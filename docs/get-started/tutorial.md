@@ -253,8 +253,8 @@ async def run_conversation():
 # Execute the conversation using await in an async context (like Colab/Jupyter)
 await run_conversation()
 
-# Alternatively, execute the conversation using asyncio
-#asyncio.run(run_conversation())
+# Alternatively, if you are not using Jupyter/ Colab, execute the conversation using asyncio
+# asyncio.run(run_conversation())
 ```
 
 **Expected Output:**
@@ -467,8 +467,8 @@ Now, execute the conversation. Ensure your API keys are correctly set in Step 0\
 # Note: Requires API keys for Gemini, GPT, and Claude to be set correctly!
 await run_multi_model_conversation()
 
-# Alternatively, execute the conversation using asyncio
-#asyncio.run(run__multi_model_conversation())
+# Alternatively, if you are not using Jupyter/ Colab, execute the conversation using asyncio
+# asyncio.run(run__multi_model_conversation())
 
 ```
 
@@ -721,8 +721,8 @@ if runner_root:
   # Note: This may require API keys for the models used by root and sub-agents!
   await run_team_conversation()
 
-  # Alternatively, execute the conversation using asyncio
-  #asyncio.run(run_team_conversation())
+  # Alternatively, if you are not using Jupyter/ Colab, execute the conversation using asyncio
+  # asyncio.run(run_team_conversation())
 else:
   print("\n⚠️ Skipping agent team conversation as the root agent runner ('runner_root') is not available.")
 
@@ -1026,8 +1026,8 @@ if runner_root_stateful:
   # Execute the conversation
   await run_stateful_conversation()
 
-  # Alternatively, execute the conversation using asyncio
-  #asyncio.run(run_stateful_conversation())
+  # Alternatively, if you are not using Jupyter/ Colab, execute the conversation using asyncio
+  # asyncio.run(run_stateful_conversation())
 
   # Inspect final session state after the conversation
   final_session = session_service_stateful.get_session(APP_NAME, USER_ID_STATEFUL, SESSION_ID_STATEFUL)
@@ -1287,8 +1287,8 @@ if runner_root_model_guardrail:
   # Execute the conversation
   await run_guardrail_test_conversation()
 
-  # Alternatively, execute the conversation using asyncio
-  #asyncio.run(run_guardrail_test_conversation())
+  # Alternatively, if you are not using Jupyter/ Colab, execute the conversation using asyncio
+  # asyncio.run(run_guardrail_test_conversation())
 
   # Optional: Check state for the trigger flag set by the callback
   final_session = session_service_stateful.get_session(APP_NAME, USER_ID_STATEFUL, SESSION_ID_STATEFUL)
@@ -1516,8 +1516,8 @@ if runner_root_tool_guardrail:
   # Execute the conversation
   await run_tool_guardrail_test()
 
-  # Alternatively, execute the conversation using asyncio
-  #asyncio.run(run_guardrail_test())
+  # Alternatively, if you are not using Jupyter/ Colab, execute the conversation using asyncio
+  # asyncio.run(run_guardrail_test())
 
   # Optional: Check state for the tool block trigger flag
   final_session = session_service_stateful.get_session(APP_NAME, USER_ID_STATEFUL, SESSION_ID_STATEFUL)
