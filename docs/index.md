@@ -93,7 +93,7 @@ orchestration**.
     response quality and the step-by-step execution trajectory against
     predefined test cases.
 
-    [**Evaluate agents**](guides/evaluate-agents.md)
+    [**Evaluate agents**](evaluate/index.md)
 
 -   :material-console-line: **Building Responsible Agents**
 
