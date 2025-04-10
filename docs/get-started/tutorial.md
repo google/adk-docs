@@ -1288,7 +1288,7 @@ if runner_root_model_guardrail:
   await run_guardrail_test_conversation()
 
   # Alternatively, execute the conversation using asyncio
-  #asyncio.run(run_guardrail_conversation())
+  #asyncio.run(run_guardrail_test_conversation())
 
   # Optional: Check state for the trigger flag set by the callback
   final_session = session_service_stateful.get_session(APP_NAME, USER_ID_STATEFUL, SESSION_ID_STATEFUL)
