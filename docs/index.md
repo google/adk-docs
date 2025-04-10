@@ -37,6 +37,7 @@ orchestration**.
   <a href="get-started/tutorial/" class="md-button">Tutorial</a>
   <a href="http://github.com/google/adk-samples" class="md-button" target="_blank">Sample Agents</a>
   <a href="api-reference/" class="md-button">API Reference</a>
+  <a href="contributing-guide.md/" class="md-button">Contribute ❤️</a>
 </p>
 
 ---
