@@ -12,7 +12,7 @@ Contains the source for the documentation site you are currently reading.
 
 ## Before you begin
 
-### Sign our Contributor License Agreement
+### ✏️ Sign our Contributor License Agreement
 
 Contributions to this project must be accompanied by a
 [Contributor License Agreement](https://cla.developers.google.com/about) (CLA).
@@ -26,10 +26,21 @@ was for a different project), you probably don't need to do it again.
 Visit <https://cla.developers.google.com/> to see your current agreements or to
 sign a new one.
 
-### Review our community guidelines
+### 📜 Review our community guidelines
 
 This project follows
 [Google's Open Source Community Guidelines](https://opensource.google/conduct/).
+
+## 💬 Join the Discussion!
+
+Have questions, want to share ideas, or discuss how you're using the ADK? Head over to our **[GitHub Discussions](https://github.com/google/adk-python/discussions)**!
+
+This is the primary place for:
+
+*   Asking questions and getting help from the community and maintainers.
+*   Sharing your projects or use cases (`Show and Tell`).
+*   Discussing potential features or improvements before creating a formal issue.
+*   General conversation about the ADK.
 
 ## How to Contribute
 

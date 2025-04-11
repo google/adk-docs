@@ -1,8 +1,45 @@
 # Build Your First Intelligent Agent Team: A Progressive Weather Bot with ADK
 
-If you've completed the [Quickstart](quickstart.md), you've seen how ADK simplifies building basic LLM-powered applications. Now, you're ready to dive deeper and construct a more sophisticated, **multi-agent system**.
+<!-- Optional outer container for overall padding/spacing -->
+<div style="padding: 10px 0;">
 
-This tutorial takes your ADK skills to the next level. We'll embark on building a **Weather Bot agent team**, progressively layering advanced features onto a simple foundation. Starting with a single agent that can look up weather, we will incrementally add capabilities like:
+  <!-- Line 1: Open in Colab -->
+  <!-- This div ensures the link takes up its own line and adds space below -->
+  <div style="margin-bottom: 10px;">
+    <a href="https://colab.research.google.com/github/google/adk-docs/blob/main/examples/python/notebooks/adk_tutorial.ipynb" target="_blank" style="display: inline-flex; align-items: center; gap: 5px; text-decoration: none; color: #4285F4;">
+      <img width="32px" src="https://www.gstatic.com/pantheon/images/bigquery/welcome_page/colab-logo.svg" alt="Google Colaboratory logo">
+      <span>Open in Colab</span>
+    </a>
+  </div>
+
+  <!-- Line 2: Share Links -->
+  <!-- This div acts as a flex container for the "Share to" text and icons -->
+  <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+    <!-- Share Text -->
+    <span style="font-weight: bold;">Share to:</span>
+
+    <!-- Social Media Links -->
+    <a href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A//github.com/google/adk-docs/blob/main/examples/python/notebooks/adk_tutorial.ipynb" target="_blank" title="Share on LinkedIn">
+      <img width="20px" src="https://upload.wikimedia.org/wikipedia/commons/8/81/LinkedIn_icon.svg" alt="LinkedIn logo" style="vertical-align: middle;">
+    </a>
+    <a href="https://bsky.app/intent/compose?text=https%3A//github.com/google/adk-docs/blob/main/examples/python/notebooks/adk_tutorial.ipynb" target="_blank" title="Share on Bluesky">
+      <img width="20px" src="https://upload.wikimedia.org/wikipedia/commons/7/7a/Bluesky_Logo.svg" alt="Bluesky logo" style="vertical-align: middle;">
+    </a>
+    <a href="https://twitter.com/intent/tweet?url=https%3A//github.com/google/adk-docs/blob/main/examples/python/notebooks/adk_tutorial.ipynb" target="_blank" title="Share on X (Twitter)">
+      <img width="20px" src="https://upload.wikimedia.org/wikipedia/commons/5/5a/X_icon_2.svg" alt="X logo" style="vertical-align: middle;">
+    </a>
+    <a href="https://reddit.com/submit?url=https%3A//github.com/google/adk-docs/blob/main/examples/python/notebooks/adk_tutorial.ipynb" target="_blank" title="Share on Reddit">
+      <img width="20px" src="https://redditinc.com/hubfs/Reddit%20Inc/Brand/Reddit_Logo.png" alt="Reddit logo" style="vertical-align: middle;">
+    </a>
+    <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A//github.com/google/adk-docs/blob/main/examples/python/notebooks/adk_tutorial.ipynb" target="_blank" title="Share on Facebook">
+      <img width="20px" src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook logo" style="vertical-align: middle;">
+    </a>
+  </div>
+
+</div>
+This tutorial extends from the [Quickstart example](https://google.github.io/adk-docs/get-started/quickstart/) for [Agent Development Kit](https://google.github.io/adk-docs/get-started/). Now, you're ready to dive deeper and construct a more sophisticated, **multi-agent system**.
+
+We'll embark on building a **Weather Bot agent team**, progressively layering advanced features onto a simple foundation. Starting with a single agent that can look up weather, we will incrementally add capabilities like:
 
 * Leveraging different AI models (Gemini, GPT, Claude).  
 * Designing specialized sub-agents for distinct tasks (like greetings and farewells).  
@@ -25,7 +62,6 @@ As a reminder, ADK is a Python framework designed to streamline the development 
 * ✅ **Agent Delegation & Collaboration:** Designing specialized sub-agents and enabling automatic routing (`auto flow`) of user requests to the most appropriate agent within a team.  
 * ✅ **Session State for Memory:** Utilizing `Session State` and `ToolContext` to enable agents to remember information across conversational turns, leading to more contextual interactions.  
 * ✅ **Safety Guardrails with Callbacks:** Implementing `before_model_callback` and `before_tool_callback` to inspect, modify, or block requests/tool usage based on predefined rules, enhancing application safety and control.  
-* ⏳ *(Coming Soon)*: Techniques for providing contextual information to agents.
 
 **End State Expectation:**
 
@@ -40,6 +76,83 @@ By completing this tutorial, you will have built a functional multi-agent Weathe
 
 **Ready to build your agent team? Let's dive in\!**
 
+## Step 0: Setup and Installation
+
+### Library Installation
+
+```
+
+!pip install google-adk -q
+!pip install litellm -q
+
+print("Installation complete.")
+```
+
+### Import Library
+
+```
+import os
+import asyncio
+from google.adk.agents import Agent
+from google.adk.models.lite_llm import LiteLlm # For multi-model support
+from google.adk.sessions import InMemorySessionService
+from google.adk.runners import Runner
+from google.genai import types # For creating message Content/Parts
+
+import warnings
+# Ignore all warnings
+warnings.filterwarnings("ignore")
+
+import logging
+logging.basicConfig(level=logging.ERROR)
+
+print("Libraries imported.")
+```
+
+### Setup API Keys
+
+```
+
+# --- IMPORTANT: Replace placeholders with your real API keys ---
+
+# Gemini API Key (Get from Google AI Studio: https://aistudio.google.com/app/apikey)
+os.environ["GOOGLE_API_KEY"] = "YOUR_GOOGLE_API_KEY" # <--- REPLACE
+
+# OpenAI API Key (Get from OpenAI Platform: https://platform.openai.com/api-keys)
+os.environ['OPENAI_API_KEY'] = 'YOUR_OPENAI_API_KEY' # <--- REPLACE
+
+# Anthropic API Key (Get from Anthropic Console: https://console.anthropic.com/settings/keys)
+os.environ['ANTHROPIC_API_KEY'] = 'YOUR_ANTHROPIC_API_KEY' # <--- REPLACE
+
+
+# --- Verify Keys (Optional Check) ---
+print("API Keys Set:")
+print(f"Google API Key set: {'Yes' if os.environ.get('GOOGLE_API_KEY') and os.environ['GOOGLE_API_KEY'] != 'YOUR_GOOGLE_API_KEY' else 'No (REPLACE PLACEHOLDER!)'}")
+print(f"OpenAI API Key set: {'Yes' if os.environ.get('OPENAI_API_KEY') and os.environ['OPENAI_API_KEY'] != 'YOUR_OPENAI_API_KEY' else 'No (REPLACE PLACEHOLDER!)'}")
+print(f"Anthropic API Key set: {'Yes' if os.environ.get('ANTHROPIC_API_KEY') and os.environ['ANTHROPIC_API_KEY'] != 'YOUR_ANTHROPIC_API_KEY' else 'No (REPLACE PLACEHOLDER!)'}")
+
+# Configure ADK to use API keys directly (not Vertex AI for this multi-model setup)
+os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "False"
+
+
+# @markdown **Security Note:** It's best practice to manage API keys securely (e.g., using Colab Secrets or environment variables) rather than hardcoding them directly in the notebook. Replace the placeholder strings above.
+
+```
+
+### Define Model Constants for easier use
+
+```
+
+MODEL_GEMINI_2_0_FLASH = "gemini-2.0-flash-exp"
+
+# Note: Specific model names might change. Refer to LiteLLM/Provider documentation.
+MODEL_GPT_4O = "openai/gpt-4o"
+MODEL_CLAUDE_SONNET = "anthropic/claude-3-sonnet-20240229"
+
+
+print("\nEnvironment configured.")
+```
+
 ## Step 1: Your First Agent \- Basic Weather Lookup
 
 Let's begin by building the fundamental component of our Weather Bot: a single agent capable of performing a specific task – looking up weather information. This involves creating two core pieces:
@@ -49,7 +162,7 @@ Let's begin by building the fundamental component of our Weather Bot: a single a
 
 ---
 
-**1\. Define the Tool (`get_weather`)**
+### **1\. Define the Tool**
 
 In ADK, **Tools** are the building blocks that give agents concrete capabilities beyond just text generation. They are typically regular Python functions that perform specific actions, like calling an API, querying a database, or performing calculations.
 
@@ -102,7 +215,7 @@ print(get_weather("Paris"))
 
 ---
 
-**2\. Define the Agent (`weather_agent`)**
+### **2\. Define the Agent**
 
 Now, let's create the **Agent** itself. An `Agent` in ADK orchestrates the interaction between the user, the LLM, and the available tools.
 
@@ -141,7 +254,7 @@ print(f"Agent '{weather_agent.name}' created using model '{AGENT_MODEL}'.")
 
 ---
 
-**3\. Setup Runner and Session Service**
+### **3\. Setup Runner and Session Service**
 
 To manage conversations and execute the agent, we need two more components:
 
@@ -181,7 +294,7 @@ print(f"Runner created for agent '{runner.agent.name}'.")
 
 ---
 
-**4\. Interact with the Agent**
+### **4\. Interact with the Agent**
 
 We need a way to send messages to our agent and receive its responses. Since LLM calls and tool executions can take time, ADK's `Runner` operates asynchronously.
 
@@ -231,7 +344,7 @@ async def call_agent_async(query: str):
 
 ---
 
-**5\. Run the Conversation**
+### **5\. Run the Conversation**
 
 Finally, let's test our setup by sending a few queries to the agent. We wrap our `async` calls in a main `async` function and run it using `await`.
 
@@ -253,8 +366,8 @@ async def run_conversation():
 # Execute the conversation using await in an async context (like Colab/Jupyter)
 await run_conversation()
 
-# Alternatively, execute the conversation using asyncio
-#asyncio.run(run_conversation())
+# Alternatively, if you are not using Jupyter/ Colab, execute the conversation using asyncio
+# asyncio.run(run_conversation())
 ```
 
 **Expected Output:**
@@ -288,22 +401,22 @@ In the next step, we'll explore how to easily switch the underlying Language Mod
 
 In Step 1, we built a functional Weather Agent powered by a specific Gemini model. While effective, real-world applications often benefit from the flexibility to use *different* Large Language Models (LLMs). Why?
 
-* **Performance:** Some models excel at specific tasks (e.g., coding, reasoning, creative writing).  
-* **Cost:** Different models have varying price points.  
-* **Capabilities:** Models offer diverse features, context window sizes, and fine-tuning options.  
+* **Performance:** Some models excel at specific tasks (e.g., coding, reasoning, creative writing).
+* **Cost:** Different models have varying price points.
+* **Capabilities:** Models offer diverse features, context window sizes, and fine-tuning options.
 * **Availability/Redundancy:** Having alternatives ensures your application remains functional even if one provider experiences issues.
 
 ADK makes switching between models seamless through its integration with the [**LiteLLM**](https://github.com/BerriAI/litellm) library. LiteLLM acts as a consistent interface to over 100 different LLMs.
 
 **In this step, we will:**
 
-1. Learn how to configure an ADK `Agent` to use models from providers like OpenAI (GPT) and Anthropic (Claude) using the `LiteLlm` wrapper.  
-2. Create new instances of our Weather Agent, each backed by a different LLM.  
+1. Learn how to configure an ADK `Agent` to use models from providers like OpenAI (GPT) and Anthropic (Claude) using the `LiteLlm` wrapper.
+2. Define, configure (with their own sessions and runners), and immediately test instances of our Weather Agent, each backed by a different LLM.
 3. Interact with these different agents to observe potential variations in their responses, even when using the same underlying tool.
 
 ---
 
-**1\. Import `LiteLlm`**
+### **1\. Import `LiteLlm`**
 
 We imported this during the initial setup (Step 0), but it's the key component for multi-model support:
 
@@ -314,26 +427,36 @@ from google.adk.models.lite_llm import LiteLlm
 
 ---
 
-**2\. Define Agents with Different Models**
+### **2\. Define and Test Multi-Model Agents**
 
-Instead of passing only a model name string (which defaults to Google's Gemini models, either directly or via Vertex AI depending on your environment setup), we wrap the desired model identifier string within the `LiteLlm` class.
+Instead of passing only a model name string (which defaults to Google's Gemini models), we wrap the desired model identifier string within the `LiteLlm` class.
 
 * **Key Concept: `LiteLlm` Wrapper:** The `LiteLlm(model="provider/model_name")` syntax tells ADK to route requests for this agent through the LiteLLM library to the specified model provider.
 
-Make sure you have configured the necessary API keys for OpenAI and Anthropic in Step 0\.
+Make sure you have configured the necessary API keys for OpenAI and Anthropic in Step 0. We'll use the `call_agent_async` function (defined earlier, which now accepts `runner`, `user_id`, and `session_id`) to interact with each agent immediately after its setup.
 
-**Best Practice:** Use constants for model names (like `MODEL_GPT_4O`, `MODEL_CLAUDE_SONNET` defined in Step 0\) to avoid typos and make code easier to manage.
+Each block below will:
+* Define the agent using a specific LiteLLM model (`MODEL_GPT_4O` or `MODEL_CLAUDE_SONNET`).
+* Create a *new, separate* `InMemorySessionService` and session specifically for that agent's test run. This keeps the conversation histories isolated for this demonstration.
+* Create a `Runner` configured for the specific agent and its session service.
+* Immediately call `call_agent_async` to send a query and test the agent.
 
-**Error Handling:** We'll wrap the agent definitions in `try...except` blocks. This prevents the entire code cell from failing if an API key for a specific provider is missing or invalid, allowing the tutorial to proceed with the models that *are* configured.
+**Best Practice:** Use constants for model names (like `MODEL_GPT_4O`, `MODEL_CLAUDE_SONNET` defined in Step 0) to avoid typos and make code easier to manage.
+
+**Error Handling:** We wrap the agent definitions in `try...except` blocks. This prevents the entire code cell from failing if an API key for a specific provider is missing or invalid, allowing the tutorial to proceed with the models that *are* configured.
+
+First, let's create and test the agent using OpenAI's GPT-4o.
 
 ```py
-# @title Define Agents with Different Models (GPT & Claude)
+# @title Define and Test GPT Agent
 
 # Make sure 'get_weather' function from Step 1 is defined in your environment.
+# Make sure 'call_agent_async' is defined from earlier.
 
 # --- Agent using GPT-4o ---
 weather_agent_gpt = None # Initialize to None
 runner_gpt = None      # Initialize runner to None
+
 try:
     weather_agent_gpt = Agent(
         name="weather_agent_gpt",
@@ -346,20 +469,66 @@ try:
         tools=[get_weather], # Re-use the same tool
     )
     print(f"Agent '{weather_agent_gpt.name}' created using model '{MODEL_GPT_4O}'.")
-    # Create a runner specific to this agent
+
+    # InMemorySessionService is simple, non-persistent storage for this tutorial.
+    session_service_gpt = InMemorySessionService() # Create a dedicated service
+
+    # Define constants for identifying the interaction context
+    APP_NAME_GPT = "weather_tutorial_app_gpt" # Unique app name for this test
+    USER_ID_GPT = "user_1_gpt"
+    SESSION_ID_GPT = "session_001_gpt" # Using a fixed ID for simplicity
+
+    # Create the specific session where the conversation will happen
+    session_gpt = session_service_gpt.create_session(
+        app_name=APP_NAME_GPT,
+        user_id=USER_ID_GPT,
+        session_id=SESSION_ID_GPT
+    )
+    print(f"Session created: App='{APP_NAME_GPT}', User='{USER_ID_GPT}', Session='{SESSION_ID_GPT}'")
+
+    # Create a runner specific to this agent and its session service
     runner_gpt = Runner(
         agent=weather_agent_gpt,
-        app_name=APP_NAME,       # Use the same app name
-        session_service=session_service # Re-use the same session service
+        app_name=APP_NAME_GPT,       # Use the specific app name
+        session_service=session_service_gpt # Use the specific session service
         )
     print(f"Runner created for agent '{runner_gpt.agent.name}'.")
 
+    # --- Test the GPT Agent ---
+    print("\n--- Testing GPT Agent ---")
+    # Ensure call_agent_async uses the correct runner, user_id, session_id
+    await call_agent_async(query = "What's the weather in Tokyo?",
+                           runner=runner_gpt,
+                           user_id=USER_ID_GPT,
+                           session_id=SESSION_ID_GPT)
+
+    # Alternatively, if you are not using Jupyter/ Colab, execute the conversation using asyncio
+    # asyncio.run(
+    #     call_agent_async(
+    #         query = "What's the weather in Tokyo?",
+    #         runner=runner_gpt,
+    #         user_id=USER_ID_GPT,
+    #         session_id=SESSION_ID_GPT
+    #     )
+    # )
+
 except Exception as e:
-    print(f"❌ Could not create GPT agent '{MODEL_GPT_4O}'. Check API Key and model name. Error: {e}")
+    print(f"❌ Could not create or run GPT agent '{MODEL_GPT_4O}'. Check API Key and model name. Error: {e}")
+
+```
+
+Next, we'll do the same for Anthropic's Claude Sonnet.
+
+```py
+# @title Define and Test Claude Agent
+
+# Make sure 'get_weather' function from Step 1 is defined in your environment.
+# Make sure 'call_agent_async' is defined from earlier.
 
 # --- Agent using Claude Sonnet ---
 weather_agent_claude = None # Initialize to None
 runner_claude = None      # Initialize runner to None
+
 try:
     weather_agent_claude = Agent(
         name="weather_agent_claude",
@@ -373,143 +542,67 @@ try:
         tools=[get_weather], # Re-use the same tool
     )
     print(f"Agent '{weather_agent_claude.name}' created using model '{MODEL_CLAUDE_SONNET}'.")
-    # Create a runner specific to this agent
+
+    # InMemorySessionService is simple, non-persistent storage for this tutorial.
+    session_service_claude = InMemorySessionService() # Create a dedicated service
+
+    # Define constants for identifying the interaction context
+    APP_NAME_CLAUDE = "weather_tutorial_app_claude" # Unique app name
+    USER_ID_CLAUDE = "user_1_claude"
+    SESSION_ID_CLAUDE = "session_001_claude" # Using a fixed ID for simplicity
+
+    # Create the specific session where the conversation will happen
+    session_claude = session_service_claude.create_session(
+        app_name=APP_NAME_CLAUDE,
+        user_id=USER_ID_CLAUDE,
+        session_id=SESSION_ID_CLAUDE
+    )
+    print(f"Session created: App='{APP_NAME_CLAUDE}', User='{USER_ID_CLAUDE}', Session='{SESSION_ID_CLAUDE}'")
+
+    # Create a runner specific to this agent and its session service
     runner_claude = Runner(
         agent=weather_agent_claude,
-        app_name=APP_NAME,       # Use the same app name
-        session_service=session_service # Re-use the same session service
+        app_name=APP_NAME_CLAUDE,       # Use the specific app name
+        session_service=session_service_claude # Use the specific session service
         )
     print(f"Runner created for agent '{runner_claude.agent.name}'.")
 
-except Exception as e:
-    print(f"❌ Could not create Claude agent '{MODEL_CLAUDE_SONNET}'. Check API Key and model name. Error: {e}")
-
-```
-
----
-
-**3\. Interact with the Multi-Model Agents**
-
-Since each agent now has its own `Runner` instance, we need a way to direct our queries to the correct runner. Let's create a slightly modified interaction function `call_specific_agent_async` that accepts the `runner_instance` as an argument.
-
-```py
-# @title Updated Agent Interaction Function (Accepts Runner)
-
-# Make sure 'types' (google.genai.types) is imported and USER_ID, SESSION_ID are defined.
-
-async def call_specific_agent_async(runner_instance: Runner, query: str):
-  """Sends a query to the agent via the specified runner and prints the final response."""
-  if not runner_instance:
-      print(f"⚠️ Cannot run query '{query}'. Runner is not available (check agent creation and API keys).")
-      return
-
-  agent_name = runner_instance.agent.name
-  print(f"\n>>> User Query to {agent_name}: {query}")
-
-  content = types.Content(role='user', parts=[types.Part(text=query)])
-  final_response_text = f"Agent {agent_name} did not produce a final response." # Default
-
-  try:
-    # Use the specific runner passed to the function
-    async for event in runner_instance.run_async(user_id=USER_ID, session_id=SESSION_ID, new_message=content):
-        # print(f"  [Event] Author: {event.author}, Type: {type(event).__name__}, Final: {event.is_final_response()}") # Debugging
-        if event.is_final_response():
-            if event.content and event.content.parts:
-               final_response_text = event.content.parts[0].text
-            elif event.actions and event.actions.escalate:
-               final_response_text = f"Agent escalated: {event.error_message or 'No specific message.'}"
-            break # Exit loop once final response is found
-  except Exception as e:
-      # Catch potential errors during the run (e.g., API errors)
-      print(f"❌ Error during run for agent {agent_name}: {e}")
-      final_response_text = f"Error occurred while running agent {agent_name}."
-
-
-  print(f"<<< {agent_name} Response: {final_response_text}")
-
-# --- Example Usage ---
-async def run_multi_model_conversation():
-    print("\n--- Testing GPT Agent ---")
-    # Check if the runner was created successfully before calling
-    if runner_gpt:
-      await call_specific_agent_async(runner_gpt, "What's the weather in Tokyo?")
-    else:
-      print("Skipping GPT test as runner is not available.")
-
+    # --- Test the Claude Agent ---
     print("\n--- Testing Claude Agent ---")
-    # Check if the runner was created successfully
-    if runner_claude:
-      await call_specific_agent_async(runner_claude, "Weather in London please.")
-    else:
-       print("Skipping Claude test as runner is not available.")
+    # Ensure call_agent_async uses the correct runner, user_id, session_id
+    await call_agent_async(query = "Weather in London please.",
+                           runner=runner_claude,
+                           user_id=USER_ID_CLAUDE,
+                           session_id=SESSION_ID_CLAUDE)
 
-    print("\n--- Testing Original Gemini Agent ---")
-    # Assuming 'runner' still holds the runner for the original Gemini agent (weather_agent_v1 from Step 1)
-    # Ensure the 'runner' variable from Step 1 is accessible here.
-    # If running steps independently, you might need to recreate the original runner.
-    if 'runner' in globals() and runner:
-         await call_specific_agent_async(runner, "How about New York?")
-    else:
-         print("Original Gemini agent runner ('runner') not found. Skipping test.")
+    # Alternatively, if you are not using Jupyter/ Colab, execute the conversation using asyncio
+    # asyncio.run(
+    #     call_agent_async(
+    #         query = "Weather in London please.",
+    #         runner=runner_claude,
+    #         user_id=USER_ID_CLAUDE,
+    #         session_id=SESSION_ID_CLAUDE
+    #     )
+    # )
+
+except Exception as e:
+    print(f"❌ Could not create or run Claude agent '{MODEL_CLAUDE_SONNET}'. Check API Key and model name. Error: {e}")
 
 ```
+
+Observe the output carefully from both code blocks. You should see:
+
+1. Each agent (`weather_agent_gpt`, `weather_agent_claude`) is created successfully (if API keys are valid).
+2. A dedicated session and runner are set up for each.
+3. Each agent correctly identifies the need to use the `get_weather` tool when processing the query (you'll see the `--- Tool: get_weather called... ---` log).
+4. The *underlying tool logic* remains identical, always returning our mock data.
+5. However, the **final textual response** generated by each agent might differ slightly in phrasing, tone, or formatting. This is because the instruction prompt is interpreted and executed by different LLMs (GPT-4o vs. Claude Sonnet).
+
+This step demonstrates the power and flexibility ADK + LiteLLM provide. You can easily experiment with and deploy agents using various LLMs while keeping your core application logic (tools, fundamental agent structure) consistent.
+
+In the next step, we'll move beyond a single agent and build a small team where agents can delegate tasks to each other!
 
 ---
-
-**4\. Run the Multi-Model Conversation**
-
-Now, execute the conversation. Ensure your API keys are correctly set in Step 0\!
-
-```py
-# @title Execute the Multi-Model Conversation
-
-# Execute the conversation defined above
-# Note: Requires API keys for Gemini, GPT, and Claude to be set correctly!
-await run_multi_model_conversation()
-
-# Alternatively, execute the conversation using asyncio
-#asyncio.run(run__multi_model_conversation())
-
-```
-
-**Expected Output:**
-
-```console
---- Testing GPT Agent ---
-
->>> User Query to weather_agent_gpt: What's the weather in Tokyo?
---- Tool: get_weather called for city: Tokyo ---
-<<< weather_agent_gpt Response: The weather in Tokyo is currently experiencing light rain with a temperature of 18°C.
-
---- Testing Claude Agent ---
-
->>> User Query to weather_agent_claude: Weather in London please.
---- Tool: get_weather called for city: London ---
-<<< weather_agent_claude Response: The weather in London is cloudy with a temperature of 15°C.
-
---- Testing Original Gemini Agent ---
-
->>> User Query to weather_agent_v1: How about New York?
-
---- Tool: get_weather called for city: New York ---
-<<< weather_agent_v1 Response: The weather in New York is sunny with a temperature of 25°C.
-
-```
-
-\*\* Ignore the warning
-
----
-
-Observe the output carefully. You should see:
-
-1. Each agent (`weather_agent_gpt`, `weather_agent_claude`, `weather_agent_v1`) successfully receives the query.  
-2. Each agent correctly identifies the need to use the `get_weather` tool (you'll see the `--- Tool: get_weather called... ---` log).  
-3. The *underlying tool logic* remains identical, always returning our mock data.  
-4. However, the **final textual response** generated by each agent might differ slightly in phrasing, tone, or formatting. This is because the instruction prompt is interpreted and executed by different LLMs (GPT-4o vs. Claude Sonnet vs. Gemini Pro).
-
-This step demonstrates the power and flexibility ADK \+ LiteLLM provide. You can easily experiment with and deploy agents using various LLMs while keeping your core application logic (tools, session management) consistent.
-
-In the next step, we'll move beyond a single agent and build a small team where agents can delegate tasks to each other\!
 
 ## Step 3: Building an Agent Team \- Delegation for Greetings & Farewells
 
@@ -538,7 +631,7 @@ A more robust approach is to build an **Agent Team**. This involves:
 
 ---
 
-**1\. Define Tools for Sub-Agents**
+### **1\. Define Tools for Sub-Agents**
 
 First, let's create the simple Python functions that will serve as tools for our new specialist agents. Remember, clear docstrings are vital for the agents that will use them.
 
@@ -574,7 +667,7 @@ print(say_goodbye())
 
 ---
 
-**2\. Define the Sub-Agents (Greeting & Farewell)**
+### **2\. Define the Sub-Agents (Greeting & Farewell)**
 
 Now, create the `Agent` instances for our specialists. Notice their highly focused `instruction` and, critically, their clear `description`. The `description` is the primary information the *root agent* uses to decide *when* to delegate to these sub-agents.
 
@@ -631,7 +724,7 @@ except Exception as e:
 
 ---
 
-**3\. Define the Root Agent (Weather Agent v2) with Sub-Agents**
+### **3\. Define the Root Agent with Sub-Agents**
 
 Now, we upgrade our `weather_agent`. The key changes are:
 
@@ -652,9 +745,9 @@ runner_root = None # Initialize runner
 
 if greeting_agent and farewell_agent and 'get_weather' in globals():
     # Let's use a capable Gemini model for the root agent to handle orchestration
-    root_agent_model = MODEL_GEMINI_2_5_PRO # Or MODEL_GEMINI_2_0_FLASH for potentially faster/cheaper routing
+    root_agent_model = MODEL_GEMINI_2_0_FLASH
 
-    root_agent = Agent(
+    weather_agent_team = Agent(
         name="weather_agent_v2", # Give it a new version name
         model=root_agent_model,
         description="The main coordinator agent. Handles weather requests and delegates greetings/farewells to specialists.",
@@ -670,16 +763,7 @@ if greeting_agent and farewell_agent and 'get_weather' in globals():
         # Key change: Link the sub-agents here!
         sub_agents=[greeting_agent, farewell_agent]
     )
-    print(f"✅ Root Agent '{root_agent.name}' created using model '{root_agent_model}' with sub-agents: {[sa.name for sa in root_agent.sub_agents]}")
-
-    # --- IMPORTANT: Create a Runner for this Root Agent ---
-    # This runner will manage the multi-agent flow starting from root_agent.
-    runner_root = Runner(
-        agent=root_agent,
-        app_name=APP_NAME,
-        session_service=session_service # Re-use the same session service
-    )
-    print(f"✅ Runner created for the root agent '{runner_root.agent.name}'.")
+    print(f"✅ Root Agent '{weather_agent_team.name}' created using model '{root_agent_model}' with sub-agents: {[sa.name for sa in weather_agent_team.sub_agents]}")
 
 else:
     print("❌ Cannot create root agent because one or more sub-agents failed to initialize or 'get_weather' tool is missing.")
@@ -687,79 +771,117 @@ else:
     if not farewell_agent: print(" - Farewell Agent is missing.")
     if 'get_weather' not in globals(): print(" - get_weather function is missing.")
 
+
+
 ```
 
 ---
 
-**4\. Interact with the Agent Team**
+### **4\. Interact with the Agent Team**
 
-Let's test our new multi-agent setup. We'll use the `call_specific_agent_async` function created in Step 2, but this time we'll pass it the `runner_root` we just created for our agent team.
+Now that we've defined our root agent (`weather_agent_team` - *Note: Ensure this variable name matches the one defined in the previous code block, likely `# @title Define the Root Agent with Sub-Agents`, which might have named it `root_agent`*) with its specialized sub-agents, let's test the delegation mechanism.
+
+The following code block will:
+
+1. Define an `async` function `run_team_conversation`.
+2. Inside this function, create a *new, dedicated* `InMemorySessionService` and a specific session (`session_001_agent_team`) just for this test run. This isolates the conversation history for testing the team dynamics.
+3. Create a `Runner` (`runner_agent_team`) configured to use our `weather_agent_team` (the root agent) and the dedicated session service.
+4. Use our updated `call_agent_async` function to send different types of queries (greeting, weather request, farewell) to the `runner_agent_team`. We explicitly pass the runner, user ID, and session ID for this specific test.
+5. Immediately execute the `run_team_conversation` function.
 
 We expect the following flow:
 
-1. User query ("Hello there\!") goes to `runner_root`.  
-2. `root_agent` (weather\_agent\_v2) receives the query.  
-3. Its LLM analyzes the query and the descriptions of its `sub_agents`. It decides the query matches `greeting_agent`'s description.  
-4. `root_agent` delegates to `greeting_agent`.  
-5. `greeting_agent` processes the query, calls its `say_hello` tool, and generates the final response.  
-6. Similar delegation happens for the farewell query to `farewell_agent`.  
-7. The weather query is *not* delegated and is handled directly by `root_agent` using `get_weather`.
+1. The "Hello there!" query goes to `runner_agent_team`.
+2. The root agent (`weather_agent_team`) receives it and, based on its instructions and the `greeting_agent`'s description, delegates the task.
+3. `greeting_agent` handles the query, calls its `say_hello` tool, and generates the response.
+4. The "What is the weather in New York?" query is *not* delegated and is handled directly by the root agent using its `get_weather` tool.
+5. The "Thanks, bye!" query is delegated to the `farewell_agent`, which uses its `say_goodbye` tool.
+
 
 ```py
 # @title Interact with the Agent Team
 
-# Ensure the runner for the root agent is available
-if runner_root:
-  async def run_team_conversation():
-      print("\n--- Testing Agent Team Delegation ---")
-      # Always interact via the root agent's runner
-      await call_specific_agent_async(runner_root, "Hello there!")
-      await call_specific_agent_async(runner_root, "What is the weather in New York?")
-      await call_specific_agent_async(runner_root, "Thanks, bye!")
+# Ensure the root agent (e.g., 'weather_agent_team' or 'root_agent' from the previous cell) is defined.
+# Ensure the call_agent_async function is defined.
 
-  # Execute the conversation
-  # Note: This may require API keys for the models used by root and sub-agents!
-  await run_team_conversation()
+# Check if the root agent variable exists before defining the conversation function
+root_agent_var_name = 'root_agent' # Default name from Step 3 guide
+if 'weather_agent_team' in globals(): # Check if user used this name instead
+    root_agent_var_name = 'weather_agent_team'
+elif 'root_agent' not in globals():
+    print("⚠️ Root agent ('root_agent' or 'weather_agent_team') not found. Cannot define run_team_conversation.")
+    # Assign a dummy value to prevent NameError later if the code block runs anyway
+    root_agent = None
 
-  # Alternatively, execute the conversation using asyncio
-  #asyncio.run(run_team_conversation())
+if root_agent_var_name in globals() and globals()[root_agent_var_name]:
+    async def run_team_conversation():
+        print("\n--- Testing Agent Team Delegation ---")
+        # InMemorySessionService is simple, non-persistent storage for this tutorial.
+        session_service = InMemorySessionService()
+
+        # Define constants for identifying the interaction context
+        APP_NAME = "weather_tutorial_agent_team"
+        USER_ID = "user_1_agent_team"
+        SESSION_ID = "session_001_agent_team" # Using a fixed ID for simplicity
+
+        # Create the specific session where the conversation will happen
+        session = session_service.create_session(
+            app_name=APP_NAME,
+            user_id=USER_ID,
+            session_id=SESSION_ID
+        )
+        print(f"Session created: App='{APP_NAME}', User='{USER_ID}', Session='{SESSION_ID}'")
+
+        # --- Get the actual root agent object ---
+        # Use the determined variable name
+        actual_root_agent = globals()[root_agent_var_name]
+
+        # Create a runner specific to this agent team test
+        runner_agent_team = Runner(
+            agent=actual_root_agent, # Use the root agent object
+            app_name=APP_NAME,       # Use the specific app name
+            session_service=session_service # Use the specific session service
+            )
+        # Corrected print statement to show the actual root agent's name
+        print(f"Runner created for agent '{actual_root_agent.name}'.")
+
+        # Always interact via the root agent's runner, passing the correct IDs
+        await call_agent_async(query = "Hello there!",
+                               runner=runner_agent_team,
+                               user_id=USER_ID,
+                               session_id=SESSION_ID)
+        await call_agent_async(query = "What is the weather in New York?",
+                               runner=runner_agent_team,
+                               user_id=USER_ID,
+                               session_id=SESSION_ID)
+        await call_agent_async(query = "Thanks, bye!",
+                               runner=runner_agent_team,
+                               user_id=USER_ID,
+                               session_id=SESSION_ID)
+
+    # Execute the conversation
+    # Note: This may require API keys for the models used by root and sub-agents!
+    await run_team_conversation()
+    
+    # Alternatively, if you are not using Jupyter/ Colab, execute the conversation using asyncio
+    # asyncio.run(run_team_conversation())
 else:
-  print("\n⚠️ Skipping agent team conversation as the root agent runner ('runner_root') is not available.")
+    print("\n⚠️ Skipping agent team conversation as the root agent was not successfully defined in the previous step.")
 
 ```
-
-**Expected Output:**
-
-```console
---- Testing Agent Team Delegation ---
-
->>> User Query to weather_agent_v2: Hello there!
-<<< weather_agent_v2 Response: Hello, there!
-
->>> User Query to weather_agent_v2: What is the weather in New York?
---- Tool: get_weather called for city: New York ---
---- Tool: get_weather called for city: New York ---
-<<< weather_agent_v2 Response: The weather in New York is sunny with a temperature of 25°C.
-
->>> User Query to weather_agent_v2: Thanks, bye!
---- Tool: say_goodbye called ---
-<<< weather_agent_v2 Response: Goodbye! Have a great day.
-
-```
-
-\*\* Ignore the warning
 
 ---
 
 Look closely at the output logs, especially the `--- Tool: ... called ---` messages. You should observe:
 
-* For "Hello there\!", the `say_hello` tool was called (indicating `greeting_agent` handled it).  
-* For "What is the weather in New York?", the `get_weather` tool was called (indicating `root_agent` handled it).  
-* For "Thanks, bye\!", the `say_goodbye` tool was called (indicating `farewell_agent` handled it).
+* For "Hello there!", the `say_hello` tool was called (indicating `greeting_agent` handled it).
+* For "What is the weather in New York?", the `get_weather` tool was called (indicating the root agent handled it).
+* For "Thanks, bye!", the `say_goodbye` tool was called (indicating `farewell_agent` handled it).
 
-This confirms successful **automatic delegation**\! The `root_agent`, guided by its instructions and the `description`s of its `sub_agents`, correctly routed user requests to the appropriate specialist agent within the team.
+This confirms successful **automatic delegation**! The root agent, guided by its instructions and the `description`s of its `sub_agents`, correctly routed user requests to the appropriate specialist agent within the team.
 
 You've now structured your application with multiple collaborating agents. This modular design is fundamental for building more complex and capable agent systems. In the next step, we'll give our agents the ability to remember information across turns using session state.
+
 
 ## Step 4: Adding Memory and Personalization with Session State
 
@@ -786,7 +908,7 @@ So far, our agent team can handle different tasks through delegation, but each i
 
 ---
 
-**1\. Initialize New Session Service and State**
+### **1\. Initialize New Session Service and State**
 
 To clearly demonstrate state management without interference from prior steps, we'll instantiate a new `InMemorySessionService`. We'll also create a session with an initial state defining the user's preferred temperature unit.
 
@@ -819,7 +941,9 @@ session_stateful = session_service_stateful.create_session(
 print(f"✅ Session '{SESSION_ID_STATEFUL}' created for user '{USER_ID_STATEFUL}'.")
 
 # Verify the initial state was set correctly
-retrieved_session = session_service_stateful.get_session(APP_NAME, USER_ID_STATEFUL, SESSION_ID_STATEFUL)
+retrieved_session = session_service_stateful.get_session(app_name=APP_NAME,
+                                                         user_id=USER_ID_STATEFUL,
+                                                         session_id = SESSION_ID_STATEFUL)
 print("\n--- Initial Session State ---")
 if retrieved_session:
     print(retrieved_session.state)
@@ -830,7 +954,7 @@ else:
 
 ---
 
-**2\. Create State-Aware Weather Tool (`get_weather_stateful`)**
+### **2. Create State-Aware Weather Tool**
 
 Now, we create a new version of the weather tool. Its key feature is accepting `tool_context: ToolContext` which allows it to access `tool_context.state`. It will read the `user_preference_temperature_unit` and format the temperature accordingly.
 
@@ -840,12 +964,11 @@ Now, we create a new version of the weather tool. Its key feature is accepting `
 
 ```py
 # @title 2. Create State-Aware Weather Tool
-
 from google.adk.tools.tool_context import ToolContext
 
 def get_weather_stateful(city: str, tool_context: ToolContext) -> dict:
     """Retrieves weather, converts temp unit based on session state."""
-    print(f"--- Tool: get_weather_stateful called for {city} (SessionID: {tool_context.session.id}) ---")
+    print(f"--- Tool: get_weather_stateful called for {city} ---")
 
     # --- Read preference from state ---
     preferred_unit = tool_context.state.get("user_preference_temperature_unit", "Celsius") # Default to Celsius
@@ -889,11 +1012,12 @@ def get_weather_stateful(city: str, tool_context: ToolContext) -> dict:
         return {"status": "error", "error_message": error_msg}
 
 print("✅ State-aware 'get_weather_stateful' tool defined.")
+
 ```
 
 ---
 
-**3\. Redefine Sub-Agents and Update Root Agent**
+### **3\. Redefine Sub-Agents and Update Root Agent**
 
 To ensure this step is self-contained and builds correctly, we first redefine the `greeting_agent` and `farewell_agent` exactly as they were in Step 3\. Then, we define our new root agent (`weather_agent_v4_stateful`):
 
@@ -915,7 +1039,7 @@ from google.adk.runners import Runner
 greeting_agent = None
 try:
     greeting_agent = Agent(
-        model=LiteLlm(model=MODEL_GPT_4O),
+        model=MODEL_GEMINI_2_0_FLASH,
         name="greeting_agent",
         instruction="You are the Greeting Agent. Your ONLY task is to provide a friendly greeting using the 'say_hello' tool. Do nothing else.",
         description="Handles simple greetings and hellos using the 'say_hello' tool.",
@@ -929,7 +1053,7 @@ except Exception as e:
 farewell_agent = None
 try:
     farewell_agent = Agent(
-        model=LiteLlm(model=MODEL_GPT_4O),
+        model=MODEL_GEMINI_2_0_FLASH,
         name="farewell_agent",
         instruction="You are the Farewell Agent. Your ONLY task is to provide a polite goodbye message using the 'say_goodbye' tool. Do not perform any other actions.",
         description="Handles simple farewells and goodbyes using the 'say_goodbye' tool.",
@@ -946,7 +1070,7 @@ runner_root_stateful = None # Initialize runner
 # Check prerequisites before creating the root agent
 if greeting_agent and farewell_agent and 'get_weather_stateful' in globals():
 
-    root_agent_model = MODEL_GEMINI_2_5_PRO # Choose orchestration model
+    root_agent_model = MODEL_GEMINI_2_0_FLASH # Choose orchestration model
 
     root_agent_stateful = Agent(
         name="weather_agent_v4_stateful", # New version name
@@ -980,62 +1104,83 @@ else:
 
 ---
 
-**4\. Interact and Test State Flow**
+### **4\. Interact and Test State Flow**
 
-Now, let's execute a conversation designed to test the state interactions:
+Now, let's execute a conversation designed to test the state interactions using the `runner_root_stateful` (associated with our stateful agent and the `session_service_stateful`). We'll use the `call_agent_async` function defined earlier, ensuring we pass the correct runner, user ID (`USER_ID_STATEFUL`), and session ID (`SESSION_ID_STATEFUL`).
 
-1. Check weather: The `get_weather_stateful` tool reads the initial "Celsius" preference. The root agent's final response (the weather report) gets saved to `state['last_weather_report']` via `output_key`.  
-2. Manually update state: We directly modify the session state to set the preference to "Fahrenheit". (Note: In real applications, state changes are often triggered by tools or specific agent logic, usually via `EventActions(state_delta=...)`, but direct modification is useful for testing).  
-3. Check weather again: The tool now reads "Fahrenheit" from the state and converts the temperature. The root agent's *new* response overwrites the `state['last_weather_report']`.  
-4. Greet the agent: Verify that delegation to the `greeting_agent` still works correctly.  
-5. Inspect final state: Confirm the `user_preference_temperature_unit` is "Fahrenheit" and observe the content of `last_weather_report`.
+The conversation flow will be:
+
+1. **Check weather (London):** The `get_weather_stateful` tool should read the initial "Celsius" preference from the session state initialized in Section 1. The root agent's final response (the weather report in Celsius) should get saved to `state['last_weather_report']` via the `output_key` configuration.
+2. **Manually update state:** We will *directly modify* the state stored within the `InMemorySessionService` instance (`session_service_stateful`).
+    * **Why direct modification?** The `session_service.get_session()` method returns a *copy* of the session. Modifying that copy wouldn't affect the state used in subsequent agent runs. For this testing scenario with `InMemorySessionService`, we access the internal `sessions` dictionary to change the *actual* stored state value for `user_preference_temperature_unit` to "Fahrenheit". *Note: In real applications, state changes are typically triggered by tools or agent logic returning `EventActions(state_delta=...)`, not direct manual updates.*
+3. **Check weather again (New York):** The `get_weather_stateful` tool should now read the updated "Fahrenheit" preference from the state and convert the temperature accordingly. The root agent's *new* response (weather in Fahrenheit) will overwrite the previous value in `state['last_weather_report']` due to the `output_key`.
+4. **Greet the agent:** Verify that delegation to the `greeting_agent` still works correctly alongside the stateful operations. This interaction will become the *last* response saved by `output_key` in this specific sequence.
+5. **Inspect final state:** After the conversation, we retrieve the session one last time (getting a copy) and print its state to confirm the `user_preference_temperature_unit` is indeed "Fahrenheit", observe the final value saved by `output_key` (which will be the greeting in this run), and see the `last_city_checked_stateful` value written by the tool.
 
 ```py
-# @title 4. Interact to Test State Flow and output_key
+# Ensure the stateful runner (runner_root_stateful) is available from the previous cell
+# Ensure call_agent_async, USER_ID_STATEFUL, SESSION_ID_STATEFUL, APP_NAME are defined
 
-# Ensure the stateful runner is available
-if runner_root_stateful:
+if 'runner_root_stateful' in globals() and runner_root_stateful:
   async def run_stateful_conversation():
       print("\n--- Testing State: Temp Unit Conversion & output_key ---")
 
-      # Define interaction helper using the stateful runner and session details
-      interaction_func = lambda query: call_specific_agent_async(runner_root_stateful, query)
-                                             # ^ Using the function from Step 2
-                                             # Ensure USER_ID_STATEFUL, SESSION_ID_STATEFUL are used if modifying the helper
-
       # 1. Check weather (Uses initial state: Celsius)
-      await interaction_func("What's the weather in London?")
+      print("--- Turn 1: Requesting weather in London (expect Celsius) ---")
+      await call_agent_async(query= "What's the weather in London?",
+                             runner=runner_root_stateful,
+                             user_id=USER_ID_STATEFUL,
+                             session_id=SESSION_ID_STATEFUL
+                            )
 
-      # 2. Manually update state preference to Fahrenheit
+      # 2. Manually update state preference to Fahrenheit - DIRECTLY MODIFY STORAGE
       print("\n--- Manually Updating State: Setting unit to Fahrenheit ---")
-      current_session = session_service_stateful.get_session(APP_NAME, USER_ID_STATEFUL, SESSION_ID_STATEFUL)
-      if current_session:
-          current_session.state["user_preference_temperature_unit"] = "Fahrenheit"
-          print(f"--- Session state updated. Current 'user_preference_temperature_unit': {current_session.state['user_preference_temperature_unit']} ---")
-      else:
-          print("--- Error: Could not retrieve session to update state. ---")
+      try:
+          # Access the internal storage directly - THIS IS SPECIFIC TO InMemorySessionService for testing
+          stored_session = session_service_stateful.sessions[APP_NAME][USER_ID_STATEFUL][SESSION_ID_STATEFUL]
+          stored_session.state["user_preference_temperature_unit"] = "Fahrenheit"
+          # Optional: You might want to update the timestamp as well if any logic depends on it
+          # import time
+          # stored_session.last_update_time = time.time()
+          print(f"--- Stored session state updated. Current 'user_preference_temperature_unit': {stored_session.state['user_preference_temperature_unit']} ---")
+      except KeyError:
+          print(f"--- Error: Could not retrieve session '{SESSION_ID_STATEFUL}' from internal storage for user '{USER_ID_STATEFUL}' in app '{APP_NAME}' to update state. Check IDs and if session was created. ---")
+      except Exception as e:
+           print(f"--- Error updating internal session state: {e} ---")
 
       # 3. Check weather again (Tool should now use Fahrenheit)
       # This will also update 'last_weather_report' via output_key
-      await interaction_func("Tell me the weather in New York.")
+      print("\n--- Turn 2: Requesting weather in New York (expect Fahrenheit) ---")
+      await call_agent_async(query= "Tell me the weather in New York.",
+                             runner=runner_root_stateful,
+                             user_id=USER_ID_STATEFUL,
+                             session_id=SESSION_ID_STATEFUL
+                            )
 
       # 4. Test basic delegation (should still work)
-      await interaction_func("Hi!")
-
+      # This will update 'last_weather_report' again, overwriting the NY weather report
+      print("\n--- Turn 3: Sending a greeting ---")
+      await call_agent_async(query= "Hi!",
+                             runner=runner_root_stateful,
+                             user_id=USER_ID_STATEFUL,
+                             session_id=SESSION_ID_STATEFUL
+                            )
 
   # Execute the conversation
   await run_stateful_conversation()
 
-  # Alternatively, execute the conversation using asyncio
-  #asyncio.run(run_stateful_conversation())
+  # Alternatively, if you are not using Jupyter/ Colab, execute the conversation using asyncio
+  # asyncio.run(run_stateful_conversation())
 
   # Inspect final session state after the conversation
-  final_session = session_service_stateful.get_session(APP_NAME, USER_ID_STATEFUL, SESSION_ID_STATEFUL)
+  print("\n--- Inspecting Final Session State ---")
+  final_session = session_service_stateful.get_session(app_name=APP_NAME,
+                                                       user_id= USER_ID_STATEFUL,
+                                                       session_id=SESSION_ID_STATEFUL)
   if final_session:
-      print("\n--- Final Session State ---")
-      print(f"Preference: {final_session.state.get('user_preference_temperature_unit')}")
-      print(f"Last Weather Report (from output_key): {final_session.state.get('last_weather_report')}")
-      print(f"Last City Checked (by tool): {final_session.state.get('last_city_checked_stateful')}")
+      print(f"Final Preference: {final_session.state.get('user_preference_temperature_unit')}")
+      print(f"Final Last Weather Report (from output_key): {final_session.state.get('last_weather_report')}")
+      print(f"Final Last City Checked (by tool): {final_session.state.get('last_city_checked_stateful')}")
       # Print full state for detailed view
       # print(f"Full State: {final_session.state}")
   else:
@@ -1046,52 +1191,21 @@ else:
 
 ```
 
-**Expected Output:**
-
-```console
---- Testing State: Temp Unit Conversion & output_key ---
-
->>> User Query to weather_agent_v4_stateful: What's the weather in London?
---- Tool: get_weather_stateful called for New York ---
---- Tool: Reading state 'user_preference_temperature_unit': Celsius ---
---- Tool: Generated report in Celsius. Result: {'status': 'success', 'report': 'The weather in New york is sunny with a temperature of 25°C.'} ---
---- Tool: Updated state 'last_city_checked_stateful': New York ---
-<<< weather_agent_v4_stateful Response: The weather in New york is sunny with a temperature of 25°C.
-
-
---- Manually Updating State: Setting unit to Fahrenheit ---
---- Session state updated. Current 'user_preference_temperature_unit': Fahrenheit ---
-
->>> User Query to weather_agent_v4_stateful: Tell me the weather in New York.
---- Tool: get_weather_stateful called for New York ---
---- Tool: Reading state 'user_preference_temperature_unit': Celsius ---
---- Tool: Generated report in Celsius. Result: {'status': 'success', 'report': 'The weather in New york is sunny with a temperature of 25°C.'} ---
---- Tool: Updated state 'last_city_checked_stateful': New York ---
-<<< weather_agent_v4_stateful Response: The weather in New york is sunny with a temperature of 25°C.
-
-
->>> User Query to weather_agent_v4_stateful: Hi!
-<<< weather_agent_v4_stateful Response: Hello, there!
-
-
---- Final Session State ---
-Preference: Celsius
-Last Weather Report (from output_key): None
-Last City Checked (by tool): None
-
-```
-
-\*\* Ignore the warning
-
 ---
 
-By reviewing the conversation flow and the final session state, you can confirm:
+By reviewing the conversation flow and the final session state printout, you can confirm:
 
-* The weather tool (`get_weather_stateful`) correctly read the `user_preference_temperature_unit` from state and adjusted its output (Celsius then Fahrenheit).  
-* The delegation to the `greeting_agent` continued to function alongside the stateful operations.  
-* The `output_key="last_weather_report"` successfully saved the root agent's final weather response into the session state automatically.
+* **State Read:** The weather tool (`get_weather_stateful`) correctly read `user_preference_temperature_unit` from state, initially using "Celsius" for London.
+* **State Update:** The direct modification successfully changed the stored preference to "Fahrenheit".
+* **State Read (Updated):** The tool subsequently read "Fahrenheit" when asked for New York's weather and performed the conversion.
+* **Tool State Write:** The tool successfully wrote the `last_city_checked_stateful` ("New York" after the second weather check) into the state via `tool_context.state`.
+* **Delegation:** The delegation to the `greeting_agent` for "Hi!" functioned correctly even after state modifications.
+* **`output_key`:** The `output_key="last_weather_report"` successfully saved the root agent's *final* response for *each turn* where the root agent was the one ultimately responding. In this sequence, the last response was the greeting ("Hello, there!"), so that overwrote the weather report in the state key.
+* **Final State:** The final check confirms the preference persisted as "Fahrenheit".
 
-You've now successfully integrated session state to personalize agent behavior and used `output_key` for simple state persistence. This foundational understanding of state management is key as we proceed to implement safety guardrails using callbacks in the next steps.
+You've now successfully integrated session state to personalize agent behavior using `ToolContext`, manually manipulated state for testing `InMemorySessionService`, and observed how `output_key` provides a simple mechanism for saving the agent's last response to state. This foundational understanding of state management is key as we proceed to implement safety guardrails using callbacks in the next steps.
+
+---
 
 ## Step 5: Adding Safety \- Input Guardrail with `before_model_callback`
 
@@ -1130,7 +1244,7 @@ ADK provides **Callbacks** – functions that allow you to hook into specific po
 
 ---
 
-**1\. Define the Guardrail Callback Function**
+### **1\. Define the Guardrail Callback Function**
 
 This function will inspect the last user message within the `llm_request` content. If it finds "BLOCK" (case-insensitive), it constructs and returns an `LlmResponse` to block the flow; otherwise, it returns `None`.
 
@@ -1189,11 +1303,12 @@ def block_keyword_guardrail(
         return None # Returning None signals ADK to continue normally
 
 print("✅ block_keyword_guardrail function defined.")
+
 ```
 
 ---
 
-**2\. Update Root Agent to Use the Callback**
+### **2\. Update Root Agent to Use the Callback**
 
 We redefine the root agent, adding the `before_model_callback` parameter and pointing it to our new guardrail function. We'll give it a new version name for clarity.
 
@@ -1202,58 +1317,85 @@ We redefine the root agent, adding the `before_model_callback` parameter and poi
 ```py
 # @title 2. Update Root Agent with before_model_callback
 
-# Ensure prerequisites are defined:
-# - greeting_agent, farewell_agent (from Step 3/4)
-# - get_weather_stateful tool (from Step 4)
-# - block_keyword_guardrail callback (from previous cell)
 
-# --- Redefine Sub-Agents and Tool if necessary (Ensure Self-Contained Execution) ---
-# (Include the definitions for greeting_agent, farewell_agent, say_hello, say_goodbye,
-#  get_weather_stateful, ToolContext, Agent, LiteLlm, Runner, model constants etc.
-#  here or ensure they were executed in the notebook previously)
-# Example placeholder check:
-if 'greeting_agent' not in globals() or 'farewell_agent' not in globals() or 'get_weather_stateful' not in globals() or 'block_keyword_guardrail' not in globals():
-    print("⚠️ Warning: Prerequisite agents, tools, or callbacks might be missing. Ensure previous steps were run or redefine them here.")
-    # Add full definitions if needed for standalone execution
+# --- Redefine Sub-Agents (Ensures they exist in this context) ---
+greeting_agent = None
+try:
+    # Use a defined model constant
+    greeting_agent = Agent(
+        model=MODEL_GEMINI_2_0_FLASH,
+        name="greeting_agent", # Keep original name for consistency
+        instruction="You are the Greeting Agent. Your ONLY task is to provide a friendly greeting using the 'say_hello' tool. Do nothing else.",
+        description="Handles simple greetings and hellos using the 'say_hello' tool.",
+        tools=[say_hello],
+    )
+    print(f"✅ Sub-Agent '{greeting_agent.name}' redefined.")
+except Exception as e:
+    print(f"❌ Could not redefine Greeting agent. Check Model/API Key ({MODEL_GPT_4O}). Error: {e}")
+
+farewell_agent = None
+try:
+    # Use a defined model constant
+    farewell_agent = Agent(
+        model=MODEL_GEMINI_2_0_FLASH,
+        name="farewell_agent", # Keep original name
+        instruction="You are the Farewell Agent. Your ONLY task is to provide a polite goodbye message using the 'say_goodbye' tool. Do not perform any other actions.",
+        description="Handles simple farewells and goodbyes using the 'say_goodbye' tool.",
+        tools=[say_goodbye],
+    )
+    print(f"✅ Sub-Agent '{farewell_agent.name}' redefined.")
+except Exception as e:
+    print(f"❌ Could not redefine Farewell agent. Check Model/API Key ({MODEL_GPT_4O}). Error: {e}")
+
 
 # --- Define the Root Agent with the Callback ---
 root_agent_model_guardrail = None
 runner_root_model_guardrail = None
 
-if 'greeting_agent' in globals() and 'farewell_agent' in globals() and 'get_weather_stateful' in globals() and 'block_keyword_guardrail' in globals():
+# Check all components before proceeding
+if greeting_agent and farewell_agent and 'get_weather_stateful' in globals() and 'block_keyword_guardrail' in globals():
 
-    root_agent_model = MODEL_GEMINI_2_5_PRO # Model for the root agent
+    # Use a defined model constant like MODEL_GEMINI_2_5_PRO
+    root_agent_model = MODEL_GEMINI_2_0_FLASH
 
     root_agent_model_guardrail = Agent(
-        name="weather_agent_v5_model_guardrail", # New version name
+        name="weather_agent_v5_model_guardrail", # New version name for clarity
         model=root_agent_model,
-        description="Main agent: Provides weather, delegates greetings/farewells, includes input keyword guardrail.",
+        description="Main agent: Handles weather, delegates greetings/farewells, includes input keyword guardrail.",
         instruction="You are the main Weather Agent. Provide weather using 'get_weather_stateful'. "
-                    "Delegate greetings to 'greeting_agent' and farewells to 'farewell_agent'. "
-                    "Handle only weather, greetings, and farewells.",
-        tools=[get_weather_stateful], # Still uses the stateful tool
-        sub_agents=[greeting_agent, farewell_agent],
+                    "Delegate simple greetings to 'greeting_agent' and farewells to 'farewell_agent'. "
+                    "Handle only weather requests, greetings, and farewells.",
+        tools=[get_weather],
+        sub_agents=[greeting_agent, farewell_agent], # Reference the redefined sub-agents
         output_key="last_weather_report", # Keep output_key from Step 4
-        before_model_callback=block_keyword_guardrail # <<< Add the callback here
+        before_model_callback=block_keyword_guardrail # <<< Assign the guardrail callback
     )
     print(f"✅ Root Agent '{root_agent_model_guardrail.name}' created with before_model_callback.")
 
     # --- Create Runner for this Agent, Using SAME Stateful Session Service ---
-    runner_root_model_guardrail = Runner(
-        agent=root_agent_model_guardrail,
-        app_name=APP_NAME,
-        session_service=session_service_stateful # <<< Use the SAME service from Step 4
-    )
-    print(f"✅ Runner created for guardrail agent '{runner_root_model_guardrail.agent.name}', using stateful session service.")
+    # Ensure session_service_stateful exists from Step 4
+    if 'session_service_stateful' in globals():
+        runner_root_model_guardrail = Runner(
+            agent=root_agent_model_guardrail,
+            app_name=APP_NAME, # Use consistent APP_NAME
+            session_service=session_service_stateful # <<< Use the service from Step 4
+        )
+        print(f"✅ Runner created for guardrail agent '{runner_root_model_guardrail.agent.name}', using stateful session service.")
+    else:
+        print("❌ Cannot create runner. 'session_service_stateful' from Step 4 is missing.")
 
 else:
-    print("❌ Cannot create root agent with model guardrail. Prerequisites missing.")
+    print("❌ Cannot create root agent with model guardrail. One or more prerequisites are missing or failed initialization:")
+    if not greeting_agent: print("   - Greeting Agent")
+    if not farewell_agent: print("   - Farewell Agent")
+    if 'get_weather_stateful' not in globals(): print("   - 'get_weather_stateful' tool")
+    if 'block_keyword_guardrail' not in globals(): print("   - 'block_keyword_guardrail' callback")
 
 ```
 
 ---
 
-**3\. Interact to Test the Guardrail**
+### **3\. Interact to Test the Guardrail**
 
 Let's test the guardrail's behavior. We'll use the *same session* (`SESSION_ID_STATEFUL`) as in Step 4 to show that state persists across these changes.
 
@@ -1270,10 +1412,9 @@ if runner_root_model_guardrail:
       print("\n--- Testing Model Input Guardrail ---")
 
       # Use the runner for the agent with the callback and the existing stateful session ID
-      interaction_func = lambda query: call_specific_agent_async(runner_root_model_guardrail, query)
-                                             # ^ Reusing the interaction function from Step 2
-                                             # Ensure it uses USER_ID_STATEFUL, SESSION_ID_STATEFUL if needed
-
+      interaction_func = lambda query: call_agent_async(query,
+      runner_root_model_guardrail, USER_ID_STATEFUL, SESSION_ID_STATEFUL # <-- Pass correct IDs
+  )
       # 1. Normal request (Callback allows, should use Fahrenheit from Step 4 state change)
       await interaction_func("What is the weather in London?")
 
@@ -1287,11 +1428,13 @@ if runner_root_model_guardrail:
   # Execute the conversation
   await run_guardrail_test_conversation()
 
-  # Alternatively, execute the conversation using asyncio
-  #asyncio.run(run_guardrail_conversation())
+  # Alternatively, if you are not using Jupyter/ Colab, execute the conversation using asyncio
+  # asyncio.run(run_guardrail_test_conversation())
 
   # Optional: Check state for the trigger flag set by the callback
-  final_session = session_service_stateful.get_session(APP_NAME, USER_ID_STATEFUL, SESSION_ID_STATEFUL)
+  final_session = session_service_stateful.get_session(app_name=APP_NAME,
+                                                       user_id=USER_ID_STATEFUL,
+                                                       session_id=SESSION_ID_STATEFUL)
   if final_session:
       print("\n--- Final Session State (After Guardrail Test) ---")
       print(f"Guardrail Triggered Flag: {final_session.state.get('guardrail_block_keyword_triggered')}")
@@ -1302,6 +1445,7 @@ if runner_root_model_guardrail:
 
 else:
   print("\n⚠️ Skipping model guardrail test. Runner ('runner_root_model_guardrail') is not available.")
+
 
 ```
 
@@ -1356,7 +1500,7 @@ ADK provides the `before_tool_callback` for this precise purpose.
 
 ---
 
-**1\. Define the Tool Guardrail Callback Function**
+### **1\. Define the Tool Guardrail Callback Function**
 
 This function targets the `get_weather_stateful` tool. It checks the `city` argument. If it's "Paris", it returns an error dictionary that looks like the tool's own error response. Otherwise, it allows the tool to run by returning `None`.
 
@@ -1416,7 +1560,7 @@ print("✅ block_paris_tool_guardrail function defined.")
 
 ---
 
-**2\. Update Root Agent to Use Both Callbacks**
+### **2\. Update Root Agent to Use Both Callbacks**
 
 We redefine the root agent again (`weather_agent_v6_tool_guardrail`), this time adding the `before_tool_callback` parameter alongside the `before_model_callback` from Step 5\.
 
@@ -1430,13 +1574,34 @@ We redefine the root agent again (`weather_agent_v6_tool_guardrail`), this time 
 #  MODEL constants, say_hello, say_goodbye, greeting_agent, farewell_agent,
 #  get_weather_stateful, block_keyword_guardrail, block_paris_tool_guardrail)
 
-# Example placeholder check:
-if ('greeting_agent' not in globals() or not greeting_agent or
-    'farewell_agent' not in globals() or not farewell_agent or
-    'get_weather_stateful' not in globals() or
-    'block_keyword_guardrail' not in globals() or
-    'block_paris_tool_guardrail' not in globals()):
-    print("⚠️ Warning: Prerequisites missing. Ensure Steps 3, 4, 5 ran or redefine components.")
+# --- Redefine Sub-Agents (Ensures they exist in this context) ---
+greeting_agent = None
+try:
+    # Use a defined model constant like MODEL_GPT_4O
+    greeting_agent = Agent(
+        model=MODEL_GEMINI_2_0_FLASH,
+        name="greeting_agent", # Keep original name for consistency
+        instruction="You are the Greeting Agent. Your ONLY task is to provide a friendly greeting using the 'say_hello' tool. Do nothing else.",
+        description="Handles simple greetings and hellos using the 'say_hello' tool.",
+        tools=[say_hello],
+    )
+    print(f"✅ Sub-Agent '{greeting_agent.name}' redefined.")
+except Exception as e:
+    print(f"❌ Could not redefine Greeting agent. Check Model/API Key ({MODEL_GPT_4O}). Error: {e}")
+
+farewell_agent = None
+try:
+    # Use a defined model constant like MODEL_GPT_4O
+    farewell_agent = Agent(
+        model=MODEL_GEMINI_2_0_FLASH,
+        name="farewell_agent", # Keep original name
+        instruction="You are the Farewell Agent. Your ONLY task is to provide a polite goodbye message using the 'say_goodbye' tool. Do not perform any other actions.",
+        description="Handles simple farewells and goodbyes using the 'say_goodbye' tool.",
+        tools=[say_goodbye],
+    )
+    print(f"✅ Sub-Agent '{farewell_agent.name}' redefined.")
+except Exception as e:
+    print(f"❌ Could not redefine Farewell agent. Check Model/API Key ({MODEL_GPT_4O}). Error: {e}")
 
 # --- Define the Root Agent with Both Callbacks ---
 root_agent_tool_guardrail = None
@@ -1448,7 +1613,7 @@ if ('greeting_agent' in globals() and greeting_agent and
     'block_keyword_guardrail' in globals() and
     'block_paris_tool_guardrail' in globals()):
 
-    root_agent_model = MODEL_GEMINI_2_5_PRO
+    root_agent_model = MODEL_GEMINI_2_0_FLASH
 
     root_agent_tool_guardrail = Agent(
         name="weather_agent_v6_tool_guardrail", # New version name
@@ -1479,11 +1644,12 @@ if ('greeting_agent' in globals() and greeting_agent and
 else:
     print("❌ Cannot create root agent with tool guardrail. Prerequisites missing.")
 
+
 ```
 
 ---
 
-**3\. Interact to Test the Tool Guardrail**
+### **3\. Interact to Test the Tool Guardrail**
 
 Let's test the interaction flow, again using the same stateful session (`SESSION_ID_STATEFUL`) from the previous steps.
 
@@ -1499,11 +1665,10 @@ if runner_root_tool_guardrail:
   async def run_tool_guardrail_test():
       print("\n--- Testing Tool Argument Guardrail ('Paris' blocked) ---")
 
-      # Use the runner for the agent with both callbacks and the existing stateful session
-      interaction_func = lambda query: call_specific_agent_async(runner_root_tool_guardrail, query)
-                                             # ^ Reusing interaction helper from Step 2
-                                             # Ensure it uses USER_ID_STATEFUL, SESSION_ID_STATEFUL
-
+        # Use the runner for the agent with both callbacks and the existing stateful session
+      interaction_func = lambda query: call_agent_async(query,
+      runner_root_tool_guardrail, USER_ID_STATEFUL, SESSION_ID_STATEFUL
+  )
       # 1. Allowed city (Should pass both callbacks, use Fahrenheit state)
       await interaction_func("What's the weather in New York?")
 
@@ -1516,11 +1681,13 @@ if runner_root_tool_guardrail:
   # Execute the conversation
   await run_tool_guardrail_test()
 
-  # Alternatively, execute the conversation using asyncio
-  #asyncio.run(run_guardrail_test())
+  # Alternatively, if you are not using Jupyter/ Colab, execute the conversation using asyncio
+  # asyncio.run(run_guardrail_test())
 
   # Optional: Check state for the tool block trigger flag
-  final_session = session_service_stateful.get_session(APP_NAME, USER_ID_STATEFUL, SESSION_ID_STATEFUL)
+  final_session = session_service_stateful.get_session(app_name=APP_NAME,
+                                                       user_id=USER_ID_STATEFUL,
+                                                       session_id= SESSION_ID_STATEFUL)
   if final_session:
       print("\n--- Final Session State (After Tool Guardrail Test) ---")
       print(f"Tool Guardrail Triggered Flag: {final_session.state.get('guardrail_tool_block_triggered')}")
@@ -1531,7 +1698,6 @@ if runner_root_tool_guardrail:
 
 else:
   print("\n⚠️ Skipping tool guardrail test. Runner ('runner_root_tool_guardrail') is not available.")
-
 ```
 
 (Run the code cell above to generate the output. Keep the output cell here in the markdown)
