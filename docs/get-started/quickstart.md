@@ -166,7 +166,7 @@ There are multiple ways to interact with your agent:
     
     !!!note "Model support"
     
-        Currently only `gemini-2.0-flash-exp` supports talking to your agent via audio/video, and can be used either with your API key from Google AI Studio or via [Vertex AI](https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal-live-api).
+        Currently only `gemini-2.0-flash-live-preview-04-09` supports talking to your agent via audio/video, and can be used either with your API key from Google AI Studio or via [Vertex AI](https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal-live-api).
 
 === "Terminal (adk run)"
 

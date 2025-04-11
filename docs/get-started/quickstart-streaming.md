@@ -38,7 +38,7 @@ adk-streaming/  # Project folder
 
 ### agent.py
 
-Copy-paste the following code block to the [`agent.py`](http://agent.py). Please note that ADK Streaming works with `gemini-2.0-flash-exp` model only.
+Copy-paste the following code block to the [`agent.py`](http://agent.py). Please note that ADK Streaming works with `gemini-2.0-flash-live-preview-04-09` model only.
 
 ```py
 from google.adk.agents import Agent
@@ -48,7 +48,7 @@ root_agent = Agent(
    # A unique name for the agent.
    name="basic_search_agent",
    # The Large Language Model (LLM) that agent will use.
-   model="gemini-2.0-flash-exp",
+   model="gemini-2.0-flash-live-preview-04-09",
    # A short description of the agent's purpose.
    description="Agent to answer questions using Google Search.",
    # Instructions to set the agent's behavior.
