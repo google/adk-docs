@@ -53,7 +53,7 @@ mkdir multi_tool_agent/
 Now create an `__init__.py` file in the folder:
 
 ```shell
-echo "from . import agent" > multi_tool_agent/__init__.py
+echo "from .agent import root_agent" > multi_tool_agent/__init__.py
 ```
 
 Your `__init__.py` should now look like this:
