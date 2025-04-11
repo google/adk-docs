@@ -503,10 +503,14 @@ try:
                            session_id=SESSION_ID_GPT)
 
     # Alternatively, if you are not using Jupyter/ Colab, execute the conversation using asyncio
-    # asyncio.run(call_agent_async(query = "What's the weather in Tokyo?",
-                                   runner=runner_gpt,
-                                   user_id=USER_ID_GPT,
-                                   session_id=SESSION_ID_GPT))
+    # asyncio.run(
+    #     call_agent_async(
+    #         query = "What's the weather in Tokyo?",
+    #         runner=runner_gpt,
+    #         user_id=USER_ID_GPT,
+    #         session_id=SESSION_ID_GPT
+    #     )
+    # )
 
 except Exception as e:
     print(f"❌ Could not create or run GPT agent '{MODEL_GPT_4O}'. Check API Key and model name. Error: {e}")
@@ -572,10 +576,14 @@ try:
                            session_id=SESSION_ID_CLAUDE)
 
     # Alternatively, if you are not using Jupyter/ Colab, execute the conversation using asyncio
-    # asyncio.run(call_agent_async(query = "Weather in London please.",
-                                   runner=runner_claude,
-                                   user_id=USER_ID_CLAUDE,
-                                   session_id=SESSION_ID_CLAUDE))
+    # asyncio.run(
+    #     call_agent_async(
+    #         query = "Weather in London please.",
+    #         runner=runner_claude,
+    #         user_id=USER_ID_CLAUDE,
+    #         session_id=SESSION_ID_CLAUDE
+    #     )
+    # )
 
 except Exception as e:
     print(f"❌ Could not create or run Claude agent '{MODEL_CLAUDE_SONNET}'. Check API Key and model name. Error: {e}")
