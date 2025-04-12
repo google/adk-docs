@@ -145,7 +145,7 @@ export GOOGLE_GENAI_USE_VERTEXAI=True
         # Example session DB URL (e.g., SQLite)
         SESSION_DB_URL = "sqlite:///./sessions.db"
         # Example allowed origins for CORS
-        ALLOWED_ORIGINS = ["http://localhost", "http://localhost:8080", "*"]
+        ALLOWED_ORIGINS = ["http://localhost", "http://localhost:8000", "*"]
         # Set web=True if you intend to serve a web interface, False otherwise
         SERVE_WEB_INTERFACE = True
 
@@ -169,7 +169,7 @@ export GOOGLE_GENAI_USE_VERTEXAI=True
             uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 8000)))
         ```
 
-        *Note: We specify `agent_dir_name="capital_agent"` and use `os.environ.get("PORT", 8000)` for Cloud Run compatibility.*
+        *Note: We specify `agent_dir` to the directory `main.py` is in and use `os.environ.get("PORT", 8000)` for Cloud Run compatibility.*
 
     2. List the necessary Python packages:
 
@@ -209,6 +209,7 @@ export GOOGLE_GENAI_USE_VERTEXAI=True
     --region $GOOGLE_CLOUD_LOCATION \
     --project $GOOGLE_CLOUD_PROJECT \
     --allow-unauthenticated \
+    --port 8000 \
     --set-env-vars="GOOGLE_CLOUD_PROJECT=$GOOGLE_CLOUD_PROJECT,GOOGLE_CLOUD_LOCATION=$GOOGLE_CLOUD_LOCATION,GOOGLE_GENAI_USE_VERTEXAI=$GOOGLE_GENAI_USE_VERTEXAI"
     # Add any other necessary environment variables your agent might need
     ```
