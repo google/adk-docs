@@ -6,7 +6,7 @@ from typing import Optional
 from google.genai import types 
 from google.adk.sessions import InMemorySessionService
 
-GEMINI_2_FLASH="gemini-2.0-flash-live-preview-04-09"
+GEMINI_2_FLASH="gemini-2.0-flash"
 
 # --- Define the Callback Function ---
 def simple_before_model_modifier(

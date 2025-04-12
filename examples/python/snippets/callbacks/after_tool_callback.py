@@ -9,7 +9,7 @@ from google.adk.tools.base_tool import BaseTool
 from typing import Dict, Any
 from copy import copy
 
-GEMINI_2_FLASH="gemini-2.0-flash-live-preview-04-09"
+GEMINI_2_FLASH="gemini-2.0-flash"
 
 # --- Define a Simple Tool Function (Same as before) ---
 def get_capital_city(country: str) -> str:
