@@ -7,7 +7,7 @@ from google.genai import types
 APP_NAME="weather_sentiment_agent"
 USER_ID="user1234"
 SESSION_ID="1234"
-MODEL_ID="gemini-2.0-flash-exp"
+MODEL_ID="gemini-2.0-flash"
 
 # Tool 1
 def get_weather_report(city: str) -> dict:

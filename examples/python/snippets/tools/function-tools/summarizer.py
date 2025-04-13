@@ -9,14 +9,14 @@ USER_ID="user1234"
 SESSION_ID="1234"
 
 summary_agent = Agent(
-    model="gemini-2.0-flash-exp",
+    model="gemini-2.0-flash",
     name="summary_agent",
     instruction="""You are an expert summarizer. Please read the following text and provide a concise summary.""",
     description="Agent to summarize text",
 )
 
 root_agent = Agent(
-    model='gemini-2.0-flash-exp',
+    model='gemini-2.0-flash',
     name='root_agent',
     instruction="""You are a helpful assistant. When the user provides a long text, use the 'summarize' tool to get a summary and then present it to the user.""",
     tools=[AgentTool(agent=summary_agent)]

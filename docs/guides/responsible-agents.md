@@ -156,7 +156,7 @@ def validate_tool_params(
 
 # Hypothetical Agent setup
 root_agent = LlmAgent( # Use specific agent type
-    model='gemini-2.0-flash-exp',
+    model='gemini-2.0-flash',
     name='root_agent',
     instruction="...",
     before_tool_callback=validate_tool_params, # Assign the callback

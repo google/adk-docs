@@ -15,7 +15,7 @@ def my_before_model_logic(
 # --- Register it during Agent creation ---
 my_agent = LlmAgent(
     name="MyCallbackAgent",
-    model="gemini-2.0-flash-exp", # Or your desired model
+    model="gemini-2.0-flash", # Or your desired model
     instruction="Be helpful.",
     # Other agent parameters...
     before_model_callback=my_before_model_logic # Pass the function here

@@ -13,7 +13,7 @@ APP_NAME_OPENAPI = "openapi_petstore_app"
 USER_ID_OPENAPI = "user_openapi_1"
 SESSION_ID_OPENAPI = f"session_openapi_{uuid.uuid4()}" # Unique session ID
 AGENT_NAME_OPENAPI = "petstore_manager_agent"
-GEMINI_MODEL = "gemini-2.0-flash-exp"
+GEMINI_MODEL = "gemini-2.0-flash"
 
 # --- Sample OpenAPI Specification (JSON String) ---
 # A basic Pet Store API example using httpbin.org as a mock server

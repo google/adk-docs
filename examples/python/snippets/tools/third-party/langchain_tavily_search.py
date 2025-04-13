@@ -28,7 +28,7 @@ adk_tavily_tool = LangchainTool(tool=tavily_search)
 # Define Agent with the wrapped tool
 my_agent = Agent(
     name="langchain_tool_agent",
-    model="gemini-2.0-flash-exp",
+    model="gemini-2.0-flash",
     description="Agent to answer questions using TavilySearch.",
     instruction="I can answer your questions by searching the internet. Just ask me anything!",
     tools=[adk_tavily_tool] # Add the wrapped tool here

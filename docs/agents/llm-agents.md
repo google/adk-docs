@@ -14,12 +14,12 @@ First, you need to establish what the agent *is* and what it's *for*.
 
 * **`description` (Optional, Recommended for Multi-Agent):** Provide a concise summary of the agent's capabilities. This description is primarily used by *other* LLM agents to determine if they should route a task to this agent. Make it specific enough to differentiate it from peers (e.g., "Handles inquiries about current billing statements," not just "Billing agent").
 
-* **`model` (Required):** Specify the underlying LLM that will power this agent's reasoning. This is a string identifier like `"gemini-2.0-flash-exp"`. The choice of model impacts the agent's capabilities, cost, and performance. See the [Models](models.md) page for available options and considerations.
+* **`model` (Required):** Specify the underlying LLM that will power this agent's reasoning. This is a string identifier like `"gemini-2.0-flash"`. The choice of model impacts the agent's capabilities, cost, and performance. See the [Models](models.md) page for available options and considerations.
 
 ```python
 # Example: Defining the basic identity
 capital_agent = LlmAgent(
-    model="gemini-2.0-flash-exp",
+    model="gemini-2.0-flash",
     name="capital_agent",
     description="Answers user questions about the capital city of a given country."
     # instruction and tools will be added next
@@ -46,7 +46,7 @@ The `instruction` parameter is arguably the most critical for shaping an `LlmAge
 ```python
 # Example: Adding instructions
 capital_agent = LlmAgent(
-    model="gemini-2.0-flash-exp",
+    model="gemini-2.0-flash",
     name="capital_agent",
     description="Answers user questions about the capital city of a given country.",
     instruction="""You are an agent that provides the capital city of a country.
@@ -84,7 +84,7 @@ def get_capital_city(country: str) -> str:
 
 # Add the tool to the agent
 capital_agent = LlmAgent(
-    model="gemini-2.0-flash-exp",
+    model="gemini-2.0-flash",
     name="capital_agent",
     description="Answers user questions about the capital city of a given country.",
     instruction="""You are an agent that provides the capital city of a country... (previous instruction text)""",

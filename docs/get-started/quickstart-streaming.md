@@ -1,8 +1,15 @@
 # ADK Streaming Quickstart {#adk-streaming-quickstart}
 
-With this quickstart, you'll learn to create a simple agent and use ADK Streaming to enable audio and video communication with it. We will install ADK, set up a basic "Google Search" agent, try running the agent with Streaming with `adk web` tool, and then explain how to build a simple asynchronous web app by yourself using ADK Streaming and [FastAPI](https://fastapi.tiangolo.com/).
+With this quickstart, you'll learn to create a simple agent and use ADK Streaming to enable voice and video communication with it that is low-latency and bidirectional. We will install ADK, set up a basic "Google Search" agent, try running the agent with Streaming with `adk web` tool, and then explain how to build a simple asynchronous web app by yourself using ADK Streaming and [FastAPI](https://fastapi.tiangolo.com/).
 
 **Note:** This guide assumes you have experience using a terminal in Windows, Mac, and Linux environments.
+
+## Supported models for voice/video streaming {#supported-models}
+
+In order to use voice/video streaming in ADK, you will need to use Gemini models that support the Live API. You can find the **model ID(s)** that supports the Gemini Live API in the documentation:
+
+- [Google AI Studio: Gemini Live API](https://ai.google.dev/gemini-api/docs/models#live-api)
+- [Vertex AI: Gemini Live API](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api)
 
 ## 1. Setup Environment & Install ADK {#1.-setup-installation}
 
@@ -38,7 +45,9 @@ adk-streaming/  # Project folder
 
 ### agent.py
 
-Copy-paste the following code block to the [`agent.py`](http://agent.py). Please note that ADK Streaming works with `gemini-2.0-flash-exp` model only.
+Copy-paste the following code block to the [`agent.py`](http://agent.py).
+
+For `model`, please double check the model ID as described earlier in the [Models section](#supported-models).
 
 ```py
 from google.adk.agents import Agent
@@ -48,7 +57,8 @@ root_agent = Agent(
    # A unique name for the agent.
    name="basic_search_agent",
    # The Large Language Model (LLM) that agent will use.
-   model="gemini-2.0-flash-exp",
+   model="gemini-2.0-flash-live-001", # Google AI Studio
+   #model="gemini-2.0-flash-live-preview-04-09" # Vertex AI Studio
    # A short description of the agent's purpose.
    description="Agent to answer questions using Google Search.",
    # Instructions to set the agent's behavior.

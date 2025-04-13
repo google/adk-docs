@@ -81,7 +81,7 @@ from google.genai.types import Content, Part
 # Define agent with output_key
 greeting_agent = LlmAgent(
     name="Greeter",
-    model="gemini-2.0-flash-exp", # Use a valid model
+    model="gemini-2.0-flash", # Use a valid model
     instruction="Generate a short, friendly greeting.",
     output_key="last_greeting" # Save response to state['last_greeting']
 )

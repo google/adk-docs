@@ -14,7 +14,7 @@ from pydantic import BaseModel, Field
 APP_NAME = "story_app"
 USER_ID = "12345"
 SESSION_ID = "123344"
-GEMINI_2_FLASH = "gemini-2.0-flash-exp"
+GEMINI_2_FLASH = "gemini-2.0-flash"
 
 # --- Configure Logging ---
 logging.basicConfig(level=logging.INFO)
