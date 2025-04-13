@@ -137,3 +137,9 @@ Here are some ways you can deploy your agent:
 
 * Deploying to [Agent Engine](../deploy/agent-engine.md), the easiest way to deploy your ADK agents to Vertex AI on Google Cloud.  
 * Deploying to [Cloud Run](../deploy/cloud-run.md), and have full control over how you want to manage your auto-scaling container on Google Cloud.  
+
+## Test Intergrations
+
+ADK can be integrated with third-party observability solutions using [Callbacks](../callbacks/index.md) to capture traces of agent calls, interactions and usage. Supported third-party solutions:
+
+* [Comet Opik](https://github.com/comet-ml/opik) is an open-source LLM observability and evaluation platform that natively supports ADK [docs](https://www.comet.com/docs/opik/tracing/integrations/adk).
