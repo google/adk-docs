@@ -212,7 +212,7 @@ There are multiple ways to interact with your agent:
 
     ![adk-api-server.png](../assets/adk-api-server.png)
 
-    To learn how to use `adk api_server` for testing, refer the
+    To learn how to use `adk api_server` for testing, refer to the
     [documentation on testing](testing.md).
 
 ### 📝 Example prompts to try
