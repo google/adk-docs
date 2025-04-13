@@ -141,7 +141,7 @@ export GOOGLE_GENAI_USE_VERTEXAI=True
         from google.adk.cli.fast_api import get_fast_api_app
 
         # Get the directory where main.py is located
-        APP_DIR = os.path.dirname(os.path.abspath(__file__))
+        AGENT_DIR = os.path.dirname(os.path.abspath(__file__))
         # Example session DB URL (e.g., SQLite)
         SESSION_DB_URL = "sqlite:///./sessions.db"
         # Example allowed origins for CORS
@@ -165,11 +165,11 @@ export GOOGLE_GENAI_USE_VERTEXAI=True
         #     return {"Hello": "World"}
 
         if __name__ == "__main__":
-            # Use the PORT environment variable provided by Cloud Run, defaulting to 8000
-            uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 8000)))
+            # Use the PORT environment variable provided by Cloud Run, defaulting to 8080
+            uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
         ```
 
-        *Note: We specify `agent_dir_name="capital_agent"` and use `os.environ.get("PORT", 8000)` for Cloud Run compatibility.*
+        *Note: We specify `agent_dir` to the directory `main.py` is in and use `os.environ.get("PORT", 8080)` for Cloud Run compatibility.*
 
     2. List the necessary Python packages:
 
@@ -181,7 +181,7 @@ export GOOGLE_GENAI_USE_VERTEXAI=True
     3. Define the container image:
 
         ```dockerfile title="Dockerfile"
-        FROM python:3.11-slim
+        FROM python:3.13-slim
         WORKDIR /app
 
         COPY requirements.txt .
@@ -194,12 +194,9 @@ export GOOGLE_GENAI_USE_VERTEXAI=True
 
         USER myuser
 
-        ENV PORT=8000
         ENV PATH="/home/myuser/.local/bin:$PATH"
 
-        EXPOSE $PORT
-
-        CMD ["uvicorn", "main:app", "--host", "0.0.0.0"]
+        CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port $PORT"]
         ```
 
     #### Deploy using `gcloud`
