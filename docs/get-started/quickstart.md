@@ -9,7 +9,7 @@ This quickstart assumes a local IDE (VS Code, PyCharm, etc.) with Python 3.9+
 and terminal access. This method runs the application entirely on your machine
 and is recommended for internal development.
 
-## 1. Setup Environment & Install ADK {#venv-install}
+## 1. Set up Environment & Install ADK {#venv-install}
 
 Create & Activate Virtual Environment (Recommended):
 
@@ -48,6 +48,13 @@ Create the folder `multi_tool_agent`:
 mkdir multi_tool_agent/
 ```
 
+!!! info "Note for Windows users"
+
+    When using ADK on Windows for the next few steps, we recommend creating
+    Python files using File Explorer or an IDE because the following commands
+    (`mkdir`, `echo`) typically generate files with null bytes and/or incorrect
+    encoding.
+
 ### `__init__.py`
 
 Now create an `__init__.py` file in the folder:
@@ -84,7 +91,7 @@ Create a `.env` file in the same folder:
 touch multi_tool_agent/.env
 ```
 
-You can just copy and paste the following code for now, as more instructions are describe in the next section on [Setup the model](#setup-the-model).
+You can just copy and paste the following code for now, as more instructions are describe in the next section on [Set up the model](#set-up-the-model).
 
 ```python title="multi_tool_agent/.env"
 --8<-- "examples/python/snippets/get-started/multi_tool_agent/.env"
@@ -92,7 +99,7 @@ You can just copy and paste the following code for now, as more instructions are
 
 ![intro_components.png](../assets/quickstart-flow-tool.png)
 
-## 3. Setup the model {#setup-the-model}
+## 3. Set up the model {#set-up-the-model}
 
 Your agent's ability to understand user requests and generate responses is
 powered by a Large Language Model (LLM). Your agent needs to make secure calls
@@ -103,19 +110,28 @@ agent will be unable to function.
 === "Gemini - Google AI Studio"
     1. Get an API key from [Google AI Studio](https://aistudio.google.com/apikey).
     2. Open the **`.env`** file located inside (`multi_tool_agent/`) and copy-paste the following code.
+
         ```env title="multi_tool_agent/.env"
         GOOGLE_GENAI_USE_VERTEXAI=FALSE
         GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_API_KEY_HERE
         ```
+
     3. Replace `GOOGLE_API_KEY` with your actual `API KEY`.
 
 === "Gemini - Google Cloud Vertex AI"
-    1. You need an existing [Google Cloud](https://cloud.google.com/?e=48754805&hl=en) account and a project.
-        * Set up a [Google Cloud project](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-gcp)
-        * Set up the [gcloud CLI](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-local)
-        * Authenticate to Google Cloud, from the terminal by running `gcloud auth login`.
+    1. You need an existing
+       [Google Cloud](https://cloud.google.com/?e=48754805&hl=en) account and a
+       project.
+        * Set up a
+          [Google Cloud project](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-gcp)
+        * Set up the
+          [gcloud CLI](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-local)
+        * Authenticate to Google Cloud, from the terminal by running
+          `gcloud auth login`.
         * [Enable the Vertex AI API](https://console.cloud.google.com/flows/enableapi?apiid=aiplatform.googleapis.com).
-    2. Open the **`.env`** file located inside (`multi_tool_agent/`). Copy-paste the following code and update the project ID and location.
+    2. Open the **`.env`** file located inside (`multi_tool_agent/`). Copy-paste
+       the following code and update the project ID and location.
+
         ```env title="multi_tool_agent/.env"
         GOOGLE_GENAI_USE_VERTEXAI=TRUE
         GOOGLE_CLOUD_PROJECT=YOUR_PROJECT_ID
@@ -144,29 +160,37 @@ There are multiple ways to interact with your agent:
     adk web
     ```
 
-    **Step 1:** Open the URL provided (usually `http://localhost:8000` or `http://127.0.0.1:8000`) directly in your browser.
-    
-    **Step 2.** In the top-left corner of the UI, you can select your agent in the dropdown. Select "multi_tool_agent".
+    **Step 1:** Open the URL provided (usually `http://localhost:8000` or
+    `http://127.0.0.1:8000`) directly in your browser.
+
+    **Step 2.** In the top-left corner of the UI, you can select your agent in
+    the dropdown. Select "multi_tool_agent".
 
     !!!note "Troubleshooting"
-        
-        If you do not see "multi_tool_agent" in the dropdown menu, make sure you are running `adk web` in the **parent folder** of your agent folder (i.e. the parent folder of multi_tool_agent).
+
+        If you do not see "multi_tool_agent" in the dropdown menu, make sure you
+        are running `adk web` in the **parent folder** of your agent folder
+        (i.e. the parent folder of multi_tool_agent).
 
     **Step 3.** Now you can chat with your agent using the textbox:
 
     ![adk-web-dev-ui-chat.png](../assets/adk-web-dev-ui-chat.png)
 
-    **Step 4.** You can also inspect individual function calls, responses and model responses by clicking on the actions:
+    **Step 4.** You can also inspect individual function calls, responses and
+    model responses by clicking on the actions:
 
     ![adk-web-dev-ui-function-call.png](../assets/adk-web-dev-ui-function-call.png)
 
     **Step 5.** You can also enable your microphone and talk to your agent:
 
     ![adk-web-dev-ui-audio.png](../assets/adk-web-dev-ui-audio.png)
-    
+
     !!!note "Model support"
-    
-        Currently only `gemini-2.0-flash-exp` supports talking to your agent via audio/video, and can be used either with your API key from Google AI Studio or via [Vertex AI](https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal-live-api).
+
+        Currently only `gemini-2.0-flash-exp` supports talking to your agent via
+        audio/video, and can be used either with your API key from Google AI
+        Studio or via
+        [Vertex AI](https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal-live-api).
 
 === "Terminal (adk run)"
 
@@ -182,11 +206,14 @@ There are multiple ways to interact with your agent:
 
 === "API Server (adk api_server)"
 
-    `adk api_server` enables you to create a local FastAPI server in a single command, enabling you to test local cURL requests before you deploy your agent.
+    `adk api_server` enables you to create a local FastAPI server in a single
+    command, enabling you to test local cURL requests before you deploy your
+    agent.
 
     ![adk-api-server.png](../assets/adk-api-server.png)
 
-    To learn how to use `adk api_server`, see the [documentation on local testing](local-testing.md).
+    To learn how to use `adk api_server`, see the
+    [documentation on local testing](local-testing.md).
 
 ### 📝 Example prompts to try
 
@@ -203,6 +230,10 @@ You've successfully created and interacted with your first agent using ADK!
 
 ## 🛣️ Next steps
 
-* **Go to the tutorial**: Learn how to add memory, session, state to your agent: [tutorial](tutorial.md).
-* **Delve into advanced configuration:** Explore the [setup](installation.md) section for deeper dives into project structure, configuration, and other interfaces.
-* **Understand Core Concepts:** Learn about [agents concepts](../agents/index.md).
+* **Go to the tutorial**: Learn how to add memory, session, state to your agent:
+  [tutorial](tutorial.md).
+* **Delve into advanced configuration:** Explore the [setup](installation.md)
+  section for deeper dives into project structure, configuration, and other
+  interfaces.
+* **Understand Core Concepts:** Learn about
+  [agents concepts](../agents/index.md).
