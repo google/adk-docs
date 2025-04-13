@@ -1,16 +1,26 @@
 # Installing ADK
 
-## Create & activate virtual environment (Recommended)
+## Create & activate virtual environment
 
-We recommend using a virtual environment such as [venv](https://docs.python.org/3/library/venv.html).
+We recommend creating a virtual Python environment using
+[venv](https://docs.python.org/3/library/venv.html):
 
-```bash
-# Create
+```shell
 python -m venv .venv
-# Activate (each new terminal)
-# macOS/Linux: source .venv/bin/activate
-# Windows CMD: .venv\Scripts\activate.bat
-# Windows PowerShell: .venv\Scripts\Activate.ps1
+```
+
+Now, you can activate the virtual environment using the appropriate command for
+your operating system and environment:
+
+```
+# Mac / Linux
+source .venv/bin/activate
+
+# Windows CMD:
+.venv\Scripts\activate.bat
+
+# Windows PowerShell:
+.venv\Scripts\Activate.ps1
 ```
 
 ### Install ADK
