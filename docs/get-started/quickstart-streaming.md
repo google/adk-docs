@@ -4,12 +4,12 @@ With this quickstart, you'll learn to create a simple agent and use ADK Streamin
 
 **Note:** This guide assumes you have experience using a terminal in Windows, Mac, and Linux environments.
 
-## Supported models {#supported-models}
+## Supported models for voice/video streaming {#supported-models}
 
-In order to use voice/video streaming in ADK, you will need to use Gemini models that support the Live API. You can find the exact model IDs that support the Live API in the documentation:
+In order to use voice/video streaming in ADK, you will need to use Gemini models that support the Live API. You can find the **model ID(s)** that supports the Gemini Live API in the documentation:
 
-- [Google AI Studio: Live API](https://ai.google.dev/gemini-api/docs/models#live-api)
-- [Vertex AI: Live API](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api)
+- [Google AI Studio: Gemini Live API](https://ai.google.dev/gemini-api/docs/models#live-api)
+- [Vertex AI: Gemini Live API](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api)
 
 ## 1. Setup Environment & Install ADK {#1.-setup-installation}
 
