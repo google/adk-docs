@@ -11,7 +11,7 @@ SESSION_ID="1234"
 
 root_agent = Agent(
     name="basic_search_agent",
-    model="gemini-2.0-flash-exp",
+    model="gemini-2.0-flash",
     description="Agent to answer questions using Google Search.",
     instruction="I can answer your questions by searching the internet. Just ask me anything!",
     # google_search is a pre-built tool which allows the agent to perform Google searches.

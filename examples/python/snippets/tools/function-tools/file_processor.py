@@ -40,7 +40,7 @@ long_running_tool = LongRunningFunctionTool(func=process_large_file)
 # 3. Use the tool in an Agent
 file_processor_agent = Agent(
     # Use a model compatible with function calling
-    model="gemini-2.0-flash-exp",
+    model="gemini-2.0-flash",
     name='file_processor_agent',
     instruction="""You are an agent that processes large files. When the user provides a file path, use the 'process_large_file' tool. Keep the user informed about the progress based on the tool's updates (which arrive as function responses). Only provide the final result when the tool indicates completion in its final function response.""",
     tools=[long_running_tool]

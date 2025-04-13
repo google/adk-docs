@@ -29,13 +29,13 @@ The foundation for structuring multi-agent systems is the parent-child relations
 from google.adk.agents import LlmAgent, BaseAgent
 
 # Define individual agents
-greeter = LlmAgent(name="Greeter", model="gemini-2.0-flash-exp")
+greeter = LlmAgent(name="Greeter", model="gemini-2.0-flash")
 task_doer = BaseAgent(name="TaskExecutor") # Custom non-LLM agent
 
 # Create parent agent and assign children via sub_agents
 coordinator = LlmAgent(
     name="Coordinator",
-    model="gemini-2.0-flash-exp",
+    model="gemini-2.0-flash",
     description="I coordinate greetings and tasks.",
     sub_agents=[ # Assign sub_agents here
         greeter,
@@ -196,7 +196,7 @@ image_tool = AgentTool(agent=image_agent) # Wrap the agent
 # Parent agent uses the AgentTool
 artist_agent = LlmAgent(
     name="Artist",
-    model="gemini-2.0-flash-exp",
+    model="gemini-2.0-flash",
     instruction="Create a prompt and use the ImageGen tool to generate the image.",
     tools=[image_tool] # Include the AgentTool
 )
@@ -229,7 +229,7 @@ support_agent = LlmAgent(name="Support", description="Handles technical support 
 
 coordinator = LlmAgent(
     name="HelpDeskCoordinator",
-    model="gemini-2.0-flash-exp",
+    model="gemini-2.0-flash",
     instruction="Route user requests: Use Billing agent for payment issues, Support agent for technical problems.",
     description="Main help desk router.",
     # allow_transfer=True is often implicit with sub_agents in AutoFlow
@@ -317,7 +317,7 @@ summarizer = LlmAgent(name="Summarizer", description="Summarizes text.")
 # Mid-level agent combining tools
 research_assistant = LlmAgent(
     name="ResearchAssistant",
-    model="gemini-2.0-flash-exp",
+    model="gemini-2.0-flash",
     description="Finds and summarizes information on a topic.",
     tools=[AgentTool(agent=web_searcher), AgentTool(agent=summarizer)]
 )
@@ -325,7 +325,7 @@ research_assistant = LlmAgent(
 # High-level agent delegating research
 report_writer = LlmAgent(
     name="ReportWriter",
-    model="gemini-2.0-flash-exp",
+    model="gemini-2.0-flash",
     instruction="Write a report on topic X. Use the ResearchAssistant to gather information.",
     tools=[AgentTool(agent=research_assistant)]
     # Alternatively, could use LLM Transfer if research_assistant is a sub_agent

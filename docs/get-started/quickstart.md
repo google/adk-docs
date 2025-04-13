@@ -182,15 +182,24 @@ There are multiple ways to interact with your agent:
     ![adk-web-dev-ui-function-call.png](../assets/adk-web-dev-ui-function-call.png)
 
     **Step 5.** You can also enable your microphone and talk to your agent:
+    
+    !!!note "Model support for voice/video streaming"
+    
+        In order to use voice/video streaming in ADK, you will need to use Gemini models that support the Live API. You can find the **model ID(s)** that supports the Gemini Live API in the documentation:
+
+        - [Google AI Studio: Gemini Live API](https://ai.google.dev/gemini-api/docs/models#live-api)
+        - [Vertex AI: Gemini Live API](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api)
+
+        You can then replace the `model` string in `root_agent` in the `agent.py` file you created earlier ([jump to section](#agentpy)). Your code should look something like:
+        
+        ```py
+        root_agent = Agent(
+            name="weather_time_agent",
+            model="replace-me-with-model-id", #e.g. gemini-2.0-flash-live-001
+            ...
+        ```
 
     ![adk-web-dev-ui-audio.png](../assets/adk-web-dev-ui-audio.png)
-
-    !!!note "Model support"
-
-        Currently only `gemini-2.0-flash-exp` supports talking to your agent via
-        audio/video, and can be used either with your API key from Google AI
-        Studio or via
-        [Vertex AI](https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal-live-api).
 
 === "Terminal (adk run)"
 

@@ -13,46 +13,55 @@ The following sections guide you through using these methods based on your needs
 
 This is the most direct way to use Google's flagship models within ADK.
 
-**Integration Method:** Pass the model's identifier string directly to the `model` parameter of `LlmAgent`.
+**Integration Method:** Pass the model's identifier string directly to the `model` parameter of `LlmAgent` (or its alias, `Agent`).
 
 **Backend Options & Setup:**
 
-The `google-genai` library, used internally by ADK for Gemini, can connect through two backends:
+The `google-genai` library, used internally by ADK for Gemini, can connect through either Google AI Studio or Vertex AI.
 
-1. **Google AI Studio:**
-    * **Use Case:** Best for rapid prototyping and development.
-    * **Setup:** Typically requires an API key set as an environment variable:
+!!!note "Model support for voice/video streaming"
 
-    ```shell
-    export GOOGLE_API_KEY="YOUR_GOOGLE_API_KEY"
-    export GOOGLE_GENAI_USE_VERTEXAI=FALSE
-    ```
+    In order to use voice/video streaming in ADK, you will need to use Gemini models that support the Live API. You can find the **model ID(s)** that supports the Gemini Live API in the documentation:
 
-    * **Models:** Find available models on the [Google AI for Developers site](https://ai.google.dev/gemini-api/docs/models).
+    - [Google AI Studio: Gemini Live API](https://ai.google.dev/gemini-api/docs/models#live-api)
+    - [Vertex AI: Gemini Live API](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api)
 
-2. **Vertex AI:**
-    * **Use Case:** Recommended for production applications, leveraging Google Cloud infrastructure.
-    * **Setup:**
-        * Authenticate using Application Default Credentials (ADC):
+### Google AI Studio
 
-            ```shell
-            gcloud auth application-default login
-            ```
+* **Use Case:** Google AI Studio is the easiest way to started with Gemini. All you need is the [API key](https://aistudio.google.com/app/apikey). Best for rapid prototyping and development.
+* **Setup:** Typically requires an API key set as an environment variable:
 
-        * Set your Google Cloud project and location:
+```shell
+export GOOGLE_API_KEY="YOUR_GOOGLE_API_KEY"
+export GOOGLE_GENAI_USE_VERTEXAI=FALSE
+```
 
-            ```shell
-            export GOOGLE_CLOUD_PROJECT="YOUR_PROJECT_ID"
-            export GOOGLE_CLOUD_LOCATION="YOUR_VERTEX_AI_LOCATION" # e.g., us-central1
-            ```
+* **Models:** Find all available models on the [Google AI for Developers site](https://ai.google.dev/gemini-api/docs/models).
 
-        * Explicitly tell the library to use Vertex AI:
+### Vertex AI
 
-            ```shell
-            export GOOGLE_GENAI_USE_VERTEXAI=TRUE
-            ```
+* **Use Case:** Recommended for production applications, leveraging Google Cloud infrastructure. Gemini on Vertex AI supports enterprise-grade features, security, and compliance controls.
+* **Setup:**
+    * Authenticate using Application Default Credentials (ADC):
 
-    * **Models:** Find available model IDs in the [Vertex AI documentation](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/models).
+        ```shell
+        gcloud auth application-default login
+        ```
+
+    * Set your Google Cloud project and location:
+
+        ```shell
+        export GOOGLE_CLOUD_PROJECT="YOUR_PROJECT_ID"
+        export GOOGLE_CLOUD_LOCATION="YOUR_VERTEX_AI_LOCATION" # e.g., us-central1
+        ```
+
+    * Explicitly tell the library to use Vertex AI:
+
+        ```shell
+        export GOOGLE_GENAI_USE_VERTEXAI=TRUE
+        ```
+
+* **Models:** Find available model IDs in the [Vertex AI documentation](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/models).
 
 **Example:**
 
@@ -62,7 +71,7 @@ from google.adk.agents import LlmAgent
 # --- Example using a stable Gemini Flash model ---
 agent_gemini_flash = LlmAgent(
     # Use the latest stable Flash model identifier
-    model="gemini-2.0-flash-exp",
+    model="gemini-2.0-flash",
     name="gemini_flash_agent",
     instruction="You are a fast and helpful Gemini assistant.",
     # ... other agent parameters

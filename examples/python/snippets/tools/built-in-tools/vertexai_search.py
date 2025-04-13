@@ -16,7 +16,7 @@ APP_NAME_VSEARCH = "vertex_search_app"
 USER_ID_VSEARCH = "user_vsearch_1"
 SESSION_ID_VSEARCH = "session_vsearch_1"
 AGENT_NAME_VSEARCH = "doc_qa_agent"
-GEMINI_2_FLASH = "gemini-2.0-flash-exp"
+GEMINI_2_FLASH = "gemini-2.0-flash"
 
 # Tool Instantiation
 # You MUST provide your datastore ID here.

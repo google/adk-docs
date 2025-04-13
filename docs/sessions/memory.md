@@ -85,7 +85,7 @@ This example demonstrates the basic flow using the `InMemory` services for simpl
     # --- Constants ---
     APP_NAME = "memory_example_app"
     USER_ID = "mem_user"
-    MODEL = "gemini-2.0-flash-exp" # Use a valid model
+    MODEL = "gemini-2.0-flash" # Use a valid model
 
     # --- Agent Definitions ---
     # Agent 1: Simple agent to capture information

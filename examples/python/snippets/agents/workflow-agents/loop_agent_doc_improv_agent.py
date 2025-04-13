@@ -8,7 +8,7 @@ from google.adk.runners import Runner
 APP_NAME = "doc_writing_app"
 USER_ID = "dev_user_01"
 SESSION_ID = "session_01"
-GEMINI_MODEL = "gemini-2.0-flash-exp"
+GEMINI_MODEL = "gemini-2.0-flash"
 
 # --- State Keys ---
 STATE_INITIAL_TOPIC = "quantum physics"

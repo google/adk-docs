@@ -5,7 +5,7 @@ from typing import Optional
 from google.genai import types 
 from google.adk.sessions import InMemorySessionService
 
-GEMINI_2_FLASH="gemini-2.0-flash-exp"
+GEMINI_2_FLASH="gemini-2.0-flash"
 
 # --- Define the Callback Function ---
 def simple_before_agent_logger(callback_context: CallbackContext) -> Optional[types.Content]:

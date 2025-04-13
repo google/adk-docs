@@ -9,7 +9,7 @@ AGENT_NAME="calculator_agent"
 APP_NAME="calculator"
 USER_ID="user1234"
 SESSION_ID="session_code_exec_async"
-GEMINI_MODEL = "gemini-2.0-flash-exp"
+GEMINI_MODEL = "gemini-2.0-flash"
 
 # Agent Definition
 code_agent = LlmAgent(

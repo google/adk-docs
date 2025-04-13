@@ -22,14 +22,14 @@ def check_and_transfer(query: str, tool_context: ToolContext) -> str:
 escalation_tool = FunctionTool(func=check_and_transfer)
 
 main_agent = Agent(
-    model='gemini-2.0-flash-exp',
+    model='gemini-2.0-flash',
     name='main_agent',
     instruction="""You are the first point of contact for customer support of an analytics tool. Answer general queries. If the user indicates urgency, use the 'check_and_transfer' tool.""",
     tools=[check_and_transfer]
 )
 
 support_agent = Agent(
-    model='gemini-2.0-flash-exp',
+    model='gemini-2.0-flash',
     name='support_agent',
     instruction="""You are the dedicated support agent. Mentioned you are a support handler and please help the user with their urgent issue."""
 )

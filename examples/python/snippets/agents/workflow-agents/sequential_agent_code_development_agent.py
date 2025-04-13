@@ -8,7 +8,7 @@ from google.adk.runners import Runner
 APP_NAME = "code_pipeline_app"
 USER_ID = "dev_user_01"
 SESSION_ID = "pipeline_session_01"
-GEMINI_MODEL = "gemini-2.0-flash-exp"
+GEMINI_MODEL = "gemini-2.0-flash"
 
 # --- 1. Define Sub-Agents for Each Pipeline Stage ---
 

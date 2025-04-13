@@ -234,7 +234,7 @@ async def get_agent_async():
   tools, exit_stack = await get_tools_async()
   print(f"Fetched {len(tools)} tools from MCP server.")
   root_agent = LlmAgent(
-      model='gemini-2.0-flash-exp', # Adjust if needed
+      model='gemini-2.0-flash', # Adjust if needed
       name='maps_assistant',
       instruction='Help user with mapping and directions using available tools.',
       tools=tools,

@@ -83,7 +83,7 @@ Note: this tutorial includes an agent creation. If you already have an agent, yo
     from .tools import sample_toolset
 
     root_agent = LlmAgent(
-        model='gemini-2.0-flash-exp',
+        model='gemini-2.0-flash',
         name='enterprise_assistant',
         instruction='Help user, leverage the tools you have access to',
         tools=sample_toolset.get_tools(),)
@@ -169,7 +169,7 @@ When running the agent, make sure to run adk web in project\_root\_folder
     from .tools import connector_tool
 
     root_agent = LlmAgent(
-    model='gemini-2.0-flash-exp',
+    model='gemini-2.0-flash',
     name='connector_agent',
     instruction="Help user, leverage the tools you have access to",
     tools=connector_tool.get_tools(),
@@ -217,7 +217,7 @@ When running the agent, make sure to run adk web in project\_root\_folder
     from .tools import integration_tool, connector_tool
 
     root_agent = LlmAgent(
-    model='gemini-2.0-flash-exp',
+    model='gemini-2.0-flash',
     name='integration_agent',
     instruction="Help user, leverage the tools you have access to",
     tools=integration_tool.get_tools(),

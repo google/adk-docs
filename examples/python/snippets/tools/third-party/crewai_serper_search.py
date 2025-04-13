@@ -29,7 +29,7 @@ adk_serper_tool = CrewaiTool(
 
 serper_agent = Agent(
     name="basic_search_agent",
-    model="gemini-2.0-flash-exp",
+    model="gemini-2.0-flash",
     description="Agent to answer questions using Google Search.",
     instruction="I can answer your questions by searching the internet. Just ask me anything!",
     # Add the Serper tool
