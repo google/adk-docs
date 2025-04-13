@@ -82,6 +82,9 @@ markdown_extensions:
 # Plugins
 plugins:
   - search
+  - redirects:
+      redirect_maps:
+        'get-started/local-testing.md': 'get-started/testing.md'
 
 # Navigation
 nav:
@@ -92,7 +95,7 @@ nav:
     - Quickstart: get-started/quickstart.md
     - Quickstart (streaming): get-started/quickstart-streaming.md
     - Tutorial: get-started/tutorial.md
-    - Local testing: get-started/local-testing.md
+    - Testing: get-started/testing.md
     - Sample agents: https://github.com/google/adk-samples
     - About ADK: get-started/about.md
   - Agents:
