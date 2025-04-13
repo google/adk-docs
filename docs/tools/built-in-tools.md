@@ -39,3 +39,79 @@ This is a category of tools designed to fetch information from various sources. 
 ```py
 --8<-- "examples/python/snippets/tools/built-in-tools/vertexai_search.py"
 ```
+
+## Use Built-in tools with other tools
+
+Here is how to use multiple built-in tools or use built-in tools with other tools:
+```py
+from google.adk.tools import agent_tool
+
+from google.adk.agents import Agent
+from google.adk.tools import google_search, built_in_code_execution
+
+search_agent = Agent(
+    model='gemini-2.0-flash',
+    name='SearchAgent',
+    instruction="""
+    You're a spealist in Google Search
+    """,
+    tools=[google_search]
+)
+coding_agent = Agent(
+    model='gemini-2.0-flash',
+    name='CodeAgent',
+    instruction="""
+    You're a specialist in Code Execution
+    """,
+    tools=[built_in_code_execution]
+)
+root_agent = Agent(
+    name="RootAgent",
+    model="gemini-2.0-flash",
+    description="Root Agent",
+    tools=[agent_tool.AgentTool(agent=search_agent), agent_tool.AgentTool(agent=coding_agent)]
+)
+```
+
+### Limitations
+
+There are some known limitations.
+
+Right now, for each root agent or single agent, only one built-in tool is supported. For example, this is NOT supported:
+```py
+root_agent = Agent(
+    name="RootAgent",
+    model="gemini-2.0-flash",
+    description="Root Agent",
+    tools=[built_in_code_execution, custom_function]
+)
+```
+
+Built-in tool can not be used in subagent. For example, this is NOT supported:
+```py
+search_agent = Agent(
+    model='gemini-2.0-flash',
+    name='SearchAgent',
+    instruction="""
+    You're a spealist in Google Search
+    """,
+    tools=[google_search]
+)
+coding_agent = Agent(
+    model='gemini-2.0-flash',
+    name='CodeAgent',
+    instruction="""
+    You're a specialist in Code Execution
+    """,
+    tools=[built_in_code_execution]
+)
+root_agent = Agent(
+    name="RootAgent",
+    model="gemini-2.0-flash",
+    description="Root Agent",
+    sub_agents=[ # Assign sub_agents here
+        Agent_Search,
+        Agent_Code
+    ]
+)
+```
