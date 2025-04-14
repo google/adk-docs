@@ -133,6 +133,26 @@ agent will be unable to function.
         GOOGLE_CLOUD_PROJECT=YOUR_PROJECT_ID
         GOOGLE_CLOUD_LOCATION=LOCATION
         ```
+=== "Other - LiteLLM"
+    1. You can use [LiteLLM](https://www.litellm.ai/) to connect to many different model providers.
+    2. Open the **`.env`** file located inside (`multi_tool_agent/`). Copy-paste
+       the following code and update the project ID and location.
+
+        ```env title="multi_tool_agent/.env"
+        ANTHROPIC_API_KEY=YOUR_API_KEY
+        ```
+    3. Change the `agent.py` file to use `LiteLLM`
+
+        ```python title="multi_tool_agent/agent.py"
+        from google.adk.models.lite_llm import LiteLlm
+
+        my_agent = Agent(
+            model=LiteLlm(model="anthropic/claude-3-sonnet-20240229"),
+            ...
+        )
+        ```
+    See more detail in [the tutorial](./tutorial.md) section on multi-model support.
+
 
 ## 4. Run Your Agent {#run-your-agent}
 

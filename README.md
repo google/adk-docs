@@ -2,7 +2,7 @@
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 
-<img src="docs/assets/agent-development-kit.png" alt="Agent Development Kit Logo" width="150">
+[<img src="docs/assets/agent-development-kit.png" alt="Agent Development Kit Logo" width="150">](https://github.com/google/adk-python)
 
 **An open-source, code-first Python toolkit for building, evaluating, and
 deploying sophisticated AI agents with flexibility and control.**
@@ -13,7 +13,7 @@ integrated with services in Google Cloud. It allows you to define agent
 behavior, orchestration, and tool use directly in code, enabling robust
 debugging, versioning, and deployment anywhere – from your laptop to the cloud.
 
----
+See the code at [ADK-python](https://github.com/google/adk-python).
 
 ## ✨ Key Features
 

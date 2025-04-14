@@ -96,6 +96,7 @@ nav:
     - Quickstart (streaming): get-started/quickstart-streaming.md
     - Tutorial: get-started/tutorial.md
     - Testing: get-started/testing.md
+    - Local Dev CLI & UI: get-started/local-dev.md
     - Sample agents: https://github.com/google/adk-samples
     - About ADK: get-started/about.md
   - Agents:
