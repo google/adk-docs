@@ -155,32 +155,140 @@ For maximum control, cost savings, privacy, or offline use cases, you can run op
 
 [Ollama](https://ollama.com/) allows you to easily run open-source models locally.
 
-**Prerequisites:**
+#### Model choice
 
-1. Install Ollama.
-2. Pull the desired model (e.g., Google's Gemma):
+If your agent is relying on tools, please make sure that you select a model with tool support from [ollama website](https://ollama.com/search?c=tools).
 
-    ```shell
-    ollama pull gemma:2b
-    ```
+For reliable results, we recommend using a decent size model with tool support.
 
-3. Ensure the Ollama server is running (usually happens automatically after installation or by running `ollama serve`).
+The tool support for the model can be checked with the following command:
 
-    **Example:**
+```bash
+ollama show mistral-small3.1
+  Model
+    architecture        mistral3    
+    parameters          24.0B       
+    context length      131072      
+    embedding length    5120        
+    quantization        Q4_K_M      
 
-    ```python
-    from google.adk.agents import LlmAgent
-    from google.adk.models.lite_llm import LiteLlm
+  Capabilities
+    completion    
+    vision        
+    tools         
+```
 
-    # --- Example Agent using Gemma 2B running via Ollama ---
-    agent_ollama_gemma = LlmAgent(
-        # LiteLLM knows how to connect to a local Ollama server by default
-        model=LiteLlm(model="ollama/gemma:2b"), # Standard LiteLLM format for Ollama
-        name="ollama_gemma_agent",
-        instruction="You are Gemma, running locally via Ollama.",
-        # ... other agent parameters
-    )
-    ```
+You are supposed to see `tools` listed under capabilities.
+
+You can also look at the template the model is using and tweak it based on your needs.
+
+```bash
+ollama show --modelfile llama3.2 > model_file_to_modify
+```
+
+For instance the default template for the above model inherently suggests that the model shall call a function all the time. This may result in an infinite loop of function calls.
+
+```
+Given the following functions, please respond with a JSON for a function call with its proper arguments that best answers the given prompt.
+
+Respond in the format {"name": function name, "parameters": dictionary of argument name and its value}. Do not use variables.
+```
+
+You can swap such prompts with a more descrptive one to prevent infitite tool call loops.
+
+For instance:
+
+```
+Review the user's prompt and the available functions listed below.
+First, determine if calling one of these functions is the most appropriate way to respond. A function call is likely needed if the prompt asks for a specific action, requires external data lookup, or involves calculations handled by the functions. If the prompt is a general question or can be answered directly, a function call is likely NOT needed.
+
+If you determine a function call IS required: Respond ONLY with a JSON object in the format {"name": "function_name", "parameters": {"argument_name": "value"}}. Ensure parameter values are concrete, not variables.
+
+If you determine a function call IS NOT required: Respond directly to the user's prompt in plain text, providing the answer or information requested. Do not output any JSON.
+```
+
+Then you can create a new model with the following command:
+
+```bash
+ollama create llama3.2-modified -f model_file_to_modify
+```
+
+#### Using ollama_chat provider
+
+Our LiteLlm wrapper can be used to create agents with ollama models. 
+
+```py
+root_agent = Agent(
+    model=LiteLlm(model="ollama_chat/mistral-small3.1"),
+    name="dice_agent",
+    description=(
+        "hello world agent that can roll a dice of 8 sides and check prime"
+        " numbers."
+    ),
+    instruction="""
+      You roll dice and answer questions about the outcome of the dice rolls.
+    """,
+    tools=[
+        roll_die,
+        check_prime,
+    ],
+)
+```
+
+**It is important to set the provider `ollama_chat` instead of `ollama`. Using `ollama` will result in unexpected behaviors such as infinite tool call loops and ignoring previous context.**  
+
+While `api_base` can be provided inside litellm for generation, litellm library is calling other APIs relying on the env variable instead as of v1.65.5 after completion. So at this time, we recommend setting the env variable `OLLAMA_API_BASE` to point to the ollama server.
+
+```bash
+export OLLAMA_API_BASE="http://localhost:11434"
+adk web
+```
+
+#### Using openai provider
+
+Alternatively, `openai` can be used as the provider name. But this will also require setting the  `OPENAI_API_BASE=http://localhost:11434/v1` and `OPENAI_API_KEY=anything` env variables instead of `OLLAMA_API_BASE`. **Please notice that api base now has `/v1` at the end.**
+
+```py
+root_agent = Agent(
+    model=LiteLlm(model="openai/mistral-small3.1"),
+    name="dice_agent",
+    description=(
+        "hello world agent that can roll a dice of 8 sides and check prime"
+        " numbers."
+    ),
+    instruction="""
+      You roll dice and answer questions about the outcome of the dice rolls.
+    """,
+    tools=[
+        roll_die,
+        check_prime,
+    ],
+)
+```
+
+```bash
+export OPENAI_API_BASE=http://localhost:11434/v1 
+export OPENAI_API_KEY=anything
+adk web
+```
+
+#### Debugging
+
+You can see the request sent to the ollama server by adding the following in your agent code just after imports.
+
+```py
+import litellm
+litellm._turn_on_debug()
+```
+
+Look for a line like the following:
+
+```bash
+quest Sent from LiteLLM:
+curl -X POST \
+http://localhost:11434/api/chat \
+-d '{'model': 'mistral-small3.1', 'messages': [{'role': 'system', 'content': ...
+```
 
 ### Self-Hosted Endpoint (e.g., vLLM)
 
