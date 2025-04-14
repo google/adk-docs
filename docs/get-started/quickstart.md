@@ -91,11 +91,7 @@ Create a `.env` file in the same folder:
 touch multi_tool_agent/.env
 ```
 
-You can just copy and paste the following code for now, as more instructions are describe in the next section on [Set up the model](#set-up-the-model).
-
-```python title="multi_tool_agent/.env"
---8<-- "examples/python/snippets/get-started/multi_tool_agent/.env"
-```
+More instructions about this file are describe in the next section on [Set up the model](#set-up-the-model).
 
 ![intro_components.png](../assets/quickstart-flow-tool.png)
 
