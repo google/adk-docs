@@ -86,7 +86,8 @@ Note: this tutorial includes an agent creation. If you already have an agent, yo
         model='gemini-2.0-flash',
         name='enterprise_assistant',
         instruction='Help user, leverage the tools you have access to',
-        tools=sample_toolset.get_tools(),)
+        tools=sample_toolset.get_tools(),
+    )
     ```
 
 5. Configure your  \`\_\_init\_\_.py\` to expose your agent
@@ -141,7 +142,7 @@ When running the agent, make sure to run adk web in project\_root\_folder
 
 1. To use a connector from Integration Connectors, you need to provision Application Integration in the same region as your connection, import and publish [Connection Tool](https://pantheon.corp.google.com/integrations/templates/connection-tool/locations/us-central1) from the template library.
 
-2. Create a tool with `ApplicationInetgrationToolset`
+2. Create a tool with `ApplicationIntegrationToolset`
 
     ```py
     from google.adk.tools.application_integration_tool.application_integration_toolset import ApplicationIntegrationToolset
@@ -162,18 +163,17 @@ When running the agent, make sure to run adk web in project\_root\_folder
     To find the list of supported entities and actions for a connection, use the connectors apis:  
     [listActions](https://cloud.google.com/integration-connectors/docs/reference/rest/v1/projects.locations.connections.connectionSchemaMetadata/listActions), [listEntityTypes](https://cloud.google.com/integration-connectors/docs/reference/rest/v1/projects.locations.connections.connectionSchemaMetadata/listEntityTypes)
 
-3. Add the tool to your agent. Update your agent.py file
+3. Add the tool to your agent. Update your `agent.py` file
 
     ```py
     from google.adk.agents.llm_agent import LlmAgent
     from .tools import connector_tool
 
     root_agent = LlmAgent(
-    model='gemini-2.0-flash',
-    name='connector_agent',
-    instruction="Help user, leverage the tools you have access to",
-    tools=connector_tool.get_tools(),
-    ]
+        model='gemini-2.0-flash',
+        name='connector_agent',
+        instruction="Help user, leverage the tools you have access to",
+        tools=connector_tool.get_tools(),
     )
     ```
 
@@ -194,7 +194,7 @@ When running the agent, make sure to run adk web in project\_root\_folder
 
 ### Use existing [Application Integration](https://cloud.google.com/application-integration/docs/overview) workflow as a tool for your agent
 
-1. Create a tool with `ApplicationInetgrationToolset`
+1. Create a tool with `ApplicationIntegrationToolset`
 
     ```py
     integration_tool = ApplicationIntegrationToolset(
@@ -210,22 +210,21 @@ When running the agent, make sure to run adk web in project\_root\_folder
 
     Note: You can provide service account to be used instead of using default credentials
 
-2. Add the tool to your agent. Update your agent.py file
+2. Add the tool to your agent. Update your `agent.py` file
 
     ```py
     from google.adk.agents.llm_agent import LlmAgent
     from .tools import integration_tool, connector_tool
 
     root_agent = LlmAgent(
-    model='gemini-2.0-flash',
-    name='integration_agent',
-    instruction="Help user, leverage the tools you have access to",
-    tools=integration_tool.get_tools(),
-    ]
+        model='gemini-2.0-flash',
+        name='integration_agent',
+        instruction="Help user, leverage the tools you have access to",
+        tools=integration_tool.get_tools(),
     )
     ```
 
-3. Configure your  \`\_\_init\_\_.py\` to expose your agent
+3. Configure your \`\_\_init\_\_.py\` to expose your agent
 
     ```py
     from . import agent
@@ -261,7 +260,7 @@ Toolbox is an open source server that you deploy and manage yourself. For more i
 
 ### Install client SDK
 
-ADK relies on the \``toolbox-langchain`\` python package to use Toolbox. Install the package before getting started:
+ADK relies on the `toolbox-langchain` python package to use Toolbox. Install the package before getting started:
 
 ```shell
 pip install toolbox-langchain langchain
@@ -290,7 +289,7 @@ root_agent = Agent(
 
 ## Advanced Toolbox Features
 
-Toolbox has a variety of features to make developing Gen AI tools for databases. For more information, read more about the following features::
+Toolbox has a variety of features to make developing Gen AI tools for databases. For more information, read more about the following features:
 
 * [Authenticated Parameters](https://googleapis.github.io/genai-toolbox/resources/tools/#authenticated-parameters): bind tool inputs to values from OIDC tokens automatically, making it easy to run sensitive queries without potentially leaking data  
 * [Authorized Invocations:](https://googleapis.github.io/genai-toolbox/resources/tools/#authorized-invocations)  restrict access to use a tool based on the users Auth token  
