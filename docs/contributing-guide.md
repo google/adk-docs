@@ -6,7 +6,7 @@ This guide provides information on how to get involved.
 
 Contains the core Python library source code.
 
-## 2. [`google/adk-docs`](https://google.github.io/adk-docs/)
+## 2. [`google/adk-docs`](https://github.com/google/adk-docs)
 
 Contains the source for the documentation site you are currently reading.
 
