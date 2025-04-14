@@ -91,7 +91,7 @@ Create a `.env` file in the same folder:
 touch multi_tool_agent/.env
 ```
 
-More instructions about this file are describe in the next section on [Set up the model](#set-up-the-model).
+More instructions about this file are described in the next section on [Set up the model](#set-up-the-model).
 
 ![intro_components.png](../assets/quickstart-flow-tool.png)
 
