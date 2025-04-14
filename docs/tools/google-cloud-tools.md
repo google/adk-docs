@@ -13,14 +13,14 @@ connect your agents with:
 
 ![Google Cloud Tools](../assets/google_cloud_tools.svg)
 
-## 1. Use an API from Apigee API Hub
+## Apigee API Hub Tools
 
 **ApiHubToolset** lets you turn any documented API from Apigee API hub into a
 tool with a few lines of code. This section shows you the step by step
 instructions including setting up authentication for a secure connection to your
 APIs.
 
-## Prerequisites
+**Prerequisites**
 
 1. [Install ADK](../get-started/installation.md)
 2. Install the
@@ -39,10 +39,10 @@ project_root_folder
      `__ tool.py
 ```
 
-### Create an API Hub Toolset and add it to your agent
+### Create an API Hub Toolset
 
-Note: this tutorial includes an agent creation. If you already have an agent,
-you can only follow subset of these steps.
+Note: This tutorial includes an agent creation. If you already have an agent,
+you only need to follow a subset of these steps.
 
 1. Get your access token, so that APIHubToolset can fetch spec from API Hub API.
    In your terminal run the following command
@@ -132,7 +132,7 @@ you can only follow subset of these steps.
 
 ---
 
-## 2. Connect to Enterprise Applications and Integration workflows
+## Application Integration Tools
 
 With **ApplicationIntegrationToolset** you can seamlessly give your agents a
 secure and governed to enterprise applications using Integration Connector’s
@@ -142,7 +142,7 @@ turn your existing Application Integration process automations into agentic
 workflows by providing application integration workflows as tools to your ADK
 agents.
 
-## Prerequisites
+**Prerequisites**
 
 1. [Install ADK](../get-started/installation.md)
 2. An existing
@@ -174,8 +174,10 @@ agents.
 
 When running the agent, make sure to run adk web in project\_root\_folder
 
-### Connect your agent to enterprise applications using
-[Integration Connectors](https://cloud.google.com/integration-connectors/docs/overview)
+### Use Integration Connectors
+
+Connect your agent to enterprise applications using
+[Integration Connectors](https://cloud.google.com/integration-connectors/docs/overview).
 
 1. To use a connector from Integration Connectors, you need to provision
    Application Integration in the same region as your connection, import and
@@ -236,9 +238,11 @@ When running the agent, make sure to run adk web in project\_root\_folder
    Then go to [http://localhost:8000](http://localhost:8000), and choose
    my\_agent agent (same as the agent folder name)
 
-### Use existing
+### Use App Integration Workflows
+
+Use existing
 [Application Integration](https://cloud.google.com/application-integration/docs/overview)
-workflow as a tool for your agent
+workflow as a tool for your agent.
 
 1. Create a tool with `ApplicationIntegrationToolset`
 
@@ -288,7 +292,7 @@ workflow as a tool for your agent
 
 ---
 
-## 3. **Toolbox Tools for Databases**
+## Toolbox Tools for Databases
 
 [MCP Toolbox for Databases](https://github.com/googleapis/genai-toolbox) is an
 open source MCP server for databases. It was designed with enterprise-grade and
@@ -305,9 +309,7 @@ Toolbox, see the
 
 ![GenAI Toolbox](../assets/mcp_db_toolbox.svg)
 
-## Before you begin
-
-### Configure and deploy Toolbox server
+### Configure and deploy
 
 Toolbox is an open source server that you deploy and manage yourself. For more
 instructions on deploying and configuring, see the official Toolbox
@@ -325,7 +327,7 @@ package before getting started:
 pip install toolbox-langchain langchain
 ```
 
-## Loading Toolbox Tools
+### Loading Toolbox Tools
 
 Once you’ve Toolbox server is configured and up and running, you can load tools
 from your server using the ADK:
@@ -347,7 +349,7 @@ root_agent = Agent(
 )
 ```
 
-## Advanced Toolbox Features
+### Advanced Toolbox Features
 
 Toolbox has a variety of features to make developing Gen AI tools for databases.
 For more information, read more about the following features:
