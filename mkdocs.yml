@@ -122,6 +122,7 @@ nav:
     - deploy/index.md
     - Agent Engine: deploy/agent-engine.md
     - Cloud Run: deploy/cloud-run.md
+    - GKE: deploy/gke.md
   - Sessions & Memory:
     - sessions/index.md
     - Session: sessions/session.md
