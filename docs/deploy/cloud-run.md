@@ -7,7 +7,7 @@ To deploy your agent, you can use either the `adk deploy cloud_run` command (rec
 
 ## Agent sample
 
-For each of the commands, we will reference a `capital_agent` sample defined in on the [LLM agent](../agents/llm-agents.md) page. We will assume it's in a `capital_agent` directory.
+For each of the commands, we will reference a `capital_agent` sample defined on the [LLM agent](../agents/llm-agents.md) page. We will assume it's in a `capital_agent` directory.
 
 To proceed, confirm that your agent code is configured as follows:
 
