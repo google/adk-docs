@@ -144,5 +144,6 @@ nav:
     - evaluate/index.md
   - Guides:
     - Responsible Agents: guides/responsible-agents.md
+  - Community Resources: community.md
   - Contributing Guide: contributing-guide.md
   - API Reference: api-reference/index.html
