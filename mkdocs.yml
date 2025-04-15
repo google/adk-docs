@@ -82,6 +82,7 @@ markdown_extensions:
 # Plugins
 plugins:
   - search
+  - social
   - redirects:
       redirect_maps:
         'get-started/local-testing.md': 'get-started/testing.md'
