@@ -161,7 +161,7 @@ agents.
     gcloud auth application-default set-quota-project <project-id>
     ```
 
-4. Set up your project structure and create required files
+5. Set up your project structure and create required files
 
     ```console
     project_root_folder
@@ -179,13 +179,23 @@ When running the agent, make sure to run adk web in project\_root\_folder
 Connect your agent to enterprise applications using
 [Integration Connectors](https://cloud.google.com/integration-connectors/docs/overview).
 
-1. To use a connector from Integration Connectors, you need to provision
-   Application Integration in the same region as your connection, import and
-   publish
-   [Connection Tool](https://console.cloud.google.com/integrations/templates/connection-tool/locations/us-central1)
-   from the template library.
+**Prerequisites**
 
-2. Create a tool with `ApplicationIntegrationToolset`
+1. To use a connector from Integration Connectors, you need to [provision](https://console.cloud.google.com/integrations)
+   Application Integration in the same region as your connection by clicking on "QUICK SETUP" button.
+
+
+   ![Google Cloud Tools](../assets/google_cloud_tools.svg)
+   
+2. Go to [Connection Tool](https://console.cloud.google.com/integrations/templates/connection-tool/locations/us-central1)
+   template from the template library and click on "USE TEMPLATE" button.
+
+3. Fill the Integration Name as **ExecuteConnection** (It is mandatory to use this integration name only) and
+   select the region same as the connection region. Click on "CREATE".
+
+4. Publish the integration by using the "PUBLISH" button on the Application Integration Editor.
+
+5. Create a tool with `ApplicationIntegrationToolset`
 
     ```py
     from google.adk.tools.application_integration_tool.application_integration_toolset import ApplicationIntegrationToolset
@@ -208,7 +218,7 @@ Connect your agent to enterprise applications using
     [listActions](https://cloud.google.com/integration-connectors/docs/reference/rest/v1/projects.locations.connections.connectionSchemaMetadata/listActions),
     [listEntityTypes](https://cloud.google.com/integration-connectors/docs/reference/rest/v1/projects.locations.connections.connectionSchemaMetadata/listEntityTypes)
 
-3. Add the tool to your agent. Update your `agent.py` file
+6. Add the tool to your agent. Update your `agent.py` file
 
     ```py
     from google.adk.agents.llm_agent import LlmAgent
@@ -222,13 +232,13 @@ Connect your agent to enterprise applications using
     )
     ```
 
-4. Configure your  \`\_\_init\_\_.py\` to expose your agent
+7. Configure your  \`\_\_init\_\_.py\` to expose your agent
 
     ```py
     from . import agent
     ```
 
-5. Start the Google ADK Web UI and try your agent.
+8. Start the Google ADK Web UI and try your agent.
 
     ```shell
     # make sure to run `adk web` from your project_root_folder
