@@ -185,15 +185,21 @@ Connect your agent to enterprise applications using
    Application Integration in the same region as your connection by clicking on "QUICK SETUP" button.
 
 
-   ![Google Cloud Tools](../assets/google_cloud_tools.svg)
+   ![Google Cloud Tools](../assets/application-integration-overview.png)
    
 2. Go to [Connection Tool](https://console.cloud.google.com/integrations/templates/connection-tool/locations/us-central1)
    template from the template library and click on "USE TEMPLATE" button.
 
+
+    ![Google Cloud Tools](../assets/use-connection-tool-template.png)
+   
 3. Fill the Integration Name as **ExecuteConnection** (It is mandatory to use this integration name only) and
    select the region same as the connection region. Click on "CREATE".
 
 4. Publish the integration by using the "PUBLISH" button on the Application Integration Editor.
+
+
+    ![Google Cloud Tools](../assets/publish-integration.png)  
 
 5. Create a tool with `ApplicationIntegrationToolset`
 
@@ -212,13 +218,15 @@ Connect your agent to enterprise applications using
     )
     ```
 
-    Note: You can provide service account to be used instead of using default
-    credentials To find the list of supported entities and actions for a
+    Note:
+   - You can provide service account to be used instead of using default
+    credentials.
+   - To find the list of supported entities and actions for a
     connection, use the connectors apis:
     [listActions](https://cloud.google.com/integration-connectors/docs/reference/rest/v1/projects.locations.connections.connectionSchemaMetadata/listActions),
     [listEntityTypes](https://cloud.google.com/integration-connectors/docs/reference/rest/v1/projects.locations.connections.connectionSchemaMetadata/listEntityTypes)
 
-6. Add the tool to your agent. Update your `agent.py` file
+8. Add the tool to your agent. Update your `agent.py` file
 
     ```py
     from google.adk.agents.llm_agent import LlmAgent
@@ -232,13 +240,13 @@ Connect your agent to enterprise applications using
     )
     ```
 
-7. Configure your  \`\_\_init\_\_.py\` to expose your agent
+9. Configure your  \`\_\_init\_\_.py\` to expose your agent
 
     ```py
     from . import agent
     ```
 
-8. Start the Google ADK Web UI and try your agent.
+10. Start the Google ADK Web UI and try your agent.
 
     ```shell
     # make sure to run `adk web` from your project_root_folder
