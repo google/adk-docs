@@ -1,11 +1,25 @@
 # Using Different Models with ADK
 
-The Agent Development Kit (ADK) is designed for flexibility, allowing you to integrate various Large Language Models (LLMs) into your agents. While the setup for Google Gemini models is covered in the [Setup Foundation Models](../get-started/installation.md) guide, this page details how to leverage Gemini effectively and integrate other popular models, including those hosted externally or running locally.
+The Agent Development Kit (ADK) is designed for flexibility, allowing you to
+integrate various Large Language Models (LLMs) into your agents. While the setup
+for Google Gemini models is covered in the
+[Setup Foundation Models](../get-started/installation.md) guide, this page
+details how to leverage Gemini effectively and integrate other popular models,
+including those hosted externally or running locally.
 
 ADK primarily uses two mechanisms for model integration:
 
-1. **Direct String / Registry:** For models tightly integrated with Google Cloud (like Gemini models accessed via Google AI Studio or Vertex AI) or models hosted on Vertex AI endpoints. You typically provide the model name or endpoint resource string directly to the `LlmAgent`. ADK's internal registry resolves this string to the appropriate backend client, often utilizing the `google-genai` library.
-2. **Wrapper Classes:** For broader compatibility, especially with models outside the Google ecosystem or those requiring specific client configurations (like models accessed via LiteLLM). You instantiate a specific wrapper class (e.g., `LiteLlm`) and pass this object as the `model` parameter to your `LlmAgent`.
+1. **Direct String / Registry:** For models tightly integrated with Google Cloud
+   (like Gemini models accessed via Google AI Studio or Vertex AI) or models
+   hosted on Vertex AI endpoints. You typically provide the model name or
+   endpoint resource string directly to the `LlmAgent`. ADK's internal registry
+   resolves this string to the appropriate backend client, often utilizing the
+   `google-genai` library.
+2. **Wrapper Classes:** For broader compatibility, especially with models
+   outside the Google ecosystem or those requiring specific client
+   configurations (like models accessed via LiteLLM). You instantiate a specific
+   wrapper class (e.g., `LiteLlm`) and pass this object as the `model` parameter
+   to your `LlmAgent`.
 
 The following sections guide you through using these methods based on your needs.
 
@@ -13,22 +27,28 @@ The following sections guide you through using these methods based on your needs
 
 This is the most direct way to use Google's flagship models within ADK.
 
-**Integration Method:** Pass the model's identifier string directly to the `model` parameter of `LlmAgent` (or its alias, `Agent`).
+**Integration Method:** Pass the model's identifier string directly to the
+`model` parameter of `LlmAgent` (or its alias, `Agent`).
 
 **Backend Options & Setup:**
 
-The `google-genai` library, used internally by ADK for Gemini, can connect through either Google AI Studio or Vertex AI.
+The `google-genai` library, used internally by ADK for Gemini, can connect
+through either Google AI Studio or Vertex AI.
 
 !!!note "Model support for voice/video streaming"
 
-    In order to use voice/video streaming in ADK, you will need to use Gemini models that support the Live API. You can find the **model ID(s)** that supports the Gemini Live API in the documentation:
+    In order to use voice/video streaming in ADK, you will need to use Gemini
+    models that support the Live API. You can find the **model ID(s)** that
+    support the Gemini Live API in the documentation:
 
     - [Google AI Studio: Gemini Live API](https://ai.google.dev/gemini-api/docs/models#live-api)
     - [Vertex AI: Gemini Live API](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api)
 
 ### Google AI Studio
 
-* **Use Case:** Google AI Studio is the easiest way to started with Gemini. All you need is the [API key](https://aistudio.google.com/app/apikey). Best for rapid prototyping and development.
+* **Use Case:** Google AI Studio is the easiest way to get started with Gemini.
+  All you need is the [API key](https://aistudio.google.com/app/apikey). Best
+  for rapid prototyping and development.
 * **Setup:** Typically requires an API key set as an environment variable:
 
 ```shell
@@ -36,11 +56,14 @@ export GOOGLE_API_KEY="YOUR_GOOGLE_API_KEY"
 export GOOGLE_GENAI_USE_VERTEXAI=FALSE
 ```
 
-* **Models:** Find all available models on the [Google AI for Developers site](https://ai.google.dev/gemini-api/docs/models).
+* **Models:** Find all available models on the
+  [Google AI for Developers site](https://ai.google.dev/gemini-api/docs/models).
 
 ### Vertex AI
 
-* **Use Case:** Recommended for production applications, leveraging Google Cloud infrastructure. Gemini on Vertex AI supports enterprise-grade features, security, and compliance controls.
+* **Use Case:** Recommended for production applications, leveraging Google Cloud
+  infrastructure. Gemini on Vertex AI supports enterprise-grade features,
+  security, and compliance controls.
 * **Setup:**
     * Authenticate using Application Default Credentials (ADC):
 
@@ -61,7 +84,8 @@ export GOOGLE_GENAI_USE_VERTEXAI=FALSE
         export GOOGLE_GENAI_USE_VERTEXAI=TRUE
         ```
 
-* **Models:** Find available model IDs in the [Vertex AI documentation](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/models).
+* **Models:** Find available model IDs in the
+  [Vertex AI documentation](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/models).
 
 **Example:**
 
@@ -92,11 +116,15 @@ agent_gemini_pro = LlmAgent(
 
 ## Using Cloud & Proprietary Models via LiteLLM
 
-To access a vast range of LLMs from providers like OpenAI, Anthropic (non-Vertex AI), Cohere, and many others, ADK offers integration through the LiteLLM library.
+To access a vast range of LLMs from providers like OpenAI, Anthropic (non-Vertex
+AI), Cohere, and many others, ADK offers integration through the LiteLLM
+library.
 
-**Integration Method:** Instantiate the `LiteLlm` wrapper class and pass it to the `model` parameter of `LlmAgent`.
+**Integration Method:** Instantiate the `LiteLlm` wrapper class and pass it to
+the `model` parameter of `LlmAgent`.
 
-**LiteLLM Overview:** [LiteLLM](https://docs.litellm.ai/) acts as a translation layer, providing a standardized, OpenAI-compatible interface to over 100+ LLMs.
+**LiteLLM Overview:** [LiteLLM](https://docs.litellm.ai/) acts as a translation
+layer, providing a standardized, OpenAI-compatible interface to over 100+ LLMs.
 
 **Setup:**
 
@@ -104,7 +132,8 @@ To access a vast range of LLMs from providers like OpenAI, Anthropic (non-Vertex
         ```shell
         pip install litellm
         ```
-2. **Set Provider API Keys:** Configure API keys as environment variables for the specific providers you intend to use.
+2. **Set Provider API Keys:** Configure API keys as environment variables for
+   the specific providers you intend to use.
 
     * *Example for OpenAI:*
 
@@ -118,7 +147,9 @@ To access a vast range of LLMs from providers like OpenAI, Anthropic (non-Vertex
         export ANTHROPIC_API_KEY="YOUR_ANTHROPIC_API_KEY"
         ```
 
-    * *Consult the [LiteLLM Providers Documentation](https://docs.litellm.ai/docs/providers) for the correct environment variable names for other providers.*
+    * *Consult the
+      [LiteLLM Providers Documentation](https://docs.litellm.ai/docs/providers)
+      for the correct environment variable names for other providers.*
 
         **Example:**
 
@@ -147,50 +178,184 @@ To access a vast range of LLMs from providers like OpenAI, Anthropic (non-Vertex
 
 ## Using Open & Local Models via LiteLLM
 
-For maximum control, cost savings, privacy, or offline use cases, you can run open-source models locally or self-host them and integrate them using LiteLLM.
+For maximum control, cost savings, privacy, or offline use cases, you can run
+open-source models locally or self-host them and integrate them using LiteLLM.
 
-**Integration Method:** Instantiate the `LiteLlm` wrapper class, configured to point to your local model server.
+**Integration Method:** Instantiate the `LiteLlm` wrapper class, configured to
+point to your local model server.
 
 ### Ollama Integration
 
-[Ollama](https://ollama.com/) allows you to easily run open-source models locally.
+[Ollama](https://ollama.com/) allows you to easily run open-source models
+locally.
 
-**Prerequisites:**
+#### Model choice
 
-1. Install Ollama.
-2. Pull the desired model (e.g., Google's Gemma):
+If your agent is relying on tools, please make sure that you select a model with
+tool support from [Ollama website](https://ollama.com/search?c=tools).
 
-    ```shell
-    ollama pull gemma:2b
-    ```
+For reliable results, we recommend using a decent-sized model with tool support.
 
-3. Ensure the Ollama server is running (usually happens automatically after installation or by running `ollama serve`).
+The tool support for the model can be checked with the following command:
 
-    **Example:**
+```bash
+ollama show mistral-small3.1
+  Model
+    architecture        mistral3
+    parameters          24.0B
+    context length      131072
+    embedding length    5120
+    quantization        Q4_K_M
 
-    ```python
-    from google.adk.agents import LlmAgent
-    from google.adk.models.lite_llm import LiteLlm
+  Capabilities
+    completion
+    vision
+    tools
+```
 
-    # --- Example Agent using Gemma 2B running via Ollama ---
-    agent_ollama_gemma = LlmAgent(
-        # LiteLLM knows how to connect to a local Ollama server by default
-        model=LiteLlm(model="ollama/gemma:2b"), # Standard LiteLLM format for Ollama
-        name="ollama_gemma_agent",
-        instruction="You are Gemma, running locally via Ollama.",
-        # ... other agent parameters
-    )
-    ```
+You are supposed to see `tools` listed under capabilities.
+
+You can also look at the template the model is using and tweak it based on your
+needs.
+
+```bash
+ollama show --modelfile llama3.2 > model_file_to_modify
+```
+
+For instance, the default template for the above model inherently suggests that
+the model shall call a function all the time. This may result in an infinite
+loop of function calls.
+
+```
+Given the following functions, please respond with a JSON for a function call
+with its proper arguments that best answers the given prompt.
+
+Respond in the format {"name": function name, "parameters": dictionary of
+argument name and its value}. Do not use variables.
+```
+
+You can swap such prompts with a more descriptive one to prevent infinite tool
+call loops.
+
+For instance:
+
+```
+Review the user's prompt and the available functions listed below.
+First, determine if calling one of these functions is the most appropriate way to respond. A function call is likely needed if the prompt asks for a specific action, requires external data lookup, or involves calculations handled by the functions. If the prompt is a general question or can be answered directly, a function call is likely NOT needed.
+
+If you determine a function call IS required: Respond ONLY with a JSON object in the format {"name": "function_name", "parameters": {"argument_name": "value"}}. Ensure parameter values are concrete, not variables.
+
+If you determine a function call IS NOT required: Respond directly to the user's prompt in plain text, providing the answer or information requested. Do not output any JSON.
+```
+
+Then you can create a new model with the following command:
+
+```bash
+ollama create llama3.2-modified -f model_file_to_modify
+```
+
+#### Using ollama_chat provider
+
+Our LiteLLM wrapper can be used to create agents with Ollama models.
+
+```py
+root_agent = Agent(
+    model=LiteLlm(model="ollama_chat/mistral-small3.1"),
+    name="dice_agent",
+    description=(
+        "hello world agent that can roll a dice of 8 sides and check prime"
+        " numbers."
+    ),
+    instruction="""
+      You roll dice and answer questions about the outcome of the dice rolls.
+    """,
+    tools=[
+        roll_die,
+        check_prime,
+    ],
+)
+```
+
+**It is important to set the provider `ollama_chat` instead of `ollama`. Using
+`ollama` will result in unexpected behaviors such as infinite tool call loops
+and ignoring previous context.**
+
+While `api_base` can be provided inside LiteLLM for generation, LiteLLM library
+is calling other APIs relying on the env variable instead as of v1.65.5 after
+completion. So at this time, we recommend setting the env variable
+`OLLAMA_API_BASE` to point to the ollama server.
+
+```bash
+export OLLAMA_API_BASE="http://localhost:11434"
+adk web
+```
+
+#### Using openai provider
+
+Alternatively, `openai` can be used as the provider name. But this will also
+require setting the `OPENAI_API_BASE=http://localhost:11434/v1` and
+`OPENAI_API_KEY=anything` env variables instead of `OLLAMA_API_BASE`. **Please
+note that api base now has `/v1` at the end.**
+
+```py
+root_agent = Agent(
+    model=LiteLlm(model="openai/mistral-small3.1"),
+    name="dice_agent",
+    description=(
+        "hello world agent that can roll a dice of 8 sides and check prime"
+        " numbers."
+    ),
+    instruction="""
+      You roll dice and answer questions about the outcome of the dice rolls.
+    """,
+    tools=[
+        roll_die,
+        check_prime,
+    ],
+)
+```
+
+```bash
+export OPENAI_API_BASE=http://localhost:11434/v1
+export OPENAI_API_KEY=anything
+adk web
+```
+
+#### Debugging
+
+You can see the request sent to the Ollama server by adding the following in
+your agent code just after imports.
+
+```py
+import litellm
+litellm._turn_on_debug()
+```
+
+Look for a line like the following:
+
+```bash
+Request Sent from LiteLLM:
+curl -X POST \
+http://localhost:11434/api/chat \
+-d '{'model': 'mistral-small3.1', 'messages': [{'role': 'system', 'content': ...
+```
 
 ### Self-Hosted Endpoint (e.g., vLLM)
 
-Tools like [vLLM](https://github.com/vllm-project/vllm) allow you to host models efficiently and often expose an OpenAI-compatible API endpoint.
+Tools such as [vLLM](https://github.com/vllm-project/vllm) allow you to host
+models efficiently and often expose an OpenAI-compatible API endpoint.
 
 **Setup:**
 
-1. **Deploy Model:** Deploy your chosen model using vLLM (or a similar tool). Note the API base URL (e.g., `https://your-vllm-endpoint.run.app/v1`).
-    * *Important for ADK Tools:* When deploying, ensure the serving tool supports and enables OpenAI-compatible tool/function calling. For vLLM, this might involve flags like `--enable-auto-tool-choice` and potentially a specific `--tool-call-parser`, depending on the model. Refer to the vLLM documentation on Tool Use.
-2. **Authentication:** Determine how your endpoint handles authentication (e.g., API key, bearer token).
+1. **Deploy Model:** Deploy your chosen model using vLLM (or a similar tool).
+   Note the API base URL (e.g., `https://your-vllm-endpoint.run.app/v1`).
+    * *Important for ADK Tools:* When deploying, ensure the serving tool
+      supports and enables OpenAI-compatible tool/function calling. For vLLM,
+      this might involve flags like `--enable-auto-tool-choice` and potentially
+      a specific `--tool-call-parser`, depending on the model. Refer to the vLLM
+      documentation on Tool Use.
+2. **Authentication:** Determine how your endpoint handles authentication (e.g.,
+   API key, bearer token).
 
     **Integration Example:**
 
@@ -235,9 +400,13 @@ Tools like [vLLM](https://github.com/vllm-project/vllm) allow you to host models
 
 ## Using Hosted & Tuned Models on Vertex AI
 
-For enterprise-grade scalability, reliability, and integration with Google Cloud's MLOps ecosystem, you can use models deployed to Vertex AI Endpoints. This includes models from Model Garden or your own fine-tuned models.
+For enterprise-grade scalability, reliability, and integration with Google
+Cloud's MLOps ecosystem, you can use models deployed to Vertex AI Endpoints.
+This includes models from Model Garden or your own fine-tuned models.
 
-**Integration Method:** Pass the full Vertex AI Endpoint resource string (`projects/PROJECT_ID/locations/LOCATION/endpoints/ENDPOINT_ID`) directly to the `model` parameter of `LlmAgent`.
+**Integration Method:** Pass the full Vertex AI Endpoint resource string
+(`projects/PROJECT_ID/locations/LOCATION/endpoints/ENDPOINT_ID`) directly to the
+`model` parameter of `LlmAgent`.
 
 **Vertex AI Setup (Consolidated):**
 
@@ -253,10 +422,11 @@ Ensure your environment is configured for Vertex AI:
 
     ```shell
     export GOOGLE_CLOUD_PROJECT="YOUR_PROJECT_ID"
-    export GOOGLE_CLOUD_LOCATION="YOUR_ENDPOINT_LOCATION" # e.g., us-central1
+    export GOOGLE_CLOUD_LOCATION="YOUR_VERTEX_AI_LOCATION" # e.g., us-central1
     ```
 
-3. **Enable Vertex Backend:** Crucially, ensure the `google-genai` library targets Vertex AI:
+3. **Enable Vertex Backend:** Crucially, ensure the `google-genai` library
+   targets Vertex AI:
 
     ```shell
     export GOOGLE_GENAI_USE_VERTEXAI=TRUE
@@ -264,7 +434,9 @@ Ensure your environment is configured for Vertex AI:
 
 ### Model Garden Deployments
 
-You can deploy various open and proprietary models from the [Vertex AI Model Garden](https://console.cloud.google.com/vertex-ai/model-garden) to an endpoint.
+You can deploy various open and proprietary models from the
+[Vertex AI Model Garden](https://console.cloud.google.com/vertex-ai/model-garden)
+to an endpoint.
 
 **Example:**
 
@@ -288,7 +460,8 @@ agent_llama3_vertex = LlmAgent(
 
 ### Fine-tuned Model Endpoints
 
-Deploying your fine-tuned models (whether based on Gemini or other architectures supported by Vertex AI) results in an endpoint that can be used directly.
+Deploying your fine-tuned models (whether based on Gemini or other architectures
+supported by Vertex AI) results in an endpoint that can be used directly.
 
 **Example:**
 
@@ -310,22 +483,33 @@ agent_finetuned_gemini = LlmAgent(
 
 ### Third-Party Models on Vertex AI (e.g., Anthropic Claude)
 
-Some providers, like Anthropic, make their models available directly through Vertex AI.
+Some providers, like Anthropic, make their models available directly through
+Vertex AI.
 
-**Integration Method:** Uses the direct model string (e.g., `"claude-3-sonnet@20240229"`), *but requires manual registration* within ADK.
+**Integration Method:** Uses the direct model string (e.g.,
+`"claude-3-sonnet@20240229"`), *but requires manual registration* within ADK.
 
-**Why Registration?** ADK's registry automatically recognizes `gemini-*` strings and standard Vertex AI endpoint strings (`projects/.../endpoints/...`) and routes them via the `google-genai` library. For other model types used directly via Vertex AI (like Claude), you must explicitly tell the ADK registry which specific wrapper class (`Claude` in this case) knows how to handle that model identifier string with the Vertex AI backend.
+**Why Registration?** ADK's registry automatically recognizes `gemini-*` strings
+and standard Vertex AI endpoint strings (`projects/.../endpoints/...`) and
+routes them via the `google-genai` library. For other model types used directly
+via Vertex AI (like Claude), you must explicitly tell the ADK registry which
+specific wrapper class (`Claude` in this case) knows how to handle that model
+identifier string with the Vertex AI backend.
 
 **Setup:**
 
-1. **Vertex AI Environment:** Ensure the consolidated Vertex AI setup (ADC, Env Vars, `GOOGLE_GENAI_USE_VERTEXAI=TRUE`) is complete.
-2. **Install Provider Library:** Install the necessary client library configured for Vertex AI.
+1. **Vertex AI Environment:** Ensure the consolidated Vertex AI setup (ADC, Env
+   Vars, `GOOGLE_GENAI_USE_VERTEXAI=TRUE`) is complete.
+
+2. **Install Provider Library:** Install the necessary client library configured
+   for Vertex AI.
 
     ```shell
     pip install "anthropic[vertex]"
     ```
 
-3. **Register Model Class:** Add this code near the start of your application, *before* creating an agent using the Claude model string:
+3. **Register Model Class:** Add this code near the start of your application,
+   *before* creating an agent using the Claude model string:
 
     ```python
     # Required for using Claude model strings directly via Vertex AI with LlmAgent
