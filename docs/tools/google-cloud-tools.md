@@ -201,32 +201,34 @@ Connect your agent to enterprise applications using
 
     ![Google Cloud Tools](../assets/publish-integration.png)  
 
-5. Create a tool with `ApplicationIntegrationToolset`
+**Steps:**
 
-    ```py
-    from google.adk.tools.application_integration_tool.application_integration_toolset import ApplicationIntegrationToolset
+1. Create a tool with `ApplicationIntegrationToolset`
 
-    connector_tool = ApplicationIntegrationToolset(
-        project="test-project", # TODO: replace with GCP project of the connection
-        location="us-central1", #TODO: replace with location of the connection
-        connection="test-connection", #TODO: replace with connection name
-        entity_operations={"Entity_One": ["LIST","CREATE"], "Entity_Two": []},#empty list for actions means all operations on the entity are supported.
-        actions=["action1"], #TODO: replace with actions
-        service_account_credentials='{...}', # optional
-        tool_name="tool_prefix2",
-        tool_instructions="..."
-    )
+   ```py
+      from google.adk.tools.application_integration_tool.application_integration_toolset import ApplicationIntegrationToolset
+  
+      connector_tool = ApplicationIntegrationToolset(
+          project="test-project", # TODO: replace with GCP project of the connection
+          location="us-central1", #TODO: replace with location of the connection
+          connection="test-connection", #TODO: replace with connection name
+          entity_operations={"Entity_One": ["LIST","CREATE"], "Entity_Two": []},#empty list for actions means all operations on the entity are supported.
+          actions=["action1"], #TODO: replace with actions
+          service_account_credentials='{...}', # optional
+          tool_name="tool_prefix2",
+          tool_instructions="..."
+      )
     ```
 
     Note:
-   - You can provide service account to be used instead of using default
+     - You can provide service account to be used instead of using default
     credentials.
-   - To find the list of supported entities and actions for a
+     - To find the list of supported entities and actions for a
     connection, use the connectors apis:
     [listActions](https://cloud.google.com/integration-connectors/docs/reference/rest/v1/projects.locations.connections.connectionSchemaMetadata/listActions),
     [listEntityTypes](https://cloud.google.com/integration-connectors/docs/reference/rest/v1/projects.locations.connections.connectionSchemaMetadata/listEntityTypes)
 
-8. Add the tool to your agent. Update your `agent.py` file
+2. Add the tool to your agent. Update your `agent.py` file
 
     ```py
     from google.adk.agents.llm_agent import LlmAgent
@@ -240,13 +242,13 @@ Connect your agent to enterprise applications using
     )
     ```
 
-9. Configure your  \`\_\_init\_\_.py\` to expose your agent
+3. Configure your  \`\_\_init\_\_.py\` to expose your agent
 
     ```py
     from . import agent
     ```
 
-10. Start the Google ADK Web UI and try your agent.
+4. Start the Google ADK Web UI and try your agent.
 
     ```shell
     # make sure to run `adk web` from your project_root_folder
@@ -260,7 +262,9 @@ Connect your agent to enterprise applications using
 
 Use existing
 [Application Integration](https://cloud.google.com/application-integration/docs/overview)
-workflow as a tool for your agent.
+workflow as a tool for your agent or create a new one.
+
+**Steps:**
 
 1. Create a tool with `ApplicationIntegrationToolset`
 
