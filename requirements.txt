@@ -1,2 +1,2 @@
-mkdocs-material[imaging]
+mkdocs-material
 mkdocs-redirects
