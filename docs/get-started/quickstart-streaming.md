@@ -43,8 +43,6 @@ adk-streaming/  # Project folder
         └── agent.py # Agent definition
 ```
 
-**Note:**  To enable both text and audio/video input, the model must support the generateContent (for text) and bidiGenerateContent methods. Verify these capabilities by referring to the List Models Documentation. This quickstart utilizes the gemini-2.0-flash-exp model for demonstration purposes.
-
 ### agent.py
 
 Copy-paste the following code block to the [`agent.py`](http://agent.py).
@@ -69,6 +67,8 @@ root_agent = Agent(
    tools=[google_search]
 )
 ```
+
+**Note:**  To enable both text and audio/video input, the model must support the generateContent (for text) and bidiGenerateContent methods. Verify these capabilities by referring to the List Models Documentation. This quickstart utilizes the gemini-2.0-flash-exp model for demonstration purposes.
 
 `agent.py` is where all your agent(s)' logic will be stored, and you must have a `root_agent` defined.
 
