@@ -203,30 +203,30 @@ Connect your agent to enterprise applications using
 
 **Steps:**
 
-1. Create a tool with `ApplicationIntegrationToolset`
+1.  Create a tool with `ApplicationIntegrationToolset`
 
-   ```py
-      from google.adk.tools.application_integration_tool.application_integration_toolset import ApplicationIntegrationToolset
-  
-      connector_tool = ApplicationIntegrationToolset(
-          project="test-project", # TODO: replace with GCP project of the connection
-          location="us-central1", #TODO: replace with location of the connection
-          connection="test-connection", #TODO: replace with connection name
-          entity_operations={"Entity_One": ["LIST","CREATE"], "Entity_Two": []},#empty list for actions means all operations on the entity are supported.
-          actions=["action1"], #TODO: replace with actions
-          service_account_credentials='{...}', # optional
-          tool_name="tool_prefix2",
-          tool_instructions="..."
-      )
+    ```py
+    from google.adk.tools.application_integration_tool.application_integration_toolset import ApplicationIntegrationToolset
+
+    connector_tool = ApplicationIntegrationToolset(
+        project="test-project", # TODO: replace with GCP project of the connection
+        location="us-central1", #TODO: replace with location of the connection
+        connection="test-connection", #TODO: replace with connection name
+        entity_operations={"Entity_One": ["LIST","CREATE"], "Entity_Two": []},#empty list for actions means all operations on the entity are supported.
+        actions=["action1"], #TODO: replace with actions
+        service_account_credentials='{...}', # optional
+        tool_name="tool_prefix2",
+        tool_instructions="..."
+    )
     ```
 
     Note:
-     - You can provide service account to be used instead of using default
-    credentials.
-     - To find the list of supported entities and actions for a
-    connection, use the connectors apis:
-    [listActions](https://cloud.google.com/integration-connectors/docs/reference/rest/v1/projects.locations.connections.connectionSchemaMetadata/listActions),
-    [listEntityTypes](https://cloud.google.com/integration-connectors/docs/reference/rest/v1/projects.locations.connections.connectionSchemaMetadata/listEntityTypes)
+    -   You can provide service account to be used instead of using default
+        credentials.
+    -   To find the list of supported entities and actions for a connection, use the connectors apis:
+        [listActions](https://cloud.google.com/integration-connectors/docs/reference/rest/v1/projects.locations.connections.connectionSchemaMetadata/listActions) or 
+        [listEntityTypes](https://cloud.google.com/integration-connectors/docs/reference/rest/v1/projects.locations.connections.connectionSchemaMetadata/listEntityTypes)
+
 
 2. Add the tool to your agent. Update your `agent.py` file
 
