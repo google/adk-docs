@@ -43,6 +43,8 @@ adk-streaming/  # Project folder
         └── agent.py # Agent definition
 ```
 
+**Note:**  To enable both text and audio/video input, the model must support the generateContent (for text) and bidiGenerateContent methods. Verify these capabilities by referring to the List Models Documentation. This quickstart utilizes the gemini-2.0-flash-exp model for demonstration purposes.
+
 ### agent.py
 
 Copy-paste the following code block to the [`agent.py`](http://agent.py).
@@ -57,7 +59,7 @@ root_agent = Agent(
    # A unique name for the agent.
    name="basic_search_agent",
    # The Large Language Model (LLM) that agent will use.
-   model="gemini-2.0-flash-live-001", # Google AI Studio
+   model="gemini-2.0-flash-exp", # Google AI Studio
    #model="gemini-2.0-flash-live-preview-04-09" # Vertex AI Studio
    # A short description of the agent's purpose.
    description="Agent to answer questions using Google Search.",
