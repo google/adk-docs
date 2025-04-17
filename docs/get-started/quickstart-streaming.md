@@ -57,7 +57,7 @@ root_agent = Agent(
    # A unique name for the agent.
    name="basic_search_agent",
    # The Large Language Model (LLM) that agent will use.
-   model="gemini-2.0-flash-live-001", # Google AI Studio
+   model="gemini-2.0-flash-exp", # Google AI Studio
    #model="gemini-2.0-flash-live-preview-04-09" # Vertex AI Studio
    # A short description of the agent's purpose.
    description="Agent to answer questions using Google Search.",
@@ -67,6 +67,8 @@ root_agent = Agent(
    tools=[google_search]
 )
 ```
+
+**Note:**  To enable both text and audio/video input, the model must support the generateContent (for text) and bidiGenerateContent methods. Verify these capabilities by referring to the [List Models Documentation](https://ai.google.dev/api/models#method:-models.list). This quickstart utilizes the gemini-2.0-flash-exp model for demonstration purposes.
 
 `agent.py` is where all your agent(s)' logic will be stored, and you must have a `root_agent` defined.
 
@@ -260,7 +262,7 @@ async def client_to_agent_messaging(websocket, live_request_queue):
         text = await websocket.receive_text()
         content = Content(role="user", parts=[Part.from_text(text=text)])
         live_request_queue.send_content(content=content)
-        print(f"[CLIENT TO AGNET]: {text}")
+        print(f"[CLIENT TO AGENT]: {text}")
         await asyncio.sleep(0)
 
 
