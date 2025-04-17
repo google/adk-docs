@@ -126,7 +126,7 @@ While `InvocationContext` acts as the comprehensive internal container, ADK prov
 
     ```python
     # Pseudocode: Tool function receiving ToolContext
-    from google.adk.agents import ToolContext
+    from google.adk.tools import ToolContext
     from typing import Dict, Any
 
     # Assume this function is wrapped by a FunctionTool
@@ -165,7 +165,7 @@ You'll frequently need to read information stored within the context.
 
     ```python
     # Pseudocode: In a Tool function
-    from google.adk.agents import ToolContext
+    from google.adk.tools import ToolContext
 
     def my_tool(tool_context: ToolContext, **kwargs):
         user_pref = tool_context.state.get("user_display_preference", "default_mode")
@@ -191,7 +191,7 @@ You'll frequently need to read information stored within the context.
 
     ```python
     # Pseudocode: In any context (ToolContext shown)
-    from google.adk.agents import ToolContext
+    from google.adk.tools import ToolContext
 
     def log_tool_usage(tool_context: ToolContext, **kwargs):
         agent_name = tool_context.agent_name
@@ -231,7 +231,7 @@ State is crucial for memory and data flow. When you modify state using `Callback
 
     ```python
     # Pseudocode: Tool 1 - Fetches user ID
-    from google.adk.agents import ToolContext
+    from google.adk.tools import ToolContext
     import uuid
 
     def get_user_profile(tool_context: ToolContext) -> dict:
@@ -255,7 +255,7 @@ State is crucial for memory and data flow. When you modify state using `Callback
 
     ```python
     # Pseudocode: Tool or Callback identifies a preference
-    from google.adk.agents import ToolContext # Or CallbackContext
+    from google.adk.tools import ToolContext # Or CallbackContext
 
     def set_user_preference(tool_context: ToolContext, preference: str, value: str) -> dict:
         # Use 'user:' prefix for user-level state (if using a persistent SessionService)
@@ -302,7 +302,7 @@ Use artifacts to handle files or large data blobs associated with the session. C
 
         ```python
         # Pseudocode: In the Summarizer tool function
-        from google.adk.agents import ToolContext
+        from google.adk.tools import ToolContext
         from google.genai import types
         # Assume libraries like google.cloud.storage or built-in open are available
         # Assume a 'summarize_text' function exists
@@ -360,7 +360,7 @@ Use artifacts to handle files or large data blobs associated with the session. C
 
     ```python
     # Pseudocode: In a tool function
-    from google.adk.agents import ToolContext
+    from google.adk.tools import ToolContext
 
     def check_available_docs(tool_context: ToolContext) -> dict:
         try:
@@ -377,7 +377,7 @@ Securely manage API keys or other credentials needed by tools.
 
 ```python
 # Pseudocode: Tool requiring auth
-from google.adk.agents import ToolContext
+from google.adk.tools import ToolContext
 from google.adk.auth import AuthConfig # Assume appropriate AuthConfig is defined
 
 # Define your required auth configuration (e.g., OAuth, API Key)
@@ -432,7 +432,7 @@ Access relevant information from the past or external sources.
 
 ```python
 # Pseudocode: Tool using memory search
-from google.adk.agents import ToolContext
+from google.adk.tools import ToolContext
 
 def find_related_info(tool_context: ToolContext, topic: str) -> dict:
     try:
