@@ -45,7 +45,7 @@ critic_agent = LlmAgent(
 
 # Create the LoopAgent
 loop_agent = LoopAgent(
-    name="LoopAgent", sub_agents=[writer_agent, critic_agent], max_iterations=2
+    name="LoopAgent", sub_agents=[writer_agent, critic_agent], max_iterations=5
 )
 
 # Session and Runner
