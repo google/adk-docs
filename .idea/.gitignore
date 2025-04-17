@@ -1,0 +1,32 @@
+# --- General ---
+# Ignore Operating System generated files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Ignore log files
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Ignore temporary files
+*~
+*.swp
+*.swo
+
+# Ignore python cache files
+__pycache__
+*.pyc
+
+# --- IDE / Editor ---
+# Ignore IDE/Editor specific files and directories
+.idea/
+.vscode/
+shelf/
+workspace.xml
+*.sublime-project
+*.sublime-workspace
+*.komodoproject
+.c9/ # Cloud9
