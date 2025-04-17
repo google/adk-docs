@@ -226,7 +226,7 @@ def start_agent_session(session_id: str):
 
 
 async def agent_to_client_messaging(websocket, live_events):
-    """Agent to client communicaation"""
+    """Agent to client communication"""
     while True:
         async for event in live_events:
             # turn_complete
