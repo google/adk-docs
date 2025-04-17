@@ -154,6 +154,20 @@ adk-streaming/  # Project folder
         └── index.html # The web client page
 ```
 
+By adding the directories and files above, the entire directory structure and files will look like:
+
+```console
+adk-streaming/  # Project folder
+└── app/ # the web app folder
+    ├── main.py # FastAPI web app
+    ├── static/ # Static content folder
+    |   └── index.html # The web client page
+    ├── .env # Gemini API key
+    └── google_search_agent/ # Agent folder
+        ├── __init__.py # Python package
+        └── agent.py # Agent definition
+```
+
 **main.py**
 
 Copy-paste the following code block to the main.py file.
