@@ -260,7 +260,7 @@ async def client_to_agent_messaging(websocket, live_request_queue):
         text = await websocket.receive_text()
         content = Content(role="user", parts=[Part.from_text(text=text)])
         live_request_queue.send_content(content=content)
-        print(f"[CLIENT TO AGNET]: {text}")
+        print(f"[CLIENT TO AGENT]: {text}")
         await asyncio.sleep(0)
 
 
