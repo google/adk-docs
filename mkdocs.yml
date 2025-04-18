@@ -52,6 +52,7 @@ theme:
     - navigation.tracking
     - navigation.indexes
     - toc.follow
+    - navigation.footer
 
 # Extensions
 markdown_extensions:
