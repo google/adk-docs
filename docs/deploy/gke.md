@@ -182,13 +182,13 @@ kubectl create serviceaccount adk-agent-sa
 ```
 
 ```bash
-gcloud projects add-iam-policy-binding projects/mofilabs \
+gcloud projects add-iam-policy-binding projects/${GOOGLE_CLOUD_PROJECT} \
     --role=roles/aiplatform.user \
-    --member=principal://iam.googleapis.com/projects/598464211339/locations/global/workloadIdentityPools/mofilabs.svc.id.goog/subject/ns/default/sa/adk-agent-sa \
+    --member=principal://iam.googleapis.com/projects/${GOOGLE_CLOUD_PROJECT_NUMBER}/locations/global/workloadIdentityPools/${GOOGLE_CLOUD_PROJECT}.svc.id.goog/subject/ns/default/sa/adk-agent-sa \
     --condition=None
 ```
 
-### Create the Kuberentes manifest files
+### Create the Kubernetes manifest files
 
 Create a Kubernetes deployment manifest file named `deployment.yaml` in your project directory. This file defines how to deploy your application on GKE.
 
