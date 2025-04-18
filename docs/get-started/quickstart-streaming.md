@@ -125,6 +125,12 @@ Now it's ready to try the agent. Run the following command to launch the **dev U
 cd app
 ```
 
+Also, set `SSL_CERT_FILE` variable with the following command. This is required for the voice and video tests later.
+
+```shell
+export SSL_CERT_FILE=$(python -m certifi)
+```
+
 Then, run the dev UI:
 
 ```shell
@@ -148,9 +154,9 @@ The agent will use the google_search tool to get the latest information to answe
 
 ### Try with voice and video
 
-Now, click the microphone button to enable the voice input, and ask the same question in voice. You will hear the answer in voice in real-time.
+To try with voice, reload the web browser, click the microphone button to enable the voice input, and ask the same question in voice. You will hear the answer in voice in real-time.
 
-Also, click the camera button to enable the video input, and ask questions like "What do you see?". The agent will answer what they see in the video input.
+To try with video, reload the web browser, click the camera button to enable the video input, and ask questions like "What do you see?". The agent will answer what they see in the video input.
 
 ### Stop the tool
 
