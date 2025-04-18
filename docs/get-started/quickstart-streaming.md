@@ -82,20 +82,40 @@ Copy-paste the following code block to `__init__.py` and `main.py` files.
 from . import agent
 ```
 
-## 3\. Setup Gemini API Key {#3.-setup-gemini-api-key}
+## 3\. Set up the platform {#3.-set-up-the-platform}
 
-To run your agent, you'll need to set up a Gemini API Key.
+To run the agent, choose a platform from either Google AI Studio or Google Cloud Vertex AI:
 
-1. Get an API key from [Google AI Studio](https://aistudio.google.com/apikey).  
-2. Inside your `app` directory, create a `.env` file.  
-3. Add these lines to `.env`, replacing `YOUR_API_KEY_HERE` with your key:
+=== "Gemini - Google AI Studio"
+    1. Get an API key from [Google AI Studio](https://aistudio.google.com/apikey).
+    2. Open the **`.env`** file located inside (`app/`) and copy-paste the following code.
 
-**.env**
+        ```env title=".env"
+        GOOGLE_GENAI_USE_VERTEXAI=FALSE
+        GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_API_KEY_HERE
+        ```
 
-```shell
-GOOGLE_API_KEY=YOUR_API_KEY_HERE # Replace with your API Key
-GOOGLE_GENAI_USE_VERTEXAI=0
-```
+    3. Replace `PASTE_YOUR_ACTUAL_API_KEY_HERE` with your actual `API KEY`.
+
+=== "Gemini - Google Cloud Vertex AI"
+    1. You need an existing
+       [Google Cloud](https://cloud.google.com/?e=48754805&hl=en) account and a
+       project.
+        * Set up a
+          [Google Cloud project](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-gcp)
+        * Set up the
+          [gcloud CLI](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-local)
+        * Authenticate to Google Cloud, from the terminal by running
+          `gcloud auth login`.
+        * [Enable the Vertex AI API](https://console.cloud.google.com/flows/enableapi?apiid=aiplatform.googleapis.com).
+    2. Open the **`.env`** file located inside (`app/`). Copy-paste
+       the following code and update the project ID and location.
+
+        ```env title=".env"
+        GOOGLE_GENAI_USE_VERTEXAI=TRUE
+        GOOGLE_CLOUD_PROJECT=PASTE_YOUR_ACTUAL_PROJECT_ID
+        GOOGLE_CLOUD_LOCATION=us-central1
+        ```
 
 ## 4. Try the agent with `adk web` {#4.-try-it-adk-web}
 
