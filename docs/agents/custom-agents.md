@@ -111,7 +111,7 @@ This method orchestrates the sub-agents using standard Python async/await and co
 These are standard `LlmAgent` definitions, responsible for specific tasks. Their `output_key` parameter is crucial for placing results into the `session.state` where other agents or the custom orchestrator can access them.
 
 ```python
-GEMINI_FLASH = "gemini-2.0-flash" # Define model constant
+GEMINI_2_FLASH = "gemini-2.0-flash" # Define model constant
 --8<-- "examples/python/snippets/agents/custom-agent/storyflow_agent.py:llmagents"
 ```
 
