@@ -33,11 +33,11 @@ orchestration**.
 </div>
 
 <p style="text-align:center;">
-  <a href="get-started/quickstart/" class="md-button">Quickstart</a>
-  <a href="get-started/tutorial/" class="md-button">Tutorial</a>
-  <a href="http://github.com/google/adk-samples" class="md-button" target="_blank">Sample Agents</a>
-  <a href="api-reference/" class="md-button">API Reference</a>
-  <a href="contributing-guide/" class="md-button">Contribute ❤️</a>
+  <a href="get-started/quickstart/" class="md-button" style="margin:3px">Quickstart</a>
+  <a href="get-started/tutorial/" class="md-button" style="margin:3px">Tutorial</a>
+  <a href="http://github.com/google/adk-samples" class="md-button" target="_blank" style="margin:3px">Sample Agents</a>
+  <a href="api-reference/" class="md-button" style="margin:3px">API Reference</a>
+  <a href="contributing-guide/" class="md-button" style="margin:3px">Contribute ❤️</a>
 </p>
 
 ---
