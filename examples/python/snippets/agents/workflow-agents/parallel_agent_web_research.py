@@ -67,6 +67,8 @@ parallel_research_agent = ParallelAgent(
     sub_agents=[researcher_agent_1, researcher_agent_2, researcher_agent_3]
 )
 
+root_agent = parallel_research_agent
+
 # Session and Runner
 session_service = InMemorySessionService()
 session = session_service.create_session(app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID)
