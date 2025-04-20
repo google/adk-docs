@@ -123,7 +123,7 @@ This example demonstrates the basic flow using the `InMemory` services for simpl
     print("--- Turn 1: Capturing Information ---")
     session1_id = "session_info"
     session1 = session_service.create_session(APP_NAME, USER_ID, session1_id)
-    user_input1 = Content(parts=[Part(text="My favorite project is Project Alpha.")])
+    user_input1 = Content(parts=[Part(text="My favorite project is Project Alpha.")], role="user")
 
     # Run the agent
     final_response_text = "(No final response)"
@@ -147,7 +147,7 @@ This example demonstrates the basic flow using the `InMemory` services for simpl
 
     # Switch runner to the recall agent
     runner.agent = memory_recall_agent
-    user_input2 = Content(parts=[Part(text="What is my favorite project?")])
+    user_input2 = Content(parts=[Part(text="What is my favorite project?")], role="user")
 
     # Run the recall agent
     print("Running MemoryRecallAgent...")
