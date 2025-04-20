@@ -144,6 +144,7 @@ os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "False"
 
 ```
 MODEL_GEMINI_2_0_FLASH = "gemini-2.0-flash"
+MODEL_GEMINI_2_5_PRO = "gemini-2.5-pro"
 
 # Note: Specific model names might change. Refer to LiteLLM or the model provider's documentation.
 MODEL_GPT_4O = "openai/gpt-4o"
