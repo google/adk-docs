@@ -144,6 +144,7 @@ os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "False"
 
 ```
 MODEL_GEMINI_2_0_FLASH = "gemini-2.0-flash"
+MODEL_GEMINI_2_5_PRO = "gemini-2.5-pro"
 
 # Note: Specific model names might change. Refer to LiteLLM or the model provider's documentation.
 MODEL_GPT_4O = "openai/gpt-4o"
@@ -234,7 +235,7 @@ We configure it with several key parameters:
 ```py
 # @title Define the Weather Agent
 # Use one of the model constants defined earlier
-AGENT_MODEL = MODEL_GEMINI_2_5_PRO # Starting with a powerful Gemini model
+AGENT_MODEL = MODEL_GEMINI_2_0_FLASH # Starting with a powerful Gemini model
 
 weather_agent = Agent(
     name="weather_agent_v1",
