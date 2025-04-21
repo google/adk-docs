@@ -148,6 +148,7 @@ nav:
     - evaluate/index.md
   - Guides:
     - Responsible Agents: guides/responsible-agents.md
+  - Agent-2-Agent (A2A) Protocol: https://github.com/google/A2A/tree/main
   - Community Resources: community.md
   - Contributing Guide: contributing-guide.md
   - API Reference: api-reference/index.html
