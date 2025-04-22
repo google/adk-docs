@@ -199,7 +199,7 @@ There are multiple ways to interact with your agent:
 
 === "Terminal (adk run)"
 
-    Run the following command, to chat with your Google Search agent.
+    Run the following command, to chat with your Weather agent.
 
     ```
     adk run multi_tool_agent
