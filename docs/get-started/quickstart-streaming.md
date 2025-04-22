@@ -139,7 +139,7 @@ adk web
 
 Open the URL provided (usually `http://localhost:8000` or
 `http://127.0.0.1:8000`) **directly in your browser**. This connection stays
-entirely on your local machine. Select `basic_search_agent`.
+entirely on your local machine. Select `google_search_agent`.
 
 ### Try with text
 
