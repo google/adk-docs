@@ -95,14 +95,14 @@ orchestration**.
 
     [**Evaluate agents**](evaluate/index.md)
 
--   :material-console-line: **Building Responsible Agents**
+-   :material-console-line: **Building Safe and Secure Agents**
 
     ---
 
     Learn how to building powerful and trustworthy agents by implementing
-    responsible AI patterns and best practices into your agent's design.
+    security and safety patterns and best practices into your agent's design.
 
-    [**Responsible agents**](guides/responsible-agents.md)
+    [**Safety and Security**](safety/index.md)
 
 </div>
 

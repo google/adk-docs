@@ -150,8 +150,7 @@ nav:
   - Evaluate:
     - evaluate/index.md
 
-  - Guides:
-    - Responsible Agents: guides/responsible-agents.md
+  - Safety and Security: safety/index.md
   - Agent2Agent (A2A) Protocol: https://github.com/google/A2A/
   - Community Resources: community.md
   - Contributing Guide: contributing-guide.md
