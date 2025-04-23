@@ -37,7 +37,7 @@ agents, capable of handling complex tasks and workflows.
 
     Create your first ADK multi-agent.
 
-    [:octicons-arrow-right-24: More information](tutorial.md)
+    [:octicons-arrow-right-24: More information](../tutorials/index.md)
 
 -   :material-rocket-launch-outline: **Discover sample agents**
 

@@ -90,6 +90,7 @@ plugins:
       redirect_maps:
         'get-started/local-testing.md': 'get-started/testing.md'
         'get-started/tutorial.md': 'tutorials/index.md'
+        'guides/responsible-agents.md': 'safety/index.md'
 
 # Navigation
 nav:
