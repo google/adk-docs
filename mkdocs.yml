@@ -89,7 +89,7 @@ plugins:
   - redirects:
       redirect_maps:
         'get-started/local-testing.md': 'get-started/testing.md'
-        'get-started/tutorials.md': 'tutorials/index.md'
+        'get-started/tutorial.md': 'tutorials/index.md'
 
 # Navigation
 nav:
