@@ -89,6 +89,8 @@ plugins:
   - redirects:
       redirect_maps:
         'get-started/local-testing.md': 'get-started/testing.md'
+        'get-started/tutorial.md': 'tutorials/index.md'
+        'guides/responsible-agents.md': 'safety/index.md'
 
 # Navigation
 nav:
@@ -98,10 +100,12 @@ nav:
     - Installation: get-started/installation.md
     - Quickstart: get-started/quickstart.md
     - Quickstart (streaming): get-started/quickstart-streaming.md
-    - Tutorial: get-started/tutorial.md
     - Testing: get-started/testing.md
     - Sample agents: https://github.com/google/adk-samples
     - About ADK: get-started/about.md
+  - Tutorials:
+    - tutorials/index.md
+    - Agent Team: tutorials/agent-team.md
   - Agents:
     - agents/index.md
     - LLM agents: agents/llm-agents.md
@@ -146,8 +150,8 @@ nav:
     - context/index.md
   - Evaluate:
     - evaluate/index.md
-  - Guides:
-    - Responsible Agents: guides/responsible-agents.md
+
+  - Safety and Security: safety/index.md
   - Agent2Agent (A2A) Protocol: https://github.com/google/A2A/
   - Community Resources: community.md
   - Contributing Guide: contributing-guide.md
