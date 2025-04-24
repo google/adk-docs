@@ -205,7 +205,7 @@ Expected output for `stream_query` (remote):
 
 ## Clean up
 
-After you've finished, it's a good practice to clean up your cloud resources.
+After you have finished, it is a good practice to clean up your cloud resources.
 You can delete the deployed Agent Engine instance to avoid any unexpected
 charges on your Google Cloud account.
 
