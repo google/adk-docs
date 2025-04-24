@@ -28,16 +28,15 @@ USER_ID = "dev_user_01"
 SESSION_ID = "loop_session_01"
 GEMINI_MODEL = "gemini-2.0-flash"
 
+# --8<-- [start:init]
+# Part of agent.py --> Follow https://google.github.io/adk-docs/get-started/quickstart/ to learn the setup
+
 # --- State Keys ---
 # Using constants makes prompts and logic less error-prone
 STATE_INITIAL_TOPIC = "initial_topic"
 STATE_CURRENT_DOC = "current_document"
 STATE_CRITICISM = "criticism"
 STOP_WORD = "completed" # The exact word the CriticAgent should output to stop
-
-
-# --8<-- [start:init]
-# Part of agent.py --> Follow https://google.github.io/adk-docs/get-started/quickstart/ to learn the setup
 
 # --- Agent Definitions ---
 
@@ -48,11 +47,11 @@ writer_agent = LlmAgent(
     # Improved Instruction: Use state key injection `{...}` and clear logic
     instruction=f"""You are a Creative Writing Assistant. Your goal is to iteratively write and refine a short document based on feedback.
 
-IF the state key '{STATE_CURRENT_DOC}' does NOT exist or is empty:
-Write a very short (1-2 sentence) story or document based on the topic provided in the state key '{STATE_INITIAL_TOPIC}'.
+IF the state key {STATE_CURRENT_DOC} does NOT exist or is empty:
+Write a very short (1-2 sentence) story or document based on the topic provided in the state key {STATE_INITIAL_TOPIC}.
 
-ELSE IF the state key '{STATE_CRITICISM}' exists and contains feedback (and is not '{STOP_WORD}'):
-Refine the document currently in the state key '{STATE_CURRENT_DOC}' by thoughtfully applying the suggestions found in '{STATE_CRITICISM}'. Aim to improve the document based on the feedback.
+ELSE IF the state key {STATE_CRITICISM} exists and contains feedback (and is not {STOP_WORD}):
+Refine the document currently in the state key {STATE_CURRENT_DOC} by thoughtfully applying the suggestions found in {STATE_CRITICISM}. Aim to improve the document based on the feedback.
 
 Output *only* the new or refined document text. Do not add any introductory or concluding remarks.
 """,
@@ -67,19 +66,20 @@ critic_agent = LlmAgent(
     # Improved Instruction: Specific output requirements for critique and stopping
     instruction=f"""You are a Constructive Critic AI. Your task is to review a document and provide feedback, or indicate completion.
 
-Review the document provided in the session state key '{STATE_CURRENT_DOC}'.
+Review the document provided in the session state key {STATE_CURRENT_DOC}.
 
 IF the document can be improved:
 Provide 1-2 brief, actionable suggestions for improvement (e.g., "Expand on the character's motivation.", "Add more sensory details."). Output *only* the critique text.
 
 ELSE IF the document requires no further changes or is satisfactory:
-Respond *exactly* with the word '{STOP_WORD}' and nothing else. This signals that the writing process is complete.
+Respond *exactly* with the word {STOP_WORD} and nothing else. This signals that the writing process is complete.
 
 Do not add any explanations before or after your critique or the stop word.
 """,
     description="Reviews the current document draft and provides critique or signals completion.",
     output_key=STATE_CRITICISM # Saves critique to state['criticism']
 )
+
 
 # Custom Agent to Check the Stop Condition
 class CheckCondition(BaseAgent):
