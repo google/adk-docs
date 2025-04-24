@@ -21,6 +21,7 @@ from google.adk.agents.sequential_agent import SequentialAgent
 from google.adk.runners import InMemoryRunner
 from google.adk.tools import google_search
 from google.genai import types
+import asyncio
 
 # --- Configuration ---
 APP_NAME = "parallel_research_app"
@@ -213,7 +214,22 @@ async def call_sequential_pipeline(query: str, user_id: str, session_id: str):
         print(f"\n❌ An error occurred during agent execution: {e}")
 
 
-# # Define main async function to run the interaction
+# Define main async function to run the interaction
 initial_trigger_query = "Summarize recent sustainable tech advancements."
-await call_sequential_pipeline(initial_trigger_query, user_id=USER_ID, session_id=SESSION_ID)
-# asyncio.run(call_sequential_pipeline(initial_trigger_query, user_id=USER_ID, session_id=SESSION_ID))
+
+# Handle both cases: whether we're in an existing event loop or not
+try:
+    # Get the current event loop or create a new one
+    loop = asyncio.get_event_loop()
+    # If we're already in an event loop, just run the coroutine
+    if loop.is_running():
+        # Create a task in the existing loop
+        asyncio.create_task(call_sequential_pipeline(initial_trigger_query, user_id=USER_ID, session_id=SESSION_ID))
+    else:
+        # No running loop, so we can run until complete
+        loop.run_until_complete(call_sequential_pipeline(initial_trigger_query, user_id=USER_ID, session_id=SESSION_ID))
+except RuntimeError:
+    # If we can't get an event loop in this thread, create a new one
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(call_sequential_pipeline(initial_trigger_query, user_id=USER_ID, session_id=SESSION_ID))
