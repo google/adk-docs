@@ -145,14 +145,6 @@ remote_app = agent_engines.create(
 
 This step may take several minutes to finish.
 
-## Grant the deployed agent permissions
-
-Before proceeding to query your agent on Agent Engine, your deployed agent must first be granted additional permissions before it can use managed sessions. Managed sessions are a built-in component of Agent Engine that enables agents to keep track of the state of a conversation. Without granting the deploy agent the permissions below, you may see errors when querying your deployed agent.
-
-You can follow the instructions in [Set up your service agent permissions](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/set-up#service-agent) to grant the following permissions via the [IAM admin page](https://console.cloud.google.com/iam-admin/iam):
-
-*  Vertex AI User (`roles/aiplatform.user`) to your `service-PROJECT_NUMBER@gcp-sa-aiplatform-re.iam.gserviceaccount.com` service account
-
 ### Try your agent on Agent Engine
 
 #### Create session (remote)
