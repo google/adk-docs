@@ -40,5 +40,5 @@ This ensures the code is written, *then* reviewed, and *finally* refactored, in 
 ???+ "Code"
 
     ```py
-    --8<-- "examples/python/snippets/agents/workflow-agents/sequential_agent_code_development_agent.py"
+    --8<-- "examples/python/snippets/agents/workflow-agents/sequential_agent_code_development_agent.py:init"
     ```
