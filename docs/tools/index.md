@@ -91,6 +91,8 @@ The **ToolContext** provides access to several key pieces of information and con
 
 * Access to Services: Methods to interact with configured services like Artifacts and Memory.
 
+Note that you shouldn't include the `tool_context` parameter in the tool function docstring. Since `ToolContext` is automatically injected by the ADK framework *after* the LLM decides to call the tool function, it is not relevant for the LLM's decision-making and including it can confuse the LLM.
+
 ### **State Management**
 
 The `tool_context.state` attribute provides direct read and write access to the state associated with the current session. It behaves like a dictionary but ensures that any modifications are tracked as deltas and persisted by the session service. This enables tools to maintain and share information across different interactions and agent steps.
@@ -203,6 +205,7 @@ Here are key guidelines for defining effective tool functions:
     * **Explain *when* the tool should be used.** Provide context or example scenarios to guide the LLM's decision-making.
     * **Describe *each parameter* clearly.** Explain what information the LLM needs to provide for that argument.
     * Describe the **structure and meaning of the expected `dict` return value**, especially the different `status` values and associated data keys.
+    * **Do not describe the injected ToolContext parameter**. Avoid mentioning the optional `tool_context: ToolContext` parameter within the docstring description since it is not a parameter the LLM needs to know about. ToolContext is injected by ADK, *after* the LLM decides to call it. 
 
     **Example of a good definition:**
 
