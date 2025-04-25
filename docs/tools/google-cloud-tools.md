@@ -329,7 +329,7 @@ information on
 Toolbox, see the
 [documentation](https://googleapis.github.io/genai-toolbox/getting-started/introduction/).
 
-![GenAI Toolbox](../assets/mcp_db_toolbox.svg)
+![GenAI Toolbox](../assets/mcp_db_toolbox.png)
 
 ### Configure and deploy
 

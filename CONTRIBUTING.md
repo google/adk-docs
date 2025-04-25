@@ -54,7 +54,7 @@ a new one if you have an idea or find a bug.
 3.  **Install dependencies:**
 
     ```shell
-    pip install -r requirements
+    pip install -r requirements.txt
     ```
 
 4.  **Run the local development server:**
