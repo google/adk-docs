@@ -125,73 +125,76 @@ root_agent = code_pipeline_agent
 
 # --- 3. Running the Agent (Using InMemoryRunner for local testing) ---
 
-# Use InMemoryRunner
-runner = InMemoryRunner(agent=root_agent, app_name=APP_NAME)
-print(f"InMemoryRunner created for agent '{root_agent.name}'.")
+# # Use InMemoryRunner
+# runner = InMemoryRunner(agent=root_agent, app_name=APP_NAME)
+# print(f"InMemoryRunner created for agent '{root_agent.name}'.")
 
 
-# --- Interaction Function ---
-async def call_code_pipeline(query: str, user_id: str, session_id: str) -> Optional[str]:
-    """Runs the code pipeline for a given query and prints intermediate/final steps."""
-    print(f"\n{'='*15} Running Code Pipeline for Query: '{query}' {'='*15}")
-    print(f"Attempting to use Session ID: {session_id}")
-    content = types.Content(role='user', parts=[types.Part(text=query)])
-    final_code = None
-    pipeline_step_outputs = {}
+# # --- Interaction Function ---
+# async def call_code_pipeline(query: str, user_id: str, session_id: str) -> Optional[str]:
+#     """Runs the code pipeline for a given query and prints intermediate/final steps."""
+#     print(f"\n{'='*15} Running Code Pipeline for Query: '{query}' {'='*15}")
+#     print(f"Attempting to use Session ID: {session_id}")
+#     content = types.Content(role='user', parts=[types.Part(text=query)])
+#     final_code = None
+#     pipeline_step_outputs = {}
 
-    # --- Explicit Session Creation/Check BEFORE run_async ---
-    session_service = runner.session_service
-    session = session_service.create_session(app_name=APP_NAME, user_id=user_id, session_id=session_id)
+#     # --- Explicit Session Creation/Check BEFORE run_async ---
+#     session_service = runner.session_service
+#     session = session_service.create_session(app_name=APP_NAME, user_id=user_id, session_id=session_id)
   
-    # --- Run the Agent ---
-    async for event in runner.run_async(
-        user_id=user_id, session_id=session_id, new_message=content
-    ):
-        author_name = event.author or "System"
-        is_final = event.is_final_response()
+#     # --- Run the Agent ---
+#     async for event in runner.run_async(
+#         user_id=user_id, session_id=session_id, new_message=content
+#     ):
+#         author_name = event.author or "System"
+#         is_final = event.is_final_response()
 
-        if is_final and event.content and event.content.parts:
-            output_text = event.content.parts[0].text.strip()
-            pipeline_step_outputs[author_name] = output_text
+#         if is_final and event.content and event.content.parts:
+#             output_text = event.content.parts[0].text.strip()
+#             pipeline_step_outputs[author_name] = output_text
 
-            print(f"\n--- Output from: {author_name} ---")
-            print(output_text)
-            print("-" * (len(author_name) + 18))
+#             print(f"\n--- Output from: {author_name} ---")
+#             print(output_text)
+#             print("-" * (len(author_name) + 18))
 
-            if author_name == code_refactorer_agent.name:
-                final_code = output_text
+#             if author_name == code_refactorer_agent.name:
+#                 final_code = output_text
 
-        elif event.error_message:
-              # Log error but allow loop to continue if possible
-              print(f"  -> Error from {author_name}: {event.error_message}")
+#         elif event.error_message:
+#               # Log error but allow loop to continue if possible
+#               print(f"  -> Error from {author_name}: {event.error_message}")
 
-    if final_code is None:
-        print("\nPipeline did not produce final refactored code.")
+#     if final_code is None:
+#         print("\nPipeline did not produce final refactored code.")
 
-    # --- Final State Retrieval ---
-    print("\n--- Attempting to retrieve Final Session State ---")
-    final_session_object = None
-    try:
-        # Use the correct method via the internal session_service
-        final_session_object = runner.session_service.get_session(
-            app_name=APP_NAME, user_id=user_id, session_id=session_id
-        )
-    except Exception as e:
-         print(f"   -> Error retrieving final session object: {e}")
+#     # --- Final State Retrieval ---
+#     print("\n--- Attempting to retrieve Final Session State ---")
+#     final_session_object = None
+#     try:
+#         # Use the correct method via the internal session_service
+#         final_session_object = runner.session_service.get_session(
+#             app_name=APP_NAME, user_id=user_id, session_id=session_id
+#         )
+#     except Exception as e:
+#          print(f"   -> Error retrieving final session object: {e}")
 
-    if final_session_object:
-        print(final_session_object.state) # Access the .state attribute
-    else:
-        print("State not found (Final session object could not be retrieved).")
-    print("=" * 50)
+#     if final_session_object:
+#         print(final_session_object.state) # Access the .state attribute
+#     else:
+#         print("State not found (Final session object could not be retrieved).")
+#     print("=" * 50)
 
-    return final_code
+#     return final_code
 
 
-query = "Write a Python function to calculate the factorial of a number using recursion."
-# query = "Create a simple Python class for a 'Book' with attributes title and author."
-# query = "Generate a Python function that takes a list of numbers and returns the sum of squares."
-# query = "Write a Python script to read the first line of a text file named 'input.txt'."
+# query = "Write a Python function to calculate the factorial of a number using recursion."
+# # query = "Create a simple Python class for a 'Book' with attributes title and author."
+# # query = "Generate a Python function that takes a list of numbers and returns the sum of squares."
+# # query = "Write a Python script to read the first line of a text file named 'input.txt'."
 
-await call_code_pipeline(query, user_id=USER_ID, session_id=SESSION_ID)
-# asyncio.run(call_code_pipeline(query, user_id=USER_ID, session_id=SESSION_ID))
+# # In Colab/Jupyter:
+# await call_code_pipeline(query, user_id=USER_ID, session_id=SESSION_ID)
+
+# # In a standalone Python script or if await is not supported/failing:
+# # asyncio.run(call_code_pipeline(query, user_id=USER_ID, session_id=SESSION_ID))
