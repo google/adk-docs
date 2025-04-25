@@ -28,7 +28,7 @@ which adk
 which npx
 ```
 
-## 1. **Using MCP servers with ADK agents (ADK as an MCP client)**
+## 1. **Using MCP servers with ADK agents (ADK as an MCP client) in `adk web` **
 
 This section shows two examples of using MCP servers with ADK agents. This is the **most common** integration pattern. Your ADK agent needs to use functionality provided by an existing service that exposes itself as an MCP Server.
 
@@ -43,9 +43,9 @@ The examples use the `MCPToolset` class in ADK which acts as the bridge to the M
 5. **Proxy Calls:** When the `LlmAgent` decides to use one of these tools, `MCPToolset` forwards the call (`call_tool` MCP method) to the MCP server and returns the result.  
 6. **Manage Connection:** Handle the lifecycle of the connection to the MCP server process, often requiring explicit cleanup.
 
-These examples assumes you interact with MCP Tools with `adk web`. If you are not using `adk web`, see "Using MCP Tools in your own Agent implementation with Code" section below.
+These examples assumes you interact with MCP Tools with `adk web`. If you are not using `adk web`, see "Using MCP Tools in your own Agent out of `adk web`" section below.
 
-_Note: Using MCP tool requires a slightly different syntax to export the agent containing MCP Tools. A simpler interface for using MCP in ADK is currently WIP._
+_Note: Using MCP tool requires a slightly different syntax to export the agent containing MCP Tools. A simpler interface for using MCP in ADK is currently in progress._
 
 ### Example 1: File System MCP Server
 
@@ -74,7 +74,7 @@ async def create_agent():
             "/path/to/your/folder",
           ],
       )
-)
+  )
 
   agent = LlmAgent(
       model='gemini-2.0-flash',
@@ -88,6 +88,58 @@ async def create_agent():
 
 
 root_agent = create_agent()
+```
+
+If there are multiple MCP Servers, create a common exit stack and apply it to all MCPToolsets
+
+```python
+# agent.py
+from contextlib import AsyncExitStack
+from google.adk.agents.llm_agent import LlmAgent
+from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, StdioServerParameters, SseServerParams
+
+
+async def create_agent():
+  """Gets tools from MCP Server."""
+  common_exit_stack = AsyncExitStack()
+
+  local_tools, _ = await MCPToolset.from_server(
+      connection_params=StdioServerParameters(
+          command='npx',
+          args=["-y",    # Arguments for the command
+            "@modelcontextprotocol/server-filesystem",
+            # TODO: IMPORTANT! Change the path below to an ABSOLUTE path on your system.
+            "/path/to/your/folder",
+          ],
+      ),
+      async_exit_stack=common_exit_stack
+  )
+
+  remote_tools, _ = await MCPToolset.from_server(
+      connection_params=SseServerParams(
+          # TODO: IMPORTANT! Change the path below to your remote MCP Server path
+          url="https://your-mcp-server-url.com/sse"
+      ),
+      async_exit_stack=common_exit_stack
+  )
+  
+
+  agent = LlmAgent(
+      model='gemini-2.0-flash',
+      name='enterprise_assistant',
+      instruction=(
+          'Help user accessing their file systems'
+      ),
+      tools=[
+        *local_tools, 
+        *remote_tools,
+      ],
+  )
+  return agent, common_exit_stack
+
+
+root_agent = create_agent()
+
 ```
 
 #### Step 2: Create an __init__ file
@@ -136,6 +188,7 @@ from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, StdioServerParamet
 
 async def create_agent():
   """Gets tools from MCP Server."""
+
   tools, exit_stack = await MCPToolset.from_server(
       connection_params=StdioServerParameters(
           command='npx',
@@ -360,13 +413,14 @@ python3 ./mcp_agent/agent.py
 
 The script will print startup messages and then wait for an MCP client to connect via its standard input/output to your MCP Server in adk\_mcp\_server.py. Any MCP-compliant client (like Claude Desktop, or a custom client using the MCP libraries) can now connect to this process, discover the load\_web\_page tool, and invoke it. The server will print log messages indicating received requests and ADK tool execution. Refer to the [documentation](https://modelcontextprotocol.io/quickstart/server#core-mcp-concepts), to try it out with Claude Desktop.
 
-## Using MCP Tools in your own Agent implementation with Code
+## Using MCP Tools in your own Agent out of `adk web`
 
 This section is relevant to you if:
 
 * You are developing your own Agent using ADK
+* And, you are **NOT** using `adk web`,
 * And, you are exposing the agent via your own UI
-* And, you are not using `adk web`, 
+ 
 
 Using MCP Tools requires a different setup than using regular tools, due to the fact that specs for MCP Tools are fetched asynchronously
 from the MCP Server running remotely, or in another process.
@@ -461,47 +515,6 @@ if __name__ == '__main__':
     print(f"An error occurred: {e}")
 ```
 
-## MCP with adk web
-You can also define your agent with MCP tools, and then interact with your agent with `adk web`. 
-
-Notice that an agent with MCP tools needs special handling for now. 
-(A simpler way is being developed.)
-```py
-async def get_tools_async():
-  """Gets tools from the File System MCP Server."""
-  print("Attempting to connect to MCP Filesystem server...")
-  tools, exit_stack = await MCPToolset.from_server(
-      # Use StdioServerParameters for local process communication
-      connection_params=StdioServerParameters(
-          command='npx', # Command to run the server
-          args=["-y",    # Arguments for the command
-                "@modelcontextprotocol/server-filesystem",
-                # TODO: IMPORTANT! Change the path below to an ABSOLUTE path on your system.
-                "/path/to/your/folder/"],
-      )
-      # For remote servers, you would use SseServerParams instead:
-      # connection_params=SseServerParams(url="http://remote-server:port/path", headers={...})
-  )
-  print("MCP Toolset created successfully.")
-  # MCP requires maintaining a connection to the local MCP Server.
-  # exit_stack manages the cleanup of this connection.
-  return tools, exit_stack
-
-async def create_agent():
-  """Gets tools from MCP Server."""
-  tools, exit_stack = await get_tools_async()
-
-  agent = LlmAgent(
-      model='gemini-2.0-flash', # Adjust model name if needed based on availability
-      name='filesystem_assistant',
-      instruction='Help user interact with the local filesystem using available tools.',
-      tools=tools, # Provide the MCP tools to the ADK agent
-  )
-  return agent, exit_stack
-
-
-root_agent = create_agent()
-```
 
 ## Key considerations
 
