@@ -122,18 +122,18 @@ This example demonstrates the basic flow using the `InMemory` services for simpl
     # Turn 1: Capture some information in a session
     print("--- Turn 1: Capturing Information ---")
     session1_id = "session_info"
-    session1 = session_service.create_session(APP_NAME, USER_ID, session1_id)
+    session1 = session_service.create_session(app_name=APP_NAME, user_id=USER_ID, session_id=session1_id)
     user_input1 = Content(parts=[Part(text="My favorite project is Project Alpha.")], role="user")
 
     # Run the agent
     final_response_text = "(No final response)"
-    for event in runner.run(USER_ID, session1_id, user_input1):
+    for event in runner.run(user_id=USER_ID, session_id=session1_id, new_message=user_input1):
         if event.is_final_response() and event.content and event.content.parts:
             final_response_text = event.content.parts[0].text
     print(f"Agent 1 Response: {final_response_text}")
 
     # Get the completed session
-    completed_session1 = session_service.get_session(APP_NAME, USER_ID, session1_id)
+    completed_session1 = session_service.get_session(app_name=APP_NAME, user_id=USER_ID, session_id=session1_id)
 
     # Add this session's content to the Memory Service
     print("\n--- Adding Session 1 to Memory ---")
@@ -143,7 +143,7 @@ This example demonstrates the basic flow using the `InMemory` services for simpl
     # Turn 2: In a *new* (or same) session, ask a question requiring memory
     print("\n--- Turn 2: Recalling Information ---")
     session2_id = "session_recall" # Can be same or different session ID
-    session2 = session_service.create_session(APP_NAME, USER_ID, session2_id)
+    session2 = session_service.create_session(app_name=APP_NAME, user_id=USER_ID, session_id=session2_id)
 
     # Switch runner to the recall agent
     runner.agent = memory_recall_agent
@@ -152,7 +152,7 @@ This example demonstrates the basic flow using the `InMemory` services for simpl
     # Run the recall agent
     print("Running MemoryRecallAgent...")
     final_response_text_2 = "(No final response)"
-    for event in runner.run(USER_ID, session2_id, user_input2):
+    for event in runner.run(user_id=USER_ID, session_id=session2_id, new_message=user_input2):
         print(f"  Event: {event.author} - Type: {'Text' if event.content and event.content.parts and event.content.parts[0].text else ''}"
             f"{'FuncCall' if event.get_function_calls() else ''}"
             f"{'FuncResp' if event.get_function_responses() else ''}")
