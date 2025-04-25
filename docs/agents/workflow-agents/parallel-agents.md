@@ -47,5 +47,5 @@ These research tasks are independent.  Using a `ParallelAgent` allows them to ru
 ???+ "Code"
 
     ```py
-    --8<-- "examples/python/snippets/agents/workflow-agents/parallel_agent_web_research.py"
+    --8<-- "examples/python/snippets/agents/workflow-agents/parallel_agent_web_research.py:init"
     ```

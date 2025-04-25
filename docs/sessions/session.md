@@ -75,11 +75,10 @@ ADK provides different `SessionService` implementations, allowing you to choose 
 
     * **How it works:** Connects to a relational database (e.g., PostgreSQL, MySQL, SQLite) to store session data persistently in tables.  
     * **Persistence:** Yes. Data survives application restarts.  
-    * **Requires:** A configured database and the `sqlalchemy` library (`pip install google-adk[database]`).  
+    * **Requires:** A configured database.  
     * **Best for:** Applications needing reliable, persistent storage that you manage yourself.
 
-    ```py
-    # Requires: pip install google-adk[database]
+    ```py    
     from google.adk.sessions import DatabaseSessionService
     # Example using a local SQLite file:
     db_url = "sqlite:///./my_agent_data.db"

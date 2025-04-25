@@ -484,6 +484,48 @@ python3 ./mcp_agent/agent.py
 
 The script will print startup messages and then wait for an MCP client to connect via its standard input/output to your MCP Server in adk\_mcp\_server.py. Any MCP-compliant client (like Claude Desktop, or a custom client using the MCP libraries) can now connect to this process, discover the load\_web\_page tool, and invoke it. The server will print log messages indicating received requests and ADK tool execution. Refer to the [documentation](https://modelcontextprotocol.io/quickstart/server#core-mcp-concepts), to try it out with Claude Desktop.
 
+## MCP with adk web
+You can also define your agent with MCP tools, and then interact with your agent with `adk web`. 
+
+Notice that an agent with MCP tools needs speical handling for now. 
+(A simpler way is being developed.)
+```py
+async def get_tools_async():
+  """Gets tools from the File System MCP Server."""
+  print("Attempting to connect to MCP Filesystem server...")
+  tools, exit_stack = await MCPToolset.from_server(
+      # Use StdioServerParameters for local process communication
+      connection_params=StdioServerParameters(
+          command='npx', # Command to run the server
+          args=["-y",    # Arguments for the command
+                "@modelcontextprotocol/server-filesystem",
+                # TODO: IMPORTANT! Change the path below to an ABSOLUTE path on your system.
+                "/path/to/your/folder/"],
+      )
+      # For remote servers, you would use SseServerParams instead:
+      # connection_params=SseServerParams(url="http://remote-server:port/path", headers={...})
+  )
+  print("MCP Toolset created successfully.")
+  # MCP requires maintaining a connection to the local MCP Server.
+  # exit_stack manages the cleanup of this connection.
+  return tools, exit_stack
+
+async def create_agent():
+  """Gets tools from MCP Server."""
+  tools, exit_stack = await get_tools_async()
+
+  agent = LlmAgent(
+      model='gemini-2.0-flash', # Adjust model name if needed based on availability
+      name='filesystem_assistant',
+      instruction='Help user interact with the local filesystem using available tools.',
+      tools=tools, # Provide the MCP tools to the ADK agent
+  )
+  return agent, exit_stack
+
+
+root_agent = create_agent()
+```
+
 ## Key considerations
 
 When working with MCP and ADK, keep these points in mind:
