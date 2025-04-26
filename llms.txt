@@ -585,7 +585,7 @@ Assessing agent performance.
 ### Methods (`adk web`, `pytest`, `adk eval`)
 
 *   **`adk web`:** Interactive evaluation via "Eval" tab in the dev UI. Can create evalsets from sessions.
-*   **`pytest`:** Programmatic evaluation using `AgentEvaluator.evaluate(agent_module=..., eval_dataset=...)`. Good for CI/CD.
+*   **`pytest`:** Programmatic evaluation using `AgentEvaluator.evaluate(agent_module=..., eval_dataset_file_path_or_dir=...)`. Good for CI/CD.
 *   **`adk eval <AGENT_MODULE> <EVAL_SET_FILE(S)>`:** CLI command to run evaluations on evalsets.
 
 ### Criteria
