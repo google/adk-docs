@@ -28,9 +28,9 @@ which adk
 which npx
 ```
 
-## 1. **Using MCP servers with ADK agents (ADK as an MCP client)**
+## 1. **Using MCP servers with ADK agents (ADK as an MCP client) in `adk web` **
 
-This section shows two examples of using MCP servers with ADK agents. This is the most common integration pattern. Your ADK agent needs to use functionality provided by an existing service that exposes itself as an MCP Server.
+This section shows two examples of using MCP servers with ADK agents. This is the **most common** integration pattern. Your ADK agent needs to use functionality provided by an existing service that exposes itself as an MCP Server.
 
 ### `MCPToolset` class
 
@@ -42,6 +42,10 @@ The examples use the `MCPToolset` class in ADK which acts as the bridge to the M
 4. **Expose:** Present these adapted tools to the ADK `LlmAgent`.  
 5. **Proxy Calls:** When the `LlmAgent` decides to use one of these tools, `MCPToolset` forwards the call (`call_tool` MCP method) to the MCP server and returns the result.  
 6. **Manage Connection:** Handle the lifecycle of the connection to the MCP server process, often requiring explicit cleanup.
+
+These examples assumes you interact with MCP Tools with `adk web`. If you are not using `adk web`, see "Using MCP Tools in your own Agent out of `adk web`" section below.
+
+_Note: Using MCP tool requires a slightly different syntax to export the agent containing MCP Tools. A simpler interface for using MCP in ADK is currently in progress._
 
 ### Example 1: File System MCP Server
 
@@ -55,128 +59,111 @@ Create `agent.py` in `./adk_agent_samples/mcp_agent/` and use the following code
 
 ```py
 # ./adk_agent_samples/mcp_agent/agent.py
-import asyncio
-from dotenv import load_dotenv
-from google.genai import types
 from google.adk.agents.llm_agent import LlmAgent
-from google.adk.runners import Runner
-from google.adk.sessions import InMemorySessionService
-from google.adk.artifacts.in_memory_artifact_service import InMemoryArtifactService # Optional
-from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, SseServerParams, StdioServerParameters
+from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, StdioServerParameters
 
-# Load environment variables from .env file in the parent directory
-# Place this near the top, before using env vars like API keys
-load_dotenv('../.env')
 
-# --- Step 1: Import Tools from MCP Server ---
-async def get_tools_async():
-  """Gets tools from the File System MCP Server."""
-  print("Attempting to connect to MCP Filesystem server...")
+async def create_agent():
+  """Gets tools from MCP Server."""
   tools, exit_stack = await MCPToolset.from_server(
-      # Use StdioServerParameters for local process communication
       connection_params=StdioServerParameters(
-          command='npx', # Command to run the server
+          command='npx',
           args=["-y",    # Arguments for the command
-                "@modelcontextprotocol/server-filesystem",
-                # TODO: IMPORTANT! Change the path below to an ABSOLUTE path on your system.
-                "/path/to/your/folder"],
+            "@modelcontextprotocol/server-filesystem",
+            # TODO: IMPORTANT! Change the path below to an ABSOLUTE path on your system.
+            "/path/to/your/folder",
+          ],
       )
-      # For remote servers, you would use SseServerParams instead:
-      # connection_params=SseServerParams(url="http://remote-server:port/path", headers={...})
-  )
-  print("MCP Toolset created successfully.")
-  # MCP requires maintaining a connection to the local MCP Server.
-  # exit_stack manages the cleanup of this connection.
-  return tools, exit_stack
-
-# --- Step 2: Agent Definition ---
-async def get_agent_async():
-  """Creates an ADK Agent equipped with tools from the MCP Server."""
-  tools, exit_stack = await get_tools_async()
-  print(f"Fetched {len(tools)} tools from MCP server.")
-  root_agent = LlmAgent(
-      model='gemini-2.0-flash', # Adjust model name if needed based on availability
-      name='filesystem_assistant',
-      instruction='Help user interact with the local filesystem using available tools.',
-      tools=tools, # Provide the MCP tools to the ADK agent
-  )
-  return root_agent, exit_stack
-
-# --- Step 3: Main Execution Logic ---
-async def async_main():
-  session_service = InMemorySessionService()
-  # Artifact service might not be needed for this example
-  artifacts_service = InMemoryArtifactService()
-
-  session = session_service.create_session(
-      state={}, app_name='mcp_filesystem_app', user_id='user_fs'
   )
 
-  # TODO: Change the query to be relevant to YOUR specified folder.
-  # e.g., "list files in the 'documents' subfolder" or "read the file 'notes.txt'"
-  query = "list files in the tests folder"
-  print(f"User Query: '{query}'")
-  content = types.Content(role='user', parts=[types.Part(text=query)])
-
-  root_agent, exit_stack = await get_agent_async()
-
-  runner = Runner(
-      app_name='mcp_filesystem_app',
-      agent=root_agent,
-      artifact_service=artifacts_service, # Optional
-      session_service=session_service,
+  agent = LlmAgent(
+      model='gemini-2.0-flash',
+      name='enterprise_assistant',
+      instruction=(
+          'Help user accessing their file systems'
+      ),
+      tools=tools,
   )
+  return agent, exit_stack
 
-  print("Running agent...")
-  events_async = runner.run_async(
-      session_id=session.id, user_id=session.user_id, new_message=content
-  )
 
-  async for event in events_async:
-    print(f"Event received: {event}")
-
-  # Crucial Cleanup: Ensure the MCP server process connection is closed.
-  print("Closing MCP server connection...")
-  await exit_stack.aclose()
-  print("Cleanup complete.")
-
-if __name__ == '__main__':
-  try:
-    asyncio.run(async_main())
-  except Exception as e:
-    print(f"An error occurred: {e}")
+root_agent = create_agent()
 ```
 
-#### Step 2: Observe the result
+If there are multiple MCP Servers, create a common exit stack and apply it to all MCPToolsets
 
-Run the script from the adk_agent_samples directory (ensure your virtual environment is active):
+```python
+# agent.py
+from contextlib import AsyncExitStack
+from google.adk.agents.llm_agent import LlmAgent
+from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, StdioServerParameters, SseServerParams
+
+
+async def create_agent():
+  """Gets tools from MCP Server."""
+  common_exit_stack = AsyncExitStack()
+
+  local_tools, _ = await MCPToolset.from_server(
+      connection_params=StdioServerParameters(
+          command='npx',
+          args=["-y",    # Arguments for the command
+            "@modelcontextprotocol/server-filesystem",
+            # TODO: IMPORTANT! Change the path below to an ABSOLUTE path on your system.
+            "/path/to/your/folder",
+          ],
+      ),
+      async_exit_stack=common_exit_stack
+  )
+
+  remote_tools, _ = await MCPToolset.from_server(
+      connection_params=SseServerParams(
+          # TODO: IMPORTANT! Change the path below to your remote MCP Server path
+          url="https://your-mcp-server-url.com/sse"
+      ),
+      async_exit_stack=common_exit_stack
+  )
+  
+
+  agent = LlmAgent(
+      model='gemini-2.0-flash',
+      name='enterprise_assistant',
+      instruction=(
+          'Help user accessing their file systems'
+      ),
+      tools=[
+        *local_tools, 
+        *remote_tools,
+      ],
+  )
+  return agent, common_exit_stack
+
+
+root_agent = create_agent()
+
+```
+
+#### Step 2: Create an __init__ file
+
+Create an `__init__.py` in the same folder as the `agent.py` above
+
+```python
+# ./adk_agent_samples/mcp_agent/__init__.py
+from . import agent
+```
+
+#### Step 3: Observe the result
+
+Run `adk web` from the adk_agent_samples directory (ensure your virtual environment is active):
 
 ```shell
 cd ./adk_agent_samples
-python3 ./mcp_agent/agent.py
+adk web
 ```
 
-The following shows the expected output for the connection attempt, the MCP server starting (via npx), the ADK agent events (including the FunctionCall to list\_directory and the FunctionResponse), and the final agent text response based on the file listing. Ensure the exit\_stack.aclose() runs at the end.
+A successfully MCPTool interaction will yield a response by accessing your local file system, like below:
 
-```text
-User Query: 'list files in the tests folder'
-Attempting to connect to MCP Filesystem server...
-# --> npx process starts here, potentially logging to stderr/stdout
-Secure MCP Filesystem Server running on stdio
-Allowed directories: [
-  '/path/to/your/folder'
-]
-# <-- npx process output ends
-MCP Toolset created successfully.
-Fetched [N] tools from MCP server. # N = number of tools like list_directory, read_file etc.
-Running agent...
-Event received: content=Content(parts=[Part(..., function_call=FunctionCall(id='...', args={'path': 'tests'}, name='list_directory'), ...)], role='model') ...
-Event received: content=Content(parts=[Part(..., function_response=FunctionResponse(id='...', name='list_directory', response={'result': CallToolResult(..., content=[TextContent(...)], ...)}), ...)], role='user') ...
-Event received: content=Content(parts=[Part(..., text='https://developers.google.com/maps/get-started#enable-api-sdk')], role='model') ...
-Closing MCP server connection...
-Cleanup complete.
+<img src="../assets/adk-tool-mcp-filesystem-adk-web-demo.png" alt="MCP with ADK Web - FileSystem Example">
 
-```
 
 ### Example 2: Google Maps MCP Server
 
@@ -188,31 +175,20 @@ Follow the directions at [Use API keys](https://developers.google.com/maps/docum
 
 Enable Directions API and Routes API in your Google Cloud project. For instructions, see [Getting started with Google Maps Platform](https://developers.google.com/maps/get-started#enable-api-sdk) topic.
 
-#### Step 2: Update get\_tools\_async
+#### Step 2: Update create_agent
 
-Modify get\_tools\_async in agent.py to connect to the Maps server, passing your API key via the env parameter of StdioServerParameters.
+Modify `create_agent` in agent.py to connect to the Maps server, passing your API key via the env parameter of StdioServerParameters.
 
 ```py
 # agent.py (modify get_tools_async and other parts as needed)
-import asyncio
-from dotenv import load_dotenv
-from google.genai import types
+
 from google.adk.agents.llm_agent import LlmAgent
-from google.adk.runners import Runner
-from google.adk.sessions import InMemorySessionService
-from google.adk.artifacts.in_memory_artifact_service import InMemoryArtifactService # Optional
-from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, SseServerParams, StdioServerParameters
+from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, StdioServerParameters
 
-load_dotenv('../.env')
 
-async def get_tools_async():
-  """ Step 1: Gets tools from the Google Maps MCP Server."""
-  # IMPORTANT: Replace with your actual key
-  google_maps_api_key = "YOUR_API_KEY_FROM_STEP_1"
-  if "YOUR_API_KEY" in google_maps_api_key:
-      raise ValueError("Please replace 'YOUR_API_KEY_FROM_STEP_1' with your actual Google Maps API key.")
+async def create_agent():
+  """Gets tools from MCP Server."""
 
-  print("Attempting to connect to MCP Google Maps server...")
   tools, exit_stack = await MCPToolset.from_server(
       connection_params=StdioServerParameters(
           command='npx',
@@ -225,90 +201,43 @@ async def get_tools_async():
           }
       )
   )
-  print("MCP Toolset created successfully.")
-  return tools, exit_stack
 
-# --- Step 2: Agent Definition ---
-async def get_agent_async():
-  """Creates an ADK Agent equipped with tools from the MCP Server."""
-  tools, exit_stack = await get_tools_async()
-  print(f"Fetched {len(tools)} tools from MCP server.")
-  root_agent = LlmAgent(
+  agent = LlmAgent(
       model='gemini-2.0-flash', # Adjust if needed
       name='maps_assistant',
       instruction='Help user with mapping and directions using available tools.',
       tools=tools,
   )
-  return root_agent, exit_stack
+  return agent, exit_stack
 
-# --- Step 3: Main Execution Logic (modify query) ---
-async def async_main():
-  session_service = InMemorySessionService()
-  artifacts_service = InMemoryArtifactService() # Optional
 
-  session = session_service.create_session(
-      state={}, app_name='mcp_maps_app', user_id='user_maps'
-  )
-
-  # TODO: Use specific addresses for reliable results with this server
-  query = "What is the route from 1600 Amphitheatre Pkwy to 1165 Borregas Ave"
-  print(f"User Query: '{query}'")
-  content = types.Content(role='user', parts=[types.Part(text=query)])
-
-  root_agent, exit_stack = await get_agent_async()
-
-  runner = Runner(
-      app_name='mcp_maps_app',
-      agent=root_agent,
-      artifact_service=artifacts_service, # Optional
-      session_service=session_service,
-  )
-
-  print("Running agent...")
-  events_async = runner.run_async(
-      session_id=session.id, user_id=session.user_id, new_message=content
-  )
-
-  async for event in events_async:
-    print(f"Event received: {event}")
-
-  print("Closing MCP server connection...")
-  await exit_stack.aclose()
-  print("Cleanup complete.")
-
-if __name__ == '__main__':
-  try:
-    asyncio.run(async_main())
-  except Exception as e:
-      print(f"An error occurred: {e}")
-
+root_agent = create_agent()
 ```
 
-#### Step 3: Observe the Result
 
-Run the script from the adk_agent_samples directory (ensure your virtual environment is active):
+#### Step 3: Create an __init__ file
+
+If you have already finished this from Example 1 above, skip this step.
+
+Create an `__init__.py` in the same folder as the `agent.py` above
+
+```python
+# ./adk_agent_samples/mcp_agent/__init__.py
+from . import agent
+```
+
+#### Step 4: Observe the Result
+
+Run `adk web` from the adk_agent_samples directory (ensure your virtual environment is active):
 
 ```shell
 cd ./adk_agent_samples
-python3 ./mcp_agent/agent.py
+adk web
 ```
 
-A successful run will show events indicating the agent called the relevant Google Maps tool (likely related to directions or routes) and a final response containing the directions. An example is shown below.
+A successfully MCPTool interaction will yield a response with a route plan, like below:
 
-```text
-User Query: 'What is the route from 1600 Amphitheatre Pkwy to 1165 Borregas Ave'
-Attempting to connect to MCP Google Maps server...
-# --> npx process starts...
-MCP Toolset created successfully.
-Fetched [N] tools from MCP server.
-Running agent...
-Event received: content=Content(parts=[Part(..., function_call=FunctionCall(name='get_directions', ...))], role='model') ...
-Event received: content=Content(parts=[Part(..., function_response=FunctionResponse(name='get_directions', ...))], role='user') ...
-Event received: content=Content(parts=[Part(..., text='Head north toward Amphitheatre Pkwy...')], role='model') ...
-Closing MCP server connection...
-Cleanup complete.
-
-```
+<img src="../assets/adk-tool-mcp-maps-adk-web-demo.png" alt="MCP with ADK Web - Google Maps Example">
 
 ## 2. **Building an MCP server with ADK tools (MCP server exposing ADK)**
 
@@ -484,15 +413,42 @@ python3 ./mcp_agent/agent.py
 
 The script will print startup messages and then wait for an MCP client to connect via its standard input/output to your MCP Server in adk\_mcp\_server.py. Any MCP-compliant client (like Claude Desktop, or a custom client using the MCP libraries) can now connect to this process, discover the load\_web\_page tool, and invoke it. The server will print log messages indicating received requests and ADK tool execution. Refer to the [documentation](https://modelcontextprotocol.io/quickstart/server#core-mcp-concepts), to try it out with Claude Desktop.
 
-## MCP with adk web
-You can also define your agent with MCP tools, and then interact with your agent with `adk web`. 
+## Using MCP Tools in your own Agent out of `adk web`
 
-Notice that an agent with MCP tools needs speical handling for now. 
-(A simpler way is being developed.)
-```py
-async def get_tools_async():
-  """Gets tools from the File System MCP Server."""
-  print("Attempting to connect to MCP Filesystem server...")
+This section is relevant to you if:
+
+* You are developing your own Agent using ADK
+* And, you are **NOT** using `adk web`,
+* And, you are exposing the agent via your own UI
+ 
+
+Using MCP Tools requires a different setup than using regular tools, due to the fact that specs for MCP Tools are fetched asynchronously
+from the MCP Server running remotely, or in another process.
+
+The following example is modified from the "Example 1: File System MCP Server" example above. The main differences are:
+
+1. Your tool and agent are created asynchronously
+2. You need to properly manage the exit stack, so that your agents and tools are destructed properly when the connection to MCP Server is closed.
+
+```python
+# agent.py (modify get_tools_async and other parts as needed)
+# ./adk_agent_samples/mcp_agent/agent.py
+import asyncio
+from dotenv import load_dotenv
+from google.genai import types
+from google.adk.agents.llm_agent import LlmAgent
+from google.adk.runners import Runner
+from google.adk.sessions import InMemorySessionService
+from google.adk.artifacts.in_memory_artifact_service import InMemoryArtifactService # Optional
+from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, SseServerParams, StdioServerParameters
+
+# Load environment variables from .env file in the parent directory
+# Place this near the top, before using env vars like API keys
+load_dotenv('../.env')
+
+# --- Step 1: Agent Definition ---
+async def get_agent_async():
+  """Creates an ADK Agent equipped with tools from the MCP Server."""
   tools, exit_stack = await MCPToolset.from_server(
       # Use StdioServerParameters for local process communication
       connection_params=StdioServerParameters(
@@ -500,31 +456,65 @@ async def get_tools_async():
           args=["-y",    # Arguments for the command
                 "@modelcontextprotocol/server-filesystem",
                 # TODO: IMPORTANT! Change the path below to an ABSOLUTE path on your system.
-                "/path/to/your/folder/"],
+                "/path/to/your/folder"],
       )
       # For remote servers, you would use SseServerParams instead:
       # connection_params=SseServerParams(url="http://remote-server:port/path", headers={...})
   )
-  print("MCP Toolset created successfully.")
-  # MCP requires maintaining a connection to the local MCP Server.
-  # exit_stack manages the cleanup of this connection.
-  return tools, exit_stack
-
-async def create_agent():
-  """Gets tools from MCP Server."""
-  tools, exit_stack = await get_tools_async()
-
-  agent = LlmAgent(
+  print(f"Fetched {len(tools)} tools from MCP server.")
+  root_agent = LlmAgent(
       model='gemini-2.0-flash', # Adjust model name if needed based on availability
       name='filesystem_assistant',
       instruction='Help user interact with the local filesystem using available tools.',
       tools=tools, # Provide the MCP tools to the ADK agent
   )
-  return agent, exit_stack
+  return root_agent, exit_stack
 
+# --- Step 2: Main Execution Logic ---
+async def async_main():
+  session_service = InMemorySessionService()
+  # Artifact service might not be needed for this example
+  artifacts_service = InMemoryArtifactService()
 
-root_agent = create_agent()
+  session = session_service.create_session(
+      state={}, app_name='mcp_filesystem_app', user_id='user_fs'
+  )
+
+  # TODO: Change the query to be relevant to YOUR specified folder.
+  # e.g., "list files in the 'documents' subfolder" or "read the file 'notes.txt'"
+  query = "list files in the tests folder"
+  print(f"User Query: '{query}'")
+  content = types.Content(role='user', parts=[types.Part(text=query)])
+
+  root_agent, exit_stack = await get_agent_async()
+
+  runner = Runner(
+      app_name='mcp_filesystem_app',
+      agent=root_agent,
+      artifact_service=artifacts_service, # Optional
+      session_service=session_service,
+  )
+
+  print("Running agent...")
+  events_async = runner.run_async(
+      session_id=session.id, user_id=session.user_id, new_message=content
+  )
+
+  async for event in events_async:
+    print(f"Event received: {event}")
+
+  # Crucial Cleanup: Ensure the MCP server process connection is closed.
+  print("Closing MCP server connection...")
+  await exit_stack.aclose()
+  print("Cleanup complete.")
+
+if __name__ == '__main__':
+  try:
+    asyncio.run(async_main())
+  except Exception as e:
+    print(f"An error occurred: {e}")
 ```
+
 
 ## Key considerations
 
