@@ -405,6 +405,8 @@ Implement the following steps inside your function:
 Inside your tool function, first check if valid credentials (e.g., access/refresh tokens) are already stored from a previous run in this session. Credentials for the current sessions should be stored in `tool_context.invocation_context.session.state` (a dictionary of state) Check existence of existing credentials by checking `tool_context.invocation_context.session.state.get(credential_name, None)`.
 
 ```py
+from google.oauth2.credentials import Credentials
+
 # Inside your tool function
 TOKEN_CACHE_KEY = "my_tool_tokens" # Choose a unique key
 SCOPES = ["scope1", "scope2"] # Define required scopes
@@ -456,8 +458,8 @@ if exchanged_credential:
             token=access_token,
             refresh_token=refresh_token,
             token_uri=auth_scheme.flows.authorizationCode.tokenUrl,
-            client_id=YOUR_OAUTH_CLIENT_ID,
-            client_secret=YOUR_OAUTH_CLIENT_SECRET,
+            client_id=auth_credential.oauth2.client_id,
+            client_secret=auth_credential.oauth2.client_secret,
             scopes=list(auth_scheme.flows.authorizationCode.scopes.keys()),
         )
     # Cache the token in session state and call the API, skip to step 5
