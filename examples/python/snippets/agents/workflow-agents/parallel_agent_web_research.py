@@ -1,25 +1,22 @@
-# --- Setup Instructions ---
-# 1. Install the ADK package:
-# !pip install google-adk
-# # Make sure to restart kernel if using colab/jupyter notebooks
-
-# 2. Set up your Gemini API Key:
-#    - Get a key from Google AI Studio: https://aistudio.google.com/app/apikey
-#    - Set it as an environment variable:
-import os
-# os.environ["GOOGLE_API_KEY"] = "YOUR_API_KEY_HERE" # <--- REPLACE with your actual key
-# # Or learn about other authentication methods (like Vertex AI, Anthropic API, etc.):
-# # https://google.github.io/adk-docs/agents/models/
-
-# Check if API key is set before proceeding (optional but recommended)
-# if not os.getenv("GOOGLE_API_KEY"):
-#     print("Warning: GOOGLE_API_KEY environment variable not set. Google Search tool may fail.")
-
-# import asyncio # Required for async execution
+# Copyright 2025 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 
 from google.adk.agents.parallel_agent import ParallelAgent
 from google.adk.agents.llm_agent import LlmAgent
+# Import SequentialAgent to orchestrate the parallel and merge steps
+from google.adk.agents.sequential_agent import SequentialAgent
 # Use InMemoryRunner for local testing/prototyping
 from google.adk.runners import InMemoryRunner
 from google.adk.tools import google_search
@@ -28,25 +25,27 @@ from google.genai import types
 # --- Configuration ---
 APP_NAME = "parallel_research_app"
 USER_ID = "research_user_01"
-SESSION_ID = "parallel_research_session"
-# Ensure this specific model is available or change to a suitable alternative.
-GEMINI_MODEL = "gemini-2.0-flash" #
+SESSION_ID = "parallel_research_session_with_merge"
+GEMINI_MODEL = "gemini-2.0-flash"
 
-# --8<-- [start:init] 
-# --- Define Researcher Sub-Agents ---
+
+# --8<-- [start:init]
+# Part of agent.py --> Follow https://google.github.io/adk-docs/get-started/quickstart/ to learn the setup
+# --- 1. Define Researcher Sub-Agents (to run in parallel) ---
 
 # Researcher 1: Renewable Energy
 researcher_agent_1 = LlmAgent(
     name="RenewableEnergyResearcher",
     model=GEMINI_MODEL,
     instruction="""You are an AI Research Assistant specializing in energy.
-    Research the latest advancements in 'renewable energy sources'.
-    Use the Google Search tool provided.
-    Summarize your key findings concisely (1-2 sentences).
-    Output *only* the summary.
-    """,
+Research the latest advancements in 'renewable energy sources'.
+Use the Google Search tool provided.
+Summarize your key findings concisely (1-2 sentences).
+Output *only* the summary.
+""",
     description="Researches renewable energy sources.",
-    tools=[google_search], # Provide the search tool
+    tools=[google_search],
+    # Store result in state for the merger agent
     output_key="renewable_energy_result"
 )
 
@@ -55,13 +54,14 @@ researcher_agent_2 = LlmAgent(
     name="EVResearcher",
     model=GEMINI_MODEL,
     instruction="""You are an AI Research Assistant specializing in transportation.
-    Research the latest developments in 'electric vehicle technology'.
-    Use the Google Search tool provided.
-    Summarize your key findings concisely (1-2 sentences).
-    Output *only* the summary.
-    """,
+Research the latest developments in 'electric vehicle technology'.
+Use the Google Search tool provided.
+Summarize your key findings concisely (1-2 sentences).
+Output *only* the summary.
+""",
     description="Researches electric vehicle technology.",
-    tools=[google_search], # Provide the search tool
+    tools=[google_search],
+    # Store result in state for the merger agent
     output_key="ev_technology_result"
 )
 
@@ -70,169 +70,154 @@ researcher_agent_3 = LlmAgent(
     name="CarbonCaptureResearcher",
     model=GEMINI_MODEL,
     instruction="""You are an AI Research Assistant specializing in climate solutions.
-    Research the current state of 'carbon capture methods'.
-    Use the Google Search tool provided.
-    Summarize your key findings concisely (1-2 sentences).
-    Output *only* the summary.
-    """,
+Research the current state of 'carbon capture methods'.
+Use the Google Search tool provided.
+Summarize your key findings concisely (1-2 sentences).
+Output *only* the summary.
+""",
     description="Researches carbon capture methods.",
-    tools=[google_search], # Provide the search tool
+    tools=[google_search],
+    # Store result in state for the merger agent
     output_key="carbon_capture_result"
 )
 
-# --- Create the ParallelAgent ---
+# --- 2. Create the ParallelAgent (Runs researchers concurrently) ---
 # This agent orchestrates the concurrent execution of the researchers.
-# For running with ADK CLI tools (adk web, adk run, adk api_server),
-# this variable MUST be named `root_agent`.
+# It finishes once all researchers have completed and stored their results in state.
 parallel_research_agent = ParallelAgent(
     name="ParallelWebResearchAgent",
     sub_agents=[researcher_agent_1, researcher_agent_2, researcher_agent_3],
-    description="Runs multiple research agents in parallel to gather information." # Added description
+    description="Runs multiple research agents in parallel to gather information."
 )
 
+# --- 3. Define the Merger Agent (Runs *after* the parallel agents) ---
+# This agent takes the results stored in the session state by the parallel agents
+# and synthesizes them into a single, structured response with attributions.
+merger_agent = LlmAgent(
+    name="SynthesisAgent",
+    model=GEMINI_MODEL,  # Or potentially a more powerful model if needed for synthesis
+    instruction="""You are an AI Assistant responsible for combining research findings into a structured report.
+
+Your primary task is to synthesize the following research summaries, clearly attributing findings to their source areas. Structure your response using headings for each topic. Ensure the report is coherent and integrates the key points smoothly.
+
+**Crucially: Your entire response MUST be grounded *exclusively* on the information provided in the 'Input Summaries' below. Do NOT add any external knowledge, facts, or details not present in these specific summaries.**
+
+**Input Summaries:**
+
+*   **Renewable Energy:**
+    {renewable_energy_result}
+
+*   **Electric Vehicles:**
+    {ev_technology_result}
+
+*   **Carbon Capture:**
+    {carbon_capture_result}
+
+**Output Format:**
+
+## Summary of Recent Sustainable Technology Advancements
+
+### Renewable Energy Findings
+(Based on RenewableEnergyResearcher's findings)
+[Synthesize and elaborate *only* on the renewable energy input summary provided above.]
+
+### Electric Vehicle Findings
+(Based on EVResearcher's findings)
+[Synthesize and elaborate *only* on the EV input summary provided above.]
+
+### Carbon Capture Findings
+(Based on CarbonCaptureResearcher's findings)
+[Synthesize and elaborate *only* on the carbon capture input summary provided above.]
+
+### Overall Conclusion
+[Provide a brief (1-2 sentence) concluding statement that connects *only* the findings presented above.]
+
+Output *only* the structured report following this format. Do not include introductory or concluding phrases outside this structure, and strictly adhere to using only the provided input summary content.
+""",
+    description="Combines research findings from parallel agents into a structured, cited report, strictly grounded on provided inputs.",
+    # No tools needed for merging
+    # No output_key needed here, as its direct response is the final output of the sequence
+)
+
+
+# --- 4. Create the SequentialAgent (Orchestrates the overall flow) ---
+# This is the main agent that will be run. It first executes the ParallelAgent
+# to populate the state, and then executes the MergerAgent to produce the final output.
+sequential_pipeline_agent = SequentialAgent(
+    name="ResearchAndSynthesisPipeline",
+    # Run parallel research first, then merge
+    sub_agents=[parallel_research_agent, merger_agent],
+    description="Coordinates parallel research and synthesizes the results."
+)
+
+root_agent = sequential_pipeline_agent
 # --8<-- [end:init]
 
-# --- Running the Agent (Choose ONE method) ---
+# # --- 5. Running the Agent (Using InMemoryRunner for local testing) This works in Notebooks and script file ---
 
-# === Method 1: Running Directly (Notebook/Script) ===
-# This method is suitable for local testing in Colab, Jupyter, or a Python script.
-# It requires explicitly setting up the Runner and Session.
+# # Use InMemoryRunner: Ideal for quick prototyping and local testing
+# runner = InMemoryRunner(agent=root_agent, app_name=APP_NAME)
+# print(f"InMemoryRunner created for agent '{root_agent.name}'.")
 
-# Use InMemoryRunner: Ideal for quick prototyping and local testing.
-# Why? It runs entirely in memory, requiring no external database or service setup.
-# Limitation: Sessions, state, and artifacts are NOT persisted after the script finishes.
-# When to use something else? For production or multi-user scenarios, use
-# VertexAiSessionService (for managed deployment) or DatabaseSessionService (for self-hosting
-# with persistence), or implement your own BaseSessionService.
-runner = InMemoryRunner(agent=parallel_research_agent, app_name=APP_NAME)
-
-# We still need access to the session service (bundled in InMemoryRunner)
-# to create the session instance for the run.
-session_service = runner.session_service
-session = session_service.create_session(app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID)
-print(f"Session '{SESSION_ID}' created for direct run.")
-
-# Agent Interaction using run_async
-async def call_agent_directly(query):
-    '''
-    Helper async function to call the agent with a query using run_async.
-    '''
-    print(f"\n--- Calling Parallel Agent Directly with query: '{query}' ---")
-    content = types.Content(role='user', parts=[types.Part(text=query)])
-
-    # Use runner.run_async for asynchronous execution
-    print("Starting parallel research...")
-    async for event in runner.run_async(
-        user_id=USER_ID, session_id=SESSION_ID, new_message=content
-    ):
-        # ParallelAgent itself doesn't usually produce a final text response directly.
-        # Its purpose is to run sub-agents. The results are often in the state.
-        # We print events for demonstration.
-        print(f"  Event from {event.author}: Partial={event.partial}, Content Role={event.content.role if event.content else 'N/A'}")
-        if event.is_final_response() and event.content:
-             print(f"  -> Final Response Fragment from {event.author}: {event.content.parts[0].text.strip()}")
-        elif event.is_error():
-             print(f"  -> Error from {event.author}: {event.error_details}")
-
-    # After the run, check the session state for results saved by output_key
-    final_session = session_service.get_session(app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID)
-    print("\n--- Final Session State ---")
-    # Use as_dict() for a cleaner dictionary representation of the state
-    print(final_session.state)
-    print("-" * 30)
-
-async def run_direct_method():
-     # Check API key again before running
-     if not os.getenv("GOOGLE_API_KEY"):
-         print("Error: GOOGLE_API_KEY needed for google_search tool. Set the environment variable.")
-         return
-     await call_agent_directly("research latest trends in sustainable tech")
+# # We still need access to the session service (bundled in InMemoryRunner)
+# # to create the session instance for the run.
+# session_service = runner.session_service
+# session = session_service.create_session(app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID)
+# print(f"Session '{SESSION_ID}' created for direct run.")
 
 
-# === Method 2: Preparing for ADK CLI (adk web, adk run, adk api_server) ===
-# Instructions for deploying this agent using ADK command-line tools.
-# Based on the Quickstart guide: https://google.github.io/adk-docs/get-started/quickstart/
+# async def call_sequential_pipeline(query: str, user_id: str, session_id: str):
+#     """
+#     Helper async function to call the sequential agent pipeline.
+#     Prints intermediate results from parallel agents and the final merged response.
+#     """
+#     print(f"\n--- Running Research & Synthesis Pipeline for query: '{query}' ---")
+#     # The initial query mainly triggers the pipeline; the research topics are fixed in the agents for this example.
+#     content = types.Content(role='user', parts=[types.Part(text=query)])
+#     final_response_text = None
+#     # Keep track of which researchers have reported
+#     researcher_outputs = {}
+#     researcher_names = {"RenewableEnergyResearcher", "EVResearcher", "CarbonCaptureResearcher"}
+#     merger_agent_name = "SynthesisAgent" # Name of the final agent in sequence
 
-# 1. Project Structure:
-#    Organize your code into a standard Python package structure as shown in the quickstart.
-#    Example:
-#    parent_folder/
-#    └── my_parallel_agent/     <-- Your agent package folder
-#        ├── __init__.py
-#        ├── agent.py           # <-- Put your agent definitions here
-#        └── .env               # <-- Store GOOGLE_API_KEY here
+#     print("Starting pipeline...")
+#     try:
+#         async for event in runner.run_async(
+#             user_id=user_id, session_id=session_id, new_message=content
+#         ):
+#             author_name = event.author or "System"
+#             is_final = event.is_final_response()
+#             print(f"  [Event] From: {author_name}, Final: {is_final}") # Basic event logging
 
-# 2. Define `root_agent`:
-#    In your `agent.py` file inside the package folder (e.g., `my_parallel_agent/agent.py`),
-#    ensure the main agent you want the ADK tools to run (`parallel_research_agent` in this case)
-#    is assigned to a variable named exactly `root_agent`.
-#    ```python
-#    # In my_parallel_agent/agent.py
-#    # ... (define researcher_agent_1, _2, _3 as above)
-#
-#    root_agent = ParallelAgent( # <<< MUST be named root_agent for ADK CLI
-#        name="ParallelWebResearchAgent",
-#        sub_agents=[researcher_agent_1, researcher_agent_2, researcher_agent_3],
-#        description="Runs multiple research agents in parallel."
-#    )
-#    ```
-#    Also make sure your `__init__.py` imports this file (e.g., `from . import agent`).
+#             # Check if it's a final response from one of the researcher agents
+#             if is_final and author_name in researcher_names and event.content and event.content.parts:
+#                 researcher_output = event.content.parts[0].text.strip()
+#                 if author_name not in researcher_outputs: # Print only once per researcher
+#                     print(f"    -> Intermediate Result from {author_name}: {researcher_output}")
+#                     researcher_outputs[author_name] = researcher_output
 
-# 3. Environment Variables (`.env`):
-#    Create a file named `.env` inside your agent package folder (e.g., `my_parallel_agent/.env`)
-#    and add your API key as shown in the quickstart (Section 3). Example:
-#    ```env
-#    GOOGLE_API_KEY=YOUR_API_KEY_HERE
-#    # Or configure for Vertex AI as per quickstart if needed
-#    # GOOGLE_GENAI_USE_VERTEXAI=TRUE
-#    # GOOGLE_CLOUD_PROJECT=YOUR_PROJECT_ID
-#    # GOOGLE_CLOUD_LOCATION=LOCATION
-#    ```
-#    The ADK tools will automatically load environment variables from this file.
+#             # Check if it's the final response from the merger agent (the last agent in the sequence)
+#             elif is_final and author_name == merger_agent_name and event.content and event.content.parts:
+#                  final_response_text = event.content.parts[0].text.strip()
+#                  print(f"\n<<< Final Synthesized Response (from {author_name}):\n{final_response_text}")
+#                  # Since this is the last agent in the sequence, we can break after its final response
+#                  break
 
-# 4. Run with ADK CLI:
-#    Navigate your terminal to the **parent folder** containing your agent package (e.g., `parent_folder/`).
-#    Then run one of the ADK commands (see Quickstart Section 4):
-#    ```bash
-#    # For the interactive Dev UI:
-#    adk web 
-#
-#    # For a single run in the terminal:
-#    adk run my_parallel_agent --query "research latest trends"
-#
-#    # To start an API server:
-#    adk api_server my_parallel_agent
-#    ```
-#    (Replace `my_parallel_agent` with the actual name of your agent package folder).
+#             elif event.is_error():
+#                  print(f"  -> Error from {author_name}: {event.error_message}")
 
-# 5. IMPORTANT - Code Differences for ADK CLI:
-#    When preparing your `agent.py` for Method 2 (ADK CLI), you **DO NOT** include:
-#      - The `InMemoryRunner` setup.
-#      - The `session_service.create_session(...)` call.
-#      - The `call_agent_directly` or `run_direct_method` helper functions.
-#      - The final execution block (`if __name__ == "__main__":` or `await ...`).
-#    The ADK tools handle the Runner, Session management, and execution loop automatically.
-#    Your `agent.py` for Method 2 should essentially contain only the imports,
-#    agent definitions, and the final `root_agent = ...` assignment.
+#         if final_response_text is None:
+#              print("<<< Pipeline finished but did not produce the expected final text response from the SynthesisAgent.")
 
-# 6. Refer to Quickstart:
-#    For complete details on project setup, authentication, and running with ADK tools,
-#    please follow the official Quickstart guide:
-#    https://google.github.io/adk-docs/get-started/quickstart/
+#     except Exception as e:
+#         print(f"\n❌ An error occurred during agent execution: {e}")
 
-# --8<-- [end:init]
 
-# --- Execution Block (Only for Method 1 - Direct Run) ---
-# Choose ONE method to execute. Comment out or remove the other.
 
-# To run Method 1 (Directly in notebook/script):
-print("Running Method 1: Direct Execution with InMemoryRunner")
+# initial_trigger_query = "Summarize recent sustainable tech advancements."
 
-# In a notebook environment:
-await run_direct_method()
+# # In Colab/Jupyter:
+# await call_sequential_pipeline(initial_trigger_query, user_id=USER_ID, session_id=SESSION_ID)
 
-# In a standard Python script:
-# if __name__ == "__main__":
-#     asyncio.run(run_direct_method())
-
-print("\nReminder: To run with ADK CLI tools (adk web/run/api_server), comment out the notebook/script execution block above, ensure your agent code is in the correct project structure (see Method 2 instructions), and run the appropriate 'adk' command from the parent directory.")
+# # In a standalone Python script or if await is not supported/failing:
+# # asyncio.run(call_sequential_pipeline(initial_trigger_query, user_id=USER_ID, session_id=SESSION_ID))
