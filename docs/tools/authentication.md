@@ -206,7 +206,7 @@ Here's the step-by-step process for your client application:
 
 * Initiate the agent interaction using `runner.run_async`.  
 * Iterate through the yielded events.  
-* Look for a specific function call event whose function call has a special name: `adk_request_credential`. This event signals that user interaction is needed. You can use helper functions to identify this event and extract necessary information. (For the second case, the logic is similar. You deserialize the event from the http response 
+* Look for a specific function call event whose function call has a special name: `adk_request_credential`. This event signals that user interaction is needed. You can use helper functions to identify this event and extract necessary information. (For the second case, the logic is similar. You deserialize the event from the http response).
 
 ```py
 
