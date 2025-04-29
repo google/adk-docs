@@ -453,8 +453,8 @@ exchanged_credential = tool_context.get_auth_response(AuthConfig(
 # If exchanged_credential is not None, then there is already an exchanged credetial from the auth response. 
 if exchanged_credential:
    # ADK exchanged the access token already for us
-        access_token = exchanged_credential.oauth2.token['access_token']
-        refresh_token = exchanged_credential.oauth2.token['refresh_token']
+        access_token = exchanged_credential.oauth2.access_token
+        refresh_token = exchanged_credential.oauth2.refresh_token
         creds = Credentials(
             token=access_token,
             refresh_token=refresh_token,
