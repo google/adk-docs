@@ -153,13 +153,13 @@ agents.
 3. To use tool with default credentials: have Google Cloud CLI installed. See
    [installation guide](https://cloud.google.com/sdk/docs/install#installation_instructions)*.*
 
-   *Run :*
+   *Run:*
 
-    ```shell
-    gcloud config set project
-    gcloud auth application-default login
-    gcloud auth application-default set-quota-project <project-id>
-    ```
+   ```shell
+   gcloud config set project <project-id>
+   gcloud auth application-default login
+   gcloud auth application-default set-quota-project <project-id>
+   ```
 
 5. Set up your project structure and create required files
 
