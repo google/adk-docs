@@ -406,6 +406,7 @@ Inside your tool function, first check if valid credentials (e.g., access/refres
 
 ```py
 from google.oauth2.credentials import Credentials
+from google.auth.transport.requests import Request
 
 # Inside your tool function
 TOKEN_CACHE_KEY = "my_tool_tokens" # Choose a unique key
