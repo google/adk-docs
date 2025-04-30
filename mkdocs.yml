@@ -43,16 +43,16 @@ theme:
   features:
     - content.code.annotate
     - content.code.copy
-    - content.tabs.link
     - content.code.select
+    - content.tabs.link
+    - navigation.footer
+    - navigation.indexes
     - navigation.instant
     - navigation.instant.progress
     - navigation.path
     - navigation.top
     - navigation.tracking
-    - navigation.indexes
     - toc.follow
-    - navigation.footer
 
 # Extensions
 markdown_extensions:
@@ -126,6 +126,9 @@ nav:
     - MCP tools: tools/mcp-tools.md
     - OpenAPI tools: tools/openapi-tools.md
     - Authentication: tools/authentication.md
+  - Running Agents:
+    - Agent Runtime: runtime/index.md
+    - Runtime Config: runtime/runconfig.md
   - Deploy:
     - deploy/index.md
     - Agent Engine: deploy/agent-engine.md
@@ -136,14 +139,12 @@ nav:
     - Session: sessions/session.md
     - State: sessions/state.md
     - Memory: sessions/memory.md
-  - Artifacts:
-    - artifacts/index.md
   - Callbacks:
     - callbacks/index.md
     - Types of callbacks: callbacks/types-of-callbacks.md
     - Callback patterns: callbacks/design-patterns-and-best-practices.md
-  - Runtime:
-    - runtime/index.md
+  - Artifacts:
+    - artifacts/index.md
   - Events:
     - events/index.md
   - Context:
