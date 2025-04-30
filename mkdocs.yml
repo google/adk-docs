@@ -153,6 +153,8 @@ nav:
     - evaluate/index.md
   - MCP:
     - mcp/index.md
+  - Streaming:
+    - streaming/index.md
 
   - Safety and Security: safety/index.md
   - Agent2Agent (A2A) Protocol: https://github.com/google/A2A/
