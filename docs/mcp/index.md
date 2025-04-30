@@ -2,32 +2,44 @@
 
 ## What is Model Context Protocol (MCP)?
 
-The [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction) is an open standard designed to standardize how Large Language Models (LLMs) like Gemini and Claude communicate with external applications, data sources, and tools. Think of it as a universal connection mechanism that simplifies how LLMs obtain context, execute actions, and interact with various systems.
+The
+[Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction) is
+an open standard designed to standardize how Large Language Models (LLMs) like
+Gemini and Claude communicate with external applications, data sources, and
+tools. Think of it as a universal connection mechanism that simplifies how LLMs
+obtain context, execute actions, and interact with various systems.
 
-MCP follows a client-server architecture, defining how **data** (resources), **interactive templates** (prompts), and **actionable functions** (tools) are exposed by an **MCP server** and consumed by an **MCP client** (which could be an LLM host application or an AI agent).
+## How does MCP work?
 
-<div class="grid cards" markdown>
+MCP follows a client-server architecture, defining how data (resources),
+interactive templates (prompts), and actionable functions (tools) are
+exposed by an MCP server and consumed by an MCP client (which could be
+an LLM host application or an AI agent).
 
--   :material-console-line: **MCP tools**
+## MCP Tools in ADK
 
-    ---
+ADK helps you both use and consume MCP tools in your agents, whether you're
+trying to build a tool to call an MCP service, or exposing an MCP server for
+other developers or agents to interact with your tools.
 
-    This guide walks you through two ways of integrating Model Context Protocol (MCP) with ADK.
+Refer to the [MCP Tools documentation](../tools/mcp-tools.md) for code samples
+and design patterns that help you use ADK together with MCP servers, including:
 
-    [:octicons-arrow-right-24: More information](../tools/mcp-tools.md)
+- **Using Existing MCP Servers within ADK**: An ADK agent can act as an MCP
+  client and use tools provided by external MCP servers.
+- **Exposing ADK Tools via an MCP Server**: How to build an MCP server that
+  wraps ADK tools, making them accessible to any MCP client.
 
--   :material-console-line: **MCP Toolbox for Databases**
+## MCP Toolbox for Databases
 
-    ---
+[MCP Toolbox for Databases](https://github.com/googleapis/genai-toolbox) is an
+open source MCP server that helps you build Gen AI tools so that your agents can
+access data in your database. Google’s Agent Development Kit (ADK) has built in
+support for The MCP Toolbox for Databases.
 
-    [MCP Toolbox for Databases](https://github.com/googleapis/genai-toolbox) is an
-    open source MCP server for databases. It was designed with enterprise-grade and
-    production-quality in mind. It enables you to develop tools easier, faster, and
-    more securely by handling the complexities such as connection pooling,
-    authentication, and more. Google’s Agent Development Kit (ADK) has built in support for Toolbox.
-    
-    [:octicons-arrow-right-24: More information](../tools/google-cloud-tools.md#toolbox-tools-for-databases)
+Refer to the
+[MCP Toolbox for Databases](../tools/google-cloud-tools.md#toolbox-tools-for-databases)
+documentation on how you can use ADK together with the MCP Toolbox for
+Databases.
 
-    ![GenAI Toolbox](../assets/mcp_db_toolbox.png)
-
-</div>
+![GenAI Toolbox](../assets/mcp_db_toolbox.png)
