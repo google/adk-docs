@@ -14,6 +14,6 @@ MCP follows a client-server architecture, defining how **data** (resources), **i
 
     This guide walks you through two ways of integrating Model Context Protocol (MCP) with ADK.
 
-    [:octicons-arrow-right-24: More information](installation.md)
+    [:octicons-arrow-right-24: More information](../tools/mcp-tools.md)
 
 </div>
