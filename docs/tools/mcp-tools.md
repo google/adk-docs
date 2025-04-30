@@ -162,7 +162,7 @@ adk web
 
 A successfully MCPTool interaction will yield a response by accessing your local file system, like below:
 
-<img src="../assets/adk-tool-mcp-filesystem-adk-web-demo.png" alt="MCP with ADK Web - FileSystem Example">
+<img src="../../assets/adk-tool-mcp-filesystem-adk-web-demo.png" alt="MCP with ADK Web - FileSystem Example">
 
 
 ### Example 2: Google Maps MCP Server
@@ -237,7 +237,7 @@ adk web
 
 A successfully MCPTool interaction will yield a response with a route plan, like below:
 
-<img src="../assets/adk-tool-mcp-maps-adk-web-demo.png" alt="MCP with ADK Web - Google Maps Example">
+<img src="../../assets/adk-tool-mcp-maps-adk-web-demo.png" alt="MCP with ADK Web - Google Maps Example">
 
 ## 2. **Building an MCP server with ADK tools (MCP server exposing ADK)**
 
