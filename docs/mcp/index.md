@@ -16,4 +16,18 @@ MCP follows a client-server architecture, defining how **data** (resources), **i
 
     [:octicons-arrow-right-24: More information](../tools/mcp-tools.md)
 
+-   :material-console-line: **MCP Toolbox for Databases**
+
+    ---
+
+    [MCP Toolbox for Databases](https://github.com/googleapis/genai-toolbox) is an
+    open source MCP server for databases. It was designed with enterprise-grade and
+    production-quality in mind. It enables you to develop tools easier, faster, and
+    more securely by handling the complexities such as connection pooling,
+    authentication, and more. Google’s Agent Development Kit (ADK) has built in support for Toolbox.
+    
+    [:octicons-arrow-right-24: More information](../tools/google-cloud-tools.md#toolbox-tools-for-databases)
+
+    ![GenAI Toolbox](../assets/mcp_db_toolbox.png)
+
 </div>
