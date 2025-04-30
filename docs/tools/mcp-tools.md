@@ -349,7 +349,7 @@ root_agent = Agent(
 Create an `__init__.py` in the same folder as the `agent.py` above
 
 ```python
-# ./adk_agent_samples/mcp_agent/__init__.py
+# ./adk_agent_samples/fastmcp_agent/__init__.py
 from . import agent
 ```
 
