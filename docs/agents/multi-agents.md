@@ -154,6 +154,7 @@ info_agent = LlmAgent(name="Info", description="Provides general information and
 
 coordinator = LlmAgent(
     name="Coordinator",
+    model="gemini-2.0-flash",
     instruction="You are an assistant. Delegate booking tasks to Booker and info requests to Info.",
     description="Main coordinator.",
     # AutoFlow is typically used implicitly here
