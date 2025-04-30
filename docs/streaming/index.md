@@ -1,10 +1,15 @@
-# ADK Streaming
+# Streaming in ADK
+
+Streaming in ADK adds the low-latency bidirectional voice and video interaction
+capability of [Gemini Live API](https://ai.google.dev/gemini-api/docs/live) to
+AI agents.
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/LwHPYyw7u6U" title="Shopper's Concierge" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
-## What is ADK Streaming?
-
-ADK Streaming adds the low-latency bidirectional voice and video interaction capability of [Gemini Live API](https://ai.google.dev/gemini-api/docs/live) to agents. Using ADK Streaming, you can provide end users with the experience of natural, human-like voice conversations, and with the ability to interrupt the agent's responses using voice commands. The agent can process text, audio, and video input, and it can provide text and audio output.
+With streaming mode, you can provide end users with the experience of natural,
+human-like voice conversations, including the ability for the user to interrupt
+the agent's responses with voice commands. Agents with streaming can process
+text, audio, and video inputs, and they can provide text and audio output.
 
 <div class="grid cards" markdown>
 
@@ -12,7 +17,8 @@ ADK Streaming adds the low-latency bidirectional voice and video interaction cap
 
     ---
 
-    With this quickstart, you'll learn to create a simple agent and use ADK Streaming to enable voice and video communication with it that is low-latency and bidirectional.
+    In this quickstart, you'll build a simple agent and use streaming in ADK to
+    implement low-latency and bidirectional voice and video communication.
 
     [:octicons-arrow-right-24: More information](../get-started/quickstart-streaming.md)
 
@@ -20,8 +26,9 @@ ADK Streaming adds the low-latency bidirectional voice and video interaction cap
 
     ---
 
-    Experience how ADK Streaming can revolutionize shopping by understanding your personal style, tastes and preferences to anticipate your needs and offer tailored recommendations – your personal shopping concierge will find exactly what you need in real-time. (We will share the
-    source code of this demo in the future)
+    Learn how streaming in ADK can be used to build a personal shopping
+    concierge that understands your personal style and offers tailored
+    recommendations.
 
     [:octicons-arrow-right-24: More information](https://youtu.be/LwHPYyw7u6U)
 
