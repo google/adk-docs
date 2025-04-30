@@ -40,7 +40,7 @@ support for The MCP Toolbox for Databases.
 Refer to the
 [MCP Toolbox for Databases](../tools/google-cloud-tools.md#toolbox-tools-for-databases)
 documentation on how you can use ADK together with the MCP Toolbox for
-Databases.
+Databases. For getting started with the MCP Toolbox for Databases, a blog post [Tutorial : MCP Toolbox for Databases - Exposing Big Query Datasets](https://medium.com/google-cloud/tutorial-mcp-toolbox-for-databases-exposing-big-query-datasets-9321f0064f4e) and Codelab [MCP Toolbox for Databases:Making BigQuery datasets available to MCP clients](https://codelabs.developers.google.com/mcp-toolbox-bigquery-dataset?hl=en#0) are also available.
 
 ![GenAI Toolbox](../assets/mcp_db_toolbox.png)
 
