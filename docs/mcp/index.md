@@ -43,3 +43,10 @@ documentation on how you can use ADK together with the MCP Toolbox for
 Databases.
 
 ![GenAI Toolbox](../assets/mcp_db_toolbox.png)
+
+## ADK Agent and FastMCP server
+[FastMCP](https://github.com/jlowin/fastmcp) handles all the complex MCP protocol details and server management, so you can focus on building great tools. It's designed to be high-level and Pythonic; in most cases, decorating a function is all you need.
+
+Refer to the
+[MCP Tools documentation](../tools/mcp-tools.md#example-3-fastmcp-server)
+documentation on how you can use ADK together with the FastMCP server running on Cloud Run.
