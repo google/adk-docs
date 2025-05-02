@@ -14,7 +14,7 @@ ADK offers several ways to create functions tools, each suited to different leve
 
 ## 1. Function Tool
 
-Transforming a function into a tool is a straightforward way to integrate custom logic into your agents. This approach offers flexibility and quick integration.
+Transforming a function into a tool is a straightforward way to integrate custom logic into your agents. In fact, when you assign a Python function to an agent’s tools list, the framework will automatically wrap it as a Function Tool for you. This approach offers flexibility and quick integration.
 
 ### Parameters
 
