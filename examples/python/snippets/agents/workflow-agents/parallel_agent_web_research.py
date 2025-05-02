@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import asyncio
 from google.adk.agents.parallel_agent import ParallelAgent
 from google.adk.agents.llm_agent import LlmAgent
 # Import SequentialAgent to orchestrate the parallel and merge steps
@@ -220,4 +219,5 @@ root_agent = sequential_pipeline_agent
 # await call_sequential_pipeline(initial_trigger_query, user_id=USER_ID, session_id=SESSION_ID)
 
 # # In a standalone Python script or if await is not supported/failing:
+# # import asyncio
 # # asyncio.run(call_sequential_pipeline(initial_trigger_query, user_id=USER_ID, session_id=SESSION_ID))
