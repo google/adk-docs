@@ -33,7 +33,6 @@ def get_stock_price(symbol: str):
         return None
 
 
-# Assign a Python function directly; it will be automatically wrapped as a FunctionTool.
 stock_price_agent = Agent(
     model='gemini-2.0-flash',
     name='stock_agent',
