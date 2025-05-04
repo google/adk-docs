@@ -7,15 +7,29 @@
 Streaming tools allows tools(functions) to stream intermediate results back to agents and agents can respond to those intermediate results. 
 For example, we can use streaming tools to monitor the changes of the stock price and have the agent react to it. Another example is we can have the agent monitor the video stream, and when there is changes in video stream, the agent can report the changes.
 
-The streaming tool should be an async function with AsyncGenerator as the return type:
-```python
-async def your_function_name(...) -> AsyncGenerator[..., ...]:
-  ...
-```
+To define a streaming tool, you must adhere to the following:
 
-Now let's define an agent that can monitor stock price change and monitor the video stream changes. 
+1.  **Asynchronous Function:** The tool must be an `async` Python function.
+2.  **AsyncGenerator Return Type:** The function must be typed to return an `AsyncGenerator`. The first type parameter to `AsyncGenerator` is the type of the data you `yield` (e.g., `str` for text messages, or a custom object for structured data). The second type parameter is typically `None` if the generator doesn't receive values via `send()`.
+
+
+We support two types of streaming tools:
+- Simple type. This is a one type of streaming tools that only take non video/audio streams(the streams that you feed to adk web or adk runner) as input.
+- Video streaming tools. This only works in video streaming and the video stream(the streams that you feed to adk web or adk runner) will be passed into this function.
+
+Now let's define an agent that can monitor stock price changes and monitor the video stream changes. 
 
 ```python
+import asyncio
+from typing import AsyncGenerator
+
+from agents.agents import LiveRequestQueue
+from agents.agents.llm_agent import Agent
+from agents.tools.function_tool import FunctionTool
+from google.genai import Client
+from google.genai import types as genai_types
+
+
 async def monitor_stock_price(stock_symbol: str) -> AsyncGenerator[str, None]:
   """This function will monitor the price for the given stock_symbol in a continuous, streaming and asynchronously way."""
   print(f"Start monitor stock price for {stock_symbol}!")
@@ -48,6 +62,7 @@ async def monitor_video_stream(
 ) -> AsyncGenerator[str, None]:
   """Monitor how many people are in the video streams."""
   print("start monitor_video_stream!")
+  client = Client(vertexai=False)
   prompt_text = (
       "Count the number of people in this image. Just respond with a numeric"
       " number."
@@ -132,3 +147,7 @@ root_agent = Agent(
     ]
 )
 ```
+
+Here are some sample queries to test:
+- Help me monitor the stock price for $XYZ stock.
+- Help me monitor how many people are there in the video stream.
