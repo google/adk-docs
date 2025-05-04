@@ -92,7 +92,7 @@ root_agent = Agent(
     Currently, for each root agent or single agent, only one built-in tool is
     supported. No other tools of any type can be used in the same agent.
 
- For example, the following approach that uses ***a built-in tool along with 
+ For example, the following approach that uses ***a built-in tool along with
  other tools*** within a single agent is **not** currently supported:
 
 ```py
