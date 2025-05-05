@@ -10,16 +10,16 @@ MCP follows a client-server architecture, defining how **data** (resources), **i
 
 This guide covers two primary integration patterns:
 
-1. **Using Existing MCP Servers within ADK:** An ADK agent acts as an MCP client, leveraging tools provided by external MCP servers.  
+1. **Using Existing MCP Servers within ADK:** An ADK agent acts as an MCP client, leveraging tools provided by external MCP servers.
 2. **Exposing ADK Tools via an MCP Server:** Building an MCP server that wraps ADK tools, making them accessible to any MCP client.
 
 ## Prerequisites
 
 Before you begin, ensure you have the following set up:
 
-* **Set up ADK:** Follow the standard ADK \[setup\]() instructions in the quickstart.  
-* **Install/update Python:** MCP requires Python version of 3.9 or higher.  
-* **Setup Node.js and npx:** Many community MCP servers are distributed as Node.js packages and run using `npx`. Install Node.js (which includes npx) if you haven't already. For details, see [https://nodejs.org/en](https://nodejs.org/en).  
+* **Set up ADK:** Follow the standard ADK \[setup\]() instructions in the quickstart.
+* **Install/update Python:** MCP requires Python version of 3.9 or higher.
+* **Setup Node.js and npx:** Many community MCP servers are distributed as Node.js packages and run using `npx`. Install Node.js (which includes npx) if you haven't already. For details, see [https://nodejs.org/en](https://nodejs.org/en).
 * **Verify Installations:** Confirm `adk` and `npx` are in your PATH within the activated virtual environment:
 
 ```shell
@@ -28,7 +28,7 @@ which adk
 which npx
 ```
 
-## 1. **Using MCP servers with ADK agents (ADK as an MCP client) in `adk web` **
+## 1. Using MCP servers with ADK agents (ADK as an MCP client) in `adk web`
 
 This section shows two examples of using MCP servers with ADK agents. This is the **most common** integration pattern. Your ADK agent needs to use functionality provided by an existing service that exposes itself as an MCP Server.
 
@@ -36,11 +36,11 @@ This section shows two examples of using MCP servers with ADK agents. This is th
 
 The examples use the `MCPToolset` class in ADK which acts as the bridge to the MCP server. Your ADK agent uses `MCPToolset` to:
 
-1. **Connect:** Establish a connection to an MCP server process. This can be a local server communicating over standard input/output (`StdioServerParameters`) or a remote server using Server-Sent Events (`SseServerParams`).  
-2. **Discover:** Query the MCP server for its available tools (`list_tools` MCP method).  
-3. **Adapt:** Convert the MCP tool schemas into ADK-compatible `BaseTool` instances.  
-4. **Expose:** Present these adapted tools to the ADK `LlmAgent`.  
-5. **Proxy Calls:** When the `LlmAgent` decides to use one of these tools, `MCPToolset` forwards the call (`call_tool` MCP method) to the MCP server and returns the result.  
+1. **Connect:** Establish a connection to an MCP server process. This can be a local server communicating over standard input/output (`StdioServerParameters`) or a remote server using Server-Sent Events (`SseServerParams`).
+2. **Discover:** Query the MCP server for its available tools (`list_tools` MCP method).
+3. **Adapt:** Convert the MCP tool schemas into ADK-compatible `BaseTool` instances.
+4. **Expose:** Present these adapted tools to the ADK `LlmAgent`.
+5. **Proxy Calls:** When the `LlmAgent` decides to use one of these tools, `MCPToolset` forwards the call (`call_tool` MCP method) to the MCP server and returns the result.
 6. **Manage Connection:** Handle the lifecycle of the connection to the MCP server process, often requiring explicit cleanup.
 
 These examples assumes you interact with MCP Tools with `adk web`. If you are not using `adk web`, see "Using MCP Tools in your own Agent out of `adk web`" section below.
@@ -122,7 +122,7 @@ async def create_agent():
       ),
       async_exit_stack=common_exit_stack
   )
-  
+
 
   agent = LlmAgent(
       model='gemini-2.0-flash',
@@ -131,7 +131,7 @@ async def create_agent():
           'Help user accessing their file systems'
       ),
       tools=[
-        *local_tools, 
+        *local_tools,
         *remote_tools,
       ],
   )
@@ -162,7 +162,7 @@ adk web
 
 A successfully MCPTool interaction will yield a response by accessing your local file system, like below:
 
-<img src="../assets/adk-tool-mcp-filesystem-adk-web-demo.png" alt="MCP with ADK Web - FileSystem Example">
+<img src="../../assets/adk-tool-mcp-filesystem-adk-web-demo.png" alt="MCP with ADK Web - FileSystem Example">
 
 
 ### Example 2: Google Maps MCP Server
@@ -237,7 +237,136 @@ adk web
 
 A successfully MCPTool interaction will yield a response with a route plan, like below:
 
-<img src="../assets/adk-tool-mcp-maps-adk-web-demo.png" alt="MCP with ADK Web - Google Maps Example">
+<img src="../../assets/adk-tool-mcp-maps-adk-web-demo.png" alt="MCP with ADK Web - Google Maps Example">
+
+
+### Example 3: FastMCP Server
+
+This example demonstrates connecting to a remote FastMCP server that provides math operations(eg. addition).
+
+#### Step 0: Deploy FastMCP Server to Cloud Run
+
+```py
+#server.py
+from fastmcp import FastMCP
+import asyncio
+
+mcp = FastMCP("FastMCP Demo Server")
+
+@mcp.tool()
+def add(a: int, b: int) -> int:
+    """Add two numbers"""
+    return a + b
+
+if __name__ == "__main__":
+    asyncio.run(mcp.run_sse_async(host="0.0.0.0", port=8080))
+```
+Ensure your MCP server project has the following files in the root directory(eg. `./fastmcp-demo`):
+
+*   `server.py`: Your main application code using FastMCP.
+
+*   `requirements.txt`: Lists the Python dependencies.
+    ```txt
+    fastmcp
+    asyncio
+    ```
+
+*   `Procfile`: Tells Cloud Run how to start your web server. 
+    ```Procfile
+    web: python server.py
+    ```
+    *(Note: This assumes your FastMCP instance is named `mcp` within your `server.py` file. Adjust `server:mcp` if your filename or instance name is different.)*
+
+Execute Cloud Run Deployment command from your FastMCP server directory(eg. `./fastmcp-demo`):
+```shell
+    gcloud run deploy fastmcp-demo \
+        --source . \
+        --region YOUR_REGION \
+        --allow-unauthenticated
+```
+#### Step 1: Attach the FastMCP Server to your ADK agent via `MCPToolset`
+
+Create `agent.py` in `./adk_agent_samples/fastmcp_agent/` and use the following code snippet to define a function that initializes the `MCPToolset`.
+
+* **Important:** Replace Cloud Run service url with the one you deployed in previous step.
+
+```py
+# ./adk_agent_samples/fastmcp_agent/agent.py
+
+import os
+
+import google.auth
+from google.adk.agents import Agent
+from google.adk.tools.tool_context import ToolContext
+from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, SseServerParams
+
+_, project_id = google.auth.default()
+os.environ.setdefault("GOOGLE_CLOUD_PROJECT", project_id)
+os.environ.setdefault("GOOGLE_CLOUD_LOCATION", "us-central1")
+os.environ.setdefault("GOOGLE_GENAI_USE_VERTEXAI", "True")
+
+
+async def get_sum(a: int, b: int) -> int:
+    """Calculate the sum of two numbers.
+
+    Args:
+        a: number
+        b: number
+
+    Returns:
+        the sum of two numbers.
+    """
+    common_exit_stack = AsyncExitStack()
+
+    tools, _ = await MCPToolset.from_server(
+        connection_params=SseServerParams(
+            url="https://fastmcp-demo-00000000000.us-central1.run.app/sse",
+            project_id="YOUR-GCP-PROJECT-ID",
+            location="us-central1",
+        ),
+        async_exit_stack=common_exit_stack
+    )
+
+    return await tools[0].run_async(
+        args={
+            "a": a,
+            "b": b,
+        },
+        tool_context=None,
+    )
+
+root_agent = Agent(
+    name="root_agent",
+    model="gemini-2.0-flash",
+    instruction="You are a helpful AI assistant designed to provide accurate and useful information.",
+    tools=[get_sum],
+)
+```
+
+
+#### Step 2: Create an __init__ file
+
+Create an `__init__.py` in the same folder as the `agent.py` above
+
+```python
+# ./adk_agent_samples/fastmcp_agent/__init__.py
+from . import agent
+```
+
+#### Step 3: Observe the result
+
+Run `adk web` from the adk_agent_samples directory (ensure your virtual environment is active):
+
+```shell
+cd ./adk_agent_samples
+adk web
+```
+
+A successfully interaction will yield a response by accessing your remote FastMCP server, like below:
+
+<img src="../../assets/adk-tool-mcp-fastmcp-adk-web-demo.png" alt="FastMCP with ADK Web - Summing numbers example">
+
+
 
 ## 2. **Building an MCP server with ADK tools (MCP server exposing ADK)**
 
@@ -247,8 +376,8 @@ This pattern allows you to wrap ADK's tools and make them available to any stand
 
 You will create a standard Python MCP server application using the model-context-protocol library. Within this server, you will:
 
-1. Instantiate the ADK tool(s) you want to expose (e.g., FunctionTool(load\_web\_page)).  
-2. Implement the MCP server's @app.list\_tools handler to advertise the ADK tool(s), converting the ADK tool definition to the MCP schema using adk\_to\_mcp\_tool\_type.  
+1. Instantiate the ADK tool(s) you want to expose (e.g., FunctionTool(load\_web\_page)).
+2. Implement the MCP server's @app.list\_tools handler to advertise the ADK tool(s), converting the ADK tool definition to the MCP schema using adk\_to\_mcp\_tool\_type.
 3. Implement the MCP server's @app.call\_tool handler to receive requests from MCP clients, identify if the request targets your wrapped ADK tool, execute the ADK tool's .run\_async() method, and format the result into an MCP-compliant response (e.g., types.TextContent).
 
 ### Prerequisites
@@ -420,7 +549,7 @@ This section is relevant to you if:
 * You are developing your own Agent using ADK
 * And, you are **NOT** using `adk web`,
 * And, you are exposing the agent via your own UI
- 
+
 
 Using MCP Tools requires a different setup than using regular tools, due to the fact that specs for MCP Tools are fetched asynchronously
 from the MCP Server running remotely, or in another process.
@@ -524,19 +653,19 @@ When working with MCP and ADK, keep these points in mind:
 
 * **ADK Tools vs. MCP Tools:**
 
-    * ADK Tools (BaseTool, FunctionTool, AgentTool, etc.) are Python objects designed for direct use within the ADK's LlmAgent and Runner.  
-    * MCP Tools are capabilities exposed by an MCP Server according to the protocol's schema. MCPToolset makes these look like ADK tools to an LlmAgent.  
+    * ADK Tools (BaseTool, FunctionTool, AgentTool, etc.) are Python objects designed for direct use within the ADK's LlmAgent and Runner.
+    * MCP Tools are capabilities exposed by an MCP Server according to the protocol's schema. MCPToolset makes these look like ADK tools to an LlmAgent.
     * Langchain/CrewAI Tools are specific implementations within those libraries, often simple functions or classes, lacking the server/protocol structure of MCP. ADK offers wrappers (LangchainTool, CrewaiTool) for some interoperability.
 
 * **Asynchronous nature:** Both ADK and the MCP Python library are heavily based on the asyncio Python library. Tool implementations and server handlers should generally be async functions.
 
 * **Stateful sessions (MCP):** MCP establishes stateful, persistent connections between a client and server instance. This differs from typical stateless REST APIs.
 
-    * **Deployment:** This statefulness can pose challenges for scaling and deployment, especially for remote servers handling many users. The original MCP design often assumed client and server were co-located. Managing these persistent connections requires careful infrastructure considerations (e.g., load balancing, session affinity).  
+    * **Deployment:** This statefulness can pose challenges for scaling and deployment, especially for remote servers handling many users. The original MCP design often assumed client and server were co-located. Managing these persistent connections requires careful infrastructure considerations (e.g., load balancing, session affinity).
     * **ADK MCPToolset:** Manages this connection lifecycle. The exit\_stack pattern shown in the examples is crucial for ensuring the connection (and potentially the server process) is properly terminated when the ADK agent finishes.
 
 ## Further Resources
 
 * [Model Context Protocol Documentation](https://modelcontextprotocol.io/ )
-* [MCP Specification](https://modelcontextprotocol.io/specification/)  
+* [MCP Specification](https://modelcontextprotocol.io/specification/)
 * [MCP Python SDK & Examples](https://github.com/modelcontextprotocol/)
