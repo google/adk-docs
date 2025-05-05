@@ -254,7 +254,7 @@ def test_with_single_test_file():
     """Test the agent's basic ability via a session file."""
     AgentEvaluator.evaluate(
         agent_module="tests.integration.fixture.home_automation_agent",
-        eval_dataset="tests/integration/fixture/home_automation_agent/simple_test.test.json",
+        eval_dataset_file_path_or_dir="tests/integration/fixture/home_automation_agent/simple_test.test.json",
     )
 ```
 
@@ -287,7 +287,7 @@ def test_with_single_test_file():
     """Test the agent's basic ability via a session file."""
     AgentEvaluator.evaluate(
         agent_module="tests.integration.fixture.trip_planner_agent",
-        eval_dataset="tests/integration/fixture/trip_planner_agent/simple_test.test.json",
+        eval_dataset_file_path_or_dir="tests/integration/fixture/trip_planner_agent/simple_test.test.json",
         initial_session_file="tests/integration/fixture/trip_planner_agent/initial.session.json"
     )
 ```
