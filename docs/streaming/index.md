@@ -1,5 +1,9 @@
 # Streaming in ADK
 
+!!! Experimental
+
+    This is an experimental feature.
+
 Streaming in ADK adds the low-latency bidirectional voice and video interaction
 capability of [Gemini Live API](https://ai.google.dev/gemini-api/docs/live) to
 AI agents.
@@ -33,3 +37,8 @@ text, audio, and video inputs, and they can provide text and audio output.
     [:octicons-arrow-right-24: More information](https://youtu.be/LwHPYyw7u6U)
 
 </div>
+
+
+## Learn more
+
+Learn more about [streaming tools](streaming-tools.md).
