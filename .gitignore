@@ -172,3 +172,6 @@ docs/site
 # hugo
 /site/public
 .hugo_build.lock
+
+# VS Code Personal Settings
+.vscode/settings.json
