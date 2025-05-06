@@ -294,6 +294,7 @@ Create `agent.py` in `./adk_agent_samples/fastmcp_agent/` and use the following 
 # ./adk_agent_samples/fastmcp_agent/agent.py
 
 import os
+from contextlib import AsyncExitStack
 
 import google.auth
 from google.adk.agents import Agent
