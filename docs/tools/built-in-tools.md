@@ -13,7 +13,7 @@ agent that needs to retrieve information from the web can directly use the
 
 Once added to an agent, the agent can decide to use the tool based on the **user
 prompt** and its **instructions**. The framework handles the execution of the
-tool when the agent calls it.
+tool when the agent calls it. Important: check the ***Limitations*** section of this page.
 
 ## Available Built-in tools
 
@@ -90,17 +90,17 @@ root_agent = Agent(
 !!! warning
 
     Currently, for each root agent or single agent, only one built-in tool is
-    supported.
+    supported. No other tools of any type can be used in the same agent.
 
- For example, the following approach that uses two or more built-in tools within
- a root agent (or a single agent) is **not** currently supported:
+ For example, the following approach that uses ***a built-in tool along with
+ other tools*** within a single agent is **not** currently supported:
 
 ```py
 root_agent = Agent(
     name="RootAgent",
     model="gemini-2.0-flash",
     description="Root Agent",
-    tools=[built_in_code_execution, custom_function],
+    tools=[built_in_code_execution, custom_function], # <-- not supported
 )
 ```
 

@@ -115,7 +115,7 @@ you only need to follow a subset of these steps.
     )
     ```
 
-5. Configure your \`\_\_init\_\_.py\` to expose your agent
+5. Configure your `__init__.py` to expose your agent
 
     ```py
     from . import agent
@@ -203,7 +203,7 @@ Connect your agent to enterprise applications using
 
 **Steps:**
 
-1.  Create a tool with `ApplicationIntegrationToolset`
+1.  Create a tool with `ApplicationIntegrationToolset` within your `tools.py` file
 
     ```py
     from google.adk.tools.application_integration_tool.application_integration_toolset import ApplicationIntegrationToolset
@@ -242,7 +242,7 @@ Connect your agent to enterprise applications using
     )
     ```
 
-3. Configure your  \`\_\_init\_\_.py\` to expose your agent
+3. Configure your  `__init__.py` to expose your agent
 
     ```py
     from . import agent
@@ -266,7 +266,7 @@ workflow as a tool for your agent or create a new one.
 
 **Steps:**
 
-1. Create a tool with `ApplicationIntegrationToolset`
+1. Create a tool with `ApplicationIntegrationToolset` within your `tools.py` file
 
     ```py
     integration_tool = ApplicationIntegrationToolset(
