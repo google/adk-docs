@@ -250,11 +250,13 @@ pytest tests/integration/
 Here is an example of a `pytest` test case that runs a single test file:
 
 ```py
+from google.adk.evaluation.agent_evaluator import AgentEvaluator
+
 def test_with_single_test_file():
     """Test the agent's basic ability via a session file."""
     AgentEvaluator.evaluate(
-        agent_module="tests.integration.fixture.home_automation_agent",
-        eval_dataset="tests/integration/fixture/home_automation_agent/simple_test.test.json",
+        agent_module="home_automation_agent",
+        eval_dataset_file_path_or_dir="tests/integration/fixture/home_automation_agent/simple_test.test.json",
     )
 ```
 
@@ -283,11 +285,13 @@ Here is a sample session json file:
 And the sample code will look like this:
 
 ```py
+from google.adk.evaluation.agent_evaluator import AgentEvaluator
+
 def test_with_single_test_file():
     """Test the agent's basic ability via a session file."""
     AgentEvaluator.evaluate(
-        agent_module="tests.integration.fixture.trip_planner_agent",
-        eval_dataset="tests/integration/fixture/trip_planner_agent/simple_test.test.json",
+        agent_module="trip_planner_agent",
+        eval_dataset_file_path_or_dir="tests/integration/fixture/trip_planner_agent/simple_test.test.json",
         initial_session_file="tests/integration/fixture/trip_planner_agent/initial.session.json"
     )
 ```

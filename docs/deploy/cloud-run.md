@@ -14,6 +14,7 @@ To proceed, confirm that your agent code is configured as follows:
 1. Agent code is in a file called `agent.py` within your agent directory.
 2. Your agent variable is named `root_agent`.
 3. `__init__.py` is within your agent directory and contains `from . import agent`.
+4. (Optional) Additional dependencies can be specified in a `requirements.txt` file within your agent directory.
 
 ## Environment variables
 
@@ -83,7 +84,7 @@ export GOOGLE_GENAI_USE_VERTEXAI=True
 
     ##### Arguments
 
-    * `AGENT_PATH`: (Required) Positional argument specifying the path to the directory containing your agent's source code (e.g., `$AGENT_PATH` in the examples, or `capital_agent/`). This directory must contain at least an `__init__.py` and your main agent file (e.g., `agent.py`).
+    * `AGENT_PATH`: (Required) Positional argument specifying the path to the directory containing your agent's source code (e.g., `$AGENT_PATH` in the examples, or `capital_agent/`). This directory must contain at least an `__init__.py` and your main agent file (e.g., `agent.py`). It may also contain a `requirements.txt` file if your agent requires additional dependencies beyond `google-adk`.
 
     ##### Options
 

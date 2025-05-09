@@ -57,8 +57,8 @@ root_agent = Agent(
    # A unique name for the agent.
    name="basic_search_agent",
    # The Large Language Model (LLM) that agent will use.
-   model="gemini-2.0-flash-exp", # Google AI Studio
-   #model="gemini-2.0-flash-live-preview-04-09" # Vertex AI Studio
+   model="gemini-2.0-flash-exp",
+   # model="gemini-2.0-flash-live-001",  # New streaming model version as of Feb 2025
    # A short description of the agent's purpose.
    description="Agent to answer questions using Google Search.",
    # Instructions to set the agent's behavior.
@@ -352,12 +352,12 @@ This code creates a real-time chat application using ADK and FastAPI. It sets up
 
 Key functionalities:
 
-* Loads the Gemini API key.  
-* Uses ADK to manage agent sessions and run the \`google\_search\_agent\`.  
-* \`start\_agent\_session\` initializes an agent session with a live request queue for real-time communication.  
-* \`agent\_to\_client\_messaging\` asynchronously streams the agent's text responses and status updates (turn complete, interrupted) to the connected WebSocket client.  
-* \`client\_to\_agent\_messaging\` asynchronously receives text messages from the WebSocket client and sends them as user input to the agent.  
-* FastAPI serves a static frontend and handles WebSocket connections at \`/ws/{session\_id}\`.  
+* Loads the Gemini API key.
+* Uses ADK to manage agent sessions and run the \`google\_search\_agent\`.
+* \`start\_agent\_session\` initializes an agent session with a live request queue for real-time communication.
+* \`agent\_to\_client\_messaging\` asynchronously streams the agent's text responses and status updates (turn complete, interrupted) to the connected WebSocket client.
+* \`client\_to\_agent\_messaging\` asynchronously receives text messages from the WebSocket client and sends them as user input to the agent.
+* FastAPI serves a static frontend and handles WebSocket connections at \`/ws/{session\_id}\`.
 * When a client connects, it starts an agent session and creates concurrent tasks for bidirectional communication between the client and the agent via WebSockets.
 
 Copy-paste the following code block to the `index.html` file.
@@ -472,12 +472,12 @@ Copy-paste the following code block to the `index.html` file.
 
 This HTML file sets up a basic webpage with:
 
-* A form (\`messageForm\`) with an input field for typing messages and a "Send" button.  
-* JavaScript that:  
-  * Connects to a WebSocket server at \`wss://\[current host\]/ws/\[random session ID\]\`.  
-  * Enables the "Send" button upon successful connection.  
-  * Appends received messages from the WebSocket to the \`messages\` div, handling streaming responses and turn completion.  
-  * Sends the text entered in the input field to the WebSocket server when the form is submitted.  
+* A form (\`messageForm\`) with an input field for typing messages and a "Send" button.
+* JavaScript that:
+  * Connects to a WebSocket server at \`wss://\[current host\]/ws/\[random session ID\]\`.
+  * Enables the "Send" button upon successful connection.
+  * Appends received messages from the WebSocket to the \`messages\` div, handling streaming responses and turn completion.
+  * Sends the text entered in the input field to the WebSocket server when the form is submitted.
   * Attempts to reconnect if the WebSocket connection closes.
 
 ## 6\. Interact with Your Streaming app {#4.-interact-with-your-streaming-app}
@@ -502,8 +502,8 @@ Try asking a question `What is Gemini?`. The agent will use Google Search to res
 
 Benefits over conventional synchronous web apps:
 
-* Real-time two-way communication: Seamless interaction.  
-* More responsive and engaging: No need to wait for full responses or constant refreshing. Feels like a live conversation.  
+* Real-time two-way communication: Seamless interaction.
+* More responsive and engaging: No need to wait for full responses or constant refreshing. Feels like a live conversation.
 * Can be extended to multimodal apps with audio, image and video streaming support.
 
 Congratulations\! You've successfully created and interacted with your first Streaming agent using ADK\!
