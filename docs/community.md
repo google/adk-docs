@@ -28,6 +28,12 @@ integrations here.*
 
 *Discover video walkthroughs, talks, and demos showcasing ADK.*
 
+*   **[Agent Development Kit (ADK) Masterclass: Build AI Agents & Automate Workflows (Beginner to Pro)](https://www.youtube.com/watch?v=P4VFL9nIaIA)**
+
+    > A comprehensive crash course that takes you from beginner to expert in Google's Agent Development Kit. 
+    > Covers 12 hands-on examples progressing from single agent setup to advanced multi-agent workflows.
+    > Includes step-by-step code walkthroughs and downloadable source code for all examples.
+
 ## Contributing Your Resource
 
 Have an ADK resource to share (tutorial, translation, tool, video, example)?

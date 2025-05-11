@@ -294,6 +294,7 @@ Create `agent.py` in `./adk_agent_samples/fastmcp_agent/` and use the following 
 # ./adk_agent_samples/fastmcp_agent/agent.py
 
 import os
+from contextlib import AsyncExitStack
 
 import google.auth
 from google.adk.agents import Agent
@@ -321,8 +322,6 @@ async def get_sum(a: int, b: int) -> int:
     tools, _ = await MCPToolset.from_server(
         connection_params=SseServerParams(
             url="https://fastmcp-demo-00000000000.us-central1.run.app/sse",
-            project_id="YOUR-GCP-PROJECT-ID",
-            location="us-central1",
         ),
         async_exit_stack=common_exit_stack
     )
