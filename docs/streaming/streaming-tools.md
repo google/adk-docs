@@ -23,9 +23,9 @@ Now let's define an agent that can monitor stock price changes and monitor the v
 import asyncio
 from typing import AsyncGenerator
 
-from agents.agents import LiveRequestQueue
-from agents.agents.llm_agent import Agent
-from agents.tools.function_tool import FunctionTool
+from google.adk.agents import LiveRequestQueue
+from google.adk.agents.llm_agent import Agent
+from google.adk.tools.function_tool import FunctionTool
 from google.genai import Client
 from google.genai import types as genai_types
 
