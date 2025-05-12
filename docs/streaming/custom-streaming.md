@@ -144,17 +144,17 @@ uvicorn main:app --reload
 
 Now you should see the UI like this:
 
-<img src="../assets/adk-streaming-text.png" alt="ADK Streaming Test" width="600">
+![ADK Streaming app](../assets/adk-streaming-text.png)
 
 Try asking a question `What time is it now?`. The agent will use Google Search to respond to your queries. You would notice that the UI shows the agent's response as streaming text. You can also send messages to the agent at any time, even while the agent is still responding. This demonstrates the bidirectional communication capability of ADK Streaming.
 
 4\. **Access the app with the audio mode:** Now click the `Start Audio` button. The app reconnects with the server in an audio mode, and the UI will show the following dialog for the first time:
 
-<img src="../assets/adk-streaming-audio-dialog.png" alt="ADK Streaming Test" width="600">
+![ADK Streaming app](../assets/adk-streaming-audio-dialog.png)
 
 Click `Allow while visiting the site`, then you will see the microphone icon will be shown at the top of the browser:
 
-<img src="../assets/adk-streaming-mic.png" alt="ADK Streaming Test" width="600">
+![ADK Streaming app](../assets/adk-streaming-mic.png)
 
 Now you can talk to the agent with voice. Ask questions like `What time is it now?` with voice and you will hear the agent responding in voice too. As Streaming for ADK supports [multiple languages](https://ai.google.dev/gemini-api/docs/live#supported-languages), it can also respond to question in the supported languages.
 
@@ -267,11 +267,11 @@ This function initializes an ADK agent live session.
 | `is_audio`   | `bool`  | `True` for audio responses, `False` for text (default). |
 
 **Key Steps:**
-1.  **Create Session:** Establishes an ADK session.
-2.  **Create Runner:** Instantiates the ADK runner for the `root_agent`.
-3.  **Set Response Modality:** Configures agent response as "AUDIO" or "TEXT".
-4.  **Create LiveRequestQueue:** Creates a queue for client inputs to the agent.
-5.  **Start Agent Session:** `runner.run_live(...)` starts the agent, returning:
+1\.  **Create Session:** Establishes an ADK session.
+2\.  **Create Runner:** Instantiates the ADK runner for the `root_agent`.
+3\.  **Set Response Modality:** Configures agent response as "AUDIO" or "TEXT".
+4\.  **Create LiveRequestQueue:** Creates a queue for client inputs to the agent.
+5\.  **Start Agent Session:** `runner.run_live(...)` starts the agent, returning:
     *   `live_events`: Asynchronous iterable for agent events (text, audio, completion).
     *   `live_request_queue`: Queue to send data to the agent.
 
