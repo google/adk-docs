@@ -40,6 +40,8 @@ from simple tasks to complex workflows.
 
 ## Learn more
 
+[:fontawesome-brands-youtube:{.youtube-red-icon} Watch "Introducing Agent Development Kit"!](https://www.youtube.com/watch?v=zgrOwow_uTQ target="_blank" rel="noopener noreferrer")
+
 <div class="grid cards" markdown>
 
 -   :material-transit-connection-variant: **Flexible Orchestration**

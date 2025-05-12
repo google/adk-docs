@@ -26,7 +26,33 @@ integrations here.*
 
 ## Videos & Screencasts
 
-*Discover video walkthroughs, talks, and demos showcasing ADK.*
+Discover video walkthroughs, talks, and demos showcasing ADK.
+
+<div class="video-grid">
+  <div class="video-item">
+    <div class="video-container">
+      <iframe src="https://www.youtube-nocookie.com/embed/zgrOwow_uTQ?si=1xVxuZyW022Rq5ZC" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    </div>
+  </div>
+
+  <div class="video-item">
+    <div class="video-container">
+      <iframe src="https://www.youtube-nocookie.com/embed/44C8u0CDtSo?si=EkZu_m5O-fQPzORk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    </div>
+  </div>
+
+  <div class="video-item">
+    <div class="video-container">
+      <iframe src="https://www.youtube-nocookie.com/embed/efcUXoMX818?si=Dwez2zH8OSwf7Ktg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    </div>
+  </div>
+
+  <div class="video-item">
+    <div class="video-container">
+      <iframe src="https://www.youtube-nocookie.com/embed/hPzjkQFV5yI?si=GNbDQ1iqP4fok-SY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    </div>
+  </div>
+</div>
 
 *   **[Agent Development Kit (ADK) Masterclass: Build AI Agents & Automate Workflows (Beginner to Pro)](https://www.youtube.com/watch?v=P4VFL9nIaIA)**
 
