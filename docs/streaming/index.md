@@ -26,6 +26,22 @@ text, audio, and video inputs, and they can provide text and audio output.
 
     [:octicons-arrow-right-24: More information](../get-started/quickstart-streaming.md)
 
+-   :material-console-line: **Streaming Tools**
+
+    ---
+
+    Streaming tools allows tools (functions) to stream intermediate results back to agents and agents can respond to those intermediate results. For example, we can use streaming tools to monitor the changes of the stock price and have the agent react to it. Another example is we can have the agent monitor the video stream, and when there is changes in video stream, the agent can report the changes.
+
+    [:octicons-arrow-right-24: More information](streaming-tools.md)
+
+-   :material-console-line: **Custom Audio Streaming app sample**
+
+    ---
+
+    This article overviews the server and client code for a custom asynchronous web app built with ADK Streaming and FastAPI, enabling real-time, bidirectional audio and text communication.
+
+    [:octicons-arrow-right-24: More information](custom-streaming.md)
+
 -   :material-console-line: **Shopper's Concierge demo**
 
     ---
@@ -38,7 +54,3 @@ text, audio, and video inputs, and they can provide text and audio output.
 
 </div>
 
-
-## Learn more
-
-Learn more about [streaming tools](streaming-tools.md).
