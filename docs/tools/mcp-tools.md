@@ -160,6 +160,10 @@ cd ./adk_agent_samples
 adk web
 ```
 
+!!!info "Note for Windows users"
+
+    When hitting the `_make_subprocess_transport NotImplementedError`, consider using `adk web --no-reload` instead.
+
 A successfully MCPTool interaction will yield a response by accessing your local file system, like below:
 
 <img src="../../assets/adk-tool-mcp-filesystem-adk-web-demo.png" alt="MCP with ADK Web - FileSystem Example">
@@ -234,6 +238,10 @@ Run `adk web` from the adk_agent_samples directory (ensure your virtual environm
 cd ./adk_agent_samples
 adk web
 ```
+
+!!!info "Note for Windows users"
+
+    When hitting the `_make_subprocess_transport NotImplementedError`, consider using `adk web --no-reload` instead.
 
 A successfully MCPTool interaction will yield a response with a route plan, like below:
 
@@ -360,6 +368,10 @@ Run `adk web` from the adk_agent_samples directory (ensure your virtual environm
 cd ./adk_agent_samples
 adk web
 ```
+
+!!!info "Note for Windows users"
+
+    When hitting the `_make_subprocess_transport NotImplementedError`, consider using `adk web --no-reload` instead.
 
 A successfully interaction will yield a response by accessing your remote FastMCP server, like below:
 
