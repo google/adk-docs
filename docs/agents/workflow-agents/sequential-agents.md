@@ -10,7 +10,7 @@ Use the `SequentialAgent` when you want the execution to occur in a fixed, stric
 
 * You want to build an agent that can summarize any webpage, using two tools: `get_page_contents` and `summarize_page`. Because the agent must always call `get_page_contents` before calling `summarize_page` (you can't summarize from nothing!), you should build your agent using a `SequentialAgent`.
 
-As with other [workflow agents](index.md), the `SequentialAgent` is not powered by an LLM, and is thus deterministic in how it executes. That being said, workflow agents are only concerned only with their execution (i.e. in sequence), and not their internal logic; the tools or sub-agents of a workflow agent may or may not utilize LLMs.
+As with other [workflow agents](index.md), the `SequentialAgent` is not powered by an LLM, and is thus deterministic in how it executes. That being said, workflow agents are concerned only with their execution (i.e. in sequence), and not their internal logic; the tools or sub-agents of a workflow agent may or may not utilize LLMs.
 
 ### How it works
 
