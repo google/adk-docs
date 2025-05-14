@@ -89,10 +89,46 @@ google.adk.sessions module
     :undoc-members:
     :show-inheritance:
 
-google.adk.tools module
------------------------
-
+google.adk.tools package
+--------------------------
 .. automodule:: google.adk.tools
     :members:
     :undoc-members:
     :show-inheritance:
+
+.. rst-class:: sphinx-indent
+
+   google.adk.tools.application_integration_tool module
+   ----------------------------------------------------
+   .. automodule:: google.adk.tools.application_integration_tool
+       :members:
+       :undoc-members:
+       :show-inheritance:
+
+   google.adk.tools.google_api_tool module
+   ---------------------------------------
+   .. automodule:: google.adk.tools.google_api_tool
+       :members:
+       :undoc-members:
+       :show-inheritance:
+
+   google.adk.tools.mcp_tool module
+   --------------------------------
+   .. automodule:: google.adk.tools.mcp_tool
+       :members:
+       :undoc-members:
+       :show-inheritance:
+
+   google.adk.tools.openapi_tool module
+   ------------------------------------
+   .. automodule:: google.adk.tools.openapi_tool
+       :members:
+       :undoc-members:
+       :show-inheritance:
+
+   google.adk.tools.retrieval module
+   ---------------------------------
+   .. automodule:: google.adk.tools.retrieval
+       :members:
+       :undoc-members:
+       :show-inheritance:
