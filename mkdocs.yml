@@ -6,8 +6,8 @@ site_description: >-
 site_dir: site
 
 # Repository
-repo_name: adk-python
-repo_url: https://github.com/google/adk-python
+repo_name: adk-docs
+repo_url: https://github.com/google/adk-docs
 
 # Copyright
 copyright: Copyright Google 2025
