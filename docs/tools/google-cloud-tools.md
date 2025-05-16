@@ -340,29 +340,20 @@ documentation:
 * [Installing the Server](https://googleapis.github.io/genai-toolbox/getting-started/introduction/#installing-the-server)
 * [Configuring Toolbox](https://googleapis.github.io/genai-toolbox/getting-started/configure/)
 
-### Install client SDK
-
-ADK relies on the `toolbox-langchain` python package to use Toolbox. Install the
-package before getting started:
-
-```shell
-pip install toolbox-langchain langchain
-```
-
 ### Loading Toolbox Tools
 
-Once you’ve Toolbox server is configured and up and running, you can load tools
-from your server using the ADK:
+Once you’re Toolbox server is configured and up and running, you can load tools
+from your server using ADK:
 
 ```py
-from google.adk.tools.toolbox_tool import ToolboxTool
+from google.adk.tools import toolbox
 
-toolbox = ToolboxTool("https://127.0.0.1:5000")
+toolbox_client = toolbox.ToolboxSyncClient("https://127.0.0.1:5000")
 
 # Load a specific set of tools
-tools = toolbox.get_toolset(toolset_name='my-toolset-name'),
+tools = toolbox_client.load_toolset('my-toolset-name')
 # Load single tool
-tools = toolbox.get_tool(tool_name='my-tool-name'),
+tools = toolbox_client.load_tool('my-tool-name')
 
 root_agent = Agent(
     ...,
