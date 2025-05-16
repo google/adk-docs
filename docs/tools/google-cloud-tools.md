@@ -351,8 +351,8 @@ pip install toolbox-core
 
 ### Loading Toolbox Tools
 
-Once you’ve Toolbox server is configured and up and running, you can load tools
-from your server using the ADK:
+Once you’re Toolbox server is configured and up and running, you can load tools
+from your server using ADK:
 
 ```python
 from google.adk.agents import Agent
