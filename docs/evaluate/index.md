@@ -58,43 +58,90 @@ The ADK offers two methods for evaluating agent performance against predefined d
 
 This approach involves creating individual test files, each representing a single, simple agent-model interaction (a session). It's most effective during active agent development, serving as a form of unit testing. These tests are designed for rapid execution and should focus on simple session complexity. Each test file contains a single session, which may consist of multiple turns. A turn represents a single interaction between the user and the agent. Each turn includes
 
-* `query:` This is the user query.  
-* `expected_tool_use`: The tool call(s) that we expect the agent to make in order to respond correctly to the user `query`.  
-* `expected_intermediate_agent_responses`:  This field contains the natural language responses produced by the agent as it progresses towards a final answer. These responses are typical in multi-agent systems where a root agent relies on child agents to accomplish a task. While generally not directly relevant to end-users, these intermediate responses are valuable for developers. They provide insight into the agent's reasoning path and help verify that it followed the correct steps to generate the final response.
-* `reference`: The expected final response from the model.
+-   `User Content`: The user issued query.
+-   `Expected Intermediate Tool Use Trajectory`: The tool calls we expect the
+    agent to make in order to respond correctly to the user query.
+-   `Expected Intermediate Agent Responses`: These are the natural language
+    responses that the agent (or sub-agents) generates as it moves towards
+    generating a final answer. These natural language responses are usually an
+    artifact of an multi-agent system, where your root agent depends on child
+    agents to achieve a goal. These intermediate responses, may or may not be of
+    interest to the end user, but for a developer/owner of the system, are of
+    critical importance, as they give you the confidence that the agent went
+    through the right path to generate final response.
+-   `Final Response`: The expected final response from the agent.
 
 You can give the file any name for example `evaluation.test.json`.The framework only checks for the `.test.json` suffix, and the preceding part of the filename is not constrained. Here is a test file with a few examples:
 
+NOTE: The test files are now backed by a formal Pydantic data model. The two key
+schema files are
+[Eval Set](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py) and
+[Eval Case](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_case.py)
+
 ```json
-[
-  {
-    "query": "hi",
-    "expected_tool_use": [],
-    "expected_intermediate_agent_responses": [],
-    "reference": "Hello! What can I do for you?\n"
-  },
-  {
-    "query": "roll a die for me",
-    "expected_tool_use": [
-      {
-        "tool_name": "roll_die",
-        "tool_input": {
-          "sides": 6
+# Do note that some fields are removed for sake of making this doc readable.
+{
+  "eval_set_id": "home_automation_agent_light_on_off_set",
+  "name": "",
+  "description": "This is an eval set that is used for unit testing `x` behavior of the Agent",
+  "eval_cases": [
+    {
+      "eval_id": "eval_case_id",
+      "conversation": [
+        {
+          "invocation_id": "b7982664-0ab6-47cc-ab13-326656afdf75", # Unique identifier for the invocation.
+          "user_content": { # Content provided by the user in this invocation. This is the query.
+            "parts": [
+              {
+                "text": "Turn off device_2 in the Bedroom."
+              }
+            ],
+            "role": "user"
+          },
+          "final_response": { # Final response from the agent that acts as a reference of benchmark.
+            "parts": [
+              {
+                "text": "I have set the device_2 status to off."
+              }
+            ],
+            "role": "model"
+          },
+          "intermediate_data": {
+            "tool_uses": [ # Tool use trajectory in chronological order.
+              {
+                "args": {
+                  "location": "Bedroom",
+                  "device_id": "device_2",
+                  "status": "OFF"
+                },
+                "name": "set_device_info"
+              }
+            ],
+            "intermediate_responses": [] # Any intermediate sub-agent responses.
+          },
         }
-      }
-    ],
-    "expected_intermediate_agent_responses": [],
-  },
-  {
-    "query": "what's the time now?",
-    "expected_tool_use": [],
-    "expected_intermediate_agent_responses": [],
-    "reference": "I'm sorry, I cannot access real-time information, including the current time. My capabilities are limited to rolling dice and checking prime numbers.\n"
-  }
-]
+      ],
+      "session_input": { # Initial session input.
+        "app_name": "home_automation_agent",
+        "user_id": "test_user",
+        "state": {}
+      },
+    }
+  ],
+}
 ```
 
 Test files can be organized into folders. Optionally, a folder can also include a `test_config.json` file that specifies the evaluation criteria.
+
+#### How to migrate old test files into the new Pydantic schema?
+
+Please use `AgentEvaluator.migrate_eval_data_to_new_schema` to migrate your
+existing `*.test.json` files to the new schema.
+
+The utility takes your current test data file and an optional initial session
+file, and generates a single output json file with data serialized in the new
+format. Given that the new schema is more cohesive, both the old test data file
+and initial session file can be ignored (or removed.)
 
 ### Second approach: Using An Evalset File
 
@@ -104,89 +151,155 @@ An evalset file contains multiple "evals," each representing a distinct session.
 
 Creating evalsets manually can be complex, therefore UI tools are provided to help capture relevant sessions and easily convert them into evals within your evalset. Learn more about using the web UI for evaluation below. Here is an example evalset containing two sessions.
 
+NOTE: The eval set files are now backed by a formal Pydantic data model. The two key
+schema files are
+[Eval Set](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py) and
+[Eval Case](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_case.py)
+
 ```json
-[
-  {
-    "name": "roll_16_sided_dice_and_then_check_if_6151953_is_prime",
-    "data": [
-      {
-        "query": "What can you do?",
-        "expected_tool_use": [],
-        "expected_intermediate_agent_responses": [],
-        "reference": "I can roll dice of different sizes and check if a number is prime. I can also use multiple tools in parallel.\n"
-      },
-      {
-        "query": "Roll a 16 sided dice for me",
-        "expected_tool_use": [
-          {
-            "tool_name": "roll_die",
-            "tool_input": {
-              "sides": 16
-            }
-          }
-        ],
-        "expected_intermediate_agent_responses": [],
-        "reference": "I rolled a 16 sided die and got 13.\n"
-      },
-      {
-        "query": "Is 6151953  a prime number?",
-        "expected_tool_use": [
-          {
-            "tool_name": "check_prime",
-            "tool_input": {
-              "nums": [
-                6151953
-              ]
-            }
-          }
-        ],
-        "expected_intermediate_agent_responses": [],
-        "reference": "No, 6151953 is not a prime number.\n"
-      }
-    ],
-    "initial_session": {
-      "state": {},
-      "app_name": "hello_world",
-      "user_id": "user"
-    }
-  },
-  {
-    "name": "roll_17_sided_dice_twice",
-    "data": [
-      {
-        "query": "What can you do?",
-        "expected_tool_use": [],
-        "expected_intermediate_agent_responses": [],
-        "reference": "I can roll dice of different sizes and check if a number is prime. I can also use multiple tools in parallel.\n"
-      },
-      {
-        "query": "Roll a 17 sided dice twice for me",
-        "expected_tool_use": [
-          {
-            "tool_name": "roll_die",
-            "tool_input": {
-              "sides": 17
-            }
+# Do note that some fields are removed for sake of making this doc readable.
+{
+  "eval_set_id": "eval_set_example_with_multiple_sessions",
+  "name": "Eval set with multiple sessions",
+  "description": "This eval set is an example that shows that an eval set can have more than one session.",
+  "eval_cases": [
+    {
+      "eval_id": "session_01",
+      "conversation": [
+        {
+          "invocation_id": "e-0067f6c4-ac27-4f24-81d7-3ab994c28768",
+          "user_content": {
+            "parts": [
+              {
+                "text": "What can you do?"
+              }
+            ],
+            "role": "user"
           },
-          {
-            "tool_name": "roll_die",
-            "tool_input": {
-              "sides": 17
-            }
-          }
-        ],
-        "expected_intermediate_agent_responses": [],
-        "reference": "I have rolled a 17 sided die twice. The first roll was 13 and the second roll was 4.\n"
-      }
-    ],
-    "initial_session": {
-      "state": {},
-      "app_name": "hello_world",
-      "user_id": "user"
+          "final_response": {
+            "parts": [
+              {
+
+                "text": "I can roll dice of different sizes and check if numbers are prime."
+              }
+            ],
+            "role": null
+          },
+          "intermediate_data": {
+            "tool_uses": [],
+            "intermediate_responses": []
+          },
+        },
+      ],
+      "session_input": {
+        "app_name": "hello_world",
+        "user_id": "user",
+        "state": {}
+      },
+    },
+    {
+      "eval_id": "session_02",
+      "conversation": [
+        {
+          "invocation_id": "e-92d34c6d-0a1b-452a-ba90-33af2838647a",
+          "user_content": {
+            "parts": [
+              {
+                "text": "Roll a 19 sided dice"
+              }
+            ],
+            "role": "user"
+          },
+          "final_response": {
+            "parts": [
+              {
+                "text": "I rolled a 17."
+              }
+            ],
+            "role": null
+          },
+          "intermediate_data": {
+            "tool_uses": [],
+            "intermediate_responses": []
+          },
+        },
+        {
+          "invocation_id": "e-bf8549a1-2a61-4ecc-a4ee-4efbbf25a8ea",
+          "user_content": {
+            "parts": [
+              {
+                "text": "Roll a 10 sided dice twice and then check if 9 is a prime or not"
+              }
+            ],
+            "role": "user"
+          },
+          "final_response": {
+            "parts": [
+              {
+                "text": I got 4 and 7 form the dice roll, and 9 is not a prime number.\n"
+              }
+            ],
+            "role": null
+          },
+          "intermediate_data": {
+            "tool_uses": [
+              {
+                "id": "adk-1a3f5a01-1782-4530-949f-07cf53fc6f05",
+                "args": {
+                  "sides": 10
+                },
+                "name": "roll_die"
+              },
+              {
+                "id": "adk-52fc3269-caaf-41c3-833d-511e454c7058",
+                "args": {
+                  "sides": 10
+                },
+                "name": "roll_die"
+              },
+              {
+                "id": "adk-5274768e-9ec5-4915-b6cf-f5d7f0387056",
+                "args": {
+                  "nums": [
+                    9
+                  ]
+                },
+                "name": "check_prime"
+              }
+            ],
+            "intermediate_responses": [
+              [
+                "data_processing_agent",
+                [
+                  {
+                    "text": "I have rolled a 10 sided die twice. The first roll is 5 and the second roll is 3.\n"
+                  }
+                ]
+              ]
+            ]
+          },
+        }
+      ],
+      "session_input": {
+        "app_name": "hello_world",
+        "user_id": "user",
+        "state": {}
+      },
     }
-  }
-]
+  ],
+}
 ```
+
+#### How to migrate old eval set files into the new Pydantic schema?
+
+Based on who is matining the eval set data, there are two routes:
+
+1.  **Eval set data maintained by ADK UI** If you use ADK UI to maintain your
+    Eval set data then *no action is needed*.
+
+2.  **Eval set data is developed and maintained manually and used in ADK eval Cli** A
+    migration tool is in the works, until then the ADK eval cli command will
+    continue to support data in the old format.
 
 ### Evaluation Criteria
 
@@ -262,39 +375,6 @@ def test_with_single_test_file():
 
 This approach allows you to integrate agent evaluations into your CI/CD pipelines or larger test suites. If you want to specify the initial session state for your tests, you can do that by storing the session details in a file and passing that to `AgentEvaluator.evaluate` method.
 
-Here is a sample session json file:
-
-```json
-{
-  "id": "test_id",
-  "app_name": "trip_planner_agent",
-  "user_id": "test_user",
-  "state": {
-    "origin": "San Francisco",
-    "interests": "Moutains, Hikes",
-    "range": "1000 miles",
-    "cities": ""
-
-
-  },
-  "events": [],
-  "last_update_time": 1741218714.258285
-}
-```
-
-And the sample code will look like this:
-
-```py
-from google.adk.evaluation.agent_evaluator import AgentEvaluator
-
-def test_with_single_test_file():
-    """Test the agent's basic ability via a session file."""
-    AgentEvaluator.evaluate(
-        agent_module="trip_planner_agent",
-        eval_dataset_file_path_or_dir="tests/integration/fixture/trip_planner_agent/simple_test.test.json",
-        initial_session_file="tests/integration/fixture/trip_planner_agent/initial.session.json"
-    )
-```
 
 ### 3\. `adk eval` \- Run Evaluations via the cli
 
