@@ -25,7 +25,7 @@ In ADK, **Artifacts** represent a crucial mechanism for managing named, versione
     )
 
     # You can also use the convenience constructor:
-    # image_artifact_alt = types.Part.from_data(data=image_bytes, mime_type="image/png")
+    # image_artifact_alt = types.Part.from_bytes(data=image_bytes, mime_type="image/png")
 
     print(f"Artifact MIME Type: {image_artifact.inline_data.mime_type}")
     print(f"Artifact Data (first 10 bytes): {image_artifact.inline_data.data[:10]}...")
@@ -128,7 +128,7 @@ runner = Runner(
     * `data` (`bytes`): The raw binary content of the artifact.  
     * `mime_type` (`str`): A standard MIME type string (e.g., `'application/pdf'`, `'image/png'`, `'audio/mpeg'`) describing the nature of the binary data. **This is crucial for correct interpretation when loading the artifact.**
 
-* **Creation:** You typically create a `Part` for an artifact using its `from_data` class method or by constructing it directly with a `Blob`.
+* **Creation:** You typically create a `Part` for an artifact using its `from_bytes` class method or by constructing it directly with a `Blob`.
 
 ```py
 import google.genai.types as types
@@ -143,7 +143,7 @@ pdf_artifact = types.Part(
 )
 
 # Using the convenience class method (equivalent)
-pdf_artifact_alt = types.Part.from_data(data=pdf_bytes, mime_type=pdf_mime_type)
+pdf_artifact_alt = types.Part.from_bytes(data=pdf_bytes, mime_type=pdf_mime_type)
 
 print(f"Created artifact with MIME type: {pdf_artifact.inline_data.mime_type}")
 ```
@@ -253,7 +253,7 @@ from google.adk.agents.callback_context import CallbackContext # Or ToolContext
 
 async def save_generated_report(context: CallbackContext, report_bytes: bytes):
     """Saves generated PDF report bytes as an artifact."""
-    report_artifact = types.Part.from_data(
+    report_artifact = types.Part.from_bytes(
         data=report_bytes,
         mime_type="application/pdf"
     )
