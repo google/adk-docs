@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# --8<-- [start:init]
+# Part of agent.py --> Follow https://google.github.io/adk-docs/get-started/quickstart/ to learn the setup
+
 import asyncio
 import os
 from google.adk.agents import LoopAgent, LlmAgent, BaseAgent, SequentialAgent
@@ -21,10 +24,6 @@ from google.adk.agents.invocation_context import InvocationContext
 from google.adk.tools.tool_context import ToolContext
 from typing import AsyncGenerator, Optional
 from google.adk.events import Event, EventActions
-
-
-# --8<-- [start:init]
-# Part of agent.py --> Follow https://google.github.io/adk-docs/get-started/quickstart/ to learn the setup
 
 # --- Constants ---
 APP_NAME = "doc_writing_app_v3" # New App Name
