@@ -7,8 +7,8 @@ Following our Introduction, let's dive into the `Session`. Think back to the ide
 When a user starts interacting with your agent, the `SessionService` creates a `Session` object (`google.adk.sessions.Session`). This object acts as the container holding everything related to that *one specific chat thread*. Here are its key properties:
 
 * **Identification (`id`, `app_name`, `user_id`):** Unique labels for the conversation.  
-    * `id`: A unique identifier for *this specific* conversation thread, essential for retrieving it later.  
-    * `app_name`: Identifies which agent application this conversation belongs to.  
+    * `id`: A unique identifier for *this specific* conversation thread, essential for retrieving it later. A SessionService object can handle multiple `Session`s. This field identifies which particular session object are we referring to. For example, "test_id_modification".
+    * `app_name`: Identifies which agent application this conversation belongs to. For example, "id_modifier_workflow". 
     * `user_id`: Links the conversation to a particular user.  
 * **History (`events`):** A chronological sequence of all interactions (`Event` objects – user messages, agent responses, tool actions) that have occurred within this specific thread.  
 * **Session Data (`state`):** A place to store temporary data relevant *only* to this specific, ongoing conversation. This acts as a scratchpad for the agent during the interaction. We will cover how to use and manage `state` in detail in the next section.  
