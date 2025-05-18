@@ -134,6 +134,8 @@ Test files can be organized into folders. Optionally, a folder can also include 
 
 #### How to migrate test files not backed by the Pydantic schema?
 
+NOTE: If your test files don't adhere to [EvalSet](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py) schema file, then this section is relevant to you.
+
 Please use `AgentEvaluator.migrate_eval_data_to_new_schema` to migrate your
 existing `*.test.json` files to the Pydanctic backed schema.
 
@@ -290,6 +292,8 @@ schema files are
 ```
 
 #### How to migrate eval set files not backed by the Pydantic schema?
+
+NOTE: If your eval set files don't adhere to [EvalSet](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py) schema file, then this section is relevant to you.
 
 Based on who is maintaining the eval set data, there are two routes:
 
