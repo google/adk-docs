@@ -64,8 +64,7 @@ This approach involves creating individual test files, each representing a singl
 -   `Expected Intermediate Agent Responses`: These are the natural language
     responses that the agent (or sub-agents) generates as it moves towards
     generating a final answer. These natural language responses are usually an
-    artifact of an multi-agent system, where your root agent depends on child
-    agents to achieve a goal. These intermediate responses, may or may not be of
+    artifact of an multi-agent system, where your root agent depends on sub-agents to achieve a goal. These intermediate responses, may or may not be of
     interest to the end user, but for a developer/owner of the system, are of
     critical importance, as they give you the confidence that the agent went
     through the right path to generate final response.
@@ -133,10 +132,10 @@ schema files are
 
 Test files can be organized into folders. Optionally, a folder can also include a `test_config.json` file that specifies the evaluation criteria.
 
-#### How to migrate old test files into the new Pydantic schema?
+#### How to migrate test files not backed by the Pydantic schema?
 
 Please use `AgentEvaluator.migrate_eval_data_to_new_schema` to migrate your
-existing `*.test.json` files to the new schema.
+existing `*.test.json` files to the Pydanctic backed schema.
 
 The utility takes your current test data file and an optional initial session
 file, and generates a single output json file with data serialized in the new
@@ -290,12 +289,12 @@ schema files are
 }
 ```
 
-#### How to migrate old eval set files into the new Pydantic schema?
+#### How to migrate eval set files not backed by the Pydantic schema?
 
-Based on who is matining the eval set data, there are two routes:
+Based on who is maintaining the eval set data, there are two routes:
 
 1.  **Eval set data maintained by ADK UI** If you use ADK UI to maintain your
-    Eval set data then *no action is needed*.
+    Eval set data then *no action is needed* from you.
 
 2.  **Eval set data is developed and maintained manually and used in ADK eval Cli** A
     migration tool is in the works, until then the ADK eval cli command will
