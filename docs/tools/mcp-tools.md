@@ -17,7 +17,7 @@ This guide covers two primary integration patterns:
 
 Before you begin, ensure you have the following set up:
 
-* **Set up ADK:** Follow the standard ADK \[setup\]() instructions in the quickstart.
+* **Set up ADK:** Follow the standard ADK \[setup\](https://google.github.io/adk-docs/get-started/quickstart/#venv-install) instructions in the quickstart.
 * **Install/update Python:** MCP requires Python version of 3.9 or higher.
 * **Setup Node.js and npx:** Many community MCP servers are distributed as Node.js packages and run using `npx`. Install Node.js (which includes npx) if you haven't already. For details, see [https://nodejs.org/en](https://nodejs.org/en).
 * **Verify Installations:** Confirm `adk` and `npx` are in your PATH within the activated virtual environment:
