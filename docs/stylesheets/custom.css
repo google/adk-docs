@@ -37,3 +37,22 @@
 @media (max-width: 600px) {  .video-item { flex: 0 1 100%; }  }
 /* Youtube icon */
 .youtube-red-icon svg { fill: #FF0000 !important; }
+
+/* Custom styles for handling two repository links */
+.md-header__source {
+  max-width: 480px;
+  display: flex;
+  align-items: center;
+}
+
+/* Hide repository stats but keep repository names visible */
+.md-source__facts {
+  display: none !important;
+}
+
+/* Ensure repository names are fully visible */
+.md-source__repository {
+  white-space: nowrap;
+  max-width: none !important;
+  overflow: visible !important;
+}

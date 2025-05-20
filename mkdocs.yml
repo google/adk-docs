@@ -16,6 +16,11 @@ copyright: Copyright Google 2025
 extra_css:
   - stylesheets/custom.css
 
+extra:
+  second_repo_url: https://github.com/google/adk-java
+  second_repo_name: adk-java
+  second_repo_icon: fontawesome/brands/github
+
 # Configuration
 theme:
   name: material
