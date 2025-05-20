@@ -14,6 +14,10 @@ Contains the core Java library source code.
 
 Contains the source for the documentation site you are currently reading.
 
+## 4. [`google/adk-web`](https://github.com/google/adk-web)
+
+Contains the source for the `adk web` dev UI.
+
 ## Before you begin
 
 ### ✏️ Sign our Contributor License Agreement
@@ -41,10 +45,10 @@ Have questions, want to share ideas, or discuss how you're using the ADK? Head o
 
 This is the primary place for:
 
-*   Asking questions and getting help from the community and maintainers.
-*   Sharing your projects or use cases (`Show and Tell`).
-*   Discussing potential features or improvements before creating a formal issue.
-*   General conversation about the ADK.
+* Asking questions and getting help from the community and maintainers.
+* Sharing your projects or use cases (`Show and Tell`).
+* Discussing potential features or improvements before creating a formal issue.
+* General conversation about the ADK.
 
 ## How to Contribute
 
@@ -54,22 +58,22 @@ There are several ways you can contribute to the ADK:
 
 If you find a bug in the framework or an error in the documentation:
 
-*   **Framework Bugs:** Open an issue in [`google/adk-python`](https://github.com/google/adk-python/issues/new) or in [`google/adk-java`](https://github.com/google/adk-java/issues/new)
-*   **Documentation Errors:** [Open an issue in `google/adk-docs` (use bug template)](https://github.com/google/adk-docs/issues/new?template=bug_report.md)
+* **Framework Bugs:** Open an issue in [`google/adk-python`](https://github.com/google/adk-python/issues/new) or in [`google/adk-java`](https://github.com/google/adk-java/issues/new)
+* **Documentation Errors:** [Open an issue in `google/adk-docs` (use bug template)](https://github.com/google/adk-docs/issues/new?template=bug_report.md)
 
 ### 2. Suggesting Enhancements
 
 Have an idea for a new feature or an improvement to an existing one?
 
-*   **Framework Enhancements:** Open an issue in [`google/adk-python`](https://github.com/google/adk-python/issues/new) or in [`google/adk-java`](https://github.com/google/adk-java/issues/new)
-*   **Documentation Enhancements:** [Open an issue in `google/adk-docs`](https://github.com/google/adk-docs/issues/new)
+* **Framework Enhancements:** Open an issue in [`google/adk-python`](https://github.com/google/adk-python/issues/new) or in [`google/adk-java`](https://github.com/google/adk-java/issues/new)
+* **Documentation Enhancements:** [Open an issue in `google/adk-docs`](https://github.com/google/adk-docs/issues/new)
 
 ### 3. Improving Documentation
 
 Found a typo, unclear explanation, or missing information? Submit your changes directly:
 
-*   **How:** Submit a Pull Request (PR) with your suggested improvements.
-*   **Where:** [Create a Pull Request in `google/adk-docs`](https://github.com/google/adk-docs/pulls)
+* **How:** Submit a Pull Request (PR) with your suggested improvements.
+* **Where:** [Create a Pull Request in `google/adk-docs`](https://github.com/google/adk-docs/pulls)
 
 ### 4. Writing Code
 
@@ -77,19 +81,20 @@ Help fix bugs, implement new features or contribute code samples for the documen
 
 **How:** Submit a Pull Request (PR) with your code changes.
 
-*   **Python Framework:** [Create a Pull Request in `google/adk-python`](https://github.com/google/adk-python/pulls)
-*   **Java Framework:** [Create a Pull Request in `google/adk-java`](https://github.com/google/adk-java/pulls)
-*   **Documentation:** [Create a Pull Request in `google/adk-docs`](https://github.com/google/adk-docs/pulls)
-
+* **Python Framework:** [Create a Pull Request in `google/adk-python`](https://github.com/google/adk-python/pulls)
+* **Java Framework:** [Create a Pull Request in `google/adk-java`](https://github.com/google/adk-java/pulls)
+* **Documentation:** [Create a Pull Request in `google/adk-docs`](https://github.com/google/adk-docs/pulls)
 
 ### Code Reviews
-    
+
 * All contributions, including those from project members, undergo a review process.
 
 * We use GitHub Pull Requests (PRs) for code submission and review. Please ensure your PR clearly describes the changes you are making.
 
 ## License
+
 By contributing, you agree that your contributions will be licensed under the project's [Apache 2.0 License](https://github.com/google/adk-docs/blob/main/LICENSE).
 
 ## Questions?
+
 If you get stuck or have questions, feel free to open an issue on the relevant repository's issue tracker.
