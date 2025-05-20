@@ -18,8 +18,8 @@ This guide covers two primary integration patterns:
 Before you begin, ensure you have the following set up:
 
 * **Set up ADK:** Follow the standard ADK [setup instructions](../../get-started/quickstart.md) in the quickstart.
-* **Install/update Python/Java:** MCP requires Python version of 3.9 or higher for Python or Java 17+.
-* **Setup Node.js and npx:** **(Python only)** Many community MCP servers are distributed as Node.js packages and run using `npx`. Install Node.js (which includes npx) if you haven't already. For details, see [https://nodejs.org/en](https://nodejs.org/en).
+* **Install/update Python/Java:** MCP requires Python version of 3.9 or higher, and for Java, at least Java 17 or more.
+* **Setup Node.js and npx:** Many community MCP servers are distributed as Node.js packages and run using `npx`. Install Node.js (which includes npx) if you haven't already. For details, see [https://nodejs.org/en](https://nodejs.org/en).
 * **Verify Installations:** **(Python only)** Confirm `adk` and `npx` are in your PATH within the activated virtual environment:
 
 ```shell
@@ -46,7 +46,7 @@ The following examples demonstrate how to use `MCPToolset` within the `adk web` 
 
 ### Example 1: File System MCP Server
 
-This example demonstrates connecting to a local MCP server that provides file system operations.
+This Python example demonstrates connecting to a local MCP server that provides file system operations.
 
 #### Step 1: Define your Agent with `MCPToolset`
 
@@ -125,6 +125,112 @@ Once the ADK Web UI loads in your browser:
 You should see the agent interacting with the MCP file system server, and the server's responses (file listings, file content) relayed through the agent. The `adk web` console (terminal where you ran the command) might also show logs from the `npx` process if it outputs to stderr.
 
 <img src="../../assets/adk-tool-mcp-filesystem-adk-web-demo.png" alt="MCP with ADK Web - FileSystem Example">
+
+
+
+For Java, refer to the following sample to define an agent that initializes the `MCPToolset`:
+
+```java
+package agents;
+
+import com.google.adk.JsonBaseModel;
+import com.google.adk.agents.LlmAgent;
+import com.google.adk.agents.RunConfig;
+import com.google.adk.runner.InMemoryRunner;
+import com.google.adk.tools.mcp.McpTool;
+import com.google.adk.tools.mcp.McpToolset;
+import com.google.adk.tools.mcp.McpToolset.McpToolsAndToolsetResult;
+import com.google.genai.types.Content;
+import com.google.genai.types.Part;
+import io.modelcontextprotocol.client.transport.ServerParameters;
+
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
+public class McpAgentCreator {
+
+    /**
+     * Initializes an McpToolset, retrieves tools from an MCP server using stdio,
+     * creates an LlmAgent with these tools, sends a prompt to the agent,
+     * and ensures the toolset is closed.
+     * @param args Command line arguments (not used).
+     */
+    public static void main(String[] args) {
+        //Note: you may have permissions issues if the folder is outside home
+        String yourFolderPath = "~/path/to/folder";
+
+        ServerParameters connectionParams = ServerParameters.builder("npx")
+                .args(List.of(
+                        "-y",
+                        "@modelcontextprotocol/server-filesystem",
+                        yourFolderPath
+                ))
+                .build();
+
+        try {
+            CompletableFuture<McpToolsAndToolsetResult> futureResult =
+                    McpToolset.fromServer(connectionParams, JsonBaseModel.getMapper());
+
+            McpToolsAndToolsetResult result = futureResult.join();
+
+            try (McpToolset toolset = result.getToolset()) {
+                List<McpTool> tools = result.getTools();
+
+                LlmAgent agent = LlmAgent.builder()
+                        .model("gemini-2.0-flash")
+                        .name("enterprise_assistant")
+                        .description("An agent to help users access their file systems")
+                        .instruction(
+                                "Help user accessing their file systems. You can list files in a directory."
+                        )
+                        .tools(tools)
+                        .build();
+
+                System.out.println("Agent created: " + agent.name());
+
+                InMemoryRunner runner = new InMemoryRunner(agent);
+                String userId = "user123";
+                String sessionId = "1234";
+                String promptText = "Which files are in this directory - " + yourFolderPath + "?";
+
+                // Explicitly create the session first
+                try {
+                    // appName for InMemoryRunner defaults to agent.name() if not specified in constructor
+                    runner.sessionService().createSession(runner.appName(), userId, null, sessionId).blockingGet();
+                    System.out.println("Session created: " + sessionId + " for user: " + userId);
+                } catch (Exception sessionCreationException) {
+                    System.err.println("Failed to create session: " + sessionCreationException.getMessage());
+                    sessionCreationException.printStackTrace();
+                    return;
+                }
+
+                Content promptContent = Content.fromParts(Part.fromText(promptText));
+
+                System.out.println("\nSending prompt: \"" + promptText + "\" to agent...\n");
+
+                runner.runAsync(userId, sessionId, promptContent, RunConfig.builder().build())
+                        .blockingForEach(event -> {
+                            System.out.println("Event received: " + event.toJson());
+                        });
+            }
+        } catch (Exception e) {
+            System.err.println("An error occurred: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+Assuming a folder containing three files named `first`, `second` and `third`, successful response will look like this:
+
+```shell
+Event received: {"id":"163a449e-691a-48a2-9e38-8cadb6d1f136","invocationId":"e-c2458c56-e57a-45b2-97de-ae7292e505ef","author":"enterprise_assistant","content":{"parts":[{"functionCall":{"id":"adk-388b4ac2-d40e-4f6a-bda6-f051110c6498","args":{"path":"~/home-test"},"name":"list_directory"}}],"role":"model"},"actions":{"stateDelta":{},"artifactDelta":{},"requestedAuthConfigs":{}},"timestamp":1747377543788}
+
+Event received: {"id":"8728380b-bfad-4d14-8421-fa98d09364f1","invocationId":"e-c2458c56-e57a-45b2-97de-ae7292e505ef","author":"enterprise_assistant","content":{"parts":[{"functionResponse":{"id":"adk-388b4ac2-d40e-4f6a-bda6-f051110c6498","name":"list_directory","response":{"text_output":[{"text":"[FILE] first\n[FILE] second\n[FILE] third"}]}}}],"role":"user"},"actions":{"stateDelta":{},"artifactDelta":{},"requestedAuthConfigs":{}},"timestamp":1747377544679}
+
+Event received: {"id":"8fe7e594-3e47-4254-8b57-9106ad8463cb","invocationId":"e-c2458c56-e57a-45b2-97de-ae7292e505ef","author":"enterprise_assistant","content":{"parts":[{"text":"There are three files in the directory: first, second, and third."}],"role":"model"},"actions":{"stateDelta":{},"artifactDelta":{},"requestedAuthConfigs":{}},"timestamp":1747377544689}
+```
+
 
 
 ### Example 2: Google Maps MCP Server
@@ -223,6 +329,110 @@ You should see the agent use the Google Maps MCP tools to provide directions or 
 
 <img src="../../assets/adk-tool-mcp-maps-adk-web-demo.png" alt="MCP with ADK Web - Google Maps Example">
 
+
+For Java, refer to the following sample to define an agent that initializes the `MCPToolset`:
+
+```java
+package agents;
+
+import com.google.adk.JsonBaseModel;
+import com.google.adk.agents.LlmAgent;
+import com.google.adk.agents.RunConfig;
+import com.google.adk.runner.InMemoryRunner;
+import com.google.adk.tools.mcp.McpTool;
+import com.google.adk.tools.mcp.McpToolset;
+import com.google.adk.tools.mcp.McpToolset.McpToolsAndToolsetResult;
+
+
+import com.google.genai.types.Content;
+import com.google.genai.types.Part;
+
+import io.modelcontextprotocol.client.transport.ServerParameters;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.concurrent.CompletableFuture;
+import java.util.Arrays;
+
+public class MapsAgentCreator {
+
+    /**
+     * Initializes an McpToolset for Google Maps, retrieves tools,
+     * creates an LlmAgent, sends a map-related prompt, and closes the toolset.
+     * @param args Command line arguments (not used).
+     */
+    public static void main(String[] args) {
+        // TODO: Replace with your actual Google Maps API key, on a project with the Places API enabled.
+        String googleMapsApiKey = "YOUR_GOOGLE_MAPS_API_KEY";
+
+        Map<String, String> envVariables = new HashMap<>();
+        envVariables.put("GOOGLE_MAPS_API_KEY", googleMapsApiKey);
+
+        ServerParameters connectionParams = ServerParameters.builder("npx")
+                .args(List.of(
+                        "-y",
+                        "@modelcontextprotocol/server-google-maps"
+                ))
+                .env(Collections.unmodifiableMap(envVariables))
+                .build();
+
+        try {
+            CompletableFuture<McpToolsAndToolsetResult> futureResult =
+                    McpToolset.fromServer(connectionParams, JsonBaseModel.getMapper());
+
+            McpToolsAndToolsetResult result = futureResult.join();
+
+            try (McpToolset toolset = result.getToolset()) {
+                List<McpTool> tools = result.getTools();
+
+                LlmAgent agent = LlmAgent.builder()
+                        .model("gemini-2.0-flash")
+                        .name("maps_assistant")
+                        .description("Maps assistant")
+                        .instruction("Help user with mapping and directions using available tools.")
+                        .tools(tools)
+                        .build();
+
+                System.out.println("Agent created: " + agent.name());
+
+                InMemoryRunner runner = new InMemoryRunner(agent);
+                String userId = "maps-user-" + System.currentTimeMillis();
+                String sessionId = "maps-session-" + System.currentTimeMillis();
+
+                String promptText = "Please give me directions to the nearest pharmacy to Madison Square Garden.";
+
+                try {
+                    runner.sessionService().createSession(runner.appName(), userId, null, sessionId).blockingGet();
+                    System.out.println("Session created: " + sessionId + " for user: " + userId);
+                } catch (Exception sessionCreationException) {
+                    System.err.println("Failed to create session: " + sessionCreationException.getMessage());
+                    sessionCreationException.printStackTrace();
+                    return;
+                }
+
+                Content promptContent = Content.fromParts(Part.fromText(promptText))
+
+                System.out.println("\nSending prompt: \"" + promptText + "\" to agent...\n");
+
+                runner.runAsync(userId, sessionId, promptContent, RunConfig.builder().build())
+                        .blockingForEach(event -> {
+                            System.out.println("Event received: " + event.toJson());
+                        });
+            }
+        } catch (Exception e) {
+            System.err.println("An error occurred: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+A successful response will look like this:
+```shell
+Event received: {"id":"1a4deb46-c496-4158-bd41-72702c773368","invocationId":"e-48994aa0-531c-47be-8c57-65215c3e0319","author":"maps_assistant","content":{"parts":[{"text":"OK. I see a few options. The closest one is CVS Pharmacy at 5 Pennsylvania Plaza, New York, NY 10001, United States. Would you like directions?\n"}],"role":"model"},"actions":{"stateDelta":{},"artifactDelta":{},"requestedAuthConfigs":{}},"timestamp":1747380026642}
+```
 
 ## 2. Building an MCP server with ADK tools (MCP server exposing ADK)
 
