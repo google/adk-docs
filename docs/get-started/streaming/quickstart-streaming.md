@@ -1,4 +1,4 @@
-# ADK Streaming Quickstart {#adk-streaming-quickstart}
+# Quickstart (Streaming / Python) {#adk-streaming-quickstart}
 
 With this quickstart, you'll learn to create a simple agent and use ADK Streaming to enable voice and video communication with it that is low-latency and bidirectional. We will install ADK, set up a basic "Google Search" agent, try running the agent with Streaming with `adk web` tool, and then explain how to build a simple asynchronous web app by yourself using ADK Streaming and [FastAPI](https://fastapi.tiangolo.com/).
 
@@ -74,7 +74,7 @@ root_agent = Agent(
 
 Notice how easily you integrated [grounding with Google Search](https://ai.google.dev/gemini-api/docs/grounding?lang=python#configure-search) capabilities.  The `Agent` class and the `google_search` tool handle the complex interactions with the LLM and grounding with the search API, allowing you to focus on the agent's *purpose* and *behavior*.
 
-![intro_components.png](../assets/quickstart-streaming-tool.png)
+![intro_components.png](../../assets/quickstart-streaming-tool.png)
 
 Copy-paste the following code block to `__init__.py` and `main.py` files.
 
@@ -170,4 +170,4 @@ Congratulations\! You've successfully created and interacted with your first Str
 
 ## Next steps: build custom streaming app
 
-In [Custom Audio Streaming app](../streaming/custom-streaming.md) tutorial, it overviews the server and client code for a custom asynchronous web app built with ADK Streaming and [FastAPI](https://fastapi.tiangolo.com/), enabling real-time, bidirectional audio and text communication.
+In [Custom Audio Streaming app](../../streaming/custom-streaming.md) tutorial, it overviews the server and client code for a custom asynchronous web app built with ADK Streaming and [FastAPI](https://fastapi.tiangolo.com/), enabling real-time, bidirectional audio and text communication.

@@ -1,4 +1,4 @@
-Thank you for your interest in contributing to the Agent Development Kit (ADK)! We welcome contributions to both the core Python framework and its documentation.
+Thank you for your interest in contributing to the Agent Development Kit (ADK)! We welcome contributions to both the core framework (Python and Java) and its documentation.
 
 This guide provides information on how to get involved.
 
@@ -6,7 +6,11 @@ This guide provides information on how to get involved.
 
 Contains the core Python library source code.
 
-## 2. [`google/adk-docs`](https://github.com/google/adk-docs)
+## 2. [`google/adk-java`](https://github.com/google/adk-java)
+
+Contains the core Java library source code.
+
+## 3. [`google/adk-docs`](https://github.com/google/adk-docs)
 
 Contains the source for the documentation site you are currently reading.
 
@@ -33,7 +37,7 @@ This project follows
 
 ## 💬 Join the Discussion!
 
-Have questions, want to share ideas, or discuss how you're using the ADK? Head over to our **[GitHub Discussions](https://github.com/google/adk-python/discussions)**!
+Have questions, want to share ideas, or discuss how you're using the ADK? Head over to our **[Python](https://github.com/google/adk-python/discussions)** or **[Java](https://github.com/google/adk-java/discussions)** Discussions!
 
 This is the primary place for:
 
@@ -50,14 +54,14 @@ There are several ways you can contribute to the ADK:
 
 If you find a bug in the framework or an error in the documentation:
 
-*   **Framework Bugs:** [Open an issue in `google/adk-python`](https://github.com/google/adk-python/issues/new)
+*   **Framework Bugs:** Open an issue in [`google/adk-python`](https://github.com/google/adk-python/issues/new) or in [`google/adk-java`](https://github.com/google/adk-java/issues/new)
 *   **Documentation Errors:** [Open an issue in `google/adk-docs` (use bug template)](https://github.com/google/adk-docs/issues/new?template=bug_report.md)
 
 ### 2. Suggesting Enhancements
 
 Have an idea for a new feature or an improvement to an existing one?
 
-*   **Framework Enhancements:** [Open an issue in `google/adk-python`](https://github.com/google/adk-python/issues/new)
+*   **Framework Enhancements:** Open an issue in [`google/adk-python`](https://github.com/google/adk-python/issues/new) or in [`google/adk-java`](https://github.com/google/adk-java/issues/new)
 *   **Documentation Enhancements:** [Open an issue in `google/adk-docs`](https://github.com/google/adk-docs/issues/new)
 
 ### 3. Improving Documentation
@@ -71,8 +75,10 @@ Found a typo, unclear explanation, or missing information? Submit your changes d
 
 Help fix bugs, implement new features or contribute code samples for the documentation:
 
-*   **How:** Submit a Pull Request (PR) with your code changes.
-*   **Framework:** [Create a Pull Request in `google/adk-python`](https://github.com/google/adk-python/pulls)
+**How:** Submit a Pull Request (PR) with your code changes.
+
+*   **Python Framework:** [Create a Pull Request in `google/adk-python`](https://github.com/google/adk-python/pulls)
+*   **Java Framework:** [Create a Pull Request in `google/adk-java`](https://github.com/google/adk-java/pulls)
 *   **Documentation:** [Create a Pull Request in `google/adk-docs`](https://github.com/google/adk-docs/pulls)
 
 

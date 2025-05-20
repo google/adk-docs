@@ -4,7 +4,7 @@ Within each `Session` (our conversation thread), the **`state`** attribute acts 
 
 ## What is `session.state`?
 
-Conceptually, `session.state` is a dictionary holding key-value pairs. It's designed for information the agent needs to recall or track to make the current conversation effective:
+Conceptually, `session.state` is a collection (dictionary or Map) holding key-value pairs. It's designed for information the agent needs to recall or track to make the current conversation effective:
 
 * **Personalize Interaction:** Remember user preferences mentioned earlier (e.g., `'user_preference_theme': 'dark'`).  
 * **Track Task Progress:** Keep tabs on steps in a multi-turn process (e.g., `'booking_step': 'confirm_payment'`).  
@@ -17,8 +17,8 @@ Conceptually, `session.state` is a dictionary holding key-value pairs. It's desi
 
     * Data is stored as `key: value`.  
     * **Keys:** Always strings (`str`). Use clear names (e.g., `'departure_city'`, `'user:language_preference'`).  
-    * **Values:** Must be **serializable**. This means they can be easily saved and loaded by the `SessionService`. Stick to basic Python types like strings, numbers, booleans, and simple lists or dictionaries containing *only* these basic types. (See API documentation for precise details).  
-    * **⚠️ Avoid Complex Objects:** **Do not store non-serializable Python objects** (custom class instances, functions, connections, etc.) directly in the state. Store simple identifiers if needed, and retrieve the complex object elsewhere.
+    * **Values:** Must be **serializable**. This means they can be easily saved and loaded by the `SessionService`. Stick to basic types in the specific languages (Python/ Java) like strings, numbers, booleans, and simple lists or dictionaries containing *only* these basic types. (See API documentation for precise details).  
+    * **⚠️ Avoid Complex Objects:** **Do not store non-serializable objects** (custom class instances, functions, connections, etc.) directly in the state. Store simple identifiers if needed, and retrieve the complex object elsewhere.
 
 2. **Mutability: It Changes**  
 
@@ -29,6 +29,9 @@ Conceptually, `session.state` is a dictionary holding key-value pairs. It's desi
     * Whether state survives application restarts depends on your chosen service:  
       * `InMemorySessionService`: **Not Persistent.** State is lost on restart.  
       * `DatabaseSessionService` / `VertexAiSessionService`: **Persistent.** State is saved reliably.
+
+!!! Note
+    The specific parameters or method names for the primitives may vary slightly by SDK language (e.g., `session.state['current_intent'] = 'book_flight'` in Python, `session.state().put("current_intent", "book_flight)` in Java). Refer to the language-specific API documentation for details.
 
 ### Organizing State with Prefixes: Scope Matters
 
@@ -62,7 +65,7 @@ Prefixes on state keys define their scope and persistence behavior, especially w
     * **Use Cases:** Intermediate results needed only immediately, data you explicitly don't want stored.  
     * **Example:** `session.state['temp:raw_api_response'] = {...}`
 
-**How the Agent Sees It:** Your agent code interacts with the *combined* state through the single `session.state` dictionary. The `SessionService` handles fetching/merging state from the correct underlying storage based on prefixes.
+**How the Agent Sees It:** Your agent code interacts with the *combined* state through the single `session.state` collection (dict/ Map). The `SessionService` handles fetching/merging state from the correct underlying storage based on prefixes.
 
 ### How State is Updated: Recommended Methods
 
@@ -72,48 +75,56 @@ State should **always** be updated as part of adding an `Event` to the session h
 
 This is the simplest method for saving an agent's final text response directly into the state. When defining your `LlmAgent`, specify the `output_key`:
 
-```py
-from google.adk.agents import LlmAgent
-from google.adk.sessions import InMemorySessionService, Session
-from google.adk.runners import Runner
-from google.genai.types import Content, Part
+=== "Python"
 
-# Define agent with output_key
-greeting_agent = LlmAgent(
-    name="Greeter",
-    model="gemini-2.0-flash", # Use a valid model
-    instruction="Generate a short, friendly greeting.",
-    output_key="last_greeting" # Save response to state['last_greeting']
-)
-
-# --- Setup Runner and Session ---
-app_name, user_id, session_id = "state_app", "user1", "session1"
-session_service = InMemorySessionService()
-runner = Runner(
-    agent=greeting_agent,
-    app_name=app_name,
-    session_service=session_service
-)
-session = session_service.create_session(app_name=app_name, 
+    ```py
+    from google.adk.agents import LlmAgent
+    from google.adk.sessions import InMemorySessionService, Session
+    from google.adk.runners import Runner
+    from google.genai.types import Content, Part
+    
+    # Define agent with output_key
+    greeting_agent = LlmAgent(
+        name="Greeter",
+        model="gemini-2.0-flash", # Use a valid model
+        instruction="Generate a short, friendly greeting.",
+        output_key="last_greeting" # Save response to state['last_greeting']
+    )
+    
+    # --- Setup Runner and Session ---
+    app_name, user_id, session_id = "state_app", "user1", "session1"
+    session_service = InMemorySessionService()
+    runner = Runner(
+        agent=greeting_agent,
+        app_name=app_name,
+        session_service=session_service
+    )
+    session = await session_service.create_session(app_name=app_name, 
                                         user_id=user_id, 
                                         session_id=session_id)
-print(f"Initial state: {session.state}")
+    print(f"Initial state: {session.state}")
+    
+    # --- Run the Agent ---
+    # Runner handles calling append_event, which uses the output_key
+    # to automatically create the state_delta.
+    user_message = Content(parts=[Part(text="Hello")])
+    for event in runner.run(user_id=user_id, 
+                            session_id=session_id, 
+                            new_message=user_message):
+        if event.is_final_response():
+          print(f"Agent responded.") # Response text is also in event.content
+    
+    # --- Check Updated State ---
+    updated_session = await session_service.get_session(app_name=APP_NAME, user_id=USER_ID, session_id=session_id)
+    print(f"State after agent run: {updated_session.state}")
+    # Expected output might include: {'last_greeting': 'Hello there! How can I help you today?'}
+    ```
 
-# --- Run the Agent ---
-# Runner handles calling append_event, which uses the output_key
-# to automatically create the state_delta.
-user_message = Content(parts=[Part(text="Hello")])
-for event in runner.run(user_id=user_id, 
-                        session_id=session_id, 
-                        new_message=user_message):
-    if event.is_final_response():
-      print(f"Agent responded.") # Response text is also in event.content
+=== "Java"
 
-# --- Check Updated State ---
-updated_session = session_service.get_session(app_name, user_id, session_id)
-print(f"State after agent run: {updated_session.state}")
-# Expected output might include: {'last_greeting': 'Hello there! How can I help you today?'}
-```
+    ```java
+    --8<-- "examples/java/snippets/src/main/java/state/GreetingAgentExample.java:full_code"
+    ```
 
 Behind the scenes, the `Runner` uses the `output_key` to create the necessary `EventActions` with a `state_delta` and calls `append_event`.
 
@@ -121,55 +132,63 @@ Behind the scenes, the `Runner` uses the `output_key` to create the necessary `E
 
 For more complex scenarios (updating multiple keys, non-string values, specific scopes like `user:` or `app:`, or updates not tied directly to the agent's final text), you manually construct the `state_delta` within `EventActions`.
 
-```py
-from google.adk.sessions import InMemorySessionService, Session
-from google.adk.events import Event, EventActions
-from google.genai.types import Part, Content
-import time
+=== "Python"
 
-# --- Setup ---
-session_service = InMemorySessionService()
-app_name, user_id, session_id = "state_app_manual", "user2", "session2"
-session = session_service.create_session(
-    app_name=app_name,
-    user_id=user_id,
-    session_id=session_id,
-    state={"user:login_count": 0, "task_status": "idle"}
-)
-print(f"Initial state: {session.state}")
+    ```py
+    from google.adk.sessions import InMemorySessionService, Session
+    from google.adk.events import Event, EventActions
+    from google.genai.types import Part, Content
+    import time
 
-# --- Define State Changes ---
-current_time = time.time()
-state_changes = {
-    "task_status": "active",              # Update session state
-    "user:login_count": session.state.get("user:login_count", 0) + 1, # Update user state
-    "user:last_login_ts": current_time,   # Add user state
-    "temp:validation_needed": True        # Add temporary state (will be discarded)
-}
+    # --- Setup ---
+    session_service = InMemorySessionService()
+    app_name, user_id, session_id = "state_app_manual", "user2", "session2"
+    session = await session_service.create_session(
+        app_name=app_name,
+        user_id=user_id,
+        session_id=session_id,
+        state={"user:login_count": 0, "task_status": "idle"}
+    )
+    print(f"Initial state: {session.state}")
 
-# --- Create Event with Actions ---
-actions_with_update = EventActions(state_delta=state_changes)
-# This event might represent an internal system action, not just an agent response
-system_event = Event(
-    invocation_id="inv_login_update",
-    author="system", # Or 'agent', 'tool' etc.
-    actions=actions_with_update,
-    timestamp=current_time
-    # content might be None or represent the action taken
-)
+    # --- Define State Changes ---
+    current_time = time.time()
+    state_changes = {
+        "task_status": "active",              # Update session state
+        "user:login_count": session.state.get("user:login_count", 0) + 1, # Update user state
+        "user:last_login_ts": current_time,   # Add user state
+        "temp:validation_needed": True        # Add temporary state (will be discarded)
+    }
 
-# --- Append the Event (This updates the state) ---
-session_service.append_event(session, system_event)
-print("`append_event` called with explicit state delta.")
+    # --- Create Event with Actions ---
+    actions_with_update = EventActions(state_delta=state_changes)
+    # This event might represent an internal system action, not just an agent response
+    system_event = Event(
+        invocation_id="inv_login_update",
+        author="system", # Or 'agent', 'tool' etc.
+        actions=actions_with_update,
+        timestamp=current_time
+        # content might be None or represent the action taken
+    )
 
-# --- Check Updated State ---
-updated_session = session_service.get_session(app_name=app_name,
-                                            user_id=user_id, 
-                                            session_id=session_id)
-print(f"State after event: {updated_session.state}")
-# Expected: {'user:login_count': 1, 'task_status': 'active', 'user:last_login_ts': <timestamp>}
-# Note: 'temp:validation_needed' is NOT present.
-```
+    # --- Append the Event (This updates the state) ---
+    await session_service.append_event(session, system_event)
+    print("`append_event` called with explicit state delta.")
+
+    # --- Check Updated State ---
+    updated_session = await session_service.get_session(app_name=app_name,
+                                                user_id=user_id, 
+                                                session_id=session_id)
+    print(f"State after event: {updated_session.state}")
+    # Expected: {'user:login_count': 1, 'task_status': 'active', 'user:last_login_ts': <timestamp>}
+    # Note: 'temp:validation_needed' is NOT present.
+    ```
+
+=== "Java"
+
+    ```java
+    --8<-- "examples/java/snippets/src/main/java/state/ManualStateUpdateExample.java:full_code"
+    ```
 
 **What `append_event` Does:**
 

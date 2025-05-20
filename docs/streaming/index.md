@@ -1,8 +1,8 @@
 # Streaming in ADK
 
-!!! Experimental
+!!! info
 
-    This is an experimental feature.
+    This is an experimental feature. Currrently available in Python.
 
 Streaming in ADK adds the low-latency bidirectional voice and video interaction
 capability of [Gemini Live API](https://ai.google.dev/gemini-api/docs/live) to
@@ -13,9 +13,19 @@ human-like voice conversations, including the ability for the user to interrupt
 the agent's responses with voice commands. Agents with streaming can process
 text, audio, and video inputs, and they can provide text and audio output.
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/Tu7-voU7nnw" title="Shopper's Concierge" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+<div class="video-grid">
+  <div class="video-item">
+    <div class="video-container">
+      <iframe src="https://www.youtube-nocookie.com/embed/Tu7-voU7nnw?si=RKs7EWKjx0bL96i5" title="Shopper's Concierge" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    </div>
+  </div>
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/LwHPYyw7u6U" title="Shopper's Concierge" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+  <div class="video-item">
+    <div class="video-container">
+      <iframe src="https://www.youtube-nocookie.com/embed/LwHPYyw7u6U?si=xxIEhnKBapzQA6VV" title="Shopper's Concierge" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    </div>
+  </div>
+</div>
 
 <div class="grid cards" markdown>
 
@@ -26,7 +36,7 @@ text, audio, and video inputs, and they can provide text and audio output.
     In this quickstart, you'll build a simple agent and use streaming in ADK to
     implement low-latency and bidirectional voice and video communication.
 
-    [:octicons-arrow-right-24: More information](../get-started/quickstart-streaming.md)
+    [:octicons-arrow-right-24: More information](../get-started/streaming/quickstart-streaming.md)
 
 -   :material-console-line: **Streaming Tools**
 

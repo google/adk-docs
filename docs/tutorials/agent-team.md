@@ -293,7 +293,7 @@ USER_ID = "user_1"
 SESSION_ID = "session_001" # Using a fixed ID for simplicity
 
 # Create the specific session where the conversation will happen
-session = session_service.create_session(
+session = await session_service.create_session(
     app_name=APP_NAME,
     user_id=USER_ID,
     session_id=SESSION_ID
@@ -495,7 +495,7 @@ try:
     SESSION_ID_GPT = "session_001_gpt" # Using a fixed ID for simplicity
 
     # Create the specific session where the conversation will happen
-    session_gpt = session_service_gpt.create_session(
+    session_gpt = await session_service_gpt.create_session(
         app_name=APP_NAME_GPT,
         user_id=USER_ID_GPT,
         session_id=SESSION_ID_GPT
@@ -571,7 +571,7 @@ try:
     SESSION_ID_CLAUDE = "session_001_claude" # Using a fixed ID for simplicity
 
     # Create the specific session where the conversation will happen
-    session_claude = session_service_claude.create_session(
+    session_claude = await session_service_claude.create_session(
         app_name=APP_NAME_CLAUDE,
         user_id=USER_ID_CLAUDE,
         session_id=SESSION_ID_CLAUDE
@@ -850,7 +850,7 @@ if root_agent_var_name in globals() and globals()[root_agent_var_name]:
         APP_NAME = "weather_tutorial_agent_team"
         USER_ID = "user_1_agent_team"
         SESSION_ID = "session_001_agent_team"
-        session = session_service.create_session(
+        session = await session_service.create_session(
             app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID
         )
         print(f"Session created: App='{APP_NAME}', User='{USER_ID}', Session='{SESSION_ID}'")
@@ -972,7 +972,7 @@ initial_state = {
 }
 
 # Create the session, providing the initial state
-session_stateful = session_service_stateful.create_session(
+session_stateful = await session_service_stateful.create_session(
     app_name=APP_NAME, # Use the consistent app name
     user_id=USER_ID_STATEFUL,
     session_id=SESSION_ID_STATEFUL,
