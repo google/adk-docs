@@ -7,14 +7,14 @@ Using ADK Java SDK to perform the popular Patent Search (Contextual Search)  use
 2. Set env variables:
    
 export GOOGLE_GENAI_USE_VERTEXAI=FALSE
-export GOOGLE_API_KEY=AIzaSyB2-DNQcffzdpab5wvlyhF1zoTEoTw44Oc
+export GOOGLE_API_KEY="<your-api-key>"
 
-3. Update the placeholders in the code with values from your project (like PROJECT_ID etc.)
+1. Update the placeholders in the code with values from your project (like PROJECT_ID etc.)
 
-4. Set up AlloyDB for Patents Data by following the codelab below:
+2. Set up AlloyDB for Patents Data by following the codelab below:
    https://codelabs.developers.google.com/patent-search-alloydb-gemini
    
-6. Create Cloud Run Function (CRF) to access AlloyDB for patents data (code in this repo)
+3. Create Cloud Run Function (CRF) to access AlloyDB for patents data (code in this repo)
    Follow codelab step #7 for setting up the CRF for this: [https://codelabs.developers.google.com/patent-search-alloydb-gemini step #](https://codelabs.developers.google.com/patent-search-alloydb-gemini?hl=en#6)
 
 7. Deploy and the CRF endpoint
