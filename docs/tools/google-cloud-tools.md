@@ -1,5 +1,7 @@
 # Google Cloud Tools
 
+![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java support is planned/ coming soon."}
+
 Google Cloud tools make it easier to connect your agents to Google Cloud’s
 products and services. With just a few lines of code you can use these tools to
 connect your agents with:
@@ -115,7 +117,7 @@ you only need to follow a subset of these steps.
     )
     ```
 
-5. Configure your \`\_\_init\_\_.py\` to expose your agent
+5. Configure your `__init__.py` to expose your agent
 
     ```py
     from . import agent
@@ -203,7 +205,7 @@ Connect your agent to enterprise applications using
 
 **Steps:**
 
-1.  Create a tool with `ApplicationIntegrationToolset`
+1.  Create a tool with `ApplicationIntegrationToolset` within your `tools.py` file
 
     ```py
     from google.adk.tools.application_integration_tool.application_integration_toolset import ApplicationIntegrationToolset
@@ -242,7 +244,7 @@ Connect your agent to enterprise applications using
     )
     ```
 
-3. Configure your  \`\_\_init\_\_.py\` to expose your agent
+3. Configure your  `__init__.py` to expose your agent
 
     ```py
     from . import agent
@@ -266,7 +268,7 @@ workflow as a tool for your agent or create a new one.
 
 **Steps:**
 
-1. Create a tool with `ApplicationIntegrationToolset`
+1. Create a tool with `ApplicationIntegrationToolset` within your `tools.py` file
 
     ```py
     integration_tool = ApplicationIntegrationToolset(
@@ -342,27 +344,28 @@ documentation:
 
 ### Install client SDK
 
-ADK relies on the `toolbox-langchain` python package to use Toolbox. Install the
+ADK relies on the `toolbox-core` python package to use Toolbox. Install the
 package before getting started:
 
 ```shell
-pip install toolbox-langchain langchain
+pip install toolbox-core
 ```
 
 ### Loading Toolbox Tools
 
-Once you’ve Toolbox server is configured and up and running, you can load tools
-from your server using the ADK:
+Once you’re Toolbox server is configured and up and running, you can load tools
+from your server using ADK:
 
-```py
-from google.adk.tools.toolbox_tool import ToolboxTool
+```python
+from google.adk.agents import Agent
+from toolbox_core import ToolboxSyncClient
 
-toolbox = ToolboxTool("https://127.0.0.1:5000")
+toolbox = ToolboxSyncClient("https://127.0.0.1:5000")
 
 # Load a specific set of tools
-tools = toolbox.get_toolset(toolset_name='my-toolset-name'),
+tools = toolbox.load_toolset('my-toolset-name'),
 # Load single tool
-tools = toolbox.get_tool(tool_name='my-tool-name'),
+tools = toolbox.load_tool('my-tool-name'),
 
 root_agent = Agent(
     ...,

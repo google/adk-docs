@@ -100,9 +100,9 @@ The `adk run` command allows you to interact with an agent directly from your te
 *   **Example (running Step 1):**
     ```bash
     # Make sure you are in the main 'adk-tutorial' folder
-    adk run step_1/agent.py
+    adk run step_1
     ```
-*   For detailed usage and options for `adk run`, please refer to the [Official ADK Documentation - Running Agents](https://google.github.io/adk-docs/get-started/running-agents/).
+*   For detailed usage and options for `adk run`, please refer to the [Official ADK Documentation - Run Your Agent](https://google.github.io/adk-docs/get-started/quickstart/#terminal-adk-run).
 
 ### Using `adk api_server` (Exposing as API)
 
@@ -111,9 +111,9 @@ The `adk api_server` command starts a FastAPI server, exposing your agent via an
 *   **Example (serving Step 1):**
     ```bash
     # Make sure you are in the main 'adk-tutorial' folder
-    adk api_server step_1/agent.py
+    adk api_server
     ```
-*   For detailed usage, API endpoint structure, and options for `adk api_server`, please consult the [Official ADK Documentation - Running Agents](https://google.github.io/adk-docs/get-started/running-agents/).
+*   For detailed usage, API endpoint structure, and options for `adk api_server`, please consult the [Official ADK Documentation - Testing your Agents](https://google.github.io/adk-docs/get-started/testing/).
 
 ## Directory Structure
 
