@@ -137,7 +137,6 @@ export GOOGLE_GENAI_USE_VERTEXAI=True
         import os
 
         import uvicorn
-        from fastapi import FastAPI
         from google.adk.cli.fast_api import get_fast_api_app
 
         # Get the directory where main.py is located
@@ -151,7 +150,7 @@ export GOOGLE_GENAI_USE_VERTEXAI=True
 
         # Call the function to get the FastAPI app instance
         # Ensure the agent directory name ('capital_agent') matches your agent folder
-        app: FastAPI = get_fast_api_app(
+        app = get_fast_api_app(
             agent_dir=AGENT_DIR,
             session_db_url=SESSION_DB_URL,
             allow_origins=ALLOWED_ORIGINS,
