@@ -17,7 +17,7 @@ tool when the agent calls it. Important: check the ***Limitations*** section of 
 
 ## Available Built-in tools
 
-Note: Java only supports Google Search and Code Execition tools currently.
+Note: Java only supports Google Search and Code Execution tools currently.
 
 ### Google Search
 
