@@ -4,6 +4,8 @@
 
 To deploy your agent you will need to have a Kubernetes cluster running on GKE. You can create a cluster using the Google Cloud Console or the `gcloud` command line tool.
 
+In this example we will deploy a simple agent to GKE. The agent will be a FastAPI application that uses `Gemini 2.0 Flash` as the LLM. We can use Vertex AI or AI Studio as the LLM provider using a Environment variable.
+
 ## Agent sample
 
 For each of the commands, we will reference a `capital_agent` sample defined in on the [LLM agent](../agents/llm-agents.md) page. We will assume it's in a `capital_agent` directory.
@@ -45,6 +47,18 @@ You can deploy your agent to GKE using the `gcloud` and `kubectl` cli and Kubern
 
 Ensure you have authenticated with Google Cloud (`gcloud auth login` and `gcloud config set project <your-project-id>`).
 
+### Enable APIs
+
+Enable the necessary APIs for your project. You can do this using the `gcloud` command line tool.
+
+```bash
+gcloud services enable \
+    container.googleapis.com \
+    artifactregistry.googleapis.com \
+    cloudbuild.googleapis.com \
+    aiplatform.googleapis.com
+```
+
 ### Create a GKE cluster
 
 You can create a GKE cluster using the `gcloud` command line tool. This example creates an Autopilot cluster named `adk-cluster` in the `us-central1` region.
@@ -63,17 +77,6 @@ After creating the cluster, you need to connect to it using `kubectl`. This comm
 gcloud container clusters get-credentials adk-cluster \
     --location=$GOOGLE_CLOUD_LOCATION \
     --project=$GOOGLE_CLOUD_PROJECT
-```
-
-### Artifact Registry
-
-You need to create a Google Artifact Registry repository to store your container images. You can do this using the `gcloud` command line tool.
-
-```bash
-gcloud artifacts repositories create adk-repo \
-    --repository-format=docker \
-    --location=$GOOGLE_CLOUD_LOCATION \
-    --description="ADK repository"
 ```
 
 ### Project Structure
@@ -164,6 +167,15 @@ Create the following files (`main.py`, `requirements.txt`, `Dockerfile`) in the 
 
 ### Build the container image
 
+You need to create a Google Artifact Registry repository to store your container images. You can do this using the `gcloud` command line tool.
+
+```bash
+gcloud artifacts repositories create adk-repo \
+    --repository-format=docker \
+    --location=$GOOGLE_CLOUD_LOCATION \
+    --description="ADK repository"
+```
+
 Build the container image using the `gcloud` command line tool. This example builds the image and tags it as `adk-repo/adk-agent:latest`.
 
 ```bash
@@ -173,9 +185,19 @@ gcloud builds submit \
     .
 ```
 
+Verify the image is built and pushed to the Artifact Registry:
+
+```bash
+gcloud artifacts docker images list \
+  $GOOGLE_CLOUD_LOCATION-docker.pkg.dev/$GOOGLE_CLOUD_PROJECT/adk-repo \
+  --project=$GOOGLE_CLOUD_PROJECT
+```
+
 ### Configure Kubernetes Service Account for Vertex AI
 
 If your agent uses Vertex AI, you need to create a Kubernetes service account with the necessary permissions. This example creates a service account named `adk-agent-sa` and binds it to the `Vertex AI User` role.
+
+> If you are using AI Studio and accessing the model with an API key you can skip this step.
 
 ```bash
 kubectl create serviceaccount adk-agent-sa
@@ -211,7 +233,8 @@ spec:
       serviceAccount: adk-agent-sa
       containers:
       - name: adk-agent
-        image: $GOOGLE_CLOUD_LOCATION-docker.pkg.dev/$GOOGLE_CLOUD_PROJECT/adk-repo/adk-agent:v0.0.4
+        imagePullPolicy: Always
+        image: $GOOGLE_CLOUD_LOCATION-docker.pkg.dev/$GOOGLE_CLOUD_PROJECT/adk-repo/adk-agent:latest
         resources:
           limits:
             memory: "128Mi"
@@ -232,6 +255,9 @@ spec:
             value: GOOGLE_CLOUD_LOCATION
           - name: GOOGLE_GENAI_USE_VERTEXAI
             value: GOOGLE_GENAI_USE_VERTEXAI
+          # If using AI Studio, set GOOGLE_GENAI_USE_VERTEXAI to false and set the following:
+          # - name: GOOGLE_API_KEY
+          #   value: GOOGLE_API_KEY
           # Add any other necessary environment variables your agent might need
 ---
 apiVersion: v1
@@ -361,3 +387,60 @@ Once your agent is deployed to GKE, you can interact with it via the deployed UI
 
     * Set `"streaming": true` if you want to receive Server-Sent Events (SSE).
     * The response will contain the agent's execution events, including the final answer.
+
+## Troubleshooting
+
+These are some common issues you might encounter when deploying your agent to GKE:
+
+### 403 Permission Denied for `Gemini 2.0 Flash`
+
+This usually means that the Kubernetes service account does not have the necessary permission to access the Vertex AI API. Ensure that you have created the service account and bound it to the `Vertex AI User` role as described in the [Configure Kubernetes Service Account for Vertex AI](#configure-kubernetes-service-account-for-vertex-ai) section. If you are using AI Studio, ensure that you have set the `GOOGLE_API_KEY` environment variable in the deployment manifest and it is valid.
+
+### Attempt to write a readonly database
+
+You might see there is no session id created in the UI and the agent does not respond to any messages. This is usually caused by the SQLite database being read-only. This can happen if you run the agent locally and then create the container image which copies the SQLite database into the container. The database is then read-only in the container.
+
+```bash
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) attempt to write a readonly database
+[SQL: UPDATE app_states SET state=?, update_time=CURRENT_TIMESTAMP WHERE app_states.app_name = ?]
+```
+
+To fix this issue, you can either:
+
+Delete the SQLite database file from your local machine before building the container image. This will create a new SQLite database when the container is started.
+
+```bash
+rm -f sessions.db
+```
+
+or (recommended) you can add a `.dockerignore` file to your project directory to exclude the SQLite database from being copied into the container image.
+
+```txt title=".dockerignore"
+sessions.db
+```
+
+Build the container image abd deploy the application again.
+
+## Cleanup
+
+To delete the GKE cluster and all associated resources, run:
+
+```bash
+gcloud container clusters delete adk-cluster \
+    --location=$GOOGLE_CLOUD_LOCATION \
+    --project=$GOOGLE_CLOUD_PROJECT
+```
+
+To delete the Artifact Registry repository, run:
+
+```bash
+gcloud artifacts repositories delete adk-repo \
+    --location=$GOOGLE_CLOUD_LOCATION \
+    --project=$GOOGLE_CLOUD_PROJECT
+```
+
+You can also delete the project if you no longer need it. This will delete all resources associated with the project, including the GKE cluster, Artifact Registry repository, and any other resources you created.
+
+```bash
+gcloud projects delete $GOOGLE_CLOUD_PROJECT
+```
