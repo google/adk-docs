@@ -1,5 +1,7 @@
 # Google Cloud Tools
 
+![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java support is planned/ coming soon."}
+
 Google Cloud tools make it easier to connect your agents to Google Cloud’s
 products and services. With just a few lines of code you can use these tools to
 connect your agents with:
