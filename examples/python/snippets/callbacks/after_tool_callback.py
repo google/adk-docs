@@ -7,7 +7,7 @@ from google.adk.tools import FunctionTool
 from google.adk.tools.tool_context import ToolContext
 from google.adk.tools.base_tool import BaseTool
 from typing import Dict, Any
-from copy import copy
+from copy import deepcopy
 
 GEMINI_2_FLASH="gemini-2.0-flash"
 
@@ -47,7 +47,7 @@ def simple_after_tool_modifier(
         print("[Callback] Detected 'Washington, D.C.'. Modifying tool response.")
 
         # IMPORTANT: Create a new dictionary or modify a copy
-        modified_response = copy.deepcopy(tool_response)
+        modified_response = deepcopy(tool_response)
         modified_response["result"] = f"{original_result_value} (Note: This is the capital of the USA)."
         modified_response["note_added_by_callback"] = True # Add extra info if needed
 
