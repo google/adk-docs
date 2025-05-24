@@ -981,7 +981,7 @@ session_stateful = await session_service_stateful.create_session(
 print(f"✅ Session '{SESSION_ID_STATEFUL}' created for user '{USER_ID_STATEFUL}'.")
 
 # Verify the initial state was set correctly
-retrieved_session = session_service_stateful.get_session(app_name=APP_NAME,
+retrieved_session = await session_service_stateful.get_session(app_name=APP_NAME,
                                                          user_id=USER_ID_STATEFUL,
                                                          session_id = SESSION_ID_STATEFUL)
 print("\n--- Initial Session State ---")
@@ -1248,7 +1248,7 @@ if 'runner_root_stateful' in globals() and runner_root_stateful:
     # --- Inspect final session state after the conversation ---
     # This block runs after either execution method completes.
     print("\n--- Inspecting Final Session State ---")
-    final_session = session_service_stateful.get_session(app_name=APP_NAME,
+    final_session = await session_service_stateful.get_session(app_name=APP_NAME,
                                                          user_id= USER_ID_STATEFUL,
                                                          session_id=SESSION_ID_STATEFUL)
     if final_session:
@@ -1541,7 +1541,7 @@ if 'runner_root_model_guardrail' in globals() and runner_root_model_guardrail:
     # Optional: Check state for the trigger flag set by the callback
     print("\n--- Inspecting Final Session State (After Guardrail Test) ---")
     # Use the session service instance associated with this stateful session
-    final_session = session_service_stateful.get_session(app_name=APP_NAME,
+    final_session = await session_service_stateful.get_session(app_name=APP_NAME,
                                                          user_id=USER_ID_STATEFUL,
                                                          session_id=SESSION_ID_STATEFUL)
     if final_session:
@@ -1829,7 +1829,7 @@ if 'runner_root_tool_guardrail' in globals() and runner_root_tool_guardrail:
     # Optional: Check state for the tool block trigger flag
     print("\n--- Inspecting Final Session State (After Tool Guardrail Test) ---")
     # Use the session service instance associated with this stateful session
-    final_session = session_service_stateful.get_session(app_name=APP_NAME,
+    final_session = await session_service_stateful.get_session(app_name=APP_NAME,
                                                          user_id=USER_ID_STATEFUL,
                                                          session_id= SESSION_ID_STATEFUL)
     if final_session:
