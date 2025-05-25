@@ -1257,7 +1257,7 @@ if 'runner_root_stateful' in globals() and runner_root_stateful:
         print(f"Final Last Weather Report (from output_key): {final_session.state.get('last_weather_report', 'Not Set')}")
         print(f"Final Last City Checked (by tool): {final_session.state.get('last_city_checked_stateful', 'Not Set')}")
         # Print full state for detailed view
-        # print(f"Full State Dict: {final_session.state.as_dict()}") # Use as_dict() for clarity
+        # print(f"Full State Dict: {final_session.state}") # For detailed view
     else:
         print("\n❌ Error: Could not retrieve final session state.")
 
