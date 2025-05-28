@@ -27,10 +27,10 @@ python -m venv .venv
 Install ADK:
 
 ```bash
-pip install google-adk
+pip install google-adk==1.0.0
 ```
 
-Set `SSL_CERT_FILE` variable with the following command (This is required when the client connects to the server with `wss://` connection).
+Set `SSL_CERT_FILE` variable with the following command.
 
 ```shell
 export SSL_CERT_FILE=$(python -m certifi)
@@ -108,16 +108,11 @@ from google.adk.agents import Agent
 from google.adk.tools import google_search  # Import the tool
 
 root_agent = Agent(
-   # A unique name for the agent.
    name="google_search_agent",
-   # The Large Language Model (LLM) that agent will use.
-   model="gemini-2.0-flash-exp",
-   # model="gemini-2.0-flash-live-001",  # New streaming model version as of Feb 2025
-   # A short description of the agent's purpose.
+   model="gemini-2.0-flash-live-001", # if this model does not work, try "gemini-2.0-flash-exp"
+   # model="gemini-2.0-flash-exp",
    description="Agent to answer questions using Google Search.",
-   # Instructions to set the agent's behavior.
    instruction="Answer the question using the Google Search tool.",
-   # Add google_search tool to perform grounding with Google search.
    tools=[google_search],
 )
 ```
@@ -177,6 +172,11 @@ INFO:     127.0.0.1:50082 - "GET /favicon.ico HTTP/1.1" 404 Not Found
 ```
 
 These console logs are important in case you develop your own streaming application. In many cases, the communication failure between the browser and server becomes a major cause for the streaming application bugs.
+
+6\. **Troubleshooting tips**
+
+- **When `ws://` doesn't work:** If you see any errors on the Chrome DevTools with regard to `ws://` connection, try replacing `ws://` with `wss://` on `app/static/js/app.js` at line 28. This may happen when you are running the sample on a cloud environment and using a proxy connection to connect from your browser.
+- **When `gemini-2.0-flash-live-001` model doesn't work:** If you see any errors on the app server console with regard to `gemini-2.0-flash-live-001` model availability, try replacing it with `gemini-2.0-flash-exp` on `app/google_search_agent/agent.py` at line 6. This may happen when you are running the sample with Vertex AI.
 
 ## 4. Server code overview {#4.-server-side-code-overview}
 

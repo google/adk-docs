@@ -26,10 +26,9 @@ from google.genai.types import (
     Blob,
 )
 
-from google.adk.runners import Runner
+from google.adk.runners import InMemoryRunner
 from google.adk.agents import LiveRequestQueue
 from google.adk.agents.run_config import RunConfig
-from google.adk.sessions.in_memory_session_service import InMemorySessionService
 
 from fastapi import FastAPI, WebSocket
 from fastapi.staticfiles import StaticFiles
@@ -45,24 +44,21 @@ from google_search_agent.agent import root_agent
 load_dotenv()
 
 APP_NAME = "ADK Streaming example"
-session_service = InMemorySessionService()
 
 
-def start_agent_session(session_id, is_audio=False):
+async def start_agent_session(user_id, is_audio=False):
     """Starts an agent session"""
 
-    # Create a Session
-    session = session_service.create_session(
-        app_name=APP_NAME,
-        user_id=session_id,
-        session_id=session_id,
-    )
-
     # Create a Runner
-    runner = Runner(
+    runner = InMemoryRunner(
         app_name=APP_NAME,
         agent=root_agent,
-        session_service=session_service,
+    )
+
+    # Create a Session
+    session = await runner.session_service.create_session(
+        app_name=APP_NAME,
+        user_id=user_id,  # Replace with actual user ID
     )
 
     # Set response modality
@@ -165,17 +161,17 @@ async def root():
     return FileResponse(os.path.join(STATIC_DIR, "index.html"))
 
 
-@app.websocket("/ws/{session_id}")
-async def websocket_endpoint(websocket: WebSocket, session_id: int, is_audio: str):
+@app.websocket("/ws/{user_id}")
+async def websocket_endpoint(websocket: WebSocket, user_id: int, is_audio: str):
     """Client websocket endpoint"""
 
     # Wait for client connection
     await websocket.accept()
-    print(f"Client #{session_id} connected, audio mode: {is_audio}")
+    print(f"Client #{user_id} connected, audio mode: {is_audio}")
 
     # Start agent session
-    session_id = str(session_id)
-    live_events, live_request_queue = start_agent_session(session_id, is_audio == "true")
+    user_id_str = str(user_id)
+    live_events, live_request_queue = await start_agent_session(user_id_str, is_audio == "true")
 
     # Start tasks
     agent_to_client_task = asyncio.create_task(
@@ -184,7 +180,13 @@ async def websocket_endpoint(websocket: WebSocket, session_id: int, is_audio: st
     client_to_agent_task = asyncio.create_task(
         client_to_agent_messaging(websocket, live_request_queue)
     )
-    await asyncio.gather(agent_to_client_task, client_to_agent_task)
+
+    # Wait until the websocket is disconnected or an error occurs
+    tasks = [agent_to_client_task, client_to_agent_task]
+    await asyncio.wait(tasks, return_when=asyncio.FIRST_EXCEPTION)
+
+    # Close LiveRequestQueue
+    live_request_queue.close()
 
     # Disconnected
-    print(f"Client #{session_id} disconnected")
+    print(f"Client #{user_id} disconnected")
