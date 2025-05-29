@@ -1,15 +1,20 @@
-# Custom Audio Streaming app {#custom-streaming}
+# Custom Audio Streaming app (SSE) {#custom-streaming}
 
-This article overviews the server and client code for a custom asynchronous web app built with ADK Streaming and [FastAPI](https://fastapi.tiangolo.com/), enabling real-time, bidirectional audio and text communication.
+This article overviews the server and client code for a custom asynchronous web app built with ADK Streaming and [FastAPI](https://fastapi.tiangolo.com/), enabling real-time, bidirectional audio and text communication with Server-Sent Events (SSE). The key features are:
 
-**Note:** This guide assumes you have experience of JavaScript and Python `asyncio` programming.
+**Server-Side (Python/FastAPI)**:
+- FastAPI + ADK integration
+- Server-Sent Events for real-time streaming
+- Session management with isolated user contexts
+- Support for both text and audio communication modes
+- Google Search tool integration for grounded responses
 
-## Supported models for voice/video streaming {#supported-models}
-
-In order to use voice/video streaming in ADK, you will need to use Gemini models that support the Live API. You can find the **model ID(s)** that supports the Gemini Live API in the documentation:
-
-- [Google AI Studio: Gemini Live API](https://ai.google.dev/gemini-api/docs/models#live-api)
-- [Vertex AI: Gemini Live API](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api)
+**Client-Side (JavaScript/Web Audio API)**:
+- Real-time bidirectional communication via SSE and HTTP POST
+- Professional audio processing using AudioWorklet processors
+- Seamless mode switching between text and audio
+- Automatic reconnection and error handling
+- Base64 encoding for audio data transmission
 
 ## 1. Install ADK {#1.-setup-installation}
 
@@ -28,12 +33,6 @@ Install ADK:
 
 ```bash
 pip install google-adk==1.0.0
-```
-
-Set `SSL_CERT_FILE` variable with the following command.
-
-```shell
-export SSL_CERT_FILE=$(python -m certifi)
 ```
 
 Download the sample code:
@@ -117,8 +116,6 @@ root_agent = Agent(
 )
 ```
 
-**Note:**  To enable both text and audio/video input, the model must support the generateContent (for text) and bidiGenerateContent methods. Verify these capabilities by referring to the [List Models Documentation](https://ai.google.dev/api/models#method:-models.list). This quickstart utilizes the gemini-2.0-flash-exp model for demonstration purposes.
-
 Notice how easily you integrated [grounding with Google Search](https://ai.google.dev/gemini-api/docs/grounding?lang=python#configure-search) capabilities.  The `Agent` class and the `google_search` tool handle the complex interactions with the LLM and grounding with the search API, allowing you to focus on the agent's *purpose* and *behavior*.
 
 ![intro_components.png](../assets/quickstart-streaming-tool.png)
@@ -160,541 +157,228 @@ If you are using the Chrome browser, use the right click and select `Inspect` to
 At the same time, in the app server console, you should see something like this:
 
 ```
-INFO:     ('127.0.0.1', 50068) - "WebSocket /ws/70070018?is_audio=true" [accepted]
-Client #70070018 connected, audio mode: true
-INFO:     connection open
-INFO:     127.0.0.1:50061 - "GET /static/js/pcm-player-processor.js HTTP/1.1" 200 OK
-INFO:     127.0.0.1:50060 - "GET /static/js/pcm-recorder-processor.js HTTP/1.1" 200 OK
-[AGENT TO CLIENT]: audio/pcm: 9600 bytes.
-INFO:     127.0.0.1:50082 - "GET /favicon.ico HTTP/1.1" 404 Not Found
-[AGENT TO CLIENT]: audio/pcm: 11520 bytes.
-[AGENT TO CLIENT]: audio/pcm: 11520 bytes.
+Client #90766266 connected via SSE, audio mode: false
+INFO:     127.0.0.1:52692 - "GET /events/90766266?is_audio=false HTTP/1.1" 200 OK
+[CLIENT TO AGENT]: hi
+INFO:     127.0.0.1:52696 - "POST /send/90766266 HTTP/1.1" 200 OK
+[AGENT TO CLIENT]: text/plain: {'mime_type': 'text/plain', 'data': 'Hi'}
+[AGENT TO CLIENT]: text/plain: {'mime_type': 'text/plain', 'data': ' there! How can I help you today?\n'}
+[AGENT TO CLIENT]: {'turn_complete': True, 'interrupted': None}
 ```
 
 These console logs are important in case you develop your own streaming application. In many cases, the communication failure between the browser and server becomes a major cause for the streaming application bugs.
 
 6\. **Troubleshooting tips**
 
-- **When `ws://` doesn't work:** If you see any errors on the Chrome DevTools with regard to `ws://` connection, try replacing `ws://` with `wss://` on `app/static/js/app.js` at line 28. This may happen when you are running the sample on a cloud environment and using a proxy connection to connect from your browser.
 - **When `gemini-2.0-flash-live-001` model doesn't work:** If you see any errors on the app server console with regard to `gemini-2.0-flash-live-001` model availability, try replacing it with `gemini-2.0-flash-exp` on `app/google_search_agent/agent.py` at line 6. This may happen when you are running the sample with Vertex AI.
 
-## 4. Server code overview {#4.-server-side-code-overview}
-
-This server app enables real-time, streaming interaction with ADK agent via WebSockets. Clients send text/audio to the ADK agent and receive streamed text/audio responses.
-
-Core functions:
-1.  Initialize/manage ADK agent sessions.
-2.  Handle client WebSocket connections.
-3.  Relay client messages to the ADK agent.
-4.  Stream ADK agent responses (text/audio) to clients.
-
-### ADK Streaming Setup
-
-```py
-import os
-import json
-import asyncio
-import base64
-
-from pathlib import Path
-from dotenv import load_dotenv
-
-from google.genai.types import (
-    Part,
-    Content,
-    Blob,
-)
-
-from google.adk.runners import Runner
-from google.adk.agents import LiveRequestQueue
-from google.adk.agents.run_config import RunConfig
-from google.adk.sessions.in_memory_session_service import InMemorySessionService
-
-from fastapi import FastAPI, WebSocket
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
-
-from google_search_agent.agent import root_agent
-```
-
-*   **Imports:** Includes standard Python libraries, `dotenv` for environment variables, Google ADK, and FastAPI.
-*   **`load_dotenv()`:** Loads environment variables.
-*   **`APP_NAME`**: Application identifier for ADK.
-*   **`session_service = InMemorySessionService()`**: Initializes an in-memory ADK session service, suitable for single-instance or development use. Production might use a persistent store.
-
-### `start_agent_session(session_id, is_audio=False)`
-
-```py
-
-def start_agent_session(session_id, is_audio=False):
-    """Starts an agent session"""
-
-    # Create a Session
-    session = await session_service.create_session(
-        app_name=APP_NAME,
-        user_id=session_id,
-        session_id=session_id,
-    )
-
-    # Create a Runner
-    runner = Runner(
-        app_name=APP_NAME,
-        agent=root_agent,
-        session_service=session_service,
-    )
-
-    # Set response modality
-    modality = "AUDIO" if is_audio else "TEXT"
-    run_config = RunConfig(response_modalities=[modality])
-
-    # Create a LiveRequestQueue for this session
-    live_request_queue = LiveRequestQueue()
-
-    # Start agent session
-    live_events = runner.run_live(
-        session=session,
-        live_request_queue=live_request_queue,
-        run_config=run_config,
-    )
-    return live_events, live_request_queue
-```
-
-This function initializes an ADK agent live session.
-
-| Parameter    | Type    | Description                                             |
-|--------------|---------|---------------------------------------------------------|
-| `session_id` | `str`   | Unique client session identifier.                       |
-| `is_audio`   | `bool`  | `True` for audio responses, `False` for text (default). |
-
-**Key Steps:**
-1\.  **Create Session:** Establishes an ADK session.
-2\.  **Create Runner:** Instantiates the ADK runner for the `root_agent`.
-3\.  **Set Response Modality:** Configures agent response as "AUDIO" or "TEXT".
-4\.  **Create LiveRequestQueue:** Creates a queue for client inputs to the agent.
-5\.  **Start Agent Session:** `runner.run_live(...)` starts the agent, returning:
-    *   `live_events`: Asynchronous iterable for agent events (text, audio, completion).
-    *   `live_request_queue`: Queue to send data to the agent.
-
-**Returns:** `(live_events, live_request_queue)`.
-
-### `agent_to_client_messaging(websocket, live_events)`
-
-```py
-
-async def agent_to_client_messaging(websocket, live_events):
-    """Agent to client communication"""
-    while True:
-        async for event in live_events:
-
-            # If the turn complete or interrupted, send it
-            if event.turn_complete or event.interrupted:
-                message = {
-                    "turn_complete": event.turn_complete,
-                    "interrupted": event.interrupted,
-                }
-                await websocket.send_text(json.dumps(message))
-                print(f"[AGENT TO CLIENT]: {message}")
-                continue
-
-            # Read the Content and its first Part
-            part: Part = (
-                event.content and event.content.parts and event.content.parts[0]
-            )
-            if not part:
-                continue
-
-            # If it's audio, send Base64 encoded audio data
-            is_audio = part.inline_data and part.inline_data.mime_type.startswith("audio/pcm")
-            if is_audio:
-                audio_data = part.inline_data and part.inline_data.data
-                if audio_data:
-                    message = {
-                        "mime_type": "audio/pcm",
-                        "data": base64.b64encode(audio_data).decode("ascii")
-                    }
-                    await websocket.send_text(json.dumps(message))
-                    print(f"[AGENT TO CLIENT]: audio/pcm: {len(audio_data)} bytes.")
-                    continue
-
-            # If it's text and a parial text, send it
-            if part.text and event.partial:
-                message = {
-                    "mime_type": "text/plain",
-                    "data": part.text
-                }
-                await websocket.send_text(json.dumps(message))
-                print(f"[AGENT TO CLIENT]: text/plain: {message}")
-```
-
-This asynchronous function streams ADK agent events to the WebSocket client.
-
-**Logic:**
-1.  Iterates through `live_events` from the agent.
-2.  **Turn Completion/Interruption:** Sends status flags to the client.
-3.  **Content Processing:**
-    *   Extracts the first `Part` from event content.
-    *   **Audio Data:** If audio (PCM), Base64 encodes and sends it as JSON: `{ "mime_type": "audio/pcm", "data": "<base64_audio>" }`.
-    *   **Text Data:** If partial text, sends it as JSON: `{ "mime_type": "text/plain", "data": "<partial_text>" }`.
-4.  Logs messages.
-
-### `client_to_agent_messaging(websocket, live_request_queue)`
-
-```py
-
-async def client_to_agent_messaging(websocket, live_request_queue):
-    """Client to agent communication"""
-    while True:
-        # Decode JSON message
-        message_json = await websocket.receive_text()
-        message = json.loads(message_json)
-        mime_type = message["mime_type"]
-        data = message["data"]
-
-        # Send the message to the agent
-        if mime_type == "text/plain":
-            # Send a text message
-            content = Content(role="user", parts=[Part.from_text(text=data)])
-            live_request_queue.send_content(content=content)
-            print(f"[CLIENT TO AGENT]: {data}")
-        elif mime_type == "audio/pcm":
-            # Send an audio data
-            decoded_data = base64.b64decode(data)
-            live_request_queue.send_realtime(Blob(data=decoded_data, mime_type=mime_type))
-        else:
-            raise ValueError(f"Mime type not supported: {mime_type}")
-```
-
-This asynchronous function relays messages from the WebSocket client to the ADK agent.
-
-**Logic:**
-1.  Receives and parses JSON messages from the WebSocket, expecting: `{ "mime_type": "text/plain" | "audio/pcm", "data": "<data>" }`.
-2.  **Text Input:** For "text/plain", sends `Content` to agent via `live_request_queue.send_content()`.
-3.  **Audio Input:** For "audio/pcm", decodes Base64 data, wraps in `Blob`, and sends via `live_request_queue.send_realtime()`.
-4.  Raises `ValueError` for unsupported MIME types.
-5.  Logs messages.
-
-### FastAPI Web Application
-
-```py
-
-app = FastAPI()
-
-STATIC_DIR = Path("static")
-app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
-
-
-@app.get("/")
-async def root():
-    """Serves the index.html"""
-    return FileResponse(os.path.join(STATIC_DIR, "index.html"))
-
-
-@app.websocket("/ws/{session_id}")
-async def websocket_endpoint(websocket: WebSocket, session_id: int, is_audio: str):
-    """Client websocket endpoint"""
-
-    # Wait for client connection
-    await websocket.accept()
-    print(f"Client #{session_id} connected, audio mode: {is_audio}")
-
-    # Start agent session
-    session_id = str(session_id)
-    live_events, live_request_queue = start_agent_session(session_id, is_audio == "true")
-
-    # Start tasks
-    agent_to_client_task = asyncio.create_task(
-        agent_to_client_messaging(websocket, live_events)
-    )
-    client_to_agent_task = asyncio.create_task(
-        client_to_agent_messaging(websocket, live_request_queue)
-    )
-    await asyncio.gather(agent_to_client_task, client_to_agent_task)
-
-    # Disconnected
-    print(f"Client #{session_id} disconnected")
-```
-
-*   **`app = FastAPI()`**: Initializes the application.
-*   **Static Files:** Serves files from the `static` directory under `/static`.
-*   **`@app.get("/")` (Root Endpoint):** Serves `index.html`.
-*   **`@app.websocket("/ws/{session_id}")` (WebSocket Endpoint):**
-    *   **Path Parameters:** `session_id` (int) and `is_audio` (str: "true"/"false").
-    *   **Connection Handling:**
-        1.  Accepts WebSocket connection.
-        2.  Calls `start_agent_session()` using `session_id` and `is_audio`.
-        3.  **Concurrent Messaging Tasks:** Creates and runs `agent_to_client_messaging` and `client_to_agent_messaging` concurrently using `asyncio.gather`. These tasks handle bidirectional message flow.
-        4.  Logs client connection and disconnection.
-
-### How It Works (Overall Flow)
-
-1.  Client connects to `ws://<server>/ws/<session_id>?is_audio=<true_or_false>`.
-2.  Server's `websocket_endpoint` accepts, starts ADK session (`start_agent_session`).
-3.  Two `asyncio` tasks manage communication:
-    *   `client_to_agent_messaging`: Client WebSocket messages -> ADK `live_request_queue`.
-    *   `agent_to_client_messaging`: ADK `live_events` -> Client WebSocket.
-4.  Bidirectional streaming continues until disconnection or error.
-
-## 5. Client code overview {#5.-client-side-code-overview}
-
-The JavaScript `app.js` (in `app/static/js`) manages client-side interaction with the ADK Streaming WebSocket backend. It handles sending text/audio and receiving/displaying streamed responses.
-
-Key functionalities:
-1.  Manage WebSocket connection.
-2.  Handle text input.
-3.  Capture microphone audio (Web Audio API, AudioWorklets).
-4.  Send text/audio to backend.
-5.  Receive and render text/audio agent responses.
-6.  Manage UI.
-
-### Prerequisites
-
-*   **HTML Structure:** Requires specific element IDs (e.g., `messageForm`, `message`, `messages`, `sendButton`, `startAudioButton`).
-*   **Backend Server:** The Python FastAPI server must be running.
-*   **Audio Worklet Files:** `audio-player.js` and `audio-recorder.js` for audio processing.
-
-### WebSocket Handling
-
-```JavaScript
-
-// Connect the server with a WebSocket connection
-const sessionId = Math.random().toString().substring(10);
-const ws_url =
-  "ws://" + window.location.host + "/ws/" + sessionId;
-let websocket = null;
-let is_audio = false;
-
-// Get DOM elements
-const messageForm = document.getElementById("messageForm");
-const messageInput = document.getElementById("message");
-const messagesDiv = document.getElementById("messages");
-let currentMessageId = null;
-
-// WebSocket handlers
-function connectWebsocket() {
-  // Connect websocket
-  websocket = new WebSocket(ws_url + "?is_audio=" + is_audio);
-
-  // Handle connection open
-  websocket.onopen = function () {
-    // Connection opened messages
-    console.log("WebSocket connection opened.");
-    document.getElementById("messages").textContent = "Connection opened";
-
-    // Enable the Send button
-    document.getElementById("sendButton").disabled = false;
-    addSubmitHandler();
-  };
-
-  // Handle incoming messages
-  websocket.onmessage = function (event) {
-    // Parse the incoming message
-    const message_from_server = JSON.parse(event.data);
-    console.log("[AGENT TO CLIENT] ", message_from_server);
-
-    // Check if the turn is complete
-    // if turn complete, add new message
-    if (
-      message_from_server.turn_complete &&
-      message_from_server.turn_complete == true
-    ) {
-      currentMessageId = null;
-      return;
-    }
-
-    // If it's audio, play it
-    if (message_from_server.mime_type == "audio/pcm" && audioPlayerNode) {
-      audioPlayerNode.port.postMessage(base64ToArray(message_from_server.data));
-    }
-
-    // If it's a text, print it
-    if (message_from_server.mime_type == "text/plain") {
-      // add a new message for a new turn
-      if (currentMessageId == null) {
-        currentMessageId = Math.random().toString(36).substring(7);
-        const message = document.createElement("p");
-        message.id = currentMessageId;
-        // Append the message element to the messagesDiv
-        messagesDiv.appendChild(message);
-      }
-
-      // Add message text to the existing message element
-      const message = document.getElementById(currentMessageId);
-      message.textContent += message_from_server.data;
-
-      // Scroll down to the bottom of the messagesDiv
-      messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    }
-  };
-
-  // Handle connection close
-  websocket.onclose = function () {
-    console.log("WebSocket connection closed.");
-    document.getElementById("sendButton").disabled = true;
-    document.getElementById("messages").textContent = "Connection closed";
-    setTimeout(function () {
-      console.log("Reconnecting...");
-      connectWebsocket();
-    }, 5000);
-  };
-
-  websocket.onerror = function (e) {
-    console.log("WebSocket error: ", e);
-  };
-}
-connectWebsocket();
-
-// Add submit handler to the form
-function addSubmitHandler() {
-  messageForm.onsubmit = function (e) {
-    e.preventDefault();
-    const message = messageInput.value;
-    if (message) {
-      const p = document.createElement("p");
-      p.textContent = "> " + message;
-      messagesDiv.appendChild(p);
-      messageInput.value = "";
-      sendMessage({
-        mime_type: "text/plain",
-        data: message,
-      });
-      console.log("[CLIENT TO AGENT] " + message);
-    }
-    return false;
-  };
-}
-
-// Send a message to the server as a JSON string
-function sendMessage(message) {
-  if (websocket && websocket.readyState == WebSocket.OPEN) {
-    const messageJson = JSON.stringify(message);
-    websocket.send(messageJson);
-  }
-}
-
-// Decode Base64 data to Array
-function base64ToArray(base64) {
-  const binaryString = window.atob(base64);
-  const len = binaryString.length;
-  const bytes = new Uint8Array(len);
-  for (let i = 0; i < len; i++) {
-    bytes[i] = binaryString.charCodeAt(i);
-  }
-  return bytes.buffer;
-}
-```
-
-*   **Connection Setup:** Generates `sessionId`, constructs `ws_url`. `is_audio` flag (initially `false`) appends `?is_audio=true` to URL when active. `connectWebsocket()` initializes the connection.
-*   **`websocket.onopen`**: Enables send button, updates UI, calls `addSubmitHandler()`.
-*   **`websocket.onmessage`**: Parses incoming JSON from server.
-    *   **Turn Completion:** Resets `currentMessageId` if agent turn is complete.
-    *   **Audio Data (`audio/pcm`):** Decodes Base64 audio (`base64ToArray()`) and sends to `audioPlayerNode` for playback.
-    *   **Text Data (`text/plain`):** If new turn (`currentMessageId` is null), creates new `<p>`. Appends received text to the current message paragraph for streaming effect. Scrolls `messagesDiv`.
-*   **`websocket.onclose`**: Disables send button, updates UI, attempts auto-reconnection after 5s.
-*   **`websocket.onerror`**: Logs errors.
-*   **Initial Connection:** `connectWebsocket()` is called on script load.
-
-#### DOM Interaction & Message Submission
-
-*   **Element Retrieval:** Fetches required DOM elements.
-*   **`addSubmitHandler()`**: Attached to `messageForm`'s submit. Prevents default submission, gets text from `messageInput`, displays user message, clears input, and calls `sendMessage()` with `{ mime_type: "text/plain", data: messageText }`.
-*   **`sendMessage(messagePayload)`**: Sends JSON stringified `messagePayload` if WebSocket is open.
-
-### Audio Handling
-
-```JavaScript
-
-let audioPlayerNode;
-let audioPlayerContext;
-let audioRecorderNode;
-let audioRecorderContext;
-let micStream;
-
-// Import the audio worklets
-import { startAudioPlayerWorklet } from "./audio-player.js";
-import { startAudioRecorderWorklet } from "./audio-recorder.js";
-
-// Start audio
-function startAudio() {
-  // Start audio output
-  startAudioPlayerWorklet().then(([node, ctx]) => {
-    audioPlayerNode = node;
-    audioPlayerContext = ctx;
-  });
-  // Start audio input
-  startAudioRecorderWorklet(audioRecorderHandler).then(
-    ([node, ctx, stream]) => {
-      audioRecorderNode = node;
-      audioRecorderContext = ctx;
-      micStream = stream;
-    }
-  );
-}
-
-// Start the audio only when the user clicked the button
-// (due to the gesture requirement for the Web Audio API)
-const startAudioButton = document.getElementById("startAudioButton");
-startAudioButton.addEventListener("click", () => {
-  startAudioButton.disabled = true;
-  startAudio();
-  is_audio = true;
-  connectWebsocket(); // reconnect with the audio mode
-});
-
-// Audio recorder handler
-function audioRecorderHandler(pcmData) {
-  // Send the pcm data as base64
-  sendMessage({
-    mime_type: "audio/pcm",
-    data: arrayBufferToBase64(pcmData),
-  });
-  console.log("[CLIENT TO AGENT] sent %s bytes", pcmData.byteLength);
-}
-
-// Encode an array buffer with Base64
-function arrayBufferToBase64(buffer) {
-  let binary = "";
-  const bytes = new Uint8Array(buffer);
-  const len = bytes.byteLength;
-  for (let i = 0; i < len; i++) {
-    binary += String.fromCharCode(bytes[i]);
-  }
-  return window.btoa(binary);
-}
-```
-
-*   **Audio Worklets:** Uses `AudioWorkletNode` via `audio-player.js` (for playback) and `audio-recorder.js` (for capture).
-*   **State Variables:** Store AudioContexts and WorkletNodes (e.g., `audioPlayerNode`).
-*   **`startAudio()`**: Initializes player and recorder worklets. Passes `audioRecorderHandler` as callback to recorder.
-*   **"Start Audio" Button (`startAudioButton`):**
-    *   Requires user gesture for Web Audio API.
-    *   On click: disables button, calls `startAudio()`, sets `is_audio = true`, then calls `connectWebsocket()` to reconnect in audio mode (URL includes `?is_audio=true`).
-*   **`audioRecorderHandler(pcmData)`**: Callback from recorder worklet with PCM audio chunks. Encodes `pcmData` to Base64 (`arrayBufferToBase64()`) and sends to server via `sendMessage()` with `mime_type: "audio/pcm"`.
-*   **Helper Functions:** `base64ToArray()` (server audio -> client player) and `arrayBufferToBase64()` (client mic audio -> server).
-
-### How It Works (Client-Side Flow)
-
-1.  **Page Load:** Establishes WebSocket in text mode.
-2.  **Text Interaction:** User types/submits text; sent to server. Server text responses displayed, streamed.
-3.  **Switching to Audio Mode:** "Start Audio" button click initializes audio worklets, sets `is_audio=true`, and reconnects WebSocket in audio mode.
-4.  **Audio Interaction:** Recorder sends mic audio (Base64 PCM) to server. Server audio/text responses handled by `websocket.onmessage` for playback/display.
-5.  **Connection Management:** Auto-reconnect on WebSocket close.
+## 4. Bidirectional communication overview {#4.-bidi-comm-overview}
 
+The server and client architecture enables real-time, bidirectional communication between web clients and AI agents with proper session isolation and resource management.
+
+### Client-to-Agent Flow:
+1. **Connection Establishment** - Client opens SSE connection to `/events/{user_id}`, triggering session creation and storing request queue in `active_sessions`
+2. **Message Transmission** - Client sends POST to `/send/{user_id}` with JSON payload containing `mime_type` and `data`
+3. **Queue Processing** - Server retrieves session's `live_request_queue` and forwards message to agent via `send_content()` or `send_realtime()`
+
+### Agent-to-Client Flow:
+1. **Event Generation** - Agent processes requests and generates events through `live_events` async generator
+2. **Stream Processing** - `agent_to_client_sse()` filters events and formats them as SSE-compatible JSON
+3. **Real-time Delivery** - Events stream to client via persistent HTTP connection with proper SSE headers
+
+### Session Management:
+- **Per-User Isolation** - Each user gets unique session stored in `active_sessions` dict
+- **Lifecycle Management** - Sessions auto-cleanup on disconnect with proper resource disposal
+- **Concurrent Support** - Multiple users can have simultaneous active sessions
+
+### Error Handling:
+- **Session Validation** - POST requests validate session existence before processing
+- **Stream Resilience** - SSE streams handle exceptions and perform cleanup automatically
+- **Connection Recovery** - Clients can reconnect by re-establishing SSE connection
+
+
+## 5. Server side code overview {#5.-server-side-code-overview}
+
+The FastAPI server provides real-time communication between web clients and the AI agent.
+
+### Agent Session Management
+
+The `start_agent_session()` function creates isolated AI agent sessions:
+
+- **InMemoryRunner Setup** - Creates a runner instance that manages the agent lifecycle in memory, with the app name "ADK Streaming example" and the Google Search agent.
+
+- **Session Creation** - Uses `runner.session_service.create_session()` to establish a unique session per user ID, enabling multiple concurrent users.
+
+- **Response Modality Configuration** - Sets `RunConfig` with either "AUDIO" or "TEXT" modality based on the `is_audio` parameter, determining output format.
+
+- **LiveRequestQueue** - Creates a bidirectional communication channel that queues incoming requests and enables real-time message passing between client and agent.
+
+- **Live Events Stream** - `runner.run_live()` returns an async generator that yields real-time events from the agent, including partial responses, turn completions, and interruptions.
+
+### Server-Sent Events (SSE) Streaming
+
+The `agent_to_client_sse()` function handles real-time streaming from agent to client:
+
+- **Event Processing Loop** - Iterates through `live_events` async generator, processing each event as it arrives from the agent.
+
+- **Turn Management**  - Detects conversation turn completion or interruption events and sends JSON messages with `turn_complete` and `interrupted` flags to signal conversation state changes.
+
+- **Content Part Extraction** - Extracts the first `Part` from event content, which contains either text or audio data.
+
+- **Audio Streaming**  - Handles PCM audio data by:
+  - Detecting `audio/pcm` MIME type in `inline_data`
+  - Base64 encoding raw audio bytes for JSON transmission
+  - Sending with `mime_type` and `data` fields
+
+- **Text Streaming**  - Processes partial text responses by sending incremental text updates as they're generated, enabling real-time typing effects.
+
+- **SSE Format** - All data is formatted as `data: {json}\n\n` following SSE specification for browser EventSource API compatibility.
+
+### HTTP Endpoints and Routing
+
+#### Root Endpoint
+**GET /** - Serves `static/index.html` as the main application interface using FastAPI's `FileResponse`.
+
+#### SSE Events Endpoint
+**GET /events/{user_id}** - Establishes persistent SSE connection:
+
+- **Parameters** - Takes `user_id` (int) and optional `is_audio` query parameter (defaults to "false")
+
+- **Session Initialization** - Calls `start_agent_session()` and stores the `live_request_queue` in `active_sessions` dict using `user_id` as key
+
+- **StreamingResponse** - Returns `StreamingResponse` with:
+  - `event_generator()` async function that wraps `agent_to_client_sse()`
+  - MIME type: `text/event-stream` 
+  - CORS headers for cross-origin access
+  - Cache-control headers to prevent caching
+
+- **Cleanup Logic** - Handles connection termination by closing the request queue and removing from active sessions, with error handling for stream interruptions.
+
+#### Message Sending Endpoint
+**POST /send/{user_id}** - Receives client messages:
+
+- **Session Lookup** - Retrieves `live_request_queue` from `active_sessions` or returns error if session doesn't exist
+
+- **Message Processing** - Parses JSON with `mime_type` and `data` fields:
+  - **Text Messages** - Creates `Content` with `Part.from_text()` and sends via `send_content()`
+  - **Audio Messages** - Base64 decodes PCM data and sends via `send_realtime()` with `Blob`
+
+- **Error Handling** - Returns appropriate error responses for unsupported MIME types or missing sessions.
+
+
+## 6. Client side code overview {#6.-client-side-code-overview}
+
+The client-side consists of a web interface with real-time communication and audio capabilities:
+
+### HTML Interface (`static/index.html`)
+
+Simple web interface with:
+- **Messages Display** - Scrollable div for conversation history
+- **Text Input Form** - Input field and send button for text messages
+- **Audio Control** - Button to enable audio mode and microphone access
+
+### Main Application Logic (`static/js/app.js`)
+
+#### Session Management (`app.js`)
+- **Random Session ID** - Generates unique session ID for each browser instance
+- **URL Construction** - Builds SSE and send endpoints with session ID
+- **Audio Mode Flag** - Tracks whether audio mode is enabled
+
+#### Server-Sent Events Connection (`app.js`)
+**connectSSE()** function handles real-time server communication:
+
+- **EventSource Setup** - Creates SSE connection with audio mode parameter
+- **Connection Handlers**:
+  - **onopen** - Enables send button and form submission when connected
+  - **onmessage** - Processes incoming messages from agent
+  - **onerror** - Handles disconnections with auto-reconnect after 5 seconds
+
+#### Message Processing (`app.js`)
+Handles different message types from server:
+
+- **Turn Management** - Detects `turn_complete` to reset message state
+- **Audio Playback** - Decodes Base64 PCM data and sends to audio worklet
+- **Text Display** - Creates new message elements and appends partial text updates for real-time typing effect
+
+#### Message Sending (`app.js`)
+**sendMessage()** function sends data to server:
+
+- **HTTP POST** - Sends JSON payload to `/send/{session_id}` endpoint
+- **Error Handling** - Logs failed requests and network errors
+- **Message Format** - Standardized `{mime_type, data}` structure
+
+### Audio Player (`static/js/audio-player.js`)
+
+**startAudioPlayerWorklet()** function:
+
+- **AudioContext Setup** - Creates context with 24kHz sample rate for playback
+- **Worklet Loading** - Loads PCM player processor for audio handling
+- **Audio Pipeline** - Connects worklet node to audio destination (speakers)
+
+### Audio Recorder (`static/js/audio-recorder.js`)
+
+**startAudioRecorderWorklet()** function:
+
+- **AudioContext Setup** - Creates context with 16kHz sample rate for recording
+- **Microphone Access** - Requests user media permissions for audio input
+- **Audio Processing** - Connects microphone to recorder worklet
+- **Data Conversion** - Converts Float32 samples to 16-bit PCM format
+
+### Audio Worklet Processors
+
+#### PCM Player Processor (`static/js/pcm-player-processor.js`)
+**PCMPlayerProcessor** class handles audio playback:
+
+- **Ring Buffer** - Circular buffer for 180 seconds of 24kHz audio
+- **Data Ingestion** - Converts Int16 to Float32 and stores in buffer
+- **Playback Loop** - Continuously reads from buffer to output channels
+- **Overflow Handling** - Overwrites oldest samples when buffer is full
+
+#### PCM Recorder Processor (`static/js/pcm-recorder-processor.js`)
+**PCMProcessor** class captures microphone input:
+
+- **Audio Input** - Processes incoming audio frames
+- **Data Transfer** - Copies Float32 samples and posts to main thread via message port
+
+#### Mode Switching:
+- **Audio Activation** - "Start Audio" button enables microphone and reconnects SSE with audio flag
+- **Seamless Transition** - Closes existing connection and establishes new audio-enabled session
+
+The client architecture enables seamless real-time communication with both text and audio modalities, using modern web APIs for professional-grade audio processing.
 
 ## Summary
 
-This article overviews the server and client code for a custom asynchronous web app built with ADK Streaming and FastAPI, enabling real-time, bidirectional voice and text communication.
+This application demonstrates a complete real-time AI agent system with the following key features:
 
-The Python FastAPI server code initializes ADK agent sessions, configured for text or audio responses. It uses a WebSocket endpoint to handle client connections. Asynchronous tasks manage bidirectional messaging: forwarding client text or Base64-encoded PCM audio to the ADK agent, and streaming text or Base64-encoded PCM audio responses from the agent back to the client.
+**Architecture Highlights**:
+- **Scalable**: Per-user session isolation supports multiple concurrent users
+- **Real-time**: Streaming responses with partial text updates and continuous audio
+- **Robust**: Comprehensive error handling and automatic recovery mechanisms
+- **Modern**: Uses latest web standards (AudioWorklet, SSE, ES6 modules)
+- **Flexible**: Easy switching between text and audio interaction modes
 
-The client-side JavaScript code manages a WebSocket connection, which can be re-established to switch between text and audio modes. It sends user input (text or microphone audio captured via Web Audio API and AudioWorklets) to the server. Incoming messages from the server are processed: text is displayed (streamed), and Base64-encoded PCM audio is decoded and played using an AudioWorklet.
+The system provides a foundation for building sophisticated AI applications that require real-time interaction, web search capabilities, and multimedia communication.
 
 ### Next steps for production
 
-When you will use the Streaming for ADK in production apps, you may want to consinder the following points:
+To deploy this system in a production environment, consider implementing the following improvements:
 
-*   **Deploy Multiple Instances:** Run several instances of your FastAPI application instead of a single one.
-*   **Implement Load Balancing:** Place a load balancer in front of your application instances to distribute incoming WebSocket connections.
-    *   **Configure for WebSockets:** Ensure the load balancer supports long-lived WebSocket connections and consider "sticky sessions" (session affinity) to route a client to the same backend instance, *or* design for stateless instances (see next point).
-*   **Externalize Session State:** Replace the `InMemorySessionService` for ADK with a distributed, persistent session store. This allows any server instance to handle any user's session, enabling true statelessness at the application server level and improving fault tolerance.
-*   **Implement Health Checks:** Set up robust health checks for your WebSocket server instances so the load balancer can automatically remove unhealthy instances from rotation.
-*   **Utilize Orchestration:** Consider using an orchestration platform like Kubernetes for automated deployment, scaling, self-healing, and management of your WebSocket server instances.
+#### Security
+- **Authentication**: Replace random session IDs with proper user authentication
+- **API Key Security**: Use environment variables or secret management services
+- **HTTPS**: Enforce TLS encryption for all communications
+- **Rate Limiting**: Prevent abuse and control API costs
+
+#### Scalability
+- **Persistent Storage**: Replace in-memory sessions with a persistent session
+- **Load Balancing**: Support multiple server instances with shared session state
+- **Audio Optimization**: Implement compression to reduce bandwidth usage
+
+#### Monitoring
+- **Error Tracking**: Monitor and alert on system failures
+- **API Cost Monitoring**: Track Google Search and Gemini usage to prevent budget overruns
+- **Performance Metrics**: Monitor response times and audio latency
+
+#### Infrastructure
+- **Containerization**: Package with Docker for consistent deployments with Cloud Run or Agent Engine
+- **Health Checks**: Implement endpoint monitoring for uptime tracking
