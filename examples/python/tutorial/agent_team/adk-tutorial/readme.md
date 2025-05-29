@@ -76,7 +76,7 @@ Before running any agent step, you **must** configure your API keys.
 
 ## Running the Examples
 
-Ensure your virtual environment is activated before running these commands.
+Ensure your virtual environment is activated before running these commands. Each `agent.py` file (e.g., in `step_1`) contains example queries you can use to test the agents. 
 
 ### Using `adk web` (Recommended for Interactive UI)
 
@@ -135,8 +135,6 @@ adk-tutorial/
 │   ├── __init__.py
 │   ├── agent.py      # Agent definition for Step 3
 │   └── .env          # API Key configuration for Step 3
-├── step_4/
-│   # ... and so on for subsequent steps
 ├── step_5/
 │   # ...
 └── step_6/
@@ -145,3 +143,13 @@ adk-tutorial/
 ```
 
 Each `step_X` directory is self-contained regarding its agent logic (`agent.py`) and required API keys (`.env`).
+
+## A Note on Step 4 (Session State & Personalization)
+
+You might notice that "Step 4: Adding Memory and Personalization with Session State" is not included in this version of the tutorial (designed for use with `adk web`, `adk api_server`, or `adk run`).
+
+The demonstration of session state concepts in Step 4, particularly the direct manipulation of `InMemorySessionService` for illustrative purposes, is best experienced in an interactive notebook environment (like Google Colab). This allows for immediate code execution and inspection of state changes that are less direct when using the ADK's built-in server tools.
+
+## To experience the full tutorial including Step 4, please refer to the [interactive notebook version here](https://google.github.io/adk-docs/tutorials/agent-team/#step-4-adding-memory-and-personalization-with-session-state)
+
+The subsequent steps in this folder-based tutorial (Step 5 onwards) build upon the concepts from Steps 1-3 and are designed to run correctly here, focusing on features like callbacks that are fully demonstrable with `adk web`/`run`.
