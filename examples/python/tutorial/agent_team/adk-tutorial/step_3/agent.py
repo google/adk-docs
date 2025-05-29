@@ -18,7 +18,7 @@ from google.adk.models.lite_llm import LiteLlm # For multi-model support
 from google.adk.sessions import InMemorySessionService
 from google.adk.runners import Runner
 from google.genai import types # For creating message Content/Parts
-
+from typing import Optional
 
 # Use one of the model constants defined earlier
 MODEL_GEMINI_2_0_FLASH = "gemini-2.0-flash"
@@ -53,22 +53,22 @@ def get_weather(city: str) -> dict:
         return {"status": "error", "error_message": f"Sorry, I don't have weather information for '{city}'."}
     
     
-# @title Define Tools for Greeting and Farewell Agents
-
-# Ensure 'get_weather' from Step 1 is available if running this step independently.
-# def get_weather(city: str) -> dict: ... (from Step 1)
-
-def say_hello(name: str = "there") -> str:
-    """Provides a simple greeting, optionally addressing the user by name.
+def say_hello(name: Optional[str] = None) -> str: 
+    """Provides a simple greeting. If a name is provided, it will be used.
 
     Args:
-        name (str, optional): The name of the person to greet. Defaults to "there".
+        name (str, optional): The name of the person to greet. Defaults to a generic greeting if not provided.
 
     Returns:
         str: A friendly greeting message.
     """
-    print(f"--- Tool: say_hello called with name: {name} ---")
-    return f"Hello, {name}!"
+    if name:
+        greeting = f"Hello, {name}!"
+        print(f"--- Tool: say_hello called with name: {name} ---")
+    else:
+        greeting = "Hello there!" # Default greeting if name is None or not explicitly passed
+        print(f"--- Tool: say_hello called without a specific name (name_arg_value: {name}) ---")
+    return greeting
 
 def say_goodbye() -> str:
     """Provides a simple farewell message to conclude the conversation."""
@@ -77,16 +77,6 @@ def say_goodbye() -> str:
 
 print("Greeting and Farewell tools defined.")
 
-# Optional self-test
-# print(say_hello("Alice"))
-# print(say_goodbye())
-
-# @title Define Greeting and Farewell Sub-Agents
-
-# If you want to use models other than Gemini, Ensure LiteLlm is imported and API keys are set (from Step 0/2)
-# from google.adk.models.lite_llm import LiteLlm
-# MODEL_GPT_4O, MODEL_CLAUDE_SONNET etc. should be defined
-# Or else, continue to use: model = MODEL_GEMINI_2_0_FLASH
 
 # --- Greeting Agent ---
 greeting_agent = None
@@ -127,11 +117,9 @@ except Exception as e:
     print(f"❌ Could not create Farewell agent. Check API Key ({farewell_agent.model}). Error: {e}")
     
     
-root_agent_model = MODEL_GEMINI_2_0_FLASH
-
 root_agent = Agent(
     name="weather_agent_v2", # Give it a new version name
-    model=root_agent_model,
+    model=MODEL_GEMINI_2_0_FLASH,
     description="The main coordinator agent. Handles weather requests and delegates greetings/farewells to specialists.",
     instruction="You are the main Weather Agent coordinating a team. Your primary responsibility is to provide weather information. "
                 "Use the 'get_weather' tool ONLY for specific weather requests (e.g., 'weather in London'). "
@@ -145,3 +133,23 @@ root_agent = Agent(
     # Key change: Link the sub-agents here!
     sub_agents=[greeting_agent, farewell_agent]
 )
+
+# Sample queries to test the agent: 
+
+# # Agent will give weather information for the specified cities.
+# # What's the weather in Tokyo?
+# # What is the weather like in London?
+# # Tell me the weather in New York?
+
+# # Agent will not have information for the specified city.
+# # How about Paris?  
+
+# # Agent will delegate greetings to the greeting_agent.
+# # Hi there!
+# # Hello!
+# # Hello,  this is alice
+
+# # Agent will delegate farewells to the farewell_agent.
+# # Bye!
+# # See you later!
+# # Thanks, bye!
