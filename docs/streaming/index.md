@@ -1,14 +1,18 @@
-# Streaming in ADK
+# Bidi-streaming(live) in ADK
 
 !!! info
 
     This is an experimental feature. Currrently available in Python.
 
-Streaming in ADK adds the low-latency bidirectional voice and video interaction
+!!! info
+
+    This is different from server-side stremaing or token-leven stremaing. This section is for bidi-streaming(live).
+    
+Bidi-streaming(live) in ADK adds the low-latency bidirectional voice and video interaction
 capability of [Gemini Live API](https://ai.google.dev/gemini-api/docs/live) to
 AI agents.
 
-With streaming mode, you can provide end users with the experience of natural,
+With bidi-streaming(live) mode, you can provide end users with the experience of natural,
 human-like voice conversations, including the ability for the user to interrupt
 the agent's responses with voice commands. Agents with streaming can process
 text, audio, and video inputs, and they can provide text and audio output.
@@ -50,9 +54,10 @@ text, audio, and video inputs, and they can provide text and audio output.
 
     ---
 
-    This article overviews the server and client code for a custom asynchronous web app built with ADK Streaming and FastAPI, enabling real-time, bidirectional audio and text communication.
+    This article overviews the server and client code for a custom asynchronous web app built with ADK Streaming and FastAPI, enabling real-time, bidirectional audio and text communication with both Server Sent Events (SSE) and WebSockets.
 
-    [:octicons-arrow-right-24: More information](custom-streaming.md)
+    [:octicons-arrow-right-24: More information (SSE)](custom-streaming.md)
+    [:octicons-arrow-right-24: More information (WebSockets)](custom-streaming-ws.md)
 
 -   :material-console-line: **Shopper's Concierge demo**
 
@@ -64,5 +69,12 @@ text, audio, and video inputs, and they can provide text and audio output.
 
     [:octicons-arrow-right-24: More information](https://youtu.be/LwHPYyw7u6U)
 
+-   :material-console-line: **Streaming Configurations**
+
+    ---
+
+    There are some configurations you can set for live(streaming) agents.
+
+    [:octicons-arrow-right-24: More information](configuration.md)
 </div>
 

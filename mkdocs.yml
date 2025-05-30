@@ -16,6 +16,11 @@ copyright: Copyright Google 2025
 extra_css:
   - stylesheets/custom.css
 
+extra:
+  second_repo_url: https://github.com/google/adk-java
+  second_repo_name: adk-java
+  second_repo_icon: fontawesome/brands/github
+
 # Configuration
 theme:
   name: material
@@ -162,9 +167,8 @@ nav:
     - streaming/index.md
     - Quickstart (streaming): get-started/streaming/index.md
     - Streaming Tools: streaming/streaming-tools.md
-    - Custom Audio Streaming app sample: streaming/custom-streaming.md
-    - \[Video\] Build a Multimodal Live Streaming Agent with ADK: https://youtu.be/Tu7-voU7nnw
-    - \[Video\] Shopper's Concierge demo: https://youtu.be/LwHPYyw7u6U
+    - Custom Audio Streaming app sample (SSE): streaming/custom-streaming.md
+    - Custom Audio Streaming app sample (WebSockets): streaming/custom-streaming-ws.md
   - Safety and Security: safety/index.md
   - Agent2Agent (A2A) Protocol: https://github.com/google/A2A/
   - Community Resources: community.md
