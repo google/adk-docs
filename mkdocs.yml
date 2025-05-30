@@ -163,7 +163,7 @@ nav:
     - evaluate/index.md
   - MCP:
     - mcp/index.md
-  - Bidi-streaming(live):
+  - Bidi-streaming (live):
     - streaming/index.md
     - Quickstart (Bidi-streaming/live): get-started/streaming/index.md
     - Streaming Tools: streaming/streaming-tools.md
