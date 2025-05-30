@@ -8,7 +8,7 @@ with the world beyond its core text generation and reasoning abilities. What
 distinguishes capable agents from basic language models is often their effective
 use of tools.
 
-Technically, a tool is typically a modular code component—**like a Python
+Technically, a tool is typically a modular code component—**like a Python/ Java
 function**, a class method, or even another specialized agent—designed to
 execute a distinct, predefined task. These tasks often involve interacting with
 external systems or data.
@@ -69,9 +69,17 @@ Furthermore, ADK supports the sequential use of tools, where the output of one t
 
 The following example showcases how an agent can use tools by **referencing their function names in its instructions**. It also demonstrates how to guide the agent to **handle different return values from tools**, such as success or error messages, and how to orchestrate the **sequential use of multiple tools** to accomplish a task.
 
-```py
---8<-- "examples/python/snippets/tools/overview/weather_sentiment.py"
-```
+=== "Python"
+
+    ```py
+    --8<-- "examples/python/snippets/tools/overview/weather_sentiment.py"
+    ```
+
+=== "Java"
+
+    ```java
+    --8<-- "examples/java/snippets/src/main/java/tools/WeatherSentimentAgentApp.java:full_code"
+    ```
 
 ## Tool Context
 
@@ -111,13 +119,42 @@ The `tool_context.state` attribute provides direct read and write access to the 
 
     * `temp:*`: Temporary, not persisted across invocations (useful for passing data within a single run call but generally less useful inside a tool context which operates between LLM calls).
 
-```py
---8<-- "examples/python/snippets/tools/overview/user_preference.py"
-```
+=== "Python"
+
+    ```py
+    --8<-- "examples/python/snippets/tools/overview/user_preference.py"
+    ```
+
+=== "Java"
+
+    ```java
+    import com.google.adk.tools.FunctionTool;
+    import com.google.adk.tools.ToolContext;
+
+    // Updates a user-specific preference.
+    public Map<String, String> updateUserThemePreference(String value, ToolContext toolContext) {
+      String userPrefsKey = "user:preferences:theme";
+  
+      // Get current preferences or initialize if none exist
+      String preference = toolContext.state().getOrDefault(userPrefsKey, "").toString();
+      if (preference.isEmpty()) {
+        preference = value;
+      }
+  
+      // Write the updated dictionary back to the state
+      toolContext.state().put("user:preferences", preference);
+      System.out.printf("Tool: Updated user preference %s to %s", userPrefsKey, preference);
+  
+      return Map.of("status", "success", "updated_preference", toolContext.state().get(userPrefsKey).toString());
+      // When the LLM calls updateUserThemePreference("dark"):
+      // The toolContext.state will be updated, and the change will be part of the
+      // resulting tool response event's actions.stateDelta.
+    }
+    ```
 
 ### **Controlling Agent Flow**
 
-The `tool_context.actions` attribute holds an **EventActions** object. Modifying attributes on this object allows your tool to influence what the agent or framework does after the tool finishes execution.
+The `tool_context.actions` attribute (`ToolContext.actions()` in Java) holds an **EventActions** object. Modifying attributes on this object allows your tool to influence what the agent or framework does after the tool finishes execution.
 
 * **`skip_summarization: bool`**: (Default: False) If set to True, instructs the ADK to bypass the LLM call that typically summarizes the tool's output. This is useful if your tool's return value is already a user-ready message.
 
@@ -127,9 +164,17 @@ The `tool_context.actions` attribute holds an **EventActions** object. Modifying
 
 #### Example
 
-```py
---8<-- "examples/python/snippets/tools/overview/customer_support_agent.py"
-```
+=== "Python"
+
+    ```py
+    --8<-- "examples/python/snippets/tools/overview/customer_support_agent.py"
+    ```
+
+=== "Java"
+
+    ```java
+    --8<-- "examples/java/snippets/src/main/java/tools/CustomerSupportAgentApp.java:full_code"
+    ```
 
 ##### Explanation
 
@@ -143,6 +188,8 @@ The `tool_context.actions` attribute holds an **EventActions** object. Modifying
 This example illustrates how a tool, through EventActions in its ToolContext, can dynamically influence the flow of the conversation by transferring control to another specialized agent.
 
 ### **Authentication**
+
+![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java support is planned/ coming soon."}
 
 ToolContext provides mechanisms for tools interacting with authenticated APIs. If your tool needs to handle authentication, you might use the following:
 
@@ -158,49 +205,107 @@ For detailed explanations of authentication flows, configuration, and examples, 
 
 These methods provide convenient ways for your tool to interact with persistent data associated with the session or user, managed by configured services.
 
-* **`list_artifacts()`**: Returns a list of filenames (or keys) for all artifacts currently stored for the session via the artifact_service. Artifacts are typically files (images, documents, etc.) uploaded by the user or generated by tools/agents.
+* **`list_artifacts()`** (or **`listArtifacts()`** in Java): Returns a list of filenames (or keys) for all artifacts currently stored for the session via the artifact_service. Artifacts are typically files (images, documents, etc.) uploaded by the user or generated by tools/agents.
 
 * **`load_artifact(filename: str)`**: Retrieves a specific artifact by its filename from the **artifact_service**. You can optionally specify a version; if omitted, the latest version is returned. Returns a `google.genai.types.Part` object containing the artifact data and mime type, or None if not found.
 
 * **`save_artifact(filename: str, artifact: types.Part)`**: Saves a new version of an artifact to the artifact_service. Returns the new version number (starting from 0).
 
-* **`search_memory(query: str)`**: Queries the user's long-term memory using the configured `memory_service`. This is useful for retrieving relevant information from past interactions or stored knowledge. The structure of the **SearchMemoryResponse** depends on the specific memory service implementation but typically contains relevant text snippets or conversation excerpts.
+* **`search_memory(query: str)`** ![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java support is planned/ coming soon."}
+
+       Queries the user's long-term memory using the configured `memory_service`. This is useful for retrieving relevant information from past interactions or stored knowledge. The structure of the **SearchMemoryResponse** depends on the specific memory service implementation but typically contains relevant text snippets or conversation excerpts.
 
 #### Example
 
-```py
---8<-- "examples/python/snippets/tools/overview/doc_analysis.py"
-```
+=== "Python"
+
+    ```py
+    --8<-- "examples/python/snippets/tools/overview/doc_analysis.py"
+    ```
+
+=== "Java"
+
+    ```java
+    // Analyzes a document using context from memory.
+    // You can also list, load and save artifacts using Callback Context or LoadArtifacts tool.
+    public static @NonNull Maybe<ImmutableMap<String, Object>> processDocument(
+        @Annotations.Schema(description = "The name of the document to analyze.") String documentName,
+        @Annotations.Schema(description = "The query for the analysis.") String analysisQuery,
+        ToolContext toolContext) {
+  
+      // 1. List all available artifacts
+      System.out.printf(
+          "Listing all available artifacts %s:", toolContext.listArtifacts().blockingGet());
+  
+      // 2. Load an artifact to memory
+      System.out.println("Tool: Attempting to load artifact: " + documentName);
+      Part documentPart = toolContext.loadArtifact(documentName, Optional.empty()).blockingGet();
+      if (documentPart == null) {
+        System.out.println("Tool: Document '" + documentName + "' not found.");
+        return Maybe.just(
+            ImmutableMap.<String, Object>of(
+                "status", "error", "message", "Document '" + documentName + "' not found."));
+      }
+      String documentText = documentPart.text().orElse("");
+      System.out.println(
+          "Tool: Loaded document '" + documentName + "' (" + documentText.length() + " chars).");
+  
+      // 3. Perform analysis (placeholder)
+      String analysisResult =
+          "Analysis of '"
+              + documentName
+              + "' regarding '"
+              + analysisQuery
+              + " [Placeholder Analysis Result]";
+      System.out.println("Tool: Performed analysis.");
+  
+      // 4. Save the analysis result as a new artifact
+      Part analysisPart = Part.fromText(analysisResult);
+      String newArtifactName = "analysis_" + documentName;
+  
+      toolContext.saveArtifact(newArtifactName, analysisPart);
+  
+      return Maybe.just(
+          ImmutableMap.<String, Object>builder()
+              .put("status", "success")
+              .put("analysis_artifact", newArtifactName)
+              .build());
+    }
+    // FunctionTool processDocumentTool =
+    //      FunctionTool.create(ToolContextArtifactExample.class, "processDocument");
+    // In the Agent, include this function tool.
+    // LlmAgent agent = LlmAgent().builder().tools(processDocumentTool).build();
+    ```
 
 By leveraging the **ToolContext**, developers can create more sophisticated and context-aware custom tools that seamlessly integrate with ADK's architecture and enhance the overall capabilities of their agents.
 
 ## Defining Effective Tool Functions
 
-When using a standard Python function as an ADK Tool, how you define it significantly impacts the agent's ability to use it correctly. The agent's Large Language Model (LLM) relies heavily on the function's **name**, **parameters (arguments)**, **type hints**, and **docstring** to understand its purpose and generate the correct call.
+When using a method or function as an ADK Tool, how you define it significantly impacts the agent's ability to use it correctly. The agent's Large Language Model (LLM) relies heavily on the function's **name**, **parameters (arguments)**, **type hints**, and **docstring** / **source code comments** to understand its purpose and generate the correct call.
 
 Here are key guidelines for defining effective tool functions:
 
 * **Function Name:**
-    * Use descriptive, verb-noun based names that clearly indicate the action (e.g., `get_weather`, `search_documents`, `schedule_meeting`).
-    * Avoid generic names like `run`, `process`, `handle_data`, or overly ambiguous names like `do_stuff`. Even with a good description, a name like `do_stuff` might confuse the model about when to use the tool versus, for example, `cancel_flight`.
+    * Use descriptive, verb-noun based names that clearly indicate the action (e.g., `get_weather`, `searchDocuments`, `schedule_meeting`).
+    * Avoid generic names like `run`, `process`, `handle_data`, or overly ambiguous names like `doStuff`. Even with a good description, a name like `do_stuff` might confuse the model about when to use the tool versus, for example, `cancelFlight`.
     * The LLM uses the function name as a primary identifier during tool selection.
 
 * **Parameters (Arguments):**
     * Your function can have any number of parameters.
     * Use clear and descriptive names (e.g., `city` instead of `c`, `search_query` instead of `q`).
-    * **Provide type hints** for all parameters (e.g., `city: str`, `user_id: int`, `items: list[str]`). This is essential for ADK to generate the correct schema for the LLM.
-    * Ensure all parameter types are **JSON serializable**. Standard Python types like `str`, `int`, `float`, `bool`, `list`, `dict`, and their combinations are generally safe. Avoid complex custom class instances as direct parameters unless they have a clear JSON representation.
+    * **Provide type hints in Python**  for all parameters (e.g., `city: str`, `user_id: int`, `items: list[str]`). This is essential for ADK to generate the correct schema for the LLM.
+    * Ensure all parameter types are **JSON serializable**. All java primitives as well as standard Python types like `str`, `int`, `float`, `bool`, `list`, `dict`, and their combinations are generally safe. Avoid complex custom class instances as direct parameters unless they have a clear JSON representation.
     * **Do not set default values** for parameters. E.g., `def my_func(param1: str = "default")`. Default values are not reliably supported or used by the underlying models during function call generation. All necessary information should be derived by the LLM from the context or explicitly requested if missing.
     * **`self` / `cls` Handled Automatically:** Implicit parameters like `self` (for instance methods) or `cls` (for class methods) are automatically handled by ADK and excluded from the schema shown to the LLM. You only need to define type hints and descriptions for the logical parameters your tool requires the LLM to provide.
 
 * **Return Type:**
-    * The function's return value **must be a dictionary (`dict`)**.
-    * If your function returns a non-dictionary type (e.g., a string, number, list), the ADK framework will automatically wrap it into a dictionary like `{'result': your_original_return_value}` before passing the result back to the model.
-    * Design the dictionary keys and values to be **descriptive and easily understood *by the LLM***. Remember, the model reads this output to decide its next step.
+    * The function's return value **must be a dictionary (`dict`)** in Python or a **Map** in Java.
+    * If your function returns a non-dictionary type (e.g., a string, number, list), the ADK framework will automatically wrap it into a dictionary/Map like `{'result': your_original_return_value}` before passing the result back to the model.
+    * Design the dictionary/Map keys and values to be **descriptive and easily understood *by the LLM***. Remember, the model reads this output to decide its next step.
     * Include meaningful keys. For example, instead of returning just an error code like `500`, return `{'status': 'error', 'error_message': 'Database connection failed'}`.
     * It's a **highly recommended practice** to include a `status` key (e.g., `'success'`, `'error'`, `'pending'`, `'ambiguous'`) to clearly indicate the outcome of the tool execution for the model.
 
-* **Docstring:**
+* **Docstring / Source Code Comments:**
     * **This is critical.** The docstring is the primary source of descriptive information for the LLM.
     * **Clearly state what the tool *does*.** Be specific about its purpose and limitations.
     * **Explain *when* the tool should be used.** Provide context or example scenarios to guide the LLM's decision-making.
@@ -210,6 +315,8 @@ Here are key guidelines for defining effective tool functions:
 
     **Example of a good definition:**
 
+=== "Python"
+    
     ```python
     def lookup_order_status(order_id: str) -> dict:
       """Fetches the current status of a customer's order using its ID.
@@ -235,10 +342,88 @@ Here are key guidelines for defining effective tool functions:
 
     ```
 
+=== "Java"
+
+    ```java
+    /**
+     * Retrieves the current weather report for a specified city.
+     *
+     * @param city The city for which to retrieve the weather report.
+     * @param toolContext The context for the tool.
+     * @return A dictionary containing the weather information.
+     */
+    public static Map<String, Object> getWeatherReport(String city, ToolContext toolContext) {
+        Map<String, Object> response = new HashMap<>();
+        if (city.toLowerCase(Locale.ROOT).equals("london")) {
+            response.put("status", "success");
+            response.put(
+                    "report",
+                    "The current weather in London is cloudy with a temperature of 18 degrees Celsius and a"
+                            + " chance of rain.");
+        } else if (city.toLowerCase(Locale.ROOT).equals("paris")) {
+            response.put("status", "success");
+            response.put("report", "The weather in Paris is sunny with a temperature of 25 degrees Celsius.");
+        } else {
+            response.put("status", "error");
+            response.put("error_message", String.format("Weather information for '%s' is not available.", city));
+        }
+        return response;
+    }
+    ```
+
 * **Simplicity and Focus:**
     * **Keep Tools Focused:** Each tool should ideally perform one well-defined task.
     * **Fewer Parameters are Better:** Models generally handle tools with fewer, clearly defined parameters more reliably than those with many optional or complex ones.
-    * **Use Simple Data Types:** Prefer basic types (`str`, `int`, `bool`, `float`, `List[str]`, etc.) over complex custom classes or deeply nested structures as parameters when possible.
+    * **Use Simple Data Types:** Prefer basic types (`str`, `int`, `bool`, `float`, `List[str]`, in **Python**, or `int`, `byte`, `short`, `long`, `float`, `double`, `boolean` and `char` in **Java**) over complex custom classes or deeply nested structures as parameters when possible.
     * **Decompose Complex Tasks:** Break down functions that perform multiple distinct logical steps into smaller, more focused tools. For instance, instead of a single `update_user_profile(profile: ProfileObject)` tool, consider separate tools like `update_user_name(name: str)`, `update_user_address(address: str)`, `update_user_preferences(preferences: list[str])`, etc. This makes it easier for the LLM to select and use the correct capability.
 
 By adhering to these guidelines, you provide the LLM with the clarity and structure it needs to effectively utilize your custom function tools, leading to more capable and reliable agent behavior.
+
+## Toolsets: Grouping and Dynamically Providing Tools ![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java support is planned/coming soon."}
+
+Beyond individual tools, ADK introduces the concept of a **Toolset** via the `BaseToolset` interface (defined in `google.adk.tools.base_toolset`). A toolset allows you to manage and provide a collection of `BaseTool` instances, often dynamically, to an agent.
+
+This approach is beneficial for:
+
+*   **Organizing Related Tools:** Grouping tools that serve a common purpose (e.g., all tools for mathematical operations, or all tools interacting with a specific API).
+*   **Dynamic Tool Availability:** Enabling an agent to have different tools available based on the current context (e.g., user permissions, session state, or other runtime conditions). The `get_tools` method of a toolset can decide which tools to expose.
+*   **Integrating External Tool Providers:** Toolsets can act as adapters for tools coming from external systems, like an OpenAPI specification or an MCP server, converting them into ADK-compatible `BaseTool` objects.
+
+### The `BaseToolset` Interface
+
+Any class acting as a toolset in ADK should implement the `BaseToolset` abstract base class. This interface primarily defines two methods:
+
+*   **`async def get_tools(...) -> list[BaseTool]:`**
+    This is the core method of a toolset. When an ADK agent needs to know its available tools, it will call `get_tools()` on each `BaseToolset` instance provided in its `tools` list.
+    *   It receives an optional `readonly_context` (an instance of `ReadonlyContext`). This context provides read-only access to information like the current session state (`readonly_context.state`), agent name, and invocation ID. The toolset can use this context to dynamically decide which tools to return.
+    *   It **must** return a `list` of `BaseTool` instances (e.g., `FunctionTool`, `RestApiTool`).
+
+*   **`async def close(self) -> None:`**
+    This asynchronous method is called by the ADK framework when the toolset is no longer needed, for example, when an agent server is shutting down or the `Runner` is being closed. Implement this method to perform any necessary cleanup, such as closing network connections, releasing file handles, or cleaning up other resources managed by the toolset.
+
+### Using Toolsets with Agents
+
+You can include instances of your `BaseToolset` implementations directly in an `LlmAgent`'s `tools` list, alongside individual `BaseTool` instances.
+
+When the agent initializes or needs to determine its available capabilities, the ADK framework will iterate through the `tools` list:
+
+*   If an item is a `BaseTool` instance, it's used directly.
+*   If an item is a `BaseToolset` instance, its `get_tools()` method is called (with the current `ReadonlyContext`), and the returned list of `BaseTool`s is added to the agent's available tools.
+
+### Example: A Simple Math Toolset
+
+Let's create a basic example of a toolset that provides simple arithmetic operations.
+
+```py
+--8<-- "examples/python/snippets/tools/overview/toolset_example.py:init"
+```
+
+In this example:
+
+*   `SimpleMathToolset` implements `BaseToolset` and its `get_tools()` method returns `FunctionTool` instances for `add_numbers` and `subtract_numbers`. It also customizes their names using a prefix.
+*   The `calculator_agent` is configured with both an individual `greet_tool` and an instance of `SimpleMathToolset`.
+*   When `calculator_agent` is run, ADK will call `math_toolset_instance.get_tools()`. The agent's LLM will then have access to `greet_user`, `calculator_add_numbers`, and `calculator_subtract_numbers` to handle user requests.
+*   The `add_numbers` tool demonstrates writing to `tool_context.state`, and the agent's instruction mentions reading this state.
+*   The `close()` method is called to ensure any resources held by the toolset are released.
+
+Toolsets offer a powerful way to organize, manage, and dynamically provide collections of tools to your ADK agents, leading to more modular, maintainable, and adaptable agentic applications.
