@@ -109,8 +109,8 @@ from google.adk.tools import google_search  # Import the tool
 
 root_agent = Agent(
    name="google_search_agent",
-   model="gemini-2.0-flash-live-001", # if this model does not work, try "gemini-2.0-flash-exp"
-   # model="gemini-2.0-flash-exp",
+   model="gemini-2.0-flash-exp", # if this model does not work, try below
+   #model="gemini-2.0-flash-live-001",
    description="Agent to answer questions using Google Search.",
    instruction="Answer the question using the Google Search tool.",
    tools=[google_search],
@@ -176,7 +176,7 @@ These console logs are important in case you develop your own streaming applicat
 6\. **Troubleshooting tips**
 
 - **When `ws://` doesn't work:** If you see any errors on the Chrome DevTools with regard to `ws://` connection, try replacing `ws://` with `wss://` on `app/static/js/app.js` at line 28. This may happen when you are running the sample on a cloud environment and using a proxy connection to connect from your browser.
-- **When `gemini-2.0-flash-live-001` model doesn't work:** If you see any errors on the app server console with regard to `gemini-2.0-flash-live-001` model availability, try replacing it with `gemini-2.0-flash-exp` on `app/google_search_agent/agent.py` at line 6. This may happen when you are running the sample with Vertex AI.
+- **When `gemini-2.0-flash-exp` model doesn't work:** If you see any errors on the app server console with regard to `gemini-2.0-flash-exp` model availability, try replacing it with `gemini-2.0-flash-live-001` on `app/google_search_agent/agent.py` at line 6.
 
 ## 4. Server code overview {#4.-server-side-code-overview}
 
