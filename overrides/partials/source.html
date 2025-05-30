@@ -1,0 +1,32 @@
+<!-- First Repository information -->
+<a
+  href="{{ config.repo_url }}"
+  title="{{ lang.t('source') }}"
+  class="md-source"
+  data-md-component="source"
+  style="margin-right: 10px;"
+>
+  <div class="md-source__icon md-icon">
+    {% set icon = config.theme.icon.repo or "fontawesome/brands/git-alt" %}
+    {% include ".icons/" ~ icon ~ ".svg" %}
+  </div>
+  <div class="md-source__repository">
+    {{ config.repo_name }}
+  </div>
+</a>
+
+<!-- Second Repository information -->
+<a
+  href="{{ config.extra.second_repo_url }}"
+  title="{{ config.extra.second_repo_name or 'Second Repository' }}"
+  class="md-source"
+  data-md-component="source"
+>
+  <div class="md-source__icon md-icon">
+    {% set second_icon = config.extra.second_repo_icon or "fontawesome/brands/github" %}
+    {% include ".icons/" ~ second_icon ~ ".svg" %}
+  </div>
+  <div class="md-source__repository">
+    {{ config.extra.second_repo_name or 'Second Repository' }}
+  </div>
+</a> 

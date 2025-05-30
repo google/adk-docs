@@ -1,5 +1,7 @@
 # Deploy to Vertex AI Agent Engine
 
+![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="Vertex AI Agent Engine currently supports only Python."}
+
 [Agent Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview)
 is a fully managed Google Cloud service enabling developers to deploy, manage,
 and scale AI agents in production. Agent Engine handles the infrastructure to

@@ -68,52 +68,121 @@ Tools can be designed with security in mind: we can create tools that expose the
 
 In-tool guardrails is an approach to create common and re-usable tools that expose deterministic controls that can be used by developers to set limits on each tool instantiation.
 
-This approach relies on the fact that tools receive two types of input: arguments,  which are set by the model, and [**`tool_context`**](../tools/index.md#tool-context), which can be set deterministically by the agent developer. We can rely on the deterministically set information to validate that the model is behaving as-expected.
+This approach relies on the fact that tools receive two types of input: arguments,  which are set by the model, and [**`Tool Context`**](../tools/index.md#tool-context), which can be set deterministically by the agent developer. We can rely on the deterministically set information to validate that the model is behaving as-expected.
 
-For example, a query tool can be designed to expect a policy to be read from the tool context
+For example, a query tool can be designed to expect a policy to be read from the Tool Context.
 
-```py
-# Conceptual example: Setting policy data intended for tool context
-# In a real ADK app, this might be set in InvocationContext.session.state
-# or passed during tool initialization, then retrieved via ToolContext.
+=== "Python"
 
-policy = {} # Assuming policy is a dictionary
-policy['select_only'] = True
-policy['tables'] = ['mytable1', 'mytable2']
+    ```py
+    # Conceptual example: Setting policy data intended for tool context
+    # In a real ADK app, this might be set in InvocationContext.session.state
+    # or passed during tool initialization, then retrieved via ToolContext.
+    
+    policy = {} # Assuming policy is a dictionary
+    policy['select_only'] = True
+    policy['tables'] = ['mytable1', 'mytable2']
+    
+    # Conceptual: Storing policy where the tool can access it via ToolContext later.
+    # This specific line might look different in practice.
+    # For example, storing in session state:
+    invocation_context.session.state["query_tool_policy"] = policy
+    
+    # Or maybe passing during tool init:
+    query_tool = QueryTool(policy=policy)
+    # For this example, we'll assume it gets stored somewhere accessible.
+    ```
+=== "Java"
 
-# Conceptual: Storing policy where the tool can access it via ToolContext later.
-# This specific line might look different in practice.
-# For example, storing in session state:
-# invocation_context.session.state["query_tool_policy"] = policy
-# Or maybe passing during tool init:
-# query_tool = QueryTool(policy=policy)
-# For this example, we'll assume it gets stored somewhere accessible.
-```
+    ```java
+    // Conceptual example: Setting policy data intended for tool context
+    // In a real ADK app, this might be set in InvocationContext.session.state
+    // or passed during tool initialization, then retrieved via ToolContext.
+    
+    policy = new HashMap<String, Object>(); // Assuming policy is a Map
+    policy.put("select_only", true);
+    policy.put("tables", new ArrayList<>("mytable1", "mytable2"));
+    
+    // Conceptual: Storing policy where the tool can access it via ToolContext later.
+    // This specific line might look different in practice.
+    // For example, storing in session state:
+    invocationContext.session().state().put("query_tool_policy", policy);
+    
+    // Or maybe passing during tool init:
+    query_tool = QueryTool(policy);
+    // For this example, we'll assume it gets stored somewhere accessible.
+    ```
 
-During the tool execution, [**`tool_context`**](../tools/index.md#tool-context) will be passed to the tool:
+During the tool execution, [**`Tool Context`**](../tools/index.md#tool-context) will be passed to the tool:
 
-```py
-def query(query: str, tool_context: ToolContext) -> str | dict:
-  # Assume 'policy' is retrieved from context, e.g., via session state:
-  # policy = tool_context.invocation_context.session.state.get('query_tool_policy', {})
+=== "Python"
 
-  # --- Placeholder Policy Enforcement ---
-  policy = tool_context.invocation_context.session.state.get('query_tool_policy', {}) # Example retrieval
-  actual_tables = explainQuery(query) # Hypothetical function call
+    ```py
+    def query(query: str, tool_context: ToolContext) -> str | dict:
+      # Assume 'policy' is retrieved from context, e.g., via session state:
+      # policy = tool_context.invocation_context.session.state.get('query_tool_policy', {})
+    
+      # --- Placeholder Policy Enforcement ---
+      policy = tool_context.invocation_context.session.state.get('query_tool_policy', {}) # Example retrieval
+      actual_tables = explainQuery(query) # Hypothetical function call
+    
+      if not set(actual_tables).issubset(set(policy.get('tables', []))):
+        # Return an error message for the model
+        allowed = ", ".join(policy.get('tables', ['(None defined)']))
+        return f"Error: Query targets unauthorized tables. Allowed: {allowed}"
+    
+      if policy.get('select_only', False):
+           if not query.strip().upper().startswith("SELECT"):
+               return "Error: Policy restricts queries to SELECT statements only."
+      # --- End Policy Enforcement ---
+    
+      print(f"Executing validated query (hypothetical): {query}")
+      return {"status": "success", "results": [...]} # Example successful return
+    ```
 
-  if not set(actual_tables).issubset(set(policy.get('tables', []))):
-    # Return an error message for the model
-    allowed = ", ".join(policy.get('tables', ['(None defined)']))
-    return f"Error: Query targets unauthorized tables. Allowed: {allowed}"
+=== "Java"
 
-  if policy.get('select_only', False):
-       if not query.strip().upper().startswith("SELECT"):
-           return "Error: Policy restricts queries to SELECT statements only."
-  # --- End Policy Enforcement ---
+    ```java
+    
+    import com.google.adk.tools.ToolContext;
+    import java.util.*;
+    
+    class ToolContextQuery {
+    
+      public Object query(String query, ToolContext toolContext) {
 
-  print(f"Executing validated query (hypothetical): {query}")
-  return {"status": "success", "results": [...]} # Example successful return
-```
+        // Assume 'policy' is retrieved from context, e.g., via session state:
+        Map<String, Object> queryToolPolicy =
+            toolContext.invocationContext.session().state().getOrDefault("query_tool_policy", null);
+        List<String> actualTables = explainQuery(query);
+    
+        // --- Placeholder Policy Enforcement ---
+        if (!queryToolPolicy.get("tables").containsAll(actualTables)) {
+          List<String> allowedPolicyTables =
+              (List<String>) queryToolPolicy.getOrDefault("tables", new ArrayList<String>());
+
+          String allowedTablesString =
+              allowedPolicyTables.isEmpty() ? "(None defined)" : String.join(", ", allowedPolicyTables);
+          
+          return String.format(
+              "Error: Query targets unauthorized tables. Allowed: %s", allowedTablesString);
+        }
+    
+        if (!queryToolPolicy.get("select_only")) {
+          if (!query.trim().toUpperCase().startswith("SELECT")) {
+            return "Error: Policy restricts queries to SELECT statements only.";
+          }
+        }
+        // --- End Policy Enforcement ---
+    
+        System.out.printf("Executing validated query (hypothetical) %s:", query);
+        Map<String, Object> successResult = new HashMap<>();
+        successResult.put("status", "success");
+        successResult.put("results", Arrays.asList("result_item1", "result_item2"));
+        return successResult;
+      }
+    }
+    ```
 
 #### Built-in Gemini Safety Features
 
@@ -128,44 +197,86 @@ While these measures are robust against content safety, you need additional chec
 
 #### Model and Tool Callbacks
 
-When modifications to the tools to add guardrails aren't possible, the [**`before_tool_callback`**](../callbacks/types-of-callbacks.md#before-tool-callback) function can be used to add pre-validation of calls. The callback has access to the agent's state, the requested tool and parameters. This approach is very general and can even be created to create a common library of re-usable tool policies. However, it might not be applicable for all tools if the information to enforce the guardrails isn't directly visible in the parameters.
+When modifications to the tools to add guardrails aren't possible, the [**`Before Tool Callback`**](../callbacks/types-of-callbacks.md#before-tool-callback) function can be used to add pre-validation of calls. The callback has access to the agent's state, the requested tool and parameters. This approach is very general and can even be created to create a common library of re-usable tool policies. However, it might not be applicable for all tools if the information to enforce the guardrails isn't directly visible in the parameters.
 
-```py
-# Hypothetical callback function
-def validate_tool_params(
-    callback_context: CallbackContext, # Correct context type
-    tool: BaseTool,
-    args: Dict[str, Any],
-    tool_context: ToolContext
-    ) -> Optional[Dict]: # Correct return type for before_tool_callback
+=== "Python"
 
-  print(f"Callback triggered for tool: {tool.name}, args: {args}")
+    ```py
+    # Hypothetical callback function
+    def validate_tool_params(
+        callback_context: CallbackContext, # Correct context type
+        tool: BaseTool,
+        args: Dict[str, Any],
+        tool_context: ToolContext
+        ) -> Optional[Dict]: # Correct return type for before_tool_callback
+    
+      print(f"Callback triggered for tool: {tool.name}, args: {args}")
+    
+      # Example validation: Check if a required user ID from state matches an arg
+      expected_user_id = callback_context.state.get("session_user_id")
+      actual_user_id_in_args = args.get("user_id_param") # Assuming tool takes 'user_id_param'
+    
+      if actual_user_id_in_args != expected_user_id:
+          print("Validation Failed: User ID mismatch!")
+          # Return a dictionary to prevent tool execution and provide feedback
+          return {"error": f"Tool call blocked: User ID mismatch."}
+    
+      # Return None to allow the tool call to proceed if validation passes
+      print("Callback validation passed.")
+      return None
+    
+    # Hypothetical Agent setup
+    root_agent = LlmAgent( # Use specific agent type
+        model='gemini-2.0-flash',
+        name='root_agent',
+        instruction="...",
+        before_tool_callback=validate_tool_params, # Assign the callback
+        tools = [
+          # ... list of tool functions or Tool instances ...
+          # e.g., query_tool_instance
+        ]
+    )
+    ```
 
-  # Example validation: Check if a required user ID from state matches an arg
-  expected_user_id = callback_context.state.get("session_user_id")
-  actual_user_id_in_args = args.get("user_id_param") # Assuming tool takes 'user_id_param'
+=== "Java"
 
-  if actual_user_id_in_args != expected_user_id:
-      print("Validation Failed: User ID mismatch!")
-      # Return a dictionary to prevent tool execution and provide feedback
-      return {"error": f"Tool call blocked: User ID mismatch."}
+    ```java
+    // Hypothetical callback function
+    public Optional<Map<String, Object>> validateToolParams(
+      CallbackContext callbackContext,
+      Tool baseTool,
+      Map<String, Object> input,
+      ToolContext toolContext) {
 
-  # Return None to allow the tool call to proceed if validation passes
-  print("Callback validation passed.")
-  return None
-
-# Hypothetical Agent setup
-root_agent = LlmAgent( # Use specific agent type
-    model='gemini-2.0-flash',
-    name='root_agent',
-    instruction="...",
-    before_tool_callback=validate_tool_params, # Assign the callback
-    tools = [
-      # ... list of tool functions or Tool instances ...
-      # e.g., query_tool_instance
-    ]
-)
-```
+    System.out.printf("Callback triggered for tool: %s, Args: %s", baseTool.name(), input);
+    
+    // Example validation: Check if a required user ID from state matches an input parameter
+    Object expectedUserId = callbackContext.state().get("session_user_id");
+    Object actualUserIdInput = input.get("user_id_param"); // Assuming tool takes 'user_id_param'
+    
+    if (!actualUserIdInput.equals(expectedUserId)) {
+      System.out.println("Validation Failed: User ID mismatch!");
+      // Return to prevent tool execution and provide feedback
+      return Optional.of(Map.of("error", "Tool call blocked: User ID mismatch."));
+    }
+    
+    // Return to allow the tool call to proceed if validation passes
+    System.out.println("Callback validation passed.");
+    return Optional.empty();
+    }
+    
+    // Hypothetical Agent setup
+    public void runAgent() {
+    LlmAgent agent =
+        LlmAgent.builder()
+            .model("gemini-2.0-flash")
+            .name("AgentWithBeforeToolCallback")
+            .instruction("...")
+            .beforeToolCallback(this::validateToolParams) // Assign the callback
+            .tools(anyToolToUse) // Define the tool to be used
+            .build();
+    }
+    ```
 
 #### Using Gemini as a safety guardrail
 

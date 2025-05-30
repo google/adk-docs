@@ -1,5 +1,7 @@
 # OpenAPI Integration
 
+![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java support is planned/ coming soon."}
+
 ## Integrating REST APIs with OpenAPI
 
 ADK simplifies interacting with external REST APIs by automatically generating callable tools directly from an [OpenAPI Specification (v3.x)](https://swagger.io/specification/). This eliminates the need to manually define individual function tools for each API endpoint.
@@ -55,15 +57,7 @@ Follow these steps to integrate an OpenAPI spec into your agent:
     # toolset = OpenAPIToolset(spec_dict=openapi_spec_dict)
     ```
 
-3. **Retrieve Tools**: Get the list of generated `RestApiTool` instances from the toolset.
-
-    ```python
-    api_tools = toolset.get_tools()
-    # Or get a specific tool by its generated name (snake_case operationId)
-    # specific_tool = toolset.get_tool("list_pets")
-    ```
-
-4. **Add to Agent**: Include the retrieved tools in your `LlmAgent`'s `tools` list.
+3. **Add to Agent**: Include the retrieved tools in your `LlmAgent`'s `tools` list.
 
     ```python
     from google.adk.agents import LlmAgent
@@ -71,13 +65,13 @@ Follow these steps to integrate an OpenAPI spec into your agent:
     my_agent = LlmAgent(
         name="api_interacting_agent",
         model="gemini-2.0-flash", # Or your preferred model
-        tools=api_tools, # Pass the list of generated tools
+        tools=[toolset], # Pass the toolset
         # ... other agent config ...
     )
     ```
 
-5. **Instruct Agent**: Update your agent's instructions to inform it about the new API capabilities and the names of the tools it can use (e.g., `list_pets`, `create_pet`). The tool descriptions generated from the spec will also help the LLM.
-6. **Run Agent**: Execute your agent using the `Runner`. When the LLM determines it needs to call one of the APIs, it will generate a function call targeting the appropriate `RestApiTool`, which will then handle the HTTP request automatically.
+4. **Instruct Agent**: Update your agent's instructions to inform it about the new API capabilities and the names of the tools it can use (e.g., `list_pets`, `create_pet`). The tool descriptions generated from the spec will also help the LLM.
+5. **Run Agent**: Execute your agent using the `Runner`. When the LLM determines it needs to call one of the APIs, it will generate a function call targeting the appropriate `RestApiTool`, which will then handle the HTTP request automatically.
 
 ## Example
 
