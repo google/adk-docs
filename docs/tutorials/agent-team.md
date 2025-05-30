@@ -159,12 +159,14 @@ os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "False"
 ```python
 # --- Define Model Constants for easier use ---
 
+# More supported models can be referenced here: https://ai.google.dev/gemini-api/docs/models#model-variations
 MODEL_GEMINI_2_0_FLASH = "gemini-2.0-flash"
 
-# Note: Specific model names might change. Refer to LiteLLM/Provider documentation.
-MODEL_GPT_4O = "openai/gpt-4o"
-MODEL_CLAUDE_SONNET = "anthropic/claude-3-sonnet-20240229"
+# More supported models can be referenced here: https://docs.litellm.ai/docs/providers/openai#openai-chat-completion-models
+MODEL_GPT_4O = "openai/gpt-4.1" # You can also try: gpt-4.1-mini, gpt-4o etc.
 
+# More supported models can be referenced here: https://docs.litellm.ai/docs/providers/anthropic
+MODEL_CLAUDE_SONNET = "anthropic/claude-sonnet-4-20250514" # You can also try: claude-opus-4-20250514 , claude-3-7-sonnet-20250219 etc
 
 print("\nEnvironment configured.")
 ```
@@ -451,6 +453,7 @@ Instead of passing only a model name string (which defaults to Google's Gemini m
 Make sure you have configured the necessary API keys for OpenAI and Anthropic in Step 0. We'll use the `call_agent_async` function (defined earlier, which now accepts `runner`, `user_id`, and `session_id`) to interact with each agent immediately after its setup.
 
 Each block below will:
+
 *   Define the agent using a specific LiteLLM model (`MODEL_GPT_4O` or `MODEL_CLAUDE_SONNET`).
 *   Create a *new, separate* `InMemorySessionService` and session specifically for that agent's test run. This keeps the conversation histories isolated for this demonstration.
 *   Create a `Runner` configured for the specific agent and its session service.
@@ -660,21 +663,27 @@ First, let's create the simple Python functions that will serve as tools for our
 
 ```python
 # @title Define Tools for Greeting and Farewell Agents
+from typing import Optional # Make sure to import Optional
 
 # Ensure 'get_weather' from Step 1 is available if running this step independently.
 # def get_weather(city: str) -> dict: ... (from Step 1)
 
-def say_hello(name: str = "there") -> str:
-    """Provides a simple greeting, optionally addressing the user by name.
+def say_hello(name: Optional[str] = None) -> str:
+    """Provides a simple greeting. If a name is provided, it will be used.
 
     Args:
-        name (str, optional): The name of the person to greet. Defaults to "there".
+        name (str, optional): The name of the person to greet. Defaults to a generic greeting if not provided.
 
     Returns:
         str: A friendly greeting message.
     """
-    print(f"--- Tool: say_hello called with name: {name} ---")
-    return f"Hello, {name}!"
+    if name:
+        greeting = f"Hello, {name}!"
+        print(f"--- Tool: say_hello called with name: {name} ---")
+    else:
+        greeting = "Hello there!" # Default greeting if name is None or not explicitly passed
+        print(f"--- Tool: say_hello called without a specific name (name_arg_value: {name}) ---")
+    return greeting
 
 def say_goodbye() -> str:
     """Provides a simple farewell message to conclude the conversation."""
@@ -685,7 +694,8 @@ print("Greeting and Farewell tools defined.")
 
 # Optional self-test
 print(say_hello("Alice"))
-print(say_goodbye())
+print(say_hello()) # Test with no argument (should use default "Hello there!")
+print(say_hello(name=None)) # Test with name explicitly as None (should use default "Hello there!")
 ```
 
 ---
@@ -981,7 +991,7 @@ session_stateful = await session_service_stateful.create_session(
 print(f"✅ Session '{SESSION_ID_STATEFUL}' created for user '{USER_ID_STATEFUL}'.")
 
 # Verify the initial state was set correctly
-retrieved_session = session_service_stateful.get_session(app_name=APP_NAME,
+retrieved_session = await session_service_stateful.get_session(app_name=APP_NAME,
                                                          user_id=USER_ID_STATEFUL,
                                                          session_id = SESSION_ID_STATEFUL)
 print("\n--- Initial Session State ---")
@@ -1248,7 +1258,7 @@ if 'runner_root_stateful' in globals() and runner_root_stateful:
     # --- Inspect final session state after the conversation ---
     # This block runs after either execution method completes.
     print("\n--- Inspecting Final Session State ---")
-    final_session = session_service_stateful.get_session(app_name=APP_NAME,
+    final_session = await session_service_stateful.get_session(app_name=APP_NAME,
                                                          user_id= USER_ID_STATEFUL,
                                                          session_id=SESSION_ID_STATEFUL)
     if final_session:
@@ -1257,7 +1267,7 @@ if 'runner_root_stateful' in globals() and runner_root_stateful:
         print(f"Final Last Weather Report (from output_key): {final_session.state.get('last_weather_report', 'Not Set')}")
         print(f"Final Last City Checked (by tool): {final_session.state.get('last_city_checked_stateful', 'Not Set')}")
         # Print full state for detailed view
-        # print(f"Full State Dict: {final_session.state.as_dict()}") # Use as_dict() for clarity
+        # print(f"Full State Dict: {final_session.state}") # For detailed view
     else:
         print("\n❌ Error: Could not retrieve final session state.")
 
@@ -1301,13 +1311,16 @@ ADK provides **Callbacks** – functions that allow you to hook into specific po
 **How it Works:**
 
 1. Define a function accepting `callback_context: CallbackContext` and `llm_request: LlmRequest`.  
-   * `callback_context`: Provides access to agent info, session state (`callback_context.state`), etc.  
-   * `llm_request`: Contains the full payload intended for the LLM (`contents`, `config`).  
-2. Inside the function:  
-   * **Inspect:** Examine `llm_request.contents` (especially the last user message).  
-   * **Modify (Use Caution):** You *can* change parts of `llm_request`.  
-   * **Block (Guardrail):** Return an `LlmResponse` object. ADK will send this response back immediately, *skipping* the LLM call for that turn.  
-   * **Allow:** Return `None`. ADK proceeds to call the LLM with the (potentially modified) request.
+
+    * `callback_context`: Provides access to agent info, session state (`callback_context.state`), etc.  
+    * `llm_request`: Contains the full payload intended for the LLM (`contents`, `config`).  
+
+2. Inside the function: 
+
+    * **Inspect:** Examine `llm_request.contents` (especially the last user message).  
+    * **Modify (Use Caution):** You *can* change parts of `llm_request`.  
+    * **Block (Guardrail):** Return an `LlmResponse` object. ADK will send this response back immediately, *skipping* the LLM call for that turn.  
+    * **Allow:** Return `None`. ADK proceeds to call the LLM with the (potentially modified) request.
 
 **In this step, we will:**
 
@@ -1541,7 +1554,7 @@ if 'runner_root_model_guardrail' in globals() and runner_root_model_guardrail:
     # Optional: Check state for the trigger flag set by the callback
     print("\n--- Inspecting Final Session State (After Guardrail Test) ---")
     # Use the session service instance associated with this stateful session
-    final_session = session_service_stateful.get_session(app_name=APP_NAME,
+    final_session = await session_service_stateful.get_session(app_name=APP_NAME,
                                                          user_id=USER_ID_STATEFUL,
                                                          session_id=SESSION_ID_STATEFUL)
     if final_session:
@@ -1587,14 +1600,17 @@ ADK provides the `before_tool_callback` for this precise purpose.
 **How it Works:**
 
 1. Define a function accepting `tool: BaseTool`, `args: Dict[str, Any]`, and `tool_context: ToolContext`.  
-   * `tool`: The tool object about to be called (inspect `tool.name`).  
-   * `args`: The dictionary of arguments the LLM generated for the tool.  
-   * `tool_context`: Provides access to session state (`tool_context.state`), agent info, etc.  
+
+    * `tool`: The tool object about to be called (inspect `tool.name`).  
+    * `args`: The dictionary of arguments the LLM generated for the tool.  
+    * `tool_context`: Provides access to session state (`tool_context.state`), agent info, etc.  
+
 2. Inside the function:  
-   * **Inspect:** Examine the `tool.name` and the `args` dictionary.  
-   * **Modify:** Change values within the `args` dictionary *directly*. If you return `None`, the tool runs with these modified args.  
-   * **Block/Override (Guardrail):** Return a **dictionary**. ADK treats this dictionary as the *result* of the tool call, completely *skipping* the execution of the original tool function. The dictionary should ideally match the expected return format of the tool it's blocking.  
-   * **Allow:** Return `None`. ADK proceeds to execute the actual tool function with the (potentially modified) arguments.
+
+    * **Inspect:** Examine the `tool.name` and the `args` dictionary.  
+    * **Modify:** Change values within the `args` dictionary *directly*. If you return `None`, the tool runs with these modified args.  
+    * **Block/Override (Guardrail):** Return a **dictionary**. ADK treats this dictionary as the *result* of the tool call, completely *skipping* the execution of the original tool function. The dictionary should ideally match the expected return format of the tool it's blocking.  
+    * **Allow:** Return `None`. ADK proceeds to execute the actual tool function with the (potentially modified) arguments.
 
 **In this step, we will:**
 
@@ -1829,7 +1845,7 @@ if 'runner_root_tool_guardrail' in globals() and runner_root_tool_guardrail:
     # Optional: Check state for the tool block trigger flag
     print("\n--- Inspecting Final Session State (After Tool Guardrail Test) ---")
     # Use the session service instance associated with this stateful session
-    final_session = session_service_stateful.get_session(app_name=APP_NAME,
+    final_session = await session_service_stateful.get_session(app_name=APP_NAME,
                                                          user_id=USER_ID_STATEFUL,
                                                          session_id= SESSION_ID_STATEFUL)
     if final_session:

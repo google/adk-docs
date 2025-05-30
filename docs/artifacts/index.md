@@ -358,7 +358,7 @@ The artifact interaction methods are available directly on instances of `Callbac
             filename = "generated_report.pdf"
 
             try:
-                version = context.save_artifact(filename=filename, artifact=report_artifact)
+                version = await context.save_artifact(filename=filename, artifact=report_artifact)
                 print(f"Successfully saved Python artifact '{filename}' as version {version}.")
                 # The event generated after this callback will contain:
                 # event.actions.artifact_delta == {"generated_report.pdf": version}
@@ -424,7 +424,7 @@ The artifact interaction methods are available directly on instances of `Callbac
             filename = "generated_report.pdf"
             try:
                 # Load the latest version
-                report_artifact = context.load_artifact(filename=filename)
+                report_artifact = await context.load_artifact(filename=filename)
 
                 if report_artifact and report_artifact.inline_data:
                     print(f"Successfully loaded latest Python artifact '{filename}'.")
@@ -437,7 +437,7 @@ The artifact interaction methods are available directly on instances of `Callbac
                     print(f"Python artifact '{filename}' not found.")
 
                 # Example: Load a specific version (if version 0 exists)
-                # specific_version_artifact = context.load_artifact(filename=filename, version=0)
+                # specific_version_artifact = await context.load_artifact(filename=filename, version=0)
                 # if specific_version_artifact:
                 #     print(f"Loaded version 0 of '{filename}'.")
 
@@ -551,7 +551,7 @@ The artifact interaction methods are available directly on instances of `Callbac
         def list_user_files_py(tool_context: ToolContext) -> str:
             """Tool to list available artifacts for the user."""
             try:
-                available_files = tool_context.list_artifacts()
+                available_files = await tool_context.list_artifacts()
                 if not available_files:
                     return "You have no saved artifacts."
                 else:
