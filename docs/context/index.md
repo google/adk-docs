@@ -87,7 +87,8 @@ While `InvocationContext` acts as the comprehensive internal container, ADK prov
     
         ```python
         # Pseudocode: Agent implementation receiving InvocationContext
-        from google.adk.agents import BaseAgent, InvocationContext
+        from google.adk.agents import BaseAgent
+        from google.adk.agents.invocation_context import InvocationContext
         from google.adk.events import Event
         from typing import AsyncGenerator
     
@@ -832,7 +833,8 @@ While most interactions happen via `CallbackContext` or `ToolContext`, sometimes
 
 ```python
 # Pseudocode: Inside agent's _run_async_impl
-from google.adk.agents import InvocationContext, BaseAgent
+from google.adk.agents import BaseAgent
+from google.adk.agents.invocation_context import InvocationContext
 from google.adk.events import Event
 from typing import AsyncGenerator
 

@@ -15,10 +15,8 @@ are its key properties:
 
 *   **Identification (`id`, `appName`, `userId`):** Unique labels for the
     conversation.
-    *   `id`: A unique identifier for *this specific* conversation thread,
-        essential for retrieving it later.
-    *   `appName`: Identifies which agent application this conversation belongs
-        to.
+    * `id`: A unique identifier for *this specific* conversation thread, essential for retrieving it later. A SessionService object can handle multiple `Session`(s). This field identifies which particular session object are we referring to. For example, "test_id_modification".
+    * `app_name`: Identifies which agent application this conversation belongs to. For example, "id_modifier_workflow". 
     *   `userId`: Links the conversation to a particular user.
 *   **History (`events`):** A chronological sequence of all interactions
     (`Event` objects – user messages, agent responses, tool actions) that have

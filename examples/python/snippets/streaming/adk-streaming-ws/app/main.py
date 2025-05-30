@@ -16,6 +16,7 @@ import os
 import json
 import asyncio
 import base64
+import warnings
 
 from pathlib import Path
 from dotenv import load_dotenv
@@ -35,6 +36,8 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 
 from google_search_agent.agent import root_agent
+
+warnings.filterwarnings("ignore", category=UserWarning, module="pydantic")
 
 #
 # ADK Streaming

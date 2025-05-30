@@ -76,7 +76,7 @@ Notice how easily you integrated [grounding with Google Search](https://ai.googl
 
 ![intro_components.png](../../assets/quickstart-streaming-tool.png)
 
-Copy-paste the following code block to `__init__.py` and `main.py` files.
+Copy-paste the following code block to `__init__.py` file.
 
 ```py title="__init__.py"
 from . import agent
@@ -136,6 +136,11 @@ Then, run the dev UI:
 ```shell
 adk web
 ```
+
+!!!info "Note for Windows users"
+
+    When hitting the `_make_subprocess_transport NotImplementedError`, consider using `adk web --no-reload` instead.
+
 
 Open the URL provided (usually `http://localhost:8000` or
 `http://127.0.0.1:8000`) **directly in your browser**. This connection stays
