@@ -1562,7 +1562,7 @@ if 'runner_root_model_guardrail' in globals() and runner_root_model_guardrail:
         print(f"Guardrail Triggered Flag: {final_session.state.get('guardrail_block_keyword_triggered', 'Not Set (or False)')}")
         print(f"Last Weather Report: {final_session.state.get('last_weather_report', 'Not Set')}") # Should be London weather if successful
         print(f"Temperature Unit: {final_session.state.get('user_preference_temperature_unit', 'Not Set')}") # Should be Fahrenheit
-        # print(f"Full State Dict: {final_session.state.as_dict()}") # For detailed view
+        # print(f"Full State Dict: {final_session.state}") # For detailed view
     else:
         print("\n❌ Error: Could not retrieve final session state.")
 
