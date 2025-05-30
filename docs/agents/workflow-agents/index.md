@@ -44,4 +44,4 @@ Workflow agents are essential when you need explicit control over how a series o
 * **Reliability:** Ensures tasks run in the required order or pattern consistently.
 * **Structure:** Allows you to build complex processes by composing agents within clear control structures.
 
-While the workflow agent manages the control flow deterministically, the sub-agents it orchestrates can themselves be any type of agent, including intelligent `LlmAgent` instances. This allows you to combine structured process control with flexible, LLM-powered task execution.
+While the workflow agent manages the control flow deterministically, the sub-agents it orchestrates can themselves be any type of agent, including intelligent LLM Agent instances. This allows you to combine structured process control with flexible, LLM-powered task execution.

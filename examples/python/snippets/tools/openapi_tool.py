@@ -1,5 +1,21 @@
+# Copyright 2025 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import asyncio
 import uuid # For unique session IDs
+from dotenv import load_dotenv
+
 from google.adk.agents import LlmAgent
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
@@ -7,6 +23,9 @@ from google.genai import types
 
 # --- OpenAPI Tool Imports ---
 from google.adk.tools.openapi_tool.openapi_spec_parser.openapi_toolset import OpenAPIToolset
+
+# --- Load Environment Variables (If ADK tools need them, e.g., API keys) ---
+load_dotenv() # Create a .env file in the same directory if needed
 
 # --- Constants ---
 APP_NAME_OPENAPI = "openapi_petstore_app"
@@ -118,36 +137,19 @@ openapi_spec_string = """
 """
 
 # --- Create OpenAPIToolset ---
-generated_tools_list = []
-try:
-    # Instantiate the toolset with the spec string
-    petstore_toolset = OpenAPIToolset(
-        spec_str=openapi_spec_string,
-        spec_str_type="json"
-        # No authentication needed for httpbin.org
-    )
-    # Get all tools generated from the spec
-    generated_tools_list = petstore_toolset.get_tools()
-    print(f"Generated {len(generated_tools_list)} tools from OpenAPI spec:")
-    for tool in generated_tools_list:
-        # Tool names are snake_case versions of operationId
-        print(f"- Tool Name: '{tool.name}', Description: {tool.description[:60]}...")
-
-except ValueError as ve:
-    print(f"Validation Error creating OpenAPIToolset: {ve}")
-    # Handle error appropriately, maybe exit or skip agent creation
-except Exception as e:
-    print(f"Unexpected Error creating OpenAPIToolset: {e}")
-    # Handle error appropriately
+petstore_toolset = OpenAPIToolset(
+    spec_str=openapi_spec_string,
+    spec_str_type='json',
+    # No authentication needed for httpbin.org
+)
 
 # --- Agent Definition ---
-openapi_agent = LlmAgent(
+root_agent = LlmAgent(
     name=AGENT_NAME_OPENAPI,
     model=GEMINI_MODEL,
-    tools=generated_tools_list, # Pass the list of RestApiTool objects
-    instruction=f"""You are a Pet Store assistant managing pets via an API.
+    tools=[petstore_toolset], # Pass the list of RestApiTool objects
+    instruction="""You are a Pet Store assistant managing pets via an API.
     Use the available tools to fulfill user requests.
-    Available tools: {', '.join([t.name for t in generated_tools_list])}.
     When creating a pet, confirm the details echoed back by the API.
     When listing pets, mention any filters used (like limit or status).
     When showing a pet by ID, state the ID you requested.
@@ -156,22 +158,24 @@ openapi_agent = LlmAgent(
 )
 
 # --- Session and Runner Setup ---
-session_service_openapi = InMemorySessionService()
-runner_openapi = Runner(
-    agent=openapi_agent, app_name=APP_NAME_OPENAPI, session_service=session_service_openapi
-)
-session_openapi = session_service_openapi.create_session(
-    app_name=APP_NAME_OPENAPI, user_id=USER_ID_OPENAPI, session_id=SESSION_ID_OPENAPI
-)
+async def setup_session_and_runner():
+    session_service_openapi = InMemorySessionService()
+    runner_openapi = Runner(
+        agent=root_agent,
+        app_name=APP_NAME_OPENAPI,
+        session_service=session_service_openapi,
+    )
+    await session_service_openapi.create_session(
+        app_name=APP_NAME_OPENAPI,
+        user_id=USER_ID_OPENAPI,
+        session_id=SESSION_ID_OPENAPI,
+    )
+    return runner_openapi
 
 # --- Agent Interaction Function ---
-async def call_openapi_agent_async(query):
+async def call_openapi_agent_async(query, runner_openapi):
     print("\n--- Running OpenAPI Pet Store Agent ---")
     print(f"Query: {query}")
-    if not generated_tools_list:
-        print("Skipping execution: No tools were generated.")
-        print("-" * 30)
-        return
 
     content = types.Content(role='user', parts=[types.Part(text=query)])
     final_response_text = "Agent did not provide a final text response."
@@ -202,12 +206,14 @@ async def call_openapi_agent_async(query):
 
 # --- Run Examples ---
 async def run_openapi_example():
+    runner_openapi = await setup_session_and_runner()
+
     # Trigger listPets
-    await call_openapi_agent_async("Show me the pets available.")
+    await call_openapi_agent_async("Show me the pets available.", runner_openapi)
     # Trigger createPet
-    await call_openapi_agent_async("Please add a new dog named 'Dukey'.")
+    await call_openapi_agent_async("Please add a new dog named 'Dukey'.", runner_openapi)
     # Trigger showPetById
-    await call_openapi_agent_async("Get info for pet with ID 123.")
+    await call_openapi_agent_async("Get info for pet with ID 123.", runner_openapi)
 
 # --- Execute ---
 if __name__ == "__main__":
