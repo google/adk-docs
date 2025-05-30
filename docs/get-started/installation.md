@@ -61,7 +61,7 @@
         <artifactId>google-adk-dev</artifactId>
         <version>0.1.0</version>
       </dependency>
-    <dependencies>
+    </dependencies>
     ```
 
     Here's a [complete pom.xml](https://github.com/google/adk-docs/tree/main/examples/java/cloud-run/pom.xml) file for reference.

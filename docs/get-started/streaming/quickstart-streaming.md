@@ -76,7 +76,7 @@ Notice how easily you integrated [grounding with Google Search](https://ai.googl
 
 ![intro_components.png](../../assets/quickstart-streaming-tool.png)
 
-Copy-paste the following code block to `__init__.py` and `main.py` files.
+Copy-paste the following code block to `__init__.py` file.
 
 ```py title="__init__.py"
 from . import agent
