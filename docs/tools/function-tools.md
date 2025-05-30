@@ -14,7 +14,7 @@ ADK offers several ways to create functions tools, each suited to different leve
 
 ## 1. Function Tool
 
-Transforming a function into a tool is a straightforward way to integrate custom logic into your agents. This approach offers flexibility and quick integration.
+Transforming a function into a tool is a straightforward way to integrate custom logic into your agents. In fact, when you assign a function to an agent’s tools list, the framework will automatically wrap it as a Function Tool for you. This approach offers flexibility and quick integration.
 
 ### Parameters
 
@@ -22,29 +22,45 @@ Define your function parameters using standard **JSON-serializable types** (e.g.
 
 ### Return Type
 
-The preferred return type for a Python Function Tool is a **dictionary**. This allows you to structure the response with key-value pairs, providing context and clarity to the LLM. If your function returns a type other than a dictionary, the framework automatically wraps it into a dictionary with a single key named **"result"**.
+The preferred return type for a Function Tool is a **dictionary** in Python or **Map** in Java. This allows you to structure the response with key-value pairs, providing context and clarity to the LLM. If your function returns a type other than a dictionary, the framework automatically wraps it into a dictionary with a single key named **"result"**.
 
 Strive to make your return values as descriptive as possible. *For example,* instead of returning a numeric error code, return a dictionary with an "error\_message" key containing a human-readable explanation. **Remember that the LLM**, not a piece of code, needs to understand the result. As a best practice, include a "status" key in your return dictionary to indicate the overall outcome (e.g., "success", "error", "pending"), providing the LLM with a clear signal about the operation's state.
 
-### Docstring
+### Docstring / Source code comments
 
-The docstring of your function serves as the tool's description and is sent to the LLM. Therefore, a well-written and comprehensive docstring is crucial for the LLM to understand how to use the tool effectively. Clearly explain the purpose of the function, the meaning of its parameters, and the expected return values.
+The docstring (or comments above) your function serve as the tool's description and is sent to the LLM. Therefore, a well-written and comprehensive docstring is crucial for the LLM to understand how to use the tool effectively. Clearly explain the purpose of the function, the meaning of its parameters, and the expected return values.
 
 ??? "Example"
 
-    This tool is a python function which obtains the Stock price of a given Stock ticker/ symbol.
-
-    <u>Note</u>: You need to `pip install yfinance` library before using this tool.
-
-    ```py
-    --8<-- "examples/python/snippets/tools/function-tools/func_tool.py"
-    ```
-
-    The return value from this tool will be wrapped into a dictionary.
-
-    ```json
-    {"result": "$123"}
-    ```
+    === "Python"
+    
+        This tool is a python function which obtains the Stock price of a given Stock ticker/ symbol.
+    
+        <u>Note</u>: You need to `pip install yfinance` library before using this tool.
+    
+        ```py
+        --8<-- "examples/python/snippets/tools/function-tools/func_tool.py"
+        ```
+    
+        The return value from this tool will be wrapped into a dictionary.
+    
+        ```json
+        {"result": "$123"}
+        ```
+    
+    === "Java"
+    
+        This tool retrieves the mocked value of a stock price.
+    
+        ```java
+        --8<-- "examples/java/snippets/src/main/java/tools/StockPriceAgent.java:full_code"
+        ```
+    
+        The return value from this tool will be wrapped into a Map<String, Object>.
+    
+        ```json
+        For input `GOOG`: {"symbol": "GOOG", "price": "1.0"}
+        ```
 
 ### Best Practices
 
@@ -52,75 +68,206 @@ While you have considerable flexibility in defining your function, remember that
 
 * **Fewer Parameters are Better:** Minimize the number of parameters to reduce complexity.  
 * **Simple Data Types:** Favor primitive data types like `str` and `int` over custom classes whenever possible.  
-* **Meaningful Names:** The function's name and parameter names significantly influence how the LLM interprets and utilizes the tool. Choose names that clearly reflect the function's purpose and the meaning of its inputs. Avoid generic names like `do_stuff()`.  
+* **Meaningful Names:** The function's name and parameter names significantly influence how the LLM interprets and utilizes the tool. Choose names that clearly reflect the function's purpose and the meaning of its inputs. Avoid generic names like `do_stuff()` or `beAgent()`.  
 
 ## 2. Long Running Function Tool
 
 Designed for tasks that require a significant amount of processing time without blocking the agent's execution. This tool is a subclass of `FunctionTool`.
 
-When using a `LongRunningFunctionTool`, your Python function can initiate the long-running operation and optionally return an **intermediate result** to keep the model and user informed about the progress. The agent can then continue with other tasks. An example is the human-in-the-loop scenario where the agent needs human approval before proceeding with a task.
+When using a `LongRunningFunctionTool`, your function can initiate the long-running operation and optionally return an **initial result**** (e.g. the long-running operation id). Once a long running function tool is invoked the agent runner will pause the agent run and let the agent client to decide whether to continue or wait until the long-running operation finishes. The agent client can query the progress of the long-running operation and send back an intermediate or final response. The agent can then continue with other tasks. An example is the human-in-the-loop scenario where the agent needs human approval before proceeding with a task.
 
 ### How it Works
 
-You wrap a Python *generator* function (a function using `yield`) with `LongRunningFunctionTool`.
+In Python, you wrap a function with `LongRunningFunctionTool`.  In Java, you pass a Method name to `LongRunningFunctionTool.create()`.
 
-1. **Initiation:** When the LLM calls the tool, your generator function starts executing.
 
-2. **Intermediate Updates (`yield`):** Your function should yield intermediate Python objects (typically dictionaries) periodically to report progress. The ADK framework takes each yielded value and sends it back to the LLM packaged within a `FunctionResponse`. This allows the LLM to inform the user (e.g., status, percentage complete, messages).
+1. **Initiation:** When the LLM calls the tool, your function starts the long-running operation.
 
-3. **Completion (`return`):** When the task is finished, the generator function uses `return` to provide the final Python object result.
+2. **Initial Updates:** Your function should optionally return an initial result (e.g. the long-running operaiton id). The ADK framework takes the result and sends it back to the LLM packaged within a `FunctionResponse`. This allows the LLM to inform the user (e.g., status, percentage complete, messages). And then the agent run is ended / paused.
 
-4. **Framework Handling:** The ADK framework manages the execution. It sends each yielded value back as an intermediate `FunctionResponse`. When the generator completes, the framework sends the returned value as the content of the final `FunctionResponse`, signaling the end of the long-running operation to the LLM.
+3. **Continue or Wait:** After each agent run is completed. Agent client can query the progress of the long-running operation and decide whether to continue the agent run with an intermediate response (to update the progress) or wait until a final response is retrieved. Agent client should send the intermediate or final response back to the agent for the next run.
+
+4. **Framework Handling:** The ADK framework manages the execution. It sends the intermediate or final `FunctionResponse` sent by agent client to the LLM to generate a user friendly message.
 
 ### Creating the Tool
 
-Define your generator function and wrap it using the `LongRunningFunctionTool` class:
+Define your tool function and wrap it using the `LongRunningFunctionTool` class:
 
-```py
-from google.adk.tools import LongRunningFunctionTool
+=== "Python"
 
-# Define your generator function (see example below)
-def my_long_task_generator(*args, **kwargs):
-    # ... setup ...
-    yield {"status": "pending", "message": "Starting task..."} # Framework sends this as FunctionResponse
-    # ... perform work incrementally ...
-    yield {"status": "pending", "progress": 50}               # Framework sends this as FunctionResponse
-    # ... finish work ...
-    return {"status": "completed", "result": "Final outcome"} # Framework sends this as final FunctionResponse
+    ```py
+    from google.adk.tools import LongRunningFunctionTool
 
-# Wrap the function
-my_tool = LongRunningFunctionTool(func=my_long_task_generator)
-```
+    # Define your long running function (see example below)
+    def ask_for_approval(
+        purpose: str, amount: float, tool_context: ToolContext
+    ) -> dict[str, Any]:
+    """Ask for approval for the reimbursement."""
+    # create a ticket for the approval
+    # Send a notification to the approver with the link of the ticket
+    return {'status': 'pending', 'approver': 'Sean Zhou', 'purpose' : purpose, 'amount': amount, 'ticket-id': 'approval-ticket-1'}
 
-### Intermediate Updates
+    # Wrap the function
+    approve_tool = LongRunningFunctionTool(func=ask_for_approval)
+    ```
 
-Yielding structured Python objects (like dictionaries) is crucial for providing meaningful updates. Include keys like:
 
-* status: e.g., "pending", "running", "waiting_for_input"
+=== "Java"
 
-* progress: e.g., percentage, steps completed
+    ```java
+    import com.google.adk.agents.LlmAgent;
+    import com.google.adk.tools.LongRunningFunctionTool;
+    import java.util.HashMap;
+    import java.util.Map;
+    
+    public class ExampleLongRunningFunction {
+    
+      // Define your Long Running function.
+      // Ask for approval for the reimbursement.
+      public static Map<String, Object> askForApproval(String purpose, double amount) {
+        // Simulate creating a ticket and sending a notification
+        System.out.println(
+            "Simulating ticket creation for purpose: " + purpose + ", amount: " + amount);
+    
+        // Send a notification to the approver with the link of the ticket
+        Map<String, Object> result = new HashMap<>();
+        result.put("status", "pending");
+        result.put("approver", "Sean Zhou");
+        result.put("purpose", purpose);
+        result.put("amount", amount);
+        result.put("ticket-id", "approval-ticket-1");
+        return result;
+      }
+    
+      public static void main(String[] args) throws NoSuchMethodException {
+        // Pass the method to LongRunningFunctionTool.create
+        LongRunningFunctionTool approveTool =
+            LongRunningFunctionTool.create(ExampleLongRunningFunction.class, "askForApproval");
+    
+        // Include the tool in the agent
+        LlmAgent approverAgent =
+            LlmAgent.builder()
+                // ...
+                .tools(approveTool)
+                .build();
+      }
+    }
+    ```
 
-* message: Descriptive text for the user/LLM
+### Intermediate / Final result Updates
 
-* estimated_completion_time: If calculable
+Agent client received an event with long running function calls and check the status of the ticket. Then Agent client can send the intermediate or final response back to update the progress. The framework packages this value (even if it's None) into the content of the `FunctionResponse` sent back to the LLM.
 
-Each value you yield is packaged into a FunctionResponse by the framework and sent to the LLM.
+!!! Tip "Applies to only Java ADK"
 
-### Final Result
+    When passing `ToolContext` with Function Tools, ensure that one of the following is true:
 
-The Python object your generator function returns is considered the final result of the tool execution. The framework packages this value (even if it's None) into the content of the final `FunctionResponse` sent back to the LLM, indicating the tool execution is complete.
+    * The Schema is passed with the ToolContext parameter in the function signature, like:
+      ```
+      @com.google.adk.tools.Annotations.Schema(name = "toolContext") ToolContext toolContext
+      ```
+    OR
+
+    * The following `-parameters` flag is set to the mvn compiler plugin
+
+    ```
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.14.0</version> <!-- or newer -->
+                <configuration>
+                    <compilerArgs>
+                        <arg>-parameters</arg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    ```
+    This constraint is temporary and will be removed.
+
+=== "Python"
+
+    ```py
+    # runner = Runner(...)
+    # session = await session_service.create_session(...)
+    # content = types.Content(...) # User's initial query
+
+    def get_long_running_function_call(event: Event) -> types.FunctionCall:
+        # Get the long running function call from the event
+        if not event.long_running_tool_ids or not event.content or not event.content.parts:
+            return
+        for part in event.content.parts:
+            if (
+                part 
+                and part.function_call 
+                and event.long_running_tool_ids 
+                and part.function_call.id in event.long_running_tool_ids
+            ):
+                return part.function_call
+
+    def get_function_response(event: Event, function_call_id: str) -> types.FunctionResponse:
+        # Get the function response for the fuction call with specified id.
+        if not event.content or not event.content.parts:
+            return
+        for part in event.content.parts:
+            if (
+                part 
+                and part.function_response
+                and part.function_response.id == function_call_id
+            ):
+                return part.function_response
+
+    print("\nRunning agent...")
+    events_async = runner.run_async(
+        session_id=session.id, user_id='user', new_message=content
+    )
+
+
+    long_running_function_call, long_running_function_response, ticket_id = None, None, None
+    async for event in events_async:
+        # Use helper to check for the specific auth request event
+        if not long_running_function_call:
+            long_running_function_call = get_long_running_function_call(event)
+        else:
+            long_running_function_response = get_function_response(event, long_running_function_call.id)
+            if long_running_function_response:
+                ticket_id = long_running_function_response.response['ticket_id']
+        if event.content and event.content.parts:
+            if text := ''.join(part.text or '' for part in event.content.parts):
+                print(f'[{event.author}]: {text}')
+
+        if long_running_function_response:
+            # query the status of the correpsonding ticket via tciket_id
+            # send back an intermediate / final response
+            updated_response = long_running_function_response.model_copy(deep=True)
+            updated_response.response = {'status': 'approved'}
+            async for event in runner.run_async(
+            session_id=session.id, user_id='user', new_message=types.Content(parts=[types.Part(function_response = updated_response)], role='user')
+            ):
+                if event.content and event.content.parts:
+                    if text := ''.join(part.text or '' for part in event.content.parts):
+                        print(f'[{event.author}]: {text}')   
+    ```
+
+=== "Java"
+
+    ```java
+    --8<-- "examples/java/snippets/src/main/java/tools/LongRunningFunctionExample.java:full_code"
+    ```
+
 
 ??? "Example: File Processing Simulation"
 
     ```py
-    --8<-- "examples/python/snippets/tools/function-tools/file_processor.py"
+    --8<-- "examples/python/snippets/tools/function-tools/human_in_the_loop.py"
     ```
 
 #### Key aspects of this example
 
-* **process_large_file**: This generator simulates a lengthy operation, yielding intermediate status/progress dictionaries.
-
-* **`LongRunningFunctionTool`**: Wraps the generator; the framework handles sending yielded updates and the final return value as sequential FunctionResponses.
+* **`LongRunningFunctionTool`**: Wraps the supplied method/function; the framework handles sending yielded updates and the final return value as sequential FunctionResponses.
 
 * **Agent instruction**: Directs the LLM to use the tool and understand the incoming FunctionResponse stream (progress vs. completion) for user updates.
 
@@ -142,9 +289,17 @@ It's important to distinguish an Agent-as-a-Tool from a Sub-Agent.
 
 To use an agent as a tool, wrap the agent with the AgentTool class.
 
-```py
-tools=[AgentTool(agent=agent_b)]
-```
+=== "Python"
+
+    ```py
+    tools=[AgentTool(agent=agent_b)]
+    ```
+
+=== "Java"
+
+    ```java
+    AgentTool.create(agent)
+    ```
 
 ### Customization
 
@@ -154,9 +309,17 @@ The `AgentTool` class provides the following attributes for customizing its beha
 
 ??? "Example"
 
-    ```py
-    --8<-- "examples/python/snippets/tools/function-tools/summarizer.py"
-    ```
+    === "Python"
+
+        ```py
+        --8<-- "examples/python/snippets/tools/function-tools/summarizer.py"
+        ```
+  
+    === "Java"
+
+        ```java
+        --8<-- "examples/java/snippets/src/main/java/tools/AgentToolCustomization.java:full_code"
+        ```
 
 ### How it works
 
@@ -166,3 +329,4 @@ The `AgentTool` class provides the following attributes for customizing its beha
 4. The `summary_agent` will process the text according to its instruction and generate a summary.  
 5. **The response from the `summary_agent` is then passed back to the `main_agent`.**  
 6. The `main_agent` can then take the summary and formulate its final response to the user (e.g., "Here's a summary of the text: ...")
+

@@ -2,41 +2,63 @@
 
 Before you deploy your agent, you should test it to ensure that it is working as
 intended. The easiest way to test your agent in your development environment is
-to use the `adk api_server` command. This command will launch a local FastAPI
+to use the ADK web UI with the following commands. 
+
+=== "Python"
+
+    ```py
+    adk api_server
+    ```
+
+=== "Java"
+
+    Make sure to update the port number.
+
+    ```java
+    mvn compile exec:java \
+         -Dexec.args="--adk.agents.source-dir=src/main/java/agents --server.port=8080"
+    ```
+    In Java, both the Dev UI and the API server are bundled together.
+
+This command will launch a local web
 server, where you can run cURL commands or send API requests to test your agent.
 
 ## Local testing
 
-Local testing involves launching a local API server, creating a session, and
+Local testing involves launching a local web server, creating a session, and
 sending queries to your agent. First, ensure you are in the correct working
 directory:
 
 ```console
-parent_folder  <-- you should be here
-|- my_sample_agent
-  |- __init__.py
-  |- .env
-  |- agent.py
+parent_folder/
+└── my_sample_agent/
+    └── agent.py (or Agent.java)
 ```
 
 **Launch the Local Server**
 
-Next, launch the local FastAPI server:
-
-```shell
-adk api_server
-```
+Next, launch the local server using the commands listed above.
 
 The output should appear similar to:
 
-```shell
-INFO:     Started server process [12345]
-INFO:     Waiting for application startup.
-INFO:     Application startup complete.
-INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
-```
+=== "Python"
 
-Your server is now running locally at `http://0.0.0.0:8000`.
+    ```shell
+    INFO:     Started server process [12345]
+    INFO:     Waiting for application startup.
+    INFO:     Application startup complete.
+    INFO:     Uvicorn running on http://localhost:8000 (Press CTRL+C to quit)
+    ```
+
+=== "Java"
+
+    ```shell
+    2025-05-13T23:32:08.972-06:00  INFO 37864 --- [ebServer.main()] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+    2025-05-13T23:32:08.980-06:00  INFO 37864 --- [ebServer.main()] com.google.adk.web.AdkWebServer          : Started AdkWebServer in 1.15 seconds (process running for 2.877)
+    2025-05-13T23:32:08.981-06:00  INFO 37864 --- [ebServer.main()] com.google.adk.web.AdkWebServer          : AdkWebServer application started successfully.
+    ```
+
+Your server is now running locally. Ensure you use the correct **_port number_** in all the subsequent commands.
 
 **Create a new session**
 
@@ -44,14 +66,14 @@ With the API server still running, open a new terminal window or tab and create
 a new session with the agent using:
 
 ```shell
-curl -X POST http://0.0.0.0:8000/apps/my_sample_agent/users/u_123/sessions/s_123 \
+curl -X POST http://localhost:8000/apps/my_sample_agent/users/u_123/sessions/s_123 \
   -H "Content-Type: application/json" \
   -d '{"state": {"key1": "value1", "key2": 42}}'
 ```
 
 Let's break down what's happening:
 
-* `http://0.0.0.0:8000/apps/my_sample_agent/users/u_123/sessions/s_123`: This
+* `http://localhost:8000/apps/my_sample_agent/users/u_123/sessions/s_123`: This
   creates a new session for your agent `my_sample_agent`, which is the name of
   the agent folder, for a user ID (`u_123`) and for a session ID (`s_123`). You
   can replace `my_sample_agent` with the name of your agent folder. You can
@@ -65,7 +87,7 @@ This should return the session information if it was created successfully. The
 output should appear similar to:
 
 ```shell
-{"id":"s_123","app_name":"my_sample_agent","user_id":"u_123","state":{"state":{"key1":"value1","key2":42}},"events":[],"last_update_time":1743711430.022186}
+{"id":"s_123","appName":"my_sample_agent","userId":"u_123","state":{"state":{"key1":"value1","key2":42}},"events":[],"lastUpdateTime":1743711430.022186}
 ```
 
 !!! info
@@ -80,10 +102,10 @@ output should appear similar to:
 There are two ways to send queries via POST to your agent, via the `/run` or
 `/run_sse` routes.
 
-* `POST http://0.0.0.0:8000/run`: collects all events as a list and returns the
+* `POST http://localhost:8000/run`: collects all events as a list and returns the
   list all at once. Suitable for most users (if you are unsure, we recommend
   using this one).
-* `POST http://0.0.0.0:8000/run_sse`: returns as Server-Sent-Events, which is a
+* `POST http://localhost:8000/run_sse`: returns as Server-Sent-Events, which is a
   stream of event objects. Suitable for those who want to be notified as soon as
   the event is available. With `/run_sse`, you can also set `streaming` to
   `true` to enable token-level streaming.
@@ -91,13 +113,13 @@ There are two ways to send queries via POST to your agent, via the `/run` or
 **Using `/run`**
 
 ```shell
-curl -X POST http://0.0.0.0:8000/run \
+curl -X POST http://localhost:8000/run \
 -H "Content-Type: application/json" \
 -d '{
-"app_name": "my_sample_agent",
-"user_id": "u_123",
-"session_id": "s_123",
-"new_message": {
+"appName": "my_sample_agent",
+"userId": "u_123",
+"sessionId": "s_123",
+"newMessage": {
     "role": "user",
     "parts": [{
     "text": "Hey whats the weather in new york today"
@@ -110,19 +132,19 @@ If using `/run`, you will see the full output of events at the same time, as a
 list, which should appear similar to:
 
 ```shell
-[{"content":{"parts":[{"functionCall":{"id":"af-e75e946d-c02a-4aad-931e-49e4ab859838","args":{"city":"new york"},"name":"get_weather"}}],"role":"model"},"invocation_id":"e-71353f1e-aea1-4821-aa4b-46874a766853","author":"weather_time_agent","actions":{"state_delta":{},"artifact_delta":{},"requested_auth_configs":{}},"long_running_tool_ids":[],"id":"2Btee6zW","timestamp":1743712220.385936},{"content":{"parts":[{"functionResponse":{"id":"af-e75e946d-c02a-4aad-931e-49e4ab859838","name":"get_weather","response":{"status":"success","report":"The weather in New York is sunny with a temperature of 25 degrees Celsius (41 degrees Fahrenheit)."}}}],"role":"user"},"invocation_id":"e-71353f1e-aea1-4821-aa4b-46874a766853","author":"weather_time_agent","actions":{"state_delta":{},"artifact_delta":{},"requested_auth_configs":{}},"id":"PmWibL2m","timestamp":1743712221.895042},{"content":{"parts":[{"text":"OK. The weather in New York is sunny with a temperature of 25 degrees Celsius (41 degrees Fahrenheit).\n"}],"role":"model"},"invocation_id":"e-71353f1e-aea1-4821-aa4b-46874a766853","author":"weather_time_agent","actions":{"state_delta":{},"artifact_delta":{},"requested_auth_configs":{}},"id":"sYT42eVC","timestamp":1743712221.899018}]
+[{"content":{"parts":[{"functionCall":{"id":"af-e75e946d-c02a-4aad-931e-49e4ab859838","args":{"city":"new york"},"name":"get_weather"}}],"role":"model"},"invocationId":"e-71353f1e-aea1-4821-aa4b-46874a766853","author":"weather_time_agent","actions":{"stateDelta":{},"artifactDelta":{},"requestedAuthConfigs":{}},"longRunningToolIds":[],"id":"2Btee6zW","timestamp":1743712220.385936},{"content":{"parts":[{"functionResponse":{"id":"af-e75e946d-c02a-4aad-931e-49e4ab859838","name":"get_weather","response":{"status":"success","report":"The weather in New York is sunny with a temperature of 25 degrees Celsius (41 degrees Fahrenheit)."}}}],"role":"user"},"invocationId":"e-71353f1e-aea1-4821-aa4b-46874a766853","author":"weather_time_agent","actions":{"stateDelta":{},"artifactDelta":{},"requestedAuthConfigs":{}},"id":"PmWibL2m","timestamp":1743712221.895042},{"content":{"parts":[{"text":"OK. The weather in New York is sunny with a temperature of 25 degrees Celsius (41 degrees Fahrenheit).\n"}],"role":"model"},"invocationId":"e-71353f1e-aea1-4821-aa4b-46874a766853","author":"weather_time_agent","actions":{"stateDelta":{},"artifactDelta":{},"requestedAuthConfigs":{}},"id":"sYT42eVC","timestamp":1743712221.899018}]
 ```
 
 **Using `/run_sse`**
 
 ```shell
-curl -X POST http://0.0.0.0:8000/run_sse \
+curl -X POST http://localhost:8000/run_sse \
 -H "Content-Type: application/json" \
 -d '{
-"app_name": "my_sample_agent",
-"user_id": "u_123",
-"session_id": "s_123",
-"new_message": {
+"appName": "my_sample_agent",
+"userId": "u_123",
+"sessionId": "s_123",
+"newMessage": {
     "role": "user",
     "parts": [{
     "text": "Hey whats the weather in new york today"
@@ -138,11 +160,11 @@ appear similar to:
 
 
 ```shell
-data: {"content":{"parts":[{"functionCall":{"id":"af-f83f8af9-f732-46b6-8cb5-7b5b73bbf13d","args":{"city":"new york"},"name":"get_weather"}}],"role":"model"},"invocation_id":"e-3f6d7765-5287-419e-9991-5fffa1a75565","author":"weather_time_agent","actions":{"state_delta":{},"artifact_delta":{},"requested_auth_configs":{}},"long_running_tool_ids":[],"id":"ptcjaZBa","timestamp":1743712255.313043}
+data: {"content":{"parts":[{"functionCall":{"id":"af-f83f8af9-f732-46b6-8cb5-7b5b73bbf13d","args":{"city":"new york"},"name":"get_weather"}}],"role":"model"},"invocationId":"e-3f6d7765-5287-419e-9991-5fffa1a75565","author":"weather_time_agent","actions":{"stateDelta":{},"artifactDelta":{},"requestedAuthConfigs":{}},"longRunningToolIds":[],"id":"ptcjaZBa","timestamp":1743712255.313043}
 
-data: {"content":{"parts":[{"functionResponse":{"id":"af-f83f8af9-f732-46b6-8cb5-7b5b73bbf13d","name":"get_weather","response":{"status":"success","report":"The weather in New York is sunny with a temperature of 25 degrees Celsius (41 degrees Fahrenheit)."}}}],"role":"user"},"invocation_id":"e-3f6d7765-5287-419e-9991-5fffa1a75565","author":"weather_time_agent","actions":{"state_delta":{},"artifact_delta":{},"requested_auth_configs":{}},"id":"5aocxjaq","timestamp":1743712257.387306}
+data: {"content":{"parts":[{"functionResponse":{"id":"af-f83f8af9-f732-46b6-8cb5-7b5b73bbf13d","name":"get_weather","response":{"status":"success","report":"The weather in New York is sunny with a temperature of 25 degrees Celsius (41 degrees Fahrenheit)."}}}],"role":"user"},"invocationId":"e-3f6d7765-5287-419e-9991-5fffa1a75565","author":"weather_time_agent","actions":{"stateDelta":{},"artifactDelta":{},"requestedAuthConfigs":{}},"id":"5aocxjaq","timestamp":1743712257.387306}
 
-data: {"content":{"parts":[{"text":"OK. The weather in New York is sunny with a temperature of 25 degrees Celsius (41 degrees Fahrenheit).\n"}],"role":"model"},"invocation_id":"e-3f6d7765-5287-419e-9991-5fffa1a75565","author":"weather_time_agent","actions":{"state_delta":{},"artifact_delta":{},"requested_auth_configs":{}},"id":"rAnWGSiV","timestamp":1743712257.391317}
+data: {"content":{"parts":[{"text":"OK. The weather in New York is sunny with a temperature of 25 degrees Celsius (41 degrees Fahrenheit).\n"}],"role":"model"},"invocationId":"e-3f6d7765-5287-419e-9991-5fffa1a75565","author":"weather_time_agent","actions":{"stateDelta":{},"artifactDelta":{},"requestedAuthConfigs":{}},"id":"rAnWGSiV","timestamp":1743712257.391317}
 ```
 
 !!! info

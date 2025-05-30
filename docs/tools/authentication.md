@@ -1,5 +1,7 @@
 # Authenticating with Tools
 
+![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java support is planned/ coming soon."}
+
 ## Core Concepts
 
 Many tools need to access protected resources (like user data in Google Calendar, Salesforce records, etc.) and require authentication. ADK provides a system to handle various authentication methods securely.
@@ -211,7 +213,7 @@ Here's the step-by-step process for your client application:
 ```py
 
 # runner = Runner(...)
-# session = session_service.create_session(...)
+# session = await session_service.create_session(...)
 # content = types.Content(...) # User's initial query
 
 print("\nRunning agent...")
@@ -534,7 +536,7 @@ except Exception as e:
     === "Tools and Agent"
 
          ```py title="tools_and_agent.py"
-         --8<-- "examples/python/snippets/tools/auth/agent_cli.py"
+         --8<-- "examples/python/snippets/tools/auth/tools_and_agent.py"
          ```
     === "Agent CLI"
 
