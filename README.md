@@ -4,7 +4,7 @@
 
 <img src="docs/assets/agent-development-kit.png" alt="Agent Development Kit Logo" width="150">
 
-**An open-source, code-first Python toolkit for building, evaluating, and
+**An open-source, code-first toolkit for building, evaluating, and
 deploying sophisticated AI agents with flexibility and control.**
 
 Agent Development Kit (ADK) is a flexible and modular framework for **developing
@@ -24,7 +24,7 @@ from simple tasks to complex workflows.
   capabilities, all for tight integration with the Google ecosystem.
 
 - **Code-First Development**: Define agent logic, tools, and orchestration
-  directly in Python for ultimate flexibility, testability, and versioning.
+  directly in Python and Java for ultimate flexibility, testability, and versioning.
 
 - **Modular Multi-Agent Systems**: Design scalable applications by composing
   multiple specialized agents into flexible hierarchies.
@@ -34,10 +34,30 @@ from simple tasks to complex workflows.
 
 ## 🚀 Installation
 
-You can install ADK using `pip`:
+You can install the Agent Development Kit (ADK) using your preferred package manager for Python or build tool for Java.
+
+### For Python (pip)
 
 ```bash
 pip install google-adk
+```
+
+### For Java (Maven)
+
+```xml
+<dependency>
+    <groupId>com.google.adk</groupId>
+    <artifactId>google-adk</artifactId>
+    <version>0.1.0</version>
+</dependency>
+```
+
+### For Java (Gradle)
+
+```groovy
+dependencies {
+    implementation 'com.google.adk:google-adk:0.1.0'
+}
 ```
 
 ## 📚 Documentation
@@ -57,10 +77,6 @@ requests, documentation improvements, or code contributions, please see our
 
 This project is licensed under the Apache 2.0 License - see the
 [LICENSE](LICENSE) file for details.
-
-## Preview
-
-This feature is subject to the "Pre-GA Offerings Terms" in the General Service Terms section of the [Service Specific Terms](https://cloud.google.com/terms/service-terms#1). Pre-GA features are available "as is" and might have limited support. For more information, see the [launch stage descriptions](https://cloud.google.com/products?hl=en#product-launch-stages).
 
 ---
 

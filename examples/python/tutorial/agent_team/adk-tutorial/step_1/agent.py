@@ -58,11 +58,9 @@ def get_weather(city: str) -> dict:
 
 # @title Define the Weather Agent
 
-AGENT_MODEL = MODEL_GEMINI_2_0_FLASH # Starting with Gemini
-
 root_agent = Agent(
     name="weather_agent_v1",
-    model=AGENT_MODEL, # Can be a string for Gemini or a LiteLlm object
+    model=MODEL_GEMINI_2_0_FLASH, # Can be a string for Gemini or a LiteLlm object
     description="Provides weather information for specific cities.",
     instruction="You are a helpful weather assistant. "
                 "When the user asks for the weather in a specific city, "
@@ -72,4 +70,12 @@ root_agent = Agent(
     tools=[get_weather], # Pass the function directly
 )
 
-# print(f"Agent '{weather_agent.name}' created using model '{AGENT_MODEL}'.")
+# Sample queries to test the agent: 
+
+# # Agent will give weather information for the specified cities.
+# # What's the weather in Tokyo?
+# # What is the weather like in London?
+# # Tell me the weather in New York?
+
+# # Agent will not have information for the specified city.
+# # How about Paris?  

@@ -16,6 +16,11 @@ copyright: Copyright Google 2025
 extra_css:
   - stylesheets/custom.css
 
+extra:
+  second_repo_url: https://github.com/google/adk-java
+  second_repo_name: adk-java
+  second_repo_icon: fontawesome/brands/github
+
 # Configuration
 theme:
   name: material
@@ -45,6 +50,7 @@ theme:
     - content.code.copy
     - content.code.select
     - content.tabs.link
+    - content.tooltips
     - navigation.footer
     - navigation.indexes
     - navigation.instant
@@ -68,7 +74,8 @@ markdown_extensions:
       line_spans: __span
       pygments_lang_class: true
   - pymdownx.inlinehilite
-  - pymdownx.snippets
+  - pymdownx.snippets:
+      dedent_subsections: true
   - pymdownx.superfences:
       custom_fences:
         - name: mermaid
@@ -99,7 +106,10 @@ nav:
     - get-started/index.md
     - Installation: get-started/installation.md
     - Quickstart: get-started/quickstart.md
-    - Quickstart (streaming): get-started/quickstart-streaming.md
+    - Quickstart (Streaming):
+      - get-started/streaming/index.md
+      - Python: get-started/streaming/quickstart-streaming.md
+      - Java: get-started/streaming/quickstart-streaming-java.md
     - Testing: get-started/testing.md
     - Sample agents: https://github.com/google/adk-samples
     - About ADK: get-started/about.md
@@ -155,9 +165,15 @@ nav:
     - mcp/index.md
   - Streaming:
     - streaming/index.md
-
+    - Quickstart (streaming): get-started/streaming/index.md
+    - Streaming Tools: streaming/streaming-tools.md
+    - Custom Audio Streaming app sample (SSE): streaming/custom-streaming.md
+    - Custom Audio Streaming app sample (WebSockets): streaming/custom-streaming-ws.md
   - Safety and Security: safety/index.md
   - Agent2Agent (A2A) Protocol: https://github.com/google/A2A/
   - Community Resources: community.md
   - Contributing Guide: contributing-guide.md
-  - API Reference: api-reference/index.html
+  - API Reference:
+    - api-reference/index.md
+    - Python ADK: api-reference/python/index.html
+    - Java ADK: api-reference/java/index.html

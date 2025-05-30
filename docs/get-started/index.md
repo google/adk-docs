@@ -11,7 +11,7 @@ agents, capable of handling complex tasks and workflows.
 
     ---
 
-    Install `google-adk` with `pip` and get up and running in minutes.
+    Install `google-adk` for Python or Java and get up and running in minutes.
 
     [:octicons-arrow-right-24: More information](installation.md)
 
@@ -29,7 +29,7 @@ agents, capable of handling complex tasks and workflows.
 
     Create your first streaming ADK agent.
 
-    [:octicons-arrow-right-24: More information](quickstart-streaming.md)
+    [:octicons-arrow-right-24: More information](streaming/quickstart-streaming.md)
 
 -   :material-console-line: **Tutorial**
 
