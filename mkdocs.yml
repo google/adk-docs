@@ -161,6 +161,8 @@ nav:
     - context/index.md
   - Evaluate:
     - evaluate/index.md
+  - Observability:
+    - 'AgentOps Integration': 'observability/agentops.md'
   - MCP:
     - mcp/index.md
   - Streaming:
