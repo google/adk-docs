@@ -100,7 +100,7 @@ async def call_agent(query):
 
     print("\nRunning agent...")
     events_async = runner.run_async(
-        session_id=session.id, user_id='user', new_message=content
+        session_id=session.id, user_id=USER_ID, new_message=content
     )
 
 
@@ -112,7 +112,7 @@ async def call_agent(query):
         else:
             long_running_function_response = get_function_response(event, long_running_function_call.id)
             if long_running_function_response:
-                ticket_id = long_running_function_response.response['ticket_id']
+                ticket_id = long_running_function_response.response['ticket-id']
         if event.content and event.content.parts:
             if text := ''.join(part.text or '' for part in event.content.parts):
                 print(f'[{event.author}]: {text}')
@@ -124,7 +124,7 @@ async def call_agent(query):
         updated_response = long_running_function_response.model_copy(deep=True)
         updated_response.response = {'status': 'approved'}
         async for event in runner.run_async(
-          session_id=session.id, user_id='user', new_message=types.Content(parts=[types.Part(function_response = updated_response)], role='user')
+          session_id=session.id, user_id=USER_ID, new_message=types.Content(parts=[types.Part(function_response = updated_response)], role='user')
         ):
             if event.content and event.content.parts:
                 if text := ''.join(part.text or '' for part in event.content.parts):

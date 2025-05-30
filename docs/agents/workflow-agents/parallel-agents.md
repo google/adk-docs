@@ -1,7 +1,5 @@
 # Parallel agents
 
-## The `ParallelAgent`
-
 The `ParallelAgent` is a [workflow agent](index.md) that executes its sub-agents *concurrently*. This dramatically speeds up workflows where tasks can be performed independently.
 
 Use `ParallelAgent` when: For scenarios prioritizing speed and involving independent, resource-intensive tasks, a `ParallelAgent` facilitates efficient parallel execution. **When sub-agents operate without dependencies, their tasks can be performed concurrently**, significantly reducing overall processing time.
@@ -44,8 +42,13 @@ Imagine researching multiple topics simultaneously:
 
 These research tasks are independent.  Using a `ParallelAgent` allows them to run concurrently, potentially reducing the total research time significantly compared to running them sequentially. The results from each agent would be collected separately after they finish.
 
-???+ "Code"
+???+ "Full Code"
 
-    ```py
-    --8<-- "examples/python/snippets/agents/workflow-agents/parallel_agent_web_research.py:init"
-    ```
+    === "Python"
+        ```py
+         --8<-- "examples/python/snippets/agents/workflow-agents/parallel_agent_web_research.py:init"
+        ```
+    === "Java"
+        ```java
+         --8<-- "examples/java/snippets/src/main/java/agents/workflow/ParallelResearchPipeline.java:full_code"
+        ```
