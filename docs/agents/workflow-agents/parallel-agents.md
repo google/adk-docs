@@ -1,12 +1,10 @@
 # Parallel agents
 
-## The `ParallelAgent`
-
 The `ParallelAgent` is a [workflow agent](index.md) that executes its sub-agents *concurrently*. This dramatically speeds up workflows where tasks can be performed independently.
 
 Use `ParallelAgent` when: For scenarios prioritizing speed and involving independent, resource-intensive tasks, a `ParallelAgent` facilitates efficient parallel execution. **When sub-agents operate without dependencies, their tasks can be performed concurrently**, significantly reducing overall processing time.
 
-As with other [workflow agents](index.md), the `ParallelAgent` is not powered by an LLM, and is thus deterministic in how it executes. That being said, workflow agents are only concerned only with their execution (i.e. in parallel), and not their internal logic; the tools or sub-agents of a workflow agent may or may not utilize LLMs.
+As with other [workflow agents](index.md), the `ParallelAgent` is not powered by an LLM, and is thus deterministic in how it executes. That being said, workflow agents are only concerned with their execution (i.e. executing sub-agents in parallel), and not their internal logic; the tools or sub-agents of a workflow agent may or may not utilize LLMs.
 
 ### Example
 
@@ -16,7 +14,7 @@ This approach is particularly beneficial for operations like multi-source data r
 
 When the `ParallelAgent`'s `run_async()` method is called:
 
-1. **Concurrent Execution:** It initiates the `run()` method of *each* sub-agent present in the `sub_agents` list *concurrently*.  This means all the agents start running at (approximately) the same time.
+1. **Concurrent Execution:** It initiates the `run_async()` method of *each* sub-agent present in the `sub_agents` list *concurrently*.  This means all the agents start running at (approximately) the same time.
 2. **Independent Branches:**  Each sub-agent operates in its own execution branch.  There is ***no* automatic sharing of conversation history or state between these branches** during execution.
 3. **Result Collection:** The `ParallelAgent` manages the parallel execution and, typically, provides a way to access the results from each sub-agent after they have completed (e.g., through a list of results or events). The order of results may not be deterministic.
 
@@ -44,8 +42,13 @@ Imagine researching multiple topics simultaneously:
 
 These research tasks are independent.  Using a `ParallelAgent` allows them to run concurrently, potentially reducing the total research time significantly compared to running them sequentially. The results from each agent would be collected separately after they finish.
 
-???+ "Code"
+???+ "Full Code"
 
-    ```py
-    --8<-- "examples/python/snippets/agents/workflow-agents/parallel_agent_web_research.py:init"
-    ```
+    === "Python"
+        ```py
+         --8<-- "examples/python/snippets/agents/workflow-agents/parallel_agent_web_research.py:init"
+        ```
+    === "Java"
+        ```java
+         --8<-- "examples/java/snippets/src/main/java/agents/workflow/ParallelResearchPipeline.java:full_code"
+        ```

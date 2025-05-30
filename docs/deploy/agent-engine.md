@@ -1,5 +1,7 @@
 # Deploy to Vertex AI Agent Engine
 
+![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="Vertex AI Agent Engine currently supports only Python."}
+
 [Agent Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview)
 is a fully managed Google Cloud service enabling developers to deploy, manage,
 and scale AI agents in production. Agent Engine handles the infrastructure to
@@ -143,7 +145,19 @@ remote_app = agent_engines.create(
 )
 ```
 
-This step may take several minutes to finish.
+This step may take several minutes to finish. Each deployed agent has a unique identifier. You can run the following command to get the resource_name identifier for your deployed agent:
+
+```python
+remote_app.resource_name
+```
+
+The response should look like the following string:
+
+```
+f"projects/{PROJECT_NUMBER}/locations/{LOCATION}/reasoningEngines/{RESOURCE_ID}"
+```
+
+For additional details, you can visit the Agent Engine documentation [deploying an agent](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/deploy) and [managing deployed agents](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/manage/overview).
 
 ### Try your agent on Agent Engine
 

@@ -3,6 +3,14 @@ hide:
   - toc
 ---
 
+!!! tip "Google I/O'25 - ADK updates"
+
+    Big news! 
+
+    - Introducing **[Java ADK v0.1.0](https://github.com/google/adk-java/)**, extending agent capabilities to the Java ecosystem.
+
+    - **[Python ADK](https://github.com/google/adk-python/)** is officially v1.0.0 offering stability for production-ready agents.
+
 <div style="text-align: center;">
   <div class="centered-logo-text-group">
     <img src="assets/agent-development-kit.png" alt="Agent Development Kit Logo" width="100">
@@ -20,13 +28,33 @@ development feel more like software development, to make it easier for
 developers to create, deploy, and orchestrate agentic architectures that range
 from simple tasks to complex workflows.
 
-<div class="install-command-container">
-  <p style="text-align:center;">
-    Get started:
-    <br/>
+<div id="centered-install-tabs" class="install-command-container" markdown="1">
+
+<p class="get-started-text" style="text-align: center;">Get started:</p>
+
+=== "Python"
+    <br>
+    <p style="text-align: center;">
     <code>pip install google-adk</code>
-  </p>
+    </p>
+
+=== "Java"
+
+    ```xml title="pom.xml"
+    <dependency>
+        <groupId>com.google.adk</groupId>
+        <artifactId>google-adk</artifactId>
+        <version>0.1.0</version>
+    </dependency>
+    ```
+
+    ```gradle title="build.gradle"
+    dependencies {
+        implementation 'com.google.adk:google-adk:0.1.0'
+    }
+    ```
 </div>
+
 
 <p style="text-align:center;">
   <a href="get-started/quickstart/" class="md-button" style="margin:3px">Quickstart</a>
@@ -39,6 +67,8 @@ from simple tasks to complex workflows.
 ---
 
 ## Learn more
+
+[:fontawesome-brands-youtube:{.youtube-red-icon} Watch "Introducing Agent Development Kit"!](https://www.youtube.com/watch?v=zgrOwow_uTQ target="_blank" rel="noopener noreferrer")
 
 <div class="grid cards" markdown>
 
@@ -101,14 +131,3 @@ from simple tasks to complex workflows.
     [**Safety and Security**](safety/index.md)
 
 </div>
-
-!!! Preview
-
-    This feature is subject to the "Pre-GA Offerings Terms" in the General
-    Service Terms section of the
-    [Service Specific Terms](https://cloud.google.com/terms/service-terms#1).
-    Pre-GA features are available "as is" and might have limited support. For
-    more information, see the
-    [launch stage descriptions](https://cloud.google.com/products#product-launch-stages).
-
-<div class="footer"></div>
