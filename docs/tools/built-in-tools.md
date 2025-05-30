@@ -7,7 +7,7 @@ agent that needs to retrieve information from the web can directly use the
 
 ## How to Use
 
-1. **Import:** Import the desired tool from the `agents.tools` module.
+1. **Import:** Import the desired tool from the tools module. This is `agents.tools` in Python or `com.google.adk.tools` in Java.
 2. **Configure:** Initialize the tool, providing required parameters if any.
 3. **Register:** Add the initialized tool to the **tools** list of your Agent.
 
@@ -16,6 +16,8 @@ prompt** and its **instructions**. The framework handles the execution of the
 tool when the agent calls it. Important: check the ***Limitations*** section of this page.
 
 ## Available Built-in tools
+
+Note: Java only supports Google Search and Code Execution tools currently.
 
 ### Google Search
 
@@ -26,9 +28,17 @@ Search. The `google_search` tool is only compatible with Gemini 2 models.
     When you use grounding with Google Search, and you receive Search suggestions in your response, you must display the Search suggestions in production and in your applications.
     For more information on grounding with Google Search, see Grounding with Google Search documentation for [Google AI Studio](https://ai.google.dev/gemini-api/docs/grounding/search-suggestions) or [Vertex AI](https://cloud.google.com/vertex-ai/generative-ai/docs/grounding/grounding-search-suggestions). The UI code (HTML) is returned in the Gemini response as `renderedContent`, and you will need to show the HTML in your app, in accordance with the policy.
 
-```py
---8<-- "examples/python/snippets/tools/built-in-tools/google_search.py"
-```
+=== "Python"
+
+    ```py
+    --8<-- "examples/python/snippets/tools/built-in-tools/google_search.py"
+    ```
+
+=== "Java"
+
+    ```java
+    --8<-- "examples/java/snippets/src/main/java/tools/GoogleSearchAgentApp.java:full_code"
+    ```
 
 ### Code Execution
 
@@ -36,9 +46,18 @@ The `built_in_code_execution` tool enables the agent to execute code,
 specifically when using Gemini 2 models. This allows the model to perform tasks
 like calculations, data manipulation, or running small scripts.
 
-````py
---8<-- "examples/python/snippets/tools/built-in-tools/code_execution.py"
-````
+=== "Python"
+
+    ```py
+    --8<-- "examples/python/snippets/tools/built-in-tools/code_execution.py"
+    ```
+
+=== "Java"
+
+    ```java
+    --8<-- "examples/java/snippets/src/main/java/tools/CodeExecutionAgentApp.java:full_code"
+    ```
+
 
 ### Vertex AI Search
 
@@ -46,6 +65,8 @@ The `vertex_ai_search_tool` uses Google Cloud's Vertex AI Search, enabling the
 agent to search across your private, configured data stores (e.g., internal
 documents, company policies, knowledge bases). This built-in tool requires you
 to provide the specific data store ID during configuration.
+
+
 
 ```py
 --8<-- "examples/python/snippets/tools/built-in-tools/vertexai_search.py"
@@ -56,34 +77,97 @@ to provide the specific data store ID during configuration.
 The following code sample demonstrates how to use multiple built-in tools or how
 to use built-in tools with other tools by using multiple agents:
 
-```py
-from google.adk.tools import agent_tool
-from google.adk.agents import Agent
-from google.adk.tools import google_search, built_in_code_execution
+=== "Python"
 
-search_agent = Agent(
-    model='gemini-2.0-flash',
-    name='SearchAgent',
-    instruction="""
-    You're a specialist in Google Search
-    """,
-    tools=[google_search],
-)
-coding_agent = Agent(
-    model='gemini-2.0-flash',
-    name='CodeAgent',
-    instruction="""
-    You're a specialist in Code Execution
-    """,
-    tools=[built_in_code_execution],
-)
-root_agent = Agent(
-    name="RootAgent",
-    model="gemini-2.0-flash",
-    description="Root Agent",
-    tools=[agent_tool.AgentTool(agent=search_agent), agent_tool.AgentTool(agent=coding_agent)],
-)
-```
+    ```py
+    from google.adk.tools import agent_tool
+    from google.adk.agents import Agent
+    from google.adk.tools import google_search
+    from google.adk.code_executors import BuiltInCodeExecutor
+    
+
+    search_agent = Agent(
+        model='gemini-2.0-flash',
+        name='SearchAgent',
+        instruction="""
+        You're a specialist in Google Search
+        """,
+        tools=[google_search],
+    )
+    coding_agent = Agent(
+        model='gemini-2.0-flash',
+        name='CodeAgent',
+        instruction="""
+        You're a specialist in Code Execution
+        """,
+        code_executor=[BuiltInCodeExecutor],
+    )
+    root_agent = Agent(
+        name="RootAgent",
+        model="gemini-2.0-flash",
+        description="Root Agent",
+        tools=[agent_tool.AgentTool(agent=search_agent), agent_tool.AgentTool(agent=coding_agent)],
+    )
+    ```
+
+=== "Java"
+
+    ```java
+    import com.google.adk.agents.BaseAgent;
+    import com.google.adk.agents.LlmAgent;
+    import com.google.adk.tools.AgentTool;
+    import com.google.adk.tools.BuiltInCodeExecutionTool;
+    import com.google.adk.tools.GoogleSearchTool;
+    import com.google.common.collect.ImmutableList;
+    
+    public class NestedAgentApp {
+    
+      private static final String MODEL_ID = "gemini-2.0-flash";
+    
+      public static void main(String[] args) {
+
+        // Define the SearchAgent
+        LlmAgent searchAgent =
+            LlmAgent.builder()
+                .model(MODEL_ID)
+                .name("SearchAgent")
+                .instruction("You're a specialist in Google Search")
+                .tools(new GoogleSearchTool()) // Instantiate GoogleSearchTool
+                .build();
+    
+
+        // Define the CodingAgent
+        LlmAgent codingAgent =
+            LlmAgent.builder()
+                .model(MODEL_ID)
+                .name("CodeAgent")
+                .instruction("You're a specialist in Code Execution")
+                .tools(new BuiltInCodeExecutionTool()) // Instantiate BuiltInCodeExecutionTool
+                .build();
+
+        // Define the RootAgent, which uses AgentTool.create() to wrap SearchAgent and CodingAgent
+        BaseAgent rootAgent =
+            LlmAgent.builder()
+                .name("RootAgent")
+                .model(MODEL_ID)
+                .description("Root Agent")
+                .tools(
+                    AgentTool.create(searchAgent), // Use create method
+                    AgentTool.create(codingAgent)   // Use create method
+                 )
+                .build();
+
+        // Note: This sample only demonstrates the agent definitions.
+        // To run these agents, you'd need to integrate them with a Runner and SessionService,
+        // similar to the previous examples.
+        System.out.println("Agents defined successfully:");
+        System.out.println("  Root Agent: " + rootAgent.name());
+        System.out.println("  Search Agent (nested): " + searchAgent.name());
+        System.out.println("  Code Agent (nested): " + codingAgent.name());
+      }
+    }
+    ```
+
 
 ### Limitations
 
@@ -95,14 +179,29 @@ root_agent = Agent(
  For example, the following approach that uses ***a built-in tool along with
  other tools*** within a single agent is **not** currently supported:
 
-```py
-root_agent = Agent(
-    name="RootAgent",
-    model="gemini-2.0-flash",
-    description="Root Agent",
-    tools=[built_in_code_execution, custom_function], # <-- not supported
-)
-```
+=== "Python"
+
+    ```py
+    root_agent = Agent(
+        name="RootAgent",
+        model="gemini-2.0-flash",
+        description="Root Agent",
+        tools=[custom_function], 
+        executor=[BuiltInCodeExecutor] # <-- not supported when used with tools
+    )
+    ```
+
+=== "Java"
+
+    ```java
+     LlmAgent searchAgent =
+            LlmAgent.builder()
+                .model(MODEL_ID)
+                .name("SearchAgent")
+                .instruction("You're a specialist in Google Search")
+                .tools(new GoogleSearchTool(), new YourCustomTool()) // <-- not supported
+                .build();
+    ```
 
 !!! warning
 
@@ -111,30 +210,61 @@ root_agent = Agent(
 For example, the following approach that uses built-in tools within sub-agents
 is **not** currently supported:
 
-```py
-search_agent = Agent(
-    model='gemini-2.0-flash',
-    name='SearchAgent',
-    instruction="""
-    You're a specialist in Google Search
-    """,
-    tools=[google_search],
-)
-coding_agent = Agent(
-    model='gemini-2.0-flash',
-    name='CodeAgent',
-    instruction="""
-    You're a specialist in Code Execution
-    """,
-    tools=[built_in_code_execution],
-)
-root_agent = Agent(
-    name="RootAgent",
-    model="gemini-2.0-flash",
-    description="Root Agent",
-    sub_agents=[
-        search_agent,
-        coding_agent
-    ],
-)
-```
+=== "Python"
+
+    ```py
+    search_agent = Agent(
+        model='gemini-2.0-flash',
+        name='SearchAgent',
+        instruction="""
+        You're a specialist in Google Search
+        """,
+        tools=[google_search],
+    )
+    coding_agent = Agent(
+        model='gemini-2.0-flash',
+        name='CodeAgent',
+        instruction="""
+        You're a specialist in Code Execution
+        """,
+        executor=[BuiltInCodeExecutor],
+    )
+    root_agent = Agent(
+        name="RootAgent",
+        model="gemini-2.0-flash",
+        description="Root Agent",
+        sub_agents=[
+            search_agent,
+            coding_agent
+        ],
+    )
+    ```
+
+=== "Java"
+
+    ```java
+    LlmAgent searchAgent =
+        LlmAgent.builder()
+            .model("gemini-2.0-flash")
+            .name("SearchAgent")
+            .instruction("You're a specialist in Google Search")
+            .tools(new GoogleSearchTool())
+            .build();
+
+    LlmAgent codingAgent =
+        LlmAgent.builder()
+            .model("gemini-2.0-flash")
+            .name("CodeAgent")
+            .instruction("You're a specialist in Code Execution")
+            .tools(new BuiltInCodeExecutionTool())
+            .build();
+    
+
+    LlmAgent rootAgent =
+        LlmAgent.builder()
+            .name("RootAgent")
+            .model("gemini-2.0-flash")
+            .description("Root Agent")
+            .subAgents(searchAgent, codingAgent) // Not supported, as the sub agents use built in tools.
+            .build();
+    ```
