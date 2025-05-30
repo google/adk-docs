@@ -207,6 +207,11 @@ agent will be unable to function.
         ```shell
         adk web
         ```
+        
+        !!!info "Note for Windows users"
+
+            When hitting the `_make_subprocess_transport NotImplementedError`, consider using `adk web --no-reload` instead.
+
 
         **Step 1:** Open the URL provided (usually `http://localhost:8000` or
         `http://127.0.0.1:8000`) directly in your browser.
