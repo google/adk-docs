@@ -295,7 +295,7 @@ USER_ID = "user_1"
 SESSION_ID = "session_001" # Using a fixed ID for simplicity
 
 # Create the specific session where the conversation will happen
-session = await session_service.create_session(
+session = session_service.create_session(
     app_name=APP_NAME,
     user_id=USER_ID,
     session_id=SESSION_ID
@@ -498,7 +498,7 @@ try:
     SESSION_ID_GPT = "session_001_gpt" # Using a fixed ID for simplicity
 
     # Create the specific session where the conversation will happen
-    session_gpt = await session_service_gpt.create_session(
+    session_gpt = session_service_gpt.create_session(
         app_name=APP_NAME_GPT,
         user_id=USER_ID_GPT,
         session_id=SESSION_ID_GPT
@@ -574,7 +574,7 @@ try:
     SESSION_ID_CLAUDE = "session_001_claude" # Using a fixed ID for simplicity
 
     # Create the specific session where the conversation will happen
-    session_claude = await session_service_claude.create_session(
+    session_claude = session_service_claude.create_session(
         app_name=APP_NAME_CLAUDE,
         user_id=USER_ID_CLAUDE,
         session_id=SESSION_ID_CLAUDE
@@ -860,7 +860,7 @@ if root_agent_var_name in globals() and globals()[root_agent_var_name]:
         APP_NAME = "weather_tutorial_agent_team"
         USER_ID = "user_1_agent_team"
         SESSION_ID = "session_001_agent_team"
-        session = await session_service.create_session(
+        session = session_service.create_session(
             app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID
         )
         print(f"Session created: App='{APP_NAME}', User='{USER_ID}', Session='{SESSION_ID}'")
@@ -982,7 +982,7 @@ initial_state = {
 }
 
 # Create the session, providing the initial state
-session_stateful = await session_service_stateful.create_session(
+session_stateful = session_service_stateful.create_session(
     app_name=APP_NAME, # Use the consistent app name
     user_id=USER_ID_STATEFUL,
     session_id=SESSION_ID_STATEFUL,
@@ -991,7 +991,7 @@ session_stateful = await session_service_stateful.create_session(
 print(f"✅ Session '{SESSION_ID_STATEFUL}' created for user '{USER_ID_STATEFUL}'.")
 
 # Verify the initial state was set correctly
-retrieved_session = await session_service_stateful.get_session(app_name=APP_NAME,
+retrieved_session = session_service_stateful.get_session(app_name=APP_NAME,
                                                          user_id=USER_ID_STATEFUL,
                                                          session_id = SESSION_ID_STATEFUL)
 print("\n--- Initial Session State ---")
@@ -1258,7 +1258,7 @@ if 'runner_root_stateful' in globals() and runner_root_stateful:
     # --- Inspect final session state after the conversation ---
     # This block runs after either execution method completes.
     print("\n--- Inspecting Final Session State ---")
-    final_session = await session_service_stateful.get_session(app_name=APP_NAME,
+    final_session = session_service_stateful.get_session(app_name=APP_NAME,
                                                          user_id= USER_ID_STATEFUL,
                                                          session_id=SESSION_ID_STATEFUL)
     if final_session:
@@ -1554,7 +1554,7 @@ if 'runner_root_model_guardrail' in globals() and runner_root_model_guardrail:
     # Optional: Check state for the trigger flag set by the callback
     print("\n--- Inspecting Final Session State (After Guardrail Test) ---")
     # Use the session service instance associated with this stateful session
-    final_session = await session_service_stateful.get_session(app_name=APP_NAME,
+    final_session = session_service_stateful.get_session(app_name=APP_NAME,
                                                          user_id=USER_ID_STATEFUL,
                                                          session_id=SESSION_ID_STATEFUL)
     if final_session:
@@ -1845,7 +1845,7 @@ if 'runner_root_tool_guardrail' in globals() and runner_root_tool_guardrail:
     # Optional: Check state for the tool block trigger flag
     print("\n--- Inspecting Final Session State (After Tool Guardrail Test) ---")
     # Use the session service instance associated with this stateful session
-    final_session = await session_service_stateful.get_session(app_name=APP_NAME,
+    final_session = session_service_stateful.get_session(app_name=APP_NAME,
                                                          user_id=USER_ID_STATEFUL,
                                                          session_id= SESSION_ID_STATEFUL)
     if final_session:
