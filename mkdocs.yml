@@ -163,12 +163,13 @@ nav:
     - evaluate/index.md
   - MCP:
     - mcp/index.md
-  - Streaming:
+  - Bidi-streaming (live):
     - streaming/index.md
-    - Quickstart (streaming): get-started/streaming/index.md
+    - Quickstart (Bidi-streaming/live): get-started/streaming/index.md
     - Streaming Tools: streaming/streaming-tools.md
-    - Custom Audio Streaming app sample (SSE): streaming/custom-streaming.md
-    - Custom Audio Streaming app sample (WebSockets): streaming/custom-streaming-ws.md
+    - Custom Audio Bidi-streaming app sample (SSE): streaming/custom-streaming.md
+    - Custom Audio Bidi-streaming app sample (WebSockets): streaming/custom-streaming-ws.md
+    - Configurating Bidi-streaming behaviour: streaming/configuration.md
   - Safety and Security: safety/index.md
   - Agent2Agent (A2A) Protocol: https://github.com/google/A2A/
   - Community Resources: community.md
