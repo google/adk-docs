@@ -286,6 +286,25 @@ layer, providing a standardized, OpenAI-compatible interface to over 100+ LLMs.
         )
         ```
 
+!!!info "Note for Windows users"
+
+    ### Avoiding LiteLLM UnicodeDecodeError on Windows
+    When using ADK agents with LiteLlm on Windows, users might encounter the following error:
+    ```
+    UnicodeDecodeError: 'charmap' codec can't decode byte...
+    ```
+    This issue occurs because `litellm` (used by LiteLlm) reads cached files (e.g., model pricing information) using the default Windows encoding (`cp1252`) instead of UTF-8.
+    Windows users can prevent this issue by setting the `PYTHONUTF8` environment variable to `1`. This forces Python to use UTF-8 globally.
+    **Example (PowerShell):**
+    ```powershell
+    # Set for current session
+    $env:PYTHONUTF8 = "1"
+    # Set persistently for the user
+    [System.Environment]::SetEnvironmentVariable('PYTHONUTF8', '1', [System.EnvironmentVariableTarget]::User)
+    Applying this setting ensures that Python reads cached files using UTF-8, avoiding the decoding error.
+    ```
+
+
 ## Using Open & Local Models via LiteLLM
 
 ![python_only](https://img.shields.io/badge/Supported_in-Python-blue)

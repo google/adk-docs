@@ -17,7 +17,7 @@ This guide covers two primary integration patterns:
 
 Before you begin, ensure you have the following set up:
 
-* **Set up ADK:** Follow the standard ADK [setup instructions](../get-started/quickstart.md) in the quickstart.
+* **Set up ADK:** Follow the standard ADK [setup instructions](../get-started/quickstart.md/#venv-install) in the quickstart.
 * **Install/update Python/Java:** MCP requires Python version of 3.9 or higher for Python or Java 17+.
 * **Setup Node.js and npx:** **(Python only)** Many community MCP servers are distributed as Node.js packages and run using `npx`. Install Node.js (which includes npx) if you haven't already. For details, see [https://nodejs.org/en](https://nodejs.org/en).
 * **Verify Installations:** **(Python only)** Confirm `adk` and `npx` are in your PATH within the activated virtual environment:
@@ -53,6 +53,7 @@ This example demonstrates connecting to a local MCP server that provides file sy
 Create an `agent.py` file (e.g., in `./adk_agent_samples/mcp_agent/agent.py`). The `MCPToolset` is instantiated directly within the `tools` list of your `LlmAgent`.
 
 *   **Important:** Replace `"/path/to/your/folder"` in the `args` list with the **absolute path** to an actual folder on your local system that the MCP server can access.
+*   **Important:** Place the `.env` file in the parent directory of the `./adk_agent_samples` directory.
 
 ```python
 # ./adk_agent_samples/mcp_agent/agent.py
@@ -113,6 +114,11 @@ Navigate to the parent directory of `mcp_agent` (e.g., `adk_agent_samples`) in y
 cd ./adk_agent_samples # Or your equivalent parent directory
 adk web
 ```
+
+!!!info "Note for Windows users"
+
+    When hitting the `_make_subprocess_transport NotImplementedError`, consider using `adk web --no-reload` instead.
+
 
 Once the ADK Web UI loads in your browser:
 
