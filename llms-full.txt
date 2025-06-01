@@ -68929,7 +68929,7 @@ public String myInstructionProvider(ReadonlyContext context){
 
 ```md-code__content
 # Pseudocode: Callback receiving CallbackContext
-from google.adk.agents import CallbackContext
+from google.adk.agents.callback_context import CallbackContext
 from google.adk.models import LlmRequest
 from google.genai import types
 from typing import Optional
@@ -69074,7 +69074,7 @@ def my_tool(tool_context: ToolContext, **kwargs):
       # ... rest of tool logic ...
 
 # Pseudocode: In a Callback function
-from google.adk.agents import CallbackContext
+from google.adk.agents.callback_context import CallbackContext
 
 def my_callback(callback_context: CallbackContext, **kwargs):
       last_tool_result = callback_context.state.get("temp:last_api_result") # Read temporary state
@@ -69189,7 +69189,7 @@ public void logToolUsage(ToolContext toolContext){
 
 ```md-code__content
 # Pseudocode: In a Callback
-from google.adk.agents import CallbackContext
+from google.adk.agents.callback_context import CallbackContext
 
 def check_initial_intent(callback_context: CallbackContext, **kwargs):
       initial_text = "N/A"
