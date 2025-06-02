@@ -1,6 +1,8 @@
 # Enhanced Observability for ADK with AgentOps
 
-AgentOps provides a powerful observability platform for testing, debugging, and monitoring AI agents and LLM applications, including those built with Google's Agent Development Kit (ADK). By integrating AgentOps, developers can gain deep insights into their ADK agent's behavior, LLM interactions, and tool usage.
+**With just two lines of code**, AgentOps provides a powerful observability platform for testing, debugging, and monitoring AI agents and LLM applications, including those built with Google's Agent Development Kit (ADK). 
+
+By integrating AgentOps, developers can gain deep insights into their ADK agent's behavior, LLM interactions, and tool usage.
 
 For more general information about AgentOps and its features, please visit the [official AgentOps documentation](https://docs.agentops.ai/v2/introduction).
 
@@ -28,6 +30,13 @@ Integrating AgentOps into your ADK application is straightforward:
 
     ```python
     import agentops
+    agentops.init()
+    ```
+
+    Detailed example:
+
+    ```python
+    import agentops
     import os
     from dotenv import load_dotenv
 
@@ -42,10 +51,11 @@ Integrating AgentOps into your ADK application is straightforward:
     )
     ```
 
-    !!! tip "API Key"
-        You can find your AgentOps API key on your [AgentOps Dashboard](https://app.agentops.ai/) after signing up. It's recommended to set it as an environment variable (`AGENTOPS_API_KEY`).
+    > 🚨 🔑 You can find your AgentOps API key on your [AgentOps Dashboard](https://app.agentops.ai/) after signing up. It's recommended to set it as an environment variable (`AGENTOPS_API_KEY`).
 
-Once initialized, AgentOps will automatically begin instrumenting your ADK application.
+Once initialized, AgentOps will automatically begin instrumenting your ADK agent.
+
+**This is all you need to capture all telemetry data for your ADK agent**
 
 ## How AgentOps Instruments ADK
 
@@ -55,7 +65,7 @@ AgentOps employs a sophisticated strategy to provide seamless observability with
     AgentOps detects ADK and intelligently patches ADK's internal OpenTelemetry tracer (typically `trace.get_tracer('gcp.vertex.agent')`). It replaces it with a `NoOpTracer`, ensuring that ADK's own attempts to create telemetry spans are effectively silenced. This prevents duplicate traces and allows AgentOps to be the authoritative source for observability data.
 
 2.  **AgentOps-Controlled Span Creation:**
-    With ADK's tracing disabled, AgentOps takes control by wrapping key ADK methods to create a logical hierarchy of spans:
+    AgentOps takes control by wrapping key ADK methods to create a logical hierarchy of spans:
 
     *   **Agent Execution Spans (e.g., `adk.agent.MySequentialAgent`):**
         When an ADK agent (like `BaseAgent`, `SequentialAgent`, or `LlmAgent`) starts its `run_async` method, AgentOps initiates a parent span for that agent's execution.
@@ -67,14 +77,14 @@ AgentOps employs a sophisticated strategy to provide seamless observability with
         When an agent uses a tool (via ADK's `functions.__call_tool_async`), AgentOps creates a single, comprehensive child span named after the tool. This span includes the tool's input parameters and the result it returns.
 
 3.  **Rich Attribute Collection:**
-    AgentOps cleverly reuses ADK's internal data extraction logic. It patches ADK's specific telemetry functions (e.g., `google.adk.telemetry.trace_tool_call`, `trace_call_llm`). The AgentOps wrappers for these functions take the detailed information ADK gathers and attach it as attributes to the *currently active AgentOps span*.
+    AgentOps reuses ADK's internal data extraction logic. It patches ADK's specific telemetry functions (e.g., `google.adk.telemetry.trace_tool_call`, `trace_call_llm`). The AgentOps wrappers for these functions take the detailed information ADK gathers and attach it as attributes to the *currently active AgentOps span*.
 
 ## Visualizing Your ADK Agent in AgentOps
 
 When you instrument your ADK application with AgentOps, you gain a clear, hierarchical view of your agent's execution in the AgentOps dashboard.
 
 1.  **Initialization:**
-    When `agentops.init()` is called (e.g., `agentops.init(trace_name="my_adk_application")`), an initial parent span is created if `auto_start_session=True` (the default). This span, often named like `my_adk_application.session`, will be the root for all operations within that trace.
+    When `agentops.init()` is called (e.g., `agentops.init(trace_name="my_adk_application")`), an initial parent span is created if the init param `auto_start_session=True` (true by default). This span, often named similar to `my_adk_application.session`, will be the root for all operations within that trace.
 
 2.  **ADK Runner Execution:**
     When an ADK `Runner` executes a top-level agent (e.g., a `SequentialAgent` orchestrating a workflow), AgentOps creates a corresponding agent span under the session trace. This span will reflect the name of your top-level ADK agent (e.g., `adk.agent.YourMainWorkflowAgent`).
