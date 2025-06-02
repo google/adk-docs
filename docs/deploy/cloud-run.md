@@ -161,7 +161,7 @@ export GOOGLE_GENAI_USE_VERTEXAI=True
         # Call the function to get the FastAPI app instance
         # Ensure the agent directory name ('capital_agent') matches your agent folder
         app = get_fast_api_app(
-            agent_dir=AGENT_DIR,
+            agents_dir=AGENT_DIR,
             session_db_url=SESSION_DB_URL,
             allow_origins=ALLOWED_ORIGINS,
             web=SERVE_WEB_INTERFACE,
