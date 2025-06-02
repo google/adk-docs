@@ -67,6 +67,18 @@ function connectWebsocket() {
       return;
     }
 
+    // Check for interrupt message
+    if (
+      message_from_server.interrupted &&
+      message_from_server.interrupted === true
+    ) {
+      // Stop audio playback if it's playing
+      if (audioPlayerNode) {
+        audioPlayerNode.port.postMessage({ command: "endOfAudio" });
+      }
+      return;
+    }
+
     // If it's audio, play it
     if (message_from_server.mime_type == "audio/pcm" && audioPlayerNode) {
       audioPlayerNode.port.postMessage(base64ToArray(message_from_server.data));
