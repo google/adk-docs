@@ -2,13 +2,11 @@
 
 **With just two lines of code**, [AgentOps](https://www.agentops.ai) provides session replays, metrics, and monitoring for agents.
 
-By integrating AgentOps, developers can gain deep insights into their ADK agent's behavior, LLM interactions, and tool usage.
-
-For more information about AgentOps and its features, visit the [official AgentOps documentation](https://docs.agentops.ai/v2/introduction).
-
 ## Why AgentOps for ADK?
 
 Observability is a key aspect of developing and deploying conversational AI agents. It allows developers to understand how their agents are performing, how their agents are interacting with users, and how their agents use external tools and APIs.
+
+By integrating AgentOps, developers can gain deep insights into their ADK agent's behavior, LLM interactions, and tool usage.
 
 Google ADK includes its own OpenTelemetry-based tracing system, primarily aimed at providing developers with a way to trace the basic flow of execution within their agents. AgentOps enhances this by offering a dedicated and more comprehensive observability platform with:
 
