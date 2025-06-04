@@ -162,7 +162,7 @@ nav:
   - Evaluate:
     - evaluate/index.md
   - Observability:
-    - 'AgentOps Integration': 'observability/agentops.md'
+    - 'AgentOps': 'observability/agentops.md'
   - MCP:
     - mcp/index.md
   - Bidi-streaming (live):
