@@ -1,4 +1,4 @@
-# AgentOps Integration
+# Agent Observability with AgentOps
 
 **With just two lines of code**, [AgentOps](https://www.agentops.ai) provides session replays, metrics, and monitoring for agents.
 
