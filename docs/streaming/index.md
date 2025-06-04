@@ -6,7 +6,7 @@
 
 !!! info
 
-    This is different from server-side stremaing or token-leven stremaing. This section is for bidi-streaming(live).
+    This is different from server-side streaming or token-leven streaming. This section is for bidi-streaming(live).
     
 Bidi-streaming(live) in ADK adds the low-latency bidirectional voice and video interaction
 capability of [Gemini Live API](https://ai.google.dev/gemini-api/docs/live) to

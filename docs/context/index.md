@@ -205,7 +205,7 @@ While `InvocationContext` acts as the comprehensive internal container, ADK prov
     
         ```python
         # Pseudocode: Callback receiving CallbackContext
-        from google.adk.agents import CallbackContext
+        from google.adk.agents.callback_context import CallbackContext
         from google.adk.models import LlmRequest
         from google.genai import types
         from typing import Optional
@@ -339,7 +339,7 @@ You'll frequently need to read information stored within the context.
             # ... rest of tool logic ...
     
         # Pseudocode: In a Callback function
-        from google.adk.agents import CallbackContext
+        from google.adk.agents.callback_context import CallbackContext
     
         def my_callback(callback_context: CallbackContext, **kwargs):
             last_tool_result = callback_context.state.get("temp:last_api_result") # Read temporary state
@@ -414,7 +414,7 @@ You'll frequently need to read information stored within the context.
     
         ```python
         # Pseudocode: In a Callback
-        from google.adk.agents import CallbackContext
+        from google.adk.agents.callback_context import CallbackContext
     
         def check_initial_intent(callback_context: CallbackContext, **kwargs):
             initial_text = "N/A"

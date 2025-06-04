@@ -68929,7 +68929,7 @@ public String myInstructionProvider(ReadonlyContext context){
 
 ```md-code__content
 # Pseudocode: Callback receiving CallbackContext
-from google.adk.agents import CallbackContext
+from google.adk.agents.callback_context import CallbackContext
 from google.adk.models import LlmRequest
 from google.genai import types
 from typing import Optional
@@ -69074,7 +69074,7 @@ def my_tool(tool_context: ToolContext, **kwargs):
       # ... rest of tool logic ...
 
 # Pseudocode: In a Callback function
-from google.adk.agents import CallbackContext
+from google.adk.agents.callback_context import CallbackContext
 
 def my_callback(callback_context: CallbackContext, **kwargs):
       last_tool_result = callback_context.state.get("temp:last_api_result") # Read temporary state
@@ -69189,7 +69189,7 @@ public void logToolUsage(ToolContext toolContext){
 
 ```md-code__content
 # Pseudocode: In a Callback
-from google.adk.agents import CallbackContext
+from google.adk.agents.callback_context import CallbackContext
 
 def check_initial_intent(callback_context: CallbackContext, **kwargs):
       initial_text = "N/A"
@@ -70400,7 +70400,7 @@ SERVE_WEB_INTERFACE = True
 # Call the function to get the FastAPI app instance
 # Ensure the agent directory name ('capital_agent') matches your agent folder
 app: FastAPI = get_fast_api_app(
-       agent_dir=AGENT_DIR,
+       agents_dir=AGENT_DIR,
        session_db_url=SESSION_DB_URL,
        allow_origins=ALLOWED_ORIGINS,
        web=SERVE_WEB_INTERFACE,
@@ -70854,7 +70854,7 @@ SERVE_WEB_INTERFACE = True
 # Call the function to get the FastAPI app instance
 # Ensure the agent directory name ('capital_agent') matches your agent folder
 app: FastAPI = get_fast_api_app(
-       agent_dir=AGENT_DIR,
+       agents_dir=AGENT_DIR,
        session_db_url=SESSION_DB_URL,
        allow_origins=ALLOWED_ORIGINS,
        web=SERVE_WEB_INTERFACE,
