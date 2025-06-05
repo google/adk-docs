@@ -216,15 +216,15 @@ Connect your agent to enterprise applications using
         connection="test-connection", #TODO: replace with connection name
         entity_operations={"Entity_One": ["LIST","CREATE"], "Entity_Two": []},#empty list for actions means all operations on the entity are supported.
         actions=["action1"], #TODO: replace with actions
-        service_account_credentials='{...}', # optional
-        tool_name="tool_prefix2",
+        service_account_credentials='{...}', # optional. Stringified json for service account key
+        tool_name_prefix="tool_prefix2",
         tool_instructions="..."
     )
     ```
 
     Note:
     -   You can provide service account to be used instead of using default
-        credentials.
+        credentials by generating [Service Account Key](https://cloud.google.com/iam/docs/keys-create-delete#creating) and providing right Application Integration and Integration Connector IAM roles to the service account.
     -   To find the list of supported entities and actions for a connection, use the connectors apis:
         [listActions](https://cloud.google.com/integration-connectors/docs/reference/rest/v1/projects.locations.connections.connectionSchemaMetadata/listActions) or 
         [listEntityTypes](https://cloud.google.com/integration-connectors/docs/reference/rest/v1/projects.locations.connections.connectionSchemaMetadata/listEntityTypes)
@@ -240,7 +240,7 @@ Connect your agent to enterprise applications using
         model='gemini-2.0-flash',
         name='connector_agent',
         instruction="Help user, leverage the tools you have access to",
-        tools=connector_tool.get_tools(),
+        tools=[connector_tool],
     )
     ```
 
@@ -276,13 +276,14 @@ workflow as a tool for your agent or create a new one.
         location="us-central1", #TODO: replace with location of the connection
         integration="test-integration", #TODO: replace with integration name
         trigger="api_trigger/test_trigger",#TODO: replace with trigger id
-        service_account_credentials='{...}', #optional
-        tool_name="tool_prefix1",
+        service_account_credentials='{...}', #optional. Stringified json for service account key
+        tool_name_prefix="tool_prefix1",
         tool_instructions="..."
     )
     ```
 
-    Note: You can provide service account to be used instead of using default credentials
+    Note: You can provide service account to be used instead of using default
+        credentials by generating [Service Account Key](https://cloud.google.com/iam/docs/keys-create-delete#creating) and providing right Application Integration and Integration Connector IAM roles to the service account.
 
 2. Add the tool to your agent. Update your `agent.py` file
 
@@ -294,7 +295,7 @@ workflow as a tool for your agent or create a new one.
         model='gemini-2.0-flash',
         name='integration_agent',
         instruction="Help user, leverage the tools you have access to",
-        tools=integration_tool.get_tools(),
+        tools=[integration_tool],
     )
     ```
 
