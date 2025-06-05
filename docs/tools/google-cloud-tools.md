@@ -275,7 +275,7 @@ workflow as a tool for your agent or create a new one.
         project="test-project", # TODO: replace with GCP project of the connection
         location="us-central1", #TODO: replace with location of the connection
         integration="test-integration", #TODO: replace with integration name
-        trigger="api_trigger/test_trigger",#TODO: replace with trigger id
+        triggers=["api_trigger/test_trigger"],#TODO: replace with trigger id(s). Empty list would mean all api triggers in the integration to be considered. 
         service_account_credentials='{...}', #optional. Stringified json for service account key
         tool_name_prefix="tool_prefix1",
         tool_instructions="..."
