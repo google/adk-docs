@@ -1,6 +1,6 @@
 # Project information
 site_name: Agent Development Kit
-site_url: https://google.github.io/adk-docs
+site_url: https://adk-labs.github.io/adk-docs
 site_description: >-
   Build powerful multi-agent systems with Agent Development Kit
 site_dir: site
