@@ -99,7 +99,7 @@ plugins:
         'get-started/tutorial.md': 'tutorials/index.md'
         'guides/responsible-agents.md': 'safety/index.md'
   - i18n:
-      docs_structure: suffix
+      docs_structure: folder
       languages:
         - locale: en
           default: true
