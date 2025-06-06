@@ -96,21 +96,8 @@ Define your tool function and wrap it using the `LongRunningFunctionTool` class:
 === "Python"
 
     ```py
-    from google.adk.tools import LongRunningFunctionTool
-
-    # Define your long running function (see example below)
-    def ask_for_approval(
-        purpose: str, amount: float, tool_context: ToolContext
-    ) -> dict[str, Any]:
-    """Ask for approval for the reimbursement."""
-    # create a ticket for the approval
-    # Send a notification to the approver with the link of the ticket
-    return {'status': 'pending', 'approver': 'Sean Zhou', 'purpose' : purpose, 'amount': amount, 'ticket-id': 'approval-ticket-1'}
-
-    # Wrap the function
-    approve_tool = LongRunningFunctionTool(func=ask_for_approval)
+    --8<-- "examples/python/snippets/tools/function-tools/human_in_the_loop.py:define_long_running_function"
     ```
-
 
 === "Java"
 
@@ -188,68 +175,11 @@ Agent client received an event with long running function calls and check the st
     ```
     This constraint is temporary and will be removed.
 
+
 === "Python"
 
     ```py
-    # runner = Runner(...)
-    # session = await session_service.create_session(...)
-    # content = types.Content(...) # User's initial query
-
-    def get_long_running_function_call(event: Event) -> types.FunctionCall:
-        # Get the long running function call from the event
-        if not event.long_running_tool_ids or not event.content or not event.content.parts:
-            return
-        for part in event.content.parts:
-            if (
-                part 
-                and part.function_call 
-                and event.long_running_tool_ids 
-                and part.function_call.id in event.long_running_tool_ids
-            ):
-                return part.function_call
-
-    def get_function_response(event: Event, function_call_id: str) -> types.FunctionResponse:
-        # Get the function response for the fuction call with specified id.
-        if not event.content or not event.content.parts:
-            return
-        for part in event.content.parts:
-            if (
-                part 
-                and part.function_response
-                and part.function_response.id == function_call_id
-            ):
-                return part.function_response
-
-    print("\nRunning agent...")
-    events_async = runner.run_async(
-        session_id=session.id, user_id='user', new_message=content
-    )
-
-
-    long_running_function_call, long_running_function_response, ticket_id = None, None, None
-    async for event in events_async:
-        # Use helper to check for the specific auth request event
-        if not long_running_function_call:
-            long_running_function_call = get_long_running_function_call(event)
-        else:
-            long_running_function_response = get_function_response(event, long_running_function_call.id)
-            if long_running_function_response:
-                ticket_id = long_running_function_response.response['ticket_id']
-        if event.content and event.content.parts:
-            if text := ''.join(part.text or '' for part in event.content.parts):
-                print(f'[{event.author}]: {text}')
-
-        if long_running_function_response:
-            # query the status of the correpsonding ticket via tciket_id
-            # send back an intermediate / final response
-            updated_response = long_running_function_response.model_copy(deep=True)
-            updated_response.response = {'status': 'approved'}
-            async for event in runner.run_async(
-            session_id=session.id, user_id='user', new_message=types.Content(parts=[types.Part(function_response = updated_response)], role='user')
-            ):
-                if event.content and event.content.parts:
-                    if text := ''.join(part.text or '' for part in event.content.parts):
-                        print(f'[{event.author}]: {text}')   
+    --8<-- "examples/python/snippets/tools/function-tools/human_in_the_loop.py:call_reimbursement_tool"
     ```
 
 === "Java"
@@ -259,7 +189,7 @@ Agent client received an event with long running function calls and check the st
     ```
 
 
-??? "Example: File Processing Simulation"
+??? "Python complete example: File Processing Simulation"
 
     ```py
     --8<-- "examples/python/snippets/tools/function-tools/human_in_the_loop.py"
