@@ -280,7 +280,7 @@ Connect your agent to enterprise applications using
     ```
 
 
-3. Add the tool to your agent. Update your `agent.py` file
+2. Add the tool to your agent. Update your `agent.py` file
 
     ```py
     from google.adk.agents.llm_agent import LlmAgent
@@ -294,13 +294,13 @@ Connect your agent to enterprise applications using
     )
     ```
 
-4. Configure your  `__init__.py` to expose your agent
+3. Configure your  `__init__.py` to expose your agent
 
     ```py
     from . import agent
     ```
 
-5. Start the Google ADK Web UI and try your agent.
+4. Start the Google ADK Web UI and try your agent.
 
     ```shell
     # make sure to run `adk web` from your project_root_folder
