@@ -93,6 +93,7 @@ If you prefer a setup that handles the runner and session management automatical
 
 **Ready to build your agent team? Let's dive in!**
 
+> **Note:** This tutorial works with adk version 1.0.0 and above
 
 ```python
 # @title Step 0: Setup and Installation

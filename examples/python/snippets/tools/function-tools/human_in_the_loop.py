@@ -21,6 +21,8 @@ from google.adk.tools import LongRunningFunctionTool
 from google.adk.sessions import InMemorySessionService
 from google.genai import types
 
+# --8<-- [start:define_long_running_function]
+
 # 1. Define the long running function
 def ask_for_approval(
     purpose: str, amount: float
@@ -37,6 +39,8 @@ def reimburse(purpose: str, amount: float) -> str:
 
 # 2. Wrap the function with LongRunningFunctionTool
 long_running_tool = LongRunningFunctionTool(func=ask_for_approval)
+
+# --8<-- [end:define_long_running_function]
 
 # 3. Use the tool in an Agent
 file_processor_agent = Agent(
@@ -63,9 +67,11 @@ SESSION_ID = "session1234"
 
 # Session and Runner
 session_service = InMemorySessionService()
-session = session_service.create_session(app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID)
+session = await session_service.create_session(app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID)
 runner = Runner(agent=file_processor_agent, app_name=APP_NAME, session_service=session_service)
 
+
+# --8<-- [start: call_reimbursement_tool]
 
 # Agent Interaction
 async def call_agent(query):
@@ -129,8 +135,12 @@ async def call_agent(query):
             if event.content and event.content.parts:
                 if text := ''.join(part.text or '' for part in event.content.parts):
                     print(f'[{event.author}]: {text}')
-
+          
+# --8<-- [end:call_reimbursement_tool]          
+                    
 # reimbursement that doesn't require approval
 asyncio.run(call_agent("Please reimburse 50$ for meals"))
+# await call_agent("Please reimburse 50$ for meals") # For Notebooks, uncomment this line and comment the above line
 # reimbursement that requires approval
 asyncio.run(call_agent("Please reimburse 200$ for meals"))
+# await call_agent("Please reimburse 200$ for meals") # For Notebooks, uncomment this line and comment the above line
