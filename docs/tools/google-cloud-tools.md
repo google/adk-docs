@@ -229,8 +229,58 @@ Connect your agent to enterprise applications using
         [listActions](https://cloud.google.com/integration-connectors/docs/reference/rest/v1/projects.locations.connections.connectionSchemaMetadata/listActions) or 
         [listEntityTypes](https://cloud.google.com/integration-connectors/docs/reference/rest/v1/projects.locations.connections.connectionSchemaMetadata/listEntityTypes)
 
+    `ApplicationIntegrationToolset` now also supports providing auth_scheme and auth_credential for dynamic OAuth2 authentication for Integration Connectors. To use it create a tool similar to this within your `tools.py` file:
 
-2. Add the tool to your agent. Update your `agent.py` file
+     ```py
+    from google.adk.tools.application_integration_tool.application_integration_toolset import ApplicationIntegrationToolset
+    from google.adk.tools.openapi_tool.auth.auth_helpers import dict_to_auth_scheme
+    from google.adk.auth import AuthCredential
+    from google.adk.auth import AuthCredentialTypes
+    from google.adk.auth import OAuth2Auth
+
+    oauth2_data_google_cloud = {
+      "type": "oauth2",
+      "flows": {
+          "authorizationCode": {
+              "authorizationUrl": "https://accounts.google.com/o/oauth2/auth",
+              "tokenUrl": "https://oauth2.googleapis.com/token",
+              "scopes": {
+                  "https://www.googleapis.com/auth/cloud-platform": (
+                      "View and manage your data across Google Cloud Platform"
+                      " services"
+                  ),
+                  "https://www.googleapis.com/auth/calendar.readonly": "View your calendars"
+              },
+          }
+      },
+    }
+
+    oauth2_scheme = dict_to_auth_scheme(oauth2_data_google_cloud)
+    
+    auth_credential = AuthCredential(
+      auth_type=AuthCredentialTypes.OAUTH2,
+      oauth2=OAuth2Auth(
+          client_id="...", #TODO: replace with client_id
+          client_secret="...", #TODO: replace with client_secret
+      ),
+    )
+
+    connector_tool = ApplicationIntegrationToolset(
+        project="test-project", # TODO: replace with GCP project of the connection
+        location="us-central1", #TODO: replace with location of the connection
+        connection="test-connection", #TODO: replace with connection name
+        entity_operations={"Entity_One": ["LIST","CREATE"], "Entity_Two": []},#empty list for actions means all operations on the entity are supported.
+        actions=["GET_calendars/%7BcalendarId%7D/events"], #TODO: replace with actions. this one is for list events
+        service_account_credentials='{...}', # optional. Stringified json for service account key
+        tool_name_prefix="tool_prefix2",
+        tool_instructions="...",
+        auth_scheme=auth_scheme,
+        auth_credential=auth_credential
+    )
+    ```
+
+
+3. Add the tool to your agent. Update your `agent.py` file
 
     ```py
     from google.adk.agents.llm_agent import LlmAgent
@@ -244,13 +294,13 @@ Connect your agent to enterprise applications using
     )
     ```
 
-3. Configure your  `__init__.py` to expose your agent
+4. Configure your  `__init__.py` to expose your agent
 
     ```py
     from . import agent
     ```
 
-4. Start the Google ADK Web UI and try your agent.
+5. Start the Google ADK Web UI and try your agent.
 
     ```shell
     # make sure to run `adk web` from your project_root_folder
