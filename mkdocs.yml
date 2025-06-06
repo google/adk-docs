@@ -108,6 +108,9 @@ plugins:
         - locale: ko
           name: 한국어
           build: true
+        - locale: ja
+          name: 日本語
+          build: true
 
 # Navigation
 nav:
