@@ -29,6 +29,9 @@ from simple tasks to complex workflows.
 - **Modular Multi-Agent Systems**: Design scalable applications by composing
   multiple specialized agents into flexible hierarchies.
 
+- **Agent Monitoring**: Built-in tracking of agent runs for debugging and optimizing
+  agent workflows with support from external providers like AgentOps.
+
 - **Deploy Anywhere**: Easily containerize and deploy agents on Cloud Run or
   scale seamlessly with Vertex AI Agent Engine.
 
