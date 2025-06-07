@@ -184,10 +184,10 @@ plugins:
       languages:
         - locale: en
           name: English
+          default: true
           build: true
         - locale: ko
           name: 한국어
-          default: true
           build: true
           nav_translations:
             Home: 홈
