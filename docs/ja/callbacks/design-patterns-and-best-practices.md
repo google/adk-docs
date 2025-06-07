@@ -1,77 +1,77 @@
-# Design Patterns and Best Practices for Callbacks
+# コールバックの設計パターンとベストプラクティス
 
-Callbacks offer powerful hooks into the agent lifecycle. Here are common design patterns illustrating how to leverage them effectively in ADK, followed by best practices for implementation.
+コールバックは、エージェントのライフサイクルに強力なフックを提供します。ここでは、ADKでそれらを効果的に活用する方法を示す一般的な設計パターンと、実装のためのベストプラクティスを紹介します。
 
-## Design Patterns
+## 設計パターン
 
-These patterns demonstrate typical ways to enhance or control agent behavior using callbacks:
+これらのパターンは、コールバックを使用してエージェントの振る舞いを強化または制御する典型的な方法を示しています：
 
-### 1. Guardrails & Policy Enforcement
+### 1. ガードレールとポリシー適用
 
-* **Pattern:** Intercept requests before they reach the LLM or tools to enforce rules.
-* **How:** Use `before_model_callback` to inspect the `LlmRequest` prompt or `before_tool_callback` to inspect tool arguments. If a policy violation is detected (e.g., forbidden topics, profanity), return a predefined response (`LlmResponse` or `dict`/ `Map`) to block the operation and optionally update `context.state` to log the violation.
-* **Example:** A `before_model_callback` checks `llm_request.contents` for sensitive keywords and returns a standard "Cannot process this request" `LlmResponse` if found, preventing the LLM call.
+*   **パターン：** LLMやツールに到達する前にリクエストを傍受し、ルールを強制します。
+*   **方法：** `before_model_callback`を使用して`LlmRequest`プロンプトを検査するか、`before_tool_callback`を使用してツール引数を検査します。ポリシー違反が検出された場合（例：禁止されたトピック、不適切な表現）、事前定義された応答（`LlmResponse`または`dict`/`Map`）を返して操作をブロックし、オプションで`context.state`を更新して違反をログに記録します。
+*   **例：** `before_model_callback`が`llm_request.contents`で機密キーワードをチェックし、見つかった場合は標準の「このリクエストは処理できません」という`LlmResponse`を返し、LLMの呼び出しを防ぎます。
 
-### 2. Dynamic State Management
+### 2. 動的な状態管理
 
-* **Pattern:** Read from and write to session state within callbacks to make agent behavior context-aware and pass data between steps.
-* **How:** Access `callback_context.state` or `tool_context.state`. Modifications (`state['key'] = value`) are automatically tracked in the subsequent `Event.actions.state_delta` for persistence by the `SessionService`.
-* **Example:** An `after_tool_callback` saves a `transaction_id` from the tool's result to `tool_context.state['last_transaction_id']`. A later `before_agent_callback` might read `state['user_tier']` to customize the agent's greeting.
+*   **パターン：** コールバック内でセッション状態を読み書きして、エージェントの振る舞いを文脈に応じて変化させ、ステップ間でデータを渡します。
+*   **方法：** `callback_context.state`または`tool_context.state`にアクセスします。変更（`state['key'] = value`）は、`SessionService`による永続化のために、後続の`Event.actions.state_delta`で自動的に追跡されます。
+*   **例：** `after_tool_callback`がツールの結果から`transaction_id`を`tool_context.state['last_transaction_id']`に保存します。後の`before_agent_callback`が`state['user_tier']`を読み取ってエージェントの挨拶をカスタマイズするかもしれません。
 
-### 3. Logging and Monitoring
+### 3. ロギングとモニタリング
 
-* **Pattern:** Add detailed logging at specific lifecycle points for observability and debugging.
-* **How:** Implement callbacks (e.g., `before_agent_callback`, `after_tool_callback`, `after_model_callback`) to print or send structured logs containing information like agent name, tool name, invocation ID, and relevant data from the context or arguments.
-* **Example:** Log messages like `INFO: [Invocation: e-123] Before Tool: search_api - Args: {'query': 'ADK'}`.
+*   **パターン：** 可観測性とデバッグのために、特定のライフサイクルポイントで詳細なログを追加します。
+*   **方法：** コールバック（例：`before_agent_callback`、`after_tool_callback`、`after_model_callback`）を実装して、エージェント名、ツール名、呼び出しID、コンテキストや引数からの関連データを含む構造化されたログを出力または送信します。
+*   **例：** `INFO: [Invocation: e-123] Before Tool: search_api - Args: {'query': 'ADK'}`のようなログメッセージ。
 
-### 4. Caching
+### 4. キャッシング
 
-* **Pattern:** Avoid redundant LLM calls or tool executions by caching results.
-* **How:** In `before_model_callback` or `before_tool_callback`, generate a cache key based on the request/arguments. Check `context.state` (or an external cache) for this key. If found, return the cached `LlmResponse` or result directly, skipping the actual operation. If not found, allow the operation to proceed and use the corresponding `after_` callback (`after_model_callback`, `after_tool_callback`) to store the new result in the cache using the key.
-*   **Example:** `before_tool_callback` for `get_stock_price(symbol)` checks `state[f"cache:stock:{symbol}"]`. If present, returns the cached price; otherwise, allows the API call and `after_tool_callback` saves the result to the state key.
+*   **パターン：** 結果をキャッシュすることで、冗長なLLM呼び出しやツール実行を回避します。
+*   **方法：** `before_model_callback`または`before_tool_callback`で、リクエスト/引数に基づいてキャッシュキーを生成します。このキーについて`context.state`（または外部キャッシュ）を確認します。見つかった場合は、キャッシュされた`LlmResponse`または結果を直接返し、実際の操作をスキップします。見つからなかった場合は、操作を続行させ、対応する`after_`コールバック（`after_model_callback`、`after_tool_callback`）を使用して、キーを使って新しい結果をキャッシュに保存します。
+*   **例：** `get_stock_price(symbol)`の`before_tool_callback`が`state[f"cache:stock:{symbol}"]`をチェックします。存在する場合はキャッシュされた価格を返し、それ以外の場合はAPI呼び出しを許可し、`after_tool_callback`が結果を状態キーに保存します。
 
-### 5. Request/Response Modification
+### 5. リクエスト/レスポンスの変更
 
-* **Pattern:** Alter data just before it's sent to the LLM/tool or just after it's received.
-* **How:**
-    * `before_model_callback`: Modify `llm_request` (e.g., add system instructions based on `state`).
-    * `after_model_callback`: Modify the returned `LlmResponse` (e.g., format text, filter content).
-    *  `before_tool_callback`: Modify the tool `args` dictionary (or Map in Java).
-    *  `after_tool_callback`: Modify the `tool_response` dictionary (or Map in Java).
-* **Example:** `before_model_callback` appends "User language preference: Spanish" to `llm_request.config.system_instruction` if `context.state['lang'] == 'es'`.
+*   **パターン：** LLM/ツールに送信される直前、または受信した直後にデータを変更します。
+*   **方法：**
+    *   `before_model_callback`：`llm_request`を変更します（例：`state`に基づいてシステム指示を追加）。
+    *   `after_model_callback`：返された`LlmResponse`を変更します（例：テキストのフォーマット、コンテンツのフィルタリング）。
+    *   `before_tool_callback`：ツールの`args`辞書（またはJavaではMap）を変更します。
+    *   `after_tool_callback`：`tool_response`辞書（またはJavaではMap）を変更します。
+*   **例：** `context.state['lang'] == 'es'`の場合、`before_model_callback`が`llm_request.config.system_instruction`に「ユーザーの言語設定：スペイン語」を追加します。
 
-### 6. Conditional Skipping of Steps
+### 6. ステップの条件付きスキップ
 
-* **Pattern:** Prevent standard operations (agent run, LLM call, tool execution) based on certain conditions.
-* **How:** Return a value from a `before_` callback (`Content` from `before_agent_callback`, `LlmResponse` from `before_model_callback`, `dict` from `before_tool_callback`). The framework interprets this returned value as the result for that step, skipping the normal execution.
-* **Example:** `before_tool_callback` checks `tool_context.state['api_quota_exceeded']`. If `True`, it returns `{'error': 'API quota exceeded'}`, preventing the actual tool function from running.
+*   **パターン：** 特定の条件に基づいて標準的な操作（エージェントの実行、LLM呼び出し、ツール実行）を防ぎます。
+*   **方法：** `before_`コールバックから値を返します（`before_agent_callback`から`Content`、`before_model_callback`から`LlmResponse`、`before_tool_callback`から`dict`）。フレームワークはこの返された値をそのステップの結果として解釈し、通常の実行をスキップします。
+*   **例：** `before_tool_callback`が`tool_context.state['api_quota_exceeded']`をチェックします。`True`の場合、`{'error': 'APIクォータを超えました'}`を返し、実際のツール関数の実行を防ぎます。
 
-### 7. Tool-Specific Actions (Authentication & Summarization Control)
+### 7. ツール固有のアクション（認証と要約制御）
 
-* **Pattern:** Handle actions specific to the tool lifecycle, primarily authentication and controlling LLM summarization of tool results.
-* **How:** Use `ToolContext` within tool callbacks (`before_tool_callback`, `after_tool_callback`).
-    * **Authentication:** Call `tool_context.request_credential(auth_config)` in `before_tool_callback` if credentials are required but not found (e.g., via `tool_context.get_auth_response` or state check). This initiates the auth flow.
-    * **Summarization:** Set `tool_context.actions.skip_summarization = True` if the raw dictionary output of the tool should be passed back to the LLM or potentially displayed directly, bypassing the default LLM summarization step.
-* **Example:** A `before_tool_callback` for a secure API checks for an auth token in state; if missing, it calls `request_credential`. An `after_tool_callback` for a tool returning structured JSON might set `skip_summarization = True`.
+*   **パターン：** 主に認証とツール結果のLLM要約の制御など、ツールのライフサイクルに固有のアクションを処理します。
+*   **方法：** ツールコールバック（`before_tool_callback`、`after_tool_callback`）内で`ToolContext`を使用します。
+    *   **認証：** 認証情報が必要で、見つからない場合（例：`tool_context.get_auth_response`や状態チェック経由）、`before_tool_callback`で`tool_context.request_credential(auth_config)`を呼び出します。これにより認証フローが開始されます。
+    *   **要約：** ツールの生の辞書出力がLLMにそのまま返されるべきか、または直接表示される可能性がある場合、デフォルトのLLM要約ステップをバイパスするために`tool_context.actions.skip_summarization = True`を設定します。
+*   **例：** 安全なAPIの`before_tool_callback`が状態内の認証トークンをチェックし、ない場合は`request_credential`を呼び出します。構造化JSONを返すツールの`after_tool_callback`が`skip_summarization = True`を設定するかもしれません。
 
-### 8. Artifact Handling
+### 8. アーティファクトの処理
 
-* **Pattern:** Save or load session-related files or large data blobs during the agent lifecycle.
-* **How:** Use `callback_context.save_artifact` / `await tool_context.save_artifact` to store data (e.g., generated reports, logs, intermediate data). Use `load_artifact` to retrieve previously stored artifacts. Changes are tracked via `Event.actions.artifact_delta`.
-* **Example:** An `after_tool_callback` for a "generate_report" tool saves the output file using `await tool_context.save_artifact("report.pdf", report_part)`. A `before_agent_callback` might load a configuration artifact using `callback_context.load_artifact("agent_config.json")`.
+*   **パターン：** エージェントのライフサイクル中に、セッション関連のファイルや大きなデータBLOBを保存または読み込みます。
+*   **方法：** `callback_context.save_artifact` / `await tool_context.save_artifact`を使用してデータ（例：生成されたレポート、ログ、中間データ）を保存します。`load_artifact`を使用して以前に保存したアーティファクトを取得します。変更は`Event.actions.artifact_delta`を介して追跡されます。
+*   **例：** 「generate_report」ツールの`after_tool_callback`が`await tool_context.save_artifact("report.pdf", report_part)`を使用して出力ファイルを保存します。`before_agent_callback`が`callback_context.load_artifact("agent_config.json")`を使用して設定アーティファクトを読み込むかもしれません。
 
-## Best Practices for Callbacks
+## コールバックのベストプラクティス
 
-* **Keep Focused:** Design each callback for a single, well-defined purpose (e.g., just logging, just validation). Avoid monolithic callbacks.
-* **Mind Performance:** Callbacks execute synchronously within the agent's processing loop. Avoid long-running or blocking operations (network calls, heavy computation). Offload if necessary, but be aware this adds complexity.
-* **Handle Errors Gracefully:** Use `try...except/ catch` blocks within your callback functions. Log errors appropriately and decide if the agent invocation should halt or attempt recovery. Don't let callback errors crash the entire process.
-* **Manage State Carefully:**
-    * Be deliberate about reading from and writing to `context.state`. Changes are immediately visible within the *current* invocation and persisted at the end of the event processing.
-    * Use specific state keys rather than modifying broad structures to avoid unintended side effects.
-    *  Consider using state prefixes (`State.APP_PREFIX`, `State.USER_PREFIX`, `State.TEMP_PREFIX`) for clarity, especially with persistent `SessionService` implementations.
-* **Consider Idempotency:** If a callback performs actions with external side effects (e.g., incrementing an external counter), design it to be idempotent (safe to run multiple times with the same input) if possible, to handle potential retries in the framework or your application.
-* **Test Thoroughly:** Unit test your callback functions using mock context objects. Perform integration tests to ensure callbacks function correctly within the full agent flow.
-* **Ensure Clarity:** Use descriptive names for your callback functions. Add clear docstrings explaining their purpose, when they run, and any side effects (especially state modifications).
-* **Use Correct Context Type:** Always use the specific context type provided (`CallbackContext` for agent/model, `ToolContext` for tools) to ensure access to the appropriate methods and properties.
+*   **焦点を絞る：** 各コールバックを単一の、明確に定義された目的（例：ロギングのみ、検証のみ）のために設計します。モノリシックなコールバックは避けてください。
+*   **パフォーマンスを意識する：** コールバックはエージェントの処理ループ内で同期的に実行されます。長時間の実行やブロッキング操作（ネットワーク呼び出し、重い計算）は避けてください。必要に応じてオフロードしますが、これにより複雑さが増すことに注意してください。
+*   **エラーを適切に処理する：** コールバック関数内で`try...except/catch`ブロックを使用します。エラーを適切にログに記録し、エージェントの呼び出しを停止するか、回復を試みるかを決定します。コールバックのエラーでプロセス全体がクラッシュしないようにしてください。
+*   **状態を慎重に管理する：**
+    *   `context.state`からの読み取りと書き込みを意図的に行います。変更は*現在*の呼び出し内ですぐに表示され、イベント処理の最後に永続化されます。
+    *   意図しない副作用を避けるために、広範な構造を変更するのではなく、特定の状態キーを使用します。
+    *   特に永続的な`SessionService`実装では、明確さのために状態プレフィックス（`State.APP_PREFIX`, `State.USER_PREFIX`, `State.TEMP_PREFIX`）の使用を検討してください。
+*   **べき等性を考慮する：** コールバックが外部の副作用を伴うアクション（例：外部カウンターのインクリメント）を実行する場合、フレームワークやアプリケーションでの潜在的な再試行を処理するために、可能であればべき等（同じ入力で複数回実行しても安全）になるように設計します。
+*   **徹底的にテストする：** モックコンテキストオブジェクトを使用してコールバック関数を単体テストします。完全なエージェントフロー内でコールバックが正しく機能することを確認するために統合テストを実行します。
+*   **明確さを確保する：** コールバック関数には説明的な名前を使用します。その目的、いつ実行されるか、および副作用（特に状態の変更）を説明する明確なdocstringを追加します。
+*   **正しいコンテキストタイプを使用する：** 常に提供される特定のコンテキストタイプ（エージェント/モデルには`CallbackContext`、ツールには`ToolContext`）を使用して、適切なメソッドとプロパティへのアクセスを確保します。
 
-By applying these patterns and best practices, you can effectively use callbacks to create more robust, observable, and customized agent behaviors in ADK.
+これらのパターンとベストプラクティスを適用することで、ADKでより堅牢で、観測可能で、カスタマイズされたエージェントの振る舞いを作成するために、コールバックを効果的に使用できます。

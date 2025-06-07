@@ -1,30 +1,29 @@
-# Callbacks: Observe, Customize, and Control Agent Behavior
+# コールバック：エージェントの振る舞いを観察、カスタマイズ、制御する
 
-## Introduction: What are Callbacks and Why Use Them?
+## はじめに：コールバックとは何か、なぜ使用するのか？
 
-Callbacks are a cornerstone feature of ADK, providing a powerful mechanism to hook into an agent's execution process. They allow you to observe, customize, and even control the agent's behavior at specific, predefined points without modifying the core ADK framework code.
+コールバックはADKの中核的な機能であり、エージェントの実行プロセスにフックするための強力なメカニズムを提供します。これにより、コアのADKフレームワークコードを変更することなく、特定の事前定義されたポイントでエージェントの振る舞いを観察、カスタマイズ、さらには制御することができます。
 
-**What are they?** In essence, callbacks are standard functions that you define. You then associate these functions with an agent when you create it. The ADK framework automatically calls your functions at key stages, letting you observe or intervene. Think of it like checkpoints during the agent's process:
+**コールバックとは？** 本質的に、コールバックはあなたが定義する標準的な関数です。そして、エージェントを作成する際にこれらの関数をエージェントに関連付けます。ADKフレームワークは、主要なステージであなたの関数を自動的に呼び出し、観察や介入を可能にします。エージェントのプロセスにおけるチェックポイントのようなものだと考えてください：
 
-* **Before the agent starts its main work on a request, and after it finishes:** When you ask an agent to do something (e.g., answer a question), it runs its internal logic to figure out the response.
-  * The `Before Agent` callback executes *right before* this main work begins for that specific request.
-  * The `After Agent` callback executes *right after* the agent has finished all its steps for that request and has prepared the final result, but just before the result is returned.
-  * This "main work" encompasses the agent's *entire* process for handling that single request. This might involve deciding to call an LLM, actually calling the LLM, deciding to use a tool, using the tool, processing the results, and finally putting together the answer. These callbacks essentially wrap the whole sequence from receiving the input to producing the final output for that one interaction.
-* **Before sending a request to, or after receiving a response from, the Large Language Model (LLM):** These callbacks (`Before Model`, `After Model`) allow you to inspect or modify the data going to and coming from the LLM specifically.
-* **Before executing a tool (like a Python function or another agent) or after it finishes:** Similarly, `Before Tool` and `After Tool` callbacks give you control points specifically around the execution of tools invoked by the agent.
-
+*   **エージェントがリクエストに対する主要な処理を開始する前と、終了した後：** エージェントに何か（例：質問に答える）を依頼すると、エージェントは応答を導き出すために内部ロジックを実行します。
+    *   `Before Agent`コールバックは、その特定のリクエストに対するこの主要な処理が始まる*直前*に実行されます。
+    *   `After Agent`コールバックは、エージェントがそのリクエストのすべてのステップを完了し、最終結果を準備した後、しかし結果が返される直前に実行されます。
+    *   この「主要な処理」とは、その1つのリクエストを処理するためのエージェントの*全*プロセスを網羅します。これには、LLMを呼び出す決定、LLMの実際の呼び出し、ツールの使用を決定、ツールの使用、結果の処理、そして最終的に回答を組み立てることが含まれる場合があります。これらのコールバックは、本質的に、入力の受信からその1つのインタラクションの最終的な出力を生成するまでの一連の全体をラップします。
+*   **大規模言語モデル（LLM）にリクエストを送信する前、または応答を受信した後：** これらのコールバック（`Before Model`, `After Model`）により、特にLLMとの間でやり取りされるデータを検査または変更することができます。
+*   **ツール（Python関数や別のエージェントなど）を実行する前、または終了した後：** 同様に、`Before Tool`および`After Tool`コールバックは、エージェントによって呼び出されるツールの実行周りに特化した制御ポイントを提供します。
 
 ![intro_components.png](../assets/callback_flow.png)
 
-**Why use them?** Callbacks unlock significant flexibility and enable advanced agent capabilities:
+**なぜ使用するのか？** コールバックは、大きな柔軟性を解放し、高度なエージェント機能を可能にします：
 
-* **Observe & Debug:** Log detailed information at critical steps for monitoring and troubleshooting.  
-* **Customize & Control:** Modify data flowing through the agent (like LLM requests or tool results) or even bypass certain steps entirely based on your logic.  
-* **Implement Guardrails:** Enforce safety rules, validate inputs/outputs, or prevent disallowed operations.  
-* **Manage State:** Read or dynamically update the agent's session state during execution.  
-* **Integrate & Enhance:** Trigger external actions (API calls, notifications) or add features like caching.
+*   **観察とデバッグ：** 監視とトラブルシューティングのために、重要なステップで詳細な情報をログに記録します。
+*   **カスタマイズと制御：** エージェントを流れるデータ（LLMリクエストやツールの結果など）を変更したり、ロジックに基づいて特定のステップを完全にバイパスしたりします。
+*   **ガードレールの実装：** 安全規則を強制し、入力/出力を検証し、許可されていない操作を防ぎます。
+*   **状態の管理：** 実行中にエージェントのセッション状態を読み取ったり、動的に更新したりします。
+*   **統合と拡張：** 外部アクション（API呼び出し、通知）をトリガーしたり、キャッシングのような機能を追加したりします。
 
-**How are they added:** 
+**どのように追加するのか：**
 
 ??? "Code"
     === "Python"
@@ -39,34 +38,34 @@ Callbacks are a cornerstone feature of ADK, providing a powerful mechanism to ho
         --8<-- "examples/java/snippets/src/main/java/callbacks/AgentWithBeforeModelCallback.java:init"
         ```
 
-## The Callback Mechanism: Interception and Control
+## コールバックのメカニズム：傍受と制御
 
-When the ADK framework encounters a point where a callback can run (e.g., just before calling the LLM), it checks if you provided a corresponding callback function for that agent. If you did, the framework executes your function.
+ADKフレームワークがコールバックを実行できるポイント（例：LLMを呼び出す直前）に遭遇すると、そのエージェントに対応するコールバック関数を提供したかどうかを確認します。提供した場合、フレームワークはあなたの関数を実行します。
 
-**Context is Key:** Your callback function isn't called in isolation. The framework provides special **context objects** (`CallbackContext` or `ToolContext`) as arguments. These objects contain vital information about the current state of the agent's execution, including the invocation details, session state, and potentially references to services like artifacts or memory. You use these context objects to understand the situation and interact with the framework. (See the dedicated "Context Objects" section for full details).
+**コンテキストが鍵：** あなたのコールバック関数は単独で呼び出されるわけではありません。フレームワークは、引数として特別な**コンテキストオブジェクト**（`CallbackContext`または`ToolContext`）を提供します。これらのオブジェクトには、呼び出しの詳細、セッション状態、アーティファクトやメモリなどのサービスへの参照を含む、エージェントの実行の現在の状態に関する重要な情報が含まれています。これらのコンテキストオブジェクトを使用して状況を理解し、フレームワークと対話します。（詳細は専用の「コンテキストオブジェクト」セクションを参照してください）。
 
-**Controlling the Flow (The Core Mechanism):** The most powerful aspect of callbacks lies in how their **return value** influences the agent's subsequent actions. This is how you intercept and control the execution flow:
+**フローの制御（コアメカニズム）：** コールバックの最も強力な側面は、その**戻り値**がエージェントの後続のアクションにどのように影響を与えるかにあります。これが、実行フローを傍受し、制御する方法です：
 
-1. **`return None` (Allow Default Behavior):**  
+1.  **`return None`（デフォルトの振る舞いを許可）：**  
 
-    * The specific return type can vary depending on the language. In Java, the equivalent return type is `Optional.empty()`. Refer to the API documentation for language specific guidance.
-    * This is the standard way to signal that your callback has finished its work (e.g., logging, inspection, minor modifications to *mutable* input arguments like `llm_request`) and that the ADK agent should **proceed with its normal operation**.  
-    * For `before_*` callbacks (`before_agent`, `before_model`, `before_tool`), returning `None` means the next step in the sequence (running the agent logic, calling the LLM, executing the tool) will occur.  
-    * For `after_*` callbacks (`after_agent`, `after_model`, `after_tool`), returning `None` means the result just produced by the preceding step (the agent's output, the LLM's response, the tool's result) will be used as is.
+    *   言語によっては特定の戻り値の型が異なる場合があります。Javaでは、同等の戻り値の型は`Optional.empty()`です。言語固有のガイダンスについては、APIドキュメントを参照してください。
+    *   これは、コールバックがその処理（ロギング、検査、*可変な*入力引数への軽微な変更など）を完了し、ADKエージェントが**通常の操作を続行すべき**であることを示す標準的な方法です。
+    *   `before_*`コールバック（`before_agent`、`before_model`、`before_tool`）の場合、`None`を返すことは、シーケンスの次のステップ（エージェントロジックの実行、LLMの呼び出し、ツールの実行）が発生することを意味します。
+    *   `after_*`コールバック（`after_agent`、`after_model`、`after_tool`）の場合、`None`を返すことは、直前のステップで生成された結果（エージェントの出力、LLMの応答、ツールの結果）がそのまま使用されることを意味します。
 
-2. **`return <Specific Object>` (Override Default Behavior):**  
+2.  **`<Specific Object>`を返す（デフォルトの振る舞いをオーバーライド）：**  
 
-    * Returning a *specific type of object* (instead of `None`) is how you **override** the ADK agent's default behavior. The framework will use the object you return and *skip* the step that would normally follow or *replace* the result that was just generated.  
-    * **`before_agent_callback` → `types.Content`**: Skips the agent's main execution logic (`_run_async_impl` / `_run_live_impl`). The returned `Content` object is immediately treated as the agent's final output for this turn. Useful for handling simple requests directly or enforcing access control.  
-    * **`before_model_callback` → `LlmResponse`**: Skips the call to the external Large Language Model. The returned `LlmResponse` object is processed as if it were the actual response from the LLM. Ideal for implementing input guardrails, prompt validation, or serving cached responses.  
-    * **`before_tool_callback` → `dict` or `Map`**: Skips the execution of the actual tool function (or sub-agent). The returned `dict` is used as the result of the tool call, which is then typically passed back to the LLM. Perfect for validating tool arguments, applying policy restrictions, or returning mocked/cached tool results.  
-    * **`after_agent_callback` → `types.Content`**: *Replaces* the `Content` that the agent's run logic just produced.  
-    * **`after_model_callback` → `LlmResponse`**: *Replaces* the `LlmResponse` received from the LLM. Useful for sanitizing outputs, adding standard disclaimers, or modifying the LLM's response structure.  
-    * **`after_tool_callback` → `dict` or `Map`**: *Replaces* the `dict` result returned by the tool. Allows for post-processing or standardization of tool outputs before they are sent back to the LLM.
+    *   `None`の代わりに*特定の型のオブジェクト*を返すことは、ADKエージェントのデフォルトの振る舞いを**オーバーライド**する方法です。フレームワークはあなたが返したオブジェクトを使用し、通常続くステップを*スキップ*するか、生成されたばかりの結果を*置き換え*ます。
+    *   **`before_agent_callback` → `types.Content`**: エージェントの主要な実行ロジック（`_run_async_impl` / `_run_live_impl`）をスキップします。返された`Content`オブジェクトは、このターンのエージェントの最終的な出力として即座に扱われます。単純なリクエストを直接処理したり、アクセス制御を強制したりするのに役立ちます。
+    *   **`before_model_callback` → `LlmResponse`**: 外部の大規模言語モデルへの呼び出しをスキップします。返された`LlmResponse`オブジェクトは、LLMからの実際の応答であるかのように処理されます。入力ガードレール、プロンプト検証、またはキャッシュされた応答の提供を実装するのに理想的です。
+    *   **`before_tool_callback` → `dict`または`Map`**: 実際のツール関数（またはサブエージェント）の実行をスキップします。返された`dict`はツール呼び出しの結果として使用され、通常はLLMに返されます。ツール引数の検証、ポリシー制限の適用、またはモック/キャッシュされたツール結果を返すのに最適です。
+    *   **`after_agent_callback` → `types.Content`**: エージェントの実行ロジックが生成したばかりの`Content`を*置き換え*ます。
+    *   **`after_model_callback` → `LlmResponse`**: LLMから受信した`LlmResponse`を*置き換え*ます。出力のサニタイズ、標準的な免責事項の追加、またはLLMの応答構造の変更に役立ちます。
+    *   **`after_tool_callback` → `dict`または`Map`**: ツールから返された`dict`の結果を*置き換え*ます。ツール出力がLLMに返される前に、後処理や標準化を可能にします。
 
-**Conceptual Code Example (Guardrail):**
+**概念的なコード例（ガードレール）：**
 
-This example demonstrates the common pattern for a guardrail using `before_model_callback`.
+この例は、`before_model_callback`を使用したガードレールの一般的なパターンを示しています。
 
 <!-- ```py
 --8<-- "examples/python/snippets/callbacks/before_model_callback.py"
@@ -83,4 +82,4 @@ This example demonstrates the common pattern for a guardrail using `before_model
         --8<-- "examples/java/snippets/src/main/java/callbacks/BeforeModelGuardrailExample.java:init"
         ```
 
-By understanding this mechanism of returning `None` versus returning specific objects, you can precisely control the agent's execution path, making callbacks an essential tool for building sophisticated and reliable agents with ADK.
+`None`を返すことと特定のオブジェクトを返すことのこのメカニズムを理解することで、エージェントの実行パスを正確に制御でき、コールバックはADKで洗練された信頼性の高いエージェントを構築するための不可欠なツールとなります。
