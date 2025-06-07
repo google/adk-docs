@@ -111,7 +111,7 @@ plugins:
           nav:
             - 홈: index.md
             - 시작하기:
-                - 소개: get-started/index.md
+                - get-started/index.md
                 - 설치: get-started/installation.md
                 - 빠르게 시작하기: get-started/quickstart.md
                 - 빠르게 시작하기 (스트리밍):
