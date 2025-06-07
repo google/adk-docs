@@ -188,7 +188,7 @@ plugins:
           nav:
             - ホーム: index.md
             - はじめに:
-              - はじめに: Get-started/index.md
+              - get-started/index.md
               - インストール: get-started/installation.md
               - クイックスタート: get-started/quickstart.md
               - クイックスタート(ストリーミング):
@@ -268,7 +268,7 @@ plugins:
 nav:
   - Home: index.md
   - Get Started:
-    - Get-started/index.md
+    - get-started/index.md
     - Installation: get-started/installation.md
     - Quickstart: get-started/quickstart.md
     - Quickstart (Streaming):
