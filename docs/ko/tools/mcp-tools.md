@@ -1,95 +1,93 @@
-# Model Context Protocol Tools
+# 모델 컨텍스트 프로토콜 도구
 
- This guide walks you through two ways of integrating Model Context Protocol (MCP) with ADK.
+ 이 가이드는 모델 컨텍스트 프로토콜(MCP)을 ADK와 통합하는 두 가지 방법을 안내합니다.
 
-## What is Model Context Protocol (MCP)?
+## 모델 컨텍스트 프로토콜(MCP)이란 무엇인가요?
 
-The Model Context Protocol (MCP) is an open standard designed to standardize how Large Language Models (LLMs) like Gemini and Claude communicate with external applications, data sources, and tools. Think of it as a universal connection mechanism that simplifies how LLMs obtain context, execute actions, and interact with various systems.
+모델 컨텍스트 프로토콜(MCP)은 Gemini 및 Claude와 같은 거대 언어 모델(LLM)이 외부 애플리케이션, 데이터 소스 및 도구와 통신하는 방법을 표준화하기 위해 설계된 개방형 표준입니다. 이는 LLM이 컨텍스트를 얻고, 작업을 실행하며, 다양한 시스템과 상호 작용하는 방식을 단순화하는 보편적인 연결 메커니즘으로 생각할 수 있습니다.
 
-MCP follows a client-server architecture, defining how **data** (resources), **interactive templates** (prompts), and **actionable functions** (tools) are exposed by an **MCP server** and consumed by an **MCP client** (which could be an LLM host application or an AI agent).
+MCP는 클라이언트-서버 아키텍처를 따르며, **데이터**(리소스), **대화형 템플릿**(프롬프트), **실행 가능한 함수**(도구)가 **MCP 서버**에 의해 노출되고 **MCP 클라이언트**(LLM 호스트 애플리케이션 또는 AI 에이전트일 수 있음)에 의해 소비되는 방식을 정의합니다.
 
-This guide covers two primary integration patterns:
+이 가이드는 두 가지 주요 통합 패턴을 다룹니다:
 
-1. **Using Existing MCP Servers within ADK:** An ADK agent acts as an MCP client, leveraging tools provided by external MCP servers.
-2. **Exposing ADK Tools via an MCP Server:** Building an MCP server that wraps ADK tools, making them accessible to any MCP client.
+1. **ADK 내에서 기존 MCP 서버 사용:** ADK 에이전트가 MCP 클라이언트 역할을 하여 외부 MCP 서버에서 제공하는 도구를 활용합니다.
+2. **MCP 서버를 통해 ADK 도구 노출:** ADK 도구를 래핑하여 모든 MCP 클라이언트에서 접근할 수 있도록 하는 MCP 서버를 구축합니다.
 
-## Prerequisites
+## 전제 조건
 
-Before you begin, ensure you have the following set up:
+시작하기 전에 다음 설정이 완료되었는지 확인하세요:
 
-* **Set up ADK:** Follow the standard ADK [setup instructions](../get-started/quickstart.md/#venv-install) in the quickstart.
-* **Install/update Python/Java:** MCP requires Python version of 3.9 or higher for Python or Java 17+.
-* **Setup Node.js and npx:** **(Python only)** Many community MCP servers are distributed as Node.js packages and run using `npx`. Install Node.js (which includes npx) if you haven't already. For details, see [https://nodejs.org/en](https://nodejs.org/en).
-* **Verify Installations:** **(Python only)** Confirm `adk` and `npx` are in your PATH within the activated virtual environment:
+* **ADK 설정:** 빠른 시작의 표준 ADK [설정 지침](../get-started/quickstart.md/#venv-install)을 따르세요.
+* **Python/Java 설치/업데이트:** MCP는 Python의 경우 3.9 이상, Java의 경우 17+ 버전이 필요합니다.
+* **Node.js 및 npx 설정:** **(Python만 해당)** 많은 커뮤니티 MCP 서버는 Node.js 패키지로 배포되며 `npx`를 사용하여 실행됩니다. 아직 설치하지 않았다면 Node.js(npx 포함)를 설치하세요. 자세한 내용은 [https://nodejs.org/en](https://nodejs.org/en)을 참조하세요.
+* **설치 확인:** **(Python만 해당)** 활성화된 가상 환경 내에서 `adk`와 `npx`가 PATH에 있는지 확인하세요:
 
 ```shell
-# Both commands should print the path to the executables.
+# 두 명령어 모두 실행 파일의 경로를 출력해야 합니다.
 which adk
 which npx
 ```
 
-## 1. Using MCP servers with ADK agents (ADK as an MCP client) in `adk web`
+## 1. `adk web`에서 ADK 에이전트와 함께 MCP 서버 사용 (ADK를 MCP 클라이언트로)
 
-This section demonstrates how to integrate tools from external MCP (Model Context Protocol) servers into your ADK agents. This is the **most common** integration pattern when your ADK agent needs to use capabilities provided by an existing service that exposes an MCP interface. You will see how the `MCPToolset` class can be directly added to your agent's `tools` list, enabling seamless connection to an MCP server, discovery of its tools, and making them available for your agent to use. These examples primarily focus on interactions within the `adk web` development environment.
+이 섹션에서는 외부 MCP(모델 컨텍스트 프로토콜) 서버의 도구를 ADK 에이전트에 통합하는 방법을 보여줍니다. 이는 ADK 에이전트가 MCP 인터페이스를 노출하는 기존 서비스에서 제공하는 기능을 사용해야 할 때 **가장 일반적인** 통합 패턴입니다. `MCPToolset` 클래스를 에이전트의 `tools` 목록에 직접 추가하여 MCP 서버에 원활하게 연결하고, 도구를 검색하며, 에이전트가 사용할 수 있도록 하는 방법을 보게 될 것입니다. 이러한 예제는 주로 `adk web` 개발 환경 내에서의 상호 작용에 중점을 둡니다.
 
-### `MCPToolset` class
+### `MCPToolset` 클래스
 
-The `MCPToolset` class is ADK's primary mechanism for integrating tools from an MCP server. When you include an `MCPToolset` instance in your agent's `tools` list, it automatically handles the interaction with the specified MCP server. Here's how it works:
+`MCPToolset` 클래스는 MCP 서버의 도구를 통합하기 위한 ADK의 기본 메커니즘입니다. 에이전트의 `tools` 목록에 `MCPToolset` 인스턴스를 포함하면 지정된 MCP 서버와의 상호 작용을 자동으로 처리합니다. 작동 방식은 다음과 같습니다:
 
-1.  **Connection Management:** On initialization, `MCPToolset` establishes and manages the connection to the MCP server. This can be a local server process (using `StdioServerParameters` for communication over standard input/output) or a remote server (using `SseServerParams` for Server-Sent Events). The toolset also handles the graceful shutdown of this connection when the agent or application terminates.
-2.  **Tool Discovery & Adaptation:** Once connected, `MCPToolset` queries the MCP server for its available tools (via the `list_tools` MCP method). It then converts the schemas of these discovered MCP tools into ADK-compatible `BaseTool` instances.
-3.  **Exposure to Agent:** These adapted tools are then made available to your `LlmAgent` as if they were native ADK tools.
-4.  **Proxying Tool Calls:** When your `LlmAgent` decides to use one of these tools, `MCPToolset` transparently proxies the call (using the `call_tool` MCP method) to the MCP server, sends the necessary arguments, and returns the server's response back to the agent.
-5.  **Filtering (Optional):** You can use the `tool_filter` parameter when creating an `MCPToolset` to select a specific subset of tools from the MCP server, rather than exposing all of them to your agent.
+1.  **연결 관리:** 초기화 시 `MCPToolset`은 MCP 서버와의 연결을 설정하고 관리합니다. 이는 로컬 서버 프로세스(표준 입력/출력을 통한 통신을 위한 `StdioServerParameters` 사용) 또는 원격 서버(서버 전송 이벤트를 위한 `SseServerParams` 사용)일 수 있습니다. 도구 세트는 또한 에이전트나 애플리케이션이 종료될 때 이 연결을 정상적으로 종료하는 것을 처리합니다.
+2.  **도구 검색 및 조정:** 연결되면 `MCPToolset`은 MCP 서버에 사용 가능한 도구를 쿼리하고(`list_tools` MCP 메서드 통해), 발견된 MCP 도구의 스키마를 ADK 호환 `BaseTool` 인스턴스로 변환합니다.
+3.  **에이전트에 노출:** 이렇게 조정된 도구는 네이티브 ADK 도구인 것처럼 `LlmAgent`에서 사용할 수 있게 됩니다.
+4.  **도구 호출 프록시:** `LlmAgent`가 이러한 도구 중 하나를 사용하기로 결정하면, `MCPToolset`은 호출을 투명하게 MCP 서버로 프록시하고(`call_tool` MCP 메서드 사용), 필요한 인수를 보내고, 서버의 응답을 에이전트에게 다시 반환합니다.
+5.  **필터링 (선택 사항):** `MCPToolset`을 생성할 때 `tool_filter` 매개변수를 사용하여 MCP 서버의 모든 도구를 에이전트에 노출하는 대신 특정 하위 집합만 선택할 수 있습니다.
 
-The following examples demonstrate how to use `MCPToolset` within the `adk web` development environment. For scenarios where you need more fine-grained control over the MCP connection lifecycle or are not using `adk web`, refer to the "Using MCP Tools in your own Agent out of `adk web`" section later in this page.
+다음 예제는 `adk web` 개발 환경 내에서 `MCPToolset`을 사용하는 방법을 보여줍니다. MCP 연결 수명 주기를 더 세밀하게 제어해야 하거나 `adk web`을 사용하지 않는 시나리오의 경우, 이 페이지 뒷부분의 "`adk web` 외부에서 에이전트에 MCP 도구 사용하기" 섹션을 참조하세요.
 
-### Example 1: File System MCP Server
+### 예제 1: 파일 시스템 MCP 서버
 
-This example demonstrates connecting to a local MCP server that provides file system operations.
+이 예제는 파일 시스템 작업을 제공하는 로컬 MCP 서버에 연결하는 방법을 보여줍니다.
 
-#### Step 1: Define your Agent with `MCPToolset`
+#### 1단계: `MCPToolset`으로 에이전트 정의하기
 
-Create an `agent.py` file (e.g., in `./adk_agent_samples/mcp_agent/agent.py`). The `MCPToolset` is instantiated directly within the `tools` list of your `LlmAgent`.
+`agent.py` 파일을 생성합니다(예: `./adk_agent_samples/mcp_agent/agent.py`). `MCPToolset`은 `LlmAgent`의 `tools` 목록 내에서 직접 인스턴스화됩니다.
 
-*   **Important:** Replace `"/path/to/your/folder"` in the `args` list with the **absolute path** to an actual folder on your local system that the MCP server can access.
-*   **Important:** Place the `.env` file in the parent directory of the `./adk_agent_samples` directory.
+*   **중요:** `args` 목록의 `"/path/to/your/folder"`를 MCP 서버가 접근할 수 있는 로컬 시스템의 **절대 경로**로 바꾸세요.
+*   **중요:** `.env` 파일을 `./adk_agent_samples` 디렉토리의 상위 디렉토리에 배치하세요.
 
 ```python
 # ./adk_agent_samples/mcp_agent/agent.py
-import os # Required for path operations
+import os # 경로 작업에 필요
 from google.adk.agents import LlmAgent
 from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, StdioServerParameters
 
-# It's good practice to define paths dynamically if possible,
-# or ensure the user understands the need for an ABSOLUTE path.
-# For this example, we'll construct a path relative to this file,
-# assuming '/path/to/your/folder' is in the same directory as agent.py.
-# REPLACE THIS with an actual absolute path if needed for your setup.
+# 가능한 경우 경로를 동적으로 정의하거나, 사용자가 절대 경로의 필요성을 이해하도록 하는 것이 좋습니다.
+# 이 예제에서는 이 파일에 상대적인 경로를 구성하며,
+# '/path/to/your/folder'가 agent.py와 동일한 디렉토리에 있다고 가정합니다.
+# 설정에 필요한 경우 실제 절대 경로로 교체하세요.
 TARGET_FOLDER_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "/path/to/your/folder")
-# Ensure TARGET_FOLDER_PATH is an absolute path for the MCP server.
-# If you created ./adk_agent_samples/mcp_agent/your_folder,
+# TARGET_FOLDER_PATH가 MCP 서버를 위한 절대 경로인지 확인하세요.
+# ./adk_agent_samples/mcp_agent/your_folder를 생성한 경우,
 
 root_agent = LlmAgent(
     model='gemini-2.0-flash',
     name='filesystem_assistant_agent',
-    instruction='Help the user manage their files. You can list files, read files, etc.',
+    instruction='사용자가 파일을 관리하도록 돕습니다. 파일을 나열하고, 읽는 등의 작업을 할 수 있습니다.',
     tools=[
         MCPToolset(
             connection_params=StdioServerParameters(
                 command='npx',
                 args=[
-                    "-y",  # Argument for npx to auto-confirm install
+                    "-y",  # npx가 설치를 자동 확인하는 인수
                     "@modelcontextprotocol/server-filesystem",
-                    # IMPORTANT: This MUST be an ABSOLUTE path to a folder the
-                    # npx process can access.
-                    # Replace with a valid absolute path on your system.
-                    # For example: "/Users/youruser/accessible_mcp_files"
-                    # or use a dynamically constructed absolute path:
+                    # 중요: 이것은 npx 프로세스가 접근할 수 있는 폴더의 절대 경로여야 합니다.
+                    # 시스템의 유효한 절대 경로로 교체하세요.
+                    # 예: "/Users/youruser/accessible_mcp_files"
+                    # 또는 동적으로 구성된 절대 경로 사용:
                     os.path.abspath(TARGET_FOLDER_PATH),
                 ],
             ),
-            # Optional: Filter which tools from the MCP server are exposed
+            # 선택 사항: MCP 서버에서 노출되는 도구 필터링
             # tool_filter=['list_directory', 'read_file']
         )
     ],
@@ -97,57 +95,57 @@ root_agent = LlmAgent(
 ```
 
 
-#### Step 2: Create an `__init__.py` file
+#### 2단계: `__init__.py` 파일 생성하기
 
-Ensure you have an `__init__.py` in the same directory as `agent.py` to make it a discoverable Python package for ADK.
+ADK가 검색할 수 있는 Python 패키지로 만들기 위해 `agent.py`와 동일한 디렉토리에 `__init__.py`가 있는지 확인하세요.
 
 ```python
 # ./adk_agent_samples/mcp_agent/__init__.py
 from . import agent
 ```
 
-#### Step 3: Run `adk web` and Interact
+#### 3단계: `adk web` 실행 및 상호작용
 
-Navigate to the parent directory of `mcp_agent` (e.g., `adk_agent_samples`) in your terminal and run:
+터미널에서 `mcp_agent`의 상위 디렉토리(예: `adk_agent_samples`)로 이동하여 다음을 실행하세요:
 
 ```shell
-cd ./adk_agent_samples # Or your equivalent parent directory
+cd ./adk_agent_samples # 또는 상응하는 상위 디렉토리
 adk web
 ```
 
-!!!info "Note for Windows users"
+!!!info "Windows 사용자 참고"
 
-    When hitting the `_make_subprocess_transport NotImplementedError`, consider using `adk web --no-reload` instead.
-
-
-Once the ADK Web UI loads in your browser:
-
-1.  Select the `filesystem_assistant_agent` from the agent dropdown.
-2.  Try prompts like:
-    *   "List files in the current directory."
-    *   "Can you read the file named sample.txt?" (assuming you created it in `TARGET_FOLDER_PATH`).
-    *   "What is the content of `another_file.md`?"
-
-You should see the agent interacting with the MCP file system server, and the server's responses (file listings, file content) relayed through the agent. The `adk web` console (terminal where you ran the command) might also show logs from the `npx` process if it outputs to stderr.
-
-<img src="../../assets/adk-tool-mcp-filesystem-adk-web-demo.png" alt="MCP with ADK Web - FileSystem Example">
+    `_make_subprocess_transport NotImplementedError`가 발생하면 대신 `adk web --no-reload`를 사용하는 것을 고려해보세요.
 
 
-### Example 2: Google Maps MCP Server
+브라우저에서 ADK 웹 UI가 로드되면:
 
-This example demonstrates connecting to the Google Maps MCP server.
+1.  에이전트 드롭다운에서 `filesystem_assistant_agent`를 선택합니다.
+2.  다음과 같은 프롬프트를 시도해 보세요:
+    *   "현재 디렉토리의 파일 목록을 보여줘."
+    *   "sample.txt라는 파일을 읽을 수 있니?" (`TARGET_FOLDER_PATH`에 생성했다고 가정).
+    *   "`another_file.md`의 내용은 뭐야?"
 
-#### Step 1: Get API Key and Enable APIs
+에이전트가 MCP 파일 시스템 서버와 상호작용하고, 서버의 응답(파일 목록, 파일 내용)이 에이전트를 통해 전달되는 것을 볼 수 있습니다. `adk web` 콘솔(명령을 실행한 터미널)에서도 `npx` 프로세스가 stderr에 출력하는 경우 로그를 볼 수 있습니다.
 
-1.  **Google Maps API Key:** Follow the directions at [Use API keys](https://developers.google.com/maps/documentation/javascript/get-api-key#create-api-keys) to obtain a Google Maps API Key.
-2.  **Enable APIs:** In your Google Cloud project, ensure the following APIs are enabled:
+<img src="../../assets/adk-tool-mcp-filesystem-adk-web-demo.png" alt="ADK 웹과 MCP - 파일 시스템 예제">
+
+
+### 예제 2: Google Maps MCP 서버
+
+이 예제는 Google Maps MCP 서버에 연결하는 방법을 보여줍니다.
+
+#### 1단계: API 키 얻기 및 API 활성화
+
+1.  **Google Maps API 키:** [API 키 사용](https://developers.google.com/maps/documentation/javascript/get-api-key#create-api-keys)의 지침에 따라 Google Maps API 키를 얻습니다.
+2.  **API 활성화:** Google Cloud 프로젝트에서 다음 API가 활성화되어 있는지 확인하세요:
     *   Directions API
     *   Routes API
-    For instructions, see the [Getting started with Google Maps Platform](https://developers.google.com/maps/get-started#enable-api-sdk) documentation.
+    지침은 [Google Maps Platform 시작하기](https://developers.google.com/maps/get-started#enable-api-sdk) 문서를 참조하세요.
 
-#### Step 2: Define your Agent with `MCPToolset` for Google Maps
+#### 2단계: Google Maps용 `MCPToolset`으로 에이전트 정의하기
 
-Modify your `agent.py` file (e.g., in `./adk_agent_samples/mcp_agent/agent.py`). Replace `YOUR_GOOGLE_MAPS_API_KEY` with the actual API key you obtained.
+`agent.py` 파일을 수정합니다(예: `./adk_agent_samples/mcp_agent/agent.py`). `YOUR_GOOGLE_MAPS_API_KEY`를 얻은 실제 API 키로 바꾸세요.
 
 ```python
 # ./adk_agent_samples/mcp_agent/agent.py
@@ -155,23 +153,23 @@ import os
 from google.adk.agents import LlmAgent
 from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, StdioServerParameters
 
-# Retrieve the API key from an environment variable or directly insert it.
-# Using an environment variable is generally safer.
-# Ensure this environment variable is set in the terminal where you run 'adk web'.
-# Example: export GOOGLE_MAPS_API_KEY="YOUR_ACTUAL_KEY"
+# 환경 변수에서 API 키를 검색하거나 직접 삽입합니다.
+# 환경 변수를 사용하는 것이 일반적으로 더 안전합니다.
+# 'adk web'을 실행하는 터미널에서 이 환경 변수가 설정되어 있는지 확인하세요.
+# 예: export GOOGLE_MAPS_API_KEY="YOUR_ACTUAL_KEY"
 google_maps_api_key = os.environ.get("GOOGLE_MAPS_API_KEY")
 
 if not google_maps_api_key:
-    # Fallback or direct assignment for testing - NOT RECOMMENDED FOR PRODUCTION
-    google_maps_api_key = "YOUR_GOOGLE_MAPS_API_KEY_HERE" # Replace if not using env var
+    # 테스트를 위한 대체 또는 직접 할당 - 프로덕션에는 권장되지 않음
+    google_maps_api_key = "YOUR_GOOGLE_MAPS_API_KEY_HERE" # env var를 사용하지 않는 경우 교체
     if google_maps_api_key == "YOUR_GOOGLE_MAPS_API_KEY_HERE":
-        print("WARNING: GOOGLE_MAPS_API_KEY is not set. Please set it as an environment variable or in the script.")
-        # You might want to raise an error or exit if the key is crucial and not found.
+        print("경고: GOOGLE_MAPS_API_KEY가 설정되지 않았습니다. 환경 변수 또는 스크립트에서 설정해 주세요.")
+        # 키가 중요하고 찾을 수 없는 경우 오류를 발생시키거나 종료할 수 있습니다.
 
 root_agent = LlmAgent(
     model='gemini-2.0-flash',
     name='maps_assistant_agent',
-    instruction='Help the user with mapping, directions, and finding places using Google Maps tools.',
+    instruction='Google Maps 도구를 사용하여 지도, 길찾기, 장소 찾기를 도와주세요.',
     tools=[
         MCPToolset(
             connection_params=StdioServerParameters(
@@ -180,87 +178,87 @@ root_agent = LlmAgent(
                     "-y",
                     "@modelcontextprotocol/server-google-maps",
                 ],
-                # Pass the API key as an environment variable to the npx process
-                # This is how the MCP server for Google Maps expects the key.
+                # npx 프로세스에 API 키를 환경 변수로 전달합니다.
+                # 이것이 Google Maps용 MCP 서버가 키를 예상하는 방식입니다.
                 env={
                     "GOOGLE_MAPS_API_KEY": google_maps_api_key
                 }
             ),
-            # You can filter for specific Maps tools if needed:
+            # 필요한 경우 특정 Maps 도구 필터링 가능:
             # tool_filter=['get_directions', 'find_place_by_id']
         )
     ],
 )
 ```
 
-#### Step 3: Ensure `__init__.py` Exists
+#### 3단계: `__init__.py` 파일이 있는지 확인하기
 
-If you created this in Example 1, you can skip this. Otherwise, ensure you have an `__init__.py` in the `./adk_agent_samples/mcp_agent/` directory:
+예제 1에서 만들었다면 이 단계를 건너뛸 수 있습니다. 그렇지 않으면 `./adk_agent_samples/mcp_agent/` 디렉토리에 `__init__.py`가 있는지 확인하세요:
 
 ```python
 # ./adk_agent_samples/mcp_agent/__init__.py
 from . import agent
 ```
 
-#### Step 4: Run `adk web` and Interact
+#### 4단계: `adk web` 실행 및 상호작용
 
-1.  **Set Environment Variable (Recommended):**
-    Before running `adk web`, it's best to set your Google Maps API key as an environment variable in your terminal:
+1.  **환경 변수 설정 (권장):**
+    `adk web`을 실행하기 전에 터미널에서 Google Maps API 키를 환경 변수로 설정하는 것이 가장 좋습니다:
     ```shell
     export GOOGLE_MAPS_API_KEY="YOUR_ACTUAL_GOOGLE_MAPS_API_KEY"
     ```
-    Replace `YOUR_ACTUAL_GOOGLE_MAPS_API_KEY` with your key.
+    `YOUR_ACTUAL_GOOGLE_MAPS_API_KEY`를 키로 바꾸세요.
 
-2.  **Run `adk web`**:
-    Navigate to the parent directory of `mcp_agent` (e.g., `adk_agent_samples`) and run:
+2.  **`adk web` 실행**:
+    `mcp_agent`의 상위 디렉토리(예: `adk_agent_samples`)로 이동하여 다음을 실행하세요:
     ```shell
-    cd ./adk_agent_samples # Or your equivalent parent directory
+    cd ./adk_agent_samples # 또는 상응하는 상위 디렉토리
     adk web
     ```
 
-3.  **Interact in the UI**:
-    *   Select the `maps_assistant_agent`.
-    *   Try prompts like:
-        *   "Get directions from GooglePlex to SFO."
-        *   "Find coffee shops near Golden Gate Park."
-        *   "What's the route from Paris, France to Berlin, Germany?"
+3.  **UI에서 상호작용**:
+    *   `maps_assistant_agent`를 선택합니다.
+    *   다음과 같은 프롬프트를 시도해 보세요:
+        *   "GooglePlex에서 SFO까지 가는 길을 알려줘."
+        *   "골든게이트 공원 근처 커피숍을 찾아줘."
+        *   "프랑스 파리에서 독일 베를린까지의 경로는 뭐야?"
 
-You should see the agent use the Google Maps MCP tools to provide directions or location-based information.
+에이전트가 Google Maps MCP 도구를 사용하여 길찾기나 위치 기반 정보를 제공하는 것을 볼 수 있습니다.
 
-<img src="../../assets/adk-tool-mcp-maps-adk-web-demo.png" alt="MCP with ADK Web - Google Maps Example">
+<img src="../../assets/adk-tool-mcp-maps-adk-web-demo.png" alt="ADK 웹과 MCP - Google Maps 예제">
 
 
-## 2. Building an MCP server with ADK tools (MCP server exposing ADK)
+## 2. ADK 도구로 MCP 서버 구축하기 (ADK를 노출하는 MCP 서버)
 
-This pattern allows you to wrap existing ADK tools and make them available to any standard MCP client application. The example in this section exposes the ADK `load_web_page` tool through a custom-built MCP server.
+이 패턴을 사용하면 기존 ADK 도구를 래핑하여 모든 표준 MCP 클라이언트 애플리케이션에서 사용할 수 있도록 할 수 있습니다. 이 섹션의 예제는 사용자 정의로 구축된 MCP 서버를 통해 ADK `load_web_page` 도구를 노출합니다.
 
-### Summary of steps
+### 단계 요약
 
-You will create a standard Python MCP server application using the `mcp` library. Within this server, you will:
+`mcp` 라이브러리를 사용하여 표준 Python MCP 서버 애플리케이션을 만듭니다. 이 서버 내에서 다음을 수행합니다:
 
-1.  Instantiate the ADK tool(s) you want to expose (e.g., `FunctionTool(load_web_page)`).
-2.  Implement the MCP server's `@app.list_tools()` handler to advertise the ADK tool(s). This involves converting the ADK tool definition to the MCP schema using the `adk_to_mcp_tool_type` utility from `google.adk.tools.mcp_tool.conversion_utils`.
-3.  Implement the MCP server's `@app.call_tool()` handler. This handler will:
-    *   Receive tool call requests from MCP clients.
-    *   Identify if the request targets one of your wrapped ADK tools.
-    *   Execute the ADK tool's `.run_async()` method.
-    *   Format the ADK tool's result into an MCP-compliant response (e.g., `mcp.types.TextContent`).
+1.  노출하려는 ADK 도구를 인스턴스화합니다(예: `FunctionTool(load_web_page)`).
+2.  MCP 서버의 `@app.list_tools()` 핸들러를 구현하여 ADK 도구를 알립니다. 여기에는 `google.adk.tools.mcp_tool.conversion_utils`의 `adk_to_mcp_tool_type` 유틸리티를 사용하여 ADK 도구 정의를 MCP 스키마로 변환하는 작업이 포함됩니다.
+3.  MCP 서버의 `@app.call_tool()` 핸들러를 구현합니다. 이 핸들러는 다음을 수행합니다:
+    *   MCP 클라이언트로부터 도구 호출 요청을 받습니다.
+    *   요청이 래핑된 ADK 도구 중 하나를 대상으로 하는지 식별합니다.
+    *   ADK 도구의 `.run_async()` 메서드를 실행합니다.
+    *   ADK 도구의 결과를 MCP 호환 응답(예: `mcp.types.TextContent`)으로 포맷합니다.
 
-### Prerequisites
+### 전제 조건
 
-Install the MCP server library in the same Python environment as your ADK installation:
+ADK 설치와 동일한 Python 환경에 MCP 서버 라이브러리를 설치합니다:
 
 ```shell
 pip install mcp
 ```
 
-### Step 1: Create the MCP Server Script
+### 1단계: MCP 서버 스크립트 생성하기
 
-Create a new Python file for your MCP server, for example, `my_adk_mcp_server.py`.
+MCP 서버를 위한 새 Python 파일을 만듭니다. 예: `my_adk_mcp_server.py`.
 
-### Step 2: Implement the Server Logic
+### 2단계: 서버 로직 구현하기
 
-Add the following code to `my_adk_mcp_server.py`. This script sets up an MCP server that exposes the ADK `load_web_page` tool.
+다음 코드를 `my_adk_mcp_server.py`에 추가합니다. 이 스크립트는 ADK `load_web_page` 도구를 노출하는 MCP 서버를 설정합니다.
 
 ```python
 # my_adk_mcp_server.py
@@ -269,123 +267,123 @@ import json
 import os
 from dotenv import load_dotenv
 
-# MCP Server Imports
-from mcp import types as mcp_types # Use alias to avoid conflict
+# MCP 서버 가져오기
+from mcp import types as mcp_types # 충돌을 피하기 위해 별칭 사용
 from mcp.server.lowlevel import Server, NotificationOptions
 from mcp.server.models import InitializationOptions
-import mcp.server.stdio # For running as a stdio server
+import mcp.server.stdio # stdio 서버로 실행하기 위해
 
-# ADK Tool Imports
+# ADK 도구 가져오기
 from google.adk.tools.function_tool import FunctionTool
-from google.adk.tools.load_web_page import load_web_page # Example ADK tool
-# ADK <-> MCP Conversion Utility
+from google.adk.tools.load_web_page import load_web_page # 예제 ADK 도구
+# ADK <-> MCP 변환 유틸리티
 from google.adk.tools.mcp_tool.conversion_utils import adk_to_mcp_tool_type
 
-# --- Load Environment Variables (If ADK tools need them, e.g., API keys) ---
-load_dotenv() # Create a .env file in the same directory if needed
+# --- 환경 변수 로드 (ADK 도구에 필요한 경우, 예: API 키) ---
+load_dotenv() # 필요한 경우 동일한 디렉토리에 .env 파일 생성
 
-# --- Prepare the ADK Tool ---
-# Instantiate the ADK tool you want to expose.
-# This tool will be wrapped and called by the MCP server.
-print("Initializing ADK load_web_page tool...")
+# --- ADK 도구 준비 ---
+# 노출하려는 ADK 도구 인스턴스화.
+# 이 도구는 MCP 서버에 의해 래핑되고 호출됩니다.
+print("ADK load_web_page 도구 초기화 중...")
 adk_tool_to_expose = FunctionTool(load_web_page)
-print(f"ADK tool '{adk_tool_to_expose.name}' initialized and ready to be exposed via MCP.")
-# --- End ADK Tool Prep ---
+print(f"ADK 도구 '{adk_tool_to_expose.name}'가 초기화되었고 MCP를 통해 노출될 준비가 되었습니다.")
+# --- ADK 도구 준비 끝 ---
 
-# --- MCP Server Setup ---
-print("Creating MCP Server instance...")
-# Create a named MCP Server instance using the mcp.server library
+# --- MCP 서버 설정 ---
+print("MCP 서버 인스턴스 생성 중...")
+# mcp.server 라이브러리를 사용하여 이름 있는 MCP 서버 인스턴스 생성
 app = Server("adk-tool-exposing-mcp-server")
 
-# Implement the MCP server's handler to list available tools
+# 사용 가능한 도구 목록을 나열하는 MCP 서버 핸들러 구현
 @app.list_tools()
 async def list_mcp_tools() -> list[mcp_types.Tool]:
-    """MCP handler to list tools this server exposes."""
-    print("MCP Server: Received list_tools request.")
-    # Convert the ADK tool's definition to the MCP Tool schema format
+    """이 서버가 노출하는 도구 목록을 나열하는 MCP 핸들러."""
+    print("MCP 서버: list_tools 요청 수신.")
+    # ADK 도구 정의를 MCP 도구 스키마 형식으로 변환
     mcp_tool_schema = adk_to_mcp_tool_type(adk_tool_to_expose)
-    print(f"MCP Server: Advertising tool: {mcp_tool_schema.name}")
+    print(f"MCP 서버: 광고 도구: {mcp_tool_schema.name}")
     return [mcp_tool_schema]
 
-# Implement the MCP server's handler to execute a tool call
+# 도구 호출을 실행하는 MCP 서버 핸들러 구현
 @app.call_tool()
 async def call_mcp_tool(
     name: str, arguments: dict
-) -> list[mcp_types.Content]: # MCP uses mcp_types.Content
-    """MCP handler to execute a tool call requested by an MCP client."""
-    print(f"MCP Server: Received call_tool request for '{name}' with args: {arguments}")
+) -> list[mcp_types.Content]: # MCP는 mcp_types.Content를 사용
+    """MCP 클라이언트가 요청한 도구 호출을 실행하는 MCP 핸들러."""
+    print(f"MCP 서버: '{name}'에 대한 call_tool 요청 수신, 인수: {arguments}")
 
-    # Check if the requested tool name matches our wrapped ADK tool
+    # 요청된 도구 이름이 래핑된 ADK 도구와 일치하는지 확인
     if name == adk_tool_to_expose.name:
         try:
-            # Execute the ADK tool's run_async method.
-            # Note: tool_context is None here because this MCP server is
-            # running the ADK tool outside of a full ADK Runner invocation.
-            # If the ADK tool requires ToolContext features (like state or auth),
-            # this direct invocation might need more sophisticated handling.
+            # ADK 도구의 run_async 메서드 실행.
+            # 참고: 이 MCP 서버가 전체 ADK Runner 호출 외부에서 ADK 도구를
+            # 실행하고 있기 때문에 tool_context는 여기서 None입니다.
+            # ADK 도구에 ToolContext 기능(상태 또는 인증 등)이 필요한 경우,
+            # 이 직접 호출은 더 정교한 처리가 필요할 수 있습니다.
             adk_tool_response = await adk_tool_to_expose.run_async(
                 args=arguments,
                 tool_context=None,
             )
-            print(f"MCP Server: ADK tool '{name}' executed. Response: {adk_tool_response}")
+            print(f"MCP 서버: ADK 도구 '{name}' 실행됨. 응답: {adk_tool_response}")
 
-            # Format the ADK tool's response (often a dict) into an MCP-compliant format.
-            # Here, we serialize the response dictionary as a JSON string within TextContent.
-            # Adjust formatting based on the ADK tool's output and client needs.
+            # ADK 도구의 응답(종종 dict)을 MCP 호환 형식으로 포맷.
+            # 여기서는 응답 딕셔너리를 TextContent 내의 JSON 문자열로 직렬화합니다.
+            # ADK 도구의 출력 및 클라이언트 요구에 따라 포맷을 조정하세요.
             response_text = json.dumps(adk_tool_response, indent=2)
-            # MCP expects a list of mcp_types.Content parts
+            # MCP는 mcp_types.Content 파트 목록을 예상합니다
             return [mcp_types.TextContent(type="text", text=response_text)]
 
         except Exception as e:
-            print(f"MCP Server: Error executing ADK tool '{name}': {e}")
-            # Return an error message in MCP format
-            error_text = json.dumps({"error": f"Failed to execute tool '{name}': {str(e)}"})
+            print(f"MCP 서버: ADK 도구 '{name}' 실행 오류: {e}")
+            # MCP 형식으로 오류 메시지 반환
+            error_text = json.dumps({"error": f"도구 '{name}' 실행 실패: {str(e)}"})
             return [mcp_types.TextContent(type="text", text=error_text)]
     else:
-        # Handle calls to unknown tools
-        print(f"MCP Server: Tool '{name}' not found/exposed by this server.")
-        error_text = json.dumps({"error": f"Tool '{name}' not implemented by this server."})
+        # 알 수 없는 도구 호출 처리
+        print(f"MCP 서버: 도구 '{name}'를 이 서버에서 찾거나 노출하지 않았습니다.")
+        error_text = json.dumps({"error": f"이 서버에서 도구 '{name}'를 구현하지 않았습니다."})
         return [mcp_types.TextContent(type="text", text=error_text)]
 
-# --- MCP Server Runner ---
+# --- MCP 서버 러너 ---
 async def run_mcp_stdio_server():
-    """Runs the MCP server, listening for connections over standard input/output."""
-    # Use the stdio_server context manager from the mcp.server.stdio library
+    """표준 입력/출력을 통해 연결을 수신하는 MCP 서버를 실행합니다."""
+    # mcp.server.stdio 라이브러리의 stdio_server 컨텍스트 관리자 사용
     async with mcp.server.stdio.stdio_server() as (read_stream, write_stream):
-        print("MCP Stdio Server: Starting handshake with client...")
+        print("MCP Stdio 서버: 클라이언트와 핸드셰이크 시작 중...")
         await app.run(
             read_stream,
             write_stream,
             InitializationOptions(
-                server_name=app.name, # Use the server name defined above
+                server_name=app.name, # 위에서 정의된 서버 이름 사용
                 server_version="0.1.0",
                 capabilities=app.get_capabilities(
-                    # Define server capabilities - consult MCP docs for options
+                    # 서버 기능 정의 - 옵션은 MCP 문서 참조
                     notification_options=NotificationOptions(),
                     experimental_capabilities={},
                 ),
             ),
         )
-        print("MCP Stdio Server: Run loop finished or client disconnected.")
+        print("MCP Stdio 서버: 실행 루프가 완료되었거나 클라이언트 연결이 끊어졌습니다.")
 
 if __name__ == "__main__":
-    print("Launching MCP Server to expose ADK tools via stdio...")
+    print("stdio를 통해 ADK 도구를 노출하기 위해 MCP 서버 시작 중...")
     try:
         asyncio.run(run_mcp_stdio_server())
     except KeyboardInterrupt:
-        print("\nMCP Server (stdio) stopped by user.")
+        print("\nMCP 서버 (stdio)가 사용자에 의해 중지되었습니다.")
     except Exception as e:
-        print(f"MCP Server (stdio) encountered an error: {e}")
+        print(f"MCP 서버 (stdio)에서 오류 발생: {e}")
     finally:
-        print("MCP Server (stdio) process exiting.")
-# --- End MCP Server ---
+        print("MCP 서버 (stdio) 프로세스 종료 중.")
+# --- MCP 서버 끝 ---
 ```
 
-### Step 3: Test your Custom MCP Server with an ADK Agent
+### 3단계: 사용자 정의 MCP 서버를 ADK 에이전트로 테스트하기
 
-Now, create an ADK agent that will act as a client to the MCP server you just built. This ADK agent will use `MCPToolset` to connect to your `my_adk_mcp_server.py` script.
+이제 방금 구축한 MCP 서버에 대한 클라이언트 역할을 할 ADK 에이전트를 만듭니다. 이 ADK 에이전트는 `MCPToolset`을 사용하여 `my_adk_mcp_server.py` 스크립트에 연결합니다.
 
-Create an `agent.py` (e.g., in `./adk_agent_samples/mcp_client_agent/agent.py`):
+`agent.py`를 만듭니다(예: `./adk_agent_samples/mcp_client_agent/agent.py`):
 
 ```python
 # ./adk_agent_samples/mcp_client_agent/agent.py
@@ -393,81 +391,80 @@ import os
 from google.adk.agents import LlmAgent
 from google.adk.tools.mcp_tool import MCPToolset, StdioServerParameters
 
-# IMPORTANT: Replace this with the ABSOLUTE path to your my_adk_mcp_server.py script
-PATH_TO_YOUR_MCP_SERVER_SCRIPT = "/path/to/your/my_adk_mcp_server.py" # <<< REPLACE
+# 중요: 이것을 my_adk_mcp_server.py 스크립트의 절대 경로로 바꾸세요
+PATH_TO_YOUR_MCP_SERVER_SCRIPT = "/path/to/your/my_adk_mcp_server.py" # <<< 교체
 
 if PATH_TO_YOUR_MCP_SERVER_SCRIPT == "/path/to/your/my_adk_mcp_server.py":
-    print("WARNING: PATH_TO_YOUR_MCP_SERVER_SCRIPT is not set. Please update it in agent.py.")
-    # Optionally, raise an error if the path is critical
+    print("경고: PATH_TO_YOUR_MCP_SERVER_SCRIPT가 설정되지 않았습니다. agent.py에서 업데이트하세요.")
+    # 경로가 중요한 경우 선택적으로 오류 발생
 
 root_agent = LlmAgent(
     model='gemini-2.0-flash',
     name='web_reader_mcp_client_agent',
-    instruction="Use the 'load_web_page' tool to fetch content from a URL provided by the user.",
+    instruction="사용자가 제공한 URL에서 콘텐츠를 가져오려면 'load_web_page' 도구를 사용하세요.",
     tools=[
         MCPToolset(
             connection_params=StdioServerParameters(
-                command='python3', # Command to run your MCP server script
-                args=[PATH_TO_YOUR_MCP_SERVER_SCRIPT], # Argument is the path to the script
+                command='python3', # MCP 서버 스크립트를 실행하는 명령어
+                args=[PATH_TO_YOUR_MCP_SERVER_SCRIPT], # 인수는 스크립트 경로
             )
-            # tool_filter=['load_web_page'] # Optional: ensure only specific tools are loaded
+            # tool_filter=['load_web_page'] # 선택 사항: 특정 도구만 로드되도록 보장
         )
     ],
 )
 ```
 
-And an `__init__.py` in the same directory:
+그리고 동일한 디렉토리에 `__init__.py`를 만듭니다:
 ```python
 # ./adk_agent_samples/mcp_client_agent/__init__.py
 from . import agent
 ```
 
-**To run the test:**
+**테스트 실행 방법:**
 
-1.  **Start your custom MCP server (optional, for separate observation):**
-    You can run your `my_adk_mcp_server.py` directly in one terminal to see its logs:
+1.  **사용자 정의 MCP 서버 시작 (선택 사항, 별도 관찰용):**
+    하나의 터미널에서 `my_adk_mcp_server.py`를 직접 실행하여 로그를 볼 수 있습니다:
     ```shell
     python3 /path/to/your/my_adk_mcp_server.py
     ```
-    It will print "Launching MCP Server..." and wait. The ADK agent (run via `adk web`) will then connect to this process if the `command` in `StdioServerParameters` is set up to execute it.
-    *(Alternatively, `MCPToolset` will start this server script as a subprocess automatically when the agent initializes).*
+    "Launching MCP Server..."를 출력하고 대기합니다. 그런 다음 (`adk web`을 통해 실행되는) ADK 에이전트가 `StdioServerParameters`의 `command`가 이를 실행하도록 설정된 경우 이 프로세스에 연결합니다.
+    *(또는, `MCPToolset`은 에이전트가 초기화될 때 이 서버 스크립트를 하위 프로세스로 자동으로 시작합니다.)*
 
-2.  **Run `adk web` for the client agent:**
-    Navigate to the parent directory of `mcp_client_agent` (e.g., `adk_agent_samples`) and run:
+2.  **클라이언트 에이전트에 대해 `adk web` 실행:**
+    `mcp_client_agent`의 상위 디렉토리(예: `adk_agent_samples`)로 이동하여 다음을 실행합니다:
     ```shell
-    cd ./adk_agent_samples # Or your equivalent parent directory
+    cd ./adk_agent_samples # 또는 상응하는 상위 디렉토리
     adk web
     ```
 
-3.  **Interact in the ADK Web UI:**
-    *   Select the `web_reader_mcp_client_agent`.
-    *   Try a prompt like: "Load the content from https://example.com"
+3.  **ADK 웹 UI에서 상호작용:**
+    *   `web_reader_mcp_client_agent`를 선택합니다.
+    *   "https://example.com에서 콘텐츠를 로드해줘"와 같은 프롬프트를 시도합니다.
 
-The ADK agent (`web_reader_mcp_client_agent`) will use `MCPToolset` to start and connect to your `my_adk_mcp_server.py`. Your MCP server will receive the `call_tool` request, execute the ADK `load_web_page` tool, and return the result. The ADK agent will then relay this information. You should see logs from both the ADK Web UI (and its terminal) and potentially from your `my_adk_mcp_server.py` terminal if you ran it separately.
+ADK 에이전트(`web_reader_mcp_client_agent`)는 `MCPToolset`을 사용하여 `my_adk_mcp_server.py`를 시작하고 연결합니다. MCP 서버는 `call_tool` 요청을 받고, ADK `load_web_page` 도구를 실행하며, 결과를 반환합니다. 그러면 ADK 에이전트가 이 정보를 전달합니다. ADK 웹 UI(및 해당 터미널)와 별도로 실행한 경우 `my_adk_mcp_server.py` 터미널에서 로그를 볼 수 있습니다.
 
-This example demonstrates how ADK tools can be encapsulated within an MCP server, making them accessible to a broader range of MCP-compliant clients, not just ADK agents.
+이 예는 ADK 도구가 MCP 서버 내에 캡슐화되어 ADK 에이전트뿐만 아니라 더 광범위한 MCP 호환 클라이언트에서 접근할 수 있는 방법을 보여줍니다.
 
-Refer to the [documentation](https://modelcontextprotocol.io/quickstart/server#core-mcp-concepts), to try it out with Claude Desktop.
+[문서](https://modelcontextprotocol.io/quickstart/server#core-mcp-concepts)를 참조하여 Claude Desktop으로 시도해 보세요.
 
-## Using MCP Tools in your own Agent out of `adk web`
+## `adk web` 외부에서 에이전트에 MCP 도구 사용하기
 
-This section is relevant to you if:
+이 섹션은 다음과 같은 경우에 해당됩니다:
 
-* You are developing your own Agent using ADK
-* And, you are **NOT** using `adk web`,
-* And, you are exposing the agent via your own UI
+* ADK를 사용하여 자신만의 에이전트를 개발하고 있습니다.
+* 그리고, `adk web`을 사용하지 **않습니다**.
+* 그리고, 자신만의 UI를 통해 에이전트를 노출하고 있습니다.
 
 
-Using MCP Tools requires a different setup than using regular tools, due to the fact that specs for MCP Tools are fetched asynchronously
-from the MCP Server running remotely, or in another process.
+MCP 도구를 사용하려면 일반 도구를 사용하는 것과는 다른 설정이 필요합니다. MCP 도구에 대한 사양은 원격으로 실행되거나 다른 프로세스에서 실행되는 MCP 서버에서 비동기적으로 가져오기 때문입니다.
 
-The following example is modified from the "Example 1: File System MCP Server" example above. The main differences are:
+다음 예제는 위의 "예제 1: 파일 시스템 MCP 서버" 예제에서 수정되었습니다. 주요 차이점은 다음과 같습니다:
 
-1. Your tool and agent are created asynchronously
-2. You need to properly manage the exit stack, so that your agents and tools are destructed properly when the connection to MCP Server is closed.
+1. 도구와 에이전트가 비동기적으로 생성됩니다.
+2. MCP 서버에 대한 연결이 닫힐 때 에이전트와 도구가 제대로 소멸되도록 종료 스택을 적절하게 관리해야 합니다.
 
 ```python
-# agent.py (modify get_tools_async and other parts as needed)
+# agent.py (필요에 따라 get_tools_async 및 기타 부분 수정)
 # ./adk_agent_samples/mcp_agent/agent.py
 import os
 import asyncio
@@ -476,55 +473,55 @@ from google.genai import types
 from google.adk.agents.llm_agent import LlmAgent
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
-from google.adk.artifacts.in_memory_artifact_service import InMemoryArtifactService # Optional
+from google.adk.artifacts.in_memory_artifact_service import InMemoryArtifactService # 선택 사항
 from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, SseServerParams, StdioServerParameters
 
-# Load environment variables from .env file in the parent directory
-# Place this near the top, before using env vars like API keys
+# 상위 디렉토리의 .env 파일에서 환경 변수 로드
+# API 키와 같은 env var를 사용하기 전에 맨 위에 배치
 load_dotenv('../.env')
 
-# Ensure TARGET_FOLDER_PATH is an absolute path for the MCP server.
+# TARGET_FOLDER_PATH가 MCP 서버를 위한 절대 경로인지 확인.
 TARGET_FOLDER_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "/path/to/your/folder")
 
-# --- Step 1: Agent Definition ---
+# --- 1단계: 에이전트 정의 ---
 async def get_agent_async():
-  """Creates an ADK Agent equipped with tools from the MCP Server."""
+  """MCP 서버의 도구를 갖춘 ADK 에이전트를 생성합니다."""
   toolset = MCPToolset(
-      # Use StdioServerParameters for local process communication
+      # 로컬 프로세스 통신을 위해 StdioServerParameters 사용
       connection_params=StdioServerParameters(
-          command='npx', # Command to run the server
-          args=["-y",    # Arguments for the command
+          command='npx', # 서버를 실행하는 명령어
+          args=["-y",    # 명령어에 대한 인수
                 "@modelcontextprotocol/server-filesystem",
                 TARGET_FOLDER_PATH],
       ),
-      tool_filter=['read_file', 'list_directory'] # Optional: filter specific tools
-      # For remote servers, you would use SseServerParams instead:
+      tool_filter=['read_file', 'list_directory'] # 선택 사항: 특정 도구 필터링
+      # 원격 서버의 경우 대신 SseServerParams를 사용합니다:
       # connection_params=SseServerParams(url="http://remote-server:port/path", headers={...})
   )
 
-  # Use in an agent
+  # 에이전트에서 사용
   root_agent = LlmAgent(
-      model='gemini-2.0-flash', # Adjust model name if needed based on availability
+      model='gemini-2.0-flash', # 가용성에 따라 모델 이름 조정
       name='enterprise_assistant',
-      instruction='Help user accessing their file systems',
-      tools=[toolset], # Provide the MCP tools to the ADK agent
+      instruction='사용자가 파일 시스템에 접근하도록 돕습니다',
+      tools=[toolset], # ADK 에이전트에 MCP 도구 제공
   )
   return root_agent, toolset
 
-# --- Step 2: Main Execution Logic ---
+# --- 2단계: 메인 실행 로직 ---
 async def async_main():
   session_service = InMemorySessionService()
-  # Artifact service might not be needed for this example
+  # 이 예제에서는 아티팩트 서비스가 필요하지 않을 수 있음
   artifacts_service = InMemoryArtifactService()
 
   session = await session_service.create_session(
       state={}, app_name='mcp_filesystem_app', user_id='user_fs'
   )
 
-  # TODO: Change the query to be relevant to YOUR specified folder.
-  # e.g., "list files in the 'documents' subfolder" or "read the file 'notes.txt'"
-  query = "list files in the tests folder"
-  print(f"User Query: '{query}'")
+  # TODO: 쿼리를 지정한 폴더와 관련되도록 변경하세요.
+  # 예: "'documents' 하위 폴더의 파일 목록" 또는 "'notes.txt' 파일 읽기"
+  query = "tests 폴더의 파일 목록"
+  print(f"사용자 쿼리: '{query}'")
   content = types.Content(role='user', parts=[types.Part(text=query)])
 
   root_agent, toolset = await get_agent_async()
@@ -532,53 +529,53 @@ async def async_main():
   runner = Runner(
       app_name='mcp_filesystem_app',
       agent=root_agent,
-      artifact_service=artifacts_service, # Optional
+      artifact_service=artifacts_service, # 선택 사항
       session_service=session_service,
   )
 
-  print("Running agent...")
+  print("에이전트 실행 중...")
   events_async = runner.run_async(
       session_id=session.id, user_id=session.user_id, new_message=content
   )
 
   async for event in events_async:
-    print(f"Event received: {event}")
+    print(f"수신된 이벤트: {event}")
 
-  # Cleanup is handled automatically by the agent framework
-  # But you can also manually close if needed:
-  print("Closing MCP server connection...")
+  # 정리는 에이전트 프레임워크에 의해 자동으로 처리됩니다.
+  # 하지만 필요한 경우 수동으로 닫을 수도 있습니다:
+  print("MCP 서버 연결 닫는 중...")
   await toolset.close()
-  print("Cleanup complete.")
+  print("정리 완료.")
 
 if __name__ == '__main__':
   try:
     asyncio.run(async_main())
   except Exception as e:
-    print(f"An error occurred: {e}")
+    print(f"오류 발생: {e}")
 ```
 
 
-## Key considerations
+## 주요 고려 사항
 
-When working with MCP and ADK, keep these points in mind:
+MCP와 ADK로 작업할 때 다음 사항을 염두에 두세요:
 
-* **Protocol vs. Library:** MCP is a protocol specification, defining communication rules. ADK is a Python library/framework for building agents. MCPToolset bridges these by implementing the client side of the MCP protocol within the ADK framework. Conversely, building an MCP server in Python requires using the model-context-protocol library.
+*   **프로토콜 대 라이브러리:** MCP는 통신 규칙을 정의하는 프로토콜 사양입니다. ADK는 에이전트 구축을 위한 Python 라이브러리/프레임워크입니다. MCPToolset은 ADK 프레임워크 내에서 MCP 프로토콜의 클라이언트 측을 구현하여 이 둘을 연결합니다. 반대로, Python에서 MCP 서버를 구축하려면 model-context-protocol 라이브러리를 사용해야 합니다.
 
-* **ADK Tools vs. MCP Tools:**
+*   **ADK 도구 대 MCP 도구:**
 
-    * ADK Tools (BaseTool, FunctionTool, AgentTool, etc.) are Python objects designed for direct use within the ADK's LlmAgent and Runner.
-    * MCP Tools are capabilities exposed by an MCP Server according to the protocol's schema. MCPToolset makes these look like ADK tools to an LlmAgent.
-    * Langchain/CrewAI Tools are specific implementations within those libraries, often simple functions or classes, lacking the server/protocol structure of MCP. ADK offers wrappers (LangchainTool, CrewaiTool) for some interoperability.
+    *   ADK 도구(BaseTool, FunctionTool, AgentTool 등)는 ADK의 LlmAgent 및 Runner 내에서 직접 사용하도록 설계된 Python 객체입니다.
+    *   MCP 도구는 프로토콜의 스키마에 따라 MCP 서버에서 노출하는 기능입니다. MCPToolset은 이러한 도구를 LlmAgent에게 ADK 도구처럼 보이게 만듭니다.
+    *   Langchain/CrewAI 도구는 해당 라이브러리 내의 특정 구현이며, 종종 MCP의 서버/프로토콜 구조가 없는 간단한 함수나 클래스입니다. ADK는 일부 상호 운용성을 위해 래퍼(LangchainTool, CrewaiTool)를 제공합니다.
 
-* **Asynchronous nature:** Both ADK and the MCP Python library are heavily based on the asyncio Python library. Tool implementations and server handlers should generally be async functions.
+*   **비동기적 특성:** ADK와 MCP Python 라이브러리 모두 asyncio Python 라이브러리를 기반으로 합니다. 도구 구현 및 서버 핸들러는 일반적으로 비동기 함수여야 합니다.
 
-* **Stateful sessions (MCP):** MCP establishes stateful, persistent connections between a client and server instance. This differs from typical stateless REST APIs.
+*   **상태 저장 세션 (MCP):** MCP는 클라이언트와 서버 인스턴스 간에 상태를 저장하는 영구 연결을 설정합니다. 이는 일반적인 상태 비저장 REST API와 다릅니다.
 
-    * **Deployment:** This statefulness can pose challenges for scaling and deployment, especially for remote servers handling many users. The original MCP design often assumed client and server were co-located. Managing these persistent connections requires careful infrastructure considerations (e.g., load balancing, session affinity).
-    * **ADK MCPToolset:** Manages this connection lifecycle. The exit\_stack pattern shown in the examples is crucial for ensuring the connection (and potentially the server process) is properly terminated when the ADK agent finishes.
+    *   **배포:** 이 상태 저장은 특히 많은 사용자를 처리하는 원격 서버의 경우 확장 및 배포에 어려움을 초래할 수 있습니다. 원래 MCP 설계는 종종 클라이언트와 서버가 동일한 위치에 있다고 가정했습니다. 이러한 영구 연결을 관리하려면 신중한 인프라 고려 사항(예: 로드 밸런싱, 세션 선호도)이 필요합니다.
+    *   **ADK MCPToolset:** 이 연결 수명 주기를 관리합니다. 예제에 표시된 exit\_stack 패턴은 ADK 에이전트가 완료될 때 연결(그리고 잠재적으로 서버 프로세스)이 제대로 종료되도록 보장하는 데 중요합니다.
 
-## Further Resources
+## 추가 자료
 
-* [Model Context Protocol Documentation](https://modelcontextprotocol.io/ )
-* [MCP Specification](https://modelcontextprotocol.io/specification/)
-* [MCP Python SDK & Examples](https://github.com/modelcontextprotocol/)
+*   [모델 컨텍스트 프로토콜 문서](https://modelcontextprotocol.io/ )
+*   [MCP 사양](https://modelcontextprotocol.io/specification/)
+*   [MCP Python SDK 및 예제](https://github.com/modelcontextprotocol/)

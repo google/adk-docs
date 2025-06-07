@@ -1,32 +1,25 @@
-# Built-in tools
+# 내장 도구
 
-These built-in tools provide ready-to-use functionality such as Google Search or
-code executors that provide agents with common capabilities. For instance, an
-agent that needs to retrieve information from the web can directly use the
-**google\_search** tool without any additional setup.
+이러한 내장 도구는 Google 검색이나 코드 실행기와 같이 에이전트에게 일반적인 기능을 제공하는 바로 사용 가능한 기능을 제공합니다. 예를 들어, 웹에서 정보를 검색해야 하는 에이전트는 추가 설정 없이 **google_search** 도구를 직접 사용할 수 있습니다.
 
-## How to Use
+## 사용 방법
 
-1. **Import:** Import the desired tool from the tools module. This is `agents.tools` in Python or `com.google.adk.tools` in Java.
-2. **Configure:** Initialize the tool, providing required parameters if any.
-3. **Register:** Add the initialized tool to the **tools** list of your Agent.
+1.  **가져오기:** 도구 모듈에서 원하는 도구를 가져옵니다. Python에서는 `agents.tools`이고 Java에서는 `com.google.adk.tools`입니다.
+2.  **구성:** 필요한 매개변수가 있는 경우 제공하여 도구를 초기화합니다.
+3.  **등록:** 초기화된 도구를 에이전트의 **도구** 목록에 추가합니다.
 
-Once added to an agent, the agent can decide to use the tool based on the **user
-prompt** and its **instructions**. The framework handles the execution of the
-tool when the agent calls it. Important: check the ***Limitations*** section of this page.
+에이전트에 추가되면, 에이전트는 **사용자 프롬프트**와 **지침**을 기반으로 도구 사용을 결정할 수 있습니다. 프레임워크는 에이전트가 도구를 호출할 때 도구 실행을 처리합니다. 중요: 이 페이지의 ***제한 사항*** 섹션을 확인하세요.
 
-## Available Built-in tools
+## 사용 가능한 내장 도구
 
-Note: Java only supports Google Search and Code Execution tools currently.
+참고: Java는 현재 Google 검색 및 코드 실행 도구만 지원합니다.
 
-### Google Search
+### Google 검색
 
-The `google_search` tool allows the agent to perform web searches using Google
-Search. The `google_search` tool is only compatible with Gemini 2 models.
+`google_search` 도구는 에이전트가 Google 검색을 사용하여 웹 검색을 수행할 수 있도록 합니다. `google_search` 도구는 Gemini 2 모델과만 호환됩니다.
 
-!!! warning "Additional requirements when using the `google_search` tool"
-    When you use grounding with Google Search, and you receive Search suggestions in your response, you must display the Search suggestions in production and in your applications.
-    For more information on grounding with Google Search, see Grounding with Google Search documentation for [Google AI Studio](https://ai.google.dev/gemini-api/docs/grounding/search-suggestions) or [Vertex AI](https://cloud.google.com/vertex-ai/generative-ai/docs/grounding/grounding-search-suggestions). The UI code (HTML) is returned in the Gemini response as `renderedContent`, and you will need to show the HTML in your app, in accordance with the policy.
+!!! warning "`google_search` 도구 사용 시 추가 요구 사항"
+    Google 검색으로 그라운딩을 사용하고 응답에서 검색 제안을 받는 경우, 프로덕션 및 애플리케이션에 검색 제안을 표시해야 합니다. Google 검색으로 그라운딩에 대한 자세한 내용은 [Google AI Studio](https://ai.google.dev/gemini-api/docs/grounding/search-suggestions) 또는 [Vertex AI](https://cloud.google.com/vertex-ai/generative-ai/docs/grounding/grounding-search-suggestions)의 Google 검색으로 그라운딩 문서를 참조하세요. UI 코드(HTML)는 Gemini 응답에서 `renderedContent`로 반환되며, 정책에 따라 앱에 HTML을 표시해야 합니다.
 
 === "Python"
 
@@ -40,11 +33,9 @@ Search. The `google_search` tool is only compatible with Gemini 2 models.
     --8<-- "examples/java/snippets/src/main/java/tools/GoogleSearchAgentApp.java:full_code"
     ```
 
-### Code Execution
+### 코드 실행
 
-The `built_in_code_execution` tool enables the agent to execute code,
-specifically when using Gemini 2 models. This allows the model to perform tasks
-like calculations, data manipulation, or running small scripts.
+`built_in_code_execution` 도구는 에이전트가 코드를 실행할 수 있게 하며, 특히 Gemini 2 모델을 사용할 때 그렇습니다. 이를 통해 모델은 계산, 데이터 조작 또는 작은 스크립트 실행과 같은 작업을 수행할 수 있습니다.
 
 === "Python"
 
@@ -59,12 +50,9 @@ like calculations, data manipulation, or running small scripts.
     ```
 
 
-### Vertex AI Search
+### Vertex AI 검색
 
-The `vertex_ai_search_tool` uses Google Cloud's Vertex AI Search, enabling the
-agent to search across your private, configured data stores (e.g., internal
-documents, company policies, knowledge bases). This built-in tool requires you
-to provide the specific data store ID during configuration.
+`vertex_ai_search_tool`은 Google Cloud의 Vertex AI Search를 사용하여 에이전트가 비공개로 구성된 데이터 저장소(예: 내부 문서, 회사 정책, 지식 기반)를 검색할 수 있도록 합니다. 이 내장 도구는 구성 중에 특정 데이터 저장소 ID를 제공해야 합니다.
 
 
 
@@ -72,10 +60,9 @@ to provide the specific data store ID during configuration.
 --8<-- "examples/python/snippets/tools/built-in-tools/vertexai_search.py"
 ```
 
-## Use Built-in tools with other tools
+## 다른 도구와 함께 내장 도구 사용하기
 
-The following code sample demonstrates how to use multiple built-in tools or how
-to use built-in tools with other tools by using multiple agents:
+다음 코드 샘플은 여러 내장 도구를 사용하거나 여러 에이전트를 사용하여 다른 도구와 함께 내장 도구를 사용하는 방법을 보여줍니다:
 
 === "Python"
 
@@ -90,7 +77,7 @@ to use built-in tools with other tools by using multiple agents:
         model='gemini-2.0-flash',
         name='SearchAgent',
         instruction="""
-        You're a specialist in Google Search
+        당신은 Google 검색 전문가입니다.
         """,
         tools=[google_search],
     )
@@ -98,14 +85,14 @@ to use built-in tools with other tools by using multiple agents:
         model='gemini-2.0-flash',
         name='CodeAgent',
         instruction="""
-        You're a specialist in Code Execution
+        당신은 코드 실행 전문가입니다.
         """,
         code_executor=[BuiltInCodeExecutor],
     )
     root_agent = Agent(
         name="RootAgent",
         model="gemini-2.0-flash",
-        description="Root Agent",
+        description="루트 에이전트",
         tools=[agent_tool.AgentTool(agent=search_agent), agent_tool.AgentTool(agent=coding_agent)],
     )
     ```
@@ -126,58 +113,56 @@ to use built-in tools with other tools by using multiple agents:
     
       public static void main(String[] args) {
 
-        // Define the SearchAgent
+        // 검색 에이전트 정의
         LlmAgent searchAgent =
             LlmAgent.builder()
                 .model(MODEL_ID)
                 .name("SearchAgent")
-                .instruction("You're a specialist in Google Search")
-                .tools(new GoogleSearchTool()) // Instantiate GoogleSearchTool
+                .instruction("당신은 Google 검색 전문가입니다.")
+                .tools(new GoogleSearchTool()) // GoogleSearchTool 인스턴스화
                 .build();
     
 
-        // Define the CodingAgent
+        // 코딩 에이전트 정의
         LlmAgent codingAgent =
             LlmAgent.builder()
                 .model(MODEL_ID)
                 .name("CodeAgent")
-                .instruction("You're a specialist in Code Execution")
-                .tools(new BuiltInCodeExecutionTool()) // Instantiate BuiltInCodeExecutionTool
+                .instruction("당신은 코드 실행 전문가입니다.")
+                .tools(new BuiltInCodeExecutionTool()) // BuiltInCodeExecutionTool 인스턴스화
                 .build();
 
-        // Define the RootAgent, which uses AgentTool.create() to wrap SearchAgent and CodingAgent
+        // 루트 에이전트 정의, AgentTool.create()를 사용하여 검색 에이전트와 코딩 에이전트를 래핑
         BaseAgent rootAgent =
             LlmAgent.builder()
                 .name("RootAgent")
                 .model(MODEL_ID)
-                .description("Root Agent")
+                .description("루트 에이전트")
                 .tools(
-                    AgentTool.create(searchAgent), // Use create method
-                    AgentTool.create(codingAgent)   // Use create method
+                    AgentTool.create(searchAgent), // create 메서드 사용
+                    AgentTool.create(codingAgent)   // create 메서드 사용
                  )
                 .build();
 
-        // Note: This sample only demonstrates the agent definitions.
-        // To run these agents, you'd need to integrate them with a Runner and SessionService,
-        // similar to the previous examples.
-        System.out.println("Agents defined successfully:");
-        System.out.println("  Root Agent: " + rootAgent.name());
-        System.out.println("  Search Agent (nested): " + searchAgent.name());
-        System.out.println("  Code Agent (nested): " + codingAgent.name());
+        // 참고: 이 샘플은 에이전트 정의만 보여줍니다.
+        // 이 에이전트들을 실행하려면 Runner와 SessionService와 통합해야 합니다.
+        // 이전 예제와 유사하게.
+        System.out.println("에이전트가 성공적으로 정의되었습니다:");
+        System.out.println("  루트 에이전트: " + rootAgent.name());
+        System.out.println("  검색 에이전트 (중첩됨): " + searchAgent.name());
+        System.out.println("  코드 에이전트 (중첩됨): " + codingAgent.name());
       }
     }
     ```
 
 
-### Limitations
+### 제한 사항
 
 !!! warning
 
-    Currently, for each root agent or single agent, only one built-in tool is
-    supported. No other tools of any type can be used in the same agent.
+    현재 각 루트 에이전트 또는 단일 에이전트당 하나의 내장 도구만 지원됩니다. 동일한 에이전트에서 다른 유형의 도구를 사용할 수 없습니다.
 
- For example, the following approach that uses ***a built-in tool along with
- other tools*** within a single agent is **not** currently supported:
+ 예를 들어, 단일 에이전트 내에서 ***다른 도구와 함께 내장 도구***를 사용하는 다음 접근 방식은 현재 지원되지 **않습니다**:
 
 === "Python"
 
@@ -185,9 +170,9 @@ to use built-in tools with other tools by using multiple agents:
     root_agent = Agent(
         name="RootAgent",
         model="gemini-2.0-flash",
-        description="Root Agent",
+        description="루트 에이전트",
         tools=[custom_function], 
-        executor=[BuiltInCodeExecutor] # <-- not supported when used with tools
+        executor=[BuiltInCodeExecutor] # <-- 도구와 함께 사용할 때 지원되지 않음
     )
     ```
 
@@ -198,17 +183,16 @@ to use built-in tools with other tools by using multiple agents:
             LlmAgent.builder()
                 .model(MODEL_ID)
                 .name("SearchAgent")
-                .instruction("You're a specialist in Google Search")
-                .tools(new GoogleSearchTool(), new YourCustomTool()) // <-- not supported
+                .instruction("당신은 Google 검색 전문가입니다.")
+                .tools(new GoogleSearchTool(), new YourCustomTool()) // <-- 지원되지 않음
                 .build();
     ```
 
 !!! warning
 
-    Built-in tools cannot be used within a sub-agent.
+    내장 도구는 하위 에이전트 내에서 사용할 수 없습니다.
 
-For example, the following approach that uses built-in tools within sub-agents
-is **not** currently supported:
+예를 들어, 하위 에이전트 내에서 내장 도구를 사용하는 다음 접근 방식은 현재 지원되지 **않습니다**:
 
 === "Python"
 
@@ -217,7 +201,7 @@ is **not** currently supported:
         model='gemini-2.0-flash',
         name='SearchAgent',
         instruction="""
-        You're a specialist in Google Search
+        당신은 Google 검색 전문가입니다.
         """,
         tools=[google_search],
     )
@@ -225,14 +209,14 @@ is **not** currently supported:
         model='gemini-2.0-flash',
         name='CodeAgent',
         instruction="""
-        You're a specialist in Code Execution
+        당신은 코드 실행 전문가입니다.
         """,
         executor=[BuiltInCodeExecutor],
     )
     root_agent = Agent(
         name="RootAgent",
         model="gemini-2.0-flash",
-        description="Root Agent",
+        description="루트 에이전트",
         sub_agents=[
             search_agent,
             coding_agent
@@ -247,7 +231,7 @@ is **not** currently supported:
         LlmAgent.builder()
             .model("gemini-2.0-flash")
             .name("SearchAgent")
-            .instruction("You're a specialist in Google Search")
+            .instruction("당신은 Google 검색 전문가입니다.")
             .tools(new GoogleSearchTool())
             .build();
 
@@ -255,7 +239,7 @@ is **not** currently supported:
         LlmAgent.builder()
             .model("gemini-2.0-flash")
             .name("CodeAgent")
-            .instruction("You're a specialist in Code Execution")
+            .instruction("당신은 코드 실행 전문가입니다.")
             .tools(new BuiltInCodeExecutionTool())
             .build();
     
@@ -264,7 +248,7 @@ is **not** currently supported:
         LlmAgent.builder()
             .name("RootAgent")
             .model("gemini-2.0-flash")
-            .description("Root Agent")
-            .subAgents(searchAgent, codingAgent) // Not supported, as the sub agents use built in tools.
+            .description("루트 에이전트")
+            .subAgents(searchAgent, codingAgent) // 지원되지 않음, 하위 에이전트가 내장 도구를 사용하기 때문.
             .build();
     ```

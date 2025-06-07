@@ -1,42 +1,42 @@
-# Third Party Tools
+# 서드파티 도구
 
-![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java support is planned/ coming soon."}
+![python_only](https://img.shields.io/badge/현재_지원되는_언어-Python-blue){ title="이 기능은 현재 Python에서만 사용할 수 있습니다. Java 지원은 계획 중이거나 곧 제공될 예정입니다."}
 
-ADK is designed to be **highly extensible, allowing you to seamlessly integrate tools from other AI Agent frameworks** like CrewAI and LangChain. This interoperability is crucial because it allows for faster development time and allows you to reuse existing tools.
+ADK는 CrewAI 및 LangChain과 같은 다른 AI 에이전트 프레임워크의 도구를 원활하게 통합할 수 있도록 **매우 확장 가능하게 설계**되었습니다. 이러한 상호 운용성은 개발 시간을 단축하고 기존 도구를 재사용할 수 있게 해주므로 매우 중요합니다.
 
-## 1. Using LangChain Tools
+## 1. LangChain 도구 사용
 
-ADK provides the `LangchainTool` wrapper to integrate tools from the LangChain ecosystem into your agents.
+ADK는 LangChain 생태계의 도구를 에이전트에 통합하기 위해 `LangchainTool` 래퍼를 제공합니다.
 
-### Example: Web Search using LangChain's Tavily tool
+### 예제: LangChain의 Tavily 도구를 사용한 웹 검색
 
-[Tavily](https://tavily.com/) provides a search API that returns answers derived from real-time search results, intended for use by applications like AI agents.
+[Tavily](https://tavily.com/)는 AI 에이전트와 같은 애플리케이션에서 사용하기 위한 실시간 검색 결과에서 파생된 답변을 반환하는 검색 API를 제공합니다.
 
-1. Follow [ADK installation and setup](../get-started/installation.md) guide.
+1. [ADK 설치 및 설정](../get-started/installation.md) 가이드를 따릅니다.
 
-2. **Install Dependencies:** Ensure you have the necessary LangChain packages installed. For example, to use the Tavily search tool, install its specific dependencies:
+2. **종속성 설치:** 필요한 LangChain 패키지가 설치되어 있는지 확인합니다. 예를 들어, Tavily 검색 도구를 사용하려면 특정 종속성을 설치해야 합니다:
 
     ```bash
     pip install langchain_community tavily-python
     ```
 
-3. Obtain a [Tavily](https://tavily.com/) API KEY and export it as an environment variable.
+3. [Tavily](https://tavily.com/) API KEY를 얻고 환경 변수로 내보냅니다.
 
     ```bash
-    export TAVILY_API_KEY=<REPLACE_WITH_API_KEY>
+    export TAVILY_API_KEY=<API_KEY로_교체>
     ```
 
-4. **Import:** Import the `LangchainTool` wrapper from ADK and the specific `LangChain` tool you wish to use (e.g, `TavilySearchResults`).
+4. **가져오기:** ADK에서 `LangchainTool` 래퍼를 가져오고 사용하려는 특정 `LangChain` 도구(예: `TavilySearchResults`)를 가져옵니다.
 
     ```py
     from google.adk.tools.langchain_tool import LangchainTool
     from langchain_community.tools import TavilySearchResults
     ```
 
-5. **Instantiate & Wrap:** Create an instance of your LangChain tool and pass it to the `LangchainTool` constructor.
+5. **인스턴스화 및 래핑:** LangChain 도구의 인스턴스를 만들고 `LangchainTool` 생성자에 전달합니다.
 
     ```py
-    # Instantiate the LangChain tool
+    # LangChain 도구 인스턴스화
     tavily_tool_instance = TavilySearchResults(
         max_results=5,
         search_depth="advanced",
@@ -45,98 +45,98 @@ ADK provides the `LangchainTool` wrapper to integrate tools from the LangChain e
         include_images=True,
     )
 
-    # Wrap it with LangchainTool for ADK
+    # ADK용 LangchainTool로 래핑
     adk_tavily_tool = LangchainTool(tool=tavily_tool_instance)
     ```
 
-6. **Add to Agent:** Include the wrapped `LangchainTool` instance in your agent's `tools` list during definition.
+6. **에이전트에 추가:** 래핑된 `LangchainTool` 인스턴스를 에이전트 정의 중 `tools` 목록에 포함합니다.
 
     ```py
     from google.adk import Agent
 
-    # Define the ADK agent, including the wrapped tool
+    # 래핑된 도구를 포함하여 ADK 에이전트 정의
     my_agent = Agent(
         name="langchain_tool_agent",
         model="gemini-2.0-flash",
-        description="Agent to answer questions using TavilySearch.",
-        instruction="I can answer your questions by searching the internet. Just ask me anything!",
-        tools=[adk_tavily_tool] # Add the wrapped tool here
+        description="TavilySearch를 사용하여 질문에 답하는 에이전트.",
+        instruction="인터넷을 검색하여 질문에 답할 수 있습니다. 무엇이든 물어보세요!",
+        tools=[adk_tavily_tool] # 여기에 래핑된 도구 추가
     )
     ```
 
-### Full Example: Tavily Search
+### 전체 예제: Tavily 검색
 
-Here's the full code combining the steps above to create and run an agent using the LangChain Tavily search tool.
+다음은 LangChain Tavily 검색 도구를 사용하여 에이전트를 만들고 실행하는 위의 단계를 결합한 전체 코드입니다.
 
 ```py
 --8<-- "examples/python/snippets/tools/third-party/langchain_tavily_search.py"
 ```
 
-## 2. Using CrewAI tools
+## 2. CrewAI 도구 사용
 
-ADK provides the `CrewaiTool` wrapper to integrate tools from the CrewAI library.
+ADK는 CrewAI 라이브러리의 도구를 통합하기 위해 `CrewaiTool` 래퍼를 제공합니다.
 
-### Example: Web Search using CrewAI's Serper API
+### 예제: CrewAI의 Serper API를 사용한 웹 검색
 
-[Serper API](https://serper.dev/) provides access to Google Search results programmatically. It allows applications, like AI agents, to perform real-time Google searches (including news, images, etc.) and get structured data back without needing to scrape web pages directly.
+[Serper API](https://serper.dev/)는 프로그래밍 방식으로 Google 검색 결과에 대한 접근을 제공합니다. 이를 통해 AI 에이전트와 같은 애플리케이션은 웹 페이지를 직접 스크래핑할 필요 없이 실시간 Google 검색(뉴스, 이미지 등 포함)을 수행하고 구조화된 데이터를 다시 얻을 수 있습니다.
 
-1. Follow [ADK installation and setup](../get-started/installation.md) guide.
+1. [ADK 설치 및 설정](../get-started/installation.md) 가이드를 따릅니다.
 
-2. **Install Dependencies:** Install the necessary CrewAI tools package. For example, to use the SerperDevTool:
+2. **종속성 설치:** 필요한 CrewAI 도구 패키지를 설치합니다. 예를 들어, SerperDevTool을 사용하려면 다음을 설치합니다:
 
     ```bash
     pip install crewai-tools
     ```
 
-3. Obtain a [Serper API KEY](https://serper.dev/) and export it as an environment variable.
+3. [Serper API KEY](https://serper.dev/)를 얻고 환경 변수로 내보냅니다.
 
     ```bash
-    export SERPER_API_KEY=<REPLACE_WITH_API_KEY>
+    export SERPER_API_KEY=<API_KEY로_교체>
     ```
 
-4. **Import:** Import `CrewaiTool` from ADK and the desired CrewAI tool (e.g, `SerperDevTool`).
+4. **가져오기:** ADK에서 `CrewaiTool`을 가져오고 원하는 CrewAI 도구(예: `SerperDevTool`)를 가져옵니다.
 
     ```py
     from google.adk.tools.crewai_tool import CrewaiTool
     from crewai_tools import SerperDevTool
     ```
 
-5. **Instantiate & Wrap:** Create an instance of the CrewAI tool. Pass it to the `CrewaiTool` constructor. **Crucially, you must provide a name and description** to the ADK wrapper, as these are used by ADK's underlying model to understand when to use the tool.
+5. **인스턴스화 및 래핑:** CrewAI 도구의 인스턴스를 만듭니다. 이를 `CrewaiTool` 생성자에 전달합니다. **결정적으로, ADK의 기본 모델이 언제 도구를 사용해야 하는지 이해하는 데 사용되므로 ADK 래퍼에 이름과 설명을 제공해야 합니다.**
 
     ```py
-    # Instantiate the CrewAI tool
+    # CrewAI 도구 인스턴스화
     serper_tool_instance = SerperDevTool(
         n_results=10,
         save_file=False,
         search_type="news",
     )
 
-    # Wrap it with CrewaiTool for ADK, providing name and description
+    # 이름과 설명을 제공하여 ADK용 CrewaiTool로 래핑
     adk_serper_tool = CrewaiTool(
         name="InternetNewsSearch",
-        description="Searches the internet specifically for recent news articles using Serper.",
+        description="Serper를 사용하여 최근 뉴스 기사를 구체적으로 검색합니다.",
         tool=serper_tool_instance
     )
     ```
 
-6. **Add to Agent:** Include the wrapped `CrewaiTool` instance in your agent's `tools` list.
+6. **에이전트에 추가:** 래핑된 `CrewaiTool` 인스턴스를 에이전트의 `tools` 목록에 포함합니다.
 
     ```py
     from google.adk import Agent
  
-    # Define the ADK agent
+    # ADK 에이전트 정의
     my_agent = Agent(
         name="crewai_search_agent",
         model="gemini-2.0-flash",
-        description="Agent to find recent news using the Serper search tool.",
-        instruction="I can find the latest news for you. What topic are you interested in?",
-        tools=[adk_serper_tool] # Add the wrapped tool here
+        description="Serper 검색 도구를 사용하여 최근 뉴스를 찾는 에이전트.",
+        instruction="최신 뉴스를 찾아드릴 수 있습니다. 어떤 주제에 관심이 있으신가요?",
+        tools=[adk_serper_tool] # 여기에 래핑된 도구 추가
     )
     ```
 
-### Full Example: Serper API
+### 전체 예제: Serper API
 
-Here's the full code combining the steps above to create and run an agent using the CrewAI Serper API search tool.
+다음은 CrewAI Serper API 검색 도구를 사용하여 에이전트를 만들고 실행하는 위의 단계를 결합한 전체 코드입니다.
 
 ```py
 --8<-- "examples/python/snippets/tools/third-party/crewai_serper_search.py"

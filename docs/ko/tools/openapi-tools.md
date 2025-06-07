@@ -1,83 +1,83 @@
-# OpenAPI Integration
+# OpenAPI 통합
 
-![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java support is planned/ coming soon."}
+![python_only](https://img.shields.io/badge/현재_지원되는_언어-Python-blue){ title="이 기능은 현재 Python에서만 사용할 수 있습니다. Java 지원은 계획 중이거나 곧 제공될 예정입니다."}
 
-## Integrating REST APIs with OpenAPI
+## OpenAPI를 사용한 REST API 통합
 
-ADK simplifies interacting with external REST APIs by automatically generating callable tools directly from an [OpenAPI Specification (v3.x)](https://swagger.io/specification/). This eliminates the need to manually define individual function tools for each API endpoint.
+ADK는 [OpenAPI 사양 (v3.x)](https://swagger.io/specification/)에서 직접 호출 가능한 도구를 자동으로 생성하여 외부 REST API와의 상호작용을 단순화합니다. 이를 통해 각 API 엔드포인트에 대한 개별 함수 도구를 수동으로 정의할 필요가 없습니다.
 
-!!! tip "Core Benefit"
-    Use `OpenAPIToolset` to instantly create agent tools (`RestApiTool`) from your existing API documentation (OpenAPI spec), enabling agents to seamlessly call your web services.
+!!! tip "핵심 이점"
+    `OpenAPIToolset`을 사용하여 기존 API 문서(OpenAPI 사양)에서 에이전트 도구(`RestApiTool`)를 즉시 생성하고, 에이전트가 웹 서비스를 원활하게 호출할 수 있도록 하세요.
 
-## Key Components
+## 주요 구성 요소
 
-* **`OpenAPIToolset`**: This is the primary class you'll use. You initialize it with your OpenAPI specification, and it handles the parsing and generation of tools.
-* **`RestApiTool`**: This class represents a single, callable API operation (like `GET /pets/{petId}` or `POST /pets`). `OpenAPIToolset` creates one `RestApiTool` instance for each operation defined in your spec.
+* **`OpenAPIToolset`**: 주로 사용하게 될 기본 클래스입니다. OpenAPI 사양으로 초기화하면 도구의 파싱과 생성을 처리합니다.
+* **`RestApiTool`**: `GET /pets/{petId}` 또는 `POST /pets`와 같이 호출 가능한 단일 API 작업을 나타내는 클래스입니다. `OpenAPIToolset`은 사양에 정의된 각 작업에 대해 하나의 `RestApiTool` 인스턴스를 생성합니다.
 
-## How it Works
+## 작동 방식
 
-The process involves these main steps when you use `OpenAPIToolset`:
+`OpenAPIToolset`을 사용할 때의 과정은 다음과 같은 주요 단계를 포함합니다:
 
-1. **Initialization & Parsing**:
-    * You provide the OpenAPI specification to `OpenAPIToolset` either as a Python dictionary, a JSON string, or a YAML string.
-    * The toolset internally parses the spec, resolving any internal references (`$ref`) to understand the complete API structure.
+1. **초기화 및 파싱**:
+    * OpenAPI 사양을 Python 딕셔너리, JSON 문자열 또는 YAML 문자열로 `OpenAPIToolset`에 제공합니다.
+    * 도구 세트는 내부적으로 사양을 파싱하여 내부 참조(`$ref`)를 확인하고 완전한 API 구조를 이해합니다.
 
-2. **Operation Discovery**:
-    * It identifies all valid API operations (e.g., `GET`, `POST`, `PUT`, `DELETE`) defined within the `paths` object of your specification.
+2. **작업 검색**:
+    * 사양의 `paths` 객체 내에 정의된 모든 유효한 API 작업(예: `GET`, `POST`, `PUT`, `DELETE`)을 식별합니다.
 
-3. **Tool Generation**:
-    * For each discovered operation, `OpenAPIToolset` automatically creates a corresponding `RestApiTool` instance.
-    * **Tool Name**: Derived from the `operationId` in the spec (converted to `snake_case`, max 60 chars). If `operationId` is missing, a name is generated from the method and path.
-    * **Tool Description**: Uses the `summary` or `description` from the operation for the LLM.
-    * **API Details**: Stores the required HTTP method, path, server base URL, parameters (path, query, header, cookie), and request body schema internally.
+3. **도구 생성**:
+    * 발견된 각 작업에 대해 `OpenAPIToolset`은 해당 `RestApiTool` 인스턴스를 자동으로 생성합니다.
+    * **도구 이름**: 사양의 `operationId`에서 파생됩니다(`snake_case`로 변환, 최대 60자). `operationId`가 없는 경우 메서드와 경로에서 이름이 생성됩니다.
+    * **도구 설명**: 작업의 `summary` 또는 `description`을 LLM에 사용합니다.
+    * **API 세부 정보**: 필요한 HTTP 메서드, 경로, 서버 기본 URL, 매개변수(경로, 쿼리, 헤더, 쿠키) 및 요청 본문 스키마를 내부에 저장합니다.
 
-4. **`RestApiTool` Functionality**: Each generated `RestApiTool`:
-    * **Schema Generation**: Dynamically creates a `FunctionDeclaration` based on the operation's parameters and request body. This schema tells the LLM how to call the tool (what arguments are expected).
-    * **Execution**: When called by the LLM, it constructs the correct HTTP request (URL, headers, query params, body) using the arguments provided by the LLM and the details from the OpenAPI spec. It handles authentication (if configured) and executes the API call using the `requests` library.
-    * **Response Handling**: Returns the API response (typically JSON) back to the agent flow.
+4. **`RestApiTool` 기능**: 생성된 각 `RestApiTool`은 다음을 수행합니다:
+    * **스키마 생성**: 작업의 매개변수와 요청 본문을 기반으로 `FunctionDeclaration`을 동적으로 생성합니다. 이 스키마는 LLM에게 도구를 호출하는 방법(예상되는 인수)을 알려줍니다.
+    * **실행**: LLM에 의해 호출될 때, LLM이 제공한 인수와 OpenAPI 사양의 세부 정보를 사용하여 올바른 HTTP 요청(URL, 헤더, 쿼리 매개변수, 본문)을 구성합니다. 인증을 처리하고(구성된 경우) `requests` 라이브러리를 사용하여 API 호출을 실행합니다.
+    * **응답 처리**: API 응답(일반적으로 JSON)을 에이전트 흐름으로 다시 반환합니다.
 
-5. **Authentication**: You can configure global authentication (like API keys or OAuth - see [Authentication](../tools/authentication.md) for details) when initializing `OpenAPIToolset`. This authentication configuration is automatically applied to all generated `RestApiTool` instances.
+5. **인증**: `OpenAPIToolset`을 초기화할 때 전역 인증(API 키 또는 OAuth 등 - 자세한 내용은 [인증](../tools/authentication.md) 참조)을 구성할 수 있습니다. 이 인증 구성은 생성된 모든 `RestApiTool` 인스턴스에 자동으로 적용됩니다.
 
-## Usage Workflow
+## 사용 워크플로
 
-Follow these steps to integrate an OpenAPI spec into your agent:
+에이전트에 OpenAPI 사양을 통합하려면 다음 단계를 따르세요:
 
-1. **Obtain Spec**: Get your OpenAPI specification document (e.g., load from a `.json` or `.yaml` file, fetch from a URL).
-2. **Instantiate Toolset**: Create an `OpenAPIToolset` instance, passing the spec content and type (`spec_str`/`spec_dict`, `spec_str_type`). Provide authentication details (`auth_scheme`, `auth_credential`) if required by the API.
+1. **사양 얻기**: OpenAPI 사양 문서를 가져옵니다(예: `.json` 또는 `.yaml` 파일에서 로드, URL에서 가져오기).
+2. **도구 세트 인스턴스화**: `OpenAPIToolset` 인스턴스를 생성하고 사양 내용과 유형(`spec_str`/`spec_dict`, `spec_str_type`)을 전달합니다. API에 필요한 경우 인증 세부 정보(`auth_scheme`, `auth_credential`)를 제공합니다.
 
     ```python
     from google.adk.tools.openapi_tool.openapi_spec_parser.openapi_toolset import OpenAPIToolset
 
-    # Example with a JSON string
-    openapi_spec_json = '...' # Your OpenAPI JSON string
+    # JSON 문자열 예제
+    openapi_spec_json = '...' # OpenAPI JSON 문자열
     toolset = OpenAPIToolset(spec_str=openapi_spec_json, spec_str_type="json")
 
-    # Example with a dictionary
-    # openapi_spec_dict = {...} # Your OpenAPI spec as a dict
+    # 딕셔너리 예제
+    # openapi_spec_dict = {...} # OpenAPI 사양을 dict로
     # toolset = OpenAPIToolset(spec_dict=openapi_spec_dict)
     ```
 
-3. **Add to Agent**: Include the retrieved tools in your `LlmAgent`'s `tools` list.
+3. **에이전트에 추가**: 검색된 도구를 `LlmAgent`의 `tools` 목록에 포함시킵니다.
 
     ```python
     from google.adk.agents import LlmAgent
 
     my_agent = LlmAgent(
         name="api_interacting_agent",
-        model="gemini-2.0-flash", # Or your preferred model
-        tools=[toolset], # Pass the toolset
-        # ... other agent config ...
+        model="gemini-2.0-flash", # 또는 선호하는 모델
+        tools=[toolset], # 도구 세트 전달
+        # ... 기타 에이전트 구성 ...
     )
     ```
 
-4. **Instruct Agent**: Update your agent's instructions to inform it about the new API capabilities and the names of the tools it can use (e.g., `list_pets`, `create_pet`). The tool descriptions generated from the spec will also help the LLM.
-5. **Run Agent**: Execute your agent using the `Runner`. When the LLM determines it needs to call one of the APIs, it will generate a function call targeting the appropriate `RestApiTool`, which will then handle the HTTP request automatically.
+4. **에이전트 지시**: 새로운 API 기능과 사용할 수 있는 도구의 이름(예: `list_pets`, `create_pet`)을 알려주도록 에이전트의 지침을 업데이트합니다. 사양에서 생성된 도구 설명도 LLM에 도움이 될 것입니다.
+5. **에이전트 실행**: `Runner`를 사용하여 에이전트를 실행합니다. LLM이 API 중 하나를 호출해야 한다고 판단하면, 적절한 `RestApiTool`을 대상으로 하는 함수 호출을 생성하고, 그러면 해당 도구가 자동으로 HTTP 요청을 처리합니다.
 
-## Example
+## 예제
 
-This example demonstrates generating tools from a simple Pet Store OpenAPI spec (using `httpbin.org` for mock responses) and interacting with them via an agent.
+이 예제는 간단한 Pet Store OpenAPI 사양(모의 응답을 위해 `httpbin.org` 사용)에서 도구를 생성하고 에이전트를 통해 상호 작용하는 방법을 보여줍니다.
 
-???+ "Code: Pet Store API"
+???+ "코드: Pet Store API"
 
     ```python title="openapi_example.py"
     --8<-- "examples/python/snippets/tools/openapi_tool.py"
