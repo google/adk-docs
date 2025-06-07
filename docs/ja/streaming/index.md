@@ -1,21 +1,16 @@
-# Bidi-streaming(live) in ADK
+# ADKにおける双方向ストリーミング（ライブ）
 
 !!! info
 
-    This is an experimental feature. Currrently available in Python.
+    これは実験的な機能です。現在、Pythonで利用可能です。
 
 !!! info
 
-    This is different from server-side streaming or token-leven streaming. This section is for bidi-streaming(live).
-    
-Bidi-streaming(live) in ADK adds the low-latency bidirectional voice and video interaction
-capability of [Gemini Live API](https://ai.google.dev/gemini-api/docs/live) to
-AI agents.
+    これはサーバーサイドストリーミングやトークンレベルストリーミングとは異なります。このセクションは双方向ストリーミング（ライブ）に関するものです。
 
-With bidi-streaming(live) mode, you can provide end users with the experience of natural,
-human-like voice conversations, including the ability for the user to interrupt
-the agent's responses with voice commands. Agents with streaming can process
-text, audio, and video inputs, and they can provide text and audio output.
+ADKにおける双方向ストリーミング（ライブ）は、[Gemini Live API](https://ai.google.dev/gemini-api/docs/live)の低遅延な双方向音声・ビデオ対話機能をAIエージェントに追加します。
+
+双方向ストリーミング（ライブ）モードを使用すると、エンドユーザーに自然で人間らしい音声会話の体験を提供できます。これには、ユーザーが音声コマンドでエージェントの応答を中断する機能も含まれます。ストリーミング対応のエージェントは、テキスト、音声、およびビデオ入力を処理でき、テキストと音声の出力を提供できます。
 
 <div class="video-grid">
   <div class="video-item">
@@ -33,48 +28,44 @@ text, audio, and video inputs, and they can provide text and audio output.
 
 <div class="grid cards" markdown>
 
--   :material-console-line: **Quickstart (Streaming)**
+-   :material-console-line: **クイックスタート（ストリーミング）**
 
     ---
 
-    In this quickstart, you'll build a simple agent and use streaming in ADK to
-    implement low-latency and bidirectional voice and video communication.
+    このクイックスタートでは、簡単なエージェントを構築し、ADKのストリーミングを使用して低遅延で双方向の音声・ビデオ通信を実装します。
 
-    [:octicons-arrow-right-24: More information](../get-started/streaming/quickstart-streaming.md)
+    [:octicons-arrow-right-24: 詳細はこちら](../get-started/streaming/quickstart-streaming.md)
 
--   :material-console-line: **Streaming Tools**
-
-    ---
-
-    Streaming tools allows tools (functions) to stream intermediate results back to agents and agents can respond to those intermediate results. For example, we can use streaming tools to monitor the changes of the stock price and have the agent react to it. Another example is we can have the agent monitor the video stream, and when there is changes in video stream, the agent can report the changes.
-
-    [:octicons-arrow-right-24: More information](streaming-tools.md)
-
--   :material-console-line: **Custom Audio Streaming app sample**
+-   :material-console-line: **ストリーミングツール**
 
     ---
 
-    This article overviews the server and client code for a custom asynchronous web app built with ADK Streaming and FastAPI, enabling real-time, bidirectional audio and text communication with both Server Sent Events (SSE) and WebSockets.
+    ストリーミングツールを使用すると、ツール（関数）が中間結果をエージェントにストリーミングで送り返し、エージェントがそれらの中間結果に応答できます。例えば、ストリーミングツールを使用して株価の変動を監視し、エージェントにそれに反応させることができます。別の例として、エージェントにビデオストリームを監視させ、ビデオストリームに変化があった場合にエージェントがその変化を報告させることができます。
 
-    [:octicons-arrow-right-24: More information (SSE)](custom-streaming.md)
-    [:octicons-arrow-right-24: More information (WebSockets)](custom-streaming-ws.md)
+    [:octicons-arrow-right-24: 詳細はこちら](streaming-tools.md)
 
--   :material-console-line: **Shopper's Concierge demo**
-
-    ---
-
-    Learn how streaming in ADK can be used to build a personal shopping
-    concierge that understands your personal style and offers tailored
-    recommendations.
-
-    [:octicons-arrow-right-24: More information](https://youtu.be/LwHPYyw7u6U)
-
--   :material-console-line: **Streaming Configurations**
+-   :material-console-line: **カスタムオーディオストリーミングアプリのサンプル**
 
     ---
 
-    There are some configurations you can set for live(streaming) agents.
+    この記事では、ADKストリーミングとFastAPIで構築されたカスタム非同期Webアプリのサーバーとクライアントのコードを概観し、サーバー送信イベント（SSE）とWebSocketの両方でリアルタイムの双方向音声・テキスト通信を可能にします。
 
-    [:octicons-arrow-right-24: More information](configuration.md)
+    [:octicons-arrow-right-24: 詳細はこちら (SSE)](custom-streaming.md)
+    [:octicons-arrow-right-24: 詳細はこちら (WebSockets)](custom-streaming-ws.md)
+
+-   :material-console-line: **ショッパーズ・コンシェルジュのデモ**
+
+    ---
+
+    ADKのストリーミングが、個人のスタイルを理解し、カスタマイズされた推薦を提供するパーソナルショッピングコンシェルジュの構築にどのように使用できるかを学びます。
+
+    [:octicons-arrow-right-24: 詳細はこちら](https://youtu.be/LwHPYyw7u6U)
+
+-   :material-console-line: **ストリーミング設定**
+
+    ---
+
+    ライブ（ストリーミング）エージェントには、設定可能な項目がいくつかあります。
+
+    [:octicons-arrow-right-24: 詳細はこちら](configuration.md)
 </div>
-
