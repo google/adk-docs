@@ -1,27 +1,17 @@
-# ADK Tutorials!
+# ADK 튜토리얼!
 
-Get started with the Agent Development Kit (ADK) through our collection of
-practical guides. These tutorials are designed in a simple, progressive,
-step-by-step fashion, introducing you to different ADK features and
-capabilities.
+실용적인 가이드 모음을 통해 Agent Development Kit(ADK)를 시작해 보세요. 이 튜토리얼들은 간단하고 점진적인 단계별 방식으로 설계되어 다양한 ADK 기능과 역량을 소개합니다.
 
-This approach allows you to learn and build incrementally – starting with
-foundational concepts and gradually tackling more advanced agent development
-techniques. You'll explore how to apply these features effectively across
-various use cases, equipping you to build your own sophisticated agentic
-applications with ADK. Explore our collection below and happy building:
+이 접근 방식을 통해 기본 개념부터 시작하여 점차적으로 더 고급 에이전트 개발 기술을 다루며 점진적으로 배우고 구축할 수 있습니다. 다양한 사용 사례에 걸쳐 이러한 기능들을 효과적으로 적용하는 방법을 탐색하고, ADK로 자신만의 정교한 에이전트 애플리케이션을 구축할 수 있도록 준비시켜 드립니다. 아래 컬렉션을 살펴보고 즐거운 개발 되세요:
 
 <div class="grid cards" markdown>
 
--   :material-console-line: **Agent Team**
+-   :material-console-line: **에이전트 팀**
 
     ---
 
-    Learn to build an intelligent multi-agent weather bot and master key ADK
-    features: defining Tools, using multiple LLMs (Gemini, GPT, Claude) with
-    LiteLLM, orchestrating agent delegation, adding memory with session state,
-    and ensuring safety via callbacks.
+    지능형 멀티 에이전트 날씨 봇을 구축하고 핵심 ADK 기능을 마스터하는 방법을 배우세요: 도구 정의, LiteLLM으로 여러 LLM(Gemini, GPT, Claude) 사용하기, 에이전트 위임 조율하기, 세션 상태로 메모리 추가하기, 콜백을 통해 안전성 보장하기.
 
-    [:octicons-arrow-right-24: Start learning here](agent-team.md)
+    [:octicons-arrow-right-24: 여기서 학습 시작하기](agent-team.md)
 
 </div>

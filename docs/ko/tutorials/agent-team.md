@@ -1,862 +1,858 @@
-# Build Your First Intelligent Agent Team: A Progressive Weather Bot with ADK
+# 최초의 지능형 에이전트 팀 구축하기: ADK를 이용한 점진적 날씨 봇
 
-<!-- Optional outer container for overall padding/spacing -->
+<!-- 전체적인 패딩/간격을 위한 선택적 외부 컨테이너 -->
 <div style="padding: 10px 0;">
 
-  <!-- Line 1: Open in Colab -->
-  <!-- This div ensures the link takes up its own line and adds space below -->
+  <!-- 라인 1: Colab에서 열기 -->
+  <!-- 이 div는 링크가 자체 라인을 차지하고 아래에 공간을 추가하도록 합니다 -->
   <div style="margin-bottom: 10px;">
     <a href="https://colab.research.google.com/github/google/adk-docs/blob/main/examples/python/tutorial/agent_team/adk_tutorial.ipynb" target="_blank" style="display: inline-flex; align-items: center; gap: 5px; text-decoration: none; color: #4285F4;">
-      <img width="32px" src="https://www.gstatic.com/pantheon/images/bigquery/welcome_page/colab-logo.svg" alt="Google Colaboratory logo">
-      <span>Open in Colab</span>
+      <img width="32px" src="https://www.gstatic.com/pantheon/images/bigquery/welcome_page/colab-logo.svg" alt="Google Colaboratory 로고">
+      <span>Colab에서 열기</span>
     </a>
   </div>
 
-  <!-- Line 2: Share Links -->
-  <!-- This div acts as a flex container for the "Share to" text and icons -->
+  <!-- 라인 2: 공유 링크 -->
+  <!-- 이 div는 "공유하기:" 텍스트와 아이콘을 위한 플렉스 컨테이너 역할을 합니다 -->
   <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-    <!-- Share Text -->
-    <span style="font-weight: bold;">Share to:</span>
+    <!-- 공유 텍스트 -->
+    <span style="font-weight: bold;">공유하기:</span>
 
-    <!-- Social Media Links -->
-    <a href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A//github/google/adk-docs/blob/main/examples/python/tutorial/agent_team/adk_tutorial.ipynb" target="_blank" title="Share on LinkedIn">
-      <img width="20px" src="https://upload.wikimedia.org/wikipedia/commons/8/81/LinkedIn_icon.svg" alt="LinkedIn logo" style="vertical-align: middle;">
+    <!-- 소셜 미디어 링크 -->
+    <a href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A//github/google/adk-docs/blob/main/examples/python/tutorial/agent_team/adk_tutorial.ipynb" target="_blank" title="LinkedIn에 공유">
+      <img width="20px" src="https://upload.wikimedia.org/wikipedia/commons/8/81/LinkedIn_icon.svg" alt="LinkedIn 로고" style="vertical-align: middle;">
     </a>
-    <a href="https://bsky.app/intent/compose?text=https%3A//github/google/adk-docs/blob/main/examples/python/tutorial/agent_team/adk_tutorial.ipynb" target="_blank" title="Share on Bluesky">
-      <img width="20px" src="https://upload.wikimedia.org/wikipedia/commons/7/7a/Bluesky_Logo.svg" alt="Bluesky logo" style="vertical-align: middle;">
+    <a href="https://bsky.app/intent/compose?text=https%3A//github/google/adk-docs/blob/main/examples/python/tutorial/agent_team/adk_tutorial.ipynb" target="_blank" title="Bluesky에 공유">
+      <img width="20px" src="https://upload.wikimedia.org/wikipedia/commons/7/7a/Bluesky_Logo.svg" alt="Bluesky 로고" style="vertical-align: middle;">
     </a>
-    <a href="https://twitter.com/intent/tweet?url=https%3A//github/google/adk-docs/blob/main/examples/python/tutorial/agent_team/adk_tutorial.ipynb" target="_blank" title="Share on X (Twitter)">
-      <img width="20px" src="https://upload.wikimedia.org/wikipedia/commons/5/5a/X_icon_2.svg" alt="X logo" style="vertical-align: middle;">
+    <a href="https://twitter.com/intent/tweet?url=https%3A//github/google/adk-docs/blob/main/examples/python/tutorial/agent_team/adk_tutorial.ipynb" target="_blank" title="X (Twitter)에 공유">
+      <img width="20px" src="https://upload.wikimedia.org/wikipedia/commons/5/5a/X_icon_2.svg" alt="X 로고" style="vertical-align: middle;">
     </a>
-    <a href="https://reddit.com/submit?url=https%3A//github/google/adk-docs/blob/main/examples/python/tutorial/agent_team/adk_tutorial.ipynb" target="_blank" title="Share on Reddit">
-      <img width="20px" src="https://redditinc.com/hubfs/Reddit%20Inc/Brand/Reddit_Logo.png" alt="Reddit logo" style="vertical-align: middle;">
+    <a href="https://reddit.com/submit?url=https%3A//github/google/adk-docs/blob/main/examples/python/tutorial/agent_team/adk_tutorial.ipynb" target="_blank" title="Reddit에 공유">
+      <img width="20px" src="https://redditinc.com/hubfs/Reddit%20Inc/Brand/Reddit_Logo.png" alt="Reddit 로고" style="vertical-align: middle;">
     </a>
-    <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A//github/google/adk-docs/blob/main/examples/python/tutorial/agent_team/adk_tutorial.ipynb" target="_blank" title="Share on Facebook">
-      <img width="20px" src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook logo" style="vertical-align: middle;">
+    <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A//github/google/adk-docs/blob/main/examples/python/tutorial/agent_team/adk_tutorial.ipynb" target="_blank" title="Facebook에 공유">
+      <img width="20px" src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook 로고" style="vertical-align: middle;">
     </a>
   </div>
 
 </div>
 
-This tutorial extends from the [Quickstart example](https://google.github.io/adk-docs/get-started/quickstart/) for [Agent Development Kit](https://google.github.io/adk-docs/get-started/). Now, you're ready to dive deeper and construct a more sophisticated, **multi-agent system**.
+이 튜토리얼은 [Agent Development Kit](https://google.github.io/adk-docs/get-started/)의 [빠른 시작 예제](https://google.github.io/adk-docs/get-started/quickstart/)를 확장한 것입니다. 이제 더 깊이 파고들어 더 정교한 **멀티 에이전트 시스템**을 구축할 준비가 되었습니다.
 
-We'll embark on building a **Weather Bot agent team**, progressively layering advanced features onto a simple foundation. Starting with a single agent that can look up weather, we will incrementally add capabilities like:
+우리는 간단한 기반 위에 점진적으로 고급 기능을 추가하며 **날씨 봇 에이전트 팀**을 구축할 것입니다. 날씨를 조회할 수 있는 단일 에이전트부터 시작하여 다음과 같은 기능을 점진적으로 추가할 것입니다:
 
-*   Leveraging different AI models (Gemini, GPT, Claude).
-*   Designing specialized sub-agents for distinct tasks (like greetings and farewells).
-*   Enabling intelligent delegation between agents.
-*   Giving agents memory using persistent session state.
-*   Implementing crucial safety guardrails using callbacks.
+*   다양한 AI 모델(Gemini, GPT, Claude) 활용하기.
+*   독립적인 작업(인사, 작별 등)을 위한 전문 하위 에이전트 설계하기.
+*   에이전트 간의 지능적인 위임 활성화하기.
+*   영구적인 세션 상태를 사용하여 에이전트에게 메모리 부여하기.
+*   콜백을 사용하여 중요한 안전 가드레일 구현하기.
 
-**Why a Weather Bot Team?**
+**왜 날씨 봇 팀인가요?**
 
-This use case, while seemingly simple, provides a practical and relatable canvas to explore core ADK concepts essential for building complex, real-world agentic applications. You'll learn how to structure interactions, manage state, ensure safety, and orchestrate multiple AI "brains" working together.
+이 사용 사례는 간단해 보이지만, 복잡한 실제 에이전트 애플리케이션을 구축하는 데 필수적인 핵심 ADK 개념을 탐색하기 위한 실용적이고 공감하기 쉬운 캔버스를 제공합니다. 상호 작용을 구조화하고, 상태를 관리하고, 안전을 보장하고, 함께 작동하는 여러 AI "두뇌"를 조율하는 방법을 배우게 됩니다.
 
-**What is ADK Again?**
+**ADK란 무엇인가요?**
 
-As a reminder, ADK is a Python framework designed to streamline the development of applications powered by Large Language Models (LLMs). It offers robust building blocks for creating agents that can reason, plan, utilize tools, interact dynamically with users, and collaborate effectively within a team.
+다시 한번 상기시켜 드리자면, ADK는 거대 언어 모델(LLM) 기반 애플리케이션 개발을 간소화하기 위해 설계된 Python 프레임워크입니다. 추론하고, 계획하고, 도구를 사용하고, 사용자와 동적으로 상호 작용하며, 팀 내에서 효과적으로 협력할 수 있는 에이전트를 만들기 위한 강력한 구성 요소를 제공합니다.
 
-**In this advanced tutorial, you will master:**
+**이 고급 튜토리얼에서 마스터할 내용:**
 
-*   ✅ **Tool Definition & Usage:** Crafting Python functions (`tools`) that grant agents specific abilities (like fetching data) and instructing agents on how to use them effectively.
-*   ✅ **Multi-LLM Flexibility:** Configuring agents to utilize various leading LLMs (Gemini, GPT-4o, Claude Sonnet) via LiteLLM integration, allowing you to choose the best model for each task.
-*   ✅ **Agent Delegation & Collaboration:** Designing specialized sub-agents and enabling automatic routing (`auto flow`) of user requests to the most appropriate agent within a team.
-*   ✅ **Session State for Memory:** Utilizing `Session State` and `ToolContext` to enable agents to remember information across conversational turns, leading to more contextual interactions.
-*   ✅ **Safety Guardrails with Callbacks:** Implementing `before_model_callback` and `before_tool_callback` to inspect, modify, or block requests/tool usage based on predefined rules, enhancing application safety and control.
+*   ✅ **도구 정의 및 사용:** 에이전트에게 특정 능력(데이터 가져오기 등)을 부여하는 Python 함수(`tools`)를 만들고 에이전트에게 이를 효과적으로 사용하는 방법을 지시합니다.
+*   ✅ **멀티 LLM 유연성:** LiteLLM 통합을 통해 다양한 주요 LLM(Gemini, GPT-4o, Claude Sonnet)을 사용하도록 에이전트를 구성하여 각 작업에 가장 적합한 모델을 선택할 수 있습니다.
+*   ✅ **에이전트 위임 및 협업:** 전문 하위 에이전트를 설계하고 사용자 요청을 팀 내에서 가장 적절한 에이전트에게 자동으로 라우팅(`auto flow`)할 수 있도록 합니다.
+*   ✅ **메모리를 위한 세션 상태:** `Session State` 및 `ToolContext`를 활용하여 에이전트가 대화 턴 간에 정보를 기억하게 하여 더 문맥적인 상호 작용을 유도합니다.
+*   ✅ **콜백을 이용한 안전 가드레일:** `before_model_callback` 및 `before_tool_callback`을 구현하여 미리 정의된 규칙에 따라 요청/도구 사용을 검사, 수정 또는 차단하여 애플리케이션 안전성과 제어력을 향상시킵니다.
 
-**End State Expectation:**
+**최종 결과물 예상:**
 
-By completing this tutorial, you will have built a functional multi-agent Weather Bot system. This system will not only provide weather information but also handle conversational niceties, remember the last city checked, and operate within defined safety boundaries, all orchestrated using ADK.
+이 튜토리얼을 완료하면 작동하는 멀티 에이전트 날씨 봇 시스템을 구축하게 될 것입니다. 이 시스템은 날씨 정보를 제공할 뿐만 아니라, 대화상의 예의를 처리하고, 마지막으로 확인한 도시를 기억하며, ADK를 사용하여 조율된 정의된 안전 경계 내에서 작동합니다.
 
-**Prerequisites:**
+**전제 조건:**
 
-*   ✅ **Solid understanding of Python programming.**
-*   ✅ **Familiarity with Large Language Models (LLMs), APIs, and the concept of agents.**
-*   ❗ **Crucially: Completion of the ADK Quickstart tutorial(s) or equivalent foundational knowledge of ADK basics (Agent, Runner, SessionService, basic Tool usage).** This tutorial builds directly upon those concepts.
-*   ✅ **API Keys** for the LLMs you intend to use (e.g., Google AI Studio for Gemini, OpenAI Platform, Anthropic Console).
+*   ✅ **Python 프로그래밍에 대한 확실한 이해.**
+*   ✅ **거대 언어 모델(LLM), API, 에이전트 개념에 대한 친숙함.**
+*   ❗ **중요: ADK 빠른 시작 튜토리얼 완료 또는 ADK 기본 사항(Agent, Runner, SessionService, 기본 도구 사용)에 대한 동등한 기초 지식.** 이 튜토리얼은 이러한 개념을 직접 기반으로 합니다.
+*   ✅ 사용하려는 LLM에 대한 **API 키** (예: Gemini용 Google AI Studio, OpenAI Platform, Anthropic Console).
 
-
----
-
-**Note on Execution Environment:**
-
-This tutorial is structured for interactive notebook environments like Google Colab, Colab Enterprise, or Jupyter notebooks. Please keep the following in mind:
-
-*   **Running Async Code:** Notebook environments handle asynchronous code differently. You'll see examples using `await` (suitable when an event loop is already running, common in notebooks) or `asyncio.run()` (often needed when running as a standalone `.py` script or in specific notebook setups). The code blocks provide guidance for both scenarios.
-*   **Manual Runner/Session Setup:** The steps involve explicitly creating `Runner` and `SessionService` instances. This approach is shown because it gives you fine-grained control over the agent's execution lifecycle, session management, and state persistence.
-
-**Alternative: Using ADK's Built-in Tools (Web UI / CLI / API Server)**
-
-If you prefer a setup that handles the runner and session management automatically using ADK's standard tools, you can find the equivalent code structured for that purpose [here](https://github.com/google/adk-docs/tree/main/examples/python/tutorial/agent_team/adk-tutorial). That version is designed to be run directly with commands like `adk web` (for a web UI), `adk run` (for CLI interaction), or `adk api_server` (to expose an API). Please follow the `README.md` instructions provided in that alternative resource.
 
 ---
 
-**Ready to build your agent team? Let's dive in!**
+**실행 환경에 대한 참고 사항:**
 
-> **Note:** This tutorial works with adk version 1.0.0 and above
+이 튜토리얼은 Google Colab, Colab Enterprise 또는 Jupyter 노트북과 같은 대화형 노트북 환경을 위해 구성되었습니다. 다음 사항을 유념해 주십시오:
+
+*   **비동기 코드 실행:** 노트북 환경은 비동기 코드를 다르게 처리합니다. `await` (이벤트 루프가 이미 실행 중일 때 적합, 노트북에서 일반적) 또는 `asyncio.run()` (독립적인 `.py` 스크립트로 실행하거나 특정 노트북 설정에서 필요)을 사용하는 예제를 보게 될 것입니다. 코드 블록은 두 시나리오 모두에 대한 지침을 제공합니다.
+*   **수동 Runner/세션 설정:** 단계에는 `Runner` 및 `SessionService` 인스턴스를 명시적으로 생성하는 과정이 포함됩니다. 이 접근 방식은 에이전트의 실행 수명 주기, 세션 관리 및 상태 지속성에 대한 세분화된 제어를 제공하기 때문에 보여줍니다.
+
+**대안: ADK의 내장 도구 사용 (웹 UI / CLI / API 서버)**
+
+ADK의 표준 도구를 사용하여 러너 및 세션 관리를 자동으로 처리하는 설정을 선호하는 경우, 해당 목적에 맞게 구성된 코드를 [여기](https://github.com/google/adk-docs/tree/main/examples/python/tutorial/agent_team/adk-tutorial)에서 찾을 수 있습니다. 해당 버전은 `adk web` (웹 UI용), `adk run` (CLI 상호작용용) 또는 `adk api_server` (API 노출용)와 같은 명령으로 직접 실행되도록 설계되었습니다. 해당 대체 리소스에 제공된 `README.md` 지침을 따르십시오.
+
+---
+
+**에이전트 팀을 만들 준비가 되셨나요? 시작해 봅시다!**
+
+> **참고:** 이 튜토리얼은 adk 버전 1.0.0 이상에서 작동합니다.
 
 ```python
-# @title Step 0: Setup and Installation
-# Install ADK and LiteLLM for multi-model support
+# @title 0단계: 설정 및 설치
+# 멀티 모델 지원을 위해 ADK와 LiteLLM 설치
 
 !pip install google-adk -q
 !pip install litellm -q
 
-print("Installation complete.")
+print("설치가 완료되었습니다.")
 ```
 
 
 ```python
-# @title Import necessary libraries
+# @title 필요한 라이브러리 가져오기
 import os
 import asyncio
 from google.adk.agents import Agent
-from google.adk.models.lite_llm import LiteLlm # For multi-model support
+from google.adk.models.lite_llm import LiteLlm # 멀티 모델 지원용
 from google.adk.sessions import InMemorySessionService
 from google.adk.runners import Runner
-from google.genai import types # For creating message Content/Parts
+from google.genai import types # 메시지 Content/Parts 생성용
 
 import warnings
-# Ignore all warnings
+# 모든 경고 무시
 warnings.filterwarnings("ignore")
 
 import logging
 logging.basicConfig(level=logging.ERROR)
 
-print("Libraries imported.")
+print("라이브러리를 가져왔습니다.")
 ```
 
 
 ```python
-# @title Configure API Keys (Replace with your actual keys!)
+# @title API 키 구성 (실제 키로 교체하세요!)
 
-# --- IMPORTANT: Replace placeholders with your real API keys ---
+# --- 중요: 플레이스홀더를 실제 API 키로 교체하세요 ---
 
-# Gemini API Key (Get from Google AI Studio: https://aistudio.google.com/app/apikey)
-os.environ["GOOGLE_API_KEY"] = "YOUR_GOOGLE_API_KEY" # <--- REPLACE
+# Gemini API 키 (Google AI Studio에서 받기: https://aistudio.google.com/app/apikey)
+os.environ["GOOGLE_API_KEY"] = "YOUR_GOOGLE_API_KEY" # <--- 교체
 
-# [Optional]
-# OpenAI API Key (Get from OpenAI Platform: https://platform.openai.com/api-keys)
-os.environ['OPENAI_API_KEY'] = 'YOUR_OPENAI_API_KEY' # <--- REPLACE
+# [선택 사항]
+# OpenAI API 키 (OpenAI Platform에서 받기: https://platform.openai.com/api-keys)
+os.environ['OPENAI_API_KEY'] = 'YOUR_OPENAI_API_KEY' # <--- 교체
 
-# [Optional]
-# Anthropic API Key (Get from Anthropic Console: https://console.anthropic.com/settings/keys)
-os.environ['ANTHROPIC_API_KEY'] = 'YOUR_ANTHROPIC_API_KEY' # <--- REPLACE
+# [선택 사항]
+# Anthropic API 키 (Anthropic Console에서 받기: https://console.anthropic.com/settings/keys)
+os.environ['ANTHROPIC_API_KEY'] = 'YOUR_ANTHROPIC_API_KEY' # <--- 교체
 
-# --- Verify Keys (Optional Check) ---
-print("API Keys Set:")
-print(f"Google API Key set: {'Yes' if os.environ.get('GOOGLE_API_KEY') and os.environ['GOOGLE_API_KEY'] != 'YOUR_GOOGLE_API_KEY' else 'No (REPLACE PLACEHOLDER!)'}")
-print(f"OpenAI API Key set: {'Yes' if os.environ.get('OPENAI_API_KEY') and os.environ['OPENAI_API_KEY'] != 'YOUR_OPENAI_API_KEY' else 'No (REPLACE PLACEHOLDER!)'}")
-print(f"Anthropic API Key set: {'Yes' if os.environ.get('ANTHROPIC_API_KEY') and os.environ['ANTHROPIC_API_KEY'] != 'YOUR_ANTHROPIC_API_KEY' else 'No (REPLACE PLACEHOLDER!)'}")
+# --- 키 확인 (선택적 검사) ---
+print("API 키 설정됨:")
+print(f"Google API 키 설정됨: {'예' if os.environ.get('GOOGLE_API_KEY') and os.environ['GOOGLE_API_KEY'] != 'YOUR_GOOGLE_API_KEY' else '아니오 (플레이스홀더 교체 필요!)'}")
+print(f"OpenAI API 키 설정됨: {'예' if os.environ.get('OPENAI_API_KEY') and os.environ['OPENAI_API_KEY'] != 'YOUR_OPENAI_API_KEY' else '아니오 (플레이스홀더 교체 필요!)'}")
+print(f"Anthropic API 키 설정됨: {'예' if os.environ.get('ANTHROPIC_API_KEY') and os.environ['ANTHROPIC_API_KEY'] != 'YOUR_ANTHROPIC_API_KEY' else '아니오 (플레이스홀더 교체 필요!)'}")
 
-# Configure ADK to use API keys directly (not Vertex AI for this multi-model setup)
+# 이 멀티 모델 설정을 위해 API 키를 직접 사용하도록 ADK 구성 (Vertex AI 사용 안 함)
 os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "False"
 
 
-# @markdown **Security Note:** It's best practice to manage API keys securely (e.g., using Colab Secrets or environment variables) rather than hardcoding them directly in the notebook. Replace the placeholder strings above.
+# @markdown **보안 참고:** API 키를 노트북에 직접 하드코딩하는 것보다 Colab Secrets나 환경 변수 등을 사용하여 안전하게 관리하는 것이 가장 좋습니다. 위의 플레이스홀더 문자열을 교체하세요.
 ```
 
 
 ```python
-# --- Define Model Constants for easier use ---
+# --- 쉬운 사용을 위해 모델 상수 정의 ---
 
-# More supported models can be referenced here: https://ai.google.dev/gemini-api/docs/models#model-variations
+# 더 많은 지원 모델은 여기에서 참조할 수 있습니다: https://ai.google.dev/gemini-api/docs/models#model-variations
 MODEL_GEMINI_2_0_FLASH = "gemini-2.0-flash"
 
-# More supported models can be referenced here: https://docs.litellm.ai/docs/providers/openai#openai-chat-completion-models
-MODEL_GPT_4O = "openai/gpt-4.1" # You can also try: gpt-4.1-mini, gpt-4o etc.
+# 더 많은 지원 모델은 여기에서 참조할 수 있습니다: https://docs.litellm.ai/docs/providers/openai#openai-chat-completion-models
+MODEL_GPT_4O = "openai/gpt-4.1" # gpt-4.1-mini, gpt-4o 등도 시도해 볼 수 있습니다.
 
-# More supported models can be referenced here: https://docs.litellm.ai/docs/providers/anthropic
-MODEL_CLAUDE_SONNET = "anthropic/claude-sonnet-4-20250514" # You can also try: claude-opus-4-20250514 , claude-3-7-sonnet-20250219 etc
+# 더 많은 지원 모델은 여기에서 참조할 수 있습니다: https://docs.litellm.ai/docs/providers/anthropic
+MODEL_CLAUDE_SONNET = "anthropic/claude-sonnet-4-20250514" # claude-opus-4-20250514 , claude-3-7-sonnet-20250219 등도 시도해 볼 수 있습니다.
 
-print("\nEnvironment configured.")
+print("\n환경이 구성되었습니다.")
 ```
 
 ---
 
-## Step 1: Your First Agent \- Basic Weather Lookup
+## 1단계: 첫 번째 에이전트 - 기본 날씨 조회
 
-Let's begin by building the fundamental component of our Weather Bot: a single agent capable of performing a specific task – looking up weather information. This involves creating two core pieces:
+날씨 봇의 기본 구성 요소인 특정 작업(날씨 정보 조회)을 수행할 수 있는 단일 에이전트를 구축하는 것부터 시작하겠습니다. 여기에는 두 가지 핵심 부분을 만드는 것이 포함됩니다.
 
-1. **A Tool:** A Python function that equips the agent with the *ability* to fetch weather data.  
-2. **An Agent:** The AI "brain" that understands the user's request, knows it has a weather tool, and decides when and how to use it.
+1. **도구:** 에이전트에게 날씨 데이터를 가져올 *능력*을 부여하는 Python 함수입니다.
+2. **에이전트:** 사용자의 요청을 이해하고, 날씨 도구가 있다는 것을 알며, 언제 어떻게 사용할지 결정하는 AI "두뇌"입니다.
 
 ---
 
-**1\. Define the Tool (`get_weather`)**
+**1. `get_weather` 도구 정의**
 
-In ADK, **Tools** are the building blocks that give agents concrete capabilities beyond just text generation. They are typically regular Python functions that perform specific actions, like calling an API, querying a database, or performing calculations.
+ADK에서 **도구**는 에이전트에게 단순한 텍스트 생성을 넘어서는 구체적인 능력을 부여하는 구성 요소입니다. 일반적으로 API 호출, 데이터베이스 쿼리, 계산 수행과 같은 특정 작업을 수행하는 일반 Python 함수입니다.
 
-Our first tool will provide a *mock* weather report. This allows us to focus on the agent structure without needing external API keys yet. Later, you could easily swap this mock function with one that calls a real weather service.
+우리의 첫 번째 도구는 *모의* 날씨 보고서를 제공할 것입니다. 이를 통해 아직 외부 API 키 없이 에이전트 구조에 집중할 수 있습니다. 나중에 이 모의 함수를 실제 날씨 서비스를 호출하는 함수로 쉽게 교체할 수 있습니다.
 
-**Key Concept: Docstrings are Crucial\!** The agent's LLM relies heavily on the function's **docstring** to understand:
+**핵심 개념: Docstring은 매우 중요합니다!** 에이전트의 LLM은 함수의 **docstring**에 크게 의존하여 다음을 이해합니다.
 
-* *What* the tool does.  
-* *When* to use it.  
-* *What arguments* it requires (`city: str`).  
-* *What information* it returns.
+*   도구가 *무엇을* 하는지.
+*   *언제* 사용해야 하는지.
+*   *어떤 인수*가 필요한지 (`city: str`).
+*   *어떤 정보*를 반환하는지.
 
-**Best Practice:** Write clear, descriptive, and accurate docstrings for your tools. This is essential for the LLM to use the tool correctly.
+**모범 사례:** 도구에 대해 명확하고, 설명적이며, 정확한 docstring을 작성하세요. 이는 LLM이 도구를 올바르게 사용하는 데 필수적입니다.
 
 
 ```python
-# @title Define the get_weather Tool
+# @title get_weather 도구 정의
 def get_weather(city: str) -> dict:
-    """Retrieves the current weather report for a specified city.
+    """지정된 도시의 현재 날씨 보고서를 검색합니다.
 
     Args:
-        city (str): The name of the city (e.g., "New York", "London", "Tokyo").
+        city (str): 도시 이름 (예: "New York", "London", "Tokyo").
 
     Returns:
-        dict: A dictionary containing the weather information.
-              Includes a 'status' key ('success' or 'error').
-              If 'success', includes a 'report' key with weather details.
-              If 'error', includes an 'error_message' key.
+        dict: 날씨 정보를 포함하는 사전.
+              'status' 키('success' 또는 'error')를 포함합니다.
+              'success'인 경우 날씨 세부 정보가 포함된 'report' 키를 포함합니다.
+              'error'인 경우 'error_message' 키를 포함합니다.
     """
-    print(f"--- Tool: get_weather called for city: {city} ---") # Log tool execution
-    city_normalized = city.lower().replace(" ", "") # Basic normalization
+    print(f"--- 도구: {city}에 대해 get_weather 호출됨 ---") # 도구 실행 기록
+    city_normalized = city.lower().replace(" ", "") # 기본 정규화
 
-    # Mock weather data
+    # 모의 날씨 데이터
     mock_weather_db = {
-        "newyork": {"status": "success", "report": "The weather in New York is sunny with a temperature of 25°C."},
-        "london": {"status": "success", "report": "It's cloudy in London with a temperature of 15°C."},
-        "tokyo": {"status": "success", "report": "Tokyo is experiencing light rain and a temperature of 18°C."},
+        "newyork": {"status": "success", "report": "뉴욕의 날씨는 맑고 기온은 25°C입니다."},
+        "london": {"status": "success", "report": "런던은 흐리고 기온은 15°C입니다."},
+        "tokyo": {"status": "success", "report": "도쿄는 약한 비가 내리고 기온은 18°C입니다."},
     }
 
     if city_normalized in mock_weather_db:
         return mock_weather_db[city_normalized]
     else:
-        return {"status": "error", "error_message": f"Sorry, I don't have weather information for '{city}'."}
+        return {"status": "error", "error_message": f"죄송합니다. '{city}'에 대한 날씨 정보가 없습니다."}
 
-# Example tool usage (optional test)
+# 예제 도구 사용 (선택적 테스트)
 print(get_weather("New York"))
 print(get_weather("Paris"))
 ```
 
 ---
 
-**2\. Define the Agent (`weather_agent`)**
+**2. `weather_agent` 에이전트 정의**
 
-Now, let's create the **Agent** itself. An `Agent` in ADK orchestrates the interaction between the user, the LLM, and the available tools.
+이제 **에이전트** 자체를 만들어 봅시다. ADK의 `Agent`는 사용자와 LLM, 그리고 사용 가능한 도구 간의 상호작용을 조율합니다.
 
-We configure it with several key parameters:
+몇 가지 주요 매개변수로 구성합니다:
 
-* `name`: A unique identifier for this agent (e.g., "weather\_agent\_v1").  
-* `model`: Specifies which LLM to use (e.g., `MODEL_GEMINI_2_0_FLASH`). We'll start with a specific Gemini model.  
-* `description`: A concise summary of the agent's overall purpose. This becomes crucial later when other agents need to decide whether to delegate tasks to *this* agent.  
-* `instruction`: Detailed guidance for the LLM on how to behave, its persona, its goals, and specifically *how and when* to utilize its assigned `tools`.  
-* `tools`: A list containing the actual Python tool functions the agent is allowed to use (e.g., `[get_weather]`).
+* `name`: 이 에이전트의 고유 식별자 (예: "weather\_agent\_v1").
+* `model`: 사용할 LLM을 지정합니다 (예: `MODEL_GEMINI_2_0_FLASH`). 특정 Gemini 모델로 시작하겠습니다.
+* `description`: 에이전트의 전반적인 목적에 대한 간결한 요약입니다. 나중에 다른 에이전트가 이 에이전트에게 작업을 위임할지 결정할 때 중요해집니다.
+* `instruction`: LLM에게 어떻게 행동해야 하는지, 그 페르소나, 목표, 그리고 특히 할당된 `tools`를 *어떻게 그리고 언제* 활용해야 하는지에 대한 상세한 지침입니다.
+* `tools`: 에이전트가 사용할 수 있도록 허용된 실제 Python 도구 함수 목록입니다 (예: `[get_weather]`).
 
-**Best Practice:** Provide clear and specific `instruction` prompts. The more detailed the instructions, the better the LLM can understand its role and how to use its tools effectively. Be explicit about error handling if needed.
+**모범 사례:** 명확하고 구체적인 `instruction` 프롬프트를 제공하세요. 지침이 상세할수록 LLM은 자신의 역할을 더 잘 이해하고 도구를 효과적으로 사용할 수 있습니다. 필요한 경우 오류 처리에 대해 명시적으로 언급하세요.
 
-**Best Practice:** Choose descriptive `name` and `description` values. These are used internally by ADK and are vital for features like automatic delegation (covered later).
+**모범 사례:** 설명적인 `name`과 `description` 값을 선택하세요. 이들은 ADK 내부에서 사용되며 나중에 다룰 자동 위임과 같은 기능에 필수적입니다.
 
 
 ```python
-# @title Define the Weather Agent
-# Use one of the model constants defined earlier
-AGENT_MODEL = MODEL_GEMINI_2_0_FLASH # Starting with Gemini
+# @title 날씨 에이전트 정의
+# 이전에 정의된 모델 상수 중 하나를 사용
+AGENT_MODEL = MODEL_GEMINI_2_0_FLASH # Gemini로 시작
 
 weather_agent = Agent(
     name="weather_agent_v1",
-    model=AGENT_MODEL, # Can be a string for Gemini or a LiteLlm object
-    description="Provides weather information for specific cities.",
-    instruction="You are a helpful weather assistant. "
-                "When the user asks for the weather in a specific city, "
-                "use the 'get_weather' tool to find the information. "
-                "If the tool returns an error, inform the user politely. "
-                "If the tool is successful, present the weather report clearly.",
-    tools=[get_weather], # Pass the function directly
+    model=AGENT_MODEL, # Gemini용 문자열 또는 LiteLlm 객체가 될 수 있음
+    description="특정 도시의 날씨 정보를 제공합니다.",
+    instruction="당신은 유용한 날씨 비서입니다. "
+                "사용자가 특정 도시의 날씨를 물으면, "
+                "'get_weather' 도구를 사용하여 정보를 찾으세요. "
+                "도구가 오류를 반환하면 사용자에게 정중하게 알리세요. "
+                "도구가 성공하면 날씨 보고서를 명확하게 제시하세요.",
+    tools=[get_weather], # 함수를 직접 전달
 )
 
-print(f"Agent '{weather_agent.name}' created using model '{AGENT_MODEL}'.")
+print(f"에이전트 '{weather_agent.name}'가 모델 '{AGENT_MODEL}'을 사용하여 생성되었습니다.")
 ```
 
 ---
 
-**3\. Setup Runner and Session Service**
+**3. Runner 및 세션 서비스 설정**
 
-To manage conversations and execute the agent, we need two more components:
+대화를 관리하고 에이전트를 실행하려면 두 가지 구성 요소가 더 필요합니다.
 
-* `SessionService`: Responsible for managing conversation history and state for different users and sessions. The `InMemorySessionService` is a simple implementation that stores everything in memory, suitable for testing and simple applications. It keeps track of the messages exchanged. We'll explore state persistence more in Step 4\.  
-* `Runner`: The engine that orchestrates the interaction flow. It takes user input, routes it to the appropriate agent, manages calls to the LLM and tools based on the agent's logic, handles session updates via the `SessionService`, and yields events representing the progress of the interaction.
+* `SessionService`: 다른 사용자와 세션에 대한 대화 기록 및 상태를 관리합니다. `InMemorySessionService`는 모든 것을 메모리에 저장하는 간단한 구현으로, 테스트 및 간단한 애플리케이션에 적합합니다. 교환된 메시지를 추적합니다. 4단계에서 상태 지속성에 대해 더 자세히 알아볼 것입니다.
+* `Runner`: 상호작용 흐름을 조율하는 엔진입니다. 사용자 입력을 받아 적절한 에이전트로 라우팅하고, 에이전트의 로직에 따라 LLM 및 도구 호출을 관리하며, `SessionService`를 통해 세션 업데이트를 처리하고, 상호작용의 진행 상황을 나타내는 이벤트를 생성합니다.
 
 
 ```python
-# @title Setup Session Service and Runner
+# @title 세션 서비스 및 Runner 설정
 
-# --- Session Management ---
-# Key Concept: SessionService stores conversation history & state.
-# InMemorySessionService is simple, non-persistent storage for this tutorial.
+# --- 세션 관리 ---
+# 핵심 개념: SessionService는 대화 기록 및 상태를 저장합니다.
+# InMemorySessionService는 이 튜토리얼을 위한 간단하고 비영구적인 저장소입니다.
 session_service = InMemorySessionService()
 
-# Define constants for identifying the interaction context
+# 상호작용 컨텍스트를 식별하기 위한 상수 정의
 APP_NAME = "weather_tutorial_app"
 USER_ID = "user_1"
-SESSION_ID = "session_001" # Using a fixed ID for simplicity
+SESSION_ID = "session_001" # 단순화를 위해 고정 ID 사용
 
-# Create the specific session where the conversation will happen
+# 대화가 이루어질 특정 세션 생성
 session = await session_service.create_session(
     app_name=APP_NAME,
     user_id=USER_ID,
     session_id=SESSION_ID
 )
-print(f"Session created: App='{APP_NAME}', User='{USER_ID}', Session='{SESSION_ID}'")
+print(f"세션 생성됨: App='{APP_NAME}', User='{USER_ID}', Session='{SESSION_ID}'")
 
 # --- Runner ---
-# Key Concept: Runner orchestrates the agent execution loop.
+# 핵심 개념: Runner는 에이전트 실행 루프를 조율합니다.
 runner = Runner(
-    agent=weather_agent, # The agent we want to run
-    app_name=APP_NAME,   # Associates runs with our app
-    session_service=session_service # Uses our session manager
+    agent=weather_agent, # 실행하려는 에이전트
+    app_name=APP_NAME,   # 실행을 우리 앱과 연결
+    session_service=session_service # 세션 관리자 사용
 )
-print(f"Runner created for agent '{runner.agent.name}'.")
+print(f"Runner가 에이전트 '{runner.agent.name}'에 대해 생성되었습니다.")
 ```
 
 ---
 
-**4\. Interact with the Agent**
+**4. 에이전트와 상호작용하기**
 
-We need a way to send messages to our agent and receive its responses. Since LLM calls and tool executions can take time, ADK's `Runner` operates asynchronously.
+에이전트에게 메시지를 보내고 응답을 받을 방법이 필요합니다. LLM 호출과 도구 실행은 시간이 걸릴 수 있으므로 ADK의 `Runner`는 비동기적으로 작동합니다.
 
-We'll define an `async` helper function (`call_agent_async`) that:
+우리는 다음을 수행하는 `async` 헬퍼 함수 (`call_agent_async`)를 정의할 것입니다:
 
-1. Takes a user query string.  
-2. Packages it into the ADK `Content` format.  
-3. Calls `runner.run_async`, providing the user/session context and the new message.  
-4. Iterates through the **Events** yielded by the runner. Events represent steps in the agent's execution (e.g., tool call requested, tool result received, intermediate LLM thought, final response).  
-5. Identifies and prints the **final response** event using `event.is_final_response()`.
+1. 사용자 쿼리 문자열을 받습니다.
+2. ADK `Content` 형식으로 패키징합니다.
+3. 사용자/세션 컨텍스트와 새 메시지를 제공하여 `runner.run_async`를 호출합니다.
+4. 러너가 생성한 **이벤트**를 반복합니다. 이벤트는 에이전트 실행의 단계를 나타냅니다 (예: 도구 호출 요청, 도구 결과 수신, 중간 LLM 생각, 최종 응답).
+5. `event.is_final_response()`를 사용하여 **최종 응답** 이벤트를 식별하고 출력합니다.
 
-**Why `async`?** Interactions with LLMs and potentially tools (like external APIs) are I/O-bound operations. Using `asyncio` allows the program to handle these operations efficiently without blocking execution.
+**왜 `async`인가?** LLM 및 잠재적 도구(외부 API 등)와의 상호작용은 I/O 바운드 작업입니다. `asyncio`를 사용하면 프로그램이 실행을 차단하지 않고 이러한 작업을 효율적으로 처리할 수 있습니다.
 
 
 ```python
-# @title Define Agent Interaction Function
+# @title 에이전트 상호작용 함수 정의
 
-from google.genai import types # For creating message Content/Parts
+from google.genai import types # 메시지 Content/Parts 생성용
 
 async def call_agent_async(query: str, runner, user_id, session_id):
-  """Sends a query to the agent and prints the final response."""
-  print(f"\n>>> User Query: {query}")
+  """에이전트에게 쿼리를 보내고 최종 응답을 출력합니다."""
+  print(f"\n>>> 사용자 쿼리: {query}")
 
-  # Prepare the user's message in ADK format
+  # 사용자 메시지를 ADK 형식으로 준비
   content = types.Content(role='user', parts=[types.Part(text=query)])
 
-  final_response_text = "Agent did not produce a final response." # Default
+  final_response_text = "에이전트가 최종 응답을 생성하지 않았습니다." # 기본값
 
-  # Key Concept: run_async executes the agent logic and yields Events.
-  # We iterate through events to find the final answer.
+  # 핵심 개념: run_async는 에이전트 로직을 실행하고 이벤트를 생성합니다.
+  # 최종 답변을 찾기 위해 이벤트를 반복합니다.
   async for event in runner.run_async(user_id=user_id, session_id=session_id, new_message=content):
-      # You can uncomment the line below to see *all* events during execution
-      # print(f"  [Event] Author: {event.author}, Type: {type(event).__name__}, Final: {event.is_final_response()}, Content: {event.content}")
+      # 아래 줄의 주석을 해제하여 실행 중 *모든* 이벤트를 볼 수 있습니다.
+      # print(f"  [이벤트] 작성자: {event.author}, 유형: {type(event).__name__}, 최종: {event.is_final_response()}, 내용: {event.content}")
 
-      # Key Concept: is_final_response() marks the concluding message for the turn.
+      # 핵심 개념: is_final_response()는 해당 턴의 마무리 메시지를 표시합니다.
       if event.is_final_response():
           if event.content and event.content.parts:
-             # Assuming text response in the first part
+             # 첫 번째 부분에 텍스트 응답이 있다고 가정
              final_response_text = event.content.parts[0].text
-          elif event.actions and event.actions.escalate: # Handle potential errors/escalations
-             final_response_text = f"Agent escalated: {event.error_message or 'No specific message.'}"
-          # Add more checks here if needed (e.g., specific error codes)
-          break # Stop processing events once the final response is found
+          elif event.actions and event.actions.escalate: # 잠재적 오류/에스컬레이션 처리
+             final_response_text = f"에이전트가 에스컬레이션함: {event.error_message or '특정 메시지 없음.'}"
+          # 필요한 경우 여기에 더 많은 확인 추가 (예: 특정 오류 코드)
+          break # 최종 응답을 찾으면 이벤트 처리 중지
 
-  print(f"<<< Agent Response: {final_response_text}")
+  print(f"<<< 에이전트 응답: {final_response_text}")
 ```
 
 ---
 
-**5\. Run the Conversation**
+**5. 대화 실행하기**
 
-Finally, let's test our setup by sending a few queries to the agent. We wrap our `async` calls in a main `async` function and run it using `await`.
+마지막으로, 에이전트에게 몇 가지 쿼리를 보내 설정을 테스트해 보겠습니다. `async` 호출을 메인 `async` 함수로 감싸고 `await`를 사용하여 실행합니다.
 
-Watch the output:
+출력을 보세요:
 
-* See the user queries.  
-* Notice the `--- Tool: get_weather called... ---` logs when the agent uses the tool.  
-* Observe the agent's final responses, including how it handles the case where weather data isn't available (for Paris).
+* 사용자 쿼리를 확인하세요.
+* 에이전트가 도구를 사용할 때 `--- 도구: get_weather 호출됨... ---` 로그를 확인하세요.
+* 파리에 대한 날씨 데이터를 사용할 수 없는 경우를 포함하여 에이전트의 최종 응답을 관찰하세요.
 
 
 ```python
-# @title Run the Initial Conversation
+# @title 초기 대화 실행
 
-# We need an async function to await our interaction helper
+# 상호작용 헬퍼를 await하기 위해 async 함수가 필요합니다
 async def run_conversation():
-    await call_agent_async("What is the weather like in London?",
+    await call_agent_async("런던 날씨는 어때?",
                                        runner=runner,
                                        user_id=USER_ID,
                                        session_id=SESSION_ID)
 
-    await call_agent_async("How about Paris?",
+    await call_agent_async("파리는 어때?",
                                        runner=runner,
                                        user_id=USER_ID,
-                                       session_id=SESSION_ID) # Expecting the tool's error message
+                                       session_id=SESSION_ID) # 도구의 오류 메시지를 예상
 
-    await call_agent_async("Tell me the weather in New York",
+    await call_agent_async("뉴욕 날씨를 알려줘",
                                        runner=runner,
                                        user_id=USER_ID,
                                        session_id=SESSION_ID)
 
-# Execute the conversation using await in an async context (like Colab/Jupyter)
+# 비동기 컨텍스트(Colab/Jupyter 등)에서 await를 사용하여 대화 실행
 await run_conversation()
 
-# --- OR ---
+# --- 또는 ---
 
-# Uncomment the following lines if running as a standard Python script (.py file):
+# 표준 Python 스크립트(.py 파일)로 실행하는 경우 다음 줄의 주석을 해제하세요:
 # import asyncio
 # if __name__ == "__main__":
 #     try:
 #         asyncio.run(run_conversation())
 #     except Exception as e:
-#         print(f"An error occurred: {e}")
+#         print(f"오류가 발생했습니다: {e}")
 ```
 
 ---
 
-Congratulations\! You've successfully built and interacted with your first ADK agent. It understands the user's request, uses a tool to find information, and responds appropriately based on the tool's result.
+축하합니다! 첫 번째 ADK 에이전트를 성공적으로 만들고 상호작용했습니다. 이 에이전트는 사용자의 요청을 이해하고, 정보를 찾기 위해 도구를 사용하며, 도구의 결과에 따라 적절하게 응답합니다.
 
-In the next step, we'll explore how to easily switch the underlying Language Model powering this agent.
+다음 단계에서는 이 에이전트를 구동하는 기본 언어 모델을 쉽게 전환하는 방법을 알아볼 것입니다.
 
-## Step 2: Going Multi-Model with LiteLLM [Optional]
+## 2단계: LiteLLM으로 멀티 모델 활용하기 [선택 사항]
 
-In Step 1, we built a functional Weather Agent powered by a specific Gemini model. While effective, real-world applications often benefit from the flexibility to use *different* Large Language Models (LLMs). Why?
+1단계에서는 특정 Gemini 모델로 구동되는 기능적인 날씨 에이전트를 구축했습니다. 효과적이긴 하지만, 실제 애플리케이션은 종종 *다른* 거대 언어 모델(LLM)을 사용할 수 있는 유연성의 이점을 얻습니다. 왜 그럴까요?
 
-*   **Performance:** Some models excel at specific tasks (e.g., coding, reasoning, creative writing).
-*   **Cost:** Different models have varying price points.
-*   **Capabilities:** Models offer diverse features, context window sizes, and fine-tuning options.
-*   **Availability/Redundancy:** Having alternatives ensures your application remains functional even if one provider experiences issues.
+*   **성능:** 일부 모델은 특정 작업(예: 코딩, 추론, 창의적 글쓰기)에 탁월합니다.
+*   **비용:** 다른 모델은 다양한 가격대를 가집니다.
+*   **기능:** 모델은 다양한 기능, 컨텍스트 창 크기, 미세 조정 옵션을 제공합니다.
+*   **가용성/중복성:** 대안을 가지면 한 제공업체에 문제가 발생하더라도 애플리케이션이 계속 작동하도록 보장합니다.
 
-ADK makes switching between models seamless through its integration with the [**LiteLLM**](https://github.com/BerriAI/litellm) library. LiteLLM acts as a consistent interface to over 100 different LLMs.
+ADK는 [**LiteLLM**](https://github.com/BerriAI/litellm) 라이브러리와의 통합을 통해 모델 간 전환을 원활하게 만듭니다. LiteLLM은 100개 이상의 다양한 LLM에 대한 일관된 인터페이스 역할을 합니다.
 
-**In this step, we will:**
+**이 단계에서는 다음을 수행합니다:**
 
-1.  Learn how to configure an ADK `Agent` to use models from providers like OpenAI (GPT) and Anthropic (Claude) using the `LiteLlm` wrapper.
-2.  Define, configure (with their own sessions and runners), and immediately test instances of our Weather Agent, each backed by a different LLM.
-3.  Interact with these different agents to observe potential variations in their responses, even when using the same underlying tool.
+1.  `LiteLlm` 래퍼를 사용하여 OpenAI(GPT) 및 Anthropic(Claude)과 같은 제공업체의 모델을 사용하도록 ADK `Agent`를 구성하는 방법을 배웁니다.
+2.  각각 다른 LLM으로 백업된 날씨 에이전트의 인스턴스를 정의, 구성(자체 세션 및 러너 포함)하고 즉시 테스트합니다.
+3.  동일한 기본 도구를 사용할 때도 응답의 잠재적 변화를 관찰하기 위해 이러한 다른 에이전트와 상호 작용합니다.
 
 ---
 
-**1\. Import `LiteLlm`**
+**1. `LiteLlm` 가져오기**
 
-We imported this during the initial setup (Step 0), but it's the key component for multi-model support:
+초기 설정(0단계) 중에 이것을 가져왔지만, 멀티 모델 지원을 위한 핵심 구성 요소입니다.
 
 
 ```python
-# @title 1. Import LiteLlm
+# @title 1. LiteLlm 가져오기
 from google.adk.models.lite_llm import LiteLlm
 ```
 
-**2\. Define and Test Multi-Model Agents**
+**2. 멀티 모델 에이전트 정의 및 테스트**
 
-Instead of passing only a model name string (which defaults to Google's Gemini models), we wrap the desired model identifier string within the `LiteLlm` class.
+모델 이름 문자열만 전달하는 대신(기본적으로 Google의 Gemini 모델로 설정됨), 원하는 모델 식별자 문자열을 `LiteLlm` 클래스 내에 래핑합니다.
 
-*   **Key Concept: `LiteLlm` Wrapper:** The `LiteLlm(model="provider/model_name")` syntax tells ADK to route requests for this agent through the LiteLLM library to the specified model provider.
+*   **핵심 개념: `LiteLlm` 래퍼:** `LiteLlm(model="provider/model_name")` 구문은 ADK에게 이 에이전트에 대한 요청을 LiteLLM 라이브러리를 통해 지정된 모델 제공업체로 라우팅하도록 지시합니다.
 
-Make sure you have configured the necessary API keys for OpenAI and Anthropic in Step 0. We'll use the `call_agent_async` function (defined earlier, which now accepts `runner`, `user_id`, and `session_id`) to interact with each agent immediately after its setup.
+0단계에서 OpenAI 및 Anthropic에 필요한 API 키를 구성했는지 확인하십시오. 이전에 정의한 `call_agent_async` 함수(이제 `runner`, `user_id`, `session_id`를 허용)를 사용하여 각 에이전트를 설정한 직후 상호 작용할 것입니다.
 
-Each block below will:
+아래 각 블록은 다음을 수행합니다:
 
-*   Define the agent using a specific LiteLLM model (`MODEL_GPT_4O` or `MODEL_CLAUDE_SONNET`).
-*   Create a *new, separate* `InMemorySessionService` and session specifically for that agent's test run. This keeps the conversation histories isolated for this demonstration.
-*   Create a `Runner` configured for the specific agent and its session service.
-*   Immediately call `call_agent_async` to send a query and test the agent.
+*   특정 LiteLLM 모델(`MODEL_GPT_4O` 또는 `MODEL_CLAUDE_SONNET`)을 사용하여 에이전트를 정의합니다.
+*   해당 에이전트의 테스트 실행을 위해 *새롭고 별도의* `InMemorySessionService` 및 세션을 특별히 생성합니다. 이는 이 시연을 위해 대화 기록을 격리합니다.
+*   특정 에이전트와 해당 세션 서비스에 맞게 구성된 `Runner`를 생성합니다.
+*   즉시 `call_agent_async`를 호출하여 쿼리를 보내고 에이전트를 테스트합니다.
 
-**Best Practice:** Use constants for model names (like `MODEL_GPT_4O`, `MODEL_CLAUDE_SONNET` defined in Step 0) to avoid typos and make code easier to manage.
+**모범 사례:** 오타를 피하고 코드 관리를 쉽게 하기 위해 모델 이름에 상수(0단계에서 정의된 `MODEL_GPT_4O`, `MODEL_CLAUDE_SONNET` 등)를 사용하세요.
 
-**Error Handling:** We wrap the agent definitions in `try...except` blocks. This prevents the entire code cell from failing if an API key for a specific provider is missing or invalid, allowing the tutorial to proceed with the models that *are* configured.
+**오류 처리:** 에이전트 정의를 `try...except` 블록으로 감쌉니다. 이렇게 하면 특정 제공업체에 대한 API 키가 없거나 유효하지 않은 경우 전체 코드 셀이 실패하는 것을 방지하여 *구성된* 모델로 튜토리얼을 계속 진행할 수 있습니다.
 
-First, let's create and test the agent using OpenAI's GPT-4o.
+먼저 OpenAI의 GPT-4o를 사용하여 에이전트를 만들고 테스트해 보겠습니다.
 
 
 ```python
-# @title Define and Test GPT Agent
+# @title GPT 에이전트 정의 및 테스트
 
-# Make sure 'get_weather' function from Step 1 is defined in your environment.
-# Make sure 'call_agent_async' is defined from earlier.
+# 1단계의 'get_weather' 함수가 환경에 정의되어 있는지 확인하세요.
+# 이전에 'call_agent_async'가 정의되어 있는지 확인하세요.
 
-# --- Agent using GPT-4o ---
-weather_agent_gpt = None # Initialize to None
-runner_gpt = None      # Initialize runner to None
+# --- GPT-4o를 사용하는 에이전트 ---
+weather_agent_gpt = None # None으로 초기화
+runner_gpt = None      # runner를 None으로 초기화
 
 try:
     weather_agent_gpt = Agent(
         name="weather_agent_gpt",
-        # Key change: Wrap the LiteLLM model identifier
+        # 핵심 변경: LiteLLM 모델 식별자를 래핑
         model=LiteLlm(model=MODEL_GPT_4O),
-        description="Provides weather information (using GPT-4o).",
-        instruction="You are a helpful weather assistant powered by GPT-4o. "
-                    "Use the 'get_weather' tool for city weather requests. "
-                    "Clearly present successful reports or polite error messages based on the tool's output status.",
-        tools=[get_weather], # Re-use the same tool
+        description="날씨 정보를 제공합니다 (GPT-4o 사용).",
+        instruction="당신은 GPT-4o로 구동되는 유용한 날씨 비서입니다. "
+                    "도시 날씨 요청에는 'get_weather' 도구를 사용하세요. "
+                    "도구의 출력 상태에 따라 성공적인 보고서나 정중한 오류 메시지를 명확하게 제시하세요.",
+        tools=[get_weather], # 동일한 도구 재사용
     )
-    print(f"Agent '{weather_agent_gpt.name}' created using model '{MODEL_GPT_4O}'.")
+    print(f"에이전트 '{weather_agent_gpt.name}'가 모델 '{MODEL_GPT_4O}'을 사용하여 생성되었습니다.")
 
-    # InMemorySessionService is simple, non-persistent storage for this tutorial.
-    session_service_gpt = InMemorySessionService() # Create a dedicated service
+    # InMemorySessionService는 이 튜토리얼을 위한 간단하고 비영구적인 저장소입니다.
+    session_service_gpt = InMemorySessionService() # 전용 서비스 생성
 
-    # Define constants for identifying the interaction context
-    APP_NAME_GPT = "weather_tutorial_app_gpt" # Unique app name for this test
+    # 상호작용 컨텍스트를 식별하기 위한 상수 정의
+    APP_NAME_GPT = "weather_tutorial_app_gpt" # 이 테스트를 위한 고유한 앱 이름
     USER_ID_GPT = "user_1_gpt"
-    SESSION_ID_GPT = "session_001_gpt" # Using a fixed ID for simplicity
+    SESSION_ID_GPT = "session_001_gpt" # 단순화를 위해 고정 ID 사용
 
-    # Create the specific session where the conversation will happen
+    # 대화가 이루어질 특정 세션 생성
     session_gpt = await session_service_gpt.create_session(
         app_name=APP_NAME_GPT,
         user_id=USER_ID_GPT,
         session_id=SESSION_ID_GPT
     )
-    print(f"Session created: App='{APP_NAME_GPT}', User='{USER_ID_GPT}', Session='{SESSION_ID_GPT}'")
+    print(f"세션 생성됨: App='{APP_NAME_GPT}', User='{USER_ID_GPT}', Session='{SESSION_ID_GPT}'")
 
-    # Create a runner specific to this agent and its session service
+    # 이 에이전트와 해당 세션 서비스에 특화된 러너 생성
     runner_gpt = Runner(
         agent=weather_agent_gpt,
-        app_name=APP_NAME_GPT,       # Use the specific app name
-        session_service=session_service_gpt # Use the specific session service
+        app_name=APP_NAME_GPT,       # 특정 앱 이름 사용
+        session_service=session_service_gpt # 특정 세션 서비스 사용
         )
-    print(f"Runner created for agent '{runner_gpt.agent.name}'.")
+    print(f"Runner가 에이전트 '{runner_gpt.agent.name}'에 대해 생성되었습니다.")
 
-    # --- Test the GPT Agent ---
-    print("\n--- Testing GPT Agent ---")
-    # Ensure call_agent_async uses the correct runner, user_id, session_id
-    await call_agent_async(query = "What's the weather in Tokyo?",
+    # --- GPT 에이전트 테스트 ---
+    print("\n--- GPT 에이전트 테스트 중 ---")
+    # call_agent_async가 올바른 runner, user_id, session_id를 사용하는지 확인
+    await call_agent_async(query = "도쿄 날씨는 어때?",
                            runner=runner_gpt,
                            user_id=USER_ID_GPT,
                            session_id=SESSION_ID_GPT)
-    # --- OR ---
+    # --- 또는 ---
 
-    # Uncomment the following lines if running as a standard Python script (.py file):
+    # 표준 Python 스크립트(.py 파일)로 실행하는 경우 다음 줄의 주석을 해제하세요:
     # import asyncio
     # if __name__ == "__main__":
     #     try:
-    #         asyncio.run(call_agent_async(query = "What's the weather in Tokyo?",
+    #         asyncio.run(call_agent_async(query = "도쿄 날씨는 어때?",
     #                      runner=runner_gpt,
     #                       user_id=USER_ID_GPT,
     #                       session_id=SESSION_ID_GPT)
     #     except Exception as e:
-    #         print(f"An error occurred: {e}")
+    #         print(f"오류가 발생했습니다: {e}")
 
 except Exception as e:
-    print(f"❌ Could not create or run GPT agent '{MODEL_GPT_4O}'. Check API Key and model name. Error: {e}")
-
+    print(f"❌ GPT 에이전트 '{MODEL_GPT_4O}'를 생성하거나 실행할 수 없습니다. API 키와 모델 이름을 확인하세요. 오류: {e}")
 ```
 
-Next, we'll do the same for Anthropic's Claude Sonnet.
+다음으로, Anthropic의 Claude Sonnet에 대해서도 동일한 작업을 수행합니다.
 
 
 ```python
-# @title Define and Test Claude Agent
+# @title Claude 에이전트 정의 및 테스트
 
-# Make sure 'get_weather' function from Step 1 is defined in your environment.
-# Make sure 'call_agent_async' is defined from earlier.
+# 1단계의 'get_weather' 함수가 환경에 정의되어 있는지 확인하세요.
+# 이전에 'call_agent_async'가 정의되어 있는지 확인하세요.
 
-# --- Agent using Claude Sonnet ---
-weather_agent_claude = None # Initialize to None
-runner_claude = None      # Initialize runner to None
+# --- Claude Sonnet을 사용하는 에이전트 ---
+weather_agent_claude = None # None으로 초기화
+runner_claude = None      # runner를 None으로 초기화
 
 try:
     weather_agent_claude = Agent(
         name="weather_agent_claude",
-        # Key change: Wrap the LiteLLM model identifier
+        # 핵심 변경: LiteLLM 모델 식별자를 래핑
         model=LiteLlm(model=MODEL_CLAUDE_SONNET),
-        description="Provides weather information (using Claude Sonnet).",
-        instruction="You are a helpful weather assistant powered by Claude Sonnet. "
-                    "Use the 'get_weather' tool for city weather requests. "
-                    "Analyze the tool's dictionary output ('status', 'report'/'error_message'). "
-                    "Clearly present successful reports or polite error messages.",
-        tools=[get_weather], # Re-use the same tool
+        description="날씨 정보를 제공합니다 (Claude Sonnet 사용).",
+        instruction="당신은 Claude Sonnet으로 구동되는 유용한 날씨 비서입니다. "
+                    "도시 날씨 요청에는 'get_weather' 도구를 사용하세요. "
+                    "도구의 사전 출력('status', 'report'/'error_message')을 분석하세요. "
+                    "성공적인 보고서나 정중한 오류 메시지를 명확하게 제시하세요.",
+        tools=[get_weather], # 동일한 도구 재사용
     )
-    print(f"Agent '{weather_agent_claude.name}' created using model '{MODEL_CLAUDE_SONNET}'.")
+    print(f"에이전트 '{weather_agent_claude.name}'가 모델 '{MODEL_CLAUDE_SONNET}'을 사용하여 생성되었습니다.")
 
-    # InMemorySessionService is simple, non-persistent storage for this tutorial.
-    session_service_claude = InMemorySessionService() # Create a dedicated service
+    # InMemorySessionService는 이 튜토리얼을 위한 간단하고 비영구적인 저장소입니다.
+    session_service_claude = InMemorySessionService() # 전용 서비스 생성
 
-    # Define constants for identifying the interaction context
-    APP_NAME_CLAUDE = "weather_tutorial_app_claude" # Unique app name
+    # 상호작용 컨텍스트를 식별하기 위한 상수 정의
+    APP_NAME_CLAUDE = "weather_tutorial_app_claude" # 고유한 앱 이름
     USER_ID_CLAUDE = "user_1_claude"
-    SESSION_ID_CLAUDE = "session_001_claude" # Using a fixed ID for simplicity
+    SESSION_ID_CLAUDE = "session_001_claude" # 단순화를 위해 고정 ID 사용
 
-    # Create the specific session where the conversation will happen
+    # 대화가 이루어질 특정 세션 생성
     session_claude = await session_service_claude.create_session(
         app_name=APP_NAME_CLAUDE,
         user_id=USER_ID_CLAUDE,
         session_id=SESSION_ID_CLAUDE
     )
-    print(f"Session created: App='{APP_NAME_CLAUDE}', User='{USER_ID_CLAUDE}', Session='{SESSION_ID_CLAUDE}'")
+    print(f"세션 생성됨: App='{APP_NAME_CLAUDE}', User='{USER_ID_CLAUDE}', Session='{SESSION_ID_CLAUDE}'")
 
-    # Create a runner specific to this agent and its session service
+    # 이 에이전트와 해당 세션 서비스에 특화된 러너 생성
     runner_claude = Runner(
         agent=weather_agent_claude,
-        app_name=APP_NAME_CLAUDE,       # Use the specific app name
-        session_service=session_service_claude # Use the specific session service
+        app_name=APP_NAME_CLAUDE,       # 특정 앱 이름 사용
+        session_service=session_service_claude # 특정 세션 서비스 사용
         )
-    print(f"Runner created for agent '{runner_claude.agent.name}'.")
+    print(f"Runner가 에이전트 '{runner_claude.agent.name}'에 대해 생성되었습니다.")
 
-    # --- Test the Claude Agent ---
-    print("\n--- Testing Claude Agent ---")
-    # Ensure call_agent_async uses the correct runner, user_id, session_id
-    await call_agent_async(query = "Weather in London please.",
+    # --- Claude 에이전트 테스트 ---
+    print("\n--- Claude 에이전트 테스트 중 ---")
+    # call_agent_async가 올바른 runner, user_id, session_id를 사용하는지 확인
+    await call_agent_async(query = "런던 날씨 좀 알려줘.",
                            runner=runner_claude,
                            user_id=USER_ID_CLAUDE,
                            session_id=SESSION_ID_CLAUDE)
 
-    # --- OR ---
+    # --- 또는 ---
 
-    # Uncomment the following lines if running as a standard Python script (.py file):
+    # 표준 Python 스크립트(.py 파일)로 실행하는 경우 다음 줄의 주석을 해제하세요:
     # import asyncio
     # if __name__ == "__main__":
     #     try:
-    #         asyncio.run(call_agent_async(query = "Weather in London please.",
+    #         asyncio.run(call_agent_async(query = "런던 날씨 좀 알려줘.",
     #                      runner=runner_claude,
     #                       user_id=USER_ID_CLAUDE,
     #                       session_id=SESSION_ID_CLAUDE)
     #     except Exception as e:
-    #         print(f"An error occurred: {e}")
+    #         print(f"오류가 발생했습니다: {e}")
 
 
 except Exception as e:
-    print(f"❌ Could not create or run Claude agent '{MODEL_CLAUDE_SONNET}'. Check API Key and model name. Error: {e}")
+    print(f"❌ Claude 에이전트 '{MODEL_CLAUDE_SONNET}'를 생성하거나 실행할 수 없습니다. API 키와 모델 이름을 확인하세요. 오류: {e}")
 ```
 
-Observe the output carefully from both code blocks. You should see:
+두 코드 블록의 출력을 주의 깊게 관찰하세요. 다음을 볼 수 있습니다:
 
-1.  Each agent (`weather_agent_gpt`, `weather_agent_claude`) is created successfully (if API keys are valid).
-2.  A dedicated session and runner are set up for each.
-3.  Each agent correctly identifies the need to use the `get_weather` tool when processing the query (you'll see the `--- Tool: get_weather called... ---` log).
-4.  The *underlying tool logic* remains identical, always returning our mock data.
-5.  However, the **final textual response** generated by each agent might differ slightly in phrasing, tone, or formatting. This is because the instruction prompt is interpreted and executed by different LLMs (GPT-4o vs. Claude Sonnet).
+1.  각 에이전트(`weather_agent_gpt`, `weather_agent_claude`)가 성공적으로 생성됩니다 (API 키가 유효한 경우).
+2.  각각에 대해 전용 세션과 러너가 설정됩니다.
+3.  각 에이전트는 쿼리를 처리할 때 `get_weather` 도구를 사용할 필요성을 올바르게 식별합니다 (`--- 도구: get_weather 호출됨... ---` 로그를 볼 수 있습니다).
+4.  *기본 도구 로직*은 동일하게 유지되며 항상 모의 데이터를 반환합니다.
+5.  그러나 각 에이전트가 생성하는 **최종 텍스트 응답**은 표현, 어조 또는 형식 면에서 약간 다를 수 있습니다. 이는 지시 프롬프트가 다른 LLM(GPT-4o 대 Claude Sonnet)에 의해 해석되고 실행되기 때문입니다.
 
-This step demonstrates the power and flexibility ADK + LiteLLM provide. You can easily experiment with and deploy agents using various LLMs while keeping your core application logic (tools, fundamental agent structure) consistent.
+이 단계는 ADK + LiteLLM이 제공하는 강력함과 유연성을 보여줍니다. 핵심 애플리케이션 로직(도구, 기본 에이전트 구조)을 일관되게 유지하면서 다양한 LLM을 사용하여 에이전트를 쉽게 실험하고 배포할 수 있습니다.
 
-In the next step, we'll move beyond a single agent and build a small team where agents can delegate tasks to each other!
-
----
-
-## Step 3: Building an Agent Team \- Delegation for Greetings & Farewells
-
-In Steps 1 and 2, we built and experimented with a single agent focused solely on weather lookups. While effective for its specific task, real-world applications often involve handling a wider variety of user interactions. We *could* keep adding more tools and complex instructions to our single weather agent, but this can quickly become unmanageable and less efficient.
-
-A more robust approach is to build an **Agent Team**. This involves:
-
-1. Creating multiple, **specialized agents**, each designed for a specific capability (e.g., one for weather, one for greetings, one for calculations).  
-2. Designating a **root agent** (or orchestrator) that receives the initial user request.  
-3. Enabling the root agent to **delegate** the request to the most appropriate specialized sub-agent based on the user's intent.
-
-**Why build an Agent Team?**
-
-* **Modularity:** Easier to develop, test, and maintain individual agents.  
-* **Specialization:** Each agent can be fine-tuned (instructions, model choice) for its specific task.  
-* **Scalability:** Simpler to add new capabilities by adding new agents.  
-* **Efficiency:** Allows using potentially simpler/cheaper models for simpler tasks (like greetings).
-
-**In this step, we will:**
-
-1. Define simple tools for handling greetings (`say_hello`) and farewells (`say_goodbye`).  
-2. Create two new specialized sub-agents: `greeting_agent` and `farewell_agent`.  
-3. Update our main weather agent (`weather_agent_v2`) to act as the **root agent**.  
-4. Configure the root agent with its sub-agents, enabling **automatic delegation**.  
-5. Test the delegation flow by sending different types of requests to the root agent.
+다음 단계에서는 단일 에이전트를 넘어 에이전트들이 서로 작업을 위임할 수 있는 작은 팀을 구축할 것입니다!
 
 ---
 
-**1\. Define Tools for Sub-Agents**
+## 3단계: 에이전트 팀 구축 - 인사 및 작별 위임
 
-First, let's create the simple Python functions that will serve as tools for our new specialist agents. Remember, clear docstrings are vital for the agents that will use them.
+1, 2단계에서는 날씨 조회에만 집중하는 단일 에이전트를 구축하고 실험했습니다. 특정 작업에는 효과적이지만, 실제 애플리케이션은 종종 더 다양한 사용자 상호작용을 처리해야 합니다. 단일 날씨 에이전트에 더 많은 도구와 복잡한 지침을 계속 추가할 수도 있지만, 이는 금방 관리하기 어려워지고 효율성이 떨어질 수 있습니다.
+
+더 견고한 접근 방식은 **에이전트 팀**을 구축하는 것입니다. 여기에는 다음이 포함됩니다:
+
+1. 각각 특정 기능을 위해 설계된 여러 **전문 에이전트**를 만듭니다 (예: 날씨용, 인사용, 계산용).
+2. 초기 사용자 요청을 받는 **루트 에이전트**(또는 오케스트레이터)를 지정합니다.
+3. 루트 에이전트가 사용자의 의도에 따라 가장 적절한 전문 하위 에이전트에게 요청을 **위임**할 수 있도록 합니다.
+
+**왜 에이전트 팀을 구축해야 할까요?**
+
+* **모듈성:** 개별 에이전트를 개발, 테스트 및 유지 관리하기가 더 쉽습니다.
+* **전문화:** 각 에이전트는 특정 작업에 맞게 미세 조정(지침, 모델 선택)될 수 있습니다.
+* **확장성:** 새 에이전트를 추가하여 새로운 기능을 더 간단하게 추가할 수 있습니다.
+* **효율성:** 간단한 작업(인사 등)에 잠재적으로 더 간단하고 저렴한 모델을 사용할 수 있습니다.
+
+**이 단계에서는 다음을 수행합니다:**
+
+1. 인사(`say_hello`) 및 작별(`say_goodbye`)을 처리하기 위한 간단한 도구를 정의합니다.
+2. 두 개의 새로운 전문 하위 에이전트인 `greeting_agent`와 `farewell_agent`를 만듭니다.
+3. 메인 날씨 에이전트(`weather_agent_v2`)를 **루트 에이전트**로 작동하도록 업데이트합니다.
+4. 루트 에이전트를 하위 에이전트로 구성하여 **자동 위임**을 활성화합니다.
+5. 루트 에이전트에게 다른 유형의 요청을 보내 위임 흐름을 테스트합니다.
+
+---
+
+**1. 하위 에이전트를 위한 도구 정의**
+
+먼저, 새로운 전문가 에이전트를 위한 도구 역할을 할 간단한 Python 함수를 만듭니다. 명확한 docstring은 이를 사용할 에이전트에게 매우 중요합니다.
 
 
 ```python
-# @title Define Tools for Greeting and Farewell Agents
-from typing import Optional # Make sure to import Optional
+# @title 인사 및 작별 에이전트를 위한 도구 정의
+from typing import Optional # Optional을 반드시 가져오세요.
 
-# Ensure 'get_weather' from Step 1 is available if running this step independently.
-# def get_weather(city: str) -> dict: ... (from Step 1)
+# 이 단계를 독립적으로 실행하는 경우 1단계의 'get_weather'가 사용 가능한지 확인하세요.
+# def get_weather(city: str) -> dict: ... (1단계에서)
 
 def say_hello(name: Optional[str] = None) -> str:
-    """Provides a simple greeting. If a name is provided, it will be used.
+    """간단한 인사를 제공합니다. 이름이 제공되면 사용됩니다.
 
     Args:
-        name (str, optional): The name of the person to greet. Defaults to a generic greeting if not provided.
+        name (str, optional): 인사할 사람의 이름. 제공되지 않으면 일반적인 인사말로 기본 설정됩니다.
 
     Returns:
-        str: A friendly greeting message.
+        str: 친근한 인사 메시지.
     """
     if name:
-        greeting = f"Hello, {name}!"
-        print(f"--- Tool: say_hello called with name: {name} ---")
+        greeting = f"안녕하세요, {name}님!"
+        print(f"--- 도구: 이름({name})으로 say_hello 호출됨 ---")
     else:
-        greeting = "Hello there!" # Default greeting if name is None or not explicitly passed
-        print(f"--- Tool: say_hello called without a specific name (name_arg_value: {name}) ---")
+        greeting = "안녕하세요!" # 이름이 None이거나 명시적으로 전달되지 않은 경우 기본 인사말
+        print(f"--- 도구: 특정 이름 없이 say_hello 호출됨 (name_arg_value: {name}) ---")
     return greeting
 
 def say_goodbye() -> str:
-    """Provides a simple farewell message to conclude the conversation."""
-    print(f"--- Tool: say_goodbye called ---")
-    return "Goodbye! Have a great day."
+    """대화를 마무리하기 위한 간단한 작별 메시지를 제공합니다."""
+    print(f"--- 도구: say_goodbye 호출됨 ---")
+    return "안녕히 가세요! 좋은 하루 되세요."
 
-print("Greeting and Farewell tools defined.")
+print("인사 및 작별 도구가 정의되었습니다.")
 
-# Optional self-test
-print(say_hello("Alice"))
-print(say_hello()) # Test with no argument (should use default "Hello there!")
-print(say_hello(name=None)) # Test with name explicitly as None (should use default "Hello there!")
+# 선택적 자체 테스트
+print(say_hello("앨리스"))
+print(say_hello()) # 인수 없이 테스트 (기본 "안녕하세요!" 사용해야 함)
+print(say_hello(name=None)) # 이름을 명시적으로 None으로 테스트 (기본 "안녕하세요!" 사용해야 함)
 ```
 
 ---
 
-**2\. Define the Sub-Agents (Greeting & Farewell)**
+**2. 하위 에이전트 정의 (인사 및 작별)**
 
-Now, create the `Agent` instances for our specialists. Notice their highly focused `instruction` and, critically, their clear `description`. The `description` is the primary information the *root agent* uses to decide *when* to delegate to these sub-agents.
+이제 전문가들을 위한 `Agent` 인스턴스를 만듭니다. 매우 집중된 `instruction`과 결정적으로 명확한 `description`을 주목하세요. `description`은 *루트 에이전트*가 이 하위 에이전트에게 *언제* 위임할지 결정하는 데 사용하는 주요 정보입니다.
 
-**Best Practice:** Sub-agent `description` fields should accurately and concisely summarize their specific capability. This is crucial for effective automatic delegation.
+**모범 사례:** 하위 에이전트의 `description` 필드는 특정 기능을 정확하고 간결하게 요약해야 합니다. 이는 효과적인 자동 위임에 매우 중요합니다.
 
-**Best Practice:** Sub-agent `instruction` fields should be tailored to their limited scope, telling them exactly what to do and *what not* to do (e.g., "Your *only* task is...").
+**모범 사례:** 하위 에이전트의 `instruction` 필드는 제한된 범위에 맞게 조정되어야 하며, 정확히 무엇을 해야 하고 *무엇을 하지 말아야 하는지* 알려줘야 합니다 (예: "당신의 *유일한* 작업은...").
 
 
 ```python
-# @title Define Greeting and Farewell Sub-Agents
+# @title 인사 및 작별 하위 에이전트 정의
 
-# If you want to use models other than Gemini, Ensure LiteLlm is imported and API keys are set (from Step 0/2)
+# Gemini 이외의 모델을 사용하려면 LiteLlm이 가져와졌고 API 키가 설정되었는지 확인하세요 (0/2단계에서)
 # from google.adk.models.lite_llm import LiteLlm
-# MODEL_GPT_4O, MODEL_CLAUDE_SONNET etc. should be defined
-# Or else, continue to use: model = MODEL_GEMINI_2_0_FLASH
+# MODEL_GPT_4O, MODEL_CLAUDE_SONNET 등이 정의되어야 합니다.
+# 그렇지 않으면 계속해서 model = MODEL_GEMINI_2_0_FLASH를 사용합니다.
 
-# --- Greeting Agent ---
+# --- 인사 에이전트 ---
 greeting_agent = None
 try:
     greeting_agent = Agent(
-        # Using a potentially different/cheaper model for a simple task
+        # 간단한 작업을 위해 잠재적으로 다른/저렴한 모델 사용
         model = MODEL_GEMINI_2_0_FLASH,
-        # model=LiteLlm(model=MODEL_GPT_4O), # If you would like to experiment with other models
+        # model=LiteLlm(model=MODEL_GPT_4O), # 다른 모델로 실험하고 싶다면
         name="greeting_agent",
-        instruction="You are the Greeting Agent. Your ONLY task is to provide a friendly greeting to the user. "
-                    "Use the 'say_hello' tool to generate the greeting. "
-                    "If the user provides their name, make sure to pass it to the tool. "
-                    "Do not engage in any other conversation or tasks.",
-        description="Handles simple greetings and hellos using the 'say_hello' tool.", # Crucial for delegation
+        instruction="당신은 인사 에이전트입니다. 당신의 유일한 임무는 사용자에게 친절한 인사를 제공하는 것입니다. "
+                    "'say_hello' 도구를 사용하여 인사를 생성하세요. "
+                    "사용자가 이름을 제공하면 반드시 도구에 전달하세요. "
+                    "다른 대화나 작업에 참여하지 마세요.",
+        description="'say_hello' 도구를 사용하여 간단한 인사와 안부를 처리합니다.", # 위임에 중요
         tools=[say_hello],
     )
-    print(f"✅ Agent '{greeting_agent.name}' created using model '{greeting_agent.model}'.")
+    print(f"✅ 에이전트 '{greeting_agent.name}'가 모델 '{greeting_agent.model}'을 사용하여 생성되었습니다.")
 except Exception as e:
-    print(f"❌ Could not create Greeting agent. Check API Key ({greeting_agent.model}). Error: {e}")
+    print(f"❌ 인사 에이전트를 생성할 수 없습니다. API 키({greeting_agent.model})를 확인하세요. 오류: {e}")
 
-# --- Farewell Agent ---
+# --- 작별 에이전트 ---
 farewell_agent = None
 try:
     farewell_agent = Agent(
-        # Can use the same or a different model
+        # 동일하거나 다른 모델 사용 가능
         model = MODEL_GEMINI_2_0_FLASH,
-        # model=LiteLlm(model=MODEL_GPT_4O), # If you would like to experiment with other models
+        # model=LiteLlm(model=MODEL_GPT_4O), # 다른 모델로 실험하고 싶다면
         name="farewell_agent",
-        instruction="You are the Farewell Agent. Your ONLY task is to provide a polite goodbye message. "
-                    "Use the 'say_goodbye' tool when the user indicates they are leaving or ending the conversation "
-                    "(e.g., using words like 'bye', 'goodbye', 'thanks bye', 'see you'). "
-                    "Do not perform any other actions.",
-        description="Handles simple farewells and goodbyes using the 'say_goodbye' tool.", # Crucial for delegation
+        instruction="당신은 작별 에이전트입니다. 당신의 유일한 임무는 정중한 작별 메시지를 제공하는 것입니다. "
+                    "사용자가 떠나거나 대화를 끝내려 할 때(예: '안녕', '잘가', '고마워 안녕', '나중에 봐' 등) 'say_goodbye' 도구를 사용하세요. "
+                    "다른 어떤 작업도 수행하지 마세요.",
+        description="'say_goodbye' 도구를 사용하여 간단한 작별과 인사를 처리합니다.", # 위임에 중요
         tools=[say_goodbye],
     )
-    print(f"✅ Agent '{farewell_agent.name}' created using model '{farewell_agent.model}'.")
+    print(f"✅ 에이전트 '{farewell_agent.name}'가 모델 '{farewell_agent.model}'을 사용하여 생성되었습니다.")
 except Exception as e:
-    print(f"❌ Could not create Farewell agent. Check API Key ({farewell_agent.model}). Error: {e}")
+    print(f"❌ 작별 에이전트를 생성할 수 없습니다. API 키({farewell_agent.model})를 확인하세요. 오류: {e}")
 ```
 
 ---
 
-**3\. Define the Root Agent (Weather Agent v2) with Sub-Agents**
+**3. 루트 에이전트 정의 (날씨 에이전트 v2) 및 하위 에이전트 추가**
 
-Now, we upgrade our `weather_agent`. The key changes are:
+이제 `weather_agent`를 업그레이드합니다. 주요 변경 사항은 다음과 같습니다.
 
-* Adding the `sub_agents` parameter: We pass a list containing the `greeting_agent` and `farewell_agent` instances we just created.  
-* Updating the `instruction`: We explicitly tell the root agent *about* its sub-agents and *when* it should delegate tasks to them.
+* `sub_agents` 매개변수 추가: 방금 만든 `greeting_agent`와 `farewell_agent` 인스턴스가 포함된 리스트를 전달합니다.
+* `instruction` 업데이트: 루트 에이전트에게 하위 에이전트에 대해 *명시적으로* 알리고 *언제* 작업을 위임해야 하는지 알려줍니다.
 
-**Key Concept: Automatic Delegation (Auto Flow)** By providing the `sub_agents` list, ADK enables automatic delegation. When the root agent receives a user query, its LLM considers not only its own instructions and tools but also the `description` of each sub-agent. If the LLM determines that a query aligns better with a sub-agent's described capability (e.g., "Handles simple greetings"), it will automatically generate a special internal action to *transfer control* to that sub-agent for that turn. The sub-agent then processes the query using its own model, instructions, and tools.
+**핵심 개념: 자동 위임 (Auto Flow)** `sub_agents` 목록을 제공함으로써 ADK는 자동 위임을 활성화합니다. 루트 에이전트가 사용자 쿼리를 받으면 LLM은 자신의 지침과 도구뿐만 아니라 각 하위 에이전트의 `description`도 고려합니다. LLM이 쿼리가 하위 에이전트의 설명된 기능(예: "간단한 인사를 처리함")과 더 잘 맞는다고 판단하면, 해당 턴에 대해 제어권을 해당 하위 에이전트에게 *넘기는* 특별한 내부 작업을 자동으로 생성합니다. 그러면 하위 에이전트는 자신의 모델, 지침, 도구를 사용하여 쿼리를 처리합니다.
 
-**Best Practice:** Ensure the root agent's instructions clearly guide its delegation decisions. Mention the sub-agents by name and describe the conditions under which delegation should occur.
+**모범 사례:** 루트 에이전트의 지침이 위임 결정을 명확하게 안내하도록 하세요. 하위 에이전트의 이름을 언급하고 위임이 발생해야 하는 조건을 설명하세요.
 
 
 ```python
-# @title Define the Root Agent with Sub-Agents
+# @title 하위 에이전트를 포함한 루트 에이전트 정의
 
-# Ensure sub-agents were created successfully before defining the root agent.
-# Also ensure the original 'get_weather' tool is defined.
+# 루트 에이전트를 정의하기 전에 하위 에이전트가 성공적으로 생성되었는지 확인하세요.
+# 또한 원래 'get_weather' 도구가 정의되어 있는지 확인하세요.
 root_agent = None
-runner_root = None # Initialize runner
+runner_root = None # runner 초기화
 
 if greeting_agent and farewell_agent and 'get_weather' in globals():
-    # Let's use a capable Gemini model for the root agent to handle orchestration
+    # 오케스트레이션을 처리하기 위해 유능한 Gemini 모델을 루트 에이전트에 사용합시다.
     root_agent_model = MODEL_GEMINI_2_0_FLASH
 
     weather_agent_team = Agent(
-        name="weather_agent_v2", # Give it a new version name
+        name="weather_agent_v2", # 새 버전 이름 부여
         model=root_agent_model,
-        description="The main coordinator agent. Handles weather requests and delegates greetings/farewells to specialists.",
-        instruction="You are the main Weather Agent coordinating a team. Your primary responsibility is to provide weather information. "
-                    "Use the 'get_weather' tool ONLY for specific weather requests (e.g., 'weather in London'). "
-                    "You have specialized sub-agents: "
-                    "1. 'greeting_agent': Handles simple greetings like 'Hi', 'Hello'. Delegate to it for these. "
-                    "2. 'farewell_agent': Handles simple farewells like 'Bye', 'See you'. Delegate to it for these. "
-                    "Analyze the user's query. If it's a greeting, delegate to 'greeting_agent'. If it's a farewell, delegate to 'farewell_agent'. "
-                    "If it's a weather request, handle it yourself using 'get_weather'. "
-                    "For anything else, respond appropriately or state you cannot handle it.",
-        tools=[get_weather], # Root agent still needs the weather tool for its core task
-        # Key change: Link the sub-agents here!
+        description="메인 코디네이터 에이전트. 날씨 요청을 처리하고 인사/작별을 전문가에게 위임합니다.",
+        instruction="당신은 팀을 조정하는 메인 날씨 에이전트입니다. 주요 책임은 날씨 정보를 제공하는 것입니다. "
+                    "'get_weather' 도구는 특정 날씨 요청(예: '런던 날씨')에만 사용하세요. "
+                    "당신에게는 전문화된 하위 에이전트가 있습니다: "
+                    "1. 'greeting_agent': '안녕', '안녕하세요'와 같은 간단한 인사를 처리합니다. 이들에게 위임하세요. "
+                    "2. 'farewell_agent': '안녕히 가세요', '나중에 봐요'와 같은 간단한 작별 인사를 처리합니다. 이들에게 위임하세요. "
+                    "사용자의 쿼리를 분석하세요. 인사이면 'greeting_agent'에게 위임하세요. 작별 인사이면 'farewell_agent'에게 위임하세요. "
+                    "날씨 요청이면 직접 'get_weather'를 사용하여 처리하세요. "
+                    "그 외의 경우에는 적절히 응답하거나 처리할 수 없다고 말하세요.",
+        tools=[get_weather], # 루트 에이전트는 여전히 핵심 작업을 위해 날씨 도구가 필요합니다.
+        # 핵심 변경: 여기에 하위 에이전트를 연결하세요!
         sub_agents=[greeting_agent, farewell_agent]
     )
-    print(f"✅ Root Agent '{weather_agent_team.name}' created using model '{root_agent_model}' with sub-agents: {[sa.name for sa in weather_agent_team.sub_agents]}")
+    print(f"✅ 루트 에이전트 '{weather_agent_team.name}'가 모델 '{root_agent_model}'과 하위 에이전트: {[sa.name for sa in weather_agent_team.sub_agents]}를 사용하여 생성되었습니다.")
 
 else:
-    print("❌ Cannot create root agent because one or more sub-agents failed to initialize or 'get_weather' tool is missing.")
-    if not greeting_agent: print(" - Greeting Agent is missing.")
-    if not farewell_agent: print(" - Farewell Agent is missing.")
-    if 'get_weather' not in globals(): print(" - get_weather function is missing.")
-
-
+    print("❌ 하나 이상의 하위 에이전트 초기화에 실패했거나 'get_weather' 도구가 없어서 루트 에이전트를 생성할 수 없습니다.")
+    if not greeting_agent: print(" - 인사 에이전트가 없습니다.")
+    if not farewell_agent: print(" - 작별 에이전트가 없습니다.")
+    if 'get_weather' not in globals(): print(" - get_weather 함수가 없습니다.")
 ```
 
 ---
 
-**4\. Interact with the Agent Team**
+**4. 에이전트 팀과 상호작용하기**
 
-Now that we've defined our root agent (`weather_agent_team` - *Note: Ensure this variable name matches the one defined in the previous code block, likely `# @title Define the Root Agent with Sub-Agents`, which might have named it `root_agent`*) with its specialized sub-agents, let's test the delegation mechanism.
+이제 전문화된 하위 에이전트를 갖춘 루트 에이전트(`weather_agent_team` - *참고: 이 변수 이름이 이전 코드 블록, 아마도 `# @title 루트 에이전트 정의`에서 정의된 이름과 일치하는지 확인하세요. 해당 블록에서는 `root_agent`라고 명명했을 수 있습니다*)를 정의했으므로, 위임 메커니즘을 테스트해 보겠습니다.
 
-The following code block will:
+다음 코드 블록은 다음을 수행합니다:
 
-1.  Define an `async` function `run_team_conversation`.
-2.  Inside this function, create a *new, dedicated* `InMemorySessionService` and a specific session (`session_001_agent_team`) just for this test run. This isolates the conversation history for testing the team dynamics.
-3.  Create a `Runner` (`runner_agent_team`) configured to use our `weather_agent_team` (the root agent) and the dedicated session service.
-4.  Use our updated `call_agent_async` function to send different types of queries (greeting, weather request, farewell) to the `runner_agent_team`. We explicitly pass the runner, user ID, and session ID for this specific test.
-5.  Immediately execute the `run_team_conversation` function.
+1.  `async` 함수 `run_team_conversation`을 정의합니다.
+2.  이 함수 내에서 이 테스트 실행을 위해 *새롭고 전용인* `InMemorySessionService`와 특정 세션(`session_001_agent_team`)을 생성합니다. 이는 팀 역학 테스트를 위해 대화 기록을 격리합니다.
+3.  `weather_agent_team`(루트 에이전트)과 전용 세션 서비스를 사용하도록 구성된 `Runner`(`runner_agent_team`)를 생성합니다.
+4.  업데이트된 `call_agent_async` 함수를 사용하여 `runner_agent_team`에 다른 유형의 쿼리(인사, 날씨 요청, 작별)를 보냅니다. 이 특정 테스트를 위해 러너, 사용자 ID, 세션 ID를 명시적으로 전달합니다.
+5.  `run_team_conversation` 함수를 즉시 실행합니다.
 
-We expect the following flow:
+다음과 같은 흐름을 기대합니다:
 
-1.  The "Hello there!" query goes to `runner_agent_team`.
-2.  The root agent (`weather_agent_team`) receives it and, based on its instructions and the `greeting_agent`'s description, delegates the task.
-3.  `greeting_agent` handles the query, calls its `say_hello` tool, and generates the response.
-4.  The "What is the weather in New York?" query is *not* delegated and is handled directly by the root agent using its `get_weather` tool.
-5.  The "Thanks, bye!" query is delegated to the `farewell_agent`, which uses its `say_goodbye` tool.
+1.  "안녕하세요!" 쿼리가 `runner_agent_team`으로 갑니다.
+2.  루트 에이전트(`weather_agent_team`)가 이를 수신하고, 지침과 `greeting_agent`의 설명을 기반으로 작업을 위임합니다.
+3.  `greeting_agent`가 쿼리를 처리하고, `say_hello` 도구를 호출하며, 응답을 생성합니다.
+4.  "뉴욕 날씨는 어떤가요?" 쿼리는 위임되지 않고 루트 에이전트가 직접 `get_weather` 도구를 사용하여 처리합니다.
+5.  "고마워요, 안녕히 가세요!" 쿼리는 `farewell_agent`에게 위임되고, `say_goodbye` 도구를 사용합니다.
 
 
 
 
 ```python
-# @title Interact with the Agent Team
-import asyncio # Ensure asyncio is imported
+# @title 에이전트 팀과 상호작용하기
+import asyncio # asyncio가 import되었는지 확인
 
-# Ensure the root agent (e.g., 'weather_agent_team' or 'root_agent' from the previous cell) is defined.
-# Ensure the call_agent_async function is defined.
+# 루트 에이전트(예: 이전 셀의 'weather_agent_team' 또는 'root_agent')가 정의되었는지 확인합니다.
+# call_agent_async 함수가 정의되었는지 확인합니다.
 
-# Check if the root agent variable exists before defining the conversation function
-root_agent_var_name = 'root_agent' # Default name from Step 3 guide
-if 'weather_agent_team' in globals(): # Check if user used this name instead
+# 루트 에이전트 변수가 있는지 확인한 후 대화 함수를 정의합니다.
+root_agent_var_name = 'root_agent' # 3단계 가이드의 기본 이름
+if 'weather_agent_team' in globals(): # 사용자가 이 이름을 대신 사용했는지 확인
     root_agent_var_name = 'weather_agent_team'
 elif 'root_agent' not in globals():
-    print("⚠️ Root agent ('root_agent' or 'weather_agent_team') not found. Cannot define run_team_conversation.")
-    # Assign a dummy value to prevent NameError later if the code block runs anyway
-    root_agent = None # Or set a flag to prevent execution
+    print("⚠️ 루트 에이전트('root_agent' 또는 'weather_agent_team')를 찾을 수 없습니다. run_team_conversation을 정의할 수 없습니다.")
+    # 코드 블록이 어쨌든 실행될 경우 나중에 NameError를 방지하기 위해 더미 값을 할당합니다.
+    root_agent = None # 또는 실행을 방지하기 위해 플래그 설정
 
-# Only define and run if the root agent exists
+# 루트 에이전트가 있을 경우에만 정의하고 실행합니다.
 if root_agent_var_name in globals() and globals()[root_agent_var_name]:
-    # Define the main async function for the conversation logic.
-    # The 'await' keywords INSIDE this function are necessary for async operations.
+    # 대화 로직을 위한 메인 async 함수를 정의합니다.
+    # 이 함수 내부의 'await' 키워드는 비동기 작업에 필수적입니다.
     async def run_team_conversation():
-        print("\n--- Testing Agent Team Delegation ---")
+        print("\n--- 에이전트 팀 위임 테스트 중 ---")
         session_service = InMemorySessionService()
         APP_NAME = "weather_tutorial_agent_team"
         USER_ID = "user_1_agent_team"
@@ -864,171 +860,171 @@ if root_agent_var_name in globals() and globals()[root_agent_var_name]:
         session = await session_service.create_session(
             app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID
         )
-        print(f"Session created: App='{APP_NAME}', User='{USER_ID}', Session='{SESSION_ID}'")
+        print(f"세션 생성됨: App='{APP_NAME}', User='{USER_ID}', Session='{SESSION_ID}'")
 
         actual_root_agent = globals()[root_agent_var_name]
-        runner_agent_team = Runner( # Or use InMemoryRunner
+        runner_agent_team = Runner( # 또는 InMemoryRunner 사용
             agent=actual_root_agent,
             app_name=APP_NAME,
             session_service=session_service
         )
-        print(f"Runner created for agent '{actual_root_agent.name}'.")
+        print(f"Runner가 에이전트 '{actual_root_agent.name}'에 대해 생성되었습니다.")
 
-        # --- Interactions using await (correct within async def) ---
-        await call_agent_async(query = "Hello there!",
+        # --- await를 사용한 상호작용 (async def 내에서 올바름) ---
+        await call_agent_async(query = "안녕하세요!",
                                runner=runner_agent_team,
                                user_id=USER_ID,
                                session_id=SESSION_ID)
-        await call_agent_async(query = "What is the weather in New York?",
+        await call_agent_async(query = "뉴욕 날씨는 어떤가요?",
                                runner=runner_agent_team,
                                user_id=USER_ID,
                                session_id=SESSION_ID)
-        await call_agent_async(query = "Thanks, bye!",
+        await call_agent_async(query = "고마워요, 안녕히 가세요!",
                                runner=runner_agent_team,
                                user_id=USER_ID,
                                session_id=SESSION_ID)
 
-    # --- Execute the `run_team_conversation` async function ---
-    # Choose ONE of the methods below based on your environment.
-    # Note: This may require API keys for the models used!
+    # --- `run_team_conversation` 비동기 함수 실행 ---
+    # 환경에 따라 아래 방법 중 하나를 선택하세요.
+    # 참고: 사용된 모델에 대한 API 키가 필요할 수 있습니다!
 
-    # METHOD 1: Direct await (Default for Notebooks/Async REPLs)
-    # If your environment supports top-level await (like Colab/Jupyter notebooks),
-    # it means an event loop is already running, so you can directly await the function.
-    print("Attempting execution using 'await' (default for notebooks)...")
+    # 방법 1: 직접 await (노트북/비동기 REPL 기본)
+    # 환경이 최상위 await를 지원하는 경우(Colab/Jupyter 노트북 등),
+    # 이벤트 루프가 이미 실행 중이므로 함수를 직접 await 할 수 있습니다.
+    print("'await'를 사용하여 실행 시도 중 (노트북 기본)...")
     await run_team_conversation()
 
-    # METHOD 2: asyncio.run (For Standard Python Scripts [.py])
-    # If running this code as a standard Python script from your terminal,
-    # the script context is synchronous. `asyncio.run()` is needed to
-    # create and manage an event loop to execute your async function.
-    # To use this method:
-    # 1. Comment out the `await run_team_conversation()` line above.
-    # 2. Uncomment the following block:
+    # 방법 2: asyncio.run (표준 Python 스크립트 [.py]용)
+    # 터미널에서 이 코드를 표준 Python 스크립트로 실행하는 경우,
+    # 스크립트 컨텍스트는 동기식입니다. 비동기 함수를 실행하려면
+    # 이벤트 루프를 생성하고 관리하기 위해 `asyncio.run()`이 필요합니다.
+    # 이 방법을 사용하려면:
+    # 1. 위의 `await run_team_conversation()` 줄을 주석 처리합니다.
+    # 2. 다음 블록의 주석을 해제합니다:
     """
     import asyncio
-    if __name__ == "__main__": # Ensures this runs only when script is executed directly
-        print("Executing using 'asyncio.run()' (for standard Python scripts)...")
+    if __name__ == "__main__": # 스크립트가 직접 실행될 때만 실행되도록 보장
+        print("'asyncio.run()'을 사용하여 실행 중 (표준 Python 스크립트용)...")
         try:
-            # This creates an event loop, runs your async function, and closes the loop.
+            # 이것은 이벤트 루프를 생성하고, 비동기 함수를 실행하며, 루프를 닫습니다.
             asyncio.run(run_team_conversation())
         except Exception as e:
-            print(f"An error occurred: {e}")
+            print(f"오류가 발생했습니다: {e}")
     """
 
 else:
-    # This message prints if the root agent variable wasn't found earlier
-    print("\n⚠️ Skipping agent team conversation execution as the root agent was not successfully defined in a previous step.")
+    # 이 메시지는 이전에 루트 에이전트 변수를 찾지 못했을 때 출력됩니다.
+    print("\n⚠️ 이전 단계에서 루트 에이전트가 성공적으로 정의되지 않았으므로 에이전트 팀 대화 실행을 건너뜁니다.")
 ```
 
 ---
 
-Look closely at the output logs, especially the `--- Tool: ... called ---` messages. You should observe:
+출력 로그, 특히 `--- 도구: ... 호출됨 ---` 메시지를 자세히 살펴보세요. 다음을 관찰해야 합니다:
 
-*   For "Hello there!", the `say_hello` tool was called (indicating `greeting_agent` handled it).
-*   For "What is the weather in New York?", the `get_weather` tool was called (indicating the root agent handled it).
-*   For "Thanks, bye!", the `say_goodbye` tool was called (indicating `farewell_agent` handled it).
+*   "안녕하세요!"에 대해서는 `say_hello` 도구가 호출되었습니다 (`greeting_agent`가 처리했음을 나타냄).
+*   "뉴욕 날씨는 어떤가요?"에 대해서는 `get_weather` 도구가 호출되었습니다 (루트 에이전트가 처리했음을 나타냄).
+*   "고마워요, 안녕히 가세요!"에 대해서는 `say_goodbye` 도구가 호출되었습니다 (`farewell_agent`가 처리했음을 나타냄).
 
-This confirms successful **automatic delegation**! The root agent, guided by its instructions and the `description`s of its `sub_agents`, correctly routed user requests to the appropriate specialist agent within the team.
+이는 성공적인 **자동 위임**을 확인시켜 줍니다! 루트 에이전트는 지침과 `sub_agents`의 `description`에 따라 사용자 요청을 팀 내 적절한 전문가 에이전트에게 올바르게 라우팅했습니다.
 
-You've now structured your application with multiple collaborating agents. This modular design is fundamental for building more complex and capable agent systems. In the next step, we'll give our agents the ability to remember information across turns using session state.
+이제 여러 협력 에이전트로 애플리케이션을 구조화했습니다. 이 모듈식 설계는 더 복잡하고 유능한 에이전트 시스템을 구축하는 데 기본이 됩니다. 다음 단계에서는 세션 상태를 사용하여 에이전트가 턴 간에 정보를 기억할 수 있는 능력을 부여할 것입니다.
 
-## Step 4: Adding Memory and Personalization with Session State
+## 4단계: 세션 상태를 이용한 메모리 및 개인화 추가
 
-So far, our agent team can handle different tasks through delegation, but each interaction starts fresh – the agents have no memory of past conversations or user preferences within a session. To create more sophisticated and context-aware experiences, agents need **memory**. ADK provides this through **Session State**.
+지금까지 우리 에이전트 팀은 위임을 통해 다양한 작업을 처리할 수 있었지만, 각 상호작용은 처음부터 다시 시작됩니다. 즉, 에이전트는 세션 내에서 과거 대화나 사용자 선호도에 대한 기억이 없습니다. 더 정교하고 문맥을 인식하는 경험을 만들려면 에이전트에게 **메모리**가 필요합니다. ADK는 **세션 상태(Session State)**를 통해 이를 제공합니다.
 
-**What is Session State?**
+**세션 상태란 무엇인가요?**
 
-* It's a Python dictionary (`session.state`) tied to a specific user session (identified by `APP_NAME`, `USER_ID`, `SESSION_ID`).  
-* It persists information *across multiple conversational turns* within that session.  
-* Agents and Tools can read from and write to this state, allowing them to remember details, adapt behavior, and personalize responses.
+*   특정 사용자 세션(`APP_NAME`, `USER_ID`, `SESSION_ID`로 식별)에 연결된 Python 사전(`session.state`)입니다.
+*   해당 세션 내에서 *여러 대화 턴에 걸쳐* 정보를 유지합니다.
+*   에이전트와 도구는 이 상태를 읽고 쓸 수 있어 세부 정보를 기억하고, 행동을 조정하며, 응답을 개인화할 수 있습니다.
 
-**How Agents Interact with State:**
+**에이전트가 상태와 상호작용하는 방법:**
 
-1. **`ToolContext` (Primary Method):** Tools can accept a `ToolContext` object (automatically provided by ADK if declared as the last argument). This object gives direct access to the session state via `tool_context.state`, allowing tools to read preferences or save results *during* execution.  
-2. **`output_key` (Auto-Save Agent Response):** An `Agent` can be configured with an `output_key="your_key"`. ADK will then automatically save the agent's final textual response for a turn into `session.state["your_key"]`.
+1.  **`ToolContext` (주요 방법):** 도구는 `ToolContext` 객체를 받을 수 있습니다 (ADK가 마지막 인수로 선언된 경우 자동으로 제공). 이 객체는 `tool_context.state`를 통해 세션 상태에 직접 접근할 수 있게 하여, 도구가 실행 *중에* 선호도를 읽거나 결과를 저장할 수 있도록 합니다.
+2.  **`output_key` (에이전트 응답 자동 저장):** `Agent`는 `output_key="your_key"`로 구성될 수 있습니다. 그러면 ADK는 해당 턴에 대한 에이전트의 최종 텍스트 응답을 `session.state["your_key"]`에 자동으로 저장합니다.
 
-**In this step, we will enhance our Weather Bot team by:**
+**이 단계에서는 날씨 봇 팀을 다음과 같이 향상시킬 것입니다:**
 
-1. Using a **new** `InMemorySessionService` to demonstrate state in isolation.  
-2. Initializing session state with a user preference for `temperature_unit`.  
-3. Creating a state-aware version of the weather tool (`get_weather_stateful`) that reads this preference via `ToolContext` and adjusts its output format (Celsius/Fahrenheit).  
-4. Updating the root agent to use this stateful tool and configuring it with an `output_key` to automatically save its final weather report to the session state.  
-5. Running a conversation to observe how the initial state affects the tool, how manual state changes alter subsequent behavior, and how `output_key` persists the agent's response.
+1.  상태를 독립적으로 보여주기 위해 **새로운** `InMemorySessionService`를 사용합니다.
+2.  사용자의 `temperature_unit` 선호도로 세션 상태를 초기화합니다.
+3.  `ToolContext`를 통해 이 선호도를 읽고 출력 형식(섭씨/화씨)을 조정하는 상태 인식 버전의 날씨 도구(`get_weather_stateful`)를 만듭니다.
+4.  이 상태 인식 도구를 사용하도록 루트 에이전트를 업데이트하고, 최종 날씨 보고서를 세션 상태에 자동으로 저장하도록 `output_key`로 구성합니다.
+5.  초기 상태가 도구에 어떤 영향을 미치는지, 수동 상태 변경이 후속 행동을 어떻게 바꾸는지, 그리고 `output_key`가 에이전트의 응답을 어떻게 유지하는지 관찰하기 위해 대화를 실행합니다.
 
 ---
 
-**1\. Initialize New Session Service and State**
+**1. 새로운 세션 서비스 및 상태 초기화**
 
-To clearly demonstrate state management without interference from prior steps, we'll instantiate a new `InMemorySessionService`. We'll also create a session with an initial state defining the user's preferred temperature unit.
+이전 단계의 간섭 없이 상태 관리를 명확하게 보여주기 위해 새로운 `InMemorySessionService`를 인스턴스화합니다. 또한 사용자가 선호하는 온도 단위를 정의하는 초기 상태로 세션을 생성합니다.
 
 
 ```python
-# @title 1. Initialize New Session Service and State
+# @title 1. 새로운 세션 서비스 및 상태 초기화
 
-# Import necessary session components
+# 필요한 세션 구성 요소 가져오기
 from google.adk.sessions import InMemorySessionService
 
-# Create a NEW session service instance for this state demonstration
+# 이 상태 시연을 위해 새로운 세션 서비스 인스턴스 생성
 session_service_stateful = InMemorySessionService()
-print("✅ New InMemorySessionService created for state demonstration.")
+print("✅ 상태 시연을 위한 새로운 InMemorySessionService가 생성되었습니다.")
 
-# Define a NEW session ID for this part of the tutorial
+# 이 튜토리얼의 이 부분을 위한 새로운 세션 ID 정의
 SESSION_ID_STATEFUL = "session_state_demo_001"
 USER_ID_STATEFUL = "user_state_demo"
 
-# Define initial state data - user prefers Celsius initially
+# 초기 상태 데이터 정의 - 사용자는 처음에 섭씨를 선호
 initial_state = {
     "user_preference_temperature_unit": "Celsius"
 }
 
-# Create the session, providing the initial state
+# 초기 상태를 제공하여 세션 생성
 session_stateful = await session_service_stateful.create_session(
-    app_name=APP_NAME, # Use the consistent app name
+    app_name=APP_NAME, # 일관된 앱 이름 사용
     user_id=USER_ID_STATEFUL,
     session_id=SESSION_ID_STATEFUL,
-    state=initial_state # <<< Initialize state during creation
+    state=initial_state # <<< 생성 중 상태 초기화
 )
-print(f"✅ Session '{SESSION_ID_STATEFUL}' created for user '{USER_ID_STATEFUL}'.")
+print(f"✅ 사용자 '{USER_ID_STATEFUL}'에 대한 세션 '{SESSION_ID_STATEFUL}'이 생성되었습니다.")
 
-# Verify the initial state was set correctly
+# 초기 상태가 올바르게 설정되었는지 확인
 retrieved_session = await session_service_stateful.get_session(app_name=APP_NAME,
                                                          user_id=USER_ID_STATEFUL,
                                                          session_id = SESSION_ID_STATEFUL)
-print("\n--- Initial Session State ---")
+print("\n--- 초기 세션 상태 ---")
 if retrieved_session:
     print(retrieved_session.state)
 else:
-    print("Error: Could not retrieve session.")
+    print("오류: 세션을 검색할 수 없습니다.")
 ```
 
 ---
 
-**2\. Create State-Aware Weather Tool (`get_weather_stateful`)**
+**2. 상태 인식 날씨 도구 생성 (`get_weather_stateful`)**
 
-Now, we create a new version of the weather tool. Its key feature is accepting `tool_context: ToolContext` which allows it to access `tool_context.state`. It will read the `user_preference_temperature_unit` and format the temperature accordingly.
-
-
-* **Key Concept: `ToolContext`** This object is the bridge allowing your tool logic to interact with the session's context, including reading and writing state variables. ADK injects it automatically if defined as the last parameter of your tool function.
+이제 날씨 도구의 새 버전을 만듭니다. 주요 특징은 `tool_context: ToolContext`를 받아 `tool_context.state`에 접근할 수 있다는 것입니다. `user_preference_temperature_unit`를 읽고 그에 따라 온도를 형식화합니다.
 
 
-* **Best Practice:** When reading from state, use `dictionary.get('key', default_value)` to handle cases where the key might not exist yet, ensuring your tool doesn't crash.
+*   **핵심 개념: `ToolContext`** 이 객체는 도구 로직이 상태 변수 읽기 및 쓰기를 포함한 세션의 컨텍스트와 상호 작용할 수 있도록 하는 다리입니다. 도구 함수의 마지막 매개변수로 정의하면 ADK가 자동으로 주입합니다.
+
+
+*   **모범 사례:** 상태에서 읽을 때 `dictionary.get('key', default_value)`를 사용하여 키가 아직 존재하지 않을 수 있는 경우를 처리하여 도구가 충돌하지 않도록 하세요.
 
 
 ```python
 from google.adk.tools.tool_context import ToolContext
 
 def get_weather_stateful(city: str, tool_context: ToolContext) -> dict:
-    """Retrieves weather, converts temp unit based on session state."""
-    print(f"--- Tool: get_weather_stateful called for {city} ---")
+    """세션 상태에 따라 날씨를 검색하고 온도 단위를 변환합니다."""
+    print(f"--- 도구: {city}에 대해 get_weather_stateful 호출됨 ---")
 
-    # --- Read preference from state ---
-    preferred_unit = tool_context.state.get("user_preference_temperature_unit", "Celsius") # Default to Celsius
-    print(f"--- Tool: Reading state 'user_preference_temperature_unit': {preferred_unit} ---")
+    # --- 상태에서 선호도 읽기 ---
+    preferred_unit = tool_context.state.get("user_preference_temperature_unit", "Celsius") # 기본값은 섭씨
+    print(f"--- 도구: 상태 'user_preference_temperature_unit' 읽기: {preferred_unit} ---")
 
     city_normalized = city.lower().replace(" ", "")
 
-    # Mock weather data (always stored in Celsius internally)
+    # 모의 날씨 데이터 (내부적으로 항상 섭씨로 저장됨)
     mock_weather_db = {
         "newyork": {"temp_c": 25, "condition": "sunny"},
         "london": {"temp_c": 15, "condition": "cloudy"},
@@ -1040,696 +1036,684 @@ def get_weather_stateful(city: str, tool_context: ToolContext) -> dict:
         temp_c = data["temp_c"]
         condition = data["condition"]
 
-        # Format temperature based on state preference
+        # 상태 선호도에 따라 온도 형식 지정
         if preferred_unit == "Fahrenheit":
-            temp_value = (temp_c * 9/5) + 32 # Calculate Fahrenheit
+            temp_value = (temp_c * 9/5) + 32 # 화씨 계산
             temp_unit = "°F"
-        else: # Default to Celsius
+        else: # 기본값은 섭씨
             temp_value = temp_c
             temp_unit = "°C"
 
-        report = f"The weather in {city.capitalize()} is {condition} with a temperature of {temp_value:.0f}{temp_unit}."
+        report = f"{city.capitalize()}의 날씨는 {condition}이며 온도는 {temp_value:.0f}{temp_unit}입니다."
         result = {"status": "success", "report": report}
-        print(f"--- Tool: Generated report in {preferred_unit}. Result: {result} ---")
+        print(f"--- 도구: {preferred_unit}로 보고서 생성됨. 결과: {result} ---")
 
-        # Example of writing back to state (optional for this tool)
+        # 상태에 다시 쓰기 예제 (이 도구에서는 선택 사항)
         tool_context.state["last_city_checked_stateful"] = city
-        print(f"--- Tool: Updated state 'last_city_checked_stateful': {city} ---")
+        print(f"--- 도구: 상태 'last_city_checked_stateful' 업데이트됨: {city} ---")
 
         return result
     else:
-        # Handle city not found
-        error_msg = f"Sorry, I don't have weather information for '{city}'."
-        print(f"--- Tool: City '{city}' not found. ---")
+        # 도시를 찾을 수 없는 경우 처리
+        error_msg = f"죄송합니다. '{city}'에 대한 날씨 정보가 없습니다."
+        print(f"--- 도구: 도시 '{city}'를 찾을 수 없음. ---")
         return {"status": "error", "error_message": error_msg}
 
-print("✅ State-aware 'get_weather_stateful' tool defined.")
-
+print("✅ 상태 인식 'get_weather_stateful' 도구가 정의되었습니다.")
 ```
 
 ---
 
-**3\. Redefine Sub-Agents and Update Root Agent**
+**3. 하위 에이전트 재정의 및 루트 에이전트 업데이트**
 
-To ensure this step is self-contained and builds correctly, we first redefine the `greeting_agent` and `farewell_agent` exactly as they were in Step 3\. Then, we define our new root agent (`weather_agent_v4_stateful`):
+이 단계가 독립적으로 올바르게 빌드되도록 하려면 먼저 3단계에서와 똑같이 `greeting_agent`와 `farewell_agent`를 재정의합니다. 그런 다음 새로운 루트 에이전트(`weather_agent_v4_stateful`)를 정의합니다:
 
-* It uses the new `get_weather_stateful` tool.  
-* It includes the greeting and farewell sub-agents for delegation.  
-* **Crucially**, it sets `output_key="last_weather_report"` which automatically saves its final weather response to the session state.
+*   새로운 `get_weather_stateful` 도구를 사용합니다.
+*   위임을 위해 인사 및 작별 하위 에이전트를 포함합니다.
+*   **결정적으로**, `output_key="last_weather_report"`를 설정하여 최종 날씨 응답을 세션 상태에 자동으로 저장합니다.
 
 
 ```python
-# @title 3. Redefine Sub-Agents and Update Root Agent with output_key
+# @title 3. 하위 에이전트 재정의 및 output_key로 루트 에이전트 업데이트
 
-# Ensure necessary imports: Agent, LiteLlm, Runner
+# 필요한 가져오기 확인: Agent, LiteLlm, Runner
 from google.adk.agents import Agent
 from google.adk.models.lite_llm import LiteLlm
 from google.adk.runners import Runner
-# Ensure tools 'say_hello', 'say_goodbye' are defined (from Step 3)
-# Ensure model constants MODEL_GPT_4O, MODEL_GEMINI_2_0_FLASH etc. are defined
+# 'say_hello', 'say_goodbye' 도구가 정의되었는지 확인 (3단계에서)
+# MODEL_GPT_4O, MODEL_GEMINI_2_0_FLASH 등 모델 상수가 정의되었는지 확인
 
-# --- Redefine Greeting Agent (from Step 3) ---
+# --- 인사 에이전트 재정의 (3단계에서) ---
 greeting_agent = None
 try:
     greeting_agent = Agent(
         model=MODEL_GEMINI_2_0_FLASH,
         name="greeting_agent",
-        instruction="You are the Greeting Agent. Your ONLY task is to provide a friendly greeting using the 'say_hello' tool. Do nothing else.",
-        description="Handles simple greetings and hellos using the 'say_hello' tool.",
+        instruction="당신은 인사 에이전트입니다. 당신의 유일한 임무는 'say_hello' 도구를 사용하여 친절한 인사를 제공하는 것입니다. 다른 작업은 하지 마세요.",
+        description="'say_hello' 도구를 사용하여 간단한 인사와 안부를 처리합니다.",
         tools=[say_hello],
     )
-    print(f"✅ Agent '{greeting_agent.name}' redefined.")
+    print(f"✅ 에이전트 '{greeting_agent.name}'가 재정의되었습니다.")
 except Exception as e:
-    print(f"❌ Could not redefine Greeting agent. Error: {e}")
+    print(f"❌ 인사 에이전트를 재정의할 수 없습니다. 오류: {e}")
 
-# --- Redefine Farewell Agent (from Step 3) ---
+# --- 작별 에이전트 재정의 (3단계에서) ---
 farewell_agent = None
 try:
     farewell_agent = Agent(
         model=MODEL_GEMINI_2_0_FLASH,
         name="farewell_agent",
-        instruction="You are the Farewell Agent. Your ONLY task is to provide a polite goodbye message using the 'say_goodbye' tool. Do not perform any other actions.",
-        description="Handles simple farewells and goodbyes using the 'say_goodbye' tool.",
+        instruction="당신은 작별 에이전트입니다. 당신의 유일한 임무는 'say_goodbye' 도구를 사용하여 정중한 작별 메시지를 제공하는 것입니다. 다른 작업은 수행하지 마세요.",
+        description="'say_goodbye' 도구를 사용하여 간단한 작별 인사를 처리합니다.",
         tools=[say_goodbye],
     )
-    print(f"✅ Agent '{farewell_agent.name}' redefined.")
+    print(f"✅ 에이전트 '{farewell_agent.name}'가 재정의되었습니다.")
 except Exception as e:
-    print(f"❌ Could not redefine Farewell agent. Error: {e}")
+    print(f"❌ 작별 에이전트를 재정의할 수 없습니다. 오류: {e}")
 
-# --- Define the Updated Root Agent ---
+# --- 업데이트된 루트 에이전트 정의 ---
 root_agent_stateful = None
-runner_root_stateful = None # Initialize runner
+runner_root_stateful = None # runner 초기화
 
-# Check prerequisites before creating the root agent
+# 루트 에이전트를 생성하기 전에 전제 조건 확인
 if greeting_agent and farewell_agent and 'get_weather_stateful' in globals():
 
-    root_agent_model = MODEL_GEMINI_2_0_FLASH # Choose orchestration model
+    root_agent_model = MODEL_GEMINI_2_0_FLASH # 오케스트레이션 모델 선택
 
     root_agent_stateful = Agent(
-        name="weather_agent_v4_stateful", # New version name
+        name="weather_agent_v4_stateful", # 새 버전 이름
         model=root_agent_model,
-        description="Main agent: Provides weather (state-aware unit), delegates greetings/farewells, saves report to state.",
-        instruction="You are the main Weather Agent. Your job is to provide weather using 'get_weather_stateful'. "
-                    "The tool will format the temperature based on user preference stored in state. "
-                    "Delegate simple greetings to 'greeting_agent' and farewells to 'farewell_agent'. "
-                    "Handle only weather requests, greetings, and farewells.",
-        tools=[get_weather_stateful], # Use the state-aware tool
-        sub_agents=[greeting_agent, farewell_agent], # Include sub-agents
-        output_key="last_weather_report" # <<< Auto-save agent's final weather response
+        description="메인 에이전트: 날씨 제공(상태 인식 단위), 인사/작별 위임, 보고서를 상태에 저장.",
+        instruction="당신은 메인 날씨 에이전트입니다. 'get_weather_stateful'을 사용하여 날씨를 제공하는 것이 당신의 임무입니다. "
+                    "도구는 상태에 저장된 사용자 선호도에 따라 온도를 형식화합니다. "
+                    "간단한 인사는 'greeting_agent'에게, 작별 인사는 'farewell_agent'에게 위임하세요. "
+                    "날씨 요청, 인사, 작별 인사만 처리하세요.",
+        tools=[get_weather_stateful], # 상태 인식 도구 사용
+        sub_agents=[greeting_agent, farewell_agent], # 하위 에이전트 포함
+        output_key="last_weather_report" # <<< 에이전트의 최종 날씨 응답 자동 저장
     )
-    print(f"✅ Root Agent '{root_agent_stateful.name}' created using stateful tool and output_key.")
+    print(f"✅ 루트 에이전트 '{root_agent_stateful.name}'가 상태 인식 도구와 output_key를 사용하여 생성되었습니다.")
 
-    # --- Create Runner for this Root Agent & NEW Session Service ---
+    # --- 이 루트 에이전트 및 새로운 세션 서비스를 위한 Runner 생성 ---
     runner_root_stateful = Runner(
         agent=root_agent_stateful,
         app_name=APP_NAME,
-        session_service=session_service_stateful # Use the NEW stateful session service
+        session_service=session_service_stateful # 새로운 상태 인식 세션 서비스 사용
     )
-    print(f"✅ Runner created for stateful root agent '{runner_root_stateful.agent.name}' using stateful session service.")
+    print(f"✅ 상태 인식 루트 에이전트 '{runner_root_stateful.agent.name}'를 위한 Runner가 상태 인식 세션 서비스를 사용하여 생성되었습니다.")
 
 else:
-    print("❌ Cannot create stateful root agent. Prerequisites missing.")
-    if not greeting_agent: print(" - greeting_agent definition missing.")
-    if not farewell_agent: print(" - farewell_agent definition missing.")
-    if 'get_weather_stateful' not in globals(): print(" - get_weather_stateful tool missing.")
-
+    print("❌ 상태 인식 루트 에이전트를 생성할 수 없습니다. 전제 조건이 누락되었습니다.")
+    if not greeting_agent: print(" - greeting_agent 정의 누락.")
+    if not farewell_agent: print(" - farewell_agent 정의 누락.")
+    if 'get_weather_stateful' not in globals(): print(" - get_weather_stateful 도구 누락.")
 ```
 
 ---
 
-**4\. Interact and Test State Flow**
+**4. 상태 흐름 상호작용 및 테스트**
 
-Now, let's execute a conversation designed to test the state interactions using the `runner_root_stateful` (associated with our stateful agent and the `session_service_stateful`). We'll use the `call_agent_async` function defined earlier, ensuring we pass the correct runner, user ID (`USER_ID_STATEFUL`), and session ID (`SESSION_ID_STATEFUL`).
+이제 상태 상호작용을 테스트하기 위해 설계된 대화를 실행해 보겠습니다. 이를 위해 `runner_root_stateful`(우리의 상태 인식 에이전트 및 `session_service_stateful`과 연결됨)을 사용합니다. 이전에 정의한 `call_agent_async` 함수를 사용하며, 올바른 러너, 사용자 ID(`USER_ID_STATEFUL`), 세션 ID(`SESSION_ID_STATEFUL`)를 전달해야 합니다.
 
-The conversation flow will be:
+대화 흐름은 다음과 같습니다:
 
-1.  **Check weather (London):** The `get_weather_stateful` tool should read the initial "Celsius" preference from the session state initialized in Section 1. The root agent's final response (the weather report in Celsius) should get saved to `state['last_weather_report']` via the `output_key` configuration.
-2.  **Manually update state:** We will *directly modify* the state stored within the `InMemorySessionService` instance (`session_service_stateful`).
-    *   **Why direct modification?** The `session_service.get_session()` method returns a *copy* of the session. Modifying that copy wouldn't affect the state used in subsequent agent runs. For this testing scenario with `InMemorySessionService`, we access the internal `sessions` dictionary to change the *actual* stored state value for `user_preference_temperature_unit` to "Fahrenheit". *Note: In real applications, state changes are typically triggered by tools or agent logic returning `EventActions(state_delta=...)`, not direct manual updates.*
-3.  **Check weather again (New York):** The `get_weather_stateful` tool should now read the updated "Fahrenheit" preference from the state and convert the temperature accordingly. The root agent's *new* response (weather in Fahrenheit) will overwrite the previous value in `state['last_weather_report']` due to the `output_key`.
-4.  **Greet the agent:** Verify that delegation to the `greeting_agent` still works correctly alongside the stateful operations. This interaction will become the *last* response saved by `output_key` in this specific sequence.
-5.  **Inspect final state:** After the conversation, we retrieve the session one last time (getting a copy) and print its state to confirm the `user_preference_temperature_unit` is indeed "Fahrenheit", observe the final value saved by `output_key` (which will be the greeting in this run), and see the `last_city_checked_stateful` value written by the tool.
-
+1.  **날씨 확인 (런던):** `get_weather_stateful` 도구는 1절에서 초기화된 세션 상태에서 초기 "섭씨" 선호도를 읽어야 합니다. 루트 에이전트의 최종 응답(섭씨로 된 날씨 보고서)은 `output_key` 구성을 통해 `state['last_weather_report']`에 저장되어야 합니다.
+2.  **수동으로 상태 업데이트:** `InMemorySessionService` 인스턴스(`session_service_stateful`) 내에 저장된 상태를 *직접 수정*합니다.
+    *   **왜 직접 수정하는가?** `session_service.get_session()` 메서드는 세션의 *사본*을 반환합니다. 해당 사본을 수정해도 후속 에이전트 실행에서 사용되는 상태에는 영향을 미치지 않습니다. `InMemorySessionService`를 사용한 이 테스트 시나리오에서는 내부 `sessions` 사전에 접근하여 `user_preference_temperature_unit`에 대해 *실제로* 저장된 상태 값을 "화씨"로 변경합니다. *참고: 실제 애플리케이션에서는 상태 변경이 일반적으로 도구나 에이전트 로직이 `EventActions(state_delta=...)`를 반환하여 트리거되며, 직접적인 수동 업데이트는 아닙니다.*
+3.  **다시 날씨 확인 (뉴욕):** `get_weather_stateful` 도구는 이제 상태에서 업데이트된 "화씨" 선호도를 읽고 그에 따라 온도를 변환해야 합니다. 루트 에이전트의 *새로운* 응답(화씨로 된 날씨)은 `output_key`로 인해 `state['last_weather_report']`의 이전 값을 덮어씁니다.
+4.  **에이전트에게 인사하기:** 상태 인식 작업과 함께 `greeting_agent`에 대한 위임이 여전히 올바르게 작동하는지 확인합니다. 이 상호작용은 이 특정 시퀀스에서 `output_key`에 의해 저장되는 *마지막* 응답이 됩니다.
+5.  **최종 상태 검사:** 대화 후, 세션을 마지막으로 한 번 더 검색(사본 얻기)하고 상태를 출력하여 `user_preference_temperature_unit`가 실제로 "화씨"인지 확인하고, `output_key`에 의해 저장된 최종 값(이 실행에서는 인사가 될 것임)을 관찰하고, 도구에 의해 작성된 `last_city_checked_stateful` 값을 확인합니다.
 
 
 ```python
-# @title 4. Interact to Test State Flow and output_key
-import asyncio # Ensure asyncio is imported
+# @title 4. 상태 흐름 및 output_key 테스트를 위한 상호작용
+import asyncio # asyncio가 import되었는지 확인
 
-# Ensure the stateful runner (runner_root_stateful) is available from the previous cell
-# Ensure call_agent_async, USER_ID_STATEFUL, SESSION_ID_STATEFUL, APP_NAME are defined
+# 상태 인식 러너(runner_root_stateful)가 이전 셀에서 사용 가능한지 확인
+# call_agent_async, USER_ID_STATEFUL, SESSION_ID_STATEFUL, APP_NAME이 정의되었는지 확인
 
 if 'runner_root_stateful' in globals() and runner_root_stateful:
-    # Define the main async function for the stateful conversation logic.
-    # The 'await' keywords INSIDE this function are necessary for async operations.
+    # 상태 인식 대화 로직을 위한 메인 async 함수 정의
+    # 이 함수 내부의 'await' 키워드는 비동기 작업에 필수적
     async def run_stateful_conversation():
-        print("\n--- Testing State: Temp Unit Conversion & output_key ---")
+        print("\n--- 상태 테스트: 온도 단위 변환 및 output_key ---")
 
-        # 1. Check weather (Uses initial state: Celsius)
-        print("--- Turn 1: Requesting weather in London (expect Celsius) ---")
-        await call_agent_async(query= "What's the weather in London?",
+        # 1. 날씨 확인 (초기 상태 사용: 섭씨)
+        print("--- 1번째 턴: 런던 날씨 요청 (섭씨 예상) ---")
+        await call_agent_async(query= "런던 날씨는 어때?",
                                runner=runner_root_stateful,
                                user_id=USER_ID_STATEFUL,
                                session_id=SESSION_ID_STATEFUL
                               )
 
-        # 2. Manually update state preference to Fahrenheit - DIRECTLY MODIFY STORAGE
-        print("\n--- Manually Updating State: Setting unit to Fahrenheit ---")
+        # 2. 수동으로 상태 선호도를 화씨로 업데이트 - 저장소 직접 수정
+        print("\n--- 상태 수동 업데이트: 단위를 화씨로 설정 ---")
         try:
-            # Access the internal storage directly - THIS IS SPECIFIC TO InMemorySessionService for testing
-            # NOTE: In production with persistent services (Database, VertexAI), you would
-            # typically update state via agent actions or specific service APIs if available,
-            # not by direct manipulation of internal storage.
+            # 내부 저장소에 직접 접근 - 이는 테스트를 위한 InMemorySessionService에만 해당
+            # 참고: 영구 서비스(데이터베이스, VertexAI)를 사용하는 프로덕션에서는
+            # 일반적으로 에이전트 작업이나 사용 가능한 특정 서비스 API를 통해 상태를 업데이트하며,
+            # 내부 저장소를 직접 조작하지 않습니다.
             stored_session = session_service_stateful.sessions[APP_NAME][USER_ID_STATEFUL][SESSION_ID_STATEFUL]
             stored_session.state["user_preference_temperature_unit"] = "Fahrenheit"
-            # Optional: You might want to update the timestamp as well if any logic depends on it
+            # 선택 사항: 로직이 타임스탬프에 의존하는 경우 타임스탬프도 업데이트할 수 있습니다.
             # import time
             # stored_session.last_update_time = time.time()
-            print(f"--- Stored session state updated. Current 'user_preference_temperature_unit': {stored_session.state.get('user_preference_temperature_unit', 'Not Set')} ---") # Added .get for safety
+            print(f"--- 저장된 세션 상태 업데이트됨. 현재 'user_preference_temperature_unit': {stored_session.state.get('user_preference_temperature_unit', '설정되지 않음')} ---") # 안전을 위해 .get 추가
         except KeyError:
-            print(f"--- Error: Could not retrieve session '{SESSION_ID_STATEFUL}' from internal storage for user '{USER_ID_STATEFUL}' in app '{APP_NAME}' to update state. Check IDs and if session was created. ---")
+            print(f"--- 오류: 상태를 업데이트하기 위해 앱 '{APP_NAME}'의 사용자 '{USER_ID_STATEFUL}'에 대한 내부 저장소에서 세션 '{SESSION_ID_STATEFUL}'을 검색할 수 없습니다. ID와 세션 생성 여부를 확인하세요. ---")
         except Exception as e:
-             print(f"--- Error updating internal session state: {e} ---")
+             print(f"--- 내부 세션 상태 업데이트 오류: {e} ---")
 
-        # 3. Check weather again (Tool should now use Fahrenheit)
-        # This will also update 'last_weather_report' via output_key
-        print("\n--- Turn 2: Requesting weather in New York (expect Fahrenheit) ---")
-        await call_agent_async(query= "Tell me the weather in New York.",
+        # 3. 다시 날씨 확인 (도구는 이제 화씨를 사용해야 함)
+        # 이것은 또한 output_key를 통해 'last_weather_report'를 업데이트함
+        print("\n--- 2번째 턴: 뉴욕 날씨 요청 (화씨 예상) ---")
+        await call_agent_async(query= "뉴욕 날씨를 알려줘.",
                                runner=runner_root_stateful,
                                user_id=USER_ID_STATEFUL,
                                session_id=SESSION_ID_STATEFUL
                               )
 
-        # 4. Test basic delegation (should still work)
-        # This will update 'last_weather_report' again, overwriting the NY weather report
-        print("\n--- Turn 3: Sending a greeting ---")
-        await call_agent_async(query= "Hi!",
+        # 4. 기본 위임 테스트 (여전히 작동해야 함)
+        # 이것은 'last_weather_report'를 다시 업데이트하여 뉴욕 날씨 보고서를 덮어씀
+        print("\n--- 3번째 턴: 인사 보내기 ---")
+        await call_agent_async(query= "안녕!",
                                runner=runner_root_stateful,
                                user_id=USER_ID_STATEFUL,
                                session_id=SESSION_ID_STATEFUL
                               )
 
-    # --- Execute the `run_stateful_conversation` async function ---
-    # Choose ONE of the methods below based on your environment.
+    # --- `run_stateful_conversation` 비동기 함수 실행 ---
+    # 환경에 따라 아래 방법 중 하나를 선택
 
-    # METHOD 1: Direct await (Default for Notebooks/Async REPLs)
-    # If your environment supports top-level await (like Colab/Jupyter notebooks),
-    # it means an event loop is already running, so you can directly await the function.
-    print("Attempting execution using 'await' (default for notebooks)...")
+    # 방법 1: 직접 await (노트북/비동기 REPL 기본)
+    # 환경이 최상위 await를 지원하는 경우(Colab/Jupyter 노트북 등),
+    # 이벤트 루프가 이미 실행 중이므로 함수를 직접 await 할 수 있습니다.
+    print("'await'를 사용하여 실행 시도 중 (노트북 기본)...")
     await run_stateful_conversation()
 
-    # METHOD 2: asyncio.run (For Standard Python Scripts [.py])
-    # If running this code as a standard Python script from your terminal,
-    # the script context is synchronous. `asyncio.run()` is needed to
-    # create and manage an event loop to execute your async function.
-    # To use this method:
-    # 1. Comment out the `await run_stateful_conversation()` line above.
-    # 2. Uncomment the following block:
+    # 방법 2: asyncio.run (표준 Python 스크립트 [.py]용)
+    # 터미널에서 이 코드를 표준 Python 스크립트로 실행하는 경우,
+    # 스크립트 컨텍스트는 동기식입니다. 비동기 함수를 실행하려면
+    # 이벤트 루프를 생성하고 관리하기 위해 `asyncio.run()`이 필요합니다.
+    # 이 방법을 사용하려면:
+    # 1. 위의 `await run_stateful_conversation()` 줄을 주석 처리합니다.
+    # 2. 다음 블록의 주석을 해제합니다:
     """
     import asyncio
-    if __name__ == "__main__": # Ensures this runs only when script is executed directly
-        print("Executing using 'asyncio.run()' (for standard Python scripts)...")
+    if __name__ == "__main__": # 스크립트가 직접 실행될 때만 실행되도록 보장
+        print("'asyncio.run()'을 사용하여 실행 중 (표준 Python 스크립트용)...")
         try:
-            # This creates an event loop, runs your async function, and closes the loop.
+            # 이것은 이벤트 루프를 생성하고, 비동기 함수를 실행하며, 루프를 닫습니다.
             asyncio.run(run_stateful_conversation())
         except Exception as e:
-            print(f"An error occurred: {e}")
+            print(f"오류가 발생했습니다: {e}")
     """
 
-    # --- Inspect final session state after the conversation ---
-    # This block runs after either execution method completes.
-    print("\n--- Inspecting Final Session State ---")
+    # --- 대화 후 최종 세션 상태 검사 ---
+    # 이 블록은 어느 실행 방법이 완료된 후에 실행됩니다.
+    print("\n--- 최종 세션 상태 검사 ---")
     final_session = await session_service_stateful.get_session(app_name=APP_NAME,
                                                          user_id= USER_ID_STATEFUL,
                                                          session_id=SESSION_ID_STATEFUL)
     if final_session:
-        # Use .get() for safer access to potentially missing keys
-        print(f"Final Preference: {final_session.state.get('user_preference_temperature_unit', 'Not Set')}")
-        print(f"Final Last Weather Report (from output_key): {final_session.state.get('last_weather_report', 'Not Set')}")
-        print(f"Final Last City Checked (by tool): {final_session.state.get('last_city_checked_stateful', 'Not Set')}")
-        # Print full state for detailed view
-        # print(f"Full State Dict: {final_session.state}") # For detailed view
+        # 잠재적으로 누락된 키에 대한 안전한 접근을 위해 .get() 사용
+        print(f"최종 선호도: {final_session.state.get('user_preference_temperature_unit', '설정되지 않음')}")
+        print(f"최종 마지막 날씨 보고서 (output_key에서): {final_session.state.get('last_weather_report', '설정되지 않음')}")
+        print(f"최종 마지막 확인 도시 (도구에 의해): {final_session.state.get('last_city_checked_stateful', '설정되지 않음')}")
+        # 상세 보기를 위한 전체 상태 사전 출력
+        # print(f"전체 상태 사전: {final_session.state}") # 상세 보기용
     else:
-        print("\n❌ Error: Could not retrieve final session state.")
+        print("\n❌ 오류: 최종 세션 상태를 검색할 수 없습니다.")
 
 else:
-    print("\n⚠️ Skipping state test conversation. Stateful root agent runner ('runner_root_stateful') is not available.")
+    print("\n⚠️ 상태 테스트 대화를 건너뜁니다. 상태 인식 루트 에이전트 러너('runner_root_stateful')를 사용할 수 없습니다.")
 ```
 
 ---
 
-By reviewing the conversation flow and the final session state printout, you can confirm:
+대화 흐름과 최종 세션 상태 출력을 검토하여 다음을 확인할 수 있습니다:
 
-*   **State Read:** The weather tool (`get_weather_stateful`) correctly read `user_preference_temperature_unit` from state, initially using "Celsius" for London.
-*   **State Update:** The direct modification successfully changed the stored preference to "Fahrenheit".
-*   **State Read (Updated):** The tool subsequently read "Fahrenheit" when asked for New York's weather and performed the conversion.
-*   **Tool State Write:** The tool successfully wrote the `last_city_checked_stateful` ("New York" after the second weather check) into the state via `tool_context.state`.
-*   **Delegation:** The delegation to the `greeting_agent` for "Hi!" functioned correctly even after state modifications.
-*   **`output_key`:** The `output_key="last_weather_report"` successfully saved the root agent's *final* response for *each turn* where the root agent was the one ultimately responding. In this sequence, the last response was the greeting ("Hello, there!"), so that overwrote the weather report in the state key.
-*   **Final State:** The final check confirms the preference persisted as "Fahrenheit".
+*   **상태 읽기:** 날씨 도구(`get_weather_stateful`)는 상태에서 `user_preference_temperature_unit`를 올바르게 읽어 처음에는 런던에 대해 "섭씨"를 사용했습니다.
+*   **상태 업데이트:** 직접 수정으로 저장된 선호도가 "화씨"로 성공적으로 변경되었습니다.
+*   **상태 읽기 (업데이트됨):** 도구는 이후 뉴욕 날씨를 물었을 때 "화씨"를 읽고 변환을 수행했습니다.
+*   **도구 상태 쓰기:** 도구는 `tool_context.state`를 통해 상태에 `last_city_checked_stateful`("뉴욕"을 두 번째 날씨 확인 후)을 성공적으로 썼습니다.
+*   **위임:** 상태 수정 후에도 "안녕!"에 대한 `greeting_agent`로의 위임이 올바르게 작동했습니다.
+*   **`output_key`:** `output_key="last_weather_report"`는 루트 에이전트가 궁극적으로 응답하는 *각 턴*에 대한 루트 에이전트의 *최종* 응답을 성공적으로 저장했습니다. 이 시퀀스에서 마지막 응답은 인사("안녕하세요!")였으므로 상태 키의 날씨 보고서를 덮어썼습니다.
+*   **최종 상태:** 최종 확인 결과 선호도가 "화씨"로 유지되었음을 확인합니다.
 
-You've now successfully integrated session state to personalize agent behavior using `ToolContext`, manually manipulated state for testing `InMemorySessionService`, and observed how `output_key` provides a simple mechanism for saving the agent's last response to state. This foundational understanding of state management is key as we proceed to implement safety guardrails using callbacks in the next steps.
-
----
-
-## Step 5: Adding Safety \- Input Guardrail with `before_model_callback`
-
-Our agent team is becoming more capable, remembering preferences and using tools effectively. However, in real-world scenarios, we often need safety mechanisms to control the agent's behavior *before* potentially problematic requests even reach the core Large Language Model (LLM).
-
-ADK provides **Callbacks** – functions that allow you to hook into specific points in the agent's execution lifecycle. The `before_model_callback` is particularly useful for input safety.
-
-**What is `before_model_callback`?**
-
-* It's a Python function you define that ADK executes *just before* an agent sends its compiled request (including conversation history, instructions, and the latest user message) to the underlying LLM.  
-* **Purpose:** Inspect the request, modify it if necessary, or block it entirely based on predefined rules.
-
-**Common Use Cases:**
-
-* **Input Validation/Filtering:** Check if user input meets criteria or contains disallowed content (like PII or keywords).  
-* **Guardrails:** Prevent harmful, off-topic, or policy-violating requests from being processed by the LLM.  
-* **Dynamic Prompt Modification:** Add timely information (e.g., from session state) to the LLM request context just before sending.
-
-**How it Works:**
-
-1. Define a function accepting `callback_context: CallbackContext` and `llm_request: LlmRequest`.  
-
-    * `callback_context`: Provides access to agent info, session state (`callback_context.state`), etc.  
-    * `llm_request`: Contains the full payload intended for the LLM (`contents`, `config`).  
-
-2. Inside the function: 
-
-    * **Inspect:** Examine `llm_request.contents` (especially the last user message).  
-    * **Modify (Use Caution):** You *can* change parts of `llm_request`.  
-    * **Block (Guardrail):** Return an `LlmResponse` object. ADK will send this response back immediately, *skipping* the LLM call for that turn.  
-    * **Allow:** Return `None`. ADK proceeds to call the LLM with the (potentially modified) request.
-
-**In this step, we will:**
-
-1. Define a `before_model_callback` function (`block_keyword_guardrail`) that checks the user's input for a specific keyword ("BLOCK").  
-2. Update our stateful root agent (`weather_agent_v4_stateful` from Step 4\) to use this callback.  
-3. Create a new runner associated with this updated agent but using the *same stateful session service* to maintain state continuity.  
-4. Test the guardrail by sending both normal and keyword-containing requests.
+이제 `ToolContext`를 사용하여 에이전트 동작을 개인화하기 위해 세션 상태를 성공적으로 통합했고, `InMemorySessionService` 테스트를 위해 상태를 수동으로 조작했으며, `output_key`가 에이전트의 마지막 응답을 상태에 저장하는 간단한 메커니즘을 제공하는 방법을 관찰했습니다. 상태 관리에 대한 이 기초적인 이해는 다음 단계에서 콜백을 사용하여 안전 가드레일을 구현하는 데 핵심입니다.
 
 ---
 
-**1\. Define the Guardrail Callback Function**
+## 5단계: 안전 기능 추가 - `before_model_callback`을 이용한 입력 가드레일
 
-This function will inspect the last user message within the `llm_request` content. If it finds "BLOCK" (case-insensitive), it constructs and returns an `LlmResponse` to block the flow; otherwise, it returns `None`.  
+우리 에이전트 팀은 선호도를 기억하고 도구를 효과적으로 사용하면서 점점 더 유능해지고 있습니다. 그러나 실제 시나리오에서는 잠재적으로 문제가 있는 요청이 핵심 거대 언어 모델(LLM)에 도달하기 전에 에이전트의 행동을 제어하는 안전 메커니즘이 종종 필요합니다.
+
+ADK는 **콜백(Callbacks)**을 제공합니다. 이는 에이전트의 실행 수명 주기의 특정 지점에 연결할 수 있는 함수입니다. `before_model_callback`은 입력 안전에 특히 유용합니다.
+
+**`before_model_callback`이란 무엇인가요?**
+
+*   에이전트가 컴파일된 요청(대화 기록, 지침, 최신 사용자 메시지 포함)을 기본 LLM으로 보내기 *직전에* ADK가 실행하는 여러분이 정의한 Python 함수입니다.
+*   **목적:** 요청을 검사하고, 필요한 경우 수정하거나, 미리 정의된 규칙에 따라 완전히 차단합니다.
+
+**일반적인 사용 사례:**
+
+*   **입력 유효성 검사/필터링:** 사용자 입력이 기준을 충족하는지 또는 허용되지 않는 콘텐츠(예: 개인 식별 정보 또는 키워드)를 포함하는지 확인합니다.
+*   **가드레일:** 유해하거나, 주제를 벗어나거나, 정책을 위반하는 요청이 LLM에 의해 처리되는 것을 방지합니다.
+*   **동적 프롬프트 수정:** 보내기 직전에 시기적절한 정보(예: 세션 상태에서)를 LLM 요청 컨텍스트에 추가합니다.
+
+**작동 방식:**
+
+1.  `callback_context: CallbackContext`와 `llm_request: LlmRequest`를 받는 함수를 정의합니다.
+    *   `callback_context`: 에이전트 정보, 세션 상태(`callback_context.state`) 등에 접근할 수 있습니다.
+    *   `llm_request`: LLM을 위한 전체 페이로드(`contents`, `config`)를 포함합니다.
+2.  함수 내부:
+    *   **검사:** `llm_request.contents`(특히 마지막 사용자 메시지)를 검사합니다.
+    *   **수정 (주의해서 사용):** `llm_request`의 일부를 변경할 *수 있습니다*.
+    *   **차단 (가드레일):** `LlmResponse` 객체를 반환합니다. ADK는 이 응답을 즉시 다시 보내고 해당 턴에 대한 LLM 호출을 *건너뜁니다*.
+    *   **허용:** `None`을 반환합니다. ADK는 (잠재적으로 수정된) 요청으로 LLM을 호출합니다.
+
+**이 단계에서는 다음을 수행합니다:**
+
+1.  사용자 입력에서 특정 키워드("BLOCK")를 확인하는 `before_model_callback` 함수(`block_keyword_guardrail`)를 정의합니다.
+2.  이 콜백을 사용하도록 상태 인식 루트 에이전트(4단계의 `weather_agent_v4_stateful`)를 업데이트합니다.
+3.  상태 연속성을 유지하기 위해 이 업데이트된 에이전트와 연결되지만 *동일한 상태 인식 세션 서비스*를 사용하는 새로운 러너를 생성합니다.
+4.  일반 요청과 키워드가 포함된 요청을 모두 보내 가드레일을 테스트합니다.
+
+---
+
+**1. 가드레일 콜백 함수 정의**
+
+이 함수는 `llm_request` 콘텐츠 내의 마지막 사용자 메시지를 검사합니다. "BLOCK"(대소문자 구분 없음)을 찾으면 `LlmResponse`를 구성하고 반환하여 흐름을 차단합니다. 그렇지 않으면 `None`을 반환합니다.
 
 
 ```python
-# @title 1. Define the before_model_callback Guardrail
+# @title 1. before_model_callback 가드레일 정의
 
-# Ensure necessary imports are available
+# 필요한 import가 사용 가능한지 확인
 from google.adk.agents.callback_context import CallbackContext
 from google.adk.models.llm_request import LlmRequest
 from google.adk.models.llm_response import LlmResponse
-from google.genai import types # For creating response content
+from google.genai import types # 응답 콘텐츠 생성을 위해
 from typing import Optional
 
 def block_keyword_guardrail(
     callback_context: CallbackContext, llm_request: LlmRequest
 ) -> Optional[LlmResponse]:
     """
-    Inspects the latest user message for 'BLOCK'. If found, blocks the LLM call
-    and returns a predefined LlmResponse. Otherwise, returns None to proceed.
+    최신 사용자 메시지에서 'BLOCK'을 검사합니다. 발견되면 LLM 호출을 차단하고
+    미리 정의된 LlmResponse를 반환합니다. 그렇지 않으면 None을 반환하여 계속 진행합니다.
     """
-    agent_name = callback_context.agent_name # Get the name of the agent whose model call is being intercepted
-    print(f"--- Callback: block_keyword_guardrail running for agent: {agent_name} ---")
+    agent_name = callback_context.agent_name # 모델 호출이 가로채진 에이전트의 이름을 가져옴
+    print(f"--- 콜백: block_keyword_guardrail이 에이전트 {agent_name}에 대해 실행 중 ---")
 
-    # Extract the text from the latest user message in the request history
+    # 요청 기록에서 최신 사용자 메시지의 텍스트 추출
     last_user_message_text = ""
     if llm_request.contents:
-        # Find the most recent message with role 'user'
+        # 역할이 'user'인 가장 최근 메시지 찾기
         for content in reversed(llm_request.contents):
             if content.role == 'user' and content.parts:
-                # Assuming text is in the first part for simplicity
+                # 단순화를 위해 텍스트가 첫 번째 부분에 있다고 가정
                 if content.parts[0].text:
                     last_user_message_text = content.parts[0].text
-                    break # Found the last user message text
+                    break # 마지막 사용자 메시지 텍스트를 찾았음
 
-    print(f"--- Callback: Inspecting last user message: '{last_user_message_text[:100]}...' ---") # Log first 100 chars
+    print(f"--- 콜백: 마지막 사용자 메시지 검사 중: '{last_user_message_text[:100]}...' ---") # 첫 100자 기록
 
-    # --- Guardrail Logic ---
+    # --- 가드레일 로직 ---
     keyword_to_block = "BLOCK"
-    if keyword_to_block in last_user_message_text.upper(): # Case-insensitive check
-        print(f"--- Callback: Found '{keyword_to_block}'. Blocking LLM call! ---")
-        # Optionally, set a flag in state to record the block event
+    if keyword_to_block in last_user_message_text.upper(): # 대소문자 무시 검사
+        print(f"--- 콜백: '{keyword_to_block}' 발견. LLM 호출 차단! ---")
+        # 선택적으로 상태에 플래그를 설정하여 차단 이벤트 기록
         callback_context.state["guardrail_block_keyword_triggered"] = True
-        print(f"--- Callback: Set state 'guardrail_block_keyword_triggered': True ---")
+        print(f"--- 콜백: 상태 'guardrail_block_keyword_triggered'를 True로 설정 ---")
 
-        # Construct and return an LlmResponse to stop the flow and send this back instead
+        # 흐름을 중지하고 대신 이 응답을 보내기 위해 LlmResponse 구성 및 반환
         return LlmResponse(
             content=types.Content(
-                role="model", # Mimic a response from the agent's perspective
-                parts=[types.Part(text=f"I cannot process this request because it contains the blocked keyword '{keyword_to_block}'.")],
+                role="model", # 에이전트 관점에서의 응답 모방
+                parts=[types.Part(text=f"차단된 키워드 '{keyword_to_block}'가 포함되어 있어 이 요청을 처리할 수 없습니다.")],
             )
-            # Note: You could also set an error_message field here if needed
+            # 참고: 필요한 경우 여기에 error_message 필드를 설정할 수도 있습니다.
         )
     else:
-        # Keyword not found, allow the request to proceed to the LLM
-        print(f"--- Callback: Keyword not found. Allowing LLM call for {agent_name}. ---")
-        return None # Returning None signals ADK to continue normally
+        # 키워드를 찾지 못했으므로 요청을 LLM으로 계속 진행 허용
+        print(f"--- 콜백: 키워드를 찾지 못했습니다. {agent_name}에 대한 LLM 호출 허용. ---")
+        return None # None을 반환하면 ADK가 정상적으로 계속 진행하라는 신호
 
-print("✅ block_keyword_guardrail function defined.")
-
+print("✅ block_keyword_guardrail 함수가 정의되었습니다.")
 ```
 
 ---
 
-**2\. Update Root Agent to Use the Callback**
+**2. 콜백을 사용하도록 루트 에이전트 업데이트**
 
-We redefine the root agent, adding the `before_model_callback` parameter and pointing it to our new guardrail function. We'll give it a new version name for clarity.
+루트 에이전트를 재정의하고, `before_model_callback` 매개변수를 추가하고 새로운 가드레일 함수를 가리키도록 합니다. 명확성을 위해 새 버전 이름을 부여합니다.
 
-*Important:* We need to redefine the sub-agents (`greeting_agent`, `farewell_agent`) and the stateful tool (`get_weather_stateful`) within this context if they are not already available from previous steps, ensuring the root agent definition has access to all its components.
+*중요:* 이 루트 에이전트를 정의하기 전에 하위 에이전트(`greeting_agent`, `farewell_agent`)와 상태 인식 도구(`get_weather_stateful`)가 이 컨텍스트에서 사용 가능하거나 이전 단계에서 이미 사용 가능한지 확인해야 합니다.
 
 
 ```python
-# @title 2. Update Root Agent with before_model_callback
+# @title 2. before_model_callback으로 루트 에이전트 업데이트
 
 
-# --- Redefine Sub-Agents (Ensures they exist in this context) ---
+# --- 하위 에이전트 재정의 (이 컨텍스트에 존재하는지 확인) ---
 greeting_agent = None
 try:
-    # Use a defined model constant
+    # 정의된 모델 상수 사용
     greeting_agent = Agent(
         model=MODEL_GEMINI_2_0_FLASH,
-        name="greeting_agent", # Keep original name for consistency
-        instruction="You are the Greeting Agent. Your ONLY task is to provide a friendly greeting using the 'say_hello' tool. Do nothing else.",
-        description="Handles simple greetings and hellos using the 'say_hello' tool.",
+        name="greeting_agent", # 일관성을 위해 원래 이름 유지
+        instruction="당신은 인사 에이전트입니다. 당신의 유일한 임무는 'say_hello' 도구를 사용하여 친절한 인사를 제공하는 것입니다. 다른 작업은 하지 마세요.",
+        description="'say_hello' 도구를 사용하여 간단한 인사와 안부를 처리합니다.",
         tools=[say_hello],
     )
-    print(f"✅ Sub-Agent '{greeting_agent.name}' redefined.")
+    print(f"✅ 하위 에이전트 '{greeting_agent.name}'가 재정의되었습니다.")
 except Exception as e:
-    print(f"❌ Could not redefine Greeting agent. Check Model/API Key ({greeting_agent.model}). Error: {e}")
+    print(f"❌ 인사 에이전트를 재정의할 수 없습니다. 모델/API 키({greeting_agent.model})를 확인하세요. 오류: {e}")
 
 farewell_agent = None
 try:
-    # Use a defined model constant
+    # 정의된 모델 상수 사용
     farewell_agent = Agent(
         model=MODEL_GEMINI_2_0_FLASH,
-        name="farewell_agent", # Keep original name
-        instruction="You are the Farewell Agent. Your ONLY task is to provide a polite goodbye message using the 'say_goodbye' tool. Do not perform any other actions.",
-        description="Handles simple farewells and goodbyes using the 'say_goodbye' tool.",
+        name="farewell_agent", # 원래 이름 유지
+        instruction="당신은 작별 에이전트입니다. 당신의 유일한 임무는 'say_goodbye' 도구를 사용하여 정중한 작별 메시지를 제공하는 것입니다. 다른 작업은 수행하지 마세요.",
+        description="'say_goodbye' 도구를 사용하여 간단한 작별 인사를 처리합니다.",
         tools=[say_goodbye],
     )
-    print(f"✅ Sub-Agent '{farewell_agent.name}' redefined.")
+    print(f"✅ 하위 에이전트 '{farewell_agent.name}'가 재정의되었습니다.")
 except Exception as e:
-    print(f"❌ Could not redefine Farewell agent. Check Model/API Key ({farewell_agent.model}). Error: {e}")
+    print(f"❌ 작별 에이전트를 재정의할 수 없습니다. 모델/API 키({farewell_agent.model})를 확인하세요. 오류: {e}")
 
 
-# --- Define the Root Agent with the Callback ---
+# --- 콜백을 포함한 루트 에이전트 정의 ---
 root_agent_model_guardrail = None
 runner_root_model_guardrail = None
 
-# Check all components before proceeding
+# 진행하기 전에 모든 구성 요소 확인
 if greeting_agent and farewell_agent and 'get_weather_stateful' in globals() and 'block_keyword_guardrail' in globals():
 
-    # Use a defined model constant
+    # 정의된 모델 상수 사용
     root_agent_model = MODEL_GEMINI_2_0_FLASH
 
     root_agent_model_guardrail = Agent(
-        name="weather_agent_v5_model_guardrail", # New version name for clarity
+        name="weather_agent_v5_model_guardrail", # 명확성을 위한 새 버전 이름
         model=root_agent_model,
-        description="Main agent: Handles weather, delegates greetings/farewells, includes input keyword guardrail.",
-        instruction="You are the main Weather Agent. Provide weather using 'get_weather_stateful'. "
-                    "Delegate simple greetings to 'greeting_agent' and farewells to 'farewell_agent'. "
-                    "Handle only weather requests, greetings, and farewells.",
+        description="메인 에이전트: 날씨 처리, 인사/작별 위임, 입력 키워드 가드레일 포함.",
+        instruction="당신은 메인 날씨 에이전트입니다. 'get_weather_stateful'을 사용하여 날씨를 제공하세요. "
+                    "간단한 인사는 'greeting_agent'에게, 작별 인사는 'farewell_agent'에게 위임하세요. "
+                    "날씨 요청, 인사, 작별 인사만 처리하세요.",
         tools=[get_weather],
-        sub_agents=[greeting_agent, farewell_agent], # Reference the redefined sub-agents
-        output_key="last_weather_report", # Keep output_key from Step 4
-        before_model_callback=block_keyword_guardrail # <<< Assign the guardrail callback
+        sub_agents=[greeting_agent, farewell_agent], # 재정의된 하위 에이전트 참조
+        output_key="last_weather_report", # 4단계의 output_key 유지
+        before_model_callback=block_keyword_guardrail # <<< 가드레일 콜백 할당
     )
-    print(f"✅ Root Agent '{root_agent_model_guardrail.name}' created with before_model_callback.")
+    print(f"✅ 루트 에이전트 '{root_agent_model_guardrail.name}'가 before_model_callback으로 생성되었습니다.")
 
-    # --- Create Runner for this Agent, Using SAME Stateful Session Service ---
-    # Ensure session_service_stateful exists from Step 4
+    # --- 이 에이전트를 위한 Runner 생성, 동일한 상태 인식 세션 서비스 사용 ---
+    # 4단계의 session_service_stateful이 존재하는지 확인
     if 'session_service_stateful' in globals():
         runner_root_model_guardrail = Runner(
             agent=root_agent_model_guardrail,
-            app_name=APP_NAME, # Use consistent APP_NAME
-            session_service=session_service_stateful # <<< Use the service from Step 4
+            app_name=APP_NAME, # 일관된 APP_NAME 사용
+            session_service=session_service_stateful # <<< 4단계의 서비스 사용
         )
-        print(f"✅ Runner created for guardrail agent '{runner_root_model_guardrail.agent.name}', using stateful session service.")
+        print(f"✅ 가드레일 에이전트 '{runner_root_model_guardrail.agent.name}'를 위한 Runner가 상태 인식 세션 서비스를 사용하여 생성되었습니다.")
     else:
-        print("❌ Cannot create runner. 'session_service_stateful' from Step 4 is missing.")
+        print("❌ Runner를 생성할 수 없습니다. 4단계의 'session_service_stateful'이 없습니다.")
 
 else:
-    print("❌ Cannot create root agent with model guardrail. One or more prerequisites are missing or failed initialization:")
-    if not greeting_agent: print("   - Greeting Agent")
-    if not farewell_agent: print("   - Farewell Agent")
-    if 'get_weather_stateful' not in globals(): print("   - 'get_weather_stateful' tool")
-    if 'block_keyword_guardrail' not in globals(): print("   - 'block_keyword_guardrail' callback")
+    print("❌ 모델 가드레일로 루트 에이전트를 생성할 수 없습니다. 하나 이상의 전제 조건이 없거나 초기화에 실패했습니다:")
+    if not greeting_agent: print("   - 인사 에이전트")
+    if not farewell_agent: print("   - 작별 에이전트")
+    if 'get_weather_stateful' not in globals(): print("   - 'get_weather_stateful' 도구")
+    if 'block_keyword_guardrail' not in globals(): print("   - 'block_keyword_guardrail' 콜백")
 ```
 
 ---
 
-**3\. Interact to Test the Guardrail**
+**3. 가드레일 테스트를 위한 상호작용**
 
-Let's test the guardrail's behavior. We'll use the *same session* (`SESSION_ID_STATEFUL`) as in Step 4 to show that state persists across these changes.
+가드레일의 동작을 테스트해 봅시다. 4단계와 *동일한 세션*(`SESSION_ID_STATEFUL`)을 사용하여 이러한 변경 사항 전반에 걸쳐 상태가 지속됨을 보여줍니다.
 
-1. Send a normal weather request (should pass the guardrail and execute).  
-2. Send a request containing "BLOCK" (should be intercepted by the callback).  
-3. Send a greeting (should pass the root agent's guardrail, be delegated, and execute normally).
+1. 일반적인 날씨 요청을 보냅니다 (가드레일을 통과하고 실행되어야 함).
+2. "BLOCK"을 포함한 요청을 보냅니다 (콜백에 의해 가로채져야 함).
+3. 인사를 보냅니다 (루트 에이전트의 가드레일을 통과하고, 위임되어 정상적으로 실행되어야 함).
 
 
 ```python
-# @title 3. Interact to Test the Model Input Guardrail
-import asyncio # Ensure asyncio is imported
+# @title 3. 모델 입력 가드레일 테스트를 위한 상호작용
+import asyncio # asyncio가 import되었는지 확인
 
-# Ensure the runner for the guardrail agent is available
+# 가드레일 에이전트를 위한 러너가 사용 가능한지 확인
 if 'runner_root_model_guardrail' in globals() and runner_root_model_guardrail:
-    # Define the main async function for the guardrail test conversation.
-    # The 'await' keywords INSIDE this function are necessary for async operations.
+    # 가드레일 테스트 대화를 위한 메인 비동기 함수 정의
+    # 이 함수 내부의 'await' 키워드는 비동기 작업에 필수적
     async def run_guardrail_test_conversation():
-        print("\n--- Testing Model Input Guardrail ---")
+        print("\n--- 모델 입력 가드레일 테스트 중 ---")
 
-        # Use the runner for the agent with the callback and the existing stateful session ID
-        # Define a helper lambda for cleaner interaction calls
+        # 콜백이 있는 에이전트와 기존 상태 인식 세션 ID를 가진 러너 사용
+        # 더 깔끔한 상호작용 호출을 위한 헬퍼 람다 정의
         interaction_func = lambda query: call_agent_async(query,
                                                          runner_root_model_guardrail,
-                                                         USER_ID_STATEFUL, # Use existing user ID
-                                                         SESSION_ID_STATEFUL # Use existing session ID
+                                                         USER_ID_STATEFUL, # 기존 사용자 ID 사용
+                                                         SESSION_ID_STATEFUL # 기존 세션 ID 사용
                                                         )
-        # 1. Normal request (Callback allows, should use Fahrenheit from previous state change)
-        print("--- Turn 1: Requesting weather in London (expect allowed, Fahrenheit) ---")
-        await interaction_func("What is the weather in London?")
+        # 1. 일반 요청 (콜백 허용, 이전 상태 변경에서 화씨 사용해야 함)
+        print("--- 1번째 턴: 런던 날씨 요청 (허용, 화씨 예상) ---")
+        await interaction_func("런던 날씨는 어때?")
 
-        # 2. Request containing the blocked keyword (Callback intercepts)
-        print("\n--- Turn 2: Requesting with blocked keyword (expect blocked) ---")
-        await interaction_func("BLOCK the request for weather in Tokyo") # Callback should catch "BLOCK"
+        # 2. 차단된 키워드를 포함한 요청 (콜백이 가로챔)
+        print("\n--- 2번째 턴: 차단된 키워드로 요청 (차단 예상) ---")
+        await interaction_func("도쿄 날씨 요청을 BLOCK") # 콜백이 "BLOCK"을 잡아야 함
 
-        # 3. Normal greeting (Callback allows root agent, delegation happens)
-        print("\n--- Turn 3: Sending a greeting (expect allowed) ---")
-        await interaction_func("Hello again")
+        # 3. 일반 인사 (콜백이 루트 에이전트 허용, 위임 발생)
+        print("\n--- 3번째 턴: 인사 보내기 (허용 예상) ---")
+        await interaction_func("다시 안녕")
 
-    # --- Execute the `run_guardrail_test_conversation` async function ---
-    # Choose ONE of the methods below based on your environment.
+    # --- `run_guardrail_test_conversation` 비동기 함수 실행 ---
+    # 환경에 따라 아래 방법 중 하나를 선택
 
-    # METHOD 1: Direct await (Default for Notebooks/Async REPLs)
-    # If your environment supports top-level await (like Colab/Jupyter notebooks),
-    # it means an event loop is already running, so you can directly await the function.
-    print("Attempting execution using 'await' (default for notebooks)...")
+    # 방법 1: 직접 await (노트북/비동기 REPL 기본)
+    # 환경이 최상위 await를 지원하는 경우(Colab/Jupyter 노트북 등),
+    # 이벤트 루프가 이미 실행 중이므로 함수를 직접 await 할 수 있습니다.
+    print("'await'를 사용하여 실행 시도 중 (노트북 기본)...")
     await run_guardrail_test_conversation()
 
-    # METHOD 2: asyncio.run (For Standard Python Scripts [.py])
-    # If running this code as a standard Python script from your terminal,
-    # the script context is synchronous. `asyncio.run()` is needed to
-    # create and manage an event loop to execute your async function.
-    # To use this method:
-    # 1. Comment out the `await run_guardrail_test_conversation()` line above.
-    # 2. Uncomment the following block:
+    # 방법 2: asyncio.run (표준 Python 스크립트 [.py]용)
+    # 터미널에서 이 코드를 표준 Python 스크립트로 실행하는 경우,
+    # 스크립트 컨텍스트는 동기식입니다. 비동기 함수를 실행하려면
+    # 이벤트 루프를 생성하고 관리하기 위해 `asyncio.run()`이 필요합니다.
+    # 이 방법을 사용하려면:
+    # 1. 위의 `await run_guardrail_test_conversation()` 줄을 주석 처리합니다.
+    # 2. 다음 블록의 주석을 해제합니다:
     """
     import asyncio
-    if __name__ == "__main__": # Ensures this runs only when script is executed directly
-        print("Executing using 'asyncio.run()' (for standard Python scripts)...")
+    if __name__ == "__main__": # 스크립트가 직접 실행될 때만 실행되도록 보장
+        print("'asyncio.run()'을 사용하여 실행 중 (표준 Python 스크립트용)...")
         try:
-            # This creates an event loop, runs your async function, and closes the loop.
+            # 이것은 이벤트 루프를 생성하고, 비동기 함수를 실행하며, 루프를 닫습니다.
             asyncio.run(run_guardrail_test_conversation())
         except Exception as e:
-            print(f"An error occurred: {e}")
+            print(f"오류가 발생했습니다: {e}")
     """
 
-    # --- Inspect final session state after the conversation ---
-    # This block runs after either execution method completes.
-    # Optional: Check state for the trigger flag set by the callback
-    print("\n--- Inspecting Final Session State (After Guardrail Test) ---")
-    # Use the session service instance associated with this stateful session
+    # --- 대화 후 최종 세션 상태 검사 ---
+    # 이 블록은 어느 실행 방법이 완료된 후에 실행됩니다.
+    # 선택 사항: 콜백에 의해 설정된 트리거 플래그에 대한 상태 확인
+    print("\n--- 최종 세션 상태 검사 (가드레일 테스트 후) ---")
+    # 이 상태 인식 세션과 관련된 세션 서비스 인스턴스 사용
     final_session = await session_service_stateful.get_session(app_name=APP_NAME,
                                                          user_id=USER_ID_STATEFUL,
                                                          session_id=SESSION_ID_STATEFUL)
     if final_session:
-        # Use .get() for safer access
-        print(f"Guardrail Triggered Flag: {final_session.state.get('guardrail_block_keyword_triggered', 'Not Set (or False)')}")
-        print(f"Last Weather Report: {final_session.state.get('last_weather_report', 'Not Set')}") # Should be London weather if successful
-        print(f"Temperature Unit: {final_session.state.get('user_preference_temperature_unit', 'Not Set')}") # Should be Fahrenheit
-        # print(f"Full State Dict: {final_session.state}") # For detailed view
+        # 안전한 접근을 위해 .get() 사용
+        print(f"가드레일 트리거 플래그: {final_session.state.get('guardrail_block_keyword_triggered', '설정되지 않음 (또는 False)')}")
+        print(f"마지막 날씨 보고서: {final_session.state.get('last_weather_report', '설정되지 않음')}") # 성공 시 런던 날씨여야 함
+        print(f"온도 단위: {final_session.state.get('user_preference_temperature_unit', '설정되지 않음')}") # 화씨여야 함
+        # print(f"전체 상태 사전: {final_session.state}") # 상세 보기용
     else:
-        print("\n❌ Error: Could not retrieve final session state.")
+        print("\n❌ 오류: 최종 세션 상태를 검색할 수 없습니다.")
 
 else:
-    print("\n⚠️ Skipping model guardrail test. Runner ('runner_root_model_guardrail') is not available.")
+    print("\n⚠️ 모델 가드레일 테스트를 건너뜁니다. 러너('runner_root_model_guardrail')를 사용할 수 없습니다.")
 ```
 
 ---
 
-Observe the execution flow:
+실행 흐름을 관찰하세요:
 
-1. **London Weather:** The callback runs for `weather_agent_v5_model_guardrail`, inspects the message, prints "Keyword not found. Allowing LLM call.", and returns `None`. The agent proceeds, calls the `get_weather_stateful` tool (which uses the "Fahrenheit" preference from Step 4's state change), and returns the weather. This response updates `last_weather_report` via `output_key`.  
-2. **BLOCK Request:** The callback runs again for `weather_agent_v5_model_guardrail`, inspects the message, finds "BLOCK", prints "Blocking LLM call\!", sets the state flag, and returns the predefined `LlmResponse`. The agent's underlying LLM is *never called* for this turn. The user sees the callback's blocking message.  
-3. **Hello Again:** The callback runs for `weather_agent_v5_model_guardrail`, allows the request. The root agent then delegates to `greeting_agent`. *Note: The `before_model_callback` defined on the root agent does NOT automatically apply to sub-agents.* The `greeting_agent` proceeds normally, calls its `say_hello` tool, and returns the greeting.
+1.  **런던 날씨:** `weather_agent_v5_model_guardrail`에 대한 콜백이 실행되고, 메시지를 검사한 후 "키워드를 찾을 수 없습니다. LLM 호출 허용."을 출력하고 `None`을 반환합니다. 에이전트는 계속 진행하여 `get_weather_stateful` 도구를 호출하고(4단계의 상태 변경에서 "화씨" 선호도를 사용), 날씨를 반환합니다. 이 응답은 `output_key`를 통해 `last_weather_report`를 업데이트합니다.
+2.  **BLOCK 요청:** `weather_agent_v5_model_guardrail`에 대한 콜백이 다시 실행되고, 메시지를 검사하여 "BLOCK"을 찾은 후 "LLM 호출 차단!"을 출력하고, 상태 플래그를 설정하며, 미리 정의된 `LlmResponse`를 반환합니다. 에이전트의 기본 LLM은 이 턴에 대해 *전혀 호출되지 않습니다*. 사용자는 콜백의 차단 메시지를 보게 됩니다.
+3.  **다시 안녕:** `weather_agent_v5_model_guardrail`에 대한 콜백이 실행되어 요청을 허용합니다. 루트 에이전트는 `greeting_agent`에게 위임합니다. *참고: 루트 에이전트에 정의된 `before_model_callback`은 하위 에이전트에게 자동으로 적용되지 않습니다.* `greeting_agent`는 정상적으로 진행되어 `say_hello` 도구를 호출하고 인사를 반환합니다.
 
-You have successfully implemented an input safety layer\! The `before_model_callback` provides a powerful mechanism to enforce rules and control agent behavior *before* expensive or potentially risky LLM calls are made. Next, we'll apply a similar concept to add guardrails around tool usage itself.
+입력 안전 계층을 성공적으로 구현했습니다! `before_model_callback`은 비용이 많이 들거나 잠재적으로 위험한 LLM 호출이 이루어지기 *전에* 규칙을 적용하고 에이전트 동작을 제어하는 강력한 메커니즘을 제공합니다. 다음으로, 도구 사용 자체에 가드레일을 추가하기 위해 비슷한 개념을 적용할 것입니다.
 
-## Step 6: Adding Safety \- Tool Argument Guardrail (`before_tool_callback`)
+## 6단계: 안전 기능 추가 - `before_tool_callback`을 이용한 도구 인수 가드레일
 
-In Step 5, we added a guardrail to inspect and potentially block user input *before* it reached the LLM. Now, we'll add another layer of control *after* the LLM has decided to use a tool but *before* that tool actually executes. This is useful for validating the *arguments* the LLM wants to pass to the tool.
+5단계에서는 사용자 입력이 LLM에 도달하기 *전에* 검사하고 잠재적으로 차단하는 가드레일을 추가했습니다. 이제 LLM이 도구를 사용하기로 결정한 *후* 하지만 해당 도구가 실제로 실행되기 *전에* 또 다른 제어 계층을 추가할 것입니다. 이는 LLM이 도구에 전달하려는 *인수*를 검증하는 데 유용합니다.
 
-ADK provides the `before_tool_callback` for this precise purpose.
+ADK는 바로 이 목적을 위해 `before_tool_callback`을 제공합니다.
 
-**What is `before_tool_callback`?**
+**`before_tool_callback`이란 무엇인가요?**
 
-* It's a Python function executed just *before* a specific tool function runs, after the LLM has requested its use and decided on the arguments.  
-* **Purpose:** Validate tool arguments, prevent tool execution based on specific inputs, modify arguments dynamically, or enforce resource usage policies.
+*   LLM이 사용을 요청하고 인수를 결정한 후, 특정 도구 함수가 실행되기 바로 *전에* 실행되는 Python 함수입니다.
+*   **목적:** 도구 인수를 검증하고, 특정 입력에 기반한 도구 실행을 방지하고, 인수를 동적으로 수정하거나, 리소스 사용 정책을 시행합니다.
 
-**Common Use Cases:**
+**일반적인 사용 사례:**
 
-* **Argument Validation:** Check if arguments provided by the LLM are valid, within allowed ranges, or conform to expected formats.  
-* **Resource Protection:** Prevent tools from being called with inputs that might be costly, access restricted data, or cause unwanted side effects (e.g., blocking API calls for certain parameters).  
-* **Dynamic Argument Modification:** Adjust arguments based on session state or other contextual information before the tool runs.
+*   **인수 유효성 검사:** LLM이 제공한 인수가 유효한지, 허용된 범위 내에 있는지, 또는 예상 형식에 부합하는지 확인합니다.
+*   **리소스 보호:** 비용이 많이 들거나, 제한된 데이터에 접근하거나, 원치 않는 부작용을 일으킬 수 있는 입력으로 도구가 호출되는 것을 방지합니다 (예: 특정 매개변수에 대한 API 호출 차단).
+*   **동적 인수 수정:** 도구가 실행되기 전에 세션 상태나 다른 문맥 정보를 기반으로 인수를 조정합니다.
 
-**How it Works:**
+**작동 방식:**
 
-1. Define a function accepting `tool: BaseTool`, `args: Dict[str, Any]`, and `tool_context: ToolContext`.  
+1.  `tool: BaseTool`, `args: Dict[str, Any]`, `tool_context: ToolContext`를 받는 함수를 정의합니다.
+    *   `tool`: 호출될 도구 객체 (`tool.name` 검사).
+    *   `args`: LLM이 도구를 위해 생성한 인수 사전.
+    *   `tool_context`: 세션 상태(`tool_context.state`), 에이전트 정보 등에 접근할 수 있습니다.
+2.  함수 내부:
+    *   **검사:** `tool.name`과 `args` 사전을 검사합니다.
+    *   **수정:** `args` 사전 내의 값을 *직접* 변경합니다. `None`을 반환하면 도구는 이러한 수정된 인수로 실행됩니다.
+    *   **차단/재정의 (가드레일):** **사전**을 반환합니다. ADK는 이 사전을 도구 호출의 *결과*로 처리하여 원래 도구 함수의 실행을 완전히 *건너뜁니다*. 사전은 이상적으로 차단하는 도구의 예상 반환 형식과 일치해야 합니다.
+    *   **허용:** `None`을 반환합니다. ADK는 실제 도구 함수를 (잠재적으로 수정된) 인수로 실행합니다.
 
-    * `tool`: The tool object about to be called (inspect `tool.name`).  
-    * `args`: The dictionary of arguments the LLM generated for the tool.  
-    * `tool_context`: Provides access to session state (`tool_context.state`), agent info, etc.  
+**이 단계에서는 다음을 수행합니다:**
 
-2. Inside the function:  
-
-    * **Inspect:** Examine the `tool.name` and the `args` dictionary.  
-    * **Modify:** Change values within the `args` dictionary *directly*. If you return `None`, the tool runs with these modified args.  
-    * **Block/Override (Guardrail):** Return a **dictionary**. ADK treats this dictionary as the *result* of the tool call, completely *skipping* the execution of the original tool function. The dictionary should ideally match the expected return format of the tool it's blocking.  
-    * **Allow:** Return `None`. ADK proceeds to execute the actual tool function with the (potentially modified) arguments.
-
-**In this step, we will:**
-
-1. Define a `before_tool_callback` function (`block_paris_tool_guardrail`) that specifically checks if the `get_weather_stateful` tool is called with the city "Paris".  
-2. If "Paris" is detected, the callback will block the tool and return a custom error dictionary.  
-3. Update our root agent (`weather_agent_v6_tool_guardrail`) to include *both* the `before_model_callback` and this new `before_tool_callback`.  
-4. Create a new runner for this agent, using the same stateful session service.  
-5. Test the flow by requesting weather for allowed cities and the blocked city ("Paris").
+1.  `get_weather_stateful` 도구가 "Paris"라는 도시로 호출되는지 구체적으로 확인하는 `before_tool_callback` 함수(`block_paris_tool_guardrail`)를 정의합니다.
+2.  "Paris"가 감지되면 콜백은 도구를 차단하고 사용자 지정 오류 사전을 반환합니다.
+3.  `before_model_callback`과 이 새로운 `before_tool_callback`을 모두 포함하도록 루트 에이전트(`weather_agent_v6_tool_guardrail`)를 업데이트합니다.
+4.  동일한 상태 인식 세션 서비스를 사용하여 이 에이전트를 위한 새로운 러너를 생성합니다.
+5.  허용된 도시와 차단된 도시("Paris")에 대한 날씨를 요청하여 흐름을 테스트합니다.
 
 ---
 
-**1\. Define the Tool Guardrail Callback Function**
+**1. 도구 가드레일 콜백 함수 정의**
 
-This function targets the `get_weather_stateful` tool. It checks the `city` argument. If it's "Paris", it returns an error dictionary that looks like the tool's own error response. Otherwise, it allows the tool to run by returning `None`.
+이 함수는 `get_weather_stateful` 도구를 대상으로 합니다. `city` 인수를 확인합니다. "Paris"이면 도구 자체의 오류 응답처럼 보이는 오류 사전을 반환합니다. 그렇지 않으면 `None`을 반환하여 도구가 실행되도록 허용합니다.
 
 
 ```python
-# @title 1. Define the before_tool_callback Guardrail
+# @title 1. before_tool_callback 가드레일 정의
 
-# Ensure necessary imports are available
+# 필요한 import가 사용 가능한지 확인
 from google.adk.tools.base_tool import BaseTool
 from google.adk.tools.tool_context import ToolContext
-from typing import Optional, Dict, Any # For type hints
+from typing import Optional, Dict, Any # 타입 힌트를 위해
 
 def block_paris_tool_guardrail(
     tool: BaseTool, args: Dict[str, Any], tool_context: ToolContext
 ) -> Optional[Dict]:
     """
-    Checks if 'get_weather_stateful' is called for 'Paris'.
-    If so, blocks the tool execution and returns a specific error dictionary.
-    Otherwise, allows the tool call to proceed by returning None.
+    'get_weather_stateful'이 'Paris'에 대해 호출되는지 확인합니다.
+    만약 그렇다면, 도구 실행을 차단하고 특정 오류 사전을 반환합니다.
+    그렇지 않으면 None을 반환하여 도구 호출을 계속 진행하도록 허용합니다.
     """
     tool_name = tool.name
-    agent_name = tool_context.agent_name # Agent attempting the tool call
-    print(f"--- Callback: block_paris_tool_guardrail running for tool '{tool_name}' in agent '{agent_name}' ---")
-    print(f"--- Callback: Inspecting args: {args} ---")
+    agent_name = tool_context.agent_name # 도구 호출을 시도하는 에이전트
+    print(f"--- 콜백: block_paris_tool_guardrail이 에이전트 '{agent_name}'의 도구 '{tool_name}'에 대해 실행 중 ---")
+    print(f"--- 콜백: 인수 검사 중: {args} ---")
 
-    # --- Guardrail Logic ---
-    target_tool_name = "get_weather_stateful" # Match the function name used by FunctionTool
+    # --- 가드레일 로직 ---
+    target_tool_name = "get_weather_stateful" # FunctionTool에서 사용하는 함수 이름과 일치
     blocked_city = "paris"
 
-    # Check if it's the correct tool and the city argument matches the blocked city
+    # 올바른 도구인지 그리고 도시 인수가 차단된 도시와 일치하는지 확인
     if tool_name == target_tool_name:
-        city_argument = args.get("city", "") # Safely get the 'city' argument
+        city_argument = args.get("city", "") # 'city' 인수를 안전하게 가져옴
         if city_argument and city_argument.lower() == blocked_city:
-            print(f"--- Callback: Detected blocked city '{city_argument}'. Blocking tool execution! ---")
-            # Optionally update state
+            print(f"--- 콜백: 차단된 도시 '{city_argument}' 감지. 도구 실행 차단! ---")
+            # 선택적으로 상태 업데이트
             tool_context.state["guardrail_tool_block_triggered"] = True
-            print(f"--- Callback: Set state 'guardrail_tool_block_triggered': True ---")
+            print(f"--- 콜백: 상태 'guardrail_tool_block_triggered'를 True로 설정 ---")
 
-            # Return a dictionary matching the tool's expected output format for errors
-            # This dictionary becomes the tool's result, skipping the actual tool run.
+            # 도구의 예상 출력 형식과 일치하는 사전을 오류용으로 반환
+            # 이 사전은 도구의 결과가 되어 실제 도구 실행을 건너뜁니다.
             return {
                 "status": "error",
-                "error_message": f"Policy restriction: Weather checks for '{city_argument.capitalize()}' are currently disabled by a tool guardrail."
+                "error_message": f"정책 제한: '{city_argument.capitalize()}'에 대한 날씨 확인은 현재 도구 가드레일에 의해 비활성화되었습니다."
             }
         else:
-             print(f"--- Callback: City '{city_argument}' is allowed for tool '{tool_name}'. ---")
+             print(f"--- 콜백: 도시 '{city_argument}'는 도구 '{tool_name}'에 대해 허용됩니다. ---")
     else:
-        print(f"--- Callback: Tool '{tool_name}' is not the target tool. Allowing. ---")
+        print(f"--- 콜백: 도구 '{tool_name}'는 대상 도구가 아닙니다. 허용합니다. ---")
 
 
-    # If the checks above didn't return a dictionary, allow the tool to execute
-    print(f"--- Callback: Allowing tool '{tool_name}' to proceed. ---")
-    return None # Returning None allows the actual tool function to run
+    # 위 확인에서 사전을 반환하지 않았다면 도구를 실행하도록 허용
+    print(f"--- 콜백: 도구 '{tool_name}' 진행을 허용합니다. ---")
+    return None # None을 반환하면 실제 도구 함수가 실행되도록 허용
 
-print("✅ block_paris_tool_guardrail function defined.")
-
-
+print("✅ block_paris_tool_guardrail 함수가 정의되었습니다.")
 ```
 
 ---
 
-**2\. Update Root Agent to Use Both Callbacks**
+**2. 두 콜백을 모두 사용하도록 루트 에이전트 업데이트**
 
-We redefine the root agent again (`weather_agent_v6_tool_guardrail`), this time adding the `before_tool_callback` parameter alongside the `before_model_callback` from Step 5\.
+루트 에이전트를 다시 정의하고(`weather_agent_v6_tool_guardrail`), 이번에는 5단계의 `before_model_callback`과 함께 `before_tool_callback` 매개변수를 추가합니다.
 
-*Self-Contained Execution Note:* Similar to Step 5, ensure all prerequisites (sub-agents, tools, `before_model_callback`) are defined or available in the execution context before defining this agent.
+*독립 실행 참고:* 5단계와 유사하게, 이 에이전트를 정의하기 전에 모든 전제 조건(하위 에이전트, 도구, `before_model_callback`)이 실행 컨텍스트에서 정의되었거나 사용 가능한지 확인하십시오.
 
 
 ```python
-# @title 2. Update Root Agent with BOTH Callbacks (Self-Contained)
+# @title 2. 두 콜백을 모두 사용하여 루트 에이전트 업데이트 (독립형)
 
-# --- Ensure Prerequisites are Defined ---
-# (Include or ensure execution of definitions for: Agent, LiteLlm, Runner, ToolContext,
-#  MODEL constants, say_hello, say_goodbye, greeting_agent, farewell_agent,
-#  get_weather_stateful, block_keyword_guardrail, block_paris_tool_guardrail)
+# --- 전제 조건이 정의되었는지 확인 ---
+# (Agent, LiteLlm, Runner, ToolContext,
+#  MODEL 상수, say_hello, say_goodbye, greeting_agent, farewell_agent,
+#  get_weather_stateful, block_keyword_guardrail, block_paris_tool_guardrail에 대한 정의를 포함하거나 실행 확인)
 
-# --- Redefine Sub-Agents (Ensures they exist in this context) ---
+# --- 하위 에이전트 재정의 (이 컨텍스트에 존재하는지 확인) ---
 greeting_agent = None
 try:
-    # Use a defined model constant
+    # 정의된 모델 상수 사용
     greeting_agent = Agent(
         model=MODEL_GEMINI_2_0_FLASH,
-        name="greeting_agent", # Keep original name for consistency
-        instruction="You are the Greeting Agent. Your ONLY task is to provide a friendly greeting using the 'say_hello' tool. Do nothing else.",
-        description="Handles simple greetings and hellos using the 'say_hello' tool.",
+        name="greeting_agent", # 일관성을 위해 원래 이름 유지
+        instruction="당신은 인사 에이전트입니다. 당신의 유일한 임무는 'say_hello' 도구를 사용하여 친절한 인사를 제공하는 것입니다. 다른 작업은 하지 마세요.",
+        description="'say_hello' 도구를 사용하여 간단한 인사와 안부를 처리합니다.",
         tools=[say_hello],
     )
-    print(f"✅ Sub-Agent '{greeting_agent.name}' redefined.")
+    print(f"✅ 하위 에이전트 '{greeting_agent.name}'가 재정의되었습니다.")
 except Exception as e:
-    print(f"❌ Could not redefine Greeting agent. Check Model/API Key ({greeting_agent.model}). Error: {e}")
+    print(f"❌ 인사 에이전트를 재정의할 수 없습니다. 모델/API 키({greeting_agent.model})를 확인하세요. 오류: {e}")
 
 farewell_agent = None
 try:
-    # Use a defined model constant
+    # 정의된 모델 상수 사용
     farewell_agent = Agent(
         model=MODEL_GEMINI_2_0_FLASH,
-        name="farewell_agent", # Keep original name
-        instruction="You are the Farewell Agent. Your ONLY task is to provide a polite goodbye message using the 'say_goodbye' tool. Do not perform any other actions.",
-        description="Handles simple farewells and goodbyes using the 'say_goodbye' tool.",
+        name="farewell_agent", # 원래 이름 유지
+        instruction="당신은 작별 에이전트입니다. 당신의 유일한 임무는 'say_goodbye' 도구를 사용하여 정중한 작별 메시지를 제공하는 것입니다. 다른 작업은 수행하지 마세요.",
+        description="'say_goodbye' 도구를 사용하여 간단한 작별 인사를 처리합니다.",
         tools=[say_goodbye],
     )
-    print(f"✅ Sub-Agent '{farewell_agent.name}' redefined.")
+    print(f"✅ 하위 에이전트 '{farewell_agent.name}'가 재정의되었습니다.")
 except Exception as e:
-    print(f"❌ Could not redefine Farewell agent. Check Model/API Key ({farewell_agent.model}). Error: {e}")
+    print(f"❌ 작별 에이전트를 재정의할 수 없습니다. 모델/API 키({farewell_agent.model})를 확인하세요. 오류: {e}")
 
-# --- Define the Root Agent with Both Callbacks ---
+# --- 두 콜백을 모두 포함한 루트 에이전트 정의 ---
 root_agent_tool_guardrail = None
 runner_root_tool_guardrail = None
 
@@ -1742,179 +1726,176 @@ if ('greeting_agent' in globals() and greeting_agent and
     root_agent_model = MODEL_GEMINI_2_0_FLASH
 
     root_agent_tool_guardrail = Agent(
-        name="weather_agent_v6_tool_guardrail", # New version name
+        name="weather_agent_v6_tool_guardrail", # 새 버전 이름
         model=root_agent_model,
-        description="Main agent: Handles weather, delegates, includes input AND tool guardrails.",
-        instruction="You are the main Weather Agent. Provide weather using 'get_weather_stateful'. "
-                    "Delegate greetings to 'greeting_agent' and farewells to 'farewell_agent'. "
-                    "Handle only weather, greetings, and farewells.",
+        description="메인 에이전트: 날씨 처리, 위임, 입력 및 도구 가드레일 포함.",
+        instruction="당신은 메인 날씨 에이전트입니다. 'get_weather_stateful'을 사용하여 날씨를 제공하세요. "
+                    "인사는 'greeting_agent'에게, 작별은 'farewell_agent'에게 위임하세요. "
+                    "날씨, 인사, 작별만 처리하세요.",
         tools=[get_weather_stateful],
         sub_agents=[greeting_agent, farewell_agent],
         output_key="last_weather_report",
-        before_model_callback=block_keyword_guardrail, # Keep model guardrail
-        before_tool_callback=block_paris_tool_guardrail # <<< Add tool guardrail
+        before_model_callback=block_keyword_guardrail, # 모델 가드레일 유지
+        before_tool_callback=block_paris_tool_guardrail # <<< 도구 가드레일 추가
     )
-    print(f"✅ Root Agent '{root_agent_tool_guardrail.name}' created with BOTH callbacks.")
+    print(f"✅ 루트 에이전트 '{root_agent_tool_guardrail.name}'가 두 콜백 모두와 함께 생성되었습니다.")
 
-    # --- Create Runner, Using SAME Stateful Session Service ---
+    # --- Runner 생성, 동일한 상태 인식 세션 서비스 사용 ---
     if 'session_service_stateful' in globals():
         runner_root_tool_guardrail = Runner(
             agent=root_agent_tool_guardrail,
             app_name=APP_NAME,
-            session_service=session_service_stateful # <<< Use the service from Step 4/5
+            session_service=session_service_stateful # <<< 4/5단계의 서비스 사용
         )
-        print(f"✅ Runner created for tool guardrail agent '{runner_root_tool_guardrail.agent.name}', using stateful session service.")
+        print(f"✅ 도구 가드레일 에이전트 '{runner_root_tool_guardrail.agent.name}'를 위한 Runner가 상태 인식 세션 서비스를 사용하여 생성되었습니다.")
     else:
-        print("❌ Cannot create runner. 'session_service_stateful' from Step 4/5 is missing.")
+        print("❌ Runner를 생성할 수 없습니다. 4/5단계의 'session_service_stateful'이 없습니다.")
 
 else:
-    print("❌ Cannot create root agent with tool guardrail. Prerequisites missing.")
-
-
+    print("❌ 도구 가드레일로 루트 에이전트를 생성할 수 없습니다. 전제 조건이 없습니다.")
 ```
 
 ---
 
-**3\. Interact to Test the Tool Guardrail**
+**3. 도구 가드레일 테스트를 위한 상호작용**
 
-Let's test the interaction flow, again using the same stateful session (`SESSION_ID_STATEFUL`) from the previous steps.
+이전 단계와 동일한 상태 인식 세션(`SESSION_ID_STATEFUL`)을 다시 사용하여 상호작용 흐름을 테스트해 봅시다.
 
-1. Request weather for "New York": Passes both callbacks, tool executes (using Fahrenheit preference from state).  
-2. Request weather for "Paris": Passes `before_model_callback`. LLM decides to call `get_weather_stateful(city='Paris')`. `before_tool_callback` intercepts, blocks the tool, and returns the error dictionary. Agent relays this error.  
-3. Request weather for "London": Passes both callbacks, tool executes normally.
+1. "뉴욕" 날씨 요청: 두 콜백을 모두 통과하고 도구가 실행됩니다(상태에서 화씨 선호도 사용).
+2. "파리" 날씨 요청: `before_model_callback`을 통과합니다. LLM이 `get_weather_stateful(city='Paris')`를 호출하기로 결정합니다. `before_tool_callback`이 가로채서 도구를 차단하고 오류 사전을 반환합니다. 에이전트가 이 오류를 전달합니다.
+3. "런던" 날씨 요청: 두 콜백을 모두 통과하고 도구가 정상적으로 실행됩니다.
 
 
 ```python
-# @title 3. Interact to Test the Tool Argument Guardrail
-import asyncio # Ensure asyncio is imported
+# @title 3. 도구 인수 가드레일 테스트를 위한 상호작용
+import asyncio # asyncio가 import되었는지 확인
 
-# Ensure the runner for the tool guardrail agent is available
+# 도구 가드레일 에이전트를 위한 러너가 사용 가능한지 확인
 if 'runner_root_tool_guardrail' in globals() and runner_root_tool_guardrail:
-    # Define the main async function for the tool guardrail test conversation.
-    # The 'await' keywords INSIDE this function are necessary for async operations.
+    # 도구 가드레일 테스트 대화를 위한 메인 비동기 함수 정의
+    # 이 함수 내부의 'await' 키워드는 비동기 작업에 필수적
     async def run_tool_guardrail_test():
-        print("\n--- Testing Tool Argument Guardrail ('Paris' blocked) ---")
+        print("\n--- 도구 인수 가드레일 테스트 중 ('파리' 차단됨) ---")
 
-        # Use the runner for the agent with both callbacks and the existing stateful session
-        # Define a helper lambda for cleaner interaction calls
+        # 두 콜백 모두와 기존 상태 인식 세션을 가진 에이전트의 러너 사용
+        # 더 깔끔한 상호작용 호출을 위한 헬퍼 람다 정의
         interaction_func = lambda query: call_agent_async(query,
                                                          runner_root_tool_guardrail,
-                                                         USER_ID_STATEFUL, # Use existing user ID
-                                                         SESSION_ID_STATEFUL # Use existing session ID
+                                                         USER_ID_STATEFUL, # 기존 사용자 ID 사용
+                                                         SESSION_ID_STATEFUL # 기존 세션 ID 사용
                                                         )
-        # 1. Allowed city (Should pass both callbacks, use Fahrenheit state)
-        print("--- Turn 1: Requesting weather in New York (expect allowed) ---")
-        await interaction_func("What's the weather in New York?")
+        # 1. 허용된 도시 (두 콜백 모두 통과, 화씨 상태 사용해야 함)
+        print("--- 1번째 턴: 뉴욕 날씨 요청 (허용 예상) ---")
+        await interaction_func("뉴욕 날씨는 어때?")
 
-        # 2. Blocked city (Should pass model callback, but be blocked by tool callback)
-        print("\n--- Turn 2: Requesting weather in Paris (expect blocked by tool guardrail) ---")
-        await interaction_func("How about Paris?") # Tool callback should intercept this
+        # 2. 차단된 도시 (모델 콜백 통과, 하지만 도구 콜백에 의해 차단됨)
+        print("\n--- 2번째 턴: 파리 날씨 요청 (도구 가드레일에 의해 차단 예상) ---")
+        await interaction_func("파리는 어때?") # 도구 콜백이 이것을 가로채야 함
 
-        # 3. Another allowed city (Should work normally again)
-        print("\n--- Turn 3: Requesting weather in London (expect allowed) ---")
-        await interaction_func("Tell me the weather in London.")
+        # 3. 다른 허용된 도시 (다시 정상적으로 작동해야 함)
+        print("\n--- 3번째 턴: 런던 날씨 요청 (허용 예상) ---")
+        await interaction_func("런던 날씨를 알려줘.")
 
-    # --- Execute the `run_tool_guardrail_test` async function ---
-    # Choose ONE of the methods below based on your environment.
+    # --- `run_tool_guardrail_test` 비동기 함수 실행 ---
+    # 환경에 따라 아래 방법 중 하나를 선택
 
-    # METHOD 1: Direct await (Default for Notebooks/Async REPLs)
-    # If your environment supports top-level await (like Colab/Jupyter notebooks),
-    # it means an event loop is already running, so you can directly await the function.
-    print("Attempting execution using 'await' (default for notebooks)...")
+    # 방법 1: 직접 await (노트북/비동기 REPL 기본)
+    # 환경이 최상위 await를 지원하는 경우(Colab/Jupyter 노트북 등),
+    # 이벤트 루프가 이미 실행 중이므로 함수를 직접 await 할 수 있습니다.
+    print("'await'를 사용하여 실행 시도 중 (노트북 기본)...")
     await run_tool_guardrail_test()
 
-    # METHOD 2: asyncio.run (For Standard Python Scripts [.py])
-    # If running this code as a standard Python script from your terminal,
-    # the script context is synchronous. `asyncio.run()` is needed to
-    # create and manage an event loop to execute your async function.
-    # To use this method:
-    # 1. Comment out the `await run_tool_guardrail_test()` line above.
-    # 2. Uncomment the following block:
+    # 방법 2: asyncio.run (표준 Python 스크립트 [.py]용)
+    # 터미널에서 이 코드를 표준 Python 스크립트로 실행하는 경우,
+    # 스크립트 컨텍스트는 동기식입니다. 비동기 함수를 실행하려면
+    # 이벤트 루프를 생성하고 관리하기 위해 `asyncio.run()`이 필요합니다.
+    # 이 방법을 사용하려면:
+    # 1. 위의 `await run_tool_guardrail_test()` 줄을 주석 처리합니다.
+    # 2. 다음 블록의 주석을 해제합니다:
     """
     import asyncio
-    if __name__ == "__main__": # Ensures this runs only when script is executed directly
-        print("Executing using 'asyncio.run()' (for standard Python scripts)...")
+    if __name__ == "__main__": # 스크립트가 직접 실행될 때만 실행되도록 보장
+        print("'asyncio.run()'을 사용하여 실행 중 (표준 Python 스크립트용)...")
         try:
-            # This creates an event loop, runs your async function, and closes the loop.
+            # 이것은 이벤트 루프를 생성하고, 비동기 함수를 실행하며, 루프를 닫습니다.
             asyncio.run(run_tool_guardrail_test())
         except Exception as e:
-            print(f"An error occurred: {e}")
+            print(f"오류가 발생했습니다: {e}")
     """
 
-    # --- Inspect final session state after the conversation ---
-    # This block runs after either execution method completes.
-    # Optional: Check state for the tool block trigger flag
-    print("\n--- Inspecting Final Session State (After Tool Guardrail Test) ---")
-    # Use the session service instance associated with this stateful session
+    # --- 대화 후 최종 세션 상태 검사 ---
+    # 이 블록은 어느 실행 방법이 완료된 후에 실행됩니다.
+    # 선택 사항: 도구 차단 트리거 플래그에 대한 상태 확인
+    print("\n--- 최종 세션 상태 검사 (도구 가드레일 테스트 후) ---")
+    # 이 상태 인식 세션과 관련된 세션 서비스 인스턴스 사용
     final_session = await session_service_stateful.get_session(app_name=APP_NAME,
                                                          user_id=USER_ID_STATEFUL,
                                                          session_id= SESSION_ID_STATEFUL)
     if final_session:
-        # Use .get() for safer access
-        print(f"Tool Guardrail Triggered Flag: {final_session.state.get('guardrail_tool_block_triggered', 'Not Set (or False)')}")
-        print(f"Last Weather Report: {final_session.state.get('last_weather_report', 'Not Set')}") # Should be London weather if successful
-        print(f"Temperature Unit: {final_session.state.get('user_preference_temperature_unit', 'Not Set')}") # Should be Fahrenheit
-        # print(f"Full State Dict: {final_session.state}") # For detailed view
+        # 안전한 접근을 위해 .get() 사용
+        print(f"도구 가드레일 트리거 플래그: {final_session.state.get('guardrail_tool_block_triggered', '설정되지 않음 (또는 False)')}")
+        print(f"마지막 날씨 보고서: {final_session.state.get('last_weather_report', '설정되지 않음')}") # 성공 시 런던 날씨여야 함
+        print(f"온도 단위: {final_session.state.get('user_preference_temperature_unit', '설정되지 않음')}") # 화씨여야 함
+        # print(f"전체 상태 사전: {final_session.state}") # 상세 보기용
     else:
-        print("\n❌ Error: Could not retrieve final session state.")
+        print("\n❌ 오류: 최종 세션 상태를 검색할 수 없습니다.")
 
 else:
-    print("\n⚠️ Skipping tool guardrail test. Runner ('runner_root_tool_guardrail') is not available.")
+    print("\n⚠️ 도구 가드레일 테스트를 건너뜁니다. 러너('runner_root_tool_guardrail')를 사용할 수 없습니다.")
 ```
 
 ---
 
-Analyze the output:
+출력을 분석해 보세요:
 
-1. **New York:** The `before_model_callback` allows the request. The LLM requests `get_weather_stateful`. The `before_tool_callback` runs, inspects the args (`{'city': 'New York'}`), sees it's not "Paris", prints "Allowing tool..." and returns `None`. The actual `get_weather_stateful` function executes, reads "Fahrenheit" from state, and returns the weather report. The agent relays this, and it gets saved via `output_key`.  
-2. **Paris:** The `before_model_callback` allows the request. The LLM requests `get_weather_stateful(city='Paris')`. The `before_tool_callback` runs, inspects the args, detects "Paris", prints "Blocking tool execution\!", sets the state flag, and returns the error dictionary `{'status': 'error', 'error_message': 'Policy restriction...'}`. The actual `get_weather_stateful` function is **never executed**. The agent receives the error dictionary *as if it were the tool's output* and formulates a response based on that error message.  
-3. **London:** Behaves like New York, passing both callbacks and executing the tool successfully. The new London weather report overwrites the `last_weather_report` in the state.
+1.  **뉴욕:** `before_model_callback`이 요청을 허용합니다. LLM이 `get_weather_stateful`을 요청합니다. `before_tool_callback`이 실행되어 인수(`{'city': 'New York'}`)를 검사하고, "파리"가 아니므로 "도구 허용 중..."을 출력하고 `None`을 반환합니다. 실제 `get_weather_stateful` 함수가 실행되어 상태에서 "화씨"를 읽고 날씨 보고서를 반환합니다. 에이전트가 이를 전달하고 `output_key`를 통해 저장됩니다.
+2.  **파리:** `before_model_callback`이 요청을 허용합니다. LLM이 `get_weather_stateful(city='Paris')`를 요청합니다. `before_tool_callback`이 실행되어 인수를 검사하고 "파리"를 감지한 후 "도구 실행 차단!"을 출력하고, 상태 플래그를 설정하며, 오류 사전 `{'status': 'error', 'error_message': '정책 제한...'}`을 반환합니다. 실제 `get_weather_stateful` 함수는 **전혀 실행되지 않습니다**. 에이전트는 오류 사전을 *마치 도구의 출력인 것처럼* 수신하고 해당 오류 메시지를 기반으로 응답을 구성합니다.
+3.  **런던:** 뉴욕처럼 작동하여 두 콜백을 모두 통과하고 도구를 성공적으로 실행합니다. 새로운 런던 날씨 보고서가 상태의 `last_weather_report`를 덮어씁니다.
 
-You've now added a crucial safety layer controlling not just *what* reaches the LLM, but also *how* the agent's tools can be used based on the specific arguments generated by the LLM. Callbacks like `before_model_callback` and `before_tool_callback` are essential for building robust, safe, and policy-compliant agent applications.
-
+이제 LLM에 도달하는 *내용*뿐만 아니라 LLM이 생성한 특정 인수에 따라 에이전트의 도구가 *어떻게* 사용될 수 있는지를 제어하는 중요한 안전 계층을 추가했습니다. `before_model_callback` 및 `before_tool_callback`과 같은 콜백은 견고하고 안전하며 정책을 준수하는 에이전트 애플리케이션을 구축하는 데 필수적입니다.
 
 
 ---
 
 
-## Conclusion: Your Agent Team is Ready!
+## 결론: 여러분의 에이전트 팀이 준비되었습니다!
 
-Congratulations! You've successfully journeyed from building a single, basic weather agent to constructing a sophisticated, multi-agent team using the Agent Development Kit (ADK).
+축하합니다! Agent Development Kit(ADK)를 사용하여 기본적인 단일 날씨 에이전트 구축에서 정교한 멀티 에이전트 팀 구성까지 성공적으로 여정을 마쳤습니다.
 
-**Let's recap what you've accomplished:**
+**달성한 내용을 요약해 보겠습니다:**
 
-*   You started with a **fundamental agent** equipped with a single tool (`get_weather`).
-*   You explored ADK's **multi-model flexibility** using LiteLLM, running the same core logic with different LLMs like Gemini, GPT-4o, and Claude.
-*   You embraced **modularity** by creating specialized sub-agents (`greeting_agent`, `farewell_agent`) and enabling **automatic delegation** from a root agent.
-*   You gave your agents **memory** using **Session State**, allowing them to remember user preferences (`temperature_unit`) and past interactions (`output_key`).
-*   You implemented crucial **safety guardrails** using both `before_model_callback` (blocking specific input keywords) and `before_tool_callback` (blocking tool execution based on arguments like the city "Paris").
+*   단일 도구(`get_weather`)를 갖춘 **기본적인 에이전트**로 시작했습니다.
+*   LiteLLM을 사용하여 ADK의 **멀티 모델 유연성**을 탐색하고, Gemini, GPT-4o, Claude와 같은 다양한 LLM으로 동일한 핵심 로직을 실행했습니다.
+*   전문화된 하위 에이전트(`greeting_agent`, `farewell_agent`)를 만들고 루트 에이전트로부터의 **자동 위임**을 활성화하여 **모듈성**을 수용했습니다.
+*   **세션 상태**를 사용하여 에이전트에게 **메모리**를 부여하여 사용자 선호도(`temperature_unit`)와 과거 상호작용(`output_key`)을 기억할 수 있도록 했습니다.
+*   `before_model_callback`(특정 입력 키워드 차단)과 `before_tool_callback`("파리"와 같은 인수에 기반한 도구 실행 차단)을 모두 사용하여 중요한 **안전 가드레일**을 구현했습니다.
 
-Through building this progressive Weather Bot team, you've gained hands-on experience with core ADK concepts essential for developing complex, intelligent applications.
+이 점진적인 날씨 봇 팀을 구축하면서, 복잡하고 지능적인 애플리케이션을 개발하는 데 필수적인 핵심 ADK 개념에 대한 실무 경험을 얻었습니다.
 
-**Key Takeaways:**
+**핵심 요약:**
 
-*   **Agents & Tools:** The fundamental building blocks for defining capabilities and reasoning. Clear instructions and docstrings are paramount.
-*   **Runners & Session Services:** The engine and memory management system that orchestrate agent execution and maintain conversational context.
-*   **Delegation:** Designing multi-agent teams allows for specialization, modularity, and better management of complex tasks. Agent `description` is key for auto-flow.
-*   **Session State (`ToolContext`, `output_key`):** Essential for creating context-aware, personalized, and multi-turn conversational agents.
-*   **Callbacks (`before_model`, `before_tool`):** Powerful hooks for implementing safety, validation, policy enforcement, and dynamic modifications *before* critical operations (LLM calls or tool execution).
-*   **Flexibility (`LiteLlm`):** ADK empowers you to choose the best LLM for the job, balancing performance, cost, and features.
+*   **에이전트 및 도구:** 기능과 추론을 정의하기 위한 기본적인 구성 요소. 명확한 지침과 docstring이 가장 중요합니다.
+*   **러너 및 세션 서비스:** 에이전트 실행을 조율하고 대화 컨텍스트를 유지하는 엔진 및 메모리 관리 시스템입니다.
+*   **위임:** 멀티 에이전트 팀을 설계하면 전문화, 모듈성 및 복잡한 작업의 더 나은 관리가 가능합니다. 에이전트 `description`은 자동 흐름의 핵심입니다.
+*   **세션 상태 (`ToolContext`, `output_key`):** 문맥을 인식하고, 개인화되며, 다중 턴 대화형 에이전트를 만드는 데 필수적입니다.
+*   **콜백 (`before_model`, `before_tool`):** 중요한 작업(LLM 호출 또는 도구 실행) *전에* 안전, 유효성 검사, 정책 시행 및 동적 수정을 구현하기 위한 강력한 후크입니다.
+*   **유연성 (`LiteLlm`):** ADK는 성능, 비용 및 기능의 균형을 맞추어 작업에 가장 적합한 LLM을 선택할 수 있는 권한을 부여합니다.
 
-**Where to Go Next?**
+**다음 단계는?**
 
-Your Weather Bot team is a great starting point. Here are some ideas to further explore ADK and enhance your application:
+여러분의 날씨 봇 팀은 훌륭한 출발점입니다. ADK를 더 탐색하고 애플리케이션을 향상시키기 위한 몇 가지 아이디어는 다음과 같습니다:
 
-1.  **Real Weather API:** Replace the `mock_weather_db` in your `get_weather` tool with a call to a real weather API (like OpenWeatherMap, WeatherAPI).
-2.  **More Complex State:** Store more user preferences (e.g., preferred location, notification settings) or conversation summaries in the session state.
-3.  **Refine Delegation:** Experiment with different root agent instructions or sub-agent descriptions to fine-tune the delegation logic. Could you add a "forecast" agent?
-4.  **Advanced Callbacks:**
-    *   Use `after_model_callback` to potentially reformat or sanitize the LLM's response *after* it's generated.
-    *   Use `after_tool_callback` to process or log the results returned by a tool.
-    *   Implement `before_agent_callback` or `after_agent_callback` for agent-level entry/exit logic.
-5.  **Error Handling:** Improve how the agent handles tool errors or unexpected API responses. Maybe add retry logic within a tool.
-6.  **Persistent Session Storage:** Explore alternatives to `InMemorySessionService` for storing session state persistently (e.g., using databases like Firestore or Cloud SQL – requires custom implementation or future ADK integrations).
-7.  **Streaming UI:** Integrate your agent team with a web framework (like FastAPI, as shown in the ADK Streaming Quickstart) to create a real-time chat interface.
+1.  **실제 날씨 API:** `get_weather` 도구의 `mock_weather_db`를 실제 날씨 API(OpenWeatherMap, WeatherAPI 등) 호출로 교체하세요.
+2.  **더 복잡한 상태:** 더 많은 사용자 선호도(예: 선호 위치, 알림 설정) 또는 대화 요약을 세션 상태에 저장하세요.
+3.  **위임 구체화:** 다른 루트 에이전트 지침이나 하위 에이전트 설명을 실험하여 위임 로직을 미세 조정하세요. "예보" 에이전트를 추가할 수 있을까요?
+4.  **고급 콜백:**
+    *   `after_model_callback`을 사용하여 LLM의 응답이 생성된 *후에* 잠재적으로 형식을 변경하거나 삭제하세요.
+    *   `after_tool_callback`을 사용하여 도구에서 반환된 결과를 처리하거나 기록하세요.
+    *   에이전트 수준의 진입/종료 로직을 위해 `before_agent_callback` 또는 `after_agent_callback`을 구현하세요.
+5.  **오류 처리:** 에이전트가 도구 오류나 예상치 못한 API 응답을 처리하는 방법을 개선하세요. 도구 내에 재시도 로직을 추가할 수도 있습니다.
+6.  **영구 세션 저장소:** 세션 상태를 영구적으로 저장하기 위해 `InMemorySessionService`의 대안을 탐색하세요 (예: Firestore 또는 Cloud SQL과 같은 데이터베이스 사용 – 사용자 지정 구현 또는 향후 ADK 통합 필요).
+7.  **스트리밍 UI:** 에이전트 팀을 웹 프레임워크(ADK 스트리밍 빠른 시작에서 보여준 FastAPI 등)와 통합하여 실시간 채팅 인터페이스를 만드세요.
 
-The Agent Development Kit provides a robust foundation for building sophisticated LLM-powered applications. By mastering the concepts covered in this tutorial – tools, state, delegation, and callbacks – you are well-equipped to tackle increasingly complex agentic systems.
+Agent Development Kit는 정교한 LLM 기반 애플리케이션을 구축하기 위한 견고한 기반을 제공합니다. 이 튜토리얼에서 다룬 개념(도구, 상태, 위임, 콜백)을 마스터함으로써 점점 더 복잡해지는 에이전트 시스템에 대처할 수 있는 충분한 준비가 되었습니다.
 
-Happy building!
+즐거운 빌딩 되세요
