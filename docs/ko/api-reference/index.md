@@ -1,29 +1,29 @@
-# API Reference
+# API 레퍼런스
 
-The Agent Development Kit (ADK) provides comprehensive API references for both Python and Java, allowing you to dive deep into all available classes, methods, and functionalities.
+Agent Development Kit(ADK)는 Python과 Java 모두에 대한 포괄적인 API 레퍼런스를 제공하여 사용 가능한 모든 클래스, 메서드 및 기능에 대해 자세히 알아볼 수 있도록 합니다.
 
 <div class.="grid cards" markdown>
 
--   :fontawesome-brands-python:{ .lg .middle } **Python API Reference**
+-   :fontawesome-brands-python:{ .lg .middle } **Python API 레퍼런스**
 
     ---
-    Explore the complete API documentation for the Python Agent Development Kit. Discover detailed information on all modules, classes, functions, and examples to build sophisticated AI agents with Python.
+    Python Agent Development Kit의 전체 API 문서를 살펴보세요. Python으로 정교한 AI 에이전트를 구축하기 위한 모든 모듈, 클래스, 함수 및 예제에 대한 자세한 정보를 찾아보세요.
 
-    [:octicons-arrow-right-24: View Python API Docs](python/index.html) <br>
-    <!-- Assuming your Python API docs are in a 'python' subdirectory -->
-    <!-- Or link to an external ReadTheDocs, etc. -->
-    <!-- [:octicons-arrow-right-24: View Python API Docs](python/index.html) -->
+    [:octicons-arrow-right-24: Python API 문서 보기](https://google.github.io/adk-docs/api-reference/python/) <br>
+    <!-- Python API 문서가 'python' 하위 디렉토리에 있다고 가정합니다 -->
+    <!-- 또는 외부 ReadTheDocs 등으로 링크 -->
+    <!-- [:octicons-arrow-right-24: Python API 문서 보기](python/index.html) -->
 
-<!-- This comment forces a block separation -->
+<!-- 이 주석은 블록 분리를 강제합니다 -->
 
--   :fontawesome-brands-java:{ .lg .middle } **Java API Reference**
+-   :fontawesome-brands-java:{ .lg .middle } **Java API 레퍼런스**
 
     ---
-    Access the comprehensive Javadoc for the Java Agent Development Kit. This reference provides detailed specifications for all packages, classes, interfaces, and methods, enabling you to develop robust AI agents using Java.
+    Java Agent Development Kit에 대한 포괄적인 Javadoc에 액세스하세요. 이 레퍼런스는 모든 패키지, 클래스, 인터페이스 및 메서드에 대한 자세한 사양을 제공하여 Java를 사용하여 강력한 AI 에이전트를 개발할 수 있도록 합니다.
 
-    [:octicons-arrow-right-24: View Java API Docs](java/index.html) <br>
-    <!-- Assuming your Java API docs (Javadocs) are in a 'java' subdirectory -->
-    <!-- Or link to an external Javadoc hosting site -->
-    <!-- [:octicons-arrow-right-24: View Java API Docs](java/index.html) -->
+    [:octicons-arrow-right-24: Java API 문서 보기](https://google.github.io/adk-docs/api-reference/java/) <br>
+    <!-- Java API 문서(Javadocs)가 'java' 하위 디렉토리에 있다고 가정합니다 -->
+    <!-- 또는 외부 Javadoc 호스팅 사이트로 링크 -->
+    <!-- [:octicons-arrow-right-24: Java API 문서 보기](java/index.html) -->
 
 </div>
