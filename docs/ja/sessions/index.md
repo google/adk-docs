@@ -1,85 +1,56 @@
-# Introduction to Conversational Context: Session, State, and Memory
+# 会話のコンテキスト入門：セッション、状態、メモリ
 
-## Why Context Matters
+## なぜコンテキストが重要なのか
 
-Meaningful, multi-turn conversations require agents to understand context. Just
-like humans, they need to recall the conversation history: what's been said and
-done to maintain continuity and avoid repetition. The Agent Development Kit
-(ADK) provides structured ways to manage this context through `Session`,
-`State`, and `Memory`.
+意味のある、複数ターンにわたる会話には、エージェントがコンテキストを理解することが必要です。人間と同じように、継続性を保ち、繰り返しを避けるためには、これまでに何が話され、何が行われたかという会話の履歴を思い出す必要があります。Agent Development Kit (ADK) は、`セッション`、`状態`、`メモリ`を通じてこのコンテキストを管理するための構造化された方法を提供します。
 
-## Core Concepts
+## コアコンセプト
 
-Think of different instances of your conversations with the agent as distinct
-**conversation threads**, potentially drawing upon **long-term knowledge**.
+エージェントとの会話のさまざまなインスタンスを、個別の**会話スレッド**と考え、それらが**長期的な知識**を利用する可能性があると想像してください。
 
-1.  **`Session`**: The Current Conversation Thread
+1.  **`セッション (Session)`**: 現在の会話スレッド
 
-    *   Represents a *single, ongoing interaction* between a user and your agent
-        system.
-    *   Contains the chronological sequence of messages and actions taken by the
-        agent (referred to `Events`) during *that specific interaction*.
-    *   A `Session` can also hold temporary data (`State`) relevant only *during
-        this conversation*.
+    *   ユーザーとエージェントシステム間の*単一の、進行中の対話*を表します。
+    *   *その特定の対話*中にエージェントによって取られたメッセージとアクションの時系列シーケンス（`イベント (Events)`と呼ばれる）を含みます。
+    *   `セッション`は、*この会話中*にのみ関連する一時的なデータ（`状態 (State)`）を保持することもできます。
 
-2.  **`State` (`session.state`)**: Data Within the Current Conversation
+2.  **`状態 (State)` (`session.state`)**: 現在の会話内のデータ
 
-    *   Data stored within a specific `Session`.
-    *   Used to manage information relevant *only* to the *current, active*
-        conversation thread (e.g., items in a shopping cart *during this chat*,
-        user preferences mentioned *in this session*).
+    *   特定の`セッション`内に保存されるデータ。
+    *   *現在のアクティブな*会話スレッドに*のみ*関連する情報を管理するために使用されます（例：*このチャット中*のショッピングカート内のアイテム、*このセッションで*言及されたユーザー設定）。
 
-3.  **`Memory`**: Searchable, Cross-Session Information
+3.  **`メモリ (Memory)`**: 検索可能で、セッションをまたぐ情報
 
-    *   Represents a store of information that might span *multiple past
-        sessions* or include external data sources.
-    *   It acts as a knowledge base the agent can *search* to recall information
-        or context beyond the immediate conversation.
+    *   *複数の過去のセッション*にまたがる可能性のある情報、または外部データソースを含む情報のストアを表します。
+    *   エージェントが、目の前の会話を超えて情報やコンテキストを思い出すために*検索*できる知識ベースとして機能します。
 
-## Managing Context: Services
+## コンテキストの管理：サービス
 
-ADK provides services to manage these concepts:
+ADKは、これらの概念を管理するためのサービスを提供します：
 
-1.  **`SessionService`**: Manages the different conversation threads (`Session`
-    objects)
+1.  **`SessionService`**: さまざまな会話スレッド（`Session`オブジェクト）を管理します。
 
-    *   Handles the lifecycle: creating, retrieving, updating (appending
-        `Events`, modifying `State`), and deleting individual `Session`s.
+    *   ライフサイクルを処理します：個々の`セッション`の作成、取得、更新（`イベント`の追加、`状態`の変更）、および削除。
 
-2.  **`MemoryService`**: Manages the Long-Term Knowledge Store (`Memory`)
+2.  **`MemoryService`**: 長期的な知識ストア（`メモリ`）を管理します。
 
-    *   Handles ingesting information (often from completed `Session`s) into the
-        long-term store.
-    *   Provides methods to search this stored knowledge based on queries.
+    *   （多くの場合、完了した`セッション`から）長期的なストアに情報を取り込む処理をします。
+    *   クエリに基づいてこの保存された知識を検索するメソッドを提供します。
 
-**Implementations**: ADK offers different implementations for both
-`SessionService` and `MemoryService`, allowing you to choose the storage backend
-that best fits your application's needs. Notably, **in-memory implementations**
-are provided for both services; these are designed specifically for **local
-testing and fast development**. It's important to remember that **all data
-stored using these in-memory options (sessions, state, or long-term knowledge)
-is lost when your application restarts**. For persistence and scalability beyond
-local testing, ADK also offers cloud-based and database service options.
+**実装**: ADKは`SessionService`と`MemoryService`の両方に対してさまざまな実装を提供しており、アプリケーションのニーズに最も適したストレージバックエンドを選択できます。特筆すべきは、両方のサービスに対して**インメモリ実装**が提供されていることです。これらは**ローカルでのテストや迅速な開発**のために特別に設計されています。これらのインメモリオプションを使用して保存されたすべてのデータ（セッション、状態、または長期的な知識）は、**アプリケーションが再起動すると失われる**ことを覚えておくことが重要です。ローカルテストを超えた永続性とスケーラビリティのために、ADKはクラウドベースおよびデータベースサービスのオプションも提供しています。
 
-**In Summary:**
+**まとめ：**
 
-*   **`Session` & `State`**: Focus on the **current interaction** – the history
-    and data of the *single, active conversation*. Managed primarily by a
-    `SessionService`.
-*   **Memory**: Focuses on the **past and external information** – a *searchable
-    archive* potentially spanning across conversations. Managed by a
-    `MemoryService`.
+*   **`セッション`と`状態`**: **現在の対話**に焦点を当てます – *単一のアクティブな会話*の履歴とデータ。主に`SessionService`によって管理されます。
+*   **メモリ**: **過去および外部の情報**に焦点を当てます – 会話をまたぐ可能性のある*検索可能なアーカイブ*。`MemoryService`によって管理されます。
 
-## What's Next?
+## 次のステップ
 
-In the following sections, we'll dive deeper into each of these components:
+以下のセクションでは、これらの各コンポーネントについてさらに詳しく掘り下げていきます：
 
-*   **`Session`**: Understanding its structure and `Events`.
-*   **`State`**: How to effectively read, write, and manage session-specific
-    data.
-*   **`SessionService`**: Choosing the right storage backend for your sessions.
-*   **`MemoryService`**: Exploring options for storing and retrieving broader
-    context.
+*   **`セッション`**: その構造と`イベント`を理解する。
+*   **`状態`**: セッション固有のデータを効果的に読み書きし、管理する方法。
+*   **`SessionService`**: セッションに適したストレージバックエンドを選択する。
+*   **`MemoryService`**: より広範なコンテキストを保存および取得するためのオプションを探る。
 
-Understanding these concepts is fundamental to building agents that can engage
-in complex, stateful, and context-aware conversations.
+これらの概念を理解することは、複雑でステートフル、かつコンテキストを意識した会話ができるエージェントを構築するための基本です。
