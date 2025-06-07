@@ -1,38 +1,27 @@
-# Deploying Your Agent
+# エージェントのデプロイ
 
-Once you've built and tested your agent using ADK,
-the next step is to deploy it so it can be accessed, queried, and used in
-production or integrated with other applications. Deployment moves your agent
-from your local development machine to a scalable and reliable environment.
+ADKを使用してエージェントを構築・テストしたら、次のステップはそれをデプロイすることです。デプロイすることで、エージェントは本番環境でアクセス、クエリ、使用されたり、他のアプリケーションと統合されたりできるようになります。デプロイによって、エージェントはローカルの開発マシンから、スケーラブルで信頼性の高い環境に移行します。
 
-<img src="../assets/deploy-agent.png" alt="Deploying your agent">
+<img src="../assets/deploy-agent.png" alt="エージェントのデプロイ">
 
-## Deployment Options
+## デプロイオプション
 
-Your ADK agent can be deployed to a range of different environments based
-on your needs for production readiness or custom flexibility:
+ADKエージェントは、本番環境への対応やカスタムの柔軟性に関するニーズに応じて、さまざまな環境にデプロイできます。
 
-### Agent Engine in Vertex AI
+### Vertex AIのAgent Engine
 
-[Agent Engine](agent-engine.md) is a fully managed auto-scaling service on Google Cloud
-specifically designed for deploying, managing, and scaling AI agents built with
-frameworks such as ADK.
+[Agent Engine](agent-engine.md)は、ADKなどのフレームワークで構築されたAIエージェントのデプロイ、管理、スケーリングのために特別に設計された、Google Cloud上のフルマネージド自動スケーリングサービスです。
 
-Learn more about [deploying your agent to Vertex AI Agent Engine](agent-engine.md).
+[Vertex AI Agent Engineへのエージェントのデプロイについて詳しくはこちら](agent-engine.md)。
 
 ### Cloud Run
 
-[Cloud Run](https://cloud.google.com/run) is a managed auto-scaling compute platform on
-Google Cloud that enables you to run your agent as a container-based
-application.
+[Cloud Run](https://cloud.google.com/run)は、Google Cloud上のマネージド自動スケーリングコンピューティングプラットフォームで、エージェントをコンテナベースのアプリケーションとして実行できます。
 
-Learn more about [deploying your agent to Cloud Run](cloud-run.md).
+[Cloud Runへのエージェントのデプロイについて詳しくはこちら](cloud-run.md)。
 
 ### Google Kubernetes Engine (GKE)
 
-[Google Kubernetes Engine (GKE)](https://cloud.google.com/kubernetes-engine) is a managed
-Kubernetes service of Google Cloud that allows you to run your agent in a containerized
-environment. GKE is a good option if you need more control over the deployment as well as
-for running Open Models.
+[Google Kubernetes Engine (GKE)](https://cloud.google.com/kubernetes-engine)は、Google CloudのマネージドKubernetesサービスで、コンテナ化された環境でエージェントを実行できます。GKEは、デプロイに対するより多くの制御が必要な場合や、オープンモデルを実行する場合に適したオプションです。
 
-Learn more about [deploying your agent to GKE](gke.md).
+[GKEへのエージェントのデプロイについて詳しくはこちら](gke.md)。

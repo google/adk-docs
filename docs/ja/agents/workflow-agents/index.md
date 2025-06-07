@@ -1,47 +1,47 @@
-# Workflow Agents
+# ワークフロー エージェント
 
-This section introduces "*workflow agents*" - **specialized agents that control the execution flow of its sub-agents**.  
+このセクションでは、「*ワークフローエージェント*」を紹介します。これは、**サブエージェントの実行フローを制御する特殊なエージェント**です。
 
-Workflow agents are specialized components in ADK designed purely for **orchestrating the execution flow of sub-agents**. Their primary role is to manage *how* and *when* other agents run, defining the control flow of a process.
+ワークフローエージェントは、ADKにおける**サブエージェントの実行フローを調整（オーケストレーション）する**ためだけに設計された特殊なコンポーネントです。その主な役割は、他のエージェントが*いつ*、*どのように*実行されるかを管理し、プロセスの制御フローを定義することです。
 
-Unlike [LLM Agents](../llm-agents.md), which use Large Language Models for dynamic reasoning and decision-making, Workflow Agents operate based on **predefined logic**. They determine the execution sequence according to their type (e.g., sequential, parallel, loop) without consulting an LLM for the orchestration itself. This results in **deterministic and predictable execution patterns**.
+動的な推論と意思決定のために大規模言語モデルを使用する[LLMエージェント](../llm-agents.md)とは異なり、ワークフローエージェントは**事前定義されたロジック**に基づいて動作します。オーケストレーション自体にLLMを参照することなく、そのタイプ（例：シーケンシャル、パラレル、ループ）に応じて実行シーケンスを決定します。これにより、**決定的で予測可能な実行パターン**が実現します。
 
-ADK provides three core workflow agent types, each implementing a distinct execution pattern:
+ADKは、それぞれが異なる実行パターンを実装する3つの主要なワークフローエージェントタイプを提供します：
 
 <div class="grid cards" markdown>
 
-- :material-console-line: **Sequential Agents**
+- :material-console-line: **シーケンシャルエージェント**
 
     ---
 
-    Executes sub-agents one after another, in **sequence**.
+    サブエージェントを次々に**シーケンシャル（順次）**に実行します。
 
-    [:octicons-arrow-right-24: Learn more](sequential-agents.md)
+    [:octicons-arrow-right-24: 詳細はこちら](sequential-agents.md)
 
-- :material-console-line: **Loop Agents**
-
-    ---
-
-    **Repeatedly** executes its sub-agents until a specific termination condition is met.
-
-    [:octicons-arrow-right-24: Learn more](loop-agents.md)
-
-- :material-console-line: **Parallel Agents**
+- :material-console-line: **ループエージェント**
 
     ---
 
-    Executes multiple sub-agents in **parallel**.
+    特定の終了条件が満たされるまで、サブエージェントを**繰り返し**実行します。
 
-    [:octicons-arrow-right-24: Learn more](parallel-agents.md)
+    [:octicons-arrow-right-24: 詳細はこちら](loop-agents.md)
+
+- :material-console-line: **パラレルエージェント**
+
+    ---
+
+    複数のサブエージェントを**パラレル（並列）**に実行します。
+
+    [:octicons-arrow-right-24: 詳細はこちら](parallel-agents.md)
 
 </div>
 
-## Why Use Workflow Agents?
+## なぜワークフローエージェントを使用するのか？
 
-Workflow agents are essential when you need explicit control over how a series of tasks or agents are executed. They provide:
+一連のタスクやエージェントがどのように実行されるかを明示的に制御する必要がある場合、ワークフローエージェントは不可欠です。それらは以下を提供します：
 
-* **Predictability:** The flow of execution is guaranteed based on the agent type and configuration.
-* **Reliability:** Ensures tasks run in the required order or pattern consistently.
-* **Structure:** Allows you to build complex processes by composing agents within clear control structures.
+*   **予測可能性：** 実行フローは、エージェントのタイプと設定に基づいて保証されます。
+*   **信頼性：** タスクが必要な順序やパターンで一貫して実行されることを保証します。
+*   **構造：** 明確な制御構造内にエージェントを構成することで、複雑なプロセスを構築できます。
 
-While the workflow agent manages the control flow deterministically, the sub-agents it orchestrates can themselves be any type of agent, including intelligent LLM Agent instances. This allows you to combine structured process control with flexible, LLM-powered task execution.
+ワークフローエージェントが制御フローを決定論的に管理する一方で、それが調整するサブエージェントは、インテリジェントなLLMエージェントのインスタンスを含む、あらゆるタイプのエージェントであり得ます。これにより、構造化されたプロセス制御と、柔軟なLLM駆動のタスク実行を組み合わせることが可能になります。

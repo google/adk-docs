@@ -1,55 +1,55 @@
-# Deploy to GKE
+# GKEへのデプロイ
 
-[GKE](https://cloud.google.com/gke) is Google Clouds managed Kubernetes service. It allows you to deploy and manage containerized applications using Kubernetes.
+[GKE](https://cloud.google.com/gke)は、Google CloudのマネージドKubernetesサービスです。Kubernetesを使用して、コンテナ化されたアプリケーションのデプロイと管理ができます。
 
-To deploy your agent you will need to have a Kubernetes cluster running on GKE. You can create a cluster using the Google Cloud Console or the `gcloud` command line tool.
+エージェントをデプロイするには、GKE上で稼働するKubernetesクラスタが必要です。クラスタは、Google Cloudコンソールまたは`gcloud`コマンドラインツールを使用して作成できます。
 
-In this example we will deploy a simple agent to GKE. The agent will be a FastAPI application that uses `Gemini 2.0 Flash` as the LLM. We can use Vertex AI or AI Studio as the LLM provider using a Environment variable.
+この例では、簡単なエージェントをGKEにデプロイします。このエージェントは、LLMとして`Gemini 2.0 Flash`を使用するFastAPIアプリケーションです。環境変数を使用することで、LLMプロバイダーとしてVertex AIまたはAI Studioのいずれかを選択できます。
 
-## Agent sample
+## エージェントのサンプル
 
-For each of the commands, we will reference a `capital_agent` sample defined in on the [LLM agent](../agents/llm-agents.md) page. We will assume it's in a `capital_agent` directory.
+各コマンドでは、[LLMエージェント](../agents/llm-agents.md)のページで定義されている`capital_agent`のサンプルを参照します。このサンプルは`capital_agent`ディレクトリ内にあるものと仮定します。
 
-To proceed, confirm that your agent code is configured as follows:
+先に進む前に、エージェントのコードが以下のように構成されていることを確認してください。
 
-1. Agent code is in a file called `agent.py` within your agent directory.
-2. Your agent variable is named `root_agent`.
-3. `__init__.py` is within your agent directory and contains `from . import agent`.
+1.  エージェントのコードは、エージェントディレクトリ内の`agent.py`というファイルに記述されている。
+2.  エージェントの変数は`root_agent`という名前である。
+3.  `__init__.py`がエージェントディレクトリ内にあり、`from . import agent`という行が含まれている。
 
-## Environment variables
+## 環境変数
 
-Set your environment variables as described in the [Setup and Installation](../get-started/installation.md) guide. You also need to install the `kubectl` command line tool. You can find instructions to do so in the [Google Kubernetes Engine Documentation](https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-access-for-kubectl).
+[セットアップとインストール](../get-started/installation.md)ガイドの説明に従って環境変数を設定してください。また、`kubectl`コマンドラインツールのインストールも必要です。インストール手順は[Google Kubernetes Engineのドキュメント](https://cloud.google.com/kubernetes-engine/docs/how-to/cluster-access-for-kubectl)で確認できます。
 
 ```bash
-export GOOGLE_CLOUD_PROJECT=your-project-id # Your GCP project ID
-export GOOGLE_CLOUD_LOCATION=us-central1 # Or your preferred location
-export GOOGLE_GENAI_USE_VERTEXAI=true # Set to true if using Vertex AI
+export GOOGLE_CLOUD_PROJECT=your-project-id # あなたのGCPプロジェクトID
+export GOOGLE_CLOUD_LOCATION=us-central1 # または希望のロケーション
+export GOOGLE_GENAI_USE_VERTEXAI=true # Vertex AIを使用する場合はtrueに設定
 export GOOGLE_CLOUD_PROJECT_NUMBER=$(gcloud projects describe --format json $GOOGLE_CLOUD_PROJECT | jq -r ".projectNumber")
 ```
 
-If you don't have `jq` installed, you can use the following command to get the project number:
+`jq`がインストールされていない場合は、次のコマンドでプロジェクト番号を取得できます。
 
 ```bash
 gcloud projects describe $GOOGLE_CLOUD_PROJECT
 ```
 
-And copy the project number from the output.
+そして、出力からプロジェクト番号をコピーしてください。
 
 ```bash
 export GOOGLE_CLOUD_PROJECT_NUMBER=YOUR_PROJECT_NUMBER
 ```
 
-## Deployment commands
+## デプロイコマンド
 
 ### gcloud CLI
 
-You can deploy your agent to GKE using the `gcloud` and `kubectl` cli and Kubernetes manifest files.
+`gcloud`および`kubectl` CLIとKubernetesマニフェストファイルを使用して、エージェントをGKEにデプロイできます。
 
-Ensure you have authenticated with Google Cloud (`gcloud auth login` and `gcloud config set project <your-project-id>`).
+Google Cloudで認証済みであることを確認してください (`gcloud auth login` および `gcloud config set project <your-project-id>`)。
 
-### Enable APIs
+### APIの有効化
 
-Enable the necessary APIs for your project. You can do this using the `gcloud` command line tool.
+プロジェクトで必要なAPIを有効にします。これは`gcloud`コマンドラインツールを使用して行えます。
 
 ```bash
 gcloud services enable \
@@ -59,11 +59,11 @@ gcloud services enable \
     aiplatform.googleapis.com
 ```
 
-### Create a GKE cluster
+### GKEクラスタの作成
 
-You can create a GKE cluster using the `gcloud` command line tool. This example creates an Autopilot cluster named `adk-cluster` in the `us-central1` region.
+`gcloud`コマンドラインツールを使用してGKEクラスタを作成できます。この例では、`us-central1`リージョンに`adk-cluster`という名前のAutopilotクラスタを作成します。
 
-> If creating a GKE Standard cluster, make sure [Workload Identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity) is enabled. Workload Identity is enabled by default in an AutoPilot cluster.
+> GKE Standardクラスタを作成する場合は、[Workload Identity](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity)が有効になっていることを確認してください。Autopilotクラスタでは、Workload Identityはデフォルトで有効になっています。
 
 ```bash
 gcloud container clusters create-auto adk-cluster \
@@ -71,7 +71,7 @@ gcloud container clusters create-auto adk-cluster \
     --project=$GOOGLE_CLOUD_PROJECT
 ```
 
-After creating the cluster, you need to connect to it using `kubectl`. This command configures `kubectl` to use the credentials for your new cluster.
+クラスタを作成した後、`kubectl`を使用して接続する必要があります。このコマンドは、新しいクラスタの認証情報を使用するように`kubectl`を設定します。
 
 ```bash
 gcloud container clusters get-credentials adk-cluster \
@@ -79,25 +79,25 @@ gcloud container clusters get-credentials adk-cluster \
     --project=$GOOGLE_CLOUD_PROJECT
 ```
 
-### Project Structure
+### プロジェクト構造
 
-Organize your project files as follows:
+プロジェクトファイルを次のように整理します。
 
 ```txt
 your-project-directory/
 ├── capital_agent/
 │   ├── __init__.py
-│   └── agent.py       # Your agent code (see "Agent sample" tab)
-├── main.py            # FastAPI application entry point
-├── requirements.txt   # Python dependencies
-└── Dockerfile         # Container build instructions
+│   └── agent.py       # エージェントのコード（「エージェントのサンプル」タブを参照）
+├── main.py            # FastAPIアプリケーションのエントリーポイント
+├── requirements.txt   # Pythonの依存関係
+└── Dockerfile         # コンテナのビルド手順
 ```
 
-Create the following files (`main.py`, `requirements.txt`, `Dockerfile`) in the root of `your-project-directory/`.
+`your-project-directory/`のルートに、次のファイル（`main.py`、`requirements.txt`、`Dockerfile`）を作成します。
 
-### Code files
+### コードファイル
 
-1. This file sets up the FastAPI application using `get_fast_api_app()` from ADK:
+1.  このファイルは、ADKの`get_fast_api_app()`を使用してFastAPIアプリケーションを設定します。
 
     ```python title="main.py"
     import os
@@ -106,17 +106,17 @@ Create the following files (`main.py`, `requirements.txt`, `Dockerfile`) in the 
     from fastapi import FastAPI
     from google.adk.cli.fast_api import get_fast_api_app
 
-    # Get the directory where main.py is located
+    # main.pyが配置されているディレクトリを取得
     AGENT_DIR = os.path.dirname(os.path.abspath(__file__))
-    # Example session DB URL (e.g., SQLite)
+    # セッションDBのURLの例（例: SQLite）
     SESSION_DB_URL = "sqlite:///./sessions.db"
-    # Example allowed origins for CORS
+    # CORSで許可するオリジンの例
     ALLOWED_ORIGINS = ["http://localhost", "http://localhost:8080", "*"]
-    # Set web=True if you intend to serve a web interface, False otherwise
+    # Webインターフェースを提供する場合はTrue、そうでない場合はFalseに設定
     SERVE_WEB_INTERFACE = True
 
-    # Call the function to get the FastAPI app instance
-    # Ensure the agent directory name ('capital_agent') matches your agent folder
+    # 関数を呼び出してFastAPIアプリのインスタンスを取得
+    # エージェントのディレクトリ名（'capital_agent'）がエージェントフォルダと一致することを確認
     app: FastAPI = get_fast_api_app(
         agents_dir=AGENT_DIR,
         session_db_url=SESSION_DB_URL,
@@ -124,27 +124,27 @@ Create the following files (`main.py`, `requirements.txt`, `Dockerfile`) in the 
         web=SERVE_WEB_INTERFACE,
     )
 
-    # You can add more FastAPI routes or configurations below if needed
-    # Example:
+    # 必要であれば、以下にFastAPIのルートや設定を追加できます
+    # 例:
     # @app.get("/hello")
     # async def read_root():
     #     return {"Hello": "World"}
 
     if __name__ == "__main__":
-        # Use the PORT environment variable provided by Cloud Run, defaulting to 8080
+        # Cloud Runから提供されるPORT環境変数を使用し、デフォルトは8080
         uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
     ```
 
-    *Note: We specify `agent_dir` to the directory `main.py` is in and use `os.environ.get("PORT", 8080)` for Cloud Run compatibility.*
+    *注: `agent_dir`には`main.py`があるディレクトリを指定し、Cloud Runとの互換性のために`os.environ.get("PORT", 8080)`を使用しています。*
 
-2. List the necessary Python packages:
+2.  必要なPythonパッケージをリストアップします。
 
     ```txt title="requirements.txt"
     google_adk
-    # Add any other dependencies your agent needs
+    # エージェントが必要とするその他の依存関係を追加
     ```
 
-3. Define the container image:
+3.  コンテナイメージを定義します。
 
     ```dockerfile title="Dockerfile"
     FROM python:3.13-slim
@@ -165,9 +165,9 @@ Create the following files (`main.py`, `requirements.txt`, `Dockerfile`) in the 
     CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port $PORT"]
     ```
 
-### Build the container image
+### コンテナイメージのビルド
 
-You need to create a Google Artifact Registry repository to store your container images. You can do this using the `gcloud` command line tool.
+コンテナイメージを保存するために、Google Artifact Registryリポジトリを作成する必要があります。これは`gcloud`コマンドラインツールを使用して行えます。
 
 ```bash
 gcloud artifacts repositories create adk-repo \
@@ -176,7 +176,7 @@ gcloud artifacts repositories create adk-repo \
     --description="ADK repository"
 ```
 
-Build the container image using the `gcloud` command line tool. This example builds the image and tags it as `adk-repo/adk-agent:latest`.
+`gcloud`コマンドラインツールを使用してコンテナイメージをビルドします。この例では、イメージをビルドし、`adk-repo/adk-agent:latest`としてタグ付けします。
 
 ```bash
 gcloud builds submit \
@@ -185,7 +185,7 @@ gcloud builds submit \
     .
 ```
 
-Verify the image is built and pushed to the Artifact Registry:
+イメージがビルドされ、Artifact Registryにプッシュされたことを確認します。
 
 ```bash
 gcloud artifacts docker images list \
@@ -193,11 +193,11 @@ gcloud artifacts docker images list \
   --project=$GOOGLE_CLOUD_PROJECT
 ```
 
-### Configure Kubernetes Service Account for Vertex AI
+### Vertex AI用のKubernetesサービスアカウントの設定
 
-If your agent uses Vertex AI, you need to create a Kubernetes service account with the necessary permissions. This example creates a service account named `adk-agent-sa` and binds it to the `Vertex AI User` role.
+エージェントがVertex AIを使用する場合、必要な権限を持つKubernetesサービスアカウントを作成する必要があります。この例では、`adk-agent-sa`という名前のサービスアカウントを作成し、`Vertex AI User`ロールにバインドします。
 
-> If you are using AI Studio and accessing the model with an API key you can skip this step.
+> AI Studioを使用してAPIキーでモデルにアクセスしている場合は、このステップをスキップできます。
 
 ```bash
 kubectl create serviceaccount adk-agent-sa
@@ -210,9 +210,9 @@ gcloud projects add-iam-policy-binding projects/${GOOGLE_CLOUD_PROJECT} \
     --condition=None
 ```
 
-### Create the Kubernetes manifest files
+### Kubernetesマニフェストファイルの作成
 
-Create a Kubernetes deployment manifest file named `deployment.yaml` in your project directory. This file defines how to deploy your application on GKE.
+プロジェクトディレクトリに`deployment.yaml`という名前のKubernetesデプロイメントマニフェストファイルを作成します。このファイルは、アプリケーションをGKEにデプロイする方法を定義します。
 
 ```yaml title="deployment.yaml"
 cat <<  EOF > deployment.yaml
@@ -255,10 +255,10 @@ spec:
             value: GOOGLE_CLOUD_LOCATION
           - name: GOOGLE_GENAI_USE_VERTEXAI
             value: GOOGLE_GENAI_USE_VERTEXAI
-          # If using AI Studio, set GOOGLE_GENAI_USE_VERTEXAI to false and set the following:
+          # AI Studioを使用する場合は、GOOGLE_GENAI_USE_VERTEXAIをfalseに設定し、以下を設定します:
           # - name: GOOGLE_API_KEY
           #   value: GOOGLE_API_KEY
-          # Add any other necessary environment variables your agent might need
+          # エージェントが必要とする可能性のあるその他の必要な環境変数を追加します
 ---
 apiVersion: v1
 kind: Service
@@ -274,88 +274,88 @@ spec:
 EOF
 ```
 
-### Deploy the Application
+### アプリケーションのデプロイ
 
-Deploy the application using the `kubectl` command line tool. This command applies the deployment and service manifest files to your GKE cluster.
+`kubectl`コマンドラインツールを使用してアプリケーションをデプロイします。このコマンドは、デプロイメントとサービスのマニフェストファイルをGKEクラスタに適用します。
 
 ```bash
 kubectl apply -f deployment.yaml
 ```
 
-After a few moments, you can check the status of your deployment using:
+しばらくすると、次のコマンドでデプロイのステータスを確認できます。
 
 ```bash
 kubectl get pods -l=app=adk-agent
 ```
 
-This command lists the pods associated with your deployment. You should see a pod with a status of `Running`.
+このコマンドは、デプロイメントに関連付けられたPodをリストします。ステータスが`Running`のPodが表示されるはずです。
 
-Once the pod is running, you can check the status of the service using:
+Podが実行されたら、次のコマンドでサービスのステータスを確認できます。
 
 ```bash
 kubectl get service adk-agent
 ```
 
-If the output shows a `External IP`, it means your service is accessible from the internet. It may take a few minutes for the external IP to be assigned.
+出力に`External IP`が表示されていれば、サービスはインターネットからアクセス可能です。外部IPが割り当てられるまでに数分かかることがあります。
 
-You can get the external IP address of your service using:
+次のコマンドでサービスの外部IPアドレスを取得できます。
 
 ```bash
 kubectl get svc adk-agent -o=jsonpath='{.status.loadBalancer.ingress[0].ip}'
 ```
 
-## Testing your agent
+## エージェントのテスト
 
-Once your agent is deployed to GKE, you can interact with it via the deployed UI (if enabled) or directly with its API endpoints using tools like `curl`. You'll need the service URL provided after deployment.
+エージェントがGKEにデプロイされたら、デプロイされたUI（有効な場合）を介して、または`curl`のようなツールを使用してAPIエンドポイントと直接対話できます。デプロイ後に提供されるサービスURLが必要です。
 
-=== "UI Testing"
+=== "UIでのテスト"
 
-    ### UI Testing
+    ### UIでのテスト
 
-    If you deployed your agent with the UI enabled:
+    UIを有効にしてエージェントをデプロイした場合:
 
-    You can test your agent by simply navigating to the kubernetes service URL in your web browser.
+    WebブラウザでKubernetesサービスのURLに移動するだけで、エージェントをテストできます。
 
-    The ADK dev UI allows you to interact with your agent, manage sessions, and view execution details directly in the browser.
+    ADK dev UIを使用すると、エージェントとの対話、セッションの管理、実行詳細の表示をブラウザで直接行えます。
 
-    To verify your agent is working as intended, you can:
+    エージェントが意図したとおりに動作していることを確認するには、次の手順を実行します。
 
-    1. Select your agent from the dropdown menu.
-    2. Type a message and verify that you receive an expected response from your agent.
+    1.  ドロップダウンメニューからエージェントを選択します。
+    2.  メッセージを入力し、エージェントから期待される応答を受け取ることを確認します。
 
-    If you experience any unexpected behavior, check the pod logs for your agent using:
+    予期しない動作が発生した場合は、次のコマンドを使用してエージェントのPodログを確認してください。
 
     ```bash
     kubectl logs -l app=adk-agent
     ```
 
-=== "API Testing (curl)"
+=== "APIでのテスト (curl)"
 
-    ### API Testing (curl)
+    ### APIでのテスト (curl)
 
-    You can interact with the agent's API endpoints using tools like `curl`. This is useful for programmatic interaction or if you deployed without the UI.
+    `curl`のようなツールを使用して、エージェントのAPIエンドポイントと対話できます。これは、プログラムによる対話や、UIなしでデプロイした場合に便利です。
 
-    #### Set the application URL
+    #### アプリケーションURLの設定
 
-    Replace the example URL with the actual URL of your deployed Cloud Run service.
+    サンプルURLを、デプロイされたCloud Runサービスの実際のURLに置き換えてください。
 
     ```bash
     export APP_URL="KUBERNETES_SERVICE_URL"
     ```
 
-    #### List available apps
+    #### 利用可能なアプリの一覧表示
 
-    Verify the deployed application name.
+    デプロイされたアプリケーション名を確認します。
 
     ```bash
     curl -X GET $APP_URL/list-apps
     ```
 
-    *(Adjust the `app_name` in the following commands based on this output if needed. The default is often the agent directory name, e.g., `capital_agent`)*.
+    *（必要に応じて、この出力に基づいて後続のコマンドの`app_name`を調整してください。デフォルトは多くの場合、`capital_agent`のようなエージェントディレクトリ名です）*。
 
-    #### Create or Update a Session
+    #### セッションの作成または更新
 
-    Initialize or update the state for a specific user and session. Replace `capital_agent` with your actual app name if different. The values `user_123` and `session_abc` are example identifiers; you can replace them with your desired user and session IDs.
+    特定のユーザーとセッションの状態を初期化または更新します。`capital_agent`を実際のアプリ名に置き換えてください（異なる場合）。`user_123`と`session_abc`の値はサンプル識別子です。希望のユーザーIDとセッションIDに置き換えることができます。
 
     ```bash
     curl -X POST \
@@ -364,9 +364,9 @@ Once your agent is deployed to GKE, you can interact with it via the deployed UI
         -d '{"state": {"preferred_language": "English", "visit_count": 5}}'
     ```
 
-    #### Run the Agent
+    #### エージェントの実行
 
-    Send a prompt to your agent. Replace `capital_agent` with your app name and adjust the user/session IDs and prompt as needed.
+    エージェントにプロンプトを送信します。`capital_agent`をアプリ名に置き換え、必要に応じてユーザー/セッションIDとプロンプトを調整してください。
 
     ```bash
     curl -X POST $APP_URL/run_sse \
@@ -385,45 +385,45 @@ Once your agent is deployed to GKE, you can interact with it via the deployed UI
         }'
     ```
 
-    * Set `"streaming": true` if you want to receive Server-Sent Events (SSE).
-    * The response will contain the agent's execution events, including the final answer.
+    *   サーバー送信イベント（SSE）を受信したい場合は、`"streaming": true`に設定します。
+    *   応答には、最終的な回答を含むエージェントの実行イベントが含まれます。
 
-## Troubleshooting
+## トラブルシューティング
 
-These are some common issues you might encounter when deploying your agent to GKE:
+これらは、エージェントをGKEにデプロイする際に遭遇する可能性のある一般的な問題です。
 
-### 403 Permission Denied for `Gemini 2.0 Flash`
+### `Gemini 2.0 Flash`に対する403権限拒否
 
-This usually means that the Kubernetes service account does not have the necessary permission to access the Vertex AI API. Ensure that you have created the service account and bound it to the `Vertex AI User` role as described in the [Configure Kubernetes Service Account for Vertex AI](#configure-kubernetes-service-account-for-vertex-ai) section. If you are using AI Studio, ensure that you have set the `GOOGLE_API_KEY` environment variable in the deployment manifest and it is valid.
+これは通常、KubernetesサービスアカウントがVertex AI APIにアクセスするために必要な権限を持っていないことを意味します。[Vertex AI用のKubernetesサービスアカウントの設定](#configure-kubernetes-service-account-for-vertex-ai)セクションで説明されているように、サービスアカウントを作成し、`Vertex AI User`ロールにバインドしたことを確認してください。AI Studioを使用している場合は、デプロイメントマニフェストで`GOOGLE_API_KEY`環境変数を設定し、それが有効であることを確認してください。
 
-### Attempt to write a readonly database
+### 読み取り専用データベースへの書き込み試行
 
-You might see there is no session id created in the UI and the agent does not respond to any messages. This is usually caused by the SQLite database being read-only. This can happen if you run the agent locally and then create the container image which copies the SQLite database into the container. The database is then read-only in the container.
+UIでセッションIDが作成されず、エージェントがどのメッセージにも応答しないことがあります。これは通常、SQLiteデータベースが読み取り専用であることが原因です。これは、エージェントをローカルで実行し、その後SQLiteデータベースをコンテナにコピーするコンテナイメージを作成した場合に発生する可能性があります。その結果、データベースはコンテナ内で読み取り専用になります。
 
 ```bash
 sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) attempt to write a readonly database
 [SQL: UPDATE app_states SET state=?, update_time=CURRENT_TIMESTAMP WHERE app_states.app_name = ?]
 ```
 
-To fix this issue, you can either:
+この問題を解決するには、次のいずれかの方法があります。
 
-Delete the SQLite database file from your local machine before building the container image. This will create a new SQLite database when the container is started.
+コンテナイメージをビルドする前に、ローカルマシンからSQLiteデータベースファイルを削除します。これにより、コンテナが起動したときに新しいSQLiteデータベースが作成されます。
 
 ```bash
 rm -f sessions.db
 ```
 
-or (recommended) you can add a `.dockerignore` file to your project directory to exclude the SQLite database from being copied into the container image.
+または（推奨）、プロジェクトディレクトリに`.dockerignore`ファイルを追加して、SQLiteデータベースがコンテナイメージにコピーされないようにします。
 
 ```txt title=".dockerignore"
 sessions.db
 ```
 
-Build the container image abd deploy the application again.
+コンテナイメージをビルドし、アプリケーションを再度デプロイします。
 
-## Cleanup
+## クリーンアップ
 
-To delete the GKE cluster and all associated resources, run:
+GKEクラスタと関連するすべてのリソースを削除するには、次を実行します。
 
 ```bash
 gcloud container clusters delete adk-cluster \
@@ -431,7 +431,7 @@ gcloud container clusters delete adk-cluster \
     --project=$GOOGLE_CLOUD_PROJECT
 ```
 
-To delete the Artifact Registry repository, run:
+Artifact Registryリポジトリを削除するには、次を実行します。
 
 ```bash
 gcloud artifacts repositories delete adk-repo \
@@ -439,7 +439,7 @@ gcloud artifacts repositories delete adk-repo \
     --project=$GOOGLE_CLOUD_PROJECT
 ```
 
-You can also delete the project if you no longer need it. This will delete all resources associated with the project, including the GKE cluster, Artifact Registry repository, and any other resources you created.
+不要になった場合は、プロジェクトを削除することもできます。これにより、GKEクラスタ、Artifact Registryリポジトリ、その他作成したリソースを含む、プロジェクトに関連付けられているすべてのリソースが削除されます。
 
 ```bash
 gcloud projects delete $GOOGLE_CLOUD_PROJECT

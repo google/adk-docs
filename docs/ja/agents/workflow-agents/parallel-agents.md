@@ -1,48 +1,48 @@
-# Parallel agents
+# 並列エージェント
 
-The `ParallelAgent` is a [workflow agent](index.md) that executes its sub-agents *concurrently*. This dramatically speeds up workflows where tasks can be performed independently.
+`ParallelAgent`は、サブエージェントを*同時に*実行する[ワークフローエージェント](index.md)です。これにより、タスクを独立して実行できるワークフローが劇的に高速化されます。
 
-Use `ParallelAgent` when: For scenarios prioritizing speed and involving independent, resource-intensive tasks, a `ParallelAgent` facilitates efficient parallel execution. **When sub-agents operate without dependencies, their tasks can be performed concurrently**, significantly reducing overall processing time.
+`ParallelAgent`を使用する場合: 速度が優先され、独立したリソース集約型のタスクが含まれるシナリオでは、`ParallelAgent`が効率的な並列実行を促進します。**サブエージェントが依存関係なく動作する場合、それらのタスクは同時に実行でき**、全体の処理時間を大幅に短縮できます。
 
-As with other [workflow agents](index.md), the `ParallelAgent` is not powered by an LLM, and is thus deterministic in how it executes. That being said, workflow agents are only concerned with their execution (i.e. executing sub-agents in parallel), and not their internal logic; the tools or sub-agents of a workflow agent may or may not utilize LLMs.
+他の[ワークフローエージェント](index.md)と同様に、`ParallelAgent`はLLMによって動作するわけではないため、その実行方法は決定論的です。とはいえ、ワークフローエージェントは自身の実行（つまりサブエージェントの並列実行）にのみ関与し、その内部ロジックには関与しません。ワークフローエージェントのツールやサブエージェントは、LLMを利用する場合もあれば、利用しない場合もあります。
 
-### Example
+### 例
 
-This approach is particularly beneficial for operations like multi-source data retrieval or heavy computations, where parallelization yields substantial performance gains. Importantly, this strategy assumes no inherent need for shared state or direct information exchange between the concurrently executing agents.
+このアプローチは、複数ソースからのデータ取得や重い計算などの操作に特に有益であり、並列化によって大幅なパフォーマンス向上が得られます。重要なのは、この戦略では、同時に実行されるエージェント間で共有状態や直接的な情報交換が本質的に必要ないことを前提としている点です。
 
-### How it works
+### 仕組み
 
-When the `ParallelAgent`'s `run_async()` method is called:
+`ParallelAgent`の`run_async()`メソッドが呼び出されると、以下の処理を実行します。
 
-1. **Concurrent Execution:** It initiates the `run_async()` method of *each* sub-agent present in the `sub_agents` list *concurrently*.  This means all the agents start running at (approximately) the same time.
-2. **Independent Branches:**  Each sub-agent operates in its own execution branch.  There is ***no* automatic sharing of conversation history or state between these branches** during execution.
-3. **Result Collection:** The `ParallelAgent` manages the parallel execution and, typically, provides a way to access the results from each sub-agent after they have completed (e.g., through a list of results or events). The order of results may not be deterministic.
+1.  **同時実行:** `sub_agents`リストに存在する*各*サブエージェントの`run_async()`メソッドを*同時に*開始します。つまり、すべてのエージェントが（ほぼ）同時に実行を開始します。
+2.  **独立したブランチ:** 各サブエージェントは、それぞれ独自の実行ブランチで動作します。実行中、これらのブランチ間で会話履歴や状態が自動的に共有されることは***ありません***。
+3.  **結果の収集:** `ParallelAgent`は並列実行を管理し、通常、各サブエージェントが完了した後にそれぞれの結果にアクセスする方法（例: 結果やイベントのリストを通じて）を提供します。結果の順序は決定論的ではない場合があります。
 
-### Independent Execution and State Management
+### 独立した実行と状態管理
 
-It's *crucial* to understand that sub-agents within a `ParallelAgent` run independently.  If you *need* communication or data sharing between these agents, you must implement it explicitly.  Possible approaches include:
+`ParallelAgent`内のサブエージェントは独立して実行されることを理解することが*非常に重要*です。これらのエージェント間で通信やデータ共有が*必要な*場合は、明示的に実装する必要があります。考えられるアプローチは次のとおりです。
 
-* **Shared `InvocationContext`:** You could pass a shared `InvocationContext` object to each sub-agent.  This object could act as a shared data store.  However, you'd need to manage concurrent access to this shared context carefully (e.g., using locks) to avoid race conditions.
-* **External State Management:**  Use an external database, message queue, or other mechanism to manage shared state and facilitate communication between agents.
-* **Post-Processing:** Collect results from each branch, and then implement logic to coordinate data afterwards.
+*   **共有`InvocationContext`:** 共有の`InvocationContext`オブジェクトを各サブエージェントに渡すことができます。このオブジェクトは共有データストアとして機能します。ただし、競合状態を避けるために、この共有コンテキストへの同時アクセスを慎重に管理する（例: ロックを使用する）必要があります。
+*   **外部状態管理:** 外部データベース、メッセージキュー、またはその他のメカニズムを使用して、共有状態を管理し、エージェント間の通信を促進します。
+*   **後処理:** 各ブランチから結果を収集し、その後でデータを調整するロジックを実装します。
 
 ![Parallel Agent](../../assets/parallel-agent.png){: width="600"}
 
-### Full Example: Parallel Web Research
+### 完全な例: 並列ウェブ調査
 
-Imagine researching multiple topics simultaneously:
+複数のトピックを同時に調査するシナリオを想像してみてください。
 
-1. **Researcher Agent 1:**  An `LlmAgent` that researches "renewable energy sources."
-2. **Researcher Agent 2:**  An `LlmAgent` that researches "electric vehicle technology."
-3. **Researcher Agent 3:**  An `LlmAgent` that researches "carbon capture methods."
+1.  **リサーチャーエージェント1:** 「再生可能エネルギー源」について調査する`LlmAgent`。
+2.  **リサーチャーエージェント2:** 「電気自動車技術」について調査する`LlmAgent`。
+3.  **リサーチャーエージェント3:** 「炭素回収方法」について調査する`LlmAgent`。
 
     ```py
     ParallelAgent(sub_agents=[ResearcherAgent1, ResearcherAgent2, ResearcherAgent3])
     ```
 
-These research tasks are independent.  Using a `ParallelAgent` allows them to run concurrently, potentially reducing the total research time significantly compared to running them sequentially. The results from each agent would be collected separately after they finish.
+これらの調査タスクは独立しています。`ParallelAgent`を使用すると、これらを同時に実行でき、順次実行する場合と比較して、総調査時間を大幅に短縮できる可能性があります。各エージェントからの結果は、完了後に個別に収集されます。
 
-???+ "Full Code"
+???+ "完全なコード"
 
     === "Python"
         ```py

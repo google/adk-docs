@@ -1,12 +1,8 @@
-# Deploy to Vertex AI Agent Engine
+# Vertex AI Agent Engineへのデプロイ
 
-![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="Vertex AI Agent Engine currently supports only Python."}
+![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="Vertex AI Agent Engineは現在Pythonのみをサポートしています。" }
 
-[Agent Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview)
-is a fully managed Google Cloud service enabling developers to deploy, manage,
-and scale AI agents in production. Agent Engine handles the infrastructure to
-scale agents in production so you can focus on creating intelligent and
-impactful applications.
+[Agent Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview)は、開発者が本番環境でAIエージェントをデプロイ、管理、スケーリングできるようにする、フルマネージドのGoogle Cloudサービスです。Agent Engineが本番環境でのエージェントのスケーリングに必要なインフラストラクチャを処理するため、開発者はインテリジェントでインパクトのあるアプリケーションの作成に集中できます。
 
 ```python
 from vertexai import agent_engines
@@ -19,27 +15,27 @@ remote_app = agent_engines.create(
 )
 ```
 
-## Install Vertex AI SDK
+## Vertex AI SDKのインストール
 
-Agent Engine is part of the Vertex AI SDK for Python. For more information, you can review the [Agent Engine quickstart documentation](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/quickstart).
+Agent Engineは、Vertex AI SDK for Pythonの一部です。詳細については、[Agent Engineクイックスタートドキュメント](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/quickstart)をご覧ください。
 
-### Install the Vertex AI SDK
+### Vertex AI SDKのインストール
 
 ```shell
 pip install google-cloud-aiplatform[adk,agent_engines]
 ```
 
 !!!info
-    Agent Engine only supported Python version >=3.9 and <=3.12.
+    Agent Engineがサポートしているのは、Pythonバージョン >=3.9 かつ <=3.12 のみです。
 
-### Initialization
+### 初期化
 
 ```py
 import vertexai
 
-PROJECT_ID = "your-project-id"
-LOCATION = "us-central1"
-STAGING_BUCKET = "gs://your-google-cloud-storage-bucket"
+PROJECT_ID = "your-project-id"  # あなたのプロジェクトID
+LOCATION = "us-central1"  # リージョン
+STAGING_BUCKET = "gs://your-google-cloud-storage-bucket"  # あなたのGoogle Cloud Storageバケット
 
 vertexai.init(
     project=PROJECT_ID,
@@ -48,19 +44,19 @@ vertexai.init(
 )
 ```
 
-For `LOCATION`, you can check out the list of [supported regions in Agent Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview#supported-regions).
+`LOCATION`については、[Agent Engineでサポートされているリージョン](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview#supported-regions)のリストを確認してください。
 
-### Create your agent
+### エージェントの作成
 
-You can use the sample agent below, which has two tools (to get weather or retrieve the time in a specified city):
+以下のサンプルエージェントを使用できます。このエージェントには2つのツール（天気の取得、指定された都市の時刻の取得）があります。
 
 ```python
 --8<-- "examples/python/snippets/get-started/multi_tool_agent/agent.py"
 ```
 
-### Prepare your agent for Agent Engine
+### Agent Engine向けにエージェントを準備する
 
-Use `reasoning_engines.AdkApp()` to wrap your agent to make it deployable to Agent Engine
+`reasoning_engines.AdkApp()`を使用してエージェントをラップし、Agent Engineにデプロイできるようにします。
 
 ```py
 from vertexai.preview import reasoning_engines
@@ -71,49 +67,49 @@ app = reasoning_engines.AdkApp(
 )
 ```
 
-### Try your agent locally
+### エージェントをローカルで試す
 
-You can try it locally before deploying to Agent Engine.
+Agent Engineにデプロイする前に、ローカルで試すことができます。
 
-#### Create session (local)
+#### セッションの作成（ローカル）
 
 ```py
 session = app.create_session(user_id="u_123")
 session
 ```
 
-Expected output for `create_session` (local):
+`create_session`の期待される出力（ローカル）:
 
 ```console
 Session(id='c6a33dae-26ef-410c-9135-b434a528291f', app_name='default-app-name', user_id='u_123', state={}, events=[], last_update_time=1743440392.8689594)
 ```
 
-#### List sessions (local)
+#### セッションの一覧表示（ローカル）
 
 ```py
 app.list_sessions(user_id="u_123")
 ```
 
-Expected output for `list_sessions` (local):
+`list_sessions`の期待される出力（ローカル）:
 
 ```console
 ListSessionsResponse(session_ids=['c6a33dae-26ef-410c-9135-b434a528291f'])
 ```
 
-#### Get a specific session (local)
+#### 特定のセッションの取得（ローカル）
 
 ```py
 session = app.get_session(user_id="u_123", session_id=session.id)
 session
 ```
 
-Expected output for `get_session` (local):
+`get_session`の期待される出力（ローカル）:
 
 ```console
 Session(id='c6a33dae-26ef-410c-9135-b434a528291f', app_name='default-app-name', user_id='u_123', state={}, events=[], last_update_time=1743681991.95696)
 ```
 
-#### Send queries to your agent (local)
+#### エージェントへのクエリ送信（ローカル）
 
 ```py
 for event in app.stream_query(
@@ -124,7 +120,7 @@ for event in app.stream_query(
 print(event)
 ```
 
-Expected output for `stream_query` (local):
+`stream_query`の期待される出力（ローカル）:
 
 ```console
 {'parts': [{'function_call': {'id': 'af-a33fedb0-29e6-4d0c-9eb3-00c402969395', 'args': {'city': 'new york'}, 'name': 'get_weather'}}], 'role': 'model'}
@@ -132,7 +128,7 @@ Expected output for `stream_query` (local):
 {'parts': [{'text': 'The weather in New York is sunny with a temperature of 25 degrees Celsius (41 degrees Fahrenheit).'}], 'role': 'model'}
 ```
 
-### Deploy your agent to Agent Engine
+### エージェントをAgent Engineにデプロイする
 
 ```python
 from vertexai import agent_engines
@@ -145,30 +141,30 @@ remote_app = agent_engines.create(
 )
 ```
 
-This step may take several minutes to finish. Each deployed agent has a unique identifier. You can run the following command to get the resource_name identifier for your deployed agent:
+このステップは完了までに数分かかることがあります。デプロイされた各エージェントには一意の識別子があります。次のコマンドを実行して、デプロイされたエージェントの`resource_name`識別子を取得できます。
 
 ```python
 remote_app.resource_name
 ```
 
-The response should look like the following string:
+応答は次のような文字列になります。
 
 ```
 f"projects/{PROJECT_NUMBER}/locations/{LOCATION}/reasoningEngines/{RESOURCE_ID}"
 ```
 
-For additional details, you can visit the Agent Engine documentation [deploying an agent](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/deploy) and [managing deployed agents](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/manage/overview).
+追加の詳細については、Agent Engineドキュメントの[エージェントのデプロイ](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/deploy)および[デプロイ済みエージェントの管理](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/manage/overview)をご覧ください。
 
-### Try your agent on Agent Engine
+### Agent Engine上のエージェントを試す
 
-#### Create session (remote)
+#### セッションの作成（リモート）
 
 ```py
 remote_session = remote_app.create_session(user_id="u_456")
 remote_session
 ```
 
-Expected output for `create_session` (remote):
+`create_session`の期待される出力（リモート）:
 
 ```console
 {'events': [],
@@ -179,24 +175,24 @@ Expected output for `create_session` (remote):
 'last_update_time': 1743683353.030133}
 ```
 
-`id` is the session ID, and `app_name` is the resource ID of the deployed agent on Agent Engine.
+`id`はセッションID、`app_name`はAgent EngineにデプロイされたエージェントのリソースIDです。
 
-#### List sessions (remote)
+#### セッションの一覧表示（リモート）
 
 ```py
 remote_app.list_sessions(user_id="u_456")
 ```
 
-#### Get a specific session (remote)
+#### 特定のセッションの取得（リモート）
 
 ```py
 remote_app.get_session(user_id="u_456", session_id=remote_session["id"])
 ```
 
 !!!note
-    While using your agent locally, session ID is stored in `session.id`, when using your agent remotely on Agent Engine, session ID is stored in `remote_session["id"]`.
+    ローカルでエージェントを使用する場合、セッションIDは`session.id`に保存されますが、Agent Engine上でリモートでエージェントを使用する場合、セッションIDは`remote_session["id"]`に保存されます。
 
-#### Send queries to your agent (remote)
+#### エージェントへのクエリ送信（リモート）
 
 ```py
 for event in remote_app.stream_query(
@@ -207,7 +203,7 @@ for event in remote_app.stream_query(
     print(event)
 ```
 
-Expected output for `stream_query` (remote):
+`stream_query`の期待される出力（リモート）:
 
 ```console
 {'parts': [{'function_call': {'id': 'af-f1906423-a531-4ecf-a1ef-723b05e85321', 'args': {'city': 'new york'}, 'name': 'get_weather'}}], 'role': 'model'}
@@ -217,14 +213,14 @@ Expected output for `stream_query` (remote):
 
 
 
-## Clean up
+## クリーンアップ
 
-After you have finished, it is a good practice to clean up your cloud resources.
-You can delete the deployed Agent Engine instance to avoid any unexpected
-charges on your Google Cloud account.
+作業が完了したら、クラウドリソースをクリーンアップすることをお勧めします。
+デプロイされたAgent Engineインスタンスを削除することで、Google Cloudアカウントでの予期せぬ
+課金を避けることができます。
 
 ```python
 remote_app.delete(force=True)
 ```
 
-`force=True` will also delete any child resources that were generated from the deployed agent, such as sessions.
+`force=True`は、セッションなど、デプロイされたエージェントから生成された子リソースも削除します。
