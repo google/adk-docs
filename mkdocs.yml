@@ -251,7 +251,11 @@ plugins:
             API Reference: API 레퍼런스
             Python ADK: Python ADK
             Java ADK: Java ADK
-          # nav:
+          nav:
+            - API 레퍼런스:
+              - 개요: api-reference/index.md
+              - Python ADK: https://google.github.io/adk-docs/api-reference/python/
+              - Java ADK: https://google.github.io/adk-docs/api-reference/java/
           #   - 홈: index.md
           #   - 시작하기:
           #       - get-started/index.md
