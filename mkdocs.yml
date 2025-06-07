@@ -233,7 +233,7 @@ plugins:
             Callbacks: 콜백
             Types of callbacks: 콜백의 종류
             Callback patterns: 디자인 패턴 및 모범 사례
-            Artifacts: 산출물
+            Artifacts: 아티팩트
             Events: 이벤트
             Context: 컨텍스트
             Evaluate: 평가
