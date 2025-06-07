@@ -1,50 +1,50 @@
-# Agents
+# エージェント
 
-In the Agent Development Kit (ADK), an **Agent** is a self-contained execution unit designed to act autonomously to achieve specific goals. Agents can perform tasks, interact with users, utilize external tools, and coordinate with other agents.
+Agent Development Kit (ADK)において、**エージェント**とは、特定の目標を達成するために自律的に行動するように設計された、自己完結型の実行ユニットです。エージェントはタスクの実行、ユーザーとの対話、外部ツールの利用、他のエージェントとの連携が可能です。
 
-The foundation for all agents in ADK is the `BaseAgent` class. It serves as the fundamental blueprint. To create functional agents, you typically extend `BaseAgent` in one of three main ways, catering to different needs – from intelligent reasoning to structured process control.
+ADKにおけるすべてのエージェントの基盤は`BaseAgent`クラスです。これは基本的な設計図として機能します。機能的なエージェントを作成するには、通常、`BaseAgent`を主に3つの方法のいずれかで拡張し、インテリジェントな推論から構造化されたプロセス制御まで、さまざまなニーズに応えます。
 
-<img src="../assets/agent-types.png" alt="Types of agents in ADK">
+<img src="../assets/agent-types.png" alt="ADKにおけるエージェントの種類">
 
-## Core Agent Categories
+## 主要なエージェントのカテゴリ
 
-ADK provides distinct agent categories to build sophisticated applications:
+ADKは、洗練されたアプリケーションを構築するために、明確なエージェントのカテゴリを提供します：
 
-1. [**LLM Agents (`LlmAgent`, `Agent`)**](llm-agents.md): These agents utilize Large Language Models (LLMs) as their core engine to understand natural language, reason, plan, generate responses, and dynamically decide how to proceed or which tools to use, making them ideal for flexible, language-centric tasks. [Learn more about LLM Agents...](llm-agents.md)
+1.  [**LLMエージェント (`LlmAgent`, `Agent`)**](llm-agents.md): これらのエージェントは、自然言語の理解、推論、計画、応答の生成、そしてどのように進めるかやどのツールを使用するかを動的に決定するためのコアエンジンとして大規模言語モデル（LLM）を利用し、柔軟性が求められる言語中心のタスクに最適です。[LLMエージェントについてさらに学ぶ...](llm-agents.md)
 
-2. [**Workflow Agents (`SequentialAgent`, `ParallelAgent`, `LoopAgent`)**](workflow-agents/index.md): These specialized agents control the execution flow of other agents in predefined, deterministic patterns (sequence, parallel, or loop) without using an LLM for the flow control itself, perfect for structured processes needing predictable execution. [Explore Workflow Agents...](workflow-agents/index.md)
+2.  [**ワークフローエージェント (`SequentialAgent`, `ParallelAgent`, `LoopAgent`)**](workflow-agents/index.md): これらの特化したエージェントは、フロー制御自体にLLMを使用せず、事前定義された決定論的なパターン（シーケンシャル、パラレル、またはループ）で他のエージェントの実行フローを制御します。予測可能な実行が必要な構造化されたプロセスに最適です。[ワークフローエージェントを探る...](workflow-agents/index.md)
 
-3. [**Custom Agents**](custom-agents.md): Created by extending `BaseAgent` directly, these agents allow you to implement unique operational logic, specific control flows, or specialized integrations not covered by the standard types, catering to highly tailored application requirements. [Discover how to build Custom Agents...](custom-agents.md)
+3.  [**カスタムエージェント**](custom-agents.md): `BaseAgent`を直接拡張して作成されるこれらのエージェントは、標準的なタイプではカバーされていない独自の運用ロジック、特定の制御フロー、または特化した統合を実装でき、高度にカスタマイズされたアプリケーション要件に対応します。[カスタムエージェントの構築方法を発見する...](custom-agents.md)
 
-## Choosing the Right Agent Type
+## 適切なエージェントタイプの選択
 
-The following table provides a high-level comparison to help distinguish between the agent types. As you explore each type in more detail in the subsequent sections, these distinctions will become clearer.
+以下の表は、エージェントタイプを区別するのに役立つ高レベルな比較を提供します。後続のセクションで各タイプをより詳細に探るにつれて、これらの違いはより明確になるでしょう。
 
-| Feature              | LLM Agent (`LlmAgent`)              | Workflow Agent                              | Custom Agent (`BaseAgent` subclass)      |
-| :------------------- | :---------------------------------- | :------------------------------------------ |:-----------------------------------------|
-| **Primary Function** | Reasoning, Generation, Tool Use     | Controlling Agent Execution Flow            | Implementing Unique Logic/Integrations   |
-| **Core Engine**  | Large Language Model (LLM)          | Predefined Logic (Sequence, Parallel, Loop) | Custom Code                              |
-| **Determinism**  | Non-deterministic (Flexible)        | Deterministic (Predictable)                 | Can be either, based on implementation   |
-| **Primary Use**  | Language tasks, Dynamic decisions   | Structured processes, Orchestration         | Tailored requirements, Specific workflows|
+| 機能             | LLMエージェント (`LlmAgent`)        | ワークフローエージェント                    | カスタムエージェント (`BaseAgent`サブクラス) |
+| :--------------- | :---------------------------------- | :------------------------------------------ | :------------------------------------------- |
+| **主な機能**     | 推論、生成、ツール使用              | エージェント実行フローの制御                | 独自のロジック/統合の実装                    |
+| **コアエンジン** | 大規模言語モデル（LLM）             | 事前定義されたロジック（シーケンシャル、パラレル、ループ） | カスタムコード                               |
+| **決定性**       | 非決定的（柔軟）                    | 決定的（予測可能）                          | 実装に応じてどちらにもなり得る               |
+| **主な用途**     | 言語タスク、動的な意思決定          | 構造化されたプロセス、オーケストレーション  | カスタマイズされた要件、特定のワークフロー   |
 
-## Agents Working Together: Multi-Agent Systems
+## 連携するエージェント：マルチエージェントシステム
 
-While each agent type serves a distinct purpose, the true power often comes from combining them. Complex applications frequently employ [multi-agent architectures](multi-agents.md) where:
+各エージェントタイプは異なる目的を果たしますが、真の力はしばしばそれらを組み合わせることから生まれます。複雑なアプリケーションでは、[マルチエージェントアーキテクチャ](multi-agents.md)が頻繁に採用され、そこでは：
 
-* **LLM Agents** handle intelligent, language-based task execution.
-* **Workflow Agents** manage the overall process flow using standard patterns.
-* **Custom Agents** provide specialized capabilities or rules needed for unique integrations.
+*   **LLMエージェント**が、インテリジェントで言語ベースのタスク実行を担当します。
+*   **ワークフローエージェント**が、標準的なパターンを使用して全体的なプロセスフローを管理します。
+*   **カスタムエージェント**が、独自の統合に必要な特殊な機能やルールを提供します。
 
-Understanding these core types is the first step toward building sophisticated, capable AI applications with ADK.
+これらのコアタイプを理解することは、ADKで洗練された有能なAIアプリケーションを構築するための第一歩です。
 
 ---
 
-## What's Next?
+## 次のステップ
 
-Now that you have an overview of the different agent types available in ADK, dive deeper into how they work and how to use them effectively:
+ADKで利用可能なさまざまなエージェントタイプの概要を理解したところで、それらがどのように機能し、効果的に使用する方法についてさらに深く掘り下げていきましょう：
 
-* [**LLM Agents:**](llm-agents.md) Explore how to configure agents powered by large language models, including setting instructions, providing tools, and enabling advanced features like planning and code execution.
-* [**Workflow Agents:**](workflow-agents/index.md) Learn how to orchestrate tasks using `SequentialAgent`, `ParallelAgent`, and `LoopAgent` for structured and predictable processes.
-* [**Custom Agents:**](custom-agents.md) Discover the principles of extending `BaseAgent` to build agents with unique logic and integrations tailored to your specific needs.
-* [**Multi-Agents:**](multi-agents.md) Understand how to combine different agent types to create sophisticated, collaborative systems capable of tackling complex problems.
-* [**Models:**](models.md) Learn about the different LLM integrations available and how to select the right model for your agents.
+*   [**LLMエージェント:**](llm-agents.md) 指示の設定、ツールの提供、プランニングやコード実行などの高度な機能の有効化を含む、大規模言語モデルを搭載したエージェントの設定方法を探ります。
+*   [**ワークフローエージェント:**](workflow-agents/index.md) 構造化された予測可能なプロセスのために、`SequentialAgent`、`ParallelAgent`、`LoopAgent`を使用してタスクを調整する方法を学びます。
+*   [**カスタムエージェント:**](custom-agents.md) 特定のニーズに合わせて独自のロジックと統合を持つエージェントを構築するために、`BaseAgent`を拡張する原則を発見します。
+*   [**マルチエージェント:**](multi-agents.md) 複雑な問題に取り組むことができる、洗練された協調的なシステムを作成するために、さまざまなエージェントタイプを組み合わせる方法を理解します。
+*   [**モデル:**](models.md) 利用可能なさまざまなLLM統合について学び、エージェントに適したモデルを選択する方法を学びます。

@@ -1,186 +1,160 @@
-# LLM Agent
+# LLMエージェント
 
-The `LlmAgent` (often aliased simply as `Agent`) is a core component in ADK,
-acting as the "thinking" part of your application. It leverages the power of a
-Large Language Model (LLM) for reasoning, understanding natural language, making
-decisions, generating responses, and interacting with tools.
+`LlmAgent`（単に`Agent`とエイリアスされることが多い）は、ADKの中核的なコンポーネントであり、アプリケーションの「思考」部分として機能します。大規模言語モデル（LLM）の力を活用して、推論、自然言語の理解、意思決定、応答の生成、ツールとの対話を行います。
 
-Unlike deterministic [Workflow Agents](workflow-agents/index.md) that follow
-predefined execution paths, `LlmAgent` behavior is non-deterministic. It uses
-the LLM to interpret instructions and context, deciding dynamically how to
-proceed, which tools to use (if any), or whether to transfer control to another
-agent.
+事前定義された実行パスに従う決定論的な[ワークフローエージェント](workflow-agents/index.md)とは異なり、`LlmAgent`の振る舞いは非決定的です。LLMを使用して指示とコンテキストを解釈し、どのように進めるか、どのツールを使用するか（もしあれば）、または他のエージェントに制御を移譲するかを動的に決定します。
 
-Building an effective `LlmAgent` involves defining its identity, clearly guiding
-its behavior through instructions, and equipping it with the necessary tools and
-capabilities.
+効果的な`LlmAgent`を構築するには、そのアイデンティティを定義し、指示を通じてその振る舞いを明確に導き、必要なツールと機能を持たせることが含まれます。
 
-## Defining the Agent's Identity and Purpose
+## エージェントのアイデンティティと目的の定義
 
-First, you need to establish what the agent *is* and what it's *for*.
+まず、エージェントが*何であるか*、そして*何のため*にあるのかを確立する必要があります。
 
-* **`name` (Required):** Every agent needs a unique string identifier. This
-  `name` is crucial for internal operations, especially in multi-agent systems
-  where agents need to refer to or delegate tasks to each other. Choose a
-  descriptive name that reflects the agent's function (e.g.,
-  `customer_support_router`, `billing_inquiry_agent`). Avoid reserved names like
-  `user`.
+*   **`name`（必須）：** すべてのエージェントには一意の文字列識別子が必要です。この`name`は、特にエージェントがお互いを参照したりタスクを委任したりする必要があるマルチエージェントシステムにおいて、内部操作にとって非常に重要です。エージェントの機能を反映した説明的な名前を選択してください（例：`customer_support_router`、`billing_inquiry_agent`）。`user`のような予約名は避けてください。
 
-* **`description` (Optional, Recommended for Multi-Agent):** Provide a concise
-  summary of the agent's capabilities. This description is primarily used by
-  *other* LLM agents to determine if they should route a task to this agent.
-  Make it specific enough to differentiate it from peers (e.g., "Handles
-  inquiries about current billing statements," not just "Billing agent").
+*   **`description`（オプション、マルチエージェントで推奨）：** エージェントの能力の簡潔な要約を提供します。この説明は、主に*他の*LLMエージェントがこのエージェントにタスクをルーティングすべきかどうかを判断するために使用されます。同僚と区別できるほど具体的にしてください（例：「現在の請求書に関する問い合わせを処理します」であり、「請求エージェント」だけではありません）。
 
-* **`model` (Required):** Specify the underlying LLM that will power this
-  agent's reasoning. This is a string identifier like `"gemini-2.0-flash"`. The
-  choice of model impacts the agent's capabilities, cost, and performance. See
-  the [Models](models.md) page for available options and considerations.
+*   **`model`（必須）：** このエージェントの推論を動かす基盤となるLLMを指定します。これは`"gemini-2.0-flash"`のような文字列識別子です。モデルの選択は、エージェントの能力、コスト、およびパフォーマンスに影響します。利用可能なオプションと考慮事項については、[モデル](models.md)のページを参照してください。
 
 === "Python"
 
     ```python
-    # Example: Defining the basic identity
+    # 例：基本的なアイデンティティの定義
     capital_agent = LlmAgent(
         model="gemini-2.0-flash",
         name="capital_agent",
-        description="Answers user questions about the capital city of a given country."
-        # instruction and tools will be added next
+        description="指定された国の首都に関するユーザーの質問に答えます。"
+        # instructionとtoolsは次に追加します
     )
     ```
 
 === "Java"
 
     ```java
-    // Example: Defining the basic identity
+    // 例：基本的なアイデンティティの定義
     LlmAgent capitalAgent =
         LlmAgent.builder()
             .model("gemini-2.0-flash")
             .name("capital_agent")
-            .description("Answers user questions about the capital city of a given country.")
-            // instruction and tools will be added next
+            .description("指定された国の首都に関するユーザーの質問に答えます。")
+            // instructionとtoolsは次に追加します
             .build();
     ```
 
 
-## Guiding the Agent: Instructions (`instruction`)
+## エージェントの誘導：指示 (`instruction`)
 
-The `instruction` parameter is arguably the most critical for shaping an
-`LlmAgent`'s behavior. It's a string (or a function returning a string) that
-tells the agent:
+`instruction`パラメータは、`LlmAgent`の振る舞いを形成する上で間違いなく最も重要な要素です。これは、エージェントに以下を伝える文字列（または文字列を返す関数）です：
 
-* Its core task or goal.
-* Its personality or persona (e.g., "You are a helpful assistant," "You are a witty pirate").
-* Constraints on its behavior (e.g., "Only answer questions about X," "Never reveal Y").
-* How and when to use its `tools`. You should explain the purpose of each tool and the circumstances under which it should be called, supplementing any descriptions within the tool itself.
-* The desired format for its output (e.g., "Respond in JSON," "Provide a bulleted list").
+*   その中心的なタスクまたは目標。
+*   その性格またはペルソナ（例：「あなたは親切なアシスタントです」、「あなたは機知に富んだ海賊です」）。
+*   その振る舞いに関する制約（例：「Xに関する質問にのみ答える」、「Yは決して明かさない」）。
+*   その`tools`をどのように、いつ使用するか。ツール自体の説明を補足し、各ツールの目的とそれを呼び出すべき状況を説明する必要があります。
+*   その出力の望ましい形式（例：「JSONで応答する」、「箇条書きで提供する」）。
 
-**Tips for Effective Instructions:**
+**効果的な指示のためのヒント：**
 
-* **Be Clear and Specific:** Avoid ambiguity. Clearly state the desired actions and outcomes.
-* **Use Markdown:** Improve readability for complex instructions using headings, lists, etc.
-* **Provide Examples (Few-Shot):** For complex tasks or specific output formats, include examples directly in the instruction.
-* **Guide Tool Use:** Don't just list tools; explain *when* and *why* the agent should use them.
+*   **明確かつ具体的にする：** 曖昧さを避けます。望ましいアクションと結果を明確に述べてください。
+*   **Markdownを使用する：** 見出しやリストなどを使用して、複雑な指示の可読性を向上させます。
+*   **例を提供する（フューショット）：** 複雑なタスクや特定の出力形式については、指示に直接例を含めます。
+*   **ツールの使用をガイドする：** ツールをリストアップするだけでなく、エージェントが*いつ*、*なぜ*それらを使用すべきかを説明します。
 
-**State:**
+**状態（State）：**
 
-* The instruction is a string template, you can use the `{var}` syntax to insert dynamic values into the instruction.
-* `{var}` is used to insert the value of the state variable named var.
-* `{artifact.var}` is used to insert the text content of the artifact named var.
-* If the state variable or artifact does not exist, the agent will raise an error. If you want to ignore the error, you can append a `?` to the variable name as in `{var?}`.
+*   instructionは文字列テンプレートであり、`{var}`構文を使用して動的な値をinstructionに挿入できます。
+*   `{var}`は、varという名前の状態変数の値を挿入するために使用されます。
+*   `{artifact.var}`は、varという名前のアーティファクトのテキストコンテンツを挿入するために使用されます。
+*   状態変数またはアーティファクトが存在しない場合、エージェントはエラーを発生させます。エラーを無視したい場合は、`{var?}`のように変数名に`?`を追加できます。
 
 === "Python"
 
     ```python
-    # Example: Adding instructions
+    # 例：指示の追加
     capital_agent = LlmAgent(
         model="gemini-2.0-flash",
         name="capital_agent",
-        description="Answers user questions about the capital city of a given country.",
-        instruction="""You are an agent that provides the capital city of a country.
-    When a user asks for the capital of a country:
-    1. Identify the country name from the user's query.
-    2. Use the `get_capital_city` tool to find the capital.
-    3. Respond clearly to the user, stating the capital city.
-    Example Query: "What's the capital of {country}?"
-    Example Response: "The capital of France is Paris."
+        description="指定された国の首都に関するユーザーの質問に答えます。",
+        instruction="""あなたは国の首都を提供するエージェントです。
+    ユーザーが国の首都を尋ねたとき：
+    1. ユーザーのクエリから国名を特定します。
+    2. `get_capital_city`ツールを使用して首都を見つけます。
+    3. ユーザーに明確に応答し、首都を述べます。
+    クエリの例: "What's the capital of {country}?"
+    応答の例: "The capital of France is Paris."
     """,
-        # tools will be added next
+        # toolsは次に追加します
     )
     ```
 
 === "Java"
 
     ```java
-    // Example: Adding instructions
+    // 例：指示の追加
     LlmAgent capitalAgent =
         LlmAgent.builder()
             .model("gemini-2.0-flash")
             .name("capital_agent")
-            .description("Answers user questions about the capital city of a given country.")
+            .description("指定された国の首都に関するユーザーの質問に答えます。")
             .instruction(
                 """
-                You are an agent that provides the capital city of a country.
-                When a user asks for the capital of a country:
-                1. Identify the country name from the user's query.
-                2. Use the `get_capital_city` tool to find the capital.
-                3. Respond clearly to the user, stating the capital city.
-                Example Query: "What's the capital of {country}?"
-                Example Response: "The capital of France is Paris."
+                あなたは国の首都を提供するエージェントです。
+                ユーザーが国の首都を尋ねたとき：
+                1. ユーザーのクエリから国名を特定します。
+                2. `get_capital_city`ツールを使用して首都を見つけます。
+                3. ユーザーに明確に応答し、首都を述べます。
+                クエリの例: "What's the capital of {country}?"
+                応答の例: "The capital of France is Paris."
                 """)
-            // tools will be added next
+            // toolsは次に追加します
             .build();
     ```
 
-*(Note: For instructions that apply to *all* agents in a system, consider using
-`global_instruction` on the root agent, detailed further in the
-[Multi-Agents](multi-agents.md) section.)*
+*（注：システム内の*すべて*のエージェントに適用される指示については、ルートエージェントで`global_instruction`を使用することを検討してください。詳細は[マルチエージェント](multi-agents.md)セクションで説明します。）*
 
-## Equipping the Agent: Tools (`tools`)
+## エージェントの装備：ツール (`tools`)
 
-Tools give your `LlmAgent` capabilities beyond the LLM's built-in knowledge or
-reasoning. They allow the agent to interact with the outside world, perform
-calculations, fetch real-time data, or execute specific actions.
+ツールは、LLMの組み込み知識や推論能力を超えた機能を`LlmAgent`に与えます。これにより、エージェントは外部の世界と対話し、計算を実行し、リアルタイムのデータを取得し、または特定のアクションを実行できます。
 
-* **`tools` (Optional):** Provide a list of tools the agent can use. Each item in the list can be:
-    * A native function or method (wrapped as a `FunctionTool`). Python ADK automatically wraps the native function into a `FuntionTool` whereas, you must explicitly wrap your Java methods using `FunctionTool.create(...)`
-    * An instance of a class inheriting from `BaseTool`.
-    * An instance of another agent (`AgentTool`, enabling agent-to-agent delegation - see [Multi-Agents](multi-agents.md)).
+*   **`tools`（オプション）：** エージェントが使用できるツールのリストを提供します。リストの各項目は以下のいずれかです：
+    *   ネイティブ関数またはメソッド（`FunctionTool`としてラップされます）。Python ADKはネイティブ関数を自動的に`FunctionTool`にラップしますが、Javaメソッドは`FunctionTool.create(...)`を使用して明示的にラップする必要があります。
+    *   `BaseTool`から継承したクラスのインスタンス。
+    *   別のエージェントのインスタンス（`AgentTool`、エージェント間の委任を可能にする - [マルチエージェント](multi-agents.md)を参照）。
 
-The LLM uses the function/tool names, descriptions (from docstrings or the
-`description` field), and parameter schemas to decide which tool to call based
-on the conversation and its instructions.
+LLMは、関数/ツール名、説明（docstringまたは`description`フィールドから）、およびパラメータスキーマを使用して、会話とその指示に基づいてどのツールを呼び出すかを決定します。
 
 === "Python"
 
     ```python
-    # Define a tool function
+    # ツール関数を定義
     def get_capital_city(country: str) -> str:
-      """Retrieves the capital city for a given country."""
-      # Replace with actual logic (e.g., API call, database lookup)
+      """指定された国の首都を取得します。"""
+      # 実際のロジックに置き換える（例：API呼び出し、データベース検索）
       capitals = {"france": "Paris", "japan": "Tokyo", "canada": "Ottawa"}
-      return capitals.get(country.lower(), f"Sorry, I don't know the capital of {country}.")
+      return capitals.get(country.lower(), f"申し訳ありませんが、{country}の首都はわかりません。")
     
-    # Add the tool to the agent
+    # ツールをエージェントに追加
     capital_agent = LlmAgent(
         model="gemini-2.0-flash",
         name="capital_agent",
-        description="Answers user questions about the capital city of a given country.",
-        instruction="""You are an agent that provides the capital city of a country... (previous instruction text)""",
-        tools=[get_capital_city] # Provide the function directly
+        description="指定された国の首都に関するユーザーの質問に答えます。",
+        instruction="""あなたは国の首都を提供するエージェントです...（前の指示テキスト）""",
+        tools=[get_capital_city] # 関数を直接提供
     )
     ```
 
 === "Java"
 
     ```java
-    
-    // Define a tool function
-    // Retrieves the capital city of a given country.
+    import com.google.genai.types.Schema;
+    import java.util.HashMap;
+    import java.util.Map;
+
+    // ツール関数を定義
+    // 指定された国の首都を取得します。
     public static Map<String, Object> getCapitalCity(
-            @Schema(name = "country", description = "The country to get capital for")
+            @Schema(name = "country", description = "首都を取得する国")
             String country) {
-      // Replace with actual logic (e.g., API call, database lookup)
+      // 実際のロジックに置き換える（例：API呼び出し、データベース検索）
       Map<String, String> countryCapitals = new HashMap<>();
       countryCapitals.put("canada", "Ottawa");
       countryCapitals.put("france", "Paris");
@@ -188,33 +162,33 @@ on the conversation and its instructions.
     
       String result =
               countryCapitals.getOrDefault(
-                      country.toLowerCase(), "Sorry, I couldn't find the capital for " + country + ".");
-      return Map.of("result", result); // Tools must return a Map
+                      country.toLowerCase(), "申し訳ありませんが、" + country + "の首都は見つかりませんでした。");
+      return Map.of("result", result); // ツールはMapを返さなければならない
     }
     
-    // Add the tool to the agent
+    // ツールをエージェントに追加
     FunctionTool capitalTool = FunctionTool.create(experiment.getClass(), "getCapitalCity");
     LlmAgent capitalAgent =
         LlmAgent.builder()
             .model("gemini-2.0-flash")
             .name("capital_agent")
-            .description("Answers user questions about the capital city of a given country.")
-            .instruction("You are an agent that provides the capital city of a country... (previous instruction text)")
-            .tools(capitalTool) // Provide the function wrapped as a FunctionTool
+            .description("指定された国の首都に関するユーザーの質問に答えます。")
+            .instruction("あなたは国の首都を提供するエージェントです...（前の指示テキスト）")
+            .tools(capitalTool) // FunctionToolとしてラップされた関数を提供
             .build();
     ```
 
-Learn more about Tools in the [Tools](../tools/index.md) section.
+ツールの詳細については、[ツール](../tools/index.md)セクションを参照してください。
 
-## Advanced Configuration & Control
+## 高度な設定と制御
 
-Beyond the core parameters, `LlmAgent` offers several options for finer control:
+主要なパラメータに加えて、`LlmAgent`はより細かい制御のためのいくつかのオプションを提供します：
 
-### Fine-Tuning LLM Generation (`generate_content_config`)
+### LLM生成の微調整 (`generate_content_config`)
 
-You can adjust how the underlying LLM generates responses using `generate_content_config`.
+`generate_content_config`を使用して、基盤となるLLMが応答を生成する方法を調整できます。
 
-* **`generate_content_config` (Optional):** Pass an instance of `google.genai.types.GenerateContentConfig` to control parameters like `temperature` (randomness), `max_output_tokens` (response length), `top_p`, `top_k`, and safety settings.
+*   **`generate_content_config`（オプション）：** `google.genai.types.GenerateContentConfig`のインスタンスを渡して、`temperature`（ランダム性）、`max_output_tokens`（応答の長さ）、`top_p`、`top_k`、および安全設定などのパラメータを制御します。
 
 === "Python"
 
@@ -222,9 +196,9 @@ You can adjust how the underlying LLM generates responses using `generate_conten
     from google.genai import types
 
     agent = LlmAgent(
-        # ... other params
+        # ... 他のパラメータ
         generate_content_config=types.GenerateContentConfig(
-            temperature=0.2, # More deterministic output
+            temperature=0.2, # より決定論的な出力
             max_output_tokens=250
         )
     )
@@ -237,61 +211,61 @@ You can adjust how the underlying LLM generates responses using `generate_conten
 
     LlmAgent agent =
         LlmAgent.builder()
-            // ... other params
+            // ... 他のパラメータ
             .generateContentConfig(GenerateContentConfig.builder()
-                .temperature(0.2F) // More deterministic output
+                .temperature(0.2F) // より決定論的な出力
                 .maxOutputTokens(250)
                 .build())
             .build();
     ```
 
-### Structuring Data (`input_schema`, `output_schema`, `output_key`)
+### データの構造化 (`input_schema`, `output_schema`, `output_key`)
 
-For scenarios requiring structured data exchange with an `LLM Agent`, the ADK provides mechanisms to define expected input and desired output formats using schema definitions.
+`LLM Agent`との構造化されたデータ交換を必要とするシナリオのために、ADKはスキーマ定義を使用して、期待される入力と望ましい出力形式を定義するメカニズムを提供します。
 
-* **`input_schema` (Optional):** Define a schema representing the expected input structure. If set, the user message content passed to this agent *must* be a JSON string conforming to this schema. Your instructions should guide the user or preceding agent accordingly.
+*   **`input_schema`（オプション）：** 期待される入力構造を表すスキーマを定義します。設定されている場合、このエージェントに渡されるユーザーメッセージのコンテンツは、このスキーマに準拠したJSON文字列で*なければなりません*。あなたの指示は、ユーザーまたは先行するエージェントをそれに応じて誘導する必要があります。
 
-* **`output_schema` (Optional):** Define a schema representing the desired output structure. If set, the agent's final response *must* be a JSON string conforming to this schema.
-    * **Constraint:** Using `output_schema` enables controlled generation within the LLM but **disables the agent's ability to use tools or transfer control to other agents**. Your instructions must guide the LLM to produce JSON matching the schema directly.
+*   **`output_schema`（オプション）：** 望ましい出力構造を表すスキーマを定義します。設定されている場合、エージェントの最終応答は、このスキーマに準拠したJSON文字列で*なければなりません*。
+    *   **制約：** `output_schema`を使用すると、LLM内での制御された生成が可能になりますが、**エージェントがツールを使用したり、他のエージェントに制御を移譲したりする能力が無効になります**。あなたの指示は、LLMが直接スキーマに一致するJSONを生成するように導く必要があります。
 
-* **`output_key` (Optional):** Provide a string key. If set, the text content of the agent's *final* response will be automatically saved to the session's state dictionary under this key. This is useful for passing results between agents or steps in a workflow.
-    * In Python, this might look like: `session.state[output_key] = agent_response_text`
-    * In Java: `session.state().put(outputKey, agentResponseText)`
+*   **`output_key`（オプション）：** 文字列キーを提供します。設定されている場合、エージェントの*最終的な*応答のテキストコンテンツは、このキーの下でセッションの状態辞書に自動的に保存されます。これは、エージェントやワークフローのステップ間で結果を渡すのに役立ちます。
+    *   Pythonでは、これは次のようになります：`session.state[output_key] = agent_response_text`
+    *   Javaでは：`session.state().put(outputKey, agentResponseText)`
 
 === "Python"
 
-    The input and output schema is typically a `Pydantic` BaseModel.
+    入力および出力スキーマは通常、`Pydantic`のBaseModelです。
 
     ```python
     from pydantic import BaseModel, Field
     
     class CapitalOutput(BaseModel):
-        capital: str = Field(description="The capital of the country.")
+        capital: str = Field(description="国の首都。")
     
     structured_capital_agent = LlmAgent(
         # ... name, model, description
-        instruction="""You are a Capital Information Agent. Given a country, respond ONLY with a JSON object containing the capital. Format: {"capital": "capital_name"}""",
-        output_schema=CapitalOutput, # Enforce JSON output
-        output_key="found_capital"  # Store result in state['found_capital']
-        # Cannot use tools=[get_capital_city] effectively here
+        instruction="""あなたは首都情報エージェントです。国が与えられたら、首都を含むJSONオブジェクトのみで応答してください。フォーマット: {"capital": "capital_name"}""",
+        output_schema=CapitalOutput, # JSON出力を強制
+        output_key="found_capital"  # 結果をstate['found_capital']に保存
+        # ここではtools=[get_capital_city]を効果的に使用できない
     )
     ```
 
 === "Java"
 
-     The input and output schema is a `google.genai.types.Schema` object.
+     入力および出力スキーマは`google.genai.types.Schema`オブジェクトです。
 
     ```java
     private static final Schema CAPITAL_OUTPUT =
         Schema.builder()
             .type("OBJECT")
-            .description("Schema for capital city information.")
+            .description("首都情報のためのスキーマ。")
             .properties(
                 Map.of(
                     "capital",
                     Schema.builder()
                         .type("STRING")
-                        .description("The capital city of the country.")
+                        .description("国の首都。")
                         .build()))
             .build();
     
@@ -299,26 +273,26 @@ For scenarios requiring structured data exchange with an `LLM Agent`, the ADK pr
         LlmAgent.builder()
             // ... name, model, description
             .instruction(
-                    "You are a Capital Information Agent. Given a country, respond ONLY with a JSON object containing the capital. Format: {\"capital\": \"capital_name\"}")
-            .outputSchema(capitalOutput) // Enforce JSON output
-            .outputKey("found_capital") // Store result in state.get("found_capital")
-            // Cannot use tools(getCapitalCity) effectively here
+                    "あなたは首都情報エージェントです。国が与えられたら、首都を含むJSONオブジェクトのみで応答してください。フォーマット: {\"capital\": \"capital_name\"}")
+            .outputSchema(CAPITAL_OUTPUT) // JSON出力を強制
+            .outputKey("found_capital") // 結果をstate.get("found_capital")に保存
+            // ここではtools(getCapitalCity)を効果的に使用できない
             .build();
     ```
 
-### Managing Context (`include_contents`)
+### コンテキストの管理 (`include_contents`)
 
-Control whether the agent receives the prior conversation history.
+エージェントが以前の会話履歴を受け取るかどうかを制御します。
 
-* **`include_contents` (Optional, Default: `'default'`):** Determines if the `contents` (history) are sent to the LLM.
-    * `'default'`: The agent receives the relevant conversation history.
-    * `'none'`: The agent receives no prior `contents`. It operates based solely on its current instruction and any input provided in the *current* turn (useful for stateless tasks or enforcing specific contexts).
+*   **`include_contents`（オプション、デフォルト：`'default'`）：** `contents`（履歴）がLLMに送信されるかどうかを決定します。
+    *   `'default'`: エージェントは関連する会話履歴を受け取ります。
+    *   `'none'`: エージェントは以前の`contents`を一切受け取りません。*現在の*ターンで提供された指示と入力のみに基づいて動作します（ステートレスタスクや特定のコンテキストの強制に役立ちます）。
 
 === "Python"
 
     ```python
     stateless_agent = LlmAgent(
-        # ... other params
+        # ... 他のパラメータ
         include_contents='none'
     )
     ```
@@ -330,24 +304,24 @@ Control whether the agent receives the prior conversation history.
     
     LlmAgent statelessAgent =
         LlmAgent.builder()
-            // ... other params
+            // ... 他のパラメータ
             .includeContents(IncludeContents.NONE)
             .build();
     ```
 
-### Planning & Code Execution
+### プランニングとコード実行
 
-![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java support is planned/ coming soon."}
+![python_only](https://img.shields.io/badge/現在サポートされているのは-Python-blue){ title="この機能は現在Pythonで利用可能です。Javaのサポートは計画中/近日公開予定です。" }
 
-For more complex reasoning involving multiple steps or executing code:
+複数のステップを含むより複雑な推論やコードの実行のために：
 
-* **`planner` (Optional):** Assign a `BasePlanner` instance to enable multi-step reasoning and planning before execution. (See [Multi-Agents](multi-agents.md) patterns).
-* **`code_executor` (Optional):** Provide a `BaseCodeExecutor` instance to allow the agent to execute code blocks (e.g., Python) found in the LLM's response. ([See Tools/Built-in tools](../tools/built-in-tools.md)).
+*   **`planner`（オプション）：** `BasePlanner`インスタンスを割り当てて、実行前の複数ステップの推論とプランニングを有効にします。（[マルチエージェント](multi-agents.md)のパターンを参照）。
+*   **`code_executor`（オプション）：** `BaseCodeExecutor`インスタンスを提供して、エージェントがLLMの応答で見つかったコードブロック（例：Python）を実行できるようにします。（[ツール/組み込みツール](../tools/built-in-tools.md)を参照）。
 
-## Putting It Together: Example
+## まとめ：例
 
 ??? "Code"
-    Here's the complete basic `capital_agent`:
+    以下は、基本的な`capital_agent`の完全な例です：
 
     === "Python"
     
@@ -361,11 +335,11 @@ For more complex reasoning involving multiple steps or executing code:
         --8<-- "examples/java/snippets/src/main/java/agents/LlmAgentExample.java:full_code"
         ```
 
-_(This example demonstrates the core concepts. More complex agents might incorporate schemas, context control, planning, etc.)_
+*（この例はコアコンセプトを示しています。より複雑なエージェントは、スキーマ、コンテキスト制御、プランニングなどを組み込む場合があります。）*
 
-## Related Concepts (Deferred Topics)
+## 関連コンセプト（後述のトピック）
 
-While this page covers the core configuration of `LlmAgent`, several related concepts provide more advanced control and are detailed elsewhere:
+このページでは`LlmAgent`のコア設定について説明しましたが、いくつかの関連コンセプトがより高度な制御を提供し、他の場所で詳しく説明されています：
 
-* **Callbacks:** Intercepting execution points (before/after model calls, before/after tool calls) using `before_model_callback`, `after_model_callback`, etc. See [Callbacks](../callbacks/types-of-callbacks.md).
-* **Multi-Agent Control:** Advanced strategies for agent interaction, including planning (`planner`), controlling agent transfer (`disallow_transfer_to_parent`, `disallow_transfer_to_peers`), and system-wide instructions (`global_instruction`). See [Multi-Agents](multi-agents.md).
+*   **コールバック：** `before_model_callback`、`after_model_callback`などを使用して実行ポイント（モデル呼び出しの前後、ツール呼び出しの前後）を傍受します。[コールバック](../callbacks/types-of-callbacks.md)を参照してください。
+*   **マルチエージェント制御：** プランニング（`planner`）、エージェント転送の制御（`disallow_transfer_to_parent`、`disallow_transfer_to_peers`）、およびシステム全体の指示（`global_instruction`）を含む、エージェント対話のための高度な戦略。[マルチエージェント](multi-agents.md)を参照してください。
