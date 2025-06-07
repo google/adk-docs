@@ -1,45 +1,45 @@
-# Loop agents
+# 루프 에이전트
 
-## The `LoopAgent`
+## `LoopAgent`
 
-The `LoopAgent` is a workflow agent that executes its sub-agents in a loop (i.e. iteratively). It **_repeatedly runs_ a sequence of agents** for a specified number of iterations or until a termination condition is met.
+`LoopAgent`는 하위 에이전트를 루프(즉, 반복적으로)로 실행하는 워크플로 에이전트입니다. 지정된 반복 횟수 또는 종료 조건이 충족될 때까지 **일련의 에이전트를 반복적으로 실행합니다**.
 
-Use the `LoopAgent` when your workflow involves repetition or iterative refinement, such as like revising code.
+`LoopAgent`는 코드를 수정하는 것처럼 반복적인 작업이나 점진적인 개선이 필요한 워크플로에 사용됩니다.
 
-### Example
+### 예제
 
-* You want to build an agent that can generate images of food, but sometimes when you want to generate a specific number of items (e.g. 5 bananas), it generates a different number of those items in the image (e.g. an image of 7 bananas). You have two tools: `Generate Image`, `Count Food Items`. Because you want to keep generating images until it either correctly generates the specified number of items, or after a certain number of iterations, you should build your agent using a `LoopAgent`.
+*   음식 이미지를 생성할 수 있는 에이전트를 만들고 싶지만, 때때로 특정 수의 항목(예: 바나나 5개)을 생성하려고 할 때 이미지에 다른 수의 항목(예: 바나나 7개 이미지)이 생성되는 경우가 있습니다. `이미지 생성`, `음식 항목 수`라는 두 가지 도구가 있습니다. 지정된 수의 항목을 올바르게 생성하거나 특정 반복 횟수 후에 이미지를 계속 생성하고 싶기 때문에 `LoopAgent`를 사용하여 에이전트를 구축해야 합니다.
 
-As with other [workflow agents](index.md), the `LoopAgent` is not powered by an LLM, and is thus deterministic in how it executes. That being said, workflow agents are only concerned only with their execution (i.e. in a loop), and not their internal logic; the tools or sub-agents of a workflow agent may or may not utilize LLMs.
+다른 [워크플로 에이전트](index.md)와 마찬가지로, `LoopAgent`는 LLM으로 구동되지 않으므로 실행 방식이 결정론적입니다. 즉, 워크플로 에이전트는 실행(즉, 루프)에만 관련이 있으며 내부 로직에는 관련이 없습니다. 워크플로 에이전트의 도구나 하위 에이전트는 LLM을 활용할 수도 있고 그렇지 않을 수도 있습니다.
 
-### How it Works
+### 작동 방식
 
-When the `LoopAgent`'s `Run Async` method is called, it performs the following actions:
+`LoopAgent`의 `Run Async` 메서드가 호출되면 다음 작업을 수행합니다:
 
-1. **Sub-Agent Execution:**  It iterates through the Sub Agents list _in order_. For _each_ sub-agent, it calls the agent's `Run Async` method.
-2. **Termination Check:**
+1.  **하위 에이전트 실행:** 하위 에이전트 목록을 _순서대로_ 반복합니다. _각_ 하위 에이전트에 대해 에이전트의 `Run Async` 메서드를 호출합니다.
+2.  **종료 확인:**
 
-    _Crucially_, the `LoopAgent` itself does _not_ inherently decide when to stop looping. You _must_ implement a termination mechanism to prevent infinite loops.  Common strategies include:
+    _중요하게도_, `LoopAgent` 자체는 언제 루프를 중지할지 본질적으로 결정하지 않습니다. 무한 루프를 방지하기 위해 종료 메커니즘을 _반드시_ 구현해야 합니다. 일반적인 전략은 다음과 같습니다:
 
-    * **Max Iterations**: Set a maximum number of iterations in the `LoopAgent`. **The loop will terminate after that many iterations**.
-    * **Escalation from sub-agent**: Design one or more sub-agents to evaluate a condition (e.g., "Is the document quality good enough?", "Has a consensus been reached?").  If the condition is met, the sub-agent can signal termination (e.g., by raising a custom event, setting a flag in a shared context, or returning a specific value).
+    *   **최대 반복 횟수**: `LoopAgent`에 최대 반복 횟수를 설정합니다. **루프는 해당 반복 횟수 후에 종료됩니다**.
+    *   **하위 에이전트로부터의 에스컬레이션**: 하나 이상의 하위 에이전트를 설계하여 조건을 평가합니다(예: "문서 품질이 충분히 좋은가?", "합의에 도달했는가?"). 조건이 충족되면 하위 에이전트는 종료를 신호할 수 있습니다(예: 사용자 정의 이벤트를 발생시키거나, 공유 컨텍스트에 플래그를 설정하거나, 특정 값을 반환).
 
-![Loop Agent](../../assets/loop-agent.png)
+![루프 에이전트](../../assets/loop-agent.png)
 
-### Full Example: Iterative Document Improvement
+### 전체 예제: 반복적인 문서 개선
 
-Imagine a scenario where you want to iteratively improve a document:
+문서를 반복적으로 개선하려는 시나리오를 상상해 보세요:
 
-* **Writer Agent:** An `LlmAgent` that generates or refines a draft on a topic.
-* **Critic Agent:** An `LlmAgent` that critiques the draft, identifying areas for improvement.
+*   **작성자 에이전트:** 주제에 대한 초안을 생성하거나 수정하는 `LlmAgent`입니다.
+*   **비평가 에이전트:** 초안을 비평하고 개선할 부분을 식별하는 `LlmAgent`입니다.
 
     ```py
     LoopAgent(sub_agents=[WriterAgent, CriticAgent], max_iterations=5)
     ```
 
-In this setup, the `LoopAgent` would manage the iterative process.  The `CriticAgent` could be **designed to return a "STOP" signal when the document reaches a satisfactory quality level**, preventing further iterations. Alternatively, the `max iterations` parameter could be used to limit the process to a fixed number of cycles, or external logic could be implemented to make stop decisions. The **loop would run at most five times**, ensuring the iterative refinement doesn't continue indefinitely.
+이 설정에서 `LoopAgent`는 반복적인 프로세스를 관리합니다. `CriticAgent`는 문서가 만족스러운 품질 수준에 도달했을 때 **"STOP" 신호를 반환하도록 설계**되어 추가 반복을 방지할 수 있습니다. 또는, `max iterations` 매개변수를 사용하여 프로세스를 고정된 횟수의 주기로 제한하거나, 외부 로직을 구현하여 중지 결정을 내릴 수 있습니다. **루프는 최대 5번 실행**되어 반복적인 개선이 무한정 계속되지 않도록 합니다.
 
-???+ "Full Code"
+???+ "전체 코드"
 
     === "Python"
         ```py
@@ -49,4 +49,3 @@ In this setup, the `LoopAgent` would manage the iterative process.  The `CriticA
         ```java
         --8<-- "examples/java/snippets/src/main/java/agents/workflow/LoopAgentExample.java:init"
         ```
-

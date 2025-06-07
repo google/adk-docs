@@ -1,54 +1,54 @@
-# Multi-Agent Systems in ADK
+# ADK의 다중 에이전트 시스템
 
-As agentic applications grow in complexity, structuring them as a single, monolithic agent can become challenging to develop, maintain, and reason about. The Agent Development Kit (ADK) supports building sophisticated applications by composing multiple, distinct `BaseAgent` instances into a **Multi-Agent System (MAS)**.
+에이전트 애플리케이션이 복잡해짐에 따라, 단일하고 거대한 에이전트로 구조화하는 것은 개발, 유지보수, 추론하기 어려워질 수 있습니다. 에이전트 개발 키트(ADK)는 여러 개의 고유한 `BaseAgent` 인스턴스를 **다중 에이전트 시스템(MAS)**으로 구성하여 정교한 애플리케이션을 구축할 수 있도록 지원합니다.
 
-In ADK, a multi-agent system is an application where different agents, often forming a hierarchy, collaborate or coordinate to achieve a larger goal. Structuring your application this way offers significant advantages, including enhanced modularity, specialization, reusability, maintainability, and the ability to define structured control flows using dedicated workflow agents.
+ADK에서 다중 에이전트 시스템은 종종 계층 구조를 이루는 여러 에이전트가 더 큰 목표를 달성하기 위해 협력하거나 조정하는 애플리케이션입니다. 애플리케이션을 이러한 방식으로 구조화하면 모듈성, 전문화, 재사용성, 유지보수성이 향상되고, 전용 워크플로 에이전트를 사용하여 구조화된 제어 흐름을 정의할 수 있는 등 상당한 이점을 얻을 수 있습니다.
 
-You can compose various types of agents derived from `BaseAgent` to build these systems:
+이러한 시스템을 구축하기 위해 `BaseAgent`에서 파생된 다양한 유형의 에이전트를 구성할 수 있습니다:
 
-* **LLM Agents:** Agents powered by large language models. (See [LLM Agents](llm-agents.md))
-* **Workflow Agents:** Specialized agents (`SequentialAgent`, `ParallelAgent`, `LoopAgent`) designed to manage the execution flow of their sub-agents. (See [Workflow Agents](workflow-agents/index.md))
-* **Custom agents:** Your own agents inheriting from `BaseAgent` with specialized, non-LLM logic. (See [Custom Agents](custom-agents.md))
+*   **LLM 에이전트:** 거대 언어 모델로 구동되는 에이전트. ([LLM 에이전트](llm-agents.md) 참조)
+*   **워크플로 에이전트:** 하위 에이전트의 실행 흐름을 관리하도록 설계된 전문화된 에이전트(`SequentialAgent`, `ParallelAgent`, `LoopAgent`). ([워크플로 에이전트](workflow-agents/index.md) 참조)
+*   **사용자 정의 에이전트:** `BaseAgent`를 상속받아 전문화된 비-LLM 로직을 가진 자체 에이전트. ([사용자 정의 에이전트](custom-agents.md) 참조)
 
-The following sections detail the core ADK primitives—such as agent hierarchy, workflow agents, and interaction mechanisms—that enable you to construct and manage these multi-agent systems effectively.
+다음 섹션에서는 이러한 다중 에이전트 시스템을 효과적으로 구성하고 관리할 수 있게 해주는 에이전트 계층, 워크플로 에이전트, 상호작용 메커니즘과 같은 핵심 ADK 프리미티브에 대해 자세히 설명합니다.
 
-## 1. ADK Primitives for Agent Composition
+## 1. 에이전트 구성을 위한 ADK 프리미티브
 
-ADK provides core building blocks—primitives—that enable you to structure and manage interactions within your multi-agent system.
+ADK는 다중 에이전트 시스템 내에서 상호작용을 구조화하고 관리할 수 있는 핵심 구성 요소인 프리미티브를 제공합니다.
 
 !!! Note
-    The specific parameters or method names for the primitives may vary slightly by SDK language (e.g., `sub_agents` in Python, `subAgents` in Java). Refer to the language-specific API documentation for details.
+    프리미티브의 특정 매개변수나 메서드 이름은 SDK 언어에 따라 약간 다를 수 있습니다(예: Python의 `sub_agents`, Java의 `subAgents`). 자세한 내용은 언어별 API 문서를 참조하세요.
 
-### 1.1. Agent Hierarchy (Parent agent, Sub Agents)
+### 1.1. 에이전트 계층 (부모 에이전트, 하위 에이전트)
 
-The foundation for structuring multi-agent systems is the parent-child relationship defined in `BaseAgent`.
+다중 에이전트 시스템을 구조화하는 기반은 `BaseAgent`에 정의된 부모-자식 관계입니다.
 
-* **Establishing Hierarchy:** You create a tree structure by passing a list of agent instances to the `sub_agents` argument when initializing a parent agent. ADK automatically sets the `parent_agent` attribute on each child agent during initialization.
-* **Single Parent Rule:** An agent instance can only be added as a sub-agent once. Attempting to assign a second parent will result in a `ValueError`.
-* **Importance:** This hierarchy defines the scope for [Workflow Agents](#12-workflow-agents-as-orchestrators) and influences the potential targets for LLM-Driven Delegation. You can navigate the hierarchy using `agent.parent_agent` or find descendants using `agent.find_agent(name)`.
+*   **계층 설정:** 부모 에이전트를 초기화할 때 `sub_agents` 인수에 에이전트 인스턴스 목록을 전달하여 트리 구조를 만듭니다. ADK는 초기화 중에 각 자식 에이전트에 `parent_agent` 속성을 자동으로 설정합니다.
+*   **단일 부모 규칙:** 에이전트 인스턴스는 한 번만 하위 에이전트로 추가될 수 있습니다. 두 번째 부모를 할당하려고 하면 `ValueError`가 발생합니다.
+*   **중요성:** 이 계층은 [워크플로 에이전트](#12-workflow-agents-as-orchestrators)의 범위를 정의하고 LLM 기반 위임의 잠재적 대상에 영향을 미칩니다. `agent.parent_agent`를 사용하여 계층을 탐색하거나 `agent.find_agent(name)`을 사용하여 하위 에이전트를 찾을 수 있습니다.
 
 === "Python"
 
     ```python
-    # Conceptual Example: Defining Hierarchy
+    # 개념적 예제: 계층 정의
     from google.adk.agents import LlmAgent, BaseAgent
     
-    # Define individual agents
+    # 개별 에이전트 정의
     greeter = LlmAgent(name="Greeter", model="gemini-2.0-flash")
-    task_doer = BaseAgent(name="TaskExecutor") # Custom non-LLM agent
+    task_doer = BaseAgent(name="TaskExecutor") # 사용자 정의 비-LLM 에이전트
     
-    # Create parent agent and assign children via sub_agents
+    # 부모 에이전트 생성 및 sub_agents를 통해 자식 할당
     coordinator = LlmAgent(
         name="Coordinator",
         model="gemini-2.0-flash",
-        description="I coordinate greetings and tasks.",
-        sub_agents=[ # Assign sub_agents here
+        description="인사와 작업을 조정합니다.",
+        sub_agents=[ # 여기에 하위 에이전트 할당
             greeter,
             task_doer
         ]
     )
     
-    # Framework automatically sets:
+    # 프레임워크가 자동으로 설정:
     # assert greeter.parent_agent == coordinator
     # assert task_doer.parent_agent == coordinator
     ```
@@ -56,83 +56,83 @@ The foundation for structuring multi-agent systems is the parent-child relations
 === "Java"
 
     ```java
-    // Conceptual Example: Defining Hierarchy
+    // 개념적 예제: 계층 정의
     import com.google.adk.agents.SequentialAgent;
     import com.google.adk.agents.LlmAgent;
     
-    // Define individual agents
+    // 개별 에이전트 정의
     LlmAgent greeter = LlmAgent.builder().name("Greeter").model("gemini-2.0-flash").build();
-    SequentialAgent taskDoer = SequentialAgent.builder().name("TaskExecutor").subAgents(...).build(); // Sequential Agent
+    SequentialAgent taskDoer = SequentialAgent.builder().name("TaskExecutor").subAgents(...).build(); // 순차 에이전트
     
-    // Create parent agent and assign sub_agents
+    // 부모 에이전트 생성 및 sub_agents 할당
     LlmAgent coordinator = LlmAgent.builder()
         .name("Coordinator")
         .model("gemini-2.0-flash")
-        .description("I coordinate greetings and tasks")
-        .subAgents(greeter, taskDoer) // Assign sub_agents here
+        .description("인사와 작업을 조정합니다")
+        .subAgents(greeter, taskDoer) // 여기에 하위 에이전트 할당
         .build();
     
-    // Framework automatically sets:
+    // 프레임워크가 자동으로 설정:
     // assert greeter.parentAgent().equals(coordinator);
     // assert taskDoer.parentAgent().equals(coordinator);
     ```
 
-### 1.2. Workflow Agents as Orchestrators
+### 1.2. 오케스트레이터로서의 워크플로 에이전트
 
-ADK includes specialized agents derived from `BaseAgent` that don't perform tasks themselves but orchestrate the execution flow of their `sub_agents`.
+ADK는 `BaseAgent`에서 파생된 전문 에이전트를 포함하며, 이들은 직접 작업을 수행하지 않고 `sub_agents`의 실행 흐름을 조율합니다.
 
-* **[`SequentialAgent`](workflow-agents/sequential-agents.md):** Executes its `sub_agents` one after another in the order they are listed.
-    * **Context:** Passes the *same* [`InvocationContext`](../runtime/index.md) sequentially, allowing agents to easily pass results via shared state.
+*   **[`SequentialAgent`](workflow-agents/sequential-agents.md):** `sub_agents`를 나열된 순서대로 하나씩 실행합니다.
+    *   **컨텍스트:** *동일한* [`InvocationContext`](../runtime/index.md)를 순차적으로 전달하여 에이전트가 공유 상태를 통해 결과를 쉽게 전달할 수 있도록 합니다.
 
 === "Python"
 
     ```python
-    # Conceptual Example: Sequential Pipeline
+    # 개념적 예제: 순차 파이프라인
     from google.adk.agents import SequentialAgent, LlmAgent
 
-    step1 = LlmAgent(name="Step1_Fetch", output_key="data") # Saves output to state['data']
-    step2 = LlmAgent(name="Step2_Process", instruction="Process data from state key 'data'.")
+    step1 = LlmAgent(name="Step1_Fetch", output_key="data") # 출력을 state['data']에 저장
+    step2 = LlmAgent(name="Step2_Process", instruction="상태 키 'data'의 데이터를 처리합니다.")
 
     pipeline = SequentialAgent(name="MyPipeline", sub_agents=[step1, step2])
-    # When pipeline runs, Step2 can access the state['data'] set by Step1.
+    # 파이프라인이 실행되면 Step2는 Step1이 설정한 state['data']에 접근할 수 있습니다.
     ```
 
 === "Java"
 
     ```java
-    // Conceptual Example: Sequential Pipeline
+    // 개념적 예제: 순차 파이프라인
     import com.google.adk.agents.SequentialAgent;
     import com.google.adk.agents.LlmAgent;
 
-    LlmAgent step1 = LlmAgent.builder().name("Step1_Fetch").outputKey("data").build(); // Saves output to state.get("data")
-    LlmAgent step2 = LlmAgent.builder().name("Step2_Process").instruction("Process data from state key 'data'.").build();
+    LlmAgent step1 = LlmAgent.builder().name("Step1_Fetch").outputKey("data").build(); // 출력을 state.get("data")에 저장
+    LlmAgent step2 = LlmAgent.builder().name("Step2_Process").instruction("상태 키 'data'의 데이터를 처리합니다.").build();
 
     SequentialAgent pipeline = SequentialAgent.builder().name("MyPipeline").subAgents(step1, step2).build();
-    // When pipeline runs, Step2 can access the state.get("data") set by Step1.
+    // 파이프라인이 실행되면 Step2는 Step1이 설정한 state.get("data")에 접근할 수 있습니다.
     ```
 
-* **[`ParallelAgent`](workflow-agents/parallel-agents.md):** Executes its `sub_agents` in parallel. Events from sub-agents may be interleaved.
-    * **Context:** Modifies the `InvocationContext.branch` for each child agent (e.g., `ParentBranch.ChildName`), providing a distinct contextual path which can be useful for isolating history in some memory implementations.
-    * **State:** Despite different branches, all parallel children access the *same shared* `session.state`, enabling them to read initial state and write results (use distinct keys to avoid race conditions).
+*   **[`ParallelAgent`](workflow-agents/parallel-agents.md):** `sub_agents`를 병렬로 실행합니다. 하위 에이전트의 이벤트가 인터리빙될 수 있습니다.
+    *   **컨텍스트:** 각 자식 에이전트에 대해 `InvocationContext.branch`를 수정하여(예: `ParentBranch.ChildName`) 고유한 컨텍스트 경로를 제공하며, 이는 일부 메모리 구현에서 기록을 격리하는 데 유용할 수 있습니다.
+    *   **상태:** 다른 분기에도 불구하고 모든 병렬 자식은 *동일한 공유* `session.state`에 접근하여 초기 상태를 읽고 결과를 쓸 수 있습니다(경쟁 조건을 피하기 위해 고유한 키 사용).
 
 === "Python"
 
     ```python
-    # Conceptual Example: Parallel Execution
+    # 개념적 예제: 병렬 실행
     from google.adk.agents import ParallelAgent, LlmAgent
 
     fetch_weather = LlmAgent(name="WeatherFetcher", output_key="weather")
     fetch_news = LlmAgent(name="NewsFetcher", output_key="news")
 
     gatherer = ParallelAgent(name="InfoGatherer", sub_agents=[fetch_weather, fetch_news])
-    # When gatherer runs, WeatherFetcher and NewsFetcher run concurrently.
-    # A subsequent agent could read state['weather'] and state['news'].
+    # gatherer가 실행되면 WeatherFetcher와 NewsFetcher가 동시에 실행됩니다.
+    # 후속 에이전트는 state['weather']와 state['news']를 읽을 수 있습니다.
     ```
   
 === "Java"
 
     ```java
-    // Conceptual Example: Parallel Execution
+    // 개념적 예제: 병렬 실행
     import com.google.adk.agents.LlmAgent;
     import com.google.adk.agents.ParallelAgent;
    
@@ -151,45 +151,45 @@ ADK includes specialized agents derived from `BaseAgent` that don't perform task
         .subAgents(fetchWeather, fetchNews)
         .build();
     
-    // When gatherer runs, WeatherFetcher and NewsFetcher run concurrently.
-    // A subsequent agent could read state['weather'] and state['news'].
+    // gatherer가 실행되면 WeatherFetcher와 NewsFetcher가 동시에 실행됩니다.
+    // 후속 에이전트는 state['weather']와 state['news']를 읽을 수 있습니다.
     ```
 
-  * **[`LoopAgent`](workflow-agents/loop-agents.md):** Executes its `sub_agents` sequentially in a loop.
-      * **Termination:** The loop stops if the optional `max_iterations` is reached, or if any sub-agent returns an [`Event`](../events/index.md) with `escalate=True` in it's Event Actions.
-      * **Context & State:** Passes the *same* `InvocationContext` in each iteration, allowing state changes (e.g., counters, flags) to persist across loops.
+  * **[`LoopAgent`](workflow-agents/loop-agents.md):** `sub_agents`를 순차적으로 루프에서 실행합니다.
+      * **종료:** 선택적 `max_iterations`에 도달하거나, 하위 에이전트 중 하나가 이벤트 작업에 `escalate=True`인 [`이벤트`](../events/index.md)를 반환하면 루프가 중지됩니다.
+      * **컨텍스트 및 상태:** 각 반복에서 *동일한* `InvocationContext`를 전달하여 상태 변경(예: 카운터, 플래그)이 루프 간에 지속되도록 합니다.
 
 === "Python"
 
       ```python
-      # Conceptual Example: Loop with Condition
+      # 개념적 예제: 조건이 있는 루프
       from google.adk.agents import LoopAgent, LlmAgent, BaseAgent
       from google.adk.events import Event, EventActions
       from google.adk.agents.invocation_context import InvocationContext
       from typing import AsyncGenerator
 
-      class CheckCondition(BaseAgent): # Custom agent to check state
+      class CheckCondition(BaseAgent): # 상태를 확인하는 사용자 정의 에이전트
           async def _run_async_impl(self, ctx: InvocationContext) -> AsyncGenerator[Event, None]:
               status = ctx.session.state.get("status", "pending")
               is_done = (status == "completed")
-              yield Event(author=self.name, actions=EventActions(escalate=is_done)) # Escalate if done
+              yield Event(author=self.name, actions=EventActions(escalate=is_done)) # 완료되면 에스컬레이션
 
-      process_step = LlmAgent(name="ProcessingStep") # Agent that might update state['status']
+      process_step = LlmAgent(name="ProcessingStep") # state['status']를 업데이트할 수 있는 에이전트
 
       poller = LoopAgent(
           name="StatusPoller",
           max_iterations=10,
           sub_agents=[process_step, CheckCondition(name="Checker")]
       )
-      # When poller runs, it executes process_step then Checker repeatedly
-      # until Checker escalates (state['status'] == 'completed') or 10 iterations pass.
+      # poller가 실행되면 process_step을 실행한 다음 Checker를 반복적으로 실행합니다.
+      # Checker가 에스컬레이션하거나(state['status'] == 'completed') 10번의 반복이 지날 때까지.
       ```
     
 === "Java"
 
     ```java
-    // Conceptual Example: Loop with Condition
-    // Custom agent to check state and potentially escalate
+    // 개념적 예제: 조건이 있는 루프
+    // 상태를 확인하고 잠재적으로 에스컬레이션하는 사용자 정의 에이전트
     public static class CheckConditionAgent extends BaseAgent {
       public CheckConditionAgent(String name, String description) {
         super(name, description, List.of(), null, null);
@@ -200,207 +200,206 @@ ADK includes specialized agents derived from `BaseAgent` that don't perform task
         String status = (String) ctx.session().state().getOrDefault("status", "pending");
         boolean isDone = "completed".equalsIgnoreCase(status);
 
-        // Emit an event that signals to escalate (exit the loop) if the condition is met.
-        // If not done, the escalate flag will be false or absent, and the loop continues.
+        // 조건이 충족되면 루프를 종료(에스컬레이션)하라는 신호를 보내는 이벤트를 내보냅니다.
+        // 완료되지 않으면 에스컬레이션 플래그는 false이거나 없으며 루프는 계속됩니다.
         Event checkEvent = Event.builder()
                 .author(name())
-                .id(Event.generateEventId()) // Important to give events unique IDs
-                .actions(EventActions.builder().escalate(isDone).build()) // Escalate if done
+                .id(Event.generateEventId()) // 이벤트에 고유 ID를 부여하는 것이 중요합니다
+                .actions(EventActions.builder().escalate(isDone).build()) // 완료되면 에스컬레이션
                 .build();
         return Flowable.just(checkEvent);
       }
     }
   
-    // Agent that might update state.put("status")
+    // 상태를 업데이트할 수 있는 에이전트.put("status")
     LlmAgent processingStepAgent = LlmAgent.builder().name("ProcessingStep").build();
-    // Custom agent instance for checking the condition
+    // 조건을 확인하기 위한 사용자 정의 에이전트 인스턴스
     CheckConditionAgent conditionCheckerAgent = new CheckConditionAgent(
         "ConditionChecker",
-        "Checks if the status is 'completed'."
+        "상태가 'completed'인지 확인합니다."
     );
     LoopAgent poller = LoopAgent.builder().name("StatusPoller").maxIterations(10).subAgents(processingStepAgent, conditionCheckerAgent).build();
-    // When poller runs, it executes processingStepAgent then conditionCheckerAgent repeatedly
-    // until Checker escalates (state.get("status") == "completed") or 10 iterations pass.
+    // poller가 실행되면 processingStepAgent를 실행한 다음 conditionCheckerAgent를 반복적으로 실행합니다.
+    // Checker가 에스컬레이션하거나(state.get("status") == "completed") 10번의 반복이 지날 때까지.
     ```
 
-### 1.3. Interaction & Communication Mechanisms
+### 1.3. 상호작용 및 통신 메커니즘
 
-Agents within a system often need to exchange data or trigger actions in one another. ADK facilitates this through:
+시스템 내의 에이전트는 종종 서로 데이터를 교환하거나 작업을 트리거해야 합니다. ADK는 다음을 통해 이를 용이하게 합니다:
 
-#### a) Shared Session State (`session.state`)
+#### a) 공유 세션 상태 (`session.state`)
 
-The most fundamental way for agents operating within the same invocation (and thus sharing the same [`Session`](../sessions/session.md) object via the `InvocationContext`) to communicate passively.
+동일한 호출 내에서 작동하고 따라서 `InvocationContext`를 통해 동일한 [`세션`](../sessions/session.md) 객체를 공유하는 에이전트가 수동적으로 통신하는 가장 기본적인 방법입니다.
 
-* **Mechanism:** One agent (or its tool/callback) writes a value (`context.state['data_key'] = processed_data`), and a subsequent agent reads it (`data = context.state.get('data_key')`). State changes are tracked via [`CallbackContext`](../callbacks/index.md).
-* **Convenience:** The `output_key` property on [`LlmAgent`](llm-agents.md) automatically saves the agent's final response text (or structured output) to the specified state key.
-* **Nature:** Asynchronous, passive communication. Ideal for pipelines orchestrated by `SequentialAgent` or passing data across `LoopAgent` iterations.
-* **See Also:** [State Management](../sessions/state.md)
+*   **메커니즘:** 한 에이전트(또는 그 도구/콜백)가 값을 쓰고(`context.state['data_key'] = processed_data`), 후속 에이전트가 이를 읽습니다(`data = context.state.get('data_key')`). 상태 변경은 [`CallbackContext`](../callbacks/index.md)를 통해 추적됩니다.
+*   **편의성:** [`LlmAgent`](llm-agents.md)의 `output_key` 속성은 에이전트의 최종 응답 텍스트(또는 구조화된 출력)를 지정된 상태 키에 자동으로 저장합니다.
+*   **특성:** 비동기적이고 수동적인 통신. `SequentialAgent`에 의해 조정되는 파이프라인이나 `LoopAgent` 반복 간에 데이터를 전달하는 데 이상적입니다.
+*   **참조:** [상태 관리](../sessions/state.md)
 
 === "Python"
 
     ```python
-    # Conceptual Example: Using output_key and reading state
+    # 개념적 예제: output_key 사용 및 상태 읽기
     from google.adk.agents import LlmAgent, SequentialAgent
     
-    agent_A = LlmAgent(name="AgentA", instruction="Find the capital of France.", output_key="capital_city")
-    agent_B = LlmAgent(name="AgentB", instruction="Tell me about the city stored in state key 'capital_city'.")
+    agent_A = LlmAgent(name="AgentA", instruction="프랑스의 수도를 찾으세요.", output_key="capital_city")
+    agent_B = LlmAgent(name="AgentB", instruction="상태 키 'capital_city'에 저장된 도시에 대해 알려주세요.")
     
     pipeline = SequentialAgent(name="CityInfo", sub_agents=[agent_A, agent_B])
-    # AgentA runs, saves "Paris" to state['capital_city'].
-    # AgentB runs, its instruction processor reads state['capital_city'] to get "Paris".
+    # AgentA가 실행되어 "파리"를 state['capital_city']에 저장합니다.
+    # AgentB가 실행되어 지침 처리기가 state['capital_city']를 읽어 "파리"를 가져옵니다.
     ```
 
 === "Java"
 
     ```java
-    // Conceptual Example: Using outputKey and reading state
+    // 개념적 예제: outputKey 사용 및 상태 읽기
     import com.google.adk.agents.LlmAgent;
     import com.google.adk.agents.SequentialAgent;
     
     LlmAgent agentA = LlmAgent.builder()
         .name("AgentA")
-        .instruction("Find the capital of France.")
+        .instruction("프랑스의 수도를 찾으세요.")
         .outputKey("capital_city")
         .build();
     
     LlmAgent agentB = LlmAgent.builder()
         .name("AgentB")
-        .instruction("Tell me about the city stored in state key 'capital_city'.")
+        .instruction("상태 키 'capital_city'에 저장된 도시에 대해 알려주세요.")
         .outputKey("capital_city")
         .build();
     
     SequentialAgent pipeline = SequentialAgent.builder().name("CityInfo").subAgents(agentA, agentB).build();
-    // AgentA runs, saves "Paris" to state('capital_city').
-    // AgentB runs, its instruction processor reads state.get("capital_city") to get "Paris".
+    // AgentA가 실행되어 "파리"를 state('capital_city')에 저장합니다.
+    // AgentB가 실행되어 지침 처리기가 state.get("capital_city")를 읽어 "파리"를 가져옵니다.
     ```
 
-#### b) LLM-Driven Delegation (Agent Transfer)
+#### b) LLM 기반 위임 (에이전트 이전)
 
-Leverages an [`LlmAgent`](llm-agents.md)'s understanding to dynamically route tasks to other suitable agents within the hierarchy.
+[`LlmAgent`](llm-agents.md)의 이해력을 활용하여 계층 내의 다른 적절한 에이전트에게 동적으로 작업을 라우팅합니다.
 
-* **Mechanism:** The agent's LLM generates a specific function call: `transfer_to_agent(agent_name='target_agent_name')`.
-* **Handling:** The `AutoFlow`, used by default when sub-agents are present or transfer isn't disallowed, intercepts this call. It identifies the target agent using `root_agent.find_agent()` and updates the `InvocationContext` to switch execution focus.
-* **Requires:** The calling `LlmAgent` needs clear `instructions` on when to transfer, and potential target agents need distinct `description`s for the LLM to make informed decisions. Transfer scope (parent, sub-agent, siblings) can be configured on the `LlmAgent`.
-* **Nature:** Dynamic, flexible routing based on LLM interpretation.
+*   **메커니즘:** 에이전트의 LLM이 특정 함수 호출을 생성합니다: `transfer_to_agent(agent_name='target_agent_name')`.
+*   **처리:** 하위 에이전트가 있거나 이전이 금지되지 않은 경우 기본적으로 사용되는 `AutoFlow`가 이 호출을 가로챕니다. `root_agent.find_agent()`를 사용하여 대상 에이전트를 식별하고 `InvocationContext`를 업데이트하여 실행 초점을 전환합니다.
+*   **필요 사항:** 호출하는 `LlmAgent`는 언제 이전해야 하는지에 대한 명확한 `instructions`이 필요하고, 잠재적인 대상 에이전트는 LLM이 정보에 입각한 결정을 내릴 수 있도록 고유한 `description`이 필요합니다. 이전 범위(부모, 하위 에이전트, 형제)는 `LlmAgent`에서 구성할 수 있습니다.
+*   **특성:** LLM 해석에 기반한 동적이고 유연한 라우팅.
 
 === "Python"
 
     ```python
-    # Conceptual Setup: LLM Transfer
+    # 개념적 설정: LLM 이전
     from google.adk.agents import LlmAgent
     
-    booking_agent = LlmAgent(name="Booker", description="Handles flight and hotel bookings.")
-    info_agent = LlmAgent(name="Info", description="Provides general information and answers questions.")
+    booking_agent = LlmAgent(name="Booker", description="항공편 및 호텔 예약을 처리합니다.")
+    info_agent = LlmAgent(name="Info", description="일반 정보 및 질문에 답변합니다.")
     
     coordinator = LlmAgent(
         name="Coordinator",
         model="gemini-2.0-flash",
-        instruction="You are an assistant. Delegate booking tasks to Booker and info requests to Info.",
-        description="Main coordinator.",
-        # AutoFlow is typically used implicitly here
+        instruction="사용자 요청을 라우팅합니다: 결제 문제는 Booker 에이전트를, 기술 문제는 Info 에이전트를 사용하세요.",
+        description="메인 코디네이터.",
+        # AutoFlow는 일반적으로 여기서 하위 에이전트와 함께 암묵적으로 사용됩니다.
         sub_agents=[booking_agent, info_agent]
     )
-    # If coordinator receives "Book a flight", its LLM should generate:
+    # 코디네이터가 "항공편 예약"을 받으면 LLM이 다음을 생성해야 합니다:
     # FunctionCall(name='transfer_to_agent', args={'agent_name': 'Booker'})
-    # ADK framework then routes execution to booking_agent.
+    # ADK 프레임워크는 실행을 booking_agent로 라우팅합니다.
     ```
 
 === "Java"
 
     ```java
-    // Conceptual Setup: LLM Transfer
+    // 개념적 설정: LLM 이전
     import com.google.adk.agents.LlmAgent;
     
     LlmAgent bookingAgent = LlmAgent.builder()
         .name("Booker")
-        .description("Handles flight and hotel bookings.")
+        .description("항공편 및 호텔 예약을 처리합니다.")
         .build();
     
     LlmAgent infoAgent = LlmAgent.builder()
         .name("Info")
-        .description("Provides general information and answers questions.")
+        .description("일반 정보 및 질문에 답변합니다.")
         .build();
     
-    // Define the coordinator agent
+    // 코디네이터 에이전트 정의
     LlmAgent coordinator = LlmAgent.builder()
         .name("Coordinator")
-        .model("gemini-2.0-flash") // Or your desired model
-        .instruction("You are an assistant. Delegate booking tasks to Booker and info requests to Info.")
-        .description("Main coordinator.")
-        // AutoFlow will be used by default (implicitly) because subAgents are present
-        // and transfer is not disallowed.
+        .model("gemini-2.0-flash") // 또는 원하는 모델
+        .instruction("사용자 요청을 라우팅합니다: 결제 문제는 Booker 에이전트를, 기술 문제는 Info 에이전트를 사용하세요.")
+        .description("메인 코디네이터.")
+        // AutoFlow는 하위 에이전트가 있고 이전이 금지되지 않는 한 기본적으로 사용됩니다.
         .subAgents(bookingAgent, infoAgent)
         .build();
 
-    // If coordinator receives "Book a flight", its LLM should generate:
+    // 코디네이터가 "항공편 예약"을 받으면 LLM이 다음을 생성해야 합니다:
     // FunctionCall.builder.name("transferToAgent").args(ImmutableMap.of("agent_name", "Booker")).build()
-    // ADK framework then routes execution to bookingAgent.
+    // ADK 프레임워크는 실행을 bookingAgent로 라우팅합니다.
     ```
 
-#### c) Explicit Invocation (`AgentTool`)
+#### c) 명시적 호출 (`AgentTool`)
 
-Allows an [`LlmAgent`](llm-agents.md) to treat another `BaseAgent` instance as a callable function or [Tool](../tools/index.md).
+[`LlmAgent`](llm-agents.md)가 다른 `BaseAgent` 인스턴스를 호출 가능한 함수나 [도구](../tools/index.md)로 취급할 수 있도록 합니다.
 
-* **Mechanism:** Wrap the target agent instance in `AgentTool` and include it in the parent `LlmAgent`'s `tools` list. `AgentTool` generates a corresponding function declaration for the LLM.
-* **Handling:** When the parent LLM generates a function call targeting the `AgentTool`, the framework executes `AgentTool.run_async`. This method runs the target agent, captures its final response, forwards any state/artifact changes back to the parent's context, and returns the response as the tool's result.
-* **Nature:** Synchronous (within the parent's flow), explicit, controlled invocation like any other tool.
-* **(Note:** `AgentTool` needs to be imported and used explicitly).
+*   **메커니즘:** 대상 에이전트 인스턴스를 `AgentTool`로 래핑하고 부모 `LlmAgent`의 `tools` 목록에 포함합니다. `AgentTool`은 LLM을 위한 해당 함수 선언을 생성합니다.
+*   **처리:** 부모 LLM이 `AgentTool`을 대상으로 하는 함수 호출을 생성하면 프레임워크는 `AgentTool.run_async`를 실행합니다. 이 메서드는 대상 에이전트를 실행하고, 최종 응답을 캡처하며, 상태/아티팩트 변경 사항을 부모의 컨텍스트로 다시 전달하고, 응답을 도구의 결과로 반환합니다.
+*   **특성:** 부모의 흐름 내에서 다른 도구와 마찬가지로 동기적이고, 명시적이며, 제어된 호출입니다.
+*   **(참고:** `AgentTool`은 명시적으로 가져와 사용해야 합니다).
 
 === "Python"
 
     ```python
-    # Conceptual Setup: Agent as a Tool
+    # 개념적 설정: 도구로서의 에이전트
     from google.adk.agents import LlmAgent, BaseAgent
     from google.adk.tools import agent_tool
     from pydantic import BaseModel
     
-    # Define a target agent (could be LlmAgent or custom BaseAgent)
-    class ImageGeneratorAgent(BaseAgent): # Example custom agent
+    # 대상 에이전트 정의 (LlmAgent 또는 사용자 정의 BaseAgent 가능)
+    class ImageGeneratorAgent(BaseAgent): # 예제 사용자 정의 에이전트
         name: str = "ImageGen"
-        description: str = "Generates an image based on a prompt."
-        # ... internal logic ...
-        async def _run_async_impl(self, ctx): # Simplified run logic
-            prompt = ctx.session.state.get("image_prompt", "default prompt")
-            # ... generate image bytes ...
+        description: str = "프롬프트를 기반으로 이미지를 생성합니다."
+        # ... 내부 로직 ...
+        async def _run_async_impl(self, ctx): # 간소화된 실행 로직
+            prompt = ctx.session.state.get("image_prompt", "기본 프롬프트")
+            # ... 이미지 바이트 생성 ...
             image_bytes = b"..."
             yield Event(author=self.name, content=types.Content(parts=[types.Part.from_bytes(image_bytes, "image/png")]))
     
     image_agent = ImageGeneratorAgent()
-    image_tool = agent_tool.AgentTool(agent=image_agent) # Wrap the agent
+    image_tool = agent_tool.AgentTool(agent=image_agent) # 에이전트 래핑
     
-    # Parent agent uses the AgentTool
+    # 부모 에이전트가 AgentTool 사용
     artist_agent = LlmAgent(
         name="Artist",
         model="gemini-2.0-flash",
-        instruction="Create a prompt and use the ImageGen tool to generate the image.",
-        tools=[image_tool] # Include the AgentTool
+        instruction="프롬프트를 만들고 ImageGen 도구를 사용하여 이미지를 생성하세요.",
+        tools=[image_tool] # AgentTool 포함
     )
-    # Artist LLM generates a prompt, then calls:
-    # FunctionCall(name='ImageGen', args={'image_prompt': 'a cat wearing a hat'})
-    # Framework calls image_tool.run_async(...), which runs ImageGeneratorAgent.
-    # The resulting image Part is returned to the Artist agent as the tool result.
+    # 아티스트 LLM이 프롬프트를 생성한 다음 호출:
+    # FunctionCall(name='ImageGen', args={'image_prompt': '모자를 쓴 고양이'})
+    # 프레임워크가 image_tool.run_async(...)를 호출하고, 이는 ImageGeneratorAgent를 실행합니다.
+    # 결과 이미지는 도구 결과로 아티스트 에이전트에게 반환됩니다.
     ```
 
 === "Java"
 
     ```java
-    // Conceptual Setup: Agent as a Tool
+    // 개념적 설정: 도구로서의 에이전트
     import com.google.adk.agents.BaseAgent;
     import com.google.adk.agents.LlmAgent;
     import com.google.adk.tools.AgentTool;
 
-    // Example custom agent (could be LlmAgent or custom BaseAgent)
+    // 예제 사용자 정의 에이전트 (LlmAgent 또는 사용자 정의 BaseAgent 가능)
     public class ImageGeneratorAgent extends BaseAgent  {
     
       public ImageGeneratorAgent(String name, String description) {
         super(name, description, List.of(), null, null);
       }
     
-      // ... internal logic ...
+      // ... 내부 로직 ...
       @Override
-      protected Flowable<Event> runAsyncImpl(InvocationContext invocationContext) { // Simplified run logic
+      protected Flowable<Event> runAsyncImpl(InvocationContext invocationContext) { // 간소화된 실행 로직
         invocationContext.session().state().get("image_prompt");
-        // Generate image bytes
+        // 이미지 바이트 생성
         // ...
     
         Event responseEvent = Event.builder()
@@ -417,146 +416,145 @@ Allows an [`LlmAgent`](llm-agents.md) to treat another `BaseAgent` instance as a
       }
     }
 
-    // Wrap the agent using AgentTool
-    ImageGeneratorAgent imageAgent = new ImageGeneratorAgent("image_agent", "generates images");
+    // AgentTool을 사용하여 에이전트 래핑
+    ImageGeneratorAgent imageAgent = new ImageGeneratorAgent("image_agent", "이미지 생성");
     AgentTool imageTool = AgentTool.create(imageAgent);
     
-    // Parent agent uses the AgentTool
+    // 부모 에이전트가 AgentTool 사용
     LlmAgent artistAgent = LlmAgent.builder()
             .name("Artist")
             .model("gemini-2.0-flash")
             .instruction(
-                    "You are an artist. Create a detailed prompt for an image and then " +
-                            "use the 'ImageGen' tool to generate the image. " +
-                            "The 'ImageGen' tool expects a single string argument named 'request' " +
-                            "containing the image prompt. The tool will return a JSON string in its " +
-                            "'result' field, containing 'image_base64', 'mime_type', and 'status'."
+                    "당신은 예술가입니다. 이미지에 대한 상세한 프롬프트를 만든 다음 " +
+                            "'ImageGen' 도구를 사용하여 이미지를 생성하세요. " +
+                            "'ImageGen' 도구는 이미지 프롬프트를 포함하는 'request'라는 이름의 단일 문자열 인수를 예상합니다. " +
+                            "이 도구는 'image_base64', 'mime_type', 'status'를 포함하는 JSON 문자열을 'result' 필드에 반환합니다."
             )
-            .description("An agent that can create images using a generation tool.")
-            .tools(imageTool) // Include the AgentTool
+            .description("생성 도구를 사용하여 이미지를 만들 수 있는 에이전트입니다.")
+            .tools(imageTool) // AgentTool 포함
             .build();
     
-    // Artist LLM generates a prompt, then calls:
-    // FunctionCall(name='ImageGen', args={'imagePrompt': 'a cat wearing a hat'})
-    // Framework calls imageTool.runAsync(...), which runs ImageGeneratorAgent.
-    // The resulting image Part is returned to the Artist agent as the tool result.
+    // 아티스트 LLM이 프롬프트를 생성한 다음 호출:
+    // FunctionCall(name='ImageGen', args={'imagePrompt': '모자를 쓴 고양이'})
+    // 프레임워크가 imageTool.runAsync(...)를 호출하고, 이는 ImageGeneratorAgent를 실행합니다.
+    // 결과 이미지는 도구 결과로 아티스트 에이전트에게 반환됩니다.
     ```
 
-These primitives provide the flexibility to design multi-agent interactions ranging from tightly coupled sequential workflows to dynamic, LLM-driven delegation networks.
+이러한 프리미티브는 긴밀하게 연결된 순차적 워크플로에서부터 동적, LLM 기반 위임 네트워크에 이르기까지 다중 에이전트 상호 작용을 설계할 수 있는 유연성을 제공합니다.
 
-## 2. Common Multi-Agent Patterns using ADK Primitives
+## 2. ADK 프리미티브를 사용한 일반적인 다중 에이전트 패턴
 
-By combining ADK's composition primitives, you can implement various established patterns for multi-agent collaboration.
+ADK의 구성 프리미티브를 결합하여 다중 에이전트 협업을 위한 다양한 기존 패턴을 구현할 수 있습니다.
 
-### Coordinator/Dispatcher Pattern
+### 코디네이터/디스패처 패턴
 
-* **Structure:** A central [`LlmAgent`](llm-agents.md) (Coordinator) manages several specialized `sub_agents`.
-* **Goal:** Route incoming requests to the appropriate specialist agent.
-* **ADK Primitives Used:**
-    * **Hierarchy:** Coordinator has specialists listed in `sub_agents`.
-    * **Interaction:** Primarily uses **LLM-Driven Delegation** (requires clear `description`s on sub-agents and appropriate `instruction` on Coordinator) or **Explicit Invocation (`AgentTool`)** (Coordinator includes `AgentTool`-wrapped specialists in its `tools`).
+*   **구조:** 중앙 [`LlmAgent`](llm-agents.md) (코디네이터)가 여러 전문 `sub_agents`를 관리합니다.
+*   **목표:** 들어오는 요청을 적절한 전문가 에이전트로 라우팅합니다.
+*   **사용된 ADK 프리미티브:**
+    *   **계층:** 코디네이터는 `sub_agents`에 전문가를 나열합니다.
+    *   **상호작용:** 주로 **LLM 기반 위임**(하위 에이전트에 대한 명확한 `description`과 코디네이터에 대한 적절한 `instruction` 필요) 또는 **명시적 호출 (`AgentTool`)**(코디네이터는 `AgentTool`로 래핑된 전문가를 `tools`에 포함)을 사용합니다.
 
 === "Python"
 
     ```python
-    # Conceptual Code: Coordinator using LLM Transfer
+    # 개념적 코드: LLM 이전을 사용하는 코디네이터
     from google.adk.agents import LlmAgent
     
-    billing_agent = LlmAgent(name="Billing", description="Handles billing inquiries.")
-    support_agent = LlmAgent(name="Support", description="Handles technical support requests.")
+    billing_agent = LlmAgent(name="Billing", description="청구 문의를 처리합니다.")
+    support_agent = LlmAgent(name="Support", description="기술 지원 요청을 처리합니다.")
     
     coordinator = LlmAgent(
         name="HelpDeskCoordinator",
         model="gemini-2.0-flash",
-        instruction="Route user requests: Use Billing agent for payment issues, Support agent for technical problems.",
-        description="Main help desk router.",
-        # allow_transfer=True is often implicit with sub_agents in AutoFlow
+        instruction="사용자 요청 라우팅: 결제 문제는 Billing 에이전트를, 기술 문제는 Support 에이전트를 사용하세요.",
+        description="메인 헬프 데스크 라우터.",
+        # allow_transfer=True는 종종 AutoFlow의 하위 에이전트와 함께 암묵적으로 사용됩니다.
         sub_agents=[billing_agent, support_agent]
     )
-    # User asks "My payment failed" -> Coordinator's LLM should call transfer_to_agent(agent_name='Billing')
-    # User asks "I can't log in" -> Coordinator's LLM should call transfer_to_agent(agent_name='Support')
+    # 사용자가 "결제가 실패했습니다"라고 문의 -> 코디네이터의 LLM이 transfer_to_agent(agent_name='Billing')을 호출해야 합니다.
+    # 사용자가 "로그인할 수 없습니다"라고 문의 -> 코디네iper의 LLM이 transfer_to_agent(agent_name='Support')를 호출해야 합니다.
     ```
 
 === "Java"
 
     ```java
-    // Conceptual Code: Coordinator using LLM Transfer
+    // 개념적 코드: LLM 이전을 사용하는 코디네이터
     import com.google.adk.agents.LlmAgent;
 
     LlmAgent billingAgent = LlmAgent.builder()
         .name("Billing")
-        .description("Handles billing inquiries and payment issues.")
+        .description("청구 문의 및 결제 문제를 처리합니다.")
         .build();
 
     LlmAgent supportAgent = LlmAgent.builder()
         .name("Support")
-        .description("Handles technical support requests and login problems.")
+        .description("기술 지원 요청 및 로그인 문제를 처리합니다.")
         .build();
 
     LlmAgent coordinator = LlmAgent.builder()
         .name("HelpDeskCoordinator")
         .model("gemini-2.0-flash")
-        .instruction("Route user requests: Use Billing agent for payment issues, Support agent for technical problems.")
-        .description("Main help desk router.")
+        .instruction("사용자 요청 라우팅: 결제 문제는 Billing 에이전트를, 기술 문제는 Support 에이전트를 사용하세요.")
+        .description("메인 헬프 데스크 라우터.")
         .subAgents(billingAgent, supportAgent)
-        // Agent transfer is implicit with sub agents in the Autoflow, unless specified
-        // using .disallowTransferToParent or disallowTransferToPeers
+        // 에이전트 이전은 지정되지 않은 경우 Autoflow의 하위 에이전트와 함께 암묵적으로 사용됩니다.
+        // .disallowTransferToParent 또는 disallowTransferToPeers 사용.
         .build();
 
-    // User asks "My payment failed" -> Coordinator's LLM should call
-    // transferToAgent(agentName='Billing')
-    // User asks "I can't log in" -> Coordinator's LLM should call
-    // transferToAgent(agentName='Support')
+    // 사용자가 "결제가 실패했습니다"라고 문의 -> 코디네이터의 LLM이
+    // transferToAgent(agentName='Billing')를 호출해야 합니다.
+    // 사용자가 "로그인할 수 없습니다"라고 문의 -> 코디네이터의 LLM이
+    // transferToAgent(agentName='Support')를 호출해야 합니다.
     ```
 
-### Sequential Pipeline Pattern
+### 순차적 파이프라인 패턴
 
-* **Structure:** A [`SequentialAgent`](workflow-agents/sequential-agents.md) contains `sub_agents` executed in a fixed order.
-* **Goal:** Implement a multi-step process where the output of one step feeds into the next.
-* **ADK Primitives Used:**
-    * **Workflow:** `SequentialAgent` defines the order.
-    * **Communication:** Primarily uses **Shared Session State**. Earlier agents write results (often via `output_key`), later agents read those results from `context.state`.
+*   **구조:** [`SequentialAgent`](workflow-agents/sequential-agents.md)가 고정된 순서로 실행되는 `sub_agents`를 포함합니다.
+*   **목표:** 한 단계의 출력이 다음 단계의 입력이 되는 다단계 프로세스를 구현합니다.
+*   **사용된 ADK 프리미티브:**
+    *   **워크플로:** `SequentialAgent`가 순서를 정의합니다.
+    *   **통신:** 주로 **공유 세션 상태**를 사용합니다. 이전 에이전트는 결과(`output_key`를 통해 종종)를 쓰고, 이후 에이전트는 `context.state`에서 해당 결과를 읽습니다.
 
 === "Python"
 
     ```python
-    # Conceptual Code: Sequential Data Pipeline
+    # 개념적 코드: 순차적 데이터 파이프라인
     from google.adk.agents import SequentialAgent, LlmAgent
     
-    validator = LlmAgent(name="ValidateInput", instruction="Validate the input.", output_key="validation_status")
-    processor = LlmAgent(name="ProcessData", instruction="Process data if state key 'validation_status' is 'valid'.", output_key="result")
-    reporter = LlmAgent(name="ReportResult", instruction="Report the result from state key 'result'.")
+    validator = LlmAgent(name="ValidateInput", instruction="입력을 검증합니다.", output_key="validation_status")
+    processor = LlmAgent(name="ProcessData", instruction="상태 키 'validation_status'가 'valid'이면 데이터를 처리합니다.", output_key="result")
+    reporter = LlmAgent(name="ReportResult", instruction="상태 키 'result'의 결과를 보고합니다.")
     
     data_pipeline = SequentialAgent(
         name="DataPipeline",
         sub_agents=[validator, processor, reporter]
     )
-    # validator runs -> saves to state['validation_status']
-    # processor runs -> reads state['validation_status'], saves to state['result']
-    # reporter runs -> reads state['result']
+    # validator 실행 -> state['validation_status']에 저장
+    # processor 실행 -> state['validation_status']를 읽고 state['result']에 저장
+    # reporter 실행 -> state['result']를 읽음
     ```
 
 === "Java"
 
     ```java
-    // Conceptual Code: Sequential Data Pipeline
+    // 개념적 코드: 순차적 데이터 파이프라인
     import com.google.adk.agents.SequentialAgent;
     
     LlmAgent validator = LlmAgent.builder()
         .name("ValidateInput")
-        .instruction("Validate the input")
-        .outputKey("validation_status") // Saves its main text output to session.state["validation_status"]
+        .instruction("입력을 검증합니다.")
+        .outputKey("validation_status") // 주 텍스트 출력을 session.state["validation_status"]에 저장
         .build();
     
     LlmAgent processor = LlmAgent.builder()
         .name("ProcessData")
-        .instruction("Process data if state key 'validation_status' is 'valid'")
-        .outputKey("result") // Saves its main text output to session.state["result"]
+        .instruction("상태 키 'validation_status'가 'valid'이면 데이터를 처리합니다.")
+        .outputKey("result") // 주 텍스트 출력을 session.state["result"]에 저장
         .build();
     
     LlmAgent reporter = LlmAgent.builder()
         .name("ReportResult")
-        .instruction("Report the result from state key 'result'")
+        .instruction("상태 키 'result'의 결과를 보고합니다.")
         .build();
     
     SequentialAgent dataPipeline = SequentialAgent.builder()
@@ -564,27 +562,27 @@ By combining ADK's composition primitives, you can implement various established
         .subAgents(validator, processor, reporter)
         .build();
     
-    // validator runs -> saves to state['validation_status']
-    // processor runs -> reads state['validation_status'], saves to state['result']
-    // reporter runs -> reads state['result']
+    // validator 실행 -> state['validation_status']에 저장
+    // processor 실행 -> state['validation_status']를 읽고 state['result']에 저장
+    // reporter 실행 -> state['result']를 읽음
     ```
 
-### Parallel Fan-Out/Gather Pattern
+### 병렬 팬아웃/수집 패턴
 
-* **Structure:** A [`ParallelAgent`](workflow-agents/parallel-agents.md) runs multiple `sub_agents` concurrently, often followed by a later agent (in a `SequentialAgent`) that aggregates results.
-* **Goal:** Execute independent tasks simultaneously to reduce latency, then combine their outputs.
-* **ADK Primitives Used:**
-    * **Workflow:** `ParallelAgent` for concurrent execution (Fan-Out). Often nested within a `SequentialAgent` to handle the subsequent aggregation step (Gather).
-    * **Communication:** Sub-agents write results to distinct keys in **Shared Session State**. The subsequent "Gather" agent reads multiple state keys.
+*   **구조:** [`ParallelAgent`](workflow-agents/parallel-agents.md)가 여러 `sub_agents`를 동시에 실행하고, 종종 결과를 집계하는 후속 에이전트(`SequentialAgent` 내)가 뒤따릅니다.
+*   **목표:** 독립적인 작업을 동시에 실행하여 지연 시간을 줄인 다음, 출력을 결합합니다.
+*   **사용된 ADK 프리미티브:**
+    *   **워크플로:** 동시 실행을 위한 `ParallelAgent`(팬아웃). 종종 후속 집계 단계(수집)를 처리하기 위해 `SequentialAgent` 내에 중첩됩니다.
+    *   **통신:** 하위 에이전트는 **공유 세션 상태**의 고유한 키에 결과를 씁니다. 후속 "수집" 에이전트는 여러 상태 키를 읽습니다.
 
 === "Python"
 
     ```python
-    # Conceptual Code: Parallel Information Gathering
+    # 개념적 코드: 병렬 정보 수집
     from google.adk.agents import SequentialAgent, ParallelAgent, LlmAgent
     
-    fetch_api1 = LlmAgent(name="API1Fetcher", instruction="Fetch data from API 1.", output_key="api1_data")
-    fetch_api2 = LlmAgent(name="API2Fetcher", instruction="Fetch data from API 2.", output_key="api2_data")
+    fetch_api1 = LlmAgent(name="API1Fetcher", instruction="API 1에서 데이터를 가져옵니다.", output_key="api1_data")
+    fetch_api2 = LlmAgent(name="API2Fetcher", instruction="API 2에서 데이터를 가져옵니다.", output_key="api2_data")
     
     gather_concurrently = ParallelAgent(
         name="ConcurrentFetch",
@@ -593,33 +591,33 @@ By combining ADK's composition primitives, you can implement various established
     
     synthesizer = LlmAgent(
         name="Synthesizer",
-        instruction="Combine results from state keys 'api1_data' and 'api2_data'."
+        instruction="상태 키 'api1_data'와 'api2_data'의 결과를 결합합니다."
     )
     
     overall_workflow = SequentialAgent(
         name="FetchAndSynthesize",
-        sub_agents=[gather_concurrently, synthesizer] # Run parallel fetch, then synthesize
+        sub_agents=[gather_concurrently, synthesizer] # 병렬 가져오기 후 합성 실행
     )
-    # fetch_api1 and fetch_api2 run concurrently, saving to state.
-    # synthesizer runs afterwards, reading state['api1_data'] and state['api2_data'].
+    # fetch_api1과 fetch_api2가 동시에 실행되어 상태에 저장됩니다.
+    # synthesizer는 나중에 실행되어 state['api1_data']와 state['api2_data']를 읽습니다.
     ```
 === "Java"
 
     ```java
-    // Conceptual Code: Parallel Information Gathering
+    // 개념적 코드: 병렬 정보 수집
     import com.google.adk.agents.LlmAgent;
     import com.google.adk.agents.ParallelAgent;
     import com.google.adk.agents.SequentialAgent;
 
     LlmAgent fetchApi1 = LlmAgent.builder()
         .name("API1Fetcher")
-        .instruction("Fetch data from API 1.")
+        .instruction("API 1에서 데이터를 가져옵니다.")
         .outputKey("api1_data")
         .build();
 
     LlmAgent fetchApi2 = LlmAgent.builder()
         .name("API2Fetcher")
-        .instruction("Fetch data from API 2.")
+        .instruction("API 2에서 데이터를 가져옵니다.")
         .outputKey("api2_data")
         .build();
 
@@ -630,200 +628,200 @@ By combining ADK's composition primitives, you can implement various established
 
     LlmAgent synthesizer = LlmAgent.builder()
         .name("Synthesizer")
-        .instruction("Combine results from state keys 'api1_data' and 'api2_data'.")
+        .instruction("상태 키 'api1_data'와 'api2_data'의 결과를 결합합니다.")
         .build();
 
     SequentialAgent overallWorfklow = SequentialAgent.builder()
-        .name("FetchAndSynthesize") // Run parallel fetch, then synthesize
+        .name("FetchAndSynthesize") // 병렬 가져오기 후 합성 실행
         .subAgents(gatherConcurrently, synthesizer)
         .build();
 
-    // fetch_api1 and fetch_api2 run concurrently, saving to state.
-    // synthesizer runs afterwards, reading state['api1_data'] and state['api2_data'].
+    // fetch_api1과 fetch_api2가 동시에 실행되어 상태에 저장됩니다.
+    // synthesizer는 나중에 실행되어 state['api1_data']와 state['api2_data']를 읽습니다.
     ```
 
 
-### Hierarchical Task Decomposition
+### 계층적 작업 분해
 
-* **Structure:** A multi-level tree of agents where higher-level agents break down complex goals and delegate sub-tasks to lower-level agents.
-* **Goal:** Solve complex problems by recursively breaking them down into simpler, executable steps.
-* **ADK Primitives Used:**
-    * **Hierarchy:** Multi-level `parent_agent`/`sub_agents` structure.
-    * **Interaction:** Primarily **LLM-Driven Delegation** or **Explicit Invocation (`AgentTool`)** used by parent agents to assign tasks to subagents. Results are returned up the hierarchy (via tool responses or state).
+*   **구조:** 상위 수준 에이전트가 복잡한 목표를 분해하고 하위 수준 에이전트에게 하위 작업을 위임하는 다단계 에이전트 트리입니다.
+*   **목표:** 복잡한 문제를 더 간단하고 실행 가능한 단계로 재귀적으로 분해하여 해결합니다.
+*   **사용된 ADK 프리미티브:**
+    *   **계층:** 다단계 `parent_agent`/`sub_agents` 구조.
+    *   **상호작용:** 주로 부모 에이전트가 하위 에이전트에게 작업을 할당하는 데 사용하는 **LLM 기반 위임** 또는 **명시적 호출 (`AgentTool`)**. 결과는 계층을 통해 위로 반환됩니다(도구 응답 또는 상태를 통해).
 
 === "Python"
 
     ```python
-    # Conceptual Code: Hierarchical Research Task
+    # 개념적 코드: 계층적 연구 작업
     from google.adk.agents import LlmAgent
     from google.adk.tools import agent_tool
     
-    # Low-level tool-like agents
-    web_searcher = LlmAgent(name="WebSearch", description="Performs web searches for facts.")
-    summarizer = LlmAgent(name="Summarizer", description="Summarizes text.")
+    # 저수준 도구와 같은 에이전트
+    web_searcher = LlmAgent(name="WebSearch", description="사실에 대한 웹 검색을 수행합니다.")
+    summarizer = LlmAgent(name="Summarizer", description="텍스트를 요약합니다.")
     
-    # Mid-level agent combining tools
+    # 도구를 결합하는 중간 수준 에이전트
     research_assistant = LlmAgent(
         name="ResearchAssistant",
         model="gemini-2.0-flash",
-        description="Finds and summarizes information on a topic.",
+        description="주제에 대한 정보를 찾고 요약합니다.",
         tools=[agent_tool.AgentTool(agent=web_searcher), agent_tool.AgentTool(agent=summarizer)]
     )
     
-    # High-level agent delegating research
+    # 연구를 위임하는 상위 수준 에이전트
     report_writer = LlmAgent(
         name="ReportWriter",
         model="gemini-2.0-flash",
-        instruction="Write a report on topic X. Use the ResearchAssistant to gather information.",
+        instruction="주제 X에 대한 보고서를 작성하세요. ResearchAssistant를 사용하여 정보를 수집하세요.",
         tools=[agent_tool.AgentTool(agent=research_assistant)]
-        # Alternatively, could use LLM Transfer if research_assistant is a sub_agent
+        # 또는 research_assistant가 하위 에이전트인 경우 LLM 이전 사용 가능
     )
-    # User interacts with ReportWriter.
-    # ReportWriter calls ResearchAssistant tool.
-    # ResearchAssistant calls WebSearch and Summarizer tools.
-    # Results flow back up.
+    # 사용자는 ReportWriter와 상호 작용합니다.
+    # ReportWriter는 ResearchAssistant 도구를 호출합니다.
+    # ResearchAssistant는 WebSearch 및 Summarizer 도구를 호출합니다.
+    # 결과는 위로 전달됩니다.
     ```
 
 === "Java"
 
     ```java
-    // Conceptual Code: Hierarchical Research Task
+    // 개념적 코드: 계층적 연구 작업
     import com.google.adk.agents.LlmAgent;
     import com.google.adk.tools.AgentTool;
     
-    // Low-level tool-like agents
+    // 저수준 도구와 같은 에이전트
     LlmAgent webSearcher = LlmAgent.builder()
         .name("WebSearch")
-        .description("Performs web searches for facts.")
+        .description("사실에 대한 웹 검색을 수행합니다.")
         .build();
     
     LlmAgent summarizer = LlmAgent.builder()
         .name("Summarizer")
-        .description("Summarizes text.")
+        .description("텍스트를 요약합니다.")
         .build();
     
-    // Mid-level agent combining tools
+    // 도구를 결합하는 중간 수준 에이전트
     LlmAgent researchAssistant = LlmAgent.builder()
         .name("ResearchAssistant")
         .model("gemini-2.0-flash")
-        .description("Finds and summarizes information on a topic.")
+        .description("주제에 대한 정보를 찾고 요약합니다.")
         .tools(AgentTool.create(webSearcher), AgentTool.create(summarizer))
         .build();
     
-    // High-level agent delegating research
+    // 연구를 위임하는 상위 수준 에이전트
     LlmAgent reportWriter = LlmAgent.builder()
         .name("ReportWriter")
         .model("gemini-2.0-flash")
-        .instruction("Write a report on topic X. Use the ResearchAssistant to gather information.")
+        .instruction("주제 X에 대한 보고서를 작성하세요. ResearchAssistant를 사용하여 정보를 수집하세요.")
         .tools(AgentTool.create(researchAssistant))
-        // Alternatively, could use LLM Transfer if research_assistant is a subAgent
+        // 또는 research_assistant가 하위 에이전트인 경우 LLM 이전 사용 가능
         .build();
     
-    // User interacts with ReportWriter.
-    // ReportWriter calls ResearchAssistant tool.
-    // ResearchAssistant calls WebSearch and Summarizer tools.
-    // Results flow back up.
+    // 사용자는 ReportWriter와 상호 작용합니다.
+    // ReportWriter는 ResearchAssistant 도구를 호출합니다.
+    // ResearchAssistant는 WebSearch 및 Summarizer 도구를 호출합니다.
+    // 결과는 위로 전달됩니다.
     ```
 
-### Review/Critique Pattern (Generator-Critic)
+### 검토/비평 패턴 (생성자-비평가)
 
-* **Structure:** Typically involves two agents within a [`SequentialAgent`](workflow-agents/sequential-agents.md): a Generator and a Critic/Reviewer.
-* **Goal:** Improve the quality or validity of generated output by having a dedicated agent review it.
-* **ADK Primitives Used:**
-    * **Workflow:** `SequentialAgent` ensures generation happens before review.
-    * **Communication:** **Shared Session State** (Generator uses `output_key` to save output; Reviewer reads that state key). The Reviewer might save its feedback to another state key for subsequent steps.
+*   **구조:** 일반적으로 [`SequentialAgent`](workflow-agents/sequential-agents.md) 내에 두 개의 에이전트, 즉 생성자와 비평가/검토자가 포함됩니다.
+*   **목표:** 전용 에이전트가 생성된 출력을 검토하여 품질이나 타당성을 향상시킵니다.
+*   **사용된 ADK 프리미티브:**
+    *   **워크플로:** `SequentialAgent`는 검토 전에 생성이 발생하도록 보장합니다.
+    *   **통신:** **공유 세션 상태** (생성자는 `output_key`를 사용하여 출력을 저장하고, 검토자는 해당 상태 키를 읽음). 검토자는 후속 단계를 위해 피드백을 다른 상태 키에 저장할 수 있습니다.
 
 === "Python"
 
     ```python
-    # Conceptual Code: Generator-Critic
+    # 개념적 코드: 생성자-비평가
     from google.adk.agents import SequentialAgent, LlmAgent
     
     generator = LlmAgent(
         name="DraftWriter",
-        instruction="Write a short paragraph about subject X.",
+        instruction="주제 X에 대한 짧은 단락을 작성하세요.",
         output_key="draft_text"
     )
     
     reviewer = LlmAgent(
         name="FactChecker",
-        instruction="Review the text in state key 'draft_text' for factual accuracy. Output 'valid' or 'invalid' with reasons.",
+        instruction="상태 키 'draft_text'의 텍스트를 사실 정확성에 대해 검토하세요. 'valid' 또는 'invalid'와 이유를 출력하세요.",
         output_key="review_status"
     )
     
-    # Optional: Further steps based on review_status
+    # 선택 사항: review_status에 기반한 추가 단계
     
     review_pipeline = SequentialAgent(
         name="WriteAndReview",
         sub_agents=[generator, reviewer]
     )
-    # generator runs -> saves draft to state['draft_text']
-    # reviewer runs -> reads state['draft_text'], saves status to state['review_status']
+    # generator 실행 -> 초안을 state['draft_text']에 저장
+    # reviewer 실행 -> state['draft_text']를 읽고 상태를 state['review_status']에 저장
     ```
 
 === "Java"
 
     ```java
-    // Conceptual Code: Generator-Critic
+    // 개념적 코드: 생성자-비평가
     import com.google.adk.agents.LlmAgent;
     import com.google.adk.agents.SequentialAgent;
     
     LlmAgent generator = LlmAgent.builder()
         .name("DraftWriter")
-        .instruction("Write a short paragraph about subject X.")
+        .instruction("주제 X에 대한 짧은 단락을 작성하세요.")
         .outputKey("draft_text")
         .build();
     
     LlmAgent reviewer = LlmAgent.builder()
         .name("FactChecker")
-        .instruction("Review the text in state key 'draft_text' for factual accuracy. Output 'valid' or 'invalid' with reasons.")
+        .instruction("상태 키 'draft_text'의 텍스트를 사실 정확성에 대해 검토하세요. 'valid' 또는 'invalid'와 이유를 출력하세요.")
         .outputKey("review_status")
         .build();
     
-    // Optional: Further steps based on review_status
+    // 선택 사항: review_status에 기반한 추가 단계
     
     SequentialAgent reviewPipeline = SequentialAgent.builder()
         .name("WriteAndReview")
         .subAgents(generator, reviewer)
         .build();
     
-    // generator runs -> saves draft to state['draft_text']
-    // reviewer runs -> reads state['draft_text'], saves status to state['review_status']
+    // generator 실행 -> 초안을 state['draft_text']에 저장
+    // reviewer 실행 -> state['draft_text']를 읽고 상태를 state['review_status']에 저장
     ```
 
-### Iterative Refinement Pattern
+### 반복적 개선 패턴
 
-* **Structure:** Uses a [`LoopAgent`](workflow-agents/loop-agents.md) containing one or more agents that work on a task over multiple iterations.
-* **Goal:** Progressively improve a result (e.g., code, text, plan) stored in the session state until a quality threshold is met or a maximum number of iterations is reached.
-* **ADK Primitives Used:**
-    * **Workflow:** `LoopAgent` manages the repetition.
-    * **Communication:** **Shared Session State** is essential for agents to read the previous iteration's output and save the refined version.
-    * **Termination:** The loop typically ends based on `max_iterations` or a dedicated checking agent setting `escalate=True` in the `Event Actions` when the result is satisfactory.
+*   **구조:** 여러 반복에 걸쳐 작업하는 하나 이상의 에이전트를 포함하는 [`LoopAgent`](workflow-agents/loop-agents.md)를 사용합니다.
+*   **목표:** 품질 임계값이 충족되거나 최대 반복 횟수에 도달할 때까지 세션 상태에 저장된 결과(예: 코드, 텍스트, 계획)를 점진적으로 개선합니다.
+*   **사용된 ADK 프리미티브:**
+    *   **워크플로:** `LoopAgent`가 반복을 관리합니다.
+    *   **통신:** 에이전트가 이전 반복의 출력을 읽고 개선된 버전을 저장하기 위해 **공유 세션 상태**가 필수적입니다.
+    *   **종료:** 루프는 일반적으로 `max_iterations`를 기반으로 종료되거나, 결과가 만족스러울 때 전용 검사 에이전트가 이벤트 작업에서 `escalate=True`를 설정하여 종료됩니다.
 
 === "Python"
 
     ```python
-    # Conceptual Code: Iterative Code Refinement
+    # 개념적 코드: 반복적 코드 개선
     from google.adk.agents import LoopAgent, LlmAgent, BaseAgent
     from google.adk.events import Event, EventActions
     from google.adk.agents.invocation_context import InvocationContext
     from typing import AsyncGenerator
     
-    # Agent to generate/refine code based on state['current_code'] and state['requirements']
+    # state['current_code'] 및 state['requirements']를 기반으로 코드를 생성/개선하는 에이전트
     code_refiner = LlmAgent(
         name="CodeRefiner",
-        instruction="Read state['current_code'] (if exists) and state['requirements']. Generate/refine Python code to meet requirements. Save to state['current_code'].",
-        output_key="current_code" # Overwrites previous code in state
+        instruction="state['current_code'](있는 경우) 및 state['requirements']를 읽습니다. 요구 사항을 충족하도록 Python 코드를 생성/개선합니다. state['current_code']에 저장합니다.",
+        output_key="current_code" # 상태의 이전 코드 덮어쓰기
     )
     
-    # Agent to check if the code meets quality standards
+    # 코드가 품질 기준을 충족하는지 확인하는 에이전트
     quality_checker = LlmAgent(
         name="QualityChecker",
-        instruction="Evaluate the code in state['current_code'] against state['requirements']. Output 'pass' or 'fail'.",
+        instruction="state['current_code']의 코드를 state['requirements']에 대해 평가합니다. 'pass' 또는 'fail'을 출력합니다.",
         output_key="quality_status"
     )
     
-    # Custom agent to check the status and escalate if 'pass'
+    # 상태를 확인하고 'pass'이면 에스컬레이션하는 사용자 정의 에이전트
     class CheckStatusAndEscalate(BaseAgent):
         async def _run_async_impl(self, ctx: InvocationContext) -> AsyncGenerator[Event, None]:
             status = ctx.session.state.get("quality_status", "fail")
@@ -835,15 +833,15 @@ By combining ADK's composition primitives, you can implement various established
         max_iterations=5,
         sub_agents=[code_refiner, quality_checker, CheckStatusAndEscalate(name="StopChecker")]
     )
-    # Loop runs: Refiner -> Checker -> StopChecker
-    # State['current_code'] is updated each iteration.
-    # Loop stops if QualityChecker outputs 'pass' (leading to StopChecker escalating) or after 5 iterations.
+    # 루프 실행: Refiner -> Checker -> StopChecker
+    # State['current_code']는 각 반복마다 업데이트됩니다.
+    # QualityChecker가 'pass'를 출력하거나(StopChecker가 에스컬레이션하도록 유도) 5번의 반복 후 루프가 중지됩니다.
     ```
 
 === "Java"
 
     ```java
-    // Conceptual Code: Iterative Code Refinement
+    // 개념적 코드: 반복적 코드 개선
     import com.google.adk.agents.BaseAgent;
     import com.google.adk.agents.LlmAgent;
     import com.google.adk.agents.LoopAgent;
@@ -853,22 +851,22 @@ By combining ADK's composition primitives, you can implement various established
     import io.reactivex.rxjava3.core.Flowable;
     import java.util.List;
     
-    // Agent to generate/refine code based on state['current_code'] and state['requirements']
+    // state['current_code'] 및 state['requirements']를 기반으로 코드를 생성/개선하는 에이전트
     LlmAgent codeRefiner = LlmAgent.builder()
         .name("CodeRefiner")
-        .instruction("Read state['current_code'] (if exists) and state['requirements']. Generate/refine Java code to meet requirements. Save to state['current_code'].")
-        .outputKey("current_code") // Overwrites previous code in state
+        .instruction("state['current_code'](있는 경우) 및 state['requirements']를 읽습니다. 요구 사항을 충족하도록 Java 코드를 생성/개선합니다. state['current_code']에 저장합니다.")
+        .outputKey("current_code") // 상태의 이전 코드 덮어쓰기
         .build();
     
-    // Agent to check if the code meets quality standards
+    // 코드가 품질 기준을 충족하는지 확인하는 에이전트
     LlmAgent qualityChecker = LlmAgent.builder()
         .name("QualityChecker")
-        .instruction("Evaluate the code in state['current_code'] against state['requirements']. Output 'pass' or 'fail'.")
+        .instruction("state['current_code']의 코드를 state['requirements']에 대해 평가합니다. 'pass' 또는 'fail'을 출력합니다.")
         .outputKey("quality_status")
         .build();
     
     BaseAgent checkStatusAndEscalate = new BaseAgent(
-        "StopChecker","Checks quality_status and escalates if 'pass'.", List.of(), null, null) {
+        "StopChecker","quality_status를 확인하고 'pass'이면 에스컬레이션합니다.", List.of(), null, null) {
     
       @Override
       protected Flowable<Event> runAsyncImpl(InvocationContext invocationContext) {
@@ -890,57 +888,56 @@ By combining ADK's composition primitives, you can implement various established
         .subAgents(codeRefiner, qualityChecker, checkStatusAndEscalate)
         .build();
     
-    // Loop runs: Refiner -> Checker -> StopChecker
-    // State['current_code'] is updated each iteration.
-    // Loop stops if QualityChecker outputs 'pass' (leading to StopChecker escalating) or after 5
-    // iterations.
+    // 루프 실행: Refiner -> Checker -> StopChecker
+    // State['current_code']는 각 반복마다 업데이트됩니다.
+    // QualityChecker가 'pass'를 출력하거나(StopChecker가 에스컬레이션하도록 유도) 5번의 반복 후 루프가 중지됩니다.
     ```
 
-### Human-in-the-Loop Pattern
+### 인간 참여 루프 패턴
 
-* **Structure:** Integrates human intervention points within an agent workflow.
-* **Goal:** Allow for human oversight, approval, correction, or tasks that AI cannot perform.
-* **ADK Primitives Used (Conceptual):**
-    * **Interaction:** Can be implemented using a custom **Tool** that pauses execution and sends a request to an external system (e.g., a UI, ticketing system) waiting for human input. The tool then returns the human's response to the agent.
-    * **Workflow:** Could use **LLM-Driven Delegation** (`transfer_to_agent`) targeting a conceptual "Human Agent" that triggers the external workflow, or use the custom tool within an `LlmAgent`.
-    * **State/Callbacks:** State can hold task details for the human; callbacks can manage the interaction flow.
-    * **Note:** ADK doesn't have a built-in "Human Agent" type, so this requires custom integration.
+*   **구조:** 에이전트 워크플로 내에 인간 개입 지점을 통합합니다.
+*   **목표:** 인간의 감독, 승인, 수정 또는 AI가 수행할 수 없는 작업을 허용합니다.
+*   **사용된 ADK 프리미티브 (개념적):**
+    *   **상호작용:** 실행을 일시 중지하고 외부 시스템(예: UI, 티켓팅 시스템)에 요청을 보내 인간의 입력을 기다리는 사용자 정의 **도구**를 사용하여 구현할 수 있습니다. 그런 다음 도구는 인간의 응답을 에이전트에게 반환합니다.
+    *   **워크플로:** 개념적인 "인간 에이전트"를 대상으로 하는 **LLM 기반 위임**(`transfer_to_agent`)을 사용하여 외부 워크플로를 트리거하거나 `LlmAgent` 내에서 사용자 정의 도구를 사용할 수 있습니다.
+    *   **상태/콜백:** 상태는 인간을 위한 작업 세부 정보를 보유할 수 있으며, 콜백은 상호 작용 흐름을 관리할 수 있습니다.
+    *   **참고:** ADK에는 내장된 "인간 에이전트" 유형이 없으므로 사용자 정의 통합이 필요합니다.
 
 === "Python"
 
     ```python
-    # Conceptual Code: Using a Tool for Human Approval
+    # 개념적 코드: 인간 승인을 위한 도구 사용
     from google.adk.agents import LlmAgent, SequentialAgent
     from google.adk.tools import FunctionTool
     
-    # --- Assume external_approval_tool exists ---
-    # This tool would:
-    # 1. Take details (e.g., request_id, amount, reason).
-    # 2. Send these details to a human review system (e.g., via API).
-    # 3. Poll or wait for the human response (approved/rejected).
-    # 4. Return the human's decision.
+    # --- external_approval_tool이 존재한다고 가정 ---
+    # 이 도구는 다음을 수행합니다:
+    # 1. 세부 정보(예: request_id, amount, reason)를 가져옵니다.
+    # 2. 이러한 세부 정보를 인간 검토 시스템(예: API를 통해)에 보냅니다.
+    # 3. 인간 응답(승인/거부)을 폴링하거나 기다립니다.
+    # 4. 인간의 결정을 반환합니다.
     # async def external_approval_tool(amount: float, reason: str) -> str: ...
     approval_tool = FunctionTool(func=external_approval_tool)
     
-    # Agent that prepares the request
+    # 요청을 준비하는 에이전트
     prepare_request = LlmAgent(
         name="PrepareApproval",
-        instruction="Prepare the approval request details based on user input. Store amount and reason in state.",
-        # ... likely sets state['approval_amount'] and state['approval_reason'] ...
+        instruction="사용자 입력을 기반으로 승인 요청 세부 정보를 준비합니다. 금액과 이유를 상태에 저장합니다.",
+        # ... 아마도 state['approval_amount']와 state['approval_reason']을 설정할 것임 ...
     )
     
-    # Agent that calls the human approval tool
+    # 인간 승인 도구를 호출하는 에이전트
     request_approval = LlmAgent(
         name="RequestHumanApproval",
-        instruction="Use the external_approval_tool with amount from state['approval_amount'] and reason from state['approval_reason'].",
+        instruction="state['approval_amount']의 금액과 state['approval_reason']의 이유로 external_approval_tool을 사용하세요.",
         tools=[approval_tool],
         output_key="human_decision"
     )
     
-    # Agent that proceeds based on human decision
+    # 인간 결정에 따라 진행하는 에이전트
     process_decision = LlmAgent(
         name="ProcessDecision",
-        instruction="Check state key 'human_decision'. If 'approved', proceed. If 'rejected', inform user."
+        instruction="상태 키 'human_decision'을 확인하세요. 'approved'이면 진행하고, 'rejected'이면 사용자에게 알리세요."
     )
     
     approval_workflow = SequentialAgent(
@@ -952,39 +949,39 @@ By combining ADK's composition primitives, you can implement various established
 === "Java"
 
     ```java
-    // Conceptual Code: Using a Tool for Human Approval
+    // 개념적 코드: 인간 승인을 위한 도구 사용
     import com.google.adk.agents.LlmAgent;
     import com.google.adk.agents.SequentialAgent;
     import com.google.adk.tools.FunctionTool;
     
-    // --- Assume external_approval_tool exists ---
-    // This tool would:
-    // 1. Take details (e.g., request_id, amount, reason).
-    // 2. Send these details to a human review system (e.g., via API).
-    // 3. Poll or wait for the human response (approved/rejected).
-    // 4. Return the human's decision.
+    // --- external_approval_tool이 존재한다고 가정 ---
+    // 이 도구는 다음을 수행합니다:
+    // 1. 세부 정보(예: request_id, amount, reason)를 가져옵니다.
+    // 2. 이러한 세부 정보를 인간 검토 시스템(예: API를 통해)에 보냅니다.
+    // 3. 인간 응답(승인/거부)을 폴링하거나 기다립니다.
+    // 4. 인간의 결정을 반환합니다.
     // public boolean externalApprovalTool(float amount, String reason) { ... }
     FunctionTool approvalTool = FunctionTool.create(externalApprovalTool);
     
-    // Agent that prepares the request
+    // 요청을 준비하는 에이전트
     LlmAgent prepareRequest = LlmAgent.builder()
         .name("PrepareApproval")
-        .instruction("Prepare the approval request details based on user input. Store amount and reason in state.")
-        // ... likely sets state['approval_amount'] and state['approval_reason'] ...
+        .instruction("사용자 입력을 기반으로 승인 요청 세부 정보를 준비합니다. 금액과 이유를 상태에 저장합니다.")
+        // ... 아마도 state['approval_amount']와 state['approval_reason']을 설정할 것임 ...
         .build();
     
-    // Agent that calls the human approval tool
+    // 인간 승인 도구를 호출하는 에이전트
     LlmAgent requestApproval = LlmAgent.builder()
         .name("RequestHumanApproval")
-        .instruction("Use the external_approval_tool with amount from state['approval_amount'] and reason from state['approval_reason'].")
+        .instruction("state['approval_amount']의 금액과 state['approval_reason']의 이유로 external_approval_tool을 사용하세요.")
         .tools(approvalTool)
         .outputKey("human_decision")
         .build();
     
-    // Agent that proceeds based on human decision
+    // 인간 결정에 따라 진행하는 에이전트
     LlmAgent processDecision = LlmAgent.builder()
         .name("ProcessDecision")
-        .instruction("Check state key 'human_decision'. If 'approved', proceed. If 'rejected', inform user.")
+        .instruction("상태 키 'human_decision'을 확인하세요. 'approved'이면 진행하고, 'rejected'이면 사용자에게 알리세요.")
         .build();
     
     SequentialAgent approvalWorkflow = SequentialAgent.builder()
@@ -993,4 +990,4 @@ By combining ADK's composition primitives, you can implement various established
         .build();
     ```
 
-These patterns provide starting points for structuring your multi-agent systems. You can mix and match them as needed to create the most effective architecture for your specific application.
+이러한 패턴은 다중 에이전트 시스템을 구조화하기 위한 출발점을 제공합니다. 특정 애플리케이션에 가장 효과적인 아키텍처를 만들기 위해 필요에 따라 혼합하고 일치시킬 수 있습니다.

@@ -1,43 +1,43 @@
-# Sequential agents
+# 순차 에이전트
 
-## The `SequentialAgent`
+## `SequentialAgent`
 
-The `SequentialAgent` is a [workflow agent](index.md) that executes its sub-agents in the order they are specified in the list.
+`SequentialAgent`는 목록에 지정된 순서대로 하위 에이전트를 실행하는 [워크플로 에이전트](index.md)입니다.
 
-Use the `SequentialAgent` when you want the execution to occur in a fixed, strict order.
+실행이 고정되고 엄격한 순서로 이루어지기를 원할 때 `SequentialAgent`를 사용하세요.
 
-### Example
+### 예제
 
-* You want to build an agent that can summarize any webpage, using two tools: `Get Page Contents` and `Summarize Page`. Because the agent must always call `Get Page Contents` before calling `Summarize Page` (you can't summarize from nothing!), you should build your agent using a `SequentialAgent`.
+*   두 가지 도구, 즉 `페이지 내용 가져오기`와 `페이지 요약하기`를 사용하여 모든 웹페이지를 요약할 수 있는 에이전트를 만들고 싶다고 가정해 봅시다. 에이전트는 항상 `페이지 요약하기`를 호출하기 전에 `페이지 내용 가져오기`를 호출해야 하므로(아무것도 없는 것을 요약할 수는 없으므로!), `SequentialAgent`를 사용하여 에이전트를 구축해야 합니다.
 
-As with other [workflow agents](index.md), the `SequentialAgent` is not powered by an LLM, and is thus deterministic in how it executes. That being said, workflow agents are concerned only with their execution (i.e. in sequence), and not their internal logic; the tools or sub-agents of a workflow agent may or may not utilize LLMs.
+다른 [워크플로 에이전트](index.md)와 마찬가지로 `SequentialAgent`는 LLM으로 구동되지 않으므로 실행 방식이 결정적입니다. 즉, 워크플로 에이전트는 실행(즉, 순차적으로)에만 관련이 있고 내부 로직에는 관련이 없습니다. 워크플로 에이전트의 도구나 하위 에이전트는 LLM을 활용할 수도 있고 그렇지 않을 수도 있습니다.
 
-### How it works
+### 작동 방식
 
-When the `SequentialAgent`'s `Run Async` method is called, it performs the following actions:
+`SequentialAgent`의 `Run Async` 메서드가 호출되면 다음 작업을 수행합니다:
 
-1. **Iteration:** It iterates through the sub agents list in the order they were provided.
-2. **Sub-Agent Execution:** For each sub-agent in the list, it calls the sub-agent's `Run Async` method.
+1.  **반복:** 제공된 순서대로 하위 에이전트 목록을 반복합니다.
+2.  **하위 에이전트 실행:** 목록의 각 하위 에이전트에 대해 하위 에이전트의 `Run Async` 메서드를 호출합니다.
 
-![Sequential Agent](../../assets/sequential-agent.png){: width="600"}
+![순차 에이전트](../../assets/sequential-agent.png){: width="600"}
 
-### Full Example: Code Development Pipeline
+### 전체 예제: 코드 개발 파이프라인
 
-Consider a simplified code development pipeline:
+간소화된 코드 개발 파이프라인을 생각해 보세요:
 
-* **Code Writer Agent:**  An LLM Agent that generates initial code based on a specification.
-* **Code Reviewer Agent:**  An LLM Agent that reviews the generated code for errors, style issues, and adherence to best practices.  It receives the output of the Code Writer Agent.
-* **Code Refactorer Agent:** An LLM Agent that takes the reviewed code (and the reviewer's comments) and refactors it to improve quality and address issues.
+*   **코드 작성자 에이전트:** 사양에 따라 초기 코드를 생성하는 LLM 에이전트입니다.
+*   **코드 검토자 에이전트:** 생성된 코드의 오류, 스타일 문제 및 모범 사례 준수 여부를 검토하는 LLM 에이전트입니다. 코드 작성자 에이전트의 출력을 받습니다.
+*   **코드 리팩터러 에이전트:** 검토된 코드(및 검토자의 의견)를 가져와 품질을 개선하고 문제를 해결하기 위해 리팩터링하는 LLM 에이전트입니다.
 
-A `SequentialAgent` is perfect for this:
+`SequentialAgent`는 이에 완벽합니다:
 
 ```py
 SequentialAgent(sub_agents=[CodeWriterAgent, CodeReviewerAgent, CodeRefactorerAgent])
 ```
 
-This ensures the code is written, *then* reviewed, and *finally* refactored, in a strict, dependable order. **The output from each sub-agent is passed to the next by storing them in state via [Output Key](../llm-agents.md#structuring-data-input_schema-output_schema-output_key)**.
+이렇게 하면 코드가 작성된 *후* 검토되고 *마지막으로* 리팩터링되는 것이 엄격하고 신뢰할 수 있는 순서로 보장됩니다. **각 하위 에이전트의 출력은 [출력 키](../llm-agents.md#structuring-data-input_schema-output_schema-output_key)를 통해 상태에 저장되어 다음 에이전트로 전달됩니다.**
 
-???+ "Code"
+???+ "코드"
 
     === "Python"
         ```py
@@ -48,5 +48,3 @@ This ensures the code is written, *then* reviewed, and *finally* refactored, in 
         ```java
         --8<-- "examples/java/snippets/src/main/java/agents/workflow/SequentialAgentExample.java:init"
         ```
-
-    

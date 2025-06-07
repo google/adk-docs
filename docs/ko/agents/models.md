@@ -1,197 +1,171 @@
-# Using Different Models with ADK
+# ADK에서 다양한 모델 사용하기
 
 !!! Note
-    Java ADK currently supports Gemini and Anthropic models. More model support coming soon.
+    Java ADK는 현재 Gemini 및 Anthropic 모델을 지원합니다. 더 많은 모델 지원이 곧 추가될 예정입니다.
 
-The Agent Development Kit (ADK) is designed for flexibility, allowing you to
-integrate various Large Language Models (LLMs) into your agents. While the setup
-for Google Gemini models is covered in the
-[Setup Foundation Models](../get-started/installation.md) guide, this page
-details how to leverage Gemini effectively and integrate other popular models,
-including those hosted externally or running locally.
+에이전트 개발 키트(ADK)는 유연성을 위해 설계되어 다양한 거대 언어 모델(LLM)을 에이전트에 통합할 수 있습니다. Google Gemini 모델의 설정은 [기반 모델 설정](../get-started/installation.md) 가이드에서 다루지만, 이 페이지에서는 Gemini를 효과적으로 활용하고 외부에서 호스팅되거나 로컬에서 실행되는 모델을 포함하여 다른 인기 있는 모델을 통합하는 방법을 자세히 설명합니다.
 
-ADK primarily uses two mechanisms for model integration:
+ADK는 주로 두 가지 메커니즘을 사용하여 모델을 통합합니다:
 
-1. **Direct String / Registry:** For models tightly integrated with Google Cloud
-   (like Gemini models accessed via Google AI Studio or Vertex AI) or models
-   hosted on Vertex AI endpoints. You typically provide the model name or
-   endpoint resource string directly to the `LlmAgent`. ADK's internal registry
-   resolves this string to the appropriate backend client, often utilizing the
-   `google-genai` library.
-2. **Wrapper Classes:** For broader compatibility, especially with models
-   outside the Google ecosystem or those requiring specific client
-   configurations (like models accessed via LiteLLM). You instantiate a specific
-   wrapper class (e.g., `LiteLlm`) and pass this object as the `model` parameter
-   to your `LlmAgent`.
+1. **직접 문자열 / 레지스트리:** Google Cloud와 긴밀하게 통합된 모델(예: Google AI Studio 또는 Vertex AI를 통해 접근하는 Gemini 모델) 또는 Vertex AI 엔드포인트에 호스팅된 모델의 경우. 일반적으로 `LlmAgent`에 모델 이름이나 엔드포인트 리소스 문자열을 직접 제공합니다. ADK의 내부 레지스트리는 이 문자열을 적절한 백엔드 클라이언트로 확인하며, 종종 `google-genai` 라이브러리를 활용합니다.
+2. **래퍼 클래스:** 특히 Google 생태계 외부의 모델이나 특정 클라이언트 구성이 필요한 모델(예: LiteLLM을 통해 접근하는 모델)과의 광범위한 호환성을 위해. 특정 래퍼 클래스(예: `LiteLlm`)를 인스턴스화하고 이 객체를 `LlmAgent`의 `model` 매개변수로 전달합니다.
 
-The following sections guide you through using these methods based on your needs.
+다음 섹션에서는 필요에 따라 이러한 방법을 사용하는 방법을 안내합니다.
 
-## Using Google Gemini Models
+## Google Gemini 모델 사용하기
 
-This is the most direct way to use Google's flagship models within ADK.
+이는 ADK 내에서 Google의 주력 모델을 사용하는 가장 직접적인 방법입니다.
 
-**Integration Method:** Pass the model's identifier string directly to the
-`model` parameter of `LlmAgent` (or its alias, `Agent`).
+**통합 방법:** 모델의 식별자 문자열을 `LlmAgent`(또는 그 별칭인 `Agent`)의 `model` 매개변수에 직접 전달합니다.
 
-**Backend Options & Setup:**
+**백엔드 옵션 및 설정:**
 
-The `google-genai` library, used internally by ADK for Gemini, can connect
-through either Google AI Studio or Vertex AI.
+ADK가 Gemini를 위해 내부적으로 사용하는 `google-genai` 라이브러리는 Google AI Studio 또는 Vertex AI를 통해 연결할 수 있습니다.
 
-!!!note "Model support for voice/video streaming"
+!!!note "음성/영상 스트리밍을 위한 모델 지원"
 
-    In order to use voice/video streaming in ADK, you will need to use Gemini
-    models that support the Live API. You can find the **model ID(s)** that
-    support the Gemini Live API in the documentation:
+    ADK에서 음성/영상 스트리밍을 사용하려면 Live API를 지원하는 Gemini 모델을 사용해야 합니다. 문서에서 Gemini Live API를 지원하는 **모델 ID**를 찾을 수 있습니다:
 
     - [Google AI Studio: Gemini Live API](https://ai.google.dev/gemini-api/docs/models#live-api)
     - [Vertex AI: Gemini Live API](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api)
 
 ### Google AI Studio
 
-* **Use Case:** Google AI Studio is the easiest way to get started with Gemini.
-  All you need is the [API key](https://aistudio.google.com/app/apikey). Best
-  for rapid prototyping and development.
-* **Setup:** Typically requires an API key:
-     * Set as an environment variable or 
-     * Passed during the model initialization via the `Client` (see example below)
+* **사용 사례:** Google AI Studio는 Gemini를 시작하는 가장 쉬운 방법입니다. [API 키](https://aistudio.google.com/app/apikey)만 있으면 됩니다. 빠른 프로토타이핑 및 개발에 가장 적합합니다.
+* **설정:** 일반적으로 API 키가 필요합니다:
+     * 환경 변수로 설정하거나
+     * 아래 예제와 같이 `Client`를 통해 모델 초기화 중에 전달합니다.
 
 ```shell
 export GOOGLE_API_KEY="YOUR_GOOGLE_API_KEY"
 export GOOGLE_GENAI_USE_VERTEXAI=FALSE
 ```
 
-* **Models:** Find all available models on the
-  [Google AI for Developers site](https://ai.google.dev/gemini-api/docs/models).
+* **모델:** [Google AI for Developers 사이트](https://ai.google.dev/gemini-api/docs/models)에서 사용 가능한 모든 모델을 찾을 수 있습니다.
 
 ### Vertex AI
 
-* **Use Case:** Recommended for production applications, leveraging Google Cloud
-  infrastructure. Gemini on Vertex AI supports enterprise-grade features,
-  security, and compliance controls.
-* **Setup:**
-    * Authenticate using Application Default Credentials (ADC):
+* **사용 사례:** 프로덕션 애플리케이션에 권장되며, Google Cloud 인프라를 활용합니다. Vertex AI의 Gemini는 엔터프라이즈급 기능, 보안 및 규정 준수 제어를 지원합니다.
+* **설정:**
+    * 애플리케이션 기본 자격 증명(ADC)을 사용하여 인증합니다:
 
         ```shell
         gcloud auth application-default login
         ```
 
-    * Configure these variables either as environment variables or by providing them directly when initializing the Model.
+    * 이러한 변수를 환경 변수로 설정하거나 모델을 직접 초기화할 때 제공합니다.
             
-         Set your Google Cloud project and location:
+         Google Cloud 프로젝트 및 위치 설정:
     
          ```shell
          export GOOGLE_CLOUD_PROJECT="YOUR_PROJECT_ID"
-         export GOOGLE_CLOUD_LOCATION="YOUR_VERTEX_AI_LOCATION" # e.g., us-central1
+         export GOOGLE_CLOUD_LOCATION="YOUR_VERTEX_AI_LOCATION" # 예: us-central1
          ```     
     
-         Explicitly tell the library to use Vertex AI:
+         라이브러리에 Vertex AI를 사용하도록 명시적으로 지시합니다:
     
          ```shell
          export GOOGLE_GENAI_USE_VERTEXAI=TRUE
          ```
 
-* **Models:** Find available model IDs in the
-  [Vertex AI documentation](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/models).
+* **모델:** [Vertex AI 문서](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/models)에서 사용 가능한 모델 ID를 찾을 수 있습니다.
 
-**Example:**
+**예제:**
 
 === "Python"
 
     ```python
     from google.adk.agents import LlmAgent
     
-    # --- Example using a stable Gemini Flash model ---
+    # --- 안정적인 Gemini Flash 모델을 사용하는 예제 ---
     agent_gemini_flash = LlmAgent(
-        # Use the latest stable Flash model identifier
+        # 최신 안정적인 Flash 모델 식별자 사용
         model="gemini-2.0-flash",
         name="gemini_flash_agent",
-        instruction="You are a fast and helpful Gemini assistant.",
-        # ... other agent parameters
+        instruction="당신은 빠르고 도움이 되는 Gemini 어시스턴트입니다.",
+        # ... 기타 에이전트 매개변수
     )
     
-    # --- Example using a powerful Gemini Pro model ---
-    # Note: Always check the official Gemini documentation for the latest model names,
-    # including specific preview versions if needed. Preview models might have
-    # different availability or quota limitations.
+    # --- 강력한 Gemini Pro 모델을 사용하는 예제 ---
+    # 참고: 필요한 경우 특정 미리보기 버전을 포함하여 최신 모델 이름은 항상 공식 Gemini 문서를 확인하세요.
+    # 미리보기 모델은 가용성이나 할당량 제한이 다를 수 있습니다.
     agent_gemini_pro = LlmAgent(
-        # Use the latest generally available Pro model identifier
+        # 최신 일반 사용 가능한 Pro 모델 식별자 사용
         model="gemini-2.5-pro-preview-03-25",
         name="gemini_pro_agent",
-        instruction="You are a powerful and knowledgeable Gemini assistant.",
-        # ... other agent parameters
+        instruction="당신은 강력하고 지식이 풍부한 Gemini 어시스턴트입니다.",
+        # ... 기타 에이전트 매개변수
     )
     ```
 
 === "Java"
 
     ```java
-    // --- Example #1: using a stable Gemini Flash model with ENV variables---
+    // --- 예제 #1: 환경 변수를 사용하는 안정적인 Gemini Flash 모델 ---
     LlmAgent agentGeminiFlash =
         LlmAgent.builder()
-            // Use the latest stable Flash model identifier
-            .model("gemini-2.0-flash") // Set ENV variables to use this model
+            // 최신 안정적인 Flash 모델 식별자 사용
+            .model("gemini-2.0-flash") // 이 모델을 사용하려면 환경 변수 설정
             .name("gemini_flash_agent")
-            .instruction("You are a fast and helpful Gemini assistant.")
-            // ... other agent parameters
+            .instruction("당신은 빠르고 도움이 되는 Gemini 어시스턴트입니다.")
+            // ... 기타 에이전트 매개변수
             .build();
 
-    // --- Example #2: using a powerful Gemini Pro model with API Key in model ---
+    // --- 예제 #2: 모델에 API 키를 사용하는 강력한 Gemini Pro 모델 ---
     LlmAgent agentGeminiPro =
         LlmAgent.builder()
-            // Use the latest generally available Pro model identifier
+            // 최신 일반 사용 가능한 Pro 모델 식별자 사용
             .model(new Gemini("gemini-2.5-pro-preview-03-25",
                 Client.builder()
                     .vertexAI(false)
-                    .apiKey("API_KEY") // Set the API Key (or) project/ location
+                    .apiKey("API_KEY") // API 키 설정 (또는) 프로젝트/위치
                     .build()))
-            // Or, you can also directly pass the API_KEY
+            // 또는 API_KEY를 직접 전달할 수도 있습니다
             // .model(new Gemini("gemini-2.5-pro-preview-03-25", "API_KEY"))
             .name("gemini_pro_agent")
-            .instruction("You are a powerful and knowledgeable Gemini assistant.")
-            // ... other agent parameters
+            .instruction("당신은 강력하고 지식이 풍부한 Gemini 어시스턴트입니다.")
+            // ... 기타 에이전트 매개변수
             .build();
 
-    // Note: Always check the official Gemini documentation for the latest model names,
-    // including specific preview versions if needed. Preview models might have
-    // different availability or quota limitations.
+    // 참고: 필요한 경우 특정 미리보기 버전을 포함하여 최신 모델 이름은 항상 공식 Gemini 문서를 확인하세요.
+    // 미리보기 모델은 가용성이나 할당량 제한이 다를 수 있습니다.
     ```
 
-## Using Anthropic models
+## Anthropic 모델 사용하기
 
-![java_only](https://img.shields.io/badge/Supported_in-Java-orange){ title="This feature is currently available for Java. Python support for direct Anthropic API (non-Vertex) is via LiteLLM."}
+![java_only](https://img.shields.io/badge/지원되는_언어-Java-orange){ title="이 기능은 현재 Java에서 사용할 수 있습니다. 직접적인 Anthropic API(Vertex가 아닌)에 대한 Python 지원은 LiteLLM을 통해 이루어집니다."}
 
-You can integrate Anthropic's Claude models directly using their API key or from a Vertex AI backend into your Java ADK applications by using the ADK's `Claude` wrapper class.
+API 키를 직접 사용하거나 Vertex AI 백엔드에서 Anthropic의 Claude 모델을 Java ADK 애플리케이션에 직접 통합할 수 있습니다. ADK의 `Claude` 래퍼 클래스를 사용하면 됩니다.
 
-For Vertex AI backend, see the [Third-Party Models on Vertex AI](#third-party-models-on-vertex-ai-eg-anthropic-claude) section.
+Vertex AI 백엔드의 경우, [Vertex AI의 타사 모델(예: Anthropic Claude)](#third-party-models-on-vertex-ai-eg-anthropic-claude) 섹션을 참조하세요.
 
-**Prerequisites:**
+**전제 조건:**
 
-1.  **Dependencies:**
-    *   **Anthropic SDK Classes (Transitive):** The Java ADK's `com.google.adk.models.Claude` wrapper relies on classes from Anthropic's official Java SDK. These are typically included as **transitive dependencies**.
+1.  **종속성:**
+    *   **Anthropic SDK 클래스(전이적):** Java ADK의 `com.google.adk.models.Claude` 래퍼는 Anthropic의 공식 Java SDK 클래스에 의존합니다. 이들은 일반적으로 **전이적 종속성**으로 포함됩니다.
 
-2.  **Anthropic API Key:**
-    *   Obtain an API key from Anthropic. Securely manage this key using a secret manager.
+2.  **Anthropic API 키:**
+    *   Anthropic에서 API 키를 얻습니다. 이 키를 비밀 관리자를 사용하여 안전하게 관리하세요.
 
-**Integration:**
+**통합:**
 
-Instantiate `com.google.adk.models.Claude`, providing the desired Claude model name and an `AnthropicOkHttpClient` configured with your API key. Then, pass this `Claude` instance to your `LlmAgent`.
+원하는 Claude 모델 이름과 API 키로 구성된 `AnthropicOkHttpClient`를 제공하여 `com.google.adk.models.Claude`를 인스턴스화합니다. 그런 다음 이 `Claude` 인스턴스를 `LlmAgent`에 전달합니다.
 
-**Example:**
+**예제:**
 
 ```java
 import com.anthropic.client.AnthropicClient;
 import com.google.adk.agents.LlmAgent;
 import com.google.adk.models.Claude;
-import com.anthropic.client.okhttp.AnthropicOkHttpClient; // From Anthropic's SDK
+import com.anthropic.client.okhttp.AnthropicOkHttpClient; // Anthropic의 SDK에서
 
 public class DirectAnthropicAgent {
   
-  private static final String CLAUDE_MODEL_ID = "claude-3-7-sonnet-latest"; // Or your preferred Claude model
+  private static final String CLAUDE_MODEL_ID = "claude-3-7-sonnet-latest"; // 또는 선호하는 Claude 모델
 
   public static LlmAgent createAgent() {
 
-    // It's recommended to load sensitive keys from a secure config
+    // 민감한 키는 보안 구성에서 로드하는 것이 좋습니다.
     AnthropicClient anthropicClient = AnthropicOkHttpClient.builder()
         .apiKey("ANTHROPIC_API_KEY")
         .build();
@@ -204,17 +178,17 @@ public class DirectAnthropicAgent {
     return LlmAgent.builder()
         .name("claude_direct_agent")
         .model(claudeModel)
-        .instruction("You are a helpful AI assistant powered by Anthropic Claude.")
-        // ... other LlmAgent configurations
+        .instruction("당신은 Anthropic Claude로 구동되는 도움이 되는 AI 어시스턴트입니다.")
+        // ... 기타 LlmAgent 구성
         .build();
   }
 
   public static void main(String[] args) {
     try {
       LlmAgent agent = createAgent();
-      System.out.println("Successfully created direct Anthropic agent: " + agent.name());
+      System.out.println("직접적인 Anthropic 에이전트가 성공적으로 생성되었습니다: " + agent.name());
     } catch (IllegalStateException e) {
-      System.err.println("Error creating agent: " + e.getMessage());
+      System.err.println("에이전트 생성 오류: " + e.getMessage());
     }
   }
 }
@@ -222,112 +196,101 @@ public class DirectAnthropicAgent {
 
 
 
-## Using Cloud & Proprietary Models via LiteLLM
+## LiteLLM을 통해 클라우드 및 독점 모델 사용하기
 
-![python_only](https://img.shields.io/badge/Supported_in-Python-blue)
+![python_only](https://img.shields.io/badge/지원되는_언어-Python-blue)
 
-To access a vast range of LLMs from providers like OpenAI, Anthropic (non-Vertex
-AI), Cohere, and many others, ADK offers integration through the LiteLLM
-library.
+OpenAI, Anthropic(Vertex AI가 아닌), Cohere 등 다양한 제공업체의 광범위한 LLM에 접근하기 위해 ADK는 LiteLLM 라이브러리를 통한 통합을 제공합니다.
 
-**Integration Method:** Instantiate the `LiteLlm` wrapper class and pass it to
-the `model` parameter of `LlmAgent`.
+**통합 방법:** `LiteLlm` 래퍼 클래스를 인스턴스화하고 `LlmAgent`의 `model` 매개변수에 전달합니다.
 
-**LiteLLM Overview:** [LiteLLM](https://docs.litellm.ai/) acts as a translation
-layer, providing a standardized, OpenAI-compatible interface to over 100+ LLMs.
+**LiteLLM 개요:** [LiteLLM](https://docs.litellm.ai/)은 100개 이상의 LLM에 대한 표준화된 OpenAI 호환 인터페이스를 제공하는 변환 계층 역할을 합니다.
 
-**Setup:**
+**설정:**
 
-1. **Install LiteLLM:**
+1. **LiteLLM 설치:**
         ```shell
         pip install litellm
         ```
-2. **Set Provider API Keys:** Configure API keys as environment variables for
-   the specific providers you intend to use.
+2. **제공업체 API 키 설정:** 사용하려는 특정 제공업체에 대해 환경 변수로 API 키를 구성합니다.
 
-    * *Example for OpenAI:*
+    * *OpenAI 예시:*
 
         ```shell
         export OPENAI_API_KEY="YOUR_OPENAI_API_KEY"
         ```
 
-    * *Example for Anthropic (non-Vertex AI):*
+    * *Anthropic(Vertex AI가 아닌) 예시:*
 
         ```shell
         export ANTHROPIC_API_KEY="YOUR_ANTHROPIC_API_KEY"
         ```
 
-    * *Consult the
-      [LiteLLM Providers Documentation](https://docs.litellm.ai/docs/providers)
-      for the correct environment variable names for other providers.*
+    * *다른 제공업체에 대한 올바른 환경 변수 이름은 [LiteLLM 제공업체 문서](https://docs.litellm.ai/docs/providers)를 참조하세요.*
 
-        **Example:**
+        **예제:**
 
         ```python
         from google.adk.agents import LlmAgent
         from google.adk.models.lite_llm import LiteLlm
 
-        # --- Example Agent using OpenAI's GPT-4o ---
-        # (Requires OPENAI_API_KEY)
+        # --- OpenAI의 GPT-4o를 사용하는 에이전트 예제 ---
+        # (OPENAI_API_KEY 필요)
         agent_openai = LlmAgent(
-            model=LiteLlm(model="openai/gpt-4o"), # LiteLLM model string format
+            model=LiteLlm(model="openai/gpt-4o"), # LiteLLM 모델 문자열 형식
             name="openai_agent",
-            instruction="You are a helpful assistant powered by GPT-4o.",
-            # ... other agent parameters
+            instruction="당신은 GPT-4o로 구동되는 도움이 되는 어시스턴트입니다.",
+            # ... 기타 에이전트 매개변수
         )
 
-        # --- Example Agent using Anthropic's Claude Haiku (non-Vertex) ---
-        # (Requires ANTHROPIC_API_KEY)
+        # --- Anthropic의 Claude Haiku(Vertex가 아닌)를 사용하는 에이전트 예제 ---
+        # (ANTHROPIC_API_KEY 필요)
         agent_claude_direct = LlmAgent(
             model=LiteLlm(model="anthropic/claude-3-haiku-20240307"),
             name="claude_direct_agent",
-            instruction="You are an assistant powered by Claude Haiku.",
-            # ... other agent parameters
+            instruction="당신은 Claude Haiku로 구동되는 어시스턴트입니다.",
+            # ... 기타 에이전트 매개변수
         )
         ```
 
-!!!info "Note for Windows users"
+!!!info "Windows 사용자 참고"
 
-    ### Avoiding LiteLLM UnicodeDecodeError on Windows
-    When using ADK agents with LiteLlm on Windows, users might encounter the following error:
+    ### Windows에서 LiteLLM UnicodeDecodeError 피하기
+    Windows에서 LiteLlm으로 ADK 에이전트를 사용할 때 사용자는 다음과 같은 오류를 만날 수 있습니다:
     ```
-    UnicodeDecodeError: 'charmap' codec can't decode byte...
+    UnicodeDecodeError: 'charmap' 코덱이 바이트를 디코딩할 수 없음...
     ```
-    This issue occurs because `litellm` (used by LiteLlm) reads cached files (e.g., model pricing information) using the default Windows encoding (`cp1252`) instead of UTF-8.
-    Windows users can prevent this issue by setting the `PYTHONUTF8` environment variable to `1`. This forces Python to use UTF-8 globally.
-    **Example (PowerShell):**
+    이 문제는 `litellm`(LiteLlm에서 사용)이 캐시된 파일(예: 모델 가격 정보)을 UTF-8 대신 기본 Windows 인코딩(`cp1252`)을 사용하여 읽기 때문에 발생합니다.
+    Windows 사용자는 `PYTHONUTF8` 환경 변수를 `1`로 설정하여 이 문제를 방지할 수 있습니다. 이렇게 하면 Python이 전역적으로 UTF-8을 사용하도록 강제합니다.
+    **예제 (PowerShell):**
     ```powershell
-    # Set for current session
+    # 현재 세션에 대해 설정
     $env:PYTHONUTF8 = "1"
-    # Set persistently for the user
+    # 사용자에 대해 영구적으로 설정
     [System.Environment]::SetEnvironmentVariable('PYTHONUTF8', '1', [System.EnvironmentVariableTarget]::User)
-    Applying this setting ensures that Python reads cached files using UTF-8, avoiding the decoding error.
+    이 설정을 적용하면 Python이 UTF-8을 사용하여 캐시된 파일을 읽도록 하여 디코딩 오류를 방지합니다.
     ```
 
 
-## Using Open & Local Models via LiteLLM
+## LiteLLM을 통해 개방형 및 로컬 모델 사용하기
 
-![python_only](https://img.shields.io/badge/Supported_in-Python-blue)
+![python_only](https://img.shields.io/badge/지원되는_언어-Python-blue)
 
-For maximum control, cost savings, privacy, or offline use cases, you can run
-open-source models locally or self-host them and integrate them using LiteLLM.
+최대한의 제어, 비용 절감, 개인 정보 보호 또는 오프라인 사용 사례를 위해 오픈 소스 모델을 로컬에서 실행하거나 자체 호스팅하고 LiteLLM을 사용하여 통합할 수 있습니다.
 
-**Integration Method:** Instantiate the `LiteLlm` wrapper class, configured to
-point to your local model server.
+**통합 방법:** 로컬 모델 서버를 가리키도록 구성된 `LiteLlm` 래퍼 클래스를 인스턴스화합니다.
 
-### Ollama Integration
+### Ollama 통합
 
-[Ollama](https://ollama.com/) allows you to easily run open-source models
-locally.
+[Ollama](https://ollama.com/)를 사용하면 오픈 소스 모델을 로컬에서 쉽게 실행할 수 있습니다.
 
-#### Model choice
+#### 모델 선택
 
-If your agent is relying on tools, please make sure that you select a model with
-tool support from [Ollama website](https://ollama.com/search?c=tools).
+에이전트가 도구에 의존하는 경우, [Ollama 웹사이트](https://ollama.com/search?c=tools)에서 도구 지원이 있는 모델을 선택해야 합니다.
 
-For reliable results, we recommend using a decent-sized model with tool support.
+신뢰할 수 있는 결과를 얻으려면 도구 지원이 있는 적당한 크기의 모델을 사용하는 것이 좋습니다.
 
-The tool support for the model can be checked with the following command:
+모델의 도구 지원은 다음 명령으로 확인할 수 있습니다:
 
 ```bash
 ollama show mistral-small3.1
@@ -344,61 +307,54 @@ ollama show mistral-small3.1
     tools
 ```
 
-You are supposed to see `tools` listed under capabilities.
+기능 아래에 `tools`가 나열되어야 합니다.
 
-You can also look at the template the model is using and tweak it based on your
-needs.
+모델이 사용하는 템플릿을 보고 필요에 따라 조정할 수도 있습니다.
 
 ```bash
 ollama show --modelfile llama3.2 > model_file_to_modify
 ```
 
-For instance, the default template for the above model inherently suggests that
-the model shall call a function all the time. This may result in an infinite
-loop of function calls.
+예를 들어, 위 모델의 기본 템플릿은 모델이 항상 함수를 호출해야 함을 본질적으로 제안합니다. 이로 인해 무한 함수 호출 루프가 발생할 수 있습니다.
 
 ```
-Given the following functions, please respond with a JSON for a function call
-with its proper arguments that best answers the given prompt.
+다음 함수가 주어졌을 때, 주어진 프롬프트에 가장 잘 답하는 함수 호출과 적절한 인수를 포함한 JSON으로 응답해 주세요.
 
-Respond in the format {"name": function name, "parameters": dictionary of
-argument name and its value}. Do not use variables.
+{"name": 함수 이름, "parameters": 인수 이름과 값의 딕셔너리} 형식으로 응답하세요. 변수를 사용하지 마세요.
 ```
 
-You can swap such prompts with a more descriptive one to prevent infinite tool
-call loops.
+무한 도구 호출 루프를 방지하기 위해 이러한 프롬프트를 더 설명적인 것으로 바꿀 수 있습니다.
 
-For instance:
+예를 들어:
 
 ```
-Review the user's prompt and the available functions listed below.
-First, determine if calling one of these functions is the most appropriate way to respond. A function call is likely needed if the prompt asks for a specific action, requires external data lookup, or involves calculations handled by the functions. If the prompt is a general question or can be answered directly, a function call is likely NOT needed.
+사용자의 프롬프트와 아래 나열된 사용 가능한 함수를 검토하세요.
+먼저, 이러한 함수 중 하나를 호출하는 것이 가장 적절한 응답 방법인지 결정하세요. 프롬프트가 특정 작업을 요청하거나, 외부 데이터 조회가 필요하거나, 함수가 처리하는 계산을 포함하는 경우 함수 호출이 필요할 가능성이 높습니다. 프롬프트가 일반적인 질문이거나 직접 답변할 수 있는 경우 함수 호출이 필요하지 않을 가능성이 높습니다.
 
-If you determine a function call IS required: Respond ONLY with a JSON object in the format {"name": "function_name", "parameters": {"argument_name": "value"}}. Ensure parameter values are concrete, not variables.
+함수 호출이 필요하다고 판단되면: {"name": "함수_이름", "parameters": {"인수_이름": "값"}} 형식의 JSON 객체로만 응답하세요. 매개변수 값은 변수가 아닌 구체적인 값이어야 합니다.
 
-If you determine a function call IS NOT required: Respond directly to the user's prompt in plain text, providing the answer or information requested. Do not output any JSON.
+함수 호출이 필요하지 않다고 판단되면: 사용자의 프롬프트에 직접 일반 텍스트로 응답하여 요청된 답변이나 정보를 제공하세요. JSON을 출력하지 마세요.
 ```
 
-Then you can create a new model with the following command:
+그런 다음 다음 명령으로 새 모델을 만들 수 있습니다:
 
 ```bash
 ollama create llama3.2-modified -f model_file_to_modify
 ```
 
-#### Using ollama_chat provider
+#### ollama_chat 제공자 사용
 
-Our LiteLLM wrapper can be used to create agents with Ollama models.
+LiteLLM 래퍼를 사용하여 Ollama 모델로 에이전트를 만들 수 있습니다.
 
 ```py
 root_agent = Agent(
     model=LiteLlm(model="ollama_chat/mistral-small3.1"),
     name="dice_agent",
     description=(
-        "hello world agent that can roll a dice of 8 sides and check prime"
-        " numbers."
+        "8면 주사위를 굴리고 소수를 확인할 수 있는 hello world 에이전트."
     ),
     instruction="""
-      You roll dice and answer questions about the outcome of the dice rolls.
+      주사위를 굴리고 주사위 굴리기 결과에 대한 질문에 답합니다.
     """,
     tools=[
         roll_die,
@@ -407,37 +363,28 @@ root_agent = Agent(
 )
 ```
 
-**It is important to set the provider `ollama_chat` instead of `ollama`. Using
-`ollama` will result in unexpected behaviors such as infinite tool call loops
-and ignoring previous context.**
+**`ollama` 대신 제공자로 `ollama_chat`을 설정하는 것이 중요합니다. `ollama`를 사용하면 무한 도구 호출 루프 및 이전 컨텍스트 무시와 같은 예기치 않은 동작이 발생할 수 있습니다.**
 
-While `api_base` can be provided inside LiteLLM for generation, LiteLLM library
-is calling other APIs relying on the env variable instead as of v1.65.5 after
-completion. So at this time, we recommend setting the env variable
-`OLLAMA_API_BASE` to point to the ollama server.
+생성을 위해 LiteLLM 내에서 `api_base`를 제공할 수 있지만, LiteLLM 라이브러리는 완료 후 v1.65.5 현재 대신 env 변수에 의존하는 다른 API를 호출합니다. 따라서 현재로서는 `OLLAMA_API_BASE` env 변수를 설정하여 ollama 서버를 가리키도록 하는 것이 좋습니다.
 
 ```bash
 export OLLAMA_API_BASE="http://localhost:11434"
 adk web
 ```
 
-#### Using openai provider
+#### openai 제공자 사용
 
-Alternatively, `openai` can be used as the provider name. But this will also
-require setting the `OPENAI_API_BASE=http://localhost:11434/v1` and
-`OPENAI_API_KEY=anything` env variables instead of `OLLAMA_API_BASE`. **Please
-note that api base now has `/v1` at the end.**
+또는 제공자 이름으로 `openai`를 사용할 수 있습니다. 그러나 이 경우 `OLLAMA_API_BASE` 대신 `OPENAI_API_BASE=http://localhost:11434/v1` 및 `OPENAI_API_KEY=anything` 환경 변수를 설정해야 합니다. **api base 끝에 `/v1`이 추가되었음을 유의하세요.**
 
 ```py
 root_agent = Agent(
     model=LiteLlm(model="openai/mistral-small3.1"),
     name="dice_agent",
     description=(
-        "hello world agent that can roll a dice of 8 sides and check prime"
-        " numbers."
+        "8면 주사위를 굴리고 소수를 확인할 수 있는 hello world 에이전트."
     ),
     instruction="""
-      You roll dice and answer questions about the outcome of the dice rolls.
+      주사위를 굴리고 주사위 굴리기 결과에 대한 질문에 답합니다.
     """,
     tools=[
         roll_die,
@@ -452,291 +399,265 @@ export OPENAI_API_KEY=anything
 adk web
 ```
 
-#### Debugging
+#### 디버깅
 
-You can see the request sent to the Ollama server by adding the following in
-your agent code just after imports.
+에이전트 코드에 임포트 직후 다음을 추가하여 Ollama 서버로 전송된 요청을 볼 수 있습니다.
 
 ```py
 import litellm
 litellm._turn_on_debug()
 ```
 
-Look for a line like the following:
+다음과 같은 줄을 찾으세요:
 
 ```bash
-Request Sent from LiteLLM:
+LiteLLM에서 보낸 요청:
 curl -X POST \
 http://localhost:11434/api/chat \
 -d '{'model': 'mistral-small3.1', 'messages': [{'role': 'system', 'content': ...
 ```
 
-### Self-Hosted Endpoint (e.g., vLLM)
+### 자체 호스팅 엔드포인트 (예: vLLM)
 
-![python_only](https://img.shields.io/badge/Supported_in-Python-blue)
+![python_only](https://img.shields.io/badge/지원되는_언어-Python-blue)
 
-Tools such as [vLLM](https://github.com/vllm-project/vllm) allow you to host
-models efficiently and often expose an OpenAI-compatible API endpoint.
+[vLLM](https://github.com/vllm-project/vllm)과 같은 도구를 사용하면 모델을 효율적으로 호스팅하고 종종 OpenAI 호환 API 엔드포인트를 노출할 수 있습니다.
 
-**Setup:**
+**설정:**
 
-1. **Deploy Model:** Deploy your chosen model using vLLM (or a similar tool).
-   Note the API base URL (e.g., `https://your-vllm-endpoint.run.app/v1`).
-    * *Important for ADK Tools:* When deploying, ensure the serving tool
-      supports and enables OpenAI-compatible tool/function calling. For vLLM,
-      this might involve flags like `--enable-auto-tool-choice` and potentially
-      a specific `--tool-call-parser`, depending on the model. Refer to the vLLM
-      documentation on Tool Use.
-2. **Authentication:** Determine how your endpoint handles authentication (e.g.,
-   API key, bearer token).
+1. **모델 배포:** vLLM(또는 유사한 도구)을 사용하여 선택한 모델을 배포합니다. API 기본 URL(예: `https://your-vllm-endpoint.run.app/v1`)을 기록해 둡니다.
+    * *ADK 도구에 중요:* 배포 시 서빙 도구가 OpenAI 호환 도구/함수 호출을 지원하고 활성화하는지 확인하세요. vLLM의 경우 모델에 따라 `--enable-auto-tool-choice` 및 잠재적으로 특정 `--tool-call-parser`와 같은 플래그가 포함될 수 있습니다. vLLM 문서의 도구 사용을 참조하세요.
+2. **인증:** 엔드포인트가 인증을 처리하는 방법(예: API 키, 베어러 토큰)을 결정합니다.
 
-    **Integration Example:**
+    **통합 예제:**
 
     ```python
     import subprocess
     from google.adk.agents import LlmAgent
     from google.adk.models.lite_llm import LiteLlm
 
-    # --- Example Agent using a model hosted on a vLLM endpoint ---
+    # --- vLLM 엔드포인트에 호스팅된 모델을 사용하는 에이전트 예제 ---
 
-    # Endpoint URL provided by your vLLM deployment
+    # vLLM 배포에서 제공하는 엔드포인트 URL
     api_base_url = "https://your-vllm-endpoint.run.app/v1"
 
-    # Model name as recognized by *your* vLLM endpoint configuration
-    model_name_at_endpoint = "hosted_vllm/google/gemma-3-4b-it" # Example from vllm_test.py
+    # *vLLM* 엔드포인트 구성에서 인식하는 모델 이름
+    model_name_at_endpoint = "hosted_vllm/google/gemma-3-4b-it" # vllm_test.py의 예제
 
-    # Authentication (Example: using gcloud identity token for a Cloud Run deployment)
-    # Adapt this based on your endpoint's security
+    # 인증 (예: Cloud Run 배포에 gcloud ID 토큰 사용)
+    # 엔드포인트 보안에 따라 이것을 조정하세요.
     try:
         gcloud_token = subprocess.check_output(
             ["gcloud", "auth", "print-identity-token", "-q"]
         ).decode().strip()
         auth_headers = {"Authorization": f"Bearer {gcloud_token}"}
     except Exception as e:
-        print(f"Warning: Could not get gcloud token - {e}. Endpoint might be unsecured or require different auth.")
-        auth_headers = None # Or handle error appropriately
+        print(f"경고: gcloud 토큰을 가져올 수 없음 - {e}. 엔드포인트가 보안되지 않았거나 다른 인증이 필요할 수 있습니다.")
+        auth_headers = None # 또는 오류를 적절하게 처리
 
     agent_vllm = LlmAgent(
         model=LiteLlm(
             model=model_name_at_endpoint,
             api_base=api_base_url,
-            # Pass authentication headers if needed
+            # 필요한 경우 인증 헤더 전달
             extra_headers=auth_headers
-            # Alternatively, if endpoint uses an API key:
+            # 또는 엔드포인트가 API 키를 사용하는 경우:
             # api_key="YOUR_ENDPOINT_API_KEY"
         ),
         name="vllm_agent",
-        instruction="You are a helpful assistant running on a self-hosted vLLM endpoint.",
-        # ... other agent parameters
+        instruction="당신은 자체 호스팅 vLLM 엔드포인트에서 실행되는 도움이 되는 어시스턴트입니다.",
+        # ... 기타 에이전트 매개변수
     )
     ```
 
-## Using Hosted & Tuned Models on Vertex AI
+## Vertex AI에서 호스팅 및 미세 조정된 모델 사용하기
 
-For enterprise-grade scalability, reliability, and integration with Google
-Cloud's MLOps ecosystem, you can use models deployed to Vertex AI Endpoints.
-This includes models from Model Garden or your own fine-tuned models.
+엔터프라이즈급 확장성, 안정성 및 Google Cloud의 MLOps 생태계와의 통합을 위해 Vertex AI 엔드포인트에 배포된 모델을 사용할 수 있습니다. 여기에는 Model Garden의 모델 또는 자체 미세 조정된 모델이 포함됩니다.
 
-**Integration Method:** Pass the full Vertex AI Endpoint resource string
-(`projects/PROJECT_ID/locations/LOCATION/endpoints/ENDPOINT_ID`) directly to the
-`model` parameter of `LlmAgent`.
+**통합 방법:** 전체 Vertex AI 엔드포인트 리소스 문자열(`projects/PROJECT_ID/locations/LOCATION/endpoints/ENDPOINT_ID`)을 `LlmAgent`의 `model` 매개변수에 직접 전달합니다.
 
-**Vertex AI Setup (Consolidated):**
+**Vertex AI 설정 (통합):**
 
-Ensure your environment is configured for Vertex AI:
+환경이 Vertex AI에 맞게 구성되었는지 확인하세요:
 
-1. **Authentication:** Use Application Default Credentials (ADC):
+1. **인증:** 애플리케이션 기본 자격 증명(ADC) 사용:
 
     ```shell
     gcloud auth application-default login
     ```
 
-2. **Environment Variables:** Set your project and location:
+2. **환경 변수:** 프로젝트 및 위치 설정:
 
     ```shell
     export GOOGLE_CLOUD_PROJECT="YOUR_PROJECT_ID"
-    export GOOGLE_CLOUD_LOCATION="YOUR_VERTEX_AI_LOCATION" # e.g., us-central1
+    export GOOGLE_CLOUD_LOCATION="YOUR_VERTEX_AI_LOCATION" # 예: us-central1
     ```
 
-3. **Enable Vertex Backend:** Crucially, ensure the `google-genai` library
-   targets Vertex AI:
+3. **Vertex 백엔드 활성화:** 결정적으로, `google-genai` 라이브러리가 Vertex AI를 대상으로 하는지 확인하세요:
 
     ```shell
     export GOOGLE_GENAI_USE_VERTEXAI=TRUE
     ```
 
-### Model Garden Deployments
+### Model Garden 배포
 
-![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java support is planned/ coming soon."}
+![python_only](https://img.shields.io/badge/지원되는_언어-Python-blue){ title="이 기능은 현재 Python에서만 사용할 수 있습니다. Java 지원은 계획 중이거나 곧 제공될 예정입니다."}
 
-You can deploy various open and proprietary models from the
-[Vertex AI Model Garden](https://console.cloud.google.com/vertex-ai/model-garden)
-to an endpoint.
+[Vertex AI Model Garden](https://console.cloud.google.com/vertex-ai/model-garden)에서 다양한 개방형 및 독점 모델을 엔드포인트에 배포할 수 있습니다.
 
-**Example:**
+**예제:**
 
 ```python
 from google.adk.agents import LlmAgent
-from google.genai import types # For config objects
+from google.genai import types # config 객체용
 
-# --- Example Agent using a Llama 3 model deployed from Model Garden ---
+# --- Model Garden에서 배포된 Llama 3 모델을 사용하는 에이전트 예제 ---
 
-# Replace with your actual Vertex AI Endpoint resource name
+# 실제 Vertex AI 엔드포인트 리소스 이름으로 교체
 llama3_endpoint = "projects/YOUR_PROJECT_ID/locations/us-central1/endpoints/YOUR_LLAMA3_ENDPOINT_ID"
 
 agent_llama3_vertex = LlmAgent(
     model=llama3_endpoint,
     name="llama3_vertex_agent",
-    instruction="You are a helpful assistant based on Llama 3, hosted on Vertex AI.",
+    instruction="당신은 Vertex AI에서 호스팅되는 Llama 3 기반의 도움이 되는 어시스턴트입니다.",
     generate_content_config=types.GenerateContentConfig(max_output_tokens=2048),
-    # ... other agent parameters
+    # ... 기타 에이전트 매개변수
 )
 ```
 
-### Fine-tuned Model Endpoints
+### 미세 조정된 모델 엔드포인트
 
-![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java support is planned/ coming soon."}
+![python_only](https://img.shields.io/badge/지원되는_언어-Python-blue){ title="이 기능은 현재 Python에서만 사용할 수 있습니다. Java 지원은 계획 중이거나 곧 제공될 예정입니다."}
 
-Deploying your fine-tuned models (whether based on Gemini or other architectures
-supported by Vertex AI) results in an endpoint that can be used directly.
+미세 조정된 모델(Gemini 또는 Vertex AI에서 지원하는 다른 아키텍처 기반)을 배포하면 직접 사용할 수 있는 엔드포인트가 생성됩니다.
 
-**Example:**
+**예제:**
 
 ```python
 from google.adk.agents import LlmAgent
 
-# --- Example Agent using a fine-tuned Gemini model endpoint ---
+# --- 미세 조정된 Gemini 모델 엔드포인트를 사용하는 에이전트 예제 ---
 
-# Replace with your fine-tuned model's endpoint resource name
+# 미세 조정된 모델의 엔드포인트 리소스 이름으로 교체
 finetuned_gemini_endpoint = "projects/YOUR_PROJECT_ID/locations/us-central1/endpoints/YOUR_FINETUNED_ENDPOINT_ID"
 
 agent_finetuned_gemini = LlmAgent(
     model=finetuned_gemini_endpoint,
     name="finetuned_gemini_agent",
-    instruction="You are a specialized assistant trained on specific data.",
-    # ... other agent parameters
+    instruction="당신은 특정 데이터로 훈련된 전문화된 어시스턴트입니다.",
+    # ... 기타 에이전트 매개변수
 )
 ```
 
-### Third-Party Models on Vertex AI (e.g., Anthropic Claude)
+### Vertex AI의 타사 모델 (예: Anthropic Claude)
 
-Some providers, like Anthropic, make their models available directly through
-Vertex AI.
+Anthropic과 같은 일부 제공업체는 Vertex AI를 통해 직접 모델을 제공합니다.
 
 === "Python"
 
-    **Integration Method:** Uses the direct model string (e.g.,
-    `"claude-3-sonnet@20240229"`), *but requires manual registration* within ADK.
+    **통합 방법:** 직접 모델 문자열(예: `"claude-3-sonnet@20240229"`)을 사용하지만, ADK 내에서 *수동 등록*이 필요합니다.
     
-    **Why Registration?** ADK's registry automatically recognizes `gemini-*` strings
-    and standard Vertex AI endpoint strings (`projects/.../endpoints/...`) and
-    routes them via the `google-genai` library. For other model types used directly
-    via Vertex AI (like Claude), you must explicitly tell the ADK registry which
-    specific wrapper class (`Claude` in this case) knows how to handle that model
-    identifier string with the Vertex AI backend.
+    **등록 이유?** ADK의 레지스트리는 `gemini-*` 문자열과 표준 Vertex AI 엔드포인트 문자열(`projects/.../endpoints/...`)을 자동으로 인식하고 `google-genai` 라이브러리를 통해 라우팅합니다. Vertex AI를 통해 직접 사용되는 다른 모델 유형(예: Claude)의 경우, ADK 레지스트리에 해당 모델 식별자 문자열을 Vertex AI 백엔드와 함께 처리하는 방법을 아는 특정 래퍼 클래스(`Claude` 이 경우)를 명시적으로 알려줘야 합니다.
     
-    **Setup:**
+    **설정:**
     
-    1. **Vertex AI Environment:** Ensure the consolidated Vertex AI setup (ADC, Env
-       Vars, `GOOGLE_GENAI_USE_VERTEXAI=TRUE`) is complete.
+    1. **Vertex AI 환경:** 통합 Vertex AI 설정(ADC, 환경 변수, `GOOGLE_GENAI_USE_VERTEXAI=TRUE`)이 완료되었는지 확인합니다.
     
-    2. **Install Provider Library:** Install the necessary client library configured
-       for Vertex AI.
+    2. **제공업체 라이브러리 설치:** Vertex AI용으로 구성된 필요한 클라이언트 라이브러리를 설치합니다.
     
         ```shell
         pip install "anthropic[vertex]"
         ```
     
-    3. **Register Model Class:** Add this code near the start of your application,
-       *before* creating an agent using the Claude model string:
+    3. **모델 클래스 등록:** Claude 모델 문자열을 사용하는 에이전트를 생성하기 *전에* 애플리케이션 시작 부분 근처에 이 코드를 추가합니다:
     
         ```python
-        # Required for using Claude model strings directly via Vertex AI with LlmAgent
+        # LlmAgent와 함께 Vertex AI를 통해 직접 Claude 모델 문자열을 사용하기 위해 필요
         from google.adk.models.anthropic_llm import Claude
         from google.adk.models.registry import LLMRegistry
     
         LLMRegistry.register(Claude)
         ```
     
-       **Example:**
+       **예제:**
 
        ```python
        from google.adk.agents import LlmAgent
-       from google.adk.models.anthropic_llm import Claude # Import needed for registration
-       from google.adk.models.registry import LLMRegistry # Import needed for registration
+       from google.adk.models.anthropic_llm import Claude # 등록에 필요
+       from google.adk.models.registry import LLMRegistry # 등록에 필요
        from google.genai import types
         
-       # --- Register Claude class (do this once at startup) ---
+       # --- Claude 클래스 등록 (시작 시 한 번 수행) ---
        LLMRegistry.register(Claude)
         
-       # --- Example Agent using Claude 3 Sonnet on Vertex AI ---
+       # --- Vertex AI에서 Claude 3 Sonnet을 사용하는 에이전트 예제 ---
         
-       # Standard model name for Claude 3 Sonnet on Vertex AI
+       # Vertex AI에서 Claude 3 Sonnet의 표준 모델 이름
        claude_model_vertexai = "claude-3-sonnet@20240229"
         
        agent_claude_vertexai = LlmAgent(
-           model=claude_model_vertexai, # Pass the direct string after registration
+           model=claude_model_vertexai, # 등록 후 직접 문자열 전달
            name="claude_vertexai_agent",
-           instruction="You are an assistant powered by Claude 3 Sonnet on Vertex AI.",
+           instruction="당신은 Vertex AI에서 Claude 3 Sonnet으로 구동되는 어시스턴트입니다.",
            generate_content_config=types.GenerateContentConfig(max_output_tokens=4096),
-           # ... other agent parameters
+           # ... 기타 에이전트 매개변수
        )
        ```
 
 === "Java"
 
-    **Integration Method:** Directly instantiate the provider-specific model class (e.g., `com.google.adk.models.Claude`) and configure it with a Vertex AI backend.
+    **통합 방법:** 제공업체별 모델 클래스(예: `com.google.adk.models.Claude`)를 직접 인스턴스화하고 Vertex AI 백엔드로 구성합니다.
     
-    **Why Direct Instantiation?** The Java ADK's `LlmRegistry` primarily handles Gemini models by default. For third-party models like Claude on Vertex AI, you directly provide an instance of the ADK's wrapper class (e.g., `Claude`) to the `LlmAgent`. This wrapper class is responsible for interacting with the model via its specific client library, configured for Vertex AI.
+    **직접 인스턴스화 이유?** Java ADK의 `LlmRegistry`는 기본적으로 주로 Gemini 모델을 처리합니다. Vertex AI의 Claude와 같은 타사 모델의 경우, ADK의 래퍼 클래스(예: `Claude`) 인스턴스를 `LlmAgent`에 직접 제공합니다. 이 래퍼 클래스는 Vertex AI용으로 구성된 특정 클라이언트 라이브러리를 통해 모델과 상호 작용할 책임이 있습니다.
     
-    **Setup:**
+    **설정:**
     
-    1.  **Vertex AI Environment:**
-        *   Ensure your Google Cloud project and region are correctly set up.
-        *   **Application Default Credentials (ADC):** Make sure ADC is configured correctly in your environment. This is typically done by running `gcloud auth application-default login`. The Java client libraries will use these credentials to authenticate with Vertex AI. Follow the [Google Cloud Java documentation on ADC](https://cloud.google.com/java/docs/reference/google-auth-library/latest/com.google.auth.oauth2.GoogleCredentials#com_google_auth_oauth2_GoogleCredentials_getApplicationDefault__) for detailed setup.
+    1.  **Vertex AI 환경:**
+        *   Google Cloud 프로젝트 및 리전이 올바르게 설정되었는지 확인합니다.
+        *   **애플리케이션 기본 자격 증명(ADC):** 환경에서 ADC가 올바르게 구성되었는지 확인합니다. 일반적으로 `gcloud auth application-default login`을 실행하여 수행됩니다. Java 클라이언트 라이브러리는 이러한 자격 증명을 사용하여 Vertex AI에 인증합니다. 자세한 설정은 [ADC에 대한 Google Cloud Java 문서](https://cloud.google.com/java/docs/reference/google-auth-library/latest/com.google.auth.oauth2.GoogleCredentials#com_google_auth_oauth2_GoogleCredentials_getApplicationDefault__)를 따르세요.
     
-    2.  **Provider Library Dependencies:**
-        *   **Third-Party Client Libraries (Often Transitive):** The ADK core library often includes the necessary client libraries for common third-party models on Vertex AI (like Anthropic's required classes) as **transitive dependencies**. This means you might not need to explicitly add a separate dependency for the Anthropic Vertex SDK in your `pom.xml` or `build.gradle`.
+    2.  **제공업체 라이브러리 종속성:**
+        *   **타사 클라이언트 라이브러리(종종 전이적):** ADK 코어 라이브러리는 종종 Vertex AI의 일반적인 타사 모델(Anthropic의 필수 클래스 등)에 필요한 클라이언트 라이브러리를 **전이적 종속성**으로 포함합니다. 즉, `pom.xml` 또는 `build.gradle`에 Anthropic Vertex SDK에 대한 별도의 종속성을 명시적으로 추가할 필요가 없을 수 있습니다.
 
-    3.  **Instantiate and Configure the Model:**
-        When creating your `LlmAgent`, instantiate the `Claude` class (or the equivalent for another provider) and configure its `VertexBackend`.
+    3.  **모델 인스턴스화 및 구성:**
+        `LlmAgent`를 생성할 때 `Claude` 클래스(또는 다른 제공업체의 동등한 클래스)를 인스턴스화하고 `VertexBackend`로 구성합니다.
     
-    **Example:**
+    **예제:**
 
     ```java
     import com.anthropic.client.AnthropicClient;
     import com.anthropic.client.okhttp.AnthropicOkHttpClient;
     import com.anthropic.vertex.backends.VertexBackend;
     import com.google.adk.agents.LlmAgent;
-    import com.google.adk.models.Claude; // ADK's wrapper for Claude
+    import com.google.adk.models.Claude; // ADK의 Claude 래퍼
     import com.google.auth.oauth2.GoogleCredentials;
     import java.io.IOException;
 
-    // ... other imports
+    // ... 기타 가져오기
 
     public class ClaudeVertexAiAgent {
 
         public static LlmAgent createAgent() throws IOException {
-            // Model name for Claude 3 Sonnet on Vertex AI (or other versions)
-            String claudeModelVertexAi = "claude-3-7-sonnet"; // Or any other Claude model
+            // Vertex AI의 Claude 3 Sonnet 모델 이름 (또는 다른 버전)
+            String claudeModelVertexAi = "claude-3-7-sonnet"; // 또는 다른 Claude 모델
 
-            // Configure the AnthropicOkHttpClient with the VertexBackend
+            // AnthropicOkHttpClient를 VertexBackend로 구성
             AnthropicClient anthropicClient = AnthropicOkHttpClient.builder()
                 .backend(
                     VertexBackend.builder()
-                        .region("us-east5") // Specify your Vertex AI region
-                        .project("your-gcp-project-id") // Specify your GCP Project ID
+                        .region("us-east5") // Vertex AI 리전 지정
+                        .project("your-gcp-project-id") // GCP 프로젝트 ID 지정
                         .googleCredentials(GoogleCredentials.getApplicationDefault())
                         .build())
                 .build();
 
-            // Instantiate LlmAgent with the ADK Claude wrapper
+            // ADK Claude 래퍼로 LlmAgent 인스턴스화
             LlmAgent agentClaudeVertexAi = LlmAgent.builder()
-                .model(new Claude(claudeModelVertexAi, anthropicClient)) // Pass the Claude instance
+                .model(new Claude(claudeModelVertexAi, anthropicClient)) // Claude 인스턴스 전달
                 .name("claude_vertexai_agent")
-                .instruction("You are an assistant powered by Claude 3 Sonnet on Vertex AI.")
-                // .generateContentConfig(...) // Optional: Add generation config if needed
-                // ... other agent parameters
+                .instruction("당신은 Vertex AI에서 Claude 3 Sonnet으로 구동되는 어시스턴트입니다.")
+                // .generateContentConfig(...) // 필요한 경우 생성 구성 추가
+                // ... 기타 에이전트 매개변수
                 .build();
             
             return agentClaudeVertexAi;
@@ -745,10 +666,10 @@ Vertex AI.
         public static void main(String[] args) {
             try {
                 LlmAgent agent = createAgent();
-                System.out.println("Successfully created agent: " + agent.name());
-                // Here you would typically set up a Runner and Session to interact with the agent
+                System.out.println("에이전트가 성공적으로 생성되었습니다: " + agent.name());
+                // 여기서는 일반적으로 에이전트와 상호 작용하기 위해 Runner와 Session을 설정합니다.
             } catch (IOException e) {
-                System.err.println("Failed to create agent: " + e.getMessage());
+                System.err.println("에이전트 생성 실패: " + e.getMessage());
                 e.printStackTrace();
             }
         }

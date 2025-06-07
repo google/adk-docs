@@ -1,47 +1,47 @@
-# Workflow Agents
+# 워크플로 에이전트
 
-This section introduces "*workflow agents*" - **specialized agents that control the execution flow of its sub-agents**.  
+이 섹션에서는 **하위 에이전트의 실행 흐름을 제어하는 전문화된 에이전트**인 "*워크플로 에이전트*"를 소개합니다.
 
-Workflow agents are specialized components in ADK designed purely for **orchestrating the execution flow of sub-agents**. Their primary role is to manage *how* and *when* other agents run, defining the control flow of a process.
+워크플로 에이전트는 **하위 에이전트의 실행 흐름을 조율**하기 위해 순수하게 설계된 ADK의 전문화된 구성 요소입니다. 주요 역할은 다른 에이전트가 *어떻게* 그리고 *언제* 실행되는지를 관리하여 프로세스의 제어 흐름을 정의하는 것입니다.
 
-Unlike [LLM Agents](../llm-agents.md), which use Large Language Models for dynamic reasoning and decision-making, Workflow Agents operate based on **predefined logic**. They determine the execution sequence according to their type (e.g., sequential, parallel, loop) without consulting an LLM for the orchestration itself. This results in **deterministic and predictable execution patterns**.
+[LLM 에이전트](../llm-agents.md)가 동적 추론 및 의사 결정을 위해 거대 언어 모델을 사용하는 것과 달리, 워크플로 에이전트는 **미리 정의된 로직**을 기반으로 작동합니다. 오케스트레이션 자체에 LLM을 참조하지 않고 유형(예: 순차, 병렬, 루프)에 따라 실행 순서를 결정합니다. 이는 **결정론적이고 예측 가능한 실행 패턴**을 만듭니다.
 
-ADK provides three core workflow agent types, each implementing a distinct execution pattern:
+ADK는 각각 고유한 실행 패턴을 구현하는 세 가지 핵심 워크플로 에이전트 유형을 제공합니다:
 
 <div class="grid cards" markdown>
 
-- :material-console-line: **Sequential Agents**
+- :material-console-line: **순차 에이전트**
 
     ---
 
-    Executes sub-agents one after another, in **sequence**.
+    하위 에이전트를 **순서대로** 하나씩 실행합니다.
 
-    [:octicons-arrow-right-24: Learn more](sequential-agents.md)
+    [:octicons-arrow-right-24: 더 알아보기](sequential-agents.md)
 
-- :material-console-line: **Loop Agents**
-
-    ---
-
-    **Repeatedly** executes its sub-agents until a specific termination condition is met.
-
-    [:octicons-arrow-right-24: Learn more](loop-agents.md)
-
-- :material-console-line: **Parallel Agents**
+- :material-console-line: **루프 에이전트**
 
     ---
 
-    Executes multiple sub-agents in **parallel**.
+    특정 종료 조건이 충족될 때까지 하위 에이전트를 **반복적으로** 실행합니다.
 
-    [:octicons-arrow-right-24: Learn more](parallel-agents.md)
+    [:octicons-arrow-right-24: 더 알아보기](loop-agents.md)
+
+- :material-console-line: **병렬 에이전트**
+
+    ---
+
+    여러 하위 에이전트를 **병렬로** 실행합니다.
+
+    [:octicons-arrow-right-24: 더 알아보기](parallel-agents.md)
 
 </div>
 
-## Why Use Workflow Agents?
+## 워크플로 에이전트를 사용하는 이유
 
-Workflow agents are essential when you need explicit control over how a series of tasks or agents are executed. They provide:
+워크플로 에이전트는 일련의 작업이나 에이전트가 실행되는 방식을 명시적으로 제어해야 할 때 필수적입니다. 다음을 제공합니다:
 
-* **Predictability:** The flow of execution is guaranteed based on the agent type and configuration.
-* **Reliability:** Ensures tasks run in the required order or pattern consistently.
-* **Structure:** Allows you to build complex processes by composing agents within clear control structures.
+*   **예측 가능성:** 실행 흐름은 에이전트 유형 및 구성에 따라 보장됩니다.
+*   **신뢰성:** 작업이 필요한 순서나 패턴으로 일관되게 실행되도록 보장합니다.
+*   **구조:** 명확한 제어 구조 내에서 에이전트를 구성하여 복잡한 프로세스를 구축할 수 있습니다.
 
-While the workflow agent manages the control flow deterministically, the sub-agents it orchestrates can themselves be any type of agent, including intelligent LLM Agent instances. This allows you to combine structured process control with flexible, LLM-powered task execution.
+워크플로 에이전트가 제어 흐름을 결정론적으로 관리하는 동안, 그것이 조율하는 하위 에이전트 자체는 지능적인 LLM 에이전트 인스턴스를 포함하여 모든 유형의 에이전트가 될 수 있습니다. 이를 통해 구조화된 프로세스 제어와 유연한 LLM 기반 작업 실행을 결합할 수 있습니다.
