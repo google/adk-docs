@@ -108,15 +108,22 @@ plugins:
         - locale: ko
           name: 한국어
           build: true
+          nav_translations:
+            Home: 홈
+            Get Started: 시작하기
+            Installation: 설치
+            Tutorials: 튜토리얼
+            Agent Team: 에이전트 팀 구성
         - locale: ja
           name: 日本語
           build: true
+
 
 # Navigation
 nav:
   - Home: index.md
   - Get Started:
-    - get-started/index.md
+    - Get-started/index.md
     - Installation: get-started/installation.md
     - Quickstart: get-started/quickstart.md
     - Quickstart (Streaming):
