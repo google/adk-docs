@@ -1,66 +1,38 @@
 # Model Context Protocol (MCP)
 
-## What is Model Context Protocol (MCP)?
+## 모델 컨텍스트 프로토콜(MCP)이란 무엇인가요?
 
-The
-[Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction) is
-an open standard designed to standardize how Large Language Models (LLMs) like
-Gemini and Claude communicate with external applications, data sources, and
-tools. Think of it as a universal connection mechanism that simplifies how LLMs
-obtain context, execute actions, and interact with various systems.
+[모델 컨텍스트 프로토콜(MCP)](https://modelcontextprotocol.io/introduction)은 Gemini 및 Claude와 같은 거대 언어 모델(LLM)이 외부 애플리케이션, 데이터 소스 및 도구와 통신하는 방법을 표준화하기 위해 설계된 개방형 표준입니다. 이는 LLM이 컨텍스트를 얻고, 작업을 실행하며, 다양한 시스템과 상호 작용하는 방식을 단순화하는 보편적인 연결 메커니즘으로 생각할 수 있습니다.
 
-## How does MCP work?
+## MCP는 어떻게 작동하나요?
 
-MCP follows a client-server architecture, defining how data (resources),
-interactive templates (prompts), and actionable functions (tools) are
-exposed by an MCP server and consumed by an MCP client (which could be
-an LLM host application or an AI agent).
+MCP는 클라이언트-서버 아키텍처를 따르며, 데이터(리소스), 대화형 템플릿(프롬프트), 실행 가능한 함수(도구)가 MCP 서버에 의해 노출되고 MCP 클라이언트(LLM 호스트 애플리케이션 또는 AI 에이전트일 수 있음)에 의해 소비되는 방식을 정의합니다.
 
-## MCP Tools in ADK
+## ADK의 MCP 도구
 
-ADK helps you both use and consume MCP tools in your agents, whether you're
-trying to build a tool to call an MCP service, or exposing an MCP server for
-other developers or agents to interact with your tools.
+ADK는 MCP 서비스를 호출하기 위한 도구를 구축하든, 다른 개발자나 에이전트가 여러분의 도구와 상호 작용할 수 있도록 MCP 서버를 노출하든, 에이전트에서 MCP 도구를 사용하고 소비하는 데 도움을 줍니다.
 
-Refer to the [MCP Tools documentation](../tools/mcp-tools.md) for code samples
-and design patterns that help you use ADK together with MCP servers, including:
+ADK를 MCP 서버와 함께 사용하는 데 도움이 되는 코드 샘플 및 디자인 패턴은 [MCP 도구 문서](../tools/mcp-tools.md)를 참조하세요. 여기에는 다음이 포함됩니다:
 
-- **Using Existing MCP Servers within ADK**: An ADK agent can act as an MCP
-  client and use tools provided by external MCP servers.
-- **Exposing ADK Tools via an MCP Server**: How to build an MCP server that
-  wraps ADK tools, making them accessible to any MCP client.
+-   **ADK 내에서 기존 MCP 서버 사용**: ADK 에이전트는 MCP 클라이언트 역할을 하고 외부 MCP 서버에서 제공하는 도구를 사용할 수 있습니다.
+-   **MCP 서버를 통해 ADK 도구 노출**: ADK 도구를 래핑하여 모든 MCP 클라이언트에서 접근할 수 있도록 하는 MCP 서버를 구축하는 방법.
 
-## MCP Toolbox for Databases
+## 데이터베이스용 MCP 도구 상자
 
-[MCP Toolbox for Databases](https://github.com/googleapis/genai-toolbox) is an
-open source MCP server that helps you build Gen AI tools so that your agents can
-access data in your database. Google’s Agent Development Kit (ADK) has built in
-support for The MCP Toolbox for Databases.
+[데이터베이스용 MCP 도구 상자](https://github.com/googleapis/genai-toolbox)는 에이전트가 데이터베이스의 데이터에 접근할 수 있도록 Gen AI 도구를 구축하는 데 도움이 되는 오픈 소스 MCP 서버입니다. Google의 Agent Development Kit(ADK)는 데이터베이스용 MCP 도구 상자를 기본적으로 지원합니다.
 
-Refer to the
-[MCP Toolbox for Databases](../tools/google-cloud-tools.md#toolbox-tools-for-databases)
-documentation on how you can use ADK together with the MCP Toolbox for
-Databases. For getting started with the MCP Toolbox for Databases, a blog post [Tutorial : MCP Toolbox for Databases - Exposing Big Query Datasets](https://medium.com/google-cloud/tutorial-mcp-toolbox-for-databases-exposing-big-query-datasets-9321f0064f4e) and Codelab [MCP Toolbox for Databases:Making BigQuery datasets available to MCP clients](https://codelabs.developers.google.com/mcp-toolbox-bigquery-dataset?hl=en#0) are also available.
+ADK를 데이터베이스용 MCP 도구 상자와 함께 사용하는 방법에 대한 자세한 내용은 [데이터베이스용 MCP 도구 상자 문서](../tools/google-cloud-tools.md#toolbox-tools-for-databases)를 참조하세요. 데이터베이스용 MCP 도구 상자를 시작하기 위해 블로그 게시물 [튜토리얼: 데이터베이스용 MCP 도구 상자 - BigQuery 데이터 세트 노출](https://medium.com/google-cloud/tutorial-mcp-toolbox-for-databases-exposing-big-query-datasets-9321f0064f4e)과 Codelab [데이터베이스용 MCP 도구 상자: BigQuery 데이터 세트를 MCP 클라이언트에서 사용 가능하게 만들기](https://codelabs.developers.google.com/mcp-toolbox-bigquery-dataset?hl=en#0)도 제공됩니다.
 
-![GenAI Toolbox](../assets/mcp_db_toolbox.png)
+![GenAI 도구 상자](../assets/mcp_db_toolbox.png)
 
-## ADK Agent and FastMCP server
-[FastMCP](https://github.com/jlowin/fastmcp) handles all the complex MCP protocol details and server management, so you can focus on building great tools. It's designed to be high-level and Pythonic; in most cases, decorating a function is all you need.
+## ADK 에이전트와 FastMCP 서버
 
-Refer to the [MCP Tools documentation](../tools/mcp-tools.md) documentation on
-how you can use ADK together with the FastMCP server running on Cloud Run.
+[FastMCP](https://github.com/jlowin/fastmcp)는 복잡한 MCP 프로토콜 세부 정보와 서버 관리를 모두 처리하므로 훌륭한 도구를 구축하는 데 집중할 수 있습니다. 이는 높은 수준의 Pythonic 방식으로 설계되었으며, 대부분의 경우 함수를 데코레이팅하는 것만으로 충분합니다.
 
-## MCP Servers for Google Cloud Genmedia
+ADK를 Cloud Run에서 실행되는 FastMCP 서버와 함께 사용하는 방법에 대한 자세한 내용은 [MCP 도구 문서](../tools/mcp-tools.md)를 참조하세요.
 
-[MCP Tools for Genmedia Services](https://github.com/GoogleCloudPlatform/vertex-ai-creative-studio/tree/main/experiments/mcp-genmedia)
-is a set of open-source MCP servers that enable you to integrate Google Cloud
-generative media services—such as Imagen, Veo, Chirp 3 HD voices, and Lyria—into
-your AI applications.
+## Google Cloud Genmedia용 MCP 서버
 
-Agent Development Kit (ADK) and [Genkit](https://genkit.dev/) provide built-in
-support for these MCP tools, allowing your AI agents to effectively orchestrate
-generative media workflows. For implementation guidance, refer to the [ADK
-example
-agent](https://github.com/GoogleCloudPlatform/vertex-ai-creative-studio/tree/main/experiments/mcp-genmedia/sample-agents/adk)
-and the
-[Genkit example](https://github.com/GoogleCloudPlatform/vertex-ai-creative-studio/tree/main/experiments/mcp-genmedia/sample-agents/genkit).
+[Genmedia 서비스용 MCP 도구](https://github.com/GoogleCloudPlatform/vertex-ai-creative-studio/tree/main/experiments/mcp-genmedia)는 Imagen, Veo, Chirp 3 HD 음성, Lyria와 같은 Google Cloud 생성형 미디어 서비스를 AI 애플리케이션에 통합할 수 있도록 하는 오픈 소스 MCP 서버 세트입니다.
+
+Agent Development Kit(ADK)와 [Genkit](https://genkit.dev/)은 이러한 MCP 도구를 기본적으로 지원하여 AI 에이전트가 생성형 미디어 워크플로를 효과적으로 조율할 수 있도록 합니다. 구현 지침은 [ADK 예제 에이전트](https://github.com/GoogleCloudPlatform/vertex-ai-creative-studio/tree/main/experiments/mcp-genmedia/sample-agents/adk)와 [Genkit 예제](https://github.com/GoogleCloudPlatform/vertex-ai-creative-studio/tree/main/experiments/mcp-genmedia/sample-agents/genkit)를 참조하세요.
