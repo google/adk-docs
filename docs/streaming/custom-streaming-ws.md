@@ -1,42 +1,42 @@
-# 사용자 정의 오디오 스트리밍 앱 (WebSocket) {#custom-streaming-websocket}
+# Custom Audio Streaming app (WebSocket) {#custom-streaming-websocket}
 
-이 글은 ADK 스트리밍과 [FastAPI](https://fastapi.tiangolo.com/)로 구축된 사용자 정의 비동기 웹 앱의 서버 및 클라이언트 코드를 개괄적으로 설명하며, WebSocket을 통한 실시간 양방향 오디오 및 텍스트 통신을 가능하게 합니다.
+This article overviews the server and client code for a custom asynchronous web app built with ADK Streaming and [FastAPI](https://fastapi.tiangolo.com/), enabling real-time, bidirectional audio and text communication with WebSockets.
 
-**참고:** 이 가이드는 JavaScript 및 Python `asyncio` 프로그래밍 경험이 있다고 가정합니다.
+**Note:** This guide assumes you have experience of JavaScript and Python `asyncio` programming.
 
-## 음성/영상 스트리밍 지원 모델 {#supported-models}
+## Supported models for voice/video streaming {#supported-models}
 
-ADK에서 음성/영상 스트리밍을 사용하려면 Live API를 지원하는 Gemini 모델을 사용해야 합니다. 문서에서 Gemini Live API를 지원하는 **모델 ID**를 찾을 수 있습니다:
+In order to use voice/video streaming in ADK, you will need to use Gemini models that support the Live API. You can find the **model ID(s)** that supports the Gemini Live API in the documentation:
 
 - [Google AI Studio: Gemini Live API](https://ai.google.dev/gemini-api/docs/models#live-api)
 - [Vertex AI: Gemini Live API](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api)
 
-## 1. ADK 설치 {#1.-setup-installation}
+## 1. Install ADK {#1.-setup-installation}
 
-가상 환경 생성 및 활성화 (권장):
+Create & Activate Virtual Environment (Recommended):
 
 ```bash
-# 생성
+# Create
 python -m venv .venv
-# 활성화 (새 터미널마다)
+# Activate (each new terminal)
 # macOS/Linux: source .venv/bin/activate
 # Windows CMD: .venv\Scripts\activate.bat
 # Windows PowerShell: .venv\Scripts\Activate.ps1
 ```
 
-ADK 설치:
+Install ADK:
 
 ```bash
 pip install google-adk==1.0.0
 ```
 
-다음 명령어로 `SSL_CERT_FILE` 변수 설정:
+Set `SSL_CERT_FILE` variable with the following command.
 
 ```shell
 export SSL_CERT_FILE=$(python -m certifi)
 ```
 
-샘플 코드 다운로드:
+Download the sample code:
 
 ```bash
 git clone --no-checkout https://github.com/google/adk-docs.git
@@ -47,43 +47,49 @@ git checkout main
 cd examples/python/snippets/streaming/adk-streaming-ws/app
 ```
 
-이 샘플 코드에는 다음과 같은 파일과 폴더가 있습니다:
+This sample code has the following files and folders:
 
 ```console
 adk-streaming-ws/
-└── app/ # 웹 앱 폴더
-    ├── .env # Gemini API 키 / Google Cloud 프로젝트 ID
-    ├── main.py # FastAPI 웹 앱
-    ├── static/ # 정적 콘텐츠 폴더
-    |   ├── js # JavaScript 파일 폴더 (app.js 포함)
-    |   └── index.html # 웹 클라이언트 페이지
-    └── google_search_agent/ # 에이전트 폴더
-        ├── __init__.py # Python 패키지
-        └── agent.py # 에이전트 정의
+└── app/ # the web app folder
+    ├── .env # Gemini API key / Google Cloud Project ID
+    ├── main.py # FastAPI web app
+    ├── static/ # Static content folder
+    |   ├── js # JavaScript files folder (includes app.js)
+    |   └── index.html # The web client page
+    └── google_search_agent/ # Agent folder
+        ├── __init__.py # Python package
+        └── agent.py # Agent definition
 ```
 
-## 2. 플랫폼 설정 {#2.-set-up-the-platform}
+## 2\. Set up the platform {#2.-set-up-the-platform}
 
-샘플 앱을 실행하려면 Google AI Studio 또는 Google Cloud Vertex AI 중에서 플랫폼을 선택하세요:
+To run the sample app, choose a platform from either Google AI Studio or Google Cloud Vertex AI:
 
 === "Gemini - Google AI Studio"
-    1. [Google AI Studio](https://aistudio.google.com/apikey)에서 API 키를 받으세요.
-    2. (`app/` 안에 있는) **`.env`** 파일을 열고 다음 코드를 복사하여 붙여넣습니다.
+    1. Get an API key from [Google AI Studio](https://aistudio.google.com/apikey).
+    2. Open the **`.env`** file located inside (`app/`) and copy-paste the following code.
 
         ```env title=".env"
         GOOGLE_GENAI_USE_VERTEXAI=FALSE
         GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_API_KEY_HERE
         ```
 
-    3. `PASTE_YOUR_ACTUAL_API_KEY_HERE`를 실제 `API 키`로 교체하세요.
+    3. Replace `PASTE_YOUR_ACTUAL_API_KEY_HERE` with your actual `API KEY`.
 
 === "Gemini - Google Cloud Vertex AI"
-    1. 기존 [Google Cloud](https://cloud.google.com/?e=48754805&hl=en) 계정과 프로젝트가 필요합니다.
-        * [Google Cloud 프로젝트 설정](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-gcp)
-        * [gcloud CLI 설정](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-local)
-        * 터미널에서 `gcloud auth login`을 실행하여 Google Cloud에 인증하세요.
-        * [Vertex AI API 활성화](https://console.cloud.google.com/flows/enableapi?apiid=aiplatform.googleapis.com).
-    2. (`app/` 안에 있는) **`.env`** 파일을 엽니다. 다음 코드를 복사하여 붙여넣고 프로젝트 ID와 위치를 업데이트하세요.
+    1. You need an existing
+       [Google Cloud](https://cloud.google.com/?e=48754805&hl=en) account and a
+       project.
+        * Set up a
+          [Google Cloud project](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-gcp)
+        * Set up the
+          [gcloud CLI](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-local)
+        * Authenticate to Google Cloud, from the terminal by running
+          `gcloud auth login`.
+        * [Enable the Vertex AI API](https://console.cloud.google.com/flows/enableapi?apiid=aiplatform.googleapis.com).
+    2. Open the **`.env`** file located inside (`app/`). Copy-paste
+       the following code and update the project ID and location.
 
         ```env title=".env"
         GOOGLE_GENAI_USE_VERTEXAI=TRUE
@@ -94,95 +100,95 @@ adk-streaming-ws/
 
 ### agent.py
 
-`google_search_agent` 폴더의 에이전트 정의 코드 `agent.py`는 에이전트의 로직이 작성되는 곳입니다:
+The agent definition code `agent.py` in the `google_search_agent` folder is where the agent's logic is written:
 
 
 ```py
 from google.adk.agents import Agent
-from google.adk.tools import google_search  # 도구 가져오기
+from google.adk.tools import google_search  # Import the tool
 
 root_agent = Agent(
    name="google_search_agent",
-   model="gemini-2.0-flash-exp", # 이 모델이 작동하지 않으면 아래 모델을 시도하세요
+   model="gemini-2.0-flash-exp", # if this model does not work, try below
    #model="gemini-2.0-flash-live-001",
-   description="Google 검색을 사용하여 질문에 답하는 에이전트.",
-   instruction="Google 검색 도구를 사용하여 질문에 답하세요.",
+   description="Agent to answer questions using Google Search.",
+   instruction="Answer the question using the Google Search tool.",
    tools=[google_search],
 )
 ```
 
-**참고:** 텍스트와 오디오/비디오 입력을 모두 활성화하려면 모델이 generateContent (텍스트용) 및 bidiGenerateContent 메서드를 지원해야 합니다. [모델 목록 문서](https://ai.google.dev/api/models#method:-models.list)를 참조하여 이러한 기능을 확인하세요. 이 빠른 시작에서는 시연 목적으로 gemini-2.0-flash-exp 모델을 활용합니다.
+**Note:**  To enable both text and audio/video input, the model must support the generateContent (for text) and bidiGenerateContent methods. Verify these capabilities by referring to the [List Models Documentation](https://ai.google.dev/api/models#method:-models.list). This quickstart utilizes the gemini-2.0-flash-exp model for demonstration purposes.
 
-[Google 검색을 통한 그라운딩](https://ai.google.dev/gemini-api/docs/grounding?lang=python#configure-search) 기능이 얼마나 쉽게 통합되었는지 주목하세요. `Agent` 클래스와 `google_search` 도구는 LLM 및 검색 API와의 복잡한 상호작용을 처리하므로, 여러분은 에이전트의 *목적*과 *행동*에 집중할 수 있습니다.
+Notice how easily you integrated [grounding with Google Search](https://ai.google.dev/gemini-api/docs/grounding?lang=python#configure-search) capabilities.  The `Agent` class and the `google_search` tool handle the complex interactions with the LLM and grounding with the search API, allowing you to focus on the agent's *purpose* and *behavior*.
 
-![인트로 컴포넌트](../assets/quickstart-streaming-tool.png)
+![intro_components.png](../assets/quickstart-streaming-tool.png)
 
-## 3. 스트리밍 앱과 상호작용하기 {#3.-interact-with-your-streaming-app}
+## 3\. Interact with Your Streaming app {#3.-interact-with-your-streaming-app}
 
-1. **올바른 디렉토리로 이동:**
+1\. **Navigate to the Correct Directory:**
 
-   에이전트를 효과적으로 실행하려면 **app 폴더 (`adk-streaming-ws/app`)**에 있는지 확인하세요.
+   To run your agent effectively, make sure you are in the **app folder (`adk-streaming-ws/app`)**
 
-2. **FastAPI 시작**: 다음 명령어를 실행하여 CLI 인터페이스 시작
+2\. **Start the Fast API**: Run the following command to start CLI interface with
 
 ```console
 uvicorn main:app --reload
 ```
 
-3. **텍스트 모드로 앱에 접속:** 앱이 시작되면 터미널에 로컬 URL(예: [http://localhost:8000](http://localhost:8000))이 표시됩니다. 이 링크를 클릭하여 브라우저에서 UI를 엽니다.
+3\. **Access the app with the text mode:** Once the app starts, the terminal will display a local URL (e.g., [http://localhost:8000](http://localhost:8000)). Click this link to open the UI in your browser.
 
-이제 다음과 같은 UI가 표시됩니다:
+Now you should see the UI like this:
 
-![ADK 스트리밍 앱](../assets/adk-streaming-text.png)
+![ADK Streaming app](../assets/adk-streaming-text.png)
 
-`지금 몇 시야?`와 같은 질문을 해보세요. 에이전트는 Google 검색을 사용하여 쿼리에 응답합니다. UI에 에이전트의 응답이 스트리밍 텍스트로 표시되는 것을 알 수 있습니다. 또한 에이전트가 아직 응답 중일 때도 언제든지 메시지를 보낼 수 있습니다. 이는 ADK 스트리밍의 양방향 통신 기능을 보여줍니다.
+Try asking a question `What time is it now?`. The agent will use Google Search to respond to your queries. You would notice that the UI shows the agent's response as streaming text. You can also send messages to the agent at any time, even while the agent is still responding. This demonstrates the bidirectional communication capability of ADK Streaming.
 
-4. **오디오 모드로 앱에 접속:** 이제 `오디오 시작` 버튼을 클릭합니다. 앱이 오디오 모드로 서버와 다시 연결되고, UI에 처음으로 다음과 같은 대화 상자가 표시됩니다:
+4\. **Access the app with the audio mode:** Now click the `Start Audio` button. The app reconnects with the server in an audio mode, and the UI will show the following dialog for the first time:
 
-![ADK 스트리밍 앱](../assets/adk-streaming-audio-dialog.png)
+![ADK Streaming app](../assets/adk-streaming-audio-dialog.png)
 
-`사이트 방문 중 허용`을 클릭하면 브라우저 상단에 마이크 아이콘이 표시됩니다:
+Click `Allow while visiting the site`, then you will see the microphone icon will be shown at the top of the browser:
 
-![ADK 스트리밍 앱](../assets/adk-streaming-mic.png)
+![ADK Streaming app](../assets/adk-streaming-mic.png)
 
-이제 음성으로 에이전트와 대화할 수 있습니다. `지금 몇 시야?`와 같은 질문을 음성으로 하면 에이전트도 음성으로 응답하는 것을 들을 수 있습니다. ADK용 스트리밍은 [다양한 언어](https://ai.google.dev/gemini-api/docs/live#supported-languages)를 지원하므로 지원되는 언어로 된 질문에도 응답할 수 있습니다.
+Now you can talk to the agent with voice. Ask questions like `What time is it now?` with voice and you will hear the agent responding in voice too. As Streaming for ADK supports [multiple languages](https://ai.google.dev/gemini-api/docs/live#supported-languages), it can also respond to question in the supported languages.
 
-5. **콘솔 로그 확인**
+5\. **Check console logs**
 
-Chrome 브라우저를 사용하는 경우 마우스 오른쪽 버튼을 클릭하고 `검사`를 선택하여 개발자 도구를 엽니다. `콘솔`에서 브라우저와 서버 간에 스트리밍되는 오디오 데이터를 나타내는 `[클라이언트에서 에이전트로]` 및 `[에이전트에서 클라이언트로]`와 같은 들어오고 나가는 오디오 데이터를 볼 수 있습니다.
+If you are using the Chrome browser, use the right click and select `Inspect` to open the DevTools. On the `Console`, you can see the incoming and outgoing audio data such as `[CLIENT TO AGENT]` and `[AGENT TO CLIENT]`, representing the audio data streaming in and out between the browser and the server.
 
-동시에 앱 서버 콘솔에는 다음과 같은 내용이 표시됩니다:
+At the same time, in the app server console, you should see something like this:
 
 ```
 INFO:     ('127.0.0.1', 50068) - "WebSocket /ws/70070018?is_audio=true" [accepted]
-클라이언트 #70070018 연결됨, 오디오 모드: true
-INFO:     연결 열림
+Client #70070018 connected, audio mode: true
+INFO:     connection open
 INFO:     127.0.0.1:50061 - "GET /static/js/pcm-player-processor.js HTTP/1.1" 200 OK
 INFO:     127.0.0.1:50060 - "GET /static/js/pcm-recorder-processor.js HTTP/1.1" 200 OK
-[에이전트에서 클라이언트로]: audio/pcm: 9600 바이트.
+[AGENT TO CLIENT]: audio/pcm: 9600 bytes.
 INFO:     127.0.0.1:50082 - "GET /favicon.ico HTTP/1.1" 404 Not Found
-[에이전트에서 클라이언트로]: audio/pcm: 11520 바이트.
-[에이전트에서 클라이언트로]: audio/pcm: 11520 바이트.
+[AGENT TO CLIENT]: audio/pcm: 11520 bytes.
+[AGENT TO CLIENT]: audio/pcm: 11520 bytes.
 ```
 
-이러한 콘솔 로그는 자신만의 스트리밍 애플리케이션을 개발할 경우 중요합니다. 많은 경우 브라우저와 서버 간의 통신 실패가 스트리밍 애플리케이션 버그의 주요 원인이 됩니다.
+These console logs are important in case you develop your own streaming application. In many cases, the communication failure between the browser and server becomes a major cause for the streaming application bugs.
 
-6. **문제 해결 팁**
+6\. **Troubleshooting tips**
 
-- **`ws://`가 작동하지 않을 때:** Chrome 개발자 도구에서 `ws://` 연결과 관련된 오류가 표시되면 `app/static/js/app.js` 28행에서 `ws://`를 `wss://`로 교체해 보세요. 이는 클라우드 환경에서 샘플을 실행하고 브라우저에서 프록시 연결을 사용하여 연결할 때 발생할 수 있습니다.
-- **`gemini-2.0-flash-exp` 모델이 작동하지 않을 때:** 앱 서버 콘솔에서 `gemini-2.0-flash-exp` 모델 가용성과 관련된 오류가 표시되면 `app/google_search_agent/agent.py` 6행에서 `gemini-2.0-flash-live-001`로 교체해 보세요.
+- **When `ws://` doesn't work:** If you see any errors on the Chrome DevTools with regard to `ws://` connection, try replacing `ws://` with `wss://` on `app/static/js/app.js` at line 28. This may happen when you are running the sample on a cloud environment and using a proxy connection to connect from your browser.
+- **When `gemini-2.0-flash-exp` model doesn't work:** If you see any errors on the app server console with regard to `gemini-2.0-flash-exp` model availability, try replacing it with `gemini-2.0-flash-live-001` on `app/google_search_agent/agent.py` at line 6.
 
-## 4. 서버 코드 개요 {#4.-server-side-code-overview}
+## 4. Server code overview {#4.-server-side-code-overview}
 
-이 서버 앱은 WebSocket을 통해 ADK 에이전트와 실시간 스트리밍 상호 작용을 가능하게 합니다. 클라이언트는 텍스트/오디오를 ADK 에이전트로 보내고 스트리밍된 텍스트/오디오 응답을 받습니다.
+This server app enables real-time, streaming interaction with ADK agent via WebSockets. Clients send text/audio to the ADK agent and receive streamed text/audio responses.
 
-핵심 기능:
-1.  ADK 에이전트 세션 초기화/관리.
-2.  클라이언트 WebSocket 연결 처리.
-3.  클라이언트 메시지를 ADK 에이전트로 전달.
-4.  ADK 에이전트 응답(텍스트/오디오)을 클라이언트로 스트리밍.
+Core functions:
+1.  Initialize/manage ADK agent sessions.
+2.  Handle client WebSocket connections.
+3.  Relay client messages to the ADK agent.
+4.  Stream ADK agent responses (text/audio) to clients.
 
-### ADK 스트리밍 설정
+### ADK Streaming Setup
 
 ```py
 import os
@@ -211,37 +217,37 @@ from fastapi.responses import FileResponse
 from google_search_agent.agent import root_agent
 ```
 
-*   **가져오기:** 표준 Python 라이브러리, 환경 변수용 `dotenv`, Google ADK 및 FastAPI를 포함합니다.
-*   **`load_dotenv()`:** 환경 변수를 로드합니다.
-*   **`APP_NAME`**: ADK용 애플리케이션 식별자입니다.
-*   **`session_service = InMemorySessionService()`**: 단일 인스턴스 또는 개발용으로 적합한 인메모리 ADK 세션 서비스를 초기화합니다. 프로덕션 환경에서는 영구 저장소를 사용할 수 있습니다.
+*   **Imports:** Includes standard Python libraries, `dotenv` for environment variables, Google ADK, and FastAPI.
+*   **`load_dotenv()`:** Loads environment variables.
+*   **`APP_NAME`**: Application identifier for ADK.
+*   **`session_service = InMemorySessionService()`**: Initializes an in-memory ADK session service, suitable for single-instance or development use. Production might use a persistent store.
 
 ### `start_agent_session(session_id, is_audio=False)`
 
 ```py
 async def start_agent_session(user_id, is_audio=False):
-    """에이전트 세션을 시작합니다"""
+    """Starts an agent session"""
 
-    # Runner 생성
+    # Create a Runner
     runner = InMemoryRunner(
         app_name=APP_NAME,
         agent=root_agent,
     )
 
-    # 세션 생성
+    # Create a Session
     session = await runner.session_service.create_session(
         app_name=APP_NAME,
-        user_id=user_id,  # 실제 사용자 ID로 교체
+        user_id=user_id,  # Replace with actual user ID
     )
 
-    # 응답 양식 설정
+    # Set response modality
     modality = "AUDIO" if is_audio else "TEXT"
     run_config = RunConfig(response_modalities=[modality])
 
-    # 이 세션에 대한 LiveRequestQueue 생성
+    # Create a LiveRequestQueue for this session
     live_request_queue = LiveRequestQueue()
 
-    # 에이전트 세션 시작
+    # Start agent session
     live_events = runner.run_live(
         session=session,
         live_request_queue=live_request_queue,
@@ -250,51 +256,51 @@ async def start_agent_session(user_id, is_audio=False):
     return live_events, live_request_queue
 ```
 
-이 함수는 ADK 에이전트 라이브 세션을 초기화합니다.
+This function initializes an ADK agent live session.
 
-| 매개변수    | 유형    | 설명                                             |
+| Parameter    | Type    | Description                                             |
 |--------------|---------|---------------------------------------------------------|
-| `user_id` | `str`   | 고유한 클라이언트 식별자.                       |
-| `is_audio`   | `bool`  | `True`는 오디오 응답, `False`는 텍스트(기본값). |
+| `user_id` | `str`   | Unique client identifier.                       |
+| `is_audio`   | `bool`  | `True` for audio responses, `False` for text (default). |
 
-**주요 단계:**
-1. **Runner 생성:** `root_agent`에 대한 ADK 러너를 인스턴스화합니다.
-2. **세션 생성:** ADK 세션을 설정합니다.
-3. **응답 양식 설정:** 에이전트 응답을 "AUDIO" 또는 "TEXT"로 구성합니다.
-4. **LiveRequestQueue 생성:** 에이전트에 대한 클라이언트 입력을 위한 큐를 생성합니다.
-5. **에이전트 세션 시작:** `runner.run_live(...)`는 에이전트를 시작하며 다음을 반환합니다:
-    * `live_events`: 에이전트 이벤트(텍스트, 오디오, 완료)에 대한 비동기 반복 가능 객체.
-    * `live_request_queue`: 에이전트에 데이터를 보내기 위한 큐.
+**Key Steps:**
+1\.  **Create Runner:** Instantiates the ADK runner for the `root_agent`.
+2\.  **Create Session:** Establishes an ADK session.
+3\.  **Set Response Modality:** Configures agent response as "AUDIO" or "TEXT".
+4\.  **Create LiveRequestQueue:** Creates a queue for client inputs to the agent.
+5\.  **Start Agent Session:** `runner.run_live(...)` starts the agent, returning:
+    *   `live_events`: Asynchronous iterable for agent events (text, audio, completion).
+    *   `live_request_queue`: Queue to send data to the agent.
 
-**반환:** `(live_events, live_request_queue)`.
+**Returns:** `(live_events, live_request_queue)`.
 
 ### `agent_to_client_messaging(websocket, live_events)`
 
 ```py
 
 async def agent_to_client_messaging(websocket, live_events):
-    """에이전트에서 클라이언트로 통신"""
+    """Agent to client communication"""
     while True:
         async for event in live_events:
 
-            # 턴이 완료되거나 중단되면 전송
+            # If the turn complete or interrupted, send it
             if event.turn_complete or event.interrupted:
                 message = {
                     "turn_complete": event.turn_complete,
                     "interrupted": event.interrupted,
                 }
                 await websocket.send_text(json.dumps(message))
-                print(f"[에이전트에서 클라이언트로]: {message}")
+                print(f"[AGENT TO CLIENT]: {message}")
                 continue
 
-            # 콘텐츠와 첫 번째 파트 읽기
+            # Read the Content and its first Part
             part: Part = (
                 event.content and event.content.parts and event.content.parts[0]
             )
             if not part:
                 continue
 
-            # 오디오인 경우 Base64로 인코딩된 오디오 데이터 전송
+            # If it's audio, send Base64 encoded audio data
             is_audio = part.inline_data and part.inline_data.mime_type.startswith("audio/pcm")
             if is_audio:
                 audio_data = part.inline_data and part.inline_data.data
@@ -304,67 +310,67 @@ async def agent_to_client_messaging(websocket, live_events):
                         "data": base64.b64encode(audio_data).decode("ascii")
                     }
                     await websocket.send_text(json.dumps(message))
-                    print(f"[에이전트에서 클라이언트로]: audio/pcm: {len(audio_data)} 바이트.")
+                    print(f"[AGENT TO CLIENT]: audio/pcm: {len(audio_data)} bytes.")
                     continue
 
-            # 텍스트이고 부분 텍스트인 경우 전송
+            # If it's text and a parial text, send it
             if part.text and event.partial:
                 message = {
                     "mime_type": "text/plain",
                     "data": part.text
                 }
                 await websocket.send_text(json.dumps(message))
-                print(f"[에이전트에서 클라이언트로]: text/plain: {message}")
+                print(f"[AGENT TO CLIENT]: text/plain: {message}")
 ```
 
-이 비동기 함수는 ADK 에이전트 이벤트를 WebSocket 클라이언트로 스트리밍합니다.
+This asynchronous function streams ADK agent events to the WebSocket client.
 
-**로직:**
-1. 에이전트의 `live_events`를 반복합니다.
-2. **턴 완료/중단:** 상태 플래그를 클라이언트로 보냅니다.
-3. **콘텐츠 처리:**
-    * 이벤트 콘텐츠에서 첫 번째 `Part`를 추출합니다.
-    * **오디오 데이터:** 오디오(PCM)인 경우 Base64로 인코딩하여 JSON으로 보냅니다: `{ "mime_type": "audio/pcm", "data": "<base64_audio>" }`.
-    * **텍스트 데이터:** 부분 텍스트인 경우 JSON으로 보냅니다: `{ "mime_type": "text/plain", "data": "<partial_text>" }`.
-4. 메시지를 기록합니다.
+**Logic:**
+1.  Iterates through `live_events` from the agent.
+2.  **Turn Completion/Interruption:** Sends status flags to the client.
+3.  **Content Processing:**
+    *   Extracts the first `Part` from event content.
+    *   **Audio Data:** If audio (PCM), Base64 encodes and sends it as JSON: `{ "mime_type": "audio/pcm", "data": "<base64_audio>" }`.
+    *   **Text Data:** If partial text, sends it as JSON: `{ "mime_type": "text/plain", "data": "<partial_text>" }`.
+4.  Logs messages.
 
 ### `client_to_agent_messaging(websocket, live_request_queue)`
 
 ```py
 
 async def client_to_agent_messaging(websocket, live_request_queue):
-    """클라이언트에서 에이전트로 통신"""
+    """Client to agent communication"""
     while True:
-        # JSON 메시지 디코딩
+        # Decode JSON message
         message_json = await websocket.receive_text()
         message = json.loads(message_json)
         mime_type = message["mime_type"]
         data = message["data"]
 
-        # 에이전트로 메시지 전송
+        # Send the message to the agent
         if mime_type == "text/plain":
-            # 텍스트 메시지 전송
+            # Send a text message
             content = Content(role="user", parts=[Part.from_text(text=data)])
             live_request_queue.send_content(content=content)
-            print(f"[클라이언트에서 에이전트로]: {data}")
+            print(f"[CLIENT TO AGENT]: {data}")
         elif mime_type == "audio/pcm":
-            # 오디오 데이터 전송
+            # Send an audio data
             decoded_data = base64.b64decode(data)
             live_request_queue.send_realtime(Blob(data=decoded_data, mime_type=mime_type))
         else:
-            raise ValueError(f"지원되지 않는 Mime 유형: {mime_type}")
+            raise ValueError(f"Mime type not supported: {mime_type}")
 ```
 
-이 비동기 함수는 WebSocket 클라이언트의 메시지를 ADK 에이전트로 전달합니다.
+This asynchronous function relays messages from the WebSocket client to the ADK agent.
 
-**로직:**
-1. WebSocket에서 JSON 메시지를 수신하고 구문 분석합니다. 예상 형식: `{ "mime_type": "text/plain" | "audio/pcm", "data": "<data>" }`.
-2. **텍스트 입력:** "text/plain"의 경우 `live_request_queue.send_content()`를 통해 `Content`를 에이전트로 보냅니다.
-3. **오디오 입력:** "audio/pcm"의 경우 Base64 데이터를 디코딩하고 `Blob`으로 래핑한 다음 `live_request_queue.send_realtime()`을 통해 보냅니다.
-4. 지원되지 않는 MIME 유형에 대해 `ValueError`를 발생시킵니다.
-5. 메시지를 기록합니다.
+**Logic:**
+1.  Receives and parses JSON messages from the WebSocket, expecting: `{ "mime_type": "text/plain" | "audio/pcm", "data": "<data>" }`.
+2.  **Text Input:** For "text/plain", sends `Content` to agent via `live_request_queue.send_content()`.
+3.  **Audio Input:** For "audio/pcm", decodes Base64 data, wraps in `Blob`, and sends via `live_request_queue.send_realtime()`.
+4.  Raises `ValueError` for unsupported MIME types.
+5.  Logs messages.
 
-### FastAPI 웹 애플리케이션
+### FastAPI Web Application
 
 ```py
 
@@ -376,23 +382,23 @@ app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 @app.get("/")
 async def root():
-    """index.html을 제공합니다"""
+    """Serves the index.html"""
     return FileResponse(os.path.join(STATIC_DIR, "index.html"))
 
 
 @app.websocket("/ws/{user_id}")
 async def websocket_endpoint(websocket: WebSocket, user_id: int, is_audio: str):
-    """클라이언트 websocket 엔드포인트"""
+    """Client websocket endpoint"""
 
-    # 클라이언트 연결 대기
+    # Wait for client connection
     await websocket.accept()
-    print(f"클라이언트 #{user_id} 연결됨, 오디오 모드: {is_audio}")
+    print(f"Client #{user_id} connected, audio mode: {is_audio}")
 
-    # 에이전트 세션 시작
+    # Start agent session
     user_id_str = str(user_id)
     live_events, live_request_queue = await start_agent_session(user_id_str, is_audio == "true")
 
-    # 작업 시작
+    # Start tasks
     agent_to_client_task = asyncio.create_task(
         agent_to_client_messaging(websocket, live_events)
     )
@@ -400,96 +406,97 @@ async def websocket_endpoint(websocket: WebSocket, user_id: int, is_audio: str):
         client_to_agent_messaging(websocket, live_request_queue)
     )
 
-    # 웹소켓 연결이 끊어지거나 오류가 발생할 때까지 대기
+    # Wait until the websocket is disconnected or an error occurs
     tasks = [agent_to_client_task, client_to_agent_task]
     await asyncio.wait(tasks, return_when=asyncio.FIRST_EXCEPTION)
 
-    # LiveRequestQueue 닫기
+    # Close LiveRequestQueue
     live_request_queue.close()
 
-    # 연결 끊김
-    print(f"클라이언트 #{user_id} 연결 끊김")
+    # Disconnected
+    print(f"Client #{user_id} disconnected")
+
 ```
 
-*   **`app = FastAPI()`**: 애플리케이션을 초기화합니다.
-*   **정적 파일:** `/static` 아래의 `static` 디렉토리에서 파일을 제공합니다.
-*   **`@app.get("/")` (루트 엔드포인트):** `index.html`을 제공합니다.
-*   **`@app.websocket("/ws/{user_id}")` (WebSocket 엔드포인트):**
-    *   **경로 매개변수:** `user_id` (int) 및 `is_audio` (str: "true"/"false").
-    *   **연결 처리:**
-        1. WebSocket 연결을 수락합니다.
-        2. `user_id` 및 `is_audio`를 사용하여 `start_agent_session()`을 호출합니다.
-        3. **동시 메시징 작업:** `asyncio.gather`를 사용하여 `agent_to_client_messaging` 및 `client_to_agent_messaging`을 동시에 생성하고 실행합니다. 이러한 작업은 양방향 메시지 흐름을 처리합니다.
-        4. 클라이언트 연결 및 연결 끊김을 기록합니다.
+*   **`app = FastAPI()`**: Initializes the application.
+*   **Static Files:** Serves files from the `static` directory under `/static`.
+*   **`@app.get("/")` (Root Endpoint):** Serves `index.html`.
+*   **`@app.websocket("/ws/{user_id}")` (WebSocket Endpoint):**
+    *   **Path Parameters:** `user_id` (int) and `is_audio` (str: "true"/"false").
+    *   **Connection Handling:**
+        1.  Accepts WebSocket connection.
+        2.  Calls `start_agent_session()` using `user_id` and `is_audio`.
+        3.  **Concurrent Messaging Tasks:** Creates and runs `agent_to_client_messaging` and `client_to_agent_messaging` concurrently using `asyncio.gather`. These tasks handle bidirectional message flow.
+        4.  Logs client connection and disconnection.
 
-### 작동 방식 (전체 흐름)
+### How It Works (Overall Flow)
 
-1. 클라이언트가 `ws://<server>/ws/<user_id>?is_audio=<true_or_false>`에 연결합니다.
-2. 서버의 `websocket_endpoint`가 수락하고 ADK 세션을 시작합니다(`start_agent_session`).
-3. 두 개의 `asyncio` 작업이 통신을 관리합니다:
-    * `client_to_agent_messaging`: 클라이언트 WebSocket 메시지 -> ADK `live_request_queue`.
-    * `agent_to_client_messaging`: ADK `live_events` -> 클라이언트 WebSocket.
-4. 연결이 끊어지거나 오류가 발생할 때까지 양방향 스트리밍이 계속됩니다.
+1.  Client connects to `ws://<server>/ws/<user_id>?is_audio=<true_or_false>`.
+2.  Server's `websocket_endpoint` accepts, starts ADK session (`start_agent_session`).
+3.  Two `asyncio` tasks manage communication:
+    *   `client_to_agent_messaging`: Client WebSocket messages -> ADK `live_request_queue`.
+    *   `agent_to_client_messaging`: ADK `live_events` -> Client WebSocket.
+4.  Bidirectional streaming continues until disconnection or error.
 
-## 5. 클라이언트 코드 개요 {#5.-client-side-code-overview}
+## 5. Client code overview {#5.-client-side-code-overview}
 
-JavaScript `app.js`(`app/static/js`에 있음)는 ADK 스트리밍 WebSocket 백엔드와의 클라이언트 측 상호 작용을 관리합니다. 텍스트/오디오를 보내고 스트리밍된 응답을 수신/표시하는 것을 처리합니다.
+The JavaScript `app.js` (in `app/static/js`) manages client-side interaction with the ADK Streaming WebSocket backend. It handles sending text/audio and receiving/displaying streamed responses.
 
-주요 기능:
-1. WebSocket 연결 관리.
-2. 텍스트 입력 처리.
-3. 마이크 오디오 캡처(Web Audio API, AudioWorklets).
-4. 백엔드로 텍스트/오디오 전송.
-5. 텍스트/오디오 에이전트 응답 수신 및 렌더링.
-6. UI 관리.
+Key functionalities:
+1.  Manage WebSocket connection.
+2.  Handle text input.
+3.  Capture microphone audio (Web Audio API, AudioWorklets).
+4.  Send text/audio to backend.
+5.  Receive and render text/audio agent responses.
+6.  Manage UI.
 
-### 전제 조건
+### Prerequisites
 
-*   **HTML 구조:** 특정 요소 ID가 필요합니다(예: `messageForm`, `message`, `messages`, `sendButton`, `startAudioButton`).
-*   **백엔드 서버:** Python FastAPI 서버가 실행 중이어야 합니다.
-*   **오디오 워클릿 파일:** 오디오 처리를 위한 `audio-player.js` 및 `audio-recorder.js`.
+*   **HTML Structure:** Requires specific element IDs (e.g., `messageForm`, `message`, `messages`, `sendButton`, `startAudioButton`).
+*   **Backend Server:** The Python FastAPI server must be running.
+*   **Audio Worklet Files:** `audio-player.js` and `audio-recorder.js` for audio processing.
 
-### WebSocket 처리
+### WebSocket Handling
 
 ```JavaScript
 
-// WebSocket 연결로 서버에 연결
+// Connect the server with a WebSocket connection
 const sessionId = Math.random().toString().substring(10);
 const ws_url =
   "ws://" + window.location.host + "/ws/" + sessionId;
 let websocket = null;
 let is_audio = false;
 
-// DOM 요소 가져오기
+// Get DOM elements
 const messageForm = document.getElementById("messageForm");
 const messageInput = document.getElementById("message");
 const messagesDiv = document.getElementById("messages");
 let currentMessageId = null;
 
-// WebSocket 핸들러
+// WebSocket handlers
 function connectWebsocket() {
-  // WebSocket 연결
+  // Connect websocket
   websocket = new WebSocket(ws_url + "?is_audio=" + is_audio);
 
-  // 연결 열림 처리
+  // Handle connection open
   websocket.onopen = function () {
-    // 연결 열림 메시지
-    console.log("WebSocket 연결이 열렸습니다.");
-    document.getElementById("messages").textContent = "연결이 열렸습니다.";
+    // Connection opened messages
+    console.log("WebSocket connection opened.");
+    document.getElementById("messages").textContent = "Connection opened";
 
-    // 보내기 버튼 활성화
+    // Enable the Send button
     document.getElementById("sendButton").disabled = false;
     addSubmitHandler();
   };
 
-  // 들어오는 메시지 처리
+  // Handle incoming messages
   websocket.onmessage = function (event) {
-    // 들어오는 메시지 구문 분석
+    // Parse the incoming message
     const message_from_server = JSON.parse(event.data);
-    console.log("[에이전트에서 클라이언트로] ", message_from_server);
+    console.log("[AGENT TO CLIENT] ", message_from_server);
 
-    // 턴이 완료되었는지 확인
-    // 턴이 완료되면 새 메시지 추가
+    // Check if the turn is complete
+    // if turn complete, add new message
     if (
       message_from_server.turn_complete &&
       message_from_server.turn_complete == true
@@ -498,49 +505,49 @@ function connectWebsocket() {
       return;
     }
 
-    // 오디오인 경우 재생
+    // If it's audio, play it
     if (message_from_server.mime_type == "audio/pcm" && audioPlayerNode) {
       audioPlayerNode.port.postMessage(base64ToArray(message_from_server.data));
     }
 
-    // 텍스트인 경우 출력
+    // If it's a text, print it
     if (message_from_server.mime_type == "text/plain") {
-      // 새 턴에 대한 새 메시지 추가
+      // add a new message for a new turn
       if (currentMessageId == null) {
         currentMessageId = Math.random().toString(36).substring(7);
         const message = document.createElement("p");
         message.id = currentMessageId;
-        // messagesDiv에 메시지 요소 추가
+        // Append the message element to the messagesDiv
         messagesDiv.appendChild(message);
       }
 
-      // 기존 메시지 요소에 메시지 텍스트 추가
+      // Add message text to the existing message element
       const message = document.getElementById(currentMessageId);
       message.textContent += message_from_server.data;
 
-      // messagesDiv의 맨 아래로 스크롤
+      // Scroll down to the bottom of the messagesDiv
       messagesDiv.scrollTop = messagesDiv.scrollHeight;
     }
   };
 
-  // 연결 닫힘 처리
+  // Handle connection close
   websocket.onclose = function () {
-    console.log("WebSocket 연결이 닫혔습니다.");
+    console.log("WebSocket connection closed.");
     document.getElementById("sendButton").disabled = true;
-    document.getElementById("messages").textContent = "연결이 닫혔습니다.";
+    document.getElementById("messages").textContent = "Connection closed";
     setTimeout(function () {
-      console.log("다시 연결 중...");
+      console.log("Reconnecting...");
       connectWebsocket();
     }, 5000);
   };
 
   websocket.onerror = function (e) {
-    console.log("WebSocket 오류: ", e);
+    console.log("WebSocket error: ", e);
   };
 }
 connectWebsocket();
 
-// 폼에 제출 핸들러 추가
+// Add submit handler to the form
 function addSubmitHandler() {
   messageForm.onsubmit = function (e) {
     e.preventDefault();
@@ -554,13 +561,13 @@ function addSubmitHandler() {
         mime_type: "text/plain",
         data: message,
       });
-      console.log("[클라이언트에서 에이전트로] " + message);
+      console.log("[CLIENT TO AGENT] " + message);
     }
     return false;
   };
 }
 
-// JSON 문자열로 서버에 메시지 전송
+// Send a message to the server as a JSON string
 function sendMessage(message) {
   if (websocket && websocket.readyState == WebSocket.OPEN) {
     const messageJson = JSON.stringify(message);
@@ -568,7 +575,7 @@ function sendMessage(message) {
   }
 }
 
-// Base64 데이터를 배열로 디코딩
+// Decode Base64 data to Array
 function base64ToArray(base64) {
   const binaryString = window.atob(base64);
   const len = binaryString.length;
@@ -580,23 +587,23 @@ function base64ToArray(base64) {
 }
 ```
 
-*   **연결 설정:** `sessionId`를 생성하고 `ws_url`을 구성합니다. `is_audio` 플래그(초기값 `false`)는 활성화되면 URL에 `?is_audio=true`를 추가합니다. `connectWebsocket()`이 연결을 초기화합니다.
-*   **`websocket.onopen`**: 보내기 버튼을 활성화하고 UI를 업데이트하며 `addSubmitHandler()`를 호출합니다.
-*   **`websocket.onmessage`**: 서버에서 들어오는 JSON을 구문 분석합니다.
-    *   **턴 완료:** 에이전트 턴이 완료되면 `currentMessageId`를 재설정합니다.
-    *   **오디오 데이터 (`audio/pcm`):** Base64 오디오를 디코딩(`base64ToArray()`)하고 재생을 위해 `audioPlayerNode`로 보냅니다.
-    *   **텍스트 데이터 (`text/plain`):** 새 턴인 경우(`currentMessageId`가 null인 경우) 새 `<p>`를 만듭니다. 스트리밍 효과를 위해 수신된 텍스트를 현재 메시지 단락에 추가합니다. `messagesDiv`를 스크롤합니다.
-*   **`websocket.onclose`**: 보내기 버튼을 비활성화하고 UI를 업데이트하며 5초 후 자동 재연결을 시도합니다.
-*   **`websocket.onerror`**: 오류를 기록합니다.
-*   **초기 연결:** 스크립트 로드 시 `connectWebsocket()`이 호출됩니다.
+*   **Connection Setup:** Generates `sessionId`, constructs `ws_url`. `is_audio` flag (initially `false`) appends `?is_audio=true` to URL when active. `connectWebsocket()` initializes the connection.
+*   **`websocket.onopen`**: Enables send button, updates UI, calls `addSubmitHandler()`.
+*   **`websocket.onmessage`**: Parses incoming JSON from server.
+    *   **Turn Completion:** Resets `currentMessageId` if agent turn is complete.
+    *   **Audio Data (`audio/pcm`):** Decodes Base64 audio (`base64ToArray()`) and sends to `audioPlayerNode` for playback.
+    *   **Text Data (`text/plain`):** If new turn (`currentMessageId` is null), creates new `<p>`. Appends received text to the current message paragraph for streaming effect. Scrolls `messagesDiv`.
+*   **`websocket.onclose`**: Disables send button, updates UI, attempts auto-reconnection after 5s.
+*   **`websocket.onerror`**: Logs errors.
+*   **Initial Connection:** `connectWebsocket()` is called on script load.
 
-#### DOM 상호 작용 및 메시지 제출
+#### DOM Interaction & Message Submission
 
-*   **요소 검색:** 필요한 DOM 요소를 가져옵니다.
-*   **`addSubmitHandler()`**: `messageForm`의 제출에 연결됩니다. 기본 제출을 방지하고, `messageInput`에서 텍스트를 가져오고, 사용자 메시지를 표시하고, 입력을 지우고, `{ mime_type: "text/plain", data: messageText }`로 `sendMessage()`를 호출합니다.
-*   **`sendMessage(messagePayload)`**: WebSocket이 열려 있으면 JSON으로 문자열화된 `messagePayload`를 보냅니다.
+*   **Element Retrieval:** Fetches required DOM elements.
+*   **`addSubmitHandler()`**: Attached to `messageForm`'s submit. Prevents default submission, gets text from `messageInput`, displays user message, clears input, and calls `sendMessage()` with `{ mime_type: "text/plain", data: messageText }`.
+*   **`sendMessage(messagePayload)`**: Sends JSON stringified `messagePayload` if WebSocket is open.
 
-### 오디오 처리
+### Audio Handling
 
 ```JavaScript
 
@@ -606,18 +613,18 @@ let audioRecorderNode;
 let audioRecorderContext;
 let micStream;
 
-// 오디오 워클릿 가져오기
+// Import the audio worklets
 import { startAudioPlayerWorklet } from "./audio-player.js";
 import { startAudioRecorderWorklet } from "./audio-recorder.js";
 
-// 오디오 시작
+// Start audio
 function startAudio() {
-  // 오디오 출력 시작
+  // Start audio output
   startAudioPlayerWorklet().then(([node, ctx]) => {
     audioPlayerNode = node;
     audioPlayerContext = ctx;
   });
-  // 오디오 입력 시작
+  // Start audio input
   startAudioRecorderWorklet(audioRecorderHandler).then(
     ([node, ctx, stream]) => {
       audioRecorderNode = node;
@@ -627,27 +634,27 @@ function startAudio() {
   );
 }
 
-// 사용자가 버튼을 클릭했을 때만 오디오 시작
-// (Web Audio API의 제스처 요구 사항 때문)
+// Start the audio only when the user clicked the button
+// (due to the gesture requirement for the Web Audio API)
 const startAudioButton = document.getElementById("startAudioButton");
 startAudioButton.addEventListener("click", () => {
   startAudioButton.disabled = true;
   startAudio();
   is_audio = true;
-  connectWebsocket(); // 오디오 모드로 다시 연결
+  connectWebsocket(); // reconnect with the audio mode
 });
 
-// 오디오 레코더 핸들러
+// Audio recorder handler
 function audioRecorderHandler(pcmData) {
-  // pcm 데이터를 base64로 전송
+  // Send the pcm data as base64
   sendMessage({
     mime_type: "audio/pcm",
     data: arrayBufferToBase64(pcmData),
   });
-  console.log("[클라이언트에서 에이전트로] %s 바이트 전송", pcmData.byteLength);
+  console.log("[CLIENT TO AGENT] sent %s bytes", pcmData.byteLength);
 }
 
-// 배열 버퍼를 Base64로 인코딩
+// Encode an array buffer with Base64
 function arrayBufferToBase64(buffer) {
   let binary = "";
   const bytes = new Uint8Array(buffer);
@@ -659,39 +666,39 @@ function arrayBufferToBase64(buffer) {
 }
 ```
 
-*   **오디오 워클릿:** `audio-player.js`(재생용) 및 `audio-recorder.js`(캡처용)를 통해 `AudioWorkletNode`를 사용합니다.
-*   **상태 변수:** AudioContexts 및 WorkletNodes를 저장합니다 (예: `audioPlayerNode`).
-*   **`startAudio()`**: 플레이어 및 레코더 워클릿을 초기화합니다. `audioRecorderHandler`를 레코더에 콜백으로 전달합니다.
-*   **"오디오 시작" 버튼 (`startAudioButton`):**
-    *   Web Audio API에 사용자 제스처가 필요합니다.
-    *   클릭 시: 버튼을 비활성화하고, `startAudio()`를 호출하고, `is_audio = true`로 설정한 다음, `connectWebsocket()`을 호출하여 오디오 모드로 다시 연결합니다(URL에 `?is_audio=true` 포함).
-*   **`audioRecorderHandler(pcmData)`**: PCM 오디오 청크가 포함된 레코더 워클릿의 콜백입니다. `pcmData`를 Base64로 인코딩(`arrayBufferToBase64()`)하고 `mime_type: "audio/pcm"`으로 `sendMessage()`를 통해 서버로 보냅니다.
-*   **도우미 함수:** `base64ToArray()`(서버 오디오 -> 클라이언트 플레이어) 및 `arrayBufferToBase64()`(클라이언트 마이크 오디오 -> 서버).
+*   **Audio Worklets:** Uses `AudioWorkletNode` via `audio-player.js` (for playback) and `audio-recorder.js` (for capture).
+*   **State Variables:** Store AudioContexts and WorkletNodes (e.g., `audioPlayerNode`).
+*   **`startAudio()`**: Initializes player and recorder worklets. Passes `audioRecorderHandler` as callback to recorder.
+*   **"Start Audio" Button (`startAudioButton`):**
+    *   Requires user gesture for Web Audio API.
+    *   On click: disables button, calls `startAudio()`, sets `is_audio = true`, then calls `connectWebsocket()` to reconnect in audio mode (URL includes `?is_audio=true`).
+*   **`audioRecorderHandler(pcmData)`**: Callback from recorder worklet with PCM audio chunks. Encodes `pcmData` to Base64 (`arrayBufferToBase64()`) and sends to server via `sendMessage()` with `mime_type: "audio/pcm"`.
+*   **Helper Functions:** `base64ToArray()` (server audio -> client player) and `arrayBufferToBase64()` (client mic audio -> server).
 
-### 작동 방식 (클라이언트 측 흐름)
+### How It Works (Client-Side Flow)
 
-1. **페이지 로드:** 텍스트 모드로 WebSocket을 설정합니다.
-2. **텍스트 상호 작용:** 사용자가 텍스트를 입력/제출하고 서버로 보냅니다. 서버 텍스트 응답이 표시되고 스트리밍됩니다.
-3. **오디오 모드로 전환:** "오디오 시작" 버튼을 클릭하면 오디오 워클릿이 초기화되고, `is_audio=true`로 설정되며, 오디오 모드로 WebSocket을 다시 연결합니다.
-4. **오디오 상호 작용:** 레코더가 마이크 오디오(Base64 PCM)를 서버로 보냅니다. 서버 오디오/텍스트 응답은 재생/표시를 위해 `websocket.onmessage`에서 처리됩니다.
-5. **연결 관리:** WebSocket이 닫히면 자동 재연결됩니다.
+1.  **Page Load:** Establishes WebSocket in text mode.
+2.  **Text Interaction:** User types/submits text; sent to server. Server text responses displayed, streamed.
+3.  **Switching to Audio Mode:** "Start Audio" button click initializes audio worklets, sets `is_audio=true`, and reconnects WebSocket in audio mode.
+4.  **Audio Interaction:** Recorder sends mic audio (Base64 PCM) to server. Server audio/text responses handled by `websocket.onmessage` for playback/display.
+5.  **Connection Management:** Auto-reconnect on WebSocket close.
 
 
-## 요약
+## Summary
 
-이 글은 ADK 스트리밍과 FastAPI로 구축된 사용자 정의 비동기 웹 앱의 서버 및 클라이언트 코드를 개괄적으로 설명하며, 실시간 양방향 음성 및 텍스트 통신을 가능하게 합니다.
+This article overviews the server and client code for a custom asynchronous web app built with ADK Streaming and FastAPI, enabling real-time, bidirectional voice and text communication.
 
-Python FastAPI 서버 코드는 텍스트 또는 오디오 응답에 맞게 구성된 ADK 에이전트 세션을 초기화합니다. WebSocket 엔드포인트를 사용하여 클라이언트 연결을 처리합니다. 비동기 작업은 양방향 메시징을 관리합니다. 즉, 클라이언트 텍스트 또는 Base64로 인코딩된 PCM 오디오를 ADK 에이전트로 전달하고, 에이전트의 텍스트 또는 Base64로 인코딩된 PCM 오디오 응답을 클라이언트로 다시 스트리밍합니다.
+The Python FastAPI server code initializes ADK agent sessions, configured for text or audio responses. It uses a WebSocket endpoint to handle client connections. Asynchronous tasks manage bidirectional messaging: forwarding client text or Base64-encoded PCM audio to the ADK agent, and streaming text or Base64-encoded PCM audio responses from the agent back to the client.
 
-클라이언트 측 JavaScript 코드는 WebSocket 연결을 관리하며, 텍스트와 오디오 모드 간에 전환하기 위해 다시 설정할 수 있습니다. 사용자 입력(텍스트 또는 Web Audio API 및 AudioWorklets를 통해 캡처된 마이크 오디오)을 서버로 보냅니다. 서버에서 들어오는 메시지는 처리됩니다. 즉, 텍스트는 표시되고(스트리밍됨), Base64로 인코딩된 PCM 오디오는 디코딩되어 AudioWorklet을 사용하여 재생됩니다.
+The client-side JavaScript code manages a WebSocket connection, which can be re-established to switch between text and audio modes. It sends user input (text or microphone audio captured via Web Audio API and AudioWorklets) to the server. Incoming messages from the server are processed: text is displayed (streamed), and Base64-encoded PCM audio is decoded and played using an AudioWorklet.
 
-### 프로덕션을 위한 다음 단계
+### Next steps for production
 
-프로덕션 앱에서 ADK용 스트리밍을 사용할 때 다음 사항을 고려할 수 있습니다:
+When you will use the Streaming for ADK in production apps, you may want to consinder the following points:
 
-*   **여러 인스턴스 배포:** 단일 인스턴스 대신 FastAPI 애플리케이션의 여러 인스턴스를 실행합니다.
-*   **로드 밸런싱 구현:** 들어오는 WebSocket 연결을 분산시키기 위해 애플리케이션 인스턴스 앞에 로드 밸런서를 배치합니다.
-    *   **WebSocket에 대한 구성:** 로드 밸런서가 장기 WebSocket 연결을 지원하는지 확인하고, 클라이언트를 동일한 백엔드 인스턴스로 라우팅하기 위해 "고정 세션"(세션 선호도)을 고려하거나, 상태 비저장 인스턴스를 설계합니다(다음 항목 참조).
-*   **세션 상태 외부화:** ADK용 `InMemorySessionService`를 분산형 영구 세션 저장소로 교체합니다. 이를 통해 모든 서버 인스턴스가 모든 사용자의 세션을 처리할 수 있게 되어, 애플리케이션 서버 수준에서 진정한 상태 비저장성을 가능하게 하고 내결함성을 향상시킵니다.
-*   **상태 확인 구현:** WebSocket 서버 인스턴스에 대한 강력한 상태 확인을 설정하여 로드 밸런서가 비정상 인스턴스를 순환에서 자동으로 제거할 수 있도록 합니다.
-*   **오케스트레이션 활용:** Kubernetes와 같은 오케스트레이션 플랫폼을 사용하여 WebSocket 서버 인스턴스의 자동화된 배포, 확장, 자가 치유 및 관리를 고려합니다.
+*   **Deploy Multiple Instances:** Run several instances of your FastAPI application instead of a single one.
+*   **Implement Load Balancing:** Place a load balancer in front of your application instances to distribute incoming WebSocket connections.
+    *   **Configure for WebSockets:** Ensure the load balancer supports long-lived WebSocket connections and consider "sticky sessions" (session affinity) to route a client to the same backend instance, *or* design for stateless instances (see next point).
+*   **Externalize Session State:** Replace the `InMemorySessionService` for ADK with a distributed, persistent session store. This allows any server instance to handle any user's session, enabling true statelessness at the application server level and improving fault tolerance.
+*   **Implement Health Checks:** Set up robust health checks for your WebSocket server instances so the load balancer can automatically remove unhealthy instances from rotation.
+*   **Utilize Orchestration:** Consider using an orchestration platform like Kubernetes for automated deployment, scaling, self-healing, and management of your WebSocket server instances.
