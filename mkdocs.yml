@@ -102,11 +102,11 @@ plugins:
       docs_structure: suffix
       languages:
         - locale: en
-          default: true
           name: English
           build: true
         - locale: ko
           name: 한국어
+          default: true
           build: true
           nav:
             - 홈: index.md
