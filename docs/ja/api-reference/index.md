@@ -1,29 +1,29 @@
-# API Reference
+# APIリファレンス
 
-The Agent Development Kit (ADK) provides comprehensive API references for both Python and Java, allowing you to dive deep into all available classes, methods, and functionalities.
+Agent Development Kit (ADK) は、PythonとJavaの両方に対応した包括的なAPIリファレンスを提供しており、利用可能なすべてのクラス、メソッド、機能を深く掘り下げることができます。
 
-<div class.="grid cards" markdown>
+<div class="grid cards" markdown>
 
--   :fontawesome-brands-python:{ .lg .middle } **Python API Reference**
+-   :fontawesome-brands-python:{ .lg .middle } **Python APIリファレンス**
 
     ---
-    Explore the complete API documentation for the Python Agent Development Kit. Discover detailed information on all modules, classes, functions, and examples to build sophisticated AI agents with Python.
+    Python Agent Development Kitの完全なAPIドキュメントをご覧ください。Pythonで高度なAIエージェントを構築するための、すべてのモジュール、クラス、関数、および例に関する詳細な情報を見つけることができます。
 
-    [:octicons-arrow-right-24: View Python API Docs](python/index.html) <br>
-    <!-- Assuming your Python API docs are in a 'python' subdirectory -->
-    <!-- Or link to an external ReadTheDocs, etc. -->
+    [:octicons-arrow-right-24: Python APIドキュメントを見る](https://google.github.io/adk-docs/api-reference/python/) <br>
+    <!-- Python APIドキュメントが 'python' サブディレクトリにあると仮定 -->
+    <!-- または、外部のReadTheDocsなどにリンク -->
     <!-- [:octicons-arrow-right-24: View Python API Docs](python/index.html) -->
 
-<!-- This comment forces a block separation -->
+<!-- このコメントはブロックの区切りを強制します -->
 
--   :fontawesome-brands-java:{ .lg .middle } **Java API Reference**
+-   :fontawesome-brands-java:{ .lg .middle } **Java APIリファレンス**
 
     ---
-    Access the comprehensive Javadoc for the Java Agent Development Kit. This reference provides detailed specifications for all packages, classes, interfaces, and methods, enabling you to develop robust AI agents using Java.
+    Java Agent Development Kitの包括的なJavadocにアクセスします。このリファレンスは、すべてのパッケージ、クラス、インターフェース、およびメソッドの詳細な仕様を提供し、Javaを使用して堅牢なAIエージェントを開発することを可能にします。
 
-    [:octicons-arrow-right-24: View Java API Docs](java/index.html) <br>
-    <!-- Assuming your Java API docs (Javadocs) are in a 'java' subdirectory -->
-    <!-- Or link to an external Javadoc hosting site -->
+    [:octicons-arrow-right-24: Java APIドキュメントを見る](https://google.github.io/adk-docs/api-reference/java/) <br>
+    <!-- Java APIドキュメント（Javadoc）が 'java' サブディレクトリにあると仮定 -->
+    <!-- または、外部のJavadocホスティングサイトにリンク -->
     <!-- [:octicons-arrow-right-24: View Java API Docs](java/index.html) -->
 
 </div>

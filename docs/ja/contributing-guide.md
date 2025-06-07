@@ -1,100 +1,98 @@
-Thank you for your interest in contributing to the Agent Development Kit (ADK)! We welcome contributions to both the core framework (Python and Java) and its documentation.
+承知いたしました。2つ目のドキュメントも、開発者向けに日本語へ翻訳します。
 
-This guide provides information on how to get involved.
+```
+Agent Development Kit (ADK)への貢献にご興味をお持ちいただき、ありがとうございます！私たちは、コアフレームワーク（PythonおよびJava）とそのドキュメントの両方への貢献を歓迎します。
+
+このガイドでは、参加方法について説明します。
 
 ## 1. [`google/adk-python`](https://github.com/google/adk-python)
 
-Contains the core Python library source code.
+Pythonコアライブラリのソースコードが含まれています。
 
 ## 2. [`google/adk-java`](https://github.com/google/adk-java)
 
-Contains the core Java library source code.
+Javaコアライブラリのソースコードが含まれています。
 
 ## 3. [`google/adk-docs`](https://github.com/google/adk-docs)
 
-Contains the source for the documentation site you are currently reading.
+現在ご覧になっているドキュメントサイトのソースが含まれています。
 
 ## 4. [`google/adk-web`](https://github.com/google/adk-web)
 
-Contains the source for the `adk web` dev UI.
+`adk web` 開発UIのソースが含まれています。
 
-## Before you begin
+## 始める前に
 
-### ✏️ Sign our Contributor License Agreement
+### ✏️ コントリビューターライセンス契約に署名する
 
-Contributions to this project must be accompanied by a
-[Contributor License Agreement](https://cla.developers.google.com/about) (CLA).
-You (or your employer) retain the copyright to your contribution; this simply
-gives us permission to use and redistribute your contributions as part of the
-project.
+このプロジェクトへの貢献には、[コントリビューターライセンス契約](https://cla.developers.google.com/about) (CLA) への同意が必要です。あなた（またはあなたの雇用主）が貢献部分の著作権を保持しますが、これにより、プロジェクトの一部としてあなたの貢献を使用および再配布する許可が私たちに与えられます。
 
-If you or your current employer have already signed the Google CLA (even if it
-was for a different project), you probably don't need to do it again.
+もしあなたまたは現在の雇用主がすでにGoogle CLAに署名している場合（それが別のプロジェクトのためであっても）、再度署名する必要はないでしょう。
 
-Visit <https://cla.developers.google.com/> to see your current agreements or to
-sign a new one.
+<https://cla.developers.google.com/> にアクセスして、現在の契約状況を確認したり、新しい契約に署名したりできます。
 
-### 📜 Review our community guidelines
+### 📜 コミュニティガイドラインを確認する
 
-This project follows
-[Google's Open Source Community Guidelines](https://opensource.google/conduct/).
+このプロジェクトは[Googleのオープンソースコミュニティガイドライン](https://opensource.google/conduct/)に従います。
 
-## 💬 Join the Discussion!
+## 💬 ディスカッションに参加しましょう！
 
-Have questions, want to share ideas, or discuss how you're using the ADK? Head over to our **[Python](https://github.com/google/adk-python/discussions)** or **[Java](https://github.com/google/adk-java/discussions)** Discussions!
+質問がありますか？アイデアを共有したいですか？ADKをどのように使っているか話したいですか？私たちの **[Python](https://github.com/google/adk-python/discussions)** または **[Java](https://github.com/google/adk-java/discussions)** のディスカッションにぜひご参加ください！
 
-This is the primary place for:
+ここは主に次のような場所です：
 
-* Asking questions and getting help from the community and maintainers.
-* Sharing your projects or use cases (`Show and Tell`).
-* Discussing potential features or improvements before creating a formal issue.
-* General conversation about the ADK.
+*   質問をしたり、コミュニティやメンテナーから助けを得る。
+*   あなたのプロジェクトやユースケースを共有する（`Show and Tell`）。
+*   正式なIssueを作成する前に、潜在的な機能や改善について議論する。
+*   ADKに関する一般的な会話。
 
-## How to Contribute
+## 貢献の方法
 
-There are several ways you can contribute to the ADK:
+ADKに貢献するには、いくつかの方法があります：
 
-### 1. Reporting Issues (Bugs & Errors)
+### 1. Issueの報告（バグとエラー）
 
-If you find a bug in the framework or an error in the documentation:
+フレームワークのバグやドキュメントのエラーを見つけた場合：
 
-* **Framework Bugs:** Open an issue in [`google/adk-python`](https://github.com/google/adk-python/issues/new) or in [`google/adk-java`](https://github.com/google/adk-java/issues/new)
-* **Documentation Errors:** [Open an issue in `google/adk-docs` (use bug template)](https://github.com/google/adk-docs/issues/new?template=bug_report.md)
+*   **フレームワークのバグ:** [`google/adk-python`](https://github.com/google/adk-python/issues/new) または [`google/adk-java`](https://github.com/google/adk-java/issues/new) にIssueをオープンしてください。
+*   **ドキュメントのエラー:** [`google/adk-docs`でIssueをオープンしてください（バグテンプレートを使用）](https://github.com/google/adk-docs/issues/new?template=bug_report.md)
 
-### 2. Suggesting Enhancements
+### 2. 改善の提案
 
-Have an idea for a new feature or an improvement to an existing one?
+新機能のアイデアや既存機能の改善案がある場合：
 
-* **Framework Enhancements:** Open an issue in [`google/adk-python`](https://github.com/google/adk-python/issues/new) or in [`google/adk-java`](https://github.com/google/adk-java/issues/new)
-* **Documentation Enhancements:** [Open an issue in `google/adk-docs`](https://github.com/google/adk-docs/issues/new)
+*   **フレームワークの機能強化:** [`google/adk-python`](https://github.com/google/adk-python/issues/new) または [`google/adk-java`](https://github.com/google/adk-java/issues/new) にIssueをオープンしてください。
+*   **ドキュメントの改善:** [`google/adk-docs`でIssueをオープンしてください](https://github.com/google/adk-docs/issues/new)
 
-### 3. Improving Documentation
+### 3. ドキュメントの改善
 
-Found a typo, unclear explanation, or missing information? Submit your changes directly:
+タイプミス、不明確な説明、不足している情報を見つけましたか？変更を直接送信してください：
 
-* **How:** Submit a Pull Request (PR) with your suggested improvements.
-* **Where:** [Create a Pull Request in `google/adk-docs`](https://github.com/google/adk-docs/pulls)
+*   **方法:** 提案する改善点を含むプルリクエスト（PR）を送信してください。
+*   **場所:** [`google/adk-docs`でプルリクエストを作成](https://github.com/google/adk-docs/pulls)
 
-### 4. Writing Code
+### 4. コードの作成
 
-Help fix bugs, implement new features or contribute code samples for the documentation:
+バグの修正、新機能の実装、ドキュメント用のコードサンプルの提供などを手伝ってください：
 
-**How:** Submit a Pull Request (PR) with your code changes.
+**方法:** コードの変更を含むプルリクエスト（PR）を送信してください。
 
-* **Python Framework:** [Create a Pull Request in `google/adk-python`](https://github.com/google/adk-python/pulls)
-* **Java Framework:** [Create a Pull Request in `google/adk-java`](https://github.com/google/adk-java/pulls)
-* **Documentation:** [Create a Pull Request in `google/adk-docs`](https://github.com/google/adk-docs/pulls)
+*   **Pythonフレームワーク:** [`google/adk-python`でプルリクエストを作成](https://github.com/google/adk-python/pulls)
+*   **Javaフレームワーク:** [`google/adk-java`でプルリクエストを作成](https://github.com/google/adk-java/pulls)
+*   **ドキュメント:** [`google/adk-docs`でプルリクエストを作成](https://github.com/google/adk-docs/pulls)
 
-### Code Reviews
+### コードレビュー
 
-* All contributions, including those from project members, undergo a review process.
+*   プロジェクトメンバーからのものを含め、すべての貢献はレビュープロセスを経ます。
 
-* We use GitHub Pull Requests (PRs) for code submission and review. Please ensure your PR clearly describes the changes you are making.
+*   私たちはコードの提出とレビューにGitHubのプルリクエスト（PR）を使用します。PRには、行っている変更内容を明確に記述してください。
 
-## License
+## ライセンス
 
-By contributing, you agree that your contributions will be licensed under the project's [Apache 2.0 License](https://github.com/google/adk-docs/blob/main/LICENSE).
+貢献することにより、あなたの貢献がプロジェクトの[Apache 2.0 License](https://github.com/google/adk-docs/blob/main/LICENSE)の下でライセンスされることに同意したことになります。
 
-## Questions?
+## 質問がありますか？
 
-If you get stuck or have questions, feel free to open an issue on the relevant repository's issue tracker.
+行き詰まったり質問がある場合は、関連するリポジトリのIssueトラッカーで気軽にIssueをオープンしてください。
+
+```

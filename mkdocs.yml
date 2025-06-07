@@ -404,5 +404,5 @@ plugins:
             - コントリビューションガイド: contributing-guide.md
             - APIリファレンス:
               - APIリファレンス: api-reference/index.md
-              - Python ADK: api-reference/python/index.html
-              - Java ADK: api-reference/java/index.html
+              - Python ADK: https://google.github.io/adk-docs/api-reference/python/
+              - Java ADK: https://google.github.io/adk-docs/api-reference/java/
