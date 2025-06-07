@@ -1,27 +1,22 @@
-# Runtime Configuration
+# ランタイム設定
 
-`RunConfig` defines runtime behavior and options for agents in the ADK. It
-controls speech and streaming settings, function calling, artifact saving, and
-limits on LLM calls.
+`RunConfig`は、ADKにおけるエージェントのランタイムの振る舞いとオプションを定義します。音声とストリーミングの設定、関数呼び出し、アーティファクトの保存、LLM呼び出しの制限を制御します。
 
-When constructing an agent run, you can pass a `RunConfig` to customize how the
-agent interacts with models, handles audio, and streams responses. By default,
-no streaming is enabled and inputs aren’t retained as artifacts. Use `RunConfig`
-to override these defaults.
+エージェントの実行を構成する際に、`RunConfig`を渡すことで、エージェントがモデルとどのように対話し、音声を処理し、応答をストリーミングするかをカスタマイズできます。デフォルトでは、ストリーミングは有効になっておらず、入力はアーティファクトとして保持されません。これらのデフォルトを上書きするために`RunConfig`を使用します。
 
-## Class Definition
+## クラス定義
 
-The `RunConfig` class holds configuration parameters for an agent's runtime behavior.
+`RunConfig`クラスは、エージェントのランタイムの振る舞いのための設定パラメータを保持します。
 
-- Python ADK uses Pydantic for this validation.
+- Python ADKはこの検証にPydanticを使用します。
 
-- Java ADK typically uses immutable data classes.
+- Java ADKは通常、イミュータブルなデータクラスを使用します。
 
 === "Python"
 
     ```python
     class RunConfig(BaseModel):
-        """Configs for runtime behavior of agents."""
+        """エージェントのランタイムの振る舞いのための設定。"""
     
         model_config = ConfigDict(
             extra='forbid',
@@ -61,135 +56,122 @@ The `RunConfig` class holds configuration parameters for an agent's runtime beha
     }
     ```
 
-## Runtime Parameters
+## ランタイムパラメータ
 
-| Parameter                       | Python Type                                  | Java Type                                             | Default (Py / Java)               | Description                                                                                                                  |
-| :------------------------------ | :------------------------------------------- |:------------------------------------------------------|:----------------------------------|:-----------------------------------------------------------------------------------------------------------------------------|
-| `speech_config`                 | `Optional[types.SpeechConfig]`               | `SpeechConfig` (nullable via `@Nullable`)             | `None` / `null`                   | Configures speech synthesis (voice, language) using the `SpeechConfig` type.                                                 |
-| `response_modalities`           | `Optional[list[str]]`                        | `ImmutableList<Modality>`                             | `None` / Empty `ImmutableList`    | List of desired output modalities (e.g., Python: `["TEXT", "AUDIO"]`; Java: uses structured `Modality` objects).             |
-| `save_input_blobs_as_artifacts` | `bool`                                       | `boolean`                                             | `False` / `false`                 | If `true`, saves input blobs (e.g., uploaded files) as run artifacts for debugging/auditing.                                 |
-| `streaming_mode`                | `StreamingMode`                              | *Currently not supported*                             | `StreamingMode.NONE` / N/A        | Sets the streaming behavior: `NONE` (default), `SSE` (server-sent events), or `BIDI` (bidirectional).                        |
-| `output_audio_transcription`    | `Optional[types.AudioTranscriptionConfig]`   | `AudioTranscriptionConfig` (nullable via `@Nullable`) | `None` / `null`                   | Configures transcription of generated audio output using the `AudioTranscriptionConfig` type.                                |
-| `max_llm_calls`                 | `int`                                        | `int`                                                 | `500` / `500`                     | Limits total LLM calls per run. `0` or negative means unlimited (warned); `sys.maxsize` raises `ValueError`.                 |
-| `support_cfc`                   | `bool`                                       | *Currently not supported*                             | `False` / N/A                     | **Python:** Enables Compositional Function Calling. Requires `streaming_mode=SSE` and uses the LIVE API. **Experimental.**   |
+| パラメータ                       | Python 型                                    | Java 型                                               | デフォルト (Py / Java)            | 説明                                                                                                                 |
+| :------------------------------- | :------------------------------------------- | :---------------------------------------------------- | :-------------------------------- | :------------------------------------------------------------------------------------------------------------------- |
+| `speech_config`                  | `Optional[types.SpeechConfig]`               | `SpeechConfig` (`@Nullable`経由でnullable)            | `None` / `null`                   | `SpeechConfig`型を使用して音声合成（声、言語）を設定します。                                                       |
+| `response_modalities`            | `Optional[list[str]]`                        | `ImmutableList<Modality>`                             | `None` / 空の `ImmutableList`     | 望ましい出力モダリティのリスト（例：Python: `["TEXT", "AUDIO"]`; Java: 構造化された`Modality`オブジェクトを使用）。 |
+| `save_input_blobs_as_artifacts`  | `bool`                                       | `boolean`                                             | `False` / `false`                 | `true`の場合、入力BLOB（例：アップロードされたファイル）をデバッグ/監査用に実行アーティファクトとして保存します。   |
+| `streaming_mode`                 | `StreamingMode`                              | *現在サポートされていません*                            | `StreamingMode.NONE` / N/A        | ストリーミングの振る舞いを設定します：`NONE`（デフォルト）、`SSE`（サーバー送信イベント）、または`BIDI`（双方向）。     |
+| `output_audio_transcription`     | `Optional[types.AudioTranscriptionConfig]`   | `AudioTranscriptionConfig` (`@Nullable`経由でnullable) | `None` / `null`                   | `AudioTranscriptionConfig`型を使用して、生成された音声出力の文字起こしを設定します。                                 |
+| `max_llm_calls`                  | `int`                                        | `int`                                                 | `500` / `500`                     | 実行ごとの合計LLM呼び出しを制限します。`0`または負の値は無制限（警告あり）を意味し、`sys.maxsize`は`ValueError`を発生させます。 |
+| `support_cfc`                    | `bool`                                       | *現在サポートされていません*                            | `False` / N/A                     | **Python:** 合成的関数呼び出し（CFC）を有効にします。`streaming_mode=SSE`が必要で、LIVE APIを使用します。**実験的機能。** |
 
 ### `speech_config`
 
 !!! Note
-    The interface or definition of `SpeechConfig` is the same, irrespective of the language.
+    `SpeechConfig`のインターフェースや定義は、言語に関わらず同じです。
 
-Speech configuration settings for live agents with audio capabilities. The
-`SpeechConfig` class has the following structure:
+音声機能を持つライブエージェントのための音声設定です。`SpeechConfig`クラスは次の構造を持っています：
 
 ```python
 class SpeechConfig(_common.BaseModel):
-    """The speech generation configuration."""
+    """音声生成の設定。"""
 
     voice_config: Optional[VoiceConfig] = Field(
         default=None,
-        description="""The configuration for the speaker to use.""",
+        description="""使用するスピーカーの設定。""",
     )
     language_code: Optional[str] = Field(
         default=None,
-        description="""Language code (ISO 639. e.g. en-US) for the speech synthesization.
-        Only available for Live API.""",
+        description="""音声合成のための言語コード（ISO 639、例：en-US）。
+        Live APIでのみ利用可能。""",
     )
 ```
 
-The `voice_config` parameter uses the `VoiceConfig` class:
+`voice_config`パラメータは`VoiceConfig`クラスを使用します：
 
 ```python
 class VoiceConfig(_common.BaseModel):
-    """The configuration for the voice to use."""
+    """使用する音声の設定。"""
 
     prebuilt_voice_config: Optional[PrebuiltVoiceConfig] = Field(
         default=None,
-        description="""The configuration for the speaker to use.""",
+        description="""使用するスピーカーの設定。""",
     )
 ```
 
-And `PrebuiltVoiceConfig` has the following structure:
+そして`PrebuiltVoiceConfig`は次の構造を持っています：
 
 ```python
 class PrebuiltVoiceConfig(_common.BaseModel):
-    """The configuration for the prebuilt speaker to use."""
+    """使用する事前構築済みスピーカーの設定。"""
 
     voice_name: Optional[str] = Field(
         default=None,
-        description="""The name of the prebuilt voice to use.""",
+        description="""使用する事前構築済み音声の名前。""",
     )
 ```
 
-These nested configuration classes allow you to specify:
+これらのネストされた設定クラスにより、以下を指定できます：
 
-* `voice_config`: The name of the prebuilt voice to use (in the `PrebuiltVoiceConfig`)
-* `language_code`: ISO 639 language code (e.g., "en-US") for speech synthesis
+*   `voice_config`: 使用する事前構築済み音声の名前（`PrebuiltVoiceConfig`内）
+*   `language_code`: 音声合成のためのISO 639言語コード（例："en-US"）
 
-When implementing voice-enabled agents, configure these parameters to control
-how your agent sounds when speaking.
+音声対応エージェントを実装する際は、これらのパラメータを設定して、エージェントが話すときの音声を制御します。
 
 ### `response_modalities`
 
-Defines the output modalities for the agent. If not set, defaults to AUDIO.
-Response modalities determine how the agent communicates with users through
-various channels (e.g., text, audio).
+エージェントの出力モダリティを定義します。設定されていない場合、デフォルトはAUDIOです。応答モダリティは、エージェントがさまざまなチャネル（例：テキスト、音声）を通じてユーザーとどのように通信するかを決定します。
 
 ### `save_input_blobs_as_artifacts`
 
-When enabled, input blobs will be saved as artifacts during agent execution.
-This is useful for debugging and audit purposes, allowing developers to review
-the exact data received by agents.
+有効にすると、エージェントの実行中に入力BLOBがアーティファクトとして保存されます。これはデバッグや監査の目的で役立ち、開発者がエージェントによって受信された正確なデータを確認できるようになります。
 
 ### `support_cfc`
 
-Enables Compositional Function Calling (CFC) support. Only applicable when using
-StreamingMode.SSE. When enabled, the LIVE API will be invoked as only it
-supports CFC functionality.
+合成的関数呼び出し（CFC）のサポートを有効にします。StreamingMode.SSEを使用している場合にのみ適用可能です。有効にすると、CFC機能はLIVE APIのみがサポートしているため、LIVE APIが呼び出されます。
 
 !!! warning
 
-    The `support_cfc` feature is experimental and its API or behavior might
-    change in future releases.
+    `support_cfc`機能は実験的なものであり、そのAPIや振る舞いは将来のリリースで変更される可能性があります。
 
 ### `streaming_mode`
 
-Configures the streaming behavior of the agent. Possible values:
+エージェントのストリーミングの振る舞いを設定します。可能な値：
 
-* `StreamingMode.NONE`: No streaming; responses delivered as complete units
-* `StreamingMode.SSE`: Server-Sent Events streaming; one-way streaming from server to client
-* `StreamingMode.BIDI`: Bidirectional streaming; simultaneous communication in both directions
+*   `StreamingMode.NONE`: ストリーミングなし。応答は完全なユニットとして配信されます。
+*   `StreamingMode.SSE`: Server-Sent Eventsストリーミング。サーバーからクライアントへの一方向ストリーミング。
+*   `StreamingMode.BIDI`: 双方向ストリーミング。両方向で同時に通信します。
 
-Streaming modes affect both performance and user experience. SSE streaming lets users see partial responses as they're generated, while BIDI streaming enables real-time interactive experiences.
+ストリーミングモードは、パフォーマンスとユーザーエクスペリエンスの両方に影響します。SSEストリーミングにより、ユーザーは生成中の応答を部分的に見ることができ、BIDIストリーミングはリアルタイムの対話型エクスペリエンスを可能にします。
 
 ### `output_audio_transcription`
 
-Configuration for transcribing audio outputs from live agents with audio
-response capability. This enables automatic transcription of audio responses for
-accessibility, record-keeping, and multi-modal applications.
+音声応答機能を持つライブエージェントからの音声出力を文字起こしするための設定です。これにより、アクセシビリティ、記録保持、およびマルチモーダルアプリケーションのために音声応答の自動文字起こしが可能になります。
 
 ### `max_llm_calls`
 
-Sets a limit on the total number of LLM calls for a given agent run.
+特定のエージェント実行に対する合計LLM呼び出し回数に制限を設定します。
 
-* Values greater than 0 and less than `sys.maxsize`: Enforces a bound on LLM calls
-* Values less than or equal to 0: Allows unbounded LLM calls *(not recommended for production)*
+*   0より大きく`sys.maxsize`未満の値：LLM呼び出しに上限を設けます。
+*   0以下の値：無制限のLLM呼び出しを許可します*（本番環境では非推奨）*。
 
-This parameter prevents excessive API usage and potential runaway processes.
-Since LLM calls often incur costs and consume resources, setting appropriate
-limits is crucial.
+このパラメータは、過剰なAPI使用と潜在的な暴走プロセスを防ぎます。LLM呼び出しはしばしばコストがかかり、リソースを消費するため、適切な制限を設定することが重要です。
 
-## Validation Rules
+## 検証ルール
 
-The `RunConfig` class validates its parameters to ensure proper agent operation. While Python ADK uses `Pydantic` for automatic type validation, Java ADK relies on its static typing and may include explicit checks in the RunConfig's construction.
-For the `max_llm_calls` parameter specifically:
+`RunConfig`クラスは、適切なエージェントの操作を保証するためにそのパラメータを検証します。Python ADKは自動的な型検証に`Pydantic`を使用しますが、Java ADKは静的型付けに依存し、RunConfigの構築時に明示的なチェックを含む場合があります。
+特に`max_llm_calls`パラメータについては：
 
-1. Extremely large values (like `sys.maxsize` in Python or `Integer.MAX_VALUE` in Java) are typically disallowed to prevent issues.
+1.  極端に大きな値（Pythonの`sys.maxsize`やJavaの`Integer.MAX_VALUE`など）は、問題を避けるために通常許可されません。
 
-2. Values of zero or less will usually trigger a warning about unlimited LLM interactions.
+2.  0以下の値は、通常、無制限のLLMインタラクションに関する警告をトリガーします。
 
-## Examples
+## 例
 
-### Basic runtime configuration
+### 基本的なランタイム設定
 
 === "Python"
 
@@ -214,11 +196,9 @@ For the `max_llm_calls` parameter specifically:
             .build();
     ```
 
-This configuration creates a non-streaming agent with a limit of 100 LLM calls,
-suitable for simple task-oriented agents where complete responses are
-preferable.
+この設定は、100回のLLM呼び出し制限を持つ非ストリーミングエージェントを作成し、完全な応答が望ましい単純なタスク指向のエージェントに適しています。
 
-### Enabling streaming
+### ストリーミングの有効化
 
 === "Python"
 
@@ -243,10 +223,9 @@ preferable.
         .build();
     ```
 
-Using SSE streaming allows users to see responses as they're generated,
-providing a more responsive feel for chatbots and assistants.
+SSEストリーミングを使用すると、ユーザーは生成中の応答を見ることができ、チャットボットやアシスタントにより応答性の高い感触を提供します。
 
-### Enabling speech support
+### 音声サポートの有効化
 
 === "Python"
 
@@ -302,18 +281,18 @@ providing a more responsive feel for chatbots and assistants.
             .build();
     ```
 
-This comprehensive example configures an agent with:
+この包括的な例では、エージェントを以下のように設定します：
 
-* Speech capabilities using the "Kore" voice (US English)
-* Both audio and text output modalities
-* Artifact saving for input blobs (useful for debugging)
-* Experimental CFC support enabled **(Python only)**
-* SSE streaming for responsive interaction
-* A limit of 1000 LLM calls
+*   "Kore"の声（米国英語）を使用した音声機能
+*   音声とテキストの両方の出力モダリティ
+*   入力BLOBのアーティファクト保存（デバッグに役立つ）
+*   実験的なCFCサポートの有効化 **(Pythonのみ)**
+*   応答性の高い対話のためのSSEストリーミング
+*   1000回のLLM呼び出し制限
 
-### Enabling Experimental CFC Support
+### 実験的なCFCサポートの有効化
 
-![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java support is planned/ coming soon."}
+![python_only](https://img.shields.io/badge/現在サポートされているのは-Python-blue){ title="この機能は現在Pythonで利用可能です。Javaのサポートは計画中/近日公開予定です。" }
 
 ```python
 from google.genai.adk import RunConfig, StreamingMode
@@ -325,6 +304,4 @@ config = RunConfig(
 )
 ```
 
-Enabling Compositional Function Calling creates an agent that can dynamically
-execute functions based on model outputs, powerful for applications requiring
-complex workflows.
+合成的関数呼び出しを有効にすると、モデルの出力に基づいて動的に関数を実行できるエージェントが作成され、複雑なワークフローを必要とするアプリケーションに強力です。

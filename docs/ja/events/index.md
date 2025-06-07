@@ -1,163 +1,163 @@
-# Events
+# イベント
 
-Events are the fundamental units of information flow within the Agent Development Kit (ADK). They represent every significant occurrence during an agent's interaction lifecycle, from initial user input to the final response and all the steps in between. Understanding events is crucial because they are the primary way components communicate, state is managed, and control flow is directed.
+イベントは、Agent Development Kit (ADK) 内における情報フローの基本単位です。これらは、最初のユーザー入力から最終的な応答、そしてその間のすべてのステップに至るまで、エージェントの対話ライフサイクル中に発生するすべての重要な出来事を表します。イベントを理解することは、コンポーネントが通信し、状態が管理され、制御フローが指示される主要な方法であるため、非常に重要です。
 
-## What Events Are and Why They Matter
+## イベントとは何か、なぜ重要か
 
-An `Event` in ADK is an immutable record representing a specific point in the agent's execution. It captures user messages, agent replies, requests to use tools (function calls), tool results, state changes, control signals, and errors.
+ADKにおける`Event`は、エージェントの実行における特定の時点を表すイミュータブル（不変）な記録です。ユーザーメッセージ、エージェントの返信、ツール使用のリクエスト（関数呼び出し）、ツールの結果、状態の変更、制御シグナル、およびエラーをキャプチャします。
 
 === "Python"
-    Technically, it's an instance of the `google.adk.events.Event` class, which builds upon the basic `LlmResponse` structure by adding essential ADK-specific metadata and an `actions` payload.
+    技術的には、これは`google.adk.events.Event`クラスのインスタンスであり、基本的な`LlmResponse`構造を基に、ADK固有の重要なメタデータと`actions`ペイロードを追加して構築されています。
 
     ```python
-    # Conceptual Structure of an Event (Python)
+    # イベントの概念的な構造 (Python)
     # from google.adk.events import Event, EventActions
     # from google.genai import types
 
-    # class Event(LlmResponse): # Simplified view
-    #     # --- LlmResponse fields ---
+    # class Event(LlmResponse): # 簡略化されたビュー
+    #     # --- LlmResponse のフィールド ---
     #     content: Optional[types.Content]
     #     partial: Optional[bool]
-    #     # ... other response fields ...
+    #     # ... 他の応答フィールド ...
 
-    #     # --- ADK specific additions ---
-    #     author: str          # 'user' or agent name
-    #     invocation_id: str   # ID for the whole interaction run
-    #     id: str              # Unique ID for this specific event
-    #     timestamp: float     # Creation time
-    #     actions: EventActions # Important for side-effects & control
-    #     branch: Optional[str] # Hierarchy path
+    #     # --- ADK固有の追加要素 ---
+    #     author: str          # 'user' またはエージェント名
+    #     invocation_id: str   # 対話全体の実行ID
+    #     id: str              # この特定のイベントの一意なID
+    #     timestamp: float     # 作成時刻
+    #     actions: EventActions # 副作用と制御に重要
+    #     branch: Optional[str] # 階層パス
     #     # ...
     ```
 
 === "Java"
-    In Java, this is an instance of the `com.google.adk.events.Event` class. It also builds upon a basic response structure by adding essential ADK-specific metadata and an `actions` payload.
+    Javaでは、これは`com.google.adk.events.Event`クラスのインスタンスです。これもまた、基本的な応答構造を基に、ADK固有の重要なメタデータと`actions`ペイロードを追加して構築されています。
 
     ```java
-    // Conceptual Structure of an Event (Java - See com.google.adk.events.Event.java)
-    // Simplified view based on the provided com.google.adk.events.Event.java
+    // イベントの概念的な構造 (Java - com.google.adk.events.Event.java を参照)
+    // 提供された com.google.adk.events.Event.java に基づく簡略化されたビュー
     // public class Event extends JsonBaseModel {
-    //     // --- Fields analogous to LlmResponse ---
+    //     // --- LlmResponse に類似したフィールド ---
     //     private Optional<Content> content;
     //     private Optional<Boolean> partial;
-    //     // ... other response fields like errorCode, errorMessage ...
+    //     // ... errorCode, errorMessage などの他の応答フィールド ...
 
-    //     // --- ADK specific additions ---
-    //     private String author;         // 'user' or agent name
-    //     private String invocationId;   // ID for the whole interaction run
-    //     private String id;             // Unique ID for this specific event
-    //     private long timestamp;        // Creation time (epoch milliseconds)
-    //     private EventActions actions;  // Important for side-effects & control
-    //     private Optional<String> branch; // Hierarchy path
-    //     // ... other fields like turnComplete, longRunningToolIds etc.
+    //     // --- ADK固有の追加要素 ---
+    //     private String author;         // 'user' またはエージェント名
+    //     private String invocationId;   // 対話全体の実行ID
+    //     private String id;             // この特定のイベントの一意なID
+    //     private long timestamp;        // 作成時刻 (エポックミリ秒)
+    //     private EventActions actions;  // 副作用と制御に重要
+    //     private Optional<String> branch; // 階層パス
+    //     // ... turnComplete, longRunningToolIds などの他のフィールド ...
     // }
     ```
 
-Events are central to ADK's operation for several key reasons:
+イベントは、いくつかの重要な理由からADKの運用において中心的な役割を果たします：
 
-1.  **Communication:** They serve as the standard message format between the user interface, the `Runner`, agents, the LLM, and tools. Everything flows as an `Event`.
+1.  **通信：** ユーザーインターフェース、`Runner`、エージェント、LLM、ツール間の標準的なメッセージ形式として機能します。すべてが`Event`として流れます。
 
-2.  **Signaling State & Artifact Changes:** Events carry instructions for state modifications and track artifact updates. The `SessionService` uses these signals to ensure persistence. In Python changes are signaled via `event.actions.state_delta` and `event.actions.artifact_delta`.
+2.  **状態とアーティファクトの変更のシグナリング：** イベントは状態変更の指示を運び、アーティファクトの更新を追跡します。`SessionService`はこれらのシグナルを使用して永続性を確保します。Pythonでは、変更は`event.actions.state_delta`と`event.actions.artifact_delta`を介して通知されます。
 
-3.  **Control Flow:** Specific fields like `event.actions.transfer_to_agent` or `event.actions.escalate` act as signals that direct the framework, determining which agent runs next or if a loop should terminate.
+3.  **制御フロー：** `event.actions.transfer_to_agent`や`event.actions.escalate`のような特定のフィールドは、フレームワークを指示するシグナルとして機能し、次にどのエージェントが実行されるか、またはループを終了すべきかを決定します。
 
-4.  **History & Observability:** The sequence of events recorded in `session.events` provides a complete, chronological history of an interaction, invaluable for debugging, auditing, and understanding agent behavior step-by-step.
+4.  **履歴と可観測性：** `session.events`に記録されたイベントのシーケンスは、対話の完全で時系列的な履歴を提供し、デバッグ、監査、およびエージェントの振る舞いをステップバイステップで理解するために非常に価値があります。
 
-In essence, the entire process, from a user's query to the agent's final answer, is orchestrated through the generation, interpretation, and processing of `Event` objects.
+本質的に、ユーザーのクエリからエージェントの最終的な回答までの全プロセスは、`Event`オブジェクトの生成、解釈、および処理を通じて調整されます。
 
 
-## Understanding and Using Events
+## イベントの理解と使用
 
-As a developer, you'll primarily interact with the stream of events yielded by the `Runner`. Here's how to understand and extract information from them:
+開発者として、あなたは主に`Runner`から生成（yield）されるイベントのストリームと対話します。それらを理解し、情報を抽出する方法は次のとおりです：
 
 !!! Note
-    The specific parameters or method names for the primitives may vary slightly by SDK language (e.g., `event.content()` in Python, `event.content().get().parts()` in Java). Refer to the language-specific API documentation for details.
+    プリミティブの具体的なパラメータやメソッド名は、SDKの言語によって若干異なる場合があります（例：Pythonでは`event.content()`、Javaでは`event.content().get().parts()`）。詳細は各言語のAPIドキュメントを参照してください。
 
-### Identifying Event Origin and Type
+### イベントの出所と種類の特定
 
-Quickly determine what an event represents by checking:
+イベントが何を表しているかを素早く判断するには、以下を確認します：
 
-*   **Who sent it? (`event.author`)**
-    *   `'user'`: Indicates input directly from the end-user.
-    *   `'AgentName'`: Indicates output or action from a specific agent (e.g., `'WeatherAgent'`, `'SummarizerAgent'`).
-*   **What's the main payload? (`event.content` and `event.content.parts`)**
-    *   **Text:** Indicates a conversational message. For Python, check if `event.content.parts[0].text` exists. For Java, check if `event.content()` is present, its `parts()` are present and not empty, and the first part's `text()` is present.
-    *   **Tool Call Request:** Check `event.get_function_calls()`. If not empty, the LLM is asking to execute one or more tools. Each item in the list has `.name` and `.args`.
-    *   **Tool Result:** Check `event.get_function_responses()`. If not empty, this event carries the result(s) from tool execution(s). Each item has `.name` and `.response` (the dictionary returned by the tool). *Note:* For history structuring, the `role` inside the `content` is often `'user'`, but the event `author` is typically the agent that requested the tool call.
+*   **誰が送信したか？ (`event.author`)**
+    *   `'user'`: エンドユーザーからの直接の入力を示します。
+    *   `'AgentName'`: 特定のエージェント（例：`'WeatherAgent'`、`'SummarizerAgent'`）からの出力またはアクションを示します。
+*   **主なペイロードは何か？ (`event.content`および`event.content.parts`)**
+    *   **テキスト：** 会話メッセージを示します。Pythonでは`event.content.parts[0].text`が存在するかどうかを確認します。Javaでは`event.content()`が存在し、その`parts()`が存在して空でなく、最初のパートの`text()`が存在するかどうかを確認します。
+    *   **ツール呼び出しリクエスト：** `event.get_function_calls()`をチェックします。空でなければ、LLMが1つ以上のツールの実行を要求しています。リストの各項目には`.name`と`.args`があります。
+    *   **ツールの結果：** `event.get_function_responses()`をチェックします。空でなければ、このイベントはツール実行の結果を運んでいます。各項目には`.name`と`.response`（ツールが返した辞書）があります。*注意：* 履歴の構造上、`content`内の`role`はしばしば`'user'`ですが、イベントの`author`は通常、ツール呼び出しを要求したエージェントです。
 
-*   **Is it streaming output? (`event.partial`)**
-    Indicates whether this is an incomplete chunk of text from the LLM.
-    *   `True`: More text will follow.
-    *   `False` or `None`/`Optional.empty()`: This part of the content is complete (though the overall turn might not be finished if `turn_complete` is also false).
+*   **ストリーミング出力か？ (`event.partial`)**
+    これがLLMからの一部不完全なテキストのチャンクであるかどうかを示します。
+    *   `True`: さらにテキストが続きます。
+    *   `False`または`None`/`Optional.empty()`: このコンテンツの部分は完了しています（ただし、`turn_complete`もfalseの場合、全体的なターンは終了していない可能性があります）。
 
 === "Python"
     ```python
-    # Pseudocode: Basic event identification (Python)
+    # 疑似コード：基本的なイベントの識別 (Python)
     # async for event in runner.run_async(...):
-    #     print(f"Event from: {event.author}")
+    #     print(f"イベントの送信元: {event.author}")
     #
     #     if event.content and event.content.parts:
     #         if event.get_function_calls():
-    #             print("  Type: Tool Call Request")
+    #             print("  タイプ: ツール呼び出しリクエスト")
     #         elif event.get_function_responses():
-    #             print("  Type: Tool Result")
-    #         elif event.content.parts[0].text:
+    #             print("  タイプ: ツールの結果")
+    #         elif event.content.parts.text:
     #             if event.partial:
-    #                 print("  Type: Streaming Text Chunk")
+    #                 print("  タイプ: ストリーミングテキストチャンク")
     #             else:
-    #                 print("  Type: Complete Text Message")
+    #                 print("  タイプ: 完全なテキストメッセージ")
     #         else:
-    #             print("  Type: Other Content (e.g., code result)")
+    #             print("  タイプ: その他のコンテンツ (例: コード結果)")
     #     elif event.actions and (event.actions.state_delta or event.actions.artifact_delta):
-    #         print("  Type: State/Artifact Update")
+    #         print("  タイプ: 状態/アーティファクト更新")
     #     else:
-    #         print("  Type: Control Signal or Other")
+    #         print("  タイプ: 制御シグナルまたはその他")
     ```
 
 === "Java"
     ```java
-    // Pseudocode: Basic event identification (Java)
+    // 疑似コード：基本的なイベントの識別 (Java)
     // import com.google.genai.types.Content;
     // import com.google.adk.events.Event;
     // import com.google.adk.events.EventActions;
 
-    // runner.runAsync(...).forEach(event -> { // Assuming a synchronous stream or reactive stream
-    //     System.out.println("Event from: " + event.author());
+    // runner.runAsync(...).forEach(event -> { // 同期ストリームまたはリアクティブストリームを想定
+    //     System.out.println("イベントの送信元: " + event.author());
     //
     //     if (event.content().isPresent()) {
     //         Content content = event.content().get();
     //         if (!event.functionCalls().isEmpty()) {
-    //             System.out.println("  Type: Tool Call Request");
+    //             System.out.println("  タイプ: ツール呼び出しリクエスト");
     //         } else if (!event.functionResponses().isEmpty()) {
-    //             System.out.println("  Type: Tool Result");
+    //             System.out.println("  タイプ: ツールの結果");
     //         } else if (content.parts().isPresent() && !content.parts().get().isEmpty() &&
     //                    content.parts().get().get(0).text().isPresent()) {
     //             if (event.partial().orElse(false)) {
-    //                 System.out.println("  Type: Streaming Text Chunk");
+    //                 System.out.println("  タイプ: ストリーミングテキストチャンク");
     //             } else {
-    //                 System.out.println("  Type: Complete Text Message");
+    //                 System.out.println("  タイプ: 完全なテキストメッセージ");
     //             }
     //         } else {
-    //             System.out.println("  Type: Other Content (e.g., code result)");
+    //             System.out.println("  タイプ: その他のコンテンツ (例: コード結果)");
     //         }
     //     } else if (event.actions() != null &&
     //                ((event.actions().stateDelta() != null && !event.actions().stateDelta().isEmpty()) ||
     //                 (event.actions().artifactDelta() != null && !event.actions().artifactDelta().isEmpty()))) {
-    //         System.out.println("  Type: State/Artifact Update");
+    //         System.out.println("  タイプ: 状態/アーティファクト更新");
     //     } else {
-    //         System.out.println("  Type: Control Signal or Other");
+    //         System.out.println("  タイプ: 制御シグナルまたはその他");
     //     }
     // });
     ```
 
-### Extracting Key Information
+### 主要な情報の抽出
 
-Once you know the event type, access the relevant data:
+イベントの種類がわかったら、関連データにアクセスします：
 
-*   **Text Content:**
-    Always check for the presence of content and parts before accessing text. In Python its `text = event.content.parts[0].text`.
+*   **テキストコンテンツ：**
+    テキストにアクセスする前に、常にコンテンツとパートの存在を確認してください。Pythonでは `text = event.content.parts[0].text` です。
 
-*   **Function Call Details:**
+*   **関数呼び出しの詳細：**
     
     === "Python"
         ```python
@@ -165,9 +165,9 @@ Once you know the event type, access the relevant data:
         if calls:
             for call in calls:
                 tool_name = call.name
-                arguments = call.args # This is usually a dictionary
-                print(f"  Tool: {tool_name}, Args: {arguments}")
-                # Application might dispatch execution based on this
+                arguments = call.args # これは通常辞書です
+                print(f"  ツール: {tool_name}, 引数: {arguments}")
+                # アプリケーションはこれに基づいて実行をディスパッチするかもしれません
         ```
     === "Java"
 
@@ -176,19 +176,19 @@ Once you know the event type, access the relevant data:
         import com.google.common.collect.ImmutableList;
         import java.util.Map;
     
-        ImmutableList<FunctionCall> calls = event.functionCalls(); // from Event.java
+        ImmutableList<FunctionCall> calls = event.functionCalls(); // Event.java から
         if (!calls.isEmpty()) {
           for (FunctionCall call : calls) {
             String toolName = call.name().get();
-            // args is Optional<Map<String, Object>>
+            // args は Optional<Map<String, Object>> です
             Map<String, Object> arguments = call.args().get();
-                   System.out.println("  Tool: " + toolName + ", Args: " + arguments);
-            // Application might dispatch execution based on this
+                   System.out.println("  ツール: " + toolName + ", 引数: " + arguments);
+            // アプリケーションはこれに基づいて実行をディスパッチするかもしれません
           }
         }
         ```
 
-*   **Function Response Details:**
+*   **関数応答の詳細：**
     
     === "Python"
         ```python
@@ -196,8 +196,8 @@ Once you know the event type, access the relevant data:
         if responses:
             for response in responses:
                 tool_name = response.name
-                result_dict = response.response # The dictionary returned by the tool
-                print(f"  Tool Result: {tool_name} -> {result_dict}")
+                result_dict = response.response # ツールが返した辞書
+                print(f"  ツールの結果: {tool_name} -> {result_dict}")
         ```
     === "Java"
 
@@ -206,32 +206,32 @@ Once you know the event type, access the relevant data:
         import com.google.common.collect.ImmutableList;
         import java.util.Map; 
 
-        ImmutableList<FunctionResponse> responses = event.functionResponses(); // from Event.java
+        ImmutableList<FunctionResponse> responses = event.functionResponses(); // Event.java から
         if (!responses.isEmpty()) {
             for (FunctionResponse response : responses) {
                 String toolName = response.name().get();
-                Map<String, String> result= response.response().get(); // Check before getting the response
-                System.out.println("  Tool Result: " + toolName + " -> " + result);
+                Map<String, Object> result = response.response().get(); // responseを取得する前に確認
+                System.out.println("  ツールの結果: " + toolName + " -> " + result);
             }
         }
         ```
 
-*   **Identifiers:**
-    *   `event.id`: Unique ID for this specific event instance.
-    *   `event.invocation_id`: ID for the entire user-request-to-final-response cycle this event belongs to. Useful for logging and tracing.
+*   **識別子：**
+    *   `event.id`: この特定のイベントインスタンスの一意なID。
+    *   `event.invocation_id`: このイベントが属する、ユーザーリクエストから最終応答までの一連のサイクル全体のID。ロギングやトレースに役立ちます。
 
-### Detecting Actions and Side Effects
+### アクションと副作用の検出
 
-The `event.actions` object signals changes that occurred or should occur. Always check if `event.actions` and it's fields/ methods exists before accessing them.
+`event.actions`オブジェクトは、発生した、または発生すべき変更を通知します。アクセスする前に、常に`event.actions`とそのフィールド/メソッドが存在するかどうかを確認してください。
 
-*   **State Changes:** Gives you a collection of key-value pairs that were modified in the session state during the step that produced this event.
+*   **状態の変更：** このイベントを生成したステップ中にセッション状態で変更されたキーと値のペアのコレクションを提供します。
     
     === "Python"
-        `delta = event.actions.state_delta` (a dictionary of `{key: value}` pairs).
+        `delta = event.actions.state_delta` (`{key: value}`ペアの辞書)。
         ```python
         if event.actions and event.actions.state_delta:
-            print(f"  State changes: {event.actions.state_delta}")
-            # Update local UI or application state if necessary
+            print(f"  状態の変更: {event.actions.state_delta}")
+            # 必要に応じてローカルUIやアプリケーションの状態を更新する
         ```
     === "Java"
         `ConcurrentMap<String, Object> delta = event.actions().stateDelta();`
@@ -240,22 +240,22 @@ The `event.actions` object signals changes that occurred or should occur. Always
         import java.util.concurrent.ConcurrentMap;
         import com.google.adk.events.EventActions;
 
-        EventActions actions = event.actions(); // Assuming event.actions() is not null
+        EventActions actions = event.actions(); // event.actions()がnullでないと仮定
         if (actions != null && actions.stateDelta() != null && !actions.stateDelta().isEmpty()) {
             ConcurrentMap<String, Object> stateChanges = actions.stateDelta();
-            System.out.println("  State changes: " + stateChanges);
-            // Update local UI or application state if necessary
+            System.out.println("  状態の変更: " + stateChanges);
+            // 必要に応じてローカルUIやアプリケーションの状態を更新する
         }
         ```
 
-*   **Artifact Saves:** Gives you a collection indicating which artifacts were saved and their new version number (or relevant `Part` information).
+*   **アーティファクトの保存：** どのアーティファクトが保存され、その新しいバージョン番号（または関連する`Part`情報）が何かを示すコレクションを提供します。
     
     === "Python"
-        `artifact_changes = event.actions.artifact_delta` (a dictionary of `{filename: version}`).
+        `artifact_changes = event.actions.artifact_delta` (`{filename: version}`の辞書)。
         ```python
         if event.actions and event.actions.artifact_delta:
-            print(f"  Artifacts saved: {event.actions.artifact_delta}")
-            # UI might refresh an artifact list
+            print(f"  保存されたアーティファクト: {event.actions.artifact_delta}")
+            # UIがアーティファクトリストを更新するかもしれない
         ```
     === "Java"
         `ConcurrentMap<String, Part> artifactChanges = event.actions().artifactDelta();`
@@ -265,112 +265,112 @@ The `event.actions` object signals changes that occurred or should occur. Always
         import com.google.genai.types.Part;
         import com.google.adk.events.EventActions;
 
-        EventActions actions = event.actions(); // Assuming event.actions() is not null
+        EventActions actions = event.actions(); // event.actions()がnullでないと仮定
         if (actions != null && actions.artifactDelta() != null && !actions.artifactDelta().isEmpty()) {
             ConcurrentMap<String, Part> artifactChanges = actions.artifactDelta();
-            System.out.println("  Artifacts saved: " + artifactChanges);
-            // UI might refresh an artifact list
-            // Iterate through artifactChanges.entrySet() to get filename and Part details
+            System.out.println("  保存されたアーティファクト: " + artifactChanges);
+            // UIがアーティファクトリストを更新するかもしれない
+            // artifactChanges.entrySet()をループしてファイル名とPartの詳細を取得する
         }
         ```
 
-*   **Control Flow Signals:** Check boolean flags or string values:
+*   **制御フローシグナル：** ブール値のフラグまたは文字列の値をチェックします：
     
     === "Python"
-        *   `event.actions.transfer_to_agent` (string): Control should pass to the named agent.
-        *   `event.actions.escalate` (bool): A loop should terminate.
-        *   `event.actions.skip_summarization` (bool): A tool result should not be summarized by the LLM.
+        *   `event.actions.transfer_to_agent` (string): 制御が指定されたエージェントに渡されるべきです。
+        *   `event.actions.escalate` (bool): ループが終了すべきです。
+        *   `event.actions.skip_summarization` (bool): ツールの結果がLLMによって要約されるべきではありません。
         ```python
         if event.actions:
             if event.actions.transfer_to_agent:
-                print(f"  Signal: Transfer to {event.actions.transfer_to_agent}")
+                print(f"  シグナル: {event.actions.transfer_to_agent}へ転送")
             if event.actions.escalate:
-                print("  Signal: Escalate (terminate loop)")
+                print("  シグナル: エスカレーション（ループ終了）")
             if event.actions.skip_summarization:
-                print("  Signal: Skip summarization for tool result")
+                print("  シグナル: ツール結果の要約をスキップ")
         ```
     === "Java"
-        *   `event.actions().transferToAgent()` (returns `Optional<String>`): Control should pass to the named agent.
-        *   `event.actions().escalate()` (returns `Optional<Boolean>`): A loop should terminate.
-        *   `event.actions().skipSummarization()` (returns `Optional<Boolean>`): A tool result should not be summarized by the LLM.
+        *   `event.actions().transferToAgent()` (`Optional<String>`を返す): 制御が指定されたエージェントに渡されるべきです。
+        *   `event.actions().escalate()` (`Optional<Boolean>`を返す): ループが終了すべきです。
+        *   `event.actions().skipSummarization()` (`Optional<Boolean>`を返す): ツールの結果がLLMによって要約されるべきではありません。
 
         ```java
         import com.google.adk.events.EventActions;
         import java.util.Optional;
 
-        EventActions actions = event.actions(); // Assuming event.actions() is not null
+        EventActions actions = event.actions(); // event.actions()がnullでないと仮定
         if (actions != null) {
             Optional<String> transferAgent = actions.transferToAgent();
             if (transferAgent.isPresent()) {
-                System.out.println("  Signal: Transfer to " + transferAgent.get());
+                System.out.println("  シグナル: " + transferAgent.get() + "へ転送");
             }
 
             Optional<Boolean> escalate = actions.escalate();
-            if (escalate.orElse(false)) { // or escalate.isPresent() && escalate.get()
-                System.out.println("  Signal: Escalate (terminate loop)");
+            if (escalate.orElse(false)) { // または escalate.isPresent() && escalate.get()
+                System.out.println("  シグナル: エスカレーション（ループ終了）");
             }
 
             Optional<Boolean> skipSummarization = actions.skipSummarization();
-            if (skipSummarization.orElse(false)) { // or skipSummarization.isPresent() && skipSummarization.get()
-                System.out.println("  Signal: Skip summarization for tool result");
+            if (skipSummarization.orElse(false)) { // または skipSummarization.isPresent() && skipSummarization.get()
+                System.out.println("  シグナル: ツール結果の要約をスキップ");
             }
         }
         ```
 
-### Determining if an Event is a "Final" Response
+### イベントが「最終」応答かどうかの判定
 
-Use the built-in helper method `event.is_final_response()` to identify events suitable for display as the agent's complete output for a turn.
+`event.is_final_response()`という組み込みのヘルパーメソッドを使用して、ターンのエージェントの完全な出力として表示するのに適したイベントを識別します。
 
-*   **Purpose:** Filters out intermediate steps (like tool calls, partial streaming text, internal state updates) from the final user-facing message(s).
-*   **When `True`?**
-    1.  The event contains a tool result (`function_response`) and `skip_summarization` is `True`.
-    2.  The event contains a tool call (`function_call`) for a tool marked as `is_long_running=True`. In Java, check if the `longRunningToolIds` list is empty: 
-        *   `event.longRunningToolIds().isPresent() && !event.longRunningToolIds().get().isEmpty()` is `true`.
-    3.  OR, **all** of the following are met:
-        *   No function calls (`get_function_calls()` is empty).
-        *   No function responses (`get_function_responses()` is empty).
-        *   Not a partial stream chunk (`partial` is not `True`).
-        *   Doesn't end with a code execution result that might need further processing/display.
-*   **Usage:** Filter the event stream in your application logic.
+*   **目的：** 中間ステップ（ツール呼び出し、部分的なストリーミングテキスト、内部の状態更新など）を、最終的なユーザー向けのメッセージから除外します。
+*   **いつ`True`になるか？**
+    1.  イベントにツールの結果（`function_response`）が含まれ、`skip_summarization`が`True`である。
+    2.  イベントに`is_long_running=True`とマークされたツールのツール呼び出し（`function_call`）が含まれている。Javaでは、`longRunningToolIds`リストが空でないか確認します：
+        *   `event.longRunningToolIds().isPresent() && !event.longRunningToolIds().get().isEmpty()` が `true` である。
+    3.  または、以下の**すべて**が満たされる場合：
+        *   関数呼び出しがない（`get_function_calls()`が空）。
+        *   関数応答がない（`get_function_responses()`が空）。
+        *   部分的なストリームチャンクではない（`partial`が`True`でない）。
+        *   さらなる処理/表示が必要な可能性のあるコード実行結果で終わらない。
+*   **使用法：** アプリケーションロジックでイベントストリームをフィルタリングします。
 
     === "Python"
         ```python
-        # Pseudocode: Handling final responses in application (Python)
+        # 疑似コード：アプリケーションでの最終応答の処理 (Python)
         # full_response_text = ""
         # async for event in runner.run_async(...):
-        #     # Accumulate streaming text if needed...
-        #     if event.partial and event.content and event.content.parts and event.content.parts[0].text:
-        #         full_response_text += event.content.parts[0].text
+        #     # 必要に応じてストリーミングテキストを蓄積...
+        #     if event.partial and event.content and event.content.parts and event.content.parts.text:
+        #         full_response_text += event.content.parts.text
         #
-        #     # Check if it's a final, displayable event
+        #     # 表示可能な最終イベントかどうかを確認
         #     if event.is_final_response():
-        #         print("\n--- Final Output Detected ---")
-        #         if event.content and event.content.parts and event.content.parts[0].text:
-        #              # If it's the final part of a stream, use accumulated text
-        #              final_text = full_response_text + (event.content.parts[0].text if not event.partial else "")
-        #              print(f"Display to user: {final_text.strip()}")
-        #              full_response_text = "" # Reset accumulator
+        #         print("\n--- 最終出力検出 ---")
+        #         if event.content and event.content.parts and event.content.parts.text:
+        #              # ストリームの最後の部分であれば、蓄積したテキストを使用
+        #              final_text = full_response_text + (event.content.parts.text if not event.partial else "")
+        #              print(f"ユーザーに表示: {final_text.strip()}")
+        #              full_response_text = "" # アキュムレータをリセット
         #         elif event.actions and event.actions.skip_summarization and event.get_function_responses():
-        #              # Handle displaying the raw tool result if needed
-        #              response_data = event.get_function_responses()[0].response
-        #              print(f"Display raw tool result: {response_data}")
+        #              # 必要に応じて生のツール結果を表示する処理
+        #              response_data = event.get_function_responses().response
+        #              print(f"生のツール結果を表示: {response_data}")
         #         elif hasattr(event, 'long_running_tool_ids') and event.long_running_tool_ids:
-        #              print("Display message: Tool is running in background...")
+        #              print("メッセージを表示: ツールはバックグラウンドで実行中です...")
         #         else:
-        #              # Handle other types of final responses if applicable
-        #              print("Display: Final non-textual response or signal.")
+        #              # 該当する場合、他の種類の最終応答を処理
+        #              print("表示: 最終的な非テキスト応答またはシグナル。")
         ```
     === "Java"
         ```java
-        // Pseudocode: Handling final responses in application (Java)
+        // 疑似コード：アプリケーションでの最終応答の処理 (Java)
         import com.google.adk.events.Event;
         import com.google.genai.types.Content;
         import com.google.genai.types.FunctionResponse;
         import java.util.Map;
 
         StringBuilder fullResponseText = new StringBuilder();
-        runner.run(...).forEach(event -> { // Assuming a stream of events
-             // Accumulate streaming text if needed...
+        runner.run(...).forEach(event -> { // イベントのストリームを想定
+             // 必要に応じてストリーミングテキストを蓄積...
              if (event.partial().orElse(false) && event.content().isPresent()) {
                  event.content().flatMap(Content::parts).ifPresent(parts -> {
                      if (!parts.isEmpty() && parts.get(0).text().isPresent()) {
@@ -379,116 +379,116 @@ Use the built-in helper method `event.is_final_response()` to identify events su
                  });
              }
         
-             // Check if it's a final, displayable event
-             if (event.finalResponse()) { // Using the method from Event.java
-                 System.out.println("\n--- Final Output Detected ---");
+             // 表示可能な最終イベントかどうかを確認
+             if (event.finalResponse()) { // Event.java のメソッドを使用
+                 System.out.println("\n--- 最終出力検出 ---");
                  if (event.content().isPresent() &&
                      event.content().flatMap(Content::parts).map(parts -> !parts.isEmpty() && parts.get(0).text().isPresent()).orElse(false)) {
-                     // If it's the final part of a stream, use accumulated text
+                     // ストリームの最後の部分であれば、蓄積したテキストを使用
                      String eventText = event.content().get().parts().get().get(0).text().get();
                      String finalText = fullResponseText.toString() + (event.partial().orElse(false) ? "" : eventText);
-                     System.out.println("Display to user: " + finalText.trim());
-                     fullResponseText.setLength(0); // Reset accumulator
+                     System.out.println("ユーザーに表示: " + finalText.trim());
+                     fullResponseText.setLength(0); // アキュムレータをリセット
                  } else if (event.actions() != null && event.actions().skipSummarization().orElse(false)
                             && !event.functionResponses().isEmpty()) {
-                     // Handle displaying the raw tool result if needed,
-                     // especially if finalResponse() was true due to other conditions
-                     // or if you want to display skipped summarization results regardless of finalResponse()
-                     Map<String, Object> responseData = event.functionResponses().get(0).response().get();
-                     System.out.println("Display raw tool result: " + responseData);
+                     // 必要に応じて生のツール結果を表示する処理、
+                     // 特に finalResponse() が他の条件で true だった場合や、
+                     // finalResponse() に関係なく要約がスキップされた結果を表示したい場合
+                     Map<String, Object> responseData = (Map<String, Object>) event.functionResponses().get(0).response().get();
+                     System.out.println("生のツール結果を表示: " + responseData);
                  } else if (event.longRunningToolIds().isPresent() && !event.longRunningToolIds().get().isEmpty()) {
-                     // This case is covered by event.finalResponse()
-                     System.out.println("Display message: Tool is running in background...");
+                     // このケースは event.finalResponse() でカバーされる
+                     System.out.println("メッセージを表示: ツールはバックグラウンドで実行中です...");
                  } else {
-                     // Handle other types of final responses if applicable
-                     System.out.println("Display: Final non-textual response or signal.");
+                     // 該当する場合、他の種類の最終応答を処理
+                     System.out.println("表示: 最終的な非テキスト応答またはシグナル。");
                  }
              }
          });
         ```
 
-By carefully examining these aspects of an event, you can build robust applications that react appropriately to the rich information flowing through the ADK system.
+イベントのこれらの側面を注意深く調べることで、ADKシステムを流れる豊富な情報に適切に反応する堅牢なアプリケーションを構築できます。
 
-## How Events Flow: Generation and Processing
+## イベントのフロー：生成と処理
 
-Events are created at different points and processed systematically by the framework. Understanding this flow helps clarify how actions and history are managed.
+イベントは異なる時点で作成され、フレームワークによって体系的に処理されます。このフローを理解することは、アクションと履歴がどのように管理されるかを明確にするのに役立ちます。
 
-*   **Generation Sources:**
-    *   **User Input:** The `Runner` typically wraps initial user messages or mid-conversation inputs into an `Event` with `author='user'`.
-    *   **Agent Logic:** Agents (`BaseAgent`, `LlmAgent`) explicitly `yield Event(...)` objects (setting `author=self.name`) to communicate responses or signal actions.
-    *   **LLM Responses:** The ADK model integration layer translates raw LLM output (text, function calls, errors) into `Event` objects, authored by the calling agent.
-    *   **Tool Results:** After a tool executes, the framework generates an `Event` containing the `function_response`. The `author` is typically the agent that requested the tool, while the `role` inside the `content` is set to `'user'` for the LLM history.
-
-
-*   **Processing Flow:**
-    1.  **Yield/Return:** An event is generated and yielded (Python) or returned/emitted (Java) by its source.
-    2.  **Runner Receives:** The main `Runner` executing the agent receives the event.
-    3.  **SessionService Processing:** The `Runner` sends the event to the configured `SessionService`. This is a critical step:
-        *   **Applies Deltas:** The service merges `event.actions.state_delta` into `session.state` and updates internal records based on `event.actions.artifact_delta`. (Note: The actual artifact *saving* usually happened earlier when `context.save_artifact` was called).
-        *   **Finalizes Metadata:** Assigns a unique `event.id` if not present, may update `event.timestamp`.
-        *   **Persists to History:** Appends the processed event to the `session.events` list.
-    4.  **External Yield:** The `Runner` yields (Python) or returns/emits (Java) the processed event outwards to the calling application (e.g., the code that invoked `runner.run_async`).
-
-This flow ensures that state changes and history are consistently recorded alongside the communication content of each event.
+*   **生成元：**
+    *   **ユーザー入力：** `Runner`は通常、最初のユーザーメッセージや会話の途中の入力を`author='user'`を持つ`Event`にラップします。
+    *   **エージェントロジック：** エージェント（`BaseAgent`、`LlmAgent`）は、応答を伝えたりアクションを通知したりするために、明示的に`Event(...)`オブジェクトを`yield`します（`author=self.name`を設定）。
+    *   **LLM応答：** ADKのモデル統合レイヤーは、生のLLM出力（テキスト、関数呼び出し、エラー）を、呼び出し元エージェントを作者とする`Event`オブジェクトに変換します。
+    *   **ツールの結果：** ツールが実行された後、フレームワークは`function_response`を含む`Event`を生成します。`author`は通常、ツールをリクエストしたエージェントですが、`content`内の`role`はLLMの履歴のために`'user'`に設定されます。
 
 
-## Common Event Examples (Illustrative Patterns)
+*   **処理フロー：**
+    1.  **Yield/Return:** イベントが生成され、そのソースによってyield（Python）またはreturn/emit（Java）されます。
+    2.  **Runnerが受信：** エージェントを実行しているメインの`Runner`がイベントを受け取ります。
+    3.  **SessionServiceによる処理：** `Runner`はイベントを設定済みの`SessionService`に送信します。これは重要なステップです：
+        *   **差分の適用：** サービスは`event.actions.state_delta`を`session.state`にマージし、`event.actions.artifact_delta`に基づいて内部レコードを更新します。（注意：実際のアーティファクトの*保存*は、通常、`context.save_artifact`が呼び出されたときに既に行われています）。
+        *   **メタデータの確定：** まだ存在しない場合は一意の`event.id`を割り当て、`event.timestamp`を更新する場合があります。
+        *   **履歴への永続化：** 処理されたイベントを`session.events`リストに追加します。
+    4.  **外部へのYield：** `Runner`は処理されたイベントを外部の呼び出し元アプリケーション（例：`runner.run_async`を呼び出したコード）にyield（Python）またはreturn/emit（Java）します。
 
-Here are concise examples of typical events you might see in the stream:
+このフローにより、状態の変更と履歴が各イベントの通信内容とともに一貫して記録されることが保証されます。
 
-*   **User Input:**
+
+## 一般的なイベントの例（説明のためのパターン）
+
+ストリームで見られる典型的なイベントの簡潔な例を以下に示します：
+
+*   **ユーザー入力：**
     ```json
     {
       "author": "user",
       "invocation_id": "e-xyz...",
-      "content": {"parts": [{"text": "Book a flight to London for next Tuesday"}]}
-      // actions usually empty
+      "content": {"parts": [{"text": "来週の火曜日のロンドン行きのフライトを予約して"}]}
+      // actions は通常空
     }
     ```
-*   **Agent Final Text Response:** (`is_final_response() == True`)
+*   **エージェントの最終テキスト応答：** (`is_final_response() == True`)
     ```json
     {
       "author": "TravelAgent",
       "invocation_id": "e-xyz...",
-      "content": {"parts": [{"text": "Okay, I can help with that. Could you confirm the departure city?"}]},
+      "content": {"parts": [{"text": "はい、承知いたしました。出発都市を確認していただけますか？"}]},
       "partial": false,
       "turn_complete": true
-      // actions might have state delta, etc.
+      // actions には state delta などが含まれる可能性がある
     }
     ```
-*   **Agent Streaming Text Response:** (`is_final_response() == False`)
+*   **エージェントのストリーミングテキスト応答：** (`is_final_response() == False`)
     ```json
     {
       "author": "SummaryAgent",
       "invocation_id": "e-abc...",
-      "content": {"parts": [{"text": "The document discusses three main points:"}]},
+      "content": {"parts": [{"text": "この文書では、主に3つの点について議論しています："}]},
       "partial": true,
       "turn_complete": false
     }
-    // ... more partial=True events follow ...
+    // ... さらに partial=True のイベントが続く ...
     ```
-*   **Tool Call Request (by LLM):** (`is_final_response() == False`)
+*   **ツール呼び出しリクエスト（LLMによる）：** (`is_final_response() == False`)
     ```json
     {
       "author": "TravelAgent",
       "invocation_id": "e-xyz...",
       "content": {"parts": [{"function_call": {"name": "find_airports", "args": {"city": "London"}}}]}
-      // actions usually empty
+      // actions は通常空
     }
     ```
-*   **Tool Result Provided (to LLM):** (`is_final_response()` depends on `skip_summarization`)
+*   **ツールの結果提供（LLMへ）：** (`is_final_response()`は`skip_summarization`に依存）
     ```json
     {
-      "author": "TravelAgent", // Author is agent that requested the call
+      "author": "TravelAgent", // 作者は呼び出しをリクエストしたエージェント
       "invocation_id": "e-xyz...",
       "content": {
-        "role": "user", // Role for LLM history
+        "role": "user", // LLM履歴用のロール
         "parts": [{"function_response": {"name": "find_airports", "response": {"result": ["LHR", "LGW", "STN"]}}}]
       }
-      // actions might have skip_summarization=True
+      // actions には skip_summarization=True が含まれる可能性がある
     }
     ```
-*   **State/Artifact Update Only:** (`is_final_response() == False`)
+*   **状態/アーティファクトの更新のみ：** (`is_final_response() == False`)
     ```json
     {
       "author": "InternalUpdater",
@@ -500,78 +500,78 @@ Here are concise examples of typical events you might see in the stream:
       }
     }
     ```
-*   **Agent Transfer Signal:** (`is_final_response() == False`)
+*   **エージェント転送シグナル：** (`is_final_response() == False`)
     ```json
     {
       "author": "OrchestratorAgent",
       "invocation_id": "e-789...",
       "content": {"parts": [{"function_call": {"name": "transfer_to_agent", "args": {"agent_name": "BillingAgent"}}}]},
-      "actions": {"transfer_to_agent": "BillingAgent"} // Added by framework
+      "actions": {"transfer_to_agent": "BillingAgent"} // フレームワークによって追加
     }
     ```
-*   **Loop Escalation Signal:** (`is_final_response() == False`)
+*   **ループエスカレーションシグナル：** (`is_final_response() == False`)
     ```json
     {
       "author": "CheckerAgent",
       "invocation_id": "e-loop...",
-      "content": {"parts": [{"text": "Maximum retries reached."}]}, // Optional content
+      "content": {"parts": [{"text": "最大再試行回数に達しました。"}]}, // オプションのコンテンツ
       "actions": {"escalate": true}
     }
     ```
 
-## Additional Context and Event Details
+## 追加のコンテキストとイベントの詳細
 
-Beyond the core concepts, here are a few specific details about context and events that are important for certain use cases:
+コアコンセプトを超えて、特定のユースケースで重要となるコンテキストとイベントに関するいくつかの詳細を以下に示します：
 
-1.  **`ToolContext.function_call_id` (Linking Tool Actions):**
-    *   When an LLM requests a tool (FunctionCall), that request has an ID. The `ToolContext` provided to your tool function includes this `function_call_id`.
-    *   **Importance:** This ID is crucial for linking actions like authentication back to the specific tool request that initiated them, especially if multiple tools are called in one turn. The framework uses this ID internally.
+1.  **`ToolContext.function_call_id`（ツールアクションのリンク）：**
+    *   LLMがツールをリクエストする（FunctionCall）と、そのリクエストにはIDがあります。ツール関数に提供される`ToolContext`には、この`function_call_id`が含まれています。
+    *   **重要性：** このIDは、特に1ターンで複数のツールが呼び出される場合に、認証のようなアクションを、それを開始した特定のツールリクエストにリンクするために不可欠です。フレームワークはこのIDを内部的に使用します。
 
-2.  **How State/Artifact Changes are Recorded:**
-    *   When you modify state or save an artifact using `CallbackContext` or `ToolContext`, these changes aren't immediately written to persistent storage.
-    *   Instead, they populate the `state_delta` and `artifact_delta` fields within the `EventActions` object.
-    *   This `EventActions` object is attached to the *next event* generated after the change (e.g., the agent's response or a tool result event).
-    *   The `SessionService.append_event` method reads these deltas from the incoming event and applies them to the session's persistent state and artifact records. This ensures changes are tied chronologically to the event stream.
+2.  **状態/アーティファクトの変更が記録される方法：**
+    *   `CallbackContext`または`ToolContext`を使用して状態を変更したりアーティファクトを保存したりしても、これらの変更はすぐには永続ストレージに書き込まれません。
+    *   代わりに、それらは`EventActions`オブジェクト内の`state_delta`および`artifact_delta`フィールドに移入されます。
+    *   この`EventActions`オブジェクトは、変更後に生成された*次*のイベント（例：エージェントの応答やツールの結果イベント）に添付されます。
+    *   `SessionService.append_event`メソッドは、入ってくるイベントからこれらのデルタを読み取り、セッションの永続的な状態とアーティファクトレコードに適用します。これにより、変更がイベントストリームと時系列で結び付けられることが保証されます。
 
-3.  **State Scope Prefixes (`app:`, `user:`, `temp:`):**
-    *   When managing state via `context.state`, you can optionally use prefixes:
-        *   `app:my_setting`: Suggests state relevant to the entire application (requires a persistent `SessionService`).
-        *   `user:user_preference`: Suggests state relevant to the specific user across sessions (requires a persistent `SessionService`).
-        *   `temp:intermediate_result` or no prefix: Typically session-specific or temporary state for the current invocation.
-    *   The underlying `SessionService` determines how these prefixes are handled for persistence.
+3.  **状態スコープのプレフィックス（`app:`、`user:`、`temp:`）：**
+    *   `context.state`を介して状態を管理する際、オプションでプレフィックスを使用できます：
+        *   `app:my_setting`: アプリケーション全体に関連する状態を示唆します（永続的な`SessionService`が必要）。
+        *   `user:user_preference`: セッションをまたいで特定のユーザーに関連する状態を示唆します（永続的な`SessionService`が必要）。
+        *   `temp:intermediate_result`またはプレフィックスなし: 通常はセッション固有または現在の呼び出しのための一時的な状態。
+    *   基盤となる`SessionService`が、永続化のためにこれらのプレフィックスをどのように処理するかを決定します。
 
-4.  **Error Events:**
-    *   An `Event` can represent an error. Check the `event.error_code` and `event.error_message` fields (inherited from `LlmResponse`).
-    *   Errors might originate from the LLM (e.g., safety filters, resource limits) or potentially be packaged by the framework if a tool fails critically. Check tool `FunctionResponse` content for typical tool-specific errors.
+4.  **エラーイベント：**
+    *   `Event`はエラーを表すことがあります。`event.error_code`および`event.error_message`フィールド（`LlmResponse`から継承）を確認してください。
+    *   エラーはLLM（例：安全フィルター、リソース制限）から発生する場合もあれば、ツールが致命的に失敗した場合にフレームワークによってパッケージ化される可能性もあります。典型的なツール固有のエラーについては、ツールの`FunctionResponse`コンテンツを確認してください。
     ```json
-    // Example Error Event (conceptual)
+    // エラーイベントの例（概念的）
     {
       "author": "LLMAgent",
       "invocation_id": "e-err...",
       "content": null,
       "error_code": "SAFETY_FILTER_TRIGGERED",
-      "error_message": "Response blocked due to safety settings.",
+      "error_message": "安全設定により応答がブロックされました。",
       "actions": {}
     }
     ```
 
-These details provide a more complete picture for advanced use cases involving tool authentication, state persistence scope, and error handling within the event stream.
+これらの詳細は、ツールの認証、状態の永続性スコープ、およびイベントストリーム内のエラー処理を含む高度なユースケースのためのより完全な像を提供します。
 
-## Best Practices for Working with Events
+## イベントを扱う際のベストプラクティス
 
-To use events effectively in your ADK applications:
+ADKアプリケーションでイベントを効果的に使用するために：
 
-*   **Clear Authorship:** When building custom agents, ensure correct attribution for agent actions in the history. The framework generally handles authorship correctly for LLM/tool events.
+*   **明確な作者情報：** カスタムエージェントを構築する際は、履歴内のエージェントアクションの帰属が正しいことを確認してください。フレームワークは通常、LLM/ツールイベントの作者情報を正しく処理します。
     
     === "Python"
-        Use `yield Event(author=self.name, ...)` in `BaseAgent` subclasses.
+        `BaseAgent`のサブクラスで`yield Event(author=self.name, ...)`を使用します。
     === "Java"
-        When constructing an `Event` in your custom agent logic, set the author, for example: `Event.builder().author(this.getAgentName()) // ... .build();`
+        カスタムエージェントロジックで`Event`を構築する際に、作者を設定します。例：`Event.builder().author(this.getAgentName()) // ... .build();`
 
-*   **Semantic Content & Actions:** Use `event.content` for the core message/data (text, function call/response). Use `event.actions` specifically for signaling side effects (state/artifact deltas) or control flow (`transfer`, `escalate`, `skip_summarization`).
-*   **Idempotency Awareness:** Understand that the `SessionService` is responsible for applying the state/artifact changes signaled in `event.actions`. While ADK services aim for consistency, consider potential downstream effects if your application logic re-processes events.
-*   **Use `is_final_response()`:** Rely on this helper method in your application/UI layer to identify complete, user-facing text responses. Avoid manually replicating its logic.
-*   **Leverage History:** The session's event list is your primary debugging tool. Examine the sequence of authors, content, and actions to trace execution and diagnose issues.
-*   **Use Metadata:** Use `invocation_id` to correlate all events within a single user interaction. Use `event.id` to reference specific, unique occurrences.
+*   **意味的なコンテンツとアクション：** `event.content`を中核的なメッセージ/データ（テキスト、関数呼び出し/応答）に使用します。`event.actions`を副作用（状態/アーティファクトの差分）や制御フロー（`transfer`、`escalate`、`skip_summarization`）の通知に特化して使用します。
+*   **べき等性の意識：** `SessionService`が`event.actions`で通知された状態/アーティファクトの変更を適用する責任があることを理解してください。ADKサービスは一貫性を目指していますが、アプリケーションロジックがイベントを再処理する場合の潜在的な下流への影響を考慮してください。
+*   **`is_final_response()`の使用：** アプリケーション/UIレイヤーでこのヘルパーメソッドに依存して、完全なユーザー向けのテキスト応答を識別します。そのロジックを手動で複製することは避けてください。
+*   **履歴の活用：** セッションのイベントリストは、主要なデバッグツールです。実行をトレースし、問題を診断するために、作者、コンテンツ、アクションのシーケンスを調べてください。
+*   **メタデータの使用：** `invocation_id`を使用して、単一のユーザーインタラクション内のすべてのイベントを関連付けます。`event.id`を使用して、特定のユニークな発生を参照します。
 
-Treating events as structured messages with clear purposes for their content and actions is key to building, debugging, and managing complex agent behaviors in ADK.
+イベントを、そのコンテンツとアクションに明確な目的を持つ構造化されたメッセージとして扱うことが、ADKで複雑なエージェントの振る舞いを構築、デバッグ、管理するための鍵です。

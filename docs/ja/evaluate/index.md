@@ -1,114 +1,105 @@
-# Why Evaluate Agents
+# なぜエージェントを評価するのか
 
-![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java support is planned/ coming soon."}
+![python_only](https://img.shields.io/badge/現在サポートされているのは-Python-blue){ title="この機能は現在Pythonで利用可能です。Javaのサポートは計画中/近日公開予定です。" }
 
-In traditional software development, unit tests and integration tests provide confidence that code functions as expected and remains stable through changes. These tests provide a clear "pass/fail" signal, guiding further development. However, LLM agents introduce a level of variability that makes traditional testing approaches insufficient.
+従来のソフトウェア開発では、単体テストと統合テストによって、コードが期待通りに機能し、変更を通じて安定しているという信頼性が得られます。これらのテストは明確な「合格/不合格」のシグナルを提供し、さらなる開発の指針となります。しかし、LLMエージェントは、従来のテストアプローチでは不十分なレベルの変動性を持ち込みます。
 
-Due to the probabilistic nature of models, deterministic "pass/fail" assertions are often unsuitable for evaluating agent performance. Instead, we need qualitative evaluations of both the final output and the agent's trajectory \- the sequence of steps taken to reach the solution. This involves assessing the quality of the agent's decisions, its reasoning process, and the final result.
+モデルの確率的な性質のため、決定論的な「合格/不合格」のアサーションは、エージェントのパフォーマンス評価にはしばしば不適切です。代わりに、最終的な出力とエージェントの**軌跡（trajectory）** - 解に到達するために取られた一連のステップ - の両方について、定性的な評価が必要です。これには、エージェントの決定の質、その推論プロセス、そして最終結果の評価が含まれます。
 
-This may seem like a lot of extra work to set up, but the investment of automating evaluations pays off quickly. If you intend to progress beyond prototype, this is a highly recommended best practice.
+これは設定に多くの余分な作業が必要に思えるかもしれませんが、評価を自動化するための投資はすぐに元が取れます。プロトタイプを超えて前進するつもりなら、これは強く推奨されるベストプラクティスです。
 
 ![intro_components.png](../assets/evaluate_agent.png)
 
-## Preparing for Agent Evaluations
+## エージェント評価の準備
 
-Before automating agent evaluations, define clear objectives and success criteria:
+エージェント評価を自動化する前に、明確な目的と成功基準を定義します：
 
-* **Define Success:** What constitutes a successful outcome for your agent?  
-* **Identify Critical Tasks:** What are the essential tasks your agent must accomplish?  
-* **Choose Relevant Metrics:** What metrics will you track to measure performance?
+*   **成功の定義：** あなたのエージェントにとって、成功した結果とは何か？
+*   **重要なタスクの特定：** あなたのエージェントが達成しなければならない本質的なタスクは何か？
+*   **関連するメトリクスの選択：** パフォーマンスを測定するために追跡するメトリクスは何か？
 
-These considerations will guide the creation of evaluation scenarios and enable effective monitoring of agent behavior in real-world deployments.
+これらの考慮事項は、評価シナリオの作成を導き、実世界のデプロイメントにおけるエージェントの振る舞いを効果的に監視することを可能にします。
 
-## What to Evaluate?
+## 何を評価するか？
 
-To bridge the gap between a proof-of-concept and a production-ready AI agent, a robust and automated evaluation framework is essential. Unlike evaluating generative models, where the focus is primarily on the final output, agent evaluation requires a deeper understanding of the decision-making process. Agent evaluation can be broken down into two components:
+概念実証（PoC）と本番環境対応のAIエージェントとの間のギャップを埋めるためには、堅牢で自動化された評価フレームワークが不可欠です。主に最終的な出力に焦点を当てる生成モデルの評価とは異なり、エージェントの評価には、意思決定プロセスのより深い理解が必要です。エージェントの評価は、2つのコンポーネントに分けることができます：
 
-1. **Evaluating Trajectory and Tool Use:** Analyzing the steps an agent takes to reach a solution, including its choice of tools, strategies, and the efficiency of its approach.  
-2. **Evaluating the Final Response:** Assessing the quality, relevance, and correctness of the agent's final output.
+1.  **軌跡とツール使用の評価：** エージェントが解決策に到達するために取るステップ（ツールの選択、戦略、アプローチの効率性など）を分析します。
+2.  **最終応答の評価：** エージェントの最終的な出力の品質、関連性、正確性を評価します。
 
-The trajectory is just a list of steps the agent took before it returned to the user. We can compare that against the list of steps we expect the agent to have taken.
+軌跡とは、エージェントがユーザーに応答を返すまでに行った一連のステップのリストにすぎません。それを、エージェントが取るべきだと我々が期待するステップのリストと比較することができます。
 
-### Evaluating trajectory and tool use
+### 軌跡とツール使用の評価
 
-Before responding to a user, an agent typically performs a series of actions, which we refer to as a 'trajectory.' It might compare the user input with session history to disambiguate a term, or lookup a policy document, search a knowledge base or invoke an API to save a ticket. We call this a ‘trajectory’ of actions. Evaluating an agent's performance requires comparing its actual trajectory to an expected, or ideal, one. This comparison can reveal errors and inefficiencies in the agent's process. The expected trajectory represents the ground truth \-- the list of steps we anticipate the agent should take.
+ユーザーに応答する前に、エージェントは通常、一連のアクションを実行します。これを「軌跡（trajectory）」と呼びます。用語を明確にするためにセッション履歴とユーザー入力を比較したり、ポリシー文書を検索したり、知識ベースを検索したり、チケットを保存するためにAPIを呼び出したりするかもしれません。我々はこの一連のアクションを「軌跡」と呼びます。エージェントのパフォーマンスを評価するには、その実際の軌跡を期待される、あるいは理想的な軌跡と比較する必要があります。この比較により、エージェントのプロセスのエラーや非効率性が明らかになることがあります。期待される軌跡は**正解データ（ground truth）**、つまりエージェントが取るべきだと我々が予測するステップのリストを表します。
 
-For example:
+例：
 
 ```py
-// Trajectory evaluation will compare
+// 軌跡の評価では以下を比較します
 expected_steps = ["determine_intent", "use_tool", "review_results", "report_generation"]
-actual_steps = ["determine_intent", "use_tool", "review_results", "report_generation"]
-```
+actual_steps = ["determine_intent", "use_tool", "review_results", "report_generation"]```
 
-Several ground-truth-based trajectory evaluations exist:
+正解データに基づく軌跡評価には、いくつか種類があります：
 
-1. **Exact match:** Requires a perfect match to the ideal trajectory.  
-2. **In-order match:** Requires the correct actions in the correct order, allows for extra actions.  
-3. **Any-order match:** Requires the correct actions in any order, allows for extra actions.  
-4. **Precision:** Measures the relevance/correctness of predicted actions.  
-5. **Recall:** Measures how many essential actions are captured in the prediction.  
-6. **Single-tool use:** Checks for the inclusion of a specific action.
+1.  **完全一致（Exact match）：** 理想的な軌跡との完全な一致を要求します。
+2.  **順序一致（In-order match）：** 正しいアクションが正しい順序であることを要求し、余分なアクションを許容します。
+3.  **順序不問一致（Any-order match）：** 正しいアクションが任意の順序であることを要求し、余分なアクションを許容します。
+4.  **適合率（Precision）：** 予測されたアクションの関連性/正確性を測定します。
+5.  **再現率（Recall）：** 予測に不可欠なアクションがどれだけ含まれているかを測定します。
+6.  **単一ツール使用（Single-tool use）：** 特定のアクションが含まれているかを確認します。
 
-Choosing the right evaluation metric depends on the specific requirements and goals of your agent. For instance, in high-stakes scenarios, an exact match might be crucial, while in more flexible situations, an in-order or any-order match might suffice.
+適切な評価メトリクスを選択するかは、エージェントの特定の要件と目標に依存します。例えば、リスクの高いシナリオでは完全一致が重要になるかもしれませんが、より柔軟な状況では順序一致や順序不問一致で十分な場合があります。
 
-## How Evaluation works with the ADK
+## ADKでの評価の仕組み
 
-The ADK offers two methods for evaluating agent performance against predefined datasets and evaluation criteria. While conceptually similar, they differ in the amount of data they can process, which typically dictates the appropriate use case for each.
+ADKは、事前定義されたデータセットと評価基準に対してエージェントのパフォーマンスを評価するための2つの方法を提供します。これらは概念的には似ていますが、処理できるデータの量が異なり、それによって通常、それぞれに適したユースケースが決まります。
 
-### First approach: Using a test file
+### 最初のアプローチ：テストファイルの使用
 
-This approach involves creating individual test files, each representing a single, simple agent-model interaction (a session). It's most effective during active agent development, serving as a form of unit testing. These tests are designed for rapid execution and should focus on simple session complexity. Each test file contains a single session, which may consist of multiple turns. A turn represents a single interaction between the user and the agent. Each turn includes
+このアプローチでは、それぞれが単一の単純なエージェントとモデルの相互作用（セッション）を表す個別のテストファイルを作成します。これは、エージェントの開発が活発な時期に最も効果的で、一種の単体テストとして機能します。これらのテストは迅速な実行のために設計されており、単純なセッションの複雑さに焦点を当てるべきです。各テストファイルには単一のセッションが含まれ、そのセッションは複数の**ターン（turn）**で構成される場合があります。ターンは、ユーザーとエージェント間の単一の対話を表します。各ターンには以下が含まれます：
 
--   `User Content`: The user issued query.
--   `Expected Intermediate Tool Use Trajectory`: The tool calls we expect the
-    agent to make in order to respond correctly to the user query.
--   `Expected Intermediate Agent Responses`: These are the natural language
-    responses that the agent (or sub-agents) generates as it moves towards
-    generating a final answer. These natural language responses are usually an
-    artifact of an multi-agent system, where your root agent depends on sub-agents to achieve a goal. These intermediate responses, may or may not be of
-    interest to the end user, but for a developer/owner of the system, are of
-    critical importance, as they give you the confidence that the agent went
-    through the right path to generate final response.
--   `Final Response`: The expected final response from the agent.
+-   `User Content`: ユーザーが発行したクエリ。
+-   `Expected Intermediate Tool Use Trajectory`: ユーザーのクエリに正しく応答するために、エージェントが行うと期待されるツール呼び出し。
+-   `Expected Intermediate Agent Responses`: エージェント（またはサブエージェント）が最終的な回答を生成する過程で生成する自然言語の応答。これらの自然言語応答は、通常、ルートエージェントが目標を達成するためにサブエージェントに依存するマルチエージェントシステムの成果物です。これらの途中応答は、エンドユーザーにとっては興味がないかもしれませんが、システムの開発者/所有者にとっては、エージェントが最終応答を生成するために正しいパスをたどったという確信を与えてくれるため、非常に重要です。
+-   `Final Response`: エージェントからの期待される最終応答。
 
-You can give the file any name for example `evaluation.test.json`.The framework only checks for the `.test.json` suffix, and the preceding part of the filename is not constrained. Here is a test file with a few examples:
+ファイルには任意の名前を付けることができます（例：`evaluation.test.json`）。フレームワークは`.test.json`という接尾辞のみをチェックし、ファイル名の前の部分に制約はありません。以下はいくつかの例を含むテストファイルです：
 
-NOTE: The test files are now backed by a formal Pydantic data model. The two key
-schema files are
-[Eval Set](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py) and
-[Eval Case](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_case.py)
+注意：テストファイルは現在、公式のPydanticデータモデルに基づいています。2つの主要なスキーマファイルは
+[Eval Set](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py) と
+[Eval Case](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_case.py) です。
 
 ```json
-# Do note that some fields are removed for sake of making this doc readable.
+# このドキュメントを読みやすくするため、一部のフィールドは削除されています。
 {
   "eval_set_id": "home_automation_agent_light_on_off_set",
   "name": "",
-  "description": "This is an eval set that is used for unit testing `x` behavior of the Agent",
+  "description": "これは、エージェントの`x`の振る舞いを単体テストするために使用される評価セットです。",
   "eval_cases": [
     {
       "eval_id": "eval_case_id",
       "conversation": [
         {
-          "invocation_id": "b7982664-0ab6-47cc-ab13-326656afdf75", # Unique identifier for the invocation.
-          "user_content": { # Content provided by the user in this invocation. This is the query.
+          "invocation_id": "b7982664-0ab6-47cc-ab13-326656afdf75", # 呼び出しの一意な識別子。
+          "user_content": { # この呼び出しでユーザーが提供したコンテンツ。これがクエリです。
             "parts": [
               {
-                "text": "Turn off device_2 in the Bedroom."
+                "text": "寝室のdevice_2をオフにして。"
               }
             ],
             "role": "user"
           },
-          "final_response": { # Final response from the agent that acts as a reference of benchmark.
+          "final_response": { # ベンチマークの参照として機能するエージェントからの最終応答。
             "parts": [
               {
-                "text": "I have set the device_2 status to off."
+                "text": "device_2のステータスをオフに設定しました。"
               }
             ],
             "role": "model"
           },
           "intermediate_data": {
-            "tool_uses": [ # Tool use trajectory in chronological order.
+            "tool_uses": [ # 時系列順のツール使用の軌跡。
               {
                 "args": {
                   "location": "Bedroom",
@@ -118,53 +109,47 @@ schema files are
                 "name": "set_device_info"
               }
             ],
-            "intermediate_responses": [] # Any intermediate sub-agent responses.
+            "intermediate_responses": [] # 任意の中間サブエージェント応答。
           },
         }
       ],
-      "session_input": { # Initial session input.
+      "session_input": { # 初期のセッション入力。
         "app_name": "home_automation_agent",
         "user_id": "test_user",
         "state": {}
       },
     }
   ],
-}
-```
+}```
 
-Test files can be organized into folders. Optionally, a folder can also include a `test_config.json` file that specifies the evaluation criteria.
+テストファイルはフォルダにまとめることができます。オプションで、フォルダに評価基準を指定する`test_config.json`ファイルを含めることもできます。
 
-#### How to migrate test files not backed by the Pydantic schema?
+#### Pydanticスキーマに基づかないテストファイルの移行方法は？
 
-NOTE: If your test files don't adhere to [EvalSet](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py) schema file, then this section is relevant to you.
+注意：もしあなたのテストファイルが[EvalSet](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py)スキーマファイルに準拠していない場合、このセクションはあなたに関連します。
 
-Please use `AgentEvaluator.migrate_eval_data_to_new_schema` to migrate your
-existing `*.test.json` files to the Pydanctic backed schema.
+既存の`*.test.json`ファイルをPydanticベースのスキーマに移行するには、`AgentEvaluator.migrate_eval_data_to_new_schema`を使用してください。
 
-The utility takes your current test data file and an optional initial session
-file, and generates a single output json file with data serialized in the new
-format. Given that the new schema is more cohesive, both the old test data file
-and initial session file can be ignored (or removed.)
+このユーティリティは、現在のテストデータファイルとオプションの初期セッションファイルを受け取り、新しい形式でシリアライズされたデータを持つ単一の出力jsonファイルを生成します。新しいスキーマはよりまとまりがあるため、古いテストデータファイルと初期セッションファイルは両方とも無視（または削除）できます。
 
-### Second approach: Using An Evalset File
+### 2番目のアプローチ：Evalsetファイルの使用
 
-The evalset approach utilizes a dedicated dataset called an "evalset" for evaluating agent-model interactions. Similar to a test file, the evalset contains example interactions. However, an evalset can contain multiple, potentially lengthy sessions, making it ideal for simulating complex, multi-turn conversations. Due to its ability to represent complex sessions, the evalset is well-suited for integration tests. These tests are typically run less frequently than unit tests due to their more extensive nature.
+evalsetアプローチは、エージェントとモデルの相互作用を評価するために「evalset」と呼ばれる専用のデータセットを利用します。テストファイルと同様に、evalsetには相互作用の例が含まれています。ただし、evalsetは複数の、潜在的に長いセッションを含むことができるため、複雑な複数ターンの会話をシミュレートするのに理想的です。複雑なセッションを表現できるため、evalsetは統合テストに適しています。これらのテストは、その広範な性質のために、通常、単体テストよりも頻繁には実行されません。
 
-An evalset file contains multiple "evals," each representing a distinct session. Each eval consists of one or more "turns," which include the user query, expected tool use, expected intermediate agent responses, and a reference response. These fields have the same meaning as they do in the test file approach. Each eval is identified by a unique name. Furthermore, each eval includes an associated initial session state.
+evalsetファイルには、それぞれが個別のセッションを表す複数の「eval」が含まれています。各evalは1つ以上の「ターン」で構成され、ユーザーのクエリ、期待されるツール使用、期待される中間エージェント応答、および参照応答が含まれます。これらのフィールドは、テストファイルアプローチと同じ意味を持ちます。各evalは一意の名前で識別されます。さらに、各evalには関連する初期セッション状態が含まれます。
 
-Creating evalsets manually can be complex, therefore UI tools are provided to help capture relevant sessions and easily convert them into evals within your evalset. Learn more about using the web UI for evaluation below. Here is an example evalset containing two sessions.
+evalsetを手動で作成するのは複雑になる可能性があるため、関連するセッションをキャプチャし、それらをevalset内のevalに簡単に変換するのに役立つUIツールが提供されています。評価にWeb UIを使用する方法については、以下で詳しく学んでください。以下は2つのセッションを含むevalsetの例です。
 
-NOTE: The eval set files are now backed by a formal Pydantic data model. The two key
-schema files are
-[Eval Set](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py) and
-[Eval Case](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_case.py)
+注意：eval setファイルは現在、公式のPydanticデータモデルに基づいています。2つの主要なスキーマファイルは
+[Eval Set](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py) と
+[Eval Case](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_case.py) です。
 
 ```json
-# Do note that some fields are removed for sake of making this doc readable.
+# このドキュメントを読みやすくするため、一部のフィールドは削除されています。
 {
   "eval_set_id": "eval_set_example_with_multiple_sessions",
-  "name": "Eval set with multiple sessions",
-  "description": "This eval set is an example that shows that an eval set can have more than one session.",
+  "name": "複数のセッションを持つ評価セット",
+  "description": "この評価セットは、評価セットが複数のセッションを持つことができることを示す例です。",
   "eval_cases": [
     {
       "eval_id": "session_01",
@@ -174,7 +159,7 @@ schema files are
           "user_content": {
             "parts": [
               {
-                "text": "What can you do?"
+                "text": "何ができる？"
               }
             ],
             "role": "user"
@@ -183,7 +168,7 @@ schema files are
             "parts": [
               {
 
-                "text": "I can roll dice of different sizes and check if numbers are prime."
+                "text": "異なるサイズのサイコロを振ったり、数字が素数かどうかをチェックしたりできます。"
               }
             ],
             "role": null
@@ -208,7 +193,7 @@ schema files are
           "user_content": {
             "parts": [
               {
-                "text": "Roll a 19 sided dice"
+                "text": "19面のサイコロを振って"
               }
             ],
             "role": "user"
@@ -216,7 +201,7 @@ schema files are
           "final_response": {
             "parts": [
               {
-                "text": "I rolled a 17."
+                "text": "17が出ました。"
               }
             ],
             "role": null
@@ -231,7 +216,7 @@ schema files are
           "user_content": {
             "parts": [
               {
-                "text": "Roll a 10 sided dice twice and then check if 9 is a prime or not"
+                "text": "10面のサイコロを2回振って、その後9が素数かどうかチェックして"
               }
             ],
             "role": "user"
@@ -239,7 +224,7 @@ schema files are
           "final_response": {
             "parts": [
               {
-                "text": I got 4 and 7 form the dice roll, and 9 is not a prime number.\n"
+                "text": "サイコロの目は4と7が出ました。9は素数ではありません。\n"
               }
             ],
             "role": null
@@ -275,7 +260,7 @@ schema files are
                 "data_processing_agent",
                 [
                   {
-                    "text": "I have rolled a 10 sided die twice. The first roll is 5 and the second roll is 3.\n"
+                    "text": "10面のサイコロを2回振りました。1回目は5、2回目は3です。\n"
                   }
                 ]
               ]
@@ -293,32 +278,29 @@ schema files are
 }
 ```
 
-#### How to migrate eval set files not backed by the Pydantic schema?
+#### Pydanticスキーマに基づかないeval setファイルの移行方法は？
 
-NOTE: If your eval set files don't adhere to [EvalSet](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py) schema file, then this section is relevant to you.
+注意：もしあなたのeval setファイルが[EvalSet](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py)スキーマファイルに準拠していない場合、このセクションはあなたに関連します。
 
-Based on who is maintaining the eval set data, there are two routes:
+eval setデータを誰が管理しているかに基づいて、2つのルートがあります：
 
-1.  **Eval set data maintained by ADK UI** If you use ADK UI to maintain your
-    Eval set data then *no action is needed* from you.
+1.  **ADK UIによって管理されているeval setデータ** ADK UIを使用してEval setデータを管理している場合、あなたからの*アクションは不要*です。
 
-2.  **Eval set data is developed and maintained manually and used in ADK eval Cli** A
-    migration tool is in the works, until then the ADK eval cli command will
-    continue to support data in the old format.
+2.  **手動で開発・管理され、ADK eval Cliで使用されるeval setデータ** 移行ツールは現在開発中です。それまでは、ADK eval cliコマンドは古い形式のデータを引き続きサポートします。
 
-### Evaluation Criteria
+### 評価基準
 
-The evaluation criteria define how the agent's performance is measured against the evalset. The following metrics are supported:
+評価基準は、evalsetに対してエージェントのパフォーマンスがどのように測定されるかを定義します。以下のメトリクスがサポートされています：
 
-* `tool_trajectory_avg_score`: This metric compares the agent's actual tool usage during the evaluation against the expected tool usage defined in the `expected_tool_use` field. Each matching tool usage step receives a score of 1, while a mismatch receives a score of 0\. The final score is the average of these matches, representing the accuracy of the tool usage trajectory.  
-* `response_match_score`: This metric compares the agent's final natural language response to the expected final response, stored in the `reference` field. We use the [ROUGE](https://en.wikipedia.org/wiki/ROUGE_\(metric\)) metric to calculate the similarity between the two responses.
+*   `tool_trajectory_avg_score`: このメトリクスは、評価中のエージェントの実際のツール使用を、`expected_tool_use`フィールドで定義された期待されるツール使用と比較します。一致する各ツール使用ステップは1のスコアを受け取り、不一致は0のスコアを受け取ります。最終スコアはこれらの一致の平均であり、ツール使用の軌跡の正確さを表します。
+*   `response_match_score`: このメトリクスは、エージェントの最終的な自然言語応答を、`reference`フィールドに保存されている期待される最終応答と比較します。2つの応答の類似度を計算するために、[ROUGE](https://ja.wikipedia.org/wiki/ROUGE_(%E8%A9%95%E4%BE%A1%E6%8C%87%E6%A8%99))メトリクスを使用します。
 
-If no evaluation criteria are provided, the following default configuration is used:
+評価基準が提供されない場合、以下のデフォルト設定が使用されます：
 
-* `tool_trajectory_avg_score`: Defaults to 1.0, requiring a 100% match in the tool usage trajectory.  
-* `response_match_score`: Defaults to 0.8, allowing for a small margin of error in the agent's natural language responses.
+*   `tool_trajectory_avg_score`: デフォルトは1.0で、ツール使用の軌跡で100%の一致を要求します。
+*   `response_match_score`: デフォルトは0.8で、エージェントの自然言語応答にわずかな誤差の余地を許容します。
 
-Here is an example of a `test_config.json` file specifying custom evaluation criteria:
+以下は、カスタム評価基準を指定する`test_config.json`ファイルの例です：
 
 ```json
 {
@@ -329,63 +311,62 @@ Here is an example of a `test_config.json` file specifying custom evaluation cri
 }
 ```
 
-## How to run Evaluation with the ADK
+## ADKで評価を実行する方法
 
-As a developer, you can evaluate your agents using the ADK in the following ways:
+開発者は、以下の方法でADKを使用してエージェントを評価できます：
 
-1. **Web-based UI (**`adk web`**):** Evaluate agents interactively through a web-based interface.  
-2. **Programmatically (**`pytest`**)**: Integrate evaluation into your testing pipeline using `pytest` and test files.  
-3. **Command Line Interface (**`adk eval`**):** Run evaluations on an existing evaluation set file directly from the command line.
+1.  **WebベースのUI（`adk web`）：** Webベースのインターフェースを通じて対話的にエージェントを評価します。
+2.  **プログラム的に（`pytest`）：** `pytest`とテストファイルを使用して、評価をテストパイプラインに統合します。
+3.  **コマンドラインインターフェース（`adk eval`）：** 既存の評価セットファイルに対して、コマンドラインから直接評価を実行します。
 
-### 1\. `adk web` \- Run Evaluations via the Web UI
+### 1. `adk web` - Web UI経由で評価を実行
 
-The web UI provides an interactive way to evaluate agents and generate evaluation datasets.
+Web UIは、エージェントを対話的に評価し、評価データセットを生成する方法を提供します。
 
-Steps to run evaluation via the web ui:
+Web UI経由で評価を実行する手順：
 
-1. Start the web server by running: `bash adk web samples_for_testing`  
-2. In the web interface:  
-    * Select an agent (e.g., `hello_world`).  
-    * Interact with the agent to create a session that you want to save as a test case.  
-    * Click the **“Eval tab”** on the right side of the interface.  
-    * If you already have an existing eval set, select that or create a new one by clicking on **"Create new eval set"** button. Give your eval set a contextual name. Select the newly created evaluation set.  
-    * Click **"Add current session"** to save the current session as an eval in the eval set file. You will be asked to provide a name for this eval, again give it a contextual name.  
-    * Once created, the newly created eval will show up in the list of available evals in the eval set file. You can run all or select specific ones to run the eval.  
-    * The status of each eval will be shown in the UI.
+1.  `bash adk web samples_for_testing` を実行してWebサーバーを起動します。
+2.  Webインターフェースで：
+    *   エージェントを選択します（例：`hello_world`）。
+    *   エージェントと対話し、テストケースとして保存したいセッションを作成します。
+    *   インターフェースの右側にある**「Evalタブ」**をクリックします。
+    *   既存の評価セットがある場合はそれを選択するか、**「新しい評価セットを作成」**ボタンをクリックして新しいものを作成します。評価セットに文脈に合った名前を付けます。新しく作成された評価セットを選択します。
+    *   **「現在のセッションを追加」**をクリックして、現在のセッションを評価セットファイル内のevalとして保存します。このevalの名前を尋ねられるので、これも文脈に合った名前を付けます。
+    *   作成されると、新しく作成されたevalが評価セットファイル内の利用可能なevalのリストに表示されます。すべてを実行するか、特定のものを選択して評価を実行できます。
+    *   各evalのステータスがUIに表示されます。
 
-### 2\.  `pytest` \- Run Tests Programmatically
+### 2. `pytest` - プログラム的にテストを実行
 
-You can also use **`pytest`** to run test files as part of your integration tests.
+**`pytest`**を使用して、統合テストの一部としてテストファイルを実行することもできます。
 
-#### Example Command
+#### コマンド例
 
 ```shell
 pytest tests/integration/
 ```
 
-#### Example Test Code
+#### テストコード例
 
-Here is an example of a `pytest` test case that runs a single test file:
+以下は、単一のテストファイルを実行する`pytest`のテストケースの例です：
 
 ```py
 from google.adk.evaluation.agent_evaluator import AgentEvaluator
 
 def test_with_single_test_file():
-    """Test the agent's basic ability via a session file."""
+    """セッションファイルを介してエージェントの基本的な能力をテストする。"""
     AgentEvaluator.evaluate(
         agent_module="home_automation_agent",
         eval_dataset_file_path_or_dir="tests/integration/fixture/home_automation_agent/simple_test.test.json",
     )
 ```
 
-This approach allows you to integrate agent evaluations into your CI/CD pipelines or larger test suites. If you want to specify the initial session state for your tests, you can do that by storing the session details in a file and passing that to `AgentEvaluator.evaluate` method.
+このアプローチにより、エージェント評価をCI/CDパイプラインやより大きなテストスイートに統合できます。テストの初期セッション状態を指定したい場合は、セッションの詳細をファイルに保存し、それを`AgentEvaluator.evaluate`メソッドに渡すことで可能です。
 
+### 3. `adk eval` - CLI経由で評価を実行
 
-### 3\. `adk eval` \- Run Evaluations via the cli
+コマンドラインインターフェース（CLI）を通じて、eval setファイルの評価を実行することもできます。これはUIで実行されるのと同じ評価を実行しますが、自動化に役立ちます。つまり、このコマンドを通常のビルド生成および検証プロセスの一部として追加できます。
 
-You can also run evaluation of an eval set file through the command line interface (CLI). This runs the same evaluation that runs on the UI, but it helps with automation, i.e. you can add this command as a part of your regular build generation and verification process.
-
-Here is the command:
+コマンドは以下の通りです：
 
 ```shell
 adk eval \
@@ -395,7 +376,7 @@ adk eval \
     [--print_detailed_results]
 ```
 
-For example:
+例：
 
 ```shell
 adk eval \
@@ -403,11 +384,11 @@ adk eval \
     samples_for_testing/hello_world/hello_world_eval_set_001.evalset.json
 ```
 
-Here are the details for each command line argument:
+各コマンドライン引数の詳細は以下の通りです：
 
-* `AGENT_MODULE_FILE_PATH`: The path to the `__init__.py` file that contains a module by the name "agent". "agent" module contains a `root_agent`.  
-* `EVAL_SET_FILE_PATH`: The path to evaluations file(s). You can specify one or more eval set file paths. For each file, all evals will be run by default. If you want to run only specific evals from a eval set, first create a comma separated list of eval names and then add that as a suffix to the eval set file name, demarcated by a colon `:` .
-* For example: `sample_eval_set_file.json:eval_1,eval_2,eval_3`  
-  `This will only run eval_1, eval_2 and eval_3 from sample_eval_set_file.json`  
-* `CONFIG_FILE_PATH`: The path to the config file.  
-* `PRINT_DETAILED_RESULTS`: Prints detailed results on the console.
+*   `AGENT_MODULE_FILE_PATH`: "agent"という名前のモジュールを含む`__init__.py`ファイルへのパス。"agent"モジュールには`root_agent`が含まれています。
+*   `EVAL_SET_FILE_PATH`: 評価ファイルへのパス。1つ以上のeval setファイルパスを指定できます。各ファイルについて、デフォルトではすべてのevalが実行されます。eval setから特定のevalのみを実行したい場合は、まずカンマ区切りのeval名のリストを作成し、それをコロン`:`で区切ってeval setファイル名の接尾辞として追加します。
+*   例：`sample_eval_set_file.json:eval_1,eval_2,eval_3`
+    `これにより、sample_eval_set_file.jsonからeval_1、eval_2、eval_3のみが実行されます`
+*   `CONFIG_FILE_PATH`: 設定ファイルへのパス。
+*   `PRINT_DETAILED_RESULTS`: コンソールに詳細な結果を出力します。
