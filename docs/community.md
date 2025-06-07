@@ -19,6 +19,13 @@ Community-provided translations of the ADK documentation.
     > continuously updated and translated to provide a localized reading
     > experience for developers in China.
 
+*   **[ADK Documentation (Korean, 한국어)](https://adk-labs.github.io/adk-docs/ko/)**
+
+    > the Korean version of the Agent Development Kit
+    > documentation, maintained by an individual. The documentation is
+    > continuously updated and translated to provide a localized reading
+    > experience for developers in South Korea.
+
 ## Tutorials, Guides & Blog Posts
 
 *Find community-written guides covering ADK features, use cases, and
