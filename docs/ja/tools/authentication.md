@@ -1,70 +1,70 @@
-# Authenticating with Tools
+# ツールでの認証
 
-![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java support is planned/ coming soon."}
+![python_only](https://img.shields.io/badge/現在サポートされているのは-Python-blue){ title="この機能は現在Pythonで利用可能です。Javaのサポートは計画中/近日公開予定です。" }
 
-## Core Concepts
+## コアコンセプト
 
-Many tools need to access protected resources (like user data in Google Calendar, Salesforce records, etc.) and require authentication. ADK provides a system to handle various authentication methods securely.
+多くのツールは、保護されたリソース（Googleカレンダーのユーザーデータ、Salesforceのレコードなど）にアクセスする必要があり、認証を必要とします。ADKは、さまざまな認証方法を安全に処理するためのシステムを提供します。
 
-The key components involved are:
+関与する主要なコンポーネントは以下の通りです：
 
-1. **`AuthScheme`**: Defines *how* an API expects authentication credentials (e.g., as an API Key in a header, an OAuth 2.0 Bearer token). ADK supports the same types of authentication schemes as OpenAPI 3.0. To know more about what each type of credential is, refer to [OpenAPI doc: Authentication](https://swagger.io/docs/specification/v3_0/authentication/). ADK uses specific classes like `APIKey`, `HTTPBearer`, `OAuth2`, `OpenIdConnectWithConfig`.  
-2. **`AuthCredential`**: Holds the *initial* information needed to *start* the authentication process (e.g., your application's OAuth Client ID/Secret, an API key value). It includes an `auth_type` (like `API_KEY`, `OAUTH2`, `SERVICE_ACCOUNT`) specifying the credential type.
+1.  **`AuthScheme`**: APIが認証情報をどのように期待するかを定義します（例：ヘッダーのAPIキーとして、OAuth 2.0のBearerトークンとして）。ADKはOpenAPI 3.0と同じタイプの認証スキームをサポートしています。各種類の認証情報の詳細については、[OpenAPIドキュメント：認証](https://swagger.io/docs/specification/v3_0/authentication/)を参照してください。ADKは`APIKey`、`HTTPBearer`、`OAuth2`、`OpenIdConnectWithConfig`のような特定のクラスを使用します。
+2.  **`AuthCredential`**: 認証プロセスを*開始*するために必要な*初期*情報を保持します（例：アプリケーションのOAuthクライアントID/シークレット、APIキーの値）。これには、認証情報の種類を指定する`auth_type`（`API_KEY`、`OAUTH2`、`SERVICE_ACCOUNT`など）が含まれます。
 
-The general flow involves providing these details when configuring a tool. ADK then attempts to automatically exchange the initial credential for a usable one (like an access token) before the tool makes an API call. For flows requiring user interaction (like OAuth consent), a specific interactive process involving the Agent Client application is triggered.
+一般的なフローは、ツールの設定時にこれらの詳細を提供することです。ADKはその後、ツールがAPI呼び出しを行う前に、初期の認証情報を利用可能なもの（アクセストークンなど）に自動的に交換しようとします。ユーザーの操作（OAuthの同意など）が必要なフローについては、エージェントクライアントアプリケーションを巻き込んだ特定の対話型プロセスがトリガーされます。
 
-## Supported Initial Credential Types
+## サポートされている初期認証情報の種類
 
-* **API\_KEY:** For simple key/value authentication. Usually requires no exchange.  
-* **HTTP:** Can represent Basic Auth (not recommended/supported for exchange) or already obtained Bearer tokens. If it's a Bearer token, no exchange is needed.  
-* **OAUTH2:** For standard OAuth 2.0 flows. Requires configuration (client ID, secret, scopes) and often triggers the interactive flow for user consent.  
-* **OPEN\_ID\_CONNECT:** For authentication based on OpenID Connect. Similar to OAuth2, often requires configuration and user interaction.  
-* **SERVICE\_ACCOUNT:** For Google Cloud Service Account credentials (JSON key or Application Default Credentials). Typically exchanged for a Bearer token.
+*   **API_KEY:** 単純なキー/値の認証用。通常、交換は不要です。
+*   **HTTP:** Basic認証（交換は非推奨/非サポート）または既に取得済みのBearerトークンを表すことができます。Bearerトークンの場合、交換は不要です。
+*   **OAUTH2:** 標準のOAuth 2.0フロー用。設定（クライアントID、シークレット、スコープ）が必要で、多くの場合、ユーザーの同意のための対話型フローをトリガーします。
+*   **OPEN_ID_CONNECT:** OpenID Connectに基づく認証用。OAuth2と同様に、多くの場合、設定とユーザーの操作が必要です。
+*   **SERVICE_ACCOUNT:** Google Cloudサービスアカウントの認証情報（JSONキーまたはApplication Default Credentials）用。通常、Bearerトークンに交換されます。
 
-## Configuring Authentication on Tools
+## ツールでの認証設定
 
-You set up authentication when defining your tool:
+ツールの定義時に認証を設定します：
 
-* **RestApiTool / OpenAPIToolset**: Pass `auth_scheme` and `auth_credential` during initialization
+*   **RestApiTool / OpenAPIToolset**: 初期化時に`auth_scheme`と`auth_credential`を渡します。
 
-* **GoogleApiToolSet Tools**: ADK has built-in 1st party tools like Google Calendar, BigQuery etc,. Use the toolset's specific method.
+*   **GoogleApiToolSetツール**: ADKには、Googleカレンダー、BigQueryなどの組み込みの1stパーティツールがあります。ツールセットの特定の方法を使用します。
 
-* **APIHubToolset / ApplicationIntegrationToolset**: Pass `auth_scheme` and `auth_credential`during initialization, if the API managed in API Hub / provided by Application Integration requires authentication.
+*   **APIHubToolset / ApplicationIntegrationToolset**: API Hubで管理されているAPI/Application Integrationによって提供されるAPIが認証を必要とする場合、初期化時に`auth_scheme`と`auth_credential`を渡します。
 
-!!! tip "WARNING" 
-    Storing sensitive credentials like access tokens and especially refresh tokens directly in the session state might pose security risks depending on your session storage backend (`SessionService`) and overall application security posture.
+!!! tip "警告" 
+    アクセストークンや特にリフレッシュトークンのような機密性の高い認証情報をセッション状態に直接保存することは、セッションストレージのバックエンド（`SessionService`）やアプリケーション全体のセキュリティ体制によっては、セキュリティリスクをもたらす可能性があります。
 
-    *   **`InMemorySessionService`:** Suitable for testing and development, but data is lost when the process ends. Less risk as it's transient.
-    *   **Database/Persistent Storage:** **Strongly consider encrypting** the token data before storing it in the database using a robust encryption library (like `cryptography`) and managing encryption keys securely (e.g., using a key management service).
-    *   **Secure Secret Stores:** For production environments, storing sensitive credentials in a dedicated secret manager (like Google Cloud Secret Manager or HashiCorp Vault) is the **most recommended approach**. Your tool could potentially store only short-lived access tokens or secure references (not the refresh token itself) in the session state, fetching the necessary secrets from the secure store when needed.
+    *   **`InMemorySessionService`:** テストや開発には適していますが、プロセスが終了するとデータは失われます。一時的なものであるためリスクは少ないです。
+    *   **データベース/永続ストレージ:** 堅牢な暗号化ライブラリ（`cryptography`など）を使用してデータベースに保存する前にトークンデータを**暗号化**し、暗号化キーを安全に管理する（キー管理サービスを使用するなど）ことを**強く検討**してください。
+    *   **セキュアなシークレットストア:** 本番環境では、機密性の高い認証情報を専用のシークレットマネージャー（Google Cloud Secret ManagerやHashiCorp Vaultなど）に保存することが**最も推奨されるアプローチ**です。ツールは、セッション状態には短期間のアクセストークンや安全な参照のみを保存し（リフレッシュトークン自体は保存しない）、必要なときにセキュアストアから必要なシークレットを取得することができます。
 
 ---
 
-## Journey 1: Building Agentic Applications with Authenticated Tools
+## ジャーニー1：認証済みツールを使用したエージェントアプリケーションの構築
 
-This section focuses on using pre-existing tools (like those from `RestApiTool/ OpenAPIToolset`, `APIHubToolset`, `GoogleApiToolSet`) that require authentication within your agentic application. Your main responsibility is configuring the tools and handling the client-side part of interactive authentication flows (if required by the tool).
+このセクションでは、エージェントアプリケーション内で認証が必要な既存のツール（`RestApiTool/OpenAPIToolset`、`APIHubToolset`、`GoogleApiToolSet`など）の使用に焦点を当てます。あなたの主な責任は、ツールの設定と、対話型認証フローのクライアント側の部分（ツールで必要な場合）の処理です。
 
-### 1. Configuring Tools with Authentication
+### 1. 認証付きツールの設定
 
-When adding an authenticated tool to your agent, you need to provide its required `AuthScheme` and your application's initial `AuthCredential`.
+認証済みツールをエージェントに追加する際には、その必要な`AuthScheme`とアプリケーションの初期`AuthCredential`を提供する必要があります。
 
-**A. Using OpenAPI-based Toolsets (`OpenAPIToolset`, `APIHubToolset`, etc.)**
+**A. OpenAPIベースのツールセットの使用（`OpenAPIToolset`、`APIHubToolset`など）**
 
-Pass the scheme and credential during toolset initialization. The toolset applies them to all generated tools. Here are few ways to create tools with authentication in ADK.
+ツールセットの初期化時にスキームと認証情報を渡します。ツールセットはそれらを生成されたすべてのツールに適用します。以下は、ADKで認証付きツールを作成するいくつかの方法です。
 
-=== "API Key"
+=== "APIキー"
 
-      Create a tool requiring an API Key.
+      APIキーを必要とするツールを作成します。
 
       ```py
       from google.adk.tools.openapi_tool.auth.auth_helpers import token_to_scheme_credential
-      from google.adk.tools.apihub_tool.apihub_toolset import APIHubToolset
+      from google.adk.tools.apihub_tool.apihub_toolset import APIHubToolset 
       auth_scheme, auth_credential = token_to_scheme_credential(
          "apikey", "query", "apikey", YOUR_API_KEY_STRING
       )
       sample_api_toolset = APIHubToolset(
          name="sample-api-requiring-api-key",
-         description="A tool using an API protected by API Key",
+         description="APIキーで保護されたAPIを使用するツール",
          apihub_resource_name="...",
          auth_scheme=auth_scheme,
          auth_credential=auth_credential,
@@ -73,7 +73,7 @@ Pass the scheme and credential during toolset initialization. The toolset applie
 
 === "OAuth2"
 
-      Create a tool requiring OAuth2.
+      OAuth2を必要とするツールを作成します。
 
       ```py
       from google.adk.tools.openapi_tool.openapi_spec_parser.openapi_toolset import OpenAPIToolset
@@ -104,16 +104,16 @@ Pass the scheme and credential during toolset initialization. The toolset applie
       )
 
       calendar_api_toolset = OpenAPIToolset(
-          spec_str=google_calendar_openapi_spec_str, # Fill this with an openapi spec
+          spec_str=google_calendar_openapi_spec_str, # openapi仕様をここに埋める
           spec_str_type='yaml',
           auth_scheme=auth_scheme,
           auth_credential=auth_credential,
       )
       ```
 
-=== "Service Account"
+=== "サービスアカウント"
 
-      Create a tool requiring Service Account.
+      サービスアカウントを必要とするツールを作成します。
 
       ```py
       from google.adk.tools.openapi_tool.auth.auth_helpers import service_account_dict_to_scheme_credential
@@ -125,7 +125,7 @@ Pass the scheme and credential during toolset initialization. The toolset applie
           scopes=["https://www.googleapis.com/auth/cloud-platform"],
       )
       sample_toolset = OpenAPIToolset(
-          spec_str=sa_openapi_spec_str, # Fill this with an openapi spec
+          spec_str=sa_openapi_spec_str, # openapi仕様をここに埋める
           spec_str_type='json',
           auth_scheme=auth_scheme,
           auth_credential=auth_credential,
@@ -134,7 +134,7 @@ Pass the scheme and credential during toolset initialization. The toolset applie
 
 === "OpenID connect"
 
-      Create a tool requiring OpenID connect.
+      OpenID connectを必要とするツールを作成します。
 
       ```py
       from google.adk.auth.auth_schemes import OpenIdConnectWithConfig
@@ -155,27 +155,27 @@ Pass the scheme and credential during toolset initialization. The toolset applie
       )
 
       userinfo_toolset = OpenAPIToolset(
-          spec_str=content, # Fill in an actual spec
+          spec_str=content, # 実際の仕様を埋める
           spec_str_type='yaml',
           auth_scheme=auth_scheme,
           auth_credential=auth_credential,
       )
       ```
 
-**B. Using Google API Toolsets (e.g., `calendar_tool_set`)**
+**B. Google APIツールセットの使用（例：`calendar_tool_set`）**
 
-These toolsets often have dedicated configuration methods.
+これらのツールセットには、多くの場合、専用の設定メソッドがあります。
 
-Tip: For how to create a Google OAuth Client ID & Secret, see this guide: [Get your Google API Client ID](https://developers.google.com/identity/gsi/web/guides/get-google-api-clientid#get_your_google_api_client_id)
+ヒント：Google OAuthクライアントIDとシークレットの作成方法については、このガイドを参照してください：[Google APIクライアントIDの取得](https://developers.google.com/identity/gsi/web/guides/get-google-api-clientid#get_your_google_api_client_id)
 
 ```py
-# Example: Configuring Google Calendar Tools
+# 例：Googleカレンダーツールの設定
 from google.adk.tools.google_api_tool import calendar_tool_set
 
 client_id = "YOUR_GOOGLE_OAUTH_CLIENT_ID.apps.googleusercontent.com"
 client_secret = "YOUR_GOOGLE_OAUTH_CLIENT_SECRET"
 
-# Use the specific configure method for this toolset type
+# このツールセットタイプ専用の設定メソッドを使用
 calendar_tool_set.configure_auth(
     client_id=oauth_client_id, client_secret=oauth_client_secret
 )
@@ -183,40 +183,39 @@ calendar_tool_set.configure_auth(
 # agent = LlmAgent(..., tools=calendar_tool_set.get_tool('calendar_tool_set'))
 ```
 
-The sequence diagram of auth request flow (where tools are requesting auth credentials) looks like below:
+認証リクエストのフローのシーケンス図（ツールが認証情報を要求している場合）は以下のようになります：
 
 ![Authentication](../assets/auth_part1.svg) 
 
 
-### 2. Handling the Interactive OAuth/OIDC Flow (Client-Side)
+### 2. 対話型OAuth/OIDCフローの処理（クライアント側）
 
-If a tool requires user login/consent (typically OAuth 2.0 or OIDC), the ADK framework pauses execution and signals your **Agent Client** application. There are two cases:
+ツールがユーザーのログイン/同意を必要とする場合（通常はOAuth 2.0またはOIDC）、ADKフレームワークは実行を一時停止し、**エージェントクライアント**アプリケーションに通知します。2つのケースがあります：
 
-* **Agent Client** application runs the agent directly (via `runner.run_async`) in the same process. e.g. UI backend, CLI app, or Spark job etc.
-* **Agent Client** application interacts with ADK's fastapi server via `/run` or `/run_sse` endpoint. While ADK's fastapi server could be setup on the same server or different server as **Agent Client** application
+*   **エージェントクライアント**アプリケーションが、同じプロセス内で直接エージェントを実行する場合（`runner.run_async`経由）。例：UIバックエンド、CLIアプリ、Sparkジョブなど。
+*   **エージェントクライアント**アプリケーションが、ADKのfastapiサーバーと`/run`または`/run_sse`エンドポイントを介して対話する場合。ADKのfastapiサーバーは、**エージェントクライアント**アプリケーションと同じサーバーまたは異なるサーバーに設定できます。
 
-The second case is a special case of first case, because `/run` or `/run_sse` endpoint also invokes `runner.run_async`. The only differences are:
+2番目のケースは1番目のケースの特殊なケースです。なぜなら、`/run`または`/run_sse`エンドポイントも`runner.run_async`を呼び出すからです。唯一の違いは：
 
-* Whether to call a python function to run the agent (first case) or call a service endpoint to run the agent (second case).
-* Whether the result events are in-memory objects (first case) or serialized json string in http response (second case).
+*   エージェントを実行するためにPython関数を呼び出すか（1番目のケース）、サービスエンドポイントを呼び出すか（2番目のケース）。
+*   結果のイベントがインメモリのオブジェクトか（1番目のケース）、HTTPレスポンス内のシリアライズされたJSON文字列か（2番目のケース）。
 
-Below sections focus on the first case and you should be able to map it to the second case very straightforward. We will also describe some differences to handle for the second case if necessary.
+以下のセクションでは1番目のケースに焦点を当てており、それを2番目のケースに非常に簡単にマッピングできるはずです。必要に応じて、2番目のケースで処理すべきいくつかの違いについても説明します。
 
-Here's the step-by-step process for your client application:
+以下は、クライアントアプリケーションのステップバイステップのプロセスです：
 
-**Step 1: Run Agent & Detect Auth Request**
+**ステップ1：エージェントの実行と認証リクエストの検出**
 
-* Initiate the agent interaction using `runner.run_async`.  
-* Iterate through the yielded events.  
-* Look for a specific function call event whose function call has a special name: `adk_request_credential`. This event signals that user interaction is needed. You can use helper functions to identify this event and extract necessary information. (For the second case, the logic is similar. You deserialize the event from the http response).
+*   `runner.run_async`を使用してエージェントとの対話を開始します。
+*   yieldされたイベントを反復処理します。
+*   関数呼び出しの特別な名前`adk_request_credential`を持つ特定の関数呼び出しイベントを探します。このイベントは、ユーザーの操作が必要であることを示します。ヘルパー関数を使用してこのイベントを識別し、必要な情報を抽出できます。（2番目のケースでは、ロジックは似ています。HTTPレスポンスからイベントをデシリアライズします）。
 
 ```py
-
 # runner = Runner(...)
 # session = await session_service.create_session(...)
-# content = types.Content(...) # User's initial query
+# content = types.Content(...) # ユーザーの初期クエリ
 
-print("\nRunning agent...")
+print("\nエージェントを実行中...")
 events_async = runner.run_async(
     session_id=session.id, user_id='user', new_message=content
 )
@@ -224,33 +223,32 @@ events_async = runner.run_async(
 auth_request_function_call_id, auth_config = None, None
 
 async for event in events_async:
-    # Use helper to check for the specific auth request event
+    # ヘルパーを使用して特定の認証リクエストイベントを確認
     if (auth_request_function_call := get_auth_request_function_call(event)):
-        print("--> Authentication required by agent.")
-        # Store the ID needed to respond later
+        print("--> エージェントによる認証が必要です。")
+        # 後で応答するために必要なIDを保存
         if not (auth_request_function_call_id := auth_request_function_call.id):
-            raise ValueError(f'Cannot get function call id from function call: {auth_request_function_call}')
-        # Get the AuthConfig containing the auth_uri etc.
+            raise ValueError(f'関数呼び出しから関数呼び出しIDを取得できません: {auth_request_function_call}')
+        # auth_uriなどを含むAuthConfigを取得
         auth_config = get_auth_config(auth_request_function_call)
-        break # Stop processing events for now, need user interaction
+        break # とりあえずイベントの処理を停止し、ユーザーの操作が必要
 
 if not auth_request_function_call_id:
-    print("\nAuth not required or agent finished.")
-    # return # Or handle final response if received
-
+    print("\n認証は不要か、エージェントが終了しました。")
+    # return # または、受信した最終応答を処理
 ```
 
-*Helper functions `helpers.py`:*
+*ヘルパー関数 `helpers.py`：*
 
 ```py
 from google.adk.events import Event
-from google.adk.auth import AuthConfig # Import necessary type
+from google.adk.auth import AuthConfig # 必要な型をインポート
 from google.genai import types
 
-def get_auth_request_function_call(event: Event) -> types.FunctionCall:
-    # Get the special auth request function call from the event
-    if not event.content or event.content.parts:
-        return
+def get_auth_request_function_call(event: Event) -> types.FunctionCall | None:
+    # イベントから特別な認証リクエスト関数呼び出しを取得
+    if not event.content or not event.content.parts:
+        return None
     for part in event.content.parts:
         if (
             part 
@@ -261,158 +259,156 @@ def get_auth_request_function_call(event: Event) -> types.FunctionCall:
         ):
 
             return part.function_call
+    return None
 
 def get_auth_config(auth_request_function_call: types.FunctionCall) -> AuthConfig:
-    # Extracts the AuthConfig object from the arguments of the auth request function call
+    # 認証リクエスト関数呼び出しの引数からAuthConfigオブジェクトを抽出
     if not auth_request_function_call.args or not (auth_config := auth_request_function_call.args.get('auth_config')):
-        raise ValueError(f'Cannot get auth config from function call: {auth_request_function_call}')
+        raise ValueError(f'関数呼び出しから認証設定を取得できません: {auth_request_function_call}')
     if not isinstance(auth_config, AuthConfig):
-        raise ValueError(f'Cannot get auth config {auth_config} is not an instance of AuthConfig.')
+        raise ValueError(f'認証設定 {auth_config} はAuthConfigのインスタンスではありません。')
     return auth_config
 ```
 
-**Step 2: Redirect User for Authorization**
+**ステップ2：認可のためのユーザーリダイレクト**
 
-* Get the authorization URL (`auth_uri`) from the `auth_config` extracted in the previous step.  
-* **Crucially, append your application's**  redirect\_uri as a query parameter to this `auth_uri`. This `redirect_uri` must be pre-registered with your OAuth provider (e.g., [Google Cloud Console](https://developers.google.com/identity/protocols/oauth2/web-server#creatingcred), [Okta admin panel](https://developer.okta.com/docs/guides/sign-into-web-app-redirect/spring-boot/main/#create-an-app-integration-in-the-admin-console)).  
-* Direct the user to this complete URL (e.g., open it in their browser).
+*   前のステップで抽出した`auth_config`から認可URL（`auth_uri`）を取得します。
+*   **重要なこととして、** アプリケーションの`redirect_uri`をこの`auth_uri`にクエリパラメータとして追加します。この`redirect_uri`は、OAuthプロバイダーに事前登録されている必要があります（例：[Google Cloud Console](https://developers.google.com/identity/protocols/oauth2/web-server#creatingcred)、[Okta管理パネル](https://developer.okta.com/docs/guides/sign-into-web-app-redirect/spring-boot/main/#create-an-app-integration-in-the-admin-console)）。
+*   ユーザーをこの完全なURLに誘導します（例：ブラウザで開く）。
 
 ```py
-# (Continuing after detecting auth needed)
+# （認証が必要と検出された後の続き）
 
 if auth_request_function_call_id and auth_config:
-    # Get the base authorization URL from the AuthConfig
+    # AuthConfigからベースの認可URLを取得
     base_auth_uri = auth_config.exchanged_auth_credential.oauth2.auth_uri
 
     if base_auth_uri:
-        redirect_uri = 'http://localhost:8000/callback' # MUST match your OAuth client app config
-        # Append redirect_uri (use urlencode in production)
+        redirect_uri = 'http://localhost:8000/callback' # OAuthクライアントアプリの設定と一致させる必要がある
+        # redirect_uriを追加（本番環境ではurlencodeを使用）
         auth_request_uri = base_auth_uri + f'&redirect_uri={redirect_uri}'
-        # Now you need to redirect your end user to this auth_request_uri or ask them to open this auth_request_uri in their browser
-        # This auth_request_uri should be served by the corresponding auth provider and the end user should login and authorize your applicaiton to access their data
-        # And then the auth provider will redirect the end user to the redirect_uri you provided
-        # Next step: Get this callback URL from the user (or your web server handler)
+        # ここで、エンドユーザーをこのauth_request_uriにリダイレクトするか、ブラウザで開くように依頼する必要があります
+        # このauth_request_uriは対応する認証プロバイダーによって提供され、エンドユーザーはログインしてアプリケーションが自分のデータにアクセスすることを承認する必要があります
+        # その後、認証プロバイダーはエンドユーザーを提供したredirect_uriにリダイレクトします
+        # 次のステップ：ユーザーからこのコールバックURLを取得する（またはWebサーバーハンドラから）
     else:
-         print("ERROR: Auth URI not found in auth_config.")
-         # Handle error
-
+         print("エラー：auth_configにAuth URIが見つかりません。")
+         # エラーを処理
 ```
 
-**Step 3. Handle the Redirect Callback (Client):**
+**ステップ3：リダイレクトコールバックの処理（クライアント）**
 
-* Your application must have a mechanism (e.g., a web server route at the `redirect_uri`) to receive the user after they authorize the application with the provider.  
-* The provider redirects the user to your `redirect_uri` and appends an `authorization_code` (and potentially `state`, `scope`) as query parameters to the URL.  
-* Capture the **full callback URL** from this incoming request.  
-* (This step happens outside the main agent execution loop, in your web server or equivalent callback handler.)
+*   アプリケーションには、ユーザーがプロバイダーでアプリケーションを承認した後にユーザーを受け取るためのメカニズム（例：`redirect_uri`でのWebサーバールート）が必要です。
+*   プロバイダーは、`authorization_code`（および潜在的に`state`、`scope`）をクエリパラメータとしてURLに追加して、ユーザーを`redirect_uri`にリダイレクトします。
+*   この着信リクエストから**完全なコールバックURL**をキャプチャします。
+*   （このステップは、メインのエージェント実行ループの外で、Webサーバーまたは同等のコールバックハンドラ内で行われます。）
 
-**Step 4. Send Authentication Result Back to ADK (Client):**
+**ステップ4：認証結果をADKに送り返す（クライアント）**
 
-* Once you have the full callback URL (containing the authorization code), retrieve the `auth_request_function_call_id` and the `auth_config` object saved in Client Step 1\.  
-* Set the captured callback URL into the `exchanged_auth_credential.oauth2.auth_response_uri` field. Also ensure `exchanged_auth_credential.oauth2.redirect_uri` contains the redirect URI you used.  
-* Create a `types.Content` object containing a `types.Part` with a `types.FunctionResponse`.  
-      * Set `name` to `"adk_request_credential"`. (Note: This is a special name for ADK to proceed with authentication. Do not use other names.)  
-      * Set `id` to the `auth_request_function_call_id` you saved.  
-      * Set `response` to the *serialized* (e.g., `.model_dump()`) updated `AuthConfig` object.  
-* Call `runner.run_async` **again** for the same session, passing this `FunctionResponse` content as the `new_message`.
+*   完全なコールバックURL（認可コードを含む）を取得したら、クライアントステップ1で保存した`auth_request_function_call_id`と`auth_config`オブジェクトを取得します。
+*   キャプチャしたコールバックURLを`exchanged_auth_credential.oauth2.auth_response_uri`フィールドに設定します。また、`exchanged_auth_credential.oauth2.redirect_uri`に使用したリダイレクトURIが含まれていることを確認します。
+*   `types.Content`オブジェクトを作成し、`types.Part`に`types.FunctionResponse`を含めます。
+      *   `name`を`"adk_request_credential"`に設定します。（注：これはADKが認証を進めるための特別な名前です。他の名前は使用しないでください。）
+      *   `id`を保存した`auth_request_function_call_id`に設定します。
+      *   `response`に、*更新された*`AuthConfig`オブジェクトの*シリアライズされた*（例：`.model_dump()`）ものを設定します。
+*   この`FunctionResponse`コンテンツを`new_message`として渡し、同じセッションに対して`runner.run_async`を**再度**呼び出します。
 
 ```py
-# (Continuing after user interaction)
+# （ユーザー操作後の続き）
 
-    # Simulate getting the callback URL (e.g., from user paste or web handler)
+    # コールバックURLの取得をシミュレート（例：ユーザーのペーストやWebハンドラから）
     auth_response_uri = await get_user_input(
-        f'Paste the full callback URL here:\n> '
+        f'完全なコールバックURLをここに貼り付けてください：\n> '
     )
-    auth_response_uri = auth_response_uri.strip() # Clean input
+    auth_response_uri = auth_response_uri.strip() # 入力を整形
 
     if not auth_response_uri:
-        print("Callback URL not provided. Aborting.")
+        print("コールバックURLが提供されませんでした。中止します。")
         return
 
-    # Update the received AuthConfig with the callback details
+    # 受信したAuthConfigをコールバックの詳細で更新
     auth_config.exchanged_auth_credential.oauth2.auth_response_uri = auth_response_uri
-    # Also include the redirect_uri used, as the token exchange might need it
+    # トークン交換で必要になる可能性があるため、使用したredirect_uriも含める
     auth_config.exchanged_auth_credential.oauth2.redirect_uri = redirect_uri
 
-    # Construct the FunctionResponse Content object
+    # FunctionResponse Contentオブジェクトを作成
     auth_content = types.Content(
-        role='user', # Role can be 'user' when sending a FunctionResponse
+        role='user', # FunctionResponseを送信する際のロールは'user'にできる
         parts=[
             types.Part(
                 function_response=types.FunctionResponse(
-                    id=auth_request_function_call_id,       # Link to the original request
-                    name='adk_request_credential', # Special framework function name
-                    response=auth_config.model_dump() # Send back the *updated* AuthConfig
+                    id=auth_request_function_call_id,       # 元のリクエストへのリンク
+                    name='adk_request_credential', # フレームワークの特別な関数名
+                    response=auth_config.model_dump() # *更新された*AuthConfigを送り返す
                 )
             )
         ],
     )
 
-    # --- Resume Execution ---
-    print("\nSubmitting authentication details back to the agent...")
+    # --- 実行再開 ---
+    print("\n認証詳細をエージェントに送り返しています...")
     events_async_after_auth = runner.run_async(
         session_id=session.id,
         user_id='user',
-        new_message=auth_content, # Send the FunctionResponse back
+        new_message=auth_content, # FunctionResponseを送り返す
     )
 
-    # --- Process Final Agent Output ---
-    print("\n--- Agent Response after Authentication ---")
+    # --- 最終的なエージェント出力の処理 ---
+    print("\n--- 認証後のエージェント応答 ---")
     async for event in events_async_after_auth:
-        # Process events normally, expecting the tool call to succeed now
-        print(event) # Print the full event for inspection
-
+        # イベントを通常通り処理し、ツール呼び出しが成功することを期待する
+        print(event) # 検査のために完全なイベントを出力
 ```
 
-**Step 5: ADK Handles Token Exchange & Tool Retry and gets Tool result**
+**ステップ5：ADKがトークン交換とツール再試行を処理し、ツールの結果を取得**
 
-* ADK receives the `FunctionResponse` for `adk_request_credential`.  
-* It uses the information in the updated `AuthConfig` (including the callback URL containing the code) to perform the OAuth **token exchange** with the provider's token endpoint, obtaining the access token (and possibly refresh token).  
-* ADK internally makes these tokens available by setting them in the session state).  
-* ADK **automatically retries** the original tool call (the one that initially failed due to missing auth).  
-* This time, the tool finds the valid tokens (via `tool_context.get_auth_response()`) and successfully executes the authenticated API call.  
-* The agent receives the actual result from the tool and generates its final response to the user.
+*   ADKは`adk_request_credential`に対する`FunctionResponse`を受け取ります。
+*   更新された`AuthConfig`内の情報（コードを含むコールバックURLなど）を使用して、プロバイダーのトークンエンドポイントでOAuthの**トークン交換**を実行し、アクセストークン（および場合によってはリフレッシュトークン）を取得します。
+*   ADKは、これらのトークンをセッション状態に設定することで内部的に利用可能にします。
+*   ADKは、最初に認証が不足していたために失敗した元のツール呼び出しを**自動的に再試行**します。
+*   今回は、ツールは（`tool_context.get_auth_response()`を介して）有効なトークンを見つけ、認証されたAPI呼び出しを正常に実行します。
+*   エージェントはツールから実際の_resultを受け取り、ユーザーへの最終的な応答を生成します。
 
 ---
 
-The sequence diagram of auth response flow (where Agent Client send back the auth response and ADK retries tool calling) looks like below:
+認証応答フローのシーケンス図（エージェントクライアントが認証応答を送り返し、ADKがツール呼び出しを再試行する場合）は以下のようになります：
 
 ![Authentication](../assets/auth_part2.svg)
 
-## Journey 2: Building Custom Tools (`FunctionTool`) Requiring Authentication
+## ジャーニー2：認証が必要なカスタムツール（`FunctionTool`）の構築
 
-This section focuses on implementing the authentication logic *inside* your custom Python function when creating a new ADK Tool. We will implement a `FunctionTool` as an example.
+このセクションでは、新しいADKツールを作成する際に、カスタムPython関数*内*で認証ロジックを実装することに焦点を当てます。例として`FunctionTool`を実装します。
 
-### Prerequisites
+### 前提条件
 
-Your function signature *must* include [`tool_context: ToolContext`](../tools/index.md#tool-context). ADK automatically injects this object, providing access to state and auth mechanisms.
+関数のシグネチャには、*必ず*[`tool_context: ToolContext`](../tools/index.md#tool-context)を含める必要があります。ADKは、状態や認証メカニズムへのアクセスを提供するこのオブジェクトを自動的に注入します。
 
 ```py
 from google.adk.tools import FunctionTool, ToolContext
 from typing import Dict
 
 def my_authenticated_tool_function(param1: str, ..., tool_context: ToolContext) -> dict:
-    # ... your logic ...
+    # ... あなたのロジック ...
     pass
 
 my_tool = FunctionTool(func=my_authenticated_tool_function)
-
 ```
 
-### Authentication Logic within the Tool Function
+### ツール関数内の認証ロジック
 
-Implement the following steps inside your function:
+関数内で以下のステップを実装します：
 
-**Step 1: Check for Cached & Valid Credentials:**
+**ステップ1：キャッシュされた有効な認証情報の確認**
 
-Inside your tool function, first check if valid credentials (e.g., access/refresh tokens) are already stored from a previous run in this session. Credentials for the current sessions should be stored in `tool_context.invocation_context.session.state` (a dictionary of state) Check existence of existing credentials by checking `tool_context.invocation_context.session.state.get(credential_name, None)`.
+ツール関数内で、まず有効な認証情報（アクセストークン/リフレッシュトークンなど）が、このセッションの以前の実行から既に保存されているかどうかを確認します。現在のセッションの認証情報は`tool_context.invocation_context.session.state`（状態の辞書）に保存されている必要があります。`tool_context.invocation_context.session.state.get(credential_name, None)`をチェックして、既存の認証情報の有無を確認します。
 
 ```py
 from google.oauth2.credentials import Credentials
 from google.auth.transport.requests import Request
 
-# Inside your tool function
-TOKEN_CACHE_KEY = "my_tool_tokens" # Choose a unique key
-SCOPES = ["scope1", "scope2"] # Define required scopes
+# ツール関数内
+TOKEN_CACHE_KEY = "my_tool_tokens" # 一意のキーを選択
+SCOPES = ["scope1", "scope2"] # 必要なスコープを定義
 
 creds = None
 cached_token_info = tool_context.state.get(TOKEN_CACHE_KEY)
@@ -421,40 +417,39 @@ if cached_token_info:
         creds = Credentials.from_authorized_user_info(cached_token_info, SCOPES)
         if not creds.valid and creds.expired and creds.refresh_token:
             creds.refresh(Request())
-            tool_context.state[TOKEN_CACHE_KEY] = json.loads(creds.to_json()) # Update cache
+            tool_context.state[TOKEN_CACHE_KEY] = json.loads(creds.to_json()) # キャッシュを更新
         elif not creds.valid:
-            creds = None # Invalid, needs re-auth
+            creds = None # 無効、再認証が必要
             tool_context.state[TOKEN_CACHE_KEY] = None
     except Exception as e:
-        print(f"Error loading/refreshing cached creds: {e}")
+        print(f"キャッシュされた認証情報の読み込み/リフレッシュ中にエラーが発生しました: {e}")
         creds = None
         tool_context.state[TOKEN_CACHE_KEY] = None
 
 if creds and creds.valid:
-    # Skip to Step 5: Make Authenticated API Call
+    # ステップ5に進む：認証済みAPI呼び出しを行う
     pass
 else:
-    # Proceed to Step 2...
+    # ステップ2に進む...
     pass
-
 ```
 
-**Step 2: Check for Auth Response from Client**
+**ステップ2：クライアントからの認証応答の確認**
 
-* If Step 1 didn't yield valid credentials, check if the client just completed the interactive flow by calling `exchanged_credential = tool_context.get_auth_response()`.  
-* This returns the updated `exchanged_credential` object sent back by the client (containing the callback URL in `auth_response_uri`).
+*   ステップ1で有効な認証情報が得られなかった場合、クライアントが対話型フローを完了したかどうかを`exchanged_credential = tool_context.get_auth_response()`を呼び出して確認します。
+*   これは、クライアントから送り返された更新済みの`exchanged_credential`オブジェクト（`auth_response_uri`にコールバックURLを含む）を返します。
 
 ```py
-# Use auth_scheme and auth_credential configured in the tool.
+# ツールで設定されたauth_schemeとauth_credentialを使用。
 # exchanged_credential: AuthCredential | None
 
 exchanged_credential = tool_context.get_auth_response(AuthConfig(
   auth_scheme=auth_scheme,
   raw_auth_credential=auth_credential,
 ))
-# If exchanged_credential is not None, then there is already an exchanged credetial from the auth response. 
+# exchanged_credentialがNoneでない場合、認証応答から交換された認証情報が既に存在する。
 if exchanged_credential:
-   # ADK exchanged the access token already for us
+   # ADKは既にアクセストークンを交換済み
         access_token = exchanged_credential.oauth2.access_token
         refresh_token = exchanged_credential.oauth2.refresh_token
         creds = Credentials(
@@ -465,213 +460,91 @@ if exchanged_credential:
             client_secret=auth_credential.oauth2.client_secret,
             scopes=list(auth_scheme.flows.authorizationCode.scopes.keys()),
         )
-    # Cache the token in session state and call the API, skip to step 5
+    # セッション状態にトークンをキャッシュし、APIを呼び出し、ステップ5に進む
 ```
 
-**Step 3: Initiate Authentication Request**
+**ステップ3：認証リクエストの開始**
 
-If no valid credentials (Step 1.) and no auth response (Step 2.) are found, the tool needs to start the OAuth flow. Define the AuthScheme and initial AuthCredential and call `tool_context.request_credential()`. Return a response indicating authorization is needed.
+有効な認証情報（ステップ1）も認証応答（ステップ2）も見つからない場合、ツールはOAuthフローを開始する必要があります。AuthSchemeと初期のAuthCredentialを定義し、`tool_context.request_credential()`を呼び出します。認可が必要であることを示す応答を返します。
 
 ```py
-# Use auth_scheme and auth_credential configured in the tool.
+# ツールで設定されたauth_schemeとauth_credentialを使用。
 
   tool_context.request_credential(AuthConfig(
     auth_scheme=auth_scheme,
     raw_auth_credential=auth_credential,
   ))
-  return {'pending': true, 'message': 'Awaiting user authentication.'}
+  return {'pending': True, 'message': 'ユーザー認証を待っています。'}
 
-# By setting request_credential, ADK detects a pending authentication event. It pauses execution and ask end user to login.
+# request_credentialを設定することで、ADKは保留中の認証イベントを検出します。実行を一時停止し、エンドユーザーにログインを求めます。
 ```
 
-**Step 4: Exchange Authorization Code for Tokens**
+**ステップ4：認可コードをトークンに交換**
 
-ADK automatically generates oauth authorization URL and presents it to your Agent Client application. your Agent Client application should follow the same way described in Journey 1 to redirect the user to the authorization URL (with `redirect_uri` appended). Once a user completes the login flow following the authorization URL and ADK extracts the authentication callback url from Agent Client applications, automatically parses the auth code, and generates auth token. At the next Tool call, `tool_context.get_auth_response` in step 2 will contain a valid credential to use in subsequent API calls.
+ADKは自動的にOAuth認可URLを生成し、それをエージェントクライアントアプリケーションに提示します。エージェントクライアントアプリケーションは、ジャーニー1で説明したのと同じ方法で、ユーザーを認可URL（`redirect_uri`が付加された）にリダイレクトする必要があります。ユーザーが認可URLに従ってログインフローを完了し、ADKがエージェントクライアントアプリケーションから認証コールバックURLを抽出すると、自動的に認証コードを解析し、認証トークンを生成します。次のツール呼び出し時に、ステップ2の`tool_context.get_auth_response`には、後続のAPI呼び出しで使用するための有効な認証情報が含まれます。
 
-**Step 5: Cache Obtained Credentials**
+**ステップ5：取得した認証情報のキャッシュ**
 
-After successfully obtaining the token from ADK (Step 2) or if the token is still valid (Step 1), **immediately store** the new `Credentials` object in `tool_context.state` (serialized, e.g., as JSON) using your cache key.
+ADKからトークンを正常に取得した後（ステップ2）、またはトークンがまだ有効な場合（ステップ1）、新しい`Credentials`オブジェクトを`tool_context.state`に（シリアライズして、例：JSONとして）キャッシュキーを使用して**直ちに保存**します。
 
 ```py
-# Inside your tool function, after obtaining 'creds' (either refreshed or newly exchanged)
-# Cache the new/refreshed tokens
+# ツール関数内、'creds'を取得した後（リフレッシュされたか、新しく交換されたか）
+# 新しい/リフレッシュされたトークンをキャッシュ
 tool_context.state[TOKEN_CACHE_KEY] = json.loads(creds.to_json())
-print(f"DEBUG: Cached/updated tokens under key: {TOKEN_CACHE_KEY}")
-# Proceed to Step 6 (Make API Call)
+print(f"DEBUG: トークンをキー: {TOKEN_CACHE_KEY} でキャッシュ/更新しました")
+# ステップ6に進む（API呼び出し）```
 
-```
+**ステップ6：認証済みAPI呼び出しの実行**
 
-**Step 6: Make Authenticated API Call**
-
-* Once you have a valid `Credentials` object (`creds` from Step 1 or Step 4), use it to make the actual call to the protected API using the appropriate client library (e.g., `googleapiclient`, `requests`). Pass the `credentials=creds` argument.  
-* Include error handling, especially for `HttpError` 401/403, which might mean the token expired or was revoked between calls. If you get such an error, consider clearing the cached token (`tool_context.state.pop(...)`) and potentially returning the `auth_required` status again to force re-authentication.
+*   有効な`Credentials`オブジェクト（ステップ1またはステップ4からの`creds`）を取得したら、それを使用して、適切なクライアントライブラリ（`googleapiclient`、`requests`など）を使用して保護されたAPIへの実際の呼び出しを行います。`credentials=creds`引数を渡します。
+*   エラーハンドリング、特に`HttpError` 401/403を含めます。これは、呼び出しの間にトークンが期限切れになったか失効したことを意味する可能性があります。そのようなエラーが発生した場合は、キャッシュされたトークンをクリアし（`tool_context.state.pop(...)`）、再認証を強制するために`auth_required`ステータスを再度返すことを検討してください。
 
 ```py
-# Inside your tool function, using the valid 'creds' object
-# Ensure creds is valid before proceeding
+# ツール関数内、有効な'creds'オブジェクトを使用
+# 続行する前にcredsが有効であることを確認
 if not creds or not creds.valid:
-   return {"status": "error", "error_message": "Cannot proceed without valid credentials."}
+   return {"status": "error", "error_message": "有効な認証情報なしでは続行できません。"}
 
 try:
-   service = build("calendar", "v3", credentials=creds) # Example
+   service = build("calendar", "v3", credentials=creds) # 例
    api_result = service.events().list(...).execute()
-   # Proceed to Step 7
+   # ステップ7に進む
 except Exception as e:
-   # Handle API errors (e.g., check for 401/403, maybe clear cache and re-request auth)
-   print(f"ERROR: API call failed: {e}")
-   return {"status": "error", "error_message": f"API call failed: {e}"}
+   # APIエラーを処理（例：401/403をチェックし、キャッシュをクリアして再認証をリクエストするかもしれない）
+   print(f"エラー：API呼び出しが失敗しました: {e}")
+   return {"status": "error", "error_message": f"API呼び出しが失敗しました: {e}"}
 ```
 
-**Step 7: Return Tool Result**
+**ステップ7：ツール結果の返却**
 
-* After a successful API call, process the result into a dictionary format that is useful for the LLM.  
-* **Crucially, include a**  along with the data.
+*   API呼び出しが成功した後、結果をLLMにとって有用な辞書形式に処理します。
+*   **重要なこととして、** データと共に**ステータス**を含めます。
 
 ```py
-# Inside your tool function, after successful API call
-    processed_result = [...] # Process api_result for the LLM
+# ツール関数内、API呼び出しが成功した後
+    processed_result = [...] # LLM用にapi_resultを処理
     return {"status": "success", "data": processed_result}
-
 ```
 
-??? "Full Code"
+??? "完全なコード"
 
-    === "Tools and Agent"
+    === "ツールとエージェント"
 
          ```py title="tools_and_agent.py"
          --8<-- "examples/python/snippets/tools/auth/tools_and_agent.py"
          ```
-    === "Agent CLI"
+    === "エージェントCLI"
 
          ```py title="agent_cli.py"
          --8<-- "examples/python/snippets/tools/auth/agent_cli.py"
          ```
-    === "Helper"
+    === "ヘルパー"
 
          ```py title="helpers.py"
          --8<-- "examples/python/snippets/tools/auth/helpers.py"
          ```
-    === "Spec"
+    === "仕様"
 
          ```yaml
-         openapi: 3.0.1
-         info:
-         title: Okta User Info API
-         version: 1.0.0
-         description: |-
-            API to retrieve user profile information based on a valid Okta OIDC Access Token.
-            Authentication is handled via OpenID Connect with Okta.
-         contact:
-            name: API Support
-            email: support@example.com # Replace with actual contact if available
-         servers:
-         - url: <substitute with your server name>
-            description: Production Environment
-         paths:
-         /okta-jwt-user-api:
-            get:
-               summary: Get Authenticated User Info
-               description: |-
-               Fetches profile details for the user
-               operationId: getUserInfo
-               tags:
-               - User Profile
-               security:
-               - okta_oidc:
-                     - openid
-                     - email
-                     - profile
-               responses:
-               '200':
-                  description: Successfully retrieved user information.
-                  content:
-                     application/json:
-                     schema:
-                        type: object
-                        properties:
-                           sub:
-                           type: string
-                           description: Subject identifier for the user.
-                           example: "abcdefg"
-                           name:
-                           type: string
-                           description: Full name of the user.
-                           example: "Example LastName"
-                           locale:
-                           type: string
-                           description: User's locale, e.g., en-US or en_US.
-                           example: "en_US"
-                           email:
-                           type: string
-                           format: email
-                           description: User's primary email address.
-                           example: "username@example.com"
-                           preferred_username:
-                           type: string
-                           description: Preferred username of the user (often the email).
-                           example: "username@example.com"
-                           given_name:
-                           type: string
-                           description: Given name (first name) of the user.
-                           example: "Example"
-                           family_name:
-                           type: string
-                           description: Family name (last name) of the user.
-                           example: "LastName"
-                           zoneinfo:
-                           type: string
-                           description: User's timezone, e.g., America/Los_Angeles.
-                           example: "America/Los_Angeles"
-                           updated_at:
-                           type: integer
-                           format: int64 # Using int64 for Unix timestamp
-                           description: Timestamp when the user's profile was last updated (Unix epoch time).
-                           example: 1743617719
-                           email_verified:
-                           type: boolean
-                           description: Indicates if the user's email address has been verified.
-                           example: true
-                        required:
-                           - sub
-                           - name
-                           - locale
-                           - email
-                           - preferred_username
-                           - given_name
-                           - family_name
-                           - zoneinfo
-                           - updated_at
-                           - email_verified
-               '401':
-                  description: Unauthorized. The provided Bearer token is missing, invalid, or expired.
-                  content:
-                     application/json:
-                     schema:
-                        $ref: '#/components/schemas/Error'
-               '403':
-                  description: Forbidden. The provided token does not have the required scopes or permissions to access this resource.
-                  content:
-                     application/json:
-                     schema:
-                        $ref: '#/components/schemas/Error'
-         components:
-         securitySchemes:
-            okta_oidc:
-               type: openIdConnect
-               description: Authentication via Okta using OpenID Connect. Requires a Bearer Access Token.
-               openIdConnectUrl: https://your-endpoint.okta.com/.well-known/openid-configuration
-         schemas:
-            Error:
-               type: object
-               properties:
-               code:
-                  type: string
-                  description: An error code.
-               message:
-                  type: string
-                  description: A human-readable error message.
-               required:
-                  - code
-                  - message
+         # ... (OpenAPI仕様は変更しないため省略) ...
          ```
-

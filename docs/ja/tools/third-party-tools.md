@@ -1,42 +1,42 @@
-# Third Party Tools
+# サードパーティ製ツール
 
-![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java support is planned/ coming soon."}
+![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="この機能は現在Pythonでのみサポートされています。Javaのサポートは計画中/近日公開予定です。" }
 
-ADK is designed to be **highly extensible, allowing you to seamlessly integrate tools from other AI Agent frameworks** like CrewAI and LangChain. This interoperability is crucial because it allows for faster development time and allows you to reuse existing tools.
+ADKは**高い拡張性を持つように設計されており、CrewAIやLangChainのような他のAIエージェントフレームワークのツールをシームレスに統合できます**。この相互運用性は、開発時間を短縮し、既存のツールを再利用できるため、非常に重要です。
 
-## 1. Using LangChain Tools
+## 1. LangChainツールの使用
 
-ADK provides the `LangchainTool` wrapper to integrate tools from the LangChain ecosystem into your agents.
+ADKは、LangChainエコシステムのツールをエージェントに統合するための`LangchainTool`ラッパーを提供します。
 
-### Example: Web Search using LangChain's Tavily tool
+### 例: LangChainのTavilyツールを使用したウェブ検索
 
-[Tavily](https://tavily.com/) provides a search API that returns answers derived from real-time search results, intended for use by applications like AI agents.
+[Tavily](https://tavily.com/)は、AIエージェントのようなアプリケーションでの使用を目的とした、リアルタイムの検索結果から導き出された回答を返す検索APIを提供します。
 
-1. Follow [ADK installation and setup](../get-started/installation.md) guide.
+1.  [ADKのインストールとセットアップ](../get-started/installation.md)ガイドに従います。
 
-2. **Install Dependencies:** Ensure you have the necessary LangChain packages installed. For example, to use the Tavily search tool, install its specific dependencies:
+2.  **依存関係のインストール:** 必要なLangChainパッケージがインストールされていることを確認します。例えば、Tavily検索ツールを使用するには、その特定の依存関係をインストールします。
 
     ```bash
     pip install langchain_community tavily-python
     ```
 
-3. Obtain a [Tavily](https://tavily.com/) API KEY and export it as an environment variable.
+3.  [Tavily](https://tavily.com/)のAPIキーを取得し、環境変数としてエクスポートします。
 
     ```bash
-    export TAVILY_API_KEY=<REPLACE_WITH_API_KEY>
+    export TAVILY_API_KEY=<APIキーに置き換えてください>
     ```
 
-4. **Import:** Import the `LangchainTool` wrapper from ADK and the specific `LangChain` tool you wish to use (e.g, `TavilySearchResults`).
+4.  **インポート:** ADKから`LangchainTool`ラッパーと、使用したい特定の`LangChain`ツール（例: `TavilySearchResults`）をインポートします。
 
     ```py
     from google.adk.tools.langchain_tool import LangchainTool
     from langchain_community.tools import TavilySearchResults
     ```
 
-5. **Instantiate & Wrap:** Create an instance of your LangChain tool and pass it to the `LangchainTool` constructor.
+5.  **インスタンス化とラップ:** LangChainツールのインスタンスを作成し、それを`LangchainTool`コンストラクタに渡します。
 
     ```py
-    # Instantiate the LangChain tool
+    # LangChainツールをインスタンス化
     tavily_tool_instance = TavilySearchResults(
         max_results=5,
         search_depth="advanced",
@@ -45,98 +45,98 @@ ADK provides the `LangchainTool` wrapper to integrate tools from the LangChain e
         include_images=True,
     )
 
-    # Wrap it with LangchainTool for ADK
+    # ADK用にLangchainToolでラップ
     adk_tavily_tool = LangchainTool(tool=tavily_tool_instance)
     ```
 
-6. **Add to Agent:** Include the wrapped `LangchainTool` instance in your agent's `tools` list during definition.
+6.  **エージェントへの追加:** ラップされた`LangchainTool`インスタンスを、エージェント定義の`tools`リストに含めます。
 
     ```py
     from google.adk import Agent
 
-    # Define the ADK agent, including the wrapped tool
+    # ラップされたツールを含むADKエージェントを定義
     my_agent = Agent(
         name="langchain_tool_agent",
         model="gemini-2.0-flash",
-        description="Agent to answer questions using TavilySearch.",
-        instruction="I can answer your questions by searching the internet. Just ask me anything!",
-        tools=[adk_tavily_tool] # Add the wrapped tool here
+        description="TavilySearchを使用して質問に答えるエージェント。",
+        instruction="インターネットを検索してあなたの質問に答えることができます。何でも聞いてください！",
+        tools=[adk_tavily_tool] # ラップされたツールをここに追加
     )
     ```
 
-### Full Example: Tavily Search
+### 完全な例: Tavily検索
 
-Here's the full code combining the steps above to create and run an agent using the LangChain Tavily search tool.
+以下は、上記の手順を組み合わせて、LangChainのTavily検索ツールを使用するエージェントを作成し、実行する完全なコードです。
 
 ```py
 --8<-- "examples/python/snippets/tools/third-party/langchain_tavily_search.py"
 ```
 
-## 2. Using CrewAI tools
+## 2. CrewAIツールの使用
 
-ADK provides the `CrewaiTool` wrapper to integrate tools from the CrewAI library.
+ADKは、CrewAIライブラリのツールを統合するための`CrewaiTool`ラッパーを提供します。
 
-### Example: Web Search using CrewAI's Serper API
+### 例: CrewAIのSerper APIを使用したウェブ検索
 
-[Serper API](https://serper.dev/) provides access to Google Search results programmatically. It allows applications, like AI agents, to perform real-time Google searches (including news, images, etc.) and get structured data back without needing to scrape web pages directly.
+[Serper API](https://serper.dev/)は、プログラムによるGoogle検索結果へのアクセスを提供します。これにより、AIエージェントのようなアプリケーションが、ウェブページを直接スクレイピングすることなく、リアルタイムのGoogle検索（ニュース、画像などを含む）を実行し、構造化されたデータを取得できます。
 
-1. Follow [ADK installation and setup](../get-started/installation.md) guide.
+1.  [ADKのインストールとセットアップ](../get-started/installation.md)ガイドに従います。
 
-2. **Install Dependencies:** Install the necessary CrewAI tools package. For example, to use the SerperDevTool:
+2.  **依存関係のインストール:** 必要なCrewAIツールパッケージをインストールします。例えば、`SerperDevTool`を使用するには、次のようにします。
 
     ```bash
     pip install crewai-tools
     ```
 
-3. Obtain a [Serper API KEY](https://serper.dev/) and export it as an environment variable.
+3.  [Serper APIキー](https://serper.dev/)を取得し、環境変数としてエクスポートします。
 
     ```bash
-    export SERPER_API_KEY=<REPLACE_WITH_API_KEY>
+    export SERPER_API_KEY=<APIキーに置き換えてください>
     ```
 
-4. **Import:** Import `CrewaiTool` from ADK and the desired CrewAI tool (e.g, `SerperDevTool`).
+4.  **インポート:** ADKから`CrewaiTool`と、目的のCrewAIツール（例: `SerperDevTool`）をインポートします。
 
     ```py
     from google.adk.tools.crewai_tool import CrewaiTool
     from crewai_tools import SerperDevTool
     ```
 
-5. **Instantiate & Wrap:** Create an instance of the CrewAI tool. Pass it to the `CrewaiTool` constructor. **Crucially, you must provide a name and description** to the ADK wrapper, as these are used by ADK's underlying model to understand when to use the tool.
+5.  **インスタンス化とラップ:** CrewAIツールのインスタンスを作成します。それを`CrewaiTool`コンストラクタに渡します。**重要なのは、ADKの基盤となるモデルがいつツールを使用するかを理解するために名前と説明が使用されるため、ADKラッパーにこれらを提供する必要がある**ことです。
 
     ```py
-    # Instantiate the CrewAI tool
+    # CrewAIツールをインスタンス化
     serper_tool_instance = SerperDevTool(
         n_results=10,
         save_file=False,
         search_type="news",
     )
 
-    # Wrap it with CrewaiTool for ADK, providing name and description
+    # ADK用にCrewaiToolでラップし、名前と説明を提供
     adk_serper_tool = CrewaiTool(
         name="InternetNewsSearch",
-        description="Searches the internet specifically for recent news articles using Serper.",
+        description="Serperを使用して、特に最近のニュース記事をインターネットで検索します。",
         tool=serper_tool_instance
     )
     ```
 
-6. **Add to Agent:** Include the wrapped `CrewaiTool` instance in your agent's `tools` list.
+6.  **エージェントへの追加:** ラップされた`CrewaiTool`インスタンスを、エージェントの`tools`リストに含めます。
 
     ```py
     from google.adk import Agent
  
-    # Define the ADK agent
+    # ADKエージェントを定義
     my_agent = Agent(
         name="crewai_search_agent",
         model="gemini-2.0-flash",
-        description="Agent to find recent news using the Serper search tool.",
-        instruction="I can find the latest news for you. What topic are you interested in?",
-        tools=[adk_serper_tool] # Add the wrapped tool here
+        description="Serper検索ツールを使用して最近のニュースを見つけるエージェント。",
+        instruction="最新のニュースを見つけることができます。どのトピックに興味がありますか？",
+        tools=[adk_serper_tool] # ラップされたツールをここに追加
     )
     ```
 
-### Full Example: Serper API
+### 完全な例: Serper API
 
-Here's the full code combining the steps above to create and run an agent using the CrewAI Serper API search tool.
+以下は、上記の手順を組み合わせて、CrewAIのSerper API検索ツールを使用するエージェントを作成し、実行する完全なコードです。
 
 ```py
 --8<-- "examples/python/snippets/tools/third-party/crewai_serper_search.py"

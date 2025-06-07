@@ -1,83 +1,83 @@
-# OpenAPI Integration
+# OpenAPI連携
 
-![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java support is planned/ coming soon."}
+![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="この機能は現在Pythonでのみ利用可能です。Javaのサポートは計画中/近日公開予定です。" }
 
-## Integrating REST APIs with OpenAPI
+## OpenAPIによるREST APIの連携
 
-ADK simplifies interacting with external REST APIs by automatically generating callable tools directly from an [OpenAPI Specification (v3.x)](https://swagger.io/specification/). This eliminates the need to manually define individual function tools for each API endpoint.
+ADKは、[OpenAPI Specification (v3.x)](https://swagger.io/specification/)から直接呼び出し可能なツールを自動的に生成することで、外部REST APIとの対話を簡素化します。これにより、各APIエンドポイントに対して個別の関数ツールを手動で定義する必要がなくなります。
 
-!!! tip "Core Benefit"
-    Use `OpenAPIToolset` to instantly create agent tools (`RestApiTool`) from your existing API documentation (OpenAPI spec), enabling agents to seamlessly call your web services.
+!!! tip "主な利点"
+    `OpenAPIToolset`を使用すると、既存のAPIドキュメント（OpenAPI仕様）からエージェントツール（`RestApiTool`）を即座に作成でき、エージェントがWebサービスをシームレスに呼び出すことが可能になります。
 
-## Key Components
+## 主要コンポーネント
 
-* **`OpenAPIToolset`**: This is the primary class you'll use. You initialize it with your OpenAPI specification, and it handles the parsing and generation of tools.
-* **`RestApiTool`**: This class represents a single, callable API operation (like `GET /pets/{petId}` or `POST /pets`). `OpenAPIToolset` creates one `RestApiTool` instance for each operation defined in your spec.
+*   **`OpenAPIToolset`**: これが主に使用するクラスです。OpenAPI仕様で初期化すると、ツールの解析と生成を処理します。
+*   **`RestApiTool`**: このクラスは、単一の呼び出し可能なAPI操作（例: `GET /pets/{petId}`や`POST /pets`）を表します。`OpenAPIToolset`は、仕様で定義された各操作に対して1つの`RestApiTool`インスタンスを作成します。
 
-## How it Works
+## 仕組み
 
-The process involves these main steps when you use `OpenAPIToolset`:
+`OpenAPIToolset`を使用する場合、プロセスは主に次のステップを含みます。
 
-1. **Initialization & Parsing**:
-    * You provide the OpenAPI specification to `OpenAPIToolset` either as a Python dictionary, a JSON string, or a YAML string.
-    * The toolset internally parses the spec, resolving any internal references (`$ref`) to understand the complete API structure.
+1.  **初期化と解析**:
+    *   OpenAPI仕様をPythonの辞書、JSON文字列、またはYAML文字列として`OpenAPIToolset`に提供します。
+    *   ツールセットは内部で仕様を解析し、内部参照（`$ref`）を解決して完全なAPI構造を理解します。
 
-2. **Operation Discovery**:
-    * It identifies all valid API operations (e.g., `GET`, `POST`, `PUT`, `DELETE`) defined within the `paths` object of your specification.
+2.  **操作の発見**:
+    *   仕様の`paths`オブジェクト内で定義されたすべての有効なAPI操作（例: `GET`, `POST`, `PUT`, `DELETE`）を識別します。
 
-3. **Tool Generation**:
-    * For each discovered operation, `OpenAPIToolset` automatically creates a corresponding `RestApiTool` instance.
-    * **Tool Name**: Derived from the `operationId` in the spec (converted to `snake_case`, max 60 chars). If `operationId` is missing, a name is generated from the method and path.
-    * **Tool Description**: Uses the `summary` or `description` from the operation for the LLM.
-    * **API Details**: Stores the required HTTP method, path, server base URL, parameters (path, query, header, cookie), and request body schema internally.
+3.  **ツールの生成**:
+    *   発見された各操作に対して、`OpenAPIToolset`は対応する`RestApiTool`インスタンスを自動的に作成します。
+    *   **ツール名**: 仕様の`operationId`から派生します（`snake_case`に変換、最大60文字）。`operationId`がない場合は、メソッドとパスから名前が生成されます。
+    *   **ツールの説明**: LLMのために、操作の`summary`または`description`を使用します。
+    *   **API詳細**: 必要なHTTPメソッド、パス、サーバーのベースURL、パラメータ（パス、クエリ、ヘッダー、クッキー）、およびリクエストボディのスキーマを内部に保存します。
 
-4. **`RestApiTool` Functionality**: Each generated `RestApiTool`:
-    * **Schema Generation**: Dynamically creates a `FunctionDeclaration` based on the operation's parameters and request body. This schema tells the LLM how to call the tool (what arguments are expected).
-    * **Execution**: When called by the LLM, it constructs the correct HTTP request (URL, headers, query params, body) using the arguments provided by the LLM and the details from the OpenAPI spec. It handles authentication (if configured) and executes the API call using the `requests` library.
-    * **Response Handling**: Returns the API response (typically JSON) back to the agent flow.
+4.  **`RestApiTool`の機能**: 生成された各`RestApiTool`は次のようになります。
+    *   **スキーマ生成**: 操作のパラメータとリクエストボディに基づいて`FunctionDeclaration`を動的に作成します。このスキーマは、LLMにツールの呼び出し方（どの引数が期待されるか）を伝えます。
+    *   **実行**: LLMによって呼び出されると、LLMから提供された引数とOpenAPI仕様の詳細を使用して、正しいHTTPリクエスト（URL、ヘッダー、クエリパラメータ、ボディ）を構築します。認証を（設定されていれば）処理し、`requests`ライブラリを使用してAPI呼び出しを実行します。
+    *   **レスポンス処理**: APIレスポンス（通常はJSON）をエージェントのフローに返します。
 
-5. **Authentication**: You can configure global authentication (like API keys or OAuth - see [Authentication](../tools/authentication.md) for details) when initializing `OpenAPIToolset`. This authentication configuration is automatically applied to all generated `RestApiTool` instances.
+5.  **認証**: `OpenAPIToolset`を初期化する際に、グローバルな認証（APIキーやOAuthなど - 詳細は[認証](../tools/authentication.md)を参照）を設定できます。この認証設定は、生成されたすべての`RestApiTool`インスタンスに自動的に適用されます。
 
-## Usage Workflow
+## 利用ワークフロー
 
-Follow these steps to integrate an OpenAPI spec into your agent:
+OpenAPI仕様をエージェントに統合するには、次の手順に従います。
 
-1. **Obtain Spec**: Get your OpenAPI specification document (e.g., load from a `.json` or `.yaml` file, fetch from a URL).
-2. **Instantiate Toolset**: Create an `OpenAPIToolset` instance, passing the spec content and type (`spec_str`/`spec_dict`, `spec_str_type`). Provide authentication details (`auth_scheme`, `auth_credential`) if required by the API.
+1.  **仕様の取得**: OpenAPI仕様ドキュメントを取得します（例: `.json`や`.yaml`ファイルから読み込む、URLから取得する）。
+2.  **ツールセットのインスタンス化**: `OpenAPIToolset`インスタンスを作成し、仕様のコンテンツとタイプ（`spec_str`/`spec_dict`, `spec_str_type`）を渡します。APIで必要な場合は、認証情報（`auth_scheme`, `auth_credential`）を提供します。
 
     ```python
     from google.adk.tools.openapi_tool.openapi_spec_parser.openapi_toolset import OpenAPIToolset
 
-    # Example with a JSON string
-    openapi_spec_json = '...' # Your OpenAPI JSON string
+    # JSON文字列の例
+    openapi_spec_json = '...' # あなたのOpenAPI JSON文字列
     toolset = OpenAPIToolset(spec_str=openapi_spec_json, spec_str_type="json")
 
-    # Example with a dictionary
-    # openapi_spec_dict = {...} # Your OpenAPI spec as a dict
+    # 辞書の例
+    # openapi_spec_dict = {...} # dictとしてのあなたのOpenAPI仕様
     # toolset = OpenAPIToolset(spec_dict=openapi_spec_dict)
     ```
 
-3. **Add to Agent**: Include the retrieved tools in your `LlmAgent`'s `tools` list.
+3.  **エージェントに追加**: 取得したツールを`LlmAgent`の`tools`リストに含めます。
 
     ```python
     from google.adk.agents import LlmAgent
 
     my_agent = LlmAgent(
         name="api_interacting_agent",
-        model="gemini-2.0-flash", # Or your preferred model
-        tools=[toolset], # Pass the toolset
-        # ... other agent config ...
+        model="gemini-2.0-flash", # または希望のモデル
+        tools=[toolset], # ツールセットを渡す
+        # ... その他のエージェント設定 ...
     )
     ```
 
-4. **Instruct Agent**: Update your agent's instructions to inform it about the new API capabilities and the names of the tools it can use (e.g., `list_pets`, `create_pet`). The tool descriptions generated from the spec will also help the LLM.
-5. **Run Agent**: Execute your agent using the `Runner`. When the LLM determines it needs to call one of the APIs, it will generate a function call targeting the appropriate `RestApiTool`, which will then handle the HTTP request automatically.
+4.  **エージェントへの指示**: エージェントの指示を更新し、新しいAPIの能力と使用できるツールの名前（例: `list_pets`, `create_pet`）を伝えます。仕様から生成されたツールの説明もLLMの助けになります。
+5.  **エージェントの実行**: `Runner`を使用してエージェントを実行します。LLMがいずれかのAPIを呼び出す必要があると判断すると、適切な`RestApiTool`をターゲットとする関数呼び出しを生成し、それが自動的にHTTPリクエストを処理します。
 
-## Example
+## 例
 
-This example demonstrates generating tools from a simple Pet Store OpenAPI spec (using `httpbin.org` for mock responses) and interacting with them via an agent.
+この例は、簡単なペットストアのOpenAPI仕様からツールを生成し（モックレスポンスに`httpbin.org`を使用）、エージェントを介してそれらと対話する方法を示しています。
 
-???+ "Code: Pet Store API"
+???+ "コード: ペットストアAPI"
 
     ```python title="openapi_example.py"
     --8<-- "examples/python/snippets/tools/openapi_tool.py"

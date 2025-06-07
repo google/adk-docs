@@ -1,32 +1,26 @@
-# Built-in tools
+# 組み込みツール
 
-These built-in tools provide ready-to-use functionality such as Google Search or
-code executors that provide agents with common capabilities. For instance, an
-agent that needs to retrieve information from the web can directly use the
-**google\_search** tool without any additional setup.
+これらの組み込みツールは、Google検索やコード実行など、すぐに使える機能を提供し、エージェントに共通の能力を付与します。例えば、ウェブから情報を取得する必要があるエージェントは、追加の設定なしで直接**google\_search**ツールを使用できます。
 
-## How to Use
+## 使用方法
 
-1. **Import:** Import the desired tool from the tools module. This is `agents.tools` in Python or `com.google.adk.tools` in Java.
-2. **Configure:** Initialize the tool, providing required parameters if any.
-3. **Register:** Add the initialized tool to the **tools** list of your Agent.
+1.  **インポート:** ツールモジュールから目的のツールをインポートします。これはPythonでは`agents.tools`、Javaでは`com.google.adk.tools`です。
+2.  **設定:** ツールを初期化し、必要であれば必須パラメータを提供します。
+3.  **登録:** 初期化されたツールをエージェントの**tools**リストに追加します。
 
-Once added to an agent, the agent can decide to use the tool based on the **user
-prompt** and its **instructions**. The framework handles the execution of the
-tool when the agent calls it. Important: check the ***Limitations*** section of this page.
+エージェントに追加されると、エージェントは**ユーザープロンプト**と自身の**指示**に基づいてツールを使用するかどうかを決定できます。エージェントがツールを呼び出すと、フレームワークがその実行を処理します。重要：このページの***制限事項***セクションを確認してください。
 
-## Available Built-in tools
+## 利用可能な組み込みツール
 
-Note: Java only supports Google Search and Code Execution tools currently.
+注：現在、JavaはGoogle検索とコード実行ツールのみをサポートしています。
 
-### Google Search
+### Google検索
 
-The `google_search` tool allows the agent to perform web searches using Google
-Search. The `google_search` tool is only compatible with Gemini 2 models.
+`google_search`ツールを使用すると、エージェントはGoogle検索を使用してウェブ検索を実行できます。`google_search`ツールはGemini 2モデルとのみ互換性があります。
 
-!!! warning "Additional requirements when using the `google_search` tool"
-    When you use grounding with Google Search, and you receive Search suggestions in your response, you must display the Search suggestions in production and in your applications.
-    For more information on grounding with Google Search, see Grounding with Google Search documentation for [Google AI Studio](https://ai.google.dev/gemini-api/docs/grounding/search-suggestions) or [Vertex AI](https://cloud.google.com/vertex-ai/generative-ai/docs/grounding/grounding-search-suggestions). The UI code (HTML) is returned in the Gemini response as `renderedContent`, and you will need to show the HTML in your app, in accordance with the policy.
+!!! warning " `google_search`ツール使用時の追加要件"
+    Google検索によるグラウンディングを使用し、レスポンスで検索候補を受け取った場合、本番環境およびアプリケーションで検索候補を表示する必要があります。
+    Google検索によるグラウンディングの詳細については、[Google AI Studio](https://ai.google.dev/gemini-api/docs/grounding/search-suggestions)または[Vertex AI](https://cloud.google.com/vertex-ai/generative-ai/docs/grounding/grounding-search-suggestions)のドキュメントを参照してください。UIコード（HTML）はGeminiレスポンスの`renderedContent`として返されるため、ポリシーに従ってアプリにHTMLを表示する必要があります。
 
 === "Python"
 
@@ -40,11 +34,9 @@ Search. The `google_search` tool is only compatible with Gemini 2 models.
     --8<-- "examples/java/snippets/src/main/java/tools/GoogleSearchAgentApp.java:full_code"
     ```
 
-### Code Execution
+### コード実行
 
-The `built_in_code_execution` tool enables the agent to execute code,
-specifically when using Gemini 2 models. This allows the model to perform tasks
-like calculations, data manipulation, or running small scripts.
+`built_in_code_execution`ツールは、特にGemini 2モデルを使用する場合に、エージェントがコードを実行できるようにします。これにより、モデルは計算、データ操作、小さなスクリプトの実行などのタスクを実行できます。
 
 === "Python"
 
@@ -61,21 +53,15 @@ like calculations, data manipulation, or running small scripts.
 
 ### Vertex AI Search
 
-The `vertex_ai_search_tool` uses Google Cloud's Vertex AI Search, enabling the
-agent to search across your private, configured data stores (e.g., internal
-documents, company policies, knowledge bases). This built-in tool requires you
-to provide the specific data store ID during configuration.
-
-
+`vertex_ai_search_tool`はGoogle CloudのVertex AI Searchを使用し、エージェントがプライベートに設定されたデータストア（例: 社内ドキュメント、企業ポリシー、ナレッジベース）を検索できるようにします。この組み込みツールでは、設定時に特定のデータストアIDを提供する必要があります。
 
 ```py
 --8<-- "examples/python/snippets/tools/built-in-tools/vertexai_search.py"
 ```
 
-## Use Built-in tools with other tools
+## 組み込みツールを他のツールと使用する
 
-The following code sample demonstrates how to use multiple built-in tools or how
-to use built-in tools with other tools by using multiple agents:
+以下のコードサンプルは、複数の組み込みツールを使用する方法、または複数のエージェントを使用して組み込みツールを他のツールと組み合わせる方法を示しています。
 
 === "Python"
 
@@ -90,7 +76,7 @@ to use built-in tools with other tools by using multiple agents:
         model='gemini-2.0-flash',
         name='SearchAgent',
         instruction="""
-        You're a specialist in Google Search
+        あなたはGoogle検索のスペシャリストです
         """,
         tools=[google_search],
     )
@@ -98,14 +84,14 @@ to use built-in tools with other tools by using multiple agents:
         model='gemini-2.0-flash',
         name='CodeAgent',
         instruction="""
-        You're a specialist in Code Execution
+        あなたはコード実行のスペシャリストです
         """,
         code_executor=[BuiltInCodeExecutor],
     )
     root_agent = Agent(
         name="RootAgent",
         model="gemini-2.0-flash",
-        description="Root Agent",
+        description="ルートエージェント",
         tools=[agent_tool.AgentTool(agent=search_agent), agent_tool.AgentTool(agent=coding_agent)],
     )
     ```
@@ -126,58 +112,56 @@ to use built-in tools with other tools by using multiple agents:
     
       public static void main(String[] args) {
 
-        // Define the SearchAgent
+        // SearchAgentを定義
         LlmAgent searchAgent =
             LlmAgent.builder()
                 .model(MODEL_ID)
                 .name("SearchAgent")
-                .instruction("You're a specialist in Google Search")
-                .tools(new GoogleSearchTool()) // Instantiate GoogleSearchTool
+                .instruction("あなたはGoogle検索のスペシャリストです")
+                .tools(new GoogleSearchTool()) // GoogleSearchToolをインスタンス化
                 .build();
     
 
-        // Define the CodingAgent
+        // CodingAgentを定義
         LlmAgent codingAgent =
             LlmAgent.builder()
                 .model(MODEL_ID)
                 .name("CodeAgent")
-                .instruction("You're a specialist in Code Execution")
-                .tools(new BuiltInCodeExecutionTool()) // Instantiate BuiltInCodeExecutionTool
+                .instruction("あなたはコード実行のスペシャリストです")
+                .tools(new BuiltInCodeExecutionTool()) // BuiltInCodeExecutionToolをインスタンス化
                 .build();
 
-        // Define the RootAgent, which uses AgentTool.create() to wrap SearchAgent and CodingAgent
+        // RootAgentを定義。AgentTool.create()を使用してSearchAgentとCodingAgentをラップ
         BaseAgent rootAgent =
             LlmAgent.builder()
                 .name("RootAgent")
                 .model(MODEL_ID)
-                .description("Root Agent")
+                .description("ルートエージェント")
                 .tools(
-                    AgentTool.create(searchAgent), // Use create method
-                    AgentTool.create(codingAgent)   // Use create method
+                    AgentTool.create(searchAgent), // createメソッドを使用
+                    AgentTool.create(codingAgent)   // createメソッドを使用
                  )
                 .build();
 
-        // Note: This sample only demonstrates the agent definitions.
-        // To run these agents, you'd need to integrate them with a Runner and SessionService,
-        // similar to the previous examples.
-        System.out.println("Agents defined successfully:");
-        System.out.println("  Root Agent: " + rootAgent.name());
-        System.out.println("  Search Agent (nested): " + searchAgent.name());
-        System.out.println("  Code Agent (nested): " + codingAgent.name());
+        // 注：このサンプルはエージェントの定義のみを示しています。
+        // これらのエージェントを実行するには、前の例と同様に、
+        // RunnerとSessionServiceに統合する必要があります。
+        System.out.println("エージェントが正常に定義されました:");
+        System.out.println("  ルートエージェント: " + rootAgent.name());
+        System.out.println("  検索エージェント（ネスト）: " + searchAgent.name());
+        System.out.println("  コードエージェント（ネスト）: " + codingAgent.name());
       }
     }
     ```
 
 
-### Limitations
+### 制限事項
 
 !!! warning
 
-    Currently, for each root agent or single agent, only one built-in tool is
-    supported. No other tools of any type can be used in the same agent.
+    現在、各ルートエージェントまたは単一のエージェントに対して、サポートされている組み込みツールは1つだけです。同じエージェント内で他のどのタイプのツールも使用することはできません。
 
- For example, the following approach that uses ***a built-in tool along with
- other tools*** within a single agent is **not** currently supported:
+ 例えば、単一のエージェント内で***組み込みツールを他のツールと一緒に***使用する以下のアプローチは、現在サポートされて**いません**。
 
 === "Python"
 
@@ -187,7 +171,7 @@ to use built-in tools with other tools by using multiple agents:
         model="gemini-2.0-flash",
         description="Root Agent",
         tools=[custom_function], 
-        executor=[BuiltInCodeExecutor] # <-- not supported when used with tools
+        executor=[BuiltInCodeExecutor] # <-- toolsと併用する場合はサポートされていません
     )
     ```
 
@@ -198,17 +182,16 @@ to use built-in tools with other tools by using multiple agents:
             LlmAgent.builder()
                 .model(MODEL_ID)
                 .name("SearchAgent")
-                .instruction("You're a specialist in Google Search")
-                .tools(new GoogleSearchTool(), new YourCustomTool()) // <-- not supported
+                .instruction("あなたはGoogle検索のスペシャリストです")
+                .tools(new GoogleSearchTool(), new YourCustomTool()) // <-- サポートされていません
                 .build();
     ```
 
 !!! warning
 
-    Built-in tools cannot be used within a sub-agent.
+    組み込みツールはサブエージェント内では使用できません。
 
-For example, the following approach that uses built-in tools within sub-agents
-is **not** currently supported:
+例えば、サブエージェント内で組み込みツールを使用する以下のアプローチは、現在サポートされて**いません**。
 
 === "Python"
 
@@ -217,7 +200,7 @@ is **not** currently supported:
         model='gemini-2.0-flash',
         name='SearchAgent',
         instruction="""
-        You're a specialist in Google Search
+        あなたはGoogle検索のスペシャリストです
         """,
         tools=[google_search],
     )
@@ -225,7 +208,7 @@ is **not** currently supported:
         model='gemini-2.0-flash',
         name='CodeAgent',
         instruction="""
-        You're a specialist in Code Execution
+        あなたはコード実行のスペシャリストです
         """,
         executor=[BuiltInCodeExecutor],
     )
@@ -247,7 +230,7 @@ is **not** currently supported:
         LlmAgent.builder()
             .model("gemini-2.0-flash")
             .name("SearchAgent")
-            .instruction("You're a specialist in Google Search")
+            .instruction("あなたはGoogle検索のスペシャリストです")
             .tools(new GoogleSearchTool())
             .build();
 
@@ -255,7 +238,7 @@ is **not** currently supported:
         LlmAgent.builder()
             .model("gemini-2.0-flash")
             .name("CodeAgent")
-            .instruction("You're a specialist in Code Execution")
+            .instruction("あなたはコード実行のスペシャリストです")
             .tools(new BuiltInCodeExecutionTool())
             .build();
     
@@ -265,6 +248,6 @@ is **not** currently supported:
             .name("RootAgent")
             .model("gemini-2.0-flash")
             .description("Root Agent")
-            .subAgents(searchAgent, codingAgent) // Not supported, as the sub agents use built in tools.
+            .subAgents(searchAgent, codingAgent) // サブエージェントが組み込みツールを使用しているため、サポートされていません。
             .build();
     ```

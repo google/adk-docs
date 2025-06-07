@@ -1,48 +1,48 @@
-# Function tools
+# 関数ツール
 
-## What are function tools?
+## 関数ツールとは？
 
-When out-of-the-box tools don't fully meet specific requirements, developers can create custom function tools. This allows for **tailored functionality**, such as connecting to proprietary databases or implementing unique algorithms.
+標準のツールが特定の要件を完全に満たさない場合、開発者はカスタムの関数ツールを作成できます。これにより、独自のデータベースへの接続やユニークなアルゴリズムの実装など、**カスタマイズされた機能**が可能になります。
 
-*For example,* a function tool, "myfinancetool", might be a function that calculates a specific financial metric. ADK also supports long running functions, so if that calculation takes a while, the agent can continue working on other tasks.
+*例えば、*関数ツール「myfinancetool」は、特定の財務指標を計算する関数かもしれません。ADKは長時間実行される関数もサポートしているため、その計算に時間がかかる場合でも、エージェントは他のタスクの作業を続けることができます。
 
-ADK offers several ways to create functions tools, each suited to different levels of complexity and control:
+ADKは、関数ツールを作成するためのいくつかの方法を提供しており、それぞれが異なるレベルの複雑さと制御に適しています：
 
-1. Function Tool
-2. Long Running Function Tool
-3. Agents-as-a-Tool
+1.  関数ツール
+2.  長時間実行関数ツール
+3.  ツールとしてエージェント
 
-## 1. Function Tool
+## 1. 関数ツール
 
-Transforming a function into a tool is a straightforward way to integrate custom logic into your agents. In fact, when you assign a function to an agent’s tools list, the framework will automatically wrap it as a Function Tool for you. This approach offers flexibility and quick integration.
+関数をツールに変換することは、カスタムロジックをエージェントに統合する簡単な方法です。実際、エージェントのツールリストに関数を割り当てると、フレームワークは自動的にそれを関数ツールとしてラップします。このアプローチは、柔軟性と迅速な統合を提供します。
 
-### Parameters
+### パラメータ
 
-Define your function parameters using standard **JSON-serializable types** (e.g., string, integer, list, dictionary). It's important to avoid setting default values for parameters, as the language model (LLM) does not currently support interpreting them.
+標準の**JSONシリアライズ可能な型**（例：文字列、整数、リスト、辞書）を使用して関数パラメータを定義します。言語モデル（LLM）は現在、パラメータのデフォルト値を解釈することをサポートしていないため、デフォルト値を設定しないことが重要です。
 
-### Return Type
+### 戻り値の型
 
-The preferred return type for a Function Tool is a **dictionary** in Python or **Map** in Java. This allows you to structure the response with key-value pairs, providing context and clarity to the LLM. If your function returns a type other than a dictionary, the framework automatically wraps it into a dictionary with a single key named **"result"**.
+関数ツールの推奨される戻り値の型は、Pythonでは**辞書（dictionary）**、Javaでは**Map**です。これにより、応答をキーと値のペアで構造化し、LLMにコンテキストと明確さを提供できます。関数が辞書以外の型を返す場合、フレームワークは自動的にそれを**「result」**という単一のキーを持つ辞書にラップします。
 
-Strive to make your return values as descriptive as possible. *For example,* instead of returning a numeric error code, return a dictionary with an "error\_message" key containing a human-readable explanation. **Remember that the LLM**, not a piece of code, needs to understand the result. As a best practice, include a "status" key in your return dictionary to indicate the overall outcome (e.g., "success", "error", "pending"), providing the LLM with a clear signal about the operation's state.
+戻り値はできるだけ説明的にするように努めてください。*例えば、*数値のエラーコードを返す代わりに、「error_message」キーに人間が読める説明を含む辞書を返します。**コードの一部ではなく、LLMが結果を理解する必要がある**ことを忘れないでください。ベストプラクティスとして、戻り値の辞書に「status」キーを含め、操作全体の成果（例：「success」、「error」、「pending」）を示すことで、LLMに操作の状態に関する明確なシグナルを提供します。
 
-### Docstring / Source code comments
+### Docstring / ソースコードのコメント
 
-The docstring (or comments above) your function serve as the tool's description and is sent to the LLM. Therefore, a well-written and comprehensive docstring is crucial for the LLM to understand how to use the tool effectively. Clearly explain the purpose of the function, the meaning of its parameters, and the expected return values.
+関数のdocstring（またはその上のコメント）は、ツールの説明として機能し、LLMに送信されます。したがって、LLMがツールを効果的に使用する方法を理解するためには、よく書かれた包括的なdocstringが不可欠です。関数の目的、そのパラメータの意味、および期待される戻り値を明確に説明してください。
 
-??? "Example"
+??? "例"
 
     === "Python"
     
-        This tool is a python function which obtains the Stock price of a given Stock ticker/ symbol.
+        このツールは、指定された株式のティッカー/シンボルの株価を取得するPython関数です。
     
-        <u>Note</u>: You need to `pip install yfinance` library before using this tool.
+        <u>注</u>：このツールを使用する前に、`pip install yfinance`ライブラリをインストールする必要があります。
     
         ```py
         --8<-- "examples/python/snippets/tools/function-tools/func_tool.py"
         ```
     
-        The return value from this tool will be wrapped into a dictionary.
+        このツールからの戻り値は辞書にラップされます。
     
         ```json
         {"result": "$123"}
@@ -50,48 +50,47 @@ The docstring (or comments above) your function serve as the tool's description 
     
     === "Java"
     
-        This tool retrieves the mocked value of a stock price.
+        このツールは、株価のモック値を取得します。
     
         ```java
         --8<-- "examples/java/snippets/src/main/java/tools/StockPriceAgent.java:full_code"
         ```
     
-        The return value from this tool will be wrapped into a Map<String, Object>.
+        このツールからの戻り値はMap<String, Object>にラップされます。
     
         ```json
-        For input `GOOG`: {"symbol": "GOOG", "price": "1.0"}
+        入力`GOOG`の場合：{"symbol": "GOOG", "price": "1.0"}
         ```
 
-### Best Practices
+### ベストプラクティス
 
-While you have considerable flexibility in defining your function, remember that simplicity enhances usability for the LLM. Consider these guidelines:
+関数の定義にはかなりの柔軟性がありますが、シンプルさがLLMの使いやすさを向上させることを忘れないでください。以下のガイドラインを考慮してください：
 
-* **Fewer Parameters are Better:** Minimize the number of parameters to reduce complexity.  
-* **Simple Data Types:** Favor primitive data types like `str` and `int` over custom classes whenever possible.  
-* **Meaningful Names:** The function's name and parameter names significantly influence how the LLM interprets and utilizes the tool. Choose names that clearly reflect the function's purpose and the meaning of its inputs. Avoid generic names like `do_stuff()` or `beAgent()`.  
+*   **パラメータは少ない方が良い：** 複雑さを減らすためにパラメータの数を最小限に抑えます。
+*   **単純なデータ型：** 可能な限り、カスタムクラスよりも`str`や`int`のようなプリミティブなデータ型を優先します。
+*   **意味のある名前：** 関数の名前とパラメータ名は、LLMがツールをどのように解釈し、利用するかに大きく影響します。関数の目的とその入力の意味を明確に反映する名前を選択してください。`do_stuff()`や`beAgent()`のような一般的な名前は避けてください。
 
-## 2. Long Running Function Tool
+## 2. 長時間実行関数ツール
 
-Designed for tasks that require a significant amount of processing time without blocking the agent's execution. This tool is a subclass of `FunctionTool`.
+エージェントの実行をブロックすることなく、かなりの処理時間を必要とするタスクのために設計されています。このツールは`FunctionTool`のサブクラスです。
 
-When using a `LongRunningFunctionTool`, your function can initiate the long-running operation and optionally return an **initial result**** (e.g. the long-running operation id). Once a long running function tool is invoked the agent runner will pause the agent run and let the agent client to decide whether to continue or wait until the long-running operation finishes. The agent client can query the progress of the long-running operation and send back an intermediate or final response. The agent can then continue with other tasks. An example is the human-in-the-loop scenario where the agent needs human approval before proceeding with a task.
+`LongRunningFunctionTool`を使用する場合、関数は長時間実行される操作を開始し、オプションで**初期結果**（例：長時間実行操作ID）を返すことができます。長時間実行関数ツールが呼び出されると、エージェントランナーはエージェントの実行を一時停止し、エージェントクライアントに続行するか、長時間実行操作が終了するまで待つかを決定させます。エージェントクライアントは長時間実行操作の進捗を照会し、中間または最終的な応答を送り返すことができます。その後、エージェントは他のタスクを続行できます。例としては、エージェントがタスクを進める前に人間の承認が必要なヒューマンインザループのシナリオがあります。
 
-### How it Works
+### 仕組み
 
-In Python, you wrap a function with `LongRunningFunctionTool`.  In Java, you pass a Method name to `LongRunningFunctionTool.create()`.
+Pythonでは、関数を`LongRunningFunctionTool`でラップします。Javaでは、メソッド名を`LongRunningFunctionTool.create()`に渡します。
 
+1.  **開始：** LLMがツールを呼び出すと、関数が長時間実行操作を開始します。
 
-1. **Initiation:** When the LLM calls the tool, your function starts the long-running operation.
+2.  **初期更新：** 関数はオプションで初期結果（例：長時間実行操作ID）を返す必要があります。ADKフレームワークはその結果を受け取り、`FunctionResponse`にパッケージ化してLLMに送り返します。これにより、LLMはユーザーに（例：ステータス、完了率、メッセージ）を通知できます。そして、エージェントの実行は終了/一時停止されます。
 
-2. **Initial Updates:** Your function should optionally return an initial result (e.g. the long-running operaiton id). The ADK framework takes the result and sends it back to the LLM packaged within a `FunctionResponse`. This allows the LLM to inform the user (e.g., status, percentage complete, messages). And then the agent run is ended / paused.
+3.  **続行または待機：** 各エージェントの実行が完了した後。エージェントクライアントは長時間実行操作の進捗を照会し、中間応答でエージェントの実行を続行するか（進捗を更新するため）、最終的な応答が取得されるまで待つかを決定できます。エージェントクライアントは、次回の実行のために中間または最終的な応答をエージェントに送り返す必要があります。
 
-3. **Continue or Wait:** After each agent run is completed. Agent client can query the progress of the long-running operation and decide whether to continue the agent run with an intermediate response (to update the progress) or wait until a final response is retrieved. Agent client should send the intermediate or final response back to the agent for the next run.
+4.  **フレームワークの処理：** ADKフレームワークは実行を管理します。エージェントクライアントから送信された中間または最終的な`FunctionResponse`をLLMに送信し、ユーザーフレンドリーなメッセージを生成します。
 
-4. **Framework Handling:** The ADK framework manages the execution. It sends the intermediate or final `FunctionResponse` sent by agent client to the LLM to generate a user friendly message.
+### ツールの作成
 
-### Creating the Tool
-
-Define your tool function and wrap it using the `LongRunningFunctionTool` class:
+ツール関数を定義し、`LongRunningFunctionTool`クラスを使用してラップします：
 
 === "Python"
 
@@ -109,14 +108,14 @@ Define your tool function and wrap it using the `LongRunningFunctionTool` class:
     
     public class ExampleLongRunningFunction {
     
-      // Define your Long Running function.
-      // Ask for approval for the reimbursement.
+      // 長時間実行関数を定義します。
+      // 払い戻しの承認を求めます。
       public static Map<String, Object> askForApproval(String purpose, double amount) {
-        // Simulate creating a ticket and sending a notification
+        // チケット作成と通知送信をシミュレート
         System.out.println(
-            "Simulating ticket creation for purpose: " + purpose + ", amount: " + amount);
+            "目的：" + purpose + "、金額：" + amount + "のチケット作成をシミュレート中");
     
-        // Send a notification to the approver with the link of the ticket
+        // 承認者にチケットのリンク付きで通知を送信
         Map<String, Object> result = new HashMap<>();
         result.put("status", "pending");
         result.put("approver", "Sean Zhou");
@@ -127,11 +126,11 @@ Define your tool function and wrap it using the `LongRunningFunctionTool` class:
       }
     
       public static void main(String[] args) throws NoSuchMethodException {
-        // Pass the method to LongRunningFunctionTool.create
+        // メソッドをLongRunningFunctionTool.createに渡す
         LongRunningFunctionTool approveTool =
             LongRunningFunctionTool.create(ExampleLongRunningFunction.class, "askForApproval");
     
-        // Include the tool in the agent
+        // ツールをエージェントに含める
         LlmAgent approverAgent =
             LlmAgent.builder()
                 // ...
@@ -141,21 +140,21 @@ Define your tool function and wrap it using the `LongRunningFunctionTool` class:
     }
     ```
 
-### Intermediate / Final result Updates
+### 中間/最終結果の更新
 
-Agent client received an event with long running function calls and check the status of the ticket. Then Agent client can send the intermediate or final response back to update the progress. The framework packages this value (even if it's None) into the content of the `FunctionResponse` sent back to the LLM.
+エージェントクライアントは、長時間実行関数呼び出しを含むイベントを受け取り、チケットのステータスを確認します。その後、エージェントクライアントは進捗を更新するために中間または最終的な応答を送り返すことができます。フレームワークはこの値（Noneであっても）を`FunctionResponse`のコンテンツにパッケージ化してLLMに送り返します。
 
-!!! Tip "Applies to only Java ADK"
+!!! Tip "Java ADKにのみ適用"
 
-    When passing `ToolContext` with Function Tools, ensure that one of the following is true:
+    Function Toolsで`ToolContext`を渡す場合、以下のいずれかが真であることを確認してください：
 
-    * The Schema is passed with the ToolContext parameter in the function signature, like:
+    *   スキーマが関数シグネチャのToolContextパラメータと一緒に渡されている。例：
       ```
       @com.google.adk.tools.Annotations.Schema(name = "toolContext") ToolContext toolContext
       ```
-    OR
+    または
 
-    * The following `-parameters` flag is set to the mvn compiler plugin
+    *   以下の`-parameters`フラグがmvnコンパイラプラグインに設定されている。
 
     ```
     <build>
@@ -163,7 +162,7 @@ Agent client received an event with long running function calls and check the st
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.14.0</version> <!-- or newer -->
+                <version>3.14.0</version> <!-- またはそれ以降 -->
                 <configuration>
                     <compilerArgs>
                         <arg>-parameters</arg>
@@ -173,7 +172,7 @@ Agent client received an event with long running function calls and check the st
         </plugins>
     </build>
     ```
-    This constraint is temporary and will be removed.
+    この制約は一時的なものであり、削除される予定です。
 
 
 === "Python"
@@ -188,36 +187,35 @@ Agent client received an event with long running function calls and check the st
     --8<-- "examples/java/snippets/src/main/java/tools/LongRunningFunctionExample.java:full_code"
     ```
 
-
-??? "Python complete example: File Processing Simulation"
+??? "Pythonの完全な例：ファイル処理シミュレーション"
 
     ```py
     --8<-- "examples/python/snippets/tools/function-tools/human_in_the_loop.py"
     ```
 
-#### Key aspects of this example
+#### この例の重要な側面
 
-* **`LongRunningFunctionTool`**: Wraps the supplied method/function; the framework handles sending yielded updates and the final return value as sequential FunctionResponses.
+*   **`LongRunningFunctionTool`**: 提供されたメソッド/関数をラップします。フレームワークは、yieldされた更新と最終的な戻り値をシーケンシャルなFunctionResponseとして送信する処理を担当します。
 
-* **Agent instruction**: Directs the LLM to use the tool and understand the incoming FunctionResponse stream (progress vs. completion) for user updates.
+*   **エージェントの指示**: LLMにツールを使用させ、ユーザーへの更新のために受信するFunctionResponseストリーム（進捗 vs 完了）を理解させます。
 
-* **Final return**: The function returns the final result dictionary, which is sent in the concluding FunctionResponse to indicate completion.
+*   **最終的な戻り値**: 関数は最終的な結果の辞書を返し、それが完了を示すための最後のFunctionResponseで送信されます。
 
-## 3. Agent-as-a-Tool
+## 3. ツールとしてのエージェント
 
-This powerful feature allows you to leverage the capabilities of other agents within your system by calling them as tools. The Agent-as-a-Tool enables you to invoke another agent to perform a specific task, effectively **delegating responsibility**. This is conceptually similar to creating a Python function that calls another agent and uses the agent's response as the function's return value.
+この強力な機能により、システム内の他のエージェントをツールとして呼び出すことで、その能力を活用できます。ツールとしてのエージェントは、別のエージェントを呼び出して特定のタスクを実行させることができ、効果的に**責任を委任**します。これは概念的に、別のエージェントを呼び出し、そのエージェントの応答を関数の戻り値として使用するPython関数を作成するのと似ています。
 
-### Key difference from sub-agents
+### サブエージェントとの主な違い
 
-It's important to distinguish an Agent-as-a-Tool from a Sub-Agent.
+ツールとしてのエージェントとサブエージェントを区別することが重要です。
 
-* **Agent-as-a-Tool:** When Agent A calls Agent B as a tool (using Agent-as-a-Tool), Agent B's answer is **passed back** to Agent A, which then summarizes the answer and generates a response to the user. Agent A retains control and continues to handle future user input.  
+*   **ツールとしてのエージェント:** エージェントAがエージェントBをツールとして呼び出すと（ツールとしてのエージェントを使用）、エージェントBの回答はエージェントAに**返され**、エージェントAはその回答を要約してユーザーへの応答を生成します。エージェントAは制御を保持し、将来のユーザー入力を処理し続けます。
 
-* **Sub-agent:** When Agent A calls Agent B as a sub-agent, the responsibility of answering the user is completely **transferred to Agent B**. Agent A is effectively out of the loop. All subsequent user input will be answered by Agent B.
+*   **サブエージェント:** エージェントAがエージェントBをサブエージェントとして呼び出すと、ユーザーに答える責任は完全に**エージェントBに移譲されます**。エージェントAは事実上ループの外に出ます。以降のすべてのユーザー入力はエージェントBによって回答されます。
 
-### Usage
+### 使用法
 
-To use an agent as a tool, wrap the agent with the AgentTool class.
+エージェントをツールとして使用するには、エージェントをAgentToolクラスでラップします。
 
 === "Python"
 
@@ -231,13 +229,13 @@ To use an agent as a tool, wrap the agent with the AgentTool class.
     AgentTool.create(agent)
     ```
 
-### Customization
+### カスタマイズ
 
-The `AgentTool` class provides the following attributes for customizing its behavior:
+`AgentTool`クラスは、その振る舞いをカスタマイズするための以下の属性を提供します：
 
-* **skip\_summarization: bool:** If set to True, the framework will **bypass the LLM-based summarization** of the tool agent's response. This can be useful when the tool's response is already well-formatted and requires no further processing.
+*   **skip_summarization: bool:** Trueに設定すると、フレームワークはツールエージェントの応答の**LLMベースの要約をバイパス**します。これは、ツールの応答が既によくフォーマットされており、さらなる処理が不要な場合に役立ちます。
 
-??? "Example"
+??? "例"
 
     === "Python"
 
@@ -251,12 +249,11 @@ The `AgentTool` class provides the following attributes for customizing its beha
         --8<-- "examples/java/snippets/src/main/java/tools/AgentToolCustomization.java:full_code"
         ```
 
-### How it works
+### 仕組み
 
-1. When the `main_agent` receives the long text, its instruction tells it to use the 'summarize' tool for long texts.  
-2. The framework recognizes 'summarize' as an `AgentTool` that wraps the `summary_agent`.  
-3. Behind the scenes, the `main_agent` will call the `summary_agent` with the long text as input.  
-4. The `summary_agent` will process the text according to its instruction and generate a summary.  
-5. **The response from the `summary_agent` is then passed back to the `main_agent`.**  
-6. The `main_agent` can then take the summary and formulate its final response to the user (e.g., "Here's a summary of the text: ...")
-
+1.  `main_agent`が長いテキストを受け取ると、その指示は長いテキストに対して'summarize'ツールを使用するように指示します。
+2.  フレームワークは'summarize'を`summary_agent`をラップする`AgentTool`として認識します。
+3.  舞台裏では、`main_agent`は長いテキストを入力として`summary_agent`を呼び出します。
+4.  `summary_agent`はその指示に従ってテキストを処理し、要約を生成します。
+5.  **`summary_agent`からの応答は、`main_agent`に返されます。**
+6.  `main_agent`はその要約を受け取り、ユーザーへの最終的な応答を（例：「テキストの要約はこちらです：...」）を組み立てることができます。
