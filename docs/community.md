@@ -26,6 +26,13 @@ Community-provided translations of the ADK documentation.
     > continuously updated and translated to provide a localized reading
     > experience for developers in South Korea.
 
+*   **[ADK Documentation (Japanese, 日本語)](https://adk-labs.github.io/adk-docs/ja/)**
+
+    > the Japanese version of the Agent Development Kit
+    > documentation, maintained by an individual. The documentation is
+    > continuously updated and translated to provide a localized reading
+    > experience for developers in Japan.
+
 ## Tutorials, Guides & Blog Posts
 
 *Find community-written guides covering ADK features, use cases, and
