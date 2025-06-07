@@ -1,27 +1,27 @@
-# Artifacts
+# 아티팩트 (Artifacts)
 
-In ADK, **Artifacts** represent a crucial mechanism for managing named, versioned binary data associated either with a specific user interaction session or persistently with a user across multiple sessions. They allow your agents and tools to handle data beyond simple text strings, enabling richer interactions involving files, images, audio, and other binary formats.
+ADK에서 **아티팩트(Artifacts)**는 특정 사용자 상호작용 세션과 연관되거나 여러 세션에 걸쳐 사용자와 영구적으로 연관된, 이름이 지정되고 버전이 관리되는 바이너리 데이터를 관리하기 위한 중요한 메커니즘을 나타냅니다. 이를 통해 에이전트와 도구는 단순한 텍스트 문자열을 넘어 파일, 이미지, 오디오 및 기타 바이너리 형식을 포함하는 더 풍부한 상호작용을 처리할 수 있습니다.
 
 !!! Note
-    The specific parameters or method names for the primitives may vary slightly by SDK language (e.g., `save_artifact` in Python, `saveArtifact` in Java). Refer to the language-specific API documentation for details.
+    기본 요소에 대한 특정 매개변수나 메서드 이름은 SDK 언어에 따라 약간 다를 수 있습니다(예: Python의 `save_artifact`, Java의 `saveArtifact`). 자세한 내용은 언어별 API 문서를 참조하세요.
 
-## What are Artifacts?
+## 아티팩트란 무엇인가요?
 
-*   **Definition:** An Artifact is essentially a piece of binary data (like the content of a file) identified by a unique `filename` string within a specific scope (session or user). Each time you save an artifact with the same filename, a new version is created.
+*   **정의:** 아티팩트는 본질적으로 특정 범위(세션 또는 사용자) 내에서 고유한 `filename` 문자열로 식별되는 바이너리 데이터 조각(파일 내용 등)입니다. 동일한 파일 이름으로 아티팩트를 저장할 때마다 새 버전이 생성됩니다.
 
-*   **Representation:** Artifacts are consistently represented using the standard `google.genai.types.Part` object. The core data is typically stored within an inline data structure of the `Part` (accessed via `inline_data`), which itself contains:
-    *   `data`: The raw binary content as bytes.
-    *   `mime_type`: A string indicating the type of the data (e.g., `"image/png"`, `"application/pdf"`). This is essential for correctly interpreting the data later.
+*   **표현:** 아티팩트는 표준 `google.genai.types.Part` 객체를 사용하여 일관되게 표현됩니다. 핵심 데이터는 일반적으로 `Part`의 인라인 데이터 구조 내에 저장되며(`inline_data`를 통해 접근), 여기에는 다음이 포함됩니다:
+    *   `data`: 원시 바이너리 콘텐츠 (바이트).
+    *   `mime_type`: 데이터 유형을 나타내는 문자열 (예: `"image/png"`, `"application/pdf"`). 이는 나중에 데이터를 올바르게 해석하는 데 필수적입니다.
 
 
 === "Python"
 
     ```py
-    # Example of how an artifact might be represented as a types.Part
+    # 아티팩트가 types.Part로 표현될 수 있는 방법의 예시
     import google.genai.types as types
 
-    # Assume 'image_bytes' contains the binary data of a PNG image
-    image_bytes = b'\x89PNG\r\n\x1a\n...' # Placeholder for actual image bytes
+    # 'image_bytes'에 PNG 이미지의 바이너리 데이터가 포함되어 있다고 가정
+    image_bytes = b'\x89PNG\r\n\x1a\n...' # 실제 이미지 바이트를 위한 플레이스홀더
 
     image_artifact = types.Part(
         inline_data=types.Blob(
@@ -30,11 +30,11 @@ In ADK, **Artifacts** represent a crucial mechanism for managing named, versione
         )
     )
 
-    # You can also use the convenience constructor:
+    # 편의 생성자를 사용할 수도 있습니다:
     # image_artifact_alt = types.Part.from_bytes(data=image_bytes, mime_type="image/png")
 
-    print(f"Artifact MIME Type: {image_artifact.inline_data.mime_type}")
-    print(f"Artifact Data (first 10 bytes): {image_artifact.inline_data.data[:10]}...")
+    print(f"아티팩트 MIME 유형: {image_artifact.inline_data.mime_type}")
+    print(f"아티팩트 데이터 (처음 10바이트): {image_artifact.inline_data.data[:10]}...")
     ```
 
 === "Java"
@@ -45,104 +45,103 @@ In ADK, **Artifacts** represent a crucial mechanism for managing named, versione
 
     public class ArtifactExample {
         public static void main(String[] args) {
-            // Assume 'imageBytes' contains the binary data of a PNG image
-            byte[] imageBytes = {(byte) 0x89, (byte) 0x50, (byte) 0x4E, (byte) 0x47, (byte) 0x0D, (byte) 0x0A, (byte) 0x1A, (byte) 0x0A, (byte) 0x01, (byte) 0x02}; // Placeholder for actual image bytes
+            // 'imageBytes'에 PNG 이미지의 바이너리 데이터가 포함되어 있다고 가정
+            byte[] imageBytes = {(byte) 0x89, (byte) 0x50, (byte) 0x4E, (byte) 0x47, (byte) 0x0D, (byte) 0x0A, (byte) 0x1A, (byte) 0x0A, (byte) 0x01, (byte) 0x02}; // 실제 이미지 바이트를 위한 플레이스홀더
 
-            // Create an image artifact using Part.fromBytes
+            // Part.fromBytes를 사용하여 이미지 아티팩트 생성
             Part imageArtifact = Part.fromBytes(imageBytes, "image/png");
 
-            System.out.println("Artifact MIME Type: " + imageArtifact.inlineData().get().mimeType().get());
+            System.out.println("아티팩트 MIME 유형: " + imageArtifact.inlineData().get().mimeType().get());
             System.out.println(
-                "Artifact Data (first 10 bytes): "
+                "아티팩트 데이터 (처음 10바이트): "
                     + new String(imageArtifact.inlineData().get().data().get(), 0, 10, StandardCharsets.UTF_8)
                     + "...");
         }
     }
     ```
 
-*   **Persistence & Management:** Artifacts are not stored directly within the agent or session state. Their storage and retrieval are managed by a dedicated **Artifact Service** (an implementation of `BaseArtifactService`, defined in `google.adk.artifacts`. ADK provides various implementations, such as:
-    *   An in-memory service for testing or temporary storage (e.g., `InMemoryArtifactService` in Python, defined in `google.adk.artifacts.in_memory_artifact_service.py`).
-    *   A service for persistent storage using Google Cloud Storage (GCS) (e.g., `GcsArtifactService` in Python, defined in `google.adk.artifacts.gcs_artifact_service.py`).
-    The chosen service implementation handles versioning automatically when you save data.
+*   **지속성 및 관리:** 아티팩트는 에이전트나 세션 상태에 직접 저장되지 않습니다. 저장 및 검색은 전용 **아티팩트 서비스(Artifact Service)**에 의해 관리됩니다 (`google.adk.artifacts`에 정의된 `BaseArtifactService`의 구현체). ADK는 다음과 같은 다양한 구현을 제공합니다:
+    *   테스트 또는 임시 저장을 위한 인메모리 서비스 (예: Python의 `InMemoryArtifactService`, `google.adk.artifacts.in_memory_artifact_service.py`에 정의됨).
+    *   Google Cloud Storage(GCS)를 사용한 영구 저장을 위한 서비스 (예: Python의 `GcsArtifactService`, `google.adk.artifacts.gcs_artifact_service.py`에 정의됨).
+    선택된 서비스 구현은 데이터를 저장할 때 자동으로 버전 관리를 처리합니다.
 
-## Why Use Artifacts?
+## 왜 아티팩트를 사용해야 하나요?
 
-While session `state` is suitable for storing small pieces of configuration or conversational context (like strings, numbers, booleans, or small dictionaries/lists), Artifacts are designed for scenarios involving binary or large data:
+세션 `state`는 작은 구성 정보나 대화 컨텍스트(문자열, 숫자, 불리언 또는 작은 사전/리스트 등)를 저장하는 데 적합하지만, 아티팩트는 바이너리 또는 대용량 데이터를 포함하는 시나리오를 위해 설계되었습니다:
 
-1. **Handling Non-Textual Data:** Easily store and retrieve images, audio clips, video snippets, PDFs, spreadsheets, or any other file format relevant to your agent's function.  
-2. **Persisting Large Data:** Session state is generally not optimized for storing large amounts of data. Artifacts provide a dedicated mechanism for persisting larger blobs without cluttering the session state.  
-3. **User File Management:** Provide capabilities for users to upload files (which can be saved as artifacts) and retrieve or download files generated by the agent (loaded from artifacts).  
-4. **Sharing Outputs:** Enable tools or agents to generate binary outputs (like a PDF report or a generated image) that can be saved via `save_artifact` and later accessed by other parts of the application or even in subsequent sessions (if using user namespacing).  
-5. **Caching Binary Data:** Store the results of computationally expensive operations that produce binary data (e.g., rendering a complex chart image) as artifacts to avoid regenerating them on subsequent requests.
+1.  **비텍스트 데이터 처리:** 에이전트의 기능과 관련된 이미지, 오디오 클립, 비디오 스니펫, PDF, 스프레드시트 또는 기타 파일 형식을 쉽게 저장하고 검색합니다.
+2.  **대용량 데이터 지속:** 세션 상태는 일반적으로 대량의 데이터를 저장하는 데 최적화되어 있지 않습니다. 아티팩트는 세션 상태를 복잡하게 만들지 않고 더 큰 블롭을 영구적으로 저장하기 위한 전용 메커니즘을 제공합니다.
+3.  **사용자 파일 관리:** 사용자가 파일을 업로드(아티팩트로 저장 가능)하고 에이전트가 생성한 파일을 검색하거나 다운로드(아티팩트에서 로드)할 수 있는 기능을 제공합니다.
+4.  **출력 공유:** 도구나 에이전트가 `save_artifact`를 통해 저장할 수 있는 바이너리 출력(PDF 보고서나 생성된 이미지 등)을 생성하고, 나중에 애플리케이션의 다른 부분이나 후속 세션에서도 (사용자 네임스페이스를 사용하는 경우) 접근할 수 있도록 합니다.
+5.  **바이너리 데이터 캐싱:** 바이너리 데이터를 생성하는 계산 비용이 많이 드는 작업(예: 복잡한 차트 이미지 렌더링)의 결과를 아티팩트로 저장하여 후속 요청 시 다시 생성하는 것을 방지합니다.
 
-In essence, whenever your agent needs to work with file-like binary data that needs to be persisted, versioned, or shared, Artifacts managed by an `ArtifactService` are the appropriate mechanism within ADK.
-
-
-## Common Use Cases
-
-Artifacts provide a flexible way to handle binary data within your ADK applications.
-
-Here are some typical scenarios where they prove valuable:
-
-* **Generated Reports/Files:**
-    * A tool or agent generates a report (e.g., a PDF analysis, a CSV data export, an image chart).
-
-* **Handling User Uploads:**
-
-    * A user uploads a file (e.g., an image for analysis, a document for summarization) through a front-end interface.
-
-* **Storing Intermediate Binary Results:**
-
-    * An agent performs a complex multi-step process where one step generates intermediate binary data (e.g., audio synthesis, simulation results).
-
-* **Persistent User Data:**
-
-    * Storing user-specific configuration or data that isn't a simple key-value state.
-
-* **Caching Generated Binary Content:**
-
-    * An agent frequently generates the same binary output based on certain inputs (e.g., a company logo image, a standard audio greeting).
+본질적으로, 에이전트가 영구적으로 저장되거나, 버전 관리되거나, 공유되어야 하는 파일과 유사한 바이너리 데이터로 작업해야 할 때마다, `ArtifactService`가 관리하는 아티팩트가 ADK 내에서 적절한 메커니즘입니다.
 
 
+## 일반적인 사용 사례
 
-## Core Concepts
+아티팩트는 ADK 애플리케이션 내에서 바이너리 데이터를 처리하는 유연한 방법을 제공합니다.
 
-Understanding artifacts involves grasping a few key components: the service that manages them, the data structure used to hold them, and how they are identified and versioned.
+다음은 아티팩트가 유용한 일반적인 시나리오입니다:
 
-### Artifact Service (`BaseArtifactService`)
+*   **생성된 보고서/파일:**
+    *   도구나 에이전트가 보고서(예: PDF 분석, CSV 데이터 내보내기, 이미지 차트)를 생성합니다.
 
-* **Role:** The central component responsible for the actual storage and retrieval logic for artifacts. It defines *how* and *where* artifacts are persisted.  
+*   **사용자 업로드 처리:**
 
-* **Interface:** Defined by the abstract base class `BaseArtifactService`. Any concrete implementation must provide methods for:  
+    *   사용자가 프론트엔드 인터페이스를 통해 파일(예: 분석용 이미지, 요약용 문서)을 업로드합니다.
 
-    * `Save Artifact`: Stores the artifact data and returns its assigned version number.  
-    * `Load Artifact`: Retrieves a specific version (or the latest) of an artifact.  
-    * `List Artifact keys`: Lists the unique filenames of artifacts within a given scope.  
-    * `Delete Artifact`: Removes an artifact (and potentially all its versions, depending on implementation).  
-    * `List versions`: Lists all available version numbers for a specific artifact filename.
+*   **중간 바이너리 결과 저장:**
 
-* **Configuration:** You provide an instance of an artifact service (e.g., `InMemoryArtifactService`, `GcsArtifactService`) when initializing the `Runner`. The `Runner` then makes this service available to agents and tools via the `InvocationContext`.
+    *   에이전트가 한 단계에서 중간 바이너리 데이터(예: 오디오 합성, 시뮬레이션 결과)를 생성하는 복잡한 다단계 프로세스를 수행합니다.
+
+*   **영구적인 사용자 데이터:**
+
+    *   단순한 키-값 상태가 아닌 사용자별 구성 또는 데이터를 저장합니다.
+
+*   **생성된 바이너리 콘텐츠 캐싱:**
+
+    *   에이전트가 특정 입력에 기반하여 동일한 바이너리 출력(예: 회사 로고 이미지, 표준 오디오 인사말)을 자주 생성합니다.
+
+
+## 핵심 개념
+
+아티팩트를 이해하려면 몇 가지 핵심 구성 요소, 즉 이를 관리하는 서비스, 이를 담는 데 사용되는 데이터 구조, 그리고 식별 및 버전 관리 방법을 파악해야 합니다.
+
+### 아티팩트 서비스 (`BaseArtifactService`)
+
+*   **역할:** 아티팩트의 실제 저장 및 검색 로직을 담당하는 중앙 구성 요소입니다. 아티팩트가 *어떻게* 그리고 *어디에* 지속되는지를 정의합니다.
+
+*   **인터페이스:** 추상 기본 클래스 `BaseArtifactService`에 의해 정의됩니다. 모든 구체적인 구현은 다음을 위한 메서드를 제공해야 합니다:
+
+    *   `Save Artifact`: 아티팩트 데이터를 저장하고 할당된 버전 번호를 반환합니다.
+    *   `Load Artifact`: 아티팩트의 특정 버전(또는 최신 버전)을 검색합니다.
+    *   `List Artifact keys`: 주어진 범위 내의 아티팩트 고유 파일 이름을 나열합니다.
+    *   `Delete Artifact`: 아티팩트(그리고 잠재적으로 모든 버전, 구현에 따라 다름)를 제거합니다.
+    *   `List versions`: 특정 아티팩트 파일 이름에 대해 사용 가능한 모든 버전 번호를 나열합니다.
+
+*   **구성:** `Runner`를 초기화할 때 아티팩트 서비스의 인스턴스(예: `InMemoryArtifactService`, `GcsArtifactService`)를 제공합니다. 그러면 `Runner`는 이 서비스를 `InvocationContext`를 통해 에이전트와 도구에서 사용할 수 있도록 합니다.
 
 === "Python"
 
     ```py
     from google.adk.runners import Runner
-    from google.adk.artifacts import InMemoryArtifactService # Or GcsArtifactService
-    from google.adk.agents import LlmAgent # Any agent
+    from google.adk.artifacts import InMemoryArtifactService # 또는 GcsArtifactService
+    from google.adk.agents import LlmAgent # 모든 에이전트
     from google.adk.sessions import InMemorySessionService
 
-    # Example: Configuring the Runner with an Artifact Service
+    # 예시: Runner를 아티팩트 서비스로 구성하기
     my_agent = LlmAgent(name="artifact_user_agent", model="gemini-2.0-flash")
-    artifact_service = InMemoryArtifactService() # Choose an implementation
+    artifact_service = InMemoryArtifactService() # 구현체 선택
     session_service = InMemorySessionService()
 
     runner = Runner(
         agent=my_agent,
         app_name="my_artifact_app",
         session_service=session_service,
-        artifact_service=artifact_service # Provide the service instance here
+        artifact_service=artifact_service # 여기에 서비스 인스턴스 제공
     )
-    # Now, contexts within runs managed by this runner can use artifact methods
+    # 이제 이 러너가 관리하는 실행 내의 컨텍스트에서 아티팩트 메서드를 사용할 수 있습니다.
     ```
 
 === "Java"
@@ -153,45 +152,45 @@ Understanding artifacts involves grasping a few key components: the service that
     import com.google.adk.sessions.InMemorySessionService;
     import com.google.adk.artifacts.InMemoryArtifactService;
     
-    // Example: Configuring the Runner with an Artifact Service
+    // 예시: Runner를 아티팩트 서비스로 구성하기
     LlmAgent myAgent =  LlmAgent.builder()
       .name("artifact_user_agent")
       .model("gemini-2.0-flash")
       .build();
-    InMemoryArtifactService artifactService = new InMemoryArtifactService(); // Choose an implementation
+    InMemoryArtifactService artifactService = new InMemoryArtifactService(); // 구현체 선택
     InMemorySessionService sessionService = new InMemorySessionService();
 
-    Runner runner = new Runner(myAgent, "my_artifact_app", artifactService, sessionService); // Provide the service instance here
-    // Now, contexts within runs managed by this runner can use artifact methods
+    Runner runner = new Runner(myAgent, "my_artifact_app", artifactService, sessionService); // 여기에 서비스 인스턴스 제공
+    // 이제 이 러너가 관리하는 실행 내의 컨텍스트에서 아티팩트 메서드를 사용할 수 있습니다.
     ```
 
-### Artifact Data
+### 아티팩트 데이터
 
-* **Standard Representation:** Artifact content is universally represented using the `google.genai.types.Part` object, the same structure used for parts of LLM messages.  
+*   **표준 표현:** 아티팩트 콘텐츠는 LLM 메시지의 일부에 사용되는 것과 동일한 구조인 `google.genai.types.Part` 객체를 사용하여 보편적으로 표현됩니다.
 
-* **Key Attribute (`inline_data`):** For artifacts, the most relevant attribute is `inline_data`, which is a `google.genai.types.Blob` object containing:  
+*   **핵심 속성 (`inline_data`):** 아티팩트의 경우 가장 관련 있는 속성은 `inline_data`이며, 이는 다음을 포함하는 `google.genai.types.Blob` 객체입니다:
 
-    * `data` (`bytes`): The raw binary content of the artifact.  
-    * `mime_type` (`str`): A standard MIME type string (e.g., `'application/pdf'`, `'image/png'`, `'audio/mpeg'`) describing the nature of the binary data. **This is crucial for correct interpretation when loading the artifact.**
+    *   `data` (`bytes`): 아티팩트의 원시 바이너리 콘텐츠.
+    *   `mime_type` (`str`): 바이너리 데이터의 특성을 설명하는 표준 MIME 유형 문자열(예: `'application/pdf'`, `'image/png'`, `'audio/mpeg'`). **이는 아티팩트를 로드할 때 올바른 해석을 위해 매우 중요합니다.**
 
 === "Python"
 
     ```python
     import google.genai.types as types
 
-    # Example: Creating an artifact Part from raw bytes
-    pdf_bytes = b'%PDF-1.4...' # Your raw PDF data
+    # 예시: 원시 바이트로부터 아티팩트 Part 생성하기
+    pdf_bytes = b'%PDF-1.4...' # 원시 PDF 데이터
     pdf_mime_type = "application/pdf"
 
-    # Using the constructor
+    # 생성자 사용
     pdf_artifact_py = types.Part(
         inline_data=types.Blob(data=pdf_bytes, mime_type=pdf_mime_type)
     )
 
-    # Using the convenience class method (equivalent)
+    # 편의 클래스 메서드 사용 (동일)
     pdf_artifact_alt_py = types.Part.from_bytes(data=pdf_bytes, mime_type=pdf_mime_type)
 
-    print(f"Created Python artifact with MIME type: {pdf_artifact_py.inline_data.mime_type}")
+    print(f"생성된 Python 아티팩트의 MIME 유형: {pdf_artifact_py.inline_data.mime_type}")
     ```
     
 === "Java"
@@ -200,114 +199,114 @@ Understanding artifacts involves grasping a few key components: the service that
     --8<-- "examples/java/snippets/src/main/java/artifacts/ArtifactDataExample.java:full_code"
     ```
 
-### Filename
+### 파일 이름 (Filename)
 
-* **Identifier:** A simple string used to name and retrieve an artifact within its specific namespace.  
-* **Uniqueness:** Filenames must be unique within their scope (either the session or the user namespace).  
-* **Best Practice:** Use descriptive names, potentially including file extensions (e.g., `"monthly_report.pdf"`, `"user_avatar.jpg"`), although the extension itself doesn't dictate behavior – the `mime_type` does.
+*   **식별자:** 특정 네임스페이스 내에서 아티팩트의 이름을 지정하고 검색하는 데 사용되는 간단한 문자열입니다.
+*   **고유성:** 파일 이름은 해당 범위(세션 또는 사용자 네임스페이스) 내에서 고유해야 합니다.
+*   **모범 사례:** 설명적인 이름을 사용하고, 파일 확장자(`"monthly_report.pdf"`, `"user_avatar.jpg"`)를 포함하는 것이 좋습니다. 확장자 자체는 동작을 결정하지 않지만, `mime_type`이 결정합니다.
 
-### Versioning
+### 버전 관리 (Versioning)
 
-* **Automatic Versioning:** The artifact service automatically handles versioning. When you call `save_artifact`, the service determines the next available version number (typically starting from 0 and incrementing) for that specific filename and scope.  
-* **Returned by `save_artifact`:** The `save_artifact` method returns the integer version number that was assigned to the newly saved artifact.  
-* **Retrieval:**  
-  * `load_artifact(..., version=None)` (default): Retrieves the *latest* available version of the artifact.  
-  * `load_artifact(..., version=N)`: Retrieves the specific version `N`.  
-* **Listing Versions:** The `list_versions` method (on the service, not context) can be used to find all existing version numbers for an artifact.
+*   **자동 버전 관리:** 아티팩트 서비스는 자동으로 버전 관리를 처리합니다. `save_artifact`를 호출하면 서비스는 해당 특정 파일 이름과 범위에 대해 다음에 사용 가능한 버전 번호(일반적으로 0부터 시작하여 증가)를 결정합니다.
+*   **`save_artifact` 반환 값:** `save_artifact` 메서드는 새로 저장된 아티팩트에 할당된 정수 버전 번호를 반환합니다.
+*   **검색:**
+  * `load_artifact(..., version=None)` (기본값): 아티팩트의 *최신* 버전을 검색합니다.
+  * `load_artifact(..., version=N)`: 특정 버전 `N`을 검색합니다.
+*   **버전 목록:** `list_versions` 메서드(컨텍스트가 아닌 서비스에 있음)를 사용하여 아티팩트의 모든 기존 버전 번호를 찾을 수 있습니다.
 
-### Namespacing (Session vs. User)
+### 네임스페이스 (세션 vs. 사용자)
 
-* **Concept:** Artifacts can be scoped either to a specific session or more broadly to a user across all their sessions within the application. This scoping is determined by the `filename` format and handled internally by the `ArtifactService`.  
+*   **개념:** 아티팩트는 특정 세션에만 국한되거나, 애플리케이션 내 모든 세션에 걸쳐 사용자에게 더 광범위하게 적용될 수 있습니다. 이 범위 지정은 `filename` 형식에 의해 결정되며 `ArtifactService`에 의해 내부적으로 처리됩니다.
 
-* **Default (Session Scope):** If you use a plain filename like `"report.pdf"`, the artifact is associated with the specific `app_name`, `user_id`, *and* `session_id`. It's only accessible within that exact session context.  
+*   **기본값 (세션 범위):** `"report.pdf"`와 같은 일반 파일 이름을 사용하면 아티팩트는 특정 `app_name`, `user_id` *및* `session_id`와 연결됩니다. 해당 세션 컨텍스트 내에서만 접근할 수 있습니다.
 
 
-* **User Scope (`"user:"` prefix):** If you prefix the filename with `"user:"`, like `"user:profile.png"`, the artifact is associated only with the `app_name` and `user_id`. It can be accessed or updated from *any* session belonging to that user within the app.  
+*   **사용자 범위 (`"user:"` 접두사):** 파일 이름에 `"user:"` 접두사를 붙여 `"user:profile.png"`와 같이 사용하면 아티팩트는 `app_name`과 `user_id`에만 연결됩니다. 해당 앱 내에서 해당 사용자에 속한 *모든* 세션에서 접근하거나 업데이트할 수 있습니다.
 
 
 === "Python"
 
     ```python
-    # Example illustrating namespace difference (conceptual)
+    # 네임스페이스 차이를 설명하는 예시 (개념적)
 
-    # Session-specific artifact filename
+    # 세션별 아티팩트 파일 이름
     session_report_filename = "summary.txt"
 
-    # User-specific artifact filename
+    # 사용자별 아티팩트 파일 이름
     user_config_filename = "user:settings.json"
 
-    # When saving 'summary.txt' via context.save_artifact,
-    # it's tied to the current app_name, user_id, and session_id.
+    # context.save_artifact를 통해 'summary.txt'를 저장할 때,
+    # 현재 app_name, user_id, session_id에 연결됩니다.
 
-    # When saving 'user:settings.json' via context.save_artifact,
-    # the ArtifactService implementation should recognize the "user:" prefix
-    # and scope it to app_name and user_id, making it accessible across sessions for that user.
+    # context.save_artifact를 통해 'user:settings.json'을 저장할 때,
+    # ArtifactService 구현은 "user:" 접두사를 인식해야 하며
+    # 이를 app_name과 user_id로 범위를 지정하여 해당 사용자의 모든 세션에서 접근할 수 있도록 합니다.
     ```
 
 === "Java"
 
     ```java
-    // Example illustrating namespace difference (conceptual)
+    // 네임스페이스 차이를 설명하는 예시 (개념적)
     
-    // Session-specific artifact filename
+    // 세션별 아티팩트 파일 이름
     String sessionReportFilename = "summary.txt";
     
-    // User-specific artifact filename
-    String userConfigFilename = "user:settings.json"; // The "user:" prefix is key
+    // 사용자별 아티팩트 파일 이름
+    String userConfigFilename = "user:settings.json"; // "user:" 접두사가 핵심
     
-    // When saving 'summary.txt' via context.save_artifact,
-    // it's tied to the current app_name, user_id, and session_id.
+    // context.save_artifact를 통해 'summary.txt'를 저장할 때,
+    // 현재 app_name, user_id, session_id에 연결됩니다.
     // artifactService.saveArtifact(appName, userId, sessionId1, sessionReportFilename, someData);
     
-    // When saving 'user:settings.json' via context.save_artifact,
-    // the ArtifactService implementation should recognize the "user:" prefix
-    // and scope it to app_name and user_id, making it accessible across sessions for that user.
+    // context.save_artifact를 통해 'user:settings.json'을 저장할 때,
+    // ArtifactService 구현은 "user:" 접두사를 인식해야 하며
+    // 이를 app_name과 user_id로 범위를 지정하여 해당 사용자의 모든 세션에서 접근할 수 있도록 합니다.
     // artifactService.saveArtifact(appName, userId, sessionId1, userConfigFilename, someData);
     ```
 
-These core concepts work together to provide a flexible system for managing binary data within the ADK framework.
+이러한 핵심 개념들은 ADK 프레임워크 내에서 바이너리 데이터를 관리하기 위한 유연한 시스템을 제공하기 위해 함께 작동합니다.
 
-## Interacting with Artifacts (via Context Objects)
+## 아티팩트와 상호작용하기 (컨텍스트 객체를 통해)
 
-The primary way you interact with artifacts within your agent's logic (specifically within callbacks or tools) is through methods provided by the `CallbackContext` and `ToolContext` objects. These methods abstract away the underlying storage details managed by the `ArtifactService`.
+에이전트 로직(특히 콜백이나 도구 내)에서 아티팩트와 상호작용하는 주요 방법은 `CallbackContext`와 `ToolContext` 객체에서 제공하는 메서드를 통하는 것입니다. 이 메서드들은 `ArtifactService`가 관리하는 기본 스토리지 세부 정보를 추상화합니다.
 
-### Prerequisite: Configuring the `ArtifactService`
+### 전제 조건: `ArtifactService` 구성하기
 
-Before you can use any artifact methods via the context objects, you **must** provide an instance of a [`BaseArtifactService` implementation](#available-implementations) (like [`InMemoryArtifactService`](#inmemoryartifactservice) or [`GcsArtifactService`](#gcsartifactservice)) when initializing your `Runner`.
+컨텍스트 객체를 통해 아티팩트 메서드를 사용하기 전에, `Runner`를 초기화할 때 **반드시** [`BaseArtifactService` 구현체](#available-implementations)의 인스턴스([`InMemoryArtifactService`](#inmemoryartifactservice) 또는 [`GcsArtifactService`](#gcsartifactservice) 등)를 제공해야 합니다.
 
 === "Python"
 
-    In Python, you provide this instance when initializing your `Runner`.
+    Python에서는 `Runner`를 초기화할 때 이 인스턴스를 제공합니다.
 
     ```python
     from google.adk.runners import Runner
-    from google.adk.artifacts import InMemoryArtifactService # Or GcsArtifactService
+    from google.adk.artifacts import InMemoryArtifactService # 또는 GcsArtifactService
     from google.adk.agents import LlmAgent
     from google.adk.sessions import InMemorySessionService
 
-    # Your agent definition
+    # 에이전트 정의
     agent = LlmAgent(name="my_agent", model="gemini-2.0-flash")
 
-    # Instantiate the desired artifact service
+    # 원하는 아티팩트 서비스 인스턴스화
     artifact_service = InMemoryArtifactService()
 
-    # Provide it to the Runner
+    # Runner에 제공
     runner = Runner(
         agent=agent,
         app_name="artifact_app",
         session_service=InMemorySessionService(),
-        artifact_service=artifact_service # Service must be provided here
+        artifact_service=artifact_service # 서비스는 여기에 제공되어야 함
     )
     ```
-    If no `artifact_service` is configured in the `InvocationContext` (which happens if it's not passed to the `Runner`), calling `save_artifact`, `load_artifact`, or `list_artifacts` on the context objects will raise a `ValueError`.
+    `InvocationContext`에 `artifact_service`가 구성되어 있지 않으면(즉, `Runner`에 전달되지 않은 경우), 컨텍스트 객체에서 `save_artifact`, `load_artifact`, 또는 `list_artifacts`를 호출하면 `ValueError`가 발생합니다.
 
 === "Java"
 
-    In Java, you would instantiate a `BaseArtifactService` implementation and then ensure it's accessible to the parts of your application that manage artifacts. This is often done through dependency injection or by explicitly passing the service instance.
+    Java에서는 `BaseArtifactService` 구현을 인스턴스화한 다음, 아티팩트를 관리하는 애플리케이션의 부분에서 접근할 수 있도록 해야 합니다. 이는 종종 의존성 주입을 통하거나 서비스 인스턴스를 명시적으로 전달하여 수행됩니다.
 
     ```java
     import com.google.adk.agents.LlmAgent;
-    import com.google.adk.artifacts.InMemoryArtifactService; // Or GcsArtifactService
+    import com.google.adk.artifacts.InMemoryArtifactService; // 또는 GcsArtifactService
     import com.google.adk.runner.Runner;
     import com.google.adk.sessions.InMemorySessionService;
     
@@ -315,41 +314,41 @@ Before you can use any artifact methods via the context objects, you **must** pr
     
       public static void main(String[] args) {
     
-        // Your agent definition
+        // 에이전트 정의
         LlmAgent agent = LlmAgent.builder()
             .name("my_agent")
             .model("gemini-2.0-flash")
             .build();
     
-        // Instantiate the desired artifact service
+        // 원하는 아티팩트 서비스 인스턴스화
         InMemoryArtifactService artifactService = new InMemoryArtifactService();
     
-        // Provide it to the Runner
+        // Runner에 제공
         Runner runner = new Runner(agent,
             "APP_NAME",
-            artifactService, // Service must be provided here
+            artifactService, // 서비스는 여기에 제공되어야 함
             new InMemorySessionService());
     
       }
     }
     ```
-    In Java, if an `ArtifactService` instance is not available (e.g., `null`) when artifact operations are attempted, it would typically result in a `NullPointerException` or a custom error, depending on how your application is structured. Robust applications often use dependency injection frameworks to manage service lifecycles and ensure availability.
+    Java에서 아티팩트 작업이 시도될 때 `ArtifactService` 인스턴스를 사용할 수 없는 경우(예: `null`), 애플리케이션 구조에 따라 일반적으로 `NullPointerException`이나 사용자 정의 오류가 발생합니다. 견고한 애플리케이션은 종종 의존성 주입 프레임워크를 사용하여 서비스 수명 주기를 관리하고 가용성을 보장합니다.
 
 
-### Accessing Methods
+### 메서드 접근하기
 
-The artifact interaction methods are available directly on instances of `CallbackContext` (passed to agent and model callbacks) and `ToolContext` (passed to tool callbacks). Remember that `ToolContext` inherits from `CallbackContext`.
+아티팩트 상호작용 메서드는 `CallbackContext`(에이전트 및 모델 콜백에 전달됨)와 `ToolContext`(도구 콜백에 전달됨)의 인스턴스에서 직접 사용할 수 있습니다. `ToolContext`는 `CallbackContext`를 상속한다는 점을 기억하세요.
 
-*   **Code Example:**
+*   **코드 예제:**
 
     === "Python"
 
         ```python
         import google.genai.types as types
-        from google.adk.agents.callback_context import CallbackContext # Or ToolContext
+        from google.adk.agents.callback_context import CallbackContext # 또는 ToolContext
 
         async def save_generated_report_py(context: CallbackContext, report_bytes: bytes):
-            """Saves generated PDF report bytes as an artifact."""
+            """생성된 PDF 보고서 바이트를 아티팩트로 저장합니다."""
             report_artifact = types.Part.from_data(
                 data=report_bytes,
                 mime_type="application/pdf"
@@ -358,19 +357,19 @@ The artifact interaction methods are available directly on instances of `Callbac
 
             try:
                 version = await context.save_artifact(filename=filename, artifact=report_artifact)
-                print(f"Successfully saved Python artifact '{filename}' as version {version}.")
-                # The event generated after this callback will contain:
+                print(f"Python 아티팩트 '{filename}'를 버전 {version}으로 성공적으로 저장했습니다.")
+                # 이 콜백 이후에 생성된 이벤트는 다음을 포함합니다:
                 # event.actions.artifact_delta == {"generated_report.pdf": version}
             except ValueError as e:
-                print(f"Error saving Python artifact: {e}. Is ArtifactService configured in Runner?")
+                print(f"Python 아티팩트 저장 오류: {e}. Runner에 ArtifactService가 구성되어 있나요?")
             except Exception as e:
-                # Handle potential storage errors (e.g., GCS permissions)
-                print(f"An unexpected error occurred during Python artifact save: {e}")
+                # 잠재적인 스토리지 오류 처리 (예: GCS 권한)
+                print(f"Python 아티팩트 저장 중 예기치 않은 오류 발생: {e}")
 
-        # --- Example Usage Concept (Python) ---
+        # --- 예제 사용 개념 (Python) ---
         # async def main_py():
-        #   callback_context: CallbackContext = ... # obtain context
-        #   report_data = b'...' # Assume this holds the PDF bytes
+        #   callback_context: CallbackContext = ... # 컨텍스트 얻기
+        #   report_data = b'...' # PDF 바이트를 담고 있다고 가정
         #   await save_generated_report_py(callback_context, report_data)
         ```
 
@@ -386,69 +385,69 @@ The artifact interaction methods are available directly on instances of `Callbac
         public class SaveArtifactExample {
 
         public void saveGeneratedReport(CallbackContext callbackContext, byte[] reportBytes) {
-        // Saves generated PDF report bytes as an artifact.
+        // 생성된 PDF 보고서 바이트를 아티팩트로 저장합니다.
         Part reportArtifact = Part.fromBytes(reportBytes, "application/pdf");
         String filename = "generatedReport.pdf";
 
             callbackContext.saveArtifact(filename, reportArtifact);
-            System.out.println("Successfully saved Java artifact '" + filename);
-            // The event generated after this callback will contain:
+            System.out.println("Java 아티팩트 '" + filename + "'를 성공적으로 저장했습니다.");
+            // 이 콜백 이후에 생성된 이벤트는 다음을 포함합니다:
             // event().actions().artifactDelta == {"generated_report.pdf": version}
         }
 
-        // --- Example Usage Concept (Java) ---
+        // --- 예제 사용 개념 (Java) ---
         public static void main(String[] args) {
-            BaseArtifactService service = new InMemoryArtifactService(); // Or GcsArtifactService
+            BaseArtifactService service = new InMemoryArtifactService(); // 또는 GcsArtifactService
             SaveArtifactExample myTool = new SaveArtifactExample();
-            byte[] reportData = "...".getBytes(StandardCharsets.UTF_8); // PDF bytes
-            CallbackContext callbackContext; // ... obtain callback context from your app
+            byte[] reportData = "...".getBytes(StandardCharsets.UTF_8); // PDF 바이트
+            CallbackContext callbackContext; // ... 앱에서 콜백 컨텍스트 얻기
             myTool.saveGeneratedReport(callbackContext, reportData);
-            // Due to async nature, in a real app, ensure program waits or handles completion.
+            // 비동기 특성으로 인해 실제 앱에서는 프로그램이 완료를 기다리거나 처리하도록 해야 합니다.
           }
         }
         ```
 
-#### Loading Artifacts
+#### 아티팩트 로드하기
 
-*   **Code Example:**
+*   **코드 예제:**
 
     === "Python"
 
         ```python
         import google.genai.types as types
-        from google.adk.agents.callback_context import CallbackContext # Or ToolContext
+        from google.adk.agents.callback_context import CallbackContext # 또는 ToolContext
 
         async def process_latest_report_py(context: CallbackContext):
-            """Loads the latest report artifact and processes its data."""
+            """최신 보고서 아티팩트를 로드하고 데이터를 처리합니다."""
             filename = "generated_report.pdf"
             try:
-                # Load the latest version
+                # 최신 버전 로드
                 report_artifact = await context.load_artifact(filename=filename)
 
                 if report_artifact and report_artifact.inline_data:
-                    print(f"Successfully loaded latest Python artifact '{filename}'.")
-                    print(f"MIME Type: {report_artifact.inline_data.mime_type}")
-                    # Process the report_artifact.inline_data.data (bytes)
+                    print(f"최신 Python 아티팩트 '{filename}'를 성공적으로 로드했습니다.")
+                    print(f"MIME 유형: {report_artifact.inline_data.mime_type}")
+                    # report_artifact.inline_data.data (바이트) 처리
                     pdf_bytes = report_artifact.inline_data.data
-                    print(f"Report size: {len(pdf_bytes)} bytes.")
-                    # ... further processing ...
+                    print(f"보고서 크기: {len(pdf_bytes)} 바이트.")
+                    # ... 추가 처리 ...
                 else:
-                    print(f"Python artifact '{filename}' not found.")
+                    print(f"Python 아티팩트 '{filename}'를 찾을 수 없습니다.")
 
-                # Example: Load a specific version (if version 0 exists)
+                # 예제: 특정 버전 로드 (버전 0이 존재하는 경우)
                 # specific_version_artifact = await context.load_artifact(filename=filename, version=0)
                 # if specific_version_artifact:
-                #     print(f"Loaded version 0 of '{filename}'.")
+                #     print(f"'{filename}'의 버전 0을 로드했습니다.")
 
             except ValueError as e:
-                print(f"Error loading Python artifact: {e}. Is ArtifactService configured?")
+                print(f"Python 아티팩트 로드 오류: {e}. ArtifactService가 구성되어 있나요?")
             except Exception as e:
-                # Handle potential storage errors
-                print(f"An unexpected error occurred during Python artifact load: {e}")
+                # 잠재적인 스토리지 오류 처리
+                print(f"Python 아티팩트 로드 중 예기치 않은 오류 발생: {e}")
 
-        # --- Example Usage Concept (Python) ---
+        # --- 예제 사용 개념 (Python) ---
         # async def main_py():
-        #   callback_context: CallbackContext = ... # obtain context
+        #   callback_context: CallbackContext = ... # 컨텍스트 얻기
         #   await process_latest_report_py(callback_context)
         ```
 
@@ -472,75 +471,75 @@ The artifact interaction methods are available directly on instances of `Callbac
             }
 
             public void processLatestReportJava(String userId, String sessionId, String filename) {
-                // Load the latest version by passing Optional.empty() for the version
+                // 버전에 Optional.empty()를 전달하여 최신 버전 로드
                 artifactService
                         .loadArtifact(appName, userId, sessionId, filename, Optional.empty())
                         .subscribe(
                                 new MaybeObserver<Part>() {
                                     @Override
                                     public void onSubscribe(Disposable d) {
-                                        // Optional: handle subscription
+                                        // 선택 사항: 구독 처리
                                     }
 
                                     @Override
                                     public void onSuccess(Part reportArtifact) {
                                         System.out.println(
-                                                "Successfully loaded latest Java artifact '" + filename + "'.");
+                                                "최신 Java 아티팩트 '" + filename + "'를 성공적으로 로드했습니다.");
                                         reportArtifact
                                                 .inlineData()
                                                 .ifPresent(
                                                         blob -> {
                                                             System.out.println(
-                                                                    "MIME Type: " + blob.mimeType().orElse("N/A"));
+                                                                    "MIME 유형: " + blob.mimeType().orElse("N/A"));
                                                             byte[] pdfBytes = blob.data().orElse(new byte[0]);
-                                                            System.out.println("Report size: " + pdfBytes.length + " bytes.");
-                                                            // ... further processing of pdfBytes ...
+                                                            System.out.println("보고서 크기: " + pdfBytes.length + " 바이트.");
+                                                            // ... pdfBytes 추가 처리 ...
                                                         });
                                     }
 
                                     @Override
                                     public void onError(Throwable e) {
-                                        // Handle potential storage errors or other exceptions
+                                        // 잠재적인 스토리지 오류 또는 다른 예외 처리
                                         System.err.println(
-                                                "An error occurred during Java artifact load for '"
+                                                "Java 아티팩트 '"
                                                         + filename
-                                                        + "': "
+                                                        + "' 로드 중 오류 발생: "
                                                         + e.getMessage());
                                     }
 
                                     @Override
                                     public void onComplete() {
-                                        // Called if the artifact (latest version) is not found
-                                        System.out.println("Java artifact '" + filename + "' not found.");
+                                        // 아티팩트(최신 버전)를 찾을 수 없는 경우 호출됨
+                                        System.out.println("Java 아티팩트 '" + filename + "'를 찾을 수 없습니다.");
                                     }
                                 });
 
-                // Example: Load a specific version (e.g., version 0)
+                // 예제: 특정 버전 로드 (예: 버전 0)
                 /*
                 artifactService.loadArtifact(appName, userId, sessionId, filename, Optional.of(0))
                     .subscribe(part -> {
-                        System.out.println("Loaded version 0 of Java artifact '" + filename + "'.");
+                        System.out.println("Java 아티팩트 '" + filename + "'의 버전 0을 로드했습니다.");
                     }, throwable -> {
-                        System.err.println("Error loading version 0 of '" + filename + "': " + throwable.getMessage());
+                        System.err.println("'" + filename + "'의 버전 0 로드 오류: " + throwable.getMessage());
                     }, () -> {
-                        System.out.println("Version 0 of Java artifact '" + filename + "' not found.");
+                        System.out.println("Java 아티팩트 '" + filename + "'의 버전 0을 찾을 수 없습니다.");
                     });
                 */
             }
 
-            // --- Example Usage Concept (Java) ---
+            // --- 예제 사용 개념 (Java) ---
             public static void main(String[] args) {
-                // BaseArtifactService service = new InMemoryArtifactService(); // Or GcsArtifactService
+                // BaseArtifactService service = new InMemoryArtifactService(); // 또는 GcsArtifactService
                 // MyArtifactLoaderService loader = new MyArtifactLoaderService(service, "myJavaApp");
                 // loader.processLatestReportJava("user123", "sessionABC", "java_report.pdf");
-                // Due to async nature, in a real app, ensure program waits or handles completion.
+                // 비동기 특성으로 인해 실제 앱에서는 프로그램이 완료를 기다리거나 처리하도록 해야 합니다.
             }
         }
         ```
 
-#### Listing Artifact Filenames
+#### 아티팩트 파일 이름 목록 보기
 
-*   **Code Example:**
+*   **코드 예제:**
 
     === "Python"
 
@@ -548,23 +547,23 @@ The artifact interaction methods are available directly on instances of `Callbac
         from google.adk.tools.tool_context import ToolContext
 
         def list_user_files_py(tool_context: ToolContext) -> str:
-            """Tool to list available artifacts for the user."""
+            """사용 가능한 아티팩트 목록을 사용자에게 제공하는 도구입니다."""
             try:
                 available_files = await tool_context.list_artifacts()
                 if not available_files:
-                    return "You have no saved artifacts."
+                    return "저장된 아티팩트가 없습니다."
                 else:
-                    # Format the list for the user/LLM
+                    # 사용자/LLM을 위한 목록 형식 지정
                     file_list_str = "\n".join([f"- {fname}" for fname in available_files])
-                    return f"Here are your available Python artifacts:\n{file_list_str}"
+                    return f"사용 가능한 Python 아티팩트는 다음과 같습니다:\n{file_list_str}"
             except ValueError as e:
-                print(f"Error listing Python artifacts: {e}. Is ArtifactService configured?")
-                return "Error: Could not list Python artifacts."
+                print(f"Python 아티팩트 목록 보기 오류: {e}. ArtifactService가 구성되어 있나요?")
+                return "오류: Python 아티팩트 목록을 볼 수 없습니다."
             except Exception as e:
-                print(f"An unexpected error occurred during Python artifact list: {e}")
-                return "Error: An unexpected error occurred while listing Python artifacts."
+                print(f"Python 아티팩트 목록 보기 중 예기치 않은 오류 발생: {e}")
+                return "오류: Python 아티팩트 목록을 보는 동안 예기치 않은 오류가 발생했습니다."
 
-        # This function would typically be wrapped in a FunctionTool
+        # 이 함수는 일반적으로 FunctionTool로 래핑됩니다.
         # from google.adk.tools import FunctionTool
         # list_files_tool = FunctionTool(func=list_user_files_py)
         ```
@@ -588,7 +587,7 @@ The artifact interaction methods are available directly on instances of `Callbac
                 this.appName = appName;
             }
 
-            // Example method that might be called by a tool or agent logic
+            // 도구나 에이전트 로직에 의해 호출될 수 있는 예제 메서드
             public void listUserFilesJava(String userId, String sessionId) {
                 artifactService
                         .listArtifactKeys(appName, userId, sessionId)
@@ -596,7 +595,7 @@ The artifact interaction methods are available directly on instances of `Callbac
                                 new SingleObserver<ListArtifactsResponse>() {
                                     @Override
                                     public void onSubscribe(Disposable d) {
-                                        // Optional: handle subscription
+                                        // 선택 사항: 구독 처리
                                     }
 
                                     @Override
@@ -604,19 +603,19 @@ The artifact interaction methods are available directly on instances of `Callbac
                                         ImmutableList<String> availableFiles = response.filenames();
                                         if (availableFiles.isEmpty()) {
                                             System.out.println(
-                                                    "User "
+                                                    "사용자 "
                                                             + userId
-                                                            + " in session "
+                                                            + " (세션 "
                                                             + sessionId
-                                                            + " has no saved Java artifacts.");
+                                                            + ") 에는 저장된 Java 아티팩트가 없습니다.");
                                         } else {
                                             StringBuilder fileListStr =
                                                     new StringBuilder(
-                                                            "Here are the available Java artifacts for user "
+                                                            "사용자 "
                                                                     + userId
-                                                                    + " in session "
+                                                                    + " (세션 "
                                                                     + sessionId
-                                                                    + ":\n");
+                                                                    + ") 의 사용 가능한 Java 아티팩트는 다음과 같습니다:\n");
                                             for (String fname : availableFiles) {
                                                 fileListStr.append("- ").append(fname).append("\n");
                                             }
@@ -627,56 +626,56 @@ The artifact interaction methods are available directly on instances of `Callbac
                                     @Override
                                     public void onError(Throwable e) {
                                         System.err.println(
-                                                "Error listing Java artifacts for user "
+                                                "사용자 "
                                                         + userId
-                                                        + " in session "
+                                                        + " (세션 "
                                                         + sessionId
-                                                        + ": "
+                                                        + ") 의 Java 아티팩트 목록 보기 오류: "
                                                         + e.getMessage());
-                                        // In a real application, you might return an error message to the user/LLM
+                                        // 실제 애플리케이션에서는 사용자/LLM에게 오류 메시지를 반환할 수 있습니다.
                                     }
                                 });
             }
 
-            // --- Example Usage Concept (Java) ---
+            // --- 예제 사용 개념 (Java) ---
             public static void main(String[] args) {
-                // BaseArtifactService service = new InMemoryArtifactService(); // Or GcsArtifactService
+                // BaseArtifactService service = new InMemoryArtifactService(); // 또는 GcsArtifactService
                 // MyArtifactListerService lister = new MyArtifactListerService(service, "myJavaApp");
                 // lister.listUserFilesJava("user123", "sessionABC");
-                // Due to async nature, in a real app, ensure program waits or handles completion.
+                // 비동기 특성으로 인해 실제 앱에서는 프로그램이 완료를 기다리거나 처리하도록 해야 합니다.
             }
         }
         ```
 
-These methods for saving, loading, and listing provide a convenient and consistent way to manage binary data persistence within ADK, whether using Python's context objects or directly interacting with the `BaseArtifactService` in Java, regardless of the chosen backend storage implementation.
+저장, 로드, 목록 보기 메서드는 Python의 컨텍스트 객체를 사용하든 Java에서 `BaseArtifactService`와 직접 상호작용하든, 선택한 백엔드 스토리지 구현에 관계없이 바이너리 데이터 지속성을 관리하는 편리하고 일관된 방법을 제공합니다.
 
-## Available Implementations
+## 사용 가능한 구현체
 
-ADK provides concrete implementations of the `BaseArtifactService` interface, offering different storage backends suitable for various development stages and deployment needs. These implementations handle the details of storing, versioning, and retrieving artifact data based on the `app_name`, `user_id`, `session_id`, and `filename` (including the `user:` namespace prefix).
+ADK는 `BaseArtifactService` 인터페이스의 구체적인 구현을 제공하여 다양한 개발 단계 및 배포 요구에 적합한 다양한 스토리지 백엔드를 제공합니다. 이러한 구현체는 `app_name`, `user_id`, `session_id` 및 `filename`(`user:` 네임스페이스 접두사 포함)을 기반으로 아티팩트 데이터를 저장, 버전 관리 및 검색하는 세부 사항을 처리합니다.
 
 ### InMemoryArtifactService
 
-*   **Storage Mechanism:**
-    *   Python: Uses a Python dictionary (`self.artifacts`) held in the application's memory. The dictionary keys represent the artifact path, and the values are lists of `types.Part`, where each list element is a version.
-    *   Java: Uses nested `HashMap` instances (`private final Map<String, Map<String, Map<String, Map<String, List<Part>>>>> artifacts;`) held in memory. The keys at each level are `appName`, `userId`, `sessionId`, and `filename` respectively. The innermost `List<Part>` stores the versions of the artifact, where the list index corresponds to the version number.
-*   **Key Features:**
-    *   **Simplicity:** Requires no external setup or dependencies beyond the core ADK library.
-    *   **Speed:** Operations are typically very fast as they involve in-memory map/dictionary lookups and list manipulations.
-    *   **Ephemeral:** All stored artifacts are **lost** when the application process terminates. Data does not persist between application restarts.
-*   **Use Cases:**
-    *   Ideal for local development and testing where persistence is not required.
-    *   Suitable for short-lived demonstrations or scenarios where artifact data is purely temporary within a single run of the application.
-*   **Instantiation:**
+*   **스토리지 메커니즘:**
+    *   Python: 애플리케이션의 메모리에 유지되는 Python 사전(`self.artifacts`)을 사용합니다. 사전 키는 아티팩트 경로를 나타내고 값은 `types.Part`의 리스트이며, 각 리스트 요소는 버전입니다.
+    *   Java: 메모리에 유지되는 중첩된 `HashMap` 인스턴스(`private final Map<String, Map<String, Map<String, Map<String, List<Part>>>>> artifacts;`)를 사용합니다. 각 수준의 키는 각각 `appName`, `userId`, `sessionId`, `filename`입니다. 가장 안쪽의 `List<Part>`는 아티팩트의 버전을 저장하며, 리스트 인덱스는 버전 번호에 해당합니다.
+*   **주요 특징:**
+    *   **단순성:** 핵심 ADK 라이브러리 외에 외부 설정이나 종속성이 필요하지 않습니다.
+    *   **속도:** 작업은 일반적으로 인메모리 맵/사전 조회 및 리스트 조작을 포함하므로 매우 빠릅니다.
+    *   **휘발성:** 저장된 모든 아티팩트는 애플리케이션 프로세스가 종료될 때 **손실됩니다**. 데이터는 애플리케이션 재시작 사이에 지속되지 않습니다.
+*   **사용 사례:**
+    *   지속성이 필요하지 않은 로컬 개발 및 테스트에 이상적입니다.
+    *   단기적인 데모나 아티팩트 데이터가 애플리케이션의 단일 실행 내에서 순수하게 임시적인 시나리오에 적합합니다.
+*   **인스턴스화:**
 
     === "Python"
 
         ```python
         from google.adk.artifacts import InMemoryArtifactService
 
-        # Simply instantiate the class
+        # 클래스를 간단히 인스턴스화
         in_memory_service_py = InMemoryArtifactService()
 
-        # Then pass it to the Runner
+        # 그런 다음 Runner에 전달
         # runner = Runner(..., artifact_service=in_memory_service_py)
         ```
 
@@ -688,14 +687,14 @@ ADK provides concrete implementations of the `BaseArtifactService` interface, of
 
         public class InMemoryServiceSetup {
             public static void main(String[] args) {
-                // Simply instantiate the class
+                // 클래스를 간단히 인스턴스화
                 BaseArtifactService inMemoryServiceJava = new InMemoryArtifactService();
 
-                System.out.println("InMemoryArtifactService (Java) instantiated: " + inMemoryServiceJava.getClass().getName());
+                System.out.println("InMemoryArtifactService (Java) 인스턴스화됨: " + inMemoryServiceJava.getClass().getName());
 
-                // This instance would then be provided to your Runner.
+                // 이 인스턴스는 Runner에 제공됩니다.
                 // Runner runner = new Runner(
-                //     /* other services */,
+                //     /* 다른 서비스들 */,
                 //     inMemoryServiceJava
                 // );
             }
@@ -705,40 +704,40 @@ ADK provides concrete implementations of the `BaseArtifactService` interface, of
 ### GcsArtifactService
 
 
-*   **Storage Mechanism:** Leverages Google Cloud Storage (GCS) for persistent artifact storage. Each version of an artifact is stored as a separate object (blob) within a specified GCS bucket.
-*   **Object Naming Convention:** It constructs GCS object names (blob names) using a hierarchical path structure.
-*   **Key Features:**
-    *   **Persistence:** Artifacts stored in GCS persist across application restarts and deployments.
-    *   **Scalability:** Leverages the scalability and durability of Google Cloud Storage.
-    *   **Versioning:** Explicitly stores each version as a distinct GCS object. The `saveArtifact` method in `GcsArtifactService`.
-    *   **Permissions Required:** The application environment needs appropriate credentials (e.g., Application Default Credentials) and IAM permissions to read from and write to the specified GCS bucket.
-*   **Use Cases:**
-    *   Production environments requiring persistent artifact storage.
-    *   Scenarios where artifacts need to be shared across different application instances or services (by accessing the same GCS bucket).
-    *   Applications needing long-term storage and retrieval of user or session data.
-*   **Instantiation:**
+*   **스토리지 메커니즘:** 영구적인 아티팩트 저장을 위해 Google Cloud Storage(GCS)를 활용합니다. 아티팩트의 각 버전은 지정된 GCS 버킷 내에 별도의 객체(blob)로 저장됩니다.
+*   **객체 명명 규칙:** 계층적 경로 구조를 사용하여 GCS 객체 이름(blob 이름)을 구성합니다.
+*   **주요 특징:**
+    *   **지속성:** GCS에 저장된 아티팩트는 애플리케이션 재시작 및 배포 전반에 걸쳐 지속됩니다.
+    *   **확장성:** Google Cloud Storage의 확장성과 내구성을 활용합니다.
+    *   **버전 관리:** 각 버전을 별개의 GCS 객체로 명시적으로 저장합니다. `GcsArtifactService`의 `saveArtifact` 메서드.
+    *   **필요한 권한:** 애플리케이션 환경에는 지정된 GCS 버킷에서 읽고 쓸 수 있는 적절한 자격 증명(예: 애플리케이션 기본 자격 증명)과 IAM 권한이 필요합니다.
+*   **사용 사례:**
+    *   영구적인 아티팩트 저장이 필요한 프로덕션 환경.
+    *   아티팩트가 다른 애플리케이션 인스턴스나 서비스 간에 공유되어야 하는 시나리오(동일한 GCS 버킷에 액세스함으로써).
+    *   사용자 또는 세션 데이터의 장기 저장 및 검색이 필요한 애플리케이션.
+*   **인스턴스화:**
 
     === "Python"
 
         ```python
         from google.adk.artifacts import GcsArtifactService
 
-        # Specify the GCS bucket name
-        gcs_bucket_name_py = "your-gcs-bucket-for-adk-artifacts" # Replace with your bucket name
+        # GCS 버킷 이름 지정
+        gcs_bucket_name_py = "your-gcs-bucket-for-adk-artifacts" # 버킷 이름으로 교체
 
         try:
             gcs_service_py = GcsArtifactService(bucket_name=gcs_bucket_name_py)
-            print(f"Python GcsArtifactService initialized for bucket: {gcs_bucket_name_py}")
-            # Ensure your environment has credentials to access this bucket.
-            # e.g., via Application Default Credentials (ADC)
+            print(f"Python GcsArtifactService가 버킷에 대해 초기화됨: {gcs_bucket_name_py}")
+            # 환경에 이 버킷에 액세스할 자격 증명이 있는지 확인하세요.
+            # 예: 애플리케이션 기본 자격 증명(ADC)을 통해
 
-            # Then pass it to the Runner
+            # 그런 다음 Runner에 전달
             # runner = Runner(..., artifact_service=gcs_service_py)
 
         except Exception as e:
-            # Catch potential errors during GCS client initialization (e.g., auth issues)
-            print(f"Error initializing Python GcsArtifactService: {e}")
-            # Handle the error appropriately - maybe fall back to InMemory or raise
+            # GCS 클라이언트 초기화 중 잠재적인 오류 포착 (예: 인증 문제)
+            print(f"Python GcsArtifactService 초기화 오류: {e}")
+            # 오류를 적절하게 처리 - InMemory로 대체하거나 예외 발생
         ```
 
     === "Java"
@@ -747,23 +746,23 @@ ADK provides concrete implementations of the `BaseArtifactService` interface, of
         --8<-- "examples/java/snippets/src/main/java/artifacts/GcsServiceSetup.java:full_code"
         ```
 
-Choosing the appropriate `ArtifactService` implementation depends on your application's requirements for data persistence, scalability, and operational environment.
+적절한 `ArtifactService` 구현을 선택하는 것은 애플리케이션의 데이터 지속성, 확장성 및 운영 환경 요구 사항에 따라 달라집니다.
 
-## Best Practices
+## 모범 사례
 
-To use artifacts effectively and maintainably:
+아티팩트를 효과적이고 유지 관리 가능하게 사용하려면:
 
-* **Choose the Right Service:** Use `InMemoryArtifactService` for rapid prototyping, testing, and scenarios where persistence isn't needed. Use `GcsArtifactService` (or implement your own `BaseArtifactService` for other backends) for production environments requiring data persistence and scalability.  
-* **Meaningful Filenames:** Use clear, descriptive filenames. Including relevant extensions (`.pdf`, `.png`, `.wav`) helps humans understand the content, even though the `mime_type` dictates programmatic handling. Establish conventions for temporary vs. persistent artifact names.  
-* **Specify Correct MIME Types:** Always provide an accurate `mime_type` when creating the `types.Part` for `save_artifact`. This is critical for applications or tools that later `load_artifact` to interpret the `bytes` data correctly. Use standard IANA MIME types where possible.  
-* **Understand Versioning:** Remember that `load_artifact()` without a specific `version` argument retrieves the *latest* version. If your logic depends on a specific historical version of an artifact, be sure to provide the integer version number when loading.  
-* **Use Namespacing (`user:`) Deliberately:** Only use the `"user:"` prefix for filenames when the data truly belongs to the user and should be accessible across all their sessions. For data specific to a single conversation or session, use regular filenames without the prefix.  
-* **Error Handling:**  
-    * Always check if an `artifact_service` is actually configured before calling context methods (`save_artifact`, `load_artifact`, `list_artifacts`) – they will raise a `ValueError` if the service is `None`. 
-    * Check the return value of `load_artifact`, as it will be `None` if the artifact or version doesn't exist. Don't assume it always returns a `Part`.  
-    * Be prepared to handle exceptions from the underlying storage service, especially with `GcsArtifactService` (e.g., `google.api_core.exceptions.Forbidden` for permission issues, `NotFound` if the bucket doesn't exist, network errors).  
-* **Size Considerations:** Artifacts are suitable for typical file sizes, but be mindful of potential costs and performance impacts with extremely large files, especially with cloud storage. `InMemoryArtifactService` can consume significant memory if storing many large artifacts. Evaluate if very large data might be better handled through direct GCS links or other specialized storage solutions rather than passing entire byte arrays in-memory.  
-* **Cleanup Strategy:** For persistent storage like `GcsArtifactService`, artifacts remain until explicitly deleted. If artifacts represent temporary data or have a limited lifespan, implement a strategy for cleanup. This might involve:  
-    * Using GCS lifecycle policies on the bucket.  
-    * Building specific tools or administrative functions that utilize the `artifact_service.delete_artifact` method (note: delete is *not* exposed via context objects for safety).  
-    * Carefully managing filenames to allow pattern-based deletion if needed.
+*   **올바른 서비스 선택:** 빠른 프로토타이핑, 테스트 및 지속성이 필요하지 않은 시나리오에는 `InMemoryArtifactService`를 사용하세요. 데이터 지속성 및 확장성이 필요한 프로덕션 환경에는 `GcsArtifactService`(또는 다른 백엔드를 위한 자체 `BaseArtifactService` 구현)를 사용하세요.
+*   **의미 있는 파일 이름:** 명확하고 설명적인 파일 이름을 사용하세요. 관련 확장자(`.pdf`, `.png`, `.wav`)를 포함하면 `mime_type`이 프로그래밍 방식의 처리를 결정하지만, 사람이 내용을 이해하는 데 도움이 됩니다. 임시 아티팩트 이름과 영구 아티팩트 이름에 대한 규칙을 설정하세요.
+*   **올바른 MIME 유형 지정:** `save_artifact`를 위해 `types.Part`를 생성할 때 항상 정확한 `mime_type`을 제공하세요. 이는 나중에 `load_artifact`하는 애플리케이션이나 도구가 `bytes` 데이터를 올바르게 해석하는 데 중요합니다. 가능한 경우 표준 IANA MIME 유형을 사용하세요.
+*   **버전 관리 이해:** 특정 `version` 인수 없이 `load_artifact()`를 호출하면 *최신* 버전을 검색한다는 점을 기억하세요. 로직이 아티팩트의 특정 과거 버전에 의존하는 경우, 로드할 때 정수 버전 번호를 제공해야 합니다.
+*   **네임스페이스 (`user:`) 신중하게 사용:** 데이터가 진정으로 사용자에게 속하고 모든 세션에서 접근 가능해야 하는 경우에만 파일 이름에 `"user:"` 접두사를 사용하세요. 단일 대화나 세션에 특정한 데이터의 경우 접두사 없이 일반 파일 이름을 사용하세요.
+*   **오류 처리:**
+    *   컨텍스트 메서드(`save_artifact`, `load_artifact`, `list_artifacts`)를 호출하기 전에 `artifact_service`가 실제로 구성되었는지 항상 확인하세요. 서비스가 `None`이면 `ValueError`가 발생합니다.
+    *   `load_artifact`의 반환 값을 확인하세요. 아티팩트나 버전이 존재하지 않으면 `None`이 됩니다. 항상 `Part`를 반환한다고 가정하지 마세요.
+    *   특히 `GcsArtifactService`의 경우 기본 스토리지 서비스에서 발생하는 예외(예: 권한 문제에 대한 `google.api_core.exceptions.Forbidden`, 버킷이 없는 경우 `NotFound`, 네트워크 오류)를 처리할 준비를 하세요.
+*   **크기 고려 사항:** 아티팩트는 일반적인 파일 크기에 적합하지만, 특히 클라우드 스토리지의 경우 매우 큰 파일로 인한 잠재적인 비용 및 성능 영향을 염두에 두세요. `InMemoryArtifactService`는 많은 대용량 아티팩트를 저장할 경우 상당한 메모리를 소비할 수 있습니다. 매우 큰 데이터가 전체 바이트 배열을 메모리에 전달하는 대신 직접적인 GCS 링크나 다른 전문 스토리지 솔루션을 통해 더 잘 처리될 수 있는지 평가하세요.
+*   **정리 전략:** `GcsArtifactService`와 같은 영구 스토리지의 경우, 아티팩트는 명시적으로 삭제될 때까지 남아 있습니다. 아티팩트가 임시 데이터를 나타내거나 수명이 제한된 경우 정리 전략을 구현하세요. 여기에는 다음이 포함될 수 있습니다:
+    *   버킷에 GCS 수명 주기 정책 사용.
+    *   `artifact_service.delete_artifact` 메서드를 활용하는 특정 도구나 관리 기능 구축(참고: 안전을 위해 delete는 컨텍스트 객체를 통해 노출되지 않음).
+    *   필요한 경우 패턴 기반 삭제를 허용하도록 파일 이름을 신중하게 관리.
