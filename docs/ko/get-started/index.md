@@ -1,58 +1,55 @@
-# Get Started
+# 시작하기
 
-Agent Development Kit (ADK) is designed to empower developers
-to build, manage, evaluate and deploy AI-powered agents. It provides a robust
-and flexible environment for creating both conversational and non-conversational
-agents, capable of handling complex tasks and workflows.
+Agent Development Kit (ADK)는 개발자들이 AI 기반 에이전트를 빌드, 관리, 평가, 배포할 수 있도록 설계되었습니다. 복잡한 작업과 워크플로우를 처리할 수 있는 대화형 및 비대화형 에이전트를 만들기 위한 강력하고 유연한 환경을 제공합니다.
 
 <div class="grid cards" markdown>
 
--   :material-console-line: **Installation**
+-   :material-console-line: **설치**
 
     ---
 
-    Install `google-adk` for Python or Java and get up and running in minutes.
+    Python 또는 Java용 `google-adk`를 설치하고 몇 분 안에 실행해보세요.
 
-    [:octicons-arrow-right-24: More information](installation.md)
+    [:octicons-arrow-right-24: 자세히 보기](installation.md)
 
--   :material-console-line: **Quickstart**
-
-    ---
-
-    Create your first ADK agent with tools in minutes.
-
-    [:octicons-arrow-right-24: More information](quickstart.md)
-
--   :material-console-line: **Quickstart (streaming)**
+-   :material-console-line: **빠른 시작**
 
     ---
 
-    Create your first streaming ADK agent.
+    도구를 사용하여 첫 번째 ADK 에이전트를 몇 분 안에 만들어보세요.
 
-    [:octicons-arrow-right-24: More information](streaming/quickstart-streaming.md)
+    [:octicons-arrow-right-24: 자세히 보기](quickstart.md)
 
--   :material-console-line: **Tutorial**
-
-    ---
-
-    Create your first ADK multi-agent.
-
-    [:octicons-arrow-right-24: More information](../tutorials/index.md)
-
--   :material-rocket-launch-outline: **Discover sample agents**
+-   :material-console-line: **빠른 시작 (스트리밍)**
 
     ---
 
-    Discover sample agents for retail, travel, customer service, and more!
+    첫 번째 스트리밍 ADK 에이전트를 만들어보세요.
 
-    [:octicons-arrow-right-24: Discover adk-samples](https://github.com/google/adk-samples){:target="_blank"}
+    [:octicons-arrow-right-24: 자세히 보기](streaming/quickstart-streaming.md)
 
--   :material-graph: **About**
+-   :material-console-line: **튜토리얼**
 
     ---
 
-    Learn about the key components of building and deploying ADK agents.
+    첫 번째 ADK 멀티 에이전트를 만들어보세요.
 
-    [:octicons-arrow-right-24: More information](about.md)
+    [:octicons-arrow-right-24: 자세히 보기](../tutorials/index.md)
+
+-   :material-rocket-launch-outline: **샘플 에이전트 살펴보기**
+
+    ---
+
+    리테일, 여행, 고객 서비스 등을 위한 샘플 에이전트를 살펴보세요!
+
+    [:octicons-arrow-right-24: adk-samples 살펴보기](https://github.com/google/adk-samples){:target="_blank"}
+
+-   :material-graph: **소개**
+
+    ---
+
+    ADK 에이전트 빌드 및 배포의 핵심 구성 요소에 대해 알아보세요.
+
+    [:octicons-arrow-right-24: 자세히 보기](about.md)
 
 </div>

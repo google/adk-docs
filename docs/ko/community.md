@@ -1,38 +1,30 @@
-# Community Resources
+# 커뮤니티 리소스
 
-Welcome! This page highlights resources maintained by the Agent Development Kit
-community.
+환영합니다! 이 페이지는 Agent Development Kit 커뮤니티가 관리하는 리소스를 소개합니다.
 
 !!! info
 
-    Google and the ADK team do not provide support for the content linked in
-    these external community resources.
+    Google 및 ADK 팀은 이러한 외부 커뮤니티 리소스에 링크된 콘텐츠에 대한 지원을 제공하지 않습니다.
 
-## Translations
+## 번역
 
-Community-provided translations of the ADK documentation.
+커뮤니티에서 제공하는 ADK 문서 번역본입니다.
 
-*   **[adk.wiki - ADK Documentation (Chinese)](https://adk.wiki/)**
+*   **[adk.wiki - ADK 문서 (중국어)](https://adk.wiki/)**
 
-    > adk.wiki is the Chinese version of the Agent Development Kit
-    > documentation, maintained by an individual. The documentation is
-    > continuously updated and translated to provide a localized reading
-    > experience for developers in China.
+    > adk.wiki는 개인이 관리하는 Agent Development Kit 문서의 중국어 버전입니다. 이 문서는 중국 개발자들에게 현지화된 독서 경험을 제공하기 위해 지속적으로 업데이트되고 번역됩니다.
 
-## Tutorials, Guides & Blog Posts
+## 튜토리얼, 가이드 및 블로그 게시물
 
-*Find community-written guides covering ADK features, use cases, and
-integrations here.*
+*여기에서 ADK 기능, 사용 사례 및 통합을 다루는 커뮤니티 작성 가이드를 찾아보세요.*
 
-*   **[Build an e-commerce recommendation AI agents with ADK + Vector Search](https://github.com/google/adk-docs/blob/main/examples/python/notebooks/shop_agent.ipynb)**
+*   **[ADK + 벡터 검색으로 전자상거래 추천 AI 에이전트 구축하기](https://github.com/google/adk-docs/blob/main/examples/python/notebooks/shop_agent.ipynb)**
 
-    > In this tutorial, we will explore how to build a simple multi-agent system for an 
-    > e-commerce site, designed to offer the "Generative Recommendations" you find in the 
-    > [Shopper's Concierge demo](https://www.youtube.com/watch?v=LwHPYyw7u6U).
+    > 이 튜토리얼에서는 [Shopper's Concierge 데모](https://www.youtube.com/watch?v=LwHPYyw7u6U)에서 볼 수 있는 "생성형 추천"을 제공하도록 설계된 전자상거래 사이트용 간단한 멀티 에이전트 시스템을 구축하는 방법을 살펴봅니다.
 
-## Videos & Screencasts
+## 비디오 및 스크린캐스트
 
-Discover video walkthroughs, talks, and demos showcasing ADK.
+ADK를 소개하는 비디오 워크스루, 강연 및 데모를 찾아보세요.
 
 <div class="video-grid">
   <div class="video-item">
@@ -61,23 +53,22 @@ Discover video walkthroughs, talks, and demos showcasing ADK.
 
   <div class="video-item">
     <div class="video-container">
-      <iframe src="https://www.youtube-nocookie.com/embed/LwHPYyw7u6U" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+      <iframe src="https.www.youtube-nocookie.com/embed/LwHPYyw7u6U" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
     </div>
   </div>
 
 </div>
 
-*   **[Agent Development Kit (ADK) Masterclass: Build AI Agents & Automate Workflows (Beginner to Pro)](https://www.youtube.com/watch?v=P4VFL9nIaIA)**
+*   **[Agent Development Kit (ADK) 마스터클래스: AI 에이전트 구축 및 워크플로우 자동화 (초급부터 전문가까지)](https://www.youtube.com/watch?v=P4VFL9nIaIA)**
 
-    > A comprehensive crash course that takes you from beginner to expert in Google's Agent Development Kit. 
-    > Covers 12 hands-on examples progressing from single agent setup to advanced multi-agent workflows.
-    > Includes step-by-step code walkthroughs and downloadable source code for all examples.
+    > Google의 Agent Development Kit에 대해 초급자에서 전문가로 만들어주는 포괄적인 집중 과정입니다.
+    > 단일 에이전트 설정에서 고급 멀티 에이전트 워크플로우까지 진행되는 12가지 실습 예제를 다룹니다.
+    > 모든 예제에 대한 단계별 코드 워크스루와 다운로드 가능한 소스 코드가 포함되어 있습니다.
 
-## Contributing Your Resource
+## 리소스 공유하기
 
-Have an ADK resource to share (tutorial, translation, tool, video, example)?
+공유할 ADK 리소스(튜토리얼, 번역, 도구, 비디오, 예제)가 있으신가요?
 
-Refer to the steps in the [Contributing Guide](contributing-guide.md) for more
-information on how to get involved!
+참여 방법에 대한 자세한 내용은 [기여 가이드](contributing-guide.md)의 단계를 참조하세요!
 
-Thank you for your contributions to Agent Development Kit! ❤️
+Agent Development Kit에 기여해주셔서 감사합니다! ❤️

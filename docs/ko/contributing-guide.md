@@ -1,100 +1,93 @@
-Thank you for your interest in contributing to the Agent Development Kit (ADK)! We welcome contributions to both the core framework (Python and Java) and its documentation.
+Agent Development Kit (ADK)에 기여하는 데 관심을 가져주셔서 감사합니다! 저희는 핵심 프레임워크(Python 및 Java)와 문서 모두에 대한 기여를 환영합니다.
 
-This guide provides information on how to get involved.
+이 가이드는 참여 방법에 대한 정보를 제공합니다.
 
 ## 1. [`google/adk-python`](https://github.com/google/adk-python)
 
-Contains the core Python library source code.
+핵심 Python 라이브러리 소스 코드를 포함합니다.
 
 ## 2. [`google/adk-java`](https://github.com/google/adk-java)
 
-Contains the core Java library source code.
+핵심 Java 라이브러리 소스 코드를 포함합니다.
 
 ## 3. [`google/adk-docs`](https://github.com/google/adk-docs)
 
-Contains the source for the documentation site you are currently reading.
+현재 읽고 계신 문서 사이트의 소스를 포함합니다.
 
 ## 4. [`google/adk-web`](https://github.com/google/adk-web)
 
-Contains the source for the `adk web` dev UI.
+`adk web` 개발 UI의 소스를 포함합니다.
 
-## Before you begin
+## 시작하기 전에
 
-### ✏️ Sign our Contributor License Agreement
+### ✏️ 기여자 라이선스 계약(CLA)에 서명해주세요
 
-Contributions to this project must be accompanied by a
-[Contributor License Agreement](https://cla.developers.google.com/about) (CLA).
-You (or your employer) retain the copyright to your contribution; this simply
-gives us permission to use and redistribute your contributions as part of the
-project.
+이 프로젝트에 대한 기여는 [기여자 라이선스 계약](https://cla.developers.google.com/about) (CLA)에 동의해야 합니다. 귀하(또는 귀하의 고용주)는 기여물에 대한 저작권을 보유하며, 이 계약은 프로젝트의 일부로서 귀하의 기여물을 사용하고 재배포할 수 있는 권한을 저희에게 부여하는 것입니다.
 
-If you or your current employer have already signed the Google CLA (even if it
-was for a different project), you probably don't need to do it again.
+만약 귀하 또는 귀하의 현재 고용주가 이미 Google CLA에 서명했다면(다른 프로젝트를 위한 것이었더라도), 다시 서명할 필요는 없습니다.
 
-Visit <https://cla.developers.google.com/> to see your current agreements or to
-sign a new one.
+현재 계약을 확인하거나 새 계약에 서명하려면 <https://cla.developers.google.com/>을 방문하세요.
 
-### 📜 Review our community guidelines
+### 📜 커뮤니티 가이드라인을 검토해주세요
 
-This project follows
-[Google's Open Source Community Guidelines](https://opensource.google/conduct/).
+이 프로젝트는 [Google의 오픈 소스 커뮤니티 가이드라인](https://opensource.google/conduct/)을 따릅니다.
 
-## 💬 Join the Discussion!
+## 💬 토론에 참여하세요!
 
-Have questions, want to share ideas, or discuss how you're using the ADK? Head over to our **[Python](https://github.com/google/adk-python/discussions)** or **[Java](https://github.com/google/adk-java/discussions)** Discussions!
+질문이 있거나, 아이디어를 공유하고 싶거나, ADK를 어떻게 사용하고 있는지 논의하고 싶으신가요? 저희 **[Python](https://github.com/google/adk-python/discussions)** 또는 **[Java](https://github.com/google/adk-java/discussions)** 토론(Discussions)으로 오세요!
 
-This is the primary place for:
+이곳은 다음과 같은 주요 소통 공간입니다:
 
-* Asking questions and getting help from the community and maintainers.
-* Sharing your projects or use cases (`Show and Tell`).
-* Discussing potential features or improvements before creating a formal issue.
-* General conversation about the ADK.
+*   커뮤니티와 유지보수자에게 질문하고 도움받기.
+*   여러분의 프로젝트나 사용 사례 공유하기 (`Show and Tell`).
+*   공식적인 이슈를 생성하기 전에 잠재적인 기능이나 개선 사항에 대해 논의하기.
+*   ADK에 대한 일반적인 대화.
 
-## How to Contribute
+## 기여하는 방법
 
-There are several ways you can contribute to the ADK:
+ADK에 기여할 수 있는 몇 가지 방법이 있습니다:
 
-### 1. Reporting Issues (Bugs & Errors)
+### 1. 이슈 보고하기 (버그 및 오류)
 
-If you find a bug in the framework or an error in the documentation:
+프레임워크에서 버그를 발견하거나 문서에서 오류를 찾은 경우:
 
-* **Framework Bugs:** Open an issue in [`google/adk-python`](https://github.com/google/adk-python/issues/new) or in [`google/adk-java`](https://github.com/google/adk-java/issues/new)
-* **Documentation Errors:** [Open an issue in `google/adk-docs` (use bug template)](https://github.com/google/adk-docs/issues/new?template=bug_report.md)
+*   **프레임워크 버그:** [`google/adk-python`](https://github.com/google/adk-python/issues/new) 또는 [`google/adk-java`](https://github.com/google/adk-java/issues/new)에 이슈를 열어주세요.
+*   **문서 오류:** [`google/adk-docs`에 이슈 열기 (버그 템플릿 사용)](https://github.com/google/adk-docs/issues/new?template=bug_report.md)
 
-### 2. Suggesting Enhancements
+### 2. 개선 제안하기
 
-Have an idea for a new feature or an improvement to an existing one?
+새로운 기능이나 기존 기능 개선에 대한 아이디어가 있으신가요?
 
-* **Framework Enhancements:** Open an issue in [`google/adk-python`](https://github.com/google/adk-python/issues/new) or in [`google/adk-java`](https://github.com/google/adk-java/issues/new)
-* **Documentation Enhancements:** [Open an issue in `google/adk-docs`](https://github.com/google/adk-docs/issues/new)
+*   **프레임워크 개선:** [`google/adk-python`](https://github.com/google/adk-python/issues/new) 또는 [`google/adk-java`](https://github.com/google/adk-java/issues/new)에 이슈를 열어주세요.
+*   **문서 개선:** [`google/adk-docs`에 이슈 열기](https://github.com/google/adk-docs/issues/new)
 
-### 3. Improving Documentation
+### 3. 문서 개선하기
 
-Found a typo, unclear explanation, or missing information? Submit your changes directly:
+오타, 불분명한 설명 또는 누락된 정보를 찾으셨나요? 변경 사항을 직접 제출하세요:
 
-* **How:** Submit a Pull Request (PR) with your suggested improvements.
-* **Where:** [Create a Pull Request in `google/adk-docs`](https://github.com/google/adk-docs/pulls)
+*   **방법:** 제안하는 개선 사항이 포함된 Pull Request (PR)를 제출하세요.
+*   **위치:** [`google/adk-docs`에서 Pull Request 생성하기](https://github.com/google/adk-docs/pulls)
 
-### 4. Writing Code
+### 4. 코드 작성하기
 
-Help fix bugs, implement new features or contribute code samples for the documentation:
+버그 수정, 새로운 기능 구현 또는 문서용 코드 샘플 기여를 도와주세요:
 
-**How:** Submit a Pull Request (PR) with your code changes.
+**방법:** 코드 변경 사항이 포함된 Pull Request (PR)를 제출하세요.
 
-* **Python Framework:** [Create a Pull Request in `google/adk-python`](https://github.com/google/adk-python/pulls)
-* **Java Framework:** [Create a Pull Request in `google/adk-java`](https://github.com/google/adk-java/pulls)
-* **Documentation:** [Create a Pull Request in `google/adk-docs`](https://github.com/google/adk-docs/pulls)
+*   **Python 프레임워크:** [`google/adk-python`에서 Pull Request 생성하기](https://github.com/google/adk-python/pulls)
+*   **Java 프레임워크:** [`google/adk-java`에서 Pull Request 생성하기](https://github.com/google/adk-java/pulls)
+*   **문서:** [`google/adk-docs`에서 Pull Request 생성하기](https://github.com/google/adk-docs/pulls)
 
-### Code Reviews
+### 코드 리뷰
 
-* All contributions, including those from project members, undergo a review process.
+*   프로젝트 멤버의 기여를 포함한 모든 기여는 리뷰 과정을 거칩니다.
 
-* We use GitHub Pull Requests (PRs) for code submission and review. Please ensure your PR clearly describes the changes you are making.
+*   저희는 코드 제출 및 리뷰를 위해 GitHub Pull Request (PR)를 사용합니다. PR에 변경 사항을 명확하게 기술해주세요.
 
-## License
+## 라이선스
 
-By contributing, you agree that your contributions will be licensed under the project's [Apache 2.0 License](https://github.com/google/adk-docs/blob/main/LICENSE).
+기여함으로써 귀하는 귀하의 기여물이 프로젝트의 [Apache 2.0 라이선스](https://github.com/google/adk-docs/blob/main/LICENSE)에 따라 라이선스가 부여된다는 데 동의하는 것입니다.
 
-## Questions?
+## 질문이 있으신가요?
 
-If you get stuck or have questions, feel free to open an issue on the relevant repository's issue tracker.
+막히거나 질문이 있으면, 관련 리포지토리의 이슈 트래커에 자유롭게 이슈를 열어주세요.

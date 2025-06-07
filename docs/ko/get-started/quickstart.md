@@ -1,30 +1,27 @@
-# Quickstart
+# 빠른 시작
 
-This quickstart guides you through installing the Agent Development Kit (ADK),
-setting up a basic agent with multiple tools, and running it locally either in the terminal or in the interactive, browser-based dev UI.
+이 빠른 시작 가이드는 Agent Development Kit (ADK)를 설치하고, 여러 도구를 갖춘 기본 에이전트를 설정한 후, 터미널이나 대화형 브라우저 기반 개발 UI에서 로컬로 실행하는 과정을 안내합니다.
 
-<!-- <img src="../../assets/quickstart.png" alt="Quickstart setup"> -->
+<!-- <img src="../../assets/quickstart.png" alt="빠른 시작 설정"> -->
 
-This quickstart assumes a local IDE (VS Code, PyCharm, IntelliJ IDEA, etc.)
-with Python 3.9+ or Java 17+ and terminal access. This method runs the
-application entirely on your machine and is recommended for internal development.
+이 빠른 시작은 로컬 IDE(VS Code, PyCharm, IntelliJ IDEA 등)에 Python 3.9+ 또는 Java 17+가 설치되어 있고 터미널을 사용할 수 있다고 가정합니다. 이 방법은 애플리케이션을 전적으로 사용자 컴퓨터에서 실행하며, 내부 개발에 권장됩니다.
 
-## 1. Set up Environment & Install ADK {#venv-install}
+## 1. 환경 설정 및 ADK 설치 {#venv-install}
 
 === "Python"
 
-    Create & Activate Virtual Environment (Recommended):
+    가상 환경 생성 및 활성화 (권장):
 
     ```bash
-    # Create
+    # 생성
     python -m venv .venv
-    # Activate (each new terminal)
+    # 활성화 (새 터미널마다)
     # macOS/Linux: source .venv/bin/activate
     # Windows CMD: .venv\Scripts\activate.bat
     # Windows PowerShell: .venv\Scripts\Activate.ps1
     ```
 
-    Install ADK:
+    ADK 설치:
 
     ```bash
     pip install google-adk
@@ -32,15 +29,15 @@ application entirely on your machine and is recommended for internal development
 
 === "Java"
 
-    To install ADK and setup the environment, proceed to the following steps.
+    ADK를 설치하고 환경을 설정하려면 다음 단계를 진행하세요.
 
-## 2. Create Agent Project {#create-agent-project}
+## 2. 에이전트 프로젝트 생성 {#create-agent-project}
 
-### Project structure
+### 프로젝트 구조
 
 === "Python"
 
-    You will need to create the following project structure:
+    다음과 같은 프로젝트 구조를 만들어야 합니다:
 
     ```console
     parent_folder/
@@ -50,28 +47,25 @@ application entirely on your machine and is recommended for internal development
             .env
     ```
 
-    Create the folder `multi_tool_agent`:
+    `multi_tool_agent` 폴더를 만드세요:
 
     ```bash
     mkdir multi_tool_agent/
     ```
 
-    !!! info "Note for Windows users"
+    !!! info "Windows 사용자를 위한 참고 사항"
 
-        When using ADK on Windows for the next few steps, we recommend creating
-        Python files using File Explorer or an IDE because the following commands
-        (`mkdir`, `echo`) typically generate files with null bytes and/or incorrect
-        encoding.
+        Windows에서 ADK를 사용하여 다음 몇 단계를 진행할 때, 다음 명령어들(`mkdir`, `echo`)이 일반적으로 null 바이트나 잘못된 인코딩으로 파일을 생성하기 때문에 파일 탐색기나 IDE를 사용하여 Python 파일을 만드는 것을 권장합니다.
 
     ### `__init__.py`
 
-    Now create an `__init__.py` file in the folder:
+    이제 폴더에 `__init__.py` 파일을 만드세요:
 
     ```shell
     echo "from . import agent" > multi_tool_agent/__init__.py
     ```
 
-    Your `__init__.py` should now look like this:
+    이제 `__init__.py` 파일은 다음과 같아야 합니다:
 
     ```python title="multi_tool_agent/__init__.py"
     --8<-- "examples/python/snippets/get-started/multi_tool_agent/__init__.py"
@@ -79,13 +73,13 @@ application entirely on your machine and is recommended for internal development
 
     ### `agent.py`
 
-    Create an `agent.py` file in the same folder:
+    같은 폴더에 `agent.py` 파일을 만드세요:
 
     ```shell
     touch multi_tool_agent/agent.py
     ```
 
-    Copy and paste the following code into `agent.py`:
+    다음 코드를 복사하여 `agent.py`에 붙여넣으세요:
 
     ```python title="multi_tool_agent/agent.py"
     --8<-- "examples/python/snippets/get-started/multi_tool_agent/agent.py"
@@ -93,17 +87,17 @@ application entirely on your machine and is recommended for internal development
 
     ### `.env`
 
-    Create a `.env` file in the same folder:
+    같은 폴더에 `.env` 파일을 만드세요:
 
     ```shell
     touch multi_tool_agent/.env
     ```
 
-    More instructions about this file are described in the next section on [Set up the model](#set-up-the-model).
+    이 파일에 대한 자세한 내용은 다음 섹션인 [모델 설정](#set-up-the-model)에서 설명합니다.
 
 === "Java"
 
-    Java projects generally feature the following project structure:
+    Java 프로젝트는 일반적으로 다음과 같은 프로젝트 구조를 가집니다:
 
     ```console
     project_folder/
@@ -116,12 +110,11 @@ application entirely on your machine and is recommended for internal development
     └── test/
     ```
 
-    ### Create `MultiToolAgent.java`
+    ### `MultiToolAgent.java` 생성
 
-    Create a `MultiToolAgent.java` source file in the `agents.multitool` package
-    in the `src/main/java/agents/multitool/` directory.
+    `src/main/java/agents/multitool/` 디렉토리의 `agents.multitool` 패키지에 `MultiToolAgent.java` 소스 파일을 만드세요.
 
-    Copy and paste the following code into `MultiToolAgent.java`:
+    다음 코드를 복사하여 `MultiToolAgent.java`에 붙여넣으세요:
 
     ```java title="agents/multitool/MultiToolAgent.java"
     --8<-- "examples/java/cloud-run/src/main/java/agents/multitool/MultiToolAgent.java:full_code"
@@ -129,46 +122,35 @@ application entirely on your machine and is recommended for internal development
 
 ![intro_components.png](../assets/quickstart-flow-tool.png)
 
-## 3. Set up the model {#set-up-the-model}
+## 3. 모델 설정 {#set-up-the-model}
 
-Your agent's ability to understand user requests and generate responses is
-powered by a Large Language Model (LLM). Your agent needs to make secure calls
-to this external LLM service, which requires authentication credentials. Without
-valid authentication, the LLM service will deny the agent's requests, and the
-agent will be unable to function.
+에이전트가 사용자 요청을 이해하고 응답을 생성하는 능력은 거대 언어 모델(LLM)에 의해 구동됩니다. 에이전트는 이 외부 LLM 서비스에 안전하게 호출해야 하며, 이를 위해 인증 자격 증명이 필요합니다. 유효한 인증 없이는 LLM 서비스가 에이전트의 요청을 거부하게 되며, 에이전트는 작동할 수 없습니다.
 
 === "Gemini - Google AI Studio"
-    1. Get an API key from [Google AI Studio](https://aistudio.google.com/apikey).
-    2. When using Python, open the **`.env`** file located inside (`multi_tool_agent/`)
-    and copy-paste the following code.
+    1. [Google AI Studio](https://aistudio.google.com/apikey)에서 API 키를 받으세요.
+    2. Python을 사용하는 경우, (`multi_tool_agent/` 안에 위치한) **`.env`** 파일을 열고 다음 코드를 복사하여 붙여넣으세요.
 
         ```env title="multi_tool_agent/.env"
         GOOGLE_GENAI_USE_VERTEXAI=FALSE
         GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_API_KEY_HERE
         ```
 
-        When using Java, define environment variables:
+        Java를 사용하는 경우, 환경 변수를 정의하세요:
 
         ```console title="terminal"
         export GOOGLE_GENAI_USE_VERTEXAI=FALSE
         export GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_API_KEY_HERE
         ```
 
-    3. Replace `PASTE_YOUR_ACTUAL_API_KEY_HERE` with your actual `API KEY`.
+    3. `PASTE_YOUR_ACTUAL_API_KEY_HERE`를 실제 `API 키`로 교체하세요.
 
 === "Gemini - Google Cloud Vertex AI"
-    1. You need an existing
-    [Google Cloud](https://cloud.google.com/?e=48754805&hl=en) account and a
-    project.
-        * Set up a
-          [Google Cloud project](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-gcp)
-        * Set up the
-          [gcloud CLI](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-local)
-        * Authenticate to Google Cloud, from the terminal by running
-          `gcloud auth login`.
-        * [Enable the Vertex AI API](https://console.cloud.google.com/flows/enableapi?apiid=aiplatform.googleapis.com).
-    2. When using Python, open the **`.env`** file located inside (`multi_tool_agent/`). Copy-paste
-    the following code and update the project ID and location.
+    1. 기존 [Google Cloud](https://cloud.google.com/?e=48754805&hl=en) 계정과 프로젝트가 필요합니다.
+        * [Google Cloud 프로젝트 설정](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-gcp)
+        * [gcloud CLI 설정](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-local)
+        * 터미널에서 `gcloud auth login`을 실행하여 Google Cloud에 인증하세요.
+        * [Vertex AI API 활성화](https://console.cloud.google.com/flows/enableapi?apiid=aiplatform.googleapis.com).
+    2. Python을 사용하는 경우, (`multi_tool_agent/` 안에 위치한) **`.env`** 파일을 여세요. 다음 코드를 복사하여 붙여넣고 프로젝트 ID와 위치를 업데이트하세요.
 
         ```env title="multi_tool_agent/.env"
         GOOGLE_GENAI_USE_VERTEXAI=TRUE
@@ -176,7 +158,7 @@ agent will be unable to function.
         GOOGLE_CLOUD_LOCATION=LOCATION
         ```
 
-        When using Java, define environment variables:
+        Java를 사용하는 경우, 환경 변수를 정의하세요:
 
         ```console title="terminal"
         export GOOGLE_GENAI_USE_VERTEXAI=TRUE
@@ -184,85 +166,78 @@ agent will be unable to function.
         export GOOGLE_CLOUD_LOCATION=LOCATION
         ```
 
-## 4. Run Your Agent {#run-your-agent}
+## 4. 에이전트 실행 {#run-your-agent}
 
 === "Python"
 
-    Using the terminal, navigate to the parent directory of your agent project
-    (e.g. using `cd ..`):
+    터미널을 사용하여 에이전트 프로젝트의 부모 디렉토리로 이동하세요 (예: `cd ..` 사용):
 
     ```console
-    parent_folder/      <-- navigate to this directory
+    parent_folder/      <-- 이 디렉토리로 이동
         multi_tool_agent/
             __init__.py
             agent.py
             .env
     ```
 
-    There are multiple ways to interact with your agent:
+    에이전트와 상호 작용하는 방법은 여러 가지가 있습니다:
 
-    === "Dev UI (adk web)"
-        Run the following command to launch the **dev UI**.
+    === "개발자 UI (adk web)"
+        다음 명령어를 실행하여 **개발자 UI**를 시작하세요.
 
         ```shell
         adk web
         ```
         
-        !!!info "Note for Windows users"
+        !!!info "Windows 사용자를 위한 참고 사항"
 
-            When hitting the `_make_subprocess_transport NotImplementedError`, consider using `adk web --no-reload` instead.
+            `_make_subprocess_transport NotImplementedError`가 발생하면 대신 `adk web --no-reload`를 사용하는 것을 고려해보세요.
 
 
-        **Step 1:** Open the URL provided (usually `http://localhost:8000` or
-        `http://127.0.0.1:8000`) directly in your browser.
+        **1단계:** 제공된 URL(보통 `http://localhost:8000` 또는 `http://127.0.0.1:8000`)을 브라우저에서 직접 여세요.
 
-        **Step 2.** In the top-left corner of the UI, you can select your agent in
-        the dropdown. Select "multi_tool_agent".
+        **2단계.** UI의 왼쪽 상단 모서리에서, 드롭다운 메뉴에서 에이전트를 선택할 수 있습니다. "multi_tool_agent"를 선택하세요.
 
-        !!!note "Troubleshooting"
+        !!!note "문제 해결"
 
-            If you do not see "multi_tool_agent" in the dropdown menu, make sure you
-            are running `adk web` in the **parent folder** of your agent folder
-            (i.e. the parent folder of multi_tool_agent).
+            드롭다운 메뉴에서 "multi_tool_agent"가 보이지 않으면, `adk web`을 에이전트 폴더의 **부모 폴더**(즉, multi_tool_agent의 부모 폴더)에서 실행하고 있는지 확인하세요.
 
-        **Step 3.** Now you can chat with your agent using the textbox:
+        **3단계.** 이제 텍스트 상자를 사용하여 에이전트와 채팅할 수 있습니다:
 
         ![adk-web-dev-ui-chat.png](../assets/adk-web-dev-ui-chat.png)
 
 
-        **Step 4.**  By using the `Events` tab at the left, you can inspect
-        individual function calls, responses and model responses by clicking on the
-        actions:
+        **4단계.**  왼쪽의 `Events` 탭을 사용하여, 액션을 클릭함으로써 개별 함수 호출, 응답 및 모델 응답을 검사할 수 있습니다:
 
         ![adk-web-dev-ui-function-call.png](../assets/adk-web-dev-ui-function-call.png)
 
-        On the `Events` tab, you can also click the `Trace` button to see the trace logs for each event that shows the latency of each function calls:
+        `Events` 탭에서 `Trace` 버튼을 클릭하여 각 이벤트의 추적 로그를 볼 수도 있습니다. 이 로그는 각 함수 호출의 지연 시간을 보여줍니다:
 
         ![adk-web-dev-ui-trace.png](../assets/adk-web-dev-ui-trace.png)
 
-        **Step 5.** You can also enable your microphone and talk to your agent:
+        **5단계.** 마이크를 활성화하여 에이전트와 대화할 수도 있습니다:
 
-        !!!note "Model support for voice/video streaming"
+        !!!note "음성/영상 스트리밍을 위한 모델 지원"
 
-            In order to use voice/video streaming in ADK, you will need to use Gemini models that support the Live API. You can find the **model ID(s)** that supports the Gemini Live API in the documentation:
+            ADK에서 음성/영상 스트리밍을 사용하려면 Live API를 지원하는 Gemini 모델을 사용해야 합니다. 문서에서 Gemini Live API를 지원하는 **모델 ID**를 찾을 수 있습니다:
 
             - [Google AI Studio: Gemini Live API](https://ai.google.dev/gemini-api/docs/models#live-api)
             - [Vertex AI: Gemini Live API](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api)
 
-            You can then replace the `model` string in `root_agent` in the `agent.py` file you created earlier ([jump to section](#agentpy)). Your code should look something like:
+            그런 다음 이전에 생성한 `agent.py` 파일의 `root_agent`에서 `model` 문자열을 바꿀 수 있습니다 ([섹션으로 이동](#agentpy)). 코드는 다음과 같아야 합니다:
 
             ```py
             root_agent = Agent(
                 name="weather_time_agent",
-                model="replace-me-with-model-id", #e.g. gemini-2.0-flash-live-001
+                model="여기에-모델-ID-교체", # 예: gemini-2.0-flash-live-001
                 ...
             ```
 
         ![adk-web-dev-ui-audio.png](../assets/adk-web-dev-ui-audio.png)
 
-    === "Terminal (adk run)"
+    === "터미널 (adk run)"
 
-        Run the following command, to chat with your Weather agent.
+        다음 명령어를 실행하여 날씨 에이전트와 채팅하세요.
 
         ```
         adk run multi_tool_agent
@@ -270,26 +245,22 @@ agent will be unable to function.
 
         ![adk-run.png](../assets/adk-run.png)
 
-        To exit, use Cmd/Ctrl+C.
+        종료하려면 Cmd/Ctrl+C를 사용하세요.
 
-    === "API Server (adk api_server)"
+    === "API 서버 (adk api_server)"
 
-        `adk api_server` enables you to create a local FastAPI server in a single
-        command, enabling you to test local cURL requests before you deploy your
-        agent.
+        `adk api_server`를 사용하면 단일 명령으로 로컬 FastAPI 서버를 생성할 수 있어, 에이전트를 배포하기 전에 로컬 cURL 요청을 테스트할 수 있습니다.
 
         ![adk-api-server.png](../assets/adk-api-server.png)
 
-        To learn how to use `adk api_server` for testing, refer to the
-        [documentation on testing](testing.md).
+        테스트를 위해 `adk api_server`를 사용하는 방법을 배우려면, [테스트에 대한 문서](testing.md)를 참조하세요.
 
 === "Java"
 
-    Using the terminal, navigate to the parent directory of your agent project
-    (e.g. using `cd ..`):
+    터미널을 사용하여 에이전트 프로젝트의 부모 디렉토리로 이동하세요 (예: `cd ..` 사용):
 
     ```console
-    project_folder/                <-- navigate to this directory
+    project_folder/                <-- 이 디렉토리로 이동
     ├── pom.xml (or build.gradle)
     ├── src/
     ├── └── main/
@@ -300,11 +271,11 @@ agent will be unable to function.
     └── test/
     ```
 
-    === "Dev UI"
+    === "개발자 UI"
 
-        Run the following command from the terminal to launch the Dev UI.
+        터미널에서 다음 명령어를 실행하여 개발자 UI를 시작하세요.
 
-        **DO NOT change the main class name of the Dev UI server.**
+        **개발자 UI 서버의 메인 클래스 이름을 변경하지 마세요.**
 
         ```console title="terminal"
         mvn exec:java \
@@ -313,31 +284,25 @@ agent will be unable to function.
             -Dexec.classpathScope="compile"
         ```
 
-        **Step 1:** Open the URL provided (usually `http://localhost:8080` or
-        `http://127.0.0.1:8080`) directly in your browser.
+        **1단계:** 제공된 URL(보통 `http://localhost:8080` 또는 `http://127.0.0.1:8080`)을 브라우저에서 직접 여세요.
 
-        **Step 2.** In the top-left corner of the UI, you can select your agent in
-        the dropdown. Select "multi_tool_agent".
+        **2단계.** UI의 왼쪽 상단 모서리에서, 드롭다운 메뉴에서 에이전트를 선택할 수 있습니다. "multi_tool_agent"를 선택하세요.
 
-        !!!note "Troubleshooting"
+        !!!note "문제 해결"
 
-            If you do not see "multi_tool_agent" in the dropdown menu, make sure you
-            are running the `mvn` command at the location where your Java source code
-            is located (usually `src/main/java`).
+            드롭다운 메뉴에서 "multi_tool_agent"가 보이지 않으면, Java 소스 코드가 위치한 곳(보통 `src/main/java`)에서 `mvn` 명령어를 실행하고 있는지 확인하세요.
 
-        **Step 3.** Now you can chat with your agent using the textbox:
+        **3단계.** 이제 텍스트 상자를 사용하여 에이전트와 채팅할 수 있습니다:
 
         ![adk-web-dev-ui-chat.png](../assets/adk-web-dev-ui-chat.png)
 
-        **Step 4.** You can also inspect individual function calls, responses and
-        model responses by clicking on the actions:
+        **4단계.** 액션을 클릭하여 개별 함수 호출, 응답 및 모델 응답을 검사할 수도 있습니다:
 
         ![adk-web-dev-ui-function-call.png](../assets/adk-web-dev-ui-function-call.png)
 
     === "Maven"
 
-        With Maven, run the `main()` method of your Java class
-        with the following command:
+        Maven을 사용하여, 다음 명령으로 Java 클래스의 `main()` 메서드를 실행하세요:
 
         ```console title="terminal"
         mvn compile exec:java -Dexec.mainClass="agents.multitool.MultiToolAgent"
@@ -345,18 +310,16 @@ agent will be unable to function.
 
     === "Gradle"
 
-        With Gradle, the `build.gradle` or `build.gradle.kts` build file
-        should have the following Java plugin in its `plugins` section:
+        Gradle을 사용하는 경우, `build.gradle` 또는 `build.gradle.kts` 빌드 파일의 `plugins` 섹션에 다음 Java 플러그인이 있어야 합니다:
 
         ```groovy
         plugins {
             id("java")
-            // other plugins
+            // 다른 플러그인들
         }
         ```
 
-        Then, elsewhere in the build file, at the top-level,
-        create a new task to run the `main()` method of your agent:
+        그런 다음, 빌드 파일의 다른 곳, 최상위 레벨에서 에이전트의 `main()` 메서드를 실행하기 위한 새 태스크를 만드세요:
 
         ```groovy
         task runAgent(type: JavaExec) {
@@ -365,7 +328,7 @@ agent will be unable to function.
         }
         ```
 
-        Finally, on the command-line, run the following command:
+        마지막으로, 명령줄에서 다음 명령을 실행하세요:
 
         ```console
         gradle runAgent
@@ -373,25 +336,22 @@ agent will be unable to function.
 
 
 
-### 📝 Example prompts to try
+### 📝 시도해볼 예제 프롬프트
 
-* What is the weather in New York?
-* What is the time in New York?
-* What is the weather in Paris?
-* What is the time in Paris?
+* 뉴욕의 날씨는 어떤가요?
+* 뉴욕은 지금 몇 시인가요?
+* 파리의 날씨는 어떤가요?
+* 파리는 지금 몇 시인가요?
 
-## 🎉 Congratulations!
+## 🎉 축하합니다!
 
-You've successfully created and interacted with your first agent using ADK!
+ADK를 사용하여 첫 번째 에이전트를 성공적으로 만들고 상호 작용했습니다!
 
 ---
 
-## 🛣️ Next steps
+## 🛣️ 다음 단계
 
-* **Go to the tutorial**: Learn how to add memory, session, state to your agent:
-  [tutorial](../tutorials/index.md).
-* **Delve into advanced configuration:** Explore the [setup](installation.md)
-  section for deeper dives into project structure, configuration, and other
-  interfaces.
-* **Understand Core Concepts:** Learn about
-  [agents concepts](../agents/index.md).
+* **튜토리얼로 이동하기**: 에이전트에 메모리, 세션, 상태를 추가하는 방법을 배우세요:
+  [튜토리얼](../tutorials/index.md).
+* **고급 구성 파고들기:** 프로젝트 구조, 구성 및 기타 인터페이스에 대한 더 깊은 내용을 보려면 [설정](installation.md) 섹션을 탐색하세요.
+* **핵심 개념 이해하기:** [에이전트 개념](../agents/index.md)에 대해 알아보세요.

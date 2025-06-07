@@ -1,20 +1,20 @@
-# Quickstart (Streaming / Java) {#adk-streaming-quickstart-java}
+# 빠른 시작 (스트리밍 / Java) {#adk-streaming-quickstart-java}
 
-This quickstart guide will walk you through the process of creating a basic agent and leveraging ADK Streaming with Java to facilitate low-latency, bidirectional voice interactions.
+이 빠른 시작 가이드는 기본 에이전트를 생성하고 Java용 ADK 스트리밍을 활용하여 저지연, 양방향 음성 상호작용을 구현하는 과정을 안내합니다.
 
-You'll begin by setting up your Java and Maven environment, structuring your project, and defining the necessary dependencies. Following this, you'll create a simple `ScienceTeacherAgent`, test its text-based streaming capabilities using the Dev UI, and then progress to enabling live audio communication, transforming your agent into an interactive voice-driven application.
+Java 및 Maven 환경 설정, 프로젝트 구조화, 필요한 의존성 정의부터 시작합니다. 그 다음, 간단한 `ScienceTeacherAgent`를 만들고, 개발 UI를 사용하여 텍스트 기반 스트리밍 기능을 테스트한 후, 실시간 오디오 통신을 활성화하여 에이전트를 대화형 음성 기반 애플리케이션으로 전환하는 단계로 진행합니다.
 
-## **Create your first agent** {#create-your-first-agent}
+## **첫 번째 에이전트 만들기** {#create-your-first-agent}
 
-### **Prerequisites**
+### **전제 조건**
 
-* In this getting started guide, you will be programming in Java. Check if **Java** is installed on your machine. Ideally, you should be using Java 17 or more (you can check that by typing **java \-version**)
+*   이 시작 가이드에서는 Java로 프로그래밍합니다. 컴퓨터에 **Java**가 설치되어 있는지 확인하세요. Java 17 이상을 사용하는 것이 이상적입니다 (**java \-version**을 입력하여 확인할 수 있습니다).
 
-* You’ll also be using the **Maven** build tool for Java. So be sure to have [Maven installed](https://maven.apache.org/install.html) on your machine before going further (this is the case for Cloud Top or Cloud Shell, but not necessarily for your laptop).
+*   또한 Java용 빌드 도구인 **Maven**을 사용합니다. 계속 진행하기 전에 컴퓨터에 [Maven이 설치되어 있는지](https://maven.apache.org/install.html) 확인하세요 (Cloud Top이나 Cloud Shell의 경우 이미 설치되어 있지만, 개인 노트북에는 아닐 수 있습니다).
 
-### **Prepare the project structure**
+### **프로젝트 구조 준비**
 
-To get started with ADK Java, let’s create a Maven project with the following directory structure:
+ADK Java를 시작하기 위해, 다음 디렉토리 구조를 가진 Maven 프로젝트를 생성해 보겠습니다.
 
 ```
 adk-agents/
@@ -26,27 +26,27 @@ adk-agents/
                 └── ScienceTeacherAgent.java
 ```
 
-Follow the instructions in [Installation](../../get-started/installation.md) page to add `pom.xml` for using the ADK package.
+[설치](../../get-started/installation.md) 페이지의 지침에 따라 ADK 패키지를 사용하기 위한 `pom.xml`을 추가하세요.
 
 !!! Note
-    Feel free to use whichever name you like for the root directory of your project (instead of adk-agents)
+    프로젝트의 루트 디렉토리 이름은 `adk-agents` 대신 원하는 이름을 자유롭게 사용해도 좋습니다.
 
-### **Running a compilation**
+### **컴파일 실행하기**
 
-Let’s see if Maven is happy with this build, by running a compilation (**mvn compile** command):
+컴파일을 실행하여 Maven이 이 빌드에 만족하는지 확인해 보겠습니다 (**mvn compile** 명령어):
 
 ```shell
 $ mvn compile
 [INFO] Scanning for projects...
-[INFO] 
+[INFO]
 [INFO] --------------------< adk-agents:adk-agents >--------------------
 [INFO] Building adk-agents 1.0-SNAPSHOT
 [INFO]   from pom.xml
 [INFO] --------------------------------[ jar ]---------------------------------
-[INFO] 
+[INFO]
 [INFO] --- resources:3.3.1:resources (default-resources) @ adk-demo ---
 [INFO] skip non existing resourceDirectory /home/user/adk-demo/src/main/resources
-[INFO] 
+[INFO]
 [INFO] --- compiler:3.13.0:compile (default-compile) @ adk-demo ---
 [INFO] Nothing to compile - all classes are up to date.
 [INFO] ------------------------------------------------------------------------
@@ -57,11 +57,11 @@ $ mvn compile
 [INFO] ------------------------------------------------------------------------
 ```
 
-Looks like the project is set up properly for compilation\!
+프로젝트가 컴파일을 위해 올바르게 설정된 것 같습니다!
 
-### **Creating an agent**
+### **에이전트 생성하기**
 
-Create the **ScienceTeacherAgent.java** file under the `src/main/java/agents/` directory with the following content:
+`src/main/java/agents/` 디렉토리 아래에 다음 내용으로 **ScienceTeacherAgent.java** 파일을 생성하세요:
 
 ```java
 package samples.liveaudio;
@@ -69,104 +69,100 @@ package samples.liveaudio;
 import com.google.adk.agents.BaseAgent;
 import com.google.adk.agents.LlmAgent;
 
-/** Science teacher agent. */
+/** 과학 선생님 에이전트. */
 public class ScienceTeacherAgent {
 
-  // Field expected by the Dev UI to load the agent dynamically
-  // (the agent must be initialized at declaration time)
+  // Dev UI가 에이전트를 동적으로 로드하기 위해 필요한 필드
+  // (에이전트는 선언 시점에 초기화되어야 합니다)
   public static BaseAgent ROOT_AGENT = initAgent();
 
   public static BaseAgent initAgent() {
     return LlmAgent.builder()
         .name("science-app")
-        .description("Science teacher agent")
+        .description("과학 선생님 에이전트")
         .model("gemini-2.0-flash-exp")
         .instruction("""
-            You are a helpful science teacher that explains
-            science concepts to kids and teenagers.
+            당신은 어린이와 청소년에게 과학 개념을 설명해주는
+            친절한 과학 선생님입니다.
             """)
         .build();
   }
 }
 ```
 
-!!!note "Troubleshooting"
+!!!note "문제 해결"
 
-    The model `gemini-2.0-flash-exp` will be deprecated in the future. If you see any issues on using it, try using `gemini-2.0-flash-live-001` instead
+    `gemini-2.0-flash-exp` 모델은 향후 지원 중단될 예정입니다. 사용 중 문제가 발생하면 대신 `gemini-2.0-flash-live-001`을 사용해 보세요.
 
-We will use `Dev UI` to run this agent later. For the tool to automatically recognize the agent, its Java class has to comply with the following two rules:
+나중에 이 에이전트를 실행하기 위해 `Dev UI`를 사용할 것입니다. 도구가 에이전트를 자동으로 인식하려면, 해당 Java 클래스는 다음 두 가지 규칙을 준수해야 합니다.
 
-* The agent should be stored in a global **public static** variable named **ROOT\_AGENT** of type **BaseAgent** and initialized at declaration time.
-* The agent definition has to be a **static** method so it can be loaded during the class initialization by the dynamic compiling classloader.
+*   에이전트는 **BaseAgent** 타입의 **public static** 전역 변수 **ROOT\_AGENT**에 저장되고 선언 시점에 초기화되어야 합니다.
+*   에이전트 정의는 동적 컴파일링 클래스로더에 의해 클래스 초기화 중에 로드될 수 있도록 **static** 메서드여야 합니다.
 
-## **Run agent with Dev UI** {#run-agent-with-adk-web-server}
+## **Dev UI로 에이전트 실행하기** {#run-agent-with-adk-web-server}
 
-`Dev UI` is a web server where you can quickly run and test your agents for development purpose, without building your own UI application for the agents.
+`Dev UI`는 개발 목적으로 에이전트를 위한 자체 UI 애플리케이션을 빌드하지 않고도 빠르게 에이전트를 실행하고 테스트할 수 있는 웹 서버입니다.
 
-### **Define environment variables**
+### **환경 변수 정의**
 
-To run the server, you’ll need to export two environment variables:
+서버를 실행하려면 두 개의 환경 변수를 내보내야 합니다:
 
-* a Gemini key that you can [get from AI Studio](https://ai.google.dev/gemini-api/docs/api-key),
-* a variable to specify we’re not using Vertex AI this time.
+*   [AI Studio에서 얻을 수 있는](https://ai.google.dev/gemini-api/docs/api-key) Gemini 키,
+*   이번에는 Vertex AI를 사용하지 않음을 지정하는 변수.
 
 ```shell
 export GOOGLE_GENAI_USE_VERTEXAI=FALSE
 export GOOGLE_API_KEY=YOUR_API_KEY
 ```
 
-### **Run Dev UI**
+### **Dev UI 실행**
 
-Run the following command from the terminal to launch the Dev UI.
+터미널에서 다음 명령을 실행하여 Dev UI를 시작합니다.
 
-```console title="terminal"
+```console title="터미널"
 mvn exec:java \
     -Dexec.mainClass="com.google.adk.web.AdkWebServer" \
     -Dexec.args="--adk.agents.source-dir=src/main/java" \
     -Dexec.classpathScope="compile"
 ```
 
-**Step 1:** Open the URL provided (usually `http://localhost:8080` or
-`http://127.0.0.1:8080`) directly in your browser.
+**1단계:** 제공된 URL(보통 `http://localhost:8080` 또는 `http://127.0.0.1:8080`)을 브라우저에서 직접 엽니다.
 
-**Step 2.** In the top-left corner of the UI, you can select your agent in
-the dropdown. Select "science-app".
+**2단계.** UI의 왼쪽 상단 모서리에서 드롭다운 메뉴로 에이전트를 선택할 수 있습니다. "science-app"을 선택하세요.
 
-!!!note "Troubleshooting"
+!!!note "문제 해결"
 
-    If you do not see "science-app" in the dropdown menu, make sure you
-    are running the `mvn` command at the location where your Java source code
-    is located (usually `src/main/java`).
+    드롭다운 메뉴에 "science-app"이 보이지 않으면, Java 소스 코드가 위치한 곳(보통 `src/main/java`)에서 `mvn` 명령을 실행하고 있는지 확인하세요.
 
-## Try Dev UI with text
+## 텍스트로 Dev UI 사용해보기
 
-With your favorite browser, navigate to: [http://127.0.0.1:8080/](http://127.0.0.1:8080/)
+선호하는 브라우저로 [http://127.0.0.1:8080/](http://127.0.0.1:8080/)으로 이동하세요.
 
-You should see the following interface:
+다음과 같은 인터페이스가 표시됩니다:
 
 ![Dev UI](../../assets/quickstart-streaming-devui.png)
 
-Click the `Token Streaming` switch at the top right, and ask any questions for the science teacher such as `What's the electron?`. Then you should see the output text in streaming on the UI.
+오른쪽 상단의 `Token Streaming` 스위치를 클릭하고, 과학 선생님에게 `전자가 뭐야?`와 같은 질문을 해보세요. 그러면 UI에서 스트리밍으로 출력되는 텍스트를 볼 수 있습니다.
 
-As we saw, you do not have to write any specific code in the agent itself for the text streaming capability. It is provided as an ADK Agent feature by default.
+보시다시피, 텍스트 스트리밍 기능을 위해 에이전트 자체에 특정 코드를 작성할 필요가 없습니다. 이는 기본적으로 ADK 에이전트 기능으로 제공됩니다.
 
-### Try with voice and video
+### 음성 및 비디오로 시도해보기
 
-To try with voice, reload the web browser, click the microphone button to enable the voice input, and ask the same question in voice. You will hear the answer in voice in real-time.
+음성으로 시도하려면 웹 브라우저를 새로고침하고, 마이크 버튼을 클릭하여 음성 입력을 활성화한 후, 같은 질문을 음성으로 해보세요. 실시간으로 음성 답변을 들을 수 있습니다.
 
-To try with video, reload the web browser, click the camera button to enable the video input, and ask questions like "What do you see?". The agent will answer what they see in the video input.
+비디오로 시도하려면 웹 브라우저를 새로고침하고, 카메라 버튼을 클릭하여 비디오 입력을 활성화한 후, "뭐가 보여?"와 같은 질문을 해보세요. 에이전트가 비디오 입력에서 보이는 것을 답변할 것입니다.
 
-### Stop the tool
+### 도구 중지하기
 
-Stop the tool by pressing `Ctrl-C` on the console.
+콘솔에서 `Ctrl-C`를 눌러 도구를 중지하세요.
 
-## **Run agent with a custom live audio app** {#run-agent-with-live-audio}
+## **사용자 지정 라이브 오디오 앱으로 에이전트 실행하기** {#run-agent-with-live-audio}
 
-Now, let's try audio streaming with the agent and a custom live audio application.
+이제, 에이전트와 사용자 지정 라이브 오디오 애플리케이션으로 오디오 스트리밍을 시도해 보겠습니다.
 
-### **A Maven pom.xml build file for Live Audio**
+### **라이브 오디오용 Maven pom.xml 빌드 파일**
 
-Replace your existing pom.xml with the following.
+기존 pom.xml을 다음 내용으로 교체하세요.
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -180,8 +176,7 @@ Replace your existing pom.xml with the following.
   <version>0.1.0</version>
   <name>Google ADK - Sample - Live Audio</name>
   <description>
-    A sample application demonstrating a live audio conversation using ADK,
-    runnable via samples.liveaudio.LiveAudioRun.
+    samples.liveaudio.LiveAudioRun을 통해 실행 가능한, ADK를 사용한 라이브 오디오 대화를 시연하는 샘플 애플리케이션입니다.
   </description>
   <packaging>jar</packaging>
 
@@ -189,7 +184,7 @@ Replace your existing pom.xml with the following.
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java.version>17</java.version>
     <auto-value.version>1.11.0</auto-value.version>
-    <!-- Main class for exec-maven-plugin -->
+    <!-- exec-maven-plugin용 메인 클래스 -->
     <exec.mainClass>samples.liveaudio.LiveAudioRun</exec.mainClass>
     <google-adk.version>0.1.0</google-adk.version>
   </properties>
@@ -215,7 +210,7 @@ Replace your existing pom.xml with the following.
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
-      <version>1.2</version> <!-- Or use a property if defined in a parent POM -->
+      <version>1.2</version> <!-- 또는 부모 POM에 정의된 속성 사용 -->
     </dependency>
   </dependencies>
 
@@ -271,9 +266,9 @@ Replace your existing pom.xml with the following.
 </project>
 ```
 
-### **Creating Live Audio Run tool**
+### **라이브 오디오 실행 도구 생성하기**
 
-Create the **LiveAudioRun.java** file under the `src/main/java/` directory with the following content. This tool runs the agent on it with live audio input and output.
+`src/main/java/` 디렉토리 아래에 다음 내용으로 **LiveAudioRun.java** 파일을 생성하세요. 이 도구는 라이브 오디오 입출력으로 에이전트를 실행합니다.
 
 ```java
 
@@ -314,7 +309,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import agents.ScienceTeacherAgent;
 
-/** Main class to demonstrate running the {@link LiveAudioAgent} for a voice conversation. */
+/** 음성 대화를 위해 {@link LiveAudioAgent} 실행을 시연하는 메인 클래스입니다. */
 public final class LiveAudioRun {
   private final String userId;
   private final String sessionId;
@@ -342,7 +337,7 @@ public final class LiveAudioRun {
   }
 
   private void runConversation() throws Exception {
-    System.out.println("Initializing microphone input and speaker output...");
+    System.out.println("마이크 입력 및 스피커 출력 초기화 중...");
 
     RunConfig runConfig =
         RunConfig.builder()
@@ -371,41 +366,41 @@ public final class LiveAudioRun {
     AtomicBoolean conversationEnded = new AtomicBoolean(false);
     ExecutorService executorService = Executors.newFixedThreadPool(2);
 
-    // Task for capturing microphone input
+    // 마이크 입력을 캡처하는 태스크
     Future<?> microphoneTask =
         executorService.submit(() -> captureAndSendMicrophoneAudio(liveRequestQueue, isRunning));
 
-    // Task for processing agent responses and playing audio
+    // 에이전트 응답을 처리하고 오디오를 재생하는 태스크
     Future<?> outputTask =
         executorService.submit(
             () -> {
               try {
                 processAudioOutput(eventStream, isRunning, conversationEnded);
               } catch (Exception e) {
-                System.err.println("Error processing audio output: " + e.getMessage());
+                System.err.println("오디오 출력 처리 오류: " + e.getMessage());
                 e.printStackTrace();
                 isRunning.set(false);
               }
             });
 
-    // Wait for user to press Enter to stop the conversation
-    System.out.println("Conversation started. Press Enter to stop...");
+    // 사용자가 Enter를 눌러 대화를 중지할 때까지 대기
+    System.out.println("대화가 시작되었습니다. 중지하려면 Enter를 누르세요...");
     System.in.read();
 
-    System.out.println("Ending conversation...");
+    System.out.println("대화 종료 중...");
     isRunning.set(false);
 
     try {
-      // Give some time for ongoing processing to complete
+      // 진행 중인 처리가 완료될 시간을 줍니다.
       microphoneTask.get(2, TimeUnit.SECONDS);
       outputTask.get(2, TimeUnit.SECONDS);
     } catch (Exception e) {
-      System.out.println("Stopping tasks...");
+      System.out.println("태스크 중지 중...");
     }
 
     liveRequestQueue.close();
     executorService.shutdownNow();
-    System.out.println("Conversation ended.");
+    System.out.println("대화가 종료되었습니다.");
   }
 
   private void captureAndSendMicrophoneAudio(
@@ -414,7 +409,7 @@ public final class LiveAudioRun {
     try {
       DataLine.Info info = new DataLine.Info(TargetDataLine.class, MIC_AUDIO_FORMAT);
       if (!AudioSystem.isLineSupported(info)) {
-        System.err.println("Microphone line not supported!");
+        System.err.println("마이크 라인이 지원되지 않습니다!");
         return;
       }
 
@@ -422,7 +417,7 @@ public final class LiveAudioRun {
       micLine.open(MIC_AUDIO_FORMAT);
       micLine.start();
 
-      System.out.println("Microphone initialized. Start speaking...");
+      System.out.println("마이크가 초기화되었습니다. 말씀하세요...");
 
       byte[] buffer = new byte[BUFFER_SIZE];
       int bytesRead;
@@ -440,7 +435,7 @@ public final class LiveAudioRun {
         }
       }
     } catch (LineUnavailableException e) {
-      System.err.println("Error accessing microphone: " + e.getMessage());
+      System.err.println("마이크 접근 오류: " + e.getMessage());
       e.printStackTrace();
     } finally {
       if (micLine != null) {
@@ -456,7 +451,7 @@ public final class LiveAudioRun {
     try {
       DataLine.Info info = new DataLine.Info(SourceDataLine.class, SPEAKER_AUDIO_FORMAT);
       if (!AudioSystem.isLineSupported(info)) {
-        System.err.println("Speaker line not supported!");
+        System.err.println("스피커 라인이 지원되지 않습니다!");
         return;
       }
 
@@ -464,7 +459,7 @@ public final class LiveAudioRun {
       finalSpeakerLine.open(SPEAKER_AUDIO_FORMAT);
       finalSpeakerLine.start();
 
-      System.out.println("Speaker initialized.");
+      System.out.println("스피커가 초기화되었습니다.");
 
       for (Event event : eventStream.blockingIterable()) {
         if (!isRunning.get()) {
@@ -473,9 +468,9 @@ public final class LiveAudioRun {
         event.content().ifPresent(content -> content.parts().ifPresent(parts -> parts.forEach(part -> playAudioData(part, finalSpeakerLine))));
       }
 
-      speakerLine = finalSpeakerLine; // Assign to outer variable for cleanup in finally block
+      speakerLine = finalSpeakerLine; // finally 블록에서 정리하기 위해 외부 변수에 할당
     } catch (LineUnavailableException e) {
-      System.err.println("Error accessing speaker: " + e.getMessage());
+      System.err.println("스피커 접근 오류: " + e.getMessage());
       e.printStackTrace();
     } finally {
       if (speakerLine != null) {
@@ -497,7 +492,7 @@ public final class LiveAudioRun {
                         audioBytes -> {
                           if (audioBytes.length > 0) {
                             System.out.printf(
-                                "Playing audio (%s): %d bytes%n",
+                                "오디오 재생 중 (%s): %d 바이트%n",
                                 inlineBlob.mimeType(),
                                 audioBytes.length);
                             speakerLine.write(audioBytes, 0, audioBytes.length);
@@ -525,13 +520,13 @@ public final class LiveAudioRun {
                         audioBytes -> {
                           if (audioBytes.length > 0) {
                             System.out.printf(
-                                "    Audio (%s): received %d bytes.%n",
+                                "    오디오 (%s): %d 바이트 수신.%n",
                                 inlineBlob.mimeType(),
                                 audioBytes.length);
                             audioReceived.set(true);
                           } else {
                             System.out.printf(
-                                "    Audio (%s): received empty audio data.%n",
+                                "    오디오 (%s): 빈 오디오 데이터 수신.%n",
                                 inlineBlob.mimeType());
                           }
                         }));
@@ -540,35 +535,35 @@ public final class LiveAudioRun {
   public static void main(String[] args) throws Exception {
     LiveAudioRun liveAudioRun = new LiveAudioRun();
     liveAudioRun.runConversation();
-    System.out.println("Exiting Live Audio Run.");
+    System.out.println("라이브 오디오 실행 종료.");
   }
 }
 ```
 
-### **Run the Live Audio Run tool**
+### **라이브 오디오 실행 도구 실행하기**
 
-To run Live Audio Run tool, use the following command on the `adk-agents` directory:
+라이브 오디오 실행 도구를 실행하려면, `adk-agents` 디렉토리에서 다음 명령을 사용하세요:
 
 ```
 mvn compile exec:java
 ```
 
-Then you should see:
+그러면 다음 메시지가 표시됩니다:
 
 ```
 $ mvn compile exec:java
 ...
-Initializing microphone input and speaker output...
-Conversation started. Press Enter to stop...
-Speaker initialized.
-Microphone initialized. Start speaking...
+마이크 입력 및 스피커 출력 초기화 중...
+대화가 시작되었습니다. 중지하려면 Enter를 누르세요...
+스피커가 초기화되었습니다.
+마이크가 초기화되었습니다. 말씀하세요...
 ```
 
-With this message, the tool is ready to take voice input. Talk to the agent with a question like `What's the electron?`.
+이 메시지가 표시되면 도구가 음성 입력을 받을 준비가 된 것입니다. `전자가 뭐야?`와 같은 질문으로 에이전트와 대화해보세요.
 
 !!! Caution
-    When you observe the agent keep speaking by itself and doesn't stop, try using earphones to suppress the echoing.
+    에이전트가 혼자 계속 말하고 멈추지 않는 현상이 관찰되면, 이어폰을 사용하여 에코를 억제해 보세요.
 
-## **Summary** {#summary}
+## **요약** {#summary}
 
-Streaming for ADK enables developers to create agents capable of low-latency, bidirectional voice and video communication, enhancing interactive experiences. The article demonstrates that text streaming is a built-in feature of ADK Agents, requiring no additional specific code, while also showcasing how to implement live audio conversations for real-time voice interaction with an agent. This allows for more natural and dynamic communication, as users can speak to and hear from the agent seamlessly.
+ADK용 스트리밍은 개발자가 저지연, 양방향 음성 및 비디오 통신이 가능한 에이전트를 생성하여 대화형 경험을 향상시킬 수 있도록 합니다. 이 글은 텍스트 스트리밍이 추가적인 특정 코드 없이 ADK 에이전트의 내장 기능임을 보여주며, 동시에 에이전트와의 실시간 음성 상호작용을 위한 라이브 오디오 대화를 구현하는 방법을 보여줍니다. 이를 통해 사용자는 에이전트와 원활하게 말하고 들을 수 있으므로 더 자연스럽고 동적인 커뮤니케이션이 가능해집니다.

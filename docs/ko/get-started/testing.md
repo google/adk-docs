@@ -1,8 +1,6 @@
-# Testing your Agents
+# 에이전트 테스트하기
 
-Before you deploy your agent, you should test it to ensure that it is working as
-intended. The easiest way to test your agent in your development environment is
-to use the ADK web UI with the following commands. 
+에이전트를 배포하기 전에 의도한 대로 작동하는지 확인하기 위해 테스트해야 합니다. 개발 환경에서 에이전트를 테스트하는 가장 쉬운 방법은 다음 명령과 함께 ADK 웹 UI를 사용하는 것입니다.
 
 === "Python"
 
@@ -12,34 +10,31 @@ to use the ADK web UI with the following commands.
 
 === "Java"
 
-    Make sure to update the port number.
+    포트 번호를 업데이트해야 합니다.
 
     ```java
     mvn compile exec:java \
          -Dexec.args="--adk.agents.source-dir=src/main/java/agents --server.port=8080"
     ```
-    In Java, both the Dev UI and the API server are bundled together.
+    Java에서는 개발 UI와 API 서버가 함께 번들로 제공됩니다.
 
-This command will launch a local web
-server, where you can run cURL commands or send API requests to test your agent.
+이 명령은 로컬 웹 서버를 시작하며, 여기서 cURL 명령을 실행하거나 API 요청을 보내 에이전트를 테스트할 수 있습니다.
 
-## Local testing
+## 로컬 테스트
 
-Local testing involves launching a local web server, creating a session, and
-sending queries to your agent. First, ensure you are in the correct working
-directory:
+로컬 테스트는 로컬 웹 서버를 시작하고, 세션을 생성하고, 에이전트에 쿼리를 보내는 과정을 포함합니다. 먼저, 올바른 작업 디렉토리에 있는지 확인하세요:
 
 ```console
 parent_folder/
 └── my_sample_agent/
-    └── agent.py (or Agent.java)
+    └── agent.py (또는 Agent.java)
 ```
 
-**Launch the Local Server**
+**로컬 서버 시작**
 
-Next, launch the local server using the commands listed above.
+다음으로, 위에 나열된 명령을 사용하여 로컬 서버를 시작합니다.
 
-The output should appear similar to:
+출력은 다음과 유사하게 나타나야 합니다:
 
 === "Python"
 
@@ -58,12 +53,11 @@ The output should appear similar to:
     2025-05-13T23:32:08.981-06:00  INFO 37864 --- [ebServer.main()] com.google.adk.web.AdkWebServer          : AdkWebServer application started successfully.
     ```
 
-Your server is now running locally. Ensure you use the correct **_port number_** in all the subsequent commands.
+이제 서버가 로컬에서 실행 중입니다. 이후의 모든 명령에서 올바른 **_포트 번호_**를 사용해야 합니다.
 
-**Create a new session**
+**새 세션 만들기**
 
-With the API server still running, open a new terminal window or tab and create
-a new session with the agent using:
+API 서버가 계속 실행 중인 상태에서 새 터미널 창이나 탭을 열고 다음을 사용하여 에이전트와 새 세션을 만듭니다:
 
 ```shell
 curl -X POST http://localhost:8000/apps/my_sample_agent/users/u_123/sessions/s_123 \
@@ -71,20 +65,12 @@ curl -X POST http://localhost:8000/apps/my_sample_agent/users/u_123/sessions/s_1
   -d '{"state": {"key1": "value1", "key2": 42}}'
 ```
 
-Let's break down what's happening:
+무슨 일이 일어나고 있는지 분석해 보겠습니다:
 
-* `http://localhost:8000/apps/my_sample_agent/users/u_123/sessions/s_123`: This
-  creates a new session for your agent `my_sample_agent`, which is the name of
-  the agent folder, for a user ID (`u_123`) and for a session ID (`s_123`). You
-  can replace `my_sample_agent` with the name of your agent folder. You can
-  replace `u_123` with a specific user ID, and `s_123` with a specific session
-  ID.
-* `{"state": {"key1": "value1", "key2": 42}}`: This is optional. You can use
-  this to customize the agent's pre-existing state (dict) when creating the
-  session.
+* `http://localhost:8000/apps/my_sample_agent/users/u_123/sessions/s_123`: 이것은 에이전트 폴더의 이름인 `my_sample_agent` 에이전트에 대해 사용자 ID(`u_123`)와 세션 ID(`s_123`)로 새 세션을 만듭니다. `my_sample_agent`를 에이전트 폴더의 이름으로 바꿀 수 있습니다. `u_123`을 특정 사용자 ID로, `s_123`을 특정 세션 ID로 바꿀 수 있습니다.
+* `{"state": {"key1": "value1", "key2": 42}}`: 이것은 선택 사항입니다. 세션을 만들 때 에이전트의 기존 상태(dict)를 사용자 정의하는 데 사용할 수 있습니다.
 
-This should return the session information if it was created successfully. The
-output should appear similar to:
+성공적으로 생성되면 세션 정보가 반환되어야 합니다. 출력은 다음과 유사하게 나타나야 합니다:
 
 ```shell
 {"id":"s_123","appName":"my_sample_agent","userId":"u_123","state":{"state":{"key1":"value1","key2":42}},"events":[],"lastUpdateTime":1743711430.022186}
@@ -92,25 +78,16 @@ output should appear similar to:
 
 !!! info
 
-    You cannot create multiple sessions with exactly the same user ID and
-    session ID. If you try to, you may see a response, like:
-    `{"detail":"Session already exists: s_123"}`. To fix this, you can either
-    delete that session (e.g., `s_123`), or choose a different session ID.
+    정확히 동일한 사용자 ID와 세션 ID로 여러 세션을 만들 수 없습니다. 시도하면 `{"detail":"Session already exists: s_123"}`와 같은 응답을 볼 수 있습니다. 이 문제를 해결하려면 해당 세션(예: `s_123`)을 삭제하거나 다른 세션 ID를 선택하면 됩니다.
 
-**Send a query**
+**쿼리 보내기**
 
-There are two ways to send queries via POST to your agent, via the `/run` or
-`/run_sse` routes.
+`/run` 또는 `/run_sse` 라우트를 통해 에이전트에 POST로 쿼리를 보내는 두 가지 방법이 있습니다.
 
-* `POST http://localhost:8000/run`: collects all events as a list and returns the
-  list all at once. Suitable for most users (if you are unsure, we recommend
-  using this one).
-* `POST http://localhost:8000/run_sse`: returns as Server-Sent-Events, which is a
-  stream of event objects. Suitable for those who want to be notified as soon as
-  the event is available. With `/run_sse`, you can also set `streaming` to
-  `true` to enable token-level streaming.
+* `POST http://localhost:8000/run`: 모든 이벤트를 목록으로 수집하여 한 번에 반환합니다. 대부분의 사용자에게 적합합니다 (확실하지 않은 경우 이것을 사용하는 것이 좋습니다).
+* `POST http://localhost:8000/run_sse`: 서버 전송 이벤트(Server-Sent-Events)로 반환하며, 이는 이벤트 객체의 스트림입니다. 이벤트가 사용 가능해지는 즉시 알림을 받고 싶은 사람들에게 적합합니다. `/run_sse`를 사용하면 `streaming`을 `true`로 설정하여 토큰 수준 스트리밍을 활성화할 수도 있습니다.
 
-**Using `/run`**
+**`/run` 사용하기**
 
 ```shell
 curl -X POST http://localhost:8000/run \
@@ -128,14 +105,13 @@ curl -X POST http://localhost:8000/run \
 }'
 ```
 
-If using `/run`, you will see the full output of events at the same time, as a
-list, which should appear similar to:
+`/run`을 사용하면 전체 이벤트 출력을 목록으로 동시에 볼 수 있으며, 다음과 유사하게 나타나야 합니다:
 
 ```shell
 [{"content":{"parts":[{"functionCall":{"id":"af-e75e946d-c02a-4aad-931e-49e4ab859838","args":{"city":"new york"},"name":"get_weather"}}],"role":"model"},"invocationId":"e-71353f1e-aea1-4821-aa4b-46874a766853","author":"weather_time_agent","actions":{"stateDelta":{},"artifactDelta":{},"requestedAuthConfigs":{}},"longRunningToolIds":[],"id":"2Btee6zW","timestamp":1743712220.385936},{"content":{"parts":[{"functionResponse":{"id":"af-e75e946d-c02a-4aad-931e-49e4ab859838","name":"get_weather","response":{"status":"success","report":"The weather in New York is sunny with a temperature of 25 degrees Celsius (41 degrees Fahrenheit)."}}}],"role":"user"},"invocationId":"e-71353f1e-aea1-4821-aa4b-46874a766853","author":"weather_time_agent","actions":{"stateDelta":{},"artifactDelta":{},"requestedAuthConfigs":{}},"id":"PmWibL2m","timestamp":1743712221.895042},{"content":{"parts":[{"text":"OK. The weather in New York is sunny with a temperature of 25 degrees Celsius (41 degrees Fahrenheit).\n"}],"role":"model"},"invocationId":"e-71353f1e-aea1-4821-aa4b-46874a766853","author":"weather_time_agent","actions":{"stateDelta":{},"artifactDelta":{},"requestedAuthConfigs":{}},"id":"sYT42eVC","timestamp":1743712221.899018}]
 ```
 
-**Using `/run_sse`**
+**`/run_sse` 사용하기**
 
 ```shell
 curl -X POST http://localhost:8000/run_sse \
@@ -154,10 +130,7 @@ curl -X POST http://localhost:8000/run_sse \
 }'
 ```
 
-You can set `streaming` to `true` to enable token-level streaming, which means
-the response will be returned to you in multiple chunks and the output should
-appear similar to:
-
+`streaming`을 `true`로 설정하여 토큰 수준 스트리밍을 활성화할 수 있습니다. 즉, 응답이 여러 청크로 반환되며 출력은 다음과 유사하게 나타나야 합니다:
 
 ```shell
 data: {"content":{"parts":[{"functionCall":{"id":"af-f83f8af9-f732-46b6-8cb5-7b5b73bbf13d","args":{"city":"new york"},"name":"get_weather"}}],"role":"model"},"invocationId":"e-3f6d7765-5287-419e-9991-5fffa1a75565","author":"weather_time_agent","actions":{"stateDelta":{},"artifactDelta":{},"requestedAuthConfigs":{}},"longRunningToolIds":[],"id":"ptcjaZBa","timestamp":1743712255.313043}
@@ -169,27 +142,17 @@ data: {"content":{"parts":[{"text":"OK. The weather in New York is sunny with a 
 
 !!! info
 
-    If you are using `/run_sse`, you should see each event as soon as it becomes
-    available.
+    `/run_sse`를 사용하면 각 이벤트를 사용할 수 있게 되는 즉시 볼 수 있어야 합니다.
 
-## Integrations
+## 통합
 
-ADK uses [Callbacks](../callbacks/index.md) to integrate with third-party
-observability tools. These integrations capture detailed traces of agent calls
-and interactions, which are crucial for understanding behavior, debugging
-issues, and evaluating performance.
+ADK는 [콜백](../callbacks/index.md)을 사용하여 타사 관찰 가능성 도구와 통합합니다. 이러한 통합은 에이전트 호출 및 상호 작용의 상세한 추적을 캡처하며, 이는 동작을 이해하고 문제를 디버깅하며 성능을 평가하는 데 중요합니다.
 
-* [Comet Opik](https://github.com/comet-ml/opik) is an open-source LLM
-  observability and evaluation platform that
-  [natively supports ADK](https://www.comet.com/docs/opik/tracing/integrations/adk).
+*   [Comet Opik](https://github.com/comet-ml/opik)은 [ADK를 기본적으로 지원](https://www.comet.com/docs/opik/tracing/integrations/adk)하는 오픈 소스 LLM 관찰 가능성 및 평가 플랫폼입니다.
 
-## Deploying your agent
+## 에이전트 배포
 
-Now that you've verified the local operation of your agent, you're ready to move
-on to deploying your agent! Here are some ways you can deploy your agent:
+이제 에이전트의 로컬 작동을 확인했으므로 에이전트 배포로 넘어갈 준비가 되었습니다! 에이전트를 배포할 수 있는 몇 가지 방법은 다음과 같습니다.
 
-* Deploy to [Agent Engine](../deploy/agent-engine.md), the easiest way to deploy
-  your ADK agents to a managed service in Vertex AI on Google Cloud.
-* Deploy to [Cloud Run](../deploy/cloud-run.md) and have full control over how
-  you scale and manage your agents using serverless architecture on Google
-  Cloud.
+*   [Agent Engine](../deploy/agent-engine.md)에 배포하여 Google Cloud의 Vertex AI에서 관리형 서비스로 ADK 에이전트를 가장 쉽게 배포하세요.
+*   [Cloud Run](../deploy/cloud-run.md)에 배포하여 Google Cloud의 서버리스 아키텍처를 사용하여 에이전트를 확장하고 관리하는 방법을 완전히 제어하세요.
