@@ -1,58 +1,55 @@
-# Get Started
+# はじめに
 
-Agent Development Kit (ADK) is designed to empower developers
-to build, manage, evaluate and deploy AI-powered agents. It provides a robust
-and flexible environment for creating both conversational and non-conversational
-agents, capable of handling complex tasks and workflows.
+Agent Development Kit (ADK) は、開発者がAI搭載エージェントを構築、管理、評価、デプロイできるように設計されています。複雑なタスクやワークフローを処理できる、対話型および非対話型の両方のエージェントを作成するための、堅牢で柔軟な環境を提供します。
 
 <div class="grid cards" markdown>
 
--   :material-console-line: **Installation**
+-   :material-console-line: **インストール**
 
     ---
 
-    Install `google-adk` for Python or Java and get up and running in minutes.
+    PythonまたはJava用の`google-adk`をインストールし、数分でセットアップを完了します。
 
-    [:octicons-arrow-right-24: More information](installation.md)
+    [:octicons-arrow-right-24: 詳細はこちら](installation.md)
 
--   :material-console-line: **Quickstart**
-
-    ---
-
-    Create your first ADK agent with tools in minutes.
-
-    [:octicons-arrow-right-24: More information](quickstart.md)
-
--   :material-console-line: **Quickstart (streaming)**
+-   :material-console-line: **クイックスタート**
 
     ---
 
-    Create your first streaming ADK agent.
+    ツールを備えた初めてのADKエージェントを数分で作成します。
 
-    [:octicons-arrow-right-24: More information](streaming/quickstart-streaming.md)
+    [:octicons-arrow-right-24: 詳細はこちら](quickstart.md)
 
--   :material-console-line: **Tutorial**
-
-    ---
-
-    Create your first ADK multi-agent.
-
-    [:octicons-arrow-right-24: More information](../tutorials/index.md)
-
--   :material-rocket-launch-outline: **Discover sample agents**
+-   :material-console-line: **クイックスタート（ストリーミング）**
 
     ---
 
-    Discover sample agents for retail, travel, customer service, and more!
+    初めてのストリーミングADKエージェントを作成します。
 
-    [:octicons-arrow-right-24: Discover adk-samples](https://github.com/google/adk-samples){:target="_blank"}
+    [:octicons-arrow-right-24: 詳細はこちら](streaming/quickstart-streaming.md)
 
--   :material-graph: **About**
+-   :material-console-line: **チュートリアル**
 
     ---
 
-    Learn about the key components of building and deploying ADK agents.
+    初めてのADKマルチエージェントを作成します。
 
-    [:octicons-arrow-right-24: More information](about.md)
+    [:octicons-arrow-right-24: 詳細はこちら](../tutorials/index.md)
+
+-   :material-rocket-launch-outline: **サンプルエージェントを探す**
+
+    ---
+
+    小売、旅行、顧客サービスなどのサンプルエージェントをご覧ください！
+
+    [:octicons-arrow-right-24: adk-samplesを探す](https://github.com/google/adk-samples){:target="_blank"}
+
+-   :material-graph: **概要**
+
+    ---
+
+    ADKエージェントの構築とデプロイの主要コンポーネントについて学びます。
+
+    [:octicons-arrow-right-24: 詳細はこちら](about.md)
 
 </div>

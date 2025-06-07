@@ -1,8 +1,6 @@
-# Testing your Agents
+# エージェントのテスト
 
-Before you deploy your agent, you should test it to ensure that it is working as
-intended. The easiest way to test your agent in your development environment is
-to use the ADK web UI with the following commands. 
+エージェントをデプロイする前に、意図したとおりに動作するかどうかをテストする必要があります。開発環境でエージェントをテストする最も簡単な方法は、以下のコマンドでADK Web UIを使用することです。
 
 === "Python"
 
@@ -12,39 +10,36 @@ to use the ADK web UI with the following commands.
 
 === "Java"
 
-    Make sure to update the port number.
+    ポート番号を更新してください。
 
     ```java
     mvn compile exec:java \
          -Dexec.args="--adk.agents.source-dir=src/main/java/agents --server.port=8080"
     ```
-    In Java, both the Dev UI and the API server are bundled together.
+    Javaでは、開発UIとAPIサーバーの両方がバンドルされています。
 
-This command will launch a local web
-server, where you can run cURL commands or send API requests to test your agent.
+このコマンドはローカルのWebサーバーを起動し、そこでcURLコマンドを実行したり、APIリクエストを送信してエージェントをテストしたりできます。
 
-## Local testing
+## ローカルテスト
 
-Local testing involves launching a local web server, creating a session, and
-sending queries to your agent. First, ensure you are in the correct working
-directory:
+ローカルテストでは、ローカルのWebサーバーを起動し、セッションを作成し、エージェントにクエリを送信します。まず、正しい作業ディレクトリにいることを確認してください：
 
 ```console
 parent_folder/
 └── my_sample_agent/
-    └── agent.py (or Agent.java)
+    └── agent.py (または Agent.java)
 ```
 
-**Launch the Local Server**
+**ローカルサーバーの起動**
 
-Next, launch the local server using the commands listed above.
+次に、上記のコマンドを使用してローカルサーバーを起動します。
 
-The output should appear similar to:
+出力は次のようになります：
 
 === "Python"
 
     ```shell
-    INFO:     Started server process [12345]
+    INFO:     Started server process
     INFO:     Waiting for application startup.
     INFO:     Application startup complete.
     INFO:     Uvicorn running on http://localhost:8000 (Press CTRL+C to quit)
@@ -58,12 +53,11 @@ The output should appear similar to:
     2025-05-13T23:32:08.981-06:00  INFO 37864 --- [ebServer.main()] com.google.adk.web.AdkWebServer          : AdkWebServer application started successfully.
     ```
 
-Your server is now running locally. Ensure you use the correct **_port number_** in all the subsequent commands.
+これでサーバーがローカルで実行されています。後続のすべてのコマンドで正しい**_ポート番号_**を使用してください。
 
-**Create a new session**
+**新しいセッションの作成**
 
-With the API server still running, open a new terminal window or tab and create
-a new session with the agent using:
+APIサーバーが実行中のまま、新しいターミナルウィンドウまたはタブを開き、以下のコマンドを使用してエージェントとの新しいセッションを作成します：
 
 ```shell
 curl -X POST http://localhost:8000/apps/my_sample_agent/users/u_123/sessions/s_123 \
@@ -71,20 +65,12 @@ curl -X POST http://localhost:8000/apps/my_sample_agent/users/u_123/sessions/s_1
   -d '{"state": {"key1": "value1", "key2": 42}}'
 ```
 
-Let's break down what's happening:
+何が起きているか分解してみましょう：
 
-* `http://localhost:8000/apps/my_sample_agent/users/u_123/sessions/s_123`: This
-  creates a new session for your agent `my_sample_agent`, which is the name of
-  the agent folder, for a user ID (`u_123`) and for a session ID (`s_123`). You
-  can replace `my_sample_agent` with the name of your agent folder. You can
-  replace `u_123` with a specific user ID, and `s_123` with a specific session
-  ID.
-* `{"state": {"key1": "value1", "key2": 42}}`: This is optional. You can use
-  this to customize the agent's pre-existing state (dict) when creating the
-  session.
+*   `http://localhost:8000/apps/my_sample_agent/users/u_123/sessions/s_123`: これは、エージェントフォルダの名前である`my_sample_agent`エージェントに対して、ユーザーID（`u_123`）とセッションID（`s_123`）で新しいセッションを作成します。`my_sample_agent`をあなたのエージェントフォルダの名前に置き換えることができます。`u_123`を特定のユーザーIDに、`s_123`を特定のセッションIDに置き換えることができます。
+*   `{"state": {"key1": "value1", "key2": 42}}`: これはオプションです。これを使用して、セッション作成時にエージェントの既存の状態（dict）をカスタマイズできます。
 
-This should return the session information if it was created successfully. The
-output should appear similar to:
+これが正常に作成された場合、セッション情報が返されます。出力は次のようになります：
 
 ```shell
 {"id":"s_123","appName":"my_sample_agent","userId":"u_123","state":{"state":{"key1":"value1","key2":42}},"events":[],"lastUpdateTime":1743711430.022186}
@@ -92,25 +78,16 @@ output should appear similar to:
 
 !!! info
 
-    You cannot create multiple sessions with exactly the same user ID and
-    session ID. If you try to, you may see a response, like:
-    `{"detail":"Session already exists: s_123"}`. To fix this, you can either
-    delete that session (e.g., `s_123`), or choose a different session ID.
+    まったく同じユーザーIDとセッションIDで複数のセッションを作成することはできません。試みると、`{"detail":"Session already exists: s_123"}`のような応答が表示される場合があります。これを修正するには、そのセッション（例：`s_123`）を削除するか、別のセッションIDを選択します。
 
-**Send a query**
+**クエリの送信**
 
-There are two ways to send queries via POST to your agent, via the `/run` or
-`/run_sse` routes.
+エージェントにPOST経由でクエリを送信するには、`/run`または`/run_sse`の2つのルートがあります。
 
-* `POST http://localhost:8000/run`: collects all events as a list and returns the
-  list all at once. Suitable for most users (if you are unsure, we recommend
-  using this one).
-* `POST http://localhost:8000/run_sse`: returns as Server-Sent-Events, which is a
-  stream of event objects. Suitable for those who want to be notified as soon as
-  the event is available. With `/run_sse`, you can also set `streaming` to
-  `true` to enable token-level streaming.
+*   `POST http://localhost:8000/run`: すべてのイベントをリストとして収集し、一度にリスト全体を返します。ほとんどのユーザーに適しています（どちらを使えばいいかわからない場合は、こちらを使用することをお勧めします）。
+*   `POST http://localhost:8000/run_sse`: サーバー送信イベント（Server-Sent-Events）として、イベントオブジェクトのストリームを返します。イベントが利用可能になり次第通知を受けたい場合に適しています。`/run_sse`では、`streaming`を`true`に設定してトークンレベルのストリーミングを有効にすることもできます。
 
-**Using `/run`**
+**`/run`の使用**
 
 ```shell
 curl -X POST http://localhost:8000/run \
@@ -128,14 +105,13 @@ curl -X POST http://localhost:8000/run \
 }'
 ```
 
-If using `/run`, you will see the full output of events at the same time, as a
-list, which should appear similar to:
+`/run`を使用すると、イベントの完全な出力がリストとして同時に表示されます。これは次のようになります：
 
 ```shell
 [{"content":{"parts":[{"functionCall":{"id":"af-e75e946d-c02a-4aad-931e-49e4ab859838","args":{"city":"new york"},"name":"get_weather"}}],"role":"model"},"invocationId":"e-71353f1e-aea1-4821-aa4b-46874a766853","author":"weather_time_agent","actions":{"stateDelta":{},"artifactDelta":{},"requestedAuthConfigs":{}},"longRunningToolIds":[],"id":"2Btee6zW","timestamp":1743712220.385936},{"content":{"parts":[{"functionResponse":{"id":"af-e75e946d-c02a-4aad-931e-49e4ab859838","name":"get_weather","response":{"status":"success","report":"The weather in New York is sunny with a temperature of 25 degrees Celsius (41 degrees Fahrenheit)."}}}],"role":"user"},"invocationId":"e-71353f1e-aea1-4821-aa4b-46874a766853","author":"weather_time_agent","actions":{"stateDelta":{},"artifactDelta":{},"requestedAuthConfigs":{}},"id":"PmWibL2m","timestamp":1743712221.895042},{"content":{"parts":[{"text":"OK. The weather in New York is sunny with a temperature of 25 degrees Celsius (41 degrees Fahrenheit).\n"}],"role":"model"},"invocationId":"e-71353f1e-aea1-4821-aa4b-46874a766853","author":"weather_time_agent","actions":{"stateDelta":{},"artifactDelta":{},"requestedAuthConfigs":{}},"id":"sYT42eVC","timestamp":1743712221.899018}]
 ```
 
-**Using `/run_sse`**
+**`/run_sse`の使用**
 
 ```shell
 curl -X POST http://localhost:8000/run_sse \
@@ -154,10 +130,7 @@ curl -X POST http://localhost:8000/run_sse \
 }'
 ```
 
-You can set `streaming` to `true` to enable token-level streaming, which means
-the response will be returned to you in multiple chunks and the output should
-appear similar to:
-
+`streaming`を`true`に設定してトークンレベルのストリーミングを有効にすると、応答が複数のチャンクで返され、出力は次のようになります：
 
 ```shell
 data: {"content":{"parts":[{"functionCall":{"id":"af-f83f8af9-f732-46b6-8cb5-7b5b73bbf13d","args":{"city":"new york"},"name":"get_weather"}}],"role":"model"},"invocationId":"e-3f6d7765-5287-419e-9991-5fffa1a75565","author":"weather_time_agent","actions":{"stateDelta":{},"artifactDelta":{},"requestedAuthConfigs":{}},"longRunningToolIds":[],"id":"ptcjaZBa","timestamp":1743712255.313043}
@@ -169,27 +142,17 @@ data: {"content":{"parts":[{"text":"OK. The weather in New York is sunny with a 
 
 !!! info
 
-    If you are using `/run_sse`, you should see each event as soon as it becomes
-    available.
+    `/run_sse`を使用している場合、各イベントが利用可能になり次第表示されるはずです。
 
-## Integrations
+## 統合
 
-ADK uses [Callbacks](../callbacks/index.md) to integrate with third-party
-observability tools. These integrations capture detailed traces of agent calls
-and interactions, which are crucial for understanding behavior, debugging
-issues, and evaluating performance.
+ADKは、[コールバック](../callbacks/index.md)を使用してサードパーティの可観測性ツールと統合します。これらの統合は、エージェントの呼び出しと対話の詳細なトレースをキャプチャし、これは振る舞いの理解、問題のデバッグ、パフォーマンスの評価に不可欠です。
 
-* [Comet Opik](https://github.com/comet-ml/opik) is an open-source LLM
-  observability and evaluation platform that
-  [natively supports ADK](https://www.comet.com/docs/opik/tracing/integrations/adk).
+*   [Comet Opik](https://github.com/comet-ml/opik)は、[ADKをネイティブにサポート](https://www.comet.com/docs/opik/tracing/integrations/adk)するオープンソースのLLM可観測性および評価プラットフォームです。
 
-## Deploying your agent
+## エージェントのデプロイ
 
-Now that you've verified the local operation of your agent, you're ready to move
-on to deploying your agent! Here are some ways you can deploy your agent:
+エージェントのローカルでの動作を確認したら、エージェントのデプロイに進む準備が整いました！エージェントをデプロイするには、いくつかの方法があります：
 
-* Deploy to [Agent Engine](../deploy/agent-engine.md), the easiest way to deploy
-  your ADK agents to a managed service in Vertex AI on Google Cloud.
-* Deploy to [Cloud Run](../deploy/cloud-run.md) and have full control over how
-  you scale and manage your agents using serverless architecture on Google
-  Cloud.
+*   [Agent Engine](../deploy/agent-engine.md)にデプロイする。これは、Google Cloud上のVertex AIのマネージドサービスにADKエージェントをデプロイする最も簡単な方法です。
+*   [Cloud Run](../deploy/cloud-run.md)にデプロイし、Google Cloud上のサーバーレスアーキテクチャを使用してエージェントのスケーリングと管理を完全に制御します。

@@ -1,18 +1,16 @@
-# Installing ADK
+# ADKのインストール
 
 === "Python"
 
-    ## Create & activate virtual environment
+    ## 仮想環境の作成と有効化
     
-    We recommend creating a virtual Python environment using
-    [venv](https://docs.python.org/3/library/venv.html):
+    [venv](https://docs.python.org/3/library/venv.html) を使用してPythonの仮想環境を作成することをお勧めします：
     
     ```shell
     python -m venv .venv
     ```
     
-    Now, you can activate the virtual environment using the appropriate command for
-    your operating system and environment:
+    次に、お使いのオペレーティングシステムと環境に応じた適切なコマンドを使用して、仮想環境を有効化します：
     
     ```
     # Mac / Linux
@@ -25,13 +23,13 @@
     .venv\Scripts\Activate.ps1
     ```
 
-    ### Install ADK
+    ### ADKのインストール
     
     ```bash
     pip install google-adk
     ```
     
-    (Optional) Verify your installation:
+    （オプション）インストールの確認：
     
     ```bash
     pip show google-adk
@@ -39,23 +37,22 @@
 
 === "Java"
 
-    You can either use maven or gradle to add the `google-adk` and `google-adk-dev` package.
+    MavenまたはGradleのいずれかを使用して、`google-adk`および`google-adk-dev`パッケージを追加できます。
 
-    `google-adk` is the core Java ADK library. Java ADK also comes with a pluggable example SpringBoot server to run your agents seamlessly. This optional
-    package is present as part of `google-adk-dev`.
+    `google-adk`はJava ADKのコアライブラリです。Java ADKには、エージェントをシームレスに実行するためのプラグイン可能なサンプルSpringBootサーバーも付属しています。このオプションのパッケージは`google-adk-dev`の一部として提供されています。
     
-    If you are using maven, add the following to your `pom.xml`:
+    Mavenを使用している場合は、`pom.xml`に以下を追加してください：
 
     ```xml title="pom.xml"
     <dependencies>
-      <!-- The ADK Core dependency -->
+      <!-- ADKコアの依存関係 -->
       <dependency>
         <groupId>com.google.adk</groupId>
         <artifactId>google-adk</artifactId>
         <version>0.1.0</version>
       </dependency>
       
-      <!-- The ADK Dev Web UI to debug your agent (Optional) -->
+      <!-- エージェントをデバッグするためのADK Dev Web UI（オプション） -->
       <dependency>
         <groupId>com.google.adk</groupId>
         <artifactId>google-adk-dev</artifactId>
@@ -64,9 +61,9 @@
     </dependencies>
     ```
 
-    Here's a [complete pom.xml](https://github.com/google/adk-docs/tree/main/examples/java/cloud-run/pom.xml) file for reference.
+    参考として、[完全なpom.xml](https://github.com/google/adk-docs/tree/main/examples/java/cloud-run/pom.xml)ファイルはこちらです。
 
-    If you are using gradle, add the dependency to your build.gradle:
+    Gradleを使用している場合は、`build.gradle`に依存関係を追加してください：
 
     ```title="build.gradle"
     dependencies {
@@ -75,7 +72,6 @@
     }
     ```
 
+## 次のステップ
 
-## Next steps
-
-* Try creating your first agent with the [**Quickstart**](quickstart.md)
+*   [**クイックスタート**](quickstart.md)で初めてのエージェントを作成してみましょう。

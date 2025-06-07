@@ -1,103 +1,46 @@
 # Agent Development Kit (ADK)
 
-<p style="text-align:center;"> <b> Build, Evaluate and Deploy agents, seamlessly! </b> </p>
+<p style="text-align:center;"> <b> エージェントの構築、評価、デプロイをシームレスに！ </b> </p>
 
-ADK is designed to empower developers
-to build, manage, evaluate and deploy AI-powered agents. It provides a robust
-and flexible environment for creating both conversational and non-conversational
-agents, capable of handling complex tasks and workflows.
+ADKは、開発者がAI搭載エージェントを構築、管理、評価、デプロイできるように設計されています。複雑なタスクやワークフローを処理できる、対話型および非対話型の両方のエージェントを作成するための、堅牢で柔軟な環境を提供します。
 
 ![intro_components.png](../assets/adk-components.png)
 
-## Core Concepts
+## コアコンセプト
 
-ADK is built around a few key primitives and concepts that make it
-powerful and flexible. Here are the essentials:
+ADKは、それを強力かつ柔軟にするいくつかの主要なプリミティブとコンセプトを中心に構築されています。以下はその要点です：
 
-* **Agent:** The fundamental worker unit designed for specific tasks. Agents can
-  use language models (`LlmAgent`) for complex reasoning, or act as deterministic controllers of the execution, which are called "[workflow agents](../agents/workflow-agents/index.md)" (`SequentialAgent`, `ParallelAgent`, `LoopAgent`).
-* **Tool:** Gives agents abilities beyond conversation, letting them interact
-  with external APIs, search information, run code, or call other services.
-* **Callbacks:** Custom code snippets you provide to run at specific points in
-  the agent's process, allowing for checks, logging, or behavior modifications.
-* **Session Management (`Session` & `State`):** Handles the context of a single
-  conversation (`Session`), including its history (`Events`) and the agent's
-  working memory for that conversation (`State`).
-* **Memory:** Enables agents to recall information about a user across
-  *multiple* sessions, providing long-term context (distinct from short-term
-  session `State`).
-* **Artifact Management (`Artifact`):** Allows agents to save, load, and manage
-  files or binary data (like images, PDFs) associated with a session or user.
-* **Code Execution:** The ability for agents (usually via Tools) to generate and
-  execute code to perform complex calculations or actions.
-* **Planning:** An advanced capability where agents can break down complex goals
-  into smaller steps and plan how to achieve them like a ReAct planner.
-* **Models:** The underlying LLM that powers `LlmAgent`s, enabling their
-  reasoning and language understanding abilities.
-* **Event:** The basic unit of communication representing things that happen
-  during a session (user message, agent reply, tool use), forming the
-  conversation history.
-* **Runner:** The engine that manages the execution flow, orchestrates agent
-  interactions based on Events, and coordinates with backend services.
+*   **エージェント (Agent):** 特定のタスクのために設計された基本的な作業単位。エージェントは、複雑な推論のために言語モデル（`LlmAgent`）を使用することも、実行を決定論的に制御するコントローラーとして機能すること（これらは「[ワークフローエージェント](../agents/workflow-agents/index.md)」と呼ばれます：`SequentialAgent`, `ParallelAgent`, `LoopAgent`）もできます。
+*   **ツール (Tool):** エージェントに会話以上の能力を与え、外部APIとの対話、情報の検索、コードの実行、または他のサービスの呼び出しを可能にします。
+*   **コールバック (Callbacks):** エージェントのプロセスの特定の時点で実行するために提供するカスタムコードスニペットで、チェック、ロギング、または振る舞いの変更を可能にします。
+*   **セッション管理 (`Session` & `State`):** 単一の会話のコンテキスト（`Session`）を処理します。これには、その履歴（`Events`）とその会話におけるエージェントの作業メモリ（`State`）が含まれます。
+*   **メモリ (Memory):** エージェントが*複数*のセッションにわたってユーザーに関する情報を思い出すことを可能にし、長期的なコンテキストを提供します（短期的なセッションの`State`とは異なります）。
+*   **アーティファクト管理 (`Artifact`):** エージェントがセッションやユーザーに関連付けられたファイルやバイナリデータ（画像、PDFなど）を保存、読み込み、管理できるようにします。
+*   **コード実行 (Code Execution):** エージェントが（通常はツールを介して）複雑な計算やアクションを実行するためにコードを生成し、実行する能力。
+*   **プランニング (Planning):** エージェントが複雑な目標をより小さなステップに分解し、ReActプランナーのようにそれらを達成する方法を計画できる高度な機能。
+*   **モデル (Models):** `LlmAgent`を動かす基盤となるLLMで、その推論と言語理解能力を可能にします。
+*   **イベント (Event):** セッション中に発生する事象（ユーザーメッセージ、エージェントの返信、ツールの使用）を表す基本的な通信単位で、会話の履歴を形成します。
+*   **ランナー (Runner):** 実行フローを管理し、イベントに基づいてエージェントの対話を調整し、バックエンドサービスと連携するエンジン。
 
-***Note:** Features like Multimodal Streaming, Evaluation, Deployment,
-Debugging, and Trace are also part of the broader ADK ecosystem, supporting
-real-time interaction and the development lifecycle.*
+***注意：** Multimodal Streaming、評価、デプロイ、デバッグ、トレースなどの機能も、リアルタイムの対話と開発ライフサイクルをサポートする、より広範なADKエコシステムの一部です。*
 
-## Key Capabilities
+## 主要な機能
 
-ADK offers several key advantages for developers building
-agentic applications:
+ADKは、エージェントアプリケーションを構築する開発者にいくつかの主要な利点を提供します：
 
-1. **Multi-Agent System Design:** Easily build applications composed of
-   multiple, specialized agents arranged hierarchically. Agents can coordinate
-   complex tasks, delegate sub-tasks using LLM-driven transfer or explicit
-   `AgentTool` invocation, enabling modular and scalable solutions.
-2. **Rich Tool Ecosystem:** Equip agents with diverse capabilities. ADK
-   supports integrating custom functions (`FunctionTool`), using other agents as
-   tools (`AgentTool`), leveraging built-in functionalities like code execution,
-   and interacting with external data sources and APIs (e.g., Search,
-   Databases). Support for long-running tools allows handling asynchronous
-   operations effectively.
-3. **Flexible Orchestration:** Define complex agent workflows using built-in
-   workflow agents (`SequentialAgent`, `ParallelAgent`, `LoopAgent`) alongside
-   LLM-driven dynamic routing. This allows for both predictable pipelines and
-   adaptive agent behavior.
-4. **Integrated Developer Tooling:** Develop and iterate locally with ease.
-   ADK includes tools like a command-line interface (CLI) and a Developer
-   UI for running agents, inspecting execution steps (events, state changes),
-   debugging interactions, and visualizing agent definitions.
-5. **Native Streaming Support:** Build real-time, interactive experiences with
-   native support for bidirectional streaming (text and audio). This integrates
-   seamlessly with underlying capabilities like the
-   [Multimodal Live API for the Gemini Developer API](https://ai.google.dev/gemini-api/docs/live)
-   (or for
-   [Vertex AI](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/multimodal-live)),
-   often enabled with simple configuration changes.
-6. **Built-in Agent Evaluation:** Assess agent performance systematically. The
-   framework includes tools to create multi-turn evaluation datasets and run
-   evaluations locally (via CLI or the dev UI) to measure quality and
-   guide improvements.
-7. **Broad LLM Support:** While optimized for Google's Gemini models, the
-   framework is designed for flexibility, allowing integration with various LLMs
-   (potentially including open-source or fine-tuned models) through its
-   `BaseLlm` interface.
-8. **Artifact Management:** Enable agents to handle files and binary data. The
-   framework provides mechanisms (`ArtifactService`, context methods) for agents
-   to save, load, and manage versioned artifacts like images, documents, or
-   generated reports during their execution.
-9. **Extensibility and Interoperability:** ADK promotes an open
-   ecosystem. While providing core tools, it allows developers to easily
-   integrate and reuse tools from other popular agent frameworks including
-   LangChain and CrewAI.
-10. **State and Memory Management:** Automatically handles short-term
-    conversational memory (`State` within a `Session`) managed by the
-    `SessionService`. Provides integration points for longer-term `Memory`
-    services, allowing agents to recall user information across multiple
-    sessions.
+1.  **マルチエージェントシステムの設計：** 階層的に配置された複数の専門エージェントで構成されるアプリケーションを簡単に構築できます。エージェントは複雑なタスクを調整し、LLM駆動の転送や明示的な`AgentTool`呼び出しを使用してサブタスクを委任し、モジュール式でスケーラブルなソリューションを可能にします。
+2.  **豊富なツールエコシステム：** エージェントに多様な機能を持たせます。ADKは、カスタム関数（`FunctionTool`）の統合、他のエージェントをツールとして使用すること（`AgentTool`）、コード実行のような組み込み機能の活用、および外部データソースやAPI（例：検索、データベース）との対話をサポートします。長時間実行ツールへの対応により、非同期操作を効果的に処理できます。
+3.  **柔軟なオーケストレーション：** 組み込みのワークフローエージェント（`SequentialAgent`、`ParallelAgent`、`LoopAgent`）とLLM駆動の動的ルーティングを組み合わせて、複雑なエージェントのワークフローを定義します。これにより、予測可能なパイプラインと適応的なエージェントの振る舞いの両方が可能になります。
+4.  **統合された開発者向けツール：** ローカルで簡単に開発とイテレーションを行います。ADKには、エージェントの実行、実行ステップ（イベント、状態変更）の検査、対話のデバッグ、エージェント定義の視覚化のためのコマンドラインインターフェース（CLI）や開発者UIなどのツールが含まれています。
+5.  **ネイティブストリーミングサポート：** 双方向ストリーミング（テキストと音声）のネイティブサポートにより、リアルタイムでインタラクティブな体験を構築します。これは、[Gemini Developer APIのMultimodal Live API](https://ai.google.dev/gemini-api/docs/live)（または[Vertex AI](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/multimodal-live)用）のような基盤となる機能とシームレスに統合され、多くの場合、簡単な設定変更で有効になります。
+6.  **組み込みのエージェント評価：** エージェントのパフォーマンスを体系的に評価します。フレームワークには、複数ターンの評価データセットを作成し、品質を測定し改善を導くためにローカルで（CLIまたは開発UI経由で）評価を実行するツールが含まれています。
+7.  **広範なLLMサポート：** GoogleのGeminiモデルに最適化されていますが、フレームワークは柔軟に設計されており、`BaseLlm`インターフェースを通じてさまざまなLLM（オープンソースやファインチューニングされたモデルを含む可能性がある）との統合が可能です。
+8.  **アーティファクト管理：** エージェントがファイルやバイナリデータを扱えるようにします。フレームワークは、エージェントが実行中に画像、ドキュメント、生成されたレポートなどのバージョン管理されたアーティファクトを保存、読み込み、管理するためのメカニズム（`ArtifactService`、コンテキストメソッド）を提供します。
+9.  **拡張性と相互運用性：** ADKはオープンなエコシステムを推進します。コアツールを提供しつつ、LangChainやCrewAIを含む他の人気のあるエージェントフレームワークからのツールを開発者が簡単に統合し、再利用できるようにします。
+10. **状態とメモリの管理：** `SessionService`によって管理される、`Session`内の短期的な会話メモリ（`State`）を自動的に処理します。より長期的な`Memory`サービスのための統合ポイントを提供し、エージェントが複数のセッションにわたってユーザー情報を思い出すことを可能にします。
 
 ![intro_components.png](../assets/adk-lifecycle.png)
 
-## Get Started
+## はじめに
 
-* Ready to build your first agent? [Try the quickstart](./quickstart.md)
+*   初めてのエージェントを構築する準備はできましたか？ [クイックスタートをお試しください](./quickstart.md)

@@ -1,30 +1,27 @@
-# Quickstart
+# クイックスタート
 
-This quickstart guides you through installing the Agent Development Kit (ADK),
-setting up a basic agent with multiple tools, and running it locally either in the terminal or in the interactive, browser-based dev UI.
+このクイックスタートでは、Agent Development Kit (ADK) のインストール、複数のツールを持つ基本的なエージェントのセットアップ、そしてターミナルまたは対話型のブラウザベース開発UIでローカルに実行する方法を説明します。
 
 <!-- <img src="../../assets/quickstart.png" alt="Quickstart setup"> -->
 
-This quickstart assumes a local IDE (VS Code, PyCharm, IntelliJ IDEA, etc.)
-with Python 3.9+ or Java 17+ and terminal access. This method runs the
-application entirely on your machine and is recommended for internal development.
+このクイックスタートは、Python 3.9以上またはJava 17以上とターミナルアクセスが可能なローカルIDE（VS Code、PyCharm、IntelliJ IDEAなど）を前提としています。この方法は、アプリケーションを完全にあなたのマシン上で実行し、内部開発に推奨されます。
 
-## 1. Set up Environment & Install ADK {#venv-install}
+## 1. 環境のセットアップとADKのインストール {#venv-install}
 
 === "Python"
 
-    Create & Activate Virtual Environment (Recommended):
+    仮想環境の作成と有効化（推奨）：
 
     ```bash
-    # Create
+    # 作成
     python -m venv .venv
-    # Activate (each new terminal)
+    # 有効化（新しいターミナルごと）
     # macOS/Linux: source .venv/bin/activate
     # Windows CMD: .venv\Scripts\activate.bat
     # Windows PowerShell: .venv\Scripts\Activate.ps1
     ```
 
-    Install ADK:
+    ADKのインストール：
 
     ```bash
     pip install google-adk
@@ -32,15 +29,15 @@ application entirely on your machine and is recommended for internal development
 
 === "Java"
 
-    To install ADK and setup the environment, proceed to the following steps.
+    ADKをインストールし、環境をセットアップするには、次の手順に進んでください。
 
-## 2. Create Agent Project {#create-agent-project}
+## 2. エージェントプロジェクトの作成 {#create-agent-project}
 
-### Project structure
+### プロジェクト構造
 
 === "Python"
 
-    You will need to create the following project structure:
+    以下のプロジェクト構造を作成する必要があります：
 
     ```console
     parent_folder/
@@ -50,28 +47,25 @@ application entirely on your machine and is recommended for internal development
             .env
     ```
 
-    Create the folder `multi_tool_agent`:
+    `multi_tool_agent`フォルダを作成します：
 
     ```bash
     mkdir multi_tool_agent/
     ```
 
-    !!! info "Note for Windows users"
+    !!! info "Windowsユーザーへの注意"
 
-        When using ADK on Windows for the next few steps, we recommend creating
-        Python files using File Explorer or an IDE because the following commands
-        (`mkdir`, `echo`) typically generate files with null bytes and/or incorrect
-        encoding.
+        次のいくつかのステップでWindows上でADKを使用する場合、`mkdir`や`echo`のようなコマンドは通常、nullバイトや不正なエンコーディングのファイルを生成するため、ファイルエクスプローラーまたはIDEを使用してPythonファイルを作成することをお勧めします。
 
     ### `__init__.py`
 
-    Now create an `__init__.py` file in the folder:
+    次に、フォルダ内に`__init__.py`ファイルを作成します：
 
     ```shell
     echo "from . import agent" > multi_tool_agent/__init__.py
     ```
 
-    Your `__init__.py` should now look like this:
+    これで`__init__.py`は以下のようになります：
 
     ```python title="multi_tool_agent/__init__.py"
     --8<-- "examples/python/snippets/get-started/multi_tool_agent/__init__.py"
@@ -79,13 +73,13 @@ application entirely on your machine and is recommended for internal development
 
     ### `agent.py`
 
-    Create an `agent.py` file in the same folder:
+    同じフォルダに`agent.py`ファイルを作成します：
 
     ```shell
     touch multi_tool_agent/agent.py
     ```
 
-    Copy and paste the following code into `agent.py`:
+    `agent.py`に以下のコードをコピー＆ペーストします：
 
     ```python title="multi_tool_agent/agent.py"
     --8<-- "examples/python/snippets/get-started/multi_tool_agent/agent.py"
@@ -93,21 +87,21 @@ application entirely on your machine and is recommended for internal development
 
     ### `.env`
 
-    Create a `.env` file in the same folder:
+    同じフォルダに`.env`ファイルを作成します：
 
     ```shell
     touch multi_tool_agent/.env
     ```
 
-    More instructions about this file are described in the next section on [Set up the model](#set-up-the-model).
+    このファイルに関する詳細は、次のセクション[モデルのセットアップ](#set-up-the-model)で説明します。
 
 === "Java"
 
-    Java projects generally feature the following project structure:
+    Javaプロジェクトは通常、以下のプロジェクト構造を持ちます：
 
     ```console
     project_folder/
-    ├── pom.xml (or build.gradle)
+    ├── pom.xml (または build.gradle)
     ├── src/
     ├── └── main/
     │       └── java/
@@ -116,12 +110,11 @@ application entirely on your machine and is recommended for internal development
     └── test/
     ```
 
-    ### Create `MultiToolAgent.java`
+    ### `MultiToolAgent.java`の作成
 
-    Create a `MultiToolAgent.java` source file in the `agents.multitool` package
-    in the `src/main/java/agents/multitool/` directory.
+    `src/main/java/agents/multitool/`ディレクトリ内の`agents.multitool`パッケージに`MultiToolAgent.java`ソースファイルを作成します。
 
-    Copy and paste the following code into `MultiToolAgent.java`:
+    `MultiToolAgent.java`に以下のコードをコピー＆ペーストします：
 
     ```java title="agents/multitool/MultiToolAgent.java"
     --8<-- "examples/java/cloud-run/src/main/java/agents/multitool/MultiToolAgent.java:full_code"
@@ -129,46 +122,35 @@ application entirely on your machine and is recommended for internal development
 
 ![intro_components.png](../assets/quickstart-flow-tool.png)
 
-## 3. Set up the model {#set-up-the-model}
+## 3. モデルのセットアップ {#set-up-the-model}
 
-Your agent's ability to understand user requests and generate responses is
-powered by a Large Language Model (LLM). Your agent needs to make secure calls
-to this external LLM service, which requires authentication credentials. Without
-valid authentication, the LLM service will deny the agent's requests, and the
-agent will be unable to function.
+エージェントがユーザーのリクエストを理解し、応答を生成する能力は、大規模言語モデル（LLM）によって支えられています。エージェントは、この外部のLLMサービスに対して安全な呼び出しを行う必要があり、そのためには認証情報が必要です。有効な認証がなければ、LLMサービスはエージェントのリクエストを拒否し、エージェントは機能できなくなります。
 
 === "Gemini - Google AI Studio"
-    1. Get an API key from [Google AI Studio](https://aistudio.google.com/apikey).
-    2. When using Python, open the **`.env`** file located inside (`multi_tool_agent/`)
-    and copy-paste the following code.
+    1.  [Google AI Studio](https://aistudio.google.com/apikey)からAPIキーを取得します。
+    2.  Pythonを使用する場合、（`multi_tool_agent/`内にある）**`.env`**ファイルを開き、以下のコードをコピー＆ペーストします。
 
         ```env title="multi_tool_agent/.env"
         GOOGLE_GENAI_USE_VERTEXAI=FALSE
-        GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_API_KEY_HERE
+        GOOGLE_API_KEY=ここに実際のAPIキーを貼り付けてください
         ```
 
-        When using Java, define environment variables:
+        Javaを使用する場合、環境変数を定義します：
 
         ```console title="terminal"
         export GOOGLE_GENAI_USE_VERTEXAI=FALSE
-        export GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_API_KEY_HERE
+        export GOOGLE_API_KEY=ここに実際のAPIキーを貼り付けてください
         ```
 
-    3. Replace `PASTE_YOUR_ACTUAL_API_KEY_HERE` with your actual `API KEY`.
+    3.  `ここに実際のAPIキーを貼り付けてください`を実際の`APIキー`に置き換えます。
 
 === "Gemini - Google Cloud Vertex AI"
-    1. You need an existing
-    [Google Cloud](https://cloud.google.com/?e=48754805&hl=en) account and a
-    project.
-        * Set up a
-          [Google Cloud project](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-gcp)
-        * Set up the
-          [gcloud CLI](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-local)
-        * Authenticate to Google Cloud, from the terminal by running
-          `gcloud auth login`.
-        * [Enable the Vertex AI API](https://console.cloud.google.com/flows/enableapi?apiid=aiplatform.googleapis.com).
-    2. When using Python, open the **`.env`** file located inside (`multi_tool_agent/`). Copy-paste
-    the following code and update the project ID and location.
+    1.  既存の[Google Cloud](https://cloud.google.com/?e=48754805&hl=en)アカウントとプロジェクトが必要です。
+        *   [Google Cloudプロジェクトのセットアップ](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-gcp)
+        *   [gcloud CLIのセットアップ](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-local)
+        *   ターミナルから`gcloud auth login`を実行してGoogle Cloudに認証します。
+        *   [Vertex AI APIを有効にする](https://console.cloud.google.com/flows/enableapi?apiid=aiplatform.googleapis.com)。
+    2.  Pythonを使用する場合、（`multi_tool_agent/`内にある）**`.env`**ファイルを開きます。以下のコードをコピー＆ペーストし、プロジェクトIDとロケーションを更新します。
 
         ```env title="multi_tool_agent/.env"
         GOOGLE_GENAI_USE_VERTEXAI=TRUE
@@ -176,7 +158,7 @@ agent will be unable to function.
         GOOGLE_CLOUD_LOCATION=LOCATION
         ```
 
-        When using Java, define environment variables:
+        Javaを使用する場合、環境変数を定義します：
 
         ```console title="terminal"
         export GOOGLE_GENAI_USE_VERTEXAI=TRUE
@@ -184,85 +166,78 @@ agent will be unable to function.
         export GOOGLE_CLOUD_LOCATION=LOCATION
         ```
 
-## 4. Run Your Agent {#run-your-agent}
+## 4. エージェントの実行 {#run-your-agent}
 
 === "Python"
 
-    Using the terminal, navigate to the parent directory of your agent project
-    (e.g. using `cd ..`):
+    ターミナルを使用して、エージェントプロジェクトの親ディレクトリに移動します（例：`cd ..`を使用）：
 
     ```console
-    parent_folder/      <-- navigate to this directory
+    parent_folder/      <-- このディレクトリに移動
         multi_tool_agent/
             __init__.py
             agent.py
             .env
     ```
 
-    There are multiple ways to interact with your agent:
+    エージェントと対話するには複数の方法があります：
 
-    === "Dev UI (adk web)"
-        Run the following command to launch the **dev UI**.
+    === "開発UI (adk web)"
+        以下のコマンドを実行して**開発UI**を起動します。
 
         ```shell
         adk web
         ```
         
-        !!!info "Note for Windows users"
+        !!!info "Windowsユーザーへの注意"
 
-            When hitting the `_make_subprocess_transport NotImplementedError`, consider using `adk web --no-reload` instead.
+            `_make_subprocess_transport NotImplementedError`が発生した場合、代わりに`adk web --no-reload`の使用を検討してください。
 
 
-        **Step 1:** Open the URL provided (usually `http://localhost:8000` or
-        `http://127.0.0.1:8000`) directly in your browser.
+        **ステップ1：** 提供されたURL（通常は`http://localhost:8000`または`http://127.0.0.1:8000`）をブラウザで直接開きます。
 
-        **Step 2.** In the top-left corner of the UI, you can select your agent in
-        the dropdown. Select "multi_tool_agent".
+        **ステップ2：** UIの左上隅にあるドロップダウンで、エージェントを選択できます。「multi_tool_agent」を選択します。
 
-        !!!note "Troubleshooting"
+        !!!note "トラブルシューティング"
 
-            If you do not see "multi_tool_agent" in the dropdown menu, make sure you
-            are running `adk web` in the **parent folder** of your agent folder
-            (i.e. the parent folder of multi_tool_agent).
+            ドロップダウンメニューに「multi_tool_agent」が表示されない場合は、`adk web`をエージェントフォルダの**親フォルダ**（つまり、multi_tool_agentの親フォルダ）で実行していることを確認してください。
 
-        **Step 3.** Now you can chat with your agent using the textbox:
+        **ステップ3：** これで、テキストボックスを使用してエージェントとチャットできます：
 
         ![adk-web-dev-ui-chat.png](../assets/adk-web-dev-ui-chat.png)
 
 
-        **Step 4.**  By using the `Events` tab at the left, you can inspect
-        individual function calls, responses and model responses by clicking on the
-        actions:
+        **ステップ4：** 左側の`Events`タブを使用すると、アクションをクリックすることで、個々の関数呼び出し、応答、モデルの応答を検査できます：
 
         ![adk-web-dev-ui-function-call.png](../assets/adk-web-dev-ui-function-call.png)
 
-        On the `Events` tab, you can also click the `Trace` button to see the trace logs for each event that shows the latency of each function calls:
+        `Events`タブで、`Trace`ボタンをクリックすると、各関数呼び出しのレイテンシを示す各イベントのトレースログを確認できます：
 
         ![adk-web-dev-ui-trace.png](../assets/adk-web-dev-ui-trace.png)
 
-        **Step 5.** You can also enable your microphone and talk to your agent:
+        **ステップ5：** マイクを有効にしてエージェントと話すこともできます：
 
-        !!!note "Model support for voice/video streaming"
+        !!!note "音声/ビデオストリーミングのモデルサポート"
 
-            In order to use voice/video streaming in ADK, you will need to use Gemini models that support the Live API. You can find the **model ID(s)** that supports the Gemini Live API in the documentation:
+            ADKで音声/ビデオストリーミングを使用するには、Live APIをサポートするGeminiモデルを使用する必要があります。Gemini Live APIをサポートする**モデルID**は、ドキュメントで確認できます：
 
             - [Google AI Studio: Gemini Live API](https://ai.google.dev/gemini-api/docs/models#live-api)
             - [Vertex AI: Gemini Live API](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api)
 
-            You can then replace the `model` string in `root_agent` in the `agent.py` file you created earlier ([jump to section](#agentpy)). Your code should look something like:
+            その後、以前に作成した`agent.py`ファイルの`root_agent`内の`model`文字列を置き換えることができます（[セクションへジャンプ](#agentpy)）。コードは次のようになります：
 
             ```py
             root_agent = Agent(
                 name="weather_time_agent",
-                model="replace-me-with-model-id", #e.g. gemini-2.0-flash-live-001
+                model="モデルIDに置き換えてください", #例: gemini-2.0-flash-live-001
                 ...
             ```
 
         ![adk-web-dev-ui-audio.png](../assets/adk-web-dev-ui-audio.png)
 
-    === "Terminal (adk run)"
+    === "ターミナル (adk run)"
 
-        Run the following command, to chat with your Weather agent.
+        以下のコマンドを実行して、天気エージェントとチャットします。
 
         ```
         adk run multi_tool_agent
@@ -270,27 +245,23 @@ agent will be unable to function.
 
         ![adk-run.png](../assets/adk-run.png)
 
-        To exit, use Cmd/Ctrl+C.
+        終了するには、Cmd/Ctrl+Cを使用します。
 
-    === "API Server (adk api_server)"
+    === "APIサーバー (adk api_server)"
 
-        `adk api_server` enables you to create a local FastAPI server in a single
-        command, enabling you to test local cURL requests before you deploy your
-        agent.
+        `adk api_server`を使用すると、単一のコマンドでローカルのFastAPIサーバーを作成でき、エージェントをデプロイする前にローカルのcURLリクエストをテストできます。
 
         ![adk-api-server.png](../assets/adk-api-server.png)
 
-        To learn how to use `adk api_server` for testing, refer to the
-        [documentation on testing](testing.md).
+        `adk api_server`を使用してテストする方法については、[テストに関するドキュメント](testing.md)を参照してください。
 
 === "Java"
 
-    Using the terminal, navigate to the parent directory of your agent project
-    (e.g. using `cd ..`):
+    ターミナルを使用して、エージェントプロジェクトの親ディレクトリに移動します（例：`cd ..`を使用）：
 
     ```console
-    project_folder/                <-- navigate to this directory
-    ├── pom.xml (or build.gradle)
+    project_folder/                <-- このディレクトリに移動
+    ├── pom.xml (または build.gradle)
     ├── src/
     ├── └── main/
     │       └── java/
@@ -300,11 +271,11 @@ agent will be unable to function.
     └── test/
     ```
 
-    === "Dev UI"
+    === "開発UI"
 
-        Run the following command from the terminal to launch the Dev UI.
+        ターミナルから以下のコマンドを実行して開発UIを起動します。
 
-        **DO NOT change the main class name of the Dev UI server.**
+        **開発UIサーバーのメインクラス名を変更しないでください。**
 
         ```console title="terminal"
         mvn exec:java \
@@ -313,31 +284,25 @@ agent will be unable to function.
             -Dexec.classpathScope="compile"
         ```
 
-        **Step 1:** Open the URL provided (usually `http://localhost:8080` or
-        `http://127.0.0.1:8080`) directly in your browser.
+        **ステップ1：** 提供されたURL（通常は`http://localhost:8080`または`http://127.0.0.1:8080`）をブラウザで直接開きます。
 
-        **Step 2.** In the top-left corner of the UI, you can select your agent in
-        the dropdown. Select "multi_tool_agent".
+        **ステップ2：** UIの左上隅にあるドロップダウンで、エージェントを選択できます。「multi_tool_agent」を選択します。
 
-        !!!note "Troubleshooting"
+        !!!note "トラブルシューティング"
 
-            If you do not see "multi_tool_agent" in the dropdown menu, make sure you
-            are running the `mvn` command at the location where your Java source code
-            is located (usually `src/main/java`).
+            ドロップダウンメニューに「multi_tool_agent」が表示されない場合は、Javaソースコードがある場所（通常は`src/main/java`）で`mvn`コマンドを実行していることを確認してください。
 
-        **Step 3.** Now you can chat with your agent using the textbox:
+        **ステップ3：** これで、テキストボックスを使用してエージェントとチャットできます：
 
         ![adk-web-dev-ui-chat.png](../assets/adk-web-dev-ui-chat.png)
 
-        **Step 4.** You can also inspect individual function calls, responses and
-        model responses by clicking on the actions:
+        **ステップ4：** アクションをクリックすることで、個々の関数呼び出し、応答、モデルの応答を検査することもできます：
 
         ![adk-web-dev-ui-function-call.png](../assets/adk-web-dev-ui-function-call.png)
 
     === "Maven"
 
-        With Maven, run the `main()` method of your Java class
-        with the following command:
+        Mavenを使用する場合、以下のコマンドでJavaクラスの`main()`メソッドを実行します：
 
         ```console title="terminal"
         mvn compile exec:java -Dexec.mainClass="agents.multitool.MultiToolAgent"
@@ -345,18 +310,16 @@ agent will be unable to function.
 
     === "Gradle"
 
-        With Gradle, the `build.gradle` or `build.gradle.kts` build file
-        should have the following Java plugin in its `plugins` section:
+        Gradleを使用する場合、`build.gradle`または`build.gradle.kts`ビルドファイルには、`plugins`セクションに以下のJavaプラグインが必要です：
 
         ```groovy
         plugins {
             id("java")
-            // other plugins
+            // 他のプラグイン
         }
         ```
 
-        Then, elsewhere in the build file, at the top-level,
-        create a new task to run the `main()` method of your agent:
+        次に、ビルドファイルのトップレベルで、エージェントの`main()`メソッドを実行するための新しいタスクを作成します：
 
         ```groovy
         task runAgent(type: JavaExec) {
@@ -365,33 +328,28 @@ agent will be unable to function.
         }
         ```
 
-        Finally, on the command-line, run the following command:
+        最後に、コマンドラインで以下のコマンドを実行します：
 
         ```console
         gradle runAgent
         ```
 
+### 📝 試してみるプロンプトの例
 
+*   What is the weather in New York?
+*   What is the time in New York?
+*   What is the weather in Paris?
+*   What is the time in Paris?
 
-### 📝 Example prompts to try
+## 🎉 おめでとうございます！
 
-* What is the weather in New York?
-* What is the time in New York?
-* What is the weather in Paris?
-* What is the time in Paris?
-
-## 🎉 Congratulations!
-
-You've successfully created and interacted with your first agent using ADK!
+ADKを使用して初めてのエージェントを作成し、対話することに成功しました！
 
 ---
 
-## 🛣️ Next steps
+## 🛣️ 次のステップ
 
-* **Go to the tutorial**: Learn how to add memory, session, state to your agent:
-  [tutorial](../tutorials/index.md).
-* **Delve into advanced configuration:** Explore the [setup](installation.md)
-  section for deeper dives into project structure, configuration, and other
-  interfaces.
-* **Understand Core Concepts:** Learn about
-  [agents concepts](../agents/index.md).
+*   **チュートリアルに進む**: エージェントにメモリ、セッション、状態を追加する方法を学びます：
+    [チュートリアル](../tutorials/index.md)。
+*   **高度な設定を掘り下げる:** プロジェクト構造、設定、およびその他のインターフェースに関する詳細については、[セットアップ](installation.md)セクションを参照してください。
+*   **コアコンセプトを理解する:** [エージェントの概念](../agents/index.md)について学びます。
