@@ -254,7 +254,7 @@ Connect your agent to enterprise applications using
       },
     }
 
-    oauth2_scheme = dict_to_auth_scheme(oauth2_data_google_cloud)
+    oauth_scheme = dict_to_auth_scheme(oauth2_data_google_cloud)
     
     auth_credential = AuthCredential(
       auth_type=AuthCredentialTypes.OAUTH2,
@@ -273,7 +273,7 @@ Connect your agent to enterprise applications using
         service_account_credentials='{...}', # optional. Stringified json for service account key
         tool_name_prefix="tool_prefix2",
         tool_instructions="...",
-        auth_scheme=auth_scheme,
+        auth_scheme=oauth_scheme,
         auth_credential=auth_credential
     )
     ```
