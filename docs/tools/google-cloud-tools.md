@@ -231,7 +231,7 @@ Connect your agent to enterprise applications using
 
     `ApplicationIntegrationToolset` now also supports providing auth_scheme and auth_credential for dynamic OAuth2 authentication for Integration Connectors. To use it create a tool similar to this within your `tools.py` file:
 
-     ```py
+    ```py
     from google.adk.tools.application_integration_tool.application_integration_toolset import ApplicationIntegrationToolset
     from google.adk.tools.openapi_tool.auth.auth_helpers import dict_to_auth_scheme
     from google.adk.auth import AuthCredential
