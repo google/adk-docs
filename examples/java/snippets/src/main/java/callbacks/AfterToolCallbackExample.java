@@ -34,7 +34,7 @@ public class AfterToolCallbackExample {
   // --- Define a Simple Tool Function (Same as before) ---
   @Schema(description = "Retrieves the capital city of a given country.")
   public static Map<String, Object> getCapitalCity(
-      @Schema(description = "The country to find the capital of.") String country) {
+      @Schema(name = "country", description = "The country to find the capital of.") String country) {
     System.out.printf("--- Tool 'getCapitalCity' executing with country: %s ---%n", country);
     Map<String, String> countryCapitals = new HashMap<>();
     countryCapitals.put("united states", "Washington, D.C.");
