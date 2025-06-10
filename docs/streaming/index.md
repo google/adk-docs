@@ -56,8 +56,16 @@ text, audio, and video inputs, and they can provide text and audio output.
 
     This article overviews the server and client code for a custom asynchronous web app built with ADK Streaming and FastAPI, enabling real-time, bidirectional audio and text communication with both Server Sent Events (SSE) and WebSockets.
 
-    [:octicons-arrow-right-24: More information (SSE)](custom-streaming.md)
-    [:octicons-arrow-right-24: More information (WebSockets)](custom-streaming-ws.md)
+    [:octicons-arrow-right-24: More information (SSE)](custom-streaming.md) and 
+    [:octicons-arrow-right-24: (WebSockets)](custom-streaming-ws.md)
+
+-   :material-console-line: **Blog post: Google ADK + Vertex AI Live API**
+
+    ---
+
+    This article shows how to use Bidi-streaming (live) in ADK for real-time audio/video streaming. It offers a Python server example using LiveRequestQueue to build custom, interactive AI agents.
+
+    [:octicons-arrow-right-24: More information](https://medium.com/google-cloud/google-adk-vertex-ai-live-api-125238982d5e)
 
 -   :material-console-line: **Shopper's Concierge demo**
 
