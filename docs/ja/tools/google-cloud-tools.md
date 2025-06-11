@@ -201,7 +201,7 @@ project_root_folder
 
     `ApplicationIntegrationToolset`は、Integration Connectors向けの動的なOAuth2認証のために`auth_scheme`と`auth_credential`の提供もサポートするようになりました。これを使用するには、`tools.py`ファイル内に次のようなツールを作成します。
 
-     ```py
+    ```py
     from google.adk.tools.application_integration_tool.application_integration_toolset import ApplicationIntegrationToolset
     from google.adk.tools.openapi_tool.auth.auth_helpers import dict_to_auth_scheme
     from google.adk.auth import AuthCredential
@@ -224,7 +224,7 @@ project_root_folder
       },
     }
 
-    oauth2_scheme = dict_to_auth_scheme(oauth2_data_google_cloud)
+    oauth_scheme = dict_to_auth_scheme(oauth2_data_google_cloud)
     
     auth_credential = AuthCredential(
       auth_type=AuthCredentialTypes.OAUTH2,
@@ -243,7 +243,7 @@ project_root_folder
         service_account_credentials='{...}', # 任意。サービスアカウントキーの文字列化されたJSON
         tool_name_prefix="tool_prefix2",
         tool_instructions="...",
-        auth_scheme=auth_scheme,
+        auth_scheme=oauth_scheme,
         auth_credential=auth_credential
     )
     ```

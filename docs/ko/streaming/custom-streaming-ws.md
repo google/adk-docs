@@ -11,6 +11,8 @@ ADK에서 음성/영상 스트리밍을 사용하려면 Live API를 지원하는
 - [Google AI Studio: Gemini Live API](https://ai.google.dev/gemini-api/docs/models#live-api)
 - [Vertex AI: Gemini Live API](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api)
 
+해당 샘플은 [SSE](custom-streaming.md) 버전으로도 확인하실 수 있습니다.
+
 ## 1. ADK 설치 {#1.-setup-installation}
 
 가상 환경 생성 및 활성화 (권장):
@@ -27,7 +29,7 @@ python -m venv .venv
 ADK 설치:
 
 ```bash
-pip install google-adk==1.0.0
+pip install --upgrade google-adk==1.2.1
 ```
 
 다음 명령어로 `SSL_CERT_FILE` 변수 설정:
