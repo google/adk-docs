@@ -25,7 +25,9 @@ from typing import cast
 
 
 async def process_document(
-    document_name: str, analysis_query: str, tool_context: ToolContext
+    document_name: str, 
+    analysis_query: str, 
+    tool_context: ToolContext
 ) -> dict:
     """Analyzes a document using context from memory."""
 
@@ -105,8 +107,8 @@ async def read_report_and_create_part():
 async def run_prompt(
       session: Session, 
       new_message: str,
-      runner,
-      user_id
+      runner: Runner,
+      user_id: str
     ) -> Session:
     content = types.Content(
         role='user', parts=[types.Part.from_text(text=new_message)]
