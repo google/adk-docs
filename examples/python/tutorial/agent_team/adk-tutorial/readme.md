@@ -4,7 +4,7 @@ This repository contains the code for the "Build Your First Intelligent Agent Te
 
 This version allows you to run each step of the tutorial without manually setting up runners and session services, as those are handled by the ADK tools.
 
-**Note:** If you prefer a notebook environment (like Colab or Jupyter) with manual control over runners and sessions, please refer to the [original notebook tutorial version](Your_Link_To_Notebook_Version_Here).
+**Note:** If you prefer a notebook environment (like Colab or Jupyter) with manual control over runners and sessions, please refer to the [original notebook tutorial version](../adk_tutorial.ipynb).
 
 ## Prerequisites
 
