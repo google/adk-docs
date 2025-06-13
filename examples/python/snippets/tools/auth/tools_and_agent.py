@@ -1,4 +1,5 @@
 import os
+import asyncio
 
 from google.adk.auth.auth_schemes import OpenIdConnectWithConfig
 from google.adk.auth.auth_credential import AuthCredential, AuthCredentialTypes, OAuth2Auth
@@ -61,7 +62,7 @@ root_agent = LlmAgent(
     model='gemini-2.0-flash',
     name='enterprise_assistant',
     instruction='Help user integrate with multiple enterprise systems, including retrieving user information which may require authentication.',
-    tools=userinfo_toolset.get_tools(),
+    tools=asyncio.run(userinfo_toolset.get_tools()),
 )
 
 # --- Ready for Use ---

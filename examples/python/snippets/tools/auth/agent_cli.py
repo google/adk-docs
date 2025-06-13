@@ -22,7 +22,7 @@ async def async_main():
   artifacts_service = InMemoryArtifactService()
 
   # Create a new user session to maintain conversation state.
-  session = session_service.create_session(
+  session = await session_service.create_session(
       state={},  # Optional state dictionary for session-specific data
       app_name='my_app', # Application identifier
       user_id='user' # User identifier
