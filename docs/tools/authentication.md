@@ -551,6 +551,16 @@ except Exception as e:
          ```py title="helpers.py"
          --8<-- "examples/python/snippets/tools/auth/helpers.py"
          ```
+    === "Mock fastapi server"
+
+         ```py title="mock_server.py"
+         --8<-- "examples/python/snippets/tools/auth/mock_server.py"
+         ```
+    === "data model"
+
+         ```py title="model.py"
+         --8<-- "examples/python/snippets/tools/auth/model.py"
+         ```
     === "Spec"
 
          ```yaml
