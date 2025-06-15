@@ -1,3 +1,17 @@
+# Copyright 2025 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import logging
 from typing import AsyncGenerator
 from typing_extensions import override
@@ -219,7 +233,7 @@ story_flow_agent = StoryFlowAgent(
 # --- Setup Runner and Session ---
 session_service = InMemorySessionService()
 initial_state = {"topic": "a brave kitten exploring a haunted house"}
-session = session_service.create_session(
+session = await session_service.create_session(
     app_name=APP_NAME,
     user_id=USER_ID,
     session_id=SESSION_ID,
@@ -234,12 +248,12 @@ runner = Runner(
 )
 
 # --- Function to Interact with the Agent ---
-def call_agent(user_input_topic: str):
+async def call_agent(user_input_topic: str):
     """
     Sends a new topic to the agent (overwriting the initial one if needed)
     and runs the workflow.
     """
-    current_session = session_service.get_session(app_name=APP_NAME, 
+    current_session = await session_service.get_session(app_name=APP_NAME, 
                                                   user_id=USER_ID, 
                                                   session_id=SESSION_ID)
     if not current_session:
@@ -261,7 +275,7 @@ def call_agent(user_input_topic: str):
     print("\n--- Agent Interaction Result ---")
     print("Agent Final Response: ", final_response)
 
-    final_session = session_service.get_session(app_name=APP_NAME, 
+    final_session = await session_service.get_session(app_name=APP_NAME, 
                                                 user_id=USER_ID, 
                                                 session_id=SESSION_ID)
     print("Final Session State:")
@@ -270,5 +284,5 @@ def call_agent(user_input_topic: str):
     print("-------------------------------\n")
 
 # --- Run the Agent ---
-call_agent("a lonely robot finding a friend in a junkyard")
+await call_agent("a lonely robot finding a friend in a junkyard")
 # --8<-- [end:story_flow_agent]
