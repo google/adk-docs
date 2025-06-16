@@ -164,7 +164,7 @@ To try with voice, reload the web browser, click the microphone button to enable
 
 To try with video, reload the web browser, click the camera button to enable the video input, and ask questions like "What do you see?". The agent will answer what they see in the video input.
 
-(Just clicking a voice or video once is enough. Your voice or video will be streamed to models and the model response will be streamed back continuously. Clicking on the audio or video button multiple times is not supported.)
+(Just clicking the microphone or camera button once is enough. Your voice or video will be streamed to models and the model response will be streamed back continuously. Clicking on the microphone or camera button multiple times is not supported.)
 
 ### Stop the tool
 
