@@ -57,9 +57,9 @@ root_agent = Agent(
    # A unique name for the agent.
    name="basic_search_agent",
    # The Large Language Model (LLM) that agent will use.
-   # Please fill in the model id that supports live from
+   # Please fill in the latest model id that supports live from
    # https://google.github.io/adk-docs/get-started/streaming/quickstart-streaming/#supported-models
-   model="...",  # the model id will be like "gemini-2.0-flash-live-001"
+   model="...",  # for example: model="gemini-2.0-flash-live-001" or model="gemini-2.0-flash-live-preview-04-09"
    # A short description of the agent's purpose.
    description="Agent to answer questions using Google Search.",
    # Instructions to set the agent's behavior.
@@ -163,6 +163,8 @@ The agent will use the google_search tool to get the latest information to answe
 To try with voice, reload the web browser, click the microphone button to enable the voice input, and ask the same question in voice. You will hear the answer in voice in real-time.
 
 To try with video, reload the web browser, click the camera button to enable the video input, and ask questions like "What do you see?". The agent will answer what they see in the video input.
+
+(Just clicking a voice or video once is enough. Your voice or video will be streamed to models and the model response will be streamed back continuously. Clicking on the audio or video button multiple times is not supported.)
 
 ### Stop the tool
 
