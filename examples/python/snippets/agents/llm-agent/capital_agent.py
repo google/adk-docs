@@ -1,5 +1,6 @@
 # --- Full example code demonstrating LlmAgent with Tools vs. Output Schema ---
 import json # Needed for pretty printing dicts
+import asyncio
 
 from google.adk.agents import LlmAgent
 from google.adk.runners import Runner
@@ -144,4 +145,4 @@ async def main():
     await call_agent_and_print(structured_runner, structured_info_agent_schema, SESSION_ID_SCHEMA_AGENT, '{"country": "Japan"}')
 
 if __name__ == "__main__":
-    await main()
+    asyncio.run(main())
