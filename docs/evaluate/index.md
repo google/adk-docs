@@ -361,6 +361,8 @@ Once a case is saved, you can click its ID in the list to inspect it. To make ch
 * **Delete** individual agent messages from the conversation.
 * **Delete** the entire evaluation case if it's no longer needed.
 
+![adk-eval-case.gif](../assets/adk-eval-case.gif)
+
 #### Step 3: Run the Evaluation with Custom Metrics
 
 1. Select one or more test cases from your evalset.
@@ -370,11 +372,14 @@ Once a case is saved, you can click its ID in the list to inspect it. To make ch
     * **Response match score**
 4. Click **Start** to run the evaluation using your custom criteria. The evaluation history will record the metrics used for each run.
 
+![adk-eval-config.gif](../assets/adk-eval-config.gif)
+
 #### Step 4: Analyze Results
 
 After the run completes, you can analyze the results:
 
 * **Analyze Run Failures**: Click on any **Pass** or **Fail** result. For failures, you can hover over the `Fail` label to see a side-by-side comparison of the **Actual vs. Expected Output** and the scores that caused the failure.
+
 ### Debugging with the Trace View
 
 The ADK web UI includes a powerful **Trace** tab for debugging agent behavior. This feature is available for any agent session, not just during evaluation.
@@ -389,6 +394,10 @@ Each trace row is interactive:
     * **Request**: The request sent to the model.
     * **Response**: The response received from the model.
     * **Graph**: A visual representation of the tool calls and agent logic flow.
+
+![adk-trace1.gif](../assets/adk-trace1.gif)
+![adk-trace2.gif](../assets/adk-trace2.gif)
+
 
 ### 2\.  `pytest` \- Run Tests Programmatically
 
