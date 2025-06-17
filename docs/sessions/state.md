@@ -115,7 +115,7 @@ This is the simplest method for saving an agent's final text response directly i
           print(f"Agent responded.") # Response text is also in event.content
     
     # --- Check Updated State ---
-    updated_session = await session_service.get_session(app_name=APP_NAME, user_id=USER_ID, session_id=session_id)
+    updated_session = await session_service.get_session(app_name=app_name, user_id=user_id, session_id=session_id)
     print(f"State after agent run: {updated_session.state}")
     # Expected output might include: {'last_greeting': 'Hello there! How can I help you today?'}
     ```
@@ -207,7 +207,7 @@ For more comprehensive details on context objects, refer to the [Context documen
 
     ```python
     # In an agent callback or tool function
-    from google.adk.agents import CallbackContext # or ToolContext
+    from google.adk.agents.callback_context import CallbackContext # or ToolContext
 
     def my_callback_or_tool_function(context: CallbackContext, # Or ToolContext
                                      # ... other parameters ...
