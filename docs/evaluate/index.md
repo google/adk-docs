@@ -357,8 +357,8 @@ The web UI provides an interactive way to evaluate agents, generate evaluation d
 
 Once a case is saved, you can click its ID in the list to inspect it. To make changes, click the **Edit current eval case** icon (pencil). This interactive view allows you to:
 
-* **Modify** agent or user messages to refine test scenarios.
-* **Delete** individual messages from the conversation.
+* **Modify** agent text responses to refine test scenarios.
+* **Delete** individual agent messages from the conversation.
 * **Delete** the entire evaluation case if it's no longer needed.
 
 #### Step 3: Run the Evaluation with Custom Metrics
@@ -370,12 +370,25 @@ Once a case is saved, you can click its ID in the list to inspect it. To make ch
     * **Response match score**
 4. Click **Start** to run the evaluation using your custom criteria. The evaluation history will record the metrics used for each run.
 
-#### Step 4: Analyze Results and Trace Behavior
+#### Step 4: Analyze Results
 
 After the run completes, you can analyze the results:
 
 * **Analyze Run Failures**: Click on any **Pass** or **Fail** result. For failures, you can hover over the `Fail` label to see a side-by-side comparison of the **Actual vs. Expected Output** and the scores that caused the failure.
-* **Deep Dive with the Trace Tab**: For even deeper debugging, click the **Trace** tab in the main left-hand panel. This powerful view groups all execution traces by user message. You can hover over a trace to highlight the corresponding chat message or click it to open a detailed panel showing the raw **Event**, **Request**, **Response**, and a visual **Graph** of the agent's logic.
+### Debugging with the Trace View
+
+The ADK web UI includes a powerful **Trace** tab for debugging agent behavior. This feature is available for any agent session, not just during evaluation.
+
+The **Trace** tab provides a detailed and interactive way to inspect your agent's execution flow. Traces are automatically grouped by user message, making it easy to follow the chain of events.
+
+Each trace row is interactive:
+
+* **Hovering** over a trace row highlights the corresponding message in the chat window.
+* **Clicking** on a trace row opens a detailed inspection panel with four tabs:
+    * **Event**: The raw event data.
+    * **Request**: The request sent to the model.
+    * **Response**: The response received from the model.
+    * **Graph**: A visual representation of the tool calls and agent logic flow.
 
 ### 2\.  `pytest` \- Run Tests Programmatically
 
