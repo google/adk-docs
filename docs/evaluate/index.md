@@ -398,6 +398,7 @@ Each trace row is interactive:
 ![adk-trace1.gif](../assets/adk-trace1.gif)
 ![adk-trace2.gif](../assets/adk-trace2.gif)
 
+Blue rows in the trace view indicate that an event was generated from that interaction. Clicking on these blue rows will open the bottom event detail panel, providing deeper insights into the agent's execution flow.
 
 ### 2\.  `pytest` \- Run Tests Programmatically
 
