@@ -32,6 +32,8 @@ from simple tasks to complex workflows.
 - **Deploy Anywhere**: Easily containerize and deploy agents on Cloud Run or
   scale seamlessly with Vertex AI Agent Engine.
 
+Testing: https://google.github.io/adk-docs/deploy/cloud-run-test/
+
 ## 🚀 Installation
 
 You can install the Agent Development Kit (ADK) using your preferred package manager for Python or build tool for Java.
