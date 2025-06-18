@@ -175,3 +175,6 @@ docs/site
 
 # VS Code Personal Settings
 .vscode/settings.json
+
+# Claude Code
+.claude
