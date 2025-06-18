@@ -100,7 +100,7 @@ to use built-in tools with other tools by using multiple agents:
         instruction="""
         You're a specialist in Code Execution
         """,
-        code_executor=[BuiltInCodeExecutor],
+        code_executor=BuiltInCodeExecutor(),
     )
     root_agent = Agent(
         name="RootAgent",
@@ -187,7 +187,7 @@ to use built-in tools with other tools by using multiple agents:
         model="gemini-2.0-flash",
         description="Root Agent",
         tools=[custom_function], 
-        executor=[BuiltInCodeExecutor] # <-- not supported when used with tools
+        code_executor=BuiltInCodeExecutor() # <-- not supported when used with tools
     )
     ```
 
@@ -227,7 +227,7 @@ is **not** currently supported:
         instruction="""
         You're a specialist in Code Execution
         """,
-        executor=[BuiltInCodeExecutor],
+        code_executor=BuiltInCodeExecutor(),
     )
     root_agent = Agent(
         name="RootAgent",
