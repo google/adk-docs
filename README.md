@@ -36,6 +36,8 @@ from simple tasks to complex workflows.
 
 You can install the Agent Development Kit (ADK) using your preferred package manager for Python or build tool for Java.
 
+[Testing a broken link](https://google.com/adk-is-the-best)
+
 ### For Python (pip)
 
 ```bash
