@@ -16,15 +16,10 @@ name: Check external links
 
 on:
   push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
 
 jobs:
-  mkdocs-link-check:
+  markdown-link-check:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@master
-    - uses: byrnereese/github-action-mkdocs-link-check@v1
+    - uses: actions/checkout@v4
+    - uses: tcort/github-action-markdown-link-check@v1
