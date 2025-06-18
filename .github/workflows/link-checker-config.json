@@ -5,6 +5,17 @@
       "pattern": "^https?://[^/]*localhost"
     }
   ],
+  "replacementPatterns": [
+    {
+      "pattern": "^/",
+      "replacement": "{{BASEURL}}/"
+    },
+    {
+      "pattern": "%20",
+      "replacement": "-",
+      "global": true
+    }
+  ],
   "timeout": "5s",
   "retryOn429": true,
   "retryCount": 10,
