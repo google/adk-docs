@@ -1,17 +1,7 @@
 {
-  "projectBaseUrl": "/github/workspace",
   "ignorePatterns": [
     {
       "pattern": "^https?://(localhost|127\\.0\\.0\\.1)"
     }
-  ],
-  "timeout": "5s",
-  "retryOn429": true,
-  "retryCount": 10,
-  "fallbackRetryDelay": "5s",
-  "aliveStatusCodes": [
-    200,
-    206,
-    302
   ]
 }
