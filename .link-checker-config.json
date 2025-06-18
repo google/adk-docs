@@ -3,5 +3,6 @@
     {
       "pattern": "^https?://(localhost|127\\.0\\.0\\.1)"
     }
-  ]
+  ],
+  "aliveStatusCodes": [ 200, 206, 302 ]
 }
