@@ -1,5 +1,5 @@
 {
-  "projectBaseUrl":"${workspaceFolder}",
+  "projectBaseUrl":"https://google.github.io/adk-docs/",
   "ignorePatterns": [
     {
       "pattern": "^https?://[^/]*localhost"
