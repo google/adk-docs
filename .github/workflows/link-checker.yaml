@@ -23,3 +23,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - uses: tcort/github-action-markdown-link-check@v1
+      with:
+        use-quiet-mode: 'yes'
+        use-verbose-mode: 'yes'
+        config-file: 'link-checker-config.json'

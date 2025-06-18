@@ -1,0 +1,13 @@
+{
+  "projectBaseUrl":"${workspaceFolder}",
+  "ignorePatterns": [
+    {
+      "pattern": "^https?://[^/]*localhost"
+    }
+  ],
+  "timeout": "5s",
+  "retryOn429": true,
+  "retryCount": 10,
+  "fallbackRetryDelay": "5s",
+  "aliveStatusCodes": [200, 206]
+}
