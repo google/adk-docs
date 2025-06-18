@@ -76,7 +76,7 @@ Next, we can create our Agent Engine instance. You can use the vertex ai SDK, or
 
 ## Managing Sessions with a `VertexAiSessionService`
 
-[VertexAiSessionService](sessions/session.md) is compatible with Vertex Express mode API Keys. We can 
+[VertexAiSessionService](session.md###sessionservice-implementations) is compatible with Vertex Express mode API Keys. We can 
 instead initialize the session object without any project or location.
 
            ```py
@@ -97,7 +97,7 @@ instead initialize the session object without any project or location.
 
 ## Managing Memories with a `VertexAiMemoryService`
 
-[VertexAiMemoryService](sessions/memory.md) is compatible with Vertex Express mode API Keys. We can 
+[VertexAiMemoryService](memory.md###memoryservice-implementations) is compatible with Vertex Express mode API Keys. We can 
 instead initialize the memory object without any project or location.
 
            ```py
