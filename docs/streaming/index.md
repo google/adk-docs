@@ -40,7 +40,24 @@ text, audio, and video inputs, and they can provide text and audio output.
     In this quickstart, you'll build a simple agent and use streaming in ADK to
     implement low-latency and bidirectional voice and video communication.
 
-    [:octicons-arrow-right-24: More information](../get-started/streaming/quickstart-streaming.md)
+    - [Quickstart (Bidi-streaming)](../get-started/streaming/quickstart-streaming.md)
+
+-   :material-console-line: **Custom Audio Streaming app sample**
+
+    ---
+
+    This article overviews the server and client code for a custom asynchronous web app built with ADK Streaming and FastAPI, enabling real-time, bidirectional audio and text communication with both Server Sent Events (SSE) and WebSockets.
+
+    - [Custom Audio Streaming app sample (SSE)](custom-streaming.md)
+    - [Custom Audio Streaming app sample (WebSockets)](custom-streaming-ws.md)
+
+-   :material-console-line: **Bidi-streaming development guide series**
+
+    ---
+
+    A series of articles for diving deeper into the Bidi-streaming development with ADK. You can learn basic concepts and use cases, the core API, and end-to-end application design.
+
+    - [Bidi-streaming development guide series: Part 1 - Introduction](dev-guide/part1.md)
 
 -   :material-console-line: **Streaming Tools**
 
