@@ -79,10 +79,6 @@ Use your knowledge to determine the capital and estimate the population. Do not 
 # --- 5. Set up Session Management and Runners ---
 session_service = InMemorySessionService()
 
-# Create separate sessions for clarity, though not strictly necessary if context is managed
-session_service.create_session(app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID_TOOL_AGENT)
-session_service.create_session(app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID_SCHEMA_AGENT)
-
 # Create a runner for EACH agent
 capital_runner = Runner(
     agent=capital_agent_with_tool,
@@ -116,7 +112,7 @@ async def call_agent_and_print(
 
     print(f"<<< Agent '{agent_instance.name}' Response: {final_response_content}")
 
-    current_session = session_service.get_session(app_name=APP_NAME,
+    await current_session = session_service.get_session(app_name=APP_NAME,
                                                   user_id=USER_ID,
                                                   session_id=session_id)
     stored_output = current_session.state.get(agent_instance.output_key)
@@ -135,6 +131,10 @@ async def call_agent_and_print(
 
 # --- 7. Run Interactions ---
 async def main():
+    # Create separate sessions for clarity, though not strictly necessary if context is managed
+    await session_service.create_session(app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID_TOOL_AGENT)
+    await session_service.create_session(app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID_SCHEMA_AGENT)
+
     print("--- Testing Agent with Tool ---")
     await call_agent_and_print(capital_runner, capital_agent_with_tool, SESSION_ID_TOOL_AGENT, '{"country": "France"}')
     await call_agent_and_print(capital_runner, capital_agent_with_tool, SESSION_ID_TOOL_AGENT, '{"country": "Canada"}')
@@ -143,5 +143,16 @@ async def main():
     await call_agent_and_print(structured_runner, structured_info_agent_schema, SESSION_ID_SCHEMA_AGENT, '{"country": "France"}')
     await call_agent_and_print(structured_runner, structured_info_agent_schema, SESSION_ID_SCHEMA_AGENT, '{"country": "Japan"}')
 
+# Run directly if using Jupyter notebooks or IPython shell that support top-level await
 if __name__ == "__main__":
     await main()
+
+# --- OR ---
+
+# Uncomment the following lines if running as a standard Python script (.py file):
+# import asyncio
+# if __name__ == "__main__":
+#     try:
+#         asyncio.run(main())
+#     except Exception as e:
+#         print(f"An error occurred while running the agent demo: {e}")
