@@ -65,7 +65,7 @@ text, audio, and video inputs, and they can provide text and audio output.
 
     Streaming tools allows tools (functions) to stream intermediate results back to agents and agents can respond to those intermediate results. For example, we can use streaming tools to monitor the changes of the stock price and have the agent react to it. Another example is we can have the agent monitor the video stream, and when there is changes in video stream, the agent can report the changes.
 
-    [:octicons-arrow-right-24: More information](streaming-tools.md)
+    - [Streaming Tools](streaming-tools.md)
 
 -   :material-console-line: **Custom Audio Streaming app sample**
 
@@ -73,8 +73,7 @@ text, audio, and video inputs, and they can provide text and audio output.
 
     This article overviews the server and client code for a custom asynchronous web app built with ADK Streaming and FastAPI, enabling real-time, bidirectional audio and text communication with both Server Sent Events (SSE) and WebSockets.
 
-    [:octicons-arrow-right-24: More information (SSE)](custom-streaming.md) and 
-    [:octicons-arrow-right-24: (WebSockets)](custom-streaming-ws.md)
+    - [Streaming Configurations](configuration.md)
 
 -   :material-console-line: **Blog post: Google ADK + Vertex AI Live API**
 
@@ -82,24 +81,6 @@ text, audio, and video inputs, and they can provide text and audio output.
 
     This article shows how to use Bidi-streaming (live) in ADK for real-time audio/video streaming. It offers a Python server example using LiveRequestQueue to build custom, interactive AI agents.
 
-    [:octicons-arrow-right-24: More information](https://medium.com/google-cloud/google-adk-vertex-ai-live-api-125238982d5e)
+    - [Blog post: Google ADK + Vertex AI Live API](https://medium.com/google-cloud/google-adk-vertex-ai-live-api-125238982d5e)
 
--   :material-console-line: **Shopper's Concierge demo**
-
-    ---
-
-    Learn how streaming in ADK can be used to build a personal shopping
-    concierge that understands your personal style and offers tailored
-    recommendations.
-
-    [:octicons-arrow-right-24: More information](https://youtu.be/LwHPYyw7u6U)
-
--   :material-console-line: **Streaming Configurations**
-
-    ---
-
-    There are some configurations you can set for live(streaming) agents.
-
-    [:octicons-arrow-right-24: More information](configuration.md)
 </div>
-
