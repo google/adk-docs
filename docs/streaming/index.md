@@ -6,13 +6,13 @@
 
 !!! info
 
-    This is different from server-side streaming or token-leven streaming. This section is for bidi-streaming(live).
+    This is different from server-side streaming or token-leven streaming. This section is for bidi-streaming (live).
     
-Bidi-streaming(live) in ADK adds the low-latency bidirectional voice and video interaction
+Bidi-streaming (live) in ADK adds the low-latency bidirectional voice and video interaction
 capability of [Gemini Live API](https://ai.google.dev/gemini-api/docs/live) to
 AI agents.
 
-With bidi-streaming(live) mode, you can provide end users with the experience of natural,
+With bidi-streaming (live) mode, you can provide end users with the experience of natural,
 human-like voice conversations, including the ability for the user to interrupt
 the agent's responses with voice commands. Agents with streaming can process
 text, audio, and video inputs, and they can provide text and audio output.
@@ -33,7 +33,7 @@ text, audio, and video inputs, and they can provide text and audio output.
 
 <div class="grid cards" markdown>
 
--   :material-console-line: **Quickstart (Streaming)**
+-   :material-console-line: **Quickstart (Bidi-streaming)**
 
     ---
 
