@@ -6,7 +6,7 @@ Workflow agents are specialized components in ADK designed purely for **orchestr
 
 Unlike [LLM Agents](../llm-agents.md), which use Large Language Models for dynamic reasoning and decision-making, Workflow Agents operate based on **predefined logic**. They determine the execution sequence according to their type (e.g., sequential, parallel, loop) without consulting an LLM for the orchestration itself. This results in **deterministic and predictable execution patterns**.
 
-ADK provides three core workflow agent types, each implementing a distinct execution pattern:
+ADK provides four core workflow agent types, each implementing a distinct execution pattern:
 
 <div class="grid cards" markdown>
 
@@ -33,6 +33,14 @@ ADK provides three core workflow agent types, each implementing a distinct execu
     Executes multiple sub-agents in **parallel**.
 
     [:octicons-arrow-right-24: Learn more](parallel-agents.md)
+
+- :material-console-line: **Conditional Agents**
+
+    ---
+
+    Route execution between exactly two sub-agents based on a boolean predicate.
+
+    [:octicons-arrow-right-24: Learn more](conditional-agents.md)
 
 </div>
 
