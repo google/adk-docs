@@ -161,6 +161,9 @@ nav:
     - events/index.md
   - Context:
     - context/index.md
+  - Observability:
+    - Arize AX: observability/arize-ax.md
+    - Phoenix: observability/phoenix.md
   - Evaluate:
     - evaluate/index.md
   - MCP:
