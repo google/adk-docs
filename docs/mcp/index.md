@@ -47,6 +47,20 @@ Databases. For getting started with the MCP Toolbox for Databases, a blog post [
 ## ADK Agent and FastMCP server
 [FastMCP](https://github.com/jlowin/fastmcp) handles all the complex MCP protocol details and server management, so you can focus on building great tools. It's designed to be high-level and Pythonic; in most cases, decorating a function is all you need.
 
-Refer to the
-[MCP Tools documentation](../tools/mcp-tools.md#example-3-fastmcp-server)
-documentation on how you can use ADK together with the FastMCP server running on Cloud Run.
+Refer to the [MCP Tools documentation](../tools/mcp-tools.md) documentation on
+how you can use ADK together with the FastMCP server running on Cloud Run.
+
+## MCP Servers for Google Cloud Genmedia
+
+[MCP Tools for Genmedia Services](https://github.com/GoogleCloudPlatform/vertex-ai-creative-studio/tree/main/experiments/mcp-genmedia)
+is a set of open-source MCP servers that enable you to integrate Google Cloud
+generative media services—such as Imagen, Veo, Chirp 3 HD voices, and Lyria—into
+your AI applications.
+
+Agent Development Kit (ADK) and [Genkit](https://genkit.dev/) provide built-in
+support for these MCP tools, allowing your AI agents to effectively orchestrate
+generative media workflows. For implementation guidance, refer to the [ADK
+example
+agent](https://github.com/GoogleCloudPlatform/vertex-ai-creative-studio/tree/main/experiments/mcp-genmedia/sample-agents/adk)
+and the
+[Genkit example](https://github.com/GoogleCloudPlatform/vertex-ai-creative-studio/tree/main/experiments/mcp-genmedia/sample-agents/genkit).

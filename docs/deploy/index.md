@@ -27,3 +27,12 @@ Google Cloud that enables you to run your agent as a container-based
 application.
 
 Learn more about [deploying your agent to Cloud Run](cloud-run.md).
+
+### Google Kubernetes Engine (GKE)
+
+[Google Kubernetes Engine (GKE)](https://cloud.google.com/kubernetes-engine) is a managed
+Kubernetes service of Google Cloud that allows you to run your agent in a containerized
+environment. GKE is a good option if you need more control over the deployment as well as
+for running Open Models.
+
+Learn more about [deploying your agent to GKE](gke.md).

@@ -3,17 +3,27 @@
 [Cloud Run](https://cloud.google.com/run)
 is a fully managed platform that enables you to run your code directly on top of Google's scalable infrastructure.
 
-To deploy your agent, you can use either the `adk deploy cloud_run` command (recommended), or with `gcloud run deploy` command through Cloud Run.
+To deploy your agent, you can use either the `adk deploy cloud_run` command _(recommended for Python)_, or with `gcloud run deploy` command through Cloud Run.
 
 ## Agent sample
 
-For each of the commands, we will reference a `capital_agent` sample defined on the [LLM agent](../agents/llm-agents.md) page. We will assume it's in a `capital_agent` directory.
+For each of the commands, we will reference a the `Capital Agent` sample defined on the [LLM agent](../agents/llm-agents.md) page. We will assume it's in a directory (eg: `capital_agent`).
 
 To proceed, confirm that your agent code is configured as follows:
 
-1. Agent code is in a file called `agent.py` within your agent directory.
-2. Your agent variable is named `root_agent`.
-3. `__init__.py` is within your agent directory and contains `from . import agent`.
+=== "Python"
+
+    1. Agent code is in a file called `agent.py` within your agent directory.
+    2. Your agent variable is named `root_agent`.
+    3. `__init__.py` is within your agent directory and contains `from . import agent`.
+
+=== "Java"
+
+    1. Agent code is in a file called `CapitalAgent.java` within your agent directory.
+    2. Your agent variable is global and follows the format `public static BaseAgent ROOT_AGENT`.
+    3. Your agent definition is present in a static class method.
+
+    Refer to the following section for more details. You can also find a [sample app](https://github.com/google/adk-docs/tree/main/examples/java/cloud-run) in the Github repo.
 
 ## Environment variables
 
@@ -29,7 +39,7 @@ export GOOGLE_GENAI_USE_VERTEXAI=True
 
 ## Deployment commands
 
-=== "adk CLI"
+=== "Python - adk CLI"
 
     ###  adk CLI
 
@@ -105,7 +115,7 @@ export GOOGLE_GENAI_USE_VERTEXAI=True
 
     Upon successful execution, the command will deploy your agent to Cloud Run and provide the URL of the deployed service.
 
-=== "gcloud CLI"
+=== "Python - gcloud CLI"
 
     ### gcloud CLI
 
@@ -137,7 +147,6 @@ export GOOGLE_GENAI_USE_VERTEXAI=True
         import os
 
         import uvicorn
-        from fastapi import FastAPI
         from google.adk.cli.fast_api import get_fast_api_app
 
         # Get the directory where main.py is located
@@ -151,9 +160,9 @@ export GOOGLE_GENAI_USE_VERTEXAI=True
 
         # Call the function to get the FastAPI app instance
         # Ensure the agent directory name ('capital_agent') matches your agent folder
-        app: FastAPI = get_fast_api_app(
-            agent_dir=AGENT_DIR,
-            session_db_url=SESSION_DB_URL,
+        app = get_fast_api_app(
+            agents_dir=AGENT_DIR,
+            session_service_uri=SESSION_DB_URL,
             allow_origins=ALLOWED_ORIGINS,
             web=SERVE_WEB_INTERFACE,
         )
@@ -199,6 +208,23 @@ export GOOGLE_GENAI_USE_VERTEXAI=True
         CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port $PORT"]
         ```
 
+    #### Defining Multiple Agents
+
+    You can define and deploy multiple agents within the same Cloud Run instance by creating separate folders in the root of `your-project-directory/`. Each folder represents one agent and must define a `root_agent` in its configuration.
+
+    Example structure:
+
+    ```txt
+    your-project-directory/
+    ├── capital_agent/
+    │   ├── __init__.py
+    │   └── agent.py       # contains `root_agent` definition
+    ├── population_agent/
+    │   ├── __init__.py
+    │   └── agent.py       # contains `root_agent` definition
+    └── ...
+    ```
+
     #### Deploy using `gcloud`
 
     Navigate to `your-project-directory` in your terminal.
@@ -223,6 +249,106 @@ export GOOGLE_GENAI_USE_VERTEXAI=True
     `gcloud` will build the Docker image, push it to Google Artifact Registry, and deploy it to Cloud Run. Upon completion, it will output the URL of your deployed service.
 
     For a full list of deployment options, see the [`gcloud run deploy` reference documentation](https://cloud.google.com/sdk/gcloud/reference/run/deploy).
+
+
+=== "Java - gcloud CLI"
+
+    ### gcloud CLI
+
+    You can deploy Java Agents using the standard `gcloud run deploy` command and a `Dockerfile`. This is the current recommended way to deploy Java Agents to Google Cloud Run.
+
+    Ensure you are [authenticated](https://cloud.google.com/docs/authentication/gcloud) with Google Cloud.
+    Specifically, run the commands `gcloud auth login` and `gcloud config set project <your-project-id>` from your terminal.
+
+    #### Project Structure
+
+    Organize your project files as follows:
+
+    ```txt
+    your-project-directory/
+    ├── src/
+    │   └── main/
+    │       └── java/
+    │             └── agents/
+    │                 ├── capitalagent/
+    │                     └── CapitalAgent.java    # Your agent code
+    ├── pom.xml                                    # Java adk and adk-dev dependencies
+    └── Dockerfile                                 # Container build instructions
+    ```
+
+    Create the `pom.xml` and `Dockerfile` in the root of your project directory. Your Agent code file (`CapitalAgent.java`) inside a directory as shown above.
+
+    #### Code files
+
+    1. This is our Agent definition. This is the same code as present in [LLM agent](../agents/llm-agents.md) with two caveats:
+       
+           * The Agent is now initialized as a **global public static variable**.
+    
+           * The definition of the agent can be exposed in a static method or inlined during declaration.
+
+        ```java title="CapitalAgent.java"
+        --8<-- "examples/java/cloud-run/src/main/java/demo/agents/capitalagent/CapitalAgent.java:full_code"
+        ```
+
+    2. Add the following dependencies and plugin to the pom.xml file.
+
+        ```xml title="pom.xml"
+        <dependencies>
+          <dependency>
+             <groupId>com.google.adk</groupId>
+             <artifactId>google-adk</artifactId>
+             <version>0.1.0</version>
+          </dependency>
+          <dependency>
+             <groupId>com.google.adk</groupId>
+             <artifactId>google-adk-dev</artifactId>
+             <version>0.1.0</version>
+          </dependency>
+        </dependencies>
+        
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <version>3.2.0</version>
+          <configuration>
+            <mainClass>com.google.adk.web.AdkWebServer</mainClass>
+            <classpathScope>compile</classpathScope>
+          </configuration>
+        </plugin>
+        ```
+
+    3.  Define the container image:
+
+        ```dockerfile title="Dockerfile"
+        --8<-- "examples/java/cloud-run/Dockerfile"
+        ```
+
+    #### Deploy using `gcloud`
+
+    Navigate to `your-project-directory` in your terminal.
+
+    ```bash
+    gcloud run deploy capital-agent-service \
+    --source . \
+    --region $GOOGLE_CLOUD_LOCATION \
+    --project $GOOGLE_CLOUD_PROJECT \
+    --allow-unauthenticated \
+    --set-env-vars="GOOGLE_CLOUD_PROJECT=$GOOGLE_CLOUD_PROJECT,GOOGLE_CLOUD_LOCATION=$GOOGLE_CLOUD_LOCATION,GOOGLE_GENAI_USE_VERTEXAI=$GOOGLE_GENAI_USE_VERTEXAI"
+    # Add any other necessary environment variables your agent might need
+    ```
+
+    * `capital-agent-service`: The name you want to give your Cloud Run service.
+    * `--source .`: Tells gcloud to build the container image from the Dockerfile in the current directory.
+    * `--region`: Specifies the deployment region.
+    * `--project`: Specifies the GCP project.
+    * `--allow-unauthenticated`: Allows public access to the service. Remove this flag for private services.
+    * `--set-env-vars`: Passes necessary environment variables to the running container. Ensure you include all variables required by ADK and your agent (like API keys if not using Application Default Credentials).
+
+    `gcloud` will build the Docker image, push it to Google Artifact Registry, and deploy it to Cloud Run. Upon completion, it will output the URL of your deployed service.
+
+    For a full list of deployment options, see the [`gcloud run deploy` reference documentation](https://cloud.google.com/sdk/gcloud/reference/run/deploy).
+
+
 
 ## Testing your agent
 

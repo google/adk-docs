@@ -4,6 +4,8 @@ site_url: https://google.github.io/adk-docs
 site_description: >-
   Build powerful multi-agent systems with Agent Development Kit
 site_dir: site
+exclude_docs:
+  api-reference/java/legal/*
 
 # Repository
 repo_name: adk-python
@@ -15,6 +17,11 @@ copyright: Copyright Google 2025
 # Custom CSS
 extra_css:
   - stylesheets/custom.css
+
+extra:
+  second_repo_url: https://github.com/google/adk-java
+  second_repo_name: adk-java
+  second_repo_icon: fontawesome/brands/github
 
 # Configuration
 theme:
@@ -45,6 +52,7 @@ theme:
     - content.code.copy
     - content.code.select
     - content.tabs.link
+    - content.tooltips
     - navigation.footer
     - navigation.indexes
     - navigation.instant
@@ -68,7 +76,8 @@ markdown_extensions:
       line_spans: __span
       pygments_lang_class: true
   - pymdownx.inlinehilite
-  - pymdownx.snippets
+  - pymdownx.snippets:
+      dedent_subsections: true
   - pymdownx.superfences:
       custom_fences:
         - name: mermaid
@@ -99,7 +108,10 @@ nav:
     - get-started/index.md
     - Installation: get-started/installation.md
     - Quickstart: get-started/quickstart.md
-    - Quickstart (streaming): get-started/quickstart-streaming.md
+    - Quickstart (Streaming):
+      - get-started/streaming/index.md
+      - Python: get-started/streaming/quickstart-streaming.md
+      - Java: get-started/streaming/quickstart-streaming-java.md
     - Testing: get-started/testing.md
     - Sample agents: https://github.com/google/adk-samples
     - About ADK: get-started/about.md
@@ -153,11 +165,18 @@ nav:
     - evaluate/index.md
   - MCP:
     - mcp/index.md
-  - Streaming:
+  - Bidi-streaming (live):
     - streaming/index.md
-
+    - Quickstart (Bidi-streaming/live): get-started/streaming/index.md
+    - Streaming Tools: streaming/streaming-tools.md
+    - Custom Audio Bidi-streaming app sample (SSE): streaming/custom-streaming.md
+    - Custom Audio Bidi-streaming app sample (WebSockets): streaming/custom-streaming-ws.md
+    - Configurating Bidi-streaming behaviour: streaming/configuration.md
   - Safety and Security: safety/index.md
   - Agent2Agent (A2A) Protocol: https://github.com/google/A2A/
   - Community Resources: community.md
   - Contributing Guide: contributing-guide.md
-  - API Reference: api-reference/index.html
+  - API Reference:
+    - api-reference/index.md
+    - Python ADK: api-reference/python/index.html
+    - Java ADK: api-reference/java/index.html

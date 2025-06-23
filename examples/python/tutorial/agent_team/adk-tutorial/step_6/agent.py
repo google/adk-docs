@@ -77,17 +77,22 @@ def get_weather_stateful(city: str, tool_context: ToolContext) -> dict:
         return {"status": "error", "error_message": error_msg}
 
 
-def say_hello(name: str = "there") -> str:
-    """Provides a simple greeting, optionally addressing the user by name.
+def say_hello(name: Optional[str] = None) -> str: 
+    """Provides a simple greeting. If a name is provided, it will be used.
 
     Args:
-        name (str, optional): The name of the person to greet. Defaults to "there".
+        name (str, optional): The name of the person to greet. Defaults to a generic greeting if not provided.
 
     Returns:
         str: A friendly greeting message.
     """
-    print(f"--- Tool: say_hello called with name: {name} ---")
-    return f"Hello, {name}!"
+    if name:
+        greeting = f"Hello, {name}!"
+        print(f"--- Tool: say_hello called with name: {name} ---")
+    else:
+        greeting = "Hello there!" # Default greeting if name is None or not explicitly passed
+        print(f"--- Tool: say_hello called without a specific name (name_arg_value: {name}) ---")
+    return greeting
 
 def say_goodbye() -> str:
     """Provides a simple farewell message to conclude the conversation."""
@@ -211,12 +216,9 @@ except Exception as e:
     print(f"❌ Could not redefine Farewell agent. Check Model/API Key ({farewell_agent.model}). Error: {e}")
 
 
-# Use a defined model constant
-root_agent_model = MODEL_GEMINI_2_0_FLASH
-
 root_agent = Agent(
         name="weather_agent_v6_tool_guardrail", # New version name
-        model=root_agent_model,
+        model=MODEL_GEMINI_2_0_FLASH,
         description="Main agent: Handles weather, delegates, includes input AND tool guardrails.",
         instruction="You are the main Weather Agent. Provide weather using 'get_weather_stateful'. "
                     "Delegate greetings to 'greeting_agent' and farewells to 'farewell_agent'. "
@@ -227,3 +229,33 @@ root_agent = Agent(
         before_model_callback=block_keyword_guardrail, # Keep model guardrail
         before_tool_callback=block_paris_tool_guardrail # <<< Add tool guardrail
 )
+
+# Sample queries to test the agent: 
+
+# # Agent will give weather information for the specified cities.
+# # What's the weather in Tokyo?
+# # What is the weather like in London?
+# # Tell me the weather in New York?
+
+# # Agent will not have information for the specified city.
+# # How about Paris?  
+
+# # Agent will delegate greetings to the greeting_agent.
+# # Hi there!
+# # Hello!
+# # Hello,  this is alice
+
+# # Agent will delegate farewells to the farewell_agent.
+# # Bye!
+# # See you later!
+# # Thanks, bye!
+
+# # Agent will block any request containing the keyword "BLOCK".
+# # What's the weather in BLOCK tokyo?
+# # tell me the weather in BLOCK london
+# # how about BLOCK new york?
+
+## # Agent will block the get_weather_stateful tool if called with "Paris".
+# # What's the weather in Paris?
+# # Tell me the weather in Paris
+# # How's the weather in Paris?

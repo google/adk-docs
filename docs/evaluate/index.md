@@ -1,5 +1,7 @@
 # Why Evaluate Agents
 
+![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java support is planned/ coming soon."}
+
 In traditional software development, unit tests and integration tests provide confidence that code functions as expected and remains stable through changes. These tests provide a clear "pass/fail" signal, guiding further development. However, LLM agents introduce a level of variability that makes traditional testing approaches insufficient.
 
 Due to the probabilistic nature of models, deterministic "pass/fail" assertions are often unsuitable for evaluating agent performance. Instead, we need qualitative evaluations of both the final output and the agent's trajectory \- the sequence of steps taken to reach the solution. This involves assessing the quality of the agent's decisions, its reasoning process, and the final result.
@@ -33,8 +35,8 @@ Before responding to a user, an agent typically performs a series of actions, wh
 
 For example:
 
-```py
-// Trajectory evaluation will compare
+```python
+# Trajectory evaluation will compare
 expected_steps = ["determine_intent", "use_tool", "review_results", "report_generation"]
 actual_steps = ["determine_intent", "use_tool", "review_results", "report_generation"]
 ```
@@ -58,43 +60,93 @@ The ADK offers two methods for evaluating agent performance against predefined d
 
 This approach involves creating individual test files, each representing a single, simple agent-model interaction (a session). It's most effective during active agent development, serving as a form of unit testing. These tests are designed for rapid execution and should focus on simple session complexity. Each test file contains a single session, which may consist of multiple turns. A turn represents a single interaction between the user and the agent. Each turn includes
 
-* `query:` This is the user query.  
-* `expected_tool_use`: The tool call(s) that we expect the agent to make in order to respond correctly to the user `query`.  
-* `expected_intermediate_agent_responses`:  This field contains the natural language responses produced by the agent as it progresses towards a final answer. These responses are typical in multi-agent systems where a root agent relies on child agents to accomplish a task. While generally not directly relevant to end-users, these intermediate responses are valuable for developers. They provide insight into the agent's reasoning path and help verify that it followed the correct steps to generate the final response.
-* `reference`: The expected final response from the model.
+-   `User Content`: The user issued query.
+-   `Expected Intermediate Tool Use Trajectory`: The tool calls we expect the
+    agent to make in order to respond correctly to the user query.
+-   `Expected Intermediate Agent Responses`: These are the natural language
+    responses that the agent (or sub-agents) generates as it moves towards
+    generating a final answer. These natural language responses are usually an
+    artifact of an multi-agent system, where your root agent depends on sub-agents to achieve a goal. These intermediate responses, may or may not be of
+    interest to the end user, but for a developer/owner of the system, are of
+    critical importance, as they give you the confidence that the agent went
+    through the right path to generate final response.
+-   `Final Response`: The expected final response from the agent.
 
 You can give the file any name for example `evaluation.test.json`.The framework only checks for the `.test.json` suffix, and the preceding part of the filename is not constrained. Here is a test file with a few examples:
 
+NOTE: The test files are now backed by a formal Pydantic data model. The two key
+schema files are
+[Eval Set](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py) and
+[Eval Case](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_case.py)
+
+*(Note: Comments are included for explanatory purposes and should be removed for the JSON to be valid.)*
+
 ```json
-[
-  {
-    "query": "hi",
-    "expected_tool_use": [],
-    "expected_intermediate_agent_responses": [],
-    "reference": "Hello! What can I do for you?\n"
-  },
-  {
-    "query": "roll a die for me",
-    "expected_tool_use": [
-      {
-        "tool_name": "roll_die",
-        "tool_input": {
-          "sides": 6
+# Do note that some fields are removed for sake of making this doc readable.
+{
+  "eval_set_id": "home_automation_agent_light_on_off_set",
+  "name": "",
+  "description": "This is an eval set that is used for unit testing `x` behavior of the Agent",
+  "eval_cases": [
+    {
+      "eval_id": "eval_case_id",
+      "conversation": [
+        {
+          "invocation_id": "b7982664-0ab6-47cc-ab13-326656afdf75", # Unique identifier for the invocation.
+          "user_content": { # Content provided by the user in this invocation. This is the query.
+            "parts": [
+              {
+                "text": "Turn off device_2 in the Bedroom."
+              }
+            ],
+            "role": "user"
+          },
+          "final_response": { # Final response from the agent that acts as a reference of benchmark.
+            "parts": [
+              {
+                "text": "I have set the device_2 status to off."
+              }
+            ],
+            "role": "model"
+          },
+          "intermediate_data": {
+            "tool_uses": [ # Tool use trajectory in chronological order.
+              {
+                "args": {
+                  "location": "Bedroom",
+                  "device_id": "device_2",
+                  "status": "OFF"
+                },
+                "name": "set_device_info"
+              }
+            ],
+            "intermediate_responses": [] # Any intermediate sub-agent responses.
+          },
         }
-      }
-    ],
-    "expected_intermediate_agent_responses": [],
-  },
-  {
-    "query": "what's the time now?",
-    "expected_tool_use": [],
-    "expected_intermediate_agent_responses": [],
-    "reference": "I'm sorry, I cannot access real-time information, including the current time. My capabilities are limited to rolling dice and checking prime numbers.\n"
-  }
-]
+      ],
+      "session_input": { # Initial session input.
+        "app_name": "home_automation_agent",
+        "user_id": "test_user",
+        "state": {}
+      },
+    }
+  ],
+}
 ```
 
 Test files can be organized into folders. Optionally, a folder can also include a `test_config.json` file that specifies the evaluation criteria.
+
+#### How to migrate test files not backed by the Pydantic schema?
+
+NOTE: If your test files don't adhere to [EvalSet](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py) schema file, then this section is relevant to you.
+
+Please use `AgentEvaluator.migrate_eval_data_to_new_schema` to migrate your
+existing `*.test.json` files to the Pydantic backed schema.
+
+The utility takes your current test data file and an optional initial session
+file, and generates a single output json file with data serialized in the new
+format. Given that the new schema is more cohesive, both the old test data file
+and initial session file can be ignored (or removed.)
 
 ### Second approach: Using An Evalset File
 
@@ -104,89 +156,159 @@ An evalset file contains multiple "evals," each representing a distinct session.
 
 Creating evalsets manually can be complex, therefore UI tools are provided to help capture relevant sessions and easily convert them into evals within your evalset. Learn more about using the web UI for evaluation below. Here is an example evalset containing two sessions.
 
+NOTE: The eval set files are now backed by a formal Pydantic data model. The two key
+schema files are
+[Eval Set](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py) and
+[Eval Case](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_case.py)
+
+*(Note: Comments are included for explanatory purposes and should be removed for the JSON to be valid.)*
+
 ```json
-[
-  {
-    "name": "roll_16_sided_dice_and_then_check_if_6151953_is_prime",
-    "data": [
-      {
-        "query": "What can you do?",
-        "expected_tool_use": [],
-        "expected_intermediate_agent_responses": [],
-        "reference": "I can roll dice of different sizes and check if a number is prime. I can also use multiple tools in parallel.\n"
-      },
-      {
-        "query": "Roll a 16 sided dice for me",
-        "expected_tool_use": [
-          {
-            "tool_name": "roll_die",
-            "tool_input": {
-              "sides": 16
-            }
-          }
-        ],
-        "expected_intermediate_agent_responses": [],
-        "reference": "I rolled a 16 sided die and got 13.\n"
-      },
-      {
-        "query": "Is 6151953  a prime number?",
-        "expected_tool_use": [
-          {
-            "tool_name": "check_prime",
-            "tool_input": {
-              "nums": [
-                6151953
-              ]
-            }
-          }
-        ],
-        "expected_intermediate_agent_responses": [],
-        "reference": "No, 6151953 is not a prime number.\n"
-      }
-    ],
-    "initial_session": {
-      "state": {},
-      "app_name": "hello_world",
-      "user_id": "user"
-    }
-  },
-  {
-    "name": "roll_17_sided_dice_twice",
-    "data": [
-      {
-        "query": "What can you do?",
-        "expected_tool_use": [],
-        "expected_intermediate_agent_responses": [],
-        "reference": "I can roll dice of different sizes and check if a number is prime. I can also use multiple tools in parallel.\n"
-      },
-      {
-        "query": "Roll a 17 sided dice twice for me",
-        "expected_tool_use": [
-          {
-            "tool_name": "roll_die",
-            "tool_input": {
-              "sides": 17
-            }
+# Do note that some fields are removed for sake of making this doc readable.
+{
+  "eval_set_id": "eval_set_example_with_multiple_sessions",
+  "name": "Eval set with multiple sessions",
+  "description": "This eval set is an example that shows that an eval set can have more than one session.",
+  "eval_cases": [
+    {
+      "eval_id": "session_01",
+      "conversation": [
+        {
+          "invocation_id": "e-0067f6c4-ac27-4f24-81d7-3ab994c28768",
+          "user_content": {
+            "parts": [
+              {
+                "text": "What can you do?"
+              }
+            ],
+            "role": "user"
           },
-          {
-            "tool_name": "roll_die",
-            "tool_input": {
-              "sides": 17
-            }
-          }
-        ],
-        "expected_intermediate_agent_responses": [],
-        "reference": "I have rolled a 17 sided die twice. The first roll was 13 and the second roll was 4.\n"
-      }
-    ],
-    "initial_session": {
-      "state": {},
-      "app_name": "hello_world",
-      "user_id": "user"
+          "final_response": {
+            "parts": [
+              {
+
+                "text": "I can roll dice of different sizes and check if numbers are prime."
+              }
+            ],
+            "role": null
+          },
+          "intermediate_data": {
+            "tool_uses": [],
+            "intermediate_responses": []
+          },
+        },
+      ],
+      "session_input": {
+        "app_name": "hello_world",
+        "user_id": "user",
+        "state": {}
+      },
+    },
+    {
+      "eval_id": "session_02",
+      "conversation": [
+        {
+          "invocation_id": "e-92d34c6d-0a1b-452a-ba90-33af2838647a",
+          "user_content": {
+            "parts": [
+              {
+                "text": "Roll a 19 sided dice"
+              }
+            ],
+            "role": "user"
+          },
+          "final_response": {
+            "parts": [
+              {
+                "text": "I rolled a 17."
+              }
+            ],
+            "role": null
+          },
+          "intermediate_data": {
+            "tool_uses": [],
+            "intermediate_responses": []
+          },
+        },
+        {
+          "invocation_id": "e-bf8549a1-2a61-4ecc-a4ee-4efbbf25a8ea",
+          "user_content": {
+            "parts": [
+              {
+                "text": "Roll a 10 sided dice twice and then check if 9 is a prime or not"
+              }
+            ],
+            "role": "user"
+          },
+          "final_response": {
+            "parts": [
+              {
+                "text": "I got 4 and 7 from the dice roll, and 9 is not a prime number.\n"
+              }
+            ],
+            "role": null
+          },
+          "intermediate_data": {
+            "tool_uses": [
+              {
+                "id": "adk-1a3f5a01-1782-4530-949f-07cf53fc6f05",
+                "args": {
+                  "sides": 10
+                },
+                "name": "roll_die"
+              },
+              {
+                "id": "adk-52fc3269-caaf-41c3-833d-511e454c7058",
+                "args": {
+                  "sides": 10
+                },
+                "name": "roll_die"
+              },
+              {
+                "id": "adk-5274768e-9ec5-4915-b6cf-f5d7f0387056",
+                "args": {
+                  "nums": [
+                    9
+                  ]
+                },
+                "name": "check_prime"
+              }
+            ],
+            "intermediate_responses": [
+              [
+                "data_processing_agent",
+                [
+                  {
+                    "text": "I have rolled a 10 sided die twice. The first roll is 5 and the second roll is 3.\n"
+                  }
+                ]
+              ]
+            ]
+          },
+        }
+      ],
+      "session_input": {
+        "app_name": "hello_world",
+        "user_id": "user",
+        "state": {}
+      },
     }
-  }
-]
+  ],
+}
 ```
+
+#### How to migrate eval set files not backed by the Pydantic schema?
+
+NOTE: If your eval set files don't adhere to [EvalSet](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py) schema file, then this section is relevant to you.
+
+Based on who is maintaining the eval set data, there are two routes:
+
+1.  **Eval set data maintained by ADK UI** If you use ADK UI to maintain your
+    Eval set data then *no action is needed* from you.
+
+2.  **Eval set data is developed and maintained manually and used in ADK eval CLI** A
+    migration tool is in the works, until then the ADK eval CLI command will
+    continue to support data in the old format.
 
 ### Evaluation Criteria
 
@@ -221,19 +343,62 @@ As a developer, you can evaluate your agents using the ADK in the following ways
 
 ### 1\. `adk web` \- Run Evaluations via the Web UI
 
-The web UI provides an interactive way to evaluate agents and generate evaluation datasets.
+The web UI provides an interactive way to evaluate agents, generate evaluation datasets, and inspect agent behavior in detail.
 
-Steps to run evaluation via the web ui:
+#### Step 1: Create and Save a Test Case
 
-1. Start the web server by running: `bash adk web samples_for_testing`  
-2. In the web interface:  
-    * Select an agent (e.g., `hello_world`).  
-    * Interact with the agent to create a session that you want to save as a test case.  
-    * Click the **“Eval tab”** on the right side of the interface.  
-    * If you already have an existing eval set, select that or create a new one by clicking on **"Create new eval set"** button. Give your eval set a contextual name. Select the newly created evaluation set.  
-    * Click **"Add current session"** to save the current session as an eval in the eval set file. You will be asked to provide a name for this eval, again give it a contextual name.  
-    * Once created, the newly created eval will show up in the list of available evals in the eval set file. You can run all or select specific ones to run the eval.  
-    * The status of each eval will be shown in the UI.
+1. Start the web server by running: `adk web <path_to_your_agents_folder>`
+2. In the web interface, select an agent and interact with it to create a session.
+3. Navigate to the **Eval** tab on the right side of the interface.
+4. Create a new eval set or select an existing one.
+5. Click **"Add current session"** to save the conversation as a new evaluation case.
+
+#### Step 2: View and Edit Your Test Case
+
+Once a case is saved, you can click its ID in the list to inspect it. To make changes, click the **Edit current eval case** icon (pencil). This interactive view allows you to:
+
+* **Modify** agent text responses to refine test scenarios.
+* **Delete** individual agent messages from the conversation.
+* **Delete** the entire evaluation case if it's no longer needed.
+
+![adk-eval-case.gif](../assets/adk-eval-case.gif)
+
+#### Step 3: Run the Evaluation with Custom Metrics
+
+1. Select one or more test cases from your evalset.
+2. Click **Run Evaluation**. An **EVALUATION METRIC** dialog will appear.
+3. In the dialog, use the sliders to configure the thresholds for:
+    * **Tool trajectory avg score**
+    * **Response match score**
+4. Click **Start** to run the evaluation using your custom criteria. The evaluation history will record the metrics used for each run.
+
+![adk-eval-config.gif](../assets/adk-eval-config.gif)
+
+#### Step 4: Analyze Results
+
+After the run completes, you can analyze the results:
+
+* **Analyze Run Failures**: Click on any **Pass** or **Fail** result. For failures, you can hover over the `Fail` label to see a side-by-side comparison of the **Actual vs. Expected Output** and the scores that caused the failure.
+
+### Debugging with the Trace View
+
+The ADK web UI includes a powerful **Trace** tab for debugging agent behavior. This feature is available for any agent session, not just during evaluation.
+
+The **Trace** tab provides a detailed and interactive way to inspect your agent's execution flow. Traces are automatically grouped by user message, making it easy to follow the chain of events.
+
+Each trace row is interactive:
+
+* **Hovering** over a trace row highlights the corresponding message in the chat window.
+* **Clicking** on a trace row opens a detailed inspection panel with four tabs:
+    * **Event**: The raw event data.
+    * **Request**: The request sent to the model.
+    * **Response**: The response received from the model.
+    * **Graph**: A visual representation of the tool calls and agent logic flow.
+
+![adk-trace1.gif](../assets/adk-trace1.gif)
+![adk-trace2.gif](../assets/adk-trace2.gif)
+
+Blue rows in the trace view indicate that an event was generated from that interaction. Clicking on these blue rows will open the bottom event detail panel, providing deeper insights into the agent's execution flow.
 
 ### 2\.  `pytest` \- Run Tests Programmatically
 
@@ -250,49 +415,21 @@ pytest tests/integration/
 Here is an example of a `pytest` test case that runs a single test file:
 
 ```py
-def test_with_single_test_file():
+from google.adk.evaluation.agent_evaluator import AgentEvaluator
+import pytest
+
+@pytest.mark.asyncio
+async def test_with_single_test_file():
     """Test the agent's basic ability via a session file."""
-    AgentEvaluator.evaluate(
-        agent_module="tests.integration.fixture.home_automation_agent",
-        eval_dataset="tests/integration/fixture/home_automation_agent/simple_test.test.json",
+    await AgentEvaluator.evaluate(
+        agent_module="home_automation_agent",
+        eval_dataset_file_path_or_dir="tests/integration/fixture/home_automation_agent/simple_test.test.json",
     )
 ```
 
 This approach allows you to integrate agent evaluations into your CI/CD pipelines or larger test suites. If you want to specify the initial session state for your tests, you can do that by storing the session details in a file and passing that to `AgentEvaluator.evaluate` method.
 
-Here is a sample session json file:
-
-```json
-{
-  "id": "test_id",
-  "app_name": "trip_planner_agent",
-  "user_id": "test_user",
-  "state": {
-    "origin": "San Francisco",
-    "interests": "Moutains, Hikes",
-    "range": "1000 miles",
-    "cities": ""
-
-
-  },
-  "events": [],
-  "last_update_time": 1741218714.258285
-}
-```
-
-And the sample code will look like this:
-
-```py
-def test_with_single_test_file():
-    """Test the agent's basic ability via a session file."""
-    AgentEvaluator.evaluate(
-        agent_module="tests.integration.fixture.trip_planner_agent",
-        eval_dataset="tests/integration/fixture/trip_planner_agent/simple_test.test.json",
-        initial_session_file="tests/integration/fixture/trip_planner_agent/initial.session.json"
-    )
-```
-
-### 3\. `adk eval` \- Run Evaluations via the cli
+### 3\. `adk eval` \- Run Evaluations via the CLI
 
 You can also run evaluation of an eval set file through the command line interface (CLI). This runs the same evaluation that runs on the UI, but it helps with automation, i.e. you can add this command as a part of your regular build generation and verification process.
 

@@ -1,39 +1,80 @@
 # Installing ADK
 
-## Create & activate virtual environment
+=== "Python"
 
-We recommend creating a virtual Python environment using
-[venv](https://docs.python.org/3/library/venv.html):
+    ## Create & activate virtual environment
+    
+    We recommend creating a virtual Python environment using
+    [venv](https://docs.python.org/3/library/venv.html):
+    
+    ```shell
+    python -m venv .venv
+    ```
+    
+    Now, you can activate the virtual environment using the appropriate command for
+    your operating system and environment:
+    
+    ```
+    # Mac / Linux
+    source .venv/bin/activate
+    
+    # Windows CMD:
+    .venv\Scripts\activate.bat
+    
+    # Windows PowerShell:
+    .venv\Scripts\Activate.ps1
+    ```
 
-```shell
-python -m venv .venv
-```
+    ### Install ADK
+    
+    ```bash
+    pip install google-adk
+    ```
+    
+    (Optional) Verify your installation:
+    
+    ```bash
+    pip show google-adk
+    ```
 
-Now, you can activate the virtual environment using the appropriate command for
-your operating system and environment:
+=== "Java"
 
-```
-# Mac / Linux
-source .venv/bin/activate
+    You can either use maven or gradle to add the `google-adk` and `google-adk-dev` package.
 
-# Windows CMD:
-.venv\Scripts\activate.bat
+    `google-adk` is the core Java ADK library. Java ADK also comes with a pluggable example SpringBoot server to run your agents seamlessly. This optional
+    package is present as part of `google-adk-dev`.
+    
+    If you are using maven, add the following to your `pom.xml`:
 
-# Windows PowerShell:
-.venv\Scripts\Activate.ps1
-```
+    ```xml title="pom.xml"
+    <dependencies>
+      <!-- The ADK Core dependency -->
+      <dependency>
+        <groupId>com.google.adk</groupId>
+        <artifactId>google-adk</artifactId>
+        <version>0.1.0</version>
+      </dependency>
+      
+      <!-- The ADK Dev Web UI to debug your agent (Optional) -->
+      <dependency>
+        <groupId>com.google.adk</groupId>
+        <artifactId>google-adk-dev</artifactId>
+        <version>0.1.0</version>
+      </dependency>
+    </dependencies>
+    ```
 
-### Install ADK
+    Here's a [complete pom.xml](https://github.com/google/adk-docs/tree/main/examples/java/cloud-run/pom.xml) file for reference.
 
-```bash
-pip install google-adk
-```
+    If you are using gradle, add the dependency to your build.gradle:
 
-(Optional) Verify your installation:
+    ```title="build.gradle"
+    dependencies {
+        implementation 'com.google.adk:google-adk:0.1.0'
+        implementation 'com.google.adk:google-adk-dev:0.1.0'
+    }
+    ```
 
-```bash
-pip show google-adk
-```
 
 ## Next steps
 
