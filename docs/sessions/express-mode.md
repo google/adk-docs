@@ -115,6 +115,18 @@ instead initialize the memory object without any project or location.
            # Generate a memory from that session so the Agent can remember relevant details about the user
            # memory_service.add_session_to_memory(session)
            ```
+## Vertex Express Mode Free Tier Quotas
+
+If you strictly use Vertex Express mode for free, your project will have limited quotas. See the table below for the related Agent Engine quotas.
+
+| Service    | Quota |
+| -------- | ------- |
+| Maximum number of Agent Engine resources	  | 10    |
+| Maximum number of Session resources	 | 100     |
+| Maximum number of Session Event resources	 | 10,000     |
+| Maximum number of Memory resources	    | 200    |
+
+
 ## Code Sample: Weather Agent with Session and Memory using Vertex Express Mode
 
           ```py
