@@ -117,7 +117,7 @@ instead initialize the memory object without any project or location.
            ```
 ## Vertex Express Mode Free Tier Quotas
 
-If you strictly use Vertex Express mode for free, your project will have limited quotas. See the table below for the related Agent Engine quotas.
+If you strictly use Vertex Express mode for free, your project will have limited quotas. See the table below for the related Agent Engine quotas. If you want to remove these restrictions, add a billing account to enable deployment to agent engine and unlimited sessions, session events, and memories.
 
 | Service    | Quota |
 | -------- | ------- |
