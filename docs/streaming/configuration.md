@@ -6,6 +6,7 @@ It's set by [RunConfig](https://github.com/google/adk-python/blob/main/src/googl
 
 For example, if you want to set voice config, you can leverage speech_config. 
 
+==="Python"
 ```python
 voice_config = genai_types.VoiceConfig(
     prebuilt_voice_config=genai_types.PrebuiltVoiceConfigDict(
@@ -20,6 +21,7 @@ runner.run_live(
     run_config=run_config,
 )
 ```
+==="Java"
 ```
 package agents;
 
