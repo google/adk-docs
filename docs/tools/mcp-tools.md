@@ -391,7 +391,7 @@ Create an `agent.py` (e.g., in `./adk_agent_samples/mcp_client_agent/agent.py`):
 # ./adk_agent_samples/mcp_client_agent/agent.py
 import os
 from google.adk.agents import LlmAgent
-from google.adk.tools.mcp_tool import MCPToolset, StdioServerParameters
+from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, StdioServerParameters
 
 # IMPORTANT: Replace this with the ABSOLUTE path to your my_adk_mcp_server.py script
 PATH_TO_YOUR_MCP_SERVER_SCRIPT = "/path/to/your/my_adk_mcp_server.py" # <<< REPLACE
