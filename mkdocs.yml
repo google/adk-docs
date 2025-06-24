@@ -175,6 +175,8 @@ nav:
     - Custom Audio Bidi-streaming app sample (SSE): streaming/custom-streaming.md
     - Custom Audio Bidi-streaming app sample (WebSockets): streaming/custom-streaming-ws.md
     - Configurating Bidi-streaming behaviour: streaming/configuration.md
+  - Grounding:
+    - Understanding Google Search Grounding: grounding/google_search_grounding.md
   - Safety and Security: safety/index.md
   - Agent2Agent (A2A) Protocol: https://github.com/google/A2A/
   - Community Resources: community.md
