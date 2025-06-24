@@ -132,6 +132,8 @@ If you strictly use Vertex Express mode for free, your project will have limited
 In this sample, we create a weather agent that utilizes both `VertexAiSessionService` and `VertexAiMemoryService` for context maangement, allowing our agent to recall user prefereneces and conversations!
 
 ??? "Code"
+    === "Python"
+
           ```py
           import os
           import asyncio
