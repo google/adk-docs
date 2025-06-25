@@ -216,29 +216,29 @@ story_flow_agent = StoryFlowAgent(
     tone_check=tone_check,
 )
 
-# --- Setup Runner and Session ---
-session_service = InMemorySessionService()
-initial_state = {"topic": "a brave kitten exploring a haunted house"}
-session = session_service.create_session(
-    app_name=APP_NAME,
-    user_id=USER_ID,
-    session_id=SESSION_ID,
-    state=initial_state # Pass initial state here
-)
-logger.info(f"Initial session state: {session.state}")
+INITIAL_STATE = {"topic": "a brave kitten exploring a haunted house"}
 
-runner = Runner(
-    agent=story_flow_agent, # Pass the custom orchestrator agent
-    app_name=APP_NAME,
-    session_service=session_service
-)
+# --- Setup Runner and Session ---
+async def setup_session_and_runner():
+    session_service = InMemorySessionService()
+    session = await session_service.create_session(app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID, state=INITIAL_STATE)
+    logger.info(f"Initial session state: {session.state}")
+    runner = Runner(
+        agent=story_flow_agent, # Pass the custom orchestrator agent
+        app_name=APP_NAME,
+        session_service=session_service
+    )
+    return session_service, runner
 
 # --- Function to Interact with the Agent ---
-def call_agent(user_input_topic: str):
+async def call_agent_async(user_input_topic: str):
     """
     Sends a new topic to the agent (overwriting the initial one if needed)
     and runs the workflow.
     """
+
+    session_service, runner = await setup_session_and_runner()
+
     current_session = session_service.get_session(app_name=APP_NAME, 
                                                   user_id=USER_ID, 
                                                   session_id=SESSION_ID)
@@ -250,10 +250,10 @@ def call_agent(user_input_topic: str):
     logger.info(f"Updated session state topic to: {user_input_topic}")
 
     content = types.Content(role='user', parts=[types.Part(text=f"Generate a story about: {user_input_topic}")])
-    events = runner.run(user_id=USER_ID, session_id=SESSION_ID, new_message=content)
+    events = runner.run_async(user_id=USER_ID, session_id=SESSION_ID, new_message=content)
 
     final_response = "No final response captured."
-    for event in events:
+    async for event in events:
         if event.is_final_response() and event.content and event.content.parts:
             logger.info(f"Potential final response from [{event.author}]: {event.content.parts[0].text}")
             final_response = event.content.parts[0].text
@@ -270,5 +270,5 @@ def call_agent(user_input_topic: str):
     print("-------------------------------\n")
 
 # --- Run the Agent ---
-call_agent("a lonely robot finding a friend in a junkyard")
+call_agent_async("a lonely robot finding a friend in a junkyard")
 # --8<-- [end:story_flow_agent]

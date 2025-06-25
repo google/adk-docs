@@ -37,19 +37,21 @@ support_agent = Agent(
 main_agent.sub_agents = [support_agent]
 
 # Session and Runner
-session_service = InMemorySessionService()
-session = session_service.create_session(app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID)
-runner = Runner(agent=main_agent, app_name=APP_NAME, session_service=session_service)
-
+async def setup_session_and_runner():
+    session_service = InMemorySessionService()
+    session = await session_service.create_session(app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID)
+    runner = Runner(agent=main_agent, app_name=APP_NAME, session_service=session_service)
+    return session, runner
 
 # Agent Interaction
-def call_agent(query):
+async def call_agent_async(query):
     content = types.Content(role='user', parts=[types.Part(text=query)])
-    events = runner.run(user_id=USER_ID, session_id=SESSION_ID, new_message=content)
+    session, runner = await setup_session_and_runner()
+    events = runner.run_async(user_id=USER_ID, session_id=SESSION_ID, new_message=content)
 
-    for event in events:
+    async for event in events:
         if event.is_final_response():
             final_response = event.content.parts[0].text
             print("Agent Response: ", final_response)
 
-call_agent("this is urgent, i cant login")
+call_agent_async("this is urgent, i cant login")
