@@ -162,7 +162,8 @@ In this sample, we create a weather agent that utilizes both `VertexAiSessionSer
                           "When the user asks for the weather in a specific city, "
                           "use the 'get_weather' tool to find the information. "
                           "If the tool returns an error, inform the user politely. "
-                          "If the tool is successful, present the weather report clearly.",
+                          "If the tool is successful, present the weather report clearly."
+                          "You can help the user find what city has better weather based on their preferences.",
               tools=[get_weather, adk.tools.preload_memory_tool.PreloadMemoryTool()], # Pass the function directly
           )
           
@@ -275,7 +276,7 @@ In this sample, we create a weather agent that utilizes both `VertexAiSessionSer
           
           print(f"New Session created: App='{APP_ID}', User='{USER_ID}', Session='{SESSION_ID}'")
           
-          await call_agent_async("What weather do I prefer?",
+          await call_agent_async("What city has the best weather for me based on my preferences?",
                                                  runner=runner,
                                                  user_id=USER_ID,
                                                  session_id=SESSION_ID)
