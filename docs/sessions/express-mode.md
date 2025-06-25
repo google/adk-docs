@@ -1,6 +1,6 @@
 # Vertex Express Mode: Using Sessions and Memory for Free
 
-If you are interested in using either the `VertexAiSessionService` or `VertexAiMemoryService` but you don't have a Google Cloud Project, you can use sign up to Vertex Express Mode and get access
+If you are interested in using either the `VertexAiSessionService` or `VertexAiMemoryBankService` but you don't have a Google Cloud Project, you can use sign up to Vertex Express Mode and get access
 for free and try out these services! You can sign up with an eligible ***gmail*** account [here](https://console.cloud.google.com/expressmode). For more details about Vertex Express mode, see the [overview page](https://cloud.google.com/vertex-ai/generative-ai/docs/start/express-mode/overview). 
 Once you sign up, get an [API key](https://cloud.google.com/vertex-ai/generative-ai/docs/start/express-mode/overview#api-keys) and you can get started using your local ADK agent with Vertex AI Session and Memory services!
 
@@ -95,9 +95,9 @@ instead initialize the session object without any project or location.
            # session_service = await session_service.create_session(app_name=REASONING_ENGINE_APP_ID, user_id= ...)
            ```
 
-## Managing Memories with a `VertexAiMemoryService`
+## Managing Memories with a `VertexAiMemoryBankService`
 
-[VertexAiMemoryService](memory.md###memoryservice-implementations) is compatible with Vertex Express mode API Keys. We can 
+[VertexAiMemoryBankService](memory.md###memoryservice-implementations) is compatible with Vertex Express mode API Keys. We can 
 instead initialize the memory object without any project or location.
 
            ```py
@@ -105,13 +105,13 @@ instead initialize the memory object without any project or location.
            # Plus environment variable setup:
            # GOOGLE_GENAI_USE_VERTEXAI=TRUE
            # GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_EXPRESS_MODE_API_KEY_HERE
-           from google.adk.sessions import VertexAiMemoryService
+           from google.adk.sessions import VertexAiMemoryBankService
 
            # The app_name used with this service should be the Reasoning Engine ID or name
            REASONING_ENGINE_APP_ID = "your-reasoning-engine-id"
 
            # Project and location are not required when initializing with Vertex Express Mode
-           session_service = VertexAiMemoryService(REASONING_ENGINE_APP_ID)
+           session_service = VertexAiMemoryBankService(REASONING_ENGINE_APP_ID)
            # Generate a memory from that session so the Agent can remember relevant details about the user
            # memory_service.add_session_to_memory(session)
            ```
@@ -129,7 +129,7 @@ If you strictly use Vertex Express mode for free, your project will have limited
 
 ## Code Sample: Weather Agent with Session and Memory using Vertex Express Mode
 
-In this sample, we create a weather agent that utilizes both `VertexAiSessionService` and `VertexAiMemoryService` for context maangement, allowing our agent to recall user prefereneces and conversations!
+In this sample, we create a weather agent that utilizes both `VertexAiSessionService` and `VertexAiMemoryBankService` for context maangement, allowing our agent to recall user prefereneces and conversations!
 
 ??? "Code"
     === "Python"
@@ -141,7 +141,7 @@ In this sample, we create a weather agent that utilizes both `VertexAiSessionSer
           from google import genai
           from google.adk.agents import Agent
           from google.adk.sessions import VertexAiSessionService
-          from google.adk.sessions import VertexAiMemoryService
+          from google.adk.sessions import VertexAiMemoryBankService
           from google.adk.runners import Runner
           from google.genai import types # For creating message Content/Parts
           
