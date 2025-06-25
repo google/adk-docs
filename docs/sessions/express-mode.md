@@ -14,7 +14,7 @@ First, ensure that your enviornment variables are set correctly. For example, in
           GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_EXPRESS_MODE_API_KEY_HERE
           ```
 
-Next, we can create our Agent Engine instance. You can use the vertex ai SDK, or the Gen AI sdk.
+Next, we can create our Agent Engine instance. You can use the Gen AI sdk.
 
 === "GenAI SDK"
     1. Import Gen AI SDK.
@@ -45,35 +45,6 @@ Next, we can create our Agent Engine instance. You can use the vertex ai SDK, or
         APP_ID=APP_NAME.split('/')[-1]
         ```
 
-=== "Vertex AI SDK"
-    1. Install Vertex AI SDK.
-
-        ```
-        pip install google-cloud-aiplatform[adk,agent_engines]
-        ```
-  
-    2. Initialization
-        
-        ```
-        import vertexai
-        from vertexai import agent_engines
-        
-        vertexai.init(api_key=PASTE_YOUR_ACTUAL_EXPRESS_MODE_API_KEY_HERE)
-        ```
-
-    3. Create your Agent Engine instance.
-
-        ```
-        # Create Agent Engine with Vertex AI SDK
-        agent_engine = agent_engines.create(displayName= "YOUR_AGENT_ENGINE_DISPLAY_NAME", description= "YOUR_AGENT_ENGINE_DESCRIPTION")
-        ```
-    4. Get the Agent Engine name and ID from the response
-
-        ```
-        APP_NAME=agent_engine.resource_name
-        APP_ID=APP_NAME.split('/')[-1]
-        ```
-
 ## Managing Sessions with a `VertexAiSessionService`
 
 [VertexAiSessionService](session.md###sessionservice-implementations) is compatible with Vertex Express mode API Keys. We can 
@@ -87,12 +58,12 @@ instead initialize the session object without any project or location.
            from google.adk.sessions import VertexAiSessionService
 
            # The app_name used with this service should be the Reasoning Engine ID or name
-           REASONING_ENGINE_APP_ID = "your-reasoning-engine-id"
+           APP_ID = "your-reasoning-engine-id"
 
            # Project and location are not required when initializing with Vertex Express Mode
-           session_service = VertexAiSessionService()
+           session_service = VertexAiSessionService(agent_engine_id=APP_ID)
            # Use REASONING_ENGINE_APP_ID when calling service methods, e.g.:
-           # session_service = await session_service.create_session(app_name=REASONING_ENGINE_APP_ID, user_id= ...)
+           # session = await session_service.create_session(app_name=REASONING_ENGINE_APP_ID, user_id= ...)
            ```
 
 ## Managing Memories with a `VertexAiMemoryBankService`
@@ -108,23 +79,23 @@ instead initialize the memory object without any project or location.
            from google.adk.sessions import VertexAiMemoryBankService
 
            # The app_name used with this service should be the Reasoning Engine ID or name
-           REASONING_ENGINE_APP_ID = "your-reasoning-engine-id"
+           APP_ID = "your-reasoning-engine-id"
 
            # Project and location are not required when initializing with Vertex Express Mode
-           session_service = VertexAiMemoryBankService(REASONING_ENGINE_APP_ID)
+           session_service = VertexAiMemoryBankService(agent_engine_id=APP_ID)
            # Generate a memory from that session so the Agent can remember relevant details about the user
-           # memory_service.add_session_to_memory(session)
+           # memory = await memory_service.add_session_to_memory(session)
            ```
 ## Vertex Express Mode Free Tier Quotas
 
 If you strictly use Vertex Express mode for free, your project will have limited quotas. See the table below for the related Agent Engine quotas. If you want to remove these restrictions, add a billing account to enable deployment to agent engine and unlimited sessions, session events, and memories.
 
-| Service    | Quota |
-| -------- | ------- |
-| Maximum number of Agent Engine resources	  | 10    |
-| Maximum number of Session resources	 | 100     |
-| Maximum number of Session Event resources	 | 10,000     |
-| Maximum number of Memory resources	    | 200    |
+| Service    | Free Quota | Paid Quota |
+| -------- | ------- | ------- |
+| Maximum number of Agent Engine resources	  | 10    | 100    |
+| Maximum number of Session resources	 | 100     | No limit    |
+| Maximum number of Session Event resources	 | 10,000     | No limit    |
+| Maximum number of Memory resources	    | 200    | No limit    |
 
 
 ## Code Sample: Weather Agent with Session and Memory using Vertex Express Mode
