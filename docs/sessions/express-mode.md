@@ -210,8 +210,8 @@ In this sample, we create a weather agent that utilizes both `VertexAiSessionSer
           print(f"Agent Engine created with ID: '{APP_ID}'.")
           
           # Set up Vertex Session and Memory services
-          session_service = VertexAiSessionService()
-          memory_service = VertexAiMemoryBankService(APP_NAME)
+          session_service = VertexAiSessionService(agent_engine_id=APP_ID)
+          memory_service = VertexAiMemoryBankService(agent_engine_id=APP_ID)
           
           # Create your initial session
           USER_ID = "INSERT_USER_ID_HERE"
