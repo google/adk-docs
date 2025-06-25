@@ -137,6 +137,7 @@ In this sample, we create a weather agent that utilizes both `VertexAiSessionSer
           ```py
           import os
           import asyncio
+          import json
           from google import adk
           from google import genai
           from google.adk.agents import Agent
@@ -196,14 +197,12 @@ In this sample, we create a weather agent that utilizes both `VertexAiSessionSer
           
           # Create Agent Engine with GenAI SDK
           client = genai.Client(vertexai = True)._api_client
-          client._http_options.base_url = (
-                  'https://staging-aiplatform.sandbox.googleapis.com'
-              )
-          response = client.request(
+          response_str = client.request(
                   http_method='POST',
                   path=f'reasoningEngines',
                   request_dict={"displayName": "Demo-Agent-Engine", "description": "ADK Vertex Express mode demo"},
-              )
+              ).body
+          response = json.loads(response_str)
           
           # Save Agent Engine name and ID
           APP_NAME="/".join(response['name'].split("/")[:6])
@@ -214,12 +213,13 @@ In this sample, we create a weather agent that utilizes both `VertexAiSessionSer
           session_service = VertexAiSessionService()
           memory_service = VertexAiMemoryBankService(APP_NAME)
           
+          # Create your initial session
           USER_ID = "INSERT_USER_ID_HERE"
           session = await session_service.create_session(app_name=APP_ID, user_id=USER_ID)
           SESSION_ID = session.id
           print(f"Session created: App='{APP_ID}', User='{USER_ID}', Session='{SESSION_ID}'")
           
-          # Create your runner
+          # Create your runner with the session and memory services
           runner = Runner(
               agent=weather_agent, # The agent we want to run
               app_name=APP_ID,   # Associates runs with our app
