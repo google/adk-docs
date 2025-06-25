@@ -141,7 +141,7 @@ In this sample, we create a weather agent that utilizes both `VertexAiSessionSer
           from google import genai
           from google.adk.agents import Agent
           from google.adk.sessions import VertexAiSessionService
-          from google.adk.sessions import VertexAiMemoryBankService
+          from google.adk.memory import VertexAiMemoryBankService
           from google.adk.runners import Runner
           from google.genai import types # For creating message Content/Parts
           
