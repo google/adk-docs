@@ -3,14 +3,6 @@ hide:
   - toc
 ---
 
-!!! tip "Google I/O'25 - ADK updates"
-
-    Big news! 
-
-    - Introducing **[Java ADK v0.1.0](https://github.com/google/adk-java/)**, extending agent capabilities to the Java ecosystem.
-
-    - **[Python ADK](https://github.com/google/adk-python/)** is officially v1.0.0 offering stability for production-ready agents.
-
 <div style="text-align: center;">
   <div class="centered-logo-text-group">
     <img src="assets/agent-development-kit.png" alt="Agent Development Kit Logo" width="100">

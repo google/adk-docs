@@ -161,6 +161,9 @@ nav:
     - events/index.md
   - Context:
     - context/index.md
+  - Observability:
+    - Arize AX: observability/arize-ax.md
+    - Phoenix: observability/phoenix.md
   - Evaluate:
     - evaluate/index.md
   - MCP:
@@ -168,10 +171,12 @@ nav:
   - Bidi-streaming (live):
     - streaming/index.md
     - Quickstart (Bidi-streaming/live): get-started/streaming/index.md
-    - Streaming Tools: streaming/streaming-tools.md
     - Custom Audio Bidi-streaming app sample (SSE): streaming/custom-streaming.md
     - Custom Audio Bidi-streaming app sample (WebSockets): streaming/custom-streaming-ws.md
+    - Bidi-streaming development guide series: streaming/dev-guide/part1.md
+    - Streaming Tools: streaming/streaming-tools.md
     - Configurating Bidi-streaming behaviour: streaming/configuration.md
+    - Blog post: Google ADK + Vertex AI Live API: https://medium.com/google-cloud/google-adk-vertex-ai-live-api-125238982d5e
   - Safety and Security: safety/index.md
   - Agent2Agent (A2A) Protocol: https://github.com/google/A2A/
   - Community Resources: community.md
