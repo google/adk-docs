@@ -1,3 +1,17 @@
+# Copyright 2025 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import os
 from google.adk import Agent, Runner
 from google.adk.sessions import InMemorySessionService
@@ -55,4 +69,6 @@ async def call_agent_async(query):
             final_response = event.content.parts[0].text
             print("Agent Response: ", final_response)
 
-call_agent_async("what's the latest news on AI Agents?")
+# Note: In Colab, you can directly use 'await' at the top level.
+# If running this code as a standalone Python script, you'll need to use asyncio.run() or manage the event loop.
+await call_agent_async("what's the latest news on AI Agents?")
