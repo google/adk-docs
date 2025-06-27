@@ -239,7 +239,7 @@ async def call_agent_async(user_input_topic: str):
 
     session_service, runner = await setup_session_and_runner()
 
-    current_session = session_service.get_session(app_name=APP_NAME, 
+    current_session = await session_service.get_session(app_name=APP_NAME, 
                                                   user_id=USER_ID, 
                                                   session_id=SESSION_ID)
     if not current_session:
@@ -261,7 +261,7 @@ async def call_agent_async(user_input_topic: str):
     print("\n--- Agent Interaction Result ---")
     print("Agent Final Response: ", final_response)
 
-    final_session = session_service.get_session(app_name=APP_NAME, 
+    final_session = await session_service.get_session(app_name=APP_NAME, 
                                                 user_id=USER_ID, 
                                                 session_id=SESSION_ID)
     print("Final Session State:")
@@ -270,5 +270,5 @@ async def call_agent_async(user_input_topic: str):
     print("-------------------------------\n")
 
 # --- Run the Agent ---
-call_agent_async("a lonely robot finding a friend in a junkyard")
+await call_agent_async("a lonely robot finding a friend in a junkyard")
 # --8<-- [end:story_flow_agent]
