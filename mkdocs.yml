@@ -166,6 +166,8 @@ nav:
     - Phoenix: observability/phoenix.md
   - Evaluate:
     - evaluate/index.md
+  - Observability:
+    - 'AgentOps': 'observability/agentops.md'
   - MCP:
     - mcp/index.md
   - Bidi-streaming (live):
