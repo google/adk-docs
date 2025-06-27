@@ -270,5 +270,7 @@ async def call_agent_async(user_input_topic: str):
     print("-------------------------------\n")
 
 # --- Run the Agent ---
+# Note: In Colab, you can directly use 'await' at the top level.
+# If running this code as a standalone Python script, you'll need to use asyncio.run() or manage the event loop.
 await call_agent_async("a lonely robot finding a friend in a junkyard")
 # --8<-- [end:story_flow_agent]
