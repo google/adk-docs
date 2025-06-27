@@ -67,7 +67,7 @@ async def setup_session_and_runner():
 # Agent Interaction
 async def call_agent_async(query):
     content = types.Content(role='user', parts=[types.Part(text=query)])
-    session, runner = setup_session_and_runner()
+    session, runner = await setup_session_and_runner()
     events = runner.run_async(user_id=USER_ID, session_id=SESSION_ID, new_message=content)
 
     async for event in events:
@@ -75,4 +75,6 @@ async def call_agent_async(query):
             final_response = event.content.parts[0].text
             print("Agent Response: ", final_response)
 
-call_agent_async("weather in london?")
+# Note: In Colab, you can directly use 'await' at the top level.
+# If running this code as a standalone Python script, you'll need to use asyncio.run() or manage the event loop.
+await call_agent_async("weather in london?")
