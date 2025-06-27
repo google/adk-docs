@@ -32,30 +32,11 @@ ADK provides different ways to implement this long-term knowledge store:
     memory_service = InMemoryMemoryService()
     ```
 
-2. **`VertexAiRagMemoryService`**  
+2.  **`VertexAiMemoryBankService`**
 
-    * **How it works:** Leverages Google Cloud's Vertex AI RAG (Retrieval-Augmented Generation) service. It ingests session data into a specified RAG Corpus and uses powerful semantic search capabilities for retrieval.  
-    * **Persistence:** Yes. The knowledge is stored persistently within the configured Vertex AI RAG Corpus.  
-    * **Requires:** A Google Cloud project, appropriate permissions, necessary SDKs (`pip install google-adk[vertexai]`), and a pre-configured Vertex AI RAG Corpus resource name/ID.  
-    * **Best for:** Production applications needing scalable, persistent, and semantically relevant knowledge retrieval, especially when deployed on Google Cloud.
+    [Vertex AI Agent Engine Memory Bank](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/memory-bank/overview) is a fully managed service for storing memories.
 
-    ```py
-    # Requires: pip install google-adk[vertexai]
-    # Plus GCP setup, RAG Corpus, and authentication
-    from google.adk.memory import VertexAiRagMemoryService
-
-    # The RAG Corpus name or ID
-    RAG_CORPUS_RESOURCE_NAME = "projects/your-gcp-project-id/locations/us-central1/ragCorpora/your-corpus-id"
-    # Optional configuration for retrieval
-    SIMILARITY_TOP_K = 5
-    VECTOR_DISTANCE_THRESHOLD = 0.7
-
-    memory_service = VertexAiRagMemoryService(
-        rag_corpus=RAG_CORPUS_RESOURCE_NAME,
-        similarity_top_k=SIMILARITY_TOP_K,
-        vector_distance_threshold=VECTOR_DISTANCE_THRESHOLD
-    )
-    ```
+    For more information, see the [Quickstart with ADK](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/memory-bank/quickstart-adk).
 
 ## How Memory Works in Practice
 
