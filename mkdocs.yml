@@ -175,8 +175,7 @@ nav:
     - Custom Audio Bidi-streaming app sample (WebSockets): streaming/custom-streaming-ws.md
     - Bidi-streaming development guide series: streaming/dev-guide/part1.md
     - Streaming Tools: streaming/streaming-tools.md
-    - Configurating Bidi-streaming behaviour: streaming/configuration.md
-    - Blog post: Google ADK + Vertex AI Live API: https://medium.com/google-cloud/google-adk-vertex-ai-live-api-125238982d5e
+    - Configuring Bidi-streaming behaviour: streaming/configuration.md
   - Safety and Security: safety/index.md
   - Agent2Agent (A2A) Protocol: https://github.com/google/A2A/
   - Community Resources: community.md
