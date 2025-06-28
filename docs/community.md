@@ -44,6 +44,10 @@ integrations here.*
     > e-commerce site, designed to offer the "Generative Recommendations" you find in the 
     > [Shopper's Concierge demo](https://www.youtube.com/watch?v=LwHPYyw7u6U).
 
+* **[Google ADK + Vertex AI Live API](https://medium.com/google-cloud/google-adk-vertex-ai-live-api-125238982d5e)**
+
+    > Going Beyond the ADK CLI by Building Streaming Experiences with the Agent Development Kit and the Vertex AI Live API.
+
 ## Videos & Screencasts
 
 Discover video walkthroughs, talks, and demos showcasing ADK.

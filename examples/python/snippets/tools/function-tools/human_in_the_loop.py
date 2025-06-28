@@ -66,15 +66,16 @@ USER_ID = "1234"
 SESSION_ID = "session1234"
 
 # Session and Runner
-session_service = InMemorySessionService()
-session = await session_service.create_session(app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID)
-runner = Runner(agent=file_processor_agent, app_name=APP_NAME, session_service=session_service)
-
+async def setup_session_and_runner():
+    session_service = InMemorySessionService()
+    session = await session_service.create_session(app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID)
+    runner = Runner(agent=file_processor_agent, app_name=APP_NAME, session_service=session_service)
+    return session, runner
 
 # --8<-- [start: call_reimbursement_tool]
 
 # Agent Interaction
-async def call_agent(query):
+async def call_agent_async(query):
 
     def get_long_running_function_call(event: Event) -> types.FunctionCall:
         # Get the long running function call from the event
@@ -102,6 +103,7 @@ async def call_agent(query):
                 return part.function_response
 
     content = types.Content(role='user', parts=[types.Part(text=query)])
+    session, runner = await setup_session_and_runner()
     events = runner.run_async(user_id=USER_ID, session_id=SESSION_ID, new_message=content)
 
     print("\nRunning agent...")
@@ -137,10 +139,13 @@ async def call_agent(query):
                     print(f'[{event.author}]: {text}')
           
 # --8<-- [end:call_reimbursement_tool]          
-                    
+
+# Note: In Colab, you can directly use 'await' at the top level.
+# If running this code as a standalone Python script, you'll need to use asyncio.run() or manage the event loop.
+                   
 # reimbursement that doesn't require approval
-asyncio.run(call_agent("Please reimburse 50$ for meals"))
-# await call_agent("Please reimburse 50$ for meals") # For Notebooks, uncomment this line and comment the above line
+# asyncio.run(call_agent_async("Please reimburse 50$ for meals"))
+await call_agent_async("Please reimburse 50$ for meals") # For Notebooks, uncomment this line and comment the above line
 # reimbursement that requires approval
-asyncio.run(call_agent("Please reimburse 200$ for meals"))
-# await call_agent("Please reimburse 200$ for meals") # For Notebooks, uncomment this line and comment the above line
+# asyncio.run(call_agent_async("Please reimburse 200$ for meals"))
+await call_agent_async("Please reimburse 200$ for meals") # For Notebooks, uncomment this line and comment the above line
