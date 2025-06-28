@@ -176,7 +176,7 @@ nav:
     - Bidi-streaming development guide series: streaming/dev-guide/part1.md
     - Streaming Tools: streaming/streaming-tools.md
     - Configurating Bidi-streaming behaviour: streaming/configuration.md
-    - Blog post: Google ADK + Vertex AI Live API: https://medium.com/google-cloud/google-adk-vertex-ai-live-api-125238982d5e
+    - Google ADK + Vertex AI Live API (blog post): https://medium.com/google-cloud/google-adk-vertex-ai-live-api-125238982d5e
   - Grounding:
     - Understanding Google Search Grounding: grounding/google_search_grounding.md
   - Safety and Security: safety/index.md
