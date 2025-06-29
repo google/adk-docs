@@ -183,7 +183,7 @@ export GOOGLE_GENAI_USE_VERTEXAI=True
     2. List the necessary Python packages:
 
         ```txt title="requirements.txt"
-        google_adk
+        google-adk
         # Add any other dependencies your agent needs
         ```
 
