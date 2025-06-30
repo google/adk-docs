@@ -30,7 +30,7 @@ pip install google-cloud-aiplatform[adk,agent_engines]
 ```
 
 !!!info
-    Agent Engine only supported Python version >=3.9 and <=3.12.
+    Agent Engine only supports Python version >=3.9 and <=3.13.
 
 ### Initialization
 
