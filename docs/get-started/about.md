@@ -30,7 +30,7 @@ powerful and flexible. Here are the essentials:
   files or binary data (like images, PDFs) associated with a session or user.
 * **Code Execution:** The ability for agents (usually via Tools) to generate and
   execute code to perform complex calculations or actions.
-* **Planning:** An advanced capability where agents can break down complex goals
+* **[Planning](../agents/llm-agents.md#planning-with-planner):** An advanced capability where agents can break down complex goals
   into smaller steps and plan how to achieve them like a ReAct planner.
 * **Models:** The underlying LLM that powers `LlmAgent`s, enabling their
   reasoning and language understanding abilities.
