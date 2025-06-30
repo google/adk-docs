@@ -123,7 +123,7 @@ In this sample, we create a weather agent that utilizes both `VertexAiSessionSer
           os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "True"
           
           # Use an allowlisted model for EasyGCP, we will use gemini 2.0. Find all allowlisted models here: https://cloud.google.com/vertex-ai/generative-ai/docs/start/express-mode/overview#models
-          MODEL_GEMINI_2_0_FLASH = "gemini-2.0-flash-001"
+          MODEL_GEMINI_2_5_PRO = "gemini-2.5-pro"
           
           # Define the get_weather Tool
           def get_weather(city: str) -> dict:
@@ -156,7 +156,7 @@ In this sample, we create a weather agent that utilizes both `VertexAiSessionSer
           # Define the Weather Agent
           weather_agent = Agent(
               name="weather_agent_v1",
-              model=MODEL_GEMINI_2_0_FLASH,
+              model=MODEL_GEMINI_2_5_PRO,
               description="Provides weather information for specific cities.",
               instruction="You are a helpful weather assistant. "
                           "When the user asks for the weather in a specific city, "
