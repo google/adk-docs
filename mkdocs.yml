@@ -4,6 +4,8 @@ site_url: https://google.github.io/adk-docs
 site_description: >-
   Build powerful multi-agent systems with Agent Development Kit
 site_dir: site
+exclude_docs:
+  api-reference/java/legal/*
 
 # Repository
 repo_name: adk-python
@@ -159,6 +161,9 @@ nav:
     - events/index.md
   - Context:
     - context/index.md
+  - Observability:
+    - Arize AX: observability/arize-ax.md
+    - Phoenix: observability/phoenix.md
   - Evaluate:
     - evaluate/index.md
   - Observability:
@@ -168,10 +173,11 @@ nav:
   - Bidi-streaming (live):
     - streaming/index.md
     - Quickstart (Bidi-streaming/live): get-started/streaming/index.md
-    - Streaming Tools: streaming/streaming-tools.md
     - Custom Audio Bidi-streaming app sample (SSE): streaming/custom-streaming.md
     - Custom Audio Bidi-streaming app sample (WebSockets): streaming/custom-streaming-ws.md
-    - Configurating Bidi-streaming behaviour: streaming/configuration.md
+    - Bidi-streaming development guide series: streaming/dev-guide/part1.md
+    - Streaming Tools: streaming/streaming-tools.md
+    - Configuring Bidi-streaming behaviour: streaming/configuration.md
   - Safety and Security: safety/index.md
   - Agent2Agent (A2A) Protocol: https://github.com/google/A2A/
   - Community Resources: community.md

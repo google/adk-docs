@@ -1,0 +1,16 @@
+{
+  "ignorePatterns": [
+    {
+      "pattern": "^https?://(localhost|127\\.0\\.0\\.1)"
+    },
+    {
+      "pattern": "^((?!http).)*$"
+    }
+  ],
+  "aliveStatusCodes": [
+    200,
+    206,
+    302,
+    403
+  ]
+}

@@ -102,8 +102,8 @@ you only need to follow a subset of these steps.
     from the API, use
     `` `projects/my-project-id/locations/us-west1/apis/my-api-id` ``
 
-4. Create your agent file [Agent.py](http://Agent.py) and add the created tools
-   to your agent definition:
+4. Create your agent file Agent.py and add the created tools to your agent
+   definition:
 
     ```py
     from google.adk.agents.llm_agent import LlmAgent
@@ -188,20 +188,20 @@ Connect your agent to enterprise applications using
 
 
    ![Google Cloud Tools](../assets/application-integration-overview.png)
-   
+
 2. Go to [Connection Tool](https://console.cloud.google.com/integrations/templates/connection-tool/locations/us-central1)
    template from the template library and click on "USE TEMPLATE" button.
 
 
     ![Google Cloud Tools](../assets/use-connection-tool-template.png)
-   
+
 3. Fill the Integration Name as **ExecuteConnection** (It is mandatory to use this integration name only) and
    select the region same as the connection region. Click on "CREATE".
 
 4. Publish the integration by using the "PUBLISH" button on the Application Integration Editor.
 
 
-    ![Google Cloud Tools](../assets/publish-integration.png)  
+    ![Google Cloud Tools](../assets/publish-integration.png)
 
 **Steps:**
 
@@ -223,7 +223,7 @@ Connect your agent to enterprise applications using
     ```
 
     **Note:**
-    
+
     * You can provide service account to be used instead of using default credentials by generating [Service Account Key](https://cloud.google.com/iam/docs/keys-create-delete#creating) and providing right Application Integration and Integration Connector IAM roles to the service account.
     * To find the list of supported entities and actions for a connection, use the connectors apis: [listActions](https://cloud.google.com/integration-connectors/docs/reference/rest/v1/projects.locations.connections.connectionSchemaMetadata/listActions) or [listEntityTypes](https://cloud.google.com/integration-connectors/docs/reference/rest/v1/projects.locations.connections.connectionSchemaMetadata/listEntityTypes)
 
@@ -255,7 +255,7 @@ Connect your agent to enterprise applications using
     }
 
     oauth_scheme = dict_to_auth_scheme(oauth2_data_google_cloud)
-    
+
     auth_credential = AuthCredential(
       auth_type=AuthCredentialTypes.OAUTH2,
       oauth2=OAuth2Auth(
@@ -324,7 +324,7 @@ workflow as a tool for your agent or create a new one.
         project="test-project", # TODO: replace with GCP project of the connection
         location="us-central1", #TODO: replace with location of the connection
         integration="test-integration", #TODO: replace with integration name
-        triggers=["api_trigger/test_trigger"],#TODO: replace with trigger id(s). Empty list would mean all api triggers in the integration to be considered. 
+        triggers=["api_trigger/test_trigger"],#TODO: replace with trigger id(s). Empty list would mean all api triggers in the integration to be considered.
         service_account_credentials='{...}', #optional. Stringified json for service account key
         tool_name_prefix="tool_prefix1",
         tool_instructions="..."

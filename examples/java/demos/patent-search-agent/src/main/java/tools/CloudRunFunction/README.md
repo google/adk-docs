@@ -1,7 +1,7 @@
 ### Create Database Objects
 
-In order to run this Cloud Run Function, you should have created the AlloyDB side of things prior, for the database objects. 
-Let’s create an AlloyDB cluster, instance and table where the ecommerce dataset will be loaded. 
+In order to run this Cloud Run Function, you should have created the AlloyDB side of things prior, for the database objects.
+Let’s create an AlloyDB cluster, instance and table where the ecommerce dataset will be loaded.
 
 #### Create a cluster and instance
 1. Navigate the AlloyDB page in the Cloud Console.  An easy way to find most pages in Cloud Console is to search for them using the search bar of the console.
@@ -15,13 +15,13 @@ PostgreSQL 15 / latest recommended
 Region: “us-central1”
 Networking: “default”
 
-4. When you select the default network, you'll see a screen like the one below.  
-Select SET UP CONNECTION.  
+4. When you select the default network, you'll see a screen like the one below.
+Select SET UP CONNECTION.
 
-5. From there, select "Use an automatically allocated IP range" and Continue.  After reviewing the information, select CREATE CONNECTION. 
+5. From there, select "Use an automatically allocated IP range" and Continue.  After reviewing the information, select CREATE CONNECTION.
 
 6. Once your network is set up, you can continue to create your cluster. Click CREATE CLUSTER to complete setting up of the cluster as shown below:
- 
+
 7. Make sure to change the instance id to vector-instance
 If you cannot change it, remember to change the instance id in all the upcoming references.
 
@@ -49,8 +49,8 @@ CREATE EXTENSION IF NOT EXISTS vector;
 select extname, extversion from pg_extension;
 
 
-4. Create a table 
-You can create a table using the DDL statement below in the AlloyDB Studio: 
+4. Create a table
+You can create a table using the DDL statement below in the AlloyDB Studio:
 
 CREATE TABLE patents_data ( id VARCHAR(25), type VARCHAR(25), number VARCHAR(20), country VARCHAR(2), date VARCHAR(20), abstract VARCHAR(300000), title VARCHAR(100000), kind VARCHAR(5), num_claims BIGINT, filename VARCHAR(100), withdrawn BIGINT, abstract_embeddings vector(768)) ;
 
@@ -62,7 +62,7 @@ Run the below statement to grant execute on the “embedding” function:
 GRANT EXECUTE ON FUNCTION embedding TO postgres;
 
 6. Grant Vertex AI User ROLE to the AlloyDB service account
-   
+
 From Google Cloud IAM console, grant the AlloyDB service account (that looks like this: service-<<PROJECT_NUMBER>>@gcp-sa-alloydb.iam.gserviceaccount.com) access to the role “Vertex AI User”. PROJECT_NUMBER will have your project number.
 
 PROJECT_ID=$(gcloud config get-value project)
@@ -72,10 +72,10 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
 --role="roles/aiplatform.user"
 
 7. Load patent data into the database
-The [Google Patents Public Datasets]([url](https://console.cloud.google.com/launcher/browse?q=google%20patents%20public%20datasets&filter=solution-type:dataset&_ga=2.179551075.-653757248.1714456172)) from BigQuery will be used as our dataset. Here is the link: https://console.cloud.google.com/launcher/browse?q=google%20patents%20public%20datasets&filter=solution-type:dataset&_ga=2.179551075.-653757248.1714456172
+The [Google Patents Public Datasets](https://console.cloud.google.com/launcher/browse?q=google%20patents%20public%20datasets&filter=solution-type:dataset&_ga=2.179551075.-653757248.1714456172) from BigQuery will be used as our dataset. Here is the link: https://console.cloud.google.com/launcher/browse?q=google%20patents%20public%20datasets&filter=solution-type:dataset&_ga=2.179551075.-653757248.1714456172
 
-We will use the AlloyDB Studio to run our queries. The [alloydb-pgvector]([url](https://github.com/AbiramiSukumaran/alloydb-pgvector)) repository includes the
-[insert_scripts.sql]([url](https://github.com/AbiramiSukumaran/alloydb-pgvector/blob/main/insert_scripts.sql)) script we will run to load the patent data:
+We will use the AlloyDB Studio to run our queries. The [alloydb-pgvector](https://github.com/AbiramiSukumaran/alloydb-pgvector) repository includes the
+[insert_scripts.sql](https://github.com/AbiramiSukumaran/alloydb-pgvector/blob/main/insert_scripts.sql) script we will run to load the patent data:
 https://github.com/AbiramiSukumaran/alloydb-pgvector/blob/main/insert_scripts.sql
 
 a. In the Google Cloud console, open the AlloyDB page.
@@ -122,11 +122,11 @@ Maximum instances* 3
 instance type* fi-micro
 
 4. Click CREATE and this connector should be listed in the egress settings now.
-   
+
 6. Select the newly created connector.
-   
+
 8. Opt for all traffic to be routed through this VPC connector.
-   
+
 10. Click NEXT and then DEPLOY.
 
     Once the updated Cloud Function is deployed, you should see the endpoint generated. Copy that and replace in the following command:
@@ -139,6 +139,3 @@ curl -X POST <<YOUR_ENDPOINT>> \
   | jq .
 
 That's it! It is that simple to perform an advanced Contextual Similarity Vector Search using the Embeddings model on AlloyDB data.
-
-
-

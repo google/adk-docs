@@ -45,7 +45,7 @@ adk-streaming/  # Project folder
 
 ### agent.py
 
-Copy-paste the following code block to the [`agent.py`](http://agent.py).
+Copy-paste the following code block into the `agent.py` file.
 
 For `model`, please double check the model ID as described earlier in the [Models section](#supported-models).
 
