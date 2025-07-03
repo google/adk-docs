@@ -26,10 +26,10 @@ SESSION_ID = "session_code_exec_async"
 GEMINI_MODEL = "gemini-2.0-flash"
 
 # Agent Definition
-code_agent = LlmAgent(
+code_agent = Agent(
     name=AGENT_NAME,
     model=GEMINI_MODEL,
-    executor=[BuiltInCodeExecutor],
+    code_executor=BuiltInCodeExecutor(),
     instruction="""You are a calculator agent.
     When given a mathematical expression, write and execute Python code to calculate the result.
     Return only the final numerical result as plain text, without markdown or code blocks.
@@ -39,7 +39,7 @@ code_agent = LlmAgent(
 
 # Session and Runner
 session_service = InMemorySessionService()
-session = session_service.create_session(
+session = await session_service.create_session(
     app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID
 )
 runner = Runner(agent=code_agent, app_name=APP_NAME, session_service=session_service)
