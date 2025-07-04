@@ -184,3 +184,4 @@ nav:
     - api-reference/index.md
     - Python ADK: api-reference/python/index.html
     - Java ADK: api-reference/java/index.html
+  - Community Clients: clients/index.md
