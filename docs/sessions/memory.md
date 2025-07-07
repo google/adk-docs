@@ -142,15 +142,30 @@ Before you can use this feature, you must have:
 
 ### Configuration
 
-To connect your agent to the Memory Bank, you use the `--memory_service_uri` flag when starting the ADK server (`adk web` or `adk api_server`).
+To connect your agent to the Memory Bank, you use the `--memory_service_uri` flag when starting the ADK server (`adk web` or `adk api_server`). The URI must be in the format `agentengine://<agent_engine_id>`.
 
-The URI must be in the format `agentengine://<agent_engine_id>`.
-
-**Example:**
-
-```bash
+```bash title="bash"
 adk web path/to/your/agents_dir --memory_service_uri="agentengine://1234567890"
 ```
+
+Or, you can configure your agent to use the Memory Bank by manually instantiating the `VertexAiMemoryBankService` and passing it to the `Runner`.
+
+```py
+from google.adk.memory import VertexAiMemoryBankService
+
+agent_engine_id = agent_engine.api_resource.name.split("/")[-1]
+
+memory_service = VertexAiMemoryBankService(
+    project="PROJECT_ID",
+    location="LOCATION",
+    agent_engine_id=agent_engine_id
+)
+
+runner = adk.Runner(
+    ...
+    memory_service=memory_service
+)
+``` 
 
 ### Using Memory in Your Agent
 
@@ -207,24 +222,30 @@ Here’s how you could implement that in your agent's code:
 
 ```python
 from google.adk.agents import Agent
-from google.adk.memory import InMemoryMemoryService
+from google.adk.memory import InMemoryMemoryService, VertexAiMemoryBankService
 from google.genai import types
 
-class MyMultiMemoryAgent(Agent):
+class MultiMemoryAgent(Agent):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+
+        self.memory_service = InMemoryMemoryService()
         # Manually instantiate a second memory service for document lookups
-        self.in_memory_service = InMemoryMemoryService()
+        self.vertexai_memorybank_service = VertexAiMemoryBankService(
+            project="PROJECT_ID",
+            location="LOCATION",
+            agent_engine_id="AGENT_ENGINE_ID"
+        )
 
     async def run(self, request: types.Content, **kwargs) -> types.Content:
         user_query = request.parts[0].text
 
         # 1. Search conversational history using the framework-provided memory
-        #    (This would be VertexAiMemoryBankService if configured via CLI)
+        #    (This would be InMemoryMemoryService if configured)
         conversation_context = await self.search_memory(query=user_query)
 
         # 2. Search the document knowledge base using the manually created service
-        document_context = await self.in_memory_service.search_memory(query=user_query)
+        document_context = await self.vertexai_memorybank_service.search_memory(query=user_query)
 
         # Combine the context from both sources to generate a better response
         prompt = "From our past conversations, I remember:\n"
