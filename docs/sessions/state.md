@@ -67,6 +67,44 @@ Prefixes on state keys define their scope and persistence behavior, especially w
 
 **How the Agent Sees It:** Your agent code interacts with the *combined* state through the single `session.state` collection (dict/ Map). The `SessionService` handles fetching/merging state from the correct underlying storage based on prefixes.
 
+### Accessing Session State in Agent Instructions
+
+When working with `LlmAgent` instances, you can directly inject session state values into the agent's instruction string using a simple templating syntax. This allows you to create dynamic and context-aware instructions without relying solely on natural language directives.
+
+#### Using `{key}` Templating
+
+To inject a value from the session state, enclose the key of the desired state variable within curly braces: `{key}`. The framework will automatically replace this placeholder with the corresponding value from `session.state` before passing the instruction to the LLM.
+
+**Example:**
+
+```python
+from google.adk.agents import LlmAgent
+
+story_generator = LlmAgent(
+    name="StoryGenerator",
+    model="gemini-2.0-flash",
+    instruction="""Write a short story about a cat, focusing on the theme: {topic}."""
+)
+
+# Assuming session.state['topic'] is set to "friendship", the LLM 
+# will receive the following instruction:
+# "Write a short story about a cat, focusing on the theme: friendship."
+```
+
+#### Important Considerations
+
+* **Key Existence:** Ensure that the key you reference in the instruction string exists in the session.state. If the key is missing, the agent might misbehave or throw an error.
+    * Data Types: The value associated with the key should be a string or a type that can be easily converted to a string.
+    * Escaping: If you need to use literal curly braces in your instruction (e.g., for JSON formatting), you'll need to escape them.
+
+* **Benefits of Direct Injection**
+    * Clarity: Makes it explicit which parts of the instruction are dynamic and based on session state.
+    * Reliability: Avoids relying on the LLM to correctly interpret natural language instructions to access state.
+    * Maintainability: Simplifies instruction strings and reduces the risk of errors when updating state variable names.
+
+* **Relation to Other State Access Methods**
+    * This direct injection method is specific to LlmAgent instructions. Refer to the following section for more information on other state access methods.
+
 ### How State is Updated: Recommended Methods
 
 State should **always** be updated as part of adding an `Event` to the session history using `session_service.append_event()`. This ensures changes are tracked, persistence works correctly, and updates are thread-safe.
