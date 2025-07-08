@@ -4,16 +4,9 @@ If you are interested in using either the `VertexAiSessionService` or `VertexAiM
 for free and try out these services! You can sign up with an eligible ***gmail*** account [here](https://console.cloud.google.com/expressmode). For more details about Vertex Express mode, see the [overview page](https://cloud.google.com/vertex-ai/generative-ai/docs/start/express-mode/overview). 
 Once you sign up, get an [API key](https://cloud.google.com/vertex-ai/generative-ai/docs/start/express-mode/overview#api-keys) and you can get started using your local ADK agent with Vertex AI Session and Memory services!
 
-!!! Vertex Express mode limitations
+!!! info Vertex Express mode limitations
 
     Vertex Express Mode has certain limitations in the free tier. Free Express mode projects are only valid for 90 days and only select services are available to be used with limited quota. For example, the number of Agent Engines is restricted to 10 and deployment to Agent Engine is reserved for the paid tier only. To remove the quota restrictions and use all of Vertex's services, add a billing account to your Express Mode project.
-    | Service    | Free Quota | Paid Quota |
-    | -------- | ------- | ------- |
-    | Maximum number of Agent Engine resources	  | 10    | 100    |
-    | Maximum number of Session resources	 | 100     | No limit    |
-    | Maximum number of Session Event resources	 | 10,000     | No limit    |
-    | Maximum number of Memory resources	    | 200    | No limit    |
-    
 
 ## Create an Agent Engine
 
