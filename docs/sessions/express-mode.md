@@ -4,13 +4,13 @@ If you are interested in using either the `VertexAiSessionService` or `VertexAiM
 for free and try out these services! You can sign up with an eligible ***gmail*** account [here](https://console.cloud.google.com/expressmode). For more details about Vertex Express mode, see the [overview page](https://cloud.google.com/vertex-ai/generative-ai/docs/start/express-mode/overview). 
 Once you sign up, get an [API key](https://cloud.google.com/vertex-ai/generative-ai/docs/start/express-mode/overview#api-keys) and you can get started using your local ADK agent with Vertex AI Session and Memory services!
 
-!!! info Vertex Express mode limitations
+!!! info Vertex AI Express mode limitations
 
-    Vertex Express Mode has certain limitations in the free tier. Free Express mode projects are only valid for 90 days and only select services are available to be used with limited quota. For example, the number of Agent Engines is restricted to 10 and deployment to Agent Engine is reserved for the paid tier only. To remove the quota restrictions and use all of Vertex's services, add a billing account to your Express Mode project.
+    Vertex AI Express Mode has certain limitations in the free tier. Free Express mode projects are only valid for 90 days and only select services are available to be used with limited quota. For example, the number of Agent Engines is restricted to 10 and deployment to Agent Engine is reserved for the paid tier only. To remove the quota restrictions and use all of Vertex AI's services, add a billing account to your Express Mode project.
 
 ## Create an Agent Engine
 
-`Session` objects are children of an `AgentEngine`. When using Vertex Express Mode, we can create an empty `AgentEngine` parent to manage all of our `Session` and `Memory` objects.
+`Session` objects are children of an `AgentEngine`. When using Vertex AI Express Mode, we can create an empty `AgentEngine` parent to manage all of our `Session` and `Memory` objects.
 First, ensure that your enviornment variables are set correctly. For example, in Python:
 
           ```env title="multi_tool_agent/.env"
@@ -51,7 +51,7 @@ Next, we can create our Agent Engine instance. You can use the Gen AI sdk.
 
 ## Managing Sessions with a `VertexAiSessionService`
 
-[VertexAiSessionService](session.md###sessionservice-implementations) is compatible with Vertex Express mode API Keys. We can 
+[VertexAiSessionService](session.md###sessionservice-implementations) is compatible with Vertex AI Express mode API Keys. We can 
 instead initialize the session object without any project or location.
 
            ```py
@@ -77,7 +77,7 @@ instead initialize the session object without any project or location.
 
 ## Managing Memories with a `VertexAiMemoryBankService`
 
-[VertexAiMemoryBankService](memory.md###memoryservice-implementations) is compatible with Vertex Express mode API Keys. We can 
+[VertexAiMemoryBankService](memory.md###memoryservice-implementations) is compatible with Vertex AI Express mode API Keys. We can 
 instead initialize the memory object without any project or location.
 
            ```py
@@ -100,7 +100,7 @@ instead initialize the memory object without any project or location.
     For Free Express Mode Projects, `VertexAiMemoryBankService` has the following quota:
     - 200 Memory Entities
 
-## Code Sample: Weather Agent with Session and Memory using Vertex Express Mode
+## Code Sample: Weather Agent with Session and Memory using Vertex AI Express Mode
 
 In this sample, we create a weather agent that utilizes both `VertexAiSessionService` and `VertexAiMemoryBankService` for context maangement, allowing our agent to recall user prefereneces and conversations!
 
