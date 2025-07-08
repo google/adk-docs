@@ -4,6 +4,17 @@ If you are interested in using either the `VertexAiSessionService` or `VertexAiM
 for free and try out these services! You can sign up with an eligible ***gmail*** account [here](https://console.cloud.google.com/expressmode). For more details about Vertex Express mode, see the [overview page](https://cloud.google.com/vertex-ai/generative-ai/docs/start/express-mode/overview). 
 Once you sign up, get an [API key](https://cloud.google.com/vertex-ai/generative-ai/docs/start/express-mode/overview#api-keys) and you can get started using your local ADK agent with Vertex AI Session and Memory services!
 
+!!! Vertex Express mode limitations
+
+    Vertex Express Mode has certain limitations in the free tier. Free Express mode projects are only valid for 90 days and only select services are available to be used with limited quota. For example, the number of Agent Engines is restricted to 10 and deployment to Agent Engine is reserved for the paid tier only. To remove the quota restrictions and use all of Vertex's services, add a billing account to your Express Mode project.
+    | Service    | Free Quota | Paid Quota |
+    | -------- | ------- | ------- |
+    | Maximum number of Agent Engine resources	  | 10    | 100    |
+    | Maximum number of Session resources	 | 100     | No limit    |
+    | Maximum number of Session Event resources	 | 10,000     | No limit    |
+    | Maximum number of Memory resources	    | 200    | No limit    |
+    
+
 ## Create an Agent Engine
 
 `Session` objects are children of an `AgentEngine`. When using Vertex Express Mode, we can create an empty `AgentEngine` parent to manage all of our `Session` and `Memory` objects.
@@ -86,17 +97,6 @@ instead initialize the memory object without any project or location.
            # Generate a memory from that session so the Agent can remember relevant details about the user
            # memory = await memory_service.add_session_to_memory(session)
            ```
-## Vertex Express Mode Free Tier Quotas
-
-If you strictly use Vertex Express mode for free, your project will have limited quotas. See the table below for the related Agent Engine quotas. If you want to remove these restrictions, add a billing account to enable deployment to agent engine and unlimited sessions, session events, and memories.
-
-| Service    | Free Quota | Paid Quota |
-| -------- | ------- | ------- |
-| Maximum number of Agent Engine resources	  | 10    | 100    |
-| Maximum number of Session resources	 | 100     | No limit    |
-| Maximum number of Session Event resources	 | 10,000     | No limit    |
-| Maximum number of Memory resources	    | 200    | No limit    |
-
 
 ## Code Sample: Weather Agent with Session and Memory using Vertex Express Mode
 
