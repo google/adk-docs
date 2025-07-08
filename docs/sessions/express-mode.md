@@ -69,6 +69,11 @@ instead initialize the session object without any project or location.
            # Use REASONING_ENGINE_APP_ID when calling service methods, e.g.:
            # session = await session_service.create_session(app_name=REASONING_ENGINE_APP_ID, user_id= ...)
            ```
+!!! info Session Service Quotas
+
+    For Free Express Mode Projects, `VertexAiSessionService` has the following quota:
+    - 100 Session Entities
+    - 10,000 Event Entities
 
 ## Managing Memories with a `VertexAiMemoryBankService`
 
@@ -90,6 +95,10 @@ instead initialize the memory object without any project or location.
            # Generate a memory from that session so the Agent can remember relevant details about the user
            # memory = await memory_service.add_session_to_memory(session)
            ```
+!!! info Memory Service Quotas
+
+    For Free Express Mode Projects, `VertexAiMemoryBankService` has the following quota:
+    - 200 Memory Entities
 
 ## Code Sample: Weather Agent with Session and Memory using Vertex Express Mode
 
