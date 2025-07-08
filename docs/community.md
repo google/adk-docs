@@ -19,6 +19,20 @@ Community-provided translations of the ADK documentation.
     > continuously updated and translated to provide a localized reading
     > experience for developers in China.
 
+*   **[ADK Documentation (Korean, 한국어)](https://adk-labs.github.io/adk-docs/ko/)**
+
+    > the Korean version of the Agent Development Kit
+    > documentation, maintained by an individual. The documentation is
+    > continuously updated and translated to provide a localized reading
+    > experience for developers in South Korea.
+
+*   **[ADK Documentation (Japanese, 日本語)](https://adk-labs.github.io/adk-docs/ja/)**
+
+    > the Japanese version of the Agent Development Kit
+    > documentation, maintained by an individual. The documentation is
+    > continuously updated and translated to provide a localized reading
+    > experience for developers in Japan.
+
 ## Tutorials, Guides & Blog Posts
 
 *Find community-written guides covering ADK features, use cases, and
@@ -29,6 +43,10 @@ integrations here.*
     > In this tutorial, we will explore how to build a simple multi-agent system for an 
     > e-commerce site, designed to offer the "Generative Recommendations" you find in the 
     > [Shopper's Concierge demo](https://www.youtube.com/watch?v=LwHPYyw7u6U).
+
+* **[Google ADK + Vertex AI Live API](https://medium.com/google-cloud/google-adk-vertex-ai-live-api-125238982d5e)**
+
+    > Going Beyond the ADK CLI by Building Streaming Experiences with the Agent Development Kit and the Vertex AI Live API.
 
 ## Videos & Screencasts
 

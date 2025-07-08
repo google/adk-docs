@@ -102,8 +102,8 @@ you only need to follow a subset of these steps.
     from the API, use
     `` `projects/my-project-id/locations/us-west1/apis/my-api-id` ``
 
-4. Create your agent file [Agent.py](http://Agent.py) and add the created tools
-   to your agent definition:
+4. Create your agent file Agent.py and add the created tools to your agent
+   definition:
 
     ```py
     from google.adk.agents.llm_agent import LlmAgent
@@ -188,20 +188,20 @@ Connect your agent to enterprise applications using
 
 
    ![Google Cloud Tools](../assets/application-integration-overview.png)
-   
+
 2. Go to [Connection Tool](https://console.cloud.google.com/integrations/templates/connection-tool/locations/us-central1)
    template from the template library and click on "USE TEMPLATE" button.
 
 
     ![Google Cloud Tools](../assets/use-connection-tool-template.png)
-   
+
 3. Fill the Integration Name as **ExecuteConnection** (It is mandatory to use this integration name only) and
    select the region same as the connection region. Click on "CREATE".
 
 4. Publish the integration by using the "PUBLISH" button on the Application Integration Editor.
 
 
-    ![Google Cloud Tools](../assets/publish-integration.png)  
+    ![Google Cloud Tools](../assets/publish-integration.png)
 
 **Steps:**
 
@@ -216,18 +216,67 @@ Connect your agent to enterprise applications using
         connection="test-connection", #TODO: replace with connection name
         entity_operations={"Entity_One": ["LIST","CREATE"], "Entity_Two": []},#empty list for actions means all operations on the entity are supported.
         actions=["action1"], #TODO: replace with actions
-        service_account_credentials='{...}', # optional
-        tool_name="tool_prefix2",
+        service_account_credentials='{...}', # optional. Stringified json for service account key
+        tool_name_prefix="tool_prefix2",
         tool_instructions="..."
     )
     ```
 
-    Note:
-    -   You can provide service account to be used instead of using default
-        credentials.
-    -   To find the list of supported entities and actions for a connection, use the connectors apis:
-        [listActions](https://cloud.google.com/integration-connectors/docs/reference/rest/v1/projects.locations.connections.connectionSchemaMetadata/listActions) or 
-        [listEntityTypes](https://cloud.google.com/integration-connectors/docs/reference/rest/v1/projects.locations.connections.connectionSchemaMetadata/listEntityTypes)
+    **Note:**
+
+    * You can provide service account to be used instead of using default credentials by generating [Service Account Key](https://cloud.google.com/iam/docs/keys-create-delete#creating) and providing right Application Integration and Integration Connector IAM roles to the service account.
+    * To find the list of supported entities and actions for a connection, use the connectors apis: [listActions](https://cloud.google.com/integration-connectors/docs/reference/rest/v1/projects.locations.connections.connectionSchemaMetadata/listActions) or [listEntityTypes](https://cloud.google.com/integration-connectors/docs/reference/rest/v1/projects.locations.connections.connectionSchemaMetadata/listEntityTypes)
+
+
+    `ApplicationIntegrationToolset` now also supports providing auth_scheme and auth_credential for dynamic OAuth2 authentication for Integration Connectors. To use it, create a tool similar to this within your `tools.py` file:
+
+    ```py
+    from google.adk.tools.application_integration_tool.application_integration_toolset import ApplicationIntegrationToolset
+    from google.adk.tools.openapi_tool.auth.auth_helpers import dict_to_auth_scheme
+    from google.adk.auth import AuthCredential
+    from google.adk.auth import AuthCredentialTypes
+    from google.adk.auth import OAuth2Auth
+
+    oauth2_data_google_cloud = {
+      "type": "oauth2",
+      "flows": {
+          "authorizationCode": {
+              "authorizationUrl": "https://accounts.google.com/o/oauth2/auth",
+              "tokenUrl": "https://oauth2.googleapis.com/token",
+              "scopes": {
+                  "https://www.googleapis.com/auth/cloud-platform": (
+                      "View and manage your data across Google Cloud Platform"
+                      " services"
+                  ),
+                  "https://www.googleapis.com/auth/calendar.readonly": "View your calendars"
+              },
+          }
+      },
+    }
+
+    oauth_scheme = dict_to_auth_scheme(oauth2_data_google_cloud)
+
+    auth_credential = AuthCredential(
+      auth_type=AuthCredentialTypes.OAUTH2,
+      oauth2=OAuth2Auth(
+          client_id="...", #TODO: replace with client_id
+          client_secret="...", #TODO: replace with client_secret
+      ),
+    )
+
+    connector_tool = ApplicationIntegrationToolset(
+        project="test-project", # TODO: replace with GCP project of the connection
+        location="us-central1", #TODO: replace with location of the connection
+        connection="test-connection", #TODO: replace with connection name
+        entity_operations={"Entity_One": ["LIST","CREATE"], "Entity_Two": []},#empty list for actions means all operations on the entity are supported.
+        actions=["GET_calendars/%7BcalendarId%7D/events"], #TODO: replace with actions. this one is for list events
+        service_account_credentials='{...}', # optional. Stringified json for service account key
+        tool_name_prefix="tool_prefix2",
+        tool_instructions="...",
+        auth_scheme=oauth_scheme,
+        auth_credential=auth_credential
+    )
+    ```
 
 
 2. Add the tool to your agent. Update your `agent.py` file
@@ -240,7 +289,7 @@ Connect your agent to enterprise applications using
         model='gemini-2.0-flash',
         name='connector_agent',
         instruction="Help user, leverage the tools you have access to",
-        tools=connector_tool.get_tools(),
+        tools=[connector_tool],
     )
     ```
 
@@ -275,14 +324,15 @@ workflow as a tool for your agent or create a new one.
         project="test-project", # TODO: replace with GCP project of the connection
         location="us-central1", #TODO: replace with location of the connection
         integration="test-integration", #TODO: replace with integration name
-        trigger="api_trigger/test_trigger",#TODO: replace with trigger id
-        service_account_credentials='{...}', #optional
-        tool_name="tool_prefix1",
+        triggers=["api_trigger/test_trigger"],#TODO: replace with trigger id(s). Empty list would mean all api triggers in the integration to be considered.
+        service_account_credentials='{...}', #optional. Stringified json for service account key
+        tool_name_prefix="tool_prefix1",
         tool_instructions="..."
     )
     ```
 
-    Note: You can provide service account to be used instead of using default credentials
+    Note: You can provide service account to be used instead of using default
+        credentials by generating [Service Account Key](https://cloud.google.com/iam/docs/keys-create-delete#creating) and providing right Application Integration and Integration Connector IAM roles to the service account.
 
 2. Add the tool to your agent. Update your `agent.py` file
 
@@ -294,7 +344,7 @@ workflow as a tool for your agent or create a new one.
         model='gemini-2.0-flash',
         name='integration_agent',
         instruction="Help user, leverage the tools you have access to",
-        tools=integration_tool.get_tools(),
+        tools=[integration_tool],
     )
     ```
 
