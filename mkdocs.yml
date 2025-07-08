@@ -151,7 +151,7 @@ nav:
     - Session: sessions/session.md
     - State: sessions/state.md
     - Memory: sessions/memory.md
-    - Try Vertex Sessions and Memories for free: sessions/express-mode.md
+    - Try Vertex AI for free: sessions/express-mode.md
   - Callbacks:
     - callbacks/index.md
     - Types of callbacks: callbacks/types-of-callbacks.md
