@@ -26,9 +26,9 @@ pip install openinference-instrumentation-google-adk google-adk arize-phoenix-ot
 
 These instructions show you how to use Phoenix Cloud. You can also [launch Phoenix](https://arize.com/docs/phoenix/integrations/llm-providers/google-gen-ai/google-adk-tracing) in a notebook, from your terminal, or self-host it using a container. 
 
-First, sign up for a [free Phoenix account](https://phoenix.arize.com/). 
-
-Next, from the Settings page of your new Phoenix Space, create your API key and copy your Hostname. 
+1. Sign up for a [free Phoenix account](https://phoenix.arize.com/). 
+2. From the Settings page of your new Phoenix Space, create your API key
+3. Copy your endpoint which should look like: https://app.phoenix.arize.com/s/[your-space-name]
 
 **Set your Phoenix endpoint and API Key:**
 
@@ -36,7 +36,7 @@ Next, from the Settings page of your new Phoenix Space, create your API key and 
 import os
 
 os.environ["PHOENIX_API_KEY"] = "ADD YOUR PHOENIX API KEY"
-os.environ["PHOENIX_COLLECTOR_ENDPOINT"] = "ADD YOUR PHOENIX HOSTNAME"
+os.environ["PHOENIX_COLLECTOR_ENDPOINT"] = "ADD YOUR PHOENIX COLLECTOR ENDPOINT"
 
 # If you created your Phoenix Cloud instance before June 24th, 2025, set the API key as a header:
 # os.environ["PHOENIX_CLIENT_HEADERS"] = f"api_key={os.getenv('PHOENIX_API_KEY')}"
