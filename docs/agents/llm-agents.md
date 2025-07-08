@@ -341,7 +341,7 @@ Control whether the agent receives the prior conversation history.
 
 **`planner` (Optional):** Assign a `BasePlanner` instance to enable multi-step reasoning and planning before execution. There are two main planners:
 
-* `BuiltInPlanner`: Leverages the model's built-in planning capabilities (e.g., Gemini's thinking feature). See [Gemini Thinking](https://ai.google.dev/gemini-api/docs/thinking) for details and examples.
+* **`BuiltInPlanner`:** Leverages the model's built-in planning capabilities (e.g., Gemini's thinking feature). See [Gemini Thinking](https://ai.google.dev/gemini-api/docs/thinking) for details and examples.
 
     Here, the `thinking_budget` parameter guides the model on the number of thinking tokens to use when generating a response. The `include_thoughts` parameter controls whether the model should include its raw thoughts and internal reasoning process in the response.
 
@@ -362,7 +362,7 @@ Control whether the agent receives the prior conversation history.
     )
     ```
     
-* `PlanReActPlanner`: This planner instructs the model to follow a specific structure in its output: first create a plan, then execute actions (like calling tools), and provide reasoning for its steps. *It's particularly useful for models that don't have a built-in "thinking" feature*.
+* **`PlanReActPlanner`:** This planner instructs the model to follow a specific structure in its output: first create a plan, then execute actions (like calling tools), and provide reasoning for its steps. *It's particularly useful for models that don't have a built-in "thinking" feature*.
 
     ```python
     from google.adk import Agent
@@ -373,6 +373,23 @@ Control whether the agent receives the prior conversation history.
         planner=PlanReActPlanner(),
         # ... your tools here
     )
+    ```
+
+    The agent's response will follow a structured format:
+
+    ```
+    [user]: ai news
+    [google_search_agent]: /*PLANNING*/
+    1. Perform a Google search for "latest AI news" to get current updates and headlines related to artificial intelligence.
+    2. Synthesize the information from the search results to provide a summary of recent AI news.
+
+    /*ACTION*/
+    /*REASONING*/
+    The search results provide a comprehensive overview of recent AI news, covering various aspects like company developments, research breakthroughs, and applications. I have enough information to answer the user's request.
+
+    /*FINAL_ANSWER*/
+    Here's a summary of recent AI news:
+    ....
     ```
 
 ### Code Execution
