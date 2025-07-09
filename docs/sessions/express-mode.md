@@ -72,6 +72,7 @@ instead initialize the session object without any project or location.
 !!! info Session Service Quotas
 
     For Free Express Mode Projects, `VertexAiSessionService` has the following quota:
+
     - 100 Session Entities
     - 10,000 Event Entities
 
@@ -98,10 +99,11 @@ instead initialize the memory object without any project or location.
 !!! info Memory Service Quotas
 
     For Free Express Mode Projects, `VertexAiMemoryBankService` has the following quota:
+
     - 200 Memory Entities
 
 ## Code Sample: Weather Agent with Session and Memory using Vertex AI Express Mode
 
 In this sample, we create a weather agent that utilizes both `VertexAiSessionService` and `VertexAiMemoryBankService` for context maangement, allowing our agent to recall user prefereneces and conversations!
 
-**[Weather Agent with Session and Memory using Vertex Express Mode](https://github.com/google/adk-docs/blob/main/examples/python/notebooks/express-mode-weather-agent.ipynb)**
+**[Weather Agent with Session and Memory using Vertex AI Express Mode](https://github.com/google/adk-docs/blob/main/examples/python/notebooks/express-mode-weather-agent.ipynb)**
