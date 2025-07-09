@@ -157,6 +157,11 @@ This direct injection method is specific to LlmAgent instructions. Refer to the 
 
 ### How State is Updated: Recommended Methods
 
+!!! note "The Right Way to Modify State"
+    When you need to change the session state, the correct and safest method is to **directly modify the `state` object on the `Context`** provided to your function (e.g., `callback_context.state['my_key'] = 'new_value'`). This is considered "direct state manipulation" in the right way, as the framework automatically tracks these changes.
+
+    This is critically different from directly modifying the `state` on a `Session` object you retrieve from the `SessionService` (e.g., `my_session.state['my_key'] = 'new_value'`). **You should avoid this**, as it bypasses the ADK's event tracking and can lead to lost data. The "Warning" section at the end of this page has more details on this important distinction.
+
 State should **always** be updated as part of adding an `Event` to the session history using `session_service.append_event()`. This ensures changes are tracked, persistence works correctly, and updates are thread-safe.
 
 **1\. The Easy Way: `output_key` (for Agent Text Responses)**
