@@ -165,6 +165,7 @@ nav:
   - Observability:
     - Arize AX: observability/arize-ax.md
     - Phoenix: observability/phoenix.md
+    - Weave: observability/weave.md
   - Evaluate:
     - evaluate/index.md
   - MCP:
