@@ -1,4 +1,4 @@
-# Vertex Express Mode: Using Vertex AI Sessions and Memory for Free
+# Vertex AI Express Mode: Using Vertex AI Sessions and Memory for Free
 
 If you are interested in using either the `VertexAiSessionService` or `VertexAiMemoryBankService` but you don't have a Google Cloud Project, you can sign up for Vertex AI Express Mode and get access
 for free and try out these services! You can sign up with an eligible ***gmail*** account [here](https://console.cloud.google.com/expressmode). For more details about Vertex AI Express mode, see the [overview page](https://cloud.google.com/vertex-ai/generative-ai/docs/start/express-mode/overview). 
