@@ -115,7 +115,7 @@ to use built-in tools with other tools by using multiple agents:
         model='gemini-2.0-flash',
         name='CodeAgent',
         instruction="""
-        You're a specialist in Code Execution   
+        You're a specialist in Code Execution
         """,
         code_executor=BuiltInCodeExecutor(),
     )
