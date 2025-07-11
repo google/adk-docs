@@ -71,6 +71,9 @@ app = reasoning_engines.AdkApp(
 )
 ```
 
+!!!info
+    When an AdkApp is deployed to Agent Engine, it automatically uses `VertexAiSessionService` for persistent, managed session state. This provides multi-turn conversational memory without any additional configuration. For local testing, the application defaults to a temporary, in-memory session service.
+
 ### Try your agent locally
 
 You can try it locally before deploying to Agent Engine.
