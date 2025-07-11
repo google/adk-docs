@@ -18,7 +18,6 @@ from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 from google.adk.tools import ToolContext
 from google.genai import types
-import asyncio
 
 APP_NAME="customer_support_agent"
 USER_ID="user1234"

@@ -16,7 +16,6 @@ from google.adk.agents import Agent
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 from google.genai import types
-import asyncio
 import yfinance as yf
 
 

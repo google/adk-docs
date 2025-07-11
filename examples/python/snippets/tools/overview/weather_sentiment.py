@@ -17,7 +17,6 @@ from google.adk.tools import FunctionTool
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 from google.genai import types
-import asyncio
 
 APP_NAME="weather_sentiment_agent"
 USER_ID="user1234"
@@ -76,6 +75,7 @@ async def setup_session_and_runner():
     session_service = InMemorySessionService()
     session = await session_service.create_session(app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID)
     runner = Runner(agent=weather_sentiment_agent, app_name=APP_NAME, session_service=session_service)
+    return session, runner
 
 
 
