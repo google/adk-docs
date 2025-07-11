@@ -305,7 +305,7 @@ You can get the external IP address of your service using:
 kubectl get svc adk-agent -o=jsonpath='{.status.loadBalancer.ingress[0].ip}'
 ```
 
-### Option 2: Automated Deployment using `adk deploy gke`
+### Option 2: Automated Deployment using `adk deploy gke` (Coming Soon)
 
 ADK provides a CLI command to streamline GKE deployment. This avoids the need to manually build images, write Kubernetes manifests, or push to Artifact Registry.
 

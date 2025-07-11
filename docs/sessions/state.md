@@ -67,7 +67,100 @@ Prefixes on state keys define their scope and persistence behavior, especially w
 
 **How the Agent Sees It:** Your agent code interacts with the *combined* state through the single `session.state` collection (dict/ Map). The `SessionService` handles fetching/merging state from the correct underlying storage based on prefixes.
 
+### Accessing Session State in Agent Instructions
+
+When working with `LlmAgent` instances, you can directly inject session state values into the agent's instruction string using a simple templating syntax. This allows you to create dynamic and context-aware instructions without relying solely on natural language directives.
+
+#### Using `{key}` Templating
+
+To inject a value from the session state, enclose the key of the desired state variable within curly braces: `{key}`. The framework will automatically replace this placeholder with the corresponding value from `session.state` before passing the instruction to the LLM.
+
+**Example:**
+
+```python
+from google.adk.agents import LlmAgent
+
+story_generator = LlmAgent(
+    name="StoryGenerator",
+    model="gemini-2.0-flash",
+    instruction="""Write a short story about a cat, focusing on the theme: {topic}."""
+)
+
+# Assuming session.state['topic'] is set to "friendship", the LLM 
+# will receive the following instruction:
+# "Write a short story about a cat, focusing on the theme: friendship."
+```
+
+#### Important Considerations
+
+* Key Existence: Ensure that the key you reference in the instruction string exists in the session.state. If the key is missing, the agent might misbehave or throw an error.
+* Data Types: The value associated with the key should be a string or a type that can be easily converted to a string.
+* Escaping: If you need to use literal curly braces in your instruction (e.g., for JSON formatting), you'll need to escape them.
+
+#### Bypassing State Injection with `InstructionProvider`
+
+In some cases, you might want to use `{{` and `}}` literally in your instructions without triggering the state injection mechanism. For example, you might be writing instructions for an agent that helps with a templating language that uses the same syntax.
+
+To achieve this, you can provide a function to the `instruction` parameter instead of a string. This function is called an `InstructionProvider`. When you use an `InstructionProvider`, the ADK will not attempt to inject state, and your instruction string will be passed to the model as-is.
+
+The `InstructionProvider` function receives a `ReadonlyContext` object, which you can use to access session state or other contextual information if you need to build the instruction dynamically.
+
+=== "Python"
+
+    ```python
+    from google.adk.agents import LlmAgent
+    from google.adk.agents.readonly_context import ReadonlyContext
+
+    # This is an InstructionProvider
+    def my_instruction_provider(context: ReadonlyContext) -> str:
+        # You can optionally use the context to build the instruction
+        # For this example, we'll return a static string with literal braces.
+        return "This is an instruction with {{literal_braces}} that will not be replaced."
+
+    agent = LlmAgent(
+        model="gemini-2.0-flash",
+        name="template_helper_agent",
+        instruction=my_instruction_provider
+    )
+    ```
+
+If you want to both use an `InstructionProvider` *and* inject state into your instructions, you can use the `inject_session_state` utility function.
+
+=== "Python"
+
+    ```python
+    from google.adk.agents import LlmAgent
+    from google.adk.agents.readonly_context import ReadonlyContext
+    from google.adk.utils import instructions_utils
+
+    async def my_dynamic_instruction_provider(context: ReadonlyContext) -> str:
+        template = "This is a {adjective} instruction with {{literal_braces}}."
+        # This will inject the 'adjective' state variable but leave the literal braces.
+        return await instructions_utils.inject_session_state(template, context)
+
+    agent = LlmAgent(
+        model="gemini-2.0-flash",
+        name="dynamic_template_helper_agent",
+        instruction=my_dynamic_instruction_provider
+    )
+    ```
+
+**Benefits of Direct Injection**
+
+* Clarity: Makes it explicit which parts of the instruction are dynamic and based on session state.
+* Reliability: Avoids relying on the LLM to correctly interpret natural language instructions to access state.
+* Maintainability: Simplifies instruction strings and reduces the risk of errors when updating state variable names.
+
+**Relation to Other State Access Methods**
+
+This direct injection method is specific to LlmAgent instructions. Refer to the following section for more information on other state access methods.
+
 ### How State is Updated: Recommended Methods
+
+!!! note "The Right Way to Modify State"
+    When you need to change the session state, the correct and safest method is to **directly modify the `state` object on the `Context`** provided to your function (e.g., `callback_context.state['my_key'] = 'new_value'`). This is considered "direct state manipulation" in the right way, as the framework automatically tracks these changes.
+
+    This is critically different from directly modifying the `state` on a `Session` object you retrieve from the `SessionService` (e.g., `my_session.state['my_key'] = 'new_value'`). **You should avoid this**, as it bypasses the ADK's event tracking and can lead to lost data. The "Warning" section at the end of this page has more details on this important distinction.
 
 State should **always** be updated as part of adding an `Event` to the session history using `session_service.append_event()`. This ensures changes are tracked, persistence works correctly, and updates are thread-safe.
 
