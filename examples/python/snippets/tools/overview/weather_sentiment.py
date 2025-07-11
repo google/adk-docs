@@ -78,6 +78,7 @@ async def setup_session_and_runner():
     return session, runner
 
 
+
 # Agent Interaction
 async def call_agent_async(query):
     content = types.Content(role='user', parts=[types.Part(text=query)])
