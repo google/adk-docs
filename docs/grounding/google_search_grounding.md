@@ -1,6 +1,6 @@
 # Understanding Google Search Grounding
 
-Google Search Grounding is a powerful feature in the Agent Development Kit (ADK) that enables AI agents to access real-time, authoritative information from the web. By connecting your agents to Google Search, you can provide users with up-to-date answers backed by reliable sources.
+[Google Search Grounding tool](../tools/built-in-tools.md#google-search) is a powerful feature in the Agent Development Kit (ADK) that enables AI agents to access real-time, authoritative information from the web. By connecting your agents to Google Search, you can provide users with up-to-date answers backed by reliable sources.
 
 This feature is particularly valuable for queries requiring current information like weather updates, news events, stock prices, or any facts that may have changed since the model's training data cutoff. When your agent determines that external information is needed, it automatically performs web searches and incorporates the results into its response with proper attribution.
 
@@ -12,6 +12,10 @@ In this guide, you'll discover:
 - **Grounding Architecture**: The data flow and technical process behind web grounding
 - **Response Structure**: How to interpret grounded responses and their metadata
 - **Best Practices**: Guidelines for displaying search results and citations to users
+
+### Additional resource
+
+As an additional resource, [Gemini Fullstack Agent Development Kit (ADK) Quickstart](https://github.com/google/adk-samples/tree/main/python/agents/gemini-fullstack) has [a great practical use of the Google Search grounding](https://github.com/google/adk-samples/blob/main/python/agents/gemini-fullstack/app/agent.py) as a full stack application example.
 
 ## Google Search Grounding Quickstart
 
