@@ -335,14 +335,68 @@ Control whether the agent receives the prior conversation history.
             .build();
     ```
 
-### Planning & Code Execution
+### Planner
 
 ![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java support is planned/ coming soon."}
 
-For more complex reasoning involving multiple steps or executing code:
+**`planner` (Optional):** Assign a `BasePlanner` instance to enable multi-step reasoning and planning before execution. There are two main planners:
 
-* **`planner` (Optional):** Assign a `BasePlanner` instance to enable multi-step reasoning and planning before execution. (See [Multi-Agents](multi-agents.md) patterns).
-* **`code_executor` (Optional):** Provide a `BaseCodeExecutor` instance to allow the agent to execute code blocks (e.g., Python) found in the LLM's response. ([See Tools/Built-in tools](../tools/built-in-tools.md)).
+* **`BuiltInPlanner`:** Leverages the model's built-in planning capabilities (e.g., Gemini's thinking feature). See [Gemini Thinking](https://ai.google.dev/gemini-api/docs/thinking) for details and examples.
+
+    Here, the `thinking_budget` parameter guides the model on the number of thinking tokens to use when generating a response. The `include_thoughts` parameter controls whether the model should include its raw thoughts and internal reasoning process in the response.
+
+    ```python
+    from google.adk import Agent
+    from google.adk.planners import BuiltInPlanner
+    from google.genai import types
+
+    my_agent = Agent(
+        model="gemini-2.5-flash",
+        planner=BuiltInPlanner(
+            thinking_config=types.ThinkingConfig(
+                include_thoughts=True,
+                thinking_budget=1024,
+            )
+        ),
+        # ... your tools here
+    )
+    ```
+    
+* **`PlanReActPlanner`:** This planner instructs the model to follow a specific structure in its output: first create a plan, then execute actions (like calling tools), and provide reasoning for its steps. *It's particularly useful for models that don't have a built-in "thinking" feature*.
+
+    ```python
+    from google.adk import Agent
+    from google.adk.planners import PlanReActPlanner
+
+    my_agent = Agent(
+        model="gemini-2.0-flash",
+        planner=PlanReActPlanner(),
+        # ... your tools here
+    )
+    ```
+
+    The agent's response will follow a structured format:
+
+    ```
+    [user]: ai news
+    [google_search_agent]: /*PLANNING*/
+    1. Perform a Google search for "latest AI news" to get current updates and headlines related to artificial intelligence.
+    2. Synthesize the information from the search results to provide a summary of recent AI news.
+
+    /*ACTION*/
+    /*REASONING*/
+    The search results provide a comprehensive overview of recent AI news, covering various aspects like company developments, research breakthroughs, and applications. I have enough information to answer the user's request.
+
+    /*FINAL_ANSWER*/
+    Here's a summary of recent AI news:
+    ....
+    ```
+
+### Code Execution
+
+![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java support is planned/ coming soon."}
+
+* **`code_executor` (Optional):** Provide a `BaseCodeExecutor` instance to allow the agent to execute code blocks found in the LLM's response. ([See Tools/Built-in tools](../tools/built-in-tools.md)).
 
 ## Putting It Together: Example
 
