@@ -171,8 +171,7 @@ class StoryFlowAgent(BaseAgent):
 story_generator = LlmAgent(
     name="StoryGenerator",
     model=GEMINI_2_FLASH,
-    instruction="""You are a story writer. Write a short story (around 100 words) about a cat,
-based on the topic provided in session state with key 'topic'""",
+    instruction="""You are a story writer. Write a short story (around 100 words), on the following topic: {topic}""",
     input_schema=None,
     output_key="current_story",  # Key for storing output in session state
 )
@@ -180,8 +179,7 @@ based on the topic provided in session state with key 'topic'""",
 critic = LlmAgent(
     name="Critic",
     model=GEMINI_2_FLASH,
-    instruction="""You are a story critic. Review the story provided in
-session state with key 'current_story'. Provide 1-2 sentences of constructive criticism
+    instruction="""You are a story critic. Review the story provided: {{current_story}}. Provide 1-2 sentences of constructive criticism
 on how to improve it. Focus on plot or character.""",
     input_schema=None,
     output_key="criticism",  # Key for storing criticism in session state
@@ -190,9 +188,8 @@ on how to improve it. Focus on plot or character.""",
 reviser = LlmAgent(
     name="Reviser",
     model=GEMINI_2_FLASH,
-    instruction="""You are a story reviser. Revise the story provided in
-session state with key 'current_story', based on the criticism in
-session state with key 'criticism'. Output only the revised story.""",
+    instruction="""You are a story reviser. Revise the story provided: {{current_story}}, based on the criticism in
+{{criticism}}. Output only the revised story.""",
     input_schema=None,
     output_key="current_story",  # Overwrites the original story
 )
@@ -200,8 +197,7 @@ session state with key 'criticism'. Output only the revised story.""",
 grammar_check = LlmAgent(
     name="GrammarCheck",
     model=GEMINI_2_FLASH,
-    instruction="""You are a grammar checker. Check the grammar of the story
-provided in session state with key 'current_story'. Output only the suggested
+    instruction="""You are a grammar checker. Check the grammar of the story provided: {current_story}. Output only the suggested
 corrections as a list, or output 'Grammar is good!' if there are no errors.""",
     input_schema=None,
     output_key="grammar_suggestions",
@@ -210,8 +206,7 @@ corrections as a list, or output 'Grammar is good!' if there are no errors.""",
 tone_check = LlmAgent(
     name="ToneCheck",
     model=GEMINI_2_FLASH,
-    instruction="""You are a tone analyzer. Analyze the tone of the story
-provided in session state with key 'current_story'. Output only one word: 'positive' if
+    instruction="""You are a tone analyzer. Analyze the tone of the story provided: {current_story}. Output only one word: 'positive' if
 the tone is generally positive, 'negative' if the tone is generally negative, or 'neutral'
 otherwise.""",
     input_schema=None,

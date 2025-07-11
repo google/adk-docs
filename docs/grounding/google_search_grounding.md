@@ -13,6 +13,10 @@ In this guide, you'll discover:
 - **Response Structure**: How to interpret grounded responses and their metadata
 - **Best Practices**: Guidelines for displaying search results and citations to users
 
+### Additional resource
+
+As an additional resource, [Gemini Fullstack Agent Development Kit (ADK) Quickstart](https://github.com/google/adk-samples/tree/main/python/agents/gemini-fullstack) has [a great practical use of the Google Search grounding](https://github.com/google/adk-samples/blob/main/python/agents/gemini-fullstack/app/agent.py) as a full stack application example.
+
 ## Google Search Grounding Quickstart
 
 This quickstart guides you through creating an ADK agent with Google Search grounding feature. This quickstart assumes a local IDE (VS Code or PyCharm, etc.) with Python 3.9+ and terminal access.
