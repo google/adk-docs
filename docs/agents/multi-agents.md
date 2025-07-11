@@ -91,7 +91,7 @@ ADK includes specialized agents derived from `BaseAgent` that don't perform task
     from google.adk.agents import SequentialAgent, LlmAgent
 
     step1 = LlmAgent(name="Step1_Fetch", output_key="data") # Saves output to state['data']
-    step2 = LlmAgent(name="Step2_Process", instruction="Process data from state key 'data'.")
+    step2 = LlmAgent(name="Step2_Process", instruction="Process data from {data}.")
 
     pipeline = SequentialAgent(name="MyPipeline", sub_agents=[step1, step2])
     # When pipeline runs, Step2 can access the state['data'] set by Step1.
@@ -105,7 +105,7 @@ ADK includes specialized agents derived from `BaseAgent` that don't perform task
     import com.google.adk.agents.LlmAgent;
 
     LlmAgent step1 = LlmAgent.builder().name("Step1_Fetch").outputKey("data").build(); // Saves output to state.get("data")
-    LlmAgent step2 = LlmAgent.builder().name("Step2_Process").instruction("Process data from state key 'data'.").build();
+    LlmAgent step2 = LlmAgent.builder().name("Step2_Process").instruction("Process data from {data}.").build();
 
     SequentialAgent pipeline = SequentialAgent.builder().name("MyPipeline").subAgents(step1, step2).build();
     // When pipeline runs, Step2 can access the state.get("data") set by Step1.
@@ -243,7 +243,7 @@ The most fundamental way for agents operating within the same invocation (and th
     from google.adk.agents import LlmAgent, SequentialAgent
     
     agent_A = LlmAgent(name="AgentA", instruction="Find the capital of France.", output_key="capital_city")
-    agent_B = LlmAgent(name="AgentB", instruction="Tell me about the city stored in state key 'capital_city'.")
+    agent_B = LlmAgent(name="AgentB", instruction="Tell me about the city stored in {capital_city}.")
     
     pipeline = SequentialAgent(name="CityInfo", sub_agents=[agent_A, agent_B])
     # AgentA runs, saves "Paris" to state['capital_city'].
@@ -265,7 +265,7 @@ The most fundamental way for agents operating within the same invocation (and th
     
     LlmAgent agentB = LlmAgent.builder()
         .name("AgentB")
-        .instruction("Tell me about the city stored in state key 'capital_city'.")
+        .instruction("Tell me about the city stored in {capital_city}.")
         .outputKey("capital_city")
         .build();
     
@@ -524,8 +524,8 @@ By combining ADK's composition primitives, you can implement various established
     from google.adk.agents import SequentialAgent, LlmAgent
     
     validator = LlmAgent(name="ValidateInput", instruction="Validate the input.", output_key="validation_status")
-    processor = LlmAgent(name="ProcessData", instruction="Process data if state key 'validation_status' is 'valid'.", output_key="result")
-    reporter = LlmAgent(name="ReportResult", instruction="Report the result from state key 'result'.")
+    processor = LlmAgent(name="ProcessData", instruction="Process data if {validation_status} is 'valid'.", output_key="result")
+    reporter = LlmAgent(name="ReportResult", instruction="Report the result from {result}.")
     
     data_pipeline = SequentialAgent(
         name="DataPipeline",
@@ -550,13 +550,13 @@ By combining ADK's composition primitives, you can implement various established
     
     LlmAgent processor = LlmAgent.builder()
         .name("ProcessData")
-        .instruction("Process data if state key 'validation_status' is 'valid'")
+        .instruction("Process data if {validation_status} is 'valid'")
         .outputKey("result") // Saves its main text output to session.state["result"]
         .build();
     
     LlmAgent reporter = LlmAgent.builder()
         .name("ReportResult")
-        .instruction("Report the result from state key 'result'")
+        .instruction("Report the result from {result}")
         .build();
     
     SequentialAgent dataPipeline = SequentialAgent.builder()
@@ -593,7 +593,7 @@ By combining ADK's composition primitives, you can implement various established
     
     synthesizer = LlmAgent(
         name="Synthesizer",
-        instruction="Combine results from state keys 'api1_data' and 'api2_data'."
+        instruction="Combine results from {api1_data} and {api2_data}."
     )
     
     overall_workflow = SequentialAgent(
@@ -630,7 +630,7 @@ By combining ADK's composition primitives, you can implement various established
 
     LlmAgent synthesizer = LlmAgent.builder()
         .name("Synthesizer")
-        .instruction("Combine results from state keys 'api1_data' and 'api2_data'.")
+        .instruction("Combine results from {api1_data} and {api2_data}.")
         .build();
 
     SequentialAgent overallWorfklow = SequentialAgent.builder()
@@ -747,7 +747,7 @@ By combining ADK's composition primitives, you can implement various established
     
     reviewer = LlmAgent(
         name="FactChecker",
-        instruction="Review the text in state key 'draft_text' for factual accuracy. Output 'valid' or 'invalid' with reasons.",
+        instruction="Review the text in {draft_text} for factual accuracy. Output 'valid' or 'invalid' with reasons.",
         output_key="review_status"
     )
     
@@ -776,7 +776,7 @@ By combining ADK's composition primitives, you can implement various established
     
     LlmAgent reviewer = LlmAgent.builder()
         .name("FactChecker")
-        .instruction("Review the text in state key 'draft_text' for factual accuracy. Output 'valid' or 'invalid' with reasons.")
+        .instruction("Review the text in {draft_text} for factual accuracy. Output 'valid' or 'invalid' with reasons.")
         .outputKey("review_status")
         .build();
     
@@ -940,7 +940,7 @@ By combining ADK's composition primitives, you can implement various established
     # Agent that proceeds based on human decision
     process_decision = LlmAgent(
         name="ProcessDecision",
-        instruction="Check state key 'human_decision'. If 'approved', proceed. If 'rejected', inform user."
+        instruction="Check {human_decision}. If 'approved', proceed. If 'rejected', inform user."
     )
     
     approval_workflow = SequentialAgent(
@@ -984,7 +984,7 @@ By combining ADK's composition primitives, you can implement various established
     // Agent that proceeds based on human decision
     LlmAgent processDecision = LlmAgent.builder()
         .name("ProcessDecision")
-        .instruction("Check state key 'human_decision'. If 'approved', proceed. If 'rejected', inform user.")
+        .instruction("Check {human_decision}. If 'approved', proceed. If 'rejected', inform user.")
         .build();
     
     SequentialAgent approvalWorkflow = SequentialAgent.builder()
