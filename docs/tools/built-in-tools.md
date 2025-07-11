@@ -21,8 +21,7 @@ Note: Java only supports Google Search and Code Execution tools currently.
 
 ### Google Search
 
-The `google_search` tool allows the agent to perform web searches using Google
-Search. The `google_search` tool is only compatible with Gemini 2 models.
+The `google_search` tool allows the agent to perform web searches using Google Search. The `google_search` tool is only compatible with Gemini 2 models. For further details of the tool, see [Understanding Google Search grounding](../grounding/google_search_grounding.md).
 
 !!! warning "Additional requirements when using the `google_search` tool"
     When you use grounding with Google Search, and you receive Search suggestions in your response, you must display the Search suggestions in production and in your applications.
@@ -64,8 +63,7 @@ like calculations, data manipulation, or running small scripts.
 The `vertex_ai_search_tool` uses Google Cloud's Vertex AI Search, enabling the
 agent to search across your private, configured data stores (e.g., internal
 documents, company policies, knowledge bases). This built-in tool requires you
-to provide the specific data store ID during configuration.
-
+to provide the specific data store ID during configuration. For further details of the tool, see [Understanding Vertex AI Search grounding](../grounding/vertex_ai_search_grounding.md).
 
 
 ```py
