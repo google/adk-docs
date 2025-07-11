@@ -470,6 +470,10 @@ public final class LiveAudioRun {
         if (!isRunning.get()) {
           break;
         }
+
+        AtomicBoolean audioReceived = new AtomicBoolean(false);
+        processEvent(event, audioReceived);
+        
         event.content().ifPresent(content -> content.parts().ifPresent(parts -> parts.forEach(part -> playAudioData(part, finalSpeakerLine))));
       }
 
