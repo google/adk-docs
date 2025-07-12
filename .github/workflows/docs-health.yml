@@ -1,0 +1,71 @@
+name: Check Docs Health
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'  # Run every Sunday at midnight
+  workflow_dispatch:
+
+jobs:
+  docs-health-check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Run health check script
+        id: health_check
+        run: python adk-docs/scripts/check_docs_health.py
+
+      - name: Generate status badge
+        run: |
+          PERCENTAGE="${{ steps.health_check.outputs.recent_percentage }}%"
+          LABEL="Docs"
+          if [ "${{ steps.health_check.outputs.exit_code }}" -eq 0 ]; then
+            STATUS_MESSAGE="Healthy ($PERCENTAGE)"
+            COLOR="34A853" # Google Green
+          else
+            STATUS_MESSAGE="Needs Review ($PERCENTAGE)"
+            COLOR="F4B400" # Google Yellow
+          fi
+          # Replace spaces with underscores for shields.io URL compatibility
+          MESSAGE_URL_FRIENDLY=$(echo "$STATUS_MESSAGE" | sed 's/ /_/g')
+          curl "https://img.shields.io/badge/$LABEL-$MESSAGE_URL_FRIENDLY-$COLOR" > adk-docs/docs-health-badge.svg
+
+      - name: Check for changes
+        id: git_status
+        run: |
+          if git diff --quiet -- adk-docs/docs_health_report.md adk-docs/docs-health-badge.svg; then
+            echo "No changes to report."
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "Health report or badge has changed."
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create Pull Request with changes
+        if: steps.git_status.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          BRANCH_NAME="docs-health/update-${{ github.run_id }}"
+          git checkout -b $BRANCH_NAME
+          git add adk-docs/docs_health_report.md adk-docs/docs-health-badge.svg
+          git commit -m "docs: Update health report and badge"
+          git push origin $BRANCH_NAME
+          gh pr create \
+            --base "main" \
+            --head "$BRANCH_NAME" \
+            --title "Docs Health Report Update (${{ github.run_id }})" \
+            --body "Automated documentation health report update. Please review and merge."

@@ -1,0 +1,103 @@
+import os
+import subprocess
+from datetime import datetime, timedelta
+
+# Configuration
+STALENESS_THRESHOLD_DAYS = 90
+RECENT_UPDATE_THRESHOLD_WEEKS = 4
+DOCS_DIRECTORY = "docs"
+REPORT_FILENAME = "docs_health_report.md"
+
+def get_last_commit_date(file_path):
+    """Gets the last commit date of a file."""
+    try:
+        # Use --format=%ci for committer date, ISO 8601 format
+        commit_date_str = subprocess.check_output(
+            ["git", "log", "-1", "--format=%ci", file_path]
+        ).decode("utf-8").strip()
+        return datetime.strptime(commit_date_str, "%Y-%m-%d %H:%M:%S %z")
+    except subprocess.CalledProcessError:
+        return None
+
+def check_docs_health():
+    """Checks the health of the documentation and generates a detailed report."""
+    section_stats = {}
+    recently_updated_count = 0
+    total_docs_count = 0
+    total_stale_files = 0
+    now = datetime.now(datetime.now().astimezone().tzinfo)
+    staleness_threshold = now - timedelta(days=STALENESS_THRESHOLD_DAYS)
+    recent_update_threshold = now - timedelta(weeks=RECENT_UPDATE_THRESHOLD_WEEKS)
+
+    # Change to the adk-docs directory to ensure git commands work correctly
+    original_cwd = os.getcwd()
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    adk_docs_root = os.path.abspath(os.path.join(script_dir, ".."))
+    os.chdir(adk_docs_root)
+
+    for root, _, files in os.walk(DOCS_DIRECTORY):
+        for file in files:
+            if file.endswith(".md"):
+                total_docs_count += 1
+                file_path = os.path.join(root, file)
+                section = os.path.basename(root) if root != DOCS_DIRECTORY else "Root"
+                
+                section_stats.setdefault(section, {
+                    "total_files": 0,
+                    "stale_files": []
+                })
+                section_stats[section]["total_files"] += 1
+                
+                last_commit_date = get_last_commit_date(file_path)
+
+                if last_commit_date:
+                    if last_commit_date < staleness_threshold:
+                        section_stats[section]["stale_files"].append(
+                            (file_path, now - last_commit_date)
+                        )
+                        total_stale_files += 1
+                    
+                    if last_commit_date > recent_update_threshold:
+                        recently_updated_count += 1
+
+    # Revert to original working directory
+    os.chdir(original_cwd)
+
+    recent_percentage = (recently_updated_count / total_docs_count * 100) if total_docs_count > 0 else 0
+    exit_code = 0 if total_stale_files == 0 else 1
+
+    report_path = os.path.join(adk_docs_root, REPORT_FILENAME)
+    with open(report_path, "w") as f:
+        f.write("# Documentation Health Report\n\n")
+        f.write(f"**Summary:** **{recent_percentage:.1f}%** of documentation pages were updated in the last "
+                f"{RECENT_UPDATE_THRESHOLD_WEEKS} weeks. ")
+        f.write(f"A total of **{total_stale_files}** page(s) are considered stale (older than {STALENESS_THRESHOLD_DAYS} days).\n\n")
+
+        if total_stale_files == 0:
+            f.write("**All documentation is up-to-date!**\n")
+            print("All documentation is up-to-date.")
+        else:
+            f.write("## Detailed Health by Section\n\n")
+            for section, stats in sorted(section_stats.items()):
+                stale_count = len(stats["stale_files"])
+                if stale_count == 0:
+                    f.write(f"### {section} - ✅ Healthy\n")
+                    f.write(f"All {stats['total_files']} page(s) in this section are up-to-date.\n\n")
+                else:
+                    f.write(f"### {section} - ⚠️ Needs Review\n")
+                    f.write(f"{stale_count} of {stats['total_files']} page(s) in this section are stale:\n\n")
+                    for file_path, days_since_update in stats["stale_files"]:
+                        f.write(f"- **{file_path}**: Last updated {days_since_update.days} days ago\n")
+                    f.write("\n")
+            print(f"Found {total_stale_files} stale files.")
+
+    # Set outputs for GitHub Actions
+    if 'GITHUB_OUTPUT' in os.environ:
+        with open(os.environ['GITHUB_OUTPUT'], 'a') as f:
+            f.write(f"recent_percentage={recent_percentage:.1f}\n")
+            f.write(f"exit_code={exit_code}\n")
+
+    return exit_code
+
+if __name__ == "__main__":
+    exit(check_docs_health())

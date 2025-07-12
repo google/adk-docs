@@ -1,6 +1,7 @@
 # Agent Development Kit (ADK)
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
+[![Docs Health](docs-health-badge.svg)](docs_health_report.md)
 
 <img src="docs/assets/agent-development-kit.png" alt="Agent Development Kit Logo" width="150">
 
