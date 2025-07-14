@@ -97,7 +97,7 @@ to use built-in tools with other tools by using multiple agents:
 === "Python"
 
     ```py
-    from google.adk.tools import agent_tool
+    from google.adk.tools.agent_tool import AgentTool
     from google.adk.agents import Agent
     from google.adk.tools import google_search
     from google.adk.code_executors import BuiltInCodeExecutor
@@ -123,7 +123,7 @@ to use built-in tools with other tools by using multiple agents:
         name="RootAgent",
         model="gemini-2.0-flash",
         description="Root Agent",
-        tools=[agent_tool.AgentTool(agent=search_agent), agent_tool.AgentTool(agent=coding_agent)],
+        tools=[AgentTool(agent=search_agent), AgentTool(agent=coding_agent)],
     )
     ```
 
