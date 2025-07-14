@@ -181,6 +181,7 @@ Connect your agent to enterprise applications using
 [Integration Connectors](https://cloud.google.com/integration-connectors/docs/overview).
 
 #### Before you begin
+> **Note:** The *ExecuteConnection* integration is typically created automatically when you provision Application Integration in a given region. If the *ExecuteConnection* doesn't exist in the [list of integrations](https://pantheon.corp.google.com/integrations/list?hl=en&inv=1&invt=Ab2u5g&project=standalone-ip-prod-testing), you must follow these steps to create it:
 
 1. To use a connector from Integration Connectors, click **QUICK SETUP** and [provision](https://console.cloud.google.com/integrations)
    Application Integration in the same region as your connection.
@@ -228,7 +229,7 @@ To create an Application Integration Toolset for Integration Connectors, follow 
 
     **Note:**
 
-    * You can provide a service account to be used instead of default credentials by generating a [Service Account Key](https://cloud.google.com/iam/docs/keys-create-delete#creating), and providing the correct Application Integration and Integration Connector IAM roles to the service account.
+    * You can provide a service account to be used instead of default credentials by generating a [Service Account Key](https://cloud.google.com/iam/docs/keys-create-delete#creating), and providing the right [Application Integration and Integration Connector IAM roles] (#Prerequisites) to the service account.
     * To find the list of supported entities and actions for a connection, use the Connectors APIs: [listActions](https://cloud.google.com/integration-connectors/docs/reference/rest/v1/projects.locations.connections.connectionSchemaMetadata/listActions) or [listEntityTypes](https://cloud.google.com/integration-connectors/docs/reference/rest/v1/projects.locations.connections.connectionSchemaMetadata/listEntityTypes).
 
 
@@ -339,7 +340,7 @@ To create an Application Integration Toolset for Application Integration Workflo
     ```
 
     **Note:** You can provide service account to be used instead of using default
-        credentials by generating [Service Account Key](https://cloud.google.com/iam/docs/keys-create-delete#creating) and providing right Application Integration and Integration Connector IAM roles to the service account. For more details about the IAM roles, refer to the [Prerequisites](#prerequisites) section.
+        credentials by generating [Service Account Key](https://cloud.google.com/iam/docs/keys-create-delete#creating) and providing right [Application Integration and Integration Connector IAM roles] (#Prerequisites) to the service account. For more details about the IAM roles, refer to the [Prerequisites](#Prerequisites) section.
 
 2. Update the `agent.py` file and add tool to your agent:
 
