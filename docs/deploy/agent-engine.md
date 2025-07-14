@@ -30,7 +30,7 @@ pip install google-cloud-aiplatform[adk,agent_engines]
 ```
 
 !!!info
-    Agent Engine only supported Python version >=3.9 and <=3.12.
+    Agent Engine only supports Python version >=3.9 and <=3.13.
 
 ### Initialization
 
@@ -70,6 +70,9 @@ app = reasoning_engines.AdkApp(
     enable_tracing=True,
 )
 ```
+
+!!!info
+    When an AdkApp is deployed to Agent Engine, it automatically uses `VertexAiSessionService` for persistent, managed session state. This provides multi-turn conversational memory without any additional configuration. For local testing, the application defaults to a temporary, in-memory session service.
 
 ### Try your agent locally
 

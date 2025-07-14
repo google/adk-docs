@@ -16,6 +16,7 @@ To proceed, confirm that your agent code is configured as follows:
     1. Agent code is in a file called `agent.py` within your agent directory.
     2. Your agent variable is named `root_agent`.
     3. `__init__.py` is within your agent directory and contains `from . import agent`.
+    4. Your `requirements.txt` file is present in the agent directory.
 
 === "Java"
 

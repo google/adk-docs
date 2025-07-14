@@ -4,6 +4,8 @@ site_url: https://google.github.io/adk-docs
 site_description: >-
   Build powerful multi-agent systems with Agent Development Kit
 site_dir: site
+exclude_docs:
+  api-reference/java/legal/*
 
 # Repository
 repo_name: adk-python
@@ -149,6 +151,7 @@ nav:
     - Session: sessions/session.md
     - State: sessions/state.md
     - Memory: sessions/memory.md
+    - Vertex AI Express Mode: sessions/express-mode.md
   - Callbacks:
     - callbacks/index.md
     - Types of callbacks: callbacks/types-of-callbacks.md
@@ -159,6 +162,11 @@ nav:
     - events/index.md
   - Context:
     - context/index.md
+  - Observability:
+    - AgentOps: observability/agentops.md
+    - Arize AX: observability/arize-ax.md
+    - Phoenix: observability/phoenix.md
+    - Logging: observability/logging.md
   - Evaluate:
     - evaluate/index.md
   - MCP:
@@ -166,10 +174,15 @@ nav:
   - Bidi-streaming (live):
     - streaming/index.md
     - Quickstart (Bidi-streaming/live): get-started/streaming/index.md
-    - Streaming Tools: streaming/streaming-tools.md
     - Custom Audio Bidi-streaming app sample (SSE): streaming/custom-streaming.md
     - Custom Audio Bidi-streaming app sample (WebSockets): streaming/custom-streaming-ws.md
+    - Bidi-streaming development guide series: streaming/dev-guide/part1.md
+    - Streaming Tools: streaming/streaming-tools.md
     - Configurating Bidi-streaming behaviour: streaming/configuration.md
+    - Google ADK + Vertex AI Live API (blog post): https://medium.com/google-cloud/google-adk-vertex-ai-live-api-125238982d5e
+  - Grounding:
+    - Understanding Google Search Grounding: grounding/google_search_grounding.md
+    - Understanding Vertex AI Search Grounding: grounding/vertex_ai_search_grounding.md
   - Safety and Security: safety/index.md
   - Agent2Agent (A2A) Protocol: https://github.com/google/A2A/
   - Community Resources: community.md
