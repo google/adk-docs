@@ -16,6 +16,7 @@ To proceed, confirm that your agent code is configured as follows:
     1. Agent code is in a file called `agent.py` within your agent directory.
     2. Your agent variable is named `root_agent`.
     3. `__init__.py` is within your agent directory and contains `from . import agent`.
+    4. Your `requirements.txt` file is present in the agent directory.
 
 === "Java"
 
@@ -151,8 +152,8 @@ export GOOGLE_GENAI_USE_VERTEXAI=True
 
         # Get the directory where main.py is located
         AGENT_DIR = os.path.dirname(os.path.abspath(__file__))
-        # Example session DB URL (e.g., SQLite)
-        SESSION_DB_URL = "sqlite:///./sessions.db"
+        # Example session service URI (e.g., SQLite)
+        SESSION_SERVICE_URI = "sqlite:///./sessions.db"
         # Example allowed origins for CORS
         ALLOWED_ORIGINS = ["http://localhost", "http://localhost:8080", "*"]
         # Set web=True if you intend to serve a web interface, False otherwise
@@ -162,7 +163,7 @@ export GOOGLE_GENAI_USE_VERTEXAI=True
         # Ensure the agent directory name ('capital_agent') matches your agent folder
         app = get_fast_api_app(
             agents_dir=AGENT_DIR,
-            session_service_uri=SESSION_DB_URL,
+            session_service_uri=SESSION_SERVICE_URI,
             allow_origins=ALLOWED_ORIGINS,
             web=SERVE_WEB_INTERFACE,
         )
