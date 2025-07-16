@@ -1,8 +1,5 @@
 # Using Different Models with ADK
 
-!!! Note
-    Java ADK currently supports Gemini and Anthropic models. More model support coming soon.
-
 The Agent Development Kit (ADK) is designed for flexibility, allowing you to
 integrate various Large Language Models (LLMs) into your agents. While the setup
 for Google Gemini models is covered in the
@@ -470,6 +467,95 @@ curl -X POST \
 http://localhost:11434/api/chat \
 -d '{'model': 'mistral-small3.1', 'messages': [{'role': 'system', 'content': ...
 ```
+
+## Using Open and Local Models via LangChain4j
+
+![java_only](https://img.shields.io/badge/Supported_in-Java-orange){ title="This feature is currently available for Java."}
+
+For Java developers, ADK provides an integration with [LangChain4j](https://github.com/langchain4j/langchain4j), which offers a streamlined way to work with a [variety of model providers](https://docs.langchain4j.dev/integrations/language-models/), including the models you can serve locally.
+
+**Integration Method:** Instantiate the LangChain4j wrapper class, configured with the model object from the Langchain4j project.
+
+### Example based on Docker Model Runner
+[Docker Model Runner](https://docs.docker.com/ai/model-runner/) allows you to easily run open-source models locally.
+You can [enable it in Docker Desktop or Docker CE environment](https://docs.docker.com/ai/model-runner/#enable-docker-model-runner), and expose it on the host machine via a TCP port. The default port for it is 12434 which we will use in the example below.
+
+#### Model Choice
+When using LangChain4j, you have the flexibility to choose any model provider and model supported by it. For agents that require tool-use capabilities, it is essential to select a model that has been fine-tuned for function calling. You can obtain models from any OCI registry, for example Docker Hub: [https://hub.docker.com/u/ai](https://hub.docker.com/u/ai).
+
+```shell
+docker model pull $model_name
+```
+
+#### Using LangChain4j wrapper
+To connect your agent to a model served via LangChain4j, you use the `com.google.adk.models.langchain4j.LangChain4j` class. You need to configure it with the `ChatModel` instance from the LangChain4j library. Note that you need specific dependencies for particular model providers like for the OpenAI compatible endpoint Docker Model Runner uses. Add the LangChain4j OpenAI dependency and the LangChain4j wrapper dependency from adk-java.
+
+```xml
+ <dependency>
+    <groupId>com.google.adk</groupId>
+    <artifactId>google-adk-contrib-langchain4j</artifactId>
+    <version>${adk-java.version}</version>
+</dependency>
+<dependency>
+    <groupId>dev.langchain4j</groupId>
+    <artifactId>langchain4j-open-ai</artifactId>
+    <version>${langchain4j.version}</version>
+</dependency>
+```
+**Example:**
+Build the `ChatModel` instance, connecting it to the Docker Model Runner on localhost.
+
+```java
+OpenAiChatModel chatModel = OpenAiChatModel.builder()
+    .baseUrl("http://localhost:12434/engines/llama.cpp/v1")
+    .modelName("ai/qwen3:8B-Q4_0")
+    .build();
+```
+
+This example uses "localhost:12434" port, which is the default
+Then wire it into the `LlmAgent` via the `LangChain4j` wrapper:
+
+```java
+import com.google.adk.agents.LlmAgent;
+import com.google.adk.models.langchain4j.LangChain4j;
+import dev.langchain4j.model.openai.OpenAiChatModel;
+public class LangChain4jExampleAgent {
+  private static OpenAiChatModel chatModel = OpenAiChatModel.builder()
+      .baseUrl("http://localhost:12434/engines/llama.cpp/v1")
+      .modelName("ai/qwen3:8B-Q4_0")
+      .build();
+  public static LlmAgent createAgent() {
+    return LlmAgent.builder()
+        .name("tiny-agent")
+        .description("tiny agent example")
+        .instruction("""
+        You are a friendly assistant. You answer questions in a concise manner.
+        """)
+        .model(new LangChain4j(chatModel))
+        .build();
+  }
+}
+```
+
+### Debugging
+
+To debug interactions with your LangChain4j-backed model, you can enable logging within your model server or use LangChain4j's built-in logging capabilities.
+
+```java
+OpenAiChatModel chatModel = OpenAiChatModel.builder()
+    .baseUrl("http://localhost:12434/engines/llama.cpp/v1")
+    .modelName("ai/qwen3:8B-Q4_0")
+    **.logRequests(true)**
+    **.logResponses(true)**
+    .build();
+```
+
+Additionally, you can inspect the logs from your Docker environment running the model to see the direct input it receives and the output it generates by running:
+
+```shell
+docker model logs
+```
+
 
 ### Self-Hosted Endpoint (e.g., vLLM)
 
