@@ -98,6 +98,17 @@ root_agent = LlmAgent(
 )
 ```
 
+## View Traces in Weave dashboard
+
+Once the agent runs, all its traces are logged to the corresponding project on [the Weave dashboard](https://wandb.ai/home).
+
+![Traces in Weave](https://wandb.github.io/weave-public-assets/google-adk/traces-overview.png)
+
+You can view a timeline of calls that your ADK agent made during execution -
+
+![Timeline view](https://wandb.github.io/weave-public-assets/google-adk/adk-weave-timeline.gif)
+
+
 ## Notes
 
 - **Environment Variables**: Ensure your environment variables are correctly set for both WandB and Google API keys.
