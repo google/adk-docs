@@ -26,7 +26,7 @@ Agent Engine is part of the Vertex AI SDK for Python. For more information, you 
 ### Install the Vertex AI SDK
 
 ```shell
-pip install google-cloud-aiplatform[adk,agent_engines]
+pip install "google-cloud-aiplatform[adk,agent_engines]" cloudpickle
 ```
 
 !!!info
