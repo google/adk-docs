@@ -158,7 +158,6 @@ export GOOGLE_GENAI_USE_VERTEXAI=True
         ALLOWED_ORIGINS = ["http://localhost", "http://localhost:8080", "*"]
         # Set web=True if you intend to serve a web interface, False otherwise
         SERVE_WEB_INTERFACE = True
-
         # Call the function to get the FastAPI app instance
         # Ensure the agent directory name ('capital_agent') matches your agent folder
         app = get_fast_api_app(
