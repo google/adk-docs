@@ -222,6 +222,17 @@ agent will be unable to function.
     There are multiple ways to interact with your agent:
 
     === "Dev UI (adk web)"
+
+        !!! success "Authentication Setup for Vertex AI Users"
+            If you selected **"Gemini - Google Cloud Vertex AI"** in the previous step, you must authenticate with Google Cloud before launching the dev UI.
+            
+            Run this command and follow the prompts:
+            ```bash
+            gcloud auth application-default login
+            ```
+            
+            **Note:** Skip this step if you're using "Gemini - Google AI Studio".
+
         Run the following command to launch the **dev UI**.
 
         ```shell
