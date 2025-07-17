@@ -21,8 +21,8 @@ from .models import UserInfo, Error
 
 # Create FastAPI app
 app = FastAPI(
-    title="Okta User Info API",
-    description="API to retrieve user profile information based on a valid Okta OIDC Access Token.",
+    title="User Info API",
+    description="API to retrieve user profile information based on a valid OIDC Access Token.",
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc",
@@ -39,7 +39,7 @@ app.add_middleware(
 
 
 @app.get(
-    "/okta-jwt-user-api",
+    "/oidc-jwt-user-api",
     response_model=UserInfo,
     responses={
         401: {"model": Error, "description": "Unauthorized. The provided Bearer token is missing, invalid, or expired."},
@@ -55,10 +55,15 @@ async def get_user_info(request: Request, authorization: Optional[str] = Header(
     Get authenticated user information.
     
     This endpoint returns the profile information of the authenticated user
-    based on the provided Okta OIDC access token.
+    based on the provided OIDC access token.
     
     The token must be provided in the Authorization header as a Bearer token.
     """
+    # TODO: configure with your userinfo endpoint depend on where you deployed. 
+    # Okta: https://your-endpoint.okta.com/oauth2/v1/userinfo
+    # Google Account: https://openidconnect.googleapis.com/v1/userinfo  can be found within https://accounts.google.com/.well-known/openid-configuration
+    USER_INFO_ENDPOINT="https://your-endpoint.okta.com/oauth2/v1/userinfo"
+
     # Check if Authorization header is present
     if not authorization:
         raise HTTPException(
@@ -76,10 +81,10 @@ async def get_user_info(request: Request, authorization: Optional[str] = Header(
         )
     
     try:
-        # Make a request to Okta UserInfo endpoint to get user info
+        # Make a request to UserInfo endpoint to get user info
         async with httpx.AsyncClient() as client:
             response = await client.get(
-                "https://your-endpoint.okta.com/oauth2/v1/userinfo",
+                USER_INFO_ENDPOINT,
                 headers={
                     "Authorization": authorization
                 }
@@ -118,7 +123,7 @@ async def get_user_info(request: Request, authorization: Optional[str] = Header(
         # Handle network errors
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail=f"Error connecting to Okta UserInfo API: {str(e)}",
+            detail=f"Error connecting to UserInfo API: {str(e)}",
         )
     except Exception as e:
         # Handle validation errors

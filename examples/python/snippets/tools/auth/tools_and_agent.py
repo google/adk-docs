@@ -76,7 +76,7 @@ root_agent = LlmAgent(
     model='gemini-2.0-flash',
     name='enterprise_assistant',
     instruction='Help user integrate with multiple enterprise systems, including retrieving user information which may require authentication.',
-    tools=asyncio.run(userinfo_toolset.get_tools()),
+    tools=[userinfo_toolset]
 )
 
 # --- Ready for Use ---

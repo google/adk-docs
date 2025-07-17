@@ -553,7 +553,7 @@ except Exception as e:
          ```
     === "Mock fastapi server"
 
-         ```py title="mock_server.py"
+         ```py title="mock_server.py (Change USER_INFO_ENDPOINT based on where you deploy userinfo endpoint.)"
          --8<-- "examples/python/snippets/tools/auth/mock_server.py"
          ```
     === "data model"
@@ -566,11 +566,11 @@ except Exception as e:
          ```yaml
          openapi: 3.0.1
          info:
-         title: Okta User Info API
+         title: User Info API
          version: 1.0.0
          description: |-
-            API to retrieve user profile information based on a valid Okta OIDC Access Token.
-            Authentication is handled via OpenID Connect with Okta.
+            API to retrieve user profile information based on a valid OIDC Access Token.
+            Authentication is handled via OpenID Connect with Any Idp provider.
          contact:
             name: API Support
             email: support@example.com # Replace with actual contact if available
@@ -578,7 +578,7 @@ except Exception as e:
             - url: <substitute with your server name>
               description: Production Environment
          paths:
-           /okta-jwt-user-api:
+           /oidc-jwt-user-api:
               get:
                 summary: Get Authenticated User Info
                 description: |-
@@ -587,7 +587,7 @@ except Exception as e:
                 tags:
                   - User Profile
                 security:
-                  - okta_oidc:
+                  - idp_oidc:
                       - openid
                       - email
                       - profile
@@ -666,9 +666,10 @@ except Exception as e:
                           $ref: '#/components/schemas/Error'
          components:
            securitySchemes:
-             okta_oidc:
+             idp_oidc:
                type: openIdConnect
-               description: Authentication via Okta using OpenID Connect. Requires a Bearer Access Token.
+               description: Authentication via idp using OpenID Connect. Requires a Bearer Access Token.
+               #  TODO: Change this url base on your Identity provider. (e.g: https://accounts.google.com/.well-known/openid-configuration)
                openIdConnectUrl: https://your-endpoint.okta.com/.well-known/openid-configuration
            schemas:
              Error:
