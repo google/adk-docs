@@ -128,7 +128,7 @@ nav:
       - Parallel agents: agents/workflow-agents/parallel-agents.md
     - Custom agents: agents/custom-agents.md
     - Multi-agent systems: agents/multi-agents.md
-    - Models: agents/models.md
+    - Models & Authentication: agents/models.md
   - Tools:
     - tools/index.md
     - Function tools: tools/function-tools.md
