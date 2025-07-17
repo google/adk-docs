@@ -128,7 +128,7 @@ nav:
       - Parallel agents: agents/workflow-agents/parallel-agents.md
     - Custom agents: agents/custom-agents.md
     - Multi-agent systems: agents/multi-agents.md
-    - Models: agents/models.md
+    - Models & Authentication: agents/models.md
   - Tools:
     - tools/index.md
     - Function tools: tools/function-tools.md
@@ -166,6 +166,7 @@ nav:
     - AgentOps: observability/agentops.md
     - Arize AX: observability/arize-ax.md
     - Phoenix: observability/phoenix.md
+    - W&B Weave: observability/weave.md
     - Logging: observability/logging.md
   - Evaluate:
     - evaluate/index.md
