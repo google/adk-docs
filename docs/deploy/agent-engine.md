@@ -218,7 +218,71 @@ Expected output for `stream_query` (remote):
 {'parts': [{'text': 'The weather in New York is sunny with a temperature of 25 degrees Celsius (41 degrees Fahrenheit).'}], 'role': 'model'}
 ```
 
+## Deploying Agents with MCP Tools
 
+When deploying an agent to Agent Engine that depends on an `MCPToolset`, you must ensure the MCP server is accessible over the network and that credentials are handled securely.
+
+### Architecture
+
+*   **External MCP Server**: The MCP server cannot be a local subprocess (`StdioConnectionParams` is not supported). It must be deployed as a separate, network-accessible service (e.g., on Cloud Run, GKE, or another compute platform).
+*   **Network Connectivity**: Ensure that the Agent Engine environment has the necessary VPC network configuration and firewall rules to reach your MCP server's endpoint.
+*   **Connection Parameters**: In your agent code, use `StreamableHTTPConnectionParams` to specify the URL of your deployed MCP server.
+
+### Secure Credential Management
+
+Handling authentication tokens and other secrets is critical for security.
+
+*   **Use Secret Manager**: The recommended best practice is to store credentials like API tokens in [Google Cloud Secret Manager](https://cloud.google.com/secret-manager).
+*   **Runtime Access**: Your agent code, running within Agent Engine, should be granted an IAM role (e.g., `Secret Manager Secret Accessor`) that allows it to fetch the secret value at runtime. This avoids exposing secrets in environment variables or source code.
+*   **Pass Secrets to Tools**: Once fetched from Secret Manager, the token can be used to construct the `AuthCredential` for your `MCPToolset`.
+
+### Example: Agent with MCP Toolset for Agent Engine
+
+Your agent definition would be packaged for Agent Engine, fetching credentials securely.
+
+```python
+# In your agent.py to be deployed to Agent Engine
+import os
+from google.adk.agents import LlmAgent
+from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, StreamableHTTPConnectionParams
+from google.adk.auth import AuthCredential, AuthCredentialTypes, HttpAuth, HttpCredentials
+from google.adk.auth.auth_schemes import HTTPBearer
+# You would also need the Secret Manager client library
+# from google.cloud import secretmanager
+
+def get_secret(secret_id: str) -> str:
+    # Placeholder for logic to fetch a secret from Google Secret Manager
+    # client = secretmanager.SecretManagerServiceClient()
+    # name = f"projects/{os.environ['GCP_PROJECT']}/secrets/{secret_id}/versions/latest"
+    # response = client.access_secret_version(name=name)
+    # return response.payload.data.decode("UTF-8")
+    # For deployment, you would use the real client. For local testing, you might use an env var.
+    return os.environ.get(secret_id)
+
+# Get configuration from environment variables or secrets
+MCP_SERVER_URL = os.environ.get("MCP_SERVER_URL")
+MCP_AUTH_TOKEN = get_secret("MCP_API_TOKEN_SECRET_ID")
+
+if not MCP_SERVER_URL or not MCP_AUTH_TOKEN:
+    raise ValueError("MCP server configuration or token is missing.")
+
+root_agent = LlmAgent(
+    model='gemini-1.5-flash',
+    tools=[
+        MCPToolset(
+            connection_params=StreamableHTTPConnectionParams(url=MCP_SERVER_URL),
+            auth_scheme=HTTPBearer(),
+            auth_credential=AuthCredential(
+                auth_type=AuthCredentialTypes.HTTP,
+                http=HttpAuth(scheme="bearer", credentials=HttpCredentials(token=MCP_AUTH_TOKEN))
+            )
+        )
+    ],
+    # ... other agent parameters
+)
+```
+
+When deploying with `agent_engines.create`, you would need to ensure the `requirements` list includes `google-cloud-secret-manager` and that the necessary environment variables (`MCP_SERVER_URL`, `MCP_API_TOKEN_SECRET_ID`, `GCP_PROJECT`) are available to the runtime.
 
 ## Clean up
 

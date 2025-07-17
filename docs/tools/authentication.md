@@ -27,6 +27,8 @@ You set up authentication when defining your tool:
 
 * **RestApiTool / OpenAPIToolset**: Pass `auth_scheme` and `auth_credential` during initialization
 
+*   **`MCPToolset`**: For tools provided by a remote, secured [Model Context Protocol server](./mcp-tools.md).
+
 * **GoogleApiToolSet Tools**: ADK has built-in 1st party tools like Google Calendar, BigQuery etc,. Use the toolset's specific method.
 
 * **APIHubToolset / ApplicationIntegrationToolset**: Pass `auth_scheme` and `auth_credential`during initialization, if the API managed in API Hub / provided by Application Integration requires authentication.

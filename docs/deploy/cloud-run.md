@@ -349,7 +349,56 @@ export GOOGLE_GENAI_USE_VERTEXAI=True
 
     For a full list of deployment options, see the [`gcloud run deploy` reference documentation](https://cloud.google.com/sdk/gcloud/reference/run/deploy).
 
+## Deploying Agents with MCP Tools
 
+When deploying an agent that uses an `MCPToolset`, it's important to follow best practices for production environments like Cloud Run.
+
+### Architecture
+
+*   **Separate Services**: The recommended architecture is to deploy your MCP server as a separate Cloud Run service from your ADK agent service. This decouples the components and allows them to be scaled and managed independently.
+*   **Avoid `StdioConnectionParams`**: Do not use `StdioConnectionParams` in a Cloud Run environment. It relies on starting a local subprocess, which is not a reliable or scalable pattern for a managed container platform.
+*   **Use `StreamableHTTPConnectionParams`**: Configure your `MCPToolset` within the ADK agent to connect to the deployed MCP server's URL using `StreamableHTTPConnectionParams`.
+
+### Authentication
+
+*   **Service-to-Service Authentication**: Secure the connection between your ADK agent service and your MCP server service. Configure the MCP server to only allow invocations from your ADK agent's service account. Cloud Run can automatically attach a secure identity token to outbound requests, which your MCP server can then validate. This is more secure than using static API keys.
+*   **Secure Credential Management**: If you must use API keys or other static tokens, do not hardcode them. Pass them to your Cloud Run service as environment variables backed by [Secret Manager](https://cloud.google.com/secret-manager).
+
+### Example Configuration Snippet
+
+Your agent code, when deployed, would look something like this:
+
+```python
+# In your agent.py deployed to Cloud Run
+import os
+from google.adk.agents import LlmAgent
+from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, StreamableHTTPConnectionParams
+from google.adk.auth import AuthCredential, AuthCredentialTypes, HttpAuth, HttpCredentials
+from google.adk.auth.auth_schemes import HTTPBearer
+
+# The URL of your deployed MCP server service
+MCP_SERVER_URL = os.environ.get("MCP_SERVER_URL") # Injected as env var
+# The token to authenticate with the MCP server
+MCP_AUTH_TOKEN = os.environ.get("MCP_AUTH_TOKEN") # Injected from Secret Manager
+
+if not MCP_SERVER_URL or not MCP_AUTH_TOKEN:
+    raise ValueError("MCP server configuration is missing.")
+
+root_agent = LlmAgent(
+    model='gemini-1.5-flash',
+    tools=[
+        MCPToolset(
+            connection_params=StreamableHTTPConnectionParams(url=MCP_SERVER_URL),
+            auth_scheme=HTTPBearer(),
+            auth_credential=AuthCredential(
+                auth_type=AuthCredentialTypes.HTTP,
+                http=HttpAuth(scheme="bearer", credentials=HttpCredentials(token=MCP_AUTH_TOKEN))
+            )
+        )
+    ],
+    # ... other agent parameters
+)
+```
 
 ## Testing your agent
 

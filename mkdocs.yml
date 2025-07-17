@@ -136,6 +136,7 @@ nav:
     - Third party tools: tools/third-party-tools.md
     - Google Cloud tools: tools/google-cloud-tools.md
     - MCP tools: tools/mcp-tools.md
+    - MCP Authentication: tools/mcp-authentication.md
     - OpenAPI tools: tools/openapi-tools.md
     - Authentication: tools/authentication.md
   - Running Agents:
