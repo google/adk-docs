@@ -165,6 +165,7 @@ nav:
   - Observability:
     - AgentOps: observability/agentops.md
     - Arize AX: observability/arize-ax.md
+    - Cloud Trace: observability/cloud-trace.md
     - Phoenix: observability/phoenix.md
     - W&B Weave: observability/weave.md
     - Logging: observability/logging.md
