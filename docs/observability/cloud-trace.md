@@ -74,7 +74,7 @@ root_agent = Agent(
 
 ### From Agent Engine Deployment
 
-To enable cloud tracing on ADK Agent Engine deployment, you can add `enable_tracing=True` when initialize the `AdkApp` object
+To enable cloud tracing for your ADK agent that you are deploying to Agent Engine, you can add `enable_tracing=True` when initialize the `AdkApp` object
 
 ```python
 # deploy_agent_engine.py
@@ -189,7 +189,7 @@ async def main():
         )
 
     user_content = Content(
-        role="user", parts=[Part(text="hello, what's weather in paris?")]
+        role="user", parts=[Part(text="what's weather in paris?")]
     )
 
     final_response_content = "No response"
@@ -218,7 +218,7 @@ And then you will see all available traces produced by ADK agent which configure
 
 ![cloud-trace](../assets/cloud-trace2.png)
 
-If you click on one of the traces, you will see the waterfall view of the detailed process, kinda similar of what we can see in the web development UI
+If you click on one of the traces, you will see the waterfall view of the detailed process, similar to what we see in the web development UI with `adk web` command.
 
 ![cloud-trace](../assets/cloud-trace3.png)
 
