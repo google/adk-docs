@@ -80,8 +80,6 @@ Use your knowledge to determine the capital and estimate the population. Do not 
 # --- 5. Set up Session Management and Runners ---
 session_service = InMemorySessionService()
 
-# Create separate sessions for clarity, though not strictly necessary if context is managed
-
 # Create a runner for EACH agent
 capital_runner = Runner(
     agent=capital_agent_with_tool,
@@ -135,6 +133,7 @@ async def call_agent_and_print(
 # --- 7. Run Interactions ---
 async def main():
     print("--- Creating Sessions ---")
+    # Create separate sessions for clarity, though not strictly necessary if context is managed
     await session_service.create_session(app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID_TOOL_AGENT)
     await session_service.create_session(app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID_SCHEMA_AGENT)
     
