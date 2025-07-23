@@ -185,7 +185,15 @@ nav:
     - Understanding Google Search Grounding: grounding/google_search_grounding.md
     - Understanding Vertex AI Search Grounding: grounding/vertex_ai_search_grounding.md
   - Safety and Security: safety/index.md
-  - Agent2Agent (A2A) Protocol: https://github.com/google/A2A/
+  - A2A Protocol:
+    - a2a/index.md
+    - Introduction to A2A: a2a/introduction-to-a2a.md
+    - A2A Quickstart: a2a/quickstart.md
+    - Connecting to a Remote Agent: a2a/connecting-to-remote-agents.md
+    - Authentication with A2A: a2a/authentication.md
+    - Human-in-the-Loop with A2A: a2a/human-in-the-loop.md
+    - A2A Under the Hood: a2a/a2a-under-the-hood.md
+    - Deployment Patterns with A2A: a2a/deployment-patterns.md
   - Community Resources: community.md
   - Contributing Guide: contributing-guide.md
   - API Reference:
