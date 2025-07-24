@@ -226,9 +226,8 @@ conversation history and temporary data are stored and persist.
 Here’s a simplified flow of how `Session` and `SessionService` work together
 during a conversation turn:
 
-1.  **Start or Resume:** Your application's `Runner` uses the `SessionService`
-    to either `create_session` (for a new chat) or `get_session` (to retrieve an
-    existing one).
+1.  **Start or Resume:** Your application needs to use the `SessionService`
+    to either `create_session` (for a new chat) or use an existing session id.
 2.  **Context Provided:** The `Runner` gets the appropriate `Session` object
     from the appropriate service method, providing the agent with access to the
     corresponding Session's `state` and `events`.
