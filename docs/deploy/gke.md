@@ -305,7 +305,7 @@ You can get the external IP address of your service using:
 kubectl get svc adk-agent -o=jsonpath='{.status.loadBalancer.ingress[0].ip}'
 ```
 
-### Option 2: Automated Deployment using `adk deploy gke` (Coming Soon)
+### Option 2: Automated Deployment using `adk deploy gke`
 
 ADK provides a CLI command to streamline GKE deployment. This avoids the need to manually build images, write Kubernetes manifests, or push to Artifact Registry.
 
@@ -315,15 +315,24 @@ Before you begin, ensure you have the following set up:
 
 1. **A running GKE cluster:** You need an active Kubernetes cluster on Google Cloud.
 
-2. **`gcloud` CLI:** The Google Cloud CLI must be installed, authenticated, and configured to use your target project. Run `gcloud auth login` and `gcloud config set project [YOUR_PROJECT_ID]`.
+2. **Required CLIs:** 
+    * **`gcloud` CLI:** The Google Cloud CLI must be installed, authenticated, and configured to use your target project. Run `gcloud auth login` and `gcloud config set project [YOUR_PROJECT_ID]`.
+    * **kubectl:** The Kubernetes CLI must be installed to deploy the application to your cluster.
 
-3. **Required IAM Permissions:** The user or service account running the command needs, at a minimum, the following roles:
+3. **Enabled Google Cloud APIs:** Make sure the following APIs are enabled in your Google Cloud project:
+    * Kubernetes Engine API (`container.googleapis.com`)
+    * Cloud Build API (`cloudbuild.googleapis.com`)
+    * Container Registry API (`containerregistry.googleapis.com`)
+
+4. **Required IAM Permissions:** The user or Compute Engine default service account running the command needs, at a minimum, the following roles:
 
    * **Kubernetes Engine Developer** (`roles/container.developer`): To interact with the GKE cluster.
 
-   * **Artifact Registry Writer** (`roles/artifactregistry.writer`): To push the agent's container image.
+   * **Storage Object Viewer** (`roles/storage.objectViewer`): To allow Cloud Build to download the source code from the Cloud Storage bucket where gcloud builds submit uploads it.
 
-4. **Docker:** The Docker daemon must be running on your local machine to build the container image.
+   * **Artifact Registry Create on Push Writer** (`roles/artifactregistry.createOnPushWriter`): To allow Cloud Build to push the built container image to Artifact Registry. This role also permits the on-the-fly creation of the special gcr.io repository within Artifact Registry if needed on the first push.
+
+   * **Logs Writer**  (`roles/logging.logWriter`): To allow Cloud Build to write build logs to Cloud Logging.
 
 ### The `deploy gke` Command
 
