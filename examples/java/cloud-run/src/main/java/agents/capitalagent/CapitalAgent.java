@@ -15,7 +15,7 @@ public class CapitalAgent {
   private static final String MODEL_NAME = "gemini-2.0-flash";
 
   // The Agent should be exposed as a "public static" argument.
-  public static BaseAgent ROOT_AGENT = initAgent();
+  public static final BaseAgent ROOT_AGENT = initAgent();
 
   // Initialize the Agent in a static class method.
   public static BaseAgent initAgent() {
