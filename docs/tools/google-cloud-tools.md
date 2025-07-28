@@ -359,15 +359,66 @@ workflow as a tool for your agent or create a new one.
 
 #### Create an Application Integration Workflow Toolset
 
+=== "Python"
+
+To create an Application Integration Toolset for Application Integration Workflows using Python, follow these steps: 
+
+1. Create a tool with `ApplicationIntegrationToolset` in the `tools.py` file:
+
+    ```py
+    integration_tool = ApplicationIntegrationToolset(
+        project="test-project", # TODO: replace with GCP project of the connection
+        location="us-central1", #TODO: replace with location of the connection
+        integration="test-integration", #TODO: replace with integration name
+        triggers=["api_trigger/test_trigger"],#TODO: replace with trigger id(s). Empty list would mean all api triggers in the integration to be considered.
+        service_account_json='{...}', #optional. Stringified json for service account key
+        tool_name_prefix="tool_prefix1",
+        tool_instructions="..."
+    )
+    ```
+
+    **Note:** You can provide service account to be used instead of using default
+        credentials by generating [Service Account Key](https://cloud.google.com/iam/docs/keys-create-delete#creating) and providing right [Application Integration and Integration Connector IAM roles](#prerequisites) to the service account. For more details about the IAM roles, refer to the [Prerequisites](#prerequisites) section.
+
+2. Update the `agent.py` file and add tool to your agent:
+
+    ```py
+    from google.adk.agents.llm_agent import LlmAgent
+    from .tools import integration_tool, connector_tool
+
+    root_agent = LlmAgent(
+        model='gemini-2.0-flash',
+        name='integration_agent',
+        instruction="Help user, leverage the tools you have access to",
+        tools=[integration_tool],
+    )
+    ```
+
+3. Configure \`\_\_init\_\_.py\` to expose your agent:
+
+    ```py
+    from . import agent
+    ```
+
+4. Start the Google ADK Web UI and use your agent:
+
+    ```shell
+    # make sure to run `adk web` from your project_root_folder
+    adk web
+    ```
+
+After completing the above steps, go to [http://localhost:8000](http://localhost:8000), and choose
+   ` my\_agent` agent (which is the same as the agent folder name).
+
 === "Java"
 
 To create an Application Integration Toolset for Application Integration
-Workflows using Python, follow these steps:
+Workflows using Java, follow these steps:
 
-1.  Create a tool with `ApplicationIntegrationToolset` in the `tools.py` file:
+1.  Create a tool with `ApplicationIntegrationToolset` in the `tools.java` file:
 
     ```java
-    #tools.py
+    #tools.java
 
     import com.google.adk.tools.applicationintegrationtoolset.ApplicationIntegrationToolset;
     import com.google.common.collect.ImmutableList;
@@ -464,58 +515,6 @@ Workflows using Python, follow these steps:
 After completing the above steps, go to
 [http://localhost:8000](http://localhost:8000), and choose `my_agent` agent
 (which is the same as the agent folder name).
-
-
-=== "Python"
-
-To create an Application Integration Toolset for Application Integration Workflows using Java, follow these steps: 
-
-1. Create a tool with `ApplicationIntegrationToolset` in the `tools.py` file:
-
-    ```py
-    integration_tool = ApplicationIntegrationToolset(
-        project="test-project", # TODO: replace with GCP project of the connection
-        location="us-central1", #TODO: replace with location of the connection
-        integration="test-integration", #TODO: replace with integration name
-        triggers=["api_trigger/test_trigger"],#TODO: replace with trigger id(s). Empty list would mean all api triggers in the integration to be considered.
-        service_account_json='{...}', #optional. Stringified json for service account key
-        tool_name_prefix="tool_prefix1",
-        tool_instructions="..."
-    )
-    ```
-
-    **Note:** You can provide service account to be used instead of using default
-        credentials by generating [Service Account Key](https://cloud.google.com/iam/docs/keys-create-delete#creating) and providing right [Application Integration and Integration Connector IAM roles](#prerequisites) to the service account. For more details about the IAM roles, refer to the [Prerequisites](#prerequisites) section.
-
-2. Update the `agent.py` file and add tool to your agent:
-
-    ```py
-    from google.adk.agents.llm_agent import LlmAgent
-    from .tools import integration_tool, connector_tool
-
-    root_agent = LlmAgent(
-        model='gemini-2.0-flash',
-        name='integration_agent',
-        instruction="Help user, leverage the tools you have access to",
-        tools=[integration_tool],
-    )
-    ```
-
-3. Configure \`\_\_init\_\_.py\` to expose your agent:
-
-    ```py
-    from . import agent
-    ```
-
-4. Start the Google ADK Web UI and use your agent:
-
-    ```shell
-    # make sure to run `adk web` from your project_root_folder
-    adk web
-    ```
-
-After completing the above steps, go to [http://localhost:8000](http://localhost:8000), and choose
-   ` my\_agent` agent (which is the same as the agent folder name).
 
 ---
 
