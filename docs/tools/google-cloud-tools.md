@@ -143,7 +143,7 @@ It supports both on-premise and SaaS applications. In addition, you can turn you
 ### Prerequisites
 
 
-=== "Java"
+=== "Python"
 * [Install ADK](../get-started/installation.md).
 * Use an existing
    [Application Integration](https://cloud.google.com/application-integration/docs/overview)
@@ -177,7 +177,7 @@ It supports both on-premise and SaaS applications. In addition, you can turn you
      
 > **Note:** For Agent Engine (AE), don't use `roles/integration.invoker`, as it can result in 403 errors. Use `roles/integration.editor`    instead.
 
-=== "Python"
+=== "Java"
 *   You must have the Google Cloud CLI installed. For more information, see the [installation
     guide](https://cloud.google.com/sdk/docs/install#installation_instructions).
 
@@ -359,14 +359,14 @@ workflow as a tool for your agent or create a new one.
 
 #### Create an Application Integration Workflow Toolset
 
-=== "Python"
+=== "Java"
 
 To create an Application Integration Toolset for Application Integration
 Workflows using Python, follow these steps:
 
 1.  Create a tool with `ApplicationIntegrationToolset` in the `tools.py` file:
 
-    ```python
+    ```java
     #tools.py
 
     import com.google.adk.tools.applicationintegrationtoolset.ApplicationIntegrationToolset;
@@ -414,7 +414,7 @@ Workflows using Python, follow these steps:
 
 2.  Update the `agent.java` file and add tool to your agent:
 
-    ```python
+    ```java
     # agent.java
 
     import com.google.adk.agent.LlmAgent;
@@ -466,7 +466,7 @@ After completing the above steps, go to
 (which is the same as the agent folder name).
 
 
-=== "Java"
+=== "Python"
 
 To create an Application Integration Toolset for Application Integration Workflows using Java, follow these steps: 
 
