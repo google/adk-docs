@@ -192,10 +192,10 @@ It supports both on-premise and SaaS applications. In addition, you can turn you
 *   To use a Connector from Integration Connectors, you need to provision
     Application Integration in the same region as your connection.
 *   Import and publish the [Connection
-    Tool](https://pantheon.corp.google.com/integrations/templates/connection-tool/locations/us-central1){:target="_blank"}
+    Tool](https://pantheon.corp.google.com/integrations/templates/connection-tool/locations/us-central1)
     from the template library.
 *   Follow the [Agent Development Kit
-    Walkthrough](https://docs.google.com/document/d/1oqXkqX9m5wjWE-rkwp-qO0CGpSEQHBTYAYQcWRf91XU/edit?tab=t.0#heading=h.7k9wrm8jpdug){:target="_blank"}
+    Walkthrough](https://docs.google.com/document/d/1oqXkqX9m5wjWE-rkwp-qO0CGpSEQHBTYAYQcWRf91XU/edit?tab=t.0#heading=h.7k9wrm8jpdug)
     and use the [latest version of adk](https://github.com/google/adk-python).
 
 *   The project structure should be as follows:
