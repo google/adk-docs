@@ -72,9 +72,24 @@ root_agent = Agent(
 
 ## Cloud Trace Setup
 
-### From Agent Engine Deployment
+### Setup for Agent Engine Deployment
 
-To enable cloud tracing for your ADK agent that you are deploying to Agent Engine, you can add `enable_tracing=True` when initialize the `AdkApp` object
+#### Agent Engine Deployment - from ADK CLI
+
+You can enable cloud tracing by adding `--trace_to_cloud` flag when deploying your agent using `adk deploy agent_engine` command for agent engine deployment.
+
+```bash
+adk deploy agent_engine \
+    --project=$GOOGLE_CLOUD_PROJECT \
+    --region=$GOOGLE_CLOUD_LOCATION \
+    --staging_bucket=$STAGING_BUCKET \
+    --trace_to_cloud \
+    $AGENT_PATH
+```
+
+#### Agent Engine Deployment - from Python SDK
+
+If you prefer using Python SDK, you can enable cloud tracing by adding `enable_tracing=True` when initialize the `AdkApp` object
 
 ```python
 # deploy_agent_engine.py
@@ -112,9 +127,27 @@ remote_app = agent_engines.create(
 )
 ```
 
-### From Built-in `get_fast_api_app` Module
+### Setup for Cloud Run Deployment
 
-Now, if you want to customize your own agent service, you also can enable cloud tracing by initialize the FastAPI app using built-in `get_fast_api_app` module and set `trace_to_cloud=True`
+#### Cloud Run Deployment - from ADK CLI
+
+You can enable cloud tracing by adding `--trace_to_cloud` flag when deploying your agent using `adk deploy cloud_run` command for cloud run deployment.
+
+```bash
+adk deploy cloud_run \
+    --project=$GOOGLE_CLOUD_PROJECT \
+    --region=$GOOGLE_CLOUD_LOCATION \
+    --trace_to_cloud \
+    $AGENT_PATH
+```
+
+If you want to enable cloud tracing and using a customized agent service deployment on Cloud Run, you can refer to the [Setup for Customized Deployment](#setup-for-customized-deployment) section below
+
+### Setup for Customized Deployment
+
+#### From Built-in `get_fast_api_app` Module
+
+If you want to customize your own agent service, you can enable cloud tracing by initialize the FastAPI app using built-in `get_fast_api_app` module and set `trace_to_cloud=True`
 
 ```python
 # deploy_fast_api_app.py
@@ -148,9 +181,9 @@ if __name__ == "__main__":
 ```
 
 
-### From Customized Agent Runner
+#### From Customized Agent Runner
 
-If you want to fully customize your ADK agent runtime, you also can enable cloud tracing by using `CloudTraceSpanExporter` module from Opentelemetry.
+If you want to fully customize your ADK agent runtime, you can enable cloud tracing by using `CloudTraceSpanExporter` module from Opentelemetry.
 
 ```python
 # agent_runner.py
