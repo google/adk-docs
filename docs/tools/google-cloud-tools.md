@@ -416,9 +416,7 @@ Workflows using Java, follow these steps:
 
 1.  Create a tool with `ApplicationIntegrationToolset` in the `tools.java` file:
 
-    ```java
-    #tools.java
-
+    ```java    
     import com.google.adk.tools.applicationintegrationtoolset.ApplicationIntegrationToolset;
     import com.google.common.collect.ImmutableList;
     import com.google.common.collect.ImmutableMap;
@@ -464,9 +462,7 @@ Workflows using Java, follow these steps:
 
 2.  Update the `agent.java` file and add tool to your agent:
 
-    ```java
-    # agent.java
-
+    ```java  
     import com.google.adk.agent.LlmAgent;
     import com.google.adk.tools.BaseTool;
     import com.google.common.collect.ImmutableList;
@@ -497,8 +493,7 @@ Workflows using Java, follow these steps:
     ```
 
     **Note:** To find the list of supported entities and actions for a
-    connection, use these Connectors APIs:
-    *   listActions, listEntityTypes
+    connection, use these Connector APIs: `listActions`, `listEntityTypes`.
 
 3.  Start the Google ADK Web UI and use your agent:
 
