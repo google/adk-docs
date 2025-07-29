@@ -8,8 +8,10 @@ This sample demonstrates how you can easily expose an ADK agent so that it can b
 
 There are two main ways to expose an ADK agent via A2A.
 
-* by using the `.to_a2a()` command (easiest way)
+* by using the `to_a2a(root_agent)` command (easiest way)
 * by creating your own agent card (`agent.json`) and hosting it using `adk api_server --a2a`
+
+This quickstart will focus on `to_a2a()`, as it is the easiest way to expose your agent and will also autogenerate the agent card behind-the-scenes.
 
 ```text
 Before:
