@@ -187,13 +187,10 @@ nav:
   - Safety and Security: safety/index.md
   - A2A Protocol:
     - a2a/index.md
-    - Introduction to A2A: a2a/introduction-to-a2a.md
-    - A2A Quickstart: a2a/quickstart.md
-    - Connecting to a Remote Agent: a2a/connecting-to-remote-agents.md
-    - Authentication with A2A: a2a/authentication.md
-    - Human-in-the-Loop with A2A: a2a/human-in-the-loop.md
-    - A2A Under the Hood: a2a/a2a-under-the-hood.md
-    - Deployment Patterns with A2A: a2a/deployment-patterns.md
+    - Introduction to A2A: a2a/intro.md
+    - A2A Quickstart (Exposing): a2a/quickstart-exposing.md
+    - A2A Quickstart (Consuming): a2a/quickstart-consuming.md
+    - A2A Protocol Documentation: https://a2a-protocol.org
   - Community Resources: community.md
   - Contributing Guide: contributing-guide.md
   - API Reference:

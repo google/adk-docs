@@ -1,42 +1,22 @@
-# Agent-to-Agent (A2A) Protocol
+# ADK with Agent2Agent (A2A) Protocol
 
-Welcome to the Agent-to-Agent (A2A) protocol documentation! This section provides a comprehensive guide to building powerful multi-agent systems where agents can communicate and collaborate securely and efficiently.
+With Agent Development Kit (ADK), you can build complex multi-agent systems where different agents need to collaborate and interact using [Agent2Agent (A2A) Protocol](https://a2aprotocol.ai/)! This section provides a comprehensive guide to building powerful multi-agent systems where agents can communicate and collaborate securely and efficiently.
 
-Navigate through the guides below to master ADK's A2A capabilities, focusing on how agents can both *expose* their functionalities and *consume* services from other agents:
+Navigate through the guides below to learn about ADK's A2A capabilities:
 
-<div class="grid cards" markdown>
+  **[Introduction to A2A](./intro.md)**
 
--   :material-rocket-launch-outline: **Getting Started**
+  Start here to learn the fundamentals of A2A by building a multi-agent system with a root agent, a local sub-agent, and a remote A2A agent.
 
-    ---
+  **[A2A Quickstart (Exposing)](./quickstart-exposing.md)**
 
-    ### [Introduction to A2A](./introduction-to-a2a.md)
-    Start here to understand the core concepts of A2A and when to use it for inter-agent communication versus local sub-agents.
+  This quickstart covers: **"I have an agent. How do I expose it so that other agents can use my agent via A2A?"**.
 
-    ### [A2A Quickstart](./quickstart.md)
-    Your practical next step: a hands-on guide to exposing an agent you've built with ADK as a secure A2A service.
+  **[A2A Quickstart (Consuming)](./quickstart-consuming.md)**
 
-    ### [Connecting to a Remote Agent](./connecting-to-remote-agents.md)
-    Learn how to build a client agent that can seamlessly connect to and utilize a remote A2A service.
+  This quickstart covers: **"There is a remote agent, how do I let my ADK agent use it via A2A?"**.
 
--   :material-lock-outline: **Advanced Topics**
+  [**Official Website for Agent2Agent (A2A) Protocol**](https://a2aprotocol.ai/)
 
-    ---
-
-    ### [Authentication with A2A](./authentication.md)
-    Secure your remote agents by implementing robust OAuth 2.0 authentication for controlled access.
-
-    ### [Human-in-the-Loop with A2A](./human-in-the-loop.md)
-    Discover how to integrate human oversight into your agent workflows, allowing for asynchronous human approval.
-
--   :material-cog-outline: **Deep Dive & Deployment**
-
-    ---
-
-    ### [A2A Under the Hood](./a2a-under-the-hood.md)
-    For advanced users: explore the intricate details of A2A integration, including server and client components.
-
-    ### [Deployment Patterns with A2A](./deployment-patterns.md)
-    Explore various strategies for deploying your A2A agents, including using standalone ASGI servers like Uvicorn.
-
-</div>
+  The official website for A2A Protocol.
+  
