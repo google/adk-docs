@@ -8,10 +8,10 @@ This sample demonstrates how you can easily expose an ADK agent so that it can b
 
 There are two main ways to expose an ADK agent via A2A.
 
-* by using the `to_a2a(root_agent)` command (easiest way)
-* by creating your own agent card (`agent.json`) and hosting it using `adk api_server --a2a`
+* **by using the `to_a2a(root_agent)` function**: use this function if you just want to convert an existing agent to work with A2A, and be able to expose it via a server through `uvicorn`, instead of `adk deploy api_server`. This means that you have tighter control over what you want to expose via `uvicorn` when you want to productionize your agent. Furthermore, the `to_a2a()` function auto-generates an agent card based on your agent code.
+* **by creating your own agent card (`agent.json`) and hosting it using `adk api_server --a2a`**: There are two main benefits of using this approach. First, `adk api_server --a2a` works with `adk web`, making it easy to use, debug, and test your agent. Second, with `adk api_server`, you can specify a parent folder with multiple, separate agents. Those agents that have an agent card (`agent.json`), will automatically be usable via A2A by other agents through the same server. However, you will need to create your own agent cards. To create an agent card, you can follow the [A2A Python tutorial](https://a2aprotocol.ai/docs/guide/python-a2a-tutorial).
 
-This quickstart will focus on `to_a2a()`, as it is the easiest way to expose your agent and will also autogenerate the agent card behind-the-scenes.
+This quickstart will focus on `to_a2a()`, as it is the easiest way to expose your agent and will also autogenerate the agent card behind-the-scenes. If you'd like to use the `adk api_server` approach, you can see it being used in the [A2A Quickstart (Consuming) documentation](quickstart-consuming.md).
 
 ```text
 Before:
@@ -38,7 +38,7 @@ The sample consists of :
 - **Remote Hello World Agent** (`remote_a2a/hello_world/agent.py`): This is the agent that you want to expose so that other agents can use it via A2A. It is an agent that handles dice rolling and prime number checking. It becomes exposed using the `to_a2a()` function and is served using `uvicorn`.
 - **Root Agent** (`agent.py`): A simple agent that is just calling the remote Hello World agent.
 
-## Exposing the Remote Agent with the `to_a2a(root_agent)` command
+## Exposing the Remote Agent with the `to_a2a(root_agent)` function
 
 You can take an existing agent built using ADK and make it A2A-compatible by simply wrapping it using the `to_a2a()` function. For example, if you have an agent like the following defined in `root_agent`:
 
@@ -62,13 +62,6 @@ a2a_app = to_a2a(root_agent, port=8001)
 ```
 
 The `to_a2a()` function will even auto-generate an agent card in-memory behind-the-scenes by [extracting skills, capabilities, and metadata from the ADK agent](https://github.com/google/adk-python/blob/main/src/google/adk/a2a/utils/agent_card_builder.py), so that the well-known agent card is made available when the agent endpoint is served using `uvicorn`.
-
-```python title="hello_world/agent.py"
-from google.adk.a2a.utils.agent_to_a2a import to_a2a
-
-# Make your agent A2A-compatible
-a2a_app = to_a2a(root_agent, port=8001)
-```
 
 Now let's dive into the sample code.
 

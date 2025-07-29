@@ -72,6 +72,13 @@ To show how your ADK agent can consume a remote agent via A2A, you'll first need
 adk api_server --a2a --port 8001 contributing/samples/a2a_basic/remote_a2a
 ```
 
+??? note "Adding logging for debugging with `--log_level debug`"
+    To enable debug-level logging, you can add `--log_level debug` to your `adk api_server`, as in:
+    ```bash
+    adk api_server --a2a --port 8001 contributing/samples/a2a_basic/remote_a2a --log_level debug
+    ```
+    This will give richer logs for you to inspect when testing your agents.
+
 ??? note "Why use port 8001?"
     In this quickstart, when testing locally, your agents will be using localhost, so the `port` for the A2A server for the exposed agent (the remote, prime agent) must be different from the consuming agent's port. The default port for `adk web` where you will interact with the consuming agent is `8000`, which is why the A2A server is created using a separate port, `8001`.
 
