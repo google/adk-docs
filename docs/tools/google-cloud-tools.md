@@ -402,11 +402,11 @@ After completing the above steps, go to [http://localhost:8000](http://localhost
 
 You can use an existing [Application Integration](https://cloud.google.com/application-integration/docs/overview) workflow as a tool for your agent or create a new one.
 
-#### Create an Application Integration Toolset and use the agent
+#### Create an Application Integration Toolset
 
-To create an agent using Application Integration Workflow in Python and Java, do the following: 
+To create an Application Integration Toolset and use the agent, do the following: 
 
-#### Step 1: Create Application Integration Toolset 
+#### Step 1: Create a tool 
 
 === "Python"
 
@@ -470,7 +470,7 @@ To create a tool with `ApplicationIntegrationToolset` in the `tools.java` file, 
 
   **Note:** You can provide a service account to be used instead of using default credentials. To do this, generate a [Service Account Key](https://cloud.google.com/iam/docs/keys-create-delete#creating) and provide the correct [Application Integration and Integration Connector IAM roles](#prerequisites) to the service account. For more details about the IAM roles, refer to the [Prerequisites](#prerequisites) section.
 
-#### Step 2: Add tool to your agent
+#### Step 2: Add the tool to your agent
 
 === "Python"
 
@@ -534,7 +534,7 @@ To configure `__init__.py` to expose your agent, use the following code:
     from . import agent
     ```
 
-### Step 4: Use your agent
+#### Step 4: Use your agent
 
 === "Python"
 
