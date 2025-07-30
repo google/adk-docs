@@ -148,25 +148,10 @@ It supports both on-premise and SaaS applications. In addition, you can turn you
 
 Install the latest version of [ADK](../get-started/installation.md). For information about the latest version of ADK, see [Agent Development Kit Walkthrough](https://docs.google.com/document/d/1oqXkqX9m5wjWE-rkwp-qO0CGpSEQHBTYAYQcWRf91XU/edit?tab=t.0#heading=h.7k9wrm8jpdug).
 
-Install [Google Cloud CLI](https://cloud.google.com/sdk/docs/install#installation_instructions). To use the tool with default credentials, run the following commands:
-
-  ```shell
-  gcloud config set project <project-id>
-  gcloud auth application-default login
-  gcloud auth application-default set-quota-project <project-id>
-  ```
-
 === "Java"
 
 Install the latest version of [ADK](../get-started/installation.md). For information about the latest version of ADK, see [Agent Development Kit Walkthrough](https://docs.google.com/document/d/1oqXkqX9m5wjWE-rkwp-qO0CGpSEQHBTYAYQcWRf91XU/edit?tab=t.0#heading=h.7k9wrm8jpdug).
 
-Install [Google Cloud CLI](https://cloud.google.com/sdk/docs/install#installation_instructions) and run the following commands:
-
-  ```bash
-  gcloud config set project <project-id>
-  gcloud auth application-default login
-  gcloud auth application-default set-quota-project <project-id>
-  ```
 
 #### Step 2: Install CLI
 
@@ -180,6 +165,8 @@ Install [Google Cloud CLI](https://cloud.google.com/sdk/docs/install#installatio
   gcloud auth application-default set-quota-project <project-id>
   ```
 
+Replace `<project-id>` with the unique ID of your Google Cloud project.
+
 === "Java"
 
 Install [Google Cloud CLI](https://cloud.google.com/sdk/docs/install#installation_instructions). To use the tool with default credentials, run the following commands:
@@ -189,6 +176,9 @@ Install [Google Cloud CLI](https://cloud.google.com/sdk/docs/install#installatio
   gcloud auth application-default login
   gcloud auth application-default set-quota-project <project-id>
   ```
+
+Replace `<project-id>` with the unique ID of your Google Cloud project.
+
 
 #### Step 3: Provision Application Integration workflow and publish Connection Tool
 
@@ -242,7 +232,7 @@ To get the permissions that you need to set up **ApplicationIntegrationToolset**
   - `roles/connectors.user`
   - `roles/secretmanager.secretAccessor`
 
-> **Note:** For Agent Engine (AE), don't use `roles/integration.invoker`, as it can result in 403 errors. Use `roles/integration.editor` instead.
+**Note:** For Agent Engine (AE), don't use `roles/integration.invoker`, as it can result in 403 errors. Use `roles/integration.editor` instead.
 
 === "Java"
 
@@ -252,7 +242,7 @@ To get the permissions that you need to set up **ApplicationIntegrationToolset**
   - `roles/connectors.user`
   - `roles/secretmanager.secretAccessor`
 
-> **Note:** For Agent Engine (AE), don't use `roles/integration.invoker`, as it can result in 403 errors. Use `roles/integration.editor` instead.
+**Note:** For Agent Engine (AE), don't use `roles/integration.invoker`, as it can result in 403 errors. Use `roles/integration.editor` instead.
 
 
 
@@ -262,7 +252,8 @@ Connect your agent to enterprise applications using
 [Integration Connectors](https://cloud.google.com/integration-connectors/docs/overview).
 
 #### Before you begin
-> **Note:** The *ExecuteConnection* integration is typically created automatically when you provision Application Integration in a given region. If the *ExecuteConnection* doesn't exist in the [list of integrations](https://pantheon.corp.google.com/integrations/list?hl=en&inv=1&invt=Ab2u5g&project=standalone-ip-prod-testing), you must follow these steps to create it:
+
+**Note:** The *ExecuteConnection* integration is typically created automatically when you provision Application Integration in a given region. If the *ExecuteConnection* doesn't exist in the [list of integrations](https://pantheon.corp.google.com/integrations/list?hl=en&inv=1&invt=Ab2u5g&project=standalone-ip-prod-testing), you must follow these steps to create it:
 
 1. To use a connector from Integration Connectors, click **QUICK SETUP** and [provision](https://console.cloud.google.com/integrations)
    Application Integration in the same region as your connection.
@@ -402,7 +393,7 @@ After completing the above steps, go to [http://localhost:8000](http://localhost
 
 You can use an existing [Application Integration](https://cloud.google.com/application-integration/docs/overview) workflow as a tool for your agent or create a new one.
 
-#### Create an Application Integration Toolset
+#### Create an Application Integration Toolset and use the agent
 
 To create an Application Integration Toolset and use the agent, do the following: 
 
