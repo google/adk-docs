@@ -220,7 +220,7 @@ Set up your project structure and create required files.
         ├── agent.java
         └── pom.xml
   ```
-When running the agent, make sure to run `adk web` in the `project\_root_folder`.
+When running the agent, make sure to run the commands in the `project\_root_folder`.
 
 #### Step 5: Set roles and permissions
 
