@@ -128,7 +128,7 @@ nav:
       - Parallel agents: agents/workflow-agents/parallel-agents.md
     - Custom agents: agents/custom-agents.md
     - Multi-agent systems: agents/multi-agents.md
-    - Models: agents/models.md
+    - Models & Authentication: agents/models.md
   - Tools:
     - tools/index.md
     - Function tools: tools/function-tools.md
@@ -185,7 +185,12 @@ nav:
     - Understanding Google Search Grounding: grounding/google_search_grounding.md
     - Understanding Vertex AI Search Grounding: grounding/vertex_ai_search_grounding.md
   - Safety and Security: safety/index.md
-  - Agent2Agent (A2A) Protocol: https://github.com/google/A2A/
+  - A2A Protocol:
+    - a2a/index.md
+    - Introduction to A2A: a2a/intro.md
+    - A2A Quickstart (Exposing): a2a/quickstart-exposing.md
+    - A2A Quickstart (Consuming): a2a/quickstart-consuming.md
+    - A2A Protocol Documentation: https://a2a-protocol.org
   - Community Resources: community.md
   - Contributing Guide: contributing-guide.md
   - API Reference:
