@@ -403,7 +403,7 @@ To create an Application Integration Toolset and use the agent, do the following
 
 To create a tool with `ApplicationIntegrationToolset` in the `tools.py` file, use the following code:
 
-    ```py
+```py
     integration_tool = ApplicationIntegrationToolset(
         project="test-project", # TODO: replace with GCP project of the connection
         location="us-central1", #TODO: replace with location of the connection
@@ -413,7 +413,7 @@ To create a tool with `ApplicationIntegrationToolset` in the `tools.py` file, us
         tool_name_prefix="tool_prefix1",
         tool_instructions="..."
     )
-    ```
+```
 
   **Note:** You can provide a service account to be used instead of using default credentials. To do this, generate a [Service Account Key](https://cloud.google.com/iam/docs/keys-create-delete#creating) and provide the correct 
      [Application Integration and Integration Connector IAM roles](#prerequisites) to the service account. For more details about the IAM roles, refer to the [Prerequisites](#prerequisites) section.
@@ -422,7 +422,7 @@ To create a tool with `ApplicationIntegrationToolset` in the `tools.py` file, us
 
 To create a tool with `ApplicationIntegrationToolset` in the `tools.java` file, use the following code:
 
-    ```java    
+```java    
     import com.google.adk.tools.applicationintegrationtoolset.ApplicationIntegrationToolset;
     import com.google.common.collect.ImmutableList;
     import com.google.common.collect.ImmutableMap;
@@ -457,7 +457,7 @@ To create a tool with `ApplicationIntegrationToolset` in the `tools.java` file, 
                     "...");
         }
     }
-    ```
+```
 
   **Note:** You can provide a service account to be used instead of using default credentials. To do this, generate a [Service Account Key](https://cloud.google.com/iam/docs/keys-create-delete#creating) and provide the correct [Application Integration and Integration Connector IAM roles](#prerequisites) to the service account. For more details about the IAM roles, refer to the [Prerequisites](#prerequisites) section.
 
@@ -467,7 +467,7 @@ To create a tool with `ApplicationIntegrationToolset` in the `tools.java` file, 
 
 To update the `agent.py` file and add the tool to your agent, use the following code:
 
-    ```py
+```py
     from google.adk.agents.llm_agent import LlmAgent
     from .tools import integration_tool, connector_tool
 
@@ -477,13 +477,13 @@ To update the `agent.py` file and add the tool to your agent, use the following 
         instruction="Help user, leverage the tools you have access to",
         tools=[integration_tool],
     )
-    ```
+```
 
   ==== "Java"
   
   To update the `agent.java` file and add the tool to your agent, use the following code:
 
-    ```java  
+```java  
     import com.google.adk.agent.LlmAgent;
     import com.google.adk.tools.BaseTool;
     import com.google.common.collect.ImmutableList;
@@ -511,7 +511,7 @@ To update the `agent.py` file and add the tool to your agent, use the following 
             // For example, you can start a conversation with the agent.
         }
     }
-    ```
+```
   **Note:** To find the list of supported entities and actions for a
     connection, use these Connector APIs: `listActions`, `listEntityTypes`.
 
@@ -521,9 +521,9 @@ To update the `agent.py` file and add the tool to your agent, use the following 
 
 To configure `__init__.py` to expose your agent, use the following code:
 
-    ```py
+```py
     from . import agent
-    ```
+```
 
 #### Step 4: Use your agent
 
@@ -531,24 +531,24 @@ To configure `__init__.py` to expose your agent, use the following code:
 
 To start the Google ADK Web UI and use your agent, use the following commands:
 
-    ```shell
+```shell
     # make sure to run `adk web` from your project_root_folder
     adk web
-    ```
+```
 After completing the above steps, go to [http://localhost:8000](http://localhost:8000), and choose the `my_agent` agent (which is the same as the agent folder name).
 
 === "Java"
 
 To start the Google ADK Web UI and use your agent, use the following commands:
 
-    ```bash
+```bash
     mvn install
 
     mvn exec:java \
         -Dexec.mainClass="com.google.adk.web.AdkWebServer" \
         -Dexec.args="--adk.agents.source-dir=src/main/java" \
         -Dexec.classpathScope="compile"
-    ```
+```
 
 After completing the above steps, go to [http://localhost:8000](http://localhost:8000), and choose the `my_agent` agent (which is the same as the agent folder name).
 
