@@ -80,8 +80,8 @@ Use your knowledge to determine the capital and estimate the population. Do not 
 session_service = InMemorySessionService()
 
 # Create separate sessions for clarity, though not strictly necessary if context is managed
-session_service.create_session(app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID_TOOL_AGENT)
-session_service.create_session(app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID_SCHEMA_AGENT)
+await session_service.create_session(app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID_TOOL_AGENT)
+await session_service.create_session(app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID_SCHEMA_AGENT)
 
 # Create a runner for EACH agent
 capital_runner = Runner(
@@ -116,7 +116,7 @@ async def call_agent_and_print(
 
     print(f"<<< Agent '{agent_instance.name}' Response: {final_response_content}")
 
-    current_session = session_service.get_session(app_name=APP_NAME,
+    current_session = await session_service.get_session(app_name=APP_NAME,
                                                   user_id=USER_ID,
                                                   session_id=session_id)
     stored_output = current_session.state.get(agent_instance.output_key)
@@ -143,5 +143,8 @@ async def main():
     await call_agent_and_print(structured_runner, structured_info_agent_schema, SESSION_ID_SCHEMA_AGENT, '{"country": "France"}')
     await call_agent_and_print(structured_runner, structured_info_agent_schema, SESSION_ID_SCHEMA_AGENT, '{"country": "Japan"}')
 
+# --- Run the Agent ---
+# Note: In Colab, you can directly use 'await' at the top level.
+# If running this code as a standalone Python script, you'll need to use asyncio.run() or manage the event loop.
 if __name__ == "__main__":
     await main()
