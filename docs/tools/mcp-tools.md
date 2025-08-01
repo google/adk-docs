@@ -36,7 +36,7 @@ This section demonstrates how to integrate tools from external MCP (Model Contex
 
 The `MCPToolset` class is ADK's primary mechanism for integrating tools from an MCP server. When you include an `MCPToolset` instance in your agent's `tools` list, it automatically handles the interaction with the specified MCP server. Here's how it works:
 
-1.  **Connection Management:** On initialization, `MCPToolset` establishes and manages the connection to the MCP server. This can be a local server process (using `StdioServerParameters` for communication over standard input/output) or a remote server (using `SseServerParams` for Server-Sent Events). The toolset also handles the graceful shutdown of this connection when the agent or application terminates.
+1.  **Connection Management:** On initialization, `MCPToolset` establishes and manages the connection to the MCP server. This can be a local server process (using `StdioConnectionParams` for communication over standard input/output) or a remote server (using `SseConnectionParams` for Server-Sent Events). The toolset also handles the graceful shutdown of this connection when the agent or application terminates.
 2.  **Tool Discovery & Adaptation:** Once connected, `MCPToolset` queries the MCP server for its available tools (via the `list_tools` MCP method). It then converts the schemas of these discovered MCP tools into ADK-compatible `BaseTool` instances.
 3.  **Exposure to Agent:** These adapted tools are then made available to your `LlmAgent` as if they were native ADK tools.
 4.  **Proxying Tool Calls:** When your `LlmAgent` decides to use one of these tools, `MCPToolset` transparently proxies the call (using the `call_tool` MCP method) to the MCP server, sends the necessary arguments, and returns the server's response back to the agent.
@@ -59,7 +59,7 @@ Create an `agent.py` file (e.g., in `./adk_agent_samples/mcp_agent/agent.py`). T
 # ./adk_agent_samples/mcp_agent/agent.py
 import os # Required for path operations
 from google.adk.agents import LlmAgent
-from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, StdioServerParameters
+from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, StdioConnectionParams
 
 # It's good practice to define paths dynamically if possible,
 # or ensure the user understands the need for an ABSOLUTE path.
@@ -76,7 +76,7 @@ root_agent = LlmAgent(
     instruction='Help the user manage their files. You can list files, read files, etc.',
     tools=[
         MCPToolset(
-            connection_params=StdioServerParameters(
+            connection_params=StdioConnectionParams(
                 command='npx',
                 args=[
                     "-y",  # Argument for npx to auto-confirm install
@@ -153,7 +153,7 @@ Modify your `agent.py` file (e.g., in `./adk_agent_samples/mcp_agent/agent.py`).
 # ./adk_agent_samples/mcp_agent/agent.py
 import os
 from google.adk.agents import LlmAgent
-from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, StdioServerParameters
+from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, StdioConnectionParams
 
 # Retrieve the API key from an environment variable or directly insert it.
 # Using an environment variable is generally safer.
@@ -174,7 +174,7 @@ root_agent = LlmAgent(
     instruction='Help the user with mapping, directions, and finding places using Google Maps tools.',
     tools=[
         MCPToolset(
-            connection_params=StdioServerParameters(
+            connection_params=StdioConnectionParams(
                 command='npx',
                 args=[
                     "-y",
@@ -391,7 +391,7 @@ Create an `agent.py` (e.g., in `./adk_agent_samples/mcp_client_agent/agent.py`):
 # ./adk_agent_samples/mcp_client_agent/agent.py
 import os
 from google.adk.agents import LlmAgent
-from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, StdioServerParameters
+from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, StdioConnectionParams
 
 # IMPORTANT: Replace this with the ABSOLUTE path to your my_adk_mcp_server.py script
 PATH_TO_YOUR_MCP_SERVER_SCRIPT = "/path/to/your/my_adk_mcp_server.py" # <<< REPLACE
@@ -406,7 +406,7 @@ root_agent = LlmAgent(
     instruction="Use the 'load_web_page' tool to fetch content from a URL provided by the user.",
     tools=[
         MCPToolset(
-            connection_params=StdioServerParameters(
+            connection_params=StdioConnectionParams(
                 command='python3', # Command to run your MCP server script
                 args=[PATH_TO_YOUR_MCP_SERVER_SCRIPT], # Argument is the path to the script
             )
@@ -429,7 +429,7 @@ from . import agent
     ```shell
     python3 /path/to/your/my_adk_mcp_server.py
     ```
-    It will print "Launching MCP Server..." and wait. The ADK agent (run via `adk web`) will then connect to this process if the `command` in `StdioServerParameters` is set up to execute it.
+    It will print "Launching MCP Server..." and wait. The ADK agent (run via `adk web`) will then connect to this process if the `command` in `StdioConnectionParams` is set up to execute it.
     *(Alternatively, `MCPToolset` will start this server script as a subprocess automatically when the agent initializes).*
 
 2.  **Run `adk web` for the client agent:**
@@ -477,7 +477,7 @@ from google.adk.agents.llm_agent import LlmAgent
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 from google.adk.artifacts.in_memory_artifact_service import InMemoryArtifactService # Optional
-from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, SseServerParams, StdioServerParameters
+from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, SseConnectionParams, StdioConnectionParams
 
 # Load environment variables from .env file in the parent directory
 # Place this near the top, before using env vars like API keys
@@ -490,16 +490,16 @@ TARGET_FOLDER_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "/
 async def get_agent_async():
   """Creates an ADK Agent equipped with tools from the MCP Server."""
   toolset = MCPToolset(
-      # Use StdioServerParameters for local process communication
-      connection_params=StdioServerParameters(
+      # Use StdioConnectionParams for local process communication
+      connection_params=StdioConnectionParams(
           command='npx', # Command to run the server
           args=["-y",    # Arguments for the command
                 "@modelcontextprotocol/server-filesystem",
                 TARGET_FOLDER_PATH],
       ),
       tool_filter=['read_file', 'list_directory'] # Optional: filter specific tools
-      # For remote servers, you would use SseServerParams instead:
-      # connection_params=SseServerParams(url="http://remote-server:port/path", headers={...})
+      # For remote servers, you would use SseConnectionParams instead:
+      # connection_params=SseConnectionParams(url="http://remote-server:port/path", headers={...})
   )
 
   # Use in an agent
