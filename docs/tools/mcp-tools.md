@@ -59,7 +59,7 @@ Create an `agent.py` file (e.g., in `./adk_agent_samples/mcp_agent/agent.py`). T
 # ./adk_agent_samples/mcp_agent/agent.py
 import os # Required for path operations
 from google.adk.agents import LlmAgent
-from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, StdioConnectionParams
+from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, StdioConnectionParams, StdioServerParams
 
 # It's good practice to define paths dynamically if possible,
 # or ensure the user understands the need for an ABSOLUTE path.
@@ -77,17 +77,19 @@ root_agent = LlmAgent(
     tools=[
         MCPToolset(
             connection_params=StdioConnectionParams(
-                command='npx',
-                args=[
-                    "-y",  # Argument for npx to auto-confirm install
-                    "@modelcontextprotocol/server-filesystem",
-                    # IMPORTANT: This MUST be an ABSOLUTE path to a folder the
-                    # npx process can access.
-                    # Replace with a valid absolute path on your system.
-                    # For example: "/Users/youruser/accessible_mcp_files"
-                    # or use a dynamically constructed absolute path:
-                    os.path.abspath(TARGET_FOLDER_PATH),
-                ],
+                server_params = StdioServerParams(
+                    command='npx',
+                    args=[
+                        "-y",  # Argument for npx to auto-confirm install
+                        "@modelcontextprotocol/server-filesystem",
+                        # IMPORTANT: This MUST be an ABSOLUTE path to a folder the
+                        # npx process can access.
+                        # Replace with a valid absolute path on your system.
+                        # For example: "/Users/youruser/accessible_mcp_files"
+                        # or use a dynamically constructed absolute path:
+                        os.path.abspath(TARGET_FOLDER_PATH),
+                    ],
+                ),
             ),
             # Optional: Filter which tools from the MCP server are exposed
             # tool_filter=['list_directory', 'read_file']
@@ -153,7 +155,7 @@ Modify your `agent.py` file (e.g., in `./adk_agent_samples/mcp_agent/agent.py`).
 # ./adk_agent_samples/mcp_agent/agent.py
 import os
 from google.adk.agents import LlmAgent
-from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, StdioConnectionParams
+from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, StdioConnectionParams, StdioServerParams
 
 # Retrieve the API key from an environment variable or directly insert it.
 # Using an environment variable is generally safer.
@@ -175,16 +177,18 @@ root_agent = LlmAgent(
     tools=[
         MCPToolset(
             connection_params=StdioConnectionParams(
-                command='npx',
-                args=[
-                    "-y",
-                    "@modelcontextprotocol/server-google-maps",
-                ],
-                # Pass the API key as an environment variable to the npx process
-                # This is how the MCP server for Google Maps expects the key.
-                env={
-                    "GOOGLE_MAPS_API_KEY": google_maps_api_key
-                }
+                server_params = StdioServerParams(
+                    command='npx',
+                    args=[
+                        "-y",
+                        "@modelcontextprotocol/server-google-maps",
+                    ],
+                    # Pass the API key as an environment variable to the npx process
+                    # This is how the MCP server for Google Maps expects the key.
+                    env={
+                        "GOOGLE_MAPS_API_KEY": google_maps_api_key
+                    }
+                ),
             ),
             # You can filter for specific Maps tools if needed:
             # tool_filter=['get_directions', 'find_place_by_id']
@@ -391,7 +395,7 @@ Create an `agent.py` (e.g., in `./adk_agent_samples/mcp_client_agent/agent.py`):
 # ./adk_agent_samples/mcp_client_agent/agent.py
 import os
 from google.adk.agents import LlmAgent
-from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, StdioConnectionParams
+from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, StdioConnectionParams, StdioServerParams
 
 # IMPORTANT: Replace this with the ABSOLUTE path to your my_adk_mcp_server.py script
 PATH_TO_YOUR_MCP_SERVER_SCRIPT = "/path/to/your/my_adk_mcp_server.py" # <<< REPLACE
@@ -407,8 +411,10 @@ root_agent = LlmAgent(
     tools=[
         MCPToolset(
             connection_params=StdioConnectionParams(
-                command='python3', # Command to run your MCP server script
-                args=[PATH_TO_YOUR_MCP_SERVER_SCRIPT], # Argument is the path to the script
+                server_params = StdioServerParams(
+                    command='python3', # Command to run your MCP server script
+                    args=[PATH_TO_YOUR_MCP_SERVER_SCRIPT], # Argument is the path to the script
+                )
             )
             # tool_filter=['load_web_page'] # Optional: ensure only specific tools are loaded
         )
@@ -477,7 +483,7 @@ from google.adk.agents.llm_agent import LlmAgent
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 from google.adk.artifacts.in_memory_artifact_service import InMemoryArtifactService # Optional
-from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, SseConnectionParams, StdioConnectionParams
+from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, SseConnectionParams, StdioConnectionParams, StdioServerParams
 
 # Load environment variables from .env file in the parent directory
 # Place this near the top, before using env vars like API keys
@@ -492,10 +498,12 @@ async def get_agent_async():
   toolset = MCPToolset(
       # Use StdioConnectionParams for local process communication
       connection_params=StdioConnectionParams(
-          command='npx', # Command to run the server
-          args=["-y",    # Arguments for the command
+          server_params = StdioServerParams(
+            command='npx', # Command to run the server
+            args=["-y",    # Arguments for the command
                 "@modelcontextprotocol/server-filesystem",
                 TARGET_FOLDER_PATH],
+          ),
       ),
       tool_filter=['read_file', 'list_directory'] # Optional: filter specific tools
       # For remote servers, you would use SseConnectionParams instead:
