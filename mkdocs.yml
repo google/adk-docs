@@ -172,6 +172,8 @@ nav:
     - evaluate/index.md
   - MCP:
     - mcp/index.md
+  - Plugins:
+    - plugins/index.md
   - Bidi-streaming (live):
     - streaming/index.md
     - Quickstart (Bidi-streaming/live): get-started/streaming/index.md
