@@ -142,21 +142,22 @@ It supports both on-premise and SaaS applications. In addition, you can turn you
 
 ### Prerequisites
 
-1. [Install ADK](../get-started/installation.md).
-2. Use an existing
+=== "Python"
+* [Install ADK](../get-started/installation.md).
+* Use an existing
    [Application Integration](https://cloud.google.com/application-integration/docs/overview)
    workflow or
    [Integrations Connector](https://cloud.google.com/integration-connectors/docs/overview)
    connection you want to use with your agent.
-3. To use tool with default credentials, install the [Google Cloud CLI](https://cloud.google.com/sdk/docs/install#installation_instructions) and run the following commands:
-   
+* To use tool with default credentials, install the [Google Cloud CLI](https://cloud.google.com/sdk/docs/install#installation_instructions) and run the following commands:
+
    ```shell
    gcloud config set project <project-id>
    gcloud auth application-default login
    gcloud auth application-default set-quota-project <project-id>
    ```
-  
-4. Set up your project structure and create required files. 
+
+* Set up your project structure and create required files.
     ```console
     project_root_folder
     |-- .env
@@ -166,14 +167,46 @@ It supports both on-premise and SaaS applications. In addition, you can turn you
         `__ tools.py
     ```
     When running the agent, make sure to run `adk web` in the `project\_root\_folder`.
+    
+* To get the permissions that you need to set up **ApplicationIntegrationToolset**, you must have the following IAM roles on the project (common to both Integration Connectors and Application Integration Workflows):
 
-5. To get the permissions that you need to set up **ApplicationIntegrationToolset**, you must have the following IAM roles on the project (common to both Integration Connectors and Application Integration Workflows):
-   
    - `roles/integration.editor`
    - `roles/connectors.user`
    - `roles/secretmanager.secretAccessor`
-         
+     
 > **Note:** For Agent Engine (AE), don't use `roles/integration.invoker`, as it can result in 403 errors. Use `roles/integration.editor`    instead.
+
+=== "Java"
+*   You must have the Google Cloud CLI installed. For more information, see the [installation
+    guide](https://cloud.google.com/sdk/docs/install#installation_instructions).
+
+*   Run the following commands:
+
+    ```bash
+    gcloud config set project <project-id>
+    gcloud auth application-default login
+    gcloud auth application-default set-quota-project <project-id>
+    ```
+
+*   To use a Connector from Integration Connectors, you need to provision
+    Application Integration in the same region as your connection.
+*   Import and publish the [Connection
+    Tool](https://pantheon.corp.google.com/integrations/templates/connection-tool/locations/us-central1)
+    from the template library.
+*   Follow the [Agent Development Kit
+    Walkthrough](https://docs.google.com/document/d/1oqXkqX9m5wjWE-rkwp-qO0CGpSEQHBTYAYQcWRf91XU/edit?tab=t.0#heading=h.7k9wrm8jpdug)
+    and use the [latest version of adk](https://github.com/google/adk-python).
+
+*   The project structure should be as follows:
+
+    ```
+    project_root_folder/
+      └── my_agent/
+          ├── agent.java
+          └── pom.xml
+    ```
+*   When running the agent, make sure you are in the `project_root_f` directory.
+   
 
 ### Use Integration Connectors
 
@@ -190,23 +223,24 @@ Connect your agent to enterprise applications using
    
    
 
-3. Go to the [Connection Tool](https://console.cloud.google.com/integrations/templates/connection-tool/locations/us-central1)
+2. Go to the [Connection Tool](https://console.cloud.google.com/integrations/templates/connection-tool/locations/us-central1)
    template in the template library and click **USE TEMPLATE**.
 
 
     ![Google Cloud Tools](../assets/use-connection-tool-template.png)
 
-4. Enter the Integration Name as *ExecuteConnection* (it is mandatory to use this exact integration name only).
+3. Enter the Integration Name as *ExecuteConnection* (it is mandatory to use this exact integration name only).
    Then, select the region to match your connection region and click **CREATE**.
 
-5. Click **PUBLISH** to publish the integration in the <i>Application Integration</i> editor.
+4. Click **PUBLISH** to publish the integration in the <i>Application Integration</i> editor.
 
 
     ![Google Cloud Tools](../assets/publish-integration.png)
    
    
-
 #### Create an Application Integration Toolset
+
+Application Integration Toolset supports `auth_scheme` and `auth_credential` for **dynamic OAuth2 authentication** for Integration Connectors. 
 
 To create an Application Integration Toolset for Integration Connectors, follow these steps: 
 
@@ -315,7 +349,7 @@ After completing the above steps, go to [http://localhost:8000](http://localhost
    `my\_agent` agent (which is the same as the agent folder name).
 
 
-### Use App Integration Workflows
+### Use Application Integration Workflows
 
 Use an existing
 [Application Integration](https://cloud.google.com/application-integration/docs/overview)
@@ -323,7 +357,10 @@ workflow as a tool for your agent or create a new one.
 
 #### Create an Application Integration Workflow Toolset
 
-To create an Application Integration Toolset for Application Integration Workflows, follow these steps: 
+
+=== "Python"
+
+To create an Application Integration Toolset for Application Integration Workflows using Python, follow these steps: 
 
 1. Create a tool with `ApplicationIntegrationToolset` in the `tools.py` file:
 
@@ -371,6 +408,107 @@ To create an Application Integration Toolset for Application Integration Workflo
 
 After completing the above steps, go to [http://localhost:8000](http://localhost:8000), and choose
    ` my\_agent` agent (which is the same as the agent folder name).
+
+=== "Java"
+
+To create an Application Integration Toolset for Application Integration
+Workflows using Java, follow these steps:
+
+1.  Create a tool with `ApplicationIntegrationToolset` in the `tools.java` file:
+
+    ```java    
+    import com.google.adk.tools.applicationintegrationtoolset.ApplicationIntegrationToolset;
+    import com.google.common.collect.ImmutableList;
+    import com.google.common.collect.ImmutableMap;
+
+    public class Tools {
+        private static ApplicationIntegrationToolset integrationTool;
+        private static ApplicationIntegrationToolset connectionsTool;
+
+        static {
+            integrationTool = new ApplicationIntegrationToolset(
+                    "test-project",
+                    "us-central1",
+                    "test-integration",
+                    ImmutableList.of("api_trigger/test-api"),
+                    null,
+                    null,
+                    null,
+                    "{...}",
+                    "tool_prefix1",
+                    "...");
+
+            connectionsTool = new ApplicationIntegrationToolset(
+                    "test-project",
+                    "us-central1",
+                    null,
+                    null,
+                    "test-connection",
+                    ImmutableMap.of("Issue", ImmutableList.of("GET")),
+                    ImmutableList.of("ExecuteCustomQuery"),
+                    "{...}",
+                    "tool_prefix",
+                    "...");
+        }
+    }
+    ```
+
+    **Note:** You can provide service account to be used instead of using
+    default credentials by generating [Service Account
+    Key](https://cloud.google.com/iam/docs/keys-create-delete#creating) and
+    providing right [Application Integration and Integration Connector IAM
+    roles](#prerequisites) to the service account. For more details about the
+    IAM roles, refer to the [Prerequisites](#prerequisites) section.
+
+2.  Update the `agent.java` file and add tool to your agent:
+
+    ```java  
+    import com.google.adk.agent.LlmAgent;
+    import com.google.adk.tools.BaseTool;
+    import com.google.common.collect.ImmutableList;
+
+    public class MyAgent {
+        public static void main(String[] args) {
+            // Assuming Tools class is defined as in the previous step
+            ImmutableList<BaseTool> tools = ImmutableList.<BaseTool>builder()
+                    .add(Tools.integrationTool)
+                    .add(Tools.connectionsTool)
+                    .build();
+
+            // Finally, create your agent with the tools generated automatically.
+            LlmAgent rootAgent = LlmAgent.builder()
+                    .name("science-teacher")
+                    .description("Science teacher agent")
+                    .model("gemini-2.0-flash")
+                    .instruction(
+                            "Help user, leverage the tools you have access to."
+                    )
+                    .tools(tools)
+                    .build();
+
+            // You can now use rootAgent to interact with the LLM
+            // For example, you can start a conversation with the agent.
+        }
+    }
+    ```
+
+    **Note:** To find the list of supported entities and actions for a
+    connection, use these Connector APIs: `listActions`, `listEntityTypes`.
+
+3.  Start the Google ADK Web UI and use your agent:
+
+    ```bash
+    mvn install
+
+    mvn exec:java \
+        -Dexec.mainClass="com.google.adk.web.AdkWebServer" \
+        -Dexec.args="--adk.agents.source-dir=src/main/java" \
+        -Dexec.classpathScope="compile"
+    ```
+
+After completing the above steps, go to
+[http://localhost:8000](http://localhost:8000), and choose `my_agent` agent
+(which is the same as the agent folder name).
 
 ---
 
