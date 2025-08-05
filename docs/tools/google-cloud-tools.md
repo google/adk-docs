@@ -143,6 +143,7 @@ It supports both on-premise and SaaS applications. In addition, you can turn you
 ### Prerequisites
 
 === "Python"
+
 * [Install ADK](../get-started/installation.md).
 * Use an existing
    [Application Integration](https://cloud.google.com/application-integration/docs/overview)
@@ -174,9 +175,10 @@ It supports both on-premise and SaaS applications. In addition, you can turn you
    - `roles/connectors.user`
    - `roles/secretmanager.secretAccessor`
      
-> **Note:** For Agent Engine (AE), don't use `roles/integration.invoker`, as it can result in 403 errors. Use `roles/integration.editor`    instead.
+**Note:** For Agent Engine (AE), don't use `roles/integration.invoker`, as it can result in 403 errors. Use `roles/integration.editor`    instead.
 
 === "Java"
+
 *   You must have the Google Cloud CLI installed. For more information, see the [installation
     guide](https://cloud.google.com/sdk/docs/install#installation_instructions).
 
@@ -214,7 +216,8 @@ Connect your agent to enterprise applications using
 [Integration Connectors](https://cloud.google.com/integration-connectors/docs/overview).
 
 #### Before you begin
-> **Note:** The *ExecuteConnection* integration is typically created automatically when you provision Application Integration in a given region. If the *ExecuteConnection* doesn't exist in the [list of integrations](https://pantheon.corp.google.com/integrations/list?hl=en&inv=1&invt=Ab2u5g&project=standalone-ip-prod-testing), you must follow these steps to create it:
+
+**Note:** The *ExecuteConnection* integration is typically created automatically when you provision Application Integration in a given region. If the *ExecuteConnection* doesn't exist in the [list of integrations](https://pantheon.corp.google.com/integrations/list?hl=en&inv=1&invt=Ab2u5g&project=standalone-ip-prod-testing), you must follow these steps to create it:
 
 1. To use a connector from Integration Connectors, click **QUICK SETUP** and [provision](https://console.cloud.google.com/integrations)
    Application Integration in the same region as your connection.
@@ -357,7 +360,6 @@ workflow as a tool for your agent or create a new one.
 
 #### Create an Application Integration Workflow Toolset
 
-
 === "Python"
 
 To create an Application Integration Toolset for Application Integration Workflows using Python, follow these steps: 
@@ -408,7 +410,7 @@ To create an Application Integration Toolset for Application Integration Workflo
 
 After completing the above steps, go to [http://localhost:8000](http://localhost:8000), and choose
    ` my\_agent` agent (which is the same as the agent folder name).
-
+   
 === "Java"
 
 To create an Application Integration Toolset for Application Integration
