@@ -424,7 +424,7 @@ To create an Application Integration Toolset and use the agent, do the following
       **Note:** You can provide a service account to be used instead of using default credentials. To do this, generate a [Service Account Key](https://cloud.google.com/iam/docs/keys-create-delete#creating) and provide the correct 
          [Application Integration and Integration Connector IAM roles](#prerequisites) to the service account. For more details about the IAM roles, refer to the [Prerequisites](#prerequisites) section.
 
-==== "Java"
+=== "Java"
 
     To create a tool with `ApplicationIntegrationToolset` in the `tools.java` file, use the following code:
     
