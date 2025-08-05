@@ -142,6 +142,7 @@ It supports both on-premise and SaaS applications. In addition, you can turn you
 
 ### Prerequisites
 
+
 #### 1. Install ADK
 
 === "Python"
@@ -249,8 +250,7 @@ It supports both on-premise and SaaS applications. In addition, you can turn you
       - `roles/secretmanager.secretAccessor`
 
     **Note:** For Agent Engine (AE), don't use `roles/integration.invoker`, as it can result in 403 errors. Use `roles/integration.editor` instead.
-
-
+    
 
 ### Use Integration Connectors
 
@@ -283,7 +283,6 @@ Connect your agent to enterprise applications using
     ![Google Cloud Tools](../assets/publish-integration.png)
    
    
-
 #### Create an Application Integration Toolset
 
 Application Integration Toolset supports `auth_scheme` and `auth_credential` for **dynamic OAuth2 authentication** for Integration Connectors. 
@@ -397,11 +396,10 @@ After completing the above steps, go to [http://localhost:8000](http://localhost
 
 ### Use Application Integration Workflows
 
-You can use an existing [Application Integration](https://cloud.google.com/application-integration/docs/overview) workflow as a tool for your agent or create a new one.
+Use an existing
+[Application Integration](https://cloud.google.com/application-integration/docs/overview)
+workflow as a tool for your agent or create a new one.
 
-#### Create an Application Integration Toolset and use the agent
-
-To create an Application Integration Toolset and use the agent, do the following: 
 
 #### 1. Create a tool 
 
@@ -542,8 +540,8 @@ To create an Application Integration Toolset and use the agent, do the following
           adk web
       ```
     After completing the above steps, go to [http://localhost:8000](http://localhost:8000), and choose the `my_agent` agent (which is the same as the agent folder name).
-
-=== "Java"
+    
+ === "Java"
 
     To start the Google ADK Web UI and use your agent, use the following commands:
     
