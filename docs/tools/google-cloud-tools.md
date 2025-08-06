@@ -218,16 +218,16 @@ It supports both on-premise and SaaS applications. In addition, you can turn you
 
 === "Java"
 
-    Set up your project structure and create required files.
-    
-     ```console
-      project_root_folder/
-        └── my_agent/
-            ├── agent.java
-            └── pom.xml
-      ```
-    
-    When running the agent, make sure to run the commands in the `project\_root_folder`.
+     Set up your project structure and create required files.
+      
+        ```console
+        project_root_folder
+        |-- my_agent
+        |   |-- agent.java
+        |   `-- pom.xml
+        ```
+        
+      When running the agent, make sure to run the commands in the `project\_root_folder`.
 
 #### 5. Set roles and permissions
 
@@ -484,10 +484,10 @@ workflow as a tool for your agent or create a new one.
       ```
 
 === "Java"
-  
+
     To update the `agent.java` file and add the tool to your agent, use the following code:
     
-        ```java  
+      ```java  
             import com.google.adk.agent.LlmAgent;
             import com.google.adk.tools.BaseTool;
             import com.google.common.collect.ImmutableList;
@@ -516,6 +516,7 @@ workflow as a tool for your agent or create a new one.
                 }
             }
         ```
+        
     **Note:** To find the list of supported entities and actions for a
         connection, use these Connector APIs: `listActions`, `listEntityTypes`.
 
@@ -541,7 +542,7 @@ workflow as a tool for your agent or create a new one.
       ```
     After completing the above steps, go to [http://localhost:8000](http://localhost:8000), and choose the `my_agent` agent (which is the same as the agent folder name).
     
- === "Java"
+=== "Java"
 
     To start the Google ADK Web UI and use your agent, use the following commands:
     
@@ -555,7 +556,7 @@ workflow as a tool for your agent or create a new one.
       ```
     
     After completing the above steps, go to [http://localhost:8000](http://localhost:8000), and choose the `my_agent` agent (which is the same as the agent folder name).
-
+  
 ---
 
 ## Toolbox Tools for Databases
