@@ -59,7 +59,7 @@ Create an `agent.py` file (e.g., in `./adk_agent_samples/mcp_agent/agent.py`). T
 # ./adk_agent_samples/mcp_agent/agent.py
 import os # Required for path operations
 from google.adk.agents import LlmAgent
-from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, StdioConnectionParams, StdioServerParams
+from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, StdioConnectionParams, StdioServerParameters
 
 # It's good practice to define paths dynamically if possible,
 # or ensure the user understands the need for an ABSOLUTE path.
@@ -77,7 +77,7 @@ root_agent = LlmAgent(
     tools=[
         MCPToolset(
             connection_params=StdioConnectionParams(
-                server_params = StdioServerParams(
+                server_params = StdioServerParameters(
                     command='npx',
                     args=[
                         "-y",  # Argument for npx to auto-confirm install
@@ -155,7 +155,7 @@ Modify your `agent.py` file (e.g., in `./adk_agent_samples/mcp_agent/agent.py`).
 # ./adk_agent_samples/mcp_agent/agent.py
 import os
 from google.adk.agents import LlmAgent
-from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, StdioConnectionParams, StdioServerParams
+from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, StdioConnectionParams, StdioServerParameters
 
 # Retrieve the API key from an environment variable or directly insert it.
 # Using an environment variable is generally safer.
@@ -177,7 +177,7 @@ root_agent = LlmAgent(
     tools=[
         MCPToolset(
             connection_params=StdioConnectionParams(
-                server_params = StdioServerParams(
+                server_params = StdioServerParameters(
                     command='npx',
                     args=[
                         "-y",
@@ -395,7 +395,7 @@ Create an `agent.py` (e.g., in `./adk_agent_samples/mcp_client_agent/agent.py`):
 # ./adk_agent_samples/mcp_client_agent/agent.py
 import os
 from google.adk.agents import LlmAgent
-from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, StdioConnectionParams, StdioServerParams
+from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, StdioConnectionParams, StdioServerParameters
 
 # IMPORTANT: Replace this with the ABSOLUTE path to your my_adk_mcp_server.py script
 PATH_TO_YOUR_MCP_SERVER_SCRIPT = "/path/to/your/my_adk_mcp_server.py" # <<< REPLACE
@@ -411,7 +411,7 @@ root_agent = LlmAgent(
     tools=[
         MCPToolset(
             connection_params=StdioConnectionParams(
-                server_params = StdioServerParams(
+                server_params = StdioServerParameters(
                     command='python3', # Command to run your MCP server script
                     args=[PATH_TO_YOUR_MCP_SERVER_SCRIPT], # Argument is the path to the script
                 )
@@ -483,7 +483,7 @@ from google.adk.agents.llm_agent import LlmAgent
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 from google.adk.artifacts.in_memory_artifact_service import InMemoryArtifactService # Optional
-from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, SseConnectionParams, StdioConnectionParams, StdioServerParams
+from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, SseConnectionParams, StdioConnectionParams, StdioServerParameters
 
 # Load environment variables from .env file in the parent directory
 # Place this near the top, before using env vars like API keys
@@ -498,7 +498,7 @@ async def get_agent_async():
   toolset = MCPToolset(
       # Use StdioConnectionParams for local process communication
       connection_params=StdioConnectionParams(
-          server_params = StdioServerParams(
+          server_params = StdioServerParameters(
             command='npx', # Command to run the server
             args=["-y",    # Arguments for the command
                 "@modelcontextprotocol/server-filesystem",
