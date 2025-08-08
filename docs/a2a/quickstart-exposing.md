@@ -67,11 +67,16 @@ Now let's dive into the sample code.
 
 ### 1. Getting the Sample Code
 
+First, make sure you have the necessary dependencies installed:
+
+```bash
+pip install google-adk[a2a]
+```
+
 You can clone and navigate to the [**a2a_root** sample](https://github.com/google/adk-python/tree/main/contributing/samples/a2a_root) here:
 
 ```bash
 git clone https://github.com/google/adk-python.git
-cd adk-python/contributing/samples/a2a_root
 ```
 
 As you'll see, the folder structure is as follows:
