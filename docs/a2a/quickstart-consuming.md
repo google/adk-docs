@@ -39,7 +39,6 @@ You can clone and navigate to the [**a2a_basic** sample](https://github.com/goog
 
 ```bash
 git clone https://github.com/google/adk-python.git
-cd adk-python/contributing/samples/a2a_basic
 ```
 
 As you'll see, the folder structure is as follows:
