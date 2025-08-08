@@ -29,11 +29,16 @@ The A2A Basic sample consists of:
 
 ### 1. Getting the Sample Code
 
+First, make sure you have the necessary dependencies installed:
+
+```bash
+pip install google-adk[a2a]
+```
+
 You can clone and navigate to the [**a2a_basic** sample](https://github.com/google/adk-python/tree/main/contributing/samples/a2a_basic) here:
 
 ```bash
 git clone https://github.com/google/adk-python.git
-cd adk-python/contributing/samples/a2a_basic
 ```
 
 As you'll see, the folder structure is as follows:
