@@ -1,8 +1,14 @@
 # Agent Development Kit (ADK)
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
+[![PyPI](https://img.shields.io/pypi/v/google-adk)](https://pypi.org/project/google-adk/)
+[![Maven Central](https://img.shields.io/maven-central/v/com.google.adk/google-adk)](https://search.maven.org/artifact/com.google.adk/google-adk)
 
-<img src="docs/assets/agent-development-kit.png" alt="Agent Development Kit Logo" width="150">
+<html>
+  <h2 align="center">
+    <img src="docs/assets/agent-development-kit.png" width="150"/>
+  </h2>
+</html>
 
 **An open-source, code-first toolkit for building, evaluating, and
 deploying sophisticated AI agents with flexibility and control.**
