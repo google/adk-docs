@@ -221,10 +221,10 @@ It supports both on-premise and SaaS applications. In addition, you can turn you
      Set up your project structure and create required files.
       
         ```console
-        project_root_folder
-        |-- my_agent
-        |   |-- agent.java
-        |   `-- pom.xml
+          project_root_folder
+          |-- my_agent
+          |   |-- agent.java
+          |   `-- pom.xml
         ```
         
       When running the agent, make sure to run the commands in the `project\_root_folder`.
@@ -486,11 +486,11 @@ workflow as a tool for your agent or create a new one.
 === "Java"
 
     To update the `agent.java` file and add the tool to your agent, use the following code:
-    
-      ```java  
-            import com.google.adk.agent.LlmAgent;
-            import com.google.adk.tools.BaseTool;
-            import com.google.common.collect.ImmutableList;
+
+    ```java
+          import com.google.adk.agent.LlmAgent;
+          import com.google.adk.tools.BaseTool;
+          import com.google.common.collect.ImmutableList;
         
             public class MyAgent {
                 public static void main(String[] args) {
@@ -515,7 +515,7 @@ workflow as a tool for your agent or create a new one.
                     // For example, you can start a conversation with the agent.
                 }
             }
-        ```
+      ```
         
     **Note:** To find the list of supported entities and actions for a
         connection, use these Connector APIs: `listActions`, `listEntityTypes`.
