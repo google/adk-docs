@@ -58,16 +58,16 @@ Pass the scheme and credential during toolset initialization. The toolset applie
 
       ```py
       from google.adk.tools.openapi_tool.auth.auth_helpers import token_to_scheme_credential
-      from google.adk.tools.apihub_tool.apihub_toolset import APIHubToolset
+      from google.adk.tools.openapi_tool.openapi_spec_parser.openapi_toolset import OpenAPIToolset
+
       auth_scheme, auth_credential = token_to_scheme_credential(
-         "apikey", "query", "apikey", YOUR_API_KEY_STRING
+          "apikey", "query", "apikey", "YOUR_API_KEY_STRING"
       )
-      sample_api_toolset = APIHubToolset(
-         name="sample-api-requiring-api-key",
-         description="A tool using an API protected by API Key",
-         apihub_resource_name="...",
-         auth_scheme=auth_scheme,
-         auth_credential=auth_credential,
+      sample_api_toolset = OpenAPIToolset(
+          spec_str="...",  # Fill this with an OpenAPI spec string
+          spec_str_type="yaml",
+          auth_scheme=auth_scheme,
+          auth_credential=auth_credential,
       )
       ```
 

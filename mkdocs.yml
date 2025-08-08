@@ -22,6 +22,9 @@ extra:
   second_repo_url: https://github.com/google/adk-java
   second_repo_name: adk-java
   second_repo_icon: fontawesome/brands/github
+  analytics:
+    provider: google
+    property: !ENV GOOGLE_ANALYTICS_KEY
 
 # Configuration
 theme:
@@ -128,7 +131,7 @@ nav:
       - Parallel agents: agents/workflow-agents/parallel-agents.md
     - Custom agents: agents/custom-agents.md
     - Multi-agent systems: agents/multi-agents.md
-    - Models: agents/models.md
+    - Models & Authentication: agents/models.md
   - Tools:
     - tools/index.md
     - Function tools: tools/function-tools.md
@@ -151,6 +154,7 @@ nav:
     - Session: sessions/session.md
     - State: sessions/state.md
     - Memory: sessions/memory.md
+    - Vertex AI Express Mode: sessions/express-mode.md
   - Callbacks:
     - callbacks/index.md
     - Types of callbacks: callbacks/types-of-callbacks.md
@@ -162,12 +166,18 @@ nav:
   - Context:
     - context/index.md
   - Observability:
+    - Logging: observability/logging.md
+    - Cloud Trace: observability/cloud-trace.md
+    - AgentOps: observability/agentops.md
     - Arize AX: observability/arize-ax.md
     - Phoenix: observability/phoenix.md
+    - W&B Weave: observability/weave.md
   - Evaluate:
     - evaluate/index.md
   - MCP:
     - mcp/index.md
+  - Plugins:
+    - plugins/index.md
   - Bidi-streaming (live):
     - streaming/index.md
     - Quickstart (Bidi-streaming/live): get-started/streaming/index.md
@@ -175,9 +185,18 @@ nav:
     - Custom Audio Bidi-streaming app sample (WebSockets): streaming/custom-streaming-ws.md
     - Bidi-streaming development guide series: streaming/dev-guide/part1.md
     - Streaming Tools: streaming/streaming-tools.md
-    - Configuring Bidi-streaming behaviour: streaming/configuration.md
+    - Configurating Bidi-streaming behaviour: streaming/configuration.md
+    - Google ADK + Vertex AI Live API (blog post): https://medium.com/google-cloud/google-adk-vertex-ai-live-api-125238982d5e
+  - Grounding:
+    - Understanding Google Search Grounding: grounding/google_search_grounding.md
+    - Understanding Vertex AI Search Grounding: grounding/vertex_ai_search_grounding.md
   - Safety and Security: safety/index.md
-  - Agent2Agent (A2A) Protocol: https://github.com/google/A2A/
+  - A2A Protocol:
+    - a2a/index.md
+    - Introduction to A2A: a2a/intro.md
+    - A2A Quickstart (Exposing): a2a/quickstart-exposing.md
+    - A2A Quickstart (Consuming): a2a/quickstart-consuming.md
+    - A2A Protocol Documentation: https://a2a-protocol.org
   - Community Resources: community.md
   - Contributing Guide: contributing-guide.md
   - API Reference:
