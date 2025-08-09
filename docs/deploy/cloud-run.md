@@ -194,7 +194,7 @@ export GOOGLE_API_KEY=your-api-key
     2. List the necessary Python packages:
 
         ```txt title="requirements.txt"
-        google_adk
+        google-adk
         # Add any other dependencies your agent needs
         ```
 

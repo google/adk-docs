@@ -188,7 +188,7 @@ Create the following files (`main.py`, `requirements.txt`, `Dockerfile`, `capita
 3. List the necessary Python packages:
 
     ```txt title="requirements.txt"
-    google_adk
+    google-adk
     # Add any other dependencies your agent needs
     ```
 
