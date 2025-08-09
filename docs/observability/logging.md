@@ -33,7 +33,7 @@ logging.basicConfig(
 
 ### Configuring Logging with the ADK CLI
 
-When running agents using the ADK's built-in web or API servers, you can easily control the log verbosity directly from the command line. The `adk web`, `adk api_server`, and `adk deploy cloud_run` commands all accept a `--log-level` option.
+When running agents using the ADK's built-in web or API servers, you can easily control the log verbosity directly from the command line. The `adk web`, `adk api_server`, and `adk deploy cloud_run` commands all accept a `--log_level` option.
 
 This provides a convenient way to set the logging level without modifying your agent's source code.
 
@@ -42,10 +42,10 @@ This provides a convenient way to set the logging level without modifying your a
 To start the web server with `DEBUG` level logging, run:
 
 ```bash
-adk web --log-level DEBUG path/to/your/agents_dir
+adk web --log_level DEBUG path/to/your/agents_dir
 ```
 
-The available log levels for the `--log-level` option are:
+The available log levels for the `--log_level` option are:
 - `DEBUG`
 - `INFO` (default)
 - `WARNING`
