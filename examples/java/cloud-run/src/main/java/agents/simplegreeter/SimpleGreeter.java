@@ -7,7 +7,7 @@ import com.google.adk.agents.LlmAgent;
 public class SimpleGreeter {
 
   // The Agent should be exposed as a "public static" argument.
-  public static BaseAgent ROOT_AGENT =
+  public static final BaseAgent ROOT_AGENT =
       LlmAgent.builder()
           .name("GreeterBot")
           .description("A friendly agent that greets the user.")
