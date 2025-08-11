@@ -18,7 +18,7 @@ This article overviews the server and client code for a custom asynchronous web 
 
 There is also a [WebSocket](custom-streaming-ws.md) version of the sample is available.
 
-## 1. Install ADK {#1.-setup-installation}
+## 1. Install ADK { #install-adk }
 
 Create & Activate Virtual Environment (Recommended):
 
@@ -69,7 +69,7 @@ adk-streaming/
         └── agent.py # Agent definition
 ```
 
-## 2\. Set up the platform {#2.-set-up-the-platform}
+## 2\. Set up the platform { #set-up-the-platform }
 
 To run the sample app, choose a platform from either Google AI Studio or Google Cloud Vertex AI:
 
@@ -105,7 +105,7 @@ To run the sample app, choose a platform from either Google AI Studio or Google 
         ```
 
 
-## 3\. Interact with Your Streaming app {#3.-interact-with-your-streaming-app}
+## 3\. Interact with Your Streaming app { #interact-with-your-streaming-app }
 
 1\. **Navigate to the Correct Directory:**
 
@@ -158,7 +158,7 @@ These console logs are important in case you develop your own streaming applicat
 - **When your browser can't connect to the server via SSH proxy:** SSH proxy used in various cloud services may not work with SSE. Please try without SSH proxy, such as using a local laptop, or try the [WebSocket](custom-streaming-ws.md) version.
 - **When `gemini-2.0-flash-exp` model doesn't work:** If you see any errors on the app server console with regard to `gemini-2.0-flash-exp` model availability, try replacing it with `gemini-2.0-flash-live-001` on `app/google_search_agent/agent.py` at line 6.
 
-## 4. Agent definition
+## 4. Agent definition { #agent-definition }
 
 The agent definition code `agent.py` in the `google_search_agent` folder is where the agent's logic is written:
 
@@ -184,7 +184,7 @@ Notice how easily you integrated [grounding with Google Search](https://ai.googl
 
 The server and client architecture enables real-time, bidirectional communication between web clients and AI agents with proper session isolation and resource management.
 
-## 5. Server side code overview {#5.-server-side-code-overview}
+## 5. Server side code overview { #server-side-code-overview }
 
 The FastAPI server provides real-time communication between web clients and the AI agent.
 
@@ -427,7 +427,7 @@ async def send_message_endpoint(user_id: int, request: Request):
 - **Error Handling** - Returns appropriate error responses for unsupported MIME types or missing sessions.
 
 
-## 6. Client side code overview {#6.-client-side-code-overview}
+## 6. Client side code overview { #client-side-code-overview }
 
 The client-side consists of a web interface with real-time communication and audio capabilities:
 

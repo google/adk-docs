@@ -13,7 +13,7 @@ In order to use voice/video streaming in ADK, you will need to use Gemini models
 
 There is also a [SSE](custom-streaming.md) version of the sample is available.
 
-## 1. Install ADK {#1.-setup-installation}
+## 1. Install ADK { #install-adk }
 
 Create & Activate Virtual Environment (Recommended):
 
@@ -64,7 +64,7 @@ adk-streaming-ws/
         └── agent.py # Agent definition
 ```
 
-## 2\. Set up the platform {#2.-set-up-the-platform}
+## 2\. Set up the platform { #set-up-the-platform }
 
 To run the sample app, choose a platform from either Google AI Studio or Google Cloud Vertex AI:
 
@@ -125,7 +125,7 @@ Notice how easily you integrated [grounding with Google Search](https://ai.googl
 
 ![intro_components.png](../assets/quickstart-streaming-tool.png)
 
-## 3\. Interact with Your Streaming app {#3.-interact-with-your-streaming-app}
+## 3\. Interact with Your Streaming app { #interact-with-your-streaming-app }
 
 1\. **Navigate to the Correct Directory:**
 
@@ -180,7 +180,7 @@ These console logs are important in case you develop your own streaming applicat
 - **When `ws://` doesn't work:** If you see any errors on the Chrome DevTools with regard to `ws://` connection, try replacing `ws://` with `wss://` on `app/static/js/app.js` at line 28. This may happen when you are running the sample on a cloud environment and using a proxy connection to connect from your browser.
 - **When `gemini-2.0-flash-exp` model doesn't work:** If you see any errors on the app server console with regard to `gemini-2.0-flash-exp` model availability, try replacing it with `gemini-2.0-flash-live-001` on `app/google_search_agent/agent.py` at line 6.
 
-## 4. Server code overview {#4.-server-side-code-overview}
+## 4. Server code overview { #server-code-overview }
 
 This server app enables real-time, streaming interaction with ADK agent via WebSockets. Clients send text/audio to the ADK agent and receive streamed text/audio responses.
 
@@ -440,7 +440,7 @@ async def websocket_endpoint(websocket: WebSocket, user_id: int, is_audio: str):
     *   `agent_to_client_messaging`: ADK `live_events` -> Client WebSocket.
 4.  Bidirectional streaming continues until disconnection or error.
 
-## 5. Client code overview {#5.-client-side-code-overview}
+## 5. Client code overview { #client-code-overview }
 
 The JavaScript `app.js` (in `app/static/js`) manages client-side interaction with the ADK Streaming WebSocket backend. It handles sending text/audio and receiving/displaying streamed responses.
 
