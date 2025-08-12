@@ -187,7 +187,7 @@ It supports both on-premise and SaaS applications. In addition, you can turn you
 
     Use an existing [Application Integration](https://cloud.google.com/application-integration/docs/overview) workflow or [Integrations Connector](https://cloud.google.com/integration-connectors/docs/overview) connection you want to use with your agent. You can also create a new [Application Integration workflow](https://cloud.google.com/application-integration/docs/setup-application-integration) or a [connection](https://cloud.google.com/integration-connectors/docs/connectors/neo4j/configure#configure-the-connector).
     
-    Import and publish the [Connection Tool](https://pantheon.corp.google.com/integrations/templates/connection-tool/locations/us-central1) from the template library.
+    Import and publish the [Connection Tool](https://console.cloud.google.com/integrations/templates/connection-tool/locations/global) from the template library.
     
     **Note**: To use a connector from Integration Connectors, you need to provision Application Integration in the same region as your connection.
 
@@ -195,7 +195,7 @@ It supports both on-premise and SaaS applications. In addition, you can turn you
 
     Use an existing [Application Integration](https://cloud.google.com/application-integration/docs/overview) workflow or [Integrations Connector](https://cloud.google.com/integration-connectors/docs/overview) connection you want to use with your agent. You can also create a new [Application Integration workflow](https://cloud.google.com/application-integration/docs/setup-application-integration) or a [connection](https://cloud.google.com/integration-connectors/docs/connectors/neo4j/configure#configure-the-connector).
     
-    Import and publish the [Connection Tool](https://pantheon.corp.google.com/integrations/templates/connection-tool/locations/us-central1) from the template library.
+    Import and publish the [Connection Tool](https://console.cloud.google.com/integrations/templates/connection-tool/locations/global) from the template library.
     
     **Note**: To use a connector from Integration Connectors, you need to provision Application Integration in the same region as your connection, import and publish Connection Tool from the template library.
 
@@ -221,10 +221,10 @@ It supports both on-premise and SaaS applications. In addition, you can turn you
      Set up your project structure and create required files.
       
         ```console
-        project_root_folder
-        |-- my_agent
-        |   |-- agent.java
-        |   `-- pom.xml
+          project_root_folder
+          |-- my_agent
+          |   |-- agent.java
+          |   `-- pom.xml
         ```
         
       When running the agent, make sure to run the commands in the `project\_root_folder`.
@@ -259,7 +259,7 @@ Connect your agent to enterprise applications using
 
 #### Before you begin
 
-**Note:** The *ExecuteConnection* integration is typically created automatically when you provision Application Integration in a given region. If the *ExecuteConnection* doesn't exist in the [list of integrations](https://pantheon.corp.google.com/integrations/list?hl=en&inv=1&invt=Ab2u5g&project=standalone-ip-prod-testing), you must follow these steps to create it:
+**Note:** The *ExecuteConnection* integration is typically created automatically when you provision Application Integration in a given region. If the *ExecuteConnection* doesn't exist in the [list of integrations](https://console.cloud.google.com/integrations/list), you must follow these steps to create it:
 
 1. To use a connector from Integration Connectors, click **QUICK SETUP** and [provision](https://console.cloud.google.com/integrations)
    Application Integration in the same region as your connection.
@@ -487,10 +487,10 @@ workflow as a tool for your agent or create a new one.
 
     To update the `agent.java` file and add the tool to your agent, use the following code:
     
-      ```java  
-            import com.google.adk.agent.LlmAgent;
-            import com.google.adk.tools.BaseTool;
-            import com.google.common.collect.ImmutableList;
+      ```java
+           import com.google.adk.agent.LlmAgent;
+           import com.google.adk.tools.BaseTool;
+           import com.google.common.collect.ImmutableList;
         
             public class MyAgent {
                 public static void main(String[] args) {
@@ -515,11 +515,11 @@ workflow as a tool for your agent or create a new one.
                     // For example, you can start a conversation with the agent.
                 }
             }
-        ```
+      ```
         
     **Note:** To find the list of supported entities and actions for a
-        connection, use these Connector APIs: `listActions`, `listEntityTypes`.
-
+        connection, use these Connector APIs: `listActions`, `listEntityTypes`.    
+      
 #### 3. Expose your agent
 
 === "Python"

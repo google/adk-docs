@@ -6,31 +6,31 @@ Callbacks offer powerful hooks into the agent lifecycle. Here are common design 
 
 These patterns demonstrate typical ways to enhance or control agent behavior using callbacks:
 
-### 1. Guardrails & Policy Enforcement
+### 1. Guardrails & Policy Enforcement { #guardrails-policy-enforcement }
 
 * **Pattern:** Intercept requests before they reach the LLM or tools to enforce rules.
 * **How:** Use `before_model_callback` to inspect the `LlmRequest` prompt or `before_tool_callback` to inspect tool arguments. If a policy violation is detected (e.g., forbidden topics, profanity), return a predefined response (`LlmResponse` or `dict`/ `Map`) to block the operation and optionally update `context.state` to log the violation.
 * **Example:** A `before_model_callback` checks `llm_request.contents` for sensitive keywords and returns a standard "Cannot process this request" `LlmResponse` if found, preventing the LLM call.
 
-### 2. Dynamic State Management
+### 2. Dynamic State Management { #dynamic-state-management }
 
 * **Pattern:** Read from and write to session state within callbacks to make agent behavior context-aware and pass data between steps.
 * **How:** Access `callback_context.state` or `tool_context.state`. Modifications (`state['key'] = value`) are automatically tracked in the subsequent `Event.actions.state_delta` for persistence by the `SessionService`.
 * **Example:** An `after_tool_callback` saves a `transaction_id` from the tool's result to `tool_context.state['last_transaction_id']`. A later `before_agent_callback` might read `state['user_tier']` to customize the agent's greeting.
 
-### 3. Logging and Monitoring
+### 3. Logging and Monitoring { #logging-and-monitoring }
 
 * **Pattern:** Add detailed logging at specific lifecycle points for observability and debugging.
 * **How:** Implement callbacks (e.g., `before_agent_callback`, `after_tool_callback`, `after_model_callback`) to print or send structured logs containing information like agent name, tool name, invocation ID, and relevant data from the context or arguments.
 * **Example:** Log messages like `INFO: [Invocation: e-123] Before Tool: search_api - Args: {'query': 'ADK'}`.
 
-### 4. Caching
+### 4. Caching { #caching }
 
 * **Pattern:** Avoid redundant LLM calls or tool executions by caching results.
 * **How:** In `before_model_callback` or `before_tool_callback`, generate a cache key based on the request/arguments. Check `context.state` (or an external cache) for this key. If found, return the cached `LlmResponse` or result directly, skipping the actual operation. If not found, allow the operation to proceed and use the corresponding `after_` callback (`after_model_callback`, `after_tool_callback`) to store the new result in the cache using the key.
 *   **Example:** `before_tool_callback` for `get_stock_price(symbol)` checks `state[f"cache:stock:{symbol}"]`. If present, returns the cached price; otherwise, allows the API call and `after_tool_callback` saves the result to the state key.
 
-### 5. Request/Response Modification
+### 5. Request/Response Modification { #request-response-modification }
 
 * **Pattern:** Alter data just before it's sent to the LLM/tool or just after it's received.
 * **How:**
@@ -40,13 +40,13 @@ These patterns demonstrate typical ways to enhance or control agent behavior usi
     *  `after_tool_callback`: Modify the `tool_response` dictionary (or Map in Java).
 * **Example:** `before_model_callback` appends "User language preference: Spanish" to `llm_request.config.system_instruction` if `context.state['lang'] == 'es'`.
 
-### 6. Conditional Skipping of Steps
+### 6. Conditional Skipping of Steps { #conditional-skipping-of-steps }
 
 * **Pattern:** Prevent standard operations (agent run, LLM call, tool execution) based on certain conditions.
 * **How:** Return a value from a `before_` callback (`Content` from `before_agent_callback`, `LlmResponse` from `before_model_callback`, `dict` from `before_tool_callback`). The framework interprets this returned value as the result for that step, skipping the normal execution.
 * **Example:** `before_tool_callback` checks `tool_context.state['api_quota_exceeded']`. If `True`, it returns `{'error': 'API quota exceeded'}`, preventing the actual tool function from running.
 
-### 7. Tool-Specific Actions (Authentication & Summarization Control)
+### 7. Tool-Specific Actions (Authentication & Summarization Control) { #tool-specific-actions-authentication-summarization-control }
 
 * **Pattern:** Handle actions specific to the tool lifecycle, primarily authentication and controlling LLM summarization of tool results.
 * **How:** Use `ToolContext` within tool callbacks (`before_tool_callback`, `after_tool_callback`).
@@ -54,7 +54,7 @@ These patterns demonstrate typical ways to enhance or control agent behavior usi
     * **Summarization:** Set `tool_context.actions.skip_summarization = True` if the raw dictionary output of the tool should be passed back to the LLM or potentially displayed directly, bypassing the default LLM summarization step.
 * **Example:** A `before_tool_callback` for a secure API checks for an auth token in state; if missing, it calls `request_credential`. An `after_tool_callback` for a tool returning structured JSON might set `skip_summarization = True`.
 
-### 8. Artifact Handling
+### 8. Artifact Handling { #artifact-handling }
 
 * **Pattern:** Save or load session-related files or large data blobs during the agent lifecycle.
 * **How:** Use `callback_context.save_artifact` / `await tool_context.save_artifact` to store data (e.g., generated reports, logs, intermediate data). Use `load_artifact` to retrieve previously stored artifacts. Changes are tracked via `Event.actions.artifact_delta`.
