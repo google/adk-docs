@@ -201,5 +201,6 @@ nav:
   - Contributing Guide: contributing-guide.md
   - API Reference:
     - api-reference/index.md
+    - CLI ADK: api-reference/cli/index.html
     - Python ADK: api-reference/python/index.html
     - Java ADK: api-reference/java/index.html
