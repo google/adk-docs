@@ -13,7 +13,7 @@ In order to use voice/video streaming in ADK, you will need to use Gemini models
 
 There is also a [SSE](custom-streaming.md) version of the sample is available.
 
-## 1. Install ADK { #install-adk }
+## 1. Install ADK {#1.-setup-installation}
 
 Create & Activate Virtual Environment (Recommended):
 
@@ -64,7 +64,7 @@ adk-streaming-ws/
         └── agent.py # Agent definition
 ```
 
-## 2\. Set up the platform { #set-up-the-platform }
+## 2\. Set up the platform {#2.-set-up-the-platform}
 
 To run the sample app, choose a platform from either Google AI Studio or Google Cloud Vertex AI:
 
@@ -125,7 +125,7 @@ Notice how easily you integrated [grounding with Google Search](https://ai.googl
 
 ![intro_components.png](../assets/quickstart-streaming-tool.png)
 
-## 3\. Interact with Your Streaming app { #interact-with-your-streaming-app }
+## 3\. Interact with Your Streaming app {#3.-interact-with-your-streaming-app}
 
 1\. **Navigate to the Correct Directory:**
 
@@ -180,7 +180,7 @@ These console logs are important in case you develop your own streaming applicat
 - **When `ws://` doesn't work:** If you see any errors on the Chrome DevTools with regard to `ws://` connection, try replacing `ws://` with `wss://` on `app/static/js/app.js` at line 28. This may happen when you are running the sample on a cloud environment and using a proxy connection to connect from your browser.
 - **When `gemini-2.0-flash-exp` model doesn't work:** If you see any errors on the app server console with regard to `gemini-2.0-flash-exp` model availability, try replacing it with `gemini-2.0-flash-live-001` on `app/google_search_agent/agent.py` at line 6.
 
-## 4. Server code overview { #server-code-overview }
+## 4. Server code overview {#4.-server-side-code-overview}
 
 This server app enables real-time, streaming interaction with ADK agent via WebSockets. Clients send text/audio to the ADK agent and receive streamed text/audio responses.
 
@@ -245,6 +245,12 @@ async def start_agent_session(user_id, is_audio=False):
     # Set response modality
     modality = "AUDIO" if is_audio else "TEXT"
     run_config = RunConfig(response_modalities=[modality])
+    
+    # Optional: Enable session resumption for improved reliability
+    # run_config = RunConfig(
+    #     response_modalities=[modality],
+    #     session_resumption=types.SessionResumptionConfig()
+    # )
 
     # Create a LiveRequestQueue for this session
     live_request_queue = LiveRequestQueue()
@@ -275,6 +281,49 @@ This function initializes an ADK agent live session.
     *   `live_request_queue`: Queue to send data to the agent.
 
 **Returns:** `(live_events, live_request_queue)`.
+
+### Session Resumption Configuration
+
+ADK supports live session resumption to improve reliability during streaming conversations. This feature enables automatic reconnection when live connections are interrupted due to network issues.
+
+#### Enabling Session Resumption
+
+To enable session resumption, you need to:
+
+1. **Import the required types**:
+```py
+from google.genai import types
+```
+
+2. **Configure session resumption in RunConfig**:
+```py
+run_config = RunConfig(
+    response_modalities=[modality],
+    session_resumption=types.SessionResumptionConfig()
+)
+```
+
+#### Session Resumption Features
+
+- **Automatic Handle Caching** - The system automatically caches session resumption handles during live conversations
+- **Transparent Reconnection** - When connections are interrupted, the system attempts to resume using cached handles
+- **Context Preservation** - Conversation context and state are maintained across reconnections
+- **Network Resilience** - Provides better user experience during unstable network conditions
+
+#### Implementation Notes
+
+- Session resumption handles are managed internally by the ADK framework
+- No additional client-side code changes are required
+- The feature is particularly beneficial for long-running streaming conversations
+- Connection interruptions become less disruptive to the user experience
+
+#### Troubleshooting
+
+If you encounter errors with session resumption:
+
+1. **Check model compatibility** - Ensure you're using a model that supports session resumption
+2. **API limitations** - Some session resumption features may not be available in all API versions
+3. **Remove session resumption** - If issues persist, you can disable session resumption by removing the `session_resumption` parameter from `RunConfig`
 
 ### `agent_to_client_messaging(websocket, live_events)`
 
@@ -440,7 +489,7 @@ async def websocket_endpoint(websocket: WebSocket, user_id: int, is_audio: str):
     *   `agent_to_client_messaging`: ADK `live_events` -> Client WebSocket.
 4.  Bidirectional streaming continues until disconnection or error.
 
-## 5. Client code overview { #client-code-overview }
+## 5. Client code overview {#5.-client-side-code-overview}
 
 The JavaScript `app.js` (in `app/static/js`) manages client-side interaction with the ADK Streaming WebSocket backend. It handles sending text/audio and receiving/displaying streamed responses.
 
