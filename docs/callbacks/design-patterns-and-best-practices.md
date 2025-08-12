@@ -6,7 +6,7 @@ Callbacks offer powerful hooks into the agent lifecycle. Here are common design 
 
 These patterns demonstrate typical ways to enhance or control agent behavior using callbacks:
 
-### 1. Guardrails & Policy Enforcement
+### 1. Guardrails & Policy Enforcement { #guardrails-policy-enforcement }
 
 **Pattern Overview:**
 Intercept requests before they reach the LLM or tools to enforce rules.
@@ -21,7 +21,7 @@ Intercept requests before they reach the LLM or tools to enforce rules.
 **Example Use Case:**
 A `before_model_callback` checks `llm_request.contents` for sensitive keywords and returns a standard "Cannot process this request" `LlmResponse` if found, preventing the LLM call.
 
-### 2. Dynamic State Management
+### 2. Dynamic State Management { #dynamic-state-management }
 
 **Pattern Overview:**
 Read from and write to session state within callbacks to make agent behavior context-aware and pass data between steps.
@@ -34,7 +34,7 @@ Read from and write to session state within callbacks to make agent behavior con
 **Example Use Case:**
 An `after_tool_callback` saves a `transaction_id` from the tool's result to `tool_context.state['last_transaction_id']`. A later `before_agent_callback` might read `state['user_tier']` to customize the agent's greeting.
 
-### 3. Logging and Monitoring
+### 3. Logging and Monitoring { #logging-and-monitoring }
 
 **Pattern Overview:**
 Add detailed logging at specific lifecycle points for observability and debugging.
@@ -50,7 +50,7 @@ Add detailed logging at specific lifecycle points for observability and debuggin
 **Example Use Case:**
 Log messages like `INFO: [Invocation: e-123] Before Tool: search_api - Args: {'query': 'ADK'}`.
 
-### 4. Caching
+### 4. Caching { #caching }
 
 **Pattern Overview:**
 Avoid redundant LLM calls or tool executions by caching results.
@@ -67,7 +67,7 @@ Avoid redundant LLM calls or tool executions by caching results.
 **Example Use Case:**
 `before_tool_callback` for `get_stock_price(symbol)` checks `state[f"cache:stock:{symbol}"]`. If present, returns the cached price; otherwise, allows the API call and `after_tool_callback` saves the result to the state key.
 
-### 5. Request/Response Modification
+### 5. Request/Response Modification { #request-response-modification }
 
 **Pattern Overview:**
 Alter data just before it's sent to the LLM/tool or just after it's received.
@@ -81,7 +81,7 @@ Alter data just before it's sent to the LLM/tool or just after it's received.
 **Example Use Case:**
 `before_model_callback` appends "User language preference: Spanish" to `llm_request.config.system_instruction` if `context.state['lang'] == 'es'`.
 
-### 6. Conditional Skipping of Steps
+### 6. Conditional Skipping of Steps { #conditional-skipping-of-steps }
 
 **Pattern Overview:**
 Prevent standard operations (agent run, LLM call, tool execution) based on certain conditions.
@@ -96,7 +96,7 @@ Prevent standard operations (agent run, LLM call, tool execution) based on certa
 **Example Use Case:**
 `before_tool_callback` checks `tool_context.state['api_quota_exceeded']`. If `True`, it returns `{'error': 'API quota exceeded'}`, preventing the actual tool function from running.
 
-### 7. Tool-Specific Actions (Authentication & Summarization Control)
+### 7. Tool-Specific Actions (Authentication & Summarization Control) { #tool-specific-actions-authentication-summarization-control }
 
 **Pattern Overview:**
 Handle actions specific to the tool lifecycle, primarily authentication and controlling LLM summarization of tool results.
@@ -110,7 +110,7 @@ Use `ToolContext` within tool callbacks (`before_tool_callback`, `after_tool_cal
 **Example Use Case:**
 A `before_tool_callback` for a secure API checks for an auth token in state; if missing, it calls `request_credential`. An `after_tool_callback` for a tool returning structured JSON might set `skip_summarization = True`.
 
-### 8. Artifact Handling
+### 8. Artifact Handling { #artifact-handling }
 
 **Pattern Overview:**
 Save or load session-related files or large data blobs during the agent lifecycle.
