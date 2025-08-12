@@ -18,7 +18,7 @@ This article overviews the server and client code for a custom asynchronous web 
 
 There is also a [WebSocket](custom-streaming-ws.md) version of the sample is available.
 
-## 1. Install ADK { #install-adk }
+## 1. Install ADK {#1.-setup-installation}
 
 Create & Activate Virtual Environment (Recommended):
 
@@ -69,7 +69,7 @@ adk-streaming/
         └── agent.py # Agent definition
 ```
 
-## 2\. Set up the platform { #set-up-the-platform }
+## 2\. Set up the platform {#2.-set-up-the-platform}
 
 To run the sample app, choose a platform from either Google AI Studio or Google Cloud Vertex AI:
 
@@ -105,7 +105,7 @@ To run the sample app, choose a platform from either Google AI Studio or Google 
         ```
 
 
-## 3\. Interact with Your Streaming app { #interact-with-your-streaming-app }
+## 3\. Interact with Your Streaming app {#3.-interact-with-your-streaming-app}
 
 1\. **Navigate to the Correct Directory:**
 
@@ -158,7 +158,7 @@ These console logs are important in case you develop your own streaming applicat
 - **When your browser can't connect to the server via SSH proxy:** SSH proxy used in various cloud services may not work with SSE. Please try without SSH proxy, such as using a local laptop, or try the [WebSocket](custom-streaming-ws.md) version.
 - **When `gemini-2.0-flash-exp` model doesn't work:** If you see any errors on the app server console with regard to `gemini-2.0-flash-exp` model availability, try replacing it with `gemini-2.0-flash-live-001` on `app/google_search_agent/agent.py` at line 6.
 
-## 4. Agent definition { #agent-definition }
+## 4. Agent definition
 
 The agent definition code `agent.py` in the `google_search_agent` folder is where the agent's logic is written:
 
@@ -184,7 +184,7 @@ Notice how easily you integrated [grounding with Google Search](https://ai.googl
 
 The server and client architecture enables real-time, bidirectional communication between web clients and AI agents with proper session isolation and resource management.
 
-## 5. Server side code overview { #server-side-code-overview }
+## 5. Server side code overview {#5.-server-side-code-overview}
 
 The FastAPI server provides real-time communication between web clients and the AI agent.
 
@@ -210,6 +210,11 @@ The FastAPI server provides real-time communication between web clients and the 
 - **Stream Resilience** - SSE streams handle exceptions and perform cleanup automatically
 - **Connection Recovery** - Clients can reconnect by re-establishing SSE connection
 
+#### Session Resumption:
+- **Live Session Resumption** - Enables transparent reconnection to interrupted live conversations
+- **Handle Caching** - System automatically caches session handles for recovery
+- **Reliability Enhancement** - Improves resilience against network instability during streaming
+
 
 ### Agent Session Management
 
@@ -234,6 +239,12 @@ async def start_agent_session(user_id, is_audio=False):
     # Set response modality
     modality = "AUDIO" if is_audio else "TEXT"
     run_config = RunConfig(response_modalities=[modality])
+    
+    # Optional: Enable session resumption for improved reliability
+    # run_config = RunConfig(
+    #     response_modalities=[modality],
+    #     session_resumption=types.SessionResumptionConfig()
+    # )
 
     # Create a LiveRequestQueue for this session
     live_request_queue = LiveRequestQueue()
@@ -382,6 +393,49 @@ async def sse_endpoint(user_id: int, is_audio: str = "false"):
 
 - **Cleanup Logic** - Handles connection termination by closing the request queue and removing from active sessions, with error handling for stream interruptions.
 
+### Session Resumption Configuration
+
+ADK supports live session resumption to improve reliability during streaming conversations. This feature enables automatic reconnection when live connections are interrupted due to network issues.
+
+#### Enabling Session Resumption
+
+To enable session resumption, you need to:
+
+1. **Import the required types**:
+```py
+from google.genai import types
+```
+
+2. **Configure session resumption in RunConfig**:
+```py
+run_config = RunConfig(
+    response_modalities=[modality],
+    session_resumption=types.SessionResumptionConfig()
+)
+```
+
+#### Session Resumption Features
+
+- **Automatic Handle Caching** - The system automatically caches session resumption handles during live conversations
+- **Transparent Reconnection** - When connections are interrupted, the system attempts to resume using cached handles
+- **Context Preservation** - Conversation context and state are maintained across reconnections
+- **Network Resilience** - Provides better user experience during unstable network conditions
+
+#### Implementation Notes
+
+- Session resumption handles are managed internally by the ADK framework
+- No additional client-side code changes are required
+- The feature is particularly beneficial for long-running streaming conversations
+- Connection interruptions become less disruptive to the user experience
+
+#### Troubleshooting
+
+If you encounter errors with session resumption:
+
+1. **Check model compatibility** - Ensure you're using a model that supports session resumption
+2. **API limitations** - Some session resumption features may not be available in all API versions
+3. **Remove session resumption** - If issues persist, you can disable session resumption by removing the `session_resumption` parameter from `RunConfig`
+
 #### Message Sending Endpoint
 
 ```py
@@ -427,7 +481,7 @@ async def send_message_endpoint(user_id: int, request: Request):
 - **Error Handling** - Returns appropriate error responses for unsupported MIME types or missing sessions.
 
 
-## 6. Client side code overview { #client-side-code-overview }
+## 6. Client side code overview {#6.-client-side-code-overview}
 
 The client-side consists of a web interface with real-time communication and audio capabilities:
 
