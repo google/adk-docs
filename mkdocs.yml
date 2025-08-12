@@ -204,3 +204,4 @@ nav:
     - CLI ADK: api-reference/cli/index.html
     - Python ADK: api-reference/python/index.html
     - Java ADK: api-reference/java/index.html
+  - Community Clients: clients/index.md
