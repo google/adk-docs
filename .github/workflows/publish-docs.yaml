@@ -28,6 +28,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Configure Git Credentials
+        env:
+          GOOGLE_ANALYTICS_KEY: ${{ secrets.GOOGLE_ANALYTICS_KEY }}
         run: |
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com

@@ -70427,7 +70427,7 @@ _Note: We specify `agent_dir` to the directory `main.py` is in and use `os.envir
 requirements.txt
 
 ```md-code__content
-google_adk
+google-adk
 # Add any other dependencies your agent needs
 
 ```
@@ -70881,7 +70881,7 @@ _Note: We specify `agent_dir` to the directory `main.py` is in and use `os.envir
 requirements.txt
 
 ```md-code__content
-google_adk
+google-adk
 # Add any other dependencies your agent needs
 
 ```
