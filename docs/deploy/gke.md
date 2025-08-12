@@ -188,7 +188,7 @@ Create the following files (`main.py`, `requirements.txt`, `Dockerfile`, `capita
 3. List the necessary Python packages:
 
     ```txt title="requirements.txt"
-    google_adk
+    google-adk
     # Add any other dependencies your agent needs
     ```
 
@@ -352,7 +352,7 @@ You can get the external IP address of your service using:
 kubectl get svc adk-agent -o=jsonpath='{.status.loadBalancer.ingress[0].ip}'
 ```
 
-## Option 2: Automated Deployment using `adk deploy gke` (Coming Soon)
+## Option 2: Automated Deployment using `adk deploy gke`
 
 ADK provides a CLI command to streamline GKE deployment. This avoids the need to manually build images, write Kubernetes manifests, or push to Artifact Registry.
 

@@ -5,6 +5,12 @@
     },
     {
       "pattern": "^((?!http).)*$"
+    },
+    {
+      "pattern": "^https://console.cloud.google.com/"
+    },
+    {
+      "pattern": "^https://a2aprotocol.ai/"
     }
   ],
   "aliveStatusCodes": [

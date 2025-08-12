@@ -38,6 +38,16 @@ export GOOGLE_GENAI_USE_VERTEXAI=True
 
 *(Replace `your-project-id` with your actual GCP project ID)*
 
+Alternatively you can also use an API key from AI Studio
+
+```bash
+export GOOGLE_CLOUD_PROJECT=your-project-id
+export GOOGLE_CLOUD_LOCATION=us-central1 # Or your preferred location
+export GOOGLE_GENAI_USE_VERTEXAI=FALSE
+export GOOGLE_API_KEY=your-api-key
+```
+*(Replace `your-project-id` with your actual GCP project ID and `your-api-key` with your actual API key from AI Studio)*
+
 ## Deployment commands
 
 === "Python - adk CLI"
@@ -184,7 +194,7 @@ export GOOGLE_GENAI_USE_VERTEXAI=True
     2. List the necessary Python packages:
 
         ```txt title="requirements.txt"
-        google_adk
+        google-adk
         # Add any other dependencies your agent needs
         ```
 
