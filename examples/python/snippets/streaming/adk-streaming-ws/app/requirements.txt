@@ -1,1 +1,1 @@
-google-adk==1.9.0
+google-adk==1.10.0
