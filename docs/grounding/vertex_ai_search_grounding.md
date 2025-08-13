@@ -51,16 +51,31 @@ pip install google-adk==1.5.0
 
 Under a project directory, run the following commands:
 
-```bash
-# Step 1: Create a new directory for your agent
-mkdir vertex_search_agent
 
-# Step 2: Create __init__.py for the agent
-echo "from . import agent" > vertex_search_agent/__init__.py
+=== "OS X &amp; Linux"
+    ```bash
+    # Step 1: Create a new directory for your agent
+    mkdir vertex_search_agent
 
-# Step 3: Create an agent.py (the agent definition) and .env (authentication config)
-touch vertex_search_agent/agent.py .env
-```
+    # Step 2: Create __init__.py for the agent
+    echo "from . import agent" > vertex_search_agent/__init__.py
+
+    # Step 3: Create an agent.py (the agent definition) and .env (authentication config)
+    touch vertex_search_agent/agent.py .env
+    ```
+
+=== "Windows"
+    ```shell
+    # Step 1: Create a new directory for your agent
+    mkdir vertex_search_agent
+
+    # Step 2: Create __init__.py for the agent
+    echo "from . import agent" > vertex_search_agent/__init__.py
+
+    # Step 3: Create an agent.py (the agent definition) and .env (authentication config)
+    type nul > vertex_search_agent\agent.py 
+    type nul > google_search_agent\.env
+    ```
 
 #### Edit `agent.py`
 
