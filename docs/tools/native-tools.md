@@ -31,10 +31,10 @@ They are packaged in the toolset `BigQueryToolset`.
 
 
 ```py
---8<-- "examples/python/snippets/tools/built-in-tools/bigquery.py"
+--8<-- "examples/python/snippets/tools/native-tools/bigquery.py"
 ```
 
-## Use Built-in tools with other tools
+## Use Native tools with other tools
 
 For each root agent or single agent, the native tools can be used with other
 non-built-in tools. For example, the following approach that uses
