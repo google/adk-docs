@@ -245,6 +245,12 @@ async def start_agent_session(user_id, is_audio=False):
     # Set response modality
     modality = "AUDIO" if is_audio else "TEXT"
     run_config = RunConfig(response_modalities=[modality])
+    
+    # Optional: Enable session resumption for improved reliability
+    # run_config = RunConfig(
+    #     response_modalities=[modality],
+    #     session_resumption=types.SessionResumptionConfig()
+    # )
 
     # Create a LiveRequestQueue for this session
     live_request_queue = LiveRequestQueue()
@@ -275,6 +281,49 @@ This function initializes an ADK agent live session.
     *   `live_request_queue`: Queue to send data to the agent.
 
 **Returns:** `(live_events, live_request_queue)`.
+
+### Session Resumption Configuration
+
+ADK supports live session resumption to improve reliability during streaming conversations. This feature enables automatic reconnection when live connections are interrupted due to network issues.
+
+#### Enabling Session Resumption
+
+To enable session resumption, you need to:
+
+1. **Import the required types**:
+```py
+from google.genai import types
+```
+
+2. **Configure session resumption in RunConfig**:
+```py
+run_config = RunConfig(
+    response_modalities=[modality],
+    session_resumption=types.SessionResumptionConfig()
+)
+```
+
+#### Session Resumption Features
+
+- **Automatic Handle Caching** - The system automatically caches session resumption handles during live conversations
+- **Transparent Reconnection** - When connections are interrupted, the system attempts to resume using cached handles
+- **Context Preservation** - Conversation context and state are maintained across reconnections
+- **Network Resilience** - Provides better user experience during unstable network conditions
+
+#### Implementation Notes
+
+- Session resumption handles are managed internally by the ADK framework
+- No additional client-side code changes are required
+- The feature is particularly beneficial for long-running streaming conversations
+- Connection interruptions become less disruptive to the user experience
+
+#### Troubleshooting
+
+If you encounter errors with session resumption:
+
+1. **Check model compatibility** - Ensure you're using a model that supports session resumption
+2. **API limitations** - Some session resumption features may not be available in all API versions
+3. **Remove session resumption** - If issues persist, you can disable session resumption by removing the `session_resumption` parameter from `RunConfig`
 
 ### `agent_to_client_messaging(websocket, live_events)`
 
