@@ -188,7 +188,7 @@ Create the following files (`main.py`, `requirements.txt`, `Dockerfile`, `capita
 3. List the necessary Python packages:
 
     ```txt title="requirements.txt"
-    google_adk
+    google-adk
     # Add any other dependencies your agent needs
     ```
 
@@ -391,7 +391,7 @@ adk deploy gke [OPTIONS] AGENT_PATH
 | --cluster_name   | The name of your GKE cluster.    | Yes |
 | --region    | The Google Cloud region of your cluster (e.g., us-central1).    | Yes |
 | --with_ui   | Deploys both the agent's back-end API and a companion front-end user interface.    | No |
-| --verbosity   | Sets the logging level for the deployment process. Options: debug, info, warning, error.     | No |
+| --log_level   | Sets the logging level for the deployment process. Options: debug, info, warning, error.     | No |
 
 
 ### How It Works
@@ -419,7 +419,7 @@ adk deploy gke \
     --cluster_name test \
     --region us-central1 \
     --with_ui \
-    --verbosity info \
+    --log_level info \
     ~/agents/multi_tool_agent/
 ```
 

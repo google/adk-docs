@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import asyncio
 from google.adk.agents import Agent
 from google.adk.tools import FunctionTool
 from google.adk.runners import Runner
@@ -70,25 +71,28 @@ You can handle these tasks sequentially if needed.""",
     tools=[weather_tool, sentiment_tool]
 )
 
-# Session and Runner
-async def setup_session_and_runner():
+async def main():
+    """Main function to run the agent asynchronously."""
+    # Session and Runner Setup
     session_service = InMemorySessionService()
-    session = await session_service.create_session(app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID)
+    # Use 'await' to correctly create the session
+    await session_service.create_session(app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID)
+    
     runner = Runner(agent=weather_sentiment_agent, app_name=APP_NAME, session_service=session_service)
-    return session, runner
 
-
-# Agent Interaction
-async def call_agent_async(query):
+    # Agent Interaction
+    query = "weather in london?"
+    print(f"User Query: {query}")
     content = types.Content(role='user', parts=[types.Part(text=query)])
-    session, runner = await setup_session_and_runner()
-    events = runner.run_async(user_id=USER_ID, session_id=SESSION_ID, new_message=content)
+    
+    # The runner's run method handles the async loop internally
+    events = runner.run(user_id=USER_ID, session_id=SESSION_ID, new_message=content)
 
-    async for event in events:
+    for event in events:
         if event.is_final_response():
             final_response = event.content.parts[0].text
-            print("Agent Response: ", final_response)
+            print("Agent Response:", final_response)
 
-# Note: In Colab, you can directly use 'await' at the top level.
-# If running this code as a standalone Python script, you'll need to use asyncio.run() or manage the event loop.
-await call_agent_async("weather in london?")
+# Standard way to run the main async function
+if __name__ == "__main__":
+    asyncio.run(main())
