@@ -2,7 +2,7 @@
 
 As you build more complex agentic systems, you will find that a single agent
 is often not enough. You will want to create specialized agents that can
-collaborate to solve a problem. The [**Agent2Agent (A2A) Protocol**](https://a2aprotocol.ai/) is the
+collaborate to solve a problem. The [**Agent2Agent (A2A) Protocol**](https://a2a-protocol.org) is the
 standard that allows these agents to communicate with each other.
 
 ## When to Use A2A vs. Local Sub-Agents
