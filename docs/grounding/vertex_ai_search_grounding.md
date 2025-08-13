@@ -51,7 +51,6 @@ pip install google-adk==1.5.0
 
 Under a project directory, run the following commands:
 
-
 === "OS X &amp; Linux"
     ```bash
     # Step 1: Create a new directory for your agent
