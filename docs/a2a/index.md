@@ -16,7 +16,7 @@ Navigate through the guides below to learn about ADK's A2A capabilities:
 
   This quickstart covers: **"There is a remote agent, how do I let my ADK agent use it via A2A?"**.
 
-  [**Official Website for Agent2Agent (A2A) Protocol**](https://a2aprotocol.ai/)
+  [**Official Website for Agent2Agent (A2A) Protocol**](https://a2a-protocol.org/)
 
   The official website for A2A Protocol.
   
