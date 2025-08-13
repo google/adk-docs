@@ -249,7 +249,7 @@ from google.genai import types
 
 def get_auth_request_function_call(event: Event) -> types.FunctionCall:
     # Get the special auth request function call from the event
-    if not event.content or event.content.parts:
+    if not event.content or not event.content.parts:
         return
     for part in event.content.parts:
         if (
