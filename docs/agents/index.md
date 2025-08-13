@@ -1,3 +1,7 @@
+---
+version: 1.0.0
+---
+
 # Agents
 
 In the Agent Development Kit (ADK), an **Agent** is a self-contained execution unit designed to act autonomously to achieve specific goals. Agents can perform tasks, interact with users, utilize external tools, and coordinate with other agents.
