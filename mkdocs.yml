@@ -136,6 +136,7 @@ nav:
     - tools/index.md
     - Function tools: tools/function-tools.md
     - Built-in tools: tools/built-in-tools.md
+    - Native tools: tools/native-tools.md
     - Third party tools: tools/third-party-tools.md
     - Google Cloud tools: tools/google-cloud-tools.md
     - MCP tools: tools/mcp-tools.md

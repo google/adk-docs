@@ -73,21 +73,10 @@ to provide the specific data store ID during configuration. For further details 
 
 ### BigQuery
 
-These are a set of tools aimed to provide integration with BigQuery, namely:
-
-* **`list_dataset_ids`**: Fetches BigQuery dataset ids present in a GCP project.
-* **`get_dataset_info`**: Fetches metadata about a BigQuery dataset.
-* **`list_table_ids`**: Fetches table ids present in a BigQuery dataset.
-* **`get_table_info`**: Fetches metadata about a BigQuery table.
-* **`execute_sql`**: Runs a SQL query in BigQuery and fetch the result.
-
-They are packaged in the toolset `BigQueryToolset`.
-
-
-
-```py
---8<-- "examples/python/snippets/tools/built-in-tools/bigquery.py"
-```
+The documentation has moved to [Native tools](./native-tools.md), as these are
+technically not in the same bucket as built-in tools `google_search`,
+`BuiltInCodeExecutor` and `VertexAiSearchTool`, which are more of an instruction
+to the LLM server for the LLM server to call the tool logic.
 
 ## Use Built-in tools with other tools
 
