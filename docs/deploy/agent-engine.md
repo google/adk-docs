@@ -26,7 +26,7 @@ Agent Engine is part of the Vertex AI SDK for Python. For more information, you 
 ### Install the Vertex AI SDK
 
 ```shell
-pip install google-cloud-aiplatform[adk,agent_engines]
+pip install "google-cloud-aiplatform[adk,agent_engines]" cloudpickle
 ```
 
 !!!info
@@ -141,14 +141,18 @@ Expected output for `stream_query` (local):
 from vertexai import agent_engines
 
 remote_app = agent_engines.create(
-    agent_engine=root_agent,
+    agent_engine=app,
     requirements=[
         "google-cloud-aiplatform[adk,agent_engines]"   
     ]
 )
 ```
 
-This step may take several minutes to finish. Each deployed agent has a unique identifier. You can run the following command to get the resource_name identifier for your deployed agent:
+This step may take several minutes to finish.
+
+You can check and monitor the deployment of your ADK agent on the [Agent Engine UI](https://console.cloud.google.com/vertex-ai/agents/agent-engines) on Google Cloud.
+
+Each deployed agent has a unique identifier. You can run the following command to get the resource_name identifier for your deployed agent:
 
 ```python
 remote_app.resource_name
@@ -156,7 +160,7 @@ remote_app.resource_name
 
 The response should look like the following string:
 
-```
+```shell
 f"projects/{PROJECT_NUMBER}/locations/{LOCATION}/reasoningEngines/{RESOURCE_ID}"
 ```
 
@@ -217,8 +221,35 @@ Expected output for `stream_query` (remote):
 {'parts': [{'function_response': {'id': 'af-f1906423-a531-4ecf-a1ef-723b05e85321', 'name': 'get_weather', 'response': {'status': 'success', 'report': 'The weather in New York is sunny with a temperature of 25 degrees Celsius (41 degrees Fahrenheit).'}}}], 'role': 'user'}
 {'parts': [{'text': 'The weather in New York is sunny with a temperature of 25 degrees Celsius (41 degrees Fahrenheit).'}], 'role': 'model'}
 ```
+#### Sending Multimodal Queries
 
+To send multimodal queries (e.g., including images) to your agent, you can construct the `message` parameter of `stream_query` with a list of `types.Part` objects. Each part can be text or an image.
 
+To include an image, you can use `types.Part.from_uri`, providing a Google Cloud Storage (GCS) URI for the image.
+
+```python
+from google.genai import types
+
+image_part = types.Part.from_uri(
+    file_uri="gs://cloud-samples-data/generative-ai/image/scones.jpg",
+    mime_type="image/jpeg",
+)
+text_part = types.Part.from_text(
+    text="What is in this image?",
+)
+
+for event in remote_app.stream_query(
+    user_id="u_456",
+    session_id=remote_session["id"],
+    message=[text_part, image_part],
+):
+    print(event)
+```
+
+!!!note
+    While the underlying communication with the model may involve Base64 encoding for images, the recommended and supported method for sending image data to an agent deployed on Agent Engine is by providing a GCS URI.
+
+## Using the Agent Engine UI
 
 ## Clean up
 
@@ -231,3 +262,5 @@ remote_app.delete(force=True)
 ```
 
 `force=True` will also delete any child resources that were generated from the deployed agent, such as sessions.
+
+You can also delete your deployed agent via the [Agent Engine UI](https://console.cloud.google.com/vertex-ai/agents/agent-engines) on Google Cloud.

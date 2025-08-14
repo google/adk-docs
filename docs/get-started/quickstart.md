@@ -9,7 +9,7 @@ This quickstart assumes a local IDE (VS Code, PyCharm, IntelliJ IDEA, etc.)
 with Python 3.9+ or Java 17+ and terminal access. This method runs the
 application entirely on your machine and is recommended for internal development.
 
-## 1. Set up Environment & Install ADK {#venv-install}
+## 1. Set up Environment & Install ADK { #set-up-environment-install-adk }
 
 === "Python"
 
@@ -34,7 +34,7 @@ application entirely on your machine and is recommended for internal development
 
     To install ADK and setup the environment, proceed to the following steps.
 
-## 2. Create Agent Project {#create-agent-project}
+## 2. Create Agent Project { #create-agent-project }
 
 ### Project structure
 
@@ -129,13 +129,17 @@ application entirely on your machine and is recommended for internal development
 
 ![intro_components.png](../assets/quickstart-flow-tool.png)
 
-## 3. Set up the model {#set-up-the-model}
+## 3. Set up the model { #set-up-the-model }
 
 Your agent's ability to understand user requests and generate responses is
 powered by a Large Language Model (LLM). Your agent needs to make secure calls
-to this external LLM service, which requires authentication credentials. Without
+to this external LLM service, which **requires authentication credentials**. Without
 valid authentication, the LLM service will deny the agent's requests, and the
 agent will be unable to function.
+
+!!!tip "Model Authentication guide"
+    For a detailed guide on authenticating to different models, see the [Authentication guide](../agents/models.md#google-ai-studio).
+    This is a critical step to ensure your agent can make calls to the LLM service.
 
 === "Gemini - Google AI Studio"
     1. Get an API key from [Google AI Studio](https://aistudio.google.com/apikey).
@@ -157,17 +161,10 @@ agent will be unable to function.
     3. Replace `PASTE_YOUR_ACTUAL_API_KEY_HERE` with your actual `API KEY`.
 
 === "Gemini - Google Cloud Vertex AI"
-    1. You need an existing
-    [Google Cloud](https://cloud.google.com/?e=48754805&hl=en) account and a
-    project.
-        * Set up a
-          [Google Cloud project](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-gcp)
-        * Set up the
-          [gcloud CLI](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-local)
-        * Authenticate to Google Cloud, from the terminal by running
-          `gcloud auth login`.
-        * [Enable the Vertex AI API](https://console.cloud.google.com/flows/enableapi?apiid=aiplatform.googleapis.com).
-    2. When using Python, open the **`.env`** file located inside (`multi_tool_agent/`). Copy-paste
+    1. Set up a [Google Cloud project](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-gcp) and [enable the Vertex AI API](https://console.cloud.google.com/flows/enableapi?apiid=aiplatform.googleapis.com).
+    2. Set up the [gcloud CLI](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-local).
+    3. Authenticate to Google Cloud from the terminal by running `gcloud auth login`.
+    4. When using Python, open the **`.env`** file located inside (`multi_tool_agent/`). Copy-paste
     the following code and update the project ID and location.
 
         ```env title="multi_tool_agent/.env"
@@ -204,7 +201,7 @@ agent will be unable to function.
         export GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_EXPRESS_MODE_API_KEY_HERE
         ```
 
-## 4. Run Your Agent {#run-your-agent}
+## 4. Run Your Agent { #run-your-agent }
 
 === "Python"
 
@@ -222,6 +219,17 @@ agent will be unable to function.
     There are multiple ways to interact with your agent:
 
     === "Dev UI (adk web)"
+
+        !!! success "Authentication Setup for Vertex AI Users"
+            If you selected **"Gemini - Google Cloud Vertex AI"** in the previous step, you must authenticate with Google Cloud before launching the dev UI.
+            
+            Run this command and follow the prompts:
+            ```bash
+            gcloud auth application-default login
+            ```
+            
+            **Note:** Skip this step if you're using "Gemini - Google AI Studio".
+
         Run the following command to launch the **dev UI**.
 
         ```shell

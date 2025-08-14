@@ -14,7 +14,7 @@ Phoenix can automatically collect traces from Google ADK using [OpenInference in
 
 ## Installation
 
-### 1. Install Required Packages
+### 1. Install Required Packages { #install-required-packages }
 
 ```bash
 pip install openinference-instrumentation-google-adk google-adk arize-phoenix-otel
@@ -22,7 +22,7 @@ pip install openinference-instrumentation-google-adk google-adk arize-phoenix-ot
 
 ## Setup
 
-### 1. Launch Phoenix
+### 1. Launch Phoenix { #launch-phoenix }
 
 These instructions show you how to use Phoenix Cloud. You can also [launch Phoenix](https://arize.com/docs/phoenix/integrations/llm-providers/google-gen-ai/google-adk-tracing) in a notebook, from your terminal, or self-host it using a container. 
 
@@ -42,7 +42,7 @@ os.environ["PHOENIX_COLLECTOR_ENDPOINT"] = "ADD YOUR PHOENIX COLLECTOR ENDPOINT"
 # os.environ["PHOENIX_CLIENT_HEADERS"] = f"api_key={os.getenv('PHOENIX_API_KEY')}"
 ```
 
-### 2.  Connect your application to Phoenix
+### 2.  Connect your application to Phoenix { #connect-your-application-to-phoenix }
 
 ```python
 from phoenix.otel import register

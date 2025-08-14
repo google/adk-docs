@@ -1455,7 +1455,7 @@ if greeting_agent and farewell_agent and 'get_weather_stateful' in globals() and
         instruction="You are the main Weather Agent. Provide weather using 'get_weather_stateful'. "
                     "Delegate simple greetings to 'greeting_agent' and farewells to 'farewell_agent'. "
                     "Handle only weather requests, greetings, and farewells.",
-        tools=[get_weather],
+        tools=[get_weather_stateful],
         sub_agents=[greeting_agent, farewell_agent], # Reference the redefined sub-agents
         output_key="last_weather_report", # Keep output_key from Step 4
         before_model_callback=block_keyword_guardrail # <<< Assign the guardrail callback

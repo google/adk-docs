@@ -25,17 +25,18 @@ The following sections guide you through using these methods based on your needs
 
 ## Using Google Gemini Models
 
-This is the most direct way to use Google's flagship models within ADK.
+This section covers authenticating with Google's Gemini models, either through Google AI Studio for rapid development or Google Cloud Vertex AI for enterprise applications. This is the most direct way to use Google's flagship models within ADK.
 
-**Integration Method:** Pass the model's identifier string directly to the
-`model` parameter of `LlmAgent` (or its alias, `Agent`).
+**Integration Method:** Once you are authenticated using one of the below methods, you can pass the model's identifier string directly to the
+`model` parameter of `LlmAgent`.
 
-**Backend Options & Setup:**
 
-The `google-genai` library, used internally by ADK for Gemini, can connect
-through either Google AI Studio or Vertex AI.
+!!!tip 
 
-!!!note "Model support for voice/video streaming"
+    The `google-genai` library, used internally by ADK for Gemini models, can connect
+    through either Google AI Studio or Vertex AI.
+
+    **Model support for voice/video streaming**
 
     In order to use voice/video streaming in ADK, you will need to use Gemini
     models that support the Live API. You can find the **model ID(s)** that
@@ -46,50 +47,75 @@ through either Google AI Studio or Vertex AI.
 
 ### Google AI Studio
 
-* **Use Case:** Google AI Studio is the easiest way to get started with Gemini.
-  All you need is the [API key](https://aistudio.google.com/app/apikey). Best
-  for rapid prototyping and development.
-* **Setup:** Typically requires an API key:
-     * Set as an environment variable or 
-     * Passed during the model initialization via the `Client` (see example below)
+This is the simplest method and is recommended for getting started quickly.
 
-```shell
-export GOOGLE_API_KEY="YOUR_GOOGLE_API_KEY"
-export GOOGLE_GENAI_USE_VERTEXAI=FALSE
-```
+*   **Authentication Method:** API Key
+*   **Setup:**
+    1.  **Get an API key:** Obtain your key from [Google AI Studio](https://aistudio.google.com/apikey).
+    2.  **Set environment variables:** Create a `.env` file (Python) or `.properties` (Java) in your project's root directory and add the following lines. ADK will automatically load this file.
+
+        ```shell
+        export GOOGLE_API_KEY="YOUR_GOOGLE_API_KEY"
+        export GOOGLE_GENAI_USE_VERTEXAI=FALSE
+        ```
+
+        (or)
+        
+        Pass these variables during the model initialization via the `Client` (see example below).
 
 * **Models:** Find all available models on the
   [Google AI for Developers site](https://ai.google.dev/gemini-api/docs/models).
 
-### Vertex AI
+### Google Cloud Vertex AI
 
-* **Use Case:** Recommended for production applications, leveraging Google Cloud
-  infrastructure. Gemini on Vertex AI supports enterprise-grade features,
-  security, and compliance controls.
-* **Setup:**
-    * Authenticate using Application Default Credentials (ADC):
+For scalable and production-oriented use cases, Vertex AI is the recommended platform. Gemini on Vertex AI supports enterprise-grade features, security, and compliance controls. Based on your development environment and usecase, *choose one of the below methods to authenticate*.
 
-        ```shell
-        gcloud auth application-default login
-        ```
+**Pre-requisites:** A Google Cloud Project with [Vertex AI enabled](https://console.cloud.google.com/apis/enableflow;apiid=aiplatform.googleapis.com).
 
-    * Configure these variables either as environment variables or by providing them directly when initializing the Model.
-            
-         Set your Google Cloud project and location:
+### **Method A: User Credentials (for Local Development)**
+
+1.  **Install the gcloud CLI:** Follow the official [installation instructions](https://cloud.google.com/sdk/docs/install).
+2.  **Log in using ADC:** This command opens a browser to authenticate your user account for local development.
+    ```bash
+    gcloud auth application-default login
+    ```
+3.  **Set environment variables:**
+    ```shell
+    export GOOGLE_CLOUD_PROJECT="YOUR_PROJECT_ID"
+    export GOOGLE_CLOUD_LOCATION="YOUR_VERTEX_AI_LOCATION" # e.g., us-central1
+    ```     
     
-         ```shell
-         export GOOGLE_CLOUD_PROJECT="YOUR_PROJECT_ID"
-         export GOOGLE_CLOUD_LOCATION="YOUR_VERTEX_AI_LOCATION" # e.g., us-central1
-         ```     
-    
-         Explicitly tell the library to use Vertex AI:
-    
-         ```shell
-         export GOOGLE_GENAI_USE_VERTEXAI=TRUE
-         ```
+    Explicitly tell the library to use Vertex AI:
 
-* **Models:** Find available model IDs in the
+    ```shell
+    export GOOGLE_GENAI_USE_VERTEXAI=TRUE
+    ```
+
+4. **Models:** Find available model IDs in the
   [Vertex AI documentation](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/models).
+
+### **Method B: Vertex AI Express Mode**
+[Vertex AI Express Mode](https://cloud.google.com/vertex-ai/generative-ai/docs/start/express-mode/overview) offers a simplified, API-key-based setup for rapid prototyping.
+
+1.  **Sign up for Express Mode** to get your API key.
+2.  **Set environment variables:**
+    ```shell
+    export GOOGLE_API_KEY="PASTE_YOUR_EXPRESS_MODE_API_KEY_HERE"
+    export GOOGLE_GENAI_USE_VERTEXAI=TRUE
+    ```
+
+### **Method C: Service Account (for Production & Automation)**
+
+For deployed applications, a service account is the standard method.
+
+1.  [**Create a Service Account**](https://cloud.google.com/iam/docs/service-accounts-create#console) and grant it the `Vertex AI User` role.
+2.  **Provide credentials to your application:**
+    *   **On Google Cloud:** If you are running the agent in Cloud Run, GKE, VM or other Google Cloud services, the environment can automatically provide the service account credentials. You don't have to create a key file.
+    *   **Elsewhere:** Create a [service account key file](https://cloud.google.com/iam/docs/keys-create-delete#console) and point to it with an environment variable:
+        ```bash
+        export GOOGLE_APPLICATION_CREDENTIALS="/path/to/your/keyfile.json"
+        ```
+    Instead of the key file, you can also authenticate the service account using Workload Identity. But this is outside the scope of this guide.
 
 **Example:**
 
@@ -153,6 +179,9 @@ export GOOGLE_GENAI_USE_VERTEXAI=FALSE
     // including specific preview versions if needed. Preview models might have
     // different availability or quota limitations.
     ```
+
+!!!warning "Secure Your Credentials"
+    Service account credentials or API keys are powerful credentials. Never expose them publicly. Use a secret manager like [Google Secret Manager](https://cloud.google.com/secret-manager) to store and access them securely in production.
 
 ## Using Anthropic models
 
@@ -283,22 +312,19 @@ layer, providing a standardized, OpenAI-compatible interface to over 100+ LLMs.
         )
         ```
 
-!!!info "Note for Windows users"
+!!!warning "Windows Encoding Note for LiteLLM"
 
-    ### Avoiding LiteLLM UnicodeDecodeError on Windows
-    When using ADK agents with LiteLlm on Windows, users might encounter the following error:
-    ```
-    UnicodeDecodeError: 'charmap' codec can't decode byte...
-    ```
-    This issue occurs because `litellm` (used by LiteLlm) reads cached files (e.g., model pricing information) using the default Windows encoding (`cp1252`) instead of UTF-8.
-    Windows users can prevent this issue by setting the `PYTHONUTF8` environment variable to `1`. This forces Python to use UTF-8 globally.
+    When using ADK agents with LiteLLM on Windows, you might encounter a `UnicodeDecodeError`. This error occurs because LiteLLM may attempt to read cached files using the default Windows encoding (`cp1252`) instead of UTF-8.
+
+    To prevent this, we recommend setting the `PYTHONUTF8` environment variable to `1`. This forces Python to use UTF-8 for all file I/O.
+
     **Example (PowerShell):**
     ```powershell
-    # Set for current session
+    # Set for the current session
     $env:PYTHONUTF8 = "1"
+
     # Set persistently for the user
     [System.Environment]::SetEnvironmentVariable('PYTHONUTF8', '1', [System.EnvironmentVariableTarget]::User)
-    Applying this setting ensures that Python reads cached files using UTF-8, avoiding the decoding error.
     ```
 
 
