@@ -1,32 +1,18 @@
 /**
-* Copyright 2025 Google LLC
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
-
-/**
  * app.js: JS code for the adk-streaming sample app.
  */
 
 /**
- * WebSocket handling
+ * SSE (Server-Sent Events) handling
  */
 
-// Connect the server with a WebSocket connection
+// Connect the server with SSE
 const sessionId = Math.random().toString().substring(10);
-const ws_url =
-  "ws://" + window.location.host + "/ws/" + sessionId;
-let websocket = null;
+const sse_url =
+  "http://" + window.location.host + "/events/" + sessionId;
+const send_url =
+  "http://" + window.location.host + "/send/" + sessionId;
+let eventSource = null;
 let is_audio = false;
 
 // Get DOM elements
@@ -35,15 +21,15 @@ const messageInput = document.getElementById("message");
 const messagesDiv = document.getElementById("messages");
 let currentMessageId = null;
 
-// WebSocket handlers
-function connectWebsocket() {
-  // Connect websocket
-  websocket = new WebSocket(ws_url + "?is_audio=" + is_audio);
+// SSE handlers
+function connectSSE() {
+  // Connect to SSE endpoint
+  eventSource = new EventSource(sse_url + "?is_audio=" + is_audio);
 
   // Handle connection open
-  websocket.onopen = function () {
+  eventSource.onopen = function () {
     // Connection opened messages
-    console.log("WebSocket connection opened.");
+    console.log("SSE connection opened.");
     document.getElementById("messages").textContent = "Connection opened";
 
     // Enable the Send button
@@ -52,7 +38,7 @@ function connectWebsocket() {
   };
 
   // Handle incoming messages
-  websocket.onmessage = function (event) {
+  eventSource.onmessage = function (event) {
     // Parse the incoming message
     const message_from_server = JSON.parse(event.data);
     console.log("[AGENT TO CLIENT] ", message_from_server);
@@ -64,6 +50,18 @@ function connectWebsocket() {
       message_from_server.turn_complete == true
     ) {
       currentMessageId = null;
+      return;
+    }
+
+    // Check for interrupt message
+    if (
+      message_from_server.interrupted &&
+      message_from_server.interrupted === true
+    ) {
+      // Stop audio playback if it's playing
+      if (audioPlayerNode) {
+        audioPlayerNode.port.postMessage({ command: "endOfAudio" });
+      }
       return;
     }
 
@@ -93,21 +91,18 @@ function connectWebsocket() {
   };
 
   // Handle connection close
-  websocket.onclose = function () {
-    console.log("WebSocket connection closed.");
+  eventSource.onerror = function (event) {
+    console.log("SSE connection error or closed.");
     document.getElementById("sendButton").disabled = true;
     document.getElementById("messages").textContent = "Connection closed";
+    eventSource.close();
     setTimeout(function () {
       console.log("Reconnecting...");
-      connectWebsocket();
+      connectSSE();
     }, 5000);
   };
-
-  websocket.onerror = function (e) {
-    console.log("WebSocket error: ", e);
-  };
 }
-connectWebsocket();
+connectSSE();
 
 // Add submit handler to the form
 function addSubmitHandler() {
@@ -129,11 +124,22 @@ function addSubmitHandler() {
   };
 }
 
-// Send a message to the server as a JSON string
-function sendMessage(message) {
-  if (websocket && websocket.readyState == WebSocket.OPEN) {
-    const messageJson = JSON.stringify(message);
-    websocket.send(messageJson);
+// Send a message to the server via HTTP POST
+async function sendMessage(message) {
+  try {
+    const response = await fetch(send_url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(message)
+    });
+    
+    if (!response.ok) {
+      console.error('Failed to send message:', response.statusText);
+    }
+  } catch (error) {
+    console.error('Error sending message:', error);
   }
 }
 
@@ -157,6 +163,10 @@ let audioPlayerContext;
 let audioRecorderNode;
 let audioRecorderContext;
 let micStream;
+
+// Audio buffering for 0.2s intervals
+let audioBuffer = [];
+let bufferTimer = null;
 
 // Import the audio worklets
 import { startAudioPlayerWorklet } from "./audio-player.js";
@@ -186,17 +196,63 @@ startAudioButton.addEventListener("click", () => {
   startAudioButton.disabled = true;
   startAudio();
   is_audio = true;
-  connectWebsocket(); // reconnect with the audio mode
+  eventSource.close(); // close current connection
+  connectSSE(); // reconnect with the audio mode
 });
 
 // Audio recorder handler
 function audioRecorderHandler(pcmData) {
-  // Send the pcm data as base64
+  // Add audio data to buffer
+  audioBuffer.push(new Uint8Array(pcmData));
+  
+  // Start timer if not already running
+  if (!bufferTimer) {
+    bufferTimer = setInterval(sendBufferedAudio, 200); // 0.2 seconds
+  }
+}
+
+// Send buffered audio data every 0.2 seconds
+function sendBufferedAudio() {
+  if (audioBuffer.length === 0) {
+    return;
+  }
+  
+  // Calculate total length
+  let totalLength = 0;
+  for (const chunk of audioBuffer) {
+    totalLength += chunk.length;
+  }
+  
+  // Combine all chunks into a single buffer
+  const combinedBuffer = new Uint8Array(totalLength);
+  let offset = 0;
+  for (const chunk of audioBuffer) {
+    combinedBuffer.set(chunk, offset);
+    offset += chunk.length;
+  }
+  
+  // Send the combined audio data
   sendMessage({
     mime_type: "audio/pcm",
-    data: arrayBufferToBase64(pcmData),
+    data: arrayBufferToBase64(combinedBuffer.buffer),
   });
-  console.log("[CLIENT TO AGENT] sent %s bytes", pcmData.byteLength);
+  console.log("[CLIENT TO AGENT] sent %s bytes", combinedBuffer.byteLength);
+  
+  // Clear the buffer
+  audioBuffer = [];
+}
+
+// Stop audio recording and cleanup
+function stopAudioRecording() {
+  if (bufferTimer) {
+    clearInterval(bufferTimer);
+    bufferTimer = null;
+  }
+  
+  // Send any remaining buffered audio
+  if (audioBuffer.length > 0) {
+    sendBufferedAudio();
+  }
 }
 
 // Encode an array buffer with Base64

@@ -7,11 +7,16 @@ com.google.adk.exceptions
 com.google.adk.flows
 com.google.adk.flows.llmflows
 com.google.adk.flows.llmflows.audio
+com.google.adk.memory
 com.google.adk.models
+com.google.adk.models.langchain4j
 com.google.adk.network
 com.google.adk.runner
 com.google.adk.sessions
 com.google.adk.tools
+com.google.adk.tools.applicationintegrationtoolset
 com.google.adk.tools.mcp
 com.google.adk.tools.retrieval
 com.google.adk.utils
+com.google.adk.web
+com.google.adk.web.config

@@ -87,7 +87,8 @@ While `InvocationContext` acts as the comprehensive internal container, ADK prov
     
         ```python
         # Pseudocode: Agent implementation receiving InvocationContext
-        from google.adk.agents import BaseAgent, InvocationContext
+        from google.adk.agents import BaseAgent
+        from google.adk.agents.invocation_context import InvocationContext
         from google.adk.events import Event
         from typing import AsyncGenerator
     
@@ -169,7 +170,7 @@ While `InvocationContext` acts as the comprehensive internal container, ADK prov
     
         ```python
         # Pseudocode: Instruction provider receiving ReadonlyContext
-        from google.adk.agents import ReadonlyContext
+        from google.adk.agents.readonly_context import ReadonlyContext
     
         def my_instruction_provider(context: ReadonlyContext) -> str:
             # Read-only access example
@@ -204,7 +205,7 @@ While `InvocationContext` acts as the comprehensive internal container, ADK prov
     
         ```python
         # Pseudocode: Callback receiving CallbackContext
-        from google.adk.agents import CallbackContext
+        from google.adk.agents.callback_context import CallbackContext
         from google.adk.models import LlmRequest
         from google.genai import types
         from typing import Optional
@@ -338,7 +339,7 @@ You'll frequently need to read information stored within the context.
             # ... rest of tool logic ...
     
         # Pseudocode: In a Callback function
-        from google.adk.agents import CallbackContext
+        from google.adk.agents.callback_context import CallbackContext
     
         def my_callback(callback_context: CallbackContext, **kwargs):
             last_tool_result = callback_context.state.get("temp:last_api_result") # Read temporary state
@@ -413,7 +414,7 @@ You'll frequently need to read information stored within the context.
     
         ```python
         # Pseudocode: In a Callback
-        from google.adk.agents import CallbackContext
+        from google.adk.agents.callback_context import CallbackContext
     
         def check_initial_intent(callback_context: CallbackContext, **kwargs):
             initial_text = "N/A"
@@ -548,7 +549,7 @@ Use artifacts to handle files or large data blobs associated with the session. C
     
                ```python
                # Pseudocode: In a callback or initial tool
-               from google.adk.agents import CallbackContext # Or ToolContext
+               from google.adk.agents.callback_context import CallbackContext # Or ToolContext
                from google.genai import types
                 
                def save_document_reference(context: CallbackContext, file_path: str) -> None:
@@ -832,7 +833,8 @@ While most interactions happen via `CallbackContext` or `ToolContext`, sometimes
 
 ```python
 # Pseudocode: Inside agent's _run_async_impl
-from google.adk.agents import InvocationContext, BaseAgent
+from google.adk.agents import BaseAgent
+from google.adk.agents.invocation_context import InvocationContext
 from google.adk.events import Event
 from typing import AsyncGenerator
 
