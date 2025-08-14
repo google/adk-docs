@@ -1,12 +1,13 @@
 # Bidi-streaming(live) in ADK
 
-!!! info
+!!! warning
 
     This is an experimental feature. Currrently available in Python.
 
 !!! info
 
-    This is different from server-side streaming or token-level streaming. This section is for bidi-streaming(live).
+    This is different from server-side streaming or token-level streaming. 
+    Token-level streaming is a one-way process where a language model generates a response and sends it back to the user one token at a time. This creates a "typing" effect, giving the impression of an immediate response and reducing the time it takes to see the start of the answer. The user sends their full prompt, the model processes it, and then the model begins to generate and send back the response piece by piece. This section is for bidi-streaming (live).
     
 Bidi-streaming (live) in ADK adds the low-latency bidirectional voice and video interaction
 capability of [Gemini Live API](https://ai.google.dev/gemini-api/docs/live) to
