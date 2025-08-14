@@ -486,11 +486,11 @@ workflow as a tool for your agent or create a new one.
 === "Java"
 
     To update the `agent.java` file and add the tool to your agent, use the following code:
-    
-      ```java
-           import com.google.adk.agent.LlmAgent;
-           import com.google.adk.tools.BaseTool;
-           import com.google.common.collect.ImmutableList;
+
+    ```java
+          import com.google.adk.agent.LlmAgent;
+          import com.google.adk.tools.BaseTool;
+          import com.google.common.collect.ImmutableList;
         
             public class MyAgent {
                 public static void main(String[] args) {
