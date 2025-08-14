@@ -2,19 +2,19 @@ Thank you for your interest in contributing to the Agent Development Kit (ADK)! 
 
 This guide provides information on how to get involved.
 
-## 1. [`google/adk-python`](https://github.com/google/adk-python)
+## 1. [`google/adk-python`](https://github.com/google/adk-python) { #google-adk-python }
 
 Contains the core Python library source code.
 
-## 2. [`google/adk-java`](https://github.com/google/adk-java)
+## 2. [`google/adk-java`](https://github.com/google/adk-java) { #google-adk-java }
 
 Contains the core Java library source code.
 
-## 3. [`google/adk-docs`](https://github.com/google/adk-docs)
+## 3. [`google/adk-docs`](https://github.com/google/adk-docs) { #google-adk-docs }
 
 Contains the source for the documentation site you are currently reading.
 
-## 4. [`google/adk-web`](https://github.com/google/adk-web)
+## 4. [`google/adk-web`](https://github.com/google/adk-web) { #google-adk-web }
 
 Contains the source for the `adk web` dev UI.
 
@@ -54,28 +54,28 @@ This is the primary place for:
 
 There are several ways you can contribute to the ADK:
 
-### 1. Reporting Issues (Bugs & Errors)
+### 1. Reporting Issues (Bugs & Errors) { #reporting-issues-bugs-errors }
 
 If you find a bug in the framework or an error in the documentation:
 
 * **Framework Bugs:** Open an issue in [`google/adk-python`](https://github.com/google/adk-python/issues/new) or in [`google/adk-java`](https://github.com/google/adk-java/issues/new)
 * **Documentation Errors:** [Open an issue in `google/adk-docs` (use bug template)](https://github.com/google/adk-docs/issues/new?template=bug_report.md)
 
-### 2. Suggesting Enhancements
+### 2. Suggesting Enhancements { #suggesting-enhancements }
 
 Have an idea for a new feature or an improvement to an existing one?
 
 * **Framework Enhancements:** Open an issue in [`google/adk-python`](https://github.com/google/adk-python/issues/new) or in [`google/adk-java`](https://github.com/google/adk-java/issues/new)
 * **Documentation Enhancements:** [Open an issue in `google/adk-docs`](https://github.com/google/adk-docs/issues/new)
 
-### 3. Improving Documentation
+### 3. Improving Documentation { #improving-documentation }
 
 Found a typo, unclear explanation, or missing information? Submit your changes directly:
 
 * **How:** Submit a Pull Request (PR) with your suggested improvements.
 * **Where:** [Create a Pull Request in `google/adk-docs`](https://github.com/google/adk-docs/pulls)
 
-### 4. Writing Code
+### 4. Writing Code { #writing-code }
 
 Help fix bugs, implement new features or contribute code samples for the documentation:
 

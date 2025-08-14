@@ -170,7 +170,7 @@ While `InvocationContext` acts as the comprehensive internal container, ADK prov
     
         ```python
         # Pseudocode: Instruction provider receiving ReadonlyContext
-        from google.adk.agents import ReadonlyContext
+        from google.adk.agents.readonly_context import ReadonlyContext
     
         def my_instruction_provider(context: ReadonlyContext) -> str:
             # Read-only access example
@@ -549,7 +549,7 @@ Use artifacts to handle files or large data blobs associated with the session. C
     
                ```python
                # Pseudocode: In a callback or initial tool
-               from google.adk.agents import CallbackContext # Or ToolContext
+               from google.adk.agents.callback_context import CallbackContext # Or ToolContext
                from google.genai import types
                 
                def save_document_reference(context: CallbackContext, file_path: str) -> None:

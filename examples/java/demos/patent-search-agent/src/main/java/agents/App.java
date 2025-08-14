@@ -54,12 +54,12 @@ public class App {
 
   static FunctionTool searchTool = FunctionTool.create(App.class, "getPatents");
   static FunctionTool explainTool = FunctionTool.create(App.class, "explainPatent");
-  
+
   private static final String APP_NAME = "story_app";
   private static final String USER_ID = "user_12345";
   private static final String SESSION_ID = "session_1234567";
   private static final Logger logger = Logger.getLogger(App.class.getName());
-  public static BaseAgent ROOT_AGENT = initAgent();
+  public static final BaseAgent ROOT_AGENT = initAgent();
 
   public static BaseAgent initAgent() {
     return LlmAgent.builder()
@@ -77,18 +77,18 @@ public class App {
                   If the user does not provide the id for the patent they want you to explain, ask them to provide the id.
                   If they provide a title or description instead insist that they provide the id correctly.
                   For this you must use the tool "explainTool", pass the id of the patent that the user asks for
-                  in the variable patentId as input and use the string value provided in session state with key 'patents' 
-                  to get the corresponding abstract from the list of patents in the string. 
-                  Get the abstract response from the tool for the searched patent and understand the abstract from it and summarize it in simple words in a concise way. 
+                  in the variable patentId as input and use the string value provided in session state with key 'patents'
+                  to get the corresponding abstract from the list of patents in the string.
+                  Get the abstract response from the tool for the searched patent and understand the abstract from it and summarize it in simple words in a concise way.
                   If there is no matching patent for the id that the user entered, ask if the user wants to do a contextual search by search text instead of id.
-                  Then offer to answer more questions for the user. 
+                  Then offer to answer more questions for the user.
                   """)
               .tools(searchTool, explainTool)
               .outputKey("patents")
               .build();
 }
 
-  
+
   static String VECTOR_SEARCH_ENDPOINT = "https://us-central1-*****.cloudfunctions.net/patent-search";
     public static void main(String[] args) throws Exception  {
       InMemoryRunner runner = new InMemoryRunner(ROOT_AGENT);
@@ -100,7 +100,7 @@ public class App {
               .createSession(runner.appName(), USER_ID )
               .blockingGet();
       logger.log(Level.INFO, () -> String.format("Initial session state: %s", session.state()));
- 
+
       try (Scanner scanner = new Scanner(System.in, StandardCharsets.UTF_8)) {
         while (true) {
           System.out.print("\nYou > ");
@@ -109,24 +109,24 @@ public class App {
           if ("quit".equalsIgnoreCase(userInput)) {
             break;
           }
-          
+
           Content userMsg = Content.fromParts(Part.fromText(userInput));
-          Flowable<Event> events = 
+          Flowable<Event> events =
                   runner.runAsync(session.userId(), session.id(), userMsg);
 
           System.out.print("\nAgent > ");
-          events.blockingForEach(event -> 
+          events.blockingForEach(event ->
                   System.out.print(event.stringifyContent()));
       }
     }
   }
 
-  
+
 
   // --- Define the Tool ---
   // Retrieves the contextually matching patents for user's search text
   public static Map<String, String> getPatents(
-    @Schema(name="searchText",description = "The search text for which the user wants to find matching patents from the database") 
+    @Schema(name="searchText",description = "The search text for which the user wants to find matching patents from the database")
     String searchText) {
       try{
         String patents = "";
@@ -146,14 +146,14 @@ public class App {
 // --- Define the Tool ---
   // Retrieves the explanation for the patent the user's interested in
   public static Map<String, String> explainPatent(
-    @Schema(name="patentId",description = "The patent id for which the user wants to get more explanation for, from the database") 
-    String patentId, 
-    @Schema(name="ctx",description = "The list of patent abstracts from the database from which the user can pick the one to get more explanation for") 
+    @Schema(name="patentId",description = "The patent id for which the user wants to get more explanation for, from the database")
+    String patentId,
+    @Schema(name="ctx",description = "The list of patent abstracts from the database from which the user can pick the one to get more explanation for")
     InvocationContext ctx) {
     String patent = "";
     try{
      String previousResults = (String) ctx.session().state().get("patents");
-    
+
      System.out.println(previousResults);
       if(!(previousResults.isEmpty())) {
         String patents = previousResults;
@@ -199,7 +199,7 @@ public static String vectorSearch(String searchText) throws Exception{
       Map<String, String> data = new HashMap<>();
       data.put("search", searchText);
       String jsonInputString = gson.toJson(data);
-      
+
       try (OutputStream os = conn.getOutputStream()) {
         byte[] input = jsonInputString.getBytes("utf-8");
         os.write(input, 0, input.length);

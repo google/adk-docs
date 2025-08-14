@@ -30,6 +30,7 @@ from google.genai.types import (
 from google.adk.runners import InMemoryRunner
 from google.adk.agents import LiveRequestQueue
 from google.adk.agents.run_config import RunConfig
+from google.genai import types
 
 from fastapi import FastAPI, WebSocket
 from fastapi.staticfiles import StaticFiles
@@ -66,7 +67,10 @@ async def start_agent_session(user_id, is_audio=False):
 
     # Set response modality
     modality = "AUDIO" if is_audio else "TEXT"
-    run_config = RunConfig(response_modalities=[modality])
+    run_config = RunConfig(
+        response_modalities=[modality],
+        session_resumption=types.SessionResumptionConfig()
+    )
 
     # Create a LiveRequestQueue for this session
     live_request_queue = LiveRequestQueue()
@@ -82,47 +86,46 @@ async def start_agent_session(user_id, is_audio=False):
 
 async def agent_to_client_messaging(websocket, live_events):
     """Agent to client communication"""
-    while True:
-        async for event in live_events:
+    async for event in live_events:
 
-            # If the turn complete or interrupted, send it
-            if event.turn_complete or event.interrupted:
+        # If the turn complete or interrupted, send it
+        if event.turn_complete or event.interrupted:
+            message = {
+                "turn_complete": event.turn_complete,
+                "interrupted": event.interrupted,
+            }
+            await websocket.send_text(json.dumps(message))
+            print(f"[AGENT TO CLIENT]: {message}")
+            continue
+
+        # Read the Content and its first Part
+        part: Part = (
+            event.content and event.content.parts and event.content.parts[0]
+        )
+        if not part:
+            continue
+
+        # If it's audio, send Base64 encoded audio data
+        is_audio = part.inline_data and part.inline_data.mime_type.startswith("audio/pcm")
+        if is_audio:
+            audio_data = part.inline_data and part.inline_data.data
+            if audio_data:
                 message = {
-                    "turn_complete": event.turn_complete,
-                    "interrupted": event.interrupted,
+                    "mime_type": "audio/pcm",
+                    "data": base64.b64encode(audio_data).decode("ascii")
                 }
                 await websocket.send_text(json.dumps(message))
-                print(f"[AGENT TO CLIENT]: {message}")
+                print(f"[AGENT TO CLIENT]: audio/pcm: {len(audio_data)} bytes.")
                 continue
 
-            # Read the Content and its first Part
-            part: Part = (
-                event.content and event.content.parts and event.content.parts[0]
-            )
-            if not part:
-                continue
-
-            # If it's audio, send Base64 encoded audio data
-            is_audio = part.inline_data and part.inline_data.mime_type.startswith("audio/pcm")
-            if is_audio:
-                audio_data = part.inline_data and part.inline_data.data
-                if audio_data:
-                    message = {
-                        "mime_type": "audio/pcm",
-                        "data": base64.b64encode(audio_data).decode("ascii")
-                    }
-                    await websocket.send_text(json.dumps(message))
-                    print(f"[AGENT TO CLIENT]: audio/pcm: {len(audio_data)} bytes.")
-                    continue
-
-            # If it's text and a parial text, send it
-            if part.text and event.partial:
-                message = {
-                    "mime_type": "text/plain",
-                    "data": part.text
-                }
-                await websocket.send_text(json.dumps(message))
-                print(f"[AGENT TO CLIENT]: text/plain: {message}")
+        # If it's text and a parial text, send it
+        if part.text and event.partial:
+            message = {
+                "mime_type": "text/plain",
+                "data": part.text
+            }
+            await websocket.send_text(json.dumps(message))
+            print(f"[AGENT TO CLIENT]: text/plain: {message}")
 
 
 async def client_to_agent_messaging(websocket, live_request_queue):
