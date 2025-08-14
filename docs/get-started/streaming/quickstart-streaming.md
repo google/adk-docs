@@ -11,7 +11,7 @@ In order to use voice/video streaming in ADK, you will need to use Gemini models
 - [Google AI Studio: Gemini Live API](https://ai.google.dev/gemini-api/docs/models#live-api)
 - [Vertex AI: Gemini Live API](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api)
 
-## 1. Setup Environment & Install ADK {#1.-setup-installation}
+## 1. Setup Environment & Install ADK { #setup-environment-install-adk }
 
 Create & Activate Virtual Environment (Recommended):
 
@@ -30,7 +30,7 @@ Install ADK:
 pip install google-adk
 ```
 
-## 2. Project Structure {#2.-project-structure}
+## 2. Project Structure { #project-structure }
 
 Create the following folder structure with empty files:
 
@@ -45,7 +45,7 @@ adk-streaming/  # Project folder
 
 ### agent.py
 
-Copy-paste the following code block to the [`agent.py`](http://agent.py).
+Copy-paste the following code block into the `agent.py` file.
 
 For `model`, please double check the model ID as described earlier in the [Models section](#supported-models).
 
@@ -57,8 +57,9 @@ root_agent = Agent(
    # A unique name for the agent.
    name="basic_search_agent",
    # The Large Language Model (LLM) that agent will use.
-   model="gemini-2.0-flash-exp",
-   # model="gemini-2.0-flash-live-001",  # New streaming model version as of Feb 2025
+   # Please fill in the latest model id that supports live from
+   # https://google.github.io/adk-docs/get-started/streaming/quickstart-streaming/#supported-models
+   model="...",  # for example: model="gemini-2.0-flash-live-001" or model="gemini-2.0-flash-live-preview-04-09"
    # A short description of the agent's purpose.
    description="Agent to answer questions using Google Search.",
    # Instructions to set the agent's behavior.
@@ -67,8 +68,6 @@ root_agent = Agent(
    tools=[google_search]
 )
 ```
-
-**Note:**  To enable both text and audio/video input, the model must support the generateContent (for text) and bidiGenerateContent methods. Verify these capabilities by referring to the [List Models Documentation](https://ai.google.dev/api/models#method:-models.list). This quickstart utilizes the gemini-2.0-flash-exp model for demonstration purposes.
 
 `agent.py` is where all your agent(s)' logic will be stored, and you must have a `root_agent` defined.
 
@@ -82,7 +81,7 @@ Copy-paste the following code block to `__init__.py` file.
 from . import agent
 ```
 
-## 3\. Set up the platform {#3.-set-up-the-platform}
+## 3\. Set up the platform { #set-up-the-platform }
 
 To run the agent, choose a platform from either Google AI Studio or Google Cloud Vertex AI:
 
@@ -117,7 +116,7 @@ To run the agent, choose a platform from either Google AI Studio or Google Cloud
         GOOGLE_CLOUD_LOCATION=us-central1
         ```
 
-## 4. Try the agent with `adk web` {#4.-try-it-adk-web}
+## 4. Try the agent with `adk web` { #try-the-agent-with-adk-web }
 
 Now it's ready to try the agent. Run the following command to launch the **dev UI**. First, make sure to set the current directory to `app`:
 
@@ -127,9 +126,17 @@ cd app
 
 Also, set `SSL_CERT_FILE` variable with the following command. This is required for the voice and video tests later.
 
-```shell
-export SSL_CERT_FILE=$(python -m certifi)
-```
+=== "OS X &amp; Linux"
+    ```bash
+    export SSL_CERT_FILE=$(python -m certifi)
+    ```
+
+=== "Windows"
+    ```powershell
+    $env:SSL_CERT_FILE = (python -m certifi)
+    ```
+
+
 
 Then, run the dev UI:
 
@@ -162,6 +169,8 @@ The agent will use the google_search tool to get the latest information to answe
 To try with voice, reload the web browser, click the microphone button to enable the voice input, and ask the same question in voice. You will hear the answer in voice in real-time.
 
 To try with video, reload the web browser, click the camera button to enable the video input, and ask questions like "What do you see?". The agent will answer what they see in the video input.
+
+(Just clicking the microphone or camera button once is enough. Your voice or video will be streamed to models and the model response will be streamed back continuously. Clicking on the microphone or camera button multiple times is not supported.)
 
 ### Stop the tool
 

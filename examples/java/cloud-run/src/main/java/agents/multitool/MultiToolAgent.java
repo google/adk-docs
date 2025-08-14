@@ -43,7 +43,8 @@ public class MultiToolAgent {
     }
 
     public static Map<String, String> getCurrentTime(
-        @Schema(description = "The name of the city for which to retrieve the current time")
+        @Schema(name = "city",
+                description = "The name of the city for which to retrieve the current time")
         String city) {
         String normalizedCity =
             Normalizer.normalize(city, Normalizer.Form.NFD)
@@ -76,7 +77,8 @@ public class MultiToolAgent {
     }
 
     public static Map<String, String> getWeather(
-        @Schema(description = "The name of the city for which to retrieve the weather report")
+        @Schema(name = "city",
+                description = "The name of the city for which to retrieve the weather report")
         String city) {
         if (city.toLowerCase().equals("new york")) {
             return Map.of(

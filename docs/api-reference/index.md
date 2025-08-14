@@ -4,6 +4,16 @@ The Agent Development Kit (ADK) provides comprehensive API references for both P
 
 <div class.="grid cards" markdown>
 
+-   :fontawesome-brands-python:{ .lg .middle } **CLI Reference**
+
+    ---
+    Explore the complete API documentation for the CLI inclding all of the 
+    valid options and subcommands. 
+
+    [:octicons-arrow-right-24: View CLI Docs](cli/index.html) <br>
+
+<!-- This comment forces a block separation -->
+
 -   :fontawesome-brands-python:{ .lg .middle } **Python API Reference**
 
     ---

@@ -16,6 +16,7 @@ To proceed, confirm that your agent code is configured as follows:
     1. Agent code is in a file called `agent.py` within your agent directory.
     2. Your agent variable is named `root_agent`.
     3. `__init__.py` is within your agent directory and contains `from . import agent`.
+    4. Your `requirements.txt` file is present in the agent directory.
 
 === "Java"
 
@@ -36,6 +37,16 @@ export GOOGLE_GENAI_USE_VERTEXAI=True
 ```
 
 _(Replace `your-project-id` with your actual GCP project ID)_
+
+Alternatively you can also use an API key from AI Studio
+
+```bash
+export GOOGLE_CLOUD_PROJECT=your-project-id
+export GOOGLE_CLOUD_LOCATION=us-central1 # Or your preferred location
+export GOOGLE_GENAI_USE_VERTEXAI=FALSE
+export GOOGLE_API_KEY=your-api-key
+```
+*(Replace `your-project-id` with your actual GCP project ID and `your-api-key` with your actual API key from AI Studio)*
 
 ## Deployment commands
 
@@ -151,8 +162,8 @@ _(Replace `your-project-id` with your actual GCP project ID)_
 
         # Get the directory where main.py is located
         AGENT_DIR = os.path.dirname(os.path.abspath(__file__))
-        # Example session DB URL (e.g., SQLite)
-        SESSION_DB_URL = "sqlite:///./sessions.db"
+        # Example session service URI (e.g., SQLite)
+        SESSION_SERVICE_URI = "sqlite:///./sessions.db"
         # Example allowed origins for CORS
         ALLOWED_ORIGINS = ["http://localhost", "http://localhost:8080", "*"]
         # Set web=True if you intend to serve a web interface, False otherwise
@@ -162,7 +173,7 @@ _(Replace `your-project-id` with your actual GCP project ID)_
         # Ensure the agent directory name ('capital_agent') matches your agent folder
         app = get_fast_api_app(
             agent_dir=AGENT_DIR,
-            session_db_url=SESSION_DB_URL,
+            session_db_url=SESSION_SERVICE_URI,
             allow_origins=ALLOWED_ORIGINS,
             web=SERVE_WEB_INTERFACE,
         )
@@ -183,7 +194,7 @@ _(Replace `your-project-id` with your actual GCP project ID)_
     2. List the necessary Python packages:
 
         ```txt title="requirements.txt"
-        google_adk
+        google-adk
         # Add any other dependencies your agent needs
         ```
 
