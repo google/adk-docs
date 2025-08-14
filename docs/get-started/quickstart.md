@@ -81,9 +81,15 @@ application entirely on your machine and is recommended for internal development
 
     Create an `agent.py` file in the same folder:
 
-    ```shell
-    touch multi_tool_agent/agent.py
-    ```
+    === "OS X &amp; Linux"
+        ```shell
+        touch multi_tool_agent/agent.py
+        ```
+
+    === "Windows"
+        ```shell
+        type nul > multi_tool_agent/agent.py
+        ```
 
     Copy and paste the following code into `agent.py`:
 
@@ -95,9 +101,15 @@ application entirely on your machine and is recommended for internal development
 
     Create a `.env` file in the same folder:
 
-    ```shell
-    touch multi_tool_agent/.env
-    ```
+    === "OS X &amp; Linux"
+        ```shell
+        touch multi_tool_agent/.env
+        ```
+
+    === "Windows"
+        ```shell
+        type nul > multi_tool_agent\.env
+        ```
 
     More instructions about this file are described in the next section on [Set up the model](#set-up-the-model).
 

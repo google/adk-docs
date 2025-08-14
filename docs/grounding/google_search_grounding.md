@@ -45,16 +45,32 @@ pip install google-adk==1.4.2
 
 Under a project directory, run the following commands:
 
-```bash
-# Step 1: Create a new directory for your agent
-mkdir google_search_agent
+=== "OS X &amp; Linux"
+    ```bash
+    # Step 1: Create a new directory for your agent
+    mkdir google_search_agent
 
-# Step 2: Create __init__.py for the agent
-echo "from . import agent" > google_search_agent/__init__.py
+    # Step 2: Create __init__.py for the agent
+    echo "from . import agent" > google_search_agent/__init__.py
 
-# Step 3: Create an agent.py (the agent definition) and .env (Gemini authentication config)
-touch google_search_agent/agent.py .env
-```
+    # Step 3: Create an agent.py (the agent definition) and .env (Gemini authentication config)
+    touch google_search_agent/agent.py .env
+    ```
+
+=== "Windows"
+    ```shell
+    # Step 1: Create a new directory for your agent
+    mkdir google_search_agent
+
+    # Step 2: Create __init__.py for the agent
+    echo "from . import agent" > google_search_agent/__init__.py
+
+    # Step 3: Create an agent.py (the agent definition) and .env (Gemini authentication config)
+    type nul > google_search_agent\agent.py 
+    type nul > google_search_agent\.env
+    ```
+
+
 
 #### Edit `agent.py`
 
