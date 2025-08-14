@@ -78757,7 +78757,9 @@ def get_auth_config(auth_request_function_call: types.FunctionCall) -> AuthConfi
     # Extracts the AuthConfig object from the arguments of the auth request function call
     if not auth_request_function_call.args or not (auth_config := auth_request_function_call.args.get('authConfig')):
         raise ValueError(f'Cannot get auth config from function call: {auth_request_function_call}')
-    if not isinstance(auth_config, AuthConfig):
+    if isinstance(auth_config, dict):
+        auth_config = AuthConfig.model_validate(auth_config)
+    elif not isinstance(auth_config, AuthConfig):
         raise ValueError(f'Cannot get auth config {auth_config} is not an instance of AuthConfig.')
     return auth_config
 
