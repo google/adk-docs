@@ -57,6 +57,46 @@ like calculations, data manipulation, or running small scripts.
     --8<-- "examples/java/snippets/src/main/java/tools/CodeExecutionAgentApp.java:full_code"
     ```
 
+### GKE Code Executor
+
+The `GkeCodeExecutor` provides a secure and scalable method for running
+LLM-generated code by leveraging the GKE (Google Kubernetes Engine) Sandbox
+environment, which uses gVisor for workload isolation.
+
+For each code execution request, it dynamically creates an ephemeral, sandboxed
+Kubernetes Job with a hardened Pod configuration. This is the recommended
+executor for production environments on GKE where security and isolation are
+critical.
+
+!!! note "Prerequisites"
+
+    - You must have a GKE cluster with a **gVisor-enabled node pool**.
+    - The agent's service account requires specific **RBAC permissions** to manage
+      Kubernetes resources (Jobs, Pods, ConfigMaps). See the full example RBAC
+      configuration in `contributing/samples/gke_agent_sandbox/deployment_rbac.yaml`.
+    - Install the necessary client library: `pip install google-adk[gke]`
+
+=== "Python"
+
+    ```py
+    from google.adk.agents import LlmAgent
+    from google.adk.code_executors import GkeCodeExecutor
+
+    # Initialize the executor, targeting the namespace where its ServiceAccount
+    # has the required RBAC permissions.
+    gke_executor = GkeCodeExecutor(
+        namespace="agent-sandbox",
+        timeout_seconds=600,
+    )
+
+    # The agent will now use this executor for any code it generates.
+    gke_agent = LlmAgent(
+        name="gke_coding_agent",
+        model="gemini-2.0-flash",
+        instruction="You are a helpful AI agent that writes and executes Python code.",
+        code_executor=gke_executor,
+    )
+    ```
 
 ### Vertex AI Search
 
