@@ -4,16 +4,6 @@ The Agent Development Kit (ADK) provides comprehensive API references for both P
 
 <div class.="grid cards" markdown>
 
--   :fontawesome-brands-python:{ .lg .middle } **CLI Reference**
-
-    ---
-    Explore the complete API documentation for the CLI inclding all of the 
-    valid options and subcommands. 
-
-    [:octicons-arrow-right-24: View CLI Docs](cli/index.html) <br>
-
-<!-- This comment forces a block separation -->
-
 -   :fontawesome-brands-python:{ .lg .middle } **Python API Reference**
 
     ---
@@ -35,5 +25,25 @@ The Agent Development Kit (ADK) provides comprehensive API references for both P
     <!-- Assuming your Java API docs (Javadocs) are in a 'java' subdirectory -->
     <!-- Or link to an external Javadoc hosting site -->
     <!-- [:octicons-arrow-right-24: View Java API Docs](java/index.html) -->
+
+<!-- This comment forces a block separation -->
+
+-   :material-console:{ .lg .middle } **CLI Reference**
+
+    ---
+    Explore the complete API documentation for the CLI inclding all of the 
+    valid options and subcommands. 
+
+    [:octicons-arrow-right-24: View CLI Docs](cli/index.html) <br>
+
+
+<!-- This comment forces a block separation -->
+
+-   :material-api:{ .lg .middle } **REST API Reference**
+
+    ---
+    Explore the REST API for the ADK web server. This reference provides details on the available endpoints, request and response formats, and more.
+
+    [:octicons-arrow-right-24: View REST API Docs](rest/index.md) <br>
 
 </div>

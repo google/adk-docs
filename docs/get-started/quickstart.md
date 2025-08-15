@@ -175,7 +175,7 @@ agent will be unable to function.
 === "Gemini - Google Cloud Vertex AI"
     1. Set up a [Google Cloud project](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-gcp) and [enable the Vertex AI API](https://console.cloud.google.com/flows/enableapi?apiid=aiplatform.googleapis.com).
     2. Set up the [gcloud CLI](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-local).
-    3. Authenticate to Google Cloud from the terminal by running `gcloud auth login`.
+    3. Authenticate to Google Cloud from the terminal by running `gcloud auth application-default login`.
     4. When using Python, open the **`.env`** file located inside (`multi_tool_agent/`). Copy-paste
     the following code and update the project ID and location.
 
