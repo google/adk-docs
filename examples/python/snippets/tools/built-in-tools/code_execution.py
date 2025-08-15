@@ -41,9 +41,9 @@ code_agent = LlmAgent(
 session_service = InMemorySessionService()
 session = asyncio.run(session_service.create_session(
     app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID
-))
-runner = Runner(agent=code_agent, app_name=APP_NAME, session_service=session_service)
-
+)
+runner = Runner(agent=code_agent, app_name=APP_NAME,
+                session_service=session_service)
 
 # Agent Interaction (Async)
 async def call_agent_async(query):
@@ -89,7 +89,8 @@ async def call_agent_async(query):
                     final_response_text = event.content.parts[0].text.strip()
                     print(f"==> Final Agent Response: {final_response_text}")
                 else:
-                    print("==> Final Agent Response: [No text content in final event]")
+                    print(
+                        "==> Final Agent Response: [No text content in final event]")
 
     except Exception as e:
         print(f"ERROR during agent run: {e}")
