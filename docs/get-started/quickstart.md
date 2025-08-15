@@ -302,6 +302,15 @@ agent will be unable to function.
 
     === "Terminal (adk run)"
 
+        !!! tip
+
+            When using `adk run` you can inject prompts into the agent to start by
+            piping text to the command like so:
+
+            ```shell
+            "Please start by listing files" | adk run file_listing_agent
+            ```
+            
         Run the following command, to chat with your Weather agent.
 
         ```
