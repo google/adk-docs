@@ -141,7 +141,7 @@ Let's illustrate the power of custom agents with an example pattern: a multi-sta
 
 ---
 
-### Part 1: Simplified custom agent Initialization
+### Part 1: Simplified custom agent Initialization { #part-1-simplified-custom-agent-initialization }
 
 === "Python"
 
@@ -160,7 +160,7 @@ Let's illustrate the power of custom agents with an example pattern: a multi-sta
     ```
 ---
 
-### Part 2: Defining the Custom Execution Logic
+### Part 2: Defining the Custom Execution Logic { #part-2-defining-the-custom-execution-logic }
 
 === "Python"
 
@@ -193,9 +193,12 @@ Let's illustrate the power of custom agents with an example pattern: a multi-sta
 
 ---
 
-### Part 3: Defining the LLM Sub-Agents
+### Part 3: Defining the LLM Sub-Agents { #part-3-defining-the-llm-sub-agents }
 
 These are standard `LlmAgent` definitions, responsible for specific tasks. Their `output key` parameter is crucial for placing results into the `session.state` where other agents or the custom orchestrator can access them.
+
+!!! tip "Direct State Injection in Instructions"
+    Notice the `story_generator`'s instruction. The `{var}` syntax is a placeholder. Before the instruction is sent to the LLM, the ADK framework automatically replaces (Example:`{topic}`) with the value of `session.state['topic']`. This is the recommended way to provide context to an agent, using templating in the instructions. For more details, see the [State documentation](../sessions/state.md#accessing-session-state-in-agent-instructions).
 
 === "Python"
 
@@ -211,7 +214,7 @@ These are standard `LlmAgent` definitions, responsible for specific tasks. Their
 
 ---
 
-### Part 4: Instantiating and Running the custom agent
+### Part 4: Instantiating and Running the custom agent { #part-4-instantiating-and-running-the-custom-agent }
 
 Finally, you instantiate your `StoryFlowAgent` and use the `Runner` as usual.
 

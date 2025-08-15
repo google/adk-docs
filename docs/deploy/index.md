@@ -36,3 +36,15 @@ environment. GKE is a good option if you need more control over the deployment a
 for running Open Models.
 
 Learn more about [deploying your agent to GKE](gke.md).
+
+### Other Container-friendly Infrastructure
+
+You can manually package your Agent into a container image and then run it in
+any environment that supports container images.  For example you can run it
+locally in Docker or Podman. This is a good option if you prefer to run offline
+or disconnected, or otherwise in a system that has no connection to Google
+Cloud.
+
+Follow the instructions for [deploying your agent to Cloud Run](cloud-run.md),
+specifically the case where you it describes how to use a custom Dockerfile.
+

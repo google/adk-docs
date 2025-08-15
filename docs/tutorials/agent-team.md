@@ -93,6 +93,7 @@ If you prefer a setup that handles the runner and session management automatical
 
 **Ready to build your agent team? Let's dive in!**
 
+> **Note:** This tutorial works with adk version 1.0.0 and above
 
 ```python
 # @title Step 0: Setup and Installation
@@ -1454,7 +1455,7 @@ if greeting_agent and farewell_agent and 'get_weather_stateful' in globals() and
         instruction="You are the main Weather Agent. Provide weather using 'get_weather_stateful'. "
                     "Delegate simple greetings to 'greeting_agent' and farewells to 'farewell_agent'. "
                     "Handle only weather requests, greetings, and farewells.",
-        tools=[get_weather],
+        tools=[get_weather_stateful],
         sub_agents=[greeting_agent, farewell_agent], # Reference the redefined sub-agents
         output_key="last_weather_report", # Keep output_key from Step 4
         before_model_callback=block_keyword_guardrail # <<< Assign the guardrail callback
@@ -1562,7 +1563,7 @@ if 'runner_root_model_guardrail' in globals() and runner_root_model_guardrail:
         print(f"Guardrail Triggered Flag: {final_session.state.get('guardrail_block_keyword_triggered', 'Not Set (or False)')}")
         print(f"Last Weather Report: {final_session.state.get('last_weather_report', 'Not Set')}") # Should be London weather if successful
         print(f"Temperature Unit: {final_session.state.get('user_preference_temperature_unit', 'Not Set')}") # Should be Fahrenheit
-        # print(f"Full State Dict: {final_session.state.as_dict()}") # For detailed view
+        # print(f"Full State Dict: {final_session.state}") # For detailed view
     else:
         print("\n❌ Error: Could not retrieve final session state.")
 
@@ -1853,7 +1854,7 @@ if 'runner_root_tool_guardrail' in globals() and runner_root_tool_guardrail:
         print(f"Tool Guardrail Triggered Flag: {final_session.state.get('guardrail_tool_block_triggered', 'Not Set (or False)')}")
         print(f"Last Weather Report: {final_session.state.get('last_weather_report', 'Not Set')}") # Should be London weather if successful
         print(f"Temperature Unit: {final_session.state.get('user_preference_temperature_unit', 'Not Set')}") # Should be Fahrenheit
-        # print(f"Full State Dict: {final_session.state.as_dict()}") # For detailed view
+        # print(f"Full State Dict: {final_session.state}") # For detailed view
     else:
         print("\n❌ Error: Could not retrieve final session state.")
 

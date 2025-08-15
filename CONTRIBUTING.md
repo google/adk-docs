@@ -7,7 +7,7 @@ share your patches and improvements with the project.
 
 Before you contribute, please take a moment to review the following:
 
-### 1. Sign our Contributor License Agreement
+### 1. Sign our Contributor License Agreement { #sign-our-contributor-license-agreement }
 
 Contributions to this project must be accompanied by a
 [Contributor License Agreement](https://cla.developers.google.com/about) (CLA).
@@ -21,7 +21,7 @@ was for a different project), you probably don't need to do it again.
 Visit <https://cla.developers.google.com/> to see your current agreements or to
 sign a new one.
 
-### 2. Review Community Guidelines
+### 2. Review Community Guidelines { #review-community-guidelines }
 
 We adhere to [Google's Open Source Community Guidelines](https://opensource.google/conduct/).
 Please familiarize yourself with these guidelines to ensure a positive and

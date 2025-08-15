@@ -169,9 +169,17 @@ cython_debug/
 # mkdocs documentation
 docs/site
 
+# Utilities for local development
+.gemini/
+.scripts/
+.tmp/
+
 # hugo
 /site/public
 .hugo_build.lock
 
 # VS Code Personal Settings
 .vscode/settings.json
+
+# Claude Code
+.claude

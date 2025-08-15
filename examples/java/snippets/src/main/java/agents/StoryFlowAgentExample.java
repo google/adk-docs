@@ -63,7 +63,7 @@ public class StoryFlowAgentExample extends BaseAgent {
             .instruction(
                 """
               You are a story writer. Write a short story (around 100 words) about a cat,
-              based on the topic provided in session state with key 'topic'
+              based on the topic: {topic}
               """)
             .inputSchema(null)
             .outputKey("current_story") // Key for storing output in session state
@@ -76,8 +76,7 @@ public class StoryFlowAgentExample extends BaseAgent {
             .description("Critiques the story.")
             .instruction(
                 """
-              You are a story critic. Review the story provided in
-              session state with key 'current_story'. Provide 1-2 sentences of constructive criticism
+              You are a story critic. Review the story: {current_story}. Provide 1-2 sentences of constructive criticism
               on how to improve it. Focus on plot or character.
               """)
             .inputSchema(null)
@@ -91,9 +90,7 @@ public class StoryFlowAgentExample extends BaseAgent {
             .description("Revises the story based on criticism.")
             .instruction(
                 """
-              You are a story reviser. Revise the story provided in
-              session state with key 'current_story', based on the criticism in
-              session state with key 'criticism'. Output only the revised story.
+              You are a story reviser. Revise the story: {current_story}, based on the criticism: {criticism}. Output only the revised story.
               """)
             .inputSchema(null)
             .outputKey("current_story") // Overwrites the original story
@@ -106,8 +103,7 @@ public class StoryFlowAgentExample extends BaseAgent {
             .description("Checks grammar and suggests corrections.")
             .instruction(
                 """
-               You are a grammar checker. Check the grammar of the story
-               provided in session state with key 'current_story'. Output only the suggested
+               You are a grammar checker. Check the grammar of the story: {current_story}. Output only the suggested
                corrections as a list, or output 'Grammar is good!' if there are no errors.
                """)
             .outputKey("grammar_suggestions")
@@ -120,8 +116,7 @@ public class StoryFlowAgentExample extends BaseAgent {
             .description("Analyzes the tone of the story.")
             .instruction(
                 """
-              You are a tone analyzer. Analyze the tone of the story
-              provided in session state with key 'current_story'. Output only one word: 'positive' if
+              You are a tone analyzer. Analyze the tone of the story: {current_story}. Output only one word: 'positive' if
               the tone is generally positive, 'negative' if the tone is generally negative, or 'neutral'
               otherwise.
               """)

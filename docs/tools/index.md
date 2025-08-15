@@ -296,6 +296,7 @@ Here are key guidelines for defining effective tool functions:
     * **Provide type hints in Python**  for all parameters (e.g., `city: str`, `user_id: int`, `items: list[str]`). This is essential for ADK to generate the correct schema for the LLM.
     * Ensure all parameter types are **JSON serializable**. All java primitives as well as standard Python types like `str`, `int`, `float`, `bool`, `list`, `dict`, and their combinations are generally safe. Avoid complex custom class instances as direct parameters unless they have a clear JSON representation.
     * **Do not set default values** for parameters. E.g., `def my_func(param1: str = "default")`. Default values are not reliably supported or used by the underlying models during function call generation. All necessary information should be derived by the LLM from the context or explicitly requested if missing.
+    * **`self` / `cls` Handled Automatically:** Implicit parameters like `self` (for instance methods) or `cls` (for class methods) are automatically handled by ADK and excluded from the schema shown to the LLM. You only need to define type hints and descriptions for the logical parameters your tool requires the LLM to provide.
 
 * **Return Type:**
     * The function's return value **must be a dictionary (`dict`)** in Python or a **Map** in Java.
@@ -328,16 +329,23 @@ Here are key guidelines for defining effective tool functions:
           order_id: The unique identifier of the order to look up.
 
       Returns:
-          A dictionary containing the order status.
-          Possible statuses: 'shipped', 'processing', 'pending', 'error'.
-          Example success: {'status': 'shipped', 'tracking_number': '1Z9...'}
+          A dictionary indicating the outcome.
+          On success, status is 'success' and includes an 'order' dictionary.
+          On failure, status is 'error' and includes an 'error_message'.
+          Example success: {'status': 'success', 'order': {'state': 'shipped', 'tracking_number': '1Z9...'}}
           Example error: {'status': 'error', 'error_message': 'Order ID not found.'}
       """
       # ... function implementation to fetch status ...
-      if status := fetch_status_from_backend(order_id):
-           return {"status": status.state, "tracking_number": status.tracking} # Example structure
+      if status_details := fetch_status_from_backend(order_id):
+        return {
+            "status": "success",
+            "order": {
+                "state": status_details.state,
+                "tracking_number": status_details.tracking,
+            },
+        }
       else:
-           return {"status": "error", "error_message": f"Order ID {order_id} not found."}
+        return {"status": "error", "error_message": f"Order ID {order_id} not found."}
 
     ```
 

@@ -68929,7 +68929,7 @@ public String myInstructionProvider(ReadonlyContext context){
 
 ```md-code__content
 # Pseudocode: Callback receiving CallbackContext
-from google.adk.agents import CallbackContext
+from google.adk.agents.callback_context import CallbackContext
 from google.adk.models import LlmRequest
 from google.genai import types
 from typing import Optional
@@ -69074,7 +69074,7 @@ def my_tool(tool_context: ToolContext, **kwargs):
       # ... rest of tool logic ...
 
 # Pseudocode: In a Callback function
-from google.adk.agents import CallbackContext
+from google.adk.agents.callback_context import CallbackContext
 
 def my_callback(callback_context: CallbackContext, **kwargs):
       last_tool_result = callback_context.state.get("temp:last_api_result") # Read temporary state
@@ -69189,7 +69189,7 @@ public void logToolUsage(ToolContext toolContext){
 
 ```md-code__content
 # Pseudocode: In a Callback
-from google.adk.agents import CallbackContext
+from google.adk.agents.callback_context import CallbackContext
 
 def check_initial_intent(callback_context: CallbackContext, **kwargs):
       initial_text = "N/A"
@@ -70252,7 +70252,7 @@ To proceed, confirm that your agent code is configured as follows:
 3. `__init__.py` is within your agent directory and contains `from . import agent`.
 
 1. Agent code is in a file called `CapitalAgent.java` within your agent directory.
-2. Your agent variable is global and follows the format `public static BaseAgent ROOT_AGENT`.
+2. Your agent variable is global and follows the format `public static final BaseAgent ROOT_AGENT`.
 3. Your agent definition is present in a static class method.
 
 Refer to the following section for more details. You can also find a [sample app](https://github.com/google/adk-docs/tree/main/examples/java/cloud-run) in the Github repo.
@@ -70400,7 +70400,7 @@ SERVE_WEB_INTERFACE = True
 # Call the function to get the FastAPI app instance
 # Ensure the agent directory name ('capital_agent') matches your agent folder
 app: FastAPI = get_fast_api_app(
-       agent_dir=AGENT_DIR,
+       agents_dir=AGENT_DIR,
        session_db_url=SESSION_DB_URL,
        allow_origins=ALLOWED_ORIGINS,
        web=SERVE_WEB_INTERFACE,
@@ -70427,7 +70427,7 @@ _Note: We specify `agent_dir` to the directory `main.py` is in and use `os.envir
 requirements.txt
 
 ```md-code__content
-google_adk
+google-adk
 # Add any other dependencies your agent needs
 
 ```
@@ -70514,7 +70514,7 @@ Create the `pom.xml` and `Dockerfile` in the root of your project directory. You
 1. This is our Agent definition. This is the same code as present in [LLM agent](https://google.github.io/adk-docs/agents/llm-agents/) with two caveats:
 
 
-   - The Agent is now initialized as a **global public static variable**.
+   - The Agent is now initialized as a **global public static final variable**.
 
    - The definition of the agent can be exposed in a static method or inlined during declaration.
 
@@ -70854,7 +70854,7 @@ SERVE_WEB_INTERFACE = True
 # Call the function to get the FastAPI app instance
 # Ensure the agent directory name ('capital_agent') matches your agent folder
 app: FastAPI = get_fast_api_app(
-       agent_dir=AGENT_DIR,
+       agents_dir=AGENT_DIR,
        session_db_url=SESSION_DB_URL,
        allow_origins=ALLOWED_ORIGINS,
        web=SERVE_WEB_INTERFACE,
@@ -70881,7 +70881,7 @@ _Note: We specify `agent_dir` to the directory `main.py` is in and use `os.envir
 requirements.txt
 
 ```md-code__content
-google_adk
+google-adk
 # Add any other dependencies your agent needs
 
 ```
@@ -71364,7 +71364,7 @@ Test files can be organized into folders. Optionally, a folder can also include 
 NOTE: If your test files don't adhere to [EvalSet](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py) schema file, then this section is relevant to you.
 
 Please use `AgentEvaluator.migrate_eval_data_to_new_schema` to migrate your
-existing `*.test.json` files to the Pydanctic backed schema.
+existing `*.test.json` files to the Pydantic backed schema.
 
 The utility takes your current test data file and an optional initial session
 file, and generates a single output json file with data serialized in the new
@@ -72949,8 +72949,8 @@ public class MultiToolAgent {
     private static String USER_ID = "student";
     private static String NAME = "multi_tool_agent";
 
-    // The run your agent with Dev UI, the ROOT_AGENT should be a global public static variable.
-    public static BaseAgent ROOT_AGENT = initAgent();
+    // The run your agent with Dev UI, the ROOT_AGENT should be a global public static final variable.
+    public static final BaseAgent ROOT_AGENT = initAgent();
 
     public static BaseAgent initAgent() {
         return LlmAgent.builder()
@@ -73656,7 +73656,7 @@ public class ScienceTeacherAgent {
 
   // Field expected by the Dev UI to load the agent dynamically
   // (the agent must be initialized at declaration time)
-  public static BaseAgent ROOT_AGENT = initAgent();
+  public static final BaseAgent ROOT_AGENT = initAgent();
 
   public static BaseAgent initAgent() {
     return LlmAgent.builder()
@@ -82018,7 +82018,7 @@ Create an `agent.py` (e.g., in `./adk_agent_samples/mcp_client_agent/agent.py`):
 # ./adk_agent_samples/mcp_client_agent/agent.py
 import os
 from google.adk.agents import LlmAgent
-from google.adk.tools.mcp_tool import MCPToolset, StdioServerParameters
+from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, StdioServerParameters
 
 # IMPORTANT: Replace this with the ABSOLUTE path to your my_adk_mcp_server.py script
 PATH_TO_YOUR_MCP_SERVER_SCRIPT = "/path/to/your/my_adk_mcp_server.py" # <<< REPLACE
