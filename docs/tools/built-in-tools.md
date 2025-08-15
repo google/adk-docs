@@ -71,10 +71,8 @@ critical.
 !!! note "Prerequisites"
 
     - You must have a GKE cluster with a **gVisor-enabled node pool**.
-    - The agent's service account requires specific **RBAC permissions**.
-
-  At a high level, these permissions allow the agent to:
-    - Create, watch, and delete **Jobs** for each execution request.
+    - The agent's service account requires specific **RBAC permissions**, which allow it to:
+        - Create, watch, and delete **Jobs** for each execution request.
         - Manage **ConfigMaps** to inject code into the Job's pod.
         - List **Pods** and read their **logs** to retrieve the execution result
     - See the complete, ready-to-use configuration in `contributing/samples/gke_agent_sandbox/deployment_rbac.yaml`.
