@@ -16,6 +16,7 @@
 
 from google.adk.agents import LlmAgent
 from google.adk.tools import google_search
+from google.adk.tools.agent_tool import AgentTool
 
 from .util import load_instruction_from_file
 
@@ -54,7 +55,11 @@ youtube_shorts_agent = LlmAgent(
     model="gemini-2.0-flash-001",
     instruction=load_instruction_from_file("shorts_agent_instruction.txt"),
     description="You are an agent that can write scripts, visuals and format youtube short videos. You have subagents that can do this",
-    sub_agents=[scriptwriter_agent, visualizer_agent, formatter_agent],
+    tools=[
+        AgentTool(scriptwriter_agent),
+        AgentTool(visualizer_agent),
+        AgentTool(formatter_agent),
+    ],
 )
 
 # --- Root Agent for the Runner ---

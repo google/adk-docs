@@ -52,16 +52,16 @@
       <dependency>
         <groupId>com.google.adk</groupId>
         <artifactId>google-adk</artifactId>
-        <version>0.1.0</version>
+        <version>0.2.0</version>
       </dependency>
       
       <!-- The ADK Dev Web UI to debug your agent (Optional) -->
       <dependency>
         <groupId>com.google.adk</groupId>
         <artifactId>google-adk-dev</artifactId>
-        <version>0.1.0</version>
+        <version>0.2.0</version>
       </dependency>
-    <dependencies>
+    </dependencies>
     ```
 
     Here's a [complete pom.xml](https://github.com/google/adk-docs/tree/main/examples/java/cloud-run/pom.xml) file for reference.
@@ -70,8 +70,8 @@
 
     ```title="build.gradle"
     dependencies {
-        implementation 'com.google.adk:google-adk:0.1.0'
-        implementation 'com.google.adk:google-adk-dev:0.1.0'
+        implementation 'com.google.adk:google-adk:0.2.0'
+        implementation 'com.google.adk:google-adk-dev:0.2.0'
     }
     ```
 
