@@ -236,6 +236,9 @@ The most fundamental way for agents operating within the same invocation (and th
 * **Nature:** Asynchronous, passive communication. Ideal for pipelines orchestrated by `SequentialAgent` or passing data across `LoopAgent` iterations.
 * **See Also:** [State Management](../sessions/state.md)
 
+!!! note "Invocation Context and `temp:` State"
+    When a parent agent invokes a sub-agent, it passes the same `InvocationContext`. This means they share the same temporary (`temp:`) state, which is ideal for passing data that is only relevant for the current turn.
+
 === "Python"
 
     ```python
