@@ -71,9 +71,11 @@ critical.
 !!! note "Prerequisites"
 
     - You must have a GKE cluster with a **gVisor-enabled node pool**.
-    - The agent's service account requires specific **RBAC permissions** to manage
-      Kubernetes resources (Jobs, Pods, ConfigMaps). See the full example RBAC
-      configuration in `contributing/samples/gke_agent_sandbox/deployment_rbac.yaml`.
+    - The agent's service account requires specific **RBAC permissions** to manage Kubernetes resources (Jobs, Pods, ConfigMaps). At a high level, these permissions allow the agent to:
+        - Create, watch, and delete **Jobs** for each execution request.
+        - Manage **ConfigMaps** to inject code into the Job's pod.
+        - List **Pods** and read their **logs** to retrieve the execution result
+    - See the complete, ready-to-use configuration in `contributing/samples/gke_agent_sandbox/deployment_rbac.yaml`.
     - Install the necessary client library: `pip install google-adk[gke]`
 
 === "Python"
