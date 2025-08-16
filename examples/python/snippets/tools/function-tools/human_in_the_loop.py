@@ -118,8 +118,9 @@ async def call_agent_async(query):
         if not long_running_function_call:
             long_running_function_call = get_long_running_function_call(event)
         else:
-            long_running_function_response = get_function_response(event, long_running_function_call.id)
-            if long_running_function_response:
+            _potential_response = get_function_response(event, long_running_function_call.id)
+            if _potential_response: # Only update if we get a non-None response
+                long_running_function_response = _potential_response
                 ticket_id = long_running_function_response.response['ticket-id']
         if event.content and event.content.parts:
             if text := ''.join(part.text or '' for part in event.content.parts):
