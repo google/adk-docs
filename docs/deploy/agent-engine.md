@@ -137,20 +137,35 @@ Expected output for `stream_query` (local):
 
 ### Deploy your agent to Agent Engine
 
-```python
-from vertexai import agent_engines
+You can deploy your agent to Agent Engine using the following methods:
 
-remote_app = agent_engines.create(
-    agent_engine=app,
-    requirements=[
-        "google-cloud-aiplatform[adk,agent_engines]"   
-    ]
-)
-```
+=== "CLI"
 
-This step may take several minutes to finish.
+    ```
+    adk deploy agent_engine –project=[project] –region=[region] \
+        –staging_bucket=[staging_bucket] –display_name=[app_name] \ 
+        path/to/my_agent
+    ```
 
-You can check and monitor the deployment of your ADK agent on the [Agent Engine UI](https://console.cloud.google.com/vertex-ai/agents/agent-engines) on Google Cloud.
+=== "Python"
+
+    ```python
+    from vertexai import agent_engines
+
+    remote_app = agent_engines.create(
+        agent_engine=app,
+        requirements=[
+            "google-cloud-aiplatform[adk,agent_engines]"   
+        ]
+    )
+    ```
+
+This step may take several minutes to finish. You can check and monitor the
+deployment of your ADK agent on the
+[Agent Engine UI](https://console.cloud.google.com/vertex-ai/agents/agent-engines)
+on Google Cloud. For more information about the command line interface
+parameters for `adk deploy`, see the 
+[ADK CLI reference](https://google.github.io/adk-docs/api-reference/cli/cli.html#adk-deploy).
 
 Each deployed agent has a unique identifier. You can run the following command to get the resource_name identifier for your deployed agent:
 
