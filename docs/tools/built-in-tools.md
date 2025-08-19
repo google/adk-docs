@@ -21,8 +21,7 @@ Note: Java only supports Google Search and Code Execution tools currently.
 
 ### Google Search
 
-The `google_search` tool allows the agent to perform web searches using Google
-Search. The `google_search` tool is only compatible with Gemini 2 models.
+The `google_search` tool allows the agent to perform web searches using Google Search. The `google_search` tool is only compatible with Gemini 2 models. For further details of the tool, see [Understanding Google Search grounding](../grounding/google_search_grounding.md).
 
 !!! warning "Additional requirements when using the `google_search` tool"
     When you use grounding with Google Search, and you receive Search suggestions in your response, you must display the Search suggestions in production and in your applications.
@@ -58,18 +57,78 @@ like calculations, data manipulation, or running small scripts.
     --8<-- "examples/java/snippets/src/main/java/tools/CodeExecutionAgentApp.java:full_code"
     ```
 
+### GKE Code Executor
+
+The `GkeCodeExecutor` provides a secure and scalable method for running
+LLM-generated code by leveraging the GKE (Google Kubernetes Engine) Sandbox
+environment, which uses gVisor for workload isolation.
+
+For each code execution request, it dynamically creates an ephemeral, sandboxed
+Kubernetes Job with a hardened Pod configuration. This is the recommended
+executor for production environments on GKE where security and isolation are
+critical.
+
+!!! note "Prerequisites"
+
+    - You must have a GKE cluster with a **gVisor-enabled node pool**.
+    - The agent's service account requires specific **RBAC permissions**, which allow it to:
+        - Create, watch, and delete **Jobs** for each execution request.
+        - Manage **ConfigMaps** to inject code into the Job's pod.
+        - List **Pods** and read their **logs** to retrieve the execution result
+    - See the complete, ready-to-use configuration in `contributing/samples/gke_agent_sandbox/deployment_rbac.yaml`.
+    - Install the necessary client library: `pip install google-adk[gke]`
+
+=== "Python"
+
+    ```py
+    from google.adk.agents import LlmAgent
+    from google.adk.code_executors import GkeCodeExecutor
+
+    # Initialize the executor, targeting the namespace where its ServiceAccount
+    # has the required RBAC permissions.
+    gke_executor = GkeCodeExecutor(
+        namespace="agent-sandbox",
+        timeout_seconds=600,
+    )
+
+    # The agent will now use this executor for any code it generates.
+    gke_agent = LlmAgent(
+        name="gke_coding_agent",
+        model="gemini-2.0-flash",
+        instruction="You are a helpful AI agent that writes and executes Python code.",
+        code_executor=gke_executor,
+    )
+    ```
 
 ### Vertex AI Search
 
 The `vertex_ai_search_tool` uses Google Cloud's Vertex AI Search, enabling the
 agent to search across your private, configured data stores (e.g., internal
 documents, company policies, knowledge bases). This built-in tool requires you
-to provide the specific data store ID during configuration.
-
+to provide the specific data store ID during configuration. For further details of the tool, see [Understanding Vertex AI Search grounding](../grounding/vertex_ai_search_grounding.md).
 
 
 ```py
 --8<-- "examples/python/snippets/tools/built-in-tools/vertexai_search.py"
+```
+
+
+### BigQuery
+
+These are a set of tools aimed to provide integration with BigQuery, namely:
+
+* **`list_dataset_ids`**: Fetches BigQuery dataset ids present in a GCP project.
+* **`get_dataset_info`**: Fetches metadata about a BigQuery dataset.
+* **`list_table_ids`**: Fetches table ids present in a BigQuery dataset.
+* **`get_table_info`**: Fetches metadata about a BigQuery table.
+* **`execute_sql`**: Runs a SQL query in BigQuery and fetch the result.
+
+They are packaged in the toolset `BigQueryToolset`.
+
+
+
+```py
+--8<-- "examples/python/snippets/tools/built-in-tools/bigquery.py"
 ```
 
 ## Use Built-in tools with other tools
@@ -100,7 +159,7 @@ to use built-in tools with other tools by using multiple agents:
         instruction="""
         You're a specialist in Code Execution
         """,
-        code_executor=[BuiltInCodeExecutor],
+        code_executor=BuiltInCodeExecutor(),
     )
     root_agent = Agent(
         name="RootAgent",
@@ -187,7 +246,7 @@ to use built-in tools with other tools by using multiple agents:
         model="gemini-2.0-flash",
         description="Root Agent",
         tools=[custom_function], 
-        executor=[BuiltInCodeExecutor] # <-- not supported when used with tools
+        code_executor=BuiltInCodeExecutor() # <-- not supported when used with tools
     )
     ```
 
@@ -227,7 +286,7 @@ is **not** currently supported:
         instruction="""
         You're a specialist in Code Execution
         """,
-        executor=[BuiltInCodeExecutor],
+        code_executor=BuiltInCodeExecutor(),
     )
     root_agent = Agent(
         name="RootAgent",

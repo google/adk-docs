@@ -29,7 +29,7 @@ GEMINI_MODEL = "gemini-2.0-flash"
 code_agent = LlmAgent(
     name=AGENT_NAME,
     model=GEMINI_MODEL,
-    executor=[BuiltInCodeExecutor],
+    code_executor=BuiltInCodeExecutor(),
     instruction="""You are a calculator agent.
     When given a mathematical expression, write and execute Python code to calculate the result.
     Return only the final numerical result as plain text, without markdown or code blocks.
@@ -39,11 +39,11 @@ code_agent = LlmAgent(
 
 # Session and Runner
 session_service = InMemorySessionService()
-session = session_service.create_session(
+session = asyncio.run(session_service.create_session(
     app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID
-)
-runner = Runner(agent=code_agent, app_name=APP_NAME, session_service=session_service)
-
+))
+runner = Runner(agent=code_agent, app_name=APP_NAME,
+                session_service=session_service)
 
 # Agent Interaction (Async)
 async def call_agent_async(query):
@@ -89,7 +89,8 @@ async def call_agent_async(query):
                     final_response_text = event.content.parts[0].text.strip()
                     print(f"==> Final Agent Response: {final_response_text}")
                 else:
-                    print("==> Final Agent Response: [No text content in final event]")
+                    print(
+                        "==> Final Agent Response: [No text content in final event]")
 
     except Exception as e:
         print(f"ERROR during agent run: {e}")

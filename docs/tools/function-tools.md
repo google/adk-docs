@@ -14,21 +14,106 @@ ADK offers several ways to create functions tools, each suited to different leve
 
 ## 1. Function Tool
 
-Transforming a function into a tool is a straightforward way to integrate custom logic into your agents. In fact, when you assign a function to an agent’s tools list, the framework will automatically wrap it as a Function Tool for you. This approach offers flexibility and quick integration.
+Transforming a Python function into a tool is a straightforward way to integrate custom logic into your agents. When you assign a function to an agent’s `tools` list, the framework automatically wraps it as a `FunctionTool`.
 
-### Parameters
+### How it Works
 
-Define your function parameters using standard **JSON-serializable types** (e.g., string, integer, list, dictionary). It's important to avoid setting default values for parameters, as the language model (LLM) does not currently support interpreting them.
+The ADK framework automatically inspects your Python function's signature—including its name, docstring, parameters, type hints, and default values—to generate a schema. This schema is what the LLM uses to understand the tool's purpose, when to use it, and what arguments it requires.
 
-### Return Type
+### Defining Function Signatures
+
+A well-defined function signature is crucial for the LLM to use your tool correctly.
+
+#### Parameters
+
+You can define functions with required parameters, optional parameters, and variadic arguments. Here’s how each is handled:
+
+##### Required Parameters
+A parameter is considered **required** if it has a type hint but **no default value**. The LLM must provide a value for this argument when it calls the tool.
+
+???+ "Example: Required Parameters"
+    === "Python"
+        ```python
+        def get_weather(city: str, unit: str):
+            """
+            Retrieves the weather for a city in the specified unit.
+
+            Args:
+                city (str): The city name.
+                unit (str): The temperature unit, either 'Celsius' or 'Fahrenheit'.
+            """
+            # ... function logic ...
+            return {"status": "success", "report": f"Weather for {city} is sunny."}
+        ```
+    In this example, both `city` and `unit` are mandatory. If the LLM tries to call `get_weather` without one of them, the ADK will return an error to the LLM, prompting it to correct the call.
+
+##### Optional Parameters with Default Values
+A parameter is considered **optional** if you provide a **default value**. This is the standard Python way to define optional arguments. The ADK correctly interprets these and does not list them in the `required` field of the tool schema sent to the LLM.
+
+???+ "Example: Optional Parameter with Default Value"
+    === "Python"
+        ```python
+        def search_flights(destination: str, departure_date: str, flexible_days: int = 0):
+            """
+            Searches for flights.
+
+            Args:
+                destination (str): The destination city.
+                departure_date (str): The desired departure date.
+                flexible_days (int, optional): Number of flexible days for the search. Defaults to 0.
+            """
+            # ... function logic ...
+            if flexible_days > 0:
+                return {"status": "success", "report": f"Found flexible flights to {destination}."}
+            return {"status": "success", "report": f"Found flights to {destination} on {departure_date}."}
+        ```
+    Here, `flexible_days` is optional. The LLM can choose to provide it, but it's not required.
+
+##### Optional Parameters with `typing.Optional`
+You can also mark a parameter as optional using `typing.Optional[SomeType]` or the `| None` syntax (Python 3.10+). This signals that the parameter can be `None`. When combined with a default value of `None`, it behaves as a standard optional parameter.
+
+???+ "Example: `typing.Optional`"
+    === "Python"
+        ```python
+        from typing import Optional
+
+        def create_user_profile(username: str, bio: Optional[str] = None):
+            """
+            Creates a new user profile.
+
+            Args:
+                username (str): The user's unique username.
+                bio (str, optional): A short biography for the user. Defaults to None.
+            """
+            # ... function logic ...
+            if bio:
+                return {"status": "success", "message": f"Profile for {username} created with a bio."}
+            return {"status": "success", "message": f"Profile for {username} created."}
+        ```
+
+##### Variadic Parameters (`*args` and `**kwargs`)
+While you can include `*args` (variable positional arguments) and `**kwargs` (variable keyword arguments) in your function signature for other purposes, they are **ignored by the ADK framework** when generating the tool schema for the LLM. The LLM will not be aware of them and cannot pass arguments to them. It's best to rely on explicitly defined parameters for all data you expect from the LLM.
+
+#### Return Type
 
 The preferred return type for a Function Tool is a **dictionary** in Python or **Map** in Java. This allows you to structure the response with key-value pairs, providing context and clarity to the LLM. If your function returns a type other than a dictionary, the framework automatically wraps it into a dictionary with a single key named **"result"**.
 
-Strive to make your return values as descriptive as possible. *For example,* instead of returning a numeric error code, return a dictionary with an "error\_message" key containing a human-readable explanation. **Remember that the LLM**, not a piece of code, needs to understand the result. As a best practice, include a "status" key in your return dictionary to indicate the overall outcome (e.g., "success", "error", "pending"), providing the LLM with a clear signal about the operation's state.
+Strive to make your return values as descriptive as possible. *For example,* instead of returning a numeric error code, return a dictionary with an "error_message" key containing a human-readable explanation. **Remember that the LLM**, not a piece of code, needs to understand the result. As a best practice, include a "status" key in your return dictionary to indicate the overall outcome (e.g., "success", "error", "pending"), providing the LLM with a clear signal about the operation's state.
 
-### Docstring / Source code comments
+#### Docstrings
 
-The docstring (or comments above) your function serve as the tool's description and is sent to the LLM. Therefore, a well-written and comprehensive docstring is crucial for the LLM to understand how to use the tool effectively. Clearly explain the purpose of the function, the meaning of its parameters, and the expected return values.
+The docstring of your function serves as the tool's **description** and is sent to the LLM. Therefore, a well-written and comprehensive docstring is crucial for the LLM to understand how to use the tool effectively. Clearly explain the purpose of the function, the meaning of its parameters, and the expected return values.
+
+### Passing Data Between Tools
+
+When an agent calls multiple tools in a sequence, you might need to pass data from one tool to another. The recommended way to do this is by using the `temp:` prefix in the session state.
+
+A tool can write data to a `temp:` variable, and a subsequent tool can read it. This data is only available for the current invocation and is discarded afterwards.
+
+!!! note "Shared Invocation Context"
+    All tool calls within a single agent turn share the same `InvocationContext`. This means they also share the same temporary (`temp:`) state, which is how data can be passed between them.
+
+### Example
 
 ??? "Example"
 
@@ -259,4 +344,3 @@ The `AgentTool` class provides the following attributes for customizing its beha
 4. The `summary_agent` will process the text according to its instruction and generate a summary.  
 5. **The response from the `summary_agent` is then passed back to the `main_agent`.**  
 6. The `main_agent` can then take the summary and formulate its final response to the user (e.g., "Here's a summary of the text: ...")
-
