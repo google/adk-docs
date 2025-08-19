@@ -71,8 +71,8 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
   --member="serviceAccount:service-$(gcloud projects describe $PROJECT_ID --format="value(projectNumber)")@gcp-sa-alloydb.iam.gserviceaccount.com" \
 --role="roles/aiplatform.user"
 
-7. Load patent data into the database
-The [Google Patents Public Datasets](https://console.cloud.google.com/launcher/browse?q=google%20patents%20public%20datasets&filter=solution-type:dataset&_ga=2.179551075.-653757248.1714456172) from BigQuery will be used as our dataset. Here is the link: https://console.cloud.google.com/launcher/browse?q=google%20patents%20public%20datasets&filter=solution-type:dataset&_ga=2.179551075.-653757248.1714456172
+7. Load patent data into the database. 
+The [Google Patents Public Datasets](https://console.cloud.google.com/marketplace/product/google_patents_public_datasets/google-patents-public-data) from BigQuery will be used as our dataset.
 
 We will use the AlloyDB Studio to run our queries. The [alloydb-pgvector](https://github.com/AbiramiSukumaran/alloydb-pgvector) repository includes the
 [insert_scripts.sql](https://github.com/AbiramiSukumaran/alloydb-pgvector/blob/main/insert_scripts.sql) script we will run to load the patent data:

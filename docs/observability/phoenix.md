@@ -14,7 +14,7 @@ Phoenix can automatically collect traces from Google ADK using [OpenInference in
 
 ## Installation
 
-### 1. Install Required Packages
+### 1. Install Required Packages { #install-required-packages }
 
 ```bash
 pip install openinference-instrumentation-google-adk google-adk arize-phoenix-otel
@@ -22,27 +22,27 @@ pip install openinference-instrumentation-google-adk google-adk arize-phoenix-ot
 
 ## Setup
 
-### 1. Launch Phoenix
+### 1. Launch Phoenix { #launch-phoenix }
 
 These instructions show you how to use Phoenix Cloud. You can also [launch Phoenix](https://arize.com/docs/phoenix/integrations/llm-providers/google-gen-ai/google-adk-tracing) in a notebook, from your terminal, or self-host it using a container. 
 
-
-First, sign up for a [free Phoenix account](https://phoenix.arize.com/).
+1. Sign up for a [free Phoenix account](https://phoenix.arize.com/). 
+2. From the Settings page of your new Phoenix Space, create your API key
+3. Copy your endpoint which should look like: https://app.phoenix.arize.com/s/[your-space-name]
 
 **Set your Phoenix endpoint and API Key:**
 
 ```python
 import os
 
-# Add Phoenix API Key for tracing
-PHOENIX_API_KEY = "ADD YOUR API KEY"
-os.environ["PHOENIX_CLIENT_HEADERS"] = f"api_key={PHOENIX_API_KEY}"
-os.environ["PHOENIX_COLLECTOR_ENDPOINT"] = "https://app.phoenix.arize.com"
+os.environ["PHOENIX_API_KEY"] = "ADD YOUR PHOENIX API KEY"
+os.environ["PHOENIX_COLLECTOR_ENDPOINT"] = "ADD YOUR PHOENIX COLLECTOR ENDPOINT"
+
+# If you created your Phoenix Cloud instance before June 24th, 2025, set the API key as a header:
+# os.environ["PHOENIX_CLIENT_HEADERS"] = f"api_key={os.getenv('PHOENIX_API_KEY')}"
 ```
 
-Your **Phoenix API key** can be found on the Keys section of your dashboard.
-
-### 2.  Connect your application to Phoenix
+### 2.  Connect your application to Phoenix { #connect-your-application-to-phoenix }
 
 ```python
 from phoenix.otel import register
