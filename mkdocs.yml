@@ -131,6 +131,7 @@ nav:
       - Parallel agents: agents/workflow-agents/parallel-agents.md
     - Custom agents: agents/custom-agents.md
     - Multi-agent systems: agents/multi-agents.md
+    - Agent Config: agents/config.md
     - Models & Authentication: agents/models.md
   - Tools:
     - tools/index.md
@@ -204,4 +205,5 @@ nav:
     - Python ADK: api-reference/python/index.html
     - Java ADK: api-reference/java/index.html
     - CLI Reference: api-reference/cli/index.html
+    - Agent Config reference: api-reference/agentconfig/index.html
     - REST API: api-reference/rest/index.md
