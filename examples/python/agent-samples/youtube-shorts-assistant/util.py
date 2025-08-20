@@ -31,3 +31,6 @@ def load_instruction_from_file(
     except Exception as e:
         print(f"ERROR loading instruction file {filepath}: {e}. Using default.")
     return instruction
+
+
+GEMINI_MODEL = "gemini-2.0-flash"

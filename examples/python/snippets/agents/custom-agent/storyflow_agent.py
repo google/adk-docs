@@ -16,7 +16,7 @@ import logging
 from typing import AsyncGenerator
 from typing_extensions import override
 
-from google.adk.agents import LlmAgent, BaseAgent, LoopAgent, SequentialAgent
+from google.adk.agents import Agent, BaseAgent, LoopAgent, SequentialAgent
 from google.adk.agents.invocation_context import InvocationContext
 from google.genai import types
 from google.adk.sessions import InMemorySessionService
@@ -48,11 +48,11 @@ class StoryFlowAgent(BaseAgent):
 
     # --- Field Declarations for Pydantic ---
     # Declare the agents passed during initialization as class attributes with type hints
-    story_generator: LlmAgent
-    critic: LlmAgent
-    reviser: LlmAgent
-    grammar_check: LlmAgent
-    tone_check: LlmAgent
+    story_generator: Agent
+    critic: Agent
+    reviser: Agent
+    grammar_check: Agent
+    tone_check: Agent
 
     loop_agent: LoopAgent
     sequential_agent: SequentialAgent
@@ -63,22 +63,22 @@ class StoryFlowAgent(BaseAgent):
     def __init__(
         self,
         name: str,
-        story_generator: LlmAgent,
-        critic: LlmAgent,
-        reviser: LlmAgent,
-        grammar_check: LlmAgent,
-        tone_check: LlmAgent,
+        story_generator: Agent,
+        critic: Agent,
+        reviser: Agent,
+        grammar_check: Agent,
+        tone_check: Agent,
     ):
         """
         Initializes the StoryFlowAgent.
 
         Args:
             name: The name of the agent.
-            story_generator: An LlmAgent to generate the initial story.
-            critic: An LlmAgent to critique the story.
-            reviser: An LlmAgent to revise the story based on criticism.
-            grammar_check: An LlmAgent to check the grammar.
-            tone_check: An LlmAgent to analyze the tone.
+            story_generator: An Agent to generate the initial story.
+            critic: An Agent to critique the story.
+            reviser: An Agent to revise the story based on criticism.
+            grammar_check: An Agent to check the grammar.
+            tone_check: An Agent to analyze the tone.
         """
         # Create internal agents *before* calling super().__init__
         loop_agent = LoopAgent(
@@ -168,7 +168,7 @@ class StoryFlowAgent(BaseAgent):
 
 # --8<-- [start:llmagents]
 # --- Define the individual LLM agents ---
-story_generator = LlmAgent(
+story_generator = Agent(
     name="StoryGenerator",
     model=GEMINI_2_FLASH,
     instruction="""You are a story writer. Write a short story (around 100 words), on the following topic: {topic}""",
@@ -176,7 +176,7 @@ story_generator = LlmAgent(
     output_key="current_story",  # Key for storing output in session state
 )
 
-critic = LlmAgent(
+critic = Agent(
     name="Critic",
     model=GEMINI_2_FLASH,
     instruction="""You are a story critic. Review the story provided: {{current_story}}. Provide 1-2 sentences of constructive criticism
@@ -185,7 +185,7 @@ on how to improve it. Focus on plot or character.""",
     output_key="criticism",  # Key for storing criticism in session state
 )
 
-reviser = LlmAgent(
+reviser = Agent(
     name="Reviser",
     model=GEMINI_2_FLASH,
     instruction="""You are a story reviser. Revise the story provided: {{current_story}}, based on the criticism in
@@ -194,7 +194,7 @@ reviser = LlmAgent(
     output_key="current_story",  # Overwrites the original story
 )
 
-grammar_check = LlmAgent(
+grammar_check = Agent(
     name="GrammarCheck",
     model=GEMINI_2_FLASH,
     instruction="""You are a grammar checker. Check the grammar of the story provided: {current_story}. Output only the suggested
@@ -203,7 +203,7 @@ corrections as a list, or output 'Grammar is good!' if there are no errors.""",
     output_key="grammar_suggestions",
 )
 
-tone_check = LlmAgent(
+tone_check = Agent(
     name="ToneCheck",
     model=GEMINI_2_FLASH,
     instruction="""You are a tone analyzer. Analyze the tone of the story provided: {current_story}. Output only one word: 'positive' if
@@ -281,5 +281,7 @@ async def call_agent_async(user_input_topic: str):
 # --- Run the Agent ---
 # Note: In Colab, you can directly use 'await' at the top level.
 # If running this code as a standalone Python script, you'll need to use asyncio.run() or manage the event loop.
+# import asyncio
+# asyncio.run(call_agent_async("a brave kitten exploring a haunted house"))
 await call_agent_async("a lonely robot finding a friend in a junkyard")
 # --8<-- [end:story_flow_agent]

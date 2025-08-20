@@ -27,7 +27,7 @@ logging.basicConfig(
 )
 
 # Your ADK agent code follows...
-# from google.adk.agents import LlmAgent
+# from google.adk.agents import Agent
 # ...
 ```
 

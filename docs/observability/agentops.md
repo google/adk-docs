@@ -84,7 +84,7 @@ AgentOps employs a sophisticated strategy to provide seamless observability with
     AgentOps takes control by wrapping key ADK methods to create a logical hierarchy of spans:
 
     *   **Agent Execution Spans (e.g., `adk.agent.MySequentialAgent`):**
-        When an ADK agent (like `BaseAgent`, `SequentialAgent`, or `LlmAgent`) starts its `run_async` method, AgentOps initiates a parent span for that agent's execution.
+        When an ADK agent (like `BaseAgent`, `SequentialAgent`, or `Agent`) starts its `run_async` method, AgentOps initiates a parent span for that agent's execution.
 
     *   **LLM Interaction Spans (e.g., `adk.llm.gemini-pro`):**
         For calls made by an agent to an LLM (via ADK's `BaseLlmFlow._call_llm_async`), AgentOps creates a dedicated child span, typically named after the LLM model. This span captures request details (prompts, model parameters) and, upon completion (via ADK's `_finalize_model_response_event`), records response details like completions, token usage, and finish reasons.

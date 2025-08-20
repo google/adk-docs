@@ -60,9 +60,9 @@ Follow these steps to integrate an OpenAPI spec into your agent:
 3. **Add to Agent**: Include the retrieved tools in your `LlmAgent`'s `tools` list.
 
     ```python
-    from google.adk.agents import LlmAgent
+    from google.adk.agents import Agent
 
-    my_agent = LlmAgent(
+    my_agent = Agent(
         name="api_interacting_agent",
         model="gemini-2.0-flash", # Or your preferred model
         tools=[toolset], # Pass the toolset

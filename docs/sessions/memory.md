@@ -47,7 +47,7 @@ This example demonstrates the basic flow using the `InMemoryMemoryService` for s
 
     ```py
     import asyncio
-    from google.adk.agents import LlmAgent
+    from google.adk.agents import Agent
     from google.adk.sessions import InMemorySessionService, Session
     from google.adk.memory import InMemoryMemoryService # Import MemoryService
     from google.adk.runners import Runner
@@ -61,14 +61,14 @@ This example demonstrates the basic flow using the `InMemoryMemoryService` for s
 
     # --- Agent Definitions ---
     # Agent 1: Simple agent to capture information
-    info_capture_agent = LlmAgent(
+    info_capture_agent = Agent(
         model=MODEL,
         name="InfoCaptureAgent",
         instruction="Acknowledge the user's statement.",
     )
 
     # Agent 2: Agent that can use memory
-    memory_recall_agent = LlmAgent(
+    memory_recall_agent = Agent(
         model=MODEL,
         name="MemoryRecallAgent",
         instruction="Answer the user's question. Use the 'load_memory' tool "

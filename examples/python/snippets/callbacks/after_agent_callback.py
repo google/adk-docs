@@ -27,7 +27,7 @@
 
 
 # ADK Imports
-from google.adk.agents import LlmAgent
+from google.adk.agents import Agent
 from google.adk.agents.callback_context import CallbackContext
 from google.adk.runners import InMemoryRunner # Use InMemoryRunner
 from google.genai import types # For types.Content
@@ -64,7 +64,7 @@ def modify_output_after_agent(callback_context: CallbackContext) -> Optional[typ
         return None
 
 # --- 2. Setup Agent with Callback ---
-llm_agent_with_after_cb = LlmAgent(
+llm_agent_with_after_cb = Agent(
     name="MySimpleAgentWithAfter",
     model=GEMINI_2_FLASH,
     instruction="You are a simple agent. Just say 'Processing complete!'",

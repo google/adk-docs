@@ -58,7 +58,7 @@ Create an `agent.py` file (e.g., in `./adk_agent_samples/mcp_agent/agent.py`). T
 ```python
 # ./adk_agent_samples/mcp_agent/agent.py
 import os # Required for path operations
-from google.adk.agents import LlmAgent
+from google.adk.agents import Agent
 from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, StdioConnectionParams, StdioServerParameters
 
 # It's good practice to define paths dynamically if possible,
@@ -70,7 +70,7 @@ TARGET_FOLDER_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "/
 # Ensure TARGET_FOLDER_PATH is an absolute path for the MCP server.
 # If you created ./adk_agent_samples/mcp_agent/your_folder,
 
-root_agent = LlmAgent(
+root_agent = Agent(
     model='gemini-2.0-flash',
     name='filesystem_assistant_agent',
     instruction='Help the user manage their files. You can list files, read files, etc.',
@@ -260,7 +260,7 @@ Modify your `agent.py` file (e.g., in `./adk_agent_samples/mcp_agent/agent.py`).
 ```python
 # ./adk_agent_samples/mcp_agent/agent.py
 import os
-from google.adk.agents import LlmAgent
+from google.adk.agents import Agent
 from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, StdioConnectionParams, StdioServerParameters
 
 # Retrieve the API key from an environment variable or directly insert it.
@@ -276,7 +276,7 @@ if not google_maps_api_key:
         print("WARNING: GOOGLE_MAPS_API_KEY is not set. Please set it as an environment variable or in the script.")
         # You might want to raise an error or exit if the key is crucial and not found.
 
-root_agent = LlmAgent(
+root_agent = Agent(
     model='gemini-2.0-flash',
     name='maps_assistant_agent',
     instruction='Help the user with mapping, directions, and finding places using Google Maps tools.',
@@ -604,7 +604,7 @@ Create an `agent.py` (e.g., in `./adk_agent_samples/mcp_client_agent/agent.py`):
 ```python
 # ./adk_agent_samples/mcp_client_agent/agent.py
 import os
-from google.adk.agents import LlmAgent
+from google.adk.agents import Agent
 from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset, StdioConnectionParams, StdioServerParameters
 
 # IMPORTANT: Replace this with the ABSOLUTE path to your my_adk_mcp_server.py script
@@ -614,7 +614,7 @@ if PATH_TO_YOUR_MCP_SERVER_SCRIPT == "/path/to/your/my_adk_mcp_server.py":
     print("WARNING: PATH_TO_YOUR_MCP_SERVER_SCRIPT is not set. Please update it in agent.py.")
     # Optionally, raise an error if the path is critical
 
-root_agent = LlmAgent(
+root_agent = Agent(
     model='gemini-2.0-flash',
     name='web_reader_mcp_client_agent',
     instruction="Use the 'load_web_page' tool to fetch content from a URL provided by the user.",
@@ -689,7 +689,7 @@ import os
 import asyncio
 from dotenv import load_dotenv
 from google.genai import types
-from google.adk.agents.llm_agent import LlmAgent
+from google.adk.agents import Agent
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 from google.adk.artifacts.in_memory_artifact_service import InMemoryArtifactService # Optional
@@ -721,7 +721,7 @@ async def get_agent_async():
   )
 
   # Use in an agent
-  root_agent = LlmAgent(
+  root_agent = Agent(
       model='gemini-2.0-flash', # Adjust model name if needed based on availability
       name='enterprise_assistant',
       instruction='Help user accessing their file systems',
@@ -806,14 +806,14 @@ When deploying ADK agents that use MCP tools to production environments like Clo
 ```python
 # ✅ CORRECT: Synchronous agent definition for deployment
 import os
-from google.adk.agents.llm_agent import LlmAgent
+from google.adk.agents import Agent
 from google.adk.tools.mcp_tool import StdioConnectionParams
 from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset
 from mcp import StdioServerParameters
 
 _allowed_path = os.path.dirname(os.path.abspath(__file__))
 
-root_agent = LlmAgent(
+root_agent = Agent(
     model='gemini-2.0-flash',
     name='enterprise_assistant',
     instruction=f'Help user accessing their file systems. Allowed directory: {_allowed_path}',
@@ -841,7 +841,7 @@ root_agent = LlmAgent(
 # ❌ WRONG: Asynchronous patterns don't work in deployment
 async def get_agent():  # This won't work for deployment
     toolset = await create_mcp_toolset_async()
-    return LlmAgent(tools=[toolset])
+    return Agent(tools=[toolset])
 ```
 
 ### Quick Deployment Commands

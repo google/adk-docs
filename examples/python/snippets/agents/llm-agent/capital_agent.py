@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# --- Full example code demonstrating LlmAgent with Tools vs. Output Schema ---
+# --- Full example code demonstrating Agent with Tools vs. Output Schema ---
 import json # Needed for pretty printing dicts
 
-from google.adk.agents import LlmAgent
+from google.adk.agents import Agent
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 from google.genai import types
@@ -58,7 +58,7 @@ def get_capital_city(country: str) -> str:
 # --- 4. Configure Agents ---
 
 # Agent 1: Uses a tool and output_key
-capital_agent_with_tool = LlmAgent(
+capital_agent_with_tool = Agent(
     model=MODEL_NAME,
     name="capital_agent_tool",
     description="Retrieves the capital city using a specific tool.",
@@ -74,7 +74,7 @@ The user will provide the country name in a JSON format like {"country": "countr
 )
 
 # Agent 2: Uses output_schema (NO tools possible)
-structured_info_agent_schema = LlmAgent(
+structured_info_agent_schema = Agent(
     model=MODEL_NAME,
     name="structured_info_agent_schema",
     description="Provides capital and estimated population in a specific JSON format.",
@@ -112,7 +112,7 @@ structured_runner = Runner(
 # --- 6. Define Agent Interaction Logic ---
 async def call_agent_and_print(
     runner_instance: Runner,
-    agent_instance: LlmAgent,
+    agent_instance: Agent,
     session_id: str,
     query_json: str
 ):

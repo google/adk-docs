@@ -16,7 +16,7 @@ import asyncio
 import uuid # For unique session IDs
 from dotenv import load_dotenv
 
-from google.adk.agents import LlmAgent
+from google.adk.agents import Agent
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 from google.genai import types
@@ -144,7 +144,7 @@ petstore_toolset = OpenAPIToolset(
 )
 
 # --- Agent Definition ---
-root_agent = LlmAgent(
+root_agent = Agent(
     name=AGENT_NAME_OPENAPI,
     model=GEMINI_MODEL,
     tools=[petstore_toolset], # Pass the list of RestApiTool objects

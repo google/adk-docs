@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from google.adk.agents import LlmAgent
+from google.adk.agents import Agent
 from google.adk.runners import Runner
 from typing import Optional
 from google.genai import types 
@@ -73,8 +73,8 @@ def simple_after_tool_modifier(
     return None
 
 
-# Create LlmAgent and Assign Callback
-my_llm_agent = LlmAgent(
+# Create Agent and Assign Callback
+my_llm_agent = Agent(
         name="AfterToolCallbackAgent",
         model=GEMINI_2_FLASH,
         instruction="You are an agent that finds capital cities using the get_capital_city tool. Report the result clearly.",

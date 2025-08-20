@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import asyncio
-from google.adk.agents import LlmAgent
+from google.adk.agents import Agent
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 from google.adk.code_executors import BuiltInCodeExecutor
@@ -26,7 +26,7 @@ SESSION_ID = "session_code_exec_async"
 GEMINI_MODEL = "gemini-2.0-flash"
 
 # Agent Definition
-code_agent = LlmAgent(
+code_agent = Agent(
     name=AGENT_NAME,
     model=GEMINI_MODEL,
     code_executor=BuiltInCodeExecutor(),

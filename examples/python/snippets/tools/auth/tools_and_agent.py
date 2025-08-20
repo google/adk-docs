@@ -3,7 +3,7 @@ import os
 from google.adk.auth.auth_schemes import OpenIdConnectWithConfig
 from google.adk.auth.auth_credential import AuthCredential, AuthCredentialTypes, OAuth2Auth
 from google.adk.tools.openapi_tool.openapi_spec_parser.openapi_toolset import OpenAPIToolset
-from google.adk.agents.llm_agent import LlmAgent
+from google.adk.agents import Agent
 
 # --- Authentication Configuration ---
 # This section configures how the agent will handle authentication using OpenID Connect (OIDC),
@@ -57,7 +57,7 @@ userinfo_toolset = OpenAPIToolset(
 
 # --- Agent Configuration ---
 # Configure and create the main LLM Agent.
-root_agent = LlmAgent(
+root_agent = Agent(
     model='gemini-2.0-flash',
     name='enterprise_assistant',
     instruction='Help user integrate with multiple enterprise systems, including retrieving user information which may require authentication.',

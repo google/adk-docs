@@ -106,10 +106,10 @@ you only need to follow a subset of these steps.
    definition:
 
     ```py
-    from google.adk.agents.llm_agent import LlmAgent
+    from google.adk.agents import Agent
     from .tools import sample_toolset
 
-    root_agent = LlmAgent(
+    root_agent = Agent(
         model='gemini-2.0-flash',
         name='enterprise_assistant',
         instruction='Help user, leverage the tools you have access to',
@@ -366,10 +366,10 @@ To create an Application Integration Toolset for Integration Connectors, follow 
 2. Update the `agent.py` file and add tool to your agent:
 
     ```py
-    from google.adk.agents.llm_agent import LlmAgent
+    from google.adk.agents import Agent
     from .tools import connector_tool
 
-    root_agent = LlmAgent(
+    root_agent = Agent(
         model='gemini-2.0-flash',
         name='connector_agent',
         instruction="Help user, leverage the tools you have access to",
@@ -472,10 +472,10 @@ workflow as a tool for your agent or create a new one.
     To update the `agent.py` file and add the tool to your agent, use the following code:
     
       ```py
-          from google.adk.agents.llm_agent import LlmAgent
+          from google.adk.agents import Agent
           from .tools import integration_tool, connector_tool
       
-          root_agent = LlmAgent(
+          root_agent = Agent(
               model='gemini-2.0-flash',
               name='integration_agent',
               instruction="Help user, leverage the tools you have access to",

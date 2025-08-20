@@ -6,7 +6,7 @@ In ADK, a multi-agent system is an application where different agents, often for
 
 You can compose various types of agents derived from `BaseAgent` to build these systems:
 
-* **LLM Agents:** Agents powered by large language models. (See [LLM Agents](llm-agents.md))
+* **LLM Agents:** Agents (`LlmAgent` or `Agent` for Python, `LlmAgent` for Java) powered by large language models. (See [LLM Agents](llm-agents.md))
 * **Workflow Agents:** Specialized agents (`SequentialAgent`, `ParallelAgent`, `LoopAgent`) designed to manage the execution flow of their sub-agents. (See [Workflow Agents](workflow-agents/index.md))
 * **Custom agents:** Your own agents inheriting from `BaseAgent` with specialized, non-LLM logic. (See [Custom Agents](custom-agents.md))
 
@@ -31,14 +31,14 @@ The foundation for structuring multi-agent systems is the parent-child relations
 
     ```python
     # Conceptual Example: Defining Hierarchy
-    from google.adk.agents import LlmAgent, BaseAgent
+    from google.adk.agents import Agent, BaseAgent
     
     # Define individual agents
-    greeter = LlmAgent(name="Greeter", model="gemini-2.0-flash")
+    greeter = Agent(name="Greeter", model="gemini-2.0-flash")
     task_doer = BaseAgent(name="TaskExecutor") # Custom non-LLM agent
     
     # Create parent agent and assign children via sub_agents
-    coordinator = LlmAgent(
+    coordinator = Agent(
         name="Coordinator",
         model="gemini-2.0-flash",
         description="I coordinate greetings and tasks.",
@@ -88,10 +88,10 @@ ADK includes specialized agents derived from `BaseAgent` that don't perform task
 
     ```python
     # Conceptual Example: Sequential Pipeline
-    from google.adk.agents import SequentialAgent, LlmAgent
+    from google.adk.agents import SequentialAgent, Agent
 
-    step1 = LlmAgent(name="Step1_Fetch", output_key="data") # Saves output to state['data']
-    step2 = LlmAgent(name="Step2_Process", instruction="Process data from {data}.")
+    step1 = Agent(name="Step1_Fetch", output_key="data") # Saves output to state['data']
+    step2 = Agent(name="Step2_Process", instruction="Process data from {data}.")
 
     pipeline = SequentialAgent(name="MyPipeline", sub_agents=[step1, step2])
     # When pipeline runs, Step2 can access the state['data'] set by Step1.
@@ -119,10 +119,10 @@ ADK includes specialized agents derived from `BaseAgent` that don't perform task
 
     ```python
     # Conceptual Example: Parallel Execution
-    from google.adk.agents import ParallelAgent, LlmAgent
+    from google.adk.agents import ParallelAgent, Agent
 
-    fetch_weather = LlmAgent(name="WeatherFetcher", output_key="weather")
-    fetch_news = LlmAgent(name="NewsFetcher", output_key="news")
+    fetch_weather = Agent(name="WeatherFetcher", output_key="weather")
+    fetch_news = Agent(name="NewsFetcher", output_key="news")
 
     gatherer = ParallelAgent(name="InfoGatherer", sub_agents=[fetch_weather, fetch_news])
     # When gatherer runs, WeatherFetcher and NewsFetcher run concurrently.
@@ -163,7 +163,7 @@ ADK includes specialized agents derived from `BaseAgent` that don't perform task
 
       ```python
       # Conceptual Example: Loop with Condition
-      from google.adk.agents import LoopAgent, LlmAgent, BaseAgent
+      from google.adk.agents import LoopAgent, Agent, BaseAgent
       from google.adk.events import Event, EventActions
       from google.adk.agents.invocation_context import InvocationContext
       from typing import AsyncGenerator
@@ -174,7 +174,7 @@ ADK includes specialized agents derived from `BaseAgent` that don't perform task
               is_done = (status == "completed")
               yield Event(author=self.name, actions=EventActions(escalate=is_done)) # Escalate if done
 
-      process_step = LlmAgent(name="ProcessingStep") # Agent that might update state['status']
+      process_step = Agent(name="ProcessingStep") # Agent that might update state['status']
 
       poller = LoopAgent(
           name="StatusPoller",
@@ -243,10 +243,10 @@ The most fundamental way for agents operating within the same invocation (and th
 
     ```python
     # Conceptual Example: Using output_key and reading state
-    from google.adk.agents import LlmAgent, SequentialAgent
+    from google.adk.agents import Agent, SequentialAgent
     
-    agent_A = LlmAgent(name="AgentA", instruction="Find the capital of France.", output_key="capital_city")
-    agent_B = LlmAgent(name="AgentB", instruction="Tell me about the city stored in {capital_city}.")
+    agent_A = Agent(name="AgentA", instruction="Find the capital of France.", output_key="capital_city")
+    agent_B = Agent(name="AgentB", instruction="Tell me about the city stored in {capital_city}.")
     
     pipeline = SequentialAgent(name="CityInfo", sub_agents=[agent_A, agent_B])
     # AgentA runs, saves "Paris" to state['capital_city'].
@@ -279,23 +279,23 @@ The most fundamental way for agents operating within the same invocation (and th
 
 #### b) LLM-Driven Delegation (Agent Transfer)
 
-Leverages an [`LlmAgent`](llm-agents.md)'s understanding to dynamically route tasks to other suitable agents within the hierarchy.
+Leverages an [`Agent`](llm-agents.md)'s understanding to dynamically route tasks to other suitable agents within the hierarchy.
 
 * **Mechanism:** The agent's LLM generates a specific function call: `transfer_to_agent(agent_name='target_agent_name')`.
 * **Handling:** The `AutoFlow`, used by default when sub-agents are present or transfer isn't disallowed, intercepts this call. It identifies the target agent using `root_agent.find_agent()` and updates the `InvocationContext` to switch execution focus.
-* **Requires:** The calling `LlmAgent` needs clear `instructions` on when to transfer, and potential target agents need distinct `description`s for the LLM to make informed decisions. Transfer scope (parent, sub-agent, siblings) can be configured on the `LlmAgent`.
+* **Requires:** The calling `Agent` needs clear `instructions` on when to transfer, and potential target agents need distinct `description`s for the LLM to make informed decisions. Transfer scope (parent, sub-agent, siblings) can be configured on the `Agent`.
 * **Nature:** Dynamic, flexible routing based on LLM interpretation.
 
 === "Python"
 
     ```python
     # Conceptual Setup: LLM Transfer
-    from google.adk.agents import LlmAgent
+    from google.adk.agents import Agent
     
-    booking_agent = LlmAgent(name="Booker", description="Handles flight and hotel bookings.")
-    info_agent = LlmAgent(name="Info", description="Provides general information and answers questions.")
+    booking_agent = Agent(name="Booker", description="Handles flight and hotel bookings.")
+    info_agent = Agent(name="Info", description="Provides general information and answers questions.")
     
-    coordinator = LlmAgent(
+    coordinator = Agent(
         name="Coordinator",
         model="gemini-2.0-flash",
         instruction="You are an assistant. Delegate booking tasks to Booker and info requests to Info.",
@@ -353,11 +353,11 @@ Allows an [`LlmAgent`](llm-agents.md) to treat another `BaseAgent` instance as a
 
     ```python
     # Conceptual Setup: Agent as a Tool
-    from google.adk.agents import LlmAgent, BaseAgent
+    from google.adk.agents import Agent, BaseAgent
     from google.adk.tools import agent_tool
     from pydantic import BaseModel
     
-    # Define a target agent (could be LlmAgent or custom BaseAgent)
+    # Define a target agent (could be Agent or custom BaseAgent)
     class ImageGeneratorAgent(BaseAgent): # Example custom agent
         name: str = "ImageGen"
         description: str = "Generates an image based on a prompt."
@@ -372,7 +372,7 @@ Allows an [`LlmAgent`](llm-agents.md) to treat another `BaseAgent` instance as a
     image_tool = agent_tool.AgentTool(agent=image_agent) # Wrap the agent
     
     # Parent agent uses the AgentTool
-    artist_agent = LlmAgent(
+    artist_agent = Agent(
         name="Artist",
         model="gemini-2.0-flash",
         instruction="Create a prompt and use the ImageGen tool to generate the image.",
@@ -463,12 +463,12 @@ By combining ADK's composition primitives, you can implement various established
 
     ```python
     # Conceptual Code: Coordinator using LLM Transfer
-    from google.adk.agents import LlmAgent
+    from google.adk.agents import Agent
     
-    billing_agent = LlmAgent(name="Billing", description="Handles billing inquiries.")
-    support_agent = LlmAgent(name="Support", description="Handles technical support requests.")
+    billing_agent = Agent(name="Billing", description="Handles billing inquiries.")
+    support_agent = Agent(name="Support", description="Handles technical support requests.")
     
-    coordinator = LlmAgent(
+    coordinator = Agent(
         name="HelpDeskCoordinator",
         model="gemini-2.0-flash",
         instruction="Route user requests: Use Billing agent for payment issues, Support agent for technical problems.",
@@ -524,11 +524,11 @@ By combining ADK's composition primitives, you can implement various established
 
     ```python
     # Conceptual Code: Sequential Data Pipeline
-    from google.adk.agents import SequentialAgent, LlmAgent
+    from google.adk.agents import SequentialAgent, Agent
     
-    validator = LlmAgent(name="ValidateInput", instruction="Validate the input.", output_key="validation_status")
-    processor = LlmAgent(name="ProcessData", instruction="Process data if {validation_status} is 'valid'.", output_key="result")
-    reporter = LlmAgent(name="ReportResult", instruction="Report the result from {result}.")
+    validator = Agent(name="ValidateInput", instruction="Validate the input.", output_key="validation_status")
+    processor = Agent(name="ProcessData", instruction="Process data if {validation_status} is 'valid'.", output_key="result")
+    reporter = Agent(name="ReportResult", instruction="Report the result from {result}.")
     
     data_pipeline = SequentialAgent(
         name="DataPipeline",
@@ -584,17 +584,17 @@ By combining ADK's composition primitives, you can implement various established
 
     ```python
     # Conceptual Code: Parallel Information Gathering
-    from google.adk.agents import SequentialAgent, ParallelAgent, LlmAgent
+    from google.adk.agents import SequentialAgent, ParallelAgent, Agent
     
-    fetch_api1 = LlmAgent(name="API1Fetcher", instruction="Fetch data from API 1.", output_key="api1_data")
-    fetch_api2 = LlmAgent(name="API2Fetcher", instruction="Fetch data from API 2.", output_key="api2_data")
+    fetch_api1 = Agent(name="API1Fetcher", instruction="Fetch data from API 1.", output_key="api1_data")
+    fetch_api2 = Agent(name="API2Fetcher", instruction="Fetch data from API 2.", output_key="api2_data")
     
     gather_concurrently = ParallelAgent(
         name="ConcurrentFetch",
         sub_agents=[fetch_api1, fetch_api2]
     )
     
-    synthesizer = LlmAgent(
+    synthesizer = Agent(
         name="Synthesizer",
         instruction="Combine results from {api1_data} and {api2_data}."
     )
@@ -658,15 +658,15 @@ By combining ADK's composition primitives, you can implement various established
 
     ```python
     # Conceptual Code: Hierarchical Research Task
-    from google.adk.agents import LlmAgent
+    from google.adk.agents import Agent
     from google.adk.tools import agent_tool
     
     # Low-level tool-like agents
-    web_searcher = LlmAgent(name="WebSearch", description="Performs web searches for facts.")
-    summarizer = LlmAgent(name="Summarizer", description="Summarizes text.")
+    web_searcher = Agent(name="WebSearch", description="Performs web searches for facts.")
+    summarizer = Agent(name="Summarizer", description="Summarizes text.")
     
     # Mid-level agent combining tools
-    research_assistant = LlmAgent(
+    research_assistant = Agent(
         name="ResearchAssistant",
         model="gemini-2.0-flash",
         description="Finds and summarizes information on a topic.",
@@ -674,7 +674,7 @@ By combining ADK's composition primitives, you can implement various established
     )
     
     # High-level agent delegating research
-    report_writer = LlmAgent(
+    report_writer = Agent(
         name="ReportWriter",
         model="gemini-2.0-flash",
         instruction="Write a report on topic X. Use the ResearchAssistant to gather information.",
@@ -740,15 +740,15 @@ By combining ADK's composition primitives, you can implement various established
 
     ```python
     # Conceptual Code: Generator-Critic
-    from google.adk.agents import SequentialAgent, LlmAgent
+    from google.adk.agents import SequentialAgent, Agent
     
-    generator = LlmAgent(
+    generator = Agent(
         name="DraftWriter",
         instruction="Write a short paragraph about subject X.",
         output_key="draft_text"
     )
     
-    reviewer = LlmAgent(
+    reviewer = Agent(
         name="FactChecker",
         instruction="Review the text in {draft_text} for factual accuracy. Output 'valid' or 'invalid' with reasons.",
         output_key="review_status"
@@ -807,20 +807,20 @@ By combining ADK's composition primitives, you can implement various established
 
     ```python
     # Conceptual Code: Iterative Code Refinement
-    from google.adk.agents import LoopAgent, LlmAgent, BaseAgent
+    from google.adk.agents import LoopAgent, Agent, BaseAgent
     from google.adk.events import Event, EventActions
     from google.adk.agents.invocation_context import InvocationContext
     from typing import AsyncGenerator
     
     # Agent to generate/refine code based on state['current_code'] and state['requirements']
-    code_refiner = LlmAgent(
+    code_refiner = Agent(
         name="CodeRefiner",
         instruction="Read state['current_code'] (if exists) and state['requirements']. Generate/refine Python code to meet requirements. Save to state['current_code'].",
         output_key="current_code" # Overwrites previous code in state
     )
     
     # Agent to check if the code meets quality standards
-    quality_checker = LlmAgent(
+    quality_checker = Agent(
         name="QualityChecker",
         instruction="Evaluate the code in state['current_code'] against state['requirements']. Output 'pass' or 'fail'.",
         output_key="quality_status"
@@ -913,7 +913,7 @@ By combining ADK's composition primitives, you can implement various established
 
     ```python
     # Conceptual Code: Using a Tool for Human Approval
-    from google.adk.agents import LlmAgent, SequentialAgent
+    from google.adk.agents import Agent, SequentialAgent
     from google.adk.tools import FunctionTool
     
     # --- Assume external_approval_tool exists ---
@@ -926,14 +926,14 @@ By combining ADK's composition primitives, you can implement various established
     approval_tool = FunctionTool(func=external_approval_tool)
     
     # Agent that prepares the request
-    prepare_request = LlmAgent(
+    prepare_request = Agent(
         name="PrepareApproval",
         instruction="Prepare the approval request details based on user input. Store amount and reason in state.",
         # ... likely sets state['approval_amount'] and state['approval_reason'] ...
     )
     
     # Agent that calls the human approval tool
-    request_approval = LlmAgent(
+    request_approval = Agent(
         name="RequestHumanApproval",
         instruction="Use the external_approval_tool with amount from state['approval_amount'] and reason from state['approval_reason'].",
         tools=[approval_tool],
@@ -941,7 +941,7 @@ By combining ADK's composition primitives, you can implement various established
     )
     
     # Agent that proceeds based on human decision
-    process_decision = LlmAgent(
+    process_decision = Agent(
         name="ProcessDecision",
         instruction="Check {human_decision}. If 'approved', proceed. If 'rejected', inform user."
     )

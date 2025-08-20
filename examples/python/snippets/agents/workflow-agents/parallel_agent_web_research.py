@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from google.adk.agents.parallel_agent import ParallelAgent
-from google.adk.agents.llm_agent import LlmAgent
+from google.adk.agents.llm_agent import Agent
 # Import SequentialAgent to orchestrate the parallel and merge steps
 from google.adk.agents.sequential_agent import SequentialAgent
 # Use InMemoryRunner for local testing/prototyping
@@ -33,7 +33,7 @@ GEMINI_MODEL = "gemini-2.0-flash"
 # --- 1. Define Researcher Sub-Agents (to run in parallel) ---
 
 # Researcher 1: Renewable Energy
-researcher_agent_1 = LlmAgent(
+researcher_agent_1 = Agent(
     name="RenewableEnergyResearcher",
     model=GEMINI_MODEL,
     instruction="""You are an AI Research Assistant specializing in energy.
@@ -49,7 +49,7 @@ Output *only* the summary.
 )
 
 # Researcher 2: Electric Vehicles
-researcher_agent_2 = LlmAgent(
+researcher_agent_2 = Agent(
     name="EVResearcher",
     model=GEMINI_MODEL,
     instruction="""You are an AI Research Assistant specializing in transportation.
@@ -65,7 +65,7 @@ Output *only* the summary.
 )
 
 # Researcher 3: Carbon Capture
-researcher_agent_3 = LlmAgent(
+researcher_agent_3 = Agent(
     name="CarbonCaptureResearcher",
     model=GEMINI_MODEL,
     instruction="""You are an AI Research Assistant specializing in climate solutions.
@@ -92,7 +92,7 @@ parallel_research_agent = ParallelAgent(
 # --- 3. Define the Merger Agent (Runs *after* the parallel agents) ---
 # This agent takes the results stored in the session state by the parallel agents
 # and synthesizes them into a single, structured response with attributions.
-merger_agent = LlmAgent(
+merger_agent = Agent(
     name="SynthesisAgent",
     model=GEMINI_MODEL,  # Or potentially a more powerful model if needed for synthesis
     instruction="""You are an AI Assistant responsible for combining research findings into a structured report.

@@ -125,10 +125,10 @@ For deployed applications, a service account is the standard method.
 === "Python"
 
     ```python
-    from google.adk.agents import LlmAgent
+    from google.adk.agents import Agent
     
     # --- Example using a stable Gemini Flash model ---
-    agent_gemini_flash = LlmAgent(
+    agent_gemini_flash = Agent(
         # Use the latest stable Flash model identifier
         model="gemini-2.0-flash",
         name="gemini_flash_agent",
@@ -140,9 +140,9 @@ For deployed applications, a service account is the standard method.
     # Note: Always check the official Gemini documentation for the latest model names,
     # including specific preview versions if needed. Preview models might have
     # different availability or quota limitations.
-    agent_gemini_pro = LlmAgent(
+    agent_gemini_pro = Agent(
         # Use the latest generally available Pro model identifier
-        model="gemini-2.5-pro-preview-03-25",
+        model="gemini-2.5-pro",
         name="gemini_pro_agent",
         instruction="You are a powerful and knowledgeable Gemini assistant.",
         # ... other agent parameters
@@ -166,13 +166,13 @@ For deployed applications, a service account is the standard method.
     LlmAgent agentGeminiPro =
         LlmAgent.builder()
             // Use the latest generally available Pro model identifier
-            .model(new Gemini("gemini-2.5-pro-preview-03-25",
+            .model(new Gemini("gemini-2.5-pro",
                 Client.builder()
                     .vertexAI(false)
                     .apiKey("API_KEY") // Set the API Key (or) project/ location
                     .build()))
             // Or, you can also directly pass the API_KEY
-            // .model(new Gemini("gemini-2.5-pro-preview-03-25", "API_KEY"))
+            // .model(new Gemini("gemini-2.5-pro", "API_KEY"))
             .name("gemini_pro_agent")
             .instruction("You are a powerful and knowledgeable Gemini assistant.")
             // ... other agent parameters

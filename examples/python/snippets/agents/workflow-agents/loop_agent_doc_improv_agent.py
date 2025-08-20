@@ -17,7 +17,7 @@
 
 import asyncio
 import os
-from google.adk.agents import LoopAgent, LlmAgent, BaseAgent, SequentialAgent
+from google.adk.agents import LoopAgent, Agent, BaseAgent, SequentialAgent
 from google.genai import types
 from google.adk.runners import InMemoryRunner
 from google.adk.agents.invocation_context import InvocationContext
@@ -49,7 +49,7 @@ def exit_loop(tool_context: ToolContext):
 # --- Agent Definitions ---
 
 # STEP 1: Initial Writer Agent (Runs ONCE at the beginning)
-initial_writer_agent = LlmAgent(
+initial_writer_agent = Agent(
     name="InitialWriterAgent",
     model=GEMINI_MODEL,
     include_contents='none',
@@ -66,7 +66,7 @@ initial_writer_agent = LlmAgent(
 )
 
 # STEP 2a: Critic Agent (Inside the Refinement Loop)
-critic_agent_in_loop = LlmAgent(
+critic_agent_in_loop = Agent(
     name="CriticAgent",
     model=GEMINI_MODEL,
     include_contents='none',
@@ -95,7 +95,7 @@ critic_agent_in_loop = LlmAgent(
 
 
 # STEP 2b: Refiner/Exiter Agent (Inside the Refinement Loop)
-refiner_agent_in_loop = LlmAgent(
+refiner_agent_in_loop = Agent(
     name="RefinerAgent",
     model=GEMINI_MODEL,
     # Relies solely on state via placeholders

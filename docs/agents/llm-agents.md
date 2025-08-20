@@ -1,17 +1,17 @@
 # LLM Agent
 
-The `LlmAgent` (often aliased simply as `Agent`) is a core component in ADK,
+The `Agent` (an alias of `LlmAgent`) is a core component in ADK,
 acting as the "thinking" part of your application. It leverages the power of a
 Large Language Model (LLM) for reasoning, understanding natural language, making
 decisions, generating responses, and interacting with tools.
 
 Unlike deterministic [Workflow Agents](workflow-agents/index.md) that follow
-predefined execution paths, `LlmAgent` behavior is non-deterministic. It uses
+predefined execution paths, `Agent` behavior is non-deterministic. It uses
 the LLM to interpret instructions and context, deciding dynamically how to
 proceed, which tools to use (if any), or whether to transfer control to another
 agent.
 
-Building an effective `LlmAgent` involves defining its identity, clearly guiding
+Building an effective `Agent` involves defining its identity, clearly guiding
 its behavior through instructions, and equipping it with the necessary tools and
 capabilities.
 
@@ -41,7 +41,7 @@ First, you need to establish what the agent *is* and what it's *for*.
 
     ```python
     # Example: Defining the basic identity
-    capital_agent = LlmAgent(
+    capital_agent = Agent(
         model="gemini-2.0-flash",
         name="capital_agent",
         description="Answers user questions about the capital city of a given country."
@@ -66,7 +66,7 @@ First, you need to establish what the agent *is* and what it's *for*.
 ## Guiding the Agent: Instructions (`instruction`)
 
 The `instruction` parameter is arguably the most critical for shaping an
-`LlmAgent`'s behavior. It's a string (or a function returning a string) that
+`Agent`'s behavior. It's a string (or a function returning a string) that
 tells the agent:
 
 * Its core task or goal.
@@ -93,7 +93,7 @@ tells the agent:
 
     ```python
     # Example: Adding instructions
-    capital_agent = LlmAgent(
+    capital_agent = Agent(
         model="gemini-2.0-flash",
         name="capital_agent",
         description="Answers user questions about the capital city of a given country.",
@@ -138,7 +138,7 @@ tells the agent:
 
 ## Equipping the Agent: Tools (`tools`)
 
-Tools give your `LlmAgent` capabilities beyond the LLM's built-in knowledge or
+Tools give your `Agent` capabilities beyond the LLM's built-in knowledge or
 reasoning. They allow the agent to interact with the outside world, perform
 calculations, fetch real-time data, or execute specific actions.
 
@@ -162,7 +162,7 @@ on the conversation and its instructions.
       return capitals.get(country.lower(), f"Sorry, I don't know the capital of {country}.")
     
     # Add the tool to the agent
-    capital_agent = LlmAgent(
+    capital_agent = Agent(
         model="gemini-2.0-flash",
         name="capital_agent",
         description="Answers user questions about the capital city of a given country.",
@@ -208,7 +208,7 @@ Learn more about Tools in the [Tools](../tools/index.md) section.
 
 ## Advanced Configuration & Control
 
-Beyond the core parameters, `LlmAgent` offers several options for finer control:
+Beyond the core parameters, `Agent` offers several options for finer control:
 
 ### Fine-Tuning LLM Generation (`generate_content_config`)
 
@@ -221,7 +221,7 @@ You can adjust how the underlying LLM generates responses using `generate_conten
     ```python
     from google.genai import types
 
-    agent = LlmAgent(
+    agent = Agent(
         # ... other params
         generate_content_config=types.GenerateContentConfig(
             temperature=0.2, # More deterministic output
@@ -268,7 +268,7 @@ For scenarios requiring structured data exchange with an `LLM Agent`, the ADK pr
     class CapitalOutput(BaseModel):
         capital: str = Field(description="The capital of the country.")
     
-    structured_capital_agent = LlmAgent(
+    structured_capital_agent = Agent(
         # ... name, model, description
         instruction="""You are a Capital Information Agent. Given a country, respond ONLY with a JSON object containing the capital. Format: {"capital": "capital_name"}""",
         output_schema=CapitalOutput, # Enforce JSON output
@@ -317,7 +317,7 @@ Control whether the agent receives the prior conversation history.
 === "Python"
 
     ```python
-    stateless_agent = LlmAgent(
+    stateless_agent = Agent(
         # ... other params
         include_contents='none'
     )
@@ -411,7 +411,7 @@ import asyncio
 import os
 
 from google.genai import types
-from google.adk.agents.llm_agent import LlmAgent
+from google.adk.agents import Agent
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 from google.adk.artifacts.in_memory_artifact_service import InMemoryArtifactService # Optional
@@ -492,9 +492,9 @@ planner = BuiltInPlanner(
 )
 print("BuiltInPlanner created.")
 
-# Step 3: Wrap the planner in an LlmAgent
-agent = LlmAgent(
-    model="gemini-2.5-pro-preview-03-25",  # Set your model name
+# Step 3: Wrap the planner in an Agent
+agent = Agent(
+    model="gemini-2.5-pro",  # Set your model name
     name="weather_and_time_agent",
     instruction="You are an agent that returns time and weather",
     planner=planner,
@@ -542,7 +542,7 @@ _(This example demonstrates the core concepts. More complex agents might incorpo
 
 ## Related Concepts (Deferred Topics)
 
-While this page covers the core configuration of `LlmAgent`, several related concepts provide more advanced control and are detailed elsewhere:
+While this page covers the core configuration of `Agent`, several related concepts provide more advanced control and are detailed elsewhere:
 
 * **Callbacks:** Intercepting execution points (before/after model calls, before/after tool calls) using `before_model_callback`, `after_model_callback`, etc. See [Callbacks](../callbacks/types-of-callbacks.md).
 * **Multi-Agent Control:** Advanced strategies for agent interaction, including planning (`planner`), controlling agent transfer (`disallow_transfer_to_parent`, `disallow_transfer_to_peers`), and system-wide instructions (`global_instruction`). See [Multi-Agents](multi-agents.md).
