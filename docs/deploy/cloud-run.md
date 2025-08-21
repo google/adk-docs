@@ -158,6 +158,7 @@ export GOOGLE_API_KEY=your-api-key
         import os
 
         import uvicorn
+        from fastapi import FastAPI
         from google.adk.cli.fast_api import get_fast_api_app
 
         # Get the directory where main.py is located
@@ -171,9 +172,9 @@ export GOOGLE_API_KEY=your-api-key
 
         # Call the function to get the FastAPI app instance
         # Ensure the agent directory name ('capital_agent') matches your agent folder
-        app = get_fast_api_app(
-            agent_dir=AGENT_DIR,
-            session_db_url=SESSION_SERVICE_URI,
+        app: FastAPI = get_fast_api_app(
+            agents_dir=AGENT_DIR,
+            session_service_uri=SESSION_SERVICE_URI,
             allow_origins=ALLOWED_ORIGINS,
             web=SERVE_WEB_INTERFACE,
         )
