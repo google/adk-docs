@@ -3,6 +3,10 @@ hide:
   - toc
 ---
 
+!!! tip "What's new"
+    Build agents without code. Check out the
+    [Agent Config](/adk-docs/agents/config/) feature.
+
 <div style="text-align: center;">
   <div class="centered-logo-text-group">
     <img src="assets/agent-development-kit.png" alt="Agent Development Kit Logo" width="100">
