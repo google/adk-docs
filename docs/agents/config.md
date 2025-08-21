@@ -39,19 +39,19 @@ the Agent Config files.
 
 !!! note
     The Agent Config feature currently only supports Gemini models. For more
-    information about additional; functional restrictions, see [Known
-    limitations](?tab=t.0#heading=h.xefmlyt7zh0i)
+    information about additional; functional restrictions, see
+    [Known limitations](#known-limitations).
 
 To setup ADK for use with Agent Config:
 
 1.  Install the ADK Python libraries by following the
-    [Installation](https://google.github.io/adk-docs/get-started/installation/#python)
+    [Installation](/adk-docs/get-started/installation/#python)
     instructions. *Python is currently required.* For more information, see the
     [Known limitations](?tab=t.0#heading=h.xefmlyt7zh0i).
 1.  Verify that ADK is installed by running the following command in your
     terminal:
 
-        adk –version
+        adk --version
 
     This command should show the ADK version you have installed.
 
@@ -59,7 +59,7 @@ To setup ADK for use with Agent Config:
     If the `adk` command fails to run and the version is not listed in step 2, make
     sure your Python environment is active. Execute `source .venv/bin/activate` in
     your terminal on Mac and Linux. For other platform commands, see the
-    [Installation](https://google.github.io/adk-docs/get-started/installation/#python)
+    [Installation](/adk-docs/get-started/installation/#python)
     page.
 
 ### Build an agent
@@ -88,9 +88,9 @@ To create an ADK project for use with Agent Config:
             GOOGLE_API_KEY=<your-Google-Gemini-API-key>
 
         You can get an API key from the Google AI Studio 
-        [API Keys](google.com/app/apikey) page.
+        [API Keys](https://aistudio.google.com/app/apikey) page.
 
-    1.  For Gemini model access through Google Cloud, add these lines to the file
+    1.  For Gemini model access through Google Cloud, add these lines to the file:
 
             GOOGLE_GENAI_USE_VERTEXAI=1
             GOOGLE_CLOUD_PROJECT=<your_gcp_project>
@@ -115,7 +115,7 @@ You can discover more configuration options for your `root_agent.yaml` agent
 configuration file by referring to the ADK
 [samples repository](https://github.com/search?q=repo%3Agoogle%2Fadk-python+path%3A%2F%5Econtributing%5C%2Fsamples%5C%2F%2F+.yaml&type=code)
 or the
-[Agent Config syntax](https://google.github.io/adk-docs/api-reference/agentconfig/)
+[Agent Config syntax](/adk-docs/api-reference/agentconfig/)
 reference.
 
 ### Run the agent
@@ -136,9 +136,9 @@ To run your Agent Config-defined agent:
 
 For more information on the ways to run your agent, see the *Run Your Agent*
 topic in the
-[Quickstart](https://google.github.io/adk-docs/get-started/quickstart/#run-your-agent).
-For more information about the ADK command line options, see the [ADK CLI
-reference](https://google.github.io/adk-docs/api-reference/cli/).
+[Quickstart](/adk-docs/get-started/quickstart/#run-your-agent).
+For more information about the ADK command line options, see the 
+[ADK CLI reference](/adk-docs/api-reference/cli/).
 
 ## Example configs
 
@@ -223,12 +223,12 @@ For more details, see the full code for this sample in the
 ## Deploy agent configs
 
 You can deploy Agent Config agents with 
-[Cloud Run](https://google.github.io/adk-docs/deploy/cloud-run/) and 
-[Agent Engine](https://google.github.io/adk-docs/deploy/agent-engine/), 
+[Cloud Run](/adk-docs/deploy/cloud-run/) and 
+[Agent Engine](/adk-docs/deploy/agent-engine/), 
 using the same procedure as code-based agents. For more information on how 
 to prepare and deploy Agent Config-based agents, see the 
-[Cloud Run](https://google.github.io/adk-docs/deploy/cloud-run/) and 
-[Agent Engine](https://google.github.io/adk-docs/deploy/agent-engine/)
+[Cloud Run](/adk-docs/deploy/cloud-run/) and 
+[Agent Engine](/adk-docs/deploy/agent-engine/)
 deployment guides.
 
 ## Known limitations {#known-limitations}
@@ -268,4 +268,4 @@ agent definitions in the ADK
 [adk-samples](https://github.com/search?q=repo:google/adk-python+path:/%5Econtributing%5C/samples%5C//+root_agent.yaml&type=code)
 repository. For detailed information on the syntax and settings supported by 
 the Agent Config format, see the
-[Agent Config syntax reference](https://google.github.io/adk-docs/api-reference/agentconfig/).
+[Agent Config syntax reference](/adk-docs/api-reference/agentconfig/).
