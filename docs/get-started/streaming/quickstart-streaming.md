@@ -126,9 +126,17 @@ cd app
 
 Also, set `SSL_CERT_FILE` variable with the following command. This is required for the voice and video tests later.
 
-```shell
-export SSL_CERT_FILE=$(python -m certifi)
-```
+=== "OS X &amp; Linux"
+    ```bash
+    export SSL_CERT_FILE=$(python -m certifi)
+    ```
+
+=== "Windows"
+    ```powershell
+    $env:SSL_CERT_FILE = (python -m certifi)
+    ```
+
+
 
 Then, run the dev UI:
 
