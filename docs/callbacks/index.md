@@ -24,6 +24,8 @@ Callbacks are a cornerstone feature of ADK, providing a powerful mechanism to ho
 * **Manage State:** Read or dynamically update the agent's session state during execution.  
 * **Integrate & Enhance:** Trigger external actions (API calls, notifications) or add features like caching.
 
+Tip: When implementing security guardrails and policies, use ADK Plugins for better modularity and flexibility than Callbacks. For more details, see <link to above page and header>.
+
 **How are they added:** 
 
 ??? "Code"
