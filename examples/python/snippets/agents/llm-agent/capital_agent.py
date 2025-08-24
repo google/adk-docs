@@ -14,6 +14,7 @@
 
 # --- Full example code demonstrating LlmAgent with Tools vs. Output Schema ---
 import json # Needed for pretty printing dicts
+import asyncio
 
 from google.adk.agents import LlmAgent
 from google.adk.runners import Runner
@@ -161,4 +162,4 @@ async def main():
 # Note: In Colab, you can directly use 'await' at the top level.
 # If running this code as a standalone Python script, you'll need to use asyncio.run() or manage the event loop.
 if __name__ == "__main__":
-    await main()
+    asyncio.run(main())
