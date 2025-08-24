@@ -13,7 +13,7 @@
 # limitations under the License.
 
 # --8<-- [start:callback_basic]
-from google.adk.agents import LlmAgent
+from google.adk.agents import Agent
 from google.adk.agents.callback_context import CallbackContext
 from google.adk.models import LlmResponse, LlmRequest
 from typing import Optional
@@ -27,7 +27,7 @@ def my_before_model_logic(
     return None # Allow the model call to proceed
 
 # --- Register it during Agent creation ---
-my_agent = LlmAgent(
+my_agent = Agent(
     name="MyCallbackAgent",
     model="gemini-2.0-flash", # Or your desired model
     instruction="Be helpful.",

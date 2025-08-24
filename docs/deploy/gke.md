@@ -116,7 +116,7 @@ Create the following files (`main.py`, `requirements.txt`, `Dockerfile`, `capita
 1. This is the Capital Agent example inside the `capital_agent` directory
 
     ```python title="capital_agent/agent.py"
-    from google.adk.agents import LlmAgent 
+    from google.adk.agents import Agent 
 
     # Define a tool function
     def get_capital_city(country: str) -> str:
@@ -126,7 +126,7 @@ Create the following files (`main.py`, `requirements.txt`, `Dockerfile`, `capita
       return capitals.get(country.lower(), f"Sorry, I don't know the capital of {country}.")
 
     # Add the tool to the agent
-    capital_agent = LlmAgent(
+    capital_agent = Agent(
         model="gemini-2.0-flash",
         name="capital_agent", #name of your agent
         description="Answers user questions about the capital city of a given country.",
@@ -160,7 +160,7 @@ Create the following files (`main.py`, `requirements.txt`, `Dockerfile`, `capita
     SESSION_SERVICE_URI = "sqlite:///./sessions.db"
     # Example allowed origins for CORS
     ALLOWED_ORIGINS = ["http://localhost", "http://localhost:8080", "*"]
-    # Set web=True if you intend to serve a web interface, False otherwise
+    # Set True if you intend to serve a web interface, False otherwise
     SERVE_WEB_INTERFACE = True
 
     # Call the function to get the FastAPI app instance

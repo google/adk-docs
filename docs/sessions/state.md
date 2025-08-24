@@ -73,7 +73,7 @@ Prefixes on state keys define their scope and persistence behavior, especially w
 
 ### Accessing Session State in Agent Instructions
 
-When working with `LlmAgent` instances, you can directly inject session state values into the agent's instruction string using a simple templating syntax. This allows you to create dynamic and context-aware instructions without relying solely on natural language directives.
+When working with `LlmAgent` (Aliased as `Agent` in Python) instances, you can directly inject session state values into the agent's instruction string using a simple templating syntax. This allows you to create dynamic and context-aware instructions without relying solely on natural language directives.
 
 #### Using `{key}` Templating
 
@@ -82,9 +82,9 @@ To inject a value from the session state, enclose the key of the desired state v
 **Example:**
 
 ```python
-from google.adk.agents import LlmAgent
+from google.adk.agents import Agent
 
-story_generator = LlmAgent(
+story_generator = Agent(
     name="StoryGenerator",
     model="gemini-2.0-flash",
     instruction="""Write a short story about a cat, focusing on the theme: {topic}."""
@@ -112,7 +112,7 @@ The `InstructionProvider` function receives a `ReadonlyContext` object, which yo
 === "Python"
 
     ```python
-    from google.adk.agents import LlmAgent
+    from google.adk.agents import Agent
     from google.adk.agents.readonly_context import ReadonlyContext
 
     # This is an InstructionProvider
@@ -121,7 +121,7 @@ The `InstructionProvider` function receives a `ReadonlyContext` object, which yo
         # For this example, we'll return a static string with literal braces.
         return "This is an instruction with {{literal_braces}} that will not be replaced."
 
-    agent = LlmAgent(
+    agent = Agent(
         model="gemini-2.0-flash",
         name="template_helper_agent",
         instruction=my_instruction_provider
@@ -133,7 +133,7 @@ If you want to both use an `InstructionProvider` *and* inject state into your in
 === "Python"
 
     ```python
-    from google.adk.agents import LlmAgent
+    from google.adk.agents import Agent
     from google.adk.agents.readonly_context import ReadonlyContext
     from google.adk.utils import instructions_utils
 
@@ -142,7 +142,7 @@ If you want to both use an `InstructionProvider` *and* inject state into your in
         # This will inject the 'adjective' state variable but leave the literal braces.
         return await instructions_utils.inject_session_state(template, context)
 
-    agent = LlmAgent(
+    agent = Agent(
         model="gemini-2.0-flash",
         name="dynamic_template_helper_agent",
         instruction=my_dynamic_instruction_provider
@@ -157,7 +157,7 @@ If you want to both use an `InstructionProvider` *and* inject state into your in
 
 **Relation to Other State Access Methods**
 
-This direct injection method is specific to LlmAgent instructions. Refer to the following section for more information on other state access methods.
+This direct injection method is specific to `LlmAgent` instructions. Refer to the following section for more information on other state access methods.
 
 ### How State is Updated: Recommended Methods
 
@@ -175,13 +175,13 @@ This is the simplest method for saving an agent's final text response directly i
 === "Python"
 
     ```py
-    from google.adk.agents import LlmAgent
+    from google.adk.agents import Agent
     from google.adk.sessions import InMemorySessionService, Session
     from google.adk.runners import Runner
     from google.genai.types import Content, Part
 
     # Define agent with output_key
-    greeting_agent = LlmAgent(
+    greeting_agent = Agent(
         name="Greeter",
         model="gemini-2.0-flash", # Use a valid model
         instruction="Generate a short, friendly greeting.",

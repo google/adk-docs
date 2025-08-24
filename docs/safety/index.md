@@ -226,7 +226,7 @@ When modifications to the tools to add guardrails aren't possible, the [**`Befor
       return None
     
     # Hypothetical Agent setup
-    root_agent = LlmAgent( # Use specific agent type
+    root_agent = Agent( # Use specific agent type
         model='gemini-2.0-flash',
         name='root_agent',
         instruction="...",

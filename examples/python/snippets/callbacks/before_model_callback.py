@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from google.adk.agents import LlmAgent
+from google.adk.agents import Agent
 from google.adk.agents.callback_context import CallbackContext
 from google.adk.models import LlmResponse, LlmRequest
 from google.adk.runners import Runner
@@ -71,8 +71,8 @@ def simple_before_model_modifier(
         return None
 
 
-# Create LlmAgent and Assign Callback
-my_llm_agent = LlmAgent(
+# Create Agent and Assign Callback
+my_llm_agent = Agent(
         name="ModelCallbackAgent",
         model=GEMINI_2_FLASH,
         instruction="You are a helpful assistant.", # Base instruction

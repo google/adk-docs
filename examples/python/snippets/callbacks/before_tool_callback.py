@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from google.adk.agents import LlmAgent
+from google.adk.agents import Agent
 from google.adk.runners import Runner
 from typing import Optional
 from google.genai import types 
@@ -61,7 +61,7 @@ def simple_before_tool_modifier(
     print("[Callback] Proceeding with original or previously modified args.")
     return None
 
-my_llm_agent = LlmAgent(
+my_llm_agent = Agent(
         name="ToolCallbackAgent",
         model=GEMINI_2_FLASH,
         instruction="You are an agent that can find capital cities. Use the get_capital_city tool.",

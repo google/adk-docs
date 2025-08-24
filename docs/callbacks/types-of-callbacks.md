@@ -4,7 +4,7 @@ The framework provides different types of callbacks that trigger at various stag
 
 ## Agent Lifecycle Callbacks
 
-These callbacks are available on *any* agent that inherits from `BaseAgent` (including `LlmAgent`, `SequentialAgent`, `ParallelAgent`, `LoopAgent`, etc).
+These callbacks are available on *any* agent that inherits from `BaseAgent` (including `LlmAgent` (Aliased as `Agent` in Python), `SequentialAgent`, `ParallelAgent`, `LoopAgent`, etc).
 
 !!! Note
     The specific method names or return types may vary slightly by SDK language (e.g., return `None` in Python, return `Optional.empty()` or `Maybe.empty()` in Java). Refer to the language-specific API documentation for details.

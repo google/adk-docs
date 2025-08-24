@@ -81,7 +81,7 @@ critical.
 === "Python"
 
     ```py
-    from google.adk.agents import LlmAgent
+    from google.adk.agents import Agent
     from google.adk.code_executors import GkeCodeExecutor
 
     # Initialize the executor, targeting the namespace where its ServiceAccount
@@ -92,7 +92,7 @@ critical.
     )
 
     # The agent will now use this executor for any code it generates.
-    gke_agent = LlmAgent(
+    gke_agent = Agent(
         name="gke_coding_agent",
         model="gemini-2.0-flash",
         instruction="You are a helpful AI agent that writes and executes Python code.",

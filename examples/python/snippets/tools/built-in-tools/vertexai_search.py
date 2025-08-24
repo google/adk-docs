@@ -14,7 +14,7 @@
 
 import asyncio
 
-from google.adk.agents import LlmAgent
+from google.adk.agents import Agent
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 from google.genai import types
@@ -36,7 +36,7 @@ GEMINI_2_FLASH = "gemini-2.0-flash"
 vertex_search_tool = VertexAiSearchTool(data_store_id=DATASTORE_PATH)
 
 # Agent Definition
-doc_qa_agent = LlmAgent(
+doc_qa_agent = Agent(
     name=AGENT_NAME_VSEARCH,
     model=GEMINI_2_FLASH, # Requires Gemini model
     tools=[vertex_search_tool],

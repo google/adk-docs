@@ -15,7 +15,7 @@ ADK is built around a few key primitives and concepts that make it
 powerful and flexible. Here are the essentials:
 
 * **Agent:** The fundamental worker unit designed for specific tasks. Agents can
-  use language models (`LlmAgent`) for complex reasoning, or act as deterministic controllers of the execution, which are called "[workflow agents](../agents/workflow-agents/index.md)" (`SequentialAgent`, `ParallelAgent`, `LoopAgent`).
+  use language models (`LlmAgent`, `Agent`) for complex reasoning, or act as deterministic controllers of the execution, which are called "[workflow agents](../agents/workflow-agents/index.md)" (`SequentialAgent`, `ParallelAgent`, `LoopAgent`).
 * **Tool:** Gives agents abilities beyond conversation, letting them interact
   with external APIs, search information, run code, or call other services.
 * **Callbacks:** Custom code snippets you provide to run at specific points in

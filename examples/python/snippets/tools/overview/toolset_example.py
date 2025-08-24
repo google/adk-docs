@@ -15,7 +15,7 @@
 import asyncio
 from typing import Optional, List, Dict, Any
 
-from google.adk.agents import LlmAgent, ReadonlyContext
+from google.adk.agents import Agent, ReadonlyContext
 from google.adk.tools import BaseTool, FunctionTool, BaseToolset
 from google.adk.tools.tool_context import ToolContext  # For tool implementation
 from google.adk.runners import Runner  # For conceptual run
@@ -100,7 +100,7 @@ greet_tool = FunctionTool(func=greet_user)
 math_toolset_instance = SimpleMathToolset(prefix="calculator_")
 
 # 5. Define an agent that uses both the individual tool and the toolset
-calculator_agent = LlmAgent(
+calculator_agent = Agent(
     name="CalculatorAgent",
     model="gemini-2.0-flash",  # Replace with your desired model
     instruction="You are a helpful calculator and greeter. "

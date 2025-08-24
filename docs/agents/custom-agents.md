@@ -1,6 +1,6 @@
 !!! warning "Advanced Concept"
 
-    Building custom agents by directly implementing `_run_async_impl` (or its equivalent in other languages) provides powerful control but is more complex than using the predefined `LlmAgent` or standard `WorkflowAgent` types. We recommend understanding those foundational agent types first before tackling custom orchestration logic.
+    Building custom agents by directly implementing `_run_async_impl` (or its equivalent in other languages) provides powerful control but is more complex than using the predefined `Agent` or standard `WorkflowAgent` types. We recommend understanding those foundational agent types first before tackling custom orchestration logic.
 
 # Custom agents
 
@@ -125,11 +125,11 @@ The core of any custom agent is the method where you define its unique asynchron
 
 ## Managing Sub-Agents and State
 
-Typically, a custom agent orchestrates other agents (like `LlmAgent`, `LoopAgent`, etc.).
+Typically, a custom agent orchestrates other agents (like `Agent`, `LoopAgent`, etc.).
 
 * **Initialization:** You usually pass instances of these sub-agents into your custom agent's constructor and store them as instance fields/attributes (e.g., `this.story_generator = story_generator_instance` or `self.story_generator = story_generator_instance`). This makes them accessible within the custom agent's core asynchronous execution logic (such as: `_run_async_impl` method).
 * **Sub Agents List:** When initializing the `BaseAgent` using it's `super()` constructor, you should pass a `sub agents` list. This list tells the ADK framework about the agents that are part of this custom agent's immediate hierarchy. It's important for framework features like lifecycle management, introspection, and potentially future routing capabilities, even if your core execution logic (`_run_async_impl`) calls the agents directly via `self.xxx_agent`. Include the agents that your custom logic directly invokes at the top level.
-* **State:** As mentioned, `ctx.session.state` is the standard way sub-agents (especially `LlmAgent`s using `output key`) communicate results back to the orchestrator and how the orchestrator passes necessary inputs down.
+* **State:** As mentioned, `ctx.session.state` is the standard way sub-agents (especially `Agent`s using `output key`) communicate results back to the orchestrator and how the orchestrator passes necessary inputs down.
 
 ## Design Pattern Example: `StoryFlowAgent`
 
@@ -195,7 +195,7 @@ Let's illustrate the power of custom agents with an example pattern: a multi-sta
 
 ### Part 3: Defining the LLM Sub-Agents { #part-3-defining-the-llm-sub-agents }
 
-These are standard `LlmAgent` definitions, responsible for specific tasks. Their `output key` parameter is crucial for placing results into the `session.state` where other agents or the custom orchestrator can access them.
+These are standard `Agent` definitions, responsible for specific tasks. Their `output key` parameter is crucial for placing results into the `session.state` where other agents or the custom orchestrator can access them.
 
 !!! tip "Direct State Injection in Instructions"
     Notice the `story_generator`'s instruction. The `{var}` syntax is a placeholder. Before the instruction is sent to the LLM, the ADK framework automatically replaces (Example:`{topic}`) with the value of `session.state['topic']`. This is the recommended way to provide context to an agent, using templating in the instructions. For more details, see the [State documentation](../sessions/state.md#accessing-session-state-in-agent-instructions).

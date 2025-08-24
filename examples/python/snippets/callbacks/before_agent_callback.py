@@ -26,7 +26,7 @@
 # # https://google.github.io/adk-docs/agents/models/
 
 # ADK Imports
-from google.adk.agents import LlmAgent
+from google.adk.agents import Agent
 from google.adk.agents.callback_context import CallbackContext
 from google.adk.runners import InMemoryRunner # Use InMemoryRunner
 from google.genai import types # For types.Content
@@ -59,11 +59,11 @@ def check_if_agent_should_run(callback_context: CallbackContext) -> Optional[typ
         )
     else:
         print(f"[Callback] State condition not met: Proceeding with agent {agent_name}.")
-        # Return None to allow the LlmAgent's normal execution
+        # Return None to allow the Agent's normal execution
         return None
 
 # --- 2. Setup Agent with Callback ---
-llm_agent_with_before_cb = LlmAgent(
+llm_agent_with_before_cb = Agent(
     name="MyControlledAgent",
     model=GEMINI_2_FLASH,
     instruction="You are a concise assistant.",

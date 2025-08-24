@@ -37,7 +37,7 @@ from opentelemetry.sdk import trace as trace_sdk
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor
 from opentelemetry import trace
 
-from google.adk.agents import LlmAgent
+from google.adk.agents import Agent
 from google.adk.tools import FunctionTool
 
 from dotenv import load_dotenv
@@ -87,7 +87,7 @@ def calculator(a: float, b: float) -> str:
 calculator_tool = FunctionTool(func=calculator)
 
 # Create an LLM agent
-root_agent = LlmAgent(
+root_agent = Agent(
     name="MathAgent",
     model="gemini-2.0-flash-exp",
     instruction=(
