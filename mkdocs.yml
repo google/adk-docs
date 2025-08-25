@@ -22,9 +22,6 @@ extra:
   second_repo_url: https://github.com/google/adk-java
   second_repo_name: adk-java
   second_repo_icon: fontawesome/brands/github
-  analytics:
-    provider: google
-    property: !ENV GOOGLE_ANALYTICS_KEY
 
 # Configuration
 theme:
