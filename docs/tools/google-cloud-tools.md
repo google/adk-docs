@@ -285,8 +285,6 @@ Connect your agent to enterprise applications using
    
 #### Create an Application Integration Toolset
 
-Application Integration Toolset supports `auth_scheme` and `auth_credential` for **dynamic OAuth2 authentication** for Integration Connectors. 
-
 To create an Application Integration Toolset for Integration Connectors, follow these steps: 
 
 1.  Create a tool with `ApplicationIntegrationToolset` in the `tools.py` file:
@@ -312,7 +310,7 @@ To create an Application Integration Toolset for Integration Connectors, follow 
     * To find the list of supported entities and actions for a connection, use the Connectors APIs: [listActions](https://cloud.google.com/integration-connectors/docs/reference/rest/v1/projects.locations.connections.connectionSchemaMetadata/listActions) or [listEntityTypes](https://cloud.google.com/integration-connectors/docs/reference/rest/v1/projects.locations.connections.connectionSchemaMetadata/listEntityTypes).
 
 
-    `ApplicationIntegrationToolset` also supports `auth_scheme` and `auth_credential` for dynamic OAuth2 authentication for Integration Connectors. To use it, create a tool similar to this in the `tools.py` file:
+    `ApplicationIntegrationToolset` also supports `auth_scheme` and `auth_credential` for **dynamic OAuth2 authentication** for Integration Connectors. To use it, create a tool similar to this in the `tools.py` file:
 
     ```py
     from google.adk.tools.application_integration_tool.application_integration_toolset import ApplicationIntegrationToolset
