@@ -1,4 +1,4 @@
-# Safety & Security for AI Agents
+# Safety and Security for AI Agents
 
 ## Overview
 
@@ -280,15 +280,15 @@ When modifications to the tools to add guardrails aren't possible, the [**`Befor
     }
     ```
 
-However, when adding security guardrails to your agent applications, plugins are the recommended approach for implementing policies that are not specific to a single agent. Plugins offer a more flexible, modular, and reusable solution. Plugins are designed to be self-contained and modular, allowing you to create individual plugins for specific security policies, and apply them globally at the runner level. This means that a security plugin can be configured once and applied to every agent that uses the runner, ensuring consistent security guardrails across your entire application without repetitive code.
+However, when adding security guardrails to your agent applications, plugins are the recommended approach for implementing policies that are not specific to a single agent. Plugins are designed to be self-contained and modular, allowing you to create individual plugins for specific security policies, and apply them globally at the runner level. This means that a security plugin can be configured once and applied to every agent that uses the runner, ensuring consistent security guardrails across your entire application without repetitive code.
 
 Some examples include:
 
-* **Gemini as a Judge Plugin**: A plugin that uses Gemini Flash Lite to evaluate user inputs, tool I/O, and agent's response for appropriateness, prompt injection and/or jailbreak detection. Gemini will be configured to act as a safety filter to mitigate against content safety, brand safety, and agent misalignment. The plugin is configured to pass user input, tool I/O, and model output to Gemini Flash Lite, who decides if the input to the agent is safe or unsafe. If Gemini decides the input is unsafe, the agent will throw a predetermined response: "Sorry I cannot help with that. Can I help you with something else?".
+* **Gemini as a Judge Plugin**: This plugin uses Gemini Flash Lite to evaluate user inputs, tool input and output, and agent's response for appropriateness, prompt injection, and jailbreak detection. The plugin configures Gemini to act as a safety filter to mitigate against content safety, brand safety, and agent misalignment. The plugin is configured to pass user input, tool input and output, and model output to Gemini Flash Lite, who decides if the input to the agent is safe or unsafe. If Gemini decides the input is unsafe, the agent returns a predetermined response: "Sorry I cannot help with that. Can I help you with something else?".
 
-* **Model Armor Plugin**: A plugin that queries the model armor API to check for potential content safety violations at specified points of agent execution. Similar to the _Gemini as a Judge_ plugin, if Model Armor finds matches of harmful content, throw a predetermined response back to the user.
+* **Model Armor Plugin**: A plugin that queries the model armor API to check for potential content safety violations at specified points of agent execution. Similar to the _Gemini as a Judge_ plugin, if Model Armor finds matches of harmful content, it returns a predetermined response to the user.
 
-* **PII Redaction Plugin**: A specialized plugin with a **`Before Tool Callback`** specifically created to redact personally identifiable information before it’s processed by a tool or sent to an external service.
+* **PII Redaction Plugin**: A specialized plugin with design for the [Before Tool Callback](/adk-docs/plugins/#tool-callbacks) and specifically created to redact personally identifiable information before it’s processed by a tool or sent to an external service.
 
 
 ### Sandboxed Code Execution
