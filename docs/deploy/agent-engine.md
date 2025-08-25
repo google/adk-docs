@@ -245,20 +245,23 @@ To include an image, you can use `types.Part.from_uri`, providing a Google Cloud
 ```python
 from google.genai import types
 
-image_part = types.Part.from_uri(
-    file_uri="gs://cloud-samples-data/generative-ai/image/scones.jpg",
-    mime_type="image/jpeg",
-)
-text_part = types.Part.from_text(
-    text="What is in this image?",
-)
+image_message = {
+    "role": "user",
+    "parts": [
+        {
+            "file_data": {
+                "file_uri": "gs://cloud-samples-data/generative-ai/image/scones.jpg",
+                "mime_type": "image/jpeg",
+            },
+        },
+        {
+            "text": "what is in this image?",
+        },
+    ]
+}
 
-for event in remote_app.stream_query(
-    user_id="u_456",
-    session_id=remote_session["id"],
-    message=[text_part, image_part],
-):
-    print(event)
+for event in agent_engine.stream_query(user_id="u_456", session_id=remote_session["id"], message=image_message):
+    print (event)
 ```
 
 !!!note
