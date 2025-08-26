@@ -8,39 +8,59 @@ and scale AI agents in production. Agent Engine handles the infrastructure to
 scale agents in production so you can focus on creating intelligent and
 impactful applications.
 
+This guide provides a step-by-step walkthrough for deploying an agent from your local environment.
+
+## Prerequisites
+
+Before you begin, ensure you have the following:
+
+1.  **Google Cloud Project**: A Google Cloud project with the [Vertex AI API enabled](https://console.cloud.google.com/flows/enableapi?apiid=aiplatform.googleapis.com).
+
+2.  **Authenticated gcloud CLI**: You need to be authenticated with Google Cloud. Run the following command in your terminal:
+    ```shell
+    gcloud auth application-default login
+    ```
+
+3.  **Google Cloud Storage (GCS) Bucket**: Agent Engine requires a GCS bucket to stage your agent's code and dependencies for deployment.
+
+    If you don't have a bucket, create one using this command, replacing `your-bucket-name` with a unique name:
+    ```shell
+    gsutil mb gs://your-bucket-name
+    ```
+
+4.  **Python Environment**: A Python version between 3.9 and 3.13.
+
+5.  **Install Vertex AI SDK**
+
+    Agent Engine is part of the Vertex AI SDK for Python. For more information, you can review the [Agent Engine quickstart documentation](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/quickstart).
+
+    ```shell
+    pip install "google-cloud-aiplatform[adk,agent_engines]" cloudpickle
+    ```
+
+## Step 1: Define Your Agent
+
+First, define your agent. You can use the sample agent below, which has two tools (to get weather or retrieve the time in a specified city):
+    ```python title="agent.py"
+    --8<-- "examples/python/snippets/get-started/multi_tool_agent/agent.py"
+    ```
+
+## Step 2: Initialize Vertex AI
+
+Next, initialize the Vertex AI SDK. This tells the SDK which Google Cloud project and region to use, and where to stage files for deployment.
+
+!!! tip "For IDE Users"
+    You can place this initialization code in a separate `deploy.py` script along with the deployment logic from Step 5.
+
 ```python
-from vertexai import agent_engines
-
-remote_app = agent_engines.create(
-    agent_engine=root_agent,
-    requirements=[
-        "google-cloud-aiplatform[adk,agent_engines]",
-    ]
-)
-```
-
-## Install Vertex AI SDK
-
-Agent Engine is part of the Vertex AI SDK for Python. For more information, you can review the [Agent Engine quickstart documentation](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/quickstart).
-
-### Install the Vertex AI SDK
-
-```shell
-pip install "google-cloud-aiplatform[adk,agent_engines]" cloudpickle
-```
-
-!!!info
-    Agent Engine only supports Python version >=3.9 and <=3.13.
-
-### Initialization
-
-```py
 import vertexai
 
-PROJECT_ID = "your-project-id"
-LOCATION = "us-central1"
-STAGING_BUCKET = "gs://your-google-cloud-storage-bucket"
+# TODO: Fill in these values for your project
+PROJECT_ID = "your-gcp-project-id"
+LOCATION = "us-central1"  # For other options, see https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview#supported-regions
+STAGING_BUCKET = "gs://your-gcs-bucket-name"
 
+# Initialize the Vertex AI SDK
 vertexai.init(
     project=PROJECT_ID,
     location=LOCATION,
@@ -48,23 +68,17 @@ vertexai.init(
 )
 ```
 
-For `LOCATION`, you can check out the list of [supported regions in Agent Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview#supported-regions).
+## Step 3: Prepare the Agent for Deployment
 
-### Create your agent
-
-You can use the sample agent below, which has two tools (to get weather or retrieve the time in a specified city):
+To make your agent compatible with Agent Engine, you need to wrap it in an `AdkApp` object.
 
 ```python
---8<-- "examples/python/snippets/get-started/multi_tool_agent/agent.py"
-```
-
-### Prepare your agent for Agent Engine
-
-Use `reasoning_engines.AdkApp()` to wrap your agent to make it deployable to Agent Engine
-
-```py
 from vertexai.preview import reasoning_engines
 
+# If you saved your agent in agent.py:
+# from agent import root_agent
+
+# Wrap the agent in an AdkApp object
 app = reasoning_engines.AdkApp(
     agent=root_agent,
     enable_tracing=True,
@@ -74,15 +88,16 @@ app = reasoning_engines.AdkApp(
 !!!info
     When an AdkApp is deployed to Agent Engine, it automatically uses `VertexAiSessionService` for persistent, managed session state. This provides multi-turn conversational memory without any additional configuration. For local testing, the application defaults to a temporary, in-memory session service.
 
-### Try your agent locally
+## Step 4: Test Your Agent Locally (Optional)
 
-You can try it locally before deploying to Agent Engine.
+Before deploying, you can test your agent's behavior locally.
 
-#### Create session (local)
+The `stream_query` method returns a stream of events that represent the agent's execution trace.
 
-```py
+```python
+# Create a local session to maintain conversation history
 session = app.create_session(user_id="u_123")
-session
+print(session)
 ```
 
 Expected output for `create_session` (local):
@@ -91,41 +106,34 @@ Expected output for `create_session` (local):
 Session(id='c6a33dae-26ef-410c-9135-b434a528291f', app_name='default-app-name', user_id='u_123', state={}, events=[], last_update_time=1743440392.8689594)
 ```
 
-#### List sessions (local)
+Send a query to the agent.
 
 ```py
-app.list_sessions(user_id="u_123")
-```
-
-Expected output for `list_sessions` (local):
-
-```console
-ListSessionsResponse(session_ids=['c6a33dae-26ef-410c-9135-b434a528291f'])
-```
-
-#### Get a specific session (local)
-
-```py
-session = app.get_session(user_id="u_123", session_id=session.id)
-session
-```
-
-Expected output for `get_session` (local):
-
-```console
-Session(id='c6a33dae-26ef-410c-9135-b434a528291f', app_name='default-app-name', user_id='u_123', state={}, events=[], last_update_time=1743681991.95696)
-```
-
-#### Send queries to your agent (local)
-
-```py
-for event in app.stream_query(
+events = list(app.stream_query(
     user_id="u_123",
     session_id=session.id,
     message="whats the weather in new york",
-):
-print(event)
+))
+
+# The full event stream shows the agent's thought process
+print("--- Full Event Stream ---")
+for event in events:
+    print(event)
+
+# For quick tests, you can extract just the final text response
+final_response = [e for e in events if e.is_final_response()]
+if final_response:
+    print("\n--- Final Response ---")
+    print(final_response[0].content.parts[0].text)
 ```
+
+**Understanding the Output**
+
+When you run the code above, you will see a few types of events:
+
+*   **Tool Call Event**: The model asks to call a tool (e.g., `get_weather`).
+*   **Tool Response Event**: The system provides the result of the tool call back to the model.
+*   **Model Response Event**: The final text response from the agent after it has processed the tool results.
 
 Expected output for `stream_query` (local):
 
@@ -135,21 +143,30 @@ Expected output for `stream_query` (local):
 {'parts': [{'text': 'The weather in New York is sunny with a temperature of 25 degrees Celsius (41 degrees Fahrenheit).'}], 'role': 'model'}
 ```
 
-### Deploy your agent to Agent Engine
+## Step 5: Deploy to Agent Engine
 
-You can deploy your agent to Agent Engine using the following methods:
+Once you are satisfied with your agent's local behavior, you can deploy it. You can do this using the Python SDK or the `adk` command-line tool.
 
-=== "CLI"
+This process packages your code, builds it into a container, and deploys it to the managed Agent Engine service. This can take several minutes.
 
+=== "ADK CLI"
+
+    You can deploy from your terminal using the `adk` CLI. This is useful for CI/CD pipelines. Make sure your agent definition (`root_agent`) is discoverable.
+
+    ```shell
+    adk deploy agent_engine path/to/your/agent_folder \
+        --project=[project] \
+        --region=[region] \
+        --staging_bucket=[staging_bucket] \
+        --display_name=[app_name]
     ```
-    adk deploy agent_engine –project=[project] –region=[region] \
-        –staging_bucket=[staging_bucket] –display_name=[app_name] \ 
-        path/to/my_agent
-    ```
+    For more details, see the [ADK CLI reference](https://google.github.io/adk-docs/api-reference/cli/cli.html#adk-deploy).
 
 === "Python"
 
-    ```python
+    This code block initiates the deployment from a Python script or notebook.
+
+    ```python title="deploy.py"
     from vertexai import agent_engines
 
     remote_app = agent_engines.create(
@@ -158,36 +175,33 @@ You can deploy your agent to Agent Engine using the following methods:
             "google-cloud-aiplatform[adk,agent_engines]"   
         ]
     )
+
+    print(f"Deployment finished!")
+    print(f"Resource Name: {remote_app.resource_name}")
+    # Resource Name: "projects/{PROJECT_NUMBER}/locations/{LOCATION}/reasoningEngines/{RESOURCE_ID}"
     ```
 
-This step may take several minutes to finish. You can check and monitor the
-deployment of your ADK agent on the
-[Agent Engine UI](https://console.cloud.google.com/vertex-ai/agents/agent-engines)
-on Google Cloud. For more information about the command line interface
-parameters for `adk deploy`, see the 
-[ADK CLI reference](https://google.github.io/adk-docs/api-reference/cli/cli.html#adk-deploy).
 
-Each deployed agent has a unique identifier. You can run the following command to get the resource_name identifier for your deployed agent:
 
-```python
-remote_app.resource_name
-```
+**Monitoring and Verification**
 
-The response should look like the following string:
+*   You can monitor the deployment status in the [Agent Engine UI](https://console.cloud.google.com/vertex-ai/agents/agent-engines) in the Google Cloud Console.
+*   The `remote_app.resource_name` is the unique identifier for your deployed agent. You will need it to interact with the agent.
+*   For additional details, you can visit the Agent Engine documentation [deploying an agent](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/deploy) and [managing deployed agents](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/manage/overview).
 
-```shell
-f"projects/{PROJECT_NUMBER}/locations/{LOCATION}/reasoningEngines/{RESOURCE_ID}"
-```
+## Step 6: Interact with the Deployed Agent
 
-For additional details, you can visit the Agent Engine documentation [deploying an agent](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/deploy) and [managing deployed agents](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/manage/overview).
+Once deployed, you can interact with your agent using its unique resource name.
 
-### Try your agent on Agent Engine
+### Create a remote session
 
-#### Create session (remote)
+The remote_app object from the previous step already has the connection. 
 
 ```py
+# If you are in a new script, you can connect like this:
+# remote_app = reasoning_engines.ReasoningEngine("your-agent-resource-name")
 remote_session = remote_app.create_session(user_id="u_456")
-remote_session
+print(remote_session)
 ```
 
 Expected output for `create_session` (remote):
@@ -203,22 +217,7 @@ Expected output for `create_session` (remote):
 
 `id` is the session ID, and `app_name` is the resource ID of the deployed agent on Agent Engine.
 
-#### List sessions (remote)
-
-```py
-remote_app.list_sessions(user_id="u_456")
-```
-
-#### Get a specific session (remote)
-
-```py
-remote_app.get_session(user_id="u_456", session_id=remote_session["id"])
-```
-
-!!!note
-    While using your agent locally, session ID is stored in `session.id`, when using your agent remotely on Agent Engine, session ID is stored in `remote_session["id"]`.
-
-#### Send queries to your agent (remote)
+### Send queries to your remote agent
 
 ```py
 for event in remote_app.stream_query(
@@ -236,7 +235,8 @@ Expected output for `stream_query` (remote):
 {'parts': [{'function_response': {'id': 'af-f1906423-a531-4ecf-a1ef-723b05e85321', 'name': 'get_weather', 'response': {'status': 'success', 'report': 'The weather in New York is sunny with a temperature of 25 degrees Celsius (41 degrees Fahrenheit).'}}}], 'role': 'user'}
 {'parts': [{'text': 'The weather in New York is sunny with a temperature of 25 degrees Celsius (41 degrees Fahrenheit).'}], 'role': 'model'}
 ```
-#### Sending Multimodal Queries
+
+### Sending Multimodal Queries
 
 To send multimodal queries (e.g., including images) to your agent, you can construct the `message` parameter of `stream_query` with a list of `types.Part` objects. Each part can be text or an image.
 
@@ -264,9 +264,7 @@ for event in remote_app.stream_query(
 !!!note
     While the underlying communication with the model may involve Base64 encoding for images, the recommended and supported method for sending image data to an agent deployed on Agent Engine is by providing a GCS URI.
 
-## Using the Agent Engine UI
-
-## Clean up
+## Step 7: Clean up
 
 After you have finished, it is a good practice to clean up your cloud resources.
 You can delete the deployed Agent Engine instance to avoid any unexpected
