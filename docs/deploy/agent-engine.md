@@ -21,12 +21,7 @@ Before you begin, ensure you have the following:
     gcloud auth application-default login
     ```
 
-3.  **Google Cloud Storage (GCS) Bucket**: Agent Engine requires a GCS bucket to stage your agent's code and dependencies for deployment.
-
-    If you don't have a bucket, create one using this command, replacing `your-bucket-name` with a unique name:
-    ```shell
-    gsutil mb gs://your-bucket-name
-    ```
+3.  **Google Cloud Storage (GCS) Bucket**: Agent Engine requires a GCS bucket to stage your agent's code and dependencies for deployment. If you don't have a bucket, create one by following the instructions [here](https://cloud.google.com/storage/docs/creating-buckets).
 
 4.  **Python Environment**: A Python version between 3.9 and 3.13.
 
@@ -50,10 +45,11 @@ First, define your agent. You can use the sample agent below, which has two tool
 Next, initialize the Vertex AI SDK. This tells the SDK which Google Cloud project and region to use, and where to stage files for deployment.
 
 !!! tip "For IDE Users"
-    You can place this initialization code in a separate `deploy.py` script along with the deployment logic from Step 5.
+    You can place this initialization code in a separate `deploy.py` script along with the deployment logic for the following steps: 3 through 6.
 
-```python
+```python title="deploy.py"
 import vertexai
+from agent import root_agent # modify this if your agent is not in agent.py
 
 # TODO: Fill in these values for your project
 PROJECT_ID = "your-gcp-project-id"
@@ -72,11 +68,8 @@ vertexai.init(
 
 To make your agent compatible with Agent Engine, you need to wrap it in an `AdkApp` object.
 
-```python
+```python title="deploy.py"
 from vertexai.preview import reasoning_engines
-
-# If you saved your agent in agent.py:
-# from agent import root_agent
 
 # Wrap the agent in an AdkApp object
 app = reasoning_engines.AdkApp(
@@ -94,7 +87,7 @@ Before deploying, you can test your agent's behavior locally.
 
 The `stream_query` method returns a stream of events that represent the agent's execution trace.
 
-```python
+```python title="deploy.py"
 # Create a local session to maintain conversation history
 session = app.create_session(user_id="u_123")
 print(session)
@@ -106,9 +99,9 @@ Expected output for `create_session` (local):
 Session(id='c6a33dae-26ef-410c-9135-b434a528291f', app_name='default-app-name', user_id='u_123', state={}, events=[], last_update_time=1743440392.8689594)
 ```
 
-Send a query to the agent.
+Send a query to the agent. Copy-paste the following code to your "deploy.py" python script or a notebook.
 
-```py
+```py title="deploy.py"
 events = list(app.stream_query(
     user_id="u_123",
     session_id=session.id,
@@ -121,10 +114,14 @@ for event in events:
     print(event)
 
 # For quick tests, you can extract just the final text response
-final_response = [e for e in events if e.is_final_response()]
-if final_response:
+final_text_responses = [
+    e for e in events
+    if e.get("content", {}).get("parts", [{}])[0].get("text")
+    and not e.get("content", {}).get("parts", [{}])[0].get("function_call")
+]
+if final_text_responses:
     print("\n--- Final Response ---")
-    print(final_response[0].content.parts[0].text)
+    print(final_text_responses[0]["content"]["parts"][0]["text"])
 ```
 
 **Understanding the Output**
@@ -154,11 +151,12 @@ This process packages your code, builds it into a container, and deploys it to t
     You can deploy from your terminal using the `adk` CLI. This is useful for CI/CD pipelines. Make sure your agent definition (`root_agent`) is discoverable.
 
     ```shell
-    adk deploy agent_engine path/to/your/agent_folder \
+    adk deploy agent_engine \
         --project=[project] \
         --region=[region] \
         --staging_bucket=[staging_bucket] \
-        --display_name=[app_name]
+        --display_name=[app_name] \
+        path/to/your/agent_folder
     ```
     For more details, see the [ADK CLI reference](https://google.github.io/adk-docs/api-reference/cli/cli.html#adk-deploy).
 
@@ -186,7 +184,7 @@ This process packages your code, builds it into a container, and deploys it to t
 **Monitoring and Verification**
 
 *   You can monitor the deployment status in the [Agent Engine UI](https://console.cloud.google.com/vertex-ai/agents/agent-engines) in the Google Cloud Console.
-*   The `remote_app.resource_name` is the unique identifier for your deployed agent. You will need it to interact with the agent.
+*   The `remote_app.resource_name` is the unique identifier for your deployed agent. You will need it to interact with the agent. You can also get this from the reponse returned by the ADK CLI command.
 *   For additional details, you can visit the Agent Engine documentation [deploying an agent](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/deploy) and [managing deployed agents](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/manage/overview).
 
 ## Step 6: Interact with the Deployed Agent
@@ -198,7 +196,7 @@ Once deployed, you can interact with your agent using its unique resource name.
 The remote_app object from the previous step already has the connection. 
 
 ```py
-# If you are in a new script, you can connect like this:
+# If you are in a new script or used the ADK CLI to deploy, you can connect like this:
 # remote_app = reasoning_engines.ReasoningEngine("your-agent-resource-name")
 remote_session = remote_app.create_session(user_id="u_456")
 print(remote_session)
