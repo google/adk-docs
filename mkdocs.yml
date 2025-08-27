@@ -22,9 +22,6 @@ extra:
   second_repo_url: https://github.com/google/adk-java
   second_repo_name: adk-java
   second_repo_icon: fontawesome/brands/github
-  analytics:
-    provider: google
-    property: !ENV GOOGLE_ANALYTICS_KEY
 
 # Configuration
 theme:
@@ -135,7 +132,9 @@ nav:
     - Models & Authentication: agents/models.md
   - Tools:
     - tools/index.md
-    - Function tools: tools/function-tools.md
+    - Function tools:
+      - Overview: tools/function-tools.md
+      - Tool performance: tools/performance.md
     - Built-in tools: tools/built-in-tools.md
     - Third party tools: tools/third-party-tools.md
     - Google Cloud tools: tools/google-cloud-tools.md
