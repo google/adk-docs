@@ -4,7 +4,7 @@
 
 The `LoopAgent` is a workflow agent that executes its sub-agents in a loop (i.e. iteratively). It **_repeatedly runs_ a sequence of agents** for a specified number of iterations or until a termination condition is met.
 
-Use the `LoopAgent` when your workflow involves repetition or iterative refinement, such as like revising code.
+Use the `LoopAgent` when your workflow involves repetition or iterative refinement, such as revising code.
 
 ### Example
 
