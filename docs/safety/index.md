@@ -290,7 +290,6 @@ Some examples include:
 
 * **PII Redaction Plugin**: A specialized plugin with design for the [Before Tool Callback](/adk-docs/plugins/#tool-callbacks) and specifically created to redact personally identifiable information before it’s processed by a tool or sent to an external service.
 
-
 ### Sandboxed Code Execution
 
 Code execution is a special tool that has extra security implications: sandboxing must be used to prevent model-generated code to compromise the local environment, potentially creating security issues.
