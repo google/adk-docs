@@ -21,7 +21,7 @@ To proceed, confirm that your agent code is configured as follows:
 === "Java"
 
     1. Agent code is in a file called `CapitalAgent.java` within your agent directory.
-    2. Your agent variable is global and follows the format `public static BaseAgent ROOT_AGENT`.
+    2. Your agent variable is global and follows the format `public static final BaseAgent ROOT_AGENT`.
     3. Your agent definition is present in a static class method.
 
     Refer to the following section for more details. You can also find a [sample app](https://github.com/google/adk-docs/tree/main/examples/java/cloud-run) in the Github repo.
@@ -36,7 +36,17 @@ export GOOGLE_CLOUD_LOCATION=us-central1 # Or your preferred location
 export GOOGLE_GENAI_USE_VERTEXAI=True
 ```
 
-*(Replace `your-project-id` with your actual GCP project ID)*
+_(Replace `your-project-id` with your actual GCP project ID)_
+
+Alternatively you can also use an API key from AI Studio
+
+```bash
+export GOOGLE_CLOUD_PROJECT=your-project-id
+export GOOGLE_CLOUD_LOCATION=us-central1 # Or your preferred location
+export GOOGLE_GENAI_USE_VERTEXAI=FALSE
+export GOOGLE_API_KEY=your-api-key
+```
+*(Replace `your-project-id` with your actual GCP project ID and `your-api-key` with your actual API key from AI Studio)*
 
 ## Deployment commands
 
@@ -108,7 +118,7 @@ export GOOGLE_GENAI_USE_VERTEXAI=True
     * `--temp_folder TEXT`: (Optional) Specifies a directory for storing intermediate files generated during the deployment process. Defaults to a timestamped folder in the system's temporary directory. *(Note: This option is generally not needed unless troubleshooting issues).*
     * `--help`: Show the help message and exit.
 
-    ##### Authenticated access 
+    ##### Authenticated access
     During the deployment process, you might be prompted: `Allow unauthenticated invocations to [your-service-name] (y/N)?`.
 
     * Enter `y` to allow public access to your agent's API endpoint without authentication.
@@ -148,6 +158,7 @@ export GOOGLE_GENAI_USE_VERTEXAI=True
         import os
 
         import uvicorn
+        from fastapi import FastAPI
         from google.adk.cli.fast_api import get_fast_api_app
 
         # Get the directory where main.py is located
@@ -161,7 +172,7 @@ export GOOGLE_GENAI_USE_VERTEXAI=True
 
         # Call the function to get the FastAPI app instance
         # Ensure the agent directory name ('capital_agent') matches your agent folder
-        app = get_fast_api_app(
+        app: FastAPI = get_fast_api_app(
             agents_dir=AGENT_DIR,
             session_service_uri=SESSION_SERVICE_URI,
             allow_origins=ALLOWED_ORIGINS,
@@ -184,7 +195,7 @@ export GOOGLE_GENAI_USE_VERTEXAI=True
     2. List the necessary Python packages:
 
         ```txt title="requirements.txt"
-        google_adk
+        google-adk
         # Add any other dependencies your agent needs
         ```
 
@@ -251,7 +262,6 @@ export GOOGLE_GENAI_USE_VERTEXAI=True
 
     For a full list of deployment options, see the [`gcloud run deploy` reference documentation](https://cloud.google.com/sdk/gcloud/reference/run/deploy).
 
-
 === "Java - gcloud CLI"
 
     ### gcloud CLI
@@ -282,9 +292,9 @@ export GOOGLE_GENAI_USE_VERTEXAI=True
     #### Code files
 
     1. This is our Agent definition. This is the same code as present in [LLM agent](../agents/llm-agents.md) with two caveats:
-       
-           * The Agent is now initialized as a **global public static variable**.
-    
+
+           * The Agent is now initialized as a **global public static final variable**.
+
            * The definition of the agent can be exposed in a static method or inlined during declaration.
 
         ```java title="CapitalAgent.java"
@@ -306,7 +316,7 @@ export GOOGLE_GENAI_USE_VERTEXAI=True
              <version>0.1.0</version>
           </dependency>
         </dependencies>
-        
+
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>exec-maven-plugin</artifactId>
@@ -348,8 +358,6 @@ export GOOGLE_GENAI_USE_VERTEXAI=True
     `gcloud` will build the Docker image, push it to Google Artifact Registry, and deploy it to Cloud Run. Upon completion, it will output the URL of your deployed service.
 
     For a full list of deployment options, see the [`gcloud run deploy` reference documentation](https://cloud.google.com/sdk/gcloud/reference/run/deploy).
-
-
 
 ## Testing your agent
 

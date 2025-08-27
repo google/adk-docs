@@ -1,3 +1,17 @@
+# Copyright 2024 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import asyncio
 
 from google.adk.agents import LlmAgent
@@ -6,10 +20,9 @@ from google.adk.sessions import InMemorySessionService
 from google.genai import types
 from google.adk.tools import VertexAiSearchTool
 
-# Replace with your actual Vertex AI Search Datastore ID
-# Format: projects/<PROJECT_ID>/locations/<LOCATION>/collections/default_collection/dataStores/<DATASTORE_ID>
-# e.g., "projects/12345/locations/us-central1/collections/default_collection/dataStores/my-datastore-123"
-YOUR_DATASTORE_ID = "YOUR_DATASTORE_ID_HERE"
+# Replace with your Vertex AI Search Datastore ID, and respective region (e.g. us-central1 or global).
+# Format: projects/<PROJECT_ID>/locations/<REGION>/collections/default_collection/dataStores/<DATASTORE_ID>
+DATASTORE_PATH = "DATASTORE_PATH_HERE"
 
 # Constants
 APP_NAME_VSEARCH = "vertex_search_app"
@@ -20,14 +33,14 @@ GEMINI_2_FLASH = "gemini-2.0-flash"
 
 # Tool Instantiation
 # You MUST provide your datastore ID here.
-vertex_search_tool = VertexAiSearchTool(data_store_id=YOUR_DATASTORE_ID)
+vertex_search_tool = VertexAiSearchTool(data_store_id=DATASTORE_PATH)
 
 # Agent Definition
 doc_qa_agent = LlmAgent(
     name=AGENT_NAME_VSEARCH,
     model=GEMINI_2_FLASH, # Requires Gemini model
     tools=[vertex_search_tool],
-    instruction=f"""You are a helpful assistant that answers questions based on information found in the document store: {YOUR_DATASTORE_ID}.
+    instruction=f"""You are a helpful assistant that answers questions based on information found in the document store: {DATASTORE_PATH}.
     Use the search tool to find relevant information before answering.
     If the answer isn't in the documents, say that you couldn't find the information.
     """,
@@ -47,8 +60,8 @@ session_vsearch = session_service_vsearch.create_session(
 async def call_vsearch_agent_async(query):
     print("\n--- Running Vertex AI Search Agent ---")
     print(f"Query: {query}")
-    if "YOUR_DATASTORE_ID_HERE" in YOUR_DATASTORE_ID:
-        print("Skipping execution: Please replace YOUR_DATASTORE_ID_HERE with your actual datastore ID.")
+    if "DATASTORE_PATH_HERE" in DATASTORE_PATH:
+        print("Skipping execution: Please replace DATASTORE_PATH_HERE with your actual datastore ID.")
         print("-" * 30)
         return
 

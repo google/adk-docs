@@ -25,8 +25,8 @@ public class MultiToolAgent {
     private static String USER_ID = "student";
     private static String NAME = "multi_tool_agent";
 
-    // The run your agent with Dev UI, the ROOT_AGENT should be a global public static variable.
-    public static BaseAgent ROOT_AGENT = initAgent();
+    // The run your agent with Dev UI, the ROOT_AGENT should be a global public static final variable.
+    public static final BaseAgent ROOT_AGENT = initAgent();
 
     public static BaseAgent initAgent() {
         return LlmAgent.builder()

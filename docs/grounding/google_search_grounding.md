@@ -21,7 +21,7 @@ As an additional resource, [Gemini Fullstack Agent Development Kit (ADK) Quickst
 
 This quickstart guides you through creating an ADK agent with Google Search grounding feature. This quickstart assumes a local IDE (VS Code or PyCharm, etc.) with Python 3.9+ and terminal access.
 
-### 1. Set up Environment & Install ADK {#venv-install}
+### 1. Set up Environment & Install ADK { #set-up-environment-install-adk }
 
 Create & Activate Virtual Environment:
 
@@ -41,20 +41,36 @@ Install ADK:
 pip install google-adk==1.4.2
 ```
 
-### 2. Create Agent Project {#create-agent-project}
+### 2. Create Agent Project { #create-agent-project }
 
 Under a project directory, run the following commands:
 
-```bash
-# Step 1: Create a new directory for your agent
-mkdir google_search_agent
+=== "OS X &amp; Linux"
+    ```bash
+    # Step 1: Create a new directory for your agent
+    mkdir google_search_agent
 
-# Step 2: Create __init__.py for the agent
-echo "from . import agent" > google_search_agent/__init__.py
+    # Step 2: Create __init__.py for the agent
+    echo "from . import agent" > google_search_agent/__init__.py
 
-# Step 3: Create an agent.py (the agent definition) and .env (Gemini authentication config)
-touch google_search_agent/agent.py .env
-```
+    # Step 3: Create an agent.py (the agent definition) and .env (Gemini authentication config)
+    touch google_search_agent/agent.py .env
+    ```
+
+=== "Windows"
+    ```shell
+    # Step 1: Create a new directory for your agent
+    mkdir google_search_agent
+
+    # Step 2: Create __init__.py for the agent
+    echo "from . import agent" > google_search_agent/__init__.py
+
+    # Step 3: Create an agent.py (the agent definition) and .env (Gemini authentication config)
+    type nul > google_search_agent\agent.py 
+    type nul > google_search_agent\.env
+    ```
+
+
 
 #### Edit `agent.py`
 
@@ -83,7 +99,7 @@ my_project/
     .env
 ```
 
-### 3. Choose a platform {#choose-a-platform}
+### 3. Choose a platform { #choose-a-platform }
 
 To run the agent, you need to select a platform that the agent will use for calling the Gemini model. Choose one from Google AI Studio or Vertex AI:
 
@@ -117,7 +133,7 @@ To run the agent, you need to select a platform that the agent will use for call
         GOOGLE_CLOUD_LOCATION=LOCATION
         ```
 
-### 4. Run Your Agent {#run-your-agent}
+### 4. Run Your Agent { #run-your-agent }
 
 There are multiple ways to interact with your agent:
 

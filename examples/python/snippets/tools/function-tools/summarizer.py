@@ -33,7 +33,7 @@ root_agent = Agent(
     model='gemini-2.0-flash',
     name='root_agent',
     instruction="""You are a helpful assistant. When the user provides a text, use the 'summarize' tool to generate a summary. Always forward the user's message exactly as received to the 'summarize' tool, without modifying or summarizing it yourself. Present the response from the tool to the user.""",
-    tools=[AgentTool(agent=summary_agent)]
+    tools=[AgentTool(agent=summary_agent, skip_summarization=True)]
 )
 
 # Session and Runner

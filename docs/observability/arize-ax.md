@@ -25,7 +25,7 @@ pip install openinference-instrumentation-google-adk google-adk arize-otel
 
 ## Setup
 
-### 1. Configure Environment Variables
+### 1. Configure Environment Variables { #configure-environment-variables }
 
 Set your Google API key:
 
@@ -33,7 +33,7 @@ Set your Google API key:
 export GOOGLE_API_KEY=[your_key_here]
 ```
 
-### 2. Connect your application to Arize AX
+### 2. Connect your application to Arize AX { #connect-your-application-to-arize-ax }
 
 ```python
 from arize.otel import register
