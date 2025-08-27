@@ -23,10 +23,16 @@ Some typical applications of Plugins are as follows:
 -   **Request or response modification**: Dynamically add information to AI
     model prompts or standardize tool output responses.
 
-**Caution:** Plugins are not supported by the
-[ADK web interface](../evaluate/#1-adk-web-run-evaluations-via-the-web-ui).
-If your ADK workflow uses Plugins, you must run your workflow without the web
-interface.
+!!! tip
+    When implementing security guardrails and policies, use ADK Plugins for
+    better modularity and flexibility than Callbacks. For more details, see 
+    [Callbacks and Plugins for Security Guardrails](/adk-docs/safety/#callbacks-and-plugins-for-security-guardrails).
+
+!!! warning "Caution"
+    Plugins are not supported by the 
+    [ADK web interface](../evaluate/#1-adk-web-run-evaluations-via-the-web-ui). 
+    If your ADK workflow uses Plugins, you must run your workflow without the 
+    web interface.
 
 Tip: When implementing security guardrails and policies, use ADK Plugins for better modularity and flexibility than Callbacks. For more details, see [Callbacks and Plugins for Security Guardrails](../safety/index.md#callbacks-and-plugins-for-security-guardrails).
 
