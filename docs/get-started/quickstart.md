@@ -9,7 +9,7 @@ This quickstart assumes a local IDE (VS Code, PyCharm, IntelliJ IDEA, etc.)
 with Python 3.9+ or Java 17+ and terminal access. This method runs the
 application entirely on your machine and is recommended for internal development.
 
-## 1. Set up Environment & Install ADK {#venv-install}
+## 1. Set up Environment & Install ADK { #set-up-environment-install-adk }
 
 === "Python"
 
@@ -34,7 +34,7 @@ application entirely on your machine and is recommended for internal development
 
     To install ADK and setup the environment, proceed to the following steps.
 
-## 2. Create Agent Project {#create-agent-project}
+## 2. Create Agent Project { #create-agent-project }
 
 ### Project structure
 
@@ -81,9 +81,15 @@ application entirely on your machine and is recommended for internal development
 
     Create an `agent.py` file in the same folder:
 
-    ```shell
-    touch multi_tool_agent/agent.py
-    ```
+    === "OS X &amp; Linux"
+        ```shell
+        touch multi_tool_agent/agent.py
+        ```
+
+    === "Windows"
+        ```shell
+        type nul > multi_tool_agent/agent.py
+        ```
 
     Copy and paste the following code into `agent.py`:
 
@@ -95,9 +101,15 @@ application entirely on your machine and is recommended for internal development
 
     Create a `.env` file in the same folder:
 
-    ```shell
-    touch multi_tool_agent/.env
-    ```
+    === "OS X &amp; Linux"
+        ```shell
+        touch multi_tool_agent/.env
+        ```
+
+    === "Windows"
+        ```shell
+        type nul > multi_tool_agent\.env
+        ```
 
     More instructions about this file are described in the next section on [Set up the model](#set-up-the-model).
 
@@ -129,7 +141,7 @@ application entirely on your machine and is recommended for internal development
 
 ![intro_components.png](../assets/quickstart-flow-tool.png)
 
-## 3. Set up the model {#set-up-the-model}
+## 3. Set up the model { #set-up-the-model }
 
 Your agent's ability to understand user requests and generate responses is
 powered by a Large Language Model (LLM). Your agent needs to make secure calls
@@ -163,7 +175,7 @@ agent will be unable to function.
 === "Gemini - Google Cloud Vertex AI"
     1. Set up a [Google Cloud project](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-gcp) and [enable the Vertex AI API](https://console.cloud.google.com/flows/enableapi?apiid=aiplatform.googleapis.com).
     2. Set up the [gcloud CLI](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-local).
-    3. Authenticate to Google Cloud from the terminal by running `gcloud auth login`.
+    3. Authenticate to Google Cloud from the terminal by running `gcloud auth application-default login`.
     4. When using Python, open the **`.env`** file located inside (`multi_tool_agent/`). Copy-paste
     the following code and update the project ID and location.
 
@@ -201,7 +213,7 @@ agent will be unable to function.
         export GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_EXPRESS_MODE_API_KEY_HERE
         ```
 
-## 4. Run Your Agent {#run-your-agent}
+## 4. Run Your Agent { #run-your-agent }
 
 === "Python"
 
@@ -290,6 +302,15 @@ agent will be unable to function.
 
     === "Terminal (adk run)"
 
+        !!! tip
+
+            When using `adk run` you can inject prompts into the agent to start by
+            piping text to the command like so:
+
+            ```shell
+            "Please start by listing files" | adk run file_listing_agent
+            ```
+            
         Run the following command, to chat with your Weather agent.
 
         ```

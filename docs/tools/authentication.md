@@ -58,16 +58,16 @@ Pass the scheme and credential during toolset initialization. The toolset applie
 
       ```py
       from google.adk.tools.openapi_tool.auth.auth_helpers import token_to_scheme_credential
-      from google.adk.tools.apihub_tool.apihub_toolset import APIHubToolset
+      from google.adk.tools.openapi_tool.openapi_spec_parser.openapi_toolset import OpenAPIToolset
+
       auth_scheme, auth_credential = token_to_scheme_credential(
-         "apikey", "query", "apikey", YOUR_API_KEY_STRING
+          "apikey", "query", "apikey", "YOUR_API_KEY_STRING"
       )
-      sample_api_toolset = APIHubToolset(
-         name="sample-api-requiring-api-key",
-         description="A tool using an API protected by API Key",
-         apihub_resource_name="...",
-         auth_scheme=auth_scheme,
-         auth_credential=auth_credential,
+      sample_api_toolset = OpenAPIToolset(
+          spec_str="...",  # Fill this with an OpenAPI spec string
+          spec_str_type="yaml",
+          auth_scheme=auth_scheme,
+          auth_credential=auth_credential,
       )
       ```
 
@@ -249,7 +249,7 @@ from google.genai import types
 
 def get_auth_request_function_call(event: Event) -> types.FunctionCall:
     # Get the special auth request function call from the event
-    if not event.content or event.content.parts:
+    if not event.content or not event.content.parts:
         return
     for part in event.content.parts:
         if (
@@ -264,9 +264,11 @@ def get_auth_request_function_call(event: Event) -> types.FunctionCall:
 
 def get_auth_config(auth_request_function_call: types.FunctionCall) -> AuthConfig:
     # Extracts the AuthConfig object from the arguments of the auth request function call
-    if not auth_request_function_call.args or not (auth_config := auth_request_function_call.args.get('auth_config')):
+    if not auth_request_function_call.args or not (auth_config := auth_request_function_call.args.get('authConfig')):
         raise ValueError(f'Cannot get auth config from function call: {auth_request_function_call}')
-    if not isinstance(auth_config, AuthConfig):
+    if isinstance(auth_config, dict):
+        auth_config = AuthConfig.model_validate(auth_config)
+    elif not isinstance(auth_config, AuthConfig):
         raise ValueError(f'Cannot get auth config {auth_config} is not an instance of AuthConfig.')
     return auth_config
 ```

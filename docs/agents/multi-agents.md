@@ -12,14 +12,14 @@ You can compose various types of agents derived from `BaseAgent` to build these 
 
 The following sections detail the core ADK primitives—such as agent hierarchy, workflow agents, and interaction mechanisms—that enable you to construct and manage these multi-agent systems effectively.
 
-## 1. ADK Primitives for Agent Composition
+## 1. ADK Primitives for Agent Composition { #adk-primitives-for-agent-composition }
 
 ADK provides core building blocks—primitives—that enable you to structure and manage interactions within your multi-agent system.
 
 !!! Note
     The specific parameters or method names for the primitives may vary slightly by SDK language (e.g., `sub_agents` in Python, `subAgents` in Java). Refer to the language-specific API documentation for details.
 
-### 1.1. Agent Hierarchy (Parent agent, Sub Agents)
+### 1.1. Agent Hierarchy (Parent agent, Sub Agents) { #agent-hierarchy-parent-agent-sub-agents }
 
 The foundation for structuring multi-agent systems is the parent-child relationship defined in `BaseAgent`.
 
@@ -77,7 +77,7 @@ The foundation for structuring multi-agent systems is the parent-child relations
     // assert taskDoer.parentAgent().equals(coordinator);
     ```
 
-### 1.2. Workflow Agents as Orchestrators
+### 1.2. Workflow Agents as Orchestrators { #workflow-agents-as-orchestrators }
 
 ADK includes specialized agents derived from `BaseAgent` that don't perform tasks themselves but orchestrate the execution flow of their `sub_agents`.
 
@@ -223,7 +223,7 @@ ADK includes specialized agents derived from `BaseAgent` that don't perform task
     // until Checker escalates (state.get("status") == "completed") or 10 iterations pass.
     ```
 
-### 1.3. Interaction & Communication Mechanisms
+### 1.3. Interaction & Communication Mechanisms { #interaction-communication-mechanisms }
 
 Agents within a system often need to exchange data or trigger actions in one another. ADK facilitates this through:
 
@@ -235,6 +235,9 @@ The most fundamental way for agents operating within the same invocation (and th
 * **Convenience:** The `output_key` property on [`LlmAgent`](llm-agents.md) automatically saves the agent's final response text (or structured output) to the specified state key.
 * **Nature:** Asynchronous, passive communication. Ideal for pipelines orchestrated by `SequentialAgent` or passing data across `LoopAgent` iterations.
 * **See Also:** [State Management](../sessions/state.md)
+
+!!! note "Invocation Context and `temp:` State"
+    When a parent agent invokes a sub-agent, it passes the same `InvocationContext`. This means they share the same temporary (`temp:`) state, which is ideal for passing data that is only relevant for the current turn.
 
 === "Python"
 
@@ -444,7 +447,7 @@ Allows an [`LlmAgent`](llm-agents.md) to treat another `BaseAgent` instance as a
 
 These primitives provide the flexibility to design multi-agent interactions ranging from tightly coupled sequential workflows to dynamic, LLM-driven delegation networks.
 
-## 2. Common Multi-Agent Patterns using ADK Primitives
+## 2. Common Multi-Agent Patterns using ADK Primitives { #common-multi-agent-patterns-using-adk-primitives }
 
 By combining ADK's composition primitives, you can implement various established patterns for multi-agent collaboration.
 

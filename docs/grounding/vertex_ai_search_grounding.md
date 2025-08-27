@@ -17,7 +17,7 @@ In this guide, you'll discover:
 
 This quickstart guides you through creating an ADK agent with Vertex AI Search grounding feature. This quickstart assumes a local IDE (VS Code or PyCharm, etc.) with Python 3.9+ and terminal access.
 
-### 1. Prepare Vertex AI Search
+### 1. Prepare Vertex AI Search { #prepare-vertex-ai-search }
 
 If you already have a Vertex AI Search Data Store and its Data Store ID, you can skip this section. If not, follow the instruction in the [Get started with custom search](https://cloud.google.com/generative-ai-app-builder/docs/try-enterprise-search#unstructured-data) until the end of [Create a data store](https://cloud.google.com/generative-ai-app-builder/docs/try-enterprise-search#create_a_data_store), with selecting the `Unstructured data` tab. With this instruction, you will build a sample Data Store with earning report PDFs from the [Alphabet investor site](https://abc.xyz/).
 
@@ -27,7 +27,7 @@ After finishing the Create a data store section, open the [Data Stores](https://
 
 Note this `Data store ID` as we will use this later.
 
-### 2. Set up Environment & Install ADK {#venv-install}
+### 2. Set up Environment & Install ADK { #set-up-environment-install-adk }
 
 Create & Activate Virtual Environment:
 
@@ -47,20 +47,34 @@ Install ADK:
 pip install google-adk==1.5.0
 ```
 
-### 3. Create Agent Project {#create-agent-project}
+### 3. Create Agent Project { #create-agent-project }
 
 Under a project directory, run the following commands:
 
-```bash
-# Step 1: Create a new directory for your agent
-mkdir vertex_search_agent
+=== "OS X &amp; Linux"
+    ```bash
+    # Step 1: Create a new directory for your agent
+    mkdir vertex_search_agent
 
-# Step 2: Create __init__.py for the agent
-echo "from . import agent" > vertex_search_agent/__init__.py
+    # Step 2: Create __init__.py for the agent
+    echo "from . import agent" > vertex_search_agent/__init__.py
 
-# Step 3: Create an agent.py (the agent definition) and .env (authentication config)
-touch vertex_search_agent/agent.py .env
-```
+    # Step 3: Create an agent.py (the agent definition) and .env (authentication config)
+    touch vertex_search_agent/agent.py .env
+    ```
+
+=== "Windows"
+    ```shell
+    # Step 1: Create a new directory for your agent
+    mkdir vertex_search_agent
+
+    # Step 2: Create __init__.py for the agent
+    echo "from . import agent" > vertex_search_agent/__init__.py
+
+    # Step 3: Create an agent.py (the agent definition) and .env (authentication config)
+    type nul > vertex_search_agent\agent.py 
+    type nul > google_search_agent\.env
+    ```
 
 #### Edit `agent.py`
 
@@ -92,7 +106,7 @@ my_project/
     .env
 ```
 
-### 4. Authentication Setup {#choose-a-platform}
+### 4. Authentication Setup { #authentication-setup }
 
 **Note: Vertex AI Search requires Google Cloud Platform (Vertex AI) authentication. Google AI Studio is not supported for this tool.**
 
@@ -107,7 +121,7 @@ my_project/
     ```
 
 
-### 5. Run Your Agent {#run-your-agent}
+### 5. Run Your Agent { #run-your-agent }
 
 There are multiple ways to interact with your agent:
 
