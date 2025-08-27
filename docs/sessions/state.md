@@ -97,7 +97,7 @@ story_generator = LlmAgent(
 
 #### Important Considerations
 
-* Key Existence: Ensure that the key you reference in the instruction string exists in the session.state. If the key is missing, the agent might misbehave or throw an error.
+* Key Existence: Ensure that the key you reference in the instruction string exists in the session.state. If the key is missing, the agent will throw an error. To use a key that may or may not be present, you can include a question mark (?) after the key (e.g. {topic?}).
 * Data Types: The value associated with the key should be a string or a type that can be easily converted to a string.
 * Escaping: If you need to use literal curly braces in your instruction (e.g., for JSON formatting), you'll need to escape them.
 
