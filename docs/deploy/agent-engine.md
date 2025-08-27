@@ -33,6 +33,18 @@ Before you begin, ensure you have the following:
     pip install "google-cloud-aiplatform[adk,agent_engines]" cloudpickle
     ```
 
+## Deployment payload {#payload}
+
+When you deploy your ADK agent workflow to Agent Engine,
+the following content is uploaded to the service:
+
+- Your ADK agent code
+- Any dependencies declared in your ADK agent code
+
+The deployment does not *does not* the ADK API server or the ADK web user
+interface libraries. Agent Engine service provides the libraries for ADK API
+server functionality.
+
 ## Step 1: Define Your Agent
 
 First, define your agent. You can use the sample agent below, which has two tools (to get weather or retrieve the time in a specified city):
