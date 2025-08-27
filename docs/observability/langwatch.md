@@ -159,6 +159,8 @@ Once your application is running with the instrumentation, you can view all trac
 - **Evaluations**: Assess agent behavior and run experiments
 - **Alerts**: Set up monitoring and get notified of issues
 
+![LangWatch Dashboard](../assets/langwatch-dashboard.png)
+
 ## Notes
 
 - You do **not** need to set any OpenTelemetry environment variables or configure exporters manually—`langwatch.setup()` handles everything.
