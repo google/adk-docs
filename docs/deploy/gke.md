@@ -1,6 +1,6 @@
-# Deploy to GKE
+# Deploy to Google Kubernetes Engine (GKE)
 
-[GKE](https://cloud.google.com/gke) is Google Clouds managed Kubernetes service. It allows you to deploy and manage containerized applications using Kubernetes.
+[GKE](https://cloud.google.com/gke) is the Google Cloud managed Kubernetes service. It allows you to deploy and manage containerized applications using Kubernetes.
 
 To deploy your agent you will need to have a Kubernetes cluster running on GKE. You can create a cluster using the Google Cloud Console or the `gcloud` command line tool.
 
@@ -63,6 +63,19 @@ for ROLE in "${ROLES_TO_ASSIGN[@]}"; do
         --role="${ROLE}"
 done
 ```
+
+## Deployment payload {#payload}
+
+When you deploy your ADK agent workflow to the Google Cloud GKE,
+the following content is uploaded to the service:
+
+- Your ADK agent code
+- Any dependencies declared in your ADK agent code
+- ADK API server code version used by your agent
+
+The default deployment *does not* include the ADK web user interface libraries,
+unless you specify it as deployment setting, such as the `--with_ui` option for
+`adk deploy gke` command.
 
 ## Deployment options
 
@@ -362,15 +375,24 @@ Before you begin, ensure you have the following set up:
 
 1. **A running GKE cluster:** You need an active Kubernetes cluster on Google Cloud.
 
-2. **`gcloud` CLI:** The Google Cloud CLI must be installed, authenticated, and configured to use your target project. Run `gcloud auth login` and `gcloud config set project [YOUR_PROJECT_ID]`.
+2. **Required CLIs:** 
+    * **`gcloud` CLI:** The Google Cloud CLI must be installed, authenticated, and configured to use your target project. Run `gcloud auth login` and `gcloud config set project [YOUR_PROJECT_ID]`.
+    * **kubectl:** The Kubernetes CLI must be installed to deploy the application to your cluster.
 
-3. **Required IAM Permissions:** The user or service account running the command needs, at a minimum, the following roles:
+3. **Enabled Google Cloud APIs:** Make sure the following APIs are enabled in your Google Cloud project:
+    * Kubernetes Engine API (`container.googleapis.com`)
+    * Cloud Build API (`cloudbuild.googleapis.com`)
+    * Container Registry API (`containerregistry.googleapis.com`)
+
+4. **Required IAM Permissions:** The user or Compute Engine default service account running the command needs, at a minimum, the following roles:
 
    * **Kubernetes Engine Developer** (`roles/container.developer`): To interact with the GKE cluster.
 
-   * **Artifact Registry Writer** (`roles/artifactregistry.writer`): To push the agent's container image.
+   * **Storage Object Viewer** (`roles/storage.objectViewer`): To allow Cloud Build to download the source code from the Cloud Storage bucket where gcloud builds submit uploads it.
 
-4. **Docker:** The Docker daemon must be running on your local machine to build the container image.
+   * **Artifact Registry Create on Push Writer** (`roles/artifactregistry.createOnPushWriter`): To allow Cloud Build to push the built container image to Artifact Registry. This role also permits the on-the-fly creation of the special gcr.io repository within Artifact Registry if needed on the first push.
+
+   * **Logs Writer**  (`roles/logging.logWriter`): To allow Cloud Build to write build logs to Cloud Logging.
 
 ### The `deploy gke` Command
 
