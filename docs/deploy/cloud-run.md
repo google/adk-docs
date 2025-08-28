@@ -48,6 +48,19 @@ export GOOGLE_API_KEY=your-api-key
 ```
 *(Replace `your-project-id` with your actual GCP project ID and `your-api-key` with your actual API key from AI Studio)*
 
+## Deployment payload {#payload}
+
+When you deploy your ADK agent workflow to the Google Cloud Run,
+the following content is uploaded to the service:
+
+- Your ADK agent code
+- Any dependencies declared in your ADK agent code
+- ADK API server code version used by your agent
+
+The default deployment *does not* include the ADK web user interface libraries,
+unless you specify it as deployment setting, such as the `--with_ui` option for
+`adk deploy cloud_run` command.
+
 ## Deployment commands
 
 === "Python - adk CLI"
@@ -128,7 +141,7 @@ export GOOGLE_API_KEY=your-api-key
 
 === "Python - gcloud CLI"
 
-    ### gcloud CLI
+    ### gcloud CLI for Python
 
     Alternatively, you can deploy using the standard `gcloud run deploy` command with a `Dockerfile`. This method requires more manual setup compared to the `adk` command but offers flexibility, particularly if you want to embed your agent within a custom [FastAPI](https://fastapi.tiangolo.com/) application.
 
@@ -158,6 +171,7 @@ export GOOGLE_API_KEY=your-api-key
         import os
 
         import uvicorn
+        from fastapi import FastAPI
         from google.adk.cli.fast_api import get_fast_api_app
 
         # Get the directory where main.py is located
@@ -171,9 +185,9 @@ export GOOGLE_API_KEY=your-api-key
 
         # Call the function to get the FastAPI app instance
         # Ensure the agent directory name ('capital_agent') matches your agent folder
-        app = get_fast_api_app(
-            agent_dir=AGENT_DIR,
-            session_db_url=SESSION_SERVICE_URI,
+        app: FastAPI = get_fast_api_app(
+            agents_dir=AGENT_DIR,
+            session_service_uri=SESSION_SERVICE_URI,
             allow_origins=ALLOWED_ORIGINS,
             web=SERVE_WEB_INTERFACE,
         )
@@ -263,7 +277,7 @@ export GOOGLE_API_KEY=your-api-key
 
 === "Java - gcloud CLI"
 
-    ### gcloud CLI
+    ### gcloud CLI for Java
 
     You can deploy Java Agents using the standard `gcloud run deploy` command and a `Dockerfile`. This is the current recommended way to deploy Java Agents to Google Cloud Run.
 
@@ -296,9 +310,9 @@ export GOOGLE_API_KEY=your-api-key
 
            * The definition of the agent can be exposed in a static method or inlined during declaration.
 
-        ```java title="CapitalAgent.java"
-        --8<-- "examples/java/cloud-run/src/main/java/demo/agents/capitalagent/CapitalAgent.java:full_code"
-        ```
+        See the code for the `CapitalAgent` example in the 
+        [examples](https://github.com/google/adk-docs/blob/main/examples/java/cloud-run/src/main/java/agents/capitalagent/CapitalAgent.java) 
+        repository.
 
     2. Add the following dependencies and plugin to the pom.xml file.
 
