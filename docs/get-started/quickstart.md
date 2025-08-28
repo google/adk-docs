@@ -399,7 +399,7 @@ agent will be unable to function.
 
         ```groovy
         plugins {
-            id("java")
+            id('java')
             // other plugins
         }
         ```
@@ -408,9 +408,9 @@ agent will be unable to function.
         create a new task to run the `main()` method of your agent:
 
         ```groovy
-        task runAgent(type: JavaExec) {
+        tasks.register('runAgent', JavaExec) {
             classpath = sourceSets.main.runtimeClasspath
-            mainClass = "agents.multitool.MultiToolAgent"
+            mainClass = 'agents.multitool.MultiToolAgent'
         }
         ```
 
