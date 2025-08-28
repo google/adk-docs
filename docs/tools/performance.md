@@ -2,7 +2,7 @@
 
 Starting with Agent Development Kit (ADK) version 1.10.0, the framework
 attempts to run any agent-requested 
-[function tools](/adk-docs/tools/function-tools/) 
+[function tools](function-tools.md) 
 in parallel. This behavior can significantly improve the performance and
 responsiveness of your agents, particularly for agents that rely on multiple
 external APIs or long-running tasks. For example, if you have 3 tools that each

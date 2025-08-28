@@ -5,7 +5,7 @@ hide:
 
 !!! tip "What's new"
     Build agents without code. Check out the
-    [Agent Config](/adk-docs/agents/config/) feature.
+    [Agent Config](agents/config.md) feature.
 
 <div style="text-align: center;">
   <div class="centered-logo-text-group">
