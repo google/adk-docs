@@ -41,8 +41,8 @@ the following content is uploaded to the service:
 - Your ADK agent code
 - Any dependencies declared in your ADK agent code
 
-The deployment does not *does not* the ADK API server or the ADK web user
-interface libraries. Agent Engine service provides the libraries for ADK API
+The deployment *does not* include the ADK API server or the ADK web user
+interface libraries. The Agent Engine service provides the libraries for ADK API
 server functionality.
 
 ## Step 1: Define Your Agent
