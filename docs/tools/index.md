@@ -47,9 +47,9 @@ Think of the tools as a specialized toolkit that the agent's intelligent core (t
 ADK offers flexibility by supporting several types of tools:
 
 1. **[Function Tools](../tools/function-tools.md):** Tools created by you, tailored to your specific application's needs.
-    * **[Functions/Methods](../tools/function-tools.md#1-function-tool):** Define standard synchronous functions or methods in your code (e.g., Python def).
-    * **[Agents-as-Tools](../tools/function-tools.md#3-agent-as-a-tool):** Use another, potentially specialized, agent as a tool for a parent agent.
-    * **[Long Running Function Tools](../tools/function-tools.md#2-long-running-function-tool):** Support for tools that perform asynchronous operations or take significant time to complete.
+    * **[Functions/Methods](../tools/function-tools.md#function-tool):** Define standard synchronous functions or methods in your code (e.g., Python def).
+    * **[Agents-as-Tools](../tools/function-tools.md#agent-tool):** Use another, potentially specialized, agent as a tool for a parent agent.
+    * **[Long Running Function Tools](../tools/function-tools.md#long-run-tool):** Support for tools that perform asynchronous operations or take significant time to complete.
 2. **[Built-in Tools](../tools/built-in-tools.md):** Ready-to-use tools provided by the framework for common tasks.
         Examples: Google Search, Code Execution, Retrieval-Augmented Generation (RAG).
 3. **[Third-Party Tools](../tools/third-party-tools.md):** Integrate tools seamlessly from popular external libraries.

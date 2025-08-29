@@ -26,11 +26,11 @@ Some typical applications of Plugins are as follows:
 !!! tip
     When implementing security guardrails and policies, use ADK Plugins for
     better modularity and flexibility than Callbacks. For more details, see 
-    [Callbacks and Plugins for Security Guardrails](/adk-docs/safety/#callbacks-and-plugins-for-security-guardrails).
+    [Callbacks and Plugins for Security Guardrails](../safety/index.md#callbacks-and-plugins-for-security-guardrails).
 
 !!! warning "Caution"
     Plugins are not supported by the 
-    [ADK web interface](../evaluate/#1-adk-web-run-evaluations-via-the-web-ui). 
+    [ADK web interface](../evaluate/index.md#1-adk-web-run-evaluations-via-the-web-ui). 
     If your ADK workflow uses Plugins, you must run your workflow without the 
     web interface.
 
@@ -46,7 +46,7 @@ Plugins in your agent application, see
 [Plugin callback hooks](#plugin-callback-hooks).
 
 Plugin functionality builds on
-[Callbacks](../callbacks/), which is a key design
+[Callbacks](../callbacks/index.md), which is a key design
 element of the ADK's extensible architecture. While a typical Agent Callback is
 configured on a *single agent, a single tool* for a *specific task*, a Plugin is
 registered *once* on the `Runner` and its callbacks apply *globally* to every
@@ -174,7 +174,7 @@ command line:
 ```
 
 Plugins are not supported by the
-[ADK web interface](../evaluate/#1-adk-web-run-evaluations-via-the-web-ui).
+[ADK web interface](../evaluate/index.md#1-adk-web-run-evaluations-via-the-web-ui).
 If your ADK workflow uses Plugins, you must run your workflow without the web
 interface.
 
@@ -193,7 +193,7 @@ Hello world: query is [hello world]
 
 
 For more information on running ADK agents, see the
-[Quickstart](/get-started/quickstart/#run-your-agent)
+[Quickstart](../get-started/quickstart.md#run-your-agent)
 guide.
 
 ## Build workflows with Plugins
@@ -373,7 +373,7 @@ callback is *not executed* (skipped).
 
 For more information about Agent callbacks defined as part of an Agent object,
 see
-[Types of Callbacks](../callbacks/types-of-callbacks/#agent-lifecycle-callbacks).
+[Types of Callbacks](../callbacks/types-of-callbacks.md#agent-lifecycle-callbacks).
 
 ### Model callbacks
 
@@ -511,4 +511,5 @@ The following code example shows the basic syntax of this callback:
 async def after_run_callback(
     self, *, invocation_context: InvocationContext
 ) -> Optional[None]:
+```
 ```
