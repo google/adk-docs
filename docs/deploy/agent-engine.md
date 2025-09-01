@@ -8,6 +8,17 @@ and scale AI agents in production. Agent Engine handles the infrastructure to
 scale agents in production so you can focus on creating intelligent and
 impactful applications.
 
+!!! tip "🚀 Accelerate Production Deployment with the [Agent Starter Pack](https://github.com/GoogleCloudPlatform/agent-starter-pack)"
+    ```bash
+    uvx agent-starter-pack enhance --adk -d agent_engine
+    ```
+    
+    This command upgrades your existing agent project in-place, seamlessly adding:
+    
+    **Agent Engine deployment** • **Terraform infrastructure** • **Automated CI/CD pipeline** • **Cloud-native Observability** 
+    
+    [Enhance CLI reference →](https://googlecloudplatform.github.io/agent-starter-pack/cli/enhance.html) | [Development guide →](https://googlecloudplatform.github.io/agent-starter-pack/guide/development-guide.html)
+
 This guide provides a step-by-step walkthrough for deploying an agent from your local environment.
 
 ## Prerequisites
