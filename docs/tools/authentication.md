@@ -461,7 +461,7 @@ if exchanged_credential:
    # ADK exchanged the access token already for us
         access_token = exchanged_credential.oauth2.access_token
         refresh_token = exchanged_credential.oauth2.refresh_token
-        expiry = datetime.utcnow() + timedelta(seconds=exchanged_credential.oauth2.expires_in)
+        expiry = datetime.utcnow() + timedelta(seconds=exchanged_credential.oauth2.expires_in) if exchanged_credential.oauth2.expires_in else None
         creds = Credentials(
             token=access_token,
             refresh_token=refresh_token,
