@@ -5,8 +5,8 @@ setting up a basic agent with multiple tools, and running it locally either in t
 
 <!-- <img src="../../assets/quickstart.png" alt="Quickstart setup"> -->
 
-This quickstart assumes a local IDE (VS Code, PyCharm, IntelliJ IDEA, etc.)
-with Python 3.9+ or Java 17+ and terminal access. This method runs the
+This quickstart assumes a local IDE (VS Code, PyCharm, IntelliJ IDEA, GoLand etc.)
+with Python 3.9+, Java 17+, or Go 1.21+ and terminal access. This method runs the
 application entirely on your machine and is recommended for internal development.
 
 ## 1. Set up Environment & Install ADK { #set-up-environment-install-adk }
@@ -33,6 +33,14 @@ application entirely on your machine and is recommended for internal development
 === "Java"
 
     To install ADK and setup the environment, proceed to the following steps.
+
+=== "Go"
+
+    Install Go 1.21+ and then run the following command to install the ADK for Go:
+
+    ```bash
+    go get google.com/adk
+    ```
 
 ## 2. Create Agent Project { #create-agent-project }
 
@@ -139,6 +147,37 @@ application entirely on your machine and is recommended for internal development
     --8<-- "examples/java/cloud-run/src/main/java/agents/multitool/MultiToolAgent.java:full_code"
     ```
 
+=== "Go"
+
+    Go projects generally feature the following project structure:
+
+    ```console
+    project_folder/
+    ├── go.mod
+    ├── go.sum
+    └── main.go
+    ```
+
+    ### Create `agent.go`
+
+    Create a `agent.go` source file in your project folder.
+
+    ```bash
+    touch agent.go
+    ```
+
+    Initialize a new Go module:
+
+    ```bash
+    go mod init multi_tool_agent
+    ```
+
+    Copy and paste the following code into `agent.go`:
+
+    ```go title="agent.go"
+    --8<-- "examples/go/snippets/get-started/multi_tool_agent/agent.go"
+    ```
+
 ![intro_components.png](../assets/quickstart-flow-tool.png)
 
 ## 3. Set up the model { #set-up-the-model }
@@ -163,7 +202,7 @@ agent will be unable to function.
         GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_API_KEY_HERE
         ```
 
-        When using Java, define environment variables:
+        When using Java or Go, define environment variables:
 
         ```console title="terminal"
         export GOOGLE_GENAI_USE_VERTEXAI=FALSE
@@ -185,7 +224,7 @@ agent will be unable to function.
         GOOGLE_CLOUD_LOCATION=LOCATION
         ```
 
-        When using Java, define environment variables:
+        When using Java or Go, define environment variables:
 
         ```console title="terminal"
         export GOOGLE_GENAI_USE_VERTEXAI=TRUE
@@ -206,7 +245,7 @@ agent will be unable to function.
         GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_EXPRESS_MODE_API_KEY_HERE
         ```
 
-        When using Java, define environment variables:
+        When using Java or Go, define environment variables:
 
         ```console title="terminal"
         export GOOGLE_GENAI_USE_VERTEXAI=TRUE
@@ -420,7 +459,24 @@ agent will be unable to function.
         gradle runAgent
         ```
 
+=== "Go"
 
+    Using the terminal, navigate to your agent project directory:
+
+    ```console
+    project_folder/      <-- navigate to this directory
+        go.mod
+        go.sum
+        agent.go
+    ```
+
+    Run the following command to chat with your agent.
+
+    ```
+    go run .
+    ```
+
+    To exit, use Cmd/Ctrl+C.
 
 ### 📝 Example prompts to try
 
