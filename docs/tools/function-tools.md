@@ -1,18 +1,15 @@
 # Function tools
 
-## What are function tools?
-
-When out-of-the-box tools don't fully meet specific requirements, developers can create custom function tools. This allows for **tailored functionality**, such as connecting to proprietary databases or implementing unique algorithms.
-
-*For example,* a function tool, "myfinancetool", might be a function that calculates a specific financial metric. ADK also supports long running functions, so if that calculation takes a while, the agent can continue working on other tasks.
+When pre-built ADK tools don't meet your requirements, you can create custom *function tools*. Building function tools allows you to create tailored functionality, such as connecting to proprietary databases or implementing unique algorithms.
+For example, a function tool, `myfinancetool`, might be a function that calculates a specific financial metric. ADK also supports long running functions, so if that calculation takes a while, the agent can continue working on other tasks.
 
 ADK offers several ways to create functions tools, each suited to different levels of complexity and control:
 
-1. Function Tool
-2. Long Running Function Tool
-3. Agents-as-a-Tool
+*  [Function Tools](#function-tool)
+*  [Long Running Function Tools](#long-run-tool)
+*  [Agents-as-a-Tool](#agent-tool)
 
-## 1. Function Tool
+## Function Tools {#function-tool}
 
 Transforming a Python function into a tool is a straightforward way to integrate custom logic into your agents. When you assign a function to an agent’s `tools` list, the framework automatically wraps it as a `FunctionTool`.
 
@@ -153,13 +150,21 @@ While you have considerable flexibility in defining your function, remember that
 
 * **Fewer Parameters are Better:** Minimize the number of parameters to reduce complexity.  
 * **Simple Data Types:** Favor primitive data types like `str` and `int` over custom classes whenever possible.  
-* **Meaningful Names:** The function's name and parameter names significantly influence how the LLM interprets and utilizes the tool. Choose names that clearly reflect the function's purpose and the meaning of its inputs. Avoid generic names like `do_stuff()` or `beAgent()`.  
+* **Meaningful Names:** The function's name and parameter names significantly influence how the LLM interprets and utilizes the tool. Choose names that clearly reflect the function's purpose and the meaning of its inputs. Avoid generic names like `do_stuff()` or `beAgent()`.
+* **Build for Parallel Execution:** Improve function calling performance when multiple tools are run by building for asynchronous operation. For information on enabling parallel execution for tools, see
+[Increase tool performance with parallel execution](/adk-docs/tools/performance/).
 
-## 2. Long Running Function Tool
+## Long Running Function Tools {#long-run-tool}
 
 Designed for tasks that require a significant amount of processing time without blocking the agent's execution. This tool is a subclass of `FunctionTool`.
 
-When using a `LongRunningFunctionTool`, your function can initiate the long-running operation and optionally return an **initial result**** (e.g. the long-running operation id). Once a long running function tool is invoked the agent runner will pause the agent run and let the agent client to decide whether to continue or wait until the long-running operation finishes. The agent client can query the progress of the long-running operation and send back an intermediate or final response. The agent can then continue with other tasks. An example is the human-in-the-loop scenario where the agent needs human approval before proceeding with a task.
+When using a `LongRunningFunctionTool`, your function can initiate the long-running operation and optionally return an **initial result** (e.g., the long-running operation id). Once a long running function tool is invoked the agent runner will pause the agent run and let the agent client to decide whether to continue or wait until the long-running operation finishes. The agent client can query the progress of the long-running operation and send back an intermediate or final response. The agent can then continue with other tasks. An example is the human-in-the-loop scenario where the agent needs human approval before proceeding with a task.
+
+!!! tip "Tip: Parallel execution"
+    Depending on the type of tool you are building, designing for asychronous
+    operation may be a better solution than creating a long running tool. For
+    more information, see
+    [Increase tool performance with parallel execution](/adk-docs/tools/performance/).
 
 ### How it Works
 
@@ -230,7 +235,7 @@ Define your tool function and wrap it using the `LongRunningFunctionTool` class:
 
 Agent client received an event with long running function calls and check the status of the ticket. Then Agent client can send the intermediate or final response back to update the progress. The framework packages this value (even if it's None) into the content of the `FunctionResponse` sent back to the LLM.
 
-!!! Tip "Applies to only Java ADK"
+??? Tip "Applies to only Java ADK"
 
     When passing `ToolContext` with Function Tools, ensure that one of the following is true:
 
@@ -288,7 +293,7 @@ Agent client received an event with long running function calls and check the st
 
 * **Final return**: The function returns the final result dictionary, which is sent in the concluding FunctionResponse to indicate completion.
 
-## 3. Agent-as-a-Tool
+## Agent-as-a-Tool {#agent-tool}
 
 This powerful feature allows you to leverage the capabilities of other agents within your system by calling them as tools. The Agent-as-a-Tool enables you to invoke another agent to perform a specific task, effectively **delegating responsibility**. This is conceptually similar to creating a Python function that calls another agent and uses the agent's response as the function's return value.
 
