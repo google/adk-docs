@@ -1,5 +1,20 @@
+# Copyright 2025 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 # --- Full example code demonstrating LlmAgent with Tools vs. Output Schema ---
 import json # Needed for pretty printing dicts
+import asyncio 
 
 from google.adk.agents import LlmAgent
 from google.adk.runners import Runner
@@ -79,10 +94,6 @@ Use your knowledge to determine the capital and estimate the population. Do not 
 # --- 5. Set up Session Management and Runners ---
 session_service = InMemorySessionService()
 
-# Create separate sessions for clarity, though not strictly necessary if context is managed
-session_service.create_session(app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID_TOOL_AGENT)
-session_service.create_session(app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID_SCHEMA_AGENT)
-
 # Create a runner for EACH agent
 capital_runner = Runner(
     agent=capital_agent_with_tool,
@@ -116,7 +127,7 @@ async def call_agent_and_print(
 
     print(f"<<< Agent '{agent_instance.name}' Response: {final_response_content}")
 
-    current_session = session_service.get_session(app_name=APP_NAME,
+    current_session = await session_service.get_session(app_name=APP_NAME,
                                                   user_id=USER_ID,
                                                   session_id=session_id)
     stored_output = current_session.state.get(agent_instance.output_key)
@@ -135,6 +146,11 @@ async def call_agent_and_print(
 
 # --- 7. Run Interactions ---
 async def main():
+    # Create separate sessions for clarity, though not strictly necessary if context is managed
+    print("--- Creating Sessions ---")
+    await session_service.create_session(app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID_TOOL_AGENT)
+    await session_service.create_session(app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID_SCHEMA_AGENT)
+    
     print("--- Testing Agent with Tool ---")
     await call_agent_and_print(capital_runner, capital_agent_with_tool, SESSION_ID_TOOL_AGENT, '{"country": "France"}')
     await call_agent_and_print(capital_runner, capital_agent_with_tool, SESSION_ID_TOOL_AGENT, '{"country": "Canada"}')
@@ -143,5 +159,8 @@ async def main():
     await call_agent_and_print(structured_runner, structured_info_agent_schema, SESSION_ID_SCHEMA_AGENT, '{"country": "France"}')
     await call_agent_and_print(structured_runner, structured_info_agent_schema, SESSION_ID_SCHEMA_AGENT, '{"country": "Japan"}')
 
+# --- Run the Agent ---
+# Note: In Colab, you can directly use 'await' at the top level.
+# If running this code as a standalone Python script, you'll need to use asyncio.run() or manage the event loop.
 if __name__ == "__main__":
-    await main()
+    asyncio.run(main())    
