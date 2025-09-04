@@ -8,7 +8,33 @@ and scale AI agents in production. Agent Engine handles the infrastructure to
 scale agents in production so you can focus on creating intelligent and
 impactful applications.
 
+!!! tip "🚀 Accelerate Production Deployment with the [Agent Starter Pack](https://github.com/GoogleCloudPlatform/agent-starter-pack)"
+    ```bash
+    uvx agent-starter-pack enhance --adk -d agent_engine
+    ```
+    
+    This command upgrades your existing agent project in-place, seamlessly adding:
+    
+    **Agent Engine deployment** • **Terraform infrastructure** • **Automated CI/CD pipeline** • **Cloud-native Observability** 
+    
+    [Enhance CLI reference →](https://googlecloudplatform.github.io/agent-starter-pack/cli/enhance.html) | [Development guide →](https://googlecloudplatform.github.io/agent-starter-pack/guide/development-guide.html)
+
 This guide provides a step-by-step walkthrough for deploying an agent from your local environment.
+
+!!! tip "Deploy with Agent Starter Pack"
+    Try the [Agent Starter Pack](https://github.com/GoogleCloudPlatform/agent-starter-pack)
+    for help deploying ADK projects. The following command updates an existing
+    ADK project to prepare for deployment with Agent Engine: 
+
+    ```bash
+    uvx agent-starter-pack enhance --adk -d agent_engine
+    ```
+    
+    For more information on using Agent Starter Pack and its
+    command line tools command, see the
+    [CLI reference](https://googlecloudplatform.github.io/agent-starter-pack/cli/enhance.html)
+    and
+    [Development guide](https://googlecloudplatform.github.io/agent-starter-pack/guide/development-guide.html).
 
 ## Prerequisites
 
@@ -30,7 +56,7 @@ Before you begin, ensure you have the following:
     Agent Engine is part of the Vertex AI SDK for Python. For more information, you can review the [Agent Engine quickstart documentation](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/quickstart).
 
     ```shell
-    pip install "google-cloud-aiplatform[adk,agent_engines]" cloudpickle
+    pip install google-cloud-aiplatform[adk,agent_engines]>=1.111
     ```
 
 ## Deployment payload {#payload}
@@ -41,8 +67,8 @@ the following content is uploaded to the service:
 - Your ADK agent code
 - Any dependencies declared in your ADK agent code
 
-The deployment does not *does not* the ADK API server or the ADK web user
-interface libraries. Agent Engine service provides the libraries for ADK API
+The deployment *does not* include the ADK API server or the ADK web user
+interface libraries. The Agent Engine service provides the libraries for ADK API
 server functionality.
 
 ## Step 1: Define Your Agent
@@ -81,10 +107,10 @@ vertexai.init(
 To make your agent compatible with Agent Engine, you need to wrap it in an `AdkApp` object.
 
 ```python title="deploy.py"
-from vertexai.preview import reasoning_engines
+from vertexai import agent_engines
 
 # Wrap the agent in an AdkApp object
-app = reasoning_engines.AdkApp(
+app = agent_engines.AdkApp(
     agent=root_agent,
     enable_tracing=True,
 )
@@ -97,11 +123,11 @@ app = reasoning_engines.AdkApp(
 
 Before deploying, you can test your agent's behavior locally.
 
-The `stream_query` method returns a stream of events that represent the agent's execution trace.
+The `async_stream_query` method returns a stream of events that represent the agent's execution trace.
 
 ```python title="deploy.py"
 # Create a local session to maintain conversation history
-session = app.create_session(user_id="u_123")
+session = await app.async_create_session(user_id="u_123")
 print(session)
 ```
 
@@ -114,11 +140,13 @@ Session(id='c6a33dae-26ef-410c-9135-b434a528291f', app_name='default-app-name', 
 Send a query to the agent. Copy-paste the following code to your "deploy.py" python script or a notebook.
 
 ```py title="deploy.py"
-events = list(app.stream_query(
+events = []
+async for event in app.async_stream_query(
     user_id="u_123",
     session_id=session.id,
     message="whats the weather in new york",
-))
+):
+    events.append(event)
 
 # The full event stream shows the agent's thought process
 print("--- Full Event Stream ---")
@@ -144,7 +172,7 @@ When you run the code above, you will see a few types of events:
 *   **Tool Response Event**: The system provides the result of the tool call back to the model.
 *   **Model Response Event**: The final text response from the agent after it has processed the tool results.
 
-Expected output for `stream_query` (local):
+Expected output for `async_stream_query` (local):
 
 ```console
 {'parts': [{'function_call': {'id': 'af-a33fedb0-29e6-4d0c-9eb3-00c402969395', 'args': {'city': 'new york'}, 'name': 'get_weather'}}], 'role': 'model'}
@@ -209,8 +237,8 @@ The remote_app object from the previous step already has the connection.
 
 ```py
 # If you are in a new script or used the ADK CLI to deploy, you can connect like this:
-# remote_app = reasoning_engines.ReasoningEngine("your-agent-resource-name")
-remote_session = remote_app.create_session(user_id="u_456")
+# remote_app = agent_engines.get("your-agent-resource-name")
+remote_session = await remote_app.async_create_session(user_id="u_456")
 print(remote_session)
 ```
 
@@ -230,7 +258,7 @@ Expected output for `create_session` (remote):
 ### Send queries to your remote agent
 
 ```py
-for event in remote_app.stream_query(
+async for event in remote_app.async_stream_query(
     user_id="u_456",
     session_id=remote_session["id"],
     message="whats the weather in new york",
@@ -238,7 +266,7 @@ for event in remote_app.stream_query(
     print(event)
 ```
 
-Expected output for `stream_query` (remote):
+Expected output for `async_stream_query` (remote):
 
 ```console
 {'parts': [{'function_call': {'id': 'af-f1906423-a531-4ecf-a1ef-723b05e85321', 'args': {'city': 'new york'}, 'name': 'get_weather'}}], 'role': 'model'}
@@ -248,7 +276,7 @@ Expected output for `stream_query` (remote):
 
 ### Sending Multimodal Queries
 
-To send multimodal queries (e.g., including images) to your agent, you can construct the `message` parameter of `stream_query` with a list of `types.Part` objects. Each part can be text or an image.
+To send multimodal queries (e.g., including images) to your agent, you can construct the `message` parameter of `async_stream_query` with a list of `types.Part` objects. Each part can be text or an image.
 
 To include an image, you can use `types.Part.from_uri`, providing a Google Cloud Storage (GCS) URI for the image.
 
@@ -263,7 +291,7 @@ text_part = types.Part.from_text(
     text="What is in this image?",
 )
 
-for event in remote_app.stream_query(
+async for event in remote_app.async_stream_query(
     user_id="u_456",
     session_id=remote_session["id"],
     message=[text_part, image_part],
