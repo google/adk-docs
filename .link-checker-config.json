@@ -1,0 +1,26 @@
+{
+  "ignorePatterns": [
+    {
+      "pattern": "^https?://(localhost|127\\.0\\.0\\.1)"
+    },
+    {
+      "pattern": "^((?!http).)*$"
+    },
+    {
+      "pattern": "^https://console.cloud.google.com/"
+    },
+    {
+      "pattern": "^https://a2aprotocol.ai/"
+    }
+  ],
+  "aliveStatusCodes": [
+    200,
+    206,
+    302,
+    403
+  ],
+  "timeout": "30s",
+  "retryOn429": true,
+  "retryCount": 5,
+  "fallbackRetryDelay": "30s"
+}

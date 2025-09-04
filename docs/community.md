@@ -44,6 +44,10 @@ integrations here.*
     > e-commerce site, designed to offer the "Generative Recommendations" you find in the 
     > [Shopper's Concierge demo](https://www.youtube.com/watch?v=LwHPYyw7u6U).
 
+* **[Google ADK + Vertex AI Live API](https://medium.com/google-cloud/google-adk-vertex-ai-live-api-125238982d5e)**
+
+    > Going Beyond the ADK CLI by Building Streaming Experiences with the Agent Development Kit and the Vertex AI Live API.
+
 ## Videos & Screencasts
 
 Discover video walkthroughs, talks, and demos showcasing ADK.
@@ -76,6 +80,12 @@ Discover video walkthroughs, talks, and demos showcasing ADK.
   <div class="video-item">
     <div class="video-container">
       <iframe src="https://www.youtube-nocookie.com/embed/LwHPYyw7u6U" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    </div>
+  </div>
+
+  <div class="video-item">
+    <div class="video-container">
+      <iframe src="https://www.youtube-nocookie.com/embed/5ZmaWY7UX6k" title="ADK Tools Walkthrough" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
     </div>
   </div>
 
