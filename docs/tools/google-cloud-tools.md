@@ -80,7 +80,7 @@ you only need to follow a subset of these steps.
         "apikey", "query", "apikey", apikey_credential_str
     )
 
-    sample_toolset_with_auth = APIHubToolset(
+    sample_toolset = APIHubToolset(
         name="apihub-sample-tool",
         description="Sample Tool",
         access_token="...",  # Copy your access token generated in step 1
