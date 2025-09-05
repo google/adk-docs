@@ -224,7 +224,7 @@ You can adjust how the underlying LLM generates responses using `generate_conten
     agent = LlmAgent(
         # ... other params
         generate_content_config=types.GenerateContentConfig(
-            temperature=0.2,
+            temperature=0.2, # More deterministic output
             max_output_tokens=250,
             safety_settings=[
                 types.SafetySetting(
