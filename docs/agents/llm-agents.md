@@ -214,7 +214,7 @@ Beyond the core parameters, `LlmAgent` offers several options for finer control:
 
 You can adjust how the underlying LLM generates responses using `generate_content_config`.
 
-* **`generate_content_config` (Optional):** Pass an instance of `google.genai.types.GenerateContentConfig` to control parameters like `temperature` (randomness), `max_output_tokens` (response length), `top_p`, `top_k`, and safety settings.
+* **`generate_content_config` (Optional):** Pass an instance of [`google.genai.types.GenerateContentConfig`](https://googleapis.github.io/python-genai/genai.html#genai.types.GenerateContentConfig) to control parameters like `temperature` (randomness), `max_output_tokens` (response length), `top_p`, `top_k`, and safety settings.
 
 === "Python"
 
@@ -225,7 +225,13 @@ You can adjust how the underlying LLM generates responses using `generate_conten
         # ... other params
         generate_content_config=types.GenerateContentConfig(
             temperature=0.2, # More deterministic output
-            max_output_tokens=250
+            max_output_tokens=250,
+            safety_settings=[
+                types.SafetySetting(
+                    category=types.HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+                    threshold=types.HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
+                )
+            ]
         )
     )
     ```
