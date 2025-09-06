@@ -267,7 +267,7 @@ class MultiMemoryAgent(Agent):
 
         # 1. Search conversational history using the framework-provided memory
         #    (This would be InMemoryMemoryService if configured)
-        conversation_context = await self.search_memory(query=user_query)
+        conversation_context = await self.memory_service.search_memory(query=user_query)
 
         # 2. Search the document knowledge base using the manually created service
         document_context = await self.vertexai_memorybank_service.search_memory(query=user_query)
