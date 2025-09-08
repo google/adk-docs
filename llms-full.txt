@@ -1684,7 +1684,7 @@ Learn more about Tools in the [Tools](https://google.github.io/adk-docs/tools/) 
 
 Beyond the core parameters, `LlmAgent` offers several options for finer control:
 
-### Fine-Tuning LLM Generation ( `generate_content_config`) [¶](https://google.github.io/adk-docs/agents/llm-agents/\#fine-tuning-llm-generation-generate_content_config "Permanent link")
+### Configuring LLM Generation ( `generate_content_config`) [¶](https://google.github.io/adk-docs/agents/llm-agents/\#fine-tuning-llm-generation-generate_content_config "Permanent link")
 
 You can adjust how the underlying LLM generates responses using `generate_content_config`.
 

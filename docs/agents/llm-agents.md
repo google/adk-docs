@@ -210,7 +210,7 @@ Learn more about Tools in the [Tools](../tools/index.md) section.
 
 Beyond the core parameters, `LlmAgent` offers several options for finer control:
 
-### Fine-Tuning LLM Generation (`generate_content_config`)
+### Configuring LLM Generation (`generate_content_config`) {#fine-tuning-llm-generation-generate_content_config}
 
 You can adjust how the underlying LLM generates responses using `generate_content_config`.
 
