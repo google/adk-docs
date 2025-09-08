@@ -1,0 +1,24 @@
+{
+  "name": "simple",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@types/node": "^24.3.1",
+    "typescript": "^5.9.2"
+  },
+    "@google/adk": "file:../adk-js/core",
+    "@google/genai": "^1.17.0",
+    "module-alias": "^2.2.3",
+    "tsconfig-paths": "^4.2.0",
+    "zod": "^3.22.4",
+    "zod-to-json-schema": "^3.24.6"
+  }
+}

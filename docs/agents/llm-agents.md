@@ -659,6 +659,12 @@ call_agent("If it's raining in New York right now, what is the current temperatu
         ```java
         --8<-- "examples/java/snippets/src/main/java/agents/LlmAgentExample.java:full_code"
         ```
+    
+    === "Typescript"
+    
+        ```javascript
+        --8<-- "examples/typescript/snippets/agents/llm-agent/capital_agent.py"
+        ```
 
 _(This example demonstrates the core concepts. More complex agents might incorporate schemas, context control, planning, etc.)_
 
