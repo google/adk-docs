@@ -37,6 +37,8 @@ When running agents using the ADK's built-in web or API servers, you can easily 
 
 This provides a convenient way to set the logging level without modifying your agent's source code.
 
+> **Note:** The command-line setting always takes precedence over the programmatic configuration (like `logging.basicConfig`) for ADK's loggers. It's recommended to use `INFO` or `WARNING` in production and enable `DEBUG` only when troubleshooting.
+
 **Example using `adk web`:**
 
 To start the web server with `DEBUG` level logging, run:
@@ -46,59 +48,48 @@ adk web --log_level DEBUG path/to/your/agents_dir
 ```
 
 The available log levels for the `--log_level` option are:
+
 - `DEBUG`
 - `INFO` (default)
 - `WARNING`
 - `ERROR`
 - `CRITICAL`
 
-> For the `DEBUG` level, you can also use `-v` or `--verbose` as a a shortcut for `--log_level DEBUG`. For example:
-> 
+> You can also use `-v` or `--verbose` as a a shortcut for `--log_level DEBUG`.
+>
 > ```bash
 > adk web -v path/to/your/agents_dir
 > ```
 
-This command-line setting overrides any programmatic configuration (like `logging.basicConfig`) you might have in your code for the ADK's loggers.
-
 ### Log Levels
 
-ADK uses standard log levels to categorize the importance of a message:
+ADK uses standard log levels to categorize messages. The configured level determines what information gets logged.
 
--   `DEBUG`: The most verbose level. Used for fine-grained diagnostic information, such as the full prompt sent to the LLM, detailed state changes, and internal logic flow. **Crucial for debugging.**
--   `INFO`: General information about the agent's lifecycle. This includes events like agent startup, session creation, and tool execution.
--   `WARNING`: Indicates a potential issue or the use of a deprecated feature. The agent can continue to function, but the issue may require attention.
--   `ERROR`: A serious error occurred that prevented the agent from performing an operation.
+| Level | Description | Type of Information Logged  |
+| :--- | :--- | :--- |
+| **`DEBUG`** | **Crucial for debugging.** The most verbose level for fine-grained diagnostic information. | <ul><li>**Full LLM Prompts:** The complete request sent to the language model, including system instructions, history, and tools.</li><li>Detailed API responses from services.</li><li>Internal state transitions and variable values.</li></ul> |
+| **`INFO`** | General information about the agent's lifecycle. | <ul><li>Agent initialization and startup.</li><li>Session creation and deletion events.</li><li>Execution of a tool, including its name and arguments.</li></ul> |
+| **`WARNING`** | Indicates a potential issue or deprecated feature use. The agent continues to function, but attention may be required. | <ul><li>Use of deprecated methods or parameters.</li><li>Non-critical errors that the system recovered from.</li></ul> |
+| **`ERROR`** | A serious error that prevented an operation from completing. | <ul><li>Failed API calls to external services (e.g., LLM, Session Service).</li><li>Unhandled exceptions during agent execution.</li><li>Configuration errors.</li></ul> |
 
-> **Note:** It is recommended to use `INFO` or `WARNING` in production environments and only enable `DEBUG` when actively troubleshooting an issue, as `DEBUG` logs can be very verbose and may contain sensitive information.
-
-## What is Logged
-
-Depending on the configured log level, you can expect to see the following information:
-
-| Level     | Type of Information Logged                                                                                             |
-| :-------- | :--------------------------------------------------------------------------------------------------------------------- |
-| **DEBUG** | - **Full LLM Prompts:** The complete request sent to the language model, including system instructions, history, and tools. |
-|           | - Detailed API responses from services.                                                                                |
-|           | - Internal state transitions and variable values.                                                                      |
-| **INFO**  | - Agent initialization and startup.                                                                                    |
-|           | - Session creation and deletion events.                                                                                |
-|           | - Execution of a tool, including the tool name and arguments.                                                          |
-| **WARNING**| - Use of deprecated methods or parameters.                                                                             |
-|           | - Non-critical errors that the system can recover from.                                                                 |
-| **ERROR** | - Failed API calls to external services (e.g., LLM, Session Service).                                                  |
-|           | - Unhandled exceptions during agent execution.                                                                         |
-|           | - Configuration errors.                                                                                                |
+> **Note:** It is recommended to use `INFO` or `WARNING` in production environments. Only enable `DEBUG` when actively troubleshooting an issue, as `DEBUG` logs can be very verbose and may contain sensitive information.
 
 ## Reading and Understanding the Logs
 
-The `format` string in the `basicConfig` example determines the structure of each log message. Let's break down a sample log entry:
+The `format` string in the `basicConfig` example determines the structure of each log message.  
 
-`2025-07-08 11:22:33,456 - DEBUG - google_adk.google.adk.models.google_llm - LLM Request: contents { ... }`
+Here’s a sample log entry:
 
--   `2025-07-08 11:22:33,456`: `%(asctime)s` - The timestamp of when the log was recorded.
--   `DEBUG`: `%(levelname)s` - The severity level of the message.
--   `google_adk.google.adk.models.google_llm`: `%(name)s` - The name of the logger. This hierarchical name tells you exactly which module in the ADK framework produced the log. In this case, it's the Google LLM model wrapper.
--   `Request to LLM: contents { ... }`: `%(message)s` - The actual log message.
+```text
+2025-07-08 11:22:33,456 - DEBUG - google_adk.google.adk.models.google_llm - LLM Request: contents { ... }
+```
+
+| Log Segment                     | Format Specifier | Meaning                                        |
+| ------------------------------- | ---------------- | ---------------------------------------------- |
+| `2025-07-08 11:22:33,456`       | `%(asctime)s`    | Timestamp                                      |
+| `DEBUG`                         | `%(levelname)s`  | Severity level                                 |
+| `google_adk.models.google_llm`  | `%(name)s`       | Logger name (the module that produced the log) |
+| `LLM Request: contents { ... }` | `%(message)s`    | The actual log message                         |
 
 By reading the logger name, you can immediately pinpoint the source of the log and understand its context within the agent's architecture.
 
