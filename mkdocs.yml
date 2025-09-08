@@ -12,7 +12,7 @@ repo_name: adk-python
 repo_url: https://github.com/google/adk-python
 
 # Copyright
-copyright: Copyright Google 2025
+copyright: Copyright Google 2025&nbsp;&nbsp;|&nbsp;&nbsp;<a href="//policies.google.com/terms">Terms</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="//policies.google.com/privacy">Privacy</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="#__consent">Manage cookies</a>
 
 # Custom CSS
 extra_css:
@@ -24,7 +24,14 @@ extra:
   second_repo_icon: fontawesome/brands/github
   analytics:
     provider: google
-    property: !ENV GOOGLE_ANALYTICS_KEY
+    property: G-DKHZS27PHP
+  consent:
+    title: Cookie consent
+    description: >- 
+      We use cookies to recognize repeated visits and preferences, 
+      as well as to measure the effectiveness of our documentation and
+      whether users find the information they need. With your consent,
+      you're helping us to make our documentation better.
 
 # Configuration
 theme:
@@ -131,10 +138,13 @@ nav:
       - Parallel agents: agents/workflow-agents/parallel-agents.md
     - Custom agents: agents/custom-agents.md
     - Multi-agent systems: agents/multi-agents.md
+    - Agent Config: agents/config.md
     - Models & Authentication: agents/models.md
   - Tools:
     - tools/index.md
-    - Function tools: tools/function-tools.md
+    - Function tools:
+      - Overview: tools/function-tools.md
+      - Tool performance: tools/performance.md
     - Built-in tools: tools/built-in-tools.md
     - Third party tools: tools/third-party-tools.md
     - Google Cloud tools: tools/google-cloud-tools.md
@@ -204,4 +214,5 @@ nav:
     - Python ADK: api-reference/python/index.html
     - Java ADK: api-reference/java/index.html
     - CLI Reference: api-reference/cli/index.html
+    - Agent Config reference: api-reference/agentconfig/index.html
     - REST API: api-reference/rest/index.md

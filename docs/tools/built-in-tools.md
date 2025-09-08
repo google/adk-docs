@@ -107,6 +107,20 @@ sample. For more information on deploying ADK workflows to GKE, see
     )
     ```
 
+### Vertex AI RAG Engine
+
+The `vertex_ai_rag_retrieval` tool allows the agent to perform private data retrieval using Vertex
+AI RAG Engine.
+
+When you use grounding with Vertex AI RAG Engine, you need to prepare a RAG corpus before hand.
+Please refer to the [RAG ADK agent sample](https://github.com/google/adk-samples/blob/main/python/agents/RAG/rag/shared_libraries/prepare_corpus_and_data.py) or [Vertex AI RAG Engine page](https://cloud.google.com/vertex-ai/generative-ai/docs/rag-engine/rag-quickstart) for setting it up.
+
+=== "Python"
+
+    ```py
+    --8<-- "examples/python/snippets/tools/built-in-tools/vertexai_rag_engine.py"
+    ```
+
 ### Vertex AI Search
 
 The `vertex_ai_search_tool` uses Google Cloud's Vertex AI Search, enabling the

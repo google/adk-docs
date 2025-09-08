@@ -104,7 +104,6 @@ async def call_agent_async(query):
 
     content = types.Content(role='user', parts=[types.Part(text=query)])
     session, runner = await setup_session_and_runner()
-    events = runner.run_async(user_id=USER_ID, session_id=SESSION_ID, new_message=content)
 
     print("\nRunning agent...")
     events_async = runner.run_async(

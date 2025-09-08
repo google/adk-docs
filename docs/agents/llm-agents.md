@@ -210,7 +210,7 @@ Learn more about Tools in the [Tools](../tools/index.md) section.
 
 Beyond the core parameters, `LlmAgent` offers several options for finer control:
 
-### Fine-Tuning LLM Generation (`generate_content_config`)
+### Configuring LLM Generation (`generate_content_config`) {#fine-tuning-llm-generation-generate_content_config}
 
 You can adjust how the underlying LLM generates responses using `generate_content_config`.
 
@@ -252,7 +252,6 @@ For scenarios requiring structured data exchange with an `LLM Agent`, the ADK pr
 * **`input_schema` (Optional):** Define a schema representing the expected input structure. If set, the user message content passed to this agent *must* be a JSON string conforming to this schema. Your instructions should guide the user or preceding agent accordingly.
 
 * **`output_schema` (Optional):** Define a schema representing the desired output structure. If set, the agent's final response *must* be a JSON string conforming to this schema.
-    * **Constraint:** Using `output_schema` enables controlled generation within the LLM but **disables the agent's ability to use tools or transfer control to other agents**. Your instructions must guide the LLM to produce JSON matching the schema directly.
 
 * **`output_key` (Optional):** Provide a string key. If set, the text content of the agent's *final* response will be automatically saved to the session's state dictionary under this key. This is useful for passing results between agents or steps in a workflow.
     * In Python, this might look like: `session.state[output_key] = agent_response_text`
