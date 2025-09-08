@@ -59,24 +59,31 @@ like calculations, data manipulation, or running small scripts.
 
 ### GKE Code Executor
 
-The `GkeCodeExecutor` provides a secure and scalable method for running
-LLM-generated code by leveraging the GKE (Google Kubernetes Engine) Sandbox
-environment, which uses gVisor for workload isolation.
+The GKE Code Executor (`GkeCodeExecutor`) provides a secure and scalable method
+for running LLM-generated code by leveraging the GKE (Google Kubernetes Engine)
+Sandbox environment, which uses gVisor for workload isolation.
 
 For each code execution request, it dynamically creates an ephemeral, sandboxed
 Kubernetes Job with a hardened Pod configuration. This is the recommended
 executor for production environments on GKE where security and isolation are
 critical.
 
-!!! note "Prerequisites"
+#### System requirements
 
-    - You must have a GKE cluster with a **gVisor-enabled node pool**.
-    - The agent's service account requires specific **RBAC permissions**, which allow it to:
-        - Create, watch, and delete **Jobs** for each execution request.
-        - Manage **ConfigMaps** to inject code into the Job's pod.
-        - List **Pods** and read their **logs** to retrieve the execution result
-    - See the complete, ready-to-use configuration in `contributing/samples/gke_agent_sandbox/deployment_rbac.yaml`.
-    - Install the necessary client library: `pip install google-adk[gke]`
+The following requirements must be met to successfully deploy your ADK project
+with the GKE Code Executor tool:
+
+- GKE cluster with a **gVisor-enabled node pool**.
+- Agent's service account requires specific **RBAC permissions**, which allow it to:
+    - Create, watch, and delete **Jobs** for each execution request.
+    - Manage **ConfigMaps** to inject code into the Job's pod.
+    - List **Pods** and read their **logs** to retrieve the execution result
+- Install the client library with GKE extras: `pip install google-adk[gke]`
+
+For a complete, ready-to-use configuration, see the 
+[deployment_rbac.yaml](https://github.com/google/adk-python/blob/main/contributing/samples/gke_agent_sandbox/deployment_rbac.yaml)
+sample. For more information on deploying ADK workflows to GKE, see
+[Deploy to Google Kubernetes Engine (GKE)](/adk-docs/deploy/gke/).
 
 === "Python"
 
