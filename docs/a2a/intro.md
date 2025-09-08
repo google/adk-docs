@@ -200,7 +200,7 @@ retrieve product information from a separate **Product Catalog Agent**.
 ### Before A2A
 
 Initially, your Customer Service Agent might not have a direct, standardized
-way to query the Product Catalog Ageny, especially if it's a separate service
+way to query the Product Catalog Agent, especially if it's a separate service
 or managed by a different team.
 
 ```text
