@@ -25,7 +25,7 @@ The A2A Basic sample consists of:
 
   The ADK comes with a built-in CLI command, `adk api_server --a2a` to expose your agent using the A2A protocol.
 
-  In the a2a_basic example, you will first need to expose the `check_prime_agent` via an A2A server, so that the local root agent can use it.
+  In the `a2a_basic` example, you will first need to expose the `check_prime_agent` via an A2A server, so that the local root agent can use it.
 
 ### 1. Getting the Sample Code { #getting-the-sample-code }
 
@@ -35,7 +35,7 @@ First, make sure you have the necessary dependencies installed:
 pip install google-adk[a2a]
 ```
 
-You can clone and navigate to the [**a2a_basic** sample](https://github.com/google/adk-python/tree/main/contributing/samples/a2a_basic) here:
+You can clone and navigate to the [**`a2a_basic`** sample](https://github.com/google/adk-python/tree/main/contributing/samples/a2a_basic) here:
 
 ```bash
 git clone https://github.com/google/adk-python.git
