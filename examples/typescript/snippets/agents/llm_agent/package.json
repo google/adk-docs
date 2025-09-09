@@ -1,14 +1,14 @@
 {
   "name": "adk-docs-examples",
   "version": "1.0.0",
-  "description": "",
+  "description": "TS code examples for the ADK Documentation",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "type": "commonjs",
   "devDependencies": {
     "@types/node": "^24.3.1",

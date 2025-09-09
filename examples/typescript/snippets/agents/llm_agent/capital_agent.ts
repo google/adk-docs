@@ -53,7 +53,7 @@ async function getCapitalCity(params: z.infer<typeof CountryInput>): Promise<{ r
 
 // Agent 1: Uses a tool and outputKey
 const getCapitalCityTool = new FunctionTool({
-    name: 'get_capital_city', // Matching Python/Java tool name
+    name: 'get_capital_city',
     description: 'Retrieves the capital city for a given country',
     parameters: CountryInput,
     execute: getCapitalCity,
