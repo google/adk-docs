@@ -96,15 +96,15 @@ INFO:     Application startup complete.
 INFO:     Uvicorn running on http://127.0.0.1:8001 (Press CTRL+C to quit)
 ```
   
-### 3. Look out for the required agent card (`agent.json`) of the remote agent { #look-out-for-the-required-agent-card-agent-json-of-the-remote-agent }
+### 3. Look out for the required agent card (`agent-card.json`) of the remote agent { #look-out-for-the-required-agent-card-agent-json-of-the-remote-agent }
 
 A2A Protocol requires that each agent must have an agent card that describes what it does.
 
-If someone else has already built the remote A2A agent that you are looking to consume in your agent, then you should confirm that they have an agent card (`agent.json`).
+If someone else has already built the remote A2A agent that you are looking to consume in your agent, then you should confirm that they have an agent card (`agent-card.json`).
 
 In the sample, the `check_prime_agent` already has an agent card provided:
 
-```json title="a2a_basic/remote_a2a/check_prime_agent/agent.json"
+```json title="a2a_basic/remote_a2a/check_prime_agent/agent-card.json"
 
 {
   "capabilities": {},
@@ -143,6 +143,9 @@ The main agent uses the `RemoteA2aAgent()` function to consume the remote agent 
 ```python title="a2a_basic/agent.py"
 <...code truncated...>
 
+from google.adk.agents.remote_a2a_agent import AGENT_CARD_WELL_KNOWN_PATH
+from google.adk.agents.remote_a2a_agent import RemoteA2aAgent
+
 prime_agent = RemoteA2aAgent(
     name="prime_agent",
     description="Agent that handles checking if numbers are prime.",
@@ -157,6 +160,9 @@ prime_agent = RemoteA2aAgent(
 Then, you can simply use the `RemoteA2aAgent` in your agent. In this case, `prime_agent` is used as one of the sub-agents in the `root_agent` below:
 
 ```python title="a2a_basic/agent.py"
+from google.adk.agents.llm_agent import Agent
+from google.genai import types
+
 root_agent = Agent(
     model="gemini-2.0-flash",
     name="root_agent",
