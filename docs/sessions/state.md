@@ -58,12 +58,16 @@ Prefixes on state keys define their scope and persistence behavior, especially w
     * **Use Cases:** Global settings (e.g., `'app:api_endpoint'`), shared templates.
     * **Example:** `session.state['app:global_discount_code'] = 'SAVE10'`
 
-* **`temp:` Prefix (Temporary Session State):**
+* **`temp:` Prefix (Temporary Invocation State):**
 
-    * **Scope:** Specific to the *current* session processing turn.
-    * **Persistence:** **Never Persistent.** Guaranteed to be discarded, even with persistent services.
-    * **Use Cases:** Intermediate results needed only immediately, data you explicitly don't want stored.
+    * **Scope:** Specific to the current **invocation** (the entire process from an agent receiving user input to generating the final output for that input).
+    * **Persistence:** **Not Persistent.** Discarded after the invocation completes and does not carry over to the next one.
+    * **Use Cases:** Storing intermediate calculations, flags, or data passed between tool calls within a single invocation.
+    * **When Not to Use:** For information that must persist across different invocations, such as user preferences, conversation history summaries, or accumulated data.
     * **Example:** `session.state['temp:raw_api_response'] = {...}`
+
+!!! note "Sub-Agents and Invocation Context"
+    When a parent agent calls a sub-agent (e.g., using `SequentialAgent` or `ParallelAgent`), it passes its `InvocationContext` to the sub-agent. This means the entire chain of agent calls shares the same invocation ID and, therefore, the same `temp:` state.
 
 **How the Agent Sees It:** Your agent code interacts with the *combined* state through the single `session.state` collection (dict/ Map). The `SessionService` handles fetching/merging state from the correct underlying storage based on prefixes.
 
@@ -93,7 +97,7 @@ story_generator = LlmAgent(
 
 #### Important Considerations
 
-* Key Existence: Ensure that the key you reference in the instruction string exists in the session.state. If the key is missing, the agent might misbehave or throw an error.
+* Key Existence: Ensure that the key you reference in the instruction string exists in the session.state. If the key is missing, the agent will throw an error. To use a key that may or may not be present, you can include a question mark (?) after the key (e.g. {topic?}).
 * Data Types: The value associated with the key should be a string or a type that can be easily converted to a string.
 * Escaping: If you need to use literal curly braces in your instruction (e.g., for JSON formatting), you'll need to escape them.
 

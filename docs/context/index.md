@@ -447,15 +447,16 @@ You'll frequently need to read information stored within the context.
         }
         ```
     
-### Managing Session State
+### Managing State
 
 State is crucial for memory and data flow. When you modify state using `CallbackContext` or `ToolContext`, the changes are automatically tracked and persisted by the framework.
 
 *   **How it Works:** Writing to `callback_context.state['my_key'] = my_value` or `tool_context.state['my_key'] = my_value` adds this change to the `EventActions.state_delta` associated with the current step's event. The `SessionService` then applies these deltas when persisting the event.
-*   **Passing Data Between Tools:**
+
+*  **Passing Data Between Tools**
 
     === "Python"
-    
+
         ```python
         # Pseudocode: Tool 1 - Fetches user ID
         from google.adk.tools import ToolContext
@@ -477,9 +478,9 @@ State is crucial for memory and data flow. When you modify state using `Callback
             # ... logic to fetch orders using user_id ...
             return {"orders": ["order123", "order456"]}
         ```
-    
+
     === "Java"
-    
+
         ```java
         // Pseudocode: Tool 1 - Fetches user ID
         import com.google.adk.tools.ToolContext;

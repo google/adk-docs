@@ -38,15 +38,15 @@ Let’s see if Maven is happy with this build, by running a compilation (**mvn c
 ```shell
 $ mvn compile
 [INFO] Scanning for projects...
-[INFO] 
+[INFO]
 [INFO] --------------------< adk-agents:adk-agents >--------------------
 [INFO] Building adk-agents 1.0-SNAPSHOT
 [INFO]   from pom.xml
 [INFO] --------------------------------[ jar ]---------------------------------
-[INFO] 
+[INFO]
 [INFO] --- resources:3.3.1:resources (default-resources) @ adk-demo ---
 [INFO] skip non existing resourceDirectory /home/user/adk-demo/src/main/resources
-[INFO] 
+[INFO]
 [INFO] --- compiler:3.13.0:compile (default-compile) @ adk-demo ---
 [INFO] Nothing to compile - all classes are up to date.
 [INFO] ------------------------------------------------------------------------
@@ -74,7 +74,7 @@ public class ScienceTeacherAgent {
 
   // Field expected by the Dev UI to load the agent dynamically
   // (the agent must be initialized at declaration time)
-  public static BaseAgent ROOT_AGENT = initAgent();
+  public static final BaseAgent ROOT_AGENT = initAgent();
 
   public static BaseAgent initAgent() {
     return LlmAgent.builder()

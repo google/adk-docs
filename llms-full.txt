@@ -1684,7 +1684,7 @@ Learn more about Tools in the [Tools](https://google.github.io/adk-docs/tools/) 
 
 Beyond the core parameters, `LlmAgent` offers several options for finer control:
 
-### Fine-Tuning LLM Generation ( `generate_content_config`) [¶](https://google.github.io/adk-docs/agents/llm-agents/\#fine-tuning-llm-generation-generate_content_config "Permanent link")
+### Configuring LLM Generation ( `generate_content_config`) [¶](https://google.github.io/adk-docs/agents/llm-agents/\#fine-tuning-llm-generation-generate_content_config "Permanent link")
 
 You can adjust how the underlying LLM generates responses using `generate_content_config`.
 
@@ -70252,7 +70252,7 @@ To proceed, confirm that your agent code is configured as follows:
 3. `__init__.py` is within your agent directory and contains `from . import agent`.
 
 1. Agent code is in a file called `CapitalAgent.java` within your agent directory.
-2. Your agent variable is global and follows the format `public static BaseAgent ROOT_AGENT`.
+2. Your agent variable is global and follows the format `public static final BaseAgent ROOT_AGENT`.
 3. Your agent definition is present in a static class method.
 
 Refer to the following section for more details. You can also find a [sample app](https://github.com/google/adk-docs/tree/main/examples/java/cloud-run) in the Github repo.
@@ -70514,7 +70514,7 @@ Create the `pom.xml` and `Dockerfile` in the root of your project directory. You
 1. This is our Agent definition. This is the same code as present in [LLM agent](https://google.github.io/adk-docs/agents/llm-agents/) with two caveats:
 
 
-   - The Agent is now initialized as a **global public static variable**.
+   - The Agent is now initialized as a **global public static final variable**.
 
    - The definition of the agent can be exposed in a static method or inlined during declaration.
 
@@ -72949,8 +72949,8 @@ public class MultiToolAgent {
     private static String USER_ID = "student";
     private static String NAME = "multi_tool_agent";
 
-    // The run your agent with Dev UI, the ROOT_AGENT should be a global public static variable.
-    public static BaseAgent ROOT_AGENT = initAgent();
+    // The run your agent with Dev UI, the ROOT_AGENT should be a global public static final variable.
+    public static final BaseAgent ROOT_AGENT = initAgent();
 
     public static BaseAgent initAgent() {
         return LlmAgent.builder()
@@ -73656,7 +73656,7 @@ public class ScienceTeacherAgent {
 
   // Field expected by the Dev UI to load the agent dynamically
   // (the agent must be initialized at declaration time)
-  public static BaseAgent ROOT_AGENT = initAgent();
+  public static final BaseAgent ROOT_AGENT = initAgent();
 
   public static BaseAgent initAgent() {
     return LlmAgent.builder()
@@ -75229,7 +75229,7 @@ title: "Safety and Security - Agent Development Kit"
 
 As AI agents grow in capability, ensuring they operate safely, securely, and align with your brand values is paramount. Uncontrolled agents can pose risks, including executing misaligned or harmful actions, such as data exfiltration, and generating inappropriate content that can impact your brand’s reputation. **Sources of risk include vague instructions, model hallucination, jailbreaks and prompt injections from adversarial users, and indirect prompt injections via tool use.**
 
-[Google Cloud's Vertex AI](https://cloud.google.com/vertex-ai/generative-ai/docs/overview) provides a multi-layered approach to mitigate these risks, enabling you to build powerful _and_ trustworthy agents. It offers several mechanisms to establish strict boundaries, ensuring agents only perform actions you've explicitly allowed:
+[Google Cloud Vertex AI](https://cloud.google.com/vertex-ai/generative-ai/docs/overview) provides a multi-layered approach to mitigate these risks, enabling you to build powerful _and_ trustworthy agents. It offers several mechanisms to establish strict boundaries, ensuring agents only perform actions you've explicitly allowed:
 
 1. **Identity and Authorization**: Control who the agent **acts as** by defining agent and user auth.
 2. **Guardrails to screen inputs and outputs:** Control your model and tool calls precisely.
@@ -75688,7 +75688,7 @@ memory_service = InMemoryMemoryService()
 2. **`VertexAiRagMemoryService`**
 
 
-   - **How it works:** Leverages Google Cloud's Vertex AI RAG (Retrieval-Augmented Generation) service. It ingests session data into a specified RAG Corpus and uses powerful semantic search capabilities for retrieval.
+   - **How it works:** Leverages Google Cloud Vertex AI RAG (Retrieval-Augmented Generation) service. It ingests session data into a specified RAG Corpus and uses powerful semantic search capabilities for retrieval.
    - **Persistence:** Yes. The knowledge is stored persistently within the configured Vertex AI RAG Corpus.
    - **Requires:** A Google Cloud project, appropriate permissions, necessary SDKs ( `pip install google-adk[vertexai]`), and a pre-configured Vertex AI RAG Corpus resource name/ID.
    - **Best for:** Production applications needing scalable, persistent, and semantically relevant knowledge retrieval, especially when deployed on Google Cloud.
@@ -75984,7 +75984,7 @@ the storage backend that best suits your needs:
 2. **`VertexAiSessionService`**
 
 
-   - **How it works:** Uses Google Cloud's Vertex AI infrastructure via API
+   - **How it works:** Uses Google Cloud Vertex AI infrastructure via API
       calls for session management.
    - **Persistence:** Yes. Data is managed reliably and scalably via
       [Vertex AI Agent Engine](https://google.github.io/adk-docs/deploy/agent-engine/).
@@ -78740,7 +78740,7 @@ from google.genai import types
 
 def get_auth_request_function_call(event: Event) -> types.FunctionCall:
     # Get the special auth request function call from the event
-    if not event.content or event.content.parts:
+    if not event.content or not event.content.parts:
         return
     for part in event.content.parts:
         if (
@@ -78755,9 +78755,11 @@ def get_auth_request_function_call(event: Event) -> types.FunctionCall:
 
 def get_auth_config(auth_request_function_call: types.FunctionCall) -> AuthConfig:
     # Extracts the AuthConfig object from the arguments of the auth request function call
-    if not auth_request_function_call.args or not (auth_config := auth_request_function_call.args.get('auth_config')):
+    if not auth_request_function_call.args or not (auth_config := auth_request_function_call.args.get('authConfig')):
         raise ValueError(f'Cannot get auth config from function call: {auth_request_function_call}')
-    if not isinstance(auth_config, AuthConfig):
+    if isinstance(auth_config, dict):
+        auth_config = AuthConfig.model_validate(auth_config)
+    elif not isinstance(auth_config, AuthConfig):
         raise ValueError(f'Cannot get auth config {auth_config} is not an instance of AuthConfig.')
     return auth_config
 
@@ -79971,7 +79973,7 @@ public class CodeExecutionAgentApp {
 
 ### Vertex AI Search [¶](https://google.github.io/adk-docs/tools/built-in-tools/\#vertex-ai-search "Permanent link")
 
-The `vertex_ai_search_tool` uses Google Cloud's Vertex AI Search, enabling the
+The `vertex_ai_search_tool` uses Google Cloud Vertex AI Search, enabling the
 agent to search across your private, configured data stores (e.g., internal
 documents, company policies, knowledge bases). This built-in tool requires you
 to provide the specific data store ID during configuration.

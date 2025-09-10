@@ -25,9 +25,9 @@ The A2A Basic sample consists of:
 
   The ADK comes with a built-in CLI command, `adk api_server --a2a` to expose your agent using the A2A protocol.
 
-  In the a2a_basic example, you will first need to expose the `check_prime_agent` via an A2A server, so that the local root agent can use it.
+  In the `a2a_basic` example, you will first need to expose the `check_prime_agent` via an A2A server, so that the local root agent can use it.
 
-### 1. Getting the Sample Code
+### 1. Getting the Sample Code { #getting-the-sample-code }
 
 First, make sure you have the necessary dependencies installed:
 
@@ -35,7 +35,7 @@ First, make sure you have the necessary dependencies installed:
 pip install google-adk[a2a]
 ```
 
-You can clone and navigate to the [**a2a_basic** sample](https://github.com/google/adk-python/tree/main/contributing/samples/a2a_basic) here:
+You can clone and navigate to the [**`a2a_basic`** sample](https://github.com/google/adk-python/tree/main/contributing/samples/a2a_basic) here:
 
 ```bash
 git clone https://github.com/google/adk-python.git
@@ -68,7 +68,7 @@ a2a_basic/
 - **`agent.json`**: Agent card of the A2A agent
 - **`check_prime(nums: list[int])`**: Prime number checking algorithm
 
-### 2. Start the Remote Prime Agent server
+### 2. Start the Remote Prime Agent server { #start-the-remote-prime-agent-server }
 
 To show how your ADK agent can consume a remote agent via A2A, you'll first need to start a remote agent server, which will host the prime agent (under `check_prime_agent`).
 
@@ -96,15 +96,15 @@ INFO:     Application startup complete.
 INFO:     Uvicorn running on http://127.0.0.1:8001 (Press CTRL+C to quit)
 ```
   
-### 3. Look out for the required agent card (`agent.json`) of the remote agent
+### 3. Look out for the required agent card (`agent-card.json`) of the remote agent { #look-out-for-the-required-agent-card-agent-json-of-the-remote-agent }
 
 A2A Protocol requires that each agent must have an agent card that describes what it does.
 
-If someone else has already built the remote A2A agent that you are looking to consume in your agent, then you should confirm that they have an agent card (`agent.json`).
+If someone else has already built the remote A2A agent that you are looking to consume in your agent, then you should confirm that they have an agent card (`agent-card.json`).
 
 In the sample, the `check_prime_agent` already has an agent card provided:
 
-```json title="a2a_basic/remote_a2a/check_prime_agent/agent.json"
+```json title="a2a_basic/remote_a2a/check_prime_agent/agent-card.json"
 
 {
   "capabilities": {},
@@ -129,7 +129,7 @@ In the sample, the `check_prime_agent` already has an agent card provided:
 
     In ADK, you can use a `to_a2a(root_agent)` wrapper which automatically generates an agent card for you. If you're interested in learning more about how to expose your existing agent so others can use it, then please look at the [A2A Quickstart (Exposing)](quickstart-exposing.md) tutorial. 
 
-### 4. Run the Main (Consuming) Agent
+### 4. Run the Main (Consuming) Agent { #run-the-main-consuming-agent }
 
   ```bash
   # In a separate terminal, run the adk web server
@@ -142,6 +142,9 @@ The main agent uses the `RemoteA2aAgent()` function to consume the remote agent 
 
 ```python title="a2a_basic/agent.py"
 <...code truncated...>
+
+from google.adk.agents.remote_a2a_agent import AGENT_CARD_WELL_KNOWN_PATH
+from google.adk.agents.remote_a2a_agent import RemoteA2aAgent
 
 prime_agent = RemoteA2aAgent(
     name="prime_agent",
@@ -157,6 +160,9 @@ prime_agent = RemoteA2aAgent(
 Then, you can simply use the `RemoteA2aAgent` in your agent. In this case, `prime_agent` is used as one of the sub-agents in the `root_agent` below:
 
 ```python title="a2a_basic/agent.py"
+from google.adk.agents.llm_agent import Agent
+from google.genai import types
+
 root_agent = Agent(
     model="gemini-2.0-flash",
     name="root_agent",

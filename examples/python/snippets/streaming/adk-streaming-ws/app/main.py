@@ -30,6 +30,7 @@ from google.genai.types import (
 from google.adk.runners import InMemoryRunner
 from google.adk.agents import LiveRequestQueue
 from google.adk.agents.run_config import RunConfig
+from google.genai import types
 
 from fastapi import FastAPI, WebSocket
 from fastapi.staticfiles import StaticFiles
@@ -66,7 +67,10 @@ async def start_agent_session(user_id, is_audio=False):
 
     # Set response modality
     modality = "AUDIO" if is_audio else "TEXT"
-    run_config = RunConfig(response_modalities=[modality])
+    run_config = RunConfig(
+        response_modalities=[modality],
+        session_resumption=types.SessionResumptionConfig()
+    )
 
     # Create a LiveRequestQueue for this session
     live_request_queue = LiveRequestQueue()
@@ -114,7 +118,7 @@ async def agent_to_client_messaging(websocket, live_events):
                 print(f"[AGENT TO CLIENT]: audio/pcm: {len(audio_data)} bytes.")
                 continue
 
-        # If it's text and a parial text, send it
+        # If it's text and a partial text, send it
         if part.text and event.partial:
             message = {
                 "mime_type": "text/plain",

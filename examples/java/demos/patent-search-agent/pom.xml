@@ -41,6 +41,9 @@
           <version>3.14.0</version>
           <configuration>
             <release>17</release>
+            <compilerArgs>
+              <arg>-parameters</arg>
+            </compilerArgs>
           </configuration>
         </plugin>
         <plugin>
