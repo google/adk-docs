@@ -80,7 +80,7 @@ you only need to follow a subset of these steps.
         "apikey", "query", "apikey", apikey_credential_str
     )
 
-    sample_toolset_with_auth = APIHubToolset(
+    sample_toolset = APIHubToolset(
         name="apihub-sample-tool",
         description="Sample Tool",
         access_token="...",  # Copy your access token generated in step 1
@@ -235,21 +235,21 @@ It supports both on-premise and SaaS applications. In addition, you can turn you
 
     To get the permissions that you need to set up **ApplicationIntegrationToolset**, you must have the following IAM roles on the project (common to both Integration Connectors and Application Integration Workflows):
     
-      - `roles/integration.editor`
-      - `roles/connectors.user`
+      - `roles/integrations.integrationEditor`
+      - `roles/connectors.invoker`
       - `roles/secretmanager.secretAccessor`
     
-    **Note:** For Agent Engine (AE), don't use `roles/integration.invoker`, as it can result in 403 errors. Use `roles/integration.editor` instead.
+    **Note:** For Agent Engine (AE), don't use `roles/integrations.integrationInvoker`, as it can result in 403 errors. Use `roles/integrations.integrationEditor` instead.
 
 === "Java"
 
     To get the permissions that you need to set up **ApplicationIntegrationToolset**, you must have the following IAM roles on the project (common to both Integration Connectors and Application Integration Workflows):
     
-      - `roles/integration.editor`
-      - `roles/connectors.user`
+      - `roles/integrations.integrationEditor`
+      - `roles/connectors.invoker`
       - `roles/secretmanager.secretAccessor`
 
-    **Note:** For Agent Engine (AE), don't use `roles/integration.invoker`, as it can result in 403 errors. Use `roles/integration.editor` instead.
+    **Note:** For Agent Engine (AE), don't use `roles/integrations.integrationInvoker`, as it can result in 403 errors. Use `roles/integrations.integrationEditor` instead.
     
 
 ### Use Integration Connectors
