@@ -202,7 +202,7 @@ ADK supports various types of tools:
 * **Built-in Tools**: Ready-to-use tools provided by the framework for common tasks. These include:
   * **Google Search**: Allows the agent to perform web searches using Google Search, compatible with Gemini 2 models.
   * **Code Execution**: Enables the agent to execute code using the built\_in\_code\_execution tool, typically with Gemini 2 models, for calculations or data manipulation.
-  * **Vertex AI Search**: Uses Google Cloud's Vertex AI Search for agents to search across private, configured data stores.
+  * **Vertex AI Search**: Uses Google Cloud Vertex AI Search for agents to search across private, configured data stores.
   * **Limitations**: Currently, each root agent or single agent only supports one built-in tool, and no other tools of any type can be used in the same agent. Built-in tools are also not supported within sub-agents.
 * **Third-Party Tools**: Integrates tools from other AI Agent frameworks like CrewAI and LangChain, enabling faster development and reuse of existing tools.
   * **LangChain Tools**: Uses the LangchainTool wrapper to integrate tools from the LangChain ecosystem (e.g., Tavily search tool).
@@ -323,7 +323,7 @@ Evaluation can be run via:
 
 #### **Safety & Security for AI Agents**
 
-Ensuring AI agents operate safely and securely is paramount due to risks like misaligned actions, data exfiltration, and inappropriate content generation. Sources of risk include vague instructions, model hallucination, jailbreaks, and prompt injections. Google Cloud's Vertex AI provides a multi-layered approach to mitigate these risks.
+Ensuring AI agents operate safely and securely is paramount due to risks like misaligned actions, data exfiltration, and inappropriate content generation. Sources of risk include vague instructions, model hallucination, jailbreaks, and prompt injections. Google Cloud Vertex AI provides a multi-layered approach to mitigate these risks.
 
 * **Safety and Security Risks**: Risks categorized as misalignment/goal corruption, harmful content generation (including brand safety), and unsafe actions (e.g., executing damaging commands, leaking sensitive data).
 * **Best Practices**:
@@ -356,4 +356,3 @@ Ways to contribute include:
 * **Writing Code**: Submit PRs to google/adk-python, google/adk-java, or google/adk-docs. All contributions undergo a review process via GitHub Pull Requests.
 
 By contributing, you agree that your contributions will be licensed under the project's Apache 2.0 License.
-
