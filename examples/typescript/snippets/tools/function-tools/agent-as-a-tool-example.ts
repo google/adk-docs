@@ -3,6 +3,7 @@ import {
   InMemoryRunner,
   LlmAgent,
 } from '@google/adk';
+import {Part} from '@google/genai';
 
 /**
  * This example demonstrates how to use an agent as a tool.
@@ -61,7 +62,7 @@ faster than even the most powerful classical supercomputers could ever achieve, 
   console.log('Agent Response:');
   for (const event of events) {
     if (event.isFinalResponse() && event.content?.parts) {
-      const responsePart = event.content.parts.find(p => p.functionResponse);
+      const responsePart = event.content.parts.find((p: Part) => p.functionResponse);
       if (responsePart && responsePart.functionResponse) {
         console.log(responsePart.functionResponse.response);
       }
