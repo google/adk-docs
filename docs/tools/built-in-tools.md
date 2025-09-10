@@ -123,7 +123,7 @@ Please refer to the [RAG ADK agent sample](https://github.com/google/adk-samples
 
 ### Vertex AI Search
 
-The `vertex_ai_search_tool` uses Google Cloud's Vertex AI Search, enabling the
+The `vertex_ai_search_tool` uses Google Cloud Vertex AI Search, enabling the
 agent to search across your private, configured data stores (e.g., internal
 documents, company policies, knowledge bases). This built-in tool requires you
 to provide the specific data store ID during configuration. For further details of the tool, see [Understanding Vertex AI Search grounding](../grounding/vertex_ai_search_grounding.md).

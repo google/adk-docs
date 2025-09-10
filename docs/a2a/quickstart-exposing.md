@@ -129,7 +129,7 @@ INFO:     Uvicorn running on http://localhost:8001 (Press CTRL+C to quit)
 
 You can check that your agent is up and running by visiting the agent card that was auto-generated earlier as part of your `to_a2a()` function in `a2a_root/remote_a2a/hello_world/agent.py`:
 
-[http://localhost:8001/.well-known/agent.json](http://localhost:8001/.well-known/agent.json)
+[http://localhost:8001/.well-known/agent-card.json](http://localhost:8001/.well-known/agent-card.json)
 
 You should see the contents of the agent card, which should look like:
 
