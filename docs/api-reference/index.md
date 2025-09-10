@@ -2,7 +2,7 @@
 
 The Agent Development Kit (ADK) provides comprehensive API references for both Python and Java, allowing you to dive deep into all available classes, methods, and functionalities.
 
-<div class.="grid cards" markdown>
+<div class="grid cards" markdown>
 
 -   :fontawesome-brands-python:{ .lg .middle } **Python API Reference**
 

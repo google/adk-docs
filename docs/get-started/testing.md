@@ -169,6 +169,33 @@ data: {"content":{"parts":[{"functionResponse":{"id":"af-f83f8af9-f732-46b6-8cb5
 
 data: {"content":{"parts":[{"text":"OK. The weather in New York is sunny with a temperature of 25 degrees Celsius (41 degrees Fahrenheit).\n"}],"role":"model"},"invocationId":"e-3f6d7765-5287-419e-9991-5fffa1a75565","author":"weather_time_agent","actions":{"stateDelta":{},"artifactDelta":{},"requestedAuthConfigs":{}},"id":"rAnWGSiV","timestamp":1743712257.391317}
 ```
+**Send a query with a base64 encoded file using `/run` or `/run_sse`**
+
+```shell
+curl -X POST http://localhost:8000/run \
+--H 'Content-Type: application/json' \
+--d '{
+   "appName":"my_sample_agent",
+   "userId":"u_123",
+   "sessionId":"s_123",
+   "newMessage":{
+      "role":"user",
+      "parts":[
+         {
+            "text":"Describe this image"
+         },
+         {
+            "inlineData":{
+               "displayName":"my_image.png",
+               "data":"iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAACXBIWXMAAAsTAAALEwEAmpw...",
+               "mimeType":"image/png"
+            }
+         }
+      ]
+   },
+   "streaming":false
+}'
+```
 
 !!! info
 

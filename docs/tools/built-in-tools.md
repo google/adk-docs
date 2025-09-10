@@ -123,7 +123,7 @@ Please refer to the [RAG ADK agent sample](https://github.com/google/adk-samples
 
 ### Vertex AI Search
 
-The `vertex_ai_search_tool` uses Google Cloud's Vertex AI Search, enabling the
+The `vertex_ai_search_tool` uses Google Cloud Vertex AI Search, enabling the
 agent to search across your private, configured data stores (e.g., internal
 documents, company policies, knowledge bases). This built-in tool requires you
 to provide the specific data store ID during configuration. For further details of the tool, see [Understanding Vertex AI Search grounding](../grounding/vertex_ai_search_grounding.md).
@@ -143,6 +143,7 @@ These are a set of tools aimed to provide integration with BigQuery, namely:
 * **`list_table_ids`**: Fetches table ids present in a BigQuery dataset.
 * **`get_table_info`**: Fetches metadata about a BigQuery table.
 * **`execute_sql`**: Runs a SQL query in BigQuery and fetch the result.
+* **`ask_data_insights`**: Answers questions about data in BigQuery tables using natural language.
 
 They are packaged in the toolset `BigQueryToolset`.
 
