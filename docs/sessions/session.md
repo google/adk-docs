@@ -143,7 +143,7 @@ the storage backend that best suits your needs:
 
 2.  **`VertexAiSessionService`**
 
-    *   **How it works:** Uses Google Cloud's Vertex AI infrastructure via API
+    *   **How it works:** Uses Google Cloud Vertex AI infrastructure via API
         calls for session management.
     *   **Persistence:** Yes. Data is managed reliably and scalably via
         [Vertex AI Agent Engine](https://google.github.io/adk-docs/deploy/agent-engine/).
