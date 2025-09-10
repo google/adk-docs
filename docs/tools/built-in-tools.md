@@ -57,6 +57,56 @@ like calculations, data manipulation, or running small scripts.
     --8<-- "examples/java/snippets/src/main/java/tools/CodeExecutionAgentApp.java:full_code"
     ```
 
+### GKE Code Executor
+
+The GKE Code Executor (`GkeCodeExecutor`) provides a secure and scalable method
+for running LLM-generated code by leveraging the GKE (Google Kubernetes Engine)
+Sandbox environment, which uses gVisor for workload isolation.
+
+For each code execution request, it dynamically creates an ephemeral, sandboxed
+Kubernetes Job with a hardened Pod configuration. This is the recommended
+executor for production environments on GKE where security and isolation are
+critical.
+
+#### System requirements
+
+The following requirements must be met to successfully deploy your ADK project
+with the GKE Code Executor tool:
+
+- GKE cluster with a **gVisor-enabled node pool**.
+- Agent's service account requires specific **RBAC permissions**, which allow it to:
+    - Create, watch, and delete **Jobs** for each execution request.
+    - Manage **ConfigMaps** to inject code into the Job's pod.
+    - List **Pods** and read their **logs** to retrieve the execution result
+- Install the client library with GKE extras: `pip install google-adk[gke]`
+
+For a complete, ready-to-use configuration, see the 
+[deployment_rbac.yaml](https://github.com/google/adk-python/blob/main/contributing/samples/gke_agent_sandbox/deployment_rbac.yaml)
+sample. For more information on deploying ADK workflows to GKE, see
+[Deploy to Google Kubernetes Engine (GKE)](/adk-docs/deploy/gke/).
+
+=== "Python"
+
+    ```py
+    from google.adk.agents import LlmAgent
+    from google.adk.code_executors import GkeCodeExecutor
+
+    # Initialize the executor, targeting the namespace where its ServiceAccount
+    # has the required RBAC permissions.
+    gke_executor = GkeCodeExecutor(
+        namespace="agent-sandbox",
+        timeout_seconds=600,
+    )
+
+    # The agent will now use this executor for any code it generates.
+    gke_agent = LlmAgent(
+        name="gke_coding_agent",
+        model="gemini-2.0-flash",
+        instruction="You are a helpful AI agent that writes and executes Python code.",
+        code_executor=gke_executor,
+    )
+    ```
+
 ### Vertex AI RAG Engine
 
 The `vertex_ai_rag_retrieval` tool allows the agent to perform private data retrieval using Vertex
@@ -73,7 +123,7 @@ Please refer to the [RAG ADK agent sample](https://github.com/google/adk-samples
 
 ### Vertex AI Search
 
-The `vertex_ai_search_tool` uses Google Cloud's Vertex AI Search, enabling the
+The `vertex_ai_search_tool` uses Google Cloud Vertex AI Search, enabling the
 agent to search across your private, configured data stores (e.g., internal
 documents, company policies, knowledge bases). This built-in tool requires you
 to provide the specific data store ID during configuration. For further details of the tool, see [Understanding Vertex AI Search grounding](../grounding/vertex_ai_search_grounding.md).
@@ -93,6 +143,7 @@ These are a set of tools aimed to provide integration with BigQuery, namely:
 * **`list_table_ids`**: Fetches table ids present in a BigQuery dataset.
 * **`get_table_info`**: Fetches metadata about a BigQuery table.
 * **`execute_sql`**: Runs a SQL query in BigQuery and fetch the result.
+* **`ask_data_insights`**: Answers questions about data in BigQuery tables using natural language.
 
 They are packaged in the toolset `BigQueryToolset`.
 
