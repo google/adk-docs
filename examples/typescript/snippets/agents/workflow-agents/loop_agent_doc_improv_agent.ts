@@ -33,19 +33,17 @@ const STATE_CRITICISM = "criticism";
 const COMPLETION_PHRASE = "No major issues found.";
 
 // --- Tool Definition ---
-function exitLoop(toolContext: ToolContext): Record<string, unknown> {
-  /** Call this function ONLY when the critique indicates no further changes are needed, signaling the iterative process should end. */
-  console.log(`  [Tool Call] exit_loop triggered by ${toolContext.agentName}`);
-  toolContext.actions.escalate = true;
-  // Return empty object as tools should typically return JSON-serializable output
-  return {};
-}
-
 const exitLoopTool = new FunctionTool({
     name: 'exit_loop',
     description: 'Call this function ONLY when the critique indicates no further changes are needed, signaling the iterative process should end.',
     parameters: z.object({}),
-    execute: exitLoop,
+    execute: (input, toolContext) => {
+        if (toolContext) {
+            console.log(`  [Tool Call] exit_loop triggered by ${toolContext.agentName}`);
+            toolContext.actions.escalate = true;
+        }
+        return {};
+    },
 });
 
 // --- Agent Definitions ---
@@ -76,9 +74,9 @@ const criticAgentInLoop = new LlmAgent({
     instruction: `You are a Constructive Critic AI reviewing a short document draft (typically 2-6 sentences). Your goal is balanced feedback.
 
     **Document to Review:**
-    ```
+    
     {{current_document}}
-    ```
+    
 
     **Task:**
     Review the document for clarity, engagement, and basic coherence according to the initial topic (if known).
@@ -89,7 +87,7 @@ const criticAgentInLoop = new LlmAgent({
     ELSE IF the document is coherent, addresses the topic adequately for its length, and has no glaring errors or obvious omissions:
     Respond *exactly* with the phrase "${COMPLETION_PHRASE}" and nothing else. It doesn't need to be perfect, just functionally complete for this stage. Avoid suggesting purely subjective stylistic preferences if the core is sound.
 
-    Do not add explanations. Output only the critique OR the exact completion phrase.
+    Do not add explanations. Output only the critique OR the exact completion.
 `,
     description: "Reviews the current draft, providing critique if clear improvements are needed, otherwise signals completion.",
     outputKey: STATE_CRITICISM
@@ -104,9 +102,9 @@ const refinerAgentInLoop = new LlmAgent({
     includeContents: 'none',
     instruction: `You are a Creative Writing Assistant refining a document based on feedback OR exiting the process.
     **Current Document:**
-    ```
+    
     {{current_document}}
-    ```
+    
     **Critique/Suggestions:**
     {{criticism}}
 
@@ -119,9 +117,9 @@ const refinerAgentInLoop = new LlmAgent({
 
     Do not add explanations. Either output the refined document OR call the exit_loop function.
 `,
+    tools: [exitLoopTool],
     description: "Refines the document based on critique, or calls exit_loop if critique indicates completion.",
-    tools: [exitLoopTool], // Provide the exit_loop tool
-    outputKey: STATE_CURRENT_DOC // Overwrites state['current_document'] with the refined version
+    outputKey: STATE_CURRENT_DOC
 });
 
 
@@ -147,112 +145,3 @@ const rootAgent = new SequentialAgent({
     description: "Writes an initial document and then iteratively refines it with critique using an exit tool."
 });
 // --8<-- [end:init]
-
-
-// --- Running the Agent on Notebooks/Scripts ---
-// const runner = new InMemoryRunner({agent: rootAgent, appName: APP_NAME});
-// console.log(`InMemoryRunner created for agent '${rootAgent.name}'.`);
-
-
-// // Interaction function (Modified to show agent names and flow)
-// async function callPipelineAsync(initialTopic: string, userId: string, sessionId: string) {
-//     console.log(`
---- Starting Iterative Writing Pipeline (Exit Tool) for topic: '${initialTopic}' ---`);
-//     const sessionService = runner.sessionService;
-//     const initialState = {[STATE_INITIAL_TOPIC]: initialTopic};
-//     // Explicitly create/check session BEFORE run
-//     let session = await sessionService.getSession({appName: APP_NAME, userId, sessionId});
-//     if (!session) {
-//         console.log(`  Session '${sessionId}' not found, creating with initial state...`);
-//         session = await sessionService.createSession({appName: APP_NAME, userId, sessionId, state: initialState});
-//         console.log(`  Session '${sessionId}' created.`);
-//     } else {
-//         console.log(`  Session '${sessionId}' exists. Resetting state for new run.`);
-//         // In a real app, you might have a more robust way to update state
-//         session.state = initialState;
-//         await sessionService.updateSession(session);
-//     }
-
-//     const initialMessage: Content = {role: 'user', parts: [{text: "Start the writing pipeline."}]};
-//     let loopIteration = 0;
-//     let pipelineFinishedViaExit = false;
-//     let lastKnownDoc = "No document generated."; // Store the last document output
-
-//     try {
-//         for await (const event of runner.run({userId, sessionId, newMessage: initialMessage})) {
-//             const authorName = event.author || "System";
-//             const isFinal = event.isFinalResponse;
-//             console.log(`  [Event] From: ${authorName}, Final: ${isFinal}`);
-
-//             // Display output from each main agent when it finishes
-//             if (isFinal && event.content && event.content.parts) {
-//                 const outputText = event.content.parts[0].text!.trim();
-
-//                 if (authorName === initialWriterAgent.name) {
-//                     console.log(`
-[Initial Draft] By ${authorName} (${STATE_CURRENT_DOC}):`);
-//                     console.log(outputText);
-//                     lastKnownDoc = outputText;
-//                 } else if (authorName === criticAgentInLoop.name) {
-//                     loopIteration++;
-//                     console.log(`
-[Loop Iteration ${loopIteration}] Critique by ${authorName} (${STATE_CRITICISM}):`);
-//                     console.log(outputText);
-//                     console.log(`  (Saving to state key '${STATE_CRITICISM}')`);
-//                 } else if (authorName === refinerAgentInLoop.name) {
-//                     // Only print if it actually refined (didn't call exit_loop)
-//                     if (!event.actions?.escalate) { // Check if exit wasn't triggered in *this* event's actions
-//                         console.log(`[Loop Iteration ${loopIteration}] Refinement by ${authorName} (${STATE_CURRENT_DOC}):`);
-//                         console.log(outputText);
-//                         lastKnownDoc = outputText;
-//                         console.log(`  (Overwriting state key '${STATE_CURRENT_DOC}')`);
-//                     }
-//                 }
-//             }
-
-//             if (event.actions?.escalate) {
-//                  console.log(`
---- Refinement Loop terminated (Escalation detected) ---`);
-//                  pipelineFinishedViaExit = true;
-//                  break;
-//             } else if (event.errorMessage) {
-//                  console.log(`  -> Error from ${authorName}: ${event.errorMessage}`);
-//                  break; // Stop on error
-//             }
-//         }
-//     } catch (e) {
-//         console.log(`
-❌ An error occurred during agent execution: ${e}`);
-//     }
-
-//     if (pipelineFinishedViaExit) {
-//         console.log(`
---- Pipeline Finished (Terminated by exit_loop) ---`);
-//     } else {
-//         console.log(`
---- Pipeline Finished (Max iterations ${refinementLoop.maxIterations} reached or error) ---`);
-//     }
-
-//     console.log(`Final Document Output:
-${lastKnownDoc}`);
-
-//     // Final state retrieval
-//     const finalSessionObject = await runner.sessionService.getSession({appName: APP_NAME, userId, sessionId});
-//     console.log("\n--- Final Session State ---");
-//     if (finalSessionObject) {
-//         console.log(finalSessionObject.state);
-//     } else {
-//         console.log("State not found (Final session object could not be retrieved).");
-//     }
-//     console.log("-".repeat(30));
-// }
-
-
-// const topic = "a robot developing unexpected emotions";
-// // const topic = "the challenges of communicating with a plant-based alien species";
-
-// // A simple hash function for demonstration
-// const simpleHash = (s: string) => s.split('').reduce((a,b)=>{a=((a<<5)-a)+b.charCodeAt(0);return a&a},0);
-// const sessionId = `${SESSION_ID_BASE}_${Math.abs(simpleHash(topic)) % 1000}`; // Unique session ID
-
-// await callPipelineAsync(topic, USER_ID, sessionId);

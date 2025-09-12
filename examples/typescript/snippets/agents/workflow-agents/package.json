@@ -14,7 +14,8 @@
     "@types/node": "^24.3.1",
     "typescript": "^5.9.2"
   },
-    "@google/adk": "file:../adk-js/core",
+  "dependencies": {
+    "@google/adk": "file:../../../../../../../repos/adk-js/core/",
     "@google/genai": "^1.17.0",
     "module-alias": "^2.2.3",
     "tsconfig-paths": "^4.2.0",

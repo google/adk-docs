@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { ParallelAgent, LlmAgent, SequentialAgent, InMemoryRunner, GoogleSearch } from '@google/adk';
+import { ParallelAgent, LlmAgent, SequentialAgent, InMemoryRunner, GoogleSearchTool } from '@google/adk';
 import { Content } from '@google/genai';
 
 // --- Configuration ---
@@ -37,7 +37,7 @@ Summarize your key findings concisely (1-2 sentences).
 Output *only* the summary.
 `,
     description: "Researches renewable energy sources.",
-    tools: [new GoogleSearch()],
+    tools: [new GoogleSearchTool()],
     // Store result in state for the merger agent
     outputKey: "renewable_energy_result"
 });
@@ -53,7 +53,7 @@ Summarize your key findings concisely (1-2 sentences).
 Output *only* the summary.
 `,
     description: "Researches electric vehicle technology.",
-    tools: [new GoogleSearch()],
+    tools: [new GoogleSearchTool()],
     // Store result in state for the merger agent
     outputKey: "ev_technology_result"
 });
@@ -69,7 +69,7 @@ Summarize your key findings concisely (1-2 sentences).
 Output *only* the summary.
 `,
     description: "Researches carbon capture methods.",
-    tools: [new GoogleSearch()],
+    tools: [new GoogleSearchTool()],
     // Store result in state for the merger agent
     outputKey: "carbon_capture_result"
 });
@@ -146,71 +146,75 @@ const sequentialPipelineAgent = new SequentialAgent({
 const rootAgent = sequentialPipelineAgent;
 // --8<-- [end:init]
 
-// // --- 5. Running the Agent (Using InMemoryRunner for local testing) This works in Notebooks and script file ---
+// --- 5. Running the Agent (Using InMemoryRunner for local testing) This works in Notebooks and script file ---
 
-// // Use InMemoryRunner: Ideal for quick prototyping and local testing
-// const runner = new InMemoryRunner({agent: rootAgent, appName: APP_NAME});
-// console.log(`InMemoryRunner created for agent '${rootAgent.name}'.`);
+async function main() {
+  // Use InMemoryRunner: Ideal for quick prototyping and local testing
+  const runner = new InMemoryRunner({agent: rootAgent, appName: APP_NAME});
+  console.log(`InMemoryRunner created for agent '${rootAgent.name}'.`);
 
-// // We still need access to the session service (bundled in InMemoryRunner)
-// // to create the session instance for the run.
-// const sessionService = runner.sessionService;
-// const session = await sessionService.createSession({appName: APP_NAME, userId: USER_ID, sessionId: SESSION_ID});
-// console.log(`Session '${SESSION_ID}' created for direct run.`);
+  // We still need access to the session service (bundled in InMemoryRunner)
+  // to create the session instance for the run.
+  const sessionService = runner.sessionService;
+  const session = await sessionService.createSession({appName: APP_NAME, userId: USER_ID, sessionId: SESSION_ID});
+  console.log(`Session '${SESSION_ID}' created for direct run.`);
 
 
-// async function callSequentialPipeline(query: string, userId: string, sessionId: string) {
-//     console.log(`
+  async function callSequentialPipeline(query: string, userId: string, sessionId: string) {
+      console.log(`
 --- Running Research & Synthesis Pipeline for query: '${query}' ---
 `);
-//     // The initial query mainly triggers the pipeline; the research topics are fixed in the agents for this example.
-//     const content: Content = {role: 'user', parts: [{text: query}]};
-//     let finalResponseText: string | null = null;
-//     // Keep track of which researchers have reported
-//     const researcherOutputs: {[key: string]: string} = {};
-//     const researcherNames = new Set(["RenewableEnergyResearcher", "EVResearcher", "CarbonCaptureResearcher"]);
-//     const mergerAgentName = "SynthesisAgent"; // Name of the final agent in sequence
+      // The initial query mainly triggers the pipeline; the research topics are fixed in the agents for this example.
+      const content: Content = {role: 'user', parts: [{text: query}]};
+      let finalResponseText: string | null = null;
+      // Keep track of which researchers have reported
+      const researcherOutputs: {[key: string]: string} = {};
+      const researcherNames = new Set(["RenewableEnergyResearcher", "EVResearcher", "CarbonCaptureResearcher"]);
+      const mergerAgentName = "SynthesisAgent"; // Name of the final agent in sequence
 
-//     console.log("Starting pipeline...");
-//     try {
-//         for await (const event of runner.run({
-//             userId,
-//             sessionId,
-//             newMessage: content,
-//         })) {
-//             const authorName = event.author || "System";
-//             const isFinal = event.isFinalResponse;
-//             console.log(`  [Event] From: ${authorName}, Final: ${isFinal}`); // Basic event logging
+      console.log("Starting pipeline...");
+      try {
+                    for await (const event of runner.runAsync({
+              userId,
+              sessionId,
+              newMessage: content,
+          })) {
+              const authorName = event.author || "System";
+              const isFinal = event.isFinalResponse();
+              console.log(`  [Event] From: ${authorName}, Final: ${isFinal}`); // Basic event logging
 
-//             // Check if it's a final response from one of the researcher agents
-//             if (isFinal && researcherNames.has(authorName) && event.content && event.content.parts) {
-//                 const researcherOutput = event.content.parts[0].text!.trim();
-//                 if (!(authorName in researcherOutputs)) { // Print only once per researcher
-//                     console.log(`    -> Intermediate Result from ${authorName}: ${researcherOutput}`);
-//                     researcherOutputs[authorName] = researcherOutput;
-//                 }
-//             }
-//             // Check if it's the final response from the merger agent (the last agent in the sequence)
-//             else if (isFinal && authorName === mergerAgentName && event.content && event.content.parts) {
-//                  finalResponseText = event.content.parts[0].text!.trim();
-//                  console.log(`
+              // Check if it's a final response from one of the researcher agents
+              if (isFinal && researcherNames.has(authorName) && event.content && event.content.parts) {
+                  const researcherOutput = event.content.parts[0].text?.trim();
+                  if (researcherOutput && !(authorName in researcherOutputs)) { // Print only once per researcher
+                      console.log(`    -> Intermediate Result from ${authorName}: ${researcherOutput}`);
+                      researcherOutputs[authorName] = researcherOutput;
+                  }
+              }
+              // Check if it's the final response from the merger agent (the last agent in the sequence)
+              else if (isFinal && authorName === mergerAgentName && event.content && event.content.parts) {
+                   finalResponseText = event.content.parts[0].text?.trim() ?? null;
+                   console.log(`
 <<< Final Synthesized Response (from ${authorName}):
 ${finalResponseText}`);
-//                  // Since this is the last agent in the sequence, we can break after its final response
-//                  break;
-//             } else if (event.isError) {
-//                  console.log(`  -> Error from ${authorName}: ${event.errorMessage}`);
-//             }
-//         }
-//         if (finalResponseText === null) {
-//              console.log("<<< Pipeline finished but did not produce the expected final text response from the SynthesisAgent.");
-//         }
-//     } catch (e) {
-//         console.log(`
+                   // Since this is the last agent in the sequence, we can break after its final response
+                   break;
+                            } else if (event.errorMessage) {
+                   console.log(`  -> Error from ${authorName}: ${event.errorMessage}`);
+              }
+          }
+          if (finalResponseText === null) {
+               console.log("<<< Pipeline finished but did not produce the expected final text response from the SynthesisAgent.");
+          }
+      } catch (e) {
+          console.log(`
 ❌ An error occurred during agent execution: ${e}`);
-//     }
-// }
+      }
+  }
 
-// const initialTriggerQuery = "Summarize recent sustainable tech advancements.";
+  const initialTriggerQuery = "Summarize recent sustainable tech advancements.";
 
-// await callSequentialPipeline(initialTriggerQuery, USER_ID, SESSION_ID);
+  await callSequentialPipeline(initialTriggerQuery, USER_ID, SESSION_ID);
+}
+
+main();

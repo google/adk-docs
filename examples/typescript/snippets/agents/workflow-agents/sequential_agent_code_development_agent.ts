@@ -116,79 +116,86 @@ const rootAgent = codePipelineAgent;
 
 // --- 3. Running the Agent (Using InMemoryRunner for local testing) ---
 
-// const runner = new InMemoryRunner({agent: rootAgent, appName: APP_NAME});
-// console.log(`InMemoryRunner created for agent '${rootAgent.name}'.`);
+const runner = new InMemoryRunner({agent: rootAgent, appName: APP_NAME});
+console.log(`InMemoryRunner created for agent '${rootAgent.name}'.`);
 
 
 // --- Interaction Function ---
-// async function callCodePipeline(query: string, userId: string, sessionId: string): Promise<string | null> {
-//     console.log(`\n=============== Running Code Pipeline for Query: '${query}' ===============`);
-//     console.log(`Attempting to use Session ID: ${sessionId}`);
-//     const content: Content = {role: 'user', parts: [{text: query}]};
-//     let finalCode: string | null = null;
-//     const pipelineStepOutputs: {[key: string]: string} = {};
+async function callCodePipeline(query: string, userId: string, sessionId: string): Promise<string | null> {
+    console.log(`
+=============== Running Code Pipeline for Query: '${query}' ===============`);
+    console.log(`Attempting to use Session ID: ${sessionId}`);
+    const content: Content = {role: 'user', parts: [{text: query}]};
+    let finalCode: string | null = null;
+    const pipelineStepOutputs: {[key: string]: string} = {};
 
-//     // --- Explicit Session Creation/Check BEFORE run ---
-//     const sessionService = runner.sessionService;
-//     const session = await sessionService.createSession({appName: APP_NAME, userId, sessionId});
+    // --- Explicit Session Creation/Check BEFORE run ---
+    const sessionService = runner.sessionService;
+    const session = await sessionService.createSession({appName: APP_NAME, userId, sessionId});
   
-//     // --- Run the Agent ---
-//     for await (const event of runner.run({
-//         userId,
-//         sessionId,
-//         newMessage: content,
-//     })) {
-//         const authorName = event.author || "System";
-//         const isFinal = event.isFinalResponse;
+    // --- Run the Agent ---
+    for await (const event of runner.runAsync({
+        userId,
+        sessionId,
+        newMessage: content,
+    })) {
+        const authorName = event.author || "System";
+        const isFinal = event.isFinalResponse();
 
-//         if (isFinal && event.content && event.content.parts) {
-//             const outputText = event.content.parts[0].text!.trim();
-//             pipelineStepOutputs[authorName] = outputText;
+        if (isFinal && event.content && event.content.parts) {
+            const outputText = event.content.parts[0].text!.trim();
+            pipelineStepOutputs[authorName] = outputText;
 
-//             console.log(`\n--- Output from: ${authorName} ---`);
-//             console.log(outputText);
-//             console.log("-".repeat(authorName.length + 18));
+            console.log(`
+--- Output from: ${authorName} ---
+`);
+            console.log(outputText);
+            console.log("- ".repeat(authorName.length + 18));
 
-//             if (authorName === codeRefactorerAgent.name) {
-//                 finalCode = outputText;
-//             }
-//         } else if (event.errorMessage) {
-//               // Log error but allow loop to continue if possible
-//               console.log(`  -> Error from ${authorName}: ${event.errorMessage}`);
-//         }
-//     }
+            if (authorName === codeRefactorerAgent.name) {
+                finalCode = outputText;
+            }
+        } else if (event.errorMessage) {
+              // Log error but allow loop to continue if possible
+              console.log(`  -> Error from ${authorName}: ${event.errorMessage}`);
+        }
+    }
 
-//     if (finalCode === null) {
-//         console.log("\nPipeline did not produce final refactored code.");
-//     }
+    if (finalCode === null) {
+        console.log("\nPipeline did not produce final refactored code.");
+    }
 
-//     // --- Final State Retrieval ---
-//     console.log("\n--- Attempting to retrieve Final Session State ---");
-//     let finalSessionObject;
-//     try {
-//         finalSessionObject = await runner.sessionService.getSession({
-//             appName: APP_NAME,
-//             userId,
-//             sessionId,
-//         });
-//     } catch (e) {
-//          console.log(`   -> Error retrieving final session object: ${e}`);
-//     }
+    // --- Final State Retrieval ---
+    console.log("\n--- Attempting to retrieve Final Session State ---");
+    let finalSessionObject;
+    try {
+        finalSessionObject = await runner.sessionService.getSession({
+            appName: APP_NAME,
+            userId,
+            sessionId,
+        });
+    } catch (e) {
+         console.log(`   -> Error retrieving final session object: ${e}`);
+    }
 
-//     if (finalSessionObject) {
-//         console.log(finalSessionObject.state);
-//     } else {
-//         console.log("State not found (Final session object could not be retrieved).");
-//     }
-//     console.log("=".repeat(50));
+    if (finalSessionObject) {
+        console.log(finalSessionObject.state);
+    } else {
+        console.log("State not found (Final session object could not be retrieved).");
+    }
+    console.log("=".repeat(50));
 
-//     return finalCode;
-// }
+    return finalCode;
+}
 
 
-// const query = "Write a Python function to calculate the factorial of a number using recursion.";
-// // const query = "Create a simple Python class for a 'Book' with attributes title and author.";
-// // const query = "Generate a Python function that takes a list of numbers and returns the sum of squares.";
-// // const query = "Write a Python script to read the first line of a text file named 'input.txt'.";
+async function main() {
+    const query = "Write a Python function to calculate the factorial of a number using recursion.";
+    // const query = "Create a simple Python class for a 'Book' with attributes title and author.";
+    // const query = "Generate a Python function that takes a list of numbers and returns the sum of squares.";
+    // const query = "Write a Python script to read the first line of a text file named 'input.txt'.";
 
-// await callCode-pipeline(query, USER_ID, SESSION_ID);
+    await callCodePipeline(query, USER_ID, SESSION_ID);
+}
+
+main();
