@@ -144,6 +144,20 @@ A tool can write data to a `temp:` variable, and a subsequent tool can read it. 
         For input `GOOG`: {"symbol": "GOOG", "price": "1.0"}
         ```
 
+    === "Typescript"
+
+        This tool retrieves the mocked value of a stock price.
+
+        ```typescript
+        --8<-- "examples/typescript/snippets/tools/function-tools/function-tools-example.ts"
+        ```
+
+        The return value from this tool will be an object.
+
+        ```json
+        For input `GOOG`: {"price": 2800.0, "currency": "USD"}
+        ```
+
 ### Best Practices
 
 While you have considerable flexibility in defining your function, remember that simplicity enhances usability for the LLM. Consider these guidelines:
@@ -327,6 +341,12 @@ To use an agent as a tool, wrap the agent with the AgentTool class.
     AgentTool.create(agent)
     ```
 
+=== "TypeScript"
+
+    ```typescript
+    tools: [new AgentTool({agent: agentB})]
+    ```
+
 ### Customization
 
 The `AgentTool` class provides the following attributes for customizing its behavior:
@@ -345,6 +365,12 @@ The `AgentTool` class provides the following attributes for customizing its beha
 
         ```java
         --8<-- "examples/java/snippets/src/main/java/tools/AgentToolCustomization.java:full_code"
+        ```
+
+    === "TypeScript"
+
+        ```typescript
+        --8<-- "examples/typescript/snippets/tools/function-tools/agent-as-a-tool-example.ts"
         ```
 
 ### How it works

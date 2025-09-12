@@ -1,0 +1,18 @@
+{
+  "name": "adk-function-tools-ts-example",
+  "version": "1.0.0",
+  "description": "ADK TS example for function tools.",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "type": "commonjs",
+  "dependencies": {
+    "@google/adk": "file:../../../../../../adk-js/core",
+    "@google/genai": "^1.16.0",
+    "@opentelemetry/api": "^1.9.0",
+    "ts-node": "^10.9.2",
+    "zod": "^3.25.76"
+  }
+}
