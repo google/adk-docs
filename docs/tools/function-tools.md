@@ -161,11 +161,10 @@ This tool is designed to help you start and manage tasks that are handled outsid
 When using a `LongRunningFunctionTool`, your function can initiate the long-running operation and optionally return an **initial result**, such as a long-running operation id. Once a long running function tool is invoked the agent runner pauses the agent run and lets the agent client to decide whether to continue or wait until the long-running operation finishes. The agent client can query the progress of the long-running operation and send back an intermediate or final response. The agent can then continue with other tasks. An example is the human-in-the-loop scenario where the agent needs human approval before proceeding with a task.
 
 !!! warning "Warning: Execution handling"
-    Long Running Function Tools are designed to help you *manage* long running tasks
-    as part of your agent workflow, but ***not perform*** the actual, long task.
+    Long Running Function Tools are designed to help you start and *manage* long running
+    tasks as part of your agent workflow, but ***not perform*** the actual, long task.
     For tasks that require significant time to complete, you should implement a separate
-    server to do the task or use a service such as
-    [Cloud Tasks](https://cloud.google.com/tasks/docs).
+    server to do the task.
 
 !!! tip "Tip: Parallel execution"
     Depending on the type of tool you are building, designing for asychronous
