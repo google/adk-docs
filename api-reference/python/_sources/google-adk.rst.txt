@@ -1,0 +1,418 @@
+Submodules
+----------
+
+google.adk.a2a module
+---------------------
+
+.. automodule:: google.adk.a2a
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.agents module
+------------------------
+
+.. automodule:: google.adk.agents
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.artifacts module
+---------------------------
+
+.. automodule:: google.adk.artifacts
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.auth module
+----------------------
+
+.. automodule:: google.adk.auth
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.cli module
+---------------------
+
+.. automodule:: google.adk.cli
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.code_executors module
+--------------------------------
+
+.. automodule:: google.adk.code_executors
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.errors module
+------------------------
+
+.. automodule:: google.adk.errors
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.evaluation module
+----------------------------
+
+.. automodule:: google.adk.evaluation
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.events module
+------------------------
+
+.. automodule:: google.adk.events
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.examples module
+--------------------------
+
+.. automodule:: google.adk.examples
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.flows module
+-----------------------
+
+.. automodule:: google.adk.flows
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.memory module
+------------------------
+
+.. automodule:: google.adk.memory
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.models module
+------------------------
+
+.. automodule:: google.adk.models
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.planners module
+--------------------------
+
+.. automodule:: google.adk.planners
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.platform module
+--------------------------
+
+.. automodule:: google.adk.platform
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.plugins module
+-------------------------
+
+.. automodule:: google.adk.plugins
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.runners module
+-------------------------
+
+.. automodule:: google.adk.runners
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.sessions module
+--------------------------
+
+.. automodule:: google.adk.sessions
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.telemetry module
+---------------------------
+
+.. automodule:: google.adk.telemetry
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.tools package
+------------------------
+
+.. automodule:: google.adk.tools
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.tools.agent_tool module
+----------------------------------
+
+.. automodule:: google.adk.tools.agent_tool
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.tools.apihub_tool module
+-----------------------------------
+
+.. automodule:: google.adk.tools.apihub_tool
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.tools.application_integration_tool module
+----------------------------------------------------
+
+.. automodule:: google.adk.tools.application_integration_tool
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.tools.authenticated_function_tool module
+---------------------------------------------------
+
+.. automodule:: google.adk.tools.authenticated_function_tool
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.tools.base_authenticated_tool module
+-----------------------------------------------
+
+.. automodule:: google.adk.tools.base_authenticated_tool
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.tools.base_tool module
+---------------------------------
+
+.. automodule:: google.adk.tools.base_tool
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.tools.base_toolset module
+------------------------------------
+
+.. automodule:: google.adk.tools.base_toolset
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.tools.bigquery module
+--------------------------------
+
+.. automodule:: google.adk.tools.bigquery
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.tools.crewai_tool module
+-----------------------------------
+
+.. automodule:: google.adk.tools.crewai_tool
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.tools.enterprise_search_tool module
+----------------------------------------------
+
+.. automodule:: google.adk.tools.enterprise_search_tool
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.tools.example_tool module
+------------------------------------
+
+.. automodule:: google.adk.tools.example_tool
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.tools.exit_loop_tool module
+--------------------------------------
+
+.. automodule:: google.adk.tools.exit_loop_tool
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.tools.function_tool module
+-------------------------------------
+
+.. automodule:: google.adk.tools.function_tool
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.tools.get_user_choice_tool module
+--------------------------------------------
+
+.. automodule:: google.adk.tools.get_user_choice_tool
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.tools.google_api_tool module
+---------------------------------------
+
+.. automodule:: google.adk.tools.google_api_tool
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.tools.google_search_tool module
+------------------------------------------
+
+.. automodule:: google.adk.tools.google_search_tool
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.tools.langchain_tool module
+--------------------------------------
+
+.. automodule:: google.adk.tools.langchain_tool
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.tools.load_artifacts_tool module
+-------------------------------------------
+
+.. automodule:: google.adk.tools.load_artifacts_tool
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.tools.load_memory_tool module
+----------------------------------------
+
+.. automodule:: google.adk.tools.load_memory_tool
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.tools.load_web_page module
+-------------------------------------
+
+.. automodule:: google.adk.tools.load_web_page
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.tools.long_running_tool module
+-----------------------------------------
+
+.. automodule:: google.adk.tools.long_running_tool
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.tools.mcp_tool module
+--------------------------------
+
+.. automodule:: google.adk.tools.mcp_tool
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.tools.openapi_tool module
+------------------------------------
+
+.. automodule:: google.adk.tools.openapi_tool
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.tools.preload_memory_tool module
+-------------------------------------------
+
+.. automodule:: google.adk.tools.preload_memory_tool
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.tools.retrieval module
+---------------------------------
+
+.. automodule:: google.adk.tools.retrieval
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.tools.tool_context module
+------------------------------------
+
+.. automodule:: google.adk.tools.tool_context
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.tools.toolbox_toolset module
+---------------------------------------
+
+.. automodule:: google.adk.tools.toolbox_toolset
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.tools.transfer_to_agent_tool module
+----------------------------------------------
+
+.. automodule:: google.adk.tools.transfer_to_agent_tool
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.tools.url_context_tool module
+----------------------------------------
+
+.. automodule:: google.adk.tools.url_context_tool
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.tools.vertex_ai_search_tool module
+---------------------------------------------
+
+.. automodule:: google.adk.tools.vertex_ai_search_tool
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.utils module
+-----------------------
+
+.. automodule:: google.adk.utils
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.version module
+-------------------------
+
+.. automodule:: google.adk.version
+    :members:
+    :undoc-members:
+    :show-inheritance:
