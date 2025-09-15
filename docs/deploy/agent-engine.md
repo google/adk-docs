@@ -17,9 +17,9 @@ This section describes how to perform a deployment using the
 [Agent Starter Pack](https://github.com/GoogleCloudPlatform/agent-starter-pack)
 (ASP) and the ADK command line interface (CLI) tool. This approach uses the ASP
 tool to apply a project template to your existing project, add deployment
-artifacts, and prepare your agent workflow for deployment. These instructions
+artifacts, and prepare your agent project for deployment. These instructions
 show you how to use ASP to provision a Google Cloud project with services needed
-for deploying your ADK workflow, as follows:
+for deploying your ADK project, as follows:
 
 -   [Prerequisites](#prerequisites-ad): Setup Google Cloud
     account, a project, and install required software.
@@ -50,17 +50,17 @@ You need the following resources configured to use this deployment path:
     [Creating and managing projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects).
 -   **Python Environment**: A Python version between 3.9 and 3.13.
 -   **UV Tool:** Manage Python development environment and running ASP
-    tools. For installation details, see [Install
-    UV](https://docs.astral.sh/uv/getting-started/installation/).
+    tools. For installation details, see 
+    [Install UV](https://docs.astral.sh/uv/getting-started/installation/).
 -   **Google Cloud CLI tool**: The gcloud command line interface. For
-    installation details, see [Google Cloud Command Line
-    Interface](https://cloud.google.com/cli).
+    installation details, see
+    [Google Cloud Command Line Interface](https://cloud.google.com/sdk/docs/install).
 -   **Make tool**: Build automation tool. This tool is part of most
-    Unix-based systems, for installation details, see the [Make
-    tool](https://www.gnu.org/software/make/) documentation.
+    Unix-based systems, for installation details, see the 
+    [Make tool](https://www.gnu.org/software/make/) documentation.
 -   **Terraform**: Infrastructure and services deployment on Google Cloud.
-    For installation details, see [Install
-    Terraform](https://developer.hashicorp.com/terraform/downloads).
+    For installation details, see 
+    [Install Terraform](https://developer.hashicorp.com/terraform/downloads).
 
 ### Prepare your ADK project {#prepare-ad}
 
@@ -94,15 +94,22 @@ To prepare your ADK project for deployment to Agent Engine:
     ```
 
 1.  Follow the instructions from the ASP tool. In general, you can accept
-    the default answers to all questions, except for **GCP region**, which you
-    should choose based on your location.
+    the default answers to all questions. However for the **GCP region**, 
+    option, make sure you select one of the 
+    [supported regions for Agent Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview#supported-regions).
+
+When you successfully complete this process, the tool shows the following message:
+
+```
+> Success! Your agent project is ready.
+```
 
 !!! tip "Note"
     The ASP tool may show a reminder to connect to Google Cloud while
     running, but that connection is *not required* at this stage.
 
-For more information about the changes ASP tool makes to your ADK project, see
-[Changes to your ADK project](?tab=t.0#heading=h.sgedwpufmtuo).
+For more information about the changes ASP makes to your ADK project, see
+[Changes to your ADK project](#adk-asp-changes).
 
 ### Connect to your Google Cloud project {#connect-ad}
 
@@ -123,7 +130,7 @@ To connect to Google Cloud and list your project:
 1.  Set your target project using the Google Cloud Project ID:
 
     ```shell
-    gcloud config set project $(your-project-id-xxxxx)
+    gcloud config set project your-project-id-xxxxx
     ```
 
 1.  Verify your Google Cloud target project is set:
@@ -133,14 +140,14 @@ To connect to Google Cloud and list your project:
     ```
 
 Once you have successfully connected to Google Cloud and set your Cloud Project
-ID, you are ready to deploy your ADK project files Agent Engine.
+ID, you are ready to deploy your ADK project files to Agent Engine.
 
 ### Deploy your ADK project {#deploy-ad}
 
 When using the ASP tool, you deploy in stages. In the first stage, you run a
-make command that provisions the services needed to run your ADK workflow on
+`make` command that provisions the services needed to run your ADK workflow on
 Agent Engine. In the second stage, your project code is uploaded to the Agent
-Engine service and the agent workflow is executed.
+Engine service and the agent project is executed.
 
 !!! warning "Important"
     *Make sure your Google Cloud target deployment project is set as your ***current
@@ -154,8 +161,8 @@ To deploy your ADK project to Agent Engine in your Google Cloud project:
 1.  In a terminal window of your development environment, navigate to the
     root directory of your project, for example:
     `cd multi_tool_agent/`
-1.  Provision a development environment by running the following ASP make
-    command:
+1.  Provision a development environment, including logging, services accounts,
+    storage, and Vertex AI API by running the following ASP make command:
 
     ```shell
     make setup-dev-env
@@ -177,7 +184,7 @@ the agent running on Google Cloud Agent Engine. For details on testing the
 deployed agent, see 
 [Test deployed agent](#test-deployment).
 
-### Changes to your ADK project
+### Changes to your ADK project {#adk-asp-changes}
 
 The ASP tools add more files to your project for deployment. The procedure
 below backs up your existing project files before modifying them. This guide
@@ -224,12 +231,8 @@ deployment settings, or are modifying an existing deployment with Agent Engine.
 ### Prerequisites
 
 These instructions assume you have already defined an ADK project. If you do not
-have an ADK project, or want to use a test project, complete the Python
-[Quickstart](/adk-docs/get-started/quickstart/) guide,
-which creates a
-[multi_tool_agent](https://github.com/google/adk-docs/tree/main/examples/python/snippets/get-started/multi_tool_agent)
-project. The following instructions use the multi_tool_agent project as an
-example.
+have an ADK project, see the instructions for creating a test project in
+[Define your agent](#define-your-agent).
 
 Before starting deployment procedure, ensure you have the following:
 
@@ -252,7 +255,7 @@ Before starting deployment procedure, ensure you have the following:
     pip install google-cloud-aiplatform[adk,agent_engines]>=1.111
     ```
 
-### Define your agent
+### Define your agent {#define-your-agent}
 
 These instructions assume you have an existing ADK project that you are modifying
 for deployment. If you do not have an ADK project, or want to use a test
@@ -276,13 +279,13 @@ from agent import root_agent # modify this if your agent is not in agent.py
 
 # TODO: Fill in these values for your project
 PROJECT_ID = "your-gcp-project-id"
-LOCATION_ID = "us-central1"  # For other options, see https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview#supported-regions
+LOCATION = "us-central1"  # For other options, see https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview#supported-regions
 STAGING_BUCKET = "gs://your-gcs-bucket-name"
 
 # Initialize the Vertex AI SDK
 vertexai.init(
     project=PROJECT_ID,
-    location=LOCATION_ID,
+    location=LOCATION,
     staging_bucket=STAGING_BUCKET,
 )
 ```
@@ -412,7 +415,7 @@ This process packages your code, builds it into a container, and deploys it to t
 
     print(f"Deployment finished!")
     print(f"Resource Name: {remote_app.resource_name}")
-    # Resource Name: "projects/{PROJECT_NUMBER}/locations/{LOCATION_ID}/reasoningEngines/{RESOURCE_ID}"
+    # Resource Name: "projects/{PROJECT_NUMBER}/locations/{LOCATION}/reasoningEngines/{RESOURCE_ID}"
     #       Note: The PROJECT_NUMBER is different than the PROJECT_ID.
     ```
 
@@ -439,6 +442,41 @@ target project selected in Google Cloud Console. For more information on
 selecting an exising Google Cloud project, see
 [Creating and managing projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects#identifying_projects).
 
+### Find Google Cloud project information
+
+You need the address and resource identification for your project (`PROJECT_ID`,
+`LOCATION`, `RESOURCE_ID`) to be able to test your deployment. You can use Cloud
+Console or the `gcloud` command line tool to find this information. 
+
+To find your project information with Google Cloud Console:
+
+1.  In the Google Cloud Console, navigate to the Agent Engine page:
+    [https://console.cloud.google.com/vertex-ai/agents/agent-engines](https://console.cloud.google.com/vertex-ai/agents/agent-engines)
+
+1.  At the top of the page, select **API URLs**, and then copy the **Query
+    URL** string for your deployed agent, which should be in this format:
+
+        https://$(LOCATION_ID)-aiplatform.googleapis.com/v1/projects/$(PROJECT_ID)/locations/$(LOCATION_ID)/reasoningEngines/$(RESOURCE_ID):query
+
+To find your project information with `gloud`:
+
+1.  In your development environment, make sure you are authenticated to 
+    Google Cloud and run the following command to list your project:
+
+    ```shell
+    gcloud projects list
+    ```
+
+1.  Take the Project ID used for deployment and run this command to get
+    the additional details:
+
+    ```shell
+    gcloud asset search-all-resources \
+        --scope=projects/$(PROJECT_ID) \
+        --asset-types='aiplatform.googleapis.com/ReasoningEngine' \
+        --format="table(name,assetType,location,reasoning_engine_id)"
+    ```
+
 ### Test using REST calls
 
 A simple way to interact with your deployed agent in Agent Engine is to use REST
@@ -454,21 +492,13 @@ execute the deployed agent, but returns information about the agent.
 
 To send a REST call get a response from deployed agent:
 
-1.  Navigate to the Agent Engine page in the Google Cloud Console:
-    [https://console.cloud.google.com/vertex-ai/agents/agent-engines](https://console.cloud.google.com/vertex-ai/agents/agent-engines)
-
-1.  At the top of the page, select **API URLs**, and then copy the **Query
-    URL** string for your deployed agent, which should be in this format:
-
-        https://$(LOCATION_ID)-aiplatform.googleapis.com/v1/projects/$(PROJECT_ID)/locations/$(LOCATION_ID)/reasoningEngines/$(RESOURCE_ID):query
-
-1.  In a terminal window of your development environment, build a request
+-   In a terminal window of your development environment, build a request
     and execute it:
 
     ```shell
     curl -X GET \
         -H "Authorization: Bearer $(gcloud auth print-access-token)" \
-        "https://$(LOCATION_ID)-aiplatform.googleapis.com/v1/projects/$(PROJECT_ID)/locations/$(LOCATION_ID)/reasoningEngines"
+        "https://$(LOCATION)-aiplatform.googleapis.com/v1/projects/$(PROJECT_ID)/locations/$(LOCATION)/reasoningEngines"
     ```
 
 If your deployment was successful, this request responds with a list of valid
@@ -481,7 +511,7 @@ requests and expected data formats.
 
 #### Send an agent request
 
-When getting responses from your agent workflow, you must first create a
+When getting responses from your agent project, you must first create a
 session, receive a Session ID, and then send your requests using that Session
 ID. This process is described in the following instructions.
 
@@ -494,7 +524,7 @@ To test interaction with the deployed agent via REST:
     curl \
         -H "Authorization: Bearer $(gcloud auth print-access-token)" \
         -H "Content-Type: application/json" \
-        https://$(LOCATION_ID)-aiplatform.googleapis.com/v1/projects/$(PROJECT_ID)/locations/$(LOCATION_ID)/reasoningEngines/$(RESOURCE_ID):query \
+        https://$(LOCATION)-aiplatform.googleapis.com/v1/projects/$(PROJECT_ID)/locations/$(LOCATION)/reasoningEngines/$(RESOURCE_ID):query \
         -d '{"class_method": "async_create_session", "input": {"user_id": "u_123"},}'
     ```
 
@@ -522,7 +552,7 @@ To test interaction with the deployed agent via REST:
     curl \
     -H "Authorization: Bearer $(gcloud auth print-access-token)" \
     -H "Content-Type: application/json" \
-    https://$(LOCATION_ID)-aiplatform.googleapis.com/v1/projects/$(PROJECT_ID)/locations/$(LOCATION_ID)/reasoningEngines/$(RESOURCE_ID):streamQuery?alt=sse -d '{
+    https://$(LOCATION)-aiplatform.googleapis.com/v1/projects/$(PROJECT_ID)/locations/$(LOCATION)/reasoningEngines/$(RESOURCE_ID):streamQuery?alt=sse -d '{
     "class_method": "async_stream_query",
     "input": {
         "user_id": "u_123",
@@ -630,7 +660,7 @@ async for event in remote_app.async_stream_query(
 
 ## Deployment payload {#payload}
 
-When you deploy your ADK agent workflow to Agent Engine,
+When you deploy your ADK agent project to Agent Engine,
 the following content is uploaded to the service:
 
 - Your ADK agent code
