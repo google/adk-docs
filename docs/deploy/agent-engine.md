@@ -433,8 +433,11 @@ To view your deployed agent in the Cloud Console:
 -   Navigate to the Agent Engine page in the Google Cloud Console:
     [https://console.cloud.google.com/vertex-ai/agents/agent-engines](https://console.cloud.google.com/vertex-ai/agents/agent-engines)
 
-You can use this unique resource address, along with your access credentials, to
-test and interact with your deployed agent.
+This page lists all deployed agents in your currently selected Google Cloud 
+project. If you do not see your agent listed, make sure you have your
+target project selected in Google Cloud Console. For more information on
+selecting an exising Google Cloud project, see
+[Creating and managing projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects#identifying_projects).
 
 ### Test using REST calls
 
