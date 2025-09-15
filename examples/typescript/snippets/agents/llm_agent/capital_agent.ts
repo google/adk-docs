@@ -7,7 +7,7 @@ const APP_NAME = "agent_comparison_app_ts";
 const USER_ID = "test_user_789";
 const SESSION_ID_TOOL_AGENT = "session_tool_agent_ts";
 const SESSION_ID_SCHEMA_AGENT = "session_schema_agent_ts";
-const MODEL_NAME = "gemini-2.0-flash"; // Using flash for speed
+const MODEL_NAME = "gemini-2.5-flash"; // Using flash for speed
 
 // --- 2. Define Schemas ---
 

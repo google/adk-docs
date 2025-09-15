@@ -67,7 +67,7 @@ First, you need to establish what the agent *is* and what it's *for*.
     ```typescript
     // Example: Defining the basic identity
     const capitalAgent = new LlmAgent({
-        model: 'gemini-2.0-flash',
+        model: 'gemini-2.5-flash',
         name: 'capital_agent',
         description: 'Answers user questions about the capital city of a given country.',
         // instruction and tools will be added next
@@ -148,7 +148,7 @@ tells the agent:
     ```typescript
     // Example: Adding instructions
     const capitalAgent = new LlmAgent({
-        model: 'gemini-2.0-flash',
+        model: 'gemini-2.5-flash',
         name: 'capital_agent',
         description: 'Answers user questions about the capital city of a given country.',
         instruction: `You are an agent that provides the capital city of a country.
@@ -268,7 +268,7 @@ on the conversation and its instructions.
 
     // Add the tool to the agent
     const capitalAgent = new LlmAgent({
-        model: 'gemini-2.0-flash',
+        model: 'gemini-2.5-flash',
         name: 'capitalAgent',
         description: 'Answers user questions about the capital city of a given country.',
         instruction: 'You are an agent that provides the capital city of a country...', // Note: the full instruction is omitted for brevity
