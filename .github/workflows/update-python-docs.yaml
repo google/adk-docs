@@ -59,8 +59,8 @@ jobs:
           GOOGLE_CLOUD_PROJECT: ${{ secrets.GOOGLE_CLOUD_PROJECT }}
           GOOGLE_CLOUD_LOCATION: ${{ secrets.GOOGLE_CLOUD_LOCATION }}
           GOOGLE_GENAI_USE_VERTEXAI: 1
-          DOC_OWNER: 'xuanyang15'
-          DOC_REPO: 'adk-docs-xy'
+          DOC_OWNER: 'google'
+          DOC_REPO: 'adk-docs'
           CODE_OWNER: 'google'
           CODE_REPO: 'adk-python'
           INTERACTIVE: 0
