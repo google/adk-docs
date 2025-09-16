@@ -49,7 +49,7 @@ faster than even the most powerful classical supercomputers could ever achieve, 
   });
 
   // Run the agent with the long text to summarize
-  const events = await runner.runSync({
+  const events = runner.run({
     userId: 'user1',
     sessionId: 'session1',
     newMessage: {
@@ -60,8 +60,8 @@ faster than even the most powerful classical supercomputers could ever achieve, 
 
   // Print the final response from the agent
   console.log('Agent Response:');
-  for (const event of events) {
-    if (event.isFinalResponse() && event.content?.parts) {
+  for await (const event of events) {
+    if (event.content?.parts) {
       const responsePart = event.content.parts.find((p: Part) => p.functionResponse);
       if (responsePart && responsePart.functionResponse) {
         console.log(responsePart.functionResponse.response);
