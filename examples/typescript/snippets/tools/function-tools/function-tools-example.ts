@@ -20,17 +20,11 @@ async function main() {
     ticker: z.string().describe('The stock ticker symbol to look up.'),
   });
 
-  // Define the schema for the tool's return value using Zod
-  const getStockPriceResponseSchema = z.object({
-      price: z.string().describe('The stock price.'),
-  });
-
   // Create a FunctionTool from the function and schema
   const stockPriceTool = new FunctionTool({
     name: 'getStockPrice',
     description: 'Gets the current price of a stock.',
     parameters: getStockPriceSchema,
-    returnType: getStockPriceResponseSchema,
     execute: getStockPrice,
   });
 
@@ -58,7 +52,7 @@ async function main() {
 
   // Run the agent and get the response
   const response = [];
-  for await (const event of runner.runAsync({
+  for await (const event of runner.run({
     userId: session.userId,
     sessionId: session.id,
     newMessage: userContent,
