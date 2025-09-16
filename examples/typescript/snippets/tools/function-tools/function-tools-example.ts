@@ -1,4 +1,3 @@
-
 import {Content, Part} from '@google/genai';
 import {
   FunctionTool,
@@ -21,11 +20,17 @@ async function main() {
     ticker: z.string().describe('The stock ticker symbol to look up.'),
   });
 
+  // Define the schema for the tool's return value using Zod
+  const getStockPriceResponseSchema = z.object({
+      price: z.string().describe('The stock price.'),
+  });
+
   // Create a FunctionTool from the function and schema
   const stockPriceTool = new FunctionTool({
     name: 'getStockPrice',
     description: 'Gets the current price of a stock.',
     parameters: getStockPriceSchema,
+    returnType: getStockPriceResponseSchema,
     execute: getStockPrice,
   });
 
@@ -52,11 +57,14 @@ async function main() {
   };
 
   // Run the agent and get the response
-  const response = await runner.runSync({
+  const response = [];
+  for await (const event of runner.runAsync({
     userId: session.userId,
     sessionId: session.id,
     newMessage: userContent,
-  });
+  })) {
+    response.push(event);
+  }
 
   // Print the final response from the agent
   const finalResponse = response[response.length - 1];
@@ -66,3 +74,4 @@ async function main() {
 }
 
 main();
+
