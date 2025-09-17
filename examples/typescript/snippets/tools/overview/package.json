@@ -1,0 +1,17 @@
+{
+  "name": "adk-ts-example-tools-overview",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "ts-node weather_sentiment.ts",
+    "start:support": "ts-node customer_support_agent.ts",
+    "start:toolset": "ts-node toolset_example.ts"
+  },
+  "dependencies": {
+    "@google/adk": "file:../../../../../../adk-js/core",
+    "@google/genai": "^1.6.0",
+    "zod": "^3.22.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
+  }
+}
