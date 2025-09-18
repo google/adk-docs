@@ -63,11 +63,11 @@ async function main() {
     its sentiment.
 
     Follow these steps:
-    1. Use the ​get_weather_report​ tool to get the weather for the requested
+    1. Use the 'get_weather_report' tool to get the weather for the requested
        city.
-    2. If the ​get_weather_report​ tool returns an error, inform the user about
+    2. If the 'get_weather_report' tool returns an error, inform the user about
        the error and stop.
-    3. If the weather report is available, use the ​analyze_sentiment​ tool to
+    3. If the weather report is available, use the 'analyze_sentiment' tool to
        determine the sentiment of the weather report.
     4. Finally, provide a summary to the user, including the weather report and
        its sentiment.
