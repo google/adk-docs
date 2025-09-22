@@ -65,6 +65,9 @@ db.sqlite3-journal
 instance/
 .webassets-cache
 
+#Gemini Stuff
+gemini.md
+
 # Scrapy stuff:
 .scrapy
 
