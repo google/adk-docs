@@ -30,6 +30,18 @@ application entirely on your machine and is recommended for internal development
     pip install google-adk
     ```
 
+=== "TypeScript"
+
+    Create a new Node.js project:
+    ```bash
+    npm init -y
+    ```
+
+    Install ADK:
+    ```bash
+    npm install @google/adk
+    ```
+
 === "Java"
 
     To install ADK and setup the environment, proceed to the following steps.
