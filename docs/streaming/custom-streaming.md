@@ -34,7 +34,7 @@ python -m venv .venv
 Install ADK:
 
 ```bash
-pip install --upgrade google-adk==1.10.0
+pip install --upgrade google-adk
 ```
 
 Set `SSL_CERT_FILE` variable with the following command.

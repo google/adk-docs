@@ -172,7 +172,7 @@ source .venv/bin/activate
 Create a `requirements.txt` file in your project root. Note that `google-adk` library includes FastAPI and uvicorn that you can use as the web server for bidi-streaming applications.
 
 ```txt
-google-adk==1.3.0
+google-adk
 python-dotenv>=1.0.0
 ```
 
