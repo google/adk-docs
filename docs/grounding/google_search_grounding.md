@@ -72,32 +72,61 @@ Under a project directory, run the following commands:
 
 
 
-#### Edit `agent.py`
+#### Edit `agent.py` or `agent.ts`
 
-Copy and paste the following code into `agent.py`:
+Copy and paste the following code into `agent.py` or `agent.ts`:
 
-```python title="google_search_agent/agent.py"
-from google.adk.agents import Agent
-from google.adk.tools import google_search
+=== "Python"
 
-root_agent = Agent(
-    name="google_search_agent",
-    model="gemini-2.5-flash",
-    instruction="Answer questions using Google Search when needed. Always cite sources.",
-    description="Professional search assistant with Google Search capabilities",
-    tools=[google_search]
-)
-```
+    ```python title="google_search_agent/agent.py"
+    from google.adk.agents import Agent
+    from google.adk.tools import google_search
+
+    root_agent = Agent(
+        name="google_search_agent",
+        model="gemini-2.5-flash",
+        instruction="Answer questions using Google Search when needed. Always cite sources.",
+        description="Professional search assistant with Google Search capabilities",
+        tools=[google_search]
+    )
+    ```
+
+=== "TypeScript"
+
+    ```typescript title="google_search_agent/agent.ts"
+    import { LlmAgent, GoogleSearchTool } from '@google/adk';
+
+    const rootAgent = new LlmAgent({
+        name: "google_search_agent",
+        model: "gemini-2.5-flash",
+        instruction: "Answer questions using Google Search when needed. Always cite sources.",
+        description: "Professional search assistant with Google Search capabilities",
+        tools: [GoogleSearchTool],
+    });
+    ```
 
 Now you would have the following directory structure:
 
-```console
-my_project/
-    google_search_agent/
-        __init__.py
-        agent.py
-    .env
-```
+=== "Python"
+
+    ```console
+    my_project/
+        google_search_agent/
+            __init__.py
+            agent.py
+        .env
+    ```
+
+=== "TypeScript"
+
+    ```console
+    my_project/
+        google_search_agent/
+            agent.ts
+        package.json
+        tsconfig.json
+        .env
+    ```
 
 ### 3. Choose a platform { #choose-a-platform }
 
