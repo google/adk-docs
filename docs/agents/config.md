@@ -73,7 +73,7 @@ To create an ADK project for use with Agent Config:
 1.  In your terminal window, run the following command to create a
     config-based agent:
 
-        adk create --type=config my_agent
+        adk create --type=config yaml_agent
 
     This command generates a `my_agent/` folder, containing a
     `root_agent.yaml` file and an `.env` file.
