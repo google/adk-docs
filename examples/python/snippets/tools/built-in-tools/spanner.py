@@ -55,7 +55,7 @@ spanner_toolset = SpannerToolset(
 # Optional
 # Create a wrapped function tool for the agent on top of the built-in
 # `execute_sql` tool in the Spanner toolset.
-# For example, this customized tool can perform a parameterized sql query.
+# For example, this customized tool can perform a dynamically-built query.
 def count_rows_tool(
     table_name: str,
     credentials: Credentials,  # GoogleTool handles `credentials`
@@ -76,7 +76,7 @@ def count_rows_tool(
   INSTANCE_ID = "<INSTANCE_ID>"
   DATABASE_ID = "<DATABASE_ID>"
 
-  parameterized_query = f"""
+  query = f"""
   SELECT count(*) FROM {table_name}
     """
 
@@ -84,7 +84,7 @@ def count_rows_tool(
       project_id=PROJECT_ID,
       instance_id=INSTANCE_ID,
       database_id=DATABASE_ID,
-      query=parameterized_query,
+      query=query,
       credentials=credentials,
       settings=settings,
       tool_context=tool_context,
