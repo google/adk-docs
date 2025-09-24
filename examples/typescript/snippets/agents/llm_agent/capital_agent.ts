@@ -101,7 +101,7 @@ async function callAgentAndPrint(
     const message = createUserContent(queryJson);
 
     let finalResponseContent = "No final response received.";
-    for await (const event of runner.runAsync({ userId: USER_ID, sessionId: sessionId, newMessage: message })) {
+    for await (const event of runner.run({ userId: USER_ID, sessionId: sessionId, newMessage: message })) {
         if (event.content?.parts && event.isFinalResponse()) {
             finalResponseContent = event.content.parts.map(part => part.text ?? '').join('');
         }
