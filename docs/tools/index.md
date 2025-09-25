@@ -296,9 +296,9 @@ These methods provide convenient ways for your tool to interact with persistent 
 
       // 3. Perform analysis (placeholder)
       String analysisResult =
-          "Analysis of '" 
+          "Analysis of '"
               + documentName
-              + "' regarding '" 
+              + "' regarding '"
               + analysisQuery
               + " [Placeholder Analysis Result]";
       System.out.println("Tool: Performed analysis.");

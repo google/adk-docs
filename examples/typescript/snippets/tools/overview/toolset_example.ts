@@ -74,10 +74,10 @@ async function main() {
   });
 
   const instruction =
-    "You are a calculator and a greeter. " +
-    "If the user asks for a math operation, use the calculator tools. " +
-    "If the user asks for a greeting, use the greet_user tool. " +
-    "The result of the last math operation is stored in the 'last_math_result' state variable.";
+    `You are a calculator and a greeter.
+    If the user asks for a math operation, use the calculator tools.
+    If the user asks for a greeting, use the greet_user tool.
+    The result of the last math operation is stored in the 'last_math_result' state variable.`;
 
   const calculatorAgent = new LlmAgent({
     name: "calculator_agent",
