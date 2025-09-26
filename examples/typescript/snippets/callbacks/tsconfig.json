@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "target": "es2020",
+    "lib": ["es2022", "dom"],
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "strict": true,

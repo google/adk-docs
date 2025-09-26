@@ -13,103 +13,127 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 import {
   LlmAgent,
   InMemoryRunner,
   CallbackContext,
   LlmRequest,
   LlmResponse,
-} from '../../../../../../repos/adk-js/core/src/index';
-import { Content, createUserContent, Part } from '@google/genai';
+  isFinalResponse,
+} from "@google/adk";
+import { Content, Part } from "@google/genai";
 
-const MODEL_NAME = 'gemini-1.5-flash-latest';
+const MODEL_NAME = "gemini-2.5-flash";
+const APP_NAME = "guardrail_app";
+const USER_ID = "user_1";
+const SESSION_ID_BLOCK = "session_block_test";
+const SESSION_ID_NORMAL = "session_normal_test";
 
 // --- Define the Callback Function ---
-function simpleBeforeModelModifier(
-  callbackContext: CallbackContext,
-  llmRequest: LlmRequest,
-): LlmResponse | undefined {
-  'use strict';
-  const agentName = callbackContext.agentName;
-  console.log(`[Callback] Before model call for agent: ${agentName}`);
+function simpleBeforeModelModifier({
+  context,
+  request,
+}: {
+  context: CallbackContext;
+  request: LlmRequest;
+}): LlmResponse | undefined {
+  console.log(`[Callback] Before model call for agent: ${context.agentName}`);
 
-  let lastUserMessage = '';
-  const lastContent = llmRequest.contents[llmRequest.contents.length - 1];
-  if (lastContent?.role === 'user' && lastContent.parts[0]?.text) {
-    lastUserMessage = lastContent.parts[0].text;
-  }
+  // Inspect the last user message in the request contents
+  const lastUserMessage = request.contents?.at(-1)?.parts?.[0]?.text ?? "";
   console.log(`[Callback] Inspecting last user message: '${lastUserMessage}'`);
 
   // --- Modification Example ---
-  const prefix = '[Modified by Callback] ';
-  if (!llmRequest.config.systemInstruction) {
-    llmRequest.config.systemInstruction = { role: 'system', parts: [{ text: '' }] };
-  } else if (typeof llmRequest.config.systemInstruction === 'string') {
-    llmRequest.config.systemInstruction = {
-      role: 'system',
-      parts: [{ text: llmRequest.config.systemInstruction }],
-    };
-  }
-
-  const instructionPart = (llmRequest.config.systemInstruction as Content).parts[0] as Part;
-  const modifiedText = prefix + (instructionPart.text || '');
-  instructionPart.text = modifiedText;
-  console.log(`[Callback] Modified system instruction to: '${modifiedText}'`);
+  // Add a prefix to the system instruction.
+  // We create a deep copy to avoid modifying the original agent's config object.
+  const modifiedConfig = JSON.parse(JSON.stringify(request.config));
+  const originalInstructionText =
+    modifiedConfig.systemInstruction?.parts?.[0]?.text ?? "";
+  const prefix = "[Modified by Callback] ";
+  modifiedConfig.systemInstruction = {
+    role: "system",
+    parts: [{ text: prefix + originalInstructionText }],
+  };
+  request.config = modifiedConfig; // Assign the modified config back to the request
+  console.log(
+    `[Callback] Modified system instruction to: '${modifiedConfig.systemInstruction.parts[0].text}'`
+  );
 
   // --- Skip Example ---
-  if (lastUserMessage.toUpperCase().includes('BLOCK')) {
+  // Check if the last user message contains "BLOCK"
+  if (lastUserMessage.toUpperCase().includes("BLOCK")) {
     console.log("[Callback] 'BLOCK' keyword found. Skipping LLM call.");
+    // Return an LlmResponse to skip the actual LLM call
     return {
       content: {
-        role: 'model',
-        parts: [{ text: 'LLM call was blocked by before_model_callback.' }],
+        role: "model",
+        parts: [
+          { text: "LLM call was blocked by the before_model_callback." },
+        ],
       },
     };
   }
 
-  console.log('[Callback] Proceeding with LLM call.');
+  console.log("[Callback] Proceeding with LLM call.");
+  // Return undefined to allow the (modified) request to go to the LLM
   return undefined;
 }
 
-// Create LlmAgent and Assign Callback
+// --- Create LlmAgent and Assign Callback ---
 const myLlmAgent = new LlmAgent({
-  name: 'ModelCallbackAgent',
+  name: "ModelCallbackAgent",
   model: MODEL_NAME,
-  instruction: 'You are a helpful assistant.',
-  description: 'An LLM agent demonstrating before_model_callback',
-  beforeModelCallback: simpleBeforeModelModifier,
+  instruction: "You are a helpful assistant.", // Base instruction
+  description: "An LLM agent demonstrating before_model_callback",
+  beforeModelCallback: simpleBeforeModelModifier, // Assign the function here
 });
 
-// Agent Interaction Logic
-async function callAgentAndPrint(runner: InMemoryRunner, query: string) {
-  const appName = 'before_model_demo';
-  const userId = 'test_user';
-  const sessionId = `session_${Math.random().toString(36).substring(7)}`;
+// --- Agent Interaction Logic ---
+async function callAgentAndPrint(
+  runner: InMemoryRunner,
+  query: string,
+  sessionId: string
+) {
+  console.log(`\n>>> Calling Agent with query: "${query}"`);
+  const message: Content = { role: "user", parts: [{ text: query }] };
 
-  await runner.sessionService.createSession({ appName, userId, sessionId });
+  let finalResponseContent = "No final response received.";
+  const events = runner.run({ userId: USER_ID, sessionId, newMessage: message });
 
-  console.log(`
->>> Calling Agent: '${myLlmAgent.name}' | Query: ${query}`);
-  const message = createUserContent(query);
-
-  for await (const event of runner.run({ userId, sessionId, newMessage: message })) {
-    if (event.isFinalResponse() && event.content) {
-      console.log(`Final Output: [${event.author}] ${event.content.parts[0].text?.trim()}`);
-    } else if (event.isError()) {
-      console.log(`Error Event: ${event.errorDetails}`);
+  for await (const event of events) {
+    if (isFinalResponse(event) && event.content?.parts) {
+      finalResponseContent = event.content.parts
+        .map((part: Part) => part.text ?? "")
+        .join("");
     }
   }
+  console.log("<<< Agent Response: ", finalResponseContent);
 }
 
-// Run Interactions
+// --- Run Interactions ---
 async function main() {
-  const runner = new InMemoryRunner({ agent: myLlmAgent, appName: 'before_model_demo' });
+  const runner = new InMemoryRunner({ agent: myLlmAgent, appName: APP_NAME });
 
-  // Scenario 1: Callback modifies the request
-  await callAgentAndPrint(runner, 'Tell me a fact about the moon.');
+  // Scenario 1: The callback will find "BLOCK" and skip the model call
+  await runner.sessionService.createSession({
+    appName: APP_NAME,
+    userId: USER_ID,
+    sessionId: SESSION_ID_BLOCK,
+  });
+  await callAgentAndPrint(
+    runner,
+    "write a joke about BLOCK",
+    SESSION_ID_BLOCK
+  );
 
-  // Scenario 2: Callback skips the LLM call
-  await callAgentAndPrint(runner, 'Tell me a fact about the sun, but BLOCK the call.');
+  // Scenario 2: The callback will modify the instruction and proceed
+  await runner.sessionService.createSession({
+    appName: APP_NAME,
+    userId: USER_ID,
+    sessionId: SESSION_ID_NORMAL,
+  });
+  await callAgentAndPrint(runner, "write a short poem", SESSION_ID_NORMAL);
 }
 
 main();
