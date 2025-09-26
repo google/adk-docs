@@ -63,6 +63,32 @@ a2a_app = to_a2a(root_agent, port=8001)
 
 The `to_a2a()` function will even auto-generate an agent card in-memory behind-the-scenes by [extracting skills, capabilities, and metadata from the ADK agent](https://github.com/google/adk-python/blob/main/src/google/adk/a2a/utils/agent_card_builder.py), so that the well-known agent card is made available when the agent endpoint is served using `uvicorn`.
 
+You can also provide your own agent card by using the `agent_card` parameter. The value can be an `AgentCard` object or a path to an agent card JSON file.
+
+**Example with an `AgentCard` object:**
+```python
+from google.adk.a2a.utils.agent_to_a2a import to_a2a
+from a2a.types import AgentCard
+
+# Make your agent A2A-compatible with a custom agent card
+my_agent_card = AgentCard(
+    protocol_version="0.2.6",
+    name="my-custom-agent",
+    description="A custom agent card.",
+    url="http://localhost:8001",
+    skills=[],
+)
+a2a_app = to_a2a(root_agent, port=8001, agent_card=my_agent_card)
+```
+
+**Example with a path to a JSON file:**
+```python
+from google.adk.a2a.utils.agent_to_a2a import to_a2a
+
+# Make your agent A2A-compatible with a custom agent card from a file
+a2a_app = to_a2a(root_agent, port=8001, agent_card="/path/to/your/agent-card.json")
+```
+
 Now let's dive into the sample code.
 
 ### 1. Getting the Sample Code { #getting-the-sample-code }
@@ -153,7 +179,7 @@ To open the adk web server, go to: [http://localhost:8000](http://localhost:8000
 Once both services are running, you can interact with the root agent to see how it calls the remote agent via A2A:
 
 **Simple Dice Rolling:**
-This interaction uses a local agent, the Roll Agent:
+This interaction uses a local agent, a Roll Agent:
 
 ```text
 User: Roll a 6-sided die
