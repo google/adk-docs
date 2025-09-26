@@ -70,13 +70,17 @@ You can also provide your own agent card by using the `agent_card` parameter. Th
 from google.adk.a2a.utils.agent_to_a2a import to_a2a
 from a2a.types import AgentCard
 
-# Make your agent A2A-compatible with a custom agent card
+# Define A2A agent card
 my_agent_card = AgentCard(
-    protocol_version="0.2.6",
-    name="my-custom-agent",
-    description="A custom agent card.",
-    url="http://localhost:8001",
-    skills=[],
+    "name": "file_agent",
+    "url": "http://example.com",
+    "description": "Test agent from file",
+    "version": "1.0.0",
+    "capabilities": {},
+    "skills": [],
+    "defaultInputModes": ["text/plain"],
+    "defaultOutputModes": ["text/plain"],
+    "supportsAuthenticatedExtendedCard": False,
 )
 a2a_app = to_a2a(root_agent, port=8001, agent_card=my_agent_card)
 ```
@@ -85,7 +89,7 @@ a2a_app = to_a2a(root_agent, port=8001, agent_card=my_agent_card)
 ```python
 from google.adk.a2a.utils.agent_to_a2a import to_a2a
 
-# Make your agent A2A-compatible with a custom agent card from a file
+# Load A2A agent card from a file
 a2a_app = to_a2a(root_agent, port=8001, agent_card="/path/to/your/agent-card.json")
 ```
 
@@ -179,7 +183,7 @@ To open the adk web server, go to: [http://localhost:8000](http://localhost:8000
 Once both services are running, you can interact with the root agent to see how it calls the remote agent via A2A:
 
 **Simple Dice Rolling:**
-This interaction uses a local agent, a Roll Agent:
+This interaction uses a local agent, the Roll Agent:
 
 ```text
 User: Roll a 6-sided die
