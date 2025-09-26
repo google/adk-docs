@@ -49,6 +49,13 @@ from simple tasks to complex workflows.
         implementation 'com.google.adk:google-adk:0.2.0'
     }
     ```
+
+=== "TypeScript"
+    <br>
+    <p style="text-align: center;">
+    <code>npm install @google/adk</code>
+    </p>
+
 </div>
 
 
