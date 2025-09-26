@@ -54,6 +54,7 @@ MCP Toolbox provides out-of-the-box toolsets for the following databases and dat
 * Firestore
 * Bigtable
 * Dataplex (for data discovery and metadata search)
+* Looker
 
 #### Relational & SQL Databases
 
