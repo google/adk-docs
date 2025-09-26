@@ -61,12 +61,26 @@ like calculations, data manipulation, or running small scripts.
 
 The GKE Code Executor (`GkeCodeExecutor`) provides a secure and scalable method
 for running LLM-generated code by leveraging the GKE (Google Kubernetes Engine)
-Sandbox environment, which uses gVisor for workload isolation.
-
-For each code execution request, it dynamically creates an ephemeral, sandboxed
-Kubernetes Job with a hardened Pod configuration. This is the recommended
+Sandbox environment, which uses gVisor for workload isolation. It is the recommended
 executor for production environments on GKE where security and isolation are
 critical.
+
+#### How it Works
+
+When a request to execute code is made, the `GkeCodeExecutor` performs the following steps:
+
+1.  **Creates a ConfigMap:** A Kubernetes ConfigMap is created to store the Python code that needs to be executed.
+2.  **Creates a Sandboxed Pod:** A new Kubernetes Job is created, which in turn creates a Pod with a hardened security context and the gVisor runtime enabled. The code from the ConfigMap is mounted into this Pod.
+3.  **Executes the Code:** The code is executed within the sandboxed Pod, isolated from the underlying node and other workloads.
+4.  **Retrieves the Result:** The standard output and error streams from the execution are captured from the Pod's logs.
+5.  **Cleans Up Resources:** Once the execution is complete, the Job and the associated ConfigMap are automatically deleted, ensuring that no artifacts are left behind.
+
+#### Key Benefits
+
+*   **Enhanced Security:** Code is executed in a gVisor-sandboxed environment, providing strong isolation from the host kernel and preventing potential container escapes.
+*   **Ephemeral Environments:** Each code execution runs in its own ephemeral Pod, ensuring that there is no state bleed between executions.
+*   **Resource Control:** You can configure CPU and memory limits for the execution Pods to prevent resource abuse.
+*   **Scalability:** By leveraging GKE, you can run a large number of code executions in parallel, with GKE handling the scheduling and scaling of the underlying nodes.
 
 #### System requirements
 
@@ -85,24 +99,43 @@ For a complete, ready-to-use configuration, see the
 sample. For more information on deploying ADK workflows to GKE, see
 [Deploy to Google Kubernetes Engine (GKE)](/adk-docs/deploy/gke/).
 
+#### Configuration
+
+The `GkeCodeExecutor` can be configured with the following parameters:
+
+| Parameter            | Type   | Description                                                                                                                              |
+| -------------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `namespace`          | `str`  | The Kubernetes namespace where the execution Jobs will be created. Defaults to `"default"`.                                              |
+| `image`              | `str`  | The container image to use for the execution Pod. Defaults to `"python:3.11-slim"`.                                                        |
+| `timeout_seconds`    | `int`  | The timeout in seconds for the code execution. Defaults to `300`.                                                                          |
+| `cpu_requested`      | `str`  | The amount of CPU to request for the execution Pod (e.g., `"200m"`). Defaults to `"200m"`.                                                 |
+| `mem_requested`      | `str`  | The amount of memory to request for the execution Pod (e.g., `"256Mi"`). Defaults to `"256Mi"`.                                              |
+| `cpu_limit`          | `str`  | The maximum amount of CPU the execution Pod can use (e.g., `"500m"`). Defaults to `"500m"`.                                                  |
+| `mem_limit`          | `str`  | The maximum amount of memory the execution Pod can use (e.g., `"512Mi"`). Defaults to `"512Mi"`.                                               |
+| `kubeconfig_path`    | `str`  | The path to a kubeconfig file to use for authentication. If not provided, it will try in-cluster config or the default local kubeconfig.    |
+| `kubeconfig_context` | `str`  | The kubeconfig context to use.                                                                                                           |
+
 === "Python"
 
-    ```py
+    ```python
     from google.adk.agents import LlmAgent
     from google.adk.code_executors import GkeCodeExecutor
 
     # Initialize the executor, targeting the namespace where its ServiceAccount
     # has the required RBAC permissions.
+    # This example also sets a custom timeout and resource limits.
     gke_executor = GkeCodeExecutor(
         namespace="agent-sandbox",
         timeout_seconds=600,
+        cpu_limit="1000m",  # 1 CPU core
+        mem_limit="1Gi",
     )
 
     # The agent will now use this executor for any code it generates.
     gke_agent = LlmAgent(
         name="gke_coding_agent",
         model="gemini-2.0-flash",
-        instruction="You are a helpful AI agent that writes and executes Python code.",
+        instruction="You are a helpful AI agent that writes and executes Python code to solve complex problems.",
         code_executor=gke_executor,
     )
     ```
