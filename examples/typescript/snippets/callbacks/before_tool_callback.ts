@@ -17,69 +17,79 @@ import {
   LlmAgent,
   InMemoryRunner,
   FunctionTool,
-  Tool,
   ToolContext,
-  BeforeToolCallbackResponse,
-} from '../../../../../../repos/adk-js/core/src/index';
-import { Content, createUserContent } from '@google/genai';
+  isFinalResponse,
+  BaseTool,
+} from '@google/adk';
+import { Content, Part } from '@google/genai';
 import { z } from 'zod';
 
-const MODEL_NAME = 'gemini-1.5-flash-latest';
+const MODEL_NAME = "gemini-2.5-flash";
+const appName = "before_tool_demo";
+const userId = "test_user";
+const sessionId = "session_001";
 
 // --- Define a Simple Tool Function ---
 const CountryInput = z.object({
   country: z.string().describe('The country to get the capital for.'),
 });
 
-async function getCapitalCity(
-  params: z.infer<typeof CountryInput>,
-): Promise<{ result: string }> {
-  console.log(`--- Tool 'get_capital_city' executing with country: ${params.country} ---`);
-  const countryCapitals: Record<string, string> = {
-    'united states': 'Washington, D.C.',
-    canada: 'Ottawa',
-    france: 'Paris',
-    germany: 'Berlin',
-  };
-  const result = countryCapitals[params.country.toLowerCase()] ?? `Capital not found for ${params.country}`;
-  return { result };
+async function getCapitalCity(params: z.infer<typeof CountryInput>): Promise<string> {
+    console.log(`\n-- Tool Call: getCapitalCity(country='${params.country}') --`);
+    const capitals: Record<string, string> = {
+        'united states': 'Washington, D.C.',
+        'canada': 'Ottawa',
+        'france': 'Paris',
+        'japan': 'Tokyo',
+    };
+    const result = capitals[params.country.toLowerCase()] ??
+        `Sorry, I couldn't find the capital for ${params.country}.`;
+    console.log(`-- Tool Result: '${result}' --`);
+    return result; // Tools must return a string
 }
 
-const capitalTool = new FunctionTool({
-  name: 'get_capital_city',
-  description: 'Retrieves the capital city for a given country',
-  parameters: CountryInput,
-  execute: getCapitalCity,
+const getCapitalCityTool = new FunctionTool({
+    name: 'get_capital_city',
+    description: 'Retrieves the capital city for a given country',
+    parameters: CountryInput,
+    execute: getCapitalCity,
 });
 
 // --- Define the Callback Function ---
-function simpleBeforeToolModifier(
-  tool: Tool,
-  args: Record<string, any>,
-  toolContext: ToolContext,
-): BeforeToolCallbackResponse | undefined {
-  'use strict';
-  const agentName = toolContext.agentName;
+function simpleBeforeToolModifier({
+  tool,
+  args,
+  context,
+}: {
+  tool: BaseTool;
+  args: Record<string, any>;
+  context: ToolContext;
+}) {
+  const agentName = context.agentName;
   const toolName = tool.name;
   console.log(`[Callback] Before tool call for tool '${toolName}' in agent '${agentName}'`);
   console.log(`[Callback] Original args: ${JSON.stringify(args)}`);
 
-  if (toolName === 'get_capital_city' && args['country']?.toLowerCase() === 'canada') {
+  if (
+    toolName === "get_capital_city" &&
+    args["country"]?.toLowerCase() === "canada"
+  ) {
     console.log("[Callback] Detected 'Canada'. Modifying args to 'France'.");
-    const modifiedArgs = { ...args, country: 'France' };
-    console.log(`[Callback] Modified args: ${JSON.stringify(modifiedArgs)}`);
-    return { args: modifiedArgs }; // Return modified args
+    args["country"] = "France";
+    console.log(`[Callback] Modified args: ${args}`);
+    return undefined;
   }
 
-  if (toolName === 'get_capital_city' && args['country']?.toUpperCase() === 'BLOCK') {
+  if (
+    toolName === "get_capital_city" &&
+    args["country"]?.toUpperCase() === "BLOCK"
+  ) {
     console.log("[Callback] Detected 'BLOCK'. Skipping tool execution.");
-    return {
-      toolResponse: { result: 'Tool execution was blocked by before_tool_callback.' },
-    }; // Return a direct response to skip the tool
+    return { result: "Tool execution was blocked by before_tool_callback." };
   }
 
-  console.log('[Callback] Proceeding with original args.');
-  return undefined; // Proceed with original args
+  console.log("[Callback] Proceeding with original or previously modified args.");
+  return;
 }
 
 // Create LlmAgent and Assign Callback
@@ -88,40 +98,36 @@ const myLlmAgent = new LlmAgent({
   model: MODEL_NAME,
   instruction: 'You are an agent that can find capital cities. Use the get_capital_city tool.',
   description: 'An LLM agent demonstrating before_tool_callback',
-  tools: [capitalTool],
+  tools: [getCapitalCityTool],
   beforeToolCallback: simpleBeforeToolModifier,
 });
 
 // Agent Interaction Logic
-async function callAgentAndPrint(runner: InMemoryRunner, query: string) {
-  const appName = 'before_tool_demo';
-  const userId = 'test_user';
-  const sessionId = `session_${Math.random().toString(36).substring(7)}`;
-
-  await runner.sessionService.createSession({ appName, userId, sessionId });
-
-  console.log(`
->>> Calling Agent: '${myLlmAgent.name}' | Query: ${query}`);
-  const message = createUserContent(query);
+async function callAgentAndPrint(runner: InMemoryRunner, query: string, sessionId: string) {
+  console.log(`\n>>> Calling Agent for session '${sessionId}' | Query: ${query}`);
+  const message: Content = { role: 'user', parts: [{ text: query }] };
 
   for await (const event of runner.run({ userId, sessionId, newMessage: message })) {
-    if (event.isFinalResponse() && event.content) {
-      console.log(`Final Output: [${event.author}] ${event.content.parts[0].text?.trim()}`);
-    } else if (event.isError()) {
-      console.log(`Error Event: ${event.errorDetails}`);
+    if (isFinalResponse(event) && event.content?.parts) {
+      const finalResponseContent = event.content.parts.map((part: Part) => part.text ?? '').join('');
+      console.log(`<<< Final Output: ${finalResponseContent}`);
     }
   }
 }
 
 // Run Interactions
 async function main() {
-  const runner = new InMemoryRunner({ agent: myLlmAgent, appName: 'before_tool_demo' });
+  const runner = new InMemoryRunner({ agent: myLlmAgent, appName });
 
   // Scenario 1: Callback modifies the arguments from "Canada" to "France"
-  await callAgentAndPrint(runner, 'What is the capital of Canada?');
+  const canadaSessionId = 'session_canada_test';
+  await runner.sessionService.createSession({ appName, userId, sessionId: canadaSessionId });
+  await callAgentAndPrint(runner, 'What is the capital of Canada?', canadaSessionId);
 
   // Scenario 2: Callback skips the tool call
-  await callAgentAndPrint(runner, 'What is the capital of BLOCK?');
+  const blockSessionId = 'session_block_test';
+  await runner.sessionService.createSession({ appName, userId, sessionId: blockSessionId });
+  await callAgentAndPrint(runner, 'What is the capital of BLOCK?', blockSessionId);
 }
 
 main();

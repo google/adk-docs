@@ -16,10 +16,12 @@
 import {
   LlmAgent,
   InMemoryRunner,
+  AfterToolCallback,
   FunctionTool,
-  Tool,
+  isFinalResponse,
   ToolContext,
-} from '../../../../../../repos/adk-js/core/src/index';
+  BaseTool,
+} from '@google/adk';
 import { Content, createUserContent } from '@google/genai';
 import { z } from 'zod';
 
@@ -56,36 +58,41 @@ const capitalTool = new FunctionTool({
 });
 
 // --- Define the Callback Function ---
-function simpleAfterToolModifier(
-  tool: Tool,
-  args: Record<string, any>,
-  toolContext: ToolContext,
-  toolResponse: Record<string, any>,
-): Record<string, any> | undefined {
-  'use strict';
-  const agentName = toolContext.agentName;
+function simpleAfterToolModifier({
+  tool,
+  args,
+  context,
+  response,
+}: {
+  tool: BaseTool;
+  args: Record<string, any>;
+  context: ToolContext;
+  response: Record<string, any>;
+}) {
+  const agentName = context.agentName;
   const toolName = tool.name;
   console.log(`[Callback] After tool call for tool '${toolName}' in agent '${agentName}'`);
-  console.log(`[Callback] Args used: ${JSON.stringify(args)}`);
-  console.log(`[Callback] Original tool_response: ${JSON.stringify(toolResponse)}`);
+  console.log(`[Callback] Original args: ${args}`);
 
-  const originalResultValue = toolResponse.result || '';
+  const originalResultValue = response?.result || '';
 
   // --- Modification Example ---
   if (toolName === 'get_capital_city' && originalResultValue === 'Washington, D.C.') {
     console.log("[Callback] Detected 'Washington, D.C.'. Modifying tool response.");
 
-    const modifiedResponse = JSON.parse(JSON.stringify(toolResponse));
+    const modifiedResponse = JSON.parse(JSON.stringify(response));
     modifiedResponse.result = `${originalResultValue} (Note: This is the capital of the USA).`;
-    modifiedResponse.note_added_by_callback = true;
+    modifiedResponse['note_added_by_callback'] = true;
 
-    console.log(`[Callback] Modified tool_response: ${JSON.stringify(modifiedResponse)}`);
+    console.log(
+      `[Callback] Modified response: ${JSON.stringify(modifiedResponse)}`
+    );
     return modifiedResponse;
   }
 
   console.log('[Callback] Passing original tool response through.');
   return undefined;
-}
+};
 
 // Create LlmAgent and Assign Callback
 const myLlmAgent = new LlmAgent({
@@ -115,7 +122,7 @@ async function callAgentAndPrint(
     newMessage: message,
   })) {
     const authorName = event.author || 'System';
-    if (event.content?.parts && event.isFinalResponse()) {
+    if (event.content?.parts && isFinalResponse(event)) {
       finalResponseContent = event.content.parts.map((part) => part.text ?? '').join('');
       console.log(`
 --- Output from: ${authorName} ---
@@ -135,7 +142,7 @@ async function main() {
   await runner.sessionService.createSession({
     appName: APP_NAME,
     userId: USER_ID,
-    id: SESSION_ID,
+    sessionId: SESSION_ID,
   });
 
   await callAgentAndPrint(runner, myLlmAgent, SESSION_ID, 'united states');

@@ -19,20 +19,22 @@ import {
   CallbackContext,
   LlmRequest,
   LlmResponse,
-} from '@google/adk';
-import { Content } from '@google/genai';
-
-const APP_NAME = "guardrail_app";
-const USER_ID = "user_1"
-const SESSION_ID = "session_001"
+  Event,
+  isFinalResponse,
+} from "@google/adk";
+import { Content } from "@google/genai";
 
 // --- Define your callback function ---
-function myBeforeModelLogic(
-  callbackContext: CallbackContext,
-  llmRequest: LlmRequest,
-): LlmResponse | undefined {
-  'use strict';
-  console.log(`Callback running before model call for agent: ${callbackContext.agentName()}`);
+function myBeforeModelLogic({
+  context,
+  request,
+}: {
+  context: CallbackContext;
+  request: LlmRequest;
+}): LlmResponse | undefined {
+  console.log(
+    `Callback running before model call for agent: ${context.agentName}`
+  );
   // ... your custom logic here ...
   return undefined; // Allow the model call to proceed
 }
@@ -40,22 +42,27 @@ function myBeforeModelLogic(
 // --- Register it during Agent creation ---
 const myAgent = new LlmAgent({
   name: "MyCallbackAgent",
-  model: "gemini-2.0-flash",
+  model: "gemini-2.5-flash",
   instruction: "Be helpful.",
   beforeModelCallback: myBeforeModelLogic,
 });
 
+const APP_NAME = "guardrail_app";
+const USER_ID = "user_1";
+const SESSION_ID = "session_001";
+
 // Agent Interaction
 async function callAgentAsync(query: string) {
-  const content: Content = { role: 'user', parts: [{ text: query }] };
+  const content: Content = { role: "user", parts: [{ text: query }] };
 
   // The InMemoryRunner creates and manages its own session service.
   const runner = new InMemoryRunner({
     agent: myAgent,
     appName: APP_NAME,
   });
-
-  // Create the session using the runner's session service.
+ 
+  // Create the session before running the agent. The runner will not
+  // create it automatically.
   await runner.sessionService.createSession({
     appName: APP_NAME,
     userId: USER_ID,
@@ -63,23 +70,24 @@ async function callAgentAsync(query: string) {
   });
 
   // The run method returns an async iterator for the events
-  const events = runner.runAsync({
+  const events = runner.run({
     userId: USER_ID,
     sessionId: SESSION_ID,
     newMessage: content,
   });
 
   for await (const event of events) {
-    if (event.isFinalResponse()) {
-      // Assuming the final response has text in the first part
-      const finalResponse = event.content?.parts?.[0]?.text ?? 'No response text found.';
-      console.log('Agent Response: ', finalResponse);
-      break; // Stop after getting the final response
+    // In a real application, you would handle different event types.
+    // For this example, we'll just print the final text response.
+    if (isFinalResponse(event)) {
+      const finalResponse =
+        event.content?.parts?.[0]?.text ?? "No response text found.";
+      console.log("Agent Response: ", finalResponse);
     }
   }
 }
 
 // In a TypeScript/Node.js environment, you would typically call an async function like this:
 (async () => {
-  await callAgentAsync('write a short joke');
+  await callAgentAsync("write a short joke");
 })();
