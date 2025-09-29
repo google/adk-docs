@@ -33,7 +33,7 @@ const CountryInput = z.object({
   country: z.string().describe('The country to get the capital for.'),
 });
 
-async function getCapitalCity(params: z.infer<typeof CountryInput>): Promise<string> {
+async function getCapitalCity(params: z.infer<typeof CountryInput>): Promise<{ result: string }> {
     console.log(`\n-- Tool Call: getCapitalCity(country='${params.country}') --`);
     const capitals: Record<string, string> = {
         'united states': 'Washington, D.C.',
@@ -44,7 +44,7 @@ async function getCapitalCity(params: z.infer<typeof CountryInput>): Promise<str
     const result = capitals[params.country.toLowerCase()] ??
         `Sorry, I couldn't find the capital for ${params.country}.`;
     console.log(`-- Tool Result: '${result}' --`);
-    return result; // Tools must return a string
+    return { result };
 }
 
 const getCapitalCityTool = new FunctionTool({
