@@ -26,9 +26,9 @@ import { Content, Part } from "@google/genai";
 
 const MODEL_NAME = "gemini-2.5-flash";
 const APP_NAME = "after_model_callback_app";
-const USER_ID = "user_1";
-const SESSION_ID_JOKE = "session_joke_test";
-const SESSION_ID_POEM = "session_poem_test";
+const USER_ID = "test_user_after_model";
+const SESSION_ID_JOKE = "session_modify_model_call";
+const SESSION_ID_POEM = "session_normal_model_call";
 
 // --- Define the Callback Function ---
 function simpleAfterModelModifier({

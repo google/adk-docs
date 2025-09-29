@@ -25,10 +25,10 @@ import {
 import { Content, createUserContent } from '@google/genai';
 import { z } from 'zod';
 
-const MODEL_NAME = 'gemini-1.5-flash-latest';
-const APP_NAME = 'after_tool_callback_app';
-const USER_ID = 'user_1';
-const SESSION_ID = 'session_001';
+const MODEL_NAME = "gemini-2.5-flash";
+const APP_NAME = "after_model_callback_app";
+const USER_ID = "test_user_after_model";
+const SESSION_ID = "session_001";
 
 // --- Define a Simple Tool Function ---
 const CountryInput = z.object({

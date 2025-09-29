@@ -24,6 +24,12 @@ import {
 } from "@google/adk";
 import { Content } from "@google/genai";
 
+const MODEL_NAME = "gemini-2.5-flash";
+const APP_NAME = "basic_callback_app";
+const USER_ID = "test_user_basic";
+const SESSION_ID = "session_basic_001";
+
+
 // --- Define your callback function ---
 function myBeforeModelLogic({
   context,
@@ -42,14 +48,10 @@ function myBeforeModelLogic({
 // --- Register it during Agent creation ---
 const myAgent = new LlmAgent({
   name: "MyCallbackAgent",
-  model: "gemini-2.5-flash",
+  model: MODEL_NAME,
   instruction: "Be helpful.",
   beforeModelCallback: myBeforeModelLogic,
 });
-
-const APP_NAME = "guardrail_app";
-const USER_ID = "user_1";
-const SESSION_ID = "session_001";
 
 // Agent Interaction
 async function callAgentAsync(query: string) {

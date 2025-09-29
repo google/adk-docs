@@ -21,6 +21,12 @@ import {
 } from "@google/adk";
 import { Content, Part } from "@google/genai";
 
+const MODEL_NAME = 'gemini-2.5-flash';
+const APP_NAME = 'before_agent_callback_app';
+const USER_ID = 'test_user_before_agent';
+const SESSION_NORMAL_ID = "session_run_normally_ts";
+const SESSION_MODIFY_ID = "session_modify_output_ts";
+
 // --- 1. Define the Callback Function ---
 /**
  * Logs exit from an agent and checks 'add_concluding_note' in session state.
@@ -63,7 +69,7 @@ function modifyOutputAfterAgent(context: CallbackContext): Content | undefined {
 // --- 2. Setup Agent with Callback ---
 const llmAgentWithAfterCb = new LlmAgent({
   name: "MySimpleAgentWithAfter",
-  model: "gemini-2.5-flash",
+  model: MODEL_NAME,
   instruction: "You are a simple agent. Just say 'Processing complete!'",
   description:
     "An LLM agent demonstrating after_agent_callback for output modification",
@@ -72,28 +78,23 @@ const llmAgentWithAfterCb = new LlmAgent({
 
 // --- 3. Run the Agent ---
 async function main() {
-  const appName = "after_agent_demo_ts";
-  const userId = "test_user_after_ts";
-  const sessionNormalId = "session_run_normally_ts";
-  const sessionModifyId = "session_modify_output_ts";
-
   const runner = new InMemoryRunner({
     agent: llmAgentWithAfterCb,
-    appName: appName,
+    appName: APP_NAME,
   });
 
   // Create session 1: Agent output will be used as is (default empty state)
   await runner.sessionService.createSession({
-    appName: appName,
-    userId: userId,
-    sessionId: sessionNormalId,
+    appName: APP_NAME,
+    userId: USER_ID,
+    sessionId: SESSION_NORMAL_ID,
   });
 
   // Create session 2: Agent output will be replaced by the callback
   await runner.sessionService.createSession({
-    appName: appName,
-    userId: userId,
-    sessionId: sessionModifyId,
+    appName: APP_NAME,
+    userId: USER_ID,
+    sessionId: SESSION_MODIFY_ID,
     state: { add_concluding_note: true }, // Set the state flag here
   });
 
@@ -101,12 +102,12 @@ async function main() {
   console.log(
     "\n" +
       "=".repeat(20) +
-      ` SCENARIO 1: Running Agent on Session '${sessionNormalId}' (Should Use Original Output) ` +
+      ` SCENARIO 1: Running Agent on Session '${SESSION_NORMAL_ID}' (Should Use Original Output) ` +
       "=".repeat(20)
   );
   const eventsNormal = runner.run({
-    userId,
-    sessionId: sessionNormalId,
+    userId: USER_ID,
+    sessionId: SESSION_NORMAL_ID,
     newMessage: { role: "user", parts: [{ text: "Process this please." }] },
   });
 
@@ -127,12 +128,12 @@ async function main() {
   console.log(
     "\n" +
       "=".repeat(20) +
-      ` SCENARIO 2: Running Agent on Session '${sessionModifyId}' (Should Replace Output) ` +
+      ` SCENARIO 2: Running Agent on Session '${SESSION_MODIFY_ID}' (Should Replace Output) ` +
       "=".repeat(20)
   );
   const eventsModify = runner.run({
-    userId,
-    sessionId: sessionModifyId,
+    userId: USER_ID,
+    sessionId: SESSION_MODIFY_ID,
     newMessage: {
       role: "user",
       parts: [{ text: "Process this and add note." }],

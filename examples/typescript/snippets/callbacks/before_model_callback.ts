@@ -25,10 +25,10 @@ import {
 import { Content, Part } from "@google/genai";
 
 const MODEL_NAME = "gemini-2.5-flash";
-const APP_NAME = "guardrail_app";
-const USER_ID = "user_1";
-const SESSION_ID_BLOCK = "session_block_test";
-const SESSION_ID_NORMAL = "session_normal_test";
+const APP_NAME = "before_model_callback_app";
+const USER_ID = "test_user_before_model";
+const SESSION_ID_BLOCK = "session_block_model_call";
+const SESSION_ID_NORMAL = "session_normal_model_call";
 
 // --- Define the Callback Function ---
 function simpleBeforeModelModifier({

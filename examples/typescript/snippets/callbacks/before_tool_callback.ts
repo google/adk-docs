@@ -25,9 +25,8 @@ import { Content, Part } from '@google/genai';
 import { z } from 'zod';
 
 const MODEL_NAME = "gemini-2.5-flash";
-const appName = "before_tool_demo";
-const userId = "test_user";
-const sessionId = "session_001";
+const APP_NAME = "before_tool_callback_app";
+const USER_ID = "test_user_before_tool";
 
 // --- Define a Simple Tool Function ---
 const CountryInput = z.object({
@@ -76,7 +75,7 @@ function simpleBeforeToolModifier({
   ) {
     console.log("[Callback] Detected 'Canada'. Modifying args to 'France'.");
     args["country"] = "France";
-    console.log(`[Callback] Modified args: ${args}`);
+    console.log(`[Callback] Modified args: ${JSON.stringify(args)}`);
     return undefined;
   }
 
@@ -104,10 +103,10 @@ const myLlmAgent = new LlmAgent({
 
 // Agent Interaction Logic
 async function callAgentAndPrint(runner: InMemoryRunner, query: string, sessionId: string) {
-  console.log(`\n>>> Calling Agent for session '${sessionId}' | Query: ${query}`);
+  console.log(`\n>>> Calling Agent for session '${sessionId}' | Query: "${query}"`);
   const message: Content = { role: 'user', parts: [{ text: query }] };
 
-  for await (const event of runner.run({ userId, sessionId, newMessage: message })) {
+  for await (const event of runner.run({ userId: USER_ID, sessionId, newMessage: message })) {
     if (isFinalResponse(event) && event.content?.parts) {
       const finalResponseContent = event.content.parts.map((part: Part) => part.text ?? '').join('');
       console.log(`<<< Final Output: ${finalResponseContent}`);
@@ -117,16 +116,16 @@ async function callAgentAndPrint(runner: InMemoryRunner, query: string, sessionI
 
 // Run Interactions
 async function main() {
-  const runner = new InMemoryRunner({ agent: myLlmAgent, appName });
+  const runner = new InMemoryRunner({ agent: myLlmAgent, appName: APP_NAME });
 
   // Scenario 1: Callback modifies the arguments from "Canada" to "France"
   const canadaSessionId = 'session_canada_test';
-  await runner.sessionService.createSession({ appName, userId, sessionId: canadaSessionId });
+  await runner.sessionService.createSession({ appName: APP_NAME, userId: USER_ID, sessionId: canadaSessionId });
   await callAgentAndPrint(runner, 'What is the capital of Canada?', canadaSessionId);
 
   // Scenario 2: Callback skips the tool call
   const blockSessionId = 'session_block_test';
-  await runner.sessionService.createSession({ appName, userId, sessionId: blockSessionId });
+  await runner.sessionService.createSession({ appName: APP_NAME, userId: USER_ID, sessionId: blockSessionId });
   await callAgentAndPrint(runner, 'What is the capital of BLOCK?', blockSessionId);
 }
 

@@ -21,7 +21,11 @@ import {
 } from '@google/adk';
 import { Content, createUserContent } from '@google/genai';
 
-const MODEL_NAME = 'gemini-1.5-flash-latest';
+const MODEL_NAME = 'gemini-2.5-flash';
+const APP_NAME = 'before_agent_callback_app';
+const USER_ID = 'test_user_before_agent';
+const SESSION_ID_RUN = 'session_will_run';
+const SESSION_ID_SKIP = 'session_will_skip';
 
 // --- 1. Define the Callback Function ---
 function checkIfAgentShouldRun(
@@ -62,34 +66,29 @@ const llmAgentWithBeforeCb = new LlmAgent({
 
 // --- 3. Setup Runner and Sessions using InMemoryRunner ---
 async function main() {
-  const appName = 'before_agent_demo';
-  const userId = 'test_user';
-  const session_id_run = 'session_will_run';
-  const session_id_skip = 'session_will_skip';
-
-  const runner = new InMemoryRunner({ agent: llmAgentWithBeforeCb, appName: appName });
+  const runner = new InMemoryRunner({ agent: llmAgentWithBeforeCb, appName: APP_NAME });
   const sessionService = runner.sessionService;
 
   sessionService.createSession({
-    appName: appName,
-    userId: userId,
-    sessionId: session_id_run,
+    appName: APP_NAME,
+    userId: USER_ID,
+    sessionId: SESSION_ID_RUN,
   });
 
   sessionService.createSession({
-    appName: appName,
-    userId: userId,
-    sessionId: session_id_skip,
+    appName: APP_NAME,
+    userId: USER_ID,
+    sessionId: SESSION_ID_SKIP,
     state: { skip_llm_agent: true },
   });
 
   // --- Scenario 1: Run where callback allows agent execution ---
   console.log(
-    '\n' + '='.repeat(20) + ` SCENARIO 1: Running Agent on Session '${session_id_run}' (Should Proceed) ` + '='.repeat(20)
+    '\n' + '='.repeat(20) + ` SCENARIO 1: Running Agent on Session '${SESSION_ID_RUN}' (Should Proceed) ` + '='.repeat(20)
   );
   for await (const event of runner.run({
-    userId: userId,
-    sessionId: session_id_run,
+    userId: USER_ID,
+    sessionId: SESSION_ID_RUN,
     newMessage: createUserContent('Hello, please respond.'),
   })) {
     if (isFinalResponse(event) && event.content?.parts) {
@@ -101,11 +100,11 @@ async function main() {
 
   // --- Scenario 2: Run where callback intercepts and skips agent ---
   console.log(
-    '\n' + '='.repeat(20) + ` SCENARIO 2: Running Agent on Session '${session_id_skip}' (Should Skip) ` + '='.repeat(20)
+    '\n' + '='.repeat(20) + ` SCENARIO 2: Running Agent on Session '${SESSION_ID_SKIP}' (Should Skip) ` + '='.repeat(20)
   );
   for await (const event of runner.run({
-    userId: userId,
-    sessionId: session_id_skip,
+    userId: USER_ID,
+    sessionId: SESSION_ID_SKIP,
     newMessage: createUserContent("This message won't reach the LLM."),
   })) {
     if (isFinalResponse(event) && event.content?.parts) {
