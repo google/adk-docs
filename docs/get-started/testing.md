@@ -20,6 +20,12 @@ to use the ADK API server.
     ```
     In Java, both the Dev UI and the API server are bundled together.
 
+=== "TypeScript"
+
+    ```shell
+    adk api_server
+    ```
+
 This command will launch a local web server, where you can run cURL commands or send API requests to test your agent.
 
 !!! tip "Advanced Usage and Debugging"
@@ -35,7 +41,7 @@ directory:
 ```console
 parent_folder/
 └── my_sample_agent/
-    └── agent.py (or Agent.java)
+    └── agent.py (or Agent.java or agent.ts)
 ```
 
 **Launch the Local Server**
@@ -59,6 +65,17 @@ The output should appear similar to:
     2025-05-13T23:32:08.972-06:00  INFO 37864 --- [ebServer.main()] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
     2025-05-13T23:32:08.980-06:00  INFO 37864 --- [ebServer.main()] com.google.adk.web.AdkWebServer          : Started AdkWebServer in 1.15 seconds (process running for 2.877)
     2025-05-13T23:32:08.981-06:00  INFO 37864 --- [ebServer.main()] com.google.adk.web.AdkWebServer          : AdkWebServer application started successfully.
+    ```
+    ```
+
+=== "TypeScript"
+
+    ```shell
+    +-----------------------------------------------------------------------------+
+    | ADK Web Server started                                                      |
+    |                                                                             |
+    | For local testing, access at http://localhost:8000.                         |
+    +-----------------------------------------------------------------------------+
     ```
 
 Your server is now running locally. Ensure you use the correct **_port number_** in all the subsequent commands.
@@ -130,6 +147,8 @@ curl -X POST http://localhost:8000/run \
 }
 }'
 ```
+
+In TypeScript, currently only `cameCase` field names are supported (e.g. `appName`, `userId`, `sessionId`, etc.), with `snake_case` support coming soon.
 
 If using `/run`, you will see the full output of events at the same time, as a
 list, which should appear similar to:
@@ -250,6 +269,8 @@ The API server automatically generates interactive API documentation using Swagg
 To access the interactive docs, start the API server and navigate to [http://localhost:8000/docs](http://localhost:8000/docs) in your web browser.
 
 You will see a complete, interactive list of all available API endpoints, which you can expand to see detailed information about parameters, request bodies, and response schemas. You can even click "Try it out" to send live requests to your running agents.
+
+In TypeScript, interactive API documentation support is coming soon.
 
 ## API Endpoints
 
@@ -372,6 +393,8 @@ Executes the agent and returns all generated events in a single JSON array after
   }
 }
 ```
+
+In TypeScript, currently only `cameCase` field names are supported (e.g. `appName`, `userId`, `sessionId`, etc.), with `snake_case` support coming soon.
 
 **Example Request**
 ```shell
