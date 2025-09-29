@@ -186,3 +186,7 @@ docs/site
 
 # Claude Code
 .claude
+
+# npm Stuff
+**/package-lock.json
+**/node_modules/

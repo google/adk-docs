@@ -17,7 +17,8 @@ import {
   LlmAgent,
   InMemoryRunner,
   CallbackContext,
-} from '../../../../../../repos/adk-js/core/src/index';
+  isFinalResponse,
+} from '@google/adk';
 import { Content, createUserContent } from '@google/genai';
 
 const MODEL_NAME = 'gemini-1.5-flash-latest';
@@ -34,7 +35,7 @@ function checkIfAgentShouldRun(
   console.log(`\n[Callback] Entering agent: ${agentName} (Inv: ${invocationId})`);
   console.log(`[Callback] Current State: ${JSON.stringify(currentState)}`);
 
-  if (currentState['skip_llm_agent']) {
+  if (currentState.get('skip_llm_agent')) {
     console.log(`[Callback] State condition 'skip_llm_agent=true' met: Skipping agent ${agentName}.`);
     return {
       role: 'model',
@@ -86,15 +87,15 @@ async function main() {
   console.log(
     '\n' + '='.repeat(20) + ` SCENARIO 1: Running Agent on Session '${session_id_run}' (Should Proceed) ` + '='.repeat(20)
   );
-  for await (const event of runner.runAsync({
+  for await (const event of runner.run({
     userId: userId,
     sessionId: session_id_run,
     newMessage: createUserContent('Hello, please respond.'),
   })) {
-    if (event.isFinalResponse() && event.content) {
+    if (isFinalResponse(event) && event.content?.parts) {
       console.log(`Final Output: [${event.author}] ${event.content.parts[0].text?.trim()}`);
-    } else if (event.isError()) {
-      console.log(`Error Event: ${event.errorDetails}`);
+    } else if (event.errorMessage) {
+      console.log(`Error Event: ${event.errorMessage}`);
     }
   }
 
@@ -102,15 +103,15 @@ async function main() {
   console.log(
     '\n' + '='.repeat(20) + ` SCENARIO 2: Running Agent on Session '${session_id_skip}' (Should Skip) ` + '='.repeat(20)
   );
-  for await (const event of runner.runAsync({
+  for await (const event of runner.run({
     userId: userId,
     sessionId: session_id_skip,
     newMessage: createUserContent("This message won't reach the LLM."),
   })) {
-    if (event.isFinalResponse() && event.content) {
+    if (isFinalResponse(event) && event.content?.parts) {
       console.log(`Final Output: [${event.author}] ${event.content.parts[0].text?.trim()}`);
-    } else if (event.isError()) {
-      console.log(`Error Event: ${event.errorDetails}`);
+    } else if (event.errorMessage) {
+      console.log(`Error Event: ${event.errorMessage}`);
     }
   }
 }
