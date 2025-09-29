@@ -154,6 +154,46 @@ They are packaged in the toolset `BigQueryToolset`.
 --8<-- "examples/python/snippets/tools/built-in-tools/bigquery.py"
 ```
 
+
+### Spanner
+
+These are a set of tools aimed to provide integration with Spanner, namely:
+
+* **`list_table_names`**: Fetches table names present in a GCP Spanner database.
+* **`list_table_indexes`**: Fetches table indexes present in a GCP Spanner database.
+* **`list_table_index_columns`**: Fetches table index columns present in a GCP Spanner database.
+* **`list_named_schemas`**: Fetches named schema for a Spanner database.
+* **`get_table_schema`**: Fetches Spanner database table schema and metadata information.
+* **`execute_sql`**: Runs a SQL query in Spanner database and fetch the result.
+* **`similarity_search`**: Similarity search in Spanner using a text query.
+
+They are packaged in the toolset `SpannerToolset`.
+
+
+
+```py
+--8<-- "examples/python/snippets/tools/built-in-tools/spanner.py"
+```
+
+
+### Bigtable
+
+These are a set of tools aimed to provide integration with Bigtable, namely:
+
+* **`list_instances`**: Fetches Bigtable instances in a Google Cloud project.
+* **`get_instance_info`**: Fetches metadata instance information in a Google Cloud project.
+* **`list_tables`**: Fetches tables in a GCP Bigtable instance.
+* **`get_table_info`**: Fetches metadata table information in a GCP Bigtable.
+* **`execute_sql`**: Runs a SQL query in Bigtable table and fetch the result.
+
+They are packaged in the toolset `BigtableToolset`.
+
+
+
+```py
+--8<-- "examples/python/snippets/tools/built-in-tools/bigtable.py"
+```
+
 ## Use Built-in tools with other tools
 
 The following code sample demonstrates how to use multiple built-in tools or how
