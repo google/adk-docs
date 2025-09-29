@@ -143,7 +143,7 @@ These are a set of tools aimed to provide integration with BigQuery, namely:
 * **`list_table_ids`**: Fetches table ids present in a BigQuery dataset.
 * **`get_table_info`**: Fetches metadata about a BigQuery table.
 * **`execute_sql`**: Runs a SQL query in BigQuery and fetch the result.
-* **`forecast`**: Runs a BigQuery AI time series forecast using AI.FORECAST.
+* **`forecast`**: Runs a BigQuery AI time series forecast using the `AI.FORECAST` function.
 * **`ask_data_insights`**: Answers questions about data in BigQuery tables using natural language.
 
 They are packaged in the toolset `BigQueryToolset`.
@@ -171,17 +171,17 @@ to use built-in tools with other tools by using multiple agents:
     search_agent = Agent(
         model='gemini-2.0-flash',
         name='SearchAgent',
-        instruction='''
+        instruction="""
         You're a specialist in Google Search
-        ''',
+        """,
         tools=[google_search],
     )
     coding_agent = Agent(
         model='gemini-2.0-flash',
         name='CodeAgent',
-        instruction='''
+        instruction="""
         You're a specialist in Code Execution
-        ''',
+        """,
         code_executor=BuiltInCodeExecutor(),
     )
     root_agent = Agent(
@@ -298,17 +298,17 @@ is **not** currently supported:
     search_agent = Agent(
         model='gemini-2.0-flash',
         name='SearchAgent',
-        instruction='''
+        instruction="""
         You're a specialist in Google Search
-        ''',
+        """,
         tools=[google_search],
     )
     coding_agent = Agent(
         model='gemini-2.0-flash',
         name='CodeAgent',
-        instruction='''
+        instruction="""
         You're a specialist in Code Execution
-        ''',
+        """,
         code_executor=BuiltInCodeExecutor(),
     )
     root_agent = Agent(
@@ -317,7 +317,7 @@ is **not** currently supported:
         description="Root Agent",
         sub_agents=[
             search_agent,
-            coding_.py
+            coding_agent
         ],
     )
     ```
