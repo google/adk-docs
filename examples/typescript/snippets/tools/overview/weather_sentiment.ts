@@ -54,26 +54,25 @@ function analyzeSentiment(params: { text: string }): Record<string, any> {
     return { "status": "success", "sentiment": "neutral" };
 }
 
-async function main() {
-    const weatherTool = new FunctionTool({
-        name: "get_weather_report",
-        description: "Retrieves the current weather report for a specified city.",
-        parameters: z.object({
-            city: z.string().describe("The city to get the weather for."),
-        }),
-        execute: getWeatherReport,
-    });
+const weatherTool = new FunctionTool({
+    name: "get_weather_report",
+    description: "Retrieves the current weather report for a specified city.",
+    parameters: z.object({
+        city: z.string().describe("The city to get the weather for."),
+    }),
+    execute: getWeatherReport,
+});
 
-    const sentimentTool = new FunctionTool({
-        name: "analyze_sentiment",
-        description: "Analyzes the sentiment of a given text.",
-        parameters: z.object({
-            text: z.string().describe("The text to analyze the sentiment of."),
-        }),
-        execute: analyzeSentiment,
-    });
+const sentimentTool = new FunctionTool({
+    name: "analyze_sentiment",
+    description: "Analyzes the sentiment of a given text.",
+    parameters: z.object({
+        text: z.string().describe("The text to analyze the sentiment of."),
+    }),
+    execute: analyzeSentiment,
+});
 
-    const instruction = `
+const instruction = `
     You are a helpful assistant that first checks the weather and then analyzes
     its sentiment.
 
@@ -88,12 +87,14 @@ async function main() {
        its sentiment.
     `;
 
-    const agent = new LlmAgent({
-        name: "weather_sentiment_agent",
-        instruction: instruction,
-        tools: [weatherTool, sentimentTool],
-        model: "gemini-2.5-flash"
-    });
+const agent = new LlmAgent({
+    name: "weather_sentiment_agent",
+    instruction: instruction,
+    tools: [weatherTool, sentimentTool],
+    model: "gemini-2.5-flash"
+});
+
+async function main() {
 
     const runner = new InMemoryRunner({ agent: agent, appName: "weather_sentiment_app" });
 
@@ -113,7 +114,7 @@ async function main() {
         sessionId: "session1",
         newMessage: newMessage,
     })) {
-        if (isFinalResponse(event) && event.content?.parts) {
+        if (isFinalResponse(event) && event.content?.parts?.length) {
             const text = event.content.parts.map(p => p.text).join('').trim();
             if (text) {
                 console.log(text);

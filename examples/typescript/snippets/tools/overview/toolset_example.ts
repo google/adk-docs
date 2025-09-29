@@ -95,7 +95,7 @@ async function main() {
   };
 
   for await (const event of runner.run({ userId: "user1", sessionId: "session1", newMessage: message })) {
-    if (isFinalResponse(event) && event.content?.parts) {
+    if (isFinalResponse(event) && event.content?.parts?.length) {
       const text = event.content.parts.map(p => p.text).join('').trim();
       if (text) {
         console.log(`Response from agent: ${text}`);
