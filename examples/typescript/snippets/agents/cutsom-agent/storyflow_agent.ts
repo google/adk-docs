@@ -34,6 +34,7 @@ const SESSION_ID = "123344_ts";
 const GEMINI_MODEL = "gemini-2.5";
 
 // --- Custom Orchestrator Agent ---
+// --8<-- [start:init]
 class StoryFlowAgent extends BaseAgent {
   // --- Property Declarations for TypeScript ---
   private storyGenerator: LlmAgent;
@@ -87,14 +88,10 @@ class StoryFlowAgent extends BaseAgent {
     this.loopAgent = loopAgent;
     this.sequentialAgent = sequentialAgent;
   }
+// --8<-- [end:init]
 
-  /**
-   * Implements the custom orchestration logic for the story workflow.
-   */
-  async* runLiveImpl(ctx: InvocationContext): AsyncGenerator<Event, void, undefined> {
-    yield* this.runImpl(ctx);
-  }
-
+  // --8<-- [start:executionlogic]
+  // Implements the custom orchestration logic for the story workflow.
   async* runImpl(ctx: InvocationContext): AsyncGenerator<Event, void, undefined> {
     console.log(`[${this.name}] Starting story generation workflow.`);
 
@@ -143,8 +140,10 @@ class StoryFlowAgent extends BaseAgent {
 
     console.log(`[${this.name}] Workflow finished.`);
   }
+  // --8<-- [end:executionlogic]
 }
 
+// --8<-- [start:llmagents]
 // --- Define the individual LLM agents ---
 const storyGenerator = new LlmAgent({
     name: "StoryGenerator",
@@ -180,7 +179,9 @@ const toneCheck = new LlmAgent({
     instruction: `You are a tone analyzer. Analyze the tone of the story provided: {{current_story}}. Output only one word: 'positive' if the tone is generally positive, 'negative' if the tone is generally negative, or 'neutral' otherwise.`,
     outputKey: "tone_check_result",
 });
+// --8<-- [end:llmagents]
 
+// --8<-- [start:story_flow_agent]
 // --- Create the custom agent instance ---
 const storyFlowAgent = new StoryFlowAgent(
     "StoryFlowAgent",
@@ -267,3 +268,4 @@ async function main() {
 }
 
 main();
+// --8<-- [end:story_flow_agent]
