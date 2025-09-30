@@ -92,6 +92,10 @@ class StoryFlowAgent extends BaseAgent {
 
   // --8<-- [start:executionlogic]
   // Implements the custom orchestration logic for the story workflow.
+  async* runLiveImpl(ctx: InvocationContext): AsyncGenerator<Event, void, undefined> {
+    yield* this.runImpl(ctx);
+  }
+
   async* runImpl(ctx: InvocationContext): AsyncGenerator<Event, void, undefined> {
     console.log(`[${this.name}] Starting story generation workflow.`);
 

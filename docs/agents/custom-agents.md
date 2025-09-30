@@ -91,12 +91,10 @@ The core of any custom agent is the method where you define its unique asynchron
     1.  **Calling Sub-Agents:** You invoke sub-agents (which are typically stored as instance properties like `this.myLlmAgent`) using their `run` method and yield their events:
 
         ```typescript
-        for await (const event of this.someSubAgent.run(ctx)) {
+        for await (const event of this.someSubAgent.runImpl(ctx)) {
             // Optionally inspect or log the event
             yield event; // Pass the event up
         }
-        // Or more concisely:
-        yield* this.someSubAgent.run(ctx);
         ```
 
     2.  **Managing State:** Read from and write to the session state object (`ctx.session.state`) to pass data between sub-agent calls or make decisions:
