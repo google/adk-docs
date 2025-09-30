@@ -148,6 +148,20 @@ A tool can write data to a `temp:` variable, and a subsequent tool can read it. 
         For input `GOOG`: {"symbol": "GOOG", "price": "1.0"}
         ```
 
+    === "Go"
+
+        This tool retrieves the mocked value of a stock price.
+
+        ```go
+        --8<-- "examples/go/snippets/tools/function-tools/func_tool.go"
+        ```
+
+        The return value from this tool will be a `map[string]any` marshalled into a JSON object.
+
+        ```json
+        For input `{"symbol": "GOOG"}`: {"price":1,"symbol":"GOOG"}
+        ```
+
 ### Best Practices
 
 While you have considerable flexibility in defining your function, remember that simplicity enhances usability for the LLM. Consider these guidelines:
