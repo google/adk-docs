@@ -88,8 +88,8 @@ Under a project directory, run the following commands:
     echo "from . import agent" > vertex_search_agent/__init__.py
 
     # Step 3: Create an agent.py (the agent definition) and .env (authentication config)
-    type nul > vertex_search_agent\\agent.py 
-    type nul > google_search_agent\\.env
+    type nul > vertex_search_agent\agent.py 
+    type nul > google_search_agent\.env
     ```
 
 #### Edit `agent.py`
