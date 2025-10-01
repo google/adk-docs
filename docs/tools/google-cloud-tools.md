@@ -154,7 +154,9 @@ Install Agent Development Kit following the steps in the
 
 #### 2. Install CLI
 
-Install the [Google Cloud CLI](https://cloud.google.com/sdk/docs/install#installation_instructions). To use the tool with default credentials, run the following commands:
+Install the
+[Google Cloud CLI](https://cloud.google.com/sdk/docs/install#installation_instructions).
+To use the tool with default credentials, run the following commands:
 
 ```shell
 gcloud config set project <project-id>
