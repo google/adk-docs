@@ -141,11 +141,16 @@ secure and governed access to enterprise applications using Integration
 Connectors' 100+ pre-built connectors for systems like Salesforce, ServiceNow,
 JIRA, SAP, and more.
 
-It supports both on-premise and SaaS applications. In addition, you can turn your existing Application Integration process automations into agentic workflows by providing application integration workflows as tools to your ADK agents. 
+It supports both on-premise and SaaS applications. In addition, you can turn
+your existing Application Integration process automations into agentic workflows
+by providing application integration workflows as tools to your ADK agents.
 
-Federated search within Application Integration lets you use ADK agents to query multiple enterprise applications and data sources simultaneously. 
+Federated search within Application Integration lets you use ADK agents to query
+multiple enterprise applications and data sources simultaneously.
 
-[:fontawesome-brands-youtube:{.youtube-red-icon} Watch "Federated Search in Application Integration"!](https://www.youtube.com/watch?v=JdlWOQe5RgU&t=1s target="_blank" rel="noopener noreferrer")
+[:fontawesome-brands-youtube:{.youtube-red-icon} See how ADK Federated Search in Application Integration works in this video walkthrough](https://www.youtube.com/watch?v=JdlWOQe5RgU){: target="_blank" rel="noopener noreferrer"}
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/JdlWOQe5RgU?si=bFY_-jJ6Oliy5UMG" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ### Prerequisites
 
