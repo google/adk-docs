@@ -35,14 +35,14 @@ const (
 	appName = "Google Search_agent"
 )
 
-func callAgent(ctx context.Context, a agent.Agent, prompt string) {
+func callAgent(ctx context.Context, a agent.Agent, prompt string) error {
 	sessionService := sessionservice.Mem()
 	session, err := sessionService.Create(ctx, &sessionservice.CreateRequest{
 		AppName: appName,
 		UserID:  userID,
 	})
 	if err != nil {
-		log.Fatalf("failed to create the session service: %v", err)
+		return fmt.Errorf("failed to create the session service: %v", err)
 	}
 
 	config := &runner.Config{
@@ -52,7 +52,7 @@ func callAgent(ctx context.Context, a agent.Agent, prompt string) {
 	}
 	r, err := runner.New(config)
 	if err != nil {
-		log.Fatalf("failed to create the runner: %v", err)
+		return fmt.Errorf("failed to create the runner: %v", err)
 	}
 
 	sessionID := session.Session.ID().SessionID
@@ -61,6 +61,8 @@ func callAgent(ctx context.Context, a agent.Agent, prompt string) {
 		Role:  string(genai.RoleUser),
 	}
 
+	// The r.Run method streams events and errors.
+	// The loop iterates over the results, handling them as they arrive.
 	for event, err := range r.Run(ctx, userID, sessionID, userMsg, &runner.RunConfig{
 		StreamingMode: runner.StreamingModeSSE,
 	}) {
@@ -72,15 +74,19 @@ func callAgent(ctx context.Context, a agent.Agent, prompt string) {
 			}
 		}
 	}
+	return nil
 }
 
 func main() {
 	agent, err := createSearchAgent(context.Background())
 	if err != nil {
-		panic(err)
+		log.Fatalf("Failed to create agent: %v", err)
 	}
 	fmt.Println("Agent created:", agent.Name())
-	fmt.Printf("\nPrompt: %s\nResponse: ", "what's the latest ai news?")
-	callAgent(context.Background(), agent, "what's the latest ai news?")
+	prompt := "what's the latest ai news?"
+	fmt.Printf("\nPrompt: %s\nResponse: ", prompt)
+	if err := callAgent(context.Background(), agent, prompt); err != nil {
+		log.Fatalf("Error calling agent: %v", err)
+	}
 	fmt.Println("\n---")
 }
