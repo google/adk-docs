@@ -141,9 +141,11 @@ secure and governed access to enterprise applications using Integration
 Connectors' 100+ pre-built connectors for systems like Salesforce, ServiceNow,
 JIRA, SAP, and more.
 
-It supports both on-premise and SaaS applications. In addition, you can turn
-your existing Application Integration process automations into agentic workflows
-by providing application integration workflows as tools to your ADK agents.
+It supports both on-premise and SaaS applications. In addition, you can turn your existing Application Integration process automations into agentic workflows by providing application integration workflows as tools to your ADK agents. 
+
+Federated search within Application Integration lets you use ADK agents to query multiple enterprise applications and data sources simultaneously. 
+
+[:fontawesome-brands-youtube:{.youtube-red-icon} Watch "Federated Search in Application Integration"!](https://www.youtube.com/watch?v=JdlWOQe5RgU&t=1s target="_blank" rel="noopener noreferrer")
 
 ### Prerequisites
 
@@ -462,7 +464,7 @@ workflow as a tool for your agent or create a new one.
 
     To update the `agent.java` file and add the tool to your agent, use the following code:
 
-    ```java
+      ```java
           import com.google.adk.agent.LlmAgent;
           import com.google.adk.tools.BaseTool;
           import com.google.common.collect.ImmutableList;
@@ -490,9 +492,9 @@ workflow as a tool for your agent or create a new one.
                     // For example, you can start a conversation with the agent.
                 }
             }
-      ```
+        ```
 
-    **Note:** To find the list of supported entities and actions for a
+**Note:** To find the list of supported entities and actions for a
         connection, use these Connector APIs: `listActions`, `listEntityTypes`.
 
 #### 3. Expose your agent
