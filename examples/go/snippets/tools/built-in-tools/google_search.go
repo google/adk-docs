@@ -1,0 +1,86 @@
+package main
+
+import (
+	"context"
+	"fmt"
+	"log"
+
+	"google.golang.org/adk/agent"
+	"google.golang.org/adk/agent/llmagent"
+	"google.golang.org/adk/llm/gemini"
+	"google.golang.org/adk/runner"
+	"google.golang.org/adk/sessionservice"
+	"google.golang.org/adk/tool"
+	"google.golang.org/adk/tool/geminitool"
+	"google.golang.org/genai"
+)
+
+func createSearchAgent(ctx context.Context) (agent.Agent, error) {
+	model, err := gemini.NewModel(ctx, "gemini-2.5-flash", &genai.ClientConfig{})
+	if err != nil {
+		return nil, fmt.Errorf("failed to create model: %v", err)
+	}
+
+	return llmagent.New(llmagent.Config{
+		Name:        "basic_search_agent",
+		Model:       model,
+		Description: "Agent to answer questions using Google Search.",
+		Instruction: "I can answer your questions by searching the web. Just ask me anything!",
+		Tools:       []tool.Tool{geminitool.GoogleSearch{}},
+	})
+}
+
+const (
+	userID  = "user1234"
+	appName = "Google Search_agent"
+)
+
+func callAgent(ctx context.Context, a agent.Agent, prompt string) {
+	sessionService := sessionservice.Mem()
+	session, err := sessionService.Create(ctx, &sessionservice.CreateRequest{
+		AppName: appName,
+		UserID:  userID,
+	})
+	if err != nil {
+		log.Fatalf("failed to create the session service: %v", err)
+	}
+
+	config := &runner.Config{
+		AppName:        appName,
+		Agent:          a,
+		SessionService: sessionService,
+	}
+	r, err := runner.New(config)
+	if err != nil {
+		log.Fatalf("failed to create the runner: %v", err)
+	}
+
+	sessionID := session.Session.ID().SessionID
+	userMsg := &genai.Content{
+		Parts: []*genai.Part{{Text: prompt}},
+		Role:  string(genai.RoleUser),
+	}
+
+	for event, err := range r.Run(ctx, userID, sessionID, userMsg, &runner.RunConfig{
+		StreamingMode: runner.StreamingModeSSE,
+	}) {
+		if err != nil {
+			fmt.Printf("\nAGENT_ERROR: %v\n", err)
+		} else {
+			for _, p := range event.LLMResponse.Content.Parts {
+				fmt.Print(p.Text)
+			}
+		}
+	}
+}
+
+func main() {
+	agent, err := createSearchAgent(context.Background())
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("Agent created:", agent.Name())
+	fmt.Printf("\nPrompt: %s\nResponse: ", "what's the latest ai news?")
+	callAgent(context.Background(), agent, "what's the latest ai news?")
+	fmt.Println("\n---")
+}
