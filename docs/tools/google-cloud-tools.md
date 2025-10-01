@@ -485,7 +485,7 @@ workflow as a tool for your agent or create a new one.
 
     To update the `agent.java` file and add the tool to your agent, use the following code:
 
-    ```java
+      ```java
           import com.google.adk.agent.LlmAgent;
           import com.google.adk.tools.BaseTool;
           import com.google.common.collect.ImmutableList;
@@ -513,7 +513,7 @@ workflow as a tool for your agent or create a new one.
                     // For example, you can start a conversation with the agent.
                 }
             }
-      ```
+        ```
         
     **Note:** To find the list of supported entities and actions for a
         connection, use these Connector APIs: `listActions`, `listEntityTypes`.    
