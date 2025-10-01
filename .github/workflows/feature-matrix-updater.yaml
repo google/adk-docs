@@ -33,10 +33,12 @@ jobs:
       run: |
         mkdir -p docs/features
         mv adk-docs-features/docs/features/index.md docs/features/index.md
+        rm -rf adk-docs-features
 
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v6
       with:
+        push-to-fork: true
         token: ${{ secrets.GITHUB_TOKEN }}
         commit-message: "feat: propose new documentation"
         title: "Proposed Documentation Update"
