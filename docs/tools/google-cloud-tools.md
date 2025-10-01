@@ -80,7 +80,7 @@ you only need to follow a subset of these steps.
         "apikey", "query", "apikey", apikey_credential_str
     )
 
-    sample_toolset_with_auth = APIHubToolset(
+    sample_toolset = APIHubToolset(
         name="apihub-sample-tool",
         description="Sample Tool",
         access_token="...",  # Copy your access token generated in step 1
@@ -138,7 +138,12 @@ you only need to follow a subset of these steps.
 
 With **ApplicationIntegrationToolset**, you can seamlessly give your agents secure and governed access to enterprise applications using Integration Connectors' 100+ pre-built connectors for systems like Salesforce, ServiceNow, JIRA, SAP, and more. 
 
-It supports both on-premise and SaaS applications. In addition, you can turn your existing Application Integration process automations into agentic workflows by providing application integration workflows as tools to your ADK agents.
+It supports both on-premise and SaaS applications. In addition, you can turn your existing Application Integration process automations into agentic workflows by providing application integration workflows as tools to your ADK agents. 
+
+Federated search within Application Integration lets you use ADK agents to query multiple enterprise applications and data sources simultaneously. 
+
+[:fontawesome-brands-youtube:{.youtube-red-icon} Watch "Federated Search in Application Integration"!](https://www.youtube.com/watch?v=JdlWOQe5RgU&t=1s target="_blank" rel="noopener noreferrer")
+
 
 ### Prerequisites
 
@@ -235,21 +240,21 @@ It supports both on-premise and SaaS applications. In addition, you can turn you
 
     To get the permissions that you need to set up **ApplicationIntegrationToolset**, you must have the following IAM roles on the project (common to both Integration Connectors and Application Integration Workflows):
     
-      - `roles/integration.editor`
-      - `roles/connectors.user`
+      - `roles/integrations.integrationEditor`
+      - `roles/connectors.invoker`
       - `roles/secretmanager.secretAccessor`
     
-    **Note:** For Agent Engine (AE), don't use `roles/integration.invoker`, as it can result in 403 errors. Use `roles/integration.editor` instead.
+    **Note:** For Agent Engine (AE), don't use `roles/integrations.integrationInvoker`, as it can result in 403 errors. Use `roles/integrations.integrationEditor` instead.
 
 === "Java"
 
     To get the permissions that you need to set up **ApplicationIntegrationToolset**, you must have the following IAM roles on the project (common to both Integration Connectors and Application Integration Workflows):
     
-      - `roles/integration.editor`
-      - `roles/connectors.user`
+      - `roles/integrations.integrationEditor`
+      - `roles/connectors.invoker`
       - `roles/secretmanager.secretAccessor`
 
-    **Note:** For Agent Engine (AE), don't use `roles/integration.invoker`, as it can result in 403 errors. Use `roles/integration.editor` instead.
+    **Note:** For Agent Engine (AE), don't use `roles/integrations.integrationInvoker`, as it can result in 403 errors. Use `roles/integrations.integrationEditor` instead.
     
 
 ### Use Integration Connectors
@@ -285,8 +290,6 @@ Connect your agent to enterprise applications using
    
 #### Create an Application Integration Toolset
 
-Application Integration Toolset supports `auth_scheme` and `auth_credential` for **dynamic OAuth2 authentication** for Integration Connectors. 
-
 To create an Application Integration Toolset for Integration Connectors, follow these steps: 
 
 1.  Create a tool with `ApplicationIntegrationToolset` in the `tools.py` file:
@@ -312,7 +315,7 @@ To create an Application Integration Toolset for Integration Connectors, follow 
     * To find the list of supported entities and actions for a connection, use the Connectors APIs: [listActions](https://cloud.google.com/integration-connectors/docs/reference/rest/v1/projects.locations.connections.connectionSchemaMetadata/listActions) or [listEntityTypes](https://cloud.google.com/integration-connectors/docs/reference/rest/v1/projects.locations.connections.connectionSchemaMetadata/listEntityTypes).
 
 
-    `ApplicationIntegrationToolset` also supports `auth_scheme` and `auth_credential` for dynamic OAuth2 authentication for Integration Connectors. To use it, create a tool similar to this in the `tools.py` file:
+    `ApplicationIntegrationToolset` supports `auth_scheme` and `auth_credential` for **dynamic OAuth2 authentication** for Integration Connectors. To use it, create a tool similar to this in the `tools.py` file:
 
     ```py
     from google.adk.tools.application_integration_tool.application_integration_toolset import ApplicationIntegrationToolset
@@ -487,7 +490,7 @@ workflow as a tool for your agent or create a new one.
 
     To update the `agent.java` file and add the tool to your agent, use the following code:
 
-    ```java
+      ```java
           import com.google.adk.agent.LlmAgent;
           import com.google.adk.tools.BaseTool;
           import com.google.common.collect.ImmutableList;
@@ -515,7 +518,7 @@ workflow as a tool for your agent or create a new one.
                     // For example, you can start a conversation with the agent.
                 }
             }
-      ```
+        ```
         
     **Note:** To find the list of supported entities and actions for a
         connection, use these Connector APIs: `listActions`, `listEntityTypes`.    

@@ -12,7 +12,7 @@ repo_name: adk-python
 repo_url: https://github.com/google/adk-python
 
 # Copyright
-copyright: Copyright Google 2025
+copyright: Copyright Google 2025&nbsp;&nbsp;|&nbsp;&nbsp;<a href="//policies.google.com/terms">Terms</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="//policies.google.com/privacy">Privacy</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="#__consent">Manage cookies</a>
 
 # Custom CSS
 extra_css:
@@ -22,6 +22,16 @@ extra:
   second_repo_url: https://github.com/google/adk-java
   second_repo_name: adk-java
   second_repo_icon: fontawesome/brands/github
+  analytics:
+    provider: google
+    property: G-DKHZS27PHP
+  consent:
+    title: Cookie consent
+    description: >- 
+      We use cookies to recognize repeated visits and preferences, 
+      as well as to measure the effectiveness of our documentation and
+      whether users find the information they need. With your consent,
+      you're helping us to make our documentation better.
 
 # Configuration
 theme:
@@ -135,6 +145,7 @@ nav:
     - Function tools:
       - Overview: tools/function-tools.md
       - Tool performance: tools/performance.md
+      - Action confirmations: tools/confirmation.md
     - Built-in tools: tools/built-in-tools.md
     - Third party tools: tools/third-party-tools.md
     - Google Cloud tools: tools/google-cloud-tools.md

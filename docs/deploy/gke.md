@@ -1,6 +1,6 @@
-# Deploy to GKE
+# Deploy to Google Kubernetes Engine (GKE)
 
-[GKE](https://cloud.google.com/gke) is Google Clouds managed Kubernetes service. It allows you to deploy and manage containerized applications using Kubernetes.
+[GKE](https://cloud.google.com/gke) is the Google Cloud managed Kubernetes service. It allows you to deploy and manage containerized applications using Kubernetes.
 
 To deploy your agent you will need to have a Kubernetes cluster running on GKE. You can create a cluster using the Google Cloud Console or the `gcloud` command line tool.
 
@@ -63,6 +63,19 @@ for ROLE in "${ROLES_TO_ASSIGN[@]}"; do
         --role="${ROLE}"
 done
 ```
+
+## Deployment payload {#payload}
+
+When you deploy your ADK agent workflow to the Google Cloud GKE,
+the following content is uploaded to the service:
+
+- Your ADK agent code
+- Any dependencies declared in your ADK agent code
+- ADK API server code version used by your agent
+
+The default deployment *does not* include the ADK web user interface libraries,
+unless you specify it as deployment setting, such as the `--with_ui` option for
+`adk deploy gke` command.
 
 ## Deployment options
 

@@ -1684,7 +1684,7 @@ Learn more about Tools in the [Tools](https://google.github.io/adk-docs/tools/) 
 
 Beyond the core parameters, `LlmAgent` offers several options for finer control:
 
-### Fine-Tuning LLM Generation ( `generate_content_config`) [¶](https://google.github.io/adk-docs/agents/llm-agents/\#fine-tuning-llm-generation-generate_content_config "Permanent link")
+### Configuring LLM Generation ( `generate_content_config`) [¶](https://google.github.io/adk-docs/agents/llm-agents/\#fine-tuning-llm-generation-generate_content_config "Permanent link")
 
 You can adjust how the underlying LLM generates responses using `generate_content_config`.
 
@@ -71538,7 +71538,7 @@ Based on who is maintaining the eval set data, there are two routes:
 The evaluation criteria define how the agent's performance is measured against the evalset. The following metrics are supported:
 
 - `tool_trajectory_avg_score`: This metric compares the agent's actual tool usage during the evaluation against the expected tool usage defined in the `expected_tool_use` field. Each matching tool usage step receives a score of 1, while a mismatch receives a score of 0. The final score is the average of these matches, representing the accuracy of the tool usage trajectory.
-- `response_match_score`: This metric compares the agent's final natural language response to the expected final response, stored in the `reference` field. We use the [ROUGE](https://en.wikipedia.org/wiki/ROUGE_(metric)) metric to calculate the similarity between the two responses.
+- `response_match_score`: This metric compares the agent's final natural language response to the expected final response, stored in the `reference` field. We use the [ROUGE](https://en.wikipedia.org/wiki/ROUGE_\(metric\)) metric to calculate the similarity between the two responses.
 
 If no evaluation criteria are provided, the following default configuration is used:
 
@@ -75229,7 +75229,7 @@ title: "Safety and Security - Agent Development Kit"
 
 As AI agents grow in capability, ensuring they operate safely, securely, and align with your brand values is paramount. Uncontrolled agents can pose risks, including executing misaligned or harmful actions, such as data exfiltration, and generating inappropriate content that can impact your brand’s reputation. **Sources of risk include vague instructions, model hallucination, jailbreaks and prompt injections from adversarial users, and indirect prompt injections via tool use.**
 
-[Google Cloud's Vertex AI](https://cloud.google.com/vertex-ai/generative-ai/docs/overview) provides a multi-layered approach to mitigate these risks, enabling you to build powerful _and_ trustworthy agents. It offers several mechanisms to establish strict boundaries, ensuring agents only perform actions you've explicitly allowed:
+[Google Cloud Vertex AI](https://cloud.google.com/vertex-ai/generative-ai/docs/overview) provides a multi-layered approach to mitigate these risks, enabling you to build powerful _and_ trustworthy agents. It offers several mechanisms to establish strict boundaries, ensuring agents only perform actions you've explicitly allowed:
 
 1. **Identity and Authorization**: Control who the agent **acts as** by defining agent and user auth.
 2. **Guardrails to screen inputs and outputs:** Control your model and tool calls precisely.
@@ -75688,7 +75688,7 @@ memory_service = InMemoryMemoryService()
 2. **`VertexAiRagMemoryService`**
 
 
-   - **How it works:** Leverages Google Cloud's Vertex AI RAG (Retrieval-Augmented Generation) service. It ingests session data into a specified RAG Corpus and uses powerful semantic search capabilities for retrieval.
+   - **How it works:** Leverages Google Cloud Vertex AI RAG (Retrieval-Augmented Generation) service. It ingests session data into a specified RAG Corpus and uses powerful semantic search capabilities for retrieval.
    - **Persistence:** Yes. The knowledge is stored persistently within the configured Vertex AI RAG Corpus.
    - **Requires:** A Google Cloud project, appropriate permissions, necessary SDKs ( `pip install google-adk[vertexai]`), and a pre-configured Vertex AI RAG Corpus resource name/ID.
    - **Best for:** Production applications needing scalable, persistent, and semantically relevant knowledge retrieval, especially when deployed on Google Cloud.
@@ -75984,7 +75984,7 @@ the storage backend that best suits your needs:
 2. **`VertexAiSessionService`**
 
 
-   - **How it works:** Uses Google Cloud's Vertex AI infrastructure via API
+   - **How it works:** Uses Google Cloud Vertex AI infrastructure via API
       calls for session management.
    - **Persistence:** Yes. Data is managed reliably and scalably via
       [Vertex AI Agent Engine](https://google.github.io/adk-docs/deploy/agent-engine/).
@@ -79973,7 +79973,7 @@ public class CodeExecutionAgentApp {
 
 ### Vertex AI Search [¶](https://google.github.io/adk-docs/tools/built-in-tools/\#vertex-ai-search "Permanent link")
 
-The `vertex_ai_search_tool` uses Google Cloud's Vertex AI Search, enabling the
+The `vertex_ai_search_tool` uses Google Cloud Vertex AI Search, enabling the
 agent to search across your private, configured data stores (e.g., internal
 documents, company policies, knowledge bases). This built-in tool requires you
 to provide the specific data store ID during configuration.
