@@ -4,6 +4,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
     - name: Checkout adk-docs repo
       uses: actions/checkout@v4
@@ -33,6 +36,7 @@ jobs:
       run: |
         mkdir -p docs/features
         mv adk-docs-features/docs/features/index.md docs/features/index.md
+        rm -rf adk-docs-features/.git
 
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v6
