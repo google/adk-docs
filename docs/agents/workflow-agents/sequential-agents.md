@@ -53,4 +53,9 @@ This ensures the code is written, *then* reviewed, and *finally* refactored, in 
         --8<-- "examples/java/snippets/src/main/java/agents/workflow/SequentialAgentExample.java:init"
         ```
 
+    === "Golang"
+        ```go
+        --8<-- "examples/go/snippets/agents/workflow-agents/sequential_agent_code_development_agent.go:init"
+        ```
+
     

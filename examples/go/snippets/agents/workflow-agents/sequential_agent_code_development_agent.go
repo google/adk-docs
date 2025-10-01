@@ -1,0 +1,162 @@
+package main
+
+import (
+	"context"
+	"fmt"
+	"log"
+
+	"google.golang.org/adk/agent"
+	"google.golang.org/adk/agent/llmagent"
+	"google.golang.org/adk/agent/workflowagents/sequentialagent"
+	"google.golang.org/adk/llm/gemini"
+	"google.golang.org/adk/runner"
+	"google.golang.org/adk/sessionservice"
+	"google.golang.org/genai"
+)
+
+const (
+	appName   = "CodePipelineAgent"
+	userID    = "test_user_456"
+	modelName = "gemini-2.5-flash"
+)
+
+func main() {
+	if err := runAgent("Write a Go function to calculate the factorial of a number."); err != nil {
+		log.Fatalf("Agent execution failed: %v", err)
+	}
+}
+
+func runAgent(prompt string) error {
+	ctx := context.Background()
+
+	// init_start
+	model, err := gemini.NewModel(ctx, modelName, &genai.ClientConfig{})
+	if err != nil {
+		return fmt.Errorf("failed to create model: %v", err)
+	}
+
+	codeWriterAgent, err := llmagent.New(llmagent.Config{
+		Name:        "CodeWriterAgent",
+		Model:       model,
+		Description: "Writes initial Go code based on a specification.",
+		Instruction: `You are a Go Code Generator.
+Based *only* on the user's request, write Go code that fulfills the requirement.
+Output *only* the complete Go code block, enclosed in triple backticks ('''go ... ''').
+Do not add any other text before or after the code block.`,
+	})
+	if err != nil {
+		return fmt.Errorf("failed to create code writer agent: %v", err)
+	}
+
+	codeReviewerAgent, err := llmagent.New(llmagent.Config{
+		Name:        "CodeReviewerAgent",
+		Model:       model,
+		Description: "Reviews code and provides feedback.",
+		Instruction: `You are an expert Go Code Reviewer.
+Your task is to provide constructive feedback on the provided code.
+
+**Code to Review:**
+'''go
+{generated_code}
+'''
+
+**Review Criteria:**
+1.  **Correctness:** Does the code work as intended? Are there logic errors?
+2.  **Readability:** Is the code clear and easy to understand? Follows Go style guidelines?
+3.  **Idiomatic Go:** Does the code use Go's features in a natural and standard way?
+4.  **Edge Cases:** Does the code handle potential edge cases or invalid inputs gracefully?
+5.  **Best Practices:** Does the code follow common Go best practices?
+
+**Output:**
+Provide your feedback as a concise, bulleted list. Focus on the most important points for improvement.
+If the code is excellent and requires no changes, simply state: "No major issues found."
+Output *only* the review comments or the "No major issues" statement.`,
+	})
+	if err != nil {
+		return fmt.Errorf("failed to create code reviewer agent: %v", err)
+	}
+
+	codeRefactorerAgent, err := llmagent.New(llmagent.Config{
+		Name:        "CodeRefactorerAgent",
+		Model:       model,
+		Description: "Refactors code based on review comments.",
+		Instruction: `You are a Go Code Refactoring AI.
+Your goal is to improve the given Go code based on the provided review comments.
+
+**Original Code:**
+'''go
+{generated_code}
+'''
+
+**Review Comments:**
+{review_comments}
+
+**Task:**
+Carefully apply the suggestions from the review comments to refactor the original code.
+If the review comments state "No major issues found," return the original code unchanged.
+Ensure the final code is complete, functional, and includes necessary imports.
+
+**Output:**
+Output *only* the final, refactored Go code block, enclosed in triple backticks ('''go ... ''').
+Do not add any other text before or after the code block.`,
+	})
+	if err != nil {
+		return fmt.Errorf("failed to create code refactorer agent: %v", err)
+	}
+
+	codePipelineAgent, err := sequentialagent.New(sequentialagent.Config{
+		AgentConfig: agent.Config{
+			Name:        appName,
+			Description: "Executes a sequence of code writing, reviewing, and refactoring.",
+			SubAgents: []agent.Agent{
+				codeWriterAgent,
+				codeReviewerAgent,
+				codeRefactorerAgent,
+			},
+		},
+	})
+	if err != nil {
+		return fmt.Errorf("failed to create sequential agent: %v", err)
+	}
+	// init_end
+
+	sessionService := sessionservice.Mem()
+	r, err := runner.New(&runner.Config{
+		AppName:        appName,
+		Agent:          codePipelineAgent,
+		SessionService: sessionService,
+	})
+	if err != nil {
+		return fmt.Errorf("failed to create runner: %v", err)
+	}
+
+	session, err := sessionService.Create(ctx, &sessionservice.CreateRequest{
+		AppName: appName,
+		UserID:  userID,
+	})
+	if err != nil {
+		return fmt.Errorf("failed to create session: %v", err)
+	}
+
+	userMsg := &genai.Content{
+		Parts: []*genai.Part{{Text: prompt}},
+		Role:  string(genai.RoleUser),
+	}
+
+	fmt.Printf("Running agent pipeline for prompt: %q\n---\n", prompt)
+
+	for event, err := range r.Run(ctx, userID, session.Session.ID().SessionID, userMsg, &runner.RunConfig{
+		StreamingMode: runner.StreamingModeSSE,
+	}) {
+		if err != nil {
+			return fmt.Errorf("error during agent execution: %v", err)
+		}
+		// The Go runner streams all events. For this example, we print the text
+		// from each part of the LLM response as it arrives.
+		for _, p := range event.LLMResponse.Content.Parts {
+			fmt.Print(p.Text)
+		}
+	}
+	fmt.Println("\n---\nPipeline finished.")
+	return nil
+}
