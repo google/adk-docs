@@ -38,7 +38,7 @@ jobs:
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v6
       with:
-        push-to-fork: true
+        push-to-fork: ${{ github.actor }}/${{ github.event.repository.name }}
         token: ${{ secrets.GITHUB_TOKEN }}
         commit-message: "feat: propose new documentation"
         title: "Proposed Documentation Update"
