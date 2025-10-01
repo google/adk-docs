@@ -71538,7 +71538,7 @@ Based on who is maintaining the eval set data, there are two routes:
 The evaluation criteria define how the agent's performance is measured against the evalset. The following metrics are supported:
 
 - `tool_trajectory_avg_score`: This metric compares the agent's actual tool usage during the evaluation against the expected tool usage defined in the `expected_tool_use` field. Each matching tool usage step receives a score of 1, while a mismatch receives a score of 0. The final score is the average of these matches, representing the accuracy of the tool usage trajectory.
-- `response_match_score`: This metric compares the agent's final natural language response to the expected final response, stored in the `reference` field. We use the [ROUGE](https://en.wikipedia.org/wiki/ROUGE_(metric)) metric to calculate the similarity between the two responses.
+- `response_match_score`: This metric compares the agent's final natural language response to the expected final response, stored in the `reference` field. We use the [ROUGE](https://en.wikipedia.org/wiki/ROUGE_\(metric\)) metric to calculate the similarity between the two responses.
 
 If no evaluation criteria are provided, the following default configuration is used:
 
