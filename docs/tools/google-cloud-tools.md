@@ -140,6 +140,9 @@ With **ApplicationIntegrationToolset**, you can seamlessly give your agents secu
 
 It supports both on-premise and SaaS applications. In addition, you can turn your existing Application Integration process automations into agentic workflows by providing application integration workflows as tools to your ADK agents.
 
+Federated search within Application Integration lets you use ADK agents to query multiple enterprise applications and data sources simultaneously. For more information, watch [Federated search in Application Integration](https://www.youtube.com/watch?v=JdlWOQe5RgU&t=15s).
+
+
 ### Prerequisites
 
 
