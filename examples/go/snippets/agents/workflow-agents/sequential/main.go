@@ -43,6 +43,7 @@ func runAgent(prompt string) error {
 Based *only* on the user's request, write Go code that fulfills the requirement.
 Output *only* the complete Go code block, enclosed in triple backticks ('''go ... ''').
 Do not add any other text before or after the code block.`,
+		// OutputKey: "generated_code",
 	})
 	if err != nil {
 		return fmt.Errorf("failed to create code writer agent: %v", err)
@@ -71,6 +72,7 @@ Your task is to provide constructive feedback on the provided code.
 Provide your feedback as a concise, bulleted list. Focus on the most important points for improvement.
 If the code is excellent and requires no changes, simply state: "No major issues found."
 Output *only* the review comments or the "No major issues" statement.`,
+		// OutputKey: "review_comments",
 	})
 	if err != nil {
 		return fmt.Errorf("failed to create code reviewer agent: %v", err)
@@ -99,6 +101,7 @@ Ensure the final code is complete, functional, and includes necessary imports.
 **Output:**
 Output *only* the final, refactored Go code block, enclosed in triple backticks ('''go ... ''').
 Do not add any other text before or after the code block.`,
+		// OutputKey: "refactored_code",
 	})
 	if err != nil {
 		return fmt.Errorf("failed to create code refactorer agent: %v", err)
@@ -144,7 +147,6 @@ Do not add any other text before or after the code block.`,
 	}
 
 	fmt.Printf("Running agent pipeline for prompt: %q\n---\n", prompt)
-
 	for event, err := range r.Run(ctx, userID, session.Session.ID().SessionID, userMsg, &runner.RunConfig{
 		StreamingMode: runner.StreamingModeSSE,
 	}) {

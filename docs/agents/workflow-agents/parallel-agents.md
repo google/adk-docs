@@ -56,3 +56,8 @@ These research tasks are independent.  Using a `ParallelAgent` allows them to ru
         ```java
          --8<-- "examples/java/snippets/src/main/java/agents/workflow/ParallelResearchPipeline.java:full_code"
         ```
+
+    === "Golang"
+        ```go
+         --8<-- "examples/go/snippets/agents/workflow-agents/parallel/main.go:init"
+        ```

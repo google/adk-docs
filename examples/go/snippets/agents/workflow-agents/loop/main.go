@@ -12,7 +12,6 @@ import (
 	"google.golang.org/adk/runner"
 	"google.golang.org/adk/sessionservice"
 	"google.golang.org/adk/tool"
-	"google.golang.org/adk/functiontool"
 	"google.golang.org/genai"
 )
 
@@ -23,9 +22,17 @@ const (
 )
 
 // init_start
-// ExitLoop is a tool that signals the loop to terminate.
-func ExitLoop(ctx context.Context, toolCtx *tool.Context) {
+// ExitLoopArgs defines the (empty) arguments for the ExitLoop tool.
+type ExitLoopArgs struct{}
+
+// ExitLoop is a tool that signals the loop to terminate by setting Escalate to true.
+func ExitLoop(ctx context.Context, args ExitLoopArgs) (map[string]any, error) {
+	toolCtx, ok := tool.FromContext(ctx)
+	if !ok {
+		return nil, fmt.Errorf("tool.Context not found in context")
+	}
 	toolCtx.EventActions.Escalate = true
+	return map[string]any{"status": "exiting loop"}, nil
 }
 
 func main() {
@@ -55,10 +62,20 @@ Critic's feedback:
 {feedback}
 
 Rewrite the document to address the feedback. If there is no feedback, write the initial draft.`,
-		OutputKey: "document",
 	})
 	if err != nil {
 		return fmt.Errorf("failed to create writer agent: %v", err)
+	}
+
+	exitLoopTool, err := tool.NewFunctionTool(
+		tool.FunctionToolConfig{
+			Name:        "ExitLoop",
+			Description: "Signals the loop to terminate when the document is well-written and complete.",
+		},
+		ExitLoop,
+	)
+	if err != nil {
+		return fmt.Errorf("failed to create exit loop tool: %v", err)
 	}
 
 	criticAgent, err := llmagent.New(llmagent.Config{
@@ -71,8 +88,7 @@ Review the following document:
 
 If the document is well-written and complete, call the "ExitLoop" tool.
 Otherwise, provide constructive feedback for improvement.`,
-		OutputKey: "feedback",
-		Tools:     []tool.Tool{functiontool.Must(ExitLoop)},
+		Tools: []tool.Tool{exitLoopTool},
 	})
 	if err != nil {
 		return fmt.Errorf("failed to create critic agent: %v", err)

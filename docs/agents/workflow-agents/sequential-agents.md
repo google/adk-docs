@@ -55,7 +55,7 @@ This ensures the code is written, *then* reviewed, and *finally* refactored, in 
 
     === "Golang"
         ```go
-        --8<-- "examples/go/snippets/agents/workflow-agents/sequential_agent_code_development_agent.go:init"
+        --8<-- "examples/go/snippets/agents/workflow-agents/sequential/main.go:init"
         ```
 
     

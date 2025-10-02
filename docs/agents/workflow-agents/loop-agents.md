@@ -54,6 +54,6 @@ In this setup, the `LoopAgent` would manage the iterative process.  The `CriticA
 
     === "Golang"
         ```go
-        --8<-- "examples/go/snippets/agents/workflow-agents/loop_agent_doc_improv_agent.go:init"
+        --8<-- "examples/go/snippets/agents/workflow-agents/loop/main.go:init"
         ```
 
