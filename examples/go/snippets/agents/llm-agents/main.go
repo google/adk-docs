@@ -93,6 +93,7 @@ func main() {
 		log.Fatalf("Failed to create function tool: %v", err)
 	}
 
+	capitalToolOutputKey := "capital_tool_result"
 	capitalAgentWithTool, err := llmagent.New(llmagent.Config{
 		Name:        "capital_agent_tool",
 		Model:       model,
@@ -104,12 +105,14 @@ The user will provide the country name in a JSON format like {"country": "countr
 3. Respond clearly to the user, stating the capital city found by the tool.`,
 		Tools:     []tool.Tool{capitalTool},
 		InputSchema: countryInputSchema,
+		// OutputKey: capitalToolOutputKey,
 	})
 	if err != nil {
 		log.Fatalf("Failed to create capital agent with tool: %v", err)
 	}
 
 	schemaJSON, _ := json.Marshal(capitalInfoOutputSchema)
+	structuredInfoAgentOutputKey := "structured_info_result"
 	structuredInfoAgentSchema, err := llmagent.New(llmagent.Config{
 		Name:        "structured_info_agent_schema",
 		Model:       model,
@@ -121,31 +124,34 @@ Respond ONLY with a JSON object matching this exact schema:
 Use your knowledge to determine the capital and estimate the population. Do not use any tools.`, string(schemaJSON)),
 		InputSchema:  countryInputSchema,
 		OutputSchema: capitalInfoOutputSchema,
+		// OutputKey:    structuredInfoAgentOutputKey,
 	})
 	if err != nil {
 		log.Fatalf("Failed to create structured info agent: %v", err)
 	}
 
 	fmt.Println("--- Testing Agent with Tool ---")
-	callAgent(ctx, capitalAgentWithTool, `{"country": "France"}`)
-	callAgent(ctx, capitalAgentWithTool, `{"country": "Canada"}`)
+	callAgent(ctx, capitalAgentWithTool, capitalToolOutputKey, `{"country": "France"}`)
+	callAgent(ctx, capitalAgentWithTool, capitalToolOutputKey, `{"country": "Canada"}`)
 
 	fmt.Println("\n\n--- Testing Agent with Output Schema (No Tool Use) ---")
-	callAgent(ctx, structuredInfoAgentSchema, `{"country": "France"}`)
-	callAgent(ctx, structuredInfoAgentSchema, `{"country": "Japan"}`)
+	callAgent(ctx, structuredInfoAgentSchema, structuredInfoAgentOutputKey, `{"country": "France"}`)
+	callAgent(ctx, structuredInfoAgentSchema, structuredInfoAgentOutputKey, `{"country": "Japan"}`)
 }
 
-func callAgent(ctx context.Context, agent agent.Agent, prompt string) {
+func callAgent(ctx context.Context, agent agent.Agent, outputKey string, prompt string) {
 	fmt.Printf("\n>>> Calling Agent: '%s' | Query: %s\n", agent.Name(), prompt)
 	sessionService := sessionservice.Mem()
 
-	session, err := sessionService.Create(ctx, &sessionservice.CreateRequest{
+	sessionCreateResponse, err := sessionService.Create(ctx, &sessionservice.CreateRequest{
 		AppName: appName,
 		UserID:  userID,
 	})
 	if err != nil {
 		log.Fatalf("Failed to create the session service: %v", err)
 	}
+
+	session := sessionCreateResponse.Session
 
 	config := &runner.Config{
 		AppName:        appName,
@@ -158,7 +164,7 @@ func callAgent(ctx context.Context, agent agent.Agent, prompt string) {
 		log.Fatalf("Failed to create the runner: %v", err)
 	}
 
-	sessionID := session.Session.ID().SessionID
+	sessionID := session.ID().SessionID
 	userMsg := &genai.Content{
 		Parts: []*genai.Part{
 			genai.NewPartFromText(prompt),
@@ -175,6 +181,30 @@ func callAgent(ctx context.Context, agent agent.Agent, prompt string) {
 			for _, p := range event.LLMResponse.Content.Parts {
 				fmt.Print(p.Text)
 			}
+		}
+	}
+
+	if outputKey != "" {
+		storedOutput, error := session.State().Get(outputKey)
+		if error == nil {
+			fmt.Printf("--- Session State ['%s']: ", outputKey)
+			storedString, isString := storedOutput.(string)
+			if isString {
+				var prettyJSON map[string]interface{}
+				if err := json.Unmarshal([]byte(storedString), &prettyJSON); err == nil {
+					indentedJSON, err := json.MarshalIndent(prettyJSON, "", "  ")
+					if err == nil {
+						fmt.Println(string(indentedJSON))
+					} else {
+						fmt.Println(storedString)
+					}
+				} else {
+					fmt.Println(storedString)
+				}
+			} else {
+				fmt.Println(storedOutput)
+			}
+			fmt.Println(strings.Repeat("-", 30))
 		}
 	}
 }
