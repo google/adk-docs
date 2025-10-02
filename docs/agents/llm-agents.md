@@ -551,6 +551,12 @@ call_agent("If it's raining in New York right now, what is the current temperatu
         --8<-- "examples/java/snippets/src/main/java/agents/LlmAgentExample.java:full_code"
         ```
 
+    === "Golang"
+
+        ```go
+        --8<-- "examples/go/snippets/agents/llm-agents/main.go"
+        ```
+
 _(This example demonstrates the core concepts. More complex agents might incorporate schemas, context control, planning, etc.)_
 
 ## Related Concepts (Deferred Topics)
