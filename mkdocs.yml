@@ -180,6 +180,7 @@ nav:
     - Logging: observability/logging.md
     - Cloud Trace: observability/cloud-trace.md
     - AgentOps: observability/agentops.md
+    - Opik: observability/opik.md
     - Arize AX: observability/arize-ax.md
     - Phoenix: observability/phoenix.md
     - W&B Weave: observability/weave.md
