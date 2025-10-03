@@ -2,6 +2,8 @@
 
 [Opik](https://www.comet.com/opik/) is Comet's observability, evaluation, and optimization platform for LLM and agent workloads. It captures the full execution context of your Google ADK applications—including agent runs, tool invocations, model calls, and custom business logic—so you can debug faster, monitor cost and latency, and ship production-ready agents with confidence.
 
+![Comet Opik Agent Observability Dashboard](https://raw.githubusercontent.com/comet-ml/opik/refs/heads/main/apps/opik-documentation/documentation/fern/img/cookbook/adk_trace_cookbook.png)
+
 ## Why Opik for ADK?
 
 Opik extends ADK's native OpenTelemetry support with:
@@ -91,6 +93,15 @@ The Opik tracer is fully compatible with the [`@opik.track`](https://www.comet.c
 
 - Call ADK agents from inside tracked functions and keep parent/child span relationships intact.
 - Decorate tool functions to capture custom business logic alongside ADK-managed spans.
+
+## Agent Graph
+Opik automatically generates visual representations of your agent workflows using Mermaid diagrams. This includes agent hierarchy and relationships, tool calling, parallel processing and sub-tasks too.
+
+![Comet Opik Google ADK graph view](https://raw.githubusercontent.com/comet-ml/opik/refs/heads/main/apps/opik-documentation/documentation/fern/img/tracing/adk/adk_error_propagation_screenshot.png)
+
+This also supports more complex agent graphs too.
+
+![Comet Opik Google ADK advanced graph view](https://raw.githubusercontent.com/comet-ml/opik/refs/heads/main/apps/opik-documentation/documentation/fern/img/tracing/adk/adk_code_assistant_graph_screenshot.png)
 
 ## Troubleshooting
 
