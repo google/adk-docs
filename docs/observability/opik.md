@@ -100,6 +100,6 @@ The Opik tracer is fully compatible with the [`@opik.track`](https://www.comet.c
 
 ## Additional resources
 
-- [Opik ADK integration reference](https://www.comet.com/docs/opik/python-sdk-reference/integrations/adk/overview/)
+- [Opik ADK integration reference](https://www.comet.com/docs/opik/integrations/adk)
 - [Opik tracing overview](https://www.comet.com/docs/opik/tracing/log_traces)
 - [Opik self-host installation guide](https://www.comet.com/docs/opik/self-host/overview)
