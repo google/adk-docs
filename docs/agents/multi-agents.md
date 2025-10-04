@@ -81,6 +81,12 @@ The foundation for structuring multi-agent systems is the parent-child relations
     // assert taskDoer.parentAgent().equals(coordinator);
     ```
 
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/agents/multi-agent/multi_agent.go:hierarchy"
+    ```
+
 ### 1.2. Workflow Agents as Orchestrators { #workflow-agents-as-orchestrators }
 
 ADK includes specialized agents derived from `BaseAgent` that don't perform tasks themselves but orchestrate the execution flow of their `sub_agents`.
@@ -113,6 +119,12 @@ ADK includes specialized agents derived from `BaseAgent` that don't perform task
 
     SequentialAgent pipeline = SequentialAgent.builder().name("MyPipeline").subAgents(step1, step2).build();
     // When pipeline runs, Step2 can access the state.get("data") set by Step1.
+    ```
+
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/agents/multi-agent/multi_agent.go:sequential-pipeline"
     ```
 
 * **[`ParallelAgent`](workflow-agents/parallel-agents.md):** Executes its `sub_agents` in parallel. Events from sub-agents may be interleaved.
@@ -157,6 +169,12 @@ ADK includes specialized agents derived from `BaseAgent` that don't perform task
     
     // When gatherer runs, WeatherFetcher and NewsFetcher run concurrently.
     // A subsequent agent could read state['weather'] and state['news'].
+    ```
+
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/agents/multi-agent/multi_agent.go:parallel-execution"
     ```
 
   * **[`LoopAgent`](workflow-agents/loop-agents.md):** Executes its `sub_agents` sequentially in a loop.
@@ -227,6 +245,12 @@ ADK includes specialized agents derived from `BaseAgent` that don't perform task
     // until Checker escalates (state.get("status") == "completed") or 10 iterations pass.
     ```
 
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/agents/multi-agent/multi_agent.go:loop-with-condition"
+    ```
+
 ### 1.3. Interaction & Communication Mechanisms { #interaction-communication-mechanisms }
 
 Agents within a system often need to exchange data or trigger actions in one another. ADK facilitates this through:
@@ -279,6 +303,12 @@ The most fundamental way for agents operating within the same invocation (and th
     SequentialAgent pipeline = SequentialAgent.builder().name("CityInfo").subAgents(agentA, agentB).build();
     // AgentA runs, saves "Paris" to state('capital_city').
     // AgentB runs, its instruction processor reads state.get("capital_city") to get "Paris".
+    ```
+
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/agents/multi-agent/multi_agent.go:output-key-state"
     ```
 
 #### b) LLM-Driven Delegation (Agent Transfer)
@@ -342,6 +372,12 @@ Leverages an [`LlmAgent`](llm-agents.md)'s understanding to dynamically route ta
     // If coordinator receives "Book a flight", its LLM should generate:
     // FunctionCall.builder.name("transferToAgent").args(ImmutableMap.of("agent_name", "Booker")).build()
     // ADK framework then routes execution to bookingAgent.
+    ```
+
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/agents/multi-agent/multi_agent.go:llm-transfer"
     ```
 
 #### c) Explicit Invocation (`AgentTool`)
@@ -449,6 +485,12 @@ Allows an [`LlmAgent`](llm-agents.md) to treat another `BaseAgent` instance as a
     // The resulting image Part is returned to the Artist agent as the tool result.
     ```
 
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/agents/multi-agent/multi_agent.go:agent-as-tool"
+    ```
+
 These primitives provide the flexibility to design multi-agent interactions ranging from tightly coupled sequential workflows to dynamic, LLM-driven delegation networks.
 
 ## 2. Common Multi-Agent Patterns using ADK Primitives { #common-multi-agent-patterns-using-adk-primitives }
@@ -516,6 +558,12 @@ By combining ADK's composition primitives, you can implement various established
     // transferToAgent(agentName='Support')
     ```
 
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/agents/multi-agent/multi_agent.go:coordinator-pattern"
+    ```
+
 ### Sequential Pipeline Pattern
 
 * **Structure:** A [`SequentialAgent`](workflow-agents/sequential-agents.md) contains `sub_agents` executed in a fixed order.
@@ -574,6 +622,12 @@ By combining ADK's composition primitives, you can implement various established
     // validator runs -> saves to state['validation_status']
     // processor runs -> reads state['validation_status'], saves to state['result']
     // reporter runs -> reads state['result']
+    ```
+
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/agents/multi-agent/multi_agent.go:sequential-pipeline-pattern"
     ```
 
 ### Parallel Fan-Out/Gather Pattern
@@ -647,6 +701,12 @@ By combining ADK's composition primitives, you can implement various established
 
     // fetch_api1 and fetch_api2 run concurrently, saving to state.
     // synthesizer runs afterwards, reading state['api1_data'] and state['api2_data'].
+    ```
+
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/agents/multi-agent/multi_agent.go:parallel-gather-pattern"
     ```
 
 
@@ -732,6 +792,12 @@ By combining ADK's composition primitives, you can implement various established
     // Results flow back up.
     ```
 
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/agents/multi-agent/multi_agent.go:hierarchical-pattern"
+    ```
+
 ### Review/Critique Pattern (Generator-Critic)
 
 * **Structure:** Typically involves two agents within a [`SequentialAgent`](workflow-agents/sequential-agents.md): a Generator and a Critic/Reviewer.
@@ -796,6 +862,12 @@ By combining ADK's composition primitives, you can implement various established
     
     // generator runs -> saves draft to state['draft_text']
     // reviewer runs -> reads state['draft_text'], saves status to state['review_status']
+    ```
+
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/agents/multi-agent/multi_agent.go:generator-critic-pattern"
     ```
 
 ### Iterative Refinement Pattern
@@ -903,6 +975,12 @@ By combining ADK's composition primitives, you can implement various established
     // iterations.
     ```
 
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/agents/multi-agent/multi_agent.go:iterative-refinement-pattern"
+    ```
+
 ### Human-in-the-Loop Pattern
 
 * **Structure:** Integrates human intervention points within an agent workflow.
@@ -998,6 +1076,12 @@ By combining ADK's composition primitives, you can implement various established
         .name("HumanApprovalWorkflow")
         .subAgents(prepareRequest, requestApproval, processDecision)
         .build();
+    ```
+
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/agents/multi-agent/multi_agent.go:human-in-loop-pattern"
     ```
 
 These patterns provide starting points for structuring your multi-agent systems. You can mix and match them as needed to create the most effective architecture for your specific application.
