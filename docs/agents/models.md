@@ -184,6 +184,12 @@ For deployed applications, a service account is the standard method.
     // different availability or quota limitations.
     ```
 
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/agents/models/models.go:gemini-example"
+    ```
+
 !!!warning "Secure Your Credentials"
     Service account credentials or API keys are powerful credentials. Never expose them publicly. Use a secret manager like [Google Secret Manager](https://cloud.google.com/secret-manager) to store and access them securely in production.
 
