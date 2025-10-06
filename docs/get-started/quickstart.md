@@ -308,7 +308,7 @@ agent will be unable to function.
             piping text to the command like so:
 
             ```shell
-            "Please start by listing files" | adk run file_listing_agent
+            echo "Please start by listing files" | adk run file_listing_agent
             ```
             
         Run the following command, to chat with your Weather agent.
