@@ -33,9 +33,56 @@ and design patterns that help you use ADK together with MCP servers, including:
 ## MCP Toolbox for Databases
 
 [MCP Toolbox for Databases](https://github.com/googleapis/genai-toolbox) is an
-open source MCP server that helps you build Gen AI tools so that your agents can
-access data in your database. Google’s Agent Development Kit (ADK) has built in
-support for The MCP Toolbox for Databases.
+open-source MCP server that securely exposes your backend data sources as a
+set of pre-built, production-ready tools for Gen AI agents. It functions as a
+universal abstraction layer, allowing your ADK agent to securely query, analyze,
+and retrieve information from a wide array of databases with built-in support.
+
+The MCP Toolbox server includes a comprehensive library of connectors, ensuring that
+agents can safely interact with your complex data estate.
+
+### Supported Data Sources
+
+MCP Toolbox provides out-of-the-box toolsets for the following databases and data platforms:
+
+#### Google Cloud
+
+* BigQuery (including tools for SQL execution, schema discovery, and AI-powered time series forecasting)
+* AlloyDB (PostgreSQL-compatible, with tools for both standard queries and natural language queries)
+* Spanner (supporting both GoogleSQL and PostgreSQL dialects)
+* Cloud SQL (with dedicated support for Cloud SQL for PostgreSQL, Cloud SQL for MySQL, and Cloud SQL for SQL Server)
+* Firestore
+* Bigtable
+* Dataplex (for data discovery and metadata search)
+
+#### Relational & SQL Databases
+
+* PostgreSQL (generic)
+* MySQL (generic)
+* Microsoft SQL Server (generic)
+* ClickHouse
+* TiDB
+* OceanBase
+* Firebird
+* SQLite
+
+#### NoSQL & Key-Value Stores
+* MongoDB
+* Couchbase
+* Redis
+* Valkey
+
+#### Graph Databases
+
+* Neo4j (with tools for Cypher queries and schema inspection)
+* Dgraph
+
+#### Data Platforms & Federation
+
+* Looker (for running Looks, queries, and building dashboards via the Looker API)
+* Trino (for running federated queries across multiple sources)
+
+### Documentation
 
 Refer to the
 [MCP Toolbox for Databases](../tools/google-cloud-tools.md#toolbox-tools-for-databases)

@@ -59,39 +59,64 @@ like calculations, data manipulation, or running small scripts.
 
 ### GKE Code Executor
 
-The `GkeCodeExecutor` provides a secure and scalable method for running
-LLM-generated code by leveraging the GKE (Google Kubernetes Engine) Sandbox
-environment, which uses gVisor for workload isolation.
+The GKE Code Executor (`GkeCodeExecutor`) provides a secure and scalable method
+for running LLM-generated code by leveraging the GKE (Google Kubernetes Engine)
+Sandbox environment, which uses gVisor for workload isolation. For each code
+execution request, it dynamically creates an ephemeral, sandboxed Kubernetes Job
+with a hardened Pod configuration. You should use this executor for production
+environments on GKE where security and isolation are critical.
 
-For each code execution request, it dynamically creates an ephemeral, sandboxed
-Kubernetes Job with a hardened Pod configuration. This is the recommended
-executor for production environments on GKE where security and isolation are
-critical.
+#### How it Works
 
-!!! note "Prerequisites"
+When a request to execute code is made, the `GkeCodeExecutor` performs the following steps:
 
-    - You must have a GKE cluster with a **gVisor-enabled node pool**.
-    - The agent's service account requires specific **RBAC permissions**, which allow it to:
-        - Create, watch, and delete **Jobs** for each execution request.
-        - Manage **ConfigMaps** to inject code into the Job's pod.
-        - List **Pods** and read their **logs** to retrieve the execution result
-    - See the complete, ready-to-use configuration in `contributing/samples/gke_agent_sandbox/deployment_rbac.yaml`.
-    - Install the necessary client library: `pip install google-adk[gke]`
+1.  **Creates a ConfigMap:** A Kubernetes ConfigMap is created to store the Python code that needs to be executed.
+2.  **Creates a Sandboxed Pod:** A new Kubernetes Job is created, which in turn creates a Pod with a hardened security context and the gVisor runtime enabled. The code from the ConfigMap is mounted into this Pod.
+3.  **Executes the Code:** The code is executed within the sandboxed Pod, isolated from the underlying node and other workloads.
+4.  **Retrieves the Result:** The standard output and error streams from the execution are captured from the Pod's logs.
+5.  **Cleans Up Resources:** Once the execution is complete, the Job and the associated ConfigMap are automatically deleted, ensuring that no artifacts are left behind.
+
+#### Key Benefits
+
+*   **Enhanced Security:** Code is executed in a gVisor-sandboxed environment with kernel-level isolation.
+*   **Ephemeral Environments:** Each code execution runs in its own ephemeral Pod, to prevent state transfer between executions.
+*   **Resource Control:** You can configure CPU and memory limits for the execution Pods to prevent resource abuse.
+*   **Scalability:** Allows you to run a large number of code executions in parallel, with GKE handling the scheduling and scaling of the underlying nodes.
+
+#### System requirements
+
+The following requirements must be met to successfully deploy your ADK project
+with the GKE Code Executor tool:
+
+- GKE cluster with a **gVisor-enabled node pool**.
+- Agent's service account requires specific **RBAC permissions**, which allow it to:
+    - Create, watch, and delete **Jobs** for each execution request.
+    - Manage **ConfigMaps** to inject code into the Job's pod.
+    - List **Pods** and read their **logs** to retrieve the execution result
+- Install the client library with GKE extras: `pip install google-adk[gke]`
+
+For a complete, ready-to-use configuration, see the 
+[deployment_rbac.yaml](https://github.com/google/adk-python/blob/main/contributing/samples/gke_agent_sandbox/deployment_rbac.yaml)
+sample. For more information on deploying ADK workflows to GKE, see
+[Deploy to Google Kubernetes Engine (GKE)](/adk-docs/deploy/gke/).
 
 === "Python"
 
-    ```py
+    ```python
     from google.adk.agents import LlmAgent
     from google.adk.code_executors import GkeCodeExecutor
 
     # Initialize the executor, targeting the namespace where its ServiceAccount
     # has the required RBAC permissions.
+    # This example also sets a custom timeout and resource limits.
     gke_executor = GkeCodeExecutor(
         namespace="agent-sandbox",
         timeout_seconds=600,
+        cpu_limit="1000m",  # 1 CPU core
+        mem_limit="1Gi",
     )
 
-    # The agent will now use this executor for any code it generates.
+    # The agent now uses this executor for any code it generates.
     gke_agent = LlmAgent(
         name="gke_coding_agent",
         model="gemini-2.0-flash",
@@ -100,9 +125,39 @@ critical.
     )
     ```
 
+#### Configuration parameters
+
+The `GkeCodeExecutor` can be configured with the following parameters:
+
+| Parameter            | Type   | Description                                                                             |
+| -------------------- | ------ | --------------------------------------------------------------------------------------- |
+| `namespace`          | `str`  | Kubernetes namespace where the execution Jobs will be created. Defaults to `"default"`. |
+| `image`              | `str`  | Container image to use for the execution Pod. Defaults to `"python:3.11-slim"`.         |
+| `timeout_seconds`    | `int`  | Timeout in seconds for the code execution. Defaults to `300`.                           |
+| `cpu_requested`      | `str`  | Amount of CPU to request for the execution Pod. Defaults to `"200m"`.                   |
+| `mem_requested`      | `str`  | Amount of memory to request for the execution Pod. Defaults to `"256Mi"`.               |
+| `cpu_limit`          | `str`  | Maximum amount of CPU the execution Pod can use. Defaults to `"500m"`.                  |
+| `mem_limit`          | `str`  | Maximum amount of memory the execution Pod can use. Defaults to `"512Mi"`.              |
+| `kubeconfig_path`    | `str`  | Path to a kubeconfig file to use for authentication. Falls back to in-cluster config or the default local kubeconfig. |
+| `kubeconfig_context` | `str`  | The `kubeconfig` context to use.  |
+
+### Vertex AI RAG Engine
+
+The `vertex_ai_rag_retrieval` tool allows the agent to perform private data retrieval using Vertex
+AI RAG Engine.
+
+When you use grounding with Vertex AI RAG Engine, you need to prepare a RAG corpus before hand.
+Please refer to the [RAG ADK agent sample](https://github.com/google/adk-samples/blob/main/python/agents/RAG/rag/shared_libraries/prepare_corpus_and_data.py) or [Vertex AI RAG Engine page](https://cloud.google.com/vertex-ai/generative-ai/docs/rag-engine/rag-quickstart) for setting it up.
+
+=== "Python"
+
+    ```py
+    --8<-- "examples/python/snippets/tools/built-in-tools/vertexai_rag_engine.py"
+    ```
+
 ### Vertex AI Search
 
-The `vertex_ai_search_tool` uses Google Cloud's Vertex AI Search, enabling the
+The `vertex_ai_search_tool` uses Google Cloud Vertex AI Search, enabling the
 agent to search across your private, configured data stores (e.g., internal
 documents, company policies, knowledge bases). This built-in tool requires you
 to provide the specific data store ID during configuration. For further details of the tool, see [Understanding Vertex AI Search grounding](../grounding/vertex_ai_search_grounding.md).
@@ -122,6 +177,8 @@ These are a set of tools aimed to provide integration with BigQuery, namely:
 * **`list_table_ids`**: Fetches table ids present in a BigQuery dataset.
 * **`get_table_info`**: Fetches metadata about a BigQuery table.
 * **`execute_sql`**: Runs a SQL query in BigQuery and fetch the result.
+* **`forecast`**: Runs a BigQuery AI time series forecast using the `AI.FORECAST` function.
+* **`ask_data_insights`**: Answers questions about data in BigQuery tables using natural language.
 
 They are packaged in the toolset `BigQueryToolset`.
 
@@ -129,6 +186,46 @@ They are packaged in the toolset `BigQueryToolset`.
 
 ```py
 --8<-- "examples/python/snippets/tools/built-in-tools/bigquery.py"
+```
+
+
+### Spanner
+
+These are a set of tools aimed to provide integration with Spanner, namely:
+
+* **`list_table_names`**: Fetches table names present in a GCP Spanner database.
+* **`list_table_indexes`**: Fetches table indexes present in a GCP Spanner database.
+* **`list_table_index_columns`**: Fetches table index columns present in a GCP Spanner database.
+* **`list_named_schemas`**: Fetches named schema for a Spanner database.
+* **`get_table_schema`**: Fetches Spanner database table schema and metadata information.
+* **`execute_sql`**: Runs a SQL query in Spanner database and fetch the result.
+* **`similarity_search`**: Similarity search in Spanner using a text query.
+
+They are packaged in the toolset `SpannerToolset`.
+
+
+
+```py
+--8<-- "examples/python/snippets/tools/built-in-tools/spanner.py"
+```
+
+
+### Bigtable
+
+These are a set of tools aimed to provide integration with Bigtable, namely:
+
+* **`list_instances`**: Fetches Bigtable instances in a Google Cloud project.
+* **`get_instance_info`**: Fetches metadata instance information in a Google Cloud project.
+* **`list_tables`**: Fetches tables in a GCP Bigtable instance.
+* **`get_table_info`**: Fetches metadata table information in a GCP Bigtable.
+* **`execute_sql`**: Runs a SQL query in Bigtable table and fetch the result.
+
+They are packaged in the toolset `BigtableToolset`.
+
+
+
+```py
+--8<-- "examples/python/snippets/tools/built-in-tools/bigtable.py"
 ```
 
 ## Use Built-in tools with other tools
@@ -139,7 +236,7 @@ to use built-in tools with other tools by using multiple agents:
 === "Python"
 
     ```py
-    from google.adk.tools import agent_tool
+    from google.adk.tools.agent_tool import AgentTool
     from google.adk.agents import Agent
     from google.adk.tools import google_search
     from google.adk.code_executors import BuiltInCodeExecutor
@@ -165,7 +262,7 @@ to use built-in tools with other tools by using multiple agents:
         name="RootAgent",
         model="gemini-2.0-flash",
         description="Root Agent",
-        tools=[agent_tool.AgentTool(agent=search_agent), agent_tool.AgentTool(agent=coding_agent)],
+        tools=[AgentTool(agent=search_agent), AgentTool(agent=coding_agent)],
     )
     ```
 

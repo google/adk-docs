@@ -23,10 +23,18 @@ Some typical applications of Plugins are as follows:
 -   **Request or response modification**: Dynamically add information to AI
     model prompts or standardize tool output responses.
 
-**Caution:** Plugins are not supported by the
-[ADK web interface](../evaluate/#1-adk-web-run-evaluations-via-the-web-ui).
-If your ADK workflow uses Plugins, you must run your workflow without the web
-interface.
+!!! tip
+    When implementing security guardrails and policies, use ADK Plugins for
+    better modularity and flexibility than Callbacks. For more details, see 
+    [Callbacks and Plugins for Security Guardrails](/adk-docs/safety/#callbacks-and-plugins-for-security-guardrails).
+
+!!! warning "Caution"
+    Plugins are not supported by the 
+    [ADK web interface](../evaluate/#1-adk-web-run-evaluations-via-the-web-ui). 
+    If your ADK workflow uses Plugins, you must run your workflow without the 
+    web interface.
+
+Tip: When implementing security guardrails and policies, use ADK Plugins for better modularity and flexibility than Callbacks. For more details, see [Callbacks and Plugins for Security Guardrails](../safety/index.md#callbacks-and-plugins-for-security-guardrails).
 
 ## How do Plugins work?
 
@@ -59,8 +67,7 @@ in the repository.
 Start by extending the `BasePlugin` class and add one or more `callback`
 methods, as shown in the following code example:
 
-```
-# count_plugin.py
+```py title="count_plugin.py"
 from google.adk.agents.base_agent import BaseAgent
 from google.adk.agents.callback_context import CallbackContext
 from google.adk.models.llm_request import LlmRequest
@@ -103,8 +110,7 @@ multiple Plugins with this parameter. The following code example shows how to
 register the `CountInvocationPlugin` plugin defined in the previous section with
 a simple ADK agent.
 
-
-```
+```py
 from google.adk.runners import InMemoryRunner
 from google.adk import Agent
 from google.adk.tools.tool_context import ToolContext
@@ -161,8 +167,8 @@ if __name__ == "__main__":
 Run the plugin as you typically would. The following shows how to run the
 command line:
 
-```
-> python3 -m path.to.main
+```sh
+python3 -m path.to.main
 ```
 
 Plugins are not supported by the
@@ -173,7 +179,7 @@ interface.
 The output of this previously described agent should look similar to the
 following:
 
-```
+```log
 [Plugin] Agent run count: 1
 [Plugin] LLM request count: 1
 ** Got event from hello_world
@@ -318,7 +324,7 @@ giving you a chance to inspect or modify the initial input.\
 
 The following code example shows the basic syntax of this callback:
 
-```
+```py
 async def on_user_message_callback(
     self,
     *,
@@ -343,7 +349,7 @@ logic begins.
 
 The following code example shows the basic syntax of this callback:
 
-```
+```py
 async def before_run_callback(
     self, *, invocation_context: InvocationContext
 ) -> Optional[types.Content]:
@@ -403,7 +409,7 @@ normally.****
 
 The following code example shows the basic syntax of this callback:
 
-```
+```py
 async def on_model_error_callback(
     self,
     *,
@@ -450,7 +456,7 @@ works as follows:
 
 The following code example shows the basic syntax of this callback:
 
-```
+```py
 async def on_tool_error_callback(
     self,
     *,
@@ -477,7 +483,7 @@ before it's streamed to the client.
 
 The following code example shows the basic syntax of this callback:
 
-```
+```py
 async def on_event_callback(
     self, *, invocation_context: InvocationContext, event: Event
 ) -> Optional[Event]:
@@ -499,7 +505,7 @@ cleanup and final reporting.
 
 The following code example shows the basic syntax of this callback:
 
-```
+```py
 async def after_run_callback(
     self, *, invocation_context: InvocationContext
 ) -> Optional[None]:
