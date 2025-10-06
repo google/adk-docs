@@ -1,58 +1,23 @@
-# Get Started
+# Get started
 
-Agent Development Kit (ADK) is designed to empower developers
-to build, manage, evaluate and deploy AI-powered agents. It provides a robust
-and flexible environment for creating both conversational and non-conversational
-agents, capable of handling complex tasks and workflows.
+Agent Development Kit (ADK) is designed to empower developers to quickly build,
+manage, evaluate and deploy AI-powered agents. These quick start guides get you
+set up and running a simple agent in less than 20 minutes.
 
 <div class="grid cards" markdown>
 
--   :material-console-line: **Installation**
+-   :fontawesome-brands-python:{ .lg .middle } **Python Quickstart**
 
     ---
+    Create your first Python ADK agent in minutes.
 
-    Install `google-adk` for Python or Java and get up and running in minutes.
+    [:octicons-arrow-right-24: Start with Python](/adk-docs/get-started/python) <br>
 
-    [:octicons-arrow-right-24: More information](installation.md)
-
--   :material-console-line: **Quickstart**
-
-    ---
-
-    Create your first ADK agent with tools in minutes.
-
-    [:octicons-arrow-right-24: More information](quickstart.md)
-
--   :material-console-line: **Quickstart (streaming)**
+-   :fontawesome-brands-java:{ .lg .middle } **Java Quickstart**
 
     ---
+    Create your first Java ADK agent in minutes.
 
-    Create your first streaming ADK agent.
-
-    [:octicons-arrow-right-24: More information](streaming/quickstart-streaming.md)
-
--   :material-console-line: **Tutorial**
-
-    ---
-
-    Create your first ADK multi-agent.
-
-    [:octicons-arrow-right-24: More information](../tutorials/index.md)
-
--   :material-rocket-launch-outline: **Discover sample agents**
-
-    ---
-
-    Discover sample agents for retail, travel, customer service, and more!
-
-    [:octicons-arrow-right-24: Discover adk-samples](https://github.com/google/adk-samples){:target="_blank"}
-
--   :material-graph: **About**
-
-    ---
-
-    Learn about the key components of building and deploying ADK agents.
-
-    [:octicons-arrow-right-24: More information](about.md)
+    [:octicons-arrow-right-24: Start with Java](/adk-docs/get-started/java.md) <br>
 
 </div>

@@ -1,4 +1,4 @@
-# ADK Tutorials!
+# Build your agent with ADK
 
 Get started with the Agent Development Kit (ADK) through our collection of
 practical guides. These tutorials are designed in a simple, progressive,
@@ -23,5 +23,30 @@ applications with ADK. Explore our collection below and happy building:
     and ensuring safety via callbacks.
 
     [:octicons-arrow-right-24: Start learning here](agent-team.md)
+
+
+-   :material-console-line: **Streaming agent**
+
+    ---
+
+    Create your first streaming ADK agent.
+
+    [:octicons-arrow-right-24: More information](/adk-docs/get-started/streaming/)
+
+-   :material-console-line: **Tutorial**
+
+    ---
+
+    Create your first ADK multi-agent.
+
+    [:octicons-arrow-right-24: More information](../tutorials/index.md)
+
+-   :material-rocket-launch-outline: **Discover sample agents**
+
+    ---
+
+    Discover sample agents for retail, travel, customer service, and more!
+
+    [:octicons-arrow-right-24: Discover adk-samples](https://github.com/google/adk-samples){:target="_blank"}
 
 </div>
