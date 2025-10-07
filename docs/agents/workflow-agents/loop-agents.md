@@ -49,4 +49,7 @@ In this setup, the `LoopAgent` would manage the iterative process.  The `CriticA
         ```java
         --8<-- "examples/java/snippets/src/main/java/agents/workflow/LoopAgentExample.java:init"
         ```
-
+    === "Typescript"
+        ```typescript
+        --8<-- "examples/typescript/snippets/agents/workflow/loop_agent_doc_improv_agent.ts:init"
+        ```

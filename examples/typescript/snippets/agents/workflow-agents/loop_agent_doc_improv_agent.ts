@@ -15,7 +15,7 @@
 // --8<-- [start:init]
 // Part of agent.ts --> Follow https://google.github.io/adk-docs/get-started/quickstart/ to learn the setup
 
-import { LoopAgent, LlmAgent, SequentialAgent, FunctionTool, ToolContext } from '@google/adk';
+import { LoopAgent, LlmAgent, SequentialAgent, FunctionTool } from '@google/adk';
 import { z } from 'zod';
 
 // --- Constants ---
