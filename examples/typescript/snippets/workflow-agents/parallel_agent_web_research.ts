@@ -184,7 +184,7 @@ async function main() {
 
       console.log("Starting pipeline...");
       try {
-          for await (const event of runner.run({
+          for await (const event of runner.runAsync({
             userId,
             sessionId,
             newMessage: content,
