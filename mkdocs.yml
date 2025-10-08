@@ -118,7 +118,6 @@ nav:
     - get-started/index.md
     - Python: get-started/python.md
     - Java: get-started/java.md
-    - Installation help: get-started/installation.md
   - Build your agent:
     - tutorials/index.md
     - Multi-tool agent: get-started/quickstart.md
@@ -129,6 +128,7 @@ nav:
       - Java: get-started/streaming/quickstart-streaming-java.md
     - Testing: get-started/testing.md
     - Code samples: https://github.com/google/adk-samples
+    - Advanced setup: get-started/installation.md
   - Technical overview: get-started/about.md
   - Agents:
     - agents/index.md

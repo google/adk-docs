@@ -1,6 +1,6 @@
 # Python Quickstart for ADK
 
-This guide shows you how to get up and running with the Agent Development Kit
+This guide shows you how to get up and running with Agent Development Kit
 (ADK) for Python. Before you start, make sure you have the following installed:
 
 *   Python 3.9 or later
@@ -26,19 +26,19 @@ pip install google-adk
 
     === "Windows CMD"
 
-        ```shell
+        ```console
         .venv\Scripts\activate.bat
         ```
 
     === "Windows Powershell"
 
-        ```shell
+        ```console
         .venv\Scripts\Activate.ps1
         ```
 
     === "MacOS / Linux"
 
-        ```shell
+        ```bash
         source .venv/bin/activate
         ```
 
@@ -50,11 +50,6 @@ Run the `adk create` command to start a new agent project.
 adk create my_agent
 ```
 
-??? tip "Note: API key required"
-    The created project uses Gemini, which requires an API key. Create a key in
-    Google AI Studio on the [API Keys](https://aistudio.google.com/app/apikey) page.
-    You can also use a Google Cloud project ID with access to the Vertex AI.
-
 ### Explore the agent project
 
 The created agent project has the following structure, with the `agent.py`
@@ -62,15 +57,17 @@ file containing the main control code for the agent.
 
 ```shell
 my_agent/
-    agent.py      # main agent code.
+    agent.py      # main agent code
     .env          # API keys or project IDs
     __init__.py
 ```
 
+## Update your agent project
+
 The `agent.py` file contains a `root_agent` definition which is the only
 required element of an ADK agent. You can also define tools for the agent to
-use. The following example includes an additional `get_current_time` tool for
-use by the agent:
+use. Update the generated `agent.py` code to include a `get_current_time` tool
+for use by the agent, as shown in the following code:
 
 ```python
 from google.adk.agents.llm_agent import Agent
@@ -87,35 +84,65 @@ root_agent = Agent(
     name='root_agent',
     description="Tells the current time in a specified city.",
     instruction="You are a helpful assistant that tells the current time in cities. Use the 'get_current_time' tool for this purpose.",
-    tools=[get_current_time]
+    tools=[get_current_time],
 )
 ```
 
+### Set your API key
+
+This project uses the Gemini API, which requires an API key. If you
+don't already have Gemini API key, create a key in Google AI Studio on the 
+[API Keys](https://aistudio.google.com/app/apikey) page.
+
+In a terminal window, write your API key into an `.env` file as an environment variable:
+
+=== "Windows"
+
+    ```console title="Update: my_agent/.env"
+    echo 'GOOGLE_API_KEY="YOUR_API_KEY"' > .env
+    ```
+
+=== "MacOS / Linux"
+
+    ```bash title="Update: my_agent/.env"
+    echo 'export GOOGLE_API_KEY="YOUR_API_KEY"' > .env
+    ```
+
 ## Run your agent
+
+You can run your ADK agent with an interactive command-line interface using the
+`adk run` command or the ADK web user interface provided by the ADK using the
+`adk web` command. Both these options allow you to test and interact with your
+agent.
+
+### Run with command-line interface
 
 Run your agent using the `adk run` command-line tool.
 
-```shell
+```console
 adk run my_agent
 ```
 
-![adk-run.png](../assets/adk-run.png)
+![adk-run.png](/adk-docs/assets/adk-run.png)
 
-### Run agent with web interface
+### Run with web interface
 
 The ADK framework provides web interface you can use to test and interact with
-your agent. You can start the web interface using the following terminal
+your agent. You can start the web interface using the following command:
 
-```shell
+```console
 adk web my_agent
 ```
-This command starts a web server with a chat interface for your agent:
 
-![adk-web-dev-ui-chat.png](../assets/adk-web-dev-ui-chat.png)
+This command starts a web server with a chat interface for your agent. You can
+access the web interface at (http://localhost:8080). Select the agent at the
+upper right corner and type a request.
 
-## Next: build your agent
+![adk-web-dev-ui-chat.png](/adk-docs/assets/adk-web-dev-ui-chat.png)
+
+## Next: Build your agent
 
 Now that you have ADK installed and your first agent running, try building
-your own agent with our intermediate build guides:
+your own agent with our build guides:
 
 *  [Build your agent](/adk-docs/tutorials/)

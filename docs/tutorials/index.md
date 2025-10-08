@@ -13,33 +13,30 @@ applications with ADK. Explore our collection below and happy building:
 
 <div class="grid cards" markdown>
 
--   :material-console-line: **Agent Team**
+-   :material-console-line: **Multi-tool agent**
 
     ---
 
-    Learn to build an intelligent multi-agent weather bot and master key ADK
-    features: defining Tools, using multiple LLMs (Gemini, GPT, Claude) with
-    LiteLLM, orchestrating agent delegation, adding memory with session state,
-    and ensuring safety via callbacks.
+    Create a workflow that uses multiple tools.
 
-    [:octicons-arrow-right-24: Start learning here](agent-team.md)
+    [:octicons-arrow-right-24: Build a multi-tool agent](/adk-docs/get-started/index.md)
 
+-   :material-console-line: **Agent team**
+
+    ---
+
+    Build an multi-agent workflow including agent delegation,
+    session management, and safety callbacks. 
+
+    [:octicons-arrow-right-24: Build an agent team](/adk-docs/tutorials/agent-team.md)
 
 -   :material-console-line: **Streaming agent**
 
     ---
 
-    Create your first streaming ADK agent.
+    Create an agent for handling streamed content.
 
-    [:octicons-arrow-right-24: More information](/adk-docs/get-started/streaming/)
-
--   :material-console-line: **Tutorial**
-
-    ---
-
-    Create your first ADK multi-agent.
-
-    [:octicons-arrow-right-24: More information](../tutorials/index.md)
+    [:octicons-arrow-right-24: Build a streaming agent](/adk-docs/get-started/streaming/)
 
 -   :material-rocket-launch-outline: **Discover sample agents**
 
