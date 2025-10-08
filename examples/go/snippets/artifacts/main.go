@@ -1,0 +1,442 @@
+package main
+
+import (
+	"context"
+	"fmt"
+	"log"
+	"os"
+	"strings"
+
+	"google.golang.org/adk/agent"
+	"google.golang.org/adk/agent/llmagent"
+	"google.golang.org/adk/artifactservice"
+	"google.golang.org/adk/llm"
+	"google.golang.org/adk/llm/gemini"
+	"google.golang.org/adk/runner"
+	"google.golang.org/adk/session"
+	"google.golang.org/adk/sessionservice"
+	"google.golang.org/genai"
+)
+
+// This file contains snippets for the artifacts documentation.
+
+// BeforeModelCallback saves any images from the user input before calling the LLM.
+func BeforeModelCallback(ctx agent.Context, req *llm.Request) (*llm.Response, error) {
+	log.Println("[Callback] BeforeModelCallback triggered.")
+	// Get the artifact manager from the context.
+	artifacts := ctx.Artifacts()
+	// Check if there are any contents in the request.
+	if req.Contents != nil && len(req.Contents) > 0 {
+		// Get the last content from the user.
+		lastContent := req.Contents[len(req.Contents)-1]
+		// Check if the last content is from the user.
+		if lastContent.Role == genai.RoleUser {
+			// Iterate over the parts of the content.
+			for i, part := range lastContent.Parts {
+				// Check if the part is an image.
+				if part.InlineData != nil && strings.HasPrefix(part.InlineData.MIMEType, "image/") {
+					// Create a unique filename for the image.
+					fileName := fmt.Sprintf("user_image_%d.%s", i, strings.Split(part.InlineData.MIMEType, "/")[1])
+					// Save the image as an artifact.
+					if err := artifacts.Save(fileName, *part); err != nil {
+						log.Printf("[WARN] Failed to save user image: %v\n", err)
+					} else {
+						log.Printf("[INFO] Saved user image artifact: %s\n", fileName)
+					}
+				}
+			}
+		}
+	}
+	// Return nil to continue to the next callback or the LLM.
+	return nil, nil // Continue to next callback or LLM call
+}
+
+// configureRunner configures the runner with an in-memory artifact service.
+func configureRunner() {
+// --8<-- [start:configure-runner]
+// --8<-- [start:prerequisite]
+	// Create a new context.
+	ctx := context.Background()
+	// Set the app name.
+	const appName = "my_artifact_app"
+	// Create a new Gemini model.
+	model, err := gemini.NewModel(ctx, "gemini-2.5-flash", &genai.ClientConfig{})
+	if err != nil {
+		log.Fatalf("Failed to create model: %v", err)
+	}
+
+	// Create a new LLM agent.
+	myAgent, err := llmagent.New(llmagent.Config{
+		Model:       model,
+		Name:        "artifact_user_agent",
+		Instruction: "You are an agent that describes images.",
+		BeforeModel: []llmagent.BeforeModelCallback{
+			BeforeModelCallback,
+		},
+	})
+	if err != nil {
+		log.Fatalf("failed to create agent: %v", err)
+	}
+
+	// Create a new in-memory artifact service.
+	artifactService := artifactservice.Mem() // In-memory ArtifactService
+	// Create a new in-memory session service.
+	sessionService := sessionservice.Mem()
+
+	// Create a new runner.
+	r, err := runner.New(&runner.Config{
+		Agent:           myAgent,
+		AppName:         appName,
+		SessionService:  sessionService,
+		ArtifactService: artifactService, // Provide the service instance here
+	})
+	if err != nil {
+		log.Fatalf("Failed to create runner: %v", err)
+	}
+	log.Printf("Runner created successfully: %v", r)
+// --8<-- [end:prerequisite]
+// --8<-- [end:configure-runner]
+}
+
+// inMemoryServiceExample demonstrates how to set up an in-memory artifact service.
+func inMemoryServiceExample() {
+	// --8<-- [start:in-memory-service]
+	// Simply instantiate the class
+	inMemoryService := artifactservice.Mem()
+	log.Printf("InMemoryArtifactService (Go) instantiated: %T", inMemoryService)
+
+	// Use the service in your runner
+	// r, _ := runner.New(&runner.Config{
+	// 	Agent:           agent,
+	// 	AppName:         "my_app",
+	// 	SessionService:  sessionService,
+	// 	ArtifactService: artifactService,
+	// })
+	
+	// --8<-- [end:in-memory-service]
+}
+
+// --8<-- [start:loading-artifacts]
+// loadArtifactsCallback is a BeforeModel callback that loads a specific artifact
+// and adds its content to the LLM request.
+func loadArtifactsCallback(ctx agent.Context, req *llm.Request) (*llm.Response, error) {
+	log.Println("[Callback] loadArtifactsCallback triggered.")
+	// In a real app, you would parse the user's request to find a filename.
+	// For this example, we'll hardcode a filename to demonstrate.
+	const filenameToLoad = "generated_report.pdf"
+
+	// Load the artifact from the artifact service.
+	loadedPart, err := ctx.Artifacts().Load(filenameToLoad)
+	if err != nil {
+		log.Printf("Callback could not load artifact '%s': %v", filenameToLoad, err)
+		return nil, nil // File not found or error, continue to LLM.
+	}
+
+	log.Printf("Callback successfully loaded artifact '%s'.", filenameToLoad)
+	// Add the loaded artifact to the request for the LLM.
+	if len(req.Contents) > 0 {
+		lastContent := req.Contents[len(req.Contents)-1]
+		lastContent.Parts = append(lastContent.Parts, &loadedPart)
+		log.Printf("Added artifact '%s' to LLM request.", filenameToLoad)
+	}
+	// Return nil to continue to the next callback or the LLM.
+	return nil, nil // Continue to next callback or LLM call
+}
+// --8<-- [end:loading-artifacts]
+
+// representation demonstrates how to manually construct an artifact.
+func representation() {
+// --8<-- [start:representation]
+	// Create a byte slice with the image data.
+	imageBytes := []byte{0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A}
+	// Create a new artifact with the image data.
+	imageArtifact := &genai.Part{
+		InlineData: &genai.Blob{
+			MIMEType: "image/png",
+			Data:     imageBytes,
+		},
+	}
+	log.Printf("Artifact MIME Type: %s", imageArtifact.InlineData.MIMEType)
+	log.Printf("Artifact Data (first 8 bytes): %x...", imageArtifact.InlineData.Data[:8])
+// --8<-- [end:representation]
+}
+
+// artifactData demonstrates how to create an artifact from a file.
+func artifactData() {
+// --8<-- [start:artifact-data]
+	// Load imageBytes from a file
+	imageBytes, err := os.ReadFile("image.png")
+	if err != nil {
+		log.Fatalf("Failed to read image file: %v", err)
+	}
+
+	// genai.NewPartFromBytes is a convenience function that is a shorthand for
+	// creating a &genai.Part with the InlineData field populated.
+	// Create a new artifact from the image data.
+	imageArtifact := genai.NewPartFromBytes([]byte(imageBytes), "image/png")
+
+	log.Printf("Artifact MIME Type: %s", imageArtifact.InlineData.MIMEType)
+// --8<-- [end:artifact-data]
+}
+
+// namespacing demonstrates the difference between session and user-scoped artifacts.
+func namespacing() {
+// --8<-- [start:namespacing]
+	// A session-scoped artifact is only available within the current session.
+	sessionReportFilename := "summary.txt"
+	// A user-scoped artifact is available across all sessions for the current user.
+	userConfigFilename := "user:settings.json"
+	
+	// When saving 'summary.txt' via ctx.Artifacts().Save,
+	// it's tied to the current app_name, user_id, and session_id.
+	// ctx.Artifacts().Save(sessionReportFilename, *artifact);
+
+	// When saving 'user:settings.json' via ctx.Artifacts().Save,
+	// the ArtifactService implementation should recognize the "user:" prefix
+	// and scope it to app_name and user_id, making it accessible across sessions for that user.
+	// ctx.Artifacts().Save(userConfigFilename, *artifact);
+// --8<-- [end:namespacing]
+
+	log.Printf("Session filename: %s", sessionReportFilename)
+	log.Printf("User filename: %s", userConfigFilename)
+}
+
+// --8<-- [start:saving-artifacts]
+// saveReportCallback is a BeforeModel callback that saves a report from session state.
+func saveReportCallback(ctx agent.Context, req *llm.Request) (*llm.Response, error) {
+	// Get the report data from the session state.
+	reportData, err := ctx.Session().State().Get("report_bytes")
+	if err != nil {
+		log.Printf("No report data found in session state: %v", err)
+		return nil, nil // No report to save, continue normally.
+	}
+
+	// Check if the report data is in the expected format.
+	reportBytes, ok := reportData.([]byte)
+	if !ok {
+		log.Printf("Report data in session state was not in the expected byte format.")
+		return nil, nil
+	}
+
+	// Create a new artifact with the report data.
+	reportArtifact := &genai.Part{
+		InlineData: &genai.Blob{
+			MIMEType: "application/pdf",
+			Data:     reportBytes,
+		},
+	}
+	// Set the filename for the artifact.
+	filename := "generated_report.pdf"
+	// Save the artifact to the artifact service.
+	err = ctx.Artifacts().Save(filename, *reportArtifact)
+	if err != nil {
+		log.Printf("An unexpected error occurred during Go artifact save: %v", err)
+		// Depending on requirements, you might want to return an error to the user.
+		return nil, nil
+	}
+	log.Printf("Successfully saved Go artifact '%s'.", filename)
+	// Return nil to continue to the next callback or the LLM.
+	return nil, nil
+}
+// --8<-- [end:saving-artifacts]
+
+// --8<-- [start:listing-artifacts]
+// listUserFilesCallback is a BeforeModel callback that lists available artifacts
+// and adds the list as context to the LLM request.
+func listUserFilesCallback(ctx agent.Context, req *llm.Request) (*llm.Response, error) {
+	log.Println("[Callback] listUserFilesCallback triggered.")
+	// List the available artifacts from the artifact service.
+	availableFiles, err := ctx.Artifacts().List()
+	if err != nil {
+		log.Printf("An unexpected error occurred during Go artifact list: %v", err)
+		return nil, nil // Continue, but log the error.
+	}
+	// If there are available files, add them to the LLM request.
+	if len(availableFiles) > 0 {
+		var fileListStr strings.Builder
+		fileListStr.WriteString("SYSTEM: The following files are available:\n")
+		for _, fname := range availableFiles {
+			fileListStr.WriteString(fmt.Sprintf("- %s\n", fname))
+		}
+		// Prepend this information to the user's request for the LLM.
+		if len(req.Contents) > 0 {
+			lastContent := req.Contents[len(req.Contents)-1]
+			if len(lastContent.Parts) > 0 {
+					lastContent.Parts[0] =  genai.NewPartFromText(fileListStr.String() + lastContent.Parts[0].Text)
+					log.Println("Added file list to LLM request context.")
+			}
+		}
+	}
+	// Return nil to continue to the next callback or the LLM.
+	return nil, nil // Continue to next callback or LLM call
+}
+// --8<-- [end:listing-artifacts]
+
+
+
+// --- Local Implementations for  Testing ---
+
+// localArtifacts implements the agent.Artifacts interface for testing.
+type localArtifacts struct {
+	service   artifactservice.Service
+	ctx       context.Context
+	appName   string
+	userID    string
+	sessionID string
+}
+
+func (m *localArtifacts) Load(filename string) (*genai.Part, error) {
+	res, err := m.service.Load(m.ctx, &artifactservice.LoadRequest{
+		AppName:   m.appName,
+		UserID:    m.userID,
+		SessionID: m.sessionID,
+		FileName:  filename,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return res.Part, nil
+}
+
+func (m *localArtifacts) List() ([]string, error) {
+	res, err := m.service.List(m.ctx, &artifactservice.ListRequest{
+		AppName:   m.appName,
+		UserID:    m.userID,
+		SessionID: m.sessionID,
+	})
+	if err != nil {
+		return nil, err
+	}
+	return res.FileNames, nil
+}
+
+// MockState implements the session.State interface for testing.
+type MockState struct {
+	data map[string]any
+}
+
+func (s *MockState) Get(key string) (any, error) {
+	val, ok := s.data[key]
+	if !ok {
+		return nil, fmt.Errorf("key not found")
+	}
+	return val, nil
+}
+
+func (s *MockState) Set(key string, value any) error {
+	s.data[key] = value
+	return nil
+}
+
+// MockSession implements the session.Session interface for testing.
+type MockSession struct {
+	session.Session
+	mockState session.State
+}
+
+func (s *MockSession) State() session.State {
+	return s.mockState
+}
+
+// MockContext implements the agent.Context interface for testing.
+type MockContext struct {
+	agent.Context
+	mockArtifacts agent.Artifacts
+	mockSession   session.Session
+}
+
+func (m *MockContext) Artifacts() agent.Artifacts {
+	return m.mockArtifacts
+}
+
+func (m *MockContext) Session() session.Session {
+	return m.mockSession
+}
+
+func main() {
+	log.Println("--- Running  Snippets ---")
+
+	// Call each standalone snippet function.
+	log.Println("\n--- representation ---")
+	representation()
+
+	log.Println("\n--- artifactData ---")
+	artifactData()
+
+	log.Println("\n--- namespacing ---")
+	namespacing()
+
+	log.Println("\n--- configureRunner (demonstrates BeforeModelCallback for saving) ---")
+	configureRunner()
+
+	log.Println("\n--- inMemoryServiceExample ---")
+	inMemoryServiceExample()
+
+	log.Println("\n--- Running Agent with Multiple Callbacks ---")
+	// 1. Set up services
+	ctx := context.Background()
+	artifactService := artifactservice.Mem()
+	sessionService := sessionservice.Mem()
+
+	// 2. Set up the agent with multiple callbacks
+	model, _ := gemini.NewModel(ctx, "gemini-2.5-flash", &genai.ClientConfig{})
+	reportingAgent, _ := llmagent.New(llmagent.Config{
+		Model:       model,
+		Name:        "reporting_agent",
+		Instruction: "You are a reporting agent. You can see available files and their contents if they are loaded for you. Summarize any provided files.",
+		BeforeModel: []llmagent.BeforeModelCallback{
+			saveReportCallback,      // Saves report from state
+			listUserFilesCallback,   // Lists available files and adds to prompt
+			loadArtifactsCallback,   // Loads a specific file and adds to prompt
+		},
+	})
+
+	// 3. Create a session with some initial state to trigger `saveReportCallback`
+	initialState := map[string]any{
+		"report_bytes": []byte("%PDF-1.4... This is a test PDF."), // Mock PDF data
+	}
+	userID := "test-user"
+	session, _ := sessionService.Create(ctx, &sessionservice.CreateRequest{
+		AppName:   "my_app",
+		UserID:    userID,
+		SessionID: "test-session-callbacks",
+		State:     initialState,
+	})
+
+	// 4. Create and run the runner
+	r, _ := runner.New(&runner.Config{
+		Agent:           reportingAgent,
+		AppName:         "my_app",
+		SessionService:  sessionService,
+		ArtifactService: artifactService,
+	})
+
+	log.Println("\n--- Agent Run 1: Triggering callbacks ---")
+	log.Println("This run will trigger `saveReportCallback` (from session state), `listUserFilesCallback` (will see the newly saved file), and `loadArtifactsCallback` (will load it).")
+	userInput := &genai.Content{Parts: []*genai.Part{genai.NewPartFromText("Please summarize the report for me.")}}
+	for event, err := range r.Run(ctx, session.Session.ID().UserID, session.Session.ID().SessionID, userInput, &runner.RunConfig{
+		StreamingMode: runner.StreamingModeSSE,
+	}) {
+		if err != nil {
+			log.Printf("AGENT ERROR: %v\n", err)
+		} else if event.LLMResponse != nil && event.LLMResponse.Content != nil {
+			for _, p := range event.LLMResponse.Content.Parts {
+				fmt.Print(string(p.Text))
+			}
+		}
+	}
+	fmt.Println()
+
+	log.Println("\n--- Verifying artifacts after run ---")
+	// We can list artifacts directly from the service to see what the agent did.
+	listReq := &artifactservice.ListRequest{
+		AppName:   "my_app",
+		UserID:    userID,
+		SessionID: "test-session-callbacks",
+	}
+	files, err := artifactService.List(ctx, listReq)
+	if err != nil {
+		log.Fatalf("Failed to list artifacts from service: %v", err)
+	}
+	log.Printf("Artifacts in service: %v", files)
+}
