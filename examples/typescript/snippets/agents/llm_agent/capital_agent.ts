@@ -1,9 +1,23 @@
-import { LlmAgent, FunctionTool, InMemoryRunner } from '@google/adk';
+// Copyright 2025 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+import { LlmAgent, FunctionTool, InMemoryRunner, isFinalResponse } from '@google/adk';
 import { createUserContent, Schema, Type } from '@google/genai';
 import { z } from 'zod';
 
 // --- 1. Define Constants ---
-const APP_NAME = "agent_comparison_app_ts";
+const APP_NAME = "capital_app_ts";
 const USER_ID = "test_user_789";
 const SESSION_ID_TOOL_AGENT = "session_tool_agent_ts";
 const SESSION_ID_SCHEMA_AGENT = "session_schema_agent_ts";
@@ -67,10 +81,10 @@ const capitalAgentWithTool = new LlmAgent({
 The user will provide the country name in a JSON format like {"country": "country_name"}.
 1. Extract the country name.
 2. Use the \`get_capital_city\` tool to find the capital.
-3. Respond clearly to the user, stating the capital city found by the tool.
+3. Respond with a JSON object with the key 'capital' and the value as the capital city.
 `,
     tools: [getCapitalCityTool],
-    outputKey: "capital_tool_result",
+    outputKey: "capital_tool_result", // Store final text response
 });
 
 // Agent 2: Uses outputSchema (NO tools possible)
@@ -101,21 +115,25 @@ async function callAgentAndPrint(
     const message = createUserContent(queryJson);
 
     let finalResponseContent = "No final response received.";
-    for await (const event of runner.run({ userId: USER_ID, sessionId: sessionId, newMessage: message })) {
-        if (event.content?.parts && event.isFinalResponse()) {
-            finalResponseContent = event.content.parts.map(part => part.text ?? '').join('');
+    for await (const event of runner.runAsync({ userId: USER_ID, sessionId: sessionId, newMessage: message })) {
+        if (isFinalResponse(event) && event.content?.parts?.length) {
+            finalResponseContent = event.content.parts.map((part: any) => part.text ?? '').join('');
         }
     }
     console.log(`<<< Agent '${agent.name}' Response: ${finalResponseContent}`);
 
     // Check the session state
     const currentSession = await runner.sessionService.getSession({ appName: APP_NAME, userId: USER_ID, sessionId: sessionId });
+    if (!currentSession) {
+        console.log(`--- Session not found: ${sessionId} ---`);
+        return;
+    }
     const storedOutput = currentSession.state[agent.outputKey!];
 
     console.log(`--- Session State ['${agent.outputKey}']: `);
     try {
         // Attempt to parse and pretty print if it's JSON
-        const parsedOutput = JSON.parse(storedOutput);
+        const parsedOutput = JSON.parse(storedOutput as string);
         console.log(JSON.stringify(parsedOutput, null, 2));
     } catch (e) {
         // Otherwise, print as a string
@@ -132,8 +150,8 @@ async function main() {
 
     // Create sessions
     console.log("--- Creating Sessions ---");
-    await capitalRunner.sessionService.createSession({ appName: APP_NAME, userId: USER_ID, id: SESSION_ID_TOOL_AGENT });
-    await structuredRunner.sessionService.createSession({ appName: APP_NAME, userId: USER_ID, id: SESSION_ID_SCHEMA_AGENT });
+    await capitalRunner.sessionService.createSession({ appName: APP_NAME, userId: USER_ID, sessionId: SESSION_ID_TOOL_AGENT });
+    await structuredRunner.sessionService.createSession({ appName: APP_NAME, userId: USER_ID, sessionId: SESSION_ID_SCHEMA_AGENT });
 
     console.log("\n--- Testing Agent with Tool ---");
     await callAgentAndPrint(capitalRunner, capitalAgentWithTool, SESSION_ID_TOOL_AGENT, '{"country": "France"}');
