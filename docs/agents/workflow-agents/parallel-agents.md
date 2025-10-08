@@ -52,3 +52,7 @@ These research tasks are independent.  Using a `ParallelAgent` allows them to ru
         ```java
          --8<-- "examples/java/snippets/src/main/java/agents/workflow/ParallelResearchPipeline.java:full_code"
         ```
+    === "Typescript"
+        ```typescript
+         --8<-- "examples/typescript/snippets/agents/workflow/parallel_agent_web_research.ts:init"
+        ```

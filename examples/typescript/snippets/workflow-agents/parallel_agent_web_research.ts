@@ -18,8 +18,10 @@ import {
   SequentialAgent,
   InMemoryRunner,
   GOOGLE_SEARCH,
-  createUserContent,
+  isFinalResponse,
 } from "@google/adk";
+
+import {createUserContent} from '@google/genai';
 
 // --- Configuration ---
 const APP_NAME = "parallel_research_app";
@@ -188,7 +190,7 @@ async function main() {
             newMessage: content,
         })) {
             const authorName = event.author || "System";
-            const isFinal = event.isFinalResponse();
+            const isFinal = isFinalResponse(event);
             console.log(`  [Event] From: ${authorName}, Final: ${isFinal}`); // Basic event logging
 
             // Check if it's a final response from one of the researcher agents
