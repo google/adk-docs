@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { SequentialAgent, LlmAgent, InMemoryRunner } from '@google/adk';
+import { SequentialAgent, LlmAgent, InMemoryRunner, isFinalResponse } from '@google/adk';
 import { Content } from '@google/genai';
 
 // --- Constants ---
@@ -131,16 +131,16 @@ async function callCodePipeline(query: string, userId: string, sessionId: string
 
     // --- Explicit Session Creation/Check BEFORE run ---
     const sessionService = runner.sessionService;
-    const session = await sessionService.createSession({appName: APP_NAME, userId, sessionId});
+    await sessionService.createSession({appName: APP_NAME, userId, sessionId});
   
     // --- Run the Agent ---
-    for await (const event of runner.run({
+    for await (const event of runner.runAsync({
         userId,
         sessionId,
         newMessage: content,
     })) {
         const authorName = event.author || "System";
-        const isFinal = event.isFinalResponse();
+        const isFinal = isFinalResponse(event);
 
         if (isFinal && event.content && event.content.parts) {
             const outputText = event.content.parts[0].text!.trim();
