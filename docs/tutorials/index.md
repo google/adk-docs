@@ -46,4 +46,15 @@ applications with ADK. Explore our collection below and happy building:
 
     [:octicons-arrow-right-24: Discover adk-samples](https://github.com/google/adk-samples){:target="_blank"}
 
+-   :material-console-line: **AG-UI Protocol**
+
+    ---
+
+    Learn how to use the AG-UI middleware to wire up your ADK agent to the AG-UI
+    protocol and to build web applications with empowering features such as Human
+    In The Loop, Agentic and Tool Based Generative UI, and Shared State using
+    CopilotKit as an AG-UI compatible react client.
+
+    [:octicons-arrow-right-24: Start learning here](ag-ui.md)
+
 </div>
