@@ -259,7 +259,10 @@ func main() {
 	})
 
 	var finalResponse string
-	for event := range events {
+	for event, err := range events {
+		if err != nil {
+			log.Fatalf("An error occurred during agent execution: %v", err)
+		}
 		if event.LLMResponse != nil && event.LLMResponse.Content != nil {
 			for _, part := range event.LLMResponse.Content.Parts {
 				// Accumulate text from all parts of the final response.

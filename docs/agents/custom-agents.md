@@ -55,11 +55,11 @@ The core of any custom agent is the method where you define its unique asynchron
 
 === "Go"
 
-    In Go, you implement the `Run` method of the `agent.Agent` interface.
+    In Go, you implement the `Run` method as part of a struct that satisfies the `agent.Agent` interface. The actual logic is typically a method on your custom agent struct.
 
-    *   **Signature:** `Run(ctx context.Context, userID, sessionID string, input *genai.Content, runConfig *runner.RunConfig) (<-chan runner.Event, <-chan error)`
-    *   **Channels:** The `Run` method returns two channels: one for events (`runner.Event`) and one for errors. This is the standard way to handle asynchronous operations in Go.
-    *   **`ctx` (Context):** The `context.Context` provides a way to manage cancellation and deadlines across API boundaries.
+    *   **Signature:** `Run(ctx agent.InvocationContext) iter.Seq2[*session.Event, error]`
+    *   **Iterator:** The `Run` method returns an iterator (`iter.Seq2`) that yields events and errors. This is the standard way to handle streaming results from an agent's execution.
+    *   **`ctx` (InvocationContext):** The `agent.InvocationContext` provides access to the session, including state, and other crucial runtime information.
     *   **Session State:** You can access the session state through the `sessionservice`.
 
 **Key Capabilities within the Core Asynchronous Method:**
@@ -141,12 +141,18 @@ The core of any custom agent is the method where you define its unique asynchron
     1. **Calling Sub-Agents:** You invoke sub-agents by calling their `Run` method.
 
           ```go
-          // Example: Running one sub-agent
-          eventChan, errChan := someSubAgent.Run(ctx, userID, sessionID, input, runConfig)
-          // Handle events and errors
+          // Example: Running one sub-agent and yielding its events
+          for event, err := range someSubAgent.Run(ctx) {
+              if err != nil {
+                  // Handle or propagate the error
+                  return
+              }
+              // Yield the event up to the caller
+              yield(event, nil)
+          }
           ```
 
-    2. **Managing State:** Read from and write to the session state to pass data between sub-agent calls or make decisions. The `ctx` (`agent.Context`) is passed directly to your agent's `Run` function.
+          // The `ctx` (`agent.InvocationContext`) is passed directly to your agent's `Run` function.
           ```go
           // Read data set by a previous agent
           previousResult, err := ctx.Session().State().Get("some_key")
@@ -247,16 +253,16 @@ Let's illustrate the power of custom agents with an example pattern: a multi-sta
 
 === "Go"
 
-    The `Run` method orchestrates the sub-agents using goroutines and channels for asynchronous control flow.
+    The `Run` method orchestrates the sub-agents by calling their respective `Run` methods in a loop and yielding their events.
 
     ```go
     --8<-- "examples/go/snippets/agents/custom-agent/storyflow_agent.go:executionlogic"
     ```
     **Explanation of Logic:**
 
-    1. The initial `story_generator` runs. Its output is expected to be in the session state under the key `"current_story"`.
-    2. The `loop_agent` runs, which internally calls the `critic` and `reviser` sequentially for `max_iterations` times. They read/write `current_story` and `criticism` from/to the state.
-    3. The `sequential_agent` runs, calling `grammar_check` then `tone_check`, reading `current_story` and writing `grammar_suggestions` and `tone_check_result` to the state.
+    1. The initial `storyGenerator` runs. Its output is expected to be in the session state under the key `"current_story"`.
+    2. The `loopAgent` runs, which internally calls the `critic` and `reviser` sequentially for `max_iterations` times. They read/write `current_story` and `criticism` from/to the state.
+    3. The `sequentialAgent` runs, calling `grammar_check` then `tone_check`, reading `current_story` and writing `grammar_suggestions` and `tone_check_result` to the state.
     4. **Custom Part:** The code checks the `tone_check_result` from the state. If it's "negative", the `story_generator` is called *again*, overwriting the `current_story` in the state. Otherwise, the flow ends.
 
 ---
