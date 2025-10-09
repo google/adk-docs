@@ -300,6 +300,16 @@ agent will be unable to function.
 
         ![adk-web-dev-ui-audio.png](../assets/adk-web-dev-ui-audio.png)
 
+        **Customizing the Logo**
+
+        You can customize the logo displayed in the web UI by using the `--logo-text` and `--logo-image-url` options with the `adk web` command.
+
+        ```shell
+        adk web --logo-text "My Agent" --logo-image-url "https://www.example.com/logo.png"
+        ```
+
+        Both options must be provided to customize the logo.
+
     === "Terminal (adk run)"
 
         !!! tip
