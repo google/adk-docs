@@ -9,16 +9,16 @@ import (
 	"google.golang.org/adk/agent/llmagent"
 	"google.golang.org/adk/agent/workflowagents/parallelagent"
 	"google.golang.org/adk/agent/workflowagents/sequentialagent"
-	"google.golang.org/adk/llm/gemini"
+	"google.golang.org/adk/model/gemini"
 	"google.golang.org/adk/runner"
-	"google.golang.org/adk/sessionservice"
+	"google.golang.org/adk/session"
 	"google.golang.org/genai"
 )
 
 const (
 	appName   = "ParallelResearchAgent"
 	userID    = "test_user_789"
-	modelName = "gemini-1.5-flash"
+	modelName = "gemini-2.5-flash"
 )
 
 func main() {
@@ -95,8 +95,8 @@ Combine the following research summaries into a single, coherent report:
 	}
 	// init_end
 
-	sessionService := sessionservice.Mem()
-	r, err := runner.New(&runner.Config{
+	sessionService := session.InMemoryService()
+	r, err := runner.New(runner.Config{
 		AppName:        appName,
 		Agent:          pipeline,
 		SessionService: sessionService,
@@ -105,7 +105,7 @@ Combine the following research summaries into a single, coherent report:
 		return fmt.Errorf("failed to create runner: %v", err)
 	}
 
-	session, err := sessionService.Create(ctx, &sessionservice.CreateRequest{
+	session, err := sessionService.Create(ctx, &session.CreateRequest{
 		AppName: appName,
 		UserID:  userID,
 	})
@@ -119,7 +119,9 @@ Combine the following research summaries into a single, coherent report:
 	}
 
 	fmt.Printf("Running parallel research pipeline for prompt: %q\n---\n", prompt)
-	for event, err := range r.Run(ctx, userID, session.Session.ID().SessionID, userMsg, nil) {
+	for event, err := range r.Run(ctx, userID, session.Session.ID(), userMsg, &agent.RunConfig{
+		StreamingMode: agent.StreamingModeSSE,
+	}) {
 		if err != nil {
 			return fmt.Errorf("error during agent execution: %v", err)
 		}

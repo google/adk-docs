@@ -8,9 +8,9 @@ import (
 	"google.golang.org/adk/agent"
 	"google.golang.org/adk/agent/llmagent"
 	"google.golang.org/adk/agent/workflowagents/loopagent"
-	"google.golang.org/adk/llm/gemini"
+	"google.golang.org/adk/model/gemini"
 	"google.golang.org/adk/runner"
-	"google.golang.org/adk/sessionservice"
+	"google.golang.org/adk/session"
 	"google.golang.org/adk/tool"
 	"google.golang.org/genai"
 )
@@ -18,21 +18,22 @@ import (
 const (
 	appName   = "DocImprovAgent"
 	userID    = "test_user_123"
-	modelName = "gemini-1.5-flash"
+	modelName = "gemini-2.5-flash"
 )
 
 // init_start
 // ExitLoopArgs defines the (empty) arguments for the ExitLoop tool.
 type ExitLoopArgs struct{}
 
+// ExitLoopResults defines the output of the ExitLoop tool.
+type ExitLoopResults struct {
+	Status string `json:"status"`
+}
+
 // ExitLoop is a tool that signals the loop to terminate by setting Escalate to true.
-func ExitLoop(ctx context.Context, args ExitLoopArgs) (map[string]any, error) {
-	toolCtx, ok := tool.FromContext(ctx)
-	if !ok {
-		return nil, fmt.Errorf("tool.Context not found in context")
-	}
-	toolCtx.EventActions.Escalate = true
-	return map[string]any{"status": "exiting loop"}, nil
+func ExitLoop(ctx tool.Context, input ExitLoopArgs) ExitLoopResults {
+	ctx.Actions().Escalate = true
+	return ExitLoopResults{Status: "exiting loop"}
 }
 
 func main() {
@@ -110,8 +111,8 @@ Otherwise, provide constructive feedback for improvement.`,
 	}
 	// init_end
 
-	sessionService := sessionservice.Mem()
-	r, err := runner.New(&runner.Config{
+	sessionService := session.InMemoryService()
+	r, err := runner.New(runner.Config{
 		AppName:        appName,
 		Agent:          refinementLoop,
 		SessionService: sessionService,
@@ -120,7 +121,7 @@ Otherwise, provide constructive feedback for improvement.`,
 		return fmt.Errorf("failed to create runner: %v", err)
 	}
 
-	session, err := sessionService.Create(ctx, &sessionservice.CreateRequest{
+	session, err := sessionService.Create(ctx, &session.CreateRequest{
 		AppName: appName,
 		UserID:  userID,
 	})
@@ -134,7 +135,9 @@ Otherwise, provide constructive feedback for improvement.`,
 	}
 
 	fmt.Printf("Running agent loop for prompt: %q\n---\n", prompt)
-	for event, err := range r.Run(ctx, userID, session.Session.ID().SessionID, userMsg, nil) {
+	for event, err := range r.Run(ctx, userID, session.Session.ID(), userMsg, &agent.RunConfig{
+		StreamingMode: agent.StreamingModeSSE,
+	}) {
 		if err != nil {
 			return fmt.Errorf("error during agent execution: %v", err)
 		}
