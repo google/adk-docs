@@ -8,9 +8,9 @@ import (
 	"google.golang.org/adk/agent"
 	"google.golang.org/adk/agent/llmagent"
 	"google.golang.org/adk/agent/workflowagents/sequentialagent"
-	"google.golang.org/adk/llm/gemini"
+	"google.golang.org/adk/model/gemini"
 	"google.golang.org/adk/runner"
-	"google.golang.org/adk/sessionservice"
+	"google.golang.org/adk/session"
 	"google.golang.org/genai"
 )
 
@@ -123,8 +123,8 @@ Do not add any other text before or after the code block.`,
 	}
 	// init_end
 
-	sessionService := sessionservice.Mem()
-	r, err := runner.New(&runner.Config{
+	sessionService := session.InMemoryService()
+	r, err := runner.New(runner.Config{
 		AppName:        appName,
 		Agent:          codePipelineAgent,
 		SessionService: sessionService,
@@ -133,7 +133,7 @@ Do not add any other text before or after the code block.`,
 		return fmt.Errorf("failed to create runner: %v", err)
 	}
 
-	session, err := sessionService.Create(ctx, &sessionservice.CreateRequest{
+	session, err := sessionService.Create(ctx, &session.CreateRequest{
 		AppName: appName,
 		UserID:  userID,
 	})
@@ -147,8 +147,8 @@ Do not add any other text before or after the code block.`,
 	}
 
 	fmt.Printf("Running agent pipeline for prompt: %q\n---\n", prompt)
-	for event, err := range r.Run(ctx, userID, session.Session.ID().SessionID, userMsg, &runner.RunConfig{
-		StreamingMode: runner.StreamingModeSSE,
+	for event, err := range r.Run(ctx, userID, session.Session.ID(), userMsg, &agent.RunConfig{
+		StreamingMode: agent.StreamingModeSSE,
 	}) {
 		if err != nil {
 			return fmt.Errorf("error during agent execution: %v", err)
