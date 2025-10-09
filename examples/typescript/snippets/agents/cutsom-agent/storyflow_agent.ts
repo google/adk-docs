@@ -31,7 +31,7 @@ import { Content, Part } from '@google/genai';
 const APP_NAME = "story_app_ts";
 const USER_ID = "12345";
 const SESSION_ID = "123344_ts";
-const GEMINI_MODEL = "gemini-2.5";
+const GEMINI_MODEL = "gemini-2.5-flash";
 
 // --- Custom Orchestrator Agent ---
 // --8<-- [start:init]
@@ -93,16 +93,17 @@ class StoryFlowAgent extends BaseAgent {
   // --8<-- [start:executionlogic]
   // Implements the custom orchestration logic for the story workflow.
   async* runLiveImpl(ctx: InvocationContext): AsyncGenerator<Event, void, undefined> {
-    yield* this.runImpl(ctx);
+    yield* this.runAsyncImpl(ctx);
   }
 
-  async* runImpl(ctx: InvocationContext): AsyncGenerator<Event, void, undefined> {
+  // Implements the custom orchestration logic for the story workflow.
+  async* runAsyncImpl(ctx: InvocationContext): AsyncGenerator<Event, void, undefined> {
     console.log(`[${this.name}] Starting story generation workflow.`);
 
     // 1. Initial Story Generation
     console.log(`[${this.name}] Running StoryGenerator...`);
-    for await (const event of this.storyGenerator.run(ctx)) {
-      console.log(`[${this.name}] Event from StoryGenerator:`, JSON.stringify(event, null, 2));
+    for await (const event of this.storyGenerator.runAsync(ctx)) {
+      console.log(`[${this.name}] Event from StoryGenerator: ${JSON.stringify(event, null, 2)}`);
       yield event;
     }
 
@@ -115,16 +116,16 @@ class StoryFlowAgent extends BaseAgent {
 
     // 2. Critic-Reviser Loop
     console.log(`[${this.name}] Running CriticReviserLoop...`);
-    for await (const event of this.loopAgent.run(ctx)) {
-      console.log(`[${this.name}] Event from CriticReviserLoop:`, JSON.stringify(event, null, 2));
+    for await (const event of this.loopAgent.runAsync(ctx)) {
+      console.log(`[${this.name}] Event from CriticReviserLoop: ${JSON.stringify(event, null, 2)}`);
       yield event;
     }
     console.log(`[${this.name}] Story state after loop: ${ctx.session.state['current_story']}`);
 
     // 3. Sequential Post-Processing (Grammar and Tone Check)
     console.log(`[${this.name}] Running PostProcessing...`);
-    for await (const event of this.sequentialAgent.run(ctx)) {
-      console.log(`[${this.name}] Event from PostProcessing:`, JSON.stringify(event, null, 2));
+    for await (const event of this.sequentialAgent.runAsync(ctx)) {
+      console.log(`[${this.name}] Event from PostProcessing: ${JSON.stringify(event, null, 2)}`);
       yield event;
     }
     
@@ -134,8 +135,8 @@ class StoryFlowAgent extends BaseAgent {
 
     if (toneCheckResult === "negative") {
       console.log(`[${this.name}] Tone is negative. Regenerating story...`);
-      for await (const event of this.storyGenerator.run(ctx)) {
-        console.log(`[${this.name}] Event from StoryGenerator (Regen):`, JSON.stringify(event, null, 2));
+      for await (const event of this.storyGenerator.runAsync(ctx)) {
+        console.log(`[${this.name}] Event from StoryGenerator (Regen): ${JSON.stringify(event, null, 2)}`);
         yield event;
       }
     } else {
@@ -152,35 +153,40 @@ class StoryFlowAgent extends BaseAgent {
 const storyGenerator = new LlmAgent({
     name: "StoryGenerator",
     model: GEMINI_MODEL,
-    instruction: `You are a story writer. Write a short story (around 100 words), on the following topic: {{topic}}`,
+    instruction: `You are a story writer. Write a short story (around 100 words), on the following topic: {topic}`,
     outputKey: "current_story",
 });
 
 const critic = new LlmAgent({
     name: "Critic",
     model: GEMINI_MODEL,
-    instruction: `You are a story critic. Review the story provided: {{current_story}}. Provide 1-2 sentences of constructive criticism on how to improve it. Focus on plot or character.`,
+    instruction: `You are a story critic. Review the story provided: {{current_story}}. Provide 1-2 sentences of constructive criticism
+on how to improve it. Focus on plot or character.`,
     outputKey: "criticism",
 });
 
 const reviser = new LlmAgent({
     name: "Reviser",
     model: GEMINI_MODEL,
-    instruction: `You are a story reviser. Revise the story provided: {{current_story}}, based on the criticism in {{criticism}}. Output only the revised story.`,
+    instruction: `You are a story reviser. Revise the story provided: {{current_story}}, based on the criticism in
+{{criticism}}. Output only the revised story.`,
     outputKey: "current_story", // Overwrites the original story
 });
 
 const grammarCheck = new LlmAgent({
     name: "GrammarCheck",
     model: GEMINI_MODEL,
-    instruction: `You are a grammar checker. Check the grammar of the story provided: {{current_story}}. Output only the suggested corrections as a list, or output 'Grammar is good!' if there are no errors.`,
+    instruction: `You are a grammar checker. Check the grammar of the story provided: {current_story}. Output only the suggested
+corrections as a list, or output 'Grammar is good!' if there are no errors.`,
     outputKey: "grammar_suggestions",
 });
 
 const toneCheck = new LlmAgent({
     name: "ToneCheck",
     model: GEMINI_MODEL,
-    instruction: `You are a tone analyzer. Analyze the tone of the story provided: {{current_story}}. Output only one word: 'positive' if the tone is generally positive, 'negative' if the tone is generally negative, or 'neutral' otherwise.`,
+    instruction: `You are a tone analyzer. Analyze the tone of the story provided: {current_story}. Output only one word: 'positive' if
+the tone is generally positive, 'negative' if the tone is generally negative, or 'neutral'
+otherwise.`,
     outputKey: "tone_check_result",
 });
 // --8<-- [end:llmagents]
@@ -210,13 +216,12 @@ async function setupRunnerAndSession() {
     sessionId: SESSION_ID,
     state: INITIAL_STATE,
   });
-  console.log("Initial session state:", session.state);
+  console.log(`Initial session state: ${JSON.stringify(session.state, null, 2)}`);
   return runner;
 }
 
 // --- Function to Interact with the Agent ---
 async function callAgent(runner: InMemoryRunner, userInputTopic: string) {
-  console.log("\n--- Agent Interaction Result ---");
   const currentSession = await runner.sessionService.getSession({
       appName: APP_NAME,
       userId: USER_ID,
@@ -224,7 +229,6 @@ async function callAgent(runner: InMemoryRunner, userInputTopic: string) {
   });
 
   if (!currentSession) {
-      console.error("Session not found!");
       return;
   }
   // Update the state with the new topic for this run
@@ -237,31 +241,27 @@ async function callAgent(runner: InMemoryRunner, userInputTopic: string) {
   };
 
   let finalResponse = "No final response captured.";
-  for await (const event of runner.run({
+  for await (const event of runner.runAsync({
     userId: USER_ID,
     sessionId: SESSION_ID,
     newMessage: content
   })) {
     if (event.content?.parts && isFinalResponse(event)) {
+      console.log(`Potential final response from [${event.author}]: ${event.content.parts.map(part => part.text ?? '').join('')}`);
       finalResponse = event.content.parts.map(part => part.text ?? '').join('');
-      console.log(`Potential final response from [${event.author}]: ${finalResponse}`);
     }
   }
-
-  console.log("\nAgent Final Response: ", finalResponse);
 
   const finalSession = await runner.sessionService.getSession({
     appName: APP_NAME,
     userId: USER_ID,
     sessionId: SESSION_ID
   });
-  
-  if (finalSession) {
-    console.log("Final Session State:");
-    console.log(JSON.stringify(finalSession.state, null, 2));
-  } else {
-    console.log("Final session not found.");
-  }
+
+  console.log("\n--- Agent Interaction Result ---");
+  console.log("Agent Final Response: ", finalResponse);
+  console.log("Final Session State:");
+  console.log(JSON.stringify(finalSession?.state, null, 2));
   console.log("-------------------------------\n");
 }
 
