@@ -112,6 +112,26 @@ For example, a query tool can be designed to expect a policy to be read from the
     query_tool = QueryTool(policy);
     // For this example, we'll assume it gets stored somewhere accessible.
     ```
+=== "Go"
+    ```go
+    // Conceptual example: Setting policy data intended for tool context
+    // In a real ADK app, this might be set in InvocationContext.Session.State
+    // or passed during tool initialization, then retrieved via ToolContext.
+
+    policy := map[string]interface{}{
+    	"select_only": true,
+    	"tables":      []string{"mytable1", "mytable2"},
+    }
+
+    // Conceptual: Storing policy where the tool can access it via ToolContext later.
+    // This specific line might look different in practice.
+    // For example, storing in session state:
+    invocationContext.Session.State["query_tool_policy"] = policy
+
+    // Or maybe passing during tool init:
+    // queryTool := NewQueryTool(policy)
+    // For this example, we'll assume it gets stored somewhere accessible.
+    ```
 
 During the tool execution, [**`Tool Context`**](../tools/index.md#tool-context) will be passed to the tool:
 
@@ -181,6 +201,57 @@ During the tool execution, [**`Tool Context`**](../tools/index.md#tool-context) 
         successResult.put("results", Arrays.asList("result_item1", "result_item2"));
         return successResult;
       }
+    }
+    ```
+=== "Go"
+    ```go
+    import (
+    	"fmt"
+    	"strings"
+
+    	"google.com/agent/tools"
+    )
+
+    func query(query string, toolContext *tools.ToolContext) (any, error) {
+    	// Assume 'policy' is retrieved from context, e.g., via session state:
+    	policy, _ := toolContext.InvocationContext.Session.State["query_tool_policy"].(map[string]interface{})
+    	actualTables := explainQuery(query) // Hypothetical function call
+
+    	// --- Placeholder Policy Enforcement ---
+    	if tables, ok := policy["tables"].([]string); ok {
+    		if !isSubset(actualTables, tables) {
+    			// Return an error to signal failure
+    			allowed := strings.Join(tables, ", ")
+    			if allowed == "" {
+    				allowed = "(None defined)"
+    			}
+    			return nil, fmt.Errorf("query targets unauthorized tables. Allowed: %s", allowed)
+    		}
+    	}
+
+    	if selectOnly, _ := policy["select_only"].(bool); selectOnly {
+    		if !strings.HasPrefix(strings.ToUpper(strings.TrimSpace(query)), "SELECT") {
+    			return nil, fmt.Errorf("policy restricts queries to SELECT statements only")
+    		}
+    	}
+    	// --- End Policy Enforcement ---
+
+    	fmt.Printf("Executing validated query (hypothetical): %s\n", query)
+    	return map[string]interface{}{"status": "success", "results": []string{"..."}}, nil
+    }
+
+    // Helper function to check if a is a subset of b
+    func isSubset(a, b []string) bool {
+    	set := make(map[string]bool)
+    	for _, item := range b {
+    		set[item] = true
+    	}
+    	for _, item := range a {
+    		if _, found := set[item]; !found {
+    			return false
+    		}
+    	}
+    	return true
     }
     ```
 
@@ -278,6 +349,53 @@ When modifications to the tools to add guardrails aren't possible, the [**`Befor
             .tools(anyToolToUse) // Define the tool to be used
             .build();
     }
+    ```
+=== "Go"
+    ```go
+    import (
+    	"fmt"
+    	"reflect"
+
+    	"google.com/agent/callbacks"
+    	"google.com/agent/tools"
+    )
+
+    // Hypothetical callback function
+    func validateToolParams(
+    	callbackContext *callbacks.CallbackContext,
+    	toolDef *tools.Tool,
+    	args map[string]any,
+    	toolContext *tools.ToolContext,
+    ) (map[string]any, error) {
+    	fmt.Printf("Callback triggered for tool: %s, args: %v\n", toolDef.Name, args)
+
+    	// Example validation: Check if a required user ID from state matches an arg
+    	expectedUserID, ok := callbackContext.State["session_user_id"]
+    	if !ok {
+    		// This is an unexpected failure, return an error.
+    		return nil, fmt.Errorf("internal error: session_user_id not found in state")
+    	}
+    	actualUserIDInArgs, _ := args["user_id_param"] // Assuming tool takes 'user_id_param'
+
+    	if !reflect.DeepEqual(actualUserIDInArgs, expectedUserID) {
+    		fmt.Println("Validation Failed: User ID mismatch!")
+    		// Return a map to prevent tool execution and provide feedback to the model.
+    		// This is not a Go error, but a message for the agent.
+    		return map[string]any{"error": "Tool call blocked: User ID mismatch."}, nil
+    	}
+
+    	// Return nil, nil to allow the tool call to proceed if validation passes
+    	fmt.Println("Callback validation passed.")
+    	return nil, nil
+    }
+
+    // Hypothetical Agent setup
+    // rootAgent, err := llmagent.NewBuilder("gemini-2.0-flash").
+    // 	SetName("root_agent").
+    // 	SetInstruction("...").
+    // 	SetBeforeToolCallback(validateToolParams).
+    // 	AddTools(queryToolInstance).
+    // 	Build(context.Background())
     ```
 
 However, when adding security guardrails to your agent applications, plugins are the recommended approach for implementing policies that are not specific to a single agent. Plugins are designed to be self-contained and modular, allowing you to create individual plugins for specific security policies, and apply them globally at the runner level. This means that a security plugin can be configured once and applied to every agent that uses the runner, ensuring consistent security guardrails across your entire application without repetitive code.
