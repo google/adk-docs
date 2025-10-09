@@ -153,16 +153,16 @@ don't already have Gemini API key, create a key in Google AI Studio on the
 In a terminal window, write your API key into your `.env` file of your project
 to set environment variables:
 
-=== "Windows"
-
-    ```console title="Update: my_agent/.env"
-    echo 'GOOGLE_API_KEY="YOUR_API_KEY"' > .env
-    ```
-
 === "MacOS / Linux"
 
     ```bash title="Update: my_agent/.env"
     echo 'export GOOGLE_API_KEY="YOUR_API_KEY"' > .env
+    ```
+
+=== "Windows"
+
+    ```console title="Update: my_agent/.env"
+    echo 'set GOOGLE_API_KEY="YOUR_API_KEY"' > env.bat
     ```
 
 ??? tip "Using other AI models with ADK"
@@ -238,7 +238,7 @@ Run your agent with the command-line interface `AgentCliRunner` class
 using the following Maven command:
 
 ```console
-# Remember to load keys and settings from .env file: source .env
+# Remember to load keys and settings: source .env OR env.bat
 mvn compile exec:java -Dexec.mainClass="com.example.agent.AgentCliRunner"
 ```
 
@@ -249,7 +249,7 @@ mvn compile exec:java -Dexec.mainClass="com.example.agent.AgentCliRunner"
 Run your agent with the ADK web interface using the following Maven command:
 
 ```console
-# Remember to load keys and settings from .env file: source .env
+# Remember to load keys and settings: source .env OR env.bat
 mvn compile exec:java \
     -Dexec.mainClass="com.google.adk.web.AdkWebServer" \
     -Dexec.args="--adk.agents.source-dir=target --server.port=8000"
