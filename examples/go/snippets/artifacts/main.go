@@ -9,19 +9,18 @@ import (
 
 	"google.golang.org/adk/agent"
 	"google.golang.org/adk/agent/llmagent"
-	"google.golang.org/adk/artifactservice"
-	"google.golang.org/adk/llm"
-	"google.golang.org/adk/llm/gemini"
+	"google.golang.org/adk/artifact"
+	"google.golang.org/adk/model"
+	"google.golang.org/adk/model/gemini"
 	"google.golang.org/adk/runner"
 	"google.golang.org/adk/session"
-	"google.golang.org/adk/sessionservice"
 	"google.golang.org/genai"
 )
 
 // This file contains snippets for the artifacts documentation.
 
-// BeforeModelCallback saves any images from the user input before calling the LLM.
-func BeforeModelCallback(ctx agent.Context, req *llm.Request) (*llm.Response, error) {
+// BeforeModelCallback saves any images from the user input before calling the model.
+func BeforeModelCallback(ctx agent.CallbackContext, req *model.LLMRequest) (*model.LLMResponse, error) {
 	log.Println("[Callback] BeforeModelCallback triggered.")
 	// Get the artifact manager from the context.
 	artifacts := ctx.Artifacts()
@@ -47,7 +46,7 @@ func BeforeModelCallback(ctx agent.Context, req *llm.Request) (*llm.Response, er
 			}
 		}
 	}
-	// Return nil to continue to the next callback or the LLM.
+	// Return nil to continue to the next callback or the model.
 	return nil, nil // Continue to next callback or LLM call
 }
 
@@ -79,12 +78,12 @@ func configureRunner() {
 	}
 
 	// Create a new in-memory artifact service.
-	artifactService := artifactservice.Mem() // In-memory ArtifactService
+	artifactService := artifact.InMemoryService()
 	// Create a new in-memory session service.
-	sessionService := sessionservice.Mem()
+	sessionService := session.InMemoryService()
 
 	// Create a new runner.
-	r, err := runner.New(&runner.Config{
+	r, err := runner.New(runner.Config{
 		Agent:           myAgent,
 		AppName:         appName,
 		SessionService:  sessionService,
@@ -102,7 +101,7 @@ func configureRunner() {
 func inMemoryServiceExample() {
 	// --8<-- [start:in-memory-service]
 	// Simply instantiate the class
-	inMemoryService := artifactservice.Mem()
+	inMemoryService := artifact.InMemoryService()
 	log.Printf("InMemoryArtifactService (Go) instantiated: %T", inMemoryService)
 
 	// Use the service in your runner
@@ -119,7 +118,7 @@ func inMemoryServiceExample() {
 // --8<-- [start:loading-artifacts]
 // loadArtifactsCallback is a BeforeModel callback that loads a specific artifact
 // and adds its content to the LLM request.
-func loadArtifactsCallback(ctx agent.Context, req *llm.Request) (*llm.Response, error) {
+func loadArtifactsCallback(ctx agent.CallbackContext, req *model.LLMRequest) (*model.LLMResponse, error) {
 	log.Println("[Callback] loadArtifactsCallback triggered.")
 	// In a real app, you would parse the user's request to find a filename.
 	// For this example, we'll hardcode a filename to demonstrate.
@@ -129,17 +128,17 @@ func loadArtifactsCallback(ctx agent.Context, req *llm.Request) (*llm.Response, 
 	loadedPart, err := ctx.Artifacts().Load(filenameToLoad)
 	if err != nil {
 		log.Printf("Callback could not load artifact '%s': %v", filenameToLoad, err)
-		return nil, nil // File not found or error, continue to LLM.
+		return nil, nil // File not found or error, continue to model.
 	}
 
 	log.Printf("Callback successfully loaded artifact '%s'.", filenameToLoad)
-	// Add the loaded artifact to the request for the LLM.
+	// Add the loaded artifact to the request for the model.
 	if len(req.Contents) > 0 {
 		lastContent := req.Contents[len(req.Contents)-1]
 		lastContent.Parts = append(lastContent.Parts, &loadedPart)
 		log.Printf("Added artifact '%s' to LLM request.", filenameToLoad)
 	}
-	// Return nil to continue to the next callback or the LLM.
+	// Return nil to continue to the next callback or the model.
 	return nil, nil // Continue to next callback or LLM call
 }
 // --8<-- [end:loading-artifacts]
@@ -148,7 +147,11 @@ func loadArtifactsCallback(ctx agent.Context, req *llm.Request) (*llm.Response, 
 func representation() {
 // --8<-- [start:representation]
 	// Create a byte slice with the image data.
-	imageBytes := []byte{0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A}
+	imageBytes, err := os.ReadFile("image.png")
+	if err != nil {
+		log.Fatalf("Failed to read image file: %v", err)
+	}
+	
 	// Create a new artifact with the image data.
 	imageArtifact := &genai.Part{
 		InlineData: &genai.Blob{
@@ -203,9 +206,9 @@ func namespacing() {
 
 // --8<-- [start:saving-artifacts]
 // saveReportCallback is a BeforeModel callback that saves a report from session state.
-func saveReportCallback(ctx agent.Context, req *llm.Request) (*llm.Response, error) {
+func saveReportCallback(ctx agent.CallbackContext, req *model.LLMRequest) (*model.LLMResponse, error) {
 	// Get the report data from the session state.
-	reportData, err := ctx.Session().State().Get("report_bytes")
+	reportData, err := ctx.State().Get("report_bytes")
 	if err != nil {
 		log.Printf("No report data found in session state: %v", err)
 		return nil, nil // No report to save, continue normally.
@@ -235,7 +238,7 @@ func saveReportCallback(ctx agent.Context, req *llm.Request) (*llm.Response, err
 		return nil, nil
 	}
 	log.Printf("Successfully saved Go artifact '%s'.", filename)
-	// Return nil to continue to the next callback or the LLM.
+	// Return nil to continue to the next callback or the model.
 	return nil, nil
 }
 // --8<-- [end:saving-artifacts]
@@ -243,7 +246,7 @@ func saveReportCallback(ctx agent.Context, req *llm.Request) (*llm.Response, err
 // --8<-- [start:listing-artifacts]
 // listUserFilesCallback is a BeforeModel callback that lists available artifacts
 // and adds the list as context to the LLM request.
-func listUserFilesCallback(ctx agent.Context, req *llm.Request) (*llm.Response, error) {
+func listUserFilesCallback(ctx agent.CallbackContext, req *model.LLMRequest) (*model.LLMResponse, error) {
 	log.Println("[Callback] listUserFilesCallback triggered.")
 	// List the available artifacts from the artifact service.
 	availableFiles, err := ctx.Artifacts().List()
@@ -251,6 +254,9 @@ func listUserFilesCallback(ctx agent.Context, req *llm.Request) (*llm.Response, 
 		log.Printf("An unexpected error occurred during Go artifact list: %v", err)
 		return nil, nil // Continue, but log the error.
 	}
+
+	log.Printf("Found %d available files.", len(availableFiles))
+
 	// If there are available files, add them to the LLM request.
 	if len(availableFiles) > 0 {
 		var fileListStr strings.Builder
@@ -258,7 +264,7 @@ func listUserFilesCallback(ctx agent.Context, req *llm.Request) (*llm.Response, 
 		for _, fname := range availableFiles {
 			fileListStr.WriteString(fmt.Sprintf("- %s\n", fname))
 		}
-		// Prepend this information to the user's request for the LLM.
+		// Prepend this information to the user's request for the model.
 		if len(req.Contents) > 0 {
 			lastContent := req.Contents[len(req.Contents)-1]
 			if len(lastContent.Parts) > 0 {
@@ -266,92 +272,16 @@ func listUserFilesCallback(ctx agent.Context, req *llm.Request) (*llm.Response, 
 					log.Println("Added file list to LLM request context.")
 			}
 		}
+		log.Printf("Available files:\n%s", fileListStr.String())
+	} else {
+		log.Println("No available files found to list.")
 	}
-	// Return nil to continue to the next callback or the LLM.
+	
+	// Return nil to continue to the next callback or the model.
 	return nil, nil // Continue to next callback or LLM call
 }
 // --8<-- [end:listing-artifacts]
 
-
-
-// --- Local Implementations for  Testing ---
-
-// localArtifacts implements the agent.Artifacts interface for testing.
-type localArtifacts struct {
-	service   artifactservice.Service
-	ctx       context.Context
-	appName   string
-	userID    string
-	sessionID string
-}
-
-func (m *localArtifacts) Load(filename string) (*genai.Part, error) {
-	res, err := m.service.Load(m.ctx, &artifactservice.LoadRequest{
-		AppName:   m.appName,
-		UserID:    m.userID,
-		SessionID: m.sessionID,
-		FileName:  filename,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return res.Part, nil
-}
-
-func (m *localArtifacts) List() ([]string, error) {
-	res, err := m.service.List(m.ctx, &artifactservice.ListRequest{
-		AppName:   m.appName,
-		UserID:    m.userID,
-		SessionID: m.sessionID,
-	})
-	if err != nil {
-		return nil, err
-	}
-	return res.FileNames, nil
-}
-
-// MockState implements the session.State interface for testing.
-type MockState struct {
-	data map[string]any
-}
-
-func (s *MockState) Get(key string) (any, error) {
-	val, ok := s.data[key]
-	if !ok {
-		return nil, fmt.Errorf("key not found")
-	}
-	return val, nil
-}
-
-func (s *MockState) Set(key string, value any) error {
-	s.data[key] = value
-	return nil
-}
-
-// MockSession implements the session.Session interface for testing.
-type MockSession struct {
-	session.Session
-	mockState session.State
-}
-
-func (s *MockSession) State() session.State {
-	return s.mockState
-}
-
-// MockContext implements the agent.Context interface for testing.
-type MockContext struct {
-	agent.Context
-	mockArtifacts agent.Artifacts
-	mockSession   session.Session
-}
-
-func (m *MockContext) Artifacts() agent.Artifacts {
-	return m.mockArtifacts
-}
-
-func (m *MockContext) Session() session.Session {
-	return m.mockSession
-}
 
 func main() {
 	log.Println("--- Running  Snippets ---")
@@ -375,8 +305,8 @@ func main() {
 	log.Println("\n--- Running Agent with Multiple Callbacks ---")
 	// 1. Set up services
 	ctx := context.Background()
-	artifactService := artifactservice.Mem()
-	sessionService := sessionservice.Mem()
+	artifactService := artifact.InMemoryService()
+	sessionService := session.InMemoryService()
 
 	// 2. Set up the agent with multiple callbacks
 	model, _ := gemini.NewModel(ctx, "gemini-2.5-flash", &genai.ClientConfig{})
@@ -392,11 +322,12 @@ func main() {
 	})
 
 	// 3. Create a session with some initial state to trigger `saveReportCallback`
+	reportBytes, _ := os.ReadFile("story.pdf") // Load a sample PDF file
 	initialState := map[string]any{
-		"report_bytes": []byte("%PDF-1.4... This is a test PDF."), // Mock PDF data
+		"report_bytes": reportBytes,
 	}
 	userID := "test-user"
-	session, _ := sessionService.Create(ctx, &sessionservice.CreateRequest{
+	session, _ := sessionService.Create(ctx, &session.CreateRequest{
 		AppName:   "my_app",
 		UserID:    userID,
 		SessionID: "test-session-callbacks",
@@ -404,7 +335,7 @@ func main() {
 	})
 
 	// 4. Create and run the runner
-	r, _ := runner.New(&runner.Config{
+	r, _ := runner.New(runner.Config{
 		Agent:           reportingAgent,
 		AppName:         "my_app",
 		SessionService:  sessionService,
@@ -414,8 +345,8 @@ func main() {
 	log.Println("\n--- Agent Run 1: Triggering callbacks ---")
 	log.Println("This run will trigger `saveReportCallback` (from session state), `listUserFilesCallback` (will see the newly saved file), and `loadArtifactsCallback` (will load it).")
 	userInput := &genai.Content{Parts: []*genai.Part{genai.NewPartFromText("Please summarize the report for me.")}}
-	for event, err := range r.Run(ctx, session.Session.ID().UserID, session.Session.ID().SessionID, userInput, &runner.RunConfig{
-		StreamingMode: runner.StreamingModeSSE,
+	for event, err := range r.Run(ctx, session.Session.UserID(), session.Session.ID(), userInput, &agent.RunConfig{
+		StreamingMode: agent.StreamingModeSSE,
 	}) {
 		if err != nil {
 			log.Printf("AGENT ERROR: %v\n", err)
@@ -429,7 +360,7 @@ func main() {
 
 	log.Println("\n--- Verifying artifacts after run ---")
 	// We can list artifacts directly from the service to see what the agent did.
-	listReq := &artifactservice.ListRequest{
+	listReq := &artifact.ListRequest{
 		AppName:   "my_app",
 		UserID:    userID,
 		SessionID: "test-session-callbacks",
