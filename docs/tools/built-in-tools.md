@@ -27,17 +27,7 @@ The `google_search` tool allows the agent to perform web searches using Google S
     When you use grounding with Google Search, and you receive Search suggestions in your response, you must display the Search suggestions in production and in your applications.
     For more information on grounding with Google Search, see Grounding with Google Search documentation for [Google AI Studio](https://ai.google.dev/gemini-api/docs/grounding/search-suggestions) or [Vertex AI](https://cloud.google.com/vertex-ai/generative-ai/docs/grounding/grounding-search-suggestions). The UI code (HTML) is returned in the Gemini response as `renderedContent`, and you will need to show the HTML in your app, in accordance with the policy.
 
-=== "Python"
 
-    ```py
-    --8<-- "examples/python/snippets/tools/built-in-tools/google_search.py"
-    ```
-
-=== "Java"
-
-    ```java
-    --8<-- "examples/java/snippets/src/main/java/tools/GoogleSearchAgentApp.java:full_code"
-    ```
 
 ### Code Execution
 
@@ -45,17 +35,7 @@ The `built_in_code_execution` tool enables the agent to execute code,
 specifically when using Gemini 2 models. This allows the model to perform tasks
 like calculations, data manipulation, or running small scripts.
 
-=== "Python"
 
-    ```py
-    --8<-- "examples/python/snippets/tools/built-in-tools/code_execution.py"
-    ```
-
-=== "Java"
-
-    ```java
-    --8<-- "examples/java/snippets/src/main/java/tools/CodeExecutionAgentApp.java:full_code"
-    ```
 
 ### GKE Code Executor
 
@@ -100,30 +80,7 @@ For a complete, ready-to-use configuration, see the
 sample. For more information on deploying ADK workflows to GKE, see
 [Deploy to Google Kubernetes Engine (GKE)](/adk-docs/deploy/gke/).
 
-=== "Python"
 
-    ```python
-    from google.adk.agents import LlmAgent
-    from google.adk.code_executors import GkeCodeExecutor
-
-    # Initialize the executor, targeting the namespace where its ServiceAccount
-    # has the required RBAC permissions.
-    # This example also sets a custom timeout and resource limits.
-    gke_executor = GkeCodeExecutor(
-        namespace="agent-sandbox",
-        timeout_seconds=600,
-        cpu_limit="1000m",  # 1 CPU core
-        mem_limit="1Gi",
-    )
-
-    # The agent now uses this executor for any code it generates.
-    gke_agent = LlmAgent(
-        name="gke_coding_agent",
-        model="gemini-2.0-flash",
-        instruction="You are a helpful AI agent that writes and executes Python code.",
-        code_executor=gke_executor,
-    )
-    ```
 
 #### Configuration parameters
 
@@ -149,11 +106,7 @@ AI RAG Engine.
 When you use grounding with Vertex AI RAG Engine, you need to prepare a RAG corpus before hand.
 Please refer to the [RAG ADK agent sample](https://github.com/google/adk-samples/blob/main/python/agents/RAG/rag/shared_libraries/prepare_corpus_and_data.py) or [Vertex AI RAG Engine page](https://cloud.google.com/vertex-ai/generative-ai/docs/rag-engine/rag-quickstart) for setting it up.
 
-=== "Python"
 
-    ```py
-    --8<-- "examples/python/snippets/tools/built-in-tools/vertexai_rag_engine.py"
-    ```
 
 ### Vertex AI Search
 
@@ -163,9 +116,6 @@ documents, company policies, knowledge bases). This built-in tool requires you
 to provide the specific data store ID during configuration. For further details of the tool, see [Understanding Vertex AI Search grounding](../grounding/vertex_ai_search_grounding.md).
 
 
-```py
---8<-- "examples/python/snippets/tools/built-in-tools/vertexai_search.py"
-```
 
 
 ### BigQuery
@@ -176,17 +126,16 @@ These are a set of tools aimed to provide integration with BigQuery, namely:
 * **`get_dataset_info`**: Fetches metadata about a BigQuery dataset.
 * **`list_table_ids`**: Fetches table ids present in a BigQuery dataset.
 * **`get_table_info`**: Fetches metadata about a BigQuery table.
-* **`execute_sql`**: Runs a SQL query in BigQuery and fetch the result.
+* **`execute_sql`**: Runs a SQL query in BigQuery and fetch the result. This tool now includes a `dry_run` parameter. If set to `True`, the query will be validated by BigQuery but not actually executed, returning information about the query's validity and potential cost.
 * **`forecast`**: Runs a BigQuery AI time series forecast using the `AI.FORECAST` function.
 * **`ask_data_insights`**: Answers questions about data in BigQuery tables using natural language.
+* **`analyze_contribution`**: Runs a BigQuery ML contribution analysis using `ML.CREATE_MODEL` and `ML.GET_INSIGHTS` to identify the dimensions that contribute most significantly to a given metric.
 
 They are packaged in the toolset `BigQueryToolset`.
 
 
 
-```py
---8<-- "examples/python/snippets/tools/built-in-tools/bigquery.py"
-```
+
 
 
 ### Spanner
@@ -209,6 +158,75 @@ They are packaged in the toolset `SpannerToolset`.
 --8<-- "examples/python/snippets/tools/built-in-tools/spanner.py"
 ```
 
+### Customizable Template and Parameterized SQL
+
+In addition to the pre-built Spanner tools, you can create your own customized Spanner query tools using template or parameterized SQL. This allows you to define specific queries that your agent can execute.
+
+#### Template SQL
+
+You can create a function that builds a SQL query string using an f-string or other string formatting method. This approach is flexible but can be vulnerable to SQL injection if you are not careful about how you handle user input. It is recommended to add additional checks or callbacks to validate the input.
+
+```python
+from google.adk.tools.spanner import utils as spanner_tool_utils
+
+def count_rows_in_table(
+    table_name: str,
+    credentials,
+    settings,
+    tool_context,
+):
+  """Counts the total number of rows for a specified table."""
+
+  # Example of adding additional checks:
+  # if table_name not in ["table1", "table2"]:
+  #   raise ValueError("Table name is not allowed.")
+
+  sql_template = f"SELECT COUNT(*) FROM {table_name}"
+
+  return spanner_tool_utils.execute_sql(
+      project_id="<PROJECT_ID>",
+      instance_id="<INSTANCE_ID>",
+      database_id="<DATABASE_ID>",
+      query=sql_template,
+      credentials=credentials,
+      settings=settings,
+      tool_context=tool_context,
+  )
+```
+
+#### Parameterized SQL
+
+A more secure approach is to use a parameterized SQL query. This helps to prevent SQL injection by separating the query logic from the user-provided values.
+
+```python
+from google.adk.tools.spanner import utils as spanner_tool_utils
+from google.cloud.spanner_v1 import param_types
+
+def search_hotels(
+    location_name: str,
+    credentials,
+    settings,
+    tool_context,
+):
+  """Search hotels for a specific location."""
+
+  sql_template = """
+      SELECT name, rating, description FROM hotels
+      WHERE location_name = @location_name
+      """
+  return spanner_tool_utils.execute_sql(
+      project_id="<PROJECT_ID>",
+      instance_id="<INSTANCE_ID>",
+      database_id="<DATABASE_ID>",
+      query=sql_template,
+      credentials=credentials,
+      settings=settings,
+      tool_context=tool_context,
+      params={"location_name": location_name},
+      params_types={"location_name": spanner_param_types.STRING},
+  )
+```
+
 
 ### Bigtable
 
@@ -224,105 +242,14 @@ They are packaged in the toolset `BigtableToolset`.
 
 
 
-```py
---8<-- "examples/python/snippets/tools/built-in-tools/bigtable.py"
-```
+
 
 ## Use Built-in tools with other tools
 
 The following code sample demonstrates how to use multiple built-in tools or how
 to use built-in tools with other tools by using multiple agents:
 
-=== "Python"
 
-    ```py
-    from google.adk.tools.agent_tool import AgentTool
-    from google.adk.agents import Agent
-    from google.adk.tools import google_search
-    from google.adk.code_executors import BuiltInCodeExecutor
-    
-
-    search_agent = Agent(
-        model='gemini-2.0-flash',
-        name='SearchAgent',
-        instruction="""
-        You're a specialist in Google Search
-        """,
-        tools=[google_search],
-    )
-    coding_agent = Agent(
-        model='gemini-2.0-flash',
-        name='CodeAgent',
-        instruction="""
-        You're a specialist in Code Execution
-        """,
-        code_executor=BuiltInCodeExecutor(),
-    )
-    root_agent = Agent(
-        name="RootAgent",
-        model="gemini-2.0-flash",
-        description="Root Agent",
-        tools=[AgentTool(agent=search_agent), AgentTool(agent=coding_agent)],
-    )
-    ```
-
-=== "Java"
-
-    ```java
-    import com.google.adk.agents.BaseAgent;
-    import com.google.adk.agents.LlmAgent;
-    import com.google.adk.tools.AgentTool;
-    import com.google.adk.tools.BuiltInCodeExecutionTool;
-    import com.google.adk.tools.GoogleSearchTool;
-    import com.google.common.collect.ImmutableList;
-    
-    public class NestedAgentApp {
-    
-      private static final String MODEL_ID = "gemini-2.0-flash";
-    
-      public static void main(String[] args) {
-
-        // Define the SearchAgent
-        LlmAgent searchAgent =
-            LlmAgent.builder()
-                .model(MODEL_ID)
-                .name("SearchAgent")
-                .instruction("You're a specialist in Google Search")
-                .tools(new GoogleSearchTool()) // Instantiate GoogleSearchTool
-                .build();
-    
-
-        // Define the CodingAgent
-        LlmAgent codingAgent =
-            LlmAgent.builder()
-                .model(MODEL_ID)
-                .name("CodeAgent")
-                .instruction("You're a specialist in Code Execution")
-                .tools(new BuiltInCodeExecutionTool()) // Instantiate BuiltInCodeExecutionTool
-                .build();
-
-        // Define the RootAgent, which uses AgentTool.create() to wrap SearchAgent and CodingAgent
-        BaseAgent rootAgent =
-            LlmAgent.builder()
-                .name("RootAgent")
-                .model(MODEL_ID)
-                .description("Root Agent")
-                .tools(
-                    AgentTool.create(searchAgent), // Use create method
-                    AgentTool.create(codingAgent)   // Use create method
-                 )
-                .build();
-
-        // Note: This sample only demonstrates the agent definitions.
-        // To run these agents, you'd need to integrate them with a Runner and SessionService,
-        // similar to the previous examples.
-        System.out.println("Agents defined successfully:");
-        System.out.println("  Root Agent: " + rootAgent.name());
-        System.out.println("  Search Agent (nested): " + searchAgent.name());
-        System.out.println("  Code Agent (nested): " + codingAgent.name());
-      }
-    }
-    ```
 
 
 ### Limitations
@@ -335,29 +262,8 @@ to use built-in tools with other tools by using multiple agents:
  For example, the following approach that uses ***a built-in tool along with
  other tools*** within a single agent is **not** currently supported:
 
-=== "Python"
 
-    ```py
-    root_agent = Agent(
-        name="RootAgent",
-        model="gemini-2.0-flash",
-        description="Root Agent",
-        tools=[custom_function], 
-        code_executor=BuiltInCodeExecutor() # <-- not supported when used with tools
-    )
-    ```
 
-=== "Java"
-
-    ```java
-     LlmAgent searchAgent =
-            LlmAgent.builder()
-                .model(MODEL_ID)
-                .name("SearchAgent")
-                .instruction("You're a specialist in Google Search")
-                .tools(new GoogleSearchTool(), new YourCustomTool()) // <-- not supported
-                .build();
-    ```
 
 !!! warning
 
@@ -366,61 +272,3 @@ to use built-in tools with other tools by using multiple agents:
 For example, the following approach that uses built-in tools within sub-agents
 is **not** currently supported:
 
-=== "Python"
-
-    ```py
-    search_agent = Agent(
-        model='gemini-2.0-flash',
-        name='SearchAgent',
-        instruction="""
-        You're a specialist in Google Search
-        """,
-        tools=[google_search],
-    )
-    coding_agent = Agent(
-        model='gemini-2.0-flash',
-        name='CodeAgent',
-        instruction="""
-        You're a specialist in Code Execution
-        """,
-        code_executor=BuiltInCodeExecutor(),
-    )
-    root_agent = Agent(
-        name="RootAgent",
-        model="gemini-2.0-flash",
-        description="Root Agent",
-        sub_agents=[
-            search_agent,
-            coding_agent
-        ],
-    )
-    ```
-
-=== "Java"
-
-    ```java
-    LlmAgent searchAgent =
-        LlmAgent.builder()
-            .model("gemini-2.0-flash")
-            .name("SearchAgent")
-            .instruction("You're a specialist in Google Search")
-            .tools(new GoogleSearchTool())
-            .build();
-
-    LlmAgent codingAgent =
-        LlmAgent.builder()
-            .model("gemini-2.0-flash")
-            .name("CodeAgent")
-            .instruction("You're a specialist in Code Execution")
-            .tools(new BuiltInCodeExecutionTool())
-            .build();
-    
-
-    LlmAgent rootAgent =
-        LlmAgent.builder()
-            .name("RootAgent")
-            .model("gemini-2.0-flash")
-            .description("Root Agent")
-            .subAgents(searchAgent, codingAgent) // Not supported, as the sub agents use built in tools.
-            .build();
-    ```
