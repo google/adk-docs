@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"google.golang.org/adk/agent/llmagent"
-	"google.golang.org/adk/llm/gemini"
+	"google.golang.org/adk/model/gemini"
 	"google.golang.org/genai"
 )
 
