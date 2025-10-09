@@ -12,10 +12,9 @@ import (
 
 	"google.golang.org/adk/agent"
 	"google.golang.org/adk/agent/llmagent"
-	"google.golang.org/adk/llm/gemini"
+	"google.golang.org/adk/model/gemini"
 	"google.golang.org/adk/runner"
 	"google.golang.org/adk/session"
-	"google.golang.org/adk/sessionservice"
 	"google.golang.org/genai"
 )
 
@@ -78,7 +77,7 @@ func NewStoryFlowAgent(
 
 // --8<-- [start:executionlogic]
 // Run defines the custom execution logic for the StoryFlowAgent.
-func (s *StoryFlowAgent) Run(ctx agent.Context) iter.Seq2[*session.Event, error] {
+func (s *StoryFlowAgent) Run(ctx agent.InvocationContext) iter.Seq2[*session.Event, error] {
 	return func(yield func(*session.Event, error) bool) {
 		// Stage 1: Initial Story Generation
 		for event, err := range s.storyGenerator.Run(ctx) {
@@ -230,11 +229,11 @@ func main() {
 	}
 
 	// --- Run the Agent ---
-	sessionService := sessionservice.Mem()
+	sessionService := session.InMemoryService()
 	initialState := map[string]any{
 		"topic": "a brave kitten exploring a haunted house",
 	}
-	session, err := sessionService.Create(ctx, &sessionservice.CreateRequest{
+	sessionInstance, err := sessionService.Create(ctx, &session.CreateRequest{
 		AppName: appName,
 		UserID:  userID,
 		State:   initialState,
@@ -245,7 +244,7 @@ func main() {
 
 	userTopic := "a lonely robot finding a friend in a junkyard"
 
-	r, err := runner.New(&runner.Config{
+	r, err := runner.New(runner.Config{
 		AppName:        appName,
 		Agent:          storyFlowAgent,
 		SessionService: sessionService,
@@ -255,10 +254,12 @@ func main() {
 	}
 
 	input := genai.NewContentFromText("Generate a story about: " + userTopic, genai.RoleUser)
-	eventChan := r.Run(ctx, userID, session.Session.ID().SessionID, input, &runner.RunConfig{})
+	events := r.Run(ctx, userID, sessionInstance.Session.ID(), input, &agent.RunConfig{
+		StreamingMode: agent.StreamingModeSSE,
+	})
 
 	var finalResponse string
-	for event := range eventChan {
+	for event := range events {
 		if event.LLMResponse != nil && event.LLMResponse.Content != nil {
 			for _, part := range event.LLMResponse.Content.Parts {
 				// Accumulate text from all parts of the final response.
@@ -270,9 +271,17 @@ func main() {
 	fmt.Println("\n--- Agent Interaction Result ---")
 	fmt.Println("Agent Final Response: " + finalResponse)
 
-	finalSession, _ := sessionService.Get(ctx, &sessionservice.GetRequest{ID: session.Session.ID()})
+	finalSession, err := sessionService.Get(ctx, &session.GetRequest{
+		UserID:    userID,
+		AppName:   appName,
+		SessionID: sessionInstance.Session.ID(),
+	})
+
+	if err != nil {
+		log.Fatalf("Failed to retrieve final session: %v", err)
+	}
+
 	fmt.Println("Final Session State:", finalSession.Session.State())
-	fmt.Println("-------------------------------\n")
 }
 // --8<-- [end:story_flow_agent]
 // --8<-- [end:full_code]
