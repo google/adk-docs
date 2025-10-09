@@ -10,12 +10,13 @@ for Java. Before you start, make sure you have the following installed:
 
 Create an agent project with the following files and directory structure:
 
-```console
+```none
 my_agent/
     src/main/java/com/example/agent/
-            HelloTimeAgent.java # main agent code
-    pom.xml                     # project configuration
-    .env                        # API keys or project IDs
+                        HelloTimeAgent.java # main agent code
+                        AgentCliRunner.java # command-line interface
+    pom.xml                                 # project configuration
+    .env                                    # API keys or project IDs
 ```
 
 ??? tip "Create this project structure using the command line"
@@ -25,6 +26,7 @@ my_agent/
         ```console
         mkdir my_agent\src\main\java\com\example\agent
         type nul > my_agent\src\main\java\com\example\agent\HelloTimeAgent.java
+        type nul > my_agent\src\main\java\com\example\agent\AgentCliRunner.java
         type nul > my_agent\pom.xml
         type nul > my_agent\.env
         ```
@@ -34,6 +36,7 @@ my_agent/
         ```bash
         mkdir -p my_agent/src/main/java/com/example/agent && \
             touch my_agent/src/main/java/com/example/agent/HelloTimeAgent.java \
+            touch my_agent/src/main/java/com/example/agent/AgentCliRunner.java \
             touch my_agent/pom.xml my_agent/.env
         ```
 
@@ -162,12 +165,17 @@ to set environment variables:
     echo 'export GOOGLE_API_KEY="YOUR_API_KEY"' > .env
     ```
 
+??? tip "Using other AI models with ADK"
+    ADK supports the use of many generative AI models. For more
+    information on configuring other models in ADK agents, see
+    [Models & Authentication](/adk-docs/agents/models).
+
 ### Create an agent command-line interface
 
-For convenience, create a `AgentCliRunner.java` class to allow you to run
-and interact with `HelloTimeAgent` from the command line. This code shows
-how to create a `RunConfig` object to run the agent and a `Session` object
-to interact with the running agent.
+Create a `AgentCliRunner.java` class to allow you to run and interact with
+`HelloTimeAgent` from the command line. This code shows how to create a
+`RunConfig` object to run the agent and a `Session` object to interact with the
+running agent.
 
 ```java title="my_agent/src/main/java/com/example/agent/AgentCliRunner.java"
 package com.example.agent;
@@ -230,6 +238,7 @@ Run your agent with the command-line interface `AgentCliRunner` class
 using the following Maven command:
 
 ```console
+# Remember to load keys and settings from .env file: source .env
 mvn compile exec:java -Dexec.mainClass="com.example.agent.AgentCliRunner"
 ```
 
@@ -237,15 +246,17 @@ mvn compile exec:java -Dexec.mainClass="com.example.agent.AgentCliRunner"
 
 ### Run with web interface
 
-Run your agent with the ADK web interface using the following maven command:
+Run your agent with the ADK web interface using the following Maven command:
 
 ```console
-mvn compile exec:java -Dexec.mainClass="com.google.adk.web.AdkWebServer" \
-    -Dexec.args="--adk.agents.source-dir=src/main/java/com/example/agent --server.port=8080"
+# Remember to load keys and settings from .env file: source .env
+mvn compile exec:java \
+    -Dexec.mainClass="com.google.adk.web.AdkWebServer" \
+    -Dexec.args="--adk.agents.source-dir=target --server.port=8000"
 ```
 
 This command starts a web server with a chat interface for your agent. You can
-access the web interface at (http://localhost:8080). Select your agent at the
+access the web interface at (http://localhost:8000). Select your agent at the
 upper right corner and type a request.
 
 ![adk-web-dev-ui-chat.png](/adk-docs/assets/adk-web-dev-ui-chat.png)

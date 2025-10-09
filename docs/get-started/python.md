@@ -55,7 +55,7 @@ adk create my_agent
 The created agent project has the following structure, with the `agent.py`
 file containing the main control code for the agent.
 
-```shell
+```none
 my_agent/
     agent.py      # main agent code
     .env          # API keys or project IDs
@@ -75,9 +75,7 @@ from google.adk.agents.llm_agent import Agent
 # Mock tool implementation
 def get_current_time(city: str) -> dict:
     """Returns the current time in a specified city."""
-    if city.lower() == "new york":
-        return {"status": "success", "time": "10:30 AM EST"}
-    return {"status": "error", "message": f"Time for {city} not available."}
+    return {"status": "success", "city": city, "time": "10:30 AM"}
 
 root_agent = Agent(
     model='gemini-2.5-flash',
@@ -108,6 +106,11 @@ In a terminal window, write your API key into an `.env` file as an environment v
     echo 'export GOOGLE_API_KEY="YOUR_API_KEY"' > .env
     ```
 
+??? tip "Using other AI models with ADK"
+    ADK supports the use of many generative AI models. For more
+    information on configuring other models in ADK agents, see
+    [Models & Authentication](/adk-docs/agents/models).
+
 ## Run your agent
 
 You can run your ADK agent with an interactive command-line interface using the
@@ -131,11 +134,11 @@ The ADK framework provides web interface you can use to test and interact with
 your agent. You can start the web interface using the following command:
 
 ```console
-adk web my_agent
+adk web --port 8000 my_agent
 ```
 
 This command starts a web server with a chat interface for your agent. You can
-access the web interface at (http://localhost:8080). Select the agent at the
+access the web interface at (http://localhost:8000). Select the agent at the
 upper right corner and type a request.
 
 ![adk-web-dev-ui-chat.png](/adk-docs/assets/adk-web-dev-ui-chat.png)
