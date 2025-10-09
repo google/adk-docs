@@ -608,7 +608,6 @@ The artifact interaction methods are available directly on instances of `Callbac
                 // Example: Load a specific version (e.g., version 0)
                 /*
                 artifactService.loadArtifact(appName, userId, sessionId, filename, Optional.of(0))
-                StringBuilder fileListStr
                     .subscribe(part -> {
                         System.out.println("Loaded version 0 of Java artifact '" + filename + "'.");
                     }, throwable -> {
@@ -830,6 +829,51 @@ ADK provides concrete implementations of the `BaseArtifactService` interface, of
 		)
 
 		--8<-- "examples/go/snippets/artifacts/main.go:in-memory-service"
+        ```
+
+### GcsArtifactService
+
+
+*   **Storage Mechanism:** Leverages Google Cloud Storage (GCS) for persistent artifact storage. Each version of an artifact is stored as a separate object (blob) within a specified GCS bucket.
+*   **Object Naming Convention:** It constructs GCS object names (blob names) using a hierarchical path structure.
+*   **Key Features:**
+    *   **Persistence:** Artifacts stored in GCS persist across application restarts and deployments.
+    *   **Scalability:** Leverages the scalability and durability of Google Cloud Storage.
+    *   **Versioning:** Explicitly stores each version as a distinct GCS object. The `saveArtifact` method in `GcsArtifactService`.
+    *   **Permissions Required:** The application environment needs appropriate credentials (e.g., Application Default Credentials) and IAM permissions to read from and write to the specified GCS bucket.
+*   **Use Cases:**
+    *   Production environments requiring persistent artifact storage.
+    *   Scenarios where artifacts need to be shared across different application instances or services (by accessing the same GCS bucket).
+    *   Applications needing long-term storage and retrieval of user or session data.
+*   **Instantiation:**
+
+    === "Python"
+
+        ```python
+        from google.adk.artifacts import GcsArtifactService
+
+        # Specify the GCS bucket name
+        gcs_bucket_name_py = "your-gcs-bucket-for-adk-artifacts" # Replace with your bucket name
+
+        try:
+            gcs_service_py = GcsArtifactService(bucket_name=gcs_bucket_name_py)
+            print(f"Python GcsArtifactService initialized for bucket: {gcs_bucket_name_py}")
+            # Ensure your environment has credentials to access this bucket.
+            # e.g., via Application Default Credentials (ADC)
+
+            # Then pass it to the Runner
+            # runner = Runner(..., artifact_service=gcs_service_py)
+
+        except Exception as e:
+            # Catch potential errors during GCS client initialization (e.g., auth issues)
+            print(f"Error initializing Python GcsArtifactService: {e}")
+            # Handle the error appropriately - maybe fall back to InMemory or raise
+        ```
+
+    === "Java"
+
+        ```java
+        --8<-- "examples/java/snippets/src/main/java/artifacts/GcsServiceSetup.java:full_code"
         ```
 
 Choosing the appropriate `ArtifactService` implementation depends on your application's requirements for data persistence, scalability, and operational environment.
