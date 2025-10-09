@@ -30,7 +30,7 @@ func main() {
 func runAgent(prompt string) error {
 	ctx := context.Background()
 
-	// init_start
+	// --8<-- [start:init]
 	model, err := gemini.NewModel(ctx, modelName, &genai.ClientConfig{})
 	if err != nil {
 		return fmt.Errorf("failed to create model: %v", err)
@@ -93,7 +93,7 @@ Combine the following research summaries into a single, coherent report:
 	if err != nil {
 		return fmt.Errorf("failed to create sequential agent pipeline: %v", err)
 	}
-	// init_end
+	// --8<-- [end:init]
 
 	sessionService := session.InMemoryService()
 	r, err := runner.New(runner.Config{

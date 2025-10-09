@@ -21,7 +21,7 @@ const (
 	modelName = "gemini-2.5-flash"
 )
 
-// init_start
+// --8<-- [start:init]
 // ExitLoopArgs defines the (empty) arguments for the ExitLoop tool.
 type ExitLoopArgs struct{}
 
@@ -109,7 +109,7 @@ Otherwise, provide constructive feedback for improvement.`,
 	if err != nil {
 		return fmt.Errorf("failed to create loop agent: %v", err)
 	}
-	// init_end
+	// --8<-- [end:init]
 
 	sessionService := session.InMemoryService()
 	r, err := runner.New(runner.Config{
