@@ -132,12 +132,19 @@ func loadArtifactsCallback(ctx agent.CallbackContext, req *model.LLMRequest) (*m
 	}
 
 	log.Printf("Callback successfully loaded artifact '%s'.", filenameToLoad)
-	// Add the loaded artifact to the request for the model.
-	if len(req.Contents) > 0 {
-		lastContent := req.Contents[len(req.Contents)-1]
-		lastContent.Parts = append(lastContent.Parts, &loadedPart)
-		log.Printf("Added artifact '%s' to LLM request.", filenameToLoad)
+
+	// Ensure there's at least one content in the request to append to.
+	if len(req.Contents) == 0 {
+		req.Contents = []*genai.Content{{Parts: []*genai.Part{
+			genai.NewPartFromText("SYSTEM: The following file is provided for context:\n"),	
+		}}}
 	}
+
+	// Add the loaded artifact to the request for the model.
+	lastContent := req.Contents[len(req.Contents)-1]
+	lastContent.Parts = append(lastContent.Parts, &loadedPart)
+	log.Printf("Added artifact '%s' to LLM request.", filenameToLoad)
+
 	// Return nil to continue to the next callback or the model.
 	return nil, nil // Continue to next callback or LLM call
 }
@@ -268,8 +275,9 @@ func listUserFilesCallback(ctx agent.CallbackContext, req *model.LLMRequest) (*m
 		if len(req.Contents) > 0 {
 			lastContent := req.Contents[len(req.Contents)-1]
 			if len(lastContent.Parts) > 0 {
-					lastContent.Parts[0] =  genai.NewPartFromText(fileListStr.String() + lastContent.Parts[0].Text)
-					log.Println("Added file list to LLM request context.")
+				fileListStr.WriteString("\n") // Add a newline for separation.
+				lastContent.Parts[0] = genai.NewPartFromText(fileListStr.String() + lastContent.Parts[0].Text)
+				log.Println("Added file list to LLM request context.")
 			}
 		}
 		log.Printf("Available files:\n%s", fileListStr.String())
