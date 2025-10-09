@@ -110,14 +110,14 @@ Copy and paste the following code into `agent.py` or `agent.ts`:
 === "TypeScript"
 
     ```typescript title="google_search_agent/agent.ts"
-    import { LlmAgent, GoogleSearchTool } from '@google/adk';
+    import { LlmAgent, GOOGLE_SEARCH } from '@google/adk';
 
     const rootAgent = new LlmAgent({
         name: "google_search_agent",
         model: "gemini-2.5-flash",
         instruction: "Answer questions using Google Search when needed. Always cite sources.",
         description: "Professional search assistant with Google Search capabilities",
-        tools: [GoogleSearchTool],
+        tools: [GOOGLE_SEARCH],
     });
     ```
 
