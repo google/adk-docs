@@ -84,14 +84,23 @@ The foundation for structuring multi-agent systems is the parent-child relations
     import { LlmAgent, BaseAgent, InvocationContext, Event } from '@google/adk';
 
     class TaskExecutorAgent extends BaseAgent {
-      async *runImpl(context: InvocationContext): AsyncGenerator<Event, void, void> {
+      async *runAsyncImpl(context: InvocationContext): AsyncGenerator<Event, void, void> {
         yield {
+          id: 'event-1',
+          invocationId: context.invocationId,
           author: this.name,
-          text: 'Task completed!',
+          content: { parts: [{ text: 'Task completed!' }] },
+          actions: {
+            stateDelta: {},
+            artifactDelta: {},
+            requestedAuthConfigs: {},
+            requestedToolConfirmations: {},
+          },
+          timestamp: Date.now(),
         };
       }
       async *runLiveImpl(context: InvocationContext): AsyncGenerator<Event, void, void> {
-        this.runImpl(context);
+        this.runAsyncImpl(context);
       }
     }
 
@@ -288,22 +297,21 @@ ADK includes specialized agents derived from `BaseAgent` that don't perform task
     // until Checker escalates (state.get("status") == "completed") or 10 iterations pass.
     ```
 
-=== "Typescript":
+=== "Typescript"
 
     ```typescript
     // Conceptual Example: Loop with Condition
-    import { LoopAgent, LlmAgent, BaseAgent, InvocationContext, Event, EventActions } from '@google/adk';
+    import { LoopAgent, LlmAgent, BaseAgent, InvocationContext, Event, EventActions, createEvent } from '@google/adk';
 
-    class CheckConditionAgent extends BaseAgent { // Custom agent to check state
-        async *runImpl(ctx: InvocationContext): AsyncGenerator<Event> {
+    class CheckConditionAgent extends BaseAgent { // Custom agent to check state        
+        async *runAsyncImpl(ctx: InvocationContext): AsyncGenerator<Event> {
             const status = ctx.session.state['status'] || 'pending';
             const isDone = (status === 'completed');
-            yield new Event({ author: this.name, actions: { escalate: isDone } }); // Escalate if done
+            yield createEvent({ author: 'check_condition', actions: { escalate: isDone } as EventActions }); // Escalate if done
         }
 
         async *runLiveImpl(ctx: InvocationContext): AsyncGenerator<Event> {
             // This is not implemented.
-            yield new Event({ author: this.name, actions: { escalate: false } });
         }
     };
 
@@ -581,7 +589,7 @@ Allows an [`LlmAgent`](llm-agents.md) to treat another `BaseAgent` instance as a
 
     ```typescript
     // Conceptual Setup: Agent as a Tool
-    import { LlmAgent, BaseAgent, AgentTool, InvocationContext, Event } from '@google/adk';
+    import { LlmAgent, BaseAgent, AgentTool, InvocationContext, createEvent, Event } from '@google/adk';
     import { Part } from '@google/genai';
 
     // Define a target agent (could be LlmAgent or custom BaseAgent)
@@ -590,14 +598,16 @@ Allows an [`LlmAgent`](llm-agents.md) to treat another `BaseAgent` instance as a
             super({name: 'ImageGen', description: 'Generates an image based on a prompt.'});
         }
         // ... internal logic ...
-        async *runImpl(ctx: InvocationContext): AsyncGenerator<Event> { // Simplified run logic
+        async *runAsyncImpl(ctx: InvocationContext): AsyncGenerator<Event> { // Simplified run logic
             const prompt = ctx.session.state['image_prompt'] || 'default prompt';
             // ... generate image bytes ...
             const imageBytes = new Uint8Array(); // placeholder
             const imagePart: Part = {inlineData: {data: Buffer.from(imageBytes).toString('base64'), mimeType: 'image/png'}};
-            yield new Event({content: {parts: [imagePart]}});
+            yield createEvent({content: {parts: [imagePart]}});
         }
-        async *runLiveImpl(ctx: InvocationContext): AsyncGenerator<Event> {
+
+        async *runLiveImpl(ctx: InvocationContext): AsyncGenerator<Event, void, void> {
+            // Not implemented for this agent.
         }
 }
 
@@ -1202,7 +1212,7 @@ By combining ADK's composition primitives, you can implement various established
 
     ```typescript
     // Conceptual Code: Iterative Code Refinement
-    import { LoopAgent, LlmAgent, BaseAgent, InvocationContext, Event, EventActions } from '@google/adk';
+    import { LoopAgent, LlmAgent, BaseAgent, InvocationContext, Event, EventActions, createEvent } from '@google/adk';
 
     // Agent to generate/refine code based on state['current_code'] and state['requirements']
     const codeRefiner = new LlmAgent({
@@ -1220,17 +1230,20 @@ By combining ADK's composition primitives, you can implement various established
 
     // Custom agent to check the status and escalate if 'pass'
     class CheckStatusAndEscalate extends BaseAgent {
-        async *runImpl(ctx: InvocationContext): AsyncGenerator<Event> {
+        async *runAsyncImpl(ctx: InvocationContext): AsyncGenerator<Event> {
             const status = ctx.session.state.quality_status;
             const shouldStop = (status === 'pass');
             if (shouldStop) {
-                yield new Event({ actions: { escalate: shouldStop } });
+                yield createEvent({
+                    author: 'StopChecker',
+                    actions: { escalate: shouldStop, stateDelta: {}, artifactDelta: {}, requestedAuthConfigs: [], requestedToolConfirmations: {} }
+                });
             }
         }
 
         async *runLiveImpl(ctx: InvocationContext): AsyncGenerator<Event> {
             // This agent doesn't have a live implementation
-            yield new Event({ actions: { done: true } });
+            yield createEvent({ author: 'StopChecker' });
         }
     }
 
