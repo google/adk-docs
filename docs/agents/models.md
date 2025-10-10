@@ -126,7 +126,7 @@ For deployed applications, a service account is the standard method.
 
     ```python
     from google.adk.agents import LlmAgent
-    
+
     # --- Example using a stable Gemini Flash model ---
     agent_gemini_flash = LlmAgent(
         # Use the latest stable Flash model identifier
@@ -135,7 +135,7 @@ For deployed applications, a service account is the standard method.
         instruction="You are a fast and helpful Gemini assistant.",
         # ... other agent parameters
     )
-    
+
     # --- Example using a powerful Gemini Pro model ---
     # Note: Always check the official Gemini documentation for the latest model names,
     # including specific preview versions if needed. Preview models might have
@@ -185,6 +185,38 @@ For deployed applications, a service account is the standard method.
 
 !!!warning "Secure Your Credentials"
     Service account credentials or API keys are powerful credentials. Never expose them publicly. Use a secret manager like [Google Secret Manager](https://cloud.google.com/secret-manager) to store and access them securely in production.
+
+## Using Gemma Models
+
+![python_only](https://img.shields.io/badge/Supported_in-Python-blue)
+
+You can use Gemma models in your agents through the `Gemma` wrapper class. This allows you to leverage Gemma's capabilities for various generative tasks.
+
+**Integration Method:** Instantiate the `Gemma` wrapper class with a supported model name and pass it to the `model` parameter of your `LlmAgent`.
+
+**Supported Models:** Currently, only Gemma 3 models are supported. For agentic use cases, `gemma-3-27b-it` and `gemma-3-12b-it` are recommended.
+
+!!! warning "Important Considerations"
+    *   **No System Instructions:** Gemma models do not support system instructions. Any system instructions provided will be automatically converted to user-level instructions.
+    *   **Limited Function Calling:** Gemma's function calling capabilities are limited.
+    *   **No Vertex AI Support:** The current integration does not support the Vertex AI API for Gemma models.
+
+**Example:**
+
+=== "Python"
+
+    ```python
+    from google.adk.agents import LlmAgent
+    from google.adk.models import Gemma
+    
+    # --- Example Agent using a Gemma model ---
+    agent_gemma = LlmAgent(
+        model=Gemma(model="gemma-3-27b-it"),
+        name="gemma_agent",
+        instruction="You are a helpful assistant powered by Gemma.",
+        # ... other agent parameters
+    )
+    ```
 
 ## Using Anthropic models
 
