@@ -29,71 +29,28 @@ You can define functions with required parameters, optional parameters, and vari
 A parameter is considered **required** if it has a type hint but **no default value**. The LLM must provide a value for this argument when it calls the tool.
 
 ???+ "Example: Required Parameters"
-    === "Python"
-        ```python
-        def get_weather(city: str, unit: str):
-            """
-            Retrieves the weather for a city in the specified unit.
-
-            Args:
-                city (str): The city name.
-                unit (str): The temperature unit, either 'Celsius' or 'Fahrenheit'.
-            """
-            # ... function logic ...
-            return {"status": "success", "report": f"Weather for {city} is sunny."}
-        ```
+    
     In this example, both `city` and `unit` are mandatory. If the LLM tries to call `get_weather` without one of them, the ADK will return an error to the LLM, prompting it to correct the call.
 
 ##### Optional Parameters with Default Values
 A parameter is considered **optional** if you provide a **default value**. This is the standard Python way to define optional arguments. The ADK correctly interprets these and does not list them in the `required` field of the tool schema sent to the LLM.
 
 ???+ "Example: Optional Parameter with Default Value"
-    === "Python"
-        ```python
-        def search_flights(destination: str, departure_date: str, flexible_days: int = 0):
-            """
-            Searches for flights.
-
-            Args:
-                destination (str): The destination city.
-                departure_date (str): The desired departure date.
-                flexible_days (int, optional): Number of flexible days for the search. Defaults to 0.
-            """
-            # ... function logic ...
-            if flexible_days > 0:
-                return {"status": "success", "report": f"Found flexible flights to {destination}."}
-            return {"status": "success", "report": f"Found flights to {destination} on {departure_date}."}
-        ```
+    
     Here, `flexible_days` is optional. The LLM can choose to provide it, but it's not required.
 
 ##### Optional Parameters with `typing.Optional`
 You can also mark a parameter as optional using `typing.Optional[SomeType]` or the `| None` syntax (Python 3.10+). This signals that the parameter can be `None`. When combined with a default value of `None`, it behaves as a standard optional parameter.
 
 ???+ "Example: `typing.Optional`"
-    === "Python"
-        ```python
-        from typing import Optional
-
-        def create_user_profile(username: str, bio: Optional[str] = None):
-            """
-            Creates a new user profile.
-
-            Args:
-                username (str): The user's unique username.
-                bio (str, optional): A short biography for the user. Defaults to None.
-            """
-            # ... function logic ...
-            if bio:
-                return {"status": "success", "message": f"Profile for {username} created with a bio."}
-            return {"status": "success", "message": f"Profile for {username} created."}
-        ```
+    
 
 ##### Variadic Parameters (`*args` and `**kwargs`)
 While you can include `*args` (variable positional arguments) and `**kwargs` (variable keyword arguments) in your function signature for other purposes, they are **ignored by the ADK framework** when generating the tool schema for the LLM. The LLM will not be aware of them and cannot pass arguments to them. It's best to rely on explicitly defined parameters for all data you expect from the LLM.
 
 #### Return Type
 
-The preferred return type for a Function Tool is a **dictionary** in Python or **Map** in Java. This allows you to structure the response with key-value pairs, providing context and clarity to the LLM. If your function returns a type other than a dictionary, the framework automatically wraps it into a dictionary with a single key named **"result"**.
+The preferred return type for a Function Tool is a **dictionary**. This allows you to structure the response with key-value pairs, providing context and clarity to the LLM. If your function returns a type other than a dictionary, the framework automatically wraps it into a dictionary with a single key named **"result"**.
 
 Strive to make your return values as descriptive as possible. *For example,* instead of returning a numeric error code, return a dictionary with an "error_message" key containing a human-readable explanation. **Remember that the LLM**, not a piece of code, needs to understand the result. As a best practice, include a "status" key in your return dictionary to indicate the overall outcome (e.g., "success", "error", "pending"), providing the LLM with a clear signal about the operation's state.
 
@@ -114,35 +71,16 @@ A tool can write data to a `temp:` variable, and a subsequent tool can read it. 
 
 ??? "Example"
 
-    === "Python"
+    This tool is a python function which obtains the Stock price of a given Stock ticker/ symbol.
+
+    <u>Note</u>: You need to `pip install yfinance` library before using this tool.
+
     
-        This tool is a python function which obtains the Stock price of a given Stock ticker/ symbol.
-    
-        <u>Note</u>: You need to `pip install yfinance` library before using this tool.
-    
-        ```py
-        --8<-- "examples/python/snippets/tools/function-tools/func_tool.py"
-        ```
-    
-        The return value from this tool will be wrapped into a dictionary.
-    
-        ```json
-        {"result": "$123"}
-        ```
-    
-    === "Java"
-    
-        This tool retrieves the mocked value of a stock price.
-    
-        ```java
-        --8<-- "examples/java/snippets/src/main/java/tools/StockPriceAgent.java:full_code"
-        ```
-    
-        The return value from this tool will be wrapped into a Map<String, Object>.
-    
-        ```json
-        For input `GOOG`: {"symbol": "GOOG", "price": "1.0"}
-        ```
+    The return value from this tool will be wrapped into a dictionary.
+
+    ```json
+    {"result": "$123"}
+    ```
 
 ### Best Practices
 
@@ -158,7 +96,7 @@ While you have considerable flexibility in defining your function, remember that
 
 This tool is designed to help you start and manage tasks that are handled outside the operation of your agent workflow, and require a significant amount of processing time, without blocking the agent's execution. This tool is a subclass of `FunctionTool`.
 
-When using a `LongRunningFunctionTool`, your function can initiate the long-running operation and optionally return an **initial result**, such as a long-running operation id. Once a long running function tool is invoked the agent runner pauses the agent run and lets the agent client to decide whether to continue or wait until the long-running operation finishes. The agent client can query the progress of the long-running operation and send back an intermediate or final response. The agent can then continue with other tasks. An example is the human-in-the-loop scenario where the agent needs human approval before proceeding with a task.
+When using a `LongRunningFunctionTool`, your function can initiate a long-running operation and signal the agent to pause. The agent client can then resume the agent's run with an intermediate or final response. This is particularly useful for scenarios like human-in-the-loop, where an agent needs to wait for human approval before proceeding.
 
 !!! warning "Warning: Execution handling"
     Long Running Function Tools are designed to help you start and *manage* long running
@@ -166,138 +104,77 @@ When using a `LongRunningFunctionTool`, your function can initiate the long-runn
     For tasks that require significant time to complete, you should implement a separate
     server to do the task.
 
-!!! tip "Tip: Parallel execution"
-    Depending on the type of tool you are building, designing for asychronous
-    operation may be a better solution than creating a long running tool. For
-    more information, see
-    [Increase tool performance with parallel execution](/adk-docs/tools/performance/).
-
 ### How it Works
 
-In Python, you wrap a function with `LongRunningFunctionTool`.  In Java, you pass a Method name to `LongRunningFunctionTool.create()`.
+1.  **Initiation and Pausing:** When the LLM calls a `LongRunningFunctionTool`, your function starts the long-running operation and returns a result indicating that the operation is pending. The ADK framework detects this and pauses the agent's invocation.
 
+2.  **Resuming:** The agent client is responsible for monitoring the long-running operation. Once the operation is complete (or has an intermediate update), the client can resume the agent's run by sending the result back to the agent.
 
-1. **Initiation:** When the LLM calls the tool, your function starts the long-running operation.
-
-2. **Initial Updates:** Your function should optionally return an initial result (e.g. the long-running operaiton id). The ADK framework takes the result and sends it back to the LLM packaged within a `FunctionResponse`. This allows the LLM to inform the user (e.g., status, percentage complete, messages). And then the agent run is ended / paused.
-
-3. **Continue or Wait:** After each agent run is completed. Agent client can query the progress of the long-running operation and decide whether to continue the agent run with an intermediate response (to update the progress) or wait until a final response is retrieved. Agent client should send the intermediate or final response back to the agent for the next run.
-
-4. **Framework Handling:** The ADK framework manages the execution. It sends the intermediate or final `FunctionResponse` sent by agent client to the LLM to generate a user friendly message.
+3.  **Framework Handling:** The ADK framework receives the result from the client and resumes the agent's execution. The result is passed back to the LLM as a `FunctionResponse`, allowing the agent to continue its work.
 
 ### Creating the Tool
 
-Define your tool function and wrap it using the `LongRunningFunctionTool` class:
+To create a long-running function tool, you define a function and wrap it with the `LongRunningFunctionTool` class.
 
 === "Python"
 
-    ```py
-    --8<-- "examples/python/snippets/tools/function-tools/human_in_the_loop.py:define_long_running_function"
-    ```
+    ```python
+    from google.adk.tools import LongRunningFunctionTool
 
-=== "Java"
-
-    ```java
-    import com.google.adk.agents.LlmAgent;
-    import com.google.adk.tools.LongRunningFunctionTool;
-    import java.util.HashMap;
-    import java.util.Map;
-    
-    public class ExampleLongRunningFunction {
-    
-      // Define your Long Running function.
-      // Ask for approval for the reimbursement.
-      public static Map<String, Object> askForApproval(String purpose, double amount) {
-        // Simulate creating a ticket and sending a notification
-        System.out.println(
-            "Simulating ticket creation for purpose: " + purpose + ", amount: " + amount);
-    
-        // Send a notification to the approver with the link of the ticket
-        Map<String, Object> result = new HashMap<>();
-        result.put("status", "pending");
-        result.put("approver", "Sean Zhou");
-        result.put("purpose", purpose);
-        result.put("amount", amount);
-        result.put("ticket-id", "approval-ticket-1");
-        return result;
+    # Define a function that initiates a long-running task
+    def ask_for_approval(purpose: str, amount: float) -> dict:
+      """Ask for approval for the reimbursement."""
+      # In a real application, this would trigger an external process,
+      # like creating a ticket in an approval system.
+      return {
+          'status': 'pending',
+          'amount': amount,
+          'ticketId': 'reimbursement-ticket-001',
       }
-    
-      public static void main(String[] args) throws NoSuchMethodException {
-        // Pass the method to LongRunningFunctionTool.create
-        LongRunningFunctionTool approveTool =
-            LongRunningFunctionTool.create(ExampleLongRunningFunction.class, "askForApproval");
-    
-        // Include the tool in the agent
-        LlmAgent approverAgent =
-            LlmAgent.builder()
-                // ...
-                .tools(approveTool)
-                .build();
-      }
-    }
+
+    # Wrap the function with LongRunningFunctionTool
+    approval_tool = LongRunningFunctionTool(func=ask_for_approval)
+
+    # Include the tool in your agent's tool list
+    my_agent = LlmAgent(
+        # ... other agent configuration
+        tools=[approval_tool],
+    )
     ```
 
-### Intermediate / Final result Updates
+### Resuming the Invocation
 
-Agent client received an event with long running function calls and check the status of the ticket. Then Agent client can send the intermediate or final response back to update the progress. The framework packages this value (even if it's None) into the content of the `FunctionResponse` sent back to the LLM.
+After the `ask_for_approval` tool is called, the agent's invocation will be paused. The agent client will receive an event indicating that a function call has been made and is pending. The client can then wait for the external process (e.g., the manager's approval) to complete.
 
-??? Tip "Applies to only Java ADK"
+Once the result is available, the client can resume the invocation by running the agent again with the result of the long-running operation. The result should be formatted as a `FunctionResponse`.
 
-    When passing `ToolContext` with Function Tools, ensure that one of the following is true:
+```python
+# Assume 'runner' is your configured Runner instance and 'session_id' is the
+# ID of the session that was paused.
 
-    * The Schema is passed with the ToolContext parameter in the function signature, like:
-      ```
-      @com.google.adk.tools.Annotations.Schema(name = "toolContext") ToolContext toolContext
-      ```
-    OR
+# The manager approves the request.
+approval_result = {
+    'status': 'approved',
+    'ticketId': 'reimbursement-ticket-001',
+}
 
-    * The following `-parameters` flag is set to the mvn compiler plugin
+# Create a FunctionResponse with the result.
+# The 'id' of the FunctionResponse must match the 'id' of the original
+# FunctionCall event.
+function_response = types.FunctionResponse(
+    name='ask_for_approval',
+    id='<function_call_id_from_event>',
+    response=approval_result
+)
 
-    ```
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.14.0</version> <!-- or newer -->
-                <configuration>
-                    <compilerArgs>
-                        <arg>-parameters</arg>
-                    </compilerArgs>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-    ```
-    This constraint is temporary and will be removed.
+# Resume the agent's run with the FunctionResponse.
+events = runner.run(
+    session_id=session_id,
+    new_message=types.Content(parts=[types.Part(function_response=function_response)])
+)
 
-
-=== "Python"
-
-    ```py
-    --8<-- "examples/python/snippets/tools/function-tools/human_in_the_loop.py:call_reimbursement_tool"
-    ```
-
-=== "Java"
-
-    ```java
-    --8<-- "examples/java/snippets/src/main/java/tools/LongRunningFunctionExample.java:full_code"
-    ```
-
-
-??? "Python complete example: File Processing Simulation"
-
-    ```py
-    --8<-- "examples/python/snippets/tools/function-tools/human_in_the_loop.py"
-    ```
-
-#### Key aspects of this example
-
-* **`LongRunningFunctionTool`**: Wraps the supplied method/function; the framework handles sending yielded updates and the final return value as sequential FunctionResponses.
-
-* **Agent instruction**: Directs the LLM to use the tool and understand the incoming FunctionResponse stream (progress vs. completion) for user updates.
-
-* **Final return**: The function returns the final result dictionary, which is sent in the concluding FunctionResponse to indicate completion.
+# The agent will now continue its execution with the result of the approval.
+```
 
 ## Agent-as-a-Tool {#agent-tool}
 
@@ -317,15 +194,11 @@ To use an agent as a tool, wrap the agent with the AgentTool class.
 
 === "Python"
 
-    ```py
+    ```python
     tools=[AgentTool(agent=agent_b)]
     ```
 
-=== "Java"
 
-    ```java
-    AgentTool.create(agent)
-    ```
 
 ### Customization
 
@@ -335,17 +208,7 @@ The `AgentTool` class provides the following attributes for customizing its beha
 
 ??? "Example"
 
-    === "Python"
-
-        ```py
-        --8<-- "examples/python/snippets/tools/function-tools/summarizer.py"
-        ```
-  
-    === "Java"
-
-        ```java
-        --8<-- "examples/java/snippets/src/main/java/tools/AgentToolCustomization.java:full_code"
-        ```
+    
 
 ### How it works
 
