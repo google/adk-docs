@@ -72,7 +72,7 @@ async function callAgentAsync(query: string) {
   });
 
   // The run method returns an async iterator for the events
-  const events = runner.run({
+  const events = runner.runAsync({
     userId: USER_ID,
     sessionId: SESSION_ID,
     newMessage: content,
