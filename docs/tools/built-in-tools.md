@@ -7,7 +7,7 @@ agent that needs to retrieve information from the web can directly use the
 
 ## How to Use
 
-1. **Import:** Import the desired tool from the tools module. This is `agents.tools` in Python or `com.google.adk.tools` in Java.
+1. **Import:** Import the desired tool from the tools module. This is `agents.tools` in Python, `com.google.adk.tools` in Java, or `google.golang.org/adk/tool/geminitool` in Go.
 2. **Configure:** Initialize the tool, providing required parameters if any.
 3. **Register:** Add the initialized tool to the **tools** list of your Agent.
 
@@ -18,6 +18,7 @@ tool when the agent calls it. Important: check the ***Limitations*** section of 
 ## Available Built-in tools
 
 Note: Java only supports Google Search and Code Execution tools currently.
+Note: Go only supports the Google Search tool currently.
 
 ### Google Search
 
