@@ -91,7 +91,7 @@ async function callAgentAndPrint({runner, query, sessionId,}: {  runner: InMemor
   });
 
   for await (const event of events) {
-    if (isFinalResponse(event) && event.content?.parts) {
+    if (isFinalResponse(event) && event.content?.parts?.length) {
       finalResponseContent = event.content.parts
         .map((part: { text?: string }) => part.text ?? "")
         .join("");
