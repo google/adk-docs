@@ -111,6 +111,41 @@ Pass the scheme and credential during toolset initialization. The toolset applie
       )
       ```
 
+=== "Client Credentials Grant Type"
+
+      For machine-to-machine authentication, you can use the OAuth2 Client Credentials grant type. This flow is non-interactive and uses the client ID and client secret to obtain an access token.
+
+      ```python
+      from fastapi.openapi.models import OAuth2, OAuthFlowClientCredentials, OAuthFlows
+      from google.adk.auth import AuthCredential, AuthCredentialTypes, OAuth2Auth
+      from google.adk.tools.openapi_tool.openapi_spec_parser.openapi_toolset import OpenAPIToolset
+
+      # Define OAuth2 scheme with client credentials flow
+      flows = OAuthFlows(
+          clientCredentials={
+              "tokenUrl": "https://example.com/token",
+              "scopes": {"read:weather": "Read weather data"},
+          }
+      )
+      auth_scheme = OAuth2(flows=flows)
+
+      # Define AuthCredential with client ID and client secret
+      auth_credential = AuthCredential(
+          auth_type=AuthCredentialTypes.OAUTH2,
+          oauth2=OAuth2Auth(
+              client_id="YOUR_CLIENT_ID",
+              client_secret="YOUR_CLIENT_SECRET",
+          ),
+      )
+
+      weather_toolset = OpenAPIToolset(
+          spec_str="...",  # Your OpenAPI spec
+          spec_str_type="yaml",
+          auth_scheme=auth_scheme,
+          auth_credential=auth_credential,
+      )
+      ```
+
 === "Service Account"
 
       Create a tool requiring Service Account.
@@ -568,7 +603,7 @@ except Exception as e:
             email: support@example.com # Replace with actual contact if available
          servers:
          - url: <substitute with your server name>
-            description: Production Environment
+           description: Production Environment
          paths:
          /okta-jwt-user-api:
             get:
@@ -676,4 +711,3 @@ except Exception as e:
                   - code
                   - message
          ```
-
