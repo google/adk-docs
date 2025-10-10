@@ -31,7 +31,7 @@ The trajectory is just a list of steps the agent took before it returned to the 
 
 ### Evaluating trajectory and tool use
 
-Before responding to a user, an agent typically performs a series of actions, which we refer to as a 'trajectory.' It might compare the user input with session history to disambiguate a term, or lookup a policy document, search a knowledge base or invoke an API to save a ticket. We call this a ‘trajectory’ of actions. Evaluating an agent's performance requires comparing its actual trajectory to an expected, or ideal, one. This comparison can reveal errors and inefficiencies in the agent's process. The expected trajectory represents the ground truth \-- the list of steps we anticipate the agent should take.
+Before responding to a user, an agent typically performs a series of actions, which we refer to as a 'trajectory.' It might compare the user input with session history to disambiguate a term, or lookup a policy document, search a knowledge base or invoke an API to save a ticket. We call this a ‘trajectory’ of actions. Evaluating an agent's performance requires comparing its actual trajectory to an expected, or ideal, one. This comparison can reveal errors and inefficiencies in the agent's process. The expected trajectory represents the ground truth \-- the list of steps we anticipate the agent should have taken.
 
 For example:
 
@@ -328,6 +328,65 @@ Here is an example of a `test_config.json` file specifying custom evaluation cri
   "criteria": {
     "tool_trajectory_avg_score": 1.0,
     "response_match_score": 0.8
+  }
+}
+```
+
+## Built-in Evaluation Metrics
+
+The ADK provides several built-in evaluation metrics that you can use to assess the performance of your agents.
+
+### HallucinationsV1
+
+The `HallucinationsV1` metric evaluates whether a model's response contains any false, contradictory, or unsupported claims. It uses a two-step process:
+
+1.  **Segmenter:** The agent's response is segmented into individual sentences.
+2.  **Sentence Validator:** Each sentence is evaluated against the provided context for grounding.
+
+The final score is the percentage of sentences that are either supported by the context or not applicable (e.g., opinions, greetings).
+
+To use this metric, add it to your `test_config.json` file:
+
+```json
+{
+  "criteria": {
+    "HallucinationsV1": {
+      "threshold": 0.8,
+      "judge_model": "gemini-1.5-flash"
+    }
+  }
+}
+```
+
+### Rubric Based Tool Use
+
+The `RubricBasedToolUseV1Evaluator` metric assesses the quality of an agent's tool usage against a set of user-defined rubrics. It uses an LLM as a judge to provide a confidence score (from 0 to 1) for each rubric.
+
+The final score is the average of the rubric scores.
+
+To use this metric, you need to define your rubrics in the `test_config.json` file:
+
+```json
+{
+  "criteria": {
+    "RubricBasedToolUseV1Evaluator": {
+      "threshold": 0.7,
+      "judge_model": "gemini-1.5-flash",
+      "rubrics": [
+        {
+          "rubric_id": "tool_selection",
+          "rubric_content": {
+            "text_property": "The agent selected the correct tool to answer the user's query."
+          }
+        },
+        {
+          "rubric_id": "parameter_filling",
+          "rubric_content": {
+            "text_property": "The agent correctly filled all the required parameters for the selected tool."
+          }
+        }
+      ]
+    }
   }
 }
 ```
