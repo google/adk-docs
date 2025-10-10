@@ -60,7 +60,7 @@ You need the following resources configured to use this deployment path:
     [Make tool](https://www.gnu.org/software/make/) documentation.
 -   **Terraform**: Infrastructure and services deployment on Google Cloud.
     For installation details, see 
-    [Install Terraform](https://developer.hashicorp.com/terraform/downloads).
+    [Install Terraform](https://developer.hashicorp.com/terraform/install).
 
 ### Prepare your ADK project {#prepare-ad}
 
