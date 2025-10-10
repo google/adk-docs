@@ -47,36 +47,39 @@
     If you are using maven, add the following to your `pom.xml`:
 
     ```xml title="pom.xml"
-    <dependencies>
-      <!-- The ADK Core dependency -->
-      <dependency>
-        <groupId>com.google.adk</groupId>
-        <artifactId>google-adk</artifactId>
-        <version>0.2.0</version>
-      </dependency>
-      
-      <!-- The ADK Dev Web UI to debug your agent (Optional) -->
-      <dependency>
-        <groupId>com.google.adk</groupId>
-        <artifactId>google-adk-dev</artifactId>
-        <version>0.2.0</version>
-      </dependency>
-    </dependencies>
+    <?xml version="1.0" encoding="UTF-8"?>
+    <project xmlns="http://maven.apache.org/POM/4.0.0"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+        <modelVersion>4.0.0</modelVersion>
 
-    <build>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.14.0</version>
-          <configuration>
-            <compilerArgs>
-              <arg>-parameters</arg>
-            </compilerArgs>
-          </configuration>
-        </plugin>
-      </plugins>
-    </build>
+        <groupId>com.example.agent</groupId>
+        <artifactId>adk-agents</artifactId>
+        <version>1.0-SNAPSHOT</version>
+
+        <!-- Specify the version of Java you'll be using -->
+        <properties>
+            <maven.compiler.source>17</maven.compiler.source>
+            <maven.compiler.target>17</maven.compiler.target>
+            <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        </properties>
+
+        <dependencies>
+            <!-- The ADK core dependency -->
+            <dependency>
+                <groupId>com.google.adk</groupId>
+                <artifactId>google-adk</artifactId>
+                <version>0.3.0</version>
+            </dependency>
+            <!-- The ADK dev web UI to debug your agent -->
+            <dependency>
+                <groupId>com.google.adk</groupId>
+                <artifactId>google-adk-dev</artifactId>
+                <version>0.3.0</version>
+            </dependency>
+        </dependencies>
+
+    </project>
     ```
 
     Here's a [complete pom.xml](https://github.com/google/adk-docs/tree/main/examples/java/cloud-run/pom.xml) file for reference.
