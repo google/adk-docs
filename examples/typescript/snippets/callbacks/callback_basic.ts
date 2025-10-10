@@ -89,7 +89,6 @@ async function callAgentAsync(query: string) {
   }
 }
 
-// In a TypeScript/Node.js environment, you would typically call an async function like this:
 (async () => {
   await callAgentAsync("write a short joke");
 })();
