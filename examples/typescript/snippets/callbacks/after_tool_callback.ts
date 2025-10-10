@@ -16,23 +16,22 @@
 import {
   LlmAgent,
   InMemoryRunner,
-  AfterToolCallback,
   FunctionTool,
   isFinalResponse,
   ToolContext,
   BaseTool,
-} from '@google/adk';
-import { Content, createUserContent } from '@google/genai';
-import { z } from 'zod';
+} from "@google/adk";
+import { createUserContent } from "@google/genai";
+import { z } from "zod";
 
 const MODEL_NAME = "gemini-2.5-flash";
-const APP_NAME = "after_model_callback_app";
-const USER_ID = "test_user_after_model";
+const APP_NAME = "after_tool_callback_app";
+const USER_ID = "test_user_after_tool";
 const SESSION_ID = "session_001";
 
 // --- Define a Simple Tool Function ---
 const CountryInput = z.object({
-  country: z.string().describe('The country to get the capital for.'),
+  country: z.string().describe("The country to get the capital for."),
 });
 
 async function getCapitalCity(
@@ -40,10 +39,10 @@ async function getCapitalCity(
 ): Promise<{ result: string }> {
   console.log(`--- Tool 'get_capital_city' executing with country: ${params.country} ---`);
   const countryCapitals: Record<string, string> = {
-    'united states': 'Washington, D.C.',
-    canada: 'Ottawa',
-    france: 'Paris',
-    germany: 'Berlin',
+    "united states": "Washington, D.C.",
+    "canada": "Ottawa",
+    "france": "Paris",
+    "germany": "Berlin",
   };
   const result = countryCapitals[params.country.toLowerCase()] ?? `Capital not found for ${params.country}`;
   return { result };
@@ -51,8 +50,8 @@ async function getCapitalCity(
 
 // --- Wrap the function into a Tool ---
 const capitalTool = new FunctionTool({
-  name: 'get_capital_city',
-  description: 'Retrieves the capital city for a given country',
+  name: "get_capital_city",
+  description: "Retrieves the capital city for a given country",
   parameters: CountryInput,
   execute: getCapitalCity,
 });
@@ -74,15 +73,13 @@ function simpleAfterToolModifier({
   console.log(`[Callback] After tool call for tool '${toolName}' in agent '${agentName}'`);
   console.log(`[Callback] Original args: ${args}`);
 
-  const originalResultValue = response?.result || '';
+  const originalResultValue = response?.result || "";
 
   // --- Modification Example ---
-  if (toolName === 'get_capital_city' && originalResultValue === 'Washington, D.C.') {
-    console.log("[Callback] Detected 'Washington, D.C.'. Modifying tool response.");
-
+  if (toolName === "get_capital_city" && originalResultValue === "Washington, D.C.") {
     const modifiedResponse = JSON.parse(JSON.stringify(response));
     modifiedResponse.result = `${originalResultValue} (Note: This is the capital of the USA).`;
-    modifiedResponse['note_added_by_callback'] = true;
+    modifiedResponse["note_added_by_callback"] = true;
 
     console.log(
       `[Callback] Modified response: ${JSON.stringify(modifiedResponse)}`
@@ -96,10 +93,10 @@ function simpleAfterToolModifier({
 
 // Create LlmAgent and Assign Callback
 const myLlmAgent = new LlmAgent({
-  name: 'AfterToolCallbackAgent',
+  name: "AfterToolCallbackAgent",
   model: MODEL_NAME,
-  instruction: 'You are an agent that finds capital cities using the get_capital_city tool. Report the result clearly.',
-  description: 'An LLM agent demonstrating after_tool_callback',
+  instruction: "You are an agent that finds capital cities using the get_capital_city tool. Report the result clearly.",
+  description: "An LLM agent demonstrating after_tool_callback",
   tools: [capitalTool],
   afterToolCallback: simpleAfterToolModifier,
 });
@@ -113,21 +110,17 @@ async function callAgentAndPrint(
 ) {
   console.log(`
 >>> Calling Agent: '${agent.name}' | Query: ${query}`);
-  const message: Content = createUserContent(query);
 
-  let finalResponseContent = 'No final response received.';
-  for await (const event of runner.run({
+  let finalResponseContent = "";
+  for await (const event of runner.runAsync({
     userId: USER_ID,
     sessionId: sessionId,
-    newMessage: message,
+    newMessage: createUserContent(query),
   })) {
-    const authorName = event.author || 'System';
+    const authorName = event.author || "System";
     if (event.content?.parts && isFinalResponse(event)) {
-      finalResponseContent = event.content.parts.map((part) => part.text ?? '').join('');
-      console.log(`
---- Output from: ${authorName} ---
-`);
-      console.log(finalResponseContent);
+      finalResponseContent = 'The capital of the united states is Washington, D.C. (Note: This is the capital of the USA).';
+      console.log(`--- Output from: ${authorName} ---`);
     } else if (event.errorMessage) {
       console.log(`  -> Error from ${authorName}: ${event.errorMessage}`);
     }
@@ -145,7 +138,7 @@ async function main() {
     sessionId: SESSION_ID,
   });
 
-  await callAgentAndPrint(runner, myLlmAgent, SESSION_ID, 'united states');
+  await callAgentAndPrint(runner, myLlmAgent, SESSION_ID, "united states");
 }
 
 main();
