@@ -13,7 +13,7 @@ Custom agents provide the ultimate flexibility in ADK, allowing you to define **
 A Custom Agent is essentially any class you create that inherits from `google.adk.agents.BaseAgent` and implements its core execution logic within the `_run_async_impl` asynchronous method. You have complete control over how this method calls other agents (sub-agents), manages state, and handles events. 
 
 !!! Note
-    The specific method name for implementing an agent's core asynchronous logic may vary slightly by SDK language (e.g., `runAsyncImpl` in Java, `_run_async_impl` in Python, or `runImpl` in TypeScript). Refer to the language-specific API documentation for details.
+    The specific method name for implementing an agent's core asynchronous logic may vary slightly by SDK language (e.g., `runAsyncImpl` in Java, `_run_async_impl` in Python, or `runAsyncImpl` in TypeScript). Refer to the language-specific API documentation for details.
 
 ### Why Use Them?
 
@@ -51,9 +51,9 @@ The core of any custom agent is the method where you define its unique asynchron
 
 === "TypeScript"
 
-    The heart of any custom agent is the `runImpl` method. This is where you define its unique behavior.
+    The heart of any custom agent is the `runAsyncImpl` method. This is where you define its unique behavior.
 
-    *   **Signature:** `async* runImpl(ctx: InvocationContext): AsyncGenerator<Event, void, undefined>`
+    *   **Signature:** `async* runAsyncImpl(ctx: InvocationContext): AsyncGenerator<Event, void, undefined>`
     *   **Asynchronous Generator:** It must be an `async` generator function (`async*`). This allows it to `yield` or `yield*` events produced by sub-agents or its own logic back to the runner.
     *   **`ctx` (InvocationContext):** Provides access to crucial runtime information, most importantly `ctx.session.state`, which is the primary way to share data between steps orchestrated by your custom agent.
 
