@@ -137,7 +137,7 @@ async function main() {
 
   for await (const event of eventsSkip) {
     // Print final output (either from LLM or callback override)
-    if (isFinalResponse(event) && event.content?.parts) {
+    if (isFinalResponse(event) && event.content?.parts?.length) {
       const finalResponse = event.content.parts
         .map((part: any) => part.text ?? '')
         .join('');
