@@ -21,7 +21,7 @@ import {
   isFinalResponse,
   BaseTool,
 } from '@google/adk';
-import { Content, Part } from '@google/genai';
+import { createUserContent } from "@google/genai";
 import { z } from 'zod';
 
 const MODEL_NAME = "gemini-2.5-flash";
@@ -104,11 +104,10 @@ const myLlmAgent = new LlmAgent({
 // Agent Interaction Logic
 async function callAgentAndPrint(runner: InMemoryRunner, query: string, sessionId: string) {
   console.log(`\n>>> Calling Agent for session '${sessionId}' | Query: "${query}"`);
-  const message: Content = { role: 'user', parts: [{ text: query }] };
 
-  for await (const event of runner.run({ userId: USER_ID, sessionId, newMessage: message })) {
-    if (isFinalResponse(event) && event.content?.parts) {
-      const finalResponseContent = event.content.parts.map((part: Part) => part.text ?? '').join('');
+  for await (const event of runner.runAsync({ userId: USER_ID, sessionId, newMessage: createUserContent(query) })) {
+    if (isFinalResponse(event) && event.content?.parts?.length) {
+      const finalResponseContent = event.content.parts.map(part => part.text ?? '').join('');
       console.log(`<<< Final Output: ${finalResponseContent}`);
     }
   }
