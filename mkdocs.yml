@@ -114,20 +114,22 @@ plugins:
 # Navigation
 nav:
   - Home: index.md
-  - Get Started:
+  - Get started:
     - get-started/index.md
-    - Installation: get-started/installation.md
-    - Quickstart: get-started/quickstart.md
-    - Quickstart (Streaming):
+    - Python: get-started/python.md
+    - Java: get-started/java.md
+  - Build your agent:
+    - tutorials/index.md
+    - Multi-tool agent: get-started/quickstart.md
+    - Agent team: tutorials/agent-team.md
+    - Streaming agent:
       - get-started/streaming/index.md
       - Python: get-started/streaming/quickstart-streaming.md
       - Java: get-started/streaming/quickstart-streaming-java.md
     - Testing: get-started/testing.md
-    - Sample agents: https://github.com/google/adk-samples
-    - About ADK: get-started/about.md
-  - Tutorials:
-    - tutorials/index.md
-    - Agent Team: tutorials/agent-team.md
+    - Code samples: https://github.com/google/adk-samples
+    - Advanced setup: get-started/installation.md
+  - Technical overview: get-started/about.md
   - Agents:
     - agents/index.md
     - LLM agents: agents/llm-agents.md
@@ -191,7 +193,7 @@ nav:
     - plugins/index.md
   - Bidi-streaming (live):
     - streaming/index.md
-    - Quickstart (Bidi-streaming/live): get-started/streaming/index.md
+    #- Quickstart (Bidi-streaming/live): get-started/streaming/index.md
     - Custom Audio Bidi-streaming app sample (SSE): streaming/custom-streaming.md
     - Custom Audio Bidi-streaming app sample (WebSockets): streaming/custom-streaming-ws.md
     - Bidi-streaming development guide series: streaming/dev-guide/part1.md
