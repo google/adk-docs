@@ -43,7 +43,7 @@ function simpleAfterModelModifier({
   const modelResponseText = response.content?.parts?.[0]?.text ?? "";
   console.log(`[Callback] Inspecting model response: "${modelResponseText.substring(0, 50)}..."`);
 
-  // --- Modification Logic (to match Python) ---
+  // --- Modification Example ---
   // Replace "joke" with "funny story" (case-insensitive)
   const searchTerm = "joke";
   const replaceTerm = "funny story";
