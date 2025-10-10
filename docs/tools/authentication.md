@@ -18,7 +18,7 @@ The general flow involves providing these details when configuring a tool. ADK t
 * **API\_KEY:** For simple key/value authentication. Usually requires no exchange.  
 * **HTTP:** Can represent Basic Auth (not recommended/supported for exchange) or already obtained Bearer tokens. If it's a Bearer token, no exchange is needed.  
 * **OAUTH2:** For standard OAuth 2.0 flows. Requires configuration (client ID, secret, scopes) and often triggers the interactive flow for user consent.  
-* **OPEN\_ID\_CONNECT:** For authentication based on OpenID Connect. Similar to OAuth2, often requires configuration and user interaction.  
+* **OPEN\_ID\_CONNECT:** For authentication based on OpenID Connect. Similar to OAuth2, often requires user interaction.  
 * **SERVICE\_ACCOUNT:** For Google Cloud Service Account credentials (JSON key or Application Default Credentials). Typically exchanged for a Bearer token.
 
 ## Configuring Authentication on Tools
@@ -52,115 +52,9 @@ When adding an authenticated tool to your agent, you need to provide its require
 
 Pass the scheme and credential during toolset initialization. The toolset applies them to all generated tools. Here are few ways to create tools with authentication in ADK.
 
-=== "API Key"
 
-      Create a tool requiring an API Key.
 
-      ```py
-      from google.adk.tools.openapi_tool.auth.auth_helpers import token_to_scheme_credential
-      from google.adk.tools.openapi_tool.openapi_spec_parser.openapi_toolset import OpenAPIToolset
 
-      auth_scheme, auth_credential = token_to_scheme_credential(
-          "apikey", "query", "apikey", "YOUR_API_KEY_STRING"
-      )
-      sample_api_toolset = OpenAPIToolset(
-          spec_str="...",  # Fill this with an OpenAPI spec string
-          spec_str_type="yaml",
-          auth_scheme=auth_scheme,
-          auth_credential=auth_credential,
-      )
-      ```
-
-=== "OAuth2"
-
-      Create a tool requiring OAuth2.
-
-      ```py
-      from google.adk.tools.openapi_tool.openapi_spec_parser.openapi_toolset import OpenAPIToolset
-      from fastapi.openapi.models import OAuth2
-      from fastapi.openapi.models import OAuthFlowAuthorizationCode
-      from fastapi.openapi.models import OAuthFlows
-      from google.adk.auth import AuthCredential
-      from google.adk.auth import AuthCredentialTypes
-      from google.adk.auth import OAuth2Auth
-
-      auth_scheme = OAuth2(
-          flows=OAuthFlows(
-              authorizationCode=OAuthFlowAuthorizationCode(
-                  authorizationUrl="https://accounts.google.com/o/oauth2/auth",
-                  tokenUrl="https://oauth2.googleapis.com/token",
-                  scopes={
-                      "https://www.googleapis.com/auth/calendar": "calendar scope"
-                  },
-              )
-          )
-      )
-      auth_credential = AuthCredential(
-          auth_type=AuthCredentialTypes.OAUTH2,
-          oauth2=OAuth2Auth(
-              client_id=YOUR_OAUTH_CLIENT_ID, 
-              client_secret=YOUR_OAUTH_CLIENT_SECRET
-          ),
-      )
-
-      calendar_api_toolset = OpenAPIToolset(
-          spec_str=google_calendar_openapi_spec_str, # Fill this with an openapi spec
-          spec_str_type='yaml',
-          auth_scheme=auth_scheme,
-          auth_credential=auth_credential,
-      )
-      ```
-
-=== "Service Account"
-
-      Create a tool requiring Service Account.
-
-      ```py
-      from google.adk.tools.openapi_tool.auth.auth_helpers import service_account_dict_to_scheme_credential
-      from google.adk.tools.openapi_tool.openapi_spec_parser.openapi_toolset import OpenAPIToolset
-
-      service_account_cred = json.loads(service_account_json_str)
-      auth_scheme, auth_credential = service_account_dict_to_scheme_credential(
-          config=service_account_cred,
-          scopes=["https://www.googleapis.com/auth/cloud-platform"],
-      )
-      sample_toolset = OpenAPIToolset(
-          spec_str=sa_openapi_spec_str, # Fill this with an openapi spec
-          spec_str_type='json',
-          auth_scheme=auth_scheme,
-          auth_credential=auth_credential,
-      )
-      ```
-
-=== "OpenID connect"
-
-      Create a tool requiring OpenID connect.
-
-      ```py
-      from google.adk.auth.auth_schemes import OpenIdConnectWithConfig
-      from google.adk.auth.auth_credential import AuthCredential, AuthCredentialTypes, OAuth2Auth
-      from google.adk.tools.openapi_tool.openapi_spec_parser.openapi_toolset import OpenAPIToolset
-
-      auth_scheme = OpenIdConnectWithConfig(
-          authorization_endpoint=OAUTH2_AUTH_ENDPOINT_URL,
-          token_endpoint=OAUTH2_TOKEN_ENDPOINT_URL,
-          scopes=['openid', 'YOUR_OAUTH_SCOPES"]
-      )
-      auth_credential = AuthCredential(
-          auth_type=AuthCredentialTypes.OPEN_ID_CONNECT,
-          oauth2=OAuth2Auth(
-              client_id="...",
-              client_secret="...",
-          )
-      )
-
-      userinfo_toolset = OpenAPIToolset(
-          spec_str=content, # Fill in an actual spec
-          spec_str_type='yaml',
-          auth_scheme=auth_scheme,
-          auth_credential=auth_credential,
-      )
-      ```
 
 **B. Using Google API Toolsets (e.g., `calendar_tool_set`)**
 
@@ -183,12 +77,14 @@ calendar_tool_set.configure_auth(
 # agent = LlmAgent(..., tools=calendar_tool_set.get_tool('calendar_tool_set'))
 ```
 
+### 2. Handling OAuth2 Authentication
+
+#### Authorization Code Grant Type
+
 The sequence diagram of auth request flow (where tools are requesting auth credentials) looks like below:
 
 ![Authentication](../assets/auth_part1.svg) 
 
-
-### 2. Handling the Interactive OAuth/OIDC Flow (Client-Side)
 
 If a tool requires user login/consent (typically OAuth 2.0 or OIDC), the ADK framework pauses execution and signals your **Agent Client** application. There are two cases:
 
@@ -380,6 +276,84 @@ The sequence diagram of auth response flow (where Agent Client send back the aut
 
 ![Authentication](../assets/auth_part2.svg)
 
+#### Client Credentials Grant Type
+
+The OAuth2 Client Credentials grant type is used for server-to-server authentication where no user interaction is required. The ADK can handle this flow automatically when you provide the necessary configuration.
+
+**Integration:**
+
+1.  **Define the `AuthScheme`:** Create an `OAuth2` object with an `OAuthFlowClientCredentials` flow, specifying the `tokenUrl` and `scopes`.
+2.  **Define the `AuthCredential`:** Create an `AuthCredential` of type `OAUTH2` and provide your `client_id` and `client_secret`.
+3.  **Wrap the tool:** Use the `AuthenticatedFunctionTool` to wrap your function, providing the `AuthConfig` object.
+
+**Example:**
+
+```python
+from fastapi.openapi.models import OAuth2, OAuthFlowClientCredentials, OAuthFlows
+from google.adk.auth import AuthCredential, AuthCredentialTypes, OAuth2Auth
+from google.adk.auth.auth_tool import AuthConfig
+from google.adk.tools.authenticated_function_tool import AuthenticatedFunctionTool
+import requests
+
+# 1. Define the AuthScheme and AuthCredential
+def create_auth_config() -> AuthConfig:
+  """Create OAuth2 auth configuration for the weather API."""
+
+  # Define OAuth2 scheme with client credentials flow
+  flows = OAuthFlows(
+      clientCredentials=OAuthFlowClientCredentials(
+          tokenUrl="http://localhost:8000/token",  # Your token endpoint
+          scopes={
+              "read": "Read access to weather data",
+          },
+      )
+  )
+  auth_scheme = OAuth2(flows=flows)
+
+  # Create credential with client ID and secret
+  raw_credential = AuthCredential(
+      auth_type=AuthCredentialTypes.OAUTH2,
+      oauth2=OAuth2Auth(
+          client_id="test_client",
+          client_secret="test_secret",
+      ),
+  )
+
+  return AuthConfig(
+      auth_scheme=auth_scheme,
+      raw_auth_credential=raw_credential,
+      credential_key="weather_api_client",
+  )
+
+# 2. Define the function that will use the authenticated client
+def get_weather_data(city: str = "San Francisco", credential=None) -> str:
+  """Get current weather data for a specified city."""
+  headers = {}
+  if credential and credential.oauth2 and credential.oauth2.access_token:
+    headers["Authorization"] = f"Bearer {credential.oauth2.access_token}"
+
+  response = requests.get(
+      "http://localhost:8000/api/weather",
+      headers=headers,
+      params={"city": city},
+      timeout=10,
+  )
+  # ... process response
+  return response.text
+
+
+# 3. Wrap the function with AuthenticatedFunctionTool
+weather_tool = AuthenticatedFunctionTool(
+    func=get_weather_data, auth_config=create_auth_config()
+)
+
+# 4. Add the tool to your agent
+agent = LlmAgent(
+    # ...
+    tools=[weather_tool],
+)
+```
+
 ## Journey 2: Building Custom Tools (`FunctionTool`) Requiring Authentication
 
 This section focuses on implementing the authentication logic *inside* your custom Python function when creating a new ADK Tool. We will implement a `FunctionTool` as an example.
@@ -538,142 +512,4 @@ except Exception as e:
 
 ??? "Full Code"
 
-    === "Tools and Agent"
-
-         ```py title="tools_and_agent.py"
-         --8<-- "examples/python/snippets/tools/auth/tools_and_agent.py"
-         ```
-    === "Agent CLI"
-
-         ```py title="agent_cli.py"
-         --8<-- "examples/python/snippets/tools/auth/agent_cli.py"
-         ```
-    === "Helper"
-
-         ```py title="helpers.py"
-         --8<-- "examples/python/snippets/tools/auth/helpers.py"
-         ```
-    === "Spec"
-
-         ```yaml
-         openapi: 3.0.1
-         info:
-         title: Okta User Info API
-         version: 1.0.0
-         description: |-
-            API to retrieve user profile information based on a valid Okta OIDC Access Token.
-            Authentication is handled via OpenID Connect with Okta.
-         contact:
-            name: API Support
-            email: support@example.com # Replace with actual contact if available
-         servers:
-         - url: <substitute with your server name>
-            description: Production Environment
-         paths:
-         /okta-jwt-user-api:
-            get:
-               summary: Get Authenticated User Info
-               description: |-
-               Fetches profile details for the user
-               operationId: getUserInfo
-               tags:
-               - User Profile
-               security:
-               - okta_oidc:
-                     - openid
-                     - email
-                     - profile
-               responses:
-               '200':
-                  description: Successfully retrieved user information.
-                  content:
-                     application/json:
-                     schema:
-                        type: object
-                        properties:
-                           sub:
-                           type: string
-                           description: Subject identifier for the user.
-                           example: "abcdefg"
-                           name:
-                           type: string
-                           description: Full name of the user.
-                           example: "Example LastName"
-                           locale:
-                           type: string
-                           description: User's locale, e.g., en-US or en_US.
-                           example: "en_US"
-                           email:
-                           type: string
-                           format: email
-                           description: User's primary email address.
-                           example: "username@example.com"
-                           preferred_username:
-                           type: string
-                           description: Preferred username of the user (often the email).
-                           example: "username@example.com"
-                           given_name:
-                           type: string
-                           description: Given name (first name) of the user.
-                           example: "Example"
-                           family_name:
-                           type: string
-                           description: Family name (last name) of the user.
-                           example: "LastName"
-                           zoneinfo:
-                           type: string
-                           description: User's timezone, e.g., America/Los_Angeles.
-                           example: "America/Los_Angeles"
-                           updated_at:
-                           type: integer
-                           format: int64 # Using int64 for Unix timestamp
-                           description: Timestamp when the user's profile was last updated (Unix epoch time).
-                           example: 1743617719
-                           email_verified:
-                           type: boolean
-                           description: Indicates if the user's email address has been verified.
-                           example: true
-                        required:
-                           - sub
-                           - name
-                           - locale
-                           - email
-                           - preferred_username
-                           - given_name
-                           - family_name
-                           - zoneinfo
-                           - updated_at
-                           - email_verified
-               '401':
-                  description: Unauthorized. The provided Bearer token is missing, invalid, or expired.
-                  content:
-                     application/json:
-                     schema:
-                        $ref: '#/components/schemas/Error'
-               '403':
-                  description: Forbidden. The provided token does not have the required scopes or permissions to access this resource.
-                  content:
-                     application/json:
-                     schema:
-                        $ref: '#/components/schemas/Error'
-         components:
-         securitySchemes:
-            okta_oidc:
-               type: openIdConnect
-               description: Authentication via Okta using OpenID Connect. Requires a Bearer Access Token.
-               openIdConnectUrl: https://your-endpoint.okta.com/.well-known/openid-configuration
-         schemas:
-            Error:
-               type: object
-               properties:
-               code:
-                  type: string
-                  description: An error code.
-               message:
-                  type: string
-                  description: A human-readable error message.
-               required:
-                  - code
-                  - message
-         ```
-
+    
