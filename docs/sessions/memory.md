@@ -2,7 +2,7 @@
 
 ![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java support is planned/ coming soon."}
 
-We've seen how `Session` tracks the history (`events`) and temporary data (`state`) for a *single, ongoing conversation*. But what if an agent needs to recall information from *past* conversations or access external knowledge bases? This is where the concept of **Long-Term Knowledge** and the **`MemoryService`** come into play.
+We've seen how `Session` tracks the history (`events`) and temporary data (`state`) for a *single, ongoing conversation*. But what if an agent needs to recall information from *past* conversations? This is where the concept of **Long-Term Knowledge** and the **`MemoryService`** come into play.
 
 Think of it this way:
 
@@ -20,13 +20,13 @@ The `BaseMemoryService` defines the interface for managing this searchable, long
 
 The ADK offers two distinct `MemoryService` implementations, each tailored to different use cases. Use the table below to decide which is the best fit for your agent.
 
-| **Feature** | **InMemoryMemoryService** | **[NEW!] VertexAiMemoryBankService** |
+| **Feature** | **InMemoryMemoryService** | **VertexAiMemoryBankService** |
 | :--- | :--- | :--- |
 | **Persistence** | None (data is lost on restart) | Yes (Managed by Vertex AI) |
 | **Primary Use Case** | Prototyping, local development, and simple testing. | Building meaningful, evolving memories from user conversations. |
 | **Memory Extraction** | Stores full conversation | Extracts [meaningful information](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/memory-bank/generate-memories) from conversations and consolidates it with existing memories (powered by LLM) |
 | **Search Capability** | Basic keyword matching. | Advanced semantic search. |
-| **Setup Complexity** | None. It's the default. | Low. Requires an [Agent Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/memory-bank/overview) in Vertex AI. |
+| **Setup Complexity** | None. It's the default. | Low. Requires an [Agent Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/memory-bank/overview) instance in Vertex AI. |
 | **Dependencies** | None. | Google Cloud Project, Vertex AI API |
 | **When to use it** | When you want to search across multiple sessions’ chat histories for prototyping. | When you want your agent to remember and learn from past interactions. |
 
@@ -144,9 +144,9 @@ The `VertexAiMemoryBankService` connects your agent to [Vertex AI Memory Bank](h
 
 ### How It Works
 
-The service automatically handles two key operations:
+The service handles two key operations:
 
-*   **Generating Memories:** At the end of a conversation, the ADK sends the session's events to the Memory Bank, which intelligently processes and stores the information as "memories."
+*   **Generating Memories:** At the end of a conversation, you can send the session's events to the Memory Bank, which intelligently processes and stores the information as "memories."
 *   **Retrieving Memories:** Your agent code can issue a search query against the Memory Bank to retrieve relevant memories from past conversations.
 
 ### Prerequisites
@@ -154,7 +154,7 @@ The service automatically handles two key operations:
 Before you can use this feature, you must have:
 
 1.  **A Google Cloud Project:** With the Vertex AI API enabled.
-2.  **An Agent Engine:** You need to create an Agent Engine in Vertex AI. This will provide you with the **Agent Engine ID** required for configuration.
+2.  **An Agent Engine:** You need to create an Agent Engine in Vertex AI. You do not need to deploy your agent to Agent Engine Runtime to use Memory Bank. This will provide you with the **Agent Engine ID** required for configuration.
 3.  **Authentication:** Ensure your local environment is authenticated to access Google Cloud services. The simplest way is to run:
     ```bash
     gcloud auth application-default login
@@ -192,31 +192,43 @@ runner = adk.Runner(
 )
 ``` 
 
-### Using Memory in Your Agent
+## Using Memory in Your Agent
 
-With the service configured, the ADK automatically saves session data to the Memory Bank. To make your agent use this memory, you need to call the `search_memory` method from your agent's code.
+When a memory service is configured, your agent can use a tool or callback to retrieve memories. ADK includes two pre-built tools for retrieving memories:
 
-This is typically done at the beginning of a turn to fetch relevant context before generating a response.
+* `PreloadMemory`: Always retrieve memory at the beginning of each turn (similar to a callback).
+* `LoadMemory`: Retrieve memory when your agent decides it would be helpful.
 
 **Example:**
 
 ```python
 from google.adk.agents import Agent
-from google.genai import types
+from google.adk.tools.preload_memory_tool import PreloadMemoryTool
 
-class MyAgent(Agent):
-    async def run(self, request: types.Content, **kwargs) -> types.Content:
-        # Get the user's latest message
-        user_query = request.parts[0].text
+agent = Agent(
+    model=MODEL_ID,
+    name='weather_sentiment_agent',
+    instruction="...",
+    tools=[PreloadMemoryTool()]
+)
+```
 
-        # Search the memory for context related to the user's query
-        search_result = await self.search_memory(query=user_query)
+To extract memories from your session, you need to call `add_session_to_memory`. For example, you can automate this via a callback:
 
-        # Create a prompt that includes the retrieved memories
-        prompt = f"Based on my memory, here's what I recall about your query: {search_result.memories}\n\nNow, please respond to: {user_query}"
+```python
+from google import adk
 
-        # Call the LLM with the enhanced prompt
-        return await self.llm.generate_content_async(prompt)
+async def auto_save_session_to_memory_callback(callback_context):
+    await callback_context._invocation_context.memory_service.add_session_to_memory(
+        callback_context._invocation_context.session)
+
+agent = Agent(
+    model=MODEL,
+    name="Generic_QA_Agent",
+    instruction="Answer the user's questions",
+    tools=[adk.tools.preload_memory_tool.PreloadMemoryTool()],
+    after_agent_callback=auto_save_session_to_memory_callback,
+)
 ```
 
 ## Advanced Concepts
@@ -226,7 +238,7 @@ class MyAgent(Agent):
 The memory workflow internally involves these steps:
 
 1. **Session Interaction:** A user interacts with an agent via a `Session`, managed by a `SessionService`. Events are added, and state might be updated.  
-2. **Ingestion into Memory:** At some point (often when a session is considered complete or has yielded significant information), your application calls `memory_service.add_session_to_memory(session)`. This extracts relevant information from the session's events and adds it to the long-term knowledge store (in-memory dictionary or RAG Corpus).  
+2. **Ingestion into Memory:** At some point (often when a session is considered complete or has yielded significant information), your application calls `memory_service.add_session_to_memory(session)`. This extracts relevant information from the session's events and adds it to the long-term knowledge store (in-memory dictionary or Agent Engine Memory Bank).  
 3. **Later Query:** In a *different* (or the same) session, the user might ask a question requiring past context (e.g., "What did we discuss about project X last week?").  
 4. **Agent Uses Memory Tool:** An agent equipped with a memory-retrieval tool (like the built-in `load_memory` tool) recognizes the need for past context. It calls the tool, providing a search query (e.g., "discussion project X last week").  
 5. **Search Execution:** The tool internally calls `memory_service.search_memory(app_name, user_id, query)`.  
