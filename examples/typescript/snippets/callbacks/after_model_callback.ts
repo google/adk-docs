@@ -18,11 +18,9 @@ import {
   LlmAgent,
   InMemoryRunner,
   CallbackContext,
-  LlmRequest,
-  LlmResponse,
   isFinalResponse,
 } from "@google/adk";
-import { Content, Part } from "@google/genai";
+import { createUserContent } from "@google/genai";
 
 const MODEL_NAME = "gemini-2.5-flash";
 const APP_NAME = "after_model_callback_app";
@@ -36,8 +34,8 @@ function simpleAfterModelModifier({
   response,
 }: {
   context: CallbackContext;
-  response: LlmResponse;
-}): LlmResponse | undefined {
+  response: any;
+}): any | undefined {
   console.log(
     `[Callback] After model call for agent: ${context.agentName}`
   );
@@ -82,25 +80,20 @@ const myLlmAgent = new LlmAgent({
 });
 
 // --- Agent Interaction Logic ---
-async function callAgentAndPrint(
-  runner: InMemoryRunner,
-  query: string,
-  sessionId: string
-) {
+async function callAgentAndPrint({runner, query, sessionId,}: {  runner: InMemoryRunner;  query: string;  sessionId: string;}) {
   console.log(`\n>>> Calling Agent with query: "${query}"`);
-  const message: Content = { role: "user", parts: [{ text: query }] };
 
   let finalResponseContent = "No final response received.";
-  const events = runner.run({
+  const events = runner.runAsync({
     userId: USER_ID,
     sessionId: sessionId,
-    newMessage: message,
+    newMessage: createUserContent(query),
   });
 
   for await (const event of events) {
     if (isFinalResponse(event) && event.content?.parts) {
       finalResponseContent = event.content.parts
-        .map((part: Part) => part.text ?? "")
+        .map((part: { text?: string }) => part.text ?? "")
         .join("");
     }
   }
@@ -117,7 +110,11 @@ async function main() {
     userId: USER_ID,
     sessionId: SESSION_ID_JOKE,
   });
-  await callAgentAndPrint(runner, "write a short joke about computers", SESSION_ID_JOKE);
+  await callAgentAndPrint({
+    runner: runner,
+    query: 'write a short joke about computers',
+    sessionId: SESSION_ID_JOKE,
+  });
 
   // Scenario 2: The callback will not find "joke" and will pass the response through unmodified
   await runner.sessionService.createSession({
@@ -125,7 +122,11 @@ async function main() {
     userId: USER_ID,
     sessionId: SESSION_ID_POEM,
   });
-  await callAgentAndPrint(runner, "write a short poem about coding", SESSION_ID_POEM);
+  await callAgentAndPrint({
+    runner: runner,
+    query: 'write a short poem about coding',
+    sessionId: SESSION_ID_POEM,
+  });
 }
 
 main();
