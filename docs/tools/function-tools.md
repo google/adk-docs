@@ -115,31 +115,31 @@ A tool can write data to a `temp:` variable, and a subsequent tool can read it. 
 ??? "Example"
 
     === "Python"
-    
+
         This tool is a python function which obtains the Stock price of a given Stock ticker/ symbol.
-    
+
         <u>Note</u>: You need to `pip install yfinance` library before using this tool.
-    
+
         ```py
         --8<-- "examples/python/snippets/tools/function-tools/func_tool.py"
         ```
-    
+
         The return value from this tool will be wrapped into a dictionary.
-    
+
         ```json
         {"result": "$123"}
         ```
-    
+
     === "Java"
-    
+
         This tool retrieves the mocked value of a stock price.
-    
+
         ```java
         --8<-- "examples/java/snippets/src/main/java/tools/StockPriceAgent.java:full_code"
         ```
-    
+
         The return value from this tool will be wrapped into a Map<String, Object>.
-    
+
         ```json
         For input `GOOG`: {"symbol": "GOOG", "price": "1.0"}
         ```
@@ -159,6 +159,16 @@ While you have considerable flexibility in defining your function, remember that
 This tool is designed to help you start and manage tasks that are handled outside the operation of your agent workflow, and require a significant amount of processing time, without blocking the agent's execution. This tool is a subclass of `FunctionTool`.
 
 When using a `LongRunningFunctionTool`, your function can initiate the long-running operation and optionally return an **initial result**, such as a long-running operation id. Once a long running function tool is invoked the agent runner pauses the agent run and lets the agent client to decide whether to continue or wait until the long-running operation finishes. The agent client can query the progress of the long-running operation and send back an intermediate or final response. The agent can then continue with other tasks. An example is the human-in-the-loop scenario where the agent needs human approval before proceeding with a task.
+
+### Pause and Resume Mechanism
+
+A key feature of the `LongRunningFunctionTool` is its ability to pause an invocation, allowing for long-running processes to execute without blocking the main application thread. Here's how it works:
+
+1.  **Pausable App:** To enable this feature, you must mark your application as "resumable".
+
+2.  **Invocation Pause:** When a `LongRunningFunctionTool` is called, the ADK runtime checks if the application is resumable. If it is, the invocation is paused immediately after the tool call event is yielded.
+
+3.  **Resuming the Invocation:** To resume a paused invocation, you can use the `run()` method of the `Runner`, providing the `invocation_id` of the paused invocation. The runner will then restore the state of the application and continue execution from where it left off. You can provide an intermediate or final result from the long-running task as part of the resumed invocation.
 
 !!! warning "Warning: Execution handling"
     Long Running Function Tools are designed to help you start and *manage* long running
@@ -202,16 +212,16 @@ Define your tool function and wrap it using the `LongRunningFunctionTool` class:
     import com.google.adk.tools.LongRunningFunctionTool;
     import java.util.HashMap;
     import java.util.Map;
-    
+
     public class ExampleLongRunningFunction {
-    
+
       // Define your Long Running function.
       // Ask for approval for the reimbursement.
       public static Map<String, Object> askForApproval(String purpose, double amount) {
         // Simulate creating a ticket and sending a notification
         System.out.println(
             "Simulating ticket creation for purpose: " + purpose + ", amount: " + amount);
-    
+
         // Send a notification to the approver with the link of the ticket
         Map<String, Object> result = new HashMap<>();
         result.put("status", "pending");
@@ -221,12 +231,12 @@ Define your tool function and wrap it using the `LongRunningFunctionTool` class:
         result.put("ticket-id", "approval-ticket-1");
         return result;
       }
-    
+
       public static void main(String[] args) throws NoSuchMethodException {
         // Pass the method to LongRunningFunctionTool.create
         LongRunningFunctionTool approveTool =
             LongRunningFunctionTool.create(ExampleLongRunningFunction.class, "askForApproval");
-    
+
         // Include the tool in the agent
         LlmAgent approverAgent =
             LlmAgent.builder()
