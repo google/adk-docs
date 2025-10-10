@@ -19,14 +19,14 @@ import {
   InMemoryRunner,
   CallbackContext,
   isFinalResponse,
-} from '@google/adk';
-import { createUserContent, Content } from '@google/genai';
+} from "@google/adk";
+import { Content, createUserContent } from "@google/genai";
 
-const MODEL_NAME = 'gemini-2.5-flash';
+const MODEL_NAME = "gemini-2.5-flash";
 const APP_NAME = "before_agent_callback_app";
 const USER_ID = "test_user_before_agent";
-const SESSION_ID_RUN = 'session_will_run';
-const SESSION_ID_SKIP = 'session_will_skip';
+const SESSION_ID_RUN = "session_will_run";
+const SESSION_ID_SKIP = "session_will_skip";
 
 
 // --- 1. Define the Callback Function ---
@@ -46,7 +46,7 @@ function checkIfAgentShouldRun(
   console.log(`[Callback] Current State:`, currentState);
 
   // Check the condition in session state
-  if (currentState.get('skip_llm_agent') === true) {
+  if (currentState.get("skip_llm_agent") === true) {
     console.log(
       `[Callback] State condition 'skip_llm_agent=True' met: Skipping agent ${agentName}.`
     );
@@ -57,7 +57,7 @@ function checkIfAgentShouldRun(
           text: `Agent ${agentName} skipped by before_agent_callback due to state.`,
         },
       ],
-      role: 'model', // Assign model role to the overriding response
+      role: "model", // Assign model role to the overriding response
     };
   } else {
     console.log(
@@ -70,10 +70,10 @@ function checkIfAgentShouldRun(
 
 // --- 2. Setup Agent with Callback ---
 const llmAgentWithBeforeCb = new LlmAgent({
-  name: 'MyControlledAgent',
+  name: "MyControlledAgent",
   model: MODEL_NAME,
-  instruction: 'You are a concise assistant.',
-  description: 'An LLM agent demonstrating stateful before_agent_callback',
+  instruction: "You are a concise assistant.",
+  description: "An LLM agent demonstrating stateful before_agent_callback",
   beforeAgentCallback: checkIfAgentShouldRun, // Assign the callback
 });
 
@@ -103,20 +103,20 @@ async function main() {
 
   // --- Scenario 1: Run where callback allows agent execution ---
   console.log(
-    `\n==================== SCENARIO 1: Running Agent on Session '${SESSION_ID_RUN}' (Should Proceed) ====================`
+    `\n==================== SCENARIO 1: Running Agent on Session "${SESSION_ID_RUN}" (Should Proceed) ====================`
   );
   const eventsRun = runner.runAsync({
     userId: USER_ID,
     sessionId: SESSION_ID_RUN,
-    newMessage: createUserContent('Hello, please respond.'),
+    newMessage: createUserContent("Hello, please respond."),
   });
 
   for await (const event of eventsRun) {
     // Print final output (either from LLM or callback override)
     if (isFinalResponse(event) && event.content?.parts?.length) {
       const finalResponse = event.content.parts
-        .map((part: any) => part.text ?? '')
-        .join('');
+        .map((part: any) => part.text ?? "")
+        .join("");
       console.log(
         `Final Output: [${event.author}] ${finalResponse.trim()}`
       );
@@ -127,7 +127,7 @@ async function main() {
 
   // --- Scenario 2: Run where callback intercepts and skips agent ---
   console.log(
-    `\n==================== SCENARIO 2: Running Agent on Session '${SESSION_ID_SKIP}' (Should Skip) ====================`
+    `\n==================== SCENARIO 2: Running Agent on Session "${SESSION_ID_SKIP}" (Should Skip) ====================`
   );
   const eventsSkip = runner.runAsync({
     userId: USER_ID,
@@ -137,10 +137,10 @@ async function main() {
 
   for await (const event of eventsSkip) {
     // Print final output (either from LLM or callback override)
-    if (isFinalResponse(event) && event.content?.parts) {
+    if (isFinalResponse(event) && event.content?.parts?.length) {
       const finalResponse = event.content.parts
-        .map((part: any) => part.text ?? '')
-        .join('');
+        .map((part: any) => part.text ?? "")
+        .join("");
       console.log(
         `Final Output: [${event.author}] ${finalResponse.trim()}`
       );
