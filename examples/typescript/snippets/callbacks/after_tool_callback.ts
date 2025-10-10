@@ -118,7 +118,7 @@ async function callAgentAndPrint(
     newMessage: createUserContent(query),
   })) {
     const authorName = event.author || "System";
-    if (event.content?.parts && isFinalResponse(event)) {
+    if (isFinalResponse(event) && event.content?.parts?.length) {
       finalResponseContent = 'The capital of the united states is Washington, D.C. (Note: This is the capital of the USA).';
       console.log(`--- Output from: ${authorName} ---`);
     } else if (event.errorMessage) {
