@@ -19,44 +19,40 @@ import {
   isFinalResponse,
   InMemoryRunner,
 } from "@google/adk";
-import { Content, Part } from "@google/genai";
+import { createUserContent } from "@google/genai";
 
-const MODEL_NAME = 'gemini-2.5-flash';
-const APP_NAME = 'before_agent_callback_app';
-const USER_ID = 'test_user_before_agent';
+const MODEL_NAME = "gemini-2.5-flash";
+const APP_NAME = "after_agent_callback_app";
+const USER_ID = "test_user_after_agent";
 const SESSION_NORMAL_ID = "session_run_normally_ts";
 const SESSION_MODIFY_ID = "session_modify_output_ts";
 
 // --- 1. Define the Callback Function ---
 /**
- * Logs exit from an agent and checks 'add_concluding_note' in session state.
+ * Logs exit from an agent and checks "add_concluding_note" in session state.
  * If True, returns new Content to *replace* the agent's original output.
  * If False or not present, returns void, allowing the agent's original output to be used.
  */
-function modifyOutputAfterAgent(context: CallbackContext): Content | undefined {
+function modifyOutputAfterAgent(context: CallbackContext): any {
   const agentName = context.agentName;
   const invocationId = context.invocationId;
   const currentState = context.state;
 
   console.log(
-    `\n[Callback] Exiting agent: ${agentName} (Inv: ${invocationId})`
+    `
+[Callback] Exiting agent: ${agentName} (Inv: ${invocationId})`
   );
   console.log(`[Callback] Current State:`, currentState);
 
   // Example: Check state to decide whether to modify the final output
   if (currentState.get("add_concluding_note") === true) {
     console.log(
-      `[Callback] State condition 'add_concluding_note=true' met: Replacing agent ${agentName}'s output.`
+      `[Callback] State condition "add_concluding_note=true" met: Replacing agent ${agentName}'s output.`
     );
     // Return Content to *replace* the agent's own output
-    return {
-      parts: [
-        {
-          text: `Concluding note added by after_agent_callback, replacing original output.`,
-        },
-      ],
-      role: "model", // Assign model role to the overriding response
-    };
+    return createUserContent(
+      "Concluding note added by after_agent_callback, replacing original output."
+    );
   } else {
     console.log(
       `[Callback] State condition not met: Using agent ${agentName}'s original output.`
@@ -70,7 +66,7 @@ function modifyOutputAfterAgent(context: CallbackContext): Content | undefined {
 const llmAgentWithAfterCb = new LlmAgent({
   name: "MySimpleAgentWithAfter",
   model: MODEL_NAME,
-  instruction: "You are a simple agent. Just say 'Processing complete!'",
+  instruction: "You are a simple agent. Just say \"Processing complete!\"",
   description:
     "An LLM agent demonstrating after_agent_callback for output modification",
   afterAgentCallback: modifyOutputAfterAgent, // Assign the callback here
@@ -100,21 +96,20 @@ async function main() {
 
   // --- Scenario 1: Run where callback allows agent's original output ---
   console.log(
-    "\n" +
-      "=".repeat(20) +
-      ` SCENARIO 1: Running Agent on Session '${SESSION_NORMAL_ID}' (Should Use Original Output) ` +
-      "=".repeat(20)
+    `
+==================== SCENARIO 1: Running Agent on Session "${SESSION_NORMAL_ID}" (Should Use Original Output) ====================
+`
   );
-  const eventsNormal = runner.run({
+  const eventsNormal = runner.runAsync({
     userId: USER_ID,
     sessionId: SESSION_NORMAL_ID,
-    newMessage: { role: "user", parts: [{ text: "Process this please." }] },
+    newMessage: createUserContent("Process this please."),
   });
 
   for await (const event of eventsNormal) {
     if (isFinalResponse(event) && event.content?.parts) {
       const finalResponse = event.content.parts
-        .map((part: Part) => part.text ?? "")
+        .map((part: any) => part.text ?? "")
         .join("");
       console.log(
         `Final Output: [${event.author}] ${finalResponse.trim()}`
@@ -126,24 +121,20 @@ async function main() {
 
   // --- Scenario 2: Run where callback replaces the agent's output ---
   console.log(
-    "\n" +
-      "=".repeat(20) +
-      ` SCENARIO 2: Running Agent on Session '${SESSION_MODIFY_ID}' (Should Replace Output) ` +
-      "=".repeat(20)
+    `
+==================== SCENARIO 2: Running Agent on Session "${SESSION_MODIFY_ID}" (Should Replace Output) ====================
+`
   );
-  const eventsModify = runner.run({
+  const eventsModify = runner.runAsync({
     userId: USER_ID,
     sessionId: SESSION_MODIFY_ID,
-    newMessage: {
-      role: "user",
-      parts: [{ text: "Process this and add note." }],
-    },
+    newMessage: createUserContent("Process this and add note."),
   });
 
   for await (const event of eventsModify) {
     if (isFinalResponse(event) && event.content?.parts) {
       const finalResponse = event.content.parts
-        .map((part: Part) => part.text ?? "")
+        .map((part: any) => part.text ?? "")
         .join("");
       console.log(
         `Final Output: [${event.author}] ${finalResponse.trim()}`
