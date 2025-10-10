@@ -99,7 +99,7 @@ async function callAgentAndPrint(
   const events = runner.runAsync({ userId: USER_ID, sessionId, newMessage: createUserContent(query) });
 
   for await (const event of events) {
-    if (isFinalResponse(event) && event.content?.parts) {
+    if (isFinalResponse(event) && event.content?.parts?.length) {
       finalResponseContent = event.content.parts
         .map((part: { text?: string }) => part.text ?? "")
         .join("");
