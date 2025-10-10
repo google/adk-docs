@@ -140,9 +140,8 @@ async function callCodePipeline(query: string, userId: string, sessionId: string
         newMessage: content,
     })) {
         const authorName = event.author || "System";
-        const isFinal = isFinalResponse(event);
 
-        if (isFinal && event.content && event.content.parts) {
+        if (isFinalResponse(event) && event.content?.parts?.length) {
             const outputText = event.content.parts[0].text!.trim();
             pipelineStepOutputs[authorName] = outputText;
 
