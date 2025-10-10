@@ -315,6 +315,7 @@ The evaluation criteria define how the agent's performance is measured against t
 
 * `tool_trajectory_avg_score`: This metric compares the agent's actual tool usage during the evaluation against the expected tool usage defined in the `expected_tool_use` field. Each matching tool usage step receives a score of 1, while a mismatch receives a score of 0\. The final score is the average of these matches, representing the accuracy of the tool usage trajectory.  
 * `response_match_score`: This metric compares the agent's final natural language response to the expected final response, stored in the `reference` field. We use the [ROUGE](https://en.wikipedia.org/wiki/ROUGE_\(metric\)) metric to calculate the similarity between the two responses.
+* `HallucinationsV1`: This metric evaluates whether the agent's response is grounded in the provided context. It helps to identify if the agent is "hallucinating" or making up information.
 
 If no evaluation criteria are provided, the following default configuration is used:
 
@@ -327,7 +328,10 @@ Here is an example of a `test_config.json` file specifying custom evaluation cri
 {
   "criteria": {
     "tool_trajectory_avg_score": 1.0,
-    "response_match_score": 0.8
+    "response_match_score": 0.8,
+    "HallucinationsV1": {
+        "threshold": 0.7
+    }
   }
 }
 ```
