@@ -107,7 +107,7 @@ async function main() {
   });
 
   for await (const event of eventsNormal) {
-    if (isFinalResponse(event) && event.content?.parts) {
+    if (isFinalResponse(event) && event.content?.parts?.length) {
       const finalResponse = event.content.parts
         .map((part: any) => part.text ?? "")
         .join("");
@@ -132,7 +132,7 @@ async function main() {
   });
 
   for await (const event of eventsModify) {
-    if (isFinalResponse(event) && event.content?.parts) {
+    if (isFinalResponse(event) && event.content?.parts?.length) {
       const finalResponse = event.content.parts
         .map((part: any) => part.text ?? "")
         .join("");
