@@ -245,7 +245,7 @@ async function callAgent(runner: InMemoryRunner, userInputTopic: string) {
     sessionId: SESSION_ID,
     newMessage: content
   })) {
-    if (event.content?.parts && isFinalResponse(event)) {
+    if (isFinalResponse(event) && event.content?.parts?.length) {
       console.log(`Potential final response from [${event.author}]: ${event.content.parts.map(part => part.text ?? '').join('')}`);
       finalResponse = event.content.parts.map(part => part.text ?? '').join('');
     }
