@@ -7,9 +7,9 @@ import (
 
 	"google.golang.org/adk/agent"
 	"google.golang.org/adk/agent/llmagent"
-	"google.golang.org/adk/llm/gemini"
+	"google.golang.org/adk/model/gemini"
 	"google.golang.org/adk/runner"
-	"google.golang.org/adk/sessionservice"
+	"google.golang.org/adk/session"
 	"google.golang.org/adk/tool"
 	"google.golang.org/adk/tool/geminitool"
 	"google.golang.org/genai"
@@ -36,8 +36,8 @@ const (
 )
 
 func callAgent(ctx context.Context, a agent.Agent, prompt string) error {
-	sessionService := sessionservice.Mem()
-	session, err := sessionService.Create(ctx, &sessionservice.CreateRequest{
+	sessionService := session.InMemoryService()
+	session, err := sessionService.Create(ctx, &session.CreateRequest{
 		AppName: appName,
 		UserID:  userID,
 	})
@@ -45,7 +45,7 @@ func callAgent(ctx context.Context, a agent.Agent, prompt string) error {
 		return fmt.Errorf("failed to create the session service: %v", err)
 	}
 
-	config := &runner.Config{
+	config := runner.Config{
 		AppName:        appName,
 		Agent:          a,
 		SessionService: sessionService,
@@ -55,7 +55,7 @@ func callAgent(ctx context.Context, a agent.Agent, prompt string) error {
 		return fmt.Errorf("failed to create the runner: %v", err)
 	}
 
-	sessionID := session.Session.ID().SessionID
+	sessionID := session.Session.ID()
 	userMsg := &genai.Content{
 		Parts: []*genai.Part{{Text: prompt}},
 		Role:  string(genai.RoleUser),
@@ -63,8 +63,8 @@ func callAgent(ctx context.Context, a agent.Agent, prompt string) error {
 
 	// The r.Run method streams events and errors.
 	// The loop iterates over the results, handling them as they arrive.
-	for event, err := range r.Run(ctx, userID, sessionID, userMsg, &runner.RunConfig{
-		StreamingMode: runner.StreamingModeSSE,
+	for event, err := range r.Run(ctx, userID, sessionID, userMsg, &agent.RunConfig{
+		StreamingMode: agent.StreamingModeSSE,
 	}) {
 		if err != nil {
 			fmt.Printf("\nAGENT_ERROR: %v\n", err)
