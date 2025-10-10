@@ -20,7 +20,7 @@ The process involves these main steps when you use `OpenAPIToolset`:
 
 1. **Initialization & Parsing**:
     * You provide the OpenAPI specification to `OpenAPIToolset` either as a Python dictionary, a JSON string, or a YAML string.
-    * The toolset internally parses the spec, resolving any internal references (`$ref`) to understand the complete API structure.
+    * The toolset internally parses the spec, resolving any internal references (`$ref`) to understand the complete API structure. This includes support for resolving references in the `$defs` section of the OpenAPI schema.
 
 2. **Operation Discovery**:
     * It identifies all valid API operations (e.g., `GET`, `POST`, `PUT`, `DELETE`) defined within the `paths` object of your specification.
