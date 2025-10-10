@@ -47,7 +47,7 @@ MCP Toolbox provides out-of-the-box toolsets for the following databases and dat
 
 #### Google Cloud
 
-* BigQuery (including tools for SQL execution, schema discovery, and ML forecasting)
+* BigQuery (including tools for SQL execution, schema discovery, and AI-powered time series forecasting)
 * AlloyDB (PostgreSQL-compatible, with tools for both standard queries and natural language queries)
 * Spanner (supporting both GoogleSQL and PostgreSQL dialects)
 * Cloud SQL (with dedicated support for Cloud SQL for PostgreSQL, Cloud SQL for MySQL, and Cloud SQL for SQL Server)
