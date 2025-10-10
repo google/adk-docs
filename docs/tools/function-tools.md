@@ -255,6 +255,12 @@ Define your tool function and wrap it using the `LongRunningFunctionTool` class:
     }
     ```
 
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/tools/function-tools/long-running-tool/long_running_tool.go:create_long_running_tool"
+    ```
+
 ### Intermediate / Final result Updates
 
 Agent client received an event with long running function calls and check the status of the ticket. Then Agent client can send the intermediate or final response back to update the progress. The framework packages this value (even if it's None) into the content of the `FunctionResponse` sent back to the LLM.
@@ -314,6 +320,14 @@ Agent client received an event with long running function calls and check the st
 
     ```java
     --8<-- "examples/java/snippets/src/main/java/tools/LongRunningFunctionExample.java:full_code"
+    ```
+
+=== "Go"
+
+    The following example demonstrates a multi-turn workflow. First, the user asks the agent to create a ticket. The agent calls the long-running tool and the client captures the `FunctionCall` ID. The client then simulates the asynchronous work completing by sending subsequent `FunctionResponse` messages back to the agent to provide the ticket ID and final status.
+
+    ```go
+    --8<-- "examples/go/snippets/tools/function-tools/long-running-tool/long_running_tool.go:run_long_running_tool"
     ```
 
 
