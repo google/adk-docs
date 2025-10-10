@@ -134,7 +134,7 @@ func callAgent(ctx context.Context, a agent.Agent, prompt string) {
 	}) {
 		if err != nil {
 			fmt.Printf("\nAGENT_ERROR: %v\n", err)
-		} else {
+		} else if event.Partial {
 			for _, p := range event.LLMResponse.Content.Parts {
 				fmt.Print(p.Text)
 			}
