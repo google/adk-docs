@@ -8,9 +8,9 @@ import (
 
 	"google.golang.org/adk/agent"
 	"google.golang.org/adk/agent/llmagent"
-	"google.golang.org/adk/llm/gemini"
+	"google.golang.org/adk/model/gemini"
 	"google.golang.org/adk/runner"
-	"google.golang.org/adk/sessionservice"
+	"google.golang.org/adk/session"
 	"google.golang.org/adk/tool"
 
 	"google.golang.org/genai"
@@ -32,17 +32,24 @@ type getStockPriceArgs struct {
 	Symbol string
 }
 
+// getStockPriceResults defines the output schema for the getStockPrice tool.
+type getStockPriceResults struct {
+	Symbol string  `json:"symbol"`
+	Price  float64 `json:"price,omitempty"`
+	Error  string  `json:"error,omitempty"`
+}
+
 // getStockPrice is a tool that retrieves the stock price for a given ticker symbol
 // from the mockStockPrices map. It demonstrates how a function can be used as a
-// tool by an agent. If the symbol is found, it returns a map containing the
-// symbol and its price. Otherwise, it returns an error message.
-func getStockPrice(ctx context.Context, input getStockPriceArgs) map[string]any {
+// tool by an agent. If the symbol is found, it returns a struct containing the
+// symbol and its price. Otherwise, it returns a struct with an error message.
+func getStockPrice(ctx tool.Context, input getStockPriceArgs) getStockPriceResults {
 	symbolUpper := strings.ToUpper(input.Symbol)
 	if price, ok := mockStockPrices[symbolUpper]; ok {
 		fmt.Printf("Tool: Found price for %s: %f\n", input.Symbol, price)
-		return map[string]any{"symbol": input.Symbol, "price": price}
+		return getStockPriceResults{Symbol: input.Symbol, Price: price}
 	}
-	return map[string]any{"symbol": input.Symbol, "error": "No data found for symbol"}
+	return getStockPriceResults{Symbol: input.Symbol, Error: "No data found for symbol"}
 }
 
 // createStockAgent initializes and configures an LlmAgent.
@@ -90,22 +97,19 @@ const (
 // It sets up the necessary services, creates a session, and uses a runner
 // to manage the agent's lifecycle. It streams the agent's responses and
 // prints them to the console, handling any potential errors during the run.
-func callAgent(ctx context.Context, agent agent.Agent, prompt string) {
-
-	sessionService := sessionservice.Mem()
-
+func callAgent(ctx context.Context, a agent.Agent, prompt string) {
+	sessionService := session.InMemoryService()
 	// Create a new session for the agent interactions.
-	session, err := sessionService.Create(ctx, &sessionservice.CreateRequest{
+	session, err := sessionService.Create(ctx, &session.CreateRequest{
 		AppName: appName,
 		UserID:  userID,
 	})
 	if err != nil {
 		log.Fatalf("Failed to create the session service: %v", err)
 	}
-
-	config := &runner.Config{
+	config := runner.Config{
 		AppName:        appName,
-		Agent:          agent,
+		Agent:          a,
 		SessionService: sessionService,
 	}
 
@@ -116,7 +120,7 @@ func callAgent(ctx context.Context, agent agent.Agent, prompt string) {
 		log.Fatalf("Failed to create the runner: %v", err)
 	}
 
-	sessionID := session.Session.ID().SessionID
+	sessionID := session.Session.ID()
 
 	userMsg := &genai.Content{
 		Parts: []*genai.Part{
@@ -125,8 +129,8 @@ func callAgent(ctx context.Context, agent agent.Agent, prompt string) {
 		Role: string(genai.RoleUser),
 	}
 
-	for event, err := range r.Run(ctx, userID, sessionID, userMsg, &runner.RunConfig{
-		StreamingMode: runner.StreamingModeSSE,
+	for event, err := range r.Run(ctx, userID, sessionID, userMsg, &agent.RunConfig{
+		StreamingMode: agent.StreamingModeSSE,
 	}) {
 		if err != nil {
 			fmt.Printf("\nAGENT_ERROR: %v\n", err)
@@ -164,4 +168,9 @@ func RunAgentSimulation() {
 		callAgent(context.Background(), agent, prompt)
 		fmt.Println("\n---")
 	}
+}
+
+func main() {
+	fmt.Println("Attempting to run the agent simulation...")
+	RunAgentSimulation()
 }
