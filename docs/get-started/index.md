@@ -18,6 +18,6 @@ set up and running a simple agent in less than 20 minutes.
     ---
     Create your first Java ADK agent in minutes.
 
-    [:octicons-arrow-right-24: Start with Java](/adk-docs/get-started/java.md) <br>
+    [:octicons-arrow-right-24: Start with Java](/adk-docs/get-started/java) <br>
 
 </div>
