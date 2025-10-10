@@ -9,10 +9,11 @@ import (
 
 	"google.golang.org/adk/agent"
 	"google.golang.org/adk/agent/llmagent"
-	"google.golang.org/adk/llm/gemini"
+	"google.golang.org/adk/model/gemini"
 	"google.golang.org/adk/runner"
-	"google.golang.org/adk/sessionservice"
+	"google.golang.org/adk/session"
 	"google.golang.org/adk/tool"
+
 	"google.golang.org/genai"
 )
 
@@ -56,7 +57,7 @@ type getCapitalCityArgs struct {
 	Country string `json:"country"`
 }
 
-func getCapitalCity(ctx context.Context, args getCapitalCityArgs) map[string]any {
+func getCapitalCity(ctx tool.Context, args getCapitalCityArgs) map[string]any {
 	fmt.Printf("\n-- Tool Call: getCapitalCity(country='%s') --\n", args.Country)
 	capitals := map[string]string{
 		"united states": "Washington, D.C.",
@@ -103,7 +104,7 @@ The user will provide the country name in a JSON format like {"country": "countr
 1. Extract the country name.
 2. Use the 'get_capital_city' tool to find the capital.
 3. Respond clearly to the user, stating the capital city found by the tool.`,
-		Tools:     []tool.Tool{capitalTool},
+		Tools:       []tool.Tool{capitalTool},
 		InputSchema: countryInputSchema,
 		// OutputKey: capitalToolOutputKey,
 	})
@@ -139,11 +140,11 @@ Use your knowledge to determine the capital and estimate the population. Do not 
 	callAgent(ctx, structuredInfoAgentSchema, structuredInfoAgentOutputKey, `{"country": "Japan"}`)
 }
 
-func callAgent(ctx context.Context, agent agent.Agent, outputKey string, prompt string) {
-	fmt.Printf("\n>>> Calling Agent: '%s' | Query: %s\n", agent.Name(), prompt)
-	sessionService := sessionservice.Mem()
+func callAgent(ctx context.Context, a agent.Agent, outputKey string, prompt string) {
+	fmt.Printf("\n>>> Calling Agent: '%s' | Query: %s\n", a.Name(), prompt)
+	sessionService := session.InMemoryService()
 
-	sessionCreateResponse, err := sessionService.Create(ctx, &sessionservice.CreateRequest{
+	sessionCreateResponse, err := sessionService.Create(ctx, &session.CreateRequest{
 		AppName: appName,
 		UserID:  userID,
 	})
@@ -153,9 +154,9 @@ func callAgent(ctx context.Context, agent agent.Agent, outputKey string, prompt 
 
 	session := sessionCreateResponse.Session
 
-	config := &runner.Config{
+	config := runner.Config{
 		AppName:        appName,
-		Agent:          agent,
+		Agent:          a,
 		SessionService: sessionService,
 	}
 
@@ -164,7 +165,7 @@ func callAgent(ctx context.Context, agent agent.Agent, outputKey string, prompt 
 		log.Fatalf("Failed to create the runner: %v", err)
 	}
 
-	sessionID := session.ID().SessionID
+	sessionID := session.ID()
 	userMsg := &genai.Content{
 		Parts: []*genai.Part{
 			genai.NewPartFromText(prompt),
@@ -172,13 +173,13 @@ func callAgent(ctx context.Context, agent agent.Agent, outputKey string, prompt 
 		Role: string(genai.RoleUser),
 	}
 
-	for event, err := range r.Run(ctx, userID, sessionID, userMsg, &runner.RunConfig{
-		StreamingMode: runner.StreamingModeSSE,
+	for event, err := range r.Run(ctx, userID, sessionID, userMsg, &agent.RunConfig{
+		StreamingMode: agent.StreamingModeSSE,
 	}) {
 		if err != nil {
 			fmt.Printf("\nAGENT_ERROR: %v\n", err)
-		} else {
-			for _, p := range event.LLMResponse.Content.Parts {
+		} else if event.Partial {
+			for _, p := range event.Content.Parts {
 				fmt.Print(p.Text)
 			}
 		}
