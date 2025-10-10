@@ -81,7 +81,7 @@ async function callAgentAsync(query: string) {
   for await (const event of events) {
     // In a real application, you would handle different event types.
     // For this example, we'll just print the final text response.
-    if (isFinalResponse(event)) {
+    if (isFinalResponse(event) && event.content?.parts?.length) {
       const finalResponse =
         event.content?.parts?.[0]?.text ?? "No response text found.";
       console.log("Agent Response: ", finalResponse);
