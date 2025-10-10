@@ -176,9 +176,10 @@ These are a set of tools aimed to provide integration with BigQuery, namely:
 * **`get_dataset_info`**: Fetches metadata about a BigQuery dataset.
 * **`list_table_ids`**: Fetches table ids present in a BigQuery dataset.
 * **`get_table_info`**: Fetches metadata about a BigQuery table.
-* **`execute_sql`**: Runs a SQL query in BigQuery and fetch the result.
+* **`execute_sql`**: Runs a SQL query in BigQuery and fetch the result. This tool includes a `dry_run` parameter that allows you to validate a query and get information about it without actually running it.
 * **`forecast`**: Runs a BigQuery AI time series forecast using the `AI.FORECAST` function.
 * **`ask_data_insights`**: Answers questions about data in BigQuery tables using natural language.
+* **`analyze_contribution`**: Analyzes the contribution of specified dimensions to a metric in a BigQuery table.
 
 They are packaged in the toolset `BigQueryToolset`.
 
@@ -209,6 +210,104 @@ They are packaged in the toolset `SpannerToolset`.
 --8<-- "examples/python/snippets/tools/built-in-tools/spanner.py"
 ```
 
+
+### Customizing Spanner Tools
+
+You can create custom Spanner tools to tailor their functionality to your specific needs. This is particularly useful for creating tools that execute predefined queries with template or parameterized SQL.
+
+#### Template SQL
+
+You can create a custom tool that uses a template SQL query. This is useful when you want to create a tool that executes a specific query with some parts of the query being dynamic.
+
+The following example shows how to create a tool that counts the rows in a table, where the table name is provided as an argument.
+
+```python
+from google.adk.tools.spanner import utils as spanner_tool_utils
+from google.adk.tools.tool_context import ToolContext
+from google.auth.credentials import Credentials
+from google.adk.tools.spanner.settings import SpannerToolSettings
+
+def count_rows_in_table(
+    table_name: str,
+    credentials: Credentials,
+    settings: SpannerToolSettings,
+    tool_context: ToolContext,
+):
+  """Counts the total number of rows for a specified table.
+
+  Args:
+    table_name: The name of the table for which to count rows.
+
+  Returns:
+      The total number of rows in the table.
+  """
+
+  sql_template = f"SELECT COUNT(*) FROM {table_name}"
+
+  return spanner_tool_utils.execute_sql(
+      project_id="<PROJECT_ID>",
+      instance_id="<INSTANCE_ID>",
+      database_id="<DATABASE_ID>",
+      query=sql_template,
+      credentials=credentials,
+      settings=settings,
+      tool_context=tool_context,
+  )
+```
+
+!!! warning "Security"
+    Using f-strings to create SQL queries can make your application vulnerable to SQL injection attacks. It is recommended to use parameterized queries whenever possible.
+
+#### Parameterized SQL
+
+To prevent SQL injection attacks, you can use parameterized queries. The `execute_sql` function supports parameterized queries through the `params` and `params_types` arguments.
+
+The following example shows how to create a tool that searches for hotels in a specific location using a parameterized query.
+
+```python
+from google.adk.tools.spanner import utils as spanner_tool_utils
+from google.adk.tools.tool_context import ToolContext
+from google.auth.credentials import Credentials
+from google.adk.tools.spanner.settings import SpannerToolSettings
+from google.cloud.spanner_v1 import param_types as spanner_param_types
+
+def search_hotels(
+    location_name: str,
+    credentials: Credentials,
+    settings: SpannerToolSettings,
+    tool_context: ToolContext,
+):
+  """Search hotels for a specific location.
+
+  This function takes a geographical location name and returns a list of hotels
+  in that area, including key details for each.
+
+  Args:
+    location_name (str): The geographical location (e.g., city or town) for the
+                         hotel search.
+
+  Returns:
+      The hotels name, rating and description.
+  """
+
+  sql_template = """
+      SELECT name, rating, description FROM hotels
+      WHERE location_name = @location_name
+      """
+  return spanner_tool_utils.execute_sql(
+      project_id="<PROJECT_ID>",
+      instance_id="<INSTANCE_ID>",
+      database_id="<DATABASE_ID>",
+      query=sql_template,
+      credentials=credentials,
+      settings=settings,
+      tool_context=tool_context,
+      params={"location_name": location_name},
+      params_types={"location_name": spanner_param_types.STRING},
+  )
+```
+
+In this example, `@location_name` is a parameter in the SQL query. The value for this parameter is passed in the `params` dictionary, and its type is specified in the `params_types` dictionary. This ensures that the value is properly escaped, preventing SQL injection attacks.
 
 ### Bigtable
 
