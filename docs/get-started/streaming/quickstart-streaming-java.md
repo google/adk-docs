@@ -1,4 +1,4 @@
-# Quickstart (Streaming / Java) {#adk-streaming-quickstart-java}
+# Build a streaming agent with Java
 
 This quickstart guide will walk you through the process of creating a basic agent and leveraging ADK Streaming with Java to facilitate low-latency, bidirectional voice interactions.
 

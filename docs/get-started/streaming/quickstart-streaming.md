@@ -1,4 +1,4 @@
-# Quickstart (Streaming / Python) {#adk-streaming-quickstart}
+# Build a streaming agent with Python
 
 With this quickstart, you'll learn to create a simple agent and use ADK Streaming to enable voice and video communication with it that is low-latency and bidirectional. We will install ADK, set up a basic "Google Search" agent, try running the agent with Streaming with `adk web` tool, and then explain how to build a simple asynchronous web app by yourself using ADK Streaming and [FastAPI](https://fastapi.tiangolo.com/).
 
