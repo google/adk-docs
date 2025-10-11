@@ -46,6 +46,12 @@ Callbacks are a cornerstone feature of ADK, providing a powerful mechanism to ho
         --8<-- "examples/java/snippets/src/main/java/callbacks/AgentWithBeforeModelCallback.java:init"
         ```
 
+    === "Golang"
+
+        ```go
+        --8<-- "examples/go/snippets/callbacks/main.go:callback_basic"
+        ```
+
 ## The Callback Mechanism: Interception and Control
 
 When the ADK framework encounters a point where a callback can run (e.g., just before calling the LLM), it checks if you provided a corresponding callback function for that agent. If you did, the framework executes your function.
@@ -88,6 +94,11 @@ This example demonstrates the common pattern for a guardrail using `before_model
     === "Java"
         ```java
         --8<-- "examples/java/snippets/src/main/java/callbacks/BeforeModelGuardrailExample.java:init"
+        ```
+        
+    === "Golang"
+        ```go
+        --8<-- "examples/go/snippets/callbacks/main.go:guardrail_init"
         ```
 
 By understanding this mechanism of returning `None` versus returning specific objects, you can precisely control the agent's execution path, making callbacks an essential tool for building sophisticated and reliable agents with ADK.
