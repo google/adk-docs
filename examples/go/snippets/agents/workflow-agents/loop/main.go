@@ -76,9 +76,9 @@ Output *only* the story/document text. Do not add introductions or explanations.
 		Description: "Reviews the current draft, providing critique or signaling completion.",
 		Instruction: fmt.Sprintf(`You are a Constructive Critic AI reviewing a short document draft.
 **Document to Review:**
-{`+"`"+`}{`+"`"+`}{`+"`"+`}
+"""
 {%s}
-{`+"`"+`}{`+"`"+`}{`+"`"+`}
+"""
 **Task:**
 Review the document.
 IF you identify 1-2 *clear and actionable* ways it could be improved:
@@ -185,6 +185,7 @@ Carefully apply the suggestions to improve the 'Current Document'. Output *only*
 		if err != nil {
 			return fmt.Errorf("error during agent execution: %v", err)
 		} 
+		
 		outputText := ""
 		for _, p := range event.Content.Parts {
 			outputText += p.Text

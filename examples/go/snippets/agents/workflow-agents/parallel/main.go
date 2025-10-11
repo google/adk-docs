@@ -181,24 +181,24 @@ Output *only* the structured report following this format. Do not include introd
 	synthesisAgentName := "SynthesisAgent"
 
 	for event, err := range r.Run(ctx, userID, session.Session.ID(), userMsg, &agent.RunConfig{
-		StreamingMode: agent.StreamingModeSSE,
+		StreamingMode: agent.StreamingModeNone,
 	}) {
 		if err != nil {
 			return fmt.Errorf("error during agent execution: %v", err)
-		} else if event.Partial {
-			if _, ok := researcherNames[event.Author]; ok {
-				fmt.Printf("    -> Intermediate Result from %s:\n", event.Author)
-				for _, p := range event.LLMResponse.Content.Parts {
-					fmt.Print(p.Text)
-				}
-				fmt.Println()
-			} else if event.Author == synthesisAgentName {
-				fmt.Printf("\n<<< Final Synthesized Response (from %s):\n", event.Author)
-				for _, p := range event.LLMResponse.Content.Parts {
-					fmt.Print(p.Text)
-				}
-				fmt.Println()
+		} 
+
+		if _, ok := researcherNames[event.Author]; ok {
+			fmt.Printf("    -> Intermediate Result from %s:\n", event.Author)
+			for _, p := range event.Content.Parts {
+				fmt.Print(p.Text)
 			}
+			fmt.Println()
+		} else if event.Author == synthesisAgentName {
+			fmt.Printf("\n<<< Final Synthesized Response (from %s):\n", event.Author)
+			for _, p := range event.Content.Parts {
+				fmt.Print(p.Text)
+			}
+			fmt.Println()
 		}
 	}
 	fmt.Println("\n---\nPipeline finished.")
