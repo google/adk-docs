@@ -23,8 +23,8 @@ import (
 // It encapsulates the logic of running sub-agents in a specific sequence.
 type StoryFlowAgent struct {
 	storyGenerator  agent.Agent
-	loopAgent       agent.Agent
-	sequentialAgent agent.Agent
+	revisionLoopAgent       agent.Agent
+	postProcessorAgent agent.Agent
 }
 
 // NewStoryFlowAgent creates and configures the entire custom agent workflow.
@@ -61,8 +61,8 @@ func NewStoryFlowAgent(
 	// The StoryFlowAgent struct holds the agents needed for the Run method.
 	orchestrator := &StoryFlowAgent{
 		storyGenerator:  storyGenerator,
-		loopAgent:       loopAgent,
-		sequentialAgent: sequentialAgent,
+		revisionLoopAgent:       loopAgent,
+		postProcessorAgent: sequentialAgent,
 	}
 
 	// agent.New creates the final agent, wiring up the Run method.
@@ -98,7 +98,7 @@ func (s *StoryFlowAgent) Run(ctx agent.InvocationContext) iter.Seq2[*session.Eve
 		}
 
 		// Stage 2: Critic-Reviser Loop
-		for event, err := range s.loopAgent.Run(ctx) {
+		for event, err := range s.revisionLoopAgent.Run(ctx) {
 			if err != nil {
 				yield(nil, fmt.Errorf("loop agent failed: %w", err))
 				return
@@ -109,7 +109,7 @@ func (s *StoryFlowAgent) Run(ctx agent.InvocationContext) iter.Seq2[*session.Eve
 		}
 
 		// Stage 3: Post-Processing
-		for event, err := range s.sequentialAgent.Run(ctx) {
+		for event, err := range s.postProcessorAgent.Run(ctx) {
 			if err != nil {
 				yield(nil, fmt.Errorf("sequential agent failed: %w", err))
 				return
@@ -164,7 +164,7 @@ func main() {
 		Model:       model,
 		Description: "Generates the initial story.",
 		Instruction: "You are a story writer. Write a short story (around 100 words) about a cat, based on the topic: {topic}",
-		// OutputKey:   "current_story",
+		OutputKey:   "current_story",
 	})
 	if err != nil {
 		log.Fatalf("Failed to create StoryGenerator agent: %v", err)
@@ -175,7 +175,7 @@ func main() {
 		Model:       model,
 		Description: "Critiques the story.",
 		Instruction: "You are a story critic. Review the story: {current_story}. Provide 1-2 sentences of constructive criticism on how to improve it. Focus on plot or character.",
-		// OutputKey:   "criticism",
+		OutputKey:   "criticism",
 	})
 	if err != nil {
 		log.Fatalf("Failed to create Critic agent: %v", err)
@@ -186,7 +186,7 @@ func main() {
 		Model:       model,
 		Description: "Revises the story based on criticism.",
 		Instruction: "You are a story reviser. Revise the story: {current_story}, based on the criticism: {criticism}. Output only the revised story.",
-		// OutputKey:   "current_story",
+		OutputKey:   "current_story",
 	})
 	if err != nil {
 		log.Fatalf("Failed to create Reviser agent: %v", err)
@@ -197,7 +197,7 @@ func main() {
 		Model:       model,
 		Description: "Checks grammar and suggests corrections.",
 		Instruction: "You are a grammar checker. Check the grammar of the story: {current_story}. Output only the suggested corrections as a list, or output 'Grammar is good!' if there are no errors.",
-		// OutputKey:   "grammar_suggestions",
+		OutputKey:   "grammar_suggestions",
 	})
 	if err != nil {
 		log.Fatalf("Failed to create GrammarCheck agent: %v", err)
@@ -208,7 +208,7 @@ func main() {
 		Model:       model,
 		Description: "Analyzes the tone of the story.",
 		Instruction: "You are a tone analyzer. Analyze the tone of the story: {current_story}. Output only one word: 'positive' if the tone is generally positive, 'negative' if the tone is generally negative, or 'neutral' otherwise.",
-		// OutputKey:   "tone_check_result",
+		OutputKey:   "tone_check_result",
 	})
 	if err != nil {
 		log.Fatalf("Failed to create ToneCheck agent: %v", err)
@@ -263,8 +263,8 @@ func main() {
 		if err != nil {
 			log.Fatalf("An error occurred during agent execution: %v", err)
 		}
-		if event.LLMResponse != nil && event.LLMResponse.Content != nil {
-			for _, part := range event.LLMResponse.Content.Parts {
+		if event.LLMResponse != nil && event.Content != nil {
+			for _, part := range event.Content.Parts {
 				// Accumulate text from all parts of the final response.
 				finalResponse += part.Text
 			}
