@@ -29,6 +29,13 @@ These callbacks are available on *any* agent that inherits from `BaseAgent` (inc
         --8<-- "examples/java/snippets/src/main/java/callbacks/BeforeAgentCallbackExample.java:init"
         ```
 
+    === "Golang"
+
+        ```go
+        --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:imports"
+        --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:before_agent_example"
+        ```
+
 
 **Note on the `before_agent_callback` Example:**
 
@@ -59,6 +66,13 @@ These callbacks are available on *any* agent that inherits from `BaseAgent` (inc
     
         ```java
         --8<-- "examples/java/snippets/src/main/java/callbacks/AfterAgentCallbackExample.java:init"
+        ```
+
+    === "Golang"
+
+        ```go
+        --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:imports"
+        --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:after_agent_example"
         ```
 
 
@@ -99,6 +113,13 @@ If the callback returns `None` (or a `Maybe.empty()` object in Java), the LLM co
         --8<-- "examples/java/snippets/src/main/java/callbacks/BeforeModelCallbackExample.java:init"
         ```
 
+    === "Golang"
+
+        ```go
+        --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:imports"
+        --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:before_model_example"
+        ```
+
 ### After Model Callback
 
 **When:** Called just after a response (`LlmResponse`) is received from the LLM, before it's processed further by the invoking agent.
@@ -124,57 +145,19 @@ If the callback returns `None` (or a `Maybe.empty()` object in Java), the LLM co
         --8<-- "examples/java/snippets/src/main/java/callbacks/AfterModelCallbackExample.java:init"
         ```
 
+    === "Golang"
+
+        ```go
+        --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:imports"
+        --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:after_model_example"
+        ```
+
 ## Tool Execution Callbacks
 
 These callbacks are also specific to `LlmAgent` and trigger around the execution of tools (including `FunctionTool`, `AgentTool`, etc.) that the LLM might request.
 
-### Before Tool Callback
-
-**When:** Called just before a specific tool's `run_async` method is invoked, after the LLM has generated a function call for it.
-
-**Purpose:** Allows inspection and modification of tool arguments, performing authorization checks before execution, logging tool usage attempts, or implementing tool-level caching.
-
-**Return Value Effect:**
-
-1. If the callback returns `None` (or a `Maybe.empty()` object in Java), the tool's `run_async` method is executed with the (potentially modified) `args`.  
-2. If a dictionary (or `Map` in Java) is returned, the tool's `run_async` method is **skipped**. The returned dictionary is used directly as the result of the tool call. This is useful for caching or overriding tool behavior.  
-
-
-??? "Code"
-    === "Python"
-    
-        ```python
-        --8<-- "examples/python/snippets/callbacks/before_tool_callback.py"
-        ```
-    
-    === "Java"
-    
-        ```java
-        --8<-- "examples/java/snippets/src/main/java/callbacks/BeforeToolCallbackExample.java:init"
-        ```
 
 
 
-### After Tool Callback
 
-**When:** Called just after the tool's `run_async` method completes successfully.
 
-**Purpose:** Allows inspection and modification of the tool's result before it's sent back to the LLM (potentially after summarization). Useful for logging tool results, post-processing or formatting results, or saving specific parts of the result to the session state.
-
-**Return Value Effect:**
-
-1. If the callback returns `None` (or a `Maybe.empty()` object in Java), the original `tool_response` is used.  
-2. If a new dictionary is returned, it **replaces** the original `tool_response`. This allows modifying or filtering the result seen by the LLM.
-
-??? "Code"
-    === "Python"
-    
-        ```python
-        --8<-- "examples/python/snippets/callbacks/after_tool_callback.py"
-        ```
-    
-    === "Java"
-    
-        ```java
-        --8<-- "examples/java/snippets/src/main/java/callbacks/AfterToolCallbackExample.java:init"
-        ```
