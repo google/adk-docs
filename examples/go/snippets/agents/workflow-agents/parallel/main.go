@@ -16,13 +16,13 @@ import (
 )
 
 const (
-	appName   = "ParallelResearchAgent"
-	userID    = "test_user_789"
-	modelName = "gemini-2.5-flash"
+	appName   = "parallel_research_app"
+	userID    = "research_user_01"
+	modelName = "gemini-2.0-flash"
 )
 
 func main() {
-	if err := runAgent("Research the latest trends in renewable energy, electric vehicles, and carbon capture."); err != nil {
+	if err := runAgent("Summarize recent sustainable tech advancements."); err != nil {
 		log.Fatalf("Agent execution failed: %v", err)
 	}
 }
@@ -36,32 +36,55 @@ func runAgent(prompt string) error {
 		return fmt.Errorf("failed to create model: %v", err)
 	}
 
-	createResearcherAgent := func(topic, outputKey string) (agent.Agent, error) {
-		return llmagent.New(llmagent.Config{
-			Name:        fmt.Sprintf("ResearcherAgent-%s", topic),
-			Model:       model,
-			Description: fmt.Sprintf("Researches the topic of %s.", topic),
-			Instruction: fmt.Sprintf("You are a research assistant. Your task is to research the following topic: %s. Summarize your findings.", topic),
-		})
+	// --- 1. Define Researcher Sub-Agents (to run in parallel) ---
+	researcher1, err := llmagent.New(llmagent.Config{
+		Name:  "RenewableEnergyResearcher",
+		Model: model,
+		Instruction: `You are an AI Research Assistant specializing in energy.
+Research the latest advancements in 'renewable energy sources'.
+Use the Google Search tool provided.
+Summarize your key findings concisely (1-2 sentences).
+Output *only* the summary.`,
+		Description: "Researches renewable energy sources.",
+		OutputKey:   "renewable_energy_result",
+	})
+	if err != nil {
+		return err
+	}
+	researcher2, err := llmagent.New(llmagent.Config{
+		Name:  "EVResearcher",
+		Model: model,
+		Instruction: `You are an AI Research Assistant specializing in transportation.
+Research the latest developments in 'electric vehicle technology'.
+Use the Google Search tool provided.
+Summarize your key findings concisely (1-2 sentences).
+Output *only* the summary.`,
+		Description: "Researches electric vehicle technology.",
+		OutputKey:   "ev_technology_result",
+	})
+	if err != nil {
+		return err
+	}
+	researcher3, err := llmagent.New(llmagent.Config{
+		Name:  "CarbonCaptureResearcher",
+		Model: model,
+		Instruction: `You are an AI Research Assistant specializing in climate solutions.
+Research the current state of 'carbon capture methods'.
+Use the Google Search tool provided.
+Summarize your key findings concisely (1-2 sentences).
+Output *only* the summary.`,
+		Description: "Researches carbon capture methods.",
+		OutputKey:   "carbon_capture_result",
+	})
+	if err != nil {
+		return err
 	}
 
-	researcher1, err := createResearcherAgent("renewable energy", "renewable_energy_summary")
-	if err != nil {
-		return err
-	}
-	researcher2, err := createResearcherAgent("electric vehicle technology", "ev_summary")
-	if err != nil {
-		return err
-	}
-	researcher3, err := createResearcherAgent("carbon capture methods", "carbon_capture_summary")
-	if err != nil {
-		return err
-	}
-
+	// --- 2. Create the ParallelAgent (Runs researchers concurrently) ---
 	parallelResearchAgent, err := parallelagent.New(parallelagent.Config{
 		AgentConfig: agent.Config{
-			Name:        "ParallelResearcher",
-			Description: "Runs multiple researchers concurrently.",
+			Name:        "ParallelWebResearchAgent",
+			Description: "Runs multiple research agents in parallel to gather information.",
 			SubAgents:   []agent.Agent{researcher1, researcher2, researcher3},
 		},
 	})
@@ -69,25 +92,56 @@ func runAgent(prompt string) error {
 		return fmt.Errorf("failed to create parallel agent: %v", err)
 	}
 
-	summaryAgent, err := llmagent.New(llmagent.Config{
-		Name:        "SummaryAgent",
-		Model:       model,
-		Description: "Summarizes the research findings from all researchers.",
-		Instruction: `You are a summary assistant.
-Combine the following research summaries into a single, coherent report:
-- Renewable Energy: {renewable_energy_summary}
-- Electric Vehicles: {ev_summary}
-- Carbon Capture: {carbon_capture_summary}`,
+	// --- 3. Define the Merger Agent (Runs *after* the parallel agents) ---
+	synthesisAgent, err := llmagent.New(llmagent.Config{
+		Name: "SynthesisAgent",
+		Model: model,
+		Instruction: `You are an AI Assistant responsible for combining research findings into a structured report.
+Your primary task is to synthesize the following research summaries, clearly attributing findings to their source areas. Structure your response using headings for each topic. Ensure the report is coherent and integrates the key points smoothly.
+**Crucially: Your entire response MUST be grounded *exclusively* on the information provided in the 'Input Summaries' below. Do NOT add any external knowledge, facts, or details not present in these specific summaries.**
+**Input Summaries:**
+
+*   **Renewable Energy:**
+    {renewable_energy_result}
+
+*   **Electric Vehicles:**
+    {ev_technology_result}
+
+*   **Carbon Capture:**
+    {carbon_capture_result}
+
+**Output Format:**
+
+## Summary of Recent Sustainable Technology Advancements
+
+### Renewable Energy Findings
+(Based on RenewableEnergyResearcher's findings)
+[Synthesize and elaborate *only* on the renewable energy input summary provided above.]
+
+### Electric Vehicle Findings
+(Based on EVResearcher's findings)
+[Synthesize and elaborate *only* on the EV input summary provided above.]
+
+### Carbon Capture Findings
+(Based on CarbonCaptureResearcher's findings)
+[Synthesize and elaborate *only* on the carbon capture input summary provided above.]
+
+### Overall Conclusion
+[Provide a brief (1-2 sentence) concluding statement that connects *only* the findings presented above.]
+
+Output *only* the structured report following this format. Do not include introductory or concluding phrases outside this structure, and strictly adhere to using only the provided input summary content.`,
+		Description: "Combines research findings from parallel agents into a structured, cited report, strictly grounded on provided inputs.",
 	})
 	if err != nil {
-		return fmt.Errorf("failed to create summary agent: %v", err)
+		return fmt.Errorf("failed to create synthesis agent: %v", err)
 	}
 
+	// --- 4. Create the SequentialAgent (Orchestrates the overall flow) ---
 	pipeline, err := sequentialagent.New(sequentialagent.Config{
 		AgentConfig: agent.Config{
-			Name:        "ResearchPipeline",
-			Description: "Runs a parallel research task and then summarizes the results.",
-			SubAgents:   []agent.Agent{parallelResearchAgent, summaryAgent},
+			Name:        "ResearchAndSynthesisPipeline",
+			Description: "Coordinates parallel research and synthesizes the results.",
+			SubAgents:   []agent.Agent{parallelResearchAgent, synthesisAgent},
 		},
 	})
 	if err != nil {
@@ -118,15 +172,33 @@ Combine the following research summaries into a single, coherent report:
 		Role:  string(genai.RoleUser),
 	}
 
-	fmt.Printf("Running parallel research pipeline for prompt: %q\n---\n", prompt)
+	fmt.Printf("Running Research & Synthesis Pipeline for query: %q\n---\n", prompt)
+	researcherNames := map[string]bool{
+		"RenewableEnergyResearcher": true,
+		"EVResearcher":              true,
+		"CarbonCaptureResearcher":   true,
+	}
+	synthesisAgentName := "SynthesisAgent"
+
 	for event, err := range r.Run(ctx, userID, session.Session.ID(), userMsg, &agent.RunConfig{
 		StreamingMode: agent.StreamingModeSSE,
 	}) {
 		if err != nil {
 			return fmt.Errorf("error during agent execution: %v", err)
-		}
-		for _, p := range event.LLMResponse.Content.Parts {
-			fmt.Print(p.Text)
+		} else if event.Partial {
+			if _, ok := researcherNames[event.Author]; ok {
+				fmt.Printf("    -> Intermediate Result from %s:\n", event.Author)
+				for _, p := range event.LLMResponse.Content.Parts {
+					fmt.Print(p.Text)
+				}
+				fmt.Println()
+			} else if event.Author == synthesisAgentName {
+				fmt.Printf("\n<<< Final Synthesized Response (from %s):\n", event.Author)
+				for _, p := range event.LLMResponse.Content.Parts {
+					fmt.Print(p.Text)
+				}
+				fmt.Println()
+			}
 		}
 	}
 	fmt.Println("\n---\nPipeline finished.")
