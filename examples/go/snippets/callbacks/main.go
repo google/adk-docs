@@ -1,3 +1,4 @@
+// --8<-- [start:imports]
 package main
 
 import (
@@ -14,6 +15,7 @@ import (
 	"google.golang.org/adk/session"
 	"google.golang.org/genai"
 )
+// --8<-- [end:imports]
 
 const (
 	modelName = "gemini-2.5-flash"
