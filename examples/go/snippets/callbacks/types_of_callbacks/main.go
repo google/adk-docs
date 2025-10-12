@@ -1,9 +1,11 @@
+// --8<-- [start:imports]
 package main
 
 import (
 	"context"
 	"fmt"
 	"log"
+	"regexp"
 	"strings"
 
 	"google.golang.org/adk/agent"
@@ -15,14 +17,13 @@ import (
 	"google.golang.org/genai"
 )
 
+// --8<-- [end:imports]
+
 const (
 	modelName = "gemini-2.5-flash"
+	userID    = "user_1"
+	appName   = "CallbackExamplesApp"
 )
-
-// --8<-- [start:imports]
-// The package and import block is included here.
-// In the documentation, this snippet is reused for each example.
-// --8<-- [end:imports]
 
 // --8<-- [start:before_agent_example]
 // 1. Define the Callback Function
@@ -61,7 +62,6 @@ func runBeforeAgentExample() {
 		log.Fatalf("FATAL: Failed to create agent: %v", err)
 	}
 
-	const appName = "BeforeAgentApp"
 	sessionService := session.InMemoryService()
 	r, err := runner.New(runner.Config{AppName: appName, Agent: testAgent, SessionService: sessionService})
 	if err != nil {
@@ -121,7 +121,6 @@ func runAfterAgentExample() {
 		log.Fatalf("FATAL: Failed to create agent: %v", err)
 	}
 
-	const appName = "AfterAgentApp"
 	sessionService := session.InMemoryService()
 	r, err := runner.New(runner.Config{AppName: appName, Agent: testAgent, SessionService: sessionService})
 	if err != nil {
@@ -139,20 +138,35 @@ func runAfterAgentExample() {
 // --8<-- [start:before_model_example]
 func onBeforeModel(ctx agent.CallbackContext, req *model.LLMRequest) (*model.LLMResponse, error) {
 	log.Printf("[Callback] BeforeModel triggered for agent %q.", ctx.AgentName())
+
+	// Modification Example: Add a prefix to the system instruction.
+	if req.Config.SystemInstruction != nil {
+		prefix := "[Modified by Callback] "
+		// This is a simplified example; production code might need deeper checks.
+		if len(req.Config.SystemInstruction.Parts) > 0 {
+			req.Config.SystemInstruction.Parts[0].Text = prefix + req.Config.SystemInstruction.Parts[0].Text
+		} else {
+			req.Config.SystemInstruction.Parts = append(req.Config.SystemInstruction.Parts, &genai.Part{Text: prefix})
+		}
+		log.Printf("[Callback] Modified system instruction.")
+	}
+
+	// Skip Example: Check for "BLOCK" in the user's prompt.
 	for _, content := range req.Contents {
 		for _, part := range content.Parts {
-			if strings.Contains(part.Text, "BLOCK") {
+			if strings.Contains(strings.ToUpper(part.Text), "BLOCK") {
 				log.Println("[Callback] 'BLOCK' keyword found. Skipping LLM call.")
 				return &model.LLMResponse{
 					Content: &genai.Content{
 						Parts: []*genai.Part{{Text: "LLM call was blocked by before_model_callback."}},
 						Role:  "model",
 					},
-				},
-				nil
+				}, nil
 			}
 		}
 	}
+
+	log.Println("[Callback] Proceeding with LLM call.")
 	return nil, nil
 }
 
@@ -173,7 +187,6 @@ func runBeforeModelExample() {
 		log.Fatalf("FATAL: Failed to create agent: %v", err)
 	}
 
-	const appName = "BeforeModelApp"
 	sessionService := session.InMemoryService()
 	r, err := runner.New(runner.Config{AppName: appName, Agent: testAgent, SessionService: sessionService})
 	if err != nil {
@@ -181,10 +194,10 @@ func runBeforeModelExample() {
 	}
 
 	log.Println("--- SCENARIO 1: Should proceed to LLM ---")
-	runScenario(ctx, r, sessionService, appName, "session_normal", nil, "This is a safe prompt.")
+	runScenario(ctx, r, sessionService, appName, "session_normal", nil, "Tell me a fun fact.")
 
 	log.Println("\n--- SCENARIO 2: Should be blocked by callback ---")
-	runScenario(ctx, r, sessionService, appName, "session_blocked", nil, "This prompt should be BLOCKED.")
+	runScenario(ctx, r, sessionService, appName, "session_blocked", nil, "write a joke on BLOCK")
 }
 // --8<-- [end:before_model_example]
 
@@ -199,13 +212,34 @@ func onAfterModel(ctx agent.CallbackContext, resp *model.LLMResponse, respErr er
 		log.Println("[Callback] Response is nil or has no parts, nothing to process.")
 		return nil, nil
 	}
-	if censor, _ := ctx.State().Get("censor_response"); censor == true {
-		log.Println("[Callback] 'censor_response' is true. Censoring response.")
-		originalText := resp.Content.Parts[0].Text
-		censoredText := strings.ReplaceAll(originalText, "blue", "[CENSORED]")
-		resp.Content.Parts[0].Text = censoredText
-		return resp, nil
+	// Check for function calls and pass them through without modification.
+	if resp.Content.Parts[0].FunctionCall != nil {
+		log.Println("[Callback] Response is a function call. No modification.")
+		return nil, nil
 	}
+
+	originalText := resp.Content.Parts[0].Text
+	
+	// Use a case-insensitive regex with word boundaries to find "joke".
+	re := regexp.MustCompile(`(?i)\bjoke\b`)
+	if !re.MatchString(originalText) {
+		log.Println("[Callback] 'joke' not found. Passing original response through.")
+		return nil, nil
+	}
+
+	log.Println("[Callback] 'joke' found. Modifying response.")
+	// Use a replacer function to handle capitalization.
+	modifiedText := re.ReplaceAllStringFunc(originalText, func(s string) string {
+		if strings.ToUpper(s) == "JOKE" {
+			if s == "Joke" {
+				return "Funny story"
+			}
+			return "funny story"
+		}
+		return s // Should not be reached with this regex, but it's safe.
+	})
+
+	resp.Content.Parts[0].Text = modifiedText
 	return resp, nil
 }
 
@@ -226,18 +260,14 @@ func runAfterModelExample() {
 		log.Fatalf("FATAL: Failed to create agent: %v", err)
 	}
 
-	const appName = "AfterModelApp"
 	sessionService := session.InMemoryService()
 	r, err := runner.New(runner.Config{AppName: appName, Agent: testAgent, SessionService: sessionService})
 	if err != nil {
 		log.Fatalf("FATAL: Failed to create runner: %v", err)
 	}
 
-	log.Println("--- SCENARIO 1: Response should be censored ---")
-	runScenario(ctx, r, sessionService, appName, "session_censor", map[string]any{"censor_response": true}, "Why is the sky blue?")
-
-	log.Println("\n--- SCENARIO 2: Response should be normal ---")
-	runScenario(ctx, r, sessionService, appName, "session_normal", map[string]any{"censor_response": false}, "Why is the sky blue?")
+	log.Println("--- SCENARIO 1: Response should be modified ---")
+	runScenario(ctx, r, sessionService, appName, "session_modify", nil, `Give me a paragraph about different styles of jokes.`)
 }
 // --8<-- [end:after_model_example]
 
@@ -258,7 +288,7 @@ func main() {
 // Generic helper to run a single scenario.
 func runScenario(ctx context.Context, r *runner.Runner, sessionService session.Service, appName, sessionID string, initialState map[string]any, prompt string) {
 	log.Printf("Running scenario for session: %s, initial state: %v", sessionID, initialState)
-	sessionResp, err := sessionService.Create(ctx, &session.CreateRequest{AppName: appName, UserID: "test_user", SessionID: sessionID, State: initialState})
+	sessionResp, err := sessionService.Create(ctx, &session.CreateRequest{AppName: appName, UserID: userID, SessionID: sessionID, State: initialState})
 	if err != nil {
 		log.Fatalf("FATAL: Failed to create session: %v", err)
 	}
