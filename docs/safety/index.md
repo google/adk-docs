@@ -9,12 +9,12 @@ As AI agents grow in capability, ensuring they operate safely, securely, and ali
 1. **Identity and Authorization**: Control who the agent **acts as** by defining agent and user auth.
 2. **Guardrails to screen inputs and outputs:** Control your model and tool calls precisely.
 
-    * *In-Tool Guardrails:* Design tools defensively, using developer-set tool context to enforce policies (e.g., allowing queries only on specific tables).  
-    * *Built-in Gemini Safety Features:* If using Gemini models, benefit from content filters to block harmful outputs and system Instructions to guide the model's behavior and safety guidelines  
+    * *In-Tool Guardrails:* Design tools defensively, using developer-set tool context to enforce policies (e.g., allowing queries only on specific tables).
+    * *Built-in Gemini Safety Features:* If using Gemini models, benefit from content filters to block harmful outputs and system Instructions to guide the model's behavior and safety guidelines
     * *Callbacks and Plugins:* Validate model and tool calls before or after execution, checking parameters against agent state or external policies.
     * *Using Gemini as a safety guardrail:* Implement an additional safety layer using a cheap and fast model (like Gemini Flash Lite) configured via callbacks  to screen inputs and outputs.
 
-3. **Sandboxed code execution:** Prevent model-generated code to cause security issues by sandboxing the environment  
+3. **Sandboxed code execution:** Prevent model-generated code to cause security issues by sandboxing the environment
 4. **Evaluation and tracing**: Use evaluation tools to assess the quality, relevance, and correctness of the agent's final output. Use tracing to gain visibility into agent actions to analyze the steps an agent takes to reach a solution, including its choice of tools, strategies, and the efficiency of its approach.
 5. **Network Controls and VPC-SC:** Confine agent activity within secure perimeters (like VPC Service Controls) to prevent data exfiltration and limit the potential impact radius.
 
@@ -25,20 +25,20 @@ Before implementing safety measures, perform a thorough risk assessment specific
 ***Sources*** **of risk** include:
 
 * Ambiguous agent instructions
-* Prompt injection and jailbreak attempts from adversarial users  
+* Prompt injection and jailbreak attempts from adversarial users
 * Indirect prompt injections via tool use
 
 **Risk categories** include:
 
-* **Misalignment & goal corruption**  
-    * Pursuing unintended or proxy goals that lead to harmful outcomes ("reward hacking")  
-    * Misinterpreting complex or ambiguous instructions  
+* **Misalignment & goal corruption**
+    * Pursuing unintended or proxy goals that lead to harmful outcomes ("reward hacking")
+    * Misinterpreting complex or ambiguous instructions
 * **Harmful content generation, including brand safety**
-    * Generating toxic, hateful, biased, sexually explicit, discriminatory, or illegal content  
-    * Brand safety risks such as Using language that goes against the brand’s values or off-topic conversations  
-* **Unsafe actions**  
+    * Generating toxic, hateful, biased, sexually explicit, discriminatory, or illegal content
+    * Brand safety risks such as Using language that goes against the brand’s values or off-topic conversations
+* **Unsafe actions**
     * Executing commands that damage systems
-    * Making unauthorized purchases or financial transactions.  
+    * Making unauthorized purchases or financial transactions.
     * Leaking sensitive personal data (PII)
     * Data exfiltration
 
@@ -78,16 +78,16 @@ For example, a query tool can be designed to expect a policy to be read from the
     # Conceptual example: Setting policy data intended for tool context
     # In a real ADK app, this might be set in InvocationContext.session.state
     # or passed during tool initialization, then retrieved via ToolContext.
-    
+
     policy = {} # Assuming policy is a dictionary
     policy['select_only'] = True
     policy['tables'] = ['mytable1', 'mytable2']
-    
+
     # Conceptual: Storing policy where the tool can access it via ToolContext later.
     # This specific line might look different in practice.
     # For example, storing in session state:
     invocation_context.session.state["query_tool_policy"] = policy
-    
+
     # Or maybe passing during tool init:
     query_tool = QueryTool(policy=policy)
     # For this example, we'll assume it gets stored somewhere accessible.
@@ -98,21 +98,22 @@ For example, a query tool can be designed to expect a policy to be read from the
     // Conceptual example: Setting policy data intended for tool context
     // In a real ADK app, this might be set in InvocationContext.session.state
     // or passed during tool initialization, then retrieved via ToolContext.
-    
+
     policy = new HashMap<String, Object>(); // Assuming policy is a Map
     policy.put("select_only", true);
     policy.put("tables", new ArrayList<>("mytable1", "mytable2"));
-    
+
     // Conceptual: Storing policy where the tool can access it via ToolContext later.
     // This specific line might look different in practice.
     // For example, storing in session state:
     invocationContext.session().state().put("query_tool_policy", policy);
-    
+
     // Or maybe passing during tool init:
     query_tool = QueryTool(policy);
     // For this example, we'll assume it gets stored somewhere accessible.
     ```
 === "Go"
+
     ```go
     // Conceptual example: Setting policy data intended for tool context
     // In a real ADK app, this might be set in InvocationContext.Session.State
@@ -141,21 +142,21 @@ During the tool execution, [**`Tool Context`**](../tools/index.md#tool-context) 
     def query(query: str, tool_context: ToolContext) -> str | dict:
       # Assume 'policy' is retrieved from context, e.g., via session state:
       # policy = tool_context.invocation_context.session.state.get('query_tool_policy', {})
-    
+
       # --- Placeholder Policy Enforcement ---
       policy = tool_context.invocation_context.session.state.get('query_tool_policy', {}) # Example retrieval
       actual_tables = explainQuery(query) # Hypothetical function call
-    
+
       if not set(actual_tables).issubset(set(policy.get('tables', []))):
         # Return an error message for the model
         allowed = ", ".join(policy.get('tables', ['(None defined)']))
         return f"Error: Query targets unauthorized tables. Allowed: {allowed}"
-    
+
       if policy.get('select_only', False):
            if not query.strip().upper().startswith("SELECT"):
                return "Error: Policy restricts queries to SELECT statements only."
       # --- End Policy Enforcement ---
-    
+
       print(f"Executing validated query (hypothetical): {query}")
       return {"status": "success", "results": [...]} # Example successful return
     ```
@@ -163,19 +164,19 @@ During the tool execution, [**`Tool Context`**](../tools/index.md#tool-context) 
 === "Java"
 
     ```java
-    
+
     import com.google.adk.tools.ToolContext;
     import java.util.*;
-    
+
     class ToolContextQuery {
-    
+
       public Object query(String query, ToolContext toolContext) {
 
         // Assume 'policy' is retrieved from context, e.g., via session state:
         Map<String, Object> queryToolPolicy =
             toolContext.invocationContext.session().state().getOrDefault("query_tool_policy", null);
         List<String> actualTables = explainQuery(query);
-    
+
         // --- Placeholder Policy Enforcement ---
         if (!queryToolPolicy.get("tables").containsAll(actualTables)) {
           List<String> allowedPolicyTables =
@@ -183,18 +184,18 @@ During the tool execution, [**`Tool Context`**](../tools/index.md#tool-context) 
 
           String allowedTablesString =
               allowedPolicyTables.isEmpty() ? "(None defined)" : String.join(", ", allowedPolicyTables);
-          
+
           return String.format(
               "Error: Query targets unauthorized tables. Allowed: %s", allowedTablesString);
         }
-    
+
         if (!queryToolPolicy.get("select_only")) {
           if (!query.trim().toUpperCase().startswith("SELECT")) {
             return "Error: Policy restricts queries to SELECT statements only.";
           }
         }
         // --- End Policy Enforcement ---
-    
+
         System.out.printf("Executing validated query (hypothetical) %s:", query);
         Map<String, Object> successResult = new HashMap<>();
         successResult.put("status", "success");
@@ -204,12 +205,13 @@ During the tool execution, [**`Tool Context`**](../tools/index.md#tool-context) 
     }
     ```
 === "Go"
+
     ```go
     import (
     	"fmt"
     	"strings"
 
-    	"google.com/agent/tools"
+    	"google.golang.org/adk/tool"
     )
 
     func query(query string, toolContext *tools.ToolContext) (any, error) {
@@ -259,9 +261,9 @@ During the tool execution, [**`Tool Context`**](../tools/index.md#tool-context) 
 
 Gemini models come with in-built safety mechanisms that can be leveraged to improve content and brand safety.
 
-* **Content safety filters**:  [Content filters](https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/configure-safety-attributes) can help block the output of harmful content. They function independently from Gemini models as part of a layered defense against threat actors who attempt to jailbreak the model. Gemini models on Vertex AI use two types of content filters:  
-* **Non-configurable safety filters** automatically block outputs containing prohibited content, such as child sexual abuse material (CSAM) and personally identifiable information (PII).  
-* **Configurable content filters** allow you to define blocking thresholds in four harm categories (hate speech, harassment, sexually explicit, and dangerous content,) based on probability and severity scores. These filters are default off but you can configure them according to your needs.  
+* **Content safety filters**:  [Content filters](https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/configure-safety-attributes) can help block the output of harmful content. They function independently from Gemini models as part of a layered defense against threat actors who attempt to jailbreak the model. Gemini models on Vertex AI use two types of content filters:
+* **Non-configurable safety filters** automatically block outputs containing prohibited content, such as child sexual abuse material (CSAM) and personally identifiable information (PII).
+* **Configurable content filters** allow you to define blocking thresholds in four harm categories (hate speech, harassment, sexually explicit, and dangerous content,) based on probability and severity scores. These filters are default off but you can configure them according to your needs.
 * **System instructions for safety**: [System instructions](https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/safety-system-instructions) for Gemini models in Vertex AI provide direct guidance to the model on how to behave and what type of content to generate. By providing specific instructions, you can proactively steer the model away from generating undesirable content to meet your organization’s unique needs. You can craft system instructions to define content safety guidelines, such as prohibited and sensitive topics, and disclaimer language, as well as brand safety guidelines to ensure the model's outputs align with your brand's voice, tone, values, and target audience.
 
 While these measures are robust against content safety, you need additional checks to reduce agent misalignment, unsafe actions, and brand safety risks.
@@ -282,22 +284,22 @@ When modifications to the tools to add guardrails aren't possible, the [**`Befor
         args: Dict[str, Any],
         tool_context: ToolContext
         ) -> Optional[Dict]: # Correct return type for before_tool_callback
-    
+
       print(f"Callback triggered for tool: {tool.name}, args: {args}")
-    
+
       # Example validation: Check if a required user ID from state matches an arg
       expected_user_id = callback_context.state.get("session_user_id")
       actual_user_id_in_args = args.get("user_id_param") # Assuming tool takes 'user_id_param'
-    
+
       if actual_user_id_in_args != expected_user_id:
           print("Validation Failed: User ID mismatch!")
           # Return a dictionary to prevent tool execution and provide feedback
           return {"error": f"Tool call blocked: User ID mismatch."}
-    
+
       # Return None to allow the tool call to proceed if validation passes
       print("Callback validation passed.")
       return None
-    
+
     # Hypothetical Agent setup
     root_agent = LlmAgent( # Use specific agent type
         model='gemini-2.0-flash',
@@ -322,22 +324,22 @@ When modifications to the tools to add guardrails aren't possible, the [**`Befor
       ToolContext toolContext) {
 
     System.out.printf("Callback triggered for tool: %s, Args: %s", baseTool.name(), input);
-    
+
     // Example validation: Check if a required user ID from state matches an input parameter
     Object expectedUserId = callbackContext.state().get("session_user_id");
     Object actualUserIdInput = input.get("user_id_param"); // Assuming tool takes 'user_id_param'
-    
+
     if (!actualUserIdInput.equals(expectedUserId)) {
       System.out.println("Validation Failed: User ID mismatch!");
       // Return to prevent tool execution and provide feedback
       return Optional.of(Map.of("error", "Tool call blocked: User ID mismatch."));
     }
-    
+
     // Return to allow the tool call to proceed if validation passes
     System.out.println("Callback validation passed.");
     return Optional.empty();
     }
-    
+
     // Hypothetical Agent setup
     public void runAgent() {
     LlmAgent agent =
@@ -351,13 +353,14 @@ When modifications to the tools to add guardrails aren't possible, the [**`Befor
     }
     ```
 === "Go"
+
     ```go
     import (
     	"fmt"
     	"reflect"
 
-    	"google.com/agent/callbacks"
-    	"google.com/agent/tools"
+    	"google.golang.org/adk/agent"
+    	"google.golang.org/adk/tool"
     )
 
     // Hypothetical callback function
