@@ -59,7 +59,7 @@
 
 .resource-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 1.5rem;
     margin: 2rem 0;
 }
@@ -102,7 +102,7 @@
     margin-bottom: 0.5rem;
 }
 .card-content h3 {
-    font-size: 1.0rem;
+    font-size: 0.9rem;
     color: #1a202c;
     margin: 0;
 }
@@ -121,7 +121,7 @@
 .translation-list a {
     display: block; padding: 1rem 1.5rem; border-radius: 8px;
     background: #f7fafc; border: 1px solid #e2e8f0; text-decoration: none;
-    font-weight: 600; font-size: 1rem; color: #2d3748;
+    font-weight: 600; font-size: 0.9rem; color: #2d3748;
     transition: all 0.2s ease-in-out;
 }
 .translation-list a:hover {
