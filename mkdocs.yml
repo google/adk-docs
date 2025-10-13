@@ -8,8 +8,9 @@ exclude_docs:
   api-reference/java/legal/*
 
 # Repository
-repo_name: adk-python
-repo_url: https://github.com/google/adk-python
+repo_name: adk-docs
+repo_url: https://github.com/google/adk-docs
+edit_uri: edit/main/docs/
 
 # Copyright
 copyright: Copyright Google 2025&nbsp;&nbsp;|&nbsp;&nbsp;<a href="//policies.google.com/terms">Terms</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="//policies.google.com/privacy">Privacy</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="#__consent">Manage cookies</a>
@@ -19,6 +20,9 @@ extra_css:
   - stylesheets/custom.css
 
 extra:
+  first_repo_url: https://github.com/google/adk-python
+  first_repo_name: adk-python
+  first_repo_icon: fontawesome/brands/github
   second_repo_url: https://github.com/google/adk-java
   second_repo_name: adk-java
   second_repo_icon: fontawesome/brands/github
@@ -27,8 +31,8 @@ extra:
     property: G-DKHZS27PHP
   consent:
     title: Cookie consent
-    description: >- 
-      We use cookies to recognize repeated visits and preferences, 
+    description: >-
+      We use cookies to recognize repeated visits and preferences,
       as well as to measure the effectiveness of our documentation and
       whether users find the information they need. With your consent,
       you're helping us to make our documentation better.
@@ -58,6 +62,7 @@ theme:
         icon: material/brightness-4
         name: Switch to light mode
   features:
+    - content.action.edit
     - content.code.annotate
     - content.code.copy
     - content.code.select
