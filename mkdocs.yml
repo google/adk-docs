@@ -187,6 +187,7 @@ nav:
     - W&B Weave: observability/weave.md
   - Evaluate:
     - evaluate/index.md
+    - Criteria: evaluate/criteria.md
   - MCP:
     - mcp/index.md
   - Plugins:
