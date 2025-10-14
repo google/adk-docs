@@ -10,8 +10,10 @@ import (
 
 	"google.golang.org/adk/agent"
 	"google.golang.org/adk/agent/llmagent"
-	"google.golang.org/adk/llm/gemini"
+	"google.golang.org/adk/model/gemini"
 	"google.golang.org/adk/session"
+	"google.golang.org/adk/tool"
+	"google.golang.org/adk/tool/agenttool"
 	"google.golang.org/genai"
 )
 
@@ -65,11 +67,11 @@ func conceptualSnippets() {
 	// Custom agent to check state
 	checkCondition, _ := agent.New(agent.Config{
 		Name: "Checker",
-		Run: func(ctx agent.Context) iter.Seq2[*session.Event, error] {
+		Run: func(ctx agent.InvocationContext) iter.Seq2[*session.Event, error] {
 			return func(yield func(*session.Event, error) bool) {
 				status, _ := ctx.Session().State().Get("status")
 				isDone := status == "completed"
-				yield(&session.Event{Author: "Checker", Actions: &session.EventActions{Escalate: isDone}}, nil)
+				yield(&session.Event{Author: "Checker", Actions: session.EventActions{Escalate: isDone}}, nil)
 			}
 		},
 	})
@@ -124,8 +126,12 @@ func conceptualSnippets() {
 		Description: "Generates an image based on a prompt.",
 		// ... internal logic ...
 	})
+	// Wrap the agent
+	imageTool := agenttool.New(imageAgent, &agenttool.Config{
+		SkipSummarization: true,
+	})
 
-	imageTool, _ := tool.NewAgentTool(imageAgent) // Wrap the agent
+	// Now imageTool can be used as a tool by other agents.
 
 	// Parent agent uses the AgentTool
 	artistAgent, _ := llmagent.New(llmagent.Config{
@@ -199,8 +205,8 @@ func conceptualSnippets() {
 	summarizer, _ := llmagent.New(llmagent.Config{Name: "Summarizer", Description: "Summarizes text.", Model: model})
 
 	// Mid-level agent combining tools
-	webSearcherTool, _ := tool.NewAgentTool(webSearcher)
-	summarizerTool, _ := tool.NewAgentTool(summarizer)
+	webSearcherTool := agenttool.New(webSearcher, nil)
+	summarizerTool := agenttool.New(summarizer, nil)
 	researchAssistant, _ := llmagent.New(llmagent.Config{
 		Name:        "ResearchAssistant",
 		Model:       model,
@@ -209,7 +215,7 @@ func conceptualSnippets() {
 	})
 
 	// High-level agent delegating research
-	researchAssistantTool, _ := tool.NewAgentTool(researchAssistant)
+	researchAssistantTool := agenttool.New(researchAssistant, nil)
 	reportWriter, _ := llmagent.New(llmagent.Config{
 		Name:        "ReportWriter",
 		Model:       model,
@@ -265,11 +271,11 @@ func conceptualSnippets() {
 
 	checkStatusAndEscalate, _ := agent.New(agent.Config{
 		Name: "StopChecker",
-		Run: func(ctx agent.Context) iter.Seq2[*session.Event, error] {
+		Run: func(ctx agent.InvocationContext) iter.Seq2[*session.Event, error] {
 			return func(yield func(*session.Event, error) bool) {
 				status, _ := ctx.Session().State().Get("quality_status")
 				shouldStop := status == "pass"
-				yield(&session.Event{Author: "StopChecker", Actions: &session.EventActions{Escalate: shouldStop}}, nil)
+				yield(&session.Event{Author: "StopChecker", Actions: session.EventActions{Escalate: shouldStop}}, nil)
 			}
 		},
 	})
@@ -288,7 +294,11 @@ func conceptualSnippets() {
 	// Conceptual Code: Using a Tool for Human Approval
 	// --- Assume externalApprovalTool exists ---
 	// func externalApprovalTool(amount float64, reason string) string { ... }
-	var externalApprovalTool func(amount float64, reason string) string
+	type externalApprovalToolArgs struct {
+		Amount float64 `json:"amount"`
+		Reason string  `json:"reason"`
+	}
+	var externalApprovalTool func(tool.Context, externalApprovalToolArgs) string
 	approvalTool, _ := tool.NewFunctionTool(
 		tool.FunctionToolConfig{
 			Name:        "external_approval_tool",
