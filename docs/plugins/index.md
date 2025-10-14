@@ -194,6 +194,12 @@ For more information on running ADK agents, see the
 [Quickstart](/get-started/quickstart/#run-your-agent)
 guide.
 
+## Available Built-in Plugins
+
+The ADK includes several built-in plugins that you can use out-of-the-box to add common functionality to your agents.
+
+*   [**Reflect and Retry Tool Plugin**](reflect-retry-tool-plugin.md): Provides self-healing, concurrent-safe error recovery for tool failures.
+
 ## Build workflows with Plugins
 
 Plugin callback hooks are a mechanism for implementing logic that intercepts,
