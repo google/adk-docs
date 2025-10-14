@@ -70,7 +70,7 @@ First, you need to establish what the agent *is* and what it's *for*.
 
     ```go
     // Example: Defining the basic identity
-    --8<-- "examples/go/snippets/agents/llm-agents/main.go:identity"
+    --8<-- "examples/go/snippets/agents/llm-agents/snippets/main.go:identity"
     ```
 
 
@@ -146,7 +146,7 @@ tells the agent:
 
     ```go
     // Example: Adding instructions
-    --8<-- "examples/go/snippets/agents/llm-agents/main.go:instruction"
+    --8<-- "examples/go/snippets/agents/llm-agents/snippets/main.go:instruction"
     ```
 
 *(Note: For instructions that apply to *all* agents in a system, consider using
@@ -224,7 +224,7 @@ on the conversation and its instructions.
 === "Golang"
 
     ```go
-    --8<-- "examples/go/snippets/agents/llm-agents/main.go:tool_example"
+    --8<-- "examples/go/snippets/agents/llm-agents/snippets/main.go:tool_example"
     ```
 
 Learn more about Tools in the [Tools](../tools/index.md) section.
@@ -279,7 +279,7 @@ You can adjust how the underlying LLM generates responses using `generate_conten
     ```go
     import "google.golang.org/genai"
 
-    --8<-- "examples/go/snippets/agents/llm-agents/main.go:gen_config"
+    --8<-- "examples/go/snippets/agents/llm-agents/snippets/main.go:gen_config"
     ```
 
 ### Structuring Data (`input_schema`, `output_schema`, `output_key`)
@@ -347,7 +347,7 @@ For scenarios requiring structured data exchange with an `LLM Agent`, the ADK pr
     The input and output schema is a `google.genai.types.Schema` object.
 
     ```go
-    --8<-- "examples/go/snippets/agents/llm-agents/main.go:schema_example"
+    --8<-- "examples/go/snippets/agents/llm-agents/snippets/main.go:schema_example"
     ```
 
 ### Managing Context (`include_contents`)
@@ -384,7 +384,7 @@ Control whether the agent receives the prior conversation history.
     ```go
     import "google.golang.org/adk/agent/llmagent"
 
-    --8<-- "examples/go/snippets/agents/llm-agents/main.go:include_contents"
+    --8<-- "examples/go/snippets/agents/llm-agents/snippets/main.go:include_contents"
     ```
 
 ### Planner
@@ -596,7 +596,7 @@ call_agent("If it's raining in New York right now, what is the current temperatu
     === "Golang"
 
         ```go
-        --8<-- "examples/go/snippets/agents/llm-agents/main.go:full_code"
+        --8<-- "examples/go/snippets/agents/llm-agents/snippets/main.go:full_code"
         ```
 
 _(This example demonstrates the core concepts. More complex agents might incorporate schemas, context control, planning, etc.)_
