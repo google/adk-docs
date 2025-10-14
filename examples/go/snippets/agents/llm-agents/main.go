@@ -106,7 +106,7 @@ The user will provide the country name in a JSON format like {"country": "countr
 3. Respond clearly to the user, stating the capital city found by the tool.`,
 		Tools:       []tool.Tool{capitalTool},
 		InputSchema: countryInputSchema,
-		// OutputKey: capitalToolOutputKey,
+		OutputKey: capitalToolOutputKey,
 	})
 	if err != nil {
 		log.Fatalf("Failed to create capital agent with tool: %v", err)
@@ -125,7 +125,7 @@ Respond ONLY with a JSON object matching this exact schema:
 Use your knowledge to determine the capital and estimate the population. Do not use any tools.`, string(schemaJSON)),
 		InputSchema:  countryInputSchema,
 		OutputSchema: capitalInfoOutputSchema,
-		// OutputKey:    structuredInfoAgentOutputKey,
+		OutputKey:    structuredInfoAgentOutputKey,
 	})
 	if err != nil {
 		log.Fatalf("Failed to create structured info agent: %v", err)
