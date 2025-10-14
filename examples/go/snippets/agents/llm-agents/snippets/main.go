@@ -108,8 +108,8 @@ func _snippet_tool_example(model model.LLM) {
 }
 
 
-// --8<-- [start:schema_example]
 func _snippet_schema_example(model model.LLM) {
+	// --8<-- [start:schema_example]
 	capitalOutput := &genai.Schema{
 		Type:        genai.TypeObject,
 		Description: "Schema for capital city information.",
@@ -128,14 +128,14 @@ func _snippet_schema_example(model model.LLM) {
 		Instruction:  `You are a Capital Information Agent. Given a country, respond ONLY with a JSON object containing the capital. Format: {"capital": "capital_name"}`,
 		OutputSchema: capitalOutput,
 		OutputKey:    "found_capital",
-		// Cannot use tools effectively here
+		// Cannot use the capitalTool tool effectively here
 	})
+	// --8<-- [end:schema_example]
 	if err != nil {
 		log.Fatal(err)
 	}
 	fmt.Println("Agent with output schema created:", agent.Name())
 }
-// --8<-- [end:schema_example]
 
 
 func _snippet_gen_config(model model.LLM) {

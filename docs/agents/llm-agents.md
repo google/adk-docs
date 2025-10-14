@@ -293,6 +293,7 @@ For scenarios requiring structured data exchange with an `LLM Agent`, the ADK pr
 * **`output_key` (Optional):** Provide a string key. If set, the text content of the agent's *final* response will be automatically saved to the session's state dictionary under this key. This is useful for passing results between agents or steps in a workflow.
     * In Python, this might look like: `session.state[output_key] = agent_response_text`
     * In Java: `session.state().put(outputKey, agentResponseText)`
+    * In Golang, within a callback handler: `ctx.State().Set(output_key, agentResponseText)`
 
 === "Python"
 
@@ -596,7 +597,7 @@ call_agent("If it's raining in New York right now, what is the current temperatu
     === "Golang"
 
         ```go
-        --8<-- "examples/go/snippets/agents/llm-agents/snippets/main.go:full_code"
+        --8<-- "examples/go/snippets/agents/llm-agents/main.go:full_code"
         ```
 
 _(This example demonstrates the core concepts. More complex agents might incorporate schemas, context control, planning, etc.)_

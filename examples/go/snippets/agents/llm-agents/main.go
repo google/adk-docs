@@ -49,6 +49,87 @@ func getCapitalCity(ctx tool.Context, args getCapitalCityArgs) map[string]any {
 	return map[string]any{"result": capital}
 }
 
+
+// callAgent is a helper function to execute an agent with a given prompt and handle its output.
+func callAgent(ctx context.Context, a agent.Agent, outputKey string, prompt string) {
+	fmt.Printf("\n>>> Calling Agent: '%s' | Query: %s\n", a.Name(), prompt)
+	// Create an in-memory session service to manage agent state.
+	sessionService := session.InMemoryService()
+
+	// Create a new session for the agent interaction.
+	sessionCreateResponse, err := sessionService.Create(ctx, &session.CreateRequest{
+		AppName: appName,
+		UserID:  userID,
+	})
+	if err != nil {
+		log.Fatalf("Failed to create the session service: %v", err)
+	}
+
+	session := sessionCreateResponse.Session
+
+	// Configure the runner with the application name, agent, and session service.
+	config := runner.Config{
+		AppName:        appName,
+		Agent:          a,
+		SessionService: sessionService,
+	}
+
+	// Create a new runner instance.
+	r, err := runner.New(config)
+	if err != nil {
+		log.Fatalf("Failed to create the runner: %v", err)
+	}
+
+	// Prepare the user's message to send to the agent.
+	sessionID := session.ID()
+	userMsg := &genai.Content{
+		Parts: []*genai.Part{
+			genai.NewPartFromText(prompt),
+		},
+		Role: string(genai.RoleUser),
+	}
+
+	// Run the agent and process the streaming events.
+	for event, err := range r.Run(ctx, userID, sessionID, userMsg, &agent.RunConfig{
+		StreamingMode: agent.StreamingModeSSE,
+	}) {
+		if err != nil {
+			fmt.Printf("\nAGENT_ERROR: %v\n", err)
+		} else if event.Partial {
+			// Print partial responses as they are received.
+			for _, p := range event.Content.Parts {
+				fmt.Print(p.Text)
+			}
+		}
+	}
+
+	// After the run, check if there's an expected output key in the session state.
+	if outputKey != "" {
+		storedOutput, error := session.State().Get(outputKey)
+		if error == nil {
+			// Pretty-print the stored output if it's a JSON string.
+			fmt.Printf("\n--- Session State ['%s']: ", outputKey)
+			storedString, isString := storedOutput.(string)
+			if isString {
+				var prettyJSON map[string]interface{}
+				if err := json.Unmarshal([]byte(storedString), &prettyJSON); err == nil {
+					indentedJSON, err := json.MarshalIndent(prettyJSON, "", "  ")
+					if err == nil {
+						fmt.Println(string(indentedJSON))
+					} else {
+						fmt.Println(storedString)
+					}
+				} else {
+					fmt.Println(storedString)
+				}
+			} else {
+				fmt.Println(storedOutput)
+			}
+			fmt.Println(strings.Repeat("-", 30))
+		}
+	}
+}
+
 func main() {
 	ctx := context.Background()
 
@@ -139,73 +220,4 @@ Use your knowledge to determine the capital and estimate the population. Do not 
 	callAgent(ctx, structuredInfoAgentSchema, "structured_info_result", `{"country": "Japan"}`)
 }
 
-func callAgent(ctx context.Context, a agent.Agent, outputKey string, prompt string) {
-	fmt.Printf("\n>>> Calling Agent: '%s' | Query: %s\n", a.Name(), prompt)
-	sessionService := session.InMemoryService()
-
-	sessionCreateResponse, err := sessionService.Create(ctx, &session.CreateRequest{
-		AppName: appName,
-		UserID:  userID,
-	})
-	if err != nil {
-		log.Fatalf("Failed to create the session service: %v", err)
-	}
-
-	session := sessionCreateResponse.Session
-
-	config := runner.Config{
-		AppName:        appName,
-		Agent:          a,
-		SessionService: sessionService,
-	}
-
-	r, err := runner.New(config)
-	if err != nil {
-		log.Fatalf("Failed to create the runner: %v", err)
-	}
-
-	sessionID := session.ID()
-	userMsg := &genai.Content{
-		Parts: []*genai.Part{
-			genai.NewPartFromText(prompt),
-		},
-		Role: string(genai.RoleUser),
-	}
-
-	for event, err := range r.Run(ctx, userID, sessionID, userMsg, &agent.RunConfig{
-		StreamingMode: agent.StreamingModeSSE,
-	}) {
-		if err != nil {
-			fmt.Printf("\nAGENT_ERROR: %v\n", err)
-		} else if event.Partial {
-			for _, p := range event.Content.Parts {
-				fmt.Print(p.Text)
-			}
-		}
-	}
-
-	if outputKey != "" {
-		storedOutput, error := session.State().Get(outputKey)
-		if error == nil {
-			fmt.Printf("--- Session State ['%s']: ", outputKey)
-			storedString, isString := storedOutput.(string)
-			if isString {
-				var prettyJSON map[string]interface{}
-				if err := json.Unmarshal([]byte(storedString), &prettyJSON); err == nil {
-					indentedJSON, err := json.MarshalIndent(prettyJSON, "", "  ")
-					if err == nil {
-						fmt.Println(string(indentedJSON))
-					} else {
-						fmt.Println(storedString)
-					}
-				} else {
-					fmt.Println(storedString)
-				}
-			} else {
-				fmt.Println(storedOutput)
-			}
-			fmt.Println(strings.Repeat("-", 30))
-		}
-	}
-}
 // --8<-- [end:full_code]
