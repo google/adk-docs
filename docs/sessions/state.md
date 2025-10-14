@@ -35,7 +35,7 @@ Conceptually, `session.state` is a collection (dictionary or Map) holding key-va
       * `DatabaseSessionService` / `VertexAiSessionService`: **Persistent.** State is saved reliably.
 
 !!! Note
-    The specific parameters or method names for the primitives may vary slightly by SDK language (e.g., `session.state['current_intent'] = 'book_flight'` in Python, `session.state().put("current_intent", "book_flight)` in Java). Refer to the language-specific API documentation for details.
+    The specific parameters or method names for the primitives may vary slightly by SDK language (e.g., `session.state['current_intent'] = 'book_flight'` in Python, `session.state().put("current_intent", "book_flight)` in Java, `context.State().Set("current_intent", "book_flight")` in Go). Refer to the language-specific API documentation for details.
 
 ### Organizing State with Prefixes: Scope Matters
 
@@ -94,7 +94,7 @@ story_generator = LlmAgent(
     instruction="""Write a short story about a cat, focusing on the theme: {topic}."""
 )
 
-# Assuming session.state['topic'] is set to "friendship", the LLM 
+# Assuming session.state['topic'] is set to "friendship", the LLM
 # will receive the following instruction:
 # "Write a short story about a cat, focusing on the theme: friendship."
 ```
@@ -227,6 +227,12 @@ This is the simplest method for saving an agent's final text response directly i
     --8<-- "examples/java/snippets/src/main/java/state/GreetingAgentExample.java:full_code"
     ```
 
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/sessions/state_example.go:greeting"
+    ```
+
 Behind the scenes, the `Runner` uses the `output_key` to create the necessary `EventActions` with a `state_delta` and calls `append_event`.
 
 **2\. The Standard Way: `EventActions.state_delta` (for Complex Updates)**
@@ -291,6 +297,13 @@ For more complex scenarios (updating multiple keys, non-string values, specific 
     --8<-- "examples/java/snippets/src/main/java/state/ManualStateUpdateExample.java:full_code"
     ```
 
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/sessions/state_example.go:manual"
+    ```
+
+
 **3. Via `CallbackContext` or `ToolContext` (Recommended for Callbacks and Tools)**
 
 Modifying state within agent callbacks (e.g., `on_before_agent_call`, `on_after_agent_call`) or tool functions is best done using the `state` attribute of the `CallbackContext` or `ToolContext` provided to your function.
@@ -344,6 +357,12 @@ For more comprehensive details on context objects, refer to the [Context documen
             // ... rest of callback logic ...
         }
     }
+    ```
+
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/sessions/state_example.go:context"
     ```
 
 **What `append_event` Does:**
