@@ -558,6 +558,57 @@ Toolbox, see the
 
 ![GenAI Toolbox](../assets/mcp_db_toolbox.png)
 
+### Supported Data Sources
+
+MCP Toolbox provides out-of-the-box toolsets for the following databases and data platforms:
+
+#### Google Cloud
+
+*   [BigQuery](https://googleapis.github.io/genai-toolbox/resources/sources/bigquery/) (including tools for SQL execution, schema discovery, and AI-powered time series forecasting)
+*   [AlloyDB](https://googleapis.github.io/genai-toolbox/resources/sources/alloydb-pg/) (PostgreSQL-compatible, with tools for both standard queries and natural language queries)
+*   [AlloyDB Admin](https://googleapis.github.io/genai-toolbox/resources/sources/alloydb-admin/)
+*   [Spanner](https://googleapis.github.io/genai-toolbox/resources/sources/spanner/) (supporting both GoogleSQL and PostgreSQL dialects)
+*   Cloud SQL (with dedicated support for [Cloud SQL for PostgreSQL](https://googleapis.github.io/genai-toolbox/resources/sources/cloud-sql-pg/), [Cloud SQL for MySQL](https://googleapis.github.io/genai-toolbox/resources/sources/cloud-sql-mysql/), and [Cloud SQL for SQL Server](https://googleapis.github.io/genai-toolbox/resources/sources/cloud-sql-mssql/))
+*   [Cloud SQL Admin](https://googleapis.github.io/genai-toolbox/resources/sources/cloud-sql-admin/)
+*   [Firestore](https://googleapis.github.io/genai-toolbox/resources/sources/firestore/)
+*   [Bigtable](https://googleapis.github.io/genai-toolbox/resources/sources/bigtable/)
+*   [Dataplex](https://googleapis.github.io/genai-toolbox/resources/sources/dataplex/) (for data discovery and metadata search)
+*   [Cloud Monitoring](https://googleapis.github.io/genai-toolbox/resources/sources/cloud-monitoring/)
+
+#### Relational & SQL Databases
+
+*   [PostgreSQL](https://googleapis.github.io/genai-toolbox/resources/sources/postgres/) (generic)
+*   [MySQL](https://googleapis.github.io/genai-toolbox/resources/sources/mysql/) (generic)
+*   [Microsoft SQL Server](https://googleapis.github.io/genai-toolbox/resources/sources/mssql/) (generic)
+*   [ClickHouse](https://googleapis.github.io/genai-toolbox/resources/sources/clickhouse/)
+*   [TiDB](https://googleapis.github.io/genai-toolbox/resources/sources/tidb/)
+*   [OceanBase](https://googleapis.github.io/genai-toolbox/resources/sources/oceanbase/)
+*   [Firebird](https://googleapis.github.io/genai-toolbox/resources/sources/firebird/)
+*   [SQLite](https://googleapis.github.io/genai-toolbox/resources/sources/sqlite/)
+*   [YugabyteDB](https://googleapis.github.io/genai-toolbox/resources/sources/yugabytedb/)
+
+#### NoSQL & Key-Value Stores
+
+*   [MongoDB](https://googleapis.github.io/genai-toolbox/resources/sources/mongodb/)
+*   [Couchbase](https://googleapis.github.io/genai-toolbox/resources/sources/couchbase/)
+*   [Redis](https://googleapis.github.io/genai-toolbox/resources/sources/redis/)
+*   [Valkey](https://googleapis.github.io/genai-toolbox/resources/sources/valkey/)
+*   [Cassandra](https://googleapis.github.io/genai-toolbox/resources/sources/cassandra/)
+
+#### Graph Databases
+
+*   [Neo4j](https://googleapis.github.io/genai-toolbox/resources/sources/neo4j/) (with tools for Cypher queries and schema inspection)
+*   [Dgraph](https://googleapis.github.io/genai-toolbox/resources/sources/dgraph/)
+
+#### Data Platforms & Federation
+
+*   [Looker](https://googleapis.github.io/genai-toolbox/resources/sources/looker/) (for running Looks, queries, and building dashboards via the Looker API)
+*   [Trino](https://googleapis.github.io/genai-toolbox/resources/sources/trino/) (for running federated queries across multiple sources)
+
+#### Other
+
+*   [HTTP](https://googleapis.github.io/genai-toolbox/resources/sources/http/)
+
 ### Configure and deploy
 
 Toolbox is an open source server that you deploy and manage yourself. For more
