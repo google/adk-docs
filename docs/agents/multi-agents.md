@@ -623,7 +623,7 @@ Allows an [`LlmAgent`](llm-agents.md) to treat another `BaseAgent` instance as a
     });
     // Artist LLM generates a prompt, then calls:
     // {functionCall: {name: 'ImageGen', args: {image_prompt: 'a cat wearing a hat'}}}
-    // Framework calls imageTool.run(...), which runs ImageGeneratorAgent.
+    // Framework calls imageTool.runAsync(...), which runs ImageGeneratorAgent.
     // The resulting image Part is returned to the Artist agent as the tool result.
     ```
 
