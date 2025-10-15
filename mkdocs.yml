@@ -133,6 +133,7 @@ nav:
       - get-started/streaming/index.md
       - Python: get-started/streaming/quickstart-streaming.md
       - Java: get-started/streaming/quickstart-streaming-java.md
+    - Agentic UI (AG-UI): tutorials/ag-ui.md
     - Testing: get-started/testing.md
     - Code samples: https://github.com/google/adk-samples
     - Advanced setup: get-started/installation.md
