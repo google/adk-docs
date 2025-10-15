@@ -75,6 +75,34 @@ The central piece holding all this information together for a single, complete u
     }
     ```
 
+=== "Go"
+
+    ```go
+    // Conceptual Pseudocode: How the framework provides context (Internal Logic)
+    
+    // runner := runner.New(runner.Config{Agent: myRootAgent, SessionService: ...})
+    // userMsg := &genai.Content{...}
+    // session, _ := sessionService.GetOrCreate(...)
+    
+    // --- Inside runner.Run(...) ---
+    // 1. Framework creates the main context for this specific run
+    // invocationContext := agent.NewInvocationContext(agent.InvocationContextConfig{
+    //     InvocationID: "unique-id-for-this-run",
+    //     Session:      session,
+    //     UserContent:  userMsg,
+    //     Agent:        myRootAgent,
+    //     // ... other necessary fields ...
+    // })
+    //
+    // 2. Framework calls the agent's run method, passing the context.
+    // for range myRootAgent.Run(invocationContext) {
+    //   // ...
+    // }
+    // --- End Internal Logic ---
+    //
+    // As a developer, you work with the context objects provided in method arguments.
+    ```
+
 ## The Different types of Context
 
 While `InvocationContext` acts as the comprehensive internal container, ADK provides specialized context objects tailored to specific situations. This ensures you have the right tools and permissions for the task at hand without needing to handle the full complexity of the internal context everywhere. Here are the different "flavors" you'll encounter:
@@ -163,6 +191,12 @@ While `InvocationContext` acts as the comprehensive internal container, ADK prov
             }
         ```
 
+    === "Go"
+
+        ```go
+        --8<-- "examples/go/snippets/context/main.go:invocation_context_agent"
+        ```
+
 2.  **`ReadonlyContext`**
     *   **Where Used:** Provided in scenarios where only read access to basic information is needed and mutation is disallowed (e.g., `InstructionProvider` functions). It's also the base class for other contexts.
     *   **Purpose:** Offers a safe, read-only view of fundamental contextual details.
@@ -180,7 +214,7 @@ While `InvocationContext` acts as the comprehensive internal container, ADK prov
             # context.state['new_key'] = 'value' # This would typically cause an error or be ineffective
             return f"Process the request for a {user_tier} user."
         ```
-    
+
     === "Java"
     
         ```java
@@ -193,6 +227,12 @@ While `InvocationContext` acts as the comprehensive internal container, ADK prov
             context.state().put('new_key', 'value'); //This would typically cause an error
             return "Process the request for a " + userTier + " user."
         }
+        ```
+
+    === "Go"
+
+        ```go
+        --8<-- "examples/go/snippets/context/main.go:readonly_context_instruction"
         ```
     
 3.  **`CallbackContext`**
@@ -242,6 +282,12 @@ While `InvocationContext` acts as the comprehensive internal container, ADK prov
             System.out.println("Preparing model call " + callCount + 1);
             return Maybe.empty(); // Allow model call to proceed
         }
+        ```
+
+    === "Go"
+
+        ```go
+        --8<-- "examples/go/snippets/context/main.go:callback_context_callback"
         ```
 
 4.  **`ToolContext`**
@@ -309,6 +355,12 @@ While `InvocationContext` acts as the comprehensive internal container, ADK prov
     
             return Map.of("result", "Data for " + query + " fetched");
         }
+        ```
+
+    === "Go"
+
+        ```go
+        --8<-- "examples/go/snippets/context/main.go:tool_context_tool"
         ```
 
 Understanding these different context objects and when to use them is key to effectively managing state, accessing services, and controlling the flow of your ADK application. The next section will detail common tasks you can perform using these contexts.
@@ -380,6 +432,16 @@ You'll frequently need to read information stored within the context.
             // ... callback logic ...
         ```
 
+    === "Go"
+
+        ```go
+        --8<-- "examples/go/snippets/context/main.go:accessing_state_tool"
+        ```
+
+        ```go
+        --8<-- "examples/go/snippets/context/main.go:accessing_state_callback"
+        ```
+
 *   **Getting Current Identifiers:** Useful for logging or custom logic based on the current operation.
 
     === "Python"
@@ -408,6 +470,12 @@ You'll frequently need to read information stored within the context.
                     String functionCallId = toolContext.functionCallId().get(); // Specific to ToolContext
                     System.out.println("Log: Invocation= " + invId &+ " Agent= " + agentName);
                 }
+        ```
+
+    === "Go"
+
+        ```go
+        --8<-- "examples/go/snippets/context/main.go:accessing_ids"
         ```
 
 *   **Accessing the Initial User Input:** Refer back to the message that started the current invocation.
@@ -447,6 +515,12 @@ You'll frequently need to read information stored within the context.
                 System.out.println("This invocation started with user input: " + initialText)
             }
         }
+        ```
+
+    === "Go"
+
+        ```go
+        --8<-- "examples/go/snippets/context/main.go:accessing_user_content_agent"
         ```
     
 ### Managing State
@@ -507,6 +581,16 @@ State is crucial for memory and data flow. When you modify state using `Callback
         }
         ```
 
+    === "Go"
+
+        ```go
+        --8<-- "examples/go/snippets/context/main.go:passing_data_tool1"
+        ```
+
+        ```go
+        --8<-- "examples/go/snippets/context/main.go:passing_data_tool2"
+        ```
+
 *   **Updating User Preferences:**
 
     === "Python"
@@ -536,6 +620,12 @@ State is crucial for memory and data flow. When you modify state using `Callback
             System.out.println("Set user preference '" + preference + "' to '" + value + "'");
             return Map.of("status", "Preference updated");
         }
+        ```
+
+    === "Go"
+
+        ```go
+        --8<-- "examples/go/snippets/context/main.go:updating_preferences"
         ```
 
 *   **State Prefixes:** While basic state is session-specific, prefixes like `app:` and `user:` can be used with persistent `SessionService` implementations (like `DatabaseSessionService` or `VertexAiSessionService`) to indicate broader scope (app-wide or user-wide across sessions). `temp:` can denote data only relevant within the current invocation.
@@ -599,6 +689,12 @@ Use artifacts to handle files or large data blobs associated with the session. C
                // Example usage:
                // saveDocumentReference(context, "gs://my-bucket/docs/report.pdf")
                ```
+
+        === "Go"
+
+            ```go
+            --8<-- "examples/go/snippets/context/main.go:artifacts_save_ref"
+            ```
 
     2.  **Summarizer Tool:** Load the artifact to get the path/URI, read the actual document content using appropriate libraries, summarize, and return the result.
 
@@ -710,7 +806,13 @@ Use artifacts to handle files or large data blobs associated with the session. C
                 }
             }
             ```
-    
+
+        === "Go"
+
+            ```go
+            --8<-- "examples/go/snippets/context/main.go:artifacts_summarize"
+            ```
+        
 *   **Listing Artifacts:** Discover what files are available.
     
     === "Python"
@@ -743,6 +845,12 @@ Use artifacts to handle files or large data blobs associated with the session. C
                 return Map.of("error", "Artifact service error: " + e);
             }
         }
+        ```
+
+    === "Go"
+
+        ```go
+        --8<-- "examples/go/snippets/context/main.go:artifacts_list"
         ```
 
 ### Handling Tool Authentication 
