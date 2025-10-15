@@ -24,7 +24,7 @@ workflow? Here is a list of available ADK Tools:
     Interact with Spanner to retrieve data, search, and execute SQL.
 *   **[Bigtable Tools](/adk-docs/tools/built-in-tools/#bigtable)**:
     Interact with Bigtable to retrieve data and and execute SQL.
-*   **[Toolbox Tools for Databases](/adk-docs/tools/google-cloud-tools/#toolbox-tools-for-databases)**:
+*   **[MCP Toolbox for Databases](/adk-docs/tools/google-cloud-tools/#toolbox-tools-for-databases)**:
     Connect a wide variety of databases to your agents.
 *   **[Apigee API Hub Tools](/adk-docs/tools/google-cloud-tools/#apigee-api-hub-tools)**:
     Turn any documented API from Apigee API hub into a tool.
