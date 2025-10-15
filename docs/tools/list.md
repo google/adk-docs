@@ -47,5 +47,5 @@ workflows using the following guides:
 
 *   **[Function Tools](/adk-docs/tools/function-tools/)**: Build custom tools for
     your specific ADK agent needs.
-*   **[MCP Tools](/adk-docs/tools/function-tools/)**: Wrap MCP servers to provide
+*   **[MCP Tools](/adk-docs/tools/mcp-tools/)**: Wrap MCP servers to provide
     this functionality to your ADK agents.
