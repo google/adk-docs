@@ -429,3 +429,13 @@ This primarily relates to how responses from the LLM are handled, especially whe
     * **CPU-Bound Work:** Purely CPU-intensive synchronous tasks will still block their execution thread in both environments.
 
 Understanding these behaviors helps you write more robust ADK applications and debug issues related to state consistency, streaming updates, and asynchronous execution.
+
+### Pausing and resuming agents
+
+The ADK runtime supports the ability to pause and resume agent invocations. This is particularly useful for tools that need to perform long-running operations or wait for external input, such as human-in-the-loop scenarios.
+
+The `LongRunningFunctionTool` is designed for this purpose. When an agent calls a `LongRunningFunctionTool`, the tool can signal to the runtime to pause the invocation. This is done by returning a result that indicates the operation is pending. The agent's execution is then suspended, and the agent client is notified.
+
+The client can then, at a later time, resume the invocation by sending back an intermediate or final response for the long-running operation. The ADK runtime will then continue the agent's execution from where it was paused.
+
+This mechanism allows agents to handle tasks that take a significant amount of time without blocking the entire system. You can find a more detailed explanation and code examples in the [Long Running Function Tools documentation](../tools/function-tools.md#long-run-tool).
