@@ -149,6 +149,7 @@ nav:
     - Models & Authentication: agents/models.md
   - Tools:
     - tools/index.md
+    - ADK Tools list: tools/list.md
     - Function tools:
       - Overview: tools/function-tools.md
       - Tool performance: tools/performance.md
@@ -199,7 +200,7 @@ nav:
     - plugins/index.md
   - Bidi-streaming (live):
     - streaming/index.md
-    #- Quickstart (Bidi-streaming/live): get-started/streaming/index.md
+
     - Custom Audio Bidi-streaming app sample (SSE): streaming/custom-streaming.md
     - Custom Audio Bidi-streaming app sample (WebSockets): streaming/custom-streaming-ws.md
     - Bidi-streaming development guide series: streaming/dev-guide/part1.md

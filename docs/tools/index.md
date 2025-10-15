@@ -1,5 +1,24 @@
 # Tools
 
+In an ADK agent workflow, Tools are programming functions with structured input
+and output that can be called by an ADK Agent to perform actions. ADK Tools
+function similarly to how you use a 
+[Function Call](https://ai.google.dev/gemini-api/docs/function-calling) 
+with Gemini or other generative AI models. You can perform various actions and
+programming functions with an ADK Tool, such as:
+
+*   Querying databases
+*   Making API requests: getting weather data, booking systems
+*   Searching the web
+*   Executing code snippets
+*   Retrieving information from documents (RAG)
+*   Interacting with other software or services
+
+!!! tip "[ADK Tools list](/adk-docs/tools/list/)"
+    Before building your own Tools for ADK, check out the 
+    **[ADK Tools list](/adk-docs/tools/list/)**
+    for pre-built tools you can use with ADK Agents.
+
 ## What is a Tool?
 
 In the context of ADK, a Tool represents a specific
@@ -17,14 +36,8 @@ external systems or data.
 
 ### Key Characteristics
 
-**Action-Oriented:** Tools perform specific actions, such as:
-
-* Querying databases
-* Making API requests (e.g., fetching weather data, booking systems)
-* Searching the web
-* Executing code snippets
-* Retrieving information from documents (RAG)
-* Interacting with other software or services
+**Action-Oriented:** Tools perform specific actions for an agent, such as 
+searching for information, calling an API, or performing calculations.
 
 **Extends Agent capabilities:** They empower agents to access real-time information, affect external systems, and overcome the knowledge limitations inherent in their training data.
 
