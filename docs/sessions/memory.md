@@ -8,14 +8,14 @@ We've seen how `Session` tracks the history (`events`) and temporary data (`stat
 
 Think of it this way:
 
-* **`Session` / `State`:** Like your short-term memory during one specific chat.  
+* **`Session` / `State`:** Like your short-term memory during one specific chat.
 * **Long-Term Knowledge (`MemoryService`)**: Like a searchable archive or knowledge library the agent can consult, potentially containing information from many past chats or other sources.
 
 ## The `MemoryService` Role
 
 The `BaseMemoryService` defines the interface for managing this searchable, long-term knowledge store. Its primary responsibilities are:
 
-1. **Ingesting Information (`add_session_to_memory`):** Taking the contents of a (usually completed) `Session` and adding relevant information to the long-term knowledge store.  
+1. **Ingesting Information (`add_session_to_memory`):** Taking the contents of a (usually completed) `Session` and adding relevant information to the long-term knowledge store.
 2. **Searching Information (`search_memory`):** Allowing an agent (typically via a `Tool`) to query the knowledge store and retrieve relevant snippets or context based on a search query.
 
 ## Choosing the Right Memory Service
@@ -45,7 +45,7 @@ memory_service = InMemoryMemoryService()
 
 This example demonstrates the basic flow using the `InMemoryMemoryService` for simplicity.
 
-??? "Full Code"
+=== "Python"
 
     ```py
     import asyncio
@@ -140,6 +140,23 @@ This example demonstrates the basic flow using the `InMemoryMemoryService` for s
     # await run_scenario()
     ```
 
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/sessions/memory_example/memory_example.go:full_example"
+    ```
+
+
+### Searching Memory Within a Tool
+
+You can also search memory from within a custom tool by using the `tool.Context`.
+
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/sessions/memory_example/memory_example.go:tool_search"
+    ```
+
 ## Vertex AI Memory Bank
 
 The `VertexAiMemoryBankService` connects your agent to [Vertex AI Memory Bank](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/memory-bank/overview), a fully managed Google Cloud service that provides sophisticated, persistent memory capabilities for conversational agents.
@@ -192,7 +209,7 @@ runner = adk.Runner(
     ...
     memory_service=memory_service
 )
-``` 
+```
 
 ## Using Memory in Your Agent
 
@@ -239,12 +256,12 @@ agent = Agent(
 
 The memory workflow internally involves these steps:
 
-1. **Session Interaction:** A user interacts with an agent via a `Session`, managed by a `SessionService`. Events are added, and state might be updated.  
-2. **Ingestion into Memory:** At some point (often when a session is considered complete or has yielded significant information), your application calls `memory_service.add_session_to_memory(session)`. This extracts relevant information from the session's events and adds it to the long-term knowledge store (in-memory dictionary or Agent Engine Memory Bank).  
-3. **Later Query:** In a *different* (or the same) session, the user might ask a question requiring past context (e.g., "What did we discuss about project X last week?").  
-4. **Agent Uses Memory Tool:** An agent equipped with a memory-retrieval tool (like the built-in `load_memory` tool) recognizes the need for past context. It calls the tool, providing a search query (e.g., "discussion project X last week").  
-5. **Search Execution:** The tool internally calls `memory_service.search_memory(app_name, user_id, query)`.  
-6. **Results Returned:** The `MemoryService` searches its store (using keyword matching or semantic search) and returns relevant snippets as a `SearchMemoryResponse` containing a list of `MemoryResult` objects (each potentially holding events from a relevant past session).  
+1. **Session Interaction:** A user interacts with an agent via a `Session`, managed by a `SessionService`. Events are added, and state might be updated.
+2. **Ingestion into Memory:** At some point (often when a session is considered complete or has yielded significant information), your application calls `memory_service.add_session_to_memory(session)`. This extracts relevant information from the session's events and adds it to the long-term knowledge store (in-memory dictionary or Agent Engine Memory Bank).
+3. **Later Query:** In a *different* (or the same) session, the user might ask a question requiring past context (e.g., "What did we discuss about project X last week?").
+4. **Agent Uses Memory Tool:** An agent equipped with a memory-retrieval tool (like the built-in `load_memory` tool) recognizes the need for past context. It calls the tool, providing a search query (e.g., "discussion project X last week").
+5. **Search Execution:** The tool internally calls `memory_service.search_memory(app_name, user_id, query)`.
+6. **Results Returned:** The `MemoryService` searches its store (using keyword matching or semantic search) and returns relevant snippets as a `SearchMemoryResponse` containing a list of `MemoryResult` objects (each potentially holding events from a relevant past session).
 7. **Agent Uses Results:** The tool returns these results to the agent, usually as part of the context or function response. The agent can then use this retrieved information to formulate its final answer to the user.
 
 ### Can an agent have access to more than one memory service?
