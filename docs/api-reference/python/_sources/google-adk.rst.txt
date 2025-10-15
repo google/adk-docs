@@ -25,6 +25,14 @@ google.adk.artifacts module
     :undoc-members:
     :show-inheritance:
 
+google.adk.apps package
+-----------------------
+
+.. automodule:: google.adk.apps
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 google.adk.auth module
 ----------------------
 
@@ -277,6 +285,14 @@ google.adk.tools.google_api_tool module
 ---------------------------------------
 
 .. automodule:: google.adk.tools.google_api_tool
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+google.adk.tools.google_maps_grounding_tool module
+---------------------------------------
+
+.. automodule:: google.adk.tools.google_maps_grounding_tool
     :members:
     :undoc-members:
     :show-inheritance:
