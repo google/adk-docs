@@ -2,7 +2,7 @@
 
 ---
 
-## Background
+## Overview
 
 As an agent builder, you want your agent to be able to interact with users through a rich and responsive interface. Building that up from scratch will require a lot of effort, especially to support streaming events and client state. That's exactly what AG-UI was designed for, rich user experiences directly connected to an agent.
 
@@ -106,7 +106,7 @@ npm install && npm run dev
 
 ---
 
-## Want to learn more?
+## Resources
 
 To see what other features you can build into your UI with AG-UI, take a look at the docs:
 <ul>
