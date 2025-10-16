@@ -11,6 +11,12 @@
     },
     {
       "pattern": "^https://a2aprotocol.ai/"
+    },
+    {
+      "pattern": "^https://www.gnu.org/"
+    },
+    {
+      "pattern": "^https://developer.hashicorp.com"
     }
   ],
   "aliveStatusCodes": [

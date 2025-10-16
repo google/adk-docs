@@ -13,11 +13,38 @@ to use the ADK API server.
 === "Java"
 
     Make sure to update the port number.
-
-    ```java
-    mvn compile exec:java \
+    === "Maven"
+        With Maven, compile and run the ADK web server:
+        ```console
+        mvn compile exec:java \
          -Dexec.args="--adk.agents.source-dir=src/main/java/agents --server.port=8080"
-    ```
+        ```
+    === "Gradle"
+        With Gradle, the `build.gradle` or `build.gradle.kts` build file should have the following Java plugin in its plugins section:
+
+        ```groovy
+        plugins {
+            id('java')
+            // other plugins
+        }
+        ```
+        Then, elsewhere in the build file, at the top-level, create a new task:
+
+        ```groovy
+        tasks.register('runADKWebServer', JavaExec) {
+            dependsOn classes 
+            classpath = sourceSets.main.runtimeClasspath
+            mainClass = 'com.google.adk.web.AdkWebServer'
+            args '--adk.agents.source-dir=src/main/java/agents', '--server.port=8080'
+        }
+        ```
+
+        Finally, on the command-line, run the following command:
+        ```console
+        gradle runADKWebServer
+        ```
+
+    
     In Java, both the Dev UI and the API server are bundled together.
 
 This command will launch a local web server, where you can run cURL commands or send API requests to test your agent.

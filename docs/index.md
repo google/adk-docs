@@ -3,18 +3,12 @@ hide:
   - toc
 ---
 
-!!! tip "What's new"
-    Build agents without code. Check out the
-    [Agent Config](/adk-docs/agents/config/) feature.
-
 <div style="text-align: center;">
   <div class="centered-logo-text-group">
     <img src="assets/agent-development-kit.png" alt="Agent Development Kit Logo" width="100">
     <h1>Agent Development Kit</h1>
   </div>
 </div>
-
-## What is Agent Development Kit?
 
 Agent Development Kit (ADK) is a flexible and modular framework for **developing
 and deploying AI agents**. While optimized for Gemini and the Google ecosystem,
@@ -51,13 +45,10 @@ from simple tasks to complex workflows.
     ```
 </div>
 
-
 <p style="text-align:center;">
-  <a href="get-started/quickstart/" class="md-button" style="margin:3px">Quickstart</a>
-  <a href="tutorials/" class="md-button" style="margin:3px">Tutorials</a>
-  <a href="http://github.com/google/adk-samples" class="md-button" target="_blank" style="margin:3px">Sample Agents</a>
-  <a href="api-reference/" class="md-button" style="margin:3px">API Reference</a>
-  <a href="contributing-guide/" class="md-button" style="margin:3px">Contribute ❤️</a>
+  <a href="/adk-docs/get-started/python/" class="md-button" style="margin:3px">Start with Python</a>
+  <a href="/adk-docs/get-started/java/" class="md-button" style="margin:3px">Start with Java</a>
+  <a href="/adk-docs/get-started/about/" class="md-button" style="margin:3px">Technical overview</a>
 </p>
 
 ---
