@@ -78,29 +78,7 @@ The central piece holding all this information together for a single, complete u
 === "Go"
 
     ```go
-    // Conceptual Pseudocode: How the framework provides context (Internal Logic)
-    
-    // runner := runner.New(runner.Config{Agent: myRootAgent, SessionService: ...})
-    // userMsg := &genai.Content{...}
-    // session, _ := sessionService.GetOrCreate(...)
-    
-    // --- Inside runner.Run(...) ---
-    // 1. Framework creates the main context for this specific run
-    // invocationContext := agent.NewInvocationContext(agent.InvocationContextConfig{
-    //     InvocationID: "unique-id-for-this-run",
-    //     Session:      session,
-    //     UserContent:  userMsg,
-    //     Agent:        myRootAgent,
-    //     // ... other necessary fields ...
-    // })
-    //
-    // 2. Framework calls the agent's run method, passing the context.
-    // for range myRootAgent.Run(invocationContext) {
-    //   // ...
-    // }
-    // --- End Internal Logic ---
-    //
-    // As a developer, you work with the context objects provided in method arguments.
+    --8<-- "examples/go/snippets/context/main.go:conceptual_runner_example"
     ```
 
 ## The Different types of Context
@@ -194,6 +172,11 @@ While `InvocationContext` acts as the comprehensive internal container, ADK prov
     === "Go"
 
         ```go
+        import (
+        	"google.golang.org/adk/agent"
+        	"google.golang.org/adk/session"
+        )
+        
         --8<-- "examples/go/snippets/context/main.go:invocation_context_agent"
         ```
 
@@ -232,6 +215,8 @@ While `InvocationContext` acts as the comprehensive internal container, ADK prov
     === "Go"
 
         ```go
+        import "google.golang.org/adk/agent"
+        
         --8<-- "examples/go/snippets/context/main.go:readonly_context_instruction"
         ```
     
@@ -287,6 +272,11 @@ While `InvocationContext` acts as the comprehensive internal container, ADK prov
     === "Go"
 
         ```go
+        import (
+        	"google.golang.org/adk/agent"
+        	"google.golang.org/adk/model"
+        )
+        
         --8<-- "examples/go/snippets/context/main.go:callback_context_callback"
         ```
 
@@ -360,6 +350,8 @@ While `InvocationContext` acts as the comprehensive internal container, ADK prov
     === "Go"
 
         ```go
+        import "google.golang.org/adk/tool"
+        
         --8<-- "examples/go/snippets/context/main.go:tool_context_tool"
         ```
 
@@ -435,7 +427,16 @@ You'll frequently need to read information stored within the context.
     === "Go"
 
         ```go
+        import "google.golang.org/adk/tool"
+        
         --8<-- "examples/go/snippets/context/main.go:accessing_state_tool"
+        ```go
+        import (
+        	"google.golang.org/adk/agent"
+        	"google.golang.org/adk/session"
+        	"google.golang.org/genai"
+        )
+        
         --8<-- "examples/go/snippets/context/main.go:accessing_state_callback"
         ```
 
@@ -472,6 +473,8 @@ You'll frequently need to read information stored within the context.
     === "Go"
 
         ```go
+        import "google.golang.org/adk/tool"
+        
         --8<-- "examples/go/snippets/context/main.go:accessing_ids"
         ```
 
@@ -517,6 +520,11 @@ You'll frequently need to read information stored within the context.
     === "Go"
 
         ```go
+        import (
+        	"google.golang.org/adk/agent"
+        	"google.golang.org/genai"
+        )
+        
         --8<-- "examples/go/snippets/context/main.go:accessing_initial_user_input"
         ```
     
@@ -581,8 +589,12 @@ State is crucial for memory and data flow. When you modify state using `Callback
     === "Go"
 
         ```go
+        import "google.golang.org/adk/tool"
+        
         --8<-- "examples/go/snippets/context/main.go:passing_data_tool1"
-
+        ```go
+        import "google.golang.org/adk/tool"
+        
         --8<-- "examples/go/snippets/context/main.go:passing_data_tool2"
         ```
 
@@ -620,6 +632,8 @@ State is crucial for memory and data flow. When you modify state using `Callback
     === "Go"
 
         ```go
+        import "google.golang.org/adk/tool"
+        
         --8<-- "examples/go/snippets/context/main.go:updating_preferences"
         ```
 
@@ -688,6 +702,11 @@ Use artifacts to handle files or large data blobs associated with the session. C
         === "Go"
 
             ```go
+            import (
+            	"google.golang.org/adk/tool"
+            	"google.golang.org/genai"
+            )
+            
             --8<-- "examples/go/snippets/context/main.go:artifacts_save_ref"
             ```
 
@@ -805,6 +824,8 @@ Use artifacts to handle files or large data blobs associated with the session. C
         === "Go"
 
             ```go
+            import "google.golang.org/adk/tool"
+            
             --8<-- "examples/go/snippets/context/main.go:artifacts_summarize"
             ```
         
@@ -845,6 +866,8 @@ Use artifacts to handle files or large data blobs associated with the session. C
     === "Go"
 
         ```go
+        import "google.golang.org/adk/tool"
+        
         --8<-- "examples/go/snippets/context/main.go:artifacts_list"
         ```
 

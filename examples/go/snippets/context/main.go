@@ -49,6 +49,45 @@ func runScenario(ctx context.Context, r *runner.Runner, sessionService session.S
 	}
 }
 
+// --8<-- [start:conceptual_runner_example]
+// Conceptual Pseudocode: How the framework provides context (Internal Logic)
+func conceptualRunnerExample(ctx context.Context, agent agent.Agent) {
+	// The runner is the main entry point for the ADK.
+	r, err := runner.New(runner.Config{
+		AppName:        "my-app",
+		Agent:          agent,
+		SessionService: session.InMemoryService(),
+	})
+	if err != nil {
+		log.Fatalf("Failed to create runner: %v", err)
+	}
+
+	// A session holds the state of a conversation.
+	session, err := r.SessionService().Create(ctx, &session.CreateRequest{
+		AppName: r.AppName(),
+		UserID:  "user123",
+	})
+	if err != nil {
+		log.Fatalf("Failed to create session: %v", err)
+	}
+
+	// --- Inside runner.Run(...) ---
+	// The runner takes the user's input and session details, creates an
+	// InvocationContext, and passes it to the agent's Run method.
+	userInput := genai.NewContentFromText("Hello, agent!", genai.RoleUser)
+	events := r.Run(ctx, session.Session.UserID(), session.Session.ID(), userInput, &agent.RunConfig{})
+
+	// As a developer, you work with the events returned by the agent.
+	for event, err := range events {
+		if err != nil {
+			log.Printf("Error during run: %v", err)
+			break
+		}
+		fmt.Printf("Event from agent %q\n", event.Author)
+	}
+}
+// --8<-- [end:conceptual_runner_example]
+
 // --8<-- [start:invocation_context_agent]
 // Pseudocode: Agent implementation receiving InvocationContext
 type MyAgent struct {
