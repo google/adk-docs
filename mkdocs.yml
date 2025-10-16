@@ -200,7 +200,6 @@ nav:
     - plugins/index.md
   - Bidi-streaming (live):
     - streaming/index.md
-
     - Custom Audio Bidi-streaming app sample (SSE): streaming/custom-streaming.md
     - Custom Audio Bidi-streaming app sample (WebSockets): streaming/custom-streaming-ws.md
     - Bidi-streaming development guide series: streaming/dev-guide/part1.md
