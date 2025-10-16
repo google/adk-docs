@@ -1,10 +1,13 @@
 package main
 
 import (
+	"bufio"
 	"context"
 	"fmt"
 	"iter"
 	"log"
+	"os"
+	"strings"
 
 	"google.golang.org/adk/agent"
 	"google.golang.org/adk/agent/llmagent"
@@ -64,46 +67,72 @@ func runScenario(ctx context.Context, agentToRun agent.Agent, sessionID string, 
 	}
 }
 
-// --8<-- [start:conceptual_runner_example]
-// Conceptual Pseudocode: How the framework provides context (Internal Logic)
-func conceptualRunnerExample(ctx context.Context, a agent.Agent) {
-	// The runner is the main entry point for the ADK.
+func conceptualRunnerExample(ctx context.Context, myAgent agent.Agent) {
+	// --8<-- [start:conceptual_runner_example]
+	sessionService := session.InMemoryService()
+
 	r, err := runner.New(runner.Config{
-		AppName:        "my-app",
-		Agent:          a,
-		SessionService: session.InMemoryService(),
+		AppName:        appName,
+		Agent:          myAgent,
+		SessionService: sessionService,
 	})
 	if err != nil {
 		log.Fatalf("Failed to create runner: %v", err)
 	}
-
-	sessionService := session.InMemoryService()
-
-	// A session holds the state of a conversation.
-	session, err := sessionService.Create(ctx, &session.CreateRequest{
+	
+	s, err := sessionService.Create(ctx, &session.CreateRequest{
 		AppName: appName,
-		UserID:  "user123",
+		UserID:  userID,
 	})
 	if err != nil {
-		log.Fatalf("Failed to create session: %v", err)
+		log.Fatalf("FATAL: Failed to create session: %v", err)
 	}
 
-	// --- Inside runner.Run(...) ---
-	// The runner takes the user's input and session details, creates an
-	// InvocationContext, and passes it to the agent's Run method.
-	userInput := genai.NewContentFromText("Hello, agent!", genai.RoleUser)
-	events := r.Run(ctx, session.Session.UserID(), session.Session.ID(), userInput, &agent.RunConfig{})
-
-	// As a developer, you work with the events returned by the agent.
-	for event, err := range events {
-		if err != nil {
-			log.Printf("Error during run: %v", err)
+	scanner := bufio.NewScanner(os.Stdin)
+	for {
+		fmt.Print("\nYou > ")
+		if !scanner.Scan() {
 			break
 		}
-		fmt.Printf("Event from agent %q\n", event.Author)
+		userInput := scanner.Text()
+		if strings.EqualFold(userInput, "quit") {
+			break
+		}
+		userMsg := genai.NewContentFromText(userInput, genai.RoleUser)
+		events := r.Run(ctx, s.Session.UserID(), s.Session.ID(), userMsg, &agent.RunConfig{
+			StreamingMode: agent.StreamingModeNone,
+		})
+		fmt.Print("\nAgent > ")
+		for event, err := range events {
+			if err != nil {
+				log.Printf("ERROR during agent execution: %v", err)
+				break
+			}
+			fmt.Print(event.Content.Parts[0].Text)
+		}
 	}
+	// --8<-- [end:conceptual_runner_example]
 }
-// --8<-- [end:conceptual_runner_example]
+
+func runConceptualExample() {
+		ctx := context.Background()
+	// 2. Create an agent with the tool.
+	geminiModel, err := gemini.NewModel(ctx, modelName, &genai.ClientConfig{})
+	if err != nil {
+		log.Fatalf("FATAL: Failed to create model: %v", err)
+	}
+	llmCfg := llmagent.Config{
+		Name:        "agent",
+		Model:       geminiModel,
+		Instruction: "You are an assistant",
+	}
+	testAgent, err := llmagent.New(llmCfg)
+	if err != nil {
+		log.Fatalf("FATAL: Failed to create agent: %v", err)
+	}
+
+	conceptualRunnerExample(ctx, testAgent)
+}
 
 // --8<-- [start:invocation_context_agent]
 // Pseudocode: Agent implementation receiving InvocationContext
@@ -474,7 +503,6 @@ func runAccessingInitialUserInputExample() {
 
 // --8<-- [start:passing_data_tool1]
 // Pseudocode: Tool 1 - Fetches user ID
-
 type GetUserProfileArgs struct {
 }
 
