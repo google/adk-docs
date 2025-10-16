@@ -560,47 +560,72 @@ func runPassingDataExample() {
 // --8<-- [start:updating_preferences]
 // Pseudocode: Tool or Callback identifies a preference
 type setUserPreferenceArgs struct {
-	Preference string `json:"preference"`
-	Value      string `json:"value"`
+	Preference string
+	Value      string
 }
 
-func setUserPreference(tc tool.Context, args setUserPreferenceArgs) (map[string]string, error) {
+type setUserPreferenceResult struct {
+	Status string
+}
+
+func setUserPreference(tc tool.Context, args setUserPreferenceArgs) setUserPreferenceResult {
 	// Use 'user:' prefix for user-level state (if using a persistent SessionService)
 	stateKey := fmt.Sprintf("user:%s", args.Preference)
 	if err := tc.State().Set(stateKey, args.Value); err != nil {
-		return nil, err
+		return setUserPreferenceResult{Status: "Failed to set preference"}
 	}
 	fmt.Printf("Set user preference '%s' to '%s'\n", args.Preference, args.Value)
-	return map[string]string{"status": "Preference updated"}, nil
+	return setUserPreferenceResult{Status: "Preference updated"}
 }
-
 // --8<-- [end:updating_preferences]
 
-// --8<-- [start:artifacts_save_ref]
-// Pseudocode: In a callback or initial tool
-func saveDocumentReference(ctx agent.CallbackContext, filePath string) error {
-	// Assume filePath is something like "gs://my-bucket/docs/report.pdf"
-	// Create a Part containing the path/URI text
-	artifactPart := genai.NewPartFromText(filePath)
-	err := ctx.Artifacts().Save("document_to_summarize.txt", *artifactPart)
+func runUpdatingPreferencesExample() {
+	log.Println("\n--- Running Updating Preferences Example ---")
+	ctx := context.Background()
+
+	// 1. Create the tool.
+	setPrefTool, err := tool.NewFunctionTool(
+		tool.FunctionToolConfig{
+			Name:        "set_user_preference",
+			Description: "Sets a user's preference in the system.",
+		},
+		setUserPreference,
+	)
 	if err != nil {
-		fmt.Printf("Error saving artifact: %v\n", err)
-		return err
+		log.Fatalf("FATAL: Failed to create setPrefTool: %v", err)
 	}
-	fmt.Printf("Saved document reference '%s' as artifact\n", filePath)
-	// Store the filename in state if needed by other tools
-	return ctx.State().Set("temp:doc_artifact_name", "document_to_summarize.txt")
+
+	// 2. Create an agent with the tool.
+	geminiModel, err := gemini.NewModel(ctx, modelName, &genai.ClientConfig{})
+	if err != nil {
+		log.Fatalf("FATAL: Failed to create model: %v", err)
+	}
+	llmCfg := llmagent.Config{
+		Name:        "preferenceAgent",
+		Model:       geminiModel,
+		Instruction: "You are an assistant that helps users set their preferences.",
+		Tools:       []tool.Tool{setPrefTool},
+	}
+	testAgent, err := llmagent.New(llmCfg)
+	if err != nil {
+		log.Fatalf("FATAL: Failed to create agent: %v", err)
+	}
+
+	// 3. Set up runner and session.
+	sessionService := session.InMemoryService()
+	r, err := runner.New(runner.Config{AppName: appName, Agent: testAgent, SessionService: sessionService})
+	if err != nil {
+		log.Fatalf("FATAL: Failed to create runner: %v", err)
+	}
+
+	// 4. Run a scenario that will trigger the tool.
+	runScenario(ctx, r, sessionService, appName, "preferences_session", nil, "Please set my theme preference to dark_mode.")
 }
 
-// --8<-- [end:artifacts_save_ref]
-
-func runSaveArtifactReferenceExample() {
-}
 
 // --8<-- [start:artifacts_summarize]
 // Pseudocode: In the Summarizer tool function
-type summarizeDocumentArgs struct {
-}
+type summarizeDocumentToolArgs struct{}
 
 type summarizeDocumentResult struct {
 	Summary string
@@ -651,6 +676,7 @@ func checkAvailableDocs(tc tool.Context) (map[string][]string, error) {
 
 // --8<-- [end:artifacts_list]
 
+// --8<-- [start:artifacts_save_ref]
 // Adapt the saveDocumentReference callback into a tool for this example.
 type saveDocRefArgs struct {
 	FilePath string
@@ -661,7 +687,7 @@ type saveDocRefResult struct {
 	Error  string
 }
 
-func saveDocRefToolFunc(tc tool.Context, args saveDocRefArgs) saveDocRefResult {
+func saveDocRef(tc tool.Context, args saveDocRefArgs) saveDocRefResult {
 	artifactPart := genai.NewPartFromText(args.FilePath)
 	err := tc.Artifacts().Save("document_to_summarize.txt", *artifactPart)
 	if err != nil {
@@ -674,6 +700,8 @@ func saveDocRefToolFunc(tc tool.Context, args saveDocRefArgs) saveDocRefResult {
 	return saveDocRefResult{"Reference saved", ""}
 }
 
+// --8<-- [end:artifacts_save_ref]
+
 func runArtifactsExample() {
 	log.Println("\n--- Running Artifacts Example ---")
 	ctx := context.Background()
@@ -685,7 +713,7 @@ func runArtifactsExample() {
 			Name:        "save_document_reference",
 			Description: "Saves a reference to a document path as an artifact.",
 		},
-		saveDocRefToolFunc,
+		saveDocRef,
 	)
 	if err != nil {
 		log.Fatalf("FATAL: Failed to create saveRefTool: %v", err)
@@ -741,5 +769,5 @@ func main() {
 	runAccessingInitialUserInputExample()
 	runPassingDataExample()
 	runArtifactsExample()
-	runSaveArtifactReferenceExample
+	runUpdatingPreferencesExample()
 }
