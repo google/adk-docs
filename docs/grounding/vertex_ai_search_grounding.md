@@ -29,23 +29,39 @@ Note this `Data store ID` as we will use this later.
 
 ### 2. Set up Environment & Install ADK { #set-up-environment-install-adk }
 
-Create & Activate Virtual Environment:
+Below are the steps for setting up your environment and installing the ADK for both Python and TypeScript projects.
 
-```bash
-# Create
-python -m venv .venv
+=== "Python"
 
-# Activate (each new terminal)
-# macOS/Linux: source .venv/bin/activate
-# Windows CMD: .venv\Scripts\activate.bat
-# Windows PowerShell: .venv\Scripts\Activate.ps1
-```
+    Create & Activate Virtual Environment:
 
-Install ADK:
+    ```bash
+    # Create
+    python -m venv .venv
 
-```bash
-pip install google-adk==1.5.0
-```
+    # Activate (each new terminal)
+    # macOS/Linux: source .venv/bin/activate
+    # Windows CMD: .venv\\Scripts\\activate.bat
+    # Windows PowerShell: .venv\\Scripts\\Activate.ps1
+    ```
+
+    Install ADK:
+
+    ```bash
+    pip install google-adk
+    ```
+
+=== "TypeScript"
+
+    Create a new Node.js project:
+    ```bash
+    npm init -y
+    ```
+
+    Install ADK:
+    ```bash
+    npm install @google/adk
+    ```
 
 ### 3. Create Agent Project { #create-agent-project }
 
