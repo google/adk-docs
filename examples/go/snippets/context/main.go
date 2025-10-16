@@ -25,8 +25,23 @@ const (
 )
 
 // Generic helper to run a single scenario.
-func runScenario(ctx context.Context, r *runner.Runner, sessionService session.Service, appName, sessionID string, initialState map[string]any, prompt string) {
+func runScenario(ctx context.Context, agentToRun agent.Agent, sessionID string, initialState map[string]any, prompt string) {
 	log.Printf("Running scenario for session: %s, initial state: %v", sessionID, initialState)
+
+	sessionService := session.InMemoryService()
+	artifactService := artifact.InMemoryService()
+	rcfg := runner.Config{
+		AppName:        appName,
+		Agent:          agentToRun,
+		SessionService: sessionService,
+		ArtifactService: artifactService,
+	}
+
+	r, err := runner.New(rcfg)
+	if err != nil {
+		log.Fatalf("FATAL: Failed to create runner: %v", err)
+	}
+
 	sessionResp, err := sessionService.Create(ctx, &session.CreateRequest{AppName: appName, UserID: userID, SessionID: sessionID, State: initialState})
 	if err != nil {
 		log.Fatalf("FATAL: Failed to create session: %v", err)
@@ -51,20 +66,22 @@ func runScenario(ctx context.Context, r *runner.Runner, sessionService session.S
 
 // --8<-- [start:conceptual_runner_example]
 // Conceptual Pseudocode: How the framework provides context (Internal Logic)
-func conceptualRunnerExample(ctx context.Context, agent agent.Agent) {
+func conceptualRunnerExample(ctx context.Context, a agent.Agent) {
 	// The runner is the main entry point for the ADK.
 	r, err := runner.New(runner.Config{
 		AppName:        "my-app",
-		Agent:          agent,
+		Agent:          a,
 		SessionService: session.InMemoryService(),
 	})
 	if err != nil {
 		log.Fatalf("Failed to create runner: %v", err)
 	}
 
+	sessionService := session.InMemoryService()
+
 	// A session holds the state of a conversation.
-	session, err := r.SessionService().Create(ctx, &session.CreateRequest{
-		AppName: r.AppName(),
+	session, err := sessionService.Create(ctx, &session.CreateRequest{
+		AppName: appName,
 		UserID:  "user123",
 	})
 	if err != nil {
@@ -131,13 +148,7 @@ func runMyAgent() {
 		log.Fatalf("FATAL: Failed to create agent: %v", err)
 	}
 
-	sessionService := session.InMemoryService()
-	r, err := runner.New(runner.Config{AppName: appName, Agent: testAgent, SessionService: sessionService})
-	if err != nil {
-		log.Fatalf("FATAL: Failed to create runner: %v", err)
-	}
-
-	runScenario(ctx, r, sessionService, appName, "session", nil, "Hello, world!")
+	runScenario(ctx, testAgent, "session", nil, "Hello, world!")
 }
 
 // --8<-- [start:readonly_context_instruction]
@@ -194,13 +205,7 @@ func runBeforeAgentCallbackCheck() {
 		log.Fatalf("FATAL: Failed to create agent: %v", err)
 	}
 
-	sessionService := session.InMemoryService()
-	r, err := runner.New(runner.Config{AppName: appName, Agent: testAgent, SessionService: sessionService})
-	if err != nil {
-		log.Fatalf("FATAL: Failed to create runner: %v", err)
-	}
-
-	runScenario(ctx, r, sessionService, appName, "session", nil, "Hello, world!")
+	runScenario(ctx, testAgent, "session", nil, "Hello, world!")
 }
 
 // --8<-- [start:tool_context_tool]
@@ -302,7 +307,7 @@ func myCallback(ctx agent.CallbackContext, event *session.Event, err error) (*ge
 	}
 	// ... callback logic ...
 	return nil, nil
-} 
+}
 
 // --8<-- [end:accessing_state_callback]
 
@@ -326,20 +331,14 @@ func runMyCallbackExample() {
 		log.Fatalf("FATAL: Failed to create agent: %v", err)
 	}
 
-	sessionService := session.InMemoryService()
-	r, err := runner.New(runner.Config{AppName: appName, Agent: testAgent, SessionService: sessionService})
-	if err != nil {
-		log.Fatalf("FATAL: Failed to create runner: %v", err)
-	}
-
 	// Scenario 1: Run without the state key.
 	log.Println("Scenario 1: State key is NOT present.")
-	runScenario(ctx, r, sessionService, appName, "callback_session_1", nil, "Trigger callback")
+	runScenario(ctx, testAgent, "callback_session_1", nil, "Trigger callback")
 
 	// Scenario 2: Run with the state key.
 	log.Println("Scenario 2: State key IS present.")
 	initialState := map[string]any{"temp:last_api_result": "Success from previous step"}
-	runScenario(ctx, r, sessionService, appName, "callback_session_2", initialState, "Trigger callback again")
+	runScenario(ctx, testAgent, "callback_session_2", initialState, "Trigger callback again")
 }
 
 // --8<-- [start:accessing_ids]
@@ -392,15 +391,8 @@ func runAccessIdsExample() {
 		log.Fatalf("FATAL: Failed to create agent: %v", err)
 	}
 
-	// 3. Set up runner and session.
-	sessionService := session.InMemoryService()
-	r, err := runner.New(runner.Config{AppName: appName, Agent: testAgent, SessionService: sessionService})
-	if err != nil {
-		log.Fatalf("FATAL: Failed to create runner: %v", err)
-	}
-
-	// 4. Run a scenario that will trigger the tool.
-	runScenario(ctx, r, sessionService, appName, "ids_session", nil, "Please log the current usage.")
+	// 3. Run a scenario that will trigger the tool.
+	runScenario(ctx, testAgent, "ids_session", nil, "Please log the current usage.")
 }
 
 // --8<-- [start:accessing_user_content_agent]
@@ -441,13 +433,7 @@ func runInitialIntentCheck() {
 		log.Fatalf("FATAL: Failed to create agent: %v", err)
 	}
 
-	sessionService := session.InMemoryService()
-	r, err := runner.New(runner.Config{AppName: appName, Agent: testAgent, SessionService: sessionService})
-	if err != nil {
-		log.Fatalf("FATAL: Failed to create runner: %v", err)
-	}
-
-	runScenario(ctx, r, sessionService, appName, "session", nil, "Hello, world!")
+	runScenario(ctx, testAgent, "session", nil, "Hello, world!")
 }
 
 // --8<-- [start:accessing_initial_user_input]
@@ -482,13 +468,7 @@ func runAccessingInitialUserInputExample() {
 		log.Fatalf("FATAL: Failed to create agent: %v", err)
 	}
 
-	sessionService := session.InMemoryService()
-	r, err := runner.New(runner.Config{AppName: appName, Agent: testAgent, SessionService: sessionService})
-	if err != nil {
-		log.Fatalf("FATAL: Failed to create runner: %v", err)
-	}
-
-	runScenario(ctx, r, sessionService, appName, "user_input_session", nil, "What is the weather in London?")
+	runScenario(ctx, testAgent, "user_input_session", nil, "What is the weather in London?")
 }
 
 
@@ -499,7 +479,7 @@ type GetUserProfileArgs struct {
 }
 
 type getUserProfileResult struct {
-	ProfileStatus string `json:"profile_status"`
+	ProfileStatus string
 	Error  string
 }
 
@@ -582,18 +562,12 @@ func runPassingDataExample() {
 	}
 
 	// 3. Set up runner and session.
-	sessionService := session.InMemoryService()
 	initialState := map[string]any{
 		"temp:current_user_id": userID,
 	}
 	
-	r, err := runner.New(runner.Config{AppName: appName, Agent: testAgent, SessionService: sessionService})
-	if err != nil {
-		log.Fatalf("FATAL: Failed to create runner: %v", err)
-	}
-
 	// 4. Run a scenario that will trigger the tools.
-	runScenario(ctx, r, sessionService, appName, "passing_data_session", initialState, "Get my orders.")
+	runScenario(ctx, testAgent, "passing_data_session", initialState, "Get my orders.")
 }
 
 // --8<-- [start:updating_preferences]
@@ -650,21 +624,14 @@ func runUpdatingPreferencesExample() {
 		log.Fatalf("FATAL: Failed to create agent: %v", err)
 	}
 
-	// 3. Set up runner and session.
-	sessionService := session.InMemoryService()
-	r, err := runner.New(runner.Config{AppName: appName, Agent: testAgent, SessionService: sessionService})
-	if err != nil {
-		log.Fatalf("FATAL: Failed to create runner: %v", err)
-	}
-
-	// 4. Run a scenario that will trigger the tool.
-	runScenario(ctx, r, sessionService, appName, "preferences_session", nil, "Please set my theme preference to dark_mode.")
+	// 3. Run a scenario that will trigger the tool.
+	runScenario(ctx, testAgent, "preferences_session", nil, "Please set my theme preference to dark_mode.")
 }
 
 
 // --8<-- [start:artifacts_summarize]
 // Pseudocode: In the Summarizer tool function
-type summarizeDocumentToolArgs struct{}
+type summarizeDocumentArgs struct{}
 
 type summarizeDocumentResult struct {
 	Summary string
@@ -704,13 +671,20 @@ func summarizeDocumentTool(tc tool.Context, input summarizeDocumentArgs) summari
 
 // --8<-- [start:artifacts_list]
 // Pseudocode: In a tool function
-func checkAvailableDocs(tc tool.Context) (map[string][]string, error) {
+type checkAvailableDocsArgs struct{}
+
+type checkAvailableDocsResult struct {
+	AvailableDocs []string
+	Error         string
+}
+
+func checkAvailableDocs(tc tool.Context, args checkAvailableDocsArgs) checkAvailableDocsResult {
 	artifactKeys, err := tc.Artifacts().List()
 	if err != nil {
-		return nil, err
+		return checkAvailableDocsResult{Error: err.Error()}
 	}
 	fmt.Printf("Available artifacts: %v\n", artifactKeys)
-	return map[string][]string{"available_docs": artifactKeys}, nil
+	return checkAvailableDocsResult{AvailableDocs: artifactKeys}
 }
 
 // --8<-- [end:artifacts_list]
@@ -734,7 +708,7 @@ func saveDocRef(tc tool.Context, args saveDocRefArgs) saveDocRefResult {
 	}
 	fmt.Printf("Saved document reference '%s' as artifact\n", args.FilePath)
 	if err := tc.State().Set("temp:doc_artifact_name", "document_to_summarize.txt"); err != nil {
-		return saveDocRefResult{"", err.Error()}
+		return saveDocRefResult{"", "Failed to set artifact name in state"}
 	}
 	return saveDocRefResult{"Reference saved", ""}
 }
@@ -784,16 +758,44 @@ func runArtifactsExample() {
 		log.Fatalf("FATAL: Failed to create agent: %v", err)
 	}
 
-	// 3. Set up runner and session.
-	sessionService := session.InMemoryService()
-	artifactService := artifact.InMemoryService()
-	r, err := runner.New(runner.Config{AppName: appName, Agent: testAgent, SessionService: sessionService, ArtifactService: artifactService	})
+	// 3. Run a scenario that will trigger the tools.
+	runScenario(ctx, testAgent, "artifacts_session", nil, "Save the doc at 'gs://my-bucket/report.pdf' and then summarize it.")
+}
+
+func runCheckAvailableDocsExample() {
+	log.Println("\n--- Running Check Available Docs Example ---")
+	ctx := context.Background()
+
+	// 1. Create the tool.
+	checkDocsTool, err := tool.NewFunctionTool(
+		tool.FunctionToolConfig{
+			Name:        "check_available_docs",
+			Description: "Checks for available documents in artifacts.",
+		},
+		checkAvailableDocs,
+	)
 	if err != nil {
-		log.Fatalf("FATAL: Failed to create runner: %v", err)
+		log.Fatalf("FATAL: Failed to create checkDocsTool: %v", err)
 	}
 
-	// 4. Run a scenario that will trigger the tools.
-	runScenario(ctx, r, sessionService, appName, "artifacts_session", nil, "Save the doc at 'gs://my-bucket/report.pdf' and then summarize it.")
+	// 2. Create an agent with the tool.
+	geminiModel, err := gemini.NewModel(ctx, modelName, &genai.ClientConfig{})
+	if err != nil {
+		log.Fatalf("FATAL: Failed to create model: %v", err)
+	}
+	llmCfg := llmagent.Config{
+		Name:        "docCheckerAgent",
+		Model:       geminiModel,
+		Instruction: "You are an assistant that can check for available documents.",
+		Tools:       []tool.Tool{checkDocsTool},
+	}
+	testAgent, err := llmagent.New(llmCfg)
+	if err != nil {
+		log.Fatalf("FATAL: Failed to create agent: %v", err)
+	}
+
+	// 3. Run a scenario that will trigger the tool.
+	runScenario(ctx, testAgent, "check_docs_session", nil, "Are there any documents available?")
 }
 
 // This main function is for compilation purposes and does not run the snippets.
@@ -809,4 +811,5 @@ func main() {
 	runPassingDataExample()
 	runArtifactsExample()
 	runUpdatingPreferencesExample()
+	runCheckAvailableDocsExample()
 }
