@@ -94,6 +94,12 @@ are its key properties:
         var unused = exampleSessionService.deleteSession(appName, userId, sessionId);
        ```
 
+=== "Go"
+
+       ```go
+       // --8<-- "examples/go/snippets/sessions/session_management_example/session_management_example.go:examine_session"
+       ```
+
 *(**Note:** The state shown above is only the initial state. State updates
 happen via events, as discussed in the State section.)*
 
@@ -143,6 +149,12 @@ the storage backend that best suits your needs:
            ```java
             import com.google.adk.sessions.InMemorySessionService;
             InMemorySessionService exampleSessionService = new InMemorySessionService();
+           ```
+
+    === "Go"
+
+           ```go
+           // --8<-- "examples/go/snippets/sessions/session_management_example/session_management_example.go:in_memory_service"
            ```
 
 2.  **`VertexAiSessionService`**
@@ -200,6 +212,12 @@ the storage backend that best suits your needs:
                sessionService
                    .createSession(reasoningEngineAppName, userId, initialState, Optional.of(sessionId))
                    .blockingGet();
+           ```
+
+    === "Go"
+
+           ```go
+           // --8<-- "examples/go/snippets/sessions/session_management_example/session_management_example.go:vertexai_service"
            ```
 
 3.  **`DatabaseSessionService`**
