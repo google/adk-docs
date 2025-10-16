@@ -23,23 +23,39 @@ This quickstart guides you through creating an ADK agent with Google Search grou
 
 ### 1. Set up Environment & Install ADK { #set-up-environment-install-adk }
 
-Create & Activate Virtual Environment:
+Below are the steps for setting up your environment and installing the ADK for both Python and TypeScript projects.
 
-```bash
-# Create
-python -m venv .venv
+=== "Python"
 
-# Activate (each new terminal)
-# macOS/Linux: source .venv/bin/activate
-# Windows CMD: .venv\Scripts\activate.bat
-# Windows PowerShell: .venv\Scripts\Activate.ps1
-```
+    Create & Activate Virtual Environment:
 
-Install ADK:
+    ```bash
+    # Create
+    python -m venv .venv
 
-```bash
-pip install google-adk==1.4.2
-```
+    # Activate (each new terminal)
+    # macOS/Linux: source .venv/bin/activate
+    # Windows CMD: .venv\Scripts\activate.bat
+    # Windows PowerShell: .venv\Scripts\Activate.ps1
+    ```
+
+    Install ADK:
+
+    ```bash
+    pip install google-adk
+    ```
+
+=== "TypeScript"
+
+    Create a new Node.js project:
+    ```bash
+    npm init -y
+    ```
+
+    Install ADK:
+    ```bash
+    npm install @google/adk
+    ```
 
 ### 2. Create Agent Project { #create-agent-project }
 
@@ -72,32 +88,61 @@ Under a project directory, run the following commands:
 
 
 
-#### Edit `agent.py`
+#### Edit `agent.py` or `agent.ts`
 
-Copy and paste the following code into `agent.py`:
+Copy and paste the following code into `agent.py` or `agent.ts`:
 
-```python title="google_search_agent/agent.py"
-from google.adk.agents import Agent
-from google.adk.tools import google_search
+=== "Python"
 
-root_agent = Agent(
-    name="google_search_agent",
-    model="gemini-2.5-flash",
-    instruction="Answer questions using Google Search when needed. Always cite sources.",
-    description="Professional search assistant with Google Search capabilities",
-    tools=[google_search]
-)
-```
+    ```python title="google_search_agent/agent.py"
+    from google.adk.agents import Agent
+    from google.adk.tools import google_search
+
+    root_agent = Agent(
+        name="google_search_agent",
+        model="gemini-2.5-flash",
+        instruction="Answer questions using Google Search when needed. Always cite sources.",
+        description="Professional search assistant with Google Search capabilities",
+        tools=[google_search]
+    )
+    ```
+
+=== "TypeScript"
+
+    ```typescript title="google_search_agent/agent.ts"
+    import { LlmAgent, GOOGLE_SEARCH } from '@google/adk';
+
+    const rootAgent = new LlmAgent({
+        name: "google_search_agent",
+        model: "gemini-2.5-flash",
+        instruction: "Answer questions using Google Search when needed. Always cite sources.",
+        description: "Professional search assistant with Google Search capabilities",
+        tools: [GOOGLE_SEARCH],
+    });
+    ```
 
 Now you would have the following directory structure:
 
-```console
-my_project/
-    google_search_agent/
-        __init__.py
-        agent.py
-    .env
-```
+=== "Python"
+
+    ```console
+    my_project/
+        google_search_agent/
+            __init__.py
+            agent.py
+        .env
+    ```
+
+=== "TypeScript"
+
+    ```console
+    my_project/
+        google_search_agent/
+            agent.ts
+        package.json
+        tsconfig.json
+        .env
+    ```
 
 ### 3. Choose a platform { #choose-a-platform }
 
