@@ -7,20 +7,64 @@ import (
 	"log"
 
 	"google.golang.org/adk/agent"
+	"google.golang.org/adk/agent/llmagent"
 	"google.golang.org/adk/model"
 	"google.golang.org/adk/model/gemini"
+	"google.golang.org/adk/runner"
 	"google.golang.org/adk/session"
 	"google.golang.org/adk/tool"
 	"google.golang.org/genai"
 )
 
 // --- Conceptual Snippets for adk-docs/docs/context/index.md ---
+const (
+	modelName = "gemini-2.5-flash"
+	appName   = "context_doc_app"
+	userID    = "test_user_123"
+)
+
+// Generic helper to run a single scenario.
+func runScenario(ctx context.Context, r *runner.Runner, sessionService session.Service, appName, sessionID string, initialState map[string]any, prompt string) {
+	log.Printf("Running scenario for session: %s, initial state: %v", sessionID, initialState)
+	sessionResp, err := sessionService.Create(ctx, &session.CreateRequest{AppName: appName, UserID: userID, SessionID: sessionID, State: initialState})
+	if err != nil {
+		log.Fatalf("FATAL: Failed to create session: %v", err)
+	}
+
+	input := genai.NewContentFromText(prompt, genai.RoleUser)
+	events := r.Run(ctx, sessionResp.Session.UserID(), sessionResp.Session.ID(), input, &agent.RunConfig{})
+	for event, err := range events {
+		if err != nil {
+			log.Printf("ERROR during agent execution: %v", err)
+			return
+		}
+
+		// Print only the final output from the agent.
+		if event.LLMResponse != nil && event.LLMResponse.Content != nil && len(event.LLMResponse.Content.Parts) > 0 {
+			fmt.Printf("Final Output for %s: [%s] %s\n", sessionID, event.Author, event.LLMResponse.Content.Parts[0].Text)
+		} else {
+			log.Printf("Final response for %s received, but it has no content to display.", sessionID)
+		}
+	}
+}
 
 // --8<-- [start:invocation_context_agent]
 // Pseudocode: Agent implementation receiving InvocationContext
 type MyAgent struct {
-	agent.Agent // Embed the agent.Agent interface to satisfy it.
 }
+
+func (a *MyAgent) Run(ctx agent.InvocationContext) iter.Seq2[*session.Event, error] {
+	return func(yield func(*session.Event, error) bool) {
+		// Direct access example
+		agentName := ctx.Agent().Name()
+		sessionID := ctx.Session().ID()
+		fmt.Printf("Agent %s running in session %s for invocation %s\n", agentName, sessionID, ctx.InvocationID())
+		// ... agent logic using ctx ...
+		yield(&session.Event{Author: agentName}, nil)
+	}
+}
+
+// --8<-- [end:invocation_context_agent]
 
 // NewMyAgent creates a new MyAgent.
 func NewMyAgent() (agent.Agent, error) {
@@ -34,22 +78,27 @@ func NewMyAgent() (agent.Agent, error) {
 	if err != nil {
 		return nil, err
 	}
-	a.Agent = baseAgent
-	return a, nil
+
+	return baseAgent, nil
 }
 
-func (a *MyAgent) Run(ctx agent.InvocationContext) iter.Seq2[*session.Event, error] {
-	return func(yield func(*session.Event, error) bool) {
-		// Direct access example
-		agentName := ctx.Agent().Name()
-		sessionID := ctx.Session().ID()
-		fmt.Printf("Agent %s running in session %s for invocation %s\n", agentName, sessionID, ctx.InvocationID())
-		// ... agent logic using ctx ...
-		yield(&session.Event{Author: a.Name()}, nil)
+
+func runMyAgent() {
+	ctx := context.Background()
+
+	testAgent, err := NewMyAgent()
+	if err != nil {
+		log.Fatalf("FATAL: Failed to create agent: %v", err)
 	}
-}
 
-// --8<-- [end:invocation_context_agent]
+	sessionService := session.InMemoryService()
+	r, err := runner.New(runner.Config{AppName: appName, Agent: testAgent, SessionService: sessionService})
+	if err != nil {
+		log.Fatalf("FATAL: Failed to create runner: %v", err)
+	}
+
+	runScenario(ctx, r, sessionService, appName, "session", nil, "Hello, world!")
+}
 
 // --8<-- [start:readonly_context_instruction]
 // Pseudocode: Instruction provider receiving ReadonlyContext
@@ -59,7 +108,7 @@ func myInstructionProvider(ctx agent.ReadonlyContext) (string, error) {
 	if err != nil {
 		userTier = "standard" // Default value
 	}
-	// ctx.State().Set("new_key", "value") // This would not be possible as State() is read-only.
+	// ctx.ReadonlyState() has no Set method since State() is read-only.
 	return fmt.Sprintf("Process the request for a %v user.", userTier), nil
 }
 
@@ -84,37 +133,93 @@ func myBeforeModelCb(ctx agent.CallbackContext, req *model.LLMRequest) (*model.L
 	return nil, nil // Allow model call to proceed
 }
 
+func runBeforeAgentCallbackCheck() {
+	ctx := context.Background()
+	geminiModel, err := gemini.NewModel(ctx, modelName, &genai.ClientConfig{})
+	if err != nil {
+		log.Fatalf("FATAL: Failed to create model: %v", err)
+	}
+
+	// 3. Register the callback in the agent configuration.
+	llmCfg := llmagent.Config{
+		Name:        "agent",
+		BeforeModel: []llmagent.BeforeModelCallback{myBeforeModelCb},
+		Model:       geminiModel,
+		Instruction: "You are an assistant.",
+	}
+	testAgent, err := llmagent.New(llmCfg)
+	if err != nil {
+		log.Fatalf("FATAL: Failed to create agent: %v", err)
+	}
+
+	sessionService := session.InMemoryService()
+	r, err := runner.New(runner.Config{AppName: appName, Agent: testAgent, SessionService: sessionService})
+	if err != nil {
+		log.Fatalf("FATAL: Failed to create runner: %v", err)
+	}
+
+	runScenario(ctx, r, sessionService, appName, "session", nil, "Hello, world!")
+}
+
 // --8<-- [end:callback_context_callback]
 
 // --8<-- [start:tool_context_tool]
 // Pseudocode: Tool function receiving ToolContext
 type searchExternalAPIArgs struct {
-	Query string `json:"query"`
+	Query string
 }
 
-func searchExternalAPI(tc tool.Context, args searchExternalAPIArgs) (map[string]any, error) {
+type searchExternalAPIResults struct {
+	Result string
+	Status string
+}
+
+func searchExternalAPI(tc tool.Context, input searchExternalAPIArgs) searchExternalAPIResults {
 	apiKey, err := tc.State().Get("api_key")
 	if err != nil || apiKey == "" {
 		// In a real scenario, you would define and request credentials here.
 		// This is a conceptual placeholder.
-		return map[string]any{"status": "Auth Required"}, nil
+		return searchExternalAPIResults{Status: "Auth Required"}
 	}
 
 	// Use the API key...
-	fmt.Printf("Tool executing for query '%s' using API key. Invocation: %s\n", args.Query, tc.InvocationID())
+	fmt.Printf("Tool executing for query '%s' using API key. Invocation: %s\n", input.Query, tc.InvocationID())
 
 	// Optionally search memory or list artifacts
-	// relevantDocs, _ := tc.Memory().Search(fmt.Sprintf("info related to %s", args.Query))
+	// relevantDocs, _ := tc.SearchMemory(tc, "info related to %s", input.Query))
 	// availableFiles, _ := tc.Artifacts().List()
 
-	return map[string]any{"result": fmt.Sprintf("Data for %s fetched.", args.Query)}, nil
+	return searchExternalAPIResults{Result: fmt.Sprintf("Data for %s fetched.", input.Query)}
 }
 
 // --8<-- [end:tool_context_tool]
 
+func runSearchExternalAPIExample() {
+	myTool, err := tool.NewFunctionTool(
+		tool.FunctionToolConfig{
+			Name:        "search_external_api",
+			Description: "Searches an external API using a query string.",
+		},
+		searchExternalAPI)
+		
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("Tool created: %s\n", myTool.Name())
+}
+
 // --8<-- [start:accessing_state_tool]
 // Pseudocode: In a Tool function
-func myTool(tc tool.Context) error {
+type toolArgs struct {
+	// Define tool-specific arguments here
+}
+
+type toolResults struct {
+	// Define tool-specific results here
+}
+
+// Example tool function demonstrating state access
+func myTool(tc tool.Context, input toolArgs) toolResults {
 	userPref, err := tc.State().Get("user_display_preference")
 	if err != nil {
 		userPref = "default_mode"
@@ -126,39 +231,141 @@ func myTool(tc tool.Context) error {
 	}
 	fmt.Printf("Using API endpoint: %v\n", apiEndpoint)
 	// ... rest of tool logic ...
-	return nil
+	return toolResults{}
 }
 
 // --8<-- [end:accessing_state_tool]
 
+func runMyToolExample() {
+	myToolTool, err := tool.NewFunctionTool(
+		tool.FunctionToolConfig{
+			Name:        "my_tool",
+			Description: "A tool for doing something.",
+		},
+		myTool)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Printf("Tool created: %s\n", myToolTool.Name())
+}
+
 // --8<-- [start:accessing_state_callback]
 // Pseudocode: In a Callback function
-func myCallback(ctx agent.CallbackContext) error {
+func myCallback(ctx agent.CallbackContext, event *session.Event, err error) (*genai.Content, error) {
 	lastToolResult, err := ctx.State().Get("temp:last_api_result") // Read temporary state
 	if err == nil {
 		fmt.Printf("Found temporary result from last tool: %v\n", lastToolResult)
+	} else {
+		fmt.Println("No temporary result found.")
 	}
 	// ... callback logic ...
-	return nil
-}
+	return nil, nil
+} 
 
 // --8<-- [end:accessing_state_callback]
 
+func runMyCallbackExample() {
+	log.Println("\n--- Running Accessing State (Callback) Example ---")
+	ctx := context.Background()
+	geminiModel, err := gemini.NewModel(ctx, modelName, &genai.ClientConfig{})
+	if err != nil {
+		log.Fatalf("FATAL: Failed to create model: %v", err)
+	}
+
+	// Register myCallback as an AfterAgentCallback.
+	llmCfg := llmagent.Config{
+		Name:         "callbackAgent",
+		AfterAgent:   []agent.AfterAgentCallback{myCallback},
+		Model:        geminiModel,
+		Instruction:  "You are an assistant that does nothing.",
+	}
+	testAgent, err := llmagent.New(llmCfg)
+	if err != nil {
+		log.Fatalf("FATAL: Failed to create agent: %v", err)
+	}
+
+	sessionService := session.InMemoryService()
+	r, err := runner.New(runner.Config{AppName: appName, Agent: testAgent, SessionService: sessionService})
+	if err != nil {
+		log.Fatalf("FATAL: Failed to create runner: %v", err)
+	}
+
+	// Scenario 1: Run without the state key.
+	log.Println("Scenario 1: State key is NOT present.")
+	runScenario(ctx, r, sessionService, appName, "callback_session_1", nil, "Trigger callback")
+
+	// Scenario 2: Run with the state key.
+	log.Println("Scenario 2: State key IS present.")
+	initialState := map[string]any{"temp:last_api_result": "Success from previous step"}
+	runScenario(ctx, r, sessionService, appName, "callback_session_2", initialState, "Trigger callback again")
+}
+
 // --8<-- [start:accessing_ids]
 // Pseudocode: In any context (ToolContext shown)
-func logToolUsage(tc tool.Context) {
+type logToolUsageArgs struct{}
+type logToolUsageResult struct {
+	Status string
+}
+
+func logToolUsage(tc tool.Context, args logToolUsageArgs) logToolUsageResult {
 	agentName := tc.AgentName()
 	invID := tc.InvocationID()
-	// funcCallID := tc.FunctionCallID() // This method may have been removed or changed.
+	funcCallID := tc.FunctionCallID()
 
-	fmt.Printf("Log: Invocation=%s, Agent=%s - Tool Executed.\n", invID, agentName)
+	fmt.Printf("Log: Invocation=%s, Agent=%s, FunctionCallID=%s - Tool Executed.\n", invID, agentName, funcCallID)
+	return logToolUsageResult{Status: "Logged successfully"}
 }
 
 // --8<-- [end:accessing_ids]
 
+func runAccessIdsExample() {
+	log.Println("\n--- Running Accessing IDs Example ---")
+	ctx := context.Background()
+
+	// 1. Create the tool.
+	loggingTool, err := tool.NewFunctionTool(
+		tool.FunctionToolConfig{
+			Name:        "log_tool_usage",
+			Description: "Logs the invocation and agent details.",
+		},
+		logToolUsage,
+	)
+	if err != nil {
+		log.Fatalf("FATAL: Failed to create tool: %v", err)
+	}
+
+	// 2. Create an agent with the tool.
+	geminiModel, err := gemini.NewModel(ctx, modelName, &genai.ClientConfig{})
+	if err != nil {
+		log.Fatalf("FATAL: Failed to create model: %v", err)
+	}
+	llmCfg := llmagent.Config{
+		Name:        "idAgent",
+		Model:       geminiModel,
+		Instruction: "You are an assistant that uses the logging tool.",
+		Tools:       []tool.Tool{loggingTool},
+	}
+	testAgent, err := llmagent.New(llmCfg)
+	if err != nil {
+		log.Fatalf("FATAL: Failed to create agent: %v", err)
+	}
+
+	// 3. Set up runner and session.
+	sessionService := session.InMemoryService()
+	r, err := runner.New(runner.Config{AppName: appName, Agent: testAgent, SessionService: sessionService})
+	if err != nil {
+		log.Fatalf("FATAL: Failed to create runner: %v", err)
+	}
+
+	// 4. Run a scenario that will trigger the tool.
+	runScenario(ctx, r, sessionService, appName, "ids_session", nil, "Please log the current usage.")
+}
+
 // --8<-- [start:accessing_user_content_agent]
 // Pseudocode: In a Callback
-func checkInitialIntent(ctx agent.CallbackContext) {
+func checkInitialIntent(ctx agent.CallbackContext) (*genai.Content, error) {
 	initialText := "N/A"
 	userContent := ctx.UserContent()
 	if userContent != nil && len(userContent.Parts) > 0 {
@@ -170,22 +377,39 @@ func checkInitialIntent(ctx agent.CallbackContext) {
 		}
 	}
 	fmt.Printf("This invocation started with user input: '%s'\n", initialText)
-}
-
-// Pseudocode: In an Agent's Run method
-func (a *MyAgent) RunWithUserContent(ctx agent.InvocationContext) iter.Seq2[*session.Event, error] {
-	return func(yield func(*session.Event, error) bool) {
-		userContent := ctx.UserContent()
-		if userContent != nil && len(userContent.Parts) > 0 {
-			if initialText := userContent.Parts[0].Text; initialText != "" {
-				fmt.Printf("Agent logic remembering initial query: %s\n", initialText)
-			}
-		}
-		yield(&session.Event{Author: a.Name()}, nil)
-	}
+	return nil, nil // No modification to the content
 }
 
 // --8<-- [end:accessing_user_content_agent]
+
+func runInitialIntentCheck() {
+	ctx := context.Background()
+	geminiModel, err := gemini.NewModel(ctx, modelName, &genai.ClientConfig{})
+	if err != nil {
+		log.Fatalf("FATAL: Failed to create model: %v", err)
+	}
+
+	// 3. Register the callback in the agent configuration.
+	llmCfg := llmagent.Config{
+		Name:        "agent",
+		BeforeAgent: []agent.BeforeAgentCallback{checkInitialIntent},
+		Model:       geminiModel,
+		Instruction: "You are an assistant.",
+	}
+	testAgent, err := llmagent.New(llmCfg)
+	if err != nil {
+		log.Fatalf("FATAL: Failed to create agent: %v", err)
+	}
+
+	sessionService := session.InMemoryService()
+	r, err := runner.New(runner.Config{AppName: appName, Agent: testAgent, SessionService: sessionService})
+	if err != nil {
+		log.Fatalf("FATAL: Failed to create runner: %v", err)
+	}
+
+	runScenario(ctx, r, sessionService, appName, "session", nil, "Hello, world!")
+}
+
 
 // --8<-- [start:passing_data_tool1]
 // Pseudocode: Tool 1 - Fetches user ID
@@ -309,13 +533,11 @@ func checkAvailableDocs(tc tool.Context) (map[string][]string, error) {
 
 // This main function is for compilation purposes and does not run the snippets.
 func main() {
-	ctx := context.Background()
-	model, err := gemini.NewModel(ctx, "gemini-1.5-flash", &genai.ClientConfig{})
-	if err != nil {
-		log.Fatalf("Failed to create model: %v", err)
-	}
-	_ = model // Avoid unused variable error
-
-	// The functions defined above are conceptual and not called directly here.
-	// They are intended to be used as snippets in documentation.
+	runInitialIntentCheck()
+	runMyAgent()
+	runBeforeAgentCallbackCheck()
+	runSearchExternalAPIExample()
+	runMyToolExample()
+	runMyCallbackExample()
+	runAccessIdsExample()
 }
