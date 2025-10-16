@@ -582,9 +582,7 @@ State is crucial for memory and data flow. When you modify state using `Callback
 
         ```go
         --8<-- "examples/go/snippets/context/main.go:passing_data_tool1"
-        ```
 
-        ```go
         --8<-- "examples/go/snippets/context/main.go:passing_data_tool2"
         ```
 

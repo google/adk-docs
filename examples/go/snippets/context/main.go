@@ -8,6 +8,7 @@ import (
 
 	"google.golang.org/adk/agent"
 	"google.golang.org/adk/agent/llmagent"
+	"google.golang.org/adk/artifact"
 	"google.golang.org/adk/model"
 	"google.golang.org/adk/model/gemini"
 	"google.golang.org/adk/runner"
@@ -133,6 +134,8 @@ func myBeforeModelCb(ctx agent.CallbackContext, req *model.LLMRequest) (*model.L
 	return nil, nil // Allow model call to proceed
 }
 
+// --8<-- [end:callback_context_callback]
+
 func runBeforeAgentCallbackCheck() {
 	ctx := context.Background()
 	geminiModel, err := gemini.NewModel(ctx, modelName, &genai.ClientConfig{})
@@ -160,8 +163,6 @@ func runBeforeAgentCallbackCheck() {
 
 	runScenario(ctx, r, sessionService, appName, "session", nil, "Hello, world!")
 }
-
-// --8<-- [end:callback_context_callback]
 
 // --8<-- [start:tool_context_tool]
 // Pseudocode: Tool function receiving ToolContext
@@ -410,43 +411,151 @@ func runInitialIntentCheck() {
 	runScenario(ctx, r, sessionService, appName, "session", nil, "Hello, world!")
 }
 
+// --8<-- [start:accessing_initial_user_input]
+// Pseudocode: In a Callback
+func logInitialUserInput(ctx agent.CallbackContext) (*genai.Content, error) {
+	userContent := ctx.UserContent()
+	if userContent != nil && len(userContent.Parts) > 0 {
+		if text := userContent.Parts[0].Text; text != "" {
+			fmt.Printf("User's initial input for this turn: '%s'\n", text)
+		}
+	}
+	return nil, nil // No modification
+}
+// --8<-- [end:accessing_initial_user_input]
+
+func runAccessingInitialUserInputExample() {
+	log.Println("\n--- Running Accessing Initial User Input Example ---")
+	ctx := context.Background()
+	geminiModel, err := gemini.NewModel(ctx, modelName, &genai.ClientConfig{})
+	if err != nil {
+		log.Fatalf("FATAL: Failed to create model: %v", err)
+	}
+
+	llmCfg := llmagent.Config{
+		Name:        "userInputLoggerAgent",
+		BeforeAgent: []agent.BeforeAgentCallback{logInitialUserInput},
+		Model:       geminiModel,
+		Instruction: "You are an assistant.",
+	}
+	testAgent, err := llmagent.New(llmCfg)
+	if err != nil {
+		log.Fatalf("FATAL: Failed to create agent: %v", err)
+	}
+
+	sessionService := session.InMemoryService()
+	r, err := runner.New(runner.Config{AppName: appName, Agent: testAgent, SessionService: sessionService})
+	if err != nil {
+		log.Fatalf("FATAL: Failed to create runner: %v", err)
+	}
+
+	runScenario(ctx, r, sessionService, appName, "user_input_session", nil, "What is the weather in London?")
+}
+
 
 // --8<-- [start:passing_data_tool1]
 // Pseudocode: Tool 1 - Fetches user ID
-type getUserProfileResult struct {
-	ProfileStatus string `json:"profile_status"`
+
+type GetUserProfileArgs struct {
 }
 
-func getUserProfile(tc tool.Context) (*getUserProfileResult, error) {
-	userID := "user-12345" // Simulate fetching ID
+type getUserProfileResult struct {
+	ProfileStatus string `json:"profile_status"`
+	Error  string
+}
+
+func getUserProfile(tc tool.Context, input GetUserProfileArgs) getUserProfileResult {
+	// A random user ID for demonstration purposes
+	userID := "random_user_456"
+	
 	// Save the ID to state for the next tool
 	if err := tc.State().Set("temp:current_user_id", userID); err != nil {
-		return nil, err
+		return getUserProfileResult{Error: "Failed to set user ID in state"}
 	}
-	return &getUserProfileResult{ProfileStatus: "ID generated"}, nil
+	return getUserProfileResult{ProfileStatus: "ID generated"}
 }
 
 // --8<-- [end:passing_data_tool1]
 
 // --8<-- [start:passing_data_tool2]
 // Pseudocode: Tool 2 - Uses user ID from state
-type getUserOrdersResult struct {
-	Orders []string `json:"orders,omitempty"`
-	Error  string   `json:"error,omitempty"`
+type GetUserOrdersArgs struct {
 }
 
-func getUserOrders(tc tool.Context) (*getUserOrdersResult, error) {
+type getUserOrdersResult struct {
+	Orders []string
+	Error  string
+}
+
+func getUserOrders(tc tool.Context, input GetUserOrdersArgs) getUserOrdersResult {
 	userID, err := tc.State().Get("temp:current_user_id")
 	if err != nil {
-		return &getUserOrdersResult{Error: "User ID not found in state"}, nil
+		return getUserOrdersResult{Error: "User ID not found in state"}
 	}
 
 	fmt.Printf("Fetching orders for user ID: %v\n", userID)
 	// ... logic to fetch orders using user_id ...
-	return &getUserOrdersResult{Orders: []string{"order123", "order456"}}, nil
+	return getUserOrdersResult{Orders: []string{"order123", "order456"}}
 }
 
 // --8<-- [end:passing_data_tool2]
+
+func runPassingDataExample() {
+	log.Println("\n--- Running Passing Data Between Tools Example ---")
+	ctx := context.Background()
+
+	// 1. Create the tools.
+	getUserProfileTool, err := tool.NewFunctionTool(
+		tool.FunctionToolConfig{
+			Name:        "get_user_profile",
+			Description: "Gets the profile for a user.",
+		},
+		getUserProfile,
+	)
+	if err != nil {
+		log.Fatalf("FATAL: Failed to create getUserProfile tool: %v", err)
+	}
+	getUserOrdersTool, err := tool.NewFunctionTool(
+		tool.FunctionToolConfig{
+			Name:        "get_user_orders",
+			Description: "Gets the orders for a user.",
+		},
+		getUserOrders,
+	)
+	if err != nil {
+		log.Fatalf("FATAL: Failed to create getUserOrders tool: %v", err)
+	}
+
+	// 2. Create an agent with the tools.
+	geminiModel, err := gemini.NewModel(ctx, modelName, &genai.ClientConfig{})
+	if err != nil {
+		log.Fatalf("FATAL: Failed to create model: %v", err)
+	}
+	llmCfg := llmagent.Config{
+		Name:        "dataPassingAgent",
+		Model:       geminiModel,
+		Instruction: "You are an assistant that first gets the user profile, then gets their orders.",
+		Tools:       []tool.Tool{getUserProfileTool, getUserOrdersTool},
+	}
+	testAgent, err := llmagent.New(llmCfg)
+	if err != nil {
+		log.Fatalf("FATAL: Failed to create agent: %v", err)
+	}
+
+	// 3. Set up runner and session.
+	sessionService := session.InMemoryService()
+	initialState := map[string]any{
+		"temp:current_user_id": userID,
+	}
+	
+	r, err := runner.New(runner.Config{AppName: appName, Agent: testAgent, SessionService: sessionService})
+	if err != nil {
+		log.Fatalf("FATAL: Failed to create runner: %v", err)
+	}
+
+	// 4. Run a scenario that will trigger the tools.
+	runScenario(ctx, r, sessionService, appName, "passing_data_session", initialState, "Get my orders.")
+}
 
 // --8<-- [start:updating_preferences]
 // Pseudocode: Tool or Callback identifies a preference
@@ -485,22 +594,33 @@ func saveDocumentReference(ctx agent.CallbackContext, filePath string) error {
 
 // --8<-- [end:artifacts_save_ref]
 
+func runSaveArtifactReferenceExample() {
+}
+
 // --8<-- [start:artifacts_summarize]
 // Pseudocode: In the Summarizer tool function
-func summarizeDocumentTool(tc tool.Context) (map[string]string, error) {
+type summarizeDocumentArgs struct {
+}
+
+type summarizeDocumentResult struct {
+	Summary string
+	Error   string
+}
+
+func summarizeDocumentTool(tc tool.Context, input summarizeDocumentArgs) summarizeDocumentResult {
 	artifactName, err := tc.State().Get("temp:doc_artifact_name")
 	if err != nil {
-		return map[string]string{"error": "Document artifact name not found in state."}, nil
+		return summarizeDocumentResult{Error: "No document artifact name found in state"}
 	}
 
 	// 1. Load the artifact part containing the path/URI
 	artifactPart, err := tc.Artifacts().Load(artifactName.(string))
 	if err != nil {
-		return nil, err
+		return summarizeDocumentResult{Error: err.Error()}
 	}
 
 	if artifactPart.Text == "" {
-		return map[string]string{"error": "Could not load artifact or artifact has no text path."}, nil
+		return summarizeDocumentResult{Error: "Could not load artifact or artifact has no text path."}
 	}
 	filePath := artifactPart.Text
 	fmt.Printf("Loaded document reference: %s\n", filePath)
@@ -513,7 +633,7 @@ func summarizeDocumentTool(tc tool.Context) (map[string]string, error) {
 	// 3. Summarize the content
 	summary := "Summary of content from " + filePath // Placeholder
 
-	return map[string]string{"summary": summary}, nil
+	return summarizeDocumentResult{Summary: summary}
 }
 
 // --8<-- [end:artifacts_summarize]
@@ -531,6 +651,84 @@ func checkAvailableDocs(tc tool.Context) (map[string][]string, error) {
 
 // --8<-- [end:artifacts_list]
 
+// Adapt the saveDocumentReference callback into a tool for this example.
+type saveDocRefArgs struct {
+	FilePath string
+}
+
+type saveDocRefResult struct {
+	Status string
+	Error  string
+}
+
+func saveDocRefToolFunc(tc tool.Context, args saveDocRefArgs) saveDocRefResult {
+	artifactPart := genai.NewPartFromText(args.FilePath)
+	err := tc.Artifacts().Save("document_to_summarize.txt", *artifactPart)
+	if err != nil {
+		return saveDocRefResult{"", err.Error()}
+	}
+	fmt.Printf("Saved document reference '%s' as artifact\n", args.FilePath)
+	if err := tc.State().Set("temp:doc_artifact_name", "document_to_summarize.txt"); err != nil {
+		return saveDocRefResult{"", err.Error()}
+	}
+	return saveDocRefResult{"Reference saved", ""}
+}
+
+func runArtifactsExample() {
+	log.Println("\n--- Running Artifacts Example ---")
+	ctx := context.Background()
+
+
+	// 1. Create the tools.
+	saveRefTool, err := tool.NewFunctionTool(
+		tool.FunctionToolConfig{
+			Name:        "save_document_reference",
+			Description: "Saves a reference to a document path as an artifact.",
+		},
+		saveDocRefToolFunc,
+	)
+	if err != nil {
+		log.Fatalf("FATAL: Failed to create saveRefTool: %v", err)
+	}
+	summarizeTool, err := tool.NewFunctionTool(
+		tool.FunctionToolConfig{
+			Name:        "summarize_document",
+			Description: "Summarizes the document stored in artifacts.",
+		},
+		summarizeDocumentTool,
+	)
+	if err != nil {
+		log.Fatalf("FATAL: Failed to create summarizeTool: %v", err)
+	}
+
+	// 2. Create an agent with the tools.
+	geminiModel, err := gemini.NewModel(ctx, modelName, &genai.ClientConfig{})
+	if err != nil {
+		log.Fatalf("FATAL: Failed to create model: %v", err)
+	}
+	llmCfg := llmagent.Config{
+		Name:        "artifactAgent",
+		Model:       geminiModel,
+		Instruction: "First save the document reference, then summarize it.",
+		Tools:       []tool.Tool{saveRefTool, summarizeTool},
+	}
+	testAgent, err := llmagent.New(llmCfg)
+	if err != nil {
+		log.Fatalf("FATAL: Failed to create agent: %v", err)
+	}
+
+	// 3. Set up runner and session.
+	sessionService := session.InMemoryService()
+	artifactService := artifact.InMemoryService()
+	r, err := runner.New(runner.Config{AppName: appName, Agent: testAgent, SessionService: sessionService, ArtifactService: artifactService	})
+	if err != nil {
+		log.Fatalf("FATAL: Failed to create runner: %v", err)
+	}
+
+	// 4. Run a scenario that will trigger the tools.
+	runScenario(ctx, r, sessionService, appName, "artifacts_session", nil, "Save the doc at 'gs://my-bucket/report.pdf' and then summarize it.")
+}
+
 // This main function is for compilation purposes and does not run the snippets.
 func main() {
 	runInitialIntentCheck()
@@ -540,4 +738,8 @@ func main() {
 	runMyToolExample()
 	runMyCallbackExample()
 	runAccessIdsExample()
+	runAccessingInitialUserInputExample()
+	runPassingDataExample()
+	runArtifactsExample()
+	runSaveArtifactReferenceExample
 }
