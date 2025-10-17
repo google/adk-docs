@@ -164,6 +164,7 @@ nav:
   - Running Agents:
     - Agent Runtime: runtime/index.md
     - Runtime Config: runtime/runconfig.md
+    - Resume Agents: runtime/resume.md
   - Deploy:
     - deploy/index.md
     - Agent Engine: deploy/agent-engine.md
