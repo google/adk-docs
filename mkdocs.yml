@@ -147,18 +147,19 @@ nav:
     - Multi-agent systems: agents/multi-agents.md
     - Agent Config: agents/config.md
     - Models & Authentication: agents/models.md
-  - Tools:
+  - Tools for Agents:
     - tools/index.md
-    - ADK Tools list: tools/list.md
+    - Built-in tools: tools/built-in-tools.md
+    - Google Cloud tools: tools/google-cloud-tools.md
+    - Third party tools: tools/third-party-tools.md
+    - OpenAPI tools: tools/openapi-tools.md
+  - Custom Tools:
+    - tools-custom/index.md
     - Function tools:
       - Overview: tools/function-tools.md
       - Tool performance: tools/performance.md
       - Action confirmations: tools/confirmation.md
-    - Built-in tools: tools/built-in-tools.md
-    - Third party tools: tools/third-party-tools.md
-    - Google Cloud tools: tools/google-cloud-tools.md
     - MCP tools: tools/mcp-tools.md
-    - OpenAPI tools: tools/openapi-tools.md
     - Authentication: tools/authentication.md
   - Running Agents:
     - Agent Runtime: runtime/index.md
