@@ -51,7 +51,7 @@ const codeReviewerAgent = new LlmAgent({
 
     **Code to Review:**
     \`\`\`python
-    {generated_code}
+    \${generated_code}
     \`\`\`
 
 **Review Criteria:**
