@@ -15,13 +15,13 @@ information, see
 
 ## Add resumable configuration
 
-Enable the resume function for an agent workflow by applying a Resumabiltiy
+Enable the Resume function for an agent workflow by applying a Resumabiltiy
 configuration to the App object of your ADK workflow, as shown in the following
 code example:
 
 ```python
 app = App(
-    name='human_tool_confirmation',
+    name='my_resumable_agent',
     root_agent=root_agent,
     # Set the resumability config to enable resumability.
     resumability_config=ResumabilityConfig(
@@ -70,14 +70,14 @@ curl -X POST http://localhost:8000/run_sse \
  }'
 ```
 
-You can also restart a workflow using the Runner object Run Async method, as
+You can also resume a workflow using the Runner object Run Async method, as
 shown below:
 
 ```python
 runner.run_async(user_id='u_123', session_id='s_abc', 
-    invocation_id='invocation-123' ,new_message=)
+    invocation_id='invocation-123')
 
-# when new_message is set to a function response,
+# When new_message is set to a function response,
 # we are trying to resume a long running function.
 ```
 
@@ -87,17 +87,17 @@ runner.run_async(user_id='u_123', session_id='s_abc',
 
 ## How it works
 
-The resume functionality works by logging completed Agent workflow tasks,
+The Resume feature works by logging completed Agent workflow tasks,
 including incremental steps using
 [Events](/adk-docs/events/) and
 [Event Actions](/adk-docs/events/#detecting-actions-and-side-effects).
 tracking completion of agent tasks within a resumable workflow. If a workflow is
-interrupted and then later restarted, the resume functionality reinstates the
-interrupted workflow by setting the completion state of each agent. If an agent
-did not complete, the resume functionality reinstates any completed Events for
-that agent, and restarts the workflow from the partially completed state. For
-multi-agent workflows, the specific resume behavior varies, based on the
-multi-agent classes in your workflow, as described below:
+interrupted and then later restarted, the system resumes the workflow by setting
+the completion state of each agent. If an agent did not complete, the workflow
+system reinstates any completed Events for that agent, and restarts the workflow
+from the partially completed state. For multi-agent workflows, the specific
+resume behavior varies, based on the multi-agent classes in your workflow, as
+described below:
 
 -   **Sequential Agent**: Reads the current_sub_agent from its saved state
     to find the next sub-agent to run in the sequence.
@@ -108,7 +108,7 @@ multi-agent classes in your workflow, as described below:
 
 Event logging includes results from Tools which successfully returned a result.
 So if an agent successfully executed Function Tools A and B, and then failed
-during execution of tool C, the resume feature reinstates the results from the
+during execution of tool C, the system reinstates the results from the
 tools A and B, and resumes the workflow by re-running the tool C request.
 
 !!! warning "Caution: Tool execution behavior"
@@ -119,7 +119,7 @@ tools A and B, and resumes the workflow by re-running the tool C request.
     check for and prevent duplicate runs.
 
 !!! note "Note: Workflow modification with Resume not supported"
-    Do not modify a stopped agent workflow before resuming the workflow. 
+    Do not modify a stopped agent workflow before resuming it. 
     For example adding or removing agents from workflow that has stopped
     and then resuming that workflow is not supported.
 
