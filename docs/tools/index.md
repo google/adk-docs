@@ -23,7 +23,7 @@ Check out the many pre-built Tools you can use with ADK agents:
     Run AI-generated code in a secure and scalable GKE Sandbox environment.
 *   **[Spanner Tools](/adk-docs/tools/built-in-tools/#spanner)**:
     Interact with Spanner to retrieve data, search, and execute SQL.
-*   **[Toolbox Tools for Databases](/adk-docs/tools/google-cloud-tools/#toolbox-tools-for-databases)**:
+*   **[MCP Toolbox for Databases](/adk-docs/tools/google-cloud-tools/#toolbox-tools-for-databases)**:
     Connect over 30 different data sources to your agents.
 *   **[Vertex AI RAG Engine](/adk-docs/tools/built-in-tools/#vertex-ai-rag-engine)**:
     Perform private data retrieval using Vertex AI RAG Engine.
