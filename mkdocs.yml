@@ -157,6 +157,8 @@ nav:
     - tools-custom/index.md
     - Function tools:
       - Overview: tools/function-tools.md
+      - Type annotations: guides/tool-type-annotations.md
+      - Best practices: tools/best-practices.md
       - Tool performance: tools/performance.md
       - Action confirmations: tools/confirmation.md
     - MCP tools: tools/mcp-tools.md
