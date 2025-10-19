@@ -71,8 +71,11 @@ report_agent = LlmAgent(
 pipeline = SequentialAgent(sub_agents=[search_agent, analysis_agent, report_agent])
 ```
 
-!!! note "Async Mode Only"
-    Early exit via `exit_sequence` is currently supported in async mode only. Live streaming mode uses the existing `task_completed()` mechanism for natural completion.
+!!! note "Live Mode Support"
+    Early exit via `exit_sequence` is supported in both async and live streaming modes. In live mode, the escalate action provides immediate termination, whilst `task_completed()` remains available for natural completion signals.
+
+!!! info "Similar to LoopAgent"
+    The `exit_sequence` tool works similarly to [`exit_loop`](loop-agents.md) in LoopAgent, providing a consistent early-exit pattern across workflow agents.
 
 ### Full Example: Code Development Pipeline
 
