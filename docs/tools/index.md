@@ -12,7 +12,7 @@ Check out the following pre-built tools that you can use with ADK agents:
 <div class="tool-card-grid">
   <a href="/adk-docs/tools/built-in-tools/#google-search" class="tool-card">
     <div class="tool-card-image-wrapper">
-      <img src="/adk-docs/assets/tools-google-search.png" alt="Google Search">
+      <img src="../assets/tools-google-search.png" alt="Google Search">
     </div>
     <div class="tool-card-content">
       <h3>Google Search</h3>
@@ -21,7 +21,7 @@ Check out the following pre-built tools that you can use with ADK agents:
   </a>
   <a href="/adk-docs/tools/built-in-tools/#code-execution" class="tool-card">
     <div class="tool-card-image-wrapper">
-      <img src="/adk-docs/assets/tools-gemini.png" alt="Gemini">
+      <img src="../assets/tools-gemini.png" alt="Gemini">
     </div>
     <div class="tool-card-content">
       <h3>Code Execution</h3>
@@ -35,7 +35,7 @@ Check out the following pre-built tools that you can use with ADK agents:
 <div class="tool-card-grid">
   <a href="/adk-docs/tools/google-cloud-tools/#apigee-api-hub-tools" class="tool-card">
     <div class="tool-card-image-wrapper">
-      <img src="/adk-docs/assets/tools-apigee.png" alt="Apigee">
+      <img src="../assets/tools-apigee.png" alt="Apigee">
     </div>
     <div class="tool-card-content">
       <h3>Apigee API Hub</h3>
@@ -44,7 +44,7 @@ Check out the following pre-built tools that you can use with ADK agents:
   </a>
   <a href="/adk-docs/tools/google-cloud-tools/#application-integration-tools" class="tool-card">
     <div class="tool-card-image-wrapper">
-      <img src="/adk-docs/assets/tools-apigee-integration.png" alt="Apigee Integration">
+      <img src="../assets/tools-apigee-integration.png" alt="Apigee Integration">
     </div>
     <div class="tool-card-content">
       <h3>Application Integration</h3>
@@ -53,7 +53,7 @@ Check out the following pre-built tools that you can use with ADK agents:
   </a>
   <a href="/adk-docs/tools/built-in-tools/#bigquery" class="tool-card">
     <div class="tool-card-image-wrapper">
-      <img src="/adk-docs/assets/tools-bigquery.png" alt="BigQuery">
+      <img src="../assets/tools-bigquery.png" alt="BigQuery">
     </div>
     <div class="tool-card-content">
       <h3>BigQuery Tools</h3>
@@ -62,7 +62,7 @@ Check out the following pre-built tools that you can use with ADK agents:
   </a>
   <a href="/adk-docs/tools/built-in-tools/#bigtable" class="tool-card">
     <div class="tool-card-image-wrapper">
-      <img src="/adk-docs/assets/tools-bigtable.png" alt="Bigtable">
+      <img src="../assets/tools-bigtable.png" alt="Bigtable">
     </div>
     <div class="tool-card-content">
       <h3>Bigtable Tools</h3>
@@ -71,7 +71,7 @@ Check out the following pre-built tools that you can use with ADK agents:
   </a>
   <a href="/adk-docs/tools/built-in-tools/#gke-code-executor" class="tool-card">
     <div class="tool-card-image-wrapper">
-      <img src="/adk-docs/assets/tools-gke.png" alt="Google Kubernetes Engine">
+      <img src="../assets/tools-gke.png" alt="Google Kubernetes Engine">
     </div>
     <div class="tool-card-content">
       <h3>GKE Code Executor</h3>
@@ -80,7 +80,7 @@ Check out the following pre-built tools that you can use with ADK agents:
   </a>
   <a href="/adk-docs/tools/built-in-tools/#spanner" class="tool-card">
     <div class="tool-card-image-wrapper">
-      <img src="/adk-docs/assets/tools-spanner.png" alt="Spanner">
+      <img src="../assets/tools-spanner.png" alt="Spanner">
     </div>
     <div class="tool-card-content">
       <h3>Spanner Tools</h3>
@@ -89,7 +89,7 @@ Check out the following pre-built tools that you can use with ADK agents:
   </a>
   <a href="/adk-docs/tools/google-cloud-tools/#toolbox-tools-for-databases" class="tool-card">
     <div class="tool-card-image-wrapper">
-      <img src="/adk-docs/assets/tools-mcp-toolbox-for-databases.png" alt="MCP Toolbox for Databases">
+      <img src="../assets/tools-mcp-toolbox-for-databases.png" alt="MCP Toolbox for Databases">
     </div>
     <div class="tool-card-content">
       <h3>MCP Toolbox for Databases</h3>
@@ -98,7 +98,7 @@ Check out the following pre-built tools that you can use with ADK agents:
   </a>
   <a href="/adk-docs/tools/built-in-tools/#vertex-ai-rag-engine" class="tool-card">
     <div class="tool-card-image-wrapper">
-      <img src="/adk-docs/assets/tools-vertex-ai.png" alt="Vertex AI">
+      <img src="../assets/tools-vertex-ai.png" alt="Vertex AI">
     </div>
     <div class="tool-card-content">
       <h3>Vertex AI RAG Engine</h3>
@@ -107,7 +107,7 @@ Check out the following pre-built tools that you can use with ADK agents:
   </a>
   <a href="/adk-docs/tools/built-in-tools/#vertex-ai-search" class="tool-card">
     <div class="tool-card-image-wrapper">
-      <img src="/adk-docs/assets/tools-vertex-ai.png" alt="Vertex AI">
+      <img src="../assets/tools-vertex-ai.png" alt="Vertex AI">
     </div>
     <div class="tool-card-content">
       <h3>Vertex AI Search</h3>
