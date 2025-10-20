@@ -4,7 +4,7 @@
 
 ADK is designed to be **highly extensible, allowing you to seamlessly integrate tools from other AI Agent frameworks** like CrewAI and LangChain. This interoperability is crucial because it allows for faster development time and allows you to reuse existing tools.
 
-## 1. Using LangChain Tools
+## Using LangChain Tools
 
 ADK provides the `LangchainTool` wrapper to integrate tools from the LangChain ecosystem into your agents.
 
@@ -72,7 +72,7 @@ Here's the full code combining the steps above to create and run an agent using 
 --8<-- "examples/python/snippets/tools/third-party/langchain_tavily_search.py"
 ```
 
-## 2. Using CrewAI tools
+## Using CrewAI tools
 
 ADK provides the `CrewaiTool` wrapper to integrate tools from the CrewAI library.
 
@@ -123,7 +123,7 @@ ADK provides the `CrewaiTool` wrapper to integrate tools from the CrewAI library
 
     ```py
     from google.adk import Agent
- 
+
     # Define the ADK agent
     my_agent = Agent(
         name="crewai_search_agent",
