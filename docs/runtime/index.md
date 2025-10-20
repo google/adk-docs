@@ -303,7 +303,7 @@ Your code within agents, tools, and callbacks is responsible for the actual comp
     // a new RunRequest or context indicating the next step. The updated state
     // would be part of the session object in that new request.
     // For this conceptual example, we'll just check the state.
-    val := ctx.Session.State["field_1"]
+    val := ctx.State.Get("field_1")
     // here `val` is guaranteed to be "value_2" because the Runner would have
     // updated the session state before calling the agent again.
     fmt.Printf("Resumed execution. Value of field_1 is now: %v\n", val)
@@ -475,7 +475,7 @@ Understanding a few key aspects of how the ADK Runtime handles state, streaming,
     // 3. Resume execution
     // In a real Go app, the agent would receive a new context with the updated session.
     // We can now safely rely on the committed state.
-    currentStatus := ctx.Session.State["status"] // Guaranteed to be 'processing'
+    currentStatus := ctx.State.Set("status") // Guaranteed to be 'processing'
     fmt.Printf("Status after resuming: %v\n", currentStatus)
     ```
 
@@ -523,14 +523,14 @@ Understanding a few key aspects of how the ADK Runtime handles state, streaming,
     // Code in before_agent_callback
     // The callback would modify the context's session state directly.
     // This change is local to the current invocation context.
-    callback_context.Session.State["field_1"] = "value_1"
+    ctx.State.Set("field_1", "value_1")
     // State is locally set to 'value_1', but not yet committed by Runner
 
     // ... agent runs ...
 
     // Code in a tool called later *within the same invocation*
     // Readable (dirty read), but 'value_1' isn't guaranteed persistent yet.
-    val := tool_context.Session.State["field_1"] // 'val' will likely be 'value_1' here
+    val := ctx.State.Get("field_1") // 'val' will likely be 'value_1' here
     fmt.Printf("Dirty read value in tool: %v\n", val)
 
     // Assume the event carrying the state_delta={'field_1': 'value_1'}
