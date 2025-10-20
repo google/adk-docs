@@ -187,6 +187,12 @@ For deployed applications, a service account is the standard method.
 === "Go"
 
     ```go
+    import (
+    	"google.golang.org/adk/agent/llmagent"
+    	"google.golang.org/adk/model/gemini"
+    	"google.golang.org/genai"
+    )
+
     --8<-- "examples/go/snippets/agents/models/models.go:gemini-example"
     ```
 
