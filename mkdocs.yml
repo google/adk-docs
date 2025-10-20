@@ -115,6 +115,8 @@ plugins:
         'get-started/local-testing.md': 'get-started/testing.md'
         'get-started/tutorial.md': 'tutorials/index.md'
         'guides/responsible-agents.md': 'safety/index.md'
+        'tools/third-party-tools.md': tools/third-party/index.md
+        'tools/openapi-tools.md': tools/third-party/openapi-tools.md
 
 # Navigation
 nav:
@@ -151,8 +153,8 @@ nav:
     - tools/index.md
     - Built-in tools: tools/built-in-tools.md
     - Google Cloud tools: tools/google-cloud-tools.md
-    - Third party tools: tools/third-party-tools.md
-    - OpenAPI tools: tools/openapi-tools.md
+    - Third party tools: tools/third-party/index.md
+    - OpenAPI tools: tools/third-party/openapi-tools.md
   - Custom Tools:
     - tools-custom/index.md
     - Function tools:
