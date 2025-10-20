@@ -10,6 +10,7 @@ Check out the following pre-built tools that you can use with ADK agents:
 ### Gemini tools
 
 <div class="tool-card-grid">
+
   <a href="/adk-docs/tools/built-in-tools/#google-search" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="../assets/tools-google-search.png" alt="Google Search">
@@ -19,6 +20,7 @@ Check out the following pre-built tools that you can use with ADK agents:
       <p>Perform web searches using Google Search with Gemini</p>
     </div>
   </a>
+
   <a href="/adk-docs/tools/built-in-tools/#code-execution" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="../assets/tools-gemini.png" alt="Gemini">
@@ -28,11 +30,13 @@ Check out the following pre-built tools that you can use with ADK agents:
       <p>Execute code using Gemini models</p>
     </div>
   </a>
+
 </div>
 
 ### Google Cloud tools
 
 <div class="tool-card-grid">
+
   <a href="/adk-docs/tools/google-cloud-tools/#apigee-api-hub-tools" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="../assets/tools-apigee.png" alt="Apigee">
@@ -42,6 +46,7 @@ Check out the following pre-built tools that you can use with ADK agents:
       <p>Turn any documented API from Apigee API hub into a tool</p>
     </div>
   </a>
+
   <a href="/adk-docs/tools/google-cloud-tools/#application-integration-tools" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="../assets/tools-apigee-integration.png" alt="Apigee Integration">
@@ -51,6 +56,7 @@ Check out the following pre-built tools that you can use with ADK agents:
       <p>Link your agents to enterprise applications using Integration Connectors</p>
     </div>
   </a>
+
   <a href="/adk-docs/tools/built-in-tools/#bigquery" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="../assets/tools-bigquery.png" alt="BigQuery">
@@ -60,6 +66,7 @@ Check out the following pre-built tools that you can use with ADK agents:
       <p>Connect with BigQuery to retrieve data and perform analysis</p>
     </div>
   </a>
+
   <a href="/adk-docs/tools/built-in-tools/#bigtable" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="../assets/tools-bigtable.png" alt="Bigtable">
@@ -69,6 +76,7 @@ Check out the following pre-built tools that you can use with ADK agents:
       <p>Interact with Bigtable to retrieve data and and execute SQL</p>
     </div>
   </a>
+
   <a href="/adk-docs/tools/built-in-tools/#gke-code-executor" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="../assets/tools-gke.png" alt="Google Kubernetes Engine">
@@ -78,6 +86,7 @@ Check out the following pre-built tools that you can use with ADK agents:
       <p>Run AI-generated code in a secure and scalable GKE Sandbox environment</p>
     </div>
   </a>
+
   <a href="/adk-docs/tools/built-in-tools/#spanner" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="../assets/tools-spanner.png" alt="Spanner">
@@ -87,6 +96,7 @@ Check out the following pre-built tools that you can use with ADK agents:
       <p>Interact with Spanner to retrieve data, search, and execute SQL</p>
     </div>
   </a>
+
   <a href="/adk-docs/tools/google-cloud-tools/#toolbox-tools-for-databases" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="../assets/tools-mcp-toolbox-for-databases.png" alt="MCP Toolbox for Databases">
@@ -96,6 +106,7 @@ Check out the following pre-built tools that you can use with ADK agents:
       <p>Connect over 30 different data sources to your agents</p>
     </div>
   </a>
+
   <a href="/adk-docs/tools/built-in-tools/#vertex-ai-rag-engine" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="../assets/tools-vertex-ai.png" alt="Vertex AI">
@@ -105,6 +116,7 @@ Check out the following pre-built tools that you can use with ADK agents:
       <p>Perform private data retrieval using Vertex AI RAG Engine</p>
     </div>
   </a>
+
   <a href="/adk-docs/tools/built-in-tools/#vertex-ai-search" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="../assets/tools-vertex-ai.png" alt="Vertex AI">
@@ -114,6 +126,7 @@ Check out the following pre-built tools that you can use with ADK agents:
       <p>Search across your private, configured data stores in Vertex AI Search</p>
     </div>
   </a>
+
 </div>
 
 ### Third-party tools
