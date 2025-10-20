@@ -311,10 +311,24 @@ Based on who is maintaining the eval set data, there are two routes:
 
 ### Evaluation Criteria
 
-The evaluation criteria define how the agent's performance is measured against the evalset. The following metrics are supported:
+ADK provides several built-in criterion for evaluating agent performance, ranging
+from tool trajectory matching to LLM-based response quality assessment. For a
+detailed list of available criteria and guidance on when to use them, please see
+[Evaluation Criteria](./criteria.md).
 
-* `tool_trajectory_avg_score`: This metric compares the agent's actual tool usage during the evaluation against the expected tool usage defined in the `expected_tool_use` field. Each matching tool usage step receives a score of 1, while a mismatch receives a score of 0\. The final score is the average of these matches, representing the accuracy of the tool usage trajectory.  
-* `response_match_score`: This metric compares the agent's final natural language response to the expected final response, stored in the `reference` field. We use the [ROUGE](https://en.wikipedia.org/wiki/ROUGE_\(metric\)) metric to calculate the similarity between the two responses.
+Here is a summary of all the available criteria:
+
+*   **tool_trajectory_avg_score**: Exact match of tool call trajectory.
+*   **response_match_score**: ROUGE-1 similarity to reference response.
+*   **final_response_match_v2**: LLM-judged semantic match to a reference
+    response.
+*   **rubric_based_final_response_quality_v1**: LLM-judged final response
+    quality based on custom rubrics.
+*   **rubric_based_tool_use_quality_v1**: LLM-judged tool usage quality based on
+    custom rubrics.
+*   **hallucinations_v1**: LLM-judged groundedness of agent response against
+    context.
+*   **safety_v1**: Safety/harmlessness of agent response.
 
 If no evaluation criteria are provided, the following default configuration is used:
 
@@ -331,6 +345,33 @@ Here is an example of a `test_config.json` file specifying custom evaluation cri
   }
 }
 ```
+
+#### Recommendations on Criteria
+
+Choose criteria based on your evaluation goals:
+
+*   **Enable tests in CI/CD pipelines or regression testing:** Use
+    `tool_trajectory_avg_score` and `response_match_score`. These criteria are
+    fast, predictable, and suitable for frequent automated checks.
+*   **Evaluate trusted reference responses:** Use `final_response_match_v2` to
+    evaluate semantic equivalence. This LLM-based check is more flexible than
+    exact matching and better captures whether the agent's response means the
+    same thing as the reference response.
+*   **Evaluate response quality without a reference response:** Use
+    `rubric_based_final_response_quality_v1`. This is useful when you don't have
+    a trusted reference, but you can define attributes of a good response (e.g.,
+    "The response is concise," "The response has a helpful tone").
+*   **Evaluate the correctness of tool usage:** Use
+    `rubric_based_tool_use_quality_v1`. This allows you to validate the agent's
+    reasoning process by checking, for example, that a specific tool was called
+    or that tools were called in the correct order (e.g., "Tool A must be called
+    before Tool B").
+*   **Check if responses are grounded in context:** Use `hallucinations_v1` to
+    detect if the agent makes claims that are unsupported by or contradictory to
+    the information available to it (e.g., tool outputs).
+*   **Check for harmful content:** Use `safety_v1` to ensure that agent
+    responses are safe and do not violate safety policies.
+
 
 ## How to run Evaluation with the ADK
 
