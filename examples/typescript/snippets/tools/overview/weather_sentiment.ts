@@ -109,7 +109,7 @@ async function main() {
         parts: [{ text: "What is the weather in London?" }],
     };
 
-    for await (const event of runner.run({
+    for await (const event of runner.runAsync({
         userId: "user1",
         sessionId: "session1",
         newMessage: newMessage,

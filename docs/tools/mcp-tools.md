@@ -249,7 +249,7 @@ import {LlmAgent, MCPToolset} from "@google/adk";
 // REPLACE THIS with an actual absolute path for your setup.
 const TARGET_FOLDER_PATH = "/path/to/your/folder";
 
-const rootAgent = new LlmAgent({
+export const rootAgent = new LlmAgent({
     model: "gemini-2.5-flash",
     name: "filesystem_assistant_agent",
     instruction: "Help the user manage their files. You can list files, read files, etc.",
@@ -490,22 +490,15 @@ For TypeScript, refer to the following sample to define an agent that initialize
 ```typescript
 import {LlmAgent, MCPToolset} from "@google/adk";
 
-// Retrieve the API key from an environment variable or directly insert it.
-// Using an environment variable is generally safer.
+// Retrieve the API key from an environment variable.
 // Ensure this environment variable is set in the terminal where you run 'adk web'.
 // Example: export GOOGLE_MAPS_API_KEY="YOUR_ACTUAL_KEY"
-let googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY;
-
+const googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY;
 if (!googleMapsApiKey) {
-    // Fallback or direct assignment for testing - NOT RECOMMENDED FOR PRODUCTION
-    googleMapsApiKey = "YOUR_GOOGLE_MAPS_API_KEY_HERE"; // Replace if not using env var
-    if (googleMapsApiKey === "YOUR_GOOGLE_MAPS_API_KEY_HERE") {
-        console.warn("WARNING: GOOGLE_MAPS_API_KEY is not set. Please set it as an environment variable or in the script.");
-        // You might want to raise an error or exit if the key is crucial and not found.
-    }
+    throw new Error('GOOGLE_MAPS_API_KEY is not provided, please run "export GOOGLE_MAPS_API_KEY=YOUR_ACTUAL_KEY" to add that.');
 }
 
-const rootAgent = new LlmAgent({
+export const rootAgent = new LlmAgent({
     model: "gemini-2.5-flash",
     name: "maps_assistant_agent",
     instruction: "Help the user with mapping, directions, and finding places using Google Maps tools.",

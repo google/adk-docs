@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { LlmAgent, FunctionTool, ToolContext, BaseToolset, ReadonlyContext, InMemoryRunner, isFinalResponse, BaseTool } from "@google/adk";
+import { LlmAgent, FunctionTool, ToolContext, BaseToolset, InMemoryRunner, isFinalResponse, BaseTool } from "@google/adk";
 import { z } from "zod";
 import { Content } from "@google/genai";
 
@@ -55,7 +55,7 @@ class SimpleMathToolset extends BaseToolset {
     ];
   }
 
-  async getTools(readonlyContext?: ReadonlyContext): Promise<BaseTool[]> {
+  async getTools(): Promise<BaseTool[]> {
     return this.tools;
   }
 
@@ -94,7 +94,7 @@ async function main() {
     parts: [{ text: "What is 5 + 3?" }],
   };
 
-  for await (const event of runner.run({ userId: "user1", sessionId: "session1", newMessage: message })) {
+  for await (const event of runner.runAsync({ userId: "user1", sessionId: "session1", newMessage: message })) {
     if (isFinalResponse(event) && event.content?.parts?.length) {
       const text = event.content.parts.map(p => p.text).join('').trim();
       if (text) {

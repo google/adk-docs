@@ -61,7 +61,6 @@ const mainAgent = new LlmAgent({
 });
 
 async function main() {
-
   const runner = new InMemoryRunner({ agent: mainAgent, appName: "customer_support_app" });
 
   console.log("--- Running with a non-urgent query ---");
@@ -70,7 +69,7 @@ async function main() {
     role: "user",
     parts: [{ text: "I have a general question about my account." }],
   };
-  for await (const event of runner.run({ userId: "user1", sessionId: "session1", newMessage: nonUrgentMessage })) {
+  for await (const event of runner.runAsync({ userId: "user1", sessionId: "session1", newMessage: nonUrgentMessage })) {
     if (isFinalResponse(event) && event.content?.parts?.length) {
       const text = event.content.parts.map(p => p.text).join('').trim();
       if (text) {
@@ -85,7 +84,7 @@ async function main() {
     role: "user",
     parts: [{ text: "My account is locked and this is urgent!" }],
   };
-  for await (const event of runner.run({ userId: "user1", sessionId: "session2", newMessage: urgentMessage })) {
+  for await (const event of runner.runAsync({ userId: "user1", sessionId: "session2", newMessage: urgentMessage })) {
     if (isFinalResponse(event) && event.content?.parts?.length) {
       const text = event.content.parts.map(p => p.text).join('').trim();
       if (text) {
