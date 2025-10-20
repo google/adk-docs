@@ -67,7 +67,7 @@ async function main() {
 
   // Run the agent and get the response
   const response = [];
-  for await (const event of runner.run({
+  for await (const event of runner.runAsync({
     userId: session.userId,
     sessionId: session.id,
     newMessage: userContent,

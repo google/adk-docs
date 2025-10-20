@@ -64,7 +64,7 @@ faster than even the most powerful classical supercomputers could ever achieve, 
   });
 
   // Run the agent with the long text to summarize
-  const events = runner.run({
+  const events = runner.runAsync({
     userId: 'user1',
     sessionId: 'session1',
     newMessage: {
