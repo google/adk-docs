@@ -46,4 +46,12 @@ applications with ADK. Explore our collection below and happy building:
 
     [:octicons-arrow-right-24: Discover adk-samples](https://github.com/google/adk-samples){:target="_blank"}
 
+-   :material-console-line: **Agentic UI with AG-UI**
+
+    ---
+
+    Build a rich user interface for your agent using the AG-UI protocol and CopilotKit.
+
+    [:octicons-arrow-right-24: Build an agentic UI](ag-ui.md)
+
 </div>
