@@ -32,11 +32,11 @@ Check out the many pre-built Tools you can use with ADK agents:
 
 ### Third-party tools
 
-*   **[LangChain Tools](/adk-docs/tools/third-party-tools/#using-langchain-tools)**:
+*   **[LangChain Tools](/adk-docs/tools/third-party/#using-langchain-tools)**:
     Integrate tools from the LangChain ecosystem.
-*   **[CrewAI tools](/adk-docs/tools/third-party-tools/#using-crewai-tools)**:
+*   **[CrewAI tools](/adk-docs/tools/third-party/#using-crewai-tools)**:
     Integrate tools from the CrewAI library.
-*   **[OpenAPI Integration](/adk-docs/tools/openapi-tools/)**:
+*   **[OpenAPI Integration](/adk-docs/tools/third-party/openapi-tools/)**:
     Generate callable tools directly from an OpenAPI Specification.
 
 ## Build your tools
