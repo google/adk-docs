@@ -14,7 +14,8 @@
 
 import { LlmAgent, FunctionTool, InMemoryRunner, isFinalResponse } from '@google/adk';
 import { createUserContent, Schema, Type } from '@google/genai';
-import { z } from 'zod';
+import type { Part } from '@google/genai';
+ import { z } from 'zod';
 
 // --- 1. Define Constants ---
 const APP_NAME = "capital_app_ts";
@@ -117,7 +118,7 @@ async function callAgentAndPrint(
     let finalResponseContent = "No final response received.";
     for await (const event of runner.runAsync({ userId: USER_ID, sessionId: sessionId, newMessage: message })) {
         if (isFinalResponse(event) && event.content?.parts?.length) {
-            finalResponseContent = event.content.parts.map((part: any) => part.text ?? '').join('');
+            finalResponseContent = event.content.parts.map((part: Part) => part.text ?? '').join('');
         }
     }
     console.log(`<<< Agent '${agent.name}' Response: ${finalResponseContent}`);
