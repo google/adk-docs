@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import { SequentialAgent, LlmAgent, InMemoryRunner, isFinalResponse } from '@google/adk';
-import { Content } from '@google/genai';
+import { createUserContent } from '@google/genai';
 
 // --- Constants ---
 const APP_NAME = "code_pipeline_app";
@@ -51,7 +51,7 @@ const codeReviewerAgent = new LlmAgent({
 
     **Code to Review:**
     \`\`\`python
-    \${generated_code}
+    {generated_code}
     \`\`\`
 
 **Review Criteria:**
@@ -103,15 +103,13 @@ Do not add any other text before or after the code block.
 
 // --- 2. Create the SequentialAgent ---
 // This agent orchestrates the pipeline by running the sub_agents in order.
-const codePipelineAgent = new SequentialAgent({
+const rootAgent = new SequentialAgent({
     name: "CodePipelineAgent",
     subAgents: [codeWriterAgent, codeReviewerAgent, codeRefactorerAgent],
     description: "Executes a sequence of code writing, reviewing, and refactoring.",
     // The agents will run in the order provided: Writer -> Reviewer -> Refactorer
 });
 
-// For ADK tools compatibility, the root agent must be named `root_agent`
-const rootAgent = codePipelineAgent;
 // --8<-- [end:init]
 
 // --- 3. Running the Agent (Using InMemoryRunner for local testing) ---
@@ -125,7 +123,7 @@ async function callCodePipeline(query: string, userId: string, sessionId: string
     console.log(`
 =============== Running Code Pipeline for Query: '${query}' ===============`);
     console.log(`Attempting to use Session ID: ${sessionId}`);
-    const content: Content = {role: 'user', parts: [{text: query}]};
+    const content = createUserContent(query);
     let finalCode: string | null = null;
     const pipelineStepOutputs: {[key: string]: string} = {};
 
@@ -145,9 +143,7 @@ async function callCodePipeline(query: string, userId: string, sessionId: string
             const outputText = event.content.parts[0].text!.trim();
             pipelineStepOutputs[authorName] = outputText;
 
-            console.log(`
---- Output from: ${authorName} ---
-`);
+            console.log(`\n--- Output from: ${authorName} ---`);
             console.log(outputText);
             console.log("- ".repeat(authorName.length + 18));
 
@@ -160,7 +156,7 @@ async function callCodePipeline(query: string, userId: string, sessionId: string
         }
     }
 
-    if (finalCode === null) {
+    if (!finalCode) {
         console.log("\nPipeline did not produce final refactored code.");
     }
 
