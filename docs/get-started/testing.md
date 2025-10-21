@@ -13,11 +13,38 @@ to use the ADK API server.
 === "Java"
 
     Make sure to update the port number.
-
-    ```java
-    mvn compile exec:java \
+    === "Maven"
+        With Maven, compile and run the ADK web server:
+        ```console
+        mvn compile exec:java \
          -Dexec.args="--adk.agents.source-dir=src/main/java/agents --server.port=8080"
-    ```
+        ```
+    === "Gradle"
+        With Gradle, the `build.gradle` or `build.gradle.kts` build file should have the following Java plugin in its plugins section:
+
+        ```groovy
+        plugins {
+            id('java')
+            // other plugins
+        }
+        ```
+        Then, elsewhere in the build file, at the top-level, create a new task:
+
+        ```groovy
+        tasks.register('runADKWebServer', JavaExec) {
+            dependsOn classes 
+            classpath = sourceSets.main.runtimeClasspath
+            mainClass = 'com.google.adk.web.AdkWebServer'
+            args '--adk.agents.source-dir=src/main/java/agents', '--server.port=8080'
+        }
+        ```
+
+        Finally, on the command-line, run the following command:
+        ```console
+        gradle runADKWebServer
+        ```
+
+    
     In Java, both the Dev UI and the API server are bundled together.
 
 This command will launch a local web server, where you can run cURL commands or send API requests to test your agent.
@@ -168,6 +195,33 @@ data: {"content":{"parts":[{"functionCall":{"id":"af-f83f8af9-f732-46b6-8cb5-7b5
 data: {"content":{"parts":[{"functionResponse":{"id":"af-f83f8af9-f732-46b6-8cb5-7b5b73bbf13d","name":"get_weather","response":{"status":"success","report":"The weather in New York is sunny with a temperature of 25 degrees Celsius (41 degrees Fahrenheit)."}}}],"role":"user"},"invocationId":"e-3f6d7765-5287-419e-9991-5fffa1a75565","author":"weather_time_agent","actions":{"stateDelta":{},"artifactDelta":{},"requestedAuthConfigs":{}},"id":"5aocxjaq","timestamp":1743712257.387306}
 
 data: {"content":{"parts":[{"text":"OK. The weather in New York is sunny with a temperature of 25 degrees Celsius (41 degrees Fahrenheit).\n"}],"role":"model"},"invocationId":"e-3f6d7765-5287-419e-9991-5fffa1a75565","author":"weather_time_agent","actions":{"stateDelta":{},"artifactDelta":{},"requestedAuthConfigs":{}},"id":"rAnWGSiV","timestamp":1743712257.391317}
+```
+**Send a query with a base64 encoded file using `/run` or `/run_sse`**
+
+```shell
+curl -X POST http://localhost:8000/run \
+--H 'Content-Type: application/json' \
+--d '{
+   "appName":"my_sample_agent",
+   "userId":"u_123",
+   "sessionId":"s_123",
+   "newMessage":{
+      "role":"user",
+      "parts":[
+         {
+            "text":"Describe this image"
+         },
+         {
+            "inlineData":{
+               "displayName":"my_image.png",
+               "data":"iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAACXBIWXMAAAsTAAALEwEAmpw...",
+               "mimeType":"image/png"
+            }
+         }
+      ]
+   },
+   "streaming":false
+}'
 ```
 
 !!! info

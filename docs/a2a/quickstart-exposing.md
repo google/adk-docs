@@ -63,6 +63,36 @@ a2a_app = to_a2a(root_agent, port=8001)
 
 The `to_a2a()` function will even auto-generate an agent card in-memory behind-the-scenes by [extracting skills, capabilities, and metadata from the ADK agent](https://github.com/google/adk-python/blob/main/src/google/adk/a2a/utils/agent_card_builder.py), so that the well-known agent card is made available when the agent endpoint is served using `uvicorn`.
 
+You can also provide your own agent card by using the `agent_card` parameter. The value can be an `AgentCard` object or a path to an agent card JSON file.
+
+**Example with an `AgentCard` object:**
+```python
+from google.adk.a2a.utils.agent_to_a2a import to_a2a
+from a2a.types import AgentCard
+
+# Define A2A agent card
+my_agent_card = AgentCard(
+    "name": "file_agent",
+    "url": "http://example.com",
+    "description": "Test agent from file",
+    "version": "1.0.0",
+    "capabilities": {},
+    "skills": [],
+    "defaultInputModes": ["text/plain"],
+    "defaultOutputModes": ["text/plain"],
+    "supportsAuthenticatedExtendedCard": False,
+)
+a2a_app = to_a2a(root_agent, port=8001, agent_card=my_agent_card)
+```
+
+**Example with a path to a JSON file:**
+```python
+from google.adk.a2a.utils.agent_to_a2a import to_a2a
+
+# Load A2A agent card from a file
+a2a_app = to_a2a(root_agent, port=8001, agent_card="/path/to/your/agent-card.json")
+```
+
 Now let's dive into the sample code.
 
 ### 1. Getting the Sample Code { #getting-the-sample-code }
@@ -129,7 +159,7 @@ INFO:     Uvicorn running on http://localhost:8001 (Press CTRL+C to quit)
 
 You can check that your agent is up and running by visiting the agent card that was auto-generated earlier as part of your `to_a2a()` function in `a2a_root/remote_a2a/hello_world/agent.py`:
 
-[http://localhost:8001/.well-known/agent.json](http://localhost:8001/.well-known/agent.json)
+[http://localhost:8001/.well-known/agent-card.json](http://localhost:8001/.well-known/agent-card.json)
 
 You should see the contents of the agent card, which should look like:
 

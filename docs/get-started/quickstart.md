@@ -1,4 +1,4 @@
-# Quickstart
+# Build a multi-tool agent
 
 This quickstart guides you through installing the Agent Development Kit (ADK),
 setting up a basic agent with multiple tools, and running it locally either in the terminal or in the interactive, browser-based dev UI.
@@ -308,7 +308,7 @@ agent will be unable to function.
             piping text to the command like so:
 
             ```shell
-            "Please start by listing files" | adk run file_listing_agent
+            echo "Please start by listing files" | adk run file_listing_agent
             ```
             
         Run the following command, to chat with your Weather agent.
@@ -399,7 +399,7 @@ agent will be unable to function.
 
         ```groovy
         plugins {
-            id("java")
+            id('java')
             // other plugins
         }
         ```
@@ -408,9 +408,9 @@ agent will be unable to function.
         create a new task to run the `main()` method of your agent:
 
         ```groovy
-        task runAgent(type: JavaExec) {
+        tasks.register('runAgent', JavaExec) {
             classpath = sourceSets.main.runtimeClasspath
-            mainClass = "agents.multitool.MultiToolAgent"
+            mainClass = 'agents.multitool.MultiToolAgent'
         }
         ```
 
