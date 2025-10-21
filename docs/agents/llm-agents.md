@@ -328,14 +328,14 @@ You can adjust how the underlying LLM generates responses using `generate_conten
     ```typescript
     import { GenerateContentConfig } from '@google/genai';
 
-    const generationConfig: GenerateContentConfig = {
+    const generateContentConfig: GenerateContentConfig = {
         temperature: 0.2, // More deterministic output
         maxOutputTokens: 250,
     };
 
     const agent = new LlmAgent({
         // ... other params
-        generateContentConfig: generationConfig,
+        generateContentConfig,
     });   
     ```
 
