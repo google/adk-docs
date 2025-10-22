@@ -72,6 +72,62 @@ Here's the full code combining the steps above to create and run an agent using 
 --8<-- "examples/python/snippets/tools/third-party/langchain_tavily_search.py"
 ```
 
+### Example: Using LangChain's StructuredTool
+
+ADK also supports LangChain's `StructuredTool` which allows you to define a schema for your tool's arguments.
+
+```python
+from google.adk.agents.llm_agent import Agent
+from google.adk.tools.langchain_tool import LangchainTool
+from langchain_core.tools import tool
+from langchain_core.tools.structured import StructuredTool
+from pydantic import BaseModel
+
+
+async def add(x, y) -> int:
+  """Adds two numbers."""
+  return x + y
+
+
+@tool
+def minus(x, y) -> int:
+  """Subtracts two numbers."""
+  return x - y
+
+
+class AddSchema(BaseModel):
+  x: int
+  y: int
+
+
+class MinusSchema(BaseModel):
+  x: int
+  y: int
+
+
+test_langchain_add_tool = StructuredTool.from_function(
+    add,
+    name="add",
+    description="Adds two numbers",
+    args_schema=AddSchema,
+)
+
+root_agent = Agent(
+    model="gemini-2.0-flash-001",
+    name="test_app",
+    description="A helpful assistant for user questions.",
+    instruction=(
+        "You are a helpful assistant for user questions, you have access to a"
+        " tool that adds two numbers."
+    ),
+    tools=[
+        LangchainTool(tool=test_langchain_add_tool),
+        LangchainTool(tool=minus),
+    ],
+)
+```
+
+
 ## 2. Using CrewAI tools
 
 ADK provides the `CrewaiTool` wrapper to integrate tools from the CrewAI library.
