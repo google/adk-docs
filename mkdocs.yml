@@ -190,6 +190,7 @@ nav:
     - Arize AX: observability/arize-ax.md
     - Phoenix: observability/phoenix.md
     - W&B Weave: observability/weave.md
+    - Datadog: observability/datadog.md
   - Evaluate:
     - evaluate/index.md
     - Criteria: evaluate/criteria.md
