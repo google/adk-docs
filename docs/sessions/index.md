@@ -83,3 +83,17 @@ In the following sections, we'll dive deeper into each of these components:
 
 Understanding these concepts is fundamental to building agents that can engage
 in complex, stateful, and context-aware conversations.
+
+## Context Compaction: Managing Long Conversations
+
+As conversations with an agent become longer, the growing history of `Events` in a `Session` can exceed the context window limitations of the underlying Large Language Model (LLM). This can lead to errors or a loss of earlier context. To manage this, the ADK provides a feature called **Context Compaction**.
+
+Context Compaction works by summarizing a portion of the conversation history into a single, condensed `Event`. This summary replaces a range of older events, reducing the overall size of the context while aiming to preserve the most important information. This process is handled automatically by the `Runner` when configured.
+
+### How it Works
+
+When enabled, context compaction is triggered after a certain number of new interactions. It uses a summarizer, such as the `LlmEventSummarizer`, to read a window of recent events and generate a summary. This summary is then stored as a new `Event` with an `EventCompaction` action, and the original events are filtered out of the context sent to the LLM in subsequent turns.
+
+This mechanism allows the agent to maintain a long-running conversation without losing the entire thread of the interaction, as key details from the past are carried forward in the summaries.
+
+You can find more details on how to configure context compaction in the [LLM Agent documentation](../agents/llm-agents.md#context-compaction).
