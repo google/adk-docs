@@ -156,9 +156,15 @@ While you have considerable flexibility in defining your function, remember that
 
 ## Long Running Function Tools {#long-run-tool}
 
-Designed for tasks that require a significant amount of processing time without blocking the agent's execution. This tool is a subclass of `FunctionTool`.
+This tool is designed to help you start and manage tasks that are handled outside the operation of your agent workflow, and require a significant amount of processing time, without blocking the agent's execution. This tool is a subclass of `FunctionTool`.
 
-When using a `LongRunningFunctionTool`, your function can initiate the long-running operation and optionally return an **initial result** (e.g., the long-running operation id). Once a long running function tool is invoked the agent runner will pause the agent run and let the agent client to decide whether to continue or wait until the long-running operation finishes. The agent client can query the progress of the long-running operation and send back an intermediate or final response. The agent can then continue with other tasks. An example is the human-in-the-loop scenario where the agent needs human approval before proceeding with a task.
+When using a `LongRunningFunctionTool`, your function can initiate the long-running operation and optionally return an **initial result**, such as a long-running operation id. Once a long running function tool is invoked the agent runner pauses the agent run and lets the agent client to decide whether to continue or wait until the long-running operation finishes. The agent client can query the progress of the long-running operation and send back an intermediate or final response. The agent can then continue with other tasks. An example is the human-in-the-loop scenario where the agent needs human approval before proceeding with a task.
+
+!!! warning "Warning: Execution handling"
+    Long Running Function Tools are designed to help you start and *manage* long running
+    tasks as part of your agent workflow, but ***not perform*** the actual, long task.
+    For tasks that require significant time to complete, you should implement a separate
+    server to do the task.
 
 !!! tip "Tip: Parallel execution"
     Depending on the type of tool you are building, designing for asychronous
@@ -234,6 +240,20 @@ Define your tool function and wrap it using the `LongRunningFunctionTool` class:
 ### Intermediate / Final result Updates
 
 Agent client received an event with long running function calls and check the status of the ticket. Then Agent client can send the intermediate or final response back to update the progress. The framework packages this value (even if it's None) into the content of the `FunctionResponse` sent back to the LLM.
+
+!!! note "Note: Long running function response with Resume feature"
+
+    If your ADK agent workflow is configured with the 
+    [Resume](/adk-docs/runtime/resume/) feature, you also must include
+    the Invocation ID (`invocation_id`) parameter with the long running 
+    function response. The Invocation ID you provide must be the same 
+    invocation that generated the long running function request, otherwise 
+    the system starts a new invocation with the response. If your
+    agent uses the Resume feature, consider including the Invocation ID
+    as a parameter with your long running function request, so it can be
+    included with the response. For more details on using the Resume 
+    feature, see
+    [Resume stopped agents](/adk-docs/runtime/resume/).
 
 ??? Tip "Applies to only Java ADK"
 

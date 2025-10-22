@@ -61,12 +61,27 @@ like calculations, data manipulation, or running small scripts.
 
 The GKE Code Executor (`GkeCodeExecutor`) provides a secure and scalable method
 for running LLM-generated code by leveraging the GKE (Google Kubernetes Engine)
-Sandbox environment, which uses gVisor for workload isolation.
+Sandbox environment, which uses gVisor for workload isolation. For each code
+execution request, it dynamically creates an ephemeral, sandboxed Kubernetes Job
+with a hardened Pod configuration. You should use this executor for production
+environments on GKE where security and isolation are critical.
 
-For each code execution request, it dynamically creates an ephemeral, sandboxed
-Kubernetes Job with a hardened Pod configuration. This is the recommended
-executor for production environments on GKE where security and isolation are
-critical.
+#### How it Works
+
+When a request to execute code is made, the `GkeCodeExecutor` performs the following steps:
+
+1.  **Creates a ConfigMap:** A Kubernetes ConfigMap is created to store the Python code that needs to be executed.
+2.  **Creates a Sandboxed Pod:** A new Kubernetes Job is created, which in turn creates a Pod with a hardened security context and the gVisor runtime enabled. The code from the ConfigMap is mounted into this Pod.
+3.  **Executes the Code:** The code is executed within the sandboxed Pod, isolated from the underlying node and other workloads.
+4.  **Retrieves the Result:** The standard output and error streams from the execution are captured from the Pod's logs.
+5.  **Cleans Up Resources:** Once the execution is complete, the Job and the associated ConfigMap are automatically deleted, ensuring that no artifacts are left behind.
+
+#### Key Benefits
+
+*   **Enhanced Security:** Code is executed in a gVisor-sandboxed environment with kernel-level isolation.
+*   **Ephemeral Environments:** Each code execution runs in its own ephemeral Pod, to prevent state transfer between executions.
+*   **Resource Control:** You can configure CPU and memory limits for the execution Pods to prevent resource abuse.
+*   **Scalability:** Allows you to run a large number of code executions in parallel, with GKE handling the scheduling and scaling of the underlying nodes.
 
 #### System requirements
 
@@ -87,18 +102,21 @@ sample. For more information on deploying ADK workflows to GKE, see
 
 === "Python"
 
-    ```py
+    ```python
     from google.adk.agents import LlmAgent
     from google.adk.code_executors import GkeCodeExecutor
 
     # Initialize the executor, targeting the namespace where its ServiceAccount
     # has the required RBAC permissions.
+    # This example also sets a custom timeout and resource limits.
     gke_executor = GkeCodeExecutor(
         namespace="agent-sandbox",
         timeout_seconds=600,
+        cpu_limit="1000m",  # 1 CPU core
+        mem_limit="1Gi",
     )
 
-    # The agent will now use this executor for any code it generates.
+    # The agent now uses this executor for any code it generates.
     gke_agent = LlmAgent(
         name="gke_coding_agent",
         model="gemini-2.0-flash",
@@ -106,6 +124,22 @@ sample. For more information on deploying ADK workflows to GKE, see
         code_executor=gke_executor,
     )
     ```
+
+#### Configuration parameters
+
+The `GkeCodeExecutor` can be configured with the following parameters:
+
+| Parameter            | Type   | Description                                                                             |
+| -------------------- | ------ | --------------------------------------------------------------------------------------- |
+| `namespace`          | `str`  | Kubernetes namespace where the execution Jobs will be created. Defaults to `"default"`. |
+| `image`              | `str`  | Container image to use for the execution Pod. Defaults to `"python:3.11-slim"`.         |
+| `timeout_seconds`    | `int`  | Timeout in seconds for the code execution. Defaults to `300`.                           |
+| `cpu_requested`      | `str`  | Amount of CPU to request for the execution Pod. Defaults to `"200m"`.                   |
+| `mem_requested`      | `str`  | Amount of memory to request for the execution Pod. Defaults to `"256Mi"`.               |
+| `cpu_limit`          | `str`  | Maximum amount of CPU the execution Pod can use. Defaults to `"500m"`.                  |
+| `mem_limit`          | `str`  | Maximum amount of memory the execution Pod can use. Defaults to `"512Mi"`.              |
+| `kubeconfig_path`    | `str`  | Path to a kubeconfig file to use for authentication. Falls back to in-cluster config or the default local kubeconfig. |
+| `kubeconfig_context` | `str`  | The `kubeconfig` context to use.  |
 
 ### Vertex AI RAG Engine
 
@@ -143,6 +177,7 @@ These are a set of tools aimed to provide integration with BigQuery, namely:
 * **`list_table_ids`**: Fetches table ids present in a BigQuery dataset.
 * **`get_table_info`**: Fetches metadata about a BigQuery table.
 * **`execute_sql`**: Runs a SQL query in BigQuery and fetch the result.
+* **`forecast`**: Runs a BigQuery AI time series forecast using the `AI.FORECAST` function.
 * **`ask_data_insights`**: Answers questions about data in BigQuery tables using natural language.
 
 They are packaged in the toolset `BigQueryToolset`.
@@ -151,6 +186,46 @@ They are packaged in the toolset `BigQueryToolset`.
 
 ```py
 --8<-- "examples/python/snippets/tools/built-in-tools/bigquery.py"
+```
+
+
+### Spanner
+
+These are a set of tools aimed to provide integration with Spanner, namely:
+
+* **`list_table_names`**: Fetches table names present in a GCP Spanner database.
+* **`list_table_indexes`**: Fetches table indexes present in a GCP Spanner database.
+* **`list_table_index_columns`**: Fetches table index columns present in a GCP Spanner database.
+* **`list_named_schemas`**: Fetches named schema for a Spanner database.
+* **`get_table_schema`**: Fetches Spanner database table schema and metadata information.
+* **`execute_sql`**: Runs a SQL query in Spanner database and fetch the result.
+* **`similarity_search`**: Similarity search in Spanner using a text query.
+
+They are packaged in the toolset `SpannerToolset`.
+
+
+
+```py
+--8<-- "examples/python/snippets/tools/built-in-tools/spanner.py"
+```
+
+
+### Bigtable
+
+These are a set of tools aimed to provide integration with Bigtable, namely:
+
+* **`list_instances`**: Fetches Bigtable instances in a Google Cloud project.
+* **`get_instance_info`**: Fetches metadata instance information in a Google Cloud project.
+* **`list_tables`**: Fetches tables in a GCP Bigtable instance.
+* **`get_table_info`**: Fetches metadata table information in a GCP Bigtable.
+* **`execute_sql`**: Runs a SQL query in Bigtable table and fetch the result.
+
+They are packaged in the toolset `BigtableToolset`.
+
+
+
+```py
+--8<-- "examples/python/snippets/tools/built-in-tools/bigtable.py"
 ```
 
 ## Use Built-in tools with other tools
@@ -284,9 +359,15 @@ to use built-in tools with other tools by using multiple agents:
                 .build();
     ```
 
+ADK Python has a built-in workaroud which bypasses this limitation for 
+`GoogleSearchTool` and `VertexAiSearchTool` (use `bypass_multi_tools_limit=True` to enable it), e.g.
+[sample agent](https://github.com/google/adk-python/tree/main/contributing/samples/built_in_multi_tools).
+
 !!! warning
 
-    Built-in tools cannot be used within a sub-agent.
+    Built-in tools cannot be used within a sub-agent, with the exception of
+    `GoogleSearchTool` and `VertexAiSearchTool` in ADK Python because of the
+    workaround mentioned above.
 
 For example, the following approach that uses built-in tools within sub-agents
 is **not** currently supported:
@@ -294,13 +375,13 @@ is **not** currently supported:
 === "Python"
 
     ```py
-    search_agent = Agent(
+    url_context_agent = Agent(
         model='gemini-2.0-flash',
-        name='SearchAgent',
+        name='UrlContextAgent',
         instruction="""
-        You're a specialist in Google Search
+        You're a specialist in URL Context
         """,
-        tools=[google_search],
+        tools=[url_context],
     )
     coding_agent = Agent(
         model='gemini-2.0-flash',
@@ -315,7 +396,7 @@ is **not** currently supported:
         model="gemini-2.0-flash",
         description="Root Agent",
         sub_agents=[
-            search_agent,
+            url_context_agent,
             coding_agent
         ],
     )
