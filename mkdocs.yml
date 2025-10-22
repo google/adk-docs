@@ -63,6 +63,7 @@ theme:
         name: Switch to light mode
   features:
     - content.action.edit
+    - content.action.view
     - content.code.annotate
     - content.code.copy
     - content.code.select
