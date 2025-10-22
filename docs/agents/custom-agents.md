@@ -54,7 +54,7 @@ The core of any custom agent is the method where you define its unique asynchron
     The heart of any custom agent is the `runAsyncImpl` method. This is where you define its unique behavior.
 
     *   **Signature:** `async* runAsyncImpl(ctx: InvocationContext): AsyncGenerator<Event, void, undefined>`
-    *   **Asynchronous Generator:** It must be an `async` generator function (`async*`). This allows it to `yield` or `yield*` events produced by sub-agents or its own logic back to the runner.
+    *   **Asynchronous Generator:** It must be an `async` generator function (`async*`).
     *   **`ctx` (InvocationContext):** Provides access to crucial runtime information, most importantly `ctx.session.state`, which is the primary way to share data between steps orchestrated by your custom agent.
 
 **Key Capabilities within the Core Asynchronous Method:**

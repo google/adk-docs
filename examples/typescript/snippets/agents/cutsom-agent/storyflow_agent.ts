@@ -24,7 +24,7 @@ import {
   Event,
   isFinalResponse,
 } from '@google/adk';
-import { Content, Part } from '@google/genai';
+import { createUserContent } from "@google/genai";
 
 // --- Constants ---
 const APP_NAME = "story_app_ts";
@@ -234,16 +234,11 @@ async function callAgent(runner: InMemoryRunner, userInputTopic: string) {
   currentSession.state["topic"] = userInputTopic;
   console.log(`Updated session state topic to: ${userInputTopic}`);
 
-  const content: Content = {
-    role: 'user',
-    parts: [{ text: `Generate a story about: ${userInputTopic}` }],
-  };
-
   let finalResponse = "No final response captured.";
   for await (const event of runner.runAsync({
     userId: USER_ID,
     sessionId: SESSION_ID,
-    newMessage: content
+    newMessage: createUserContent(`Generate a story about: ${userInputTopic}`)
   })) {
     if (isFinalResponse(event) && event.content?.parts?.length) {
       console.log(`Potential final response from [${event.author}]: ${event.content.parts.map(part => part.text ?? '').join('')}`);
