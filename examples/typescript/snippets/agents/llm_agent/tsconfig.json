@@ -1,12 +1,23 @@
 {
   "compilerOptions": {
+    /* Build Options */
     "target": "es2020",
-    "module": "commonjs",
-    "ignoreDeprecations": "6.0",
-    "moduleResolution": "node",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "outDir": "./dist",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+
+    /* Strictness */
     "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+
+    /* Module Interop */
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-  }
+    "forceConsistentCasingInFileNames": true
+  },
+  "exclude": ["node_modules", "dist"]
 }
