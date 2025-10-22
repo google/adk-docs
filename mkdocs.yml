@@ -124,6 +124,7 @@ nav:
   - Get started:
     - get-started/index.md
     - Python: get-started/python.md
+    - JavaScript: get-started/javascript.md
     - Java: get-started/java.md
   - Build your agent:
     - tutorials/index.md
