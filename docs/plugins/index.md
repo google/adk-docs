@@ -108,37 +108,37 @@ methods, as shown in the following code example:
      * A custom plugin that counts agent and tool invocations.
      */
     export class CountInvocationPlugin extends BasePlugin {
-    public agentCount = 0;
-    public toolCount = 0;
-    public llmRequestCount = 0;
+        public agentCount = 0;
+        public toolCount = 0;
+        public llmRequestCount = 0;
 
-    constructor() {
-        super("count_invocation");
-    }
+        constructor() {
+            super("count_invocation");
+        }
 
-    /**
-     * Count agent runs.
-     */
-    async beforeAgentCallback(
-        agent: BaseAgent,
-        callbackContext: CallbackContext
-    ): Promise<Content | undefined> {
-        this.agentCount++;
-        console.log(`[Plugin] Agent run count: ${this.agentCount}`);
-        return undefined;
-    }
+        /**
+         * Count agent runs.
+         */
+        async beforeAgentCallback(
+            agent: BaseAgent,
+            callbackContext: CallbackContext
+        ): Promise<Content | undefined> {
+            this.agentCount++;
+            console.log(`[Plugin] Agent run count: ${this.agentCount}`);
+            return undefined;
+        }
 
-    /**
-     * Count LLM requests.
-     */
-    async beforeModelCallback(
-        callbackContext: CallbackContext,
-        llmRequest: LlmRequest
-    ): Promise<LlmResponse | undefined> {
-        this.llmRequestCount++;
-        console.log(`[Plugin] LLM request count: ${this.llmRequestCount}`);
-        return undefined;
-    }
+        /**
+         * Count LLM requests.
+         */
+        async beforeModelCallback(
+            callbackContext: CallbackContext,
+            llmRequest: LlmRequest
+        ): Promise<LlmResponse | undefined> {
+            this.llmRequestCount++;
+            console.log(`[Plugin] LLM request count: ${this.llmRequestCount}`);
+            return undefined;
+        }
     }    
     ```
 
@@ -219,64 +219,64 @@ a simple ADK agent.
     import { CountInvocationPlugin } from "./count_plugin.ts";
 
     const HelloWorldInput = z.object({
-    query: z.string().describe("The query string to print."),
+        query: z.string().describe("The query string to print."),
     });
 
     async function helloWorld({ query }: z.infer<typeof HelloWorldInput>): Promise<{ result: string }> {
-    const output = `Hello world: query is [${query}]`;
-    console.log(output);
-    // Tools should return a string or JSON-compatible object
-    return { result: output };
+        const output = `Hello world: query is [${query}]`;
+        console.log(output);
+        // Tools should return a string or JSON-compatible object
+        return { result: output };
     }
 
     const helloWorldTool = new FunctionTool({
-    name: "hello_world",
-    description: "Prints hello world with user query.",
-    parameters: HelloWorldInput,
-    execute: helloWorld,
+        name: "hello_world",
+        description: "Prints hello world with user query.",
+        parameters: HelloWorldInput,
+        execute: helloWorld,
     });
 
     const rootAgent = new LlmAgent({
-    model: "gemini-2.5-flash", // Preserved from your Python code
-    name: "hello_world",
-    description: "Prints hello world with user query.",
-    instruction: `Use hello_world tool to print hello world and user query.`,
-    tools: [helloWorldTool],
+        model: "gemini-2.5-flash", // Preserved from your Python code
+        name: "hello_world",
+        description: "Prints hello world with user query.",
+        instruction: `Use hello_world tool to print hello world and user query.`,
+        tools: [helloWorldTool],
     });
 
     /**
     * Main entry point for the agent.
     */
     async function main(): Promise<void> {
-    const prompt = "hello world";
-    const runner = new InMemoryRunner({
-        agent: rootAgent,
-        appName: "test_app_with_plugin",
+        const prompt = "hello world";
+        const runner = new InMemoryRunner({
+            agent: rootAgent,
+            appName: "test_app_with_plugin",
 
-        // Add your plugin here. You can add multiple plugins.
-        plugins: [new CountInvocationPlugin()],
-    });
+            // Add your plugin here. You can add multiple plugins.
+            plugins: [new CountInvocationPlugin()],
+        });
 
-    // The rest is the same as starting a regular ADK runner.
-    const session = await runner.sessionService.createSession({
-        userId: "user",
-        appName: "test_app_with_plugin",
-    });
+        // The rest is the same as starting a regular ADK runner.
+        const session = await runner.sessionService.createSession({
+            userId: "user",
+            appName: "test_app_with_plugin",
+        });
 
-    // runAsync returns an async iterable stream in TypeScript
-    const runStream = runner.runAsync({
-        userId: "user",
-        sessionId: session.id,
-        newMessage: {
-        role: "user",
-        parts: [{ text: prompt }],
-        },
-    });
+        // runAsync returns an async iterable stream in TypeScript
+        const runStream = runner.runAsync({
+            userId: "user",
+            sessionId: session.id,
+            newMessage: {
+            role: "user",
+            parts: [{ text: prompt }],
+            },
+        });
 
-    // Use 'for await...of' to loop through the async stream
-    for await (const event of runStream) {
-        console.log(`** Got event from ${event.author}`);
-    }
+        // Use 'for await...of' to loop through the async stream
+        for await (const event of runStream) {
+            console.log(`** Got event from ${event.author}`);
+        }
     }
 
     main();
