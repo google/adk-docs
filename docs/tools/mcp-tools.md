@@ -42,6 +42,32 @@ The `MCPToolset` class is ADK's primary mechanism for integrating tools from an 
 4.  **Proxying Tool Calls:** When your `LlmAgent` decides to use one of these tools, `MCPToolset` transparently proxies the call (using the `call_tool` MCP method) to the MCP server, sends the necessary arguments, and returns the server's response back to the agent.
 5.  **Filtering (Optional):** You can use the `tool_filter` parameter when creating an `MCPToolset` to select a specific subset of tools from the MCP server, rather than exposing all of them to your agent.
 
+### Dynamic Headers with `header_provider`
+
+You can provide a `header_provider` to the `McpToolset` to dynamically generate headers for each request. This is useful for multi-tenancy or other scenarios where headers need to change based on the context.
+
+**Example:**
+```python
+from google.adk.tools.mcp_tool.mcp_toolset import McpToolset
+from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPConnectionParams
+
+root_agent = LlmAgent(
+    model='gemini-2.0-flash',
+    name='tenant_agent',
+    instruction="...",
+    tools=[
+        McpToolset(
+            connection_params=StreamableHTTPConnectionParams(
+                url='http://localhost:3000/mcp',
+            ),
+            tool_filter=['get_tenant_data'],
+            header_provider=lambda ctx: {'X-Tenant-ID': 'tenant1'},
+        )
+    ],
+)
+```
+For a complete example, see the [mcp_dynamic_header_agent sample](https://github.com/google/adk-python/tree/main/contributing/samples/mcp_dynamic_header_agent).
+
 The following examples demonstrate how to use `MCPToolset` within the `adk web` development environment. For scenarios where you need more fine-grained control over the MCP connection lifecycle or are not using `adk web`, refer to the "Using MCP Tools in your own Agent out of `adk web`" section later in this page.
 
 ### Example 1: File System MCP Server
@@ -781,7 +807,6 @@ if __name__ == '__main__':
     asyncio.run(async_main())
   except Exception as e:
     print(f"An error occurred: {e}")
-```
 
 
 ## Key considerations
