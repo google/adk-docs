@@ -103,8 +103,7 @@ export const rootAgent = new LlmAgent({
 });
 
 export class CustomPolicyEngine implements BasePolicyEngine {
-  // @ts-ignore
-  async evaluate(context: ToolCallPolicyContext): Promise<PolicyCheckResult> {
+  async evaluate(_context: ToolCallPolicyContext): Promise<PolicyCheckResult> {
     // Default permissive implementation
     return Promise.resolve({
       outcome: PolicyOutcome.CONFIRM,
@@ -114,6 +113,7 @@ export class CustomPolicyEngine implements BasePolicyEngine {
 }
 
 async function main() {
+  const SEPARATOR = '-'.repeat(60);
   const userId = 'test_user';
   const appName = rootAgent.name;
   const runner = new InMemoryRunner({
@@ -147,7 +147,7 @@ async function main() {
   }
 
   while (confirmationCalls.length > 0) {
-    console.log('------------------------------------------------------------');
+    console.log(SEPARATOR);
     console.log(
       `Confirmation requested for: ${confirmationCalls[0].name}(${JSON.stringify(confirmationCalls[0].args)})`
     );
@@ -175,7 +175,7 @@ async function main() {
       'User has approved. Sending confirmation response:',
       JSON.stringify(contentWithConfirmation, null, 4)
     );
-    console.log('------------------------------------------------------------');
+    console.log(SEPARATOR);
 
     for await (const e of runner.runAsync({
       userId,
