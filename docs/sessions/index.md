@@ -70,6 +70,14 @@ local testing, ADK also offers cloud-based and database service options.
     archive* potentially spanning across conversations. Managed by a
     `MemoryService`.
 
+## Context Compaction
+
+As conversations with an agent become longer, the amount of history (Events) that needs to be processed for each new turn can become very large. This can lead to increased latency and cost. To manage this, the ADK provides a feature called **Context Compaction**.
+
+Context Compaction works by summarizing older parts of the conversation history into a more compact form. This summary replaces the original events in the conversation history that is sent to the LLM, reducing the size of the context while still preserving the essential information from the past. This is particularly useful for long-running conversations where the agent needs to maintain context over many turns.
+
+You can configure context compaction at the application level, specifying how often it should be triggered and how the summarization should be performed.
+
 ## What's Next?
 
 In the following sections, we'll dive deeper into each of these components:
