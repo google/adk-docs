@@ -306,8 +306,8 @@ ADK includes specialized agents derived from `BaseAgent` that don't perform task
     class CheckConditionAgent extends BaseAgent { // Custom agent to check state        
         async *runAsyncImpl(ctx: InvocationContext): AsyncGenerator<Event> {
             const status = ctx.session.state['status'] || 'pending';
-            const isDone = (status === 'completed');
-            yield createEvent({ author: 'check_condition', actions: { escalate: isDone } as EventActions }); // Escalate if done
+            const isDone = status === 'completed';
+            yield createEvent({ author: 'check_condition', actions: createEventActions({ escalate: isDone }) });
         }
 
         async *runLiveImpl(ctx: InvocationContext): AsyncGenerator<Event> {
@@ -1232,7 +1232,7 @@ By combining ADK's composition primitives, you can implement various established
     class CheckStatusAndEscalate extends BaseAgent {
         async *runAsyncImpl(ctx: InvocationContext): AsyncGenerator<Event> {
             const status = ctx.session.state.quality_status;
-            const shouldStop = (status === 'pass');
+            const shouldStop = status === 'pass';
             if (shouldStop) {
                 yield createEvent({
                     author: 'StopChecker',
