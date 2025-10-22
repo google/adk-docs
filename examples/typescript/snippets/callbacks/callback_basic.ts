@@ -22,7 +22,8 @@ import {
   Event,
   isFinalResponse,
 } from "@google/adk";
-import { Content } from "@google/genai";
+import { createUserContent } from "@google/genai";
+import type { Content } from "@google/genai";
 
 const MODEL_NAME = "gemini-2.5-flash";
 const APP_NAME = "basic_callback_app";
@@ -55,7 +56,7 @@ const myAgent = new LlmAgent({
 
 // Agent Interaction
 async function callAgentAsync(query: string) {
-  const content: Content = { role: "user", parts: [{ text: query }] };
+  const content: Content = createUserContent(query);
 
   // The InMemoryRunner creates and manages its own session service.
   const runner = new InMemoryRunner({
