@@ -54,5 +54,5 @@ These research tasks are independent.  Using a `ParallelAgent` allows them to ru
         ```
     === "Typescript"
         ```typescript
-         --8<-- "examples/typescript/snippets/agents/workflow/parallel_agent_web_research.ts:init"
+         --8<-- "examples/typescript/snippets/agents/workflow-agents/parallel_agent_web_research.ts:init"
         ```

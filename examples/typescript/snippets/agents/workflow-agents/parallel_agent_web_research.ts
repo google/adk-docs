@@ -158,33 +158,19 @@ const rootAgent = sequentialPipelineAgent;
 
 // --- 5. Running the Agent (Using InMemoryRunner for local testing) This works in Notebooks and script file ---
 
-async function main() {
-  // Use InMemoryRunner: Ideal for quick prototyping and local testing
-  const runner = new InMemoryRunner({agent: rootAgent, appName: APP_NAME});
-  console.log(`InMemoryRunner created for agent "${rootAgent.name}".`);
+async function callSequentialPipeline(runner: InMemoryRunner, query: string, userId: string, sessionId: string) {
+    console.log(`--- Running Research & Synthesis Pipeline for query: "${query}" ---`);
+    // The initial query mainly triggers the pipeline; the research topics are fixed in the agents for this example.
+    const content = createUserContent(query);
+    let finalResponseText: string | undefined = undefined;
+    // Keep track of which researchers have reported
+    const researcherOutputs: {[key: string]: string} = {};
+    const researcherNames = new Set(["RenewableEnergyResearcher", "EVResearcher", "CarbonCaptureResearcher"]);
+    const mergerAgentName = "SynthesisAgent"; // Name of the final agent in sequence
 
-  // We still need access to the session service (bundled in InMemoryRunner)
-  // to create the session instance for the run.
-  const sessionService = runner.sessionService;
-  const session = await sessionService.createSession({appName: APP_NAME, userId: USER_ID, sessionId: SESSION_ID});
-  console.log(`Session "${SESSION_ID}" created for direct run.`);
-
-
-  async function callSequentialPipeline(query: string, userId: string, sessionId: string) {
-      console.log(`
---- Running Research & Synthesis Pipeline for query: "${query}" ---
-`);
-      // The initial query mainly triggers the pipeline; the research topics are fixed in the agents for this example.
-      const content = createUserContent(query);
-      let finalResponseText: string | null = null;
-      // Keep track of which researchers have reported
-      const researcherOutputs: {[key: string]: string} = {};
-      const researcherNames = new Set(["RenewableEnergyResearcher", "EVResearcher", "CarbonCaptureResearcher"]);
-      const mergerAgentName = "SynthesisAgent"; // Name of the final agent in sequence
-
-      console.log("Starting pipeline...");
-      try {
-          for await (const event of runner.runAsync({
+    console.log("Starting pipeline...");
+    try {
+        for await (const event of runner.runAsync({
             userId,
             sessionId,
             newMessage: content,
@@ -202,27 +188,37 @@ async function main() {
                 }
             }
             // Check if it's the final response from the merger agent (the last agent in the sequence)
-            else if (isFinal && authorName === mergerAgentName && event.content && event.content.parts) {
-                 finalResponseText = event.content.parts[0].text?.trim() ?? null;
-                 console.log(`<<< Final Synthesized Response (from ${authorName}): ${finalResponseText}`);
-                 // Since this is the last agent in the sequence, we can break after its final response
-                 break;
+            else if (isFinal && authorName === mergerAgentName && event.content?.parts?.length) {
+                    finalResponseText = event.content.parts[0].text?.trim();
+                    console.log(`<<< Final Synthesized Response (from ${authorName}): ${finalResponseText}`);
+                    // Since this is the last agent in the sequence, we can break after its final response
+                    break;
             } else if (event.errorMessage) {
-                 console.log(`  -> Error from ${authorName}: ${event.errorMessage}`);
+                    console.log(`  -> Error from ${authorName}: ${event.errorMessage}`);
             }
         }
-        if (finalResponseText === null) {
-             console.log("<<< Pipeline finished but did not produce the expected final text response from the SynthesisAgent.");
-        }
-      } catch (e) {
-          console.log(`
-❌ An error occurred during agent execution: ${e}`);
-      }
-  }
+    if (!finalResponseText) {
+            console.log("<<< Pipeline finished but did not produce the expected final text response from the SynthesisAgent.");
+    }
+    } catch (e) {
+        console.log(`\n❌ An error occurred during agent execution: ${e}`);
+    }
+}
+
+async function main() {
+  // Use InMemoryRunner: Ideal for quick prototyping and local testing
+  const runner = new InMemoryRunner({agent: rootAgent, appName: APP_NAME});
+  console.log(`InMemoryRunner created for agent "${rootAgent.name}".`);
+
+  // We still need access to the session service (bundled in InMemoryRunner)
+  // to create the session instance for the run.
+  const sessionService = runner.sessionService;
+  await sessionService.createSession({appName: APP_NAME, userId: USER_ID, sessionId: SESSION_ID});
+  console.log(`Session "${SESSION_ID}" created for direct run.`);
 
   const initialTriggerQuery = "Summarize recent sustainable tech advancements.";
 
-  await callSequentialPipeline(initialTriggerQuery, USER_ID, SESSION_ID);
+  await callSequentialPipeline(runner, initialTriggerQuery, USER_ID, SESSION_ID);
 }
 
 main();
