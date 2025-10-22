@@ -135,7 +135,7 @@ const refinementLoop = new LoopAgent({
 
 // STEP 3: Overall Sequential Pipeline
 // For ADK tools compatibility, the root agent must be named `root_agent`
-const rootAgent = new SequentialAgent({
+export const rootAgent = new SequentialAgent({
     name: "IterativeWritingPipeline",
     subAgents: [
         initialWriterAgent, // Run first to create initial doc
