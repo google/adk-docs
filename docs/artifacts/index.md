@@ -64,16 +64,12 @@ In ADK, **Artifacts** represent a crucial mechanism for managing named, versione
 
     ```typescript
     import type { Part } from '@google/genai';
+    import { createPartFromBase64 } from '@google/genai';
 
     // Assume 'imageBytes' contains the binary data of a PNG image
     const imageBytes = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]); // Placeholder
 
-    const imageArtifact: Part = {
-        inlineData: {
-            mimeType: "image/png",
-            data: Buffer.from(imageBytes).toString('base64'), // Data should be base64 encoded string
-        }
-    };
+    const imageArtifact: Part = createPartFromBase64(imageBytes.toString('base64'), "image/png");
 
     console.log(`Artifact MIME Type: ${imageArtifact.inlineData?.mimeType}`);
     // Note: Accessing raw bytes would require decoding from base64.
@@ -244,14 +240,13 @@ Understanding artifacts involves grasping a few key components: the service that
 
     ```typescript
     import type { Part } from '@google/genai';
+    import { createPartFromBase64 } from '@google/genai';
 
     // Example: Creating an artifact Part from raw bytes
     const pdfBytes = new Uint8Array([0x25, 0x50, 0x44, 0x46, 0x2d, 0x31, 0x2e, 0x34]); // Your raw PDF data
     const pdfMimeType = "application/pdf";
 
-    const pdfArtifact: Part = {
-        inlineData: { data: Buffer.from(pdfBytes).toString('base64'), mimeType: pdfMimeType }
-    };
+    const pdfArtifact: Part = createPartFromBase64(pdfBytes.toString('base64'), pdfMimeType);
     console.log(`Created TypeScript artifact with MIME Type: ${pdfArtifact.inlineData?.mimeType}`);
     ```
 
@@ -503,16 +498,13 @@ The artifact interaction methods are available directly on instances of `Callbac
 
     ```typescript
     import type { Part } from '@google/genai';
+    import { createPartFromBase64 } from '@google/genai';
     import { CallbackContext } from '@google/adk';
 
     async function saveGeneratedReport(context: CallbackContext, reportBytes: Uint8Array): Promise<void> {
         /**Saves generated PDF report bytes as an artifact.*/
-        const reportArtifact: Part = {
-            inlineData: {
-                data: Buffer.from(reportBytes).toString('base64'),
-                mimeType: "application/pdf"
-            }
-        };
+        const reportArtifact: Part = createPartFromBase64(reportBytes.toString('base64'), "application/pdf");
+
         const filename = "generated_report.pdf";
 
         try {
@@ -522,7 +514,7 @@ The artifact interaction methods are available directly on instances of `Callbac
             console.error(`Error saving TypeScript artifact: ${e.message}. Is ArtifactService configured in Runner?`);
         }
     }
-        ```
+    ```
 
 #### Loading Artifacts
 
