@@ -44,6 +44,36 @@ async function get_weather({city}: {city: string}): Promise<ToolResult> {
   }
 }
 
+/**
+ * Returns the current time in a specified city.
+ *
+ * @param city The name of the city for which to retrieve the current time.
+ * @returns status and result or error msg.
+ */
+async function get_current_time({city}: {city: string}): Promise<ToolResult> {
+  if (city.toLowerCase() === 'new york') {
+    const tzIdentifier = 'America/New_York';
+    try {
+      const now = new Date();
+      const report =
+          `The current time in ${city} is ${now.toLocaleString('en-US', {
+            timeZone: tzIdentifier
+          })} ${tzIdentifier}`;
+      return {'status': 'success', 'report': report};
+    } catch (e) {
+      return {
+        'status': 'error',
+        'error_message': `Error getting time for ${city}: ${e}`,
+      };
+    }
+  } else {
+    return {
+      'status': 'error',
+      'error_message': `Sorry, I don't have timezone information for ${city}.`,
+    };
+  }
+}
+
 const getWeatherTool = new FunctionTool({
   name: 'get_weather',
   description: 'Retrieves the current weather report for a specified city.',
@@ -53,6 +83,15 @@ const getWeatherTool = new FunctionTool({
   execute: get_weather,
 });
 
+const getCurrentTimeTool = new FunctionTool({
+  name: 'get_current_time',
+  description: 'Returns the current time in a specified city.',
+  parameters: z.object({
+    city: z.string().describe('The name of the city.'),
+  }),
+  execute: get_current_time,
+});
+
 export const rootAgent = new LlmAgent({
   name: 'weather_time_agent',
   model: 'gemini-2.5-flash',
@@ -60,7 +99,7 @@ export const rootAgent = new LlmAgent({
       'Agent to answer questions about the time and weather in a city.',
   instruction:
       'You are a helpful agent who can answer user questions about the time and weather in a city.',
-  tools: [getWeatherTool],
+  tools: [getWeatherTool, getCurrentTimeTool],
 });
 
 export class CustomPolicyEngine implements BasePolicyEngine {
@@ -88,7 +127,8 @@ async function main() {
     userId,
   });
 
-  const content = createUserContent('What is the weather in New York?');
+  const content =
+      createUserContent('What is the weather in New York? And the time?');
   console.log(content);
 
   let confirmationCalls: FunctionCall[] = [];
@@ -106,23 +146,35 @@ async function main() {
     }
   }
 
-  if (confirmationCalls.length > 0) {
+  while (confirmationCalls.length > 0) {
     console.log('------------------------------------------------------------');
-    console.log('Confirmation requested. Simulating user approval.');
+    console.log(
+      `Confirmation requested for: ${confirmationCalls[0].name}(${JSON.stringify(confirmationCalls[0].args)})`
+    );
+    console.log('Simulating a user thinking for 3 seconds...');
+    // Simulate a user taking time to respond before confirming.
+    await new Promise((resolve) => setTimeout(resolve, 3000));
 
-    // For simplicity, we confirm the first request.
-    // const callToConfirm = confirmationCalls[0];
-    const confirmationResponse: FunctionResponse = {
-      name: REQUEST_CONFIRMATION_FUNCTION_CALL_NAME,
-      response: {confirmed: true},
+    const call = confirmationCalls.shift();
+    if (!call) {
+      break;
+    }
+    const functionResponse = new FunctionResponse();
+    functionResponse.name = REQUEST_CONFIRMATION_FUNCTION_CALL_NAME;
+    functionResponse.response = {
+      confirmed: true,
     };
+    functionResponse.id = call.id;
 
     const contentWithConfirmation: Content = {
       role: 'user',
-      parts: [{functionResponse: confirmationResponse}],
+      parts: [{functionResponse: functionResponse}],
     };
 
-    console.log('Sending confirmation:', JSON.stringify(contentWithConfirmation, null, 2));
+    console.log(
+      'User has approved. Sending confirmation response:',
+      JSON.stringify(contentWithConfirmation, null, 4)
+    );
     console.log('------------------------------------------------------------');
 
     for await (const e of runner.runAsync({
@@ -131,11 +183,13 @@ async function main() {
       newMessage: contentWithConfirmation,
     })) {
       if (e.content?.parts?.[0]?.text) {
-        console.log(`${e.author}: ${JSON.stringify(e.content, null, 2)}`);
+        console.log(`${e.author}: ${JSON.stringify(e.content, null, 4)}`);
+      }
+      const newConfirmationCalls = getAskUserConfirmationFunctionCalls(e);
+      if (newConfirmationCalls.length > 0) {
+        confirmationCalls.push(...newConfirmationCalls);
       }
     }
-  } else {
-    console.log('No confirmation was requested. Exiting.');
   }
 }
 
