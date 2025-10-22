@@ -57,6 +57,8 @@
   overflow: visible !important;
 }
 
+/* Community Resources cards */
+
 .resource-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -126,4 +128,62 @@
 }
 .translation-list a:hover {
     background: white; border-color: #4285F4; transform: translateY(-2px);
+}
+
+/* Tool cards */
+
+.tool-card-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin: 1.5rem 0;
+}
+.tool-card {
+    width: 280px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    text-decoration: none !important;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+.tool-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    border-color: #4285F4;
+}
+.tool-card-image-wrapper {
+    width: 70px;
+    height: auto;
+    background-color: transparent;
+    padding: 0.5rem;
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
+.tool-card-image-wrapper img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+.tool-card-content {
+    padding: 0.8rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+.tool-card-content h3 {
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: #1a202c;
+    margin: 0;
+}
+.tool-card-content p {
+    font-size: 0.75rem;
+    color: #4a5568;
+    line-height: 1.5;
+    margin-top: 0.2rem;
+    flex-grow: 1;
 }
