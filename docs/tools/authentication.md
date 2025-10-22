@@ -365,6 +365,20 @@ if auth_request_function_call_id and auth_config:
 
 ```
 
+!!! note "Note: Authorization response with Resume feature"
+
+    If your ADK agent workflow is configured with the 
+    [Resume](/adk-docs/runtime/resume/) feature, you also must include
+    the Invocation ID (`invocation_id`) parameter with the authorization
+    response. The Invocation ID you provide must be the same invocation
+    that generated the authorization request, otherwise the system
+    starts a new invocation with the authorization response. If your
+    agent uses the Resume feature, consider including the Invocation ID
+    as a parameter with your authorization request, so it can be included
+    with the authorization response. For more details on using the Resume 
+    feature, see
+    [Resume stopped agents](/adk-docs/runtime/resume/).
+
 **Step 5: ADK Handles Token Exchange & Tool Retry and gets Tool result**
 
 * ADK receives the `FunctionResponse` for `adk_request_credential`.  
