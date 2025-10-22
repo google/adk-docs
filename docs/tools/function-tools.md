@@ -244,7 +244,7 @@ Agent client received an event with long running function calls and check the st
 !!! note "Note: Long running function response with Resume feature"
 
     If your ADK agent workflow is configured with the 
-    [Resume](/adk-dos/runtime/resume/) feature, you also must include
+    [Resume](/adk-docs/runtime/resume/) feature, you also must include
     the Invocation ID (`invocation_id`) parameter with the long running 
     function response. The Invocation ID you provide must be the same 
     invocation that generated the long running function request, otherwise 
@@ -253,7 +253,7 @@ Agent client received an event with long running function calls and check the st
     as a parameter with your long running function request, so it can be
     included with the response. For more details on using the Resume 
     feature, see
-    [Resume stopped agents](/adk-dos/runtime/resume/).
+    [Resume stopped agents](/adk-docs/runtime/resume/).
 
 ??? Tip "Applies to only Java ADK"
 
