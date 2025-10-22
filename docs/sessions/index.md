@@ -70,6 +70,20 @@ local testing, ADK also offers cloud-based and database service options.
     archive* potentially spanning across conversations. Managed by a
     `MemoryService`.
 
+## Rewinding a Session
+
+You can rewind a session to a previous state using the `runner.rewind_async` method. This is useful for debugging or re-running parts of a conversation.
+
+**Example:**
+```python
+await runner.rewind_async(
+    user_id="test_user",
+    session_id="test_session",
+    rewind_before_invocation_id="<invocation_id>"
+)
+```
+For a complete example, see the [rewind_session sample](https://github.com/google/adk-python/tree/main/contributing/samples/rewind_session).
+
 ## What's Next?
 
 In the following sections, we'll dive deeper into each of these components:
