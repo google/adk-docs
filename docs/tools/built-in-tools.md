@@ -176,7 +176,7 @@ These are a set of tools aimed to provide integration with BigQuery, namely:
 * **`get_dataset_info`**: Fetches metadata about a BigQuery dataset.
 * **`list_table_ids`**: Fetches table ids present in a BigQuery dataset.
 * **`get_table_info`**: Fetches metadata about a BigQuery table.
-* **`execute_sql`**: Runs a SQL query in BigQuery and fetch the result.
+* **`execute_sql`**: Runs a SQL query in BigQuery and fetch the result. This tool includes a `dry_run` parameter that allows you to validate a query and get information about it without actually running it.
 * **`forecast`**: Runs a BigQuery AI time series forecast using the `AI.FORECAST` function.
 * **`ask_data_insights`**: Answers questions about data in BigQuery tables using natural language.
 
