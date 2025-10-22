@@ -8,7 +8,7 @@
     "build": "tsc",
     "clean": "rm -rf dist"
   },
-  "keywords": ["adk", "google", "agent", "typescript", "gemini"],
+  "keywords": ["adk", "google", "agent", "typescript", "gemini", "adk-js", "adk-ts", "javascript"],
   "author": "",
   "license": "Apache-2.0",
   "type": "commonjs",

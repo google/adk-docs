@@ -52,4 +52,7 @@ This ensures the code is written, *then* reviewed, and *finally* refactored, in 
         --8<-- "examples/java/snippets/src/main/java/agents/workflow/SequentialAgentExample.java:init"
         ```
 
-    
+    === "Typescript"
+        ```typescript
+        --8<-- "examples/typescript/snippets/agents/workflow/sequential_agent_code_development_agent.ts:init"
+        ```
