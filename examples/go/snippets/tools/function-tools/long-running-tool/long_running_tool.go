@@ -24,17 +24,25 @@ type CreateTicketArgs struct {
 }
 
 // CreateTicketResults defines the *initial* output of our long-running tool.
-// In this simulation, the tool immediately returns, but in a real scenario,
-// it would start a background task.
 type CreateTicketResults struct {
-	Status string `json:"status"`
+	Status   string `json:"status"`
+	TicketId string `json:"ticket_id"`
 }
 
 // createTicketAsync simulates the *initiation* of a long-running ticket creation task.
 func createTicketAsync(ctx tool.Context, args CreateTicketArgs) CreateTicketResults {
 	log.Printf("TOOL_EXEC: 'create_ticket_long_running' called with urgency: %s (Call ID: %s)\n", args.Urgency, ctx.FunctionCallID())
-	// This is the initial response. The actual ticket ID will be provided later.
-	return CreateTicketResults{Status: "started"}
+
+	// "Generate" a ticket ID and return it in the initial response.
+	ticketID := "TICKET-ABC-123"
+	log.Printf("ACTION: Generated Ticket ID: %s for Call ID: %s\n", ticketID, ctx.FunctionCallID())
+
+	// In a real application, you would save the association between the
+	// FunctionCallID and the ticketID to handle the async response later.
+	return CreateTicketResults{
+		Status:   "started",
+		TicketId: ticketID,
+	}
 }
 
 func createTicketAgent(ctx context.Context) (agent.Agent, error) {
@@ -127,27 +135,11 @@ func main() {
 	}
 	fmt.Printf("ACTION: Captured FunctionCall ID: %s\n", funcCallID)
 
-	// --- Turn 2: App provides the ticket_id after async processing. ---
+	// --- Turn 2: App provides the final status of the ticket. ---
+	// In a real application, the ticketID would be retrieved from a database
+	// using the funcCallID. For this example, we'll use the same ID.
 	ticketID := "TICKET-ABC-123"
-	willContinue := true // Signal that more updates will follow.
-	ticketCreatedResponse := &genai.FunctionResponse{
-		Name: "create_ticket_long_running",
-		ID:   funcCallID,
-		Response: map[string]any{
-			"status":    "pending",
-			"ticket_id": ticketID,
-		},
-		WillContinue: &willContinue,
-	}
-	appResponseWithTicketID := &genai.Content{
-		Role:  string(genai.RoleUser),
-		Parts: []*genai.Part{{FunctionResponse: ticketCreatedResponse}},
-	}
-	runTurn(ctx, r, session.Session.ID(), "Turn 2: App provides ticket_id", appResponseWithTicketID)
-	fmt.Printf("ACTION: Sent ticket_id %s to agent.\n", ticketID)
-
-	// --- Turn 3: App provides the final status of the ticket. ---
-	willContinue = false // Signal that this is the final response.
+	willContinue := false // Signal that this is the final response.
 	ticketStatusResponse := &genai.FunctionResponse{
 		Name: "create_ticket_long_running",
 		ID:   funcCallID,
@@ -161,22 +153,20 @@ func main() {
 		Role:  string(genai.RoleUser),
 		Parts: []*genai.Part{{FunctionResponse: ticketStatusResponse}},
 	}
-	runTurn(ctx, r, session.Session.ID(), "Turn 3: App provides ticket status", appResponseWithStatus)
+	runTurn(ctx, r, session.Session.ID(), "Turn 2: App provides ticket status", appResponseWithStatus)
 	fmt.Println("Long running function completed successfully.")
 }
 
 // printEventSummary provides a readable log of agent and LLM interactions.
 func printEventSummary(event *session.Event, turnLabel string) {
-	if event.LLMResponse != nil && event.LLMResponse.Content != nil {
-		for _, part := range event.LLMResponse.Content.Parts {
-			// Check for a text part.
-			if part.Text != "" {
-				fmt.Printf("[%s][%s_TEXT]: %s\n", turnLabel, event.Author, part.Text)
-			}
-			// Check for a function call part.
-			if fc := part.FunctionCall; fc != nil {
-				fmt.Printf("[%s][%s_CALL]: %s(%v) ID: %s\n", turnLabel, event.Author, fc.Name, fc.Args, fc.ID)
-			}
+	for _, part := range event.LLMResponse.Content.Parts {
+		// Check for a text part.
+		if part.Text != "" {
+			fmt.Printf("[%s][%s_TEXT]: %s\n", turnLabel, event.Author, part.Text)
+		}
+		// Check for a function call part.
+		if fc := part.FunctionCall; fc != nil {
+			fmt.Printf("[%s][%s_CALL]: %s(%v) ID: %s\n", turnLabel, event.Author, fc.Name, fc.Args, fc.ID)
 		}
 	}
 }
