@@ -1414,10 +1414,18 @@ By combining ADK's composition primitives, you can implement various established
 
 A more advanced and structured way to implement Human-in-the-Loop is by using a `PolicyEngine`. This approach allows you to define policies that can trigger a confirmation step from a user before a tool is executed. The `SecurityPlugin` intercepts a tool call, consults the `PolicyEngine`, and if the policy dictates, it will automatically request user confirmation. This pattern is more robust for enforcing governance and security rules.
 
-!!! Note "Recommended Pattern"
-    The Policy-based pattern is the recommended approach for implementing Human-in-the-Loop workflows going forward. Support in other ADK languages is planned for future releases.
+Here's how it works:
 
-A conceptual example of using a `CustomPolicyEngine` to require user confirmation before executing tools is shown below.
+1.  **`SecurityPlugin`**: You add this plugin to your `Runner`. It acts as an interceptor for all tool calls.
+2.  **`BasePolicyEngine`**: You create a custom class that implements this interface. Its `evaluate()` method contains your logic to decide if a tool call needs confirmation.
+3.  **`PolicyOutcome.CONFIRM`**: When your `evaluate()` method returns this outcome, the `SecurityPlugin` pauses the tool execution and generates a special `FunctionCall` using `getAskUserConfirmationFunctionCalls`.
+4.  **Application Handling**: Your application code receives this special function call and presents the confirmation request to the user.
+5.  **User Confirmation**: Once the user confirms, your application sends a `FunctionResponse` back to the agent, which allows the `SecurityPlugin` to proceed with the original tool execution.
+
+!!! Note "TypeScript Recommended Pattern"
+    The Policy-based pattern is the recommended approach for implementing Human-in-the-Loop workflows in TypeScript. Support in other ADK languages is planned for future releases.
+
+A conceptual example of using a `CustomPolicyEngine` to require user confirmation before executing any tool is shown below.
 
 === "TypeScript"
 
