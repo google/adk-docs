@@ -9,7 +9,7 @@
   "license": "Apache-2.0",
   "type": "commonjs",
   "dependencies": {
-    "@google/adk": "^0.1.1",
+    "@google/adk": "^0.1.2",
     "@opentelemetry/api": "^1.9.0",
     "ts-node": "^10.9.2",
     "zod": "^3.25.76"

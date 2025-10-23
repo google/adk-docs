@@ -74,7 +74,7 @@ const reimburseTool = new FunctionTool({
 });
 
 // 3. Use the tool in an Agent
-const fileProcessorAgent = new LlmAgent({
+const reimbursementAgent = new LlmAgent({
   model: "gemini-2.5-flash",
   name: "reimbursement_agent",
   instruction: `
@@ -103,71 +103,70 @@ async function setupSessionAndRunner() {
     sessionId: SESSION_ID,
   });
   const runner = new Runner({
-    agent: fileProcessorAgent,
+    agent: reimbursementAgent,
     appName: APP_NAME,
     sessionService: sessionService,
   });
   return {session, runner};
 }
 
+function getLongRunningFunctionCall(event: Event): FunctionCall | undefined {
+  // Get the long-running function call from the event
+  if (
+    !event.longRunningToolIds ||
+    !event.content ||
+    !event.content.parts
+  ) {
+    return;
+  }
+  for (const part of event.content.parts) {
+    if (
+      part &&
+      part.functionCall &&
+      event.longRunningToolIds &&
+      part.functionCall.id &&
+      event.longRunningToolIds.includes(part.functionCall.id)
+    ) {
+      return part.functionCall;
+    }
+  }
+}
+
+function getFunctionResponse(
+  event: Event,
+  functionCallId: string
+): FunctionResponse | undefined {
+  // Get the function response for the function call with specified id.
+  if (!event.content || !event.content.parts) {
+    return;
+  }
+  for (const part of event.content.parts) {
+    if (
+      part &&
+      part.functionResponse &&
+      part.functionResponse.id === functionCallId
+    ) {
+      return part.functionResponse;
+    }
+  }
+}
+
 // Agent Interaction
 async function callAgentAsync(query: string) {
-  function getLongRunningFunctionCall(event: Event): FunctionCall | undefined {
-    // Get the long-running function call from the event
-    if (
-      !event.longRunningToolIds ||
-      !event.content ||
-      !event.content.parts
-    ) {
-      return;
-    }
-    for (const part of event.content.parts) {
-      if (
-        part &&
-        part.functionCall &&
-        event.longRunningToolIds &&
-        part.functionCall.id &&
-        event.longRunningToolIds.includes(part.functionCall.id)
-      ) {
-        return part.functionCall;
-      }
-    }
-  }
-
-  function getFunctionResponse(
-    event: Event,
-    functionCallId: string
-  ): FunctionResponse | undefined {
-    // Get the function response for the function call with specified id.
-    if (!event.content || !event.content.parts) {
-      return;
-    }
-    for (const part of event.content.parts) {
-      if (
-        part &&
-        part.functionResponse &&
-        part.functionResponse.id === functionCallId
-      ) {
-        return part.functionResponse;
-      }
-    }
-  }
-
+  let longRunningFunctionCall: FunctionCall | undefined;
+  let longRunningFunctionResponse: FunctionResponse | undefined;
+  let ticketId: string | undefined;
   const content: Content = createUserContent(query);
   const {session, runner} = await setupSessionAndRunner();
 
   console.log("\nRunning agent...");
-  const eventsAsync = runner.runAsync({
+  const events = runner.runAsync({
     sessionId: session.id,
     userId: USER_ID,
     newMessage: content,
   });
 
-  let longRunningFunctionCall: FunctionCall | undefined;
-  let longRunningFunctionResponse: FunctionResponse | undefined;
-  let ticketId: string | undefined;
-
-  for await (const event of eventsAsync) {
+  for await (const event of events) {
     // Use helper to check for the specific auth request event
     if (!longRunningFunctionCall) {
       longRunningFunctionCall = getLongRunningFunctionCall(event);
