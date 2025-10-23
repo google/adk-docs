@@ -84,4 +84,12 @@ text, audio, and video inputs, and they can provide text and audio output.
 
     - [Blog post: Google ADK + Vertex AI Live API](https://medium.com/google-cloud/google-adk-vertex-ai-live-api-125238982d5e)
 
+-   :material-console-line: **Blog post: Supercharge ADK Development with Claude Code Skills**
+
+    ---
+
+    This article demonstrates how to use Claude Code Skills to accelerate ADK development, with an example of building a Bidi-streaming chat app. Learn how to leverage AI-powered coding assistance to build better agents faster.
+
+    - [Blog post: Supercharge ADK Development with Claude Code Skills](https://medium.com/@kazunori279/supercharge-adk-development-with-claude-code-skills-d192481cbe72)
+
 </div>
