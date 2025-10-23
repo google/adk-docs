@@ -93,7 +93,7 @@ While you can include `*args` (variable positional arguments) and `**kwargs` (va
 
 #### Return Type
 
-The preferred return type for a Function Tool is a **dictionary** in Python or **Map** in Java. This allows you to structure the response with key-value pairs, providing context and clarity to the LLM. If your function returns a type other than a dictionary, the framework automatically wraps it into a dictionary with a single key named **"result"**.
+The preferred return type for a Function Tool is a **dictionary** in Python, a **Map** in Java, or an **object** in TypeScript. This allows you to structure the response with key-value pairs, providing context and clarity to the LLM. If your function returns a type other than a dictionary, the framework automatically wraps it into a dictionary with a single key named **"result"**.
 
 Strive to make your return values as descriptive as possible. *For example,* instead of returning a numeric error code, return a dictionary with an "error_message" key containing a human-readable explanation. **Remember that the LLM**, not a piece of code, needs to understand the result. As a best practice, include a "status" key in your return dictionary to indicate the overall outcome (e.g., "success", "error", "pending"), providing the LLM with a clear signal about the operation's state.
 
@@ -188,7 +188,7 @@ When using a `LongRunningFunctionTool`, your function can initiate the long-runn
 
 ### How it Works
 
-In Python, you wrap a function with `LongRunningFunctionTool`.  In Java, you pass a Method name to `LongRunningFunctionTool.create()`.
+In Python, you wrap a function with `LongRunningFunctionTool`. In Java, you pass a Method name to `LongRunningFunctionTool.create()`. In TypeScript, you instantiate the `LongRunningFunctionTool` class.
 
 
 1. **Initiation:** When the LLM calls the tool, your function starts the long-running operation.
@@ -251,6 +251,12 @@ Define your tool function and wrap it using the `LongRunningFunctionTool` class:
     }
     ```
 
+=== "TypeScript"
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/tools/function-tools/long-running-function-tool-example.ts:define_long_running_function"
+    ```
+
 ### Intermediate / Final result Updates
 
 Agent client received an event with long running function calls and check the status of the ticket. Then Agent client can send the intermediate or final response back to update the progress. The framework packages this value (even if it's None) into the content of the `FunctionResponse` sent back to the LLM.
@@ -310,6 +316,12 @@ Agent client received an event with long running function calls and check the st
 
     ```java
     --8<-- "examples/java/snippets/src/main/java/tools/LongRunningFunctionExample.java:full_code"
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/tools/function-tools/long-running-function-tool-example.ts
     ```
 
 
