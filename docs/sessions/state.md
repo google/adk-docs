@@ -285,9 +285,9 @@ This is the simplest method for saving an agent's final text response directly i
         sessionService: sessionService
     });
     const session = await sessionService.createSession({
-        appName: appName,
-        userId: userId,
-        sessionId: sessionId
+        appName,
+        userId,
+        sessionId
     });
     console.log(`Initial state: ${JSON.stringify(session.state)}`);
 
@@ -296,8 +296,8 @@ This is the simplest method for saving an agent's final text response directly i
     // to automatically create the stateDelta.
     const userMessage: Content = { parts: [{ text: "Hello" }] };
     for await (const event of runner.run({
-        userId: userId,
-        sessionId: sessionId,
+        userId,
+        sessionId,
         newMessage: userMessage
     })) {
         if (isFinalResponse(event)) {
@@ -306,7 +306,7 @@ This is the simplest method for saving an agent's final text response directly i
     }
 
     // --- Check Updated State ---
-    const updatedSession = await sessionService.getSession({ appName: appName, userId: userId, sessionId: sessionId });
+    const updatedSession = await sessionService.getSession({ appName, userId, sessionId });
     console.log(`State after agent run: ${JSON.stringify(updatedSession?.state)}`);
     // Expected output might include: {"last_greeting":"Hello there! How can I help you today?"}
     ```
@@ -378,7 +378,7 @@ For more complex scenarios (updating multiple keys, non-string values, specific 
 === "TypeScript"
 
     ```typescript
-    import { InMemorySessionService, createEvent, EventActions } from "@google/adk";
+    import { InMemorySessionService, createEvent, createEventActions } from "@google/adk";
 
     // --- Setup ---
     const sessionService = new InMemorySessionService();
@@ -386,9 +386,9 @@ For more complex scenarios (updating multiple keys, non-string values, specific 
     const userId = "user2";
     const sessionId = "session2";
     const session = await sessionService.createSession({
-        appName: appName,
-        userId: userId,
-        sessionId: sessionId,
+        appName,
+        userId,
+        sessionId,
         state: { "user:login_count": 0, "task_status": "idle" }
     });
     console.log(`Initial state: ${JSON.stringify(session.state)}`);
@@ -403,12 +403,9 @@ For more complex scenarios (updating multiple keys, non-string values, specific 
     };
 
     // --- Create Event with Actions ---
-    const actionsWithUpdate: EventActions = {
+    const actionsWithUpdate = createEventActions({
         stateDelta: stateChanges,
-        artifactDelta: {},
-        requestedAuthConfigs: {},
-        requestedToolConfirmations: {},
-    };
+    });
     // This event might represent an internal system action, not just an agent response
     const systemEvent = createEvent({
         invocationId: "inv_login_update",
@@ -424,9 +421,9 @@ For more complex scenarios (updating multiple keys, non-string values, specific 
 
     // --- Check Updated State ---
     const updatedSession = await sessionService.getSession({
-        appName: appName,
-        userId: userId,
-        sessionId: sessionId
+        appName,
+        userId,
+        sessionId
     });
     console.log(`State after event: ${JSON.stringify(updatedSession?.state)}`);
     // Expected: {"user:login_count":1,"task_status":"active","user:last_login_ts":<timestamp>}
