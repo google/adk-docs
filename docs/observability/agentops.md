@@ -114,7 +114,7 @@ When you instrument your ADK application with AgentOps, you gain a clear, hierar
 This creates a waterfall of spans, allowing you to see the sequence, duration, and details of each step in your ADK application. All relevant attributes, such as LLM prompts, completions, token counts, tool inputs/outputs, and agent names, are captured and displayed.
 
 For a practical demonstration, you can explore a sample Jupyter Notebook that illustrates a human approval workflow using Google ADK and AgentOps:
-[Google ADK Human Approval Example on GitHub](https://github.com/AgentOps-AI/agentops/blob/main/examples/google_adk_example/adk_human_approval_example.ipynb).
+[Google ADK Human Approval Example on GitHub](https://github.com/AgentOps-AI/agentops/blob/main/examples/google_adk/human_approval.ipynb).
 
 This example showcases how a multi-step agent process with tool usage is visualized in AgentOps.
 
@@ -125,7 +125,7 @@ This example showcases how a multi-step agent process with tool usage is visuali
 *   **Faster Debugging:** Quickly pinpoint issues with detailed trace data.
 *   **Performance Optimization:** Analyze latencies and token usage.
 
-By integrating AgentOps, ADK developers can significantly enhance their ability to build, debug, and maintain robust AI agents. 
+By integrating AgentOps, ADK developers can significantly enhance their ability to build, debug, and maintain robust AI agents.
 
 ## Further Information
 
