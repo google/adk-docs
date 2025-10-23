@@ -27,73 +27,207 @@ A well-defined function signature is crucial for the LLM to use your tool correc
 
 #### Parameters
 
-You can define functions with required parameters, optional parameters, and variadic arguments. Here’s how each is handled:
 
-##### Required Parameters
-A parameter is considered **required** if it has a type hint but **no default value**. The LLM must provide a value for this argument when it calls the tool.
 
-???+ "Example: Required Parameters"
-    === "Python"
-        ```python
-        def get_weather(city: str, unit: str):
-            """
-            Retrieves the weather for a city in the specified unit.
+=== "Python"
 
-            Args:
-                city (str): The city name.
-                unit (str): The temperature unit, either 'Celsius' or 'Fahrenheit'.
-            """
-            # ... function logic ...
-            return {"status": "success", "report": f"Weather for {city} is sunny."}
-        ```
-    In this example, both `city` and `unit` are mandatory. If the LLM tries to call `get_weather` without one of them, the ADK will return an error to the LLM, prompting it to correct the call.
 
-##### Optional Parameters with Default Values
-A parameter is considered **optional** if you provide a **default value**. This is the standard Python way to define optional arguments. The ADK correctly interprets these and does not list them in the `required` field of the tool schema sent to the LLM.
 
-???+ "Example: Optional Parameter with Default Value"
-    === "Python"
-        ```python
-        def search_flights(destination: str, departure_date: str, flexible_days: int = 0):
-            """
-            Searches for flights.
+    You can define functions with required parameters, optional parameters, and variadic arguments. Here’s how each is handled:
 
-            Args:
-                destination (str): The destination city.
-                departure_date (str): The desired departure date.
-                flexible_days (int, optional): Number of flexible days for the search. Defaults to 0.
-            """
-            # ... function logic ...
-            if flexible_days > 0:
-                return {"status": "success", "report": f"Found flexible flights to {destination}."}
-            return {"status": "success", "report": f"Found flights to {destination} on {departure_date}."}
-        ```
-    Here, `flexible_days` is optional. The LLM can choose to provide it, but it's not required.
 
-##### Optional Parameters with `typing.Optional`
-You can also mark a parameter as optional using `typing.Optional[SomeType]` or the `| None` syntax (Python 3.10+). This signals that the parameter can be `None`. When combined with a default value of `None`, it behaves as a standard optional parameter.
 
-???+ "Example: `typing.Optional`"
-    === "Python"
-        ```python
-        from typing import Optional
+    ##### Required Parameters
 
-        def create_user_profile(username: str, bio: Optional[str] = None):
-            """
-            Creates a new user profile.
+    A parameter is considered **required** if it has a type hint but **no default value**. The LLM must provide a value for this argument when it calls the tool.
 
-            Args:
-                username (str): The user's unique username.
-                bio (str, optional): A short biography for the user. Defaults to None.
-            """
-            # ... function logic ...
-            if bio:
-                return {"status": "success", "message": f"Profile for {username} created with a bio."}
-            return {"status": "success", "message": f"Profile for {username} created."}
-        ```
 
-##### Variadic Parameters (`*args` and `**kwargs`)
-While you can include `*args` (variable positional arguments) and `**kwargs` (variable keyword arguments) in your function signature for other purposes, they are **ignored by the ADK framework** when generating the tool schema for the LLM. The LLM will not be aware of them and cannot pass arguments to them. It's best to rely on explicitly defined parameters for all data you expect from the LLM.
+
+    ???+ "Example: Required Parameters"
+
+        === "Python"
+
+            ```python
+
+            def get_weather(city: str, unit: str):
+
+                """
+
+                Retrieves the weather for a city in the specified unit.
+
+
+
+                Args:
+
+                    city (str): The city name.
+
+                    unit (str): The temperature unit, either 'Celsius' or 'Fahrenheit'.
+
+                """
+
+                # ... function logic ...
+
+                return {"status": "success", "report": f"Weather for {city} is sunny."}
+
+            ```
+
+        In this example, both `city` and `unit` are mandatory. If the LLM tries to call `get_weather` without one of them, the ADK will return an error to the LLM, prompting it to correct the call.
+
+
+
+    ##### Optional Parameters with Default Values
+
+    A parameter is considered **optional** if you provide a **default value**. This is the standard Python way to define optional arguments. The ADK correctly interprets these and does not list them in the `required` field of the tool schema sent to the LLM.
+
+
+
+    ???+ "Example: Optional Parameter with Default Value"
+
+        === "Python"
+
+            ```python
+
+            def search_flights(destination: str, departure_date: str, flexible_days: int = 0):
+
+                """
+
+                Searches for flights.
+
+
+
+                Args:
+
+                    destination (str): The destination city.
+
+                    departure_date (str): The desired departure date.
+
+                    flexible_days (int, optional): Number of flexible days for the search. Defaults to 0.
+
+                """
+
+                # ... function logic ...
+
+                if flexible_days > 0:
+
+                    return {"status": "success", "report": f"Found flexible flights to {destination}."}
+
+                return {"status": "success", "report": f"Found flights to {destination} on {departure_date}."}
+
+            ```
+
+        Here, `flexible_days` is optional. The LLM can choose to provide it, but it's not required.
+
+
+
+    ##### Optional Parameters with `typing.Optional`
+
+    You can also mark a parameter as optional using `typing.Optional[SomeType]` or the `| None` syntax (Python 3.10+). This signals that the parameter can be `None`. When combined with a default value of `None`, it behaves as a standard optional parameter.
+
+
+
+    ???+ "Example: `typing.Optional`"
+
+        === "Python"
+
+            ```python
+
+            from typing import Optional
+
+
+
+            def create_user_profile(username: str, bio: Optional[str] = None):
+
+                """
+
+                Creates a new user profile.
+
+
+
+                Args:
+
+                    username (str): The user's unique username.
+
+                    bio (str, optional): A short biography for the user. Defaults to None.
+
+                """
+
+                # ... function logic ...
+
+                if bio:
+
+                    return {"status": "success", "message": f"Profile for {username} created with a bio."}
+
+                return {"status": "success", "message": f"Profile for {username} created."}
+
+            ```
+
+
+
+    ##### Variadic Parameters (`*args` and `**kwargs`)
+
+    While you can include `*args` (variable positional arguments) and `**kwargs` (variable keyword arguments) in your function signature for other purposes, they are **ignored by the ADK framework** when generating the tool schema for the LLM. The LLM will not be aware of them and cannot pass arguments to them. It's best to rely on explicitly defined parameters for all data you expect from the LLM.
+
+
+
+=== "Go"
+
+    In Go, you define a tool's parameters using a `struct`. The fields of the struct become the arguments for the tool. You use struct tags to provide details like name, description, and whether a parameter is required.
+
+    The two primary tags you will use are `json` and `jsonschema`.
+
+    - The `json` tag defines the parameter name and its optionality.
+    - The `jsonschema` tag provides the description for the parameter.
+
+    ##### Required Parameters
+    A parameter is considered **required** if its struct field does **not** have the `omitempty` or `omitzero` option in its `json` tag. The LLM must provide a value for this argument when it calls the tool.
+
+    ???+ "Example: Required Parameters"
+        === "Go"
+            ```go
+            // GetWeatherParams defines the arguments for the getWeather tool.
+            type GetWeatherParams struct {
+                // Location is a required parameter.
+                Location string `json:"location" jsonschema:"The city and state, e.g., San Francisco, CA"`
+                // Unit is also required.
+                Unit     string `json:"unit" jsonschema:"The temperature unit, either 'celsius' or 'fahrenheit'"`
+            }
+            ```
+        In this example, both `location` and `unit` are mandatory.
+
+    ##### Optional Parameters
+    A parameter is considered **optional** if its struct field has the `omitempty` or `omitzero` option in its `json` tag.
+
+    - `omitempty`: Use for strings, slices, maps, and other reference types. The field is omitted from the JSON if its value is the zero value for its type (e.g., `""` for string, `nil` for slices/maps).
+    - `omitzero`: Use for numeric types (like `int` or `float`). This is a convention to signal that `0` is a value to be omitted, though `omitempty` with Go 1.20+ works for numbers too.
+
+    ???+ "Example: Optional Parameters"
+        === "Go"
+            ```go
+            // GetWeatherParams defines the arguments for the getWeather tool.
+            type GetWeatherParams struct {
+                // Location is required.
+                Location string `json:"location" jsonschema:"The city and state, e.g., San Francisco, CA"`
+
+                // Unit is optional.
+                Unit string `json:"unit,omitempty" jsonschema:"The temperature unit, either 'celsius' or 'fahrenheit'"`
+
+                // Days is optional.
+                Days int `json:"days,omitzero" jsonschema:"The number of forecast days to return (defaults to 1)"`
+            }
+            ```
+        Here, `unit` and `days` are optional. The LLM can choose to provide them, but they are not required.
+
+    ##### Variadic Parameters
+    Go does not have a direct equivalent to Python's `*args` and `**kwargs` that can be represented in the tool's JSON schema. To accept a variable number of inputs of the same type, you can use a slice.
+
+    ???+ "Example: Slice for multiple values"
+        === "Go"
+            ```go
+            type CreateUsersParams struct {
+                Usernames []string `json:"usernames" jsonschema:"A list of usernames to create"`
+            }
+            ```
+
 
 #### Return Type
 
