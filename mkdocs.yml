@@ -63,6 +63,7 @@ theme:
         name: Switch to light mode
   features:
     - content.action.edit
+    - content.action.view
     - content.code.annotate
     - content.code.copy
     - content.code.select
@@ -124,6 +125,7 @@ nav:
   - Get started:
     - get-started/index.md
     - Python: get-started/python.md
+    - JavaScript: get-started/javascript.md
     - Java: get-started/java.md
   - Build your agent:
     - tutorials/index.md
