@@ -1,0 +1,18 @@
+name: Go Fmt
+
+on:
+  pull_request:
+    paths:
+      - '**.go'
+
+jobs:
+  gofmt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+      - name: Run gofmt
+        run: |
+          test -z "$(gofmt -l .)"
