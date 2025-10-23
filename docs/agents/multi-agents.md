@@ -1414,7 +1414,7 @@ By combining ADK's composition primitives, you can implement various established
 
 A more advanced and structured way to implement Human-in-the-Loop is by using a `PolicyEngine`. This approach allows you to define policies that can trigger a confirmation step from a user before a tool is executed. The `SecurityPlugin` intercepts a tool call, consults the `PolicyEngine`, and if the policy dictates, it will automatically request user confirmation. This pattern is more robust for enforcing governance and security rules.
 
-!!! note "Recommended Pattern"
+!!! Note "Recommended Pattern"
     The Policy-based pattern is the recommended approach for implementing Human-in-the-Loop workflows going forward. Support in other ADK languages is planned for future releases.
 
 A conceptual example of using a `CustomPolicyEngine` to require user confirmation before executing tools is shown below.
@@ -1448,6 +1448,9 @@ A conceptual example of using a `CustomPolicyEngine` to require user confirmatio
         plugins: [new SecurityPlugin({policyEngine: new CustomPolicyEngine()})]
     });    
     ```
-    You can find the full code sample [here](../../examples/typescript/snippets/agents/workflow-agents/hitl_confirmation_agent.ts).
+
+You can find the full code sample [here](../../examples/typescript/snippets/agents/workflow-agents/hitl_confirmation_agent.ts).
+
+### Combining Patterns
 
 These patterns provide starting points for structuring your multi-agent systems. You can mix and match them as needed to create the most effective architecture for your specific application.
