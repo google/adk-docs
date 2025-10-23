@@ -34,7 +34,7 @@ agent.
 To use the Code Execution tool with your ADK agent:
 
 1.  Follow the instructions in the Agent Engine
-    [Code Execution quickstart](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/code-execution/quickstart#create_a_sandbox)
+    [Code Execution quickstart](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/code-execution/quickstart)
     to create a code execution sandbox environment.
 1.  Create an ADK agent with settings to access the Google Cloud project
     where you created the sandbox environment.
@@ -42,7 +42,7 @@ To use the Code Execution tool with your ADK agent:
     Executor tool. Replace `SANDBOX_RESOURCE_NAME` with the sandbox environment 
     resource name you created.
 
-```
+```python
 from google.adk.agents.llm_agent import Agent
 from google.adk.code_executors.agent_engine_sandbox_code_executor import AgentEngineSandboxCodeExecutor
 
@@ -109,6 +109,40 @@ Code Execution tool with your ADK agents:
     -   Create, get, list and delete code execution sandboxes
     -   Execute code execution sandbox
 
+## Configuration parameters {#config-parameters}
+
+The Agent Engine Code Execution tool has the following parameters. You must set
+one of the following resource parameters:
+
+-   **`sandbox_resource_name`** : A sandbox resource path to an
+    existing sandbox environment it uses for each tool call. The expected
+string format is as follows:
+    ```
+    projects/{$PROJECT_ID}/locations/{$LOCATION_ID}/reasoningEngines/{$REASONING_ENGINE_ID}/sandboxEnvironments/{$SANDBOX_ENVIRONMENT_ID}
+    
+    # Example:
+    projects/my-vertex-agent-project/locations/us-central1/reasoningEngines/6842888880301111172/sandboxEnvironments/6545148888889161728
+    ```
+-   **`agent_engine_resource_name`**: Agent Engine resource name where the tool
+creates a sandbox environment. The expected string format is as follows:
+    ```
+    projects/{$PROJECT_ID}/locations/{$LOCATION_ID}/reasoningEngines/{$REASONING_ENGINE_ID}
+    
+    # Example:
+    projects/my-vertex-agent-project/locations/us-central1/reasoningEngines/6842888880301111172
+    ```
+
+You can use Google Cloud Agent Engine's API to configure Agent Engine sandbox
+environments separately using a Google Cloud client connection, including the
+following settings:
+
+-   **Programming languages,** including Python and JavaScript
+-   **Compute environment**, including CPU and memory sizes
+
+For more information on connecting to Google Cloud Agent Engine and configuring
+sandbox environments, see the Agent Engine
+[Code Execution quickstart](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/code-execution/quickstart#create_a_sandbox).
+
 ## Advanced example {#advanced-example}
 
 The following example code shows how to implement use of the Code Executor tool
@@ -116,7 +150,7 @@ in an ADK agent. This example includes a `base_system_instruction` clause to set
 the operating guidelines for code execution. This instruction clause is
 optional, but strongly recommended for getting the best results from this tool.
 
-```
+```python
 from google.adk.agents.llm_agent import Agent
 from google.adk.code_executors.agent_engine_sandbox_code_executor import AgentEngineSandboxCodeExecutor
 
@@ -197,37 +231,3 @@ When plotting trends, you should make sure to sort and order the data by the x-a
 
 For a complete version of an ADK agent using this example code, see the
 [agent_engine_code_execution sample](https://github.com/google/adk-python/tree/main/contributing/samples/agent_engine_code_execution).
-
-## Configuration parameters {#config-parameters}
-
-The Agent Engine Code Execution tool has the following parameters. You must set
-one of the following resource parameters:
-
--   **`sandbox_resource_name`** : A sandbox resource path to an
-    existing sandbox environment it uses for each tool call. The expected
-string format is as follows:
-    ```console
-    projects/{$PROJECT_ID}/locations/{$LOCATION_ID}/reasoningEngines/{$REASONING_ENGINE_ID}/sandboxEnvironments/{$SANDBOX_ENVIRONMENT_ID}
-    
-    # Example:
-    projects/my-vertex-agent-project/locations/us-central1/reasoningEngines/6842888880301111172/sandboxEnvironments/6545148888889161728
-    ```
--   **`agent_engine_resource_name`**: Agent Engine resource name where the tool
-creates a sandbox environment. The expected string format is as follows:
-    ```
-    projects/{$PROJECT_ID}/locations/{$LOCATION_ID}/reasoningEngines/{$REASONING_ENGINE_ID}
-    
-    # Example:
-    projects/my-vertex-agent-project/locations/us-central1/reasoningEngines/6842888880301111172
-    ```
-
-You can use Cloud Cloud Agent Engine's API to configure Agent Engine sandbox
-environments separately using a Google Cloud client connection, including the
-following settings:
-
--   **Programming languages,** including Python and JavaScript
--   **Compute environment**, including CPU and memory sizes
-
-For more information on connecting to Google Cloud Agent Engine and configuring
-sandbox environments, see the Agent Engine
-[Code Execution quickstart](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/code-execution/quickstart#create_a_sandbox).
