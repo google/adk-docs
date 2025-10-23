@@ -4,6 +4,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
     - name: Checkout adk-docs repo
       uses: actions/checkout@v4
@@ -27,8 +30,8 @@ jobs:
       uses: peter-evans/create-pull-request@v6
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
-        commit-message: "feat: propose new documentation"
-        title: "Proposed Documentation Update"
-        body: "This is an auto-generated PR with new documentation."
-        branch: "new-documentation-proposal"
+        commit-message: "feat: propose update to feature matrix"
+        title: "Proposed Update to Feature Matrix"
+        body: "This is an auto-generated PR with new content for the feature matrix."
+        branch: "new-feature-matrix-proposal"
         delete-branch: true
