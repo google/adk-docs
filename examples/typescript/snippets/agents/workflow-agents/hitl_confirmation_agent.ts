@@ -16,6 +16,10 @@ import {BasePolicyEngine, FunctionTool, getAskUserConfirmationFunctionCalls, InM
 import {Content, createUserContent, FunctionCall, FunctionResponse} from '@google/genai';
 import {z} from 'zod';
 
+const APP_NAME = "weather_time_app";
+const USER_ID = "test_user_789";
+const MODEL_NAME = "gemini-2.5-flash";
+
 interface ToolResult {
   status: 'success'|'error';
   report?: string;
@@ -29,8 +33,8 @@ interface ToolResult {
  report.
  * @returns status and result or error msg.
  */
-async function get_weather({city}: {city: string}): Promise<ToolResult> {
-  if (city.toLowerCase() === 'new york') {
+async function getWeather({city}: {city: string}): Promise<ToolResult> {
+  if (city.toLowerCase() === 'new york') {  // eslint-disable-line
     return {
       'status': 'success',
       'report':
@@ -50,8 +54,8 @@ async function get_weather({city}: {city: string}): Promise<ToolResult> {
  * @param city The name of the city for which to retrieve the current time.
  * @returns status and result or error msg.
  */
-async function get_current_time({city}: {city: string}): Promise<ToolResult> {
-  if (city.toLowerCase() === 'new york') {
+async function getCurrentTime({city}: {city: string}): Promise<ToolResult> {
+  if (city.toLowerCase() === 'new york') {  // eslint-disable-line
     const tzIdentifier = 'America/New_York';
     try {
       const now = new Date();
@@ -80,7 +84,7 @@ const getWeatherTool = new FunctionTool({
   parameters: z.object({
     city: z.string().describe('The name of the city.'),
   }),
-  execute: get_weather,
+  execute: getWeather,
 });
 
 const getCurrentTimeTool = new FunctionTool({
@@ -89,12 +93,12 @@ const getCurrentTimeTool = new FunctionTool({
   parameters: z.object({
     city: z.string().describe('The name of the city.'),
   }),
-  execute: get_current_time,
+  execute: getCurrentTime,
 });
 
 export const rootAgent = new LlmAgent({
   name: 'weather_time_agent',
-  model: 'gemini-2.5-flash',
+  model: MODEL_NAME,
   description:
       'Agent to answer questions about the time and weather in a city.',
   instruction:
@@ -119,33 +123,31 @@ export class CustomPolicyEngine implements BasePolicyEngine {
   }
 }
 
-async function main() {
-  const SEPARATOR = '-'.repeat(60);
-  const userId = 'test_user';
-  const appName = rootAgent.name;
-  // The SecurityPlugin is added to the runner's plugins. It intercepts tool
-  // calls and uses the provided `policyEngine` to evaluate them.
-  const runner = new InMemoryRunner({
-    agent: rootAgent,
-    appName,
-    plugins: [new SecurityPlugin({policyEngine: new CustomPolicyEngine()})]
-  });
-
-  const session = await runner.sessionService.createSession({
-    appName,
-    userId,
-  });
-
-  const content = createUserContent('What is the weather in New York? And the time?');
-
-  let confirmationCalls: FunctionCall[] = [];
+/**
+ * Runs the initial user message through the agent and collects the resulting
+ * confirmation requests.
+ *
+ * @param runner The InMemoryRunner instance.
+ * @param userId The ID of the user.
+ * @param sessionId The ID of the session.
+ * @param content The initial user message.
+ * @returns A promise that resolves to an array of FunctionCall objects
+ * representing the confirmation requests that need to be approved.
+ */
+async function getInitialConfirmationRequests(
+  runner: InMemoryRunner,
+  userId: string,
+  sessionId: string,
+  content: Content
+): Promise<FunctionCall[]> {
+  const confirmationCalls: FunctionCall[] = [];
   // First run: The agent will decide to call one or more tools. The
   // `SecurityPlugin` intercepts these calls, consults our `CustomPolicyEngine`,
   // and sees the `CONFIRM` outcome. It then generates a special function call
   // instead of executing the actual tool.
   for await (const e of runner.runAsync({
     userId,
-    sessionId: session.id,
+    sessionId,
     newMessage: content,
   })) {
     if (e.content?.parts?.[0]?.text) {
@@ -157,29 +159,42 @@ async function main() {
       confirmationCalls.push(...newConfirmationCalls);
     }
   }
+  return confirmationCalls;
+}
 
+/**
+ * Processes a queue of confirmation requests by approving each one and sending
+ * it back to the agent. It continues until all confirmation requests are handled.
+ *
+ * @param runner The InMemoryRunner instance.
+ * @param userId The ID of the user.
+ * @param sessionId The ID of the session.
+ * @param confirmationCalls An array of FunctionCall objects for confirmation.
+ */
+async function processConfirmationRequests(
+  runner: InMemoryRunner,
+  userId: string,
+  sessionId: string,
+  confirmationCalls: FunctionCall[]
+) {
+  const SEPARATOR = '-'.repeat(60);
   // This loop represents the application's logic for handling confirmation
   // requests. It iterates through each request, simulates user approval, and
   // sends the confirmation back to the agent. This allows the `SecurityPlugin`
   // to proceed with the originally intended tool call.
   while (confirmationCalls.length > 0) {
     console.log(SEPARATOR);
+    const call = confirmationCalls.shift();
+    if (!call) break;
+
     console.log(
-      `Confirmation requested for: ${confirmationCalls[0].name}(${JSON.stringify(confirmationCalls[0].args)})`
+      `Confirmation requested for: ${call.name}(${JSON.stringify(call.args)})`
     );
 
-    const call = confirmationCalls.shift();
-    if (!call) {
-      break;
-    }
     // To approve the request, we create a FunctionResponse for the special confirmation request.
-    // The `name` of this response must match the constant `REQUEST_CONFIRMATION_FUNCTION_CALL_NAME`
-    // and the response must indicate confirmation.
     const functionResponse = new FunctionResponse();
     functionResponse.name = REQUEST_CONFIRMATION_FUNCTION_CALL_NAME;
-    functionResponse.response = {
-      confirmed: true,
-    };
+    functionResponse.response = {confirmed: true};
     functionResponse.id = call.id;
 
     const contentWithConfirmation: Content = {
@@ -193,20 +208,16 @@ async function main() {
     );
     console.log(SEPARATOR);
 
-    // Second run: We send the confirmation response back to the agent. The
-    // `SecurityPlugin` receives this, recognizes it as an approval for the
-    // pending tool call, and proceeds to execute the original tool.
-    // The agent then gets the real tool result and continues.
+    // Second run: We send the confirmation response back to the agent.
     for await (const e of runner.runAsync({
       userId,
-      sessionId: session.id,
+      sessionId,
       newMessage: contentWithConfirmation,
     })) {
       if (e.content?.parts?.[0]?.text) {
         console.log(`${e.author}: ${JSON.stringify(e.content, null, 4)}`);
       }
-      // Check if this second run resulted in another confirmation request (for
-      // the next tool in a sequence).
+      // Check if this second run resulted in another confirmation request.
       const newConfirmationCalls = getAskUserConfirmationFunctionCalls(e);
       if (newConfirmationCalls.length > 0) {
         confirmationCalls.push(...newConfirmationCalls);
@@ -215,4 +226,30 @@ async function main() {
   }
 }
 
-main().catch(console.error);
+async function main(appName: string, userId: string) {
+
+  // The SecurityPlugin is added to the runner's plugins. It intercepts tool
+  // calls and uses the provided `policyEngine` to evaluate them.
+  const runner = new InMemoryRunner({
+    agent: rootAgent,
+    appName,
+    plugins: [new SecurityPlugin({policyEngine: new CustomPolicyEngine()})]
+  });
+
+  const session = await runner.sessionService.createSession({
+    appName,
+    userId,
+  });
+
+  const content =
+    createUserContent('What is the weather in New York? And the time?');
+
+  // 1. Run the initial query and get confirmation requests.
+  const confirmationCalls = await getInitialConfirmationRequests(
+    runner, userId, session.id, content);
+
+  // 2. Process the collected confirmation requests.
+  await processConfirmationRequests(runner, userId, session.id, confirmationCalls);
+}
+
+main(APP_NAME, USER_ID).catch(console.error);
