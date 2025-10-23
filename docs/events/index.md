@@ -64,21 +64,21 @@ An `Event` in ADK is an immutable record representing a specific point in the ag
     // Conceptual Structure of an Event (Go - See session/session.go)
     // Simplified view based on the session.Event struct
     type Event struct {
-        // --- Fields analogous to LlmResponse ---
-        LLMResponse *llm.Response
+        // --- Fields from embedded model.LLMResponse ---
+        model.LLMResponse
 
         // --- ADK specific additions ---
-        Author       string    // 'user' or agent name
-        InvocationID string    // ID for the whole interaction run
-        ID           string    // Unique ID for this specific event
-        Timestamp    time.Time // Creation time
-        Actions      *Actions  // Important for side-effects & control
-        Branch       string    // Hierarchy path
+        Author       string         // 'user' or agent name
+        InvocationID string         // ID for the whole interaction run
+        ID           string         // Unique ID for this specific event
+        Timestamp    time.Time      // Creation time
+        Actions      EventActions   // Important for side-effects & control
+        Branch       string         // Hierarchy path
         // ... other fields
     }
 
-    // llm.Response contains the Content field
-    type Response struct {
+    // model.LLMResponse contains the Content field
+    type LLMResponse struct {
         Content *genai.Content
         // ... other fields
     }
@@ -237,7 +237,7 @@ Quickly determine what an event represents by checking:
               fmt.Println("  Type: Other Content (e.g., code result)")
             }
           }
-        } else if &event.Actions != nil && (len(event.Actions.StateDelta) > 0) {
+        } else if len(event.Actions.StateDelta) > 0 {
           fmt.Println("  Type: State Update")
         } else {
           fmt.Println("  Type: Control Signal or Other")
@@ -295,10 +295,10 @@ Once you know the event type, access the relevant data:
       )
 
       func handleFunctionCalls(event *session.Event) {
-          if event.LLMResponse == nil {
+          if event.LLMResponse == nil || event.LLMResponse.Content == nil {
               return
           }
-          calls := event.LLMResponse.FunctionCalls()
+          calls := event.LLMResponse.Content.FunctionCalls()
           if len(calls) > 0 {
               for _, call := range calls {
                   toolName := call.Name
@@ -349,10 +349,10 @@ Once you know the event type, access the relevant data:
         )
 
         func handleFunctionResponses(event *session.Event) {
-            if event.LLMResponse == nil {
+            if event.LLMResponse == nil || event.LLMResponse.Content == nil {
                 return
             }
-            responses := event.LLMResponse.FunctionResponses()
+            responses := event.LLMResponse.Content.FunctionResponses()
             if len(responses) > 0 {
                 for _, response := range responses {
                     toolName := response.Name
@@ -404,7 +404,7 @@ The `event.actions` object signals changes that occurred or should occur. Always
         )
 
         func handleStateChanges(event *session.Event) {
-            if event.Actions != nil && len(event.Actions.StateDelta) > 0 {
+            if len(event.Actions.StateDelta) > 0 {
                 fmt.Printf("  State changes: %v\n", event.Actions.StateDelta)
                 // Update local UI or application state if necessary
             }
@@ -438,20 +438,8 @@ The `event.actions` object signals changes that occurred or should occur. Always
         ```
 
     === "Go"
-        `artifactChanges := event.Actions.ArtifactDelta` (a `map[string]genai.Part`)
-        ```go
-        import (
-            "fmt"
-            "google.golang.org/adk/session"
-        )
-
-        func handleArtifactChanges(event *session.Event) {
-            if event.Actions != nil && len(event.Actions.ArtifactDelta) > 0 {
-                fmt.Printf("  Artifacts saved: %v\n", event.Actions.ArtifactDelta)
-                // UI might refresh an artifact list
-            }
-        }
-        ```
+        !!! warning "Not Yet Available"
+            Artifact change tracking via `event.Actions.ArtifactDelta` is not yet implemented in the Go ADK.
 
 *   **Control Flow Signals:** Check boolean flags or string values:
 
@@ -506,16 +494,14 @@ The `event.actions` object signals changes that occurred or should occur. Always
         )
 
         func handleControlFlow(event *session.Event) {
-            if event.Actions != nil {
-                if event.Actions.TransferToAgent != "" {
-                    fmt.Printf("  Signal: Transfer to %s\n", event.Actions.TransferToAgent)
-                }
-                if event.Actions.Escalate {
-                    fmt.Println("  Signal: Escalate (terminate loop)")
-                }
-                if event.Actions.SkipSummarization {
-                    fmt.Println("  Signal: Skip summarization for tool result")
-                }
+            if event.Actions.TransferToAgent != "" {
+                fmt.Printf("  Signal: Transfer to %s\n", event.Actions.TransferToAgent)
+            }
+            if event.Actions.Escalate {
+                fmt.Println("  Signal: Escalate (terminate loop)")
+            }
+            if event.Actions.SkipSummarization {
+                fmt.Println("  Signal: Skip summarization for tool result")
             }
         }
         ```
@@ -621,33 +607,53 @@ Use the built-in helper method `event.is_final_response()` to identify events su
             "google.golang.org/genai"
         )
 
+        // isFinalResponse checks if an event is a final response suitable for display.
+        func isFinalResponse(event *session.Event) bool {
+            if event.LLMResponse != nil {
+                // Condition 1: Tool result with skip summarization.
+                if event.LLMResponse.Content != nil && len(event.LLMResponse.Content.FunctionResponses()) > 0 && event.Actions.SkipSummarization {
+                    return true
+                }
+                // Condition 2: Long-running tool call.
+                if len(event.LongRunningToolIDs) > 0 {
+                    return true
+                }
+                // Condition 3: A complete message without tool calls or responses.
+                if (event.LLMResponse.Content == nil ||
+                    (len(event.LLMResponse.Content.FunctionCalls()) == 0 && len(event.LLMResponse.Content.FunctionResponses()) == 0)) &&
+                    !event.LLMResponse.Partial {
+                    return true
+                }
+            }
+            return false
+        }
+
         func handleFinalResponses() {
-            // Pseudocode: Handling final responses in application (Go)
             var fullResponseText strings.Builder
-            // for event := range runner.Run(...) {
+            // for event := range runner.Run(...) { // Example loop
             // 	// Accumulate streaming text if needed...
-            // 	if event.LLMResponse != nil && event.LLMResponse.IsPartial && event.LLMResponse.Content != nil {
-            // 		if part, ok := event.LLMResponse.Content.Parts[0].(genai.Text); ok {
-            // 			fullResponseText.WriteString(string(part))
+            // 	if event.LLMResponse != nil && event.LLMResponse.Partial && event.LLMResponse.Content != nil {
+            // 		if len(event.LLMResponse.Content.Parts) > 0 && event.LLMResponse.Content.Parts[0].Text != "" {
+            // 			fullResponseText.WriteString(event.LLMResponse.Content.Parts[0].Text)
             // 		}
             // 	}
             //
             // 	// Check if it's a final, displayable event
-            // 	if event.IsFinalResponse() {
+            // 	if isFinalResponse(event) {
             // 		fmt.Println("\n--- Final Output Detected ---")
             // 		if event.LLMResponse != nil && event.LLMResponse.Content != nil {
-            // 			if part, ok := event.LLMResponse.Content.Parts[0].(genai.Text); ok {
+            // 			if len(event.LLMResponse.Content.Parts) > 0 && event.LLMResponse.Content.Parts[0].Text != "" {
             // 				// If it's the final part of a stream, use accumulated text
             // 				finalText := fullResponseText.String()
-            // 				if !event.LLMResponse.IsPartial {
-            // 					finalText += string(part)
+            // 				if !event.LLMResponse.Partial {
+            // 					finalText += event.LLMResponse.Content.Parts[0].Text
             // 				}
             // 				fmt.Printf("Display to user: %s\n", strings.TrimSpace(finalText))
             // 				fullResponseText.Reset() // Reset accumulator
             // 			}
-            // 		} else if event.Actions != nil && event.Actions.SkipSummarization && len(event.LLMResponse.FunctionResponses()) > 0 {
+            // 		} else if event.Actions.SkipSummarization && event.LLMResponse.Content != nil && len(event.LLMResponse.Content.FunctionResponses()) > 0 {
             // 			// Handle displaying the raw tool result if needed
-            // 			responseData := event.LLMResponse.FunctionResponses()[0].Response
+            // 			responseData := event.LLMResponse.Content.FunctionResponses()[0].Response
             // 			fmt.Printf("Display raw tool result: %v\n", responseData)
             // 		} else if len(event.LongRunningToolIDs) > 0 {
             // 			fmt.Println("Display message: Tool is running in background...")
