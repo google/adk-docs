@@ -17,7 +17,7 @@ The `RunConfig` class holds configuration parameters for an agent's runtime beha
 
 - Java ADK typically uses immutable data classes.
 
-- TypeScript ADK uses a standard class, with type safety provided by the TypeScript compiler.
+- TypeScript ADK uses a standard interface, with type safety provided by the TypeScript compiler.
 
 === "Python"
 
@@ -66,7 +66,7 @@ The `RunConfig` class holds configuration parameters for an agent's runtime beha
 === "TypeScript"
 
     ```typescript
-    export class RunConfig {
+    export interface RunConfig {
       speechConfig?: SpeechConfig;
       responseModalities?: Modality[];
       saveInputBlobsAsArtifacts: boolean;
@@ -75,10 +75,6 @@ The `RunConfig` class holds configuration parameters for an agent's runtime beha
       outputAudioTranscription?: AudioTranscriptionConfig;
       maxLlmCalls: number;
       // ... and other properties
-
-      constructor(params: Partial<RunConfig> = {}) {
-        // ... initialization logic
-      }
     }
 
     export enum StreamingMode {
@@ -246,10 +242,10 @@ For the `max_llm_calls` parameter specifically:
     ```typescript
     import { RunConfig, StreamingMode } from '@google/adk';
 
-    const config = new RunConfig({
+    const config: RunConfig = {
       streamingMode: StreamingMode.NONE,
       maxLlmCalls: 100,
-    });
+    };
     ```
 
 This configuration creates a non-streaming agent with a limit of 100 LLM calls,
@@ -286,10 +282,10 @@ preferable.
     ```typescript
     import { RunConfig, StreamingMode } from '@google/adk';
 
-    const config = new RunConfig({
+    const config: RunConfig = {
       streamingMode: StreamingMode.SSE,
       maxLlmCalls: 200,
-    });
+    };
     ```
 
 Using SSE streaming allows users to see responses as they're generated,
@@ -356,7 +352,7 @@ providing a more responsive feel for chatbots and assistants.
     ```typescript
     import { RunConfig, StreamingMode } from '@google/adk';
 
-    const config = new RunConfig({
+    const config: RunConfig = {
         speechConfig: {
             languageCode: "en-US",
             voiceConfig: {
@@ -373,7 +369,7 @@ providing a more responsive feel for chatbots and assistants.
         supportCfc: true,
         streamingMode: StreamingMode.SSE,
         maxLlmCalls: 1000,
-    });
+    };
     ```
 
 This comprehensive example configures an agent with:
@@ -405,11 +401,11 @@ This comprehensive example configures an agent with:
     ```typescript
     import { RunConfig, StreamingMode } from '@google/adk';
 
-    const config = new RunConfig({
+    const config: RunConfig = {
         streamingMode: StreamingMode.SSE,
         supportCfc: true,
         maxLlmCalls: 150,
-    });
+    };
     ```
 
 Enabling Compositional Function Calling creates an agent that can dynamically

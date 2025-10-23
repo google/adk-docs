@@ -103,7 +103,7 @@ The `Runner` acts as the central coordinator for a single user invocation. Its r
 
     ```typescript
     // Simplified view of Runner's main loop logic
-    async * run(newQuery: Content, ...): AsyncGenerator<Event, void, void> {
+    async * runAsync(newQuery: Content, ...): AsyncGenerator<Event, void, void> {
         // 1. Append newQuery to session event history (via SessionService)
         await sessionService.appendEvent({
             session,
@@ -525,10 +525,10 @@ This primarily relates to how responses from the LLM are handled, especially whe
 
 ## Async is Primary (`run_async`)
 
-* **Core Design:** The ADK Runtime is fundamentally built on asynchronous patterns and libraries (like Python's `asyncio`, Java's `RxJava`, and native `async/await` with `AsyncGenerator` in TypeScript) to handle concurrent operations (like waiting for LLM responses or tool executions) efficiently without blocking.
+* **Core Design:** The ADK Runtime is fundamentally built on asynchronous patterns and libraries (like Python's `asyncio`, Java's `RxJava`, and native `Promise`s and `AsyncGenerator`s in TypeScript) to handle concurrent operations (like waiting for LLM responses or tool executions) efficiently without blocking.
 * **Main Entry Point:** `Runner.run_async` is the primary method for executing agent invocations. All core runnable components (Agents, specific flows) use `asynchronous` methods internally.
 * **Synchronous Convenience (`run`):** A synchronous `Runner.run` method exists mainly for convenience (e.g., in simple scripts or testing environments). However, internally, `Runner.run` typically just calls `Runner.run_async` and manages the async event loop execution for you.
-* **Developer Experience:** We recommend designing your applications (e.g., web servers using ADK) to be asynchronous for best performance. In Python, this means using `asyncio`; in Java, leverage `RxJava`'s reactive programming model; and in TypeScript, this means building on an async framework like Express.js or Fastify and using native `async/await`.
+* **Developer Experience:** We recommend designing your applications (e.g., web servers using ADK) to be asynchronous for best performance. In Python, this means using `asyncio`; in Java, leverage `RxJava`'s reactive programming model; and in TypeScript, this means building using native `Promise`s and `AsyncGenerator`s.
 * **Sync Callbacks/Tools:** The ADK framework supports both asynchronous and synchronous functions for tools and callbacks.
     * **Blocking I/O:** For long-running synchronous I/O operations, the framework attempts to prevent stalls. Python ADK may use asyncio.to_thread, while Java ADK often relies on appropriate RxJava schedulers or wrappers for blocking calls. In TypeScript, the framework simply awaits the function; if a synchronous function performs blocking I/O, it will stall the event loop. Developers should use asynchronous I/O APIs (which return a Promise) whenever possible.
     * **CPU-Bound Work:** Purely CPU-intensive synchronous tasks will still block their execution thread in both environments.
