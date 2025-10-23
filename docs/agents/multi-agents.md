@@ -1410,4 +1410,44 @@ By combining ADK's composition primitives, you can implement various established
     });
     ```
 
+#### Human in the Loop with Policy
+
+A more advanced and structured way to implement Human-in-the-Loop is by using a `PolicyEngine`. This approach allows you to define policies that can trigger a confirmation step from a user before a tool is executed. The `SecurityPlugin` intercepts a tool call, consults the `PolicyEngine`, and if the policy dictates, it will automatically request user confirmation. This pattern is more robust for enforcing governance and security rules.
+
+!!! note "Recommended Pattern"
+    The Policy-based pattern is the recommended approach for implementing Human-in-the-Loop workflows going forward. Support in other ADK languages is planned for future releases.
+
+A conceptual example of using a `CustomPolicyEngine` to require user confirmation before executing tools is shown below.
+
+=== "TypeScript"
+
+    ```typescript    
+    const rootAgent = new LlmAgent({
+      name: 'weather_time_agent',
+      model: 'gemini-2.5-flash',
+      description:
+          'Agent to answer questions about the time and weather in a city.',
+      instruction:
+          'You are a helpful agent who can answer user questions about the time and weather in a city.',
+      tools: [getWeatherTool],
+    });
+    
+    class CustomPolicyEngine implements BasePolicyEngine {
+      async evaluate(_context: ToolCallPolicyContext): Promise<PolicyCheckResult> {
+        // Default permissive implementation
+        return Promise.resolve({
+          outcome: PolicyOutcome.CONFIRM,
+          reason: 'Needs confirmation for tool call',
+        });
+      }
+    }
+
+    const runner = new InMemoryRunner({
+        agent: rootAgent,
+        appName,
+        plugins: [new SecurityPlugin({policyEngine: new CustomPolicyEngine()})]
+    });    
+    ```
+    You can find the full code sample [here](../../examples/typescript/snippets/agents/workflow-agents/hitl_confirmation_agent.ts).
+
 These patterns provide starting points for structuring your multi-agent systems. You can mix and match them as needed to create the most effective architecture for your specific application.
