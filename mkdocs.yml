@@ -154,7 +154,9 @@ nav:
   - Tools for Agents:
     - tools/index.md
     - Built-in tools: tools/built-in-tools.md
-    - Google Cloud tools: tools/google-cloud-tools.md
+    - Google Cloud tools: 
+      - Overview: tools/google-cloud-tools.md
+      - Code Execution with Agent Engine: tools/google-cloud/code-exec-agent-engine.md
     - Third party tools: tools/third-party/index.md
     - OpenAPI tools: tools/third-party/openapi-tools.md
   - Custom Tools:
