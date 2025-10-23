@@ -4,7 +4,7 @@
 
 ADK is designed to be **highly extensible, allowing you to seamlessly integrate tools from other AI Agent frameworks** like CrewAI and LangChain. This interoperability is crucial because it allows for faster development time and allows you to reuse existing tools.
 
-## 1. Using LangChain Tools
+## Using LangChain Tools
 
 ADK provides the `LangchainTool` wrapper to integrate tools from the LangChain ecosystem into your agents.
 
@@ -12,7 +12,7 @@ ADK provides the `LangchainTool` wrapper to integrate tools from the LangChain e
 
 [Tavily](https://tavily.com/) provides a search API that returns answers derived from real-time search results, intended for use by applications like AI agents.
 
-1. Follow [ADK installation and setup](../get-started/installation.md) guide.
+1. Follow [ADK installation and setup](/adk-docs/get-started/installation.md) guide.
 
 2. **Install Dependencies:** Ensure you have the necessary LangChain packages installed. For example, to use the Tavily search tool, install its specific dependencies:
 
@@ -72,7 +72,7 @@ Here's the full code combining the steps above to create and run an agent using 
 --8<-- "examples/python/snippets/tools/third-party/langchain_tavily_search.py"
 ```
 
-## 2. Using CrewAI tools
+## Using CrewAI tools
 
 ADK provides the `CrewaiTool` wrapper to integrate tools from the CrewAI library.
 
@@ -80,7 +80,7 @@ ADK provides the `CrewaiTool` wrapper to integrate tools from the CrewAI library
 
 [Serper API](https://serper.dev/) provides access to Google Search results programmatically. It allows applications, like AI agents, to perform real-time Google searches (including news, images, etc.) and get structured data back without needing to scrape web pages directly.
 
-1. Follow [ADK installation and setup](../get-started/installation.md) guide.
+1. Follow [ADK installation and setup](/adk-docs/get-started/installation.md) guide.
 
 2. **Install Dependencies:** Install the necessary CrewAI tools package. For example, to use the SerperDevTool:
 
@@ -123,7 +123,7 @@ ADK provides the `CrewaiTool` wrapper to integrate tools from the CrewAI library
 
     ```py
     from google.adk import Agent
- 
+
     # Define the ADK agent
     my_agent = Agent(
         name="crewai_search_agent",

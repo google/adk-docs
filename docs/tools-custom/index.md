@@ -65,7 +65,7 @@ ADK offers flexibility by supporting several types of tools:
     * **[Long Running Function Tools](../tools/function-tools.md#2-long-running-function-tool):** Support for tools that perform asynchronous operations or take significant time to complete.
 2. **[Built-in Tools](../tools/built-in-tools.md):** Ready-to-use tools provided by the framework for common tasks.
         Examples: Google Search, Code Execution, Retrieval-Augmented Generation (RAG).
-3. **[Third-Party Tools](../tools/third-party-tools.md):** Integrate tools seamlessly from popular external libraries.
+3. **[Third-Party Tools](/adk-docs/tools/third-party/):** Integrate tools seamlessly from popular external libraries.
         Examples: LangChain Tools, CrewAI Tools.
 
 Navigate to the respective documentation pages linked above for detailed information and examples for each tool type.
