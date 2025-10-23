@@ -12,6 +12,7 @@ import (
 	"google.golang.org/adk/runner"
 	"google.golang.org/adk/session"
 	"google.golang.org/adk/tool"
+	"google.golang.org/adk/tool/functiontool"
 
 	"google.golang.org/genai"
 )
@@ -37,8 +38,8 @@ func createTicketAsync(ctx tool.Context, args CreateTicketArgs) CreateTicketResu
 }
 
 func createTicketAgent(ctx context.Context) (agent.Agent, error) {
-	ticketTool, err := tool.NewLongRunningFunctionTool(
-		tool.FunctionToolConfig{
+	ticketTool, err := functiontool.New(
+		functiontool.Config{
 			Name:        "create_ticket_long_running",
 			Description: "Creates a new support ticket with a specified urgency level.",
 		},
@@ -74,7 +75,7 @@ func runTurn(ctx context.Context, r *runner.Runner, sessionID, turnLabel string,
 	var funcCallID atomic.Value // Safely store the found ID.
 
 	fmt.Printf("\n--- %s ---\n", turnLabel)
-	for event, err := range r.Run(ctx, userID, sessionID, content, &agent.RunConfig{
+	for event, err := range r.Run(ctx, userID, sessionID, content, agent.RunConfig{
 		StreamingMode: agent.StreamingModeNone,
 	}) {
 		if err != nil {
@@ -85,12 +86,10 @@ func runTurn(ctx context.Context, r *runner.Runner, sessionID, turnLabel string,
 		printEventSummary(event, turnLabel)
 
 		// Capture the function call ID from the event.
-		if event.LLMResponse != nil && event.LLMResponse.Content != nil {
-			for _, part := range event.LLMResponse.Content.Parts {
-				if fc := part.FunctionCall; fc != nil {
-					if fc.Name == "create_ticket_long_running" {
-						funcCallID.Store(fc.ID)
-					}
+		for _, part := range event.LLMResponse.Content.Parts {
+			if fc := part.FunctionCall; fc != nil {
+				if fc.Name == "create_ticket_long_running" {
+					funcCallID.Store(fc.ID)
 				}
 			}
 		}
