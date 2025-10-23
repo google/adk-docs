@@ -63,6 +63,7 @@ theme:
         name: Switch to light mode
   features:
     - content.action.edit
+    - content.action.view
     - content.code.annotate
     - content.code.copy
     - content.code.select
@@ -115,6 +116,8 @@ plugins:
         'get-started/local-testing.md': 'get-started/testing.md'
         'get-started/tutorial.md': 'tutorials/index.md'
         'guides/responsible-agents.md': 'safety/index.md'
+        'tools/third-party-tools.md': tools/third-party/index.md
+        'tools/openapi-tools.md': tools/third-party/openapi-tools.md
 
 # Navigation
 nav:
@@ -122,6 +125,7 @@ nav:
   - Get started:
     - get-started/index.md
     - Python: get-started/python.md
+    - JavaScript: get-started/javascript.md
     - Java: get-started/java.md
   - Build your agent:
     - tutorials/index.md
@@ -131,6 +135,7 @@ nav:
       - get-started/streaming/index.md
       - Python: get-started/streaming/quickstart-streaming.md
       - Java: get-started/streaming/quickstart-streaming-java.md
+    - Agentic UI (AG-UI): tutorials/ag-ui.md
     - Testing: get-started/testing.md
     - Code samples: https://github.com/google/adk-samples
     - Advanced setup: get-started/installation.md
@@ -147,21 +152,24 @@ nav:
     - Multi-agent systems: agents/multi-agents.md
     - Agent Config: agents/config.md
     - Models & Authentication: agents/models.md
-  - Tools:
+  - Tools for Agents:
     - tools/index.md
+    - Built-in tools: tools/built-in-tools.md
+    - Google Cloud tools: tools/google-cloud-tools.md
+    - Third party tools: tools/third-party/index.md
+    - OpenAPI tools: tools/third-party/openapi-tools.md
+  - Custom Tools:
+    - tools-custom/index.md
     - Function tools:
       - Overview: tools/function-tools.md
       - Tool performance: tools/performance.md
       - Action confirmations: tools/confirmation.md
-    - Built-in tools: tools/built-in-tools.md
-    - Third party tools: tools/third-party-tools.md
-    - Google Cloud tools: tools/google-cloud-tools.md
     - MCP tools: tools/mcp-tools.md
-    - OpenAPI tools: tools/openapi-tools.md
     - Authentication: tools/authentication.md
   - Running Agents:
     - Agent Runtime: runtime/index.md
     - Runtime Config: runtime/runconfig.md
+    - Resume Agents: runtime/resume.md
   - Deploy:
     - deploy/index.md
     - Agent Engine: deploy/agent-engine.md
@@ -199,7 +207,6 @@ nav:
     - plugins/index.md
   - Bidi-streaming (live):
     - streaming/index.md
-    #- Quickstart (Bidi-streaming/live): get-started/streaming/index.md
     - Custom Audio Bidi-streaming app sample (SSE): streaming/custom-streaming.md
     - Custom Audio Bidi-streaming app sample (WebSockets): streaming/custom-streaming-ws.md
     - Bidi-streaming development guide series: streaming/dev-guide/part1.md

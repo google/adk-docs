@@ -13,6 +13,13 @@ set up and running a simple agent in less than 20 minutes.
 
     [:octicons-arrow-right-24: Start with Python](python.md) <br>
 
+-   :fontawesome-brands-js:{ .lg .middle } **JavaScript Quickstart**
+
+    ---
+    Create your first JavaScript ADK agent in minutes.
+
+    [:octicons-arrow-right-24: Start with JavaScript](javascript.md) <br>
+
 -   :fontawesome-brands-java:{ .lg .middle } **Java Quickstart**
 
     ---
