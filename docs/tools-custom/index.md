@@ -94,6 +94,12 @@ The following example showcases how an agent can use tools by **referencing thei
     --8<-- "examples/java/snippets/src/main/java/tools/WeatherSentimentAgentApp.java:full_code"
     ```
 
+=== "TypeScript"
+
+    ```ts
+    --8<-- "examples/typescript/snippets/tools/overview/weather_sentiment.ts"
+    ```
+
 ## Tool Context
 
 For more advanced scenarios, ADK allows you to access additional contextual information within your tool function by including the special parameter `tool_context: ToolContext`. By including this in the function signature, ADK will **automatically** provide an **instance of the ToolContext** class when your tool is called during agent execution.
@@ -165,6 +171,38 @@ The `tool_context.state` attribute provides direct read and write access to the 
     }
     ```
 
+=== "TypeScript"
+
+    ```ts
+    import { ToolContext } from "@google/adk";
+
+    // Updates a user-specific preference.
+    export function updateUserThemePreference(
+      value: string,
+      toolContext: ToolContext
+    ): Record<string, any> {
+      const userPrefsKey = "user:preferences";
+
+      // Get current preferences or initialize if none exist
+      const preferences = toolContext.state.get(userPrefsKey, {}) as Record<string, any>;
+      preferences["theme"] = value;
+
+      // Write the updated dictionary back to the state
+      toolContext.state.set(userPrefsKey, preferences);
+      console.log(
+        `Tool: Updated user preference ${userPrefsKey} to ${JSON.stringify(toolContext.state.get(userPrefsKey))}`
+      );
+
+      return {
+        status: "success",
+        updated_preference: toolContext.state.get(userPrefsKey),
+      };
+      // When the LLM calls updateUserThemePreference("dark"):
+      // The toolContext.state will be updated, and the change will be part of the
+      // resulting tool response event's actions.stateDelta.
+    }
+    ```
+
 ### **Controlling Agent Flow**
 
 The `tool_context.actions` attribute (`ToolContext.actions()` in Java) holds an **EventActions** object. Modifying attributes on this object allows your tool to influence what the agent or framework does after the tool finishes execution.
@@ -187,6 +225,12 @@ The `tool_context.actions` attribute (`ToolContext.actions()` in Java) holds an 
 
     ```java
     --8<-- "examples/java/snippets/src/main/java/tools/CustomerSupportAgentApp.java:full_code"
+    ```
+
+=== "TypeScript"
+
+    ```ts
+    --8<-- "examples/typescript/snippets/tools/overview/customer_support_agent.ts"
     ```
 
 ##### Explanation
@@ -290,6 +334,71 @@ These methods provide convenient ways for your tool to interact with persistent 
     // LlmAgent agent = LlmAgent().builder().tools(processDocumentTool).build();
     ```
 
+===
+
+==="TypeScript"
+
+    ```ts
+    import { Part } from "@google/genai";
+    import { ToolContext } from "@google/adk";
+
+    // Analyzes a document using context from memory.
+    export async function processDocument(
+      params: { documentName: string; analysisQuery: string },
+      toolContext?: ToolContext
+    ): Promise<Record<string, any>> {
+      if (!toolContext) {
+        throw new Error("ToolContext is required for this tool.");
+      }
+
+      // 1. List all available artifacts
+      const artifacts = await toolContext.listArtifacts();
+      console.log(`Listing all available artifacts: ${artifacts}`);
+
+      // 2. Load an artifact
+      console.log(`Tool: Attempting to load artifact: ${params.documentName}`);
+      const documentPart = await toolContext.loadArtifact(params.documentName);
+      if (!documentPart) {
+        console.log(`Tool: Document '${params.documentName}' not found.`);
+        return {
+          status: "error",
+          message: `Document '${params.documentName}' not found.`, 
+        };
+      }
+
+      const documentText = documentPart.text ?? "";
+      console.log(
+        `Tool: Loaded document '${params.documentName}' (${documentText.length} chars).`
+      );
+
+      // 3. Search memory for related context
+      console.log(`Tool: Searching memory for context related to '${params.analysisQuery}'`);
+      const memory_results = await toolContext.searchMemory(params.analysisQuery);
+      console.log(`Tool: Found ${memory_results.memories.length} relevant memories.`);
+      const context_from_memory = memory_results.memories
+        .map((m) => m.content.parts[0].text)
+        .join("\n");
+
+      // 4. Perform analysis (placeholder)
+      const analysisResult =
+        `Analysis of '${params.documentName}' regarding '${params.analysisQuery}':\n` +
+        `Context from Memory:\n${context_from_memory}\n` +
+        `[Placeholder Analysis Result]`;
+      console.log("Tool: Performed analysis.");
+
+      // 5. Save the analysis result as a new artifact
+      const analysisPart: Part = { text: analysisResult };
+      const newArtifactName = `analysis_${params.documentName}`;
+      await toolContext.saveArtifact(newArtifactName, analysisPart);
+      console.log(`Tool: Saved analysis result to '${newArtifactName}'.`);
+
+      return {
+        status: "success",
+        analysis_artifact: newArtifactName,
+      };
+    }
+    ```
+
 By leveraging the **ToolContext**, developers can create more sophisticated and context-aware custom tools that seamlessly integrate with ADK's architecture and enhance the overall capabilities of their agents.
 
 ## Defining Effective Tool Functions
@@ -391,6 +500,49 @@ Here are key guidelines for defining effective tool functions:
     }
     ```
 
+=== "TypeScript"
+
+    ```ts
+    /**
+     * Fetches the current status of a customer's order using its ID.
+     *
+     * Use this tool ONLY when a user explicitly asks for the status of
+     * a specific order and provides the order ID. Do not use it for
+     * general inquiries.
+     *
+     * @param params The parameters for the function.
+     * @param params.order_id The unique identifier of the order to look up.
+     * @returns A dictionary indicating the outcome.
+     *          On success, status is 'success' and includes an 'order' dictionary.
+     *          On failure, status is 'error' and includes an 'error_message'.
+     *          Example success: {'status': 'success', 'order': {'state': 'shipped', 'tracking_number': '1Z9...'}}
+     *          Example error: {'status': 'error', 'error_message': 'Order ID not found.'}
+     */
+    async function lookupOrderStatus(params: { order_id: string }): Promise<Record<string, any>> {
+      // ... function implementation to fetch status from a backend ...
+      const status_details = await fetchStatusFromBackend(params.order_id);
+      if (status_details) {
+        return {
+          "status": "success",
+          "order": {
+            "state": status_details.state,
+            "tracking_number": status_details.tracking,
+          },
+        };
+      } else {
+        return { "status": "error", "error_message": `Order ID ${params.order_id} not found.` };
+      }
+    }
+
+    // Placeholder for a backend call
+    async function fetchStatusFromBackend(order_id: string): Promise<{state: string, tracking: string} | null> {
+        if (order_id === "12345") {
+            return { state: "shipped", tracking: "1Z9..." };
+        }
+        return null;
+    }
+    ```
+
 * **Simplicity and Focus:**
     * **Keep Tools Focused:** Each tool should ideally perform one well-defined task.
     * **Fewer Parameters are Better:** Models generally handle tools with fewer, clearly defined parameters more reliably than those with many optional or complex ones.
@@ -434,9 +586,17 @@ When the agent initializes or needs to determine its available capabilities, the
 
 Let's create a basic example of a toolset that provides simple arithmetic operations.
 
-```py
---8<-- "examples/python/snippets/tools/overview/toolset_example.py:init"
-```
+=== "Python"
+
+    ```py
+    --8<-- "examples/python/snippets/tools/overview/toolset_example.py:init"
+    ```
+
+=== "TypeScript"
+
+    ```ts
+    --8<-- "examples/typescript/snippets/tools/overview/toolset_example.ts"
+    ```
 
 In this example:
 
