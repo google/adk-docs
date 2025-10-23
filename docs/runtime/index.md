@@ -27,7 +27,7 @@ This event-driven loop is the fundamental pattern governing how ADK executes you
 The Event Loop is the core operational pattern defining the interaction between the `Runner` and your custom code (Agents, Tools, Callbacks, collectively referred to as "Execution Logic" or "Logic Components" in the design document). It establishes a clear division of responsibilities:
 
 !!! Note
-    The specific method names and parameter names may vary slightly by SDK language (e.g., `agent_to_run.runAsync(...)` in Java, `agent_to_run.run_async(...)` in Python). Refer to the language-specific API documentation for details.
+    The specific method names and parameter names may vary slightly by SDK language (e.g., `agent_to_run.runAsync(...)` in Java and TypeScript, `agent_to_run.run_async(...)` in Python). Refer to the language-specific API documentation for details.
 
 ### Runner's Role (Orchestrator)
 
@@ -96,6 +96,34 @@ The `Runner` acts as the central coordinator for a single user invocation. Its r
             //    In RxJava, returning the event in map effectively yields it to the next operator or subscriber.
             return event;
         });
+    }
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    // Simplified view of Runner's main loop logic
+    async * runAsync(newQuery: Content, ...): AsyncGenerator<Event, void, void> {
+        // 1. Append newQuery to session event history (via SessionService)
+        await sessionService.appendEvent({
+            session,
+            event: createEvent({author: 'user', content: newQuery})
+        });
+
+        // 2. Kick off event loop by calling the agent
+        const agentEventGenerator = agentToRun.runAsync(context);
+
+        for await (const event of agentEventGenerator) {
+            // 3. Process the generated event and commit changes
+            // Commits state/artifact deltas etc.
+            await sessionService.appendEvent({session, event});
+            // memoryService.updateMemory(...) // If applicable
+            // artifactService might have already been called via context during agent run
+
+            // 4. Yield event for upstream processing (e.g., UI rendering)
+            yield event;
+            // Runner implicitly signals agent generator can continue after yielding
+        }
     }
     ```
 
@@ -216,6 +244,40 @@ Your code within agents, tools, and callbacks is responsible for the actual comp
     
             // ... subsequent code continues ...
             // If this subsequent code needs to yield another event, it would do so here.
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    // Simplified view of logic inside Agent.runAsync, callbacks, or tools
+
+    // ... previous code runs based on current state ...
+
+    // 1. Determine a change or output is needed, construct the event
+    // Example: Updating state
+    const updateData = {'field_1': 'value_2'};
+    const eventWithStateChange = createEvent({
+        author: this.name,
+        actions: createEventActions({stateDelta: updateData}),
+        content: {parts: [{text: "State updated."}]}
+        // ... other event fields ...
+    });
+
+    // 2. Yield the event to the Runner for processing & commit
+    yield eventWithStateChange;
+    // <<<<<<<<<<<< EXECUTION PAUSES HERE >>>>>>>>>>>>
+
+    // <<<<<<<<<<<< RUNNER PROCESSES & COMMITS THE EVENT >>>>>>>>>>>>
+
+    // 3. Resume execution ONLY after Runner is done processing the above event.
+    // Now, the state committed by the Runner is reliably reflected.
+    // Subsequent code can safely assume the change from the yielded event happened.
+    const val = ctx.session.state['field_1'];
+    // here `val` is guaranteed to be "value_2" (assuming Runner committed successfully)
+    console.log(`Resumed execution. Value of field_1 is now: ${val}`);
+
+    // ... subsequent code continues ...
+    // Maybe yield another event later...
     ```
 
 This cooperative yield/pause/resume cycle between the `Runner` and your Execution Logic, mediated by `Event` objects, forms the core of the ADK Runtime.
@@ -362,6 +424,31 @@ Understanding a few key aspects of how the ADK Runtime handles state, streaming,
     // or emitting more events based on the now-updated `ctx.session().state()`.
     ```
 
+=== "TypeScript"
+
+    ```typescript
+    // Inside agent logic (conceptual)
+
+    // 1. Modify state
+    // In TypeScript, you modify state via the context, which tracks the change.
+    ctx.state.set('status', 'processing');
+    const event1 = createEvent({
+        // The framework will automatically populate actions with the state
+        // delta from the context. For illustration, it's shown here.
+        actions: createEventActions({stateDelta: {'status': 'processing'}}),
+        // ... other event fields
+    });
+
+    // 2. Yield event with the delta
+    yield event1;
+    // --- PAUSE --- Runner processes event1, SessionService commits 'status' = 'processing' ---
+
+    // 3. Resume execution
+    // Now it's safe to rely on the committed state in the session object.
+    const currentStatus = ctx.session.state['status']; // Guaranteed to be 'processing'
+    console.log(`Status after resuming: ${currentStatus}`);
+    ```
+
 ### "Dirty Reads" of Session State
 
 * **Definition:** While commitment happens *after* the yield, code running *later within the same invocation*, but *before* the state-changing event is actually yielded and processed, **can often see the local, uncommitted changes**. This is sometimes called a "dirty read".
@@ -402,6 +489,24 @@ Understanding a few key aspects of how the ADK Runtime handles state, streaming,
     // is yielded *after* this tool runs and is processed by the Runner.
     ```
 
+=== "TypeScript"
+
+    ```typescript
+    // Code in beforeAgentCallback
+    callbackContext.state.set('field_1', 'value_1');
+    // State is locally set to 'value_1', but not yet committed by Runner
+
+    // --- agent runs ... ---
+
+    // --- Code in a tool called later *within the same invocation* ---
+    // Readable (dirty read), but 'value_1' isn't guaranteed persistent yet.
+    const val = toolContext.state.get('field_1'); // 'val' will likely be 'value_1' here
+    console.log(`Dirty read value in tool: ${val}`);
+
+    // Assume the event carrying the state_delta={'field_1': 'value_1'}
+    // is yielded *after* this tool runs and is processed by the Runner.
+    ```
+
 * **Implications:**
   * **Benefit:** Allows different parts of your logic within a single complex step (e.g., multiple callbacks or tool calls before the next LLM turn) to coordinate using state without waiting for a full yield/commit cycle.
   * **Caveat:** Relying heavily on dirty reads for critical logic can be risky. If the invocation fails *before* the event carrying the `state_delta` is yielded and processed by the `Runner`, the uncommitted state change will be lost. For critical state transitions, ensure they are associated with an event that gets successfully processed.
@@ -420,12 +525,12 @@ This primarily relates to how responses from the LLM are handled, especially whe
 
 ## Async is Primary (`run_async`)
 
-* **Core Design:** The ADK Runtime is fundamentally built on asynchronous libraries (like Python's `asyncio` and Java's `RxJava`) to handle concurrent operations (like waiting for LLM responses or tool executions) efficiently without blocking.
+* **Core Design:** The ADK Runtime is fundamentally built on asynchronous patterns and libraries (like Python's `asyncio`, Java's `RxJava`, and native `Promise`s and `AsyncGenerator`s in TypeScript) to handle concurrent operations (like waiting for LLM responses or tool executions) efficiently without blocking.
 * **Main Entry Point:** `Runner.run_async` is the primary method for executing agent invocations. All core runnable components (Agents, specific flows) use `asynchronous` methods internally.
 * **Synchronous Convenience (`run`):** A synchronous `Runner.run` method exists mainly for convenience (e.g., in simple scripts or testing environments). However, internally, `Runner.run` typically just calls `Runner.run_async` and manages the async event loop execution for you.
-* **Developer Experience:** We recommend designing your applications (e.g., web servers using ADK) to be asynchronous for best performance. In Python, this means using `asyncio`; in Java, leverage `RxJava`'s reactive programming model.
+* **Developer Experience:** We recommend designing your applications (e.g., web servers using ADK) to be asynchronous for best performance. In Python, this means using `asyncio`; in Java, leverage `RxJava`'s reactive programming model; and in TypeScript, this means building using native `Promise`s and `AsyncGenerator`s.
 * **Sync Callbacks/Tools:** The ADK framework supports both asynchronous and synchronous functions for tools and callbacks.
-    * **Blocking I/O:** For long-running synchronous I/O operations, the framework attempts to prevent stalls. Python ADK may use asyncio.to_thread, while Java ADK often relies on appropriate RxJava schedulers or wrappers for blocking calls.
+    * **Blocking I/O:** For long-running synchronous I/O operations, the framework attempts to prevent stalls. Python ADK may use asyncio.to_thread, while Java ADK often relies on appropriate RxJava schedulers or wrappers for blocking calls. In TypeScript, the framework simply awaits the function; if a synchronous function performs blocking I/O, it will stall the event loop. Developers should use asynchronous I/O APIs (which return a Promise) whenever possible.
     * **CPU-Bound Work:** Purely CPU-intensive synchronous tasks will still block their execution thread in both environments.
 
 Understanding these behaviors helps you write more robust ADK applications and debug issues related to state consistency, streaming updates, and asynchronous execution.
