@@ -1,7 +1,5 @@
 # Plugins
 
-## What is a Plugin?
-
 A Plugin in Agent Development Kit (ADK) is a custom code module that can be
 executed at various stages of an agent workflow lifecycle using callback hooks.
 You use Plugins for functionality that is applicable across your agent workflow.
@@ -33,8 +31,6 @@ Some typical applications of Plugins are as follows:
     [ADK web interface](../evaluate/#1-adk-web-run-evaluations-via-the-web-ui). 
     If your ADK workflow uses Plugins, you must run your workflow without the 
     web interface.
-
-Tip: When implementing security guardrails and policies, use ADK Plugins for better modularity and flexibility than Callbacks. For more details, see [Callbacks and Plugins for Security Guardrails](../safety/index.md#callbacks-and-plugins-for-security-guardrails).
 
 ## How do Plugins work?
 
@@ -510,3 +506,13 @@ async def after_run_callback(
     self, *, invocation_context: InvocationContext
 ) -> Optional[None]:
 ```
+
+## Next steps
+
+Check out these resources for developing and applying Plugins to your ADK
+projects:
+
+-   For more ADK Plugin code examples, see the
+    [ADK Python repository](https://github.com/google/adk-python/tree/main/src/google/adk/plugins).
+-   For information on applying Plugins for security purposes, see 
+    [Callbacks and Plugins for Security Guardrails](/adk-docs/safety/#callbacks-and-plugins-for-security-guardrails).

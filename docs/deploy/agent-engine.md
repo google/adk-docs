@@ -58,9 +58,6 @@ You need the following resources configured to use this deployment path:
 -   **Make tool**: Build automation tool. This tool is part of most
     Unix-based systems, for installation details, see the 
     [Make tool](https://www.gnu.org/software/make/) documentation.
--   **Terraform**: Infrastructure and services deployment on Google Cloud.
-    For installation details, see 
-    [Install Terraform](https://developer.hashicorp.com/terraform/install).
 
 ### Prepare your ADK project {#prepare-ad}
 
@@ -80,11 +77,18 @@ example.
 To prepare your ADK project for deployment to Agent Engine:
 
 1.  In a terminal window of your development environment, navigate to the
-    root directory of your project, for example:
+    **parent directory** that contains your agent folder. For example, if your
+    project structure is:
 
-    ```shell
-    cd multi_tool_agent/
     ```
+    your-project-directory/
+    ├── multi_tool_agent/
+    │   ├── __init__.py
+    │   ├── agent.py
+    │   └── .env
+    ```
+
+    Navigate to `your-project-directory/`
 
 1.  Run the ASP `enhance` command to add the needed files required for
     deployment into your project.
@@ -158,15 +162,8 @@ Engine service and the agent project is executed.
 
 To deploy your ADK project to Agent Engine in your Google Cloud project:
 
-1.  In a terminal window of your development environment, navigate to the
-    root directory of your project, for example:
-    `cd multi_tool_agent/`
-1.  Provision a development environment, including logging, services accounts,
-    storage, and Vertex AI API by running the following ASP make command:
-
-    ```shell
-    make setup-dev-env
-    ```
+1.  In a terminal window, ensure you are in the parent directory (e.g.,
+    `your-project-directory/`) that contains your agent folder.
 
 1.  Deploy the code from the updated local project into the Google Cloud
 development environment, by running the following ASP make command:
