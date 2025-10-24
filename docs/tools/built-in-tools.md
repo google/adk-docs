@@ -141,6 +141,31 @@ The `GkeCodeExecutor` can be configured with the following parameters:
 | `kubeconfig_path`    | `str`  | Path to a kubeconfig file to use for authentication. Falls back to in-cluster config or the default local kubeconfig. |
 | `kubeconfig_context` | `str`  | The `kubeconfig` context to use.  |
 
+### Agent Engine Sandbox Code Executor
+
+The `AgentEngineSandboxCodeExecutor` provides a secure way to execute LLM-generated code within the Agent Engine Code Execution Sandbox. This is particularly useful for data analysis tasks.
+
+#### How to use
+
+1. Follow the instructions at https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/code-execution/overview to create a code execution sandbox environment.
+2. Replace `SANDBOX_RESOURCE_NAME` with the one you just created.
+
+**Example:**
+```python
+from google.adk.agents.llm_agent import Agent
+from google.adk.code_executors.agent_engine_sandbox_code_executor import AgentEngineSandboxCodeExecutor
+
+root_agent = Agent(
+    model="gemini-2.0-flash-001",
+    name="agent_engine_code_execution_agent",
+    instruction="<your instruction here>",
+    code_executor=AgentEngineSandboxCodeExecutor(
+        sandbox_resource_name="SANDBOX_RESOURCE_NAME",
+        agent_engine_resource_name="AGENT_ENGINE_RESOURCE_NAME",
+    ),
+)
+```
+For a complete example, see the [agent_engine_code_execution sample](https://github.com/google/adk-python/tree/main/contributing/samples/agent_engine_code_execution).
 ### Vertex AI RAG Engine
 
 The `vertex_ai_rag_retrieval` tool allows the agent to perform private data retrieval using Vertex
@@ -230,134 +255,29 @@ They are packaged in the toolset `BigtableToolset`.
 
 ## Use Built-in tools with other tools
 
-The following code sample demonstrates how to use multiple built-in tools or how
-to use built-in tools with other tools by using multiple agents:
+You can now use `GoogleSearchTool` and `VertexAiSearchTool` with other tools by setting `bypass_multi_tools_limit=True`.
 
-=== "Python"
+**Example:**
+```python
+from google.adk.tools.google_search_tool import GoogleSearchTool
+from google.adk.tools.vertex_ai_search_tool import VertexAiSearchTool
 
-    ```py
-    from google.adk.tools.agent_tool import AgentTool
-    from google.adk.agents import Agent
-    from google.adk.tools import google_search
-    from google.adk.code_executors import BuiltInCodeExecutor
-    
-
-    search_agent = Agent(
-        model='gemini-2.0-flash',
-        name='SearchAgent',
-        instruction="""
-        You're a specialist in Google Search
-        """,
-        tools=[google_search],
-    )
-    coding_agent = Agent(
-        model='gemini-2.0-flash',
-        name='CodeAgent',
-        instruction="""
-        You're a specialist in Code Execution
-        """,
-        code_executor=BuiltInCodeExecutor(),
-    )
-    root_agent = Agent(
-        name="RootAgent",
-        model="gemini-2.0-flash",
-        description="Root Agent",
-        tools=[AgentTool(agent=search_agent), AgentTool(agent=coding_agent)],
-    )
-    ```
-
-=== "Java"
-
-    ```java
-    import com.google.adk.agents.BaseAgent;
-    import com.google.adk.agents.LlmAgent;
-    import com.google.adk.tools.AgentTool;
-    import com.google.adk.tools.BuiltInCodeExecutionTool;
-    import com.google.adk.tools.GoogleSearchTool;
-    import com.google.common.collect.ImmutableList;
-    
-    public class NestedAgentApp {
-    
-      private static final String MODEL_ID = "gemini-2.0-flash";
-    
-      public static void main(String[] args) {
-
-        // Define the SearchAgent
-        LlmAgent searchAgent =
-            LlmAgent.builder()
-                .model(MODEL_ID)
-                .name("SearchAgent")
-                .instruction("You're a specialist in Google Search")
-                .tools(new GoogleSearchTool()) // Instantiate GoogleSearchTool
-                .build();
-    
-
-        // Define the CodingAgent
-        LlmAgent codingAgent =
-            LlmAgent.builder()
-                .model(MODEL_ID)
-                .name("CodeAgent")
-                .instruction("You're a specialist in Code Execution")
-                .tools(new BuiltInCodeExecutionTool()) // Instantiate BuiltInCodeExecutionTool
-                .build();
-
-        // Define the RootAgent, which uses AgentTool.create() to wrap SearchAgent and CodingAgent
-        BaseAgent rootAgent =
-            LlmAgent.builder()
-                .name("RootAgent")
-                .model(MODEL_ID)
-                .description("Root Agent")
-                .tools(
-                    AgentTool.create(searchAgent), // Use create method
-                    AgentTool.create(codingAgent)   // Use create method
-                 )
-                .build();
-
-        // Note: This sample only demonstrates the agent definitions.
-        // To run these agents, you'd need to integrate them with a Runner and SessionService,
-        // similar to the previous examples.
-        System.out.println("Agents defined successfully:");
-        System.out.println("  Root Agent: " + rootAgent.name());
-        System.out.println("  Search Agent (nested): " + searchAgent.name());
-        System.out.println("  Code Agent (nested): " + codingAgent.name());
-      }
-    }
-    ```
-
+root_agent = Agent(
+    name="MyAgent",
+    model="gemini-2.5-flash",
+    tools=[
+        my_custom_tool,
+        GoogleSearchTool(bypass_multi_tools_limit=True),
+        VertexAiSearchTool(data_store_id="my-data-store", bypass_multi_tools_limit=True),
+    ],
+)
+```
 
 ### Limitations
 
 !!! warning
 
-    Currently, for each root agent or single agent, only one built-in tool is
-    supported. No other tools of any type can be used in the same agent.
-
- For example, the following approach that uses ***a built-in tool along with
- other tools*** within a single agent is **not** currently supported:
-
-=== "Python"
-
-    ```py
-    root_agent = Agent(
-        name="RootAgent",
-        model="gemini-2.0-flash",
-        description="Root Agent",
-        tools=[custom_function], 
-        code_executor=BuiltInCodeExecutor() # <-- not supported when used with tools
-    )
-    ```
-
-=== "Java"
-
-    ```java
-     LlmAgent searchAgent =
-            LlmAgent.builder()
-                .model(MODEL_ID)
-                .name("SearchAgent")
-                .instruction("You're a specialist in Google Search")
-                .tools(new GoogleSearchTool(), new YourCustomTool()) // <-- not supported
-                .build();
-    ```
+    When using `GoogleSearchTool` or `VertexAiSearchTool` with other tools, you must set `bypass_multi_tools_limit=True`.
 
 ADK Python has a built-in workaroud which bypasses this limitation for 
 `GoogleSearchTool` and `VertexAiSearchTool` (use `bypass_multi_tools_limit=True` to enable it), e.g.
