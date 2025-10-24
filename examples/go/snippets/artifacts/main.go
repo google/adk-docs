@@ -74,7 +74,7 @@ func configureRunner() {
 		},
 	})
 	if err != nil {
-		log.Fatalf("failed to create agent: %v", err)
+		log.Fatalf("Failed to create agent: %v", err)
 	}
 
 	// Create a new in-memory artifact service.
@@ -100,17 +100,17 @@ func configureRunner() {
 // inMemoryServiceExample demonstrates how to set up an in-memory artifact service.
 func inMemoryServiceExample() {
 	// --8<-- [start:in-memory-service]
-	// Simply instantiate the class
-	inMemoryService := artifact.InMemoryService()
-	log.Printf("InMemoryArtifactService (Go) instantiated: %T", inMemoryService)
+	// Simply instantiate the service
+	artifactService := artifact.InMemoryService()
+	log.Printf("InMemoryArtifactService (Go) instantiated: %T", artifactService)
 
 	// Use the service in your runner
-	// r, _ := runner.New(&runner.Config{
+	// r, _ := runner.New(runner.Config{
 	// 	Agent:           agent,
 	// 	AppName:         "my_app",
 	// 	SessionService:  sessionService,
 	// 	ArtifactService: artifactService,
-	// })
+	// })	
 	
 	// --8<-- [end:in-memory-service]
 }
@@ -192,6 +192,7 @@ func artifactData() {
 // namespacing demonstrates the difference between session and user-scoped artifacts.
 func namespacing() {
 // --8<-- [start:namespacing]
+	// Note: Namespacing is only supported when using the GCS ArtifactService implementation.
 	// A session-scoped artifact is only available within the current session.
 	sessionReportFilename := "summary.txt"
 	// A user-scoped artifact is available across all sessions for the current user.
