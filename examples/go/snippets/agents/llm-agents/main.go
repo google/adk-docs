@@ -50,7 +50,6 @@ func getCapitalCity(ctx tool.Context, args getCapitalCityArgs) map[string]any {
 	return map[string]any{"result": capital}
 }
 
-
 // callAgent is a helper function to execute an agent with a given prompt and handle its output.
 func callAgent(ctx context.Context, a agent.Agent, outputKey string, prompt string) {
 	fmt.Printf("\n>>> Calling Agent: '%s' | Query: %s\n", a.Name(), prompt)

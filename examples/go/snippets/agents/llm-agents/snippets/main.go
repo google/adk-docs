@@ -19,7 +19,6 @@ import (
 // The following functions are self-contained examples for documentation.
 // They are not called by the main application.
 
-
 func _snippet_identity(model model.LLM) {
 	// --8<-- [start:identity]
 	// Example: Defining the basic identity
@@ -34,10 +33,9 @@ func _snippet_identity(model model.LLM) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	
+
 	fmt.Println("Agent created:", agent.Name())
 }
-
 
 func _snippet_instruction(model model.LLM) {
 	// --8<-- [start:instruction]
@@ -60,10 +58,9 @@ Example Response: "The capital of France is Paris."`,
 	if err != nil {
 		log.Fatal(err)
 	}
-	
+
 	fmt.Println("Agent with instruction created:", agent.Name())
 }
-
 
 func _snippet_tool_example(model model.LLM) {
 	// --8<-- [start:tool_example]
@@ -104,10 +101,9 @@ func _snippet_tool_example(model model.LLM) {
 	if err != nil {
 		log.Fatal(err)
 	}
-	
+
 	fmt.Println("Agent with tool created:", agent.Name())
 }
-
 
 func _snippet_schema_example(model model.LLM) {
 	// --8<-- [start:schema_example]
@@ -138,7 +134,6 @@ func _snippet_schema_example(model model.LLM) {
 	fmt.Println("Agent with output schema created:", agent.Name())
 }
 
-
 func _snippet_gen_config(model model.LLM) {
 	// --8<-- [start:gen_config]
 	temperature := float32(0.2)
@@ -158,7 +153,6 @@ func _snippet_gen_config(model model.LLM) {
 	fmt.Println("Agent with generation config created:", agent.Name())
 }
 
-
 func _snippet_include_contents(model model.LLM) {
 	// --8<-- [start:include_contents]
 	agent, err := llmagent.New(llmagent.Config{
@@ -173,7 +167,6 @@ func _snippet_include_contents(model model.LLM) {
 	fmt.Println("Stateless agent created:", agent.Name())
 }
 
-
 func main() {
 	// Call all snippet functions to ensure they compile.
 	ctx := context.Background()
@@ -183,7 +176,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to create model: %v", err)
 	}
-	
+
 	_snippet_include_contents(model)
 	_snippet_identity(model)
 	_snippet_instruction(model)
