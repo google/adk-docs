@@ -10,6 +10,7 @@ import (
 	"google.golang.org/adk/model"
 	"google.golang.org/adk/model/gemini"
 	"google.golang.org/adk/tool"
+	"google.golang.org/adk/tool/functiontool"
 
 	"google.golang.org/genai"
 )
@@ -81,8 +82,8 @@ func _snippet_tool_example(model model.LLM) {
 	}
 
 	// Add the tool to the agent
-	capitalTool, err := tool.NewFunctionTool(
-		tool.FunctionToolConfig{
+	capitalTool, err := functiontool.New(
+		functiontool.Config{
 			Name:        "get_capital_city",
 			Description: "Retrieves the capital city for a given country.",
 		},
@@ -163,7 +164,7 @@ func _snippet_include_contents(model model.LLM) {
 	agent, err := llmagent.New(llmagent.Config{
 		Name:            "stateless_agent",
 		Model:           model,
-		IncludeContents: "None",
+		IncludeContents: llmagent.IncludeContentsNone,
 	})
 	// --8<-- [end:include_contents]
 	if err != nil {

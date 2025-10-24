@@ -14,6 +14,7 @@ import (
 	"google.golang.org/adk/runner"
 	"google.golang.org/adk/session"
 	"google.golang.org/adk/tool"
+	"google.golang.org/adk/tool/functiontool"
 
 	"google.golang.org/genai"
 )
@@ -90,7 +91,7 @@ func callAgent(ctx context.Context, a agent.Agent, outputKey string, prompt stri
 	}
 
 	// Run the agent and process the streaming events.
-	for event, err := range r.Run(ctx, userID, sessionID, userMsg, &agent.RunConfig{
+	for event, err := range r.Run(ctx, userID, sessionID, userMsg, agent.RunConfig{
 		StreamingMode: agent.StreamingModeSSE,
 	}) {
 		if err != nil {
@@ -138,8 +139,8 @@ func main() {
 		log.Fatalf("Failed to create model: %v", err)
 	}
 
-	capitalTool, err := tool.NewFunctionTool(
-		tool.FunctionToolConfig{
+	capitalTool, err := functiontool.New(
+		functiontool.Config{
 			Name:        "get_capital_city",
 			Description: "Retrieves the capital city for a given country.",
 		},
