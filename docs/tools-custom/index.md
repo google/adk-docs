@@ -2,8 +2,8 @@
 
 In an ADK agent workflow, Tools are programming functions with structured input
 and output that can be called by an ADK Agent to perform actions. ADK Tools
-function similarly to how you use a 
-[Function Call](https://ai.google.dev/gemini-api/docs/function-calling) 
+function similarly to how you use a
+[Function Call](https://ai.google.dev/gemini-api/docs/function-calling)
 with Gemini or other generative AI models. You can perform various actions and
 programming functions with an ADK Tool, such as:
 
@@ -15,7 +15,7 @@ programming functions with an ADK Tool, such as:
 *   Interacting with other software or services
 
 !!! tip "[ADK Tools list](/adk-docs/tools/)"
-    Before building your own Tools for ADK, check out the 
+    Before building your own Tools for ADK, check out the
     **[ADK Tools list](/adk-docs/tools/)**
     for pre-built tools you can use with ADK Agents.
 
@@ -36,7 +36,7 @@ external systems or data.
 
 ### Key Characteristics
 
-**Action-Oriented:** Tools perform specific actions for an agent, such as 
+**Action-Oriented:** Tools perform specific actions for an agent, such as
 searching for information, calling an API, or performing calculations.
 
 **Extends Agent capabilities:** They empower agents to access real-time information, affect external systems, and overcome the knowledge limitations inherent in their training data.
@@ -65,8 +65,8 @@ ADK offers flexibility by supporting several types of tools:
     * **[Long Running Function Tools](../tools/function-tools.md#2-long-running-function-tool):** Support for tools that perform asynchronous operations or take significant time to complete.
 2. **[Built-in Tools](../tools/built-in-tools.md):** Ready-to-use tools provided by the framework for common tasks.
         Examples: Google Search, Code Execution, Retrieval-Augmented Generation (RAG).
-3. **[Third-Party Tools](/adk-docs/tools/third-party/):** Integrate tools seamlessly from popular external libraries.
-        Examples: LangChain Tools, CrewAI Tools.
+3. **Third-Party Tools:** Integrate tools seamlessly from popular external libraries.
+        Examples: [LangChain Tools](/adk-docs/tools/third-party/langchain/), [CrewAI Tools](/adk-docs/tools/third-party/crewai/).
 
 Navigate to the respective documentation pages linked above for detailed information and examples for each tool type.
 
@@ -147,17 +147,17 @@ The `tool_context.state` attribute provides direct read and write access to the 
     // Updates a user-specific preference.
     public Map<String, String> updateUserThemePreference(String value, ToolContext toolContext) {
       String userPrefsKey = "user:preferences:theme";
-  
+
       // Get current preferences or initialize if none exist
       String preference = toolContext.state().getOrDefault(userPrefsKey, "").toString();
       if (preference.isEmpty()) {
         preference = value;
       }
-  
+
       // Write the updated dictionary back to the state
       toolContext.state().put("user:preferences", preference);
       System.out.printf("Tool: Updated user preference %s to %s", userPrefsKey, preference);
-  
+
       return Map.of("status", "success", "updated_preference", toolContext.state().get(userPrefsKey).toString());
       // When the LLM calls updateUserThemePreference("dark"):
       // The toolContext.state will be updated, and the change will be part of the
@@ -245,11 +245,11 @@ These methods provide convenient ways for your tool to interact with persistent 
         @Annotations.Schema(description = "The name of the document to analyze.") String documentName,
         @Annotations.Schema(description = "The query for the analysis.") String analysisQuery,
         ToolContext toolContext) {
-  
+
       // 1. List all available artifacts
       System.out.printf(
           "Listing all available artifacts %s:", toolContext.listArtifacts().blockingGet());
-  
+
       // 2. Load an artifact to memory
       System.out.println("Tool: Attempting to load artifact: " + documentName);
       Part documentPart = toolContext.loadArtifact(documentName, Optional.empty()).blockingGet();
@@ -262,7 +262,7 @@ These methods provide convenient ways for your tool to interact with persistent 
       String documentText = documentPart.text().orElse("");
       System.out.println(
           "Tool: Loaded document '" + documentName + "' (" + documentText.length() + " chars).");
-  
+
       // 3. Perform analysis (placeholder)
       String analysisResult =
           "Analysis of '"
@@ -271,13 +271,13 @@ These methods provide convenient ways for your tool to interact with persistent 
               + analysisQuery
               + " [Placeholder Analysis Result]";
       System.out.println("Tool: Performed analysis.");
-  
+
       // 4. Save the analysis result as a new artifact
       Part analysisPart = Part.fromText(analysisResult);
       String newArtifactName = "analysis_" + documentName;
-  
+
       toolContext.saveArtifact(newArtifactName, analysisPart);
-  
+
       return Maybe.just(
           ImmutableMap.<String, Object>builder()
               .put("status", "success")
@@ -324,12 +324,12 @@ Here are key guidelines for defining effective tool functions:
     * **Explain *when* the tool should be used.** Provide context or example scenarios to guide the LLM's decision-making.
     * **Describe *each parameter* clearly.** Explain what information the LLM needs to provide for that argument.
     * Describe the **structure and meaning of the expected `dict` return value**, especially the different `status` values and associated data keys.
-    * **Do not describe the injected ToolContext parameter**. Avoid mentioning the optional `tool_context: ToolContext` parameter within the docstring description since it is not a parameter the LLM needs to know about. ToolContext is injected by ADK, *after* the LLM decides to call it. 
+    * **Do not describe the injected ToolContext parameter**. Avoid mentioning the optional `tool_context: ToolContext` parameter within the docstring description since it is not a parameter the LLM needs to know about. ToolContext is injected by ADK, *after* the LLM decides to call it.
 
     **Example of a good definition:**
 
 === "Python"
-    
+
     ```python
     def lookup_order_status(order_id: str) -> dict:
       """Fetches the current status of a customer's order using its ID.
