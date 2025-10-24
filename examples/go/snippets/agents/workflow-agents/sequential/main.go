@@ -153,8 +153,7 @@ Do not add any other text before or after the code block.`,
 		if err != nil {
 			return fmt.Errorf("error during agent execution: %v", err)
 		}
-		// The Go runner streams all events. For this example, we print the text
-		// from each part of the LLM response as it arrives.
+		
 		for _, p := range event.Content.Parts {
 			fmt.Print(p.Text)
 		}
