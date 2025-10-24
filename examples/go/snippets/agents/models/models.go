@@ -9,7 +9,6 @@ import (
 	"google.golang.org/genai"
 )
 
-
 func main() {
 	ctx := context.Background()
 	// --8<-- [start:gemini-example]
