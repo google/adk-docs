@@ -94,7 +94,7 @@ func runTurn(ctx context.Context, r *runner.Runner, sessionID, turnLabel string,
 		printEventSummary(event, turnLabel)
 
 		// Capture the function call ID from the event.
-		for _, part := range event.LLMResponse.Content.Parts {
+		for _, part := range event.Content.Parts {
 			if fc := part.FunctionCall; fc != nil {
 				if fc.Name == "create_ticket_long_running" {
 					funcCallID.Store(fc.ID)
@@ -159,7 +159,7 @@ func main() {
 
 // printEventSummary provides a readable log of agent and LLM interactions.
 func printEventSummary(event *session.Event, turnLabel string) {
-	for _, part := range event.LLMResponse.Content.Parts {
+	for _, part := range event.Content.Parts {
 		// Check for a text part.
 		if part.Text != "" {
 			fmt.Printf("[%s][%s_TEXT]: %s\n", turnLabel, event.Author, part.Text)
