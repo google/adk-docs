@@ -18,7 +18,7 @@ tool when the agent calls it. Important: check the ***Limitations*** section of 
 ## Available Built-in tools
 
 Note: Java only supports Google Search and Code Execution tools currently.
-Note: Go only supports the Google Search tool currently.
+Note: Go supports the Google Search tool and other built-in tools via the `geminitool` package.
 
 ### Google Search
 
