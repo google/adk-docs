@@ -66,13 +66,6 @@ First, you need to establish what the agent *is* and what it's *for*.
             .build();
     ```
 
-=== "Golang"
-
-    ```go
-    // Example: Defining the basic identity
-    --8<-- "examples/go/snippets/agents/llm-agents/snippets/main.go:identity"
-    ```
-
 
 ## Guiding the Agent: Instructions (`instruction`)
 
@@ -136,17 +129,11 @@ tells the agent:
                 1. Identify the country name from the user's query.
                 2. Use the `get_capital_city` tool to find the capital.
                 3. Respond clearly to the user, stating the capital city.
-                Example Query: \"What's the capital of {country}?\"\n                Example Response: \"The capital of France is Paris.\"
+                Example Query: "What's the capital of {country}?"
+                Example Response: "The capital of France is Paris."
                 """)
             // tools will be added next
             .build();
-    ```
-
-=== "Golang"
-
-    ```go
-    // Example: Adding instructions
-    --8<-- "examples/go/snippets/agents/llm-agents/snippets/main.go:instruction"
     ```
 
 *(Note: For instructions that apply to *all* agents in a system, consider using
@@ -183,7 +170,7 @@ on the conversation and its instructions.
         model="gemini-2.0-flash",
         name="capital_agent",
         description="Answers user questions about the capital city of a given country.",
-        instruction="""You are an agent that provides the capital city of a country... (previous instruction text) """,
+        instruction="""You are an agent that provides the capital city of a country... (previous instruction text)""",
         tools=[get_capital_city] # Provide the function directly
     )
     ```
@@ -219,12 +206,6 @@ on the conversation and its instructions.
             .instruction("You are an agent that provides the capital city of a country... (previous instruction text)")
             .tools(capitalTool) // Provide the function wrapped as a FunctionTool
             .build();
-    ```
-
-=== "Golang"
-
-    ```go
-    --8<-- "examples/go/snippets/agents/llm-agents/snippets/main.go:tool_example"
     ```
 
 Learn more about Tools in the [Tools](../tools/index.md) section.
@@ -268,18 +249,10 @@ You can adjust how the underlying LLM generates responses using `generate_conten
         LlmAgent.builder()
             // ... other params
             .generateContentConfig(GenerateContentConfig.builder()
-                .temperature(0.2F) # More deterministic output
+                .temperature(0.2F) // More deterministic output
                 .maxOutputTokens(250)
                 .build())
             .build();
-    ```
-
-=== "Golang"
-
-    ```go
-    import "google.golang.org/genai"
-
-    --8<-- "examples/go/snippets/agents/llm-agents/snippets/main.go:gen_config"
     ```
 
 ### Structuring Data (`input_schema`, `output_schema`, `output_key`)
@@ -293,7 +266,6 @@ For scenarios requiring structured data exchange with an `LLM Agent`, the ADK pr
 * **`output_key` (Optional):** Provide a string key. If set, the text content of the agent's *final* response will be automatically saved to the session's state dictionary under this key. This is useful for passing results between agents or steps in a workflow.
     * In Python, this might look like: `session.state[output_key] = agent_response_text`
     * In Java: `session.state().put(outputKey, agentResponseText)`
-    * In Golang, within a callback handler: `ctx.State().Set(output_key, agentResponseText)`
 
 === "Python"
 
@@ -334,21 +306,13 @@ For scenarios requiring structured data exchange with an `LLM Agent`, the ADK pr
     
     LlmAgent structuredCapitalAgent =
         LlmAgent.builder()
-            # ... name, model, description
+            // ... name, model, description
             .instruction(
                     "You are a Capital Information Agent. Given a country, respond ONLY with a JSON object containing the capital. Format: {\"capital\": \"capital_name\"}")
-            .outputSchema(capitalOutput) # Enforce JSON output
-            .outputKey("found_capital") # Store result in state.get("found_capital")
-            # Cannot use tools(getCapitalCity) effectively here
+            .outputSchema(capitalOutput) // Enforce JSON output
+            .outputKey("found_capital") // Store result in state.get("found_capital")
+            // Cannot use tools(getCapitalCity) effectively here
             .build();
-    ```
-
-=== "Golang"
-
-    The input and output schema is a `google.genai.types.Schema` object.
-
-    ```go
-    --8<-- "examples/go/snippets/agents/llm-agents/snippets/main.go:schema_example"
     ```
 
 ### Managing Context (`include_contents`)
@@ -375,17 +339,9 @@ Control whether the agent receives the prior conversation history.
     
     LlmAgent statelessAgent =
         LlmAgent.builder()
-            # ... other params
+            // ... other params
             .includeContents(IncludeContents.NONE)
             .build();
-    ```
-
-=== "Golang"
-
-    ```go
-    import "google.golang.org/adk/agent/llmagent"
-
-    --8<-- "examples/go/snippets/agents/llm-agents/snippets/main.go:include_contents"
     ```
 
 ### Planner
@@ -531,8 +487,9 @@ def get_current_time(city: str) -> dict:
 
     tz = ZoneInfo(tz_identifier)
     now = datetime.datetime.now(tz)
-    report =
+    report = (
         f'The current time in {city} is {now.strftime("%Y-%m-%d %H:%M:%S %Z%z")}'
+    )
     return {"status": "success", "report": report}
 
 # Step 1: Create a ThinkingConfig
@@ -582,27 +539,21 @@ call_agent("If it's raining in New York right now, what is the current temperatu
 ??? "Code"
     Here's the complete basic `capital_agent`:
 
-    === "Python" 
+    === "Python"
     
         ```python
         --8<-- "examples/python/snippets/agents/llm-agent/capital_agent.py"
         ```
     
-    === "Java" 
+    === "Java"
     
         ```java
         --8<-- "examples/java/snippets/src/main/java/agents/LlmAgentExample.java:full_code"
         ```
 
-    === "Golang"
-
-        ```go
-        --8<-- "examples/go/snippets/agents/llm-agents/main.go:full_code"
-        ```
-
 _(This example demonstrates the core concepts. More complex agents might incorporate schemas, context control, planning, etc.)_
 
-## Related Concepts (Deferred Topics) 
+## Related Concepts (Deferred Topics)
 
 While this page covers the core configuration of `LlmAgent`, several related concepts provide more advanced control and are detailed elsewhere:
 
