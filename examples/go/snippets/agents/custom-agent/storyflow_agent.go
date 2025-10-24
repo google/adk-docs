@@ -22,8 +22,8 @@ import (
 // StoryFlowAgent is a custom agent that orchestrates a story generation workflow.
 // It encapsulates the logic of running sub-agents in a specific sequence.
 type StoryFlowAgent struct {
-	storyGenerator  agent.Agent
-	revisionLoopAgent       agent.Agent
+	storyGenerator     agent.Agent
+	revisionLoopAgent  agent.Agent
 	postProcessorAgent agent.Agent
 }
 
@@ -60,8 +60,8 @@ func NewStoryFlowAgent(
 
 	// The StoryFlowAgent struct holds the agents needed for the Run method.
 	orchestrator := &StoryFlowAgent{
-		storyGenerator:  storyGenerator,
-		revisionLoopAgent:       loopAgent,
+		storyGenerator:     storyGenerator,
+		revisionLoopAgent:  loopAgent,
 		postProcessorAgent: sequentialAgent,
 	}
 
@@ -73,6 +73,7 @@ func NewStoryFlowAgent(
 		Run:         orchestrator.Run,
 	})
 }
+
 // --8<-- [end:init]
 
 // --8<-- [start:executionlogic]
@@ -142,6 +143,7 @@ func (s *StoryFlowAgent) Run(ctx agent.InvocationContext) iter.Seq2[*session.Eve
 		}
 	}
 }
+
 // --8<-- [end:executionlogic]
 
 const (
@@ -253,8 +255,8 @@ func main() {
 		log.Fatalf("Failed to create runner: %v", err)
 	}
 
-	input := genai.NewContentFromText("Generate a story about: " + userTopic, genai.RoleUser)
-	events := r.Run(ctx, userID, sessionInstance.Session.ID(), input, &agent.RunConfig{
+	input := genai.NewContentFromText("Generate a story about: "+userTopic, genai.RoleUser)
+	events := r.Run(ctx, userID, sessionInstance.Session.ID(), input, agent.RunConfig{
 		StreamingMode: agent.StreamingModeSSE,
 	})
 
@@ -263,11 +265,10 @@ func main() {
 		if err != nil {
 			log.Fatalf("An error occurred during agent execution: %v", err)
 		}
-		if event.LLMResponse != nil && event.Content != nil {
-			for _, part := range event.Content.Parts {
-				// Accumulate text from all parts of the final response.
-				finalResponse += part.Text
-			}
+
+		for _, part := range event.Content.Parts {
+			// Accumulate text from all parts of the final response.
+			finalResponse += part.Text
 		}
 	}
 
@@ -286,5 +287,6 @@ func main() {
 
 	fmt.Println("Final Session State:", finalSession.Session.State())
 }
+
 // --8<-- [end:story_flow_agent]
 // --8<-- [end:full_code]
