@@ -17,6 +17,7 @@ import (
 	"google.golang.org/adk/runner"
 	"google.golang.org/adk/session"
 	"google.golang.org/adk/tool"
+	"google.golang.org/adk/tool/functiontool"
 	"google.golang.org/genai"
 )
 
@@ -51,7 +52,7 @@ func runScenario(ctx context.Context, agentToRun agent.Agent, sessionID string, 
 	}
 
 	input := genai.NewContentFromText(prompt, genai.RoleUser)
-	events := r.Run(ctx, sessionResp.Session.UserID(), sessionResp.Session.ID(), input, &agent.RunConfig{})
+	events := r.Run(ctx, sessionResp.Session.UserID(), sessionResp.Session.ID(), input, agent.RunConfig{})
 	for event, err := range events {
 		if err != nil {
 			log.Printf("ERROR during agent execution: %v", err)
@@ -59,7 +60,7 @@ func runScenario(ctx context.Context, agentToRun agent.Agent, sessionID string, 
 		}
 
 		// Print only the final output from the agent.
-		if event.LLMResponse != nil && event.LLMResponse.Content != nil && len(event.LLMResponse.Content.Parts) > 0 {
+		if event != nil && event.Content != nil && len(event.Content.Parts) > 0 {
 			fmt.Printf("Final Output for %s: [%s] %s\n", sessionID, event.Author, event.LLMResponse.Content.Parts[0].Text)
 		} else {
 			log.Printf("Final response for %s received, but it has no content to display.", sessionID)
@@ -99,7 +100,7 @@ func conceptualRunnerExample(ctx context.Context, myAgent agent.Agent) {
 			break
 		}
 		userMsg := genai.NewContentFromText(userInput, genai.RoleUser)
-		events := r.Run(ctx, s.Session.UserID(), s.Session.ID(), userMsg, &agent.RunConfig{
+		events := r.Run(ctx, s.Session.UserID(), s.Session.ID(), userMsg, agent.RunConfig{
 			StreamingMode: agent.StreamingModeNone,
 		})
 		fmt.Print("\nAgent > ")
@@ -156,16 +157,11 @@ func (a *MyAgent) Run(ctx agent.InvocationContext) iter.Seq2[*session.Event, err
 func NewMyAgent() (agent.Agent, error) {
 	a := &MyAgent{}
 	// Use agent.New to construct the base agent functionality.
-	baseAgent, err := agent.New(agent.Config{
+	return agent.New(agent.Config{
 		Name:        "MyAgent",
 		Description: "An example agent.",
 		Run:         a.Run, // Pass the Run method of our struct.
 	})
-	if err != nil {
-		return nil, err
-	}
-
-	return baseAgent, nil
 }
 
 
@@ -225,7 +221,7 @@ func runBeforeAgentCallbackCheck() {
 	// 3. Register the callback in the agent configuration.
 	llmCfg := llmagent.Config{
 		Name:        "agent",
-		BeforeModel: []llmagent.BeforeModelCallback{myBeforeModelCb},
+		BeforeModelCallbacks: []llmagent.BeforeModelCallback{myBeforeModelCb},
 		Model:       geminiModel,
 		Instruction: "You are an assistant.",
 	}
@@ -269,8 +265,8 @@ func searchExternalAPI(tc tool.Context, input searchExternalAPIArgs) searchExter
 // --8<-- [end:tool_context_tool]
 
 func runSearchExternalAPIExample() {
-	myTool, err := tool.NewFunctionTool(
-		tool.FunctionToolConfig{
+	myTool, err := functiontool.New(
+		functiontool.Config{
 			Name:        "search_external_api",
 			Description: "Searches an external API using a query string.",
 		},
@@ -311,8 +307,8 @@ func myTool(tc tool.Context, input toolArgs) toolResults {
 // --8<-- [end:accessing_state_tool]
 
 func runMyToolExample() {
-	myToolTool, err := tool.NewFunctionTool(
-		tool.FunctionToolConfig{
+	myToolTool, err := functiontool.New(
+		functiontool.Config{
 			Name:        "my_tool",
 			Description: "A tool for doing something.",
 		},
@@ -351,7 +347,7 @@ func runMyCallbackExample() {
 	// Register myCallback as an AfterAgentCallback.
 	llmCfg := llmagent.Config{
 		Name:         "callbackAgent",
-		AfterAgent:   []agent.AfterAgentCallback{myCallback},
+		AfterAgentCallbacks:   []agent.AfterAgentCallback{myCallback},
 		Model:        geminiModel,
 		Instruction:  "You are an assistant that does nothing.",
 	}
@@ -393,8 +389,8 @@ func runAccessIdsExample() {
 	ctx := context.Background()
 
 	// 1. Create the tool.
-	loggingTool, err := tool.NewFunctionTool(
-		tool.FunctionToolConfig{
+	loggingTool, err := functiontool.New(
+		functiontool.Config{
 			Name:        "log_tool_usage",
 			Description: "Logs the invocation and agent details.",
 		},
@@ -453,7 +449,7 @@ func runInitialIntentCheck() {
 	// 3. Register the callback in the agent configuration.
 	llmCfg := llmagent.Config{
 		Name:        "agent",
-		BeforeAgent: []agent.BeforeAgentCallback{checkInitialIntent},
+		BeforeAgentCallbacks: []agent.BeforeAgentCallback{checkInitialIntent},
 		Model:       geminiModel,
 		Instruction: "You are an assistant.",
 	}
@@ -488,7 +484,7 @@ func runAccessingInitialUserInputExample() {
 
 	llmCfg := llmagent.Config{
 		Name:        "userInputLoggerAgent",
-		BeforeAgent: []agent.BeforeAgentCallback{logInitialUserInput},
+		BeforeAgentCallbacks: []agent.BeforeAgentCallback{logInitialUserInput},
 		Model:       geminiModel,
 		Instruction: "You are an assistant.",
 	}
@@ -552,8 +548,8 @@ func runPassingDataExample() {
 	ctx := context.Background()
 
 	// 1. Create the tools.
-	getUserProfileTool, err := tool.NewFunctionTool(
-		tool.FunctionToolConfig{
+	getUserProfileTool, err := functiontool.New(
+		functiontool.Config{
 			Name:        "get_user_profile",
 			Description: "Gets the profile for a user.",
 		},
@@ -562,8 +558,8 @@ func runPassingDataExample() {
 	if err != nil {
 		log.Fatalf("FATAL: Failed to create getUserProfile tool: %v", err)
 	}
-	getUserOrdersTool, err := tool.NewFunctionTool(
-		tool.FunctionToolConfig{
+	getUserOrdersTool, err := functiontool.New(
+		functiontool.Config{
 			Name:        "get_user_orders",
 			Description: "Gets the orders for a user.",
 		},
@@ -625,8 +621,8 @@ func runUpdatingPreferencesExample() {
 	ctx := context.Background()
 
 	// 1. Create the tool.
-	setPrefTool, err := tool.NewFunctionTool(
-		tool.FunctionToolConfig{
+	setPrefTool, err := functiontool.New(
+		functiontool.Config{
 			Name:        "set_user_preference",
 			Description: "Sets a user's preference in the system.",
 		},
@@ -673,15 +669,15 @@ func summarizeDocumentTool(tc tool.Context, input summarizeDocumentArgs) summari
 	}
 
 	// 1. Load the artifact part containing the path/URI
-	artifactPart, err := tc.Artifacts().Load(artifactName.(string))
+	artifactPart, err := tc.Artifacts().Load(tc, artifactName.(string))
 	if err != nil {
 		return summarizeDocumentResult{Error: err.Error()}
 	}
 
-	if artifactPart.Text == "" {
+	if artifactPart.Part.Text == "" {
 		return summarizeDocumentResult{Error: "Could not load artifact or artifact has no text path."}
 	}
-	filePath := artifactPart.Text
+	filePath := artifactPart.Part.Text
 	fmt.Printf("Loaded document reference: %s\n", filePath)
 
 	// 2. Read the actual document content (outside ADK context)
@@ -707,12 +703,12 @@ type checkAvailableDocsResult struct {
 }
 
 func checkAvailableDocs(tc tool.Context, args checkAvailableDocsArgs) checkAvailableDocsResult {
-	artifactKeys, err := tc.Artifacts().List()
+	artifactKeys, err := tc.Artifacts().List(tc)
 	if err != nil {
 		return checkAvailableDocsResult{Error: err.Error()}
 	}
 	fmt.Printf("Available artifacts: %v\n", artifactKeys)
-	return checkAvailableDocsResult{AvailableDocs: artifactKeys}
+	return checkAvailableDocsResult{AvailableDocs: artifactKeys.FileNames}
 }
 
 // --8<-- [end:artifacts_list]
@@ -730,7 +726,7 @@ type saveDocRefResult struct {
 
 func saveDocRef(tc tool.Context, args saveDocRefArgs) saveDocRefResult {
 	artifactPart := genai.NewPartFromText(args.FilePath)
-	err := tc.Artifacts().Save("document_to_summarize.txt", *artifactPart)
+	_, err := tc.Artifacts().Save(tc, "document_to_summarize.txt", artifactPart)
 	if err != nil {
 		return saveDocRefResult{"", err.Error()}
 	}
@@ -749,8 +745,8 @@ func runArtifactsExample() {
 
 
 	// 1. Create the tools.
-	saveRefTool, err := tool.NewFunctionTool(
-		tool.FunctionToolConfig{
+	saveRefTool, err := functiontool.New(
+		functiontool.Config{
 			Name:        "save_document_reference",
 			Description: "Saves a reference to a document path as an artifact.",
 		},
@@ -759,8 +755,8 @@ func runArtifactsExample() {
 	if err != nil {
 		log.Fatalf("FATAL: Failed to create saveRefTool: %v", err)
 	}
-	summarizeTool, err := tool.NewFunctionTool(
-		tool.FunctionToolConfig{
+	summarizeTool, err := functiontool.New(
+		functiontool.Config{
 			Name:        "summarize_document",
 			Description: "Summarizes the document stored in artifacts.",
 		},
@@ -795,8 +791,8 @@ func runCheckAvailableDocsExample() {
 	ctx := context.Background()
 
 	// 1. Create the tool.
-	checkDocsTool, err := tool.NewFunctionTool(
-		tool.FunctionToolConfig{
+	checkDocsTool, err := functiontool.New(
+		functiontool.Config{
 			Name:        "check_available_docs",
 			Description: "Checks for available documents in artifacts.",
 		},
