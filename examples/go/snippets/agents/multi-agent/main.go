@@ -15,6 +15,7 @@ import (
 	"google.golang.org/adk/session"
 	"google.golang.org/adk/tool"
 	"google.golang.org/adk/tool/agenttool"
+	"google.golang.org/adk/tool/functiontool"
 	"google.golang.org/genai"
 )
 
@@ -138,7 +139,7 @@ func agentInteractionSnippets(m model.LLM) {
 				imageBytes := []byte("...") // Simulate image bytes
 				yield(&session.Event{
 					Author: "ImageGen",
-					LLMResponse: &model.LLMResponse{
+					LLMResponse: model.LLMResponse{
 						Content: &genai.Content{
 							Parts: []*genai.Part{genai.NewPartFromBytes(imageBytes, "image/png")},
 						},
@@ -147,7 +148,7 @@ func agentInteractionSnippets(m model.LLM) {
 			}
 		},
 	})
-	
+
 	// Wrap the agent
 	imageTool := agenttool.New(imageAgent, nil)
 
@@ -321,8 +322,8 @@ func advancedPatternSnippets(m model.LLM) {
 		Reason string  `json:"reason"`
 	}
 	var externalApprovalTool func(tool.Context, externalApprovalToolArgs) string
-	approvalTool, _ := tool.NewFunctionTool(
-		tool.FunctionToolConfig{
+	approvalTool, _ := functiontool.New(
+		functiontool.Config{
 			Name:        "external_approval_tool",
 			Description: "Sends a request for human approval.",
 		},
