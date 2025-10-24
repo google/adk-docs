@@ -15,6 +15,7 @@ import (
 	"google.golang.org/adk/session"
 	"google.golang.org/genai"
 )
+
 // --8<-- [end:imports]
 
 const (
@@ -43,9 +44,9 @@ func runBasicExample() {
 
 	// Register the callback function in the agent configuration.
 	agentCfg := llmagent.Config{
-		Name:        "SimpleAgent",
-		Model:       geminiModel,
-		BeforeModel: []llmagent.BeforeModelCallback{onBeforeModel},
+		Name:                 "SimpleAgent",
+		Model:                geminiModel,
+		BeforeModelCallbacks: []llmagent.BeforeModelCallback{onBeforeModel},
 	}
 	simpleAgent, err := llmagent.New(agentCfg)
 	if err != nil {
@@ -73,7 +74,7 @@ func runBasicExample() {
 
 	input := genai.NewContentFromText("Why is the sky blue?", genai.RoleUser)
 	log.Println("--- Running Agent ---")
-	events := r.Run(ctx, userID, session.Session.ID(), input, &agent.RunConfig{
+	events := r.Run(ctx, userID, session.Session.ID(), input, agent.RunConfig{
 		StreamingMode: agent.StreamingModeNone,
 	})
 
@@ -81,7 +82,7 @@ func runBasicExample() {
 		if err != nil {
 			log.Fatalf("Error during agent execution: %v", err)
 		}
-		for _, p := range event.LLMResponse.Content.Parts {
+		for _, p := range event.Content.Parts {
 			fmt.Printf("Final Response: %s\n", p.Text)
 		}
 	}
@@ -129,9 +130,9 @@ func runGuardrailExample() {
 	}
 
 	agentCfg := llmagent.Config{
-		Name:        "ChatAgent",
-		Model:       geminiModel,
-		BeforeModel: []llmagent.BeforeModelCallback{onBeforeModelGuardrail},
+		Name:                 "ChatAgent",
+		Model:                geminiModel,
+		BeforeModelCallbacks: []llmagent.BeforeModelCallback{onBeforeModelGuardrail},
 	}
 	chatAgent, err := llmagent.New(agentCfg)
 	if err != nil {
@@ -167,7 +168,7 @@ func runAndPrint(ctx context.Context, r *runner.Runner, sessionService session.S
 
 	input := genai.NewContentFromText(prompt, genai.RoleUser)
 	log.Printf("\n--- Running Agent with prompt: %q ---\n", prompt)
-	events := r.Run(ctx, session.Session.UserID(), session.Session.ID(), input, &agent.RunConfig{
+	events := r.Run(ctx, session.Session.UserID(), session.Session.ID(), input, agent.RunConfig{
 		StreamingMode: agent.StreamingModeNone,
 	})
 
@@ -175,9 +176,9 @@ func runAndPrint(ctx context.Context, r *runner.Runner, sessionService session.S
 		if err != nil {
 			log.Fatalf("Error during agent execution: %v", err)
 		}
-			for _, p := range event.Content.Parts {
-				fmt.Printf("Final Response: %s\n", p.Text)
-			}
+		for _, p := range event.Content.Parts {
+			fmt.Printf("Final Response: %s\n", p.Text)
+		}
 	}
 	log.Println("--- Agent Run Finished ---")
 }

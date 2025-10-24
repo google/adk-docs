@@ -33,10 +33,10 @@ func onBeforeAgent(ctx agent.CallbackContext) (*genai.Content, error) {
 	if skip, _ := ctx.State().Get("skip_llm_agent"); skip == true {
 		log.Printf("[Callback] State condition met: Skipping agent %s", agentName)
 		return genai.NewContentFromText(
-			fmt.Sprintf("Agent %s skipped by before_agent_callback.", agentName),
-			genai.RoleModel,
-		),
-		nil
+				fmt.Sprintf("Agent %s skipped by before_agent_callback.", agentName),
+				genai.RoleModel,
+			),
+			nil
 	}
 	log.Printf("[Callback] State condition not met: Running agent %s", agentName)
 	return nil, nil
@@ -52,10 +52,10 @@ func runBeforeAgentExample() {
 
 	// 3. Register the callback in the agent configuration.
 	llmCfg := llmagent.Config{
-		Name:        "AgentWithBeforeAgentCallback",
-		BeforeAgent: []agent.BeforeAgentCallback{onBeforeAgent},
-		Model:       geminiModel,
-		Instruction: "You are a concise assistant.",
+		Name:                 "AgentWithBeforeAgentCallback",
+		BeforeAgentCallbacks: []agent.BeforeAgentCallback{onBeforeAgent},
+		Model:                geminiModel,
+		Instruction:          "You are a concise assistant.",
 	}
 	testAgent, err := llmagent.New(llmCfg)
 	if err != nil {
@@ -75,6 +75,7 @@ func runBeforeAgentExample() {
 	log.Println("\n--- SCENARIO 2: Agent should be skipped ---")
 	runScenario(ctx, r, sessionService, appName, "session_skip", map[string]any{"skip_llm_agent": true}, "This should be skipped.")
 }
+
 // --8<-- [end:before_agent_example]
 
 // --8<-- [start:after_agent_example]
@@ -111,10 +112,10 @@ func runAfterAgentExample() {
 	}
 
 	llmCfg := llmagent.Config{
-		Name:       "AgentWithAfterAgentCallback",
-		AfterAgent: []agent.AfterAgentCallback{onAfterAgent},
-		Model:      geminiModel,
-		Instruction: "You are a simple agent. Just say 'Processing complete!'",
+		Name:                "AgentWithAfterAgentCallback",
+		AfterAgentCallbacks: []agent.AfterAgentCallback{onAfterAgent},
+		Model:               geminiModel,
+		Instruction:         "You are a simple agent. Just say 'Processing complete!'",
 	}
 	testAgent, err := llmagent.New(llmCfg)
 	if err != nil {
@@ -133,6 +134,7 @@ func runAfterAgentExample() {
 	log.Println("\n--- SCENARIO 2: Should replace output ---")
 	runScenario(ctx, r, sessionService, appName, "session_modify", map[string]any{"add_concluding_note": true}, "Process and add note.")
 }
+
 // --8<-- [end:after_agent_example]
 
 // --8<-- [start:before_model_example]
@@ -178,9 +180,9 @@ func runBeforeModelExample() {
 	}
 
 	llmCfg := llmagent.Config{
-		Name:        "AgentWithBeforeModelCallback",
-		Model:       geminiModel,
-		BeforeModel: []llmagent.BeforeModelCallback{onBeforeModel},
+		Name:                 "AgentWithBeforeModelCallback",
+		Model:                geminiModel,
+		BeforeModelCallbacks: []llmagent.BeforeModelCallback{onBeforeModel},
 	}
 	testAgent, err := llmagent.New(llmCfg)
 	if err != nil {
@@ -199,6 +201,7 @@ func runBeforeModelExample() {
 	log.Println("\n--- SCENARIO 2: Should be blocked by callback ---")
 	runScenario(ctx, r, sessionService, appName, "session_blocked", nil, "write a joke on BLOCK")
 }
+
 // --8<-- [end:before_model_example]
 
 // --8<-- [start:after_model_example]
@@ -219,7 +222,7 @@ func onAfterModel(ctx agent.CallbackContext, resp *model.LLMResponse, respErr er
 	}
 
 	originalText := resp.Content.Parts[0].Text
-	
+
 	// Use a case-insensitive regex with word boundaries to find "joke".
 	re := regexp.MustCompile(`(?i)\bjoke\b`)
 	if !re.MatchString(originalText) {
@@ -251,9 +254,9 @@ func runAfterModelExample() {
 	}
 
 	llmCfg := llmagent.Config{
-		Name:       "AgentWithAfterModelCallback",
-		Model:      geminiModel,
-		AfterModel: []llmagent.AfterModelCallback{onAfterModel},
+		Name:                "AgentWithAfterModelCallback",
+		Model:               geminiModel,
+		AfterModelCallbacks: []llmagent.AfterModelCallback{onAfterModel},
 	}
 	testAgent, err := llmagent.New(llmCfg)
 	if err != nil {
@@ -269,6 +272,7 @@ func runAfterModelExample() {
 	log.Println("--- SCENARIO 1: Response should be modified ---")
 	runScenario(ctx, r, sessionService, appName, "session_modify", nil, `Give me a paragraph about different styles of jokes.`)
 }
+
 // --8<-- [end:after_model_example]
 
 func main() {
@@ -294,15 +298,15 @@ func runScenario(ctx context.Context, r *runner.Runner, sessionService session.S
 	}
 
 	input := genai.NewContentFromText(prompt, genai.RoleUser)
-	events := r.Run(ctx, sessionResp.Session.UserID(), sessionResp.Session.ID(), input, &agent.RunConfig{})
+	events := r.Run(ctx, sessionResp.Session.UserID(), sessionResp.Session.ID(), input, agent.RunConfig{})
 	for event, err := range events {
 		if err != nil {
 			log.Printf("ERROR during agent execution: %v", err)
 			return
 		}
-		
+
 		// Print only the final output from the agent.
-		if event.LLMResponse != nil && event.LLMResponse.Content != nil && len(event.LLMResponse.Content.Parts) > 0 {
+		if event != nil && event.Content != nil && len(event.Content.Parts) > 0 {
 			fmt.Printf("Final Output for %s: [%s] %s\n", sessionID, event.Author, event.LLMResponse.Content.Parts[0].Text)
 		} else {
 			log.Printf("Final response for %s received, but it has no content to display.", sessionID)
