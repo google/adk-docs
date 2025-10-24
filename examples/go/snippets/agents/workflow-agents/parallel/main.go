@@ -22,14 +22,14 @@ const (
 )
 
 func main() {
-	if err := runAgent("Summarize recent sustainable tech advancements."); err != nil {
+	ctx := context.Background()
+
+	if err := runAgent(ctx, "Summarize recent sustainable tech advancements."); err != nil {
 		log.Fatalf("Agent execution failed: %v", err)
 	}
 }
 
-func runAgent(prompt string) error {
-	ctx := context.Background()
-
+func runAgent(ctx context.Context, prompt string) error {
 	// --8<-- [start:init]
 	model, err := gemini.NewModel(ctx, modelName, &genai.ClientConfig{})
 	if err != nil {
@@ -94,7 +94,7 @@ Output *only* the summary.`,
 
 	// --- 3. Define the Merger Agent (Runs *after* the parallel agents) ---
 	synthesisAgent, err := llmagent.New(llmagent.Config{
-		Name: "SynthesisAgent",
+		Name:  "SynthesisAgent",
 		Model: model,
 		Instruction: `You are an AI Assistant responsible for combining research findings into a structured report.
 Your primary task is to synthesize the following research summaries, clearly attributing findings to their source areas. Structure your response using headings for each topic. Ensure the report is coherent and integrates the key points smoothly.
@@ -180,12 +180,12 @@ Output *only* the structured report following this format. Do not include introd
 	}
 	synthesisAgentName := "SynthesisAgent"
 
-	for event, err := range r.Run(ctx, userID, session.Session.ID(), userMsg, &agent.RunConfig{
+	for event, err := range r.Run(ctx, userID, session.Session.ID(), userMsg, agent.RunConfig{
 		StreamingMode: agent.StreamingModeNone,
 	}) {
 		if err != nil {
 			return fmt.Errorf("error during agent execution: %v", err)
-		} 
+		}
 
 		if _, ok := researcherNames[event.Author]; ok {
 			fmt.Printf("    -> Intermediate Result from %s:\n", event.Author)

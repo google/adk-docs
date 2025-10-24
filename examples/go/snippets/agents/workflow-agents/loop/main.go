@@ -14,16 +14,17 @@ import (
 	"google.golang.org/adk/runner"
 	"google.golang.org/adk/session"
 	"google.golang.org/adk/tool"
+	"google.golang.org/adk/tool/functiontool"
 	"google.golang.org/genai"
 )
 
 const (
-	appName     = "IterativeWritingPipeline"
-	userID      = "test_user_456"
-	modelName   = "gemini-2.5-flash"
-	stateDoc    = "current_document"
-	stateCrit   = "criticism"
-	donePhrase  = "No major issues found."
+	appName    = "IterativeWritingPipeline"
+	userID     = "test_user_456"
+	modelName  = "gemini-2.5-flash"
+	stateDoc   = "current_document"
+	stateCrit  = "criticism"
+	donePhrase = "No major issues found."
 )
 
 // --8<-- [start:init]
@@ -41,14 +42,14 @@ func ExitLoop(ctx tool.Context, input ExitLoopArgs) ExitLoopResults {
 }
 
 func main() {
-	if err := runAgent("Write a document about a cat"); err != nil {
+	ctx := context.Background()
+
+	if err := runAgent(ctx, "Write a document about a cat"); err != nil {
 		log.Fatalf("Agent execution failed: %v", err)
 	}
 }
 
-func runAgent(prompt string) error {
-	ctx := context.Background()
-
+func runAgent(ctx context.Context, prompt string) error {
 	model, err := gemini.NewModel(ctx, modelName, &genai.ClientConfig{})
 	if err != nil {
 		return fmt.Errorf("failed to create model: %v", err)
@@ -91,8 +92,8 @@ Respond *exactly* with the phrase "%s" and nothing else.`, stateDoc, donePhrase)
 		return fmt.Errorf("failed to create critic agent: %v", err)
 	}
 
-	exitLoopTool, err := tool.NewFunctionTool(
-		tool.FunctionToolConfig{
+	exitLoopTool, err := functiontool.New(
+		functiontool.Config{
 			Name:        "exitLoop",
 			Description: "Call this function ONLY when the critique indicates no further changes are needed.",
 		},
@@ -176,16 +177,16 @@ Carefully apply the suggestions to improve the 'Current Document'. Output *only*
 		Role:  string(genai.RoleUser),
 	}
 
-	fmt.Printf("---" + " Starting Iterative Writing Pipeline for topic: %q ---" + "\n", prompt)
+	fmt.Printf("---"+" Starting Iterative Writing Pipeline for topic: %q ---"+"\n", prompt)
 	loopIteration := 0
 
-	for event, err := range r.Run(ctx, userID, session.Session.ID(), userMsg, &agent.RunConfig{
+	for event, err := range r.Run(ctx, userID, session.Session.ID(), userMsg, agent.RunConfig{
 		StreamingMode: agent.StreamingModeNone,
 	}) {
 		if err != nil {
 			return fmt.Errorf("error during agent execution: %v", err)
-		} 
-		
+		}
+
 		outputText := ""
 		for _, p := range event.Content.Parts {
 			outputText += p.Text

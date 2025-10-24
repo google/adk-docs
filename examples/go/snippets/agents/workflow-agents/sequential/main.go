@@ -21,14 +21,14 @@ const (
 )
 
 func main() {
-	if err := runAgent("Write a Go function to calculate the factorial of a number."); err != nil {
+	ctx := context.Background()
+
+	if err := runAgent(ctx, "Write a Go function to calculate the factorial of a number."); err != nil {
 		log.Fatalf("Agent execution failed: %v", err)
 	}
 }
 
-func runAgent(prompt string) error {
-	ctx := context.Background()
-
+func runAgent(ctx context.Context, prompt string) error {
 	// --8<-- [start:init]
 	model, err := gemini.NewModel(ctx, modelName, &genai.ClientConfig{})
 	if err != nil {
@@ -147,7 +147,7 @@ Do not add any other text before or after the code block.`,
 	}
 
 	fmt.Printf("Running agent pipeline for prompt: %q\n---\n", prompt)
-	for event, err := range r.Run(ctx, userID, session.Session.ID(), userMsg, &agent.RunConfig{
+	for event, err := range r.Run(ctx, userID, session.Session.ID(), userMsg, agent.RunConfig{
 		StreamingMode: agent.StreamingModeNone,
 	}) {
 		if err != nil {
