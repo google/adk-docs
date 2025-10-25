@@ -58,7 +58,7 @@ To set up the required software libraries for the Computer Use Toolset:
     pip install browserbase==1.3.0
     pip install rich
     ```
-2.  Install Playwright dependencies, including the Chromium browser:
+2.  Install the Playwright dependencies, including the Chromium browser:
     ```console
     playwright install-deps chromium
     playwright install chromium
@@ -66,11 +66,13 @@ To set up the required software libraries for the Computer Use Toolset:
 
 ## Use the tool
 
-Use the Computer Use Toolset, add it as a tool to your agent. When
-you configure the tool, you must provide a Computer implementation
-which provides the agent an interface to use a computer. In the
-following example, an instance of the `PlaywrightComputer` class 
-is provided for this purpose.
+Use the Computer Use Toolset by adding it as a tool to your agent. When you
+configure the tool, you must provide a implementation of the `BaseComputer`
+class which defines an interface for an agent to use a computer. In the
+following example, the `PlaywrightComputer` class is defined for this purpose.
+You can find the code for this implementation in `playwright.py` file of the
+[computer_use](https://github.com/google/adk-python/blob/main/contributing/samples/computer_use/playwright.py)
+agent sample project.
 
 ```python
 from google.adk import Agent
@@ -94,5 +96,6 @@ root_agent = Agent(
 )
 ```
 
-For a complete example, see the
-[computer_use sample](https://github.com/google/adk-python/tree/main/contributing/samples/computer_use).
+For a complete code example, see the
+[computer_use](https://github.com/google/adk-python/tree/main/contributing/samples/computer_use)
+agent sample project.
