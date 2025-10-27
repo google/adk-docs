@@ -154,6 +154,8 @@ nav:
   - Tools for Agents:
     - tools/index.md
     - Built-in tools: tools/built-in-tools.md
+    - Gemini API tools:
+      -  Computer use: tools/gemini-api/computer-use.md
     - Google Cloud tools: 
       - Overview: tools/google-cloud-tools.md
       - Code Execution with Agent Engine: tools/google-cloud/code-exec-agent-engine.md
