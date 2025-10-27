@@ -130,7 +130,7 @@ adk web --port 8000
 ```
 *Note:*  
 Run this command from the *parent directory* that contains your my_agent/ folder.  
-For example, if your agent is inside my_agent/, run adk web from the directory that contains my_agent/.
+For example, if your agent is inside `my_agent/`, run adk web from the directory that contains `my_agent/`.
 
 This command starts a web server with a chat interface for your agent. You can
 access the web interface at (http://localhost:8000). Select the agent at the
