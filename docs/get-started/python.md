@@ -126,8 +126,11 @@ The ADK framework provides web interface you can use to test and interact with
 your agent. You can start the web interface using the following command:
 
 ```console
-adk web --port 8000 my_agent
+adk web --port 8000 
 ```
+*Note:*  
+Run this command from the *parent directory* that contains your my_agent/ folder.  
+For example, if your agent is inside my_agent/, run adk web from the directory that contains my_agent/.
 
 This command starts a web server with a chat interface for your agent. You can
 access the web interface at (http://localhost:8000). Select the agent at the
