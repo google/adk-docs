@@ -122,7 +122,7 @@ Run the following command from the terminal to launch the Dev UI.
 ```console title="terminal"
 mvn exec:java \
     -Dexec.mainClass="com.google.adk.web.AdkWebServer" \
-    -Dexec.args="--adk.agents.source-dir=src/main/java" \
+    -Dexec.args="--adk.agents.source-dir=." \
     -Dexec.classpathScope="compile"
 ```
 
@@ -135,8 +135,7 @@ the dropdown. Select "science-app".
 !!!note "Troubleshooting"
 
     If you do not see "science-app" in the dropdown menu, make sure you
-    are running the `mvn` command at the location where your Java source code
-    is located (usually `src/main/java`).
+    are running the `mvn` command from the root of your maven project.
 
 ## Try Dev UI with text
 
