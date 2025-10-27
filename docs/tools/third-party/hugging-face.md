@@ -1,7 +1,5 @@
 # Hugging Face
 
-## Overview
-
 The [Hugging Face MCP Server](https://github.com/huggingface/hf-mcp-server) can be used to connect
 your ADK agent to the Hugging Face Hub and thousands of Gradio AI Applications.
 

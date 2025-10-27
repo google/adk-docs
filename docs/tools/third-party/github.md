@@ -1,7 +1,5 @@
 # GitHub
 
-## Overview
-
 The [GitHub MCP Server](https://github.com/github/github-mcp-server) connects AI
 tools directly to GitHub's platform. This gives your ADK agent the ability to
 read repositories and code files, manage issues and PRs, analyze code, and
