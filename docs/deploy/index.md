@@ -45,6 +45,6 @@ locally in Docker or Podman. This is a good option if you prefer to run offline
 or disconnected, or otherwise in a system that has no connection to Google
 Cloud.
 
-Follow the instructions for [deploying your agent to Cloud Run](cloud-run.md),
-specifically the case where you it describes how to use a custom Dockerfile.
-
+Follow the instructions for [deploying your agent to Cloud Run](cloud-run.md#deployment-commands).
+In the "Deployment Commands" section for gcloud CLI, you will find an example FastAPI entry point and 
+Dockerfile.
