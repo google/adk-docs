@@ -174,5 +174,5 @@ workflows using the following guides:
     your specific ADK agent needs.
 *   **[MCP Tools](/adk-docs/tools/function-tools/)**: Connect MCP servers as tools
     for your ADK agents.
-*   **[OpenAPI Integration](/adk-docs/tools/openapi-tools/)**:
+*   **[OpenAPI Integration](/adk-docs/tools-custom/openapi-tools/)**:
     Generate callable tools directly from an OpenAPI Specification.

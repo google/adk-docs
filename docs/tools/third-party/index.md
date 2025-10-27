@@ -25,3 +25,13 @@ Check out the following third-party tools that you can use with ADK agents:
   </a>
 
 </div>
+
+## Integrate with existing tools
+
+ADK provides wrappers that can be used to integrate with existing tools from the
+LangChain and CrewAI ecosystems:
+
+*   **[LangChain Tools](/adk-docs/tools/third-party/langchain/)**:
+    Integrate tools from the LangChain ecosystem.
+*   **[CrewAI Tools](/adk-docs/tools/third-party/crewai/)**:
+    Integrate tools from the CrewAI library.
