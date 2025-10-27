@@ -146,14 +146,12 @@ Output *only* the structured report following this format. Do not include introd
 // --- 4. Create the SequentialAgent (Orchestrates the overall flow) ---
 // This is the main agent that will be run. It first executes the ParallelAgent
 // to populate the state, and then executes the MergerAgent to produce the final output.
-const sequentialPipelineAgent = new SequentialAgent({
+const rootAgent = new SequentialAgent({
     name: "ResearchAndSynthesisPipeline",
     // Run parallel research first, then merge
     subAgents: [parallelResearchAgent, mergerAgent],
     description: "Coordinates parallel research and synthesizes the results."
 });
-
-const rootAgent = sequentialPipelineAgent;
 // --8<-- [end:init]
 
 // --- 5. Running the Agent (Using InMemoryRunner for local testing) This works in Notebooks and script file ---
@@ -180,7 +178,7 @@ async function callSequentialPipeline(runner: InMemoryRunner, query: string, use
             console.log(`  [Event] From: ${authorName}, Final: ${isFinal}`); // Basic event logging
 
             // Check if it's a final response from one of the researcher agents
-            if (isFinal && researcherNames.has(authorName) && event.content && event.content.parts) {
+            if (isFinal && researcherNames.has(authorName) && event.content?.parts?.length) {
                 const researcherOutput = event.content.parts[0].text?.trim();
                 if (researcherOutput && !(authorName in researcherOutputs)) { // Print only once per researcher
                     console.log(`    -> Intermediate Result from ${authorName}: ${researcherOutput}`);
