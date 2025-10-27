@@ -21,7 +21,7 @@ automate workflows using natural language.
 - Create a
   [Personal Access Token](https://github.com/settings/personal-access-tokens/new) in GitHub. Refer to the [documentation](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) for more information.
 
-## Usage with ADK
+## Use with agent
 
 === "Remote MCP Server"
 

@@ -19,7 +19,7 @@ your ADK agent to the Hugging Face Hub and thousands of Gradio AI Applications.
   [documentation](https://huggingface.co/docs/hub/en/security-tokens) for more
   information.
 
-## Usage with ADK
+## Use with agent
 
 === "Local MCP Server"
 
