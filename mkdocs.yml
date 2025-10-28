@@ -117,7 +117,8 @@ plugins:
         'get-started/tutorial.md': 'tutorials/index.md'
         'guides/responsible-agents.md': 'safety/index.md'
         'tools/third-party-tools.md': tools/third-party/index.md
-        'tools/openapi-tools.md': tools/third-party/openapi-tools.md
+        'tools/third-party/openapi-tools.md': tools-custom/openapi-tools.md
+        'tools/openapi-tools.md': tools-custom/openapi-tools.md
 
 # Navigation
 nav:
@@ -157,11 +158,15 @@ nav:
     - Built-in tools: tools/built-in-tools.md
     - Gemini API tools:
       -  Computer use: tools/gemini-api/computer-use.md
-    - Google Cloud tools: 
+    - Google Cloud tools:
       - Overview: tools/google-cloud-tools.md
       - Code Execution with Agent Engine: tools/google-cloud/code-exec-agent-engine.md
-    - Third party tools: tools/third-party/index.md
-    - OpenAPI tools: tools/third-party/openapi-tools.md
+    - Third-party tools:
+      - tools/third-party/index.md
+      - GitHub: tools/third-party/github.md
+      - Hugging Face: tools/third-party/hugging-face.md
+      - LangChain tools: tools/third-party/langchain.md
+      - CrewAI tools: tools/third-party/crewai.md
   - Custom Tools:
     - tools-custom/index.md
     - Function tools:
@@ -169,6 +174,7 @@ nav:
       - Tool performance: tools/performance.md
       - Action confirmations: tools/confirmation.md
     - MCP tools: tools/mcp-tools.md
+    - OpenAPI tools: tools-custom/openapi-tools.md
     - Authentication: tools/authentication.md
   - Running Agents:
     - Agent Runtime: runtime/index.md
