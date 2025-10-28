@@ -14,6 +14,8 @@ import (
 	"google.golang.org/adk/model/gemini"
 	"google.golang.org/adk/runner"
 	"google.golang.org/adk/session"
+	"google.golang.org/adk/tool"
+	"google.golang.org/adk/tool/functiontool"
 	"google.golang.org/genai"
 )
 
@@ -275,6 +277,155 @@ func runAfterModelExample() {
 
 // --8<-- [end:after_model_example]
 
+// --8<-- [start:tool_defs]
+// GetCapitalCityArgs defines the arguments for the getCapitalCity tool.
+type GetCapitalCityArgs struct {
+	Country string `json:"country" adk:"description=The country to get the capital of."`
+}
+
+// getCapitalCity is a tool that returns the capital of a given country.
+func getCapitalCity(ctx tool.Context, args *GetCapitalCityArgs) string {
+	capitals := map[string]string{
+		"canada":        "Ottawa",
+		"france":        "Paris",
+		"germany":       "Berlin",
+		"united states": "Washington, D.C.",
+	}
+	capital, ok := capitals[strings.ToLower(args.Country)]
+	if !ok {
+		return "<Unknown>"
+	}
+	return capital
+}
+
+// --8<-- [end:tool_defs]
+
+// --8<-- [start:before_tool_example]
+func onBeforeTool(ctx tool.Context, t tool.Tool, args map[string]any) (map[string]any, error) {
+	log.Printf("[Callback] BeforeTool triggered for tool %q in agent %q.", t.Name(), ctx.AgentName())
+	log.Printf("[Callback] Original args: %v", args)
+
+	if t.Name() == "getCapitalCity" {
+		if country, ok := args["country"].(string); ok {
+			if strings.ToLower(country) == "canada" {
+				log.Println("[Callback] Detected 'Canada'. Modifying args to 'France'.")
+				args["country"] = "France"
+				return args, nil // Proceed with modified args
+			} else if strings.ToUpper(country) == "BLOCK" {
+				log.Println("[Callback] Detected 'BLOCK'. Skipping tool execution.")
+				// Skip tool and return a custom result.
+				return map[string]any{"result": "Tool execution was blocked by before_tool_callback."}, nil
+			}
+		}
+	}
+	log.Println("[Callback] Proceeding with original or previously modified args.")
+	return nil, nil // Proceed with original args
+}
+
+func runBeforeToolExample() {
+	ctx := context.Background()
+	geminiModel, err := gemini.NewModel(ctx, modelName, &genai.ClientConfig{})
+	if err != nil {
+		log.Fatalf("FATAL: Failed to create model: %v", err)
+	}
+	capitalTool, err := functiontool.New[*GetCapitalCityArgs, string](functiontool.Config{
+		Name:        "getCapitalCity",
+		Description: "Retrieves the capital city of a given country.",
+	}, getCapitalCity)
+	if err != nil {
+		log.Fatalf("FATAL: Failed to create function tool: %v", err)
+	}
+
+	llmCfg := llmagent.Config{
+		Name:                "AgentWithBeforeToolCallback",
+		Model:               geminiModel,
+		Tools:               []tool.Tool{capitalTool},
+		BeforeToolCallbacks: []llmagent.BeforeToolCallback{onBeforeTool},
+		Instruction:         "You are an agent that can find capital cities. Use the getCapitalCity tool.",
+	}
+	testAgent, err := llmagent.New(llmCfg)
+	if err != nil {
+		log.Fatalf("FATAL: Failed to create agent: %v", err)
+	}
+	sessionService := session.InMemoryService()
+	r, err := runner.New(runner.Config{AppName: appName, Agent: testAgent, SessionService: sessionService})
+	if err != nil {
+		log.Fatalf("FATAL: Failed to create runner: %v", err)
+	}
+
+	log.Println("--- SCENARIO 1: Args should be modified ---")
+	runScenario(ctx, r, sessionService, appName, "session_tool_modify", nil, "What is the capital of Canada?")
+
+	log.Println("--- SCENARIO 2: Tool call should be blocked ---")
+	runScenario(ctx, r, sessionService, appName, "session_tool_block", nil, "capital of BLOCK")
+}
+
+// --8<-- [end:before_tool_example]
+
+// --8<-- [start:after_tool_example]
+func onAfterTool(ctx tool.Context, t tool.Tool, args map[string]any, result map[string]any, err error) (map[string]any, error) {
+	log.Printf("[Callback] AfterTool triggered for tool %q in agent %q.", t.Name(), ctx.AgentName())
+	log.Printf("[Callback] Original result: %v", result)
+
+	if err != nil {
+		log.Printf("[Callback] Tool run produced an error: %v. Passing through.", err)
+		return nil, err
+	}
+
+	if t.Name() == "getCapitalCity" {
+		if originalResult, ok := result["result"].(string); ok && originalResult == "Washington, D.C." {
+			log.Println("[Callback] Detected 'Washington, D.C.'. Modifying tool response.")
+			modifiedResult := make(map[string]any)
+			for k, v := range result {
+				modifiedResult[k] = v
+			}
+			modifiedResult["result"] = fmt.Sprintf("%s (Note: This is the capital of the USA).", originalResult)
+			modifiedResult["note_added_by_callback"] = true
+			return modifiedResult, nil
+		}
+	}
+
+	log.Println("[Callback] Passing original tool response through.")
+	return nil, nil
+}
+
+func runAfterToolExample() {
+	ctx := context.Background()
+	geminiModel, err := gemini.NewModel(ctx, modelName, &genai.ClientConfig{})
+	if err != nil {
+		log.Fatalf("FATAL: Failed to create model: %v", err)
+	}
+	capitalTool, err := functiontool.New[*GetCapitalCityArgs, string](functiontool.Config{
+		Name:        "getCapitalCity",
+		Description: "Retrieves the capital city of a given country.",
+	}, getCapitalCity)
+	if err != nil {
+		log.Fatalf("FATAL: Failed to create function tool: %v", err)
+	}
+
+	llmCfg := llmagent.Config{
+		Name:               "AgentWithAfterToolCallback",
+		Model:              geminiModel,
+		Tools:              []tool.Tool{capitalTool},
+		AfterToolCallbacks: []llmagent.AfterToolCallback{onAfterTool},
+		Instruction:        "You are an agent that finds capital cities. Use the getCapitalCity tool.",
+	}
+	testAgent, err := llmagent.New(llmCfg)
+	if err != nil {
+		log.Fatalf("FATAL: Failed to create agent: %v", err)
+	}
+	sessionService := session.InMemoryService()
+	r, err := runner.New(runner.Config{AppName: appName, Agent: testAgent, SessionService: sessionService})
+	if err != nil {
+		log.Fatalf("FATAL: Failed to create runner: %v", err)
+	}
+
+	log.Println("--- SCENARIO 1: Result should be modified ---")
+	runScenario(ctx, r, sessionService, appName, "session_tool_after_modify", nil, "capital of united states")
+}
+
+// --8<-- [end:after_tool_example]
+
 func main() {
 	log.Println("--- Running BeforeAgent Example ---")
 	runBeforeAgentExample()
@@ -287,6 +438,12 @@ func main() {
 
 	log.Println("\n\n--- Running AfterModel Example ---")
 	runAfterModelExample()
+
+	log.Println("\n\n--- Running BeforeTool Example ---")
+	runBeforeToolExample()
+
+	log.Println("\n\n--- Running AfterTool Example ---")
+	runAfterToolExample()
 }
 
 // Generic helper to run a single scenario.

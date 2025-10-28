@@ -189,6 +189,14 @@ These callbacks are also specific to `LlmAgent` and trigger around the execution
         --8<-- "examples/java/snippets/src/main/java/callbacks/BeforeToolCallbackExample.java:init"
         ```
 
+    === "Golang"
+
+        ```go
+        --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:imports"
+        --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:tool_defs"
+        --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:before_tool_example"
+        ```
+
 
 
 ### After Tool Callback
@@ -213,4 +221,12 @@ These callbacks are also specific to `LlmAgent` and trigger around the execution
     
         ```java
         --8<-- "examples/java/snippets/src/main/java/callbacks/AfterToolCallbackExample.java:init"
+        ```
+
+    === "Golang"
+
+        ```go
+        --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:imports"
+        --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:tool_defs"
+        --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:after_tool_example"
         ```
