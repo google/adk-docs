@@ -117,7 +117,7 @@ plugins:
         'get-started/tutorial.md': 'tutorials/index.md'
         'guides/responsible-agents.md': 'safety/index.md'
         'tools/third-party-tools.md': tools/third-party/index.md
-        'tools/third-party/openapi-tools.md': tools/openapi-tools.md
+        'tools/third-party/openapi-tools.md': tools-custom/openapi-tools.md
         'tools/openapi-tools.md': tools-custom/openapi-tools.md
 
 # Navigation
