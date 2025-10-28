@@ -82,7 +82,7 @@ The foundation for structuring multi-agent systems is the parent-child relations
     ```typescript
     // Conceptual Example: Defining Hierarchy
     import { LlmAgent, BaseAgent, InvocationContext } from '@google/adk';
-    import type { Event } from '@google/adk';
+    import type { Event, createEventActions } from '@google/adk';
 
     class TaskExecutorAgent extends BaseAgent {
       async *runAsyncImpl(context: InvocationContext): AsyncGenerator<Event, void, void> {
@@ -91,12 +91,7 @@ The foundation for structuring multi-agent systems is the parent-child relations
           invocationId: context.invocationId,
           author: this.name,
           content: { parts: [{ text: 'Task completed!' }] },
-          actions: {
-            stateDelta: {},
-            artifactDelta: {},
-            requestedAuthConfigs: {},
-            requestedToolConfirmations: {},
-          },
+          actions: createEventActions(),
           timestamp: Date.now(),
         };
       }
@@ -1215,7 +1210,7 @@ By combining ADK's composition primitives, you can implement various established
     ```typescript
     // Conceptual Code: Iterative Code Refinement
     import { LoopAgent, LlmAgent, BaseAgent, InvocationContext } from '@google/adk';
-    import type { Event, createEvent } from '@google/genai';
+    import type { Event, createEvent, createEventActions } from '@google/genai';
 
     // Agent to generate/refine code based on state['current_code'] and state['requirements']
     const codeRefiner = new LlmAgent({
@@ -1239,7 +1234,7 @@ By combining ADK's composition primitives, you can implement various established
             if (shouldStop) {
                 yield createEvent({
                     author: 'StopChecker',
-                    actions: { escalate: shouldStop, stateDelta: {}, artifactDelta: {}, requestedAuthConfigs: [], requestedToolConfirmations: {} }
+                    actions: createEventActions(),
                 });
             }
         }
@@ -1412,5 +1407,56 @@ By combining ADK's composition primitives, you can implement various established
         subAgents: [prepareRequest, requestApproval, processDecision]
     });
     ```
+
+#### Human in the Loop with Policy
+
+A more advanced and structured way to implement Human-in-the-Loop is by using a `PolicyEngine`. This approach allows you to define policies that can trigger a confirmation step from a user before a tool is executed. The `SecurityPlugin` intercepts a tool call, consults the `PolicyEngine`, and if the policy dictates, it will automatically request user confirmation. This pattern is more robust for enforcing governance and security rules.
+
+Here's how it works:
+
+1.  **`SecurityPlugin`**: You add this plugin to your `Runner`. It acts as an interceptor for all tool calls.
+2.  **`BasePolicyEngine`**: You create a custom class that implements this interface. Its `evaluate()` method contains your logic to decide if a tool call needs confirmation.
+3.  **`PolicyOutcome.CONFIRM`**: When your `evaluate()` method returns this outcome, the `SecurityPlugin` pauses the tool execution and generates a special `FunctionCall` using `getAskUserConfirmationFunctionCalls`.
+4.  **Application Handling**: Your application code receives this special function call and presents the confirmation request to the user.
+5.  **User Confirmation**: Once the user confirms, your application sends a `FunctionResponse` back to the agent, which allows the `SecurityPlugin` to proceed with the original tool execution.
+
+!!! Note "TypeScript Recommended Pattern"
+    The Policy-based pattern is the recommended approach for implementing Human-in-the-Loop workflows in TypeScript. Support in other ADK languages is planned for future releases.
+
+A conceptual example of using a `CustomPolicyEngine` to require user confirmation before executing any tool is shown below.
+
+=== "TypeScript"
+
+    ```typescript    
+    const rootAgent = new LlmAgent({
+      name: 'weather_time_agent',
+      model: 'gemini-2.5-flash',
+      description:
+          'Agent to answer questions about the time and weather in a city.',
+      instruction:
+          'You are a helpful agent who can answer user questions about the time and weather in a city.',
+      tools: [getWeatherTool],
+    });
+    
+    class CustomPolicyEngine implements BasePolicyEngine {
+      async evaluate(_context: ToolCallPolicyContext): Promise<PolicyCheckResult> {
+        // Default permissive implementation
+        return Promise.resolve({
+          outcome: PolicyOutcome.CONFIRM,
+          reason: 'Needs confirmation for tool call',
+        });
+      }
+    }
+
+    const runner = new InMemoryRunner({
+        agent: rootAgent,
+        appName,
+        plugins: [new SecurityPlugin({policyEngine: new CustomPolicyEngine()})]
+    });    
+    ```
+
+You can find the full code sample [here](../../examples/typescript/snippets/agents/workflow-agents/hitl_confirmation_agent.ts).
+
+### Combining Patterns
 
 These patterns provide starting points for structuring your multi-agent systems. You can mix and match them as needed to create the most effective architecture for your specific application.
