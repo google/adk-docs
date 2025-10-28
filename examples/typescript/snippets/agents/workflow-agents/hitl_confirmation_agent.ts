@@ -13,7 +13,7 @@
 // limitations under the License.
 
 import {BasePolicyEngine, FunctionTool, getAskUserConfirmationFunctionCalls, InMemoryRunner, LlmAgent, PolicyCheckResult, PolicyOutcome, REQUEST_CONFIRMATION_FUNCTION_CALL_NAME, SecurityPlugin, ToolCallPolicyContext} from '@google/adk';
-import {Content, createUserContent, FunctionCall, FunctionResponse} from '@google/genai';
+import {Content, createUserContent, FunctionCall} from '@google/genai';
 import {z} from 'zod';
 
 const APP_NAME = "weather_time_app";
@@ -192,14 +192,15 @@ async function processConfirmationRequests(
     );
 
     // To approve the request, we create a FunctionResponse for the special confirmation request.
-    const functionResponse = new FunctionResponse();
-    functionResponse.name = REQUEST_CONFIRMATION_FUNCTION_CALL_NAME;
-    functionResponse.response = {confirmed: true};
-    functionResponse.id = call.id;
+    const functionResponse = {
+      id: call.id,
+      name: REQUEST_CONFIRMATION_FUNCTION_CALL_NAME,
+      response: { confirmed: true },
+    }
 
     const contentWithConfirmation: Content = {
       role: 'user',
-      parts: [{functionResponse: functionResponse}],
+      parts: [{functionResponse}],
     };
 
     console.log(
