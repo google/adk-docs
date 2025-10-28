@@ -81,7 +81,8 @@ The foundation for structuring multi-agent systems is the parent-child relations
 
     ```typescript
     // Conceptual Example: Defining Hierarchy
-    import { LlmAgent, BaseAgent, InvocationContext, Event } from '@google/adk';
+    import { LlmAgent, BaseAgent, InvocationContext } from '@google/adk';
+    import type { Event } from '@google/adk';
 
     class TaskExecutorAgent extends BaseAgent {
       async *runAsyncImpl(context: InvocationContext): AsyncGenerator<Event, void, void> {
@@ -301,7 +302,8 @@ ADK includes specialized agents derived from `BaseAgent` that don't perform task
 
     ```typescript
     // Conceptual Example: Loop with Condition
-    import { LoopAgent, LlmAgent, BaseAgent, InvocationContext, Event, EventActions, createEvent } from '@google/adk';
+    import { LoopAgent, LlmAgent, BaseAgent, InvocationContext } from '@google/adk';
+    import type { Event, createEventActions, EventActions } from '@google/adk';
 
     class CheckConditionAgent extends BaseAgent { // Custom agent to check state        
         async *runAsyncImpl(ctx: InvocationContext): AsyncGenerator<Event> {
@@ -589,8 +591,8 @@ Allows an [`LlmAgent`](llm-agents.md) to treat another `BaseAgent` instance as a
 
     ```typescript
     // Conceptual Setup: Agent as a Tool
-    import { LlmAgent, BaseAgent, AgentTool, InvocationContext, createEvent, Event } from '@google/adk';
-    import { Part } from '@google/genai';
+    import { LlmAgent, BaseAgent, AgentTool, InvocationContext } from '@google/adk';
+    import type { Part, createEvent, Event } from '@google/genai';
 
     // Define a target agent (could be LlmAgent or custom BaseAgent)
     class ImageGeneratorAgent extends BaseAgent { // Example custom agent
@@ -1212,7 +1214,8 @@ By combining ADK's composition primitives, you can implement various established
 
     ```typescript
     // Conceptual Code: Iterative Code Refinement
-    import { LoopAgent, LlmAgent, BaseAgent, InvocationContext, Event, EventActions, createEvent } from '@google/adk';
+    import { LoopAgent, LlmAgent, BaseAgent, InvocationContext } from '@google/adk';
+    import type { Event, createEvent } from '@google/genai';
 
     // Agent to generate/refine code based on state['current_code'] and state['requirements']
     const codeRefiner = new LlmAgent({
