@@ -82,7 +82,7 @@ The foundation for structuring multi-agent systems is the parent-child relations
     ```typescript
     // Conceptual Example: Defining Hierarchy
     import { LlmAgent, BaseAgent, InvocationContext } from '@google/adk';
-    import type { Event } from '@google/adk';
+    import type { Event, createEventActions } from '@google/adk';
 
     class TaskExecutorAgent extends BaseAgent {
       async *runAsyncImpl(context: InvocationContext): AsyncGenerator<Event, void, void> {
@@ -91,12 +91,7 @@ The foundation for structuring multi-agent systems is the parent-child relations
           invocationId: context.invocationId,
           author: this.name,
           content: { parts: [{ text: 'Task completed!' }] },
-          actions: {
-            stateDelta: {},
-            artifactDelta: {},
-            requestedAuthConfigs: {},
-            requestedToolConfirmations: {},
-          },
+          actions: createEventActions(),
           timestamp: Date.now(),
         };
       }
@@ -1215,7 +1210,7 @@ By combining ADK's composition primitives, you can implement various established
     ```typescript
     // Conceptual Code: Iterative Code Refinement
     import { LoopAgent, LlmAgent, BaseAgent, InvocationContext } from '@google/adk';
-    import type { Event, createEvent } from '@google/genai';
+    import type { Event, createEvent, createEventActions } from '@google/genai';
 
     // Agent to generate/refine code based on state['current_code'] and state['requirements']
     const codeRefiner = new LlmAgent({
@@ -1239,7 +1234,7 @@ By combining ADK's composition primitives, you can implement various established
             if (shouldStop) {
                 yield createEvent({
                     author: 'StopChecker',
-                    actions: { escalate: shouldStop, stateDelta: {}, artifactDelta: {}, requestedAuthConfigs: [], requestedToolConfirmations: {} }
+                    actions: createEventActions(),
                 });
             }
         }
