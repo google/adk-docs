@@ -17,8 +17,8 @@
     "typescript": "^5.9.2"
   },
   "dependencies": {
-    "@google/adk": "^0.1.0",
-    "@google/adk-devtools": "^0.1.0",
+    "@google/adk": "^0.1.2",
+    "@google/adk-devtools": "^0.1.2",
     "@google/genai": "1.14.0",
     "module-alias": "^2.2.3",
     "tsconfig-paths": "^4.2.0",

@@ -19,9 +19,6 @@ import { LoopAgent, LlmAgent, SequentialAgent, FunctionTool } from '@google/adk'
 import { z } from 'zod';
 
 // --- Constants ---
-const APP_NAME = "doc_writing_app_v3"; // New App Name
-const USER_ID = "dev_user_01";
-const SESSION_ID_BASE = "loop_exit_tool_session"; // New Base Session ID
 const GEMINI_MODEL = "gemini-2.5-flash";
 const STATE_INITIAL_TOPIC = "initial_topic";
 
@@ -38,7 +35,7 @@ const exitLoopTool = new FunctionTool({
     parameters: z.object({}),
     execute: (input, toolContext) => {
         if (toolContext) {
-            console.log(`  [Tool Call] exit_loop triggered by ${toolContext.agentName}`);
+            console.log(`  [Tool Call] exit_loop triggered by ${toolContext.agentName} with input: ${input}`);
             toolContext.actions.escalate = true;
         }
         return {};
@@ -56,10 +53,10 @@ const initialWriterAgent = new LlmAgent({
     instruction: `You are a Creative Writing Assistant tasked with starting a story.
     Write the *first draft* of a short story (aim for 2-4 sentences).
     Base the content *only* on the topic provided below. Try to introduce a specific element (like a character, a setting detail, or a starting action) to make it engaging.
-    Topic: {{initial_topic}}
+    Topic: {{${STATE_INITIAL_TOPIC}}}
 
     Output *only* the story/document text. Do not add introductions or explanations.
-`,
+    `,
     description: "Writes the initial document draft based on the topic, aiming for some initial substance.",
     outputKey: STATE_CURRENT_DOC
 });
