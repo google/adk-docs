@@ -4,6 +4,16 @@ Check out the following third-party tools that you can use with ADK agents:
 
 <div class="tool-card-grid">
 
+  <a href="/adk-docs/tools/third-party/browserbase/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="../../assets/tools-browserbase.png" alt="Browserbase">
+    </div>
+    <div class="tool-card-content">
+      <h3>Browserbase</h3>
+      <p>Powers web browsing capabilities for AI agents</p>
+    </div>
+  </a>
+
   <a href="/adk-docs/tools/third-party/github/" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="../../assets/tools-github.png" alt="GitHub">
