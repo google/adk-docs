@@ -4,16 +4,6 @@ Check out the following third-party tools that you can use with ADK agents:
 
 <div class="tool-card-grid">
 
-  <a href="tavily/" class="tool-card">
-    <div class="tool-card-image-wrapper">
-      <img src="../../assets/tools-tavily.png" alt="Tavily">
-    </div>
-    <div class="tool-card-content">
-      <h3>Tavily</h3>
-      <p>Search engine optimized for LLMs</p>
-    </div>
-  </a>
-
   <a href="github/" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="../../assets/tools-github.png" alt="GitHub">
@@ -31,6 +21,16 @@ Check out the following third-party tools that you can use with ADK agents:
     <div class="tool-card-content">
       <h3>Hugging Face</h3>
       <p>Access models, datasets, research papers, and AI tools</p>
+    </div>
+  </a>
+
+  <a href="tavily/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="../../assets/tools-tavily.png" alt="Tavily">
+    </div>
+    <div class="tool-card-content">
+      <h3>Tavily</h3>
+      <p>Search engine optimized for LLMs</p>
     </div>
   </a>
 
