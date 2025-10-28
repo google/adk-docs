@@ -13,7 +13,7 @@ Custom agents provide the ultimate flexibility in ADK, allowing you to define **
 A Custom Agent is essentially any class you create that inherits from `google.adk.agents.BaseAgent` and implements its core execution logic within the `_run_async_impl` asynchronous method. You have complete control over how this method calls other agents (sub-agents), manages state, and handles events. 
 
 !!! Note
-    The specific method name for implementing an agent's core asynchronous logic may vary slightly by SDK language (e.g., `runAsyncImpl` in Java, `_run_async_impl` in Python). Refer to the language-specific API documentation for details.
+    The specific method name for implementing an agent's core asynchronous logic may vary slightly by SDK language (e.g., `runAsyncImpl` in Java, `_run_async_impl` in Python, or `runAsyncImpl` in TypeScript). Refer to the language-specific API documentation for details.
 
 ### Why Use Them?
 
@@ -48,6 +48,14 @@ The core of any custom agent is the method where you define its unique asynchron
     *   **Signature:** `protected Flowable<Event> runAsyncImpl(InvocationContext ctx)`
     *   **Reactive Stream (`Flowable`):** It must return an `io.reactivex.rxjava3.core.Flowable<Event>`. This `Flowable` represents a stream of events that will be produced by the custom agent's logic, often by combining or transforming multiple `Flowable` from sub-agents.
     *   **`ctx` (InvocationContext):** Provides access to crucial runtime information, most importantly `ctx.session().state()`, which is a `java.util.concurrent.ConcurrentMap<String, Object>`. This is the primary way to share data between steps orchestrated by your custom agent.
+
+=== "TypeScript"
+
+    The heart of any custom agent is the `runAsyncImpl` method. This is where you define its unique behavior.
+
+    *   **Signature:** `async* runAsyncImpl(ctx: InvocationContext): AsyncGenerator<Event, void, undefined>`
+    *   **Asynchronous Generator:** It must be an `async` generator function (`async*`).
+    *   **`ctx` (InvocationContext):** Provides access to crucial runtime information, most importantly `ctx.session.state`, which is the primary way to share data between steps orchestrated by your custom agent.
 
 **Key Capabilities within the Core Asynchronous Method:**
 
@@ -123,6 +131,36 @@ The core of any custom agent is the method where you define its unique asynchron
           *   **Conditional:** `Flowable.defer()` to choose which `Flowable` to subscribe to based on a condition, or `filter()` if you're filtering events within a stream.
           *   **Iterative:** Operators like `repeat()`, `retry()`, or by structuring your `Flowable` chain to recursively call parts of itself based on conditions (often managed with `flatMapPublisher` or `concatMap`).
 
+=== "TypeScript"
+
+    1.  **Calling Sub-Agents:** You invoke sub-agents (which are typically stored as instance properties like `this.myLlmAgent`) using their `run` method and yield their events:
+ 
+        ```typescript
+        for await (const event of this.someSubAgent.runAsync(ctx)) {
+            // Optionally inspect or log the event
+            yield event; // Pass the event up to the runner
+        }
+        ```
+
+    2.  **Managing State:** Read from and write to the session state object (`ctx.session.state`) to pass data between sub-agent calls or make decisions:
+
+        ```typescript
+        // Read data set by a previous agent
+        const previousResult = ctx.session.state['some_key'];
+
+        // Make a decision based on state
+        if (previousResult === 'some_value') {
+          // ... call a specific sub-agent ...
+        } else {
+          // ... call another sub-agent ...
+        }
+
+        // Store a result for a later step (often done via a sub-agent's outputKey)
+        // ctx.session.state['my_custom_result'] = 'calculated_value';
+          ```
+
+    3. **Implementing Control Flow:** Use standard TypeScript/JavaScript constructs (`if`/`else`, `for`/`while` loops, `try`/`catch`) to create sophisticated, conditional, or iterative workflows involving your sub-agents.
+
 ## Managing Sub-Agents and State
 
 Typically, a custom agent orchestrates other agents (like `LlmAgent`, `LoopAgent`, etc.).
@@ -158,6 +196,18 @@ Let's illustrate the power of custom agents with an example pattern: a multi-sta
     ```java
     --8<-- "examples/java/snippets/src/main/java/agents/StoryFlowAgentExample.java:init"
     ```
+
+=== "TypeScript"
+
+    We define the `StoryFlowAgent` by extending `BaseAgent`. In its constructor, we:
+    1.  Create any internal composite agents (like `LoopAgent` or `SequentialAgent`).
+    2.  Pass the list of all top-level sub-agents to the `super()` constructor.
+    3.  Store the sub-agents (passed in or created internally) as instance properties (e.g., `this.storyGenerator`) so they can be accessed in the custom `runImpl` logic.
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/agents/cutsom-agent/storyflow_agent.ts:init"
+    ```
+
 ---
 
 ### Part 2: Defining the Custom Execution Logic { #part-2-defining-the-custom-execution-logic }
@@ -177,6 +227,7 @@ Let's illustrate the power of custom agents with an example pattern: a multi-sta
     4. **Custom Part:** The `if` statement checks the `tone_check_result` from the state. If it's "negative", the `story_generator` is called *again*, overwriting the `current_story` in the state. Otherwise, the flow ends.
 
 
+
 === "Java"
     
     The `runAsyncImpl` method orchestrates the sub-agents using RxJava's Flowable streams and operators for asynchronous control flow.
@@ -190,6 +241,21 @@ Let's illustrate the power of custom agents with an example pattern: a multi-sta
     2. The `loopAgent's` Flowable runs next (due to `Flowable.concatArray` and `Flowable.defer`). The LoopAgent internally calls the `critic` and `reviser` sub-agents sequentially for up to `maxIterations`. They read/write `current_story` and `criticism` from/to the state.
     3. Then, the `sequentialAgent's` Flowable executes. It calls the `grammar_check` then `tone_check`, reading `current_story` and writing `grammar_suggestions` and `tone_check_result` to the state.
     4. **Custom Part:** After the sequentialAgent completes, logic within a `Flowable.defer` checks the "tone_check_result" from `invocationContext.session().state()`. If it's "negative", the `storyGenerator` Flowable is *conditionally concatenated* and executed again, overwriting "current_story". Otherwise, an empty Flowable is used, and the overall workflow proceeds to completion.
+
+=== "TypeScript"
+
+    The `runImpl` method orchestrates the sub-agents using standard TypeScript `async`/`await` and control flow. The `runLiveImpl` is also added to handle live streaming scenarios.
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/agents/cutsom-agent/storyflow_agent.ts:executionlogic"
+    ```
+    **Explanation of Logic:**
+
+    1.  The initial `storyGenerator` runs. Its output is expected to be in `ctx.session.state['current_story']`.
+    2.  The `loopAgent` runs, which internally calls the `critic` and `reviser` sequentially for `maxIterations` times. They read/write `current_story` and `criticism` from/to the state.
+    3.  The `sequentialAgent` runs, calling `grammarCheck` then `toneCheck`, reading `current_story` and writing `grammar_suggestions` and `tone_check_result` to the state.
+    4.  **Custom Part:** The `if` statement checks the `tone_check_result` from the state. If it's "negative", the `storyGenerator` is called *again*, overwriting the `current_story` in the state. Otherwise, the flow ends.
+
 
 ---
 
@@ -206,10 +272,17 @@ These are standard `LlmAgent` definitions, responsible for specific tasks. Their
     GEMINI_2_FLASH = "gemini-2.0-flash" # Define model constant
     --8<-- "examples/python/snippets/agents/custom-agent/storyflow_agent.py:llmagents"
     ```
+
 === "Java"
 
     ```java
     --8<-- "examples/java/snippets/src/main/java/agents/StoryFlowAgentExample.java:llmagents"
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/agents/cutsom-agent/storyflow_agent.ts:llmagents"
     ```
 
 ---
@@ -230,6 +303,12 @@ Finally, you instantiate your `StoryFlowAgent` and use the `Runner` as usual.
     --8<-- "examples/java/snippets/src/main/java/agents/StoryFlowAgentExample.java:story_flow_agent"
     ```
 
+=== "TypeScript"
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/agents/cutsom-agent/storyflow_agent.ts:story_flow_agent"
+    ```
+
 *(Note: The full runnable code, including imports and execution logic, can be found linked below.)*
 
 ---
@@ -244,10 +323,17 @@ Finally, you instantiate your `StoryFlowAgent` and use the `Runner` as usual.
         # Full runnable code for the StoryFlowAgent example
         --8<-- "examples/python/snippets/agents/custom-agent/storyflow_agent.py"
         ```
-    
+
     === "Java"
     
         ```java
         # Full runnable code for the StoryFlowAgent example
         --8<-- "examples/java/snippets/src/main/java/agents/StoryFlowAgentExample.java:full_code"
+        ```
+
+    === "TypeScript"
+
+        ```typescript
+        # Full runnable code for the StoryFlowAgent example
+        --8<-- "examples/typescript/snippets/agents/cutsom-agent/storyflow_agent.ts"
         ```
