@@ -45,8 +45,8 @@ context back to a vision-enabled model.
 
     root_agent = Agent(
         model="gemini-2.5-pro",
-        name="exa_agent",
-        instruction="Help users get information from Exa",
+        name="browserbase_agent",
+        instruction="Help users get information from Browserbase",
         tools=[
             MCPToolset(
                 connection_params=StdioConnectionParams(
