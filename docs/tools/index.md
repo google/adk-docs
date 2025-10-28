@@ -97,7 +97,7 @@ Check out the following pre-built tools that you can use with ADK agents:
     </div>
   </a>
 
-  <a href="/adk-docs/tools/google-cloud-tools/#toolbox-tools-for-databases" class="tool-card">
+  <a href="/adk-docs/tools/google-cloud/mcp-toolbox-for-databases/" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="../assets/tools-mcp-toolbox-for-databases.png" alt="MCP Toolbox for Databases">
     </div>

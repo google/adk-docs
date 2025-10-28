@@ -159,6 +159,7 @@ nav:
       -  Computer use: tools/gemini-api/computer-use.md
     - Google Cloud tools:
       - Overview: tools/google-cloud-tools.md
+      - MCP Toolbox for Databases: tools/google-cloud/mcp-toolbox-for-databases.md
       - Code Execution with Agent Engine: tools/google-cloud/code-exec-agent-engine.md
     - Third-party tools:
       - tools/third-party/index.md
