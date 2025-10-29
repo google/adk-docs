@@ -153,7 +153,7 @@ Do not add any other text before or after the code block.`,
 		if err != nil {
 			return fmt.Errorf("error during agent execution: %v", err)
 		}
-		
+
 		for _, p := range event.Content.Parts {
 			fmt.Print(p.Text)
 		}
