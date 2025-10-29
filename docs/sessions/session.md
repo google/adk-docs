@@ -181,6 +181,8 @@ the storage backend that best suits your needs:
 
 2.  **`VertexAiSessionService`**
 
+    ![py_java_only](https://img.shields.io/badge/Currently_supported_in-Python_&_Java-blue){ title="This feature is currently available for Python and Java. TypeScript support is planned/ coming soon."}
+
     *   **How it works:** Uses Google Cloud Vertex AI infrastructure via API
         calls for session management.
     *   **Persistence:** Yes. Data is managed reliably and scalably via
@@ -238,7 +240,7 @@ the storage backend that best suits your needs:
 
 3.  **`DatabaseSessionService`**
 
-    ![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java support is planned/ coming soon."}
+    ![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java and TypeScript support is planned/ coming soon."}
 
     *   **How it works:** Connects to a relational database (e.g., PostgreSQL,
         MySQL, SQLite) to store session data persistently in tables.

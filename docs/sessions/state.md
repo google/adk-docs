@@ -295,7 +295,7 @@ This is the simplest method for saving an agent's final text response directly i
     // Runner handles calling appendEvent, which uses the outputKey
     // to automatically create the stateDelta.
     const userMessage: Content = { parts: [{ text: "Hello" }] };
-    for await (const event of runner.run({
+    for await (const event of runner.runAsync({
         userId,
         sessionId,
         newMessage: userMessage

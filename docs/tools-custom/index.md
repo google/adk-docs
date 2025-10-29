@@ -27,7 +27,7 @@ with the world beyond its core text generation and reasoning abilities. What
 distinguishes capable agents from basic language models is often their effective
 use of tools.
 
-Technically, a tool is typically a modular code component—**like a Python/ Java
+Technically, a tool is typically a modular code component—**like a Python, Java, or TypeScript
 function**, a class method, or even another specialized agent—designed to
 execute a distinct, predefined task. These tasks often involve interacting with
 external systems or data.
@@ -96,7 +96,7 @@ The following example showcases how an agent can use tools by **referencing thei
 
 === "TypeScript"
 
-    ```ts
+    ```typescript
     --8<-- "examples/typescript/snippets/tools/overview/weather_sentiment.ts"
     ```
 
@@ -173,39 +173,13 @@ The `tool_context.state` attribute provides direct read and write access to the 
 
 === "TypeScript"
 
-    ```ts
-    import { ToolContext } from "@google/adk";
-
-    // Updates a user-specific preference.
-    export function updateUserThemePreference(
-      value: string,
-      toolContext: ToolContext
-    ): Record<string, any> {
-      const userPrefsKey = "user:preferences";
-
-      // Get current preferences or initialize if none exist
-      const preferences = toolContext.state.get(userPrefsKey, {}) as Record<string, any>;
-      preferences["theme"] = value;
-
-      // Write the updated dictionary back to the state
-      toolContext.state.set(userPrefsKey, preferences);
-      console.log(
-        `Tool: Updated user preference ${userPrefsKey} to ${JSON.stringify(toolContext.state.get(userPrefsKey))}`
-      );
-
-      return {
-        status: "success",
-        updated_preference: toolContext.state.get(userPrefsKey),
-      };
-      // When the LLM calls updateUserThemePreference("dark"):
-      // The toolContext.state will be updated, and the change will be part of the
-      // resulting tool response event's actions.stateDelta.
-    }
+    ```typescript
+    --8<-- "examples/typescript/snippets/tools/overview/user_preference.ts"
     ```
 
 ### **Controlling Agent Flow**
 
-The `tool_context.actions` attribute (`ToolContext.actions()` in Java) holds an **EventActions** object. Modifying attributes on this object allows your tool to influence what the agent or framework does after the tool finishes execution.
+The `tool_context.actions` attribute (in Python and TypeScript) or `ToolContext.actions()` (in Java) holds an **EventActions** object. Modifying attributes on this object allows your tool to influence what the agent or framework does after the tool finishes execution.
 
 * **`skip_summarization: bool`**: (Default: False) If set to True, instructs the ADK to bypass the LLM call that typically summarizes the tool's output. This is useful if your tool's return value is already a user-ready message.
 
@@ -229,7 +203,7 @@ The `tool_context.actions` attribute (`ToolContext.actions()` in Java) holds an 
 
 === "TypeScript"
 
-    ```ts
+    ```typescript
     --8<-- "examples/typescript/snippets/tools/overview/customer_support_agent.ts"
     ```
 
@@ -246,15 +220,15 @@ This example illustrates how a tool, through EventActions in its ToolContext, ca
 
 ### **Authentication**
 
-![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java support is planned/ coming soon."}
+![py_ts_only](https://img.shields.io/badge/Currently_supported_in-Python_&_TypeScript-blue){ title="This feature is currently available for Python and TypeScript. Java support is planned/ coming soon."}
 
 ToolContext provides mechanisms for tools interacting with authenticated APIs. If your tool needs to handle authentication, you might use the following:
 
-* **`auth_response`**: Contains credentials (e.g., a token) if authentication was already handled by the framework before your tool was called (common with RestApiTool and OpenAPI security schemes).
+* **`auth_response`** (in Python): Contains credentials (e.g., a token) if authentication was already handled by the framework before your tool was called (common with RestApiTool and OpenAPI security schemes). In TypeScript, this is retrieved via the getAuthResponse() method.
 
-* **`request_credential(auth_config: dict)`**: Call this method if your tool determines authentication is needed but credentials aren't available. This signals the framework to start an authentication flow based on the provided auth_config.
+* **`request_credential(auth_config: dict)`** (in Python) or **`requestCredential(authConfig: AuthConfig)`** (in TypeScript): Call this method if your tool determines authentication is needed but credentials aren't available. This signals the framework to start an authentication flow based on the provided auth_config.
 
-* **`get_auth_response()`**: Call this in a subsequent invocation (after request_credential was successfully handled) to retrieve the credentials the user provided.
+* **`get_auth_response()`** (in Python) or **`getAuthResponse(authConfig: AuthConfig)`** (in TypeScript): Call this in a subsequent invocation (after request_credential was successfully handled) to retrieve the credentials the user provided.
 
 For detailed explanations of authentication flows, configuration, and examples, please refer to the dedicated Tool Authentication documentation page.
 
@@ -262,13 +236,13 @@ For detailed explanations of authentication flows, configuration, and examples, 
 
 These methods provide convenient ways for your tool to interact with persistent data associated with the session or user, managed by configured services.
 
-* **`list_artifacts()`** (or **`listArtifacts()`** in Java): Returns a list of filenames (or keys) for all artifacts currently stored for the session via the artifact_service. Artifacts are typically files (images, documents, etc.) uploaded by the user or generated by tools/agents.
+* **`list_artifacts()`** (in Python) or **`listArtifacts()`** (in Java and TypeScript): Returns a list of filenames (or keys) for all artifacts currently stored for the session via the artifact_service. Artifacts are typically files (images, documents, etc.) uploaded by the user or generated by tools/agents.
 
 * **`load_artifact(filename: str)`**: Retrieves a specific artifact by its filename from the **artifact_service**. You can optionally specify a version; if omitted, the latest version is returned. Returns a `google.genai.types.Part` object containing the artifact data and mime type, or None if not found.
 
 * **`save_artifact(filename: str, artifact: types.Part)`**: Saves a new version of an artifact to the artifact_service. Returns the new version number (starting from 0).
 
-* **`search_memory(query: str)`** ![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java support is planned/ coming soon."}
+* **`search_memory(query: str)`** ![py_ts_only](https://img.shields.io/badge/Currently_supported_in-Python_&_TypeScript-blue){ title="This feature is currently available for Python and TypeScript. Java support is planned/ coming soon."}
 
        Queries the user's long-term memory using the configured `memory_service`. This is useful for retrieving relevant information from past interactions or stored knowledge. The structure of the **SearchMemoryResponse** depends on the specific memory service implementation but typically contains relevant text snippets or conversation excerpts.
 
@@ -338,65 +312,8 @@ These methods provide convenient ways for your tool to interact with persistent 
 
 ==="TypeScript"
 
-    ```ts
-    import { Part } from "@google/genai";
-    import { ToolContext } from "@google/adk";
-
-    // Analyzes a document using context from memory.
-    export async function processDocument(
-      params: { documentName: string; analysisQuery: string },
-      toolContext?: ToolContext
-    ): Promise<Record<string, any>> {
-      if (!toolContext) {
-        throw new Error("ToolContext is required for this tool.");
-      }
-
-      // 1. List all available artifacts
-      const artifacts = await toolContext.listArtifacts();
-      console.log(`Listing all available artifacts: ${artifacts}`);
-
-      // 2. Load an artifact
-      console.log(`Tool: Attempting to load artifact: ${params.documentName}`);
-      const documentPart = await toolContext.loadArtifact(params.documentName);
-      if (!documentPart) {
-        console.log(`Tool: Document '${params.documentName}' not found.`);
-        return {
-          status: "error",
-          message: `Document '${params.documentName}' not found.`, 
-        };
-      }
-
-      const documentText = documentPart.text ?? "";
-      console.log(
-        `Tool: Loaded document '${params.documentName}' (${documentText.length} chars).`
-      );
-
-      // 3. Search memory for related context
-      console.log(`Tool: Searching memory for context related to '${params.analysisQuery}'`);
-      const memory_results = await toolContext.searchMemory(params.analysisQuery);
-      console.log(`Tool: Found ${memory_results.memories.length} relevant memories.`);
-      const context_from_memory = memory_results.memories
-        .map((m) => m.content.parts[0].text)
-        .join("\n");
-
-      // 4. Perform analysis (placeholder)
-      const analysisResult =
-        `Analysis of '${params.documentName}' regarding '${params.analysisQuery}':\n` +
-        `Context from Memory:\n${context_from_memory}\n` +
-        `[Placeholder Analysis Result]`;
-      console.log("Tool: Performed analysis.");
-
-      // 5. Save the analysis result as a new artifact
-      const analysisPart: Part = { text: analysisResult };
-      const newArtifactName = `analysis_${params.documentName}`;
-      await toolContext.saveArtifact(newArtifactName, analysisPart);
-      console.log(`Tool: Saved analysis result to '${newArtifactName}'.`);
-
-      return {
-        status: "success",
-        analysis_artifact: newArtifactName,
-      };
-    }
+    ```typescript
+    --8<-- "examples/typescript/snippets/tools/overview/doc_analysis.ts"
     ```
 
 By leveraging the **ToolContext**, developers can create more sophisticated and context-aware custom tools that seamlessly integrate with ADK's architecture and enhance the overall capabilities of their agents.
@@ -421,7 +338,7 @@ Here are key guidelines for defining effective tool functions:
     * **`self` / `cls` Handled Automatically:** Implicit parameters like `self` (for instance methods) or `cls` (for class methods) are automatically handled by ADK and excluded from the schema shown to the LLM. You only need to define type hints and descriptions for the logical parameters your tool requires the LLM to provide.
 
 * **Return Type:**
-    * The function's return value **must be a dictionary (`dict`)** in Python or a **Map** in Java.
+    * The function's return value **must be a dictionary (`dict`)** in Python, a **Map** in Java, or a plain **object** in TypeScript.
     * If your function returns a non-dictionary type (e.g., a string, number, list), the ADK framework will automatically wrap it into a dictionary/Map like `{'result': your_original_return_value}` before passing the result back to the model.
     * Design the dictionary/Map keys and values to be **descriptive and easily understood *by the LLM***. Remember, the model reads this output to decide its next step.
     * Include meaningful keys. For example, instead of returning just an error code like `500`, return `{'status': 'error', 'error_message': 'Database connection failed'}`.
@@ -502,7 +419,7 @@ Here are key guidelines for defining effective tool functions:
 
 === "TypeScript"
 
-    ```ts
+    ```typescript
     /**
      * Fetches the current status of a customer's order using its ID.
      *
@@ -546,12 +463,12 @@ Here are key guidelines for defining effective tool functions:
 * **Simplicity and Focus:**
     * **Keep Tools Focused:** Each tool should ideally perform one well-defined task.
     * **Fewer Parameters are Better:** Models generally handle tools with fewer, clearly defined parameters more reliably than those with many optional or complex ones.
-    * **Use Simple Data Types:** Prefer basic types (`str`, `int`, `bool`, `float`, `List[str]`, in **Python**, or `int`, `byte`, `short`, `long`, `float`, `double`, `boolean` and `char` in **Java**) over complex custom classes or deeply nested structures as parameters when possible.
+    * **Use Simple Data Types:** Prefer basic types (`str`, `int`, `bool`, `float`, `List[str]`, in **Python**; `int`, `byte`, `short`, `long`, `float`, `double`, `boolean` and `char` in **Java**; or `string`, `number`, `boolean`, and arrays like `string[]` in **TypeScript**) over complex custom classes or deeply nested structures as parameters when possible.
     * **Decompose Complex Tasks:** Break down functions that perform multiple distinct logical steps into smaller, more focused tools. For instance, instead of a single `update_user_profile(profile: ProfileObject)` tool, consider separate tools like `update_user_name(name: str)`, `update_user_address(address: str)`, `update_user_preferences(preferences: list[str])`, etc. This makes it easier for the LLM to select and use the correct capability.
 
 By adhering to these guidelines, you provide the LLM with the clarity and structure it needs to effectively utilize your custom function tools, leading to more capable and reliable agent behavior.
 
-## Toolsets: Grouping and Dynamically Providing Tools ![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java support is planned/coming soon."}
+## Toolsets: Grouping and Dynamically Providing Tools ![py_ts_only](https://img.shields.io/badge/Currently_supported_in-Python_&_TypeScript-blue){ title="This feature is currently available for Python and TypeScript. Java support is planned/ coming soon."}
 
 Beyond individual tools, ADK introduces the concept of a **Toolset** via the `BaseToolset` interface (defined in `google.adk.tools.base_toolset`). A toolset allows you to manage and provide a collection of `BaseTool` instances, often dynamically, to an agent.
 
@@ -594,7 +511,7 @@ Let's create a basic example of a toolset that provides simple arithmetic operat
 
 === "TypeScript"
 
-    ```ts
+    ```typescript
     --8<-- "examples/typescript/snippets/tools/overview/toolset_example.ts"
     ```
 

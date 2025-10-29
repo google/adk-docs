@@ -432,9 +432,9 @@ Understanding a few key aspects of how the ADK Runtime handles state, streaming,
     // 1. Modify state
     // In TypeScript, you modify state via the context, which tracks the change.
     ctx.state.set('status', 'processing');
+    // The framework will automatically populate actions with the state
+    // delta from the context. For illustration, it's shown here.
     const event1 = createEvent({
-        // The framework will automatically populate actions with the state
-        // delta from the context. For illustration, it's shown here.
         actions: createEventActions({stateDelta: {'status': 'processing'}}),
         // ... other event fields
     });

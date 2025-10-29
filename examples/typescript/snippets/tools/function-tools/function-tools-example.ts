@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {Content, Part} from '@google/genai';
+import {Content, Part, createUserContent} from '@google/genai';
 import {
+  stringifyContent,
   FunctionTool,
   InMemoryRunner,
   LlmAgent,
@@ -60,10 +61,7 @@ async function main() {
     userId: 'test-user',
   });
 
-  const userContent: Content = {
-    role: 'user',
-    parts: [{text: 'What is the stock price of GOOG?'},],
-  };
+  const userContent: Content = createUserContent('What is the stock price of GOOG?');
 
   // Run the agent and get the response
   const response = [];
@@ -77,8 +75,8 @@ async function main() {
 
   // Print the final response from the agent
   const finalResponse = response[response.length - 1];
-  if (finalResponse?.content?.parts) {
-    console.log(finalResponse.content.parts.map((part: Part) => part.text).join(''));
+  if (finalResponse?.content?.parts?.length) {
+    console.log(stringifyContent(finalResponse));
   }
 }
 

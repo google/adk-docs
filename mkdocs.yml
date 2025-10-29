@@ -126,6 +126,7 @@ nav:
     - get-started/index.md
     - Python: get-started/python.md
     - Java: get-started/java.md
+    - TypeScript: get-started/typescript.md
   - Build your agent:
     - tutorials/index.md
     - Multi-tool agent: get-started/quickstart.md

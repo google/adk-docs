@@ -18,7 +18,7 @@ import {
   InMemoryRunner,
   LlmAgent,
 } from '@google/adk';
-import {Part} from '@google/genai';
+import {Part, createUserContent} from '@google/genai';
 
 /**
  * This example demonstrates how to use an agent as a tool.
@@ -67,16 +67,13 @@ faster than even the most powerful classical supercomputers could ever achieve, 
   const events = runner.runAsync({
     userId: 'user1',
     sessionId: 'session1',
-    newMessage: {
-      role: 'user',
-      parts: [{text: longText}],
-    },
+    newMessage: createUserContent(longText),
   });
 
   // Print the final response from the agent
   console.log('Agent Response:');
   for await (const event of events) {
-    if (event.content?.parts) {
+    if (event.content?.parts?.length) {
       const responsePart = event.content.parts.find((p: Part) => p.functionResponse);
       if (responsePart && responsePart.functionResponse) {
         console.log(responsePart.functionResponse.response);

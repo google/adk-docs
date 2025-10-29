@@ -115,7 +115,7 @@ function getLongRunningFunctionCall(event: Event): FunctionCall | undefined {
   if (
     !event.longRunningToolIds ||
     !event.content ||
-    !event.content.parts
+    !event.content.parts?.length
   ) {
     return;
   }
@@ -137,7 +137,7 @@ function getFunctionResponse(
   functionCallId: string
 ): FunctionResponse | undefined {
   // Get the function response for the function call with specified id.
-  if (!event.content || !event.content.parts) {
+  if (!event.content || !event.content.parts?.length) {
     return;
   }
   for (const part of event.content.parts) {
@@ -199,10 +199,7 @@ async function callAgentAsync(query: string) {
     for await (const event of runner.runAsync({
       sessionId: session.id,
       userId: USER_ID,
-      newMessage: {
-        parts: [{functionResponse: updatedResponse}],
-        role: "user",
-      },
+      newMessage: createUserContent(JSON.stringify({functionResponse: updatedResponse})),
     })) {
       const text = stringifyContent(event);
       if (text) {

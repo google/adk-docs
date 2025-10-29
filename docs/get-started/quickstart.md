@@ -36,25 +36,29 @@ application entirely on your machine and is recommended for internal development
 
 === "TypeScript"
 
-    Create a new project directory and initialize it with a `package.json` file:
+    Create a new project directory, initialize it, and install dependencies:
 
     ```bash
     mkdir my-adk-agent
     cd my-adk-agent
     npm init -y
-    ```
-
-    Install ADK, the ADK CLI, and TypeScript:
-
-    ```bash
-    npm install @google/adk
-    npm install @google/adk_cli
+    npm install @google/adk @google/adk-devtools
     npm install -D typescript
     ```
 
-    Create a `tsconfig.json` file:
-    ```bash
-    npx tsc --init
+    Create a `tsconfig.json` file with the following content. This configuration ensures your project correctly handles modern Node.js modules.
+
+    ```json title="tsconfig.json"
+    {
+      "compilerOptions": {
+        "target": "es2020",
+        "module": "nodenext",
+        "moduleResolution": "nodenext",
+        "esModuleInterop": true,
+        "strict": true,
+        "skipLibCheck": true
+      }
+    }
     ```
 
 
@@ -173,16 +177,21 @@ application entirely on your machine and is recommended for internal development
         .env
         package.json
         tsconfig.json
-        node_modules/
     ```
 
     ### `agent.ts`
 
     Create an `agent.ts` file in your project folder:
 
-    ```shell
-    touch agent.ts
-    ```
+    === "OS X &amp; Linux"
+        ```shell
+        touch agent.ts
+        ```
+
+    === "Windows"
+        ```shell
+        type nul > agent.ts
+        ```
 
     Copy and paste the following code into `agent.ts`:
 
@@ -190,19 +199,19 @@ application entirely on your machine and is recommended for internal development
     --8<-- "examples/typescript/snippets/get-started/multi_tool_agent/agent.ts"
     ```
 
-    !!! note
-        The example uses `zod` for schema validation. You'll need to add it to your project:
-        ```bash
-        npm install zod
-        ```
-
     ### `.env`
 
     Create a `.env` file in the same folder:
 
-    ```shell
-    touch .env
-    ```
+    === "OS X &amp; Linux"
+        ```shell
+        touch .env
+        ```
+
+    === "Windows"
+        ```shell
+        type nul > .env
+        ```
 
     More instructions about this file are described in the next section on [Set up the model](#set-up-the-model).
 
@@ -238,11 +247,11 @@ agent will be unable to function.
         export GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_API_KEY_HERE
         ```
 
-        When using TypeScript, it is recommended to use a `.env` file just like in the Python example. You can use the `dotenv` package. Install it with `npm install dotenv` and add `import 'dotenv/config';` to the first line of your `main.ts` file.
+        When using TypeScript, the `.env` file is automatically loaded by the `import 'dotenv/config';` line at the top of your `agent.ts` file.
 
-        ```env title=".env"
+        ```env title=""multi_tool_agent/.env"
         GOOGLE_GENAI_USE_VERTEXAI=FALSE
-        GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_API_KEY_HERE
+        GOOGLE_GENAI_API_KEY=PASTE_YOUR_ACTUAL_API_KEY_HERE
         ```
 
     3. Replace `PASTE_YOUR_ACTUAL_API_KEY_HERE` with your actual `API KEY`.
@@ -268,7 +277,7 @@ agent will be unable to function.
         export GOOGLE_CLOUD_LOCATION=LOCATION
         ```
 
-        When using TypeScript, it is recommended to use a `.env` file just like in the Python example. You can use the `dotenv` package. Install it with `npm install dotenv` and add `import 'dotenv/config';` to the first line of your `main.ts` file.
+        When using TypeScript, the `.env` file is automatically loaded by the `import 'dotenv/config';` line at the top of your `agent.ts` file.
 
         ```env title=".env"
         GOOGLE_GENAI_USE_VERTEXAI=TRUE
@@ -296,11 +305,11 @@ agent will be unable to function.
         export GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_EXPRESS_MODE_API_KEY_HERE
         ```
 
-        When using TypeScript, it is recommended to use a `.env` file just like in the Python example. You can use the `dotenv` package. Install it with `npm install dotenv` and add `import 'dotenv/config';` to the first line of your `main.ts` file.
+        When using TypeScript, the `.env` file is automatically loaded by the `import 'dotenv/config';` line at the top of your `agent.ts` file.
 
         ```env title=".env"
         GOOGLE_GENAI_USE_VERTEXAI=TRUE
-        GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_EXPRESS_MODE_API_KEY_HERE
+        GOOGLE_GENAI_API_KEY=PASTE_YOUR_ACTUAL_EXPRESS_MODE_API_KEY_HERE
         ```
 
 ## 4. Run Your Agent { #run-your-agent }
@@ -522,12 +531,6 @@ agent will be unable to function.
         tsconfig.json
     ```
 
-    Before running the agent, you need to compile your TypeScript code:
-    ```bash
-    npx tsc
-    ```
-    This will create a `agent.js` file in the same directory.
-
     There are multiple ways to interact with your agent:
 
     === "Dev UI (adk web)"
@@ -535,62 +538,36 @@ agent will be unable to function.
         Run the following command to launch the **dev UI**.
 
         ```shell
-        npx @google/adk_cli web
+        npx adk web
         ```
 
         **Step 1:** Open the URL provided (usually `http://localhost:8000` or
         `http://127.0.0.1:8000`) directly in your browser.
 
-        **Step 2.** In the top-left corner of the UI, you can select your agent in
-        the dropdown. The agent is loaded from your compiled `agent.js` file. Select "weather_time_agent".
+        **Step 2.** In the top-left corner of the UI, select your agent from the dropdown. The agents are listed by their filenames, so you should select "agent".
 
         !!!note "Troubleshooting"
 
-            If you do not see "weather_time_agent" in the dropdown menu, make sure you
-            are running `npx @google/adk_cli web` in the directory containing your compiled agent file.
+            If you do not see "agent" in the dropdown menu, make sure you
+            are running `npx adk web` in the directory containing your `agent.ts` file.
 
         **Step 3.** Now you can chat with your agent using the textbox:
 
         ![adk-web-dev-ui-chat.png](../assets/adk-web-dev-ui-chat.png)
 
 
-        **Step 4.**  By using the `Events` tab at the left, you can inspect
+        **Step 4.** By using the `Events` tab at the left, you can inspect
         individual function calls, responses and model responses by clicking on the
         actions:
 
         ![adk-web-dev-ui-function-call.png](../assets/adk-web-dev-ui-function-call.png)
 
-        On the `Events` tab, you can also click the `Trace` button to see the trace logs for each event that shows the latency of each function calls:
-
-        ![adk-web-dev-ui-trace.png](../assets/adk-web-dev-ui-trace.png)
-
-        **Step 5.** You can also enable your microphone and talk to your agent:
-
-        !!!note "Model support for voice/video streaming"
-
-            In order to use voice/video streaming in ADK, you will need to use Gemini models that support the Live API. You can find the **model ID(s)** that supports the Gemini Live API in the documentation:
-
-            - [Google AI Studio: Gemini Live API](https://ai.google.dev/gemini-api/docs/models#live-api)
-            - [Vertex AI: Gemini Live API](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api)
-
-            You can then replace the `model` string in `root_agent` in the `agent.ts` file you created earlier. Your code should look something like:
-
-            ```typescript
-            const rootAgent = new LlmAgent({
-                name: "weather_time_agent",
-                model: "replace-me-with-model-id", //e.g. gemini-2.0-flash-live-001
-                ...
-            });
-            ```
-
-        ![adk-web-dev-ui-audio.png](../assets/adk-web-dev-ui-audio.png)
-
     === "Terminal (adk run)"
 
-        Run the following command, to chat with your Weather agent. This will load the agent from your compiled `agent.js` file.
+        Run the following command to chat with your agent.
 
         ```
-        npx @google/adk_cli run
+        npx adk run agent.ts
         ```
 
         ![adk-run.png](../assets/adk-run.png)
@@ -599,7 +576,7 @@ agent will be unable to function.
 
     === "API Server (adk api_server)"
 
-        `npx @google/adk_cli api_server` enables you to create a local Express.js server in a single
+        `npx adk api_server` enables you to create a local Express.js server in a single
         command, enabling you to test local cURL requests before you deploy your
         agent.
 
