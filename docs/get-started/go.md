@@ -3,7 +3,7 @@
 This guide shows you how to get up and running with Agent Development Kit
 for Go. Before you start, make sure you have the following installed:
 
-*   Go 1.11 or later
+*   Go 1.24.4 or later
 
 ## Create an agent project
 
@@ -22,9 +22,10 @@ my_agent/
 
         ```console
         mkdir my_agent\
+				# switch to UTF-8 encoding:
+				chcp 65001 > nul
         type nul > my_agent\agent.go
-        type nul > my_agent\go.mod
-        type nul > my_agent\.env
+        type nul > my_agent\env.bat
         ```
 
     === "MacOS / Linux"
@@ -32,15 +33,17 @@ my_agent/
         ```bash
         mkdir -p my_agent/ && \
             touch my_agent/agent.go \
-            touch my_agent/go.mod \
-            my_agent/.env
+            touch my_agent/.env
         ```
+
+    **Note:** Do not create the `go.mod` file, 
+		you generate that file in a later step.  
 
 ### Define the agent code
 
 Create the code for a basic agent, including a simple implementation of an ADK 
-[Function Tool](/adk-docs/tools/function-tools/), called `getCurrentTime()`.
-Add the following code to the `HelloTimeAgent.java` file in your project
+[Function Tool](/adk-docs/tools/function-tools/), called `getCurrentTime`.
+Add the following code to the `my_agent/agent.go` file in your project
 directory: 
 
 ```go title="my_agent/agent.go"
@@ -64,7 +67,7 @@ func main() {
 	ctx := context.Background()
 
 	model, err := gemini.NewModel(ctx, "gemini-2.5-flash", &genai.ClientConfig{
-		APIKey: os.Getenv("GEMINI_API_KEY"),
+		APIKey: os.Getenv("GOOGLE_API_KEY"),
 	})
 	if err != nil {
 		log.Fatalf("Failed to create model: %v", err)
@@ -123,19 +126,19 @@ This project uses the Gemini API, which requires an API key. If you
 don't already have Gemini API key, create a key in Google AI Studio on the 
 [API Keys](https://aistudio.google.com/app/apikey) page.
 
-In a terminal window, write your API key into your `.env` file of your project
-to set environment variables:
+In a terminal window, write your API key into the `.env` or `env.bat` file of 
+your project to set environment variables:
 
 === "MacOS / Linux"
 
     ```bash title="Update: my_agent/.env"
-    echo 'export GEMINI_API_KEY="YOUR_API_KEY"' > .env
+    echo 'export GOOGLE_API_KEY="YOUR_API_KEY"' > .env
     ```
 
 === "Windows"
 
     ```console title="Update: my_agent/.env"
-    echo 'set GEMINI_API_KEY="YOUR_API_KEY"' > env.bat
+    echo 'set GOOGLE_API_KEY="YOUR_API_KEY"' > env.bat
     ```
 
 ??? tip "Using other AI models with ADK"
@@ -149,12 +152,7 @@ to set environment variables:
 You can run your ADK agent using the interactive command-line interface
 you defined or the ADK web user interface provided by
 the ADK Go command line tool. Both these options allow you to test and
-interact with your agent. Install the `adkgo` tool using the following
-command:
-
-```console
-go install google.golang.org/adk/cmd/adkgo@latest
-```
+interact with your agent.
 
 ### Run with command-line interface
 
@@ -163,7 +161,7 @@ using the following Maven command:
 
 ```console
 # Remember to load keys and settings: source .env OR env.bat
-go run agent.go
+go run agent.go console
 ```
 
 ![adk-run.png](/adk-docs/assets/adk-run.png)
@@ -174,12 +172,12 @@ Run your agent with the ADK web interface using the following Maven command:
 
 ```console
 # Remember to load keys and settings: source .env OR env.bat
-adkgo run local -e agent.go
+go run agent.go web api webui
 ```
 
 This command starts a web server with a chat interface for your agent. You can
-access the web interface at (http://localhost:8000). Select your agent at the
-upper right corner and type a request.
+access the web interface at (http://localhost:8080). Select your agent at the
+upper left corner and type a request.
 
 ![adk-web-dev-ui-chat.png](/adk-docs/assets/adk-web-dev-ui-chat.png)
 
