@@ -35,9 +35,9 @@ func runScenario(ctx context.Context, agentToRun agent.Agent, sessionID string, 
 	sessionService := session.InMemoryService()
 	artifactService := artifact.InMemoryService()
 	rcfg := runner.Config{
-		AppName:        appName,
-		Agent:          agentToRun,
-		SessionService: sessionService,
+		AppName:         appName,
+		Agent:           agentToRun,
+		SessionService:  sessionService,
 		ArtifactService: artifactService,
 	}
 
@@ -80,7 +80,7 @@ func conceptualRunnerExample(ctx context.Context, myAgent agent.Agent) {
 	if err != nil {
 		log.Fatalf("Failed to create runner: %v", err)
 	}
-	
+
 	s, err := sessionService.Create(ctx, &session.CreateRequest{
 		AppName: appName,
 		UserID:  userID,
@@ -116,7 +116,7 @@ func conceptualRunnerExample(ctx context.Context, myAgent agent.Agent) {
 }
 
 func runConceptualExample() {
-		ctx := context.Background()
+	ctx := context.Background()
 	// 2. Create an agent with the tool.
 	geminiModel, err := gemini.NewModel(ctx, modelName, &genai.ClientConfig{})
 	if err != nil {
@@ -163,7 +163,6 @@ func NewMyAgent() (agent.Agent, error) {
 		Run:         a.Run, // Pass the Run method of our struct.
 	})
 }
-
 
 func runMyAgent() {
 	ctx := context.Background()
@@ -220,10 +219,10 @@ func runBeforeAgentCallbackCheck() {
 
 	// 3. Register the callback in the agent configuration.
 	llmCfg := llmagent.Config{
-		Name:        "agent",
+		Name:                 "agent",
 		BeforeModelCallbacks: []llmagent.BeforeModelCallback{myBeforeModelCb},
-		Model:       geminiModel,
-		Instruction: "You are an assistant.",
+		Model:                geminiModel,
+		Instruction:          "You are an assistant.",
 	}
 	testAgent, err := llmagent.New(llmCfg)
 	if err != nil {
@@ -271,7 +270,7 @@ func runSearchExternalAPIExample() {
 			Description: "Searches an external API using a query string.",
 		},
 		searchExternalAPI)
-		
+
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -346,10 +345,10 @@ func runMyCallbackExample() {
 
 	// Register myCallback as an AfterAgentCallback.
 	llmCfg := llmagent.Config{
-		Name:         "callbackAgent",
-		AfterAgentCallbacks:   []agent.AfterAgentCallback{myCallback},
-		Model:        geminiModel,
-		Instruction:  "You are an assistant that does nothing.",
+		Name:                "callbackAgent",
+		AfterAgentCallbacks: []agent.AfterAgentCallback{myCallback},
+		Model:               geminiModel,
+		Instruction:         "You are an assistant that does nothing.",
 	}
 	testAgent, err := llmagent.New(llmCfg)
 	if err != nil {
@@ -448,10 +447,10 @@ func runInitialIntentCheck() {
 
 	// 3. Register the callback in the agent configuration.
 	llmCfg := llmagent.Config{
-		Name:        "agent",
+		Name:                 "agent",
 		BeforeAgentCallbacks: []agent.BeforeAgentCallback{checkInitialIntent},
-		Model:       geminiModel,
-		Instruction: "You are an assistant.",
+		Model:                geminiModel,
+		Instruction:          "You are an assistant.",
 	}
 	testAgent, err := llmagent.New(llmCfg)
 	if err != nil {
@@ -472,6 +471,7 @@ func logInitialUserInput(ctx agent.CallbackContext) (*genai.Content, error) {
 	}
 	return nil, nil // No modification
 }
+
 // --8<-- [end:accessing_initial_user_input]
 
 func runAccessingInitialUserInputExample() {
@@ -483,10 +483,10 @@ func runAccessingInitialUserInputExample() {
 	}
 
 	llmCfg := llmagent.Config{
-		Name:        "userInputLoggerAgent",
+		Name:                 "userInputLoggerAgent",
 		BeforeAgentCallbacks: []agent.BeforeAgentCallback{logInitialUserInput},
-		Model:       geminiModel,
-		Instruction: "You are an assistant.",
+		Model:                geminiModel,
+		Instruction:          "You are an assistant.",
 	}
 	testAgent, err := llmagent.New(llmCfg)
 	if err != nil {
@@ -496,7 +496,6 @@ func runAccessingInitialUserInputExample() {
 	runScenario(ctx, testAgent, "user_input_session", nil, "What is the weather in London?")
 }
 
-
 // --8<-- [start:passing_data_tool1]
 // Pseudocode: Tool 1 - Fetches user ID
 type GetUserProfileArgs struct {
@@ -504,13 +503,13 @@ type GetUserProfileArgs struct {
 
 type getUserProfileResult struct {
 	ProfileStatus string
-	Error  string
+	Error         string
 }
 
 func getUserProfile(tc tool.Context, input GetUserProfileArgs) getUserProfileResult {
 	// A random user ID for demonstration purposes
 	userID := "random_user_456"
-	
+
 	// Save the ID to state for the next tool
 	if err := tc.State().Set("temp:current_user_id", userID); err != nil {
 		return getUserProfileResult{Error: "Failed to set user ID in state"}
@@ -589,7 +588,7 @@ func runPassingDataExample() {
 	initialState := map[string]any{
 		"temp:current_user_id": userID,
 	}
-	
+
 	// 4. Run a scenario that will trigger the tools.
 	runScenario(ctx, testAgent, "passing_data_session", initialState, "Get my orders.")
 }
@@ -614,6 +613,7 @@ func setUserPreference(tc tool.Context, args setUserPreferenceArgs) setUserPrefe
 	fmt.Printf("Set user preference '%s' to '%s'\n", args.Preference, args.Value)
 	return setUserPreferenceResult{Status: "Preference updated"}
 }
+
 // --8<-- [end:updating_preferences]
 
 func runUpdatingPreferencesExample() {
@@ -651,7 +651,6 @@ func runUpdatingPreferencesExample() {
 	// 3. Run a scenario that will trigger the tool.
 	runScenario(ctx, testAgent, "preferences_session", nil, "Please set my theme preference to dark_mode.")
 }
-
 
 // --8<-- [start:artifacts_summarize]
 // Pseudocode: In the Summarizer tool function
@@ -742,7 +741,6 @@ func saveDocRef(tc tool.Context, args saveDocRefArgs) saveDocRefResult {
 func runArtifactsExample() {
 	log.Println("\n--- Running Artifacts Example ---")
 	ctx := context.Background()
-
 
 	// 1. Create the tools.
 	saveRefTool, err := functiontool.New(
