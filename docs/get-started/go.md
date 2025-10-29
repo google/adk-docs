@@ -22,8 +22,8 @@ my_agent/
 
         ```console
         mkdir my_agent\
-				# switch to UTF-8 encoding:
-				chcp 65001 > nul
+        # switch to UTF-8 encoding:
+        chcp 65001 > nul
         type nul > my_agent\agent.go
         type nul > my_agent\env.bat
         ```
@@ -37,7 +37,7 @@ my_agent/
         ```
 
     **Note:** Do not create the `go.mod` file, 
-		you generate that file in a later step.  
+    you generate that file in a later step.  
 
 ### Define the agent code
 
@@ -50,63 +50,63 @@ directory:
 package main
 
 import (
-	"context"
-	"log"
-	"os"
+  "context"
+  "log"
+  "os"
 
-	"google.golang.org/adk/agent"
-	"google.golang.org/adk/agent/llmagent"
-	"google.golang.org/adk/model/gemini"
-	"google.golang.org/adk/tool"
-	"google.golang.org/adk/tool/functiontool"
+  "google.golang.org/adk/agent"
+  "google.golang.org/adk/agent/llmagent"
+  "google.golang.org/adk/model/gemini"
+  "google.golang.org/adk/tool"
+  "google.golang.org/adk/tool/functiontool"
 
-	"google.golang.org/genai"
+  "google.golang.org/genai"
 )
 
 func main() {
-	ctx := context.Background()
+  ctx := context.Background()
 
-	model, err := gemini.NewModel(ctx, "gemini-2.5-flash", &genai.ClientConfig{
-		APIKey: os.Getenv("GOOGLE_API_KEY"),
-	})
-	if err != nil {
-		log.Fatalf("Failed to create model: %v", err)
-	}
+  model, err := gemini.NewModel(ctx, "gemini-2.5-flash", &genai.ClientConfig{
+    APIKey: os.Getenv("GOOGLE_API_KEY"),
+  })
+  if err != nil {
+    log.Fatalf("Failed to create model: %v", err)
+  }
 
   // mock tool implementation
-	type Input struct {
-		City string `json:"city"`
-	}
-	type Output struct {
-		City string `json:"city"`
-		Time string `json:"time"`
-	}
-	handler := func(ctx tool.Context, input Input) Output {
+  type Input struct {
+    City string `json:"city"`
+  }
+  type Output struct {
+    City string `json:"city"`
+    Time string `json:"time"`
+  }
+  handler := func(ctx tool.Context, input Input) Output {
     return Output{
       City: input.City,
       Time: "10:30am",
-	  }
-	}
-	getCurrentTime, err := functiontool.New(functiontool.Config{
-		Name:        "get_current_time",
-		Description: "Get the current time for a given city",
-	}, handler)
-	if err != nil {
-		log.Fatalf("Failed to create tool: %v", err)
-	}
+    }
+  }
+  getCurrentTime, err := functiontool.New(functiontool.Config{
+    Name:        "get_current_time",
+    Description: "Get the current time for a given city",
+  }, handler)
+  if err != nil {
+    log.Fatalf("Failed to create tool: %v", err)
+  }
 
-	agent, err := llmagent.New(llmagent.Config{
-		Name:        "hello_time_agent",
-		Model:       model,
-		Description: "Tells the current time in a specified city.",
-		Instruction: "You are a helpful assistant that tells the current time in a city. Use the 'getCurrentTime' tool for this purpose.",
-		Tools: []tool.Tool{
-			getCurrentTime{},
-		},
-	})
-	if err != nil {
-		log.Fatalf("Failed to create agent: %v", err)
-	}
+  agent, err := llmagent.New(llmagent.Config{
+    Name:        "hello_time_agent",
+    Model:       model,
+    Description: "Tells the current time in a specified city.",
+    Instruction: "You are a helpful assistant that tells the current time in a city. Use the 'getCurrentTime' tool for this purpose.",
+    Tools: []tool.Tool{
+      getCurrentTime{},
+    },
+  })
+  if err != nil {
+    log.Fatalf("Failed to create agent: %v", err)
+  }
 }
 ```
 
