@@ -28,10 +28,12 @@ Check out the following third-party tools that you can use with ADK agents:
 
 ## Integrate with existing tools
 
-ADK provides wrappers that can be used to integrate with existing tools from the
-LangChain and CrewAI ecosystems:
+ADK provides tool integrations and wrappers for existing tool ecosystems
+to help you extend the capabilities of your agents and workflows:
 
 *   **[LangChain Tools](/adk-docs/tools/third-party/langchain/)**:
     Integrate tools from the LangChain ecosystem.
 *   **[CrewAI Tools](/adk-docs/tools/third-party/crewai/)**:
     Integrate tools from the CrewAI library.
+*   **[Agentic UI](/adk-docs/tools/third-party/ag-ui/)**:
+    Use a rich, alternative web interface for ADK workflows.
