@@ -1,0 +1,191 @@
+# Go Quickstart for ADK
+
+This guide shows you how to get up and running with Agent Development Kit
+for Go. Before you start, make sure you have the following installed:
+
+*   Go 1.11 or later
+
+## Create an agent project
+
+Create an agent project with the following files and directory structure:
+
+```none
+my_agent/
+    agent.go    # main agent code
+    go.mod      # module configuration
+    .env        # API keys or project IDs
+```
+
+??? tip "Create this project structure using the command line"
+
+    === "Windows"
+
+        ```console
+        mkdir my_agent\
+        type nul > my_agent\agent.go
+        type nul > my_agent\go.mod
+        type nul > my_agent\.env
+        ```
+
+    === "MacOS / Linux"
+
+        ```bash
+        mkdir -p my_agent/ && \
+            touch my_agent/agent.go \
+            touch my_agent/go.mod \
+            my_agent/.env
+        ```
+
+### Define the agent code
+
+Create the code for a basic agent, including a simple implementation of an ADK 
+[Function Tool](/adk-docs/tools/function-tools/), called `getCurrentTime()`.
+Add the following code to the `HelloTimeAgent.java` file in your project
+directory: 
+
+```go title="my_agent/agent.go"
+package main
+
+import (
+	"context"
+	"log"
+	"os"
+
+	"google.golang.org/adk/agent"
+	"google.golang.org/adk/agent/llmagent"
+	"google.golang.org/adk/model/gemini"
+	"google.golang.org/adk/tool"
+	"google.golang.org/adk/tool/functiontool"
+
+	"google.golang.org/genai"
+)
+
+func main() {
+	ctx := context.Background()
+
+	model, err := gemini.NewModel(ctx, "gemini-2.5-flash", &genai.ClientConfig{
+		APIKey: os.Getenv("GEMINI_API_KEY"),
+	})
+	if err != nil {
+		log.Fatalf("Failed to create model: %v", err)
+	}
+
+  // mock tool implementation
+	type Input struct {
+		City string `json:"city"`
+	}
+	type Output struct {
+		City string `json:"city"`
+		Time string `json:"time"`
+	}
+	handler := func(ctx tool.Context, input Input) Output {
+    return Output{
+      City: input.City,
+      Time: "10:30am",
+	  }
+	}
+	getCurrentTime, err := functiontool.New(functiontool.Config{
+		Name:        "get_current_time",
+		Description: "Get the current time for a given city",
+	}, handler)
+	if err != nil {
+		log.Fatalf("Failed to create tool: %v", err)
+	}
+
+	agent, err := llmagent.New(llmagent.Config{
+		Name:        "hello_time_agent",
+		Model:       model,
+		Description: "Tells the current time in a specified city.",
+		Instruction: "You are a helpful assistant that tells the current time in a city. Use the 'getCurrentTime' tool for this purpose.",
+		Tools: []tool.Tool{
+			getCurrentTime{},
+		},
+	})
+	if err != nil {
+		log.Fatalf("Failed to create agent: %v", err)
+	}
+}
+```
+
+### Configure project and dependencies
+
+Use the `go mod` command to initialize the project modules and install the
+required packages based on the `import` statement in your agent code file:
+
+```console
+go mod init my-agent/main
+go mod tidy
+```
+
+### Set your API key
+
+This project uses the Gemini API, which requires an API key. If you
+don't already have Gemini API key, create a key in Google AI Studio on the 
+[API Keys](https://aistudio.google.com/app/apikey) page.
+
+In a terminal window, write your API key into your `.env` file of your project
+to set environment variables:
+
+=== "MacOS / Linux"
+
+    ```bash title="Update: my_agent/.env"
+    echo 'export GEMINI_API_KEY="YOUR_API_KEY"' > .env
+    ```
+
+=== "Windows"
+
+    ```console title="Update: my_agent/.env"
+    echo 'set GEMINI_API_KEY="YOUR_API_KEY"' > env.bat
+    ```
+
+??? tip "Using other AI models with ADK"
+    ADK supports the use of many generative AI models. For more
+    information on configuring other models in ADK agents, see
+    [Models & Authentication](/adk-docs/agents/models).
+
+
+## Run your agent
+
+You can run your ADK agent using the interactive command-line interface
+you defined or the ADK web user interface provided by
+the ADK Go command line tool. Both these options allow you to test and
+interact with your agent. Install the `adkgo` tool using the following
+command:
+
+```console
+go install google.golang.org/adk/cmd/adkgo@latest
+```
+
+### Run with command-line interface
+
+Run your agent with the command-line interface `AgentCliRunner` class
+using the following Maven command:
+
+```console
+# Remember to load keys and settings: source .env OR env.bat
+go run agent.go
+```
+
+![adk-run.png](/adk-docs/assets/adk-run.png)
+
+### Run with web interface
+
+Run your agent with the ADK web interface using the following Maven command:
+
+```console
+# Remember to load keys and settings: source .env OR env.bat
+adkgo run local -e agent.go
+```
+
+This command starts a web server with a chat interface for your agent. You can
+access the web interface at (http://localhost:8000). Select your agent at the
+upper right corner and type a request.
+
+![adk-web-dev-ui-chat.png](/adk-docs/assets/adk-web-dev-ui-chat.png)
+
+## Next: Build your agent
+
+Now that you have ADK installed and your first agent running, try building
+your own agent with our build guides:
+
+*  [Build your agent](/adk-docs/tutorials/)
