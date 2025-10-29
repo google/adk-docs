@@ -52,8 +52,8 @@ func BeforeModelCallback(ctx agent.CallbackContext, req *model.LLMRequest) (*mod
 
 // configureRunner configures the runner with an in-memory artifact service.
 func configureRunner() {
-// --8<-- [start:configure-runner]
-// --8<-- [start:prerequisite]
+	// --8<-- [start:configure-runner]
+	// --8<-- [start:prerequisite]
 	// Create a new context.
 	ctx := context.Background()
 	// Set the app name.
@@ -93,8 +93,8 @@ func configureRunner() {
 		log.Fatalf("Failed to create runner: %v", err)
 	}
 	log.Printf("Runner created successfully: %v", r)
-// --8<-- [end:prerequisite]
-// --8<-- [end:configure-runner]
+	// --8<-- [end:prerequisite]
+	// --8<-- [end:configure-runner]
 }
 
 // inMemoryServiceExample demonstrates how to set up an in-memory artifact service.
@@ -110,8 +110,8 @@ func inMemoryServiceExample() {
 	// 	AppName:         "my_app",
 	// 	SessionService:  sessionService,
 	// 	ArtifactService: artifactService,
-	// })	
-	
+	// })
+
 	// --8<-- [end:in-memory-service]
 }
 
@@ -136,7 +136,7 @@ func loadArtifactsCallback(ctx agent.CallbackContext, req *model.LLMRequest) (*m
 	// Ensure there's at least one content in the request to append to.
 	if len(req.Contents) == 0 {
 		req.Contents = []*genai.Content{{Parts: []*genai.Part{
-			genai.NewPartFromText("SYSTEM: The following file is provided for context:\n"),	
+			genai.NewPartFromText("SYSTEM: The following file is provided for context:\n"),
 		}}}
 	}
 
@@ -148,17 +148,18 @@ func loadArtifactsCallback(ctx agent.CallbackContext, req *model.LLMRequest) (*m
 	// Return nil to continue to the next callback or the model.
 	return nil, nil // Continue to next callback or LLM call
 }
+
 // --8<-- [end:loading-artifacts]
 
 // representation demonstrates how to manually construct an artifact.
 func representation() {
-// --8<-- [start:representation]
+	// --8<-- [start:representation]
 	// Create a byte slice with the image data.
 	imageBytes, err := os.ReadFile("image.png")
 	if err != nil {
 		log.Fatalf("Failed to read image file: %v", err)
 	}
-	
+
 	// Create a new artifact with the image data.
 	imageArtifact := &genai.Part{
 		InlineData: &genai.Blob{
@@ -168,12 +169,12 @@ func representation() {
 	}
 	log.Printf("Artifact MIME Type: %s", imageArtifact.InlineData.MIMEType)
 	log.Printf("Artifact Data (first 8 bytes): %x...", imageArtifact.InlineData.Data[:8])
-// --8<-- [end:representation]
+	// --8<-- [end:representation]
 }
 
 // artifactData demonstrates how to create an artifact from a file.
 func artifactData() {
-// --8<-- [start:artifact-data]
+	// --8<-- [start:artifact-data]
 	// Load imageBytes from a file
 	imageBytes, err := os.ReadFile("image.png")
 	if err != nil {
@@ -186,18 +187,18 @@ func artifactData() {
 	imageArtifact := genai.NewPartFromBytes([]byte(imageBytes), "image/png")
 
 	log.Printf("Artifact MIME Type: %s", imageArtifact.InlineData.MIMEType)
-// --8<-- [end:artifact-data]
+	// --8<-- [end:artifact-data]
 }
 
 // namespacing demonstrates the difference between session and user-scoped artifacts.
 func namespacing() {
-// --8<-- [start:namespacing]
+	// --8<-- [start:namespacing]
 	// Note: Namespacing is only supported when using the GCS ArtifactService implementation.
 	// A session-scoped artifact is only available within the current session.
 	sessionReportFilename := "summary.txt"
 	// A user-scoped artifact is available across all sessions for the current user.
 	userConfigFilename := "user:settings.json"
-	
+
 	// When saving 'summary.txt' via ctx.Artifacts().Save,
 	// it's tied to the current app_name, user_id, and session_id.
 	// ctx.Artifacts().Save(sessionReportFilename, *artifact);
@@ -206,7 +207,7 @@ func namespacing() {
 	// the ArtifactService implementation should recognize the "user:" prefix
 	// and scope it to app_name and user_id, making it accessible across sessions for that user.
 	// ctx.Artifacts().Save(userConfigFilename, *artifact);
-// --8<-- [end:namespacing]
+	// --8<-- [end:namespacing]
 
 	log.Printf("Session filename: %s", sessionReportFilename)
 	log.Printf("User filename: %s", userConfigFilename)
@@ -249,6 +250,7 @@ func saveReportCallback(ctx agent.CallbackContext, req *model.LLMRequest) (*mode
 	// Return nil to continue to the next callback or the model.
 	return nil, nil
 }
+
 // --8<-- [end:saving-artifacts]
 
 // --8<-- [start:listing-artifacts]
@@ -285,12 +287,12 @@ func listUserFilesCallback(ctx agent.CallbackContext, req *model.LLMRequest) (*m
 	} else {
 		log.Println("No available files found to list.")
 	}
-	
+
 	// Return nil to continue to the next callback or the model.
 	return nil, nil // Continue to next callback or LLM call
 }
-// --8<-- [end:listing-artifacts]
 
+// --8<-- [end:listing-artifacts]
 
 func main() {
 	log.Println("--- Running  Snippets ---")
@@ -324,9 +326,9 @@ func main() {
 		Name:        "reporting_agent",
 		Instruction: "You are a reporting agent. You can see available files and their contents if they are loaded for you. Summarize any provided files.",
 		BeforeModel: []llmagent.BeforeModelCallback{
-			saveReportCallback,      // Saves report from state
-			listUserFilesCallback,   // Lists available files and adds to prompt
-			loadArtifactsCallback,   // Loads a specific file and adds to prompt
+			saveReportCallback,    // Saves report from state
+			listUserFilesCallback, // Lists available files and adds to prompt
+			loadArtifactsCallback, // Loads a specific file and adds to prompt
 		},
 	})
 
