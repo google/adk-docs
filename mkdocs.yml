@@ -117,7 +117,9 @@ plugins:
         'get-started/tutorial.md': 'tutorials/index.md'
         'guides/responsible-agents.md': 'safety/index.md'
         'tools/third-party-tools.md': tools/third-party/index.md
-        'tools/openapi-tools.md': tools/third-party/openapi-tools.md
+        'tools/third-party/openapi-tools.md': tools-custom/openapi-tools.md
+        'tools/openapi-tools.md': tools-custom/openapi-tools.md
+        'tutorials/ag-ui.md': tools/third-party/ag-ui.md
 
 # Navigation
 nav:
@@ -135,7 +137,6 @@ nav:
       - get-started/streaming/index.md
       - Python: get-started/streaming/quickstart-streaming.md
       - Java: get-started/streaming/quickstart-streaming-java.md
-    - Agentic UI (AG-UI): tutorials/ag-ui.md
     - Testing: get-started/testing.md
     - Code samples: https://github.com/google/adk-samples
     - Advanced setup: get-started/installation.md
@@ -155,11 +156,19 @@ nav:
   - Tools for Agents:
     - tools/index.md
     - Built-in tools: tools/built-in-tools.md
-    - Google Cloud tools: 
+    - Gemini API tools:
+      -  Computer use: tools/gemini-api/computer-use.md
+    - Google Cloud tools:
       - Overview: tools/google-cloud-tools.md
+      - MCP Toolbox for Databases: tools/google-cloud/mcp-toolbox-for-databases.md
       - Code Execution with Agent Engine: tools/google-cloud/code-exec-agent-engine.md
-    - Third party tools: tools/third-party/index.md
-    - OpenAPI tools: tools/third-party/openapi-tools.md
+    - Third-party tools:
+      - tools/third-party/index.md
+      - GitHub: tools/third-party/github.md
+      - Hugging Face: tools/third-party/hugging-face.md
+      - LangChain tools: tools/third-party/langchain.md
+      - CrewAI tools: tools/third-party/crewai.md
+      - Agentic UI (AG-UI): tools/third-party/ag-ui.md      
   - Custom Tools:
     - tools-custom/index.md
     - Function tools:
@@ -167,6 +176,7 @@ nav:
       - Tool performance: tools/performance.md
       - Action confirmations: tools/confirmation.md
     - MCP tools: tools/mcp-tools.md
+    - OpenAPI tools: tools-custom/openapi-tools.md
     - Authentication: tools/authentication.md
   - Running Agents:
     - Agent Runtime: runtime/index.md
