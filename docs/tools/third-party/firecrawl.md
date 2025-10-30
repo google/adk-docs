@@ -20,147 +20,62 @@ accessible subpages and gives you clean data for each.
 
 ## Usage with ADK
 
-=== "Python"
+=== "Local MCP Server"
 
-    === "Local MCP Server"
+    ```python
+    from google.adk.agents.llm_agent import Agent
+    from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
+    from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset
+    from mcp import StdioServerParameters
 
-        ```python
-        from google.adk.agents.llm_agent import Agent
-        from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
-        from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset
-        from mcp import StdioServerParameters
-
-        root_agent = Agent(
-            model="gemini-2.5-pro",
-            name="firecrawl_agent",
-            description="A helpful assistant for scraping websites with Firecrawl",
-            instruction="Help the user search for website content",
-            tools=[
-                MCPToolset(
-                    connection_params=StdioConnectionParams(
-                        server_params = StdioServerParameters(
-                            command="npx",
-                            args=[
-                                "-y",
-                                "firecrawl-mcp",
-                            ],
-                            env={
-                                "FIRECRAWL_API_KEY": "YOUR-API-KEY",
-                            }
-                        ),
-                        timeout=30,
-                    ),
-                )
-            ],
-        )
-        ```
-
-    === "Remote MCP Server"
-
-        ```python
-        from google.adk.agents.llm_agent import Agent
-        from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPServerParams
-        from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset
-
-        FIRECRAWL_API_KEY = "YOUR-API-KEY"
-
-        root_agent = Agent(
-            model="gemini-2.5-pro",
-            name="firecrawl_agent",
-            description="A helpful assistant for scraping websites with Firecrawl",
-            instruction="Help the user search for website content",
-            tools=[
-                MCPToolset(
-                    connection_params=StreamableHTTPServerParams(
-                        url=f"https://mcp.firecrawl.dev/{FIRECRAWL_API_KEY}/v2/mcp",
-                    ),
-                )
-            ],
-        )
-        ```
-
-=== "Java"
-
-    === "Local MCP Server"
-
-        ```java
-        package agents;
-
-        import com.google.adk.JsonBaseModel;
-        import com.google.adk.agents.LlmAgent;
-        import com.google.adk.agents.RunConfig;
-        import com.google.adk.runner.InMemoryRunner;
-        import com.google.adk.tools.mcp.McpTool;
-        import com.google.adk.tools.mcp.McpToolset;
-        import com.google.adk.tools.mcp.McpToolset.McpToolsAndToolsetResult;
-        import com.google.genai.types.Content;
-        import com.google.genai.types.Part;
-        import io.modelcontextprotocol.client.transport.ServerParameters;
-
-        import java.util.List;
-        import java.util.concurrent.CompletableFuture;
-
-        public class McpAgentCreator {
-
-            public static void main(String[] args) {
-                ServerParameters connectionParams = ServerParameters.builder("npx")
-                        .args(List.of(
-                                "-y",
-                                "firecrawl-mcp"
-                        ))
-                        .build();
-
-                try {
-                    CompletableFuture<McpToolsAndToolsetResult> futureResult =
-                            McpToolset.fromServer(connectionParams, JsonBaseModel.getMapper());
-
-                    McpToolsAndToolsetResult result = futureResult.join();
-
-                    try (McpToolset toolset = result.getToolset()) {
-                        List<McpTool> tools = result.getTools();
-
-                        LlmAgent agent = LlmAgent.builder()
-                                .model("gemini-2.0-flash")
-                                .name("enterprise_assistant")
-                                .description("A helpful assistant for scraping websites with Firecrawl")
-                                .instruction(
-                                        "Help the user search for website content."
-                                )
-                                .tools(tools)
-                                .build();
-
-                        System.out.println("Agent created: " + agent.name());
-
-                        InMemoryRunner runner = new InMemoryRunner(agent);
-                        String userId = "user";
-                        String sessionId = "session";
-                        String promptText = "Tell me about the top restaurants in San Francisco";
-
-                        try {
-                            runner.sessionService().createSession(runner.appName(), userId, null, sessionId).blockingGet();
-                            System.out.println("Session created: " + sessionId + " for user: " + userId);
-                        } catch (Exception sessionCreationException) {
-                            System.err.println("Failed to create session: " + sessionCreationException.getMessage());
-                            sessionCreationException.printStackTrace();
-                            return;
+    root_agent = Agent(
+        model="gemini-2.5-pro",
+        name="firecrawl_agent",
+        description="A helpful assistant for scraping websites with Firecrawl",
+        instruction="Help the user search for website content",
+        tools=[
+            MCPToolset(
+                connection_params=StdioConnectionParams(
+                    server_params = StdioServerParameters(
+                        command="npx",
+                        args=[
+                            "-y",
+                            "firecrawl-mcp",
+                        ],
+                        env={
+                            "FIRECRAWL_API_KEY": "YOUR-API-KEY",
                         }
+                    ),
+                    timeout=30,
+                ),
+            )
+        ],
+    )
+    ```
 
-                        Content promptContent = Content.fromParts(Part.fromText(promptText));
+=== "Remote MCP Server"
 
-                        System.out.println("\nSending prompt: \"" + promptText + "\" to agent...\n");
+    ```python
+    from google.adk.agents.llm_agent import Agent
+    from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPServerParams
+    from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset
 
-                        runner.runAsync(userId, sessionId, promptContent, RunConfig.builder().build())
-                                .blockingForEach(event -> {
-                                    System.out.println("Event received: " + event.toJson());
-                                });
-                    }
-                } catch (Exception e) {
-                    System.err.println("An error occurred: " + e.getMessage());
-                    e.printStackTrace();
-                }
-            }
-        }
-        ```
+    FIRECRAWL_API_KEY = "YOUR-API-KEY"
+
+    root_agent = Agent(
+        model="gemini-2.5-pro",
+        name="firecrawl_agent",
+        description="A helpful assistant for scraping websites with Firecrawl",
+        instruction="Help the user search for website content",
+        tools=[
+            MCPToolset(
+                connection_params=StreamableHTTPServerParams(
+                    url=f"https://mcp.firecrawl.dev/{FIRECRAWL_API_KEY}/v2/mcp",
+                ),
+            )
+        ],
+    )
+    ```
 
 ## Available tools
 
