@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { LlmAgent, FunctionTool, ToolContext, InMemoryRunner, isFinalResponse } from "@google/adk";
+import { LlmAgent, FunctionTool, ToolContext, InMemoryRunner, isFinalResponse, stringifyContent } from "@google/adk";
 import { z } from "zod";
-import { Content } from "@google/genai";
+import { Content, createUserContent } from "@google/genai";
 
 function checkAndTransfer(
   params: { query: string },
@@ -65,13 +65,10 @@ async function main() {
 
   console.log("--- Running with a non-urgent query ---");
   await runner.sessionService.createSession({ appName: "customer_support_app", userId: "user1", sessionId: "session1" });
-  const nonUrgentMessage: Content = {
-    role: "user",
-    parts: [{ text: "I have a general question about my account." }],
-  };
+  const nonUrgentMessage: Content = createUserContent("I have a general question about my account.");
   for await (const event of runner.runAsync({ userId: "user1", sessionId: "session1", newMessage: nonUrgentMessage })) {
     if (isFinalResponse(event) && event.content?.parts?.length) {
-      const text = event.content.parts.map(p => p.text).join('').trim();
+      const text = stringifyContent(event).trim();
       if (text) {
         console.log(`Final Response: ${text}`);
       }
@@ -80,13 +77,10 @@ async function main() {
 
   console.log("\n--- Running with an urgent query ---");
   await runner.sessionService.createSession({ appName: "customer_support_app", userId: "user1", sessionId: "session2" });
-  const urgentMessage: Content = {
-    role: "user",
-    parts: [{ text: "My account is locked and this is urgent!" }],
-  };
+  const urgentMessage: Content = createUserContent("My account is locked and this is urgent!");
   for await (const event of runner.runAsync({ userId: "user1", sessionId: "session2", newMessage: urgentMessage })) {
     if (isFinalResponse(event) && event.content?.parts?.length) {
-      const text = event.content.parts.map(p => p.text).join('').trim();
+      const text = stringifyContent(event).trim();
       if (text) {
         console.log(`Final Response: ${text}`);
       }

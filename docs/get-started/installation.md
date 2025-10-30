@@ -97,11 +97,10 @@
 
 === "TypeScript"
 
-    ### Install ADK
+    ### Install ADK and ADK DevTools
 
     ```bash
-    npm install @google/adk
-    npm install @google/adk_cli
+    npm install @google/adk @google/adk-devtools
     ```
 
 ## Next steps

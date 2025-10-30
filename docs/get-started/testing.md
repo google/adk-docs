@@ -50,7 +50,7 @@ to use the ADK API server.
 === "TypeScript"
 
     ```shell
-    adk api_server
+    npx adk api_server
     ```
 
 This command will launch a local web server, where you can run cURL commands or send API requests to test your agent.
@@ -63,11 +63,13 @@ This command will launch a local web server, where you can run cURL commands or 
 
 Local testing involves launching a local web server, creating a session, and
 sending queries to your agent. First, ensure you are in the correct working
-directory:
+directory.
+
+For TypeScript, you should be inside the agent project directory itself.
 
 ```console
 parent_folder/
-└── my_sample_agent/
+└── my_sample_agent/  <-- For TypeScript, run commands from here
     └── agent.py (or Agent.java or agent.ts)
 ```
 

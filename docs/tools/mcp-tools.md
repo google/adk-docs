@@ -244,6 +244,7 @@ Event received: {"id":"8fe7e594-3e47-4254-8b57-9106ad8463cb","invocationId":"e-c
 For Typescript, you can define an agent that initializes the `MCPToolset` as follows:
 
 ```typescript
+import 'dotenv/config';
 import {LlmAgent, MCPToolset} from "@google/adk";
 
 // REPLACE THIS with an actual absolute path for your setup.
@@ -488,6 +489,7 @@ Event received: {"id":"1a4deb46-c496-4158-bd41-72702c773368","invocationId":"e-4
 For TypeScript, refer to the following sample to define an agent that initializes the `MCPToolset`:
 
 ```typescript
+import 'dotenv/config';
 import {LlmAgent, MCPToolset} from "@google/adk";
 
 // Retrieve the API key from an environment variable.
