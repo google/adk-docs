@@ -89,6 +89,17 @@ tells the agent:
 * `{artifact.var}` is used to insert the text content of the artifact named var.
 * If the state variable or artifact does not exist, the agent will raise an error. If you want to ignore the error, you can append a `?` to the variable name as in `{var?}`.
 
+**`static_instruction` (Optional[types.ContentUnion]):** Static instruction content sent literally as system instruction.
+...
+**Content Support:**
+Accepts `types.ContentUnion` which includes:
+- `str`: Simple text instruction
+- `types.Content`: Rich content object
+- `types.Part`: Single part (text, inline_data, file_data, etc.)
+- `PIL.Image.Image`: Image object
+- `types.File`: File reference
+- `list[PartUnion]`: List of parts
+
 === "Python"
 
     ```python
