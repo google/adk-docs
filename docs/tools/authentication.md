@@ -461,6 +461,8 @@ else:
 * This returns the updated `exchanged_credential` object sent back by the client (containing the callback URL in `auth_response_uri`).
 
 ```py
+from datetime import datetime, timedelta
+
 # Use auth_scheme and auth_credential configured in the tool.
 # exchanged_credential: AuthCredential | None
 
@@ -473,9 +475,11 @@ if exchanged_credential:
    # ADK exchanged the access token already for us
         access_token = exchanged_credential.oauth2.access_token
         refresh_token = exchanged_credential.oauth2.refresh_token
+        expiry = datetime.utcnow() + timedelta(seconds=exchanged_credential.oauth2.expires_in) if exchanged_credential.oauth2.expires_in else None
         creds = Credentials(
             token=access_token,
             refresh_token=refresh_token,
+            expiry=expiry,
             token_uri=auth_scheme.flows.authorizationCode.tokenUrl,
             client_id=auth_credential.oauth2.client_id,
             client_secret=auth_credential.oauth2.client_secret,
