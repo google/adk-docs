@@ -135,7 +135,7 @@ Check out the following pre-built tools that you can use with ADK agents:
 
   <a href="/adk-docs/tools/third-party/firecrawl/" class="tool-card">
     <div class="tool-card-image-wrapper">
-      <img src="../../assets/tools-firecrawl.png" alt="Firecrawl">
+      <img src="../assets/tools-firecrawl.png" alt="Firecrawl">
     </div>
     <div class="tool-card-content">
       <h3>Firecrawl</h4>
