@@ -93,7 +93,7 @@ While you can include `*args` (variable positional arguments) and `**kwargs` (va
 
 #### Return Type
 
-The preferred return type for a Function Tool is a **dictionary** in Python or **Map** in Java. This allows you to structure the response with key-value pairs, providing context and clarity to the LLM. If your function returns a type other than a dictionary, the framework automatically wraps it into a dictionary with a single key named **"result"**.
+The preferred return type for a Function Tool is a **dictionary** in Python, a **Map** in Java, or an **object** in TypeScript. This allows you to structure the response with key-value pairs, providing context and clarity to the LLM. If your function returns a type other than a dictionary, the framework automatically wraps it into a dictionary with a single key named **"result"**.
 
 Strive to make your return values as descriptive as possible. *For example,* instead of returning a numeric error code, return a dictionary with an "error_message" key containing a human-readable explanation. **Remember that the LLM**, not a piece of code, needs to understand the result. As a best practice, include a "status" key in your return dictionary to indicate the overall outcome (e.g., "success", "error", "pending"), providing the LLM with a clear signal about the operation's state.
 
@@ -144,6 +144,20 @@ A tool can write data to a `temp:` variable, and a subsequent tool can read it. 
         For input `GOOG`: {"symbol": "GOOG", "price": "1.0"}
         ```
 
+    === "Typescript"
+
+        This tool retrieves the mocked value of a stock price.
+
+        ```typescript
+        --8<-- "examples/typescript/snippets/tools/function-tools/function-tools-example.ts"
+        ```
+
+        The return value from this tool will be an object.
+
+        ```json
+        For input `GOOG`: {"price": 2800.0, "currency": "USD"}
+        ```
+
 ### Best Practices
 
 While you have considerable flexibility in defining your function, remember that simplicity enhances usability for the LLM. Consider these guidelines:
@@ -174,7 +188,7 @@ When using a `LongRunningFunctionTool`, your function can initiate the long-runn
 
 ### How it Works
 
-In Python, you wrap a function with `LongRunningFunctionTool`.  In Java, you pass a Method name to `LongRunningFunctionTool.create()`.
+In Python, you wrap a function with `LongRunningFunctionTool`. In Java, you pass a Method name to `LongRunningFunctionTool.create()`. In TypeScript, you instantiate the `LongRunningFunctionTool` class.
 
 
 1. **Initiation:** When the LLM calls the tool, your function starts the long-running operation.
@@ -235,6 +249,12 @@ Define your tool function and wrap it using the `LongRunningFunctionTool` class:
                 .build();
       }
     }
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/tools/function-tools/long-running-function-tool-example.ts:define_long_running_function"
     ```
 
 ### Intermediate / Final result Updates
@@ -298,6 +318,12 @@ Agent client received an event with long running function calls and check the st
     --8<-- "examples/java/snippets/src/main/java/tools/LongRunningFunctionExample.java:full_code"
     ```
 
+=== "TypeScript"
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/tools/function-tools/long-running-function-tool-example.ts
+    ```
+
 
 ??? "Python complete example: File Processing Simulation"
 
@@ -341,6 +367,12 @@ To use an agent as a tool, wrap the agent with the AgentTool class.
     AgentTool.create(agent)
     ```
 
+=== "TypeScript"
+
+    ```typescript
+    tools: [new AgentTool({agent: agentB})]
+    ```
+
 ### Customization
 
 The `AgentTool` class provides the following attributes for customizing its behavior:
@@ -359,6 +391,12 @@ The `AgentTool` class provides the following attributes for customizing its beha
 
         ```java
         --8<-- "examples/java/snippets/src/main/java/tools/AgentToolCustomization.java:full_code"
+        ```
+
+    === "TypeScript"
+
+        ```typescript
+        --8<-- "examples/typescript/snippets/tools/function-tools/agent-as-a-tool-example.ts"
         ```
 
 ### How it works

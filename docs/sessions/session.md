@@ -90,6 +90,37 @@ are its key properties:
         var unused = exampleSessionService.deleteSession(appName, userId, sessionId);
        ```
 
+=== "TypeScript"
+
+       ```typescript
+        import { InMemorySessionService } from "@google/adk";
+
+        // Create a simple session to examine its properties
+        const tempService = new InMemorySessionService();
+        const exampleSession = await tempService.createSession({
+            appName: "my_app",
+            userId: "example_user",
+            state: {"initial_key": "initial_value"} // State can be initialized
+        });
+
+        console.log("--- Examining Session Properties ---");
+        console.log(`ID ('id'):                ${exampleSession.id}`);
+        console.log(`Application Name ('appName'): ${exampleSession.appName}`);
+        console.log(`User ID ('userId'):         ${exampleSession.userId}`);
+        console.log(`State ('state'):           ${JSON.stringify(exampleSession.state)}`); // Note: Only shows initial state here
+        console.log(`Events ('events'):         ${JSON.stringify(exampleSession.events)}`); // Initially empty
+        console.log(`Last Update ('lastUpdateTime'): ${exampleSession.lastUpdateTime}`);
+        console.log("---------------------------------");
+
+        // Clean up (optional for this example)
+        const finalStatus = await tempService.deleteSession({
+            appName: exampleSession.appName,
+            userId: exampleSession.userId,
+            sessionId: exampleSession.id
+        });
+        console.log("The final status of temp_service - ", finalStatus);
+       ```
+
 *(**Note:** The state shown above is only the initial state. State updates
 happen via events, as discussed in the State section.)*
 
@@ -141,7 +172,16 @@ the storage backend that best suits your needs:
             InMemorySessionService exampleSessionService = new InMemorySessionService();
            ```
 
+    === "TypeScript"
+
+           ```typescript
+            import { InMemorySessionService } from "@google/adk";
+            const sessionService = new InMemorySessionService();
+           ```
+
 2.  **`VertexAiSessionService`**
+
+    ![py_java_only](https://img.shields.io/badge/Currently_supported_in-Python_&_Java-blue){ title="This feature is currently available for Python and Java. TypeScript support is planned/ coming soon."}
 
     *   **How it works:** Uses Google Cloud Vertex AI infrastructure via API
         calls for session management.
@@ -200,7 +240,7 @@ the storage backend that best suits your needs:
 
 3.  **`DatabaseSessionService`**
 
-    ![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java support is planned/ coming soon."}
+    ![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java and TypeScript support is planned/ coming soon."}
 
     *   **How it works:** Connects to a relational database (e.g., PostgreSQL,
         MySQL, SQLite) to store session data persistently in tables.

@@ -241,6 +241,44 @@ Event received: {"id":"8728380b-bfad-4d14-8421-fa98d09364f1","invocationId":"e-c
 Event received: {"id":"8fe7e594-3e47-4254-8b57-9106ad8463cb","invocationId":"e-c2458c56-e57a-45b2-97de-ae7292e505ef","author":"enterprise_assistant","content":{"parts":[{"text":"There are three files in the directory: first, second, and third."}],"role":"model"},"actions":{"stateDelta":{},"artifactDelta":{},"requestedAuthConfigs":{}},"timestamp":1747377544689}
 ```
 
+For Typescript, you can define an agent that initializes the `MCPToolset` as follows:
+
+```typescript
+import 'dotenv/config';
+import {LlmAgent, MCPToolset} from "@google/adk";
+
+// REPLACE THIS with an actual absolute path for your setup.
+const TARGET_FOLDER_PATH = "/path/to/your/folder";
+
+export const rootAgent = new LlmAgent({
+    model: "gemini-2.5-flash",
+    name: "filesystem_assistant_agent",
+    instruction: "Help the user manage their files. You can list files, read files, etc.",
+    tools: [
+        // To filter tools, pass a list of tool names as the second argument
+        // to the MCPToolset constructor.
+        // e.g., new MCPToolset(connectionParams, ['list_directory', 'read_file'])
+        new MCPToolset(
+            {
+                type: "StdioConnectionParams",
+                serverParams: {
+                    command: "npx",
+                    args: [
+                        "-y",
+                        "@modelcontextprotocol/server-filesystem",
+                        // IMPORTANT: This MUST be an ABSOLUTE path to a folder the
+                        // npx process can access.
+                        // Replace with a valid absolute path on your system.
+                        // For example: "/Users/youruser/accessible_mcp_files"
+                        TARGET_FOLDER_PATH,
+                    ],
+                },
+            }
+        )
+    ],
+});
+```
+
 
 
 ### Example 2: Google Maps MCP Server
@@ -441,6 +479,53 @@ public class MapsAgentCreator {
         }
     }
 }
+```
+
+A successful response will look like this:
+```shell
+Event received: {"id":"1a4deb46-c496-4158-bd41-72702c773368","invocationId":"e-48994aa0-531c-47be-8c57-65215c3e0319","author":"maps_assistant","content":{"parts":[{"text":"OK. I see a few options. The closest one is CVS Pharmacy at 5 Pennsylvania Plaza, New York, NY 10001, United States. Would you like directions?\n"}],"role":"model"},"actions":{"stateDelta":{},"artifactDelta":{},"requestedAuthConfigs":{}},"timestamp":1747380026642}
+```
+
+For TypeScript, refer to the following sample to define an agent that initializes the `MCPToolset`:
+
+```typescript
+import 'dotenv/config';
+import {LlmAgent, MCPToolset} from "@google/adk";
+
+// Retrieve the API key from an environment variable.
+// Ensure this environment variable is set in the terminal where you run 'adk web'.
+// Example: export GOOGLE_MAPS_API_KEY="YOUR_ACTUAL_KEY"
+const googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY;
+if (!googleMapsApiKey) {
+    throw new Error('GOOGLE_MAPS_API_KEY is not provided, please run "export GOOGLE_MAPS_API_KEY=YOUR_ACTUAL_KEY" to add that.');
+}
+
+export const rootAgent = new LlmAgent({
+    model: "gemini-2.5-flash",
+    name: "maps_assistant_agent",
+    instruction: "Help the user with mapping, directions, and finding places using Google Maps tools.",
+    tools: [
+        new MCPToolset(
+            {
+                type: "StdioConnectionParams",
+                serverParams: {
+                    command: "npx",
+                    args: [
+                        "-y",
+                        "@modelcontextprotocol/server-google-maps",
+                    ],
+                    // Pass the API key as an environment variable to the npx process
+                    // This is how the MCP server for Google Maps expects the key.
+                    env: {
+                        "GOOGLE_MAPS_API_KEY": googleMapsApiKey
+                    }
+                },
+            },
+            // You can filter for specific Maps tools if needed:
+            // ['get_directions', 'find_place_by_id']
+        )
+    ],
+});
 ```
 
 A successful response will look like this:
