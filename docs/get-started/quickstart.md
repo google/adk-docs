@@ -56,7 +56,9 @@ application entirely on your machine and is recommended for internal development
         "moduleResolution": "nodenext",
         "esModuleInterop": true,
         "strict": true,
-        "skipLibCheck": true
+        "skipLibCheck": true,
+        // set to false to allow CommonJS module syntax:
+        "verbatimModuleSyntax": false
       }
     }
     ```
@@ -561,6 +563,10 @@ agent will be unable to function.
         actions:
 
         ![adk-web-dev-ui-function-call.png](../assets/adk-web-dev-ui-function-call.png)
+
+        On the `Events` tab, you can also click the `Trace` button to see the trace logs for each event that shows the latency of each function calls:
+
+        ![adk-web-dev-ui-trace.png](../assets/adk-web-dev-ui-trace.png)
 
     === "Terminal (adk run)"
 

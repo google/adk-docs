@@ -55,7 +55,6 @@ from simple tasks to complex workflows.
 <p style="text-align:center;">
   <a href="/adk-docs/get-started/python/" class="md-button" style="margin:3px">Start with Python</a>
   <a href="/adk-docs/get-started/java/" class="md-button" style="margin:3px">Start with Java</a>
-  <a href="/adk-docs/get-started/typescript/" class="md-button" style="margin:3px">Start with TypeScript</a>
   <a href="/adk-docs/get-started/about/" class="md-button" style="margin:3px">Technical overview</a>
 </p>
 
