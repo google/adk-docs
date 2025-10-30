@@ -160,7 +160,7 @@ on the conversation and its instructions.
       # Replace with actual logic (e.g., API call, database lookup)
       capitals = {"france": "Paris", "japan": "Tokyo", "canada": "Ottawa"}
       return capitals.get(country.lower(), f"Sorry, I don't know the capital of {country}.")
-    
+
     # Add the tool to the agent
     capital_agent = LlmAgent(
         model="gemini-2.0-flash",
@@ -174,7 +174,7 @@ on the conversation and its instructions.
 === "Java"
 
     ```java
-    
+
     // Define a tool function
     // Retrieves the capital city of a given country.
     public static Map<String, Object> getCapitalCity(
@@ -185,13 +185,13 @@ on the conversation and its instructions.
       countryCapitals.put("canada", "Ottawa");
       countryCapitals.put("france", "Paris");
       countryCapitals.put("japan", "Tokyo");
-    
+
       String result =
               countryCapitals.getOrDefault(
                       country.toLowerCase(), "Sorry, I couldn't find the capital for " + country + ".");
       return Map.of("result", result); // Tools must return a Map
     }
-    
+
     // Add the tool to the agent
     FunctionTool capitalTool = FunctionTool.create(experiment.getClass(), "getCapitalCity");
     LlmAgent capitalAgent =
@@ -269,10 +269,10 @@ For scenarios requiring structured data exchange with an `LLM Agent`, the ADK pr
 
     ```python
     from pydantic import BaseModel, Field
-    
+
     class CapitalOutput(BaseModel):
         capital: str = Field(description="The capital of the country.")
-    
+
     structured_capital_agent = LlmAgent(
         # ... name, model, description
         instruction="""You are a Capital Information Agent. Given a country, respond ONLY with a JSON object containing the capital. Format: {"capital": "capital_name"}""",
@@ -299,7 +299,7 @@ For scenarios requiring structured data exchange with an `LLM Agent`, the ADK pr
                         .description("The capital city of the country.")
                         .build()))
             .build();
-    
+
     LlmAgent structuredCapitalAgent =
         LlmAgent.builder()
             // ... name, model, description
@@ -332,12 +332,51 @@ Control whether the agent receives the prior conversation history.
 
     ```java
     import com.google.adk.agents.LlmAgent.IncludeContents;
-    
+
     LlmAgent statelessAgent =
         LlmAgent.builder()
             // ... other params
             .includeContents(IncludeContents.NONE)
             .build();
+    ```
+
+### Context Compaction
+
+![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java support is planned/ coming soon."}
+
+For long-running conversations, the history of events can grow very large, leading to increased latency and cost. The ADK provides a context compaction feature to mitigate this. It summarizes the conversation history at regular intervals, reducing the context size sent to the LLM.
+
+You can enable this feature by providing an `EventsCompactionConfig` when creating your `App`.
+
+* **`events_compaction_config` (Optional):** An instance of `EventsCompactionConfig` to configure context compaction.
+    * **`compaction_interval`:** The number of new user-initiated invocations that will trigger a compaction.
+    * **`summarizer`:** An instance of a `BaseEventsSummarizer`. The `LlmEventSummarizer` is a good default choice.
+    * **`overlap_size`:** The number of invocations to overlap between compaction windows to maintain context.
+
+=== "Python"
+
+    ```python
+    from google.adk.apps import App, EventsCompactionConfig
+    from google.adk.apps.llm_event_summarizer import LlmEventSummarizer
+    from google.adk.agents import LlmAgent
+
+    # Define your agent
+    my_agent = LlmAgent(
+        # ... your agent configuration
+    )
+
+    # Configure context compaction
+    compaction_config = EventsCompactionConfig(
+        compaction_interval=2,
+        summarizer=LlmEventSummarizer(model="gemini-1.5-flash"),
+        overlap_size=1
+    )
+
+    # Create an App with the agent and compaction config
+    my_app = App(
+        agent=my_agent,
+        events_compaction_config=compaction_config
+    )
     ```
 
 ### Planner
@@ -532,13 +571,13 @@ call_agent("If it's raining in New York right now, what is the current temperatu
     Here's the complete basic `capital_agent`:
 
     === "Python"
-    
+
         ```python
         --8<-- "examples/python/snippets/agents/llm-agent/capital_agent.py"
         ```
-    
+
     === "Java"
-    
+
         ```java
         --8<-- "examples/java/snippets/src/main/java/agents/LlmAgentExample.java:full_code"
         ```
