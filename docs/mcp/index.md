@@ -95,7 +95,7 @@ MCP Toolbox provides out-of-the-box toolsets for the following databases and dat
 ### Documentation
 
 Refer to the
-[MCP Toolbox for Databases](../tools/google-cloud-tools.md#toolbox-tools-for-databases)
+[MCP Toolbox for Databases](/adk-docs/tools/google-cloud/mcp-toolbox-for-databases/)
 documentation on how you can use ADK together with the MCP Toolbox for
 Databases. For getting started with the MCP Toolbox for Databases, a blog post [Tutorial : MCP Toolbox for Databases - Exposing Big Query Datasets](https://medium.com/google-cloud/tutorial-mcp-toolbox-for-databases-exposing-big-query-datasets-9321f0064f4e) and Codelab [MCP Toolbox for Databases:Making BigQuery datasets available to MCP clients](https://codelabs.developers.google.com/mcp-toolbox-bigquery-dataset?hl=en#0) are also available.
 
