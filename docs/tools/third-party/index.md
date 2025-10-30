@@ -4,7 +4,7 @@ Check out the following third-party tools that you can use with ADK agents:
 
 <div class="tool-card-grid">
 
-  <a href="firecrawl/" class="tool-card">
+  <a href="/adk-docs/tools/third-party/firecrawl/" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="../../assets/firecrawl.png" alt="Firecrawl">
     </div>
@@ -14,7 +14,7 @@ Check out the following third-party tools that you can use with ADK agents:
     </div>
   </a>
 
-  <a href="github/" class="tool-card">
+  <a href="/adk-docs/tools/third-party/github/" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="../../assets/tools-github.png" alt="GitHub">
     </div>
@@ -24,7 +24,7 @@ Check out the following third-party tools that you can use with ADK agents:
     </div>
   </a>
 
-  <a href="hugging-face/" class="tool-card">
+  <a href="/adk-docs/tools/third-party/hugging-face/" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="../../assets/tools-hugging-face.png" alt="Hugging Face">
     </div>
