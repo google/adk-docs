@@ -97,7 +97,7 @@ Check out the following pre-built tools that you can use with ADK agents:
     </div>
   </a>
 
-  <a href="/adk-docs/tools/google-cloud-tools/#toolbox-tools-for-databases" class="tool-card">
+  <a href="/adk-docs/tools/google-cloud/mcp-toolbox-for-databases/" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="../assets/tools-mcp-toolbox-for-databases.png" alt="MCP Toolbox for Databases">
     </div>
@@ -133,6 +133,26 @@ Check out the following pre-built tools that you can use with ADK agents:
 
 <div class="tool-card-grid">
 
+  <a href="/adk-docs/tools/third-party/exa/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="../assets/tools-exa.png" alt="Exa">
+    </div>
+    <div class="tool-card-content">
+      <h3>Exa</h3>
+      <p>Search and extract structured content from websites and live data</p>
+    </div>
+  </a>
+
+  <a href="/adk-docs/tools/third-party/firecrawl/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="../assets/tools-firecrawl.png" alt="Firecrawl">
+    </div>
+    <div class="tool-card-content">
+      <h3>Firecrawl</h4>
+      <p>Empower your AI apps with clean data from any website</p>
+    </div>
+  </a>
+
   <a href="/adk-docs/tools/third-party/github/" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="../assets/tools-github.png" alt="GitHub">
@@ -154,16 +174,6 @@ Check out the following pre-built tools that you can use with ADK agents:
   </a>
 
 </div>
-
-## Integrate with existing tools
-
-ADK provides wrappers that can be used to integrate with existing tools from the
-LangChain and CrewAI ecosystems:
-
-*   **[LangChain Tools](/adk-docs/tools/third-party/langchain/)**:
-    Integrate tools from the LangChain ecosystem.
-*   **[CrewAI Tools](/adk-docs/tools/third-party/crewai/)**:
-    Integrate tools from the CrewAI library.
 
 ## Build your tools
 

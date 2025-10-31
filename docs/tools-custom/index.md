@@ -66,7 +66,6 @@ ADK offers flexibility by supporting several types of tools:
 2. **[Built-in Tools](../tools/built-in-tools.md):** Ready-to-use tools provided by the framework for common tasks.
         Examples: Google Search, Code Execution, Retrieval-Augmented Generation (RAG).
 3. **Third-Party Tools:** Integrate tools seamlessly from popular external libraries.
-        Examples: [LangChain Tools](/adk-docs/tools/third-party/langchain/), [CrewAI Tools](/adk-docs/tools/third-party/crewai/).
 
 Navigate to the respective documentation pages linked above for detailed information and examples for each tool type.
 
