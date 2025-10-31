@@ -11,7 +11,7 @@ to override these defaults.
 
 ## Class Definition
 
-The `RunConfig` class holds configuration parameters for an agent's runtime behavior.
+ The `RunConfig` class holds configuration parameters for an agent's runtime behavior.
 
 - Python ADK uses Pydantic for this validation.
 
@@ -63,15 +63,16 @@ The `RunConfig` class holds configuration parameters for an agent's runtime beha
 
 ## Runtime Parameters
 
-| Parameter                       | Python Type                                  | Java Type                                             | Default (Py / Java)               | Description                                                                                                                  |
-| :------------------------------ | :------------------------------------------- |:------------------------------------------------------|:----------------------------------|:-----------------------------------------------------------------------------------------------------------------------------|
-| `speech_config`                 | `Optional[types.SpeechConfig]`               | `SpeechConfig` (nullable via `@Nullable`)             | `None` / `null`                   | Configures speech synthesis (voice, language) using the `SpeechConfig` type.                                                 |
-| `response_modalities`           | `Optional[list[str]]`                        | `ImmutableList<Modality>`                             | `None` / Empty `ImmutableList`    | List of desired output modalities (e.g., Python: `["TEXT", "AUDIO"]`; Java: uses structured `Modality` objects).             |
-| `save_input_blobs_as_artifacts` | `bool`                                       | `boolean`                                             | `False` / `false`                 | If `true`, saves input blobs (e.g., uploaded files) as run artifacts for debugging/auditing.                                 |
-| `streaming_mode`                | `StreamingMode`                              | *Currently not supported*                             | `StreamingMode.NONE` / N/A        | Sets the streaming behavior: `NONE` (default), `SSE` (server-sent events), or `BIDI` (bidirectional).                        |
-| `output_audio_transcription`    | `Optional[types.AudioTranscriptionConfig]`   | `AudioTranscriptionConfig` (nullable via `@Nullable`) | `None` / `null`                   | Configures transcription of generated audio output using the `AudioTranscriptionConfig` type.                                |
-| `max_llm_calls`                 | `int`                                        | `int`                                                 | `500` / `500`                     | Limits total LLM calls per run. `0` or negative means unlimited (warned); `sys.maxsize` raises `ValueError`.                 |
-| `support_cfc`                   | `bool`                                       | *Currently not supported*                             | `False` / N/A                     | **Python:** Enables Compositional Function Calling. Requires `streaming_mode=SSE` and uses the LIVE API. **Experimental.**   |
+| Parameter | Python Type | Java Type | Default (Py / Java) | Description |
+| :--- | :--- |:---|:---|:---|
+| `speech_config` | `Optional[types.SpeechConfig]` | `SpeechConfig` (nullable via `@Nullable`) | `None` / `null` | Configures speech synthesis (voice, language) using the `SpeechConfig` type. |
+| `response_modalities` | `Optional[list[str]]` | `ImmutableList<Modality>` | `None` / Empty `ImmutableList` | List of desired output modalities (e.g., Python: `["TEXT", "AUDIO"]`; Java: uses structured `Modality` objects). |
+| `save_input_blobs_as_artifacts` | `bool` | `boolean` | `False` / `false` | If `true`, saves input blobs (e.g., uploaded files) as run artifacts for debugging/auditing. |
+| `streaming_mode` | `StreamingMode` | *Currently not supported* | `StreamingMode.NONE` / N/A | Sets the streaming behavior: `NONE` (default), `SSE` (server-sent events), or `BIDI` (bidirectional). |
+| `output_audio_transcription` | `Optional[types.AudioTranscriptionConfig]` | `AudioTranscriptionConfig` (nullable via `@Nullable`) | `None` / `null` | Configures transcription of generated audio output using the `AudioTranscriptionConfig` type. |
+| `max_llm_calls` | `int` | `int` | `500` / `500` | Limits total LLM calls per run. `0` or negative means unlimited (warned); `sys.maxsize` raises `ValueError`. |
+| `support_cfc` | `bool` | *Currently not supported* | `False` / N/A | **Python:** Enables Compositional Function Calling. Requires `streaming_mode=SSE` and uses the LIVE API. **Experimental.** |
+| `context_window_compression` | `Optional[types.ContextWindowCompressionConfig]` | | `None` | Configuration for context window compression. |
 
 ### `speech_config`
 
