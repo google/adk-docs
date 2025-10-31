@@ -15,7 +15,6 @@
  */
 
 /* Index page styling */
-
 .md-grid { max-width: 80%; }
 .footer { padding-bottom: 30vh; }
 .centered-logo-text-group { display: inline-flex; align-items: center; gap: 1.5em; margin-bottom: 0.5em; vertical-align: middle; }
@@ -29,20 +28,42 @@
 
 /* Youtube Video Grid Layout - Community page*/
 .video-grid { display: flex; flex-wrap: wrap; gap: 20px; margin-top: 1.5em; margin-bottom: 1.5em; }
+
 /* For 3 items per row: 100% / 3 = 33.333% */
 .video-item { flex: 0 1 calc(33.333% - 13.333px); box-sizing: border-box; min-width: 250px; }
 .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; background: #f0f0f0; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
 .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
 @media (max-width: 992px) {  .video-item { flex: 0 1 calc(50% - 10px); }  }
 @media (max-width: 600px) {  .video-item { flex: 0 1 100%; }  }
+
 /* Youtube icon */
 .youtube-red-icon svg { fill: #FF0000 !important; }
+
+/* Replace full site name with "ADK" on mobile */
+@media screen and (max-width: 76.1875em) {
+  .md-header__topic .md-ellipsis {
+    display: none;
+  }
+
+  .md-header__topic::before {
+    content: "ADK";
+    display: block;
+    padding-left: 0.6rem;
+  }
+}
 
 /* Custom styles for handling two repository links */
 .md-header__source {
   max-width: 480px;
   display: flex;
   align-items: center;
+}
+
+/* Hide the custom repository links on mobile viewports */
+@media screen and (max-width: 76.1875em) {
+  .md-header__source {
+    display: none;
+  }
 }
 
 /* Hide repository stats but keep repository names visible */
