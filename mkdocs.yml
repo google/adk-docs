@@ -221,6 +221,7 @@ nav:
       - events/index.md
     - Context:
       - context/index.md
+      - Context compression: context/compaction.md
     - MCP:
       - mcp/index.md
     - Plugins:
