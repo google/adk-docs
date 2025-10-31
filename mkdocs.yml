@@ -242,6 +242,7 @@ nav:
     - api-reference/index.md
     - Python ADK: api-reference/python/index.html
     - Java ADK: api-reference/java/index.html
+    - Typescript ADK: api-reference/typescript/index.html
     - CLI Reference: api-reference/cli/index.html
     - Agent Config reference: api-reference/agentconfig/index.html
     - REST API: api-reference/rest/index.md
