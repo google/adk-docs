@@ -120,6 +120,8 @@ plugins:
         'tools/third-party/openapi-tools.md': tools-custom/openapi-tools.md
         'tools/openapi-tools.md': tools-custom/openapi-tools.md
         'tutorials/ag-ui.md': tools/third-party/ag-ui.md
+        'tools/third-party/langchain.md': tools/index.md 
+        'tools/third-party/crewai.md':  tools/index.md
 
 # Navigation
 nav:
