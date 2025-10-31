@@ -4,7 +4,7 @@ Check out the following third-party tools that you can use with ADK agents:
 
 <div class="tool-card-grid">
 
-  <a href="exa/" class="tool-card">
+  <a href="/adk-docs/tools/third-party/exa/" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="../../assets/tools-exa.png" alt="Exa">
     </div>
