@@ -38,7 +38,7 @@ Development Kit community.
     <div class="card-content">
       <div class="type">Video</div>
       <h3>📺 Getting Started with ADK Tools</h3>
-      <p>A guide to building a software bug assistant using tools like MCP, Google Search, and LangChain.</p>
+      <p>A guide to building a software bug assistant using tools like MCP and Google Search.</p>
     </div>
   </a>
 </div>
