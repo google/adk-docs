@@ -34,6 +34,7 @@ text, audio, and video inputs, and they can provide text and audio output.
 
 <div class="grid cards" markdown>
 
+<!-- this quickstart is outdated
 -   :material-console-line: **Quickstart (Bidi-streaming)**
 
     ---
@@ -42,6 +43,7 @@ text, audio, and video inputs, and they can provide text and audio output.
     implement low-latency and bidirectional voice and video communication.
 
     - [Quickstart (Bidi-streaming)](../get-started/streaming/quickstart-streaming.md)
+-->
 
 -   :material-console-line: **Custom Audio Streaming app sample**
 
