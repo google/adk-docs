@@ -37,7 +37,10 @@ tool_config = BigQueryToolConfig(write_mode=WriteMode.BLOCKED)
 # Uses externally-managed Application Default Credentials (ADC) by default.
 # This decouples authentication from the agent / tool lifecycle.
 # https://cloud.google.com/docs/authentication/provide-credentials-adc
-credentials_config = BigQueryCredentialsConfig()
+application_default_credentials, _ = google.auth.default()
+credentials_config = BigQueryCredentialsConfig(
+    credentials=application_default_credentials
+)
 
 # Instantiate a BigQuery toolset
 bigquery_toolset = BigQueryToolset(
