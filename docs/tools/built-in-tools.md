@@ -359,9 +359,15 @@ to use built-in tools with other tools by using multiple agents:
                 .build();
     ```
 
+ADK Python has a built-in workaroud which bypasses this limitation for 
+`GoogleSearchTool` and `VertexAiSearchTool` (use `bypass_multi_tools_limit=True` to enable it), e.g.
+[sample agent](https://github.com/google/adk-python/tree/main/contributing/samples/built_in_multi_tools).
+
 !!! warning
 
-    Built-in tools cannot be used within a sub-agent.
+    Built-in tools cannot be used within a sub-agent, with the exception of
+    `GoogleSearchTool` and `VertexAiSearchTool` in ADK Python because of the
+    workaround mentioned above.
 
 For example, the following approach that uses built-in tools within sub-agents
 is **not** currently supported:
@@ -369,13 +375,13 @@ is **not** currently supported:
 === "Python"
 
     ```py
-    search_agent = Agent(
+    url_context_agent = Agent(
         model='gemini-2.0-flash',
-        name='SearchAgent',
+        name='UrlContextAgent',
         instruction="""
-        You're a specialist in Google Search
+        You're a specialist in URL Context
         """,
-        tools=[google_search],
+        tools=[url_context],
     )
     coding_agent = Agent(
         model='gemini-2.0-flash',
@@ -390,7 +396,7 @@ is **not** currently supported:
         model="gemini-2.0-flash",
         description="Root Agent",
         sub_agents=[
-            search_agent,
+            url_context_agent,
             coding_agent
         ],
     )
