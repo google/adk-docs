@@ -1,4 +1,4 @@
-# Compress workflow context for performance
+# Compress agent context for performance
 
 As an ADK agent runs it collects *context* information, including user
 instructions, retrieved data, tool responses, and generated content. As the size
@@ -38,7 +38,7 @@ app = App(
 Once configured, the ADK `Runner` handles the compaction process in the
 background each time the session reaches the interval.
 
-## Example of context compression
+## Example of context compaction
 
 If you set `compaction_interval` to 3 and `overlap_size` to 1, the event data is
 compressed upon completion of events 3, 6, 9, and so on. The overlap setting
@@ -73,7 +73,7 @@ a compactor object
 
 ### Define a Compactor {#define-compactor}
 
-You can define a compactor object using the `SlidingWindowCompactor` class to
+You can define a Compactor object using the `SlidingWindowCompactor` class to
 customize the operation of context compression. The following code example
 demonstrates how to define a compactor:
 
