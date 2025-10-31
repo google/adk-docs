@@ -26,7 +26,7 @@
 #centered-install-tabs .tabbed-labels.tabbed-labels--linked { display: flex; justify-content: center; width: 100%; } /* Centered install tabs in the homepage*/
 #centered-install-tabs .tabbed-labels { display: flex; justify-content: center; width: 100%; } /* Centered install tabs in the homepage*/
 
-/* Youtube Video Grid Layout - Community page*/
+/* YouTube Video Grid Layout - Community page*/
 .video-grid { display: flex; flex-wrap: wrap; gap: 20px; margin-top: 1.5em; margin-bottom: 1.5em; }
 
 /* For 3 items per row: 100% / 3 = 33.333% */
@@ -36,7 +36,7 @@
 @media (max-width: 992px) {  .video-item { flex: 0 1 calc(50% - 10px); }  }
 @media (max-width: 600px) {  .video-item { flex: 0 1 100%; }  }
 
-/* Youtube icon */
+/* YouTube icon */
 .youtube-red-icon svg { fill: #FF0000 !important; }
 
 /* Replace full site name with "ADK" on mobile */
