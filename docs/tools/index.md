@@ -133,6 +133,16 @@ Check out the following pre-built tools that you can use with ADK agents:
 
 <div class="tool-card-grid">
 
+  <a href="/adk-docs/tools/third-party/exa/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="../assets/tools-exa.png" alt="Exa">
+    </div>
+    <div class="tool-card-content">
+      <h3>Exa</h3>
+      <p>Search and extract structured content from websites and live data</p>
+    </div>
+  </a>
+
   <a href="/adk-docs/tools/third-party/firecrawl/" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="../assets/tools-firecrawl.png" alt="Firecrawl">
