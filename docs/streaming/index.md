@@ -47,9 +47,8 @@ text, audio, and video inputs, and they can provide text and audio output.
 
     ---
 
-    This article overviews the server and client code for a custom asynchronous web app built with ADK Streaming and FastAPI, enabling real-time, bidirectional audio and text communication with both Server Sent Events (SSE) and WebSockets.
+    This article overviews the server and client code for a custom asynchronous web app built with ADK Streaming and FastAPI, enabling real-time, bidirectional audio and text communication with WebSockets.
 
-    - [Custom Audio Streaming app sample (SSE)](custom-streaming.md)
     - [Custom Audio Streaming app sample (WebSockets)](custom-streaming-ws.md)
 
 -   :material-console-line: **Bidi-streaming development guide series**

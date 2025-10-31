@@ -523,7 +523,7 @@ Once your agent is deployed to GKE, you can interact with it via the deployed UI
     curl -X POST \
         $APP_URL/apps/capital_agent/users/user_123/sessions/session_abc \
         -H "Content-Type: application/json" \
-        -d '{"state": {"preferred_language": "English", "visit_count": 5}}'
+        -d '{"preferred_language": "English", "visit_count": 5}'
     ```
 
     #### Run the Agent
