@@ -34,7 +34,7 @@ Check out the following third-party tools that you can use with ADK agents:
     </div>
   </a>
 
-  <a href="hugging-face/" class="tool-card">
+  <a href="/adk-docs/tools/third-party/hugging-face/" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="../../assets/tools-hugging-face.png" alt="Hugging Face">
     </div>
