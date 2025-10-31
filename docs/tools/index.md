@@ -133,6 +133,16 @@ Check out the following pre-built tools that you can use with ADK agents:
 
 <div class="tool-card-grid">
 
+  <a href="/adk-docs/tools/third-party/firecrawl/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="../assets/tools-firecrawl.png" alt="Firecrawl">
+    </div>
+    <div class="tool-card-content">
+      <h3>Firecrawl</h4>
+      <p>Empower your AI apps with clean data from any website</p>
+    </div>
+  </a>
+
   <a href="/adk-docs/tools/third-party/github/" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="../assets/tools-github.png" alt="GitHub">

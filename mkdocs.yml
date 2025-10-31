@@ -165,6 +165,7 @@ nav:
       - Code Execution with Agent Engine: tools/google-cloud/code-exec-agent-engine.md
     - Third-party tools:
       - tools/third-party/index.md
+      - Firecrawl: tools/third-party/firecrawl.md
       - GitHub: tools/third-party/github.md
       - Hugging Face: tools/third-party/hugging-face.md
       - Agentic UI (AG-UI): tools/third-party/ag-ui.md
