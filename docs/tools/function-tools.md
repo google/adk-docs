@@ -21,6 +21,21 @@ The ADK framework automatically inspects your Python function's signature—incl
 
 A well-defined function signature is crucial for the LLM to use your tool correctly.
 
+!!! warning "Type Annotations Required"
+    Proper type annotations are **critical** for Gemini API schema generation. Using bare `list` or `dict` instead of `List[T]` or `Dict[K, V]` causes schema validation failures (400 errors).
+
+    **See the [Type Annotations Guide](../guides/tool-type-annotations.md)** for:
+
+    - Required patterns (`List[str]` vs `list`)
+    - Common errors and fixes (400 Bad Request)
+    - Python version compatibility notes
+    - Migration checklist
+
+    **Quick fix**: Always import from `typing`:
+    ```python
+    from typing import List, Dict, Optional, Any
+    ```
+
 #### Parameters
 
 You can define functions with required parameters, optional parameters, and variadic arguments. Here’s how each is handled:
