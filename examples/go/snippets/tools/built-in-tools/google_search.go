@@ -63,7 +63,7 @@ func callAgent(ctx context.Context, a agent.Agent, prompt string) error {
 
 	// The r.Run method streams events and errors.
 	// The loop iterates over the results, handling them as they arrive.
-	for event, err := range r.Run(ctx, userID, sessionID, userMsg, &agent.RunConfig{
+	for event, err := range r.Run(ctx, userID, sessionID, userMsg, agent.RunConfig{
 		StreamingMode: agent.StreamingModeSSE,
 	}) {
 		if err != nil {

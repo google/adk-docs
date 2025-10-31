@@ -12,6 +12,7 @@ import (
 	"google.golang.org/adk/runner"
 	"google.golang.org/adk/session"
 	"google.golang.org/adk/tool"
+	"google.golang.org/adk/tool/functiontool"
 
 	"google.golang.org/genai"
 )
@@ -20,7 +21,7 @@ import (
 // to simulate a real-world stock data API. This allows the example to
 // demonstrate tool functionality without making external network calls.
 var mockStockPrices = map[string]float64{
-	"GOOG": 600.6,
+	"GOOG": 300.6,
 	"AAPL": 123.4,
 	"MSFT": 234.5,
 }
@@ -57,8 +58,8 @@ func getStockPrice(ctx tool.Context, input getStockPriceArgs) getStockPriceResul
 // on how to respond to user queries about stock prices. It uses the
 // Gemini model to understand user intent and decide when to use its tools.
 func createStockAgent(ctx context.Context) (agent.Agent, error) {
-	stockPriceTool, err := tool.NewFunctionTool(
-		tool.FunctionToolConfig{
+	stockPriceTool, err := functiontool.New(
+		functiontool.Config{
 			Name:        "get_stock_price",
 			Description: "Retrieves the current stock price for a given symbol.",
 		},
@@ -129,7 +130,7 @@ func callAgent(ctx context.Context, a agent.Agent, prompt string) {
 		Role: string(genai.RoleUser),
 	}
 
-	for event, err := range r.Run(ctx, userID, sessionID, userMsg, &agent.RunConfig{
+	for event, err := range r.Run(ctx, userID, sessionID, userMsg, agent.RunConfig{
 		StreamingMode: agent.StreamingModeSSE,
 	}) {
 		if err != nil {
