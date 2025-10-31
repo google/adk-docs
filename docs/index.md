@@ -83,8 +83,8 @@ from simple tasks to complex workflows.
     ---
 
     Equip agents with diverse capabilities: use pre-built tools (Search, Code
-    Exec), create custom functions, integrate 3rd-party libraries (LangChain,
-    CrewAI), or even use other agents as tools.
+    Exec), create custom functions, integrate 3rd-party libraries, or even use
+    other agents as tools.
 
     [**Browse tools**](tools/index.md)
 
