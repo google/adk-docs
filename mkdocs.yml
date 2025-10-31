@@ -161,7 +161,7 @@ nav:
       - Built-in tools: tools/built-in-tools.md
       - Gemini API tools:
         -  Computer use: tools/gemini-api/computer-use.md
-      - Google Cloud tools: 
+      - Google Cloud tools:
         - Overview: tools/google-cloud-tools.md
         - MCP Toolbox for Databases: tools/google-cloud/mcp-toolbox-for-databases.md
         - Code Execution with Agent Engine: tools/google-cloud/code-exec-agent-engine.md
