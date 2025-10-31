@@ -119,6 +119,9 @@ plugins:
         'tools/third-party-tools.md': tools/third-party/index.md
         'tools/third-party/openapi-tools.md': tools-custom/openapi-tools.md
         'tools/openapi-tools.md': tools-custom/openapi-tools.md
+        'tutorials/ag-ui.md': tools/third-party/ag-ui.md
+        'tools/third-party/langchain.md': tools/index.md
+        'tools/third-party/crewai.md':  tools/index.md
 
 # Navigation
 nav:
@@ -135,7 +138,6 @@ nav:
       - get-started/streaming/index.md
       - Python: get-started/streaming/quickstart-streaming.md
       - Java: get-started/streaming/quickstart-streaming-java.md
-    - Agentic UI (AG-UI): tutorials/ag-ui.md
     - Testing: get-started/testing.md
     - Code samples: https://github.com/google/adk-samples
     - Advanced setup: get-started/installation.md
@@ -164,10 +166,10 @@ nav:
     - Third-party tools:
       - tools/third-party/index.md
       - Exa: tools/third-party/exa.md
+      - Firecrawl: tools/third-party/firecrawl.md
       - GitHub: tools/third-party/github.md
       - Hugging Face: tools/third-party/hugging-face.md
-      - LangChain tools: tools/third-party/langchain.md
-      - CrewAI tools: tools/third-party/crewai.md
+      - Agentic UI (AG-UI): tools/third-party/ag-ui.md
   - Custom Tools:
     - tools-custom/index.md
     - Function tools:

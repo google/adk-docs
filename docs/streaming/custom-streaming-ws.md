@@ -1,6 +1,6 @@
-# Custom Audio Streaming app (WebSocket) {#custom-streaming-websocket}
+# Custom Audio Streaming Application (WebSocket) {#custom-streaming-websocket}
 
-This article overviews the server and client code for a custom asynchronous web app built with ADK Streaming and [FastAPI](https://fastapi.tiangolo.com/), enabling real-time, bidirectional audio and text communication with WebSockets.
+This article overviews the server and client code for a custom Bidi-streaming web application built with ADK Bidi-streaming and [FastAPI](https://fastapi.tiangolo.com/), enabling real-time, bidirectional audio and text communication with WebSockets.
 
 **Note:** This guide assumes you have experience of JavaScript and Python `asyncio` programming.
 
@@ -11,9 +11,16 @@ In order to use voice/video streaming in ADK, you will need to use Gemini models
 - [Google AI Studio: Gemini Live API](https://ai.google.dev/gemini-api/docs/models#live-api)
 - [Vertex AI: Gemini Live API](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api)
 
-There is also a [SSE](custom-streaming.md) version of the sample is available.
+## 1. Install ADK {#1-setup-installation}
 
-## 1. Install ADK {#1.-setup-installation}
+Download the sample code:
+
+```bash
+curl -L https://github.com/google/adk-docs/archive/refs/heads/main.tar.gz | \
+  tar xz --strip=5 adk-docs-main/examples/python/snippets/streaming/adk-streaming-ws
+
+cd adk-streaming-ws
+```
 
 Create & Activate Virtual Environment (Recommended):
 
@@ -29,24 +36,19 @@ python -m venv .venv
 Install ADK:
 
 ```bash
-pip install --upgrade google-adk==1.10.0
+pip install --upgrade google-adk==1.17.0
 ```
 
 Set `SSL_CERT_FILE` variable with the following command.
 
-```shell
+```bash
 export SSL_CERT_FILE=$(python -m certifi)
 ```
 
-Download the sample code:
+Navigate to the app folder:
 
 ```bash
-git clone --no-checkout https://github.com/google/adk-docs.git
-cd adk-docs
-git sparse-checkout init --cone
-git sparse-checkout set examples/python/snippets/streaming/adk-streaming-ws
-git checkout main
-cd examples/python/snippets/streaming/adk-streaming-ws/app
+cd app
 ```
 
 This sample code has the following files and folders:
@@ -64,7 +66,7 @@ adk-streaming-ws/
         └── agent.py # Agent definition
 ```
 
-## 2\. Set up the platform {#2.-set-up-the-platform}
+## 2. Set up the platform {#2-set-up-the-platform}
 
 To run the sample app, choose a platform from either Google AI Studio or Google Cloud Vertex AI:
 
@@ -75,6 +77,8 @@ To run the sample app, choose a platform from either Google AI Studio or Google 
         ```env title=".env"
         GOOGLE_GENAI_USE_VERTEXAI=FALSE
         GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_API_KEY_HERE
+        DEMO_AGENT_MODEL=gemini-2.5-flash-native-audio-preview-09-2025
+        #DEMO_AGENT_MODEL=gemini-2.0-flash-exp # if the model above doesn't work
         ```
 
     3. Replace `PASTE_YOUR_ACTUAL_API_KEY_HERE` with your actual `API KEY`.
@@ -97,6 +101,8 @@ To run the sample app, choose a platform from either Google AI Studio or Google 
         GOOGLE_GENAI_USE_VERTEXAI=TRUE
         GOOGLE_CLOUD_PROJECT=PASTE_YOUR_ACTUAL_PROJECT_ID
         GOOGLE_CLOUD_LOCATION=us-central1
+        DEMO_AGENT_MODEL=gemini-live-2.5-flash-preview-native-audio-09-2025
+        #DEMO_AGENT_MODEL=gemini-2.0-flash-exp # if the model above doesn't work
         ```
 
 
@@ -106,38 +112,43 @@ The agent definition code `agent.py` in the `google_search_agent` folder is wher
 
 
 ```py
+import os
 from google.adk.agents import Agent
 from google.adk.tools import google_search  # Import the tool
 
 root_agent = Agent(
    name="google_search_agent",
-   model="gemini-2.0-flash-exp", # if this model does not work, try below
-   #model="gemini-2.0-flash-live-001",
+   model=os.getenv("DEMO_AGENT_MODEL"),
    description="Agent to answer questions using Google Search.",
    instruction="Answer the question using the Google Search tool.",
    tools=[google_search],
 )
 ```
 
-**Note:**  To enable both text and audio/video input, the model must support the generateContent (for text) and bidiGenerateContent methods. Verify these capabilities by referring to the [List Models Documentation](https://ai.google.dev/api/models#method:-models.list). This quickstart utilizes the gemini-2.0-flash-exp model for demonstration purposes.
+**Note:** This application uses the Gemini Live API (also known as `bidiGenerateContent`), which enables real-time bidirectional streaming for both text and audio/video input. The model must support the Live API for Bidi-streaming to work. Verify model capabilities by referring to:
+
+- [Gemini Live API - Supported Models](https://ai.google.dev/gemini-api/docs/live#supported-models)
+- [Vertex AI Live API - Model Support](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api#models)
+
+The agent uses the model specified in the `DEMO_AGENT_MODEL` environment variable (from the `.env` file).
 
 Notice how easily you integrated [grounding with Google Search](https://ai.google.dev/gemini-api/docs/grounding?lang=python#configure-search) capabilities.  The `Agent` class and the `google_search` tool handle the complex interactions with the LLM and grounding with the search API, allowing you to focus on the agent's *purpose* and *behavior*.
 
 ![intro_components.png](../assets/quickstart-streaming-tool.png)
 
-## 3\. Interact with Your Streaming app {#3.-interact-with-your-streaming-app}
+## 3. Interact with Your Streaming Application {#3-interact-with-your-streaming-app}
 
-1\. **Navigate to the Correct Directory:**
+1. **Navigate to the Correct Directory:**
 
    To run your agent effectively, make sure you are in the **app folder (`adk-streaming-ws/app`)**
 
-2\. **Start the Fast API**: Run the following command to start CLI interface with
+2. **Start the Fast API**: Run the following command to start CLI interface with
 
-```console
+```bash
 uvicorn main:app --reload
 ```
 
-3\. **Access the app with the text mode:** Once the app starts, the terminal will display a local URL (e.g., [http://localhost:8000](http://localhost:8000)). Click this link to open the UI in your browser.
+3. **Access the app with the text mode:** Once the app starts, the terminal will display a local URL (e.g., [http://localhost:8000](http://localhost:8000)). Click this link to open the UI in your browser.
 
 Now you should see the UI like this:
 
@@ -145,7 +156,7 @@ Now you should see the UI like this:
 
 Try asking a question `What time is it now?`. The agent will use Google Search to respond to your queries. You would notice that the UI shows the agent's response as streaming text. You can also send messages to the agent at any time, even while the agent is still responding. This demonstrates the bidirectional communication capability of ADK Streaming.
 
-4\. **Access the app with the audio mode:** Now click the `Start Audio` button. The app reconnects with the server in an audio mode, and the UI will show the following dialog for the first time:
+4. **Access the app with the audio mode:** Now click the `Start Audio` button. The app reconnects with the server in an audio mode, and the UI will show the following dialog for the first time:
 
 ![ADK Streaming app](../assets/adk-streaming-audio-dialog.png)
 
@@ -155,7 +166,7 @@ Click `Allow while visiting the site`, then you will see the microphone icon wil
 
 Now you can talk to the agent with voice. Ask questions like `What time is it now?` with voice and you will hear the agent responding in voice too. As Streaming for ADK supports [multiple languages](https://ai.google.dev/gemini-api/docs/live#supported-languages), it can also respond to question in the supported languages.
 
-5\. **Check console logs**
+5. **Check console logs**
 
 If you are using the Chrome browser, use the right click and select `Inspect` to open the DevTools. On the `Console`, you can see the incoming and outgoing audio data such as `[CLIENT TO AGENT]` and `[AGENT TO CLIENT]`, representing the audio data streaming in and out between the browser and the server.
 
@@ -175,20 +186,60 @@ INFO:     127.0.0.1:50082 - "GET /favicon.ico HTTP/1.1" 404 Not Found
 
 These console logs are important in case you develop your own streaming application. In many cases, the communication failure between the browser and server becomes a major cause for the streaming application bugs.
 
-6\. **Troubleshooting tips**
+6. **Troubleshooting tips**
 
 - **When `ws://` doesn't work:** If you see any errors on the Chrome DevTools with regard to `ws://` connection, try replacing `ws://` with `wss://` on `app/static/js/app.js` at line 28. This may happen when you are running the sample on a cloud environment and using a proxy connection to connect from your browser.
-- **When `gemini-2.0-flash-exp` model doesn't work:** If you see any errors on the app server console with regard to `gemini-2.0-flash-exp` model availability, try replacing it with `gemini-2.0-flash-live-001` on `app/google_search_agent/agent.py` at line 6.
+- **When the model doesn't work:** If you see any errors on the app server console with regard to model availability, try using the alternative model by uncommenting the `#DEMO_AGENT_MODEL=gemini-2.0-flash-exp` line in your `.env` file and commenting out the current `DEMO_AGENT_MODEL` line.
 
-## 4. Server code overview {#4.-server-side-code-overview}
+## 4. Server code overview {#4-server-side-code-overview}
 
-This server app enables real-time, streaming interaction with ADK agent via WebSockets. Clients send text/audio to the ADK agent and receive streamed text/audio responses.
+This server application enables real-time, streaming interaction with an ADK agent via WebSockets. Clients send text/audio to the ADK agent and receive streamed text/audio responses.
 
 Core functions:
 1.  Initialize/manage ADK agent sessions.
 2.  Handle client WebSocket connections.
 3.  Relay client messages to the ADK agent.
 4.  Stream ADK agent responses (text/audio) to clients.
+
+### Architecture Overview
+
+The following diagram illustrates how components interact in this streaming application:
+
+```mermaid
+sequenceDiagram
+    participant Browser
+    participant FastAPI
+    participant ADK Runner
+    participant Gemini Live API
+
+    Note over Browser,Gemini Live API: Connection Establishment
+    Browser->>FastAPI: WebSocket Connect
+    FastAPI->>ADK Runner: start_agent_session()
+    ADK Runner->>Gemini Live API: Establish Live Session
+    Gemini Live API-->>ADK Runner: Session Ready
+
+    Note over Browser,Gemini Live API: Bidirectional Communication
+    Browser->>FastAPI: Send Text/Audio Message
+    FastAPI->>ADK Runner: send_content() / send_realtime()
+    ADK Runner->>Gemini Live API: Forward to Model
+    Gemini Live API-->>ADK Runner: Stream Response (live_events)
+    ADK Runner-->>FastAPI: Process Events
+    FastAPI-->>Browser: Send Response (Text/Audio)
+
+    Note over Browser,Gemini Live API: Continuous Streaming
+    loop Until Disconnection
+        Browser->>FastAPI: Additional Messages
+        FastAPI->>ADK Runner: Process Input
+        ADK Runner->>Gemini Live API: Forward
+        Gemini Live API-->>Browser: Streamed Responses
+    end
+```
+
+**Key Components:**
+- **Browser:** WebSocket client that sends/receives text and audio data
+- **FastAPI:** Server handling WebSocket connections and routing messages
+- **ADK Runner:** Manages agent sessions and coordinates with Gemini Live API
+- **Gemini Live API:** Processes requests and streams responses (text/audio)
 
 ### ADK Streaming Setup
 
@@ -197,10 +248,15 @@ import os
 import json
 import asyncio
 import base64
+import warnings
 
 from pathlib import Path
 from dotenv import load_dotenv
 
+# Load environment variables BEFORE importing the agent
+load_dotenv()
+
+from google.genai import types
 from google.genai.types import (
     Part,
     Content,
@@ -209,130 +265,240 @@ from google.genai.types import (
 
 from google.adk.runners import Runner
 from google.adk.agents import LiveRequestQueue
-from google.adk.agents.run_config import RunConfig
+from google.adk.agents.run_config import RunConfig, StreamingMode
 from google.adk.sessions.in_memory_session_service import InMemorySessionService
 
 from fastapi import FastAPI, WebSocket
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
+from fastapi.websockets import WebSocketDisconnect
 
 from google_search_agent.agent import root_agent
+
+warnings.filterwarnings("ignore", category=UserWarning, module="pydantic")
 ```
 
-*   **Imports:** Includes standard Python libraries, `dotenv` for environment variables, Google ADK, and FastAPI.
-*   **`load_dotenv()`:** Loads environment variables.
+*   **Imports:** Includes standard Python libraries (`os`, `json`, `asyncio`, `base64`, `warnings`), `dotenv` for environment variables, Google ADK (`types`, `Part`, `Content`, `Blob`, `Runner`, `LiveRequestQueue`, `RunConfig`, `StreamingMode`, `InMemorySessionService`), and FastAPI (`FastAPI`, `WebSocket`, `StaticFiles`, `FileResponse`, `WebSocketDisconnect`).
+*   **`load_dotenv()`:** Called immediately after importing dotenv and **before** importing the agent. This ensures environment variables (like `DEMO_AGENT_MODEL`) are available when the agent module initializes.
+*   **`warnings.filterwarnings()`:** Suppresses Pydantic UserWarnings to reduce console noise during development.
+
+**Initialization:**
+
+```py
+#
+# ADK Streaming
+#
+
+# Application configuration
+APP_NAME = "adk-streaming-ws"
+
+# Initialize session service
+session_service = InMemorySessionService()
+
+# APP_NAME and session_service are defined in the Initialization section above
+runner = Runner(
+    app_name=APP_NAME,
+    agent=root_agent,
+    session_service=session_service,
+)
+```
+
 *   **`APP_NAME`**: Application identifier for ADK.
 *   **`session_service = InMemorySessionService()`**: Initializes an in-memory ADK session service, suitable for single-instance or development use. Production might use a persistent store.
+*   **`runner = Runner(...)`**: Creates the Runner instance **once at module level** (production-ready pattern). This reuses the same runner for all connections, improving performance and resource utilization.
 
-### `start_agent_session(session_id, is_audio=False)`
+#### `start_agent_session(user_id, is_audio=False)`
 
 ```py
 async def start_agent_session(user_id, is_audio=False):
     """Starts an agent session"""
 
-    # Create a Runner
-    runner = InMemoryRunner(
+    # Get or create session (recommended pattern for production)
+    session_id = f"{APP_NAME}_{user_id}"
+    session = await runner.session_service.get_session(
         app_name=APP_NAME,
-        agent=root_agent,
+        user_id=user_id,
+        session_id=session_id,
+    )
+    if not session:
+        session = await runner.session_service.create_session(
+            app_name=APP_NAME,
+            user_id=user_id,
+            session_id=session_id,
+        )
+
+    # Configure response format based on client preference
+    # IMPORTANT: You must choose exactly ONE modality per session
+    # Either ["TEXT"] for text responses OR ["AUDIO"] for voice responses
+    # You cannot use both modalities simultaneously in the same session
+
+    # Force AUDIO modality for native audio models regardless of client preference
+    model_name = root_agent.model if isinstance(root_agent.model, str) else root_agent.model.model
+    is_native_audio = "native-audio" in model_name.lower()
+
+    modality = "AUDIO" if (is_audio or is_native_audio) else "TEXT"
+
+    # Enable session resumption for improved reliability
+    # For audio mode, enable output transcription to get text for UI display
+    run_config = RunConfig(
+        streaming_mode=StreamingMode.BIDI,
+        response_modalities=[modality],
+        session_resumption=types.SessionResumptionConfig(),
+        output_audio_transcription=types.AudioTranscriptionConfig() if (is_audio or is_native_audio) else None,
     )
 
-    # Create a Session
-    session = await runner.session_service.create_session(
-        app_name=APP_NAME,
-        user_id=user_id,  # Replace with actual user ID
-    )
-
-    # Set response modality
-    modality = "AUDIO" if is_audio else "TEXT"
-    run_config = RunConfig(response_modalities=[modality])
-    
-    # Optional: Enable session resumption for improved reliability
-    # run_config = RunConfig(
-    #     response_modalities=[modality],
-    #     session_resumption=types.SessionResumptionConfig()
-    # )
-
-    # Create a LiveRequestQueue for this session
+    # Create LiveRequestQueue in async context (recommended best practice)
+    # This ensures the queue uses the correct event loop
     live_request_queue = LiveRequestQueue()
 
-    # Start agent session
+    # Start streaming session - returns async iterator for agent responses
     live_events = runner.run_live(
-        session=session,
+        user_id=user_id,
+        session_id=session.id,
         live_request_queue=live_request_queue,
         run_config=run_config,
     )
     return live_events, live_request_queue
 ```
 
-This function initializes an ADK agent live session.
+This function initializes an ADK agent live session. It uses `APP_NAME` and `session_service` which are defined in the Initialization section above.
 
-| Parameter    | Type    | Description                                             |
-|--------------|---------|---------------------------------------------------------|
-| `user_id` | `str`   | Unique client identifier.                       |
-| `is_audio`   | `bool`  | `True` for audio responses, `False` for text (default). |
+| **Parameter** | **Type** | **Description** |
+|---|---|---|
+| `user_id` | `str` | Unique client identifier. |
+| `is_audio` | `bool` | `True` for audio responses, `False` for text (default). |
 
 **Key Steps:**
-1\.  **Create Runner:** Instantiates the ADK runner for the `root_agent`.
-2\.  **Create Session:** Establishes an ADK session.
-3\.  **Set Response Modality:** Configures agent response as "AUDIO" or "TEXT".
-4\.  **Create LiveRequestQueue:** Creates a queue for client inputs to the agent.
-5\.  **Start Agent Session:** `runner.run_live(...)` starts the agent, returning:
-    *   `live_events`: Asynchronous iterable for agent events (text, audio, completion).
-    *   `live_request_queue`: Queue to send data to the agent.
+1.  **Get or Create Session:** Attempts to retrieve an existing session, or creates a new one if it doesn't exist. This pattern supports session persistence and resumption.
+2.  **Detect Native Audio Models:** Checks if the agent's model name contains "native-audio" to automatically force AUDIO modality for native audio models.
+3.  **Configure Response Modality:** Sets modality to "AUDIO" if either `is_audio=True` or the model is a native audio model, otherwise "TEXT". Note: You must choose exactly ONE modality per session.
+4.  **Enable Session Resumption:** Configures `session_resumption=types.SessionResumptionConfig()` for improved reliability during network interruptions.
+5.  **Enable Output Transcription (Audio Mode):** When using audio mode or native audio models, enables `output_audio_transcription` to get text representation of audio responses for UI display.
+6.  **Create LiveRequestQueue:** Creates a queue in async context (best practice) for sending client inputs to the agent.
+7.  **Start Agent Session:** Calls `runner.run_live(...)` to start the streaming session, returning `live_events` (async iterator for agent responses) and the `live_request_queue`.
 
 **Returns:** `(live_events, live_request_queue)`.
 
-### Session Resumption Configuration
+#### Output Audio Transcription
+
+When using audio mode (`is_audio=True`) or native audio models (`is_native_audio=True`), the application enables output audio transcription through `RunConfig`:
+
+```py
+output_audio_transcription=types.AudioTranscriptionConfig() if (is_audio or is_native_audio) else None,
+```
+
+**Audio Transcription Features:**
+
+- **Native Audio Model Support** - Works with models that have native audio output capability
+- **Text Representation** - Provides text transcription of audio responses for UI display
+- **Dual Output** - Enables both audio playback and text visualization simultaneously
+- **Enhanced Accessibility** - Allows users to see what the agent is saying while hearing it
+
+**Use Cases:**
+
+- Display audio responses as text in the UI for better user experience
+- Enable accessibility features for users who prefer text
+- Support debugging by logging what the agent says
+- Create conversation transcripts alongside audio
+
+**Note:** This feature requires models that support output audio transcription. Not all Live API models may support this capability.
+
+#### Session Resumption Configuration
 
 ADK supports live session resumption to improve reliability during streaming conversations. This feature enables automatic reconnection when live connections are interrupted due to network issues.
 
-#### Enabling Session Resumption
+This sample application enables session resumption by default in the `RunConfig`:
 
-To enable session resumption, you need to:
-
-1. **Import the required types**:
-```py
-from google.genai import types
-```
-
-2. **Configure session resumption in RunConfig**:
 ```py
 run_config = RunConfig(
+    streaming_mode=StreamingMode.BIDI,
     response_modalities=[modality],
     session_resumption=types.SessionResumptionConfig()
 )
 ```
 
-#### Session Resumption Features
+##### Session Resumption Features
 
 - **Automatic Handle Caching** - The system automatically caches session resumption handles during live conversations
 - **Transparent Reconnection** - When connections are interrupted, the system attempts to resume using cached handles
 - **Context Preservation** - Conversation context and state are maintained across reconnections
 - **Network Resilience** - Provides better user experience during unstable network conditions
 
-#### Implementation Notes
+##### Implementation Notes
 
 - Session resumption handles are managed internally by the ADK framework
 - No additional client-side code changes are required
 - The feature is particularly beneficial for long-running streaming conversations
 - Connection interruptions become less disruptive to the user experience
 
-#### Troubleshooting
+##### Disabling Session Resumption (Optional)
 
-If you encounter errors with session resumption:
+If you encounter errors with session resumption or want to disable it:
 
 1. **Check model compatibility** - Ensure you're using a model that supports session resumption
 2. **API limitations** - Some session resumption features may not be available in all API versions
-3. **Remove session resumption** - If issues persist, you can disable session resumption by removing the `session_resumption` parameter from `RunConfig`
+3. **Disable session resumption** - You can disable session resumption by removing the `session_resumption` parameter from `RunConfig`:
 
-### `agent_to_client_messaging(websocket, live_events)`
+```py
+# Disable session resumption
+run_config = RunConfig(
+    streaming_mode=StreamingMode.BIDI,
+    response_modalities=[modality]
+)
+```
+
+---
+
+Now that we've covered session initialization and optional enhancements, let's explore the core messaging functions that handle bidirectional communication between the client and the ADK agent.
+
+#### `agent_to_client_messaging(websocket, live_events)`
 
 ```py
 
 async def agent_to_client_messaging(websocket, live_events):
     """Agent to client communication"""
-    while True:
+    try:
         async for event in live_events:
+
+            # Handle output audio transcription for native audio models
+            # This provides text representation of audio output for UI display
+            if event.output_transcription and event.output_transcription.text:
+                transcript_text = event.output_transcription.text
+                message = {
+                    "mime_type": "text/plain",
+                    "data": transcript_text,
+                    "is_transcript": True
+                }
+                await websocket.send_text(json.dumps(message))
+                print(f"[AGENT TO CLIENT]: audio transcript: {transcript_text}")
+                # Continue to process audio data if present
+                # Don't return here as we may want to send both transcript and audio
+
+            # Read the Content and its first Part
+            part: Part = (
+                event.content and event.content.parts and event.content.parts[0]
+            )
+            if part:
+                # Audio data must be Base64-encoded for JSON transport
+                is_audio = part.inline_data and part.inline_data.mime_type.startswith("audio/pcm")
+                if is_audio:
+                    audio_data = part.inline_data and part.inline_data.data
+                    if audio_data:
+                        message = {
+                            "mime_type": "audio/pcm",
+                            "data": base64.b64encode(audio_data).decode("ascii")
+                        }
+                        await websocket.send_text(json.dumps(message))
+                        print(f"[AGENT TO CLIENT]: audio/pcm: {len(audio_data)} bytes.")
+
+                # If it's text and a partial text, send it (for cascade audio models or text mode)
+                if part.text and event.partial:
+                    message = {
+                        "mime_type": "text/plain",
+                        "data": part.text
+                    }
+                    await websocket.send_text(json.dumps(message))
+                    print(f"[AGENT TO CLIENT]: text/plain: {message}")
 
             # If the turn complete or interrupted, send it
             if event.turn_complete or event.interrupted:
@@ -342,74 +508,73 @@ async def agent_to_client_messaging(websocket, live_events):
                 }
                 await websocket.send_text(json.dumps(message))
                 print(f"[AGENT TO CLIENT]: {message}")
-                continue
-
-            # Read the Content and its first Part
-            part: Part = (
-                event.content and event.content.parts and event.content.parts[0]
-            )
-            if not part:
-                continue
-
-            # If it's audio, send Base64 encoded audio data
-            is_audio = part.inline_data and part.inline_data.mime_type.startswith("audio/pcm")
-            if is_audio:
-                audio_data = part.inline_data and part.inline_data.data
-                if audio_data:
-                    message = {
-                        "mime_type": "audio/pcm",
-                        "data": base64.b64encode(audio_data).decode("ascii")
-                    }
-                    await websocket.send_text(json.dumps(message))
-                    print(f"[AGENT TO CLIENT]: audio/pcm: {len(audio_data)} bytes.")
-                    continue
-
-            # If it's text and a parial text, send it
-            if part.text and event.partial:
-                message = {
-                    "mime_type": "text/plain",
-                    "data": part.text
-                }
-                await websocket.send_text(json.dumps(message))
-                print(f"[AGENT TO CLIENT]: text/plain: {message}")
+    except WebSocketDisconnect:
+        print("Client disconnected from agent_to_client_messaging")
+    except Exception as e:
+        print(f"Error in agent_to_client_messaging: {e}")
 ```
 
 This asynchronous function streams ADK agent events to the WebSocket client.
 
 **Logic:**
 1.  Iterates through `live_events` from the agent.
-2.  **Turn Completion/Interruption:** Sends status flags to the client.
+2.  **Audio Transcription (Native Audio Models):** If the event contains output audio transcription text, sends it to the client with an `is_transcript` flag: `{ "mime_type": "text/plain", "data": "<transcript_text>", "is_transcript": True }`. This enables displaying the audio content as text in the UI.
 3.  **Content Processing:**
-    *   Extracts the first `Part` from event content.
+    *   Extracts the first `Part` from event content (if it exists).
     *   **Audio Data:** If audio (PCM), Base64 encodes and sends it as JSON: `{ "mime_type": "audio/pcm", "data": "<base64_audio>" }`.
-    *   **Text Data:** If partial text, sends it as JSON: `{ "mime_type": "text/plain", "data": "<partial_text>" }`.
-4.  Logs messages.
+    *   **Text Data (Cascade Audio Models or Text Mode):** If partial text, sends it as JSON: `{ "mime_type": "text/plain", "data": "<partial_text>" }`.
+4.  **Turn Completion/Interruption:** Sends status flags to the client at the end of each event (see explanation below).
+5.  Logs messages.
 
-### `client_to_agent_messaging(websocket, live_request_queue)`
+**Understanding Turn Completion and Interruption Events:**
+
+These events are critical for managing bidirectional streaming conversations:
+
+- **`turn_complete`**: Signals that the agent has finished generating a complete response. This event:
+  - Marks the end of the agent's response turn
+  - Allows the UI to prepare for the next conversation turn
+  - Helps manage conversation state and flow
+  - In the UI: Resets `currentMessageId` to `null` so the next agent response creates a new message element
+
+- **`interrupted`**: Signals that the agent's response was interrupted (e.g., when the user starts speaking during the agent's audio response). This event:
+  - Indicates the current agent turn was cut short
+  - Enables natural conversation flow where users can interrupt the agent
+  - In the UI: Stops audio playback immediately by sending `{ command: "endOfAudio" }` to the audio player worklet
+  - Prevents the agent from continuing to speak while the user is talking
+
+Both events are handled silently in the UI without visual indicators, prioritizing a seamless conversational experience.
+
+#### `client_to_agent_messaging(websocket, live_request_queue)`
 
 ```py
 
 async def client_to_agent_messaging(websocket, live_request_queue):
     """Client to agent communication"""
-    while True:
-        # Decode JSON message
-        message_json = await websocket.receive_text()
-        message = json.loads(message_json)
-        mime_type = message["mime_type"]
-        data = message["data"]
+    try:
+        while True:
+            message_json = await websocket.receive_text()
+            message = json.loads(message_json)
+            mime_type = message["mime_type"]
+            data = message["data"]
 
-        # Send the message to the agent
-        if mime_type == "text/plain":
-            # Send a text message
-            content = Content(role="user", parts=[Part.from_text(text=data)])
-            live_request_queue.send_content(content=content)
-            print(f"[CLIENT TO AGENT]: {data}")
-        elif mime_type == "audio/pcm":
-            # Send an audio data
-            decoded_data = base64.b64decode(data)
-            live_request_queue.send_realtime(Blob(data=decoded_data, mime_type=mime_type))
-        else:
-            raise ValueError(f"Mime type not supported: {mime_type}")
+            if mime_type == "text/plain":
+                # send_content() sends text in "turn-by-turn mode"
+                # This signals a complete turn to the model, triggering immediate response
+                content = Content(role="user", parts=[Part.from_text(text=data)])
+                live_request_queue.send_content(content=content)
+                print(f"[CLIENT TO AGENT]: {data}")
+            elif mime_type == "audio/pcm":
+                # send_realtime() sends audio in "realtime mode"
+                # Data flows continuously without turn boundaries, enabling natural conversation
+                # Audio is Base64-encoded for JSON transport, decode before sending
+                decoded_data = base64.b64decode(data)
+                live_request_queue.send_realtime(Blob(data=decoded_data, mime_type=mime_type))
+            else:
+                raise ValueError(f"Mime type not supported: {mime_type}")
+    except WebSocketDisconnect:
+        print("Client disconnected from client_to_agent_messaging")
+    except Exception as e:
+        print(f"Error in client_to_agent_messaging: {e}")
 ```
 
 This asynchronous function relays messages from the WebSocket client to the ADK agent.
@@ -421,9 +586,32 @@ This asynchronous function relays messages from the WebSocket client to the ADK 
 4.  Raises `ValueError` for unsupported MIME types.
 5.  Logs messages.
 
+**Error Handling:**
+
+Both `agent_to_client_messaging` and `client_to_agent_messaging` functions include try-except blocks to handle WebSocket disconnections gracefully:
+
+- **`WebSocketDisconnect`**: Catches when the client disconnects unexpectedly and logs the disconnection without raising an error
+- **Generic `Exception`**: Catches any other errors (JSON parsing, Base64 decoding, etc.) and logs them for debugging
+
+This error handling ensures:
+- Clean shutdown when clients disconnect
+- Proper logging for debugging connection issues
+- The WebSocket connection closes gracefully without propagating unhandled exceptions
+- The `FIRST_EXCEPTION` condition in `asyncio.wait()` can still trigger for cleanup
+
+For production environments, consider additional error handling:
+- Send error messages back to the client to inform them of invalid input (before the connection closes)
+- Implement retry logic for transient failures
+- Add monitoring and alerting for error patterns
+- Validate message structure before processing to provide better error messages
+
 ### FastAPI Web Application
 
 ```py
+
+#
+# FastAPI web app
+#
 
 app = FastAPI()
 
@@ -439,17 +627,20 @@ async def root():
 
 @app.websocket("/ws/{user_id}")
 async def websocket_endpoint(websocket: WebSocket, user_id: int, is_audio: str):
-    """Client websocket endpoint"""
+    """Client websocket endpoint
 
-    # Wait for client connection
+    This async function creates the LiveRequestQueue in an async context,
+    which is the recommended best practice from the ADK documentation.
+    This ensures the queue uses the correct event loop.
+    """
+
     await websocket.accept()
     print(f"Client #{user_id} connected, audio mode: {is_audio}")
 
-    # Start agent session
     user_id_str = str(user_id)
     live_events, live_request_queue = await start_agent_session(user_id_str, is_audio == "true")
 
-    # Start tasks
+    # Run bidirectional messaging concurrently
     agent_to_client_task = asyncio.create_task(
         agent_to_client_messaging(websocket, live_events)
     )
@@ -457,15 +648,21 @@ async def websocket_endpoint(websocket: WebSocket, user_id: int, is_audio: str):
         client_to_agent_messaging(websocket, live_request_queue)
     )
 
-    # Wait until the websocket is disconnected or an error occurs
-    tasks = [agent_to_client_task, client_to_agent_task]
-    await asyncio.wait(tasks, return_when=asyncio.FIRST_EXCEPTION)
+    try:
+        # Wait for either task to complete (connection close or error)
+        tasks = [agent_to_client_task, client_to_agent_task]
+        done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_EXCEPTION)
 
-    # Close LiveRequestQueue
-    live_request_queue.close()
-
-    # Disconnected
-    print(f"Client #{user_id} disconnected")
+        # Check for errors in completed tasks
+        for task in done:
+            if task.exception() is not None:
+                print(f"Task error for client #{user_id}: {task.exception()}")
+                import traceback
+                traceback.print_exception(type(task.exception()), task.exception(), task.exception().__traceback__)
+    finally:
+        # Clean up resources (always runs, even if asyncio.wait fails)
+        live_request_queue.close()
+        print(f"Client #{user_id} disconnected")
 
 ```
 
@@ -477,8 +674,11 @@ async def websocket_endpoint(websocket: WebSocket, user_id: int, is_audio: str):
     *   **Connection Handling:**
         1.  Accepts WebSocket connection.
         2.  Calls `start_agent_session()` using `user_id` and `is_audio`.
-        3.  **Concurrent Messaging Tasks:** Creates and runs `agent_to_client_messaging` and `client_to_agent_messaging` concurrently using `asyncio.gather`. These tasks handle bidirectional message flow.
-        4.  Logs client connection and disconnection.
+        3.  **Concurrent Messaging Tasks:** Creates and runs `agent_to_client_messaging` and `client_to_agent_messaging` concurrently using `asyncio.wait`. These tasks handle bidirectional message flow.
+        4.  **Error Handling:** Uses a try-finally block to:
+            *   Check completed tasks for exceptions and log detailed error information with traceback
+            *   Ensure `live_request_queue.close()` is always called in the `finally` block for proper cleanup
+        5.  Logs client connection and disconnection.
 
 ### How It Works (Overall Flow)
 
@@ -489,16 +689,16 @@ async def websocket_endpoint(websocket: WebSocket, user_id: int, is_audio: str):
     *   `agent_to_client_messaging`: ADK `live_events` -> Client WebSocket.
 4.  Bidirectional streaming continues until disconnection or error.
 
-## 5. Client code overview {#5.-client-side-code-overview}
+## 5. Client code overview {#5-client-side-code-overview}
 
-The JavaScript `app.js` (in `app/static/js`) manages client-side interaction with the ADK Streaming WebSocket backend. It handles sending text/audio and receiving/displaying streamed responses.
+The JavaScript `app.js` (in `app/static/js`) manages client-side interaction with the ADK Streaming WebSocket server. It handles sending text/audio and receiving/displaying streamed responses.
 
 Key functionalities:
 1.  Manage WebSocket connection.
 2.  Handle text input.
 3.  Capture microphone audio (Web Audio API, AudioWorklets).
-4.  Send text/audio to backend.
-5.  Receive and render text/audio agent responses.
+4.  Send text/audio to server.
+5.  Receive and render text/audio responses from the ADK agent.
 6.  Manage UI.
 
 ### Prerequisites
@@ -509,7 +709,7 @@ Key functionalities:
 
 ### WebSocket Handling
 
-```JavaScript
+```javascript
 
 // Connect the server with a WebSocket connection
 const sessionId = Math.random().toString().substring(10);
@@ -553,6 +753,18 @@ function connectWebsocket() {
       message_from_server.turn_complete == true
     ) {
       currentMessageId = null;
+      return;
+    }
+
+    // Check for interrupt message
+    if (
+      message_from_server.interrupted &&
+      message_from_server.interrupted === true
+    ) {
+      // Stop audio playback if it's playing
+      if (audioPlayerNode) {
+        audioPlayerNode.port.postMessage({ command: "endOfAudio" });
+      }
       return;
     }
 
@@ -641,7 +853,8 @@ function base64ToArray(base64) {
 *   **Connection Setup:** Generates `sessionId`, constructs `ws_url`. `is_audio` flag (initially `false`) appends `?is_audio=true` to URL when active. `connectWebsocket()` initializes the connection.
 *   **`websocket.onopen`**: Enables send button, updates UI, calls `addSubmitHandler()`.
 *   **`websocket.onmessage`**: Parses incoming JSON from server.
-    *   **Turn Completion:** Resets `currentMessageId` if agent turn is complete.
+    *   **Turn Completion:** Resets `currentMessageId` to `null` when agent turn is complete, preparing for the next response.
+    *   **Interruption:** Stops audio playback by sending `{ command: "endOfAudio" }` to `audioPlayerNode` when the agent is interrupted (e.g., user starts speaking).
     *   **Audio Data (`audio/pcm`):** Decodes Base64 audio (`base64ToArray()`) and sends to `audioPlayerNode` for playback.
     *   **Text Data (`text/plain`):** If new turn (`currentMessageId` is null), creates new `<p>`. Appends received text to the current message paragraph for streaming effect. Scrolls `messagesDiv`.
 *   **`websocket.onclose`**: Disables send button, updates UI, attempts auto-reconnection after 5s.
@@ -656,7 +869,7 @@ function base64ToArray(base64) {
 
 ### Audio Handling
 
-```JavaScript
+```javascript
 
 let audioPlayerNode;
 let audioPlayerContext;
@@ -737,19 +950,23 @@ function arrayBufferToBase64(buffer) {
 
 ## Summary
 
-This article overviews the server and client code for a custom asynchronous web app built with ADK Streaming and FastAPI, enabling real-time, bidirectional voice and text communication.
+This article overviews the server and client code for a custom asynchronous web application built with ADK Streaming and FastAPI, enabling real-time, bidirectional voice and text communication.
 
-The Python FastAPI server code initializes ADK agent sessions, configured for text or audio responses. It uses a WebSocket endpoint to handle client connections. Asynchronous tasks manage bidirectional messaging: forwarding client text or Base64-encoded PCM audio to the ADK agent, and streaming text or Base64-encoded PCM audio responses from the agent back to the client.
+The Python FastAPI server code initializes ADK agent sessions, configured for text or audio responses. It uses a WebSocket endpoint to handle client connections. Asynchronous tasks manage bidirectional messaging: forwarding client text or Base64-encoded PCM audio to the ADK agent, and streaming text or Base64-encoded PCM audio responses from the ADK agent back to the client.
 
 The client-side JavaScript code manages a WebSocket connection, which can be re-established to switch between text and audio modes. It sends user input (text or microphone audio captured via Web Audio API and AudioWorklets) to the server. Incoming messages from the server are processed: text is displayed (streamed), and Base64-encoded PCM audio is decoded and played using an AudioWorklet.
 
-### Next steps for production
+### Additional Resources
 
-When you will use the Streaming for ADK in production apps, you may want to consinder the following points:
+For comprehensive guidance on ADK Bidi-streaming best practices, architecture patterns, and advanced features, refer to:
 
-*   **Deploy Multiple Instances:** Run several instances of your FastAPI application instead of a single one.
-*   **Implement Load Balancing:** Place a load balancer in front of your application instances to distribute incoming WebSocket connections.
-    *   **Configure for WebSockets:** Ensure the load balancer supports long-lived WebSocket connections and consider "sticky sessions" (session affinity) to route a client to the same backend instance, *or* design for stateless instances (see next point).
-*   **Externalize Session State:** Replace the `InMemorySessionService` for ADK with a distributed, persistent session store. This allows any server instance to handle any user's session, enabling true statelessness at the application server level and improving fault tolerance.
-*   **Implement Health Checks:** Set up robust health checks for your WebSocket server instances so the load balancer can automatically remove unhealthy instances from rotation.
-*   **Utilize Orchestration:** Consider using an orchestration platform like Kubernetes for automated deployment, scaling, self-healing, and management of your WebSocket server instances.
+- **[ADK Documentation](https://google.github.io/adk-docs/)**: Complete ADK documentation including agents, tools, and session management
+- **[Gemini Live API Documentation](https://ai.google.dev/gemini-api/docs/live)**: Live API reference for Google AI Studio
+- **[Vertex AI Live API Documentation](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api)**: Live API reference for Google Cloud Vertex AI
+
+These resources provide detailed explanations of:
+
+- **Phase-based lifecycle patterns** for streaming applications (initialization, session management, active streaming, termination)
+- **Event handling patterns** including partial/complete text, interruptions, and turn completion signals
+- **Advanced features** like session resumption, voice activity detection, audio transcription, and context window compression
+- **Production deployment strategies** including load balancing, stateless session management, and health checks
