@@ -189,6 +189,7 @@ nav:
     - events/index.md
   - Context:
     - context/index.md
+    - Context compression: context/compaction.md
   - Observability:
     - Logging: observability/logging.md
     - Cloud Trace: observability/cloud-trace.md
