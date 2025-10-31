@@ -203,6 +203,7 @@ ADK supports various types of tools:
   * **Google Search**: Allows the agent to perform web searches using Google Search, compatible with Gemini 2 models.
   * **Code Execution**: Enables the agent to execute code using the built\_in\_code\_execution tool, typically with Gemini 2 models, for calculations or data manipulation.
   * **Vertex AI Search**: Uses Google Cloud Vertex AI Search for agents to search across private, configured data stores.
+  * **GKE Code Executor (`GkeCodeExecutor`)**: Provides a secure and scalable method for running LLM-generated code by leveraging a gVisor-sandboxed GKE environment. It creates ephemeral, isolated Kubernetes Jobs for each execution request.
   * **Limitations**: Currently, each root agent or single agent only supports one built-in tool, and no other tools of any type can be used in the same agent. Built-in tools are also not supported within sub-agents.
 * **Third-Party Tools**: Integrates tools from other AI Agent frameworks like CrewAI and LangChain, enabling faster development and reuse of existing tools.
   * **LangChain Tools**: Uses the LangchainTool wrapper to integrate tools from the LangChain ecosystem (e.g., Tavily search tool).
@@ -245,6 +246,17 @@ Meaningful, multi-turn conversations require agents to understand context. ADK m
 * **Session**: Represents a single, ongoing interaction between a user and the agent system. It contains a chronological sequence of Events (messages and actions) and can hold temporary data (State) relevant only to that conversation. Key properties include id, appName, userId for identification, events for history, state for session-specific data, and lastUpdateTime for activity tracking. SessionService manages the lifecycle of Session objects. Implementations include InMemorySessionService (non-persistent) and VertexAiSessionService or DatabaseSessionService (persistent).
 * **State (session.state)**: A dictionary or Map within each Session for storing and updating dynamic details needed during the conversation. It holds serializable key-value pairs and its persistence depends on the SessionService. State can be organized using prefixes: no prefix for session-specific, user: for user-specific across sessions, app: for app-wide, and temp: for temporary state not persisted. State should be updated by adding an Event to the session history via session\_service.append\_event(), either through output\_key for agent text responses or EventActions.state\_delta for complex updates.
 * **Memory**: A searchable store of information that can span multiple past sessions or include external data sources. MemoryService defines the interface for managing this long-term knowledge, handling ingestion of session information (add\_session\_to\_memory) and searching (search\_memory). Implementations include InMemoryMemoryService (in-memory, non-persistent) and VertexAiRagMemoryService (persistent, leverages Vertex AI RAG Corpus).
+
+#### **Accessing State in Instructions**
+`LlmAgent` instructions can directly inject session state values using `{key}` templating. The framework replaces the placeholder with the value from `session.state` before sending the instruction to the LLM.
+* **Syntax**: `{key}` for required keys, `{key?}` for optional keys.
+* **Bypassing Injection**: To use literal `{{` and `}}`, provide the instruction as a function (an `InstructionProvider`) instead of a string. The `InstructionProvider` receives a `ReadonlyContext` object.
+
+#### **Updating State**
+State should be updated as part of an `Event` to ensure tracking and persistence.
+1.  **`output_key`**: The simplest method for an `LlmAgent`. The agent's final text response is automatically saved to `session.state[output_key]`.
+2.  **`EventActions.state_delta`**: For complex updates, manually construct a dictionary of changes and assign it to the `state_delta` of an `EventActions` object when creating an `Event`.
+3.  **`CallbackContext` or `ToolContext`**: The recommended method within callbacks and tools. Directly modify the `state` attribute on the provided context object (e.g., `tool_context.state['my_key'] = 'new_value'`). The framework automatically captures these changes and includes them in the event's `state_delta`.
 
 #### **Events**
 
@@ -299,6 +311,16 @@ ADK agents can be deployed to various environments based on production needs or 
 * **GKE**: Google Cloud's managed Kubernetes service, allowing deployment and management of containerized applications using Kubernetes. Deployment involves enabling necessary APIs, creating a GKE cluster, configuring a Kubernetes Service Account for Vertex AI (if applicable), building a container image from a Dockerfile, creating Kubernetes manifest files (deployment.yaml), and deploying the application using kubectl.
 
 ### **7\. Evaluation and Safety**
+
+#### **Callbacks**
+Callbacks are functions that hook into an agent's execution lifecycle, allowing for observation, customization, and control. They are associated with an agent at creation.
+* **Lifecycle Points**: `before_agent`, `after_agent`, `before_model`, `after_model`, `before_tool`, `after_tool`.
+* **Context Objects**: Callbacks receive `CallbackContext` or `ToolContext`, providing access to session state and runtime information.
+* **Control Flow**:
+  * **`return None` (or `Optional.empty()` in Java)**: Allows the default ADK behavior to proceed.
+  * **`return <Specific Object>`**: Overrides the default behavior. For example, returning an `LlmResponse` from `before_model_callback` skips the LLM call and uses the returned object as the response. Returning a `dict` from `before_tool_callback` skips the tool execution and uses the dictionary as the tool's result. This is the core mechanism for implementing guardrails and custom logic.
+
+---
 
 #### **Why Evaluate Agents?**
 
