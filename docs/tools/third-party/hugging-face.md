@@ -29,6 +29,8 @@ your ADK agent to the Hugging Face Hub and thousands of Gradio AI Applications.
     from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset
     from mcp import StdioServerParameters
 
+    HUGGING_FACE_TOKEN = "YOUR_HUGGING_FACE_TOKEN"
+
     root_agent = Agent(
         model="gemini-2.5-pro",
         name="hugging_face_agent",
@@ -43,7 +45,7 @@ your ADK agent to the Hugging Face Hub and thousands of Gradio AI Applications.
                             "@llmindset/hf-mcp-server",
                         ],
                         env={
-                            "HF_TOKEN": "YOUR-HUGGING-FACE-TOKEN",
+                            "HF_TOKEN": HUGGING_FACE_TOKEN,
                         }
                     ),
                     timeout=30,
