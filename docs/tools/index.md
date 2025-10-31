@@ -135,7 +135,7 @@ Check out the following pre-built tools that you can use with ADK agents:
 
   <a href="/adk-docs/tools/third-party/exa/" class="tool-card">
     <div class="tool-card-image-wrapper">
-      <img src="../../assets/tools-exa.png" alt="Exa">
+      <img src="../assets/tools-exa.png" alt="Exa">
     </div>
     <div class="tool-card-content">
       <h3>Exa</h3>
