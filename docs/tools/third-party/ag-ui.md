@@ -1,6 +1,4 @@
-# Building chat experiences with AG-UI and CopilotKit
-
-## Overview
+# Build chat experiences with AG-UI and CopilotKit
 
 As an agent builder, you want users to interact with your agents through a rich
 and responsive interface. Building UIs from scratch requires a lot of effort,
