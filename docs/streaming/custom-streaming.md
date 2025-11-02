@@ -1,22 +1,25 @@
 # Custom Audio Streaming app (SSE) {#custom-streaming}
 
-This article overviews the server and client code for a custom asynchronous web app built with ADK Streaming and [FastAPI](https://fastapi.tiangolo.com/), enabling real-time, bidirectional audio and text communication with Server-Sent Events (SSE). The key features are:
+This article overviews the server and client code for a custom asynchronous web app built with ADK Streaming and [FastAPI](https://fastapi.tiangolo.com/), enabling real-time, two-way (or hybrid bidirectional) audio and text communication. This is achieved by pairing Server-Sent Events (SSE) for the server's streaming output with standard HTTP POST for the client's input requests.
 
 **Server-Side (Python/FastAPI)**:
+
 - FastAPI + ADK integration
-- Server-Sent Events for real-time streaming
+- Server-Sent Events for real-time output streaming
+- HTTP POST for handling client requests
 - Session management with isolated user contexts
 - Support for both text and audio communication modes
 - Google Search tool integration for grounded responses
 
 **Client-Side (JavaScript/Web Audio API)**:
-- Real-time bidirectional communication via SSE and HTTP POST
+
+- Real-time, hybrid two-way communication via SSE (output) and HTTP POST (input)
 - Professional audio processing using AudioWorklet processors
 - Seamless mode switching between text and audio
 - Automatic reconnection and error handling
 - Base64 encoding for audio data transmission
 
-There is also a [WebSocket](custom-streaming-ws.md) version of the sample is available.
+There is also a [WebSocket](custom-streaming-ws.md) version of the sample is available, which uses a single, truly bidirectional connection.
 
 ## 1. Install ADK {#1.-setup-installation}
 
@@ -189,13 +192,14 @@ The server and client architecture enables real-time, bidirectional communicatio
 The FastAPI server provides real-time communication between web clients and the AI agent.
 
 ### Bidirectional communication overview {#4.-bidi-comm-overview}
+This application uses a hybrid approach to achieve real-time, two-way interaction: SSE for the continuous downstream output (Agent -> Client) and HTTP POST for the discrete upstream input (Client -> Agent).
 
-#### Client-to-Agent Flow:
+#### Client-to-Agent Flow (Upstream Input via HTTP POST):
 1. **Connection Establishment** - Client opens SSE connection to `/events/{user_id}`, triggering session creation and storing request queue in `active_sessions`
 2. **Message Transmission** - Client sends POST to `/send/{user_id}` with JSON payload containing `mime_type` and `data`
 3. **Queue Processing** - Server retrieves session's `live_request_queue` and forwards message to agent via `send_content()` or `send_realtime()`
 
-#### Agent-to-Client Flow:
+#### Agent-to-Client Flow (Downstream Output via SSE):
 1. **Event Generation** - Agent processes requests and generates events through `live_events` async generator
 2. **Stream Processing** - `agent_to_client_sse()` filters events and formats them as SSE-compatible JSON
 3. **Real-time Delivery** - Events stream to client via persistent HTTP connection with proper SSE headers
@@ -700,11 +704,21 @@ The client architecture enables seamless real-time communication with both text 
 This application demonstrates a complete real-time AI agent system with the following key features:
 
 **Architecture Highlights**:
+
 - **Real-time**: Streaming responses with partial text updates and continuous audio
 - **Robust**: Comprehensive error handling and automatic recovery mechanisms
 - **Modern**: Uses latest web standards (AudioWorklet, SSE, ES6 modules)
 
 The system provides a foundation for building sophisticated AI applications that require real-time interaction, web search capabilities, and multimedia communication.
+
+#### Performance and Latency Note (SSE vs. WebSockets):
+While this hybrid approach is highly functional, it's important to understand the trade-offs compared to the pure WebSocket (WS) method:
+
+- **Upstream Overhead** - Every time the client sends data (text or audio), a full HTTP POST request is created. This process is generally less efficient and introduces higher latency/overhead than sending a small message frame over a single, persistent WebSocket connection.
+
+- **Downstream Simplicity** - SSE is simpler for the server-side output (Agent -> Client) as it relies solely on standard HTTP streaming, often simplifying deployment behind traditional proxies and load balancers.
+
+- **Low-Latency Preference** - For mission-critical applications where minimizing latency is the absolute priority, a true WebSocket connection is typically preferred due to its lower message framing overhead in both directions.
 
 ### Next steps for production
 
