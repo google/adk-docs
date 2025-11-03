@@ -4,8 +4,6 @@ go 1.24.4
 
 toolchain go1.24.8
 
-replace google.golang.org/adk => ../../../../../../adk-go
-
 require (
 	google.golang.org/adk v0.0.0-00010101000000-000000000000
 	google.golang.org/genai v1.33.0
