@@ -173,6 +173,16 @@ Check out the following pre-built tools that you can use with ADK agents:
     </div>
   </a>
 
+  <a href="/adk-docs/tools/third-party/notion/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="../assets/tools-notion.png" alt="Notion">
+    </div>
+    <div class="tool-card-content">
+      <h3>Notion</h4>
+      <p>Search workspaces, create pages, and manage tasks and databases</p>
+    </div>
+  </a>
+
 </div>
 
 ## Build your tools

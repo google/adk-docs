@@ -76,7 +76,7 @@ Before running any agent step, you **must** configure your API keys.
 
 ## Running the Examples
 
-Ensure your virtual environment is activated before running these commands. Each `agent.py` file (e.g., in `step_1`) contains example queries you can use to test the agents. 
+Ensure your virtual environment is activated before running these commands. Each `agent.py` file (e.g., in `step_1`) contains example queries you can use to test the agents.
 
 ### Using `adk web` (Recommended for Interactive UI)
 
@@ -113,7 +113,7 @@ The `adk api_server` command starts a FastAPI server, exposing your agent via an
     # Make sure you are in the main 'adk-tutorial' folder
     adk api_server
     ```
-*   For detailed usage, API endpoint structure, and options for `adk api_server`, please consult the [Official ADK Documentation - Testing your Agents](https://google.github.io/adk-docs/get-started/testing/).
+*   For detailed usage, API endpoint structure, and options for `adk api_server`, please consult the [Official ADK Documentation - Testing your Agents](https://google.github.io/adk-docs/runtime/api-server/).
 
 ## Directory Structure
 
