@@ -1,7 +1,7 @@
 # Function tools
 
 <div class="language-support-tag">
-  <span class="supported">Supported in ADK</span><span class="python">Python v0.1.0</span><span class="java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
 When pre-built ADK tools don't meet your requirements, you can create custom *function tools*. Building function tools allows you to create tailored functionality, such as connecting to proprietary databases or implementing unique algorithms.

@@ -1,7 +1,7 @@
 # ADK with Agent2Agent (A2A) Protocol
 
 <div class="language-support-tag">
-  <span class="supported">Supported in ADK</span><span class="python">Python</span><span class="preview">Experimental</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-preview">Experimental</span>
 </div>
 
 With Agent Development Kit (ADK), you can build complex multi-agent systems where different agents need to collaborate and interact using [Agent2Agent (A2A) Protocol](https://a2a-protocol.org/)! This section provides a comprehensive guide to building powerful multi-agent systems where agents can communicate and collaborate securely and efficiently.

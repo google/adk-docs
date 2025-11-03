@@ -1,7 +1,7 @@
 # Deploy to Vertex AI Agent Engine
 
 <div class="language-support-tag" title="Vertex AI Agent Engine currently supports only Python.">
-    <span class="supported">Supported in ADK</span><span class="python">Python</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
 </div>
 
 [Agent Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview)

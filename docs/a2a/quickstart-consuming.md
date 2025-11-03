@@ -1,7 +1,7 @@
 # Quickstart: Consuming a remote agent via A2A
 
 <div class="language-support-tag">
-  <span class="supported">Supported in ADK</span><span class="python">Python</span><span class="preview">Experimental</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-preview">Experimental</span>
 </div>
 
 This quickstart covers the most common starting point for any developer: **"There is a remote agent, how do I let my ADK agent use it via A2A?"**. This is crucial for building complex multi-agent systems where different agents need to collaborate and interact.

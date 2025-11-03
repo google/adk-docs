@@ -1,7 +1,7 @@
 # Custom Tools for ADK
 
 <div class="language-support-tag">
-  <span class="supported">Supported in ADK</span><span class="python">Python v0.1.0</span><span class="java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
 In an ADK agent workflow, Tools are programming functions with structured input
@@ -206,7 +206,7 @@ This example illustrates how a tool, through EventActions in its ToolContext, ca
 ### **Authentication**
 
 <div class="language-support-tag">
-    <span class="supported">Supported in ADK</span><span class="python">Python v0.1.0</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
 </div>
 
 ToolContext provides mechanisms for tools interacting with authenticated APIs. If your tool needs to handle authentication, you might use the following:
@@ -406,7 +406,7 @@ By adhering to these guidelines, you provide the LLM with the clarity and struct
 ## Toolsets: Grouping and Dynamically Providing Tools
 
 <div class="language-support-tag" title="This feature is currently available for Python.">
-   <span class="supported">Supported in ADK</span><span class="python">Python v0.5.0</span>
+   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.5.0</span>
 </div>
 
 Beyond individual tools, ADK introduces the concept of a **Toolset** via the `BaseToolset` interface (defined in `google.adk.tools.base_toolset`). A toolset allows you to manage and provide a collection of `BaseTool` instances, often dynamically, to an agent.

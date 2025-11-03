@@ -1,7 +1,7 @@
 # Code Execution Tool with Agent Engine
 
 <div class="language-support-tag">
-  <span class="supported">Supported in ADK</span><span class="python">Python v1.17.0</span><span class="preview">Preview</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.17.0</span><span class="lst-preview">Preview</span>
 </div>
 
 The Agent Engine Code Execution ADK Tool provides a low-latency, highly

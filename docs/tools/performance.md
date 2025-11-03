@@ -1,7 +1,7 @@
 # Increase tool performance with parallel execution
 
 <div class="language-support-tag">
-  <span class="supported">Supported in ADK</span><span class="python">Python v1.10.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.10.0</span>
 </div>
 
 Starting with Agent Development Kit (ADK) version 1.10.0 for Python, the framework

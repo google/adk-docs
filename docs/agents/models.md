@@ -1,7 +1,7 @@
 # Using Different Models with ADK
 
 <div class="language-support-tag" title="Java ADK currently supports Gemini and Anthropic models.">
-  <span class="supported">Supported in ADK</span><span class="python">Python v0.1.0</span><span class="java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
 The Agent Development Kit (ADK) is designed for flexibility, allowing you to
@@ -190,7 +190,7 @@ For deployed applications, a service account is the standard method.
 ## Using Anthropic models
 
 <div class="language-support-tag" title="Available for Java. Python support for direct Anthropic API (non-Vertex) is via LiteLLM.">
-   <span class="supported">Supported in ADK</span><span class="java">Java v0.2.0</span>
+   <span class="lst-supported">Supported in ADK</span><span class="lst-java">Java v0.2.0</span>
 </div>
 
 You can integrate Anthropic's Claude models directly using their API key or from a Vertex AI backend into your Java ADK applications by using the ADK's `Claude` wrapper class.
@@ -257,7 +257,7 @@ public class DirectAnthropicAgent {
 ## Using Cloud & Proprietary Models via LiteLLM
 
 <div class="language-support-tag">
-    <span class="supported">Supported in ADK</span><span class="python">Python v0.1.0</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
 </div>
 
 To access a vast range of LLMs from providers like OpenAI, Anthropic (non-Vertex
@@ -339,7 +339,7 @@ layer, providing a standardized, OpenAI-compatible interface to over 100+ LLMs.
 ## Using Open & Local Models via LiteLLM
 
 <div class="language-support-tag">
-    <span class="supported">Supported in ADK</span><span class="python">Python v0.1.0</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
 </div>
 
 For maximum control, cost savings, privacy, or offline use cases, you can run
@@ -506,8 +506,8 @@ http://localhost:11434/api/chat \
 
 ### Self-Hosted Endpoint (e.g., vLLM)
 
-<div class="language-support-tag" title="hover text.">
-   <span class="supported">Supported in ADK</span><span class="python">Python</span>
+<div class="language-support-tag">
+   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
 </div>
 
 Tools such as [vLLM](https://github.com/vllm-project/vllm) allow you to host
@@ -603,7 +603,7 @@ Ensure your environment is configured for Vertex AI:
 ### Model Garden Deployments
 
 <div class="language-support-tag">
-    <span class="supported">Supported in ADK</span><span class="python">Python v0.2.0</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.2.0</span>
 </div>
 
 You can deploy various open and proprietary models from the
@@ -633,7 +633,7 @@ agent_llama3_vertex = LlmAgent(
 ### Fine-tuned Model Endpoints
 
 <div class="language-support-tag">
-    <span class="supported">Supported in ADK</span><span class="python">Python v0.2.0</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.2.0</span>
 </div>
 
 Deploying your fine-tuned models (whether based on Gemini or other architectures

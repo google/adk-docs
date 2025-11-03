@@ -1,7 +1,7 @@
 # Compress agent context for performance
 
 <div class="language-support-tag">
-  <span class="supported">Supported in ADK</span><span class="python">Python v1.16.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.16.0</span>
 </div>
 
 As an ADK agent runs it collects *context* information, including user

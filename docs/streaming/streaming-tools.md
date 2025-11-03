@@ -1,7 +1,7 @@
 # Streaming Tools
 
 <div class="language-support-tag">
-    <span class="supported">Supported in ADK</span><span class="python">Python v0.5.0</span><span class="preview">Experimental</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.5.0</span><span class="lst-preview">Experimental</span>
 </div>
 
 Streaming tools allows tools(functions) to stream intermediate results back to agents and agents can respond to those intermediate results. 

@@ -18,7 +18,7 @@ connect your agents with:
 ## Apigee API Hub Tools
 
 <div class="language-support-tag">
-  <span class="supported">Supported in ADK</span><span class="python">Python v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
 </div>
 
 **ApiHubToolset** lets you turn any documented API from Apigee API hub into a
@@ -141,7 +141,7 @@ you only need to follow a subset of these steps.
 ## Application Integration Tools
 
 <div class="language-support-tag">
-  <span class="supported">Supported in ADK</span><span class="python">Python v0.1.0</span><span class="java">Java v0.3.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.3.0</span>
 </div>
 
 With **ApplicationIntegrationToolset**, you can seamlessly give your agents

@@ -1,7 +1,7 @@
 # Runtime Configuration
 
 <div class="language-support-tag">
-    <span class="supported">Supported in ADK</span><span class="python">Python v0.1.0</span><span class="java">Java v0.1.0</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
 `RunConfig` defines runtime behavior and options for agents in the ADK. It
@@ -150,7 +150,7 @@ Enables Compositional Function Calling (CFC) support. Only applicable when using
 StreamingMode.SSE. When enabled, the LIVE API will be invoked as only it
 supports CFC functionality.
 
-!!! warning
+!!! example "Experimental release" 
 
     The `support_cfc` feature is experimental and its API or behavior might
     change in future releases.
@@ -318,7 +318,7 @@ This comprehensive example configures an agent with:
 ### Enabling Experimental CFC Support
 
 <div class="language-support-tag" title="This feature is an experimental preview release.">
-    <span class="supported">Supported in ADK</span><span class="python">Python v0.1.0</span><span class="preview">Experimental</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-preview">Experimental</span>
 </div>
 
 ```python

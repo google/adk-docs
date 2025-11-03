@@ -26,34 +26,34 @@
  border-radius: 0.2em;
  overflow: hidden; /* Ensures the border-radius is applied to the child elements */
 }
-.supported {
+.lst-supported {
  background-color: #555555;
  padding: 4px 6px;
  display: inline-block;
 }
-.python {
+.lst-python {
  background-color: #007ec6;
  padding: 4px 6px;
  display: inline-block;
 }
-.java {
+.lst-java {
  background-color: #ED8B00;
  color: black;
  padding: 4px 6px;
  display: inline-block;
 }
-.go {
+.lst-go {
  background-color: #00ADD8;
  color: black;
  padding: 4px 6px;
  display: inline-block;
 }
-.typescript {
+.lst-typescript {
  background-color: #235A97;
  padding: 4px 6px;
  display: inline-block;
 }
-.preview {
+.lst-preview {
  background-color: #7c4dff;
  padding: 4px 6px;
  display: inline-block;  

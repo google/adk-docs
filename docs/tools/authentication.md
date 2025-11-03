@@ -1,7 +1,7 @@
 # Authenticating with Tools
 
 <div class="language-support-tag">
-  <span class="supported">Supported in ADK</span><span class="python">Python v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
 </div>
 
 Many tools need to access protected resources (like user data in Google Calendar, Salesforce records, etc.) and require authentication. ADK provides a system to handle various authentication methods securely.

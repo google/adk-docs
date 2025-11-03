@@ -1,7 +1,7 @@
 # Resume stopped agents
 
 <div class="language-support-tag">
-  <span class="supported">Supported in ADK</span><span class="python">Python v1.14.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.14.0</span>
 </div>
 
 An ADK agent's execution can be interrupted by various factors including

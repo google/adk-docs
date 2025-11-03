@@ -1,7 +1,7 @@
 # Computer Use Toolset with Gemini
 
 <div class="language-support-tag">
-  <span class="supported">Supported in ADK</span><span class="python">Python v1.17.0</span><span class="preview">Preview</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.17.0</span><span class="lst-preview">Preview</span>
 </div>
 
 The Computer Use Toolset allows an agent to operate a user interface

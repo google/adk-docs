@@ -1,7 +1,7 @@
 # Vertex AI Express Mode: Using Vertex AI Sessions and Memory
 
 <div class="language-support-tag">
-  <span class="supported">Supported in ADK</span><span class="python">Python v0.1.0</span><span class="java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
 If you are interested in using either the `VertexAiSessionService` or `VertexAiMemoryBankService` but you don't have a Google Cloud Project, you can sign up for Vertex AI Express Mode and get access

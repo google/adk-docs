@@ -1,7 +1,7 @@
 # Deploy to Google Kubernetes Engine (GKE)
 
 <div class="language-support-tag">
-  <span class="supported">Supported in ADK</span><span class="python">Python</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
 </div>
 
 [GKE](https://cloud.google.com/gke) is the Google Cloud managed Kubernetes service. It allows you to deploy and manage containerized applications using Kubernetes.

@@ -1,7 +1,7 @@
 # LLM Agent
 
 <div class="language-support-tag">
-  <span class="supported">Supported in ADK</span><span class="python">Python v0.1.0</span><span class="java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
 The `LlmAgent` (often aliased simply as `Agent`) is a core component in ADK,
@@ -347,7 +347,7 @@ Control whether the agent receives the prior conversation history.
 ### Planner
 
 <div class="language-support-tag" title="">
-   <span class="supported">Supported in ADK</span><span class="python">Python v0.1.0</span>
+   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
 </div>
 
 **`planner` (Optional):** Assign a `BasePlanner` instance to enable multi-step reasoning and planning before execution. There are two main planners:
@@ -405,9 +405,8 @@ Control whether the agent receives the prior conversation history.
 
 ### Code Execution
 
-<div class="language-support-tag" title="hover text.">
-   <span class="supported">Supported in ADK</span>
-   <span class="python">Python v0.1.0</span>
+<div class="language-support-tag">
+   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
 </div>
 
 * **`code_executor` (Optional):** Provide a `BaseCodeExecutor` instance to allow the agent to execute code blocks found in the LLM's response. ([See Tools/Built-in tools](../tools/built-in-tools.md)).

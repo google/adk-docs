@@ -1,7 +1,7 @@
 # Session: Tracking Individual Conversations
 
 <div class="language-support-tag">
-  <span class="supported">Supported in ADK</span><span class="python">Python v0.1.0</span><span class="java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
 Following our Introduction, let's dive into the `Session`. Think back to the
@@ -205,7 +205,7 @@ the storage backend that best suits your needs:
 3.  **`DatabaseSessionService`**
 
     <div class="language-support-tag">
-      <span class="supported">Supported in ADK</span><span class="python">Python v0.1.0</span>
+      <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
     </div>
 
     *   **How it works:** Connects to a relational database (e.g., PostgreSQL,
