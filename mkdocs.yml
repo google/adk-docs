@@ -171,6 +171,7 @@ nav:
         - Firecrawl: tools/third-party/firecrawl.md
         - GitHub: tools/third-party/github.md
         - Hugging Face: tools/third-party/hugging-face.md
+        - Notion: tools/third-party/notion.md
         - Agentic UI (AG-UI): tutorials/ag-ui.md
     - Custom Tools:
       - tools-custom/index.md
