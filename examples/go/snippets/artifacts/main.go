@@ -37,7 +37,7 @@ func BeforeModelCallback(ctx agent.CallbackContext, req *model.LLMRequest) (*mod
 					// Create a unique filename for the image.
 					fileName := fmt.Sprintf("user_image_%d.%s", i, strings.Split(part.InlineData.MIMEType, "/")[1])
 					// Save the image as an artifact.
-					if err := artifacts.Save(fileName, *part); err != nil {
+					if _, err := artifacts.Save(ctx, fileName, part); err != nil {
 						log.Printf("[WARN] Failed to save user image: %v\n", err)
 					} else {
 						log.Printf("[INFO] Saved user image artifact: %s\n", fileName)
@@ -69,7 +69,7 @@ func configureRunner() {
 		Model:       model,
 		Name:        "artifact_user_agent",
 		Instruction: "You are an agent that describes images.",
-		BeforeModel: []llmagent.BeforeModelCallback{
+		BeforeModelCallbacks: []llmagent.BeforeModelCallback{
 			BeforeModelCallback,
 		},
 	})
@@ -125,11 +125,13 @@ func loadArtifactsCallback(ctx agent.CallbackContext, req *model.LLMRequest) (*m
 	const filenameToLoad = "generated_report.pdf"
 
 	// Load the artifact from the artifact service.
-	loadedPart, err := ctx.Artifacts().Load(filenameToLoad)
+	loadedPartResponse, err := ctx.Artifacts().Load(ctx, filenameToLoad)
 	if err != nil {
 		log.Printf("Callback could not load artifact '%s': %v", filenameToLoad, err)
 		return nil, nil // File not found or error, continue to model.
 	}
+
+	loadedPart := loadedPartResponse.Part
 
 	log.Printf("Callback successfully loaded artifact '%s'.", filenameToLoad)
 
@@ -142,7 +144,7 @@ func loadArtifactsCallback(ctx agent.CallbackContext, req *model.LLMRequest) (*m
 
 	// Add the loaded artifact to the request for the model.
 	lastContent := req.Contents[len(req.Contents)-1]
-	lastContent.Parts = append(lastContent.Parts, &loadedPart)
+	lastContent.Parts = append(lastContent.Parts, loadedPart)
 	log.Printf("Added artifact '%s' to LLM request.", filenameToLoad)
 
 	// Return nil to continue to the next callback or the model.
@@ -240,7 +242,7 @@ func saveReportCallback(ctx agent.CallbackContext, req *model.LLMRequest) (*mode
 	// Set the filename for the artifact.
 	filename := "generated_report.pdf"
 	// Save the artifact to the artifact service.
-	err = ctx.Artifacts().Save(filename, *reportArtifact)
+	_, err = ctx.Artifacts().Save(ctx, filename, reportArtifact)
 	if err != nil {
 		log.Printf("An unexpected error occurred during Go artifact save: %v", err)
 		// Depending on requirements, you might want to return an error to the user.
@@ -259,11 +261,13 @@ func saveReportCallback(ctx agent.CallbackContext, req *model.LLMRequest) (*mode
 func listUserFilesCallback(ctx agent.CallbackContext, req *model.LLMRequest) (*model.LLMResponse, error) {
 	log.Println("[Callback] listUserFilesCallback triggered.")
 	// List the available artifacts from the artifact service.
-	availableFiles, err := ctx.Artifacts().List()
+	listResponse, err := ctx.Artifacts().List(ctx)
 	if err != nil {
 		log.Printf("An unexpected error occurred during Go artifact list: %v", err)
 		return nil, nil // Continue, but log the error.
 	}
+
+	availableFiles := listResponse.FileNames
 
 	log.Printf("Found %d available files.", len(availableFiles))
 
@@ -325,7 +329,7 @@ func main() {
 		Model:       model,
 		Name:        "reporting_agent",
 		Instruction: "You are a reporting agent. You can see available files and their contents if they are loaded for you. Summarize any provided files.",
-		BeforeModel: []llmagent.BeforeModelCallback{
+		BeforeModelCallbacks: []llmagent.BeforeModelCallback{
 			saveReportCallback,    // Saves report from state
 			listUserFilesCallback, // Lists available files and adds to prompt
 			loadArtifactsCallback, // Loads a specific file and adds to prompt
@@ -356,13 +360,13 @@ func main() {
 	log.Println("\n--- Agent Run 1: Triggering callbacks ---")
 	log.Println("This run will trigger `saveReportCallback` (from session state), `listUserFilesCallback` (will see the newly saved file), and `loadArtifactsCallback` (will load it).")
 	userInput := &genai.Content{Parts: []*genai.Part{genai.NewPartFromText("Please summarize the report for me.")}}
-	for event, err := range r.Run(ctx, session.Session.UserID(), session.Session.ID(), userInput, &agent.RunConfig{
+	for event, err := range r.Run(ctx, session.Session.UserID(), session.Session.ID(), userInput, agent.RunConfig{
 		StreamingMode: agent.StreamingModeSSE,
 	}) {
 		if err != nil {
 			log.Printf("AGENT ERROR: %v\n", err)
-		} else if event.LLMResponse != nil && event.LLMResponse.Content != nil {
-			for _, p := range event.LLMResponse.Content.Parts {
+		} else if event != nil && event.Content != nil {
+			for _, p := range event.Content.Parts {
 				fmt.Print(string(p.Text))
 			}
 		}

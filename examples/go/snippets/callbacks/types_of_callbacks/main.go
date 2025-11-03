@@ -81,18 +81,13 @@ func runBeforeAgentExample() {
 // --8<-- [end:before_agent_example]
 
 // --8<-- [start:after_agent_example]
-func onAfterAgent(ctx agent.CallbackContext, finalEvent *session.Event, runErr error) (*genai.Content, error) {
+func onAfterAgent(ctx agent.CallbackContext) (*genai.Content, error) {
 	agentName := ctx.AgentName()
 	invocationID := ctx.InvocationID()
 	state := ctx.State()
 
 	log.Printf("\n[Callback] Exiting agent: %s (Inv: %s)", agentName, invocationID)
 	log.Printf("[Callback] Current State: %v", state)
-
-	if runErr != nil {
-		log.Printf("[Callback] Agent run produced an error: %v. Passing through.", runErr)
-		return nil, runErr
-	}
 
 	if addNote, _ := state.Get("add_concluding_note"); addNote == true {
 		log.Printf("[Callback] State condition 'add_concluding_note=True' met: Replacing agent %s's output.", agentName)

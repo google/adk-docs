@@ -322,7 +322,7 @@ func runMyToolExample() {
 
 // --8<-- [start:accessing_state_callback]
 // Pseudocode: In a Callback function
-func myCallback(ctx agent.CallbackContext, event *session.Event, err error) (*genai.Content, error) {
+func myCallback(ctx agent.CallbackContext) (*genai.Content, error) {
 	lastToolResult, err := ctx.State().Get("temp:last_api_result") // Read temporary state
 	if err == nil {
 		fmt.Printf("Found temporary result from last tool: %v\n", lastToolResult)
