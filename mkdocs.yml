@@ -126,7 +126,7 @@ plugins:
 
 # Navigation
 nav:
-  - Building Agents:
+  - Build Agents:
     - Home:
       - index.md
     - Get started:
@@ -172,7 +172,7 @@ nav:
         - GitHub: tools/third-party/github.md
         - Hugging Face: tools/third-party/hugging-face.md
         - Notion: tools/third-party/notion.md
-        - Agentic UI (AG-UI): tutorials/ag-ui.md
+        - Agentic UI (AG-UI): tools/third-party/ag-ui.md
     - Custom Tools:
       - tools-custom/index.md
       - Function tools:
@@ -180,10 +180,10 @@ nav:
         - Tool performance: tools/performance.md
         - Action confirmations: tools/confirmation.md
       - MCP tools: tools/mcp-tools.md
-      - OpenAPI tools: tools/third-party/openapi-tools.md
+      - OpenAPI tools: tools-custom/openapi-tools.md
       - Authentication: tools/authentication.md
     - Technical overview: get-started/about.md
-  - Running Agents:
+  - Run Agents:
     - Agent Runtime:
       - Agent Runtime: runtime/index.md
       - Runtime Config: runtime/runconfig.md
