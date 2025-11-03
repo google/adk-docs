@@ -130,11 +130,11 @@ nav:
   - Home:
     - index.md
   - Build Agents:
-    - Get started:
+    - Get Started:
       - get-started/index.md
       - Python: get-started/python.md
       - Java: get-started/java.md
-    - Build your agent:
+    - Build your Agent:
       - tutorials/index.md
       - Multi-tool agent: get-started/quickstart.md
       - Agent team: tutorials/agent-team.md
