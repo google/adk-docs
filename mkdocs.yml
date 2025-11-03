@@ -188,7 +188,7 @@ nav:
       - Agent Runtime: runtime/index.md
       - Runtime Config: runtime/runconfig.md
       - Resume Agents: runtime/resume.md
-    - Deploy:
+    - Deployment:
       - deploy/index.md
       - Agent Engine: deploy/agent-engine.md
       - Cloud Run: deploy/cloud-run.md
@@ -200,7 +200,7 @@ nav:
       - Arize AX: observability/arize-ax.md
       - Phoenix: observability/phoenix.md
       - W&B Weave: observability/weave.md
-    - Evaluate:
+    - Evaluation:
       - evaluate/index.md
       - Criteria: evaluate/criteria.md
     - Safety and Security:
