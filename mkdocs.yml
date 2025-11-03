@@ -114,16 +114,16 @@ plugins:
   - search
   - redirects:
       redirect_maps:
-        'get-started/local-testing.md': 'get-started/testing.md'
+        'get-started/local-testing.md': 'runtime/api-server.md'
         'get-started/tutorial.md': 'tutorials/index.md'
         'guides/responsible-agents.md': 'safety/index.md'
-        'tools/third-party-tools.md': tools/third-party/index.md
-        'tools/third-party/openapi-tools.md': tools-custom/openapi-tools.md
-        'tools/openapi-tools.md': tools-custom/openapi-tools.md
-        'tutorials/ag-ui.md': tools/third-party/ag-ui.md
-        'tools/third-party/langchain.md': tools/index.md
-        'tools/third-party/crewai.md':  tools/index.md
-        'get-started/testing.md':  runtime/api-server.md
+        'tools/third-party-tools.md': 'tools/third-party/index.md'
+        'tools/third-party/openapi-tools.md': 'tools-custom/openapi-tools.md'
+        'tools/openapi-tools.md': 'tools-custom/openapi-tools.md'
+        'tutorials/ag-ui.md': 'tools/third-party/ag-ui.md'
+        'tools/third-party/langchain.md': 'tools/index.md'
+        'tools/third-party/crewai.md': 'tools/index.md'
+        'get-started/testing.md': 'runtime/api-server.md'
 
 # Navigation
 nav:
