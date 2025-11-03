@@ -95,19 +95,29 @@ func main() {
 
 	// --8<-- [start:tool_search]
 	// Define a tool that can search memory.
-	memorySearchTool := must(functiontool.New[struct{ Query string `json:"query"` }, struct{ Results []string `json:"results"` }](
+	memorySearchTool := must(functiontool.New[struct {
+		Query string `json:"query"`
+	}, struct {
+		Results []string `json:"results"`
+	}](
 		functiontool.Config{
 			Name:        "search_past_conversations",
 			Description: "Searches past conversations for relevant information.",
 		},
 		// This function demonstrates accessing memory via tool.Context.
-		func(tctx tool.Context, args struct{ Query string `json:"query"` }) struct{ Results []string `json:"results"` } {
+		func(tctx tool.Context, args struct {
+			Query string `json:"query"`
+		}) struct {
+			Results []string `json:"results"`
+		} {
 			fmt.Printf("Tool: Searching memory for query: '%s'\n", args.Query)
 			// The SearchMemory function is available on the context.
 			searchResults, err := tctx.SearchMemory(context.Background(), args.Query)
 			if err != nil {
 				log.Printf("Error searching memory: %v", err)
-				return struct{ Results []string `json:"results"` }{Results: []string{"Error searching memory."}}
+				return struct {
+					Results []string `json:"results"`
+				}{Results: []string{"Error searching memory."}}
 			}
 
 			var results []string
@@ -116,7 +126,9 @@ func main() {
 					results = append(results, textParts(res.Content)...)
 				}
 			}
-			return struct{ Results []string `json:"results"` }{Results: results}
+			return struct {
+				Results []string `json:"results"`
+			}{Results: results}
 		},
 	))
 	// --8<-- [end:tool_search]
