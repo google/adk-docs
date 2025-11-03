@@ -123,6 +123,7 @@ plugins:
         'tutorials/ag-ui.md': tools/third-party/ag-ui.md
         'tools/third-party/langchain.md': tools/index.md
         'tools/third-party/crewai.md':  tools/index.md
+        'get-started/testing.md':  runtime/api-server.md
 
 # Navigation
 nav:
@@ -141,7 +142,6 @@ nav:
         - get-started/streaming/index.md
         - Python: get-started/streaming/quickstart-streaming.md
         - Java: get-started/streaming/quickstart-streaming-java.md
-      - Testing: get-started/testing.md
       - Code samples: https://github.com/google/adk-samples
       - Advanced setup: get-started/installation.md
     - Agents:
@@ -186,6 +186,7 @@ nav:
     - Agent Runtime:
       - Agent Runtime: runtime/index.md
       - Runtime Config: runtime/runconfig.md
+      - API Server: runtime/api-server.md
       - Resume Agents: runtime/resume.md
     - Deployment:
       - deploy/index.md

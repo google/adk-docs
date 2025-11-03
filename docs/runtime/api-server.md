@@ -1,4 +1,4 @@
-# Testing your Agents
+# Use the API Server
 
 Before you deploy your agent, you should test it to ensure that it is working as
 intended. The easiest way to test your agent in your development environment is
@@ -32,7 +32,7 @@ to use the ADK API server.
 
         ```groovy
         tasks.register('runADKWebServer', JavaExec) {
-            dependsOn classes 
+            dependsOn classes
             classpath = sourceSets.main.runtimeClasspath
             mainClass = 'com.google.adk.web.AdkWebServer'
             args '--adk.agents.source-dir=src/main/java/agents', '--server.port=8080'
@@ -44,7 +44,7 @@ to use the ADK API server.
         gradle runADKWebServer
         ```
 
-    
+
     In Java, both the Dev UI and the API server are bundled together.
 
 This command will launch a local web server, where you can run cURL commands or send API requests to test your agent.
