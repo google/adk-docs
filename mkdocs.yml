@@ -127,9 +127,9 @@ plugins:
 
 # Navigation
 nav:
+  - Home:
+    - index.md
   - Build Agents:
-    - Home:
-      - index.md
     - Get started:
       - get-started/index.md
       - Python: get-started/python.md
