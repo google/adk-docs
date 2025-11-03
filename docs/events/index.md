@@ -438,8 +438,25 @@ The `event.actions` object signals changes that occurred or should occur. Always
         ```
 
     === "Go"
-        !!! warning "Not Yet Available"
-            Artifact change tracking via `event.Actions.ArtifactDelta` is not yet implemented in the Go ADK.
+        `artifactChanges := event.Actions.ArtifactDelta` (a `map[string]artifact.Artifact`)
+        ```go
+        import (
+            "fmt"
+            "google.golang.org/adk/artifact"
+            "google.golang.org/adk/session"
+        )
+
+        func handleArtifactChanges(event *session.Event) {
+            if len(event.Actions.ArtifactDelta) > 0 {
+                fmt.Printf("  Artifacts saved: %v\n", event.Actions.ArtifactDelta)
+                // UI might refresh an artifact list
+                // Iterate through event.Actions.ArtifactDelta to get filename and artifact.Artifact details
+                for filename, art := range event.Actions.ArtifactDelta {
+                    fmt.Printf("    Filename: %s, Version: %d, MIMEType: %s\n", filename, art.Version, art.MIMEType)
+                }
+            }
+        }
+        ```
 
 *   **Control Flow Signals:** Check boolean flags or string values:
 
