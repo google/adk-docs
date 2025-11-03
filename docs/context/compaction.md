@@ -1,5 +1,9 @@
 # Compress agent context for performance
 
+<div class="language-support-tag">
+  <span class="supported">Supported in ADK</span><span class="python">Python v1.16.0</span>
+</div>
+
 As an ADK agent runs it collects *context* information, including user
 instructions, retrieved data, tool responses, and generated content. As the size
 of this context data grows, agent processing times typically also increase.

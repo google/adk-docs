@@ -1,5 +1,9 @@
 # Logging in the Agent Development Kit (ADK)
 
+<div class="language-support-tag">
+  <span class="supported">Supported in ADK</span><span class="python">Python v0.1.0</span><span class="java">Java v0.1.0</span>
+</div>
+
 The Agent Development Kit (ADK) uses Python's standard `logging` module to provide flexible and powerful logging capabilities. Understanding how to configure and interpret these logs is crucial for monitoring agent behavior and debugging issues effectively.
 
 ## Logging Philosophy

@@ -1,5 +1,9 @@
 # Plugins
 
+<div class="language-support-tag">
+    <span class="supported">Supported in ADK</span><span class="python">Python v1.7.0</span>
+</div>
+
 A Plugin in Agent Development Kit (ADK) is a custom code module that can be
 executed at various stages of an agent workflow lifecycle using callback hooks.
 You use Plugins for functionality that is applicable across your agent workflow.

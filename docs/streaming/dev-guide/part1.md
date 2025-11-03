@@ -1,5 +1,9 @@
 # ADK Bidi-streaming development guide: Part 1 - Introduction
 
+<div class="language-support-tag">
+    <span class="supported">Supported in ADK</span><span class="python">Python v0.5.0</span><span class="preview">Experimental</span>
+</div>
+
 Welcome to the world of bidirectional streaming with [Agent Development Kit (ADK)](https://google.github.io/adk-docs/). This article will transform your understanding of AI agent communication from traditional request-response patterns to dynamic, real-time conversations that feel as natural as talking to another person.
 
 Imagine building an AI assistant that doesn't just wait for you to finish speaking before responding, but actively listens and can be interrupted mid-sentence when you have a sudden thought. Picture creating customer support bots that handle audio, video, and text simultaneously while maintaining context throughout the conversation. This is the power of bidirectional streaming, and ADK makes it accessible to every developer.

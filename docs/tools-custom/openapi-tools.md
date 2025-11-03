@@ -1,8 +1,8 @@
-# OpenAPI Integration
+# Integrate REST APIs with OpenAPI
 
-![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java support is planned/ coming soon."}
-
-## Integrating REST APIs with OpenAPI
+<div class="language-support-tag">
+  <span class="supported">Supported in ADK</span><span class="python">Python v0.1.0</span>
+</div>
 
 ADK simplifies interacting with external REST APIs by automatically generating callable tools directly from an [OpenAPI Specification (v3.x)](https://swagger.io/specification/). This eliminates the need to manually define individual function tools for each API endpoint.
 

@@ -1,5 +1,9 @@
 # Multi-Agent Systems in ADK
 
+<div class="language-support-tag">
+  <span class="supported">Supported in ADK</span><span class="python">Python v0.1.0</span><span class="java">Java v0.2.0</span>
+</div>
+
 As agentic applications grow in complexity, structuring them as a single, monolithic agent can become challenging to develop, maintain, and reason about. The Agent Development Kit (ADK) supports building sophisticated applications by composing multiple, distinct `BaseAgent` instances into a **Multi-Agent System (MAS)**.
 
 In ADK, a multi-agent system is an application where different agents, often forming a hierarchy, collaborate or coordinate to achieve a larger goal. Structuring your application this way offers significant advantages, including enhanced modularity, specialization, reusability, maintainability, and the ability to define structured control flows using dedicated workflow agents.

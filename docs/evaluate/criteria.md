@@ -1,5 +1,9 @@
 # Evaluation Criteria
 
+<div class="language-support-tag">
+    <span class="supported">Supported in ADK</span><span class="python">Python</span>
+</div>
+
 This page outlines the evaluation criteria provided by ADK to assess agent
 performance, including tool use trajectory, response quality, and safety.
 

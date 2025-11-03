@@ -1,5 +1,9 @@
 # Parallel agents
 
+<div class="language-support-tag">
+  <span class="supported">Supported in ADK</span><span class="python">Python v0.1.0</span><span class="java">Java v0.2.0</span>
+</div>
+
 The `ParallelAgent` is a [workflow agent](index.md) that executes its sub-agents *concurrently*. This dramatically speeds up workflows where tasks can be performed independently.
 
 Use `ParallelAgent` when: For scenarios prioritizing speed and involving independent, resource-intensive tasks, a `ParallelAgent` facilitates efficient parallel execution. **When sub-agents operate without dependencies, their tasks can be performed concurrently**, significantly reducing overall processing time.

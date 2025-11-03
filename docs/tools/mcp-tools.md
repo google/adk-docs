@@ -1,6 +1,10 @@
 # Model Context Protocol Tools
 
- This guide walks you through two ways of integrating Model Context Protocol (MCP) with ADK.
+<div class="language-support-tag">
+  <span class="supported">Supported in ADK</span><span class="python">Python v0.1.0</span><span class="java">Java v0.1.0</span>
+</div>
+
+This guide walks you through two ways of integrating Model Context Protocol (MCP) with ADK.
 
 ## What is Model Context Protocol (MCP)?
 

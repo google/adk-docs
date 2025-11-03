@@ -1,6 +1,8 @@
 # Introduction to Conversational Context: Session, State, and Memory
 
-## Why Context Matters
+<div class="language-support-tag">
+    <span class="supported">Supported in ADK</span><span class="python">Python</span><span class="java">Java</span>
+</div>
 
 Meaningful, multi-turn conversations require agents to understand context. Just
 like humans, they need to recall the conversation history: what's been said and

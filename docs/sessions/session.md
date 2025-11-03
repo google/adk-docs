@@ -1,5 +1,9 @@
 # Session: Tracking Individual Conversations
 
+<div class="language-support-tag">
+  <span class="supported">Supported in ADK</span><span class="python">Python v0.1.0</span><span class="java">Java v0.1.0</span>
+</div>
+
 Following our Introduction, let's dive into the `Session`. Think back to the
 idea of a "conversation thread." Just like you wouldn't start every text message
 from scratch, agents need context regarding the ongoing interaction.
@@ -200,7 +204,9 @@ the storage backend that best suits your needs:
 
 3.  **`DatabaseSessionService`**
 
-    ![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java support is planned/ coming soon."}
+    <div class="language-support-tag">
+      <span class="supported">Supported in ADK</span><span class="python">Python v0.1.0</span>
+    </div>
 
     *   **How it works:** Connects to a relational database (e.g., PostgreSQL,
         MySQL, SQLite) to store session data persistently in tables.

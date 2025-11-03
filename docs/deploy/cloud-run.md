@@ -1,5 +1,9 @@
 # Deploy to Cloud Run
 
+<div class="language-support-tag">
+  <span class="supported">Supported in ADK</span><span class="python">Python</span><span class="java">Java</span>
+</div>
+
 [Cloud Run](https://cloud.google.com/run)
 is a fully managed platform that enables you to run your code directly on top of Google's scalable infrastructure.
 

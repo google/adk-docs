@@ -1,5 +1,9 @@
 # LLM Agent
 
+<div class="language-support-tag">
+  <span class="supported">Supported in ADK</span><span class="python">Python v0.1.0</span><span class="java">Java v0.1.0</span>
+</div>
+
 The `LlmAgent` (often aliased simply as `Agent`) is a core component in ADK,
 acting as the "thinking" part of your application. It leverages the power of a
 Large Language Model (LLM) for reasoning, understanding natural language, making
@@ -342,7 +346,9 @@ Control whether the agent receives the prior conversation history.
 
 ### Planner
 
-![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java support is planned/ coming soon."}
+<div class="language-support-tag" title="">
+   <span class="supported">Supported in ADK</span><span class="python">Python v0.1.0</span>
+</div>
 
 **`planner` (Optional):** Assign a `BasePlanner` instance to enable multi-step reasoning and planning before execution. There are two main planners:
 
@@ -399,7 +405,10 @@ Control whether the agent receives the prior conversation history.
 
 ### Code Execution
 
-![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java support is planned/ coming soon."}
+<div class="language-support-tag" title="hover text.">
+   <span class="supported">Supported in ADK</span>
+   <span class="python">Python v0.1.0</span>
+</div>
 
 * **`code_executor` (Optional):** Provide a `BaseCodeExecutor` instance to allow the agent to execute code blocks found in the LLM's response. ([See Tools/Built-in tools](../tools/built-in-tools.md)).
 

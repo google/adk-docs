@@ -21,6 +21,10 @@ Note: Java only supports Google Search and Code Execution tools currently.
 
 ### Google Search
 
+<div class="language-support-tag">
+  <span class="supported">Supported in ADK</span><span class="python">Python v0.1.0</span><span class="java">Java v0.2.0</span>
+</div>
+
 The `google_search` tool allows the agent to perform web searches using Google Search. The `google_search` tool is only compatible with Gemini 2 models. For further details of the tool, see [Understanding Google Search grounding](../grounding/google_search_grounding.md).
 
 !!! warning "Additional requirements when using the `google_search` tool"
@@ -41,6 +45,10 @@ The `google_search` tool allows the agent to perform web searches using Google S
 
 ### Code Execution
 
+<div class="language-support-tag">
+  <span class="supported">Supported in ADK</span><span class="python">Python v0.1.0</span><span class="java">Java v0.2.0</span>
+</div>
+
 The `built_in_code_execution` tool enables the agent to execute code,
 specifically when using Gemini 2 models. This allows the model to perform tasks
 like calculations, data manipulation, or running small scripts.
@@ -58,6 +66,10 @@ like calculations, data manipulation, or running small scripts.
     ```
 
 ### GKE Code Executor
+
+<div class="language-support-tag">
+  <span class="supported">Supported in ADK</span><span class="python">Python v1.14.0</span>
+</div>
 
 The GKE Code Executor (`GkeCodeExecutor`) provides a secure and scalable method
 for running LLM-generated code by leveraging the GKE (Google Kubernetes Engine)
@@ -143,6 +155,10 @@ The `GkeCodeExecutor` can be configured with the following parameters:
 
 ### Vertex AI RAG Engine
 
+<div class="language-support-tag">
+  <span class="supported">Supported in ADK</span><span class="python">Python v0.1.0</span><span class="java">Java v0.2.0</span>
+</div>
+
 The `vertex_ai_rag_retrieval` tool allows the agent to perform private data retrieval using Vertex
 AI RAG Engine.
 
@@ -157,6 +173,10 @@ Please refer to the [RAG ADK agent sample](https://github.com/google/adk-samples
 
 ### Vertex AI Search
 
+<div class="language-support-tag">
+  <span class="supported">Supported in ADK</span><span class="python">Python v0.1.0</span>
+</div>
+
 The `vertex_ai_search_tool` uses Google Cloud Vertex AI Search, enabling the
 agent to search across your private, configured data stores (e.g., internal
 documents, company policies, knowledge bases). This built-in tool requires you
@@ -169,6 +189,10 @@ to provide the specific data store ID during configuration. For further details 
 
 
 ### BigQuery
+
+<div class="language-support-tag">
+  <span class="supported">Supported in ADK</span><span class="python">Python v1.1.0</span>
+</div>
 
 These are a set of tools aimed to provide integration with BigQuery, namely:
 
@@ -191,6 +215,10 @@ They are packaged in the toolset `BigQueryToolset`.
 
 ### Spanner
 
+<div class="language-support-tag">
+  <span class="supported">Supported in ADK</span><span class="python">Python v1.11.0</span>
+</div>
+
 These are a set of tools aimed to provide integration with Spanner, namely:
 
 * **`list_table_names`**: Fetches table names present in a GCP Spanner database.
@@ -212,6 +240,10 @@ They are packaged in the toolset `SpannerToolset`.
 
 ### Bigtable
 
+<div class="language-support-tag">
+  <span class="supported">Supported in ADK</span><span class="python">Python v1.12.0</span>
+</div>
+
 These are a set of tools aimed to provide integration with Bigtable, namely:
 
 * **`list_instances`**: Fetches Bigtable instances in a Google Cloud project.
@@ -229,6 +261,10 @@ They are packaged in the toolset `BigtableToolset`.
 ```
 
 ## Use Built-in tools with other tools
+
+<div class="language-support-tag">
+  <span class="supported">Supported in ADK</span><span class="python">Python</span><span class="java">Java</span>
+</div>
 
 The following code sample demonstrates how to use multiple built-in tools or how
 to use built-in tools with other tools by using multiple agents:
