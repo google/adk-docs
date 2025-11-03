@@ -207,6 +207,9 @@ nav:
       - safety/index.md
   - Components:
     - Technical Overview: get-started/about.md
+    - Context:
+      - context/index.md
+      - Context compression: context/compaction.md
     - Sessions & Memory:
       - sessions/index.md
       - Session: sessions/session.md
@@ -221,16 +224,16 @@ nav:
       - artifacts/index.md
     - Events:
       - events/index.md
-    - Context:
-      - context/index.md
-      - Context compression: context/compaction.md
-    - MCP:
-      - mcp/index.md
     - Plugins:
       - plugins/index.md
-    - Grounding:
-      - Understanding Google Search Grounding: grounding/google_search_grounding.md
-      - Understanding Vertex AI Search Grounding: grounding/vertex_ai_search_grounding.md
+    - MCP:
+      - mcp/index.md
+    - A2A Protocol:
+      - a2a/index.md
+      - Introduction to A2A: a2a/intro.md
+      - A2A Quickstart (Exposing): a2a/quickstart-exposing.md
+      - A2A Quickstart (Consuming): a2a/quickstart-consuming.md
+      - A2A Protocol Documentation: https://a2a-protocol.org
     - Bidi-streaming (live):
       - streaming/index.md
       - Custom Audio Bidi-streaming app sample (WebSockets): streaming/custom-streaming-ws.md
@@ -238,12 +241,9 @@ nav:
       - Streaming Tools: streaming/streaming-tools.md
       - Configurating Bidi-streaming behaviour: streaming/configuration.md
       - Google ADK + Vertex AI Live API (blog post): https://medium.com/google-cloud/google-adk-vertex-ai-live-api-125238982d5e
-    - A2A Protocol:
-      - a2a/index.md
-      - Introduction to A2A: a2a/intro.md
-      - A2A Quickstart (Exposing): a2a/quickstart-exposing.md
-      - A2A Quickstart (Consuming): a2a/quickstart-consuming.md
-      - A2A Protocol Documentation: https://a2a-protocol.org
+    - Grounding:
+      - Understanding Google Search Grounding: grounding/google_search_grounding.md
+      - Understanding Vertex AI Search Grounding: grounding/vertex_ai_search_grounding.md
   - Reference:
     - API Reference:
       - api-reference/index.md
