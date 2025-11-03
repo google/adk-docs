@@ -18,22 +18,23 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"strings"
 
 	"google.golang.org/adk/agent"
 	"google.golang.org/adk/agent/llmagent"
 	"google.golang.org/adk/memory"
-	"google.golang.org/adk/model"
 	"google.golang.org/adk/model/gemini"
 	"google.golang.org/adk/runner"
 	"google.golang.org/adk/session"
 	"google.golang.org/adk/tool"
+	"google.golang.org/adk/tool/functiontool"
 	"google.golang.org/genai"
 )
 
 const (
 	appName = "go_memory_example_app"
 	userID  = "go_mem_user"
-	modelID = "gemini-2.0-flash" // Replace with a valid model name
+	modelID = "gemini-2.5-pro"
 )
 
 // This example demonstrates how to use the MemoryService in the Go ADK.
@@ -70,15 +71,13 @@ func main() {
 
 	userInput1 := genai.NewContentFromText("My favorite project is Project Alpha.", "user")
 	var finalResponseText string
-	for event, err := range runner1.Run(ctx, userID, session1ID, userInput1, &agent.RunConfig{}) {
+	for event, err := range runner1.Run(ctx, userID, session1ID, userInput1, agent.RunConfig{}) {
 		if err != nil {
 			log.Printf("Agent 1 Error: %v", err)
+			continue
 		}
-		if isFinalResponse(event) {
-			texts := textParts(event.LLMResponse.Content)
-			if len(texts) > 0 {
-				finalResponseText = texts[0]
-			}
+		if event.LLMResponse.Content != nil && !event.LLMResponse.Partial {
+			finalResponseText = strings.Join(textParts(event.LLMResponse.Content), "")
 		}
 	}
 	fmt.Printf("Agent 1 Response: %s\n", finalResponseText)
@@ -96,8 +95,8 @@ func main() {
 
 	// --8<-- [start:tool_search]
 	// Define a tool that can search memory.
-	memorySearchTool := must(tool.NewFunctionTool[struct{ Query string `json:"query"` }, struct{ Results []string `json:"results"` }](
-		tool.FunctionToolConfig{
+	memorySearchTool := must(functiontool.New[struct{ Query string `json:"query"` }, struct{ Results []string `json:"results"` }](
+		functiontool.Config{
 			Name:        "search_past_conversations",
 			Description: "Searches past conversations for relevant information.",
 		},
@@ -112,7 +111,7 @@ func main() {
 			}
 
 			var results []string
-			for _, res := range searchResults {
+			for _, res := range searchResults.Memories {
 				if res.Content != nil {
 					results = append(results, textParts(res.Content)...)
 				}
@@ -141,19 +140,18 @@ func main() {
 	userInput2 := genai.NewContentFromText("What is my favorite project?", "user")
 
 	var finalResponseText2 string
-	for event, err := range runner2.Run(ctx, userID, session2ID, userInput2, &agent.RunConfig{}) {
+	for event, err := range runner2.Run(ctx, userID, session2ID, userInput2, agent.RunConfig{}) {
 		if err != nil {
 			log.Printf("Agent 2 Error: %v", err)
+			continue
 		}
-		if isFinalResponse(event) {
-			texts := textParts(event.LLMResponse.Content)
-			if len(texts) > 0 {
-				finalResponseText2 = texts[0]
-			}
+		if event.LLMResponse.Content != nil && !event.LLMResponse.Partial {
+			finalResponseText2 = strings.Join(textParts(event.LLMResponse.Content), "")
 		}
 	}
 	fmt.Printf("Agent 2 Response: %s\n", finalResponseText2)
 }
+
 // --8<-- [end:full_example]
 
 // --- Helper Functions ---
@@ -163,48 +161,6 @@ func must[T any](v T, err error) T {
 		log.Fatalf("Setup failed: %v", err)
 	}
 	return v
-}
-
-func isFinalResponse(ev *session.Event) bool {
-	if ev.Actions.SkipSummarization || len(ev.LongRunningToolIDs) > 0 {
-		return true
-	}
-	if ev.LLMResponse == nil {
-		return true
-	}
-	return !hasFunctionCalls(ev.LLMResponse) && !hasFunctionResponses(ev.LLMResponse) && !ev.LLMResponse.Partial && !hasTrailingCodeExecutionResult(ev.LLMResponse)
-}
-
-func hasFunctionCalls(resp *model.LLMResponse) bool {
-	if resp == nil || resp.Content == nil {
-		return false
-	}
-	for _, part := range resp.Content.Parts {
-		if part.FunctionCall != nil {
-			return true
-		}
-	}
-	return false
-}
-
-func hasFunctionResponses(resp *model.LLMResponse) bool {
-	if resp == nil || resp.Content == nil {
-		return false
-	}
-	for _, part := range resp.Content.Parts {
-		if part.FunctionResponse != nil {
-			return true
-		}
-	}
-	return false
-}
-
-func hasTrailingCodeExecutionResult(resp *model.LLMResponse) bool {
-	if resp == nil || resp.Content == nil || len(resp.Content.Parts) == 0 {
-		return false
-	}
-	lastPart := resp.Content.Parts[len(resp.Content.Parts)-1]
-	return lastPart.CodeExecutionResult != nil
 }
 
 func textParts(c *genai.Content) (ret []string) {

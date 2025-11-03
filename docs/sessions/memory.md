@@ -194,22 +194,23 @@ adk web path/to/your/agents_dir --memory_service_uri="agentengine://1234567890"
 
 Or, you can configure your agent to use the Memory Bank by manually instantiating the `VertexAiMemoryBankService` and passing it to the `Runner`.
 
-```py
-from google.adk.memory import VertexAiMemoryBankService
+=== "Python"
+  ```py
+  from google.adk.memory import VertexAiMemoryBankService
 
-agent_engine_id = agent_engine.api_resource.name.split("/")[-1]
+  agent_engine_id = agent_engine.api_resource.name.split("/")[-1]
 
-memory_service = VertexAiMemoryBankService(
-    project="PROJECT_ID",
-    location="LOCATION",
-    agent_engine_id=agent_engine_id
-)
+  memory_service = VertexAiMemoryBankService(
+      project="PROJECT_ID",
+      location="LOCATION",
+      agent_engine_id=agent_engine_id
+  )
 
-runner = adk.Runner(
-    ...
-    memory_service=memory_service
-)
-```
+  runner = adk.Runner(
+      ...
+      memory_service=memory_service
+  )
+  ```
 
 ## Using Memory in Your Agent
 
@@ -220,6 +221,7 @@ When a memory service is configured, your agent can use a tool or callback to re
 
 **Example:**
 
+=== "Python"
 ```python
 from google.adk.agents import Agent
 from google.adk.tools.preload_memory_tool import PreloadMemoryTool
@@ -234,6 +236,7 @@ agent = Agent(
 
 To extract memories from your session, you need to call `add_session_to_memory`. For example, you can automate this via a callback:
 
+=== "Python"
 ```python
 from google import adk
 
@@ -276,6 +279,7 @@ For example, your agent could use the framework-configured `VertexAiMemoryBankSe
 
 Here’s how you could implement that in your agent's code:
 
+=== "Python"
 ```python
 from google.adk.agents import Agent
 from google.adk.memory import InMemoryMemoryService, VertexAiMemoryBankService
