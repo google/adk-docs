@@ -182,7 +182,6 @@ nav:
       - MCP tools: tools/mcp-tools.md
       - OpenAPI tools: tools-custom/openapi-tools.md
       - Authentication: tools/authentication.md
-    - Technical overview: get-started/about.md
   - Run Agents:
     - Agent Runtime:
       - Agent Runtime: runtime/index.md
@@ -206,6 +205,7 @@ nav:
     - Safety and Security:
       - safety/index.md
   - Components:
+    - Technical Overview: get-started/about.md
     - Sessions & Memory:
       - sessions/index.md
       - Session: sessions/session.md
