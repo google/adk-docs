@@ -71,7 +71,7 @@ context back to a vision-enabled model.
 
 ## Available tools
 
-Tool | Description
+Tool <img width="200px"/> | Description
 ---- | -----------
 `browserbase_stagehand_navigate` | Navigate to any URL in the browser
 `browserbase_stagehand_act` | Perform an action on the web page using natural language
