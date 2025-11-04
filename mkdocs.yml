@@ -210,6 +210,7 @@ nav:
     - Technical Overview: get-started/about.md
     - Context:
       - context/index.md
+      - Context caching: context/caching.md
       - Context compression: context/compaction.md
     - Sessions & Memory:
       - sessions/index.md
