@@ -21,16 +21,18 @@ The `RunConfig` class holds configuration parameters for an agent's runtime beha
 
 - Java ADK typically uses immutable data classes.
 
+- Go ADK has mutable structs by default.
+
 === "Python"
 
     ```python
     class RunConfig(BaseModel):
         """Configs for runtime behavior of agents."""
-    
+
         model_config = ConfigDict(
             extra='forbid',
         )
-    
+
         speech_config: Optional[types.SpeechConfig] = None
         response_modalities: Optional[list[str]] = None
         save_input_blobs_as_artifacts: bool = False
@@ -44,38 +46,83 @@ The `RunConfig` class holds configuration parameters for an agent's runtime beha
 
     ```java
     public abstract class RunConfig {
-      
+
       public enum StreamingMode {
         NONE,
         SSE,
         BIDI
       }
-      
+
       public abstract @Nullable SpeechConfig speechConfig();
-    
+
       public abstract ImmutableList<Modality> responseModalities();
-    
+
       public abstract boolean saveInputBlobsAsArtifacts();
-      
+
       public abstract @Nullable AudioTranscriptionConfig outputAudioTranscription();
-    
+
       public abstract int maxLlmCalls();
-      
+
       // ...
+    }
+    ```
+
+=== "Go"
+
+    ```go
+    import "google.golang.org/genai"
+
+    type StreamingMode string
+
+    const (
+    	StreamingModeNone StreamingMode = "none"
+    	StreamingModeSSE  StreamingMode = "sse"
+    	StreamingModeBidi StreamingMode = "bidi"
+    )
+
+    // RunConfig controls runtime behavior.
+    type RunConfig struct {
+    	// Speech configuration for the live agent.
+    	SpeechConfig *genai.SpeechConfig
+    	// Output transcription for live agents with audio response.
+    	OutputAudioTranscriptionConfig *genai.AudioTranscriptionConfig
+    	// The output modalities. If not set, it defaults to AUDIO.
+    	ResponseModalities []string
+    	// Streaming mode, None or StreamingMode.SSE or StreamingMode.BIDI.
+    	StreamingMode StreamingMode
+    	// Whether or not to save the input blobs as artifacts
+    	SaveInputBlobsAsArtifacts bool
+
+    	// Whether to support CFC (Compositional Function Calling). Only applicable for
+    	// StreamingModeSSE. If it's true. the LIVE API will be invoked since only LIVE
+    	// API supports CFC.
+    	//
+    	// .. warning::
+    	//      This feature is **experimental** and its API or behavior may change
+    	//     in future releases.
+    	SupportCFC bool
+
+    	// A limit on the total number of llm calls for a given run.
+    	//
+    	// Valid Values:
+    	//  - More than 0 and less than sys.maxsize: The bound on the number of llm
+    	//    calls is enforced, if the value is set in this range.
+    	//  - Less than or equal to 0: This allows for unbounded number of llm calls.
+    	MaxLLMCalls int
     }
     ```
 
 ## Runtime Parameters
 
-| Parameter                       | Python Type                                  | Java Type                                             | Default (Py / Java)               | Description                                                                                                                  |
-| :------------------------------ | :------------------------------------------- |:------------------------------------------------------|:----------------------------------|:-----------------------------------------------------------------------------------------------------------------------------|
-| `speech_config`                 | `Optional[types.SpeechConfig]`               | `SpeechConfig` (nullable via `@Nullable`)             | `None` / `null`                   | Configures speech synthesis (voice, language) using the `SpeechConfig` type.                                                 |
-| `response_modalities`           | `Optional[list[str]]`                        | `ImmutableList<Modality>`                             | `None` / Empty `ImmutableList`    | List of desired output modalities (e.g., Python: `["TEXT", "AUDIO"]`; Java: uses structured `Modality` objects).             |
-| `save_input_blobs_as_artifacts` | `bool`                                       | `boolean`                                             | `False` / `false`                 | If `true`, saves input blobs (e.g., uploaded files) as run artifacts for debugging/auditing.                                 |
-| `streaming_mode`                | `StreamingMode`                              | *Currently not supported*                             | `StreamingMode.NONE` / N/A        | Sets the streaming behavior: `NONE` (default), `SSE` (server-sent events), or `BIDI` (bidirectional).                        |
-| `output_audio_transcription`    | `Optional[types.AudioTranscriptionConfig]`   | `AudioTranscriptionConfig` (nullable via `@Nullable`) | `None` / `null`                   | Configures transcription of generated audio output using the `AudioTranscriptionConfig` type.                                |
-| `max_llm_calls`                 | `int`                                        | `int`                                                 | `500` / `500`                     | Limits total LLM calls per run. `0` or negative means unlimited (warned); `sys.maxsize` raises `ValueError`.                 |
-| `support_cfc`                   | `bool`                                       | *Currently not supported*                             | `False` / N/A                     | **Python:** Enables Compositional Function Calling. Requires `streaming_mode=SSE` and uses the LIVE API. **Experimental.**   |
+| Parameter                       | Python Type                                  | Java Type                                             | Go Type                               | Default (Py / Java / Go)               | Description                                                                                                                  |
+| :------------------------------ | :------------------------------------------- |:------------------------------------------------------|:--------------------------------------|:---------------------------------------|:-----------------------------------------------------------------------------------------------------------------------------|
+| `speech_config`                 | `Optional[types.SpeechConfig]`               | `SpeechConfig` (nullable via `@Nullable`)             | `*genai.SpeechConfig`                 | `None` / `null` / `nil`                | Configures speech synthesis (voice, language) using the `SpeechConfig` type.                                                 |
+| `response_modalities`           | `Optional[list[str]]`                        | `ImmutableList<Modality>`                             | `[]string`                            | `None` / Empty `ImmutableList` / `AUDIO` | List of desired output modalities (e.g., Python: `["TEXT", "AUDIO"]`; Java: uses structured `Modality` objects).             |
+| `save_input_blobs_as_artifacts` | `bool`                                       | `boolean`                                             | `bool`                                | `False` / `false` / `false`            | If `true`, saves input blobs (e.g., uploaded files) as run artifacts for debugging/auditing.                                 |
+| `streaming_mode`                | `StreamingMode`                              | `StreamingMode`                                       | `StreamingMode`                       | `StreamingMode.NONE` / `StreamingMode.NONE` / `agent.StreamingModeNone` | Sets the streaming behavior: `NONE` (default), `SSE` (server-sent events), or `BIDI` (bidirectional).                        |
+| `output_audio_transcription`    | `Optional[types.AudioTranscriptionConfig]`   | `AudioTranscriptionConfig` (nullable via `@Nullable`) | `*genai.AudioTranscriptionConfig`     | `None` / `null` / `nil`                | Configures transcription of generated audio output using the `AudioTranscriptionConfig` type.                                |
+| `max_llm_calls`                 | `int`                                        | `int`                                                 | `int`                                 | `500` / `500` / `0` (unlimited)        | Limits total LLM calls per run. `0` or negative means unlimited (warned); `sys.maxsize` raises `ValueError`.                 |
+| `support_cfc`                   | `bool`                                       | `bool`                                                | `bool`                                | `False` / `false` / `false`            | **Python/Go:** Enables Compositional Function Calling. Requires `streaming_mode=SSE` and uses the LIVE API. **Experimental.**   |
 
 ### `speech_config`
 
@@ -150,7 +197,7 @@ Enables Compositional Function Calling (CFC) support. Only applicable when using
 StreamingMode.SSE. When enabled, the LIVE API will be invoked as only it
 supports CFC functionality.
 
-!!! example "Experimental release" 
+!!! example "Experimental release"
 
     The `support_cfc` feature is experimental and its API or behavior might
     change in future releases.
@@ -199,7 +246,7 @@ For the `max_llm_calls` parameter specifically:
 
     ```python
     from google.genai.adk import RunConfig, StreamingMode
-    
+
     config = RunConfig(
         streaming_mode=StreamingMode.NONE,
         max_llm_calls=100
@@ -211,11 +258,22 @@ For the `max_llm_calls` parameter specifically:
     ```java
     import com.google.adk.agents.RunConfig;
     import com.google.adk.agents.RunConfig.StreamingMode;
-    
+
     RunConfig config = RunConfig.builder()
             .setStreamingMode(StreamingMode.NONE)
             .setMaxLlmCalls(100)
             .build();
+    ```
+
+=== "Go"
+
+    ```go
+    import "google.golang.org/adk/agent"
+
+    config := agent.RunConfig{
+        StreamingMode: agent.StreamingModeNone,
+        MaxLLMCalls:   100,
+    }
     ```
 
 This configuration creates a non-streaming agent with a limit of 100 LLM calls,
@@ -228,7 +286,7 @@ preferable.
 
     ```python
     from google.genai.adk import RunConfig, StreamingMode
-    
+
     config = RunConfig(
         streaming_mode=StreamingMode.SSE,
         max_llm_calls=200
@@ -240,11 +298,22 @@ preferable.
     ```java
     import com.google.adk.agents.RunConfig;
     import com.google.adk.agents.RunConfig.StreamingMode;
-    
+
     RunConfig config = RunConfig.builder()
         .setStreamingMode(StreamingMode.SSE)
         .setMaxLlmCalls(200)
         .build();
+    ```
+
+=== "Go"
+
+    ```go
+    import "google.golang.org/adk/agent"
+
+    config := agent.RunConfig{
+        StreamingMode: agent.StreamingModeSSE,
+        MaxLLMCalls:   200,
+    }
     ```
 
 Using SSE streaming allows users to see responses as they're generated,
@@ -257,7 +326,7 @@ providing a more responsive feel for chatbots and assistants.
     ```python
     from google.genai.adk import RunConfig, StreamingMode
     from google.genai import types
-    
+
     config = RunConfig(
         speech_config=types.SpeechConfig(
             language_code="en-US",
@@ -287,7 +356,7 @@ providing a more responsive feel for chatbots and assistants.
     import com.google.genai.types.PrebuiltVoiceConfig;
     import com.google.genai.types.SpeechConfig;
     import com.google.genai.types.VoiceConfig;
-    
+
     RunConfig runConfig =
         RunConfig.builder()
             .setStreamingMode(StreamingMode.SSE)
@@ -306,19 +375,43 @@ providing a more responsive feel for chatbots and assistants.
             .build();
     ```
 
+=== "Go"
+
+    ```go
+    import (
+    	"google.golang.org/adk/agent"
+    	"google.golang.org/genai"
+    )
+
+    config := agent.RunConfig{
+    	SpeechConfig: &genai.SpeechConfig{
+    		LanguageCode: "en-US",
+    		VoiceConfig: &genai.VoiceConfig{
+    			PrebuiltVoiceConfig: &genai.PrebuiltVoiceConfig{
+    				VoiceName: "Kore",
+    			},
+    		},
+    	},
+    	ResponseModalities:        []string{"AUDIO", "TEXT"},
+    	SaveInputBlobsAsArtifacts: true,
+    	SupportCFC:                true,
+    	StreamingMode:             agent.StreamingModeSSE,
+    	MaxLLMCalls:               1000,
+    }
+    ```
+
 This comprehensive example configures an agent with:
 
 * Speech capabilities using the "Kore" voice (US English)
 * Both audio and text output modalities
 * Artifact saving for input blobs (useful for debugging)
-* Experimental CFC support enabled **(Python only)**
 * SSE streaming for responsive interaction
 * A limit of 1000 LLM calls
 
 ### Enabling Experimental CFC Support
 
 <div class="language-support-tag" title="This feature is an experimental preview release.">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-preview">Experimental</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-preview">Experimental</span>
 </div>
 
 ```python
@@ -330,6 +423,18 @@ config = RunConfig(
     max_llm_calls=150
 )
 ```
+
+=== "Go"
+
+    ```go
+    import "google.golang.org/adk/agent"
+
+    config := agent.RunConfig{
+        StreamingMode: agent.StreamingModeSSE,
+        SupportCFC:    true,
+        MaxLLMCalls:   150,
+    }
+    ```
 
 Enabling Compositional Function Calling creates an agent that can dynamically
 execute functions based on model outputs, powerful for applications requiring
