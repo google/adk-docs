@@ -1,5 +1,9 @@
 # Context caching with Gemini
 
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.15.0</span>
+</div>
+
 When working with agents to complete tasks, you may want to reuse extended
 instructions or large sets of data across multiple agent requests to a
 generative AI model. Resending this data for each agent request is slow,
