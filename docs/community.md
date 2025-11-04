@@ -96,6 +96,16 @@ Development Kit community.
       <p>A developer's guide to building intelligent agents with Google’s code-first Python toolkit.</p>
     </div>
   </a>
+  <a href="https://www.youtube.com/playlist?list=PL0Zc2RFDZsM_MkHOzWNJpaT4EH5fQxA8n" class="resource-card">
+      <div class="card-image-wrapper">
+        <img src="../assets/community-adk-news-jp.jpg" alt="ADK News">
+      </div>
+      <div class="card-content">
+        <div class="type">YouTube Playlist</div>
+        <h3>📻️ ADK News - ADK Podcast in Japanese</h3>
+        <p>ADK News is an auto-generated Japanese podcast about ADK, created by an ADK agent. This podcast covers ADK Python/ADK Web commit logs, release notes, and blog posts every Monday, Wednesday, and Friday.</p>
+      </div>
+    </a>
 </div>
 
 ## Agent Tutorials and Demos
