@@ -38,8 +38,8 @@ const (
 )
 
 // --8<-- [start:greeting]
-// 1. GreetingAgent demonstrates using `OutputKey` to save an agent's
-//    final text response directly into the session state.
+//  1. GreetingAgent demonstrates using `OutputKey` to save an agent's
+//     final text response directly into the session state.
 func greetingAgentExample(sessionService session.Service) {
 	fmt.Println("--- Running GreetingAgent (output_key) Example ---")
 	ctx := context.Background()
@@ -87,12 +87,13 @@ func greetingAgentExample(sessionService session.Service) {
 	lastGreeting, _ := resp.Session.State().Get("last_greeting")
 	fmt.Printf("State after agent run: last_greeting = %q\n\n", lastGreeting)
 }
+
 // --8<-- [end:greeting]
 
 // --8<-- [start:manual]
-// 2. manualStateUpdateExample demonstrates creating an event with explicit
-//    state changes (a "state_delta") to update multiple keys, including
-//    those with user- and temp- prefixes.
+//  2. manualStateUpdateExample demonstrates creating an event with explicit
+//     state changes (a "state_delta") to update multiple keys, including
+//     those with user- and temp- prefixes.
 func manualStateUpdateExample(sessionService session.Service) {
 	fmt.Println("--- Running Manual State Update (EventActions) Example ---")
 	ctx := context.Background()
@@ -110,9 +111,9 @@ func manualStateUpdateExample(sessionService session.Service) {
 	}
 
 	stateChanges := map[string]any{
-		"task_status":          "active",
-		"user:login_count":     newLoginCount,
-		"user:last_login_ts":   time.Now().Unix(),
+		"task_status":            "active",
+		"user:login_count":       newLoginCount,
+		"user:last_login_ts":     time.Now().Unix(),
 		"temp:validation_needed": true,
 	}
 
@@ -144,11 +145,12 @@ func manualStateUpdateExample(sessionService session.Service) {
 		fmt.Printf("Unexpected temp state value: %v\n\n", temp)
 	}
 }
+
 // --8<-- [end:manual]
 
 // --8<-- [start:context]
-// 3. contextStateUpdateExample demonstrates the recommended way to modify state
-//    from within a tool function using the provided `tool.Context`.
+//  3. contextStateUpdateExample demonstrates the recommended way to modify state
+//     from within a tool function using the provided `tool.Context`.
 func contextStateUpdateExample(sessionService session.Service) {
 	fmt.Println("--- Running Context State Update (ToolContext) Example ---")
 	ctx := context.Background()
@@ -208,6 +210,7 @@ func contextStateUpdateExample(sessionService session.Service) {
 	actionCount, _ := resp.Session.State().Get("user_action_count")
 	fmt.Printf("State after tool run: user_action_count = %v\n", actionCount)
 }
+
 // --8<-- [end:context]
 func main() {
 	ctx := context.Background()

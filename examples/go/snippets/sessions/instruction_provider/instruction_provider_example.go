@@ -37,24 +37,26 @@ const (
 
 // --8<-- [start:bypass_state_injection]
 
-// 1. This InstructionProvider returns a static string.
-//    Because it's a provider function, the ADK will not attempt to inject
-//    state, and the instruction will be passed to the model as-is,
-//    preserving the literal braces.
+//  1. This InstructionProvider returns a static string.
+//     Because it's a provider function, the ADK will not attempt to inject
+//     state, and the instruction will be passed to the model as-is,
+//     preserving the literal braces.
 func staticInstructionProvider(ctx agent.ReadonlyContext) (string, error) {
 	return "This is an instruction with {{literal_braces}} that will not be replaced.", nil
 }
+
 // --8<-- [end:bypass_state_injection]
 
 // --8<-- [start:manual_state_injection]
 
-// 2. This InstructionProvider demonstrates how to manually inject state
-//    while also preserving literal braces. It uses the instructionutil helper.
+//  2. This InstructionProvider demonstrates how to manually inject state
+//     while also preserving literal braces. It uses the instructionutil helper.
 func dynamicInstructionProvider(ctx agent.ReadonlyContext) (string, error) {
 	template := "This is a {adjective} instruction with {{literal_braces}}."
 	// This will inject the 'adjective' state variable but leave the literal braces.
 	return instructionutil.InjectSessionState(ctx, template)
 }
+
 // --8<-- [end:manual_state_injection]
 
 func main() {
@@ -102,7 +104,6 @@ func main() {
 	}
 	runAgent(ctx, sessionService, dynamicAgent, "Explain your instructions.")
 }
-
 
 // Helper function to run an agent and print its response.
 func runAgent(ctx context.Context, ss session.Service, a agent.Agent, prompt string) {
