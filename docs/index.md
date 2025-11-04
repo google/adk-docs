@@ -48,7 +48,7 @@ from simple tasks to complex workflows.
 <p style="text-align:center;">
   <a href="/adk-docs/get-started/python/" class="md-button" style="margin:3px">Start with Python</a>
   <a href="/adk-docs/get-started/java/" class="md-button" style="margin:3px">Start with Java</a>
-  <a href="/adk-docs/get-started/about/" class="md-button" style="margin:3px">Technical overview</a>
+  <a href="/adk-docs/get-started/about/" class="md-button" style="margin:3px">Technical Overview</a>
 </p>
 
 ---
@@ -83,8 +83,8 @@ from simple tasks to complex workflows.
     ---
 
     Equip agents with diverse capabilities: use pre-built tools (Search, Code
-    Exec), create custom functions, integrate 3rd-party libraries (LangChain,
-    CrewAI), or even use other agents as tools.
+    Exec), create custom functions, integrate 3rd-party libraries, or even use
+    other agents as tools.
 
     [**Browse tools**](tools/index.md)
 
