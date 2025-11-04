@@ -1,5 +1,9 @@
 # MCP Toolbox for Databases
 
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
+</div>
+
 [MCP Toolbox for Databases](https://github.com/googleapis/genai-toolbox) is an
 open source MCP server for databases. It was designed with enterprise-grade and
 production-quality in mind. It enables you to develop tools easier, faster, and
