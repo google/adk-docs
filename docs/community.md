@@ -103,7 +103,7 @@ Development Kit community.
       <div class="card-content">
         <div class="type">YouTube Playlist</div>
         <h3>📻️ ADK News - ADK Podcast in Japanese</h3>
-        <p>ADK News is an auto-generated Japanese podcast about ADK, created by an ADK agent. This podcast covers ADK Python/ADK Web commit logs, release notes, and blog posts every Monday, Wednesday, and Friday.</p>
+        <p>An auto-generated Japanese podcast about ADK, created by an ADK agent that covers commit logs, release notes, and blog posts.</p>
       </div>
     </a>
 </div>
