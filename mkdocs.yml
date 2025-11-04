@@ -204,6 +204,7 @@ nav:
     - Evaluation:
       - evaluate/index.md
       - Criteria: evaluate/criteria.md
+      - User Simulation: evaluate/user-sim.md
     - Safety and Security:
       - safety/index.md
   - Components:

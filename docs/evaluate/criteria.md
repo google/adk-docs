@@ -7,15 +7,15 @@
 This page outlines the evaluation criteria provided by ADK to assess agent
 performance, including tool use trajectory, response quality, and safety.
 
-Criterion                                | Description                                               | Reference-Based | Requires Rubrics | LLM-as-a-Judge
-:--------------------------------------- | :-------------------------------------------------------- | :-------------- | :--------------- | :-------------
-`tool_trajectory_avg_score`              | Exact match of tool call trajectory                       | Yes             | No               | No
-`response_match_score`                   | ROUGE-1 similarity to reference response                  | Yes             | No               | No
-`final_response_match_v2`                | LLM-judged semantic match to reference response           | Yes             | No               | Yes
-`rubric_based_final_response_quality_v1` | LLM-judged final response quality based on custom rubrics | No              | Yes              | Yes
-`rubric_based_tool_use_quality_v1`       | LLM-judged tool usage quality based on custom rubrics     | No              | Yes              | Yes
-`hallucinations_v1`                      | LLM-judged groundedness of agent response against context | No              | No               | Yes
-`safety_v1`                              | Safety/harmlessness of agent response                     | No              | No               | Yes
+Criterion                                | Description                                               | Reference-Based | Requires Rubrics | LLM-as-a-Judge | Supports [User Simulation](./user-sim.md)
+:--------------------------------------- | :-------------------------------------------------------- | :-------------- | :--------------- | :------------- | :----------------------------------------
+`tool_trajectory_avg_score`              | Exact match of tool call trajectory                       | Yes             | No               | No             | No
+`response_match_score`                   | ROUGE-1 similarity to reference response                  | Yes             | No               | No             | No
+`final_response_match_v2`                | LLM-judged semantic match to reference response           | Yes             | No               | Yes            | No
+`rubric_based_final_response_quality_v1` | LLM-judged final response quality based on custom rubrics | No              | Yes              | Yes            | No
+`rubric_based_tool_use_quality_v1`       | LLM-judged tool usage quality based on custom rubrics     | No              | Yes              | Yes            | No
+`hallucinations_v1`                      | LLM-judged groundedness of agent response against context | No              | No               | Yes            | Yes
+`safety_v1`                              | Safety/harmlessness of agent response                     | No              | No               | Yes            | Yes
 
 ## tool_trajectory_avg_score
 
