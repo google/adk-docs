@@ -1,6 +1,6 @@
 # Google Cloud Tools
 
-![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java support is planned/ coming soon."}
+
 
 Google Cloud tools make it easier to connect your agents to Google Cloud’s
 products and services. With just a few lines of code you can use these tools to
@@ -16,6 +16,10 @@ connect your agents with:
 ![Google Cloud Tools](../assets/google_cloud_tools.svg)
 
 ## Apigee API Hub Tools
+
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
+</div>
 
 **ApiHubToolset** lets you turn any documented API from Apigee API hub into a
 tool with a few lines of code. This section shows you the step by step
@@ -135,6 +139,10 @@ you only need to follow a subset of these steps.
 ---
 
 ## Application Integration Tools
+
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.3.0</span>
+</div>
 
 With **ApplicationIntegrationToolset**, you can seamlessly give your agents
 secure and governed access to enterprise applications using Integration
