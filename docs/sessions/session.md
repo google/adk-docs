@@ -20,7 +20,7 @@ are its key properties:
 *   **Identification (`id`, `appName`, `userId`):** Unique labels for the
     conversation.
     * `id`: A unique identifier for *this specific* conversation thread, essential for retrieving it later. A SessionService object can handle multiple `Session`(s). This field identifies which particular session object are we referring to. For example, "test_id_modification".
-    * `app_name`: Identifies which agent application this conversation belongs to. For example, "id_modifier_workflow". 
+    * `app_name`: Identifies which agent application this conversation belongs to. For example, "id_modifier_workflow".
     *   `userId`: Links the conversation to a particular user.
 *   **History (`events`):** A chronological sequence of all interactions
     (`Event` objects – user messages, agent responses, tool actions) that have
@@ -39,7 +39,7 @@ are its key properties:
 
        ```py
         from google.adk.sessions import InMemorySessionService, Session
-    
+
         # Create a simple session to examine its properties
         temp_service = InMemorySessionService()
         example_session = await temp_service.create_session(
@@ -70,26 +70,26 @@ are its key properties:
         import com.google.adk.sessions.Session;
         import java.util.concurrent.ConcurrentMap;
         import java.util.concurrent.ConcurrentHashMap;
-    
+
         String sessionId = "123";
         String appName = "example-app"; // Example app name
         String userId = "example-user"; // Example user id
         ConcurrentMap<String, Object> initialState = new ConcurrentHashMap<>(Map.of("newKey", "newValue"));
         InMemorySessionService exampleSessionService = new InMemorySessionService();
-    
+
         // Create Session
         Session exampleSession = exampleSessionService.createSession(
             appName, userId, initialState, Optional.of(sessionId)).blockingGet();
         System.out.println("Session created successfully.");
-    
+
         System.out.println("--- Examining Session Properties ---");
         System.out.printf("ID (`id`): %s%n", exampleSession.id());
         System.out.printf("Application Name (`appName`): %s%n", exampleSession.appName());
         System.out.printf("User ID (`userId`): %s%n", exampleSession.userId());
         System.out.printf("State (`state`): %s%n", exampleSession.state());
         System.out.println("------------------------------------");
-    
-    
+
+
         // Clean up (optional for this example)
         var unused = exampleSessionService.deleteSession(appName, userId, sessionId);
        ```
@@ -97,7 +97,7 @@ are its key properties:
 === "Go"
 
        ```go
-       // --8<-- "examples/go/snippets/sessions/session_management_example/session_management_example.go:examine_session"
+       --8<-- "examples/go/snippets/sessions/session_management_example/session_management_example.go:examine_session"
        ```
 
 *(**Note:** The state shown above is only the initial state. State updates
@@ -139,13 +139,13 @@ the storage backend that best suits your needs:
         where long-term persistence isn't required.
 
     === "Python"
-    
+
            ```py
             from google.adk.sessions import InMemorySessionService
             session_service = InMemorySessionService()
            ```
     === "Java"
-    
+
            ```java
             import com.google.adk.sessions.InMemorySessionService;
             InMemorySessionService exampleSessionService = new InMemorySessionService();
@@ -154,7 +154,7 @@ the storage backend that best suits your needs:
     === "Go"
 
            ```go
-           // --8<-- "examples/go/snippets/sessions/session_management_example/session_management_example.go:in_memory_service"
+           --8<-- "examples/go/snippets/sessions/session_management_example/session_management_example.go:in_memory_service"
            ```
 
 2.  **`VertexAiSessionService`**
@@ -174,7 +174,7 @@ the storage backend that best suits your needs:
         especially when integrating with other Vertex AI features.
 
     === "Python"
-    
+
            ```py
            # Requires: pip install google-adk[vertexai]
            # Plus GCP setup and authentication
@@ -189,9 +189,9 @@ the storage backend that best suits your needs:
            # Use REASONING_ENGINE_APP_NAME when calling service methods, e.g.:
            # session_service = await session_service.create_session(app_name=REASONING_ENGINE_APP_NAME, ...)
            ```
-       
+
     === "Java"
-    
+
            ```java
            // Please look at the set of requirements above, consequently export the following in your bashrc file:
            // export GOOGLE_CLOUD_PROJECT=my_gcp_project
@@ -217,7 +217,7 @@ the storage backend that best suits your needs:
     === "Go"
 
            ```go
-           // --8<-- "examples/go/snippets/sessions/session_management_example/session_management_example.go:vertexai_service"
+           --8<-- "examples/go/snippets/sessions/session_management_example/session_management_example.go:vertexai_service"
            ```
 
 3.  **`DatabaseSessionService`**

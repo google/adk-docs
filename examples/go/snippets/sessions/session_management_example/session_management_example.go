@@ -32,33 +32,33 @@ func main() {
 	// --- SessionService Implementations ---
 
 	// --8<-- [start:in_memory_service]
-	// 1. InMemorySessionService
+	// 1. InMemoryService
 	// Stores all session data directly in the application's memory.
 	// All conversation data is lost if the application restarts.
 	inMemoryService := session.InMemoryService()
-	fmt.Println("Initialized InMemorySessionService.")
+	fmt.Println("Initialized InMemoryService.")
 	// --8<-- [end:in_memory_service]
 
 	// --8<-- [start:vertexai_service]
-	// 2. VertexAiSessionService
+	// 2. VertexAIService
 	// Uses Google Cloud Vertex AI for persistent, scalable session management.
-	// Requires a Google Cloud project and an Agent Engine ID.
-	// Before running, ensure your environment is authenticated and variables are set:
-	// export GOOGLE_API_KEY="your-express-mode-api-key"
+	// Requires a Google Cloud project.
+	// Before running, ensure your environment is authenticated:
+	// gcloud auth application-default login
 	// export GOOGLE_CLOUD_PROJECT="your-gcp-project-id"
 	// export GOOGLE_CLOUD_LOCATION="your-gcp-location"
-	agentEngineID := "your-reasoning-engine-id" // Replace with your actual Agent Engine ID
-	vertexService, err := session.VertexAIService(ctx, agentEngineID)
+	modelName := "gemini-1.5-flash-001" // Replace with your desired model
+	vertexService, err := session.VertexAIService(ctx, modelName)
 	if err != nil {
-		log.Printf("Could not initialize VertexAiSessionService (this is expected if GOOGLE_API_KEY is not set): %v", err)
+		log.Printf("Could not initialize VertexAIService (this is expected if the gcloud project is not set): %v", err)
 	} else {
-		fmt.Println("Successfully initialized VertexAiSessionService.")
+		fmt.Println("Successfully initialized VertexAIService.")
 	}
 	// --8<-- [end:vertexai_service]
 	_ = vertexService // Avoid unused variable error if initialization fails.
 
 	// --- Examining Session Properties ---
-	// We'll use the InMemorySessionService for this demonstration.
+	// We'll use the InMemoryService for this demonstration.
 	// --8<-- [start:examine_session]
 	appName := "my_go_app"
 	userID := "example_go_user"
