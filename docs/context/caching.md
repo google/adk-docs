@@ -53,10 +53,10 @@ all agents within your app.
     for very small requests where the performance benefit would be negligible.
     Defaults to `0`.
 -   **`ttl_seconds`** (int): The time-to-live (TTL) for the cache in seconds.
-    This setting determines how long the cached content is be stored before it's
+    This setting determines how long the cached content is stored before it is
     refreshed. Defaults to `1800` (30 minutes).
 -   **`cache_intervals`** (int): The maximum number of times the same cached
-    content can be used before it's refreshed. This setting allows you to
+    content can be used before it expires. This setting allows you to
     control how frequently the cache is updated, even if the TTL has not
     expired. Defaults to `10`.
 
