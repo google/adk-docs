@@ -1,7 +1,7 @@
 # User Simulation
 
 <div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.18.0</span>
 </div>
 
 When evaluating conversational agents, it is not always practical to use a fixed
