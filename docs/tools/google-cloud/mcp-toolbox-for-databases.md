@@ -116,7 +116,7 @@ root_agent = Agent(
 ## Go SDK
 
 ADK relies on the `mcp-toolbox-sdk-go` go module to use Toolbox. Install the
-package before getting started:
+module before getting started:
 
 ```shell
 go get github.com/googleapis/mcp-toolbox-sdk-go
@@ -128,6 +128,8 @@ Once you’re Toolbox server is configured and up and running, you can load tool
 from your server using ADK:
 
 ```go
+package main
+
 import (
 	"context"
 	"fmt"
