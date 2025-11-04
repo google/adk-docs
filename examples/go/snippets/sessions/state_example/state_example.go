@@ -71,7 +71,11 @@ func greetingAgentExample(sessionService session.Service) {
 			continue
 		}
 		if isFinalResponse(event) {
-			fmt.Println("Agent responded.")
+			if event.LLMResponse != nil && event.LLMResponse.Content != nil {
+				fmt.Printf("Agent responded with: %q\n", textParts(event.LLMResponse.Content))
+			} else {
+				fmt.Println("Agent responded.")
+			}
 		}
 	}
 
