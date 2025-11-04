@@ -86,6 +86,32 @@ websites.
     )
     ```
 
+## Example usage
+
+Once your agent is set up and running, you can interact with it through the
+command-line interface or web interface. Here's a simple example:
+
+**Sample agent prompt:**
+
+> Find all documentation pages on tavily.com and provide instructions on how to get started with Tavily
+
+The agent automatically calls multiple Tavily tools to provide comprehensive
+answers, making it easy to explore websites and gather information without
+manual navigation:
+
+<img src="../../../assets/tools-tavily-screenshot.png">
+
+## Available tools
+
+Once connected, your agent gains access to Tavily's web intelligence tools:
+
+Tool <img width="100px"/> | Description
+---- | -----------
+`tavily-search` | Execute a search query to find relevant information across the web.
+​`tavily-extract` | Extract structured data from any web page. Extract text, links, and images from single pages or batch process multiple URLs efficiently.
+​`tavily-map` | Traverses websites like a graph and can explore hundreds of paths in parallel with intelligent discovery to generate comprehensive site maps.
+​`tavily-crawl` | Traversal tool that can explore hundreds of paths in parallel with built-in extraction and intelligent discovery.
+
 ## Additional resources
 
 - [Tavily MCP Server Documentation](https://docs.tavily.com/documentation/mcp)
