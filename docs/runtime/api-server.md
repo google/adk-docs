@@ -1,5 +1,9 @@
 # Use the API Server
 
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+</div>
+
 Before you deploy your agent, you should test it to ensure that it is working as
 intended. The easiest way to test your agent in your development environment is
 to use the ADK API server.

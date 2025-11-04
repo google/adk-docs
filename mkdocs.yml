@@ -18,6 +18,7 @@ copyright: Copyright Google 2025&nbsp;&nbsp;|&nbsp;&nbsp;<a href="//policies.goo
 # Custom CSS
 extra_css:
   - stylesheets/custom.css
+  - stylesheets/language-tags.css
 
 extra:
   first_repo_url: https://github.com/google/adk-python

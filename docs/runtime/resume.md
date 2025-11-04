@@ -1,5 +1,9 @@
 # Resume stopped agents
 
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.14.0</span>
+</div>
+
 An ADK agent's execution can be interrupted by various factors including
 dropped network connections, power failure, or a required external system going
 offline. The Resume feature of ADK allows an agent workflow to pick up where it

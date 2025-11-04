@@ -1,19 +1,18 @@
-# Bidi-streaming(live) in ADK
+# Bidi-streaming (live) in ADK
 
-!!! warning
-
-    This is an experimental feature. Currrently available in Python.
-
-!!! info
-
-    This is different from server-side streaming or token-level streaming. 
-    Token-level streaming is a one-way process where a language model generates a response and sends it back to the user one token at a time. This creates a "typing" effect, giving the impression of an immediate response and reducing the time it takes to see the start of the answer. The user sends their full prompt, the model processes it, and then the model begins to generate and send back the response piece by piece. This section is for bidi-streaming (live).
-    
-Bidi-streaming (live) in ADK adds the low-latency bidirectional voice and video interaction
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.5.0</span><span class="lst-preview">Experimental</span>
+</div>
+  
+Bidirectional (Bidi) streaming (live) in ADK adds the low-latency bidirectional voice and video interaction
 capability of [Gemini Live API](https://ai.google.dev/gemini-api/docs/live) to
 AI agents.
 
-With bidi-streaming (live) mode, you can provide end users with the experience of natural,
+!!! example "Experimental preview release"
+
+    The Bidirectional (Bidi) streaming feature is experimental.
+
+With bidi-streaming, or live, mode, you can provide end users with the experience of natural,
 human-like voice conversations, including the ability for the user to interrupt
 the agent's responses with voice commands. Agents with streaming can process
 text, audio, and video inputs, and they can provide text and audio output.
@@ -31,6 +30,11 @@ text, audio, and video inputs, and they can provide text and audio output.
     </div>
   </div>
 </div>
+
+!!! info
+
+    This is different from server-side streaming or token-level streaming. 
+    Token-level streaming is a one-way process where a language model generates a response and sends it back to the user one token at a time. This creates a "typing" effect, giving the impression of an immediate response and reducing the time it takes to see the start of the answer. The user sends their full prompt, the model processes it, and then the model begins to generate and send back the response piece by piece. This section is for bidi-streaming (live).
 
 <div class="grid cards" markdown>
 
