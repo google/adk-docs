@@ -79,7 +79,9 @@ documentation:
 * [Installing the Server](https://googleapis.github.io/genai-toolbox/getting-started/introduction/#installing-the-server)
 * [Configuring Toolbox](https://googleapis.github.io/genai-toolbox/getting-started/configure/)
 
-## Install client SDK for ADK
+## Install Client SDK for ADK
+
+## Python SDK
 
 ADK relies on the `toolbox-core` python package to use Toolbox. Install the
 package before getting started:
@@ -88,7 +90,7 @@ package before getting started:
 pip install toolbox-core
 ```
 
-## Loading Toolbox Tools
+### Loading Toolbox Tools
 
 Once you’re Toolbox server is configured and up and running, you can load tools
 from your server using ADK:
@@ -109,6 +111,65 @@ root_agent = Agent(
     tools=tools # Provide the list of tools to the Agent
 
 )
+```
+
+## Go SDK
+
+ADK relies on the `mcp-toolbox-sdk-go` go module to use Toolbox. Install the
+package before getting started:
+
+```shell
+go get github.com/googleapis/mcp-toolbox-sdk-go
+```
+
+### Loading Toolbox Tools
+
+Once you’re Toolbox server is configured and up and running, you can load tools
+from your server using ADK:
+
+```go
+import (
+	"context"
+	"fmt"
+
+	"github.com/googleapis/mcp-toolbox-sdk-go/tbadk"
+	"google.golang.org/adk/agent/llmagent"
+)
+
+func main() {
+
+  toolboxClient, err := tbadk.NewToolboxClient("https://127.0.0.1:5000")
+	if err != nil {
+		log.Fatalf("Failed to create MCP Toolbox client: %v", err)
+	}
+
+  // Load a specific set of tools
+  toolboxtools, err := toolboxClient.LoadToolset("my-toolset-name", ctx)
+  if err != nil {
+    return fmt.Sprintln("Could not load Toolbox Toolset", err)
+  }
+
+  toolsList := make([]tool.Tool, len(toolboxtools))
+    for i := range toolboxtools {
+      toolsList[i] = &toolboxtools[i]
+    }
+
+  llmagent, err := llmagent.New(llmagent.Config{
+    ...,
+    Tools:       toolsList,
+  })
+
+  // Load a single tool
+  tool, err := client.LoadTool("my-tool-name", ctx)
+  if err != nil {
+    return fmt.Sprintln("Could not load Toolbox Tool", err)
+  }
+
+  llmagent, err := llmagent.New(llmagent.Config{
+    ...,
+    Tools:       []tool.Tool{&toolboxtool},
+  })
+}
 ```
 
 ## Advanced Toolbox Features
