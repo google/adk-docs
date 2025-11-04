@@ -22,8 +22,6 @@ my_agent/
 
         ```console
         mkdir my_agent\
-        # switch to UTF-8 encoding:
-        chcp 65001 > nul
         type nul > my_agent\agent.go
         type nul > my_agent\env.bat
         ```
@@ -75,16 +73,14 @@ func main() {
 
   // mock tool implementation
   type Input struct {
-    City string `json:"city"`
+    City string `json:"city"`,
   }
   type Output struct {
-    City string `json:"city"`
-    Time string `json:"time"`
+    City string `json:"city"`, Time string `json:"time"`,
   }
   handler := func(ctx tool.Context, input Input) Output {
     return Output{
-      City: input.City,
-      Time: "10:30am",
+      City: input.City, Time: "10:30am",
     }
   }
   getCurrentTime, err := functiontool.New(functiontool.Config{
@@ -107,6 +103,16 @@ func main() {
   if err != nil {
     log.Fatalf("Failed to create agent: %v", err)
   }
+
+  config := &adk.Config{
+    AgentLoader: services.NewSingleAgentLoader(agent),
+  }
+  l := full.NewLaucher("hello_time_agent")
+  err = l.ParseAndRun(ctx, config, os.Args[1:], universal.ErrorOnUnparsedArgs)
+  if err != nil {
+          log.Fatalf("run failed: %v\n\n%s", err, l.FormatSyntax())
+  }
+
 }
 ```
 
