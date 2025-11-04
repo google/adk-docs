@@ -18,6 +18,7 @@ copyright: Copyright Google 2025&nbsp;&nbsp;|&nbsp;&nbsp;<a href="//policies.goo
 # Custom CSS
 extra_css:
   - stylesheets/custom.css
+  - stylesheets/language-tags.css
 
 extra:
   first_repo_url: https://github.com/google/adk-python
@@ -74,6 +75,7 @@ theme:
     - navigation.instant
     - navigation.instant.progress
     - navigation.path
+    - navigation.sections
     - navigation.top
     - navigation.tracking
     - toc.follow
@@ -113,12 +115,16 @@ plugins:
   - search
   - redirects:
       redirect_maps:
-        'get-started/local-testing.md': 'get-started/testing.md'
+        'get-started/local-testing.md': 'runtime/api-server.md'
         'get-started/tutorial.md': 'tutorials/index.md'
         'guides/responsible-agents.md': 'safety/index.md'
-        'tools/third-party-tools.md': tools/third-party/index.md
-        'tools/third-party/openapi-tools.md': tools-custom/openapi-tools.md
-        'tools/openapi-tools.md': tools-custom/openapi-tools.md
+        'tools/third-party-tools.md': 'tools/third-party/index.md'
+        'tools/third-party/openapi-tools.md': 'tools-custom/openapi-tools.md'
+        'tools/openapi-tools.md': 'tools-custom/openapi-tools.md'
+        'tutorials/ag-ui.md': 'tools/third-party/ag-ui.md'
+        'tools/third-party/langchain.md': 'tools/index.md'
+        'tools/third-party/crewai.md': 'tools/index.md'
+        'get-started/testing.md': 'runtime/api-server.md'
 
 # Navigation
 nav:
@@ -163,11 +169,13 @@ nav:
       - Code Execution with Agent Engine: tools/google-cloud/code-exec-agent-engine.md
     - Third-party tools:
       - tools/third-party/index.md
+      - Exa: tools/third-party/exa.md
+      - Firecrawl: tools/third-party/firecrawl.md
       - GitHub: tools/third-party/github.md
       - Hugging Face: tools/third-party/hugging-face.md
+      - Notion: tools/third-party/notion.md
       - Tavily: tools/third-party/tavily.md
-      - LangChain tools: tools/third-party/langchain.md
-      - CrewAI tools: tools/third-party/crewai.md
+      - Agentic UI (AG-UI): tools/third-party/ag-ui.md
   - Custom Tools:
     - tools-custom/index.md
     - Function tools:
