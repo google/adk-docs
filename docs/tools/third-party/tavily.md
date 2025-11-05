@@ -2,9 +2,9 @@
 
 The [Tavily MCP Server](https://github.com/tavily-ai/tavily-mcp) connects your
 ADK agent to Tavily's AI-focused search, extraction, and crawling platform. This
-gives your agent the ability to perform real-time web searches, intelligently
-extract specific data from web pages, and crawl or create structured maps of
-websites.
+tool gives your agent the ability to perform real-time web searches,
+intelligently extract specific data from web pages, and crawl or create
+structured maps of websites.
 
 ## Use cases
 
@@ -19,7 +19,7 @@ websites.
 
 ## Prerequisites
 
-- [Sign up for a Tavily account](https://app.tavily.com/) to obtain an API key.
+- Sign up for a [Tavily account](https://app.tavily.com/) to obtain an API key.
   Refer to the
   [documentation](https://docs.tavily.com/documentation/quickstart) for more
   information.
