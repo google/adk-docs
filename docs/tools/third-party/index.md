@@ -75,7 +75,7 @@ Check out the following third-party tools that you can use with ADK agents:
     </div>
     <div class="tool-card-content">
       <h3>Tavily</h3>
-      <p>Search engine optimized for LLMs</p>
+      <p>Provides real-time web search, extraction, and crawling tools</p>
     </div>
   </a>
 
