@@ -56,21 +56,27 @@ Next, we can create our Agent Engine instance. You can use the Gen AI SDK.
 
 ## Managing Sessions with a `VertexAiSessionService`
 
-[`VertexAiSessionService`](session.md###sessionservice-implementations) is compatible with Vertex AI Express mode API Keys. We can 
-instead initialize the session object without any project or location.
+[`VertexAiSessionService`](session.md###sessionservice-implementations) is compatible with Vertex AI Express mode API Keys. You can initialize the session service by passing your Express Mode API key directly to the constructor, or by setting the `GOOGLE_API_KEY` environment variable.
 
 ```py
 # Requires: pip install google-adk[vertexai]
-# Plus environment variable setup:
-# GOOGLE_GENAI_USE_VERTEXAI=TRUE
-# GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_EXPRESS_MODE_API_KEY_HERE
 from google.adk.sessions import VertexAiSessionService
 
 # The app_name used with this service should be the Reasoning Engine ID or name
 APP_ID = "your-reasoning-engine-id"
 
-# Project and location are not required when initializing with Vertex Express Mode
-session_service = VertexAiSessionService(agent_engine_id=APP_ID)
+# Option 1: Pass the API key directly to the constructor
+session_service = VertexAiSessionService(
+    agent_engine_id=APP_ID,
+    express_mode_api_key="PASTE_YOUR_ACTUAL_EXPRESS_MODE_API_KEY_HERE"
+)
+
+# Option 2: Set the GOOGLE_API_KEY environment variable
+# GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_EXPRESS_MODE_API_KEY_HERE
+# GOOGLE_GENAI_USE_VERTEXAI=TRUE
+#
+# session_service = VertexAiSessionService(agent_engine_id=APP_ID)
+
 # Use REASONING_ENGINE_APP_ID when calling service methods, e.g.:
 # session = await session_service.create_session(app_name=REASONING_ENGINE_APP_ID, user_id= ...)
 ```
