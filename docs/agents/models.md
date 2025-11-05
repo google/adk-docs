@@ -252,7 +252,7 @@ public class DirectAnthropicAgent {
 }
 ```
 
-## Using Gemini Models (Vertex/Gemini API) via Apigee
+## Using Apigee gateway for AI models
 
 <div class="language-support-tag">
    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.18.0</span>
