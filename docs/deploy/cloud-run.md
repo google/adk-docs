@@ -1,7 +1,7 @@
 # Deploy to Cloud Run
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-java">Java</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-go">Go</span><span class="lst-java">Java</span>
 </div>
 
 [Cloud Run](https://cloud.google.com/run)
@@ -21,6 +21,19 @@ To proceed, confirm that your agent code is configured as follows:
     2. Your agent variable is named `root_agent`.
     3. `__init__.py` is within your agent directory and contains `from . import agent`.
     4. Your `requirements.txt` file is present in the agent directory.
+
+=== "Go"
+
+    1. Your application's entry point (the main package and main() function) is in a
+       single Go file. Using main.go is a strong convention.
+    2. Your agent instance is passed to a launcher configuration, typically using
+       services.NewSingleAgentLoader(agent). The adkgo tool uses this launcher to start
+       your agent with the correct services.
+    3. Your go.mod and go.sum files are present in your project directory to manage
+       dependencies.
+
+   Refer to the following section for more details. You can also find a [sample app](https://github.com/google/adk-docs/tree/main/examples/go/cloud-run) in the Github
+  repo.
 
 === "Java"
 
@@ -51,6 +64,31 @@ export GOOGLE_GENAI_USE_VERTEXAI=FALSE
 export GOOGLE_API_KEY=your-api-key
 ```
 *(Replace `your-project-id` with your actual GCP project ID and `your-api-key` with your actual API key from AI Studio)*
+
+## Prerequisites
+
+1. You should have a Google Cloud project. You need to know your:
+    1. Project name (i.e. "my-project")
+    1. Project location (i.e. "us-central1")
+    1. Service account (i.e. "1234567890-compute@developer.gserviceaccount.com")
+    1. GOOGLE_API_KEY 
+
+## Secret
+
+Please make sure you have created a secret which can be read by your service account.
+
+### Entry for GOOGLE_API_KEY secret
+
+You can create your secret manually or use CLI:
+```bash
+echo "<<put your GOOGLE_API_KEY here>>" | gcloud secrets create GOOGLE_API_KEY --project=my-project --data-file=-
+```
+
+### Permissions to read
+You should give appropiate permissision for you service account to read this secret.
+```bash
+gcloud secrets add-iam-policy-binding GOOGLE_API_KEY --member="serviceAccount:1234567890-compute@developer.gserviceaccount.com" --role="roles/secretmanager.secretAccessor" --project=my-project
+```
 
 ## Deployment payload {#payload}
 
@@ -141,7 +179,7 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
     * Enter `y` to allow public access to your agent's API endpoint without authentication.
     * Enter `N` (or press Enter for the default) to require authentication (e.g., using an identity token as shown in the "Testing your agent" section).
 
-    Upon successful execution, the command will deploy your agent to Cloud Run and provide the URL of the deployed service.
+    Upon successful execution, the command deploys your agent to Cloud Run and provide the URL of the deployed service.
 
 === "Python - gcloud CLI"
 
@@ -376,6 +414,99 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
 
     For a full list of deployment options, see the [`gcloud run deploy` reference documentation](https://cloud.google.com/sdk/gcloud/reference/run/deploy).
 
+=== "Go - adkgo CLI"
+
+    ### adk CLI
+
+    The adkgo command is located in the google/adk-go repository under cmd/adkgo. Before using it, you need to build it from the root of the adk-go repository:
+
+    `go build ./cmd/adkgo`
+
+    The adkgo deploy cloudrun command automates the deployment of your application. You do not need to provide your own Dockerfile.
+
+    #### Agent Code Structure
+
+    When using the adkgo tool, your main.go file must use the launcher framework. This is because the tool compiles your code and then runs the resulting executable with specific command-line arguments (like web, api, a2a) to start the required services. The launcher is designed to parse these arguments correctly.
+
+    Your main.go should look like this:
+
+    ```go title="main.go"
+    --8<-- "examples/go/cloud-run/main.go"
+    ```
+
+    #### How it Works
+    1. The adkgo tool compiles your main.go into a statically linked binary for Linux.
+    2. It generates a Dockerfile that copies this binary into a minimal container.
+    3. It uses gcloud to build and deploy this container to Cloud Run.
+    4. After deployment, it starts a local proxy that securely connects to your new
+        service.
+
+    Ensure you have authenticated with Google Cloud (`gcloud auth login` and `gcloud config set project <your-project-id>`).
+
+    #### Setup environment variables
+
+    Optional but recommended: Setting environment variables can make the deployment commands cleaner.
+
+    ```bash
+    # Set your Google Cloud Project ID
+    export GOOGLE_CLOUD_PROJECT="your-gcp-project-id"
+
+    # Set your desired Google Cloud Location
+    export GOOGLE_CLOUD_LOCATION="us-central1"
+
+    # Set the path to your agent's main Go file
+    export AGENT_PATH="./examples/go/cloud-run/main.go"
+
+    # Set a name for your Cloud Run service
+    export SERVICE_NAME="capital-agent-service"
+    ```
+
+    #### Command usage
+
+    ```bash
+    ./adkgo deploy cloudrun \
+        -p $GOOGLE_CLOUD_PROJECT \
+        -r $GOOGLE_CLOUD_LOCATION \
+        -s $SERVICE_NAME \
+        --proxy_port=8081 \
+        --server_port=8080 \
+        -e $AGENT_PATH \
+        --a2a --api --webui
+    ```
+
+    ##### Arguments
+
+    * -p, --project_name TEXT: (Required) Your Google Cloud project ID (e.g.,
+        $GOOGLE_CLOUD_PROJECT).
+    * -r, --region TEXT: (Required) The Google Cloud location for deployment (e.g.,
+        $GOOGLE_CLOUD_LOCATION, us-central1).
+    * -s, --service_name TEXT: (Required) The name for the Cloud Run service (e.g.,
+        $SERVICE_NAME).
+    * -e, --entry_point_path TEXT: (Required) Path to the main Go file containing your
+        agent's source code (e.g., $AGENT_PATH).
+
+    ##### Options
+
+    * --proxy_port INTEGER: (Optional) The local port for the authenticating proxy to
+        listen on. Defaults to 8081.
+    * --server_port INTEGER: (Optional) The port number the server will listen on
+        within the Cloud Run container. Defaults to 8080.
+    * --a2a: (Optional) If included, enables Agent-to-Agent communication. Enabled by
+        default.
+    * --a2a_agent_url: (Optional) A2A agent card URL as advertised in the public agent card. This flag is only valid when   
+        used with the --a2a flag.
+    * --api: (Optional) If included, deploys the ADK API server. Enabled by default.
+    * --webui: (Optional) If included, deploys the ADK dev UI alongside the agent API
+        server. Enabled by default.
+    * --temp_dir TEXT: (Optional) Temp directory for build artifacts. Defaults to
+        os.TempDir().
+    * --help: Show the help message and exit.
+
+    ##### Authenticated access
+    The service is deployed with --no-allow-unauthenticated by default.
+
+    Upon successful execution, the command deploys your agent to Cloud Run and provide a local URL to access the service through the proxy.
+
 ## Testing your agent
 
 Once your agent is deployed to Cloud Run, you can interact with it via the deployed UI (if enabled) or directly with its API endpoints using tools like `curl`. You'll need the service URL provided after deployment.
@@ -386,7 +517,7 @@ Once your agent is deployed to Cloud Run, you can interact with it via the deplo
 
     If you deployed your agent with the UI enabled:
 
-    *   **adk CLI:** You included the `--with_ui` flag during deployment.
+    *   **adk CLI:** You included the `--webui` flag during deployment.
     *   **gcloud CLI:** You set `SERVE_WEB_INTERFACE = True` in your `main.py`.
 
     You can test your agent by simply navigating to the Cloud Run service URL provided after deployment in your web browser.
