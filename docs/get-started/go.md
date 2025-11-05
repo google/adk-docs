@@ -13,7 +13,7 @@ Create an agent project with the following files and directory structure:
 my_agent/
     agent.go    # main agent code
     go.mod      # module configuration
-    .env        # API keys or project IDs
+    .env         # API keys or project IDs
 ```
 
 ??? tip "Create this project structure using the command line"
