@@ -19,7 +19,7 @@ agent workflows, including the following capabilities:
 ## Add Reflect and Retry Plugin
 
 Add this plugin to your ADK workflow by adding it to the plugins setting of your
-App object, as shown below:
+ADK project's App object, as shown below:
 
 ```python
 from google.adk.apps.app import App
@@ -72,12 +72,11 @@ class CustomRetryPlugin(ReflectAndRetryToolPlugin):
 error_handling_plugin = CustomRetryPlugin(max_retries=5)
 ```
 
-For a complete implementation of this sample, see the
-[Basic sample](https://github.com/google/adk-python/tree/main/contributing/samples/plugin_reflect_tool_retry/basic).
-
 ## Next steps
 
 For complete code samples using the Reflect and Retry plugin, see the following: 
 
-*   [Basic](https://github.com/google/adk-python/tree/main/contributing/samples/plugin_reflect_tool_retry/basic) code sample
-*   [Hallucinating function name](https://github.com/google/adk-python/tree/main/contributing/samples/plugin_reflect_tool_retry/hallucinating_func_name) code sample
+*   [Basic](https://github.com/google/adk-python/tree/main/contributing/samples/plugin_reflect_tool_retry/basic)
+    code sample
+*   [Hallucinating function name](https://github.com/google/adk-python/tree/main/contributing/samples/plugin_reflect_tool_retry/hallucinating_func_name)
+    code sample
