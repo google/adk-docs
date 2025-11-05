@@ -187,6 +187,43 @@ For deployed applications, a service account is the standard method.
 !!!warning "Secure Your Credentials"
     Service account credentials or API keys are powerful credentials. Never expose them publicly. Use a secret manager like [Google Secret Manager](https://cloud.google.com/secret-manager) to store and access them securely in production.
 
+## Using Models via Apigee
+
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.18.0</span>
+</div>
+
+If your organization uses Apigee to manage and secure access to LLMs, you can use the `ApigeeLlm` model to connect your ADK agents to an Apigee proxy. This allows you to leverage Apigee's API management capabilities, such as authentication, rate limiting, and analytics, for your agent's model interactions.
+
+**Integration Method:** To use a model fronted by an Apigee proxy, you specify the model name with the `apigee/` prefix.
+
+**Setup:**
+
+1.  **Apigee Proxy:** Ensure you have an Apigee proxy configured to forward requests to your desired LLM.
+2.  **Environment Variables:** Configure the following environment variables to connect to your Apigee proxy:
+    *   `APIGEE_HOST`: The hostname of your Apigee environment.
+    *   `APIGEE_DEPLOYMENT`: The name of your Apigee proxy deployment.
+    *   `APIGEE_API_KEY`: The API key for your Apigee proxy.
+
+**Example:**
+
+```python
+from google.adk.agents import LlmAgent
+
+# --- Example Agent using a model via an Apigee proxy ---
+
+# The model name is prefixed with "apigee/"
+# The rest of the model name is passed to the Apigee proxy
+# to identify the target LLM
+agent_apigee = LlmAgent(
+    model="apigee/gemini-2.5-flash",
+    name="apigee_agent",
+    instruction="You are a helpful assistant.",
+)
+```
+
+In this example, when the `agent_apigee` agent runs, it will send its model requests to the Apigee proxy specified by the environment variables. The proxy will then forward the requests to the `gemini-2.5-flash` model.
+
 ## Using Anthropic models
 
 <div class="language-support-tag" title="Available for Java. Python support for direct Anthropic API (non-Vertex) is via LiteLLM.">
