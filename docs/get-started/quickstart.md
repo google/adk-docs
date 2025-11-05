@@ -234,12 +234,12 @@ agent will be unable to function.
 
         !!! success "Authentication Setup for Vertex AI Users"
             If you selected **"Gemini - Google Cloud Vertex AI"** in the previous step, you must authenticate with Google Cloud before launching the dev UI.
-            
+
             Run this command and follow the prompts:
             ```bash
             gcloud auth application-default login
             ```
-            
+
             **Note:** Skip this step if you're using "Gemini - Google AI Studio".
 
         Run the following command to launch the **dev UI**.
@@ -247,7 +247,7 @@ agent will be unable to function.
         ```shell
         adk web
         ```
-        
+
         !!!info "Note for Windows users"
 
             When hitting the `_make_subprocess_transport NotImplementedError`, consider using `adk web --no-reload` instead.
@@ -310,7 +310,7 @@ agent will be unable to function.
             ```shell
             echo "Please start by listing files" | adk run file_listing_agent
             ```
-            
+
         Run the following command, to chat with your Weather agent.
 
         ```
@@ -330,7 +330,7 @@ agent will be unable to function.
         ![adk-api-server.png](../assets/adk-api-server.png)
 
         To learn how to use `adk api_server` for testing, refer to the
-        [documentation on testing](testing.md).
+        [documentation on using the API server](/adk-docs/runtime/api-server/).
 
 === "Java"
 

@@ -1,6 +1,10 @@
 # Model Context Protocol Tools
 
- This guide walks you through two ways of integrating Model Context Protocol (MCP) with ADK.
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+</div>
+
+This guide walks you through two ways of integrating Model Context Protocol (MCP) with ADK.
 
 ## What is Model Context Protocol (MCP)?
 
@@ -794,7 +798,6 @@ When working with MCP and ADK, keep these points in mind:
 
     * ADK Tools (BaseTool, FunctionTool, AgentTool, etc.) are Python objects designed for direct use within the ADK's LlmAgent and Runner.
     * MCP Tools are capabilities exposed by an MCP Server according to the protocol's schema. MCPToolset makes these look like ADK tools to an LlmAgent.
-    * Langchain/CrewAI Tools are specific implementations within those libraries, often simple functions or classes, lacking the server/protocol structure of MCP. ADK offers wrappers (LangchainTool, CrewaiTool) for some interoperability.
 
 * **Asynchronous nature:** Both ADK and the MCP Python library are heavily based on the asyncio Python library. Tool implementations and server handlers should generally be async functions.
 
@@ -978,9 +981,9 @@ def create_mcp_server():
 def main(port: int = 8080, json_response: bool = False):
     """Main server function."""
     logging.basicConfig(level=logging.INFO)
-    
+
     app = create_mcp_server()
-    
+
     # Create session manager with stateless mode for scalability
     session_manager = StreamableHTTPSessionManager(
         app=app,
@@ -1051,7 +1054,7 @@ spec:
         env:
         - name: MCP_SERVER_URL
           value: "http://localhost:8081"
-      
+
       # MCP server sidecar
       - name: mcp-server
         image: your-mcp-server:latest
@@ -1066,7 +1069,7 @@ spec:
 - **Cons:** Process overhead, not suitable for high-scale deployments
 - **Best for:** Development, single-tenant deployments, simple MCP servers
 
-#### SSE/HTTP Connections  
+#### SSE/HTTP Connections
 - **Pros:** Network-based, scalable, can handle multiple clients
 - **Cons:** Requires network infrastructure, authentication complexity
 - **Best for:** Production deployments, multi-tenant systems, external MCP services
@@ -1175,7 +1178,7 @@ MCPToolset(
    ```python
    # Test remote MCP connectivity
    import aiohttp
-   
+
    async def test_mcp_connection():
        async with aiohttp.ClientSession() as session:
            async with session.get('https://your-mcp-server.com/health') as resp:
