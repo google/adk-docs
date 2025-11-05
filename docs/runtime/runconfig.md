@@ -110,8 +110,9 @@ The `RunConfig` class holds configuration parameters for an agent's runtime beha
 
 ### `speech_config`
 
-!!! note "Go ADK"
-    This feature is not available in the Go ADK.
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+</div>
 
 !!! Note
     The interface or definition of `SpeechConfig` is the same, irrespective of the language.
@@ -168,8 +169,9 @@ how your agent sounds when speaking.
 
 ### `response_modalities`
 
-!!! note "Go ADK"
-    This feature is not available in the Go ADK.
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+</div>
 
 Defines the output modalities for the agent. If not set, defaults to AUDIO.
 Response modalities determine how the agent communicates with users through
@@ -177,11 +179,19 @@ various channels (e.g., text, audio).
 
 ### `save_input_blobs_as_artifacts`
 
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-go">Go v0.1.0</span>
+</div>
+
 When enabled, input blobs will be saved as artifacts during agent execution.
 This is useful for debugging and audit purposes, allowing developers to review
 the exact data received by agents.
 
 ### `support_cfc`
+
+<div class="language-support-tag" title="This feature is an experimental preview release.">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-preview">Experimental</span>
+</div>
 
 Enables Compositional Function Calling (CFC) support. Only applicable when using
 StreamingMode.SSE. When enabled, the LIVE API will be invoked as only it
@@ -194,6 +204,10 @@ supports CFC functionality.
 
 ### `streaming_mode`
 
+<div class="language-support-tag" title="This feature is an experimental preview release.">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span>
+</div>
+
 Configures the streaming behavior of the agent. Possible values:
 
 * `StreamingMode.NONE`: No streaming; responses delivered as complete units
@@ -204,8 +218,9 @@ Streaming modes affect both performance and user experience. SSE streaming lets 
 
 ### `output_audio_transcription`
 
-!!! note "Go ADK"
-    This feature is not available in the Go ADK.
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+</div>
 
 Configuration for transcribing audio outputs from live agents with audio
 response capability. This enables automatic transcription of audio responses for
@@ -213,8 +228,9 @@ accessibility, record-keeping, and multi-modal applications.
 
 ### `max_llm_calls`
 
-!!! note "Go ADK"
-    This feature is not available in the Go ADK.
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+</div>
 
 Sets a limit on the total number of LLM calls for a given agent run.
 
