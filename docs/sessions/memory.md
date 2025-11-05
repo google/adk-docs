@@ -36,10 +36,25 @@ The ADK offers two distinct `MemoryService` implementations, each tailored to di
 
 The `InMemoryMemoryService` stores session information in the application's memory and performs basic keyword matching for searches. It requires no setup and is best for prototyping and simple testing scenarios where persistence isn't required.
 
-```py
-from google.adk.memory import InMemoryMemoryService
-memory_service = InMemoryMemoryService()
-```
+=== "Python"
+
+    ```py
+    from google.adk.memory import InMemoryMemoryService
+    memory_service = InMemoryMemoryService()
+    ```
+
+=== "Go"
+    ```go
+    import (
+      "google.golang.org/adk/memory"
+      "google.golang.org/adk/session"
+    )
+
+    // Services must be shared across runners to share state and memory.
+    sessionService := session.InMemoryService()
+    memoryService := memory.InMemoryService()
+    ```
+
 
 **Example: Adding and Searching Memory**
 

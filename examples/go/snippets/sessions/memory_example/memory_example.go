@@ -14,6 +14,8 @@
 
 package main
 
+// --8<-- [start:full_example]
+
 import (
 	"context"
 	"fmt"
@@ -37,12 +39,53 @@ const (
 	modelID = "gemini-2.5-pro"
 )
 
+// Args defines the input structure for the memory search tool.
+type Args struct {
+	Query string `json:"query"`
+}
+
+// Result defines the output structure for the memory search tool.
+type Result struct {
+	Results []string `json:"results"`
+}
+
+// --8<-- [start:tool_search]
+
+// memorySearchToolFunc is the implementation of the memory search tool.
+// This function demonstrates accessing memory via tool.Context.
+func memorySearchToolFunc(tctx tool.Context, args Args) Result {
+	fmt.Printf("Tool: Searching memory for query: '%s'\n", args.Query)
+	// The SearchMemory function is available on the context.
+	searchResults, err := tctx.SearchMemory(context.Background(), args.Query)
+	if err != nil {
+		log.Printf("Error searching memory: %v", err)
+		return Result{Results: []string{"Error searching memory."}}
+	}
+
+	var results []string
+	for _, res := range searchResults.Memories {
+		if res.Content != nil {
+			results = append(results, textParts(res.Content)...)
+		}
+	}
+	return Result{Results: results}
+}
+
+// Define a tool that can search memory.
+var memorySearchTool = must(functiontool.New[Args, Result](
+	functiontool.Config{
+		Name:        "search_past_conversations",
+		Description: "Searches past conversations for relevant information.",
+	},
+	memorySearchToolFunc,
+))
+
+// --8<-- [end:tool_search]
+
 // This example demonstrates how to use the MemoryService in the Go ADK.
 // It covers two main scenarios:
 // 1. Adding a completed session to memory and recalling it in a new session.
 // 2. Searching memory from within a custom tool using the tool.Context.
-
-// --8<-- [start:full_example]
 func main() {
 	ctx := context.Background()
 
@@ -92,46 +135,6 @@ func main() {
 
 	// --- Scenario 2: Recall the information in a new session using a tool ---
 	fmt.Println("\n--- Turn 2: Recalling Information ---")
-
-	// --8<-- [start:tool_search]
-	// Define a tool that can search memory.
-	memorySearchTool := must(functiontool.New[struct {
-		Query string `json:"query"`
-	}, struct {
-		Results []string `json:"results"`
-	}](
-		functiontool.Config{
-			Name:        "search_past_conversations",
-			Description: "Searches past conversations for relevant information.",
-		},
-		// This function demonstrates accessing memory via tool.Context.
-		func(tctx tool.Context, args struct {
-			Query string `json:"query"`
-		}) struct {
-			Results []string `json:"results"`
-		} {
-			fmt.Printf("Tool: Searching memory for query: '%s'\n", args.Query)
-			// The SearchMemory function is available on the context.
-			searchResults, err := tctx.SearchMemory(context.Background(), args.Query)
-			if err != nil {
-				log.Printf("Error searching memory: %v", err)
-				return struct {
-					Results []string `json:"results"`
-				}{Results: []string{"Error searching memory."}}
-			}
-
-			var results []string
-			for _, res := range searchResults.Memories {
-				if res.Content != nil {
-					results = append(results, textParts(res.Content)...)
-				}
-			}
-			return struct {
-				Results []string `json:"results"`
-			}{Results: results}
-		},
-	))
-	// --8<-- [end:tool_search]
 
 	memoryRecallAgent := must(llmagent.New(llmagent.Config{
 		Name:        "MemoryRecallAgent",
