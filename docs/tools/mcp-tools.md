@@ -570,7 +570,7 @@ async def call_mcp_tool(
         return [mcp_types.TextContent(type="text", text=error_text)]
 
 # --- MCP Server Runner ---
-async def run_mcp_stdio_server():
+asynchronous def run_mcp_stdio_server():
     """Runs the MCP server, listening for connections over standard input/output."""
     # Use the stdio_server context manager from the mcp.server.stdio library
     async with mcp.server.stdio.stdio_server() as (read_stream, write_stream):
@@ -785,7 +785,6 @@ if __name__ == '__main__':
     asyncio.run(async_main())
   except Exception as e:
     print(f"An error occurred: {e}")
-```
 
 
 ## Key considerations
@@ -805,6 +804,52 @@ When working with MCP and ADK, keep these points in mind:
 
     * **Deployment:** This statefulness can pose challenges for scaling and deployment, especially for remote servers handling many users. The original MCP design often assumed client and server were co-located. Managing these persistent connections requires careful infrastructure considerations (e.g., load balancing, session affinity).
     * **ADK MCPToolset:** Manages this connection lifecycle. The exit\_stack pattern shown in the examples is crucial for ensuring the connection (and potentially the server process) is properly terminated when the ADK agent finishes.
+
+## Using `McpInstructionProvider` to Fetch Instructions
+
+In addition to fetching tools, you can also use MCP to dynamically provide instructions to your agents. The `McpInstructionProvider` allows you to fetch a prompt from an MCP server and use it as the instruction for your `LlmAgent`.
+
+This is particularly useful when you want to manage your agent's instructions centrally or update them without redeploying your agent.
+
+### How it Works
+
+1.  **Initialization:** You create an instance of `McpInstructionProvider`, passing it the connection parameters for your MCP server and the name of the prompt you want to fetch.
+2.  **Instruction Fetching:** When the agent runs, the `McpInstructionProvider` connects to the MCP server, fetches the specified prompt, and returns its content as the agent's instruction.
+3.  **Dynamic Arguments:** If the MCP prompt requires arguments, the `McpInstructionProvider` will look for them in the agent's context (`context.state`) and pass them to the MCP server when fetching the prompt.
+
+### Example Usage
+
+Here's how you can use `McpInstructionProvider` in your agent definition:
+
+```python
+from google.adk.agents import LlmAgent
+from google.adk.agents.mcp_instruction_provider import McpInstructionProvider
+from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
+from mcp import StdioServerParameters
+
+# Define the connection to your MCP server
+mcp_connection_params = StdioConnectionParams(
+    server_params=StdioServerParameters(
+        command='npx',
+        args=['-y', '@modelcontextprotocol/server-filesystem', '/path/to/your/folder'],
+    ),
+)
+
+# Create an agent with instructions fetched from the MCP server
+root_agent = LlmAgent(
+    model='gemini-2.0-flash',
+    name='dynamic_instruction_agent',
+    instruction=McpInstructionProvider(
+        connection_params=mcp_connection_params,
+        prompt_name='my_dynamic_prompt', # The name of the prompt to fetch
+    ),
+    tools=[
+        # ... your tools
+    ],
+)
+```
+
+In this example, the agent's instruction will be the content of the `my_dynamic_prompt` prompt fetched from the MCP server. If `my_dynamic_prompt` requires an argument, say `user_name`, you would need to ensure that `user_name` exists in the agent's state for the instruction to be fetched correctly.
 
 ## Deploying Agents with MCP Tools
 
