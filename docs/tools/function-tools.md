@@ -75,9 +75,7 @@ A well-defined function signature is crucial for the LLM to use your tool correc
 
     ???+ "Example: Optional Parameters"
         ```python
-        from typing import Optional
-
-        def search_flights(destination: str, departure_date: str, flexible_days: int = 0, bio: Optional[str] = None):
+        def search_flights(destination: str, departure_date: str, flexible_days: int = 0):
             """
             Searches for flights.
 
@@ -85,14 +83,13 @@ A well-defined function signature is crucial for the LLM to use your tool correc
                 destination (str): The destination city.
                 departure_date (str): The desired departure date.
                 flexible_days (int, optional): Number of flexible days for the search. Defaults to 0.
-                bio (str, optional): A short biography for the user. Defaults to None.
             """
             # ... function logic ...
             if flexible_days > 0:
                 return {"status": "success", "report": f"Found flexible flights to {destination}."}
             return {"status": "success", "report": f"Found flights to {destination} on {departure_date}."}
         ```
-    Here, `flexible_days` and `bio` are optional. The LLM can choose to provide them, but it's not required.
+    Here, `flexible_days` is optional. The LLM can choose to provide it, but it's not required.
 
 === "Go"
     A parameter is considered **optional** if its struct field has the `omitempty` or `omitzero` option in its `json` tag.
@@ -113,33 +110,30 @@ A well-defined function signature is crucial for the LLM to use your tool correc
         ```
     Here, `unit` and `days` are optional. The LLM can choose to provide them, but they are not required.
 
-##### Variadic Parameters
+##### Optional Parameters with `typing.Optional`
+You can also mark a parameter as optional using `typing.Optional[SomeType]` or the `| None` syntax (Python 3.10+). This signals that the parameter can be `None`. When combined with a default value of `None`, it behaves as a standard optional parameter.
 
-=== "Python"
-    While you can include `*args` (variable positional arguments) and `**kwargs` (variable keyword arguments) in your function signature for other purposes, they are **ignored by the ADK framework** when generating the tool schema for the LLM. The LLM will not be aware of them and cannot pass arguments to them. It's best to rely on explicitly defined parameters for all data you expect from the LLM. To accept a variable number of inputs of the same type, you can use a list.
-
-    ???+ "Example: Variadic Parameters"
+???+ "Example: `typing.Optional`"
+    === "Python"
         ```python
-        def create_users(usernames: list[str]):
+        from typing import Optional
+
+        def create_user_profile(username: str, bio: Optional[str] = None):
             """
-            Creates multiple user profiles.
+            Creates a new user profile.
 
             Args:
-                usernames (list[str]): A list of usernames to create.
+                username (str): The user's unique username.
+                bio (str, optional): A short biography for the user. Defaults to None.
             """
             # ... function logic ...
-            return {"status": "success", "message": f"{len(usernames)} users created."}
+            if bio:
+                return {"status": "success", "message": f"Profile for {username} created with a bio."}
+            return {"status": "success", "message": f"Profile for {username} created."}
         ```
 
-=== "Go"
-    Go does not have a direct equivalent to Python's `*args` and `**kwargs` that can be represented in the tool's JSON schema. To accept a variable number of inputs of the same type, you can use a slice.
-
-    ???+ "Example: Variadic Parameters"
-        ```go
-        type CreateUsersParams struct {
-            Usernames []string `json:"usernames" jsonschema:"A list of usernames to create"`
-        }
-        ```
+##### Variadic Parameters (`*args` and `**kwargs`)
+While you can include `*args` (variable positional arguments) and `**kwargs` (variable keyword arguments) in your function signature for other purposes, they are **ignored by the ADK framework** when generating the tool schema for the LLM. The LLM will not be aware of them and cannot pass arguments to them. It's best to rely on explicitly defined parameters for all data you expect from the LLM.
 
 
 #### Return Type
