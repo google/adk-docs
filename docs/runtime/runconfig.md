@@ -75,12 +75,11 @@ The `RunConfig` class holds configuration parameters for an agent's runtime beha
     const (
     	StreamingModeNone StreamingMode = "none"
     	StreamingModeSSE  StreamingMode = "sse"
-    	StreamingModeBidi StreamingMode = "bidi"
     )
 
     // RunConfig controls runtime behavior.
     type RunConfig struct {
-    	// Streaming mode, None or StreamingMode.SSE or StreamingMode.BIDI.
+    	// Streaming mode, None or StreamingMode.SSE.
     	StreamingMode StreamingMode
     	// Whether or not to save the input blobs as artifacts
     	SaveInputBlobsAsArtifacts bool
@@ -94,7 +93,7 @@ The `RunConfig` class holds configuration parameters for an agent's runtime beha
 | `speech_config`                 | `Optional[types.SpeechConfig]`               | `SpeechConfig` (nullable via `@Nullable`)             | N/A             | `None` / `null` / N/A                  | Configures speech synthesis (voice, language) using the `SpeechConfig` type.                                                 |
 | `response_modalities`           | `Optional[list[str]]`                        | `ImmutableList<Modality>`                             | N/A             | `None` / Empty `ImmutableList` / N/A   | List of desired output modalities (e.g., Python: `["TEXT", "AUDIO"]`; Java: uses structured `Modality` objects).             |
 | `save_input_blobs_as_artifacts` | `bool`                                       | `boolean`                                             | `bool`          | `False` / `false` / `false`            | If `true`, saves input blobs (e.g., uploaded files) as run artifacts for debugging/auditing.                                 |
-| `streaming_mode`                | `StreamingMode`                              | `StreamingMode`                                       | `StreamingMode` | `StreamingMode.NONE` / `StreamingMode.NONE` / `agent.StreamingModeNone` | Sets the streaming behavior: `NONE` (default), `SSE` (server-sent events), or `BIDI` (bidirectional).                        |
+| `streaming_mode`                | `StreamingMode`                              | `StreamingMode`                                       | `StreamingMode` | `StreamingMode.NONE` / `StreamingMode.NONE` / `agent.StreamingModeNone` | Sets the streaming behavior: `NONE` (default), `SSE` (server-sent events), or `BIDI` (bidirectional) (**Python/Java**).                        |
 | `output_audio_transcription`    | `Optional[types.AudioTranscriptionConfig]`   | `AudioTranscriptionConfig` (nullable via `@Nullable`) | N/A             | `None` / `null` / N/A                  | Configures transcription of generated audio output using the `AudioTranscriptionConfig` type.                                |
 | `max_llm_calls`                 | `int`                                        | `int`                                                 | N/A             | `500` / `500` / N/A                    | Limits total LLM calls per run. `0` or negative means unlimited (warned); `sys.maxsize` raises `ValueError`.                 |
 | `support_cfc`                   | `bool`                                       | `bool`                                                | N/A          | `False` / `false` / N/A           | **Python:** Enables Compositional Function Calling. Requires `streaming_mode=SSE` and uses the LIVE API. **Experimental.**   |
