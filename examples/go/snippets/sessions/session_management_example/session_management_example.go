@@ -39,8 +39,6 @@ func main() {
 
 	// --8<-- [start:vertexai_service]
 	// 2. VertexAIService
-	// Uses Google Cloud Vertex AI for persistent, scalable session management.
-	// Requires a Google Cloud project.
 	// Before running, ensure your environment is authenticated:
 	// gcloud auth application-default login
 	// export GOOGLE_CLOUD_PROJECT="your-gcp-project-id"
