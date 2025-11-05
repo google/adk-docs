@@ -284,7 +284,7 @@ model = ApigeeLlm(
     # The proxy URL of your deployed Apigee proxy including the base path
     proxy_url=f"https://{APIGEE_PROXY_URL}", 
     # Pass necessary authentication/authorization headers (like an API key)
-    custom_headers={"x-apikey": apikey_credential_str}
+    custom_headers={"foo": "bar"}
 )
 
 # Pass the configured model wrapper to your LlmAgent
