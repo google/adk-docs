@@ -4,7 +4,7 @@
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.16.0</span>
 </div>
 
-The Refect and Retry Tool plugin can help your agent recover from error
+The Reflect and Retry Tool plugin can help your agent recover from error
 responses from ADK [Tools](/adk-docs/tools-custom/) and automatically retry the
 tool request. This plugin intercepts tool failures, provides structured guidance
 to the AI model for reflection and correction, and retries the operation up to a
@@ -77,7 +77,7 @@ For a complete implementation of this sample, see the
 
 ## Next steps
 
-For complete code samples using this plugin, see the following: 
+For complete code samples using the Reflect and Retry plugin, see the following: 
 
-*   [Basic sample](https://github.com/google/adk-python/tree/main/contributing/samples/plugin_reflect_tool_retry/basic) 
-*   [Hallucinating function name](https://github.com/google/adk-python/tree/main/contributing/samples/plugin_reflect_tool_retry/hallucinating_func_name) 
+*   [Basic](https://github.com/google/adk-python/tree/main/contributing/samples/plugin_reflect_tool_retry/basic) code sample
+*   [Hallucinating function name](https://github.com/google/adk-python/tree/main/contributing/samples/plugin_reflect_tool_retry/hallucinating_func_name) code sample
