@@ -209,7 +209,7 @@ Hello world: query is [hello world]
 
 
 For more information on running ADK agents, see the
-[Quickstart](/get-started/quickstart/#run-your-agent)
+[Quickstart](/adk-docs/get-started/quickstart/#run-your-agent)
 guide.
 
 ## Build workflows with Plugins
