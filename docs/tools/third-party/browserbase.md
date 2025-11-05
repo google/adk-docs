@@ -24,7 +24,7 @@ context back to a vision-enabled model.
 
 ## Prerequisites
 
-- [Sign up for a Browserbase account](https://www.browserbase.com/sign-up) to
+- Sign up for a [Browserbase account](https://www.browserbase.com/sign-up) to
   obtain an API key and project ID. Refer to the
   [documentation](https://docs.browserbase.com/introduction/getting-started) for
   more information.
