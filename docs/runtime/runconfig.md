@@ -84,15 +84,6 @@ The `RunConfig` class holds configuration parameters for an agent's runtime beha
     	StreamingMode StreamingMode
     	// Whether or not to save the input blobs as artifacts
     	SaveInputBlobsAsArtifacts bool
-
-    	// Whether to support CFC (Compositional Function Calling). Only applicable for
-    	// StreamingModeSSE. If it's true. the LIVE API will be invoked since only LIVE
-    	// API supports CFC.
-    	//
-    	// .. warning::
-    	//      This feature is **experimental** and its API or behavior may change
-    	//     in future releases.
-    	SupportCFC bool
     }
     ```
 
@@ -106,7 +97,7 @@ The `RunConfig` class holds configuration parameters for an agent's runtime beha
 | `streaming_mode`                | `StreamingMode`                              | `StreamingMode`                                       | `StreamingMode` | `StreamingMode.NONE` / `StreamingMode.NONE` / `agent.StreamingModeNone` | Sets the streaming behavior: `NONE` (default), `SSE` (server-sent events), or `BIDI` (bidirectional).                        |
 | `output_audio_transcription`    | `Optional[types.AudioTranscriptionConfig]`   | `AudioTranscriptionConfig` (nullable via `@Nullable`) | N/A             | `None` / `null` / N/A                  | Configures transcription of generated audio output using the `AudioTranscriptionConfig` type.                                |
 | `max_llm_calls`                 | `int`                                        | `int`                                                 | N/A             | `500` / `500` / N/A                    | Limits total LLM calls per run. `0` or negative means unlimited (warned); `sys.maxsize` raises `ValueError`.                 |
-| `support_cfc`                   | `bool`                                       | `bool`                                                | `bool`          | `False` / `false` / `false`            | **Python/Go:** Enables Compositional Function Calling. Requires `streaming_mode=SSE` and uses the LIVE API. **Experimental.**   |
+| `support_cfc`                   | `bool`                                       | `bool`                                                | N/A          | `False` / `false` / N/A           | **Python:** Enables Compositional Function Calling. Requires `streaming_mode=SSE` and uses the LIVE API. **Experimental.**   |
 
 ### `speech_config`
 
@@ -190,7 +181,7 @@ the exact data received by agents.
 ### `support_cfc`
 
 <div class="language-support-tag" title="This feature is an experimental preview release.">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-preview">Experimental</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-preview">Experimental</span>
 </div>
 
 Enables Compositional Function Calling (CFC) support. Only applicable when using
@@ -398,7 +389,7 @@ This comprehensive example configures an agent with:
 ### Enabling Experimental CFC Support
 
 <div class="language-support-tag" title="This feature is an experimental preview release.">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-preview">Experimental</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-preview">Experimental</span>
 </div>
 
     ```python
@@ -410,17 +401,6 @@ This comprehensive example configures an agent with:
             max_llm_calls=150
         )
     ```
-
-=== "Go"
-
-      ```go
-      import "google.golang.org/adk/agent"
-
-      config := agent.RunConfig{
-          StreamingMode: agent.StreamingModeSSE,
-          SupportCFC:    true,
-      }
-      ```
 
 Enabling Compositional Function Calling creates an agent that can dynamically
 execute functions based on model outputs, powerful for applications requiring
