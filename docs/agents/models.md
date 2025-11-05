@@ -252,7 +252,46 @@ public class DirectAnthropicAgent {
 }
 ```
 
+## Using Models behind a Gateway
 
+### Apigee
+
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.18.0</span>
+</div>
+
+If your organization uses Apigee to manage access to LLMs, you can use the `ApigeeLlm` wrapper to connect your ADK agents to an Apigee proxy.
+
+**Integration Method:** Instantiate the `ApigeeLlm` wrapper class and pass it to the `model` parameter of `LlmAgent`.
+
+**Setup:**
+
+1.  **Apigee Proxy:** Ensure you have an Apigee proxy configured to route requests to your desired LLM.
+2.  **Authentication:** The `ApigeeLlm` model can be authenticated using an API key.
+
+**Example:**
+
+```python
+from google.adk.agents import LlmAgent
+from google.adk.models.apigee_llm import ApigeeLlm
+
+# --- Example Agent using a model fronted by an Apigee proxy ---
+
+# The model name should be in the format "apigee/<your-model-name>"
+# The name after "apigee/" should match the model registered with ApigeeLlm
+apigee_model = ApigeeLlm(
+    model="apigee/gemini-2.5-flash",
+    api_key="YOUR_APIGEE_API_KEY",
+    proxy_url="https://your-apigee-proxy-url"
+)
+
+agent_apigee = LlmAgent(
+    model=apigee_model,
+    name="apigee_agent",
+    instruction="You are a helpful assistant powered by a model behind an Apigee proxy.",
+    # ... other agent parameters
+)
+```
 
 ## Using Cloud & Proprietary Models via LiteLLM
 
