@@ -200,8 +200,10 @@ These are a set of tools aimed to provide integration with BigQuery, namely:
 * **`get_dataset_info`**: Fetches metadata about a BigQuery dataset.
 * **`list_table_ids`**: Fetches table ids present in a BigQuery dataset.
 * **`get_table_info`**: Fetches metadata about a BigQuery table.
+* **`get_job_info`**: Fetches metadata about a BigQuery job.
 * **`execute_sql`**: Runs a SQL query in BigQuery and fetch the result.
 * **`forecast`**: Runs a BigQuery AI time series forecast using the `AI.FORECAST` function.
+* **`detect_anomalies`**: Runs a BigQuery time series anomaly detection using the `ML.DETECT_ANOMALIES` function.
 * **`ask_data_insights`**: Answers questions about data in BigQuery tables using natural language.
 
 They are packaged in the toolset `BigQueryToolset`.
