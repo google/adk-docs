@@ -1,522 +1,296 @@
 # Plugins
 
 <div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.7.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.13.0</span>
 </div>
 
-A Plugin in Agent Development Kit (ADK) is a custom code module that can be
-executed at various stages of an agent workflow lifecycle using callback hooks.
+In the Agent Development Kit (ADK), you can use Plugins to customize and
+extend the functionality of your agent applications. With Plugins, you can add
+features that apply across all agents in your application, like logging, security
+checks, or custom authentication logic.
+
 You use Plugins for functionality that is applicable across your agent workflow.
 Some typical applications of Plugins are as follows:
 
--   **Logging and tracing**: Create detailed logs of agent, tool, and
-    generative AI model activity for debugging and performance analysis.
--   **Policy enforcement**: Implement security guardrails, such as a
-    function that checks if users are authorized to use a specific tool and
-    prevent its execution if they do not have permission.
--   **Monitoring and metrics**: Collect and export metrics on token usage,
-    execution times, and invocation counts to monitoring systems such as
-    Prometheus or 
-    [Google Cloud Observability](https://cloud.google.com/stackdriver/docs) 
-    (formerly Stackdriver).
--   **Response caching**: Check if a request has been made before, so you
-    can return a cached response, skipping expensive or time consuming AI model
-    or tool calls.
--   **Request or response modification**: Dynamically add information to AI
-    model prompts or standardize tool output responses.
+*   **Logging:** Record agent interactions for performance analysis and
+    debugging.
+*   **Security:** Implement guardrails to prevent harmful or undesirable agent
+    behavior.
+*   **Caching:** Store and retrieve generative AI model activity for debugging and
+    performance analysis.
+*   **Authentication:** Add a layer to authenticate with external services that
+    your agent uses.
 
-!!! tip
-    When implementing security guardrails and policies, use ADK Plugins for
-    better modularity and flexibility than Callbacks. For more details, see 
-    [Callbacks and Plugins for Security Guardrails](/adk-docs/safety/#callbacks-and-plugins-for-security-guardrails).
+When you use Plugins with your agent applications, you can enable integration
+with third-party services like
+[Google Cloud Observability](https://cloud.google.com/stackdriver/docs) that
+enhance the security and performance of your ADK workflows.
 
-!!! warning "Caution"
-    Plugins are not supported by the 
-    [ADK web interface](../evaluate/#1-adk-web-run-evaluations-via-the-web-ui). 
-    If your ADK workflow uses Plugins, you must run your workflow without the 
-    web interface.
+ADK is architected to allow you to seamlessly add Plugins to your agent
+applications. Because of their cross-cutting applicability, you can develop and
+maintain Plugins independently from the core business logic of your agents.
+
+When implementing security guardrails and policies, use ADK Plugins for
+consistent enforcement across all agents. For more information, see
+[Callbacks and Plugins for Security Guardrails](/adk-docs/safety/#callbacks-and-plugins-for-security-guardrails).
+
+!!! warning
+
+    Plugins are not supported by the
+    [ADK web UI](/adk-docs/get-started/quickstart/#dev-ui-adk-web).
+    If your ADK workflow uses Plugins, you must run your workflow without the
+    web UI.
 
 ## How do Plugins work?
 
-An ADK Plugin extends the `BasePlugin` class and contains one or more
-`callback` methods, indicating where in the agent lifecycle the Plugin should be
+Plugins use the ADK's callback system to inject custom logic at specific points
+in the agent execution lifecycle, before or after a particular action is
 executed. You integrate Plugins into an agent by registering them in your
-agent's `Runner` class. For more information on how and where you can trigger
-Plugins in your agent application, see
-[Plugin callback hooks](#plugin-callback-hooks).
+application. For information on defining and registering Plugins in your agent
+application, see
+[Define and register Plugins](/adk-docs/plugins/#define-and-register-plugins).
 
-Plugin functionality builds on
-[Callbacks](../callbacks/), which is a key design
-element of the ADK's extensible architecture. While a typical Agent Callback is
-configured on a *single agent, a single tool* for a *specific task*, a Plugin is
-registered *once* on the `Runner` and its callbacks apply *globally* to every
-agent, tool, and LLM call managed by that runner. Plugins let you package
-related callback functions together to be used across a workflow. This makes
+When you register a Plugin at the app level, its callbacks are automatically
+applied to every agent, tool, and LLM call managed by that runner. Plugins let
+you package reusable logic that can be applied to multiple agents without having
+to add callbacks to each agent individually. The cross-cutting behavior of
 Plugins an ideal solution for implementing features that cut across your entire
-agent application.
+application workflow, such as logging or authentication.
 
 ## Define and register Plugins
 
-This section explains how to define Plugin classes and register them as part of
-your agent workflow. For a complete code example, see
-[Plugin Basic](https://github.com/google/adk-python/tree/main/contributing/samples/plugin_basic)
-in the repository.
+To create a Plugin, you define a class that inherits from the `BasePlugin` class,
+and then implement one or more of the available callback methods. These methods
+correspond to specific events in the agent lifecycle, as detailed in the
+[Plugin callbacks reference](/adk-docs/plugins/#plugin-callbacks).
 
-### Create Plugin class
+The following code example shows how to create a simple Plugin that counts the
+number of invocations in an agent workflow:
 
-Start by extending the `BasePlugin` class and add one or more `callback`
-methods, as shown in the following code example:
-
-```py title="count_plugin.py"
-from google.adk.agents.base_agent import BaseAgent
+```python
 from google.adk.agents.callback_context import CallbackContext
-from google.adk.models.llm_request import LlmRequest
 from google.adk.plugins.base_plugin import BasePlugin
 
+
 class CountInvocationPlugin(BasePlugin):
-  """A custom plugin that counts agent and tool invocations."""
+    """A plugin that counts the number of invocations in a workflow."""
 
-  def __init__(self) -> None:
-    """Initialize the plugin with counters."""
-    super().__init__(name="count_invocation")
-    self.agent_count: int = 0
-    self.tool_count: int = 0
-    self.llm_request_count: int = 0
+    def __init__(self):
+        super().__init__("CountInvocationPlugin")
+        self.invocation_count = 0
 
-  async def before_agent_callback(
-      self, *, agent: BaseAgent, callback_context: CallbackContext
-  ) -> None:
-    """Count agent runs."""
-    self.agent_count += 1
-    print(f"[Plugin] Agent run count: {self.agent_count}")
-
-  async def before_model_callback(
-      self, *, callback_context: CallbackContext, llm_request: LlmRequest
-  ) -> None:
-    """Count LLM requests."""
-    self.llm_request_count += 1
-    print(f"[Plugin] LLM request count: {self.llm_request_count}")
+    async def before_run_callback(
+        self, *, callback_context: CallbackContext
+    ) -> None:
+        """Increment the invocation count before each run."""
+        self.invocation_count += 1
+        print(f"Invocation count: {self.invocation_count}")
 ```
 
-This example code implements callbacks for `before_agent_callback` and
-`before_model_callback` to count execution of these tasks during the lifecycle
-of the agent.
-
-### Register Plugin class
-
-Integrate your Plugin class by registering it during your agent initialization
+After you define your Plugin, you register it when you instantiate your app object
 as part of your `Runner` class, using the `plugins` parameter. You can specify
 multiple Plugins with this parameter. The following code example shows how to
-register the `CountInvocationPlugin` plugin defined in the previous section with
-a simple ADK agent.
+register the Plugin defined in the preceding example:
 
-```py
-from google.adk.runners import InMemoryRunner
-from google.adk import Agent
-from google.adk.tools.tool_context import ToolContext
-from google.genai import types
+```python
 import asyncio
 
-# Import the plugin.
-from .count_plugin import CountInvocationPlugin
+from google.adk.agents import Agent
+from google.adk.apps import App
+from google.adk.runners import Runner
+from google.adk.sessions.in_memory_session_service import InMemorySessionService
+from google.genai.types import Content, Part
 
-async def hello_world(tool_context: ToolContext, query: str):
-  print(f'Hello world: query is [{query}]')
+from plugins.count_invocation_plugin import CountInvocationPlugin
 
+# Define your agent
 root_agent = Agent(
-    model='gemini-2.0-flash',
-    name='hello_world',
-    description='Prints hello world with user query.',
-    instruction="""Use hello_world tool to print hello world and user query.
-    """,
-    tools=[hello_world],
+    model="gemini-2.0-flash",
+    instruction="You are a counting agent. Please say 'hello' to the user.",
 )
 
+# Define your app with the agent and the plugin
+app = App(
+    name="my-app",
+    root_agent=root_agent,
+    # Add your plugin here. You can add multiple plugins.
+    plugins=[CountInvocationPlugin()],
+)
+
+# Define your runner with the app
+runner = Runner(
+    app=app,
+    session_service=InMemorySessionService(),
+)
+
+
 async def main():
-  """Main entry point for the agent."""
-  prompt = 'hello world'
-  runner = InMemoryRunner(
-      agent=root_agent,
-      app_name='test_app_with_plugin',
+    """Run the agent with the plugin."""
+    # Create a new session
+    session = await runner.session_service.create_session(
+        app_name=app.name, user_id="test-user"
+    )
 
-      # Add your plugin here. You can add multiple plugins.
-      plugins=[CountInvocationPlugin()],
-  )
+    # Run the agent in the session
+    async for event in runner.run_async(
+        session_id=session.id,
+        user_id="test-user",
+        new_message=Content(parts=[Part(text="hello")])
+    ):
+        print(event.get_text_content())
 
-  # The rest is the same as starting a regular ADK runner.
-  session = await runner.session_service.create_session(
-      user_id='user',
-      app_name='test_app_with_plugin',
-  )
-
-  async for event in runner.run_async(
-      user_id='user',
-      session_id=session.id,
-      new_message=types.Content(
-        role='user', parts=[types.Part.from_text(text=prompt)]
-      )
-  ):
-    print(f'** Got event from {event.author}')
 
 if __name__ == "__main__":
-  asyncio.run(main())
+    # Note that Plugins are not supported by the ADK web UI.
+    # If your ADK workflow uses Plugins, you must run your workflow without the web UI.
+    asyncio.run(main())
 ```
 
-### Run the agent with the Plugin
+## Available Built-in tools
 
-Run the plugin as you typically would. The following shows how to run the
-command line:
-
-```sh
-python3 -m path.to.main
-```
-
-Plugins are not supported by the
-[ADK web interface](../evaluate/#1-adk-web-run-evaluations-via-the-web-ui).
-If your ADK workflow uses Plugins, you must run your workflow without the web
-interface.
-
-The output of this previously described agent should look similar to the
-following:
-
-```log
-[Plugin] Agent run count: 1
-[Plugin] LLM request count: 1
-** Got event from hello_world
-Hello world: query is [hello world]
-** Got event from hello_world
-[Plugin] LLM request count: 2
-** Got event from hello_world
-```
-
-
-For more information on running ADK agents, see the
-[Quickstart](/get-started/quickstart/#run-your-agent)
-guide.
+* **[BigQuery Logging Plugin](../observability/bigquery-logging.md):** Logs agent events to a BigQuery table for analysis and debugging.
 
 ## Build workflows with Plugins
 
-Plugin callback hooks are a mechanism for implementing logic that intercepts,
-modifies, and even controls the agent's execution lifecycle. Each hook is a
-specific method in your Plugin class that you can implement to run code at a key
-moment. You have a choice between two modes of operation based on your hook's
-return value:
+Plugins provide a powerful way to add security and other functionality to your
+ADK workflows. The following diagram shows how Plugins integrate with the ADK
+callback system:
 
--   **To Observe:** Implement a hook with no return value (`None`). This
-    approach is for tasks such as logging or collecting metrics, as it allows
-    the agent's workflow to proceed to the next step without interruption. For
-    example, you could use `after_tool_callback` in a Plugin to log every
-    tool's result for debugging.
--   **To Intervene:** Implement a hook and return a value. This approach
-    short-circuits the workflow. The `Runner` halts processing, skips any
-    subsequent plugins and the original intended action, like a Model call, and
-    use a Plugin callback's return value as the result. A common use case is
-    implementing `before_model_callback` to return a cached `LlmResponse`,
-    preventing a redundant and costly API call.
--   **To Amend:** Implement a hook and modify the Context object. This
-    approach allows you to modify the context data for the module to be
-    executed without otherwise interrupting the execution of that module. For
-    example, adding additional, standardized prompt text for Model object execution.
+![ADK workflow plugin hooks.](../../assets/workflow-plugin-hooks.svg)
 
-**Caution:** Plugin callback functions have precedence over callbacks
-implemented at the object level. This behavior means that Any Plugin callbacks
-code is executed *before* any Agent, Model, or Tool objects callbacks are
-executed. Furthermore, if a Plugin-level agent callback returns any value, and
-not an empty (`None`) response, the Agent, Model, or Tool-level callback is *not
-executed* (skipped).
+In this workflow, the Plugin callback is invoked first. The Plugin can modify
+the inputs to the ADK workflow, or it can short-circuit the workflow by
+returning a response directly. This prevents the execution of subsequent
+plugins and the original intended action, like a Model call, and immediately
+returns control to the calling process. For more information, see
+[Short-circuiting](/adk-docs/callbacks/#short-circuiting).
 
-The Plugin design establishes a hierarchy of code execution and separates
-global concerns from local agent logic. A Plugin is the stateful *module* you
-build, such as `PerformanceMonitoringPlugin`, while the callback hooks are the
-specific *functions* within that module that get executed. This architecture
-differs fundamentally from standard Agent Callbacks in these critical ways:
+When building agent applications with Plugins, you should be aware of the
+following considerations:
 
--   **Scope:** Plugin hooks are *global*. You register a Plugin once on the
-    `Runner`, and its hooks apply universally to every Agent, Model, and Tool
-    it manages. In contrast, Agent Callbacks are *local*, configured
-    individually on a specific agent instance.
+-   **Short-circuiting:** When a callback returns a value, it *short-circuits*
+    the execution chain. This means subsequent callbacks for the same event
+    (from other plugins or the agent itself) will not be executed, and the
+    original operation (e.g., the model call or tool execution) is skipped. The
+    returned value is then passed back up the chain.
+
 -   **Execution Order:** Plugins have *precedence*. For any given event, the
-    Plugin hooks always run before any corresponding Agent Callback. This
+    callback from the first registered plugin is executed first. This predictable
     system behavior makes Plugins the correct architectural choice for
-    implementing cross-cutting features like security policies, universal
-    caching, and consistent logging across your entire application.
+    implementing security guardrails, where you must check for policy violations
+    before any other action is taken.
 
 ### Agent Callbacks and Plugins
 
-As mentioned in the previous section, there are some functional similarities
-between Plugins and Agent Callbacks. The following table compares the
-differences between Plugins and Agent Callbacks in more detail.
+The following table summarizes the key differences and recommended use cases for
+when to choose between Plugins and Agent Callbacks. The following table compares
+the differences between Plugins and Agent Callbacks in more detail.
 
-<table>
-  <thead>
-    <tr>
-      <th></th>
-      <th><strong>Plugins</strong></th>
-      <th><strong>Agent Callbacks</strong></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><strong>Scope</strong></td>
-      <td><strong>Global</strong>: Apply to all agents/tools/LLMs in the
-<code>Runner</code>.</td>
-      <td><strong>Local</strong>: Apply only to the specific agent instance
-they are configured on.</td>
-    </tr>
-    <tr>
-      <td><strong>Primary Use Case</strong></td>
-      <td><strong>Horizontal Features</strong>: Logging, policy, monitoring,
-global caching.</td>
-      <td><strong>Specific Agent Logic</strong>: Modifying the behavior or
-state of a single agent.</td>
-    </tr>
-    <tr>
-      <td><strong>Configuration</strong></td>
-      <td>Configure once on the <code>Runner</code>.</td>
-      <td>Configure individually on each <code>BaseAgent</code> instance.</td>
-    </tr>
-    <tr>
-      <td><strong>Execution Order</strong></td>
-      <td>Plugin callbacks run <strong>before</strong> Agent Callbacks.</td>
-      <td>Agent callbacks run <strong>after</strong> Plugin callbacks.</td>
-    </tr>
-  </tbody>
-</table>
+| Feature             | **Plugins**                                                                                                                                                                                                                                                              | **Agent Callbacks**                                                                                                                                                                   |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Scope**           | **Global (App/Runner Level)**                                                                                                                                                                                                                                            | **Local (Agent Level)**                                                                                                                                                               |
+| **Definition**      | Defined in separate classes that inherit from `BasePlugin`.                                                                                                                                                                                                              | Defined as functions or methods directly within an `Agent`'s definition.                                                                                                            |
+| **Registration**    | Registered once at the `App` or `Runner` level.                                                                                                                                                                                                                          | Registered for each individual `Agent` that requires the callback.                                                                                                                    |
+| **Use Case**        | Best for **cross-cutting concerns** that apply to all agents, such as logging, authentication, and global security policies. Recommended for implementing reusable, application-wide security guardrails.                                                   | Best for logic that is **specific to a single agent's behavior**, such as validating or modifying inputs/outputs for that agent's particular task.                                     |
+| **Reusability**     | **Highly Reusable.** A single plugin can be applied to any number of agent applications without modification.                                                                                                                                      | **Less Reusable.** Logic is tied to a specific agent and must be copied or refactored to be used elsewhere.                                                                        |
+| **Execution Order** | Predictable and controllable. Callbacks are executed in the order that their containing plugins are registered, which is ideal for enforcing security checks before other processing occurs. This allows you to create chains of validations or transformations. | Less predictable when multiple agents are involved, as the execution order depends on how agents call each other.                                                                 |
 
-## Plugin callback hooks
-
-You define when a Plugin is called with the callback functions to define in
-your Plugin class. Callbacks are available when a user message is received,
-before and after an `Runner`, `Agent`, `Model`, or `Tool` is called, for
-`Events`, and when a `Model`, or `Tool` error occurs. These callbacks include,
-and take precedence over, the any callbacks defined within your Agent, Model,
-and Tool classes.
-
-The following diagram illustrates callback points where you can attach and run
-Plugin functionality during your agents workflow:
-
-![ADK Plugin callback hooks](../assets/workflow-plugin-hooks.svg)
-**Figure 1.** Diagram of ADK agent workflow with Plugin callback hook
-locations.
+### Plugin callbacks
 
 The following sections describe the available callback hooks for Plugins in
-more detail.
+more detail. For more information on the ADK callback system, see
+[Callbacks](/adk-docs/callbacks/).
 
--   [User Message callbacks](#user-message-callbacks)
--   [Runner start callbacks](#runner-start-callbacks)
--   [Agent execution callbacks](#agent-execution-callbacks)
--   [Model callbacks](#model-callbacks)
--   [Tool callbacks](#tool-callbacks)
--   [Runner end callbacks](#runner-end-callbacks)
+#### Run callbacks
 
-### User Message callbacks
-
-*A User Message c*allback (`on_user_message_callback`) happens when a user
-sends a message. The `on_user_message_callback` is the very first hook to run,
-giving you a chance to inspect or modify the initial input.\
-
--   **When It Runs:** This callback happens immediately after
-    `runner.run()`, before any other processing.
--   **Purpose:** The first opportunity to inspect or modify the user's raw
-    input.
--   **Flow Control:** Returns a `types.Content` object to **replace** the
-    user's original message.
-
-The following code example shows the basic syntax of this callback:
-
-```py
-async def on_user_message_callback(
-    self,
-    *,
-    invocation_context: InvocationContext,
-    user_message: types.Content,
-) -> Optional[types.Content]:
-```
-
-### Runner start callbacks
-
-A *Runner start* callback (`before_run_callback`) happens when the `Runner`
-object takes the potentially modified user message and prepares for execution.
-The `before_run_callback` fires here, allowing for global setup before any agent
-logic begins.
-
--   **When It Runs:** Immediately after `runner.run()` is called, before
-    any other processing.
--   **Purpose:** The first opportunity to inspect or modify the user's raw
-    input.
--   **Flow Control:** Return a `types.Content` object to **replace** the
-    user's original message.
-
-The following code example shows the basic syntax of this callback:
-
-```py
-async def before_run_callback(
-    self, *, invocation_context: InvocationContext
-) -> Optional[types.Content]:
-```
-
-### Agent execution callbacks
-
-*Agent execution* callbacks (`before_agent`, `after_agent`) happen when a
-`Runner` object invokes an agent. The `before_agent_callback` runs immediately
-before the agent's main work begins. The main work encompasses the agent's
-entire process for handling the request, which could involve calling models or
-tools. After the agent has finished all its steps and prepared a result, the
-`after_agent_callback` runs.
+Run callbacks **(`before_run`, `after_run`, `on_run_error`)** are executed before
+and after a `Runner` object executes. `Runner` objects orchestrate the execution
+of your agent workflows. These callbacks are executed once per `run` call.
 
 **Caution:** Plugins that implement these callbacks are executed *before* the
-Agent-level callbacks are executed. Furthermore, if a Plugin-level agent
-callback returns anything other than a `None` or null response, the Agent-level
-callback is *not executed* (skipped).
+callbacks that are defined as part of an `Agent` object.
 
-For more information about Agent callbacks defined as part of an Agent object,
-see
-[Types of Callbacks](../callbacks/types-of-callbacks/#agent-lifecycle-callbacks).
+The `before_run` and `after_run` callbacks are supported by the Plugins feature,
+but the `on_run_error` callback is not.
 
-### Model callbacks
+For more information on the available run callbacks, see the
+[Run callbacks reference](/adk-docs/callbacks/#run-callbacks).
 
-Model callbacks **(`before_model`, `after_model`, `on_model_error`)** happen
+#### Model callbacks
+
+Model callbacks (`before_model`, `after_model`, `on_model_error`) are executed
 before and after a Model object executes. The Plugins feature also supports a
-callback in the event of an error, as detailed below:
+callback in the event of an error, as detailed in the following section.
 
--   If an agent needs to call an AI model, `before_model_callback` runs first.
--   If the model call is successful, `after_model_callback` runs next.
--   If the model call fails with an exception, the `on_model_error_callback`
-    is triggered instead, allowing for graceful recovery.
+For more information on the available model callbacks, see the
+[Model callbacks reference](/adk-docs/callbacks/#model-callbacks).
 
 **Caution:** Plugins that implement the **`before_model`** and  `**after_model`
-**callback methods are executed *before* the Model-level callbacks are executed.
-Furthermore, if a Plugin-level model callback returns anything other than a
-`None` or null response, the Model-level callback is *not executed* (skipped).
+callbacks are executed *before* the callbacks that are defined as part of an
+`Agent` object.
 
-#### Model on error callback details
+##### `on_model_error`
 
 The on error callback for Model objects is only supported by the Plugins
-feature works as follows:
+feature. This callback is executed when an error occurs during a model call. It
+receives the `callback_context`, the `llm_request` that caused the error, and the
+`exception` that was raised. You can use this callback to log errors, modify the
+error response, or attempt to recover from the error.
 
--   **When It Runs:** When an exception is raised during the model call.
--   **Common Use Cases:** Graceful error handling, logging the specific
-    error, or returning a fallback response, such as "The AI service is
-    currently unavailable."
--   **Flow Control:**
-    -   Returns an `LlmResponse` object to **suppress the exception**
-        and provide a fallback result.
-    -   Returns `None` to allow the original exception to be raised.
+The following code example shows how to implement the `on_model_error` callback:
 
-**Note**: If the execution of the Model object returns a `LlmResponse`, the
-system resumes the execution flow, and `after_model_callback` will be triggered
-normally.****
-
-The following code example shows the basic syntax of this callback:
-
-```py
-async def on_model_error_callback(
-    self,
-    *,
-    callback_context: CallbackContext,
-    llm_request: LlmRequest,
-    error: Exception,
+```python
+async def on_model_error(
+    self, *, callback_context: CallbackContext, llm_request: LlmRequest, error: Exception
 ) -> Optional[LlmResponse]:
+    # ...
 ```
 
-### Tool callbacks
+#### Tool callbacks
 
 Tool callbacks **(`before_tool`, `after_tool`, `on_tool_error`)** for Plugins
-happen before or after the execution of a tool, or when an error occurs. The
-Plugins feature also supports a callback in the event of an error, as detailed
-below:\
+are executed before and after a `Tool` object executes. The Plugins feature also
+supports a callback in the event of an error, as detailed in the following
+section.
 
--   When an agent executes a Tool, `before_tool_callback` runs first.
--   If the tool executes successfully, `after_tool_callback` runs next.
--   If the tool raises an exception, the `on_tool_error_callback` is
-    triggered instead, giving you a chance to handle the failure. If
-    `on_tool_error_callback` returns a dict, `after_tool_callback` will be
-    triggered normally.
+For more information on the available tool callbacks, see the
+[Tool callbacks reference](/adk-docs/callbacks/#tool-callbacks).
 
 **Caution:** Plugins that implement these callbacks are executed *before* the
-Tool-level callbacks are executed. Furthermore, if a Plugin-level tool callback
-returns anything other than a `None` or null response, the Tool-level callback
-is *not executed* (skipped).
+callbacks that are defined as part of an `Agent` object.
 
-#### Tool on error callback details
+##### `on_tool_error`
 
-The on error callback for Tool objects is only supported by the Plugins feature
-works as follows:
+The on error callback for Tool objects is only supported by the Plugins feature.
+This callback is executed when an error occurs during a tool call. It receives
+the `tool` object, the `tool_args` that were passed to the tool, the
+`tool_context`, and the `exception` that was raised. You can use this callback to
+log errors, modify the error response, or attempt to recover from the error.
 
--   **When It Runs:** When an exception is raised during the execution of a
-    tool's `run` method.
--   **Purpose:** Catching specific tool exceptions (like `APIError`),
-    logging the failure, and providing a user-friendly error message back to
-    the LLM.
--   **Flow Control:** Return a `dict` to **suppress the exception**, provide
-    a fallback result. Return `None` to allow the original exception to be raised.
-
-**Note**: By returning a `dict`, this resumes the execution flow, and
-`after_tool_callback` will be triggered normally.
-
-The following code example shows the basic syntax of this callback:
-
-```py
-async def on_tool_error_callback(
-    self,
-    *,
-    tool: BaseTool,
-    tool_args: dict[str, Any],
-    tool_context: ToolContext,
-    error: Exception,
-) -> Optional[dict]:
+```python
+async def on_tool_error(
+    self, *, tool: BaseTool, tool_args: Dict[str, Any], tool_context: ToolContext, error: Exception
+) -> None:
+    # ...
 ```
 
-### Event callbacks
+#### Agent callbacks
 
-An *Event callback* (`on_event_callback`) happens when an agent produces
-outputs such as a text response or a tool call result, it yields them as `Event`
-objects. The `on_event_callback` fires for each event, allowing you to modify it
-before it's streamed to the client.
+Agent callbacks (`before_agent`, `after_agent`) are invoked before and after an
+`Agent` object executes.
 
--   **When It Runs:** After an agent yields an `Event` but before it's sent
-    to the user. An agent's run may produce multiple events.
--   **Purpose:** Useful for modifying or enriching events (e.g., adding
-    metadata) or for triggering side effects based on specific events.
--   **Flow Control:** Return an `Event` object to **replace** the original
-    event.
+For more information on the available agent callbacks, see the
+[Agent callbacks reference](/adk-docs/callbacks/#agent-callbacks).
 
-The following code example shows the basic syntax of this callback:
-
-```py
-async def on_event_callback(
-    self, *, invocation_context: InvocationContext, event: Event
-) -> Optional[Event]:
-```
-
-### Runner end callbacks
-
-The *Runner end* callback **(`after_run_callback`)** happens when the agent has
-finished its entire process and all events have been handled, the `Runner`
-completes its run. The `after_run_callback` is the final hook, perfect for
-cleanup and final reporting.
-
--   **When It Runs:** After the `Runner` fully completes the execution of a
-    request.
--   **Purpose:** Ideal for global cleanup tasks, such as closing connections
-    or finalizing logs and metrics data.
--   **Flow Control:** This callback is for teardown only and cannot alter
-    the final result.
-
-The following code example shows the basic syntax of this callback:
-
-```py
-async def after_run_callback(
-    self, *, invocation_context: InvocationContext
-) -> Optional[None]:
-```
+**Caution:** Plugins that implement these callbacks are executed *before* the
+callbacks that are defined as part of an `Agent` object.
 
 ## Next steps
 
 Check out these resources for developing and applying Plugins to your ADK
-projects:
+workflows:
 
--   For more ADK Plugin code examples, see the
+-   See the `plugins` package in the
     [ADK Python repository](https://github.com/google/adk-python/tree/main/src/google/adk/plugins).
--   For information on applying Plugins for security purposes, see 
+-   For information on applying Plugins for security purposes, see
     [Callbacks and Plugins for Security Guardrails](/adk-docs/safety/#callbacks-and-plugins-for-security-guardrails).
