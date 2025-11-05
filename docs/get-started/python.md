@@ -4,7 +4,7 @@ This guide shows you how to get up and running with Agent Development Kit
 (ADK) for Python. Before you start, make sure you have the following installed:
 
 *   Python 3.9 or later
-*   `pip` for installing packages   
+*   `pip` for installing packages
 
 ## Installation
 
@@ -44,7 +44,7 @@ pip install google-adk
 
 ## Create an agent project
 
-Run the `adk create` command to start a new agent project. 
+Run the `adk create` command to start a new agent project.
 
 ```shell
 adk create my_agent
@@ -89,7 +89,7 @@ root_agent = Agent(
 ### Set your API key
 
 This project uses the Gemini API, which requires an API key. If you
-don't already have Gemini API key, create a key in Google AI Studio on the 
+don't already have Gemini API key, create a key in Google AI Studio on the
 [API Keys](https://aistudio.google.com/app/apikey) page.
 
 In a terminal window, write your API key into an `.env` file as an environment variable:
@@ -126,8 +126,14 @@ The ADK framework provides web interface you can use to test and interact with
 your agent. You can start the web interface using the following command:
 
 ```console
-adk web --port 8000 my_agent
+adk web --port 8000
 ```
+
+!!! note
+
+    Run this command from the **parent directory** that contains your
+    `my_agent/` folder. For example, if your agent is inside `agents/my_agent/`,
+    run `adk web` from the `agents/` directory.
 
 This command starts a web server with a chat interface for your agent. You can
 access the web interface at (http://localhost:8000). Select the agent at the

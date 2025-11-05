@@ -2,10 +2,10 @@
 
 This page provides a reference for the REST API provided by the ADK web server.
 For details on using the ADK REST API in practice, see
-[Testing](../../get-started/testing.md). 
+[Use the API Server](/adk-docs/runtime/api-server/).
 
 !!! tip
-    You can view an updated API reference on a running ADK web server by browsing 
+    You can view an updated API reference on a running ADK web server by browsing
     the `/docs` location, for example at: `http://localhost:8000/docs`
 
 ## Endpoints

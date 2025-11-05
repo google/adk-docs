@@ -1,5 +1,9 @@
 # Runtime Configuration
 
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+</div>
+
 `RunConfig` defines runtime behavior and options for agents in the ADK. It
 controls speech and streaming settings, function calling, artifact saving, and
 limits on LLM calls.
@@ -146,7 +150,7 @@ Enables Compositional Function Calling (CFC) support. Only applicable when using
 StreamingMode.SSE. When enabled, the LIVE API will be invoked as only it
 supports CFC functionality.
 
-!!! warning
+!!! example "Experimental release" 
 
     The `support_cfc` feature is experimental and its API or behavior might
     change in future releases.
@@ -313,7 +317,9 @@ This comprehensive example configures an agent with:
 
 ### Enabling Experimental CFC Support
 
-![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java support is planned/ coming soon."}
+<div class="language-support-tag" title="This feature is an experimental preview release.">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-preview">Experimental</span>
+</div>
 
 ```python
 from google.genai.adk import RunConfig, StreamingMode
