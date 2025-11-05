@@ -31,13 +31,11 @@ func main() {
 
 	// --- SessionService Implementations ---
 
-	// --8<-- [start:in_memory_service]
 	// 1. InMemoryService
 	// Stores all session data directly in the application's memory.
 	// All conversation data is lost if the application restarts.
 	inMemoryService := session.InMemoryService()
 	fmt.Println("Initialized InMemoryService.")
-	// --8<-- [end:in_memory_service]
 
 	// --8<-- [start:vertexai_service]
 	// 2. VertexAIService
@@ -76,13 +74,10 @@ func main() {
 	exampleSession := createResp.Session
 
 	fmt.Println("\n--- Examining Session Properties ---")
-	fmt.Printf("ID (`ID()`):                %s\n", exampleSession.ID())
+	fmt.Printf("ID (`ID()`): %s\n", exampleSession.ID())
 	fmt.Printf("Application Name (`AppName()`): %s\n", exampleSession.AppName())
-	fmt.Printf("User ID (`UserID()`):         %s\n", exampleSession.UserID())
-
-	// To access state, you get a state object and then call Get().
-	stateObj := exampleSession.State()
-	val, _ := stateObj.Get("initial_key")
+	// To access state, you call Get().
+	val, _ := exampleSession.State().Get("initial_key")
 	fmt.Printf("State (`State().Get()`):    initial_key = %v\n", val)
 
 	// Events are initially empty.

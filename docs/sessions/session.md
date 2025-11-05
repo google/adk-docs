@@ -154,7 +154,9 @@ the storage backend that best suits your needs:
     === "Go"
 
            ```go
-           --8<-- "examples/go/snippets/sessions/session_management_example/session_management_example.go:in_memory_service"
+            import "google.golang.org/adk/session"
+
+            inMemoryService := session.InMemoryService()
            ```
 
 2.  **`VertexAiSessionService`**
@@ -216,9 +218,23 @@ the storage backend that best suits your needs:
 
     === "Go"
 
-           ```go
-           --8<-- "examples/go/snippets/sessions/session_management_example/session_management_example.go:vertexai_service"
-           ```
+          ```go
+          import "google.golang.org/adk/session"
+
+          // 2. VertexAIService
+          // Before running, ensure your environment is authenticated:
+          // gcloud auth application-default login
+          // export GOOGLE_CLOUD_PROJECT="your-gcp-project-id"
+          // export GOOGLE_CLOUD_LOCATION="your-gcp-location"
+
+          modelName := "gemini-1.5-flash-001" // Replace with your desired model
+          vertexService, err := session.VertexAIService(ctx, modelName)
+          if err != nil {
+            log.Printf("Could not initialize VertexAIService (this is expected if the gcloud project is not set): %v", err)
+          } else {
+            fmt.Println("Successfully initialized VertexAIService.")
+          }
+          ```
 
 3.  **`DatabaseSessionService`**
 
