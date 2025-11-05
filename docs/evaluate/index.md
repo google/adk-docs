@@ -501,3 +501,46 @@ Here are the details for each command line argument:
   `This will only run eval_1, eval_2 and eval_3 from sample_eval_set_file.json`  
 * `CONFIG_FILE_PATH`: The path to the config file.  
 * `PRINT_DETAILED_RESULTS`: Prints detailed results on the console.
+
+### 4. `LlmBackedUserSimulator` - Dynamic, Realistic Agent Testing
+
+For more advanced evaluation scenarios, the ADK provides the `LlmBackedUserSimulator`. This tool uses a separate LLM to simulate a user, allowing for more dynamic and realistic conversations than a static script. Instead of following a rigid, predefined script, the LLM-backed simulator can react to your agent's responses in a more human-like way, uncovering a wider range of potential issues and edge cases.
+
+#### How it Works
+
+The `LlmBackedUserSimulator` is configured with a `ConversationScenario` that defines the user's goals and the overall conversation plan. During the evaluation, the simulator's LLM generates user responses based on the agent's messages and the conversation plan, creating a more natural and unpredictable dialogue.
+
+#### When to Use It
+
+Use the `LlmBackedUserSimulator` when you want to:
+
+*   **Test your agent's robustness:** See how your agent handles unexpected user behavior and conversational detours.
+*   **Uncover hidden flaws:** The dynamic nature of the simulator can reveal issues that a static script might miss.
+*   **Create more realistic test scenarios:** Simulate a wide range of user personas and conversation styles.
+
+#### Example Usage
+
+Here's a basic example of how to set up and use the `LlmBackedUserSimulator`:
+
+```python
+from google.adk.evaluation.llm_backed_user_simulator import LlmBackedUserSimulator, LlmBackedUserSimulatorConfig
+from google.adk.evaluation.conversation_scenarios import ConversationScenario
+
+# Define a conversation scenario for the user simulator
+scenario = ConversationScenario(
+    starting_prompt="I want to book a flight to Paris.",
+    conversation_plan="First, ask for the departure and return dates. Then, ask for the number of passengers. Finally, confirm the booking.",
+)
+
+# Create an instance of the user simulator
+user_simulator = LlmBackedUserSimulator(
+    config=LlmBackedUserSimulatorConfig(model="gemini-2.5-flash"),
+    conversation_scenario=scenario,
+)
+
+# You can then use this user_simulator in your evaluation pipeline.
+# The user_simulator will generate user messages based on the agent's responses
+# and the conversation scenario.
+```
+
+By using the `LlmBackedUserSimulator`, you can create more comprehensive and realistic evaluations that will help you build more robust and reliable agents.
