@@ -12,6 +12,7 @@ import (
 	"google.golang.org/adk/runner"
 	"google.golang.org/adk/session"
 	"google.golang.org/adk/tool"
+	"google.golang.org/adk/tool/agenttool"
 	"google.golang.org/adk/tool/functiontool"
 
 	"google.golang.org/genai"
@@ -74,10 +75,9 @@ func createStockAgent(ctx context.Context) (agent.Agent, error) {
 		log.Fatalf("Failed to create model: %v", err)
 	}
 
-
 	return llmagent.New(llmagent.Config{
-		Name: "stock_agent",
-		Model: model,
+		Name:        "stock_agent",
+		Model:       model,
 		Instruction: "You are an agent who retrieves stock prices. If a ticker symbol is provided, fetch the current price. If only a company name is given, first perform a Google search to find the correct ticker symbol before retrieving the stock price. If the provided ticker symbol is invalid or data cannot be retrieved, inform the user that the stock price could not be found.",
 		Description: "This agent specializes in retrieving real-time stock prices. Given a stock ticker symbol (e.g., AAPL, GOOG, MSFT) or the stock name, use the tools and reliable data sources to provide the most up-to-date price.",
 		Tools: []tool.Tool{
@@ -131,11 +131,11 @@ func callAgent(ctx context.Context, a agent.Agent, prompt string) {
 	}
 
 	for event, err := range r.Run(ctx, userID, sessionID, userMsg, agent.RunConfig{
-		StreamingMode: agent.StreamingModeSSE,
+		StreamingMode: agent.StreamingModeNone,
 	}) {
 		if err != nil {
 			fmt.Printf("\nAGENT_ERROR: %v\n", err)
-		} else if event.Partial {
+		} else {
 			for _, p := range event.Content.Parts {
 				fmt.Print(p.Text)
 			}
@@ -171,7 +171,79 @@ func RunAgentSimulation() {
 	}
 }
 
+// --8<-- [start:agent_tool_example]
+// createSummarizerAgent creates an agent whose sole purpose is to summarize text.
+func createSummarizerAgent(ctx context.Context) (agent.Agent, error) {
+	model, err := gemini.NewModel(ctx, "gemini-2.5-flash", &genai.ClientConfig{})
+	if err != nil {
+		return nil, err
+	}
+	return llmagent.New(llmagent.Config{
+		Name:        "SummarizerAgent",
+		Model:       model,
+		Instruction: "You are an expert at summarizing text. Take the user's input and provide a concise summary.",
+		Description: "An agent that summarizes text.",
+	})
+}
+
+// createMainAgent creates the primary agent that will use the summarizer agent as a tool.
+func createMainAgent(ctx context.Context, tools ...tool.Tool) (agent.Agent, error) {
+	model, err := gemini.NewModel(ctx, "gemini-2.5-flash", &genai.ClientConfig{})
+	if err != nil {
+		return nil, err
+	}
+	return llmagent.New(llmagent.Config{
+		Name:  "MainAgent",
+		Model: model,
+		Instruction: "You are a helpful assistant. If you are asked to summarize a long text, use the 'summarize' tool. " +
+			"After getting the summary, present it to the user by saying 'Here is a summary of the text:'.",
+		Description: "The main agent that can delegate tasks.",
+		Tools:       tools,
+	})
+}
+
+func RunAgentAsToolSimulation() {
+	ctx := context.Background()
+
+	// 1. Create the Tool Agent (Summarizer)
+	summarizerAgent, err := createSummarizerAgent(ctx)
+	if err != nil {
+		log.Fatalf("Failed to create summarizer agent: %v", err)
+	}
+
+	// 2. Wrap the Tool Agent in an AgentTool
+	summarizeTool := agenttool.New(summarizerAgent, &agenttool.Config{
+		SkipSummarization: true,
+	})
+
+	// 3. Create the Main Agent and provide it with the AgentTool
+	mainAgent, err := createMainAgent(ctx, summarizeTool)
+	if err != nil {
+		log.Fatalf("Failed to create main agent: %v", err)
+	}
+
+	// 4. Run the main agent
+	prompt := `
+		Please summarize this text for me:
+		Quantum computing represents a fundamentally different approach to computation,
+		leveraging the bizarre principles of quantum mechanics to process information. Unlike classical computers
+		that rely on bits representing either 0 or 1, quantum computers use qubits which can exist in a state of superposition - effectively
+		being 0, 1, or a combination of both simultaneously. Furthermore, qubits can become entangled,
+		meaning their fates are intertwined regardless of distance, allowing for complex correlations. This parallelism and
+		interconnectedness grant quantum computers the potential to solve specific types of incredibly complex problems - such
+		as drug discovery, materials science, complex system optimization, and breaking certain types of cryptography - far
+		faster than even the most powerful classical supercomputers could ever achieve, although the technology is still largely in its developmental stages.
+	`
+	fmt.Printf("\nPrompt: %s\nResponse: ", prompt)
+	callAgent(context.Background(), mainAgent, prompt)
+	fmt.Println("\n---")
+}
+
+// --8<-- [end:agent_tool_example]
+
 func main() {
 	fmt.Println("Attempting to run the agent simulation...")
 	RunAgentSimulation()
+	fmt.Println("\nAttempting to run the agent-as-a-tool simulation...")
+	RunAgentAsToolSimulation()
 }

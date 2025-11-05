@@ -193,6 +193,17 @@ A tool can write data to a `temp:` variable, and a subsequent tool can read it. 
         This tool retrieves the mocked value of a stock price.
 
         ```go
+        import (
+            "google.golang.org/adk/agent"
+            "google.golang.org/adk/agent/llmagent"
+            "google.golang.org/adk/model/gemini"
+            "google.golang.org/adk/runner"
+            "google.golang.org/adk/session"
+            "google.golang.org/adk/tool"
+            "google.golang.org/adk/tool/functiontool"
+            "google.golang.org/genai"
+        )
+
         --8<-- "examples/go/snippets/tools/function-tools/func_tool.go"
         ```
 
@@ -298,6 +309,15 @@ Define your tool function and wrap it using the `LongRunningFunctionTool` class:
 === "Go"
 
     ```go
+    import (
+        "google.golang.org/adk/agent"
+        "google.golang.org/adk/agent/llmagent"
+        "google.golang.org/adk/model/gemini"
+        "google.golang.org/adk/tool"
+        "google.golang.org/adk/tool/functiontool"
+        "google.golang.org/genai"
+    )
+
     --8<-- "examples/go/snippets/tools/function-tools/long-running-tool/long_running_tool.go:create_long_running_tool"
     ```
 
@@ -413,6 +433,13 @@ To use an agent as a tool, wrap the agent with the AgentTool class.
     AgentTool.create(agent)
     ```
 
+=== "Go"
+
+    ```go
+    agenttool.New(agent, &agenttool.Config{...})
+    ```
+
+
 ### Customization
 
 The `AgentTool` class provides the following attributes for customizing its behavior:
@@ -431,6 +458,21 @@ The `AgentTool` class provides the following attributes for customizing its beha
 
         ```java
         --8<-- "examples/java/snippets/src/main/java/tools/AgentToolCustomization.java:full_code"
+        ```
+
+    === "Go"
+
+        ```go
+        import (
+            "google.golang.org/adk/agent"
+            "google.golang.org/adk/agent/llmagent"
+            "google.golang.org/adk/model/gemini"
+            "google.golang.org/adk/tool"
+            "google.golang.org/adk/tool/agenttool"
+            "google.golang.org/genai"
+        )
+
+        --8<-- "examples/go/snippets/tools/function-tools/func_tool.go:agent_tool_example"
         ```
 
 ### How it works
