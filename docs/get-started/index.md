@@ -13,18 +13,18 @@ set up and running a simple agent in less than 20 minutes.
 
     [:octicons-arrow-right-24: Start with Python](python.md) <br>
 
--   :fontawesome-brands-java:{ .lg .middle } **Java Quickstart**
-
-    ---
-    Create your first Java ADK agent in minutes.
-
-    [:octicons-arrow-right-24: Start with Java](java.md) <br>
-
 -   :fontawesome-brands-golang:{ .lg .middle } **Go Quickstart**
 
     ---
     Create your first Go ADK agent in minutes.
 
     [:octicons-arrow-right-24: Start with Go](go.md) <br>
+
+-   :fontawesome-brands-java:{ .lg .middle } **Java Quickstart**
+
+    ---
+    Create your first Java ADK agent in minutes.
+
+    [:octicons-arrow-right-24: Start with Java](java.md) <br>
 
 </div>
