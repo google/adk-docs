@@ -1,7 +1,7 @@
 # Parallel agents
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.2.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.2.0</span><span class="lst-go">Go v0.1.0</span>
 </div>
 
 The `ParallelAgent` is a [workflow agent](index.md) that executes its sub-agents *concurrently*. This dramatically speeds up workflows where tasks can be performed independently.
@@ -55,4 +55,9 @@ These research tasks are independent.  Using a `ParallelAgent` allows them to ru
     === "Java"
         ```java
          --8<-- "examples/java/snippets/src/main/java/agents/workflow/ParallelResearchPipeline.java:full_code"
+        ```
+
+    === "Go"
+        ```go
+         --8<-- "examples/go/snippets/agents/workflow-agents/parallel/main.go:init"
         ```
