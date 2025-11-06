@@ -66,7 +66,7 @@ func _snippet_tool_example(model model.LLM) {
 	// --8<-- [start:tool_example]
 	// Define a tool function
 	type getCapitalCityArgs struct {
-		Country string `json:"country"`
+		Country string `json:"country" jsonschema:"The country to get the capital of."`
 	}
 	getCapitalCity := func(ctx tool.Context, args getCapitalCityArgs) map[string]any {
 		// Replace with actual logic (e.g., API call, database lookup)

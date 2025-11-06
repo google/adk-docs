@@ -33,7 +33,7 @@ func isPrime(n int) bool {
 }
 
 type checkPrimeToolArgs struct {
-	Nums []int `json:"nums"`
+	Nums []int `json:"nums" jsonschema:"A list of numbers to check for primality."`
 }
 
 func checkPrimeTool(tc tool.Context, args checkPrimeToolArgs) string {

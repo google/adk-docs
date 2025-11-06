@@ -33,7 +33,7 @@ import (
 )
 
 type getCapitalCityArgs struct {
-	Country string `json:"country"`
+	Country string `json:"country" jsonschema:"The country for which to find the capital city."`
 }
 
 type getCapitalCityResult struct {

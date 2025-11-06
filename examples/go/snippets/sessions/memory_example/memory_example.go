@@ -41,7 +41,7 @@ const (
 
 // Args defines the input structure for the memory search tool.
 type Args struct {
-	Query string `json:"query"`
+	Query string `json:"query" jsonschema:"The query to search for in the memory."`
 }
 
 // Result defines the output structure for the memory search tool.

@@ -17,7 +17,7 @@ import (
 )
 
 type checkAndTransferArgs struct {
-	Query string `json:"query"`
+	Query string `json:"query" jsonschema:"The user's query to check for urgency."`
 }
 
 type checkAndTransferResult struct {

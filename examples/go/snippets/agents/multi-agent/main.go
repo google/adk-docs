@@ -318,8 +318,8 @@ func advancedPatternSnippets(m model.LLM) {
 	// --- Assume externalApprovalTool exists ---
 	// func externalApprovalTool(amount float64, reason string) string { ... }
 	type externalApprovalToolArgs struct {
-		Amount float64 `json:"amount"`
-		Reason string  `json:"reason"`
+		Amount float64 `json:"amount" jsonschema:"The amount for which approval is requested."`
+		Reason string  `json:"reason" jsonschema:"The reason for the approval request."`
 	}
 	var externalApprovalTool func(tool.Context, externalApprovalToolArgs) string
 	approvalTool, _ := functiontool.New(

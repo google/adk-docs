@@ -8,7 +8,7 @@ import (
 )
 
 type lookupOrderStatusArgs struct {
-	OrderID string `json:"order_id"`
+	OrderID string `json:"order_id" jsonschema:"The ID of the order to look up."`
 }
 
 type order struct {

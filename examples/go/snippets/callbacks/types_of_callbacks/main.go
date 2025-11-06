@@ -275,7 +275,7 @@ func runAfterModelExample() {
 // --8<-- [start:tool_defs]
 // GetCapitalCityArgs defines the arguments for the getCapitalCity tool.
 type GetCapitalCityArgs struct {
-	Country string `json:"country" adk:"description=The country to get the capital of."`
+	Country string `json:"country" jsonschema:"The country to get the capital of."`
 }
 
 // getCapitalCity is a tool that returns the capital of a given country.

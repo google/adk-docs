@@ -28,7 +28,7 @@ const (
 )
 
 type getCapitalCityArgs struct {
-	Country string `json:"country"`
+	Country string `json:"country" jsonschema:"The country to get the capital of."`
 }
 
 // getCapitalCity retrieves the capital city of a given country.

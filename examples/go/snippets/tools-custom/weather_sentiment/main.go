@@ -17,7 +17,7 @@ import (
 )
 
 type getWeatherReportArgs struct {
-	City string `json:"city"`
+	City string `json:"city" jsonschema:"The city for which to get the weather report."`
 }
 
 type getWeatherReportResult struct {
@@ -37,7 +37,7 @@ func getWeatherReport(ctx tool.Context, args getWeatherReportArgs) getWeatherRep
 }
 
 type analyzeSentimentArgs struct {
-	Text string `json:"text"`
+	Text string `json:"text" jsonschema:"The text to analyze for sentiment."`
 }
 
 type analyzeSentimentResult struct {

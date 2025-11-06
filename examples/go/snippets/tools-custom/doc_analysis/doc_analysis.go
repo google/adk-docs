@@ -8,8 +8,8 @@ import (
 )
 
 type processDocumentArgs struct {
-	DocumentName  string `json:"document_name"`
-	AnalysisQuery string `json:"analysis_query"`
+	DocumentName  string `json:"document_name" jsonschema:"The name of the document to be processed."`
+	AnalysisQuery string `json:"analysis_query" jsonschema:"The query for the analysis."`
 }
 
 type processDocumentResult struct {

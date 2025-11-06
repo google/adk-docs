@@ -235,12 +235,12 @@ func runBeforeAgentCallbackCheck() {
 // --8<-- [start:tool_context_tool]
 // Pseudocode: Tool function receiving ToolContext
 type searchExternalAPIArgs struct {
-	Query string
+	Query string `json:"query" jsonschema:"The query to search for."`
 }
 
 type searchExternalAPIResults struct {
-	Result string
-	Status string
+	Result string `json:"result"`
+	Status string `json:"status"`
 }
 
 func searchExternalAPI(tc tool.Context, input searchExternalAPIArgs) searchExternalAPIResults {
@@ -369,7 +369,7 @@ func runMyCallbackExample() {
 // Pseudocode: In any context (ToolContext shown)
 type logToolUsageArgs struct{}
 type logToolUsageResult struct {
-	Status string
+	Status string `json:"status"`
 }
 
 func logToolUsage(tc tool.Context, args logToolUsageArgs) logToolUsageResult {
@@ -502,8 +502,8 @@ type GetUserProfileArgs struct {
 }
 
 type getUserProfileResult struct {
-	ProfileStatus string
-	Error         string
+	ProfileStatus string `json:"profile_status"`
+	Error         string `json:"error"`
 }
 
 func getUserProfile(tc tool.Context, input GetUserProfileArgs) getUserProfileResult {
@@ -525,8 +525,8 @@ type GetUserOrdersArgs struct {
 }
 
 type getUserOrdersResult struct {
-	Orders []string
-	Error  string
+	Orders []string `json:"orders"`
+	Error  string   `json:"error"`
 }
 
 func getUserOrders(tc tool.Context, input GetUserOrdersArgs) getUserOrdersResult {
@@ -596,12 +596,12 @@ func runPassingDataExample() {
 // --8<-- [start:updating_preferences]
 // Pseudocode: Tool or Callback identifies a preference
 type setUserPreferenceArgs struct {
-	Preference string
-	Value      string
+	Preference string `json:"preference" jsonschema:"The name of the preference to set."`
+	Value      string `json:"value" jsonschema:"The value to set for the preference."`
 }
 
 type setUserPreferenceResult struct {
-	Status string
+	Status string `json:"status"`
 }
 
 func setUserPreference(tc tool.Context, args setUserPreferenceArgs) setUserPreferenceResult {
@@ -657,8 +657,8 @@ func runUpdatingPreferencesExample() {
 type summarizeDocumentArgs struct{}
 
 type summarizeDocumentResult struct {
-	Summary string
-	Error   string
+	Summary string `json:"summary"`
+	Error   string `json:"error"`
 }
 
 func summarizeDocumentTool(tc tool.Context, input summarizeDocumentArgs) summarizeDocumentResult {
@@ -697,8 +697,8 @@ func summarizeDocumentTool(tc tool.Context, input summarizeDocumentArgs) summari
 type checkAvailableDocsArgs struct{}
 
 type checkAvailableDocsResult struct {
-	AvailableDocs []string
-	Error         string
+	AvailableDocs []string `json:"available_docs"`
+	Error         string   `json:"error"`
 }
 
 func checkAvailableDocs(tc tool.Context, args checkAvailableDocsArgs) checkAvailableDocsResult {
@@ -715,12 +715,12 @@ func checkAvailableDocs(tc tool.Context, args checkAvailableDocsArgs) checkAvail
 // --8<-- [start:artifacts_save_ref]
 // Adapt the saveDocumentReference callback into a tool for this example.
 type saveDocRefArgs struct {
-	FilePath string
+	FilePath string `json:"file_path" jsonschema:"The path to the file to save."`
 }
 
 type saveDocRefResult struct {
-	Status string
-	Error  string
+	Status string `json:"status"`
+	Error  string `json:"error"`
 }
 
 func saveDocRef(tc tool.Context, args saveDocRefArgs) saveDocRefResult {

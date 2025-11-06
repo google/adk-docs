@@ -22,7 +22,7 @@ import (
 // --- Local Roll Agent ---
 
 type rollDieToolArgs struct {
-	Sides int `json:"sides"`
+	Sides int `json:"sides" jsonschema:"The number of sides on the die."`
 }
 
 func rollDieTool(tc tool.Context, args rollDieToolArgs) int {

@@ -20,7 +20,7 @@ import (
 // --8<-- [start:create_long_running_tool]
 // CreateTicketArgs defines the arguments for our long-running tool.
 type CreateTicketArgs struct {
-	Urgency string `json:"urgency"`
+	Urgency string `json:"urgency" jsonschema:"The urgency level of the ticket."`
 }
 
 // CreateTicketResults defines the *initial* output of our long-running tool.

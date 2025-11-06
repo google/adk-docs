@@ -31,7 +31,7 @@ var mockStockPrices = map[string]float64{
 // Using a struct is the recommended approach in the Go ADK as it provides strong
 // typing and clear validation for the expected inputs.
 type getStockPriceArgs struct {
-	Symbol string
+	Symbol string `json:"symbol" jsonschema:"The stock ticker symbol, e.g., GOOG"`
 }
 
 // getStockPriceResults defines the output schema for the getStockPrice tool.

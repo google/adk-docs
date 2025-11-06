@@ -8,8 +8,8 @@ import (
 )
 
 type updateUserPreferenceArgs struct {
-	Preference string `json:"preference"`
-	Value      string `json:"value"`
+	Preference string `json:"preference" jsonschema:"The name of the preference to set."`
+	Value      string `json:"value" jsonschema:"The value to set for the preference."`
 }
 
 type updateUserPreferenceResult struct {
