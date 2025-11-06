@@ -265,8 +265,6 @@ func main() {
 
 // --- Helper Functions ---
 
-
-
 func isFinalResponse(ev *session.Event) bool {
 	if ev.Actions.SkipSummarization || len(ev.LongRunningToolIDs) > 0 {
 		return true

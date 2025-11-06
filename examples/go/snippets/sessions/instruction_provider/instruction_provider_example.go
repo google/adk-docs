@@ -140,5 +140,3 @@ func runAgent(ctx context.Context, ss session.Service, a agent.Agent, prompt str
 	}
 	fmt.Println()
 }
-
-
