@@ -382,15 +382,31 @@ When modifications to the tools to add guardrails aren't possible, the [**`Befor
     		// This is an unexpected failure, return an error.
     		return nil, fmt.Errorf("internal error: session_user_id not found in state: %w", err)
     	}
-    	actualUserIDInArgs, _ := args["user_id_param"] // Assuming tool takes 'user_id_param'
+    	    	expectedUserID, ok := expectedUserIDVal.(string)
+    	if !ok {
+    		return nil, fmt.Errorf("internal error: session_user_id in state is not a string, got %T", expectedUserIDVal)
+    	}
 
-    	if !reflect.DeepEqual(actualUserIDInArgs, expectedUserID) {
+    	actualUserIDInArgs, exists := args["user_id_param"]
+    	if !exists {
+    		// Handle case where user_id_param is not in args
+    		fmt.Println("Validation Failed: user_id_param missing from arguments!")
+    		return map[string]any{"error": "Tool call blocked: user_id_param missing from arguments."}, nil
+    	}
+
+    	actualUserID, ok := actualUserIDInArgs.(string)
+    	if !ok {
+    		// Handle case where user_id_param is not a string
+    		fmt.Println("Validation Failed: user_id_param is not a string!")
+    		return map[string]any{"error": "Tool call blocked: user_id_param is not a string."}, nil
+    	}
+
+    	if actualUserID != expectedUserID {
     		fmt.Println("Validation Failed: User ID mismatch!")
     		// Return a map to prevent tool execution and provide feedback to the model.
     		// This is not a Go error, but a message for the agent.
     		return map[string]any{"error": "Tool call blocked: User ID mismatch."}, nil
     	}
-
     	// Return nil, nil to allow the tool call to proceed if validation passes
     	fmt.Println("Callback validation passed.")
     	return nil, nil
