@@ -1,19 +1,18 @@
-# Bidi-streaming(live) in ADK
+# Bidi-streaming (live) in ADK
 
-!!! warning
-
-    This is an experimental feature. Currrently available in Python.
-
-!!! info
-
-    This is different from server-side streaming or token-level streaming. 
-    Token-level streaming is a one-way process where a language model generates a response and sends it back to the user one token at a time. This creates a "typing" effect, giving the impression of an immediate response and reducing the time it takes to see the start of the answer. The user sends their full prompt, the model processes it, and then the model begins to generate and send back the response piece by piece. This section is for bidi-streaming (live).
-    
-Bidi-streaming (live) in ADK adds the low-latency bidirectional voice and video interaction
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.5.0</span><span class="lst-preview">Experimental</span>
+</div>
+  
+Bidirectional (Bidi) streaming (live) in ADK adds the low-latency bidirectional voice and video interaction
 capability of [Gemini Live API](https://ai.google.dev/gemini-api/docs/live) to
 AI agents.
 
-With bidi-streaming (live) mode, you can provide end users with the experience of natural,
+!!! example "Experimental preview release"
+
+    The Bidirectional (Bidi) streaming feature is experimental.
+
+With bidi-streaming, or live, mode, you can provide end users with the experience of natural,
 human-like voice conversations, including the ability for the user to interrupt
 the agent's responses with voice commands. Agents with streaming can process
 text, audio, and video inputs, and they can provide text and audio output.
@@ -32,6 +31,11 @@ text, audio, and video inputs, and they can provide text and audio output.
   </div>
 </div>
 
+!!! info
+
+    This is different from server-side streaming or token-level streaming. 
+    Token-level streaming is a one-way process where a language model generates a response and sends it back to the user one token at a time. This creates a "typing" effect, giving the impression of an immediate response and reducing the time it takes to see the start of the answer. The user sends their full prompt, the model processes it, and then the model begins to generate and send back the response piece by piece. This section is for bidi-streaming (live).
+
 <div class="grid cards" markdown>
 
 -   :material-console-line: **Quickstart (Bidi-streaming)**
@@ -47,9 +51,8 @@ text, audio, and video inputs, and they can provide text and audio output.
 
     ---
 
-    This article overviews the server and client code for a custom asynchronous web app built with ADK Streaming and FastAPI, enabling real-time, bidirectional audio and text communication with both Server Sent Events (SSE) and WebSockets.
+    This article overviews the server and client code for a custom asynchronous web app built with ADK Streaming and FastAPI, enabling real-time, bidirectional audio and text communication with WebSockets.
 
-    - [Custom Audio Streaming app sample (SSE)](custom-streaming.md)
     - [Custom Audio Streaming app sample (WebSockets)](custom-streaming-ws.md)
 
 -   :material-console-line: **Bidi-streaming development guide series**
@@ -83,5 +86,13 @@ text, audio, and video inputs, and they can provide text and audio output.
     This article shows how to use Bidi-streaming (live) in ADK for real-time audio/video streaming. It offers a Python server example using LiveRequestQueue to build custom, interactive AI agents.
 
     - [Blog post: Google ADK + Vertex AI Live API](https://medium.com/google-cloud/google-adk-vertex-ai-live-api-125238982d5e)
+
+-   :material-console-line: **Blog post: Supercharge ADK Development with Claude Code Skills**
+
+    ---
+
+    This article demonstrates how to use Claude Code Skills to accelerate ADK development, with an example of building a Bidi-streaming chat app. Learn how to leverage AI-powered coding assistance to build better agents faster.
+
+    - [Blog post: Supercharge ADK Development with Claude Code Skills](https://medium.com/@kazunori279/supercharge-adk-development-with-claude-code-skills-d192481cbe72)
 
 </div>

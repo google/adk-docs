@@ -1,18 +1,15 @@
-name: Feature Matrix Creator
+name: Publish Feature Matrix
 on:
   workflow_dispatch:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
     - name: Checkout adk-docs repo
       uses: actions/checkout@v4
-
-    - name: Checkout adk-docs-features repo
-      uses: actions/checkout@v4
-      with:
-        repository: 'tpryan/adk-docs-features'
-        path: 'adk-docs-features'
 
     - name: Set up Go
       uses: actions/setup-go@v5
@@ -21,27 +18,20 @@ jobs:
 
     - name: Install dependencies
       run: go mod tidy
-      working-directory: ./adk-docs-features
+      working-directory: ./tools/feature-matrix
 
     - name: Run program
       run: go run main.go
-      working-directory: ./adk-docs-features
+      working-directory: ./tools/feature-matrix
       env:
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-
-    - name: Prepare PR content
-      run: |
-        mkdir -p docs/features
-        mv adk-docs-features/docs/features/index.md docs/features/index.md
-        rm -rf adk-docs-features
 
     - name: Create Pull Request
       uses: peter-evans/create-pull-request@v6
       with:
-        push-to-fork: ${{ github.actor }}/${{ github.event.repository.name }}
-        token: ${{ secrets.GITHUB_TOKEN }}
-        commit-message: "feat: propose new documentation"
-        title: "Proposed Documentation Update"
-        body: "This is an auto-generated PR with new documentation."
-        branch: "new-documentation-proposal"
+        token: ${{ secrets.ADK_BOT_GITHUB_TOKEN }}
+        commit-message: "feat: propose update to feature matrix"
+        title: "Proposed Update to Feature Matrix"
+        body: "This is an auto-generated PR with new content for the feature matrix."
+        branch: "new-feature-matrix-proposal"
         delete-branch: true

@@ -1,5 +1,9 @@
 # Function tools
 
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+</div>
+
 When pre-built ADK tools don't meet your requirements, you can create custom *function tools*. Building function tools allows you to create tailored functionality, such as connecting to proprietary databases or implementing unique algorithms.
 For example, a function tool, `myfinancetool`, might be a function that calculates a specific financial metric. ADK also supports long running functions, so if that calculation takes a while, the agent can continue working on other tasks.
 
@@ -240,6 +244,20 @@ Define your tool function and wrap it using the `LongRunningFunctionTool` class:
 ### Intermediate / Final result Updates
 
 Agent client received an event with long running function calls and check the status of the ticket. Then Agent client can send the intermediate or final response back to update the progress. The framework packages this value (even if it's None) into the content of the `FunctionResponse` sent back to the LLM.
+
+!!! note "Note: Long running function response with Resume feature"
+
+    If your ADK agent workflow is configured with the 
+    [Resume](/adk-docs/runtime/resume/) feature, you also must include
+    the Invocation ID (`invocation_id`) parameter with the long running 
+    function response. The Invocation ID you provide must be the same 
+    invocation that generated the long running function request, otherwise 
+    the system starts a new invocation with the response. If your
+    agent uses the Resume feature, consider including the Invocation ID
+    as a parameter with your long running function request, so it can be
+    included with the response. For more details on using the Resume 
+    feature, see
+    [Resume stopped agents](/adk-docs/runtime/resume/).
 
 ??? Tip "Applies to only Java ADK"
 

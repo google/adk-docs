@@ -1,6 +1,8 @@
 # Why Evaluate Agents
 
-![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java support is planned/ coming soon."}
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
+</div>
 
 In traditional software development, unit tests and integration tests provide confidence that code functions as expected and remains stable through changes. These tests provide a clear "pass/fail" signal, guiding further development. However, LLM agents introduce a level of variability that makes traditional testing approaches insufficient.
 
@@ -150,7 +152,7 @@ and initial session file can be ignored (or removed.)
 
 The evalset approach utilizes a dedicated dataset called an "evalset" for evaluating agent-model interactions. Similar to a test file, the evalset contains example interactions. However, an evalset can contain multiple, potentially lengthy sessions, making it ideal for simulating complex, multi-turn conversations. Due to its ability to represent complex sessions, the evalset is well-suited for integration tests. These tests are typically run less frequently than unit tests due to their more extensive nature.
 
-An evalset file contains multiple "evals," each representing a distinct session. Each eval consists of one or more "turns," which include the user query, expected tool use, expected intermediate agent responses, and a reference response. These fields have the same meaning as they do in the test file approach. Each eval is identified by a unique name. Furthermore, each eval includes an associated initial session state.
+An evalset file contains multiple "evals," each representing a distinct session. Each eval consists of one or more "turns," which include the user query, expected tool use, expected intermediate agent responses, and a reference response. These fields have the same meaning as they do in the test file approach. Alternatively, an eval can define a *conversation scenario* which is used to [dynamically simulate](./user-sim.md) a user interaction with the agent. Each eval is identified by a unique name. Furthermore, each eval includes an associated initial session state.
 
 Creating evalsets manually can be complex, therefore UI tools are provided to help capture relevant sessions and easily convert them into evals within your evalset. Learn more about using the web UI for evaluation below. Here is an example evalset containing two sessions. The eval set files are  backed by a formal Pydantic data model. The two key schema files are
 [Eval Set](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py) and
@@ -311,10 +313,24 @@ Based on who is maintaining the eval set data, there are two routes:
 
 ### Evaluation Criteria
 
-The evaluation criteria define how the agent's performance is measured against the evalset. The following metrics are supported:
+ADK provides several built-in criteria for evaluating agent performance, ranging
+from tool trajectory matching to LLM-based response quality assessment. For a
+detailed list of available criteria and guidance on when to use them, please see
+[Evaluation Criteria](./criteria.md).
 
-* `tool_trajectory_avg_score`: This metric compares the agent's actual tool usage during the evaluation against the expected tool usage defined in the `expected_tool_use` field. Each matching tool usage step receives a score of 1, while a mismatch receives a score of 0\. The final score is the average of these matches, representing the accuracy of the tool usage trajectory.  
-* `response_match_score`: This metric compares the agent's final natural language response to the expected final response, stored in the `reference` field. We use the [ROUGE](https://en.wikipedia.org/wiki/ROUGE_\(metric\)) metric to calculate the similarity between the two responses.
+Here is a summary of all the available criteria:
+
+*   **tool_trajectory_avg_score**: Exact match of tool call trajectory.
+*   **response_match_score**: ROUGE-1 similarity to reference response.
+*   **final_response_match_v2**: LLM-judged semantic match to a reference
+    response.
+*   **rubric_based_final_response_quality_v1**: LLM-judged final response
+    quality based on custom rubrics.
+*   **rubric_based_tool_use_quality_v1**: LLM-judged tool usage quality based on
+    custom rubrics.
+*   **hallucinations_v1**: LLM-judged groundedness of agent response against
+    context.
+*   **safety_v1**: Safety/harmlessness of agent response.
 
 If no evaluation criteria are provided, the following default configuration is used:
 
@@ -331,6 +347,49 @@ Here is an example of a `test_config.json` file specifying custom evaluation cri
   }
 }
 ```
+
+#### Recommendations on Criteria
+
+Choose criteria based on your evaluation goals:
+
+*   **Enable tests in CI/CD pipelines or regression testing:** Use
+    `tool_trajectory_avg_score` and `response_match_score`. These criteria are
+    fast, predictable, and suitable for frequent automated checks.
+*   **Evaluate trusted reference responses:** Use `final_response_match_v2` to
+    evaluate semantic equivalence. This LLM-based check is more flexible than
+    exact matching and better captures whether the agent's response means the
+    same thing as the reference response.
+*   **Evaluate response quality without a reference response:** Use
+    `rubric_based_final_response_quality_v1`. This is useful when you don't have
+    a trusted reference, but you can define attributes of a good response (e.g.,
+    "The response is concise," "The response has a helpful tone").
+*   **Evaluate the correctness of tool usage:** Use
+    `rubric_based_tool_use_quality_v1`. This allows you to validate the agent's
+    reasoning process by checking, for example, that a specific tool was called
+    or that tools were called in the correct order (e.g., "Tool A must be called
+    before Tool B").
+*   **Check if responses are grounded in context:** Use `hallucinations_v1` to
+    detect if the agent makes claims that are unsupported by or contradictory to
+    the information available to it (e.g., tool outputs).
+*   **Check for harmful content:** Use `safety_v1` to ensure that agent
+    responses are safe and do not violate safety policies.
+
+In addition, criteria which require information on expected agent tool use
+and/or responses are not supported in combination with
+[User Simulation](./user-sim.md).
+Currently, only the `hallucinations_v1` and `safety_v1` criteria support such evals.
+
+### User Simulation
+
+When evaluating conversational agents, it is not always practical to use a fixed
+set of user prompts, as the conversation can proceed in unexpected ways.
+For example, if the agent needs the user to supply two values to perform a task,
+it may ask for those values one at a time or both at once.
+To resolve this issue, ADK allows you test the behavior of the agent in a
+specific *conversation scenario* with user prompts that are dynamically
+generated by an AI model.
+For details on how to set up an eval with user simulation, see
+[User Simulation](./user-sim.md).
 
 ## How to run Evaluation with the ADK
 

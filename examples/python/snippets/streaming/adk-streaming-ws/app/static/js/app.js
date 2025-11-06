@@ -170,10 +170,6 @@ let audioRecorderNode;
 let audioRecorderContext;
 let micStream;
 
-// Audio buffering for 0.2s intervals
-let audioBuffer = [];
-let bufferTimer = null;
-
 // Import the audio worklets
 import { startAudioPlayerWorklet } from "./audio-player.js";
 import { startAudioRecorderWorklet } from "./audio-recorder.js";
@@ -207,57 +203,12 @@ startAudioButton.addEventListener("click", () => {
 
 // Audio recorder handler
 function audioRecorderHandler(pcmData) {
-  // Add audio data to buffer
-  audioBuffer.push(new Uint8Array(pcmData));
-  
-  // Start timer if not already running
-  if (!bufferTimer) {
-    bufferTimer = setInterval(sendBufferedAudio, 200); // 0.2 seconds
-  }
-}
-
-// Send buffered audio data every 0.2 seconds
-function sendBufferedAudio() {
-  if (audioBuffer.length === 0) {
-    return;
-  }
-  
-  // Calculate total length
-  let totalLength = 0;
-  for (const chunk of audioBuffer) {
-    totalLength += chunk.length;
-  }
-  
-  // Combine all chunks into a single buffer
-  const combinedBuffer = new Uint8Array(totalLength);
-  let offset = 0;
-  for (const chunk of audioBuffer) {
-    combinedBuffer.set(chunk, offset);
-    offset += chunk.length;
-  }
-  
-  // Send the combined audio data
+  // Send the pcm data as base64
   sendMessage({
     mime_type: "audio/pcm",
-    data: arrayBufferToBase64(combinedBuffer.buffer),
+    data: arrayBufferToBase64(pcmData),
   });
-  console.log("[CLIENT TO AGENT] sent %s bytes", combinedBuffer.byteLength);
-  
-  // Clear the buffer
-  audioBuffer = [];
-}
-
-// Stop audio recording and cleanup
-function stopAudioRecording() {
-  if (bufferTimer) {
-    clearInterval(bufferTimer);
-    bufferTimer = null;
-  }
-  
-  // Send any remaining buffered audio
-  if (audioBuffer.length > 0) {
-    sendBufferedAudio();
-  }
+  console.log("[CLIENT TO AGENT] sent %s bytes", pcmData.byteLength);
 }
 
 // Encode an array buffer with Base64

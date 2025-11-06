@@ -1,7 +1,8 @@
 # Using Different Models with ADK
 
-!!! Note
-    Java ADK currently supports Gemini and Anthropic models. More model support coming soon.
+<div class="language-support-tag" title="Java ADK currently supports Gemini and Anthropic models.">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+</div>
 
 The Agent Development Kit (ADK) is designed for flexibility, allowing you to
 integrate various Large Language Models (LLMs) into your agents. While the setup
@@ -20,8 +21,8 @@ ADK primarily uses two mechanisms for model integration:
    `google-genai` library.
 2. **Wrapper Classes:** For broader compatibility, especially with models
    outside the Google ecosystem or those requiring specific client
-   configurations (like models accessed via LiteLLM). You instantiate a specific
-   wrapper class (e.g., `LiteLlm`) and pass this object as the `model` parameter
+   configurations (like models accessed via Apigee or LiteLLM). You instantiate a specific
+   wrapper class (e.g., `ApigeeLlm` or `LiteLlm`) and pass this object as the `model` parameter
    to your `LlmAgent`.
 
 The following sections guide you through using these methods based on your needs.
@@ -188,7 +189,9 @@ For deployed applications, a service account is the standard method.
 
 ## Using Anthropic models
 
-![java_only](https://img.shields.io/badge/Supported_in-Java-orange){ title="This feature is currently available for Java. Python support for direct Anthropic API (non-Vertex) is via LiteLLM."}
+<div class="language-support-tag" title="Available for Java. Python support for direct Anthropic API (non-Vertex) is via LiteLLM.">
+   <span class="lst-supported">Supported in ADK</span><span class="lst-java">Java v0.2.0</span>
+</div>
 
 You can integrate Anthropic's Claude models directly using their API key or from a Vertex AI backend into your Java ADK applications by using the ADK's `Claude` wrapper class.
 
@@ -249,11 +252,62 @@ public class DirectAnthropicAgent {
 }
 ```
 
+## Using Apigee gateway for AI models
 
+<div class="language-support-tag">
+   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.18.0</span>
+</div>
+
+[Apigee](https://docs.cloud.google.com/apigee/docs/api-platform/get-started/what-apigee) acts as a powerful [AI Gateway](https://cloud.google.com/solutions/apigee-ai), transforming how you manage and govern your generative AI model traffic. By exposing your AI model endpoint (like Vertex AI or the Gemini API) through an Apigee proxy, you immediately gain enterprise-grade capabilities:
+
+- **Model Safety:** Implement security policies like Model Armor for threat protection.
+
+- **Traffic Governance:** Enforce Rate Limiting and Token Limiting to manage costs and prevent abuse.
+
+- **Performance:** Improve response times and efficiency using Semantic Caching and advanced model routing.
+
+- **Monitoring & Visibility:** Get granular monitoring, analysis, and auditing of all your AI requests.
+
+**NOTE:** The `ApigeeLLM` wrapper is currently designed for use with Vertex AI and the Gemini API (generateContent). We are continually expanding support for other models and interfaces.
+
+**Integration Method:**  To integrate Apigee's governance into your agent's workflow, simply instantiate the `ApigeeLlm` wrapper and pass it to an `LlmAgent` or other agent type.
+
+**Example:**
+
+```python
+
+from google.adk.agents import LlmAgent
+from google.adk.models.apigee_llm import ApigeeLlm
+
+# Instantiate the ApigeeLlm wrapper
+model = ApigeeLlm(
+    # Specify the Apigee route to your model. For more info, check out the ApigeeLlm documentation (https://github.com/google/adk-python/tree/main/contributing/samples/hello_world_apigeellm).
+    model="apigee/gemini-2.5-flash", 
+    # The proxy URL of your deployed Apigee proxy including the base path
+    proxy_url=f"https://{APIGEE_PROXY_URL}", 
+    # Pass necessary authentication/authorization headers (like an API key)
+    custom_headers={"foo": "bar"}
+)
+
+# Pass the configured model wrapper to your LlmAgent
+agent = LlmAgent(
+    model=model,
+    name="my_governed_agent",
+    instruction="You are a helpful assistant powered by Gemini and governed by Apigee.",
+    # ... other agent parameters
+)
+
+```
+
+With this configuration, every API call from your agent will be routed through Apigee first, where all necessary policies (security, rate limiting, logging) are executed before the request is securely forwarded to the underlying AI model endpoint.
+
+For a full code example using the Apigee proxy, see [Hello World Apigee LLM](https://github.com/google/adk-python/tree/main/contributing/samples/hello_world_apigeellm)
 
 ## Using Cloud & Proprietary Models via LiteLLM
 
-![python_only](https://img.shields.io/badge/Supported_in-Python-blue)
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
+</div>
 
 To access a vast range of LLMs from providers like OpenAI, Anthropic (non-Vertex
 AI), Cohere, and many others, ADK offers integration through the LiteLLM
@@ -333,7 +387,9 @@ layer, providing a standardized, OpenAI-compatible interface to over 100+ LLMs.
 
 ## Using Open & Local Models via LiteLLM
 
-![python_only](https://img.shields.io/badge/Supported_in-Python-blue)
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
+</div>
 
 For maximum control, cost savings, privacy, or offline use cases, you can run
 open-source models locally or self-host them and integrate them using LiteLLM.
@@ -499,7 +555,9 @@ http://localhost:11434/api/chat \
 
 ### Self-Hosted Endpoint (e.g., vLLM)
 
-![python_only](https://img.shields.io/badge/Supported_in-Python-blue)
+<div class="language-support-tag">
+   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
+</div>
 
 Tools such as [vLLM](https://github.com/vllm-project/vllm) allow you to host
 models efficiently and often expose an OpenAI-compatible API endpoint.
@@ -593,7 +651,9 @@ Ensure your environment is configured for Vertex AI:
 
 ### Model Garden Deployments
 
-![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java support is planned/ coming soon."}
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.2.0</span>
+</div>
 
 You can deploy various open and proprietary models from the
 [Vertex AI Model Garden](https://console.cloud.google.com/vertex-ai/model-garden)
@@ -621,7 +681,9 @@ agent_llama3_vertex = LlmAgent(
 
 ### Fine-tuned Model Endpoints
 
-![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java support is planned/ coming soon."}
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.2.0</span>
+</div>
 
 Deploying your fine-tuned models (whether based on Gemini or other architectures
 supported by Vertex AI) results in an endpoint that can be used directly.

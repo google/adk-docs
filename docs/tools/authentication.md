@@ -1,8 +1,8 @@
 # Authenticating with Tools
 
-![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java support is planned/ coming soon."}
-
-## Core Concepts
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
+</div>
 
 Many tools need to access protected resources (like user data in Google Calendar, Salesforce records, etc.) and require authentication. ADK provides a system to handle various authentication methods securely.
 
@@ -364,6 +364,20 @@ if auth_request_function_call_id and auth_config:
         print(event) # Print the full event for inspection
 
 ```
+
+!!! note "Note: Authorization response with Resume feature"
+
+    If your ADK agent workflow is configured with the 
+    [Resume](/adk-docs/runtime/resume/) feature, you also must include
+    the Invocation ID (`invocation_id`) parameter with the authorization
+    response. The Invocation ID you provide must be the same invocation
+    that generated the authorization request, otherwise the system
+    starts a new invocation with the authorization response. If your
+    agent uses the Resume feature, consider including the Invocation ID
+    as a parameter with your authorization request, so it can be included
+    with the authorization response. For more details on using the Resume 
+    feature, see
+    [Resume stopped agents](/adk-docs/runtime/resume/).
 
 **Step 5: ADK Handles Token Exchange & Tool Retry and gets Tool result**
 
