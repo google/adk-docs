@@ -298,7 +298,7 @@ Once you know the event type, access the relevant data:
           if event.LLMResponse == nil || event.LLMResponse.Content == nil {
               return
           }
-          calls := event.LLMResponse.Content.FunctionCalls()
+          calls := event.Content.FunctionCalls()
           if len(calls) > 0 {
               for _, call := range calls {
                   toolName := call.Name
@@ -352,7 +352,7 @@ Once you know the event type, access the relevant data:
             if event.LLMResponse == nil || event.LLMResponse.Content == nil {
                 return
             }
-            responses := event.LLMResponse.Content.FunctionResponses()
+            responses := event.Content.FunctionResponses()
             if len(responses) > 0 {
                 for _, response := range responses {
                     toolName := response.Name
@@ -381,19 +381,19 @@ The `event.actions` object signals changes that occurred or should occur. Always
             # Update local UI or application state if necessary
         ```
     === "Java"
-            `ConcurrentMap<String, Object> delta = event.actions().stateDelta();`
+        `ConcurrentMap<String, Object> delta = event.actions().stateDelta();`
 
-            ```java
-            import java.util.concurrent.ConcurrentMap;
-            import com.google.adk.events.EventActions;
+        ```java
+        import java.util.concurrent.ConcurrentMap;
+        import com.google.adk.events.EventActions;
 
-            EventActions actions = event.actions(); // Assuming event.actions() is not null
-            if (actions != null && actions.stateDelta() != null && !actions.stateDelta().isEmpty()) {
-                ConcurrentMap<String, Object> stateChanges = actions.stateDelta();
-                System.out.println("  State changes: " + stateChanges);
-                // Update local UI or application state if necessary
-            }
-            ```
+        EventActions actions = event.actions(); // Assuming event.actions() is not null
+        if (actions != null && actions.stateDelta() != null && !actions.stateDelta().isEmpty()) {
+            ConcurrentMap<String, Object> stateChanges = actions.stateDelta();
+            System.out.println("  State changes: " + stateChanges);
+            // Update local UI or application state if necessary
+        }
+        ```
 
     === "Go"
         `delta := event.Actions.StateDelta` (a `map[string]any`)
@@ -595,7 +595,7 @@ Use the built-in helper method `event.is_final_response()` to identify events su
                      String finalText = fullResponseText.toString() + (event.partial().orElse(false) ? "" : eventText);
                      System.out.println("Display to user: " + finalText.trim());
                      fullResponseText.setLength(0); // Reset accumulator
-                 } else if (event.actions() != nil && event.actions().skipSummarization().orElse(false)
+                 } else if (event.actions() != null && event.actions().skipSummarization().orElse(false)
                             && !event.functionResponses().isEmpty()) {
                      // Handle displaying the raw tool result if needed,
                      // especially if finalResponse() was true due to other conditions
