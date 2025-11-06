@@ -53,7 +53,7 @@ Check out the following pre-built tools that you can use with ADK agents:
     </div>
     <div class="tool-card-content">
       <h3>Application Integration</h3>
-      <p>Link your agents to enterprise applications using Integration Connectors</p>
+      <p>Link your agents to enterprise apps using Integration Connectors</p>
     </div>
   </a>
 
@@ -83,7 +83,7 @@ Check out the following pre-built tools that you can use with ADK agents:
     </div>
     <div class="tool-card-content">
       <h3>GKE Code Executor</h3>
-      <p>Run AI-generated code in a secure and scalable GKE Sandbox environment</p>
+      <p>Run AI-generated code in a secure and scalable GKE environment</p>
     </div>
   </a>
 
@@ -133,6 +133,16 @@ Check out the following pre-built tools that you can use with ADK agents:
 
 <div class="tool-card-grid">
 
+  <a href="/adk-docs/tools/third-party/browserbase/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="../assets/tools-browserbase.png" alt="Browserbase">
+    </div>
+    <div class="tool-card-content">
+      <h3>Browserbase</h3>
+      <p>Powers web browsing capabilities for AI agents</p>
+    </div>
+  </a>
+
   <a href="/adk-docs/tools/third-party/exa/" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="../assets/tools-exa.png" alt="Exa">
@@ -148,7 +158,7 @@ Check out the following pre-built tools that you can use with ADK agents:
       <img src="../assets/tools-firecrawl.png" alt="Firecrawl">
     </div>
     <div class="tool-card-content">
-      <h3>Firecrawl</h4>
+      <h3>Firecrawl</h3>
       <p>Empower your AI apps with clean data from any website</p>
     </div>
   </a>
@@ -178,8 +188,18 @@ Check out the following pre-built tools that you can use with ADK agents:
       <img src="../assets/tools-notion.png" alt="Notion">
     </div>
     <div class="tool-card-content">
-      <h3>Notion</h4>
+      <h3>Notion</h3>
       <p>Search workspaces, create pages, and manage tasks and databases</p>
+    </div>
+  </a>
+
+  <a href="/adk-docs/tools/third-party/tavily/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="../assets/tools-tavily.png" alt="Tavily">
+    </div>
+    <div class="tool-card-content">
+      <h3>Tavily</h3>
+      <p>Provides real-time web search, extraction, and crawling tools</p>
     </div>
   </a>
 
