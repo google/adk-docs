@@ -207,10 +207,10 @@ A tool can write data to a `temp:` variable, and a subsequent tool can read it. 
         --8<-- "examples/go/snippets/tools/function-tools/func_tool.go"
         ```
 
-        The return value from this tool will be a `map[string]any` marshalled into a JSON object.
+        The return value from this tool will be a `getStockPriceResults` instance.
 
         ```json
-        For input `{"symbol": "GOOG"}`: {"price":1,"symbol":"GOOG"}
+        For input `{"symbol": "GOOG"}`: {"price":300.6,"symbol":"GOOG"}
         ```
 
 ### Best Practices
