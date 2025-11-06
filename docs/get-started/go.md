@@ -12,7 +12,6 @@ Create an agent project with the following files and directory structure:
 ```none
 my_agent/
     agent.go    # main agent code
-    go.mod      # module configuration
     .env        # API keys or project IDs
 ```
 
@@ -30,19 +29,15 @@ my_agent/
 
         ```bash
         mkdir -p my_agent/ && \
-            touch my_agent/agent.go \
+            touch my_agent/agent.go && \
             touch my_agent/.env
         ```
 
-    **Note:** Do not create the `go.mod` file, 
-    you generate that file in a later step.  
-
 ### Define the agent code
 
-Create the code for a basic agent, including a simple implementation of an ADK 
-[Function Tool](/adk-docs/tools/function-tools/), called `getCurrentTime`.
-Add the following code to the `my_agent/agent.go` file in your project
-directory: 
+Create the code for a basic agent that uses the built-in
+[Google Search tool](/adk-docs/tools/built-in-tools/#google-search). Add the
+following code to the `my_agent/agent.go` file in your project directory:
 
 ```go title="my_agent/agent.go"
 package main
@@ -110,10 +105,10 @@ go mod tidy
 ### Set your API key
 
 This project uses the Gemini API, which requires an API key. If you
-don't already have Gemini API key, create a key in Google AI Studio on the 
+don't already have Gemini API key, create a key in Google AI Studio on the
 [API Keys](https://aistudio.google.com/app/apikey) page.
 
-In a terminal window, write your API key into the `.env` or `env.bat` file of 
+In a terminal window, write your API key into the `.env` or `env.bat` file of
 your project to set environment variables:
 
 === "MacOS / Linux"
@@ -143,8 +138,7 @@ interact with your agent.
 
 ### Run with command-line interface
 
-Run your agent with the command-line interface `AgentCliRunner` class
-using the following Maven command:
+Run your agent using the following Go command:
 
 ```console title="Run from: my_agent/ directory"
 # Remember to load keys and settings: source .env OR env.bat
@@ -155,7 +149,7 @@ go run agent.go
 
 ### Run with web interface
 
-Run your agent with the ADK web interface using the following Maven command:
+Run your agent with the ADK web interface using the following Go command:
 
 ```console title="Run from: my_agent/ directory"
 # Remember to load keys and settings: source .env OR env.bat
