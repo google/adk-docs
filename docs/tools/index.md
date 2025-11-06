@@ -139,7 +139,7 @@ Check out the following pre-built tools that you can use with ADK agents:
     </div>
     <div class="tool-card-content">
       <h3>Bright Data</h3>
-      <p>One MCP for the Web. Connet your AI to real web data.</p>
+      <p>One MCP for the web - connect your AI to real web data</p>
     </div>
   </a>
 

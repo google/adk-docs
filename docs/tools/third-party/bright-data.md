@@ -8,12 +8,8 @@ pre-built data feeds from popular platforms.
 
 ## Use cases
 
-- **Real-Time Web Search**: Perform optimized web searches to get up-to-date 
+- **Real-Time Web Search**: Perform optimized web searches to get up-to-date
   information in AI-friendly formats (JSON/Markdown).
-
-- **Web Scraping**: Scrape any webpage with enterprise-grade
-  unblocking that bypasses bot detection, CAPTCHAs, and geo-restrictions
-  automatically.
 
 - **Structured Data Extraction**: Use AI-powered extraction to convert any
   webpage into clean, structured JSON data with optional custom prompts.
@@ -34,7 +30,7 @@ pre-built data feeds from popular platforms.
 - Refer to the
   [documentation](https://docs.brightdata.com/mcp-server/overview) for more
   information.
-- The server offers a **free tier with 5,000 requests/month** useful for
+- The server offers a **free tier with 5,000 requests/month**, which is useful for
   prototyping and everyday workflows.
 
 ## Use with agent
@@ -66,7 +62,7 @@ pre-built data feeds from popular platforms.
                             "PRO_MODE": "true",  # Optional: Enable all 60+ tools
                         }
                     ),
-                    timeout=30,
+                    timeout=300,
                 ),
             )
         ],
@@ -111,8 +107,6 @@ command-line interface or web interface. Here are some examples:
 > Scrape the homepage of techcrunch.com and extract all article headlines and
 > links
 
-> What are the trending posts on the @elonmusk LinkedIn profile?
-
 The agent automatically calls the appropriate Bright Data tools to provide
 comprehensive answers, making it easy to access real-time web data without
 manual navigation or worrying about getting blocked.
@@ -144,6 +138,7 @@ Enable Pro Mode by setting `PRO_MODE=true` in environment variables to access:
 - Navigate, click, type, scroll, take screenshots, and more.
 
 **Web Data APIs (60+ Structured Datasets):**
+
 - **E-commerce**: `web_data_amazon_product`, `web_data_walmart_product`,
   `web_data_ebay_product`, `web_data_etsy_products`, `web_data_bestbuy_products`,
   `web_data_zara_products`
