@@ -1,7 +1,7 @@
 # Custom Tools for ADK
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-go">Go v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
 In an ADK agent workflow, Tools are programming functions with structured input
@@ -91,16 +91,16 @@ The following example showcases how an agent can use tools by **referencing thei
     --8<-- "examples/python/snippets/tools/overview/weather_sentiment.py"
     ```
 
-=== "Java"
-
-    ```java
-    --8<-- "examples/java/snippets/src/main/java/tools/WeatherSentimentAgentApp.java:full_code"
-    ```
-
 === "Go"
 
     ```go
     --8<-- "examples/go/snippets/tools-custom/weather_sentiment/main.go"
+    ```
+
+=== "Java"
+
+    ```java
+    --8<-- "examples/java/snippets/src/main/java/tools/WeatherSentimentAgentApp.java:full_code"
     ```
 
 ## Tool Context
@@ -147,6 +147,12 @@ The `tool_context.state` attribute provides direct read and write access to the 
     --8<-- "examples/python/snippets/tools/overview/user_preference.py"
     ```
 
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/tools-custom/user_preference/user_preference.go:example"
+    ```
+
 === "Java"
 
     ```java
@@ -174,12 +180,6 @@ The `tool_context.state` attribute provides direct read and write access to the 
     }
     ```
 
-=== "Go"
-
-    ```go
-    --8<-- "examples/go/snippets/tools-custom/user_preference/user_preference.go:example"
-    ```
-
 ### **Controlling Agent Flow**
 
 The `tool_context.actions` attribute (`ToolContext.actions()` in Java) holds an **EventActions** object. Modifying attributes on this object allows your tool to influence what the agent or framework does after the tool finishes execution.
@@ -198,16 +198,16 @@ The `tool_context.actions` attribute (`ToolContext.actions()` in Java) holds an 
     --8<-- "examples/python/snippets/tools/overview/customer_support_agent.py"
     ```
 
-=== "Java"
-
-    ```java
-    --8<-- "examples/java/snippets/src/main/java/tools/CustomerSupportAgentApp.java:full_code"
-    ```
-
 === "Go"
 
     ```go
     --8<-- "examples/go/snippets/tools-custom/customer_support_agent/main.go"
+    ```
+
+=== "Java"
+
+    ```java
+    --8<-- "examples/java/snippets/src/main/java/tools/CustomerSupportAgentApp.java:full_code"
     ```
 
 ##### Explanation
@@ -247,7 +247,7 @@ These methods provide convenient ways for your tool to interact with persistent 
 
 * **`save_artifact(filename: str, artifact: types.Part)`**: Saves a new version of an artifact to the artifact_service. Returns the new version number (starting from 0).
 
-* **`search_memory(query: str)`**: (Python and Go only feature)
+* **`search_memory(query: str)`**: (Support in ADK Python and Go)
     Queries the user's long-term memory using the configured `memory_service`. This is useful for retrieving relevant information from past interactions or stored knowledge. The structure of the **SearchMemoryResponse** depends on the specific memory service implementation but typically contains relevant text snippets or conversation excerpts.
 
 #### Example
@@ -256,6 +256,12 @@ These methods provide convenient ways for your tool to interact with persistent 
 
     ```py
     --8<-- "examples/python/snippets/tools/overview/doc_analysis.py"
+    ```
+
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/tools-custom/doc_analysis/doc_analysis.go"
     ```
 
 === "Java"
@@ -310,12 +316,6 @@ These methods provide convenient ways for your tool to interact with persistent 
     //      FunctionTool.create(ToolContextArtifactExample.class, "processDocument");
     // In the Agent, include this function tool.
     // LlmAgent agent = LlmAgent().builder().tools(processDocumentTool).build();
-    ```
-
-=== "Go"
-
-    ```go
-    --8<-- "examples/go/snippets/tools-custom/doc_analysis/doc_analysis.go"
     ```
 
 By leveraging the **ToolContext**, developers can create more sophisticated and context-aware custom tools that seamlessly integrate with ADK's architecture and enhance the overall capabilities of their agents.
@@ -390,6 +390,12 @@ Here are key guidelines for defining effective tool functions:
 
     ```
 
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/tools-custom/order_status/order_status.go:snippet"
+    ```
+
 === "Java"
 
     ```java
@@ -417,12 +423,6 @@ Here are key guidelines for defining effective tool functions:
         }
         return response;
     }
-    ```
-
-=== "Go"
-
-    ```go
-    --8<-- "examples/go/snippets/tools-custom/order_status/order_status.go:snippet"
     ```
 
 * **Simplicity and Focus:**
