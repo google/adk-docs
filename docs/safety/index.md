@@ -116,8 +116,8 @@ For example, a query tool can be designed to expect a policy to be read from the
 
     ```go
     // Conceptual example: Setting policy data intended for tool context
-    // In a real ADK app, this might be set in InvocationContext.Session.State
-    // or passed during tool initialization, then retrieved via ToolContext.
+    // In a real ADK app, this might be set using the session state service.
+    // `ctx` is an `agent.Context` available in callbacks or custom agents.
 
     policy := map[string]interface{}{
     	"select_only": true,
@@ -127,7 +127,9 @@ For example, a query tool can be designed to expect a policy to be read from the
     // Conceptual: Storing policy where the tool can access it via ToolContext later.
     // This specific line might look different in practice.
     // For example, storing in session state:
-    invocationContext.Session.State["query_tool_policy"] = policy
+    if err := ctx.Session().State().Set("query_tool_policy", policy); err != nil {
+        // Handle error, e.g., log it.
+    }
 
     // Or maybe passing during tool init:
     // queryTool := NewQueryTool(policy)
@@ -214,9 +216,12 @@ During the tool execution, [**`Tool Context`**](../tools/index.md#tool-context) 
     	"google.golang.org/adk/tool"
     )
 
-    func query(query string, toolContext *tools.ToolContext) (any, error) {
+    func query(query string, toolContext *tool.Context) (any, error) {
     	// Assume 'policy' is retrieved from context, e.g., via session state:
-    	policy, _ := toolContext.InvocationContext.Session.State["query_tool_policy"].(map[string]interface{})
+    	policyAny, err := toolContext.State().Get("query_tool_policy")
+    	if err != nil {
+    		return nil, fmt.Errorf("could not retrieve policy: %w", err)
+    	}    	policy, _ := policyAny.(map[string]interface{})
     	actualTables := explainQuery(query) // Hypothetical function call
 
     	// --- Placeholder Policy Enforcement ---
@@ -359,24 +364,23 @@ When modifications to the tools to add guardrails aren't possible, the [**`Befor
     	"fmt"
     	"reflect"
 
-    	"google.golang.org/adk/agent"
+    	"google.golang.org/adk/agent/llmagent"
     	"google.golang.org/adk/tool"
     )
 
     // Hypothetical callback function
     func validateToolParams(
-    	callbackContext *callbacks.CallbackContext,
-    	toolDef *tools.Tool,
+    	ctx tool.Context,
+    	t tool.Tool,
     	args map[string]any,
-    	toolContext *tools.ToolContext,
     ) (map[string]any, error) {
-    	fmt.Printf("Callback triggered for tool: %s, args: %v\n", toolDef.Name, args)
+    	fmt.Printf("Callback triggered for tool: %s, args: %v\n", t.Name(), args)
 
     	// Example validation: Check if a required user ID from state matches an arg
-    	expectedUserID, ok := callbackContext.State["session_user_id"]
-    	if !ok {
+    	expectedUserID, err := ctx.State().Get("session_user_id")
+    	if err != nil {
     		// This is an unexpected failure, return an error.
-    		return nil, fmt.Errorf("internal error: session_user_id not found in state")
+    		return nil, fmt.Errorf("internal error: session_user_id not found in state: %w", err)
     	}
     	actualUserIDInArgs, _ := args["user_id_param"] // Assuming tool takes 'user_id_param'
 
@@ -393,12 +397,13 @@ When modifications to the tools to add guardrails aren't possible, the [**`Befor
     }
 
     // Hypothetical Agent setup
-    // rootAgent, err := llmagent.NewBuilder("gemini-2.0-flash").
-    // 	SetName("root_agent").
-    // 	SetInstruction("...").
-    // 	SetBeforeToolCallback(validateToolParams).
-    // 	AddTools(queryToolInstance).
-    // 	Build(context.Background())
+    // rootAgent, err := llmagent.New(llmagent.Config{
+    // 	Model: "gemini-2.0-flash",
+    // 	Name: "root_agent",
+    // 	Instruction: "...",
+    // 	BeforeToolCallbacks: []llmagent.BeforeToolCallback{validateToolParams},
+    // 	Tools: []tool.Tool{queryToolInstance},
+    // })
     ```
 
 However, when adding security guardrails to your agent applications, plugins are the recommended approach for implementing policies that are not specific to a single agent. Plugins are designed to be self-contained and modular, allowing you to create individual plugins for specific security policies, and apply them globally at the runner level. This means that a security plugin can be configured once and applied to every agent that uses the runner, ensuring consistent security guardrails across your entire application without repetitive code.
