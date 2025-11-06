@@ -35,17 +35,17 @@ my_agent/
 
         ```bash
         mkdir -p my_agent/src/main/java/com/example/agent && \
-            touch my_agent/src/main/java/com/example/agent/HelloTimeAgent.java \
-            touch my_agent/src/main/java/com/example/agent/AgentCliRunner.java \
+            touch my_agent/src/main/java/com/example/agent/HelloTimeAgent.java && \
+            touch my_agent/src/main/java/com/example/agent/AgentCliRunner.java && \
             touch my_agent/pom.xml my_agent/.env
         ```
 
 ### Define the agent code
 
-Create the code for a basic agent, including a simple implementation of an ADK 
+Create the code for a basic agent, including a simple implementation of an ADK
 [Function Tool](/adk-docs/tools/function-tools/), called `getCurrentTime()`.
 Add the following code to the `HelloTimeAgent.java` file in your project
-directory: 
+directory:
 
 ```java title="my_agent/src/main/java/com/example/agent/HelloTimeAgent.java"
 package com.example.agent;
@@ -66,7 +66,7 @@ public class HelloTimeAgent {
             .name("hello-time-agent")
             .description("Tells the current time in a specified city")
             .instruction("""
-                You are a helpful assistant that tells the current time in a city.                
+                You are a helpful assistant that tells the current time in a city.
                 Use the 'getCurrentTime' tool for this purpose.
                 """)
             .model("gemini-2.5-flash")
@@ -147,7 +147,7 @@ addtional settings with the following configuration code:
 ### Set your API key
 
 This project uses the Gemini API, which requires an API key. If you
-don't already have Gemini API key, create a key in Google AI Studio on the 
+don't already have Gemini API key, create a key in Google AI Studio on the
 [API Keys](https://aistudio.google.com/app/apikey) page.
 
 In a terminal window, write your API key into your `.env` file of your project
