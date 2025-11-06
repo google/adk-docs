@@ -55,9 +55,13 @@ func main() {
 	// 2. Create an agent with an instruction that uses a {topic} placeholder.
 	//    The ADK will automatically inject the value of "topic" from the
 	//    session state into the instruction before calling the LLM.
+	model, err := gemini.NewModel(ctx, modelID, nil)
+	if err != nil {
+		log.Fatalf("Failed to create Gemini model: %v", err)
+	}
 	storyGenerator, err := llmagent.New(llmagent.Config{
 		Name:        "StoryGenerator",
-		Model:       must(gemini.NewModel(ctx, modelID, nil)),
+		Model:       model,
 		Instruction: "Write a short story about a cat, focusing on the theme: {topic}.",
 	})
 	if err != nil {
@@ -83,8 +87,8 @@ func main() {
 			log.Printf("Agent Error: %v", err)
 			continue
 		}
-		if event.LLMResponse.Content != nil && len(event.LLMResponse.Content.Parts) > 0 {
-			for _, p := range event.LLMResponse.Content.Parts {
+		if event.Content != nil && len(event.Content.Parts) > 0 {
+			for _, p := range event.Content.Parts {
 				if p.Text != "" {
 					fmt.Print(p.Text)
 				}
@@ -94,9 +98,3 @@ func main() {
 	fmt.Println("\n--- Example Complete ---")
 }
 
-func must[T any](v T, err error) T {
-	if err != nil {
-		log.Fatal(err)
-	}
-	return v
-}

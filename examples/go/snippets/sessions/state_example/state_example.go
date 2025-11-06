@@ -27,6 +27,7 @@ import (
 	"google.golang.org/adk/runner"
 	"google.golang.org/adk/session"
 	"google.golang.org/adk/tool"
+	"google.golang.org/adk/tool/functiontool"
 	"google.golang.org/genai"
 )
 
@@ -44,9 +45,13 @@ func greetingAgentExample(sessionService session.Service) {
 	fmt.Println("--- Running GreetingAgent (output_key) Example ---")
 	ctx := context.Background()
 
+	modelGreeting, err := gemini.NewModel(ctx, modelID, nil)
+	if err != nil {
+		log.Fatalf("Failed to create Gemini model for greeting agent: %v", err)
+	}
 	greetingAgent, err := llmagent.New(llmagent.Config{
 		Name:        "Greeter",
-		Model:       must(gemini.NewModel(ctx, modelID, nil)),
+		Model:       modelGreeting,
 		Instruction: "Generate a short, friendly greeting.",
 		OutputKey:   "last_greeting",
 	})
@@ -65,13 +70,13 @@ func greetingAgentExample(sessionService session.Service) {
 
 	// Run the agent
 	userMessage := genai.NewContentFromText("Hello", "user")
-	for event, err := range r.Run(ctx, userID, sessionID, userMessage, &agent.RunConfig{}) {
+	for event, err := range r.Run(ctx, userID, sessionID, userMessage, agent.RunConfig{}) {
 		if err != nil {
 			log.Printf("Agent Error: %v", err)
 			continue
 		}
 		if isFinalResponse(event) {
-			if event.LLMResponse != nil && event.LLMResponse.Content != nil {
+			if event.LLMResponse.Content != nil {
 				fmt.Printf("Agent responded with: %q\n", textParts(event.LLMResponse.Content))
 			} else {
 				fmt.Println("Agent responded.")
@@ -156,17 +161,28 @@ func contextStateUpdateExample(sessionService session.Service) {
 	ctx := context.Background()
 
 	// Define the tool that modifies state
-	updateActionCountTool, err := tool.NewFunctionTool[struct{}, struct{}](
-		tool.FunctionToolConfig{Name: "update_action_count", Description: "Updates the user action count in the state."},
+	updateActionCountTool, err := functiontool.New[struct{}, struct{}](
+		functiontool.Config{Name: "update_action_count", Description: "Updates the user action count in the state."},
 		func(tctx tool.Context, args struct{}) struct{} {
-			count, _ := tctx.State().Get("user_action_count")
+			actx, ok := tctx.(agent.CallbackContext)
+			if !ok {
+				log.Fatalf("tool.Context is not of type agent.CallbackContext")
+			}
+			s, err := actx.State().Get("user_action_count")
+			if err != nil {
+				log.Printf("could not get user_action_count: %v", err)
+			}
 			newCount := 1
-			if c, ok := count.(int); ok {
+			if c, ok := s.(int); ok {
 				newCount = c + 1
 			}
-			tctx.State().Set("user_action_count", newCount)
-			tctx.State().Set("temp:last_operation_status", "success from tool")
-			fmt.Println("Tool: Updated state via tool.Context.")
+			if err := actx.State().Set("user_action_count", newCount); err != nil {
+				log.Printf("could not set user_action_count: %v", err)
+			}
+			if err := actx.State().Set("temp:last_operation_status", "success from tool"); err != nil {
+				log.Printf("could not set temp:last_operation_status: %v", err)
+			}
+			fmt.Println("Tool: Updated state via agent.CallbackContext.")
 			return struct{}{}
 		},
 	)
@@ -175,9 +191,13 @@ func contextStateUpdateExample(sessionService session.Service) {
 	}
 
 	// Define an agent that uses the tool
+	modelTool, err := gemini.NewModel(ctx, modelID, nil)
+	if err != nil {
+		log.Fatalf("Failed to create Gemini model for tool agent: %v", err)
+	}
 	toolAgent, err := llmagent.New(llmagent.Config{
 		Name:        "ToolAgent",
-		Model:       must(gemini.NewModel(ctx, modelID, nil)),
+		Model:       modelTool,
 		Instruction: "Use the update_action_count tool.",
 		Tools:       []tool.Tool{updateActionCountTool},
 	})
@@ -196,7 +216,7 @@ func contextStateUpdateExample(sessionService session.Service) {
 
 	// Run the agent to trigger the tool
 	userMessage := genai.NewContentFromText("Please update the action count.", "user")
-	for _, err := range r.Run(ctx, userID, sessionID, userMessage, &agent.RunConfig{}) {
+	for _, err := range r.Run(ctx, userID, sessionID, userMessage, agent.RunConfig{}) {
 		if err != nil {
 			log.Printf("Agent Error: %v", err)
 		}
@@ -245,21 +265,16 @@ func main() {
 
 // --- Helper Functions ---
 
-func must[T any](v T, err error) T {
-	if err != nil {
-		log.Fatal(err)
-	}
-	return v
-}
+
 
 func isFinalResponse(ev *session.Event) bool {
 	if ev.Actions.SkipSummarization || len(ev.LongRunningToolIDs) > 0 {
 		return true
 	}
-	if ev.LLMResponse == nil {
+	if ev.LLMResponse.Content == nil {
 		return true
 	}
-	return !hasFunctionCalls(ev.LLMResponse) && !hasFunctionResponses(ev.LLMResponse) && !ev.LLMResponse.Partial && !hasTrailingCodeExecutionResult(ev.LLMResponse)
+	return !hasFunctionCalls(&ev.LLMResponse) && !hasFunctionResponses(&ev.LLMResponse) && !ev.LLMResponse.Partial && !hasTrailingCodeExecutionResult(&ev.LLMResponse)
 }
 
 func hasFunctionCalls(resp *model.LLMResponse) bool {

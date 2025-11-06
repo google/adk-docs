@@ -80,9 +80,13 @@ func main() {
 	// Example with Static Provider
 	// ---
 	fmt.Println("--- Running Agent with Static InstructionProvider ---")
+	modelStatic, err := gemini.NewModel(ctx, modelID, nil)
+	if err != nil {
+		log.Fatalf("Failed to create Gemini model for static agent: %v", err)
+	}
 	staticAgent, err := llmagent.New(llmagent.Config{
 		Name:                "StaticTemplateAgent",
-		Model:               must(gemini.NewModel(ctx, modelID, nil)),
+		Model:               modelStatic,
 		InstructionProvider: staticInstructionProvider,
 	})
 	if err != nil {
@@ -94,9 +98,13 @@ func main() {
 	// Example with Dynamic Provider
 	// ---
 	fmt.Println("\n--- Running Agent with Dynamic InstructionProvider ---")
+	modelDynamic, err := gemini.NewModel(ctx, modelID, nil)
+	if err != nil {
+		log.Fatalf("Failed to create Gemini model for dynamic agent: %v", err)
+	}
 	dynamicAgent, err := llmagent.New(llmagent.Config{
 		Name:                "DynamicTemplateAgent",
-		Model:               must(gemini.NewModel(ctx, modelID, nil)),
+		Model:               modelDynamic,
 		InstructionProvider: dynamicInstructionProvider,
 	})
 	if err != nil {
@@ -133,9 +141,4 @@ func runAgent(ctx context.Context, ss session.Service, a agent.Agent, prompt str
 	fmt.Println()
 }
 
-func must[T any](v T, err error) T {
-	if err != nil {
-		log.Fatal(err)
-	}
-	return v
-}
+
