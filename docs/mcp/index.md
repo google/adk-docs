@@ -1,6 +1,8 @@
 # Model Context Protocol (MCP)
 
-## What is Model Context Protocol (MCP)?
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-java">Java</span><span class="lst-go">Go</span>
+</div>
 
 The
 [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction) is

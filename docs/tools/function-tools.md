@@ -1,5 +1,9 @@
 # Function tools
 
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+</div>
+
 When pre-built ADK tools don't meet your requirements, you can create custom *function tools*. Building function tools allows you to create tailored functionality, such as connecting to proprietary databases or implementing unique algorithms.
 For example, a function tool, `myfinancetool`, might be a function that calculates a specific financial metric. ADK also supports long running functions, so if that calculation takes a while, the agent can continue working on other tasks.
 
@@ -23,13 +27,12 @@ A well-defined function signature is crucial for the LLM to use your tool correc
 
 #### Parameters
 
-You can define functions with required parameters, optional parameters, and variadic arguments. Here’s how each is handled:
-
 ##### Required Parameters
-A parameter is considered **required** if it has a type hint but **no default value**. The LLM must provide a value for this argument when it calls the tool.
 
-???+ "Example: Required Parameters"
-    === "Python"
+=== "Python"
+    A parameter is considered **required** if it has a type hint but **no default value**. The LLM must provide a value for this argument when it calls the tool. The parameter's description is taken from the function's docstring.
+
+    ???+ "Example: Required Parameters"
         ```python
         def get_weather(city: str, unit: str):
             """
@@ -44,11 +47,33 @@ A parameter is considered **required** if it has a type hint but **no default va
         ```
     In this example, both `city` and `unit` are mandatory. If the LLM tries to call `get_weather` without one of them, the ADK will return an error to the LLM, prompting it to correct the call.
 
-##### Optional Parameters with Default Values
-A parameter is considered **optional** if you provide a **default value**. This is the standard Python way to define optional arguments. The ADK correctly interprets these and does not list them in the `required` field of the tool schema sent to the LLM.
+=== "Go"
+    In Go, you use struct tags to control the JSON schema. The two primary tags are `json` and `jsonschema`.
 
-???+ "Example: Optional Parameter with Default Value"
-    === "Python"
+    A parameter is considered **required** if its struct field does **not** have the `omitempty` or `omitzero` option in its `json` tag.
+
+    The `jsonschema` tag is used to provide the argument's description. This is crucial for the LLM to understand what the argument is for.
+
+    ???+ "Example: Required Parameters"
+        ```go
+        // GetWeatherParams defines the arguments for the getWeather tool.
+        type GetWeatherParams struct {
+            // This field is REQUIRED (no "omitempty").
+            // The jsonschema tag provides the description.
+            Location string `json:"location" jsonschema:"The city and state, e.g., San Francisco, CA"`
+
+            // This field is also REQUIRED.
+            Unit     string `json:"unit" jsonschema:"The temperature unit, either 'celsius' or 'fahrenheit'"`
+        }
+        ```
+    In this example, both `location` and `unit` are mandatory.
+
+##### Optional Parameters
+
+=== "Python"
+    A parameter is considered **optional** if you provide a **default value**. This is the standard Python way to define optional arguments. You can also mark a parameter as optional using `typing.Optional[SomeType]` or the `| None` syntax (Python 3.10+).
+
+    ???+ "Example: Optional Parameters"
         ```python
         def search_flights(destination: str, departure_date: str, flexible_days: int = 0):
             """
@@ -65,6 +90,25 @@ A parameter is considered **optional** if you provide a **default value**. This 
             return {"status": "success", "report": f"Found flights to {destination} on {departure_date}."}
         ```
     Here, `flexible_days` is optional. The LLM can choose to provide it, but it's not required.
+
+=== "Go"
+    A parameter is considered **optional** if its struct field has the `omitempty` or `omitzero` option in its `json` tag.
+
+    ???+ "Example: Optional Parameters"
+        ```go
+        // GetWeatherParams defines the arguments for the getWeather tool.
+        type GetWeatherParams struct {
+            // Location is required.
+            Location string `json:"location" jsonschema:"The city and state, e.g., San Francisco, CA"`
+
+            // Unit is optional.
+            Unit string `json:"unit,omitempty" jsonschema:"The temperature unit, either 'celsius' or 'fahrenheit'"`
+
+            // Days is optional.
+            Days int `json:"days,omitzero" jsonschema:"The number of forecast days to return (defaults to 1)"`
+        }
+        ```
+    Here, `unit` and `days` are optional. The LLM can choose to provide them, but they are not required.
 
 ##### Optional Parameters with `typing.Optional`
 You can also mark a parameter as optional using `typing.Optional[SomeType]` or the `| None` syntax (Python 3.10+). This signals that the parameter can be `None`. When combined with a default value of `None`, it behaves as a standard optional parameter.
@@ -130,6 +174,31 @@ A tool can write data to a `temp:` variable, and a subsequent tool can read it. 
         {"result": "$123"}
         ```
     
+    === "Go"
+
+        This tool retrieves the mocked value of a stock price.
+
+        ```go
+        import (
+            "google.golang.org/adk/agent"
+            "google.golang.org/adk/agent/llmagent"
+            "google.golang.org/adk/model/gemini"
+            "google.golang.org/adk/runner"
+            "google.golang.org/adk/session"
+            "google.golang.org/adk/tool"
+            "google.golang.org/adk/tool/functiontool"
+            "google.golang.org/genai"
+        )
+
+        --8<-- "examples/go/snippets/tools/function-tools/func_tool.go"
+        ```
+
+        The return value from this tool will be a `getStockPriceResults` instance.
+
+        ```json
+        For input `{"symbol": "GOOG"}`: {"price":300.6,"symbol":"GOOG"}
+        ```
+
     === "Java"
     
         This tool retrieves the mocked value of a stock price.
@@ -193,6 +262,21 @@ Define your tool function and wrap it using the `LongRunningFunctionTool` class:
 
     ```py
     --8<-- "examples/python/snippets/tools/function-tools/human_in_the_loop.py:define_long_running_function"
+    ```
+
+=== "Go"
+
+    ```go
+    import (
+        "google.golang.org/adk/agent"
+        "google.golang.org/adk/agent/llmagent"
+        "google.golang.org/adk/model/gemini"
+        "google.golang.org/adk/tool"
+        "google.golang.org/adk/tool/functiontool"
+        "google.golang.org/genai"
+    )
+
+    --8<-- "examples/go/snippets/tools/function-tools/long-running-tool/long_running_tool.go:create_long_running_tool"
     ```
 
 === "Java"
@@ -292,12 +376,19 @@ Agent client received an event with long running function calls and check the st
     --8<-- "examples/python/snippets/tools/function-tools/human_in_the_loop.py:call_reimbursement_tool"
     ```
 
+=== "Go"
+
+    The following example demonstrates a multi-turn workflow. First, the user asks the agent to create a ticket. The agent calls the long-running tool and the client captures the `FunctionCall` ID. The client then simulates the asynchronous work completing by sending subsequent `FunctionResponse` messages back to the agent to provide the ticket ID and final status.
+
+    ```go
+    --8<-- "examples/go/snippets/tools/function-tools/long-running-tool/long_running_tool.go:run_long_running_tool"
+    ```
+
 === "Java"
 
     ```java
     --8<-- "examples/java/snippets/src/main/java/tools/LongRunningFunctionExample.java:full_code"
     ```
-
 
 ??? "Python complete example: File Processing Simulation"
 
@@ -335,11 +426,18 @@ To use an agent as a tool, wrap the agent with the AgentTool class.
     tools=[AgentTool(agent=agent_b)]
     ```
 
+=== "Go"
+
+    ```go
+    agenttool.New(agent, &agenttool.Config{...})
+    ```
+
 === "Java"
 
     ```java
     AgentTool.create(agent)
     ```
+
 
 ### Customization
 
@@ -355,6 +453,21 @@ The `AgentTool` class provides the following attributes for customizing its beha
         --8<-- "examples/python/snippets/tools/function-tools/summarizer.py"
         ```
   
+    === "Go"
+
+        ```go
+        import (
+            "google.golang.org/adk/agent"
+            "google.golang.org/adk/agent/llmagent"
+            "google.golang.org/adk/model/gemini"
+            "google.golang.org/adk/tool"
+            "google.golang.org/adk/tool/agenttool"
+            "google.golang.org/genai"
+        )
+
+        --8<-- "examples/go/snippets/tools/function-tools/func_tool.go:agent_tool_example"
+        ```
+
     === "Java"
 
         ```java

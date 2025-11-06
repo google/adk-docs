@@ -1,5 +1,9 @@
 # Custom Tools for ADK
 
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+</div>
+
 In an ADK agent workflow, Tools are programming functions with structured input
 and output that can be called by an ADK Agent to perform actions. ADK Tools
 function similarly to how you use a
@@ -66,7 +70,6 @@ ADK offers flexibility by supporting several types of tools:
 2. **[Built-in Tools](../tools/built-in-tools.md):** Ready-to-use tools provided by the framework for common tasks.
         Examples: Google Search, Code Execution, Retrieval-Augmented Generation (RAG).
 3. **Third-Party Tools:** Integrate tools seamlessly from popular external libraries.
-        Examples: [LangChain Tools](/adk-docs/tools/third-party/langchain/), [CrewAI Tools](/adk-docs/tools/third-party/crewai/).
 
 Navigate to the respective documentation pages linked above for detailed information and examples for each tool type.
 
@@ -86,6 +89,12 @@ The following example showcases how an agent can use tools by **referencing thei
 
     ```py
     --8<-- "examples/python/snippets/tools/overview/weather_sentiment.py"
+    ```
+
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/tools-custom/weather_sentiment/main.go"
     ```
 
 === "Java"
@@ -138,6 +147,12 @@ The `tool_context.state` attribute provides direct read and write access to the 
     --8<-- "examples/python/snippets/tools/overview/user_preference.py"
     ```
 
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/tools-custom/user_preference/user_preference.go:example"
+    ```
+
 === "Java"
 
     ```java
@@ -167,7 +182,7 @@ The `tool_context.state` attribute provides direct read and write access to the 
 
 ### **Controlling Agent Flow**
 
-The `tool_context.actions` attribute (`ToolContext.actions()` in Java) holds an **EventActions** object. Modifying attributes on this object allows your tool to influence what the agent or framework does after the tool finishes execution.
+The `tool_context.actions` attribute (`ToolContext.actions()` in Java and `tool.Context.Actions()` in Go) holds an **EventActions** object. Modifying attributes on this object allows your tool to influence what the agent or framework does after the tool finishes execution.
 
 * **`skip_summarization: bool`**: (Default: False) If set to True, instructs the ADK to bypass the LLM call that typically summarizes the tool's output. This is useful if your tool's return value is already a user-ready message.
 
@@ -181,6 +196,12 @@ The `tool_context.actions` attribute (`ToolContext.actions()` in Java) holds an 
 
     ```py
     --8<-- "examples/python/snippets/tools/overview/customer_support_agent.py"
+    ```
+
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/tools-custom/customer_support_agent/main.go"
     ```
 
 === "Java"
@@ -202,7 +223,9 @@ This example illustrates how a tool, through EventActions in its ToolContext, ca
 
 ### **Authentication**
 
-![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java support is planned/ coming soon."}
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
+</div>
 
 ToolContext provides mechanisms for tools interacting with authenticated APIs. If your tool needs to handle authentication, you might use the following:
 
@@ -224,9 +247,8 @@ These methods provide convenient ways for your tool to interact with persistent 
 
 * **`save_artifact(filename: str, artifact: types.Part)`**: Saves a new version of an artifact to the artifact_service. Returns the new version number (starting from 0).
 
-* **`search_memory(query: str)`** ![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java support is planned/ coming soon."}
-
-       Queries the user's long-term memory using the configured `memory_service`. This is useful for retrieving relevant information from past interactions or stored knowledge. The structure of the **SearchMemoryResponse** depends on the specific memory service implementation but typically contains relevant text snippets or conversation excerpts.
+* **`search_memory(query: str)`**: (Support in ADK Python and Go)
+    Queries the user's long-term memory using the configured `memory_service`. This is useful for retrieving relevant information from past interactions or stored knowledge. The structure of the **SearchMemoryResponse** depends on the specific memory service implementation but typically contains relevant text snippets or conversation excerpts.
 
 #### Example
 
@@ -234,6 +256,12 @@ These methods provide convenient ways for your tool to interact with persistent 
 
     ```py
     --8<-- "examples/python/snippets/tools/overview/doc_analysis.py"
+    ```
+
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/tools-custom/doc_analysis/doc_analysis.go"
     ```
 
 === "Java"
@@ -362,6 +390,12 @@ Here are key guidelines for defining effective tool functions:
 
     ```
 
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/tools-custom/order_status/order_status.go:snippet"
+    ```
+
 === "Java"
 
     ```java
@@ -399,7 +433,11 @@ Here are key guidelines for defining effective tool functions:
 
 By adhering to these guidelines, you provide the LLM with the clarity and structure it needs to effectively utilize your custom function tools, leading to more capable and reliable agent behavior.
 
-## Toolsets: Grouping and Dynamically Providing Tools ![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java support is planned/coming soon."}
+## Toolsets: Grouping and Dynamically Providing Tools
+
+<div class="language-support-tag" title="This feature is currently available for Python.">
+   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.5.0</span>
+</div>
 
 Beyond individual tools, ADK introduces the concept of a **Toolset** via the `BaseToolset` interface (defined in `google.adk.tools.base_toolset`). A toolset allows you to manage and provide a collection of `BaseTool` instances, often dynamically, to an agent.
 

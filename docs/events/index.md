@@ -1,5 +1,9 @@
 # Events
 
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-go">Go v0.1.0</span>
+</div>
+
 Events are the fundamental units of information flow within the Agent Development Kit (ADK). They represent every significant occurrence during an agent's interaction lifecycle, from initial user input to the final response and all the steps in between. Understanding events is crucial because they are the primary way components communicate, state is managed, and control flow is directed.
 
 ## What Events Are and Why They Matter
@@ -53,6 +57,33 @@ An `Event` in ADK is an immutable record representing a specific point in the ag
     // }
     ```
 
+=== "Go"
+    In Go, this is a struct of type `google.golang.org/adk/session.Event`.
+
+    ```go
+    // Conceptual Structure of an Event (Go - See session/session.go)
+    // Simplified view based on the session.Event struct
+    type Event struct {
+        // --- Fields from embedded model.LLMResponse ---
+        model.LLMResponse
+
+        // --- ADK specific additions ---
+        Author       string         // 'user' or agent name
+        InvocationID string         // ID for the whole interaction run
+        ID           string         // Unique ID for this specific event
+        Timestamp    time.Time      // Creation time
+        Actions      EventActions   // Important for side-effects & control
+        Branch       string         // Hierarchy path
+        // ... other fields
+    }
+
+    // model.LLMResponse contains the Content field
+    type LLMResponse struct {
+        Content *genai.Content
+        // ... other fields
+    }
+    ```
+
 Events are central to ADK's operation for several key reasons:
 
 1.  **Communication:** They serve as the standard message format between the user interface, the `Runner`, agents, the LLM, and tools. Everything flows as an `Event`.
@@ -91,6 +122,7 @@ Quickly determine what an event represents by checking:
     *   `False` or `None`/`Optional.empty()`: This part of the content is complete (though the overall turn might not be finished if `turn_complete` is also false).
 
 === "Python"
+
     ```python
     # Pseudocode: Basic event identification (Python)
     # async for event in runner.run_async(...):
@@ -115,6 +147,7 @@ Quickly determine what an event represents by checking:
     ```
 
 === "Java"
+
     ```java
     // Pseudocode: Basic event identification (Java)
     // import com.google.genai.types.Content;
@@ -150,6 +183,70 @@ Quickly determine what an event represents by checking:
     // });
     ```
 
+=== "Go"
+
+    ```go
+      // Pseudocode: Basic event identification (Go)
+    import (
+      "fmt"
+      "google.golang.org/adk/session"
+      "google.golang.org/genai"
+    )
+
+    func hasFunctionCalls(content *genai.Content) bool {
+      if content == nil {
+        return false
+      }
+      for _, part := range content.Parts {
+        if part.FunctionCall != nil {
+          return true
+        }
+      }
+      return false
+    }
+
+    func hasFunctionResponses(content *genai.Content) bool {
+      if content == nil {
+        return false
+      }
+      for _, part := range content.Parts {
+        if part.FunctionResponse != nil {
+          return true
+        }
+      }
+      return false
+    }
+
+    func processEvents(events <-chan *session.Event) {
+      for event := range events {
+        fmt.Printf("Event from: %s\n", event.Author)
+
+        if event.LLMResponse != nil && event.LLMResponse.Content != nil {
+          if hasFunctionCalls(event.LLMResponse.Content) {
+            fmt.Println("  Type: Tool Call Request")
+          } else if hasFunctionResponses(event.LLMResponse.Content) {
+            fmt.Println("  Type: Tool Result")
+          } else if len(event.LLMResponse.Content.Parts) > 0 {
+            if event.LLMResponse.Content.Parts[0].Text != "" {
+              if event.LLMResponse.Partial {
+                fmt.Println("  Type: Streaming Text Chunk")
+              } else {
+                fmt.Println("  Type: Complete Text Message")
+              }
+            } else {
+              fmt.Println("  Type: Other Content (e.g., code result)")
+            }
+          }
+        } else if len(event.Actions.StateDelta) > 0 {
+          fmt.Println("  Type: State Update")
+        } else {
+          fmt.Println("  Type: Control Signal or Other")
+        }
+      }
+    }
+
+    ```
+
 ### Extracting Key Information
 
 Once you know the event type, access the relevant data:
@@ -158,7 +255,7 @@ Once you know the event type, access the relevant data:
     Always check for the presence of content and parts before accessing text. In Python its `text = event.content.parts[0].text`.
 
 *   **Function Call Details:**
-    
+
     === "Python"
         ```python
         calls = event.get_function_calls()
@@ -175,7 +272,7 @@ Once you know the event type, access the relevant data:
         import com.google.genai.types.FunctionCall;
         import com.google.common.collect.ImmutableList;
         import java.util.Map;
-    
+
         ImmutableList<FunctionCall> calls = event.functionCalls(); // from Event.java
         if (!calls.isEmpty()) {
           for (FunctionCall call : calls) {
@@ -188,9 +285,35 @@ Once you know the event type, access the relevant data:
         }
         ```
 
+    === "Go"
+
+      ```go
+      import (
+          "fmt"
+          "google.golang.org/adk/session"
+          "google.golang.org/genai"
+      )
+
+      func handleFunctionCalls(event *session.Event) {
+          if event.LLMResponse == nil || event.LLMResponse.Content == nil {
+              return
+          }
+          calls := event.Content.FunctionCalls()
+          if len(calls) > 0 {
+              for _, call := range calls {
+                  toolName := call.Name
+                  arguments := call.Args
+                  fmt.Printf("  Tool: %s, Args: %v\n", toolName, arguments)
+                  // Application might dispatch execution based on this
+              }
+          }
+      }
+      ```
+
 *   **Function Response Details:**
-    
+
     === "Python"
+
         ```python
         responses = event.get_function_responses()
         if responses:
@@ -204,7 +327,7 @@ Once you know the event type, access the relevant data:
         ```java
         import com.google.genai.types.FunctionResponse;
         import com.google.common.collect.ImmutableList;
-        import java.util.Map; 
+        import java.util.Map;
 
         ImmutableList<FunctionResponse> responses = event.functionResponses(); // from Event.java
         if (!responses.isEmpty()) {
@@ -212,6 +335,30 @@ Once you know the event type, access the relevant data:
                 String toolName = response.name().get();
                 Map<String, String> result= response.response().get(); // Check before getting the response
                 System.out.println("  Tool Result: " + toolName + " -> " + result);
+            }
+        }
+        ```
+
+    === "Go"
+
+        ```go
+        import (
+            "fmt"
+            "google.golang.org/adk/session"
+            "google.golang.org/genai"
+        )
+
+        func handleFunctionResponses(event *session.Event) {
+            if event.LLMResponse == nil || event.LLMResponse.Content == nil {
+                return
+            }
+            responses := event.Content.FunctionResponses()
+            if len(responses) > 0 {
+                for _, response := range responses {
+                    toolName := response.Name
+                    result := response.Response
+                    fmt.Printf("  Tool Result: %s -> %v\n", toolName, result)
+                }
             }
         }
         ```
@@ -225,7 +372,7 @@ Once you know the event type, access the relevant data:
 The `event.actions` object signals changes that occurred or should occur. Always check if `event.actions` and it's fields/ methods exists before accessing them.
 
 *   **State Changes:** Gives you a collection of key-value pairs that were modified in the session state during the step that produced this event.
-    
+
     === "Python"
         `delta = event.actions.state_delta` (a dictionary of `{key: value}` pairs).
         ```python
@@ -248,8 +395,24 @@ The `event.actions` object signals changes that occurred or should occur. Always
         }
         ```
 
+    === "Go"
+        `delta := event.Actions.StateDelta` (a `map[string]any`)
+        ```go
+        import (
+            "fmt"
+            "google.golang.org/adk/session"
+        )
+
+        func handleStateChanges(event *session.Event) {
+            if len(event.Actions.StateDelta) > 0 {
+                fmt.Printf("  State changes: %v\n", event.Actions.StateDelta)
+                // Update local UI or application state if necessary
+            }
+        }
+        ```
+
 *   **Artifact Saves:** Gives you a collection indicating which artifacts were saved and their new version number (or relevant `Part` information).
-    
+
     === "Python"
         `artifact_changes = event.actions.artifact_delta` (a dictionary of `{filename: version}`).
         ```python
@@ -259,7 +422,7 @@ The `event.actions` object signals changes that occurred or should occur. Always
         ```
     === "Java"
         `ConcurrentMap<String, Part> artifactChanges = event.actions().artifactDelta();`
-        
+
         ```java
         import java.util.concurrent.ConcurrentMap;
         import com.google.genai.types.Part;
@@ -274,8 +437,29 @@ The `event.actions` object signals changes that occurred or should occur. Always
         }
         ```
 
+    === "Go"
+        `artifactChanges := event.Actions.ArtifactDelta` (a `map[string]artifact.Artifact`)
+        ```go
+        import (
+            "fmt"
+            "google.golang.org/adk/artifact"
+            "google.golang.org/adk/session"
+        )
+
+        func handleArtifactChanges(event *session.Event) {
+            if len(event.Actions.ArtifactDelta) > 0 {
+                fmt.Printf("  Artifacts saved: %v\n", event.Actions.ArtifactDelta)
+                // UI might refresh an artifact list
+                // Iterate through event.Actions.ArtifactDelta to get filename and artifact.Artifact details
+                for filename, art := range event.Actions.ArtifactDelta {
+                    fmt.Printf("    Filename: %s, Version: %d, MIMEType: %s\n", filename, art.Version, art.MIMEType)
+                }
+            }
+        }
+        ```
+
 *   **Control Flow Signals:** Check boolean flags or string values:
-    
+
     === "Python"
         *   `event.actions.transfer_to_agent` (string): Control should pass to the named agent.
         *   `event.actions.escalate` (bool): A loop should terminate.
@@ -316,6 +500,28 @@ The `event.actions` object signals changes that occurred or should occur. Always
             }
         }
         ```
+    === "Go"
+        *   `event.Actions.TransferToAgent` (string): Control should pass to the named agent.
+        *   `event.Actions.Escalate` (bool): A loop should terminate.
+        *   `event.Actions.SkipSummarization` (bool): A tool result should not be summarized by the LLM.
+        ```go
+        import (
+            "fmt"
+            "google.golang.org/adk/session"
+        )
+
+        func handleControlFlow(event *session.Event) {
+            if event.Actions.TransferToAgent != "" {
+                fmt.Printf("  Signal: Transfer to %s\n", event.Actions.TransferToAgent)
+            }
+            if event.Actions.Escalate {
+                fmt.Println("  Signal: Escalate (terminate loop)")
+            }
+            if event.Actions.SkipSummarization {
+                fmt.Println("  Signal: Skip summarization for tool result")
+            }
+        }
+        ```
 
 ### Determining if an Event is a "Final" Response
 
@@ -324,7 +530,7 @@ Use the built-in helper method `event.is_final_response()` to identify events su
 *   **Purpose:** Filters out intermediate steps (like tool calls, partial streaming text, internal state updates) from the final user-facing message(s).
 *   **When `True`?**
     1.  The event contains a tool result (`function_response`) and `skip_summarization` is `True`.
-    2.  The event contains a tool call (`function_call`) for a tool marked as `is_long_running=True`. In Java, check if the `longRunningToolIds` list is empty: 
+    2.  The event contains a tool call (`function_call`) for a tool marked as `is_long_running=True`. In Java, check if the `longRunningToolIds` list is empty:
         *   `event.longRunningToolIds().isPresent() && !event.longRunningToolIds().get().isEmpty()` is `true`.
     3.  OR, **all** of the following are met:
         *   No function calls (`get_function_calls()` is empty).
@@ -378,7 +584,7 @@ Use the built-in helper method `event.is_final_response()` to identify events su
                     }
                  });
              }
-        
+
              // Check if it's a final, displayable event
              if (event.finalResponse()) { // Using the method from Event.java
                  System.out.println("\n--- Final Output Detected ---");
@@ -405,6 +611,76 @@ Use the built-in helper method `event.is_final_response()` to identify events su
                  }
              }
          });
+        ```
+
+    === "Go"
+
+        ```go
+        // Pseudocode: Handling final responses in application (Go)
+        import (
+            "fmt"
+            "strings"
+            "google.golang.org/adk/session"
+            "google.golang.org/genai"
+        )
+
+        // isFinalResponse checks if an event is a final response suitable for display.
+        func isFinalResponse(event *session.Event) bool {
+            if event.LLMResponse != nil {
+                // Condition 1: Tool result with skip summarization.
+                if event.LLMResponse.Content != nil && len(event.LLMResponse.Content.FunctionResponses()) > 0 && event.Actions.SkipSummarization {
+                    return true
+                }
+                // Condition 2: Long-running tool call.
+                if len(event.LongRunningToolIDs) > 0 {
+                    return true
+                }
+                // Condition 3: A complete message without tool calls or responses.
+                if (event.LLMResponse.Content == nil ||
+                    (len(event.LLMResponse.Content.FunctionCalls()) == 0 && len(event.LLMResponse.Content.FunctionResponses()) == 0)) &&
+                    !event.LLMResponse.Partial {
+                    return true
+                }
+            }
+            return false
+        }
+
+        func handleFinalResponses() {
+            var fullResponseText strings.Builder
+            // for event := range runner.Run(...) { // Example loop
+            // 	// Accumulate streaming text if needed...
+            // 	if event.LLMResponse != nil && event.LLMResponse.Partial && event.LLMResponse.Content != nil {
+            // 		if len(event.LLMResponse.Content.Parts) > 0 && event.LLMResponse.Content.Parts[0].Text != "" {
+            // 			fullResponseText.WriteString(event.LLMResponse.Content.Parts[0].Text)
+            // 		}
+            // 	}
+            //
+            // 	// Check if it's a final, displayable event
+            // 	if isFinalResponse(event) {
+            // 		fmt.Println("\n--- Final Output Detected ---")
+            // 		if event.LLMResponse != nil && event.LLMResponse.Content != nil {
+            // 			if len(event.LLMResponse.Content.Parts) > 0 && event.LLMResponse.Content.Parts[0].Text != "" {
+            // 				// If it's the final part of a stream, use accumulated text
+            // 				finalText := fullResponseText.String()
+            // 				if !event.LLMResponse.Partial {
+            // 					finalText += event.LLMResponse.Content.Parts[0].Text
+            // 				}
+            // 				fmt.Printf("Display to user: %s\n", strings.TrimSpace(finalText))
+            // 				fullResponseText.Reset() // Reset accumulator
+            // 			}
+            // 		} else if event.Actions.SkipSummarization && event.LLMResponse.Content != nil && len(event.LLMResponse.Content.FunctionResponses()) > 0 {
+            // 			// Handle displaying the raw tool result if needed
+            // 			responseData := event.LLMResponse.Content.FunctionResponses()[0].Response
+            // 			fmt.Printf("Display raw tool result: %v\n", responseData)
+            // 		} else if len(event.LongRunningToolIDs) > 0 {
+            // 			fmt.Println("Display message: Tool is running in background...")
+            // 		} else {
+            // 			// Handle other types of final responses if applicable
+            // 			fmt.Println("Display: Final non-textual response or signal.")
+            // 		}
+            // 	}
+            // }
+        }
         ```
 
 By carefully examining these aspects of an event, you can build robust applications that react appropriately to the rich information flowing through the ADK system.
@@ -562,11 +838,14 @@ These details provide a more complete picture for advanced use cases involving t
 To use events effectively in your ADK applications:
 
 *   **Clear Authorship:** When building custom agents, ensure correct attribution for agent actions in the history. The framework generally handles authorship correctly for LLM/tool events.
-    
+
     === "Python"
         Use `yield Event(author=self.name, ...)` in `BaseAgent` subclasses.
     === "Java"
         When constructing an `Event` in your custom agent logic, set the author, for example: `Event.builder().author(this.getAgentName()) // ... .build();`
+
+    === "Go"
+        In custom agent `Run` methods, the framework typically handles authorship. If creating an event manually, set the author: `yield(&session.Event{Author: a.name, ...}, nil)`
 
 *   **Semantic Content & Actions:** Use `event.content` for the core message/data (text, function call/response). Use `event.actions` specifically for signaling side effects (state/artifact deltas) or control flow (`transfer`, `escalate`, `skip_summarization`).
 *   **Idempotency Awareness:** Understand that the `SessionService` is responsible for applying the state/artifact changes signaled in `event.actions`. While ADK services aim for consistency, consider potential downstream effects if your application logic re-processes events.

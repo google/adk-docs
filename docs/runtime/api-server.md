@@ -1,4 +1,8 @@
-# Testing your Agents
+# Use the API Server
+
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-go">Go v0.1.0</span>
+</div>
 
 Before you deploy your agent, you should test it to ensure that it is working as
 intended. The easiest way to test your agent in your development environment is
@@ -32,7 +36,7 @@ to use the ADK API server.
 
         ```groovy
         tasks.register('runADKWebServer', JavaExec) {
-            dependsOn classes 
+            dependsOn classes
             classpath = sourceSets.main.runtimeClasspath
             mainClass = 'com.google.adk.web.AdkWebServer'
             args '--adk.agents.source-dir=src/main/java/agents', '--server.port=8080'
@@ -44,7 +48,7 @@ to use the ADK API server.
         gradle runADKWebServer
         ```
 
-    
+
     In Java, both the Dev UI and the API server are bundled together.
 
 This command will launch a local web server, where you can run cURL commands or send API requests to test your agent.
@@ -98,7 +102,7 @@ a new session with the agent using:
 ```shell
 curl -X POST http://localhost:8000/apps/my_sample_agent/users/u_123/sessions/s_123 \
   -H "Content-Type: application/json" \
-  -d '{"state": {"key1": "value1", "key2": 42}}'
+  -d '{"key1": "value1", "key2": 42}'
 ```
 
 Let's break down what's happening:
@@ -109,7 +113,7 @@ Let's break down what's happening:
   can replace `my_sample_agent` with the name of your agent folder. You can
   replace `u_123` with a specific user ID, and `s_123` with a specific session
   ID.
-* `{"state": {"key1": "value1", "key2": 42}}`: This is optional. You can use
+* `{"key1": "value1", "key2": 42}`: This is optional. You can use
   this to customize the agent's pre-existing state (dict) when creating the
   session.
 
@@ -321,10 +325,8 @@ Creates a new session or updates an existing one. If a session with the given ID
 **Request Body**
 ```json
 {
-  "state": {
-    "key1": "value1",
-    "key2": 42
-  }
+  "key1": "value1",
+  "key2": 42
 }
 ```
 
@@ -332,7 +334,7 @@ Creates a new session or updates an existing one. If a session with the given ID
 ```shell
 curl -X POST http://localhost:8000/apps/my_sample_agent/users/u_123/sessions/s_abc \
   -H "Content-Type: application/json" \
-  -d '{"state": {"visit_count": 5}}'
+  -d '{"visit_count": 5}'
 ```
 
 **Example Response**

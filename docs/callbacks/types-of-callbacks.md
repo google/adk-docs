@@ -29,6 +29,15 @@ These callbacks are available on *any* agent that inherits from `BaseAgent` (inc
         --8<-- "examples/java/snippets/src/main/java/callbacks/BeforeAgentCallbackExample.java:init"
         ```
 
+    === "Go"
+
+        ```go
+        --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:imports"
+
+
+        --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:before_agent_example"
+        ```
+
 
 **Note on the `before_agent_callback` Example:**
 
@@ -59,6 +68,15 @@ These callbacks are available on *any* agent that inherits from `BaseAgent` (inc
     
         ```java
         --8<-- "examples/java/snippets/src/main/java/callbacks/AfterAgentCallbackExample.java:init"
+        ```
+
+    === "Go"
+
+        ```go
+        --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:imports"
+
+
+        --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:after_agent_example"
         ```
 
 
@@ -99,6 +117,15 @@ If the callback returns `None` (or a `Maybe.empty()` object in Java), the LLM co
         --8<-- "examples/java/snippets/src/main/java/callbacks/BeforeModelCallbackExample.java:init"
         ```
 
+    === "Go"
+
+        ```go
+        --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:imports"
+
+        
+        --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:before_model_example"
+        ```
+
 ### After Model Callback
 
 **When:** Called just after a response (`LlmResponse`) is received from the LLM, before it's processed further by the invoking agent.
@@ -122,6 +149,15 @@ If the callback returns `None` (or a `Maybe.empty()` object in Java), the LLM co
     
         ```java
         --8<-- "examples/java/snippets/src/main/java/callbacks/AfterModelCallbackExample.java:init"
+        ```
+
+    === "Go"
+
+        ```go
+        --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:imports"
+
+
+        --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:after_model_example"
         ```
 
 ## Tool Execution Callbacks
@@ -153,6 +189,14 @@ These callbacks are also specific to `LlmAgent` and trigger around the execution
         --8<-- "examples/java/snippets/src/main/java/callbacks/BeforeToolCallbackExample.java:init"
         ```
 
+    === "Go"
+
+        ```go
+        --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:imports"
+        --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:tool_defs"
+        --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:before_tool_example"
+        ```
+
 
 
 ### After Tool Callback
@@ -177,4 +221,12 @@ These callbacks are also specific to `LlmAgent` and trigger around the execution
     
         ```java
         --8<-- "examples/java/snippets/src/main/java/callbacks/AfterToolCallbackExample.java:init"
+        ```
+
+    === "Go"
+
+        ```go
+        --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:imports"
+        --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:tool_defs"
+        --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:after_tool_example"
         ```

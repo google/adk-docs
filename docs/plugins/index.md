@@ -1,5 +1,9 @@
 # Plugins
 
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.7.0</span>
+</div>
+
 A Plugin in Agent Development Kit (ADK) is a custom code module that can be
 executed at various stages of an agent workflow lifecycle using callback hooks.
 You use Plugins for functionality that is applicable across your agent workflow.
@@ -50,6 +54,24 @@ agent, tool, and LLM call managed by that runner. Plugins let you package
 related callback functions together to be used across a workflow. This makes
 Plugins an ideal solution for implementing features that cut across your entire
 agent application.
+
+## Prebuilt Plugins
+
+ADK includes several plugins that you can add to your agent workflows
+immediately:
+
+*   [**Reflect and Retry Tools**](/adk-docs/plugins/reflect-and-retry/):
+    Tracks tool failures and intelligently retries tool requests.
+*   [**BigQuery Logging**](https://github.com/google/adk-python/blob/main/src/google/adk/plugins/bigquery_logging_plugin.py):
+    Enables agent logging and analysis with BigQuery.
+*   [**Context Filter**](https://github.com/google/adk-python/blob/main/src/google/adk/plugins/context_filter_plugin.py):
+    Filters the generative AI context to reduce its size.
+*   [**Global Instruction**](https://github.com/google/adk-python/blob/main/src/google/adk/plugins/global_instruction_plugin.py):
+    Plugin that provides global instructions functionality at the App level.
+*   [**Save Files as Artifacts**](https://github.com/google/adk-python/blob/main/src/google/adk/plugins/save_files_as_artifacts_plugin.py):
+    Saves files included in user messages as Artifacts.
+*   [**Logging**](https://github.com/google/adk-python/blame/main/src/google/adk/plugins/logging_plugin.py):
+    Log important information at each agent workflow callback point.
 
 ## Define and register Plugins
 
@@ -187,7 +209,7 @@ Hello world: query is [hello world]
 
 
 For more information on running ADK agents, see the
-[Quickstart](/get-started/quickstart/#run-your-agent)
+[Quickstart](/adk-docs/get-started/quickstart/#run-your-agent)
 guide.
 
 ## Build workflows with Plugins
