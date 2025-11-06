@@ -186,4 +186,5 @@ is a code example for executing a batch test on Freeplay with ADK.
 [Here](https://github.com/228Labs/freeplay-google-demo/blob/main/examples/example_test_run.py) is a code example for executing a batch test on Freeplay with the Google ADK. 
 
 ## Sign up now
-Go to [Freeplay](https://freeplay.ai/) to sign up for an account and checkout a full Freeplay <> ADK Integration [Here](https://github.com/228Labs/freeplay-google-demo)
+
+Go to [Freeplay](https://freeplay.ai/) to sign up for an account, and check out a full Freeplay <> ADK Integration [here](https://github.com/228Labs/freeplay-google-demo).
