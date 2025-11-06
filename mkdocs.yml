@@ -203,6 +203,7 @@ nav:
       - Arize AX: observability/arize-ax.md
       - Phoenix: observability/phoenix.md
       - W&B Weave: observability/weave.md
+      - Freeplay: observability/freeplay.md
     - Evaluation:
       - evaluate/index.md
       - Criteria: evaluate/criteria.md
