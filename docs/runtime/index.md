@@ -1,8 +1,8 @@
 # Runtime
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-go">Go v0.1.0</span>
-</div>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span>
+</div><span class="lst-java">Java v0.1.0</span>
 
 The ADK Runtime is the underlying engine that powers your agent application during user interactions. It's the system that takes your defined agents, tools, and callbacks and orchestrates their execution in response to user input, managing the flow of information, state changes, and interactions with external services like LLMs or storage.
 
@@ -67,39 +67,6 @@ The `Runner` acts as the central coordinator for a single user invocation. Its r
             # Runner implicitly signals agent generator can continue after yielding
     ```
 
-=== "Java"
-
-    ```java
-    // Simplified conceptual view of the Runner's main loop logic in Java.
-    public Flowable<Event> runConceptual(
-        Session session,
-        InvocationContext invocationContext,
-        Content newQuery
-        ) {
-
-        // 1. Append new_query to session event history (via SessionService)
-        // ...
-        sessionService.appendEvent(session, userEvent).blockingGet();
-
-        // 2. Kick off event stream by calling the agent
-        Flowable<Event> agentEventStream = agentToRun.runAsync(invocationContext);
-
-        // 3. Process each generated event, commit changes, and "yield" or "emit"
-        return agentEventStream.map(event -> {
-            // This mutates the session object (adds event, applies stateDelta).
-            // The return value of appendEvent (a Single<Event>) is conceptually
-            // just the event itself after processing.
-            sessionService.appendEvent(session, event).blockingGet(); // Simplified blocking call
-
-            // memory_service.update_memory(...) // If applicable - conceptual
-            // artifact_service might have already been called via context during agent run
-
-            // 4. "Yield" event for upstream processing
-            //    In RxJava, returning the event in map effectively yields it to the next operator or subscriber.
-            return event;
-        });
-    }
-    ```
 === "Go"
 
     ```go
@@ -148,7 +115,40 @@ The `Runner` acts as the central coordinator for a single user invocation. Its r
             // Agent finished successfully
         }
     }
+    ```
 
+=== "Java"
+
+    ```java
+    // Simplified conceptual view of the Runner's main loop logic in Java.
+    public Flowable<Event> runConceptual(
+        Session session,
+        InvocationContext invocationContext,
+        Content newQuery
+        ) {
+
+        // 1. Append new_query to session event history (via SessionService)
+        // ...
+        sessionService.appendEvent(session, userEvent).blockingGet();
+
+        // 2. Kick off event stream by calling the agent
+        Flowable<Event> agentEventStream = agentToRun.runAsync(invocationContext);
+
+        // 3. Process each generated event, commit changes, and "yield" or "emit"
+        return agentEventStream.map(event -> {
+            // This mutates the session object (adds event, applies stateDelta).
+            // The return value of appendEvent (a Single<Event>) is conceptually
+            // just the event itself after processing.
+            sessionService.appendEvent(session, event).blockingGet(); // Simplified blocking call
+
+            // memory_service.update_memory(...) // If applicable - conceptual
+            // artifact_service might have already been called via context during agent run
+
+            // 4. "Yield" event for upstream processing
+            //    In RxJava, returning the event in map effectively yields it to the next operator or subscriber.
+            return event;
+        });
+    }
     ```
 
 ### Execution Logic's Role (Agent, Tool, Callback)
@@ -195,6 +195,46 @@ Your code within agents, tools, and callbacks is responsible for the actual comp
 
     # ... subsequent code continues ...
     # Maybe yield another event later...
+    ```
+
+=== "Go"
+
+    ```go
+    // Simplified view of logic inside Agent.Run, callbacks, or tools
+
+    // ... previous code runs based on current state ...
+
+    // 1. Determine a change or output is needed, construct the event
+    // Example: Updating state
+    updateData := map[string]interface{}{"field_1": "value_2"}
+    eventWithStateChange := &Event{
+        Author: self.Name(),
+        Actions: &EventActions{StateDelta: updateData},
+        Content: genai.NewContentFromText("State updated.", "model"),
+        // ... other event fields ...
+    }
+
+    // 2. Yield the event to the Runner for processing & commit
+    // In Go, this is done by sending the event to a channel.
+    eventsChan <- eventWithStateChange
+    // <<<<<<<<<<<< EXECUTION PAUSES HERE (conceptually) >>>>>>>>>>>>
+    // The Runner on the other side of the channel will receive and process the event.
+    // The agent's goroutine might continue, but the logical flow waits for the next input or step.
+
+    // <<<<<<<<<<<< RUNNER PROCESSES & COMMITS THE EVENT >>>>>>>>>>>>
+
+    // 3. Resume execution ONLY after Runner is done processing the above event.
+    // In a real Go implementation, this would likely be handled by the agent receiving
+    // a new RunRequest or context indicating the next step. The updated state
+    // would be part of the session object in that new request.
+    // For this conceptual example, we'll just check the state.
+    val := ctx.State.Get("field_1")
+    // here `val` is guaranteed to be "value_2" because the Runner would have
+    // updated the session state before calling the agent again.
+    fmt.Printf("Resumed execution. Value of field_1 is now: %v\n", val)
+
+    // ... subsequent code continues ...
+    // Maybe send another event to the channel later...
     ```
 
 === "Java"
@@ -268,45 +308,6 @@ Your code within agents, tools, and callbacks is responsible for the actual comp
 
             // ... subsequent code continues ...
             // If this subsequent code needs to yield another event, it would do so here.
-    ```
-=== "Go"
-
-    ```go
-    // Simplified view of logic inside Agent.Run, callbacks, or tools
-
-    // ... previous code runs based on current state ...
-
-    // 1. Determine a change or output is needed, construct the event
-    // Example: Updating state
-    updateData := map[string]interface{}{"field_1": "value_2"}
-    eventWithStateChange := &Event{
-        Author: self.Name(),
-        Actions: &EventActions{StateDelta: updateData},
-        Content: genai.NewContentFromText("State updated.", "model"),
-        // ... other event fields ...
-    }
-
-    // 2. Yield the event to the Runner for processing & commit
-    // In Go, this is done by sending the event to a channel.
-    eventsChan <- eventWithStateChange
-    // <<<<<<<<<<<< EXECUTION PAUSES HERE (conceptually) >>>>>>>>>>>>
-    // The Runner on the other side of the channel will receive and process the event.
-    // The agent's goroutine might continue, but the logical flow waits for the next input or step.
-
-    // <<<<<<<<<<<< RUNNER PROCESSES & COMMITS THE EVENT >>>>>>>>>>>>
-
-    // 3. Resume execution ONLY after Runner is done processing the above event.
-    // In a real Go implementation, this would likely be handled by the agent receiving
-    // a new RunRequest or context indicating the next step. The updated state
-    // would be part of the session object in that new request.
-    // For this conceptual example, we'll just check the state.
-    val := ctx.State.Get("field_1")
-    // here `val` is guaranteed to be "value_2" because the Runner would have
-    // updated the session state before calling the agent again.
-    fmt.Printf("Resumed execution. Value of field_1 is now: %v\n", val)
-
-    // ... subsequent code continues ...
-    // Maybe send another event to the channel later...
     ```
 
 This cooperative yield/pause/resume cycle between the `Runner` and your Execution Logic, mediated by `Event` objects, forms the core of the ADK Runtime.
@@ -415,43 +416,6 @@ Understanding a few key aspects of how the ADK Runtime handles state, streaming,
     print(f"Status after resuming: {current_status}")
     ```
 
-=== "Java"
-
-    ```java
-    // Inside agent logic (conceptual)
-    // ... previous code runs based on current state ...
-
-    // 1. Prepare state modification and construct the event
-    ConcurrentHashMap<String, Object> stateChanges = new ConcurrentHashMap<>();
-    stateChanges.put("status", "processing");
-
-    EventActions actions = EventActions.builder().stateDelta(stateChanges).build();
-    Content content = Content.builder().parts(Part.fromText("Status update: processing")).build();
-
-    Event event1 = Event.builder()
-        .actions(actions)
-        // ...
-        .build();
-
-    // 2. Yield event with the delta
-    return Flowable.just(event1)
-        .map(
-            emittedEvent -> {
-                // --- CONCEPTUAL PAUSE & RUNNER PROCESSING ---
-                // 3. Resume execution (conceptually)
-                // Now it's safe to rely on the committed state.
-                String currentStatus = (String) ctx.session().state().get("status");
-                System.out.println("Status after resuming (inside agent logic): " + currentStatus); // Guaranteed to be 'processing'
-
-                // The event itself (event1) is passed on.
-                // If subsequent logic within this agent step produced *another* event,
-                // you'd use concatMap to emit that new event.
-                return emittedEvent;
-            });
-
-    // ... subsequent agent logic might involve further reactive operators
-    // or emitting more events based on the now-updated `ctx.session().state()`.
-    ```
 === "Go"
 
     ```go
@@ -499,6 +463,44 @@ Understanding a few key aspects of how the ADK Runtime handles state, streaming,
     }
     ```
 
+=== "Java"
+
+    ```java
+    // Inside agent logic (conceptual)
+    // ... previous code runs based on current state ...
+
+    // 1. Prepare state modification and construct the event
+    ConcurrentHashMap<String, Object> stateChanges = new ConcurrentHashMap<>();
+    stateChanges.put("status", "processing");
+
+    EventActions actions = EventActions.builder().stateDelta(stateChanges).build();
+    Content content = Content.builder().parts(Part.fromText("Status update: processing")).build();
+
+    Event event1 = Event.builder()
+        .actions(actions)
+        // ...
+        .build();
+
+    // 2. Yield event with the delta
+    return Flowable.just(event1)
+        .map(
+            emittedEvent -> {
+                // --- CONCEPTUAL PAUSE & RUNNER PROCESSING ---
+                // 3. Resume execution (conceptually)
+                // Now it's safe to rely on the committed state.
+                String currentStatus = (String) ctx.session().state().get("status");
+                System.out.println("Status after resuming (inside agent logic): " + currentStatus); // Guaranteed to be 'processing'
+
+                // The event itself (event1) is passed on.
+                // If subsequent logic within this agent step produced *another* event,
+                // you'd use concatMap to emit that new event.
+                return emittedEvent;
+            });
+
+    // ... subsequent agent logic might involve further reactive operators
+    // or emitting more events based on the now-updated `ctx.session().state()`.
+    ```
+
 ### "Dirty Reads" of Session State
 
 * **Definition:** While commitment happens *after* the yield, code running *later within the same invocation*, but *before* the state-changing event is actually yielded and processed, **can often see the local, uncommitted changes**. This is sometimes called a "dirty read".
@@ -522,22 +524,6 @@ Understanding a few key aspects of how the ADK Runtime handles state, streaming,
     # is yielded *after* this tool runs and is processed by the Runner.
     ```
 
-=== "Java"
-
-    ```java
-    // Modify state - Code in BeforeAgentCallback
-    // AND stages this change in callbackContext.eventActions().stateDelta().
-    callbackContext.state().put("field_1", "value_1");
-
-    // --- agent runs ... ---
-
-    // --- Code in a tool called later *within the same invocation* ---
-    // Readable (dirty read), but 'value_1' isn't guaranteed persistent yet.
-    Object val = toolContext.state().get("field_1"); // 'val' will likely be 'value_1' here
-    System.out.println("Dirty read value in tool: " + val);
-    // Assume the event carrying the state_delta={'field_1': 'value_1'}
-    // is yielded *after* this tool runs and is processed by the Runner.
-    ```
 === "Go"
 
     ```go
@@ -554,6 +540,23 @@ Understanding a few key aspects of how the ADK Runtime handles state, streaming,
     val := ctx.State.Get("field_1") // 'val' will likely be 'value_1' here
     fmt.Printf("Dirty read value in tool: %v\n", val)
 
+    // Assume the event carrying the state_delta={'field_1': 'value_1'}
+    // is yielded *after* this tool runs and is processed by the Runner.
+    ```
+
+=== "Java"
+
+    ```java
+    // Modify state - Code in BeforeAgentCallback
+    // AND stages this change in callbackContext.eventActions().stateDelta().
+    callbackContext.state().put("field_1", "value_1");
+
+    // --- agent runs ... ---
+
+    // --- Code in a tool called later *within the same invocation* ---
+    // Readable (dirty read), but 'value_1' isn't guaranteed persistent yet.
+    Object val = toolContext.state().get("field_1"); // 'val' will likely be 'value_1' here
+    System.out.println("Dirty read value in tool: " + val);
     // Assume the event carrying the state_delta={'field_1': 'value_1'}
     // is yielded *after* this tool runs and is processed by the Runner.
     ```
