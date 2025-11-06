@@ -35,6 +35,13 @@ An LLM uses this conversation plan, along with the conversation history, to
 dynamically generate user prompts until it judges that the conversation is
 complete.
 
+!!! tip "Try it in Colab"
+
+    Test this entire workflow yourself in an interactive notebook on
+    [Simulating User Conversations to Dynamically Evaluate ADK Agents](https://github.com/google/adk-samples/blob/main/python/notebooks/evaluation/user_simulation_in_adk_evals.ipynb).
+    You'll define a conversation scenario, run a "dry run" to check the
+    dialogue, and then perform a full evaluation to score the agent's responses.
+
 ## Example: Evaluating the [`hello_world`](https://github.com/google/adk-python/tree/main/contributing/samples/hello_world) agent with conversation scenarios
 
 To add evaluation cases containing conversation scenarios to a new or existing

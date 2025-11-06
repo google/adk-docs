@@ -1,6 +1,8 @@
 # Safety and Security for AI Agents
 
-## Overview
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-go">Go</span><span class="lst-java">Java</span>
+</div>
 
 As AI agents grow in capability, ensuring they operate safely, securely, and align with your brand values is paramount. Uncontrolled agents can pose risks, including executing misaligned or harmful actions, such as data exfiltration, and generating inappropriate content that can impact your brand’s reputation. **Sources of risk include vague instructions, model hallucination, jailbreaks and prompt injections from adversarial users, and indirect prompt injections via tool use.**
 
@@ -92,26 +94,7 @@ For example, a query tool can be designed to expect a policy to be read from the
     query_tool = QueryTool(policy=policy)
     # For this example, we'll assume it gets stored somewhere accessible.
     ```
-=== "Java"
 
-    ```java
-    // Conceptual example: Setting policy data intended for tool context
-    // In a real ADK app, this might be set in InvocationContext.session.state
-    // or passed during tool initialization, then retrieved via ToolContext.
-
-    policy = new HashMap<String, Object>(); // Assuming policy is a Map
-    policy.put("select_only", true);
-    policy.put("tables", new ArrayList<>("mytable1", "mytable2"));
-
-    // Conceptual: Storing policy where the tool can access it via ToolContext later.
-    // This specific line might look different in practice.
-    // For example, storing in session state:
-    invocationContext.session().state().put("query_tool_policy", policy);
-
-    // Or maybe passing during tool init:
-    query_tool = QueryTool(policy);
-    // For this example, we'll assume it gets stored somewhere accessible.
-    ```
 === "Go"
 
     ```go
@@ -133,6 +116,27 @@ For example, a query tool can be designed to expect a policy to be read from the
 
     // Or maybe passing during tool init:
     // queryTool := NewQueryTool(policy)
+    // For this example, we'll assume it gets stored somewhere accessible.
+    ```
+
+=== "Java"
+
+    ```java
+    // Conceptual example: Setting policy data intended for tool context
+    // In a real ADK app, this might be set in InvocationContext.session.state
+    // or passed during tool initialization, then retrieved via ToolContext.
+
+    policy = new HashMap<String, Object>(); // Assuming policy is a Map
+    policy.put("select_only", true);
+    policy.put("tables", new ArrayList<>("mytable1", "mytable2"));
+
+    // Conceptual: Storing policy where the tool can access it via ToolContext later.
+    // This specific line might look different in practice.
+    // For example, storing in session state:
+    invocationContext.session().state().put("query_tool_policy", policy);
+
+    // Or maybe passing during tool init:
+    query_tool = QueryTool(policy);
     // For this example, we'll assume it gets stored somewhere accessible.
     ```
 
@@ -163,49 +167,6 @@ During the tool execution, [**`Tool Context`**](../tools/index.md#tool-context) 
       return {"status": "success", "results": [...]} # Example successful return
     ```
 
-=== "Java"
-
-    ```java
-
-    import com.google.adk.tools.ToolContext;
-    import java.util.*;
-
-    class ToolContextQuery {
-
-      public Object query(String query, ToolContext toolContext) {
-
-        // Assume 'policy' is retrieved from context, e.g., via session state:
-        Map<String, Object> queryToolPolicy =
-            toolContext.invocationContext.session().state().getOrDefault("query_tool_policy", null);
-        List<String> actualTables = explainQuery(query);
-
-        // --- Placeholder Policy Enforcement ---
-        if (!queryToolPolicy.get("tables").containsAll(actualTables)) {
-          List<String> allowedPolicyTables =
-              (List<String>) queryToolPolicy.getOrDefault("tables", new ArrayList<String>());
-
-          String allowedTablesString =
-              allowedPolicyTables.isEmpty() ? "(None defined)" : String.join(", ", allowedPolicyTables);
-
-          return String.format(
-              "Error: Query targets unauthorized tables. Allowed: %s", allowedTablesString);
-        }
-
-        if (!queryToolPolicy.get("select_only")) {
-          if (!query.trim().toUpperCase().startswith("SELECT")) {
-            return "Error: Policy restricts queries to SELECT statements only.";
-          }
-        }
-        // --- End Policy Enforcement ---
-
-        System.out.printf("Executing validated query (hypothetical) %s:", query);
-        Map<String, Object> successResult = new HashMap<>();
-        successResult.put("status", "success");
-        successResult.put("results", Arrays.asList("result_item1", "result_item2"));
-        return successResult;
-      }
-    }
-    ```
 === "Go"
 
     ```go
@@ -259,6 +220,50 @@ During the tool execution, [**`Tool Context`**](../tools/index.md#tool-context) 
     		}
     	}
     	return true
+    }
+    ```
+
+=== "Java"
+
+    ```java
+
+    import com.google.adk.tools.ToolContext;
+    import java.util.*;
+
+    class ToolContextQuery {
+
+      public Object query(String query, ToolContext toolContext) {
+
+        // Assume 'policy' is retrieved from context, e.g., via session state:
+        Map<String, Object> queryToolPolicy =
+            toolContext.invocationContext.session().state().getOrDefault("query_tool_policy", null);
+        List<String> actualTables = explainQuery(query);
+
+        // --- Placeholder Policy Enforcement ---
+        if (!queryToolPolicy.get("tables").containsAll(actualTables)) {
+          List<String> allowedPolicyTables =
+              (List<String>) queryToolPolicy.getOrDefault("tables", new ArrayList<String>());
+
+          String allowedTablesString =
+              allowedPolicyTables.isEmpty() ? "(None defined)" : String.join(", ", allowedPolicyTables);
+
+          return String.format(
+              "Error: Query targets unauthorized tables. Allowed: %s", allowedTablesString);
+        }
+
+        if (!queryToolPolicy.get("select_only")) {
+          if (!query.trim().toUpperCase().startswith("SELECT")) {
+            return "Error: Policy restricts queries to SELECT statements only.";
+          }
+        }
+        // --- End Policy Enforcement ---
+
+        System.out.printf("Executing validated query (hypothetical) %s:", query);
+        Map<String, Object> successResult = new HashMap<>();
+        successResult.put("status", "success");
+        successResult.put("results", Arrays.asList("result_item1", "result_item2"));
+        return successResult;
+      }
     }
     ```
 
@@ -318,45 +323,6 @@ When modifications to the tools to add guardrails aren't possible, the [**`Befor
     )
     ```
 
-=== "Java"
-
-    ```java
-    // Hypothetical callback function
-    public Optional<Map<String, Object>> validateToolParams(
-      CallbackContext callbackContext,
-      Tool baseTool,
-      Map<String, Object> input,
-      ToolContext toolContext) {
-
-    System.out.printf("Callback triggered for tool: %s, Args: %s", baseTool.name(), input);
-
-    // Example validation: Check if a required user ID from state matches an input parameter
-    Object expectedUserId = callbackContext.state().get("session_user_id");
-    Object actualUserIdInput = input.get("user_id_param"); // Assuming tool takes 'user_id_param'
-
-    if (!actualUserIdInput.equals(expectedUserId)) {
-      System.out.println("Validation Failed: User ID mismatch!");
-      // Return to prevent tool execution and provide feedback
-      return Optional.of(Map.of("error", "Tool call blocked: User ID mismatch."));
-    }
-
-    // Return to allow the tool call to proceed if validation passes
-    System.out.println("Callback validation passed.");
-    return Optional.empty();
-    }
-
-    // Hypothetical Agent setup
-    public void runAgent() {
-    LlmAgent agent =
-        LlmAgent.builder()
-            .model("gemini-2.0-flash")
-            .name("AgentWithBeforeToolCallback")
-            .instruction("...")
-            .beforeToolCallback(this::validateToolParams) // Assign the callback
-            .tools(anyToolToUse) // Define the tool to be used
-            .build();
-    }
-    ```
 === "Go"
 
     ```go
@@ -420,6 +386,46 @@ When modifications to the tools to add guardrails aren't possible, the [**`Befor
     // 	BeforeToolCallbacks: []llmagent.BeforeToolCallback{validateToolParams},
     // 	Tools: []tool.Tool{queryToolInstance},
     // })
+    ```
+
+=== "Java"
+
+    ```java
+    // Hypothetical callback function
+    public Optional<Map<String, Object>> validateToolParams(
+      CallbackContext callbackContext,
+      Tool baseTool,
+      Map<String, Object> input,
+      ToolContext toolContext) {
+
+    System.out.printf("Callback triggered for tool: %s, Args: %s", baseTool.name(), input);
+
+    // Example validation: Check if a required user ID from state matches an input parameter
+    Object expectedUserId = callbackContext.state().get("session_user_id");
+    Object actualUserIdInput = input.get("user_id_param"); // Assuming tool takes 'user_id_param'
+
+    if (!actualUserIdInput.equals(expectedUserId)) {
+      System.out.println("Validation Failed: User ID mismatch!");
+      // Return to prevent tool execution and provide feedback
+      return Optional.of(Map.of("error", "Tool call blocked: User ID mismatch."));
+    }
+
+    // Return to allow the tool call to proceed if validation passes
+    System.out.println("Callback validation passed.");
+    return Optional.empty();
+    }
+
+    // Hypothetical Agent setup
+    public void runAgent() {
+    LlmAgent agent =
+        LlmAgent.builder()
+            .model("gemini-2.0-flash")
+            .name("AgentWithBeforeToolCallback")
+            .instruction("...")
+            .beforeToolCallback(this::validateToolParams) // Assign the callback
+            .tools(anyToolToUse) // Define the tool to be used
+            .build();
+    }
     ```
 
 However, when adding security guardrails to your agent applications, plugins are the recommended approach for implementing policies that are not specific to a single agent. Plugins are designed to be self-contained and modular, allowing you to create individual plugins for specific security policies, and apply them globally at the runner level. This means that a security plugin can be configured once and applied to every agent that uses the runner, ensuring consistent security guardrails across your entire application without repetitive code.
