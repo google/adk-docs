@@ -22,7 +22,7 @@ GOOGLE_GENAI_USE_VERTEXAI=TRUE
 GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_EXPRESS_MODE_API_KEY_HERE
 ```
 
-Next, we can create our Agent Engine instance. You can use the Gen AI SDK.
+Next, we can create our Agent Engine instance. You can use the Vertex AI SDK.
 
 === "Vertex AI SDK"
 
