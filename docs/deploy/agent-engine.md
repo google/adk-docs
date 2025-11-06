@@ -33,7 +33,7 @@ for deploying your ADK project, as follows:
 -   [Deploy your ADK project](#deploy-ad):  Provision
     required services in your Google Cloud project and upload your ADK project code.
 
-!!! tip "Note"
+!!!note
     If you don't have a Google Cloud project, you can try Agent Engine without cost using 
     [Vertex AI in Express mode](https://cloud.google.com/vertex-ai/generative-ai/docs/start/express-mode/overview).
     See [Standard deployment](#standard-deployment) for more details. 
