@@ -29,7 +29,7 @@ These callbacks are available on *any* agent that inherits from `BaseAgent` (inc
         --8<-- "examples/java/snippets/src/main/java/callbacks/BeforeAgentCallbackExample.java:init"
         ```
 
-    === "Golang"
+    === "Go"
 
         ```go
         --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:imports"
@@ -70,7 +70,7 @@ These callbacks are available on *any* agent that inherits from `BaseAgent` (inc
         --8<-- "examples/java/snippets/src/main/java/callbacks/AfterAgentCallbackExample.java:init"
         ```
 
-    === "Golang"
+    === "Go"
 
         ```go
         --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:imports"
@@ -117,7 +117,7 @@ If the callback returns `None` (or a `Maybe.empty()` object in Java), the LLM co
         --8<-- "examples/java/snippets/src/main/java/callbacks/BeforeModelCallbackExample.java:init"
         ```
 
-    === "Golang"
+    === "Go"
 
         ```go
         --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:imports"
@@ -151,7 +151,7 @@ If the callback returns `None` (or a `Maybe.empty()` object in Java), the LLM co
         --8<-- "examples/java/snippets/src/main/java/callbacks/AfterModelCallbackExample.java:init"
         ```
 
-    === "Golang"
+    === "Go"
 
         ```go
         --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:imports"
@@ -189,7 +189,7 @@ These callbacks are also specific to `LlmAgent` and trigger around the execution
         --8<-- "examples/java/snippets/src/main/java/callbacks/BeforeToolCallbackExample.java:init"
         ```
 
-    === "Golang"
+    === "Go"
 
         ```go
         --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:imports"
@@ -223,7 +223,7 @@ These callbacks are also specific to `LlmAgent` and trigger around the execution
         --8<-- "examples/java/snippets/src/main/java/callbacks/AfterToolCallbackExample.java:init"
         ```
 
-    === "Golang"
+    === "Go"
 
         ```go
         --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:imports"

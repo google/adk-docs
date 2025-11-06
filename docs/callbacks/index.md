@@ -46,7 +46,7 @@ Callbacks are a cornerstone feature of ADK, providing a powerful mechanism to ho
         --8<-- "examples/java/snippets/src/main/java/callbacks/AgentWithBeforeModelCallback.java:init"
         ```
 
-    === "Golang"
+    === "Go"
 
         ```go
         --8<-- "examples/go/snippets/callbacks/main.go:imports"
@@ -99,7 +99,7 @@ This example demonstrates the common pattern for a guardrail using `before_model
         --8<-- "examples/java/snippets/src/main/java/callbacks/BeforeModelGuardrailExample.java:init"
         ```
         
-    === "Golang"
+    === "Go"
         ```go
         --8<-- "examples/go/snippets/callbacks/main.go:imports"
 

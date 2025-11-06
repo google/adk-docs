@@ -66,7 +66,7 @@ First, you need to establish what the agent *is* and what it's *for*.
             .build();
     ```
 
-=== "Golang"
+=== "Go"
 
     ```go
     // Example: Defining the basic identity
@@ -143,7 +143,7 @@ tells the agent:
             .build();
     ```
 
-=== "Golang"
+=== "Go"
 
     ```go
     // Example: Adding instructions
@@ -222,7 +222,7 @@ on the conversation and its instructions.
             .build();
     ```
 
-=== "Golang"
+=== "Go"
 
     ```go
     --8<-- "examples/go/snippets/agents/llm-agents/snippets/main.go:tool_example"
@@ -275,7 +275,7 @@ You can adjust how the underlying LLM generates responses using `generate_conten
             .build();
     ```
 
-=== "Golang"
+=== "Go"
 
     ```go
     import "google.golang.org/genai"
@@ -344,7 +344,7 @@ For scenarios requiring structured data exchange with an `LLM Agent`, the ADK pr
             .build();
     ```
 
-=== "Golang"
+=== "Go"
 
     The input and output schema is a `google.genai.types.Schema` object.
 
@@ -381,7 +381,7 @@ Control whether the agent receives the prior conversation history.
             .build();
     ```
 
-=== "Golang"
+=== "Go"
 
     ```go
     import "google.golang.org/adk/agent/llmagent"
@@ -596,7 +596,7 @@ call_agent("If it's raining in New York right now, what is the current temperatu
         --8<-- "examples/java/snippets/src/main/java/agents/LlmAgentExample.java:full_code"
         ```
 
-    === "Golang"
+    === "Go"
 
         ```go
         --8<-- "examples/go/snippets/agents/llm-agents/main.go:full_code"
