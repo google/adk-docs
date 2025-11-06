@@ -29,7 +29,7 @@ This event-driven loop is the fundamental pattern governing how ADK executes you
 The Event Loop is the core operational pattern defining the interaction between the `Runner` and your custom code (Agents, Tools, Callbacks, collectively referred to as "Execution Logic" or "Logic Components" in the design document). It establishes a clear division of responsibilities:
 
 !!! Note
-    The specific method names and parameter names may vary slightly by SDK language (e.g., `agent_to_run.runAsync(...)` in Java, `agent_to_run.run_async(...)` in Python). Refer to the language-specific API documentation for details.
+    The specific method names and parameter names may vary slightly by SDK language (e.g., `agent_to_run.run_async(...)` in Python, `agent.Run(...)` in Go, `agent_to_run.runAsync(...)` in Java ). Refer to the language-specific API documentation for details.
 
 ### Runner's Role (Orchestrator)
 
@@ -103,55 +103,52 @@ The `Runner` acts as the central coordinator for a single user invocation. Its r
 === "Go"
 
     ```go
-    // Simplified conceptual view of the Runner's main loop logic in Go.
-    func (r *Runner) RunConceptual(ctx context.Context, session *session.Session, newQuery *genai.Content) (<-chan *Event, <-chan error) {
-        events := make(chan *Event)
-        errs := make(chan error, 1)
-
-        go func() {
-            defer close(events)
-            defer close(errs)
-
+    // Simplified conceptual view of the Runner's main loop logic in Go
+    func (r *Runner) RunConceptual(ctx context.Context, session *session.Session, newQuery *genai.Content) iter.Seq2[*Event, error] {
+        return func(yield func(*Event, error) bool) {
             // 1. Append new_query to session event history (via SessionService)
             // ...
+            userEvent := session.NewEvent(ctx.InvocationID()) // Simplified for conceptual view
+            userEvent.Author = "user"
+            userEvent.LLMResponse = model.LLMResponse{Content: newQuery}
+
             if _, err := r.sessionService.Append(ctx, &session.AppendRequest{Event: userEvent}); err != nil {
-                errs <- err
+                yield(nil, err)
                 return
             }
 
             // 2. Kick off event stream by calling the agent
-            agentEvents, agentErrs := r.agent.Run(ctx, &agent.RunRequest{Session: session, Input: newQuery})
+            // Assuming agent.Run also returns iter.Seq2[*Event, error]
+            agentEventsAndErrs := r.agent.Run(ctx, &agent.RunRequest{Session: session, Input: newQuery})
 
-            for {
-                select {
-                case event, ok := <-agentEvents:
-                    if !ok {
-                        return // Agent finished
-                    }
-                    // 3. Process the generated event and commit changes
-                    if _, err := r.sessionService.Append(ctx, &session.AppendRequest{Event: event}); err != nil {
-                        errs <- err
+            for event, err := range agentEventsAndErrs {
+                if err != nil {
+                    if !yield(event, err) { // Yield event even if there's an error, then stop
                         return
                     }
-                    // memory_service.update_memory(...) // If applicable
-                    // artifact_service might have already been called via context during agent run
-
-                    // 4. Yield event for upstream processing
-                    events <- event
-                case err, ok := <-agentErrs:
-                    if ok {
-                        errs <- err
-                    }
                     return // Agent finished with an error
-                case <-ctx.Done():
-                    errs <- ctx.Err()
-                    return
+                }
+
+                // 3. Process the generated event and commit changes
+                // Only commit non-partial event to a session service (as seen in actual code)
+                if !event.LLMResponse.Partial {
+                    if _, err := r.sessionService.Append(ctx, &session.AppendRequest{Event: event}); err != nil {
+                        yield(nil, err)
+                        return
+                    }
+                }
+                // memory_service.update_memory(...) // If applicable
+                // artifact_service might have already been called via context during agent run
+
+                // 4. Yield event for upstream processing
+                if !yield(event, nil) {
+                    return // Upstream consumer stopped
                 }
             }
-        }()
-
-        return events, errs
+            // Agent finished successfully
+        }
     }
+
     ```
 
 ### Execution Logic's Role (Agent, Tool, Callback)
@@ -458,25 +455,48 @@ Understanding a few key aspects of how the ADK Runtime handles state, streaming,
 === "Go"
 
     ```go
-    // Inside agent logic (conceptual)
+      // Inside agent logic (conceptual)
 
-    // 1. Modify state
-    // In Go, state modifications are staged and then sent as part of an event.
-    updateData := map[string]interface{}{"status": "processing"}
-    event1 := &Event{
-        Actions: &EventActions{StateDelta: updateData},
-        // ... other event fields
+    func (a *Agent) RunConceptual(ctx agent.InvocationContext) iter.Seq2[*session.Event, error] {
+      // The entire logic is wrapped in a function that will be returned as an iterator.
+      return func(yield func(*session.Event, error) bool) {
+          // ... previous code runs based on current state from the input `ctx` ...
+          // e.g., val := ctx.State().Get("field_1") might return "value_1" here.
+
+          // 1. Determine a change or output is needed, construct the event
+          updateData := map[string]interface{}{"field_1": "value_2"}
+          eventWithStateChange := session.NewEvent(ctx.InvocationID())
+          eventWithStateChange.Author = a.Name()
+          eventWithStateChange.Actions = &session.EventActions{StateDelta: updateData}
+          // ... other event fields ...
+
+
+          // 2. Yield the event to the Runner for processing & commit.
+          // The agent's execution continues immediately after this call.
+          if !yield(eventWithStateChange, nil) {
+              // If yield returns false, it means the consumer (the Runner)
+              // has stopped listening, so we should stop producing events.
+              return
+          }
+
+          // <<<<<<<<<<<< RUNNER PROCESSES & COMMITS THE EVENT >>>>>>>>>>>>
+          // This happens outside the agent, after the agent's iterator has
+          // produced the event.
+
+          // 3. The agent CANNOT immediately see the state change it just yielded.
+          // The state is immutable within a single `Run` invocation.
+          val := ctx.State().Get("field_1")
+          // `val` here is STILL "value_1" (or whatever it was at the start).
+          // The updated state ("value_2") will only be available in the `ctx`
+          // of the *next* `Run` invocation in a subsequent turn.
+
+          // ... subsequent code continues, potentially yielding more events ...
+          finalEvent := session.NewEvent(ctx.InvocationID())
+          finalEvent.Author = a.Name()
+          // ...
+          yield(finalEvent, nil)
+      }
     }
-
-    // 2. Yield event with the delta by sending it to the channel
-    eventsChan <- event1
-    // --- PAUSE --- Runner processes event1, SessionService commits 'status' = 'processing' ---
-
-    // 3. Resume execution
-    // In a real Go app, the agent would receive a new context with the updated session.
-    // We can now safely rely on the committed state.
-    currentStatus := ctx.State.Set("status") // Guaranteed to be 'processing'
-    fmt.Printf("Status after resuming: %v\n", currentStatus)
     ```
 
 ### "Dirty Reads" of Session State
@@ -519,6 +539,7 @@ Understanding a few key aspects of how the ADK Runtime handles state, streaming,
     // is yielded *after* this tool runs and is processed by the Runner.
     ```
 === "Go"
+
     ```go
     // Code in before_agent_callback
     // The callback would modify the context's session state directly.
