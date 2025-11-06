@@ -135,6 +135,7 @@ nav:
       - get-started/index.md
       - Python: get-started/python.md
       - Java: get-started/java.md
+      - Go: get-started/go.md
     - Build your Agent:
       - tutorials/index.md
       - Multi-tool agent: get-started/quickstart.md
