@@ -175,6 +175,7 @@ nav:
         - Hugging Face: tools/third-party/hugging-face.md
         - Notion: tools/third-party/notion.md
         - Tavily: tools/third-party/tavily.md
+        - Bright Data: tools/third-part/bright-data.md
         - Agentic UI (AG-UI): tools/third-party/ag-ui.md
     - Custom Tools:
       - tools-custom/index.md
