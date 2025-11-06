@@ -134,8 +134,8 @@ nav:
     - Get Started:
       - get-started/index.md
       - Python: get-started/python.md
-      - Java: get-started/java.md
       - Go: get-started/go.md
+      - Java: get-started/java.md
     - Build your Agent:
       - tutorials/index.md
       - Multi-tool agent: get-started/quickstart.md
@@ -144,7 +144,6 @@ nav:
         - get-started/streaming/index.md
         - Python: get-started/streaming/quickstart-streaming.md
         - Java: get-started/streaming/quickstart-streaming-java.md
-      - Code samples: https://github.com/google/adk-samples
       - Advanced setup: get-started/installation.md
     - Agents:
       - agents/index.md
@@ -242,14 +241,12 @@ nav:
       - A2A Quickstart (Exposing) (Go): a2a/quickstart-exposing-go.md
       - A2A Quickstart (Consuming): a2a/quickstart-consuming.md
       - A2A Quickstart (Consuming) (Go): a2a/quickstart-consuming-go.md
-      - A2A Protocol Documentation: https://a2a-protocol.org
     - Bidi-streaming (live):
       - streaming/index.md
       - Custom Audio Bidi-streaming app sample (WebSockets): streaming/custom-streaming-ws.md
       - Bidi-streaming development guide series: streaming/dev-guide/part1.md
       - Streaming Tools: streaming/streaming-tools.md
       - Configurating Bidi-streaming behaviour: streaming/configuration.md
-      - Google ADK + Vertex AI Live API (blog post): https://medium.com/google-cloud/google-adk-vertex-ai-live-api-125238982d5e
     - Grounding:
       - Understanding Google Search Grounding: grounding/google_search_grounding.md
       - Understanding Vertex AI Search Grounding: grounding/vertex_ai_search_grounding.md
