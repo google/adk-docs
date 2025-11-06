@@ -13,7 +13,7 @@ Create an agent project with the following files and directory structure:
 my_agent/
     agent.go    # main agent code
     go.mod      # module configuration
-    .env         # API keys or project IDs
+    .env        # API keys or project IDs
 ```
 
 ??? tip "Create this project structure using the command line"
@@ -52,12 +52,13 @@ import (
   "log"
   "os"
 
-  "google.golang.org/adk/agent"
   "google.golang.org/adk/agent/llmagent"
+  "google.golang.org/adk/cmd/launcher/adk"
+  "google.golang.org/adk/cmd/launcher/full"
   "google.golang.org/adk/model/gemini"
+  "google.golang.org/adk/server/restapi/services"
   "google.golang.org/adk/tool"
-  "google.golang.org/adk/tool/functiontool"
-
+  "google.golang.org/adk/tool/geminitool"
   "google.golang.org/genai"
 )
 
@@ -71,33 +72,13 @@ func main() {
     log.Fatalf("Failed to create model: %v", err)
   }
 
-  // mock tool implementation
-  type Input struct {
-    City string `json:"city"`,
-  }
-  type Output struct {
-    City string `json:"city"`, Time string `json:"time"`,
-  }
-  handler := func(ctx tool.Context, input Input) Output {
-    return Output{
-      City: input.City, Time: "10:30am",
-    }
-  }
-  getCurrentTime, err := functiontool.New(functiontool.Config{
-    Name:        "get_current_time",
-    Description: "Get the current time for a given city",
-  }, handler)
-  if err != nil {
-    log.Fatalf("Failed to create tool: %v", err)
-  }
-
   agent, err := llmagent.New(llmagent.Config{
     Name:        "hello_time_agent",
     Model:       model,
     Description: "Tells the current time in a specified city.",
-    Instruction: "You are a helpful assistant that tells the current time in a city. Use the 'getCurrentTime' tool for this purpose.",
+    Instruction: "You are a helpful assistant that tells the current time in a city.",
     Tools: []tool.Tool{
-      getCurrentTime{},
+      geminitool.GoogleSearch{},
     },
   })
   if err != nil {
@@ -107,12 +88,12 @@ func main() {
   config := &adk.Config{
     AgentLoader: services.NewSingleAgentLoader(agent),
   }
-  l := full.NewLaucher("hello_time_agent")
-  err = l.ParseAndRun(ctx, config, os.Args[1:], universal.ErrorOnUnparsedArgs)
-  if err != nil {
-          log.Fatalf("run failed: %v\n\n%s", err, l.FormatSyntax())
-  }
 
+  l := full.NewLauncher()
+  err = l.Execute(ctx, config, os.Args[1:])
+  if err != nil {
+    log.Fatalf("run failed: %v\n\n%s", err, l.CommandLineSyntax())
+  }
 }
 ```
 
@@ -165,9 +146,9 @@ interact with your agent.
 Run your agent with the command-line interface `AgentCliRunner` class
 using the following Maven command:
 
-```console
+```console title="Run from: my_agent/ directory"
 # Remember to load keys and settings: source .env OR env.bat
-go run agent.go console
+go run agent.go
 ```
 
 ![adk-run.png](/adk-docs/assets/adk-run.png)
@@ -176,7 +157,7 @@ go run agent.go console
 
 Run your agent with the ADK web interface using the following Maven command:
 
-```console
+```console title="Run from: my_agent/ directory"
 # Remember to load keys and settings: source .env OR env.bat
 go run agent.go web api webui
 ```

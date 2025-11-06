@@ -43,6 +43,13 @@ from simple tasks to complex workflows.
         implementation 'com.google.adk:google-adk:0.2.0'
     }
     ```
+
+=== "Go"
+    <br>
+    <p style="text-align: center;">
+    <code>go get google.golang.org/adk</code>
+    </p>
+
 </div>
 
 <p style="text-align:center;">
