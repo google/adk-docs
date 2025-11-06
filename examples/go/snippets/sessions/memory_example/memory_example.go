@@ -119,7 +119,7 @@ func main() {
 			log.Printf("Agent 1 Error: %v", err)
 			continue
 		}
-		if event.LLMResponse.Content != nil && !event.LLMResponse.Partial {
+		if event.Content != nil && !event.LLMResponse.Partial {
 			finalResponseText = strings.Join(textParts(event.LLMResponse.Content), "")
 		}
 	}
@@ -127,7 +127,7 @@ func main() {
 
 	// Add the completed session to the Memory Service
 	fmt.Println("\n--- Adding Session 1 to Memory ---")
-	completedSession := must(sessionService.Get(ctx, &session.GetRequest{AppName: appName, UserID: userID, SessionID: session1ID})).Session
+	completedSession := sessionService.Get(ctx, &session.GetRequest{AppName: appName, UserID: userID, SessionID: session1ID}).Session
 	if err := memoryService.AddSession(ctx, completedSession); err != nil {
 		log.Fatalf("Failed to add session to memory: %v", err)
 	}
@@ -160,7 +160,7 @@ func main() {
 			log.Printf("Agent 2 Error: %v", err)
 			continue
 		}
-		if event.LLMResponse.Content != nil && !event.LLMResponse.Partial {
+		if event.Content != nil && !event.LLMResponse.Partial {
 			finalResponseText2 = strings.Join(textParts(event.LLMResponse.Content), "")
 		}
 	}
