@@ -1,7 +1,7 @@
 # Function tools
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-go">Go v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
 When pre-built ADK tools don't meet your requirements, you can create custom *function tools*. Building function tools allows you to create tailored functionality, such as connecting to proprietary databases or implementing unique algorithms.
@@ -174,20 +174,6 @@ A tool can write data to a `temp:` variable, and a subsequent tool can read it. 
         {"result": "$123"}
         ```
     
-    === "Java"
-    
-        This tool retrieves the mocked value of a stock price.
-    
-        ```java
-        --8<-- "examples/java/snippets/src/main/java/tools/StockPriceAgent.java:full_code"
-        ```
-    
-        The return value from this tool will be wrapped into a Map<String, Object>.
-    
-        ```json
-        For input `GOOG`: {"symbol": "GOOG", "price": "1.0"}
-        ```
-
     === "Go"
 
         This tool retrieves the mocked value of a stock price.
@@ -211,6 +197,20 @@ A tool can write data to a `temp:` variable, and a subsequent tool can read it. 
 
         ```json
         For input `{"symbol": "GOOG"}`: {"price":300.6,"symbol":"GOOG"}
+        ```
+
+    === "Java"
+    
+        This tool retrieves the mocked value of a stock price.
+    
+        ```java
+        --8<-- "examples/java/snippets/src/main/java/tools/StockPriceAgent.java:full_code"
+        ```
+    
+        The return value from this tool will be wrapped into a Map<String, Object>.
+    
+        ```json
+        For input `GOOG`: {"symbol": "GOOG", "price": "1.0"}
         ```
 
 ### Best Practices
@@ -264,6 +264,21 @@ Define your tool function and wrap it using the `LongRunningFunctionTool` class:
     --8<-- "examples/python/snippets/tools/function-tools/human_in_the_loop.py:define_long_running_function"
     ```
 
+=== "Go"
+
+    ```go
+    import (
+        "google.golang.org/adk/agent"
+        "google.golang.org/adk/agent/llmagent"
+        "google.golang.org/adk/model/gemini"
+        "google.golang.org/adk/tool"
+        "google.golang.org/adk/tool/functiontool"
+        "google.golang.org/genai"
+    )
+
+    --8<-- "examples/go/snippets/tools/function-tools/long-running-tool/long_running_tool.go:create_long_running_tool"
+    ```
+
 === "Java"
 
     ```java
@@ -304,21 +319,6 @@ Define your tool function and wrap it using the `LongRunningFunctionTool` class:
                 .build();
       }
     }
-    ```
-
-=== "Go"
-
-    ```go
-    import (
-        "google.golang.org/adk/agent"
-        "google.golang.org/adk/agent/llmagent"
-        "google.golang.org/adk/model/gemini"
-        "google.golang.org/adk/tool"
-        "google.golang.org/adk/tool/functiontool"
-        "google.golang.org/genai"
-    )
-
-    --8<-- "examples/go/snippets/tools/function-tools/long-running-tool/long_running_tool.go:create_long_running_tool"
     ```
 
 ### Intermediate / Final result Updates
@@ -376,12 +376,6 @@ Agent client received an event with long running function calls and check the st
     --8<-- "examples/python/snippets/tools/function-tools/human_in_the_loop.py:call_reimbursement_tool"
     ```
 
-=== "Java"
-
-    ```java
-    --8<-- "examples/java/snippets/src/main/java/tools/LongRunningFunctionExample.java:full_code"
-    ```
-
 === "Go"
 
     The following example demonstrates a multi-turn workflow. First, the user asks the agent to create a ticket. The agent calls the long-running tool and the client captures the `FunctionCall` ID. The client then simulates the asynchronous work completing by sending subsequent `FunctionResponse` messages back to the agent to provide the ticket ID and final status.
@@ -390,6 +384,11 @@ Agent client received an event with long running function calls and check the st
     --8<-- "examples/go/snippets/tools/function-tools/long-running-tool/long_running_tool.go:run_long_running_tool"
     ```
 
+=== "Java"
+
+    ```java
+    --8<-- "examples/java/snippets/src/main/java/tools/LongRunningFunctionExample.java:full_code"
+    ```
 
 ??? "Python complete example: File Processing Simulation"
 
@@ -427,16 +426,16 @@ To use an agent as a tool, wrap the agent with the AgentTool class.
     tools=[AgentTool(agent=agent_b)]
     ```
 
-=== "Java"
-
-    ```java
-    AgentTool.create(agent)
-    ```
-
 === "Go"
 
     ```go
     agenttool.New(agent, &agenttool.Config{...})
+    ```
+
+=== "Java"
+
+    ```java
+    AgentTool.create(agent)
     ```
 
 
@@ -454,12 +453,6 @@ The `AgentTool` class provides the following attributes for customizing its beha
         --8<-- "examples/python/snippets/tools/function-tools/summarizer.py"
         ```
   
-    === "Java"
-
-        ```java
-        --8<-- "examples/java/snippets/src/main/java/tools/AgentToolCustomization.java:full_code"
-        ```
-
     === "Go"
 
         ```go
@@ -473,6 +466,12 @@ The `AgentTool` class provides the following attributes for customizing its beha
         )
 
         --8<-- "examples/go/snippets/tools/function-tools/func_tool.go:agent_tool_example"
+        ```
+
+    === "Java"
+
+        ```java
+        --8<-- "examples/java/snippets/src/main/java/tools/AgentToolCustomization.java:full_code"
         ```
 
 ### How it works
