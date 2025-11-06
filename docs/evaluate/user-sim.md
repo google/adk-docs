@@ -37,6 +37,9 @@ complete.
 
 ## Example: Evaluating the [`hello_world`](https://github.com/google/adk-python/tree/main/contributing/samples/hello_world) agent with conversation scenarios
 
+**A Colab tutorial which closely follows this example is available in the
+[ADK samples repository](https://github.com/google/adk-samples/blob/main/python/notebooks/evaluation/user_simulation_in_adk_evals.ipynb).**
+
 To add evaluation cases containing conversation scenarios to a new or existing
 [`EvalSet`](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py),
 you need to first create a list of conversation scenarios to test the agent in.
