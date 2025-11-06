@@ -1,7 +1,7 @@
 # LLM Agent
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-go">Go v0.1.0</span>
 </div>
 
 The `LlmAgent` (often aliased simply as `Agent`) is a core component in ADK,
@@ -64,6 +64,13 @@ First, you need to establish what the agent *is* and what it's *for*.
             .description("Answers user questions about the capital city of a given country.")
             // instruction and tools will be added next
             .build();
+    ```
+
+=== "Go"
+
+    ```go
+    // Example: Defining the basic identity
+    --8<-- "examples/go/snippets/agents/llm-agents/snippets/main.go:identity"
     ```
 
 
@@ -134,6 +141,13 @@ tells the agent:
                 """)
             // tools will be added next
             .build();
+    ```
+
+=== "Go"
+
+    ```go
+    // Example: Adding instructions
+    --8<-- "examples/go/snippets/agents/llm-agents/snippets/main.go:instruction"
     ```
 
 *(Note: For instructions that apply to *all* agents in a system, consider using
@@ -208,6 +222,12 @@ on the conversation and its instructions.
             .build();
     ```
 
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/agents/llm-agents/snippets/main.go:tool_example"
+    ```
+
 Learn more about Tools in the [Tools](../tools/index.md) section.
 
 ## Advanced Configuration & Control
@@ -255,6 +275,14 @@ You can adjust how the underlying LLM generates responses using `generate_conten
             .build();
     ```
 
+=== "Go"
+
+    ```go
+    import "google.golang.org/genai"
+
+    --8<-- "examples/go/snippets/agents/llm-agents/snippets/main.go:gen_config"
+    ```
+
 ### Structuring Data (`input_schema`, `output_schema`, `output_key`)
 
 For scenarios requiring structured data exchange with an `LLM Agent`, the ADK provides mechanisms to define expected input and desired output formats using schema definitions.
@@ -266,6 +294,7 @@ For scenarios requiring structured data exchange with an `LLM Agent`, the ADK pr
 * **`output_key` (Optional):** Provide a string key. If set, the text content of the agent's *final* response will be automatically saved to the session's state dictionary under this key. This is useful for passing results between agents or steps in a workflow.
     * In Python, this might look like: `session.state[output_key] = agent_response_text`
     * In Java: `session.state().put(outputKey, agentResponseText)`
+    * In Golang, within a callback handler: `ctx.State().Set(output_key, agentResponseText)`
 
 === "Python"
 
@@ -315,6 +344,14 @@ For scenarios requiring structured data exchange with an `LLM Agent`, the ADK pr
             .build();
     ```
 
+=== "Go"
+
+    The input and output schema is a `google.genai.types.Schema` object.
+
+    ```go
+    --8<-- "examples/go/snippets/agents/llm-agents/snippets/main.go:schema_example"
+    ```
+
 ### Managing Context (`include_contents`)
 
 Control whether the agent receives the prior conversation history.
@@ -342,6 +379,14 @@ Control whether the agent receives the prior conversation history.
             // ... other params
             .includeContents(IncludeContents.NONE)
             .build();
+    ```
+
+=== "Go"
+
+    ```go
+    import "google.golang.org/adk/agent/llmagent"
+
+    --8<-- "examples/go/snippets/agents/llm-agents/snippets/main.go:include_contents"
     ```
 
 ### Planner
@@ -549,6 +594,12 @@ call_agent("If it's raining in New York right now, what is the current temperatu
     
         ```java
         --8<-- "examples/java/snippets/src/main/java/agents/LlmAgentExample.java:full_code"
+        ```
+
+    === "Go"
+
+        ```go
+        --8<-- "examples/go/snippets/agents/llm-agents/main.go:full_code"
         ```
 
 _(This example demonstrates the core concepts. More complex agents might incorporate schemas, context control, planning, etc.)_
