@@ -229,6 +229,8 @@ nav:
       - artifacts/index.md
     - Events:
       - events/index.md
+    - Apps:
+      - apps/index.md
     - Plugins:
       - plugins/index.md
       - Reflect and retry: plugins/reflect-and-retry.md
