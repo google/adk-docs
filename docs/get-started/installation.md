@@ -57,7 +57,7 @@
 
     This will add the ADK as a dependency to your `go.mod` file.
 
-    (Optional) Verify your installation by checking your `go.mod` file for the `github.com/google/adk-go` entry.
+    (Optional) Verify your installation by checking your `go.mod` file for the `google.golang.org/adk` entry.
 
 === "Java"
 
