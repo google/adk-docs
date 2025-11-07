@@ -201,6 +201,10 @@ Carefully apply the suggestions to improve the 'Current Document'. Output *only*
 			return fmt.Errorf("error during agent execution: %v", err)
 		}
 
+		if event.Content == nil {
+			continue
+		}
+
 		outputText := ""
 		for _, p := range event.Content.Parts {
 			outputText += p.Text
