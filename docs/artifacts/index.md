@@ -1,7 +1,7 @@
 # Artifacts
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-go">Go v0.1.0</span>
 </div>
 
 In ADK, **Artifacts** represent a crucial mechanism for managing named, versioned binary data associated either with a specific user interaction session or persistently with a user across multiple sessions. They allow your agents and tools to handle data beyond simple text strings, enabling richer interactions involving files, images, audio, and other binary formats.
@@ -62,6 +62,18 @@ In ADK, **Artifacts** represent a crucial mechanism for managing named, versione
                     + "...");
         }
     }
+    ```
+
+=== "Go"
+
+    ```go
+	import (
+		"log"
+
+		"google.golang.org/genai"
+	)
+
+	--8<-- "examples/go/snippets/artifacts/main.go:representation"
     ```
 
 *   **Persistence & Management:** Artifacts are not stored directly within the agent or session state. Their storage and retrieval are managed by a dedicated **Artifact Service** (an implementation of `BaseArtifactService`, defined in `google.adk.artifacts`. ADK provides various implementations, such as:
@@ -169,6 +181,24 @@ Understanding artifacts involves grasping a few key components: the service that
     // Now, contexts within runs managed by this runner can use artifact methods
     ```
 
+=== "Go"
+
+    ```go
+	import (
+		"context"
+		"log"
+
+		"google.golang.org/adk/agent/llmagent"
+		"google.golang.org/adk/artifactservice"
+		"google.golang.org/adk/llm/gemini"
+		"google.golang.org/adk/runner"
+		"google.golang.org/adk/sessionservice"
+		"google.golang.org/genai"
+	)
+
+	--8<-- "examples/go/snippets/artifacts/main.go:configure-runner"
+    ```
+
 ### Artifact Data
 
 * **Standard Representation:** Artifact content is universally represented using the `google.genai.types.Part` object, the same structure used for parts of LLM messages.  
@@ -202,6 +232,19 @@ Understanding artifacts involves grasping a few key components: the service that
 
     ```java
     --8<-- "examples/java/snippets/src/main/java/artifacts/ArtifactDataExample.java:full_code"
+    ```
+
+=== "Go"
+
+    ```go
+	import (
+		"log"
+		"os"
+
+		"google.golang.org/genai"
+	)
+
+	--8<-- "examples/go/snippets/artifacts/main.go:artifact-data"
     ```
 
 ### Filename
@@ -267,6 +310,16 @@ Understanding artifacts involves grasping a few key components: the service that
     // the ArtifactService implementation should recognize the "user:" prefix
     // and scope it to app_name and user_id, making it accessible across sessions for that user.
     // artifactService.saveArtifact(appName, userId, sessionId1, userConfigFilename, someData);
+    ```
+
+=== "Go"
+
+    ```go
+	import (
+		"log"
+	)
+
+	--8<-- "examples/go/snippets/artifacts/main.go:namespacing"
     ```
 
 These core concepts work together to provide a flexible system for managing binary data within the ADK framework.
@@ -339,10 +392,30 @@ Before you can use any artifact methods via the context objects, you **must** pr
     ```
     In Java, if an `ArtifactService` instance is not available (e.g., `null`) when artifact operations are attempted, it would typically result in a `NullPointerException` or a custom error, depending on how your application is structured. Robust applications often use dependency injection frameworks to manage service lifecycles and ensure availability.
 
+=== "Go"
+
+    ```go
+	import (
+		"context"
+		"log"
+
+		"google.golang.org/adk/agent/llmagent"
+		"google.golang.org/adk/artifactservice"
+		"google.golang.org/adk/llm/gemini"
+		"google.golang.org/adk/runner"
+		"google.golang.org/adk/sessionservice"
+		"google.golang.org/genai"
+	)
+
+	--8<-- "examples/go/snippets/artifacts/main.go:prerequisite"
+    ```
+
 
 ### Accessing Methods
 
 The artifact interaction methods are available directly on instances of `CallbackContext` (passed to agent and model callbacks) and `ToolContext` (passed to tool callbacks). Remember that `ToolContext` inherits from `CallbackContext`.
+
+#### Saving Artifacts
 
 *   **Code Example:**
 
@@ -412,6 +485,19 @@ The artifact interaction methods are available directly on instances of `Callbac
         }
         ```
 
+    === "Go"
+
+        ```go
+		import (
+			"log"
+
+			"google.golang.org/adk/agent"
+			"google.golang.org/adk/llm"
+			"google.golang.org/genai"
+		)
+
+		--8<-- "examples/go/snippets/artifacts/main.go:saving-artifacts"
+        ```
 #### Loading Artifacts
 
 *   **Code Example:**
@@ -542,6 +628,19 @@ The artifact interaction methods are available directly on instances of `Callbac
         }
         ```
 
+    === "Go"
+
+        ```go
+		import (
+			"log"
+
+			"google.golang.org/adk/agent"
+			"google.golang.org/adk/llm"
+		)
+
+		--8<-- "examples/go/snippets/artifacts/main.go:loading-artifacts"
+        ```
+
 #### Listing Artifact Filenames
 
 *   **Code Example:**
@@ -652,6 +751,22 @@ The artifact interaction methods are available directly on instances of `Callbac
         }
         ```
 
+    === "Go"
+
+        ```go
+		import (
+			"fmt"
+			"log"
+			"strings"
+
+			"google.golang.org/adk/agent"
+			"google.golang.org/adk/llm"
+			"google.golang.org/genai"
+		)
+
+		--8<-- "examples/go/snippets/artifacts/main.go:listing-artifacts"
+        ```
+
 These methods for saving, loading, and listing provide a convenient and consistent way to manage binary data persistence within ADK, whether using Python's context objects or directly interacting with the `BaseArtifactService` in Java, regardless of the chosen backend storage implementation.
 
 ## Available Implementations
@@ -704,6 +819,16 @@ ADK provides concrete implementations of the `BaseArtifactService` interface, of
                 // );
             }
         }
+        ```
+
+    === "Go"
+
+        ```go
+		import (
+			"google.golang.org/adk/artifactservice"
+		)
+
+		--8<-- "examples/go/snippets/artifacts/main.go:in-memory-service"
         ```
 
 ### GcsArtifactService

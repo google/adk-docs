@@ -1,7 +1,7 @@
 # MCP Toolbox for Databases
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-go">Go</span>
 </div>
 
 [MCP Toolbox for Databases](https://github.com/googleapis/genai-toolbox) is an
@@ -79,37 +79,100 @@ documentation:
 * [Installing the Server](https://googleapis.github.io/genai-toolbox/getting-started/introduction/#installing-the-server)
 * [Configuring Toolbox](https://googleapis.github.io/genai-toolbox/getting-started/configure/)
 
-## Install client SDK for ADK
+## Install Client SDK for ADK
 
-ADK relies on the `toolbox-core` python package to use Toolbox. Install the
-package before getting started:
+=== "Python"
 
-```shell
-pip install toolbox-core
-```
+    ADK relies on the `toolbox-core` python package to use Toolbox. Install the
+    package before getting started:
 
-## Loading Toolbox Tools
+    ```shell
+    pip install toolbox-core
+    ```
 
-Once you’re Toolbox server is configured and up and running, you can load tools
-from your server using ADK:
+    ### Loading Toolbox Tools
 
-```python
-from google.adk.agents import Agent
-from toolbox_core import ToolboxSyncClient
+    Once you’re Toolbox server is configured and up and running, you can load tools
+    from your server using ADK:
 
-toolbox = ToolboxSyncClient("https://127.0.0.1:5000")
+    ```python
+    from google.adk.agents import Agent
+    from toolbox_core import ToolboxSyncClient
 
-# Load a specific set of tools
-tools = toolbox.load_toolset('my-toolset-name'),
-# Load single tool
-tools = toolbox.load_tool('my-tool-name'),
+    toolbox = ToolboxSyncClient("https://127.0.0.1:5000")
 
-root_agent = Agent(
-    ...,
-    tools=tools # Provide the list of tools to the Agent
+    # Load a specific set of tools
+    tools = toolbox.load_toolset('my-toolset-name'),
+    # Load single tool
+    tools = toolbox.load_tool('my-tool-name'),
 
-)
-```
+    root_agent = Agent(
+        ...,
+        tools=tools # Provide the list of tools to the Agent
+
+    )
+    ```
+
+=== "Go"
+
+    ADK relies on the `mcp-toolbox-sdk-go` go module to use Toolbox. Install the
+    module before getting started:
+
+    ```shell
+    go get github.com/googleapis/mcp-toolbox-sdk-go
+    ```
+
+    ### Loading Toolbox Tools
+
+    Once you’re Toolbox server is configured and up and running, you can load tools
+    from your server using ADK:
+
+    ```go
+    package main
+
+    import (
+    	"context"
+    	"fmt"
+
+    	"github.com/googleapis/mcp-toolbox-sdk-go/tbadk"
+    	"google.golang.org/adk/agent/llmagent"
+    )
+
+    func main() {
+
+      toolboxClient, err := tbadk.NewToolboxClient("https://127.0.0.1:5000")
+    	if err != nil {
+    		log.Fatalf("Failed to create MCP Toolbox client: %v", err)
+    	}
+
+      // Load a specific set of tools
+      toolboxtools, err := toolboxClient.LoadToolset("my-toolset-name", ctx)
+      if err != nil {
+        return fmt.Sprintln("Could not load Toolbox Toolset", err)
+      }
+
+      toolsList := make([]tool.Tool, len(toolboxtools))
+        for i := range toolboxtools {
+          toolsList[i] = &toolboxtools[i]
+        }
+
+      llmagent, err := llmagent.New(llmagent.Config{
+        ...,
+        Tools:       toolsList,
+      })
+
+      // Load a single tool
+      tool, err := client.LoadTool("my-tool-name", ctx)
+      if err != nil {
+        return fmt.Sprintln("Could not load Toolbox Tool", err)
+      }
+
+      llmagent, err := llmagent.New(llmagent.Config{
+        ...,
+        Tools:       []tool.Tool{&toolboxtool},
+      })
+    }
+    ```
 
 ## Advanced Toolbox Features
 
