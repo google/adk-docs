@@ -22,7 +22,7 @@ This guide covers two primary integration patterns:
 Before you begin, ensure you have the following set up:
 
 * **Set up ADK:** Follow the standard ADK [setup instructions](../get-started/quickstart.md/#venv-install) in the quickstart.
-* **Install/update Python/Java/Go:** MCP requires Python version of 3.9 or higher for Python, Java 17 or higher, or Go 1.22 or higher.
+* **Install/update Python/Java/Go:** MCP requires Python version of 3.9 or higher for Python, Go 1.22 or higher, or Java 17 or higher.
 * **Setup Node.js and npx:** **(Python only)** Many community MCP servers are distributed as Node.js packages and run using `npx`. Install Node.js (which includes npx) if you haven't already. For details, see [https://nodejs.org/en](https://nodejs.org/en).
 * **Verify Installations:** **(Python only)** Confirm `adk` and `npx` are in your PATH within the activated virtual environment:
 
@@ -240,98 +240,7 @@ For Go, you can create an `LlmAgent` with an `MCPToolset` to connect to the file
 
 === "Go"
     ```go
-    package main
-
-    import (
-      "context"
-      "fmt"
-      "log"
-      "os"
-      "os/exec"
-      "path/filepath"
-
-      "github.com/modelcontextprotocol/go-sdk/mcp"
-      "google.golang.org/adk/agent/llmagent"
-      "google.golang.org/adk/model/gemini"
-      "google.golang.org/adk/runner"
-      "google.golang.org/adk/session"
-      "google.golang.org/adk/tool"
-      "google.golang.org/adk/tool/mcptoolset"
-      "google.golang.org/genai"
-    )
-
-    func main() {
-      // It's good practice to define paths dynamically if possible,
-      // or ensure the user understands the need for an ABSOLUTE path.
-      // For this example, we'll construct a path relative to the current working directory.
-      // REPLACE THIS with an actual absolute path if needed for your setup.
-      targetFolderPath, err := filepath.Abs("./path/to/your/folder")
-      if err != nil {
-        log.Fatalf("Failed to get absolute path: %v", err)
-      }
-      // Ensure the directory exists
-      if err := os.MkdirAll(targetFolderPath, 0755); err != nil {
-        log.Fatalf("Failed to create target directory: %v", err)
-      }
-      fmt.Printf("Using target folder: %s\n", targetFolderPath)
-
-      ctx := context.Background()
-      // Get the API Key from an environment variable
-      apiKey := os.Getenv("GEMINI_API_KEY")
-      if apiKey == "" {
-        log.Fatal("GEMINI_API_KEY environment variable not set")
-      }
-
-      model, err := gemini.NewModel(ctx, "gemini-2.0-flash", &genai.ClientConfig{APIKey: apiKey})
-      if err != nil {
-        log.Fatalf("Failed to create model: %v", err)
-      }
-
-      mcpToolset, err := mcptoolset.New(mcptoolset.Config{
-        Transport: &mcp.CommandTransport{
-          Command: exec.Command("npx",
-            "-y",
-            "@modelcontextprotocol/server-filesystem",
-            targetFolderPath,
-          ),
-        },
-        // Optional: Filter which tools from the MCP server are exposed
-        // ToolFilter: tool.StringPredicate([]string{"list_directory", "read_file"}),
-      })
-      if err != nil {
-        log.Fatalf("Failed to create MCP toolset: %v", err)
-      }
-
-      agent, err := llmagent.New(llmagent.Config{
-        Name:        "filesystem_assistant_agent",
-        Model:       model,
-        Description: "Help the user manage their files. You can list files, read files, etc.",
-        Instruction: "Help the user manage their files. You can list files, read files, etc.",
-        Toolsets:    []tool.Toolset{mcpToolset},
-      })
-      if err != nil {
-        log.Fatalf("Failed to create agent: %v", err)
-      }
-
-      r, err := runner.New(runner.Config{
-        AppName:        "mcp_filesystem_app",
-        Agent:          agent,
-        SessionService: session.InMemoryService(),
-      })
-      if err != nil {
-        log.Fatalf("Failed to create runner: %v", err)
-      }
-
-      prompt := "List files in the current directory."
-      fmt.Printf("\nSending prompt: %q to agent...\n\n", prompt)
-
-      for event, err := range r.Run(ctx, "user123", "session123", genai.NewContentFromText(prompt, genai.RoleUser), agent.RunConfig{}) {
-        if err != nil {
-          log.Fatalf("Runner returned an error: %v", err)
-        }
-        fmt.Printf("Event received: %s\n", event.ToJSON())
-      }
-    }
+    --8<-- "examples/go/snippets/tools-custom/filesystem_tool/filesystem_tool.go"
     ```
 
 Assuming a folder containing three files named `first`, `second` and `third`, successful response will look like this:
@@ -552,89 +461,7 @@ For Go, the setup is similar. You will need to provide the `GOOGLE_MAPS_API_KEY`
 === "Go"
 
     ```go
-    package main
-
-    import (
-      "context"
-      "fmt"
-      "log"
-      "os"
-      "os/exec"
-
-      "github.com/modelcontextprotocol/go-sdk/mcp"
-      "google.golang.org/adk/agent/llmagent"
-      "google.golang.org/adk/model/gemini"
-      "google.golang.org/adk/runner"
-      "google.golang.org/adk/session"
-      "google.golang.org/adk/tool"
-      "google.golang.org/adk/tool/mcptoolset"
-      "google.golang.org/genai"
-    )
-
-    func main() {
-      // Retrieve the API key from an environment variable.
-      // This is the recommended approach for security.
-      googleMapsAPIKey := os.Getenv("GOOGLE_MAPS_API_KEY")
-      if googleMapsAPIKey == "" {
-        log.Fatal("GOOGLE_MAPS_API_KEY environment variable not set")
-      }
-
-      ctx := context.Background()
-      // Get the Gemini API Key from an environment variable
-      geminiAPIKey := os.Getenv("GEMINI_API_KEY")
-      if geminiAPIKey == "" {
-        log.Fatal("GEMINI_API_KEY environment variable not set")
-      }
-
-      model, err := gemini.NewModel(ctx, "gemini-2.0-flash", &genai.ClientConfig{APIKey: geminiAPIKey})
-      if err != nil {
-        log.Fatalf("Failed to create model: %v", err)
-      }
-
-      cmd := exec.Command("npx", "-y", "@modelcontextprotocol/server-google-maps")
-      // Pass the API key as an environment variable to the npx process
-      // This is how the MCP server for Google Maps expects the key.
-      cmd.Env = append(os.Environ(), fmt.Sprintf("GOOGLE_MAPS_API_KEY=%s", googleMapsAPIKey))
-
-      mcpToolset, err := mcptoolset.New(mcptoolset.Config{
-        Transport: &mcp.CommandTransport{Command: cmd},
-        // You can filter for specific Maps tools if needed:
-        // ToolFilter: tool.StringPredicate([]string{"get_directions", "find_place_by_id"}),
-      })
-      if err != nil {
-        log.Fatalf("Failed to create MCP toolset: %v", err)
-      }
-
-      agent, err := llmagent.New(llmagent.Config{
-        Name:        "maps_assistant_agent",
-        Model:       model,
-        Description: "Help the user with mapping, directions, and finding places using Google Maps tools.",
-        Instruction: "Help the user with mapping, directions, and finding places using Google Maps tools.",
-        Toolsets:    []tool.Toolset{mcpToolset},
-      })
-      if err != nil {
-        log.Fatalf("Failed to create agent: %v", err)
-      }
-
-      r, err := runner.New(runner.Config{
-        AppName:        "mcp_maps_app",
-        Agent:          agent,
-        SessionService: session.InMemoryService(),
-      })
-      if err != nil {
-        log.Fatalf("Failed to create runner: %v", err)
-      }
-
-      prompt := "Get directions from GooglePlex to SFO."
-      fmt.Printf("\nSending prompt: %q to agent...\n\n", prompt)
-
-      for event, err := range r.Run(ctx, "user123", "session123", genai.NewContentFromText(prompt, genai.RoleUser), agent.RunConfig{}) {
-        if err != nil {
-          log.Fatalf("Runner returned an error: %v", err)
-        }
-        fmt.Printf("Event received: %s\n", event.ToJSON())
-      }
-    }
+    --8<-- "examples/go/snippets/tools-custom/maps_tool/maps_tool.go"
     ```
 
 A successful response will look like this:
