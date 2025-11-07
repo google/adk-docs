@@ -1,14 +1,14 @@
-# App object for ADK
+# App: workflow management class
 
 <div class="language-support-tag">
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.14.0</span>
 </div>
 
-The `App` class is a top-level container for an entire Agent Development Kit
+The ***App*** class is a top-level container for an entire Agent Development Kit
 (ADK) agent workflow. It is designed to manage the lifecycle, configuration, and
-state for a collection of agents. The App class separates the concerns of an
-agent workflow's overall operational infrastructure from individual agents'
-task-oriented reasoning. 
+state for a collection of agents grouped by a ***root agent***. The App class
+separates the concerns of an agent workflow's overall operational infrastructure
+from individual agents' task-oriented reasoning. 
 
 Defining an App object in your ADK workflow is optional and changes how you
 organize your agent code and run your agents. From a practical perspective, you
@@ -25,18 +25,19 @@ ADK agent workflows.
 ## Use the App class
 
 The App class is used as the primary container of your agent workflow and
-contains the root agent of the project.
+contains the root agent of the project. The ***root agent*** is the container
+for the primary controller agent and any additonal sub-agents. 
 
 ### Define your Agent
 
-First, define an agent using a class derived from BaseAgent. The
+First, define an agent using a class derived from ***BaseAgent***. The
 following code sample defines a simple greeter agent:
 
 ```python
 from google.adk.agents import Agent
 
-class GreeterAgent(Agent):
-    name = "Greeter Agent"
+root_agent = GreeterAgent(Agent):
+    name='greeter_agent'
     description = "An agent that provides a friendly greeting."
 
     def __call__(self, unused_input: str) -> str:
@@ -47,20 +48,25 @@ class GreeterAgent(Agent):
 ### Define your App
 
 Create a class that inherits from `App`. Configure this object with the
-`root_agent` parameter and optional features, as shown in the following
+***root agent*** parameter and optional features, as shown in the following
 sample code:
 
 ```python
 from google.adk.apps import App
 
 class MyGreeterApp(App):
-    name = "Simple Greeter App"
-    root_agent = GreeterAgent()
+    name='greeter_app'
+    root_agent=root_agent
     # Optionally include App-level features:
     # plugins, context_cache_config, resumability_config
 
-my_app = MyGreeterApp()
+app = MyGreeterApp()
 ```
+
+!!! warning "Recommended: `app` variable name"
+
+    In your agent project code, set your ***App*** object to the variable name
+    `app` so it is compatible with the ADK command line interface runner tools. 
 
 ### Run your App
 
@@ -68,7 +74,7 @@ You can use the Runner class to run your agent workflow using the
 `app` parameter, as shown in the following code sample:
 
 ```python
-Runner.run(app=my_app, ...)
+Runner.run(app=app, ...)
 ```
 
 ## Purpose of App Class
