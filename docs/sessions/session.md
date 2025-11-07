@@ -1,7 +1,7 @@
 # Session: Tracking Individual Conversations
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-go">Go v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
 Following our Introduction, let's dive into the `Session`. Think back to the
@@ -63,6 +63,12 @@ are its key properties:
         print("The final status of temp_service - ", temp_service)
        ```
 
+=== "Go"
+
+       ```go
+       --8<-- "examples/go/snippets/sessions/session_management_example/session_management_example.go:examine_session"
+       ```
+
 === "Java"
 
        ```java
@@ -92,12 +98,6 @@ are its key properties:
 
         // Clean up (optional for this example)
         var unused = exampleSessionService.deleteSession(appName, userId, sessionId);
-       ```
-
-=== "Go"
-
-       ```go
-       --8<-- "examples/go/snippets/sessions/session_management_example/session_management_example.go:examine_session"
        ```
 
 *(**Note:** The state shown above is only the initial state. State updates
@@ -144,19 +144,19 @@ the storage backend that best suits your needs:
             from google.adk.sessions import InMemorySessionService
             session_service = InMemorySessionService()
            ```
-    === "Java"
-
-           ```java
-            import com.google.adk.sessions.InMemorySessionService;
-            InMemorySessionService exampleSessionService = new InMemorySessionService();
-           ```
-
     === "Go"
 
            ```go
             import "google.golang.org/adk/session"
 
             inMemoryService := session.InMemoryService()
+           ```
+
+    === "Java"
+
+           ```java
+            import com.google.adk.sessions.InMemorySessionService;
+            InMemorySessionService exampleSessionService = new InMemorySessionService();
            ```
 
 2.  **`VertexAiSessionService`**
@@ -192,6 +192,26 @@ the storage backend that best suits your needs:
            # session_service = await session_service.create_session(app_name=REASONING_ENGINE_APP_NAME, ...)
            ```
 
+    === "Go"
+
+          ```go
+          import "google.golang.org/adk/session"
+
+          // 2. VertexAIService
+          // Before running, ensure your environment is authenticated:
+          // gcloud auth application-default login
+          // export GOOGLE_CLOUD_PROJECT="your-gcp-project-id"
+          // export GOOGLE_CLOUD_LOCATION="your-gcp-location"
+
+          modelName := "gemini-1.5-flash-001" // Replace with your desired model
+          vertexService, err := session.VertexAIService(ctx, modelName)
+          if err != nil {
+            log.Printf("Could not initialize VertexAIService (this is expected if the gcloud project is not set): %v", err)
+          } else {
+            fmt.Println("Successfully initialized VertexAIService.")
+          }
+          ```
+
     === "Java"
 
            ```java
@@ -215,26 +235,6 @@ the storage backend that best suits your needs:
                    .createSession(reasoningEngineAppName, userId, initialState, Optional.of(sessionId))
                    .blockingGet();
            ```
-
-    === "Go"
-
-          ```go
-          import "google.golang.org/adk/session"
-
-          // 2. VertexAIService
-          // Before running, ensure your environment is authenticated:
-          // gcloud auth application-default login
-          // export GOOGLE_CLOUD_PROJECT="your-gcp-project-id"
-          // export GOOGLE_CLOUD_LOCATION="your-gcp-location"
-
-          modelName := "gemini-1.5-flash-001" // Replace with your desired model
-          vertexService, err := session.VertexAIService(ctx, modelName)
-          if err != nil {
-            log.Printf("Could not initialize VertexAIService (this is expected if the gcloud project is not set): %v", err)
-          } else {
-            fmt.Println("Successfully initialized VertexAIService.")
-          }
-          ```
 
 3.  **`DatabaseSessionService`**
 

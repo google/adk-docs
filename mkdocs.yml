@@ -24,9 +24,12 @@ extra:
   first_repo_url: https://github.com/google/adk-python
   first_repo_name: adk-python
   first_repo_icon: fontawesome/brands/github
-  second_repo_url: https://github.com/google/adk-java
-  second_repo_name: adk-java
+  second_repo_url: https://github.com/google/adk-go
+  second_repo_name: adk-go
   second_repo_icon: fontawesome/brands/github
+  third_repo_url: https://github.com/google/adk-java
+  third_repo_name: adk-java
+  third_repo_icon: fontawesome/brands/github
   analytics:
     provider: google
     property: G-DKHZS27PHP
@@ -201,6 +204,7 @@ nav:
       - Cloud Trace: observability/cloud-trace.md
       - AgentOps: observability/agentops.md
       - Arize AX: observability/arize-ax.md
+      - Freeplay: observability/freeplay.md
       - Phoenix: observability/phoenix.md
       - W&B Weave: observability/weave.md
     - Evaluation:
