@@ -1,7 +1,7 @@
 # Events
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-go">Go v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
 Events are the fundamental units of information flow within the Agent Development Kit (ADK). They represent every significant occurrence during an agent's interaction lifecycle, from initial user input to the final response and all the steps in between. Understanding events is crucial because they are the primary way components communicate, state is managed, and control flow is directed.
@@ -34,29 +34,6 @@ An `Event` in ADK is an immutable record representing a specific point in the ag
     #     # ...
     ```
 
-=== "Java"
-    In Java, this is an instance of the `com.google.adk.events.Event` class. It also builds upon a basic response structure by adding essential ADK-specific metadata and an `actions` payload.
-
-    ```java
-    // Conceptual Structure of an Event (Java - See com.google.adk.events.Event.java)
-    // Simplified view based on the provided com.google.adk.events.Event.java
-    // public class Event extends JsonBaseModel {
-    //     // --- Fields analogous to LlmResponse ---
-    //     private Optional<Content> content;
-    //     private Optional<Boolean> partial;
-    //     // ... other response fields like errorCode, errorMessage ...
-
-    //     // --- ADK specific additions ---
-    //     private String author;         // 'user' or agent name
-    //     private String invocationId;   // ID for the whole interaction run
-    //     private String id;             // Unique ID for this specific event
-    //     private long timestamp;        // Creation time (epoch milliseconds)
-    //     private EventActions actions;  // Important for side-effects & control
-    //     private Optional<String> branch; // Hierarchy path
-    //     // ... other fields like turnComplete, longRunningToolIds etc.
-    // }
-    ```
-
 === "Go"
     In Go, this is a struct of type `google.golang.org/adk/session.Event`.
 
@@ -82,6 +59,29 @@ An `Event` in ADK is an immutable record representing a specific point in the ag
         Content *genai.Content
         // ... other fields
     }
+    ```
+
+=== "Java"
+    In Java, this is an instance of the `com.google.adk.events.Event` class. It also builds upon a basic response structure by adding essential ADK-specific metadata and an `actions` payload.
+
+    ```java
+    // Conceptual Structure of an Event (Java - See com.google.adk.events.Event.java)
+    // Simplified view based on the provided com.google.adk.events.Event.java
+    // public class Event extends JsonBaseModel {
+    //     // --- Fields analogous to LlmResponse ---
+    //     private Optional<Content> content;
+    //     private Optional<Boolean> partial;
+    //     // ... other response fields like errorCode, errorMessage ...
+
+    //     // --- ADK specific additions ---
+    //     private String author;         // 'user' or agent name
+    //     private String invocationId;   // ID for the whole interaction run
+    //     private String id;             // Unique ID for this specific event
+    //     private long timestamp;        // Creation time (epoch milliseconds)
+    //     private EventActions actions;  // Important for side-effects & control
+    //     private Optional<String> branch; // Hierarchy path
+    //     // ... other fields like turnComplete, longRunningToolIds etc.
+    // }
     ```
 
 Events are central to ADK's operation for several key reasons:
@@ -144,43 +144,6 @@ Quickly determine what an event represents by checking:
     #         print("  Type: State/Artifact Update")
     #     else:
     #         print("  Type: Control Signal or Other")
-    ```
-
-=== "Java"
-
-    ```java
-    // Pseudocode: Basic event identification (Java)
-    // import com.google.genai.types.Content;
-    // import com.google.adk.events.Event;
-    // import com.google.adk.events.EventActions;
-
-    // runner.runAsync(...).forEach(event -> { // Assuming a synchronous stream or reactive stream
-    //     System.out.println("Event from: " + event.author());
-    //
-    //     if (event.content().isPresent()) {
-    //         Content content = event.content().get();
-    //         if (!event.functionCalls().isEmpty()) {
-    //             System.out.println("  Type: Tool Call Request");
-    //         } else if (!event.functionResponses().isEmpty()) {
-    //             System.out.println("  Type: Tool Result");
-    //         } else if (content.parts().isPresent() && !content.parts().get().isEmpty() &&
-    //                    content.parts().get().get(0).text().isPresent()) {
-    //             if (event.partial().orElse(false)) {
-    //                 System.out.println("  Type: Streaming Text Chunk");
-    //             } else {
-    //                 System.out.println("  Type: Complete Text Message");
-    //             }
-    //         } else {
-    //             System.out.println("  Type: Other Content (e.g., code result)");
-    //         }
-    //     } else if (event.actions() != null &&
-    //                ((event.actions().stateDelta() != null && !event.actions().stateDelta().isEmpty()) ||
-    //                 (event.actions().artifactDelta() != null && !event.actions().artifactDelta().isEmpty()))) {
-    //         System.out.println("  Type: State/Artifact Update");
-    //     } else {
-    //         System.out.println("  Type: Control Signal or Other");
-    //     }
-    // });
     ```
 
 === "Go"
@@ -247,6 +210,43 @@ Quickly determine what an event represents by checking:
 
     ```
 
+=== "Java"
+
+    ```java
+    // Pseudocode: Basic event identification (Java)
+    // import com.google.genai.types.Content;
+    // import com.google.adk.events.Event;
+    // import com.google.adk.events.EventActions;
+
+    // runner.runAsync(...).forEach(event -> { // Assuming a synchronous stream or reactive stream
+    //     System.out.println("Event from: " + event.author());
+    //
+    //     if (event.content().isPresent()) {
+    //         Content content = event.content().get();
+    //         if (!event.functionCalls().isEmpty()) {
+    //             System.out.println("  Type: Tool Call Request");
+    //         } else if (!event.functionResponses().isEmpty()) {
+    //             System.out.println("  Type: Tool Result");
+    //         } else if (content.parts().isPresent() && !content.parts().get().isEmpty() &&
+    //                    content.parts().get().get(0).text().isPresent()) {
+    //             if (event.partial().orElse(false)) {
+    //                 System.out.println("  Type: Streaming Text Chunk");
+    //             } else {
+    //                 System.out.println("  Type: Complete Text Message");
+    //             }
+    //         } else {
+    //             System.out.println("  Type: Other Content (e.g., code result)");
+    //         }
+    //     } else if (event.actions() != null &&
+    //                ((event.actions().stateDelta() != null && !event.actions().stateDelta().isEmpty()) ||
+    //                 (event.actions().artifactDelta() != null && !event.actions().artifactDelta().isEmpty()))) {
+    //         System.out.println("  Type: State/Artifact Update");
+    //     } else {
+    //         System.out.println("  Type: Control Signal or Other");
+    //     }
+    // });
+    ```
+
 ### Extracting Key Information
 
 Once you know the event type, access the relevant data:
@@ -257,6 +257,7 @@ Once you know the event type, access the relevant data:
 *   **Function Call Details:**
 
     === "Python"
+    
         ```python
         calls = event.get_function_calls()
         if calls:
@@ -266,6 +267,32 @@ Once you know the event type, access the relevant data:
                 print(f"  Tool: {tool_name}, Args: {arguments}")
                 # Application might dispatch execution based on this
         ```
+
+    === "Go"
+
+        ```go
+        import (
+            "fmt"
+            "google.golang.org/adk/session"
+            "google.golang.org/genai"
+        )
+
+        func handleFunctionCalls(event *session.Event) {
+            if event.LLMResponse == nil || event.LLMResponse.Content == nil {
+                return
+            }
+            calls := event.Content.FunctionCalls()
+            if len(calls) > 0 {
+                for _, call := range calls {
+                    toolName := call.Name
+                    arguments := call.Args
+                    fmt.Printf("  Tool: %s, Args: %v\n", toolName, arguments)
+                    // Application might dispatch execution based on this
+                }
+            }
+        }
+        ```
+
     === "Java"
 
         ```java
@@ -285,31 +312,6 @@ Once you know the event type, access the relevant data:
         }
         ```
 
-    === "Go"
-
-      ```go
-      import (
-          "fmt"
-          "google.golang.org/adk/session"
-          "google.golang.org/genai"
-      )
-
-      func handleFunctionCalls(event *session.Event) {
-          if event.LLMResponse == nil || event.LLMResponse.Content == nil {
-              return
-          }
-          calls := event.Content.FunctionCalls()
-          if len(calls) > 0 {
-              for _, call := range calls {
-                  toolName := call.Name
-                  arguments := call.Args
-                  fmt.Printf("  Tool: %s, Args: %v\n", toolName, arguments)
-                  // Application might dispatch execution based on this
-              }
-          }
-      }
-      ```
-
 *   **Function Response Details:**
 
     === "Python"
@@ -321,22 +323,6 @@ Once you know the event type, access the relevant data:
                 tool_name = response.name
                 result_dict = response.response # The dictionary returned by the tool
                 print(f"  Tool Result: {tool_name} -> {result_dict}")
-        ```
-    === "Java"
-
-        ```java
-        import com.google.genai.types.FunctionResponse;
-        import com.google.common.collect.ImmutableList;
-        import java.util.Map;
-
-        ImmutableList<FunctionResponse> responses = event.functionResponses(); // from Event.java
-        if (!responses.isEmpty()) {
-            for (FunctionResponse response : responses) {
-                String toolName = response.name().get();
-                Map<String, String> result= response.response().get(); // Check before getting the response
-                System.out.println("  Tool Result: " + toolName + " -> " + result);
-            }
-        }
         ```
 
     === "Go"
@@ -363,6 +349,23 @@ Once you know the event type, access the relevant data:
         }
         ```
 
+    === "Java"
+
+        ```java
+        import com.google.genai.types.FunctionResponse;
+        import com.google.common.collect.ImmutableList;
+        import java.util.Map;
+
+        ImmutableList<FunctionResponse> responses = event.functionResponses(); // from Event.java
+        if (!responses.isEmpty()) {
+            for (FunctionResponse response : responses) {
+                String toolName = response.name().get();
+                Map<String, String> result= response.response().get(); // Check before getting the response
+                System.out.println("  Tool Result: " + toolName + " -> " + result);
+            }
+        }
+        ```
+
 *   **Identifiers:**
     *   `event.id`: Unique ID for this specific event instance.
     *   `event.invocation_id`: ID for the entire user-request-to-final-response cycle this event belongs to. Useful for logging and tracing.
@@ -380,21 +383,6 @@ The `event.actions` object signals changes that occurred or should occur. Always
             print(f"  State changes: {event.actions.state_delta}")
             # Update local UI or application state if necessary
         ```
-    === "Java"
-        `ConcurrentMap<String, Object> delta = event.actions().stateDelta();`
-
-        ```java
-        import java.util.concurrent.ConcurrentMap;
-        import com.google.adk.events.EventActions;
-
-        EventActions actions = event.actions(); // Assuming event.actions() is not null
-        if (actions != null && actions.stateDelta() != null && !actions.stateDelta().isEmpty()) {
-            ConcurrentMap<String, Object> stateChanges = actions.stateDelta();
-            System.out.println("  State changes: " + stateChanges);
-            // Update local UI or application state if necessary
-        }
-        ```
-
     === "Go"
         `delta := event.Actions.StateDelta` (a `map[string]any`)
         ```go
@@ -411,6 +399,21 @@ The `event.actions` object signals changes that occurred or should occur. Always
         }
         ```
 
+    === "Java"
+        `ConcurrentMap<String, Object> delta = event.actions().stateDelta();`
+
+        ```java
+        import java.util.concurrent.ConcurrentMap;
+        import com.google.adk.events.EventActions;
+
+        EventActions actions = event.actions(); // Assuming event.actions() is not null
+        if (actions != null && actions.stateDelta() != null && !actions.stateDelta().isEmpty()) {
+            ConcurrentMap<String, Object> stateChanges = actions.stateDelta();
+            System.out.println("  State changes: " + stateChanges);
+            // Update local UI or application state if necessary
+        }
+        ```
+
 *   **Artifact Saves:** Gives you a collection indicating which artifacts were saved and their new version number (or relevant `Part` information).
 
     === "Python"
@@ -419,22 +422,6 @@ The `event.actions` object signals changes that occurred or should occur. Always
         if event.actions and event.actions.artifact_delta:
             print(f"  Artifacts saved: {event.actions.artifact_delta}")
             # UI might refresh an artifact list
-        ```
-    === "Java"
-        `ConcurrentMap<String, Part> artifactChanges = event.actions().artifactDelta();`
-
-        ```java
-        import java.util.concurrent.ConcurrentMap;
-        import com.google.genai.types.Part;
-        import com.google.adk.events.EventActions;
-
-        EventActions actions = event.actions(); // Assuming event.actions() is not null
-        if (actions != null && actions.artifactDelta() != null && !actions.artifactDelta().isEmpty()) {
-            ConcurrentMap<String, Part> artifactChanges = actions.artifactDelta();
-            System.out.println("  Artifacts saved: " + artifactChanges);
-            // UI might refresh an artifact list
-            // Iterate through artifactChanges.entrySet() to get filename and Part details
-        }
         ```
 
     === "Go"
@@ -458,6 +445,23 @@ The `event.actions` object signals changes that occurred or should occur. Always
         }
         ```
 
+    === "Java"
+        `ConcurrentMap<String, Part> artifactChanges = event.actions().artifactDelta();`
+
+        ```java
+        import java.util.concurrent.ConcurrentMap;
+        import com.google.genai.types.Part;
+        import com.google.adk.events.EventActions;
+
+        EventActions actions = event.actions(); // Assuming event.actions() is not null
+        if (actions != null && actions.artifactDelta() != null && !actions.artifactDelta().isEmpty()) {
+            ConcurrentMap<String, Part> artifactChanges = actions.artifactDelta();
+            System.out.println("  Artifacts saved: " + artifactChanges);
+            // UI might refresh an artifact list
+            // Iterate through artifactChanges.entrySet() to get filename and Part details
+        }
+        ```
+
 *   **Control Flow Signals:** Check boolean flags or string values:
 
     === "Python"
@@ -473,6 +477,30 @@ The `event.actions` object signals changes that occurred or should occur. Always
             if event.actions.skip_summarization:
                 print("  Signal: Skip summarization for tool result")
         ```
+
+    === "Go"
+        *   `event.Actions.TransferToAgent` (string): Control should pass to the named agent.
+        *   `event.Actions.Escalate` (bool): A loop should terminate.
+        *   `event.Actions.SkipSummarization` (bool): A tool result should not be summarized by the LLM.
+        ```go
+        import (
+            "fmt"
+            "google.golang.org/adk/session"
+        )
+
+        func handleControlFlow(event *session.Event) {
+            if event.Actions.TransferToAgent != "" {
+                fmt.Printf("  Signal: Transfer to %s\n", event.Actions.TransferToAgent)
+            }
+            if event.Actions.Escalate {
+                fmt.Println("  Signal: Escalate (terminate loop)")
+            }
+            if event.Actions.SkipSummarization {
+                fmt.Println("  Signal: Skip summarization for tool result")
+            }
+        }
+        ```
+
     === "Java"
         *   `event.actions().transferToAgent()` (returns `Optional<String>`): Control should pass to the named agent.
         *   `event.actions().escalate()` (returns `Optional<Boolean>`): A loop should terminate.
@@ -497,28 +525,6 @@ The `event.actions` object signals changes that occurred or should occur. Always
             Optional<Boolean> skipSummarization = actions.skipSummarization();
             if (skipSummarization.orElse(false)) { // or skipSummarization.isPresent() && skipSummarization.get()
                 System.out.println("  Signal: Skip summarization for tool result");
-            }
-        }
-        ```
-    === "Go"
-        *   `event.Actions.TransferToAgent` (string): Control should pass to the named agent.
-        *   `event.Actions.Escalate` (bool): A loop should terminate.
-        *   `event.Actions.SkipSummarization` (bool): A tool result should not be summarized by the LLM.
-        ```go
-        import (
-            "fmt"
-            "google.golang.org/adk/session"
-        )
-
-        func handleControlFlow(event *session.Event) {
-            if event.Actions.TransferToAgent != "" {
-                fmt.Printf("  Signal: Transfer to %s\n", event.Actions.TransferToAgent)
-            }
-            if event.Actions.Escalate {
-                fmt.Println("  Signal: Escalate (terminate loop)")
-            }
-            if event.Actions.SkipSummarization {
-                fmt.Println("  Signal: Skip summarization for tool result")
             }
         }
         ```
@@ -565,52 +571,6 @@ Use the built-in helper method `event.is_final_response()` to identify events su
         #         else:
         #              # Handle other types of final responses if applicable
         #              print("Display: Final non-textual response or signal.")
-        ```
-    === "Java"
-        ```java
-        // Pseudocode: Handling final responses in application (Java)
-        import com.google.adk.events.Event;
-        import com.google.genai.types.Content;
-        import com.google.genai.types.FunctionResponse;
-        import java.util.Map;
-
-        StringBuilder fullResponseText = new StringBuilder();
-        runner.run(...).forEach(event -> { // Assuming a stream of events
-             // Accumulate streaming text if needed...
-             if (event.partial().orElse(false) && event.content().isPresent()) {
-                 event.content().flatMap(Content::parts).ifPresent(parts -> {
-                     if (!parts.isEmpty() && parts.get(0).text().isPresent()) {
-                         fullResponseText.append(parts.get(0).text().get());
-                    }
-                 });
-             }
-
-             // Check if it's a final, displayable event
-             if (event.finalResponse()) { // Using the method from Event.java
-                 System.out.println("\n--- Final Output Detected ---");
-                 if (event.content().isPresent() &&
-                     event.content().flatMap(Content::parts).map(parts -> !parts.isEmpty() && parts.get(0).text().isPresent()).orElse(false)) {
-                     // If it's the final part of a stream, use accumulated text
-                     String eventText = event.content().get().parts().get().get(0).text().get();
-                     String finalText = fullResponseText.toString() + (event.partial().orElse(false) ? "" : eventText);
-                     System.out.println("Display to user: " + finalText.trim());
-                     fullResponseText.setLength(0); // Reset accumulator
-                 } else if (event.actions() != null && event.actions().skipSummarization().orElse(false)
-                            && !event.functionResponses().isEmpty()) {
-                     // Handle displaying the raw tool result if needed,
-                     // especially if finalResponse() was true due to other conditions
-                     // or if you want to display skipped summarization results regardless of finalResponse()
-                     Map<String, Object> responseData = event.functionResponses().get(0).response().get();
-                     System.out.println("Display raw tool result: " + responseData);
-                 } else if (event.longRunningToolIds().isPresent() && !event.longRunningToolIds().get().isEmpty()) {
-                     // This case is covered by event.finalResponse()
-                     System.out.println("Display message: Tool is running in background...");
-                 } else {
-                     // Handle other types of final responses if applicable
-                     System.out.println("Display: Final non-textual response or signal.");
-                 }
-             }
-         });
         ```
 
     === "Go"
@@ -681,6 +641,53 @@ Use the built-in helper method `event.is_final_response()` to identify events su
             // 	}
             // }
         }
+        ```
+
+    === "Java"
+        ```java
+        // Pseudocode: Handling final responses in application (Java)
+        import com.google.adk.events.Event;
+        import com.google.genai.types.Content;
+        import com.google.genai.types.FunctionResponse;
+        import java.util.Map;
+
+        StringBuilder fullResponseText = new StringBuilder();
+        runner.run(...).forEach(event -> { // Assuming a stream of events
+             // Accumulate streaming text if needed...
+             if (event.partial().orElse(false) && event.content().isPresent()) {
+                 event.content().flatMap(Content::parts).ifPresent(parts -> {
+                     if (!parts.isEmpty() && parts.get(0).text().isPresent()) {
+                         fullResponseText.append(parts.get(0).text().get());
+                    }
+                 });
+             }
+
+             // Check if it's a final, displayable event
+             if (event.finalResponse()) { // Using the method from Event.java
+                 System.out.println("\n--- Final Output Detected ---");
+                 if (event.content().isPresent() &&
+                     event.content().flatMap(Content::parts).map(parts -> !parts.isEmpty() && parts.get(0).text().isPresent()).orElse(false)) {
+                     // If it's the final part of a stream, use accumulated text
+                     String eventText = event.content().get().parts().get().get(0).text().get();
+                     String finalText = fullResponseText.toString() + (event.partial().orElse(false) ? "" : eventText);
+                     System.out.println("Display to user: " + finalText.trim());
+                     fullResponseText.setLength(0); // Reset accumulator
+                 } else if (event.actions() != null && event.actions().skipSummarization().orElse(false)
+                            && !event.functionResponses().isEmpty()) {
+                     // Handle displaying the raw tool result if needed,
+                     // especially if finalResponse() was true due to other conditions
+                     // or if you want to display skipped summarization results regardless of finalResponse()
+                     Map<String, Object> responseData = event.functionResponses().get(0).response().get();
+                     System.out.println("Display raw tool result: " + responseData);
+                 } else if (event.longRunningToolIds().isPresent() && !event.longRunningToolIds().get().isEmpty()) {
+                     // This case is covered by event.finalResponse()
+                     System.out.println("Display message: Tool is running in background...");
+                 } else {
+                     // Handle other types of final responses if applicable
+                     System.out.println("Display: Final non-textual response or signal.");
+                 }
+             }
+         });
         ```
 
 By carefully examining these aspects of an event, you can build robust applications that react appropriately to the rich information flowing through the ADK system.
@@ -841,11 +848,12 @@ To use events effectively in your ADK applications:
 
     === "Python"
         Use `yield Event(author=self.name, ...)` in `BaseAgent` subclasses.
-    === "Java"
-        When constructing an `Event` in your custom agent logic, set the author, for example: `Event.builder().author(this.getAgentName()) // ... .build();`
 
     === "Go"
         In custom agent `Run` methods, the framework typically handles authorship. If creating an event manually, set the author: `yield(&session.Event{Author: a.name, ...}, nil)`
+
+    === "Java"
+        When constructing an `Event` in your custom agent logic, set the author, for example: `Event.builder().author(this.getAgentName()) // ... .build();`
 
 *   **Semantic Content & Actions:** Use `event.content` for the core message/data (text, function call/response). Use `event.actions` specifically for signaling side effects (state/artifact deltas) or control flow (`transfer`, `escalate`, `skip_summarization`).
 *   **Idempotency Awareness:** Understand that the `SessionService` is responsible for applying the state/artifact changes signaled in `event.actions`. While ADK services aim for consistency, consider potential downstream effects if your application logic re-processes events.

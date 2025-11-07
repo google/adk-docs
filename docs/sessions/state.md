@@ -1,7 +1,7 @@
 # State: The Session's Scratchpad
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-go">Go v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
 Within each `Session` (our conversation thread), the **`state`** attribute acts like the agent's dedicated scratchpad for that specific interaction. While `session.events` holds the full history, `session.state` is where the agent stores and updates dynamic details needed *during* the conversation.
@@ -36,7 +36,7 @@ Conceptually, `session.state` is a collection (dictionary or Map) holding key-va
       * `DatabaseSessionService` / `VertexAiSessionService`: **Persistent.** State is saved reliably.
 
 !!! Note
-    The specific parameters or method names for the primitives may vary slightly by SDK language (e.g., `session.state['current_intent'] = 'book_flight'` in Python, `session.state().put("current_intent", "book_flight)` in Java, `context.State().Set("current_intent", "book_flight")` in Go). Refer to the language-specific API documentation for details.
+    The specific parameters or method names for the primitives may vary slightly by SDK language (e.g., `session.state['current_intent'] = 'book_flight'` in Python,`context.State().Set("current_intent", "book_flight")` in Go, `session.state().put("current_intent", "book_flight)` in Java). Refer to the language-specific API documentation for details.
 
 ### Organizing State with Prefixes: Scope Matters
 
@@ -88,25 +88,25 @@ To inject a value from the session state, enclose the key of the desired state v
 
 === "Python"
 
-  ```python
-  from google.adk.agents import LlmAgent
+    ```python
+    from google.adk.agents import LlmAgent
 
-  story_generator = LlmAgent(
-      name="StoryGenerator",
-      model="gemini-2.0-flash",
-      instruction="""Write a short story about a cat, focusing on the theme: {topic}."""
-  )
+    story_generator = LlmAgent(
+        name="StoryGenerator",
+        model="gemini-2.0-flash",
+        instruction="""Write a short story about a cat, focusing on the theme: {topic}."""
+    )
 
-  # Assuming session.state['topic'] is set to "friendship", the LLM
-  # will receive the following instruction:
-  # "Write a short story about a cat, focusing on the theme: friendship."
-  ```
+    # Assuming session.state['topic'] is set to "friendship", the LLM
+    # will receive the following instruction:
+    # "Write a short story about a cat, focusing on the theme: friendship."
+    ```
 
 === "Go"
 
-  ```go
-  --8<-- "examples/go/snippets/sessions/instruction_template/instruction_template_example.go:key_template"
-  ```
+    ```go
+    --8<-- "examples/go/snippets/sessions/instruction_template/instruction_template_example.go:key_template"
+    ```
 
 #### Important Considerations
 
@@ -312,18 +312,17 @@ For more complex scenarios (updating multiple keys, non-string values, specific 
     # Note: 'temp:validation_needed' is NOT present.
     ```
 
-=== "Java"
-
-    ```java
-    --8<-- "examples/java/snippets/src/main/java/state/ManualStateUpdateExample.java:full_code"
-    ```
-
 === "Go"
 
     ```go
     --8<-- "examples/go/snippets/sessions/state_example/state_example.go:manual"
     ```
 
+=== "Java"
+
+    ```java
+    --8<-- "examples/java/snippets/src/main/java/state/ManualStateUpdateExample.java:full_code"
+    ```
 
 **3. Via `CallbackContext` or `ToolContext` (Recommended for Callbacks and Tools)**
 
@@ -358,6 +357,12 @@ For more comprehensive details on context objects, refer to the [Context documen
         # ... rest of callback/tool logic ...
     ```
 
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/sessions/state_example/state_example.go:context"
+    ```
+
 === "Java"
 
     ```java
@@ -378,12 +383,6 @@ For more comprehensive details on context objects, refer to the [Context documen
             // ... rest of callback logic ...
         }
     }
-    ```
-
-=== "Go"
-
-    ```go
-    --8<-- "examples/go/snippets/sessions/state_example/state_example.go:context"
     ```
 
 **What `append_event` Does:**
