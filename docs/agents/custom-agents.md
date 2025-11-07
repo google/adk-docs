@@ -103,7 +103,9 @@ The core of any custom agent is the method where you define its unique asynchron
                   return
               }
               // Yield the event up to the caller
-              yield(event, nil)
+              if !yield(event, nil) {
+                return
+              }
           }
           ```
 

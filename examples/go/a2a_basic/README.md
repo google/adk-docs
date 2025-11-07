@@ -6,7 +6,7 @@ It sets up a "Root Agent" that delegates tasks to a local "Roll Agent" and a rem
 ## Prerequisites
 
 Before running this example, you need to have the A2A serving example running.
-Follow the instructions in `cmd/a2a_basic/remote_a2a/check_prime_agent/README.md` to start the serving agent on port 8001.
+Follow the instructions in [remote_a2a/check_prime_agent/README.md](https://github.com/google/adk-docs/blob/main/examples/go/a2a_basic/remote_a2a/check_prime_agent/README.md) to start the serving agent on port 8001.
 
 ## Files
 
