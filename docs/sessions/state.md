@@ -88,25 +88,25 @@ To inject a value from the session state, enclose the key of the desired state v
 
 === "Python"
 
-  ```python
-  from google.adk.agents import LlmAgent
+    ```python
+    from google.adk.agents import LlmAgent
 
-  story_generator = LlmAgent(
-      name="StoryGenerator",
-      model="gemini-2.0-flash",
-      instruction="""Write a short story about a cat, focusing on the theme: {topic}."""
-  )
+    story_generator = LlmAgent(
+        name="StoryGenerator",
+        model="gemini-2.0-flash",
+        instruction="""Write a short story about a cat, focusing on the theme: {topic}."""
+    )
 
-  # Assuming session.state['topic'] is set to "friendship", the LLM
-  # will receive the following instruction:
-  # "Write a short story about a cat, focusing on the theme: friendship."
-  ```
+    # Assuming session.state['topic'] is set to "friendship", the LLM
+    # will receive the following instruction:
+    # "Write a short story about a cat, focusing on the theme: friendship."
+    ```
 
 === "Go"
 
-  ```go
-  --8<-- "examples/go/snippets/sessions/instruction_template/instruction_template_example.go:key_template"
-  ```
+    ```go
+    --8<-- "examples/go/snippets/sessions/instruction_template/instruction_template_example.go:key_template"
+    ```
 
 #### Important Considerations
 
