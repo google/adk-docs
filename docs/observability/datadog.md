@@ -34,13 +34,15 @@ export DD_SITE=<YOUR_DD_SITE>
 export DD_LLMOBS_ENABLED=true
 export DD_LLMOBS_ML_APP=<YOUR_ML_APP_NAME>
 export DD_LLMOBS_AGENTLESS_ENABLED=true
-export DD_APM_TRACING_ENABLED=false
+export DD_APM_TRACING_ENABLED=false  # Only set this if you are not using Datadog APM
 ```
 
 Additionally, configure any LLM provider API keys
 
 ```shell
 export GEMINI_API_KEY=<YOUR_GEMINI_API_KEY>
+#  or
+export GOOGLE_API_KEY=<YOUR_GOOGLE_API_KEY>
 ...
 ```
 
