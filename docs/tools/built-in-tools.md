@@ -7,7 +7,7 @@ agent that needs to retrieve information from the web can directly use the
 
 ## How to Use
 
-1. **Import:** Import the desired tool from the tools module. This is `agents.tools` in Python, `com.google.adk.tools` in Java, or `google.golang.org/adk/tool/geminitool` in Go.
+1. **Import:** Import the desired tool from the tools module. This is `agents.tools` in Python, `google.golang.org/adk/tool/geminitool` in Go, or `com.google.adk.tools` in Java.
 2. **Configure:** Initialize the tool, providing required parameters if any.
 3. **Register:** Add the initialized tool to the **tools** list of your Agent.
 
@@ -17,13 +17,13 @@ tool when the agent calls it. Important: check the ***Limitations*** section of 
 
 ## Available Built-in tools
 
-Note: Java only supports Google Search and Code Execution tools currently.
 Note: Go supports the Google Search tool and other built-in tools via the `geminitool` package.
+Note: Java only supports Google Search and Code Execution tools currently.
 
 ### Google Search
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.2.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.2.0</span>
 </div>
 
 The `google_search` tool allows the agent to perform web searches using Google Search. The `google_search` tool is only compatible with Gemini 2 models. For further details of the tool, see [Understanding Google Search grounding](../grounding/google_search_grounding.md).
@@ -38,16 +38,16 @@ The `google_search` tool allows the agent to perform web searches using Google S
     --8<-- "examples/python/snippets/tools/built-in-tools/google_search.py"
     ```
 
-=== "Java"
-
-    ```java
-    --8<-- "examples/java/snippets/src/main/java/tools/GoogleSearchAgentApp.java:full_code"
-    ```
-
 === "Go"
 
     ```go
     --8<-- "examples/go/snippets/tools/built-in-tools/google_search.go"
+    ```
+
+=== "Java"
+
+    ```java
+    --8<-- "examples/java/snippets/src/main/java/tools/GoogleSearchAgentApp.java:full_code"
     ```
 
 ### Code Execution

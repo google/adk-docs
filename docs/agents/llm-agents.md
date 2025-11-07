@@ -1,7 +1,7 @@
 # LLM Agent
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-go">Go v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
 The `LlmAgent` (often aliased simply as `Agent`) is a core component in ADK,
@@ -53,6 +53,13 @@ First, you need to establish what the agent *is* and what it's *for*.
     )
     ```
 
+=== "Go"
+
+    ```go
+    // Example: Defining the basic identity
+    --8<-- "examples/go/snippets/agents/llm-agents/snippets/main.go:identity"
+    ```
+
 === "Java"
 
     ```java
@@ -65,13 +72,6 @@ First, you need to establish what the agent *is* and what it's *for*.
             // instruction and tools will be added next
             .build();
     ```
-
-=== "Go"
-
-    ```go
-    --8<-- "examples/go/snippets/agents/llm-agents/snippets/main.go:identity"
-    ```
-
 
 ## Guiding the Agent: Instructions (`instruction`)
 
@@ -119,6 +119,13 @@ tells the agent:
     )
     ```
 
+=== "Go"
+
+    ```go
+    // Example: Adding instructions
+    --8<-- "examples/go/snippets/agents/llm-agents/snippets/main.go:instruction"
+    ```
+
 === "Java"
 
     ```java
@@ -140,13 +147,6 @@ tells the agent:
                 """)
             // tools will be added next
             .build();
-    ```
-
-=== "Go"
-
-    ```go
-    // Example: Adding instructions
-    --8<-- "examples/go/snippets/agents/llm-agents/snippets/main.go:instruction"
     ```
 
 *(Note: For instructions that apply to *all* agents in a system, consider using
@@ -188,6 +188,12 @@ on the conversation and its instructions.
     )
     ```
 
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/agents/llm-agents/snippets/main.go:tool_example"
+    ```
+
 === "Java"
 
     ```java
@@ -219,12 +225,6 @@ on the conversation and its instructions.
             .instruction("You are an agent that provides the capital city of a country... (previous instruction text)")
             .tools(capitalTool) // Provide the function wrapped as a FunctionTool
             .build();
-    ```
-
-=== "Go"
-
-    ```go
-    --8<-- "examples/go/snippets/agents/llm-agents/snippets/main.go:tool_example"
     ```
 
 Learn more about Tools in the [Tools](../tools/index.md) section.
@@ -259,6 +259,14 @@ You can adjust how the underlying LLM generates responses using `generate_conten
     )
     ```
 
+=== "Go"
+
+    ```go
+    import "google.golang.org/genai"
+
+    --8<-- "examples/go/snippets/agents/llm-agents/snippets/main.go:gen_config"
+    ```
+
 === "Java"
 
     ```java
@@ -272,14 +280,6 @@ You can adjust how the underlying LLM generates responses using `generate_conten
                 .maxOutputTokens(250)
                 .build())
             .build();
-    ```
-
-=== "Go"
-
-    ```go
-    import "google.golang.org/genai"
-
-    --8<-- "examples/go/snippets/agents/llm-agents/snippets/main.go:gen_config"
     ```
 
 ### Structuring Data (`input_schema`, `output_schema`, `output_key`)
@@ -314,6 +314,14 @@ For scenarios requiring structured data exchange with an `LLM Agent`, the ADK pr
     )
     ```
 
+=== "Go"
+
+    The input and output schema is a `google.genai.types.Schema` object.
+
+    ```go
+    --8<-- "examples/go/snippets/agents/llm-agents/snippets/main.go:schema_example"
+    ```
+
 === "Java"
 
      The input and output schema is a `google.genai.types.Schema` object.
@@ -343,14 +351,6 @@ For scenarios requiring structured data exchange with an `LLM Agent`, the ADK pr
             .build();
     ```
 
-=== "Go"
-
-    The input and output schema is a `google.genai.types.Schema` object.
-
-    ```go
-    --8<-- "examples/go/snippets/agents/llm-agents/snippets/main.go:schema_example"
-    ```
-
 ### Managing Context (`include_contents`)
 
 Control whether the agent receives the prior conversation history.
@@ -368,6 +368,14 @@ Control whether the agent receives the prior conversation history.
     )
     ```
 
+=== "Go"
+
+    ```go
+    import "google.golang.org/adk/agent/llmagent"
+
+    --8<-- "examples/go/snippets/agents/llm-agents/snippets/main.go:include_contents"
+    ```
+
 === "Java"
 
     ```java
@@ -378,14 +386,6 @@ Control whether the agent receives the prior conversation history.
             // ... other params
             .includeContents(IncludeContents.NONE)
             .build();
-    ```
-
-=== "Go"
-
-    ```go
-    import "google.golang.org/adk/agent/llmagent"
-
-    --8<-- "examples/go/snippets/agents/llm-agents/snippets/main.go:include_contents"
     ```
 
 ### Planner
@@ -457,10 +457,6 @@ Control whether the agent receives the prior conversation history.
 
 Example for using built-in-planner:
 ```python
-
-
-
-
 from dotenv import load_dotenv
 
 
@@ -589,16 +585,16 @@ call_agent("If it's raining in New York right now, what is the current temperatu
         --8<-- "examples/python/snippets/agents/llm-agent/capital_agent.py"
         ```
     
-    === "Java"
-    
-        ```java
-        --8<-- "examples/java/snippets/src/main/java/agents/LlmAgentExample.java:full_code"
-        ```
-
     === "Go"
 
         ```go
         --8<-- "examples/go/snippets/agents/llm-agents/main.go:full_code"
+        ```
+
+    === "Java"
+    
+        ```java
+        --8<-- "examples/java/snippets/src/main/java/agents/LlmAgentExample.java:full_code"
         ```
 
 _(This example demonstrates the core concepts. More complex agents might incorporate schemas, context control, planning, etc.)_

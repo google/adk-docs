@@ -1,7 +1,7 @@
 # Using Different Models with ADK
 
 <div class="language-support-tag" title="Java ADK currently supports Gemini and Anthropic models.">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-go">Go v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
 The Agent Development Kit (ADK) is designed for flexibility, allowing you to
@@ -150,6 +150,18 @@ For deployed applications, a service account is the standard method.
     )
     ```
 
+=== "Go"
+
+    ```go
+    import (
+    	"google.golang.org/adk/agent/llmagent"
+    	"google.golang.org/adk/model/gemini"
+    	"google.golang.org/genai"
+    )
+
+    --8<-- "examples/go/snippets/agents/models/models.go:gemini-example"
+    ```
+
 === "Java"
 
     ```java
@@ -182,18 +194,6 @@ For deployed applications, a service account is the standard method.
     // Note: Always check the official Gemini documentation for the latest model names,
     // including specific preview versions if needed. Preview models might have
     // different availability or quota limitations.
-    ```
-
-=== "Go"
-
-    ```go
-    import (
-    	"google.golang.org/adk/agent/llmagent"
-    	"google.golang.org/adk/model/gemini"
-    	"google.golang.org/genai"
-    )
-
-    --8<-- "examples/go/snippets/agents/models/models.go:gemini-example"
     ```
 
 !!!warning "Secure Your Credentials"
