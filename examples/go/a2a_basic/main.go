@@ -153,7 +153,7 @@ func main() {
 		log.Fatalf("Failed to create runner: %v", err)
 	}
 
-	userInput := "Roll a 6-sided die"
+	userInput := "Roll a 6-sided die and check if it's prime."
 	fmt.Printf("User: %s\n", userInput)
 
 	inputContent := genai.NewContentFromText(userInput, genai.RoleUser)
