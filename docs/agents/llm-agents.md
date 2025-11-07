@@ -56,7 +56,6 @@ First, you need to establish what the agent *is* and what it's *for*.
 === "Go"
 
     ```go
-    // Example: Defining the basic identity
     --8<-- "examples/go/snippets/agents/llm-agents/snippets/main.go:identity"
     ```
 
@@ -122,7 +121,6 @@ tells the agent:
 === "Go"
 
     ```go
-    // Example: Adding instructions
     --8<-- "examples/go/snippets/agents/llm-agents/snippets/main.go:instruction"
     ```
 
