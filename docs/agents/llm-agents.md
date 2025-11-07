@@ -1,5 +1,9 @@
 # LLM Agent
 
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+</div>
+
 The `LlmAgent` (often aliased simply as `Agent`) is a core component in ADK,
 acting as the "thinking" part of your application. It leverages the power of a
 Large Language Model (LLM) for reasoning, understanding natural language, making
@@ -49,6 +53,12 @@ First, you need to establish what the agent *is* and what it's *for*.
     )
     ```
 
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/agents/llm-agents/snippets/main.go:identity"
+    ```
+
 === "Java"
 
     ```java
@@ -61,7 +71,6 @@ First, you need to establish what the agent *is* and what it's *for*.
             // instruction and tools will be added next
             .build();
     ```
-
 
 ## Guiding the Agent: Instructions (`instruction`)
 
@@ -107,6 +116,12 @@ tells the agent:
     """,
         # tools will be added next
     )
+    ```
+
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/agents/llm-agents/snippets/main.go:instruction"
     ```
 
 === "Java"
@@ -169,6 +184,12 @@ on the conversation and its instructions.
         instruction="""You are an agent that provides the capital city of a country... (previous instruction text)""",
         tools=[get_capital_city] # Provide the function directly
     )
+    ```
+
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/agents/llm-agents/snippets/main.go:tool_example"
     ```
 
 === "Java"
@@ -236,6 +257,14 @@ You can adjust how the underlying LLM generates responses using `generate_conten
     )
     ```
 
+=== "Go"
+
+    ```go
+    import "google.golang.org/genai"
+
+    --8<-- "examples/go/snippets/agents/llm-agents/snippets/main.go:gen_config"
+    ```
+
 === "Java"
 
     ```java
@@ -262,6 +291,7 @@ For scenarios requiring structured data exchange with an `LLM Agent`, the ADK pr
 * **`output_key` (Optional):** Provide a string key. If set, the text content of the agent's *final* response will be automatically saved to the session's state dictionary under this key. This is useful for passing results between agents or steps in a workflow.
     * In Python, this might look like: `session.state[output_key] = agent_response_text`
     * In Java: `session.state().put(outputKey, agentResponseText)`
+    * In Golang, within a callback handler: `ctx.State().Set(output_key, agentResponseText)`
 
 === "Python"
 
@@ -280,6 +310,14 @@ For scenarios requiring structured data exchange with an `LLM Agent`, the ADK pr
         output_key="found_capital"  # Store result in state['found_capital']
         # Cannot use tools=[get_capital_city] effectively here
     )
+    ```
+
+=== "Go"
+
+    The input and output schema is a `google.genai.types.Schema` object.
+
+    ```go
+    --8<-- "examples/go/snippets/agents/llm-agents/snippets/main.go:schema_example"
     ```
 
 === "Java"
@@ -328,6 +366,14 @@ Control whether the agent receives the prior conversation history.
     )
     ```
 
+=== "Go"
+
+    ```go
+    import "google.golang.org/adk/agent/llmagent"
+
+    --8<-- "examples/go/snippets/agents/llm-agents/snippets/main.go:include_contents"
+    ```
+
 === "Java"
 
     ```java
@@ -342,7 +388,9 @@ Control whether the agent receives the prior conversation history.
 
 ### Planner
 
-![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java support is planned/ coming soon."}
+<div class="language-support-tag" title="">
+   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
+</div>
 
 **`planner` (Optional):** Assign a `BasePlanner` instance to enable multi-step reasoning and planning before execution. There are two main planners:
 
@@ -399,16 +447,14 @@ Control whether the agent receives the prior conversation history.
 
 ### Code Execution
 
-![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java support is planned/ coming soon."}
+<div class="language-support-tag">
+   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
+</div>
 
 * **`code_executor` (Optional):** Provide a `BaseCodeExecutor` instance to allow the agent to execute code blocks found in the LLM's response. ([See Tools/Built-in tools](../tools/built-in-tools.md)).
 
 Example for using built-in-planner:
 ```python
-
-
-
-
 from dotenv import load_dotenv
 
 
@@ -537,6 +583,12 @@ call_agent("If it's raining in New York right now, what is the current temperatu
         --8<-- "examples/python/snippets/agents/llm-agent/capital_agent.py"
         ```
     
+    === "Go"
+
+        ```go
+        --8<-- "examples/go/snippets/agents/llm-agents/main.go:full_code"
+        ```
+
     === "Java"
     
         ```java

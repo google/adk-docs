@@ -1,5 +1,9 @@
 # Types of Callbacks
 
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+</div>
+
 The framework provides different types of callbacks that trigger at various stages of an agent's execution. Understanding when each callback fires and what context it receives is key to using them effectively.
 
 ## Agent Lifecycle Callbacks
@@ -23,6 +27,15 @@ These callbacks are available on *any* agent that inherits from `BaseAgent` (inc
         --8<-- "examples/python/snippets/callbacks/before_agent_callback.py"
         ```
     
+    === "Go"
+
+        ```go
+        --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:imports"
+
+
+        --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:before_agent_example"
+        ```
+
     === "Java"
     
         ```java
@@ -55,6 +68,15 @@ These callbacks are available on *any* agent that inherits from `BaseAgent` (inc
         --8<-- "examples/python/snippets/callbacks/after_agent_callback.py"
         ```
     
+    === "Go"
+
+        ```go
+        --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:imports"
+
+
+        --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:after_agent_example"
+        ```
+
     === "Java"
     
         ```java
@@ -93,6 +115,15 @@ If the callback returns `None` (or a `Maybe.empty()` object in Java), the LLM co
         --8<-- "examples/python/snippets/callbacks/before_model_callback.py"
         ```
     
+    === "Go"
+
+        ```go
+        --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:imports"
+
+        
+        --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:before_model_example"
+        ```
+
     === "Java"
     
         ```java
@@ -118,6 +149,15 @@ If the callback returns `None` (or a `Maybe.empty()` object in Java), the LLM co
         --8<-- "examples/python/snippets/callbacks/after_model_callback.py"
         ```
     
+    === "Go"
+
+        ```go
+        --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:imports"
+
+
+        --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:after_model_example"
+        ```
+
     === "Java"
     
         ```java
@@ -147,12 +187,19 @@ These callbacks are also specific to `LlmAgent` and trigger around the execution
         --8<-- "examples/python/snippets/callbacks/before_tool_callback.py"
         ```
     
+    === "Go"
+
+        ```go
+        --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:imports"
+        --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:tool_defs"
+        --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:before_tool_example"
+        ```
+
     === "Java"
     
         ```java
         --8<-- "examples/java/snippets/src/main/java/callbacks/BeforeToolCallbackExample.java:init"
         ```
-
 
 
 ### After Tool Callback
@@ -172,7 +219,15 @@ These callbacks are also specific to `LlmAgent` and trigger around the execution
         ```python
         --8<-- "examples/python/snippets/callbacks/after_tool_callback.py"
         ```
-    
+
+    === "Go"
+
+        ```go
+        --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:imports"
+        --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:tool_defs"
+        --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:after_tool_example"
+        ```    
+
     === "Java"
     
         ```java

@@ -28,34 +28,41 @@ from simple tasks to complex workflows.
     <code>pip install google-adk</code>
     </p>
 
+=== "Go"
+    <br>
+    <p style="text-align: center;">
+    <code>go get google.golang.org/adk</code>
+    </p>
+
 === "Java"
 
     ```xml title="pom.xml"
     <dependency>
         <groupId>com.google.adk</groupId>
         <artifactId>google-adk</artifactId>
-        <version>0.2.0</version>
+        <version>0.3.0</version>
     </dependency>
     ```
 
     ```gradle title="build.gradle"
     dependencies {
-        implementation 'com.google.adk:google-adk:0.2.0'
+        implementation 'com.google.adk:google-adk:0.3.0'
     }
     ```
+
 </div>
 
 <p style="text-align:center;">
   <a href="/adk-docs/get-started/python/" class="md-button" style="margin:3px">Start with Python</a>
+  <a href="/adk-docs/get-started/go/" class="md-button" style="margin:3px">Start with Go</a>
   <a href="/adk-docs/get-started/java/" class="md-button" style="margin:3px">Start with Java</a>
-  <a href="/adk-docs/get-started/about/" class="md-button" style="margin:3px">Technical overview</a>
 </p>
 
 ---
 
 ## Learn more
 
-[:fontawesome-brands-youtube:{.youtube-red-icon} Watch "Introducing Agent Development Kit"!](https://www.youtube.com/watch?v=zgrOwow_uTQ target="_blank" rel="noopener noreferrer")
+[:fontawesome-brands-youtube:{.youtube-red-icon} Watch "Introducing Agent Development Kit"!](https://www.youtube.com/watch?v=zgrOwow_uTQ){:target="_blank" rel="noopener noreferrer"}
 
 <div class="grid cards" markdown>
 
@@ -83,8 +90,8 @@ from simple tasks to complex workflows.
     ---
 
     Equip agents with diverse capabilities: use pre-built tools (Search, Code
-    Exec), create custom functions, integrate 3rd-party libraries (LangChain,
-    CrewAI), or even use other agents as tools.
+    Exec), create custom functions, integrate 3rd-party libraries, or even use
+    other agents as tools.
 
     [**Browse tools**](tools/index.md)
 

@@ -1,5 +1,9 @@
 # Build agents with Agent Config
 
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.11.0</span><span class="lst-preview">Experimental</span>
+</div>
+
 The ADK Agent Config feature lets you build an ADK workflow without writing
 code. An Agent Config uses a YAML format text file with a brief description of
 the agent, allowing just about anyone to assemble and run an ADK agent. The
@@ -87,7 +91,7 @@ To create an ADK project for use with Agent Config:
             GOOGLE_GENAI_USE_VERTEXAI=0
             GOOGLE_API_KEY=<your-Google-Gemini-API-key>
 
-        You can get an API key from the Google AI Studio 
+        You can get an API key from the Google AI Studio
         [API Keys](https://aistudio.google.com/app/apikey) page.
 
     1.  For Gemini model access through Google Cloud, add these lines to the file:
@@ -125,7 +129,7 @@ the web interface, command line terminal execution, or API server mode.
 
 To run your Agent Config-defined agent:
 
-1.  In your terminal, navigate to the `my_agent/` directory containing the 
+1.  In your terminal, navigate to the `my_agent/` directory containing the
     `root_agent.yaml` file.
 1.  Type one of the following commands to run your agent:
     -   `adk web` - Run web UI interface for your agent.
@@ -137,7 +141,7 @@ To run your Agent Config-defined agent:
 For more information on the ways to run your agent, see the *Run Your Agent*
 topic in the
 [Quickstart](/adk-docs/get-started/quickstart/#run-your-agent).
-For more information about the ADK command line options, see the 
+For more information about the ADK command line options, see the
 [ADK CLI reference](/adk-docs/api-reference/cli/).
 
 ## Example configs
@@ -222,12 +226,12 @@ For more details, see the full code for this sample in the
 
 ## Deploy agent configs
 
-You can deploy Agent Config agents with 
-[Cloud Run](/adk-docs/deploy/cloud-run/) and 
-[Agent Engine](/adk-docs/deploy/agent-engine/), 
-using the same procedure as code-based agents. For more information on how 
-to prepare and deploy Agent Config-based agents, see the 
-[Cloud Run](/adk-docs/deploy/cloud-run/) and 
+You can deploy Agent Config agents with
+[Cloud Run](/adk-docs/deploy/cloud-run/) and
+[Agent Engine](/adk-docs/deploy/agent-engine/),
+using the same procedure as code-based agents. For more information on how
+to prepare and deploy Agent Config-based agents, see the
+[Cloud Run](/adk-docs/deploy/cloud-run/) and
 [Agent Engine](/adk-docs/deploy/agent-engine/)
 deployment guides.
 
@@ -251,14 +255,12 @@ limitations:
     -   `enterprise_web_search`
     -   `load_web_page`: Requires a fully-qualified path to access web
         pages.
--   **Agent Type Support:** The `LangGraphAgent` and `A2aAgent` types are 
+-   **Agent Type Support:** The `LangGraphAgent` and `A2aAgent` types are
     not yet supported.
     -   `AgentTool`
     -   `LongRunningFunctionTool`
     -   `VertexAiSearchTool`
     -   `MCPToolset`
-    -   `CrewaiTool`
-    -   `LangchainTool`
     -   `ExampleTool`
 
 ## Next steps
@@ -266,6 +268,6 @@ limitations:
 For ideas on how and what to build with ADK Agent Configs, see the yaml-based
 agent definitions in the ADK
 [adk-samples](https://github.com/search?q=repo:google/adk-python+path:/%5Econtributing%5C/samples%5C//+root_agent.yaml&type=code)
-repository. For detailed information on the syntax and settings supported by 
+repository. For detailed information on the syntax and settings supported by
 the Agent Config format, see the
 [Agent Config syntax reference](/adk-docs/api-reference/agentconfig/).

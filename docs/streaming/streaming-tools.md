@@ -1,11 +1,15 @@
 # Streaming Tools
 
-!!! info
-
-    This is only supported in streaming(live) agents/api.
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.5.0</span><span class="lst-preview">Experimental</span>
+</div>
 
 Streaming tools allows tools(functions) to stream intermediate results back to agents and agents can respond to those intermediate results. 
 For example, we can use streaming tools to monitor the changes of the stock price and have the agent react to it. Another example is we can have the agent monitor the video stream, and when there is changes in video stream, the agent can report the changes.
+
+!!! info
+
+    This is only supported in streaming(live) agents/api.
 
 To define a streaming tool, you must adhere to the following:
 

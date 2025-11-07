@@ -1,5 +1,9 @@
 # Workflow Agents
 
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-go">Go</span><span class="lst-java">Java</span>
+</div>
+
 This section introduces "*workflow agents*" - **specialized agents that control the execution flow of its sub-agents**.  
 
 Workflow agents are specialized components in ADK designed purely for **orchestrating the execution flow of sub-agents**. Their primary role is to manage *how* and *when* other agents run, defining the control flow of a process.

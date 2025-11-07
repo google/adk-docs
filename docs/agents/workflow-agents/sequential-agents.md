@@ -1,9 +1,10 @@
 # Sequential agents
 
-## The `SequentialAgent`
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.2.0</span>
+</div>
 
 The `SequentialAgent` is a [workflow agent](index.md) that executes its sub-agents in the order they are specified in the list.
-
 Use the `SequentialAgent` when you want the execution to occur in a fixed, strict order.
 
 ### Example
@@ -45,6 +46,11 @@ This ensures the code is written, *then* reviewed, and *finally* refactored, in 
     === "Python"
         ```py
         --8<-- "examples/python/snippets/agents/workflow-agents/sequential_agent_code_development_agent.py:init"
+        ```
+
+    === "Go"
+        ```go
+        --8<-- "examples/go/snippets/agents/workflow-agents/sequential/main.go:init"
         ```
 
     === "Java"

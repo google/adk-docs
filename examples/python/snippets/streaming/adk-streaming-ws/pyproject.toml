@@ -1,0 +1,37 @@
+[project]
+name = "adk-streaming-ws"
+version = "0.1.0"
+description = "ADK Streaming WebSocket application with bidirectional audio and text communication"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+authors = [
+    { name = "Google LLC" }
+]
+
+dependencies = [
+    "google-adk==1.17.0",
+    "fastapi>=0.115.0",
+    "python-dotenv>=1.0.0",
+    "uvicorn[standard]>=0.32.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.24.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.uv]
+dev-dependencies = []
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+
+[tool.hatch.build.targets.wheel.shared-data]
+"app/static" = "share/adk-streaming-ws/static"
+"app/.env" = "share/adk-streaming-ws/.env.template"

@@ -1,5 +1,9 @@
 # Artifacts
 
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+</div>
+
 In ADK, **Artifacts** represent a crucial mechanism for managing named, versioned binary data associated either with a specific user interaction session or persistently with a user across multiple sessions. They allow your agents and tools to handle data beyond simple text strings, enabling richer interactions involving files, images, audio, and other binary formats.
 
 !!! Note
@@ -35,6 +39,18 @@ In ADK, **Artifacts** represent a crucial mechanism for managing named, versione
 
     print(f"Artifact MIME Type: {image_artifact.inline_data.mime_type}")
     print(f"Artifact Data (first 10 bytes): {image_artifact.inline_data.data[:10]}...")
+    ```
+
+=== "Go"
+
+    ```go
+	import (
+		"log"
+
+		"google.golang.org/genai"
+	)
+
+	--8<-- "examples/go/snippets/artifacts/main.go:representation"
     ```
 
 === "Java"
@@ -145,6 +161,24 @@ Understanding artifacts involves grasping a few key components: the service that
     # Now, contexts within runs managed by this runner can use artifact methods
     ```
 
+=== "Go"
+
+    ```go
+	import (
+		"context"
+		"log"
+
+		"google.golang.org/adk/agent/llmagent"
+		"google.golang.org/adk/artifactservice"
+		"google.golang.org/adk/llm/gemini"
+		"google.golang.org/adk/runner"
+		"google.golang.org/adk/sessionservice"
+		"google.golang.org/genai"
+	)
+
+	--8<-- "examples/go/snippets/artifacts/main.go:configure-runner"
+    ```
+
 === "Java"
     
     ```java
@@ -194,6 +228,19 @@ Understanding artifacts involves grasping a few key components: the service that
     print(f"Created Python artifact with MIME type: {pdf_artifact_py.inline_data.mime_type}")
     ```
     
+=== "Go"
+
+    ```go
+	import (
+		"log"
+		"os"
+
+		"google.golang.org/genai"
+	)
+
+	--8<-- "examples/go/snippets/artifacts/main.go:artifact-data"
+    ```
+
 === "Java"
 
     ```java
@@ -242,6 +289,16 @@ Understanding artifacts involves grasping a few key components: the service that
     # When saving 'user:settings.json' via context.save_artifact,
     # the ArtifactService implementation should recognize the "user:" prefix
     # and scope it to app_name and user_id, making it accessible across sessions for that user.
+    ```
+
+=== "Go"
+
+    ```go
+	import (
+		"log"
+	)
+
+	--8<-- "examples/go/snippets/artifacts/main.go:namespacing"
     ```
 
 === "Java"
@@ -301,6 +358,24 @@ Before you can use any artifact methods via the context objects, you **must** pr
     ```
     If no `artifact_service` is configured in the `InvocationContext` (which happens if it's not passed to the `Runner`), calling `save_artifact`, `load_artifact`, or `list_artifacts` on the context objects will raise a `ValueError`.
 
+=== "Go"
+
+    ```go
+	import (
+		"context"
+		"log"
+
+		"google.golang.org/adk/agent/llmagent"
+		"google.golang.org/adk/artifactservice"
+		"google.golang.org/adk/llm/gemini"
+		"google.golang.org/adk/runner"
+		"google.golang.org/adk/sessionservice"
+		"google.golang.org/genai"
+	)
+
+	--8<-- "examples/go/snippets/artifacts/main.go:prerequisite"
+    ```
+
 === "Java"
 
     In Java, you would instantiate a `BaseArtifactService` implementation and then ensure it's accessible to the parts of your application that manage artifacts. This is often done through dependency injection or by explicitly passing the service instance.
@@ -340,6 +415,8 @@ Before you can use any artifact methods via the context objects, you **must** pr
 
 The artifact interaction methods are available directly on instances of `CallbackContext` (passed to agent and model callbacks) and `ToolContext` (passed to tool callbacks). Remember that `ToolContext` inherits from `CallbackContext`.
 
+#### Saving Artifacts
+
 *   **Code Example:**
 
     === "Python"
@@ -372,6 +449,20 @@ The artifact interaction methods are available directly on instances of `Callbac
         #   callback_context: CallbackContext = ... # obtain context
         #   report_data = b'...' # Assume this holds the PDF bytes
         #   await save_generated_report_py(callback_context, report_data)
+        ```
+
+    === "Go"
+
+        ```go
+		import (
+			"log"
+
+			"google.golang.org/adk/agent"
+			"google.golang.org/adk/llm"
+			"google.golang.org/genai"
+		)
+
+		--8<-- "examples/go/snippets/artifacts/main.go:saving-artifacts"
         ```
 
     === "Java"
@@ -450,6 +541,19 @@ The artifact interaction methods are available directly on instances of `Callbac
         # async def main_py():
         #   callback_context: CallbackContext = ... # obtain context
         #   await process_latest_report_py(callback_context)
+        ```
+
+    === "Go"
+
+        ```go
+		import (
+			"log"
+
+			"google.golang.org/adk/agent"
+			"google.golang.org/adk/llm"
+		)
+
+		--8<-- "examples/go/snippets/artifacts/main.go:loading-artifacts"
         ```
 
     === "Java"
@@ -569,6 +673,22 @@ The artifact interaction methods are available directly on instances of `Callbac
         # list_files_tool = FunctionTool(func=list_user_files_py)
         ```
 
+    === "Go"
+
+        ```go
+		import (
+			"fmt"
+			"log"
+			"strings"
+
+			"google.golang.org/adk/agent"
+			"google.golang.org/adk/llm"
+			"google.golang.org/genai"
+		)
+
+		--8<-- "examples/go/snippets/artifacts/main.go:listing-artifacts"
+        ```
+
     === "Java"
 
         ```java
@@ -678,6 +798,16 @@ ADK provides concrete implementations of the `BaseArtifactService` interface, of
 
         # Then pass it to the Runner
         # runner = Runner(..., artifact_service=in_memory_service_py)
+        ```
+
+    === "Go"
+
+        ```go
+		import (
+			"google.golang.org/adk/artifactservice"
+		)
+
+		--8<-- "examples/go/snippets/artifacts/main.go:in-memory-service"
         ```
 
     === "Java"
