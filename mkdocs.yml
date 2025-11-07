@@ -24,9 +24,12 @@ extra:
   first_repo_url: https://github.com/google/adk-python
   first_repo_name: adk-python
   first_repo_icon: fontawesome/brands/github
-  second_repo_url: https://github.com/google/adk-java
-  second_repo_name: adk-java
+  second_repo_url: https://github.com/google/adk-go
+  second_repo_name: adk-go
   second_repo_icon: fontawesome/brands/github
+  third_repo_url: https://github.com/google/adk-java
+  third_repo_name: adk-java
+  third_repo_icon: fontawesome/brands/github
   analytics:
     provider: google
     property: G-DKHZS27PHP
@@ -134,6 +137,7 @@ nav:
     - Get Started:
       - get-started/index.md
       - Python: get-started/python.md
+      - Go: get-started/go.md
       - Java: get-started/java.md
     - Build your Agent:
       - tutorials/index.md
@@ -143,7 +147,6 @@ nav:
         - get-started/streaming/index.md
         - Python: get-started/streaming/quickstart-streaming.md
         - Java: get-started/streaming/quickstart-streaming-java.md
-      - Code samples: https://github.com/google/adk-samples
       - Advanced setup: get-started/installation.md
     - Agents:
       - agents/index.md
@@ -201,6 +204,7 @@ nav:
       - Cloud Trace: observability/cloud-trace.md
       - AgentOps: observability/agentops.md
       - Arize AX: observability/arize-ax.md
+      - Freeplay: observability/freeplay.md
       - Phoenix: observability/phoenix.md
       - W&B Weave: observability/weave.md
     - Evaluation:
@@ -238,15 +242,15 @@ nav:
       - a2a/index.md
       - Introduction to A2A: a2a/intro.md
       - A2A Quickstart (Exposing): a2a/quickstart-exposing.md
+      - A2A Quickstart (Exposing) (Go): a2a/quickstart-exposing-go.md
       - A2A Quickstart (Consuming): a2a/quickstart-consuming.md
-      - A2A Protocol Documentation: https://a2a-protocol.org
+      - A2A Quickstart (Consuming) (Go): a2a/quickstart-consuming-go.md
     - Bidi-streaming (live):
       - streaming/index.md
       - Custom Audio Bidi-streaming app sample (WebSockets): streaming/custom-streaming-ws.md
       - Bidi-streaming development guide series: streaming/dev-guide/part1.md
       - Streaming Tools: streaming/streaming-tools.md
       - Configurating Bidi-streaming behaviour: streaming/configuration.md
-      - Google ADK + Vertex AI Live API (blog post): https://medium.com/google-cloud/google-adk-vertex-ai-live-api-125238982d5e
     - Grounding:
       - Understanding Google Search Grounding: grounding/google_search_grounding.md
       - Understanding Vertex AI Search Grounding: grounding/vertex_ai_search_grounding.md
@@ -254,6 +258,7 @@ nav:
     - API Reference:
       - api-reference/index.md
       - Python ADK: api-reference/python/index.html
+      - Go ADK: https://pkg.go.dev/google.golang.org/adk" target="_blank
       - Java ADK: api-reference/java/index.html
       - CLI Reference: api-reference/cli/index.html
       - Agent Config reference: api-reference/agentconfig/index.html
