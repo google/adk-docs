@@ -388,7 +388,7 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
 
     * `--proxy_port`: The local port for the authenticating proxy to listen on. Defaults to 8081.
     * `--server_port`: The port number the server will listen on within the Cloud Run container. Defaults to 8080.
-    * `--a2a`: If included, enables Agent-to-Agent communication. Enabled by default.
+    * `--a2a`: If included, enables Agent2Agent communication. Enabled by default.
     * `--a2a_agent_url`: A2A agent card URL as advertised in the public agent card. This flag is only valid when used with the --a2a flag.
     * `--api`: If included, deploys the ADK API server. Enabled by default.
     * `--webui`: If included, deploys the ADK dev UI alongside the agent API server. Enabled by default.
