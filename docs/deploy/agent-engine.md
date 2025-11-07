@@ -13,6 +13,11 @@ instruction set for when you want to deploy an ADK project quickly, and a
 standard, step-by-step set of instructions for when you want to carefully manage
 deploying an agent to Agent Engine.
 
+!!! example "Preview: Vertex AI in express mode"
+    If you don't have a Google Cloud project, you can try Agent Engine without cost using 
+    [Vertex AI in Express mode](https://cloud.google.com/vertex-ai/generative-ai/docs/start/express-mode/overview).
+    For details on using this feature, see the [Standard deployment](#standard-deployment) section. 
+
 ## Accelerated deployment
 
 This section describes how to perform a deployment using the
@@ -33,18 +38,12 @@ for deploying your ADK project, as follows:
 -   [Deploy your ADK project](#deploy-ad):  Provision
     required services in your Google Cloud project and upload your ADK project code.
 
-!!!note
-    If you don't have a Google Cloud project, you can try Agent Engine without cost using 
-    [Vertex AI in Express mode](https://cloud.google.com/vertex-ai/generative-ai/docs/start/express-mode/overview).
-    See [Standard deployment](#standard-deployment) for more details. 
-
 For information on testing a deployed agent, see [Test deployed agent](#test-deployment).
 For more information on using Agent Starter Pack and its command line tools,
 see the
 [CLI reference](https://googlecloudplatform.github.io/agent-starter-pack/cli/enhance.html)
 and
 [Development guide](https://googlecloudplatform.github.io/agent-starter-pack/guide/development-guide.html).
-
 
 ### Prerequisites {#prerequisites-ad}
 
@@ -236,8 +235,11 @@ deployment settings, or are modifying an existing deployment with Agent Engine.
 
 These instructions assume you have already defined an ADK project and GCP project. If you do not
 have an ADK project, see the instructions for creating a test project in
-[Define your agent](#define-your-agent). If you do not have an exising GCP project, you can try Agent Engine without cost using 
-[Vertex AI in Express mode](https://cloud.google.com/vertex-ai/generative-ai/docs/start/express-mode/overview).
+[Define your agent](#define-your-agent). 
+
+!!! example "Preview: Vertex AI in express mode"
+    If you do not have an exising GCP project, you can try Agent Engine without cost using 
+    [Vertex AI in Express mode](https://cloud.google.com/vertex-ai/generative-ai/docs/start/express-mode/overview).
 
 === "Google Cloud Project"
 
@@ -526,8 +528,8 @@ You need the address and resource identification for your project (`PROJECT_ID`,
 `LOCATION`, `RESOURCE_ID`) to be able to test your deployment. You can use Cloud
 Console or the `gcloud` command line tool to find this information. 
 
-!!!note 
-    Vertex AI express mode users can skip this step and just use their API key.
+!!! note "Vertex AI express mode API key"
+    If you are using Vertex AI express mode, you can skip this step and use your API key.
 
 To find your project information with Google Cloud Console:
 
