@@ -221,7 +221,7 @@ While you have considerable flexibility in defining your function, remember that
 * **Simple Data Types:** Favor primitive data types like `str` and `int` over custom classes whenever possible.  
 * **Meaningful Names:** The function's name and parameter names significantly influence how the LLM interprets and utilizes the tool. Choose names that clearly reflect the function's purpose and the meaning of its inputs. Avoid generic names like `do_stuff()` or `beAgent()`.
 * **Build for Parallel Execution:** Improve function calling performance when multiple tools are run by building for asynchronous operation. For information on enabling parallel execution for tools, see
-[Increase tool performance with parallel execution](/adk-docs/tools/performance/).
+[Increase tool performance with parallel execution](/adk-docs/tools-custom/performance/).
 
 ## Long Running Function Tools {#long-run-tool}
 
@@ -239,7 +239,7 @@ When using a `LongRunningFunctionTool`, your function can initiate the long-runn
     Depending on the type of tool you are building, designing for asychronous
     operation may be a better solution than creating a long running tool. For
     more information, see
-    [Increase tool performance with parallel execution](/adk-docs/tools/performance/).
+    [Increase tool performance with parallel execution](/adk-docs/tools-custom/performance/).
 
 ### How it Works
 
