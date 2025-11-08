@@ -137,7 +137,7 @@ adk web --port 8000
 
 This command starts a web server with a chat interface for your agent. You can
 access the web interface at (http://localhost:8000). Select the agent at the
-upper right corner and type a request.
+upper left corner and type a request.
 
 ![adk-web-dev-ui-chat.png](/adk-docs/assets/adk-web-dev-ui-chat.png)
 

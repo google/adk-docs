@@ -161,7 +161,7 @@ to set environment variables:
 
 === "Windows"
 
-    ```console title="Update: my_agent/.env"
+    ```console title="Update: my_agent/env.bat"
     echo 'set GOOGLE_API_KEY="YOUR_API_KEY"' > env.bat
     ```
 
@@ -257,7 +257,7 @@ mvn compile exec:java \
 
 This command starts a web server with a chat interface for your agent. You can
 access the web interface at (http://localhost:8000). Select your agent at the
-upper right corner and type a request.
+upper left corner and type a request.
 
 ![adk-web-dev-ui-chat.png](/adk-docs/assets/adk-web-dev-ui-chat.png)
 
