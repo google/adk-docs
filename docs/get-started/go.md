@@ -119,7 +119,7 @@ your project to set environment variables:
 
 === "Windows"
 
-    ```console title="Update: my_agent/.env"
+    ```console title="Update: my_agent/env.bat"
     echo 'set GOOGLE_API_KEY="YOUR_API_KEY"' > env.bat
     ```
 
