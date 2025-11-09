@@ -1,6 +1,6 @@
 # A2A Agent Example
 
-This example demonstrates how to expose an ADK agent using the Agent-to-Agent (A2A) protocol in Go using the ADK Web Launcher.
+This example demonstrates how to expose an ADK agent using the Agent2Agent (A2A) protocol in Go using the ADK Web Launcher.
 
 ## Files
 

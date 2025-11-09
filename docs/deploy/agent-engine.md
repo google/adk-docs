@@ -13,6 +13,11 @@ instruction set for when you want to deploy an ADK project quickly, and a
 standard, step-by-step set of instructions for when you want to carefully manage
 deploying an agent to Agent Engine.
 
+!!! example "Preview: Vertex AI in express mode"
+    If you don't have a Google Cloud project, you can try Agent Engine without cost using 
+    [Vertex AI in Express mode](https://cloud.google.com/vertex-ai/generative-ai/docs/start/express-mode/overview).
+    For details on using this feature, see the [Standard deployment](#standard-deployment) section. 
+
 ## Accelerated deployment
 
 This section describes how to perform a deployment using the
@@ -39,7 +44,6 @@ see the
 [CLI reference](https://googlecloudplatform.github.io/agent-starter-pack/cli/enhance.html)
 and
 [Development guide](https://googlecloudplatform.github.io/agent-starter-pack/guide/development-guide.html).
-
 
 ### Prerequisites {#prerequisites-ad}
 
@@ -229,30 +233,52 @@ deployment settings, or are modifying an existing deployment with Agent Engine.
 
 ### Prerequisites
 
-These instructions assume you have already defined an ADK project. If you do not
+These instructions assume you have already defined an ADK project and GCP project. If you do not
 have an ADK project, see the instructions for creating a test project in
-[Define your agent](#define-your-agent).
+[Define your agent](#define-your-agent). 
 
-Before starting deployment procedure, ensure you have the following:
+!!! example "Preview: Vertex AI in express mode"
+    If you do not have an exising GCP project, you can try Agent Engine without cost using 
+    [Vertex AI in Express mode](https://cloud.google.com/vertex-ai/generative-ai/docs/start/express-mode/overview).
 
-1.  **Google Cloud Project**: A Google Cloud project with the [Vertex AI API enabled](https://console.cloud.google.com/flows/enableapi?apiid=aiplatform.googleapis.com).
+=== "Google Cloud Project"
 
-2.  **Authenticated gcloud CLI**: You need to be authenticated with Google Cloud. Run the following command in your terminal:
-    ```shell
-    gcloud auth application-default login
-    ```
+    Before starting deployment procedure, ensure you have the following:
+    
+    1.  **Google Cloud Project**: A Google Cloud project with the [Vertex AI API enabled](https://console.cloud.google.com/flows/enableapi?apiid=aiplatform.googleapis.com).
+    
+    2.  **Authenticated gcloud CLI**: You need to be authenticated with Google Cloud. Run the following command in your terminal:
+        ```shell
+        gcloud auth application-default login
+        ```
+    
+    3.  **Google Cloud Storage (GCS) Bucket**: Agent Engine requires a GCS bucket to stage your agent's code and dependencies for deployment. If you don't have a bucket, create one by following the instructions [here](https://cloud.google.com/storage/docs/creating-buckets).
+    
+    4.  **Python Environment**: A Python version between 3.9 and 3.13.
+    
+    5.  **Install Vertex AI SDK**
+    
+        Agent Engine is part of the Vertex AI SDK for Python. For more information, you can review the [Agent Engine quickstart documentation](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/quickstart).
+    
+        ```shell
+        pip install google-cloud-aiplatform[adk,agent_engines]>=1.111
+        ```
 
-3.  **Google Cloud Storage (GCS) Bucket**: Agent Engine requires a GCS bucket to stage your agent's code and dependencies for deployment. If you don't have a bucket, create one by following the instructions [here](https://cloud.google.com/storage/docs/creating-buckets).
+=== "Vertex AI express mode"
 
-4.  **Python Environment**: A Python version between 3.9 and 3.13.
-
-5.  **Install Vertex AI SDK**
-
-    Agent Engine is part of the Vertex AI SDK for Python. For more information, you can review the [Agent Engine quickstart documentation](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/quickstart).
-
-    ```shell
-    pip install google-cloud-aiplatform[adk,agent_engines]>=1.111
-    ```
+    Before starting deployment procedure, ensure you have the following:
+    
+    1.  **API Key from Express Mode project**: Sign up for an Express Mode project with your gmail account following the [Express mode sign up](https://cloud.google.com/vertex-ai/generative-ai/docs/start/express-mode/overview#eligibility). Get an API key from that project to use with Agent Engine!
+    
+    2.  **Python Environment**: A Python version between 3.9 and 3.13.
+    
+    3.  **Install Vertex AI SDK**
+    
+        Agent Engine is part of the Vertex AI SDK for Python. For more information, you can review the [Agent Engine quickstart documentation](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/quickstart).
+    
+        ```shell
+        pip install google-cloud-aiplatform[adk,agent_engines]>=1.111
+        ```
 
 ### Define your agent {#define-your-agent}
 
@@ -272,22 +298,40 @@ Next, initialize the Vertex AI SDK. This tells the SDK which Google Cloud projec
 !!! tip "For IDE Users"
     You can place this initialization code in a separate `deploy.py` script along with the deployment logic for the following steps: 3 through 6.
 
-```python title="deploy.py"
-import vertexai
-from agent import root_agent # modify this if your agent is not in agent.py
+=== "Google Cloud Project"
 
-# TODO: Fill in these values for your project
-PROJECT_ID = "your-gcp-project-id"
-LOCATION = "us-central1"  # For other options, see https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview#supported-regions
-STAGING_BUCKET = "gs://your-gcs-bucket-name"
+    ```python title="deploy.py"
+    import vertexai
+    from agent import root_agent # modify this if your agent is not in agent.py
+    
+    # TODO: Fill in these values for your project
+    PROJECT_ID = "your-gcp-project-id"
+    LOCATION = "us-central1"  # For other options, see https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview#supported-regions
+    STAGING_BUCKET = "gs://your-gcs-bucket-name"
+    
+    # Initialize the Vertex AI SDK
+    vertexai.init(
+        project=PROJECT_ID,
+        location=LOCATION,
+        staging_bucket=STAGING_BUCKET,
+    )
+    ```
 
-# Initialize the Vertex AI SDK
-vertexai.init(
-    project=PROJECT_ID,
-    location=LOCATION,
-    staging_bucket=STAGING_BUCKET,
-)
-```
+=== "Vertex AI express mode"
+
+    ```python title="deploy.py"
+    import vertexai
+    from agent import root_agent # modify this if your agent is not in agent.py
+    
+    # TODO: Fill in these values for your api key
+    API_KEY = "your-express-mode-api-key"
+    
+    # Initialize the Vertex AI SDK
+    vertexai.init(
+        api_key=API_KEY,
+    )
+    ```
+
 
 ### Prepare the agent for deployment
 
@@ -418,6 +462,43 @@ This process packages your code, builds it into a container, and deploys it to t
     #       Note: The PROJECT_NUMBER is different than the PROJECT_ID.
     ```
 
+=== "Vertex AI express mode"
+
+    Vertex AI express mode supports both ADK CLI deployment and Python deployment.
+
+    The following example deploy command uses the `multi_tool_agent` sample
+    code as the project to be deployed with express mode:
+
+    ```shell
+    adk deploy agent_engine \
+        --display_name="My Agent Name" \
+        --api_key=your-api-key-here
+        /multi_tool_agent
+    ```
+
+    !!! tip
+        Make sure your main ADK agent definition (`root_agent`) is 
+        discoverable when deploying your ADK project.
+
+    This code block initiates the deployment from a Python script or notebook.
+
+    ```python title="deploy.py"
+    from vertexai import agent_engines
+
+    remote_app = agent_engines.create(
+        agent_engine=app,
+        requirements=[
+            "google-cloud-aiplatform[adk,agent_engines]"   
+        ]
+    )
+
+    print(f"Deployment finished!")
+    print(f"Resource Name: {remote_app.resource_name}")
+    # Resource Name: "projects/{PROJECT_NUMBER}/locations/{LOCATION}/reasoningEngines/{RESOURCE_ID}"
+    #       Note: The PROJECT_NUMBER is different than the PROJECT_ID.
+    ```
+
+
 #### Monitoring and verification
 
 *   You can monitor the deployment status in the [Agent Engine UI](https://console.cloud.google.com/vertex-ai/agents/agent-engines) in the Google Cloud Console.
@@ -446,6 +527,9 @@ selecting an exising Google Cloud project, see
 You need the address and resource identification for your project (`PROJECT_ID`,
 `LOCATION`, `RESOURCE_ID`) to be able to test your deployment. You can use Cloud
 Console or the `gcloud` command line tool to find this information. 
+
+!!! note "Vertex AI express mode API key"
+    If you are using Vertex AI express mode, you can skip this step and use your API key.
 
 To find your project information with Google Cloud Console:
 
@@ -494,11 +578,21 @@ To send a REST call get a response from deployed agent:
 -   In a terminal window of your development environment, build a request
     and execute it:
 
-    ```shell
-    curl -X GET \
-        -H "Authorization: Bearer $(gcloud auth print-access-token)" \
-        "https://$(LOCATION)-aiplatform.googleapis.com/v1/projects/$(PROJECT_ID)/locations/$(LOCATION)/reasoningEngines"
-    ```
+    === "Google Cloud Project"
+
+        ```shell
+        curl -X GET \
+            -H "Authorization: Bearer $(gcloud auth print-access-token)" \
+            "https://$(LOCATION)-aiplatform.googleapis.com/v1/projects/$(PROJECT_ID)/locations/$(LOCATION)/reasoningEngines"
+        ```
+
+    === "Vertex AI express mode"
+    
+        ```shell
+        curl -X GET \
+            -H "x-goog-api-key:YOUR-EXPRESS-MODE-API-KEY" \
+            "https://aiplatform.googleapis.com/v1/reasoningEngines"
+        ```
 
 If your deployment was successful, this request responds with a list of valid
 requests and expected data formats. 
@@ -519,13 +613,25 @@ To test interaction with the deployed agent via REST:
 1.  In a terminal window of your development environment, create a session
     by building a request using this template:
 
-    ```shell
-    curl \
-        -H "Authorization: Bearer $(gcloud auth print-access-token)" \
-        -H "Content-Type: application/json" \
-        https://$(LOCATION)-aiplatform.googleapis.com/v1/projects/$(PROJECT_ID)/locations/$(LOCATION)/reasoningEngines/$(RESOURCE_ID):query \
-        -d '{"class_method": "async_create_session", "input": {"user_id": "u_123"},}'
-    ```
+    === "Google Cloud Project"
+
+        ```shell
+        curl \
+            -H "Authorization: Bearer $(gcloud auth print-access-token)" \
+            -H "Content-Type: application/json" \
+            https://$(LOCATION)-aiplatform.googleapis.com/v1/projects/$(PROJECT_ID)/locations/$(LOCATION)/reasoningEngines/$(RESOURCE_ID):query \
+            -d '{"class_method": "async_create_session", "input": {"user_id": "u_123"},}'
+        ```
+
+    === "Vertex AI express mode"
+    
+        ```shell
+        curl \
+            -H "x-goog-api-key:YOUR-EXPRESS-MODE-API-KEY" \
+            -H "Content-Type: application/json" \
+            https://aiplatform.googleapis.com/v1/reasoningEngines/$(RESOURCE_ID):query \
+            -d '{"class_method": "async_create_session", "input": {"user_id": "u_123"},}'
+        ```
 
 1.  In the response to the previous command, extract the created **Session ID**
     from the **id** field:
@@ -547,19 +653,37 @@ To test interaction with the deployed agent via REST:
     your agent by building a request using this template and the Session ID
     created in the previous step:
 
-    ```shell
-    curl \
-    -H "Authorization: Bearer $(gcloud auth print-access-token)" \
-    -H "Content-Type: application/json" \
-    https://$(LOCATION)-aiplatform.googleapis.com/v1/projects/$(PROJECT_ID)/locations/$(LOCATION)/reasoningEngines/$(RESOURCE_ID):streamQuery?alt=sse -d '{
-    "class_method": "async_stream_query",
-    "input": {
-        "user_id": "u_123",
-        "session_id": "4857885913439920384",
-        "message": "Hey whats the weather in new york today?",
-    }
-    }'
-    ```
+    === "Google Cloud Project"
+
+        ```shell
+        curl \
+        -H "Authorization: Bearer $(gcloud auth print-access-token)" \
+        -H "Content-Type: application/json" \
+        https://$(LOCATION)-aiplatform.googleapis.com/v1/projects/$(PROJECT_ID)/locations/$(LOCATION)/reasoningEngines/$(RESOURCE_ID):streamQuery?alt=sse -d '{
+        "class_method": "async_stream_query",
+        "input": {
+            "user_id": "u_123",
+            "session_id": "4857885913439920384",
+            "message": "Hey whats the weather in new york today?",
+        }
+        }'
+        ```
+
+    === "Vertex AI express mode"
+
+        ```shell
+        curl \
+        -H "x-goog-api-key:YOUR-EXPRESS-MODE-API-KEY" \
+        -H "Content-Type: application/json" \
+        https://aiplatform.googleapis.com/v1/reasoningEngines/$(RESOURCE_ID):streamQuery?alt=sse -d '{
+        "class_method": "async_stream_query",
+        "input": {
+            "user_id": "u_123",
+            "session_id": "4857885913439920384",
+            "message": "Hey whats the weather in new york today?",
+        }
+        }'
+        ```
 
 This request should generate a response from your deployed agent code in JSON
 format. For more information about interacting with a deployed ADK agent in

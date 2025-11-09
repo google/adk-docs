@@ -24,9 +24,12 @@ extra:
   first_repo_url: https://github.com/google/adk-python
   first_repo_name: adk-python
   first_repo_icon: fontawesome/brands/github
-  second_repo_url: https://github.com/google/adk-java
-  second_repo_name: adk-java
+  second_repo_url: https://github.com/google/adk-go
+  second_repo_name: adk-go
   second_repo_icon: fontawesome/brands/github
+  third_repo_url: https://github.com/google/adk-java
+  third_repo_name: adk-java
+  third_repo_icon: fontawesome/brands/github
   analytics:
     provider: google
     property: G-DKHZS27PHP
@@ -202,6 +205,7 @@ nav:
       - Cloud Trace: observability/cloud-trace.md
       - AgentOps: observability/agentops.md
       - Arize AX: observability/arize-ax.md
+      - Freeplay: observability/freeplay.md
       - Phoenix: observability/phoenix.md
       - W&B Weave: observability/weave.md
     - Evaluation:
@@ -230,6 +234,8 @@ nav:
       - artifacts/index.md
     - Events:
       - events/index.md
+    - Apps:
+      - apps/index.md
     - Plugins:
       - plugins/index.md
       - Reflect and retry: plugins/reflect-and-retry.md
@@ -238,10 +244,12 @@ nav:
     - A2A Protocol:
       - a2a/index.md
       - Introduction to A2A: a2a/intro.md
-      - A2A Quickstart (Exposing): a2a/quickstart-exposing.md
-      - A2A Quickstart (Exposing) (Go): a2a/quickstart-exposing-go.md
-      - A2A Quickstart (Consuming): a2a/quickstart-consuming.md
-      - A2A Quickstart (Consuming) (Go): a2a/quickstart-consuming-go.md
+      - A2A Quickstart (Exposing):
+        - Python: a2a/quickstart-exposing.md
+        - Go: a2a/quickstart-exposing-go.md
+      - A2A Quickstart (Consuming):
+        - Python: a2a/quickstart-consuming.md
+        - Go: a2a/quickstart-consuming-go.md
     - Bidi-streaming (live):
       - streaming/index.md
       - Custom Audio Bidi-streaming app sample (WebSockets): streaming/custom-streaming-ws.md
