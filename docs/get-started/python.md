@@ -123,7 +123,7 @@ adk run my_agent
 ### Run with web interface
 
 The ADK framework provides web interface you can use to test and interact with
-your agent. You can start the web interface using the following command:
+your agent. You can start the web interface using the following command: 
 
 ```console
 adk web --port 8000
