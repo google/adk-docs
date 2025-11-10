@@ -9,6 +9,16 @@ Check out the following third-party tools that you can use with ADK agents:
 
 <div class="tool-card-grid">
 
+  <a href="/adk-docs/tools/third-party/bright-data/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="../../assets/tools-bright-data.png" alt="Bright Data">
+    </div>
+    <div class="tool-card-content">
+      <h3>Bright Data</h3>
+      <p>One MCP for the web - connect your AI to real web data</p>
+    </div>
+  </a>
+
   <a href="/adk-docs/tools/third-party/browserbase/" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="../../assets/tools-browserbase.png" alt="Browserbase">
