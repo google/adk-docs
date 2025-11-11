@@ -321,26 +321,28 @@ curl -X GET http://localhost:8000/list-apps
 
 Sessions store the state and event history for a specific user's interaction with an agent.
 
-#### Create or Update a Session
+#### Update a Session
 
-Creates a new session or updates an existing one. If a session with the given IDs already exists, its state will be overwritten with the new state provided.
+Updates an existing session.
 
-*   **Method:** `POST`
+*   **Method:** `PATCH`
 *   **Path:** `/apps/{app_name}/users/{user_id}/sessions/{session_id}`
 
 **Request Body**
 ```json
 {
-  "key1": "value1",
-  "key2": 42
+  "stateDelta": {
+    "key1": "value1",
+    "key2": 42
+  }
 }
 ```
 
 **Example Request**
 ```shell
-curl -X POST http://localhost:8000/apps/my_sample_agent/users/u_123/sessions/s_abc \
+curl -X PATCH http://localhost:8000/apps/my_sample_agent/users/u_123/sessions/s_abc \
   -H "Content-Type: application/json" \
-  -d '{"visit_count": 5}'
+  -d '{"stateDelta":{"visit_count": 5}}'
 ```
 
 **Example Response**
