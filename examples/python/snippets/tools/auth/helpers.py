@@ -1,3 +1,17 @@
+# Copyright 2025 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 from google.adk.auth import AuthConfig
 from google.adk.events import Event
 import asyncio
@@ -100,11 +114,11 @@ def get_function_call_auth_config(event: Event) -> AuthConfig:
       and event.content.parts[0] # Use content, not contents
       and event.content.parts[0].function_call
       and event.content.parts[0].function_call.args
-      and event.content.parts[0].function_call.args.get('auth_config')
+      and event.content.parts[0].function_call.args.get('authConfig')
   ):
     # Reconstruct the AuthConfig object using the dictionary provided in the arguments.
     # The ** operator unpacks the dictionary into keyword arguments for the constructor.
     return AuthConfig(
-          **event.content.parts[0].function_call.args.get('auth_config')
+          **event.content.parts[0].function_call.args.get('authConfig')
       )
   raise ValueError(f'Cannot get auth config from event {event}')
