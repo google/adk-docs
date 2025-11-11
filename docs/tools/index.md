@@ -133,6 +133,16 @@ Check out the following pre-built tools that you can use with ADK agents:
 
 <div class="tool-card-grid">
 
+  <a href="/adk-docs/tools/third-party/agentql/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="../assets/tools-agentql.png" alt="AgentQL">
+    </div>
+    <div class="tool-card-content">
+      <h3>AgentQL</h3>
+      <p>Extract resilient, structured web data using natural language</p>
+    </div>
+  </a>
+
   <a href="/adk-docs/tools/third-party/bright-data/" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="../assets/tools-bright-data.png" alt="Bright Data">
