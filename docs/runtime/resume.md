@@ -36,9 +36,9 @@ app = App(
 
 !!! warning "Caution: Long Running Functions, Confirmations, Authentication"
     For agents that use
-    [Long Running Functions](/adk-docs/tools/function-tools/#long-run-tool),
-    [Confirmations](/adk-docs/tools/confirmation/), or
-    [Authentication](/adk-docs/tools/authentication/)
+    [Long Running Functions](/adk-docs/tools-custom/function-tools/#long-run-tool),
+    [Confirmations](/adk-docs/tools-custom/confirmation/), or
+    [Authentication](/adk-docs/tools-custom/authentication/)
     requiring user input, adding a resumable confirmation changes how these features
     operate. For more information, see the documentation for those features.
 

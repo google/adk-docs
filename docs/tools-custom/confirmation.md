@@ -237,4 +237,4 @@ The tool confirmation feature has the following limitations:
 ## Next steps
 
 For more information on building ADK tools for agent workflows, see [Function
-tools](/adk-docs/tools/function-tools/).
+tools](/adk-docs/tools-custom/function-tools/).
