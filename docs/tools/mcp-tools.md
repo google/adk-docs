@@ -52,6 +52,8 @@ The following examples demonstrate how to use `MCPToolset` within the `adk web` 
 
 This Python example demonstrates connecting to a local MCP server that provides file system operations.
 
+=== "Python"
+
 #### Step 1: Define your Agent with `MCPToolset`
 
 Create an `agent.py` file (e.g., in `./adk_agent_samples/mcp_agent/agent.py`). The `MCPToolset` is instantiated directly within the `tools` list of your `LlmAgent`.
@@ -112,6 +114,58 @@ Ensure you have an `__init__.py` in the same directory as `agent.py` to make it 
 ```python
 # ./adk_agent_samples/mcp_agent/__init__.py
 from . import agent
+```
+
+=== "Java"
+
+
+Create an `McpToolsExample.java` file. The `MCPToolset` is instantiated directly within the `tools` list of your `LlmAgent`.
+
+*   **Important:** Replace `"/path/to/your/folder"` in the `args` list with the **absolute path** to an actual folder on your local system that the MCP server can access.
+
+```java
+package com.google.adk.examples;
+
+import com.google.adk.agents.LlmAgent;
+import com.google.adk.tools.ToolPredicate;
+import com.google.adk.tools.mcp.McpToolset;
+import io.modelcontextprotocol.client.transport.ServerParameters;
+
+import java.util.Optional;
+
+public class McpToolsExample {
+
+    /**
+     * IMPORTANT: This MUST be an ABSOLUTE path to a folder the
+     * npx process can access.
+     * Replace with a valid absolute path on your system.
+     * For example: "/Users/youruser/accessible_mcp_files"
+     * or use a dynamically constructed absolute path:
+     */
+    private static final String TARGET_FOLDER_PATH = "/path/to/your/folder";
+
+    public static void main(String[] args) {
+        ServerParameters serverParameters = ServerParameters.builder("npx")
+                .args(
+                        "-y", // Argument for npx to auto-confirm install
+                        "@modelcontextprotocol/server-filesystem",
+                        TARGET_FOLDER_PATH
+                )
+                .build();
+        var tools = new McpToolset(
+                serverParameters,
+                // Optional: Filter which tools from the MCP server are exposed
+                Optional.of((ToolPredicate) (tool, readonlyContext) -> true)
+        );
+        LlmAgent llmAgent = LlmAgent.builder()
+                .name("filesystem_assistant_agent")
+                .description("Help the user manage their files. You can list files, read files, etc.")
+                .model("gemini-2.5-flash")
+                .tools(tools)
+                .build();
+    }
+}
+
 ```
 
 #### Step 3: Run `adk web` and Interact
@@ -347,6 +401,53 @@ You should see the agent use the Google Maps MCP tools to provide directions or 
 
 <img src="../../assets/adk-tool-mcp-maps-adk-web-demo.png" alt="MCP with ADK Web - Google Maps Example">
 
+### Example 3: SSE MCP Server
+
+=== "Java"
+
+
+This example demonstrates connecting to the SSE MCP server.
+
+Create an `McpToolsExample.java` file. The `MCPToolset` is instantiated directly within the `tools` list of your `LlmAgent`.
+
+```java
+package com.google.adk.examples;
+
+import com.google.adk.agents.LlmAgent;
+import com.google.adk.tools.ToolPredicate;
+import com.google.adk.tools.mcp.McpToolset;
+import com.google.adk.tools.mcp.SseServerParameters;
+
+import java.time.Duration;
+import java.util.Map;
+import java.util.Optional;
+
+public class McpToolsExample {
+
+    public static void main(String[] args) {
+        SseServerParameters sseServerParameters = SseServerParameters.builder()
+                .url("https://your.sse-mcp.server/sse")
+                .headers(Map.of(
+                        "Authorization", "Bearer your-mcp-api-key" // Optional: pass headers to you sse server
+                ))
+                .timeout(Duration.ofSeconds(10L)) // timeout to connect to sse server
+                .sseReadTimeout(Duration.ofSeconds(30L)) // timeout to tool call
+                .build();
+        var tools = new McpToolset(
+                sseServerParameters,
+                // Optional: Filter which tools from the MCP server are exposed
+                Optional.of((ToolPredicate) (tool, readonlyContext) -> true)
+        );
+        LlmAgent llmAgent = LlmAgent.builder()
+                .name("...")
+                .description("...")
+                .model("gemini-2.5-flash")
+                .tools(tools)
+                .build();
+    }
+}
+
+```
 
 For Java, refer to the following sample to define an agent that initializes the `MCPToolset`:
 
