@@ -1,4 +1,4 @@
-# Python Quickstart for ADK
+# Python Quickstart adk
 
 This guide shows you how to get up and running with Agent Development Kit
 (ADK) for Python. Before you start, make sure you have the following installed:
