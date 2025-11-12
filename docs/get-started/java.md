@@ -43,7 +43,7 @@ my_agent/
 ### Define the agent code
 
 Create the code for a basic agent, including a simple implementation of an ADK
-[Function Tool](/adk-docs/tools/function-tools/), called `getCurrentTime()`.
+[Function Tool](/adk-docs/tools-custom/function-tools/), called `getCurrentTime()`.
 Add the following code to the `HelloTimeAgent.java` file in your project
 directory:
 
