@@ -13,10 +13,6 @@ definitions.
   language descriptions. This allows your agent to reliably gather information
   from sites that frequently update their layout or CSS without breaking.
 
-- **Complex Document Parsing**: Extract structured tables and specific data
-  points from non-HTML sources, such as PDF files or embedded documents found
-  during web research.
-
 - **Data Normalization**: Convert unstructured web pages into clean, predictable
   JSON formats. This enables your agent to instantly normalize data from
   different sources (like multiple job boards or shopping sites) into a single
