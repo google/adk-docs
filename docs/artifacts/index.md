@@ -135,7 +135,8 @@ Understanding artifacts involves grasping a few key components: the service that
     * `Load Artifact`: Retrieves a specific version (or the latest) of an artifact.  
     * `List Artifact keys`: Lists the unique filenames of artifacts within a given scope.  
     * `Delete Artifact`: Removes an artifact (and potentially all its versions, depending on implementation).  
-    * `List versions`: Lists all available version numbers for a specific artifact filename.
+    * `list_artifact_versions`: Lists all versions and their metadata for a specific artifact.
+    * `get_artifact_version`: Gets the metadata for a specific version of an artifact.
 
 * **Configuration:** You provide an instance of an artifact service (e.g., `InMemoryArtifactService`, `GcsArtifactService`) when initializing the `Runner`. The `Runner` then makes this service available to agents and tools via the `InvocationContext`.
 
@@ -210,7 +211,7 @@ Understanding artifacts involves grasping a few key components: the service that
 
 === "Python"
 
-    ```python
+    ```py
     import google.genai.types as types
 
     # Example: Creating an artifact Part from raw bytes
@@ -274,7 +275,7 @@ Understanding artifacts involves grasping a few key components: the service that
 
 === "Python"
 
-    ```python
+    ```py
     # Example illustrating namespace difference (conceptual)
 
     # Session-specific artifact filename
@@ -336,7 +337,7 @@ Before you can use any artifact methods via the context objects, you **must** pr
 
     In Python, you provide this instance when initializing your `Runner`.
 
-    ```python
+    ```py
     from google.adk.runners import Runner
     from google.adk.artifacts import InMemoryArtifactService # Or GcsArtifactService
     from google.adk.agents import LlmAgent
@@ -421,7 +422,7 @@ The artifact interaction methods are available directly on instances of `Callbac
 
     === "Python"
 
-        ```python
+        ```py
         import google.genai.types as types
         from google.adk.agents.callback_context import CallbackContext # Or ToolContext
 
@@ -505,7 +506,7 @@ The artifact interaction methods are available directly on instances of `Callbac
 
     === "Python"
 
-        ```python
+        ```py
         import google.genai.types as types
         from google.adk.agents.callback_context import CallbackContext # Or ToolContext
 
@@ -648,7 +649,7 @@ The artifact interaction methods are available directly on instances of `Callbac
 
     === "Python"
 
-        ```python
+        ```py
         from google.adk.tools.tool_context import ToolContext
 
         def list_user_files_py(tool_context: ToolContext) -> str:
@@ -790,7 +791,7 @@ ADK provides concrete implementations of the `BaseArtifactService` interface, of
 
     === "Python"
 
-        ```python
+        ```py
         from google.adk.artifacts import InMemoryArtifactService
 
         # Simply instantiate the class
@@ -850,7 +851,7 @@ ADK provides concrete implementations of the `BaseArtifactService` interface, of
 
     === "Python"
 
-        ```python
+        ```py
         from google.adk.artifacts import GcsArtifactService
 
         # Specify the GCS bucket name
@@ -896,4 +897,4 @@ To use artifacts effectively and maintainably:
 * **Cleanup Strategy:** For persistent storage like `GcsArtifactService`, artifacts remain until explicitly deleted. If artifacts represent temporary data or have a limited lifespan, implement a strategy for cleanup. This might involve:  
     * Using GCS lifecycle policies on the bucket.  
     * Building specific tools or administrative functions that utilize the `artifact_service.delete_artifact` method (note: delete is *not* exposed via context objects for safety).  
-    * Carefully managing filenames to allow pattern-based deletion if needed.
+    * Carefully managing filenames to allow pattern-based deletion if needed.  
