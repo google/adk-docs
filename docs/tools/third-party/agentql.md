@@ -20,9 +20,8 @@ definitions.
 
 ## Prerequisites
 
-- Create an [API Key](https://www.agentql.com/dev) in AgentQL. Refer to the
-  [documentation](https://docs.agentql.com/quick-start) for more
-  information.
+- Create an [API Key](https://dev.agentql.com/sign-in) in AgentQL. Refer to the
+  [documentation](https://docs.agentql.com/quick-start) for more information.
 
 ## Use with agent
 
