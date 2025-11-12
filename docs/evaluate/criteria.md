@@ -51,7 +51,7 @@ Use `ANY_ORDER` match when you want to ensure certain key tool calls occur, but
 do not care about their order, and allow for other tool calls to happen in
 between. This criteria is helpful for cases where multiple tool calls about the
 same concept occur, like your agent issues 5 search queries. You don't really
-care the order in which the search queries are issues, till they occur.
+care the order in which the search queries are issued, till they occur.
 
 #### Details
 
@@ -92,7 +92,7 @@ Example `EvalConfig` entry for `EXACT` match:
 }
 ```
 
-Or you could specify the match type explicitly:
+Or you could specify the `match_type` explicitly:
 
 ```json
 {
