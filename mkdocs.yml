@@ -128,6 +128,11 @@ plugins:
         'tools/third-party/langchain.md': 'tools/index.md'
         'tools/third-party/crewai.md': 'tools/index.md'
         'get-started/testing.md': 'runtime/api-server.md'
+        'tools/authentication.md': 'tools-custom/authentication.md'
+        'tools/function-tools.md': 'tools-custom/function-tools.md'
+        'tools/confirmation.md': 'tools-custom/confirmation.md'
+        'tools/performance.md': 'tools-custom/performance.md'
+        'tools/mcp-tools.md': 'tools-custom/mcp-tools.md'
 
 # Navigation
 nav:
@@ -183,12 +188,12 @@ nav:
     - Custom Tools:
       - tools-custom/index.md
       - Function tools:
-        - Overview: tools/function-tools.md
-        - Tool performance: tools/performance.md
-        - Action confirmations: tools/confirmation.md
-      - MCP tools: tools/mcp-tools.md
+        - Overview: tools-custom/function-tools.md
+        - Tool performance: tools-custom/performance.md
+        - Action confirmations: tools-custom/confirmation.md
+      - MCP tools: tools-custom/mcp-tools.md
       - OpenAPI tools: tools-custom/openapi-tools.md
-      - Authentication: tools/authentication.md
+      - Authentication: tools-custom/authentication.md
   - Run Agents:
     - Agent Runtime:
       - Agent Runtime: runtime/index.md

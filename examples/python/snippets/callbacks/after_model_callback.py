@@ -19,6 +19,7 @@ from typing import Optional
 from google.genai import types 
 from google.adk.sessions import InMemorySessionService
 from google.adk.models import LlmResponse
+from copy import deepcopy
 
 GEMINI_2_FLASH="gemini-2.0-flash"
 
@@ -61,7 +62,7 @@ def simple_after_model_modifier(
 
         # Create a NEW LlmResponse with the modified content
         # Deep copy parts to avoid modifying original if other callbacks exist
-        modified_parts = [copy.deepcopy(part) for part in llm_response.content.parts]
+        modified_parts = [deepcopy(part) for part in llm_response.content.parts]
         modified_parts[0].text = modified_text # Update the text in the copied part
 
         new_response = LlmResponse(
