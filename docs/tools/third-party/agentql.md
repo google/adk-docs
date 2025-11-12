@@ -84,4 +84,4 @@ To ensure accurate extraction, follow these guidelines when prompting the agent:
 ## Additional resources
 
 - [AgentQL MCP Server Documentation](https://docs.exa.ai/reference/exa-mcp)
-- [AgentQL MCP Server Repository](https://github.com/tinyfish-io/agentql-mhttps://docs.agentql.com/integrations/mcpcp)
+- [AgentQL MCP Server Repository](https://github.com/tinyfish-io/agentql-mcp)
