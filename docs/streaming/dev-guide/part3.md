@@ -573,8 +573,8 @@ ADK error codes come from the underlying Gemini API. For complete error code lis
 
 > 📖 **Official Documentation**:
 >
-> - **FinishReason** (when model stops generating tokens): [Google AI for Developers](https://ai.google.dev/api/rest/v1beta/FinishReason) | [Vertex AI](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/gemini)
-> - **BlockedReason** (when prompts are blocked by content filters): [Google AI for Developers](https://ai.google.dev/api/rest/v1beta/BlockReason) | [Vertex AI Safety Filters](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/safety-filters)
+> - **FinishReason** (when model stops generating tokens): [Google AI for Developers](https://ai.google.dev/api/python/google/ai/generativelanguage/Candidate/FinishReason) | [Vertex AI](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/gemini)
+> - **BlockedReason** (when prompts are blocked by content filters): [Google AI for Developers](https://ai.google.dev/api/python/google/ai/generativelanguage/GenerateContentResponse/PromptFeedback/BlockReason) | [Vertex AI](https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/configure-safety-attributes)
 > - **ADK Implementation**: [`llm_response.py:160-184`](https://github.com/google/adk-python/blob/main/src/google/adk/models/llm_response.py#L160-L184)
 
 **Best practices for error handling:**
