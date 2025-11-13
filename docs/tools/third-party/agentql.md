@@ -3,20 +3,21 @@
 The [AgentQL MCP Server](https://github.com/tinyfish-io/agentql-mcp) connects
 your ADK agent to [AgentQL](https://www.agentql.com/). AgentQL is a semantic
 extraction engine that queries web elements based on their meaning rather than
-their CSS or XPath selectors. This allows agents to retrieve specific data
-points from web pages, PDFs, and authenticated sessions using natural language
-definitions.
+their CSS or XPath selectors. This functionality allows agents to retrieve
+specific data points from web pages, PDFs, and authenticated sessions using
+natural language definitions.
 
 ## Use cases
 
 - **Resilient Web Extraction**: Extract data from dynamic websites using natural
-  language descriptions. This allows your agent to reliably gather information
-  from sites that frequently update their layout or CSS without breaking.
+  language descriptions. This feature allows your agent to reliably gather
+  information from sites that frequently update their layout or CSS without
+  breaking.
 
 - **Data Normalization**: Convert unstructured web pages into clean, predictable
-  JSON formats. This enables your agent to instantly normalize data from
-  different sources (like multiple job boards or shopping sites) into a single
-  schema.
+  JSON formats. This capability enables your agent to instantly normalize data
+  from different sources (like multiple job boards or shopping sites) into a
+  single schema.
 
 ## Prerequisites
 
