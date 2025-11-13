@@ -1,5 +1,9 @@
 # Custom Audio Streaming Application (WebSocket) {#custom-streaming-websocket}
 
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.5.0</span><span class="lst-preview">Experimental</span>
+</div>
+
 This article overviews the server and client code for a custom Bidi-streaming web application built with ADK Bidi-streaming and [FastAPI](https://fastapi.tiangolo.com/), enabling real-time, bidirectional audio and text communication with WebSockets.
 
 **Note:** This guide assumes you have experience of JavaScript and Python `asyncio` programming.

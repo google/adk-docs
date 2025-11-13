@@ -3,39 +3,61 @@
 === "Python"
 
     ## Create & activate virtual environment
-    
+
     We recommend creating a virtual Python environment using
     [venv](https://docs.python.org/3/library/venv.html):
-    
+
     ```shell
     python -m venv .venv
     ```
-    
+
     Now, you can activate the virtual environment using the appropriate command for
     your operating system and environment:
-    
+
     ```
     # Mac / Linux
     source .venv/bin/activate
-    
+
     # Windows CMD:
     .venv\Scripts\activate.bat
-    
+
     # Windows PowerShell:
     .venv\Scripts\Activate.ps1
     ```
 
     ### Install ADK
-    
+
     ```bash
     pip install google-adk
     ```
-    
+
     (Optional) Verify your installation:
-    
+
     ```bash
     pip show google-adk
     ```
+
+=== "Go"
+
+    ## Create a new Go module
+
+    If you are starting a new project, you can create a new Go module:
+
+    ```shell
+    go mod init example.com/my-agent
+    ```
+
+    ## Install ADK
+
+    To add the ADK to your project, run the following command:
+
+    ```shell
+    go get google.golang.org/adk
+    ```
+
+    This will add the ADK as a dependency to your `go.mod` file.
+
+    (Optional) Verify your installation by checking your `go.mod` file for the `google.golang.org/adk` entry.
 
 === "Java"
 
@@ -43,7 +65,7 @@
 
     `google-adk` is the core Java ADK library. Java ADK also comes with a pluggable example SpringBoot server to run your agents seamlessly. This optional
     package is present as part of `google-adk-dev`.
-    
+
     If you are using maven, add the following to your `pom.xml`:
 
     ```xml title="pom.xml"

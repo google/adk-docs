@@ -36,45 +36,27 @@ from simple tasks to complex workflows.
   multiple specialized agents into flexible hierarchies.
 
 - **Tracing and Monitoring**: Built-in agent observability for debugging and optimizing
-  workflows with support from external providers like [AgentOps](https://www.agentops.ai).
+  workflows.
 
-- **Deploy Anywhere**: Easily containerize and deploy agents on Cloud Run or
+- **Deploy Anywhere**: Easily containerize and deploy agents on Cloud Run or GKE, or
   scale seamlessly with Vertex AI Agent Engine.
 
-## 🚀 Installation
+## 🚀 Usage
 
-You can install the Agent Development Kit (ADK) using your preferred package manager for Python or build tool for Java.
+You can use Agent Development Kit (ADK) with your preferred package manager for Python or build tool for Java.
 
-### For Python (pip)
+- **[Get started with ADK Python](https://google.github.io/adk-docs/get-started/python/)**
 
-```bash
-pip install google-adk
-```
+- **[Get started with ADK Go](https://google.github.io/adk-docs/get-started/go/)**
 
-### For Java (Maven)
-
-```xml
-<dependency>
-    <groupId>com.google.adk</groupId>
-    <artifactId>google-adk</artifactId>
-    <version>0.1.0</version>
-</dependency>
-```
-
-### For Java (Gradle)
-
-```groovy
-dependencies {
-    implementation 'com.google.adk:google-adk:0.1.0'
-}
-```
+- **[Get started with ADK Java](https://google.github.io/adk-docs/get-started/java/)**
 
 ## 📚 Documentation
 
 Explore the full documentation for detailed guides on building, evaluating, and
 deploying agents:
 
-* **[Documentation](https://google.github.io/adk-docs)**
+- **[Documentation](https://google.github.io/adk-docs)**
 
 ## 🤝 Contributing
 

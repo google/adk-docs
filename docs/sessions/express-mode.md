@@ -1,7 +1,11 @@
-# Vertex AI Express Mode: Using Vertex AI Sessions and Memory for Free
+# Vertex AI Express Mode: Using Vertex AI Sessions and Memory
+
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+</div>
 
 If you are interested in using either the `VertexAiSessionService` or `VertexAiMemoryBankService` but you don't have a Google Cloud Project, you can sign up for Vertex AI Express Mode and get access
-for free and try out these services! You can sign up with an eligible ***gmail*** account [here](https://console.cloud.google.com/expressmode). For more details about Vertex AI Express mode, see the [overview page](https://cloud.google.com/vertex-ai/generative-ai/docs/start/express-mode/overview).
+for without cost and try out these services! You can sign up with an eligible ***gmail*** account [here](https://console.cloud.google.com/expressmode). For more details about Vertex AI Express mode, see the [overview page](https://cloud.google.com/vertex-ai/generative-ai/docs/start/express-mode/overview).
 Once you sign up, get an [API key](https://cloud.google.com/vertex-ai/generative-ai/docs/start/express-mode/overview#api-keys) and you can get started using your local ADK agent with Vertex AI Session and Memory services!
 
 !!! info Vertex AI Express mode limitations
@@ -13,41 +17,42 @@ Once you sign up, get an [API key](https://cloud.google.com/vertex-ai/generative
 `Session` objects are children of an `AgentEngine`. When using Vertex AI Express Mode, we can create an empty `AgentEngine` parent to manage all of our `Session` and `Memory` objects.
 First, ensure that your environment variables are set correctly. For example, in Python:
 
-```env title="weather_agent/.env"
+```env title="agent/.env"
 GOOGLE_GENAI_USE_VERTEXAI=TRUE
 GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_EXPRESS_MODE_API_KEY_HERE
 ```
 
-Next, we can create our Agent Engine instance. You can use the Gen AI SDK.
+Next, we can create our Agent Engine instance. You can use the Vertex AI SDK.
 
-=== "Gen AI SDK"
+=== "Vertex AI SDK"
 
-    1. Import Gen AI SDK.
+    1. Import Vertex AI SDK.
 
         ```py
-        from google import genai
+        import vertexai
+        from vertexai import agent_engines
         ```
 
-    2. Set Vertex AI to be True, then use a `POST` request to create the Agent Engine
+    2. Initialize the Vertex AI Client with your API key and create an agent engine instance.
         
         ```py
         # Create Agent Engine with Gen AI SDK
-        client = genai.Client(vertexai=True)._api_client
-
-        response = client.request(
-            http_method='POST',
-            path=f'reasoningEngines',
-            request_dict={"displayName": "YOUR_AGENT_ENGINE_DISPLAY_NAME", "description": "YOUR_AGENT_ENGINE_DESCRIPTION"},
+        client = vertexai.Client(
+          api_key="YOUR_API_KEY",
         )
-        response
+
+        agent_engine = client.agent_engines.create(
+          config={
+            "display_name": "Demo Agent Engine",
+            "description": "Agent Engine for Session and Memory",
+          })
         ```
 
     3. Replace `YOUR_AGENT_ENGINE_DISPLAY_NAME` and `YOUR_AGENT_ENGINE_DESCRIPTION` with your use case.
-    4. Get the Agent Engine name and ID from the response
+    4. Get the Agent Engine name and ID from the response to use with Memories and Sessions.
 
         ```py
-        APP_NAME = "/".join(response['name'].split("/")[:6])
-        APP_ID = APP_NAME.split('/')[-1]
+        APP_ID = agent_engine.api_resource.name.split('/')[-1]
         ```
 
 ## Managing Sessions with a `VertexAiSessionService`
@@ -68,15 +73,15 @@ APP_ID = "your-reasoning-engine-id"
 # Project and location are not required when initializing with Vertex Express Mode
 session_service = VertexAiSessionService(agent_engine_id=APP_ID)
 # Use REASONING_ENGINE_APP_ID when calling service methods, e.g.:
-# session = await session_service.create_session(app_name=REASONING_ENGINE_APP_ID, user_id= ...)
+# session = await session_service.create_session(app_name=APP_ID, user_id= ...)
 ```
 
 !!! info Session Service Quotas
 
     For Free Express Mode Projects, `VertexAiSessionService` has the following quota:
 
-    - 100 Session Entities
-    - 10,000 Event Entities
+    - 10 Create, delete, or update Vertex AI Agent Engine sessions per minute
+    - 30 Append event to Vertex AI Agent Engine sessions per minute
 
 ## Managing Memories with a `VertexAiMemoryBankService`
 
@@ -88,7 +93,7 @@ instead initialize the memory object without any project or location.
 # Plus environment variable setup:
 # GOOGLE_GENAI_USE_VERTEXAI=TRUE
 # GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_EXPRESS_MODE_API_KEY_HERE
-from google.adk.sessions import VertexAiMemoryBankService
+from google.adk.memory import VertexAiMemoryBankService
 
 # The app_name used with this service should be the Reasoning Engine ID or name
 APP_ID = "your-reasoning-engine-id"
@@ -103,7 +108,8 @@ memory_service = VertexAiMemoryBankService(agent_engine_id=APP_ID)
 
     For Free Express Mode Projects, `VertexAiMemoryBankService` has the following quota:
 
-    - 200 Memory Entities
+    - 10 Create, delete, or update Vertex AI Agent Engine memory resources per minute
+    - 10 Get, list, or retrieve from Vertex AI Agent Engine Memory Bank per minute
 
 ## Code Sample: Weather Agent with Session and Memory using Vertex AI Express Mode
 

@@ -1,10 +1,14 @@
 # Quickstart: Consuming a remote agent via A2A
 
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-preview">Experimental</span>
+</div>
+
 This quickstart covers the most common starting point for any developer: **"There is a remote agent, how do I let my ADK agent use it via A2A?"**. This is crucial for building complex multi-agent systems where different agents need to collaborate and interact.
 
 ## Overview
 
-This sample demonstrates the **Agent-to-Agent (A2A)** architecture in the Agent Development Kit (ADK), showcasing how multiple agents can work together to handle complex tasks. The sample implements an agent that can roll dice and check if numbers are prime.
+This sample demonstrates the **Agent2Agent (A2A)** architecture in the Agent Development Kit (ADK), showcasing how multiple agents can work together to handle complex tasks. The sample implements an agent that can roll dice and check if numbers are prime.
 
 ```text
 ┌─────────────────┐    ┌──────────────────┐    ┌────────────────────┐

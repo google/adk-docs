@@ -16,6 +16,15 @@ The Agent Development Kit (ADK) provides comprehensive API references for both P
 
 <!-- This comment forces a block separation -->
 
+-   :fontawesome-brands-golang:{ .lg .middle } **Go API Reference**
+
+    ---
+    Explore the complete API documentation for the Go Agent Development Kit. Discover detailed information on all modules, classes, and functions to build sophisticated AI agents with Go.
+
+    [:octicons-arrow-right-24: View Go API Docs](https://pkg.go.dev/google.golang.org/adk) <br>
+
+<!-- This comment forces a block separation -->
+
 -   :fontawesome-brands-java:{ .lg .middle } **Java API Reference**
 
     ---

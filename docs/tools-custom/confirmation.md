@@ -1,5 +1,9 @@
 # Get action confirmation for ADK Tools
 
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.14.0</span><span class="lst-preview">Experimental</span>
+</div>
+
 Some agent workflows require confirmation for decision making, verification,
 security, or general oversight. In these cases, you want to get a response from
 a human or supervising system before proceeding with a workflow. The *Tool
@@ -233,4 +237,4 @@ The tool confirmation feature has the following limitations:
 ## Next steps
 
 For more information on building ADK tools for agent workflows, see [Function
-tools](/adk-docs/tools/function-tools/).
+tools](/adk-docs/tools-custom/function-tools/).

@@ -78,6 +78,12 @@
   overflow: visible !important;
 }
 
+/* Style for the main navigation section titles */
+nav.md-nav--primary .md-nav__item--section > .md-nav__link {
+  color: #1565C0;
+  font-weight: bold;
+  font-size: 0.8rem;
+}
 /* Community Resources cards */
 
 .resource-grid {
@@ -161,6 +167,8 @@
 }
 .tool-card {
     width: 280px;
+    padding-left: 10px;
+    padding-right: 5px;
     background: #ffffff;
     border: 1px solid #e2e8f0;
     border-radius: 12px;

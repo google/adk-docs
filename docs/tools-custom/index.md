@@ -1,5 +1,9 @@
 # Custom Tools for ADK
 
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+</div>
+
 In an ADK agent workflow, Tools are programming functions with structured input
 and output that can be called by an ADK Agent to perform actions. ADK Tools
 function similarly to how you use a
@@ -59,11 +63,11 @@ Think of the tools as a specialized toolkit that the agent's intelligent core (t
 
 ADK offers flexibility by supporting several types of tools:
 
-1. **[Function Tools](../tools/function-tools.md):** Tools created by you, tailored to your specific application's needs.
-    * **[Functions/Methods](../tools/function-tools.md#1-function-tool):** Define standard synchronous functions or methods in your code (e.g., Python def).
-    * **[Agents-as-Tools](../tools/function-tools.md#3-agent-as-a-tool):** Use another, potentially specialized, agent as a tool for a parent agent.
-    * **[Long Running Function Tools](../tools/function-tools.md#2-long-running-function-tool):** Support for tools that perform asynchronous operations or take significant time to complete.
-2. **[Built-in Tools](../tools/built-in-tools.md):** Ready-to-use tools provided by the framework for common tasks.
+1. **[Function Tools](/adk-docs/tools-custom/function-tools/):** Tools created by you, tailored to your specific application's needs.
+    * **[Functions/Methods](/adk-docs/tools-custom/function-tools/#1-function-tool):** Define standard synchronous functions or methods in your code (e.g., Python def).
+    * **[Agents-as-Tools](/adk-docs/tools-custom/function-tools/#3-agent-as-a-tool):** Use another, potentially specialized, agent as a tool for a parent agent.
+    * **[Long Running Function Tools](/adk-docs/tools-custom/function-tools/#2-long-running-function-tool):** Support for tools that perform asynchronous operations or take significant time to complete.
+2. **[Built-in Tools](/adk-docs/tools/built-in-tools/):** Ready-to-use tools provided by the framework for common tasks.
         Examples: Google Search, Code Execution, Retrieval-Augmented Generation (RAG).
 3. **Third-Party Tools:** Integrate tools seamlessly from popular external libraries.
 
@@ -85,6 +89,12 @@ The following example showcases how an agent can use tools by **referencing thei
 
     ```py
     --8<-- "examples/python/snippets/tools/overview/weather_sentiment.py"
+    ```
+
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/tools-custom/weather_sentiment/main.go"
     ```
 
 === "Java"
@@ -143,6 +153,12 @@ The `tool_context.state` attribute provides direct read and write access to the 
     --8<-- "examples/python/snippets/tools/overview/user_preference.py"
     ```
 
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/tools-custom/user_preference/user_preference.go:example"
+    ```
+
 === "Java"
 
     ```java
@@ -178,7 +194,7 @@ The `tool_context.state` attribute provides direct read and write access to the 
 
 ### **Controlling Agent Flow**
 
-The `tool_context.actions` attribute (in Python and TypeScript) or `ToolContext.actions()` (in Java) holds an **EventActions** object. Modifying attributes on this object allows your tool to influence what the agent or framework does after the tool finishes execution.
+The `tool_context.actions` attribute in Python and TypeScript, `ToolContext.actions()` in Java, and `tool.Context.Actions()` in Go, holds an **EventActions** object. Modifying attributes on this object allows your tool to influence what the agent or framework does after the tool finishes execution.
 
 * **`skip_summarization: bool`**: (Default: False) If set to True, instructs the ADK to bypass the LLM call that typically summarizes the tool's output. This is useful if your tool's return value is already a user-ready message.
 
@@ -192,6 +208,12 @@ The `tool_context.actions` attribute (in Python and TypeScript) or `ToolContext.
 
     ```py
     --8<-- "examples/python/snippets/tools/overview/customer_support_agent.py"
+    ```
+
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/tools-custom/customer_support_agent/main.go"
     ```
 
 === "Java"
@@ -219,7 +241,13 @@ This example illustrates how a tool, through EventActions in its ToolContext, ca
 
 ### **Authentication**
 
-![py_ts_only](https://img.shields.io/badge/Currently_supported_in-Python_&_TypeScript-blue){ title="This feature is currently available for Python and TypeScript. Java support is planned/ coming soon."}
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span>
+  <span class="lst-python">Python v0.1.0</span>
+  <span class="lst-go">Go v0.1.0</span>
+  <span class="lst-java">Java v0.1.0</span>
+  <span class="lst-typescript">TypeScript v0.1.0</span>
+</div>
 
 ToolContext provides mechanisms for tools interacting with authenticated APIs. If your tool needs to handle authentication, you might use the following:
 
@@ -241,9 +269,9 @@ These methods provide convenient ways for your tool to interact with persistent 
 
 * **`save_artifact(filename: str, artifact: types.Part)`**: Saves a new version of an artifact to the artifact_service. Returns the new version number (starting from 0).
 
-* **`search_memory(query: str)`** ![py_ts_only](https://img.shields.io/badge/Currently_supported_in-Python_&_TypeScript-blue){ title="This feature is currently available for Python and TypeScript. Java support is planned/ coming soon."}
+* **`search_memory(query: str)`**: (Support in ADK Python, Go and TypeScript)
+    Queries the user's long-term memory using the configured `memory_service`. This is useful for retrieving relevant information from past interactions or stored knowledge. The structure of the **SearchMemoryResponse** depends on the specific memory service implementation but typically contains relevant text snippets or conversation excerpts.
 
-       Queries the user's long-term memory using the configured `memory_service`. This is useful for retrieving relevant information from past interactions or stored knowledge. The structure of the **SearchMemoryResponse** depends on the specific memory service implementation but typically contains relevant text snippets or conversation excerpts.
 
 #### Example
 
@@ -251,6 +279,12 @@ These methods provide convenient ways for your tool to interact with persistent 
 
     ```py
     --8<-- "examples/python/snippets/tools/overview/doc_analysis.py"
+    ```
+
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/tools-custom/doc_analysis/doc_analysis.go"
     ```
 
 === "Java"
@@ -387,6 +421,12 @@ Here are key guidelines for defining effective tool functions:
 
     ```
 
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/tools-custom/order_status/order_status.go:snippet"
+    ```
+
 === "Java"
 
     ```java
@@ -467,7 +507,12 @@ Here are key guidelines for defining effective tool functions:
 
 By adhering to these guidelines, you provide the LLM with the clarity and structure it needs to effectively utilize your custom function tools, leading to more capable and reliable agent behavior.
 
-## Toolsets: Grouping and Dynamically Providing Tools ![py_ts_only](https://img.shields.io/badge/Currently_supported_in-Python_&_TypeScript-blue){ title="This feature is currently available for Python and TypeScript. Java support is planned/ coming soon."}
+## Toolsets: Grouping and Dynamically Providing Tools
+
+<div class="language-support-tag" title="This feature is currently available for Python and Typescript.">
+   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.5.0</span><span class="lst-typescript">TypeScript v0.1.0</span>
+</div>
+
 
 Beyond individual tools, ADK introduces the concept of a **Toolset** via the `BaseToolset` interface (defined in `google.adk.tools.base_toolset`). A toolset allows you to manage and provide a collection of `BaseTool` instances, often dynamically, to an agent.
 

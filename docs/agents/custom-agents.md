@@ -1,10 +1,18 @@
+# Custom agents
+
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span>
+  <span class="lst-python">Python v0.1.0</span>
+  <span class="lst-go">Go v0.1.0</span>
+  <span class="lst-java">Java v0.1.0</span>
+  <span class="lst-typescript">TypeScript v0.1.0</span>
+</div>
+
+Custom agents provide the ultimate flexibility in ADK, allowing you to define **arbitrary orchestration logic** by inheriting directly from `BaseAgent` and implementing your own control flow. This goes beyond the predefined patterns of `SequentialAgent`, `LoopAgent`, and `ParallelAgent`, enabling you to build highly specific and complex agentic workflows.
+
 !!! warning "Advanced Concept"
 
     Building custom agents by directly implementing `_run_async_impl` (or its equivalent in other languages) provides powerful control but is more complex than using the predefined `LlmAgent` or standard `WorkflowAgent` types. We recommend understanding those foundational agent types first before tackling custom orchestration logic.
-
-# Custom agents
-
-Custom agents provide the ultimate flexibility in ADK, allowing you to define **arbitrary orchestration logic** by inheriting directly from `BaseAgent` and implementing your own control flow. This goes beyond the predefined patterns of `SequentialAgent`, `LoopAgent`, and `ParallelAgent`, enabling you to build highly specific and complex agentic workflows.
 
 ## Introduction: Beyond Predefined Workflows
 
@@ -40,6 +48,15 @@ The core of any custom agent is the method where you define its unique asynchron
       * **Signature:** `async def _run_async_impl(self, ctx: InvocationContext) -> AsyncGenerator[Event, None]:`
       * **Asynchronous Generator:** It must be an `async def` function and return an `AsyncGenerator`. This allows it to `yield` events produced by sub-agents or its own logic back to the runner.
       * **`ctx` (InvocationContext):** Provides access to crucial runtime information, most importantly `ctx.session.state`, which is the primary way to share data between steps orchestrated by your custom agent.
+
+=== "Go"
+
+    In Go, you implement the `Run` method as part of a struct that satisfies the `agent.Agent` interface. The actual logic is typically a method on your custom agent struct.
+
+    *   **Signature:** `Run(ctx agent.InvocationContext) iter.Seq2[*session.Event, error]`
+    *   **Iterator:** The `Run` method returns an iterator (`iter.Seq2`) that yields events and errors. This is the standard way to handle streaming results from an agent's execution.
+    *   **`ctx` (InvocationContext):** The `agent.InvocationContext` provides access to the session, including state, and other crucial runtime information.
+    *   **Session State:** You can access the session state through `ctx.Session().State()`.
 
 === "Java"
 
@@ -85,6 +102,48 @@ The core of any custom agent is the method where you define its unique asynchron
           ```
 
     3. **Implementing Control Flow:** Use standard Python constructs (`if`/`elif`/`else`, `for`/`while` loops, `try`/`except`) to create sophisticated, conditional, or iterative workflows involving your sub-agents.
+
+=== "Go"
+
+    1. **Calling Sub-Agents:** You invoke sub-agents by calling their `Run` method.
+
+          ```go
+          // Example: Running one sub-agent and yielding its events
+          for event, err := range someSubAgent.Run(ctx) {
+              if err != nil {
+                  // Handle or propagate the error
+                  return
+              }
+              // Yield the event up to the caller
+              if !yield(event, nil) {
+                return
+              }
+          }
+          ```
+
+    2. **Managing State:** Read from and write to the session state to pass data between sub-agent calls or make decisions.
+          ```go
+          // The `ctx` (`agent.InvocationContext`) is passed directly to your agent's `Run` function.
+          // Read data set by a previous agent
+          previousResult, err := ctx.Session().State().Get("some_key")
+          if err != nil {
+              // Handle cases where the key might not exist yet
+          }
+
+          // Make a decision based on state
+          if val, ok := previousResult.(string); ok && val == "some_value" {
+              // ... call a specific sub-agent ...
+          } else {
+              // ... call another sub-agent ...
+          }
+
+          // Store a result for a later step
+          if err := ctx.Session().State().Set("my_custom_result", "calculated_value"); err != nil {
+              // Handle error
+          }
+          ```
+
+    3. **Implementing Control Flow:** Use standard Go constructs (`if`/`else`, `for`/`switch` loops, goroutines, channels) to create sophisticated, conditional, or iterative workflows involving your sub-agents.
 
 === "Java"
 
@@ -189,6 +248,14 @@ Let's illustrate the power of custom agents with an example pattern: a multi-sta
     --8<-- "examples/python/snippets/agents/custom-agent/storyflow_agent.py:init"
     ```
 
+=== "Go"
+
+    We define the `StoryFlowAgent` struct and a constructor. In the constructor, we store the necessary sub-agents and tell the `BaseAgent` framework about the top-level agents this custom agent will directly orchestrate.
+
+    ```go
+    --8<-- "examples/go/snippets/agents/custom-agent/storyflow_agent.go:init"
+    ```
+
 === "Java"
 
     We define the `StoryFlowAgentExample` by extending `BaseAgent`. In its **constructor**, we store the necessary sub-agent instances (passed as parameters) as instance fields. These top-level sub-agents, which this custom agent will directly orchestrate, are also passed to the `super` constructor of `BaseAgent` as a list.
@@ -226,6 +293,19 @@ Let's illustrate the power of custom agents with an example pattern: a multi-sta
     3. The `sequential_agent` runs, calling `grammar_check` then `tone_check`, reading `current_story` and writing `grammar_suggestions` and `tone_check_result` to the state.
     4. **Custom Part:** The `if` statement checks the `tone_check_result` from the state. If it's "negative", the `story_generator` is called *again*, overwriting the `current_story` in the state. Otherwise, the flow ends.
 
+=== "Go"
+
+    The `Run` method orchestrates the sub-agents by calling their respective `Run` methods in a loop and yielding their events.
+
+    ```go
+    --8<-- "examples/go/snippets/agents/custom-agent/storyflow_agent.go:executionlogic"
+    ```
+    **Explanation of Logic:**
+
+    1. The initial `storyGenerator` runs. Its output is expected to be in the session state under the key `"current_story"`.
+    2. The `revisionLoopAgent` runs, which internally calls the `critic` and `reviser` sequentially for `max_iterations` times. They read/write `current_story` and `criticism` from/to the state.
+    3. The `postProcessorAgent` runs, calling `grammar_check` then `tone_check`, reading `current_story` and writing `grammar_suggestions` and `tone_check_result` to the state.
+    4. **Custom Part:** The code checks the `tone_check_result` from the state. If it's "negative", the `story_generator` is called *again*, overwriting the `current_story` in the state. Otherwise, the flow ends.
 
 
 === "Java"
@@ -273,6 +353,12 @@ These are standard `LlmAgent` definitions, responsible for specific tasks. Their
     --8<-- "examples/python/snippets/agents/custom-agent/storyflow_agent.py:llmagents"
     ```
 
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/agents/custom-agent/storyflow_agent.go:llmagents"
+    ```
+
 === "Java"
 
     ```java
@@ -283,7 +369,6 @@ These are standard `LlmAgent` definitions, responsible for specific tasks. Their
 
     ```typescript
     --8<-- "examples/typescript/snippets/agents/cutsom-agent/storyflow_agent.ts:llmagents"
-    ```
 
 ---
 
@@ -295,6 +380,12 @@ Finally, you instantiate your `StoryFlowAgent` and use the `Runner` as usual.
 
     ```python
     --8<-- "examples/python/snippets/agents/custom-agent/storyflow_agent.py:story_flow_agent"
+    ```
+
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/agents/custom-agent/storyflow_agent.go:story_flow_agent"
     ```
 
 === "Java"
@@ -322,6 +413,13 @@ Finally, you instantiate your `StoryFlowAgent` and use the `Runner` as usual.
         ```python
         # Full runnable code for the StoryFlowAgent example
         --8<-- "examples/python/snippets/agents/custom-agent/storyflow_agent.py"
+        ```
+    
+    === "Go"
+
+        ```go
+        # Full runnable code for the StoryFlowAgent example
+        --8<-- "examples/go/snippets/agents/custom-agent/storyflow_agent.go:full_code"
         ```
 
     === "Java"

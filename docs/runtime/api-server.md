@@ -1,4 +1,8 @@
-# Testing your Agents
+# Use the API Server
+
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+</div>
 
 Before you deploy your agent, you should test it to ensure that it is working as
 intended. The easiest way to test your agent in your development environment is
@@ -8,6 +12,12 @@ to use the ADK API server.
 
     ```py
     adk api_server
+    ```
+
+=== "Go"
+
+    ```go
+    go run agent.go web api
     ```
 
 === "Java"
@@ -32,7 +42,7 @@ to use the ADK API server.
 
         ```groovy
         tasks.register('runADKWebServer', JavaExec) {
-            dependsOn classes 
+            dependsOn classes
             classpath = sourceSets.main.runtimeClasspath
             mainClass = 'com.google.adk.web.AdkWebServer'
             args '--adk.agents.source-dir=src/main/java/agents', '--server.port=8080'
@@ -44,7 +54,7 @@ to use the ADK API server.
         gradle runADKWebServer
         ```
 
-    
+
     In Java, both the Dev UI and the API server are bundled together.
 
 === "TypeScript"
@@ -334,26 +344,28 @@ curl -X GET http://localhost:8000/list-apps
 
 Sessions store the state and event history for a specific user's interaction with an agent.
 
-#### Create or Update a Session
+#### Update a Session
 
-Creates a new session or updates an existing one. If a session with the given IDs already exists, its state will be overwritten with the new state provided.
+Updates an existing session.
 
-*   **Method:** `POST`
+*   **Method:** `PATCH`
 *   **Path:** `/apps/{app_name}/users/{user_id}/sessions/{session_id}`
 
 **Request Body**
 ```json
 {
-  "key1": "value1",
-  "key2": 42
+  "stateDelta": {
+    "key1": "value1",
+    "key2": 42
+  }
 }
 ```
 
 **Example Request**
 ```shell
-curl -X POST http://localhost:8000/apps/my_sample_agent/users/u_123/sessions/s_abc \
+curl -X PATCH http://localhost:8000/apps/my_sample_agent/users/u_123/sessions/s_abc \
   -H "Content-Type: application/json" \
-  -d '{"visit_count": 5}'
+  -d '{"stateDelta":{"visit_count": 5}}'
 ```
 
 **Example Response**

@@ -1,5 +1,9 @@
 # State: The Session's Scratchpad
 
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+</div>
+
 Within each `Session` (our conversation thread), the **`state`** attribute acts like the agent's dedicated scratchpad for that specific interaction. While `session.events` holds the full history, `session.state` is where the agent stores and updates dynamic details needed *during* the conversation.
 
 ## What is `session.state`?
@@ -17,7 +21,7 @@ Conceptually, `session.state` is a collection (dictionary or Map) holding key-va
 
     * Data is stored as `key: value`.
     * **Keys:** Always strings (`str`). Use clear names (e.g., `'departure_city'`, `'user:language_preference'`).
-    * **Values:** Must be **serializable**. This means they can be easily saved and loaded by the `SessionService`. Stick to basic types in the specific languages (Python/Java/TypeScript) like strings, numbers, booleans, and simple lists or dictionaries containing *only* these basic types. (See API documentation for precise details).
+    * **Values:** Must be **serializable**. This means they can be easily saved and loaded by the `SessionService`. Stick to basic types in the specific languages (Python/Go/Java/TypeScript) like strings, numbers, booleans, and simple lists or dictionaries containing *only* these basic types. (See API documentation for precise details).
     * **⚠️ Avoid Complex Objects:** **Do not store non-serializable objects** (custom class instances, functions, connections, etc.) directly in the state. Store simple identifiers if needed, and retrieve the complex object elsewhere.
 
 2. **Mutability: It Changes**
@@ -27,11 +31,12 @@ Conceptually, `session.state` is a collection (dictionary or Map) holding key-va
 3. **Persistence: Depends on `SessionService`**
 
     * Whether state survives application restarts depends on your chosen service:
+
       * `InMemorySessionService`: **Not Persistent.** State is lost on restart.
       * `DatabaseSessionService` / `VertexAiSessionService`: **Persistent.** State is saved reliably.
 
 !!! Note
-    The specific parameters or method names for the primitives may vary slightly by SDK language (e.g., `session.state['current_intent'] = 'book_flight'` in Python, `session.state().put("current_intent", "book_flight")` in Java, or `context.state.set("current_intent", "book_flight")` in TypeScript). Refer to the language-specific API documentation for details.
+    The specific parameters or method names for the primitives may vary slightly by SDK language (e.g., `session.state['current_intent'] = 'book_flight'` in Python,`context.State().Set("current_intent", "book_flight")` in Go, `session.state().put("current_intent", "book_flight)` in Java, or `context.state.set("current_intent", "book_flight")` in TypeScript). Refer to the language-specific API documentation for details.
 
 ### Organizing State with Prefixes: Scope Matters
 
@@ -92,9 +97,15 @@ To inject a value from the session state, enclose the key of the desired state v
         instruction="""Write a short story about a cat, focusing on the theme: {topic}."""
     )
 
-    # Assuming session.state['topic'] is set to "friendship", the LLM 
+    # Assuming session.state['topic'] is set to "friendship", the LLM
     # will receive the following instruction:
     # "Write a short story about a cat, focusing on the theme: friendship."
+    ```
+
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/sessions/instruction_template/instruction_template_example.go:key_template"
     ```
 
 === "TypeScript"
@@ -111,7 +122,6 @@ To inject a value from the session state, enclose the key of the desired state v
     // Assuming session.state['topic'] is set to "friendship", the LLM 
     // will receive the following instruction:
     // "Write a short story about a cat, focusing on the theme: friendship."
-    ```
 
 #### Important Considerations
 
@@ -146,6 +156,12 @@ The `InstructionProvider` function receives a `ReadonlyContext` object, which yo
     )
     ```
 
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/sessions/instruction_provider/instruction_provider_example.go:bypass_state_injection"
+    ```
+
 === "TypeScript"
 
     ```typescript
@@ -163,7 +179,6 @@ The `InstructionProvider` function receives a `ReadonlyContext` object, which yo
         name: "template_helper_agent",
         instruction: myInstructionProvider
     });
-    ```
 
 If you want to both use an `InstructionProvider` *and* inject state into your instructions, you can use the `inject_session_state` utility function.
 
@@ -184,6 +199,12 @@ If you want to both use an `InstructionProvider` *and* inject state into your in
         name="dynamic_template_helper_agent",
         instruction=my_dynamic_instruction_provider
     )
+    ```
+
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/sessions/instruction_provider/instruction_provider_example.go:manual_state_injection"
     ```
 
 **Benefits of Direct Injection**
@@ -260,6 +281,12 @@ This is the simplest method for saving an agent's final text response directly i
     --8<-- "examples/java/snippets/src/main/java/state/GreetingAgentExample.java:full_code"
     ```
 
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/sessions/state_example/state_example.go:greeting"
+    ```
+
 === "TypeScript"
 
     ```typescript
@@ -309,7 +336,7 @@ This is the simplest method for saving an agent's final text response directly i
     const updatedSession = await sessionService.getSession({ appName, userId, sessionId });
     console.log(`State after agent run: ${JSON.stringify(updatedSession?.state)}`);
     // Expected output might include: {"last_greeting":"Hello there! How can I help you today?"}
-    ```
+
 
 Behind the scenes, the `Runner` uses the `output_key` to create the necessary `EventActions` with a `state_delta` and calls `append_event`.
 
@@ -367,6 +394,12 @@ For more complex scenarios (updating multiple keys, non-string values, specific 
     print(f"State after event: {updated_session.state}")
     # Expected: {'user:login_count': 1, 'task_status': 'active', 'user:last_login_ts': <timestamp>}
     # Note: 'temp:validation_needed' is NOT present.
+    ```
+
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/sessions/state_example/state_example.go:manual"
     ```
 
 === "Java"
@@ -461,6 +494,12 @@ For more comprehensive details on context objects, refer to the [Context documen
 
         # State changes are automatically part of the event's state_delta
         # ... rest of callback/tool logic ...
+    ```
+
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/sessions/state_example/state_example.go:context"
     ```
 
 === "Java"

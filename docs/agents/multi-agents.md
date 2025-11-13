@@ -1,5 +1,13 @@
 # Multi-Agent Systems in ADK
 
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span>
+  <span class="lst-python">Python v0.1.0</span>
+  <span class="lst-go">Go v0.1.0</span>
+  <span class="lst-java">Java v0.1.0</span>
+  <span class="lst-typescript">TypeScript v0.1.0</span>
+</div>
+
 As agentic applications grow in complexity, structuring them as a single, monolithic agent can become challenging to develop, maintain, and reason about. The Agent Development Kit (ADK) supports building sophisticated applications by composing multiple, distinct `BaseAgent` instances into a **Multi-Agent System (MAS)**.
 
 In ADK, a multi-agent system is an application where different agents, often forming a hierarchy, collaborate or coordinate to achieve a larger goal. Structuring your application this way offers significant advantages, including enhanced modularity, specialization, reusability, maintainability, and the ability to define structured control flows using dedicated workflow agents.
@@ -51,6 +59,17 @@ The foundation for structuring multi-agent systems is the parent-child relations
     # Framework automatically sets:
     # assert greeter.parent_agent == coordinator
     # assert task_doer.parent_agent == coordinator
+    ```
+
+=== "Go"
+
+    ```go
+    import (
+        "google.golang.org/adk/agent"
+        "google.golang.org/adk/agent/llmagent"
+    )
+
+    --8<-- "examples/go/snippets/agents/multi-agent/main.go:hierarchy"
     ```
 
 === "Java"
@@ -118,7 +137,7 @@ The foundation for structuring multi-agent systems is the parent-child relations
     // Framework automatically sets:
     // console.assert(greeter.parentAgent === coordinator);
     // console.assert(taskDoer.parentAgent === coordinator);
-    ```
+
 
 ### 1.2. Workflow Agents as Orchestrators { #workflow-agents-as-orchestrators }
 
@@ -138,6 +157,18 @@ ADK includes specialized agents derived from `BaseAgent` that don't perform task
 
     pipeline = SequentialAgent(name="MyPipeline", sub_agents=[step1, step2])
     # When pipeline runs, Step2 can access the state['data'] set by Step1.
+    ```
+
+=== "Go"
+
+    ```go
+    import (
+        "google.golang.org/adk/agent"
+        "google.golang.org/adk/agent/llmagent"
+        "google.golang.org/adk/agent/workflowagents/sequentialagent"
+    )
+
+    --8<-- "examples/go/snippets/agents/multi-agent/main.go:sequential-pipeline"
     ```
 
 === "Java"
@@ -165,7 +196,7 @@ ADK includes specialized agents derived from `BaseAgent` that don't perform task
 
     const pipeline = new SequentialAgent({name: 'MyPipeline', subAgents: [step1, step2]});
     // When pipeline runs, Step2 can access the state['data'] set by Step1.
-    ```
+
 
 * **[`ParallelAgent`](workflow-agents/parallel-agents.md):** Executes its `sub_agents` in parallel. Events from sub-agents may be interleaved.
     * **Context:** Modifies the `InvocationContext.branch` for each child agent (e.g., `ParentBranch.ChildName`), providing a distinct contextual path which can be useful for isolating history in some memory implementations.
@@ -185,6 +216,18 @@ ADK includes specialized agents derived from `BaseAgent` that don't perform task
     # A subsequent agent could read state['weather'] and state['news'].
     ```
   
+=== "Go"
+
+    ```go
+    import (
+        "google.golang.org/adk/agent"
+        "google.golang.org/adk/agent/llmagent"
+        "google.golang.org/adk/agent/workflowagents/parallelagent"
+    )
+
+    --8<-- "examples/go/snippets/agents/multi-agent/main.go:parallel-execution"
+    ```
+
 === "Java"
 
     ```java
@@ -223,7 +266,7 @@ ADK includes specialized agents derived from `BaseAgent` that don't perform task
     const gatherer = new ParallelAgent({name: 'InfoGatherer', subAgents: [fetchWeather, fetchNews]});
     // When gatherer runs, WeatherFetcher and NewsFetcher run concurrently.
     // A subsequent agent could read state['weather'] and state['news'].
-    ```
+
 
   * **[`LoopAgent`](workflow-agents/loop-agents.md):** Executes its `sub_agents` sequentially in a loop.
       * **Termination:** The loop stops if the optional `max_iterations` is reached, or if any sub-agent returns an [`Event`](../events/index.md) with `escalate=True` in it's Event Actions.
@@ -293,6 +336,20 @@ ADK includes specialized agents derived from `BaseAgent` that don't perform task
     // until Checker escalates (state.get("status") == "completed") or 10 iterations pass.
     ```
 
+=== "Go"
+
+    ```go
+    import (
+        "iter"
+        "google.golang.org/adk/agent"
+        "google.golang.org/adk/agent/llmagent"
+        "google.golang.org/adk/agent/workflowagents/loopagent"
+        "google.golang.org/adk/session"
+    )
+
+    --8<-- "examples/go/snippets/agents/multi-agent/main.go:loop-with-condition"
+    ```
+
 === "Typescript"
 
     ```typescript
@@ -322,7 +379,7 @@ ADK includes specialized agents derived from `BaseAgent` that don't perform task
     });
     // When poller runs, it executes processStep then Checker repeatedly
     // until Checker escalates (state['status'] === 'completed') or 10 iterations pass.
-    ```
+
 
 ### 1.3. Interaction & Communication Mechanisms { #interaction-communication-mechanisms }
 
@@ -378,6 +435,18 @@ The most fundamental way for agents operating within the same invocation (and th
     // AgentB runs, its instruction processor reads state.get("capital_city") to get "Paris".
     ```
 
+=== "Go"
+
+    ```go
+    import (
+        "google.golang.org/adk/agent"
+        "google.golang.org/adk/agent/llmagent"
+        "google.golang.org/adk/agent/workflowagents/sequentialagent"
+    )
+
+    --8<-- "examples/go/snippets/agents/multi-agent/main.go:output-key-state"
+    ```
+
 === "Typescript"
 
     ```typescript
@@ -390,7 +459,7 @@ The most fundamental way for agents operating within the same invocation (and th
     const pipeline = new SequentialAgent({name: 'CityInfo', subAgents: [agentA, agentB]});
     // AgentA runs, saves "Paris" to state['capital_city'].
     // AgentB runs, its instruction processor reads state['capital_city'] to get "Paris".
-    ```
+
 
 #### b) LLM-Driven Delegation (Agent Transfer)
 
@@ -455,6 +524,16 @@ Leverages an [`LlmAgent`](llm-agents.md)'s understanding to dynamically route ta
     // ADK framework then routes execution to bookingAgent.
     ```
 
+=== "Go"
+
+    ```go
+    import (
+        "google.golang.org/adk/agent/llmagent"
+    )
+
+    --8<-- "examples/go/snippets/agents/multi-agent/main.go:llm-transfer"
+    ```
+
 === "Typescript"
 
     ```typescript
@@ -475,7 +554,7 @@ Leverages an [`LlmAgent`](llm-agents.md)'s understanding to dynamically route ta
     // If coordinator receives "Book a flight", its LLM should generate:
     // {functionCall: {name: 'transfer_to_agent', args: {agent_name: 'Booker'}}}
     // ADK framework then routes execution to bookingAgent.
-    ```
+
 
 #### c) Explicit Invocation (`AgentTool`)
 
@@ -582,6 +661,24 @@ Allows an [`LlmAgent`](llm-agents.md) to treat another `BaseAgent` instance as a
     // The resulting image Part is returned to the Artist agent as the tool result.
     ```
 
+=== "Go"
+
+    ```go
+    import (
+        "fmt"
+        "iter"
+        "google.golang.org/adk/agent"
+        "google.golang.org/adk/agent/llmagent"
+        "google.golang.org/adk/model"
+        "google.golang.org/adk/session"
+        "google.golang.org/adk/tool"
+        "google.golang.org/adk/tool/agenttool"
+        "google.golang.org/genai"
+    )
+
+    --8<-- "examples/go/snippets/agents/multi-agent/main.go:agent-as-tool"
+    ```
+
 === "Typescript"
 
     ```typescript
@@ -622,7 +719,7 @@ Allows an [`LlmAgent`](llm-agents.md) to treat another `BaseAgent` instance as a
     // {functionCall: {name: 'ImageGen', args: {image_prompt: 'a cat wearing a hat'}}}
     // Framework calls imageTool.runAsync(...), which runs ImageGeneratorAgent.
     // The resulting image Part is returned to the Artist agent as the tool result.
-    ```
+
 
 These primitives provide the flexibility to design multi-agent interactions ranging from tightly coupled sequential workflows to dynamic, LLM-driven delegation networks.
 
@@ -657,6 +754,17 @@ By combining ADK's composition primitives, you can implement various established
     )
     # User asks "My payment failed" -> Coordinator's LLM should call transfer_to_agent(agent_name='Billing')
     # User asks "I can't log in" -> Coordinator's LLM should call transfer_to_agent(agent_name='Support')
+    ```
+
+=== "Go"
+
+    ```go
+    import (
+        "google.golang.org/adk/agent"
+        "google.golang.org/adk/agent/llmagent"
+    )
+
+    --8<-- "examples/go/snippets/agents/multi-agent/main.go:coordinator-pattern"
     ```
 
 === "Java"
@@ -710,7 +818,6 @@ By combining ADK's composition primitives, you can implement various established
     });
     // User asks "My payment failed" -> Coordinator's LLM should call {functionCall: {name: 'transfer_to_agent', args: {agent_name: 'Billing'}}}
     // User asks "I can't log in" -> Coordinator's LLM should call {functionCall: {name: 'transfer_to_agent', args: {agent_name: 'Support'}}}
-    ```
 
 ### Sequential Pipeline Pattern
 
@@ -737,6 +844,18 @@ By combining ADK's composition primitives, you can implement various established
     # validator runs -> saves to state['validation_status']
     # processor runs -> reads state['validation_status'], saves to state['result']
     # reporter runs -> reads state['result']
+    ```
+
+=== "Go"
+
+    ```go
+    import (
+        "google.golang.org/adk/agent"
+        "google.golang.org/adk/agent/llmagent"
+        "google.golang.org/adk/agent/workflowagents/sequentialagent"
+    )
+
+    --8<-- "examples/go/snippets/agents/multi-agent/main.go:sequential-pipeline-pattern"
     ```
 
 === "Java"
@@ -789,7 +908,6 @@ By combining ADK's composition primitives, you can implement various established
     // validator runs -> saves to state['validation_status']
     // processor runs -> reads state['validation_status'], saves to state['result']
     // reporter runs -> reads state['result']
-    ```
 
 ### Parallel Fan-Out/Gather Pattern
 
@@ -825,6 +943,20 @@ By combining ADK's composition primitives, you can implement various established
     # fetch_api1 and fetch_api2 run concurrently, saving to state.
     # synthesizer runs afterwards, reading state['api1_data'] and state['api2_data'].
     ```
+
+=== "Go"
+
+    ```go
+    import (
+        "google.golang.org/adk/agent"
+        "google.golang.org/adk/agent/llmagent"
+        "google.golang.org/adk/agent/workflowagents/parallelagent"
+        "google.golang.org/adk/agent/workflowagents/sequentialagent"
+    )
+
+    --8<-- "examples/go/snippets/agents/multi-agent/main.go:parallel-gather-pattern"
+    ```
+
 === "Java"
 
     ```java
@@ -889,8 +1021,6 @@ By combining ADK's composition primitives, you can implement various established
     });
     // fetchApi1 and fetchApi2 run concurrently, saving to state.
     // synthesizer runs afterwards, reading state['api1_data'] and state['api2_data'].
-    ```
-
 
 ### Hierarchical Task Decomposition
 
@@ -931,6 +1061,18 @@ By combining ADK's composition primitives, you can implement various established
     # ReportWriter calls ResearchAssistant tool.
     # ResearchAssistant calls WebSearch and Summarizer tools.
     # Results flow back up.
+    ```
+
+=== "Go"
+
+    ```go
+    import (
+        "google.golang.org/adk/agent/llmagent"
+        "google.golang.org/adk/tool"
+        "google.golang.org/adk/tool/agenttool"
+    )
+
+    --8<-- "examples/go/snippets/agents/multi-agent/main.go:hierarchical-pattern"
     ```
 
 === "Java"
@@ -1004,7 +1146,6 @@ By combining ADK's composition primitives, you can implement various established
     // ReportWriter calls ResearchAssistant tool.
     // ResearchAssistant calls WebSearch and Summarizer tools.
     // Results flow back up.
-    ```
 
 ### Review/Critique Pattern (Generator-Critic)
 
@@ -1040,6 +1181,18 @@ By combining ADK's composition primitives, you can implement various established
     )
     # generator runs -> saves draft to state['draft_text']
     # reviewer runs -> reads state['draft_text'], saves status to state['review_status']
+    ```
+
+=== "Go"
+
+    ```go
+    import (
+        "google.golang.org/adk/agent"
+        "google.golang.org/adk/agent/llmagent"
+        "google.golang.org/adk/agent/workflowagents/sequentialagent"
+    )
+
+    --8<-- "examples/go/snippets/agents/multi-agent/main.go:generator-critic-pattern"
     ```
 
 === "Java"
@@ -1098,7 +1251,7 @@ By combining ADK's composition primitives, you can implement various established
     });
     // generator runs -> saves draft to state['draft_text']
     // reviewer runs -> reads state['draft_text'], saves status to state['review_status']
-    ```
+
 
 ### Iterative Refinement Pattern
 
@@ -1147,6 +1300,20 @@ By combining ADK's composition primitives, you can implement various established
     # Loop runs: Refiner -> Checker -> StopChecker
     # State['current_code'] is updated each iteration.
     # Loop stops if QualityChecker outputs 'pass' (leading to StopChecker escalating) or after 5 iterations.
+    ```
+
+=== "Go"
+
+    ```go
+    import (
+        "iter"
+        "google.golang.org/adk/agent"
+        "google.golang.org/adk/agent/llmagent"
+        "google.golang.org/adk/agent/workflowagents/loopagent"
+        "google.golang.org/adk/session"
+    )
+
+    --8<-- "examples/go/snippets/agents/multi-agent/main.go:iterative-refinement-pattern"
     ```
 
 === "Java"
@@ -1253,7 +1420,6 @@ By combining ADK's composition primitives, you can implement various established
         maxIterations: 5,
         subAgents: [codeRefiner, qualityChecker, new CheckStatusAndEscalate({name: 'StopChecker'})]
     });
-    ```
 
 ### Human-in-the-Loop Pattern
 
@@ -1350,6 +1516,19 @@ By combining ADK's composition primitives, you can implement various established
         .name("HumanApprovalWorkflow")
         .subAgents(prepareRequest, requestApproval, processDecision)
         .build();
+    ```
+
+=== "Go"
+
+    ```go
+    import (
+        "google.golang.org/adk/agent"
+        "google.golang.org/adk/agent/llmagent"
+        "google.golang.org/adk/agent/workflowagents/sequentialagent"
+        "google.golang.org/adk/tool"
+    )
+    
+    --8<-- "examples/go/snippets/agents/multi-agent/main.go:human-in-loop-pattern"
     ```
 
 === "Typescript"
@@ -1460,3 +1639,4 @@ You can find the full code sample [here](../../examples/typescript/snippets/agen
 ### Combining Patterns
 
 These patterns provide starting points for structuring your multi-agent systems. You can mix and match them as needed to create the most effective architecture for your specific application.
+

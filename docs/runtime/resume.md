@@ -1,5 +1,9 @@
 # Resume stopped agents
 
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.14.0</span>
+</div>
+
 An ADK agent's execution can be interrupted by various factors including
 dropped network connections, power failure, or a required external system going
 offline. The Resume feature of ADK allows an agent workflow to pick up where it
@@ -32,9 +36,9 @@ app = App(
 
 !!! warning "Caution: Long Running Functions, Confirmations, Authentication"
     For agents that use
-    [Long Running Functions](/adk-docs/tools/function-tools/#long-run-tool),
-    [Confirmations](/adk-docs/tools/confirmation/), or
-    [Authentication](/adk-docs/tools/authentication/)
+    [Long Running Functions](/adk-docs/tools-custom/function-tools/#long-run-tool),
+    [Confirmations](/adk-docs/tools-custom/confirmation/), or
+    [Authentication](/adk-docs/tools-custom/authentication/)
     requiring user input, adding a resumable confirmation changes how these features
     operate. For more information, see the documentation for those features.
 
