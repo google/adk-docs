@@ -176,7 +176,8 @@ nav:
         - Code Execution with Agent Engine: tools/google-cloud/code-exec-agent-engine.md
       - Third-party tools:
         - tools/third-party/index.md
-        - Bright Data: tools/third-part/bright-data.md
+        - AgentQL: tools/third-party/agentql.md
+        - Bright Data: tools/third-party/bright-data.md
         - Browserbase: tools/third-party/browserbase.md
         - Exa: tools/third-party/exa.md
         - Firecrawl: tools/third-party/firecrawl.md
