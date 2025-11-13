@@ -43,8 +43,8 @@ Use `EXACT` match when you need to enforce a specific tool execution path and
 consider any deviation—whether in tool name, arguments, or order—as a failure.
 
 Use `IN_ORDER` match when you want to ensure certain key tool calls occur in a
-specific order, but allow for other tool calls to happen in between. This is
-useful in assuring if certain key actions/tool calls occur and in certain order,
+specific order, but allow for other tool calls to happen in between. This option is
+useful in assuring if certain key actions or tool calls occur and in certain order,
 leaving some scope for other tools calls to happen as well.
 
 Use `ANY_ORDER` match when you want to ensure certain key tool calls occur, but
