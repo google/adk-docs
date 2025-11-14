@@ -54,7 +54,9 @@ If you need the agent to create this table, you need to grant the `roles/bigquer
 
 ## Use with agent
 
-You use the BigQuery Analytics Plugin by registering it with your ADK agent's App object. The following example shows an implementation of an agent with this plugin and BigQuery tools enabled:
+You use the BigQuery Analytics Plugin by configuring and registering it with
+your ADK agent's App object. The following example shows an implementation of an
+agent with this plugin and BigQuery tools enabled:
 
 ```python title="my_bq_agent/agent.py"
 # my_bq_agent/agent.py
