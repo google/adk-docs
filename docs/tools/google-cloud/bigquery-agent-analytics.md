@@ -40,7 +40,7 @@ information, see [Event types and payloads](#event-types).
 
 -   **Google Cloud Project** with the **BigQuery API** enabled.
 -   **BigQuery Dataset:** Create a dataset to store logging tables before
-    using the plugin. The plugin automatically would create the necessary events table within the dataset if the table does not exist . By default, this table is named agent_events, while you can customize this with the table_id parameter in the plugin configuration.
+    using the plugin. The plugin automatically would create the necessary events table within the dataset if the table does not exist. By default, this table is named agent_events, while you can customize this with the table_id parameter in the plugin configuration.
 -   **Authentication:**
     -   **Local:** Run `gcloud auth application-default login`.
     -   **Cloud:** Ensure your service account has the required permissions.
