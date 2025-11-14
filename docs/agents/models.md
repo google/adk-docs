@@ -201,9 +201,9 @@ For deployed applications, a service account is the standard method.
 
 ### Troubleshooting
 
-#### HTTP Error Code: 429 (RESOURCE_EXHAUSTED)
+#### Error Code 429 - RESOURCE_EXHAUSTED
 
-This usually happens if you exceed your alloted request quota.
+This usually happens if the number of your requests exceeds the capacity allocated to process requests.
 
 To mitigate this, you can do one of the following:
 
