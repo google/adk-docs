@@ -137,10 +137,10 @@ You can customize the plugin using `BigQueryLoggerConfig`.
 -   **`event_allowlist`** (`Optional[List[str]]`, default: `None`): A list
     of event types to log. If `None`, all events are logged except those in
     `event_denylist`. For a comprehensive list of supported event types, refer
-    to the [Event Types and Payloads](#event-types) section.
+    to the [Event types and payloads](#event-types) section.
 -   **`event_denylist`** (`Optional[List[str]]`, default: `None`): A list of
     event types to skip logging. For a comprehensive list of supported event
-    types, refer to the [Event Types and Payloads](#event-types) section.
+    types, refer to the [Event types and payloads](#event-types) section.
 -   **`content_formatter`** (`Optional[Callable[[Any], str]]`, default:
     `None`): An optional function to format event content before logging. The
     following code illustrates how to implement the content formatter.
