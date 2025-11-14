@@ -1,7 +1,7 @@
 # BigQuery Agent Analytics Plugin
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.18.0</span><span class="lst-preview">Preview</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.19.0</span><span class="lst-preview">Preview</span>
 </div>
 
 !!! note "Availability"
