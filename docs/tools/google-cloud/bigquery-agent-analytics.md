@@ -4,12 +4,10 @@
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.18.0</span><span class="lst-preview">Preview</span>
 </div>
 
-The BigQuery Agent Analytics Plugin provides a robust solution for in-depth
-behavior analysis of agents for the Agent Development Kit (ADK). Using the ADK
-[Plugin](/adk-docs/plugins/) architecture and the BigQuery Storage Write API, it
-captures and logs critical operational events directly into a Google BigQuery
-table, empowering you with advanced capabilities for debugging, real-time
-monitoring, and comprehensive offline performance evaluation.
+!!! note "Availability"
+    To try this plugin, it is recommended to build ADK from the Top of the tree or wait for the official release of version 1.19. This note will be removed once version 1.19 is out.
+
+The BigQuery Agent Analytics Plugin significantly enhances the Agent Development Kit (ADK) by providing a robust solution for in-depth agent behavior analysis. Using the ADK Plugin architecture and the BigQuery Storage Write API, it captures and logs critical operational events directly into a Google BigQuery table, empowering you with advanced capabilities for debugging, real-time monitoring, and comprehensive offline performance evaluation.
 
 !!! example "Preview release"
 
@@ -20,9 +18,8 @@ monitoring, and comprehensive offline performance evaluation.
 !!! warning "BigQuery Storage Write API"
 
     This feature uses **BigQuery Storage Write API**, which is a paid service.
-    For information on costs, see the 
-    [BigQuery](https://cloud.google.com/bigquery/pricing?e=48754805&hl=en#data-ingestion-pricing)
-    documentation.
+    For information on costs, see the
+    [BigQuery documentation](https://cloud.google.com/bigquery/pricing?e=48754805&hl=en#data-ingestion-pricing).
 
 ## Use cases
 
@@ -35,63 +32,27 @@ monitoring, and comprehensive offline performance evaluation.
     event order via timestamps.
 
 The agent event data recorded varies based on the ADK event type. For more
-information, see [Event types and payloads](#event-types).
+information, see [Event Types and Payloads](#event-types).
 
 ## Prerequisites
 
 -   **Google Cloud Project** with the **BigQuery API** enabled.
 -   **BigQuery Dataset:** Create a dataset to store logging tables before
-    using the plugin.
+    using the plugin. The plugin automatically would create the necessary events table within the dataset if the table does not exist . By default, this table is named agent_events, while you can customize this with the table_id parameter in the plugin configuration.
 -   **Authentication:**
     -   **Local:** Run `gcloud auth application-default login`.
     -   **Cloud:** Ensure your service account has the required permissions.
 
-### IAM permissions
+### IAM Permissions
 
-To ensure the agent functions correctly while adhering to the principle of
-least privilege, grant the following roles to the user or service account
-running the agent:
-
-1.  To run BigQuery jobs:
-    -   **Role:** `roles/bigquery.jobUser`
-    -   **Scope:** Grant at the **Project** level.
-    -   **Reason:** This role is necessary for the agent to execute
-        BigQuery jobs, including queries, within your GCP project. It does not
-        inherently grant access to any data.
-
-1.  To write data to specific BigQuery datasets:
-    -   **Role:** `roles/bigquery.dataEditor`
-    -   **Scope:** Grant at the **Dataset** level for each specific
-        BigQuery dataset the agent needs to write to (e.g.,
-        `your-project-id:agent_logs_dataset`, `your-project-id:feedback_dataset`).
-    -   **Reason:** This permission allows the agent to create, update,
-        and delete tables *only* within the specified dataset(s) and write data
-        to them. Granting this role at the dataset level prevents overly broad
-        access across the entire project.
-
-**Example:**
-
-If your agent needs to run queries in the project `my-ca-project` and write data
-to tables within the BigQuery dataset `agentops_data`, configure the permissions
-as follows:
-
--   Grant `roles/bigquery.jobUser` to the service account on the project
-    `my-ca-project`.
--   Grant `roles/bigquery.dataEditor` to the service account on the dataset
-    `my-ca-project:agentops_data`.
-
-!!! tip "Tip: Create datasets in advance"
-
-    Best practice is to create the BigQuery datasets beforehand. If
-    the agent requires permissions to *create* datasets, this means you need to set
-    broader permissions, such as `roles/bigquery.dataEditor` at the project
-    level, which is generally not recommended for runtime service accounts.
+For the agent to work properly, the principal (e.g., service account, user account) under which the agent is running needs these Google Cloud roles:
+*   `roles/bigquery.jobUser` at Project Level to run BigQuery queries in your project. This role doesn't grant access to any data on its own.
+*   `roles/bigquery.dataEditor` at Table Level to write log/event data to a BigQuery Table of your choice.
+If you need the agent to create this table, you need to grant the `roles/bigquery.dataEditor` on the BigQuery dataset where you want the table to be created.
 
 ## Use with agent
 
-You use the BigQuery Analytics Plugin by configuring and registering it with
-your ADK agent's App object. The following example shows an implementation of an
-agent with this plugin and BigQuery tools enabled:
+You use the BigQuery Analytics Plugin by registering it with your ADK agent's App object. The following example shows an implementation of an agent with this plugin and BigQuery tools enabled:
 
 ```python title="my_bq_agent/agent.py"
 # my_bq_agent/agent.py
@@ -106,27 +67,39 @@ from google.adk.tools.bigquery import BigQueryToolset, BigQueryCredentialsConfig
 # --- Configuration ---
 PROJECT_ID = os.environ.get("GOOGLE_CLOUD_PROJECT", "your-gcp-project-id")
 DATASET_ID = os.environ.get("BIG_QUERY_DATASET_ID", "your-big-query-dataset-id")
+LOCATION = os.environ.get("GOOGLE_CLOUD_LOCATION", "your-gcp-project-location") # use the location of your google cloud project
+
 if PROJECT_ID == "your-gcp-project-id":
     raise ValueError("Please set GOOGLE_CLOUD_PROJECT or update the code.")
 if DATASET_ID == "your-big-query-dataset-id":
     raise ValueError("Please set BIG_QUERY_DATASET_ID or update the code.")
+if LOCATION == "your-gcp-project-location":
+    raise ValueError("Please set GOOGLE_CLOUD_LOCATION or update the code.")
 
+# --- CRITICAL: Set environment variables BEFORE Gemini instantiation ---
+os.environ['GOOGLE_CLOUD_PROJECT'] = PROJECT_ID
+os.environ['GOOGLE_CLOUD_LOCATION'] = LOCATION
+os.environ['GOOGLE_GENAI_USE_VERTEXAI'] = 'True' # Make sure you have Vertex AI API enabled
 
 # --- Initialize the Plugin ---
 bq_logging_plugin = BigQueryAgentAnalyticsPlugin(
     project_id=PROJECT_ID, # project_id is required input from user
     dataset_id=DATASET_ID, # dataset_id is required input from user
-    table_id="agent_events" # The plugin will create the agent_events table if the user does not specify a table_id.
+    table_id="agent_events" # Optional: defaults to "agent_events". The plugin automatically creates this table if it doesn't exist.
 )
 
-# --- Initialize Tools and Agent ---
+# --- Initialize Tools and Model ---
 credentials, _ = google.auth.default(scopes=["https://www.googleapis.com/auth/cloud-platform"])
 bigquery_toolset = BigQueryToolset(
     credentials_config=BigQueryCredentialsConfig(credentials=credentials)
 )
 
-root_agent = Agent(
+llm = Gemini(
     model="gemini-2.5-flash",
+)
+
+root_agent = Agent(
+    model=llm,
     name='my_bq_agent',
     instruction="You are a helpful assistant with access to BigQuery tools.",
     tools=[bigquery_toolset]
@@ -143,11 +116,9 @@ app = App(
 ### Run and test agent
 
 Test the plugin by running the agent and making a few requests through the chat
-interface, such as "tell me what you can do" or  "List datasets in my cloud
-project <`your-gcp-project-id`>". These actions create events which are
+interface, such as ”tell me what you can do” or  "List datasets in my cloud project <your-gcp-project-id> “. These actions create events which are
 recorded in your Google Cloud project BigQuery instance. Once these events have
-been processed, you can view the data for them in the [BigQuery
-Console](https://console.cloud.google.com/bigquery), using this query
+been processed, you can view the data for them in the [BigQuery Console](https://console.cloud.google.com/bigquery), using this query
 
 ```sql
 SELECT timestamp, event_type, content
@@ -158,18 +129,16 @@ LIMIT 20;
 
 ## Configuration options
 
-You can customize the plugin using the `BigQueryLoggerConfig` class,
-which includes the following options:
+You can customize the plugin using `BigQueryLoggerConfig`.
 
--   **`enabled`** (`bool`, default: `True`): Set this parameter to `False`
-    when not actively debugging your agent.
+-   **`enabled`** (`bool`, default: `True`): To disable the plugin from logging agent data to the BigQuery table, set this parameter to False.
 -   **`event_allowlist`** (`Optional[List[str]]`, default: `None`): A list
     of event types to log. If `None`, all events are logged except those in
     `event_denylist`. For a comprehensive list of supported event types, refer
-    to the [Event types and payloads](#event-types) section.
+    to the [Event Types and Payloads](#event-types) section.
 -   **`event_denylist`** (`Optional[List[str]]`, default: `None`): A list of
     event types to skip logging. For a comprehensive list of supported event
-    types, refer to the [Event types and payloads](#event-types) section.
+    types, refer to the [Event Types and Payloads](#event-types) section.
 -   **`content_formatter`** (`Optional[Callable[[Any], str]]`, default:
     `None`): An optional function to format event content before logging. The
     following code illustrates how to implement the content formatter.
@@ -214,6 +183,7 @@ config = BigQueryLoggerConfig(
     client_close_timeout=2.0, # Wait up to 2s for BQ client to close
     max_content_length=500, # Truncate content to 500 chars (default)
     content_formatter=redact_dollar_amounts, # Redact the dollar amounts in the logging content
+
 )
 
 plugin = BigQueryAgentAnalyticsPlugin(..., config=config)
@@ -237,21 +207,20 @@ CREATE TABLE `your-gcp-project-id.adk_agent_logs.agent_events`
   invocation_id STRING OPTIONS(description="A unique identifier for each individual agent execution or turn within a session."),
   user_id STRING OPTIONS(description="The identifier of the user associated with the current session."),
   content STRING OPTIONS(description="The event-specific data (payload). Format varies by event_type."),
-  error_message STRING OPTIONS(description="Populated if an error occurs during the processing of the event.")
+  error_message STRING OPTIONS(description="Populated if an error occurs during the processing of the event."),
+  is_truncated STRING OPTIONS(description="Indicates if the content field was truncated due to size limits.")
 )
 PARTITION BY DATE(timestamp)
 CLUSTER BY event_type, agent, user_id;
 ```
-### Event types and payloads {#event-types}
+### Event Types and Payloads {#event-types}
 
 The `content` column contains a formatted string specific to the `event_type`.
 The following table descibes these events and corresponding content.
 
 !!! note
 
-    All variable content fields, such as user input, model response, tool
-    arguments, system prompt, are truncated to `max_content_length` characters
-    (configured in `BigQueryLoggerConfig`, default 500) to manage log size.
+    All variable content fields (e.g., user input, model response, tool arguments, system prompt) are truncated to `max_content_length` characters (configured in `BigQueryLoggerConfig`, default 500) to manage log size.
 
 #### LLM interactions (plugin lifecycle)
 
@@ -279,7 +248,7 @@ before_model_callback
 Model: {model} | Prompt: {prompt} | System Prompt: Model: {model} | Prompt: {formatted_contents} | System Prompt: {system_prompt} | Params: {params} | Available Tools: {tool_names}
 </pre></p></td>
       <td><p><pre>
-Model: gemini-2.5-flash | Prompt: user: Model: gemini-flash-2.5| Prompt: user: text: 'Hello'| System Prompt: You are a helpful assistant. | Params: {temperature=1.0} | Available Tools: ['bigquery[...]
+Model: gemini-2.5-flash | Prompt: user: Model: gemini-flash-2.5| Prompt: user: text: 'Hello'| System Prompt: You are a helpful assistant. | Params: {temperature=1.0} | Available Tools: ['bigquery_tool']
 </pre></p></td>
     </tr>
     <tr>
@@ -314,7 +283,7 @@ None
   </tbody>
 </table>
 
-#### Tool usage (plugin lifecycle)
+#### Tool Usage (Plugin Lifecycle)
 
 These events track the execution of tools by the agent.
 
@@ -446,7 +415,7 @@ Agent Name: sub_agent_researcher
   </tbody>
 </table>
 
-#### User and generic events (event stream)
+#### User and generic events (Event stream)
 
 These events are derived from the `Event` objects yielded by the agent or the
 runner.
@@ -520,11 +489,13 @@ The following example queries demonstrate how to extract information from the
 recorded ADK agent event analytics data in BigQuery. You can run these queries
 using the [BigQuery Console](https://console.cloud.google.com/bigquery).
 
+Before executing these queries, ensure you update the GCP project ID, BigQuery dataset ID, and the table ID (defaulting to "agent_events" if unspecified) within the provided SQL.
+
 **Trace a specific conversation turn**
 
 ```sql
 SELECT timestamp, event_type, agent, content
-FROM `your-gcp-project-id.adk_agent_logs.agent_events`
+FROM `your-gcp-project-id.your-dataset-id.agent_events`
 WHERE invocation_id = 'your-invocation-id'
 ORDER BY timestamp ASC;
 ```
@@ -533,7 +504,7 @@ ORDER BY timestamp ASC;
 
 ```sql
 SELECT DATE(timestamp) as log_date, COUNT(DISTINCT invocation_id) as count
-FROM `your-gcp-project-id.adk_agent_logs.agent_events`
+FROM `your-gcp-project-id.your-dataset-id.agent_events`
 WHERE event_type = 'INVOCATION_STARTING'
 GROUP BY log_date ORDER BY log_date DESC;
 ```
@@ -542,8 +513,8 @@ GROUP BY log_date ORDER BY log_date DESC;
 
 ```sql
 SELECT
-  AVG(CAST(REGEXP_EXTRACT(content, r"total: ([0-9]+)") AS INT64)) as avg_tokens
-FROM `your-gcp-project-id.adk_agent_logs.agent_events`
+  AVG(CAST(REGEXP_EXTRACT(content, r"Token Usage:.*total: ([0-9]+)") AS INT64)) as avg_tokens
+FROM `your-gcp-project-id.your-dataset-id.agent_events`
 WHERE event_type = 'LLM_RESPONSE';
 ```
 
@@ -551,12 +522,12 @@ WHERE event_type = 'LLM_RESPONSE';
 
 ```sql
 SELECT timestamp, event_type, error_message
-FROM `your-gcp-project-id.adk_agent_logs.agent_events`
+FROM `your-gcp-project-id.your-dataset-id.agent_events`
 WHERE error_message IS NOT NULL
 ORDER BY timestamp DESC LIMIT 50;
 ```
 
 ## Additional resources
 
--   [BigQuery Storage Write API](https://docs.cloud.google.com/bigquery/docs/write-api)
--   [BigQuery product documentation](https://docs.cloud.google.com/bigquery/docs)
+-   [BigQuery Storage Write API](https://cloud.google.com/bigquery/docs/write-api)
+-   [BigQuery product documentation](https://cloud.google.com/bigquery/docs)
