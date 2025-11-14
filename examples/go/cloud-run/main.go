@@ -44,7 +44,7 @@ func getCapitalCity(ctx tool.Context, args getCapitalCityArgs) (string, error) {
 	}
 	capital, ok := capitals[strings.ToLower(args.Country)]
 	if !ok {
-		return "", fmt.Errorf("Sorry, I couldn't find the capital for %s.", args.Country)
+		return "", fmt.Errorf("couldn't find the capital for %s", args.Country)
 	}
 
 	return capital, nil

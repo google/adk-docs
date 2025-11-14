@@ -58,7 +58,7 @@ func checkPrimeTool(tc tool.Context, args checkPrimeToolArgs) (string, error) {
 		}
 	}
 	if len(primes) == 0 {
-		return "", fmt.Errorf("No prime numbers found.")
+		return "", fmt.Errorf("no prime numbers found")
 	}
 	var primeStrings []string
 	for _, p := range primes {

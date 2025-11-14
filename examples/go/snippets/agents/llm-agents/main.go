@@ -18,6 +18,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"strings"
@@ -46,7 +47,7 @@ type getCapitalCityArgs struct {
 }
 
 // getCapitalCity retrieves the capital city of a given country.
-func getCapitalCity(ctx tool.Context, args getCapitalCityArgs) map[string]any {
+func getCapitalCity(ctx tool.Context, args getCapitalCityArgs) (map[string]any, error) {
 	fmt.Printf("\n-- Tool Call: getCapitalCity(country='%s') --\n", args.Country)
 	capitals := map[string]string{
 		"united states": "Washington, D.C.",
@@ -58,10 +59,10 @@ func getCapitalCity(ctx tool.Context, args getCapitalCityArgs) map[string]any {
 	if !ok {
 		result := fmt.Sprintf("Sorry, I couldn't find the capital for %s.", args.Country)
 		fmt.Printf("-- Tool Result: '%s' --\n", result)
-		return map[string]any{"result": result}
+		return nil, errors.New(result)
 	}
 	fmt.Printf("-- Tool Result: '%s' --\n", capital)
-	return map[string]any{"result": capital}
+	return map[string]any{"result": capital}, nil
 }
 
 // callAgent is a helper function to execute an agent with a given prompt and handle its output.
