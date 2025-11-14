@@ -781,6 +781,127 @@ async for event in remote_app.async_stream_query(
     encoding for images, the recommended and supported method for sending image
     data to an agent deployed on Agent Engine is by providing a GCS URI.
 
+## Advanced deployment considerations
+
+When deploying to Agent Engine, understanding the deployment lifecycle is crucial for proper configuration management. Agent Engine uses pickle serialisation to package your application, which has specific timing implications for environment variable access and toolset initialisation.
+
+!!! warning "Environment Variable Timing"
+    Environment variables specified in `AdkApp.env_vars` are not available during toolset initialisation at import time. Toolsets that read configuration at import time will use deployment environment values instead of runtime environment values, which can cause production issues.
+
+Common scenarios affected:
+
+- **OpenAPI toolsets** connecting to environment specific APIs
+- **Database toolsets** with different connection strings per environment
+- **Credential toolsets** requiring different secrets across environments
+- **Any toolset using Pydantic BaseSettings** for configuration
+
+### The pickle timing issue
+
+Agent Engine deployment follows this lifecycle:
+
+1.  **Deployment time** (local/CI environment):
+    -   Agent module is imported.
+    -   Toolsets are created, reading configuration from the **deployment** environment.
+    -   The agent hierarchy (including toolsets with their embedded configuration) is pickled.
+    -   The pickle is uploaded to GCS.
+
+2.  **Runtime** (Vertex AI):
+    -   The agent is unpickled, restoring toolsets with their now frozen configuration from deployment time.
+    -   Environment variables from `AdkApp.env_vars` are set.
+    -   It's too late—the toolsets have already been initialised with the old configuration.
+
+### Solution: The Lazy Initialisation Pattern
+
+To ensure toolsets read their configuration at runtime, use a lazy initialisation pattern. This involves creating a lightweight wrapper that holds the configuration, but defers the creation of the actual toolset until it's first used inside the running agent.
+
+Here is a complete example for an OpenAPI toolset.
+
+```python
+import os
+import yaml
+from pathlib import Path
+from google.adk.tools import BaseToolset
+from google.adk.tools.openapi import OpenAPIToolset
+
+def load_spec(spec_path: Path) -> dict:
+    """Helper to load a YAML or JSON OpenAPI spec."""
+    with spec_path.open("r") as f:
+        return yaml.safe_load(f)
+
+class LazyOpenAPIToolset(BaseToolset):
+    """A wrapper that defers toolset creation until runtime."""
+
+    def __init__(self, spec_path: Path, tool_filter: list[str] = None):
+        self.spec_path = spec_path
+        self.tool_filter = tool_filter or []
+        self._toolset_instance = None  # The actual toolset is not created yet
+
+    def _ensure_toolset(self):
+        """Creates the toolset instance on first use."""
+        if self._toolset_instance is None:
+            # Now we are at RUNTIME, so we can load from the environment
+            api_url = os.getenv("API_BASE_URL")
+            if not api_url:
+                raise ValueError("API_BASE_URL environment variable not set at runtime")
+
+            # Load the spec and dynamically insert the server URL
+            spec_dict = load_spec(self.spec_path)
+            spec_dict["servers"] = [{"url": api_url}]
+
+            # Create the real toolset
+            self._toolset_instance = OpenAPIToolset(
+                spec_dict=spec_dict,
+                tool_filter=self.tool_filter
+            )
+        return self._toolset_instance
+
+    def get_tools(self):
+        """Delegate tool retrieval to the real toolset."""
+        toolset = self._ensure_toolset()
+        return toolset.get_tools()
+
+    def __reduce__(self):
+        """
+        Controls what gets pickled. We only pickle the arguments needed
+        to reconstruct the wrapper, not the created toolset instance.
+        """
+        return (self.__class__, (self.spec_path, self.tool_filter))
+```
+
+You would then use this wrapper in your agent definition:
+
+```python
+# In your agent.py
+from .tools.lazy_toolset import LazyOpenAPIToolset
+
+my_lazy_toolset = LazyOpenAPIToolset(spec_path=Path("specs/my_api.yaml"))
+
+# This toolset is now safe to use in an agent deployed to Agent Engine
+root_agent = ParallelAgent(
+    toolsets=[my_lazy_toolset]
+)
+```
+
+And configure the environment variable in your deployment script:
+
+```python
+# In your deploy.py
+app = agent_engines.AdkApp(
+    agent=root_agent,
+    env_vars={
+        "API_BASE_URL": "https://my-prod-api.example.com"
+    }
+)
+```
+
+!!! tip "When to Use This Pattern"
+    Use the Lazy Initialisation pattern whenever your toolsets need environment-specific configuration:
+
+    - OpenAPI toolsets with environment specific API endpoints.
+    - Database toolsets with different connection strings per environment.
+    - Any toolset using Pydantic `BaseSettings` for configuration.
+    - Toolsets that require runtime credentials or secrets.
+
 ## Deployment payload {#payload}
 
 When you deploy your ADK agent project to Agent Engine,
