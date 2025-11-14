@@ -47,11 +47,11 @@ import (
 	"log"
 	"os"
 
+	"google.golang.org/adk/agent"
 	"google.golang.org/adk/agent/llmagent"
 	"google.golang.org/adk/cmd/launcher/adk"
 	"google.golang.org/adk/cmd/launcher/full"
 	"google.golang.org/adk/model/gemini"
-	"google.golang.org/adk/server/restapi/services"
 	"google.golang.org/adk/tool"
 	"google.golang.org/adk/tool/geminitool"
 	"google.golang.org/genai"
@@ -67,7 +67,7 @@ func main() {
 		log.Fatalf("Failed to create model: %v", err)
 	}
 
-	agent, err := llmagent.New(llmagent.Config{
+	timeAgent, err := llmagent.New(llmagent.Config{
 		Name:        "hello_time_agent",
 		Model:       model,
 		Description: "Tells the current time in a specified city.",
@@ -80,8 +80,8 @@ func main() {
 		log.Fatalf("Failed to create agent: %v", err)
 	}
 
-	config := &adk.Config{
-		AgentLoader: services.NewSingleAgentLoader(agent),
+	config := &launcher.Config{
+		AgentLoader: agent.NewSingleLoader(timeAgent),
 	}
 
 	l := full.NewLauncher()
