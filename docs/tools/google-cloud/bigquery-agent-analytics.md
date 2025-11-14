@@ -89,9 +89,9 @@ as follows:
 
 ## Use with agent
 
-You use the BigQuery Analytics Plugin by registering it with your ADK agent's
-App object. The following example shows an implementation of an agent with this
-plugin and BigQuery tools enabled:
+You use the BigQuery Analytics Plugin by configuring and registering it with
+your ADK agent's App object. The following example shows an implementation of an
+agent with this plugin and BigQuery tools enabled:
 
 ```python title="my_bq_agent/agent.py"
 # my_bq_agent/agent.py
@@ -119,16 +119,14 @@ bq_logging_plugin = BigQueryAgentAnalyticsPlugin(
     table_id="agent_events" # The plugin will create agent_events table if user does not specified table_id
 )
 
-# --- Initialize Tools and Model ---
+# --- Initialize Tools and Agent ---
 credentials, _ = google.auth.default(scopes=["https://www.googleapis.com/auth/cloud-platform"])
 bigquery_toolset = BigQueryToolset(
     credentials_config=BigQueryCredentialsConfig(credentials=credentials)
 )
 
-llm = Gemini(model="gemini-2.5-flash")
-
 root_agent = Agent(
-    model=llm,
+    model="gemini-2.5-flash",
     name='my_bq_agent',
     instruction="You are a helpful assistant with access to BigQuery tools.",
     tools=[bigquery_toolset]
@@ -216,7 +214,6 @@ config = BigQueryLoggerConfig(
     client_close_timeout=2.0, # Wait up to 2s for BQ client to close
     max_content_length=500, # Truncate content to 500 chars (default)
     content_formatter=redact_dollar_amounts, # Redact the dollar amounts in the logging content 
-
 )
 
 plugin = BigQueryAgentAnalyticsPlugin(..., config=config)
@@ -224,7 +221,7 @@ plugin = BigQueryAgentAnalyticsPlugin(..., config=config)
 
 ## Schema and production setup
 
-The plugin automatically creates the table if it doesn't exist. However, for
+The plugin automatically creates the table if it does not exist. However, for
 production, we recommend creating the table manually with **partitioning** and
 **clustering** for performance and cost optimization.
 
