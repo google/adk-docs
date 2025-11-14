@@ -173,6 +173,7 @@ nav:
       - Google Cloud tools:
         - Overview: tools/google-cloud-tools.md
         - MCP Toolbox for Databases: tools/google-cloud/mcp-toolbox-for-databases.md
+        - BigQuery Agent Analytics: tools/google-cloud/bigquery-agent-analytics.md
         - Code Execution with Agent Engine: tools/google-cloud/code-exec-agent-engine.md
       - Third-party tools:
         - tools/third-party/index.md
