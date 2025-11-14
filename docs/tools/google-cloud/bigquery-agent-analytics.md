@@ -5,7 +5,9 @@
 </div>
 
 !!! note "Availability"
-    To try this plugin, it is recommended to build ADK from the Top of the tree or wait for the official release of version 1.19. This note will be removed once version 1.19 is out.
+
+    To try this plugin, it is recommended to build ADK from the Top of the tree or wait for the official 
+    release of version 1.19. This note will be removed once version 1.19 is out.
 
 The BigQuery Agent Analytics Plugin significantly enhances the Agent Development Kit (ADK) by providing a robust solution for in-depth agent behavior analysis. Using the ADK Plugin architecture and the BigQuery Storage Write API, it captures and logs critical operational events directly into a Google BigQuery table, empowering you with advanced capabilities for debugging, real-time monitoring, and comprehensive offline performance evaluation.
 
@@ -32,7 +34,7 @@ The BigQuery Agent Analytics Plugin significantly enhances the Agent Development
     event order via timestamps.
 
 The agent event data recorded varies based on the ADK event type. For more
-information, see [Event Types and Payloads](#event-types).
+information, see [Event types and payloads](#event-types).
 
 ## Prerequisites
 
@@ -213,7 +215,7 @@ CREATE TABLE `your-gcp-project-id.adk_agent_logs.agent_events`
 PARTITION BY DATE(timestamp)
 CLUSTER BY event_type, agent, user_id;
 ```
-### Event Types and Payloads {#event-types}
+### Event types and payloads {#event-types}
 
 The `content` column contains a formatted string specific to the `event_type`.
 The following table descibes these events and corresponding content.
@@ -283,7 +285,7 @@ None
   </tbody>
 </table>
 
-#### Tool Usage (Plugin Lifecycle)
+#### Tool usage (plugin lifecycle)
 
 These events track the execution of tools by the agent.
 
