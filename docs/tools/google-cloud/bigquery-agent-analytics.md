@@ -9,7 +9,13 @@
     To try this plugin, it is recommended to build ADK from the Top of the tree or wait for the 
     official release of version 1.19. This note will be removed once version 1.19 is out.
 
-The BigQuery Agent Analytics Plugin significantly enhances the Agent Development Kit (ADK) by providing a robust solution for in-depth agent behavior analysis. Using the ADK Plugin architecture and the BigQuery Storage Write API, it captures and logs critical operational events directly into a Google BigQuery table, empowering you with advanced capabilities for debugging, real-time monitoring, and comprehensive offline performance evaluation.
+
+The BigQuery Agent Analytics Plugin provides a robust solution for in-depth
+behavior analysis of agents for the Agent Development Kit (ADK). Using the ADK
+[Plugin](/adk-docs/plugins/) architecture and the BigQuery Storage Write API, it
+captures and logs critical operational events directly into a Google BigQuery
+table, empowering you with advanced capabilities for debugging, real-time
+monitoring, and comprehensive offline performance evaluation.
 
 !!! example "Preview release"
 
@@ -40,21 +46,29 @@ information, see [Event Types & Payloads](#event-types).
 
 -   **Google Cloud Project** with the **BigQuery API** enabled.
 -   **BigQuery Dataset:** Create a dataset to store logging tables before
-    using the plugin. The plugin automatically would create the necessary events table within the dataset if the table does not exist . By default, this table is named agent_events, while you can customize this with the table_id parameter in the plugin configuration.
+    using the plugin. The plugin automatically would create the necessary events
+    table within the dataset if the table does not exist . By default,
+    this table is named agent_events, while you can customize this with the
+    table_id parameter in the plugin configuration.
 -   **Authentication:**
     -   **Local:** Run `gcloud auth application-default login`.
     -   **Cloud:** Ensure your service account has the required permissions.
 
 ### IAM Permissions
 
-For the agent to work properly, the principal (e.g., service account, user account) under which the agent is running needs these Google Cloud roles:
-*   `roles/bigquery.jobUser` at Project Level to run BigQuery queries in your project. This role doesn't grant access to any data on its own.
-*   `roles/bigquery.dataEditor` at Table Level to write log/event data to a BigQuery Table of your choice.
-If you need the agent to create this table, you need to grant the `roles/bigquery.dataEditor` on the BigQuery dataset where you want the table to be created.
+For the agent to work properly, the principal (e.g., service account, user account) 
+under which the agent is running needs these Google Cloud roles:
+-  `roles/bigquery.jobUser` at Project Level to run BigQuery queries in your project.
+    This role doesn't grant access to any data on its own.
+-  `roles/bigquery.dataEditor` at Table Level to write log/event data to a BigQuery
+    Table of your choice.
+If you need the agent to create this table, you need to grant the `roles/bigquery.dataEditor`
+ on the BigQuery dataset where you want the table to be created.
 
 ## Use with agent
 
-You use the BigQuery Analytics Plugin by registering it with your ADK agent's App object. The following example shows an implementation of an agent with this plugin and BigQuery tools enabled:
+You use the BigQuery Analytics Plugin by registering it with your ADK agent's App object. 
+The following example shows an implementation of an agent with this plugin and BigQuery tools enabled:
 
 ```python title="my_bq_agent/agent.py"
 # my_bq_agent/agent.py
@@ -118,9 +132,10 @@ app = App(
 ### Run and test agent
 
 Test the plugin by running the agent and making a few requests through the chat
-interface, such as ”tell me what you can do” or  "List datasets in my cloud project <your-gcp-project-id> “. These actions create events which are
-recorded in your Google Cloud project BigQuery instance. Once these events have
-been processed, you can view the data for them in the [BigQuery Console](https://console.cloud.google.com/bigquery), using this query
+interface, such as ”tell me what you can do” or  "List datasets in my cloud project <your-gcp-project-id> “. 
+These actions create events which are  recorded in your Google Cloud project 
+BigQuery instance. Once these events have been processed, you can view the data for 
+them in the [BigQuery Console](https://console.cloud.google.com/bigquery), using this query
 
 ```sql
 SELECT timestamp, event_type, content
@@ -133,7 +148,8 @@ LIMIT 20;
 
 You can customize the plugin using `BigQueryLoggerConfig`.
 
--   **`enabled`** (`bool`, default: `True`): To disable the plugin from logging agent data to the BigQuery table, set this parameter to False.
+-   **`enabled`** (`bool`, default: `True`): To disable the plugin from logging
+    agent data to the BigQuery table, set this parameter to False.
 -   **`event_allowlist`** (`Optional[List[str]]`, default: `None`): A list
     of event types to log. If `None`, all events are logged except those in
     `event_denylist`. For a comprehensive list of supported event types, refer
@@ -222,7 +238,8 @@ The following table descibes these events and corresponding content.
 
 !!! note
 
-    All variable content fields (e.g., user input, model response, tool arguments, system prompt) are truncated to `max_content_length` characters (configured in `BigQueryLoggerConfig`, default 500) to manage log size.
+    All variable content fields (e.g., user input, model response, tool arguments, system prompt) are truncated 
+    to `max_content_length` characters (configured in `BigQueryLoggerConfig`, default 500) to manage log size.
 
 #### LLM Interactions (Plugin Lifecycle)
 
