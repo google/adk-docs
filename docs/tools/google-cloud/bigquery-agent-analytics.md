@@ -45,7 +45,7 @@ information, see [Event types and payloads](#event-types).
     -   **Local:** Run `gcloud auth application-default login`.
     -   **Cloud:** Ensure your service account has the required permissions.
 
-### IAM Permissions
+### IAM permissions
 
 For the agent to work properly, the principal (e.g., service account, user account) under which the agent is running needs these Google Cloud roles:
 *   `roles/bigquery.jobUser` at Project Level to run BigQuery queries in your project. This role doesn't grant access to any data on its own.
@@ -222,7 +222,9 @@ The following table descibes these events and corresponding content.
 
 !!! note
 
-    All variable content fields (e.g., user input, model response, tool arguments, system prompt) are truncated to `max_content_length` characters (configured in `BigQueryLoggerConfig`, default 500) to manage log size.
+    - All variable content fields (e.g., user input, model response, tool arguments, system prompt) 
+    - are truncated to `max_content_length` characters 
+    - (configured in `BigQueryLoggerConfig`, default 500) to manage log size.
 
 #### LLM interactions (plugin lifecycle)
 
