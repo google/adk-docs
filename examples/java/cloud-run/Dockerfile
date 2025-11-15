@@ -13,10 +13,8 @@ COPY src ./src
 EXPOSE 8080
 
 # The command to run your application.
-# TODO(Developer): Update the "adk.agents.source-dir" to the directory that contains your agents.
-# You can have multiple agents in this directory and all of them will be available in the Dev UI.
-ENTRYPOINT ["mvn", "exec:java", \
-    "-Dexec.mainClass=com.google.adk.web.AdkWebServer", \
-    "-Dexec.classpathScope=compile", \
-    "-Dexec.args=--server.port=${PORT} --adk.agents.source-dir=src/main/java" \
-]
+# Use a shell so ${PORT} expands and quote exec.args so agent source-dir is passed correctly.
+ENTRYPOINT ["sh", "-c", "mvn compile exec:java \
+    -Dexec.mainClass=com.google.adk.web.AdkWebServer \
+    -Dexec.classpathScope=compile \
+    -Dexec.args='--server.port=${PORT:-8080} --adk.agents.source-dir=target'"]
