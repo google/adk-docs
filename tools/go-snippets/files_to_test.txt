@@ -38,7 +38,6 @@ snippets/agents/custom-agent/storyflow_agent.go
 snippets/agents/workflow-agents/sequential/main.go
 snippets/agents/workflow-agents/parallel/main.go
 snippets/agents/workflow-agents/loop/main.go
-snippets/quickstart/main.go "What is the weather in London?"
 snippets/agents/multi-agent/main.go
 snippets/tools/function-tools/long-running-tool/long_running_tool.go
 snippets/agents/llm-agents/snippets/main.go

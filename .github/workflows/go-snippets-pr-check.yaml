@@ -40,6 +40,14 @@ jobs:
       with:
         go-version: '1.22'
 
+    - name: Cache Go modules
+      uses: actions/cache@v3
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+
     # --- PR-Specific Checks ---
     # These steps only run for pull request events.
 
