@@ -35,19 +35,18 @@ type getWeatherReportArgs struct {
 }
 
 type getWeatherReportResult struct {
-	Status       string `json:"status"`
-	Report       string `json:"report,omitempty"`
-	ErrorMessage string `json:"error_message,omitempty"`
+	Status string `json:"status"`
+	Report string `json:"report,omitempty"`
 }
 
-func getWeatherReport(ctx tool.Context, args getWeatherReportArgs) getWeatherReportResult {
+func getWeatherReport(ctx tool.Context, args getWeatherReportArgs) (getWeatherReportResult, error) {
 	if strings.ToLower(args.City) == "london" {
-		return getWeatherReportResult{Status: "success", Report: "The current weather in London is cloudy with a temperature of 18 degrees Celsius and a chance of rain."}
+		return getWeatherReportResult{Status: "success", Report: "The current weather in London is cloudy with a temperature of 18 degrees Celsius and a chance of rain."}, nil
 	}
 	if strings.ToLower(args.City) == "paris" {
-		return getWeatherReportResult{Status: "success", Report: "The weather in Paris is sunny with a temperature of 25 degrees Celsius."}
+		return getWeatherReportResult{Status: "success", Report: "The weather in Paris is sunny with a temperature of 25 degrees Celsius."}, nil
 	}
-	return getWeatherReportResult{Status: "error", ErrorMessage: fmt.Sprintf("Weather information for '%s' is not available.", args.City)}
+	return getWeatherReportResult{}, fmt.Errorf("weather information for '%s' is not available.", args.City)
 }
 
 type analyzeSentimentArgs struct {
@@ -59,14 +58,14 @@ type analyzeSentimentResult struct {
 	Confidence float64 `json:"confidence"`
 }
 
-func analyzeSentiment(ctx tool.Context, args analyzeSentimentArgs) analyzeSentimentResult {
+func analyzeSentiment(ctx tool.Context, args analyzeSentimentArgs) (analyzeSentimentResult, error) {
 	if strings.Contains(strings.ToLower(args.Text), "good") || strings.Contains(strings.ToLower(args.Text), "sunny") {
-		return analyzeSentimentResult{Sentiment: "positive", Confidence: 0.8}
+		return analyzeSentimentResult{Sentiment: "positive", Confidence: 0.8}, nil
 	}
 	if strings.Contains(strings.ToLower(args.Text), "rain") || strings.Contains(strings.ToLower(args.Text), "bad") {
-		return analyzeSentimentResult{Sentiment: "negative", Confidence: 0.7}
+		return analyzeSentimentResult{Sentiment: "negative", Confidence: 0.7}, nil
 	}
-	return analyzeSentimentResult{Sentiment: "neutral", Confidence: 0.6}
+	return analyzeSentimentResult{Sentiment: "neutral", Confidence: 0.6}, nil
 }
 
 func main() {

@@ -39,8 +39,8 @@ type rollDieToolArgs struct {
 	Sides int `json:"sides" jsonschema:"The number of sides on the die."`
 }
 
-func rollDieTool(tc tool.Context, args rollDieToolArgs) int {
-	return rand.Intn(args.Sides) + 1
+func rollDieTool(tc tool.Context, args rollDieToolArgs) (int, error) {
+	return rand.Intn(args.Sides) + 1, nil
 }
 
 func newRollAgent(ctx context.Context) (agent.Agent, error) {
@@ -70,7 +70,7 @@ func newRollAgent(ctx context.Context) (agent.Agent, error) {
 
 // --8<-- [start:new-prime-agent]
 func newPrimeAgent() (agent.Agent, error) {
-	remoteAgent, err := remoteagent.New(remoteagent.A2AConfig{
+	remoteAgent, err := remoteagent.NewA2A(remoteagent.A2AConfig{
 		Name:            "prime_agent",
 		Description:     "Agent that handles checking if numbers are prime.",
 		AgentCardSource: "http://localhost:8001",
