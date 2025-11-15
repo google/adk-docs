@@ -1,0 +1,32 @@
+name: Go PR Test
+
+on:
+  pull_request:
+    paths:
+      - 'examples/go/**'
+      - '.github/workflows/go-pr-test.yaml'
+
+jobs:
+  go-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+      
+      - name: Tidy modules
+        run: |
+          find examples/go -name 'go.mod' -execdir go mod tidy \;
+
+      - name: Run go test
+        working-directory: ./examples/go
+        run: go test ./...
+
+      - name: Run build_all.sh
+        working-directory: ./examples/go/snippets
+        run: ./build_all.sh
+
+      - name: Run run_all.sh
+        working-directory: ./examples/go/snippets
+        run: ./run_all.sh
