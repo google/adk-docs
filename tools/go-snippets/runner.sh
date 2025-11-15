@@ -29,7 +29,7 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 EXIT_CODE=0
-SNIPPETS_FILE="tools/go-snippets/snippets.txt"
+SNIPPETS_FILE="tools/go-snippets/files_to_test.txt"
 
 # --- Helper Function ---
 # execute_and_check executes a command, captures the output,
@@ -63,7 +63,7 @@ execute_and_check() {
 if [[ "$1" != "build" && "$1" != "run" ]]; then
   echo "Usage: $0 <build|run> [file1 file2 ...]"
   exit 1
-fi
+}
 
 ACTION=$1
 shift
@@ -99,12 +99,7 @@ else
     if [ "${ACTION}" == "build" ]; then
       command_to_execute="go build ${line}"
     elif [ "${ACTION}" == "run" ]; then
-      # Special case for quickstart
-      if [[ "${line}" == "snippets/quickstart/main.go" ]]; then
-        command_to_execute="go run ${line} \"What is the weather in London?\""
-      else
-        command_to_execute="go run ${line}"
-      fi
+      command_to_execute="go run ${line}"
     fi
     
     if [[ -n "${command_to_execute}" ]]; then
