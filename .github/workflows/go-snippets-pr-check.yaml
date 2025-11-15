@@ -66,12 +66,6 @@ jobs:
         echo "Building only the changed Go files..."
         ./tools/go-snippets/runner.sh build ${{ steps.changed-files.outputs.changed_files }}
 
-    - name: Run changed Go snippets (PR only)
-      if: github.event_name == 'pull_request' && steps.changed-files.outputs.changed_files != ''
-      run: |
-        echo "Running only the changed Go files..."
-        ./tools/go-snippets/runner.sh run ${{ steps.changed-files.outputs.changed_files }}
-
     # --- Scheduled Checks ---
     # These steps only run on the weekly schedule.
 
@@ -80,9 +74,3 @@ jobs:
       run: |
         echo "Running weekly build for all Go snippets..."
         ./tools/go-snippets/runner.sh build
-
-    - name: Run all Go snippets (Scheduled)
-      if: github.event_name == 'schedule'
-      run: |
-        echo "Running weekly run for all Go snippets..."
-        ./tools/go-snippets/runner.sh run

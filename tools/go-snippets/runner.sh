@@ -63,7 +63,7 @@ execute_and_check() {
 if [[ "$1" != "build" && "$1" != "run" ]]; then
   echo "Usage: $0 <build|run> [file1 file2 ...]"
   exit 1
-}
+fi
 
 ACTION=$1
 shift

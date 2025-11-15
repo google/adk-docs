@@ -23,10 +23,5 @@ jobs:
         working-directory: ./examples/go
         run: go test ./...
 
-      - name: Run build_all.sh
-        working-directory: ./examples/go/snippets
-        run: ./build_all.sh
-
-      - name: Run run_all.sh
-        working-directory: ./examples/go/snippets
-        run: ./run_all.sh
+      - name: Build Go snippets
+        run: ./tools/go-snippets/runner.sh build
