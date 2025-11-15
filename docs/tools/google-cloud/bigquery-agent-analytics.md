@@ -212,7 +212,7 @@ CREATE TABLE `your-gcp-project-id.adk_agent_logs.agent_events`
   user_id STRING OPTIONS(description="The identifier of the user associated with the current session."),
   content STRING OPTIONS(description="The event-specific data (payload). Format varies by event_type."),
   error_message STRING OPTIONS(description="Populated if an error occurs during the processing of the event."),
-  is_truncated STRING OPTIONS(description="Indicates if the content field was truncated due to size limits.")
+  is_truncated BOOLEAN OPTIONS(description="Boolean flag indicates if the content field was truncated due to size limits.")
 )
 PARTITION BY DATE(timestamp)
 CLUSTER BY event_type, agent, user_id;
