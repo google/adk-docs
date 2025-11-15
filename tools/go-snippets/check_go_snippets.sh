@@ -46,4 +46,15 @@ else
   echo "All Go files are correctly referenced in the snippets file."
 fi
 
+# Check for files in the list that don't exist on disk
+dangling_references=$(comm -23 <(echo "${referenced_files}") <(echo "${all_go_files}"))
+
+if [[ -n "${dangling_references}" ]]; then
+  echo -e "${RED}Error: The following files are referenced in ${SNIPPETS_FILE} but do not exist:${NC}"
+  echo "${dangling_references}" | sed 's/^/  /'
+  echo
+  echo "Please remove them from ${SNIPPETS_FILE}."
+  EXIT_CODE=1
+fi
+
 exit ${EXIT_CODE}
