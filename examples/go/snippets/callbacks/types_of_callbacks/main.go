@@ -404,7 +404,7 @@ func runAfterToolExample() {
 	if err != nil {
 		log.Fatalf("FATAL: Failed to create model: %v", err)
 	}
-	capitalTool, err := functiontool.New[*GetCapitalCityArgs, string](functiontool.Config{
+	capitalTool, err := functiontool.New(functiontool.Config{
 		Name:        "getCapitalCity",
 		Description: "Retrieves the capital city of a given country.",
 	}, getCapitalCity)
