@@ -1,8 +1,6 @@
 # Part 4: Understanding RunConfig
 
-> 📖 **Source Reference**: [`run_config.py`](https://github.com/google/adk-python/blob/main/src/google/adk/agents/run_config.py)
-
-RunConfig is how you configure the behavior of `run_live()` sessions. It unlocks sophisticated capabilities like multimodal interactions, intelligent proactivity, session resumption, and cost controls—all configured declaratively without complex implementation.
+In Part 3, you learned how to handle events from `run_live()` to process model responses, tool calls, and streaming updates. This part shows you how to configure those streaming sessions through `RunConfig`—controlling response formats, managing session lifecycles, and enforcing production constraints.
 
 **What you'll learn**: This part covers response modalities and their constraints, explores the differences between BIDI and SSE streaming modes, examines the relationship between ADK Sessions and Live API sessions, and shows how to manage session duration with session resumption and context window compression. You'll understand how to handle concurrent session quotas, implement architectural patterns for quota management, configure cost controls through `max_llm_calls` and audio persistence options, and track token usage in real-time for production monitoring (new in v1.18.0). With RunConfig mastery, you can build production-ready streaming applications that balance feature richness with operational constraints.
 
@@ -22,12 +20,14 @@ This table provides a quick reference for all RunConfig parameters covered in th
 | **save_live_blob** | bool | Persist audio/video streams | Both | [Details](#save_live_blob) |
 | **custom_metadata** | dict[str, Any] | Attach metadata to invocation events | Both | [Details](#custom_metadata) |
 | **support_cfc** | bool | Enable compositional function calling | Gemini (2.x models only) | [Details](#support_cfc-experimental) |
-| **speech_config** | SpeechConfig | Voice and language configuration | Both | [Part 5](part5.md#voice-configuration-speech-config) |
-| **input_audio_transcription** | AudioTranscriptionConfig | Transcribe user speech | Both | [Part 5](part5.md#audio-transcription) |
-| **output_audio_transcription** | AudioTranscriptionConfig | Transcribe model speech | Both | [Part 5](part5.md#audio-transcription) |
-| **realtime_input_config** | RealtimeInputConfig | VAD configuration | Both | [Part 5](part5.md#voice-activity-detection-vad) |
-| **proactivity** | ProactivityConfig | Enable proactive audio | Gemini (native audio only) | [Part 5](part5.md#proactivity-and-affective-dialog) |
-| **enable_affective_dialog** | bool | Emotional adaptation | Gemini (native audio only) | [Part 5](part5.md#proactivity-and-affective-dialog) |
+| **speech_config** | SpeechConfig | Voice and language configuration | Both | [Part 5: Voice Configuration](part5.md#voice-configuration-speech-config) |
+| **input_audio_transcription** | AudioTranscriptionConfig | Transcribe user speech | Both | [Part 5: Audio Transcription](part5.md#audio-transcription) |
+| **output_audio_transcription** | AudioTranscriptionConfig | Transcribe model speech | Both | [Part 5: Audio Transcription](part5.md#audio-transcription) |
+| **realtime_input_config** | RealtimeInputConfig | VAD configuration | Both | [Part 5: Voice Activity Detection](part5.md#voice-activity-detection-vad) |
+| **proactivity** | ProactivityConfig | Enable proactive audio | Gemini (native audio only) | [Part 5: Proactivity and Affective Dialog](part5.md#proactivity-and-affective-dialog) |
+| **enable_affective_dialog** | bool | Emotional adaptation | Gemini (native audio only) | [Part 5: Proactivity and Affective Dialog](part5.md#proactivity-and-affective-dialog) |
+
+> 📖 **Source Reference**: [`run_config.py`](https://github.com/google/adk-python/blob/main/src/google/adk/agents/run_config.py)
 
 **Platform Support Legend:**
 
@@ -61,82 +61,71 @@ Response modalities control how the model generates output—as text or audio. B
 ### Configuration
 
 ```python
+# Phase 2: Session initialization - RunConfig determines streaming behavior
+
 # Default behavior: ADK automatically sets response_modalities to ["AUDIO"]
 # when not specified (required by native audio models)
 run_config = RunConfig(
-    streaming_mode=StreamingMode.BIDI
+    streaming_mode=StreamingMode.BIDI  # Bidirectional WebSocket communication
 )
+
 # The above is equivalent to:
 run_config = RunConfig(
     response_modalities=["AUDIO"],  # Automatically set by ADK in run_live()
-    streaming_mode=StreamingMode.BIDI
+    streaming_mode=StreamingMode.BIDI  # Bidirectional WebSocket communication
 )
 
 # ✅ CORRECT: Text-only responses
 run_config = RunConfig(
-    response_modalities=["TEXT"],
-    streaming_mode=StreamingMode.BIDI
+    response_modalities=["TEXT"],  # Model responds with text only
+    streaming_mode=StreamingMode.BIDI  # Still uses bidirectional streaming
 )
 
 # ✅ CORRECT: Audio-only responses (explicit)
 run_config = RunConfig(
-    response_modalities=["AUDIO"],
-    streaming_mode=StreamingMode.BIDI
+    response_modalities=["AUDIO"],  # Model responds with audio only
+    streaming_mode=StreamingMode.BIDI  # Bidirectional WebSocket communication
 )
-
-# ❌ INCORRECT: Both modalities - results in API error
-run_config = RunConfig(
-    response_modalities=["TEXT", "AUDIO"],  # ERROR
-    streaming_mode=StreamingMode.BIDI
-)
-# This will cause an error from the Live API:
-# "Only one response modality is supported per session"
 ```
 
-!!! note "Default Behavior"
-    When `response_modalities` is not specified, ADK's `run_live()` method automatically sets it to `["AUDIO"]` because native audio models require an explicit response modality. You can override this by explicitly setting `response_modalities=["TEXT"]` if needed.
+Both Gemini Live API and Vertex AI Live API restrict sessions to a single response modality. Attempting to use both will result in an API error:
 
-!!! note "Audio Transcription Defaults"
-    **Audio transcription is enabled by default** for all Live API sessions. Both `input_audio_transcription` and `output_audio_transcription` default to `AudioTranscriptionConfig()` in RunConfig.
+```python
+# ❌ INCORRECT: Both modalities not supported
+run_config = RunConfig(
+    response_modalities=["TEXT", "AUDIO"],  # ERROR: Cannot use both
+    streaming_mode=StreamingMode.BIDI
+)
+# Error from Live API: "Only one response modality is supported per session"
+```
 
-    - **Input audio transcription**: Enabled by default to capture text transcriptions of user speech
-    - **Output audio transcription**: Enabled by default to provide text transcriptions of model audio responses
+**Default Behavior:**
 
-    **To disable transcription**, explicitly set the parameters to `None`:
-    ```python
-    run_config = RunConfig(
-        response_modalities=["AUDIO"],
-        input_audio_transcription=None,   # Explicitly disable
-        output_audio_transcription=None   # Explicitly disable
-    )
-    ```
+When `response_modalities` is not specified, ADK's `run_live()` method automatically sets it to `["AUDIO"]` because native audio models require an explicit response modality. You can override this by explicitly setting `response_modalities=["TEXT"]` if needed.
 
-    **For multi-agent scenarios**: In addition to these defaults, ADK's `run_live()` method includes fallback logic that ensures transcription is always enabled for multi-agent sessions (agents with `sub_agents`), even if you explicitly set them to `None`. This is critical for agent transfer functionality. For detailed explanation and examples, see [Part 5: Multi-Agent Transcription Requirements](part5.md#multi-agent-transcription-requirements).
+**Key constraints:**
 
-    **Sources**: [`run_config.py:81-88`](https://github.com/google/adk-python/blob/main/src/google/adk/agents/run_config.py#L81-L88) (default configuration) | [`runners.py:1242-1253`](https://github.com/google/adk-python/blob/main/src/google/adk/runners.py#L1242-L1253) (multi-agent fallback logic)
-
-    **Key constraints:**
-
-    - You must choose either `TEXT` or `AUDIO` at session start. **Cannot switch between modalities mid-session**
-    - You must choose `AUDIO` for [Native Audio models](part5.md#understanding-audio-architectures). If you want to receive both audio and text responses from native audio models, use the Audio Transcript feature which provides text transcripts of the audio output. See [Audio Transcription](part5.md#audio-transcription) for details
-    - Response modality only affects model output—**you can always send text, voice, or video input (if the model supports those input modalities)** regardless of the chosen response modality
+- You must choose either `TEXT` or `AUDIO` at session start. **Cannot switch between modalities mid-session**
+- You must choose `AUDIO` for [Native Audio models](part5.md#understanding-audio-architectures). If you want to receive both audio and text responses from native audio models, use the Audio Transcript feature which provides text transcripts of the audio output. See [Audio Transcription](part5.md#audio-transcription) for details
+- Response modality only affects model output—**you can always send text, voice, or video input (if the model supports those input modalities)** regardless of the chosen response modality
 
 ## StreamingMode: BIDI or SSE
 
-ADK supports two distinct streaming modes that use different Gemini API endpoints and protocols:
+ADK supports two distinct streaming modes that use different API endpoints and protocols:
 
-- `StreamingMode.BIDI`: ADK uses WebSocket to connect to the **Gemini Live API** (the bidirectional streaming endpoint via `live.connect()`)
+- `StreamingMode.BIDI`: ADK uses WebSocket to connect to the **Live API** (the bidirectional streaming endpoint via `live.connect()`)
 - `StreamingMode.SSE`: ADK uses HTTP streaming to connect to the **standard Gemini API** (the unary/streaming endpoint via `generate_content_async()`)
 
-!!! note "API Terminology"
-    "Gemini Live API" refers specifically to the bidirectional WebSocket endpoint (`live.connect()`), while "Gemini API" or "standard Gemini API" refers to the traditional HTTP-based endpoint (`generate_content()` / `generate_content_async()`). Both are part of the broader Gemini API platform but use different protocols and capabilities.
+"Live API" refers specifically to the bidirectional WebSocket endpoint (`live.connect()`), while "Gemini API" or "standard Gemini API" refers to the traditional HTTP-based endpoint (`generate_content()` / `generate_content_async()`). Both are part of the broader Gemini API platform but use different protocols and capabilities.
 
-    **Important:** These modes refer to the **ADK-to-Gemini API communication protocol**, not your application's client-facing architecture. You can build WebSocket servers, REST APIs, SSE endpoints, or any other architecture for your clients with either mode.
+**Note:** These modes refer to the **ADK-to-Gemini API communication protocol**, not your application's client-facing architecture. You can build WebSocket servers, REST APIs, SSE endpoints, or any other architecture for your clients with either mode.
 
-    This guide focuses on `StreamingMode.BIDI`, which is required for real-time audio/video interactions and Live API features. However, it's worth understanding the differences between BIDI and SSE modes to choose the right approach for your use case.
+This guide focuses on `StreamingMode.BIDI`, which is required for real-time audio/video interactions and Live API features. However, it's worth understanding the differences between BIDI and SSE modes to choose the right approach for your use case.
 
-    ```python
-    from google.adk.agents.run_config import RunConfig, StreamingMode
+**Configuration:**
+
+```python
+from google.adk.agents.run_config import RunConfig, StreamingMode
 
 # BIDI streaming for real-time audio/video
 run_config = RunConfig(
@@ -309,7 +298,7 @@ Understanding the distinction between **ADK `Session`** and **Live API session**
 
 In short, ADK `Session` provides persistent, long-term conversation storage, while Live API sessions are ephemeral streaming contexts. This separation enables production applications to maintain conversation continuity across network interruptions, application restarts, and multiple streaming sessions.
 
-**Visual Representation:**
+The following diagram illustrates the relationship between ADK Session persistence and ephemeral Live API session contexts, showing how conversation history is maintained across multiple `run_live()` calls:
 
 ```mermaid
 sequenceDiagram
@@ -388,7 +377,11 @@ Understanding the constraints of each platform is critical for production planni
 | **Session Duration (Audio + video)** | 2 minutes | 10 minutes | Gemini has shorter limit for video; Vertex treats all sessions equally. Both platforms: unlimited with context window compression enabled |
 | **Concurrent sessions** | 50 (Tier 1)<br>1,000 (Tier 2+) | Up to 1,000 | Gemini limits vary by API tier; Vertex limit is per Google Cloud project |
 
-> 📖 **Sources**: [Gemini Live API Capabilities Guide](https://ai.google.dev/gemini-api/docs/live-guide) | [Gemini API Quotas](https://ai.google.dev/gemini-api/docs/quota) | [Vertex AI Streamed Conversations](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api/streamed-conversations)
+> 📖 **Source References**:
+>
+> - [Gemini Live API Capabilities Guide](https://ai.google.dev/gemini-api/docs/live-guide)
+> - [Gemini API Quotas](https://ai.google.dev/gemini-api/docs/quota)
+> - [Vertex AI Streamed Conversations](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api/streamed-conversations)
 
 ## Live API Session Resumption
 
@@ -396,56 +389,40 @@ By default, the Live API limits connection duration to approximately 10 minutes�
 
 **ADK automates this entirely**: When you enable session resumption in RunConfig, ADK automatically handles all reconnection logic—detecting connection closures, caching resumption handles, and reconnecting seamlessly in the background. You don't need to write any reconnection code. Sessions continue seamlessly beyond the 10-minute connection limit, handling connection timeouts, network disruptions, and planned reconnections automatically.
 
-!!! important "Scope of ADK's Reconnection Management"
-    ADK manages the **ADK-to-Live API connection** (the WebSocket between ADK and the Gemini/Vertex Live API backend). This is transparent to your application code.
+### Scope of ADK's Reconnection Management
 
-    **Your application remains responsible for**:
+ADK manages the **ADK-to-Live API connection** (the WebSocket between ADK and the Gemini/Vertex Live API backend). This is transparent to your application code.
 
-    - Managing client connections to your application (e.g., user's WebSocket to your FastAPI server)
-    - Implementing client-side reconnection logic if needed
-    - Handling network failures between clients and your application
+**Your application remains responsible for**:
 
-    When ADK reconnects to the Live API, your application's event loop continues normally—you keep receiving events from `run_live()` without interruption. From your application's perspective, the Live API session continues seamlessly.
+- Managing client connections to your application (e.g., user's WebSocket to your FastAPI server)
+- Implementing client-side reconnection logic if needed
+- Handling network failures between clients and your application
 
-    **Configuration:**
+When ADK reconnects to the Live API, your application's event loop continues normally—you keep receiving events from `run_live()` without interruption. From your application's perspective, the Live API session continues seamlessly.
 
-    ```python
-    from google.genai import types
+**Configuration:**
 
-    run_config = RunConfig(
+```python
+from google.genai import types
+
+run_config = RunConfig(
     session_resumption=types.SessionResumptionConfig()
-    )
-    ```
+)
+```
 
-!!! note "Understanding Session Resumption Modes"
-    Session resumption has two modes:
 
-    - **Basic mode** (`transparent=False`): The Live API saves session snapshots. When reconnecting, you resume from the last snapshot.
-    - **Transparent mode** (`transparent=True`): In addition to session snapshots, the Live API tracks exactly which client messages were processed using `last_consumed_client_message_index`. This allows more precise reconnection—you know exactly which messages to resend if needed.
 
-    **How ADK handles session resumption**:
+**When NOT to Enable Session Resumption:**
 
-    ADK **automatically uses transparent session resumption mode** (`transparent=True`) during reconnections, regardless of what you configure in `SessionResumptionConfig()`. This is hardcoded in ADK's implementation to ensure the most reliable reconnection behavior with precise message tracking.
+While session resumption is recommended for most production applications, consider these scenarios where you might not need it:
 
-    **To enable**: Simply add `session_resumption=types.SessionResumptionConfig()` to your RunConfig. ADK handles all the reconnection logic transparently.
+- **Short sessions (<10 minutes)**: If your sessions typically complete within the ~10 minute connection timeout, resumption adds unnecessary overhead
+- **Stateless interactions**: Request-response style interactions where each turn is independent don't benefit from session continuity
+- **Development/testing**: Simpler debugging when each session starts fresh without carrying over state
+- **Cost-sensitive deployments**: Session resumption may incur additional platform costs or resource usage (verify with your platform)
 
-    **Platform compatibility**:
-
-    - **Vertex AI Live API**: Fully supports transparent mode ✅
-    - **Gemini Live API**: Transparent mode support is not explicitly documented ⚠️
-
-    **Recommended**: Enable session resumption for production applications using `SessionResumptionConfig()`. ADK handles all mode selection and reconnection logic automatically. For production deployments requiring guaranteed session resumption reliability, prefer Vertex AI Live API.
-
-    **When NOT to Enable Session Resumption:**
-
-    While session resumption is recommended for most production applications, consider these scenarios where you might not need it:
-
-    - **Short sessions (<10 minutes)**: If your sessions typically complete within the ~10 minute connection timeout, resumption adds unnecessary overhead
-    - **Stateless interactions**: Request-response style interactions where each turn is independent don't benefit from session continuity
-    - **Development/testing**: Simpler debugging when each session starts fresh without carrying over state
-    - **Cost-sensitive deployments**: Session resumption may incur additional platform costs or resource usage (verify with your platform)
-
-    **Best practice**: Enable session resumption by default for production, disable only when you have a specific reason not to use it.
+**Best practice**: Enable session resumption by default for production, disable only when you have a specific reason not to use it.
 
 ### How ADK Manages Session Resumption
 
@@ -531,19 +508,20 @@ sequenceDiagram
 
 **Solution:** [Context window compression](https://ai.google.dev/gemini-api/docs/live-session#context-window-compression) solves both constraints simultaneously. It uses a sliding-window approach to automatically compress or summarize earlier conversation history when the token count reaches a configured threshold. The Live API preserves recent context in full detail while compressing older portions. **Critically, enabling context window compression extends session duration to unlimited time**, removing the session duration limits (15 minutes for audio-only / 2 minutes for audio+video on Gemini Live API; 10 minutes for all sessions on Vertex AI) while also preventing token limit exhaustion. However, there is a trade-off: as the feature summarizes earlier conversation history rather than retaining it all, the detail of past context will be gradually lost over time. The model will have access to compressed summaries of older exchanges, not the full verbatim history.
 
-!!! note "Platform Behavior and Official Limits"
-    Session duration management and context window compression are **Live API platform features**. ADK configures these features via RunConfig and passes the configuration to the Live API, but the actual enforcement and implementation are handled by the Gemini/Vertex AI Live API backends.
+### Platform Behavior and Official Limits
 
-    **Important**: The duration limits and "unlimited" session behavior mentioned in this guide are based on current Live API behavior. These limits are subject to change by Google. Always verify current session duration limits and compression behavior in the official documentation:
+Session duration management and context window compression are **Live API platform features**. ADK configures these features via RunConfig and passes the configuration to the Live API, but the actual enforcement and implementation are handled by the Gemini/Vertex AI Live API backends.
 
-    - [Gemini Live API Documentation](https://ai.google.dev/gemini-api/docs/live)
-    - [Vertex AI Live API Documentation](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api)
+**Important**: The duration limits and "unlimited" session behavior mentioned in this guide are based on current Live API behavior. These limits are subject to change by Google. Always verify current session duration limits and compression behavior in the official documentation:
 
-    ADK provides an easy way to configure context window compression through RunConfig. However, developers are responsible for appropriately configuring the compression parameters (`trigger_tokens` and `target_tokens`) based on their specific requirements—model context window size, expected conversation patterns, and quality needs:
+- [Gemini Live API Documentation](https://ai.google.dev/gemini-api/docs/live)
+- [Vertex AI Live API Documentation](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api)
 
-    ```python
-    from google.genai import types
-    from google.adk.agents.run_config import RunConfig
+ADK provides an easy way to configure context window compression through RunConfig. However, developers are responsible for appropriately configuring the compression parameters (`trigger_tokens` and `target_tokens`) based on their specific requirements—model context window size, expected conversation patterns, and quality needs:
+
+```python
+from google.genai import types
+from google.adk.agents.run_config import RunConfig
 
 # For gemini-2.5-flash-native-audio-preview-09-2025 (128k context window)
 run_config = RunConfig(
@@ -816,14 +794,16 @@ run_config = RunConfig(
 
 This parameter caps the total number of LLM invocations allowed per invocation context, providing protection against runaway costs and infinite agent loops.
 
-!!! warning "Critical Limitation for BIDI Streaming"
-    **The `max_llm_calls` limit does NOT apply to `run_live()` with `StreamingMode.BIDI`.** This parameter only protects SSE streaming mode and `run_async()` flows. If you're building bidirectional streaming applications (the focus of this guide), you will NOT get automatic cost protection from this parameter.
+**Limitation for BIDI Streaming:**
 
-    **For Live streaming sessions**, implement your own safeguards:
-    - Session duration limits
-    - Turn count tracking
-    - Custom cost monitoring using [token usage metadata](#token-usage-tracking-in-live-events)
-    - Application-level circuit breakers
+**The `max_llm_calls` limit does NOT apply to `run_live()` with `StreamingMode.BIDI`.** This parameter only protects SSE streaming mode and `run_async()` flows. If you're building bidirectional streaming applications (the focus of this guide), you will NOT get automatic cost protection from this parameter.
+
+**For Live streaming sessions**, implement your own safeguards:
+
+- Session duration limits
+- Turn count tracking
+- Custom cost monitoring by tracking token usage in model turn events (see [Part 3: Event Types](part3.md#event-types))
+- Application-level circuit breakers
 
 ### save_live_blob
 
@@ -996,15 +976,6 @@ CFC is designed for complex, multi-step workflows that benefit from intelligent 
 
 In this part, you learned how RunConfig enables sophisticated control over ADK Bidi-streaming sessions through declarative configuration. We covered response modalities and their constraints, explored the differences between BIDI and SSE streaming modes, examined the relationship between ADK Sessions and Live API sessions, and learned how to manage session duration with session resumption and context window compression. You now understand how to handle concurrent session quotas, implement architectural patterns for quota management, configure cost controls through `max_llm_calls` and audio persistence options. With RunConfig mastery, you can build production-ready streaming applications that balance feature richness with operational constraints—enabling extended conversations, managing platform limits, controlling costs effectively, and monitoring resource consumption.
 
-## What's Next
+---
 
-Now that you understand RunConfig and session management, learn how to implement multimodal features:
-
-- **[Part 5: Audio, Image and Video](part5.md)** - Implement voice and video features with ADK's multimodal capabilities
-
-**Recommended next step**: Explore Part 5 to understand audio specifications, streaming architectures, voice activity detection, and best practices for building natural voice-enabled AI experiences.
-
-**Related Topics:**
-- **Session Management**: Revisit [ADK Session vs Live API session](#adk-session-vs-live-api-session) when debugging session issues
-- **Quota Planning**: Reference [Concurrent Sessions and Quota Management](#concurrent-live-api-sessions-and-quota-management) when scaling to production
-- **Advanced Features**: See [ADK Session Services documentation](https://google.github.io/adk-docs/sessions/) for persistent session storage options
+← [Previous: Part 3 - Event Handling with run_live()](part3.md) | [Next: Part 5 - How to Use Audio, Image and Video](part5.md) →

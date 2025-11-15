@@ -5,16 +5,18 @@ The `run_live()` method is ADK's primary entry point for streaming conversations
 You'll learn how to process different event types (text, audio, transcriptions, tool calls), manage conversation flow with interruption and turn completion signals, serialize events for network transport, and leverage ADK's automatic tool execution. Understanding event handling is essential for building responsive streaming applications that feel natural and real-time to users.
 
 !!! note "Async Context Required"
-
+    
     All `run_live()` code requires async context. See [Part 1: FastAPI Application Example](part1.md#fastapi-application-example) for details and production examples.
-
-## How run_live() works
+    
+## How run_live() Works
 
 `run_live()` is an async generator that streams conversation events in real-time. It yields events immediately as they're generated—no buffering, no polling, no callbacks. Events are streamed without internal buffering. Overall memory depends on session persistence (e.g., in-memory vs database), making it suitable for both quick exchanges and extended sessions.
 
 ### Method Signature and Flow
 
 > 📖 **Source Reference**: [`runners.py`](https://github.com/google/adk-python/blob/main/src/google/adk/runners.py)
+
+**Usage:**
 
 ```python
 # The method signature reveals the thoughtful design
@@ -29,33 +31,29 @@ async def run_live(
 ) -> AsyncGenerator[Event, None]:           # Generator yielding conversation events
 ```
 
-!!! note "Deprecated session parameter"
+As its signature tells, every streaming conversation needs identity (user_id), continuity (session_id), communication (live_request_queue), and configuration (run_config). The return type—an async generator of Events—promises real-time delivery without overwhelming system resources.
+    
+```mermaid
+sequenceDiagram
+participant Client
+participant Runner
+participant Agent
+participant LLMFlow
+participant Gemini
 
-    The `session` parameter is deprecated. Use `user_id` and `session_id` instead. See [ADK source](https://github.com/google/adk-python/blob/main/src/google/adk/runners.py#L767-L773) for details.
+Client->>Runner: runner.run_live(user_id, session_id, queue, config)
+Runner->>Agent: agent.run_live(context)
+Agent->>LLMFlow: _llm_flow.run_live(context)
+LLMFlow->>Gemini: Connect and stream
 
-    As its signature tells, every streaming conversation needs identity (user_id), continuity (session_id), communication (live_request_queue), and configuration (run_config). The return type—an async generator of Events—promises real-time delivery without overwhelming system resources.
-
-    ```mermaid
-    sequenceDiagram
-    participant Client
-    participant Runner
-    participant Agent
-    participant LLMFlow
-    participant Gemini
-
-    Client->>Runner: runner.run_live(user_id, session_id, queue, config)
-    Runner->>Agent: agent.run_live(context)
-    Agent->>LLMFlow: _llm_flow.run_live(context)
-    LLMFlow->>Gemini: Connect and stream
-
-    loop Continuous Streaming
-        Gemini-->>LLMFlow: LlmResponse
-        LLMFlow-->>Agent: Event
-        Agent-->>Runner: Event
-        Runner-->>Client: Event (yield)
-    end
-    ```
-
+loop Continuous Streaming
+    Gemini-->>LLMFlow: LlmResponse
+    LLMFlow-->>Agent: Event
+    Agent-->>Runner: Event
+    Runner-->>Client: Event (yield)
+end
+```
+    
 ### Basic Usage Pattern
 
 The simplest way to consume events from `run_live()` is to iterate over the async generator with a for-loop:
@@ -86,7 +84,7 @@ The `run_live()` method manages the underlying Live API connection lifecycle aut
 1. **Initialization**: Connection established when `run_live()` is called
 2. **Active Streaming**: Bidirectional communication via `LiveRequestQueue` (upstream to the model) and `run_live()` (downstream from the model)
 3. **Graceful Closure**: Connection closes when `LiveRequestQueue.close()` is called
-4. **Error Recovery**: ADK supports transparent session resumption; enable via `RunConfig.session_resumption` to handle transient failures
+4. **Error Recovery**: ADK supports transparent session resumption; enable via `RunConfig.session_resumption` to handle transient failures. See [Part 4: Session Resumption](part4.md#session-resumption) for details.
 
 #### What run_live() Yields
 
@@ -111,7 +109,7 @@ The `run_live()` event loop can exit under various conditions. Understanding the
 | Exit Condition | Trigger | Graceful? | Description |
 |---|---|---|---|
 | **Manual close** | `live_request_queue.close()` | ✅ Yes | User explicitly closes the queue, sending `LiveRequest(close=True)` signal |
-| **All agents complete** | Last agent in SequentialAgent calls `task_completed` | ✅ Yes | After all sequential agents finish their tasks |
+| **All agents complete** | Last agent in SequentialAgent calls `task_completed()` | ✅ Yes | After all sequential agents finish their tasks |
 | **Session timeout** | Live API duration limit reached | ⚠️ Connection closed | Session exceeds maximum duration (see limits below) |
 | **Early exit** | `end_invocation` flag set | ✅ Yes | Set during preprocessing or by tools/callbacks to terminate early |
 | **Empty event** | Queue closure signal | ✅ Yes | Internal signal indicating event stream has ended |
@@ -191,6 +189,7 @@ Events have two important ID fields:
 - **`event.invocation_id`**: Shared identifier for all events in the current invocation (format: `"e-" + UUID`). In `run_live()`, all events from a single streaming session share the same invocation_id. (See [InvocationContext](#invocationcontext-the-execution-state-container) for more about invocations)
 
 **Usage:**
+
 ```python
 # All events in this streaming session will have the same invocation_id
 async for event in runner.run_live(...):
@@ -231,13 +230,15 @@ This transformation ensures that transcribed user input is correctly attributed 
 
 > 📖 **Source Reference**: [`base_llm_flow.py:281-294`](https://github.com/google/adk-python/blob/main/src/google/adk/flows/llm_flows/base_llm_flow.py#L281-L294)
 
-### Event types and handling
+### Event Types and Handling
 
 ADK streams distinct event types through `runner.run_live()` to support different interaction modalities: text responses for traditional chat, audio chunks for voice output, transcriptions for accessibility and logging, and tool call notifications for function execution. Each event includes metadata flags (`partial`, `turn_complete`, `interrupted`) that control UI state transitions and enable natural, human-like conversation flows. Understanding how to recognize and handle these event types is essential for building responsive streaming applications.
 
 ### Text Events
 
 The most common event type, containing the model's text responses when you specifying `response_modalities` in `RunConfig` to `["TEXT"]` mode:
+
+**Usage:**
 
 ```python
 async for event in runner.run_live(...):
@@ -246,44 +247,47 @@ async for event in runner.run_live(...):
             text = event.content.parts[0].text
 
             if not event.partial:
-                # Your UI update logic here
+                # Your logic to update streaming display
                 update_streaming_display(text)
 ```
 
+#### Default Response Modality Behavior
 
-!!! warning "Default Response Modality Behavior"
+When `response_modalities` is not explicitly set (i.e., `None`), ADK automatically defaults to `["AUDIO"]` mode at the start of `run_live()`. This means:
 
-    When `response_modalities` is not explicitly set (i.e., `None`), ADK automatically defaults to `["AUDIO"]` mode at the start of `run_live()`. This means:
+- **If you provide no RunConfig**: Defaults to `["AUDIO"]`
+- **If you provide RunConfig without response_modalities**: Defaults to `["AUDIO"]`
+- **If you explicitly set response_modalities**: Uses your setting (no default applied)
 
-    - **If you provide no RunConfig**: Defaults to `["AUDIO"]`
-    - **If you provide RunConfig without response_modalities**: Defaults to `["AUDIO"]`
-    - **If you explicitly set response_modalities**: Uses your setting (no default applied)
+**Why this default exists**: Some native audio models require the response modality to be explicitly set. To ensure compatibility with all models, ADK defaults to `["AUDIO"]`.
 
-    **Why this default exists**: Some native audio models require the response modality to be explicitly set. To ensure compatibility with all models, ADK defaults to `["AUDIO"]`.
+**For text-only applications**: Always explicitly set `response_modalities=["TEXT"]` in your RunConfig to avoid receiving unexpected audio events.
 
-    **For text-only applications**: Always explicitly set `response_modalities=["TEXT"]` in your RunConfig to avoid receiving unexpected audio events.
+**Example:**
 
-    ```python
-    # Explicit text mode
-    run_config = RunConfig(
-        response_modalities=["TEXT"],
-        streaming_mode=StreamingMode.BIDI
-    )
-    ```
+```python
+# Explicit text mode
+run_config = RunConfig(
+    response_modalities=["TEXT"],
+    streaming_mode=StreamingMode.BIDI
+)
+```
 
-    **Key Event Flags:**
+**Key Event Flags:**
 
-    These flags help you manage streaming text display and conversation flow in your UI:
+These flags help you manage streaming text display and conversation flow in your UI:
 
-    - `event.partial`: `True` for incremental text chunks during streaming; `False` for complete merged text
-    - `event.turn_complete`: `True` when the model has finished its complete response
-    - `event.interrupted`: `True` when user interrupted the model's response
+- `event.partial`: `True` for incremental text chunks during streaming; `False` for complete merged text
+- `event.turn_complete`: `True` when the model has finished its complete response
+- `event.interrupted`: `True` when user interrupted the model's response
 
-    > 💡 **Learn More**: For detailed guidance on using `partial` `turn_complete` and `interrupted` flags to manage conversation flow and UI state, see [Handling Text Events](#handling-text-events).
+> 💡 **Learn More**: For detailed guidance on using `partial` `turn_complete` and `interrupted` flags to manage conversation flow and UI state, see [Handling Text Events](#handling-text-events).
 
 ### Audio Events
 
 When `response_modalities` is configured to `["AUDIO"]` in your `RunConfig`, the model generates audio output instead of text, and you'll receive audio data in the event stream:
+
+**Configuration:**
 
 ```python
 # Configure RunConfig for audio responses
@@ -304,6 +308,7 @@ async for event in runner.run_live(..., run_config=run_config):
             mime_type = part.inline_data.mime_type
 
             print(f"Received {len(audio_data)} bytes of {mime_type}")
+            # Your logic to play audio
             await play_audio(audio_data)
 ```
 
@@ -383,14 +388,18 @@ async for event in runner.run_live(
 
 When transcription is enabled in `RunConfig`, you receive transcriptions as separate events:
 
+**Configuration:**
+
 ```python
 async for event in runner.run_live(...):
     # User's spoken words (when input_audio_transcription enabled)
     if event.input_transcription:
+        # Your logic to display user transcription
         display_user_transcription(event.input_transcription)
 
     # Model's spoken words (when output_audio_transcription enabled)
     if event.output_transcription:
+        # Your logic to display model transcription
         display_model_transcription(event.output_transcription)
 ```
 
@@ -401,6 +410,8 @@ These enable accessibility features and conversation logging without separate tr
 ### Tool Call Events
 
 When the model requests tool execution:
+
+**Usage:**
 
 ```python
 async for event in runner.run_live(...):
@@ -420,6 +431,8 @@ ADK processes tool calls automatically—you typically don't need to handle thes
 ### Error Events
 
 Production applications need robust error handling to gracefully handle model errors and connection issues. ADK surfaces errors through the `error_code` and `error_message` fields:
+
+**Usage:**
 
 ```python
 import logging
@@ -467,6 +480,8 @@ The key decision is: *Can the model's response continue meaningfully?*
 
 You're building a customer support chatbot. A user asks an inappropriate question that triggers a SAFETY filter:
 
+**Example:**
+
 ```python
 if event.error_code in ["SAFETY", "PROHIBITED_CONTENT", "BLOCKLIST"]:
     # Model has stopped generating - continuation is impossible
@@ -484,6 +499,8 @@ if event.error_code in ["SAFETY", "PROHIBITED_CONTENT", "BLOCKLIST"]:
 **Scenario 2: Network Hiccup During Streaming (Use `continue`)**
 
 You're building a voice transcription service. Midway through transcribing, there's a brief network glitch:
+
+**Example:**
 
 ```python
 if event.error_code == "UNAVAILABLE":
@@ -503,6 +520,8 @@ if event.error_code == "UNAVAILABLE":
 
 You're generating a long-form article and hit the maximum token limit:
 
+**Example:**
+
 ```python
 if event.error_code == "MAX_TOKENS":
     # Model has reached output limit
@@ -521,6 +540,8 @@ if event.error_code == "MAX_TOKENS":
 **Scenario 4: Rate Limit with Retry Logic (Use `continue` with backoff)**
 
 You're running a high-traffic application that occasionally hits rate limits:
+
+**Example:**
 
 ```python
 retry_count = 0
@@ -557,6 +578,8 @@ async for event in runner.run_live(...):
 
 **Critical: Always use `finally` for cleanup**
 
+**Usage:**
+
 ```python
 try:
     async for event in runner.run_live(...):
@@ -569,7 +592,21 @@ Whether you `break` or the loop finishes naturally, `finally` ensures the connec
 
 **Error Code Reference:**
 
-ADK error codes come from the underlying Gemini API. For complete error code listings and descriptions, refer to the official documentation:
+ADK error codes come from the underlying Gemini API. Here are the most common error codes you'll encounter:
+
+| Error Code | Category | Description | Recommended Action |
+|------------|----------|-------------|-------------------|
+| `SAFETY` | Content Policy | Content violates safety policies | `break` - Inform user, log incident |
+| `PROHIBITED_CONTENT` | Content Policy | Content contains prohibited material | `break` - Show policy violation message |
+| `BLOCKLIST` | Content Policy | Content matches blocklist | `break` - Alert user, don't retry |
+| `MAX_TOKENS` | Limits | Output reached maximum token limit | `break` - Truncate gracefully, summarize |
+| `RESOURCE_EXHAUSTED` | Rate Limiting | Quota or rate limit exceeded | `continue` with backoff - Retry after delay |
+| `UNAVAILABLE` | Transient | Service temporarily unavailable | `continue` - Retry, may self-resolve |
+| `DEADLINE_EXCEEDED` | Transient | Request timeout exceeded | `continue` - Consider retry with backoff |
+| `CANCELLED` | Client | Client cancelled the request | `break` - Clean up resources |
+| `UNKNOWN` | System | Unspecified error occurred | `continue` with logging - Log for analysis |
+
+For complete error code listings and descriptions, refer to the official documentation:
 
 > 📖 **Official Documentation**:
 >
@@ -594,6 +631,8 @@ Understanding the `partial`, `interrupted`, and `turn_complete` flags is essenti
 ### Handling `partial`
 
 This flag helps you distinguish between incremental text chunks and complete merged text, enabling smooth streaming displays with proper final confirmation.
+
+**Usage:**
 
 ```python
 async for event in runner.run_live(...):
@@ -640,11 +679,13 @@ Event 4: partial=False, text="",             turn_complete=True  # Turn done
 > - If you do display `partial=True` events, the `partial=False` event provides the complete merged text for validation or storage
 > - This accumulation is handled automatically by ADK's `StreamingResponseAggregator`—you don't need to manually concatenate partial text chunks
 
-#### Handling `interrupted`
+#### Handling `interrupted` Flag
 
 This enables natural conversation flow by detecting when users interrupt the model mid-response, allowing you to stop rendering outdated content immediately.
 
 When users send new input while the model is still generating a response (common in voice conversations), you'll receive an event with `interrupted=True`:
+
+**Usage:**
 
 ```python
 async for event in runner.run_live(...):
@@ -674,17 +715,20 @@ Model: "The weather in San Diego is..."
 - **Conversation logging**: Mark which responses were interrupted (incomplete)
 - **User feedback**: Show visual indication that interruption was recognized
 
-#### Handling `turn_completion`
+#### Handling `turn_complete` Flag
 
 This signals conversation boundaries, allowing you to update UI state (enable input controls, hide indicators) and mark proper turn boundaries in logs and analytics.
 
 When the model finishes its complete response, you'll receive an event with `turn_complete=True`:
+
+**Usage:**
 
 ```python
 async for event in runner.run_live(...):
     if event.turn_complete:
         # Your logic to update UI to show "ready for input" state
         enable_user_input()
+        # Your logic to hide typing indicator
         hide_typing_indicator()
 
         # Your logic to mark conversation boundary in logs
@@ -740,7 +784,7 @@ async for event in runner.run_live(...):
 - **On interruption** (`interrupted=True`): Model audio cache is flushed
 - **On generation completion**: Model audio cache is flushed
 
-## Serializing events to JSON
+## Serializing Events to JSON
 
 ADK `Event` objects are Pydantic models, which means they come with powerful serialization capabilities. The `model_dump_json()` method is particularly useful for streaming events over network protocols like WebSockets or Server-Sent Events (SSE).
 
@@ -907,6 +951,8 @@ websocket.onmessage = function (event) {
 ### Optimization for Audio Transmission
 
 Base64-encoded binary audio in JSON significantly increases payload size. For production applications, use a single WebSocket connection with both binary frames (for audio) and text frames (for metadata):
+
+**Usage:**
 
 ```python
 async for event in runner.run_live(...):
@@ -1166,6 +1212,8 @@ When building multi-agent systems with ADK, understanding how agents transition 
 
 ADK automatically adds a `task_completed()` function to each agent in the sequence. When the model calls this function, it signals completion and triggers the transition to the next agent:
 
+**Usage:**
+
 ```python
 # SequentialAgent automatically adds this tool to each sub-agent
 def task_completed():
@@ -1179,6 +1227,8 @@ def task_completed():
 ### Recommended Pattern: Transparent Sequential Flow
 
 The key insight is that **agent transitions happen transparently** within the same `run_live()` event stream. Your application doesn't need to manage transitions—just consume events uniformly:
+
+**Usage:**
 
 ```python
 async def handle_sequential_workflow():
@@ -1213,7 +1263,8 @@ async def handle_sequential_workflow():
                 for part in event.content.parts:
                     # Check for audio data
                     if part.inline_data and part.inline_data.mime_type.startswith("audio/"):
-                        await play_audio(part.inline_data.data)
+                        # Your logic to play audio
+            await play_audio(part.inline_data.data)
 
                     # Check for text data
                     if part.text:
@@ -1262,6 +1313,8 @@ Event: author="reviewer", function_response: task_completed
 
 Use one event loop for all agents in the sequence:
 
+**Usage:**
+
 ```python
 # ✅ CORRECT: One loop handles all agents
 async for event in runner.run_live(...):
@@ -1304,6 +1357,8 @@ async for event in runner.run_live(live_request_queue=queue):
 
 Track which agent is active for better user experience:
 
+**Usage:**
+
 ```python
 current_agent_name = None
 
@@ -1321,6 +1376,8 @@ async for event in runner.run_live(...):
 #### 4. Transition Notifications
 
 Optionally notify users when agents hand off:
+
+**Usage:**
 
 ```python
 async for event in runner.run_live(...):
@@ -1383,3 +1440,7 @@ The SequentialAgent design ensures smooth transitions—your application simply 
 ## Summary
 
 In this part, you mastered event handling in ADK's Bidi-streaming architecture. We explored the different event types that agents generate—text responses, audio chunks, transcriptions, tool calls, and control signals—and learned how to process each event type effectively. You now understand how to handle interruptions and turn completion signals for natural conversation flow, serialize events for network transport using Pydantic's model serialization, leverage ADK's automatic tool execution to simplify agent workflows, and access InvocationContext for advanced state management scenarios. With these event handling patterns in place, you're equipped to build responsive streaming applications that provide real-time feedback to users. Next, you'll learn how to configure sophisticated streaming behaviors through RunConfig, including multimodal interactions, session resumption, and cost controls.
+
+---
+
+← [Previous: Part 2 - Sending Messages with LiveRequestQueue](part2.md) | [Next: Part 4 - Understanding RunConfig](part4.md) →
