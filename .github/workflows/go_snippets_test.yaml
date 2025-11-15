@@ -47,7 +47,7 @@ jobs:
       if: github.event_name == 'pull_request'
       run: |
         echo "Checking for any new Go files that are not in the build script..."
-        ./tools/pr-checks/check_go_snippets.sh
+        ./tools/go-snippets/check_go_snippets.sh
 
     - name: Get changed Go snippet files (PR only)
       if: github.event_name == 'pull_request'
