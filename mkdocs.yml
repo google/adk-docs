@@ -185,6 +185,7 @@ nav:
         - GitHub: tools/third-party/github.md
         - Hugging Face: tools/third-party/hugging-face.md
         - Notion: tools/third-party/notion.md
+        - ScrapeGraphAI: tools/third-party/scrapegraphai.md
         - Tavily: tools/third-party/tavily.md
         - Agentic UI (AG-UI): tools/third-party/ag-ui.md
     - Custom Tools:
