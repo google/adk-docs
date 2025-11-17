@@ -61,7 +61,7 @@ a2a_basic/
 
 #### Main Agent (`a2a_basic/agent.py`)
 
-- **`roll_die(sides: int)`**: Function tool for rolling dice
+- **`roll_dice(sides: int)`**: Function tool for rolling dice
 - **`roll_agent`**: Local agent specialized in dice rolling
 - **`prime_agent`**: Remote A2A agent configuration
 - **`root_agent`**: Main orchestrator with delegation logic
