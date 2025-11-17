@@ -199,6 +199,57 @@ For deployed applications, a service account is the standard method.
 !!!warning "Secure Your Credentials"
     Service account credentials or API keys are powerful credentials. Never expose them publicly. Use a secret manager like [Google Secret Manager](https://cloud.google.com/secret-manager) to store and access them securely in production.
 
+### Troubleshooting
+
+#### Error Code 429 - RESOURCE_EXHAUSTED
+
+This error usually happens if the number of your requests exceeds the capacity allocated to process requests.
+
+To mitigate this, you can do one of the following:
+
+1.  Request higher quota limits for the model you are trying to use.
+
+2.  Enable client-side retries. Retries allow the client to automatically retry the request after a delay, which can help if the quota issue is temporary.
+    
+    There are two ways you can set retry options:
+
+    **Option 1:** Set retry options on the Agent as a part of generate_content_config.
+
+    You would use this option if you are instantiating this model adapter by
+    yourself.
+
+    ```python
+    root_agent = Agent(
+        model='gemini-2.0-flash',
+        ...
+        generate_content_config=types.GenerateContentConfig(
+            ...
+            http_options=types.HttpOptions(
+                ...
+                retry_options=types.HttpRetryOptions(initial_delay=1, attempts=2),
+                ...
+            ),
+            ...
+        )
+    ```
+
+    **Option 2:** Retry options on this model adapter.
+
+    You would use this option if you were instantiating the instance of adapter
+    by yourself.
+
+    ```python
+    from google.genai import types
+
+    # ...
+
+    agent = Agent(
+        model=Gemini(
+        retry_options=types.HttpRetryOptions(initial_delay=1, attempts=2),
+        )
+    )
+    ```
+
 ## Using Anthropic models
 
 <div class="language-support-tag" title="Available for Java. Python support for direct Anthropic API (non-Vertex) is via LiteLLM.">
