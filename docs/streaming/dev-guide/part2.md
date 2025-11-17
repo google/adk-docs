@@ -15,7 +15,7 @@ Understanding `LiveRequestQueue` is essential for building responsive streaming 
 
 The `LiveRequestQueue` is your primary interface for sending messages to the Agent in streaming conversations. Rather than managing separate channels for text, audio, and control signals, ADK provides a unified `LiveRequest` container that handles all message types through a single, elegant API:
 
-```python
+```python title='Source reference: <a href="https://github.com/google/adk-python/blob/0b1784e0/src/google/adk/agents/live_request_queue.py" target="_blank">live_request_queue.py</a>'
 class LiveRequest(BaseModel):
     content: Optional[Content] = None           # Text-based content and structured data
     blob: Optional[Blob] = None                 # Audio/video data and binary streams
@@ -23,8 +23,6 @@ class LiveRequest(BaseModel):
     activity_end: Optional[ActivityEnd] = None      # Signal end of user activity
     close: bool = False                         # Graceful connection termination signal
 ```
-
-> 📖 **Source Reference**: For complete field definitions and validation logic, see [`live_request_queue.py`](https://github.com/google/adk-python/blob/0b1784e0/src/google/adk/agents/live_request_queue.py)
 
 This streamlined design handles every streaming scenario you'll encounter. The `content` and `blob` fields handle different data types, the `activity_start` and `activity_end` fields enable activity signaling, and the `close` flag provides graceful termination semantics.
 
@@ -75,14 +73,10 @@ graph LR
 
 The `send_content()` method sends text messages in turn-by-turn mode, where each message represents a discrete conversation turn. This signals a complete turn to the model, triggering immediate response generation.
 
-**Demo Implementation:**
-
-```python
+```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py#L157-L158" target="_blank">main.py:157-158</a>'
 content = types.Content(parts=[types.Part(text=json_message["text"])])
 live_request_queue.send_content(content)
 ```
-
-> 📖 **Demo Implementation**: See text message handling in [`app/main.py:157-158`](https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py#L157-L158)
 
 **Using Content and Part with ADK Bidi-streaming:**
 
@@ -109,9 +103,7 @@ For Live API, multimodal inputs (audio/video) use different mechanisms (see `sen
 
 The `send_realtime()` method sends binary data streams—primarily audio, image and video—flow through the `Blob` type, which handles transmission in realtime mode. Unlike text content that gets processed in turn-by-turn mode, blobs are designed for continuous streaming scenarios where data arrives in chunks. You provide raw bytes, and Pydantic automatically handles base64 encoding during JSON serialization for safe network transmission (configured in `LiveRequest.model_config`). The MIME type helps the model understand the content format.
 
-**Demo Implementation:**
-
-```python
+```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py#L141-L145" target="_blank">main.py:141-145</a>'
 audio_blob = types.Blob(
     mime_type="audio/pcm;rate=16000",
     data=audio_data
@@ -119,9 +111,9 @@ audio_blob = types.Blob(
 live_request_queue.send_realtime(audio_blob)
 ```
 
-> 📖 **Demo Implementation**: See audio blob creation and sending in [`app/main.py:141-145`](https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py#L141-L145)
-
-> 💡 **Learn More**: For complete details on audio, image and video specifications, formats, and best practices, see [Part 5: How to Use Audio, Image and Video](part5.md).
+!!! note "Learn More"
+    
+    For complete details on audio, image and video specifications, formats, and best practices, see [Part 5: How to Use Audio, Image and Video](part5.md).
 
 ### Activity Signals
 
@@ -157,7 +149,9 @@ live_request_queue.send_activity_end()  # Signal: user stopped speaking
 
 **Default behavior (automatic VAD):** If you don't send activity signals, Live API's built-in VAD automatically detects speech boundaries in the audio stream you send via `send_realtime()`. This is the recommended approach for most applications.
 
-> 💡 **Learn More**: For detailed comparison of automatic VAD vs manual activity signals, including when to disable VAD and best practices, see [Part 5: Voice Activity Detection](part5.md#voice-activity-detection-vad).
+!!! note "Learn More"
+    
+    For detailed comparison of automatic VAD vs manual activity signals, including when to disable VAD and best practices, see [Part 5: Voice Activity Detection](part5.md#voice-activity-detection-vad).
 
 ### Control Signals
 
@@ -169,9 +163,7 @@ The `close` signal provides graceful termination semantics for streaming session
 
 See [Part 4: Understanding RunConfig](part4.md#streamingmode-bidi-or-sse) for detailed comparison and when to use each mode.
 
-**Demo Implementation:**
-
-```python
+```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py#L195-L213" target="_blank">main.py:195-213</a>'
 try:
     logger.debug("Starting asyncio.gather for upstream and downstream tasks")
     await asyncio.gather(
@@ -189,13 +181,13 @@ finally:
     live_request_queue.close()
 ```
 
-> 📖 **Demo Implementation**: See the cleanup in finally block in [`app/main.py:195-213`](https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py#L195-L213)
-
 **What happens if you don't call close()?**
 
 Although ADK cleans up local resources automatically, failing to call `close()` in BIDI mode prevents sending a graceful termination signal to the Live API, which will then receive an abrupt disconnection after certain timeout period. This can lead to "zombie" Live API sessions that remain open on the cloud service, even though your application has finished with them. These stranded sessions may significantly decrease the number of concurrent sessions your application can handle, as they continue to count against your quota limits until they eventually timeout.
 
-> 💡 **Learn More**: For comprehensive error handling patterns during streaming, including when to use `break` vs `continue` and handling different error types, see [Part 3: Error Events](part3.md#error-events).
+!!! note "Learn More"
+    
+    For comprehensive error handling patterns during streaming, including when to use `break` vs `continue` and handling different error types, see [Part 3: Error Events](part3.md#error-events).
 
 ## Concurrency and Thread Safety
 
@@ -207,9 +199,7 @@ Understanding how `LiveRequestQueue` handles concurrency is essential for buildi
 
 **Why synchronous send methods?** Convenience and simplicity. You can call them from anywhere in your async code without `await`:
 
-**Demo Implementation:**
-
-```python
+```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py#L129-L158" target="_blank">main.py:129-158</a>'
 async def upstream_task() -> None:
     """Receives messages from WebSocket and sends to LiveRequestQueue."""
     while True:
@@ -231,8 +221,6 @@ async def upstream_task() -> None:
                 content = types.Content(parts=[types.Part(text=json_message["text"])])
                 live_request_queue.send_content(content)
 ```
-
-> 📖 **Demo Implementation**: See the complete upstream task in [`app/main.py:129-158`](https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py#L129-L158)
 
 This pattern mixes async I/O operations with sync CPU operations naturally. The send methods return immediately without blocking, allowing your application to stay responsive.
 

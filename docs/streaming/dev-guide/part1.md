@@ -148,7 +148,9 @@ Live API is Google's real-time conversational AI technology that enables **low-l
 - **Proactive Audio**: The model can initiate responses based on context awareness, creating more natural interactions where the AI offers help or clarification proactively (Native Audio models only)
 - **Affective Dialog**: Advanced models understand tone of voice and emotional context, adapting responses to match the conversational mood and user sentiment (Native Audio models only)
 
-> 💡 **Learn More**: For detailed information about Native Audio models and these features, see [Part 5: Audio and Video - Proactivity and Affective Dialog](part5.md#proactivity-and-affective-dialog).
+!!! note "Learn More"
+
+    For detailed information about Native Audio models and these features, see [Part 5: Audio and Video - Proactivity and Affective Dialog](part5.md#proactivity-and-affective-dialog).
 
 **Technical Specifications:**
 
@@ -167,7 +169,7 @@ Both APIs provide the same core Live API technology, but differ in deployment pl
 | **Access** | Google AI Studio | Google Cloud |
 | **Authentication** | API key (`GOOGLE_API_KEY`) | Google Cloud credentials (`GOOGLE_CLOUD_PROJECT`, `GOOGLE_CLOUD_LOCATION`) |
 | **Best for** | Rapid prototyping, development, experimentation | Production deployments, enterprise applications |
-| **Session Duration** | Audio-only: 15 min<br>Audio+video: 2 min<br>With [Part 4: Context Window Compression](part4.md#context-window-compression): Unlimited | Both: 10 min<br>With [Part 4: Context Window Compression](part4.md#context-window-compression): Unlimited |
+| **Session Duration** | Audio-only: 15 min<br>Audio+video: 2 min<br>With [Part 4: Context Window Compression](part4.md#live-api-context-window-compression): Unlimited | Both: 10 min<br>With [Part 4: Context Window Compression](part4.md#live-api-context-window-compression): Unlimited |
 | **Concurrent Sessions** | Tier-based quotas (see [API quotas](https://ai.google.dev/gemini-api/docs/quota)) | Up to 1,000 per project (configurable via quota requests) |
 | **Enterprise Features** | Basic | Advanced monitoring, logging, SLAs, session resumption (24h) |
 | **Setup Complexity** | Minimal (API key only) | Requires Google Cloud project setup |
@@ -175,10 +177,11 @@ Both APIs provide the same core Live API technology, but differ in deployment pl
 | **API Endpoint** | `generativelanguage.googleapis.com` | `{location}-aiplatform.googleapis.com` |
 | **Billing** | Usage tracked via API key | Google Cloud project billing |
 
-> 📖 **Source Reference**: [Gemini Live API Guide](https://ai.google.dev/gemini-api/docs/live-guide) | [Vertex AI Live API Overview](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api)
-
 !!! note "Live API Reference Notes"
+
     **Concurrent session limits**: Quota-based and may vary by account tier or configuration. Check your current quotas in Google AI Studio or Google Cloud Console.
+
+    **Official Documentation**: [Gemini Live API Guide](https://ai.google.dev/gemini-api/docs/live-guide) | [Vertex AI Live API Overview](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api)
 
 ## 1.3 ADK Bidi-streaming: For Building Realtime Agent Applications
 
@@ -191,8 +194,8 @@ ADK transforms these challenges into simple, declarative APIs. Instead of spendi
 | Feature | Raw Live API (`google-genai` SDK) | ADK Bidi-streaming (`adk-python` and `adk-java` SDK) |
 |---------|-----------------------------------|------------------------------------------------------|
 | **Agent Framework** | ❌ Not available | ✅ Single agent, multi-agent with sub-agents, and sequential workflow agents, Tool ecosystem, Deployment ready, Evaluation, Security and more (see [ADK Agent docs](https://google.github.io/adk-docs/agents/)) |
-| **Tool Execution** | ❌ Manual tool execution and response handling | ✅ Automatic tool execution (see [Part 3: Event Handling](part3.md#tool-events)) |
-| **Connection Management** | ❌ Manual reconnection and session resumption | ✅ Automatic reconnection and session resumption (see [Part 4: Session Resumption](part4.md#session-resumption)) |
+| **Tool Execution** | ❌ Manual tool execution and response handling | ✅ Automatic tool execution (see [Part 3: Tool Call Events](part3.md#tool-call-events)) |
+| **Connection Management** | ❌ Manual reconnection and session resumption | ✅ Automatic reconnection and session resumption (see [Part 4: Live API Session Resumption](part4.md#live-api-session-resumption)) |
 | **Event Model** | ❌ Custom event structures and serialization | ✅ Unified event model with metadata (see [Part 3: Event Handling](part3.md)) |
 | **Async Event Processing Framework** | ❌ Manual async coordination and stream handling | ✅ `LiveRequestQueue`, `run_live()` async generator, automatic bidirectional flow coordination (see [Part 2](part2.md) and [Part 3](part3.md)) |
 | **App-level Session Persistence** | ❌ Manual implementation | ✅ SQL databases (PostgreSQL, MySQL, SQLite), Vertex AI, in-memory (see [ADK Session docs](https://google.github.io/adk-docs/sessions/)) |
@@ -249,8 +252,6 @@ By handling the complexity of session management, tool orchestration, state pers
 Now that you understand Live API technology and why ADK adds value, let's explore how ADK actually works. This section maps the complete data flow from your application through ADK's pipeline to Live API and back, showing which components handle which responsibilities.
 
 You'll see how key components like `LiveRequestQueue`, `Runner`, and `Agent` orchestrate streaming conversations without requiring you to manage WebSocket connections, coordinate async flows, or handle platform-specific API differences.
-
-> 📖 **Source Reference**: [Official ADK documentation](https://google.github.io/adk-docs/)
 
 ### High-Level Architecture
 
@@ -413,9 +414,7 @@ These components are created once when your application starts and shared across
 
 The `Agent` is the core of your streaming application—it defines what your AI can do, how it should behave, and which AI model powers it. You configure your agent with a specific model, tools it can use (like Google Search or custom APIs), and instructions that shape its personality and behavior.
 
-**Demo Implementation:**
-
-```python
+```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/google_search_agent/agent.py#L10-L15" target="_blank">agent.py:10-15</a>'
 """Google Search Agent definition for ADK Bidi-streaming demo."""
 
 import os
@@ -433,11 +432,11 @@ agent = Agent(
 )
 ```
 
-> 📖 **Demo Implementation**: See the agent definition in [`agent.py:10-15`](https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/google_search_agent/agent.py#L10-L15)
-
 The agent instance is **stateless and reusable**—you create it once and use it for all streaming sessions. Agent configuration is covered in the [ADK Agent documentation](https://google.github.io/adk-docs/agents/).
 
-> 💡 **Model Availability**: For the latest supported models and their capabilities, see [Part 5: Audio and Video - Supported Models](part5.md#supported-models).
+!!! note "Model Availability"
+
+    For the latest supported models and their capabilities, see [Part 5: Understanding Audio Model Architectures](part5.md#understanding-audio-model-architectures).
 
 !!! note "Agent vs LlmAgent"
 
@@ -449,16 +448,12 @@ The ADK [Session](https://google.github.io/adk-docs/sessions/session/) manages c
 
 To create a `Session`, or get an existing one for a specified `session_id`, every ADK application needs to have a [SessionService](https://google.github.io/adk-docs/sessions/session/#managing-sessions-with-a-sessionservice). For development purpose, ADK provides a simple `InMemorySessionService` that will lose the `Session` state when the application shuts down.
 
-**Demo Implementation:**
-
-```python
+```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py#L46" target="_blank">main.py:46</a>'
 from google.adk.sessions import InMemorySessionService
 
 # Define your session service
 session_service = InMemorySessionService()
 ```
-
-> 📖 **Demo Implementation**: See the session service initialization in [`main.py:46`](https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py#L46)
 
 For production applications, choose a persistent session service based on your infrastructure:
 
@@ -482,9 +477,7 @@ Both provide the same session persistence capabilities—choose based on your in
 
 The [Runner](https://google.github.io/adk-docs/runtime/) provides the runtime for the `Agent`. It manages the conversation flow, coordinates tool execution, handles events, and integrates with session storage. You create one runner instance at application startup and reuse it for all streaming sessions.
 
-**Demo Implementation:**
-
-```python
+```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py#L34" target="_blank">main.py:34,49-53</a>'
 from google.adk.runners import Runner
 
 APP_NAME = "bidi-demo"
@@ -496,8 +489,6 @@ runner = Runner(
     session_service=session_service
 )
 ```
-
-> 📖 **Demo Implementation**: See the runner initialization in [`main.py:34,49-53`](https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py#L34)
 
 The `app_name` parameter is required and identifies your application in session storage. All sessions for your application are organized under this name.
 
@@ -511,7 +502,9 @@ ADK `Session` provides a "conversation thread" of the Bidi-streaming application
 
 ADK `Session` (managed by SessionService) provides **persistent conversation storage** across multiple Bidi-streaming sessions (can spans hours, days or even months), while Live API session (managed by Live API backend) is **a transient streaming context** that exists only during single Bidi-streaming event loop (spans minutes or hours typically) that we will discuss later. When the loop starts, ADK initializes the Live API session with history from the ADK `Session`, then updates the ADK `Session` as new events occur.
 
-> 💡 **Learn More**: For a detailed comparison with sequence diagrams, see [Part 4: ADK `Session` vs Live API session](part4.md#adk-session-vs-live-api-session).
+!!! note "Learn More"
+
+    For a detailed comparison with sequence diagrams, see [Part 4: ADK `Session` vs Live API session](part4.md#adk-session-vs-live-api-session).
 
 ##### Session Identifiers Are Application-Defined
 
@@ -540,9 +533,7 @@ This design enables scenarios like:
 
 The recommended production pattern is to check if a session exists first, then create it only if needed. This approach safely handles both new sessions and conversation resumption:
 
-**Demo Implementation:**
-
-```python
+```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py#L110-L121" target="_blank">main.py:110-121</a>'
 # Get or create session (handles both new sessions and reconnections)
 session = await session_service.get_session(
     app_name=APP_NAME,
@@ -557,8 +548,6 @@ if not session:
     )
 ```
 
-> 📖 **Demo Implementation**: See the session get-or-create pattern in [`main.py:181-189`](https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py#L181-L189)
-
 This pattern works correctly in all scenarios:
 
 - **New conversations**: If the session doesn't exist, it's created automatically
@@ -571,9 +560,7 @@ This pattern works correctly in all scenarios:
 
 [RunConfig](part4.md) defines the streaming behavior for this specific session—which modalities to use (text or audio), whether to enable transcription, voice activity detection, proactivity, and other advanced features.
 
-**Demo Implementation:**
-
-```python
+```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py#L89-L95" target="_blank">main.py:89-95</a>'
 from google.adk.agents.run_config import RunConfig, StreamingMode
 from google.genai import types
 
@@ -588,23 +575,17 @@ run_config = RunConfig(
 )
 ```
 
-> 📖 **Demo Implementation**: See the RunConfig setup in [`main.py:99-106`](https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py#L99-L106)
-
 `RunConfig` is **session-specific**—each streaming session can have different configuration. For example, one user might prefer text-only responses while another uses voice mode. See [Part 4: Understanding RunConfig](part4.md) for complete configuration options.
 
 #### Create LiveRequestQueue
 
 `LiveRequestQueue` is the communication channel for sending messages to the agent during streaming. It's a thread-safe async queue that buffers user messages (text content, audio blobs, activity signals) for orderly processing.
 
-**Demo Implementation:**
-
-```python
+```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py#L123" target="_blank">main.py:123</a>'
 from google.adk.agents.live_request_queue import LiveRequestQueue
 
 live_request_queue = LiveRequestQueue()
 ```
-
-> 📖 **Demo Implementation**: See the LiveRequestQueue creation in [`main.py:124`](https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py#L124)
 
 `LiveRequestQueue` is **session-specific and stateful**—you create a new queue for each streaming session and close it when the session ends. Unlike `Agent` and `Runner`, queues cannot be reused across sessions.
 
@@ -612,7 +593,7 @@ live_request_queue = LiveRequestQueue()
 
     Never reuse a `LiveRequestQueue` across multiple streaming sessions. Each call to `run_live()` requires a fresh queue. Reusing queues can cause message ordering issues and state corruption.
 
-    > 📖 **Source Reference**: The close signal persists in the queue ([`live_request_queue.py:59-60`](https://github.com/google/adk-python/blob/main/src/google/adk/agents/live_request_queue.py#L59-L60)) and terminates the sender loop ([`base_llm_flow.py:238-240`](https://github.com/google/adk-python/blob/main/src/google/adk/flows/llm_flows/base_llm_flow.py#L238-L240)). Reusing a queue would carry over this signal and any remaining messages from the previous session.
+    The close signal persists in the queue (see [`live_request_queue.py:59-60`](https://github.com/google/adk-python/blob/main/src/google/adk/agents/live_request_queue.py#L59-L60)) and terminates the sender loop (see [`base_llm_flow.py:238-240`](https://github.com/google/adk-python/blob/main/src/google/adk/flows/llm_flows/base_llm_flow.py#L238-L240)). Reusing a queue would carry over this signal and any remaining messages from the previous session.
 
 ### Phase 3: Bidi-streaming with `run_live()` event loop
 
@@ -622,9 +603,7 @@ Once the streaming loop is running, you can send messages to the agent and recei
 
 Use `LiveRequestQueue` methods to send different types of messages to the agent during the streaming session:
 
-**Demo Implementation:**
-
-```python
+```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py#L136-L176" target="_blank">main.py:136-176</a>'
 from google.genai import types
 
 # Send text content
@@ -639,8 +618,6 @@ audio_blob = types.Blob(
 live_request_queue.send_realtime(audio_blob)
 ```
 
-> 📖 **Demo Implementation**: See the upstream task in [`main.py:150-154,141-146`](https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py#L150-L154)
-
 These methods are **non-blocking**—they immediately add messages to the queue without waiting for processing. This enables smooth, responsive user experiences even during heavy AI processing.
 
 See [Part 2: Sending messages with LiveRequestQueue](part2.md) for detailed API documentation.
@@ -649,9 +626,7 @@ See [Part 2: Sending messages with LiveRequestQueue](part2.md) for detailed API 
 
 The `run_live()` async generator continuously yields `Event` objects as the agent processes input and generates responses. Each event represents a discrete occurrence—partial text generation, audio chunks, tool execution, transcription, interruption, or turn completion.
 
-**Demo Implementation:**
-
-```python
+```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py#L178-L190" target="_blank">main.py:178-190</a>'
 async for event in runner.run_live(
     user_id=user_id,
     session_id=session_id,
@@ -661,8 +636,6 @@ async for event in runner.run_live(
     event_json = event.model_dump_json(exclude_none=True, by_alias=True)
     await websocket.send_text(event_json)
 ```
-
-> 📖 **Demo Implementation**: See the downstream task in [`main.py:177-190`](https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py#L177-L190)
 
 Events are designed for **streaming delivery**—you receive partial responses as they're generated, not just complete messages. This enables real-time UI updates and responsive user experiences.
 
@@ -676,13 +649,9 @@ When the streaming session should end (user disconnects, conversation completes,
 
 Send a close signal through the queue to terminate the streaming loop:
 
-**Demo Implementation:**
-
-```python
+```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py#L213" target="_blank">main.py:213</a>'
 live_request_queue.close()
 ```
-
-> 📖 **Demo Implementation**: See the queue cleanup in finally block in [`main.py:212`](https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py#L212)
 
 This signals `run_live()` to stop yielding events and exit the async generator loop. The agent completes any in-progress processing and the streaming session ends cleanly.
 
@@ -690,7 +659,9 @@ This signals `run_live()` to stop yielding events and exit the async generator l
 
 Here's a complete FastAPI WebSocket application showing all four phases integrated with proper Bidi-streaming. The key pattern is **upstream/downstream tasks**: the upstream task receives messages from WebSocket and sends them to `LiveRequestQueue`, while the downstream task receives `Event` objects from `run_live()` and sends them to WebSocket.
 
-> 📖 **Demo Implementation**: For the complete, production-ready implementation with multimodal support (text, audio, image), see [`main.py`](https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py)
+!!! note "Complete Demo Implementation"
+
+    For the production-ready implementation with multimodal support (text, audio, image), see the complete [`main.py`](https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py) file.
 
 **Complete Implementation:**
 
@@ -824,9 +795,7 @@ async def websocket_endpoint(websocket: WebSocket, user_id: str, session_id: str
 
 The upstream task continuously receives messages from the WebSocket client and forwards them to the `LiveRequestQueue`. This enables the user to send messages to the agent at any time, even while the agent is generating a response.
 
-**Demo Implementation:**
-
-```python
+```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py#L129-L176" target="_blank">main.py:129-176</a>'
 async def upstream_task() -> None:
     """Receives messages from WebSocket and sends to LiveRequestQueue."""
     try:
@@ -838,15 +807,11 @@ async def upstream_task() -> None:
         pass  # Client disconnected
 ```
 
-> 📖 **Demo Implementation**: See the complete upstream task in [`main.py:128-175`](https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py#L128-L175)
-
 **Downstream Task (run_live() → WebSocket)**
 
 The downstream task continuously receives `Event` objects from `run_live()` and sends them to the WebSocket client. This streams the agent's responses, tool executions, transcriptions, and other events to the user in real-time.
 
-**Demo Implementation:**
-
-```python
+```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py#L178-L190" target="_blank">main.py:178-190</a>'
 async def downstream_task() -> None:
     """Receives Events from run_live() and sends to WebSocket."""
     async for event in runner.run_live(
@@ -860,15 +825,11 @@ async def downstream_task() -> None:
         )
 ```
 
-> 📖 **Demo Implementation**: See the complete downstream task in [`main.py:177-190`](https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py#L177-L190)
-
 **Concurrent Execution with Cleanup**
 
 Both tasks run concurrently using `asyncio.gather()`, enabling true Bidi-streaming. The `try/finally` block ensures `LiveRequestQueue.close()` is called even if exceptions occur, minimizing the session resource usage.
 
-**Demo Implementation:**
-
-```python
+```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py#L195-L213" target="_blank">main.py:195-213</a>'
 try:
     await asyncio.gather(
         upstream_task(),
@@ -878,8 +839,6 @@ try:
 finally:
     live_request_queue.close()  # Always cleanup
 ```
-
-> 📖 **Demo Implementation**: See the error handling and cleanup in [`main.py:192-212`](https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py#L192-L212)
 
 This pattern—concurrent upstream/downstream tasks with guaranteed cleanup—is the foundation of production-ready streaming applications. The lifecycle pattern (initialize once, stream many times) enables efficient resource usage and clean separation of concerns, with application components remaining stateless and reusable while session-specific state is isolated in `LiveRequestQueue`, `RunConfig`, and session records.
 

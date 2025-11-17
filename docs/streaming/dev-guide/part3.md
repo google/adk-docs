@@ -14,11 +14,9 @@ You'll learn how to process different event types (text, audio, transcriptions, 
 
 ### Method Signature and Flow
 
-> 📖 **Source Reference**: [`runners.py`](https://github.com/google/adk-python/blob/main/src/google/adk/runners.py)
-
 **Usage:**
 
-```python
+```python title='Source reference: <a href="https://github.com/google/adk-python/blob/main/src/google/adk/runners.py" target="_blank">runners.py</a>'
 # The method signature reveals the thoughtful design
 async def run_live(
     self,
@@ -58,9 +56,7 @@ end
 
 The simplest way to consume events from `run_live()` is to iterate over the async generator with a for-loop:
 
-**Demo Implementation:**
-
-```python
+```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py#L182-L190" target="_blank">main.py:182-190</a>'
 async for event in runner.run_live(
     user_id=user_id,
     session_id=session_id,
@@ -72,9 +68,9 @@ async for event in runner.run_live(
     await websocket.send_text(event_json)
 ```
 
-> 📖 **Demo Implementation**: See the complete downstream task in [`main.py:182-190`](https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py#L182-L190)
+!!! note "Session Identifiers"
 
-> 💡 **Session Identifiers**: Both `user_id` and `session_id` must match the identifiers you used when creating the session via `SessionService.create_session()`. These can be any string values based on your application's needs (e.g., UUIDs, email addresses, custom tokens). See [Part 1: Get or Create Session](part1.md#get-or-create-session) for detailed guidance on session identifiers.
+    Both `user_id` and `session_id` must match the identifiers you used when creating the session via `SessionService.create_session()`. These can be any string values based on your application's needs (e.g., UUIDs, email addresses, custom tokens). See [Part 1: Get or Create Session](part1.md#get-or-create-session) for detailed guidance on session identifiers.
 
 ### Connection Lifecycle in run_live()
 
@@ -84,7 +80,7 @@ The `run_live()` method manages the underlying Live API connection lifecycle aut
 1. **Initialization**: Connection established when `run_live()` is called
 2. **Active Streaming**: Bidirectional communication via `LiveRequestQueue` (upstream to the model) and `run_live()` (downstream from the model)
 3. **Graceful Closure**: Connection closes when `LiveRequestQueue.close()` is called
-4. **Error Recovery**: ADK supports transparent session resumption; enable via `RunConfig.session_resumption` to handle transient failures. See [Part 4: Session Resumption](part4.md#session-resumption) for details.
+4. **Error Recovery**: ADK supports transparent session resumption; enable via `RunConfig.session_resumption` to handle transient failures. See [Part 4: Live API Session Resumption](part4.md#live-api-session-resumption) for details.
 
 #### What run_live() Yields
 
@@ -100,7 +96,9 @@ The `run_live()` method yields a stream of `Event` objects in real-time as the a
 | **[Tool Call Events](#tool-call-events)** | Function call requests from the model; ADK handles execution automatically |
 | **[Error Events](#error-events)** | Model errors and connection issues with `error_code` and `error_message` fields |
 
-> 📖 **Source Reference**: [`runners.py:746-775`](https://github.com/google/adk-python/blob/main/src/google/adk/runners.py#L746-L775)
+!!! note "Source Reference"
+
+    See the complete event type handling implementation in [`runners.py:746-775`](https://github.com/google/adk-python/blob/main/src/google/adk/runners.py#L746-L775)
 
 #### When run_live() Exits
 
@@ -115,15 +113,21 @@ The `run_live()` event loop can exit under various conditions. Understanding the
 | **Empty event** | Queue closure signal | ✅ Yes | Internal signal indicating event stream has ended |
 | **Errors** | Connection errors, exceptions | ❌ No | Unhandled exceptions or connection failures |
 
-> ⚠️ **Important**: When using `SequentialAgent`, the `task_completed()` function does NOT exit your application's `run_live()` loop. It only signals the end of the current agent's work, triggering a seamless transition to the next agent in the sequence. Your event loop continues receiving events from subsequent agents. The loop only exits when the **last** agent in the sequence completes.
+!!! warning "SequentialAgent Behavior"
 
-> 💡 **Learn More**: For session resumption and connection recovery details, see [Part 4: Session Resumption](part4.md#session-resumption). For multi-agent workflows, see [Best Practices for Multi-Agent Workflows](#best-practices-for-multi-agent-workflows).
+    When using `SequentialAgent`, the `task_completed()` function does NOT exit your application's `run_live()` loop. It only signals the end of the current agent's work, triggering a seamless transition to the next agent in the sequence. Your event loop continues receiving events from subsequent agents. The loop only exits when the **last** agent in the sequence completes.
+
+!!! note "Learn More"
+
+    For session resumption and connection recovery details, see [Part 4: Live API Session Resumption](part4.md#live-api-session-resumption). For multi-agent workflows, see [Best Practices for Multi-Agent Workflows](#best-practices-for-multi-agent-workflows).
 
 #### Events Saved to ADK `Session`
 
 Not all events yielded by `run_live()` are persisted to the ADK `Session`. When `run_live()` exits, only certain events are saved to the session while others remain ephemeral. Understanding which events are saved versus which are ephemeral is crucial for applications that use session persistence, resumption, or need to review conversation history.
 
-> 📖 **Source Reference**: [`runners.py:746-775`](https://github.com/google/adk-python/blob/main/src/google/adk/runners.py#L746-L775)
+!!! note "Source Reference"
+
+    See session event persistence logic in [`runners.py:746-775`](https://github.com/google/adk-python/blob/main/src/google/adk/runners.py#L746-L775)
 
 **Events Saved to the ADK `Session`:**
 
@@ -142,7 +146,9 @@ These events are ephemeral and only yielded to callers during active streaming:
 - **Audio Events with Inline Data**: Raw audio `Blob` data in `inline_data` is never saved to the ADK `Session` (only yielded for real-time playback)
 - **Partial Transcription Events**: Only yielded for real-time display; final transcriptions are saved
 
-> 💡 **Audio Persistence**: To save audio conversations to the ADK `Session` for review or resumption, enable `RunConfig.save_live_blob = True`. This persists audio streams to artifacts. See [Part 4: save_live_blob](part4.md#save_live_blob) for configuration details.
+!!! note "Audio Persistence"
+
+    To save audio conversations to the ADK `Session` for review or resumption, enable `RunConfig.save_live_blob = True`. This persists audio streams to artifacts. See [Part 4: save_live_blob](part4.md#save_live_blob) for configuration details.
 
 ## Understanding Events
 
@@ -152,7 +158,9 @@ Events are the core communication mechanism in ADK's Bidi-streaming system. This
 
 ADK's `Event` class is a Pydantic model that represents all communication in a streaming conversation. It extends `LlmResponse` and serves as the unified container for model responses, user input, transcriptions, and control signals.
 
-> 📖 **Source Reference**: [`event.py:30-129`](https://github.com/google/adk-python/blob/main/src/google/adk/events/event.py#L30-L129), [`llm_response.py:28-185`](https://github.com/google/adk-python/blob/main/src/google/adk/models/llm_response.py#L28-L185)
+!!! note "Source Reference"
+
+    See Event class implementation in [`event.py:30-129`](https://github.com/google/adk-python/blob/main/src/google/adk/events/event.py#L30-L129) and [`llm_response.py:28-185`](https://github.com/google/adk-python/blob/main/src/google/adk/models/llm_response.py#L28-L185)
 
 #### Key Fields
 
@@ -179,7 +187,9 @@ ADK's `Event` class is a Pydantic model that represents all communication in a s
 - `finish_reason`: Why the model stopped generating (e.g., STOP, MAX_TOKENS, SAFETY)
 - `error_code` / `error_message`: Failure diagnostics
 
-> 📝 **Author Semantics**: Transcription events have author `"user"`; model responses/events use the agent's name as `author` (not `"model"`). See [Event Authorship](#event-authorship) for details.
+!!! note "Author Semantics"
+
+    Transcription events have author `"user"`; model responses/events use the agent's name as `author` (not `"model"`). See [Event Authorship](#event-authorship) for details.
 
 #### Understanding Event Identity
 
@@ -213,6 +223,7 @@ In live streaming mode, the `Event.author` field follows special semantics to ma
 **User transcriptions**: Authored as `"user"` when the event contains transcribed user audio
 
 **How it works**:
+
 1. Gemini Live API returns user audio transcriptions with `content.role == 'user'`
 2. ADK's `get_author_for_event()` function checks for this role marker
 3. If `content.role == 'user'`, ADK sets `Event.author` to `"user"`
@@ -228,7 +239,9 @@ This transformation ensures that transcribed user input is correctly attributed 
 - When displaying conversation history, use `event.author` to show who said what
 - Transcription events are correctly attributed to the user even though they flow through the model
 
-> 📖 **Source Reference**: [`base_llm_flow.py:281-294`](https://github.com/google/adk-python/blob/main/src/google/adk/flows/llm_flows/base_llm_flow.py#L281-L294)
+!!! note "Source Reference"
+
+    See author attribution logic in [`base_llm_flow.py:281-294`](https://github.com/google/adk-python/blob/main/src/google/adk/flows/llm_flows/base_llm_flow.py#L281-L294)
 
 ### Event Types and Handling
 
@@ -281,7 +294,9 @@ These flags help you manage streaming text display and conversation flow in your
 - `event.turn_complete`: `True` when the model has finished its complete response
 - `event.interrupted`: `True` when user interrupted the model's response
 
-> 💡 **Learn More**: For detailed guidance on using `partial` `turn_complete` and `interrupted` flags to manage conversation flow and UI state, see [Handling Text Events](#handling-text-events).
+!!! note "Learn More"
+
+    For detailed guidance on using `partial` `turn_complete` and `interrupted` flags to manage conversation flow and UI state, see [Handling Text Events](#handling-text-events).
 
 ### Audio Events
 
@@ -312,15 +327,18 @@ async for event in runner.run_live(..., run_config=run_config):
             await play_audio(audio_data)
 ```
 
-> 💡 **Learn More**:
-> - **`response_modalities` controls how the model generates output**—you must choose either `["TEXT"]` for text responses or `["AUDIO"]` for audio responses per session. You cannot use both modalities simultaneously. See [Part 4: Response Modalities](part4.md#response-modalities) for configuration details.
-> - For comprehensive coverage of audio formats, sending/receiving audio, and audio processing flow, see [Part 5: How to Use Audio, Image and Video](part5.md).
+!!! note "Learn More"
+
+    - **`response_modalities` controls how the model generates output**—you must choose either `["TEXT"]` for text responses or `["AUDIO"]` for audio responses per session. You cannot use both modalities simultaneously. See [Part 4: Response Modalities](part4.md#response-modalities) for configuration details.
+    - For comprehensive coverage of audio formats, sending/receiving audio, and audio processing flow, see [Part 5: How to Use Audio, Image and Video](part5.md).
 
 ### Audio Events with File Data
 
 When audio data is aggregated and saved as files in artifacts, ADK yields events containing `file_data` references instead of raw `inline_data`. This is useful for persisting audio to session history.
 
-> 📖 **Source Reference**: [`runners.py:752-754`](https://github.com/google/adk-python/blob/main/src/google/adk/runners.py#L752-L754), [`audio_cache_manager.py:192-194`](https://github.com/google/adk-python/blob/main/src/google/adk/flows/llm_flows/audio_cache_manager.py#L192-L194)
+!!! note "Source Reference"
+
+    See audio file aggregation logic in [`runners.py:752-754`](https://github.com/google/adk-python/blob/main/src/google/adk/runners.py#L752-L754) and [`audio_cache_manager.py:192-194`](https://github.com/google/adk-python/blob/main/src/google/adk/flows/llm_flows/audio_cache_manager.py#L192-L194)
 
 **Receiving Audio File References:**
 
@@ -349,13 +367,17 @@ async for event in runner.run_live(
 
 Both input and output audio data are aggregated into audio files and saved in the artifact service. The file reference is included in the event as `file_data`, allowing you to retrieve the audio later.
 
-> 💡 **Session Persistence**: To save audio events with file data to session history, enable `RunConfig.save_live_model_audio_to_session = True`. This allows audio conversations to be reviewed or replayed from persisted sessions.
+!!! note "Session Persistence"
+
+    To save audio events with file data to session history, enable `RunConfig.save_live_model_audio_to_session = True`. This allows audio conversations to be reviewed or replayed from persisted sessions.
 
 ### Metadata Events
 
 Usage metadata events contain token usage information for monitoring costs and quota consumption. The `run_live()` method yields these events separately from content events.
 
-> 📖 **Source Reference**: [`llm_response.py:105-106`](https://github.com/google/adk-python/blob/main/src/google/adk/models/llm_response.py#L105-L106)
+!!! note "Source Reference"
+
+    See usage metadata structure in [`llm_response.py:105-106`](https://github.com/google/adk-python/blob/main/src/google/adk/models/llm_response.py#L105-L106)
 
 **Accessing Token Usage:**
 
@@ -382,7 +404,9 @@ async for event in runner.run_live(
 - `total_token_count`: Sum of prompt and response tokens
 - `cached_content_token_count`: Number of tokens served from cache (when using context caching)
 
-> 💡 **Cost Monitoring**: Usage metadata events allow real-time cost tracking during streaming sessions. You can implement quota limits, display usage to users, or log metrics for billing and analytics.
+!!! note "Cost Monitoring"
+
+    Usage metadata events allow real-time cost tracking during streaming sessions. You can implement quota limits, display usage to users, or log metrics for billing and analytics.
 
 ### Transcription Events
 
@@ -405,7 +429,9 @@ async for event in runner.run_live(...):
 
 These enable accessibility features and conversation logging without separate transcription services.
 
-> 💡 **Learn More**: For details on enabling transcription in `RunConfig` and understanding transcription delivery, see [Part 5: Audio Transcription](part5.md#audio-transcription).
+!!! note "Learn More"
+
+    For details on enabling transcription in `RunConfig` and understanding transcription delivery, see [Part 5: Audio Transcription](part5.md#audio-transcription).
 
 ### Tool Call Events
 
@@ -426,7 +452,9 @@ async for event in runner.run_live(...):
 
 ADK processes tool calls automatically—you typically don't need to handle these directly unless implementing custom tool execution logic.
 
-> 💡 **Learn More**: For details on how ADK automatically executes tools, handles function responses, and supports long-running and streaming tools, see [Automatic Tool Execution in run_live()](#automatic-tool-execution-in-run_live).
+!!! note "Learn More"
+
+    For details on how ADK automatically executes tools, handles function responses, and supports long-running and streaming tools, see [Automatic Tool Execution in run_live()](#automatic-tool-execution-in-run_live).
 
 ### Error Events
 
@@ -470,7 +498,9 @@ finally:
     queue.close()  # Always cleanup connection
 ```
 
-> 💡 **Note**: The above example shows the basic structure for checking `error_code` and `error_message`. For production-ready error handling with user notifications, retry logic, and context logging, see the real-world scenarios below.
+!!! note
+
+    The above example shows the basic structure for checking `error_code` and `error_message`. For production-ready error handling with user notifications, retry logic, and context logging, see the real-world scenarios below.
 
 **When to use `break` vs `continue`:**
 
@@ -512,7 +542,9 @@ if event.error_code == "UNAVAILABLE":
 
 **Why `continue`?** This is a transient error. The connection might recover, and the model may continue streaming the transcription. Breaking would prematurely end a potentially recoverable stream.
 
-> 💡 **Note on user notifications**: For brief transient errors (lasting <1 second), don't notify the user—they won't notice the hiccup. But if the error persists or impacts the user experience (e.g., streaming pauses for >3 seconds), notify them gracefully: "Experiencing connection issues, retrying..."
+!!! note "User Notifications"
+
+    For brief transient errors (lasting <1 second), don't notify the user—they won't notice the hiccup. But if the error persists or impacts the user experience (e.g., streaming pauses for >3 seconds), notify them gracefully: "Experiencing connection issues, retrying..."
 
 ---
 
@@ -608,11 +640,11 @@ ADK error codes come from the underlying Gemini API. Here are the most common er
 
 For complete error code listings and descriptions, refer to the official documentation:
 
-> 📖 **Official Documentation**:
->
-> - **FinishReason** (when model stops generating tokens): [Google AI for Developers](https://ai.google.dev/api/python/google/ai/generativelanguage/Candidate/FinishReason) | [Vertex AI](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/gemini)
-> - **BlockedReason** (when prompts are blocked by content filters): [Google AI for Developers](https://ai.google.dev/api/python/google/ai/generativelanguage/GenerateContentResponse/PromptFeedback/BlockReason) | [Vertex AI](https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/configure-safety-attributes)
-> - **ADK Implementation**: [`llm_response.py:160-184`](https://github.com/google/adk-python/blob/main/src/google/adk/models/llm_response.py#L160-L184)
+!!! note "Official Documentation"
+
+    - **FinishReason** (when model stops generating tokens): [Google AI for Developers](https://ai.google.dev/api/python/google/ai/generativelanguage/Candidate/FinishReason) | [Vertex AI](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/gemini)
+    - **BlockedReason** (when prompts are blocked by content filters): [Google AI for Developers](https://ai.google.dev/api/python/google/ai/generativelanguage/GenerateContentResponse/PromptFeedback/BlockReason) | [Vertex AI](https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/configure-safety-attributes)
+    - **ADK Implementation**: [`llm_response.py:160-184`](https://github.com/google/adk-python/blob/main/src/google/adk/models/llm_response.py#L160-L184)
 
 **Best practices for error handling:**
 
@@ -653,11 +685,13 @@ async for event in runner.run_live(...):
 - `partial=True`: The text in this event is **incremental**—it contains ONLY the new text since the last event
 - `partial=False`: The text in this event is **complete**—it contains the full merged text for this response segment
 
-> 📝 **Note**: The `partial` flag is only meaningful for text content (`event.content.parts[].text`). For other content types:
->
-> - **Audio events**: Each audio chunk in `inline_data` is independent (no merging occurs)
-> - **Tool calls**: Function calls and responses are always complete (partial doesn't apply)
-> - **Transcriptions**: Transcription events are always complete when yielded
+!!! note
+
+    The `partial` flag is only meaningful for text content (`event.content.parts[].text`). For other content types:
+
+    - **Audio events**: Each audio chunk in `inline_data` is independent (no merging occurs)
+    - **Tool calls**: Function calls and responses are always complete (partial doesn't apply)
+    - **Transcriptions**: Transcription events are always complete when yielded
 
 **Example Stream:**
 
@@ -674,10 +708,13 @@ Event 4: partial=False, text="",             turn_complete=True  # Turn done
 - You may receive: `partial=False` (sentence 1) → `partial=False` (sentence 2) → `turn_complete=True`
 - The merged text event (`partial=False` with content) is always yielded **before** the `turn_complete=True` event
 
-> 📝 **Note**: ADK internally accumulates all text from `partial=True` events. When you receive an event with `partial=False`, the text content equals the sum of all preceding `partial=True` chunks. This means:
-> - You can safely ignore all `partial=True` events and only process `partial=False` events if you don't need streaming display
-> - If you do display `partial=True` events, the `partial=False` event provides the complete merged text for validation or storage
-> - This accumulation is handled automatically by ADK's `StreamingResponseAggregator`—you don't need to manually concatenate partial text chunks
+!!! note
+
+    ADK internally accumulates all text from `partial=True` events. When you receive an event with `partial=False`, the text content equals the sum of all preceding `partial=True` chunks. This means:
+
+    - You can safely ignore all `partial=True` events and only process `partial=False` events if you don't need streaming display
+    - If you do display `partial=True` events, the `partial=False` event provides the complete merged text for validation or storage
+    - This accumulation is handled automatically by ADK's `StreamingResponseAggregator`—you don't need to manually concatenate partial text chunks
 
 #### Handling `interrupted` Flag
 
@@ -794,9 +831,7 @@ This provides a simple one-liner to convert ADK events into JSON format that can
 
 The `model_dump_json()` method serializes an `Event` object to a JSON string:
 
-**Demo Implementation:**
-
-```python
+```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py#L178-L191" target="_blank">main.py:178-191</a>'
 async def downstream_task() -> None:
     """Receives Events from run_live() and sends to WebSocket."""
     async for event in runner.run_live(
@@ -808,8 +843,6 @@ async def downstream_task() -> None:
         event_json = event.model_dump_json(exclude_none=True, by_alias=True)
         await websocket.send_text(event_json)
 ```
-
-> 📖 **Demo Implementation**: See the complete downstream task in [`main.py:178-191`](https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py#L178-L191)
 
 **What gets serialized:**
 
@@ -832,7 +865,9 @@ async def downstream_task() -> None:
 - ❌ High-frequency events where serialization overhead matters
 - ❌ When you only need a few fields (extract them directly instead)
 
-> ⚠️ **Performance Warning**: Binary audio data in `event.content.parts[].inline_data` will be base64-encoded when serialized to JSON, significantly increasing payload size (~133% overhead). For production applications with audio, send binary data separately using WebSocket binary frames or multipart HTTP. See [Optimization for Audio Transmission](#optimization-for-audio-transmission) for details.
+!!! warning "Performance Warning"
+
+    Binary audio data in `event.content.parts[].inline_data` will be base64-encoded when serialized to JSON, significantly increasing payload size (~133% overhead). For production applications with audio, send binary data separately using WebSocket binary frames or multipart HTTP. See [Optimization for Audio Transmission](#optimization-for-audio-transmission) for details.
 
 ### Serialization options
 
@@ -870,9 +905,7 @@ This shows how to parse and handle serialized events on the client side, enablin
 
 On the client side (JavaScript/TypeScript), parse the JSON back to objects:
 
-**Demo Implementation:**
-
-```javascript
+```javascript title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/static/js/app.js#L297-L576" target="_blank">app.js:297-576</a>'
 // Handle incoming messages
 websocket.onmessage = function (event) {
     // Parse the incoming ADK Event
@@ -984,7 +1017,9 @@ This approach reduces bandwidth by ~75% for audio-heavy streams while maintainin
 
 ## Automatic Tool Execution in run_live()
 
-> 📖 **Source Reference**: [`functions.py`](https://github.com/google/adk-python/blob/main/src/google/adk/flows/llm_flows/functions.py)
+!!! note "Source Reference"
+
+    See automatic tool execution implementation in [`functions.py`](https://github.com/google/adk-python/blob/main/src/google/adk/flows/llm_flows/functions.py)
 
 One of the most powerful features of ADK's `run_live()` is **automatic tool execution**. Unlike the raw Gemini Live API, which requires you to manually handle tool calls and responses, ADK abstracts this complexity entirely.
 
@@ -1003,9 +1038,7 @@ This creates significant implementation overhead, especially in streaming contex
 
 With ADK, tool execution becomes declarative. Simply define tools on your Agent:
 
-**Demo Implementation:**
-
-```python
+```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/google_search_agent/agent.py#L11-L16" target="_blank">agent.py:11-16</a>'
 import os
 from google.adk.agents import Agent
 from google.adk.tools import google_search
@@ -1017,8 +1050,6 @@ agent = Agent(
     instruction="You are a helpful assistant that can search the web."
 )
 ```
-
-> 📖 **Demo Implementation**: See the complete agent definition in [`agent.py:11-16`](https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/google_search_agent/agent.py#L11-L16)
 
 When you call `runner.run_live()`, ADK automatically:
 
@@ -1048,7 +1079,9 @@ async for event in runner.run_live(...):
 
 You don't need to handle the execution yourself—ADK does it automatically. You just observe the events as they flow through the conversation.
 
-> 💡 **Learn More**: The bidi-demo sends all events (including function calls and responses) directly to the WebSocket client without server-side filtering. This allows the client to observe tool execution in real-time through the event stream. See the downstream task in [`main.py:178-191`](https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py#L178-L191)
+!!! note "Learn More"
+
+    The bidi-demo sends all events (including function calls and responses) directly to the WebSocket client without server-side filtering. This allows the client to observe tool execution in real-time through the event stream. See the downstream task in [`main.py:178-191`](https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py#L178-L191)
 
 ### Long-Running and Streaming Tools
 
@@ -1058,28 +1091,30 @@ ADK supports advanced tool patterns that integrate seamlessly with `run_live()`:
 
 **Streaming Tools**: Tools that accept an `input_stream` parameter with type `LiveRequestQueue` can send real-time updates back to the model during execution, enabling progressive responses.
 
-> 💡 **How it works**: When you call `runner.run_live()`, ADK inspects your agent's tools at initialization (lines 828-865 in `runners.py`) to identify streaming tools by checking parameter type annotations for `LiveRequestQueue`.
->
-> **Queue creation and lifecycle**:
->
-> 1. **Creation**: ADK creates an `ActiveStreamingTool` with a dedicated `LiveRequestQueue` for each streaming tool at the start of `run_live()` (before processing any events)
-> 2. **Storage**: These queues are stored in `invocation_context.active_streaming_tools[tool_name]` for the duration of the invocation
-> 3. **Injection**: When the model calls the tool, ADK automatically injects the tool's queue as the `input_stream` parameter (lines 238-253 in `function_tool.py`)
-> 4. **Usage**: The tool can use this queue to send real-time updates back to the model during execution
-> 5. **Lifecycle**: The queues persist for the entire `run_live()` invocation (one InvocationContext = one `run_live()` call) and are destroyed when `run_live()` exits
->
-> **Queue distinction**:
->
-> - **Main queue** (`live_request_queue` parameter): Created by your application, used for client-to-model communication
-> - **Tool queues** (`active_streaming_tools[tool_name].stream`): Created automatically by ADK, used for tool-to-model communication during execution
->
-> Both types of queues are `LiveRequestQueue` instances, but they serve different purposes in the streaming architecture.
->
-> This enables tools to provide incremental updates, progress notifications, or partial results during long-running operations.
->
-> **Code reference**: See `runners.py:828-865` (tool detection) and `function_tool.py:238-253` (parameter injection) for implementation details.
->
-> See the [Tools Guide](https://google.github.io/adk-docs/tools/) for implementation examples.
+!!! note "How Streaming Tools Work"
+
+    When you call `runner.run_live()`, ADK inspects your agent's tools at initialization (lines 828-865 in `runners.py`) to identify streaming tools by checking parameter type annotations for `LiveRequestQueue`.
+
+    **Queue creation and lifecycle**:
+
+    1. **Creation**: ADK creates an `ActiveStreamingTool` with a dedicated `LiveRequestQueue` for each streaming tool at the start of `run_live()` (before processing any events)
+    2. **Storage**: These queues are stored in `invocation_context.active_streaming_tools[tool_name]` for the duration of the invocation
+    3. **Injection**: When the model calls the tool, ADK automatically injects the tool's queue as the `input_stream` parameter (lines 238-253 in `function_tool.py`)
+    4. **Usage**: The tool can use this queue to send real-time updates back to the model during execution
+    5. **Lifecycle**: The queues persist for the entire `run_live()` invocation (one InvocationContext = one `run_live()` call) and are destroyed when `run_live()` exits
+
+    **Queue distinction**:
+
+    - **Main queue** (`live_request_queue` parameter): Created by your application, used for client-to-model communication
+    - **Tool queues** (`active_streaming_tools[tool_name].stream`): Created automatically by ADK, used for tool-to-model communication during execution
+
+    Both types of queues are `LiveRequestQueue` instances, but they serve different purposes in the streaming architecture.
+
+    This enables tools to provide incremental updates, progress notifications, or partial results during long-running operations.
+
+    **Code reference**: See `runners.py:828-865` (tool detection) and `function_tool.py:238-253` (parameter injection) for implementation details.
+
+    See the [Tools Guide](https://google.github.io/adk-docs/tools/) for implementation examples.
 
 ### Key Takeaway
 
@@ -1098,7 +1133,9 @@ This automatic handling is one of the core value propositions of ADK—it transf
 
 ## InvocationContext: The Execution State Container
 
-> 📖 **Source Reference**: [`invocation_context.py`](https://github.com/google/adk-python/blob/main/src/google/adk/agents/invocation_context.py)
+!!! note "Source Reference"
+
+    See InvocationContext implementation in [`invocation_context.py`](https://github.com/google/adk-python/blob/main/src/google/adk/agents/invocation_context.py)
 
 While `run_live()` returns an AsyncGenerator for consuming events, internally it creates and manages an `InvocationContext`—ADK's unified state carrier that encapsulates everything needed for a complete conversation invocation. **One InvocationContext corresponds to one `run_live()` loop**—it's created when you call `run_live()` and persists for the entire streaming session.
 
@@ -1198,7 +1235,9 @@ Understanding InvocationContext is essential for grasping how ADK maintains stat
 
 ADK's bidirectional streaming supports three agent architectures: **single agent** (one agent handles the entire conversation), **multi-agent with sub-agents** (a coordinator agent dynamically routes to specialist agents using `transfer_to_agent`), and **sequential workflow agents** (agents execute in a fixed pipeline using `task_completed`). This section focuses on best practices for sequential workflows, where understanding agent transitions and state sharing is crucial for smooth BIDI communication.
 
-> 📖 **Learn More**: For comprehensive coverage of multi-agent patterns, see [Workflow Agents as Orchestrators](https://google.github.io/adk-docs/agents/multi-agents/#workflow-agents-as-orchestrators) in the ADK documentation.
+!!! note "Learn More"
+
+    For comprehensive coverage of multi-agent patterns, see [Workflow Agents as Orchestrators](https://google.github.io/adk-docs/agents/multi-agents/#workflow-agents-as-orchestrators) in the ADK documentation.
 
 When building multi-agent systems with ADK, understanding how agents transition and share state during live streaming is crucial for smooth BIDI communication.
 
@@ -1206,7 +1245,9 @@ When building multi-agent systems with ADK, understanding how agents transition 
 
 `SequentialAgent` enables workflow pipelines where agents execute one after another. Each agent completes its task before the next one begins. The challenge with live streaming is determining when an agent has finished processing continuous audio or video input.
 
-> 📖 **Source Reference**: [`sequential_agent.py:119-159`](https://github.com/google/adk-python/blob/main/src/google/adk/agents/sequential_agent.py#L119-L159)
+!!! note "Source Reference"
+
+    See SequentialAgent implementation in [`sequential_agent.py:119-159`](https://github.com/google/adk-python/blob/main/src/google/adk/agents/sequential_agent.py#L119-L159)
 
 **How it works:**
 

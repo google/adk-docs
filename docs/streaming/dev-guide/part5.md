@@ -18,9 +18,7 @@ Before calling `send_realtime()`, ensure your audio data is already in the corre
 
 ADK does not perform audio format conversion. Sending audio in incorrect formats will result in poor quality or errors.
 
-**Demo Implementation:**
-
-```python
+```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py#L141-L145" target="_blank">main.py:141-145</a>'
 audio_blob = types.Blob(
     mime_type="audio/pcm;rate=16000",
     data=audio_data
@@ -28,18 +26,20 @@ audio_blob = types.Blob(
 live_request_queue.send_realtime(audio_blob)
 ```
 
-> 📖 **Demo Implementation**: See the complete upstream task handling audio, text, and image input in [`main.py:136-176`](https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py#L136-L176)
-
 #### Best Practices for Sending Audio Input
 
 1. **Chunked Streaming**: Send audio in small chunks for low latency. Choose chunk size based on your latency requirements:
-   - **Ultra-low latency** (real-time conversation): 10-20ms chunks (~320-640 bytes @ 16kHz)
-   - **Balanced** (recommended): 50-100ms chunks (~1600-3200 bytes @ 16kHz)
-   - **Lower overhead**: 100-200ms chunks (~3200-6400 bytes @ 16kHz)
 
-   Use consistent chunk sizes throughout the session for optimal performance. Example: 100ms @ 16kHz = 16000 samples/sec × 0.1 sec × 2 bytes/sample = 3200 bytes.
+    - **Ultra-low latency** (real-time conversation): 10-20ms chunks (~320-640 bytes @ 16kHz)
+    - **Balanced** (recommended): 50-100ms chunks (~1600-3200 bytes @ 16kHz)
+    - **Lower overhead**: 100-200ms chunks (~3200-6400 bytes @ 16kHz)
+
+    Use consistent chunk sizes throughout the session for optimal performance. Example: 100ms @ 16kHz = 16000 samples/sec × 0.1 sec × 2 bytes/sample = 3200 bytes.
+
 2. **Prompt Forwarding**: ADK's `LiveRequestQueue` forwards each chunk promptly without coalescing or batching. Choose chunk sizes that meet your latency and bandwidth requirements. Don't wait for model responses before sending next chunks.
+
 3. **Continuous Processing**: The model processes audio continuously, not turn-by-turn. With automatic VAD enabled (the default), just stream continuously and let the API detect speech.
+
 4. **Activity Signals**: Use `send_activity_start()` / `send_activity_end()` only when you explicitly disable VAD for manual turn-taking control. VAD is enabled by default, so activity signals are not needed for most applications.
 
 #### Handling Audio Input at the Client
@@ -53,9 +53,7 @@ In browser-based applications, capturing microphone audio and sending it to the 
 3. **Format conversion**: Convert Float32Array samples to 16-bit PCM
 4. **WebSocket streaming**: Send PCM chunks to server via WebSocket
 
-**Demo Implementation (Client - JavaScript):**
-
-```javascript
+```javascript title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/static/js/audio-recorder.js#L7-L58" target="_blank">audio-recorder.js:7-58</a>'
 // Start audio recorder worklet
 export async function startAudioRecorderWorklet(audioRecorderHandler) {
     // Create an AudioContext with 16kHz sample rate
@@ -108,11 +106,7 @@ function convertFloat32ToPCM(inputData) {
 }
 ```
 
-> 📖 **Demo Implementation**: See audio recorder setup in [`audio-recorder.js:7-38`](https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/static/js/audio-recorder.js#L7-L38) and format conversion in [`audio-recorder.js:48-58`](https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/static/js/audio-recorder.js#L48-L58)
-
-**AudioWorklet Processor:**
-
-```javascript
+```javascript title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/static/js/pcm-recorder-processor.js#L1-L19" target="_blank">pcm-recorder-processor.js:1-19</a>'
 // pcm-recorder-processor.js - AudioWorklet processor for capturing audio
 class PCMProcessor extends AudioWorkletProcessor {
     constructor() {
@@ -134,11 +128,7 @@ class PCMProcessor extends AudioWorkletProcessor {
 registerProcessor("pcm-recorder-processor", PCMProcessor);
 ```
 
-> 📖 **Demo Implementation**: See AudioWorklet processor in [`pcm-recorder-processor.js:1-19`](https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/static/js/pcm-recorder-processor.js#L1-L19)
-
-**Sending Audio to Server:**
-
-```javascript
+```javascript title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/static/js/app.js#L865-L874" target="_blank">app.js:865-874</a>'
 // Audio recorder handler - called for each audio chunk
 function audioRecorderHandler(pcmData) {
     if (websocket && websocket.readyState === WebSocket.OPEN && is_audio) {
@@ -148,8 +138,6 @@ function audioRecorderHandler(pcmData) {
     }
 }
 ```
-
-> 📖 **Demo Implementation**: See audio transmission handler in [`app.js:865-874`](https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/static/js/app.js#L865-L874)
 
 **Key Implementation Details:**
 
@@ -224,9 +212,7 @@ async for event in runner.run_live(
 
 The bidi-demo uses a different architectural approach: instead of processing audio on the server, it forwards all events (including audio data) to the WebSocket client and handles audio playback in the browser. This pattern separates concerns—the server focuses on ADK event streaming while the client handles media playback using Web Audio API.
 
-**Demo Implementation (Server):**
-
-```python
+```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py#L182-L190" target="_blank">main.py:182-190</a>'
 # The bidi-demo forwards all events (including audio) to the WebSocket client
 async for event in runner.run_live(
     user_id=user_id,
@@ -238,15 +224,12 @@ async for event in runner.run_live(
     await websocket.send_text(event_json)
 ```
 
-> 📖 **Demo Implementation**: See event forwarding to WebSocket client in [`main.py:182-190`](https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py#L182-L190)
-
 **Demo Implementation (Client - JavaScript):**
 
 The client-side implementation involves three components: WebSocket message handling, audio player setup with AudioWorklet, and the AudioWorklet processor itself.
 
-**1. WebSocket Message Handler:**
-
-```javascript
+```javascript title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/static/js/app.js#L544-L673" target="_blank">app.js:544-673</a>'
+// 1. WebSocket Message Handler
 // Handle content events (text or audio)
 if (adkEvent.content && adkEvent.content.parts) {
     const parts = adkEvent.content.parts;
@@ -291,11 +274,8 @@ function base64ToArray(base64) {
 }
 ```
 
-> 📖 **Demo Implementation**: See audio playback handling in [`app.js:544-553`](https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/static/js/app.js#L544-L553) and base64 decoding in [`app.js:654-673`](https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/static/js/app.js#L654-L673)
-
-**2. Audio Player Setup:**
-
-```javascript
+```javascript title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/static/js/audio-player.js#L5-L24" target="_blank">audio-player.js:5-24</a>'
+// 2. Audio Player Setup
 // Start audio player worklet
 export async function startAudioPlayerWorklet() {
     // Create an AudioContext with 24kHz sample rate
@@ -322,11 +302,8 @@ export async function startAudioPlayerWorklet() {
 }
 ```
 
-> 📖 **Demo Implementation**: See audio player setup in [`audio-player.js:5-24`](https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/static/js/audio-player.js#L5-L24)
-
-**3. AudioWorklet Processor (Ring Buffer):**
-
-```javascript
+```javascript title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/static/js/pcm-player-processor.js#L5-L76" target="_blank">pcm-player-processor.js:5-76</a>'
+// 3. AudioWorklet Processor (Ring Buffer)
 // AudioWorklet processor that buffers and plays PCM audio
 class PCMPlayerProcessor extends AudioWorkletProcessor {
     constructor() {
@@ -403,8 +380,6 @@ class PCMPlayerProcessor extends AudioWorkletProcessor {
 registerProcessor('pcm-player-processor', PCMPlayerProcessor);
 ```
 
-> 📖 **Demo Implementation**: See AudioWorklet processor implementation in [`pcm-player-processor.js:5-76`](https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/static/js/pcm-player-processor.js#L5-L76)
-
 **Key Implementation Patterns:**
 
 1. **Base64 Decoding**: The server sends audio data as base64-encoded strings in JSON. The client must decode to ArrayBuffer before passing to AudioWorklet. Handle both standard base64 and base64url encoding.
@@ -431,9 +406,7 @@ Both images and video in ADK Bidi-streaming are processed as JPEG frames. Rather
 - **Frame rate**: 1 frame per second (1 FPS) recommended maximum
 - **Resolution**: 768x768 pixels (recommended)
 
-**Demo Implementation:**
-
-```python
+```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py#L161-L176" target="_blank">main.py:161-176</a>'
 # Decode base64 image data
 image_data = base64.b64decode(json_message["data"])
 mime_type = json_message.get("mimeType", "image/jpeg")
@@ -445,9 +418,6 @@ image_blob = types.Blob(
 )
 live_request_queue.send_realtime(image_blob)
 ```
-
-> 📖 **Demo Implementation**: See image handling in the upstream task at [`main.py:161-176`](https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py#L161-L176)
-
 
 **Not Suitable For**:
 
@@ -478,11 +448,8 @@ In browser-based applications, capturing images from the user's webcam and sendi
 4. **Base64 encoding**: Convert canvas to base64 data URL for transmission
 5. **WebSocket transmission**: Send as JSON message to server
 
-**Demo Implementation (Client - JavaScript):**
-
-**1. Opening Camera Preview:**
-
-```javascript
+```javascript title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/static/js/app.js#L689-731" target="_blank">app.js:689-731</a>'
+// 1. Opening Camera Preview
 // Open camera modal and start preview
 async function openCameraPreview() {
     try {
@@ -523,11 +490,8 @@ function closeCameraPreview() {
 }
 ```
 
-> 📖 **Demo Implementation**: See camera preview handling in [`app.js:689-731`](https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/static/js/app.js#L689-L731)
-
-**2. Capturing and Sending Image:**
-
-```javascript
+```javascript title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/static/js/app.js#L734-L802" target="_blank">app.js:734-802</a>'
+// 2. Capturing and Sending Image
 // Capture image from the live preview
 function captureImageFromPreview() {
     if (!cameraStream) {
@@ -586,8 +550,6 @@ function sendImage(base64Image) {
     }
 }
 ```
-
-> 📖 **Demo Implementation**: See image capture in [`app.js:734-789`](https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/static/js/app.js#L734-L789) and transmission in [`app.js:792-802`](https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/static/js/app.js#L792-L802)
 
 **Key Implementation Details:**
 
@@ -713,16 +675,14 @@ DEMO_AGENT_MODEL=gemini-2.5-flash-native-audio-preview-09-2025
    - Native Audio for natural conversational AI with advanced features
    - Half-Cascade for production reliability with tool execution
 3. **Check current availability**: Refer to the model tables above and official documentation
-4. **Configure environment variable**: Set `DEMO_AGENT_MODEL` in your `.env` file
-
-> 📖 **Demo Implementation**: See the environment variable pattern in [`agent.py:11-16`](https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/google_search_agent/agent.py#L11-L16) and automatic model detection in [`main.py:83-96`](https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py#L83-L96)
+4. **Configure environment variable**: Set `DEMO_AGENT_MODEL` in your `.env` file (see [`agent.py:11-16`](https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/google_search_agent/agent.py#L11-L16) and [`main.py:83-96`](https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py#L83-L96))
 
 ### Live API Models Compatibility and Availability
 
 For the latest information on Live API model compatibility and availability:
 
 - **Gemini Live API models**: See the [Gemini models documentation](https://ai.google.dev/gemini-api/docs/models/gemini)
-- **Vertex AI Live API models**: See the [Vertex AI model documentation](https://cloud.google.com/vertex-ai/generative-ai/docs/models/gemini)
+- **Vertex AI Live API models**: See the [Vertex AI model documentation](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/models)
 
 Always verify model availability and feature support in the official documentation before deploying to production.
 
@@ -730,7 +690,9 @@ Always verify model availability and feature support in the official documentati
 
 The Live API provides built-in audio transcription capabilities that automatically convert speech to text for both user input and model output. This eliminates the need for external transcription services and enables real-time captions, conversation logging, and accessibility features. ADK exposes these capabilities through `RunConfig`, allowing you to enable transcription for either or both audio directions.
 
-> 📖 **Source**: [Gemini Live API - Audio transcriptions](https://ai.google.dev/gemini-api/docs/live-guide#audio-transcriptions)
+!!! note "Source"
+
+    [Gemini Live API - Audio transcriptions](https://ai.google.dev/gemini-api/docs/live-guide#audio-transcriptions)
 
 **Configuration:**
 
@@ -785,7 +747,9 @@ class Event:
     # ... other fields
 ```
 
-> 💡 **Learn More**: For complete Event structure, see [Part 3: Understanding Events](part3.md#event-structure).
+!!! note "Learn More"
+
+    For complete Event structure, see [Part 3: The Event Class](part3.md#the-event-class).
 
 Each `Transcription` object has two attributes:
 - **`.text`**: The transcribed text (string)
@@ -850,9 +814,7 @@ In web applications, transcription events need to be forwarded from the server t
 2. **Client side**: Process `inputTranscription` and `outputTranscription` events from the WebSocket
 3. **UI rendering**: Display partial transcriptions with typing indicators, finalize when `finished: true`
 
-**Demo Implementation (Client - JavaScript):**
-
-```javascript
+```javascript title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/static/js/app.js#L438-L525" target="_blank">app.js:438-525</a>'
 // Handle input transcription (user's spoken words)
 if (adkEvent.inputTranscription && adkEvent.inputTranscription.text) {
     const transcriptionText = adkEvent.inputTranscription.text;
@@ -944,8 +906,6 @@ if (adkEvent.outputTranscription && adkEvent.outputTranscription.text) {
 }
 ```
 
-> 📖 **Demo Implementation**: See input transcription handling in [`app.js:438-478`](https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/static/js/app.js#L438-L478) and output transcription handling in [`app.js:480-525`](https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/static/js/app.js#L480-L525)
-
 **Key Implementation Patterns:**
 
 1. **Incremental Text Accumulation**: The Live API may send transcriptions in multiple chunks. Accumulate text by appending new pieces to existing content:
@@ -991,13 +951,17 @@ The automatic enablement happens in `Runner.run_live()` when both conditions are
 - The agent has `sub_agents` defined
 - A `LiveRequestQueue` is provided (bidirectional streaming mode)
 
-> 📖 **Source**: [`runners.py:1236-1253`](https://github.com/google/adk-python/blob/main/src/google/adk/runners.py#L1236-L1253)
+!!! note "Source"
+
+    [`runners.py:1236-1253`](https://github.com/google/adk-python/blob/main/src/google/adk/runners.py#L1236-L1253)
 
 ## Voice Configuration (Speech Config)
 
 The Live API provides voice configuration capabilities that allow you to customize how the model sounds when generating audio responses. ADK supports voice configuration at two levels: **agent-level** (per-agent voice settings) and **session-level** (global voice settings via RunConfig). This enables sophisticated multi-agent scenarios where different agents can speak with different voices, as well as single-agent applications with consistent voice characteristics.
 
-> 📖 **Source**: [Gemini Live API - Capabilities Guide](https://ai.google.dev/gemini-api/docs/live-guide)
+!!! note "Source"
+
+    [Gemini Live API - Capabilities Guide](https://ai.google.dev/gemini-api/docs/live-guide)
 
 ### Agent-Level Configuration
 
@@ -1232,13 +1196,17 @@ Voice configuration is supported on both platforms, but voice availability may v
 - **Native audio models**: Automatically determine language based on conversation context; explicit `language_code` may not be supported
 - **Voice availability**: Specific voice names may vary by model; refer to the current Live API documentation for supported voices on your chosen model
 
-> 💡 **Learn More**: For complete RunConfig reference, see [Part 4: Understanding RunConfig](part4.md).
+!!! note "Learn More"
+
+    For complete RunConfig reference, see [Part 4: Understanding RunConfig](part4.md).
 
 ## Voice Activity Detection (VAD)
 
 Voice Activity Detection (VAD) is a Live API feature that automatically detects when users start and stop speaking, enabling natural turn-taking without manual control. VAD is **enabled by default** on all Live API models, allowing the model to automatically manage conversation turns based on detected speech activity.
 
-> 📖 **Source**: [Gemini Live API - Voice Activity Detection](https://ai.google.dev/gemini-api/docs/live-guide#voice-activity-detection-vad)
+!!! note "Source"
+
+    [Gemini Live API - Voice Activity Detection](https://ai.google.dev/gemini-api/docs/live-guide#voice-activity-detection-vad)
 
 ### How VAD Works
 
@@ -1480,7 +1448,9 @@ This pattern provides several advantages:
 
 The Live API offers advanced conversational features that enable more natural and context-aware interactions. **Proactive audio** allows the model to intelligently decide when to respond, offer suggestions without explicit prompts, or ignore irrelevant input. **Affective dialog** enables the model to detect and adapt to emotional cues in voice tone and content, adjusting its response style for more empathetic interactions. These features are currently supported only on native audio models.
 
-> 📖 **Source**: [Gemini Live API - Proactive audio](https://ai.google.dev/gemini-api/docs/live-guide#proactive-audio) | [Affective dialog](https://ai.google.dev/gemini-api/docs/live-guide#affective-dialog)
+!!! note "Source"
+
+    [Gemini Live API - Proactive audio](https://ai.google.dev/gemini-api/docs/live-guide#proactive-audio) | [Affective dialog](https://ai.google.dev/gemini-api/docs/live-guide#affective-dialog)
 
 **Configuration:**
 
@@ -1599,7 +1569,9 @@ In this part, you learned how to implement multimodal features in ADK Bidi-strea
 
 **Congratulations!** You've completed the ADK Bidi-streaming Developer Guide. You now have a comprehensive understanding of how to build production-ready real-time streaming AI applications with Google's Agent Development Kit.
 
-> 📢 **Stay Tuned**: We're working on new parts covering advanced topics like performance optimization, testing strategies, and production deployment patterns. Check back for updates!
+!!! info "Stay Tuned"
+
+    We're working on new parts covering advanced topics like performance optimization, testing strategies, and production deployment patterns. Check back for updates!
 
 ---
 

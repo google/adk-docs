@@ -4,7 +4,9 @@ In Part 3, you learned how to handle events from `run_live()` to process model r
 
 **What you'll learn**: This part covers response modalities and their constraints, explores the differences between BIDI and SSE streaming modes, examines the relationship between ADK Sessions and Live API sessions, and shows how to manage session duration with session resumption and context window compression. You'll understand how to handle concurrent session quotas, implement architectural patterns for quota management, configure cost controls through `max_llm_calls` and audio persistence options, and track token usage in real-time for production monitoring (new in v1.18.0). With RunConfig mastery, you can build production-ready streaming applications that balance feature richness with operational constraints.
 
-> 💡 **Learn More**: For detailed information about audio/video related `RunConfig` configurations, see [Part 5: Audio, Image and Video in Live API](part5.md).
+!!! note "Learn More"
+
+    For detailed information about audio/video related `RunConfig` configurations, see [Part 5: Audio, Image and Video in Live API](part5.md).
 
 ## RunConfig Parameter Quick Reference
 
@@ -27,7 +29,9 @@ This table provides a quick reference for all RunConfig parameters covered in th
 | **proactivity** | ProactivityConfig | Enable proactive audio | Gemini (native audio only) | [Part 5: Proactivity and Affective Dialog](part5.md#proactivity-and-affective-dialog) |
 | **enable_affective_dialog** | bool | Emotional adaptation | Gemini (native audio only) | [Part 5: Proactivity and Affective Dialog](part5.md#proactivity-and-affective-dialog) |
 
-> 📖 **Source Reference**: [`run_config.py`](https://github.com/google/adk-python/blob/main/src/google/adk/agents/run_config.py)
+!!! note "Source Reference"
+
+    [`run_config.py`](https://github.com/google/adk-python/blob/main/src/google/adk/agents/run_config.py)
 
 **Platform Support Legend:**
 
@@ -58,7 +62,7 @@ The `RunConfig` class itself and `StreamingMode` enum are imported from `google.
 
 Response modalities control how the model generates output—as text or audio. Both Gemini Live API and Vertex AI Live API have the same restriction: only one response modality per session.
 
-### Configuration
+**Configuration:**
 
 ```python
 # Phase 2: Session initialization - RunConfig determines streaming behavior
@@ -106,7 +110,7 @@ When `response_modalities` is not specified, ADK's `run_live()` method automatic
 **Key constraints:**
 
 - You must choose either `TEXT` or `AUDIO` at session start. **Cannot switch between modalities mid-session**
-- You must choose `AUDIO` for [Native Audio models](part5.md#understanding-audio-architectures). If you want to receive both audio and text responses from native audio models, use the Audio Transcript feature which provides text transcripts of the audio output. See [Audio Transcription](part5.md#audio-transcription) for details
+- You must choose `AUDIO` for [Native Audio models](part5.md#understanding-audio-model-architectures). If you want to receive both audio and text responses from native audio models, use the Audio Transcript feature which provides text transcripts of the audio output. See [Audio Transcription](part5.md#audio-transcription) for details
 - Response modality only affects model output—**you can always send text, voice, or video input (if the model supports those input modalities)** regardless of the chosen response modality
 
 ## StreamingMode: BIDI or SSE
@@ -226,7 +230,7 @@ Your choice between BIDI and SSE depends on your application requirements and th
 - Building voice/video applications with real-time interaction
 - Need bidirectional communication (send while receiving)
 - Require Live API features (audio transcription, VAD, proactivity, affective dialog)
-- Supporting interruptions and natural turn-taking (see [Part 3: Handling Interruptions](part3.md#handling-interruptions-and-turn-completion))
+- Supporting interruptions and natural turn-taking (see [Part 3: Handling Interrupted Flag](part3.md#handling-interrupted-flag))
 - Implementing live streaming tools or real-time data feeds
 - Can plan for concurrent session quotas (50-1,000 sessions depending on platform/tier)
 
@@ -280,7 +284,7 @@ Understanding the distinction between **ADK `Session`** and **Live API session**
 
 **Live API session** (managed by Live API backend):
 - Maintained by the Live API during the `run_live()` event loop is running, and destroyed when streaming ends by calling `LiveRequestQueue.close()`
-- Subject to platform duration limits, and can be resumed across multiple connections using session resumption handles (see [ADK's Automatic Reconnection with Session Resumption](#adks-automatic-reconnection-with-session-resumption) below)
+- Subject to platform duration limits, and can be resumed across multiple connections using session resumption handles (see [How ADK Manages Session Resumption](#how-adk-manages-session-resumption) below)
 
 **How they work together:**
 
@@ -377,11 +381,11 @@ Understanding the constraints of each platform is critical for production planni
 | **Session Duration (Audio + video)** | 2 minutes | 10 minutes | Gemini has shorter limit for video; Vertex treats all sessions equally. Both platforms: unlimited with context window compression enabled |
 | **Concurrent sessions** | 50 (Tier 1)<br>1,000 (Tier 2+) | Up to 1,000 | Gemini limits vary by API tier; Vertex limit is per Google Cloud project |
 
-> 📖 **Source References**:
->
-> - [Gemini Live API Capabilities Guide](https://ai.google.dev/gemini-api/docs/live-guide)
-> - [Gemini API Quotas](https://ai.google.dev/gemini-api/docs/quota)
-> - [Vertex AI Streamed Conversations](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api/streamed-conversations)
+!!! note "Source References"
+
+    - [Gemini Live API Capabilities Guide](https://ai.google.dev/gemini-api/docs/live-guide)
+    - [Gemini API Quotas](https://ai.google.dev/gemini-api/docs/quota)
+    - [Vertex AI Streamed Conversations](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api/streamed-conversations)
 
 ## Live API Session Resumption
 
@@ -411,8 +415,6 @@ run_config = RunConfig(
 )
 ```
 
-
-
 **When NOT to Enable Session Resumption:**
 
 While session resumption is recommended for most production applications, consider these scenarios where you might not need it:
@@ -436,7 +438,9 @@ While session resumption is supported by both Gemini Live API and Vertex AI Live
 4. **Automatic Reconnection**: ADK's internal loop detects the close and automatically reconnects using the most recent cached handle
 5. **Session Continuation**: The same session continues seamlessly with full context preserved
 
-> **Implementation Detail**: During reconnection, ADK retrieves the cached handle from `InvocationContext.live_session_resumption_handle` and includes it in the new `LiveConnectConfig` for the `live.connect()` call. This is handled entirely by ADK's internal reconnection loop—developers never need to access or manage these handles directly.
+!!! note "Implementation Detail"
+
+    During reconnection, ADK retrieves the cached handle from `InvocationContext.live_session_resumption_handle` and includes it in the new `LiveConnectConfig` for the `live.connect()` call. This is handled entirely by ADK's internal reconnection loop—developers never need to access or manage these handles directly.
 
 ### Sequence Diagram: Automatic Reconnection
 
@@ -500,7 +504,9 @@ sequenceDiagram
     deactivate LiveSession
 ```
 
-> 💡 **Events and Session Persistence**: For details on which events are saved to the ADK `Session` versus which are only yielded during streaming, see [Part 3: Events Saved to ADK Session vs. Events Only Yielded](part3.md#events-saved-to-adk-session-vs-events-only-yielded).
+!!! note "Events and Session Persistence"
+
+    For details on which events are saved to the ADK `Session` versus which are only yielded during streaming, see [Part 3: Events Saved to ADK Session](part3.md#events-saved-to-adk-session).
 
 ## Live API Context Window Compression
 
@@ -685,7 +691,9 @@ Both platforms limit how many Live API sessions can run simultaneously, but the 
 
 *Free tier concurrent session limits are not explicitly documented but are significantly lower than paid tiers.
 
-> 📖 **Source**: [Gemini API Quotas](https://ai.google.dev/gemini-api/docs/quota)
+!!! note "Source"
+
+    [Gemini API Quotas](https://ai.google.dev/gemini-api/docs/quota)
 
 **Vertex AI Live API (Google Cloud) - Project-based quotas:**
 
@@ -695,7 +703,9 @@ Both platforms limit how many Live API sessions can run simultaneously, but the 
 | **Maximum concurrent sessions** | Up to 1,000 | Per project |
 | **Session creation/deletion/update** | 100 per minute | Per project, per region |
 
-> 📖 **Source**: [Vertex AI Live API Streamed Conversations](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api/streamed-conversations) | [Vertex AI Quotas](https://cloud.google.com/vertex-ai/generative-ai/docs/quotas)
+!!! note "Source"
+
+    [Vertex AI Live API Streamed Conversations](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api/streamed-conversations) | [Vertex AI Quotas](https://cloud.google.com/vertex-ai/generative-ai/docs/quotas)
 
 **Requesting a quota increase:**
 
@@ -802,7 +812,7 @@ This parameter caps the total number of LLM invocations allowed per invocation c
 
 - Session duration limits
 - Turn count tracking
-- Custom cost monitoring by tracking token usage in model turn events (see [Part 3: Event Types](part3.md#event-types))
+- Custom cost monitoring by tracking token usage in model turn events (see [Part 3: Event Types and Handling](part3.md#event-types-and-handling))
 - Application-level circuit breakers
 
 ### save_live_blob
