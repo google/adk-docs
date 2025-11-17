@@ -47,6 +47,16 @@ To create an agent with Visual Builder:
 1.  Interact with your new agent to test it.
 1.  In top left of the page, select the pencil icon, as shown in *Figure 1*, to continue editing your agent.
 
+Here are few things to note when using Visual Builder:
+
+*   **Create agent and save:** When creating an agent, make sure you select
+    **Save** before exiting the editing interface, otherwise your new agent may
+    not be editable.
+*   **Agent editing:** Edit (pencil icon) for agents is *only* available for
+    agents created with Visual Builder
+*   **Add tools:** When adding existing custom Tools to a Visual Builder
+    agent, specify a fully-qualified Python function name.
+
 ## Workflow component support
 
 The Visual Builder tool provides a drag-and-drop user interface for constructing agents, as
@@ -67,7 +77,7 @@ The tool supports all the essential components for building an ADK agent workflo
 *   **Tools**
     *   [**Prebuilt tools:**](/adk-docs/tools/built-in-tools/)
         A limited set of ADK-provided tools can be added to agents.
-    *   [**Custom tools:**](/adk-docs/tools/built-in-tools/)
+    *   [**Custom tools:**](/adk-docs/tools-custom/)
         You can build and add custom tools to your workflow.
 *   **Components**
     *   [**Callbacks**](/adk-docs/callbacks/)
@@ -102,7 +112,7 @@ DiceAgent/
 
 ## Next steps
 
-Using the Visual Builder development Assistant, try building an new agent using
+Using the Visual Builder development Assistant, try building a new agent using
 this prompt:
 
 ```none
