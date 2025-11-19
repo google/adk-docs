@@ -43,7 +43,7 @@ my_agent/
 ### Define the agent code
 
 Create the code for a basic agent, including a simple implementation of an ADK
-[Function Tool](/adk-docs/tools/function-tools/), called `getCurrentTime()`.
+[Function Tool](/adk-docs/tools-custom/function-tools/), called `getCurrentTime()`.
 Add the following code to the `HelloTimeAgent.java` file in your project
 directory:
 
@@ -85,6 +85,13 @@ public class HelloTimeAgent {
     }
 }
 ```
+
+!!! warning "Caution: Gemini 3 compatibility"
+
+    ADK Java v0.3.0 and lower is not compatible with
+    [Gemini 3 Pro Preview](https://ai.google.dev/gemini-api/docs/models#gemini-3-pro)
+    due to thought signature changes for function calling. Use Gemini 2.5
+    or lower models instead.
 
 ### Configure project and dependencies
 

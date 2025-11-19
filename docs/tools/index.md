@@ -57,6 +57,16 @@ Check out the following pre-built tools that you can use with ADK agents:
     </div>
   </a>
 
+  <a href="/adk-docs/tools/google-cloud/bigquery-agent-analytics/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="../assets/tools-bigquery.png" alt="BigQuery">
+    </div>
+    <div class="tool-card-content">
+      <h3>BigQuery Agent Analytics</h3>
+      <p>Analyze and debug agent behavior at scale.</p>
+    </div>
+  </a>
+
   <a href="/adk-docs/tools/built-in-tools/#bigquery" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="../assets/tools-bigquery.png" alt="BigQuery">
@@ -132,6 +142,16 @@ Check out the following pre-built tools that you can use with ADK agents:
 ### Third-party tools
 
 <div class="tool-card-grid">
+
+  <a href="/adk-docs/tools/third-party/agentql/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="../assets/tools-agentql.png" alt="AgentQL">
+    </div>
+    <div class="tool-card-content">
+      <h3>AgentQL</h3>
+      <p>Extract resilient, structured web data using natural language</p>
+    </div>
+  </a>
 
   <a href="/adk-docs/tools/third-party/bright-data/" class="tool-card">
     <div class="tool-card-image-wrapper">
@@ -220,7 +240,7 @@ Check out the following pre-built tools that you can use with ADK agents:
 If the above tools don't meet your needs, you can build tools for your ADK
 workflows using the following guides:
 
-*   **[Function Tools](/adk-docs/tools/function-tools/)**: Build custom tools for
+*   **[Function Tools](/adk-docs/tools-custom/function-tools/)**: Build custom tools for
     your specific ADK agent needs.
 *   **[MCP Tools](/adk-docs/tools/mcp-tools/)**: Connect MCP servers as tools
     for your ADK agents.
