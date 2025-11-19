@@ -156,10 +156,10 @@ There are two ways to send queries via POST to your agent, via the `/run` or
 curl -X POST http://localhost:8000/run \
 -H "Content-Type: application/json" \
 -d '{
-"app_name": "my_sample_agent",
-"user_id": "u_123",
-"session_id": "s_123",
-"new_message": {
+"appName": "my_sample_agent",
+"userId": "u_123",
+"sessionId": "s_123",
+"newMessage": {
     "role": "user",
     "parts": [{
     "text": "Hey whats the weather in new york today"
@@ -181,10 +181,10 @@ list, which should appear similar to:
 curl -X POST http://localhost:8000/run_sse \
 -H "Content-Type: application/json" \
 -d '{
-"app_name": "my_sample_agent",
-"user_id": "u_123",
-"session_id": "s_123",
-"new_message": {
+"appName": "my_sample_agent",
+"userId": "u_123",
+"sessionId": "s_123",
+"newMessage": {
     "role": "user",
     "parts": [{
     "text": "Hey whats the weather in new york today"
@@ -293,8 +293,7 @@ You will see a complete, interactive list of all available API endpoints, which 
 The following sections detail the primary endpoints for interacting with your agents.
 
 !!! note "JSON Naming Convention"
-    - **Request bodies** must use `snake_case` for field names (e.g., `"app_name"`).
-    - **Response bodies** will use `camelCase` for field names (e.g., `"appName"`).
+    - **Both Request and Response bodies** will use `camelCase` for field names (e.g., `"appName"`).
 
 ### Utility Endpoints
 
@@ -398,10 +397,10 @@ Executes the agent and returns all generated events in a single JSON array after
 **Request Body**
 ```json
 {
-  "app_name": "my_sample_agent",
-  "user_id": "u_123",
-  "session_id": "s_abc",
-  "new_message": {
+  "appName": "my_sample_agent",
+  "userId": "u_123",
+  "sessionId": "s_abc",
+  "newMessage": {
     "role": "user",
     "parts": [
       { "text": "What is the capital of France?" }
@@ -415,10 +414,10 @@ Executes the agent and returns all generated events in a single JSON array after
 curl -X POST http://localhost:8000/run \
   -H "Content-Type: application/json" \
   -d '{
-    "app_name": "my_sample_agent",
-    "user_id": "u_123",
-    "session_id": "s_abc",
-    "new_message": {
+    "appName": "my_sample_agent",
+    "userId": "u_123",
+    "sessionId": "s_abc",
+    "newMessage": {
       "role": "user",
       "parts": [{"text": "What is the capital of France?"}]
     }
@@ -436,10 +435,10 @@ Executes the agent and streams events back to the client as they are generated u
 The request body is the same as for `/run`, with an additional optional `streaming` flag.
 ```json
 {
-  "app_name": "my_sample_agent",
-  "user_id": "u_123",
-  "session_id": "s_abc",
-  "new_message": {
+  "appName": "my_sample_agent",
+  "userId": "u_123",
+  "sessionId": "s_abc",
+  "newMessage": {
     "role": "user",
     "parts": [
       { "text": "What is the weather in New York?" }
@@ -455,10 +454,10 @@ The request body is the same as for `/run`, with an additional optional `streami
 curl -X POST http://localhost:8000/run_sse \
   -H "Content-Type: application/json" \
   -d '{
-    "app_name": "my_sample_agent",
-    "user_id": "u_123",
-    "session_id": "s_abc",
-    "new_message": {
+    "appName": "my_sample_agent",
+    "userId": "u_123",
+    "sessionId": "s_abc",
+    "newMessage": {
       "role": "user",
       "parts": [{"text": "What is the weather in New York?"}]
     },

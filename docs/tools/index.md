@@ -57,6 +57,16 @@ Check out the following pre-built tools that you can use with ADK agents:
     </div>
   </a>
 
+  <a href="/adk-docs/tools/google-cloud/bigquery-agent-analytics/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="../assets/tools-bigquery.png" alt="BigQuery">
+    </div>
+    <div class="tool-card-content">
+      <h3>BigQuery Agent Analytics</h3>
+      <p>Analyze and debug agent behavior at scale.</p>
+    </div>
+  </a>
+
   <a href="/adk-docs/tools/built-in-tools/#bigquery" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="../assets/tools-bigquery.png" alt="BigQuery">

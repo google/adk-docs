@@ -35,7 +35,7 @@ This section covers authenticating with Google's Gemini models, either through G
 `model` parameter of `LlmAgent`.
 
 
-!!!tip 
+!!! tip
 
     The `google-genai` library, used internally by ADK for Gemini models, can connect
     through either Google AI Studio or Vertex AI.
@@ -64,7 +64,7 @@ This is the simplest method and is recommended for getting started quickly.
         ```
 
         (or)
-        
+
         Pass these variables during the model initialization via the `Client` (see example below).
 
 * **Models:** Find all available models on the
@@ -87,8 +87,8 @@ For scalable and production-oriented use cases, Vertex AI is the recommended pla
     ```shell
     export GOOGLE_CLOUD_PROJECT="YOUR_PROJECT_ID"
     export GOOGLE_CLOUD_LOCATION="YOUR_VERTEX_AI_LOCATION" # e.g., us-central1
-    ```     
-    
+    ```
+
     Explicitly tell the library to use Vertex AI:
 
     ```shell
@@ -127,7 +127,7 @@ For deployed applications, a service account is the standard method.
 
     ```python
     from google.adk.agents import LlmAgent
-    
+
     # --- Example using a stable Gemini Flash model ---
     agent_gemini_flash = LlmAgent(
         # Use the latest stable Flash model identifier
@@ -136,7 +136,7 @@ For deployed applications, a service account is the standard method.
         instruction="You are a fast and helpful Gemini assistant.",
         # ... other agent parameters
     )
-    
+
     # --- Example using a powerful Gemini Pro model ---
     # Note: Always check the official Gemini documentation for the latest model names,
     # including specific preview versions if needed. Preview models might have
@@ -196,8 +196,63 @@ For deployed applications, a service account is the standard method.
     // different availability or quota limitations.
     ```
 
-!!!warning "Secure Your Credentials"
-    Service account credentials or API keys are powerful credentials. Never expose them publicly. Use a secret manager like [Google Secret Manager](https://cloud.google.com/secret-manager) to store and access them securely in production.
+!!! warning "Secure Your Credentials"
+
+    Service account credentials or API keys are powerful credentials. Never
+    expose them publicly. Use a secret manager such as [Google Cloud Secret
+    Manager](https://cloud.google.com/security/products/secret-manager) to store
+    and access them securely in production.
+
+### Troubleshooting
+
+#### Error Code 429 - RESOURCE_EXHAUSTED
+
+This error usually happens if the number of your requests exceeds the capacity allocated to process requests.
+
+To mitigate this, you can do one of the following:
+
+1.  Request higher quota limits for the model you are trying to use.
+
+2.  Enable client-side retries. Retries allow the client to automatically retry the request after a delay, which can help if the quota issue is temporary.
+
+    There are two ways you can set retry options:
+
+    **Option 1:** Set retry options on the Agent as a part of generate_content_config.
+
+    You would use this option if you are instantiating this model adapter by
+    yourself.
+
+    ```python
+    root_agent = Agent(
+        model='gemini-2.0-flash',
+        ...
+        generate_content_config=types.GenerateContentConfig(
+            ...
+            http_options=types.HttpOptions(
+                ...
+                retry_options=types.HttpRetryOptions(initial_delay=1, attempts=2),
+                ...
+            ),
+            ...
+        )
+    ```
+
+    **Option 2:** Retry options on this model adapter.
+
+    You would use this option if you were instantiating the instance of adapter
+    by yourself.
+
+    ```python
+    from google.genai import types
+
+    # ...
+
+    agent = Agent(
+        model=Gemini(
+        retry_options=types.HttpRetryOptions(initial_delay=1, attempts=2),
+        )
+    )
+    ```
 
 ## Using Anthropic models
 
@@ -230,7 +285,7 @@ import com.google.adk.models.Claude;
 import com.anthropic.client.okhttp.AnthropicOkHttpClient; // From Anthropic's SDK
 
 public class DirectAnthropicAgent {
-  
+
   private static final String CLAUDE_MODEL_ID = "claude-3-7-sonnet-latest"; // Or your preferred Claude model
 
   public static LlmAgent createAgent() {
@@ -294,9 +349,9 @@ from google.adk.models.apigee_llm import ApigeeLlm
 # Instantiate the ApigeeLlm wrapper
 model = ApigeeLlm(
     # Specify the Apigee route to your model. For more info, check out the ApigeeLlm documentation (https://github.com/google/adk-python/tree/main/contributing/samples/hello_world_apigeellm).
-    model="apigee/gemini-2.5-flash", 
+    model="apigee/gemini-2.5-flash",
     # The proxy URL of your deployed Apigee proxy including the base path
-    proxy_url=f"https://{APIGEE_PROXY_URL}", 
+    proxy_url=f"https://{APIGEE_PROXY_URL}",
     # Pass necessary authentication/authorization headers (like an API key)
     custom_headers={"foo": "bar"}
 )
@@ -381,7 +436,7 @@ layer, providing a standardized, OpenAI-compatible interface to over 100+ LLMs.
         )
         ```
 
-!!!warning "Windows Encoding Note for LiteLLM"
+!!! warning "Windows Encoding Note for LiteLLM"
 
     When using ADK agents with LiteLLM on Windows, you might encounter a `UnicodeDecodeError`. This error occurs because LiteLLM may attempt to read cached files using the default Windows encoding (`cp1252`) instead of UTF-8.
 
@@ -727,37 +782,37 @@ Vertex AI.
 
     **Integration Method:** Uses the direct model string (e.g.,
     `"claude-3-sonnet@20240229"`), *but requires manual registration* within ADK.
-    
+
     **Why Registration?** ADK's registry automatically recognizes `gemini-*` strings
     and standard Vertex AI endpoint strings (`projects/.../endpoints/...`) and
     routes them via the `google-genai` library. For other model types used directly
     via Vertex AI (like Claude), you must explicitly tell the ADK registry which
     specific wrapper class (`Claude` in this case) knows how to handle that model
     identifier string with the Vertex AI backend.
-    
+
     **Setup:**
-    
+
     1. **Vertex AI Environment:** Ensure the consolidated Vertex AI setup (ADC, Env
        Vars, `GOOGLE_GENAI_USE_VERTEXAI=TRUE`) is complete.
-    
+
     2. **Install Provider Library:** Install the necessary client library configured
        for Vertex AI.
-    
+
         ```shell
         pip install "anthropic[vertex]"
         ```
-    
+
     3. **Register Model Class:** Add this code near the start of your application,
        *before* creating an agent using the Claude model string:
-    
+
         ```python
         # Required for using Claude model strings directly via Vertex AI with LlmAgent
         from google.adk.models.anthropic_llm import Claude
         from google.adk.models.registry import LLMRegistry
-    
+
         LLMRegistry.register(Claude)
         ```
-    
+
        **Example:**
 
        ```python
@@ -765,15 +820,15 @@ Vertex AI.
        from google.adk.models.anthropic_llm import Claude # Import needed for registration
        from google.adk.models.registry import LLMRegistry # Import needed for registration
        from google.genai import types
-        
+
        # --- Register Claude class (do this once at startup) ---
        LLMRegistry.register(Claude)
-        
+
        # --- Example Agent using Claude 3 Sonnet on Vertex AI ---
-        
+
        # Standard model name for Claude 3 Sonnet on Vertex AI
        claude_model_vertexai = "claude-3-sonnet@20240229"
-        
+
        agent_claude_vertexai = LlmAgent(
            model=claude_model_vertexai, # Pass the direct string after registration
            name="claude_vertexai_agent",
@@ -786,21 +841,21 @@ Vertex AI.
 === "Java"
 
     **Integration Method:** Directly instantiate the provider-specific model class (e.g., `com.google.adk.models.Claude`) and configure it with a Vertex AI backend.
-    
+
     **Why Direct Instantiation?** The Java ADK's `LlmRegistry` primarily handles Gemini models by default. For third-party models like Claude on Vertex AI, you directly provide an instance of the ADK's wrapper class (e.g., `Claude`) to the `LlmAgent`. This wrapper class is responsible for interacting with the model via its specific client library, configured for Vertex AI.
-    
+
     **Setup:**
-    
+
     1.  **Vertex AI Environment:**
         *   Ensure your Google Cloud project and region are correctly set up.
         *   **Application Default Credentials (ADC):** Make sure ADC is configured correctly in your environment. This is typically done by running `gcloud auth application-default login`. The Java client libraries will use these credentials to authenticate with Vertex AI. Follow the [Google Cloud Java documentation on ADC](https://cloud.google.com/java/docs/reference/google-auth-library/latest/com.google.auth.oauth2.GoogleCredentials#com_google_auth_oauth2_GoogleCredentials_getApplicationDefault__) for detailed setup.
-    
+
     2.  **Provider Library Dependencies:**
         *   **Third-Party Client Libraries (Often Transitive):** The ADK core library often includes the necessary client libraries for common third-party models on Vertex AI (like Anthropic's required classes) as **transitive dependencies**. This means you might not need to explicitly add a separate dependency for the Anthropic Vertex SDK in your `pom.xml` or `build.gradle`.
 
     3.  **Instantiate and Configure the Model:**
         When creating your `LlmAgent`, instantiate the `Claude` class (or the equivalent for another provider) and configure its `VertexBackend`.
-    
+
     **Example:**
 
     ```java
@@ -838,7 +893,7 @@ Vertex AI.
                 // .generateContentConfig(...) // Optional: Add generation config if needed
                 // ... other agent parameters
                 .build();
-            
+
             return agentClaudeVertexAi;
         }
 
