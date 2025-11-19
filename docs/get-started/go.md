@@ -48,7 +48,7 @@ import (
 	"os"
 
 	"google.golang.org/adk/agent/llmagent"
-	"google.golang.org/adk/cmd/launcher"
+	"google.golang.org/adk/cmd/launcher/adk"
 	"google.golang.org/adk/cmd/launcher/full"
 	"google.golang.org/adk/model/gemini"
 	"google.golang.org/adk/server/restapi/services"
@@ -60,7 +60,7 @@ import (
 func main() {
 	ctx := context.Background()
 
-	model, err := gemini.NewModel(ctx, "gemini-2.5-flash", &genai.ClientConfig{
+	model, err := gemini.NewModel(ctx, "gemini-3-pro-preview", &genai.ClientConfig{
 		APIKey: os.Getenv("GOOGLE_API_KEY"),
 	})
 	if err != nil {
@@ -80,7 +80,7 @@ func main() {
 		log.Fatalf("Failed to create agent: %v", err)
 	}
 
-	config := &launcher.Config{
+	config := &adk.Config{
 		AgentLoader: services.NewSingleAgentLoader(agent),
 	}
 

@@ -152,6 +152,7 @@ nav:
         - get-started/streaming/index.md
         - Python: get-started/streaming/quickstart-streaming.md
         - Java: get-started/streaming/quickstart-streaming-java.md
+      - Visual Builder: visual-builder/index.md
       - Advanced setup: get-started/installation.md
     - Agents:
       - agents/index.md
@@ -213,6 +214,7 @@ nav:
       - AgentOps: observability/agentops.md
       - Arize AX: observability/arize-ax.md
       - Freeplay: observability/freeplay.md
+      - Monocle: observability/monocle.md
       - Phoenix: observability/phoenix.md
       - W&B Weave: observability/weave.md
     - Evaluation:
