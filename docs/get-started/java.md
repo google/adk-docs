@@ -86,6 +86,13 @@ public class HelloTimeAgent {
 }
 ```
 
+!!! warning "Caution: Gemini 3 compatibility"
+
+    ADK Java v0.3.0 and lower is not compatible with
+    [Gemini 3 Pro Preview](https://ai.google.dev/gemini-api/docs/models#gemini-3-pro)
+    due to thought signature changes for function calling. Use Gemini 2.5
+    or lower models instead.
+
 ### Configure project and dependencies
 
 An ADK agent project requires this dependency in your
