@@ -24,6 +24,13 @@ webpages into clean, usable JSON or Markdown.
 
 - Create an [API Key](https://dev.agentql.com/sign-in) in AgentQL. Refer to the
   [documentation](https://docs.agentql.com/quick-start) for more information.
+- Install the [ScrapeGraphAI MCP server
+  package](https://pypi.org/project/scrapegraph-mcp/) (requires Python 3.13 or
+  higher):
+
+    ```console
+    pip install scrapegraph-mcp
+    ```
 
 ## Use with agent
 
@@ -31,32 +38,33 @@ webpages into clean, usable JSON or Markdown.
 
     ```python
     from google.adk.agents import Agent
-    from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
     from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset
+    from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
     from mcp import StdioServerParameters
 
-    SCRAPEGRAPHAI_API_KEY = "YOUR_SCRAPEGRAPHAI_API_KEY"
+    SGAI_API_KEY = "YOUR_SCRAPEGRAPHAI_API_KEY"
 
     root_agent = Agent(
         model="gemini-2.5-pro",
-        name="agentql_agent",
-        instruction="Help users get information from AgentQL",
+        name="scrapegraph_assistant_agent",
+        instruction="""Help the user with web scraping and data extraction using
+                      ScrapeGraph AI. You can convert webpages to markdown, extract
+                      structured data using AI, perform web searches, crawl
+                      multiple pages, and automate complex scraping workflows.""",
         tools=[
             MCPToolset(
                 connection_params=StdioConnectionParams(
-                    server_params = StdioServerParameters(
-                        command="npx",
-                        args=[
-                            "-y",
-                            "@scrapegraphai/mcp-server",
-                        ],
+                    server_params=StdioServerParameters(
+                        command="scrapegraph-mcp", ## Available from `pip install scrapegraph-mcp`
                         env={
-                            "SGAI_API_KEY": SCRAPEGRAPHAI_API_KEY,
-                        }
+                            "SGAI_API_KEY": SGAI_API_KEY,
+                        },
                     ),
                     timeout=300,
                 ),
-            )
+            # Optional: Filter which tools from the MCP server are exposed
+            # tool_filter=["markdownify", "smartscraper", "searchscraper"]
+            ),
         ],
     )
     ```
