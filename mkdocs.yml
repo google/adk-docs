@@ -206,7 +206,7 @@ nav:
     - Deployment:
       - deploy/index.md
       - Agent Engine: deploy/agent-engine.md
-      - Cloud Run: deploy/cloud-run.md
+      - Cloud Run: deploy/cloudrun.md
       - GKE: deploy/gke.md
     - Observability:
       - Logging: observability/logging.md
