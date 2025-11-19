@@ -22,8 +22,9 @@ webpages into clean, usable JSON or Markdown.
 
 ## Prerequisites
 
-- Create an [API Key](https://dev.agentql.com/sign-in) in AgentQL. Refer to the
-  [documentation](https://docs.agentql.com/quick-start) for more information.
+- Create an [API Key](https://dashboard.scrapegraphai.com/register/) in
+  ScrapeGraphAI. Refer to the
+  [documentation](https://docs.scrapegraphai.com/api-reference/introduction) for more information.
 - Install the [ScrapeGraphAI MCP server
   package](https://pypi.org/project/scrapegraph-mcp/) (requires Python 3.13 or
   higher):
@@ -55,7 +56,9 @@ webpages into clean, usable JSON or Markdown.
             MCPToolset(
                 connection_params=StdioConnectionParams(
                     server_params=StdioServerParameters(
-                        command="scrapegraph-mcp", ## Available from `pip install scrapegraph-mcp`
+                        # The following CLI command is available
+                        # from `pip install scrapegraph-mcp`
+                        command="scrapegraph-mcp",
                         env={
                             "SGAI_API_KEY": SGAI_API_KEY,
                         },
@@ -71,7 +74,7 @@ webpages into clean, usable JSON or Markdown.
 
 ## Available tools
 
-Tool <img width="100px"/> | Description
+Tool <img width="200px"/> | Description
 ---- | -----------
 `markdownify` | Transform any webpage into clean, structured markdown format
 `smartscraper` | Leverage AI to extract structured data from any webpage with support for infinite scrolling
