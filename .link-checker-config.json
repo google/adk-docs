@@ -13,7 +13,7 @@
       "pattern": "^https://www.gnu.org/"
     },
     {
-      "pattern": "^https://www.exa.ai"
+      "pattern": "^https://exa.ai"
     }
   ],
   "aliveStatusCodes": [
