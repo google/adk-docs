@@ -46,6 +46,16 @@ Development Kit community.
 ## Courses & Deep Dives
 
 <div class="resource-grid">
+  <a href="https://www.kaggle.com/learn-guide/5-day-agents" class="resource-card">
+    <div class="card-image-wrapper">
+      <img src="https://storage.googleapis.com/kaggle-media/Images/AI%20AGENT%20COURSE%20ILLUSTRATION.png" alt="ADK Masterclass Thumbnail">
+    </div>
+    <div class="card-content">
+      <div class="type">Online Course</div>
+      <h3>5-Day AI Agents Intensive Course with Google</h3>
+      <p>Build with core ADK agent components including, models, tools, memory, evaluation, and deployment.</p>
+    </div>
+  </a>
   <a href="https://www.youtube.com/watch?v=P4VFL9nIaIA" class="resource-card">
     <div class="card-image-wrapper">
       <img src="../assets/community-adk-masterclass.jpg" alt="ADK Masterclass Thumbnail">
