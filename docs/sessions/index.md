@@ -82,6 +82,7 @@ In the following sections, we'll dive deeper into each of these components:
 *   **`SessionService`**: Choosing the right storage backend for your sessions.
 *   **`MemoryService`**: Exploring options for storing and retrieving broader
     context.
+*   **[Custom Services](/adk-docs/advanced/custom-services.md)**: Learn how to create your own custom services for sessions, artifacts, and memory.
 
 Understanding these concepts is fundamental to building agents that can engage
 in complex, stateful, and context-aware conversations.

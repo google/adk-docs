@@ -137,7 +137,7 @@ Understanding artifacts involves grasping a few key components: the service that
     * `Delete Artifact`: Removes an artifact (and potentially all its versions, depending on implementation).  
     * `List versions`: Lists all available version numbers for a specific artifact filename.
 
-* **Configuration:** You provide an instance of an artifact service (e.g., `InMemoryArtifactService`, `GcsArtifactService`) when initializing the `Runner`. The `Runner` then makes this service available to agents and tools via the `InvocationContext`.
+* **Configuration:** You provide an instance of an artifact service (e.g., `InMemoryArtifactService`, `GcsArtifactService`) when initializing the `Runner`. The `Runner` then makes this service available to agents and tools via the `InvocationContext`. You can also [create and register your own custom services](/adk-docs/advanced/custom-services).
 
 === "Python"
 
