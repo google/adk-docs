@@ -27,8 +27,7 @@ automate workflows using natural language.
 
     ```python
     from google.adk.agents import Agent
-    from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPServerParams
-    from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset
+    from google.adk.tools.mcp_tool import McpToolset, StreamableHTTPServerParams
 
     GITHUB_TOKEN = "YOUR_GITHUB_TOKEN"
 
@@ -37,7 +36,7 @@ automate workflows using natural language.
         name="github_agent",
         instruction="Help users get information from GitHub",
         tools=[
-            MCPToolset(
+            McpToolset(
                 connection_params=StreamableHTTPServerParams(
                     url="https://api.githubcopilot.com/mcp/",
                     headers={
