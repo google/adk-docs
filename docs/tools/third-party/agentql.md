@@ -30,7 +30,8 @@ natural language definitions.
 
     ```python
     from google.adk.agents import Agent
-    from google.adk.tools.mcp_tool import McpToolset, StdioConnectionParams
+    from google.adk.tools.mcp_tool import McpToolset
+    from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
     from mcp import StdioServerParameters
 
     AGENTQL_API_KEY = "YOUR_AGENTQL_API_KEY"

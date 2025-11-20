@@ -27,7 +27,8 @@ automate workflows using natural language.
 
     ```python
     from google.adk.agents import Agent
-    from google.adk.tools.mcp_tool import McpToolset, StreamableHTTPServerParams
+    from google.adk.tools.mcp_tool import McpToolset
+    from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPServerParams
 
     GITHUB_TOKEN = "YOUR_GITHUB_TOKEN"
 

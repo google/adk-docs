@@ -39,7 +39,8 @@ pre-built data feeds from popular platforms.
 
     ```python
     from google.adk.agents import Agent
-    from google.adk.tools.mcp_tool import McpToolset, StdioConnectionParams
+    from google.adk.tools.mcp_tool import McpToolset
+    from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
     from mcp import StdioServerParameters
 
     BRIGHTDATA_API_TOKEN = "YOUR_BRIGHTDATA_API_TOKEN"
@@ -72,7 +73,8 @@ pre-built data feeds from popular platforms.
 
     ```python
     from google.adk.agents import Agent
-    from google.adk.tools.mcp_tool import McpToolset, StreamableHTTPServerParams
+    from google.adk.tools.mcp_tool import McpToolset
+    from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPServerParams
 
     BRIGHTDATA_API_TOKEN = "YOUR_BRIGHTDATA_API_TOKEN"
 

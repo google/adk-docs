@@ -63,7 +63,8 @@ Create an `agent.py` file (e.g., in `./adk_agent_samples/mcp_agent/agent.py`). T
 # ./adk_agent_samples/mcp_agent/agent.py
 import os # Required for path operations
 from google.adk.agents import LlmAgent
-from google.adk.tools.mcp_tool import McpToolset, StdioConnectionParams
+from google.adk.tools.mcp_tool import McpToolset
+from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
 from mcp import StdioServerParameters
 
 # It's good practice to define paths dynamically if possible,
@@ -266,7 +267,8 @@ Modify your `agent.py` file (e.g., in `./adk_agent_samples/mcp_agent/agent.py`).
 # ./adk_agent_samples/mcp_agent/agent.py
 import os
 from google.adk.agents import LlmAgent
-from google.adk.tools.mcp_tool import McpToolset, StdioConnectionParams
+from google.adk.tools.mcp_tool import McpToolset
+from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
 from mcp import StdioServerParameters
 
 # Retrieve the API key from an environment variable or directly insert it.
@@ -611,7 +613,8 @@ Create an `agent.py` (e.g., in `./adk_agent_samples/mcp_client_agent/agent.py`):
 # ./adk_agent_samples/mcp_client_agent/agent.py
 import os
 from google.adk.agents import LlmAgent
-from google.adk.tools.mcp_tool import McpToolset, StdioConnectionParams
+from google.adk.tools.mcp_tool import McpToolset
+from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
 from mcp import StdioServerParameters
 
 # IMPORTANT: Replace this with the ABSOLUTE path to your my_adk_mcp_server.py script
@@ -700,7 +703,8 @@ from google.adk.agents.llm_agent import LlmAgent
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 from google.adk.artifacts.in_memory_artifact_service import InMemoryArtifactService # Optional
-from google.adk.tools.mcp_tool import McpToolset, StdioConnectionParams
+from google.adk.tools.mcp_tool import McpToolset
+from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
 from mcp import StdioServerParameters
 
 # Load environment variables from .env file in the parent directory
@@ -814,7 +818,8 @@ When deploying ADK agents that use MCP tools to production environments like Clo
 # ✅ CORRECT: Synchronous agent definition for deployment
 import os
 from google.adk.agents.llm_agent import LlmAgent
-from google.adk.tools.mcp_tool import McpToolset, StdioConnectionParams
+from google.adk.tools.mcp_tool import McpToolset
+from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
 from mcp import StdioServerParameters
 
 _allowed_path = os.path.dirname(os.path.abspath(__file__))

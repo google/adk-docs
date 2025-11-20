@@ -33,7 +33,8 @@ reports using natural language.
 
     ```python
     from google.adk.agents import Agent
-    from google.adk.tools.mcp_tool import McpToolset, StdioConnectionParams
+    from google.adk.tools.mcp_tool import McpToolset
+    from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
     from mcp import StdioServerParameters
 
     EXA_API_KEY = "YOUR_EXA_API_KEY"
@@ -69,7 +70,8 @@ reports using natural language.
 
     ```python
     from google.adk.agents import Agent
-    from google.adk.tools.mcp_tool import McpToolset, StreamableHTTPServerParams
+    from google.adk.tools.mcp_tool import McpToolset
+    from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPServerParams
 
     EXA_API_KEY = "YOUR_EXA_API_KEY"
 

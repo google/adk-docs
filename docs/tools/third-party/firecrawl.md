@@ -31,7 +31,8 @@ web data from any URL, including all its subpages.
 
     ```python
     from google.adk.agents.llm_agent import Agent
-    from google.adk.tools.mcp_tool import McpToolset, StdioConnectionParams
+    from google.adk.tools.mcp_tool import McpToolset
+    from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
     from mcp import StdioServerParameters
 
     FIRECRAWL_API_KEY = "YOUR_FIRECRAWL_API_KEY"
@@ -65,7 +66,8 @@ web data from any URL, including all its subpages.
 
     ```python
     from google.adk.agents.llm_agent import Agent
-    from google.adk.tools.mcp_tool import McpToolset, StreamableHTTPServerParams
+    from google.adk.tools.mcp_tool import McpToolset
+    from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPServerParams
 
     FIRECRAWL_API_KEY = "YOUR_FIRECRAWL_API_KEY"
 

@@ -25,7 +25,8 @@ your ADK agent to the Hugging Face Hub and thousands of Gradio AI Applications.
 
     ```python
     from google.adk.agents import Agent
-    from google.adk.tools.mcp_tool import McpToolset, StdioConnectionParams
+    from google.adk.tools.mcp_tool import McpToolset
+    from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
     from mcp import StdioServerParameters
 
     HUGGING_FACE_TOKEN = "YOUR_HUGGING_FACE_TOKEN"
@@ -58,7 +59,8 @@ your ADK agent to the Hugging Face Hub and thousands of Gradio AI Applications.
 
     ```python
     from google.adk.agents import Agent
-    from google.adk.tools.mcp_tool import McpToolset, StreamableHTTPServerParams
+    from google.adk.tools.mcp_tool import McpToolset
+    from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPServerParams
 
     HUGGING_FACE_TOKEN = "YOUR_HUGGING_FACE_TOKEN"
 
