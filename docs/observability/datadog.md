@@ -4,7 +4,7 @@
 
 ## Overview
 
-Datadog LLM Observability can [automatically collect traces from Google ADK leveraging auto-instrumentation](https://docs.datadoghq.com/llm_observability/instrumentation/auto_instrumentation?tab=python#google-adk), allowing you to:
+Datadog LLM Observability can [automatically instrument and trace your agents built on Google ADK](https://docs.datadoghq.com/llm_observability/instrumentation/auto_instrumentation?tab=python#google-adk), allowing you to:
 
 - **Observe agent executions and interactions** - Automatically capture every agent run, tool call, and code execution within your agents
 - **Capture LLM calls and responses** made with the underlying Google GenAI SDK
