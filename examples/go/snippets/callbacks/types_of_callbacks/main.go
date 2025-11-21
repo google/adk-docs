@@ -293,7 +293,7 @@ type GetCapitalCityArgs struct {
 }
 
 // getCapitalCity is a tool that returns the capital of a given country.
-func getCapitalCity(ctx tool.Context, args *GetCapitalCityArgs) string {
+func getCapitalCity(ctx tool.Context, args *GetCapitalCityArgs) (string, error) {
 	capitals := map[string]string{
 		"canada":        "Ottawa",
 		"france":        "Paris",
@@ -302,9 +302,9 @@ func getCapitalCity(ctx tool.Context, args *GetCapitalCityArgs) string {
 	}
 	capital, ok := capitals[strings.ToLower(args.Country)]
 	if !ok {
-		return "<Unknown>"
+		return "", fmt.Errorf("unknown country: %s", args.Country)
 	}
-	return capital
+	return capital, nil
 }
 
 // --8<-- [end:tool_defs]
@@ -337,7 +337,7 @@ func runBeforeToolExample() {
 	if err != nil {
 		log.Fatalf("FATAL: Failed to create model: %v", err)
 	}
-	capitalTool, err := functiontool.New[*GetCapitalCityArgs, string](functiontool.Config{
+	capitalTool, err := functiontool.New(functiontool.Config{
 		Name:        "getCapitalCity",
 		Description: "Retrieves the capital city of a given country.",
 	}, getCapitalCity)
@@ -404,7 +404,7 @@ func runAfterToolExample() {
 	if err != nil {
 		log.Fatalf("FATAL: Failed to create model: %v", err)
 	}
-	capitalTool, err := functiontool.New[*GetCapitalCityArgs, string](functiontool.Config{
+	capitalTool, err := functiontool.New(functiontool.Config{
 		Name:        "getCapitalCity",
 		Description: "Retrieves the capital city of a given country.",
 	}, getCapitalCity)
