@@ -1,0 +1,46 @@
+# This file lists Go snippet files to be built and run by runner.sh.
+# Each line represents a single build/run target.
+#
+# Format:
+# - Lines starting with '#' are treated as comments and ignored.
+# - Each non-comment line should contain one or more Go file paths,
+#   relative to the 'examples/go/' directory.
+# - If multiple files are on a single line, they are treated as part of the same package
+#   and built/run together (e.g., for files with shared dependencies).
+# - Arguments are not supported
+#
+# Examples:
+#   # Single file example
+#   snippets/quickstart/main.go
+#
+#   # Multiple files in a single package example
+#   snippets/tools-custom/doc_analysis/main.go snippets/tools-custom/doc_analysis/doc_analysis.go
+
+cloud-run/main.go
+a2a_basic/remote_a2a/check_prime_agent/main.go
+a2a_basic/main.go
+snippets/tools-custom/doc_analysis/main.go snippets/tools-custom/doc_analysis/doc_analysis.go
+snippets/tools-custom/order_status/main.go snippets/tools-custom/order_status/order_status.go
+snippets/tools-custom/user_preference/main.go snippets/tools-custom/user_preference/user_preference.go
+snippets/tools-custom/weather_sentiment/main.go
+snippets/callbacks/types_of_callbacks/main.go
+snippets/context/main.go
+snippets/tools/function-tools/func_tool.go
+snippets/sessions/state_example/state_example.go
+snippets/sessions/session_management_example/session_management_example.go
+snippets/sessions/instruction_template/instruction_template_example.go
+snippets/sessions/instruction_provider/instruction_provider_example.go
+snippets/artifacts/main.go
+snippets/tools/built-in-tools/google_search.go
+snippets/callbacks/main.go
+snippets/agents/models/models.go
+snippets/agents/custom-agent/storyflow_agent.go
+snippets/agents/workflow-agents/sequential/main.go
+snippets/agents/workflow-agents/parallel/main.go
+snippets/agents/workflow-agents/loop/main.go
+snippets/agents/multi-agent/main.go
+snippets/tools/function-tools/long-running-tool/long_running_tool.go
+snippets/agents/llm-agents/snippets/main.go
+snippets/agents/llm-agents/main.go
+snippets/sessions/memory_example/memory_example.go
+snippets/tools-custom/customer_support_agent/main.go
