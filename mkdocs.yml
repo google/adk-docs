@@ -184,6 +184,7 @@ nav:
         - Exa: tools/third-party/exa.md
         - Firecrawl: tools/third-party/firecrawl.md
         - GitHub: tools/third-party/github.md
+        - GitLab: tools/third-party/gitlab.md
         - Hugging Face: tools/third-party/hugging-face.md
         - Notion: tools/third-party/notion.md
         - ScrapeGraphAI: tools/third-party/scrapegraphai.md
