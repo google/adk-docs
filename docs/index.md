@@ -18,6 +18,13 @@ development feel more like software development, to make it easier for
 developers to create, deploy, and orchestrate agentic architectures that range
 from simple tasks to complex workflows.
 
+??? tip "News: ADK Go v0.2.0 released!"
+
+    ADK Go release v0.2.0 is live with a variety of improvements, including new
+    features, bug fixes, documentation updates, and significant code refactoring.
+    For release details, check out the
+    [release notes](https://github.com/google/adk-go/releases/tag/v0.2.0).
+
 <div id="centered-install-tabs" class="install-command-container" markdown="1">
 
 <p class="get-started-text" style="text-align: center;">Get started:</p>
