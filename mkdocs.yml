@@ -213,6 +213,7 @@ nav:
       - Logging: observability/logging.md
       - Cloud Trace: observability/cloud-trace.md
       - AgentOps: observability/agentops.md
+      - Opik: observability/opik.md
       - Arize AX: observability/arize-ax.md
       - Freeplay: observability/freeplay.md
       - Monocle: observability/monocle.md
