@@ -27,7 +27,7 @@ To proceed, confirm that your agent code is configured as follows:
     1. Your application's entry point (the main package and main() function) is in a
        single Go file. Using main.go is a strong convention.
     2. Your agent instance is passed to a launcher configuration, typically using
-       services.NewSingleAgentLoader(agent). The adkgo tool uses this launcher to start
+       agent.NewSingleLoader(yourAgent). The adkgo tool uses this launcher to start
        your agent with the correct services.
     3. Your go.mod and go.sum files are present in your project directory to manage
        dependencies.

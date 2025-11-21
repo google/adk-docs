@@ -303,6 +303,21 @@ session = await session_service.create_session(
 )
 print(f"Session created: App='{APP_NAME}', User='{USER_ID}', Session='{SESSION_ID}'")
 
+# --- OR ---
+
+# Uncomment the following lines if running as a standard Python script (.py file):
+
+# async def init_session(app_name:str,user_id:str,session_id:str) -> InMemorySessionService:
+#     session = await session_service.create_session(
+#         app_name=app_name,
+#         user_id=user_id,
+#         session_id=session_id
+#     )
+#     print(f"Session created: App='{app_name}', User='{user_id}', Session='{session_id}'")
+#     return session
+# 
+# session = asyncio.run(init_session(APP_NAME,USER_ID,SESSION_ID))
+
 # --- Runner ---
 # Key Concept: Runner orchestrates the agent execution loop.
 runner = Runner(
