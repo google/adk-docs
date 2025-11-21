@@ -21,12 +21,12 @@ import (
 	"strconv"
 	"strings"
 
+	"google.golang.org/adk/agent"
 	"google.golang.org/adk/agent/llmagent"
-	"google.golang.org/adk/cmd/launcher/adk"
+	"google.golang.org/adk/cmd/launcher"
 	"google.golang.org/adk/cmd/launcher/web"
 	"google.golang.org/adk/cmd/launcher/web/a2a"
 	"google.golang.org/adk/model/gemini"
-	"google.golang.org/adk/server/restapi/services"
 	"google.golang.org/adk/session"
 	"google.golang.org/adk/tool"
 	"google.golang.org/adk/tool/functiontool"
@@ -50,7 +50,7 @@ type checkPrimeToolArgs struct {
 	Nums []int `json:"nums" jsonschema:"A list of numbers to check for primality."`
 }
 
-func checkPrimeTool(tc tool.Context, args checkPrimeToolArgs) string {
+func checkPrimeTool(tc tool.Context, args checkPrimeToolArgs) (string, error) {
 	var primes []int
 	for _, num := range args.Nums {
 		if isPrime(num) {
@@ -58,13 +58,13 @@ func checkPrimeTool(tc tool.Context, args checkPrimeToolArgs) string {
 		}
 	}
 	if len(primes) == 0 {
-		return "No prime numbers found."
+		return "", fmt.Errorf("no prime numbers found")
 	}
 	var primeStrings []string
 	for _, p := range primes {
 		primeStrings = append(primeStrings, strconv.Itoa(p))
 	}
-	return fmt.Sprintf("%s are prime numbers.", strings.Join(primeStrings, ", "))
+	return fmt.Sprintf("%s are prime numbers.", strings.Join(primeStrings, ", ")), nil
 }
 
 // --8<-- [start:a2a-launcher]
@@ -100,8 +100,8 @@ func main() {
 
 	// Create launcher. The a2a.NewLauncher() will dynamically generate the agent card.
 	port := 8001
-	launcher := web.NewLauncher(a2a.NewLauncher())
-	_, err = launcher.Parse([]string{
+	webLauncher := web.NewLauncher(a2a.NewLauncher())
+	_, err = webLauncher.Parse([]string{
 		"--port", strconv.Itoa(port),
 		"a2a", "--a2a_agent_url", "http://localhost:" + strconv.Itoa(port),
 	})
@@ -110,15 +110,15 @@ func main() {
 	}
 
 	// Create ADK config
-	config := &adk.Config{
-		AgentLoader:    services.NewSingleAgentLoader(primeAgent),
+	config := &launcher.Config{
+		AgentLoader:    agent.NewSingleLoader(primeAgent),
 		SessionService: session.InMemoryService(),
 	}
 
 	log.Printf("Starting A2A prime checker server on port %d\n", port)
 	// Run launcher
-	if err := launcher.Run(context.Background(), config); err != nil {
-		log.Fatalf("launcher.Run() error = %v", err)
+	if err := webLauncher.Run(context.Background(), config); err != nil {
+		log.Fatalf("webLauncher.Run() error = %v", err)
 	}
 }
 
