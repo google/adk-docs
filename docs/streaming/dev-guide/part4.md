@@ -278,7 +278,7 @@ When building ADK Bidi-streaming applications, it's essential to understand how 
 Understanding the distinction between **ADK `Session`** and **Live API session** is crucial for building reliable streaming applications with ADK Bidi-streaming.
 
 **ADK `Session`** (managed by SessionService):
-- Persistent conversation storage for conversation history, events, and state, created via `SessionService.create_session()` 
+- Persistent conversation storage for conversation history, events, and state, created via `SessionService.create_session()`
 - Storage options: in-memory, database (PostgreSQL/MySQL/SQLite), or Vertex AI
 - Survives across multiple `run_live()` calls and application restarts (with the persistent `SessionService`)
 
@@ -348,6 +348,7 @@ sequenceDiagram
 ```
 
 **Key insights:**
+
 - ADK Session survives across multiple `run_live()` calls and app restarts
 - Live API session is ephemeral - created and destroyed per streaming session
 - Conversation continuity is maintained through ADK Session's persistent storage
@@ -607,12 +608,14 @@ While compression enables unlimited session duration, consider these trade-offs:
 **Common Use Cases:**
 
 ✅ **Enable compression when:**
+
 - Sessions need to exceed platform duration limits (15/2/10 minutes)
 - Extended conversations may hit token limits (128k for 2.5-flash)
 - Customer support sessions that can last hours
 - Educational tutoring with long interactions
 
 ❌ **Disable compression when:**
+
 - All sessions complete within duration limits
 - Precision recall of early conversation is critical
 - Development/testing phase (full history aids debugging)

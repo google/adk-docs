@@ -948,6 +948,7 @@ When an agent has `sub_agents` defined, ADK's `run_live()` method automatically 
 **Implementation Details:**
 
 The automatic enablement happens in `Runner.run_live()` when both conditions are met:
+
 - The agent has `sub_agents` defined
 - A `LiveRequestQueue` is provided (bidirectional streaming mode)
 
@@ -1137,10 +1138,12 @@ In this example, when the customer service agent speaks, users hear the "Aoede" 
 ### Configuration Parameters
 
 **`voice_config`**: Specifies which prebuilt voice to use for audio generation
+
 - Configured through nested `VoiceConfig` and `PrebuiltVoiceConfig` objects
 - `voice_name`: String identifier for the prebuilt voice (e.g., "Kore", "Puck", "Charon")
 
 **`language_code`**: ISO 639 language code for speech synthesis (e.g., "en-US", "ja-JP")
+
 - Determines the language and regional accent for synthesized speech
 - **Model-specific behavior:**
   - **Half-Cascade models**: Use the specified `language_code` for TTS output
@@ -1149,11 +1152,13 @@ In this example, when the customer service agent speaks, users hear the "Aoede" 
 ### Available Voices
 
 The available voices vary by model architecture. To verify which voices are available for your specific model:
+
 - Check the [Gemini Live API documentation](https://ai.google.dev/gemini-api/docs/live-guide) for the complete list
 - Test voice configurations in development before deploying to production
 - If a voice is not supported, the Live API will return an error
 
 **Half-cascade models** support these voices:
+
 - Puck
 - Charon
 - Kore
@@ -1558,6 +1563,7 @@ To verify proactive behavior is working:
 **When to Disable**:
 
 Consider disabling proactivity/affective dialog for:
+
 - **Formal/professional contexts** where emotional adaptation is inappropriate
 - **High-precision tasks** where predictability is critical
 - **Accessibility applications** where consistent behavior is expected
