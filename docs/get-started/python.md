@@ -3,7 +3,7 @@
 This guide shows you how to get up and running with Agent Development Kit
 (ADK) for Python. Before you start, make sure you have the following installed:
 
-*   Python 3.9 or later
+*   Python 3.10 or later
 *   `pip` for installing packages
 
 ## Installation
