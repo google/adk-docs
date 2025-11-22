@@ -1,13 +1,8 @@
 # BigQuery Agent Analytics Plugin
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.18.0</span><span class="lst-preview">Preview</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.19.0</span><span class="lst-preview">Preview</span>
 </div>
-
-!!! note "Availability"
-
-    To try this plugin, it is recommended to build ADK from the Top of the tree or wait for the official 
-    release of version 1.19. This note will be removed once version 1.19 is out.
 
 The BigQuery Agent Analytics Plugin significantly enhances the Agent Development Kit (ADK) by providing a robust solution for in-depth agent behavior analysis. Using the ADK Plugin architecture and the BigQuery Storage Write API, it captures and logs critical operational events directly into a Google BigQuery table, empowering you with advanced capabilities for debugging, real-time monitoring, and comprehensive offline performance evaluation.
 
@@ -212,7 +207,7 @@ CREATE TABLE `your-gcp-project-id.adk_agent_logs.agent_events`
   user_id STRING OPTIONS(description="The identifier of the user associated with the current session."),
   content STRING OPTIONS(description="The event-specific data (payload). Format varies by event_type."),
   error_message STRING OPTIONS(description="Populated if an error occurs during the processing of the event."),
-  is_truncated STRING OPTIONS(description="Indicates if the content field was truncated due to size limits.")
+  is_truncated BOOLEAN OPTIONS(description="Boolean flag indicates if the content field was truncated due to size limits.")
 )
 PARTITION BY DATE(timestamp)
 CLUSTER BY event_type, agent, user_id;

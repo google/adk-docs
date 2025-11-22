@@ -3,7 +3,7 @@
 This guide shows you how to get up and running with Agent Development Kit
 (ADK) for Python. Before you start, make sure you have the following installed:
 
-*   Python 3.9 or later
+*   Python 3.10 or later
 *   `pip` for installing packages
 
 ## Installation
@@ -78,7 +78,7 @@ def get_current_time(city: str) -> dict:
     return {"status": "success", "city": city, "time": "10:30 AM"}
 
 root_agent = Agent(
-    model='gemini-2.5-flash',
+    model='gemini-3-pro-preview',
     name='root_agent',
     description="Tells the current time in a specified city.",
     instruction="You are a helpful assistant that tells the current time in cities. Use the 'get_current_time' tool for this purpose.",

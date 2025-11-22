@@ -152,6 +152,7 @@ nav:
         - get-started/streaming/index.md
         - Python: get-started/streaming/quickstart-streaming.md
         - Java: get-started/streaming/quickstart-streaming-java.md
+      - Visual Builder: visual-builder/index.md
       - Advanced setup: get-started/installation.md
     - Agents:
       - agents/index.md
@@ -183,8 +184,10 @@ nav:
         - Exa: tools/third-party/exa.md
         - Firecrawl: tools/third-party/firecrawl.md
         - GitHub: tools/third-party/github.md
+        - GitLab: tools/third-party/gitlab.md
         - Hugging Face: tools/third-party/hugging-face.md
         - Notion: tools/third-party/notion.md
+        - ScrapeGraphAI: tools/third-party/scrapegraphai.md
         - Tavily: tools/third-party/tavily.md
         - Agentic UI (AG-UI): tools/third-party/ag-ui.md
     - Custom Tools:
@@ -213,6 +216,7 @@ nav:
       - AgentOps: observability/agentops.md
       - Arize AX: observability/arize-ax.md
       - Freeplay: observability/freeplay.md
+      - Monocle: observability/monocle.md
       - Phoenix: observability/phoenix.md
       - W&B Weave: observability/weave.md
     - Evaluation:
@@ -272,13 +276,14 @@ nav:
       - Understanding Google Search Grounding: grounding/google_search_grounding.md
       - Understanding Vertex AI Search Grounding: grounding/vertex_ai_search_grounding.md
   - Reference:
+    - Release Notes: release-notes.md
     - API Reference:
       - api-reference/index.md
       - Python ADK: api-reference/python/index.html
       - Go ADK: https://pkg.go.dev/google.golang.org/adk" target="_blank
       - Java ADK: api-reference/java/index.html
       - CLI Reference: api-reference/cli/index.html
-      - Agent Config reference: api-reference/agentconfig/index.html
+      - Agent Config Reference: api-reference/agentconfig/index.html
       - REST API: api-reference/rest/index.md
     - Community Resources: community.md
     - Contributing Guide: contributing-guide.md

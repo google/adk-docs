@@ -4,6 +4,7 @@ This guide shows you how to get up and running with Agent Development Kit
 for Go. Before you start, make sure you have the following installed:
 
 *   Go 1.24.4 or later
+*   ADK Go v0.2.0 or later
 
 ## Create an agent project
 
@@ -47,11 +48,11 @@ import (
 	"log"
 	"os"
 
+	"google.golang.org/adk/agent"
 	"google.golang.org/adk/agent/llmagent"
-	"google.golang.org/adk/cmd/launcher/adk"
+	"google.golang.org/adk/cmd/launcher"
 	"google.golang.org/adk/cmd/launcher/full"
 	"google.golang.org/adk/model/gemini"
-	"google.golang.org/adk/server/restapi/services"
 	"google.golang.org/adk/tool"
 	"google.golang.org/adk/tool/geminitool"
 	"google.golang.org/genai"
@@ -60,14 +61,14 @@ import (
 func main() {
 	ctx := context.Background()
 
-	model, err := gemini.NewModel(ctx, "gemini-2.5-flash", &genai.ClientConfig{
+	model, err := gemini.NewModel(ctx, "gemini-3-pro-preview", &genai.ClientConfig{
 		APIKey: os.Getenv("GOOGLE_API_KEY"),
 	})
 	if err != nil {
 		log.Fatalf("Failed to create model: %v", err)
 	}
 
-	agent, err := llmagent.New(llmagent.Config{
+	timeAgent, err := llmagent.New(llmagent.Config{
 		Name:        "hello_time_agent",
 		Model:       model,
 		Description: "Tells the current time in a specified city.",
@@ -80,8 +81,8 @@ func main() {
 		log.Fatalf("Failed to create agent: %v", err)
 	}
 
-	config := &adk.Config{
-		AgentLoader: services.NewSingleAgentLoader(agent),
+	config := &launcher.Config{
+		AgentLoader: agent.NewSingleLoader(timeAgent),
 	}
 
 	l := full.NewLauncher()

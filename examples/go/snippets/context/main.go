@@ -252,17 +252,12 @@ type searchExternalAPIArgs struct {
 	Query string `json:"query" jsonschema:"The query to search for."`
 }
 
-type searchExternalAPIResults struct {
-	Result string `json:"result"`
-	Status string `json:"status"`
-}
-
-func searchExternalAPI(tc tool.Context, input searchExternalAPIArgs) searchExternalAPIResults {
+func searchExternalAPI(tc tool.Context, input searchExternalAPIArgs) (string, error) {
 	apiKey, err := tc.State().Get("api_key")
 	if err != nil || apiKey == "" {
 		// In a real scenario, you would define and request credentials here.
 		// This is a conceptual placeholder.
-		return searchExternalAPIResults{Status: "Auth Required"}
+		return "", fmt.Errorf("auth required")
 	}
 
 	// Use the API key...
@@ -272,7 +267,7 @@ func searchExternalAPI(tc tool.Context, input searchExternalAPIArgs) searchExter
 	// relevantDocs, _ := tc.SearchMemory(tc, "info related to %s", input.Query))
 	// availableFiles, _ := tc.Artifacts().List()
 
-	return searchExternalAPIResults{Result: fmt.Sprintf("Data for %s fetched.", input.Query)}
+	return fmt.Sprintf("Data for %s fetched.", input.Query), nil
 }
 
 // --8<-- [end:tool_context_tool]
@@ -302,7 +297,7 @@ type toolResults struct {
 }
 
 // Example tool function demonstrating state access
-func myTool(tc tool.Context, input toolArgs) toolResults {
+func myTool(tc tool.Context, input toolArgs) (toolResults, error) {
 	userPref, err := tc.State().Get("user_display_preference")
 	if err != nil {
 		userPref = "default_mode"
@@ -314,7 +309,7 @@ func myTool(tc tool.Context, input toolArgs) toolResults {
 	}
 	fmt.Printf("Using API endpoint: %v\n", apiEndpoint)
 	// ... rest of tool logic ...
-	return toolResults{}
+	return toolResults{}, nil
 }
 
 // --8<-- [end:accessing_state_tool]
@@ -386,13 +381,13 @@ type logToolUsageResult struct {
 	Status string `json:"status"`
 }
 
-func logToolUsage(tc tool.Context, args logToolUsageArgs) logToolUsageResult {
+func logToolUsage(tc tool.Context, args logToolUsageArgs) (logToolUsageResult, error) {
 	agentName := tc.AgentName()
 	invID := tc.InvocationID()
 	funcCallID := tc.FunctionCallID()
 
 	fmt.Printf("Log: Invocation=%s, Agent=%s, FunctionCallID=%s - Tool Executed.\n", invID, agentName, funcCallID)
-	return logToolUsageResult{Status: "Logged successfully"}
+	return logToolUsageResult{Status: "Logged successfully"}, nil
 }
 
 // --8<-- [end:accessing_ids]
@@ -515,20 +510,15 @@ func runAccessingInitialUserInputExample() {
 type GetUserProfileArgs struct {
 }
 
-type getUserProfileResult struct {
-	ProfileStatus string `json:"profile_status"`
-	Error         string `json:"error"`
-}
-
-func getUserProfile(tc tool.Context, input GetUserProfileArgs) getUserProfileResult {
+func getUserProfile(tc tool.Context, input GetUserProfileArgs) (string, error) {
 	// A random user ID for demonstration purposes
 	userID := "random_user_456"
 
 	// Save the ID to state for the next tool
 	if err := tc.State().Set("temp:current_user_id", userID); err != nil {
-		return getUserProfileResult{Error: "Failed to set user ID in state"}
+		return "", fmt.Errorf("failed to set user ID in state: %w", err)
 	}
-	return getUserProfileResult{ProfileStatus: "ID generated"}
+	return "ID generated", nil
 }
 
 // --8<-- [end:passing_data_tool1]
@@ -540,18 +530,17 @@ type GetUserOrdersArgs struct {
 
 type getUserOrdersResult struct {
 	Orders []string `json:"orders"`
-	Error  string   `json:"error"`
 }
 
-func getUserOrders(tc tool.Context, input GetUserOrdersArgs) getUserOrdersResult {
+func getUserOrders(tc tool.Context, input GetUserOrdersArgs) (*getUserOrdersResult, error) {
 	userID, err := tc.State().Get("temp:current_user_id")
 	if err != nil {
-		return getUserOrdersResult{Error: "User ID not found in state"}
+		return &getUserOrdersResult{}, fmt.Errorf("user ID not found in state")
 	}
 
 	fmt.Printf("Fetching orders for user ID: %v\n", userID)
 	// ... logic to fetch orders using user_id ...
-	return getUserOrdersResult{Orders: []string{"order123", "order456"}}
+	return &getUserOrdersResult{Orders: []string{"order123", "order456"}}, nil
 }
 
 // --8<-- [end:passing_data_tool2]
@@ -618,14 +607,14 @@ type setUserPreferenceResult struct {
 	Status string `json:"status"`
 }
 
-func setUserPreference(tc tool.Context, args setUserPreferenceArgs) setUserPreferenceResult {
+func setUserPreference(tc tool.Context, args setUserPreferenceArgs) (setUserPreferenceResult, error) {
 	// Use 'user:' prefix for user-level state (if using a persistent SessionService)
 	stateKey := fmt.Sprintf("user:%s", args.Preference)
 	if err := tc.State().Set(stateKey, args.Value); err != nil {
-		return setUserPreferenceResult{Status: "Failed to set preference"}
+		return setUserPreferenceResult{}, fmt.Errorf("failed to set preference in state: %w", err)
 	}
 	fmt.Printf("Set user preference '%s' to '%s'\n", args.Preference, args.Value)
-	return setUserPreferenceResult{Status: "Preference updated"}
+	return setUserPreferenceResult{Status: "Preference updated"}, nil
 }
 
 // --8<-- [end:updating_preferences]
@@ -672,23 +661,22 @@ type summarizeDocumentArgs struct{}
 
 type summarizeDocumentResult struct {
 	Summary string `json:"summary"`
-	Error   string `json:"error"`
 }
 
-func summarizeDocumentTool(tc tool.Context, input summarizeDocumentArgs) summarizeDocumentResult {
+func summarizeDocumentTool(tc tool.Context, input summarizeDocumentArgs) (summarizeDocumentResult, error) {
 	artifactName, err := tc.State().Get("temp:doc_artifact_name")
 	if err != nil {
-		return summarizeDocumentResult{Error: "No document artifact name found in state"}
+		return summarizeDocumentResult{}, fmt.Errorf("No document artifact name found in state")
 	}
 
 	// 1. Load the artifact part containing the path/URI
 	artifactPart, err := tc.Artifacts().Load(tc, artifactName.(string))
 	if err != nil {
-		return summarizeDocumentResult{Error: err.Error()}
+		return summarizeDocumentResult{}, err
 	}
 
 	if artifactPart.Part.Text == "" {
-		return summarizeDocumentResult{Error: "Could not load artifact or artifact has no text path."}
+		return summarizeDocumentResult{}, fmt.Errorf("Could not load artifact or artifact has no text path.")
 	}
 	filePath := artifactPart.Part.Text
 	fmt.Printf("Loaded document reference: %s\n", filePath)
@@ -701,7 +689,7 @@ func summarizeDocumentTool(tc tool.Context, input summarizeDocumentArgs) summari
 	// 3. Summarize the content
 	summary := "Summary of content from " + filePath // Placeholder
 
-	return summarizeDocumentResult{Summary: summary}
+	return summarizeDocumentResult{Summary: summary}, nil
 }
 
 // --8<-- [end:artifacts_summarize]
@@ -712,16 +700,15 @@ type checkAvailableDocsArgs struct{}
 
 type checkAvailableDocsResult struct {
 	AvailableDocs []string `json:"available_docs"`
-	Error         string   `json:"error"`
 }
 
-func checkAvailableDocs(tc tool.Context, args checkAvailableDocsArgs) checkAvailableDocsResult {
+func checkAvailableDocs(tc tool.Context, args checkAvailableDocsArgs) (checkAvailableDocsResult, error) {
 	artifactKeys, err := tc.Artifacts().List(tc)
 	if err != nil {
-		return checkAvailableDocsResult{Error: err.Error()}
+		return checkAvailableDocsResult{}, err
 	}
 	fmt.Printf("Available artifacts: %v\n", artifactKeys)
-	return checkAvailableDocsResult{AvailableDocs: artifactKeys.FileNames}
+	return checkAvailableDocsResult{AvailableDocs: artifactKeys.FileNames}, nil
 }
 
 // --8<-- [end:artifacts_list]
@@ -734,20 +721,19 @@ type saveDocRefArgs struct {
 
 type saveDocRefResult struct {
 	Status string `json:"status"`
-	Error  string `json:"error"`
 }
 
-func saveDocRef(tc tool.Context, args saveDocRefArgs) saveDocRefResult {
+func saveDocRef(tc tool.Context, args saveDocRefArgs) (saveDocRefResult, error) {
 	artifactPart := genai.NewPartFromText(args.FilePath)
 	_, err := tc.Artifacts().Save(tc, "document_to_summarize.txt", artifactPart)
 	if err != nil {
-		return saveDocRefResult{"", err.Error()}
+		return saveDocRefResult{}, err
 	}
 	fmt.Printf("Saved document reference '%s' as artifact\n", args.FilePath)
 	if err := tc.State().Set("temp:doc_artifact_name", "document_to_summarize.txt"); err != nil {
-		return saveDocRefResult{"", "Failed to set artifact name in state"}
+		return saveDocRefResult{}, fmt.Errorf("failed to set artifact name in state")
 	}
-	return saveDocRefResult{"Reference saved", ""}
+	return saveDocRefResult{"Reference saved"}, nil
 }
 
 // --8<-- [end:artifacts_save_ref]
