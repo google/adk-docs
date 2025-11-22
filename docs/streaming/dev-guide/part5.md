@@ -948,7 +948,6 @@ When an agent has `sub_agents` defined, ADK's `run_live()` method automatically 
 **Implementation Details:**
 
 The automatic enablement happens in `Runner.run_live()` when both conditions are met:
-
 - The agent has `sub_agents` defined
 - A `LiveRequestQueue` is provided (bidirectional streaming mode)
 
@@ -1138,12 +1137,10 @@ In this example, when the customer service agent speaks, users hear the "Aoede" 
 ### Configuration Parameters
 
 **`voice_config`**: Specifies which prebuilt voice to use for audio generation
-
 - Configured through nested `VoiceConfig` and `PrebuiltVoiceConfig` objects
 - `voice_name`: String identifier for the prebuilt voice (e.g., "Kore", "Puck", "Charon")
 
 **`language_code`**: ISO 639 language code for speech synthesis (e.g., "en-US", "ja-JP")
-
 - Determines the language and regional accent for synthesized speech
 - **Model-specific behavior:**
   - **Half-Cascade models**: Use the specified `language_code` for TTS output
@@ -1152,13 +1149,11 @@ In this example, when the customer service agent speaks, users hear the "Aoede" 
 ### Available Voices
 
 The available voices vary by model architecture. To verify which voices are available for your specific model:
-
 - Check the [Gemini Live API documentation](https://ai.google.dev/gemini-api/docs/live-guide) for the complete list
 - Test voice configurations in development before deploying to production
 - If a voice is not supported, the Live API will return an error
 
 **Half-cascade models** support these voices:
-
 - Puck
 - Charon
 - Kore
@@ -1563,7 +1558,6 @@ To verify proactive behavior is working:
 **When to Disable**:
 
 Consider disabling proactivity/affective dialog for:
-
 - **Formal/professional contexts** where emotional adaptation is inappropriate
 - **High-precision tasks** where predictability is critical
 - **Accessibility applications** where consistent behavior is expected
@@ -1574,11 +1568,5 @@ Consider disabling proactivity/affective dialog for:
 In this part, you learned how to implement multimodal features in ADK Bidi-streaming applications, focusing on audio, image, and video capabilities. We covered audio specifications and format requirements, explored the differences between native audio and half-cascade architectures, examined how to send and receive audio streams through LiveRequestQueue and Events, and learned about advanced features like audio transcription, voice activity detection, and proactive/affective dialog. You now understand how to build natural voice-enabled AI experiences with proper audio handling, implement video streaming for visual context, and configure model-specific features based on platform capabilities. With this comprehensive understanding of ADK's multimodal streaming features, you're equipped to build production-ready applications that handle text, audio, image, and video seamlessly—creating rich, interactive AI experiences across diverse use cases.
 
 **Congratulations!** You've completed the ADK Bidi-streaming Developer Guide. You now have a comprehensive understanding of how to build production-ready real-time streaming AI applications with Google's Agent Development Kit.
-
-!!! info "Stay Tuned"
-
-    We're working on new parts covering advanced topics like performance optimization, testing strategies, and production deployment patterns. Check back for updates!
-
----
 
 ← [Previous: Part 4 - Understanding RunConfig](part4.md)
