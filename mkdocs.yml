@@ -215,6 +215,7 @@ nav:
       - Cloud Trace: observability/cloud-trace.md
       - AgentOps: observability/agentops.md
       - Arize AX: observability/arize-ax.md
+      - Datadog: observability/datadog.md
       - Freeplay: observability/freeplay.md
       - Monocle: observability/monocle.md
       - Phoenix: observability/phoenix.md
