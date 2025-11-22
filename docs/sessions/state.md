@@ -108,11 +108,83 @@ To inject a value from the session state, enclose the key of the desired state v
     --8<-- "examples/go/snippets/sessions/instruction_template/instruction_template_example.go:key_template"
     ```
 
+#### Accessing Nested State with Dot Notation
+
+The templating system supports accessing nested values within your state objects using dot notation. This allows you to directly reference deeply nested properties without needing to flatten your state structure.
+
+**Syntax:**
+
+* **Dot Notation:** Use dots to traverse nested dictionaries or object attributes: `{user.profile.role}`
+* **Optional Chaining:** Add a `?` after any key to safely handle missing values: `{user?.profile?.role?}`
+  * If any part of the path is missing or `None`, the template will insert an empty string instead of raising an error.
+
+**Example:**
+
+=== "Python"
+
+    ```python
+    from google.adk.agents import LlmAgent, CallbackContext
+    from google.adk.agents.readonly_context import ReadonlyContext
+    from google.adk.utils import instructions_utils
+
+    # Define a callback to populate nested state
+    def inject_nested_state(callback_context: CallbackContext):
+        callback_context.state["user"] = {
+            "name": "Alice",
+            "profile": {
+                "role": "Software Engineer",
+                "team": "AI Research"
+            }
+        }
+
+    # Use nested state in instruction template
+    async def build_instruction(readonly_context: ReadonlyContext) -> str:
+        template = (
+            "Current user is {user.name} and {user.profile.role}. "
+            "Please greet them by name and role."
+        )
+        return await instructions_utils.inject_session_state(template, readonly_context)
+
+    agent = LlmAgent(
+        name="GreetingAgent",
+        model="gemini-2.0-flash",
+        instruction=build_instruction,
+        on_before_agent_call=inject_nested_state
+    )
+
+    # The LLM will receive:
+    # "Current user is Alice and Software Engineer. Please greet them by name and role."
+    ```
+
+**With Optional Chaining:**
+
+=== "Python"
+
+    ```python
+    # If user.profile.department might not exist
+    template = "User {user.name} from {user?.profile?.department?} department"
+
+    # If department is missing, this becomes:
+    # "User Alice from  department"
+    # Instead of raising an error
+    ```
+
+**Behavior:**
+
+* **Dictionary Access:** Works with nested dictionaries (e.g., `{config.database.host}`)
+* **Object Attributes:** Works with object attributes (e.g., `{user.profile.email}`)
+* **Mixed Access:** Can traverse both dictionaries and objects in the same path
+* **Error Handling:**
+  * Without `?`: Raises a `KeyError` if any key in the path is missing
+  * With `?`: Returns an empty string if any key in the path is missing or `None`
+
 #### Important Considerations
 
-* Key Existence: Ensure that the key you reference in the instruction string exists in the session.state. If the key is missing, the agent will throw an error. To use a key that may or may not be present, you can include a question mark (?) after the key (e.g. {topic?}).
-* Data Types: The value associated with the key should be a string or a type that can be easily converted to a string.
-* Escaping: If you need to use literal curly braces in your instruction (e.g., for JSON formatting), you'll need to escape them.
+* **Key Existence:** Ensure that the keys you reference in the instruction string exist in the session.state. If a key is missing, the agent will throw an error. To use a key that may or may not be present, include a question mark (?) after the key:
+  * Flat keys: `{topic?}`
+  * Nested keys: `{user?.profile?.role?}`
+* **Data Types:** The value associated with the key should be a string or a type that can be easily converted to a string.
+* **Escaping:** If you need to use literal curly braces in your instruction (e.g., for JSON formatting), you'll need to escape them.
 
 #### Bypassing State Injection with `InstructionProvider`
 
