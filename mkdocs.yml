@@ -185,8 +185,10 @@ nav:
         - Exa: tools/third-party/exa.md
         - Firecrawl: tools/third-party/firecrawl.md
         - GitHub: tools/third-party/github.md
+        - GitLab: tools/third-party/gitlab.md
         - Hugging Face: tools/third-party/hugging-face.md
         - Notion: tools/third-party/notion.md
+        - ScrapeGraphAI: tools/third-party/scrapegraphai.md
         - Tavily: tools/third-party/tavily.md
         - Agentic UI (AG-UI): tools/third-party/ag-ui.md
     - Custom Tools:
@@ -263,13 +265,19 @@ nav:
     - Bidi-streaming (live):
       - streaming/index.md
       - Custom Audio Bidi-streaming app sample (WebSockets): streaming/custom-streaming-ws.md
-      - Bidi-streaming development guide series: streaming/dev-guide/part1.md
+      - Bidi-streaming development guide series:
+        - Part 1, Intro to streaming: streaming/dev-guide/part1.md
+        - Part 2, Sending messages: streaming/dev-guide/part2.md
+        - Part 3, Event handling: streaming/dev-guide/part3.md
+        - Part 4, Run configuration: streaming/dev-guide/part4.md
+        - Part 5, Audio, Images, and Video: streaming/dev-guide/part5.md
       - Streaming Tools: streaming/streaming-tools.md
       - Configurating Bidi-streaming behaviour: streaming/configuration.md
     - Grounding:
       - Understanding Google Search Grounding: grounding/google_search_grounding.md
       - Understanding Vertex AI Search Grounding: grounding/vertex_ai_search_grounding.md
   - Reference:
+    - Release Notes: release-notes.md
     - API Reference:
       - api-reference/index.md
       - Python ADK: api-reference/python/index.html
@@ -277,7 +285,7 @@ nav:
       - Java ADK: api-reference/java/index.html
       - Typescript ADK: api-reference/typescript/index.html
       - CLI Reference: api-reference/cli/index.html
-      - Agent Config reference: api-reference/agentconfig/index.html
+      - Agent Config Reference: api-reference/agentconfig/index.html
       - REST API: api-reference/rest/index.md
     - Community Resources: community.md
     - Contributing Guide: contributing-guide.md

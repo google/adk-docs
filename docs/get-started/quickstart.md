@@ -6,7 +6,7 @@ setting up a basic agent with multiple tools, and running it locally either in t
 <!-- <img src="../../assets/quickstart.png" alt="Quickstart setup"> -->
 
 This quickstart assumes a local IDE (VS Code, PyCharm, IntelliJ IDEA, etc.)
-with Python 3.9+ or Java 17+ and terminal access. This method runs the
+with Python 3.10+ or Java 17+ and terminal access. This method runs the
 application entirely on your machine and is recommended for internal development.
 
 ## 1. Set up Environment & Install ADK { #set-up-environment-install-adk }

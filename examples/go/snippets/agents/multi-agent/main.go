@@ -330,12 +330,12 @@ func advancedPatternSnippets(m model.LLM) {
 	// --8<-- [start:human-in-loop-pattern]
 	// Conceptual Code: Using a Tool for Human Approval
 	// --- Assume externalApprovalTool exists ---
-	// func externalApprovalTool(amount float64, reason string) string { ... }
+	// func externalApprovalTool(amount float64, reason string) (string, error) { ... }
 	type externalApprovalToolArgs struct {
 		Amount float64 `json:"amount" jsonschema:"The amount for which approval is requested."`
 		Reason string  `json:"reason" jsonschema:"The reason for the approval request."`
 	}
-	var externalApprovalTool func(tool.Context, externalApprovalToolArgs) string
+	var externalApprovalTool func(tool.Context, externalApprovalToolArgs) (string, error)
 	approvalTool, _ := functiontool.New(
 		functiontool.Config{
 			Name:        "external_approval_tool",
