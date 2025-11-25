@@ -71,9 +71,9 @@ a compactor object
     of the prior event data. 
 *   **`overlap_size`**: Set how many of the previously compacted events are included in a
     newly compacted context set.
-*   **`compactor`**: (Optional) Define a compactor object including a specific AI model
+*   **`summarizer`**: (Optional) Define a summarizer object including a specific AI model
     to use for summarization. For more information, see 
-    [Define a compactor](#define-compactor).    
+    [Define a Summarizer](#define-summarizer).    
 
 ### Define a Summarizer {#define-summarizer}
 You can customize the process of context compression by defining a summarizer. 
