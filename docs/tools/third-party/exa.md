@@ -33,8 +33,8 @@ reports using natural language.
 
     ```python
     from google.adk.agents import Agent
+    from google.adk.tools.mcp_tool import McpToolset
     from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
-    from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset
     from mcp import StdioServerParameters
 
     EXA_API_KEY = "YOUR_EXA_API_KEY"
@@ -44,7 +44,7 @@ reports using natural language.
         name="exa_agent",
         instruction="Help users get information from Exa",
         tools=[
-            MCPToolset(
+            McpToolset(
                 connection_params=StdioConnectionParams(
                     server_params = StdioServerParameters(
                         command="npx",
@@ -70,8 +70,8 @@ reports using natural language.
 
     ```python
     from google.adk.agents import Agent
+    from google.adk.tools.mcp_tool import McpToolset
     from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPServerParams
-    from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset
 
     EXA_API_KEY = "YOUR_EXA_API_KEY"
 
@@ -80,7 +80,7 @@ reports using natural language.
         name="exa_agent",
         instruction="""Help users get information from Exa""",
         tools=[
-            MCPToolset(
+            McpToolset(
                 connection_params=StreamableHTTPServerParams(
                     url="https://mcp.exa.ai/mcp?exaApiKey=" + EXA_API_KEY,
                     # (Optional) Specify which tools to enable

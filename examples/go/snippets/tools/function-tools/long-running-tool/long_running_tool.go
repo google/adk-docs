@@ -44,7 +44,7 @@ type CreateTicketResults struct {
 }
 
 // createTicketAsync simulates the *initiation* of a long-running ticket creation task.
-func createTicketAsync(ctx tool.Context, args CreateTicketArgs) CreateTicketResults {
+func createTicketAsync(ctx tool.Context, args CreateTicketArgs) (CreateTicketResults, error) {
 	log.Printf("TOOL_EXEC: 'create_ticket_long_running' called with urgency: %s (Call ID: %s)\n", args.Urgency, ctx.FunctionCallID())
 
 	// "Generate" a ticket ID and return it in the initial response.
@@ -56,7 +56,7 @@ func createTicketAsync(ctx tool.Context, args CreateTicketArgs) CreateTicketResu
 	return CreateTicketResults{
 		Status:   "started",
 		TicketId: ticketID,
-	}
+	}, nil
 }
 
 func createTicketAgent(ctx context.Context) (agent.Agent, error) {

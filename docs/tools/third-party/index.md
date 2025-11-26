@@ -69,6 +69,16 @@ Check out the following third-party tools that you can use with ADK agents:
     </div>
   </a>
 
+  <a href="/adk-docs/tools/third-party/gitlab/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="../../assets/tools-gitlab.png" alt="GitLab">
+    </div>
+    <div class="tool-card-content">
+      <h3>GitLab</h3>
+      <p>Perform semantic code search, inspect pipelines, manage merge requests</p>
+    </div>
+  </a>
+
   <a href="/adk-docs/tools/third-party/hugging-face/" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="../../assets/tools-hugging-face.png" alt="Hugging Face">
@@ -86,6 +96,16 @@ Check out the following third-party tools that you can use with ADK agents:
     <div class="tool-card-content">
       <h3>Notion</h3>
       <p>Search workspaces, create pages, and manage tasks and databases</p>
+    </div>
+  </a>
+
+  <a href="/adk-docs/tools/third-party/scrapegraphai/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="../../assets/tools-scrapegraphai.png" alt="ScrapeGraphAI">
+    </div>
+    <div class="tool-card-content">
+      <h3>ScrapeGraphAI</h3>
+      <p>AI-powered web scraping, crawling, and data extraction</p>
     </div>
   </a>
 

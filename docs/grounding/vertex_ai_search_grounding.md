@@ -15,7 +15,7 @@ In this guide, you'll discover:
 
 ## Vertex AI Search Grounding Quickstart
 
-This quickstart guides you through creating an ADK agent with Vertex AI Search grounding feature. This quickstart assumes a local IDE (VS Code or PyCharm, etc.) with Python 3.9+ and terminal access.
+This quickstart guides you through creating an ADK agent with Vertex AI Search grounding feature. This quickstart assumes a local IDE (VS Code or PyCharm, etc.) with Python 3.10+ and terminal access.
 
 ### 1. Prepare Vertex AI Search { #prepare-vertex-ai-search }
 

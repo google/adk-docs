@@ -18,6 +18,20 @@ development feel more like software development, to make it easier for
 developers to create, deploy, and orchestrate agentic architectures that range
 from simple tasks to complex workflows.
 
+??? warning "ALERT: ADK Python v1.19.0 requires Python 3.10 or higher"
+
+    ADK Python release v1.19.0 requires Python 3.10 or higher. This change
+    is breaking for anyone attempting to use the v1.19.0 release with Python
+    3.9. For more release details, check out the
+    [release notes](https://github.com/google/adk-python/releases/tag/v1.19.0).
+
+??? tip "News: ADK Go v0.2.0 released!"
+
+    ADK Go release v0.2.0 is live with a variety of improvements, including new
+    features, bug fixes, documentation updates, and significant code refactoring.
+    For release details, check out the
+    [release notes](https://github.com/google/adk-go/releases/tag/v0.2.0).
+
 <div id="centered-install-tabs" class="install-command-container" markdown="1">
 
 <p class="get-started-text" style="text-align: center;">Get started:</p>

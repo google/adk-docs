@@ -30,8 +30,8 @@ structured maps of websites.
 
     ```python
     from google.adk.agents import Agent
+    from google.adk.tools.mcp_tool import McpToolset
     from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
-    from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset
     from mcp import StdioServerParameters
 
     TAVILY_API_KEY = "YOUR_TAVILY_API_KEY"
@@ -41,7 +41,7 @@ structured maps of websites.
         name="tavily_agent",
         instruction="Help users get information from Tavily",
         tools=[
-            MCPToolset(
+            McpToolset(
                 connection_params=StdioConnectionParams(
                     server_params = StdioServerParameters(
                         command="npx",
@@ -64,8 +64,8 @@ structured maps of websites.
 
     ```python
     from google.adk.agents import Agent
+    from google.adk.tools.mcp_tool import McpToolset
     from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPServerParams
-    from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset
 
     TAVILY_API_KEY = "YOUR_TAVILY_API_KEY"
 
@@ -74,7 +74,7 @@ structured maps of websites.
         name="tavily_agent",
         instruction="""Help users get information from Tavily""",
         tools=[
-            MCPToolset(
+            McpToolset(
                 connection_params=StreamableHTTPServerParams(
                     url="https://mcp.tavily.com/mcp/",
                     headers={

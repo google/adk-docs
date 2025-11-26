@@ -53,13 +53,13 @@ type Result struct {
 
 // memorySearchToolFunc is the implementation of the memory search tool.
 // This function demonstrates accessing memory via tool.Context.
-func memorySearchToolFunc(tctx tool.Context, args Args) Result {
+func memorySearchToolFunc(tctx tool.Context, args Args) (Result, error) {
 	fmt.Printf("Tool: Searching memory for query: '%s'\n", args.Query)
 	// The SearchMemory function is available on the context.
 	searchResults, err := tctx.SearchMemory(context.Background(), args.Query)
 	if err != nil {
 		log.Printf("Error searching memory: %v", err)
-		return Result{Results: []string{"Error searching memory."}}
+		return Result{}, fmt.Errorf("failed memory search")
 	}
 
 	var results []string
@@ -68,11 +68,11 @@ func memorySearchToolFunc(tctx tool.Context, args Args) Result {
 			results = append(results, textParts(res.Content)...)
 		}
 	}
-	return Result{Results: results}
+	return Result{Results: results}, nil
 }
 
 // Define a tool that can search memory.
-var memorySearchTool = must(functiontool.New[Args, Result](
+var memorySearchTool = must(functiontool.New(
 	functiontool.Config{
 		Name:        "search_past_conversations",
 		Description: "Searches past conversations for relevant information.",

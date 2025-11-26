@@ -62,7 +62,7 @@ immediately:
 
 *   [**Reflect and Retry Tools**](/adk-docs/plugins/reflect-and-retry/):
     Tracks tool failures and intelligently retries tool requests.
-*   [**BigQuery Analytics**](https://github.com/google/adk-python/blob/main/src/google/adk/plugins/bigquery_agent_analytics_plugin.py):
+*   [**BigQuery Analytics**](/adk-docs/tools/google-cloud/bigquery-agent-analytics/):
     Enables agent logging and analysis with BigQuery.
 *   [**Context Filter**](https://github.com/google/adk-python/blob/main/src/google/adk/plugins/context_filter_plugin.py):
     Filters the generative AI context to reduce its size.

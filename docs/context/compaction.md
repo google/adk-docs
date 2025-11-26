@@ -75,31 +75,33 @@ a compactor object
     to use for summarization. For more information, see 
     [Define a compactor](#define-compactor).    
 
-### Define a Compactor {#define-compactor}
-
-You can define a Compactor object using the `SlidingWindowCompactor` class to
-customize the operation of context compression. The following code example
-demonstrates how to define a compactor:
+### Define a Summarizer {#define-summarizer}
+You can customize the process of context compression by defining a summarizer. 
+The LlmEventSummarizer class allows you to specify a particular model for summarization. 
+The following code example demonstrates how to define and configure a custom summarizer:
 
 ```python
-from google.adk.apps.app import App
-from google.adk.apps.app import EventsCompactionConfig
+from google.adk.apps.app import App, EventsCompactionConfig
+from google.adk.apps.llm_event_summarizer import LlmEventSummarizer
 from google.adk.models import Gemini
-from google.adk.apps.sliding_window_compactor import SlidingWindowCompactor
 
-# Define a compactor using a specific AI model:
+# Define the AI model to be used for summarization:
 summarization_llm = Gemini(model="gemini-2.5-flash")
-my_compactor = SlidingWindowCompactor(llm=summarization_llm)
 
+# Create the summarizer with the custom model:
+my_summarizer = LlmEventSummarizer(llm=summarization_llm)
+
+# Configure the App with the custom summarizer and compaction settings:
 app = App(
     name='my-agent',
     root_agent=root_agent,
     events_compaction_config=EventsCompactionConfig(
-        compactor=my_compactor,
-        compaction_interval=3, overlap_size=1
+        summarizer=my_summarizer,
+        compaction_interval=3,
+        overlap_size=1
     ),
-)    
-```
+)
+``` 
 
 You can further refine the operation of the `SlidingWindowCompactor` by
 by modifying its summarizer class `LlmEventSummarizer` including changing

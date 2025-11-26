@@ -260,7 +260,7 @@ limitations:
     -   `AgentTool`
     -   `LongRunningFunctionTool`
     -   `VertexAiSearchTool`
-    -   `MCPToolset`
+    -   `McpToolset`
     -   `ExampleTool`
 
 ## Next steps
