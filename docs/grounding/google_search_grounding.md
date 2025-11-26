@@ -19,7 +19,7 @@ As an additional resource, [Gemini Fullstack Agent Development Kit (ADK) Quickst
 
 ## Google Search Grounding Quickstart
 
-This quickstart guides you through creating an ADK agent with Google Search grounding feature. This quickstart assumes a local IDE (VS Code or PyCharm, etc.) with Python 3.9+ and terminal access.
+This quickstart guides you through creating an ADK agent with Google Search grounding feature. This quickstart assumes a local IDE (VS Code or PyCharm, etc.) with Python 3.10+ and terminal access.
 
 ### 1. Set up Environment & Install ADK { #set-up-environment-install-adk }
 

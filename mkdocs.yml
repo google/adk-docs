@@ -184,6 +184,7 @@ nav:
         - Exa: tools/third-party/exa.md
         - Firecrawl: tools/third-party/firecrawl.md
         - GitHub: tools/third-party/github.md
+        - GitLab: tools/third-party/gitlab.md
         - Hugging Face: tools/third-party/hugging-face.md
         - Notion: tools/third-party/notion.md
         - ScrapeGraphAI: tools/third-party/scrapegraphai.md
@@ -263,7 +264,12 @@ nav:
     - Bidi-streaming (live):
       - streaming/index.md
       - Custom Audio Bidi-streaming app sample (WebSockets): streaming/custom-streaming-ws.md
-      - Bidi-streaming development guide series: streaming/dev-guide/part1.md
+      - Bidi-streaming development guide series:
+        - Part 1, Intro to streaming: streaming/dev-guide/part1.md
+        - Part 2, Sending messages: streaming/dev-guide/part2.md
+        - Part 3, Event handling: streaming/dev-guide/part3.md
+        - Part 4, Run configuration: streaming/dev-guide/part4.md
+        - Part 5, Audio, Images, and Video: streaming/dev-guide/part5.md
       - Streaming Tools: streaming/streaming-tools.md
       - Configurating Bidi-streaming behaviour: streaming/configuration.md
     - Grounding:

@@ -203,6 +203,16 @@ Check out the following pre-built tools that you can use with ADK agents:
     </div>
   </a>
 
+  <a href="/adk-docs/tools/third-party/gitlab/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="../assets/tools-gitlab.png" alt="GitLab">
+    </div>
+    <div class="tool-card-content">
+      <h3>GitLab</h3>
+      <p>Perform semantic code search, inspect pipelines, manage merge requests</p>
+    </div>
+  </a>
+
   <a href="/adk-docs/tools/third-party/hugging-face/" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="../assets/tools-hugging-face.png" alt="Hugging Face">
