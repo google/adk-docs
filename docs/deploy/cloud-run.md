@@ -131,7 +131,7 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
     export SERVICE_NAME="capital-agent-service"
 
     # Set an application name (optional)
-    export APP_NAME="capital-agent-app"
+    export APP_NAME="capital_agent_app"
     ```
 
     #### Command usage
