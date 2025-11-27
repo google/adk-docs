@@ -30,12 +30,6 @@ Some typical applications of Plugins are as follows:
     better modularity and flexibility than Callbacks. For more details, see
     [Callbacks and Plugins for Security Guardrails](/adk-docs/safety/#callbacks-and-plugins-for-security-guardrails).
 
-!!! warning "Caution"
-    Plugins are not supported by the
-    [ADK web interface](../evaluate/#1-adk-web-run-evaluations-via-the-web-ui).
-    If your ADK workflow uses Plugins, you must run your workflow without the
-    web interface.
-
 ## How do Plugins work?
 
 An ADK Plugin extends the `BasePlugin` class and contains one or more
@@ -189,11 +183,6 @@ command line:
 python3 -m path.to.main
 ```
 
-Plugins are not supported by the
-[ADK web interface](../evaluate/#1-adk-web-run-evaluations-via-the-web-ui).
-If your ADK workflow uses Plugins, you must run your workflow without the web
-interface.
-
 The output of this previously described agent should look similar to the
 following:
 
@@ -211,6 +200,38 @@ Hello world: query is [hello world]
 For more information on running ADK agents, see the
 [Quickstart](/adk-docs/get-started/quickstart/#run-your-agent)
 guide.
+
+### Run the agent with ADK Web
+
+When running your agent via `adk web`, you can enable plugins using the
+`--extra_plugins` argument. Specify plugin classes or instances as a
+comma-separated list:
+
+```sh
+adk web --extra_plugins my.module.MyPluginClass,my.module.my_plugin_instance
+```
+
+For example, to add a plugin that provides datetime context to your agents:
+
+```py title="my_plugins/datetime_context.py"
+from datetime import UTC, datetime
+from google.adk.agents.readonly_context import ReadonlyContext
+from google.adk.plugins.global_instruction_plugin import GlobalInstructionPlugin
+
+def get_datetime_context(ctx: ReadonlyContext) -> str:
+    """Build datetime context string with current date/time."""
+    now = datetime.now(UTC)
+    return f'Current date and time (UTC): {now.strftime("%Y-%m-%d %H:%M:%S")}'
+
+# Pre-configured plugin instance for use with --extra_plugins
+datetime_context_plugin = GlobalInstructionPlugin(global_instruction=get_datetime_context)
+```
+
+Then run:
+
+```sh
+adk web --extra_plugins my_plugins.datetime_context.datetime_context_plugin
+```
 
 ## Build workflows with Plugins
 
