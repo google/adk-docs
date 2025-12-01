@@ -47,6 +47,8 @@ You can use Agent Development Kit (ADK) with your preferred package manager for 
 
 - **[Get started with ADK Python](https://google.github.io/adk-docs/get-started/python/)**
 
+- **[Get started with ADK Go](https://google.github.io/adk-docs/get-started/go/)**
+
 - **[Get started with ADK Java](https://google.github.io/adk-docs/get-started/java/)**
 
 ## 📚 Documentation

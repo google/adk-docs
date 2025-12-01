@@ -128,6 +128,11 @@ plugins:
         'tools/third-party/langchain.md': 'tools/index.md'
         'tools/third-party/crewai.md': 'tools/index.md'
         'get-started/testing.md': 'runtime/api-server.md'
+        'tools/authentication.md': 'tools-custom/authentication.md'
+        'tools/function-tools.md': 'tools-custom/function-tools.md'
+        'tools/confirmation.md': 'tools-custom/confirmation.md'
+        'tools/performance.md': 'tools-custom/performance.md'
+        'tools/mcp-tools.md': 'tools-custom/mcp-tools.md'
 
 # Navigation
 nav:
@@ -147,6 +152,7 @@ nav:
         - get-started/streaming/index.md
         - Python: get-started/streaming/quickstart-streaming.md
         - Java: get-started/streaming/quickstart-streaming-java.md
+      - Visual Builder: visual-builder/index.md
       - Advanced setup: get-started/installation.md
     - Agents:
       - agents/index.md
@@ -168,26 +174,31 @@ nav:
       - Google Cloud tools:
         - Overview: tools/google-cloud-tools.md
         - MCP Toolbox for Databases: tools/google-cloud/mcp-toolbox-for-databases.md
+        - BigQuery Agent Analytics: tools/google-cloud/bigquery-agent-analytics.md
         - Code Execution with Agent Engine: tools/google-cloud/code-exec-agent-engine.md
       - Third-party tools:
         - tools/third-party/index.md
+        - AgentQL: tools/third-party/agentql.md
+        - Bright Data: tools/third-party/bright-data.md
         - Browserbase: tools/third-party/browserbase.md
         - Exa: tools/third-party/exa.md
         - Firecrawl: tools/third-party/firecrawl.md
         - GitHub: tools/third-party/github.md
+        - GitLab: tools/third-party/gitlab.md
         - Hugging Face: tools/third-party/hugging-face.md
         - Notion: tools/third-party/notion.md
+        - ScrapeGraphAI: tools/third-party/scrapegraphai.md
         - Tavily: tools/third-party/tavily.md
         - Agentic UI (AG-UI): tools/third-party/ag-ui.md
     - Custom Tools:
       - tools-custom/index.md
       - Function tools:
-        - Overview: tools/function-tools.md
-        - Tool performance: tools/performance.md
-        - Action confirmations: tools/confirmation.md
-      - MCP tools: tools/mcp-tools.md
+        - Overview: tools-custom/function-tools.md
+        - Tool performance: tools-custom/performance.md
+        - Action confirmations: tools-custom/confirmation.md
+      - MCP tools: tools-custom/mcp-tools.md
       - OpenAPI tools: tools-custom/openapi-tools.md
-      - Authentication: tools/authentication.md
+      - Authentication: tools-custom/authentication.md
   - Run Agents:
     - Agent Runtime:
       - Agent Runtime: runtime/index.md
@@ -206,6 +217,7 @@ nav:
       - Arize AX: observability/arize-ax.md
       - Datadog: observability/datadog.md
       - Freeplay: observability/freeplay.md
+      - Monocle: observability/monocle.md
       - Phoenix: observability/phoenix.md
       - W&B Weave: observability/weave.md
     - Evaluation:
@@ -234,6 +246,8 @@ nav:
       - artifacts/index.md
     - Events:
       - events/index.md
+    - Apps:
+      - apps/index.md
     - Plugins:
       - plugins/index.md
       - Reflect and retry: plugins/reflect-and-retry.md
@@ -242,27 +256,35 @@ nav:
     - A2A Protocol:
       - a2a/index.md
       - Introduction to A2A: a2a/intro.md
-      - A2A Quickstart (Exposing): a2a/quickstart-exposing.md
-      - A2A Quickstart (Exposing) (Go): a2a/quickstart-exposing-go.md
-      - A2A Quickstart (Consuming): a2a/quickstart-consuming.md
-      - A2A Quickstart (Consuming) (Go): a2a/quickstart-consuming-go.md
+      - A2A Quickstart (Exposing):
+        - Python: a2a/quickstart-exposing.md
+        - Go: a2a/quickstart-exposing-go.md
+      - A2A Quickstart (Consuming):
+        - Python: a2a/quickstart-consuming.md
+        - Go: a2a/quickstart-consuming-go.md
     - Bidi-streaming (live):
       - streaming/index.md
       - Custom Audio Bidi-streaming app sample (WebSockets): streaming/custom-streaming-ws.md
-      - Bidi-streaming development guide series: streaming/dev-guide/part1.md
+      - Bidi-streaming development guide series:
+        - Part 1, Intro to streaming: streaming/dev-guide/part1.md
+        - Part 2, Sending messages: streaming/dev-guide/part2.md
+        - Part 3, Event handling: streaming/dev-guide/part3.md
+        - Part 4, Run configuration: streaming/dev-guide/part4.md
+        - Part 5, Audio, Images, and Video: streaming/dev-guide/part5.md
       - Streaming Tools: streaming/streaming-tools.md
       - Configurating Bidi-streaming behaviour: streaming/configuration.md
     - Grounding:
       - Understanding Google Search Grounding: grounding/google_search_grounding.md
       - Understanding Vertex AI Search Grounding: grounding/vertex_ai_search_grounding.md
   - Reference:
+    - Release Notes: release-notes.md
     - API Reference:
       - api-reference/index.md
       - Python ADK: api-reference/python/index.html
       - Go ADK: https://pkg.go.dev/google.golang.org/adk" target="_blank
       - Java ADK: api-reference/java/index.html
       - CLI Reference: api-reference/cli/index.html
-      - Agent Config reference: api-reference/agentconfig/index.html
+      - Agent Config Reference: api-reference/agentconfig/index.html
       - REST API: api-reference/rest/index.md
     - Community Resources: community.md
     - Contributing Guide: contributing-guide.md

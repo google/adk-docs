@@ -8,10 +8,6 @@ Bidirectional (Bidi) streaming (live) in ADK adds the low-latency bidirectional 
 capability of [Gemini Live API](https://ai.google.dev/gemini-api/docs/live) to
 AI agents.
 
-!!! example "Experimental preview release"
-
-    The Bidirectional (Bidi) streaming feature is experimental.
-
 With bidi-streaming, or live, mode, you can provide end users with the experience of natural,
 human-like voice conversations, including the ability for the user to interrupt
 the agent's responses with voice commands. Agents with streaming can process
@@ -31,11 +27,6 @@ text, audio, and video inputs, and they can provide text and audio output.
   </div>
 </div>
 
-!!! info
-
-    This is different from server-side streaming or token-level streaming. 
-    Token-level streaming is a one-way process where a language model generates a response and sends it back to the user one token at a time. This creates a "typing" effect, giving the impression of an immediate response and reducing the time it takes to see the start of the answer. The user sends their full prompt, the model processes it, and then the model begins to generate and send back the response piece by piece. This section is for bidi-streaming (live).
-
 <div class="grid cards" markdown>
 
 -   :material-console-line: **Quickstart (Bidi-streaming)**
@@ -47,13 +38,13 @@ text, audio, and video inputs, and they can provide text and audio output.
 
     - [Quickstart (Bidi-streaming)](../get-started/streaming/quickstart-streaming.md)
 
--   :material-console-line: **Custom Audio Streaming app sample**
+-   :material-console-line: **Bidi-streaming Demo Application**
 
     ---
 
-    This article overviews the server and client code for a custom asynchronous web app built with ADK Streaming and FastAPI, enabling real-time, bidirectional audio and text communication with WebSockets.
+    A production-ready reference implementation showcasing ADK bidirectional streaming with multimodal support (text, audio, image). This FastAPI-based demo demonstrates real-time WebSocket communication, automatic transcription, tool calling with Google Search, and complete streaming lifecycle management. This demo is extensively referenced throughout the development guide series.
 
-    - [Custom Audio Streaming app sample (WebSockets)](custom-streaming-ws.md)
+    - [ADK Bidi-streaming Demo](https://github.com/google/adk-samples/tree/main/python/agents/bidi-demo)
 
 -   :material-console-line: **Bidi-streaming development guide series**
 
@@ -61,23 +52,19 @@ text, audio, and video inputs, and they can provide text and audio output.
 
     A series of articles for diving deeper into the Bidi-streaming development with ADK. You can learn basic concepts and use cases, the core API, and end-to-end application design.
 
-    - [Bidi-streaming development guide series: Part 1 - Introduction](dev-guide/part1.md)
+    - [Part 1: Introduction to ADK Bidi-streaming](dev-guide/part1.md) - Fundamentals of Bidi-streaming, Live API technology, ADK architecture components, and complete application lifecycle with FastAPI examples
+    - [Part 2: Sending messages with LiveRequestQueue](dev-guide/part2.md) - Upstream message flow, sending text/audio/video, activity signals, and concurrency patterns
+    - [Part 3: Event handling with run_live()](dev-guide/part3.md) - Processing events, handling text/audio/transcriptions, automatic tool execution, and multi-agent workflows
+    - [Part 4: Understanding RunConfig](dev-guide/part4.md) - Response modalities, streaming modes, session management, session resumption, context window compression, and quota management
+    - [Part 5: How to Use Audio, Image and Video](dev-guide/part5.md) - Audio specifications, model architectures, audio transcription, voice activity detection, and proactive/affective dialog features
 
 -   :material-console-line: **Streaming Tools**
 
     ---
 
-    Streaming tools allows tools (functions) to stream intermediate results back to agents and agents can respond to those intermediate results. For example, we can use streaming tools to monitor the changes of the stock price and have the agent react to it. Another example is we can have the agent monitor the video stream, and when there is changes in video stream, the agent can report the changes.
+    Streaming tools allow tools (functions) to stream intermediate results back to agents and agents can respond to those intermediate results. For example, we can use streaming tools to monitor the changes of the stock price and have the agent react to it. Another example is we can have the agent monitor the video stream, and when there are changes in video stream, the agent can report the changes.
 
     - [Streaming Tools](streaming-tools.md)
-
--   :material-console-line: **Custom Audio Streaming app sample**
-
-    ---
-
-    This article overviews the server and client code for a custom asynchronous web app built with ADK Streaming and FastAPI, enabling real-time, bidirectional audio and text communication with both Server Sent Events (SSE) and WebSockets.
-
-    - [Streaming Configurations](configuration.md)
 
 -   :material-console-line: **Blog post: Google ADK + Vertex AI Live API**
 

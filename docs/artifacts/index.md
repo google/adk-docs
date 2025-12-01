@@ -427,7 +427,7 @@ The artifact interaction methods are available directly on instances of `Callbac
 
         async def save_generated_report_py(context: CallbackContext, report_bytes: bytes):
             """Saves generated PDF report bytes as an artifact."""
-            report_artifact = types.Part.from_data(
+            report_artifact = types.Part.from_bytes(
                 data=report_bytes,
                 mime_type="application/pdf"
             )
