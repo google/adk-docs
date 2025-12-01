@@ -116,12 +116,6 @@ URL.
 - **Specific tools**: You can specify tools using the `tools` CLI parameter
   (local MCP server) or the `tools` query parameter (remote MCP server).
 
-Example URL for specific tools:
-
-```
-https://mcp.apify.com?tools=apify/instagram-scraper,apify/google-search-scraper
-```
-
 ## Additional resources
 
 - [Apify MCP Server Documentation](https://docs.apify.com/platform/integrations/mcp)
