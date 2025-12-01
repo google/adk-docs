@@ -82,6 +82,6 @@ Based on the documentation, ADK delivers a comprehensive set of features for bui
 
 ### Development Lifecycle
 *   **Evaluation**: Systematically assess agent performance by evaluating both the final response quality and the step-by-step execution trajectory.
-*   **Observability & Logging**: Gain deep insights into agent behavior with detailed logging and integrations with observability platforms like AgentOps, Arize AX, Cloud Trace, and Weave.
+*   **Observability & Logging**: Gain deep insights into agent behavior with detailed logging and integrations with observability platforms like MLflow, AgentOps, Arize AX, Cloud Trace, and Weave.
 *   **Deployment**: Deploy your agents to a variety of environments, including serverless (Cloud Run), Kubernetes (GKE), and the fully managed Vertex AI Agent Engine.
 *   **Agent2Agent (A2A) Protocol**: Build distributed, multi-agent systems where agents running as separate services can communicate and collaborate using the open A2A standard.
