@@ -1,11 +1,16 @@
 # Agent Observability with MLflow
 
-[MLflow Tracing](https://mlflow.org/docs/latest/genai/tracing/) provides first‑class support for ingesting OpenTelemetry (OTEL) traces. Google ADK emits OTEL spans for agent runs, tool calls, and model requests, which you can send directly to an MLflow Tracking Server for analysis and debugging.
+[MLflow Tracing](https://mlflow.org/docs/latest/genai/tracing/) provides
+first‑class support for ingesting OpenTelemetry (OTEL) traces. Google ADK emits
+OTEL spans for agent runs, tool calls, and model requests, which you can send
+directly to an MLflow Tracking Server for analysis and debugging.
 
 ## Prerequisites
 
-- MLflow version 3.6.0 or newer. OpenTelemetry ingestion is only supported from MLflow 3.6+.
-- A SQL‑based backend store (e.g., SQLite, PostgreSQL, MySQL). File‑based stores do not support OTLP ingestion.
+- MLflow version 3.6.0 or newer. OpenTelemetry ingestion is only supported from
+  MLflow 3.6+.
+- A SQL‑based backend store (e.g., SQLite, PostgreSQL, MySQL). File‑based stores
+  do not support OTLP ingestion.
 - Google ADK installed in your environment.
 
 ## Install dependencies
