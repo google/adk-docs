@@ -89,6 +89,16 @@ Check out the following third-party tools that you can use with ADK agents:
     </div>
   </a>
 
+  <a href="/adk-docs/tools/third-party/linear/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="../../assets/tools-linear.png" alt="Linear">
+    </div>
+    <div class="tool-card-content">
+      <h3>Linear</h3>
+      <p>Manage issues, track projects, and streamline development</p>
+    </div>
+  </a>
+
   <a href="/adk-docs/tools/third-party/notion/" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="../../assets/tools-notion.png" alt="Notion">
