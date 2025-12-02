@@ -51,6 +51,7 @@ project cycles, and automate development workflows using natural language.
                             "https://mcp.linear.app/mcp",
                         ]
                     ),
+                    timeout=30,
                 ),
             )
         ],
