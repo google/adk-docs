@@ -128,6 +128,11 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   ACTION=$1
   shift # Remove the first argument, so '$@' contains only the file paths.
 
+  # Update to the latest version of the ADK.
+  # This ensures that we are always testing against the most recent release.
+  echo "Updating google.golang.org/adk to latest..."
+  (cd examples/go && go get google.golang.org/adk@latest)
+
   # Ensure all Go module dependencies are tidy before running any builds or tests.
   # This is run from the 'examples/go' directory where the go.mod file is located.
   (cd examples/go && go mod tidy)
