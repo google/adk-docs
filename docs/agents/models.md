@@ -371,13 +371,11 @@ public class DirectAnthropicAgent {
 === "Java"
 
 ```java
-Map<String, String> headers = new HashMap<String, String>();
-headers.put("foo", "bar");
 ApigeeLlm apigeeLlm =
         ApigeeLlm.builder()
             .modelName("apigee/gemini-2.5-flash") // Specify the Apigee route to your model. For more info, check out the ApigeeLlm documentation
             .proxyUrl(APIGEE_PROXY_URL) //The proxy URL of your deployed Apigee proxy including the base path
-            .customHeaders(headers) //Pass necessary authentication/authorization headers (like an API key)
+            .customHeaders(ImmutableMap.of("foo", "bar")) //Pass necessary authentication/authorization headers (like an API key)
             .build();
 LlmAgent agent =
     LlmAgent.builder()
