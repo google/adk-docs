@@ -349,6 +349,11 @@ agent will be unable to function.
         adk web
         ```
 
+        !!! warning "Caution: ADK Web for development only"
+
+            ADK Web is ***not meant for use in production deployments***. You should
+            use ADK Web for development and debugging purposes only.
+
         !!!info "Note for Windows users"
 
             When hitting the `_make_subprocess_transport NotImplementedError`, consider using `adk web --no-reload` instead.
@@ -483,6 +488,11 @@ agent will be unable to function.
         model responses by clicking on the actions:
 
         ![adk-web-dev-ui-function-call.png](../assets/adk-web-dev-ui-function-call.png)
+
+        !!! warning "Caution: ADK Web for development only"
+
+            ADK Web is ***not meant for use in production deployments***. You should
+            use ADK Web for development and debugging purposes only.
 
     === "Maven"
 
