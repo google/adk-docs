@@ -47,7 +47,7 @@ Apify documentation.
                             "-y",
                             "@apify/actors-mcp-server",
                             # (Optional) Customize which tools to enable
-                            # "--tools=actors,docs,apify/web-scraper",
+                            # "--tools=actors,docs,apify/rag-web-browser",
                         ],
                         env={
                             "APIFY_TOKEN": APIFY_TOKEN,
@@ -78,7 +78,7 @@ Apify documentation.
                 connection_params=StreamableHTTPServerParams(
                     url="https://mcp.apify.com",
                     # (Optional) Customize which tools to enable
-                    # url="https://mcp.apify.com?tools=actors,docs,apify/web-scraper",
+                    # url="https://mcp.apify.com?tools=actors,docs,apify/rag-web-browser",
                     headers={
                         "Authorization": f"Bearer {APIFY_TOKEN}",
                     },
