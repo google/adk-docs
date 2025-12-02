@@ -2,9 +2,9 @@
 
 The [Apify MCP Server](https://github.com/apify/actors-mcp-server) allows AI
 applications and agents to interact with the Apify platform. This functionality
-enables your ADK agents to discover and run Actors from
-[Apify Store](https://apify.com/store), access storages and results, and read
-Apify documentation.
+enables your ADK agents to discover and run Actors from the [Apify
+Store](https://apify.com/store), access storage and results, and read Apify
+documentation.
 
 ## Use cases
 
@@ -111,10 +111,11 @@ Tool | Description
 You can customize which tools are available by adding parameters to the server
 URL.
 
-- **Default tools**: `actors`, `docs`, and `apify/rag-web-browser` are loaded by
-  default.
-- **Specific tools**: You can specify tools using the `tools` CLI parameter
-  (local MCP server) or the `tools` query parameter (remote MCP server).
+- **Default tools**: Tools related to `actors`, `docs`, and
+  `apify/rag-web-browser` are loaded by default.
+- **Specific tools**: You can specify additional tools using the `tools` CLI
+  parameter (local MCP server) or the `tools` query parameter (remote MCP
+  server).
 
 ## Additional resources
 
