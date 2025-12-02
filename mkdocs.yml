@@ -179,6 +179,7 @@ nav:
       - Third-party tools:
         - tools/third-party/index.md
         - AgentQL: tools/third-party/agentql.md
+        - Atlassian: tools/third-party/atlassian.md
         - Bright Data: tools/third-party/bright-data.md
         - Browserbase: tools/third-party/browserbase.md
         - Exa: tools/third-party/exa.md

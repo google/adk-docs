@@ -9,6 +9,16 @@ Check out the following third-party tools that you can use with ADK agents:
 
 <div class="tool-card-grid">
 
+  <a href="/adk-docs/tools/third-party/atlassian/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="../../assets/tools-atlassian.png" alt="Atlassian">
+    </div>
+    <div class="tool-card-content">
+      <h3>Atlassian</h3>
+      <p>Manage issues, search pages, and update team content</p>
+    </div>
+  </a>
+
   <a href="/adk-docs/tools/third-party/agentql/" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="../../assets/tools-agentql.png" alt="AgentQL">
