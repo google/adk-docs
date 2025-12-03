@@ -343,53 +343,53 @@ public class DirectAnthropicAgent {
 
 === "Python"
 
- ```python
+    ```python
 
- from google.adk.agents import LlmAgent
- from google.adk.models.apigee_llm import ApigeeLlm
+    from google.adk.agents import LlmAgent
+    from google.adk.models.apigee_llm import ApigeeLlm
 
- # Instantiate the ApigeeLlm wrapper
- model = ApigeeLlm(
-     # Specify the Apigee route to your model. For more info, check out the ApigeeLlm documentation (https://github.com/google/adk-python/tree/main/contributing/samples/hello_world_apigeellm).
-     model="apigee/gemini-2.5-flash",
-     # The proxy URL of your deployed Apigee proxy including the base path
-     proxy_url=f"https://{APIGEE_PROXY_URL}",
-     # Pass necessary authentication/authorization headers (like an API key)
-     custom_headers={"foo": "bar"}
- )
+    # Instantiate the ApigeeLlm wrapper
+    model = ApigeeLlm(
+        # Specify the Apigee route to your model. For more info, check out the ApigeeLlm documentation (https://github.com/google/adk-python/tree/main/contributing/samples/hello_world_apigeellm).
+        model="apigee/gemini-2.5-flash",
+        # The proxy URL of your deployed Apigee proxy including the base path
+        proxy_url=f"https://{APIGEE_PROXY_URL}",
+        # Pass necessary authentication/authorization headers (like an API key)
+        custom_headers={"foo": "bar"}
+    )
 
- # Pass the configured model wrapper to your LlmAgent
- agent = LlmAgent(
-     model=model,
-     name="my_governed_agent",
-     instruction="You are a helpful assistant powered by Gemini and governed by Apigee.",
-     # ... other agent parameters
- )
+    # Pass the configured model wrapper to your LlmAgent
+    agent = LlmAgent(
+        model=model,
+        name="my_governed_agent",
+        instruction="You are a helpful assistant powered by Gemini and governed by Apigee.",
+        # ... other agent parameters
+    )
 
- ```
+    ```
 
 === "Java"
 
-  ```java
-   import com.google.adk.agents.LlmAgent;
-   import com.google.adk.models.ApigeeLlm;
-   import com.google.common.collect.ImmutableMap;
+    ```java
+    import com.google.adk.agents.LlmAgent;
+    import com.google.adk.models.ApigeeLlm;
+    import com.google.common.collect.ImmutableMap;
 
-   ApigeeLlm apigeeLlm =
-           ApigeeLlm.builder()
-               .modelName("apigee/gemini-2.5-flash") // Specify the Apigee route to your model. For more info, check out the ApigeeLlm documentation
-               .proxyUrl(APIGEE_PROXY_URL) //The proxy URL of your deployed Apigee proxy including the base path
-               .customHeaders(ImmutableMap.of("foo", "bar")) //Pass necessary authentication/authorization headers (like an API key)
-               .build();
-   LlmAgent agent =
-       LlmAgent.builder()
-           .model(apigeeLlm)
-           .name("my_governed_agent")
-           .description("my_governed_agent")
-           .instruction("You are a helpful assistant powered by Gemini and governed by Apigee.")
-           // tools will be added next
-           .build();
-```
+    ApigeeLlm apigeeLlm =
+            ApigeeLlm.builder()
+                .modelName("apigee/gemini-2.5-flash") // Specify the Apigee route to your model. For more info, check out the ApigeeLlm documentation
+                .proxyUrl(APIGEE_PROXY_URL) //The proxy URL of your deployed Apigee proxy including the base path
+                .customHeaders(ImmutableMap.of("foo", "bar")) //Pass necessary authentication/authorization headers (like an API key)
+                .build();
+    LlmAgent agent =
+        LlmAgent.builder()
+            .model(apigeeLlm)
+            .name("my_governed_agent")
+            .description("my_governed_agent")
+            .instruction("You are a helpful assistant powered by Gemini and governed by Apigee.")
+            // tools will be added next
+            .build();
+    ```
 
 With this configuration, every API call from your agent will be routed through Apigee first, where all necessary policies (security, rate limiting, logging) are executed before the request is securely forwarded to the underlying AI model endpoint.
 
