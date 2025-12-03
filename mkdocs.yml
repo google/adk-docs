@@ -182,6 +182,7 @@ nav:
         - Python: get-started/streaming/quickstart-streaming.md
         - Java: get-started/streaming/quickstart-streaming-java.md
       - Visual Builder: visual-builder/index.md
+      - Coding with AI: tutorials/coding-with-ai.md
       - Advanced setup: get-started/installation.md
     - Agents:
       - agents/index.md
