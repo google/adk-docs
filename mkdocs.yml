@@ -15,11 +15,16 @@ edit_uri: edit/main/docs/
 # Copyright
 copyright: Copyright Google 2025&nbsp;&nbsp;|&nbsp;&nbsp;<a href="//policies.google.com/terms">Terms</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="//policies.google.com/privacy">Privacy</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="#__consent">Manage cookies</a>
 
+# Validation
+validation:
+  absolute_links: ignore
+
 # Custom CSS
 extra_css:
   - stylesheets/custom.css
   - stylesheets/language-tags.css
 
+# Additional config
 extra:
   first_repo_url: https://github.com/google/adk-python
   first_repo_name: adk-python
