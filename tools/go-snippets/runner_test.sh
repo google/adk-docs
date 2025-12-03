@@ -107,6 +107,28 @@ test_find_snippet_line() {
   SNIPPETS_FILE="${original_snippets_file}" # Restore original path
 }
 
+# Tests that find_snippet_line correctly matches a line when the changed file
+# is part of a multi-file snippet listed on a single line in files_to_test.txt.
+test_find_snippet_line_multi_file_match() {
+  local original_snippets_file="${SNIPPETS_FILE}"
+  SNIPPETS_FILE=$(mktemp)
+  
+  # A snippet line with multiple files.
+  echo "snippets/my-multi-file/main.go snippets/my-multi-file/helper.go" > "${SNIPPETS_FILE}"
+
+  # Simulate changing the helper file.
+  local input_file_path="examples/go/snippets/my-multi-file/helper.go"
+  local expected_line="snippets/my-multi-file/main.go snippets/my-multi-file/helper.go"
+  
+  local actual_line=$(find_snippet_line "${input_file_path}")
+  
+  assert_equals "${expected_line}" "${actual_line}" "Should find the entire multi-file snippet line"
+
+  # Cleanup
+  rm "${SNIPPETS_FILE}"
+  SNIPPETS_FILE="${original_snippets_file}"
+}
+
 # Tests the logic for determining if a line should be processed.
 test_should_process_line() {
   # A valid line should return 0 (success).
@@ -137,5 +159,6 @@ test_get_command_for_build_action_strips_args
 test_get_command_for_multi_file_build
 test_get_command_for_multi_file_run
 test_find_snippet_line
+test_find_snippet_line_multi_file_match
 test_should_process_line
 echo "All tests passed."

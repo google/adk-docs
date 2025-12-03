@@ -15,6 +15,16 @@ The tooling is designed to ensure that all Go snippets are continuously validate
 
 ---
 
+## Understanding the Test Runner
+
+The `runner.sh` script is the core of this tooling. It is crucial to understand how it identifies which snippets to build, especially when making changes.
+
+*   **Strict Adherence to `files_to_test.txt`:** The runner strictly relies on the `files_to_test.txt` configuration file. When a file is changed in a Pull Request, the runner looks for that file's path (relative to `examples/go/`) as a **substring** within any line of `files_to_test.txt`. If the file is not found (e.g., you added a new file but forgot to register it, or it is an ignored file type), the runner will not trigger a build for that specific change.
+*   **Multi-file `package main`:** If a snippet is a `package main` (an executable application) that is split across multiple `.go` source files in the same directory (e.g., `main.go` and `helper.go`), **all of these files must be listed on the same line** in `files_to_test.txt`.
+    *   **Correct:** `snippets/mytask/main.go snippets/mytask/helper.go`
+    *   **Incorrect:** Listing them on separate lines or omitting the helper. This will cause the `go build` command to fail with "undefined symbol" errors because the compiler won't see the helper file.
+*   **Test Files (`_test.go`):** Files ending in `_test.go` are explicitly excluded from `files_to_test.txt` and are ignored by the runner. Consequently, changing a `_test.go` file will **not** automatically trigger a build of the main snippet in that directory. The `go build` command used by the runner ignores test files.
+
 ## How to Use
 
 ### Automatic Execution (CI/CD)

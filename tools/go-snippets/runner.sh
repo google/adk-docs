@@ -56,7 +56,11 @@ should_process_line() {
 }
 
 # find_snippet_line searches the SNIPPETS_FILE for a given Go file path.
-# It ignores comments and returns the full line from the file.
+# It returns any line from the snippets file that contains the relative path of the changed Go file
+# as a substring.
+#
+# For `package main` snippets split across multiple files, all source files must be listed on the
+# same line in `files_to_test.txt` for `go build` to succeed (e.g., `main.go helper.go`).
 #
 # @param {string} file_path_from_root - The full path to the Go file relative to the project root (e.g., "examples/go/snippets/quickstart/main.go").
 # @returns {string} The matching line from SNIPPETS_FILE, or an empty string if not found.
@@ -99,6 +103,9 @@ execute_and_check() {
   local command=$1
   local display_name=$2
 
+  # Log the exact command being executed for debugging and transparency.
+  echo "Executing: ${command}"
+
   # 'eval' is used to correctly execute the command string, which may contain quotes and other special characters.
   local output
   output=$(eval ${command} 2>&1)
@@ -130,8 +137,10 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
 
   # Update to the latest version of the ADK.
   # This ensures that we are always testing against the most recent release.
-  echo "Updating google.golang.org/adk to latest..."
-  (cd examples/go && go get google.golang.org/adk@latest)
+  execute_and_check "(cd examples/go && go get google.golang.org/adk@latest)" "Updating google.golang.org/adk to latest"
+  if [ ${EXIT_CODE} -ne 0 ]; then
+    exit ${EXIT_CODE} # Exit immediately if go get failed.
+  fi
 
   # Ensure all Go module dependencies are tidy before running any builds or tests.
   # This is run from the 'examples/go' directory where the go.mod file is located.
