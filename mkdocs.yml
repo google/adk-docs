@@ -209,6 +209,8 @@ nav:
       - Third-party tools:
         - tools/third-party/index.md
         - AgentQL: tools/third-party/agentql.md
+        - Atlassian: tools/third-party/atlassian.md
+        - Apify: tools/third-party/apify.md
         - Bright Data: tools/third-party/bright-data.md
         - Browserbase: tools/third-party/browserbase.md
         - Exa: tools/third-party/exa.md
@@ -216,6 +218,7 @@ nav:
         - GitHub: tools/third-party/github.md
         - GitLab: tools/third-party/gitlab.md
         - Hugging Face: tools/third-party/hugging-face.md
+        - Linear: tools/third-party/linear.md
         - Notion: tools/third-party/notion.md
         - ScrapeGraphAI: tools/third-party/scrapegraphai.md
         - Tavily: tools/third-party/tavily.md
