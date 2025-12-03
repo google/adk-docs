@@ -138,30 +138,30 @@ plugins:
       full_output: llms-full.txt
       sections:
         Build Agents:
-        - get-started/*
-        - tutorials/*
-        - tools/*
-        - tools-custom/*
+        - get-started/*.md
+        - tutorials/*.md
+        - tools/*.md
+        - tools-custom/*.md
         Run Agents:
-        - runtime/*
-        - deploy/*
-        - observability/*
-        - evaluation/*
-        - safety/*
+        - runtime/*.md
+        - deploy/*.md
+        - observability/*.md
+        - evaluation/*.md
+        - safety/*.md
         Components:
-        - context/*
-        - sessions/*
-        - callbacks/*
-        - artifacts/*
-        - events/*
-        - apps/*
-        - plugins/*
-        - mcp/*
-        - a2a/*
-        - streaming/*
-        - grounding/*
+        - context/*.md
+        - sessions/*.md
+        - callbacks/*.md
+        - artifacts/*.md
+        - events/*.md
+        - apps/*.md
+        - plugins/*.md
+        - mcp/*.md
+        - a2a/*.md
+        - streaming/*.md
+        - grounding/*.md
         Reference:
-        - api-reference/*
+        - api-reference/*.md
 
 # Navigation
 nav:
