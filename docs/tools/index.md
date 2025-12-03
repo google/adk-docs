@@ -153,6 +153,16 @@ Check out the following pre-built tools that you can use with ADK agents:
     </div>
   </a>
 
+  <a href="/adk-docs/tools/third-party/apify/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="../assets/tools-apify.png" alt="Apify">
+    </div>
+    <div class="tool-card-content">
+      <h3>Apify</h3>
+      <p>Use Actors to scrape websites and automate web workflows</p>
+    </div>
+  </a>
+
   <a href="/adk-docs/tools/third-party/bright-data/" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="../assets/tools-bright-data.png" alt="Bright Data">
