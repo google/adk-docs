@@ -33,8 +33,8 @@ documentation while planning tasks and generating code.
 
 **Prerequisites:**
 
-Ensure you have the [`uv`](https://docs.astral.sh/uv/) package installed, as
-this configuration uses `uvx` to run the documentation server without manual
+Ensure you have the [`uv`](https://docs.astral.sh/uv/) Python package installed,
+as this configuration uses `uvx` to run the documentation server without manual
 installation.
 
 **Configuration:**
