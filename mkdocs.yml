@@ -161,7 +161,8 @@ plugins:
         - streaming/*.md
         - grounding/*.md
         Reference:
-        - api-reference/*.md
+        - api-reference/index.md
+        - api-reference/rest/index.md
 
 # Navigation
 nav:
