@@ -58,10 +58,10 @@ collaboration workflows using natural language.
 
 !!! note
 
-    When you run this agent for the first time, a browser window will open
-    automatically to request access via OAuth. Alternatively, you can use
-    the authorization URL printed in the console. You must approve this
-    request to allow the agent to access your Atlassian data.
+    When you run this agent for the first time, a browser window opens
+    automatically to request access via OAuth. Alternatively, you can use the
+    authorization URL printed in the console. You must approve this request to
+    allow the agent to access your Atlassian data.
 
 ## Available tools
 
