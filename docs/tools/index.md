@@ -143,6 +143,16 @@ Check out the following pre-built tools that you can use with ADK agents:
 
 <div class="tool-card-grid">
 
+  <a href="/adk-docs/tools/third-party/atlassian/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="../assets/tools-atlassian.png" alt="Atlassian">
+    </div>
+    <div class="tool-card-content">
+      <h3>Atlassian</h3>
+      <p>Manage issues, search pages, and update team content</p>
+    </div>
+  </a>
+
   <a href="/adk-docs/tools/third-party/agentql/" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="../assets/tools-agentql.png" alt="AgentQL">
@@ -150,6 +160,16 @@ Check out the following pre-built tools that you can use with ADK agents:
     <div class="tool-card-content">
       <h3>AgentQL</h3>
       <p>Extract resilient, structured web data using natural language</p>
+    </div>
+  </a>
+
+  <a href="/adk-docs/tools/third-party/apify/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="../assets/tools-apify.png" alt="Apify">
+    </div>
+    <div class="tool-card-content">
+      <h3>Apify</h3>
+      <p>Use Actors to scrape websites and automate web workflows</p>
     </div>
   </a>
 
@@ -220,6 +240,16 @@ Check out the following pre-built tools that you can use with ADK agents:
     <div class="tool-card-content">
       <h3>Hugging Face</h3>
       <p>Access models, datasets, research papers, and AI tools</p>
+    </div>
+  </a>
+
+  <a href="/adk-docs/tools/third-party/linear/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="../assets/tools-linear.png" alt="Linear">
+    </div>
+    <div class="tool-card-content">
+      <h3>Linear</h3>
+      <p>Manage issues, track projects, and streamline development</p>
     </div>
   </a>
 
