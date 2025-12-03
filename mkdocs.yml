@@ -133,6 +133,35 @@ plugins:
         'tools/confirmation.md': 'tools-custom/confirmation.md'
         'tools/performance.md': 'tools-custom/performance.md'
         'tools/mcp-tools.md': 'tools-custom/mcp-tools.md'
+  - llmstxt:
+      markdown_description: An open-source, code-first toolkit for building, evaluating, and deploying sophisticated AI agents with flexibility and control.
+      full_output: llms-full.txt
+      sections:
+        Build Agents:
+        - get-started/*
+        - tutorials/*
+        - tools/*
+        - tools-custom/*
+        Run Agents:
+        - runtime/*
+        - deploy/*
+        - observability/*
+        - evaluation/*
+        - safety/*
+        Components:
+        - context/*
+        - sessions/*
+        - callbacks/*
+        - artifacts/*
+        - events/*
+        - apps/*
+        - plugins/*
+        - mcp/*
+        - a2a/*
+        - streaming/*
+        - grounding/*
+        Reference:
+        - api-reference/*
 
 # Navigation
 nav:
