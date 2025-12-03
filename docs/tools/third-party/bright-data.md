@@ -81,7 +81,7 @@ pre-built data feeds from popular platforms.
     root_agent = Agent(
         model="gemini-2.5-pro",
         name="brightdata_agent",
-        instruction="""Help users access web data using Bright Data""",
+        instruction="Help users access web data using Bright Data",
         tools=[
             McpToolset(
                 connection_params=StreamableHTTPServerParams(

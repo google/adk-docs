@@ -67,7 +67,7 @@ your ADK agent to the Hugging Face Hub and thousands of Gradio AI Applications.
     root_agent = Agent(
         model="gemini-2.5-pro",
         name="hugging_face_agent",
-        instruction="""Help users get information from Hugging Face""",
+        instruction="Help users get information from Hugging Face",
         tools=[
             McpToolset(
                 connection_params=StreamableHTTPServerParams(
