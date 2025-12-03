@@ -221,6 +221,33 @@ sequenceDiagram
     Note over ADK,Gemini: Turn Detection: finish_reason
 ```
 
+!!! info "Progressive SSE Streaming (New in v1.19.0)"
+
+    ADK v1.19.0 introduced **progressive SSE streaming**, an experimental feature that enhances how SSE mode delivers streaming responses. When enabled, this feature improves response aggregation by:
+
+    **Key improvements:**
+
+    - **Content ordering preservation**: Maintains the original order of mixed content types (text, function calls, inline data)
+    - **Intelligent text merging**: Only merges consecutive text parts of the same type (regular text vs thought text)
+    - **Progressive delivery**: Marks all intermediate chunks as `partial=True`, with a single final aggregated response at the end
+    - **Deferred function execution**: Skips executing function calls in partial events, only executing them in the final aggregated event to avoid duplicate executions
+
+    **Enabling the feature:**
+
+    This is an experimental (WIP stage) feature disabled by default. Enable it via environment variable:
+
+    ```bash
+    export ADK_ENABLE_PROGRESSIVE_SSE_STREAMING=1
+    ```
+
+    **When to use:**
+
+    - You're using `StreamingMode.SSE` and need better handling of mixed content types (text + function calls)
+    - Your responses include thought text (extended thinking) mixed with regular text
+    - You want to ensure function calls execute only once after complete response aggregation
+
+    **Note:** This feature only affects `StreamingMode.SSE`. It does not apply to `StreamingMode.BIDI` (the focus of this guide), which uses the Live API's native bidirectional protocol.
+
 ### When to Use Each Mode
 
 Your choice between BIDI and SSE depends on your application requirements and the interaction patterns you need to support. Here's a practical guide to help you choose:
@@ -278,7 +305,7 @@ When building ADK Bidi-streaming applications, it's essential to understand how 
 Understanding the distinction between **ADK `Session`** and **Live API session** is crucial for building reliable streaming applications with ADK Bidi-streaming.
 
 **ADK `Session`** (managed by SessionService):
-- Persistent conversation storage for conversation history, events, and state, created via `SessionService.create_session()`
+- Persistent conversation storage for conversation history, events, and state, created via `SessionService.create_session()` 
 - Storage options: in-memory, database (PostgreSQL/MySQL/SQLite), or Vertex AI
 - Survives across multiple `run_live()` calls and application restarts (with the persistent `SessionService`)
 
@@ -348,7 +375,6 @@ sequenceDiagram
 ```
 
 **Key insights:**
-
 - ADK Session survives across multiple `run_live()` calls and app restarts
 - Live API session is ephemeral - created and destroyed per streaming session
 - Conversation continuity is maintained through ADK Session's persistent storage
@@ -539,16 +565,6 @@ run_config = RunConfig(
         )
     )
 )
-
-# For gemini-live-2.5-flash (32k context window on Vertex AI)
-run_config = RunConfig(
-    context_window_compression=types.ContextWindowCompressionConfig(
-        trigger_tokens=25000,  # Start compression at ~78% of 32k context
-        sliding_window=types.SlidingWindow(
-            target_tokens=20000  # Compress to ~62% of context
-        )
-    )
-)
 ```
 
 **How it works:**
@@ -608,14 +624,12 @@ While compression enables unlimited session duration, consider these trade-offs:
 **Common Use Cases:**
 
 ✅ **Enable compression when:**
-
 - Sessions need to exceed platform duration limits (15/2/10 minutes)
 - Extended conversations may hit token limits (128k for 2.5-flash)
 - Customer support sessions that can last hours
 - Educational tutoring with long interactions
 
 ❌ **Disable compression when:**
-
 - All sessions complete within duration limits
 - Precision recall of early conversation is critical
 - Development/testing phase (full history aids debugging)
@@ -822,6 +836,10 @@ This parameter caps the total number of LLM invocations allowed per invocation c
 
 This parameter controls whether audio and video streams are persisted to ADK's session and artifact services for debugging, compliance, and quality assurance purposes.
 
+!!! warning "Migration Note: save_live_audio Deprecated"
+
+    **If you're using `save_live_audio`:** This parameter has been deprecated in favor of `save_live_blob`. ADK will automatically migrate `save_live_audio=True` to `save_live_blob=True` with a deprecation warning, but this compatibility layer will be removed in a future release. Update your code to use `save_live_blob` instead.
+
 Currently, **only audio is persisted** by ADK's implementation. When enabled, ADK persists audio streams to:
 
 - **[Session service](https://google.github.io/adk-docs/sessions/)**: Conversation history includes audio references
@@ -957,7 +975,7 @@ run_config = RunConfig(
 
 ADK validates CFC compatibility at session initialization and will raise an error if the model is unsupported:
 
-- ✅ **Supported**: `gemini-2.x` models (e.g., `gemini-2.5-flash-native-audio-preview-09-2025`, `gemini-2.0-flash-live-001`)
+- ✅ **Supported**: `gemini-2.x` models (e.g., `gemini-2.5-flash-native-audio-preview-09-2025`)
 - ❌ **Not supported**: `gemini-1.5-x` models
 - **Validation**: ADK checks that the model name starts with `gemini-2` when `support_cfc=True` ([`runners.py:1200-1203`](https://github.com/google/adk-python/blob/main/src/google/adk/runners.py#L1200-L1203))
 - **Code executor**: ADK automatically injects `BuiltInCodeExecutor` when CFC is enabled for safe parallel tool execution

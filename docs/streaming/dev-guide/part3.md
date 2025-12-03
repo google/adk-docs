@@ -5,9 +5,9 @@ The `run_live()` method is ADK's primary entry point for streaming conversations
 You'll learn how to process different event types (text, audio, transcriptions, tool calls), manage conversation flow with interruption and turn completion signals, serialize events for network transport, and leverage ADK's automatic tool execution. Understanding event handling is essential for building responsive streaming applications that feel natural and real-time to users.
 
 !!! note "Async Context Required"
-
+    
     All `run_live()` code requires async context. See [Part 1: FastAPI Application Example](part1.md#fastapi-application-example) for details and production examples.
-
+    
 ## How run_live() Works
 
 `run_live()` is an async generator that streams conversation events in real-time. It yields events immediately as they're generated—no buffering, no polling, no callbacks. Events are streamed without internal buffering. Overall memory depends on session persistence (e.g., in-memory vs database), making it suitable for both quick exchanges and extended sessions.
@@ -30,7 +30,7 @@ async def run_live(
 ```
 
 As its signature tells, every streaming conversation needs identity (user_id), continuity (session_id), communication (live_request_queue), and configuration (run_config). The return type—an async generator of Events—promises real-time delivery without overwhelming system resources.
-
+    
 ```mermaid
 sequenceDiagram
 participant Client
@@ -51,12 +51,12 @@ loop Continuous Streaming
     Runner-->>Client: Event (yield)
 end
 ```
-
+    
 ### Basic Usage Pattern
 
 The simplest way to consume events from `run_live()` is to iterate over the async generator with a for-loop:
 
-```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py#L182-L190" target="_blank">main.py:182-190</a>'
+```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/4274c70ae3f4c68595f543ee504474747ea9f0da/python/agents/bidi-demo/app/main.py#L197-L205" target="_blank">main.py:197-205</a>'
 async for event in runner.run_live(
     user_id=user_id,
     session_id=session_id,
@@ -77,7 +77,6 @@ async for event in runner.run_live(
 The `run_live()` method manages the underlying Live API connection lifecycle automatically:
 
 **Connection States:**
-
 1. **Initialization**: Connection established when `run_live()` is called
 2. **Active Streaming**: Bidirectional communication via `LiveRequestQueue` (upstream to the model) and `run_live()` (downstream from the model)
 3. **Graceful Closure**: Connection closes when `LiveRequestQueue.close()` is called
@@ -134,7 +133,7 @@ Not all events yielded by `run_live()` are persisted to the ADK `Session`. When 
 
 These events are persisted to the ADK `Session` and available in session history:
 
-- **Audio Events with File Data**: Saved to ADK `Session` only if `RunConfig.save_live_model_audio_to_session` is `True`; audio data is aggregated into files in artifacts with `file_data` references
+- **Audio Events with File Data**: Saved to ADK `Session` only if `RunConfig.save_live_blob` is `True`; audio data is aggregated into files in artifacts with `file_data` references
 - **Usage Metadata Events**: Always saved to track token consumption across the ADK `Session`
 - **Non-Partial Transcription Events**: Final transcriptions are saved; partial transcriptions are not persisted
 - **Function Call and Response Events**: Always saved to maintain tool execution history
@@ -166,7 +165,6 @@ ADK's `Event` class is a Pydantic model that represents all communication in a s
 #### Key Fields
 
 **Essential for all applications:**
-
 - `content`: Contains text, audio, or function calls as `Content.parts`
 - `author`: Identifies who created the event (`"user"` or agent name)
 - `partial`: Distinguishes incremental chunks from complete text
@@ -174,19 +172,16 @@ ADK's `Event` class is a Pydantic model that represents all communication in a s
 - `interrupted`: Indicates when to stop rendering current output
 
 **For voice/audio applications:**
-
 - `input_transcription`: User's spoken words (when enabled in `RunConfig`)
 - `output_transcription`: Model's spoken words (when enabled in `RunConfig`)
 - `content.parts[].inline_data`: Audio data for playback
 
 **For tool execution:**
-
 - `content.parts[].function_call`: Model's tool invocation requests
 - `content.parts[].function_response`: Tool execution results
 - `long_running_tool_ids`: Track async tool execution
 
 **For debugging and diagnostics:**
-
 - `usage_metadata`: Token counts and billing information
 - `cache_metadata`: Context cache hit/miss statistics
 - `finish_reason`: Why the model stopped generating (e.g., STOP, MAX_TOKENS, SAFETY)
@@ -374,7 +369,7 @@ Both input and output audio data are aggregated into audio files and saved in th
 
 !!! note "Session Persistence"
 
-    To save audio events with file data to session history, enable `RunConfig.save_live_model_audio_to_session = True`. This allows audio conversations to be reviewed or replayed from persisted sessions.
+    To save audio events with file data to session history, enable `RunConfig.save_live_blob = True`. This allows audio conversations to be reviewed or replayed from persisted sessions.
 
 ### Metadata Events
 
@@ -708,7 +703,6 @@ Event 4: partial=False, text="",             turn_complete=True  # Turn done
 ```
 
 **Important timing relationships**:
-
 - `partial=False` can occur **multiple times** in a turn (e.g., after each sentence)
 - `turn_complete=True` occurs **once** at the very end of the model's complete response, in a **separate event**
 - You may receive: `partial=False` (sentence 1) → `partial=False` (sentence 2) → `turn_complete=True`
@@ -823,7 +817,6 @@ async for event in runner.run_live(...):
 - **Streaming optimization**: Stop buffering when turn is complete
 
 **Turn completion and caching:** Audio/transcript caches are flushed automatically at specific points during streaming:
-
 - **On turn completion** (`turn_complete=True`): Both user and model audio caches are flushed
 - **On interruption** (`interrupted=True`): Model audio cache is flushed
 - **On generation completion**: Model audio cache is flushed
@@ -838,7 +831,7 @@ This provides a simple one-liner to convert ADK events into JSON format that can
 
 The `model_dump_json()` method serializes an `Event` object to a JSON string:
 
-```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py#L178-L191" target="_blank">main.py:178-191</a>'
+```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/4274c70ae3f4c68595f543ee504474747ea9f0da/python/agents/bidi-demo/app/main.py#L191-L206" target="_blank">main.py:191-206</a>'
 async def downstream_task() -> None:
     """Receives Events from run_live() and sends to WebSocket."""
     async for event in runner.run_live(
@@ -912,7 +905,7 @@ This shows how to parse and handle serialized events on the client side, enablin
 
 On the client side (JavaScript/TypeScript), parse the JSON back to objects:
 
-```javascript title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/static/js/app.js#L297-L576" target="_blank">app.js:297-576</a>'
+```javascript title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/4274c70ae3f4c68595f543ee504474747ea9f0da/python/agents/bidi-demo/app/static/js/app.js#L297-L576" target="_blank">app.js:297-576</a>'
 // Handle incoming messages
 websocket.onmessage = function (event) {
     // Parse the incoming ADK Event
@@ -986,7 +979,7 @@ websocket.onmessage = function (event) {
 };
 ```
 
-> 📖 **Demo Implementation**: See the complete WebSocket message handler in [`app.js:297-576`](https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/static/js/app.js#L297-L576)
+> 📖 **Demo Implementation**: See the complete WebSocket message handler in [`app.js:297-576`](https://github.com/google/adk-samples/blob/4274c70ae3f4c68595f543ee504474747ea9f0da/python/agents/bidi-demo/app/static/js/app.js#L297-L576)
 
 ### Optimization for Audio Transmission
 
@@ -1045,7 +1038,7 @@ This creates significant implementation overhead, especially in streaming contex
 
 With ADK, tool execution becomes declarative. Simply define tools on your Agent:
 
-```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/google_search_agent/agent.py#L11-L16" target="_blank">agent.py:11-16</a>'
+```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/4274c70ae3f4c68595f543ee504474747ea9f0da/python/agents/bidi-demo/app/google_search_agent/agent.py#L11-L16" target="_blank">agent.py:11-16</a>'
 import os
 from google.adk.agents import Agent
 from google.adk.tools import google_search
@@ -1088,7 +1081,7 @@ You don't need to handle the execution yourself—ADK does it automatically. You
 
 !!! note "Learn More"
 
-    The bidi-demo sends all events (including function calls and responses) directly to the WebSocket client without server-side filtering. This allows the client to observe tool execution in real-time through the event stream. See the downstream task in [`main.py:178-191`](https://github.com/google/adk-samples/blob/main/python/agents/bidi-demo/app/main.py#L178-L191)
+    The bidi-demo sends all events (including function calls and responses) directly to the WebSocket client without server-side filtering. This allows the client to observe tool execution in real-time through the event stream. See the downstream task in [`main.py:191-206`](https://github.com/google/adk-samples/blob/4274c70ae3f4c68595f543ee504474747ea9f0da/python/agents/bidi-demo/app/main.py#L191-L206)
 
 ### Long-Running and Streaming Tools
 
@@ -1151,7 +1144,6 @@ Think of it as a traveling notebook that accompanies a conversation from start t
 ### What is an Invocation?
 
 An **invocation** represents a complete interaction cycle:
-
 - Starts with user input (text, audio, or control signal)
 - May involve one or multiple agent calls
 - Ends when a final response is generated or when explicitly terminated
