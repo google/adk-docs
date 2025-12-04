@@ -982,7 +982,7 @@ The automatic enablement happens in `Runner.run_live()` when both conditions are
 
 !!! note "Source"
 
-    [`runners.py:1245-1260`](https://github.com/google/adk-python/blob/main/src/google/adk/runners.py#L1245-L1260)
+    [`runners.py:1324-1341`](https://github.com/google/adk-python/blob/960b206752918d13f127a9d6ed8d21d34bcbc7fa/src/google/adk/runners.py#L1324-L1341)
 
 ## Voice Configuration (Speech Config)
 
