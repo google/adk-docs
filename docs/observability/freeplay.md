@@ -22,7 +22,7 @@ management, evaluation and testing. Once you integrate with Freeplay, you can
 update prompts and evals from the Freeplay UI or from code, so that anyone on
 your team can contribute.
 
-[Click here](https://www.loom.com/share/82f41ffde94949beb941cb191f53c3ec?sid=997aff3c-daa3-40ab-93a9-fdaf87ea2ea1) to see a demo.
+[![Click here for a demo walk through](https://img.youtube.com/vi/AV2zCkp4aYM/maxresdefault.jpg)](https://www.youtube.com/watch?v=AV2zCkp4aYM)
 
 ## Getting Started
 
