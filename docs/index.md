@@ -25,6 +25,14 @@ from simple tasks to complex workflows.
     3.9. For more release details, check out the
     [release notes](https://github.com/google/adk-python/releases/tag/v1.19.0).
 
+??? tip "News: ADK Java v0.4.0 released!"
+
+    ADK Java release v0.4.0 is live with significant new features including a
+    Firestore-backed session service, human-in-the-loop tool confirmations,
+    integrations with Spring AI and Apigee, and many other improvements.
+    For release details, check out the
+    [release notes](https://github.com/google/adk-java/releases/tag/v0.4.0).
+
 ??? tip "News: ADK Go v0.2.0 released!"
 
     ADK Go release v0.2.0 is live with a variety of improvements, including new

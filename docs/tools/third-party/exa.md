@@ -78,7 +78,7 @@ reports using natural language.
     root_agent = Agent(
         model="gemini-2.5-pro",
         name="exa_agent",
-        instruction="""Help users get information from Exa""",
+        instruction="Help users get information from Exa",
         tools=[
             McpToolset(
                 connection_params=StreamableHTTPServerParams(
