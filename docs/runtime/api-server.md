@@ -156,10 +156,10 @@ There are two ways to send queries via POST to your agent, via the `/run` or
 curl -X POST http://localhost:8000/run \
 -H "Content-Type: application/json" \
 -d '{
-"app_name": "my_sample_agent",
-"user_id": "u_123",
-"session_id": "s_123",
-"new_message": {
+"appName": "my_sample_agent",
+"userId": "u_123",
+"sessionId": "s_123",
+"newMessage": {
     "role": "user",
     "parts": [{
     "text": "Hey whats the weather in new york today"
@@ -181,10 +181,10 @@ list, which should appear similar to:
 curl -X POST http://localhost:8000/run_sse \
 -H "Content-Type: application/json" \
 -d '{
-"app_name": "my_sample_agent",
-"user_id": "u_123",
-"session_id": "s_123",
-"new_message": {
+"appName": "my_sample_agent",
+"userId": "u_123",
+"sessionId": "s_123",
+"newMessage": {
     "role": "user",
     "parts": [{
     "text": "Hey whats the weather in new york today"
@@ -293,8 +293,7 @@ You will see a complete, interactive list of all available API endpoints, which 
 The following sections detail the primary endpoints for interacting with your agents.
 
 !!! note "JSON Naming Convention"
-    - **Request bodies** must use `snake_case` for field names (e.g., `"app_name"`).
-    - **Response bodies** will use `camelCase` for field names (e.g., `"appName"`).
+    - **Both Request and Response bodies** will use `camelCase` for field names (e.g., `"appName"`).
 
 ### Utility Endpoints
 
@@ -321,26 +320,28 @@ curl -X GET http://localhost:8000/list-apps
 
 Sessions store the state and event history for a specific user's interaction with an agent.
 
-#### Create or Update a Session
+#### Update a Session
 
-Creates a new session or updates an existing one. If a session with the given IDs already exists, its state will be overwritten with the new state provided.
+Updates an existing session.
 
-*   **Method:** `POST`
+*   **Method:** `PATCH`
 *   **Path:** `/apps/{app_name}/users/{user_id}/sessions/{session_id}`
 
 **Request Body**
 ```json
 {
-  "key1": "value1",
-  "key2": 42
+  "stateDelta": {
+    "key1": "value1",
+    "key2": 42
+  }
 }
 ```
 
 **Example Request**
 ```shell
-curl -X POST http://localhost:8000/apps/my_sample_agent/users/u_123/sessions/s_abc \
+curl -X PATCH http://localhost:8000/apps/my_sample_agent/users/u_123/sessions/s_abc \
   -H "Content-Type: application/json" \
-  -d '{"visit_count": 5}'
+  -d '{"stateDelta":{"visit_count": 5}}'
 ```
 
 **Example Response**
@@ -396,10 +397,10 @@ Executes the agent and returns all generated events in a single JSON array after
 **Request Body**
 ```json
 {
-  "app_name": "my_sample_agent",
-  "user_id": "u_123",
-  "session_id": "s_abc",
-  "new_message": {
+  "appName": "my_sample_agent",
+  "userId": "u_123",
+  "sessionId": "s_abc",
+  "newMessage": {
     "role": "user",
     "parts": [
       { "text": "What is the capital of France?" }
@@ -413,10 +414,10 @@ Executes the agent and returns all generated events in a single JSON array after
 curl -X POST http://localhost:8000/run \
   -H "Content-Type: application/json" \
   -d '{
-    "app_name": "my_sample_agent",
-    "user_id": "u_123",
-    "session_id": "s_abc",
-    "new_message": {
+    "appName": "my_sample_agent",
+    "userId": "u_123",
+    "sessionId": "s_abc",
+    "newMessage": {
       "role": "user",
       "parts": [{"text": "What is the capital of France?"}]
     }
@@ -434,10 +435,10 @@ Executes the agent and streams events back to the client as they are generated u
 The request body is the same as for `/run`, with an additional optional `streaming` flag.
 ```json
 {
-  "app_name": "my_sample_agent",
-  "user_id": "u_123",
-  "session_id": "s_abc",
-  "new_message": {
+  "appName": "my_sample_agent",
+  "userId": "u_123",
+  "sessionId": "s_abc",
+  "newMessage": {
     "role": "user",
     "parts": [
       { "text": "What is the weather in New York?" }
@@ -453,10 +454,10 @@ The request body is the same as for `/run`, with an additional optional `streami
 curl -X POST http://localhost:8000/run_sse \
   -H "Content-Type: application/json" \
   -d '{
-    "app_name": "my_sample_agent",
-    "user_id": "u_123",
-    "session_id": "s_abc",
-    "new_message": {
+    "appName": "my_sample_agent",
+    "userId": "u_123",
+    "sessionId": "s_abc",
+    "newMessage": {
       "role": "user",
       "parts": [{"text": "What is the weather in New York?"}]
     },

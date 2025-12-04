@@ -25,8 +25,8 @@ your ADK agent to the Hugging Face Hub and thousands of Gradio AI Applications.
 
     ```python
     from google.adk.agents import Agent
+    from google.adk.tools.mcp_tool import McpToolset
     from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
-    from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset
     from mcp import StdioServerParameters
 
     HUGGING_FACE_TOKEN = "YOUR_HUGGING_FACE_TOKEN"
@@ -36,7 +36,7 @@ your ADK agent to the Hugging Face Hub and thousands of Gradio AI Applications.
         name="hugging_face_agent",
         instruction="Help users get information from Hugging Face",
         tools=[
-            MCPToolset(
+            McpToolset(
                 connection_params=StdioConnectionParams(
                     server_params = StdioServerParameters(
                         command="npx",
@@ -59,17 +59,17 @@ your ADK agent to the Hugging Face Hub and thousands of Gradio AI Applications.
 
     ```python
     from google.adk.agents import Agent
+    from google.adk.tools.mcp_tool import McpToolset
     from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPServerParams
-    from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset
 
     HUGGING_FACE_TOKEN = "YOUR_HUGGING_FACE_TOKEN"
 
     root_agent = Agent(
         model="gemini-2.5-pro",
         name="hugging_face_agent",
-        instruction="""Help users get information from Hugging Face""",
+        instruction="Help users get information from Hugging Face",
         tools=[
-            MCPToolset(
+            McpToolset(
                 connection_params=StreamableHTTPServerParams(
                     url="https://huggingface.co/mcp",
                     headers={

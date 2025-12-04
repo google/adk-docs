@@ -4,6 +4,7 @@ This guide shows you how to get up and running with Agent Development Kit
 for Go. Before you start, make sure you have the following installed:
 
 *   Go 1.24.4 or later
+*   ADK Go v0.2.0 or later
 
 ## Create an agent project
 
@@ -43,52 +44,51 @@ following code to the `my_agent/agent.go` file in your project directory:
 package main
 
 import (
-  "context"
-  "log"
-  "os"
+	"context"
+	"log"
+	"os"
 
-  "google.golang.org/adk/agent/llmagent"
-  "google.golang.org/adk/cmd/launcher/adk"
-  "google.golang.org/adk/cmd/launcher/full"
-  "google.golang.org/adk/model/gemini"
-  "google.golang.org/adk/server/restapi/services"
-  "google.golang.org/adk/tool"
-  "google.golang.org/adk/tool/geminitool"
-  "google.golang.org/genai"
+	"google.golang.org/adk/agent"
+	"google.golang.org/adk/agent/llmagent"
+	"google.golang.org/adk/cmd/launcher"
+	"google.golang.org/adk/cmd/launcher/full"
+	"google.golang.org/adk/model/gemini"
+	"google.golang.org/adk/tool"
+	"google.golang.org/adk/tool/geminitool"
+	"google.golang.org/genai"
 )
 
 func main() {
-  ctx := context.Background()
+	ctx := context.Background()
 
-  model, err := gemini.NewModel(ctx, "gemini-2.5-flash", &genai.ClientConfig{
-    APIKey: os.Getenv("GOOGLE_API_KEY"),
-  })
-  if err != nil {
-    log.Fatalf("Failed to create model: %v", err)
-  }
+	model, err := gemini.NewModel(ctx, "gemini-3-pro-preview", &genai.ClientConfig{
+		APIKey: os.Getenv("GOOGLE_API_KEY"),
+	})
+	if err != nil {
+		log.Fatalf("Failed to create model: %v", err)
+	}
 
-  agent, err := llmagent.New(llmagent.Config{
-    Name:        "hello_time_agent",
-    Model:       model,
-    Description: "Tells the current time in a specified city.",
-    Instruction: "You are a helpful assistant that tells the current time in a city.",
-    Tools: []tool.Tool{
-      geminitool.GoogleSearch{},
-    },
-  })
-  if err != nil {
-    log.Fatalf("Failed to create agent: %v", err)
-  }
+	timeAgent, err := llmagent.New(llmagent.Config{
+		Name:        "hello_time_agent",
+		Model:       model,
+		Description: "Tells the current time in a specified city.",
+		Instruction: "You are a helpful assistant that tells the current time in a city.",
+		Tools: []tool.Tool{
+			geminitool.GoogleSearch{},
+		},
+	})
+	if err != nil {
+		log.Fatalf("Failed to create agent: %v", err)
+	}
 
-  config := &adk.Config{
-    AgentLoader: services.NewSingleAgentLoader(agent),
-  }
+	config := &launcher.Config{
+		AgentLoader: agent.NewSingleLoader(timeAgent),
+	}
 
-  l := full.NewLauncher()
-  err = l.Execute(ctx, config, os.Args[1:])
-  if err != nil {
-    log.Fatalf("run failed: %v\n\n%s", err, l.CommandLineSyntax())
-  }
+	l := full.NewLauncher()
+	if err = l.Execute(ctx, config, os.Args[1:]); err != nil {
+		log.Fatalf("Run failed: %v\n\n%s", err, l.CommandLineSyntax())
+	}
 }
 ```
 
@@ -161,6 +161,11 @@ access the web interface at (http://localhost:8080). Select your agent at the
 upper left corner and type a request.
 
 ![adk-web-dev-ui-chat.png](/adk-docs/assets/adk-web-dev-ui-chat.png)
+
+!!! warning "Caution: ADK Web for development only"
+
+    ADK Web is ***not meant for use in production deployments***. You should
+    use ADK Web for development and debugging purposes only.
 
 ## Next: Build your agent
 

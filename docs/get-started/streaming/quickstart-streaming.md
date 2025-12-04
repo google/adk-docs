@@ -148,6 +148,10 @@ adk web
 
     When hitting the `_make_subprocess_transport NotImplementedError`, consider using `adk web --no-reload` instead.
 
+!!! warning "Caution: ADK Web for development only"
+
+    ADK Web is ***not meant for use in production deployments***. You should
+    use ADK Web for development and debugging purposes only.
 
 Open the URL provided (usually `http://localhost:8000` or
 `http://127.0.0.1:8000`) **directly in your browser**. This connection stays

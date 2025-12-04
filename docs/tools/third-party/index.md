@@ -9,6 +9,36 @@ Check out the following third-party tools that you can use with ADK agents:
 
 <div class="tool-card-grid">
 
+  <a href="/adk-docs/tools/third-party/atlassian/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="../../assets/tools-atlassian.png" alt="Atlassian">
+    </div>
+    <div class="tool-card-content">
+      <h3>Atlassian</h3>
+      <p>Manage issues, search pages, and update team content</p>
+    </div>
+  </a>
+
+  <a href="/adk-docs/tools/third-party/agentql/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="../../assets/tools-agentql.png" alt="AgentQL">
+    </div>
+    <div class="tool-card-content">
+      <h3>AgentQL</h3>
+      <p>Extract resilient, structured web data using natural language</p>
+    </div>
+  </a>
+
+  <a href="/adk-docs/tools/third-party/apify/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="../../assets/tools-apify.png" alt="Apify">
+    </div>
+    <div class="tool-card-content">
+      <h3>Apify</h3>
+      <p>Use Actors to scrape websites and automate web workflows</p>
+    </div>
+  </a>
+
   <a href="/adk-docs/tools/third-party/bright-data/" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="../../assets/tools-bright-data.png" alt="Bright Data">
@@ -59,6 +89,16 @@ Check out the following third-party tools that you can use with ADK agents:
     </div>
   </a>
 
+  <a href="/adk-docs/tools/third-party/gitlab/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="../../assets/tools-gitlab.png" alt="GitLab">
+    </div>
+    <div class="tool-card-content">
+      <h3>GitLab</h3>
+      <p>Perform semantic code search, inspect pipelines, manage merge requests</p>
+    </div>
+  </a>
+
   <a href="/adk-docs/tools/third-party/hugging-face/" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="../../assets/tools-hugging-face.png" alt="Hugging Face">
@@ -69,6 +109,16 @@ Check out the following third-party tools that you can use with ADK agents:
     </div>
   </a>
 
+  <a href="/adk-docs/tools/third-party/linear/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="../../assets/tools-linear.png" alt="Linear">
+    </div>
+    <div class="tool-card-content">
+      <h3>Linear</h3>
+      <p>Manage issues, track projects, and streamline development</p>
+    </div>
+  </a>
+
   <a href="/adk-docs/tools/third-party/notion/" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="../../assets/tools-notion.png" alt="Notion">
@@ -76,6 +126,16 @@ Check out the following third-party tools that you can use with ADK agents:
     <div class="tool-card-content">
       <h3>Notion</h3>
       <p>Search workspaces, create pages, and manage tasks and databases</p>
+    </div>
+  </a>
+
+  <a href="/adk-docs/tools/third-party/scrapegraphai/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="../../assets/tools-scrapegraphai.png" alt="ScrapeGraphAI">
+    </div>
+    <div class="tool-card-content">
+      <h3>ScrapeGraphAI</h3>
+      <p>AI-powered web scraping, crawling, and data extraction</p>
     </div>
   </a>
 

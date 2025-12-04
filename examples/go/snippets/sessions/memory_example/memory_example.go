@@ -53,13 +53,13 @@ type Result struct {
 
 // memorySearchToolFunc is the implementation of the memory search tool.
 // This function demonstrates accessing memory via tool.Context.
-func memorySearchToolFunc(tctx tool.Context, args Args) Result {
+func memorySearchToolFunc(tctx tool.Context, args Args) (Result, error) {
 	fmt.Printf("Tool: Searching memory for query: '%s'\n", args.Query)
 	// The SearchMemory function is available on the context.
 	searchResults, err := tctx.SearchMemory(context.Background(), args.Query)
 	if err != nil {
 		log.Printf("Error searching memory: %v", err)
-		return Result{Results: []string{"Error searching memory."}}
+		return Result{}, fmt.Errorf("failed memory search")
 	}
 
 	var results []string
@@ -68,11 +68,11 @@ func memorySearchToolFunc(tctx tool.Context, args Args) Result {
 			results = append(results, textParts(res.Content)...)
 		}
 	}
-	return Result{Results: results}
+	return Result{Results: results}, nil
 }
 
 // Define a tool that can search memory.
-var memorySearchTool = must(functiontool.New[Args, Result](
+var memorySearchTool = must(functiontool.New(
 	functiontool.Config{
 		Name:        "search_past_conversations",
 		Description: "Searches past conversations for relevant information.",
@@ -127,8 +127,11 @@ func main() {
 
 	// Add the completed session to the Memory Service
 	fmt.Println("\n--- Adding Session 1 to Memory ---")
-	completedSession := sessionService.Get(ctx, &session.GetRequest{AppName: appName, UserID: userID, SessionID: session1ID}).Session
-	if err := memoryService.AddSession(ctx, completedSession); err != nil {
+	resp, err := sessionService.Get(ctx, &session.GetRequest{AppName: appName, UserID: userID, SessionID: session1ID})
+	if err != nil {
+		log.Fatalf("Failed to get completed session: %v", err)
+	}
+	if err := memoryService.AddSession(ctx, resp.Session); err != nil {
 		log.Fatalf("Failed to add session to memory: %v", err)
 	}
 	fmt.Println("Session added to memory.")

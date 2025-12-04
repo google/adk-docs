@@ -6,7 +6,7 @@ setting up a basic agent with multiple tools, and running it locally either in t
 <!-- <img src="../../assets/quickstart.png" alt="Quickstart setup"> -->
 
 This quickstart assumes a local IDE (VS Code, PyCharm, IntelliJ IDEA, etc.)
-with Python 3.9+ or Java 17+ and terminal access. This method runs the
+with Python 3.10+ or Java 17+ and terminal access. This method runs the
 application entirely on your machine and is recommended for internal development.
 
 ## 1. Set up Environment & Install ADK { #set-up-environment-install-adk }
@@ -248,6 +248,11 @@ agent will be unable to function.
         adk web
         ```
 
+        !!! warning "Caution: ADK Web for development only"
+
+            ADK Web is ***not meant for use in production deployments***. You should
+            use ADK Web for development and debugging purposes only.
+
         !!!info "Note for Windows users"
 
             When hitting the `_make_subprocess_transport NotImplementedError`, consider using `adk web --no-reload` instead.
@@ -382,6 +387,11 @@ agent will be unable to function.
         model responses by clicking on the actions:
 
         ![adk-web-dev-ui-function-call.png](../assets/adk-web-dev-ui-function-call.png)
+
+        !!! warning "Caution: ADK Web for development only"
+
+            ADK Web is ***not meant for use in production deployments***. You should
+            use ADK Web for development and debugging purposes only.
 
     === "Maven"
 

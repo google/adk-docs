@@ -43,16 +43,7 @@ expected_steps = ["determine_intent", "use_tool", "review_results", "report_gene
 actual_steps = ["determine_intent", "use_tool", "review_results", "report_generation"]
 ```
 
-Several ground-truth-based trajectory evaluations exist:
-
-1. **Exact match:** Requires a perfect match to the ideal trajectory.  
-2. **In-order match:** Requires the correct actions in the correct order, allows for extra actions.  
-3. **Any-order match:** Requires the correct actions in any order, allows for extra actions.  
-4. **Precision:** Measures the relevance/correctness of predicted actions.  
-5. **Recall:** Measures how many essential actions are captured in the prediction.  
-6. **Single-tool use:** Checks for the inclusion of a specific action.
-
-Choosing the right evaluation metric depends on the specific requirements and goals of your agent. For instance, in high-stakes scenarios, an exact match might be crucial, while in more flexible situations, an in-order or any-order match might suffice.
+ADK provides both groundtruth based and rubric based tool use evaluation metrics. To select the appropriate metric for your agent's specific requirements and goals, please refer to our [recommendations](#recommendations-on-criteria).
 
 ## How Evaluation works with the ADK
 

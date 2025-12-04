@@ -35,8 +35,8 @@ context back to a vision-enabled model.
 
     ```python
     from google.adk.agents import Agent
+    from google.adk.tools.mcp_tool import McpToolset
     from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
-    from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset
     from mcp import StdioServerParameters
 
     BROWSERBASE_API_KEY = "YOUR_BROWSERBASE_API_KEY"
@@ -48,7 +48,7 @@ context back to a vision-enabled model.
         name="browserbase_agent",
         instruction="Help users get information from Browserbase",
         tools=[
-            MCPToolset(
+            McpToolset(
                 connection_params=StdioConnectionParams(
                     server_params = StdioServerParameters(
                         command="npx",

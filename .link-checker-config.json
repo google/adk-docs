@@ -11,6 +11,9 @@
     },
     {
       "pattern": "^https://www.gnu.org/"
+    },
+    {
+      "pattern": "^https://exa.ai"
     }
   ],
   "aliveStatusCodes": [
