@@ -36,3 +36,16 @@
   <meta name="twitter:description" content="Build powerful multi-agent systems with Agent Development Kit">
   <meta name="twitter:image" content="https://google.github.io/adk-docs/assets/adk-social-card.png">
 {% endblock %}
+
+
+{% block content %}
+  {{ super() }}
+
+  {% if page.meta.version %}
+    <div style="display: flex; justify-content: flex-end; margin-top: 2em;">
+      <div class="md-source-date">
+        <small>Version: {{ page.meta.version }}</small>
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}
