@@ -38,8 +38,8 @@ workflows and business insights.
     from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
     from mcp import StdioServerParameters
 
-    PAYPAL_ACCESS_TOKEN = "YOUR_PAYPAL_ACCESS_TOKEN"
     PAYPAL_ENVIRONMENT = "SANDBOX"  # Options: "SANDBOX" or "PRODUCTION"
+    PAYPAL_ACCESS_TOKEN = "YOUR_PAYPAL_ACCESS_TOKEN"
 
     root_agent = Agent(
         model="gemini-2.5-pro",
@@ -76,8 +76,8 @@ workflows and business insights.
     from google.adk.tools.mcp_tool import McpToolset
     from google.adk.tools.mcp_tool.mcp_session_manager import SseConnectionParams
 
-    PAYPAL_ACCESS_TOKEN = "YOUR_PAYPAL_ACCESS_TOKEN"
     PAYPAL_MCP_ENDPOINT = "https://mcp.sandbox.paypal.com/sse"  # Production: https://mcp.paypal.com/sse
+    PAYPAL_ACCESS_TOKEN = "YOUR_PAYPAL_ACCESS_TOKEN"
 
     root_agent = Agent(
         model="gemini-2.5-pro",
