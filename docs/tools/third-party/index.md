@@ -125,7 +125,7 @@ Check out the following third-party tools that you can use with ADK agents:
     </div>
     <div class="tool-card-content">
       <h3>n8n</h3>
-      <p>Manage and execute workflows in n8n</p>
+      <p>Trigger automated workflows, connect apps, and process data</p>
     </div>
   </a>
 
