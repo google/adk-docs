@@ -1,6 +1,6 @@
-# Paypal
+# PayPal
 
-The [Paypal MCP Server](https://github.com/paypal/paypal-mcp-server) connects
+The [PayPal MCP Server](https://github.com/paypal/paypal-mcp-server) connects
 your ADK agent to the [PayPal](https://www.paypal.com/) ecosystem. This
 integration gives your agent the ability to manage payments, invoices,
 subscriptions, and disputes using natural language, enabling automated commerce
@@ -22,7 +22,11 @@ workflows and business insights.
 
 ## Prerequisites
 
-...
+- Create a [PayPal Developer account](https://developer.paypal.com/)
+- Create an app and retrieve your credentials from the
+  [PayPal Developer Dashboard](https://developer.paypal.com/)
+- [Generate an access token](https://developer.paypal.com/reference/get-an-access-token/)
+  from your credentials
 
 ## Use with agent
 
@@ -35,7 +39,7 @@ workflows and business insights.
     from mcp import StdioServerParameters
 
     PAYPAL_ACCESS_TOKEN = "YOUR_PAYPAL_ACCESS_TOKEN"
-    PAYPAL_ENVIRONMENT = "SANDBOX"
+    PAYPAL_ENVIRONMENT = "SANDBOX"  # Options: "SANDBOX" or "PRODUCTION"
 
     root_agent = Agent(
         model="gemini-2.5-pro",
@@ -50,6 +54,8 @@ workflows and business insights.
                             "-y",
                             "@paypal/mcp",
                             "--tools=all",
+                            # (Optional) Specify which tools to enable
+                            # "--tools=subscriptionPlans.list,subscriptionPlans.show",
                         ],
                         env={
                             "PAYPAL_ACCESS_TOKEN": PAYPAL_ACCESS_TOKEN,
@@ -68,11 +74,10 @@ workflows and business insights.
     ```python
     from google.adk.agents import Agent
     from google.adk.tools.mcp_tool import McpToolset
-    from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPServerParams
+    from google.adk.tools.mcp_tool.mcp_session_manager import SseConnectionParams
 
     PAYPAL_ACCESS_TOKEN = "YOUR_PAYPAL_ACCESS_TOKEN"
-    PAYPAL_ENVIRONMENT = "https://mcp.sandbox.paypal.com/http"  # Use for sandbox
-    # PAYPAL_ENVIRONMENT = "https://mcp.paypal.com/http"  # Use for production
+    PAYPAL_MCP_ENDPOINT = "https://mcp.sandbox.paypal.com/sse"  # Production: https://mcp.paypal.com/sse
 
     root_agent = Agent(
         model="gemini-2.5-pro",
@@ -80,8 +85,8 @@ workflows and business insights.
         instruction="Help users manage their PayPal account",
         tools=[
             McpToolset(
-                connection_params=StreamableHTTPServerParams(
-                    url=PAYPAL_ENVIRONMENT,
+                connection_params=SseConnectionParams(
+                    url=PAYPAL_MCP_ENDPOINT,
                     headers={
                         "Authorization": f"Bearer {PAYPAL_ACCESS_TOKEN}",
                     },
@@ -91,6 +96,13 @@ workflows and business insights.
     )
     ```
 
+!!! note
+
+    **Token Expiration**: PayPal Access Tokens have a limited lifespan of 3-8
+    hours. If your agent stops working, ensure your token has not expired and
+    generate a new one if necessary. You should implement token refresh logic to
+    handle token expiration.
+
 ## Available tools
 
 ### Catalog management
@@ -98,8 +110,9 @@ workflows and business insights.
 Tool | Description
 ---- | -----------
 `create_product` | Create a new product in the PayPal catalog
-`list_product` | List products from the PayPal catalog
+`list_products` | List products from the PayPal catalog
 `show_product_details` | Show details of a specific product from the PayPal catalog
+`update_product` | Update an existing product in the PayPal catalog
 
 ### Dispute management
 
@@ -136,7 +149,7 @@ Tool | Description
 Tool | Description
 ---- | -----------
 `get_merchant_insights` | Retrieve business intelligence metrics and analytics for a merchant
-`list_transaction` | List all transactions
+`list_transactions` | List all transactions
 
 ### Shipment tracking
 
@@ -153,25 +166,48 @@ Tool | Description
 `cancel_subscription` | Cancel an active subscription
 `create_subscription` | Create a new subscription
 `create_subscription_plan` | Create a new subscription plan
+`update_subscription` | Update an existing subscription
 `list_subscription_plans` | List subscription plans
 `show_subscription_details` | Show details of a specific subscription
 `show_subscription_plan_details` | Show details of a specific subscription plan
-`update_subscription` | Update an existing subscription
-
-### Remote MCP server tools
-
-Tool | Description
----- | -----------
-`search_product` | Find gift card products in the PayPal catalog
-`create_cart` | Open a new shopping cart with specified items and shipping preferences
-`checkout_cart` | Finalize a shopping cart to complete the purchase process
 
 ## Configuration
 
-...
+You can control which tools are enabled using the `--tools` command-line
+argument. This is useful for limiting the scope of the agent's permissions.
+
+You can enable all tools with `--tools=all` or specify a comma-separated list of
+specific tool identifiers.
+
+**Note**: The configuration identifiers below use dot notation (e.g.,
+`invoices.create`) which differs from the tool names exposed to the agent (e.g.,
+`create_invoice`).
+
+**Products**: `products.create`, `products.list`, `products.update`,
+`products.show`
+
+**Disputes**:
+`disputes.list`, `disputes.get`, `disputes.create`
+
+**Invoices**: `invoices.create`, `invoices.list`, `invoices.get`,
+`invoices.send`, `invoices.sendReminder`, `invoices.cancel`,
+`invoices.generateQRC`
+
+**Orders & Payments**: `orders.create`, `orders.get`, `orders.capture`,
+`payments.createRefund`, `payments.getRefunds`
+
+**Transactions**:
+`transactions.list`
+
+**Shipment**:
+`shipment.create`, `shipment.get`
+
+**Subscriptions**: `subscriptionPlans.create`, `subscriptionPlans.list`,
+`subscriptionPlans.show`, `subscriptions.create`, `subscriptions.show`,
+`subscriptions.cancel`
 
 ## Additional resources
 
-- [Paypal MCP Server Documentation](https://docs.paypal.ai/developer/tools/ai/mcp-quickstart)
-- [Paypal MCP Server Repository](https://github.com/paypal/paypal-mcp-server)
-- [Paypal Agent Tools Reference](https://docs.paypal.ai/developer/tools/ai/agent-tools-ref)
+- [PayPal MCP Server Documentation](https://docs.paypal.ai/developer/tools/ai/mcp-quickstart)
+- [PayPal MCP Server Repository](https://github.com/paypal/paypal-mcp-server)
+- [PayPal Agent Tools Reference](https://docs.paypal.ai/developer/tools/ai/agent-tools-ref)
