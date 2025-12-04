@@ -410,6 +410,10 @@ In the following sections, you'll see each phase detailed, showing exactly when 
 
 These components are created once when your application starts and shared across all streaming sessions. They define your agent's capabilities, manage conversation history, and orchestrate the streaming execution.
 
+!!! info "Python Version Requirement"
+
+    ADK requires **Python 3.10 or higher**. As of ADK v1.19.0, Python 3.9 is no longer supported. Ensure your development and production environments meet this requirement before installing ADK.
+
 #### Define Your Agent
 
 The `Agent` is the core of your streaming application—it defines what your AI can do, how it should behave, and which AI model powers it. You configure your agent with a specific model, tools it can use (like Google Search or custom APIs), and instructions that shape its personality and behavior.
@@ -457,11 +461,18 @@ session_service = InMemorySessionService()
 
 For production applications, choose a persistent session service based on your infrastructure:
 
+**Use `SqliteSessionService` if:**
+
+- You need lightweight local persistence without external dependencies
+- You're building a single-server application or development environment
+- You want automatic database initialization with minimal configuration
+- Example: `SqliteSessionService(db_path="sessions.db")`
+
 **Use `DatabaseSessionService` if:**
 
-- You have existing PostgreSQL/MySQL/SQLite infrastructure
+- You have existing PostgreSQL/MySQL infrastructure
 - You need full control over data storage and backups
-- You're running outside Google Cloud or in hybrid environments
+- You're running multi-server deployments requiring shared state
 - Example: `DatabaseSessionService(connection_string="postgresql://...")`
 
 **Use `VertexAiSessionService` if:**
@@ -471,7 +482,7 @@ For production applications, choose a persistent session service based on your i
 - You need tight integration with Vertex AI features
 - Example: `VertexAiSessionService(project="my-project")`
 
-Both provide the same session persistence capabilities—choose based on your infrastructure. With persistent session services, the state of the `Session` will be preserved even after application shutdown. See the [ADK Session Management documentation](https://google.github.io/adk-docs/sessions/ for more details.
+All three provide session persistence capabilities—choose based on your infrastructure and scale requirements. With persistent session services, the state of the `Session` will be preserved even after application shutdown. See the [ADK Session Management documentation](https://google.github.io/adk-docs/sessions/ for more details.
 
 #### Define Your Runner
 
@@ -855,7 +866,7 @@ This example shows the core pattern. For production applications, consider:
 - **Authentication and authorization**: Implement authentication and authorization for your endpoints
 - **Rate limiting and quotas**: Add rate limiting and timeout controls. For guidance on concurrent sessions and quota management, see [Part 4: Concurrent Live API Sessions and Quota Management](part4.md#concurrent-live-api-sessions-and-quota-management).
 - **Structured logging**: Use structured logging for debugging.
-- **Persistent session services**: Consider using persistent session services (`DatabaseSessionService` or `VertexAiSessionService`). See the [ADK Session Services documentation](https://google.github.io/adk-docs/sessions/) for more details.
+- **Persistent session services**: Consider using persistent session services (`SqliteSessionService`, `DatabaseSessionService`, or `VertexAiSessionService`). See the [ADK Session Services documentation](https://google.github.io/adk-docs/sessions/) for more details.
 
 ## 1.6 What We Will Learn
 

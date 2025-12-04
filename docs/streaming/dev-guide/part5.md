@@ -668,6 +668,35 @@ DEMO_AGENT_MODEL=gemini-2.5-flash-native-audio-preview-09-2025
 # DEMO_AGENT_MODEL=gemini-live-2.5-flash-preview-native-audio-09-2025
 ```
 
+!!! note "Environment Variable Loading Order"
+
+    When using `.env` files with `python-dotenv`, you must call `load_dotenv()` **before** importing any modules that read environment variables. Otherwise, `os.getenv()` will return `None` and fall back to the default value, ignoring your `.env` configuration.
+
+    **Correct order in `main.py`:**
+
+    ```python
+    from dotenv import load_dotenv
+    from pathlib import Path
+
+    # Load .env file BEFORE importing agent
+    load_dotenv(Path(__file__).parent / ".env")
+
+    # Now safe to import modules that use environment variables
+    from google_search_agent.agent import agent
+    ```
+
+    **Incorrect order (will not work):**
+
+    ```python
+    from dotenv import load_dotenv
+    from google_search_agent.agent import agent  # Agent reads env var here
+
+    # Too late! Agent already initialized with default model
+    load_dotenv(Path(__file__).parent / ".env")
+    ```
+
+    This is a Python import behavior: when you import a module, its top-level code executes immediately. If your agent module calls `os.getenv("DEMO_AGENT_MODEL")` at import time, the `.env` file must already be loaded.
+
 **Selecting the right model:**
 
 1. **Choose platform**: Decide between Gemini Live API (public) or Vertex AI Live API (enterprise)
@@ -953,7 +982,7 @@ The automatic enablement happens in `Runner.run_live()` when both conditions are
 
 !!! note "Source"
 
-    [`runners.py:1236-1253`](https://github.com/google/adk-python/blob/main/src/google/adk/runners.py#L1236-L1253)
+    [`runners.py:1245-1260`](https://github.com/google/adk-python/blob/main/src/google/adk/runners.py#L1245-L1260)
 
 ## Voice Configuration (Speech Config)
 
