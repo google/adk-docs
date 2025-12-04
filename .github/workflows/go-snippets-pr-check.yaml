@@ -1,0 +1,84 @@
+# Copyright 2025 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: Go Snippets Build on PR and Schedule
+
+on:
+  # Run on pull requests targeting the main branch.
+  pull_request:
+    branches: [ "main" ]
+  
+  # Run on a weekly schedule (every Sunday at 3:00 AM UTC).
+  schedule:
+    - cron: '0 3 * * 0'
+
+jobs:
+  # This job builds and runs the Go snippets.
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        # Fetch the entire history to compare branches in the PR.
+        fetch-depth: 0
+
+    - name: Set up Go
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.22'
+
+    - name: Cache Go modules
+      uses: actions/cache@v3
+      with:
+        path: ~/go/pkg/mod
+        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        restore-keys: |
+          ${{ runner.os }}-go-
+
+    # --- PR-Specific Checks ---
+    # These steps only run for pull request events.
+
+    - name: Find new, un-tested Go files (PR only)
+      if: github.event_name == 'pull_request'
+      run: |
+        echo "Checking for any new Go files that are not in the build script..."
+        ./tools/go-snippets/check_go_snippets.sh
+
+    - name: Get changed Go snippet files (PR only)
+      if: github.event_name == 'pull_request'
+      id: changed-files
+      run: |
+        # This command gets the list of changed .go files in the snippets directory
+        # between the PR's head and the base branch.
+        # The output is an escaped, space-separated string suitable for shell commands.
+        CHANGED_FILES=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} -- 'examples/go/snippets/**/*.go' | xargs)
+        echo "changed_files=${CHANGED_FILES}" >> $GITHUB_OUTPUT
+        echo "Detected changes in: ${CHANGED_FILES}"
+
+    - name: Build changed Go snippets (PR only)
+      if: github.event_name == 'pull_request' && steps.changed-files.outputs.changed_files != ''
+      run: |
+        echo "Building only the changed Go files..."
+        ./tools/go-snippets/runner.sh build ${{ steps.changed-files.outputs.changed_files }}
+
+    # --- Scheduled Checks ---
+    # These steps only run on the weekly schedule.
+
+    - name: Build all Go snippets (Scheduled)
+      if: github.event_name == 'schedule'
+      run: |
+        echo "Running weekly build for all Go snippets..."
+        ./tools/go-snippets/runner.sh build
