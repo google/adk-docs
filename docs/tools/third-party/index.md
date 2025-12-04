@@ -119,6 +119,16 @@ Check out the following third-party tools that you can use with ADK agents:
     </div>
   </a>
 
+  <a href="/adk-docs/tools/third-party/n8n/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="../../assets/tools-n8n.png" alt="n8n">
+    </div>
+    <div class="tool-card-content">
+      <h3>n8n</h3>
+      <p>Manage and execute workflows in n8n</p>
+    </div>
+  </a>
+
   <a href="/adk-docs/tools/third-party/notion/" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="../../assets/tools-notion.png" alt="Notion">
