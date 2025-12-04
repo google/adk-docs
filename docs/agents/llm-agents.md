@@ -445,15 +445,8 @@ Control whether the agent receives the prior conversation history.
     ....
     ```
 
-### Code Execution
-
-<div class="language-support-tag">
-   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
-</div>
-
-* **`code_executor` (Optional):** Provide a `BaseCodeExecutor` instance to allow the agent to execute code blocks found in the LLM's response. ([See Tools/Built-in tools](../tools/built-in-tools.md)).
-
 Example for using built-in-planner:
+
 ```python
 from dotenv import load_dotenv
 
@@ -571,6 +564,26 @@ def call_agent(query):
 call_agent("If it's raining in New York right now, what is the current temperature?")
 
 ```
+
+### Code Execution
+
+<div class="language-support-tag">
+   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+</div>
+
+- **`code_executor` (Optional):** Provide a `BaseCodeExecutor` instance to allow the agent to execute code blocks found in the LLM's response. ([See Tools/Built-in tools](../tools/built-in-tools.md)).
+
+== "Python"
+
+    ```py
+    --8<-- "examples/python/snippets/tools/built-in-tools/code_execution.py"
+    ```
+
+=== "Java"
+
+    ```java
+    --8<-- "examples/java/snippets/src/main/java/tools/CodeExecutionAgentApp.java:full_code"
+    ```
 
 ## Putting It Together: Example
 
