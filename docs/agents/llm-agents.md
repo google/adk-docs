@@ -573,9 +573,9 @@ call_agent("If it's raining in New York right now, what is the current temperatu
 
 - **`code_executor` (Optional):** Provide a `BaseCodeExecutor` instance to allow the agent to execute code blocks found in the LLM's response. ([See Tools/Built-in tools](../tools/built-in-tools.md)).
 
-== "Python"
+=== "Python"
 
-    ```py
+    ```python
     --8<-- "examples/python/snippets/tools/built-in-tools/code_execution.py"
     ```
 
