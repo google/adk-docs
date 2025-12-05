@@ -15,11 +15,16 @@ edit_uri: edit/main/docs/
 # Copyright
 copyright: Copyright Google 2025&nbsp;&nbsp;|&nbsp;&nbsp;<a href="//policies.google.com/terms">Terms</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="//policies.google.com/privacy">Privacy</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="#__consent">Manage cookies</a>
 
+# Validation
+validation:
+  absolute_links: ignore
+
 # Custom CSS
 extra_css:
   - stylesheets/custom.css
   - stylesheets/language-tags.css
 
+# Additional config
 extra:
   first_repo_url: https://github.com/google/adk-python
   first_repo_name: adk-python
@@ -133,6 +138,36 @@ plugins:
         'tools/confirmation.md': 'tools-custom/confirmation.md'
         'tools/performance.md': 'tools-custom/performance.md'
         'tools/mcp-tools.md': 'tools-custom/mcp-tools.md'
+  - llmstxt:
+      markdown_description: An open-source, code-first toolkit for building, evaluating, and deploying sophisticated AI agents with flexibility and control.
+      full_output: llms-full.txt
+      sections:
+        Build Agents:
+        - get-started/*.md
+        - tutorials/*.md
+        - tools/*.md
+        - tools-custom/*.md
+        Run Agents:
+        - runtime/*.md
+        - deploy/*.md
+        - observability/*.md
+        - evaluation/*.md
+        - safety/*.md
+        Components:
+        - context/*.md
+        - sessions/*.md
+        - callbacks/*.md
+        - artifacts/*.md
+        - events/*.md
+        - apps/*.md
+        - plugins/*.md
+        - mcp/*.md
+        - a2a/*.md
+        - streaming/*.md
+        - grounding/*.md
+        Reference:
+        - api-reference/index.md
+        - api-reference/rest/index.md
 
 # Navigation
 nav:
@@ -153,6 +188,7 @@ nav:
         - Python: get-started/streaming/quickstart-streaming.md
         - Java: get-started/streaming/quickstart-streaming-java.md
       - Visual Builder: visual-builder/index.md
+      - Coding with AI: tutorials/coding-with-ai.md
       - Advanced setup: get-started/installation.md
     - Agents:
       - agents/index.md
@@ -270,13 +306,12 @@ nav:
         - Go: a2a/quickstart-consuming-go.md
     - Bidi-streaming (live):
       - streaming/index.md
-      - Custom Audio Bidi-streaming app sample (WebSockets): streaming/custom-streaming-ws.md
       - Bidi-streaming development guide series:
-        - Part 1, Intro to streaming: streaming/dev-guide/part1.md
-        - Part 2, Sending messages: streaming/dev-guide/part2.md
-        - Part 3, Event handling: streaming/dev-guide/part3.md
-        - Part 4, Run configuration: streaming/dev-guide/part4.md
-        - Part 5, Audio, Images, and Video: streaming/dev-guide/part5.md
+        - Part 1. Intro to streaming: streaming/dev-guide/part1.md
+        - Part 2. Sending messages: streaming/dev-guide/part2.md
+        - Part 3. Event handling: streaming/dev-guide/part3.md
+        - Part 4. Run configuration: streaming/dev-guide/part4.md
+        - Part 5. Audio, Images, and Video: streaming/dev-guide/part5.md
       - Streaming Tools: streaming/streaming-tools.md
       - Configurating Bidi-streaming behaviour: streaming/configuration.md
     - Grounding:

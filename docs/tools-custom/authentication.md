@@ -8,17 +8,17 @@ Many tools need to access protected resources (like user data in Google Calendar
 
 The key components involved are:
 
-1. **`AuthScheme`**: Defines *how* an API expects authentication credentials (e.g., as an API Key in a header, an OAuth 2.0 Bearer token). ADK supports the same types of authentication schemes as OpenAPI 3.0. To know more about what each type of credential is, refer to [OpenAPI doc: Authentication](https://swagger.io/docs/specification/v3_0/authentication/). ADK uses specific classes like `APIKey`, `HTTPBearer`, `OAuth2`, `OpenIdConnectWithConfig`.  
+1. **`AuthScheme`**: Defines *how* an API expects authentication credentials (e.g., as an API Key in a header, an OAuth 2.0 Bearer token). ADK supports the same types of authentication schemes as OpenAPI 3.0. To know more about what each type of credential is, refer to [OpenAPI doc: Authentication](https://swagger.io/docs/specification/v3_0/authentication/). ADK uses specific classes like `APIKey`, `HTTPBearer`, `OAuth2`, `OpenIdConnectWithConfig`.
 2. **`AuthCredential`**: Holds the *initial* information needed to *start* the authentication process (e.g., your application's OAuth Client ID/Secret, an API key value). It includes an `auth_type` (like `API_KEY`, `OAUTH2`, `SERVICE_ACCOUNT`) specifying the credential type.
 
 The general flow involves providing these details when configuring a tool. ADK then attempts to automatically exchange the initial credential for a usable one (like an access token) before the tool makes an API call. For flows requiring user interaction (like OAuth consent), a specific interactive process involving the Agent Client application is triggered.
 
 ## Supported Initial Credential Types
 
-* **API\_KEY:** For simple key/value authentication. Usually requires no exchange.  
-* **HTTP:** Can represent Basic Auth (not recommended/supported for exchange) or already obtained Bearer tokens. If it's a Bearer token, no exchange is needed.  
-* **OAUTH2:** For standard OAuth 2.0 flows. Requires configuration (client ID, secret, scopes) and often triggers the interactive flow for user consent.  
-* **OPEN\_ID\_CONNECT:** For authentication based on OpenID Connect. Similar to OAuth2, often requires configuration and user interaction.  
+* **API\_KEY:** For simple key/value authentication. Usually requires no exchange.
+* **HTTP:** Can represent Basic Auth (not recommended/supported for exchange) or already obtained Bearer tokens. If it's a Bearer token, no exchange is needed.
+* **OAUTH2:** For standard OAuth 2.0 flows. Requires configuration (client ID, secret, scopes) and often triggers the interactive flow for user consent.
+* **OPEN\_ID\_CONNECT:** For authentication based on OpenID Connect. Similar to OAuth2, often requires configuration and user interaction.
 * **SERVICE\_ACCOUNT:** For Google Cloud Service Account credentials (JSON key or Application Default Credentials). Typically exchanged for a Bearer token.
 
 ## Configuring Authentication on Tools
@@ -31,7 +31,7 @@ You set up authentication when defining your tool:
 
 * **APIHubToolset / ApplicationIntegrationToolset**: Pass `auth_scheme` and `auth_credential`during initialization, if the API managed in API Hub / provided by Application Integration requires authentication.
 
-!!! tip "WARNING" 
+!!! tip "WARNING"
     Storing sensitive credentials like access tokens and especially refresh tokens directly in the session state might pose security risks depending on your session storage backend (`SessionService`) and overall application security posture.
 
     *   **`InMemorySessionService`:** Suitable for testing and development, but data is lost when the process ends. Less risk as it's transient.
@@ -98,7 +98,7 @@ Pass the scheme and credential during toolset initialization. The toolset applie
       auth_credential = AuthCredential(
           auth_type=AuthCredentialTypes.OAUTH2,
           oauth2=OAuth2Auth(
-              client_id=YOUR_OAUTH_CLIENT_ID, 
+              client_id=YOUR_OAUTH_CLIENT_ID,
               client_secret=YOUR_OAUTH_CLIENT_SECRET
           ),
       )
@@ -185,7 +185,7 @@ calendar_tool_set.configure_auth(
 
 The sequence diagram of auth request flow (where tools are requesting auth credentials) looks like below:
 
-![Authentication](../assets/auth_part1.svg) 
+![Authentication](../assets/auth_part1.svg)
 
 
 ### 2. Handling the Interactive OAuth/OIDC Flow (Client-Side)
@@ -206,8 +206,8 @@ Here's the step-by-step process for your client application:
 
 **Step 1: Run Agent & Detect Auth Request**
 
-* Initiate the agent interaction using `runner.run_async`.  
-* Iterate through the yielded events.  
+* Initiate the agent interaction using `runner.run_async`.
+* Iterate through the yielded events.
 * Look for a specific function call event whose function call has a special name: `adk_request_credential`. This event signals that user interaction is needed. You can use helper functions to identify this event and extract necessary information. (For the second case, the logic is similar. You deserialize the event from the http response).
 
 ```py
@@ -253,10 +253,10 @@ def get_auth_request_function_call(event: Event) -> types.FunctionCall:
         return
     for part in event.content.parts:
         if (
-            part 
-            and part.function_call 
+            part
+            and part.function_call
             and part.function_call.name == 'adk_request_credential'
-            and event.long_running_tool_ids 
+            and event.long_running_tool_ids
             and part.function_call.id in event.long_running_tool_ids
         ):
 
@@ -275,8 +275,8 @@ def get_auth_config(auth_request_function_call: types.FunctionCall) -> AuthConfi
 
 **Step 2: Redirect User for Authorization**
 
-* Get the authorization URL (`auth_uri`) from the `auth_config` extracted in the previous step.  
-* **Crucially, append your application's**  redirect\_uri as a query parameter to this `auth_uri`. This `redirect_uri` must be pre-registered with your OAuth provider (e.g., [Google Cloud Console](https://developers.google.com/identity/protocols/oauth2/web-server#creatingcred), [Okta admin panel](https://developer.okta.com/docs/guides/sign-into-web-app-redirect/spring-boot/main/#create-an-app-integration-in-the-admin-console)).  
+* Get the authorization URL (`auth_uri`) from the `auth_config` extracted in the previous step.
+* **Crucially, append your application's**  redirect\_uri as a query parameter to this `auth_uri`. This `redirect_uri` must be pre-registered with your OAuth provider (e.g., [Google Cloud Console](https://developers.google.com/identity/protocols/oauth2/web-server#creatingcred), [Okta admin panel](https://developer.okta.com/docs/guides/sign-into-web-app-redirect/spring-boot/main/#create-an-app-integration-in-the-admin-console)).
 * Direct the user to this complete URL (e.g., open it in their browser).
 
 ```py
@@ -302,19 +302,19 @@ if auth_request_function_call_id and auth_config:
 
 **Step 3. Handle the Redirect Callback (Client):**
 
-* Your application must have a mechanism (e.g., a web server route at the `redirect_uri`) to receive the user after they authorize the application with the provider.  
-* The provider redirects the user to your `redirect_uri` and appends an `authorization_code` (and potentially `state`, `scope`) as query parameters to the URL.  
-* Capture the **full callback URL** from this incoming request.  
+* Your application must have a mechanism (e.g., a web server route at the `redirect_uri`) to receive the user after they authorize the application with the provider.
+* The provider redirects the user to your `redirect_uri` and appends an `authorization_code` (and potentially `state`, `scope`) as query parameters to the URL.
+* Capture the **full callback URL** from this incoming request.
 * (This step happens outside the main agent execution loop, in your web server or equivalent callback handler.)
 
 **Step 4. Send Authentication Result Back to ADK (Client):**
 
-* Once you have the full callback URL (containing the authorization code), retrieve the `auth_request_function_call_id` and the `auth_config` object saved in Client Step 1\.  
-* Set the captured callback URL into the `exchanged_auth_credential.oauth2.auth_response_uri` field. Also ensure `exchanged_auth_credential.oauth2.redirect_uri` contains the redirect URI you used.  
-* Create a `types.Content` object containing a `types.Part` with a `types.FunctionResponse`.  
-      * Set `name` to `"adk_request_credential"`. (Note: This is a special name for ADK to proceed with authentication. Do not use other names.)  
-      * Set `id` to the `auth_request_function_call_id` you saved.  
-      * Set `response` to the *serialized* (e.g., `.model_dump()`) updated `AuthConfig` object.  
+* Once you have the full callback URL (containing the authorization code), retrieve the `auth_request_function_call_id` and the `auth_config` object saved in Client Step 1\.
+* Set the captured callback URL into the `exchanged_auth_credential.oauth2.auth_response_uri` field. Also ensure `exchanged_auth_credential.oauth2.redirect_uri` contains the redirect URI you used.
+* Create a `types.Content` object containing a `types.Part` with a `types.FunctionResponse`.
+      * Set `name` to `"adk_request_credential"`. (Note: This is a special name for ADK to proceed with authentication. Do not use other names.)
+      * Set `id` to the `auth_request_function_call_id` you saved.
+      * Set `response` to the *serialized* (e.g., `.model_dump()`) updated `AuthConfig` object.
 * Call `runner.run_async` **again** for the same session, passing this `FunctionResponse` content as the `new_message`.
 
 ```py
@@ -367,7 +367,7 @@ if auth_request_function_call_id and auth_config:
 
 !!! note "Note: Authorization response with Resume feature"
 
-    If your ADK agent workflow is configured with the 
+    If your ADK agent workflow is configured with the
     [Resume](/adk-docs/runtime/resume/) feature, you also must include
     the Invocation ID (`invocation_id`) parameter with the authorization
     response. The Invocation ID you provide must be the same invocation
@@ -375,17 +375,17 @@ if auth_request_function_call_id and auth_config:
     starts a new invocation with the authorization response. If your
     agent uses the Resume feature, consider including the Invocation ID
     as a parameter with your authorization request, so it can be included
-    with the authorization response. For more details on using the Resume 
+    with the authorization response. For more details on using the Resume
     feature, see
     [Resume stopped agents](/adk-docs/runtime/resume/).
 
 **Step 5: ADK Handles Token Exchange & Tool Retry and gets Tool result**
 
-* ADK receives the `FunctionResponse` for `adk_request_credential`.  
-* It uses the information in the updated `AuthConfig` (including the callback URL containing the code) to perform the OAuth **token exchange** with the provider's token endpoint, obtaining the access token (and possibly refresh token).  
-* ADK internally makes these tokens available by setting them in the session state).  
-* ADK **automatically retries** the original tool call (the one that initially failed due to missing auth).  
-* This time, the tool finds the valid tokens (via `tool_context.get_auth_response()`) and successfully executes the authenticated API call.  
+* ADK receives the `FunctionResponse` for `adk_request_credential`.
+* It uses the information in the updated `AuthConfig` (including the callback URL containing the code) to perform the OAuth **token exchange** with the provider's token endpoint, obtaining the access token (and possibly refresh token).
+* ADK internally makes these tokens available by setting them in the session state).
+* ADK **automatically retries** the original tool call (the one that initially failed due to missing auth).
+* This time, the tool finds the valid tokens (via `tool_context.get_auth_response()`) and successfully executes the authenticated API call.
 * The agent receives the actual result from the tool and generates its final response to the user.
 
 ---
@@ -400,7 +400,7 @@ This section focuses on implementing the authentication logic *inside* your cust
 
 ### Prerequisites
 
-Your function signature *must* include [`tool_context: ToolContext`](../tools/index.md#tool-context). ADK automatically injects this object, providing access to state and auth mechanisms.
+Your function signature *must* include [`tool_context: ToolContext`](../tools-custom/index.md#tool-context). ADK automatically injects this object, providing access to state and auth mechanisms.
 
 ```py
 from google.adk.tools import FunctionTool, ToolContext
@@ -457,7 +457,7 @@ else:
 
 **Step 2: Check for Auth Response from Client**
 
-* If Step 1 didn't yield valid credentials, check if the client just completed the interactive flow by calling `exchanged_credential = tool_context.get_auth_response()`.  
+* If Step 1 didn't yield valid credentials, check if the client just completed the interactive flow by calling `exchanged_credential = tool_context.get_auth_response()`.
 * This returns the updated `exchanged_credential` object sent back by the client (containing the callback URL in `auth_response_uri`).
 
 ```py
@@ -468,7 +468,7 @@ exchanged_credential = tool_context.get_auth_response(AuthConfig(
   auth_scheme=auth_scheme,
   raw_auth_credential=auth_credential,
 ))
-# If exchanged_credential is not None, then there is already an exchanged credetial from the auth response. 
+# If exchanged_credential is not None, then there is already an exchanged credetial from the auth response.
 if exchanged_credential:
    # ADK exchanged the access token already for us
         access_token = exchanged_credential.oauth2.access_token
@@ -519,7 +519,7 @@ print(f"DEBUG: Cached/updated tokens under key: {TOKEN_CACHE_KEY}")
 
 **Step 6: Make Authenticated API Call**
 
-* Once you have a valid `Credentials` object (`creds` from Step 1 or Step 4), use it to make the actual call to the protected API using the appropriate client library (e.g., `googleapiclient`, `requests`). Pass the `credentials=creds` argument.  
+* Once you have a valid `Credentials` object (`creds` from Step 1 or Step 4), use it to make the actual call to the protected API using the appropriate client library (e.g., `googleapiclient`, `requests`). Pass the `credentials=creds` argument.
 * Include error handling, especially for `HttpError` 401/403, which might mean the token expired or was revoked between calls. If you get such an error, consider clearing the cached token (`tool_context.state.pop(...)`) and potentially returning the `auth_required` status again to force re-authentication.
 
 ```py
@@ -540,7 +540,7 @@ except Exception as e:
 
 **Step 7: Return Tool Result**
 
-* After a successful API call, process the result into a dictionary format that is useful for the LLM.  
+* After a successful API call, process the result into a dictionary format that is useful for the LLM.
 * **Crucially, include a**  along with the data.
 
 ```py
@@ -690,4 +690,3 @@ except Exception as e:
                   - code
                   - message
          ```
-
