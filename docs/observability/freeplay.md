@@ -22,7 +22,7 @@ management, evaluation and testing. Once you integrate with Freeplay, you can
 update prompts and evals from the Freeplay UI or from code, so that anyone on
 your team can contribute.
 
-[![Click here for a demo walk through](https://img.youtube.com/vi/AV2zCkp4aYM/maxresdefault.jpg)](https://www.youtube.com/watch?v=AV2zCkp4aYM)
+<iframe width="672" height="378" src="https://www.youtube.com/embed/AV2zCkp4aYM?si=HVuOJFLMEkkpocF7" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ## Getting Started
 
@@ -183,7 +183,7 @@ quantify changes head to head across your full agent execution.
 
 [Here](https://github.com/228Labs/freeplay-google-demo/blob/main/examples/example_test_run.py)
 is a code example for executing a batch test on Freeplay with ADK.
-[Here](https://github.com/228Labs/freeplay-google-demo/blob/main/examples/example_test_run.py) is a code example for executing a batch test on Freeplay with the Google ADK. 
+[Here](https://github.com/228Labs/freeplay-google-demo/blob/main/examples/example_test_run.py) is a code example for executing a batch test on Freeplay with the Google ADK.
 
 ## Sign up now
 
