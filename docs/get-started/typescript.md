@@ -1,7 +1,7 @@
-# Java Quickstart for ADK
+# TypeScript Quickstart for ADK
 
 This guide shows you how to get up and running with Agent Development Kit
-for JavaScript. Before you start, make sure you have the following installed:
+for TypeScript. Before you start, make sure you have the following installed:
 
 *   Node.js 20.12.7 or later
 *   Node Package Manager (npm) 9.2.0 or later
@@ -39,11 +39,11 @@ my-agent/
         ```
 
     **Note:** Do not create `tsconfig.json`, you generate that
-    file in a later step.  
+    file in a later step.
 
 ### Define the agent code
 
-Create the code for a basic agent, including a simple implementation of an ADK 
+Create the code for a basic agent, including a simple implementation of an ADK
 [Function Tool](/adk-docs/tools/function-tools/), called `getCurrentTime`.
 Add the following code to the `agent.ts` file in your project
 directory:
@@ -77,7 +77,7 @@ export const rootAgent = new LlmAgent({
 ### Configure project and dependencies
 
 Use the `npm` tool to install and configure dependencies for your project,
-including the package file, TypeScript configuration, ADK JavaScript main
+including the package file, TypeScript configuration, ADK TypeScript main
 library and developer tools:
 
 ```console
@@ -115,8 +115,8 @@ well as the ADK library dependencies, as shown in this example:
 }
 ```
 
-For development convenience, in the `tsconfig.json` file, update the 
-setting for `verbatimModuleSyntax` to `false` to allow simpler syntax 
+For development convenience, in the `tsconfig.json` file, update the
+setting for `verbatimModuleSyntax` to `false` to allow simpler syntax
 when adding modules:
 
 ```json title="my-agent/tsconfig.json"
@@ -136,7 +136,7 @@ npx tsc
 ### Set your API key
 
 This project uses the Gemini API, which requires an API key. If you
-don't already have Gemini API key, create a key in Google AI Studio on the 
+don't already have Gemini API key, create a key in Google AI Studio on the
 [API Keys](https://aistudio.google.com/app/apikey) page.
 
 In a terminal window, write your API key into your `.env` file of your project
@@ -160,7 +160,7 @@ interact with your agent.
 
 ### Run with command-line interface
 
-Run your agent with the ADK JavaScript command-line interface tool
+Run your agent with the ADK TypeScript command-line interface tool
 using the following command:
 
 ```console
