@@ -237,7 +237,9 @@ nav:
       - Context compression: context/compaction.md
     - Sessions & Memory:
       - sessions/index.md
-      - Session: sessions/session.md
+      - Sessions:
+        - Overview: sessions/session.md
+        - Rewind sessions: sessions/rewind.md
       - State: sessions/state.md
       - Memory: sessions/memory.md
       - Vertex AI Express Mode: sessions/express-mode.md
