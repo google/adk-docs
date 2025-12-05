@@ -32,7 +32,7 @@ Some typical applications of Plugins are as follows:
 
 !!! warning "Caution"
     Plugins are not supported by the
-    [ADK web interface](../evaluate/#1-adk-web-run-evaluations-via-the-web-ui).
+    [ADK web interface](../evaluate/index.md#1-adk-web-run-evaluations-via-the-web-ui).
     If your ADK workflow uses Plugins, you must run your workflow without the
     web interface.
 
@@ -46,7 +46,7 @@ Plugins in your agent application, see
 [Plugin callback hooks](#plugin-callback-hooks).
 
 Plugin functionality builds on
-[Callbacks](../callbacks/), which is a key design
+[Callbacks](../callbacks/index.md), which is a key design
 element of the ADK's extensible architecture. While a typical Agent Callback is
 configured on a *single agent, a single tool* for a *specific task*, a Plugin is
 registered *once* on the `Runner` and its callbacks apply *globally* to every
@@ -322,7 +322,7 @@ command line:
     ```
 
 Plugins are not supported by the
-[ADK web interface](../evaluate/#1-adk-web-run-evaluations-via-the-web-ui).
+[ADK web interface](../evaluate/index.md#1-adk-web-run-evaluations-via-the-web-ui).
 If your ADK workflow uses Plugins, you must run your workflow without the web
 interface.
 
@@ -544,7 +544,7 @@ callback is *not executed* (skipped).
 
 For more information about Agent callbacks defined as part of an Agent object,
 see
-[Types of Callbacks](../callbacks/types-of-callbacks/#agent-lifecycle-callbacks).
+[Types of Callbacks](../callbacks/types-of-callbacks.md#agent-lifecycle-callbacks).
 
 ### Model callbacks
 
