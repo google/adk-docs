@@ -2,7 +2,7 @@
 
 In Part 3, you learned how to handle events from `run_live()` to process model responses, tool calls, and streaming updates. This part shows you how to configure those streaming sessions through `RunConfig`—controlling response formats, managing session lifecycles, and enforcing production constraints.
 
-**What you'll learn**: This part covers response modalities and their constraints, explores the differences between BIDI and SSE streaming modes, examines the relationship between ADK Sessions and Live API sessions, and shows how to manage session duration with session resumption and context window compression. You'll understand how to handle concurrent session quotas, implement architectural patterns for quota management, configure cost controls through `max_llm_calls` and audio persistence options, and track token usage in real-time for production monitoring (new in v1.18.0). With RunConfig mastery, you can build production-ready streaming applications that balance feature richness with operational constraints.
+**What you'll learn**: This part covers response modalities and their constraints, explores the differences between BIDI and SSE streaming modes, examines the relationship between ADK Sessions and Live API sessions, and shows how to manage session duration with session resumption and context window compression. You'll understand how to handle concurrent session quotas, implement architectural patterns for quota management, and configure cost controls through `max_llm_calls` and audio persistence options. With RunConfig mastery, you can build production-ready streaming applications that balance feature richness with operational constraints.
 
 !!! note "Learn More"
 
@@ -31,7 +31,7 @@ This table provides a quick reference for all RunConfig parameters covered in th
 
 !!! note "Source Reference"
 
-    [`run_config.py`](https://github.com/google/adk-python/blob/main/src/google/adk/agents/run_config.py)
+    [`run_config.py`](https://github.com/google/adk-python/blob/960b206752918d13f127a9d6ed8d21d34bcbc7fa/src/google/adk/agents/run_config.py)
 
 **Platform Support Legend:**
 
@@ -221,6 +221,31 @@ sequenceDiagram
     Note over ADK,Gemini: Turn Detection: finish_reason
 ```
 
+### Progressive SSE Streaming
+
+**Progressive SSE streaming** is an experimental feature that enhances how SSE mode delivers streaming responses. When enabled, this feature improves response aggregation by:
+
+- **Content ordering preservation**: Maintains the original order of mixed content types (text, function calls, inline data)
+- **Intelligent text merging**: Only merges consecutive text parts of the same type (regular text vs thought text)
+- **Progressive delivery**: Marks all intermediate chunks as `partial=True`, with a single final aggregated response at the end
+- **Deferred function execution**: Skips executing function calls in partial events, only executing them in the final aggregated event to avoid duplicate executions
+
+**Enabling the feature:**
+
+This is an experimental (WIP stage) feature disabled by default. Enable it via environment variable:
+
+```bash
+export ADK_ENABLE_PROGRESSIVE_SSE_STREAMING=1
+```
+
+**When to use:**
+
+- You're using `StreamingMode.SSE` and need better handling of mixed content types (text + function calls)
+- Your responses include thought text (extended thinking) mixed with regular text
+- You want to ensure function calls execute only once after complete response aggregation
+
+**Note:** This feature only affects `StreamingMode.SSE`. It does not apply to `StreamingMode.BIDI` (the focus of this guide), which uses the Live API's native bidirectional protocol.
+
 ### When to Use Each Mode
 
 Your choice between BIDI and SSE depends on your application requirements and the interaction patterns you need to support. Here's a practical guide to help you choose:
@@ -278,7 +303,7 @@ When building ADK Bidi-streaming applications, it's essential to understand how 
 Understanding the distinction between **ADK `Session`** and **Live API session** is crucial for building reliable streaming applications with ADK Bidi-streaming.
 
 **ADK `Session`** (managed by SessionService):
-- Persistent conversation storage for conversation history, events, and state, created via `SessionService.create_session()`
+- Persistent conversation storage for conversation history, events, and state, created via `SessionService.create_session()` 
 - Storage options: in-memory, database (PostgreSQL/MySQL/SQLite), or Vertex AI
 - Survives across multiple `run_live()` calls and application restarts (with the persistent `SessionService`)
 
@@ -348,7 +373,6 @@ sequenceDiagram
 ```
 
 **Key insights:**
-
 - ADK Session survives across multiple `run_live()` calls and app restarts
 - Live API session is ephemeral - created and destroyed per streaming session
 - Conversation continuity is maintained through ADK Session's persistent storage
@@ -386,7 +410,7 @@ Understanding the constraints of each platform is critical for production planni
 
     - [Gemini Live API Capabilities Guide](https://ai.google.dev/gemini-api/docs/live-guide)
     - [Gemini API Quotas](https://ai.google.dev/gemini-api/docs/quota)
-    - [Vertex AI Streamed Conversations](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api/streamed-conversations)
+    - [Vertex AI Live API](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api)
 
 ## Live API Session Resumption
 
@@ -539,16 +563,6 @@ run_config = RunConfig(
         )
     )
 )
-
-# For gemini-live-2.5-flash (32k context window on Vertex AI)
-run_config = RunConfig(
-    context_window_compression=types.ContextWindowCompressionConfig(
-        trigger_tokens=25000,  # Start compression at ~78% of 32k context
-        sliding_window=types.SlidingWindow(
-            target_tokens=20000  # Compress to ~62% of context
-        )
-    )
-)
 ```
 
 **How it works:**
@@ -608,14 +622,12 @@ While compression enables unlimited session duration, consider these trade-offs:
 **Common Use Cases:**
 
 ✅ **Enable compression when:**
-
 - Sessions need to exceed platform duration limits (15/2/10 minutes)
 - Extended conversations may hit token limits (128k for 2.5-flash)
 - Customer support sessions that can last hours
 - Educational tutoring with long interactions
 
 ❌ **Disable compression when:**
-
 - All sessions complete within duration limits
 - Precision recall of early conversation is critical
 - Development/testing phase (full history aids debugging)
@@ -708,7 +720,7 @@ Both platforms limit how many Live API sessions can run simultaneously, but the 
 
 !!! note "Source"
 
-    [Vertex AI Live API Streamed Conversations](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api/streamed-conversations) | [Vertex AI Quotas](https://cloud.google.com/vertex-ai/generative-ai/docs/quotas)
+    [Vertex AI Live API](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api) | [Vertex AI Quotas](https://cloud.google.com/vertex-ai/generative-ai/docs/quotas)
 
 **Requesting a quota increase:**
 
@@ -821,6 +833,10 @@ This parameter caps the total number of LLM invocations allowed per invocation c
 ### save_live_blob
 
 This parameter controls whether audio and video streams are persisted to ADK's session and artifact services for debugging, compliance, and quality assurance purposes.
+
+!!! warning "Migration Note: save_live_audio Deprecated"
+
+    **If you're using `save_live_audio`:** This parameter has been deprecated in favor of `save_live_blob`. ADK will automatically migrate `save_live_audio=True` to `save_live_blob=True` with a deprecation warning, but this compatibility layer will be removed in a future release. Update your code to use `save_live_blob` instead.
 
 Currently, **only audio is persisted** by ADK's implementation. When enabled, ADK persists audio streams to:
 
@@ -957,9 +973,9 @@ run_config = RunConfig(
 
 ADK validates CFC compatibility at session initialization and will raise an error if the model is unsupported:
 
-- ✅ **Supported**: `gemini-2.x` models (e.g., `gemini-2.5-flash-native-audio-preview-09-2025`, `gemini-2.0-flash-live-001`)
+- ✅ **Supported**: `gemini-2.x` models (e.g., `gemini-2.5-flash-native-audio-preview-09-2025`)
 - ❌ **Not supported**: `gemini-1.5-x` models
-- **Validation**: ADK checks that the model name starts with `gemini-2` when `support_cfc=True` ([`runners.py:1200-1203`](https://github.com/google/adk-python/blob/main/src/google/adk/runners.py#L1200-L1203))
+- **Validation**: ADK checks that the model name starts with `gemini-2` when `support_cfc=True` ([`runners.py:1288-1291`](https://github.com/google/adk-python/blob/960b206752918d13f127a9d6ed8d21d34bcbc7fa/src/google/adk/runners.py#L1288-L1291))
 - **Code executor**: ADK automatically injects `BuiltInCodeExecutor` when CFC is enabled for safe parallel tool execution
 
 **CFC capabilities:**
@@ -982,7 +998,7 @@ CFC is designed for complex, multi-step workflows that benefit from intelligent 
 **Learn more:**
 
 - [Gemini Function Calling Guide](https://ai.google.dev/gemini-api/docs/function-calling) - Official documentation on compositional and parallel function calling
-- [ADK Parallel Functions Example](https://github.com/google/adk-python/blob/main/contributing/samples/parallel_functions/agent.py) - Working example with async tools
+- [ADK Parallel Functions Example](https://github.com/google/adk-python/blob/960b206752918d13f127a9d6ed8d21d34bcbc7fa/contributing/samples/parallel_functions/agent.py) - Working example with async tools
 - [ADK Performance Guide](https://google.github.io/adk-docs/tools/performance/) - Best practices for parallel-ready tools
 
 ## Summary

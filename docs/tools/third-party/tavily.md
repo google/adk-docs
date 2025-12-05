@@ -72,7 +72,7 @@ structured maps of websites.
     root_agent = Agent(
         model="gemini-2.5-pro",
         name="tavily_agent",
-        instruction="""Help users get information from Tavily""",
+        instruction="Help users get information from Tavily",
         tools=[
             McpToolset(
                 connection_params=StreamableHTTPServerParams(
