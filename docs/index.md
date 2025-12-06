@@ -50,6 +50,12 @@ from simple tasks to complex workflows.
     <code>pip install google-adk</code>
     </p>
 
+=== "TypeScript"
+    <br>
+    <p style="text-align: center;">
+    <code>npm install @google/adk</code>
+    </p>
+
 === "Go"
     <br>
     <p style="text-align: center;">
@@ -72,17 +78,11 @@ from simple tasks to complex workflows.
     }
     ```
 
-=== "TypeScript"
-    <br>
-    <p style="text-align: center;">
-    <code>npm install @google/adk</code>
-    </p>
-
 </div>
 
 <p style="text-align:center;">
   <a href="/adk-docs/get-started/python/" class="md-button" style="margin:3px">Start with Python</a>
-  <a href="/adk-docs/get-started/javascript/" class="md-button" style="margin:3px">Start with TypeScript</a>
+  <a href="/adk-docs/get-started/typescript/" class="md-button" style="margin:3px">Start with TypeScript</a>
   <a href="/adk-docs/get-started/go/" class="md-button" style="margin:3px">Start with Go</a>
   <a href="/adk-docs/get-started/java/" class="md-button" style="margin:3px">Start with Java</a>
 </p>
