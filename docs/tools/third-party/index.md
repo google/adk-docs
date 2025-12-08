@@ -135,7 +135,7 @@ Check out the following third-party tools that you can use with ADK agents:
     </div>
     <div class="tool-card-content">
       <h3>Paypal</h3>
-      <p>Manage your PayPal account</p>
+      <p>Manage payments, send invoices, and handle subscriptions</p>
     </div>
   </a>
 
