@@ -129,6 +129,16 @@ Check out the following third-party tools that you can use with ADK agents:
     </div>
   </a>
 
+  <a href="/adk-docs/tools/third-party/qdrant/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="../../assets/tools-qdrant.png" alt="Qdrant">
+    </div>
+    <div class="tool-card-content">
+      <h3>Qdrant</h3>
+      <p>Equip agents with long-term memory and semantic knowledge retrieval</p>
+    </div>
+  </a>
+
   <a href="/adk-docs/tools/third-party/scrapegraphai/" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="../../assets/tools-scrapegraphai.png" alt="ScrapeGraphAI">
