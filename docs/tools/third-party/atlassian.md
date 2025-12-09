@@ -33,7 +33,6 @@ collaboration workflows using natural language.
     from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
     from mcp import StdioServerParameters
 
-
     root_agent = Agent(
         model="gemini-2.5-pro",
         name="atlassian_agent",
