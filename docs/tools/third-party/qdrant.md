@@ -40,7 +40,7 @@ relevant details using natural language queries.
     from mcp import StdioServerParameters
 
     QDRANT_URL = "YOUR_QDRANT_URL"
-    QDRANT_API_KEY = "YOUR_QDRANT_API_KEY"
+    # QDRANT_API_KEY = "YOUR_QDRANT_API_KEY"  # Uncomment if using Qdrant Cloud
 
     root_agent = Agent(
         model="gemini-2.5-pro",
@@ -56,7 +56,7 @@ relevant details using natural language queries.
                         ],
                         env={
                             "QDRANT_URL": QDRANT_URL,
-                            "QDRANT_API_KEY": QDRANT_API_KEY,
+                            # "QDRANT_API_KEY": QDRANT_API_KEY,  # Uncomment if using Qdrant Cloud
                         }
                     ),
                     timeout=30,
