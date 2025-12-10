@@ -254,151 +254,179 @@ To mitigate this, you can do one of the following:
     )
     ```
 
-## Using Anthropic models
+## Using Third-Party and Open Source Models
 
-<div class="language-support-tag" title="Available for Java. Python support for direct Anthropic API (non-Vertex) is via LiteLLM.">
-   <span class="lst-supported">Supported in ADK</span><span class="lst-java">Java v0.2.0</span>
+ADK provides robust support for a wide range of third-party models, including those from Anthropic, OpenAI, and open-source models running locally. This is primarily achieved through native integrations for specific providers like Anthropic on Vertex AI, and broad support via the LiteLLM library.
+
+### Anthropic Claude Models
+<div class="language-support-tag" title="Java ADK currently supports Gemini and Anthropic models.">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.20.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
-You can integrate Anthropic's Claude models directly using their API key or from a Vertex AI backend into your Java ADK applications by using the ADK's `Claude` wrapper class.
-
-For Vertex AI backend, see the [Third-Party Models on Vertex AI](#third-party-models-on-vertex-ai-eg-anthropic-claude) section.
-
-**Prerequisites:**
-
-1.  **Dependencies:**
-    *   **Anthropic SDK Classes (Transitive):** The Java ADK's `com.google.adk.models.Claude` wrapper relies on classes from Anthropic's official Java SDK. These are typically included as **transitive dependencies**.
-
-2.  **Anthropic API Key:**
-    *   Obtain an API key from Anthropic. Securely manage this key using a secret manager.
-
-**Integration:**
-
-Instantiate `com.google.adk.models.Claude`, providing the desired Claude model name and an `AnthropicOkHttpClient` configured with your API key. Then, pass this `Claude` instance to your `LlmAgent`.
-
-**Example:**
-
-```java
-import com.anthropic.client.AnthropicClient;
-import com.google.adk.agents.LlmAgent;
-import com.google.adk.models.Claude;
-import com.anthropic.client.okhttp.AnthropicOkHttpClient; // From Anthropic's SDK
-
-public class DirectAnthropicAgent {
-
-  private static final String CLAUDE_MODEL_ID = "claude-3-7-sonnet-latest"; // Or your preferred Claude model
-
-  public static LlmAgent createAgent() {
-
-    // It's recommended to load sensitive keys from a secure config
-    AnthropicClient anthropicClient = AnthropicOkHttpClient.builder()
-        .apiKey("ANTHROPIC_API_KEY")
-        .build();
-
-    Claude claudeModel = new Claude(
-        CLAUDE_MODEL_ID,
-        anthropicClient
-    );
-
-    return LlmAgent.builder()
-        .name("claude_direct_agent")
-        .model(claudeModel)
-        .instruction("You are a helpful AI assistant powered by Anthropic Claude.")
-        // ... other LlmAgent configurations
-        .build();
-  }
-
-  public static void main(String[] args) {
-    try {
-      LlmAgent agent = createAgent();
-      System.out.println("Successfully created direct Anthropic agent: " + agent.name());
-    } catch (IllegalStateException e) {
-      System.err.println("Error creating agent: " + e.getMessage());
-    }
-  }
-}
-```
-
-## Using Apigee gateway for AI models
-
-<div class="language-support-tag">
-   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.18.0</span><span class="lst-java">Java v0.4.0</span>
-</div>
-
-[Apigee](https://docs.cloud.google.com/apigee/docs/api-platform/get-started/what-apigee) acts as a powerful [AI Gateway](https://cloud.google.com/solutions/apigee-ai), transforming how you manage and govern your generative AI model traffic. By exposing your AI model endpoint (like Vertex AI or the Gemini API) through an Apigee proxy, you immediately gain enterprise-grade capabilities:
-
-- **Model Safety:** Implement security policies like Model Armor for threat protection.
-
-- **Traffic Governance:** Enforce Rate Limiting and Token Limiting to manage costs and prevent abuse.
-
-- **Performance:** Improve response times and efficiency using Semantic Caching and advanced model routing.
-
-- **Monitoring & Visibility:** Get granular monitoring, analysis, and auditing of all your AI requests.
-
-**NOTE:** The `ApigeeLLM` wrapper is currently designed for use with Vertex AI and the Gemini API (generateContent). We are continually expanding support for other models and interfaces.
-
-**Integration Method:**  To integrate Apigee's governance into your agent's workflow, simply instantiate the `ApigeeLlm` wrapper and pass it to an `LlmAgent` or other agent type.
-
-**Example:**
+You can use Anthropic's Claude models in your ADK applications in two ways: directly on Google Cloud Vertex AI for an integrated experience, or via their native API using the LiteLLM integration.
 
 === "Python"
 
+    #### Option 1: Using Claude on Vertex AI (Recommended for Google Cloud users)
+
+    This method leverages Google Cloud's infrastructure and is recommended for enterprise applications. It requires you to register the ADK's native `Claude` wrapper with the model registry.
+
+    **Setup:**
+
+    1.  **Install the necessary library:**
+        ```shell
+        pip install "anthropic[vertex]"
+        ```
+    2.  **Configure Vertex AI environment:** Ensure your environment is authenticated (`gcloud auth application-default login`) and the following variables are set:
+        ```shell
+        export GOOGLE_CLOUD_PROJECT="YOUR_PROJECT_ID"
+        export GOOGLE_CLOUD_LOCATION="YOUR_VERTEX_AI_LOCATION" # e.g., us-central1
+        export GOOGLE_GENAI_USE_VERTEXAI=TRUE
+        ```
+    3.  **Register the `Claude` Model Adapter:** Before creating your agent, you must register the `Claude` class with the ADK's `LLMRegistry`. This tells the ADK how to handle Claude model strings.
+
+        ```python
+        from google.adk.models.anthropic_llm import Claude
+        from google.adk.models.registry import LLMRegistry
+
+        # Do this once at the start of your application
+        LLMRegistry.register(Claude)
+        ```
+
+    **Example:**
+
+    Once registered, you can create an `LlmAgent` by passing the Vertex AI model name directly.
+
     ```python
-
     from google.adk.agents import LlmAgent
-    from google.adk.models.apigee_llm import ApigeeLlm
 
-    # Instantiate the ApigeeLlm wrapper
-    model = ApigeeLlm(
-        # Specify the Apigee route to your model. For more info, check out the ApigeeLlm documentation (https://github.com/google/adk-python/tree/main/contributing/samples/hello_world_apigeellm).
-        model="apigee/gemini-2.5-flash",
-        # The proxy URL of your deployed Apigee proxy including the base path
-        proxy_url=f"https://{APIGEE_PROXY_URL}",
-        # Pass necessary authentication/authorization headers (like an API key)
-        custom_headers={"foo": "bar"}
+    # Ensure the Claude class is registered as shown above
+
+    # Standard model name for Claude 3 Sonnet on Vertex AI
+    claude_model_vertexai = "claude-3-sonnet@20240229"
+
+    agent_claude_vertexai = LlmAgent(
+        model=claude_model_vertexai, # Pass the direct string after registration
+        name="claude_vertexai_agent",
+        instruction="You are an assistant powered by Claude 3 Sonnet on Vertex AI."
     )
-
-    # Pass the configured model wrapper to your LlmAgent
-    agent = LlmAgent(
-        model=model,
-        name="my_governed_agent",
-        instruction="You are a helpful assistant powered by Gemini and governed by Apigee.",
-        # ... other agent parameters
-    )
-
     ```
+
+    #### Option 2: Using the Anthropic API via LiteLLM
+
+    To connect to Anthropic's API directly (not through Vertex AI), you can use the `LiteLlm` wrapper. This is covered in the [A Wide Range of Models with LiteLLM](#a-wide-range-of-models-with-litellm) section.
 
 === "Java"
+    #### Using the Anthropic API
+
+    You can integrate Anthropic's Claude models directly using their API key.
+
+    **Prerequisites:**
+
+    1.  **Dependencies:**
+        *   **Anthropic SDK Classes (Transitive):** The Java ADK's `com.google.adk.models.Claude` wrapper relies on classes from Anthropic's official Java SDK. These are typically included as **transitive dependencies**.
+
+    2.  **Anthropic API Key:**
+        *   Obtain an API key from Anthropic. Securely manage this key using a secret manager.
+
+    **Integration:**
+
+    Instantiate `com.google.adk.models.Claude`, providing the desired Claude model name and an `AnthropicOkHttpClient` configured with your API key. Then, pass this `Claude` instance to your `LlmAgent`.
+
+    **Example:**
 
     ```java
+    import com.anthropic.client.AnthropicClient;
     import com.google.adk.agents.LlmAgent;
-    import com.google.adk.models.ApigeeLlm;
-    import com.google.common.collect.ImmutableMap;
+    import com.google.adk.models.Claude;
+    import com.anthropic.client.okhttp.AnthropicOkHttpClient; // From Anthropic's SDK
 
-    ApigeeLlm apigeeLlm =
-            ApigeeLlm.builder()
-                .modelName("apigee/gemini-2.5-flash") // Specify the Apigee route to your model. For more info, check out the ApigeeLlm documentation
-                .proxyUrl(APIGEE_PROXY_URL) //The proxy URL of your deployed Apigee proxy including the base path
-                .customHeaders(ImmutableMap.of("foo", "bar")) //Pass necessary authentication/authorization headers (like an API key)
-                .build();
-    LlmAgent agent =
-        LlmAgent.builder()
-            .model(apigeeLlm)
-            .name("my_governed_agent")
-            .description("my_governed_agent")
-            .instruction("You are a helpful assistant powered by Gemini and governed by Apigee.")
-            // tools will be added next
+    public class DirectAnthropicAgent {
+
+      private static final String CLAUDE_MODEL_ID = "claude-3-7-sonnet-latest"; // Or your preferred Claude model
+
+      public static LlmAgent createAgent() {
+
+        // It's recommended to load sensitive keys from a secure config
+        AnthropicClient anthropicClient = AnthropicOkHttpClient.builder()
+            .apiKey("ANTHROPIC_API_KEY")
             .build();
+
+        Claude claudeModel = new Claude(
+            CLAUDE_MODEL_ID,
+            anthropicClient
+        );
+
+        return LlmAgent.builder()
+            .name("claude_direct_agent")
+            .model(claudeModel)
+            .instruction("You are a helpful AI assistant powered by Anthropic Claude.")
+            // ... other LlmAgent configurations
+            .build();
+      }
+    }
     ```
 
-With this configuration, every API call from your agent will be routed through Apigee first, where all necessary policies (security, rate limiting, logging) are executed before the request is securely forwarded to the underlying AI model endpoint.
+    #### Using Claude on Vertex AI
 
-For a full code example using the Apigee proxy, see [Hello World Apigee LLM](https://github.com/google/adk-python/tree/main/contributing/samples/hello_world_apigeellm)
+    You can also use Claude models hosted on Vertex AI.
 
-## Using Cloud & Proprietary Models via LiteLLM
+    **Integration Method:** Directly instantiate the provider-specific model class (`com.google.adk.models.Claude`) and configure it with a Vertex AI backend.
 
+    **Setup:**
+
+    1.  **Vertex AI Environment:**
+        *   Ensure your Google Cloud project and region are correctly set up.
+        *   **Application Default Credentials (ADC):** Make sure ADC is configured correctly in your environment. This is typically done by running `gcloud auth application-default login`.
+
+    2.  **Provider Library Dependencies:**
+        *   The ADK core library often includes the necessary client libraries for common third-party models on Vertex AI as **transitive dependencies**.
+
+    3.  **Instantiate and Configure the Model:**
+        When creating your `LlmAgent`, instantiate the `Claude` class and configure its `VertexBackend`.
+
+    **Example:**
+
+    ```java
+    import com.anthropic.client.AnthropicClient;
+    import com.anthropic.client.okhttp.AnthropicOkHttpClient;
+    import com.anthropic.vertex.backends.VertexBackend;
+    import com.google.adk.agents.LlmAgent;
+    import com.google.adk.models.Claude; // ADK's wrapper for Claude
+    import com.google.auth.oauth2.GoogleCredentials;
+    import java.io.IOException;
+
+    public class ClaudeVertexAiAgent {
+
+        public static LlmAgent createAgent() throws IOException {
+            // Model name for Claude 3 Sonnet on Vertex AI (or other versions)
+            String claudeModelVertexAi = "claude-3-7-sonnet"; // Or any other Claude model
+
+            // Configure the AnthropicOkHttpClient with the VertexBackend
+            AnthropicClient anthropicClient = AnthropicOkHttpClient.builder()
+                .backend(
+                    VertexBackend.builder()
+                        .region("us-east5") // Specify your Vertex AI region
+                        .project("your-gcp-project-id") // Specify your GCP Project ID
+                        .googleCredentials(GoogleCredentials.getApplicationDefault())
+                        .build())
+                .build();
+
+            // Instantiate LlmAgent with the ADK Claude wrapper
+            LlmAgent agentClaudeVertexAi = LlmAgent.builder()
+                .model(new Claude(claudeModelVertexAi, anthropicClient)) // Pass the Claude instance
+                .name("claude_vertexai_agent")
+                .instruction("You are an assistant powered by Claude 3 Sonnet on Vertex AI.")
+                .build();
+
+            return agentClaudeVertexAi;
+        }
+    }
+    ```
+
+### A Wide Range of Models with LiteLLM
 <div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.20.0</span>
 </div>
 
 To access a vast range of LLMs from providers like OpenAI, Anthropic (non-Vertex
@@ -477,7 +505,7 @@ layer, providing a standardized, OpenAI-compatible interface to over 100+ LLMs.
     ```
 
 
-## Using Open & Local Models via LiteLLM
+### Local and Self-Hosted Models with LiteLLM
 
 <div class="language-support-tag">
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
@@ -489,12 +517,12 @@ open-source models locally or self-host them and integrate them using LiteLLM.
 **Integration Method:** Instantiate the `LiteLlm` wrapper class, configured to
 point to your local model server.
 
-### Ollama Integration
+#### Ollama Integration
 
 [Ollama](https://ollama.com/) allows you to easily run open-source models
 locally.
 
-#### Model choice
+##### Model choice
 
 If your agent is relying on tools, please make sure that you select a model with
 tool support from [Ollama website](https://ollama.com/search?c=tools).
@@ -559,7 +587,7 @@ Then you can create a new model with the following command:
 ollama create llama3.2-modified -f model_file_to_modify
 ```
 
-#### Using ollama_chat provider
+##### Using ollama_chat provider
 
 Our LiteLLM wrapper can be used to create agents with Ollama models.
 
@@ -595,7 +623,7 @@ export OLLAMA_API_BASE="http://localhost:11434"
 adk web
 ```
 
-#### Using openai provider
+##### Using openai provider
 
 Alternatively, `openai` can be used as the provider name. But this will also
 require setting the `OPENAI_API_BASE=http://localhost:11434/v1` and
@@ -626,7 +654,7 @@ export OPENAI_API_KEY=anything
 adk web
 ```
 
-#### Debugging
+##### Debugging
 
 You can see the request sent to the Ollama server by adding the following in
 your agent code just after imports.
@@ -645,7 +673,7 @@ http://localhost:11434/api/chat \
 -d '{'model': 'mistral-small3.1', 'messages': [{'role': 'system', 'content': ...
 ```
 
-### Self-Hosted Endpoint (e.g., vLLM)
+#### Self-Hosted Endpoint (e.g., vLLM)
 
 <div class="language-support-tag">
    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
@@ -706,6 +734,82 @@ models efficiently and often expose an OpenAI-compatible API endpoint.
         # ... other agent parameters
     )
     ```
+
+## Using Apigee gateway for AI models
+
+<div class="language-support-tag">
+   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.18.0</span><span class="lst-java">Java v0.4.0</span>
+</div>
+
+[Apigee](https://docs.cloud.google.com/apigee/docs/api-platform/get-started/what-apigee) acts as a powerful [AI Gateway](https://cloud.google.com/solutions/apigee-ai), transforming how you manage and govern your generative AI model traffic. By exposing your AI model endpoint (like Vertex AI or the Gemini API) through an Apigee proxy, you immediately gain enterprise-grade capabilities:
+
+- **Model Safety:** Implement security policies like Model Armor for threat protection.
+
+- **Traffic Governance:** Enforce Rate Limiting and Token Limiting to manage costs and prevent abuse.
+
+- **Performance:** Improve response times and efficiency using Semantic Caching and advanced model routing.
+
+- **Monitoring & Visibility:** Get granular monitoring, analysis, and auditing of all your AI requests.
+
+**NOTE:** The `ApigeeLLM` wrapper is currently designed for use with Vertex AI and the Gemini API (generateContent). We are continually expanding support for other models and interfaces.
+
+**Integration Method:**  To integrate Apigee's governance into your agent's workflow, simply instantiate the `ApigeeLlm` wrapper and pass it to an `LlmAgent` or other agent type.
+
+**Example:**
+
+=== "Python"
+
+    ```python
+
+    from google.adk.agents import LlmAgent
+    from google.adk.models.apigee_llm import ApigeeLlm
+
+    # Instantiate the ApigeeLlm wrapper
+    model = ApigeeLlm(
+        # Specify the Apigee route to your model. For more info, check out the ApigeeLlm documentation (https://github.com/google/adk-python/tree/main/contributing/samples/hello_world_apigeellm).
+        model="apigee/gemini-2.5-flash",
+        # The proxy URL of your deployed Apigee proxy including the base path
+        proxy_url=f"https://{APIGEE_PROXY_URL}",
+        # Pass necessary authentication/authorization headers (like an API key)
+        custom_headers={"foo": "bar"}
+    )
+
+    # Pass the configured model wrapper to your LlmAgent
+    agent = LlmAgent(
+        model=model,
+        name="my_governed_agent",
+        instruction="You are a helpful assistant powered by Gemini and governed by Apigee.",
+        # ... other agent parameters
+    )
+
+    ```
+
+=== "Java"
+
+    ```java
+    import com.google.adk.agents.LlmAgent;
+    import com.google.adk.models.ApigeeLlm;
+    import com.google.common.collect.ImmutableMap;
+
+    ApigeeLlm apigeeLlm =
+            ApigeeLlm.builder()
+                .modelName("apigee/gemini-2.5-flash") // Specify the Apigee route to your model. For more info, check out the ApigeeLlm documentation
+                .proxyUrl(APIGEE_PROXY_URL) //The proxy URL of your deployed Apigee proxy including the base path
+                .customHeaders(ImmutableMap.of("foo", "bar")) //Pass necessary authentication/authorization headers (like an API key)
+                .build();
+    LlmAgent agent =
+        LlmAgent.builder()
+            .model(apigeeLlm)
+            .name("my_governed_agent")
+            .description("my_governed_agent")
+            .instruction("You are a helpful assistant powered by Gemini and governed by Apigee.")
+            // tools will be added next
+            .build();
+    ```
+
+With this configuration, every API call from your agent will be routed through Apigee first, where all necessary policies (security, rate limiting, logging) are executed before the request is securely forwarded to the underlying AI model endpoint.
+
+For a full code example using the Apigee proxy, see [Hello World Apigee LLM](https://github.com/google/adk-python/tree/main/contributing/samples/hello_world_apigeellm)
 
 ## Using Hosted & Tuned Models on Vertex AI
 
@@ -797,140 +901,3 @@ agent_finetuned_gemini = LlmAgent(
     # ... other agent parameters
 )
 ```
-
-### Third-Party Models on Vertex AI (e.g., Anthropic Claude)
-
-Some providers, like Anthropic, make their models available directly through
-Vertex AI.
-
-=== "Python"
-
-    **Integration Method:** Uses the direct model string (e.g.,
-    `"claude-3-sonnet@20240229"`), *but requires manual registration* within ADK.
-
-    **Why Registration?** ADK's registry automatically recognizes `gemini-*` strings
-    and standard Vertex AI endpoint strings (`projects/.../endpoints/...`) and
-    routes them via the `google-genai` library. For other model types used directly
-    via Vertex AI (like Claude), you must explicitly tell the ADK registry which
-    specific wrapper class (`Claude` in this case) knows how to handle that model
-    identifier string with the Vertex AI backend.
-
-    **Setup:**
-
-    1. **Vertex AI Environment:** Ensure the consolidated Vertex AI setup (ADC, Env
-       Vars, `GOOGLE_GENAI_USE_VERTEXAI=TRUE`) is complete.
-
-    2. **Install Provider Library:** Install the necessary client library configured
-       for Vertex AI.
-
-        ```shell
-        pip install "anthropic[vertex]"
-        ```
-
-    3. **Register Model Class:** Add this code near the start of your application,
-       *before* creating an agent using the Claude model string:
-
-        ```python
-        # Required for using Claude model strings directly via Vertex AI with LlmAgent
-        from google.adk.models.anthropic_llm import Claude
-        from google.adk.models.registry import LLMRegistry
-
-        LLMRegistry.register(Claude)
-        ```
-
-       **Example:**
-
-       ```python
-       from google.adk.agents import LlmAgent
-       from google.adk.models.anthropic_llm import Claude # Import needed for registration
-       from google.adk.models.registry import LLMRegistry # Import needed for registration
-       from google.genai import types
-
-       # --- Register Claude class (do this once at startup) ---
-       LLMRegistry.register(Claude)
-
-       # --- Example Agent using Claude 3 Sonnet on Vertex AI ---
-
-       # Standard model name for Claude 3 Sonnet on Vertex AI
-       claude_model_vertexai = "claude-3-sonnet@20240229"
-
-       agent_claude_vertexai = LlmAgent(
-           model=claude_model_vertexai, # Pass the direct string after registration
-           name="claude_vertexai_agent",
-           instruction="You are an assistant powered by Claude 3 Sonnet on Vertex AI.",
-           generate_content_config=types.GenerateContentConfig(max_output_tokens=4096),
-           # ... other agent parameters
-       )
-       ```
-
-=== "Java"
-
-    **Integration Method:** Directly instantiate the provider-specific model class (e.g., `com.google.adk.models.Claude`) and configure it with a Vertex AI backend.
-
-    **Why Direct Instantiation?** The Java ADK's `LlmRegistry` primarily handles Gemini models by default. For third-party models like Claude on Vertex AI, you directly provide an instance of the ADK's wrapper class (e.g., `Claude`) to the `LlmAgent`. This wrapper class is responsible for interacting with the model via its specific client library, configured for Vertex AI.
-
-    **Setup:**
-
-    1.  **Vertex AI Environment:**
-        *   Ensure your Google Cloud project and region are correctly set up.
-        *   **Application Default Credentials (ADC):** Make sure ADC is configured correctly in your environment. This is typically done by running `gcloud auth application-default login`. The Java client libraries will use these credentials to authenticate with Vertex AI. Follow the [Google Cloud Java documentation on ADC](https://cloud.google.com/java/docs/reference/google-auth-library/latest/com.google.auth.oauth2.GoogleCredentials#com_google_auth_oauth2_GoogleCredentials_getApplicationDefault__) for detailed setup.
-
-    2.  **Provider Library Dependencies:**
-        *   **Third-Party Client Libraries (Often Transitive):** The ADK core library often includes the necessary client libraries for common third-party models on Vertex AI (like Anthropic's required classes) as **transitive dependencies**. This means you might not need to explicitly add a separate dependency for the Anthropic Vertex SDK in your `pom.xml` or `build.gradle`.
-
-    3.  **Instantiate and Configure the Model:**
-        When creating your `LlmAgent`, instantiate the `Claude` class (or the equivalent for another provider) and configure its `VertexBackend`.
-
-    **Example:**
-
-    ```java
-    import com.anthropic.client.AnthropicClient;
-    import com.anthropic.client.okhttp.AnthropicOkHttpClient;
-    import com.anthropic.vertex.backends.VertexBackend;
-    import com.google.adk.agents.LlmAgent;
-    import com.google.adk.models.Claude; // ADK's wrapper for Claude
-    import com.google.auth.oauth2.GoogleCredentials;
-    import java.io.IOException;
-
-    // ... other imports
-
-    public class ClaudeVertexAiAgent {
-
-        public static LlmAgent createAgent() throws IOException {
-            // Model name for Claude 3 Sonnet on Vertex AI (or other versions)
-            String claudeModelVertexAi = "claude-3-7-sonnet"; // Or any other Claude model
-
-            // Configure the AnthropicOkHttpClient with the VertexBackend
-            AnthropicClient anthropicClient = AnthropicOkHttpClient.builder()
-                .backend(
-                    VertexBackend.builder()
-                        .region("us-east5") // Specify your Vertex AI region
-                        .project("your-gcp-project-id") // Specify your GCP Project ID
-                        .googleCredentials(GoogleCredentials.getApplicationDefault())
-                        .build())
-                .build();
-
-            // Instantiate LlmAgent with the ADK Claude wrapper
-            LlmAgent agentClaudeVertexAi = LlmAgent.builder()
-                .model(new Claude(claudeModelVertexAi, anthropicClient)) // Pass the Claude instance
-                .name("claude_vertexai_agent")
-                .instruction("You are an assistant powered by Claude 3 Sonnet on Vertex AI.")
-                // .generateContentConfig(...) // Optional: Add generation config if needed
-                // ... other agent parameters
-                .build();
-
-            return agentClaudeVertexAi;
-        }
-
-        public static void main(String[] args) {
-            try {
-                LlmAgent agent = createAgent();
-                System.out.println("Successfully created agent: " + agent.name());
-                // Here you would typically set up a Runner and Session to interact with the agent
-            } catch (IOException e) {
-                System.err.println("Failed to create agent: " + e.getMessage());
-                e.printStackTrace();
-            }
-        }
-    }
-    ```
