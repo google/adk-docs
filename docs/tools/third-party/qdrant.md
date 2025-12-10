@@ -23,7 +23,7 @@ relevant details using natural language queries.
   [Qdrant Cloud](https://qdrant.tech/documentation/cloud-intro/) or run a local
   instance.
 - A Qdrant API Key (if using Qdrant Cloud). You can generate one in the
-  [Qdrant Dashboard](https://cloud.qdrant.tech/). Refer to the
+  [Qdrant Cloud Console](https://cloud.qdrant.io/). Refer to the
   [documentation](https://qdrant.tech/documentation/cloud/authentication/) for
   more information.
 - The [uv tool](https://docs.astral.sh/uv/) installed to start the MCP server
