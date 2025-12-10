@@ -423,7 +423,7 @@ To use an agent as a tool, wrap the agent with the AgentTool class.
 === "Python"
 
     ```py
-    tools=[AgentTool(agent=agent_b)]
+    tools=[AgentTool(agent=agent_b, include_plugins=True)]
     ```
 
 === "Go"
@@ -444,6 +444,7 @@ To use an agent as a tool, wrap the agent with the AgentTool class.
 The `AgentTool` class provides the following attributes for customizing its behavior:
 
 * **skip\_summarization: bool:** If set to True, the framework will **bypass the LLM-based summarization** of the tool agent's response. This can be useful when the tool's response is already well-formatted and requires no further processing.
+* **include\_plugins: bool:** If set to True (the default), plugins from the parent runner are propagated to the agent's runner. This means the agent inherits all plugins from its parent. Set to False to run the agent with an isolated plugin environment.
 
 ??? "Example"
 
