@@ -174,10 +174,10 @@ documentation:
     }
     ```
 
-=== "TS"
+=== "Typescript"
 
-    ADK relies on the `@toolbox-sdk/adk` go module to use Toolbox. Install the
-    module before getting started:
+    ADK relies on the `@toolbox-sdk/adk` TS package to use Toolbox. Install the
+    package before getting started:
 
     ```shell
     npm install @toolbox-sdk/adk
@@ -189,7 +189,7 @@ documentation:
     from your server using ADK:
 
     ```typescript
-    import {FunctionTool, InMemoryRunner, LlmAgent} from '@google/adk';
+    import {InMemoryRunner, LlmAgent} from '@google/adk';
     import {Content} from '@google/genai';
     import {ToolboxClient} from '@toolbox-sdk/core'
     
