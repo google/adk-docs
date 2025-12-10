@@ -74,7 +74,7 @@ Variable | Description | Default
 -------- | ----------- | -------
 `QDRANT_URL` | URL of the Qdrant server | `None` (required)
 `QDRANT_API_KEY` | API key for Qdrant Cloud authentication | `None`
-`COLLECTION_NAME` | Name of the collection to use | `None` (required)
+`COLLECTION_NAME` | Name of the collection to use | `None`
 `QDRANT_LOCAL_PATH` | Path for local persistent storage (alternative to URL) | `None`
 `EMBEDDING_MODEL` | Embedding model to use | `sentence-transformers/all-MiniLM-L6-v2`
 `EMBEDDING_PROVIDER` | Provider for embeddings (`fastembed` or `ollama`) | `fastembed`
