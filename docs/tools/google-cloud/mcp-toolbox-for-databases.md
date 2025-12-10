@@ -1,7 +1,7 @@
 # MCP Toolbox for Databases
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-go">Go</span><span class="lst-ts">TS</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-go">Go</span><span class="lst-ts">Typescript</span>
 </div>
 
 [MCP Toolbox for Databases](https://github.com/googleapis/genai-toolbox) is an
