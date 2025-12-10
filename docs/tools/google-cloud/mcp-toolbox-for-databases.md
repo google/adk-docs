@@ -188,7 +188,7 @@ documentation:
     Once you’re Toolbox server is configured and up and running, you can load tools
     from your server using ADK:
 
-    ```javascript
+    ```typescript
     import {FunctionTool, InMemoryRunner, LlmAgent} from '@google/adk';
     import {Content} from '@google/genai';
     import {ToolboxClient} from '@toolbox-sdk/core'
