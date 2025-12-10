@@ -191,7 +191,7 @@ documentation:
     ```typescript
     import {InMemoryRunner, LlmAgent} from '@google/adk';
     import {Content} from '@google/genai';
-    import {ToolboxClient} from '@toolbox-sdk/core'
+    import {ToolboxClient} from '@toolbox-sdk/adk'
     
     const toolboxClient = new ToolboxClient("http://127.0.0.1:5000");
     const loadedTools = await toolboxClient.loadToolset();
