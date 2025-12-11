@@ -443,7 +443,7 @@ While `InvocationContext` acts as the comprehensive internal container, ADK prov
         import { ToolContext } from '@google/adk';
 
         // __Assume this function is wrapped by a FunctionTool__
-        function searchExternalApi(query: string, toolContext: ToolContext): { [key: string]: any } {
+        function searchExternalApi(query: string, toolContext: ToolContext): { [key: string]: string } {
           const apiKey = toolContext.state.get('api_key') as string;
           if (!apiKey) {
              // Define required auth config
@@ -1402,7 +1402,7 @@ class MyControllingAgent(BaseAgent):
 
         // Example: Early termination based on some condition
         // Direct access to state via ctx.session.state or through ctx.session.state property if wrapped
-        if ((ctx.session.state as any)['critical_error_flag']) {
+        if ((ctx.session.state as { 'critical_error_flag': boolean })['critical_error_flag']) {
           console.log('Critical error detected, ending invocation.');
           ctx.endInvocation = true; // Signal framework to stop processing
           yield {
