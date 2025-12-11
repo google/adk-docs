@@ -30,15 +30,6 @@ text, audio, and video inputs, and they can provide text and audio output.
 
 <div class="grid cards" markdown>
 
--   :material-console-line: **Quickstart (Bidi-streaming)**
-
-    ---
-
-    In this quickstart, you'll build a simple agent and use streaming in ADK to
-    implement low-latency and bidirectional voice and video communication.
-
-    - [Quickstart (Bidi-streaming)](../get-started/streaming/quickstart-streaming.md)
-
 -   :material-console-line: **Bidi-streaming Demo Application**
 
     ---
