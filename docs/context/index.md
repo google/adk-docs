@@ -926,7 +926,7 @@ Use artifacts to handle files or large data blobs associated with the session. C
                ```typescript
                // Pseudocode: In a callback or initial tool
                import { CallbackContext } from '@google/adk'; // Or ToolContext
-               import { Part } from '@google/genai';
+               import type { Part } from '@google/genai';
 
                async function saveDocumentReference(context: CallbackContext, filePath: string) {
                  // Assume filePath is something like "gs://my-bucket/docs/report.pdf" or "/local/path/to/report.pdf"
@@ -1241,11 +1241,20 @@ def call_secure_api(tool_context: ToolContext, request_data: str) -> dict:
 
     ```typescript
     // Pseudocode: Tool requiring auth
-    import { ToolContext, AuthConfig } from '@google/adk'; // AuthConfig from ADK or custom
-    import { AuthHandler } from '@google/adk/auth'; // Hypothetical path for example
-
+    import { ToolContext } from '@google/adk'; // AuthConfig from ADK or custom
+    
+    // Define a local AuthConfig interface as it's not publicly exported by ADK
+    interface AuthConfig {
+      credentialKey: string;
+      authScheme: { type: string }; // Minimal representation for the example
+      // Add other properties if they become relevant for the example
+    }
+    
     // Define your required auth configuration (e.g., OAuth, API Key)
-    const MY_API_AUTH_CONFIG = new AuthConfig({ /* ... */ });
+    const MY_API_AUTH_CONFIG: AuthConfig = {
+      credentialKey: 'my-api-key', // Example key
+      authScheme: { type: 'api-key' }, // Example scheme type
+    };
     const AUTH_STATE_KEY = 'user:my_api_credential'; // Key to store retrieved credential
 
     async function callSecureApi(toolContext: ToolContext, requestData: string): Promise<Record<string, string>> {
@@ -1260,9 +1269,7 @@ def call_secure_api(tool_context: ToolContext, request_data: str) -> dict:
           // The framework handles yielding the event. The tool execution stops here for this turn.
           return { status: 'Authentication required. Please provide credentials.' };
         } catch (e) {
-          return { error: `Auth error: ${e}` }; // e.g., function_call_id missing
-        } catch (e) {
-          return { error: `Failed to request credential: ${e}` };
+          return { error: `Auth or credential request error: ${e}` };
         }
       }
 
@@ -1382,7 +1389,8 @@ class MyControllingAgent(BaseAgent):
 
     ```typescript
     // Pseudocode: Inside agent's runAsyncImpl
-    import { BaseAgent, InvocationContext, Event } from '@google/adk';
+    import { BaseAgent, InvocationContext } from '@google/adk';
+    import type { Event } from '@google/adk';
 
     class MyControllingAgent extends BaseAgent {
       async *runAsyncImpl(ctx: InvocationContext): AsyncGenerator<Event, void, undefined> {
