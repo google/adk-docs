@@ -98,7 +98,8 @@ In a terminal window, write your API key into an `.env` file as an environment v
 echo 'GOOGLE_API_KEY="YOUR_API_KEY"' > .env
 ```
 
-??? tip "Using other AI models with ADK"
+??? tip "Using other AI models with ADK"mistimdsumon@gmail.com
+
     ADK supports the use of many generative AI models. For more
     information on configuring other models in ADK agents, see
     [Models & Authentication](/adk-docs/agents/models).
