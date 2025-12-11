@@ -82,6 +82,34 @@ The central piece holding all this information together for a single, complete u
     }
     ```
 
+=== "TypeScript"
+
+    ```typescript
+    /* Conceptual Pseudocode: How the framework provides context (Internal Logic) */
+
+    const runner = new InMemoryRunner({ agent: myRootAgent });
+    const session = await runner.sessionService.createSession({ ... });
+    const userMessage = createUserContent(...);
+
+    // --- Inside runner.runAsync(...) ---
+    // 1. Framework creates the main context for this specific run
+    const invocationContext = new InvocationContext({
+      invocationId: "unique-id-for-this-run",
+      session: session,
+      userContent: userMessage,
+      agent: myRootAgent, // The starting agent
+      sessionService: runner.sessionService,
+      pluginManager: runner.pluginManager, 
+      // ... other necessary fields ...
+    });
+    //
+    // 2. Framework calls the agent's run method, passing the context implicitly
+    await myRootAgent.runAsync(invocationContext);
+    //   --- End Internal Logic ---
+
+    // As a developer, you work with the context objects provided in method arguments.
+    ```
+
 ## The Different types of Context
 
 While `InvocationContext` acts as the comprehensive internal container, ADK provides specialized context objects tailored to specific situations. This ensures you have the right tools and permissions for the task at hand without needing to handle the full complexity of the internal context everywhere. Here are the different "flavors" you'll encounter:
@@ -181,6 +209,24 @@ While `InvocationContext` acts as the comprehensive internal container, ADK prov
             }
         ```
 
+    === "TypeScript"
+
+        ```typescript
+        // Pseudocode: Agent implementation receiving InvocationContext
+        import { BaseAgent, InvocationContext, Event } from '@google/adk';
+
+        class MyAgent extends BaseAgent {
+          async *runAsyncImpl(ctx: InvocationContext): AsyncGenerator<Event, void, undefined> {
+            // Direct access example
+            const agentName = ctx.agent.name;
+            const sessionId = ctx.session.id;
+            console.log(`Agent ${agentName} running in session ${sessionId} for invocation ${ctx.invocationId}`);
+            // ... agent logic using ctx ...
+            yield; // ... event ...
+          }
+        }
+        ```
+
 2.  **`ReadonlyContext`**
     *   **Where Used:** Provided in scenarios where only read access to basic information is needed and mutation is disallowed (e.g., `InstructionProvider` functions). It's also the base class for other contexts.
     *   **Purpose:** Offers a safe, read-only view of fundamental contextual details.
@@ -218,6 +264,21 @@ While `InvocationContext` acts as the comprehensive internal container, ADK prov
             String userTier = context.state().get("user_tier", "standard");
             context.state().put('new_key', 'value'); //This would typically cause an error
             return "Process the request for a " + userTier + " user."
+        }
+        ```
+
+    === "TypeScript"
+
+        ```typescript
+        // Pseudocode: Instruction provider receiving ReadonlyContext
+        import { ReadonlyContext } from '@google/adk';
+
+        function myInstructionProvider(context: ReadonlyContext): string {
+          // Read-only access example
+          // The state object is read-only
+          const userTier = context.state.get('user_tier') ?? 'standard';
+          // context.state.set('new_key', 'value'); // This would fail or throw an error
+          return `Process the request for a ${userTier} user.`;
         }
         ```
     
@@ -278,6 +339,25 @@ While `InvocationContext` acts as the comprehensive internal container, ADK prov
             // Maybe<Part> configPart = callbackContext.loadArtifact("model_config.json");
             System.out.println("Preparing model call " + callCount + 1);
             return Maybe.empty(); // Allow model call to proceed
+        }
+        ```
+
+    === "TypeScript"
+
+        ```typescript
+        // Pseudocode: Callback receiving CallbackContext
+        import { CallbackContext, LlmRequest } from '@google/adk';
+        import { Content } from '@google/genai';
+
+        function myBeforeModelCb(callbackContext: CallbackContext, request: LlmRequest): Content | undefined {
+          // Read/Write state example
+          const callCount = (callbackContext.state.get('model_calls') as number) || 0;
+          callbackContext.state.set('model_calls', callCount + 1); // Modify state
+
+          // Optionally load an artifact
+          // const configPart = await callbackContext.loadArtifact('model_config.json');
+          console.log(`Preparing model call #${callCount + 1} for invocation ${callbackContext.invocationId}`);
+          return undefined; // Allow model call to proceed
         }
         ```
 
@@ -353,6 +433,36 @@ While `InvocationContext` acts as the comprehensive internal container, ADK prov
             // Single<List<String>> availableFiles = toolContext.listArtifacts();
     
             return Map.of("result", "Data for " + query + " fetched");
+        }
+        ```
+
+    === "TypeScript"
+
+        ```typescript
+        // Pseudocode: Tool function receiving ToolContext
+        import { ToolContext } from '@google/adk';
+
+        // __Assume this function is wrapped by a FunctionTool__
+        function searchExternalApi(query: string, toolContext: ToolContext): { [key: string]: any } {
+          const apiKey = toolContext.state.get('api_key') as string;
+          if (!apiKey) {
+             // Define required auth config
+             // const authConfig = new AuthConfig(...);
+             // toolContext.requestCredential(authConfig); // Request credentials
+             // The 'actions' property is now automatically updated by requestCredential
+             return { status: 'Auth Required' };
+          }
+
+          // Use the API key...
+          console.log(`Tool executing for query '${query}' using API key. Invocation: ${toolContext.invocationId}`);
+
+          // Optionally search memory or list artifacts
+          // Note: accessing services like memory/artifacts is typically async in TS, 
+          // so you would need to mark this function 'async' if you reused them.
+          // toolContext.searchMemory(`info related to ${query}`).then(...)
+          // toolContext.listArtifacts().then(...)
+
+          return { result: `Data for ${query} fetched.` };
         }
         ```
 
@@ -440,6 +550,35 @@ You'll frequently need to read information stored within the context.
             // ... callback logic ...
         ```
 
+    === "TypeScript"
+
+        ```typescript
+        // Pseudocode: In a Tool function
+        import { ToolContext } from '@google/adk';
+
+        async function myTool(toolContext: ToolContext) {
+          const userPref = toolContext.state.get('user_display_preference', 'default_mode');
+          const apiEndpoint = toolContext.state.get('app:api_endpoint'); // Read app-level state
+
+          if (userPref === 'dark_mode') {
+            // ... apply dark mode logic ...
+          }
+          console.log(`Using API endpoint: ${apiEndpoint}`);
+          // ... rest of tool logic ...
+        }
+
+        // Pseudocode: In a Callback function
+        import { CallbackContext } from '@google/adk';
+
+        function myCallback(callbackContext: CallbackContext) {
+          const lastToolResult = callbackContext.state.get('temp:last_api_result'); // Read temporary state
+          if (lastToolResult) {
+            console.log(`Found temporary result from last tool: ${lastToolResult}`);
+          }
+          // ... callback logic ...
+        }
+        ```
+
 *   **Getting Current Identifiers:** Useful for logging or custom logic based on the current operation.
 
     === "Python"
@@ -476,6 +615,21 @@ You'll frequently need to read information stored within the context.
                     String functionCallId = toolContext.functionCallId().get(); // Specific to ToolContext
                     System.out.println("Log: Invocation= " + invId &+ " Agent= " + agentName);
                 }
+        ```
+
+    === "TypeScript"
+
+        ```typescript
+        // Pseudocode: In any context (ToolContext shown)
+        import { ToolContext } from '@google/adk';
+
+        function logToolUsage(toolContext: ToolContext) {
+          const agentName = toolContext.agentName;
+          const invId = toolContext.invocationId;
+          const functionCallId = toolContext.functionCallId ?? 'N/A'; // Specific to ToolContext
+
+          console.log(`Log: Invocation=${invId}, Agent=${agentName}, FunctionCallID=${functionCallId} - Tool Executed.`);
+        }
         ```
 
 *   **Accessing the Initial User Input:** Refer back to the message that started the current invocation.
@@ -525,6 +679,23 @@ You'll frequently need to read information stored within the context.
                 ...
                 System.out.println("This invocation started with user input: " + initialText)
             }
+        }
+        ```
+
+    === "TypeScript"
+
+        ```typescript
+        // Pseudocode: In a Callback
+        import { CallbackContext } from '@google/adk';
+
+        function checkInitialIntent(callbackContext: CallbackContext) {
+          let initialText = 'N/A';
+          const userContent = callbackContext.userContent;
+          if (userContent?.parts?.length) {
+            initialText = userContent.parts[0].text ?? 'Non-text input';
+          }
+
+          console.log(`This invocation started with user input: '${initialText}'`);
         }
         ```
     
@@ -596,6 +767,33 @@ State is crucial for memory and data flow. When you modify state using `Callback
         }
         ```
 
+    === "TypeScript"
+
+        ```typescript
+        // Pseudocode: Tool 1 - Fetches user ID
+        import { ToolContext } from '@google/adk';
+        import { v4 as uuidv4 } from 'uuid';
+
+        function getUserProfile(toolContext: ToolContext): Record<string, string> {
+          const userId = uuidv4(); // Simulate fetching ID
+          // Save the ID to state for the next tool
+          toolContext.state.set('temp:current_user_id', userId);
+          return { profile_status: 'ID generated' };
+        }
+
+        // Pseudocode: Tool 2 - Uses user ID from state
+        function getUserOrders(toolContext: ToolContext): Record<string, string | string[]> {
+          const userId = toolContext.state.get('temp:current_user_id');
+          if (!userId) {
+            return { error: 'User ID not found in state' };
+          }
+
+          console.log(`Fetching orders for user ID: ${userId}`);
+          // ... logic to fetch orders using user_id ...
+          return { orders: ['order123', 'order456'] };
+        }
+        ```
+
 *   **Updating User Preferences:**
 
     === "Python"
@@ -632,6 +830,21 @@ State is crucial for memory and data flow. When you modify state using `Callback
             toolContext.state().put(stateKey, value);
             System.out.println("Set user preference '" + preference + "' to '" + value + "'");
             return Map.of("status", "Preference updated");
+        }
+        ```
+
+    === "TypeScript"
+
+        ```typescript
+        // Pseudocode: Tool or Callback identifies a preference
+        import { ToolContext } from '@google/adk'; // Or CallbackContext
+
+        function setUserPreference(toolContext: ToolContext, preference: string, value: string): Record<string, string> {
+          // Use 'user:' prefix for user-level state (if using a persistent SessionService)
+          const stateKey = `user:${preference}`;
+          toolContext.state.set(stateKey, value);
+          console.log(`Set user preference '${preference}' to '${value}'`);
+          return { status: 'Preference updated' };
         }
         ```
 
@@ -706,6 +919,31 @@ Use artifacts to handle files or large data blobs associated with the session. C
                     
                // Example usage:
                // saveDocumentReference(context, "gs://my-bucket/docs/report.pdf")
+               ```
+
+        === "TypeScript"
+
+               ```typescript
+               // Pseudocode: In a callback or initial tool
+               import { CallbackContext } from '@google/adk'; // Or ToolContext
+               import { Part } from '@google/genai';
+
+               async function saveDocumentReference(context: CallbackContext, filePath: string) {
+                 // Assume filePath is something like "gs://my-bucket/docs/report.pdf" or "/local/path/to/report.pdf"
+                 try {
+                   // Create a Part containing the path/URI text
+                   const artifactPart: Part = { text: filePath };
+                   const version = await context.saveArtifact('document_to_summarize.txt', artifactPart);
+                   console.log(`Saved document reference '${filePath}' as artifact version ${version}`);
+                   // Store the filename in state if needed by other tools
+                   context.state.set('temp:doc_artifact_name', 'document_to_summarize.txt');
+                 } catch (e) {
+                   console.error(`Unexpected error saving artifact reference: ${e}`);
+                 }
+               }
+
+               // Example usage:
+               // saveDocumentReference(callbackContext, "gs://my-bucket/docs/report.pdf");
                ```
 
     2.  **Summarizer Tool:** Load the artifact to get the path/URI, read the actual document content using appropriate libraries, summarize, and return the result.
@@ -827,6 +1065,61 @@ Use artifacts to handle files or large data blobs associated with the session. C
             }
             ```
         
+        === "TypeScript"
+
+            ```typescript
+            // Pseudocode: In the Summarizer tool function
+            import { ToolContext } from '@google/adk';
+
+            async function summarizeDocumentTool(toolContext: ToolContext): Promise<Record<string, string>> {
+              const artifactName = toolContext.state.get('temp:doc_artifact_name') as string;
+              if (!artifactName) {
+                return { error: 'Document artifact name not found in state.' };
+              }
+
+              try {
+                // 1. Load the artifact part containing the path/URI
+                const artifactPart = await toolContext.loadArtifact(artifactName);
+                if (!artifactPart?.text) {
+                  return { error: `Could not load artifact or artifact has no text path: ${artifactName}` };
+                }
+
+                const filePath = artifactPart.text;
+                console.log(`Loaded document reference: ${filePath}`);
+
+                // 2. Read the actual document content (outside ADK context)
+                let documentContent = '';
+                if (filePath.startsWith('gs://')) {
+                  // Example: Use GCS client library to download/read
+                  // const storage = new Storage();
+                  // const bucket = storage.bucket('my-bucket');
+                  // const file = bucket.file(filePath.replace('gs://my-bucket/', ''));
+                  // const [contents] = await file.download();
+                  // documentContent = contents.toString();
+                } else if (filePath.startsWith('/')) {
+                  // Example: Use local file system
+                  // import { readFile } from 'fs/promises';
+                  // documentContent = await readFile(filePath, 'utf8');
+                } else {
+                  return { error: `Unsupported file path scheme: ${filePath}` };
+                }
+
+                // 3. Summarize the content
+                if (!documentContent) {
+                   return { error: 'Failed to read document content.' };
+                }
+
+                // const summary = summarizeText(documentContent); // Call your summarization logic
+                const summary = `Summary of content from ${filePath}`; // Placeholder
+
+                return { summary };
+
+              } catch (e) {
+                 return { error: `Error processing artifact: ${e}` };
+              }
+            }
+            ```
+        
 *   **Listing Artifacts:** Discover what files are available.
     
     === "Python"
@@ -866,6 +1159,23 @@ Use artifacts to handle files or large data blobs associated with the session. C
             } catch(IllegalArgumentException e){
                 return Map.of("error", "Artifact service error: " + e);
             }
+        }
+        ```
+
+    === "TypeScript"
+
+        ```typescript
+        // Pseudocode: In a tool function
+        import { ToolContext } from '@google/adk';
+
+        async function checkAvailableDocs(toolContext: ToolContext): Promise<Record<string, string[] | string>> {
+          try {
+            const artifactKeys = await toolContext.listArtifacts();
+            console.log(`Available artifacts: ${artifactKeys}`);
+            return { available_docs: artifactKeys };
+          } catch (e) {
+            return { error: `Artifact service error: ${e}` };
+          }
         }
         ```
 
@@ -926,6 +1236,62 @@ def call_secure_api(tool_context: ToolContext, request_data: str) -> dict:
         return {"error": "Failed to use credential"}
 
 ```
+
+    === "TypeScript"
+
+    ```typescript
+    // Pseudocode: Tool requiring auth
+    import { ToolContext, AuthConfig } from '@google/adk'; // AuthConfig from ADK or custom
+    import { AuthHandler } from '@google/adk/auth'; // Hypothetical path for example
+
+    // Define your required auth configuration (e.g., OAuth, API Key)
+    const MY_API_AUTH_CONFIG = new AuthConfig({ /* ... */ });
+    const AUTH_STATE_KEY = 'user:my_api_credential'; // Key to store retrieved credential
+
+    async function callSecureApi(toolContext: ToolContext, requestData: string): Promise<Record<string, string>> {
+      // 1. Check if credential already exists in state
+      const credential = toolContext.state.get(AUTH_STATE_KEY);
+
+      if (!credential) {
+        // 2. If not, request it
+        console.log('Credential not found, requesting...');
+        try {
+          toolContext.requestCredential(MY_API_AUTH_CONFIG);
+          // The framework handles yielding the event. The tool execution stops here for this turn.
+          return { status: 'Authentication required. Please provide credentials.' };
+        } catch (e) {
+          return { error: `Auth error: ${e}` }; // e.g., function_call_id missing
+        } catch (e) {
+          return { error: `Failed to request credential: ${e}` };
+        }
+      }
+
+      // 3. If credential exists (might be from a previous turn after request)
+      //    or if this is a subsequent call after auth flow completed externally
+      try {
+        // Optionally, re-validate/retrieve if needed, or use directly
+        // This might retrieve the credential if the external flow just completed
+        const authCredentialObj = toolContext.getAuthResponse(MY_API_AUTH_CONFIG);
+        const apiKey = authCredentialObj?.apiKey; // Or accessToken, etc.
+
+        // Store it back in state for future calls within the session
+        // Note: In strict TS, might need to cast or serialize authCredentialObj
+        toolContext.state.set(AUTH_STATE_KEY, JSON.stringify(authCredentialObj));
+
+        console.log(`Using retrieved credential to call API with data: ${requestData}`);
+        // ... Make the actual API call using apiKey ...
+        const apiResult = `API result for ${requestData}`;
+
+        return { result: apiResult };
+      } catch (e) {
+        // Handle errors retrieving/using the credential
+        console.error(`Error using credential: ${e}`);
+        // Maybe clear the state key if credential is invalid?
+        // toolContext.state.set(AUTH_STATE_KEY, null);
+        return { error: 'Failed to use credential' };
+      }
+    }
+    ```
 *Remember: `request_credential` pauses the tool and signals the need for authentication. The user/system provides credentials, and on a subsequent call, `get_auth_response` (or checking state again) allows the tool to proceed.* The `tool_context.function_call_id` is used implicitly by the framework to link the request and response.
 
 ### Leveraging Memory 
@@ -955,6 +1321,29 @@ def find_related_info(tool_context: ToolContext, topic: str) -> dict:
     except Exception as e:
         return {"error": f"Unexpected error searching memory: {e}"}
 ```
+
+    === "TypeScript"
+
+    ```typescript
+    // Pseudocode: Tool using memory search
+    import { ToolContext } from '@google/adk';
+
+    async function findRelatedInfo(toolContext: ToolContext, topic: string): Promise<Record<string, string>> {
+      try {
+        const searchResults = await toolContext.searchMemory(`Information about ${topic}`);
+        if (searchResults.results?.length) {
+          console.log(`Found ${searchResults.results.length} memory results for '${topic}'`);
+          // Process searchResults.results
+          const topResultText = searchResults.results[0].text;
+          return { memory_snippet: topResultText };
+        } else {
+          return { message: 'No relevant memories found.' };
+        }
+      } catch (e) {
+         return { error: `Memory service error: ${e}` }; // e.g., Service not configured
+      }
+    }
+    ```
 
 ### Advanced: Direct `InvocationContext` Usage 
 
@@ -988,6 +1377,39 @@ class MyControllingAgent(BaseAgent):
         # ... Normal agent processing ...
         yield # ... event ...
 ```
+
+    === "TypeScript"
+
+    ```typescript
+    // Pseudocode: Inside agent's runAsyncImpl
+    import { BaseAgent, InvocationContext, Event } from '@google/adk';
+
+    class MyControllingAgent extends BaseAgent {
+      async *runAsyncImpl(ctx: InvocationContext): AsyncGenerator<Event, void, undefined> {
+        // Example: Check if a specific service is available
+        if (!ctx.memoryService) {
+          console.log('Memory service is not available for this invocation.');
+          // Potentially change agent behavior
+        }
+
+        // Example: Early termination based on some condition
+        // Direct access to state via ctx.session.state or through ctx.session.state property if wrapped
+        if ((ctx.session.state as any)['critical_error_flag']) {
+          console.log('Critical error detected, ending invocation.');
+          ctx.endInvocation = true; // Signal framework to stop processing
+          yield {
+            author: this.name,
+            invocationId: ctx.invocationId,
+            content: { parts: [{ text: 'Stopping due to critical error.' }] }
+          } as Event;
+          return; // Stop this agent's execution
+        }
+
+        // ... Normal agent processing ...
+        yield; // ... event ...
+      }
+    }
+    ```
 
 Setting `ctx.end_invocation = True` is a way to gracefully stop the entire request-response cycle from within the agent or its callbacks/tools (via their respective context objects which also have access to modify the underlying `InvocationContext`'s flag).
 
