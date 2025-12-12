@@ -337,6 +337,33 @@ agent will be unable to function.
         To learn how to use `adk api_server` for testing, refer to the
         [documentation on using the API server](/adk-docs/runtime/api-server/).
 
+    === "Debug (runner.run_debug())"
+
+        For quick debugging and experimentation, the `InMemoryRunner` provides a `run_debug()` helper method. This method significantly reduces boilerplate code, allowing you to interact with your agent in as little as two lines, as opposed to the 7-8 lines previously required for setting up sessions and handling events.
+
+        The following example shows how to use `run_debug()` to send a message to your agent and receive a response:
+
+        ```python
+        import asyncio
+        from google.adk.runners import InMemoryRunner
+        from multi_tool_agent import agent
+
+        async def main():
+            runner = InMemoryRunner(agent=agent.root_agent)
+            await runner.run_debug("What's the weather in San Francisco?")
+
+        if __name__ == "__main__":
+            asyncio.run(main())
+        ```
+
+        `run_debug()` also supports:
+
+        *   **Multiple messages:** Pass a list of strings to send multiple messages in sequence.
+        *   **Conversation persistence:** The runner automatically manages the session, so you can have a continuous conversation.
+        *   **Separate sessions:** Use the `user_id` and `session_id` parameters to create and manage separate conversations.
+        *   **Verbose mode:** Set `verbose=True` to see detailed output, including tool calls and results.
+        *   **Event capture:** Set `quiet=True` to capture and inspect events without printing them to the console.
+
 === "Java"
 
     Using the terminal, navigate to the parent directory of your agent project
@@ -435,7 +462,7 @@ agent will be unable to function.
 ### 📝 Example prompts to try
 
 * What is the weather in New York?
-* What is the time in New York?
+* What is the time in in New York?
 * What is the weather in Paris?
 * What is the time in Paris?
 
