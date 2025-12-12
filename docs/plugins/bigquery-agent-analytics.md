@@ -127,10 +127,12 @@ app = App(
 ### Run and test agent
 
 Test the plugin by running the agent and making a few requests through the chat
-interface. These actions create events which are recorded in your Google Cloud project BigQuery instance.
+interface, such as ”tell me what you can do” or  "List datasets in my cloud project <your-gcp-project-id> “. These actions create events which are
+recorded in your Google Cloud project BigQuery instance. Once these events have
+been processed, you can view the data for them in the [BigQuery Console](https://console.cloud.google.com/bigquery), using this query
 
 ```sql
-SELECT timestamp, event_type, JSON_VALUE(content, '$.text') as text_content
+SELECT timestamp, event_type, content 
 FROM `your-gcp-project-id.your-big-query-dataset-id.agent_events_v2`
 ORDER BY timestamp DESC
 LIMIT 20;
@@ -148,10 +150,57 @@ You can customize the plugin using `BigQueryLoggerConfig`.
 -   **`batch_size`** (`int`, default: `1`): The number of events to batch before writing to BigQuery.
 -   **`batch_flush_interval`** (`float`, default: `1.0`): The maximum time (in seconds) to wait before flushing a partial batch.
 -   **`shutdown_timeout`** (`float`, default: `10.0`): Seconds to wait for logs to flush during shutdown.
--   **`event_allowlist`** (`Optional[List[str]]`, default: `None`): A list of event types to log.
--   **`event_denylist`** (`Optional[List[str]]`, default: `None`): A list of event types to skip logging.
+-   **`event_allowlist`** (`Optional[List[str]]`, default: `None`): A list
+    of event types to log. If `None`, all events are logged except those in
+    `event_denylist`. For a comprehensive list of supported event types, refer
+    to the [Event types and payloads](#event-types-deprecated) section.
+-   **`event_denylist`** (`Optional[List[str]]`, default: `None`): A list of
+    event types to skip logging. For a comprehensive list of supported event
+    types, refer to the [Event types and payloads](#event-types-deprecated) section.
 -   **`content_formatter`** (`Optional[Callable[[Any, str], Any]]`, default: `None`): An optional function to format event content before logging.
 -   **`log_multi_modal_content`** (`bool`, default: `True`): Whether to log detailed content parts (including GCS references).
+
+
+The following code sample shows how to define a configuration for the
+BigQuery Agent Analytics plugin:
+
+```python
+import json
+import re
+
+from google.adk.plugins.bigquery_agent_analytics_plugin import BigQueryLoggerConfig
+
+def redact_dollar_amounts(event_content: Any) -> str:
+    """
+    Custom formatter to redact dollar amounts (e.g., $600, $12.50)
+    and ensure JSON output if the input is a dict.
+    """
+    text_content = ""
+    if isinstance(event_content, dict):
+        text_content = json.dumps(event_content)
+    else:
+        text_content = str(event_content)
+
+    # Regex to find dollar amounts: $ followed by digits, optionally with commas or decimals.
+    # Examples: $600, $1,200.50, $0.99
+    redacted_content = re.sub(r'\$\d+(?:,\d{3})*(?:\.\d+)?', 'xxx', text_content)
+
+    return redacted_content
+
+config = BigQueryLoggerConfig(
+    enabled=True,
+    event_allowlist=["LLM_REQUEST", "LLM_RESPONSE"], # Only log these events
+    # event_denylist=["TOOL_STARTING"], # Skip these events
+    shutdown_timeout=10.0, # Wait up to 10s for logs to flush on exit
+    client_close_timeout=2.0, # Wait up to 2s for BQ client to close
+    max_content_length=500, # Truncate content to 500 chars (default)
+    content_formatter=redact_dollar_amounts, # Redact the dollar amounts in the logging content
+
+)
+
+plugin = BigQueryAgentAnalyticsPlugin(..., config=config)
+```
+
 
 ## Schema and production setup
 
