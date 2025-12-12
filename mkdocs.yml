@@ -251,9 +251,9 @@ nav:
       - Cloud Run: deploy/cloud-run.md
       - GKE: deploy/gke.md
     - Observability:
-      - BigQuery Agent Analytics: observability/bigquery-agent-analytics.md
       - Logging: observability/logging.md
       - Cloud Trace: observability/cloud-trace.md
+      - BigQuery Agent Analytics: observability/bigquery-agent-analytics.md
       - AgentOps: observability/agentops.md
       - Arize AX: observability/arize-ax.md
       - Freeplay: observability/freeplay.md
