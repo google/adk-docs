@@ -202,6 +202,7 @@ nav:
       - Multi-agent systems: agents/multi-agents.md
       - Agent Config: agents/config.md
       - Models & Authentication: agents/models.md
+      - Interactions API: agents/interactions-api.md
     - Tools for Agents:
       - tools/index.md
       - Built-in tools: tools/built-in-tools.md
