@@ -300,6 +300,18 @@ To create an Application Integration Toolset for Integration Connectors, follow 
 
     * You can provide a service account to be used instead of default credentials by generating a [Service Account Key](https://cloud.google.com/iam/docs/keys-create-delete#creating), and providing the right [Application Integration and Integration Connector IAM roles](#prerequisites) to the service account.
     * To find the list of supported entities and actions for a connection, use the Connectors APIs: [listActions](https://cloud.google.com/integration-connectors/docs/reference/rest/v1/projects.locations.connections.connectionSchemaMetadata/listActions) or [listEntityTypes](https://cloud.google.com/integration-connectors/docs/reference/rest/v1/projects.locations.connections.connectionSchemaMetadata/listEntityTypes).
+    * You can override the default `ExecuteConnection` integration by using the `connection_template_override` parameter.
+
+      ```py
+      from google.adk.tools.application_integration_tool.application_integration_toolset import ApplicationIntegrationToolset
+
+      connector_tool = ApplicationIntegrationToolset(
+          project="test-project",
+          location="us-central1",
+          connection="test-connection",
+          connection_template_override="MyExecuteConnection",
+      )
+      ```
 
 
     `ApplicationIntegrationToolset` supports `auth_scheme` and `auth_credential` for **dynamic OAuth2 authentication** for Integration Connectors. To use it, create a tool similar to this in the `tools.py` file:
@@ -380,7 +392,7 @@ To create an Application Integration Toolset for Integration Connectors, follow 
     adk web
     ```
 
-After completing the above steps, go to [http://localhost:8000](http://localhost:8000), and choose
+   After completing the above steps, go to [http://localhost:8000](http://localhost:8000), and choose
    `my\_agent` agent (which is the same as the agent folder name).
 
 
@@ -546,4 +558,3 @@ workflow as a tool for your agent or create a new one.
       ```
 
     After completing the above steps, go to [http://localhost:8000](http://localhost:8000), and choose the `my_agent` agent (which is the same as the agent folder name).
-
