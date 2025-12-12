@@ -225,7 +225,9 @@ nav:
         - GitLab: tools/third-party/gitlab.md
         - Hugging Face: tools/third-party/hugging-face.md
         - Linear: tools/third-party/linear.md
+        - n8n: tools/third-party/n8n.md
         - Notion: tools/third-party/notion.md
+        - PayPal: tools/third-party/paypal.md
         - Qdrant: tools/third-party/qdrant.md
         - ScrapeGraphAI: tools/third-party/scrapegraphai.md
         - Tavily: tools/third-party/tavily.md
