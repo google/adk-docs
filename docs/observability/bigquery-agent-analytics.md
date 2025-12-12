@@ -55,7 +55,7 @@ For the agent to work properly, the principal (e.g., service account, user accou
 
 ## Use with agent
 
-You use the BigQuery Analytics Plugin by configuring and registering it with
+You use the BigQuery Agent Analytics Plugin by configuring and registering it with
 your ADK agent's App object. The following example shows an implementation of an
 agent with this plugin, including GCS offloading:
 
@@ -625,7 +625,7 @@ If you need the agent to create this table, you need to grant the `roles/bigquer
 
 ### Use with agent
 
-You use the BigQuery Analytics Plugin by configuring and registering it with
+You use the BigQuery Agent Analytics Plugin by configuring and registering it with
 your ADK agent's App object. The following example shows an implementation of an
 agent with this plugin and BigQuery tools enabled:
 
