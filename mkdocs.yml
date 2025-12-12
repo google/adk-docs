@@ -138,6 +138,7 @@ plugins:
         'tools/confirmation.md': 'tools-custom/confirmation.md'
         'tools/performance.md': 'tools-custom/performance.md'
         'tools/mcp-tools.md': 'tools-custom/mcp-tools.md'
+        'tools/google-cloud/bigquery-agent-analytics.md': 'observability/bigquery-agent-analytics.md'
   - llmstxt:
       markdown_description: An open-source, code-first toolkit for building, evaluating, and deploying sophisticated AI agents with flexibility and control.
       full_output: llms-full.txt
@@ -210,7 +211,6 @@ nav:
       - Google Cloud tools:
         - Overview: tools/google-cloud-tools.md
         - MCP Toolbox for Databases: tools/google-cloud/mcp-toolbox-for-databases.md
-        - BigQuery Agent Analytics: tools/google-cloud/bigquery-agent-analytics.md
         - Code Execution with Agent Engine: tools/google-cloud/code-exec-agent-engine.md
       - Third-party tools:
         - tools/third-party/index.md
@@ -251,6 +251,7 @@ nav:
       - Cloud Run: deploy/cloud-run.md
       - GKE: deploy/gke.md
     - Observability:
+      - BigQuery Agent Analytics: observability/bigquery-agent-analytics.md
       - Logging: observability/logging.md
       - Cloud Trace: observability/cloud-trace.md
       - AgentOps: observability/agentops.md
