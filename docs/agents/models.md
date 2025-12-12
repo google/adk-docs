@@ -29,9 +29,9 @@ The following sections guide you through using these methods based on your needs
 
 ## Google Gemini models
 
-ADK support the Google Gemini family of generative AI models that provide a powerful
-set of models with a wide range of features. ADK provides a number of
-integrations with Gemini models to support features including
+ADK supports the Google Gemini family of generative AI models that provide a
+powerful set of models with a wide range of features. ADK provides support for many
+Gemini features, including
 [Code Execution](/adk-docs/tools/built-in-tools/#code-execution),
 [Google Search](/adk-docs/tools/built-in-tools/#google-search),
 [Context caching](/adk-docs/context/caching/),
@@ -45,10 +45,10 @@ and the [Interactions API](#interactions-api).
 </div>
 
 The Gemini [Interactions API](https://ai.google.dev/gemini-api/docs/interactions)
-provides stateful conversation capabilities, allowing you to chain interactions
-using a `previous_interaction_id` instead of sending the full conversation
-history with each request. Using this feature can be more efficient for long
-conversations.
+is an alternative to the ***generateContent*** inference API, which provides
+stateful conversation capabilities, allowing you to chain interactions using a
+`previous_interaction_id` instead of sending the full conversation history with
+each request. Using this feature can be more efficient for long conversations.
 
 You can enable the Interactions API by settting the `use_interactions_api=True`
 parameter in the Gemini model configuration, as shown in the following code
