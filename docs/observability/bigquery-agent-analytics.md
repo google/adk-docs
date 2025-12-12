@@ -1,13 +1,13 @@
-# BigQuery Agent Analytics Plugin (v2)
+# BigQuery Agent Analytics Plugin
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.21.0+</span><span class="lst-preview">Preview</span>
 </div>
 
 !!! important "Version Requirement"
-    To use the V2 features described in this document (including Multimodal Logging and GCS Offloading), please update the BigQuery Agent Analytics Plugin to version **1.21.0 or later**.
+    To use the features described in this document (including Multimodal Logging and GCS Offloading), please update the ADK to version **1.21.0 or later**.
 
-The BigQuery Agent Analytics Plugin (v2) significantly enhances the Agent Development Kit (ADK) by providing a robust solution for in-depth agent behavior analysis. Using the ADK Plugin architecture and the **BigQuery Storage Write API**, it captures and logs critical operational events directly into a Google BigQuery table, empowering you with advanced capabilities for debugging, real-time monitoring, and comprehensive offline performance evaluation.
+The BigQuery Agent Analytics Plugin significantly enhances the Agent Development Kit (ADK) by providing a robust solution for in-depth agent behavior analysis. Using the ADK Plugin architecture and the **BigQuery Storage Write API**, it captures and logs critical operational events directly into a Google BigQuery table, empowering you with advanced capabilities for debugging, real-time monitoring, and comprehensive offline performance evaluation.
 
 Version 1.21.0 introduces **Hybrid Multimodal Logging**, allowing you to log large payloads (images, audio, blobs) by offloading them to Google Cloud Storage (GCS) while keeping a structured reference (`ObjectRef`) in BigQuery.
 
