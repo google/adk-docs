@@ -223,6 +223,14 @@ While you have considerable flexibility in defining your function, remember that
 * **Build for Parallel Execution:** Improve function calling performance when multiple tools are run by building for asynchronous operation. For information on enabling parallel execution for tools, see
 [Increase tool performance with parallel execution](/adk-docs/tools-custom/performance/).
 
+## Simplified Tool Declaration with JSON Schema (Experimental)
+
+ADK now offers a simplified way to declare function tools by generating a JSON schema from your function's signature using Pydantic. This feature can be enabled via a feature flag.
+
+When enabled, `build_function_declaration` will automatically generate a JSON schema for your function's parameters, which simplifies the declaration process and provides more accurate type information to the LLM.
+
+This feature is currently experimental and can be enabled by setting the `ADK_ENABLE_JSON_SCHEMA_FOR_FUNC_DECL` environment variable to `true`.
+
 ## Long Running Function Tools {#long-run-tool}
 
 This tool is designed to help you start and manage tasks that are handled outside the operation of your agent workflow, and require a significant amount of processing time, without blocking the agent's execution. This tool is a subclass of `FunctionTool`.
