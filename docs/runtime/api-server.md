@@ -1,7 +1,7 @@
 # Use the API Server
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
 Before you deploy your agent, you should test it to ensure that it is working as
@@ -12,6 +12,12 @@ to use the ADK API server.
 
     ```py
     adk api_server
+    ```
+
+=== "TypeScript"
+
+    ```shell
+    npx adk api_server
     ```
 
 === "Go"
@@ -57,12 +63,6 @@ to use the ADK API server.
 
     In Java, both the Dev UI and the API server are bundled together.
 
-=== "TypeScript"
-
-    ```shell
-    npx adk api_server
-    ```
-
 This command will launch a local web server, where you can run cURL commands or send API requests to test your agent.
 
 !!! tip "Advanced Usage and Debugging"
@@ -98,15 +98,6 @@ The output should appear similar to:
     INFO:     Uvicorn running on http://localhost:8000 (Press CTRL+C to quit)
     ```
 
-=== "Java"
-
-    ```shell
-    2025-05-13T23:32:08.972-06:00  INFO 37864 --- [ebServer.main()] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
-    2025-05-13T23:32:08.980-06:00  INFO 37864 --- [ebServer.main()] com.google.adk.web.AdkWebServer          : Started AdkWebServer in 1.15 seconds (process running for 2.877)
-    2025-05-13T23:32:08.981-06:00  INFO 37864 --- [ebServer.main()] com.google.adk.web.AdkWebServer          : AdkWebServer application started successfully.
-    ```
-    ```
-
 === "TypeScript"
 
     ```shell
@@ -115,6 +106,15 @@ The output should appear similar to:
     |                                                                             |
     | For local testing, access at http://localhost:8000.                         |
     +-----------------------------------------------------------------------------+
+    ```
+
+=== "Java"
+
+    ```shell
+    2025-05-13T23:32:08.972-06:00  INFO 37864 --- [ebServer.main()] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+    2025-05-13T23:32:08.980-06:00  INFO 37864 --- [ebServer.main()] com.google.adk.web.AdkWebServer          : Started AdkWebServer in 1.15 seconds (process running for 2.877)
+    2025-05-13T23:32:08.981-06:00  INFO 37864 --- [ebServer.main()] com.google.adk.web.AdkWebServer          : AdkWebServer application started successfully.
+    ```
     ```
 
 Your server is now running locally. Ensure you use the correct **_port number_** in all the subsequent commands.

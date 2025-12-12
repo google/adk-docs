@@ -32,5 +32,5 @@ set up and running a simple agent in less than 20 minutes.
     ---
     Create your first TypeScript ADK agent in minutes.
 
-    [:octicons-arrow-right-24: Start with TypeScript](javascript.md) <br>
+    [:octicons-arrow-right-24: Start with TypeScript](typescript.md) <br>
 </div>

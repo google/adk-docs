@@ -5,7 +5,7 @@
   <span class="lst-python">Python v0.1.0</span>
   <span class="lst-go">Go v0.1.0</span>
   <span class="lst-java">Java v0.1.0</span>
-  <span class="lst-typescript">TypeScript v0.1.0</span>
+  <span class="lst-typescript">Typescript v0.2.0</span>
 </div>
 
 Following our Introduction, let's dive into the `Session`. Think back to the
@@ -287,7 +287,7 @@ the storage backend that best suits your needs:
         <span class="lst-python">Python v0.1.0</span>
         <span class="lst-go">Go v0.1.0</span>
         <span class="lst-java">Java v0.1.0</span>
-        <span class="lst-typescript">TypeScript v0.1.0</span>
+        <span class="lst-typescript">Typescript v0.2.0</span>
     </div>
 
     *   **How it works:** Connects to a relational database (e.g., PostgreSQL,

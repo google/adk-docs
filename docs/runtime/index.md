@@ -1,7 +1,7 @@
 # Runtime
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
 The ADK Runtime is the underlying engine that powers your agent application during user interactions. It's the system that takes your defined agents, tools, and callbacks and orchestrates their execution in response to user input, managing the flow of information, state changes, and interactions with external services like LLMs or storage.
@@ -65,6 +65,34 @@ The `Runner` acts as the central coordinator for a single user invocation. Its r
             # 4. Yield event for upstream processing (e.g., UI rendering)
             yield event
             # Runner implicitly signals agent generator can continue after yielding
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    // Simplified view of Runner's main loop logic
+    async * runAsync(newQuery: Content, ...): AsyncGenerator<Event, void, void> {
+        // 1. Append newQuery to session event history (via SessionService)
+        await sessionService.appendEvent({
+            session,
+            event: createEvent({author: 'user', content: newQuery})
+        });
+
+        // 2. Kick off event loop by calling the agent
+        const agentEventGenerator = agentToRun.runAsync(context);
+
+        for await (const event of agentEventGenerator) {
+            // 3. Process the generated event and commit changes
+            // Commits state/artifact deltas etc.
+            await sessionService.appendEvent({session, event});
+            // memoryService.updateMemory(...) // If applicable
+            // artifactService might have already been called via context during agent run
+
+            // 4. Yield event for upstream processing (e.g., UI rendering)
+            yield event;
+            // Runner implicitly signals agent generator can continue after yielding
+        }
+    }
     ```
 
 === "Go"
@@ -151,34 +179,6 @@ The `Runner` acts as the central coordinator for a single user invocation. Its r
     }
     ```
 
-=== "TypeScript"
-
-    ```typescript
-    // Simplified view of Runner's main loop logic
-    async * runAsync(newQuery: Content, ...): AsyncGenerator<Event, void, void> {
-        // 1. Append newQuery to session event history (via SessionService)
-        await sessionService.appendEvent({
-            session,
-            event: createEvent({author: 'user', content: newQuery})
-        });
-
-        // 2. Kick off event loop by calling the agent
-        const agentEventGenerator = agentToRun.runAsync(context);
-
-        for await (const event of agentEventGenerator) {
-            // 3. Process the generated event and commit changes
-            // Commits state/artifact deltas etc.
-            await sessionService.appendEvent({session, event});
-            // memoryService.updateMemory(...) // If applicable
-            // artifactService might have already been called via context during agent run
-
-            // 4. Yield event for upstream processing (e.g., UI rendering)
-            yield event;
-            // Runner implicitly signals agent generator can continue after yielding
-        }
-    }
-    ```
-
 ### Execution Logic's Role (Agent, Tool, Callback)
 
 Your code within agents, tools, and callbacks is responsible for the actual computation and decision-making. Its interaction with the loop involves:
@@ -223,6 +223,40 @@ Your code within agents, tools, and callbacks is responsible for the actual comp
 
     # ... subsequent code continues ...
     # Maybe yield another event later...
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    // Simplified view of logic inside Agent.runAsync, callbacks, or tools
+
+    // ... previous code runs based on current state ...
+
+    // 1. Determine a change or output is needed, construct the event
+    // Example: Updating state
+    const updateData = {'field_1': 'value_2'};
+    const eventWithStateChange = createEvent({
+        author: this.name,
+        actions: createEventActions({stateDelta: updateData}),
+        content: {parts: [{text: "State updated."}]}
+        // ... other event fields ...
+    });
+
+    // 2. Yield the event to the Runner for processing & commit
+    yield eventWithStateChange;
+    // <<<<<<<<<<<< EXECUTION PAUSES HERE >>>>>>>>>>>>
+
+    // <<<<<<<<<<<< RUNNER PROCESSES & COMMITS THE EVENT >>>>>>>>>>>>
+
+    // 3. Resume execution ONLY after Runner is done processing the above event.
+    // Now, the state committed by the Runner is reliably reflected.
+    // Subsequent code can safely assume the change from the yielded event happened.
+    const val = ctx.session.state['field_1'];
+    // here `val` is guaranteed to be "value_2" (assuming Runner committed successfully)
+    console.log(`Resumed execution. Value of field_1 is now: ${val}`);
+
+    // ... subsequent code continues ...
+    // Maybe yield another event later...
     ```
 
 === "Go"
@@ -338,40 +372,6 @@ Your code within agents, tools, and callbacks is responsible for the actual comp
             // If this subsequent code needs to yield another event, it would do so here.
     ```
 
-=== "TypeScript"
-
-    ```typescript
-    // Simplified view of logic inside Agent.runAsync, callbacks, or tools
-
-    // ... previous code runs based on current state ...
-
-    // 1. Determine a change or output is needed, construct the event
-    // Example: Updating state
-    const updateData = {'field_1': 'value_2'};
-    const eventWithStateChange = createEvent({
-        author: this.name,
-        actions: createEventActions({stateDelta: updateData}),
-        content: {parts: [{text: "State updated."}]}
-        // ... other event fields ...
-    });
-
-    // 2. Yield the event to the Runner for processing & commit
-    yield eventWithStateChange;
-    // <<<<<<<<<<<< EXECUTION PAUSES HERE >>>>>>>>>>>>
-
-    // <<<<<<<<<<<< RUNNER PROCESSES & COMMITS THE EVENT >>>>>>>>>>>>
-
-    // 3. Resume execution ONLY after Runner is done processing the above event.
-    // Now, the state committed by the Runner is reliably reflected.
-    // Subsequent code can safely assume the change from the yielded event happened.
-    const val = ctx.session.state['field_1'];
-    // here `val` is guaranteed to be "value_2" (assuming Runner committed successfully)
-    console.log(`Resumed execution. Value of field_1 is now: ${val}`);
-
-    // ... subsequent code continues ...
-    // Maybe yield another event later...
-    ```
-
 This cooperative yield/pause/resume cycle between the `Runner` and your Execution Logic, mediated by `Event` objects, forms the core of the ADK Runtime.
 
 ## Key components of the Runtime
@@ -478,6 +478,31 @@ Understanding a few key aspects of how the ADK Runtime handles state, streaming,
     print(f"Status after resuming: {current_status}")
     ```
 
+=== "TypeScript"
+
+    ```typescript
+    // Inside agent logic (conceptual)
+
+    // 1. Modify state
+    // In TypeScript, you modify state via the context, which tracks the change.
+    ctx.state.set('status', 'processing');
+    // The framework will automatically populate actions with the state
+    // delta from the context. For illustration, it's shown here.
+    const event1 = createEvent({
+        actions: createEventActions({stateDelta: {'status': 'processing'}}),
+        // ... other event fields
+    });
+
+    // 2. Yield event with the delta
+    yield event1;
+    // --- PAUSE --- Runner processes event1, SessionService commits 'status' = 'processing' ---
+
+    // 3. Resume execution
+    // Now it's safe to rely on the committed state in the session object.
+    const currentStatus = ctx.session.state['status']; // Guaranteed to be 'processing'
+    console.log(`Status after resuming: ${currentStatus}`);
+    ```
+
 === "Go"
 
     ```go
@@ -563,31 +588,6 @@ Understanding a few key aspects of how the ADK Runtime handles state, streaming,
     // or emitting more events based on the now-updated `ctx.session().state()`.
     ```
 
-=== "TypeScript"
-
-    ```typescript
-    // Inside agent logic (conceptual)
-
-    // 1. Modify state
-    // In TypeScript, you modify state via the context, which tracks the change.
-    ctx.state.set('status', 'processing');
-    // The framework will automatically populate actions with the state
-    // delta from the context. For illustration, it's shown here.
-    const event1 = createEvent({
-        actions: createEventActions({stateDelta: {'status': 'processing'}}),
-        // ... other event fields
-    });
-
-    // 2. Yield event with the delta
-    yield event1;
-    // --- PAUSE --- Runner processes event1, SessionService commits 'status' = 'processing' ---
-
-    // 3. Resume execution
-    // Now it's safe to rely on the committed state in the session object.
-    const currentStatus = ctx.session.state['status']; // Guaranteed to be 'processing'
-    console.log(`Status after resuming: ${currentStatus}`);
-    ```
-
 ### "Dirty Reads" of Session State
 
 * **Definition:** While commitment happens *after* the yield, code running *later within the same invocation*, but *before* the state-changing event is actually yielded and processed, **can often see the local, uncommitted changes**. This is sometimes called a "dirty read".
@@ -609,6 +609,24 @@ Understanding a few key aspects of how the ADK Runtime handles state, streaming,
 
     # Assume the event carrying the state_delta={'field_1': 'value_1'}
     # is yielded *after* this tool runs and is processed by the Runner.
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    // Code in beforeAgentCallback
+    callbackContext.state.set('field_1', 'value_1');
+    // State is locally set to 'value_1', but not yet committed by Runner
+
+    // --- agent runs ... ---
+
+    // --- Code in a tool called later *within the same invocation* ---
+    // Readable (dirty read), but 'value_1' isn't guaranteed persistent yet.
+    const val = toolContext.state.get('field_1'); // 'val' will likely be 'value_1' here
+    console.log(`Dirty read value in tool: ${val}`);
+
+    // Assume the event carrying the state_delta={'field_1': 'value_1'}
+    // is yielded *after* this tool runs and is processed by the Runner.
     ```
 
 === "Go"
@@ -644,24 +662,6 @@ Understanding a few key aspects of how the ADK Runtime handles state, streaming,
     // Readable (dirty read), but 'value_1' isn't guaranteed persistent yet.
     Object val = toolContext.state().get("field_1"); // 'val' will likely be 'value_1' here
     System.out.println("Dirty read value in tool: " + val);
-    // Assume the event carrying the state_delta={'field_1': 'value_1'}
-    // is yielded *after* this tool runs and is processed by the Runner.
-    ```
-
-=== "TypeScript"
-
-    ```typescript
-    // Code in beforeAgentCallback
-    callbackContext.state.set('field_1', 'value_1');
-    // State is locally set to 'value_1', but not yet committed by Runner
-
-    // --- agent runs ... ---
-
-    // --- Code in a tool called later *within the same invocation* ---
-    // Readable (dirty read), but 'value_1' isn't guaranteed persistent yet.
-    const val = toolContext.state.get('field_1'); // 'val' will likely be 'value_1' here
-    console.log(`Dirty read value in tool: ${val}`);
-
     // Assume the event carrying the state_delta={'field_1': 'value_1'}
     // is yielded *after* this tool runs and is processed by the Runner.
     ```
