@@ -49,9 +49,9 @@ information, see [Event types and payloads](#event-types).
 ### IAM permissions
 
 For the agent to work properly, the principal (e.g., service account, user account) under which the agent is running needs these Google Cloud roles:
-*   `roles/bigquery.jobUser` at Project Level to run BigQuery queries.
-*   `roles/bigquery.dataEditor` at Table Level to write log/event data.
-*   **If using GCS offloading:** `roles/storage.objectCreator` and `roles/storage.objectViewer` on the target bucket.
+* `roles/bigquery.jobUser` at Project Level to run BigQuery queries.
+* `roles/bigquery.dataEditor` at Table Level to write log/event data.
+* **If using GCS offloading:** `roles/storage.objectCreator` and `roles/storage.objectViewer` on the target bucket.
 
 ## Use with agent
 
