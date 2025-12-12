@@ -452,7 +452,7 @@ The `AgentTool` class provides the following attributes for customizing its beha
         ```py
         --8<-- "examples/python/snippets/tools/function-tools/summarizer.py"
         ```
-  
+   
     === "Go"
 
         ```go
@@ -482,3 +482,11 @@ The `AgentTool` class provides the following attributes for customizing its beha
 4. The `summary_agent` will process the text according to its instruction and generate a summary.  
 5. **The response from the `summary_agent` is then passed back to the `main_agent`.**  
 6. The `main_agent` can then take the summary and formulate its final response to the user (e.g., "Here's a summary of the text: ...")
+
+## Simplified Tool Declaration with JSON Schema (Experimental)
+
+ADK now offers a simplified way to declare function tools by generating a JSON schema from your function's signature using Pydantic. This feature can be enabled via a feature flag.
+
+When enabled, `build_function_declaration` will automatically generate a JSON schema for your function's parameters, which simplifies the declaration process and provides more accurate type information to the LLM.
+
+This feature is currently experimental and can be enabled by setting the `ADK_ENABLE_JSON_SCHEMA_FOR_FUNC_DECL` environment variable to `true`.
