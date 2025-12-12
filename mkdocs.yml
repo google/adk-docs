@@ -227,6 +227,7 @@ nav:
         - Linear: tools/third-party/linear.md
         - Notion: tools/third-party/notion.md
         - Paypal: tools/third-party/paypal.md
+        - Qdrant: tools/third-party/qdrant.md
         - ScrapeGraphAI: tools/third-party/scrapegraphai.md
         - Tavily: tools/third-party/tavily.md
         - Agentic UI (AG-UI): tools/third-party/ag-ui.md
