@@ -72,7 +72,7 @@ from google.adk.tools.bigquery import BigQueryToolset, BigQueryCredentialsConfig
 # --- Configuration ---
 PROJECT_ID = os.environ.get("GOOGLE_CLOUD_PROJECT", "your-gcp-project-id")
 DATASET_ID = os.environ.get("BIG_QUERY_DATASET_ID", "your-big-query-dataset-id")
-LOCATION = os.environ.get("GOOGLE_CLOUD_LOCATION", "US")
+LOCATION = os.environ.get("GOOGLE_CLOUD_LOCATION", "US") # default location is US in the plugin
 GCS_BUCKET = os.environ.get("GCS_BUCKET_NAME", "your-gcs-bucket-name") # Optional
 
 if PROJECT_ID == "your-gcp-project-id":
@@ -96,7 +96,7 @@ bq_config = BigQueryLoggerConfig(
 bq_logging_plugin = BigQueryAgentAnalyticsPlugin(
     project_id=PROJECT_ID,
     dataset_id=DATASET_ID,
-    table_id="agent_events_v2",
+    table_id="agent_events_v2", # default table name is agent_events_v2
     config=bq_config,
     location=LOCATION
 )
