@@ -193,7 +193,7 @@ config = BigQueryLoggerConfig(
     # event_denylist=["TOOL_STARTING"], # Skip these events
     shutdown_timeout=10.0, # Wait up to 10s for logs to flush on exit
     client_close_timeout=2.0, # Wait up to 2s for BQ client to close
-    max_content_length=500, # Truncate content to 500 chars (default)
+    max_content_length=500, # Truncate content to 500 chars
     content_formatter=redact_dollar_amounts, # Redact the dollar amounts in the logging content
 
 )
