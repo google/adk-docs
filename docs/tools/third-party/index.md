@@ -139,6 +139,16 @@ Check out the following third-party tools that you can use with ADK agents:
     </div>
   </a>
 
+  <a href="/adk-docs/tools/third-party/paypal/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="../../assets/tools-paypal.png" alt="Paypal">
+    </div>
+    <div class="tool-card-content">
+      <h3>Paypal</h3>
+      <p>Manage payments, send invoices, and handle subscriptions</p>
+    </div>
+  </a>
+
   <a href="/adk-docs/tools/third-party/qdrant/" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="../../assets/tools-qdrant.png" alt="Qdrant">
