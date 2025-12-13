@@ -250,6 +250,7 @@ nav:
       - Resume Agents: runtime/resume.md
     - Deployment:
       - deploy/index.md
+      - Strategy Guide: deploy/decision-guide.md
       - Agent Engine: deploy/agent-engine.md
       - Cloud Run: deploy/cloud-run.md
       - GKE: deploy/gke.md
