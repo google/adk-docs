@@ -1,11 +1,7 @@
 # Session: Tracking Individual Conversations
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span>
-  <span class="lst-python">Python v0.1.0</span>
-  <span class="lst-go">Go v0.1.0</span>
-  <span class="lst-java">Java v0.1.0</span>
-  <span class="lst-typescript">Typescript v0.2.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
 Following our Introduction, let's dive into the `Session`. Think back to the
@@ -67,6 +63,37 @@ are its key properties:
         print("The final status of temp_service - ", temp_service)
        ```
 
+=== "TypeScript"
+
+       ```typescript
+        import { InMemorySessionService } from "@google/adk";
+
+        // Create a simple session to examine its properties
+        const tempService = new InMemorySessionService();
+        const exampleSession = await tempService.createSession({
+            appName: "my_app",
+            userId: "example_user",
+            state: {"initial_key": "initial_value"} // State can be initialized
+        });
+
+        console.log("--- Examining Session Properties ---");
+        console.log(`ID ('id'):                ${exampleSession.id}`);
+        console.log(`Application Name ('appName'): ${exampleSession.appName}`);
+        console.log(`User ID ('userId'):         ${exampleSession.userId}`);
+        console.log(`State ('state'):           ${JSON.stringify(exampleSession.state)}`); // Note: Only shows initial state here
+        console.log(`Events ('events'):         ${JSON.stringify(exampleSession.events)}`); // Initially empty
+        console.log(`Last Update ('lastUpdateTime'): ${exampleSession.lastUpdateTime}`);
+        console.log("---------------------------------");
+
+        // Clean up (optional for this example)
+        const finalStatus = await tempService.deleteSession({
+            appName: exampleSession.appName,
+            userId: exampleSession.userId,
+            sessionId: exampleSession.id
+        });
+        console.log("The final status of temp_service - ", finalStatus);
+       ```
+
 === "Go"
 
        ```go
@@ -102,37 +129,6 @@ are its key properties:
 
         // Clean up (optional for this example)
         var unused = exampleSessionService.deleteSession(appName, userId, sessionId);
-       ```
-
-=== "TypeScript"
-
-       ```typescript
-        import { InMemorySessionService } from "@google/adk";
-
-        // Create a simple session to examine its properties
-        const tempService = new InMemorySessionService();
-        const exampleSession = await tempService.createSession({
-            appName: "my_app",
-            userId: "example_user",
-            state: {"initial_key": "initial_value"} // State can be initialized
-        });
-
-        console.log("--- Examining Session Properties ---");
-        console.log(`ID ('id'):                ${exampleSession.id}`);
-        console.log(`Application Name ('appName'): ${exampleSession.appName}`);
-        console.log(`User ID ('userId'):         ${exampleSession.userId}`);
-        console.log(`State ('state'):           ${JSON.stringify(exampleSession.state)}`); // Note: Only shows initial state here
-        console.log(`Events ('events'):         ${JSON.stringify(exampleSession.events)}`); // Initially empty
-        console.log(`Last Update ('lastUpdateTime'): ${exampleSession.lastUpdateTime}`);
-        console.log("---------------------------------");
-
-        // Clean up (optional for this example)
-        const finalStatus = await tempService.deleteSession({
-            appName: exampleSession.appName,
-            userId: exampleSession.userId,
-            sessionId: exampleSession.id
-        });
-        console.log("The final status of temp_service - ", finalStatus);
        ```
 
 *(**Note:** The state shown above is only the initial state. State updates
@@ -179,6 +175,13 @@ the storage backend that best suits your needs:
             from google.adk.sessions import InMemorySessionService
             session_service = InMemorySessionService()
            ```
+    === "TypeScript"
+
+           ```typescript
+            import { InMemorySessionService } from "@google/adk";
+            const sessionService = new InMemorySessionService();
+           ```
+
     === "Go"
 
            ```go
@@ -194,16 +197,11 @@ the storage backend that best suits your needs:
             InMemorySessionService exampleSessionService = new InMemorySessionService();
            ```
 
-    === "TypeScript"
-
-           ```typescript
-            import { InMemorySessionService } from "@google/adk";
-            const sessionService = new InMemorySessionService();
-           ```
-
 2.  **`VertexAiSessionService`**
 
-    ![py_java_only](https://img.shields.io/badge/Currently_supported_in-Python_&_Java-blue){ title="This feature is currently available for Python and Java. TypeScript support is planned/ coming soon."}
+    <div class="language-support-tag">
+      <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+    </div>
 
     *   **How it works:** Uses Google Cloud Vertex AI infrastructure via API
         calls for session management.
@@ -283,11 +281,7 @@ the storage backend that best suits your needs:
 3.  **`DatabaseSessionService`**
 
     <div class="language-support-tag">
-        <span class="lst-supported">Supported in ADK</span>
-        <span class="lst-python">Python v0.1.0</span>
-        <span class="lst-go">Go v0.1.0</span>
-        <span class="lst-java">Java v0.1.0</span>
-        <span class="lst-typescript">Typescript v0.2.0</span>
+      <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span>
     </div>
 
     *   **How it works:** Connects to a relational database (e.g., PostgreSQL,

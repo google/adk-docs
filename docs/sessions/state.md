@@ -1,7 +1,7 @@
 # State: The Session's Scratchpad
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
 Within each `Session` (our conversation thread), the **`state`** attribute acts like the agent's dedicated scratchpad for that specific interaction. While `session.events` holds the full history, `session.state` is where the agent stores and updates dynamic details needed *during* the conversation.
@@ -102,12 +102,6 @@ To inject a value from the session state, enclose the key of the desired state v
     # "Write a short story about a cat, focusing on the theme: friendship."
     ```
 
-=== "Go"
-
-    ```go
-    --8<-- "examples/go/snippets/sessions/instruction_template/instruction_template_example.go:key_template"
-    ```
-
 === "TypeScript"
 
     ```typescript
@@ -119,9 +113,16 @@ To inject a value from the session state, enclose the key of the desired state v
         instruction: "Write a short story about a cat, focusing on the theme: {topic}."
     });
 
-    // Assuming session.state['topic'] is set to "friendship", the LLM 
+    // Assuming session.state['topic'] is set to "friendship", the LLM
     // will receive the following instruction:
     // "Write a short story about a cat, focusing on the theme: friendship."
+    ```
+
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/sessions/instruction_template/instruction_template_example.go:key_template"
+    ```
 
 #### Important Considerations
 
@@ -156,12 +157,6 @@ The `InstructionProvider` function receives a `ReadonlyContext` object, which yo
     )
     ```
 
-=== "Go"
-
-    ```go
-    --8<-- "examples/go/snippets/sessions/instruction_provider/instruction_provider_example.go:bypass_state_injection"
-    ```
-
 === "TypeScript"
 
     ```typescript
@@ -179,6 +174,13 @@ The `InstructionProvider` function receives a `ReadonlyContext` object, which yo
         name: "template_helper_agent",
         instruction: myInstructionProvider
     });
+    ```
+
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/sessions/instruction_provider/instruction_provider_example.go:bypass_state_injection"
+    ```
 
 If you want to both use an `InstructionProvider` *and* inject state into your instructions, you can use the `inject_session_state` utility function.
 
@@ -275,18 +277,6 @@ This is the simplest method for saving an agent's final text response directly i
     # Expected output might include: {'last_greeting': 'Hello there! How can I help you today?'}
     ```
 
-=== "Java"
-
-    ```java
-    --8<-- "examples/java/snippets/src/main/java/state/GreetingAgentExample.java:full_code"
-    ```
-
-=== "Go"
-
-    ```go
-    --8<-- "examples/go/snippets/sessions/state_example/state_example.go:greeting"
-    ```
-
 === "TypeScript"
 
     ```typescript
@@ -336,7 +326,19 @@ This is the simplest method for saving an agent's final text response directly i
     const updatedSession = await sessionService.getSession({ appName, userId, sessionId });
     console.log(`State after agent run: ${JSON.stringify(updatedSession?.state)}`);
     // Expected output might include: {"last_greeting":"Hello there! How can I help you today?"}
+    ```
 
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/sessions/state_example/state_example.go:greeting"
+    ```
+
+=== "Java"
+
+    ```java
+    --8<-- "examples/java/snippets/src/main/java/state/GreetingAgentExample.java:full_code"
+    ```
 
 Behind the scenes, the `Runner` uses the `output_key` to create the necessary `EventActions` with a `state_delta` and calls `append_event`.
 
@@ -396,18 +398,6 @@ For more complex scenarios (updating multiple keys, non-string values, specific 
     # Note: 'temp:validation_needed' is NOT present.
     ```
 
-=== "Go"
-
-    ```go
-    --8<-- "examples/go/snippets/sessions/state_example/state_example.go:manual"
-    ```
-
-=== "Java"
-
-    ```java
-    --8<-- "examples/java/snippets/src/main/java/state/ManualStateUpdateExample.java:full_code"
-    ```
-
 === "TypeScript"
 
     ```typescript
@@ -463,6 +453,18 @@ For more complex scenarios (updating multiple keys, non-string values, specific 
     // Note: 'temp:validation_needed' is NOT present.
     ```
 
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/sessions/state_example/state_example.go:manual"
+    ```
+
+=== "Java"
+
+    ```java
+    --8<-- "examples/java/snippets/src/main/java/state/ManualStateUpdateExample.java:full_code"
+    ```
+
 **3. Via `CallbackContext` or `ToolContext` (Recommended for Callbacks and Tools)**
 
 Modifying state within agent callbacks (e.g., `on_before_agent_call`, `on_after_agent_call`) or tool functions is best done using the `state` attribute of the `CallbackContext` or `ToolContext` provided to your function.
@@ -496,6 +498,28 @@ For more comprehensive details on context objects, refer to the [Context documen
         # ... rest of callback/tool logic ...
     ```
 
+=== "TypeScript"
+
+    ```typescript
+    // In an agent callback or tool function
+    import { CallbackContext } from "@google/adk"; // or ToolContext
+
+    function myCallbackOrToolFunction(
+        context: CallbackContext, // Or ToolContext
+        // ... other parameters ...
+    ) {
+        // Update existing state
+        const count = context.state.get("user_action_count", 0);
+        context.state.set("user_action_count", count + 1);
+
+        // Add new state
+        context.state.set("temp:last_operation_status", "success");
+
+        // State changes are automatically part of the event's stateDelta
+        // ... rest of callback/tool logic ...
+    }
+    ```
+
 === "Go"
 
     ```go
@@ -521,28 +545,6 @@ For more comprehensive details on context objects, refer to the [Context documen
             // State changes are automatically part of the event's state_delta
             // ... rest of callback logic ...
         }
-    }
-    ```
-
-=== "TypeScript"
-
-    ```typescript
-    // In an agent callback or tool function
-    import { CallbackContext } from "@google/adk"; // or ToolContext
-
-    function myCallbackOrToolFunction(
-        context: CallbackContext, // Or ToolContext
-        // ... other parameters ...
-    ) {
-        // Update existing state
-        const count = context.state.get("user_action_count", 0);
-        context.state.set("user_action_count", count + 1);
-
-        // Add new state
-        context.state.set("temp:last_operation_status", "success");
-
-        // State changes are automatically part of the event's stateDelta
-        // ... rest of callback/tool logic ...
     }
     ```
 
