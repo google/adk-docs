@@ -1,5 +1,9 @@
 # Understanding Google Search Grounding
 
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
+</div>
+
 [Google Search Grounding tool](../tools/built-in-tools.md#google-search) is a powerful feature in the Agent Development Kit (ADK) that enables AI agents to access real-time, authoritative information from the web. By connecting your agents to Google Search, you can provide users with up-to-date answers backed by reliable sources.
 
 This feature is particularly valuable for queries requiring current information like weather updates, news events, stock prices, or any facts that may have changed since the model's training data cutoff. When your agent determines that external information is needed, it automatically performs web searches and incorporates the results into its response with proper attribution.
@@ -82,7 +86,7 @@ Under a project directory, run the following commands:
     echo "from . import agent" > google_search_agent/__init__.py
 
     # Step 3: Create an agent.py (the agent definition) and .env (Gemini authentication config)
-    type nul > google_search_agent\agent.py 
+    type nul > google_search_agent\agent.py
     type nul > google_search_agent\.env
     ```
 
@@ -188,7 +192,7 @@ There are multiple ways to interact with your agent:
     ```shell
     adk web
     ```
-    
+
     !!!info "Note for Windows users"
 
         When hitting the `_make_subprocess_transport NotImplementedError`, consider using `adk web --no-reload` instead.
@@ -217,7 +221,7 @@ There are multiple ways to interact with your agent:
     ```
     To exit, use Cmd/Ctrl+C.
 
-### 📝 Example prompts to try
+### Example prompts to try
 
 With those questions, you can confirm that the agent is actually calling Google Search
 to get the latest weather and time.
@@ -245,18 +249,18 @@ This diagram illustrates the step-by-step process of how a user query results in
 
 The grounding agent uses the data flow described in the diagram to retrieve, process, and incorporate external information into the final answer presented to the user.
 
-1. **User Query**: An end-user interacts with your agent by asking a question or giving a command.  
-2. **ADK Orchestration** : The Agent Development Kit orchestrates the agent's behavior and passes the user's message to the core of your agent.  
-3. **LLM Analysis and Tool-Calling** : The agent's LLM (e.g., a Gemini model) analyzes the prompt. If it determines that external, up-to-date information is required, it triggers the grounding mechanism by calling the  
-    google\_search tool. This is ideal for answering queries about recent news, weather, or facts not present in the model's training data.  
-4. **Grounding Service Interaction** : The google\_search tool interacts with an internal grounding service that formulates and sends one or more queries to the Google Search Index.  
-5. **Context Injection**: The grounding service retrieves the relevant web pages and snippets. It then integrates these search results into the model's context  
-    before the final response is generated. This crucial step allows the model to "reason" over factual, real-time data.  
-6. **Grounded Response Generation**: The LLM, now informed by the fresh search results, generates a response that incorporates the retrieved information.  
-7. **Response Presentation with Sources** : The ADK receives the final grounded response, which includes the necessary source URLs and   
+1. **User Query**: An end-user interacts with your agent by asking a question or giving a command.
+2. **ADK Orchestration** : The Agent Development Kit orchestrates the agent's behavior and passes the user's message to the core of your agent.
+3. **LLM Analysis and Tool-Calling** : The agent's LLM (e.g., a Gemini model) analyzes the prompt. If it determines that external, up-to-date information is required, it triggers the grounding mechanism by calling the
+    google\_search tool. This is ideal for answering queries about recent news, weather, or facts not present in the model's training data.
+4. **Grounding Service Interaction** : The google\_search tool interacts with an internal grounding service that formulates and sends one or more queries to the Google Search Index.
+5. **Context Injection**: The grounding service retrieves the relevant web pages and snippets. It then integrates these search results into the model's context
+    before the final response is generated. This crucial step allows the model to "reason" over factual, real-time data.
+6. **Grounded Response Generation**: The LLM, now informed by the fresh search results, generates a response that incorporates the retrieved information.
+7. **Response Presentation with Sources** : The ADK receives the final grounded response, which includes the necessary source URLs and
    groundingMetadata, and presents it to the user with attribution. This allows end-users to verify the information and builds trust in the agent's answers.
 
-### Understanding grounding with Google Search response 
+### Understanding grounding with Google Search response
 
 When the agent uses Google Search to ground a response, it returns a detailed set of information that includes not only the final text answer but also the sources it used to generate that answer. This metadata is crucial for verifying the response and for providing attribution to the original sources.
 
@@ -314,9 +318,9 @@ The following is an example of the content object returned by the model after a 
 
 The metadata provides a link between the text generated by the model and the sources that support it. Here is a step-by-step breakdown:
 
-1. **groundingChunks**: This is a list of the web pages the model consulted. Each chunk contains the title of the webpage and a uri that links to the source.  
-2. **groundingSupports**: This list connects specific sentences in the final answer back to the groundingChunks.  
-   * **segment**: This object identifies a specific portion of the final text answer, defined by its startIndex, endIndex, and the text itself.  
+1. **groundingChunks**: This is a list of the web pages the model consulted. Each chunk contains the title of the webpage and a uri that links to the source.
+2. **groundingSupports**: This list connects specific sentences in the final answer back to the groundingChunks.
+   * **segment**: This object identifies a specific portion of the final text answer, defined by its startIndex, endIndex, and the text itself.
    * **groundingChunkIndices**: This array contains the index numbers that correspond to the sources listed in the groundingChunks. For example, the sentence "They defeated FC Porto 2-1..." is supported by information from groundingChunks at index 0 and 1 (both from mlssoccer.com and intermiamicf.com).
 
 ### How to display grounding responses with Google Search
