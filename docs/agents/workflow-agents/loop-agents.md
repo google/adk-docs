@@ -50,7 +50,7 @@ In this setup, the `LoopAgent` would manage the iterative process.  The `CriticA
 
     === "Typescript"
         ```typescript
-        --8<-- "examples/typescript/snippets/agents/workflow/loop_agent_doc_improv_agent.ts:init"
+        --8<-- "examples/typescript/snippets/agents/workflow-agents/loop_agent_doc_improv_agent.ts:init"
         ```
 
     === "Go"
