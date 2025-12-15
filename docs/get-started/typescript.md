@@ -109,8 +109,8 @@ well as the ADK library dependencies, as shown in this example:
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "@google/adk": "^0.1.2",
-    "@google/adk-devtools": "^0.1.2"
+    "@google/adk": "^0.2.0",
+    "@google/adk-devtools": "^0.2.0"
   }
 }
 ```
