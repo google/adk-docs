@@ -20,6 +20,7 @@ Repository | Description | Detailed Guide
 [`google/adk-java`](https://github.com/google/adk-java) | Contains the core Java library source code | [`CONTRIBUTING.md`](https://github.com/google/adk-java/blob/main/CONTRIBUTING.md)
 [`google/adk-docs`](https://github.com/google/adk-docs) | Contains the source for the documentation site you are currently reading | [`CONTRIBUTING.md`](https://github.com/google/adk-docs/blob/main/CONTRIBUTING.md)
 [`google/adk-web`](https://github.com/google/adk-web) | Contains the source for the `adk web` dev UI |
+[`google/adk-samples`](https://github.com/google/adk-samples) | Contains sample agents for ADK | [`CONTRIBUTING.md`](https://github.com/google/adk-samples/blob/main/CONTRIBUTING.md)
 
 These repositories typically include a `CONTRIBUTING.md` file in the root of
 their repository with more detailed information on requirements, testing, code
