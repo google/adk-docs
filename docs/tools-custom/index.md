@@ -91,6 +91,12 @@ The following example showcases how an agent can use tools by **referencing thei
     --8<-- "examples/python/snippets/tools/overview/weather_sentiment.py"
     ```
 
+=== "TypeScript"
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/tools/overview/weather_sentiment.ts"
+    ```
+
 === "Go"
 
     ```go
@@ -101,12 +107,6 @@ The following example showcases how an agent can use tools by **referencing thei
 
     ```java
     --8<-- "examples/java/snippets/src/main/java/tools/WeatherSentimentAgentApp.java:full_code"
-    ```
-
-=== "TypeScript"
-
-    ```typescript
-    --8<-- "examples/typescript/snippets/tools/overview/weather_sentiment.ts"
     ```
 
 ## Tool Context
@@ -153,6 +153,12 @@ The `tool_context.state` attribute provides direct read and write access to the 
     --8<-- "examples/python/snippets/tools/overview/user_preference.py"
     ```
 
+=== "TypeScript"
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/tools/overview/user_preference.ts"
+    ```
+
 === "Go"
 
     ```go
@@ -186,12 +192,6 @@ The `tool_context.state` attribute provides direct read and write access to the 
     }
     ```
 
-=== "TypeScript"
-
-    ```typescript
-    --8<-- "examples/typescript/snippets/tools/overview/user_preference.ts"
-    ```
-
 ### **Controlling Agent Flow**
 
 The `tool_context.actions` attribute in Python and TypeScript, `ToolContext.actions()` in Java, and `tool.Context.Actions()` in Go, holds an **EventActions** object. Modifying attributes on this object allows your tool to influence what the agent or framework does after the tool finishes execution.
@@ -210,6 +210,12 @@ The `tool_context.actions` attribute in Python and TypeScript, `ToolContext.acti
     --8<-- "examples/python/snippets/tools/overview/customer_support_agent.py"
     ```
 
+=== "TypeScript"
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/tools/overview/customer_support_agent.ts"
+    ```
+
 === "Go"
 
     ```go
@@ -220,12 +226,6 @@ The `tool_context.actions` attribute in Python and TypeScript, `ToolContext.acti
 
     ```java
     --8<-- "examples/java/snippets/src/main/java/tools/CustomerSupportAgentApp.java:full_code"
-    ```
-
-=== "TypeScript"
-
-    ```typescript
-    --8<-- "examples/typescript/snippets/tools/overview/customer_support_agent.ts"
     ```
 
 ##### Explanation
@@ -240,14 +240,6 @@ The `tool_context.actions` attribute in Python and TypeScript, `ToolContext.acti
 This example illustrates how a tool, through EventActions in its ToolContext, can dynamically influence the flow of the conversation by transferring control to another specialized agent.
 
 ### **Authentication**
-
-<div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span>
-  <span class="lst-python">Python v0.1.0</span>
-  <span class="lst-go">Go v0.1.0</span>
-  <span class="lst-java">Java v0.1.0</span>
-  <span class="lst-typescript">Typescript v0.2.0</span>
-</div>
 
 ToolContext provides mechanisms for tools interacting with authenticated APIs. If your tool needs to handle authentication, you might use the following:
 
@@ -419,41 +411,6 @@ Here are key guidelines for defining effective tool functions:
 
     ```
 
-=== "Go"
-
-    ```go
-    --8<-- "examples/go/snippets/tools-custom/order_status/order_status.go:snippet"
-    ```
-
-=== "Java"
-
-    ```java
-    /**
-     * Retrieves the current weather report for a specified city.
-     *
-     * @param city The city for which to retrieve the weather report.
-     * @param toolContext The context for the tool.
-     * @return A dictionary containing the weather information.
-     */
-    public static Map<String, Object> getWeatherReport(String city, ToolContext toolContext) {
-        Map<String, Object> response = new HashMap<>();
-        if (city.toLowerCase(Locale.ROOT).equals("london")) {
-            response.put("status", "success");
-            response.put(
-                    "report",
-                    "The current weather in London is cloudy with a temperature of 18 degrees Celsius and a"
-                            + " chance of rain.");
-        } else if (city.toLowerCase(Locale.ROOT).equals("paris")) {
-            response.put("status", "success");
-            response.put("report", "The weather in Paris is sunny with a temperature of 25 degrees Celsius.");
-        } else {
-            response.put("status", "error");
-            response.put("error_message", String.format("Weather information for '%s' is not available.", city));
-        }
-        return response;
-    }
-    ```
-
 === "TypeScript"
 
     ```typescript
@@ -494,6 +451,41 @@ Here are key guidelines for defining effective tool functions:
             return { state: "shipped", tracking: "1Z9..." };
         }
         return null;
+    }
+    ```
+
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/tools-custom/order_status/order_status.go:snippet"
+    ```
+
+=== "Java"
+
+    ```java
+    /**
+     * Retrieves the current weather report for a specified city.
+     *
+     * @param city The city for which to retrieve the weather report.
+     * @param toolContext The context for the tool.
+     * @return A dictionary containing the weather information.
+     */
+    public static Map<String, Object> getWeatherReport(String city, ToolContext toolContext) {
+        Map<String, Object> response = new HashMap<>();
+        if (city.toLowerCase(Locale.ROOT).equals("london")) {
+            response.put("status", "success");
+            response.put(
+                    "report",
+                    "The current weather in London is cloudy with a temperature of 18 degrees Celsius and a"
+                            + " chance of rain.");
+        } else if (city.toLowerCase(Locale.ROOT).equals("paris")) {
+            response.put("status", "success");
+            response.put("report", "The weather in Paris is sunny with a temperature of 25 degrees Celsius.");
+        } else {
+            response.put("status", "error");
+            response.put("error_message", String.format("Weather information for '%s' is not available.", city));
+        }
+        return response;
     }
     ```
 

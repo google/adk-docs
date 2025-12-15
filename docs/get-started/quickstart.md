@@ -30,10 +30,6 @@ application entirely on your machine and is recommended for internal development
     pip install google-adk
     ```
 
-=== "Java"
-
-    To install ADK and setup the environment, proceed to the following steps.
-
 === "TypeScript"
 
     Create a new project directory, initialize it, and install dependencies:
@@ -63,6 +59,9 @@ application entirely on your machine and is recommended for internal development
     }
     ```
 
+=== "Java"
+
+    To install ADK and setup the environment, proceed to the following steps.
 
 ## 2. Create Agent Project { #create-agent-project }
 
@@ -143,32 +142,6 @@ application entirely on your machine and is recommended for internal development
 
     More instructions about this file are described in the next section on [Set up the model](#set-up-the-model).
 
-=== "Java"
-
-    Java projects generally feature the following project structure:
-
-    ```console
-    project_folder/
-    ├── pom.xml (or build.gradle)
-    ├── src/
-    ├── └── main/
-    │       └── java/
-    │           └── agents/
-    │               └── multitool/
-    └── test/
-    ```
-
-    ### Create `MultiToolAgent.java`
-
-    Create a `MultiToolAgent.java` source file in the `agents.multitool` package
-    in the `src/main/java/agents/multitool/` directory.
-
-    Copy and paste the following code into `MultiToolAgent.java`:
-
-    ```java title="agents/multitool/MultiToolAgent.java"
-    --8<-- "examples/java/cloud-run/src/main/java/agents/multitool/MultiToolAgent.java:full_code"
-    ```
-
 === "TypeScript"
 
     You will need to create the following project structure in your `my-adk-agent` directory:
@@ -217,6 +190,31 @@ application entirely on your machine and is recommended for internal development
 
     More instructions about this file are described in the next section on [Set up the model](#set-up-the-model).
 
+=== "Java"
+
+    Java projects generally feature the following project structure:
+
+    ```console
+    project_folder/
+    ├── pom.xml (or build.gradle)
+    ├── src/
+    ├── └── main/
+    │       └── java/
+    │           └── agents/
+    │               └── multitool/
+    └── test/
+    ```
+
+    ### Create `MultiToolAgent.java`
+
+    Create a `MultiToolAgent.java` source file in the `agents.multitool` package
+    in the `src/main/java/agents/multitool/` directory.
+
+    Copy and paste the following code into `MultiToolAgent.java`:
+
+    ```java title="agents/multitool/MultiToolAgent.java"
+    --8<-- "examples/java/cloud-run/src/main/java/agents/multitool/MultiToolAgent.java:full_code"
+    ```
 
 ![intro_components.png](../assets/quickstart-flow-tool.png)
 
@@ -438,6 +436,76 @@ agent will be unable to function.
         To learn how to use `adk api_server` for testing, refer to the
         [documentation on using the API server](/adk-docs/runtime/api-server/).
 
+=== "TypeScript"
+
+    Using the terminal, navigate to your agent project directory:
+
+    ```console
+    my-adk-agent/      <-- navigate to this directory
+        agent.ts
+        .env
+        package.json
+        tsconfig.json
+    ```
+
+    There are multiple ways to interact with your agent:
+
+    === "Dev UI (adk web)"
+
+        Run the following command to launch the **dev UI**.
+
+        ```shell
+        npx adk web
+        ```
+
+        **Step 1:** Open the URL provided (usually `http://localhost:8000` or
+        `http://127.0.0.1:8000`) directly in your browser.
+
+        **Step 2.** In the top-left corner of the UI, select your agent from the dropdown. The agents are listed by their filenames, so you should select "agent".
+
+        !!!note "Troubleshooting"
+
+            If you do not see "agent" in the dropdown menu, make sure you
+            are running `npx adk web` in the directory containing your `agent.ts` file.
+
+        **Step 3.** Now you can chat with your agent using the textbox:
+
+        ![adk-web-dev-ui-chat.png](../assets/adk-web-dev-ui-chat.png)
+
+
+        **Step 4.** By using the `Events` tab at the left, you can inspect
+        individual function calls, responses and model responses by clicking on the
+        actions:
+
+        ![adk-web-dev-ui-function-call.png](../assets/adk-web-dev-ui-function-call.png)
+
+        On the `Events` tab, you can also click the `Trace` button to see the trace logs for each event that shows the latency of each function calls:
+
+        ![adk-web-dev-ui-trace.png](../assets/adk-web-dev-ui-trace.png)
+
+    === "Terminal (adk run)"
+
+        Run the following command to chat with your agent.
+
+        ```
+        npx adk run agent.ts
+        ```
+
+        ![adk-run.png](../assets/adk-run.png)
+
+        To exit, use Cmd/Ctrl+C.
+
+    === "API Server (adk api_server)"
+
+        `npx adk api_server` enables you to create a local Express.js server in a single
+        command, enabling you to test local cURL requests before you deploy your
+        agent.
+
+        ![adk-api-server.png](../assets/adk-api-server.png)
+
+        To learn how to use `api_server` for testing, refer to the
+        [documentation on testing](testing.md).
+
 === "Java"
 
     Using the terminal, navigate to the parent directory of your agent project
@@ -530,78 +598,6 @@ agent will be unable to function.
         ```console
         gradle runAgent
         ```
-
-=== "TypeScript"
-
-    Using the terminal, navigate to your agent project directory:
-
-    ```console
-    my-adk-agent/      <-- navigate to this directory
-        agent.ts
-        .env
-        package.json
-        tsconfig.json
-    ```
-
-    There are multiple ways to interact with your agent:
-
-    === "Dev UI (adk web)"
-
-        Run the following command to launch the **dev UI**.
-
-        ```shell
-        npx adk web
-        ```
-
-        **Step 1:** Open the URL provided (usually `http://localhost:8000` or
-        `http://127.0.0.1:8000`) directly in your browser.
-
-        **Step 2.** In the top-left corner of the UI, select your agent from the dropdown. The agents are listed by their filenames, so you should select "agent".
-
-        !!!note "Troubleshooting"
-
-            If you do not see "agent" in the dropdown menu, make sure you
-            are running `npx adk web` in the directory containing your `agent.ts` file.
-
-        **Step 3.** Now you can chat with your agent using the textbox:
-
-        ![adk-web-dev-ui-chat.png](../assets/adk-web-dev-ui-chat.png)
-
-
-        **Step 4.** By using the `Events` tab at the left, you can inspect
-        individual function calls, responses and model responses by clicking on the
-        actions:
-
-        ![adk-web-dev-ui-function-call.png](../assets/adk-web-dev-ui-function-call.png)
-
-        On the `Events` tab, you can also click the `Trace` button to see the trace logs for each event that shows the latency of each function calls:
-
-        ![adk-web-dev-ui-trace.png](../assets/adk-web-dev-ui-trace.png)
-
-    === "Terminal (adk run)"
-
-        Run the following command to chat with your agent.
-
-        ```
-        npx adk run agent.ts
-        ```
-
-        ![adk-run.png](../assets/adk-run.png)
-
-        To exit, use Cmd/Ctrl+C.
-
-    === "API Server (adk api_server)"
-
-        `npx adk api_server` enables you to create a local Express.js server in a single
-        command, enabling you to test local cURL requests before you deploy your
-        agent.
-
-        ![adk-api-server.png](../assets/adk-api-server.png)
-
-        To learn how to use `api_server` for testing, refer to the
-        [documentation on testing](/adk-docs/runtime/api-server/).
-
-
 
 ### 📝 Example prompts to try
 
