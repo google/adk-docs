@@ -504,7 +504,7 @@ agent will be unable to function.
         ![adk-api-server.png](../assets/adk-api-server.png)
 
         To learn how to use `api_server` for testing, refer to the
-        [documentation on testing](testing.md).
+        [documentation on testing](/adk-docs/runtime/api-server/).
 
 === "Java"
 
