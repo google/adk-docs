@@ -97,6 +97,8 @@ Help fix bugs, implement new features or contribute code samples for the documen
 **How:** Submit a Pull Request (PR) with your code changes.
 
 * **Python Framework:** [Create a Pull Request in `google/adk-python`](https://github.com/google/adk-python/pulls)
+* **TypeScript Framework:** [Create a Pull Request in `google/adk-js`](https://github.com/google/adk-js/pulls)
+* **Go Framework:** [Create a Pull Request in `google/adk-go`](https://github.com/google/adk-go/pulls)
 * **Java Framework:** [Create a Pull Request in `google/adk-java`](https://github.com/google/adk-java/pulls)
 * **Documentation:** [Create a Pull Request in `google/adk-docs`](https://github.com/google/adk-docs/pulls)
 
