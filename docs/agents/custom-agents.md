@@ -414,7 +414,7 @@ Finally, you instantiate your `StoryFlowAgent` and use the `Runner` as usual.
     === "TypeScript"
 
         ```typescript
-        // # Full runnable code for the StoryFlowAgent example
+        // Full runnable code for the StoryFlowAgent example
 
         --8<-- "examples/typescript/snippets/agents/custom-agent/storyflow_agent.ts"
         ```
