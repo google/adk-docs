@@ -48,7 +48,7 @@ Create the code for a basic agent, including a simple implementation of an ADK
 Add the following code to the `agent.ts` file in your project
 directory:
 
-```js title="my-agent/agent.ts"
+```typescript title="my-agent/agent.ts"
 import {FunctionTool, LlmAgent} from '@google/adk';
 import {z} from 'zod';
 
@@ -109,8 +109,8 @@ well as the ADK library dependencies, as shown in this example:
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "@google/adk": "^0.1.1",
-    "@google/adk-devtools": "^0.1.1"
+    "@google/adk": "^0.1.2",
+    "@google/adk-devtools": "^0.1.2"
   }
 }
 ```
