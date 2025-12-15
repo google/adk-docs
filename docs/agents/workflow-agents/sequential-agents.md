@@ -50,7 +50,7 @@ This ensures the code is written, *then* reviewed, and *finally* refactored, in 
 
     === "Typescript"
         ```typescript
-        --8<-- "examples/typescript/snippets/agents/workflow/sequential_agent_code_development_agent.ts:init"
+        --8<-- "examples/typescript/snippets/agents/workflow-agents/sequential_agent_code_development_agent.ts:init"
         ```
 
     === "Go"
