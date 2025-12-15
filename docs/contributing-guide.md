@@ -47,7 +47,9 @@ This project follows
 ## Join the discussion
 
 Have questions, want to share ideas, or discuss how you're using ADK? Head over
-to our **[Python](https://github.com/google/adk-python/discussions)** or
+to our **[Python](https://github.com/google/adk-python/discussions)**,
+**[TypeScript](https://github.com/google/adk-js/discussions)**,
+**[Go](https://github.com/google/adk-go/discussions)**, or
 **[Java](https://github.com/google/adk-java/discussions)** Discussions!
 
 This is the primary place for:
@@ -65,14 +67,20 @@ There are several ways you can contribute to ADK:
 
 If you find a bug in the framework or an error in the documentation:
 
-* **Framework Bugs:** Open an issue in [`google/adk-python`](https://github.com/google/adk-python/issues/new) or in [`google/adk-java`](https://github.com/google/adk-java/issues/new)
+* **Framework Bugs:** Open an issue in [`google/adk-python`](https://github.com/google/adk-python/issues/new),
+[`google/adk-js`](https://github.com/google/adk-js/issues/new),
+[`google/adk-go`](https://github.com/google/adk-go/issues/new), or
+[`google/adk-java`](https://github.com/google/adk-java/issues/new)
 * **Documentation Errors:** [Open an issue in `google/adk-docs` (use bug template)](https://github.com/google/adk-docs/issues/new?template=bug_report.md)
 
 ### Suggesting enhancements { #suggesting-enhancements }
 
 Have an idea for a new feature or an improvement to an existing one?
 
-* **Framework Enhancements:** Open an issue in [`google/adk-python`](https://github.com/google/adk-python/issues/new) or in [`google/adk-java`](https://github.com/google/adk-java/issues/new)
+* **Framework Enhancements:** Open an issue in [`google/adk-python`](https://github.com/google/adk-python/issues/new),
+[`google/adk-js`](https://github.com/google/adk-js/issues/new),
+[`google/adk-go`](https://github.com/google/adk-go/issues/new), or
+[`google/adk-java`](https://github.com/google/adk-java/issues/new)
 * **Documentation Enhancements:** [Open an issue in `google/adk-docs`](https://github.com/google/adk-docs/issues/new)
 
 ### Improving documentation { #improving-documentation }
