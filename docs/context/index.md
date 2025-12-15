@@ -588,7 +588,7 @@ You'll frequently need to read information stored within the context.
         from google.adk.tools import ToolContext
 
         def log_tool_usage(tool_context: ToolContext, **kwargs):
-            agent_name = tool_context.agent_nameSystem.out.println("Found temporary result from last tool: " + lastToolResult);
+            agent_name = tool_context.agent_name
             inv_id = tool_context.invocation_id
             func_call_id = getattr(tool_context, 'function_call_id', 'N/A') # Specific to ToolContext
 

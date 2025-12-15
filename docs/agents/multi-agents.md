@@ -29,7 +29,7 @@ The foundation for structuring multi-agent systems is the parent-child relations
 
 * **Establishing Hierarchy:** You create a tree structure by passing a list of agent instances to the `sub_agents` argument when initializing a parent agent. ADK automatically sets the `parent_agent` attribute on each child agent during initialization.
 * **Single Parent Rule:** An agent instance can only be added as a sub-agent once. Attempting to assign a second parent will result in a `ValueError`.
-* **Importance:** This hierarchy defines the scope for [Workflow Agents](#12-workflow-agents-as-orchestrators) and influences the potential targets for LLM-Driven Delegation. You can navigate the hierarchy using `agent.parent_agent` or find descendants using `agent.find_agent(name)`.
+* **Importance:** This hierarchy defines the scope for [Workflow Agents](#workflow-agents-as-orchestrators) and influences the potential targets for LLM-Driven Delegation. You can navigate the hierarchy using `agent.parent_agent` or find descendants using `agent.find_agent(name)`.
 
 === "Python"
 
@@ -37,9 +37,11 @@ The foundation for structuring multi-agent systems is the parent-child relations
     # Conceptual Example: Defining Hierarchy
     from google.adk.agents import LlmAgent, BaseAgent
 
+
     # Define individual agents
     greeter = LlmAgent(name="Greeter", model="gemini-2.0-flash")
     task_doer = BaseAgent(name="TaskExecutor") # Custom non-LLM agent
+
 
     # Create parent agent and assign children via sub_agents
     coordinator = LlmAgent(
@@ -51,6 +53,7 @@ The foundation for structuring multi-agent systems is the parent-child relations
             task_doer
         ]
     )
+
 
     # Framework automatically sets:
     # assert greeter.parent_agent == coordinator
@@ -118,9 +121,11 @@ The foundation for structuring multi-agent systems is the parent-child relations
     import com.google.adk.agents.SequentialAgent;
     import com.google.adk.agents.LlmAgent;
 
+
     // Define individual agents
     LlmAgent greeter = LlmAgent.builder().name("Greeter").model("gemini-2.0-flash").build();
     SequentialAgent taskDoer = SequentialAgent.builder().name("TaskExecutor").subAgents(...).build(); // Sequential Agent
+
 
     // Create parent agent and assign sub_agents
     LlmAgent coordinator = LlmAgent.builder()
@@ -129,6 +134,7 @@ The foundation for structuring multi-agent systems is the parent-child relations
         .description("I coordinate greetings and tasks")
         .subAgents(greeter, taskDoer) // Assign sub_agents here
         .build();
+
 
     // Framework automatically sets:
     // assert greeter.parentAgent().equals(coordinator);
@@ -245,20 +251,24 @@ ADK includes specialized agents derived from `BaseAgent` that don't perform task
     import com.google.adk.agents.LlmAgent;
     import com.google.adk.agents.ParallelAgent;
 
+
     LlmAgent fetchWeather = LlmAgent.builder()
         .name("WeatherFetcher")
         .outputKey("weather")
         .build();
+
 
     LlmAgent fetchNews = LlmAgent.builder()
         .name("NewsFetcher")
         .instruction("news")
         .build();
 
+
     ParallelAgent gatherer = ParallelAgent.builder()
         .name("InfoGatherer")
         .subAgents(fetchWeather, fetchNews)
         .build();
+
 
     // When gatherer runs, WeatherFetcher and NewsFetcher run concurrently.
     // A subsequent agent could read state['weather'] and state['news'].
@@ -339,6 +349,8 @@ ADK includes specialized agents derived from `BaseAgent` that don't perform task
     --8<-- "examples/go/snippets/agents/multi-agent/main.go:loop-with-condition"
     ```
 
+      ```
+
 === "Java"
 
     ```java
@@ -348,6 +360,7 @@ ADK includes specialized agents derived from `BaseAgent` that don't perform task
       public CheckConditionAgent(String name, String description) {
         super(name, description, List.of(), null, null);
       }
+
 
       @Override
       protected Flowable<Event> runAsyncImpl(InvocationContext ctx) {
@@ -364,6 +377,7 @@ ADK includes specialized agents derived from `BaseAgent` that don't perform task
         return Flowable.just(checkEvent);
       }
     }
+
 
     // Agent that might update state.put("status")
     LlmAgent processingStepAgent = LlmAgent.builder().name("ProcessingStep").build();
@@ -399,8 +413,10 @@ The most fundamental way for agents operating within the same invocation (and th
     # Conceptual Example: Using output_key and reading state
     from google.adk.agents import LlmAgent, SequentialAgent
 
+
     agent_A = LlmAgent(name="AgentA", instruction="Find the capital of France.", output_key="capital_city")
     agent_B = LlmAgent(name="AgentB", instruction="Tell me about the city stored in {capital_city}.")
+
 
     pipeline = SequentialAgent(name="CityInfo", sub_agents=[agent_A, agent_B])
     # AgentA runs, saves "Paris" to state['capital_city'].
@@ -440,17 +456,20 @@ The most fundamental way for agents operating within the same invocation (and th
     import com.google.adk.agents.LlmAgent;
     import com.google.adk.agents.SequentialAgent;
 
+
     LlmAgent agentA = LlmAgent.builder()
         .name("AgentA")
         .instruction("Find the capital of France.")
         .outputKey("capital_city")
         .build();
 
+
     LlmAgent agentB = LlmAgent.builder()
         .name("AgentB")
         .instruction("Tell me about the city stored in {capital_city}.")
         .outputKey("capital_city")
         .build();
+
 
     SequentialAgent pipeline = SequentialAgent.builder().name("CityInfo").subAgents(agentA, agentB).build();
     // AgentA runs, saves "Paris" to state('capital_city').
@@ -472,8 +491,10 @@ Leverages an [`LlmAgent`](llm-agents.md)'s understanding to dynamically route ta
     # Conceptual Setup: LLM Transfer
     from google.adk.agents import LlmAgent
 
+
     booking_agent = LlmAgent(name="Booker", description="Handles flight and hotel bookings.")
     info_agent = LlmAgent(name="Info", description="Provides general information and answers questions.")
+
 
     coordinator = LlmAgent(
         name="Coordinator",
@@ -526,15 +547,18 @@ Leverages an [`LlmAgent`](llm-agents.md)'s understanding to dynamically route ta
     // Conceptual Setup: LLM Transfer
     import com.google.adk.agents.LlmAgent;
 
+
     LlmAgent bookingAgent = LlmAgent.builder()
         .name("Booker")
         .description("Handles flight and hotel bookings.")
         .build();
 
+
     LlmAgent infoAgent = LlmAgent.builder()
         .name("Info")
         .description("Provides general information and answers questions.")
         .build();
+
 
     // Define the coordinator agent
     LlmAgent coordinator = LlmAgent.builder()
@@ -569,6 +593,7 @@ Allows an [`LlmAgent`](llm-agents.md) to treat another `BaseAgent` instance as a
     from google.adk.tools import agent_tool
     from pydantic import BaseModel
 
+
     # Define a target agent (could be LlmAgent or custom BaseAgent)
     class ImageGeneratorAgent(BaseAgent): # Example custom agent
         name: str = "ImageGen"
@@ -580,8 +605,10 @@ Allows an [`LlmAgent`](llm-agents.md) to treat another `BaseAgent` instance as a
             image_bytes = b"..."
             yield Event(author=self.name, content=types.Content(parts=[types.Part.from_bytes(image_bytes, "image/png")]))
 
+
     image_agent = ImageGeneratorAgent()
     image_tool = agent_tool.AgentTool(agent=image_agent) # Wrap the agent
+
 
     # Parent agent uses the AgentTool
     artist_agent = LlmAgent(
@@ -667,9 +694,11 @@ Allows an [`LlmAgent`](llm-agents.md) to treat another `BaseAgent` instance as a
     // Example custom agent (could be LlmAgent or custom BaseAgent)
     public class ImageGeneratorAgent extends BaseAgent  {
 
+
       public ImageGeneratorAgent(String name, String description) {
         super(name, description, List.of(), null, null);
       }
+
 
       // ... internal logic ...
       @Override
@@ -678,13 +707,16 @@ Allows an [`LlmAgent`](llm-agents.md) to treat another `BaseAgent` instance as a
         // Generate image bytes
         // ...
 
+
         Event responseEvent = Event.builder()
             .author(this.name())
             .content(Content.fromParts(Part.fromText("...")))
             .build();
 
+
         return Flowable.just(responseEvent);
       }
+
 
       @Override
       protected Flowable<Event> runLiveImpl(InvocationContext invocationContext) {
@@ -695,6 +727,7 @@ Allows an [`LlmAgent`](llm-agents.md) to treat another `BaseAgent` instance as a
     // Wrap the agent using AgentTool
     ImageGeneratorAgent imageAgent = new ImageGeneratorAgent("image_agent", "generates images");
     AgentTool imageTool = AgentTool.create(imageAgent);
+
 
     // Parent agent uses the AgentTool
     LlmAgent artistAgent = LlmAgent.builder()
@@ -710,6 +743,7 @@ Allows an [`LlmAgent`](llm-agents.md) to treat another `BaseAgent` instance as a
             .description("An agent that can create images using a generation tool.")
             .tools(imageTool) // Include the AgentTool
             .build();
+
 
     // Artist LLM generates a prompt, then calls:
     // FunctionCall(name='ImageGen', args={'imagePrompt': 'a cat wearing a hat'})
@@ -737,8 +771,10 @@ By combining ADK's composition primitives, you can implement various established
     # Conceptual Code: Coordinator using LLM Transfer
     from google.adk.agents import LlmAgent
 
+
     billing_agent = LlmAgent(name="Billing", description="Handles billing inquiries.")
     support_agent = LlmAgent(name="Support", description="Handles technical support requests.")
+
 
     coordinator = LlmAgent(
         name="HelpDeskCoordinator",
@@ -830,9 +866,11 @@ By combining ADK's composition primitives, you can implement various established
     # Conceptual Code: Sequential Data Pipeline
     from google.adk.agents import SequentialAgent, LlmAgent
 
+
     validator = LlmAgent(name="ValidateInput", instruction="Validate the input.", output_key="validation_status")
     processor = LlmAgent(name="ProcessData", instruction="Process data if {validation_status} is 'valid'.", output_key="result")
     reporter = LlmAgent(name="ReportResult", instruction="Report the result from {result}.")
+
 
     data_pipeline = SequentialAgent(
         name="DataPipeline",
@@ -880,11 +918,13 @@ By combining ADK's composition primitives, you can implement various established
     // Conceptual Code: Sequential Data Pipeline
     import com.google.adk.agents.SequentialAgent;
 
+
     LlmAgent validator = LlmAgent.builder()
         .name("ValidateInput")
         .instruction("Validate the input")
         .outputKey("validation_status") // Saves its main text output to session.state["validation_status"]
         .build();
+
 
     LlmAgent processor = LlmAgent.builder()
         .name("ProcessData")
@@ -892,15 +932,18 @@ By combining ADK's composition primitives, you can implement various established
         .outputKey("result") // Saves its main text output to session.state["result"]
         .build();
 
+
     LlmAgent reporter = LlmAgent.builder()
         .name("ReportResult")
         .instruction("Report the result from {result}")
         .build();
 
+
     SequentialAgent dataPipeline = SequentialAgent.builder()
         .name("DataPipeline")
         .subAgents(validator, processor, reporter)
         .build();
+
 
     // validator runs -> saves to state['validation_status']
     // processor runs -> reads state['validation_status'], saves to state['result']
@@ -921,18 +964,22 @@ By combining ADK's composition primitives, you can implement various established
     # Conceptual Code: Parallel Information Gathering
     from google.adk.agents import SequentialAgent, ParallelAgent, LlmAgent
 
+
     fetch_api1 = LlmAgent(name="API1Fetcher", instruction="Fetch data from API 1.", output_key="api1_data")
     fetch_api2 = LlmAgent(name="API2Fetcher", instruction="Fetch data from API 2.", output_key="api2_data")
+
 
     gather_concurrently = ParallelAgent(
         name="ConcurrentFetch",
         sub_agents=[fetch_api1, fetch_api2]
     )
 
+
     synthesizer = LlmAgent(
         name="Synthesizer",
         instruction="Combine results from {api1_data} and {api2_data}."
     )
+
 
     overall_workflow = SequentialAgent(
         name="FetchAndSynthesize",
@@ -1036,9 +1083,11 @@ By combining ADK's composition primitives, you can implement various established
     from google.adk.agents import LlmAgent
     from google.adk.tools import agent_tool
 
+
     # Low-level tool-like agents
     web_searcher = LlmAgent(name="WebSearch", description="Performs web searches for facts.")
     summarizer = LlmAgent(name="Summarizer", description="Summarizes text.")
+
 
     # Mid-level agent combining tools
     research_assistant = LlmAgent(
@@ -1047,6 +1096,7 @@ By combining ADK's composition primitives, you can implement various established
         description="Finds and summarizes information on a topic.",
         tools=[agent_tool.AgentTool(agent=web_searcher), agent_tool.AgentTool(agent=summarizer)]
     )
+
 
     # High-level agent delegating research
     report_writer = LlmAgent(
@@ -1113,16 +1163,19 @@ By combining ADK's composition primitives, you can implement various established
     import com.google.adk.agents.LlmAgent;
     import com.google.adk.tools.AgentTool;
 
+
     // Low-level tool-like agents
     LlmAgent webSearcher = LlmAgent.builder()
         .name("WebSearch")
         .description("Performs web searches for facts.")
         .build();
 
+
     LlmAgent summarizer = LlmAgent.builder()
         .name("Summarizer")
         .description("Summarizes text.")
         .build();
+
 
     // Mid-level agent combining tools
     LlmAgent researchAssistant = LlmAgent.builder()
@@ -1132,6 +1185,7 @@ By combining ADK's composition primitives, you can implement various established
         .tools(AgentTool.create(webSearcher), AgentTool.create(summarizer))
         .build();
 
+
     // High-level agent delegating research
     LlmAgent reportWriter = LlmAgent.builder()
         .name("ReportWriter")
@@ -1140,6 +1194,7 @@ By combining ADK's composition primitives, you can implement various established
         .tools(AgentTool.create(researchAssistant))
         // Alternatively, could use LLM Transfer if research_assistant is a subAgent
         .build();
+
 
     // User interacts with ReportWriter.
     // ReportWriter calls ResearchAssistant tool.
@@ -1161,11 +1216,13 @@ By combining ADK's composition primitives, you can implement various established
     # Conceptual Code: Generator-Critic
     from google.adk.agents import SequentialAgent, LlmAgent
 
+
     generator = LlmAgent(
         name="DraftWriter",
         instruction="Write a short paragraph about subject X.",
         output_key="draft_text"
     )
+
 
     reviewer = LlmAgent(
         name="FactChecker",
@@ -1173,7 +1230,9 @@ By combining ADK's composition primitives, you can implement various established
         output_key="review_status"
     )
 
+
     # Optional: Further steps based on review_status
+
 
     review_pipeline = SequentialAgent(
         name="WriteAndReview",
@@ -1230,11 +1289,13 @@ By combining ADK's composition primitives, you can implement various established
     import com.google.adk.agents.LlmAgent;
     import com.google.adk.agents.SequentialAgent;
 
+
     LlmAgent generator = LlmAgent.builder()
         .name("DraftWriter")
         .instruction("Write a short paragraph about subject X.")
         .outputKey("draft_text")
         .build();
+
 
     LlmAgent reviewer = LlmAgent.builder()
         .name("FactChecker")
@@ -1242,12 +1303,15 @@ By combining ADK's composition primitives, you can implement various established
         .outputKey("review_status")
         .build();
 
+
     // Optional: Further steps based on review_status
+
 
     SequentialAgent reviewPipeline = SequentialAgent.builder()
         .name("WriteAndReview")
         .subAgents(generator, reviewer)
         .build();
+
 
     // generator runs -> saves draft to state['draft_text']
     // reviewer runs -> reads state['draft_text'], saves status to state['review_status']
@@ -1271,12 +1335,14 @@ By combining ADK's composition primitives, you can implement various established
     from google.adk.agents.invocation_context import InvocationContext
     from typing import AsyncGenerator
 
+
     # Agent to generate/refine code based on state['current_code'] and state['requirements']
     code_refiner = LlmAgent(
         name="CodeRefiner",
         instruction="Read state['current_code'] (if exists) and state['requirements']. Generate/refine Python code to meet requirements. Save to state['current_code'].",
         output_key="current_code" # Overwrites previous code in state
     )
+
 
     # Agent to check if the code meets quality standards
     quality_checker = LlmAgent(
@@ -1285,12 +1351,14 @@ By combining ADK's composition primitives, you can implement various established
         output_key="quality_status"
     )
 
+
     # Custom agent to check the status and escalate if 'pass'
     class CheckStatusAndEscalate(BaseAgent):
         async def _run_async_impl(self, ctx: InvocationContext) -> AsyncGenerator[Event, None]:
             status = ctx.session.state.get("quality_status", "fail")
             should_stop = (status == "pass")
             yield Event(author=self.name, actions=EventActions(escalate=should_stop))
+
 
     refinement_loop = LoopAgent(
         name="CodeRefinementLoop",
@@ -1379,12 +1447,14 @@ By combining ADK's composition primitives, you can implement various established
     import io.reactivex.rxjava3.core.Flowable;
     import java.util.List;
 
+
     // Agent to generate/refine code based on state['current_code'] and state['requirements']
     LlmAgent codeRefiner = LlmAgent.builder()
         .name("CodeRefiner")
         .instruction("Read state['current_code'] (if exists) and state['requirements']. Generate/refine Java code to meet requirements. Save to state['current_code'].")
         .outputKey("current_code") // Overwrites previous code in state
         .build();
+
 
     // Agent to check if the code meets quality standards
     LlmAgent qualityChecker = LlmAgent.builder()
@@ -1393,13 +1463,16 @@ By combining ADK's composition primitives, you can implement various established
         .outputKey("quality_status")
         .build();
 
+
     BaseAgent checkStatusAndEscalate = new BaseAgent(
         "StopChecker","Checks quality_status and escalates if 'pass'.", List.of(), null, null) {
+
 
       @Override
       protected Flowable<Event> runAsyncImpl(InvocationContext invocationContext) {
         String status = (String) invocationContext.session().state().getOrDefault("quality_status", "fail");
         boolean shouldStop = "pass".equals(status);
+
 
         EventActions actions = EventActions.builder().escalate(shouldStop).build();
         Event event = Event.builder()
@@ -1410,11 +1483,13 @@ By combining ADK's composition primitives, you can implement various established
       }
     };
 
+
     LoopAgent refinementLoop = LoopAgent.builder()
         .name("CodeRefinementLoop")
         .maxIterations(5)
         .subAgents(codeRefiner, qualityChecker, checkStatusAndEscalate)
         .build();
+
 
     // Loop runs: Refiner -> Checker -> StopChecker
     // State['current_code'] is updated each iteration.
@@ -1439,6 +1514,7 @@ By combining ADK's composition primitives, you can implement various established
     from google.adk.agents import LlmAgent, SequentialAgent
     from google.adk.tools import FunctionTool
 
+
     # --- Assume external_approval_tool exists ---
     # This tool would:
     # 1. Take details (e.g., request_id, amount, reason).
@@ -1448,12 +1524,14 @@ By combining ADK's composition primitives, you can implement various established
     # async def external_approval_tool(amount: float, reason: str) -> str: ...
     approval_tool = FunctionTool(func=external_approval_tool)
 
+
     # Agent that prepares the request
     prepare_request = LlmAgent(
         name="PrepareApproval",
         instruction="Prepare the approval request details based on user input. Store amount and reason in state.",
         # ... likely sets state['approval_amount'] and state['approval_reason'] ...
     )
+
 
     # Agent that calls the human approval tool
     request_approval = LlmAgent(
@@ -1463,11 +1541,13 @@ By combining ADK's composition primitives, you can implement various established
         output_key="human_decision"
     )
 
+
     # Agent that proceeds based on human decision
     process_decision = LlmAgent(
         name="ProcessDecision",
         instruction="Check {human_decision}. If 'approved', proceed. If 'rejected', inform user."
     )
+
 
     approval_workflow = SequentialAgent(
         name="HumanApprovalWorkflow",
@@ -1552,6 +1632,7 @@ By combining ADK's composition primitives, you can implement various established
     import com.google.adk.agents.SequentialAgent;
     import com.google.adk.tools.FunctionTool;
 
+
     // --- Assume external_approval_tool exists ---
     // This tool would:
     // 1. Take details (e.g., request_id, amount, reason).
@@ -1561,12 +1642,14 @@ By combining ADK's composition primitives, you can implement various established
     // public boolean externalApprovalTool(float amount, String reason) { ... }
     FunctionTool approvalTool = FunctionTool.create(externalApprovalTool);
 
+
     // Agent that prepares the request
     LlmAgent prepareRequest = LlmAgent.builder()
         .name("PrepareApproval")
         .instruction("Prepare the approval request details based on user input. Store amount and reason in state.")
         // ... likely sets state['approval_amount'] and state['approval_reason'] ...
         .build();
+
 
     // Agent that calls the human approval tool
     LlmAgent requestApproval = LlmAgent.builder()
@@ -1576,11 +1659,13 @@ By combining ADK's composition primitives, you can implement various established
         .outputKey("human_decision")
         .build();
 
+
     // Agent that proceeds based on human decision
     LlmAgent processDecision = LlmAgent.builder()
         .name("ProcessDecision")
         .instruction("Check {human_decision}. If 'approved', proceed. If 'rejected', inform user.")
         .build();
+
 
     SequentialAgent approvalWorkflow = SequentialAgent.builder()
         .name("HumanApprovalWorkflow")
@@ -1588,6 +1673,18 @@ By combining ADK's composition primitives, you can implement various established
         .build();
     ```
 
+=== "Go"
+
+    ```go
+    import (
+        "google.golang.org/adk/agent"
+        "google.golang.org/adk/agent/llmagent"
+        "google.golang.org/adk/agent/workflowagents/sequentialagent"
+        "google.golang.org/adk/tool"
+    )
+
+    --8<-- "examples/go/snippets/agents/multi-agent/main.go:human-in-loop-pattern"
+    ```
 #### Human in the Loop with Policy
 
 A more advanced and structured way to implement Human-in-the-Loop is by using a `PolicyEngine`. This approach allows you to define policies that can trigger a confirmation step from a user before a tool is executed. The `SecurityPlugin` intercepts a tool call, consults the `PolicyEngine`, and if the policy dictates, it will automatically request user confirmation. This pattern is more robust for enforcing governance and security rules.

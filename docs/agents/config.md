@@ -51,7 +51,7 @@ To setup ADK for use with Agent Config:
 1.  Install the ADK Python libraries by following the
     [Installation](/adk-docs/get-started/installation/#python)
     instructions. *Python is currently required.* For more information, see the
-    [Known limitations](?tab=t.0#heading=h.xefmlyt7zh0i).
+    [Known limitations](#known-limitations).
 1.  Verify that ADK is installed by running the following command in your
     terminal:
 
