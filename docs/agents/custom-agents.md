@@ -253,7 +253,7 @@ Let's illustrate the power of custom agents with an example pattern: a multi-sta
     3.  Store the sub-agents (passed in or created internally) as instance properties (e.g., `this.storyGenerator`) so they can be accessed in the custom `runImpl` logic.
 
     ```typescript
-    --8<-- "examples/typescript/snippets/agents/cutsom-agent/storyflow_agent.ts:init"
+    --8<-- "examples/typescript/snippets/agents/custom-agent/storyflow_agent.ts:init"
     ```
 
 === "Go"
@@ -295,7 +295,7 @@ Let's illustrate the power of custom agents with an example pattern: a multi-sta
     The `runImpl` method orchestrates the sub-agents using standard TypeScript `async`/`await` and control flow. The `runLiveImpl` is also added to handle live streaming scenarios.
 
     ```typescript
-    --8<-- "examples/typescript/snippets/agents/cutsom-agent/storyflow_agent.ts:executionlogic"
+    --8<-- "examples/typescript/snippets/agents/custom-agent/storyflow_agent.ts:executionlogic"
     ```
     **Explanation of Logic:**
 
@@ -351,7 +351,7 @@ These are standard `LlmAgent` definitions, responsible for specific tasks. Their
 === "TypeScript"
 
     ```typescript
-    --8<-- "examples/typescript/snippets/agents/cutsom-agent/storyflow_agent.ts:llmagents"
+    --8<-- "examples/typescript/snippets/agents/custom-agent/storyflow_agent.ts:llmagents"
     ```
 
 === "Go"
@@ -381,7 +381,7 @@ Finally, you instantiate your `StoryFlowAgent` and use the `Runner` as usual.
 === "TypeScript"
 
     ```typescript
-    --8<-- "examples/typescript/snippets/agents/cutsom-agent/storyflow_agent.ts:story_flow_agent"
+    --8<-- "examples/typescript/snippets/agents/custom-agent/storyflow_agent.ts:story_flow_agent"
     ```
 
 === "Go"
@@ -415,7 +415,7 @@ Finally, you instantiate your `StoryFlowAgent` and use the `Runner` as usual.
 
         ```typescript
         # Full runnable code for the StoryFlowAgent example
-        --8<-- "examples/typescript/snippets/agents/cutsom-agent/storyflow_agent.ts"
+        --8<-- "examples/typescript/snippets/agents/custom-agent/storyflow_agent.ts"
         ```
 
     === "Go"
