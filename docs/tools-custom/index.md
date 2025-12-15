@@ -281,6 +281,12 @@ These methods provide convenient ways for your tool to interact with persistent 
     --8<-- "examples/python/snippets/tools/overview/doc_analysis.py"
     ```
 
+=== "TypeScript"
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/tools/overview/doc_analysis.ts"
+    ```
+
 === "Go"
 
     ```go
@@ -339,14 +345,6 @@ These methods provide convenient ways for your tool to interact with persistent 
     //      FunctionTool.create(ToolContextArtifactExample.class, "processDocument");
     // In the Agent, include this function tool.
     // LlmAgent agent = LlmAgent().builder().tools(processDocumentTool).build();
-    ```
-
-===
-
-==="TypeScript"
-
-    ```typescript
-    --8<-- "examples/typescript/snippets/tools/overview/doc_analysis.ts"
     ```
 
 By leveraging the **ToolContext**, developers can create more sophisticated and context-aware custom tools that seamlessly integrate with ADK's architecture and enhance the overall capabilities of their agents.
