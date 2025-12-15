@@ -2,6 +2,8 @@
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![PyPI](https://img.shields.io/pypi/v/google-adk)](https://pypi.org/project/google-adk/)
+[![NPM Version](https://img.shields.io/npm/v/@google/adk)](https://www.npmjs.com/package/@google/adk)
+[![Go Doc](https://img.shields.io/badge/Go%20Package-Doc-blue.svg)](https://pkg.go.dev/google.golang.org/adk)
 [![Maven Central](https://img.shields.io/maven-central/v/com.google.adk/google-adk)](https://search.maven.org/artifact/com.google.adk/google-adk)
 
 <html>
@@ -47,6 +49,8 @@ You can use Agent Development Kit (ADK) with your preferred package manager for 
 
 - **[Get started with ADK Python](https://google.github.io/adk-docs/get-started/python/)**
 
+- **[Get started with ADK TypeScript](https://google.github.io/adk-docs/get-started/typescript/)**
+
 - **[Get started with ADK Go](https://google.github.io/adk-docs/get-started/go/)**
 
 - **[Get started with ADK Java](https://google.github.io/adk-docs/get-started/java/)**
@@ -71,7 +75,7 @@ provides optimized documentation context compatible with AI code editors:
   models with large context windows.
 
 You can also visit our
-[Coding with AI](https://google.github.io/adk-docs/tutorials/coding-with-ai/)
+**[Coding with AI](https://google.github.io/adk-docs/tutorials/coding-with-ai/)**
 guide for instructions on using these files with development tools like Gemini
 CLI and Antigravity.
 
@@ -79,12 +83,12 @@ CLI and Antigravity.
 
 We welcome contributions from the community! Whether it's bug reports, feature
 requests, documentation improvements, or code contributions, please see our
-[**Contributing Guidelines**](./CONTRIBUTING.md) to get started.
+**[Contributing Guidelines](./CONTRIBUTING.md)** to get started.
 
 ## 📄 License
 
 This project is licensed under the Apache 2.0 License - see the
-[LICENSE](LICENSE) file for details.
+**[LICENSE](LICENSE)** file for details.
 
 ---
 
