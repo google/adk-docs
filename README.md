@@ -32,7 +32,7 @@ from simple tasks to complex workflows.
   capabilities, all for tight integration with the Google ecosystem.
 
 - **Code-First Development**: Define agent logic, tools, and orchestration
-  directly in Python and Java for ultimate flexibility, testability, and versioning.
+  directly for ultimate flexibility, testability, and versioning.
 
 - **Modular Multi-Agent Systems**: Design scalable applications by composing
   multiple specialized agents into flexible hierarchies.
@@ -45,7 +45,7 @@ from simple tasks to complex workflows.
 
 ## 🚀 Usage
 
-You can use Agent Development Kit (ADK) with your preferred package manager for Python or build tool for Java.
+You can use Agent Development Kit (ADK) with your preferred language:
 
 - **[Get started with ADK Python](https://google.github.io/adk-docs/get-started/python/)**
 
