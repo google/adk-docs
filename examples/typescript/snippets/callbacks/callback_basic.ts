@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+// --8<-- [start:callback_basic]
 import {
   LlmAgent,
   InMemoryRunner,
@@ -53,6 +55,7 @@ const myAgent = new LlmAgent({
   instruction: "Be helpful.",
   beforeModelCallback: myBeforeModelLogic,
 });
+// --8<-- [end:callback_basic]
 
 // Agent Interaction
 async function callAgentAsync(query: string) {

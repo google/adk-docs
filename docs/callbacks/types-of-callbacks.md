@@ -27,6 +27,11 @@ These callbacks are available on *any* agent that inherits from `BaseAgent` (inc
         --8<-- "examples/python/snippets/callbacks/before_agent_callback.py"
         ```
     
+    === "Typescript"
+        ```typescript
+        --8<-- "examples/typescript/snippets/callbacks/before_agent_callback.ts"
+        ```
+    
     === "Go"
 
         ```go
@@ -66,6 +71,11 @@ These callbacks are available on *any* agent that inherits from `BaseAgent` (inc
     
         ```python
         --8<-- "examples/python/snippets/callbacks/after_agent_callback.py"
+        ```
+    
+    === "Typescript"
+        ```typescript
+        --8<-- "examples/typescript/snippets/callbacks/after_agent_callback.ts"
         ```
     
     === "Go"
@@ -114,6 +124,11 @@ If the callback returns `None` (or a `Maybe.empty()` object in Java), the LLM co
         ```python
         --8<-- "examples/python/snippets/callbacks/before_model_callback.py"
         ```
+
+    === "Typescript"
+        ```typescript
+        --8<-- "examples/typescript/snippets/callbacks/before_model_callback.ts"
+        ``` 
     
     === "Go"
 
@@ -147,6 +162,11 @@ If the callback returns `None` (or a `Maybe.empty()` object in Java), the LLM co
     
         ```python
         --8<-- "examples/python/snippets/callbacks/after_model_callback.py"
+        ```
+    
+    === "Typescript"
+        ```typescript
+        --8<-- "examples/typescript/snippets/callbacks/after_model_callback.ts"
         ```
     
     === "Go"
@@ -187,6 +207,11 @@ These callbacks are also specific to `LlmAgent` and trigger around the execution
         --8<-- "examples/python/snippets/callbacks/before_tool_callback.py"
         ```
     
+    === "Typescript"
+        ```typescript
+        --8<-- "examples/typescript/snippets/callbacks/before_tool_callback.ts"
+        ```
+    
     === "Go"
 
         ```go
@@ -218,6 +243,11 @@ These callbacks are also specific to `LlmAgent` and trigger around the execution
     
         ```python
         --8<-- "examples/python/snippets/callbacks/after_tool_callback.py"
+        ```
+
+    === "Typescript"
+        ```typescript
+        --8<-- "examples/typescript/snippets/callbacks/after_tool_callback.ts"
         ```
 
     === "Go"
