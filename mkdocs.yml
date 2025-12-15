@@ -178,6 +178,7 @@ nav:
     - Get Started:
       - get-started/index.md
       - Python: get-started/python.md
+      - TypeScript: get-started/typescript.md
       - Go: get-started/go.md
       - Java: get-started/java.md
     - Build your Agent:
@@ -327,6 +328,7 @@ nav:
       - Python ADK: api-reference/python/index.html
       - Go ADK: https://pkg.go.dev/google.golang.org/adk" target="_blank
       - Java ADK: api-reference/java/index.html
+      - Typescript ADK: api-reference/typescript/index.html
       - CLI Reference: api-reference/cli/index.html
       - Agent Config Reference: api-reference/agentconfig/index.html
       - REST API: api-reference/rest/index.md

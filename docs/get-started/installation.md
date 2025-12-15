@@ -117,6 +117,13 @@
 
     You should also configure Gradle to pass `-parameters` to `javac`. (Alternatively, use `@Schema(name = "...")`).
 
+=== "TypeScript"
+
+    ### Install ADK and ADK DevTools
+
+    ```bash
+    npm install @google/adk @google/adk-devtools
+    ```
 
 ## Next steps
 

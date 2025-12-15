@@ -1,7 +1,7 @@
 # Logging in the Agent Development Kit (ADK)
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
 The Agent Development Kit (ADK) uses Python's standard `logging` module to provide flexible and powerful logging capabilities. Understanding how to configure and interpret these logs is crucial for monitoring agent behavior and debugging issues effectively.
@@ -80,7 +80,7 @@ ADK uses standard log levels to categorize messages. The configured level determ
 
 ## Reading and Understanding the Logs
 
-The `format` string in the `basicConfig` example determines the structure of each log message.  
+The `format` string in the `basicConfig` example determines the structure of each log message.
 
 Here’s a sample log entry:
 
@@ -119,7 +119,7 @@ By reading the logger name, you can immediately pinpoint the source of the log a
     ```log
     ...
     2025-07-10 15:26:13,778 - DEBUG - google_adk.google.adk.models.google_llm - Sending out request, model: gemini-2.0-flash, backend: GoogleLLMVariant.GEMINI_API, stream: False
-    2025-07-10 15:26:13,778 - DEBUG - google_adk.google.adk.models.google_llm - 
+    2025-07-10 15:26:13,778 - DEBUG - google_adk.google.adk.models.google_llm -
     LLM Request:
     -----------------------------------------------------------
     System Instruction:
@@ -139,7 +139,7 @@ By reading the logger name, you can immediately pinpoint the source of the log a
           3. When you respond, you must include the roll_die result from step 1.
           You should always perform the previous 3 steps when asking for a roll and checking prime numbers.
           You should not rely on the previous history on prime results.
-        
+
 
     You are an agent. Your internal name is "hello_world_agent".
 
@@ -151,12 +151,12 @@ By reading the logger name, you can immediately pinpoint the source of the log a
     {"parts":[{"function_response":{"name":"roll_die","response":{"result":2}}}],"role":"user"}
     -----------------------------------------------------------
     Functions:
-    roll_die: {'sides': {'type': <Type.INTEGER: 'INTEGER'>}} 
-    check_prime: {'nums': {'items': {'type': <Type.INTEGER: 'INTEGER'>}, 'type': <Type.ARRAY: 'ARRAY'>}} 
+    roll_die: {'sides': {'type': <Type.INTEGER: 'INTEGER'>}}
+    check_prime: {'nums': {'items': {'type': <Type.INTEGER: 'INTEGER'>}, 'type': <Type.ARRAY: 'ARRAY'>}}
     -----------------------------------------------------------
 
     2025-07-10 15:26:13,779 - INFO - google_genai.models - AFC is enabled with max remote calls: 10.
-    2025-07-10 15:26:14,309 - INFO - google_adk.google.adk.models.google_llm - 
+    2025-07-10 15:26:14,309 - INFO - google_adk.google.adk.models.google_llm -
     LLM Response:
     -----------------------------------------------------------
     Text:
