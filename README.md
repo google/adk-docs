@@ -58,7 +58,7 @@ deploying agents:
 
 - **[Documentation](https://google.github.io/adk-docs)**
 
-## Vibe Coding
+## ✨ Vibe Coding
 
 Accelerate your ADK agent development workflow with AI-assisted coding. ADK
 provides optimized documentation context compatible with AI code editors:
