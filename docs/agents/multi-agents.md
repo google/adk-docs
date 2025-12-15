@@ -1673,18 +1673,6 @@ By combining ADK's composition primitives, you can implement various established
         .build();
     ```
 
-=== "Go"
-
-    ```go
-    import (
-        "google.golang.org/adk/agent"
-        "google.golang.org/adk/agent/llmagent"
-        "google.golang.org/adk/agent/workflowagents/sequentialagent"
-        "google.golang.org/adk/tool"
-    )
-
-    --8<-- "examples/go/snippets/agents/multi-agent/main.go:human-in-loop-pattern"
-    ```
 #### Human in the Loop with Policy
 
 A more advanced and structured way to implement Human-in-the-Loop is by using a `PolicyEngine`. This approach allows you to define policies that can trigger a confirmation step from a user before a tool is executed. The `SecurityPlugin` intercepts a tool call, consults the `PolicyEngine`, and if the policy dictates, it will automatically request user confirmation. This pattern is more robust for enforcing governance and security rules.
