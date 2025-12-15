@@ -40,6 +40,12 @@ Callbacks are a cornerstone feature of ADK, providing a powerful mechanism to ho
         --8<-- "examples/python/snippets/callbacks/callback_basic.py:callback_basic"
         ```
 
+    === "Typescript"
+
+        ```typescript
+        --8<-- "examples/typescript/snippets/callbacks/callback_basic.ts:callback_basic"
+        ```
+    
     === "Go"
 
         ```go
@@ -89,6 +95,11 @@ This example demonstrates the common pattern for a guardrail using `before_model
 
         ```python
         --8<-- "examples/python/snippets/callbacks/before_model_callback.py"
+        ```
+
+    === "Typescript"
+        ```typescript
+        --8<-- "examples/typescript/snippets/callbacks/before_model_callback.ts"
         ```
 
     === "Go"
