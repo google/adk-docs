@@ -1,21 +1,6 @@
-/**
- * Copyright 2025 Google LLC
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 import 'dotenv/config';
-import {FunctionTool, LlmAgent} from '@google/adk';
-import {z} from 'zod';
+import { FunctionTool, LlmAgent } from '@google/adk';
+import { z } from 'zod';
 
 const getWeather = new FunctionTool({
   name: 'get_weather',
@@ -23,12 +8,12 @@ const getWeather = new FunctionTool({
   parameters: z.object({
     city: z.string().describe('The name of the city for which to retrieve the weather report.'),
   }),
-  execute: ({city}) => {
+  execute: ({ city }) => {
     if (city.toLowerCase() === 'new york') {
       return {
         status: 'success',
         report:
-            'The weather in New York is sunny with a temperature of 25 degrees Celsius (77 degrees Fahrenheit).',
+          'The weather in New York is sunny with a temperature of 25 degrees Celsius (77 degrees Fahrenheit).',
       };
     } else {
       return {
@@ -45,7 +30,7 @@ const getCurrentTime = new FunctionTool({
   parameters: z.object({
     city: z.string().describe("The name of the city for which to retrieve the current time."),
   }),
-  execute: ({city}) => {
+  execute: ({ city }) => {
     let tz_identifier: string;
     if (city.toLowerCase() === 'new york') {
       tz_identifier = 'America/New_York';
@@ -57,9 +42,9 @@ const getCurrentTime = new FunctionTool({
     }
 
     const now = new Date();
-    const report = `The current time in ${city} is ${now.toLocaleString('en-US', {timeZone: tz_identifier})}`;
+    const report = `The current time in ${city} is ${now.toLocaleString('en-US', { timeZone: tz_identifier })}`;
 
-    return {status: 'success', report: report};
+    return { status: 'success', report: report };
   },
 });
 

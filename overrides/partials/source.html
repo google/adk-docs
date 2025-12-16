@@ -1,11 +1,6 @@
 <!-- First repository information -->
-<a
-  href="{{ config.extra.first_repo_url }}"
-  title="{{ config.extra.first_repo_name or 'First Repository' }}"
-  class="md-source"
-  data-md-component="source"
-  style="margin-right: 10px;"
->
+<a href="{{ config.extra.first_repo_url }}" title="{{ config.extra.first_repo_name or 'First Repository' }}"
+  class="md-source" data-md-component="source" style="margin-right: 10px;">
   <div class="md-source__icon md-icon">
     {% set first_icon = config.extra.first_repo_icon or "fontawesome/brands/github" %}
     {% include ".icons/" ~ first_icon ~ ".svg" %}
@@ -16,13 +11,8 @@
 </a>
 
 <!-- Second repository information -->
-<a
-  href="{{ config.extra.second_repo_url }}"
-  title="{{ config.extra.second_repo_name or 'Second Repository' }}"
-  class="md-source"
-  data-md-component="source"
-  style="margin-right: 10px;"
->
+<a href="{{ config.extra.second_repo_url }}" title="{{ config.extra.second_repo_name or 'Second Repository' }}"
+  class="md-source" data-md-component="source" style="margin-right: 10px;">
   <div class="md-source__icon md-icon">
     {% set second_icon = config.extra.second_repo_icon or "fontawesome/brands/github" %}
     {% include ".icons/" ~ second_icon ~ ".svg" %}
@@ -33,17 +23,25 @@
 </a>
 
 <!-- Third repository information -->
-<a
-  href="{{ config.extra.third_repo_url }}"
-  title="{{ config.extra.third_repo_name or 'Third Repository' }}"
-  class="md-source"
-  data-md-component="source"
->
+<a href="{{ config.extra.third_repo_url }}" title="{{ config.extra.third_repo_name or 'Third Repository' }}"
+  class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     {% set third_icon = config.extra.third_repo_icon or "fontawesome/brands/github" %}
     {% include ".icons/" ~ third_icon ~ ".svg" %}
   </div>
   <div class="md-source__repository">
     {{ config.extra.third_repo_name or 'Third Repository' }}
+  </div>
+</a>
+
+<!-- Fourth repository information -->
+<a href="{{ config.extra.fourth_repo_url }}" title="{{ config.extra.fourth_repo_name or 'Fourth Repository' }}"
+  class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    {% set fourth_icon = config.extra.fourth_repo_icon or "fontawesome/brands/github" %}
+    {% include ".icons/" ~ fourth_icon ~ ".svg" %}
+  </div>
+  <div class="md-source__repository">
+    {{ config.extra.fourth_repo_name or 'Fourth Repository' }}
   </div>
 </a>
