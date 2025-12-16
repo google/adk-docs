@@ -143,6 +143,16 @@ Check out the following pre-built tools that you can use with ADK agents:
 
 <div class="tool-card-grid">
 
+  <a href="/adk-docs/tools/third-party/atlassian/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="../assets/tools-atlassian.png" alt="Atlassian">
+    </div>
+    <div class="tool-card-content">
+      <h3>Atlassian</h3>
+      <p>Manage issues, search pages, and update team content</p>
+    </div>
+  </a>
+
   <a href="/adk-docs/tools/third-party/agentql/" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="../assets/tools-agentql.png" alt="AgentQL">
@@ -150,6 +160,16 @@ Check out the following pre-built tools that you can use with ADK agents:
     <div class="tool-card-content">
       <h3>AgentQL</h3>
       <p>Extract resilient, structured web data using natural language</p>
+    </div>
+  </a>
+
+  <a href="/adk-docs/tools/third-party/apify/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="../assets/tools-apify.png" alt="Apify">
+    </div>
+    <div class="tool-card-content">
+      <h3>Apify</h3>
+      <p>Use Actors to scrape websites and automate web workflows</p>
     </div>
   </a>
 
@@ -223,6 +243,26 @@ Check out the following pre-built tools that you can use with ADK agents:
     </div>
   </a>
 
+  <a href="/adk-docs/tools/third-party/linear/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="../assets/tools-linear.png" alt="Linear">
+    </div>
+    <div class="tool-card-content">
+      <h3>Linear</h3>
+      <p>Manage issues, track projects, and streamline development</p>
+    </div>
+  </a>
+
+  <a href="/adk-docs/tools/third-party/n8n/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="../assets/tools-n8n.png" alt="n8n">
+    </div>
+    <div class="tool-card-content">
+      <h3>n8n</h3>
+      <p>Trigger automated workflows, connect apps, and process data</p>
+    </div>
+  </a>
+
   <a href="/adk-docs/tools/third-party/notion/" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="../assets/tools-notion.png" alt="Notion">
@@ -230,6 +270,26 @@ Check out the following pre-built tools that you can use with ADK agents:
     <div class="tool-card-content">
       <h3>Notion</h3>
       <p>Search workspaces, create pages, and manage tasks and databases</p>
+    </div>
+  </a>
+
+  <a href="/adk-docs/tools/third-party/paypal/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="../assets/tools-paypal.png" alt="Paypal">
+    </div>
+    <div class="tool-card-content">
+      <h3>Paypal</h3>
+      <p>Manage payments, send invoices, and handle subscriptions</p>
+    </div>
+  </a>
+
+  <a href="/adk-docs/tools/third-party/qdrant/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="../assets/tools-qdrant.png" alt="Qdrant">
+    </div>
+    <div class="tool-card-content">
+      <h3>Qdrant</h3>
+      <p>Store and retrieve information using semantic vector search</p>
     </div>
   </a>
 

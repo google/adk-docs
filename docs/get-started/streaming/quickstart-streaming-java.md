@@ -137,6 +137,11 @@ the dropdown. Select "science-app".
     If you do not see "science-app" in the dropdown menu, make sure you
     are running the `mvn` command from the root of your maven project.
 
+!!! warning "Caution: ADK Web for development only"
+
+    ADK Web is ***not meant for use in production deployments***. You should
+    use ADK Web for development and debugging purposes only.
+
 ## Try Dev UI with text
 
 With your favorite browser, navigate to: [http://127.0.0.1:8080/](http://127.0.0.1:8080/)
@@ -472,7 +477,7 @@ public final class LiveAudioRun {
 
         AtomicBoolean audioReceived = new AtomicBoolean(false);
         processEvent(event, audioReceived);
-        
+
         event.content().ifPresent(content -> content.parts().ifPresent(parts -> parts.forEach(part -> playAudioData(part, finalSpeakerLine))));
       }
 

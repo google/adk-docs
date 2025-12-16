@@ -10,7 +10,7 @@ of this context data grows, agent processing times typically also increase.
 More and more data is sent to the generative AI model used by the agent,
 increasing processing time and slowing down responses. The ADK Context
 Compaction feature is designed to reduce the size of context as an agent
-is running by summarizing older parts of the agent workflow event history. 
+is running by summarizing older parts of the agent workflow event history.
 
 The Context Compaction feature uses a *sliding window* approach for collecting
 and summarizing agent workflow event data within a
@@ -47,7 +47,7 @@ background each time the session reaches the interval.
 If you set `compaction_interval` to 3 and `overlap_size` to 1, the event data is
 compressed upon completion of events 3, 6, 9, and so on. The overlap setting
 increases size of the second summary compression, and each summary afterwards,
-as shown in Figure 1. 
+as shown in Figure 1.
 
 ![Context compaction example illustration](/adk-docs/assets/context-compaction.svg)
 **Figure 1.** Ilustration of event compaction configuration with a interval of 3
@@ -65,19 +65,19 @@ With this example configuration, the context compression tasks happen as follows
 
 The configuration settings for this feature control how frequently event data is compressed
 and how much data is retained as the agent workflow runs. Optionally, you can configure
-a compactor object 
+a compactor object
 
 *   **`compaction_interval`**: Set the number of completed events that triggers compaction
-    of the prior event data. 
+    of the prior event data.
 *   **`overlap_size`**: Set how many of the previously compacted events are included in a
     newly compacted context set.
-*   **`compactor`**: (Optional) Define a compactor object including a specific AI model
-    to use for summarization. For more information, see 
-    [Define a compactor](#define-compactor).    
+*   **`summarizer`**: (Optional) Define a summarizer object including a specific AI model
+    to use for summarization. For more information, see
+    [Define a Summarizer](#define-summarizer).
 
 ### Define a Summarizer {#define-summarizer}
-You can customize the process of context compression by defining a summarizer. 
-The LlmEventSummarizer class allows you to specify a particular model for summarization. 
+You can customize the process of context compression by defining a summarizer.
+The LlmEventSummarizer class allows you to specify a particular model for summarization.
 The following code example demonstrates how to define and configure a custom summarizer:
 
 ```python
@@ -96,12 +96,12 @@ app = App(
     name='my-agent',
     root_agent=root_agent,
     events_compaction_config=EventsCompactionConfig(
-        summarizer=my_summarizer,
         compaction_interval=3,
-        overlap_size=1
+        overlap_size=1,
+        summarizer=my_summarizer,
     ),
 )
-``` 
+```
 
 You can further refine the operation of the `SlidingWindowCompactor` by
 by modifying its summarizer class `LlmEventSummarizer` including changing

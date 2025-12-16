@@ -1,7 +1,7 @@
 # Context
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
 In the Agent Development Kit (ADK), "context" refers to the crucial bundle of information available to your agent and its tools during specific operations. Think of it as the necessary background knowledge and resources needed to handle a current task or conversation turn effectively.
@@ -24,11 +24,11 @@ The central piece holding all this information together for a single, complete u
 
     ```python
     # Conceptual Pseudocode: How the framework provides context (Internal Logic)
-    
+
     # runner = Runner(agent=my_root_agent, session_service=..., artifact_service=...)
     # user_message = types.Content(...)
     # session = session_service.get_session(...) # Or create new
-    
+
     # --- Inside runner.run_async(...) ---
     # 1. Framework creates the main context for this specific run
     # invocation_context = InvocationContext(
@@ -48,6 +48,34 @@ The central piece holding all this information together for a single, complete u
     #   --- End Internal Logic ---
     #
     # As a developer, you work with the context objects provided in method arguments.
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    /* Conceptual Pseudocode: How the framework provides context (Internal Logic) */
+
+    const runner = new InMemoryRunner({ agent: myRootAgent });
+    const session = await runner.sessionService.createSession({ ... });
+    const userMessage = createUserContent(...);
+
+    // --- Inside runner.runAsync(...) ---
+    // 1. Framework creates the main context for this specific run
+    const invocationContext = new InvocationContext({
+      invocationId: "unique-id-for-this-run",
+      session: session,
+      userContent: userMessage,
+      agent: myRootAgent, // The starting agent
+      sessionService: runner.sessionService,
+      pluginManager: runner.pluginManager,
+      // ... other necessary fields ...
+    });
+    //
+    // 2. Framework calls the agent's run method, passing the context implicitly
+    await myRootAgent.runAsync(invocationContext);
+    //   --- End Internal Logic ---
+
+    // As a developer, you work with the context objects provided in method arguments.
     ```
 
 === "Go"
@@ -93,14 +121,14 @@ While `InvocationContext` acts as the comprehensive internal container, ADK prov
     *   **Use Case:** Primarily used when the agent's core logic needs direct access to the overall session or services, though often state and artifact interactions are delegated to callbacks/tools which use their own contexts. Also used to control the invocation itself (e.g., setting `ctx.end_invocation = True`).
 
     === "Python"
-    
+
         ```python
         # Pseudocode: Agent implementation receiving InvocationContext
         from google.adk.agents import BaseAgent
         from google.adk.agents.invocation_context import InvocationContext
         from google.adk.events import Event
         from typing import AsyncGenerator
-    
+
         class MyAgent(BaseAgent):
             async def _run_async_impl(self, ctx: InvocationContext) -> AsyncGenerator[Event, None]:
                 # Direct access example
@@ -110,7 +138,25 @@ While `InvocationContext` acts as the comprehensive internal container, ADK prov
                 # ... agent logic using ctx ...
                 yield # ... event ...
         ```
-    
+
+    === "TypeScript"
+
+        ```typescript
+        // Pseudocode: Agent implementation receiving InvocationContext
+        import { BaseAgent, InvocationContext, Event } from '@google/adk';
+
+        class MyAgent extends BaseAgent {
+          async *runAsyncImpl(ctx: InvocationContext): AsyncGenerator<Event, void, undefined> {
+            // Direct access example
+            const agentName = ctx.agent.name;
+            const sessionId = ctx.session.id;
+            console.log(`Agent ${agentName} running in session ${sessionId} for invocation ${ctx.invocationId}`);
+            // ... agent logic using ctx ...
+            yield; // ... event ...
+          }
+        }
+        ```
+
     === "Go"
 
         ```go
@@ -118,17 +164,17 @@ While `InvocationContext` acts as the comprehensive internal container, ADK prov
         	"google.golang.org/adk/agent"
         	"google.golang.org/adk/session"
         )
-        
+
         --8<-- "examples/go/snippets/context/main.go:invocation_context_agent"
         ```
 
     === "Java"
-    
+
         ```java
         // Pseudocode: Agent implementation receiving InvocationContext
         import com.google.adk.agents.BaseAgent;
         import com.google.adk.agents.InvocationContext;
-        
+
             LlmAgent root_agent =
                 LlmAgent.builder()
                     .model("gemini-***")
@@ -142,35 +188,35 @@ While `InvocationContext` acts as the comprehensive internal container, ADK prov
                     .tools(sampleTool)
                     .outputKey("YOUR_KEY")
                     .build();
-    
+
             ConcurrentMap<String, Object> initialState = new ConcurrentHashMap<>();
             initialState.put("YOUR_KEY", "");
-          
+
             InMemoryRunner runner = new InMemoryRunner(agent);
             Session session =
                   runner
                       .sessionService()
                       .createSession(runner.appName(), USER_ID, initialState, SESSION_ID )
                       .blockingGet();
-    
+
            try (Scanner scanner = new Scanner(System.in, StandardCharsets.UTF_8)) {
                 while (true) {
                   System.out.print("\nYou > ");
                   String userInput = scanner.nextLine();
-        
+
                   if ("quit".equalsIgnoreCase(userInput)) {
                     break;
                   }
-                  
+
                   Content userMsg = Content.fromParts(Part.fromText(userInput));
-                  Flowable<Event> events = 
+                  Flowable<Event> events =
                           runner.runAsync(session.userId(), session.id(), userMsg);
-        
+
                   System.out.print("\nAgent > ");
-                  events.blockingForEach(event -> 
+                  events.blockingForEach(event ->
                           System.out.print(event.stringifyContent()));
               }
-        
+
             protected Flowable<Event> runAsyncImpl(InvocationContext invocationContext) {
                 // Direct access example
                 String agentName = invocationContext.agent.name
@@ -187,11 +233,11 @@ While `InvocationContext` acts as the comprehensive internal container, ADK prov
     *   **Key Contents:** `invocation_id`, `agent_name`, and a read-only *view* of the current `state`.
 
     === "Python"
-    
+
         ```python
         # Pseudocode: Instruction provider receiving ReadonlyContext
         from google.adk.agents.readonly_context import ReadonlyContext
-    
+
         def my_instruction_provider(context: ReadonlyContext) -> str:
             # Read-only access example
             user_tier = context.state().get("user_tier", "standard") # Can read state
@@ -199,20 +245,35 @@ While `InvocationContext` acts as the comprehensive internal container, ADK prov
             return f"Process the request for a {user_tier} user."
         ```
 
+    === "TypeScript"
+
+        ```typescript
+        // Pseudocode: Instruction provider receiving ReadonlyContext
+        import { ReadonlyContext } from '@google/adk';
+
+        function myInstructionProvider(context: ReadonlyContext): string {
+          // Read-only access example
+          // The state object is read-only
+          const userTier = context.state.get('user_tier') ?? 'standard';
+          // context.state.set('new_key', 'value'); // This would fail or throw an error
+          return `Process the request for a ${userTier} user.`;
+        }
+        ```
+
     === "Go"
 
         ```go
         import "google.golang.org/adk/agent"
-        
+
         --8<-- "examples/go/snippets/context/main.go:readonly_context_instruction"
         ```
 
     === "Java"
-    
+
         ```java
         // Pseudocode: Instruction provider receiving ReadonlyContext
         import com.google.adk.agents.ReadonlyContext;
-    
+
         public String myInstructionProvider(ReadonlyContext context){
             // Read-only access example
             String userTier = context.state().get("user_tier", "standard");
@@ -220,7 +281,7 @@ While `InvocationContext` acts as the comprehensive internal container, ADK prov
             return "Process the request for a " + userTier + " user."
         }
         ```
-    
+
 3.  **`CallbackContext`**
     *   **Where Used:** Passed as `callback_context` to agent lifecycle callbacks (`before_agent_callback`, `after_agent_callback`) and model interaction callbacks (`before_model_callback`, `after_model_callback`).
     *   **Purpose:** Facilitates inspecting and modifying state, interacting with artifacts, and accessing invocation details *specifically within callbacks*.
@@ -230,25 +291,44 @@ While `InvocationContext` acts as the comprehensive internal container, ADK prov
         *   Direct `user_content` access.
 
     === "Python"
-    
+
         ```python
         # Pseudocode: Callback receiving CallbackContext
         from google.adk.agents.callback_context import CallbackContext
         from google.adk.models import LlmRequest
         from google.genai import types
         from typing import Optional
-    
+
         def my_before_model_cb(callback_context: CallbackContext, request: LlmRequest) -> Optional[types.Content]:
             # Read/Write state example
             call_count = callback_context.state.get("model_calls", 0)
             callback_context.state["model_calls"] = call_count + 1 # Modify state
-    
+
             # Optionally load an artifact
             # config_part = callback_context.load_artifact("model_config.json")
             print(f"Preparing model call #{call_count + 1} for invocation {callback_context.invocation_id}")
             return None # Allow model call to proceed
         ```
-    
+
+    === "TypeScript"
+
+        ```typescript
+        // Pseudocode: Callback receiving CallbackContext
+        import { CallbackContext, LlmRequest } from '@google/adk';
+        import { Content } from '@google/genai';
+
+        function myBeforeModelCb(callbackContext: CallbackContext, request: LlmRequest): Content | undefined {
+          // Read/Write state example
+          const callCount = (callbackContext.state.get('model_calls') as number) || 0;
+          callbackContext.state.set('model_calls', callCount + 1); // Modify state
+
+          // Optionally load an artifact
+          // const configPart = await callbackContext.loadArtifact('model_config.json');
+          console.log(`Preparing model call #${callCount + 1} for invocation ${callbackContext.invocationId}`);
+          return undefined; // Allow model call to proceed
+        }
+        ```
+
     === "Go"
 
         ```go
@@ -256,24 +336,24 @@ While `InvocationContext` acts as the comprehensive internal container, ADK prov
         	"google.golang.org/adk/agent"
         	"google.golang.org/adk/model"
         )
-        
+
         --8<-- "examples/go/snippets/context/main.go:callback_context_callback"
         ```
 
     === "Java"
-    
+
         ```java
         // Pseudocode: Callback receiving CallbackContext
         import com.google.adk.agents.CallbackContext;
         import com.google.adk.models.LlmRequest;
         import com.google.genai.types.Content;
         import java.util.Optional;
-    
+
         public Maybe<LlmResponse> myBeforeModelCb(CallbackContext callbackContext, LlmRequest request){
             // Read/Write state example
             callCount = callbackContext.state().get("model_calls", 0)
             callbackContext.state().put("model_calls") = callCount + 1 # Modify state
-    
+
             // Optionally load an artifact
             // Maybe<Part> configPart = callbackContext.loadArtifact("model_config.json");
             System.out.println("Preparing model call " + callCount + 1);
@@ -292,12 +372,12 @@ While `InvocationContext` acts as the comprehensive internal container, ADK prov
         *   **`actions` Property:** Direct access to the `EventActions` object for this step, allowing the tool to signal state changes, auth requests, etc.
 
     === "Python"
-    
+
         ```python
         # Pseudocode: Tool function receiving ToolContext
         from google.adk.tools import ToolContext
         from typing import Dict, Any
-    
+
         # Assume this function is wrapped by a FunctionTool
         def search_external_api(query: str, tool_context: ToolContext) -> Dict[str, Any]:
             api_key = tool_context.state.get("api_key")
@@ -308,33 +388,63 @@ While `InvocationContext` acts as the comprehensive internal container, ADK prov
                 # Use the 'actions' property to signal the auth request has been made
                 # tool_context.actions.requested_auth_configs[tool_context.function_call_id] = auth_config
                 return {"status": "Auth Required"}
-    
+
             # Use the API key...
             print(f"Tool executing for query '{query}' using API key. Invocation: {tool_context.invocation_id}")
-    
+
             # Optionally search memory or list artifacts
             # relevant_docs = tool_context.search_memory(f"info related to {query}")
             # available_files = tool_context.list_artifacts()
-    
+
             return {"result": f"Data for {query} fetched."}
         ```
-    
+
+    === "TypeScript"
+
+        ```typescript
+        // Pseudocode: Tool function receiving ToolContext
+        import { ToolContext } from '@google/adk';
+
+        // __Assume this function is wrapped by a FunctionTool__
+        function searchExternalApi(query: string, toolContext: ToolContext): { [key: string]: string } {
+          const apiKey = toolContext.state.get('api_key') as string;
+          if (!apiKey) {
+             // Define required auth config
+             // const authConfig = new AuthConfig(...);
+             // toolContext.requestCredential(authConfig); // Request credentials
+             // The 'actions' property is now automatically updated by requestCredential
+             return { status: 'Auth Required' };
+          }
+
+          // Use the API key...
+          console.log(`Tool executing for query '${query}' using API key. Invocation: ${toolContext.invocationId}`);
+
+          // Optionally search memory or list artifacts
+          // Note: accessing services like memory/artifacts is typically async in TS,
+          // so you would need to mark this function 'async' if you reused them.
+          // toolContext.searchMemory(`info related to ${query}`).then(...)
+          // toolContext.listArtifacts().then(...)
+
+          return { result: `Data for ${query} fetched.` };
+        }
+        ```
+
     === "Go"
 
         ```go
         import "google.golang.org/adk/tool"
-        
+
         --8<-- "examples/go/snippets/context/main.go:tool_context_tool"
         ```
 
     === "Java"
-    
+
         ```java
         // Pseudocode: Tool function receiving ToolContext
         import com.google.adk.tools.ToolContext;
         import java.util.HashMap;
         import java.util.Map;
-    
+
         // Assume this function is wrapped by a FunctionTool
         public Map<String, Object> searchExternalApi(String query, ToolContext toolContext){
             String apiKey = toolContext.state.get("api_key");
@@ -345,13 +455,13 @@ While `InvocationContext` acts as the comprehensive internal container, ADK prov
                 // Use the 'actions' property to signal the auth request has been made
                 ...
                 return Map.of("status", "Auth Required");
-    
+
             // Use the API key...
             System.out.println("Tool executing for query " + query + " using API key. ");
-    
+
             // Optionally list artifacts
             // Single<List<String>> availableFiles = toolContext.listArtifacts();
-    
+
             return Map.of("result", "Data for " + query + " fetched");
         }
         ```
@@ -370,31 +480,60 @@ You'll frequently need to read information stored within the context.
 *   **Reading Session State:** Access data saved in previous steps or user/app-level settings. Use dictionary-like access on the `state` property.
 
     === "Python"
-    
+
         ```python
         # Pseudocode: In a Tool function
         from google.adk.tools import ToolContext
-    
+
         def my_tool(tool_context: ToolContext, **kwargs):
             user_pref = tool_context.state.get("user_display_preference", "default_mode")
             api_endpoint = tool_context.state.get("app:api_endpoint") # Read app-level state
-    
+
             if user_pref == "dark_mode":
                 # ... apply dark mode logic ...
                 pass
             print(f"Using API endpoint: {api_endpoint}")
             # ... rest of tool logic ...
-    
+
         # Pseudocode: In a Callback function
         from google.adk.agents.callback_context import CallbackContext
-    
+
         def my_callback(callback_context: CallbackContext, **kwargs):
             last_tool_result = callback_context.state.get("temp:last_api_result") # Read temporary state
             if last_tool_result:
                 print(f"Found temporary result from last tool: {last_tool_result}")
             # ... callback logic ...
         ```
-    
+
+    === "TypeScript"
+
+        ```typescript
+        // Pseudocode: In a Tool function
+        import { ToolContext } from '@google/adk';
+
+        async function myTool(toolContext: ToolContext) {
+          const userPref = toolContext.state.get('user_display_preference', 'default_mode');
+          const apiEndpoint = toolContext.state.get('app:api_endpoint'); // Read app-level state
+
+          if (userPref === 'dark_mode') {
+            // ... apply dark mode logic ...
+          }
+          console.log(`Using API endpoint: ${apiEndpoint}`);
+          // ... rest of tool logic ...
+        }
+
+        // Pseudocode: In a Callback function
+        import { CallbackContext } from '@google/adk';
+
+        function myCallback(callbackContext: CallbackContext) {
+          const lastToolResult = callbackContext.state.get('temp:last_api_result'); // Read temporary state
+          if (lastToolResult) {
+            console.log(`Found temporary result from last tool: ${lastToolResult}`);
+          }
+          // ... callback logic ...
+        }
+        ```
+
     === "Go"
 
         ```go
@@ -404,18 +543,18 @@ You'll frequently need to read information stored within the context.
             "google.golang.org/adk/tool"
         	"google.golang.org/genai"
         )
-        
+
         --8<-- "examples/go/snippets/context/main.go:accessing_state_tool"
 
         --8<-- "examples/go/snippets/context/main.go:accessing_state_callback"
         ```
 
     === "Java"
-    
+
         ```java
         // Pseudocode: In a Tool function
         import com.google.adk.tools.ToolContext;
-    
+
         public void myTool(ToolContext toolContext){
            String userPref = toolContext.state().get("user_display_preference");
            String apiEndpoint = toolContext.state().get("app:api_endpoint"); // Read app-level state
@@ -426,11 +565,11 @@ You'll frequently need to read information stored within the context.
            System.out.println("Using API endpoint: " + api_endpoint);
            // ... rest of tool logic ...
         }
-    
-    
+
+
         // Pseudocode: In a Callback function
         import com.google.adk.agents.CallbackContext;
-    
+
             public void myCallback(CallbackContext callbackContext){
                 String lastToolResult = (String) callbackContext.state().get("temp:last_api_result"); // Read temporary state
             }
@@ -443,33 +582,48 @@ You'll frequently need to read information stored within the context.
 *   **Getting Current Identifiers:** Useful for logging or custom logic based on the current operation.
 
     === "Python"
-    
+
         ```python
         # Pseudocode: In any context (ToolContext shown)
         from google.adk.tools import ToolContext
-    
+
         def log_tool_usage(tool_context: ToolContext, **kwargs):
-            agent_name = tool_context.agent_nameSystem.out.println("Found temporary result from last tool: " + lastToolResult);
+            agent_name = tool_context.agent_name
             inv_id = tool_context.invocation_id
             func_call_id = getattr(tool_context, 'function_call_id', 'N/A') # Specific to ToolContext
-    
+
             print(f"Log: Invocation={inv_id}, Agent={agent_name}, FunctionCallID={func_call_id} - Tool Executed.")
         ```
-    
+
+    === "TypeScript"
+
+        ```typescript
+        // Pseudocode: In any context (ToolContext shown)
+        import { ToolContext } from '@google/adk';
+
+        function logToolUsage(toolContext: ToolContext) {
+          const agentName = toolContext.agentName;
+          const invId = toolContext.invocationId;
+          const functionCallId = toolContext.functionCallId ?? 'N/A'; // Specific to ToolContext
+
+          console.log(`Log: Invocation=${invId}, Agent=${agentName}, FunctionCallID=${functionCallId} - Tool Executed.`);
+        }
+        ```
+
     === "Go"
 
         ```go
         import "google.golang.org/adk/tool"
-        
+
         --8<-- "examples/go/snippets/context/main.go:accessing_ids"
         ```
 
     === "Java"
-    
+
         ```java
         // Pseudocode: In any context (ToolContext shown)
          import com.google.adk.tools.ToolContext;
-    
+
          public void logToolUsage(ToolContext toolContext){
                     String agentName = toolContext.agentName;
                     String invId = toolContext.invocationId;
@@ -481,18 +635,18 @@ You'll frequently need to read information stored within the context.
 *   **Accessing the Initial User Input:** Refer back to the message that started the current invocation.
 
     === "Python"
-    
+
         ```python
         # Pseudocode: In a Callback
         from google.adk.agents.callback_context import CallbackContext
-    
+
         def check_initial_intent(callback_context: CallbackContext, **kwargs):
             initial_text = "N/A"
             if callback_context.user_content and callback_context.user_content.parts:
                 initial_text = callback_context.user_content.parts[0].text or "Non-text input"
-    
+
             print(f"This invocation started with user input: '{initial_text}'")
-    
+
         # Pseudocode: In an Agent's _run_async_impl
         # async def _run_async_impl(self, ctx: InvocationContext) -> AsyncGenerator[Event, None]:
         #     if ctx.user_content and ctx.user_content.parts:
@@ -500,7 +654,24 @@ You'll frequently need to read information stored within the context.
         #         print(f"Agent logic remembering initial query: {initial_text}")
         #     ...
         ```
-    
+
+    === "TypeScript"
+
+        ```typescript
+        // Pseudocode: In a Callback
+        import { CallbackContext } from '@google/adk';
+
+        function checkInitialIntent(callbackContext: CallbackContext) {
+          let initialText = 'N/A';
+          const userContent = callbackContext.userContent;
+          if (userContent?.parts?.length) {
+            initialText = userContent.parts[0].text ?? 'Non-text input';
+          }
+
+          console.log(`This invocation started with user input: '${initialText}'`);
+        }
+        ```
+
     === "Go"
 
         ```go
@@ -508,16 +679,16 @@ You'll frequently need to read information stored within the context.
         	"google.golang.org/adk/agent"
         	"google.golang.org/genai"
         )
-        
+
         --8<-- "examples/go/snippets/context/main.go:accessing_initial_user_input"
         ```
 
     === "Java"
-    
+
         ```java
         // Pseudocode: In a Callback
         import com.google.adk.agents.CallbackContext;
-    
+
         public void checkInitialIntent(CallbackContext callbackContext){
             String initialText = "N/A";
             if((!(callbackContext.userContent().isEmpty())) && (!(callbackContext.userContent().parts.isEmpty()))){
@@ -527,7 +698,7 @@ You'll frequently need to read information stored within the context.
             }
         }
         ```
-    
+
 ### Managing State
 
 State is crucial for memory and data flow. When you modify state using `CallbackContext` or `ToolContext`, the changes are automatically tracked and persisted by the framework.
@@ -542,31 +713,58 @@ State is crucial for memory and data flow. When you modify state using `Callback
         # Pseudocode: Tool 1 - Fetches user ID
         from google.adk.tools import ToolContext
         import uuid
-    
+
         def get_user_profile(tool_context: ToolContext) -> dict:
             user_id = str(uuid.uuid4()) # Simulate fetching ID
             # Save the ID to state for the next tool
             tool_context.state["temp:current_user_id"] = user_id
             return {"profile_status": "ID generated"}
-    
+
         # Pseudocode: Tool 2 - Uses user ID from state
         def get_user_orders(tool_context: ToolContext) -> dict:
             user_id = tool_context.state.get("temp:current_user_id")
             if not user_id:
                 return {"error": "User ID not found in state"}
-    
+
             print(f"Fetching orders for user ID: {user_id}")
             # ... logic to fetch orders using user_id ...
             return {"orders": ["order123", "order456"]}
+        ```
+
+    === "TypeScript"
+
+        ```typescript
+        // Pseudocode: Tool 1 - Fetches user ID
+        import { ToolContext } from '@google/adk';
+        import { v4 as uuidv4 } from 'uuid';
+
+        function getUserProfile(toolContext: ToolContext): Record<string, string> {
+          const userId = uuidv4(); // Simulate fetching ID
+          // Save the ID to state for the next tool
+          toolContext.state.set('temp:current_user_id', userId);
+          return { profile_status: 'ID generated' };
+        }
+
+        // Pseudocode: Tool 2 - Uses user ID from state
+        function getUserOrders(toolContext: ToolContext): Record<string, string | string[]> {
+          const userId = toolContext.state.get('temp:current_user_id');
+          if (!userId) {
+            return { error: 'User ID not found in state' };
+          }
+
+          console.log(`Fetching orders for user ID: ${userId}`);
+          // ... logic to fetch orders using user_id ...
+          return { orders: ['order123', 'order456'] };
+        }
         ```
 
     === "Go"
 
         ```go
         import "google.golang.org/adk/tool"
-        
+
         --8<-- "examples/go/snippets/context/main.go:passing_data_tool1"
-        
+
         --8<-- "examples/go/snippets/context/main.go:passing_data_tool2"
         ```
 
@@ -576,14 +774,14 @@ State is crucial for memory and data flow. When you modify state using `Callback
         // Pseudocode: Tool 1 - Fetches user ID
         import com.google.adk.tools.ToolContext;
         import java.util.UUID;
-    
+
         public Map<String, String> getUserProfile(ToolContext toolContext){
             String userId = UUID.randomUUID().toString();
             // Save the ID to state for the next tool
             toolContext.state().put("temp:current_user_id", user_id);
             return Map.of("profile_status", "ID generated");
         }
-    
+
         // Pseudocode: Tool 2 - Uses user ID from state
         public  Map<String, String> getUserOrders(ToolContext toolContext){
             String userId = toolContext.state().get("temp:current_user_id");
@@ -599,11 +797,11 @@ State is crucial for memory and data flow. When you modify state using `Callback
 *   **Updating User Preferences:**
 
     === "Python"
-    
+
         ```python
         # Pseudocode: Tool or Callback identifies a preference
         from google.adk.tools import ToolContext # Or CallbackContext
-    
+
         def set_user_preference(tool_context: ToolContext, preference: str, value: str) -> dict:
             # Use 'user:' prefix for user-level state (if using a persistent SessionService)
             state_key = f"user:{preference}"
@@ -611,21 +809,36 @@ State is crucial for memory and data flow. When you modify state using `Callback
             print(f"Set user preference '{preference}' to '{value}'")
             return {"status": "Preference updated"}
         ```
-    
+
+    === "TypeScript"
+
+        ```typescript
+        // Pseudocode: Tool or Callback identifies a preference
+        import { ToolContext } from '@google/adk'; // Or CallbackContext
+
+        function setUserPreference(toolContext: ToolContext, preference: string, value: string): Record<string, string> {
+          // Use 'user:' prefix for user-level state (if using a persistent SessionService)
+          const stateKey = `user:${preference}`;
+          toolContext.state.set(stateKey, value);
+          console.log(`Set user preference '${preference}' to '${value}'`);
+          return { status: 'Preference updated' };
+        }
+        ```
+
     === "Go"
 
         ```go
         import "google.golang.org/adk/tool"
-        
+
         --8<-- "examples/go/snippets/context/main.go:updating_preferences"
         ```
 
     === "Java"
-    
+
         ```java
         // Pseudocode: Tool or Callback identifies a preference
         import com.google.adk.tools.ToolContext; // Or CallbackContext
-    
+
         public Map<String, String> setUserPreference(ToolContext toolContext, String preference, String value){
             // Use 'user:' prefix for user-level state (if using a persistent SessionService)
             String stateKey = "user:" + preference;
@@ -646,12 +859,12 @@ Use artifacts to handle files or large data blobs associated with the session. C
     1.  **Ingest Reference (e.g., in a Setup Tool or Callback):** Save the *path or URI* of the document, not the entire content, as an artifact.
 
         === "Python"
-    
+
                ```python
                # Pseudocode: In a callback or initial tool
                from google.adk.agents.callback_context import CallbackContext # Or ToolContext
                from google.genai import types
-                
+
                def save_document_reference(context: CallbackContext, file_path: str) -> None:
                    # Assume file_path is something like "gs://my-bucket/docs/report.pdf" or "/local/path/to/report.pdf"
                    try:
@@ -665,11 +878,36 @@ Use artifacts to handle files or large data blobs associated with the session. C
                        print(f"Error saving artifact: {e}") # E.g., Artifact service not configured
                    except Exception as e:
                        print(f"Unexpected error saving artifact reference: {e}")
-                
+
                # Example usage:
                # save_document_reference(callback_context, "gs://my-bucket/docs/report.pdf")
                ```
-    
+
+        === "TypeScript"
+
+               ```typescript
+               // Pseudocode: In a callback or initial tool
+               import { CallbackContext } from '@google/adk'; // Or ToolContext
+               import type { Part } from '@google/genai';
+
+               async function saveDocumentReference(context: CallbackContext, filePath: string) {
+                 // Assume filePath is something like "gs://my-bucket/docs/report.pdf" or "/local/path/to/report.pdf"
+                 try {
+                   // Create a Part containing the path/URI text
+                   const artifactPart: Part = { text: filePath };
+                   const version = await context.saveArtifact('document_to_summarize.txt', artifactPart);
+                   console.log(`Saved document reference '${filePath}' as artifact version ${version}`);
+                   // Store the filename in state if needed by other tools
+                   context.state.set('temp:doc_artifact_name', 'document_to_summarize.txt');
+                 } catch (e) {
+                   console.error(`Unexpected error saving artifact reference: ${e}`);
+                 }
+               }
+
+               // Example usage:
+               // saveDocumentReference(callbackContext, "gs://my-bucket/docs/report.pdf");
+               ```
+
         === "Go"
 
             ```go
@@ -677,19 +915,19 @@ Use artifacts to handle files or large data blobs associated with the session. C
             	"google.golang.org/adk/tool"
             	"google.golang.org/genai"
             )
-            
+
             --8<-- "examples/go/snippets/context/main.go:artifacts_save_ref"
             ```
 
         === "Java"
-    
+
                ```java
                // Pseudocode: In a callback or initial tool
                import com.google.adk.agents.CallbackContext;
                import com.google.genai.types.Content;
                import com.google.genai.types.Part;
-                
-                
+
+
                pubic void saveDocumentReference(CallbackContext context, String filePath){
                    // Assume file_path is something like "gs://my-bucket/docs/report.pdf" or "/local/path/to/report.pdf"
                    try{
@@ -703,7 +941,7 @@ Use artifacts to handle files or large data blobs associated with the session. C
                        System.out.println("Unexpected error saving artifact reference: " + e);
                    }
                }
-                    
+
                // Example usage:
                // saveDocumentReference(context, "gs://my-bucket/docs/report.pdf")
                ```
@@ -767,11 +1005,66 @@ Use artifacts to handle files or large data blobs associated with the session. C
                 #      return {"error": f"Error reading document {file_path}: {e}"}
             ```
 
+        === "TypeScript"
+
+            ```typescript
+            // Pseudocode: In the Summarizer tool function
+            import { ToolContext } from '@google/adk';
+
+            async function summarizeDocumentTool(toolContext: ToolContext): Promise<Record<string, string>> {
+              const artifactName = toolContext.state.get('temp:doc_artifact_name') as string;
+              if (!artifactName) {
+                return { error: 'Document artifact name not found in state.' };
+              }
+
+              try {
+                // 1. Load the artifact part containing the path/URI
+                const artifactPart = await toolContext.loadArtifact(artifactName);
+                if (!artifactPart?.text) {
+                  return { error: `Could not load artifact or artifact has no text path: ${artifactName}` };
+                }
+
+                const filePath = artifactPart.text;
+                console.log(`Loaded document reference: ${filePath}`);
+
+                // 2. Read the actual document content (outside ADK context)
+                let documentContent = '';
+                if (filePath.startsWith('gs://')) {
+                  // Example: Use GCS client library to download/read
+                  // const storage = new Storage();
+                  // const bucket = storage.bucket('my-bucket');
+                  // const file = bucket.file(filePath.replace('gs://my-bucket/', ''));
+                  // const [contents] = await file.download();
+                  // documentContent = contents.toString();
+                } else if (filePath.startsWith('/')) {
+                  // Example: Use local file system
+                  // import { readFile } from 'fs/promises';
+                  // documentContent = await readFile(filePath, 'utf8');
+                } else {
+                  return { error: `Unsupported file path scheme: ${filePath}` };
+                }
+
+                // 3. Summarize the content
+                if (!documentContent) {
+                   return { error: 'Failed to read document content.' };
+                }
+
+                // const summary = summarizeText(documentContent); // Call your summarization logic
+                const summary = `Summary of content from ${filePath}`; // Placeholder
+
+                return { summary };
+
+              } catch (e) {
+                 return { error: `Error processing artifact: ${e}` };
+              }
+            }
+            ```
+
         === "Go"
 
             ```go
             import "google.golang.org/adk/tool"
-            
+
             --8<-- "examples/go/snippets/context/main.go:artifacts_summarize"
             ```
 
@@ -805,12 +1098,12 @@ Use artifacts to handle files or large data blobs associated with the session. C
                     } else if(){
                         // Example: Use local file system to download/read into documentContent
                     } else{
-                        return Map.of("error", "Unsupported file path scheme: " + filePath); 
+                        return Map.of("error", "Unsupported file path scheme: " + filePath);
                     }
 
                     // 3. Summarize the content
                     if(documentContent.isEmpty()){
-                        return Map.of("error", "Failed to read document content."); 
+                        return Map.of("error", "Failed to read document content.");
                     }
 
                     // summary = summarizeText(documentContent) // Call your summarization logic
@@ -826,15 +1119,15 @@ Use artifacts to handle files or large data blobs associated with the session. C
                 }
             }
             ```
-        
+
 *   **Listing Artifacts:** Discover what files are available.
-    
+
     === "Python"
-        
+
         ```python
         # Pseudocode: In a tool function
         from google.adk.tools import ToolContext
-        
+
         def check_available_docs(tool_context: ToolContext) -> dict:
             try:
                 artifact_keys = tool_context.list_artifacts()
@@ -843,21 +1136,38 @@ Use artifacts to handle files or large data blobs associated with the session. C
             except ValueError as e:
                 return {"error": f"Artifact service error: {e}"}
         ```
-        
+
+    === "TypeScript"
+
+        ```typescript
+        // Pseudocode: In a tool function
+        import { ToolContext } from '@google/adk';
+
+        async function checkAvailableDocs(toolContext: ToolContext): Promise<Record<string, string[] | string>> {
+          try {
+            const artifactKeys = await toolContext.listArtifacts();
+            console.log(`Available artifacts: ${artifactKeys}`);
+            return { available_docs: artifactKeys };
+          } catch (e) {
+            return { error: `Artifact service error: ${e}` };
+          }
+        }
+        ```
+
     === "Go"
 
         ```go
         import "google.golang.org/adk/tool"
-        
+
         --8<-- "examples/go/snippets/context/main.go:artifacts_list"
         ```
 
     === "Java"
-        
+
         ```java
         // Pseudocode: In a tool function
         import com.google.adk.tools.ToolContext;
-        
+
         public Map<String, String> checkAvailableDocs(ToolContext toolContext){
             try{
                 Single<List<String>> artifactKeys = toolContext.listArtifacts();
@@ -869,125 +1179,251 @@ Use artifacts to handle files or large data blobs associated with the session. C
         }
         ```
 
-### Handling Tool Authentication 
+### Handling Tool Authentication
 
 <div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
 </div>
 
 Securely manage API keys or other credentials needed by tools.
 
-```python
-# Pseudocode: Tool requiring auth
-from google.adk.tools import ToolContext
-from google.adk.auth import AuthConfig # Assume appropriate AuthConfig is defined
+=== "Python"
 
-# Define your required auth configuration (e.g., OAuth, API Key)
-MY_API_AUTH_CONFIG = AuthConfig(...)
-AUTH_STATE_KEY = "user:my_api_credential" # Key to store retrieved credential
+    ```python
+    # Pseudocode: Tool requiring auth
+    from google.adk.tools import ToolContext
+    from google.adk.auth import AuthConfig # Assume appropriate AuthConfig is defined
 
-def call_secure_api(tool_context: ToolContext, request_data: str) -> dict:
-    # 1. Check if credential already exists in state
-    credential = tool_context.state.get(AUTH_STATE_KEY)
+    # Define your required auth configuration (e.g., OAuth, API Key)
+    MY_API_AUTH_CONFIG = AuthConfig(...)
+    AUTH_STATE_KEY = "user:my_api_credential" # Key to store retrieved credential
 
-    if not credential:
-        # 2. If not, request it
-        print("Credential not found, requesting...")
+    def call_secure_api(tool_context: ToolContext, request_data: str) -> dict:
+        # 1. Check if credential already exists in state
+        credential = tool_context.state.get(AUTH_STATE_KEY)
+
+        if not credential:
+            # 2. If not, request it
+            print("Credential not found, requesting...")
+            try:
+                tool_context.request_credential(MY_API_AUTH_CONFIG)
+                # The framework handles yielding the event. The tool execution stops here for this turn.
+                return {"status": "Authentication required. Please provide credentials."}
+            except ValueError as e:
+                return {"error": f"Auth error: {e}"} # e.g., function_call_id missing
+            except Exception as e:
+                return {"error": f"Failed to request credential: {e}"}
+
+        # 3. If credential exists (might be from a previous turn after request)
+        #    or if this is a subsequent call after auth flow completed externally
         try:
-            tool_context.request_credential(MY_API_AUTH_CONFIG)
-            # The framework handles yielding the event. The tool execution stops here for this turn.
-            return {"status": "Authentication required. Please provide credentials."}
-        except ValueError as e:
-            return {"error": f"Auth error: {e}"} # e.g., function_call_id missing
+            # Optionally, re-validate/retrieve if needed, or use directly
+            # This might retrieve the credential if the external flow just completed
+            auth_credential_obj = tool_context.get_auth_response(MY_API_AUTH_CONFIG)
+            api_key = auth_credential_obj.api_key # Or access_token, etc.
+
+            # Store it back in state for future calls within the session
+            tool_context.state[AUTH_STATE_KEY] = auth_credential_obj.model_dump() # Persist retrieved credential
+
+            print(f"Using retrieved credential to call API with data: {request_data}")
+            # ... Make the actual API call using api_key ...
+            api_result = f"API result for {request_data}"
+
+            return {"result": api_result}
         except Exception as e:
-            return {"error": f"Failed to request credential: {e}"}
+            # Handle errors retrieving/using the credential
+            print(f"Error using credential: {e}")
+            # Maybe clear the state key if credential is invalid?
+            # tool_context.state[AUTH_STATE_KEY] = None
+            return {"error": "Failed to use credential"}
+    ```
 
-    # 3. If credential exists (might be from a previous turn after request)
-    #    or if this is a subsequent call after auth flow completed externally
-    try:
-        # Optionally, re-validate/retrieve if needed, or use directly
-        # This might retrieve the credential if the external flow just completed
-        auth_credential_obj = tool_context.get_auth_response(MY_API_AUTH_CONFIG)
-        api_key = auth_credential_obj.api_key # Or access_token, etc.
+=== "TypeScript"
 
-        # Store it back in state for future calls within the session
-        tool_context.state[AUTH_STATE_KEY] = auth_credential_obj.model_dump() # Persist retrieved credential
+    ```typescript
+    // Pseudocode: Tool requiring auth
+    import { ToolContext } from '@google/adk'; // AuthConfig from ADK or custom
 
-        print(f"Using retrieved credential to call API with data: {request_data}")
-        # ... Make the actual API call using api_key ...
-        api_result = f"API result for {request_data}"
+    // Define a local AuthConfig interface as it's not publicly exported by ADK
+    interface AuthConfig {
+      credentialKey: string;
+      authScheme: { type: string }; // Minimal representation for the example
+      // Add other properties if they become relevant for the example
+    }
 
-        return {"result": api_result}
-    except Exception as e:
-        # Handle errors retrieving/using the credential
-        print(f"Error using credential: {e}")
-        # Maybe clear the state key if credential is invalid?
-        # tool_context.state[AUTH_STATE_KEY] = None
-        return {"error": "Failed to use credential"}
+    // Define your required auth configuration (e.g., OAuth, API Key)
+    const MY_API_AUTH_CONFIG: AuthConfig = {
+      credentialKey: 'my-api-key', // Example key
+      authScheme: { type: 'api-key' }, // Example scheme type
+    };
+    const AUTH_STATE_KEY = 'user:my_api_credential'; // Key to store retrieved credential
 
-```
+    async function callSecureApi(toolContext: ToolContext, requestData: string): Promise<Record<string, string>> {
+      // 1. Check if credential already exists in state
+      const credential = toolContext.state.get(AUTH_STATE_KEY);
+
+      if (!credential) {
+        // 2. If not, request it
+        console.log('Credential not found, requesting...');
+        try {
+          toolContext.requestCredential(MY_API_AUTH_CONFIG);
+          // The framework handles yielding the event. The tool execution stops here for this turn.
+          return { status: 'Authentication required. Please provide credentials.' };
+        } catch (e) {
+          return { error: `Auth or credential request error: ${e}` };
+        }
+      }
+
+      // 3. If credential exists (might be from a previous turn after request)
+      //    or if this is a subsequent call after auth flow completed externally
+      try {
+        // Optionally, re-validate/retrieve if needed, or use directly
+        // This might retrieve the credential if the external flow just completed
+        const authCredentialObj = toolContext.getAuthResponse(MY_API_AUTH_CONFIG);
+        const apiKey = authCredentialObj?.apiKey; // Or accessToken, etc.
+
+        // Store it back in state for future calls within the session
+        // Note: In strict TS, might need to cast or serialize authCredentialObj
+        toolContext.state.set(AUTH_STATE_KEY, JSON.stringify(authCredentialObj));
+
+        console.log(`Using retrieved credential to call API with data: ${requestData}`);
+        // ... Make the actual API call using apiKey ...
+        const apiResult = `API result for ${requestData}`;
+
+        return { result: apiResult };
+      } catch (e) {
+        // Handle errors retrieving/using the credential
+        console.error(`Error using credential: ${e}`);
+        // Maybe clear the state key if credential is invalid?
+        // toolContext.state.set(AUTH_STATE_KEY, null);
+        return { error: 'Failed to use credential' };
+      }
+    }
+    ```
+
 *Remember: `request_credential` pauses the tool and signals the need for authentication. The user/system provides credentials, and on a subsequent call, `get_auth_response` (or checking state again) allows the tool to proceed.* The `tool_context.function_call_id` is used implicitly by the framework to link the request and response.
 
-### Leveraging Memory 
+### Leveraging Memory
 
 <div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
 </div>
 
 Access relevant information from the past or external sources.
 
-```python
-# Pseudocode: Tool using memory search
-from google.adk.tools import ToolContext
+=== "Python"
 
-def find_related_info(tool_context: ToolContext, topic: str) -> dict:
-    try:
-        search_results = tool_context.search_memory(f"Information about {topic}")
-        if search_results.results:
-            print(f"Found {len(search_results.results)} memory results for '{topic}'")
-            # Process search_results.results (which are SearchMemoryResponseEntry)
-            top_result_text = search_results.results[0].text
-            return {"memory_snippet": top_result_text}
-        else:
-            return {"message": "No relevant memories found."}
-    except ValueError as e:
-        return {"error": f"Memory service error: {e}"} # e.g., Service not configured
-    except Exception as e:
-        return {"error": f"Unexpected error searching memory: {e}"}
-```
+    ```python
+    # Pseudocode: Tool using memory search
+    from google.adk.tools import ToolContext
 
-### Advanced: Direct `InvocationContext` Usage 
+    def find_related_info(tool_context: ToolContext, topic: str) -> dict:
+        try:
+            search_results = tool_context.search_memory(f"Information about {topic}")
+            if search_results.results:
+                print(f"Found {len(search_results.results)} memory results for '{topic}'")
+                # Process search_results.results (which are SearchMemoryResponseEntry)
+                top_result_text = search_results.results[0].text
+                return {"memory_snippet": top_result_text}
+            else:
+                return {"message": "No relevant memories found."}
+        except ValueError as e:
+            return {"error": f"Memory service error: {e}"} # e.g., Service not configured
+        except Exception as e:
+            return {"error": f"Unexpected error searching memory: {e}"}
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    // Pseudocode: Tool using memory search
+    import { ToolContext } from '@google/adk';
+
+    async function findRelatedInfo(toolContext: ToolContext, topic: string): Promise<Record<string, string>> {
+      try {
+        const searchResults = await toolContext.searchMemory(`Information about ${topic}`);
+        if (searchResults.results?.length) {
+          console.log(`Found ${searchResults.results.length} memory results for '${topic}'`);
+          // Process searchResults.results
+          const topResultText = searchResults.results[0].text;
+          return { memory_snippet: topResultText };
+        } else {
+          return { message: 'No relevant memories found.' };
+        }
+      } catch (e) {
+         return { error: `Memory service error: ${e}` }; // e.g., Service not configured
+      }
+    }
+    ```
+
+### Advanced: Direct `InvocationContext` Usage
 
 <div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
 </div>
 
 While most interactions happen via `CallbackContext` or `ToolContext`, sometimes the agent's core logic (`_run_async_impl`/`_run_live_impl`) needs direct access.
 
-```python
-# Pseudocode: Inside agent's _run_async_impl
-from google.adk.agents import BaseAgent
-from google.adk.agents.invocation_context import InvocationContext
-from google.adk.events import Event
-from typing import AsyncGenerator
+=== "Python"
 
-class MyControllingAgent(BaseAgent):
-    async def _run_async_impl(self, ctx: InvocationContext) -> AsyncGenerator[Event, None]:
-        # Example: Check if a specific service is available
-        if not ctx.memory_service:
-            print("Memory service is not available for this invocation.")
-            # Potentially change agent behavior
+    ```python
+    # Pseudocode: Inside agent's _run_async_impl
+    from google.adk.agents import BaseAgent
+    from google.adk.agents.invocation_context import InvocationContext
+    from google.adk.events import Event
+    from typing import AsyncGenerator
 
-        # Example: Early termination based on some condition
-        if ctx.session.state.get("critical_error_flag"):
-            print("Critical error detected, ending invocation.")
-            ctx.end_invocation = True # Signal framework to stop processing
-            yield Event(author=self.name, invocation_id=ctx.invocation_id, content="Stopping due to critical error.")
-            return # Stop this agent's execution
+    class MyControllingAgent(BaseAgent):
+        async def _run_async_impl(self, ctx: InvocationContext) -> AsyncGenerator[Event, None]:
+            # Example: Check if a specific service is available
+            if not ctx.memory_service:
+                print("Memory service is not available for this invocation.")
+                # Potentially change agent behavior
 
-        # ... Normal agent processing ...
-        yield # ... event ...
-```
+            # Example: Early termination based on some condition
+            if ctx.session.state.get("critical_error_flag"):
+                print("Critical error detected, ending invocation.")
+                ctx.end_invocation = True # Signal framework to stop processing
+                yield Event(author=self.name, invocation_id=ctx.invocation_id, content="Stopping due to critical error.")
+                return # Stop this agent's execution
+
+            # ... Normal agent processing ...
+            yield # ... event ...
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    // Pseudocode: Inside agent's runAsyncImpl
+    import { BaseAgent, InvocationContext } from '@google/adk';
+    import type { Event } from '@google/adk';
+
+    class MyControllingAgent extends BaseAgent {
+      async *runAsyncImpl(ctx: InvocationContext): AsyncGenerator<Event, void, undefined> {
+        // Example: Check if a specific service is available
+        if (!ctx.memoryService) {
+          console.log('Memory service is not available for this invocation.');
+          // Potentially change agent behavior
+        }
+
+        // Example: Early termination based on some condition
+        // Direct access to state via ctx.session.state or through ctx.session.state property if wrapped
+        if ((ctx.session.state as { 'critical_error_flag': boolean })['critical_error_flag']) {
+          console.log('Critical error detected, ending invocation.');
+          ctx.endInvocation = true; // Signal framework to stop processing
+          yield {
+            author: this.name,
+            invocationId: ctx.invocationId,
+            content: { parts: [{ text: 'Stopping due to critical error.' }] }
+          } as Event;
+          return; // Stop this agent's execution
+        }
+
+        // ... Normal agent processing ...
+        yield; // ... event ...
+      }
+    }
+    ```
 
 Setting `ctx.end_invocation = True` is a way to gracefully stop the entire request-response cycle from within the agent or its callbacks/tools (via their respective context objects which also have access to modify the underlying `InvocationContext`'s flag).
 
