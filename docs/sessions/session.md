@@ -294,7 +294,7 @@ the storage backend that best suits your needs:
     ```py
     from google.adk.sessions import DatabaseSessionService
     # Example using a local SQLite file:
-    db_url = "sqlite:///./my_agent_data.db"
+    db_url = "sqlite+aiosqlite:///./my_agent_data.db"
     session_service = DatabaseSessionService(db_url=db_url)
     ```
 

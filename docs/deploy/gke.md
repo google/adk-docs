@@ -174,7 +174,7 @@ Create the following files (`main.py`, `requirements.txt`, `Dockerfile`, `capita
     # Get the directory where main.py is located
     AGENT_DIR = os.path.dirname(os.path.abspath(__file__))
     # Example session service URI (e.g., SQLite)
-    SESSION_SERVICE_URI = "sqlite:///./sessions.db"
+    SESSION_SERVICE_URI = "sqlite+aiosqlite:///./sessions.db"
     # Example allowed origins for CORS
     ALLOWED_ORIGINS = ["http://localhost", "http://localhost:8080", "*"]
     # Set web=True if you intend to serve a web interface, False otherwise
