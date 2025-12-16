@@ -69,7 +69,7 @@ public class HelloTimeAgent {
                 You are a helpful assistant that tells the current time in a city.
                 Use the 'getCurrentTime' tool for this purpose.
                 """)
-            .model("gemini-2.5-flash")
+            .model("gemini-3-flash-preview")
             .tools(FunctionTool.create(HelloTimeAgent.class, "getCurrentTime"))
             .build();
     }
