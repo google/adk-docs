@@ -29,12 +29,15 @@ extra:
   first_repo_url: https://github.com/google/adk-python
   first_repo_name: adk-python
   first_repo_icon: fontawesome/brands/github
-  second_repo_url: https://github.com/google/adk-go
-  second_repo_name: adk-go
+  second_repo_url: https://github.com/google/adk-js
+  second_repo_name: adk-js
   second_repo_icon: fontawesome/brands/github
-  third_repo_url: https://github.com/google/adk-java
-  third_repo_name: adk-java
+  third_repo_url: https://github.com/google/adk-go
+  third_repo_name: adk-go
   third_repo_icon: fontawesome/brands/github
+  fourth_repo_url: https://github.com/google/adk-java
+  fourth_repo_name: adk-java
+  fourth_repo_icon: fontawesome/brands/github
   analytics:
     provider: google
     property: G-DKHZS27PHP
