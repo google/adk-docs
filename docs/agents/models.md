@@ -1,7 +1,7 @@
 # Using Different Models with ADK
 
 <div class="language-support-tag" title="Java ADK currently supports Gemini and Anthropic models.">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
 The Agent Development Kit (ADK) is designed for flexibility, allowing you to

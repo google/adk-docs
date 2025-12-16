@@ -1,7 +1,7 @@
 # State: The Session's Scratchpad
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
 Within each `Session` (our conversation thread), the **`state`** attribute acts like the agent's dedicated scratchpad for that specific interaction. While `session.events` holds the full history, `session.state` is where the agent stores and updates dynamic details needed *during* the conversation.
@@ -21,7 +21,7 @@ Conceptually, `session.state` is a collection (dictionary or Map) holding key-va
 
     * Data is stored as `key: value`.
     * **Keys:** Always strings (`str`). Use clear names (e.g., `'departure_city'`, `'user:language_preference'`).
-    * **Values:** Must be **serializable**. This means they can be easily saved and loaded by the `SessionService`. Stick to basic types in the specific languages (Python/Go/Java) like strings, numbers, booleans, and simple lists or dictionaries containing *only* these basic types. (See API documentation for precise details).
+    * **Values:** Must be **serializable**. This means they can be easily saved and loaded by the `SessionService`. Stick to basic types in the specific languages (Python/Go/Java/TypeScript) like strings, numbers, booleans, and simple lists or dictionaries containing *only* these basic types. (See API documentation for precise details).
     * **⚠️ Avoid Complex Objects:** **Do not store non-serializable objects** (custom class instances, functions, connections, etc.) directly in the state. Store simple identifiers if needed, and retrieve the complex object elsewhere.
 
 2. **Mutability: It Changes**
@@ -36,7 +36,7 @@ Conceptually, `session.state` is a collection (dictionary or Map) holding key-va
       * `DatabaseSessionService` / `VertexAiSessionService`: **Persistent.** State is saved reliably.
 
 !!! Note
-    The specific parameters or method names for the primitives may vary slightly by SDK language (e.g., `session.state['current_intent'] = 'book_flight'` in Python,`context.State().Set("current_intent", "book_flight")` in Go, `session.state().put("current_intent", "book_flight)` in Java). Refer to the language-specific API documentation for details.
+    The specific parameters or method names for the primitives may vary slightly by SDK language (e.g., `session.state['current_intent'] = 'book_flight'` in Python,`context.State().Set("current_intent", "book_flight")` in Go, `session.state().put("current_intent", "book_flight)` in Java, or `context.state.set("current_intent", "book_flight")` in TypeScript). Refer to the language-specific API documentation for details.
 
 ### Organizing State with Prefixes: Scope Matters
 
@@ -102,6 +102,22 @@ To inject a value from the session state, enclose the key of the desired state v
     # "Write a short story about a cat, focusing on the theme: friendship."
     ```
 
+=== "TypeScript"
+
+    ```typescript
+    import { LlmAgent } from "@google/adk";
+
+    const storyGenerator = new LlmAgent({
+        name: "StoryGenerator",
+        model: "gemini-2.5-flash",
+        instruction: "Write a short story about a cat, focusing on the theme: {topic}."
+    });
+
+    // Assuming session.state['topic'] is set to "friendship", the LLM
+    // will receive the following instruction:
+    // "Write a short story about a cat, focusing on the theme: friendship."
+    ```
+
 === "Go"
 
     ```go
@@ -139,6 +155,25 @@ The `InstructionProvider` function receives a `ReadonlyContext` object, which yo
         name="template_helper_agent",
         instruction=my_instruction_provider
     )
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    import { LlmAgent, ReadonlyContext } from "@google/adk";
+
+    // This is an InstructionProvider
+    function myInstructionProvider(context: ReadonlyContext): string {
+        // You can optionally use the context to build the instruction
+        // For this example, we'll return a static string with literal braces.
+        return "This is an instruction with {{literal_braces}} that will not be replaced.";
+    }
+
+    const agent = new LlmAgent({
+        model: "gemini-2.5-flash",
+        name: "template_helper_agent",
+        instruction: myInstructionProvider
+    });
     ```
 
 === "Go"
@@ -242,16 +277,67 @@ This is the simplest method for saving an agent's final text response directly i
     # Expected output might include: {'last_greeting': 'Hello there! How can I help you today?'}
     ```
 
-=== "Java"
+=== "TypeScript"
 
-    ```java
-    --8<-- "examples/java/snippets/src/main/java/state/GreetingAgentExample.java:full_code"
+    ```typescript
+    import { LlmAgent, Runner, InMemorySessionService, isFinalResponse } from "@google/adk";
+    import { Content } from "@google/genai";
+
+    // Define agent with outputKey
+    const greetingAgent = new LlmAgent({
+        name: "Greeter",
+        model: "gemini-2.5-flash",
+        instruction: "Generate a short, friendly greeting.",
+        outputKey: "last_greeting" // Save response to state['last_greeting']
+    });
+
+    // --- Setup Runner and Session ---
+    const appName = "state_app";
+    const userId = "user1";
+    const sessionId = "session1";
+    const sessionService = new InMemorySessionService();
+    const runner = new Runner({
+        agent: greetingAgent,
+        appName: appName,
+        sessionService: sessionService
+    });
+    const session = await sessionService.createSession({
+        appName,
+        userId,
+        sessionId
+    });
+    console.log(`Initial state: ${JSON.stringify(session.state)}`);
+
+    // --- Run the Agent ---
+    // Runner handles calling appendEvent, which uses the outputKey
+    // to automatically create the stateDelta.
+    const userMessage: Content = { parts: [{ text: "Hello" }] };
+    for await (const event of runner.runAsync({
+        userId,
+        sessionId,
+        newMessage: userMessage
+    })) {
+        if (isFinalResponse(event)) {
+          console.log("Agent responded."); // Response text is also in event.content
+        }
+    }
+
+    // --- Check Updated State ---
+    const updatedSession = await sessionService.getSession({ appName, userId, sessionId });
+    console.log(`State after agent run: ${JSON.stringify(updatedSession?.state)}`);
+    // Expected output might include: {"last_greeting":"Hello there! How can I help you today?"}
     ```
 
 === "Go"
 
     ```go
     --8<-- "examples/go/snippets/sessions/state_example/state_example.go:greeting"
+    ```
+
+=== "Java"
+
+    ```java
+    --8<-- "examples/java/snippets/src/main/java/state/GreetingAgentExample.java:full_code"
     ```
 
 Behind the scenes, the `Runner` uses the `output_key` to create the necessary `EventActions` with a `state_delta` and calls `append_event`.
@@ -312,6 +398,61 @@ For more complex scenarios (updating multiple keys, non-string values, specific 
     # Note: 'temp:validation_needed' is NOT present.
     ```
 
+=== "TypeScript"
+
+    ```typescript
+    import { InMemorySessionService, createEvent, createEventActions } from "@google/adk";
+
+    // --- Setup ---
+    const sessionService = new InMemorySessionService();
+    const appName = "state_app_manual";
+    const userId = "user2";
+    const sessionId = "session2";
+    const session = await sessionService.createSession({
+        appName,
+        userId,
+        sessionId,
+        state: { "user:login_count": 0, "task_status": "idle" }
+    });
+    console.log(`Initial state: ${JSON.stringify(session.state)}`);
+
+    // --- Define State Changes ---
+    const currentTime = Date.now();
+    const stateChanges = {
+        "task_status": "active",              // Update session state
+        "user:login_count": (session.state["user:login_count"] as number || 0) + 1, // Update user state
+        "user:last_login_ts": currentTime,   // Add user state
+        "temp:validation_needed": true        // Add temporary state (will be discarded)
+    };
+
+    // --- Create Event with Actions ---
+    const actionsWithUpdate = createEventActions({
+        stateDelta: stateChanges,
+    });
+    // This event might represent an internal system action, not just an agent response
+    const systemEvent = createEvent({
+        invocationId: "inv_login_update",
+        author: "system", // Or 'agent', 'tool' etc.
+        actions: actionsWithUpdate,
+        timestamp: currentTime
+        // content might be null or represent the action taken
+    });
+
+    // --- Append the Event (This updates the state) ---
+    await sessionService.appendEvent({ session, event: systemEvent });
+    console.log("`appendEvent` called with explicit state delta.");
+
+    // --- Check Updated State ---
+    const updatedSession = await sessionService.getSession({
+        appName,
+        userId,
+        sessionId
+    });
+    console.log(`State after event: ${JSON.stringify(updatedSession?.state)}`);
+    // Expected: {"user:login_count":1,"task_status":"active","user:last_login_ts":<timestamp>}
+    // Note: 'temp:validation_needed' is NOT present.
+    ```
+
 === "Go"
 
     ```go
@@ -355,6 +496,28 @@ For more comprehensive details on context objects, refer to the [Context documen
 
         # State changes are automatically part of the event's state_delta
         # ... rest of callback/tool logic ...
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    // In an agent callback or tool function
+    import { CallbackContext } from "@google/adk"; // or ToolContext
+
+    function myCallbackOrToolFunction(
+        context: CallbackContext, // Or ToolContext
+        // ... other parameters ...
+    ) {
+        // Update existing state
+        const count = context.state.get("user_action_count", 0);
+        context.state.set("user_action_count", count + 1);
+
+        // Add new state
+        context.state.set("temp:last_operation_status", "success");
+
+        // State changes are automatically part of the event's stateDelta
+        // ... rest of callback/tool logic ...
+    }
     ```
 
 === "Go"

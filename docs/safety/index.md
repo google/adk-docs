@@ -1,7 +1,7 @@
 # Safety and Security for AI Agents
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-go">Go</span><span class="lst-java">Java</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript</span><span class="lst-go">Go</span><span class="lst-java">Java</span>
 </div>
 
 As AI agents grow in capability, ensuring they operate safely, securely, and align with your brand values is paramount. Uncontrolled agents can pose risks, including executing misaligned or harmful actions, such as data exfiltration, and generating inappropriate content that can impact your brand’s reputation. **Sources of risk include vague instructions, model hallucination, jailbreaks and prompt injections from adversarial users, and indirect prompt injections via tool use.**
@@ -95,6 +95,27 @@ For example, a query tool can be designed to expect a policy to be read from the
     # For this example, we'll assume it gets stored somewhere accessible.
     ```
 
+=== "TypeScript"
+
+    ```typescript
+    // Conceptual example: Setting policy data intended for tool context
+    // In a real ADK app, this might be set in InvocationContext.session.state
+    // or passed during tool initialization, then retrieved via ToolContext.
+
+    const policy: {[key: string]: any} = {}; // Assuming policy is an object
+    policy['select_only'] = true;
+    policy['tables'] = ['mytable1', 'mytable2'];
+
+    // Conceptual: Storing policy where the tool can access it via ToolContext later.
+    // This specific line might look different in practice.
+    // For example, storing in session state:
+    invocationContext.session.state["query_tool_policy"] = policy;
+
+    // Or maybe passing during tool init:
+    const queryTool = new QueryTool({policy: policy});
+    // For this example, we'll assume it gets stored somewhere accessible.
+    ```
+
 === "Go"
 
     ```go
@@ -165,6 +186,37 @@ During the tool execution, [**`Tool Context`**](../tools-custom/index.md#tool-co
 
       print(f"Executing validated query (hypothetical): {query}")
       return {"status": "success", "results": [...]} # Example successful return
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    function query(query: string, toolContext: ToolContext): string | object {
+        // Assume 'policy' is retrieved from context, e.g., via session state:
+        const policy = toolContext.state.get('query_tool_policy', {}) as {[key: string]: any};
+
+        // --- Placeholder Policy Enforcement ---
+        const actual_tables = explainQuery(query); // Hypothetical function call
+
+        const policyTables = new Set(policy['tables'] || []);
+        const isSubset = actual_tables.every(table => policyTables.has(table));
+
+        if (!isSubset) {
+            // Return an error message for the model
+            const allowed = (policy['tables'] || ['(None defined)']).join(', ');
+            return `Error: Query targets unauthorized tables. Allowed: ${allowed}`;
+        }
+
+        if (policy['select_only']) {
+            if (!query.trim().toUpperCase().startsWith("SELECT")) {
+                return "Error: Policy restricts queries to SELECT statements only.";
+            }
+        }
+        // --- End Policy Enforcement ---
+
+        console.log(`Executing validated query (hypothetical): ${query}`);
+        return { "status": "success", "results": [] }; // Example successful return
+    }
     ```
 
 === "Go"
@@ -321,6 +373,47 @@ When modifications to the tools to add guardrails aren't possible, the [**`Befor
           # e.g., query_tool_instance
         ]
     )
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    // Hypothetical callback function
+    function validateToolParams(
+        {tool, args, context}: {
+            tool: BaseTool,
+            args: {[key: string]: any},
+            context: ToolContext
+        }
+    ): {[key: string]: any} | undefined {
+        console.log(`Callback triggered for tool: ${tool.name}, args: ${JSON.stringify(args)}`);
+
+        // Example validation: Check if a required user ID from state matches an arg
+        const expectedUserId = context.state.get("session_user_id");
+        const actualUserIdInArgs = args["user_id_param"]; // Assuming tool takes 'user_id_param'
+
+        if (actualUserIdInArgs !== expectedUserId) {
+            console.log("Validation Failed: User ID mismatch!");
+            // Return a dictionary to prevent tool execution and provide feedback
+            return {"error": `Tool call blocked: User ID mismatch.`};
+        }
+
+        // Return undefined to allow the tool call to proceed if validation passes
+        console.log("Callback validation passed.");
+        return undefined;
+    }
+
+    // Hypothetical Agent setup
+    const rootAgent = new LlmAgent({
+        model: 'gemini-2.5-flash',
+        name: 'root_agent',
+        instruction: "...",
+        beforeToolCallback: validateToolParams, // Assign the callback
+        tools: [
+          // ... list of tool functions or Tool instances ...
+          // e.g., queryToolInstance
+        ]
+    });
     ```
 
 === "Go"

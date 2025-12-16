@@ -37,6 +37,14 @@
     pip show google-adk
     ```
 
+=== "TypeScript"
+
+    ### Install ADK and ADK DevTools
+
+    ```bash
+    npm install @google/adk @google/adk-devtools
+    ```
+
 === "Go"
 
     ## Create a new Go module
@@ -116,7 +124,6 @@
     ```
 
     You should also configure Gradle to pass `-parameters` to `javac`. (Alternatively, use `@Schema(name = "...")`).
-
 
 ## Next steps
 
