@@ -78,11 +78,13 @@ export const rootAgent = new LlmAgent({
 
 Use the `npm` tool to install and configure dependencies for your project,
 including the package file, TypeScript configuration, ADK TypeScript main
-library and developer tools:
+library and developer tools. Run the following commands from your
+`my-agent/` directory:
 
 ```console
-# initialize the project
-npm init
+cd my-agent/
+# initialize a project with default values
+npm init --yes
 # configure TypeScript
 npm install -D typescript
 npx tsc --init
