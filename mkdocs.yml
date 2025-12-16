@@ -216,6 +216,7 @@ nav:
         - Overview: tools/google-cloud-tools.md
         - MCP Toolbox for Databases: tools/google-cloud/mcp-toolbox-for-databases.md
         - Code Execution with Agent Engine: tools/google-cloud/code-exec-agent-engine.md
+        - Cloud API Registry: tools/google-cloud/api-registry.md
       - Third-party tools:
         - tools/third-party/index.md
         - AgentQL: tools/third-party/agentql.md
