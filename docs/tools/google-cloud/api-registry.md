@@ -1,12 +1,12 @@
 # Connect MCP tools from Cloud API Registry
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.22.0</span><span class="lst-preview">Preview</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.20.0</span><span class="lst-preview">Preview</span>
 </div>
 
 The Google Cloud API Registry connector tool for Agent Development Kit (ADK)
 lets you access a wide range of Google Cloud services for your agents as Model
-Content Protocol (MCP) servers through the
+Context Protocol (MCP) servers through the
 [Google Cloud API Registry](https://docs.cloud.google.com/api-registry/docs/overview).
 You can configure this tool to connect your agent to your Google Cloud projects
 and dynamically access Cloud services enabled for that project.
@@ -27,10 +27,27 @@ Before using the API Registry with your agent, you need to ensure the following:
     Cloud [Application Default Credentials](https://docs.cloud.google.com/docs/authentication/provide-credentials-adc)
     with the `apiregistry.viewer` role to list available MCP servers.
 
--   **MCP Server and Tool access:** The credentials used by the agent must have
-    permissions to access the MCP server and the underlying services the tools
-    interact with. For example, to use BigQuery tools, the service account needs
-    BigQuery IAM roles like `bigquery.dataViewer` and `bigquery.jobUser`.
+-   **Cloud APIs:** In your Google Cloud project, enable the
+    *cloudapiregistry.googleapis.com* and *apihub.googleapis.com* Google Cloud
+    APIs.
+
+-   **MCP Server and Tool access:** Make sure you enable the MCP Servers in the
+    API Registry for the Google Cloud services in your Cloud Project that you
+    want access with your agent. You can enable this in the Cloud Console or
+    use a gcloud command such as:
+    `gcloud beta api-registry mcp enable bigquery.googleapis.com --project={PROJECT_ID}`.
+    The credentials used by the agent must have permissions to access the MCP
+    server and the underlying services used by the tools. For example, to use
+    BigQuery tools, the service account needs BigQuery IAM roles like
+    `bigquery.dataViewer` and `bigquery.jobUser`. For more information about
+    required permissions, see [Authentication and access](#auth).
+
+You can check what MCP servers are enabled with API Registry using the follwing
+gcloud command:
+
+```console
+gcloud beta api-registry mcp servers list --project={PROJECT_ID}.
+```
 
 ## Use with agent
 
@@ -83,9 +100,9 @@ For the complete code for this example, see the
 sample. For information on the configuration options, see
 [Configuration](#configuration).
 For information on the authentication for this tool, see
-[Authentication](#authentication).
+[Authentication and access](#auth).
 
-## Authentication {#authentication}
+## Authentication and access {#auth}
 
 Using the API Registry with your agent requires authentication for the services
 the agent accesses. By default the tool uses Google Cloud
@@ -107,12 +124,19 @@ permissions and access:
     1.  Utilizing the underlying services and resources that the tools interact
         with.
 
+-   **MCP Tool user role:** Allow the account used by your agent to call MCP
+    tools through the API registry by granting the MCP tool user role:
+    `gcloud projects add-iam-policy-binding {PROJECT_ID} --member={member}
+    --role="roles/mcp.toolUser"`
+
 For example, when using MCP server tools that interact with BigQuery, the
 account associated with the credentials, such as a service account, must be
 granted appropriate BigQuery IAM roles, such as `bigquery.dataViewer` or
 `bigquery.jobUser`, within your Google Cloud project to access datasets and run
-queries. Additional headers for authentication or project context can be
-injected via the `header_provider` argument in the `ApiRegistry` constructor.
+queries. In the case of the bigquery MCP server, a `"x-goog-user-project":
+PROJECT_ID` header is required to use its tools Additional headers for
+authentication or project context can be injected via the `header_provider`
+argument in the `ApiRegistry` constructor.
 
 ## Configuration {#configuration}
 
@@ -147,5 +171,7 @@ The `get_toolset()` function has the following configuration options:
 
 ## Additional resources
 
--   [api_registry_agent sample](https://github.com/google/adk-python/tree/main/contributing/samples/api_registry_agent/)
+-   [api_registry_agent](https://github.com/google/adk-python/tree/main/contributing/samples/api_registry_agent/)
+    ADK code sample
 -   [Google Cloud API Registry](https://docs.cloud.google.com/api-registry/docs/overview)
+    documentation
