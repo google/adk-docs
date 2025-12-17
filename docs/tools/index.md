@@ -93,7 +93,7 @@ Check out the following pre-built tools that you can use with ADK agents:
     </div>
     <div class="tool-card-content">
       <h3>Bigtable Tools</h3>
-      <p>Interact with Bigtable to retrieve data and and execute SQL</p>
+      <p>Interact with Bigtable to retrieve data and execute SQL</p>
     </div>
   </a>
 
