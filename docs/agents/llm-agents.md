@@ -1,7 +1,11 @@
 # LLM Agent
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span>
+  <span class="lst-python">Python v0.1.0</span>
+  <span class="lst-typescript">Typescript v0.2.0</span>
+  <span class="lst-go">Go v0.1.0</span>
+  <span class="lst-java">Java v0.1.0</span>
 </div>
 
 The `LlmAgent` (often aliased simply as `Agent`) is a core component in ADK,
@@ -190,7 +194,7 @@ reasoning. They allow the agent to interact with the outside world, perform
 calculations, fetch real-time data, or execute specific actions.
 
 * **`tools` (Optional):** Provide a list of tools the agent can use. Each item in the list can be:
-    * A native function or method (wrapped as a `FunctionTool`). Python ADK automatically wraps the native function into a `FuntionTool` whereas, you must explicitly wrap your Java methods using `FunctionTool.create(...)`
+    * A native function or method (wrapped as a `FunctionTool`). Python ADK automatically wraps the native function into a `FunctionTool` whereas, you must explicitly wrap your Java methods using `FunctionTool.create(...)`
     * An instance of a class inheriting from `BaseTool`.
     * An instance of another agent (`AgentTool`, enabling agent-to-agent delegation - see [Multi-Agents](multi-agents.md)).
 
