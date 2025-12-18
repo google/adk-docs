@@ -256,3 +256,8 @@ workflows using the following guides:
     for your ADK agents.
 *   **[OpenAPI Integration](/adk-docs/tools-custom/openapi-tools/)**:
     Generate callable tools directly from an OpenAPI Specification.
+
+!!! warning "Deploying tools to Agent Engine"
+    When deploying agents with custom toolsets to Vertex AI Agent Engine, be aware of environment variable timing considerations. Toolsets that read configuration at import time will use deployment environment values instead of runtime values.
+
+    For toolsets that need environment-specific configuration (API endpoints, database URLs, credentials), use the LazyToolsetWrapper pattern to defer initialisation until runtime. See [Advanced deployment considerations](/adk-docs/deploy/agent-engine/#advanced-deployment-considerations) in the Agent Engine guide for the complete solution.
