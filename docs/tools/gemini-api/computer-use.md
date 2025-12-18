@@ -1,4 +1,4 @@
-# Computer Use Toolset with Gemini
+# Computer Use Toolset with Gemini API
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.17.0</span><span class="lst-preview">Preview</span>
@@ -6,13 +6,13 @@
 
 The Computer Use Toolset allows an agent to operate a user interface
 of a computer, such as a browsers, to complete tasks. This tool uses
-a specific Gemini model and the [Playwright](https://playwright.dev/) 
+a specific Gemini model and the [Playwright](https://playwright.dev/)
 testing tool to control a Chromium browser and can interact with
 web pages by taking screenshots, clicking, typing, and navigating.
 
-For more information about the computer use model, see 
+For more information about the computer use model, see
 Gemini API [Computer use](https://ai.google.dev/gemini-api/docs/computer-use)
-or the Google Cloud Vertex AI API 
+or the Google Cloud Vertex AI API
 [Computer use](https://cloud.google.com/vertex-ai/generative-ai/docs/computer-use).
 
 !!! example "Preview release"
