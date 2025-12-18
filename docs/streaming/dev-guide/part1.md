@@ -463,8 +463,13 @@ For production applications, choose a persistent session service based on your i
 - You're building single-server apps (SQLite) or multi-server deployments (PostgreSQL/MySQL)
 - You want full control over data storage and backups
 - Examples:
-    - SQLite: `DatabaseSessionService(db_url="sqlite:///./sessions.db")`
+    - SQLite: `DatabaseSessionService(db_url="sqlite+aiosqlite:///./sessions.db")`
     - PostgreSQL: `DatabaseSessionService(db_url="postgresql://user:pass@host/db")`
+
+    <div class="admonition note">
+    <p class="admonition-title">Note</p>
+    <p>For SQLite, use <code>sqlite+aiosqlite</code> instead of <code>sqlite</code> because <code>DatabaseSessionService</code> requires an async database driver.</p>
+    </div>
 
 **Use `VertexAiSessionService` if:**
 
