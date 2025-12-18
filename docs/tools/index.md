@@ -47,6 +47,16 @@ Check out the following pre-built tools that you can use with ADK agents:
     </div>
   </a>
 
+  <a href="/adk-docs/tools/google-cloud/api-registry/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="../assets/developer-tools-color.svg" alt="Cloud API Registry">
+    </div>
+    <div class="tool-card-content">
+      <h3>API Registry</h3>
+      <p>Dynamically connect with Google Cloud services as MCP tools</p>
+    </div>
+  </a>
+
   <a href="/adk-docs/tools/google-cloud-tools/#application-integration-tools" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="../assets/tools-apigee-integration.png" alt="Apigee Integration">
@@ -83,7 +93,7 @@ Check out the following pre-built tools that you can use with ADK agents:
     </div>
     <div class="tool-card-content">
       <h3>Bigtable Tools</h3>
-      <p>Interact with Bigtable to retrieve data and and execute SQL</p>
+      <p>Interact with Bigtable to retrieve data and execute SQL</p>
     </div>
   </a>
 

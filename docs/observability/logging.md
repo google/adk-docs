@@ -59,7 +59,7 @@ The available log levels for the `--log_level` option are:
 - `ERROR`
 - `CRITICAL`
 
-> You can also use `-v` or `--verbose` as a a shortcut for `--log_level DEBUG`.
+> You can also use `-v` or `--verbose` as a shortcut for `--log_level DEBUG`.
 >
 > ```bash
 > adk web -v path/to/your/agents_dir

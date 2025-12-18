@@ -213,7 +213,7 @@ production, we recommend creating the table manually using the following DDL, wh
 ```sql
 CREATE TABLE `your-gcp-project-id.adk_agent_logs.agent_events_v2`
 (
-  timestamp TIMESTAMP NOT NULLOPTIONS(description="The UTC time at which the event was logged."),
+  timestamp TIMESTAMP NOT NULL OPTIONS(description="The UTC time at which the event was logged."),
   event_type STRING OPTIONS(description="Indicates the type of event being logged (e.g., 'LLM_REQUEST', 'TOOL_COMPLETED')."),
   agent STRING OPTIONS(description="The name of the ADK agent or author associated with the event."),
   session_id STRING OPTIONS(description="A unique identifier to group events within a single conversation or user session."),
