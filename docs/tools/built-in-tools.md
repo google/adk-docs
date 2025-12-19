@@ -235,9 +235,30 @@ These are a set of tools aimed to provide integration with Spanner, namely:
 * **`get_table_schema`**: Fetches Spanner database table schema and metadata information.
 * **`execute_sql`**: Runs a SQL query in Spanner database and fetch the result.
 * **`similarity_search`**: Similarity search in Spanner using a text query.
+* **`vector_store_similarity_search`**: Performs a semantic similarity search to retrieve relevant context from the Spanner vector store.
 
 They are packaged in the toolset `SpannerToolset`.
 
+When using the `vector_store_similarity_search` tool, you need to provide the
+`SpannerVectorStoreSettings` to configure the tool. The settings are described
+in the following table:
+
+| Parameter            | Type   | Description                                                                             |
+| -------------------- | ------ | --------------------------------------------------------------------------------------- |
+| `project_id`          | `str`  | The GCP project id in which the Spanner database resides. |
+| `instance_id`          | `str`  | The instance id of the Spanner database. |
+| `database_id`          | `str`  | The database id of the Spanner database. |
+| `table_name`              | `str`  | The name of the vector store table to use for vector similarity search.         |
+| `content_column`    | `str`  | The name of the content column in the vector store table. By default, this column value is also returned as part of the vector similarity search result.                           |
+| `embedding_column`      | `str`  | The name of the embedding column to search in the vector store table.                   |
+| `vector_length`      | `int`  | The the dimension of the vectors in the `embedding_column`.               |
+| `vertex_ai_embedding_model_name`          | `str`  | The Vertex AI embedding model name, which is used to generate embeddings for vector store and vector similarity search. For example, `'text-embedding-005'`.                 |
+| `selected_columns` | `List[str]`  | The vector store table columns to return in the vector similarity search result. By default, only the `content_column` value and the distance value are returned. |
+| `nearest_neighbors_algorithm` | `str`  | The algorithm used to perform vector similarity search. This value can be `EXACT_NEAREST_NEIGHBORS` or `APPROXIMATE_NEAREST_NEIGHBORS`. |
+| `top_k` | `int`  | The number of neighbors to return for each vector similarity search query. The default value is `4`. |
+| `distance_type` | `str`  | The distance metric used to build the vector index or perform vector similarity search. This value can be `COSINE`, `DOT_PRODUCT`, or `EUCLIDEAN`. |
+| `num_leaves_to_search` | `int`  | This option specifies how many leaf nodes of the index are searched. Note: this option is only used when the nearest neighbors search algorithm (`nearest_neighbors_algorithm`) is `APPROXIMATE_NEAREST_NEIGHBORS`.|
+| `additional_filter` | `str`  | An optional filter to apply to the search query. If provided, this will be added to the `WHERE` clause of the final query. |
 
 
 ```py
@@ -288,17 +309,17 @@ to use built-in tools with other tools by using multiple agents:
     search_agent = Agent(
         model='gemini-2.0-flash',
         name='SearchAgent',
-        instruction="""
+        instruction='''
         You're a specialist in Google Search
-        """,
+        ''',
         tools=[google_search],
     )
     coding_agent = Agent(
         model='gemini-2.0-flash',
         name='CodeAgent',
-        instruction="""
+        instruction='''
         You're a specialist in Code Execution
-        """,
+        ''',
         code_executor=BuiltInCodeExecutor(),
     )
     root_agent = Agent(
@@ -421,17 +442,17 @@ is **not** currently supported:
     url_context_agent = Agent(
         model='gemini-2.0-flash',
         name='UrlContextAgent',
-        instruction="""
+        instruction='''
         You're a specialist in URL Context
-        """,
+        ''',
         tools=[url_context],
     )
     coding_agent = Agent(
         model='gemini-2.0-flash',
         name='CodeAgent',
-        instruction="""
+        instruction='''
         You're a specialist in Code Execution
-        """,
+        ''',
         code_executor=BuiltInCodeExecutor(),
     )
     root_agent = Agent(
