@@ -238,6 +238,16 @@ These are a set of tools aimed to provide integration with Spanner, namely:
 
 They are packaged in the toolset `SpannerToolset`.
 
+The `execute_sql` tool can now return results as a list of dictionaries. To enable this, set `query_result_mode=QueryResultMode.DICT_LIST` in `SpannerToolSettings`.
+
+```python
+from google.adk.tools.spanner.settings import QueryResultMode, SpannerToolSettings
+from google.adk.tools.spanner.spanner_toolset import SpannerToolset
+
+tool_settings = SpannerToolSettings(query_result_mode=QueryResultMode.DICT_LIST)
+spanner_toolset = SpannerToolset(spanner_tool_settings=tool_settings)
+```
+
 
 
 ```py
