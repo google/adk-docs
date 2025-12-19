@@ -5,7 +5,7 @@
 </div>
 
 The Computer Use Toolset allows an agent to operate a user interface
-of a computer, such as a browsers, to complete tasks. This tool uses
+of a computer, such as browsers, to complete tasks. This tool uses
 a specific Gemini model and the [Playwright](https://playwright.dev/)
 testing tool to control a Chromium browser and can interact with
 web pages by taking screenshots, clicking, typing, and navigating.

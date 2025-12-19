@@ -54,7 +54,7 @@ connect your agents with:
     </div>
     <div class="tool-card-content">
       <h3>BigQuery Agent Analytics</h3>
-      <p>Analyze and debug agent behavior at scale.</p>
+      <p>Analyze and debug agent behavior at scale</p>
     </div>
   </a>
 

@@ -1,7 +1,7 @@
 # Google Search tool for ADK
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.2.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.2.0</span>
 </div>
 
 The `google_search` tool allows the agent to perform web searches using Google Search. The `google_search` tool is only compatible with Gemini 2 models. For further details of the tool, see [Understanding Google Search grounding](/adk-docs/grounding/google_search_grounding/).
@@ -20,6 +20,22 @@ The `google_search` tool allows the agent to perform web searches using Google S
 
     ```py
     --8<-- "examples/python/snippets/tools/built-in-tools/google_search.py"
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    import {GOOGLE_SEARCH, LlmAgent} from '@google/adk';
+
+    export const rootAgent = new LlmAgent({
+      model: 'gemini-2.5-flash',
+      name: 'root_agent',
+      description:
+          'an agent whose job it is to perform Google search queries and answer questions about the results.',
+      instruction:
+          'You are an agent whose job is to perform Google search queries and answer questions about the results.',
+      tools: [GOOGLE_SEARCH],
+    });
     ```
 
 === "Go"

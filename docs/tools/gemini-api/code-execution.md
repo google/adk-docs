@@ -5,8 +5,8 @@
 </div>
 
 The `built_in_code_execution` tool enables the agent to execute code,
-specifically when using Gemini 2 models. This allows the model to perform tasks
-like calculations, data manipulation, or running small scripts.
+specifically when using Gemini 2 and higher models. This allows the model to
+perform tasks like calculations, data manipulation, or running small scripts.
 
 !!! warning "Warning: Single tool per agent limitation"
 
