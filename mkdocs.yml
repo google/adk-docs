@@ -246,7 +246,10 @@ nav:
       - Resume Agents: runtime/resume.md
     - Deployment:
       - deploy/index.md
-      - Agent Engine: deploy/agent-engine.md
+      - Agent Engine:
+        - deploy/agent-engine/index.md
+        - Deploy with ADK CLI: deploy/agent-engine/agent-engine-adk-cli.md
+        - Deploy with Agent Starter Pack: deploy/agent-engine/agent-engine-agent-starter-pack.md
       - Cloud Run: deploy/cloud-run.md
       - GKE: deploy/gke.md
     - Observability:
