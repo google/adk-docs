@@ -262,8 +262,9 @@ nav:
       - deploy/index.md
       - Agent Engine:
         - deploy/agent-engine/index.md
-        - Deploy with ADK CLI: deploy/agent-engine/agent-engine-adk-cli.md
-        - Deploy with Agent Starter Pack: deploy/agent-engine/agent-engine-agent-starter-pack.md
+        - Standard deployment: deploy/agent-engine/deploy.md
+        - Agent Starter Pack: deploy/agent-engine/asp.md
+        - Test deployed agents: deploy/agent-engine/test.md
       - Cloud Run: deploy/cloud-run.md
       - GKE: deploy/gke.md
     - Observability:
