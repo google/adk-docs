@@ -701,7 +701,9 @@ call_agent("If it's raining in New York right now, what is the current temperatu
    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
-- **`code_executor` (Optional):** Provide a `BaseCodeExecutor` instance to allow the agent to execute code blocks found in the LLM's response. ([See Tools/Built-in tools](../tools/built-in-tools.md)).
+- **`code_executor` (Optional):** Provide a `BaseCodeExecutor` instance to allow
+  the agent to execute code blocks found in the LLM's response. For more
+  information, see [Code Execution with Gemini API](/adk-docs/tools/gemini-api/code-execution/).
 
 === "Python"
 

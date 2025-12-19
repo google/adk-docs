@@ -11,7 +11,7 @@ Check out the following third-party tools that you can use with ADK agents:
 
   <a href="/adk-docs/tools/third-party/atlassian/" class="tool-card">
     <div class="tool-card-image-wrapper">
-      <img src="../../assets/tools-atlassian.png" alt="Atlassian">
+      <img src="/adk-docs/assets/tools-atlassian.png" alt="Atlassian">
     </div>
     <div class="tool-card-content">
       <h3>Atlassian</h3>
@@ -21,7 +21,7 @@ Check out the following third-party tools that you can use with ADK agents:
 
   <a href="/adk-docs/tools/third-party/github/" class="tool-card">
     <div class="tool-card-image-wrapper">
-      <img src="../../assets/tools-github.png" alt="GitHub">
+      <img src="/adk-docs/assets/tools-github.png" alt="GitHub">
     </div>
     <div class="tool-card-content">
       <h3>GitHub</h3>
@@ -31,7 +31,7 @@ Check out the following third-party tools that you can use with ADK agents:
 
   <a href="/adk-docs/tools/third-party/gitlab/" class="tool-card">
     <div class="tool-card-image-wrapper">
-      <img src="../../assets/tools-gitlab.png" alt="GitLab">
+      <img src="/adk-docs/assets/tools-gitlab.png" alt="GitLab">
     </div>
     <div class="tool-card-content">
       <h3>GitLab</h3>
@@ -41,7 +41,7 @@ Check out the following third-party tools that you can use with ADK agents:
 
   <a href="/adk-docs/tools/third-party/hugging-face/" class="tool-card">
     <div class="tool-card-image-wrapper">
-      <img src="../../assets/tools-hugging-face.png" alt="Hugging Face">
+      <img src="/adk-docs/assets/tools-hugging-face.png" alt="Hugging Face">
     </div>
     <div class="tool-card-content">
       <h3>Hugging Face</h3>
@@ -51,7 +51,7 @@ Check out the following third-party tools that you can use with ADK agents:
 
   <a href="/adk-docs/tools/third-party/linear/" class="tool-card">
     <div class="tool-card-image-wrapper">
-      <img src="../../assets/tools-linear.png" alt="Linear">
+      <img src="/adk-docs/assets/tools-linear.png" alt="Linear">
     </div>
     <div class="tool-card-content">
       <h3>Linear</h3>
@@ -61,7 +61,7 @@ Check out the following third-party tools that you can use with ADK agents:
 
   <a href="/adk-docs/tools/third-party/n8n/" class="tool-card">
     <div class="tool-card-image-wrapper">
-      <img src="../../assets/tools-n8n.png" alt="n8n">
+      <img src="/adk-docs/assets/tools-n8n.png" alt="n8n">
     </div>
     <div class="tool-card-content">
       <h3>n8n</h3>
@@ -71,7 +71,7 @@ Check out the following third-party tools that you can use with ADK agents:
 
   <a href="/adk-docs/tools/third-party/notion/" class="tool-card">
     <div class="tool-card-image-wrapper">
-      <img src="../../assets/tools-notion.png" alt="Notion">
+      <img src="/adk-docs/assets/tools-notion.png" alt="Notion">
     </div>
     <div class="tool-card-content">
       <h3>Notion</h3>
@@ -81,7 +81,7 @@ Check out the following third-party tools that you can use with ADK agents:
 
   <a href="/adk-docs/tools/third-party/paypal/" class="tool-card">
     <div class="tool-card-image-wrapper">
-      <img src="../../assets/tools-paypal.png" alt="Paypal">
+      <img src="/adk-docs/assets/tools-paypal.png" alt="Paypal">
     </div>
     <div class="tool-card-content">
       <h3>Paypal</h3>
@@ -91,7 +91,7 @@ Check out the following third-party tools that you can use with ADK agents:
 
   <a href="/adk-docs/tools/third-party/qdrant/" class="tool-card">
     <div class="tool-card-image-wrapper">
-      <img src="../../assets/tools-qdrant.png" alt="Qdrant">
+      <img src="/adk-docs/assets/tools-qdrant.png" alt="Qdrant">
     </div>
     <div class="tool-card-content">
       <h3>Qdrant</h3>
