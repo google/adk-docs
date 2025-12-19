@@ -4,7 +4,7 @@
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
 </div>
 
-[Google Search Grounding tool](../tools/built-in-tools.md#google-search) is a powerful feature in the Agent Development Kit (ADK) that enables AI agents to access real-time, authoritative information from the web. By connecting your agents to Google Search, you can provide users with up-to-date answers backed by reliable sources.
+[Google Search Grounding tool](/adk-docs/tools/gemini-api/google-search/) is a powerful feature in the Agent Development Kit (ADK) that enables AI agents to access real-time, authoritative information from the web. By connecting your agents to Google Search, you can provide users with up-to-date answers backed by reliable sources.
 
 This feature is particularly valuable for queries requiring current information like weather updates, news events, stock prices, or any facts that may have changed since the model's training data cutoff. When your agent determines that external information is needed, it automatically performs web searches and incorporates the results into its response with proper attribution.
 
@@ -19,7 +19,7 @@ In this guide, you'll discover:
 
 ### Additional resource
 
-As an additional resource, [Gemini Fullstack Agent Development Kit (ADK) Quickstart](https://github.com/google/adk-samples/tree/main/python/agents/gemini-fullstack) has [a great practical use of the Google Search grounding](https://github.com/google/adk-samples/blob/main/python/agents/gemini-fullstack/app/agent.py) as a full stack application example.
+As an additional resource, the [Deep Search Agent Development Kit (ADK) Quickstart](https://github.com/google/adk-samples/tree/main/python/agents/deep-search) has a practical use of the Google Search grounding as a full stack application example.
 
 ## Google Search Grounding Quickstart
 
