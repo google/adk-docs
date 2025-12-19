@@ -447,12 +447,12 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
           <dependency>
              <groupId>com.google.adk</groupId>
              <artifactId>google-adk</artifactId>
-             <version>0.1.0</version>
+             <version>0.5.0</version>
           </dependency>
           <dependency>
              <groupId>com.google.adk</groupId>
              <artifactId>google-adk-dev</artifactId>
-             <version>0.1.0</version>
+             <version>0.5.0</version>
           </dependency>
         </dependencies>
 
