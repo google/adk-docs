@@ -260,7 +260,11 @@ nav:
       - Resume Agents: runtime/resume.md
     - Deployment:
       - deploy/index.md
-      - Agent Engine: deploy/agent-engine.md
+      - Agent Engine:
+        - deploy/agent-engine/index.md
+        - Standard deployment: deploy/agent-engine/deploy.md
+        - Agent Starter Pack: deploy/agent-engine/asp.md
+        - Test deployed agents: deploy/agent-engine/test.md
       - Cloud Run: deploy/cloud-run.md
       - GKE: deploy/gke.md
     - Observability:
@@ -327,7 +331,7 @@ nav:
         - Part 4. Run configuration: streaming/dev-guide/part4.md
         - Part 5. Audio, Images, and Video: streaming/dev-guide/part5.md
       - Streaming Tools: streaming/streaming-tools.md
-      - Configurating Bidi-streaming behaviour: streaming/configuration.md
+      - Configuring Bidi-streaming behavior: streaming/configuration.md
     - Grounding:
       - Understanding Google Search Grounding: grounding/google_search_grounding.md
       - Understanding Vertex AI Search Grounding: grounding/vertex_ai_search_grounding.md

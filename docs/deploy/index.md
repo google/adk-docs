@@ -14,11 +14,11 @@ on your needs for production readiness or custom flexibility:
 
 ### Agent Engine in Vertex AI
 
-[Agent Engine](agent-engine.md) is a fully managed auto-scaling service on Google Cloud
+[Agent Engine](agent-engine/index.md) is a fully managed auto-scaling service on Google Cloud
 specifically designed for deploying, managing, and scaling AI agents built with
 frameworks such as ADK.
 
-Learn more about [deploying your agent to Vertex AI Agent Engine](agent-engine.md).
+Learn more about [deploying your agent to Vertex AI Agent Engine](agent-engine/index.md).
 
 ### Cloud Run
 
