@@ -152,6 +152,7 @@ plugins:
         Build Agents:
         - get-started/*.md
         - tutorials/*.md
+        - agents/*.md
         - tools/*.md
         - tools-custom/*.md
         Run Agents:
