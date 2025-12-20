@@ -6,11 +6,12 @@
 
 This deployment procedure describes how to perform a deployment using the
 [Agent Starter Pack](https://github.com/GoogleCloudPlatform/agent-starter-pack)
-(ASP) and the ADK command line interface (CLI) tool. Using ASP for deployment
-is an accelerated path you should use it for _*development and testing*_ only.
-The ASP tool configures Google Cloud resources that are not strictly neccessary for
-running an ADK agent workflow, and you should throughly review that configuration
-before using it in a production deployment.
+(ASP) and the ADK command line interface (CLI) tool. Using ASP for deployment to
+the Agent Engine runtime is an accelerated path, and you should use it for
+_*development and testing*_ only. The ASP tool configures Google Cloud resources
+that are not strictly necessary for running an ADK agent workflow, and you
+should thoroughly review that configuration before using it in a production
+deployment.
 
 This deployment guide uses the ASP tool to apply a project template to your
 existing project, add deployment artifacts, and prepare your agent project for
@@ -38,15 +39,16 @@ and
 
 You need the following resources configured to use this deployment path:
 
--   **Google Cloud account**, with administrator access to:
--   **Google Cloud Project**: An empty Google Cloud project with
-    [billing enabled](https://cloud.google.com/billing/docs/how-to/modify-project).
-    For information on creating projects, see
-    [Creating and managing projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects).
--   **Python Environment**: A Python version between 3.9 and 3.13.
--   **UV Tool:** Manage Python development environment and running ASP
+-   **Google Cloud account**: with administrator access to the following:
+    -   **Google Cloud Project**: An empty Google Cloud project with
+        [billing enabled](https://cloud.google.com/billing/docs/how-to/modify-project).
+        For information on creating projects, see
+        [Creating and managing projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects).
+-   **Python Environment**: A Python version supported by the
+    [ASP project](https://googlecloudplatform.github.io/agent-starter-pack/guide/getting-started.html).
+-   **uv Tool:** Manage Python development environment and running ASP
     tools. For installation details, see
-    [Install UV](https://docs.astral.sh/uv/getting-started/installation/).
+    [Install uv](https://docs.astral.sh/uv/getting-started/installation/).
 -   **Google Cloud CLI tool**: The gcloud command line interface. For
     installation details, see
     [Google Cloud Command Line Interface](https://cloud.google.com/sdk/docs/install).
@@ -85,8 +87,8 @@ To prepare your ADK project for deployment to Agent Engine:
 
     Navigate to `your-project-directory/`
 
-1.  Run the ASP `enhance` command to add the needed files required for
-    deployment into your project.
+1.  Run the ASP `enhance` command to add the files required for deployment into
+    your project.
 
     ```shell
     uvx agent-starter-pack enhance --adk -d agent_engine
@@ -95,7 +97,8 @@ To prepare your ADK project for deployment to Agent Engine:
 1.  Follow the instructions from the ASP tool. In general, you can accept
     the default answers to all questions. However for the **GCP region**,
     option, make sure you select one of the
-    [supported regions for Agent Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview#supported-regions).
+    [supported regions](https://docs.cloud.google.com/agent-builder/locations#supported-regions-agent-engine)
+    for Agent Engine.
 
 When you successfully complete this process, the tool shows the following message:
 
@@ -145,8 +148,8 @@ ID, you are ready to deploy your ADK project files to Agent Engine.
 
 When using the ASP tool, you deploy in stages. In the first stage, you run a
 `make` command that provisions the services needed to run your ADK workflow on
-Agent Engine. In the second stage, your project code is uploaded to the Agent
-Engine service and the agent project is executed.
+Agent Engine. In the second stage, the tool uploads your project code to the
+Agent Engine service and runs it in the hosted environment
 
 !!! warning "Important"
     *Make sure your Google Cloud target deployment project is set as your ***current
@@ -169,12 +172,8 @@ development environment, by running the following ASP make command:
 
 Once this process completes successfully, you should be able to interact with
 the agent running on Google Cloud Agent Engine. For details on testing the
-deployed agent, see the next section.
-
-Once this process completes successfully, you should be able to interact with
-the agent running on Google Cloud Agent Engine. For details on testing the
 deployed agent, see
-[Test deployed agent](#test-deployment).
+[Test deployed agent](/adk-docs/deploy/agent-engine/test/).
 
 ### Changes to your ADK project {#adk-asp-changes}
 

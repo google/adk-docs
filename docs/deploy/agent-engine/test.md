@@ -1,9 +1,13 @@
 # Test deployed agents in Agent Engine
 
-Once you have completed the deployment of your agent to Agent Engine, you can
-view your deployed agent through the Google Cloud Console, and interact
-with the agent using REST calls or the Vertex AI SDK for Python. These instructions
-explain how test an ADK agent deployed in Agent Engine.
+These instructions explain how to test an ADK agent deployed to the
+[Agent Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview)
+runtime environment. Before using these instructions, you need to have completed
+the deployment of your agent to the Agent Engine runtime environment using one
+of the [available methods](/adk-docs/deploy/agent-engine/). This guide shows you
+how to view, interact, and test your deployed agent through the Google Cloud
+Console, and interact with the agent using REST API calls or the Vertex AI SDK
+for Python.
 
 ## View deployed agent in Cloud Console
 
@@ -15,16 +19,16 @@ To view your deployed agent in the Cloud Console:
 This page lists all deployed agents in your currently selected Google Cloud
 project. If you do not see your agent listed, make sure you have your
 target project selected in Google Cloud Console. For more information on
-selecting an exising Google Cloud project, see
+selecting an existing Google Cloud project, see
 [Creating and managing projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects#identifying_projects).
 
 ## Find Google Cloud project information
 
 You need the address and resource identification for your project (`PROJECT_ID`,
-`LOCATION`, `RESOURCE_ID`) to be able to test your deployment. You can use Cloud
+`LOCATION_ID`, `RESOURCE_ID`) to be able to test your deployment. You can use Cloud
 Console or the `gcloud` command line tool to find this information.
 
-!!! note "Vertex AI express mode API key"
+??? note "Vertex AI express mode API key"
     If you are using Vertex AI express mode, you can skip this step and use your API key.
 
 To find your project information with Google Cloud Console:
@@ -37,7 +41,7 @@ To find your project information with Google Cloud Console:
 
         https://$(LOCATION_ID)-aiplatform.googleapis.com/v1/projects/$(PROJECT_ID)/locations/$(LOCATION_ID)/reasoningEngines/$(RESOURCE_ID):query
 
-To find your project information with `gloud`:
+To find your project information with the `gcloud` command line tool:
 
 1.  In your development environment, make sure you are authenticated to
     Google Cloud and run the following command to list your project:
@@ -46,7 +50,7 @@ To find your project information with `gloud`:
     gcloud projects list
     ```
 
-1.  Take the Project ID used for deployment and run this command to get
+1.  With the Project ID you used for deployment, run this command to get
     the additional details:
 
     ```shell
@@ -59,7 +63,7 @@ To find your project information with `gloud`:
 ## Test using REST calls
 
 A simple way to interact with your deployed agent in Agent Engine is to use REST
-calls with the `curl` tool. This section describes the how to check your
+calls with the `curl` tool. This section describes how to check your
 connection to the agent and also to test processing of a request by the deployed
 agent.
 
@@ -69,7 +73,7 @@ You can check your connection to the running agent using the **Query URL**
 available in the Agent Engine section of the Cloud Console. This check does not
 execute the deployed agent, but returns information about the agent.
 
-To send a REST call get a response from deployed agent:
+To send a REST call and get a response from deployed agent:
 
 -   In a terminal window of your development environment, build a request
     and execute it:
@@ -79,7 +83,7 @@ To send a REST call get a response from deployed agent:
         ```shell
         curl -X GET \
             -H "Authorization: Bearer $(gcloud auth print-access-token)" \
-            "https://$(LOCATION)-aiplatform.googleapis.com/v1/projects/$(PROJECT_ID)/locations/$(LOCATION)/reasoningEngines"
+            "https://$(LOCATION_ID)-aiplatform.googleapis.com/v1/projects/$(PROJECT_ID)/locations/$(LOCATION_ID)/reasoningEngines"
         ```
 
     === "Vertex AI express mode"
@@ -92,6 +96,10 @@ To send a REST call get a response from deployed agent:
 
 If your deployment was successful, this request responds with a list of valid
 requests and expected data formats.
+
+!!! tip "Remove `:query` parameter for connection URL"
+    If you use the **Query URL** available in the Agent Engine section of the Cloud
+    Console, make sure to remove the `:query` parameter from end of the address.
 
 !!! tip "Access for agent connections"
     This connection test requires the calling user has a valid access token for the
@@ -115,7 +123,7 @@ To test interaction with the deployed agent via REST:
         curl \
             -H "Authorization: Bearer $(gcloud auth print-access-token)" \
             -H "Content-Type: application/json" \
-            https://$(LOCATION)-aiplatform.googleapis.com/v1/projects/$(PROJECT_ID)/locations/$(LOCATION)/reasoningEngines/$(RESOURCE_ID):query \
+            https://$(LOCATION_ID)-aiplatform.googleapis.com/v1/projects/$(PROJECT_ID)/locations/$(LOCATION_ID)/reasoningEngines/$(RESOURCE_ID):query \
             -d '{"class_method": "async_create_session", "input": {"user_id": "u_123"},}'
         ```
 
@@ -129,7 +137,7 @@ To test interaction with the deployed agent via REST:
             -d '{"class_method": "async_create_session", "input": {"user_id": "u_123"},}'
         ```
 
-1.  In the response to the previous command, extract the created **Session ID**
+1.  In the response from the previous command, extract the created **Session ID**
     from the **id** field:
 
     ```json
@@ -155,7 +163,7 @@ To test interaction with the deployed agent via REST:
         curl \
         -H "Authorization: Bearer $(gcloud auth print-access-token)" \
         -H "Content-Type: application/json" \
-        https://$(LOCATION)-aiplatform.googleapis.com/v1/projects/$(PROJECT_ID)/locations/$(LOCATION)/reasoningEngines/$(RESOURCE_ID):streamQuery?alt=sse -d '{
+        https://$(LOCATION_ID)-aiplatform.googleapis.com/v1/projects/$(PROJECT_ID)/locations/$(LOCATION_ID)/reasoningEngines/$(RESOURCE_ID):query?alt=sse -d '{
         "class_method": "async_stream_query",
         "input": {
             "user_id": "u_123",
@@ -171,7 +179,7 @@ To test interaction with the deployed agent via REST:
         curl \
         -H "x-goog-api-key:YOUR-EXPRESS-MODE-API-KEY" \
         -H "Content-Type: application/json" \
-        https://aiplatform.googleapis.com/v1/reasoningEngines/$(RESOURCE_ID):streamQuery?alt=sse -d '{
+        https://aiplatform.googleapis.com/v1/reasoningEngines/$(RESOURCE_ID):query?alt=sse -d '{
         "class_method": "async_stream_query",
         "input": {
             "user_id": "u_123",
@@ -186,7 +194,7 @@ format. For more information about interacting with a deployed ADK agent in
 Agent Engine using REST calls, see
 [Manage deployed agents](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/manage/overview#console)
 and
-[Use a Agent Development Kit agent](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/use/adk)
+[Use an Agent Development Kit agent](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/use/adk)
 in the Agent Engine documentation.
 
 ## Test using Python
@@ -198,7 +206,7 @@ processing.
 
 ### Create a remote session
 
-Use the `remote_app` object to create a connection to deployed, remote agent:
+Use the `remote_app` object to create a connection to a deployed, remote agent:
 
 ```py
 # If you are in a new script or used the ADK CLI to deploy, you can connect like this:

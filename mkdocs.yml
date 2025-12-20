@@ -331,7 +331,7 @@ nav:
         - Part 4. Run configuration: streaming/dev-guide/part4.md
         - Part 5. Audio, Images, and Video: streaming/dev-guide/part5.md
       - Streaming Tools: streaming/streaming-tools.md
-      - Configurating Bidi-streaming behaviour: streaming/configuration.md
+      - Configuring Bidi-streaming behavior: streaming/configuration.md
     - Grounding:
       - Understanding Google Search Grounding: grounding/google_search_grounding.md
       - Understanding Vertex AI Search Grounding: grounding/vertex_ai_search_grounding.md
