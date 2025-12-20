@@ -83,11 +83,11 @@ documentation:
 
 === "Python"
 
-    ADK relies on the `toolbox-core` python package to use Toolbox. Install the
+    ADK relies on the `toolbox-adk` python package to use Toolbox. Install the
     package before getting started:
 
     ```shell
-    pip install toolbox-core
+    pip install toolbox-adk
     ```
 
     ### Loading Toolbox Tools
@@ -97,19 +97,16 @@ documentation:
 
     ```python
     from google.adk.agents import Agent
-    from toolbox_core import ToolboxSyncClient
+    from google.adk.tools.toolbox_toolset import ToolboxToolset
 
-    toolbox = ToolboxSyncClient("https://127.0.0.1:5000")
-
-    # Load a specific set of tools
-    tools = toolbox.load_toolset('my-toolset-name'),
-    # Load single tool
-    tools = toolbox.load_tool('my-tool-name'),
+    toolset = ToolboxToolset(
+        server_url="http://127.0.0.1:5000",
+        toolset_name="my-toolset-name"
+    )
 
     root_agent = Agent(
         ...,
-        tools=tools # Provide the list of tools to the Agent
-
+        tools=[toolset] # Provide the toolset to the Agent
     )
     ```
 
