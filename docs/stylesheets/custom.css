@@ -84,6 +84,49 @@ nav.md-nav--primary .md-nav__item--section > .md-nav__link {
   font-weight: bold;
   font-size: 0.8rem;
 }
+
+/* Ensure navigation bar and sidebar respect dark mode */
+[data-md-color-scheme="slate"] nav.md-nav--primary,
+[data-md-color-scheme="slate"] .md-sidebar--primary,
+[data-md-color-scheme="slate"] .md-sidebar--primary .md-sidebar__scrollwrap,
+[data-md-color-scheme="slate"] .md-sidebar--primary .md-sidebar__inner {
+  background-color: var(--md-default-bg-color) !important;
+}
+
+/* Fix top navigation bar (header) for dark mode */
+[data-md-color-scheme="slate"] .md-header,
+[data-md-color-scheme="slate"] .md-header__inner {
+  background-color: var(--md-default-bg-color) !important;
+}
+
+/* Fix all header text, links, buttons, labels, and general content */
+[data-md-color-scheme="slate"] .md-header,
+[data-md-color-scheme="slate"] .md-header * {
+  color: var(--md-default-fg-color) !important;
+}
+
+/* Fix header SVG icons */
+[data-md-color-scheme="slate"] .md-header svg,
+[data-md-color-scheme="slate"] .md-header path {
+  fill: var(--md-default-fg-color) !important;
+}
+
+/* Fix search input fields */
+[data-md-color-scheme="slate"] .md-search__input {
+  color: var(--md-default-fg-color) !important;
+  background-color: var(--md-default-bg-color) !important;
+  border-color: var(--md-default-fg-color--light) !important;
+}
+
+[data-md-color-scheme="slate"] .md-search__input::placeholder {
+  color: var(--md-default-fg-color--light) !important;
+}
+
+/* Fix search icon */
+[data-md-color-scheme="slate"] .md-search__icon svg,
+[data-md-color-scheme="slate"] .md-search__icon path {
+  fill: var(--md-default-fg-color) !important;
+}
 /* Community Resources cards */
 
 .resource-grid {
