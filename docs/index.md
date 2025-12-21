@@ -69,13 +69,13 @@ from simple tasks to complex workflows.
     <dependency>
         <groupId>com.google.adk</groupId>
         <artifactId>google-adk</artifactId>
-        <version>0.3.0</version>
+        <version>0.5.0</version>
     </dependency>
     ```
 
     ```gradle title="build.gradle"
     dependencies {
-        implementation 'com.google.adk:google-adk:0.3.0'
+        implementation 'com.google.adk:google-adk:0.5.0'
     }
     ```
 
