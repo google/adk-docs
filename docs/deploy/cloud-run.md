@@ -85,7 +85,7 @@ echo "<<put your GOOGLE_API_KEY here>>" | gcloud secrets create GOOGLE_API_KEY -
 ```
 
 ### Permissions to read
-You should give appropiate permissision for you service account to read this secret.
+You should give appropriate permission for you service account to read this secret.
 ```bash
 gcloud secrets add-iam-policy-binding GOOGLE_API_KEY --member="serviceAccount:1234567890-compute@developer.gserviceaccount.com" --role="roles/secretmanager.secretAccessor" --project=my-project
 ```
