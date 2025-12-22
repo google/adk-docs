@@ -598,7 +598,7 @@ sessions.db
 
 Build the container image abd deploy the application again.
 
-### Insufficent Permission to Stream Logs `ERROR: (gcloud.builds.submit)`
+### Insufficient Permission to Stream Logs `ERROR: (gcloud.builds.submit)`
 
 This error can occur when you don't have sufficient permissions to stream build logs, or your VPC-SC security policy restricts access to the default logs bucket.
 
