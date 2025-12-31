@@ -15,9 +15,11 @@ Repository | Description | Detailed Guide
 --- | --- | ---
 [`google/adk-python`](https://github.com/google/adk-python) | Contains the core Python library source code | [`CONTRIBUTING.md`](https://github.com/google/adk-python/blob/main/CONTRIBUTING.md)
 [`google/adk-python-community`](https://github.com/google/adk-python-community) | Contains community-contributed tools, integrations, and scripts | [`CONTRIBUTING.md`](https://github.com/google/adk-python-community/blob/main/CONTRIBUTING.md)
-[`google/adk-go`](https://github.com/google/adk-go) | Contains the core Go library source code | 
+[`google/adk-js`](https://github.com/google/adk-js) | Contains the core JavaScript library source code | [`CONTRIBUTING.md`](https://github.com/google/adk-js/blob/main/CONTRIBUTING.md)
+[`google/adk-go`](https://github.com/google/adk-go) | Contains the core Go library source code | [`CONTRIBUTING.md`](https://github.com/google/adk-go/blob/main/CONTRIBUTING.md)
 [`google/adk-java`](https://github.com/google/adk-java) | Contains the core Java library source code | [`CONTRIBUTING.md`](https://github.com/google/adk-java/blob/main/CONTRIBUTING.md)
 [`google/adk-docs`](https://github.com/google/adk-docs) | Contains the source for the documentation site you are currently reading | [`CONTRIBUTING.md`](https://github.com/google/adk-docs/blob/main/CONTRIBUTING.md)
+[`google/adk-samples`](https://github.com/google/adk-samples) | Contains sample agents for ADK | [`CONTRIBUTING.md`](https://github.com/google/adk-samples/blob/main/CONTRIBUTING.md)
 [`google/adk-web`](https://github.com/google/adk-web) | Contains the source for the `adk web` dev UI |
 
 These repositories typically include a `CONTRIBUTING.md` file in the root of
@@ -46,7 +48,9 @@ This project follows
 ## Join the discussion
 
 Have questions, want to share ideas, or discuss how you're using ADK? Head over
-to our **[Python](https://github.com/google/adk-python/discussions)** or
+to our **[Python](https://github.com/google/adk-python/discussions)**,
+**[TypeScript](https://github.com/google/adk-js/discussions)**,
+**[Go](https://github.com/google/adk-go/discussions)**, or
 **[Java](https://github.com/google/adk-java/discussions)** Discussions!
 
 This is the primary place for:
@@ -64,14 +68,20 @@ There are several ways you can contribute to ADK:
 
 If you find a bug in the framework or an error in the documentation:
 
-* **Framework Bugs:** Open an issue in [`google/adk-python`](https://github.com/google/adk-python/issues/new) or in [`google/adk-java`](https://github.com/google/adk-java/issues/new)
+* **Framework Bugs:** Open an issue in [`google/adk-python`](https://github.com/google/adk-python/issues/new),
+[`google/adk-js`](https://github.com/google/adk-js/issues/new),
+[`google/adk-go`](https://github.com/google/adk-go/issues/new), or
+[`google/adk-java`](https://github.com/google/adk-java/issues/new)
 * **Documentation Errors:** [Open an issue in `google/adk-docs` (use bug template)](https://github.com/google/adk-docs/issues/new?template=bug_report.md)
 
 ### Suggesting enhancements { #suggesting-enhancements }
 
 Have an idea for a new feature or an improvement to an existing one?
 
-* **Framework Enhancements:** Open an issue in [`google/adk-python`](https://github.com/google/adk-python/issues/new) or in [`google/adk-java`](https://github.com/google/adk-java/issues/new)
+* **Framework Enhancements:** Open an issue in [`google/adk-python`](https://github.com/google/adk-python/issues/new),
+[`google/adk-js`](https://github.com/google/adk-js/issues/new),
+[`google/adk-go`](https://github.com/google/adk-go/issues/new), or
+[`google/adk-java`](https://github.com/google/adk-java/issues/new)
 * **Documentation Enhancements:** [Open an issue in `google/adk-docs`](https://github.com/google/adk-docs/issues/new)
 
 ### Improving documentation { #improving-documentation }
@@ -88,6 +98,8 @@ Help fix bugs, implement new features or contribute code samples for the documen
 **How:** Submit a Pull Request (PR) with your code changes.
 
 * **Python Framework:** [Create a Pull Request in `google/adk-python`](https://github.com/google/adk-python/pulls)
+* **TypeScript Framework:** [Create a Pull Request in `google/adk-js`](https://github.com/google/adk-js/pulls)
+* **Go Framework:** [Create a Pull Request in `google/adk-go`](https://github.com/google/adk-go/pulls)
 * **Java Framework:** [Create a Pull Request in `google/adk-java`](https://github.com/google/adk-java/pulls)
 * **Documentation:** [Create a Pull Request in `google/adk-docs`](https://github.com/google/adk-docs/pulls)
 

@@ -1,6 +1,10 @@
 # Understanding Vertex AI Search Grounding
 
-[Vertex AI Search Grounding tool](../tools/built-in-tools.md#vertex-ai-search) is a powerful feature in the Agent Development Kit (ADK) that enables AI agents to access information from your private enterprise documents and data repositories. By connecting your agents to indexed enterprise content, you can provide users with answers grounded in your organization's knowledge base.
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
+</div>
+
+[Vertex AI Search](/adk-docs/tools/google-cloud/vertex-ai-search/) is a powerful tool for the Agent Development Kit (ADK) that enables AI agents to access information from your private enterprise documents and data repositories. By connecting your agents to indexed enterprise content, you can provide users with answers grounded in your organization's knowledge base.
 
 This feature is particularly valuable for enterprise-specific queries requiring information from internal documentation, policies, research papers, or any proprietary content that has been indexed in your [Vertex AI Search](https://cloud.google.com/enterprise-search) datastore. When your agent determines that information from your knowledge base is needed, it automatically searches your indexed documents and incorporates the results into its response with proper attribution.
 
@@ -29,23 +33,39 @@ Note this `Data store ID` as we will use this later.
 
 ### 2. Set up Environment & Install ADK { #set-up-environment-install-adk }
 
-Create & Activate Virtual Environment:
+Below are the steps for setting up your environment and installing the ADK for both Python and TypeScript projects.
 
-```bash
-# Create
-python -m venv .venv
+=== "Python"
 
-# Activate (each new terminal)
-# macOS/Linux: source .venv/bin/activate
-# Windows CMD: .venv\Scripts\activate.bat
-# Windows PowerShell: .venv\Scripts\Activate.ps1
-```
+    Create & Activate Virtual Environment:
 
-Install ADK:
+    ```bash
+    # Create
+    python -m venv .venv
 
-```bash
-pip install google-adk==1.5.0
-```
+    # Activate (each new terminal)
+    # macOS/Linux: source .venv/bin/activate
+    # Windows CMD: .venv\\Scripts\\activate.bat
+    # Windows PowerShell: .venv\\Scripts\\Activate.ps1
+    ```
+
+    Install ADK:
+
+    ```bash
+    pip install google-adk
+    ```
+
+=== "TypeScript"
+
+    Create a new Node.js project:
+    ```bash
+    npm init -y
+    ```
+
+    Install ADK:
+    ```bash
+    npm install @google/adk
+    ```
 
 ### 3. Create Agent Project { #create-agent-project }
 
@@ -72,7 +92,7 @@ Under a project directory, run the following commands:
     echo "from . import agent" > vertex_search_agent/__init__.py
 
     # Step 3: Create an agent.py (the agent definition) and .env (authentication config)
-    type nul > vertex_search_agent\agent.py 
+    type nul > vertex_search_agent\agent.py
     type nul > google_search_agent\.env
     ```
 
@@ -131,7 +151,7 @@ There are multiple ways to interact with your agent:
     ```shell
     adk web
     ```
-    
+
     !!!info "Note for Windows users"
 
         When hitting the `_make_subprocess_transport NotImplementedError`, consider using `adk web --no-reload` instead.
@@ -160,7 +180,7 @@ There are multiple ways to interact with your agent:
     ```
     To exit, use Cmd/Ctrl+C.
 
-### 📝 Example prompts to try
+### Example prompts to try
 
 With those questions, you can confirm that the agent is actually calling Vertex AI Search
 to get information from the Alphabet reports:
@@ -289,7 +309,7 @@ Since grounding metadata is provided, you can choose to implement citation displ
 for event in events:
     if event.is_final_response():
         print(event.content.parts[0].text)
-        
+
         # Optional: Show source count
         if event.grounding_metadata:
             print(f"\nBased on {len(event.grounding_metadata.grounding_chunks)} documents")

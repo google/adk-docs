@@ -80,7 +80,7 @@ Freeplay in the Observability section.
 ## Observability
 
 Freeplay's Observability feature gives you a clear view into how your agent is
-behaving in production. You can dig into to individual agent traces to
+behaving in production. You can dig into individual agent traces to
 understand each step and diagnose issues:
 
 ![Trace detail](https://228labs.com/freeplay-google-demo/images/trace_detail.png)

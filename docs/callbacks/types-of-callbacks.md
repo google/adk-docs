@@ -1,7 +1,7 @@
 # Types of Callbacks
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
 The framework provides different types of callbacks that trigger at various stages of an agent's execution. Understanding when each callback fires and what context it receives is key to using them effectively.
@@ -22,11 +22,16 @@ These callbacks are available on *any* agent that inherits from `BaseAgent` (inc
 
 ??? "Code"
     === "Python"
-    
+
         ```python
         --8<-- "examples/python/snippets/callbacks/before_agent_callback.py"
         ```
-    
+
+    === "Typescript"
+        ```typescript
+        --8<-- "examples/typescript/snippets/callbacks/before_agent_callback.ts"
+        ```
+
     === "Go"
 
         ```go
@@ -37,7 +42,7 @@ These callbacks are available on *any* agent that inherits from `BaseAgent` (inc
         ```
 
     === "Java"
-    
+
         ```java
         --8<-- "examples/java/snippets/src/main/java/callbacks/BeforeAgentCallbackExample.java:init"
         ```
@@ -63,11 +68,16 @@ These callbacks are available on *any* agent that inherits from `BaseAgent` (inc
 
 ??? "Code"
     === "Python"
-    
+
         ```python
         --8<-- "examples/python/snippets/callbacks/after_agent_callback.py"
         ```
-    
+
+    === "Typescript"
+        ```typescript
+        --8<-- "examples/typescript/snippets/callbacks/after_agent_callback.ts"
+        ```
+
     === "Go"
 
         ```go
@@ -78,7 +88,7 @@ These callbacks are available on *any* agent that inherits from `BaseAgent` (inc
         ```
 
     === "Java"
-    
+
         ```java
         --8<-- "examples/java/snippets/src/main/java/callbacks/AfterAgentCallbackExample.java:init"
         ```
@@ -105,27 +115,32 @@ These callbacks are specific to `LlmAgent` and provide hooks around the interact
 
 **Purpose:** Allows inspection and modification of the request going to the LLM. Use cases include adding dynamic instructions, injecting few-shot examples based on state, modifying model config, implementing guardrails (like profanity filters), or implementing request-level caching.
 
-**Return Value Effect:**  
+**Return Value Effect:**
 If the callback returns `None` (or a `Maybe.empty()` object in Java), the LLM continues its normal workflow. If the callback returns an `LlmResponse` object, then the call to the LLM is **skipped**. The returned `LlmResponse` is used directly as if it came from the model. This is powerful for implementing guardrails or caching.
 
 ??? "Code"
     === "Python"
-    
+
         ```python
         --8<-- "examples/python/snippets/callbacks/before_model_callback.py"
         ```
-    
+
+    === "Typescript"
+        ```typescript
+        --8<-- "examples/typescript/snippets/callbacks/before_model_callback.ts"
+        ```
+
     === "Go"
 
         ```go
         --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:imports"
 
-        
+
         --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:before_model_example"
         ```
 
     === "Java"
-    
+
         ```java
         --8<-- "examples/java/snippets/src/main/java/callbacks/BeforeModelCallbackExample.java:init"
         ```
@@ -144,11 +159,16 @@ If the callback returns `None` (or a `Maybe.empty()` object in Java), the LLM co
 
 ??? "Code"
     === "Python"
-    
+
         ```python
         --8<-- "examples/python/snippets/callbacks/after_model_callback.py"
         ```
-    
+
+    === "Typescript"
+        ```typescript
+        --8<-- "examples/typescript/snippets/callbacks/after_model_callback.ts"
+        ```
+
     === "Go"
 
         ```go
@@ -159,7 +179,7 @@ If the callback returns `None` (or a `Maybe.empty()` object in Java), the LLM co
         ```
 
     === "Java"
-    
+
         ```java
         --8<-- "examples/java/snippets/src/main/java/callbacks/AfterModelCallbackExample.java:init"
         ```
@@ -176,17 +196,22 @@ These callbacks are also specific to `LlmAgent` and trigger around the execution
 
 **Return Value Effect:**
 
-1. If the callback returns `None` (or a `Maybe.empty()` object in Java), the tool's `run_async` method is executed with the (potentially modified) `args`.  
-2. If a dictionary (or `Map` in Java) is returned, the tool's `run_async` method is **skipped**. The returned dictionary is used directly as the result of the tool call. This is useful for caching or overriding tool behavior.  
+1. If the callback returns `None` (or a `Maybe.empty()` object in Java), the tool's `run_async` method is executed with the (potentially modified) `args`.
+2. If a dictionary (or `Map` in Java) is returned, the tool's `run_async` method is **skipped**. The returned dictionary is used directly as the result of the tool call. This is useful for caching or overriding tool behavior.
 
 
 ??? "Code"
     === "Python"
-    
+
         ```python
         --8<-- "examples/python/snippets/callbacks/before_tool_callback.py"
         ```
-    
+
+    === "Typescript"
+        ```typescript
+        --8<-- "examples/typescript/snippets/callbacks/before_tool_callback.ts"
+        ```
+
     === "Go"
 
         ```go
@@ -196,7 +221,7 @@ These callbacks are also specific to `LlmAgent` and trigger around the execution
         ```
 
     === "Java"
-    
+
         ```java
         --8<-- "examples/java/snippets/src/main/java/callbacks/BeforeToolCallbackExample.java:init"
         ```
@@ -210,14 +235,19 @@ These callbacks are also specific to `LlmAgent` and trigger around the execution
 
 **Return Value Effect:**
 
-1. If the callback returns `None` (or a `Maybe.empty()` object in Java), the original `tool_response` is used.  
+1. If the callback returns `None` (or a `Maybe.empty()` object in Java), the original `tool_response` is used.
 2. If a new dictionary is returned, it **replaces** the original `tool_response`. This allows modifying or filtering the result seen by the LLM.
 
 ??? "Code"
     === "Python"
-    
+
         ```python
         --8<-- "examples/python/snippets/callbacks/after_tool_callback.py"
+        ```
+
+    === "Typescript"
+        ```typescript
+        --8<-- "examples/typescript/snippets/callbacks/after_tool_callback.ts"
         ```
 
     === "Go"
@@ -226,10 +256,10 @@ These callbacks are also specific to `LlmAgent` and trigger around the execution
         --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:imports"
         --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:tool_defs"
         --8<-- "examples/go/snippets/callbacks/types_of_callbacks/main.go:after_tool_example"
-        ```    
+        ```
 
     === "Java"
-    
+
         ```java
         --8<-- "examples/java/snippets/src/main/java/callbacks/AfterToolCallbackExample.java:init"
         ```

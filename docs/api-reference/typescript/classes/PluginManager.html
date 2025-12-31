@@ -1,0 +1,384 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>PluginManager | ADK for TypeScript: API Reference</title><meta name="description" content="Documentation for ADK for TypeScript: API Reference"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script><style type="text/css">
+/* typedoc-theme-fresh */
+
+/* @view-transition {
+  navigation: auto;
+} */
+
+:root {
+  --light-color-background: #fafafe;
+  --light-color-background-active: #eaeced;
+  --light-color-text: #222222;
+  --light-color-text-aside: #5e5e5e;
+
+  --dark-color-background: #1a1a1c;
+  --dark-color-background-active: #2f2f2b;
+  --dark-color-text: #dfdfd6;
+  --dark-color-text-aside: #b0b0b0;
+
+  --dim-header-height: 2.5rem;
+  --dim-footer-height: 0px;
+
+  --light-code-background: #ffffff18;
+  --dark-code-background: #00000018;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+  & > .container.container-main {
+    margin: 0 auto;
+    margin-top: var(--dim-header-height);
+    --dim-container-main-margin-y: 0px;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  ::selection {
+    background-color: #11111a20;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  ::selection {
+    background-color: #bbbbff48;
+  }
+}
+
+:root[data-theme="light"] {
+  ::selection {
+    background-color: #11111a20;
+  }
+}
+
+:root[data-theme="dark"] {
+  ::selection {
+    background-color: #bbbbff48;
+  }
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 500;
+}
+
+.tsd-page-toolbar {
+  position: fixed;
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--color-background) 80%, transparent) 60%,
+    transparent
+  );
+  backdrop-filter: blur(2px);
+  border-bottom: none;
+
+  .title {
+    font-weight: 500;
+    font-size: 18px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    min-width: 0;
+    margin-right: auto;
+
+    &:hover {
+      color: var(--color-contrast-text);
+      text-decoration: none;
+    }
+  }
+
+  .tsd-theme-toggle {
+    display: flex;
+    position: relative;
+    margin-right: 12px;
+    color: var(--color-text-aside);
+    
+    select {
+      cursor: pointer;
+      border: 1px solid var(--color-background-active);
+      border-radius: 4px;
+      padding: 6px 8px;
+      padding-left: 32px;  /* Space for the icon */
+      font-size: 14px;
+      background: transparent;
+      transition: background-color 200ms;
+      color: var(--color-text-aside);
+      
+      /* for Firefox and Chrome: these are inconsistent */
+      -moz-appearance: none;
+      -webkit-appearance: none;
+      
+      &:hover {
+        background-color: var(--color-background-active);
+      }
+    }
+  }
+}
+
+.tsd-widget {
+  display: flex;
+  align-items: center;
+  height: auto;
+  width: auto;
+  padding: 4px;
+  font-size: 14px;
+  border-radius: 4px;
+  transition: background-color 200ms;
+  color: var(--color-text-aside);
+  opacity: 100%;
+
+  &:hover {
+    background-color: var(--color-background-active);
+  }
+}
+
+#tsd-search-results {
+  & > li {
+    padding-inline: 6px;
+    transition: background-color 200ms;
+  }
+
+  a:hover {
+    text-decoration: none;
+  }
+}
+
+.col-content {
+  overflow: hidden;
+  padding-block: 24px;
+
+  & > .tsd-typography {
+    padding-bottom: 24px;
+  }
+}
+
+.col-sidebar {
+  top: var(--dim-header-height);  /* Relevant for tablet layout. */
+}
+
+.site-menu {
+  top: var(--dim-header-height);
+  padding-block: 24px;
+  box-sizing: border-box;
+}
+
+.page-menu {
+  top: var(--dim-header-height);
+  padding-block: 48px 24px;
+  box-sizing: border-box;
+}
+
+.tsd-navigation,
+.tsd-page-navigation {
+  > details {
+    margin-bottom: 8px;
+  }
+
+  a {
+    border-radius: 4px;
+    padding-inline: 6px;
+    margin-bottom: 2px;
+  }
+  a:hover {
+    text-decoration: none;
+    background-color: var(--color-background-active);
+  }
+  a.current {
+    background-color: var(--color-background-active);
+    span {
+      color: var(--color-contrast-text);
+    }
+  }
+}
+
+.tsd-navigation {
+  & > a {
+    /* Top-level navigation anchor. */
+    margin-block: 16px;
+    font-size: 18px;
+    background: transparent !important;
+    padding: 0;
+    
+    &:hover {
+      color: var(--color-contrast-text);
+    }
+  }
+}
+
+.tsd-page-navigation {
+  border-left: 1px solid var(--color-background-active);
+  padding-left: 4px;
+  padding-block: 4px;
+}
+
+.tsd-page-navigation-section {
+  & > summary > svg {
+    margin-right: 0;
+  }
+  & > div {
+    margin-left: 24px;
+  }
+}
+
+.tsd-page-title {
+  color: var(--color-contrast-text);
+}
+
+h1 > code.tsd-tag {
+  margin-left: 12px;
+}
+
+code.tsd-tag {
+  display: inline-block;
+  transform: translateY(-0.1em);
+  background: var(--color-background-secondary);
+  border: 0;
+  border-radius: 8px;
+  padding: 2px 4px;
+}
+
+.tsd-breadcrumb {
+  margin-bottom: 12px;
+  li:after {
+    content: " › ";
+    opacity: 0.4;
+  }
+  li:last-of-type::after {
+    content: "";
+  }
+}
+
+.tsd-signature,
+.tsd-signatures .tsd-signature {
+  border: 0;
+  border-radius: 8px;
+  background: var(--color-background-secondary);
+  font-weight: 500;
+  padding: 10px 8px;
+  line-height: 1.3;
+}
+
+.tsd-anchor-icon {
+  color: var(--color-text-aside);
+  padding-bottom: 1px;
+}
+
+.tsd-kind-icon {
+  filter: grayscale(0.5) opacity(0.8);
+}
+
+/* Accordion icon */
+.tsd-accordion-summary > svg {
+  color: var(--color-text-aside);
+  opacity: 50%;
+  stroke-width: 1px;
+  transition: transform 200ms ease-in-out;
+}
+
+.tsd-accordion-summary > svg:has(+ h2) {
+  height: 24px;
+  width: 24px;
+}
+
+/* Desktop sizing */
+@media (min-width: 1200px) {
+  .container-main {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 2.5fr) minmax(0, 17rem);
+  }
+
+  .site-menu {
+    padding-right: 8px;
+  }
+  .page-menu {
+    padding-left: 24px;
+  }
+
+  .tsd-widget.menu {
+    display: none;
+  }
+}
+
+/* Tablet sizing */
+@media (min-width: 770px) and (max-width: 1199px) {
+  .page-menu {
+    padding-block: 24px 24px;
+  }
+  .site-menu {
+    padding-block: 0 24px;
+    margin-top: 0;
+  }
+
+  .tsd-widget.menu {
+    display: none;
+  }
+
+  .lg-show {
+    display: none !important;
+  }
+}
+
+/* Mobile sizing */
+@media (max-width: 769px) {
+  .page-menu {
+    display: none;
+  }
+  .site-menu {
+    padding: 0;
+  }
+
+  .container {
+    padding: 0 1rem;
+  }
+
+  .has-menu .col-sidebar {
+    padding: 0 1rem;
+    max-height: 100dvh;
+  }
+
+  .lg-show {
+    display: none !important;
+  }
+  .md-show {
+    display: none !important;
+  }
+}
+</style></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar"><div class="tsd-toolbar-contents container"><a href="../index.html" class="title">ADK for TypeScript: API Reference</a><div id="tsd-toolbar-links"></div><div class="tsd-theme-toggle md-show" style="position: relative"><div style="position: absolute; left: 8px; top: 4px; pointer-events: none"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sun-moon-icon lucide-sun-moon"><path d="M12 2v2"></path><path d="M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715"></path><path d="M16 12a4 4 0 0 0-4-4"></path><path d="m19 5-1.256 1.256"></path><path d="M20 12h2"></path></svg></div><select id="tsd-theme"><option value="os">System</option><option value="light">Light</option><option value="dark">Dark</option></select></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search" style="
+              border: 1px solid var(--color-background-active);
+              border-radius: 4px;
+              margin-left: 8px;
+            "><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search-icon lucide-search" style="margin-bottom: 1px; margin-left: 4px; margin-right: 4px;"><path d="m21 21-4.34-4.34"></path><circle cx="11" cy="11" r="8"></circle></svg><span class="lg-show" style="margin-left: 4px; margin-right: 12ch;">Search…</span></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/><ul role="listbox" id="tsd-search-results"></ul><div id="tsd-search-status" aria-live="polite" aria-atomic="true"><div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu" style="
+              border: 1px solid var(--color-background-active);
+              border-radius: 4px;
+              margin-left: 4px;
+            "><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-menu-icon lucide-menu" style="margin-left: 4px; margin-right: 4px;"><path d="M4 5h16"></path><path d="M4 12h16"></path><path d="M4 19h16"></path></svg></a></div></header><div class="container container-main"><div class="col-content"><div class="tsd-page-title"><ul class="tsd-breadcrumb" aria-label="Breadcrumb"><li><a href="" aria-current="page">PluginManager</a></li></ul><h1>Class PluginManager</h1></div><section class="tsd-panel tsd-comment"><div class="tsd-comment tsd-typography"><p>Manages the registration and execution of plugins.</p>
+<p>The PluginManager is an internal class that orchestrates the invocation of
+plugin callbacks at key points in the SDK's execution lifecycle. It maintains
+a list of registered plugins and ensures they are called in the order they
+were registered.</p>
+<p>The core execution logic implements an &quot;early exit&quot; strategy: if any plugin
+callback returns a non-<code>undefined</code> value, the execution of subsequent plugins
+for that specific event is halted, and the returned value is propagated up
+the call stack. This allows plugins to short-circuit operations like agent
+runs, tool calls, or model requests.</p>
+</div></section><aside class="tsd-sources"><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/plugins/plugin_manager.ts#L35">core/src/plugins/plugin_manager.ts:35</a></li></ul></aside><div style="margin-top: 64px"></div><details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Constructors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg><h2>Constructors</h2></summary><section><section class="tsd-panel tsd-member"><h3 class="tsd-anchor-link" id="constructor"><span>constructor</span><a href="#constructor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures"><li class=""><div class="tsd-signature tsd-anchor-link" id="constructorpluginmanager"><span class="tsd-signature-keyword">new</span> <span class="tsd-kind-constructor-signature">PluginManager</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">plugins</span><span class="tsd-signature-symbol">?:</span> <a href="BasePlugin.html" class="tsd-signature-type tsd-kind-class">BasePlugin</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">PluginManager</a><a href="#constructorpluginmanager" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div><div class="tsd-description"><div class="tsd-comment tsd-typography"><p>Initializes the plugin service.</p>
+</div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">plugins</span>: <a href="BasePlugin.html" class="tsd-signature-type tsd-kind-class">BasePlugin</a><span class="tsd-signature-symbol">[]</span></span><div class="tsd-comment tsd-typography"><p>An optional list of plugins to register upon
+initialization.</p>
+</div></li></ul></div><h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">PluginManager</a></h4><aside class="tsd-sources"><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/plugins/plugin_manager.ts#L43">core/src/plugins/plugin_manager.ts:43</a></li></ul></aside></div></li></ul></section></section></details><details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg><h2>Methods</h2></summary><section><section class="tsd-panel tsd-member"><h3 class="tsd-anchor-link" id="getplugin"><span>get<wbr/>Plugin</span><a href="#getplugin" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures"><li class=""><div class="tsd-signature tsd-anchor-link" id="getplugin-1"><span class="tsd-kind-call-signature">getPlugin</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">pluginName</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="BasePlugin.html" class="tsd-signature-type tsd-kind-class">BasePlugin</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><a href="#getplugin-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div><div class="tsd-description"><div class="tsd-comment tsd-typography"><p>Retrieves a registered plugin by its name.</p>
+</div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><span><span class="tsd-kind-parameter">pluginName</span>: <span class="tsd-signature-type">string</span></span><div class="tsd-comment tsd-typography"><p>The name of the plugin to retrieve.</p>
+</div></li></ul></div><h4 class="tsd-returns-title">Returns <a href="BasePlugin.html" class="tsd-signature-type tsd-kind-class">BasePlugin</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span></h4><p>The plugin instance if found, otherwise <code>undefined</code>.</p>
+<aside class="tsd-sources"><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/plugins/plugin_manager.ts#L78">core/src/plugins/plugin_manager.ts:78</a></li></ul></aside></div></li></ul></section><section class="tsd-panel tsd-member"><h3 class="tsd-anchor-link" id="registerplugin"><span>register<wbr/>Plugin</span><a href="#registerplugin" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures"><li class=""><div class="tsd-signature tsd-anchor-link" id="registerplugin-1"><span class="tsd-kind-call-signature">registerPlugin</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">plugin</span><span class="tsd-signature-symbol">:</span> <a href="BasePlugin.html" class="tsd-signature-type tsd-kind-class">BasePlugin</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#registerplugin-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div><div class="tsd-description"><div class="tsd-comment tsd-typography"><p>Registers a new plugin.</p>
+</div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><span><span class="tsd-kind-parameter">plugin</span>: <a href="BasePlugin.html" class="tsd-signature-type tsd-kind-class">BasePlugin</a></span><div class="tsd-comment tsd-typography"><p>The plugin instance to register.</p>
+</div></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><div class="tsd-comment tsd-typography"><div class="tsd-tag-throws"><h4 class="tsd-anchor-link" id="throws">Throws<a href="#throws" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>If the same exact plugin or a plugin with the same name is already
+registered.</p>
+</div></div><aside class="tsd-sources"><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/plugins/plugin_manager.ts#L58">core/src/plugins/plugin_manager.ts:58</a></li></ul></aside></div></li></ul></section><section class="tsd-panel tsd-member"><h3 class="tsd-anchor-link" id="runafteragentcallback"><span>run<wbr/>After<wbr/>Agent<wbr/>Callback</span><a href="#runafteragentcallback" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures"><li class=""><div class="tsd-signature tsd-anchor-link" id="runafteragentcallback-1"><span class="tsd-kind-call-signature">runAfterAgentCallback</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">__namedParameters</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{</span><br/>        <span class="tsd-kind-property">agent</span><span class="tsd-signature-symbol">:</span> <a href="BaseAgent.html" class="tsd-signature-type tsd-kind-class">BaseAgent</a><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">callbackContext</span><span class="tsd-signature-symbol">:</span> <a href="CallbackContext.html" class="tsd-signature-type tsd-kind-class">CallbackContext</a><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Content</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span><a href="#runafteragentcallback-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div><div class="tsd-description"><div class="tsd-comment tsd-typography"><p>Runs the <code>afterAgentCallback</code> for all plugins.</p>
+</div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><span><span class="tsd-kind-parameter">__namedParameters</span>: <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">agent</span><span class="tsd-signature-symbol">:</span> <a href="BaseAgent.html" class="tsd-signature-type tsd-kind-class">BaseAgent</a><span class="tsd-signature-symbol">;</span> <span class="tsd-kind-property">callbackContext</span><span class="tsd-signature-symbol">:</span> <a href="CallbackContext.html" class="tsd-signature-type tsd-kind-class">CallbackContext</a> <span class="tsd-signature-symbol">}</span></span></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Content</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources"><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/plugins/plugin_manager.ts#L196">core/src/plugins/plugin_manager.ts:196</a></li></ul></aside></div></li></ul></section><section class="tsd-panel tsd-member"><h3 class="tsd-anchor-link" id="runaftermodelcallback"><span>run<wbr/>After<wbr/>Model<wbr/>Callback</span><a href="#runaftermodelcallback" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures"><li class=""><div class="tsd-signature tsd-anchor-link" id="runaftermodelcallback-1"><span class="tsd-kind-call-signature">runAfterModelCallback</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">__namedParameters</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{</span><br/>        <span class="tsd-kind-property">callbackContext</span><span class="tsd-signature-symbol">:</span> <a href="CallbackContext.html" class="tsd-signature-type tsd-kind-class">CallbackContext</a><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">llmResponse</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/LlmResponse.html" class="tsd-signature-type tsd-kind-interface">LlmResponse</a><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/LlmResponse.html" class="tsd-signature-type tsd-kind-interface">LlmResponse</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span><a href="#runaftermodelcallback-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div><div class="tsd-description"><div class="tsd-comment tsd-typography"><p>Runs the <code>afterModelCallback</code> for all plugins.</p>
+</div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><span><span class="tsd-kind-parameter">__namedParameters</span>: <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">callbackContext</span><span class="tsd-signature-symbol">:</span> <a href="CallbackContext.html" class="tsd-signature-type tsd-kind-class">CallbackContext</a><span class="tsd-signature-symbol">;</span> <span class="tsd-kind-property">llmResponse</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/LlmResponse.html" class="tsd-signature-type tsd-kind-interface">LlmResponse</a> <span class="tsd-signature-symbol">}</span></span></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/LlmResponse.html" class="tsd-signature-type tsd-kind-interface">LlmResponse</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources"><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/plugins/plugin_manager.ts#L272">core/src/plugins/plugin_manager.ts:272</a></li></ul></aside></div></li></ul></section><section class="tsd-panel tsd-member"><h3 class="tsd-anchor-link" id="runafterruncallback"><span>run<wbr/>After<wbr/>Run<wbr/>Callback</span><a href="#runafterruncallback" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures"><li class=""><div class="tsd-signature tsd-anchor-link" id="runafterruncallback-1"><span class="tsd-kind-call-signature">runAfterRunCallback</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">__namedParameters</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">invocationContext</span><span class="tsd-signature-symbol">:</span> <a href="InvocationContext.html" class="tsd-signature-type tsd-kind-class">InvocationContext</a> <span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><a href="#runafterruncallback-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div><div class="tsd-description"><div class="tsd-comment tsd-typography"><p>Runs the <code>afterRunCallback</code> for all plugins.</p>
+</div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><span><span class="tsd-kind-parameter">__namedParameters</span>: <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">invocationContext</span><span class="tsd-signature-symbol">:</span> <a href="InvocationContext.html" class="tsd-signature-type tsd-kind-class">InvocationContext</a> <span class="tsd-signature-symbol">}</span></span></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources"><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/plugins/plugin_manager.ts#L153">core/src/plugins/plugin_manager.ts:153</a></li></ul></aside></div></li></ul></section><section class="tsd-panel tsd-member"><h3 class="tsd-anchor-link" id="runaftertoolcallback"><span>run<wbr/>After<wbr/>Tool<wbr/>Callback</span><a href="#runaftertoolcallback" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures"><li class=""><div class="tsd-signature tsd-anchor-link" id="runaftertoolcallback-1"><span class="tsd-kind-call-signature">runAfterToolCallback</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">__namedParameters</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{</span><br/>        <span class="tsd-kind-property">result</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">tool</span><span class="tsd-signature-symbol">:</span> <a href="BaseTool.html" class="tsd-signature-type tsd-kind-class">BaseTool</a><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">toolArgs</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">toolContext</span><span class="tsd-signature-symbol">:</span> <a href="ToolContext.html" class="tsd-signature-type tsd-kind-class">ToolContext</a><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span><a href="#runaftertoolcallback-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div><div class="tsd-description"><div class="tsd-comment tsd-typography"><p>Runs the <code>afterToolCallback</code> for all plugins.</p>
+</div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><span><span class="tsd-kind-parameter">__namedParameters</span>: <span class="tsd-signature-symbol">{</span><br/>    <span class="tsd-kind-property">result</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">tool</span><span class="tsd-signature-symbol">:</span> <a href="BaseTool.html" class="tsd-signature-type tsd-kind-class">BaseTool</a><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">toolArgs</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">toolContext</span><span class="tsd-signature-symbol">:</span> <a href="ToolContext.html" class="tsd-signature-type tsd-kind-class">ToolContext</a><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></span></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources"><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/plugins/plugin_manager.ts#L226">core/src/plugins/plugin_manager.ts:226</a></li></ul></aside></div></li></ul></section><section class="tsd-panel tsd-member"><h3 class="tsd-anchor-link" id="runbeforeagentcallback"><span>run<wbr/>Before<wbr/>Agent<wbr/>Callback</span><a href="#runbeforeagentcallback" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures"><li class=""><div class="tsd-signature tsd-anchor-link" id="runbeforeagentcallback-1"><span class="tsd-kind-call-signature">runBeforeAgentCallback</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">__namedParameters</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{</span><br/>        <span class="tsd-kind-property">agent</span><span class="tsd-signature-symbol">:</span> <a href="BaseAgent.html" class="tsd-signature-type tsd-kind-class">BaseAgent</a><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">callbackContext</span><span class="tsd-signature-symbol">:</span> <a href="CallbackContext.html" class="tsd-signature-type tsd-kind-class">CallbackContext</a><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Content</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span><a href="#runbeforeagentcallback-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div><div class="tsd-description"><div class="tsd-comment tsd-typography"><p>Runs the <code>beforeAgentCallback</code> for all plugins.</p>
+</div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><span><span class="tsd-kind-parameter">__namedParameters</span>: <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">agent</span><span class="tsd-signature-symbol">:</span> <a href="BaseAgent.html" class="tsd-signature-type tsd-kind-class">BaseAgent</a><span class="tsd-signature-symbol">;</span> <span class="tsd-kind-property">callbackContext</span><span class="tsd-signature-symbol">:</span> <a href="CallbackContext.html" class="tsd-signature-type tsd-kind-class">CallbackContext</a> <span class="tsd-signature-symbol">}</span></span></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Content</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources"><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/plugins/plugin_manager.ts#L181">core/src/plugins/plugin_manager.ts:181</a></li></ul></aside></div></li></ul></section><section class="tsd-panel tsd-member"><h3 class="tsd-anchor-link" id="runbeforemodelcallback"><span>run<wbr/>Before<wbr/>Model<wbr/>Callback</span><a href="#runbeforemodelcallback" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures"><li class=""><div class="tsd-signature tsd-anchor-link" id="runbeforemodelcallback-1"><span class="tsd-kind-call-signature">runBeforeModelCallback</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">__namedParameters</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{</span><br/>        <span class="tsd-kind-property">callbackContext</span><span class="tsd-signature-symbol">:</span> <a href="CallbackContext.html" class="tsd-signature-type tsd-kind-class">CallbackContext</a><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">llmRequest</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/LlmRequest.html" class="tsd-signature-type tsd-kind-interface">LlmRequest</a><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/LlmResponse.html" class="tsd-signature-type tsd-kind-interface">LlmResponse</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span><a href="#runbeforemodelcallback-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div><div class="tsd-description"><div class="tsd-comment tsd-typography"><p>Runs the <code>beforeModelCallback</code> for all plugins.</p>
+</div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><span><span class="tsd-kind-parameter">__namedParameters</span>: <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">callbackContext</span><span class="tsd-signature-symbol">:</span> <a href="CallbackContext.html" class="tsd-signature-type tsd-kind-class">CallbackContext</a><span class="tsd-signature-symbol">;</span> <span class="tsd-kind-property">llmRequest</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/LlmRequest.html" class="tsd-signature-type tsd-kind-interface">LlmRequest</a> <span class="tsd-signature-symbol">}</span></span></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/LlmResponse.html" class="tsd-signature-type tsd-kind-interface">LlmResponse</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources"><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/plugins/plugin_manager.ts#L257">core/src/plugins/plugin_manager.ts:257</a></li></ul></aside></div></li></ul></section><section class="tsd-panel tsd-member"><h3 class="tsd-anchor-link" id="runbeforeruncallback"><span>run<wbr/>Before<wbr/>Run<wbr/>Callback</span><a href="#runbeforeruncallback" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures"><li class=""><div class="tsd-signature tsd-anchor-link" id="runbeforeruncallback-1"><span class="tsd-kind-call-signature">runBeforeRunCallback</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">__namedParameters</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">invocationContext</span><span class="tsd-signature-symbol">:</span> <a href="InvocationContext.html" class="tsd-signature-type tsd-kind-class">InvocationContext</a> <span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Content</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span><a href="#runbeforeruncallback-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div><div class="tsd-description"><div class="tsd-comment tsd-typography"><p>Runs the <code>beforeRunCallback</code> for all plugins.</p>
+</div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><span><span class="tsd-kind-parameter">__namedParameters</span>: <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">invocationContext</span><span class="tsd-signature-symbol">:</span> <a href="InvocationContext.html" class="tsd-signature-type tsd-kind-class">InvocationContext</a> <span class="tsd-signature-symbol">}</span></span></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Content</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources"><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/plugins/plugin_manager.ts#L138">core/src/plugins/plugin_manager.ts:138</a></li></ul></aside></div></li></ul></section><section class="tsd-panel tsd-member"><h3 class="tsd-anchor-link" id="runbeforetoolcallback"><span>run<wbr/>Before<wbr/>Tool<wbr/>Callback</span><a href="#runbeforetoolcallback" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures"><li class=""><div class="tsd-signature tsd-anchor-link" id="runbeforetoolcallback-1"><span class="tsd-kind-call-signature">runBeforeToolCallback</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">__namedParameters</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{</span><br/>        <span class="tsd-kind-property">tool</span><span class="tsd-signature-symbol">:</span> <a href="BaseTool.html" class="tsd-signature-type tsd-kind-class">BaseTool</a><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">toolArgs</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">toolContext</span><span class="tsd-signature-symbol">:</span> <a href="ToolContext.html" class="tsd-signature-type tsd-kind-class">ToolContext</a><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span><a href="#runbeforetoolcallback-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div><div class="tsd-description"><div class="tsd-comment tsd-typography"><p>Runs the <code>beforeToolCallback</code> for all plugins.</p>
+</div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><span><span class="tsd-kind-parameter">__namedParameters</span>: <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">tool</span><span class="tsd-signature-symbol">:</span> <a href="BaseTool.html" class="tsd-signature-type tsd-kind-class">BaseTool</a><span class="tsd-signature-symbol">;</span> <span class="tsd-kind-property">toolArgs</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">;</span> <span class="tsd-kind-property">toolContext</span><span class="tsd-signature-symbol">:</span> <a href="ToolContext.html" class="tsd-signature-type tsd-kind-class">ToolContext</a> <span class="tsd-signature-symbol">}</span></span></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources"><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/plugins/plugin_manager.ts#L211">core/src/plugins/plugin_manager.ts:211</a></li></ul></aside></div></li></ul></section><section class="tsd-panel tsd-member"><h3 class="tsd-anchor-link" id="runoneventcallback"><span>run<wbr/>On<wbr/>Event<wbr/>Callback</span><a href="#runoneventcallback" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures"><li class=""><div class="tsd-signature tsd-anchor-link" id="runoneventcallback-1"><span class="tsd-kind-call-signature">runOnEventCallback</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">__namedParameters</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{</span><br/>        <span class="tsd-kind-property">event</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/Event.html" class="tsd-signature-type tsd-kind-interface">Event</a><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">invocationContext</span><span class="tsd-signature-symbol">:</span> <a href="InvocationContext.html" class="tsd-signature-type tsd-kind-class">InvocationContext</a><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/Event.html" class="tsd-signature-type tsd-kind-interface">Event</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span><a href="#runoneventcallback-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div><div class="tsd-description"><div class="tsd-comment tsd-typography"><p>Runs the <code>onEventCallback</code> for all plugins.</p>
+</div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><span><span class="tsd-kind-parameter">__namedParameters</span>: <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">event</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/Event.html" class="tsd-signature-type tsd-kind-interface">Event</a><span class="tsd-signature-symbol">;</span> <span class="tsd-kind-property">invocationContext</span><span class="tsd-signature-symbol">:</span> <a href="InvocationContext.html" class="tsd-signature-type tsd-kind-class">InvocationContext</a> <span class="tsd-signature-symbol">}</span></span></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/Event.html" class="tsd-signature-type tsd-kind-interface">Event</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources"><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/plugins/plugin_manager.ts#L166">core/src/plugins/plugin_manager.ts:166</a></li></ul></aside></div></li></ul></section><section class="tsd-panel tsd-member"><h3 class="tsd-anchor-link" id="runonmodelerrorcallback"><span>run<wbr/>On<wbr/>Model<wbr/>Error<wbr/>Callback</span><a href="#runonmodelerrorcallback" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures"><li class=""><div class="tsd-signature tsd-anchor-link" id="runonmodelerrorcallback-1"><span class="tsd-kind-call-signature">runOnModelErrorCallback</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">__namedParameters</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{</span><br/>        <span class="tsd-kind-property">callbackContext</span><span class="tsd-signature-symbol">:</span> <a href="CallbackContext.html" class="tsd-signature-type tsd-kind-class">CallbackContext</a><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">error</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">llmRequest</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/LlmRequest.html" class="tsd-signature-type tsd-kind-interface">LlmRequest</a><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/LlmResponse.html" class="tsd-signature-type tsd-kind-interface">LlmResponse</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span><a href="#runonmodelerrorcallback-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div><div class="tsd-description"><div class="tsd-comment tsd-typography"><p>Runs the <code>onModelErrorCallback</code> for all plugins.</p>
+</div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><span><span class="tsd-kind-parameter">__namedParameters</span>: <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">callbackContext</span><span class="tsd-signature-symbol">:</span> <a href="CallbackContext.html" class="tsd-signature-type tsd-kind-class">CallbackContext</a><span class="tsd-signature-symbol">;</span> <span class="tsd-kind-property">error</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">;</span> <span class="tsd-kind-property">llmRequest</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/LlmRequest.html" class="tsd-signature-type tsd-kind-interface">LlmRequest</a> <span class="tsd-signature-symbol">}</span></span></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/LlmResponse.html" class="tsd-signature-type tsd-kind-interface">LlmResponse</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources"><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/plugins/plugin_manager.ts#L242">core/src/plugins/plugin_manager.ts:242</a></li></ul></aside></div></li></ul></section><section class="tsd-panel tsd-member"><h3 class="tsd-anchor-link" id="runontoolerrorcallback"><span>run<wbr/>On<wbr/>Tool<wbr/>Error<wbr/>Callback</span><a href="#runontoolerrorcallback" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures"><li class=""><div class="tsd-signature tsd-anchor-link" id="runontoolerrorcallback-1"><span class="tsd-kind-call-signature">runOnToolErrorCallback</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">__namedParameters</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{</span><br/>        <span class="tsd-kind-property">error</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">tool</span><span class="tsd-signature-symbol">:</span> <a href="BaseTool.html" class="tsd-signature-type tsd-kind-class">BaseTool</a><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">toolArgs</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">toolContext</span><span class="tsd-signature-symbol">:</span> <a href="ToolContext.html" class="tsd-signature-type tsd-kind-class">ToolContext</a><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span><a href="#runontoolerrorcallback-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div><div class="tsd-description"><div class="tsd-comment tsd-typography"><p>Runs the <code>onToolErrorCallback</code> for all plugins.</p>
+</div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><span><span class="tsd-kind-parameter">__namedParameters</span>: <span class="tsd-signature-symbol">{</span><br/>    <span class="tsd-kind-property">error</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">tool</span><span class="tsd-signature-symbol">:</span> <a href="BaseTool.html" class="tsd-signature-type tsd-kind-class">BaseTool</a><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">toolArgs</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">toolContext</span><span class="tsd-signature-symbol">:</span> <a href="ToolContext.html" class="tsd-signature-type tsd-kind-class">ToolContext</a><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></span></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources"><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/plugins/plugin_manager.ts#L287">core/src/plugins/plugin_manager.ts:287</a></li></ul></aside></div></li></ul></section><section class="tsd-panel tsd-member"><h3 class="tsd-anchor-link" id="runonusermessagecallback"><span>run<wbr/>On<wbr/>User<wbr/>Message<wbr/>Callback</span><a href="#runonusermessagecallback" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures"><li class=""><div class="tsd-signature tsd-anchor-link" id="runonusermessagecallback-1"><span class="tsd-kind-call-signature">runOnUserMessageCallback</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">__namedParameters</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{</span><br/>        <span class="tsd-kind-property">invocationContext</span><span class="tsd-signature-symbol">:</span> <a href="InvocationContext.html" class="tsd-signature-type tsd-kind-class">InvocationContext</a><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">userMessage</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Content</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Content</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span><a href="#runonusermessagecallback-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div><div class="tsd-description"><div class="tsd-comment tsd-typography"><p>Runs the <code>onUserMessageCallback</code> for all plugins.</p>
+</div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><span><span class="tsd-kind-parameter">__namedParameters</span>: <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">invocationContext</span><span class="tsd-signature-symbol">:</span> <a href="InvocationContext.html" class="tsd-signature-type tsd-kind-class">InvocationContext</a><span class="tsd-signature-symbol">;</span> <span class="tsd-kind-property">userMessage</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Content</span> <span class="tsd-signature-symbol">}</span></span></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Content</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources"><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/plugins/plugin_manager.ts#L122">core/src/plugins/plugin_manager.ts:122</a></li></ul></aside></div></li></ul></section></section></details></div><div class="col-sidebar"><div class="page-menu"><div class="tsd-page-navigation"><details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Constructors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Constructors</summary><div><a href="#constructor"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Constructor"><use href="../assets/icons.svg#icon-512"></use></svg><span>constructor</span></a></div></details><details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Methods</summary><div><a href="#getplugin"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Plugin</span></a><a href="#registerplugin"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>register<wbr/>Plugin</span></a><a href="#runafteragentcallback"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>run<wbr/>After<wbr/>Agent<wbr/>Callback</span></a><a href="#runaftermodelcallback"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>run<wbr/>After<wbr/>Model<wbr/>Callback</span></a><a href="#runafterruncallback"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>run<wbr/>After<wbr/>Run<wbr/>Callback</span></a><a href="#runaftertoolcallback"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>run<wbr/>After<wbr/>Tool<wbr/>Callback</span></a><a href="#runbeforeagentcallback"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>run<wbr/>Before<wbr/>Agent<wbr/>Callback</span></a><a href="#runbeforemodelcallback"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>run<wbr/>Before<wbr/>Model<wbr/>Callback</span></a><a href="#runbeforeruncallback"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>run<wbr/>Before<wbr/>Run<wbr/>Callback</span></a><a href="#runbeforetoolcallback"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>run<wbr/>Before<wbr/>Tool<wbr/>Callback</span></a><a href="#runoneventcallback"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>run<wbr/>On<wbr/>Event<wbr/>Callback</span></a><a href="#runonmodelerrorcallback"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>run<wbr/>On<wbr/>Model<wbr/>Error<wbr/>Callback</span></a><a href="#runontoolerrorcallback"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>run<wbr/>On<wbr/>Tool<wbr/>Error<wbr/>Callback</span></a><a href="#runonusermessagecallback"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>run<wbr/>On<wbr/>User<wbr/>Message<wbr/>Callback</span></a></div></details></div></div><div class="site-menu"><nav class="tsd-navigation"><a href="../index.html">ADK for TypeScript: API Reference</a><ul class="tsd-small-nested-navigation" id="tsd-nav-container"><li>Loading...</li></ul></nav></div></div></div><div class="overlay"></div></body></html>
