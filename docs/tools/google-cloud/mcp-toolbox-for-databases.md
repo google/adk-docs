@@ -100,8 +100,7 @@ documentation:
     from google.adk.tools.toolbox_toolset import ToolboxToolset
 
     toolset = ToolboxToolset(
-        server_url="http://127.0.0.1:5000",
-        toolset_name="my-toolset-name"
+        server_url="http://127.0.0.1:5000"
     )
 
     root_agent = Agent(
