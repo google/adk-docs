@@ -35,7 +35,7 @@ from simple tasks to complex workflows.
 
 ??? tip "News: ADK Java v0.5.0 released!"
 
-    The ADK Go v0.5.0 release adds new features for tool execution mode
+    The ADK Java v0.5.0 release adds new features for tool execution mode
     configuration and model versioning, along with numerous bug fixes,
     dependency updates, and significant refactoring to improve the agent
     and runner architecture. For release details, check out the
