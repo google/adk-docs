@@ -36,6 +36,10 @@ pip install ddtrace
 
 ## Setup
 
+### Create an Application using the Google ADK
+
+If you do not have an application using the Google ADK, follow the steps in the [ADK Getting Started Guide](https://google.github.io/adk-docs/get-started/) to create a sample ADK agent.
+
 ### Configure Environment Variables
 
 You will also need to specify an ML Application name in the following
@@ -54,18 +58,9 @@ export DD_LLMOBS_AGENTLESS_ENABLED=true
 export DD_APM_TRACING_ENABLED=false  # Only set this if you are not using Datadog APM
 ```
 
-Additionally, configure any LLM provider API keys:
-
-```shell
-export GEMINI_API_KEY=<YOUR_GEMINI_API_KEY>
-#  or
-export GOOGLE_API_KEY=<YOUR_GOOGLE_API_KEY>
-...
-```
+These variables must be exported before running your application so the following `ddtrace-run` command can use them, as opposed to putting them in the agent's `.env` file.
 
 ### Run Your Application
-
-Follow the steps in the [ADK Getting Started Guide](https://google.github.io/adk-docs/get-started/) to create a sample ADK agent.
 
 Once you have configured your environment variables, you can run your
 application and start observing your LLM-based applications.
