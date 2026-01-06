@@ -250,7 +250,7 @@ When using a `LongRunningFunctionTool`, your function can initiate the long-runn
     server to do the task.
 
 !!! tip "Tip: Parallel execution"
-    Depending on the type of tool you are building, designing for asychronous
+    Depending on the type of tool you are building, designing for asynchronous
     operation may be a better solution than creating a long running tool. For
     more information, see
     [Increase tool performance with parallel execution](/adk-docs/tools-custom/performance/).
@@ -262,7 +262,7 @@ In Python, you wrap a function with `LongRunningFunctionTool`. In Java, you pass
 
 1. **Initiation:** When the LLM calls the tool, your function starts the long-running operation.
 
-2. **Initial Updates:** Your function should optionally return an initial result (e.g. the long-running operaiton id). The ADK framework takes the result and sends it back to the LLM packaged within a `FunctionResponse`. This allows the LLM to inform the user (e.g., status, percentage complete, messages). And then the agent run is ended / paused.
+2. **Initial Updates:** Your function should optionally return an initial result (e.g. the long-running operation id). The ADK framework takes the result and sends it back to the LLM packaged within a `FunctionResponse`. This allows the LLM to inform the user (e.g., status, percentage complete, messages). And then the agent run is ended / paused.
 
 3. **Continue or Wait:** After each agent run is completed. Agent client can query the progress of the long-running operation and decide whether to continue the agent run with an intermediate response (to update the progress) or wait until a final response is retrieved. Agent client should send the intermediate or final response back to the agent for the next run.
 

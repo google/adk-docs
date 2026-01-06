@@ -294,9 +294,16 @@ the storage backend that best suits your needs:
     ```py
     from google.adk.sessions import DatabaseSessionService
     # Example using a local SQLite file:
-    db_url = "sqlite:///./my_agent_data.db"
+    # Note: The implementation requires an async database driver.
+    # For SQLite, use 'sqlite+aiosqlite' instead of 'sqlite' to ensure async compatibility.
+    db_url = "sqlite+aiosqlite:///./my_agent_data.db"
     session_service = DatabaseSessionService(db_url=db_url)
     ```
+
+    <div class="admonition warning">
+    <p class="admonition-title">Async Driver Requirement</p>
+    <p><code>DatabaseSessionService</code> requires an async database driver. When using SQLite, you must use <code>sqlite+aiosqlite</code> instead of <code>sqlite</code> in your connection string. For other databases (PostgreSQL, MySQL), ensure you're using an async-compatible driver (e.g., <code>asyncpg</code> for PostgreSQL, <code>aiomysql</code> for MySQL).</p>
+    </div>
 
 Choosing the right `SessionService` is key to defining how your agent's
 conversation history and temporary data are stored and persist.
