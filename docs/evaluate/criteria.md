@@ -505,7 +505,7 @@ conversation plan defined in the `ConversationScenario`.
 
 #### Details
 
-This criterion determines whether the a user simulator follows a definedß
+This criterion determines whether the a user simulator follows a defined
 `ConversationScenario` in a multi-turn conversation.
 
 For the first turn, this criterion checks if user simulator response matches the
