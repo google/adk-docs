@@ -65,11 +65,13 @@ export GOOGLE_API_KEY=<YOUR_GOOGLE_API_KEY>
 
 ### Run Your Application
 
+Follow the steps in the [ADK Getting Started Guide](https://google.github.io/adk-docs/get-started/) to create a sample ADK agent.
+
 Once you have configured your environment variables, you can run your
 application and start observing your LLM-based applications.
 
 ```shell
-ddtrace-run python your_application.py
+ddtrace-run adk run my_agent
 ```
 
 ## Observe
