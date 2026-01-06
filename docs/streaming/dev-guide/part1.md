@@ -460,7 +460,7 @@ For production applications, choose a persistent session service based on your i
 **Use `DatabaseSessionService` if:**
 
 - You need persistent storage with SQLite, PostgreSQL, or MySQL
-- You're building single-server apps (SQLite) or multi-server deployments (PostgreSQL/MySQL)
+- You're building single-server apps (SQLite) or multiserver deployments (PostgreSQL/MySQL)
 - You want full control over data storage and backups
 - Examples:
     - SQLite: `DatabaseSessionService(db_url="sqlite+aiosqlite:///./sessions.db")`

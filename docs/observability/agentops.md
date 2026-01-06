@@ -20,7 +20,7 @@ Google ADK includes its own OpenTelemetry-based tracing system, primarily aimed 
 
 ![AgentOps Dashboard showing an ADK trace with nested agent, LLM, and tool spans.](../assets/agentops-adk-trace-example.jpg)
 
-*AgentOps dashboard displaying a trace from a multi-step ADK application execution. You can see the hierarchical structure of spans, including the main agent workflow, individual sub-agents, LLM calls, and tool executions. Note the clear hierarchy: the main workflow agent span contains child spans for various sub-agent operations, LLM calls, and tool executions.*
+*AgentOps dashboard displaying a trace from a multistep ADK application execution. You can see the hierarchical structure of spans, including the main agent workflow, individual sub-agents, LLM calls, and tool executions. Note the clear hierarchy: the main workflow agent span contains child spans for various sub-agent operations, LLM calls, and tool executions.*
 
 ## Getting Started with AgentOps and ADK
 
@@ -116,7 +116,7 @@ This creates a waterfall of spans, allowing you to see the sequence, duration, a
 For a practical demonstration, you can explore a sample Jupyter Notebook that illustrates a human approval workflow using Google ADK and AgentOps:
 [Google ADK Human Approval Example on GitHub](https://github.com/AgentOps-AI/agentops/blob/main/examples/google_adk/human_approval.ipynb).
 
-This example showcases how a multi-step agent process with tool usage is visualized in AgentOps.
+This example showcases how a multistep agent process with tool usage is visualized in AgentOps.
 
 ## Benefits
 
