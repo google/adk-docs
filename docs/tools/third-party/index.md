@@ -11,7 +11,7 @@ Check out the following third-party tools that you can use with ADK agents:
 
   <a href="/adk-docs/tools/third-party/atlassian/" class="tool-card">
     <div class="tool-card-image-wrapper">
-      <img src="../../assets/tools-atlassian.png" alt="Atlassian">
+      <img src="/adk-docs/assets/tools-atlassian.png" alt="Atlassian">
     </div>
     <div class="tool-card-content">
       <h3>Atlassian</h3>
@@ -19,69 +19,9 @@ Check out the following third-party tools that you can use with ADK agents:
     </div>
   </a>
 
-  <a href="/adk-docs/tools/third-party/agentql/" class="tool-card">
-    <div class="tool-card-image-wrapper">
-      <img src="../../assets/tools-agentql.png" alt="AgentQL">
-    </div>
-    <div class="tool-card-content">
-      <h3>AgentQL</h3>
-      <p>Extract resilient, structured web data using natural language</p>
-    </div>
-  </a>
-
-  <a href="/adk-docs/tools/third-party/apify/" class="tool-card">
-    <div class="tool-card-image-wrapper">
-      <img src="../../assets/tools-apify.png" alt="Apify">
-    </div>
-    <div class="tool-card-content">
-      <h3>Apify</h3>
-      <p>Use Actors to scrape websites and automate web workflows</p>
-    </div>
-  </a>
-
-  <a href="/adk-docs/tools/third-party/bright-data/" class="tool-card">
-    <div class="tool-card-image-wrapper">
-      <img src="../../assets/tools-bright-data.png" alt="Bright Data">
-    </div>
-    <div class="tool-card-content">
-      <h3>Bright Data</h3>
-      <p>One MCP for the web - connect your AI to real web data</p>
-    </div>
-  </a>
-
-  <a href="/adk-docs/tools/third-party/browserbase/" class="tool-card">
-    <div class="tool-card-image-wrapper">
-      <img src="../../assets/tools-browserbase.png" alt="Browserbase">
-    </div>
-    <div class="tool-card-content">
-      <h3>Browserbase</h3>
-      <p>Powers web browsing capabilities for AI agents</p>
-    </div>
-  </a>
-
-  <a href="/adk-docs/tools/third-party/exa/" class="tool-card">
-    <div class="tool-card-image-wrapper">
-      <img src="../../assets/tools-exa.png" alt="Exa">
-    </div>
-    <div class="tool-card-content">
-      <h3>Exa</h3>
-      <p>Search and extract structured content from websites and live data</p>
-    </div>
-  </a>
-
-  <a href="/adk-docs/tools/third-party/firecrawl/" class="tool-card">
-    <div class="tool-card-image-wrapper">
-      <img src="../../assets/tools-firecrawl.png" alt="Firecrawl">
-    </div>
-    <div class="tool-card-content">
-      <h3>Firecrawl</h3>
-      <p>Empower your AI apps with clean data from any website</p>
-    </div>
-  </a>
-
   <a href="/adk-docs/tools/third-party/github/" class="tool-card">
     <div class="tool-card-image-wrapper">
-      <img src="../../assets/tools-github.png" alt="GitHub">
+      <img src="/adk-docs/assets/tools-github.png" alt="GitHub">
     </div>
     <div class="tool-card-content">
       <h3>GitHub</h3>
@@ -91,7 +31,7 @@ Check out the following third-party tools that you can use with ADK agents:
 
   <a href="/adk-docs/tools/third-party/gitlab/" class="tool-card">
     <div class="tool-card-image-wrapper">
-      <img src="../../assets/tools-gitlab.png" alt="GitLab">
+      <img src="/adk-docs/assets/tools-gitlab.png" alt="GitLab">
     </div>
     <div class="tool-card-content">
       <h3>GitLab</h3>
@@ -101,7 +41,7 @@ Check out the following third-party tools that you can use with ADK agents:
 
   <a href="/adk-docs/tools/third-party/hugging-face/" class="tool-card">
     <div class="tool-card-image-wrapper">
-      <img src="../../assets/tools-hugging-face.png" alt="Hugging Face">
+      <img src="/adk-docs/assets/tools-hugging-face.png" alt="Hugging Face">
     </div>
     <div class="tool-card-content">
       <h3>Hugging Face</h3>
@@ -111,7 +51,7 @@ Check out the following third-party tools that you can use with ADK agents:
 
   <a href="/adk-docs/tools/third-party/linear/" class="tool-card">
     <div class="tool-card-image-wrapper">
-      <img src="../../assets/tools-linear.png" alt="Linear">
+      <img src="/adk-docs/assets/tools-linear.png" alt="Linear">
     </div>
     <div class="tool-card-content">
       <h3>Linear</h3>
@@ -121,7 +61,7 @@ Check out the following third-party tools that you can use with ADK agents:
 
   <a href="/adk-docs/tools/third-party/n8n/" class="tool-card">
     <div class="tool-card-image-wrapper">
-      <img src="../../assets/tools-n8n.png" alt="n8n">
+      <img src="/adk-docs/assets/tools-n8n.png" alt="n8n">
     </div>
     <div class="tool-card-content">
       <h3>n8n</h3>
@@ -131,7 +71,7 @@ Check out the following third-party tools that you can use with ADK agents:
 
   <a href="/adk-docs/tools/third-party/notion/" class="tool-card">
     <div class="tool-card-image-wrapper">
-      <img src="../../assets/tools-notion.png" alt="Notion">
+      <img src="/adk-docs/assets/tools-notion.png" alt="Notion">
     </div>
     <div class="tool-card-content">
       <h3>Notion</h3>
@@ -141,7 +81,7 @@ Check out the following third-party tools that you can use with ADK agents:
 
   <a href="/adk-docs/tools/third-party/paypal/" class="tool-card">
     <div class="tool-card-image-wrapper">
-      <img src="../../assets/tools-paypal.png" alt="Paypal">
+      <img src="/adk-docs/assets/tools-paypal.png" alt="Paypal">
     </div>
     <div class="tool-card-content">
       <h3>Paypal</h3>
@@ -151,31 +91,11 @@ Check out the following third-party tools that you can use with ADK agents:
 
   <a href="/adk-docs/tools/third-party/qdrant/" class="tool-card">
     <div class="tool-card-image-wrapper">
-      <img src="../../assets/tools-qdrant.png" alt="Qdrant">
+      <img src="/adk-docs/assets/tools-qdrant.png" alt="Qdrant">
     </div>
     <div class="tool-card-content">
       <h3>Qdrant</h3>
       <p>Store and retrieve information using semantic vector search</p>
-    </div>
-  </a>
-
-  <a href="/adk-docs/tools/third-party/scrapegraphai/" class="tool-card">
-    <div class="tool-card-image-wrapper">
-      <img src="../../assets/tools-scrapegraphai.png" alt="ScrapeGraphAI">
-    </div>
-    <div class="tool-card-content">
-      <h3>ScrapeGraphAI</h3>
-      <p>AI-powered web scraping, crawling, and data extraction</p>
-    </div>
-  </a>
-
-  <a href="/adk-docs/tools/third-party/tavily/" class="tool-card">
-    <div class="tool-card-image-wrapper">
-      <img src="../../assets/tools-tavily.png" alt="Tavily">
-    </div>
-    <div class="tool-card-content">
-      <h3>Tavily</h3>
-      <p>Provides real-time web search, extraction, and crawling tools</p>
     </div>
   </a>
 

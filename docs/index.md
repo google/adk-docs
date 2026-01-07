@@ -33,6 +33,14 @@ from simple tasks to complex workflows.
     For release details, check out the
     [release notes](https://github.com/google/adk-go/releases/tag/v0.3.0).
 
+??? tip "News: ADK Java v0.5.0 released!"
+
+    The ADK Java v0.5.0 release adds new features for tool execution mode
+    configuration and model versioning, along with numerous bug fixes,
+    dependency updates, and significant refactoring to improve the agent
+    and runner architecture. For release details, check out the
+    [release notes](https://github.com/google/adk-java/releases/tag/v0.5.0).
+
 <div id="centered-install-tabs" class="install-command-container" markdown="1">
 
 <p class="get-started-text" style="text-align: center;">Get started:</p>

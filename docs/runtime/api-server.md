@@ -276,7 +276,7 @@ issues, and evaluating performance.
 Now that you've verified the local operation of your agent, you're ready to move
 on to deploying your agent! Here are some ways you can deploy your agent:
 
-* Deploy to [Agent Engine](../deploy/agent-engine.md), the easiest way to deploy
+* Deploy to [Agent Engine](../deploy/agent-engine/index.md), the easiest way to deploy
   your ADK agents to a managed service in Vertex AI on Google Cloud.
 * Deploy to [Cloud Run](../deploy/cloud-run.md) and have full control over how
   you scale and manage your agents using serverless architecture on Google
