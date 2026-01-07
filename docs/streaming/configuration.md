@@ -1,4 +1,4 @@
-# Configurating streaming behaviour
+# Configuring streaming behaviour
 
 <div class="language-support-tag">
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.5.0</span><span class="lst-preview">Experimental</span>
