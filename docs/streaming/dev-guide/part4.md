@@ -228,7 +228,7 @@ sequenceDiagram
 - **Content ordering preservation**: Maintains the original order of mixed content types (text, function calls, inline data)
 - **Intelligent text merging**: Only merges consecutive text parts of the same type (regular text vs thought text)
 - **Progressive delivery**: Marks all intermediate chunks as `partial=True`, with a single final aggregated response at the end
-- **Deferred function execution**: Skips executing function calls in partial events, only executing them in the final aggregated event to avoid duplicate executions
+- **Deferred function execution**: Skips executing function calls in partial events, only executing them in the final aggregated event to ensure parallel function calls are executed together rather than sequentially
 - **Function call argument streaming**: Supports progressive building of function call arguments through `partial_args`, enabling real-time display of function call construction
 
 **Default Behavior:**
