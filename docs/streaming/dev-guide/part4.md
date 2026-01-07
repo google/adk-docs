@@ -240,7 +240,7 @@ Progressive SSE streaming is **enabled by default** in ADK. This means when you 
 If you need to revert to the legacy SSE streaming behavior (simple text accumulation), you can disable it via environment variable:
 
 ```bash
-export ADK_ENABLE_PROGRESSIVE_SSE_STREAMING=0
+export ADK_DISABLE_PROGRESSIVE_SSE_STREAMING=1
 ```
 
 !!! warning "Legacy Behavior Trade-offs"
