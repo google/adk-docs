@@ -298,6 +298,9 @@ on the conversation and its instructions.
             .build();
     ```
 
+!!! warning "Using `tools` with `output_schema`"
+    Using both `tools` and `output_schema` parameters in the same `LlmAgent` object can cause issues. When `output_schema` is set, the agent's response must conform to the specified JSON schema, which can conflict with the agent's ability to use tools effectively. If you need both tool capabilities and structured output, it's preferred to create a sub-agent as a tool (using `AgentTool`) that handles the tool execution, while the main agent uses `output_schema` to structure the final response. See [Multi-Agents](multi-agents.md) for details on creating agents as tools.
+
 Learn more about Tools in the [Tools](../tools/index.md) section.
 
 ## Advanced Configuration & Control
@@ -376,6 +379,9 @@ For scenarios requiring structured data exchange with an `LLM Agent`, the ADK pr
 * **`input_schema` (Optional):** Define a schema representing the expected input structure. If set, the user message content passed to this agent *must* be a JSON string conforming to this schema. Your instructions should guide the user or preceding agent accordingly.
 
 * **`output_schema` (Optional):** Define a schema representing the desired output structure. If set, the agent's final response *must* be a JSON string conforming to this schema.
+
+!!! warning "Using `output_schema` with `tools`"
+    Using both `output_schema` and `tools` parameters in the same `LlmAgent` object can cause issues. When `output_schema` is set, the agent's response must conform to the specified JSON schema, which can conflict with the agent's ability to use tools effectively. If you need both tool capabilities and structured output, it's preferred to create a sub-agent as a tool (using `AgentTool`) that handles the tool execution, while the main agent uses `output_schema` to structure the final response. See [Multi-Agents](multi-agents.md) for details on creating agents as tools.
 
 * **`output_key` (Optional):** Provide a string key. If set, the text content of the agent's *final* response will be automatically saved to the session's state dictionary under this key. This is useful for passing results between agents or steps in a workflow.
     * In Python, this might look like: `session.state[output_key] = agent_response_text`
