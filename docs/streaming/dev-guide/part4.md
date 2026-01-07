@@ -248,7 +248,6 @@ export ADK_ENABLE_PROGRESSIVE_SSE_STREAMING=0
     Disabling progressive SSE streaming reverts to simple text accumulation, which:
     - May lose original content ordering when mixing text and function calls
     - Does not support function call argument streaming via `partial_args`
-    - May produce duplicate merged text events in addition to the final aggregated event
     - Is provided for backward compatibility only—new applications should use the default progressive mode
 
 **When progressive SSE streaming helps:**
