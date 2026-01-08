@@ -83,12 +83,12 @@ Freeplay's Observability feature gives you a clear view into how your agent is
 behaving in production. You can dig into individual agent traces to
 understand each step and diagnose issues:
 
-![Trace detail](https://github.com/freeplayai/freeplay-google-demo/blob/main/docs/images/trace_detail.png)
+![Trace detail](https://raw.githubusercontent.com/freeplayai/freeplay-google-demo/refs/heads/main/docs/images/trace_detail.png)
 
 You can also use Freeplay's filtering functionality to search and filter the
 data across any segment of interest:
 
-![Filter](https://github.com/freeplayai/freeplay-google-demo/blob/main/docs/images/filter.png)
+![Filter](https://raw.githubusercontent.com/freeplayai/freeplay-google-demo/refs/heads/main/docs/images/filter.png)
 
 ## Prompt Management (optional)
 
@@ -106,7 +106,7 @@ instructions, you can version prompts in the Freeplay application.
 
 First define a prompt in Freeplay by going to Prompts -> Create prompt template:
 
-![Prompt](https://github.com/freeplayai/freeplay-google-demo/blob/main/docs/images/prompt.png)
+![Prompt](https://raw.githubusercontent.com/freeplayai/freeplay-google-demo/refs/heads/main/docs/images/prompt.png)
 
 When creating your prompt template you'll need to add 3 elements, as described
 in the following sections:
@@ -129,7 +129,7 @@ for the ongoing agent context to be passed through:
 Click new message and change the role to 'history'. This will ensure the past
 messages are passed through when present.
 
-![Prompt Editor](https://github.com/freeplayai/freeplay-google-demo/blob/main/docs/images/prompt_editor.png)
+![Prompt Editor](https://raw.githubusercontent.com/freeplayai/freeplay-google-demo/refs/heads/main/docs/images/prompt_editor.png)
 
 Now in your code you can use the ```FreeplayLLMAgent```:
 
@@ -157,7 +157,7 @@ Freeplay enables you to define, version, and run
 application. You can define evaluations for any of your prompts or agents by
 going to Evaluations -> "New evaluation".
 
-![Creating a new evaluation in Freeplay](https://github.com/freeplayai/freeplay-google-demo/blob/main/docs/images/eval_create.png)
+![Creating a new evaluation in Freeplay](https://raw.githubusercontent.com/freeplayai/freeplay-google-demo/refs/heads/main/docs/images/eval_create.png)
 
 These evaluations can be configured to run for both online monitoring and
 offline evaluation. Datasets for offline evaluation can be uploaded to Freeplay
@@ -170,7 +170,7 @@ up [datasets](https://docs.freeplay.ai/docs/datasets) to test against on a
 repeated basis. Use production logs to create golden datasets or collections of
 failure cases that you can use to test against as you make changes.
 
-![Save test case](https://github.com/freeplayai/freeplay-google-demo/blob/main/docs/images/save_test_case.png)
+![Save test case](https://raw.githubusercontent.com/freeplayai/freeplay-google-demo/refs/heads/main/docs/images/save_test_case.png)
 
 ## Batch Testing
 
