@@ -305,6 +305,42 @@ the storage backend that best suits your needs:
     <p><code>DatabaseSessionService</code> requires an async database driver. When using SQLite, you must use <code>sqlite+aiosqlite</code> instead of <code>sqlite</code> in your connection string. For other databases (PostgreSQL, MySQL), ensure you're using an async-compatible driver (e.g., <code>asyncpg</code> for PostgreSQL, <code>aiomysql</code> for MySQL).</p>
     </div>
 
+4.  **Database Schema Migration**
+
+    The database schema for `DatabaseSessionService` has been updated from v0 (pickle-based serialization) to v1 (JSON-based serialization). If you are using `DatabaseSessionService` and upgrading from a previous version of ADK, you need to migrate your database to the new schema.
+
+    <div class="admonition warning">
+    <p class="admonition-title">Database Migration Required</p>
+    <p>The schema change from pickle to JSON is a breaking change. You must migrate your existing database to continue using `DatabaseSessionService` with the latest version of ADK.</p>
+    </div>
+
+    A migration script is provided to facilitate this process. The script reads data from your existing database, converts it to the new format, and writes it to a new database.
+
+    You can run the migration using the `google.adk.sessions.migration.migration_runner` module. Here is an example of how to use the migration script:
+
+    ```python
+    from google.adk.sessions.migration import migration_runner
+
+    # URL of the source database (pickle-based schema)
+    source_db_url = "sqlite+aiosqlite:///./old_agent_data.db"
+
+    # URL of the destination database (JSON-based schema)
+    dest_db_url = "sqlite+aiosqlite:///./new_agent_data.db"
+
+    # Run the migration
+    migration_runner.upgrade(source_db_url, dest_db_url)
+    ```
+
+    You can also run the migration from the command line:
+
+    ```bash
+    python -m google.adk.sessions.migration.migrate_from_sqlalchemy_pickle \
+        --source_db_url sqlite+aiosqlite:///./old_agent_data.db \
+        --dest_db_url sqlite+aiosqlite:///./new_agent_data.db
+    ```
+
+    After running the migration, update your `DatabaseSessionService` configuration to use the new database URL (`dest_db_url`).
+
 Choosing the right `SessionService` is key to defining how your agent's
 conversation history and temporary data are stored and persist.
 
