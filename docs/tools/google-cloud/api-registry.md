@@ -169,6 +169,13 @@ The `get_toolset()` function has the following configuration options:
 -   **`tool_name_prefix`** (str, optional): A prefix to add to the name of each
     tool in the resulting toolset.
 
+!!! note "Automatic handling of URL schemes and Project ID"
+    The `ApiRegistry` tool automatically handles `http://` and `https://`
+    prefixes for MCP server URLs. If a URL doesn't have a scheme, it defaults to
+    `https://`. Additionally, the tool uses the `quota_project_id` from the
+    Application Default Credentials if available, and includes it as the
+    `x-goog-user-project` header in requests to the MCP server.
+
 ## Additional resources
 
 -   [api_registry_agent](https://github.com/google/adk-python/tree/main/contributing/samples/api_registry_agent/)
