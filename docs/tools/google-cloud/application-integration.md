@@ -1,144 +1,4 @@
-# Google Cloud Tools
-
-
-
-Google Cloud tools make it easier to connect your agents to Google Cloud’s
-products and services. With just a few lines of code you can use these tools to
-connect your agents with:
-
-* **Any custom APIs** that developers host in Apigee.
-* **100s** of **prebuilt connectors** to enterprise systems such as Salesforce,
-  Workday, and SAP.
-* **Automation workflows** built using application integration.
-* **Databases** such as Spanner, AlloyDB, Postgres and more using the MCP Toolbox for
-  databases.
-
-![Google Cloud Tools](../assets/google_cloud_tools.svg)
-
-## Apigee API Hub Tools
-
-<div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
-</div>
-
-**ApiHubToolset** lets you turn any documented API from Apigee API hub into a
-tool with a few lines of code. This section shows you the step by step
-instructions including setting up authentication for a secure connection to your
-APIs.
-
-**Prerequisites**
-
-1. [Install ADK](../get-started/installation.md)
-2. Install the
-   [Google Cloud CLI](https://cloud.google.com/sdk/docs/install?db=bigtable-docs#installation_instructions).
-3. [Apigee API hub](https://cloud.google.com/apigee/docs/apihub/what-is-api-hub)
-    instance with documented (i.e. OpenAPI spec) APIs
-4. Set up your project structure and create required files
-
-```console
-project_root_folder
- |
- `-- my_agent
-     |-- .env
-     |-- __init__.py
-     |-- agent.py
-     `__ tool.py
-```
-
-### Create an API Hub Toolset
-
-Note: This tutorial includes an agent creation. If you already have an agent,
-you only need to follow a subset of these steps.
-
-1. Get your access token, so that APIHubToolset can fetch spec from API Hub API.
-   In your terminal run the following command
-
-    ```shell
-    gcloud auth print-access-token
-    # Prints your access token like 'ya29....'
-    ```
-
-2. Ensure that the account used has the required permissions. You can use the
-   pre-defined role `roles/apihub.viewer` or assign the following permissions:
-
-    1. **apihub.specs.get (required)**
-    2. apihub.apis.get (optional)
-    3. apihub.apis.list (optional)
-    4. apihub.versions.get (optional)
-    5. apihub.versions.list (optional)
-    6. apihub.specs.list (optional)
-
-3. Create a tool with `APIHubToolset`. Add the below to `tools.py`
-
-    If your API requires authentication, you must configure authentication for
-    the tool. The following code sample demonstrates how to configure an API
-    key. ADK supports token based auth (API Key, Bearer token), service account,
-    and OpenID Connect. We will soon add support for various OAuth2 flows.
-
-    ```py
-    from google.adk.tools.openapi_tool.auth.auth_helpers import token_to_scheme_credential
-    from google.adk.tools.apihub_tool.apihub_toolset import APIHubToolset
-
-    # Provide authentication for your APIs. Not required if your APIs don't required authentication.
-    auth_scheme, auth_credential = token_to_scheme_credential(
-        "apikey", "query", "apikey", apikey_credential_str
-    )
-
-    sample_toolset = APIHubToolset(
-        name="apihub-sample-tool",
-        description="Sample Tool",
-        access_token="...",  # Copy your access token generated in step 1
-        apihub_resource_name="...", # API Hub resource name
-        auth_scheme=auth_scheme,
-        auth_credential=auth_credential,
-    )
-    ```
-
-    For production deployment we recommend using a service account instead of an
-    access token. In the code snippet above, use
-    `service_account_json=service_account_cred_json_str` and provide your
-    security account credentials instead of the token.
-
-    For apihub\_resource\_name, if you know the specific ID of the OpenAPI Spec
-    being used for your API, use
-    `` `projects/my-project-id/locations/us-west1/apis/my-api-id/versions/version-id/specs/spec-id` ``.
-    If you would like the Toolset to automatically pull the first available spec
-    from the API, use
-    `` `projects/my-project-id/locations/us-west1/apis/my-api-id` ``
-
-4. Create your agent file Agent.py and add the created tools to your agent
-   definition:
-
-    ```py
-    from google.adk.agents.llm_agent import LlmAgent
-    from .tools import sample_toolset
-
-    root_agent = LlmAgent(
-        model='gemini-2.0-flash',
-        name='enterprise_assistant',
-        instruction='Help user, leverage the tools you have access to',
-        tools=sample_toolset.get_tools(),
-    )
-    ```
-
-5. Configure your `__init__.py` to expose your agent
-
-    ```py
-    from . import agent
-    ```
-
-6. Start the Google ADK Web UI and try your agent:
-
-    ```shell
-    # make sure to run `adk web` from your project_root_folder
-    adk web
-    ```
-
-   Then go to [http://localhost:8000](http://localhost:8000) to try your agent from the Web UI.
-
----
-
-## Application Integration Tools
+# Application Integration Tools for ADK
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.3.0</span>
@@ -160,14 +20,14 @@ multiple enterprise applications and data sources simultaneously.
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/JdlWOQe5RgU?si=bFY_-jJ6Oliy5UMG" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
-### Prerequisites
+## Prerequisites
 
-#### 1. Install ADK
+### 1. Install ADK
 
 Install Agent Development Kit following the steps in the
-[installation guide](../get-started/installation.md).
+[installation guide](/adk-docs/get-started/installation/).
 
-#### 2. Install CLI
+### 2. Install CLI
 
 Install the
 [Google Cloud CLI](https://cloud.google.com/sdk/docs/install#installation_instructions).
@@ -181,7 +41,7 @@ gcloud auth application-default set-quota-project <project-id>
 
 Replace `<project-id>` with the unique ID of your Google Cloud project.
 
-#### 3. Provision Application Integration workflow and publish Connection Tool
+### 3. Provision Application Integration workflow and publish Connection Tool
 
 Use an existing
 [Application Integration](https://cloud.google.com/application-integration/docs/overview)
@@ -199,7 +59,7 @@ from the template library.
 **Note**: To use a connector from Integration Connectors, you need to provision
 the Application Integration in the same region as your connection.
 
-#### 4. Create project structure
+### 4. Create project structure
 
 === "Python"
 
@@ -229,7 +89,7 @@ the Application Integration in the same region as your connection.
 
      When running the agent, make sure to run the commands from the `project_root_folder`.
 
-#### 5. Set roles and permissions
+### 5. Set roles and permissions
 
 To get the permissions that you need to set up
 **ApplicationIntegrationToolset**, you must have the following IAM roles on the
@@ -244,19 +104,19 @@ Workflows):
 `roles/integrations.integrationInvoker`, as it can result in 403 errors. Use
 `roles/integrations.integrationEditor` instead.
 
-### Use Integration Connectors
+## Use Integration Connectors
 
 Connect your agent to enterprise applications using
 [Integration Connectors](https://cloud.google.com/integration-connectors/docs/overview).
 
-#### Before you begin
+### Before you begin
 
 **Note:** The *ExecuteConnection* integration is typically created automatically when you provision Application Integration in a given region. If the *ExecuteConnection* doesn't exist in the [list of integrations](https://console.cloud.google.com/integrations/list), you must follow these steps to create it:
 
 1. To use a connector from Integration Connectors, click **QUICK SETUP** and [provision](https://console.cloud.google.com/integrations)
    Application Integration in the same region as your connection.
 
-   ![Google Cloud Tools](../assets/application-integration-overview.png)
+   ![Google Cloud Tools](/adk-docs/assets/application-integration-overview.png)
 
 
 
@@ -264,7 +124,7 @@ Connect your agent to enterprise applications using
    template in the template library and click **USE TEMPLATE**.
 
 
-    ![Google Cloud Tools](../assets/use-connection-tool-template.png)
+    ![Google Cloud Tools](/adk-docs/assets/use-connection-tool-template.png)
 
 3. Enter the Integration Name as *ExecuteConnection* (it is mandatory to use this exact integration name only).
    Then, select the region to match your connection region and click **CREATE**.
@@ -272,10 +132,10 @@ Connect your agent to enterprise applications using
 4. Click **PUBLISH** to publish the integration in the <i>Application Integration</i> editor.
 
 
-    ![Google Cloud Tools](../assets/publish-integration.png)
+    ![Google Cloud Tools](/adk-docs/assets/publish-integration.png)
 
 
-#### Create an Application Integration Toolset
+### Create an Application Integration Toolset
 
 To create an Application Integration Toolset for Integration Connectors, follow these steps:
 
@@ -384,14 +244,14 @@ After completing the above steps, go to [http://localhost:8000](http://localhost
    `my\_agent` agent (which is the same as the agent folder name).
 
 
-### Use Application Integration Workflows
+## Use Application Integration Workflows
 
 Use an existing
 [Application Integration](https://cloud.google.com/application-integration/docs/overview)
 workflow as a tool for your agent or create a new one.
 
 
-#### 1. Create a tool
+### 1. Create a tool
 
 === "Python"
 
@@ -455,7 +315,7 @@ workflow as a tool for your agent or create a new one.
 
       **Note:** You can provide a service account to be used instead of using default credentials. To do this, generate a [Service Account Key](https://cloud.google.com/iam/docs/keys-create-delete#creating) and provide the correct [Application Integration and Integration Connector IAM roles](#prerequisites) to the service account. For more details about the IAM roles, refer to the [Prerequisites](#prerequisites) section.
 
-#### 2. Add the tool to your agent
+### 2. Add the tool to your agent
 
 === "Python"
 
@@ -510,7 +370,7 @@ workflow as a tool for your agent or create a new one.
 **Note:** To find the list of supported entities and actions for a
         connection, use these Connector APIs: `listActions`, `listEntityTypes`.
 
-#### 3. Expose your agent
+### 3. Expose your agent
 
 === "Python"
 
@@ -520,7 +380,7 @@ workflow as a tool for your agent or create a new one.
           from . import agent
       ```
 
-#### 4. Use your agent
+### 4. Use your agent
 
 === "Python"
 
@@ -546,4 +406,3 @@ workflow as a tool for your agent or create a new one.
       ```
 
     After completing the above steps, go to [http://localhost:8000](http://localhost:8000), and choose the `my_agent` agent (which is the same as the agent folder name).
-
