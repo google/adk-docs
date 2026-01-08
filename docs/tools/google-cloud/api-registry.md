@@ -169,6 +169,11 @@ The `get_toolset()` function has the following configuration options:
 -   **`tool_name_prefix`** (str, optional): A prefix to add to the name of each
     tool in the resulting toolset.
 
+!!! note
+    The tool automatically handles `http://` and `https://` prefixes for MCP
+    server URLs. It also uses the `quota_project_id` from the Application
+    Default Credentials if available.
+
 ## Additional resources
 
 -   [api_registry_agent](https://github.com/google/adk-python/tree/main/contributing/samples/api_registry_agent/)
