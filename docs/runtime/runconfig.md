@@ -4,9 +4,9 @@
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
-`RunConfig` defines runtime behavior and options for agents in the ADK. It
-controls speech and streaming settings, function calling, artifact saving, and
-limits on LLM calls.
+`RunConfig` defines runtime behavior and options for agents in ADK. It controls
+speech and streaming settings, function calling, artifact saving, and limits on
+LLM calls.
 
 When constructing an agent run, you can pass a `RunConfig` to customize how the
 agent interacts with models, handles audio, and streams responses. By default,

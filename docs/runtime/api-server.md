@@ -8,6 +8,8 @@ Before you deploy your agent, you should test it to ensure that it is working as
 intended. The easiest way to test your agent in your development environment is
 to use the ADK API server.
 
+![ADK API Server](../assets/adk-api-server.png)
+
 === "Python"
 
     ```py
