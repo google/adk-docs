@@ -5,8 +5,8 @@
 </div>
 
 Before you deploy your agent, you should test it to ensure that it is working as
-intended. The easiest way to test your agent in your development environment is
-to use the ADK API server.
+intended. Use the API server in ADK to expose your agents through a REST API for
+programmatic testing and integration.
 
 ![ADK API Server](../assets/adk-api-server.png)
 
