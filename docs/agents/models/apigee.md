@@ -1,4 +1,4 @@
-# Using Apigee gateway for AI models
+# Apigee AI Gateway for ADK agents
 
 <div class="language-support-tag">
    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.18.0</span><span class="lst-java">Java v0.4.0</span>

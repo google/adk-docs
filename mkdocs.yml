@@ -212,11 +212,12 @@ nav:
     - Models for Agents:
       - agents/models/index.md
       - Gemini: agents/models/google-gemini.md
-      - Vertex AI: agents/models/vertex.md
-      - Anthropic: agents/models/anthropic.md
-      - Apigee: agents/models/apigee.md
+      - Claude: agents/models/anthropic.md
+      - Vertex AI hosted: agents/models/vertex.md
+      - Apigee AI Gateway: agents/models/apigee.md
+      - Ollama: agents/models/ollama.md
+      - vLLM: agents/models/vllm.md
       - LiteLLM: agents/models/litellm.md
-      - Open & Local Models: agents/models/vllm.md
     - Tools for Agents:
       - tools/index.md
       - Gemini API tools:

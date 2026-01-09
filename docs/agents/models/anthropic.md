@@ -1,4 +1,4 @@
-# Using Anthropic models
+# Claude models for ADK agents
 
 <div class="language-support-tag" title="Available for Java. Python support for direct Anthropic API (non-Vertex) is via LiteLLM.">
    <span class="lst-supported">Supported in ADK</span><span class="lst-java">Java v0.2.0</span>

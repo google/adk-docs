@@ -1,4 +1,4 @@
-# Using Hosted & Tuned Models on Vertex AI
+# Vertex AI hosted models for ADK agents
 
 For enterprise-grade scalability, reliability, and integration with Google
 Cloud's MLOps ecosystem, you can use models deployed to Vertex AI Endpoints.
@@ -8,7 +8,7 @@ This includes models from Model Garden or your own fine-tuned models.
 (`projects/PROJECT_ID/locations/LOCATION/endpoints/ENDPOINT_ID`) directly to the
 `model` parameter of `LlmAgent`.
 
-**Vertex AI Setup (Consolidated):**
+## Vertex AI Setup (Consolidated)
 
 Ensure your environment is configured for Vertex AI:
 

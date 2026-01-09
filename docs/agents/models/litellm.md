@@ -1,8 +1,14 @@
-# Using Cloud & Proprietary Models via LiteLLM
+# LiteLLM model connector for ADK agents
 
 <div class="language-support-tag">
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
 </div>
+
+For maximum control, cost savings, privacy, or offline use cases, you can run
+open-source models locally or self-host them and integrate them using LiteLLM.
+
+**Integration Method:** Instantiate the `LiteLlm` wrapper class, configured to
+point to your local model server.
 
 To access a vast range of LLMs from providers like OpenAI, Anthropic (non-Vertex
 AI), Cohere, and many others, ADK offers integration through the LiteLLM
@@ -78,3 +84,54 @@ layer, providing a standardized, OpenAI-compatible interface to over 100+ LLMs.
     # Set persistently for the user
     [System.Environment]::SetEnvironmentVariable('PYTHONUTF8', '1', [System.EnvironmentVariableTarget]::User)
     ```
+
+### Using openai provider
+
+Alternatively, `openai` can be used as the provider name. But this will also
+require setting the `OPENAI_API_BASE=http://localhost:11434/v1` and
+`OPENAI_API_KEY=anything` env variables instead of `OLLAMA_API_BASE`. **Please
+note that api base now has `/v1` at the end.**
+
+```py
+root_agent = Agent(
+    model=LiteLlm(model="openai/mistral-small3.1"),
+    name="dice_agent",
+    description=(
+        "hello world agent that can roll a dice of 8 sides and check prime"
+        " numbers."
+    ),
+    instruction="""
+      You roll dice and answer questions about the outcome of the dice rolls.
+    """,
+    tools=[
+        roll_die,
+        check_prime,
+    ],
+)
+```
+
+```bash
+export OPENAI_API_BASE=http://localhost:11434/v1
+export OPENAI_API_KEY=anything
+adk web
+```
+
+### Debugging
+
+You can see the request sent to the Ollama server by adding the following in
+your agent code just after imports.
+
+```py
+import litellm
+litellm._turn_on_debug()
+```
+
+Look for a line like the following:
+
+```bash
+Request Sent from LiteLLM:
+curl -X POST \
+http://localhost:11434/api/chat \
+-d '{'model': 'mistral-small3.1', 'messages': [{'role': 'system', 'content': ...
+```
+
