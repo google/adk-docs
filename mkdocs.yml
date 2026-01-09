@@ -233,7 +233,9 @@ nav:
         - Vertex AI Search: tools/google-cloud/vertex-ai-search.md
       - Third-party tools:
         - tools/third-party/index.md
+        - AgentQL: tools/third-party/agentql.md
         - Atlassian: tools/third-party/atlassian.md
+        - Browserbase: tools/third-party/browserbase.md
         - GitHub: tools/third-party/github.md
         - GitLab: tools/third-party/gitlab.md
         - Hugging Face: tools/third-party/hugging-face.md
