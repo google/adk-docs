@@ -45,7 +45,6 @@ You can use the LiteLLM library to access remote or locally hosted AI models:
         ```shell
         pip install litellm
         ```
-
 2. **Set Provider API Keys:** Configure API keys as environment variables for
    the specific providers you intend to use.
 
