@@ -256,9 +256,12 @@ nav:
   - Run Agents:
     - Agent Runtime:
       - Agent Runtime: runtime/index.md
-      - Runtime Config: runtime/runconfig.md
+      - Web Interface: runtime/web-interface.md
+      - Command Line: runtime/command-line.md
       - API Server: runtime/api-server.md
+      - Event Loop: runtime/event-loop.md
       - Resume Agents: runtime/resume.md
+      - Runtime Config: runtime/runconfig.md
     - Deployment:
       - deploy/index.md
       - Agent Engine:
