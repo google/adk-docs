@@ -320,6 +320,38 @@ To mitigate this, you can do one of the following:
     )
     ```
 
+## Using Gemma Models
+
+![python_only](https://img.shields.io/badge/Supported_in-Python-blue)
+
+You can use Gemma models in your agents through the `Gemma` wrapper class. This allows you to leverage Gemma's capabilities for various generative tasks.
+
+**Integration Method:** Instantiate the `Gemma` wrapper class with a supported model name and pass it to the `model` parameter of your `LlmAgent`.
+
+**Supported Models:** Currently, only Gemma 3 models are supported. For agentic use cases, `gemma-3-27b-it` and `gemma-3-12b-it` are recommended.
+
+!!! warning "Important Considerations"
+    *   **No System Instructions:** Gemma models do not support system instructions. Any system instructions provided will be automatically converted to user-level instructions.
+    *   **Limited Function Calling:** Gemma's function calling capabilities are limited.
+    *   **No Vertex AI Support:** The current integration does not support the Vertex AI API for Gemma models.
+
+**Example:**
+
+=== "Python"
+
+    ```python
+    from google.adk.agents import LlmAgent
+    from google.adk.models import Gemma
+    
+    # --- Example Agent using a Gemma model ---
+    agent_gemma = LlmAgent(
+        model=Gemma(model="gemma-3-27b-it"),
+        name="gemma_agent",
+        instruction="You are a helpful assistant powered by Gemma.",
+        # ... other agent parameters
+    )
+    ```
+
 ## Using Anthropic models
 
 <div class="language-support-tag" title="Available for Java. Python support for direct Anthropic API (non-Vertex) is via LiteLLM.">
