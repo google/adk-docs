@@ -43,6 +43,45 @@ Development Kit community.
   </a>
 </div>
 
+## ADK Community Calls
+
+!!! tip "Stay Connected"
+
+    Join the [ADK Community Google Group](https://groups.google.com/g/adk-community) for updates, calendar invites, and to connect with the ADK community.
+
+<div class="resource-grid">
+  <a href="https://www.youtube.com/watch?v=cNVWhrbdn-E" class="resource-card">
+    <div class="card-image-wrapper">
+      <img src="https://img.youtube.com/vi/cNVWhrbdn-E/maxresdefault.jpg" alt="ADK Community Call Dec 2025">
+    </div>
+    <div class="card-content">
+      <div class="type">Community Call</div>
+      <h3>📞 ADK Community Call (Dec 2025)</h3>
+      <p>Discussions include the ADK TypeScript launch, Gemini 3 Flash support, bidirectional streaming for voice agents, and the Visual Builder UI.</p>
+    </div>
+  </a>
+  <a href="https://www.youtube.com/watch?v=bftUz-WBqyw" class="resource-card">
+    <div class="card-image-wrapper">
+      <img src="https://img.youtube.com/vi/bftUz-WBqyw/maxresdefault.jpg" alt="ADK Community Call Nov 2025">
+    </div>
+    <div class="card-content">
+      <div class="type">Community Call</div>
+      <h3>📞 ADK Community Call (Nov 2025)</h3>
+      <p>Discussions include the ADK Go launch, the reflect & retry plugin for error recovery, and time travel debugging for rewinding agent sessions.</p>
+    </div>
+  </a>
+  <a href="https://www.youtube.com/watch?v=A95mQaSRKik" class="resource-card">
+    <div class="card-image-wrapper">
+      <img src="https://img.youtube.com/vi/A95mQaSRKik/maxresdefault.jpg" alt="ADK Community Call Oct 2025">
+    </div>
+    <div class="card-content">
+      <div class="type">Community Call</div>
+      <h3>📞 ADK Community Call (Oct 2025)</h3>
+      <p>Discussions include the ADK roadmap, context compaction and caching for reducing cost and latency, and community contribution guidelines.</p>
+    </div>
+  </a>
+</div>
+
 ## Courses & Deep Dives
 
 <div class="resource-grid">
