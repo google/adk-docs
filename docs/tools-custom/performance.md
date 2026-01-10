@@ -65,7 +65,7 @@ async def query_database(query: str) -> list:
 
 ### Example of yielding behavior for long loops
 
-In cases where a tool is processing multiple requests or numerous long running
+In cases where a tool is processing multiple requests or numerous long-running
 requests, consider adding yielding code to allow other tools to execute, as
 shown in the following code sample:
 

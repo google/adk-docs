@@ -452,7 +452,7 @@ ADK makes switching between models seamless through its integration with the [**
 
 **1\. Import `LiteLlm`**
 
-We imported this during the initial setup (Step 0), but it's the key component for multi-model support:
+We imported this during the initial setup (Step 0), but it's the key component for multimodel support:
 
 
 ```python
@@ -1899,7 +1899,7 @@ Congratulations! You've successfully journeyed from building a single, basic wea
 **Let's recap what you've accomplished:**
 
 *   You started with a **fundamental agent** equipped with a single tool (`get_weather`).
-*   You explored ADK's **multi-model flexibility** using LiteLLM, running the same core logic with different LLMs like Gemini, GPT-4o, and Claude.
+*   You explored ADK's **multimodel flexibility** using LiteLLM, running the same core logic with different LLMs like Gemini, GPT-4o, and Claude.
 *   You embraced **modularity** by creating specialized sub-agents (`greeting_agent`, `farewell_agent`) and enabling **automatic delegation** from a root agent.
 *   You gave your agents **memory** using **Session State**, allowing them to remember user preferences (`temperature_unit`) and past interactions (`output_key`).
 *   You implemented crucial **safety guardrails** using both `before_model_callback` (blocking specific input keywords) and `before_tool_callback` (blocking tool execution based on arguments like the city "Paris").
