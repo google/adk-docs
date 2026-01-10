@@ -305,6 +305,23 @@ the storage backend that best suits your needs:
     <p><code>DatabaseSessionService</code> requires an async database driver. When using SQLite, you must use <code>sqlite+aiosqlite</code> instead of <code>sqlite</code> in your connection string. For other databases (PostgreSQL, MySQL), ensure you're using an async-compatible driver (e.g., <code>asyncpg</code> for PostgreSQL, <code>aiomysql</code> for MySQL).</p>
     </div>
 
+    <div class="admonition note">
+    <p class="admonition-title">Database Schema Migration</p>
+    <p>The database schema for `DatabaseSessionService` has been updated from v0 (which used pickle-based serialization) to v1 (which uses JSON-based serialization) to improve security and portability. If you have an existing database created with an older version of the ADK, you must migrate it to the new schema.</p>
+    <p>You can migrate your database using the ADK's command-line interface:</p>
+    ```bash
+    adk migrate session --source_db_url <OLD_DATABASE_URL> --dest_db_url <NEW_DATABASE_URL>
+    ```
+    <p>For example, to migrate an old SQLite database file named `old_agent.db` to a new file named `new_agent.db`, you would run:</p>
+    ```bash
+    adk migrate session --source_db_url "sqlite+aiosqlite:///./old_agent.db" --dest_db_url "sqlite+aiosqlite:///./new_agent.db"
+    ```
+    <div class="admonition warning">
+    <p class="admonition-title">Important</p>
+    <p>In-place migration is not supported. You must provide a different URL for the destination database.</p>
+    </div>
+    </div>
+
 Choosing the right `SessionService` is key to defining how your agent's
 conversation history and temporary data are stored and persist.
 
