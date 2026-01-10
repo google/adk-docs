@@ -4,23 +4,54 @@
    <span class="lst-supported">Supported in ADK</span><span class="lst-java">Java v0.2.0</span>
 </div>
 
-You can integrate Anthropic's Claude models directly using their API key or from a Vertex AI backend into your Java ADK applications by using the ADK's `Claude` wrapper class.
+You can integrate Anthropic's Claude models directly using an Anthropic API key
+or from a Vertex AI backend into your Java ADK applications by using the ADK's
+`Claude` wrapper class. You can also access Anthropic models Google Vertex AI
+services. For more information, see the
+[Third-Party Models on Vertex AI](vertex.md#third-party-models-on-vertex-ai-eg-anthropic-claude)
+section. You can also use Anthropic models through the
+[LiteLLM](/adk-docs/agents/models/litellm/) library for Python.
 
-For Vertex AI backend, see the [Third-Party Models on Vertex AI](vertex.md#third-party-models-on-vertex-ai-eg-anthropic-claude) section.
+## Get started
 
-**Prerequisites:**
+The following code examples show a basic implementation for using Gemini models
+in your agents:
+
+```java
+public static LlmAgent createAgent() {
+
+  AnthropicClient anthropicClient = AnthropicOkHttpClient.builder()
+      .apiKey("ANTHROPIC_API_KEY")
+      .build();
+
+  Claude claudeModel = new Claude(
+      "claude-3-7-sonnet-latest", anthropicClient
+  );
+
+  return LlmAgent.builder()
+      .name("claude_direct_agent")
+      .model(claudeModel)
+      .instruction("You are a helpful AI assistant powered by Anthropic Claude.")
+      .build();
+}
+```
+
+## Prerequisites
 
 1.  **Dependencies:**
-    *   **Anthropic SDK Classes (Transitive):** The Java ADK's `com.google.adk.models.Claude` wrapper relies on classes from Anthropic's official Java SDK. These are typically included as **transitive dependencies**.
+    *   **Anthropic SDK Classes (Transitive):** The Java ADK's `com.google.adk.models.Claude`
+    wrapper relies on classes from Anthropic's official Java SDK. These are typically included
+    as *transitive dependencies*. For more information, see the
+    [Anthropic Java SDK](https://github.com/anthropics/anthropic-sdk-java).
 
 2.  **Anthropic API Key:**
     *   Obtain an API key from Anthropic. Securely manage this key using a secret manager.
 
-**Integration:**
+## Example implementation
 
-Instantiate `com.google.adk.models.Claude`, providing the desired Claude model name and an `AnthropicOkHttpClient` configured with your API key. Then, pass this `Claude` instance to your `LlmAgent`.
-
-**Example:**
+Instantiate `com.google.adk.models.Claude`, providing the desired Claude model name and
+an `AnthropicOkHttpClient` configured with your API key. Then, pass the `Claude` instance
+to your `LlmAgent`, as shown in the following example:
 
 ```java
 import com.anthropic.client.AnthropicClient;

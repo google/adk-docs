@@ -13,6 +13,67 @@ Gemini features, including
 [Computer use](/adk-docs/tools/gemini-api/computer-use/)
 and the [Interactions API](#interactions-api).
 
+## Get started
+
+The following code examples show a basic implementation for using Gemini models
+in your agents:
+
+=== "Python"
+
+    ```python
+    from google.adk.agents import LlmAgent
+
+    # --- Example using a stable Gemini Flash model ---
+    agent_gemini_flash = LlmAgent(
+        # Use the latest stable Flash model identifier
+        model="gemini-2.0-flash",
+        name="gemini_flash_agent",
+        instruction="You are a fast and helpful Gemini assistant.",
+        # ... other agent parameters
+    )
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    import {LlmAgent} from '@google/adk';
+
+    // --- Example #2: using a powerful Gemini Pro model with API Key in model ---
+    export const rootAgent = new LlmAgent({
+      name: 'hello_time_agent',
+      model: 'gemini-2.5-flash',
+      description: 'Gemini flash agent',
+      instruction: `You are a fast and helpful Gemini assistant.`,
+    });
+    ```
+
+=== "Go"
+
+    ```go
+    import (
+    	"google.golang.org/adk/agent/llmagent"
+    	"google.golang.org/adk/model/gemini"
+    	"google.golang.org/genai"
+    )
+
+    --8<-- "examples/go/snippets/agents/models/models.go:gemini-example"
+    ```
+
+=== "Java"
+
+    ```java
+    // --- Example #1: using a stable Gemini Flash model with ENV variables---
+    LlmAgent agentGeminiFlash =
+        LlmAgent.builder()
+            // Use the latest stable Flash model identifier
+            .model("gemini-2.0-flash") // Set ENV variables to use this model
+            .name("gemini_flash_agent")
+            .instruction("You are a fast and helpful Gemini assistant.")
+            // ... other agent parameters
+            .build();
+    ```
+
+
 ## Gemini model authentication
 
 This section covers authenticating with Google's Gemini models, either through Google AI Studio for rapid development or Google Cloud Vertex AI for enterprise applications. This is the most direct way to use Google's flagship models within ADK.
@@ -107,7 +168,7 @@ For deployed applications, a service account is the standard method.
         ```
     Instead of the key file, you can also authenticate the service account using Workload Identity. But this is outside the scope of this guide.
 
-**Example:**
+## Example implementation
 
 === "Python"
 
@@ -124,16 +185,34 @@ For deployed applications, a service account is the standard method.
     )
 
     # --- Example using a powerful Gemini Pro model ---
-    # Note: Always check the official Gemini documentation for the latest model names,
-    # including specific preview versions if needed. Preview models might have
-    # different availability or quota limitations.
     agent_gemini_pro = LlmAgent(
         # Use the latest generally available Pro model identifier
-        model="gemini-2.5-pro-preview-03-25",
+        model="gemini-2.5-pro",
         name="gemini_pro_agent",
         instruction="You are a powerful and knowledgeable Gemini assistant.",
         # ... other agent parameters
     )
+    ```
+=== "TypeScript"
+
+    ```typescript
+    import {LlmAgent} from '@google/adk';
+
+    // --- Example #2: using a powerful Gemini Pro model with API Key in model ---
+    export const rootAgent = new LlmAgent({
+      name: 'hello_time_agent',
+      model: 'gemini-2.5-flash',
+      description: 'Gemini flash agent',
+      instruction: `You are a fast and helpful Gemini assistant.`,
+    });
+
+    // --- Example #2: using a powerful Gemini Pro model with API Key in model ---
+    export const rootAgent = new LlmAgent({
+      name: 'hello_time_agent',
+      model: 'gemini-2.5-pro',
+      description: 'Gemini Pro agent',
+      instruction: `You are a powerful and knowledgeable Gemini assistant.`,
+    });
     ```
 
 === "Go"
@@ -146,6 +225,8 @@ For deployed applications, a service account is the standard method.
     )
 
     --8<-- "examples/go/snippets/agents/models/models.go:gemini-example"
+
+    --8<-- "examples/go/snippets/agents/models/models.go:gemini-example-2"
     ```
 
 === "Java"
@@ -177,9 +258,6 @@ For deployed applications, a service account is the standard method.
             // ... other agent parameters
             .build();
 
-    // Note: Always check the official Gemini documentation for the latest model names,
-    // including specific preview versions if needed. Preview models might have
-    // different availability or quota limitations.
     ```
 
 !!! warning "Secure Your Credentials"
@@ -188,6 +266,12 @@ For deployed applications, a service account is the standard method.
     expose them publicly. Use a secret manager such as [Google Cloud Secret
     Manager](https://cloud.google.com/security/products/secret-manager) to store
     and access them securely in production.
+
+!!! note "Gemini model versions"
+
+    Always check the official Gemini documentation for the latest model names,
+    including specific preview versions if needed. Preview models might have
+    different availability or quota limitations.
 
 ## Troubleshooting
 

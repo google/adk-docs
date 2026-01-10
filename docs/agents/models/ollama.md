@@ -4,17 +4,58 @@
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
 </div>
 
-[Ollama](https://ollama.com/) allows you to host and run open-source models
-locally.
+[Ollama](https://ollama.com/) is a tool that allows you to host and run
+open-source models locally. ADK integrates with Ollama-hosted models through the
+[LiteLLM](/adk-docs/agents/models/litellm/) model connector library.
+
+## Get started
+
+Use the LiteLLM wrapper can be used to create agents with Ollama-hosted models.
+The following code example shows a basic implementation for using Gemini models
+in your agents:
+
+```py
+root_agent = Agent(
+    model=LiteLlm(model="ollama_chat/mistral-small3.1"),
+    name="dice_agent",
+    description=(
+        "hello world agent that can roll a dice of 8 sides and check prime"
+        " numbers."
+    ),
+    instruction="""
+      You roll dice and answer questions about the outcome of the dice rolls.
+    """,
+    tools=[
+        roll_die,
+        check_prime,
+    ],
+)
+```
+
+!!! warning "Warning: Use `ollama_chat`interface"
+
+    Make sure you set the provider `ollama_chat` instead of `ollama`. Using
+    `ollama` can result in unexpected behaviors such as infinite tool call loops
+    and ignoring previous context.
+
+!!! tip "Use `OLLAMA_API_BASE` environment variable"
+
+    Although you can specify the `api_base` parameter in LiteLLM for generation,
+    as of v1.65.5, the library relies on the environment variable for other API calls.
+    Therefore, you should set the `OLLAMA_API_BASE` environment variable for your
+    Ollama server URL to ensure all requests are routed correctly.
+
+```bash
+export OLLAMA_API_BASE="http://localhost:11434"
+adk web
+```
 
 ## Model choice
 
-If your agent is relying on tools, please make sure that you select a model with
+If your agent is relying on tools, make sure that you select a model with
 tool support from [Ollama website](https://ollama.com/search?c=tools).
-
-For reliable results, we recommend using a decent-sized model with tool support.
-
-The tool support for the model can be checked with the following command:
+For reliable results, use a model with tool support.
+You can check tool support for the model using the following command:
 
 ```bash
 ollama show mistral-small3.1
@@ -31,8 +72,7 @@ ollama show mistral-small3.1
     tools
 ```
 
-You are supposed to see `tools` listed under capabilities.
-
+You should see **tools** listed under capabilities.
 You can also look at the template the model is using and tweak it based on your
 needs.
 
@@ -53,57 +93,28 @@ argument name and its value}. Do not use variables.
 ```
 
 You can swap such prompts with a more descriptive one to prevent infinite tool
-call loops.
-
-For instance:
+call loops, for instance:
 
 ```
 Review the user's prompt and the available functions listed below.
-First, determine if calling one of these functions is the most appropriate way to respond. A function call is likely needed if the prompt asks for a specific action, requires external data lookup, or involves calculations handled by the functions. If the prompt is a general question or can be answered directly, a function call is likely NOT needed.
 
-If you determine a function call IS required: Respond ONLY with a JSON object in the format {"name": "function_name", "parameters": {"argument_name": "value"}}. Ensure parameter values are concrete, not variables.
+First, determine if calling one of these functions is the most appropriate way
+to respond. A function call is likely needed if the prompt asks for a specific
+action, requires external data lookup, or involves calculations handled by the
+functions. If the prompt is a general question or can be answered directly, a
+function call is likely NOT needed.
 
-If you determine a function call IS NOT required: Respond directly to the user's prompt in plain text, providing the answer or information requested. Do not output any JSON.
+If you determine a function call IS required: Respond ONLY with a JSON object in
+the format {"name": "function_name", "parameters": {"argument_name": "value"}}.
+Ensure parameter values are concrete, not variables.
+
+If you determine a function call IS NOT required: Respond directly to the user's
+prompt in plain text, providing the answer or information requested. Do not
+output any JSON.
 ```
 
 Then you can create a new model with the following command:
 
 ```bash
 ollama create llama3.2-modified -f model_file_to_modify
-```
-
-## Using ollama_chat provider
-
-The LiteLLM wrapper can be used to create agents with Ollama-hosted models.
-
-```py
-root_agent = Agent(
-    model=LiteLlm(model="ollama_chat/mistral-small3.1"),
-    name="dice_agent",
-    description=(
-        "hello world agent that can roll a dice of 8 sides and check prime"
-        " numbers."
-    ),
-    instruction="""
-      You roll dice and answer questions about the outcome of the dice rolls.
-    """,
-    tools=[
-        roll_die,
-        check_prime,
-    ],
-)
-```
-
-**It is important to set the provider `ollama_chat` instead of `ollama`. Using
-`ollama` will result in unexpected behaviors such as infinite tool call loops
-and ignoring previous context.**
-
-While `api_base` can be provided inside LiteLLM for generation, LiteLLM library
-is calling other APIs relying on the env variable instead as of v1.65.5 after
-completion. So at this time, we recommend setting the env variable
-`OLLAMA_API_BASE` to point to the ollama server.
-
-```bash
-export OLLAMA_API_BASE="http://localhost:11434"
-adk web
 ```

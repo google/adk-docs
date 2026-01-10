@@ -4,7 +4,11 @@
    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.18.0</span><span class="lst-java">Java v0.4.0</span>
 </div>
 
-[Apigee](https://docs.cloud.google.com/apigee/docs/api-platform/get-started/what-apigee) acts as a powerful [AI Gateway](https://cloud.google.com/solutions/apigee-ai), transforming how you manage and govern your generative AI model traffic. By exposing your AI model endpoint (like Vertex AI or the Gemini API) through an Apigee proxy, you immediately gain enterprise-grade capabilities:
+[Apigee](https://docs.cloud.google.com/apigee/docs/api-platform/get-started/what-apigee)
+provides a powerful [AI Gateway](https://cloud.google.com/solutions/apigee-ai),
+transforming how you manage and govern your generative AI model traffic. By
+exposing your AI model endpoint (like Vertex AI or the Gemini API) through an
+Apigee proxy, you immediately gain enterprise-grade capabilities:
 
 - **Model Safety:** Implement security policies like Model Armor for threat protection.
 
@@ -14,11 +18,16 @@
 
 - **Monitoring & Visibility:** Get granular monitoring, analysis, and auditing of all your AI requests.
 
-**NOTE:** The `ApigeeLLM` wrapper is currently designed for use with Vertex AI and the Gemini API (generateContent). We are continually expanding support for other models and interfaces.
+!!! note
 
-**Integration Method:**  To integrate Apigee's governance into your agent's workflow, simply instantiate the `ApigeeLlm` wrapper and pass it to an `LlmAgent` or other agent type.
+    The `ApigeeLLM` wrapper is currently designed for use with Vertex AI
+    and the Gemini API (generateContent). We are continually expanding support for
+    other models and interfaces.
 
-**Example:**
+## Example implementation
+
+Integrate Apigee's governance into your agent's workflow by instantiating the
+`ApigeeLlm` wrapper object and pass it to an `LlmAgent` or other agent type.
 
 === "Python"
 
@@ -70,6 +79,8 @@
             .build();
     ```
 
-With this configuration, every API call from your agent will be routed through Apigee first, where all necessary policies (security, rate limiting, logging) are executed before the request is securely forwarded to the underlying AI model endpoint.
-
-For a full code example using the Apigee proxy, see [Hello World Apigee LLM](https://github.com/google/adk-python/tree/main/contributing/samples/hello_world_apigeellm)
+With this configuration, every API call from your agent will be routed through
+Apigee first, where all necessary policies (security, rate limiting, logging)
+are executed before the request is securely forwarded to the underlying AI model
+endpoint. For a full code example using the Apigee proxy, see
+[Hello World Apigee LLM](https://github.com/google/adk-python/tree/main/contributing/samples/hello_world_apigeellm).

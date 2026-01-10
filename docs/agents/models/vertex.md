@@ -8,7 +8,7 @@ This includes models from Model Garden or your own fine-tuned models.
 (`projects/PROJECT_ID/locations/LOCATION/endpoints/ENDPOINT_ID`) directly to the
 `model` parameter of `LlmAgent`.
 
-## Vertex AI Setup (Consolidated)
+## Vertex AI Setup
 
 Ensure your environment is configured for Vertex AI:
 
@@ -89,7 +89,7 @@ agent_finetuned_gemini = LlmAgent(
 )
 ```
 
-## Third-Party Models on Vertex AI (e.g., Anthropic Claude) {#third-party-models-on-vertex-ai-eg-anthropic-claude}
+## Anthropic Claude on Vertex AI {#third-party-models-on-vertex-ai-eg-anthropic-claude}
 
 Some providers, like Anthropic, make their models available directly through
 Vertex AI.
