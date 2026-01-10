@@ -311,6 +311,33 @@ You will see a complete, interactive list of all available API endpoints, which 
 
 In TypeScript, interactive API documentation support is coming soon.
 
+#### CORS Configuration
+
+You can control which origins are allowed to make requests to the API server using the `--allow-origins` flag. This is crucial for securing your agent when it's accessed from a web browser.
+
+*   `--allow_origins`: A comma-separated list of allowed origins.
+
+**Examples:**
+
+*   **Allow a specific origin:**
+    ```shell
+    adk api_server --allow_origins http://localhost:3000
+    ```
+*   **Allow multiple origins:**
+    ```shell
+    adk api_server --allow_origins http://localhost:3000,https://my-app.com
+    ```
+*   **Allow all origins (not recommended for production):**
+    ```shell
+    adk api_server --allow_origins "*"
+    ```
+*   **Allow origins using a regular expression:**
+    Prefix the origin with `regex:` to use a regular expression.
+    ```shell
+    adk api_server --allow_origins "regex:https://.*\.example\.com"
+    ```
+    This example allows requests from any subdomain of `example.com`.
+
 ## API Endpoints
 
 The following sections detail the primary endpoints for interacting with your agents.
