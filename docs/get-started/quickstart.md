@@ -227,7 +227,7 @@ valid authentication, the LLM service will deny the agent's requests, and the
 agent will be unable to function.
 
 !!!tip "Model Authentication guide"
-    For a detailed guide on authenticating to different models, see the [Authentication guide](../agents/models.md#google-ai-studio).
+    For a detailed guide on authenticating to different models, see the [Authentication guide](/adk-docs/agents/models/google-gemini#google-ai-studio).
     This is a critical step to ensure your agent can make calls to the LLM service.
 
 === "Gemini - Google AI Studio"

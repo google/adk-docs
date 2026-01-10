@@ -210,7 +210,15 @@ nav:
       - Custom agents: agents/custom-agents.md
       - Multi-agent systems: agents/multi-agents.md
       - Agent Config: agents/config.md
-      - Models & Authentication: agents/models.md
+    - Models for Agents:
+      - agents/models/index.md
+      - Gemini: agents/models/google-gemini.md
+      - Claude: agents/models/anthropic.md
+      - Vertex AI hosted: agents/models/vertex.md
+      - Apigee AI Gateway: agents/models/apigee.md
+      - Ollama: agents/models/ollama.md
+      - vLLM: agents/models/vllm.md
+      - LiteLLM: agents/models/litellm.md
     - Tools for Agents:
       - tools/index.md
       - Gemini API tools:

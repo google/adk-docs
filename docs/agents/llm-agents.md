@@ -43,7 +43,7 @@ First, you need to establish what the agent *is* and what it's *for*.
 * **`model` (Required):** Specify the underlying LLM that will power this
   agent's reasoning. This is a string identifier like `"gemini-2.0-flash"`. The
   choice of model impacts the agent's capabilities, cost, and performance. See
-  the [Models](models.md) page for available options and considerations.
+  the [Models](/adk-docs/agents/models/) page for available options and considerations.
 
 === "Python"
 
