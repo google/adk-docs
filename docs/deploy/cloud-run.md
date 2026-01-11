@@ -85,7 +85,7 @@ echo "<<put your GOOGLE_API_KEY here>>" | gcloud secrets create GOOGLE_API_KEY -
 ```
 
 ### Permissions to read
-You should give appropiate permissision for you service account to read this secret.
+You should give appropriate permission for you service account to read this secret.
 ```bash
 gcloud secrets add-iam-policy-binding GOOGLE_API_KEY --member="serviceAccount:1234567890-compute@developer.gserviceaccount.com" --role="roles/secretmanager.secretAccessor" --project=my-project
 ```
@@ -447,12 +447,12 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
           <dependency>
              <groupId>com.google.adk</groupId>
              <artifactId>google-adk</artifactId>
-             <version>0.1.0</version>
+             <version>0.5.0</version>
           </dependency>
           <dependency>
              <groupId>com.google.adk</groupId>
              <artifactId>google-adk-dev</artifactId>
-             <version>0.1.0</version>
+             <version>0.5.0</version>
           </dependency>
         </dependencies>
 

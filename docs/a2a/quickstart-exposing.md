@@ -76,15 +76,15 @@ from a2a.types import AgentCard
 
 # Define A2A agent card
 my_agent_card = AgentCard(
-    "name": "file_agent",
-    "url": "http://example.com",
-    "description": "Test agent from file",
-    "version": "1.0.0",
-    "capabilities": {},
-    "skills": [],
-    "defaultInputModes": ["text/plain"],
-    "defaultOutputModes": ["text/plain"],
-    "supportsAuthenticatedExtendedCard": False,
+    name="file_agent",
+    url="http://example.com",
+    description="Test agent from file",
+    version="1.0.0",
+    capabilities={},
+    skills=[],
+    defaultInputModes=["text/plain"],
+    defaultOutputModes=["text/plain"],
+    supportsAuthenticatedExtendedCard=False,
 )
 a2a_app = to_a2a(root_agent, port=8001, agent_card=my_agent_card)
 ```
