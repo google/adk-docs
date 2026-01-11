@@ -606,6 +606,47 @@ agent will be unable to function.
 * What is the weather in Paris?
 * What is the time in Paris?
 
+## 5. Debug your Agent
+
+For a simplified debugging experience, the ADK provides a `run_debug()` helper method. This method reduces the boilerplate code required to interact with your agent, making it ideal for quick experiments and troubleshooting.
+
+Here's a comparison of the code required to run an agent with and without `run_debug()`:
+
+**Before `run_debug()`:**
+
+```python
+from google.adk.runners import InMemoryRunner
+from google.adk.sessions import InMemorySessionService
+from google.genai import types
+
+# Requires manual setup of runner, session service, and message content
+APP_NAME = "default"
+USER_ID = "default"
+session_service = InMemorySessionService()
+runner = InMemoryRunner(agent=agent.root_agent, app_name=APP_NAME, session_service=session_service)
+session = await session_service.create_session(
+    app_name=APP_NAME, user_id=USER_ID, session_id="default"
+)
+content = types.Content(role="user", parts=[types.Part.from_text("Hi")])
+async for event in runner.run_async(
+    user_id=USER_ID, session_id=session.id, new_message=content
+):
+    if event.content and event.content.parts:
+        print(event.content.parts[0].text)
+```
+
+**After `run_debug()`:**
+
+```python
+from google.adk.runners import InMemoryRunner
+
+# Just two lines to create a runner and start debugging
+runner = InMemoryRunner(agent=agent.root_agent)
+await runner.run_debug("Hi")
+```
+
+As you can see, `run_debug()` significantly simplifies the process, allowing you to focus on your agent's logic instead of the surrounding infrastructure. You can find more examples of how to use this method in the `contributing/samples/runner_debug_example/main.py` file in the ADK Python repository.
+
 ## 🎉 Congratulations!
 
 You've successfully created and interacted with your first agent using ADK!
