@@ -1,7 +1,7 @@
 # Using Different Models with ADK
 
 <div class="language-support-tag" title="Java ADK currently supports Gemini and Anthropic models.">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
 The Agent Development Kit (ADK) is designed for flexibility, allowing you to
@@ -27,7 +27,73 @@ ADK primarily uses two mechanisms for model integration:
 
 The following sections guide you through using these methods based on your needs.
 
-## Using Google Gemini Models
+## Google Gemini models
+
+ADK supports the Google Gemini family of generative AI models that provide a
+powerful set of models with a wide range of features. ADK provides support for many
+Gemini features, including
+[Code Execution](/adk-docs/tools/built-in-tools/#code-execution),
+[Google Search](/adk-docs/tools/built-in-tools/#google-search),
+[Context caching](/adk-docs/context/caching/),
+[Computer use](/adk-docs/tools/gemini-api/computer-use/)
+and the [Interactions API](#interactions-api).
+
+### Gemini Interactions API {#interactions-api}
+
+<div class="language-support-tag" title="Java ADK currently supports Gemini and Anthropic models.">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.21.0</span>
+</div>
+
+The Gemini [Interactions API](https://ai.google.dev/gemini-api/docs/interactions)
+is an alternative to the ***generateContent*** inference API, which provides
+stateful conversation capabilities, allowing you to chain interactions using a
+`previous_interaction_id` instead of sending the full conversation history with
+each request. Using this feature can be more efficient for long conversations.
+
+You can enable the Interactions API by settting the `use_interactions_api=True`
+parameter in the Gemini model configuration, as shown in the following code
+snippet:
+
+```python
+from google.adk.agents.llm_agent import Agent
+from google.adk.models.google_llm import Gemini
+from google.adk.tools.google_search_tool import GoogleSearchTool
+
+root_agent = Agent(
+    model=Gemini(
+        model="gemini-2.5-flash",
+        use_interactions_api=True,  # Enable Interactions API
+    ),
+    name="interactions_test_agent",
+    tools=[
+        GoogleSearchTool(bypass_multi_tools_limit=True),  # Converted to function tool
+        get_current_weather,  # Custom function tool
+    ],
+)
+```
+
+For a complete code sample, see the
+[Interactions API sample](https://github.com/google/adk-python/tree/main/contributing/samples/interactions_api).
+
+#### Known limitations
+
+The Interactions API **does not** support mixing custom function calling tools with
+built-in tools, such as the
+[Google Search](/adk-docs/tools/built-in-tools/#google-search),
+tool, within the same agent. You can work around this limitation by configuring the
+the built-in tool to operate as a custom tool using the `bypass_multi_tools_limit`
+parameter:
+
+```python
+# Use bypass_multi_tools_limit=True to convert google_search to a function tool
+GoogleSearchTool(bypass_multi_tools_limit=True)
+```
+
+In this example, this option converts the built-in google_search to a function
+calling tool (via GoogleSearchAgentTool), which allows it to work alongside
+custom function tools.
+
+## Gemini model authentication
 
 This section covers authenticating with Google's Gemini models, either through Google AI Studio for rapid development or Google Cloud Vertex AI for enterprise applications. This is the most direct way to use Google's flagship models within ADK.
 
@@ -322,7 +388,7 @@ public class DirectAnthropicAgent {
 ## Using Apigee gateway for AI models
 
 <div class="language-support-tag">
-   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.18.0</span>
+   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.18.0</span><span class="lst-java">Java v0.4.0</span>
 </div>
 
 [Apigee](https://docs.cloud.google.com/apigee/docs/api-platform/get-started/what-apigee) acts as a powerful [AI Gateway](https://cloud.google.com/solutions/apigee-ai), transforming how you manage and govern your generative AI model traffic. By exposing your AI model endpoint (like Vertex AI or the Gemini API) through an Apigee proxy, you immediately gain enterprise-grade capabilities:
@@ -341,30 +407,55 @@ public class DirectAnthropicAgent {
 
 **Example:**
 
-```python
+=== "Python"
 
-from google.adk.agents import LlmAgent
-from google.adk.models.apigee_llm import ApigeeLlm
+    ```python
 
-# Instantiate the ApigeeLlm wrapper
-model = ApigeeLlm(
-    # Specify the Apigee route to your model. For more info, check out the ApigeeLlm documentation (https://github.com/google/adk-python/tree/main/contributing/samples/hello_world_apigeellm).
-    model="apigee/gemini-2.5-flash",
-    # The proxy URL of your deployed Apigee proxy including the base path
-    proxy_url=f"https://{APIGEE_PROXY_URL}",
-    # Pass necessary authentication/authorization headers (like an API key)
-    custom_headers={"foo": "bar"}
-)
+    from google.adk.agents import LlmAgent
+    from google.adk.models.apigee_llm import ApigeeLlm
 
-# Pass the configured model wrapper to your LlmAgent
-agent = LlmAgent(
-    model=model,
-    name="my_governed_agent",
-    instruction="You are a helpful assistant powered by Gemini and governed by Apigee.",
-    # ... other agent parameters
-)
+    # Instantiate the ApigeeLlm wrapper
+    model = ApigeeLlm(
+        # Specify the Apigee route to your model. For more info, check out the ApigeeLlm documentation (https://github.com/google/adk-python/tree/main/contributing/samples/hello_world_apigeellm).
+        model="apigee/gemini-2.5-flash",
+        # The proxy URL of your deployed Apigee proxy including the base path
+        proxy_url=f"https://{APIGEE_PROXY_URL}",
+        # Pass necessary authentication/authorization headers (like an API key)
+        custom_headers={"foo": "bar"}
+    )
 
-```
+    # Pass the configured model wrapper to your LlmAgent
+    agent = LlmAgent(
+        model=model,
+        name="my_governed_agent",
+        instruction="You are a helpful assistant powered by Gemini and governed by Apigee.",
+        # ... other agent parameters
+    )
+
+    ```
+
+=== "Java"
+
+    ```java
+    import com.google.adk.agents.LlmAgent;
+    import com.google.adk.models.ApigeeLlm;
+    import com.google.common.collect.ImmutableMap;
+
+    ApigeeLlm apigeeLlm =
+            ApigeeLlm.builder()
+                .modelName("apigee/gemini-2.5-flash") // Specify the Apigee route to your model. For more info, check out the ApigeeLlm documentation
+                .proxyUrl(APIGEE_PROXY_URL) //The proxy URL of your deployed Apigee proxy including the base path
+                .customHeaders(ImmutableMap.of("foo", "bar")) //Pass necessary authentication/authorization headers (like an API key)
+                .build();
+    LlmAgent agent =
+        LlmAgent.builder()
+            .model(apigeeLlm)
+            .name("my_governed_agent")
+            .description("my_governed_agent")
+            .instruction("You are a helpful assistant powered by Gemini and governed by Apigee.")
+            // tools will be added next
+            .build();
+    ```
 
 With this configuration, every API call from your agent will be routed through Apigee first, where all necessary policies (security, rate limiting, logging) are executed before the request is securely forwarded to the underlying AI model endpoint.
 

@@ -31,23 +31,23 @@ type order struct {
 }
 
 type lookupOrderStatusResult struct {
-	Status       string `json:"status"`
-	Order        order  `json:"order,omitempty"`
-	ErrorMessage string `json:"error_message,omitempty"`
+	Status string `json:"status"`
+	Order  order  `json:"order,omitempty"`
 }
 
-func lookupOrderStatus(ctx tool.Context, args lookupOrderStatusArgs) lookupOrderStatusResult {
+func lookupOrderStatus(ctx tool.Context, args lookupOrderStatusArgs) (*lookupOrderStatusResult, error) {
 	// ... function implementation to fetch status ...
-	if statusDetails, ok := fetchStatusFromBackend(args.OrderID); ok {
-		return lookupOrderStatusResult{
-			Status: "success",
-			Order: order{
-				State:          statusDetails.State,
-				TrackingNumber: statusDetails.Tracking,
-			},
-		}
+	statusDetails, ok := fetchStatusFromBackend(args.OrderID)
+	if !ok {
+		return nil, fmt.Errorf("order ID %s not found", args.OrderID)
 	}
-	return lookupOrderStatusResult{Status: "error", ErrorMessage: fmt.Sprintf("Order ID %s not found.", args.OrderID)}
+	return &lookupOrderStatusResult{
+		Status: "success",
+		Order: order{
+			State:          statusDetails.State,
+			TrackingNumber: statusDetails.Tracking,
+		},
+	}, nil
 }
 
 // --8<-- [end:snippet]

@@ -248,17 +248,11 @@ async def call_agent_async(user_input_topic: str):
 
     session_service, runner = await setup_session_and_runner()
 
-    current_session = await session_service.get_session(app_name=APP_NAME, 
-                                                  user_id=USER_ID, 
-                                                  session_id=SESSION_ID)
-    if not current_session:
-        logger.error("Session not found!")
-        return
-
+    current_session = session_service.sessions[APP_NAME][USER_ID][SESSION_ID]
     current_session.state["topic"] = user_input_topic
     logger.info(f"Updated session state topic to: {user_input_topic}")
 
-    content = types.Content(role='user', parts=[types.Part(text=f"Generate a story about: {user_input_topic}")])
+    content = types.Content(role='user', parts=[types.Part(text=f"Generate a story about the preset topic.")])
     events = runner.run_async(user_id=USER_ID, session_id=SESSION_ID, new_message=content)
 
     final_response = "No final response captured."

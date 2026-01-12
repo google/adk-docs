@@ -1,7 +1,7 @@
 # Safety and Security for AI Agents
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-go">Go</span><span class="lst-java">Java</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript</span><span class="lst-go">Go</span><span class="lst-java">Java</span>
 </div>
 
 As AI agents grow in capability, ensuring they operate safely, securely, and align with your brand values is paramount. Uncontrolled agents can pose risks, including executing misaligned or harmful actions, such as data exfiltration, and generating inappropriate content that can impact your brand’s reputation. **Sources of risk include vague instructions, model hallucination, jailbreaks and prompt injections from adversarial users, and indirect prompt injections via tool use.**
@@ -70,7 +70,7 @@ Tools can be designed with security in mind: we can create tools that expose the
 
 In-tool guardrails is an approach to create common and re-usable tools that expose deterministic controls that can be used by developers to set limits on each tool instantiation.
 
-This approach relies on the fact that tools receive two types of input: arguments,  which are set by the model, and [**`Tool Context`**](../tools/index.md#tool-context), which can be set deterministically by the agent developer. We can rely on the deterministically set information to validate that the model is behaving as-expected.
+This approach relies on the fact that tools receive two types of input: arguments,  which are set by the model, and [**`Tool Context`**](../tools-custom/index.md#tool-context), which can be set deterministically by the agent developer. We can rely on the deterministically set information to validate that the model is behaving as-expected.
 
 For example, a query tool can be designed to expect a policy to be read from the Tool Context.
 
@@ -93,6 +93,27 @@ For example, a query tool can be designed to expect a policy to be read from the
     # Or maybe passing during tool init:
     query_tool = QueryTool(policy=policy)
     # For this example, we'll assume it gets stored somewhere accessible.
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    // Conceptual example: Setting policy data intended for tool context
+    // In a real ADK app, this might be set in InvocationContext.session.state
+    // or passed during tool initialization, then retrieved via ToolContext.
+
+    const policy: {[key: string]: any} = {}; // Assuming policy is an object
+    policy['select_only'] = true;
+    policy['tables'] = ['mytable1', 'mytable2'];
+
+    // Conceptual: Storing policy where the tool can access it via ToolContext later.
+    // This specific line might look different in practice.
+    // For example, storing in session state:
+    invocationContext.session.state["query_tool_policy"] = policy;
+
+    // Or maybe passing during tool init:
+    const queryTool = new QueryTool({policy: policy});
+    // For this example, we'll assume it gets stored somewhere accessible.
     ```
 
 === "Go"
@@ -140,7 +161,7 @@ For example, a query tool can be designed to expect a policy to be read from the
     // For this example, we'll assume it gets stored somewhere accessible.
     ```
 
-During the tool execution, [**`Tool Context`**](../tools/index.md#tool-context) will be passed to the tool:
+During the tool execution, [**`Tool Context`**](../tools-custom/index.md#tool-context) will be passed to the tool:
 
 === "Python"
 
@@ -165,6 +186,37 @@ During the tool execution, [**`Tool Context`**](../tools/index.md#tool-context) 
 
       print(f"Executing validated query (hypothetical): {query}")
       return {"status": "success", "results": [...]} # Example successful return
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    function query(query: string, toolContext: ToolContext): string | object {
+        // Assume 'policy' is retrieved from context, e.g., via session state:
+        const policy = toolContext.state.get('query_tool_policy', {}) as {[key: string]: any};
+
+        // --- Placeholder Policy Enforcement ---
+        const actual_tables = explainQuery(query); // Hypothetical function call
+
+        const policyTables = new Set(policy['tables'] || []);
+        const isSubset = actual_tables.every(table => policyTables.has(table));
+
+        if (!isSubset) {
+            // Return an error message for the model
+            const allowed = (policy['tables'] || ['(None defined)']).join(', ');
+            return `Error: Query targets unauthorized tables. Allowed: ${allowed}`;
+        }
+
+        if (policy['select_only']) {
+            if (!query.trim().toUpperCase().startsWith("SELECT")) {
+                return "Error: Policy restricts queries to SELECT statements only.";
+            }
+        }
+        // --- End Policy Enforcement ---
+
+        console.log(`Executing validated query (hypothetical): ${query}`);
+        return { "status": "success", "results": [] }; // Example successful return
+    }
     ```
 
 === "Go"
@@ -323,6 +375,47 @@ When modifications to the tools to add guardrails aren't possible, the [**`Befor
     )
     ```
 
+=== "TypeScript"
+
+    ```typescript
+    // Hypothetical callback function
+    function validateToolParams(
+        {tool, args, context}: {
+            tool: BaseTool,
+            args: {[key: string]: any},
+            context: ToolContext
+        }
+    ): {[key: string]: any} | undefined {
+        console.log(`Callback triggered for tool: ${tool.name}, args: ${JSON.stringify(args)}`);
+
+        // Example validation: Check if a required user ID from state matches an arg
+        const expectedUserId = context.state.get("session_user_id");
+        const actualUserIdInArgs = args["user_id_param"]; // Assuming tool takes 'user_id_param'
+
+        if (actualUserIdInArgs !== expectedUserId) {
+            console.log("Validation Failed: User ID mismatch!");
+            // Return a dictionary to prevent tool execution and provide feedback
+            return {"error": `Tool call blocked: User ID mismatch.`};
+        }
+
+        // Return undefined to allow the tool call to proceed if validation passes
+        console.log("Callback validation passed.");
+        return undefined;
+    }
+
+    // Hypothetical Agent setup
+    const rootAgent = new LlmAgent({
+        model: 'gemini-2.5-flash',
+        name: 'root_agent',
+        instruction: "...",
+        beforeToolCallback: validateToolParams, // Assign the callback
+        tools: [
+          // ... list of tool functions or Tool instances ...
+          // e.g., queryToolInstance
+        ]
+    });
+    ```
+
 === "Go"
 
     ```go
@@ -442,7 +535,7 @@ Some examples include:
 
 Code execution is a special tool that has extra security implications: sandboxing must be used to prevent model-generated code to compromise the local environment, potentially creating security issues.
 
-Google and the ADK provide several options for safe code execution. [Vertex Gemini Enterprise API code execution feature](https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/code-execution-api) enables agents to take advantage of sandboxed code execution server-side by enabling the tool\_execution tool. For code performing data analysis, you can use the [built-in Code Executor](../tools/built-in-tools.md#code-execution) tool in ADK to call the [Vertex Code Interpreter Extension](https://cloud.google.com/vertex-ai/generative-ai/docs/extensions/code-interpreter).
+Google and the ADK provide several options for safe code execution. [Vertex Gemini Enterprise API code execution feature](https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/code-execution-api) enables agents to take advantage of sandboxed code execution server-side by enabling the tool\_execution tool. For code performing data analysis, you can use the [Code Executor](/adk-docs/tools/gemini-api/code-execution/) tool in ADK to call the [Vertex Code Interpreter Extension](https://cloud.google.com/vertex-ai/generative-ai/docs/extensions/code-interpreter).
 
 If none of these options satisfy your requirements, you can build your own code executor using the building blocks provided by the ADK. We recommend creating execution environments that are hermetic: no network connections and API calls permitted to avoid uncontrolled data exfiltration; and full clean up of data across execution to not create cross-user exfiltration concerns.
 

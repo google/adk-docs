@@ -11,7 +11,7 @@ To deploy your agent, you can use either the `adk deploy cloud_run` command _(re
 
 ## Agent sample
 
-For each of the commands, we will reference a the `Capital Agent` sample defined on the [LLM agent](../agents/llm-agents.md) page. We will assume it's in a directory (eg: `capital_agent`).
+For each of the commands, we will reference the `Capital Agent` sample defined on the [LLM agent](../agents/llm-agents.md) page. We will assume it's in a directory (eg: `capital_agent`).
 
 To proceed, confirm that your agent code is configured as follows:
 
@@ -27,7 +27,7 @@ To proceed, confirm that your agent code is configured as follows:
     1. Your application's entry point (the main package and main() function) is in a
        single Go file. Using main.go is a strong convention.
     2. Your agent instance is passed to a launcher configuration, typically using
-       services.NewSingleAgentLoader(agent). The adkgo tool uses this launcher to start
+       agent.NewSingleLoader(yourAgent). The adkgo tool uses this launcher to start
        your agent with the correct services.
     3. Your go.mod and go.sum files are present in your project directory to manage
        dependencies.
@@ -85,7 +85,7 @@ echo "<<put your GOOGLE_API_KEY here>>" | gcloud secrets create GOOGLE_API_KEY -
 ```
 
 ### Permissions to read
-You should give appropiate permissision for you service account to read this secret.
+You should give appropriate permission for you service account to read this secret.
 ```bash
 gcloud secrets add-iam-policy-binding GOOGLE_API_KEY --member="serviceAccount:1234567890-compute@developer.gserviceaccount.com" --role="roles/secretmanager.secretAccessor" --project=my-project
 ```
@@ -219,7 +219,8 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
         # Get the directory where main.py is located
         AGENT_DIR = os.path.dirname(os.path.abspath(__file__))
         # Example session service URI (e.g., SQLite)
-        SESSION_SERVICE_URI = "sqlite:///./sessions.db"
+        # Note: Use 'sqlite+aiosqlite' instead of 'sqlite' because DatabaseSessionService requires an async driver
+        SESSION_SERVICE_URI = "sqlite+aiosqlite:///./sessions.db"
         # Example allowed origins for CORS
         ALLOWED_ORIGINS = ["http://localhost", "http://localhost:8080", "*"]
         # Set web=True if you intend to serve a web interface, False otherwise
@@ -446,12 +447,12 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
           <dependency>
              <groupId>com.google.adk</groupId>
              <artifactId>google-adk</artifactId>
-             <version>0.1.0</version>
+             <version>0.5.0</version>
           </dependency>
           <dependency>
              <groupId>com.google.adk</groupId>
              <artifactId>google-adk-dev</artifactId>
-             <version>0.1.0</version>
+             <version>0.5.0</version>
           </dependency>
         </dependencies>
 

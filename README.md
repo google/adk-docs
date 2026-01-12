@@ -2,6 +2,8 @@
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![PyPI](https://img.shields.io/pypi/v/google-adk)](https://pypi.org/project/google-adk/)
+[![NPM Version](https://img.shields.io/npm/v/@google/adk)](https://www.npmjs.com/package/@google/adk)
+[![Go Doc](https://img.shields.io/badge/Go%20Package-Doc-blue.svg)](https://pkg.go.dev/google.golang.org/adk)
 [![Maven Central](https://img.shields.io/maven-central/v/com.google.adk/google-adk)](https://search.maven.org/artifact/com.google.adk/google-adk)
 
 <html>
@@ -30,7 +32,7 @@ from simple tasks to complex workflows.
   capabilities, all for tight integration with the Google ecosystem.
 
 - **Code-First Development**: Define agent logic, tools, and orchestration
-  directly in Python and Java for ultimate flexibility, testability, and versioning.
+  directly for ultimate flexibility, testability, and versioning.
 
 - **Modular Multi-Agent Systems**: Design scalable applications by composing
   multiple specialized agents into flexible hierarchies.
@@ -43,9 +45,11 @@ from simple tasks to complex workflows.
 
 ## 🚀 Usage
 
-You can use Agent Development Kit (ADK) with your preferred package manager for Python or build tool for Java.
+You can use Agent Development Kit (ADK) with your preferred language:
 
 - **[Get started with ADK Python](https://google.github.io/adk-docs/get-started/python/)**
+
+- **[Get started with ADK TypeScript](https://google.github.io/adk-docs/get-started/typescript/)**
 
 - **[Get started with ADK Go](https://google.github.io/adk-docs/get-started/go/)**
 
@@ -58,16 +62,33 @@ deploying agents:
 
 - **[Documentation](https://google.github.io/adk-docs)**
 
+## ✨ Vibe Coding
+
+Accelerate your ADK agent development workflow with AI-assisted coding. ADK
+provides optimized documentation context compatible with AI code editors:
+
+- **[llms.txt](https://google.github.io/adk-docs/llms.txt)**: A structured index
+  of ADK documentation, designed to help LLMs navigate and locate specific
+  topics and guides.
+- **[llms-full.txt](https://google.github.io/adk-docs/llms-full.txt)**: The
+  comprehensive documentation reference, ideal for complex implementations or
+  models with large context windows.
+
+You can also visit our
+**[Coding with AI](https://google.github.io/adk-docs/tutorials/coding-with-ai/)**
+guide for instructions on using these files with development tools like Gemini
+CLI and Antigravity.
+
 ## 🤝 Contributing
 
 We welcome contributions from the community! Whether it's bug reports, feature
 requests, documentation improvements, or code contributions, please see our
-[**Contributing Guidelines**](./CONTRIBUTING.md) to get started.
+**[Contributing Guidelines](./CONTRIBUTING.md)** to get started.
 
 ## 📄 License
 
 This project is licensed under the Apache 2.0 License - see the
-[LICENSE](LICENSE) file for details.
+**[LICENSE](LICENSE)** file for details.
 
 ---
 
