@@ -52,3 +52,4 @@ Now that you have an overview of the different agent types available in ADK, div
 * [**Custom Agents:**](custom-agents.md) Discover the principles of extending `BaseAgent` to build agents with unique logic and integrations tailored to your specific needs.
 * [**Multi-Agents:**](multi-agents.md) Understand how to combine different agent types to create sophisticated, collaborative systems capable of tackling complex problems.
 * [**Models:**](models.md) Learn about the different LLM integrations available and how to select the right model for your agents.
+* [**Service Registration**](service-registration.md): Learn how to register custom services for sessions, artifacts, and memory.
