@@ -1,0 +1,44 @@
+name: PR Preview
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed, labeled, unlabeled]
+concurrency: preview-${{ github.ref }}
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    if: |
+      github.event.action != 'closed' &&
+      github.event.action != 'unlabeled' &&
+      contains(github.event.pull_request.labels.*.name, 'build-preview')
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+          
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+        
+      - name: Build MkDocs
+        run: mkdocs build
+        
+      - name: Deploy PR Preview
+        uses: rossjrw/pr-preview-action@v1
+        with:
+          source-dir: ./site
+          umbrella-dir: pr-preview
+  cleanup:
+    runs-on: ubuntu-latest
+    if: |
+      github.event.action == 'closed' ||
+      (github.event.action == 'unlabeled' && github.event.label.name == 'build-preview')
+    steps:
+      - uses: actions/checkout@v4
+      - name: Cleanup Preview
+        uses: rossjrw/pr-preview-action@v1
+        with:
+          source-dir: ./site
+          umbrella-dir: pr-preview
+          action: remove
