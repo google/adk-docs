@@ -91,6 +91,10 @@ agent_finetuned_gemini = LlmAgent(
 
 ## Anthropic Claude on Vertex AI {#third-party-models-on-vertex-ai-eg-anthropic-claude}
 
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.2.0</span><span class="lst-java">Java v0.1.0</span>
+</div>
+
 Some providers, like Anthropic, make their models available directly through
 Vertex AI.
 

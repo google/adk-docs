@@ -7,8 +7,8 @@
 ADK supports the Google Gemini family of generative AI models that provide a
 powerful set of models with a wide range of features. ADK provides support for many
 Gemini features, including
-[Code Execution](/adk-docs/tools/built-in-tools/#code-execution),
-[Google Search](/adk-docs/tools/built-in-tools/#google-search),
+[Code Execution](/adk-docs/tools/gemini-api/code-execution/),
+[Google Search](/adk-docs/tools/gemini-api/google-search/),
 [Context caching](/adk-docs/context/caching/),
 [Computer use](/adk-docs/tools/gemini-api/computer-use/)
 and the [Interactions API](#interactions-api).
@@ -145,7 +145,7 @@ For scalable and production-oriented use cases, Vertex AI is the recommended pla
 4. **Models:** Find available model IDs in the
   [Vertex AI documentation](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/models).
 
-#### **Method B: Vertex AI Express Mode**
+### **Method B: Vertex AI Express Mode**
 [Vertex AI Express Mode](https://cloud.google.com/vertex-ai/generative-ai/docs/start/express-mode/overview) offers a simplified, API-key-based setup for rapid prototyping.
 
 1.  **Sign up for Express Mode** to get your API key.
@@ -155,7 +155,7 @@ For scalable and production-oriented use cases, Vertex AI is the recommended pla
     export GOOGLE_GENAI_USE_VERTEXAI=TRUE
     ```
 
-#### **Method C: Service Account (for Production & Automation)**
+### **Method C: Service Account (for Production & Automation)**
 
 For deployed applications, a service account is the standard method.
 
@@ -167,98 +167,6 @@ For deployed applications, a service account is the standard method.
         export GOOGLE_APPLICATION_CREDENTIALS="/path/to/your/keyfile.json"
         ```
     Instead of the key file, you can also authenticate the service account using Workload Identity. But this is outside the scope of this guide.
-
-## Example implementation
-
-=== "Python"
-
-    ```python
-    from google.adk.agents import LlmAgent
-
-    # --- Example using a stable Gemini Flash model ---
-    agent_gemini_flash = LlmAgent(
-        # Use the latest stable Flash model identifier
-        model="gemini-2.5-flash",
-        name="gemini_flash_agent",
-        instruction="You are a fast and helpful Gemini assistant.",
-        # ... other agent parameters
-    )
-
-    # --- Example using a powerful Gemini Pro model ---
-    agent_gemini_pro = LlmAgent(
-        # Use the latest generally available Pro model identifier
-        model="gemini-2.5-pro",
-        name="gemini_pro_agent",
-        instruction="You are a powerful and knowledgeable Gemini assistant.",
-        # ... other agent parameters
-    )
-    ```
-=== "TypeScript"
-
-    ```typescript
-    import {LlmAgent} from '@google/adk';
-
-    // --- Example #2: using a powerful Gemini Pro model with API Key in model ---
-    export const rootAgent = new LlmAgent({
-      name: 'hello_time_agent',
-      model: 'gemini-2.5-flash',
-      description: 'Gemini flash agent',
-      instruction: `You are a fast and helpful Gemini assistant.`,
-    });
-
-    // --- Example #2: using a powerful Gemini Pro model with API Key in model ---
-    export const rootAgent = new LlmAgent({
-      name: 'hello_time_agent',
-      model: 'gemini-2.5-pro',
-      description: 'Gemini Pro agent',
-      instruction: `You are a powerful and knowledgeable Gemini assistant.`,
-    });
-    ```
-
-=== "Go"
-
-    ```go
-    import (
-    	"google.golang.org/adk/agent/llmagent"
-    	"google.golang.org/adk/model/gemini"
-    	"google.golang.org/genai"
-    )
-
-    --8<-- "examples/go/snippets/agents/models/models.go:gemini-example"
-
-    --8<-- "examples/go/snippets/agents/models/models.go:gemini-example-2"
-    ```
-
-=== "Java"
-
-    ```java
-    // --- Example #1: using a stable Gemini Flash model with ENV variables---
-    LlmAgent agentGeminiFlash =
-        LlmAgent.builder()
-            // Use the latest stable Flash model identifier
-            .model("gemini-2.5-flash") // Set ENV variables to use this model
-            .name("gemini_flash_agent")
-            .instruction("You are a fast and helpful Gemini assistant.")
-            // ... other agent parameters
-            .build();
-
-    // --- Example #2: using a powerful Gemini Pro model with API Key in model ---
-    LlmAgent agentGeminiPro =
-        LlmAgent.builder()
-            // Use the latest generally available Pro model identifier
-            .model(new Gemini("gemini-2.5-pro-preview-03-25",
-                Client.builder()
-                    .vertexAI(false)
-                    .apiKey("API_KEY") // Set the API Key (or) project/ location
-                    .build()))
-            // Or, you can also directly pass the API_KEY
-            // .model(new Gemini("gemini-2.5-pro-preview-03-25", "API_KEY"))
-            .name("gemini_pro_agent")
-            .instruction("You are a powerful and knowledgeable Gemini assistant.")
-            // ... other agent parameters
-            .build();
-
-    ```
 
 !!! warning "Secure Your Credentials"
 
@@ -336,7 +244,7 @@ stateful conversation capabilities, allowing you to chain interactions using a
 `previous_interaction_id` instead of sending the full conversation history with
 each request. Using this feature can be more efficient for long conversations.
 
-You can enable the Interactions API by settting the `use_interactions_api=True`
+You can enable the Interactions API by setting the `use_interactions_api=True`
 parameter in the Gemini model configuration, as shown in the following code
 snippet:
 

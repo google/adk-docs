@@ -10,13 +10,13 @@ open-source models locally. ADK integrates with Ollama-hosted models through the
 
 ## Get started
 
-Use the LiteLLM wrapper can be used to create agents with Ollama-hosted models.
-The following code example shows a basic implementation for using Gemini models
-in your agents:
+Use the LiteLLM wrapper to create agents with Ollama-hosted models. The
+following code example shows a basic implementation for using Gemma open
+models with your agents:
 
 ```py
 root_agent = Agent(
-    model=LiteLlm(model="ollama_chat/mistral-small3.1"),
+    model=LiteLlm(model="ollama_chat/gemma3:latest"),
     name="dice_agent",
     description=(
         "hello world agent that can roll a dice of 8 sides and check prime"
@@ -117,4 +117,54 @@ Then you can create a new model with the following command:
 
 ```bash
 ollama create llama3.2-modified -f model_file_to_modify
+```
+
+## Use OpenAI provider
+
+Alternatively, you can use `openai` as the provider name. This approach
+requires setting the `OPENAI_API_BASE=http://localhost:11434/v1` and
+`OPENAI_API_KEY=anything` env variables instead of `OLLAMA_API_BASE`.
+Note that the `API_BASE` value has *`/v1`* at the end.
+
+```py
+root_agent = Agent(
+    model=LiteLlm(model="openai/mistral-small3.1"),
+    name="dice_agent",
+    description=(
+        "hello world agent that can roll a dice of 8 sides and check prime"
+        " numbers."
+    ),
+    instruction="""
+      You roll dice and answer questions about the outcome of the dice rolls.
+    """,
+    tools=[
+        roll_die,
+        check_prime,
+    ],
+)
+```
+
+```bash
+export OPENAI_API_BASE=http://localhost:11434/v1
+export OPENAI_API_KEY=anything
+adk web
+```
+
+### Debugging
+
+You can see the request sent to the Ollama server by adding the following in
+your agent code just after imports.
+
+```py
+import litellm
+litellm._turn_on_debug()
+```
+
+Look for a line like the following:
+
+```bash
+Request Sent from LiteLLM:
+curl -X POST \
+http://localhost:11434/api/chat \
+-d '{'model': 'mistral-small3.1', 'messages': [{'role': 'system', 'content': ...
 ```

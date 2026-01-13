@@ -6,9 +6,9 @@
 
 You can integrate Anthropic's Claude models directly using an Anthropic API key
 or from a Vertex AI backend into your Java ADK applications by using the ADK's
-`Claude` wrapper class. You can also access Anthropic models Google Vertex AI
-services. For more information, see the
-[Third-Party Models on Vertex AI](vertex.md#third-party-models-on-vertex-ai-eg-anthropic-claude)
+`Claude` wrapper class. You can also access Anthropic models through
+Google Cloud Vertex AI services. For more information, see the
+[Third-Party Models on Vertex AI](/adk-docs/agents/models/vertex/#third-party-models-on-vertex-ai-eg-anthropic-claude)
 section. You can also use Anthropic models through the
 [LiteLLM](/adk-docs/agents/models/litellm/) library for Python.
 

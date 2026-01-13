@@ -9,7 +9,7 @@ translation layer for models and model hosting services, providing a
 standardized, OpenAI-compatible interface to over 100+ LLMs. ADK provides
 integration through the LiteLLM library, allowing you to access a vast range of
 LLMs from providers like OpenAI, Anthropic (non-Vertex AI), Cohere, and many
-others You can run open-source models locally or self-host them and integrate
+others. You can run open-source models locally or self-host them and integrate
 them using LiteLLM for operational control, cost savings, privacy, or offline
 use cases.
 
@@ -89,54 +89,3 @@ agent_claude_direct = LlmAgent(
     # ... other agent parameters
 )
 ```
-
-## Use OpenAI provider
-
-Alternatively, you can use `openai` as the provider name. This approach
-requires setting the `OPENAI_API_BASE=http://localhost:11434/v1` and
-`OPENAI_API_KEY=anything` env variables instead of `OLLAMA_API_BASE`. **Please
-note that api base now has `/v1` at the end.**
-
-```py
-root_agent = Agent(
-    model=LiteLlm(model="openai/mistral-small3.1"),
-    name="dice_agent",
-    description=(
-        "hello world agent that can roll a dice of 8 sides and check prime"
-        " numbers."
-    ),
-    instruction="""
-      You roll dice and answer questions about the outcome of the dice rolls.
-    """,
-    tools=[
-        roll_die,
-        check_prime,
-    ],
-)
-```
-
-```bash
-export OPENAI_API_BASE=http://localhost:11434/v1
-export OPENAI_API_KEY=anything
-adk web
-```
-
-### Debugging
-
-You can see the request sent to the Ollama server by adding the following in
-your agent code just after imports.
-
-```py
-import litellm
-litellm._turn_on_debug()
-```
-
-Look for a line like the following:
-
-```bash
-Request Sent from LiteLLM:
-curl -X POST \
-http://localhost:11434/api/chat \
--d '{'model': 'mistral-small3.1', 'messages': [{'role': 'system', 'content': ...
-```
-
