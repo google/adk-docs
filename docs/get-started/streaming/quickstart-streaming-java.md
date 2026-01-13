@@ -1,4 +1,4 @@
-# Quickstart (Streaming / Java) {#adk-streaming-quickstart-java}
+# Build a streaming agent with Java
 
 This quickstart guide will walk you through the process of creating a basic agent and leveraging ADK Streaming with Java to facilitate low-latency, bidirectional voice interactions.
 
@@ -38,15 +38,15 @@ Let’s see if Maven is happy with this build, by running a compilation (**mvn c
 ```shell
 $ mvn compile
 [INFO] Scanning for projects...
-[INFO] 
+[INFO]
 [INFO] --------------------< adk-agents:adk-agents >--------------------
 [INFO] Building adk-agents 1.0-SNAPSHOT
 [INFO]   from pom.xml
 [INFO] --------------------------------[ jar ]---------------------------------
-[INFO] 
+[INFO]
 [INFO] --- resources:3.3.1:resources (default-resources) @ adk-demo ---
 [INFO] skip non existing resourceDirectory /home/user/adk-demo/src/main/resources
-[INFO] 
+[INFO]
 [INFO] --- compiler:3.13.0:compile (default-compile) @ adk-demo ---
 [INFO] Nothing to compile - all classes are up to date.
 [INFO] ------------------------------------------------------------------------
@@ -74,7 +74,7 @@ public class ScienceTeacherAgent {
 
   // Field expected by the Dev UI to load the agent dynamically
   // (the agent must be initialized at declaration time)
-  public static BaseAgent ROOT_AGENT = initAgent();
+  public static final BaseAgent ROOT_AGENT = initAgent();
 
   public static BaseAgent initAgent() {
     return LlmAgent.builder()
@@ -122,7 +122,7 @@ Run the following command from the terminal to launch the Dev UI.
 ```console title="terminal"
 mvn exec:java \
     -Dexec.mainClass="com.google.adk.web.AdkWebServer" \
-    -Dexec.args="--adk.agents.source-dir=src/main/java" \
+    -Dexec.args="--adk.agents.source-dir=." \
     -Dexec.classpathScope="compile"
 ```
 
@@ -135,8 +135,12 @@ the dropdown. Select "science-app".
 !!!note "Troubleshooting"
 
     If you do not see "science-app" in the dropdown menu, make sure you
-    are running the `mvn` command at the location where your Java source code
-    is located (usually `src/main/java`).
+    are running the `mvn` command from the root of your maven project.
+
+!!! warning "Caution: ADK Web for development only"
+
+    ADK Web is ***not meant for use in production deployments***. You should
+    use ADK Web for development and debugging purposes only.
 
 ## Try Dev UI with text
 
@@ -470,6 +474,10 @@ public final class LiveAudioRun {
         if (!isRunning.get()) {
           break;
         }
+
+        AtomicBoolean audioReceived = new AtomicBoolean(false);
+        processEvent(event, audioReceived);
+
         event.content().ifPresent(content -> content.parts().ifPresent(parts -> parts.forEach(part -> playAudioData(part, finalSpeakerLine))));
       }
 

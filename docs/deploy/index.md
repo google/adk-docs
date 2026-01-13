@@ -14,11 +14,11 @@ on your needs for production readiness or custom flexibility:
 
 ### Agent Engine in Vertex AI
 
-[Agent Engine](agent-engine.md) is a fully managed auto-scaling service on Google Cloud
+[Agent Engine](agent-engine/index.md) is a fully managed auto-scaling service on Google Cloud
 specifically designed for deploying, managing, and scaling AI agents built with
 frameworks such as ADK.
 
-Learn more about [deploying your agent to Vertex AI Agent Engine](agent-engine.md).
+Learn more about [deploying your agent to Vertex AI Agent Engine](agent-engine/index.md).
 
 ### Cloud Run
 
@@ -36,3 +36,15 @@ environment. GKE is a good option if you need more control over the deployment a
 for running Open Models.
 
 Learn more about [deploying your agent to GKE](gke.md).
+
+### Other Container-friendly Infrastructure
+
+You can manually package your Agent into a container image and then run it in
+any environment that supports container images.  For example you can run it
+locally in Docker or Podman. This is a good option if you prefer to run offline
+or disconnected, or otherwise in a system that has no connection to Google
+Cloud.
+
+Follow the instructions for [deploying your agent to Cloud Run](cloud-run.md#deployment-commands).
+In the "Deployment Commands" section for gcloud CLI, you will find an example FastAPI entry point and 
+Dockerfile.

@@ -1,5 +1,9 @@
 # Session: Tracking Individual Conversations
 
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+</div>
+
 Following our Introduction, let's dive into the `Session`. Think back to the
 idea of a "conversation thread." Just like you wouldn't start every text message
 from scratch, agents need context regarding the ongoing interaction.
@@ -16,7 +20,7 @@ are its key properties:
 *   **Identification (`id`, `appName`, `userId`):** Unique labels for the
     conversation.
     * `id`: A unique identifier for *this specific* conversation thread, essential for retrieving it later. A SessionService object can handle multiple `Session`(s). This field identifies which particular session object are we referring to. For example, "test_id_modification".
-    * `app_name`: Identifies which agent application this conversation belongs to. For example, "id_modifier_workflow". 
+    * `app_name`: Identifies which agent application this conversation belongs to. For example, "id_modifier_workflow".
     *   `userId`: Links the conversation to a particular user.
 *   **History (`events`):** A chronological sequence of all interactions
     (`Event` objects – user messages, agent responses, tool actions) that have
@@ -35,7 +39,7 @@ are its key properties:
 
        ```py
         from google.adk.sessions import InMemorySessionService, Session
-    
+
         # Create a simple session to examine its properties
         temp_service = InMemorySessionService()
         example_session = await temp_service.create_session(
@@ -59,6 +63,43 @@ are its key properties:
         print("The final status of temp_service - ", temp_service)
        ```
 
+=== "TypeScript"
+
+       ```typescript
+        import { InMemorySessionService } from "@google/adk";
+
+        // Create a simple session to examine its properties
+        const tempService = new InMemorySessionService();
+        const exampleSession = await tempService.createSession({
+            appName: "my_app",
+            userId: "example_user",
+            state: {"initial_key": "initial_value"} // State can be initialized
+        });
+
+        console.log("--- Examining Session Properties ---");
+        console.log(`ID ('id'):                ${exampleSession.id}`);
+        console.log(`Application Name ('appName'): ${exampleSession.appName}`);
+        console.log(`User ID ('userId'):         ${exampleSession.userId}`);
+        console.log(`State ('state'):           ${JSON.stringify(exampleSession.state)}`); // Note: Only shows initial state here
+        console.log(`Events ('events'):         ${JSON.stringify(exampleSession.events)}`); // Initially empty
+        console.log(`Last Update ('lastUpdateTime'): ${exampleSession.lastUpdateTime}`);
+        console.log("---------------------------------");
+
+        // Clean up (optional for this example)
+        const finalStatus = await tempService.deleteSession({
+            appName: exampleSession.appName,
+            userId: exampleSession.userId,
+            sessionId: exampleSession.id
+        });
+        console.log("The final status of temp_service - ", finalStatus);
+       ```
+
+=== "Go"
+
+       ```go
+       --8<-- "examples/go/snippets/sessions/session_management_example/session_management_example.go:examine_session"
+       ```
+
 === "Java"
 
        ```java
@@ -66,26 +107,26 @@ are its key properties:
         import com.google.adk.sessions.Session;
         import java.util.concurrent.ConcurrentMap;
         import java.util.concurrent.ConcurrentHashMap;
-    
+
         String sessionId = "123";
         String appName = "example-app"; // Example app name
         String userId = "example-user"; // Example user id
         ConcurrentMap<String, Object> initialState = new ConcurrentHashMap<>(Map.of("newKey", "newValue"));
         InMemorySessionService exampleSessionService = new InMemorySessionService();
-    
+
         // Create Session
         Session exampleSession = exampleSessionService.createSession(
             appName, userId, initialState, Optional.of(sessionId)).blockingGet();
         System.out.println("Session created successfully.");
-    
+
         System.out.println("--- Examining Session Properties ---");
         System.out.printf("ID (`id`): %s%n", exampleSession.id());
         System.out.printf("Application Name (`appName`): %s%n", exampleSession.appName());
         System.out.printf("User ID (`userId`): %s%n", exampleSession.userId());
         System.out.printf("State (`state`): %s%n", exampleSession.state());
         System.out.println("------------------------------------");
-    
-    
+
+
         // Clean up (optional for this example)
         var unused = exampleSessionService.deleteSession(appName, userId, sessionId);
        ```
@@ -129,13 +170,28 @@ the storage backend that best suits your needs:
         where long-term persistence isn't required.
 
     === "Python"
-    
+
            ```py
             from google.adk.sessions import InMemorySessionService
             session_service = InMemorySessionService()
            ```
+    === "TypeScript"
+
+           ```typescript
+            import { InMemorySessionService } from "@google/adk";
+            const sessionService = new InMemorySessionService();
+           ```
+
+    === "Go"
+
+           ```go
+            import "google.golang.org/adk/session"
+
+            inMemoryService := session.InMemoryService()
+           ```
+
     === "Java"
-    
+
            ```java
             import com.google.adk.sessions.InMemorySessionService;
             InMemorySessionService exampleSessionService = new InMemorySessionService();
@@ -143,7 +199,11 @@ the storage backend that best suits your needs:
 
 2.  **`VertexAiSessionService`**
 
-    *   **How it works:** Uses Google Cloud's Vertex AI infrastructure via API
+    <div class="language-support-tag">
+      <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+    </div>
+
+    *   **How it works:** Uses Google Cloud Vertex AI infrastructure via API
         calls for session management.
     *   **Persistence:** Yes. Data is managed reliably and scalably via
         [Vertex AI Agent Engine](https://google.github.io/adk-docs/deploy/agent-engine/).
@@ -153,11 +213,12 @@ the storage backend that best suits your needs:
             [step](https://cloud.google.com/vertex-ai/docs/pipelines/configure-project#storage).
         *   A Reasoning Engine resource name/ID that can setup following this
             [tutorial](https://google.github.io/adk-docs/deploy/agent-engine/).
+        *   If you do not have a Google Cloud project and you want to try the VertexAiSessionService for free, see how to [try Session and Memory for free.](express-mode.md)
     *   **Best for:** Scalable production applications deployed on Google Cloud,
         especially when integrating with other Vertex AI features.
 
     === "Python"
-    
+
            ```py
            # Requires: pip install google-adk[vertexai]
            # Plus GCP setup and authentication
@@ -172,9 +233,29 @@ the storage backend that best suits your needs:
            # Use REASONING_ENGINE_APP_NAME when calling service methods, e.g.:
            # session_service = await session_service.create_session(app_name=REASONING_ENGINE_APP_NAME, ...)
            ```
-       
+
+    === "Go"
+
+          ```go
+          import "google.golang.org/adk/session"
+
+          // 2. VertexAIService
+          // Before running, ensure your environment is authenticated:
+          // gcloud auth application-default login
+          // export GOOGLE_CLOUD_PROJECT="your-gcp-project-id"
+          // export GOOGLE_CLOUD_LOCATION="your-gcp-location"
+
+          modelName := "gemini-1.5-flash-001" // Replace with your desired model
+          vertexService, err := session.VertexAIService(ctx, modelName)
+          if err != nil {
+            log.Printf("Could not initialize VertexAIService (this is expected if the gcloud project is not set): %v", err)
+          } else {
+            fmt.Println("Successfully initialized VertexAIService.")
+          }
+          ```
+
     === "Java"
-    
+
            ```java
            // Please look at the set of requirements above, consequently export the following in your bashrc file:
            // export GOOGLE_CLOUD_PROJECT=my_gcp_project
@@ -199,7 +280,9 @@ the storage backend that best suits your needs:
 
 3.  **`DatabaseSessionService`**
 
-    ![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java support is planned/ coming soon."}
+    <div class="language-support-tag">
+      <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span>
+    </div>
 
     *   **How it works:** Connects to a relational database (e.g., PostgreSQL,
         MySQL, SQLite) to store session data persistently in tables.
@@ -211,9 +294,16 @@ the storage backend that best suits your needs:
     ```py
     from google.adk.sessions import DatabaseSessionService
     # Example using a local SQLite file:
-    db_url = "sqlite:///./my_agent_data.db"
+    # Note: The implementation requires an async database driver.
+    # For SQLite, use 'sqlite+aiosqlite' instead of 'sqlite' to ensure async compatibility.
+    db_url = "sqlite+aiosqlite:///./my_agent_data.db"
     session_service = DatabaseSessionService(db_url=db_url)
     ```
+
+    <div class="admonition warning">
+    <p class="admonition-title">Async Driver Requirement</p>
+    <p><code>DatabaseSessionService</code> requires an async database driver. When using SQLite, you must use <code>sqlite+aiosqlite</code> instead of <code>sqlite</code> in your connection string. For other databases (PostgreSQL, MySQL), ensure you're using an async-compatible driver (e.g., <code>asyncpg</code> for PostgreSQL, <code>aiomysql</code> for MySQL).</p>
+    </div>
 
 Choosing the right `SessionService` is key to defining how your agent's
 conversation history and temporary data are stored and persist.
@@ -225,9 +315,8 @@ conversation history and temporary data are stored and persist.
 Here’s a simplified flow of how `Session` and `SessionService` work together
 during a conversation turn:
 
-1.  **Start or Resume:** Your application's `Runner` uses the `SessionService`
-    to either `create_session` (for a new chat) or `get_session` (to retrieve an
-    existing one).
+1.  **Start or Resume:** Your application needs to use the `SessionService` to
+    either `create_session` (for a new chat) or use an existing session id.
 2.  **Context Provided:** The `Runner` gets the appropriate `Session` object
     from the appropriate service method, providing the agent with access to the
     corresponding Session's `state` and `events`.

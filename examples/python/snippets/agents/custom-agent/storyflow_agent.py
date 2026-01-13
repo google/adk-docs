@@ -1,3 +1,17 @@
+# Copyright 2025 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import logging
 from typing import AsyncGenerator
 from typing_extensions import override
@@ -157,8 +171,7 @@ class StoryFlowAgent(BaseAgent):
 story_generator = LlmAgent(
     name="StoryGenerator",
     model=GEMINI_2_FLASH,
-    instruction="""You are a story writer. Write a short story (around 100 words) about a cat,
-based on the topic provided in session state with key 'topic'""",
+    instruction="""You are a story writer. Write a short story (around 100 words), on the following topic: {topic}""",
     input_schema=None,
     output_key="current_story",  # Key for storing output in session state
 )
@@ -166,8 +179,7 @@ based on the topic provided in session state with key 'topic'""",
 critic = LlmAgent(
     name="Critic",
     model=GEMINI_2_FLASH,
-    instruction="""You are a story critic. Review the story provided in
-session state with key 'current_story'. Provide 1-2 sentences of constructive criticism
+    instruction="""You are a story critic. Review the story provided: {{current_story}}. Provide 1-2 sentences of constructive criticism
 on how to improve it. Focus on plot or character.""",
     input_schema=None,
     output_key="criticism",  # Key for storing criticism in session state
@@ -176,9 +188,8 @@ on how to improve it. Focus on plot or character.""",
 reviser = LlmAgent(
     name="Reviser",
     model=GEMINI_2_FLASH,
-    instruction="""You are a story reviser. Revise the story provided in
-session state with key 'current_story', based on the criticism in
-session state with key 'criticism'. Output only the revised story.""",
+    instruction="""You are a story reviser. Revise the story provided: {{current_story}}, based on the criticism in
+{{criticism}}. Output only the revised story.""",
     input_schema=None,
     output_key="current_story",  # Overwrites the original story
 )
@@ -186,8 +197,7 @@ session state with key 'criticism'. Output only the revised story.""",
 grammar_check = LlmAgent(
     name="GrammarCheck",
     model=GEMINI_2_FLASH,
-    instruction="""You are a grammar checker. Check the grammar of the story
-provided in session state with key 'current_story'. Output only the suggested
+    instruction="""You are a grammar checker. Check the grammar of the story provided: {current_story}. Output only the suggested
 corrections as a list, or output 'Grammar is good!' if there are no errors.""",
     input_schema=None,
     output_key="grammar_suggestions",
@@ -196,8 +206,7 @@ corrections as a list, or output 'Grammar is good!' if there are no errors.""",
 tone_check = LlmAgent(
     name="ToneCheck",
     model=GEMINI_2_FLASH,
-    instruction="""You are a tone analyzer. Analyze the tone of the story
-provided in session state with key 'current_story'. Output only one word: 'positive' if
+    instruction="""You are a tone analyzer. Analyze the tone of the story provided: {current_story}. Output only one word: 'positive' if
 the tone is generally positive, 'negative' if the tone is generally negative, or 'neutral'
 otherwise.""",
     input_schema=None,
@@ -216,44 +225,38 @@ story_flow_agent = StoryFlowAgent(
     tone_check=tone_check,
 )
 
-# --- Setup Runner and Session ---
-session_service = InMemorySessionService()
-initial_state = {"topic": "a brave kitten exploring a haunted house"}
-session = session_service.create_session(
-    app_name=APP_NAME,
-    user_id=USER_ID,
-    session_id=SESSION_ID,
-    state=initial_state # Pass initial state here
-)
-logger.info(f"Initial session state: {session.state}")
+INITIAL_STATE = {"topic": "a brave kitten exploring a haunted house"}
 
-runner = Runner(
-    agent=story_flow_agent, # Pass the custom orchestrator agent
-    app_name=APP_NAME,
-    session_service=session_service
-)
+# --- Setup Runner and Session ---
+async def setup_session_and_runner():
+    session_service = InMemorySessionService()
+    session = await session_service.create_session(app_name=APP_NAME, user_id=USER_ID, session_id=SESSION_ID, state=INITIAL_STATE)
+    logger.info(f"Initial session state: {session.state}")
+    runner = Runner(
+        agent=story_flow_agent, # Pass the custom orchestrator agent
+        app_name=APP_NAME,
+        session_service=session_service
+    )
+    return session_service, runner
 
 # --- Function to Interact with the Agent ---
-def call_agent(user_input_topic: str):
+async def call_agent_async(user_input_topic: str):
     """
     Sends a new topic to the agent (overwriting the initial one if needed)
     and runs the workflow.
     """
-    current_session = session_service.get_session(app_name=APP_NAME, 
-                                                  user_id=USER_ID, 
-                                                  session_id=SESSION_ID)
-    if not current_session:
-        logger.error("Session not found!")
-        return
 
+    session_service, runner = await setup_session_and_runner()
+
+    current_session = session_service.sessions[APP_NAME][USER_ID][SESSION_ID]
     current_session.state["topic"] = user_input_topic
     logger.info(f"Updated session state topic to: {user_input_topic}")
 
-    content = types.Content(role='user', parts=[types.Part(text=f"Generate a story about: {user_input_topic}")])
-    events = runner.run(user_id=USER_ID, session_id=SESSION_ID, new_message=content)
+    content = types.Content(role='user', parts=[types.Part(text=f"Generate a story about the preset topic.")])
+    events = runner.run_async(user_id=USER_ID, session_id=SESSION_ID, new_message=content)
 
     final_response = "No final response captured."
-    for event in events:
+    async for event in events:
         if event.is_final_response() and event.content and event.content.parts:
             logger.info(f"Potential final response from [{event.author}]: {event.content.parts[0].text}")
             final_response = event.content.parts[0].text
@@ -261,7 +264,7 @@ def call_agent(user_input_topic: str):
     print("\n--- Agent Interaction Result ---")
     print("Agent Final Response: ", final_response)
 
-    final_session = session_service.get_session(app_name=APP_NAME, 
+    final_session = await session_service.get_session(app_name=APP_NAME, 
                                                 user_id=USER_ID, 
                                                 session_id=SESSION_ID)
     print("Final Session State:")
@@ -270,5 +273,7 @@ def call_agent(user_input_topic: str):
     print("-------------------------------\n")
 
 # --- Run the Agent ---
-call_agent("a lonely robot finding a friend in a junkyard")
+# Note: In Colab, you can directly use 'await' at the top level.
+# If running this code as a standalone Python script, you'll need to use asyncio.run() or manage the event loop.
+await call_agent_async("a lonely robot finding a friend in a junkyard")
 # --8<-- [end:story_flow_agent]

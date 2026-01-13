@@ -1,6 +1,8 @@
 # Why Evaluate Agents
 
-![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java support is planned/ coming soon."}
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
+</div>
 
 In traditional software development, unit tests and integration tests provide confidence that code functions as expected and remains stable through changes. These tests provide a clear "pass/fail" signal, guiding further development. However, LLM agents introduce a level of variability that makes traditional testing approaches insufficient.
 
@@ -35,22 +37,13 @@ Before responding to a user, an agent typically performs a series of actions, wh
 
 For example:
 
-```py
-// Trajectory evaluation will compare
+```python
+# Trajectory evaluation will compare
 expected_steps = ["determine_intent", "use_tool", "review_results", "report_generation"]
 actual_steps = ["determine_intent", "use_tool", "review_results", "report_generation"]
 ```
 
-Several ground-truth-based trajectory evaluations exist:
-
-1. **Exact match:** Requires a perfect match to the ideal trajectory.  
-2. **In-order match:** Requires the correct actions in the correct order, allows for extra actions.  
-3. **Any-order match:** Requires the correct actions in any order, allows for extra actions.  
-4. **Precision:** Measures the relevance/correctness of predicted actions.  
-5. **Recall:** Measures how many essential actions are captured in the prediction.  
-6. **Single-tool use:** Checks for the inclusion of a specific action.
-
-Choosing the right evaluation metric depends on the specific requirements and goals of your agent. For instance, in high-stakes scenarios, an exact match might be crucial, while in more flexible situations, an in-order or any-order match might suffice.
+ADK provides both groundtruth based and rubric based tool use evaluation metrics. To select the appropriate metric for your agent's specific requirements and goals, please refer to our [recommendations](#recommendations-on-criteria).
 
 ## How Evaluation works with the ADK
 
@@ -72,12 +65,12 @@ This approach involves creating individual test files, each representing a singl
     through the right path to generate final response.
 -   `Final Response`: The expected final response from the agent.
 
-You can give the file any name for example `evaluation.test.json`.The framework only checks for the `.test.json` suffix, and the preceding part of the filename is not constrained. Here is a test file with a few examples:
-
-NOTE: The test files are now backed by a formal Pydantic data model. The two key
-schema files are
+You can give the file any name for example `evaluation.test.json`.The framework only checks for the `.test.json` suffix, and the preceding part of the filename is not constrained. The test files are backed by a formal Pydantic data model. The two key schema files are
 [Eval Set](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py) and
-[Eval Case](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_case.py)
+[Eval Case](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_case.py).
+Here is a test file with a few examples:
+
+*(Note: Comments are included for explanatory purposes and should be removed for the JSON to be valid.)*
 
 ```json
 # Do note that some fields are removed for sake of making this doc readable.
@@ -139,7 +132,7 @@ Test files can be organized into folders. Optionally, a folder can also include 
 NOTE: If your test files don't adhere to [EvalSet](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py) schema file, then this section is relevant to you.
 
 Please use `AgentEvaluator.migrate_eval_data_to_new_schema` to migrate your
-existing `*.test.json` files to the Pydanctic backed schema.
+existing `*.test.json` files to the Pydantic backed schema.
 
 The utility takes your current test data file and an optional initial session
 file, and generates a single output json file with data serialized in the new
@@ -150,14 +143,17 @@ and initial session file can be ignored (or removed.)
 
 The evalset approach utilizes a dedicated dataset called an "evalset" for evaluating agent-model interactions. Similar to a test file, the evalset contains example interactions. However, an evalset can contain multiple, potentially lengthy sessions, making it ideal for simulating complex, multi-turn conversations. Due to its ability to represent complex sessions, the evalset is well-suited for integration tests. These tests are typically run less frequently than unit tests due to their more extensive nature.
 
-An evalset file contains multiple "evals," each representing a distinct session. Each eval consists of one or more "turns," which include the user query, expected tool use, expected intermediate agent responses, and a reference response. These fields have the same meaning as they do in the test file approach. Each eval is identified by a unique name. Furthermore, each eval includes an associated initial session state.
+An evalset file contains multiple "evals," each representing a distinct session. Each eval consists of one or more "turns," which include the user query, expected tool use, expected intermediate agent responses, and a reference response. These fields have the same meaning as they do in the test file approach. Alternatively, an eval can define a *conversation scenario* which is used to [dynamically simulate](./user-sim.md) a user interaction with the agent. Each eval is identified by a unique name. Furthermore, each eval includes an associated initial session state.
 
-Creating evalsets manually can be complex, therefore UI tools are provided to help capture relevant sessions and easily convert them into evals within your evalset. Learn more about using the web UI for evaluation below. Here is an example evalset containing two sessions.
-
-NOTE: The eval set files are now backed by a formal Pydantic data model. The two key
-schema files are
+Creating evalsets manually can be complex, therefore UI tools are provided to help capture relevant sessions and easily convert them into evals within your evalset. Learn more about using the web UI for evaluation below. Here is an example evalset containing two sessions. The eval set files are  backed by a formal Pydantic data model. The two key schema files are
 [Eval Set](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py) and
-[Eval Case](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_case.py)
+[Eval Case](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_case.py).
+
+!!! warning
+    This evalset evaluation method requires the use of a paid service,
+    [Vertex Gen AI Evaluation Service API](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/evaluation).
+
+*(Note: Comments are included for explanatory purposes and should be removed for the JSON to be valid.)*
 
 ```json
 # Do note that some fields are removed for sake of making this doc readable.
@@ -239,7 +235,7 @@ schema files are
           "final_response": {
             "parts": [
               {
-                "text": I got 4 and 7 form the dice roll, and 9 is not a prime number.\n"
+                "text": "I got 4 and 7 from the dice roll, and 9 is not a prime number.\n"
               }
             ],
             "role": null
@@ -302,16 +298,30 @@ Based on who is maintaining the eval set data, there are two routes:
 1.  **Eval set data maintained by ADK UI** If you use ADK UI to maintain your
     Eval set data then *no action is needed* from you.
 
-2.  **Eval set data is developed and maintained manually and used in ADK eval Cli** A
-    migration tool is in the works, until then the ADK eval cli command will
+2.  **Eval set data is developed and maintained manually and used in ADK eval CLI** A
+    migration tool is in the works, until then the ADK eval CLI command will
     continue to support data in the old format.
 
 ### Evaluation Criteria
 
-The evaluation criteria define how the agent's performance is measured against the evalset. The following metrics are supported:
+ADK provides several built-in criteria for evaluating agent performance, ranging
+from tool trajectory matching to LLM-based response quality assessment. For a
+detailed list of available criteria and guidance on when to use them, please see
+[Evaluation Criteria](./criteria.md).
 
-* `tool_trajectory_avg_score`: This metric compares the agent's actual tool usage during the evaluation against the expected tool usage defined in the `expected_tool_use` field. Each matching tool usage step receives a score of 1, while a mismatch receives a score of 0\. The final score is the average of these matches, representing the accuracy of the tool usage trajectory.  
-* `response_match_score`: This metric compares the agent's final natural language response to the expected final response, stored in the `reference` field. We use the [ROUGE](https://en.wikipedia.org/wiki/ROUGE_\(metric\)) metric to calculate the similarity between the two responses.
+Here is a summary of all the available criteria:
+
+*   **tool_trajectory_avg_score**: Exact match of tool call trajectory.
+*   **response_match_score**: ROUGE-1 similarity to reference response.
+*   **final_response_match_v2**: LLM-judged semantic match to a reference
+    response.
+*   **rubric_based_final_response_quality_v1**: LLM-judged final response
+    quality based on custom rubrics.
+*   **rubric_based_tool_use_quality_v1**: LLM-judged tool usage quality based on
+    custom rubrics.
+*   **hallucinations_v1**: LLM-judged groundedness of agent response against
+    context.
+*   **safety_v1**: Safety/harmlessness of agent response.
 
 If no evaluation criteria are provided, the following default configuration is used:
 
@@ -329,6 +339,49 @@ Here is an example of a `test_config.json` file specifying custom evaluation cri
 }
 ```
 
+#### Recommendations on Criteria
+
+Choose criteria based on your evaluation goals:
+
+*   **Enable tests in CI/CD pipelines or regression testing:** Use
+    `tool_trajectory_avg_score` and `response_match_score`. These criteria are
+    fast, predictable, and suitable for frequent automated checks.
+*   **Evaluate trusted reference responses:** Use `final_response_match_v2` to
+    evaluate semantic equivalence. This LLM-based check is more flexible than
+    exact matching and better captures whether the agent's response means the
+    same thing as the reference response.
+*   **Evaluate response quality without a reference response:** Use
+    `rubric_based_final_response_quality_v1`. This is useful when you don't have
+    a trusted reference, but you can define attributes of a good response (e.g.,
+    "The response is concise," "The response has a helpful tone").
+*   **Evaluate the correctness of tool usage:** Use
+    `rubric_based_tool_use_quality_v1`. This allows you to validate the agent's
+    reasoning process by checking, for example, that a specific tool was called
+    or that tools were called in the correct order (e.g., "Tool A must be called
+    before Tool B").
+*   **Check if responses are grounded in context:** Use `hallucinations_v1` to
+    detect if the agent makes claims that are unsupported by or contradictory to
+    the information available to it (e.g., tool outputs).
+*   **Check for harmful content:** Use `safety_v1` to ensure that agent
+    responses are safe and do not violate safety policies.
+
+In addition, criteria which require information on expected agent tool use
+and/or responses are not supported in combination with
+[User Simulation](./user-sim.md).
+Currently, only the `hallucinations_v1` and `safety_v1` criteria support such evals.
+
+### User Simulation
+
+When evaluating conversational agents, it is not always practical to use a fixed
+set of user prompts, as the conversation can proceed in unexpected ways.
+For example, if the agent needs the user to supply two values to perform a task,
+it may ask for those values one at a time or both at once.
+To resolve this issue, ADK allows you test the behavior of the agent in a
+specific *conversation scenario* with user prompts that are dynamically
+generated by an AI model.
+For details on how to set up an eval with user simulation, see
+[User Simulation](./user-sim.md).
+
 ## How to run Evaluation with the ADK
 
 As a developer, you can evaluate your agents using the ADK in the following ways:
@@ -339,19 +392,62 @@ As a developer, you can evaluate your agents using the ADK in the following ways
 
 ### 1\. `adk web` \- Run Evaluations via the Web UI
 
-The web UI provides an interactive way to evaluate agents and generate evaluation datasets.
+The web UI provides an interactive way to evaluate agents, generate evaluation datasets, and inspect agent behavior in detail.
 
-Steps to run evaluation via the web ui:
+#### Step 1: Create and Save a Test Case
 
-1. Start the web server by running: `bash adk web samples_for_testing`  
-2. In the web interface:  
-    * Select an agent (e.g., `hello_world`).  
-    * Interact with the agent to create a session that you want to save as a test case.  
-    * Click the **“Eval tab”** on the right side of the interface.  
-    * If you already have an existing eval set, select that or create a new one by clicking on **"Create new eval set"** button. Give your eval set a contextual name. Select the newly created evaluation set.  
-    * Click **"Add current session"** to save the current session as an eval in the eval set file. You will be asked to provide a name for this eval, again give it a contextual name.  
-    * Once created, the newly created eval will show up in the list of available evals in the eval set file. You can run all or select specific ones to run the eval.  
-    * The status of each eval will be shown in the UI.
+1. Start the web server by running: `adk web <path_to_your_agents_folder>`
+2. In the web interface, select an agent and interact with it to create a session.
+3. Navigate to the **Eval** tab on the right side of the interface.
+4. Create a new eval set or select an existing one.
+5. Click **"Add current session"** to save the conversation as a new evaluation case.
+
+#### Step 2: View and Edit Your Test Case
+
+Once a case is saved, you can click its ID in the list to inspect it. To make changes, click the **Edit current eval case** icon (pencil). This interactive view allows you to:
+
+* **Modify** agent text responses to refine test scenarios.
+* **Delete** individual agent messages from the conversation.
+* **Delete** the entire evaluation case if it's no longer needed.
+
+![adk-eval-case.gif](../assets/adk-eval-case.gif)
+
+#### Step 3: Run the Evaluation with Custom Metrics
+
+1. Select one or more test cases from your evalset.
+2. Click **Run Evaluation**. An **EVALUATION METRIC** dialog will appear.
+3. In the dialog, use the sliders to configure the thresholds for:
+    * **Tool trajectory avg score**
+    * **Response match score**
+4. Click **Start** to run the evaluation using your custom criteria. The evaluation history will record the metrics used for each run.
+
+![adk-eval-config.gif](../assets/adk-eval-config.gif)
+
+#### Step 4: Analyze Results
+
+After the run completes, you can analyze the results:
+
+* **Analyze Run Failures**: Click on any **Pass** or **Fail** result. For failures, you can hover over the `Fail` label to see a side-by-side comparison of the **Actual vs. Expected Output** and the scores that caused the failure.
+
+### Debugging with the Trace View
+
+The ADK web UI includes a powerful **Trace** tab for debugging agent behavior. This feature is available for any agent session, not just during evaluation.
+
+The **Trace** tab provides a detailed and interactive way to inspect your agent's execution flow. Traces are automatically grouped by user message, making it easy to follow the chain of events.
+
+Each trace row is interactive:
+
+* **Hovering** over a trace row highlights the corresponding message in the chat window.
+* **Clicking** on a trace row opens a detailed inspection panel with four tabs:
+    * **Event**: The raw event data.
+    * **Request**: The request sent to the model.
+    * **Response**: The response received from the model.
+    * **Graph**: A visual representation of the tool calls and agent logic flow.
+
+![adk-trace1.gif](../assets/adk-trace1.gif)
+![adk-trace2.gif](../assets/adk-trace2.gif)
+
+Blue rows in the trace view indicate that an event was generated from that interaction. Clicking on these blue rows will open the bottom event detail panel, providing deeper insights into the agent's execution flow.
 
 ### 2\.  `pytest` \- Run Tests Programmatically
 
@@ -382,8 +478,7 @@ async def test_with_single_test_file():
 
 This approach allows you to integrate agent evaluations into your CI/CD pipelines or larger test suites. If you want to specify the initial session state for your tests, you can do that by storing the session details in a file and passing that to `AgentEvaluator.evaluate` method.
 
-
-### 3\. `adk eval` \- Run Evaluations via the cli
+### 3\. `adk eval` \- Run Evaluations via the CLI
 
 You can also run evaluation of an eval set file through the command line interface (CLI). This runs the same evaluation that runs on the UI, but it helps with automation, i.e. you can add this command as a part of your regular build generation and verification process.
 

@@ -1,9 +1,10 @@
 # Sequential agents
 
-## The `SequentialAgent`
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.2.0</span>
+</div>
 
 The `SequentialAgent` is a [workflow agent](index.md) that executes its sub-agents in the order they are specified in the list.
-
 Use the `SequentialAgent` when you want the execution to occur in a fixed, strict order.
 
 ### Example
@@ -37,6 +38,9 @@ SequentialAgent(sub_agents=[CodeWriterAgent, CodeReviewerAgent, CodeRefactorerAg
 
 This ensures the code is written, *then* reviewed, and *finally* refactored, in a strict, dependable order. **The output from each sub-agent is passed to the next by storing them in state via [Output Key](../llm-agents.md#structuring-data-input_schema-output_schema-output_key)**.
 
+!!! note "Shared Invocation Context"
+    The `SequentialAgent` passes the same `InvocationContext` to each of its sub-agents. This means they all share the same session state, including the temporary (`temp:`) namespace, making it easy to pass data between steps within a single turn.
+
 ???+ "Code"
 
     === "Python"
@@ -44,9 +48,17 @@ This ensures the code is written, *then* reviewed, and *finally* refactored, in 
         --8<-- "examples/python/snippets/agents/workflow-agents/sequential_agent_code_development_agent.py:init"
         ```
 
+    === "Typescript"
+        ```typescript
+        --8<-- "examples/typescript/snippets/agents/workflow-agents/sequential_agent_code_development_agent.ts:init"
+        ```
+
+    === "Go"
+        ```go
+        --8<-- "examples/go/snippets/agents/workflow-agents/sequential/main.go:init"
+        ```
+
     === "Java"
         ```java
         --8<-- "examples/java/snippets/src/main/java/agents/workflow/SequentialAgentExample.java:init"
         ```
-
-    

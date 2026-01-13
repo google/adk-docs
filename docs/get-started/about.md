@@ -88,8 +88,7 @@ agentic applications:
    generated reports during their execution.
 9. **Extensibility and Interoperability:** ADK promotes an open
    ecosystem. While providing core tools, it allows developers to easily
-   integrate and reuse tools from other popular agent frameworks including
-   LangChain and CrewAI.
+   integrate and reuse third-party tools and data connectors.
 10. **State and Memory Management:** Automatically handles short-term
     conversational memory (`State` within a `Session`) managed by the
     `SessionService`. Provides integration points for longer-term `Memory`

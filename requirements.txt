@@ -1,2 +1,4 @@
-mkdocs-material==9.6.12
+mkdocs-material==9.7.0
 mkdocs-redirects==1.2.2
+mkdocs-linkcheck==1.0.6
+mkdocs-llmstxt==0.5.0
