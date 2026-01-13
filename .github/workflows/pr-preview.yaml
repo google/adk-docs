@@ -23,12 +23,19 @@ jobs:
         
       - name: Build MkDocs
         run: mkdocs build
+
+      # - name: Inject NoIndex Meta Tag
+      #   run: |
+      #     find site -name "*.html" -exec sed -i 's/<head>/<head><meta name="robots" content="noindex, nofollow" \/>/g' {} +
         
       - name: Deploy PR Preview
         uses: rossjrw/pr-preview-action@v1
         with:
           source-dir: ./site
+          repository: Sita04/test-docs-preview
+          token: ${{ secrets.PREVIEW_REPO_TOKEN }}
           umbrella-dir: pr-preview
+          action: deploy
   cleanup:
     runs-on: ubuntu-latest
     if: |
@@ -40,5 +47,7 @@ jobs:
         uses: rossjrw/pr-preview-action@v1
         with:
           source-dir: ./site
+          repository: Sita04/test-docs-preview
+          token: ${{ secrets.PREVIEW_REPO_TOKEN }}
           umbrella-dir: pr-preview
           action: remove
