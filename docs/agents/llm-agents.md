@@ -41,16 +41,16 @@ First, you need to establish what the agent *is* and what it's *for*.
   inquiries about current billing statements," not just "Billing agent").
 
 * **`model` (Required):** Specify the underlying LLM that will power this
-  agent's reasoning. This is a string identifier like `"gemini-2.0-flash"`. The
+  agent's reasoning. This is a string identifier like `"gemini-2.5-flash"`. The
   choice of model impacts the agent's capabilities, cost, and performance. See
-  the [Models](models.md) page for available options and considerations.
+  the [Models](/adk-docs/agents/models/) page for available options and considerations.
 
 === "Python"
 
     ```python
     # Example: Defining the basic identity
     capital_agent = LlmAgent(
-        model="gemini-2.0-flash",
+        model="gemini-2.5-flash",
         name="capital_agent",
         description="Answers user questions about the capital city of a given country."
         # instruction and tools will be added next
@@ -81,7 +81,7 @@ First, you need to establish what the agent *is* and what it's *for*.
     // Example: Defining the basic identity
     LlmAgent capitalAgent =
         LlmAgent.builder()
-            .model("gemini-2.0-flash")
+            .model("gemini-2.5-flash")
             .name("capital_agent")
             .description("Answers user questions about the capital city of a given country.")
             // instruction and tools will be added next
@@ -119,7 +119,7 @@ tells the agent:
     ```python
     # Example: Adding instructions
     capital_agent = LlmAgent(
-        model="gemini-2.0-flash",
+        model="gemini-2.5-flash",
         name="capital_agent",
         description="Answers user questions about the capital city of a given country.",
         instruction="""You are an agent that provides the capital city of a country.
@@ -166,7 +166,7 @@ tells the agent:
     // Example: Adding instructions
     LlmAgent capitalAgent =
         LlmAgent.builder()
-            .model("gemini-2.0-flash")
+            .model("gemini-2.5-flash")
             .name("capital_agent")
             .description("Answers user questions about the capital city of a given country.")
             .instruction(
@@ -214,7 +214,7 @@ on the conversation and its instructions.
 
     # Add the tool to the agent
     capital_agent = LlmAgent(
-        model="gemini-2.0-flash",
+        model="gemini-2.5-flash",
         name="capital_agent",
         description="Answers user questions about the capital city of a given country.",
         instruction="""You are an agent that provides the capital city of a country... (previous instruction text)""",
@@ -294,7 +294,7 @@ on the conversation and its instructions.
     FunctionTool capitalTool = FunctionTool.create(experiment.getClass(), "getCapitalCity");
     LlmAgent capitalAgent =
         LlmAgent.builder()
-            .model("gemini-2.0-flash")
+            .model("gemini-2.5-flash")
             .name("capital_agent")
             .description("Answers user questions about the capital city of a given country.")
             .instruction("You are an agent that provides the capital city of a country... (previous instruction text)")
@@ -552,7 +552,7 @@ Control whether the agent receives the prior conversation history.
     from google.adk.planners import PlanReActPlanner
 
     my_agent = Agent(
-        model="gemini-2.0-flash",
+        model="gemini-2.5-flash",
         planner=PlanReActPlanner(),
         # ... your tools here
     )

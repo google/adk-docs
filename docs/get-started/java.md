@@ -109,7 +109,7 @@ An ADK agent project requires this dependency in your
 ```
 
 Update the `pom.xml` project file to include this dependency and
-addtional settings with the following configuration code:
+additional settings with the following configuration code:
 
 ??? info "Complete `pom.xml` configuration for project"
     The following code shows a complete `pom.xml` configuration for
