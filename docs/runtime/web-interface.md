@@ -4,13 +4,19 @@
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
-The `adk web` command launches a FastAPI server with a built-in web interface
-for testing your agents in the browser. This is the easiest way to interactively
-develop and debug your agents.
+The ADK web interface lets you test your agents directly in the browser. This
+tool provides a simple way to interactively develop and debug your agents.
 
 ![ADK Web Interface](../assets/adk-web-dev-ui-chat.png)
 
-## Starting the Web Interface
+!!! warning "Caution: ADK Web for development only"
+
+    ADK Web is ***not meant for use in production deployments***. You should
+    use ADK Web for development and debugging purposes only.
+
+## Start the web interface
+
+Use the following command to run your agent in the ADK web interface:
 
 === "Python"
 
@@ -67,7 +73,7 @@ develop and debug your agents.
 
     In Java, the Web Interface and the API server are bundled together.
 
-The server will start on `http://localhost:8000` by default:
+The server starts on `http://localhost:8000` by default:
 
 ```shell
 +-----------------------------------------------------------------------------+
@@ -79,7 +85,7 @@ The server will start on `http://localhost:8000` by default:
 
 ## Features
 
-The Web Interface provides an interactive interface for:
+Key features of the ADK web interface include:
 
 - **Chat interface**: Send messages to your agents and view responses in real-time
 - **Session management**: Create and switch between sessions
@@ -101,8 +107,3 @@ The Web Interface provides an interactive interface for:
 ```shell
 adk web --port 3000 --session_service_uri "sqlite:///sessions.db"
 ```
-
-!!! warning "Caution: ADK Web for development only"
-
-    ADK Web is ***not meant for use in production deployments***. You should
-    use ADK Web for development and debugging purposes only.

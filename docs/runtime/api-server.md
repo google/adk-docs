@@ -10,9 +10,13 @@ programmatic testing and integration.
 
 ![ADK API Server](../assets/adk-api-server.png)
 
+## Start the API server
+
+Use the following command to run your agent in an ADK API server:
+
 === "Python"
 
-    ```py
+    ```shell
     adk api_server
     ```
 
@@ -24,7 +28,7 @@ programmatic testing and integration.
 
 === "Go"
 
-    ```go
+    ```shell
     go run agent.go web api
     ```
 
@@ -65,15 +69,17 @@ programmatic testing and integration.
 
     In Java, both the Dev UI and the API server are bundled together.
 
-This command will launch a local web server, where you can run cURL commands or send API requests to test your agent.
+This command will launch a local web server, where you can run cURL commands or
+send API requests to test your agent. By default, the server runs on
+`http://localhost:8000`.
 
 !!! tip "Advanced Usage and Debugging"
 
     For a complete reference on all available endpoints, request/response formats, and tips for debugging (including how to use the interactive API documentation), see the **ADK API Server Guide** below.
 
-## Local testing
+## Test locally
 
-Local testing involves launching a local web server, creating a session, and
+Testing locally involves launching a local web server, creating a session, and
 sending queries to your agent. First, ensure you are in the correct working
 directory.
 
@@ -116,7 +122,6 @@ The output should appear similar to:
     2025-05-13T23:32:08.972-06:00  INFO 37864 --- [ebServer.main()] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
     2025-05-13T23:32:08.980-06:00  INFO 37864 --- [ebServer.main()] com.google.adk.web.AdkWebServer          : Started AdkWebServer in 1.15 seconds (process running for 2.877)
     2025-05-13T23:32:08.981-06:00  INFO 37864 --- [ebServer.main()] com.google.adk.web.AdkWebServer          : AdkWebServer application started successfully.
-    ```
     ```
 
 Your server is now running locally. Ensure you use the correct **_port number_** in all the subsequent commands.
@@ -189,7 +194,7 @@ curl -X POST http://localhost:8000/run \
 }'
 ```
 
-In TypeScript, currently only `cameCase` field names are supported (e.g. `appName`, `userId`, `sessionId`, etc.), with `snake_case` support coming soon.
+In TypeScript, currently only `camelCase` field names are supported (e.g. `appName`, `userId`, `sessionId`, etc.).
 
 If using `/run`, you will see the full output of events at the same time, as a
 list, which should appear similar to:
@@ -233,8 +238,8 @@ data: {"content":{"parts":[{"text":"OK. The weather in New York is sunny with a 
 
 ```shell
 curl -X POST http://localhost:8000/run \
---H 'Content-Type: application/json' \
---d '{
+-H 'Content-Type: application/json' \
+-d '{
    "appName":"my_sample_agent",
    "userId":"u_123",
    "sessionId":"s_123",
@@ -273,37 +278,18 @@ issues, and evaluating performance.
   observability and evaluation platform that
   [natively supports ADK](https://www.comet.com/docs/opik/tracing/integrations/adk).
 
-## Deploying your agent
+## Deploy your agent
 
 Now that you've verified the local operation of your agent, you're ready to move
 on to deploying your agent! Here are some ways you can deploy your agent:
 
-* Deploy to [Agent Engine](../deploy/agent-engine/index.md), the easiest way to deploy
+* Deploy to [Agent Engine](../deploy/agent-engine/index.md), a simple way to deploy
   your ADK agents to a managed service in Vertex AI on Google Cloud.
 * Deploy to [Cloud Run](../deploy/cloud-run.md) and have full control over how
   you scale and manage your agents using serverless architecture on Google
   Cloud.
 
-
-## The ADK API Server
-
-The ADK API Server is a pre-packaged [FastAPI](https://fastapi.tiangolo.com/) web server that exposes your agents through a RESTful API. It is the primary tool for local testing and development, allowing you to interact with your agents programmatically before deploying them.
-
-## Running the Server
-
-To start the server, run the following command from your project's root directory:
-
-```shell
-adk api_server
-```
-
-By default, the server runs on `http://localhost:8000`. You will see output confirming that the server has started:
-
-```shell
-INFO:     Uvicorn running on http://localhost:8000 (Press CTRL+C to quit)
-```
-
-## Debugging with Interactive API Docs
+## Interactive API docs
 
 The API server automatically generates interactive API documentation using Swagger UI. This is an invaluable tool for exploring endpoints, understanding request formats, and testing your agent directly from your browser.
 
@@ -311,18 +297,16 @@ To access the interactive docs, start the API server and navigate to [http://loc
 
 You will see a complete, interactive list of all available API endpoints, which you can expand to see detailed information about parameters, request bodies, and response schemas. You can even click "Try it out" to send live requests to your running agents.
 
-In TypeScript, interactive API documentation support is coming soon.
-
-## API Endpoints
+## API endpoints
 
 The following sections detail the primary endpoints for interacting with your agents.
 
 !!! note "JSON Naming Convention"
     - **Both Request and Response bodies** will use `camelCase` for field names (e.g., `"appName"`).
 
-### Utility Endpoints
+### Utility endpoints
 
-#### List Available Agents
+#### List available agents
 
 Returns a list of all agent applications discovered by the server.
 
@@ -341,11 +325,11 @@ curl -X GET http://localhost:8000/list-apps
 
 ---
 
-### Session Management
+### Session management
 
 Sessions store the state and event history for a specific user's interaction with an agent.
 
-#### Update a Session
+#### Update a session
 
 Updates an existing session.
 
@@ -374,7 +358,7 @@ curl -X PATCH http://localhost:8000/apps/my_sample_agent/users/u_123/sessions/s_
 {"id":"s_abc","appName":"my_sample_agent","userId":"u_123","state":{"visit_count":5},"events":[],"lastUpdateTime":1743711430.022186}
 ```
 
-#### Get a Session
+#### Get a session
 
 Retrieves the details of a specific session, including its current state and all associated events.
 
@@ -391,7 +375,7 @@ curl -X GET http://localhost:8000/apps/my_sample_agent/users/u_123/sessions/s_ab
 {"id":"s_abc","appName":"my_sample_agent","userId":"u_123","state":{"visit_count":5},"events":[...],"lastUpdateTime":1743711430.022186}
 ```
 
-#### Delete a Session
+#### Delete a session
 
 Deletes a session and all of its associated data.
 
@@ -408,11 +392,11 @@ A successful deletion returns an empty response with a `204 No Content` status c
 
 ---
 
-### Agent Execution
+### Agent execution
 
 These endpoints are used to send a new message to an agent and get a response.
 
-#### Run Agent (Single Response)
+#### Run agent (single response)
 
 Executes the agent and returns all generated events in a single JSON array after the run is complete.
 
@@ -434,7 +418,8 @@ Executes the agent and returns all generated events in a single JSON array after
 }
 ```
 
-In TypeScript, currently only `cameCase` field names are supported (e.g. `appName`, `userId`, `sessionId`, etc.), with `snake_case` support coming soon.
+In TypeScript, currently only `camelCase` field names are supported (e.g.
+`appName`, `userId`, `sessionId`, etc.).
 
 **Example Request**
 ```shell
@@ -451,7 +436,7 @@ curl -X POST http://localhost:8000/run \
   }'
 ```
 
-#### Run Agent (Streaming)
+#### Run agent (streaming)
 
 Executes the agent and streams events back to the client as they are generated using [Server-Sent Events (SSE)](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events).
 

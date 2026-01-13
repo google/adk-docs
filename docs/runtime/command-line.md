@@ -9,7 +9,9 @@ useful for quick testing, scripted interactions, and CI/CD pipelines.
 
 ![ADK Run](../assets/adk-run.png)
 
-## Running an agent
+## Run an agent
+
+Use the following command to run your agent in the ADK command line interface:
 
 === "Python"
 
@@ -49,11 +51,10 @@ Running agent my_agent, type exit to exit.
 
 ## Session options
 
-The following options are available for the `adk run` command.
+The `adk run` command includes options for saving, resuming, and replaying
+sessions.
 
-The `adk run` command provides options for saving and resuming sessions.
-
-### Saving sessions
+### Save sessions
 
 To save the session when you exit:
 
@@ -70,7 +71,7 @@ You can also specify the session ID upfront:
 adk run --save_session --session_id my_session path/to/my_agent
 ```
 
-### Resuming sessions
+### Resume sessions
 
 To continue a previously saved session:
 
@@ -81,7 +82,7 @@ adk run --resume path/to/my_agent/my_session.session.json path/to/my_agent
 This loads the previous session state and event history, displays it, and allows
 you to continue the conversation.
 
-### Replaying sessions
+### Replay sessions
 
 To replay a session file without interactive input:
 
