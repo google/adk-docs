@@ -161,7 +161,7 @@ os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "False"
 # --- Define Model Constants for easier use ---
 
 # More supported models can be referenced here: https://ai.google.dev/gemini-api/docs/models#model-variations
-MODEL_GEMINI_2_0_FLASH = "gemini-2.0-flash"
+MODEL_GEMINI_2_5_FLASH = "gemini-2.5-flash"
 
 # More supported models can be referenced here: https://docs.litellm.ai/docs/providers/openai#openai-chat-completion-models
 MODEL_GPT_4O = "openai/gpt-4.1" # You can also try: gpt-4.1-mini, gpt-4o etc.
@@ -242,7 +242,7 @@ Now, let's create the **Agent** itself. An `Agent` in ADK orchestrates the inter
 We configure it with several key parameters:
 
 * `name`: A unique identifier for this agent (e.g., "weather\_agent\_v1").  
-* `model`: Specifies which LLM to use (e.g., `MODEL_GEMINI_2_0_FLASH`). We'll start with a specific Gemini model.  
+* `model`: Specifies which LLM to use (e.g., `MODEL_GEMINI_2_5_FLASH`). We'll start with a specific Gemini model.  
 * `description`: A concise summary of the agent's overall purpose. This becomes crucial later when other agents need to decide whether to delegate tasks to *this* agent.  
 * `instruction`: Detailed guidance for the LLM on how to behave, its persona, its goals, and specifically *how and when* to utilize its assigned `tools`.  
 * `tools`: A list containing the actual Python tool functions the agent is allowed to use (e.g., `[get_weather]`).
@@ -255,7 +255,7 @@ We configure it with several key parameters:
 ```python
 # @title Define the Weather Agent
 # Use one of the model constants defined earlier
-AGENT_MODEL = MODEL_GEMINI_2_0_FLASH # Starting with Gemini
+AGENT_MODEL = MODEL_GEMINI_2_5_FLASH # Starting with Gemini
 
 weather_agent = Agent(
     name="weather_agent_v1",
@@ -731,14 +731,14 @@ Now, create the `Agent` instances for our specialists. Notice their highly focus
 # If you want to use models other than Gemini, Ensure LiteLlm is imported and API keys are set (from Step 0/2)
 # from google.adk.models.lite_llm import LiteLlm
 # MODEL_GPT_4O, MODEL_CLAUDE_SONNET etc. should be defined
-# Or else, continue to use: model = MODEL_GEMINI_2_0_FLASH
+# Or else, continue to use: model = MODEL_GEMINI_2_5_FLASH
 
 # --- Greeting Agent ---
 greeting_agent = None
 try:
     greeting_agent = Agent(
         # Using a potentially different/cheaper model for a simple task
-        model = MODEL_GEMINI_2_0_FLASH,
+        model = MODEL_GEMINI_2_5_FLASH,
         # model=LiteLlm(model=MODEL_GPT_4O), # If you would like to experiment with other models
         name="greeting_agent",
         instruction="You are the Greeting Agent. Your ONLY task is to provide a friendly greeting to the user. "
@@ -757,7 +757,7 @@ farewell_agent = None
 try:
     farewell_agent = Agent(
         # Can use the same or a different model
-        model = MODEL_GEMINI_2_0_FLASH,
+        model = MODEL_GEMINI_2_5_FLASH,
         # model=LiteLlm(model=MODEL_GPT_4O), # If you would like to experiment with other models
         name="farewell_agent",
         instruction="You are the Farewell Agent. Your ONLY task is to provide a polite goodbye message. "
@@ -796,7 +796,7 @@ runner_root = None # Initialize runner
 
 if greeting_agent and farewell_agent and 'get_weather' in globals():
     # Let's use a capable Gemini model for the root agent to handle orchestration
-    root_agent_model = MODEL_GEMINI_2_0_FLASH
+    root_agent_model = MODEL_GEMINI_2_5_FLASH
 
     weather_agent_team = Agent(
         name="weather_agent_v2", # Give it a new version name
@@ -1101,13 +1101,13 @@ from google.adk.agents import Agent
 from google.adk.models.lite_llm import LiteLlm
 from google.adk.runners import Runner
 # Ensure tools 'say_hello', 'say_goodbye' are defined (from Step 3)
-# Ensure model constants MODEL_GPT_4O, MODEL_GEMINI_2_0_FLASH etc. are defined
+# Ensure model constants MODEL_GPT_4O, MODEL_GEMINI_2_5_FLASH etc. are defined
 
 # --- Redefine Greeting Agent (from Step 3) ---
 greeting_agent = None
 try:
     greeting_agent = Agent(
-        model=MODEL_GEMINI_2_0_FLASH,
+        model=MODEL_GEMINI_2_5_FLASH,
         name="greeting_agent",
         instruction="You are the Greeting Agent. Your ONLY task is to provide a friendly greeting using the 'say_hello' tool. Do nothing else.",
         description="Handles simple greetings and hellos using the 'say_hello' tool.",
@@ -1121,7 +1121,7 @@ except Exception as e:
 farewell_agent = None
 try:
     farewell_agent = Agent(
-        model=MODEL_GEMINI_2_0_FLASH,
+        model=MODEL_GEMINI_2_5_FLASH,
         name="farewell_agent",
         instruction="You are the Farewell Agent. Your ONLY task is to provide a polite goodbye message using the 'say_goodbye' tool. Do not perform any other actions.",
         description="Handles simple farewells and goodbyes using the 'say_goodbye' tool.",
@@ -1138,7 +1138,7 @@ runner_root_stateful = None # Initialize runner
 # Check prerequisites before creating the root agent
 if greeting_agent and farewell_agent and 'get_weather_stateful' in globals():
 
-    root_agent_model = MODEL_GEMINI_2_0_FLASH # Choose orchestration model
+    root_agent_model = MODEL_GEMINI_2_5_FLASH # Choose orchestration model
 
     root_agent_stateful = Agent(
         name="weather_agent_v4_stateful", # New version name
@@ -1428,7 +1428,7 @@ greeting_agent = None
 try:
     # Use a defined model constant
     greeting_agent = Agent(
-        model=MODEL_GEMINI_2_0_FLASH,
+        model=MODEL_GEMINI_2_5_FLASH,
         name="greeting_agent", # Keep original name for consistency
         instruction="You are the Greeting Agent. Your ONLY task is to provide a friendly greeting using the 'say_hello' tool. Do nothing else.",
         description="Handles simple greetings and hellos using the 'say_hello' tool.",
@@ -1442,7 +1442,7 @@ farewell_agent = None
 try:
     # Use a defined model constant
     farewell_agent = Agent(
-        model=MODEL_GEMINI_2_0_FLASH,
+        model=MODEL_GEMINI_2_5_FLASH,
         name="farewell_agent", # Keep original name
         instruction="You are the Farewell Agent. Your ONLY task is to provide a polite goodbye message using the 'say_goodbye' tool. Do not perform any other actions.",
         description="Handles simple farewells and goodbyes using the 'say_goodbye' tool.",
@@ -1461,7 +1461,7 @@ runner_root_model_guardrail = None
 if greeting_agent and farewell_agent and 'get_weather_stateful' in globals() and 'block_keyword_guardrail' in globals():
 
     # Use a defined model constant
-    root_agent_model = MODEL_GEMINI_2_0_FLASH
+    root_agent_model = MODEL_GEMINI_2_5_FLASH
 
     root_agent_model_guardrail = Agent(
         name="weather_agent_v5_model_guardrail", # New version name for clarity
@@ -1720,7 +1720,7 @@ greeting_agent = None
 try:
     # Use a defined model constant
     greeting_agent = Agent(
-        model=MODEL_GEMINI_2_0_FLASH,
+        model=MODEL_GEMINI_2_5_FLASH,
         name="greeting_agent", # Keep original name for consistency
         instruction="You are the Greeting Agent. Your ONLY task is to provide a friendly greeting using the 'say_hello' tool. Do nothing else.",
         description="Handles simple greetings and hellos using the 'say_hello' tool.",
@@ -1734,7 +1734,7 @@ farewell_agent = None
 try:
     # Use a defined model constant
     farewell_agent = Agent(
-        model=MODEL_GEMINI_2_0_FLASH,
+        model=MODEL_GEMINI_2_5_FLASH,
         name="farewell_agent", # Keep original name
         instruction="You are the Farewell Agent. Your ONLY task is to provide a polite goodbye message using the 'say_goodbye' tool. Do not perform any other actions.",
         description="Handles simple farewells and goodbyes using the 'say_goodbye' tool.",
@@ -1754,7 +1754,7 @@ if ('greeting_agent' in globals() and greeting_agent and
     'block_keyword_guardrail' in globals() and
     'block_paris_tool_guardrail' in globals()):
 
-    root_agent_model = MODEL_GEMINI_2_0_FLASH
+    root_agent_model = MODEL_GEMINI_2_5_FLASH
 
     root_agent_tool_guardrail = Agent(
         name="weather_agent_v6_tool_guardrail", # New version name
