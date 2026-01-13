@@ -278,6 +278,7 @@ nav:
       - AgentOps: observability/agentops.md
       - Arize AX: observability/arize-ax.md
       - Freeplay: observability/freeplay.md
+      - Galileo: observability/galileo.md
       - MLflow: observability/mlflow.md
       - Monocle: observability/monocle.md
       - Phoenix: observability/phoenix.md
