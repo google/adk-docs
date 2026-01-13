@@ -170,7 +170,8 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
     * `--agent_engine_id TEXT`: (Optional) If you are using a managed session service via Vertex AI Agent Engine, provide its resource ID here.
     * `--port INTEGER`: (Optional) The port number the ADK API server will listen on within the container. Defaults to 8000.
     * `--with_ui`: (Optional) If included, deploys the ADK dev UI alongside the agent API server. By default, only the API server is deployed.
-    * `--temp_folder TEXT`: (Optional) Specifies a directory for storing intermediate files generated during the deployment process. Defaults to a timestamped folder in the system's temporary directory. *(Note: This option is generally not needed unless troubleshooting issues).*
+    * `--allow_origins TEXT`: (Optional) A comma-separated list of origins to allow for CORS (Cross-Origin Resource Sharing). To allow a regular expression pattern, prefix the origin with `regex:`. For example: `http://localhost:8000,regex:https://.*\.example\.com`.
+    * `--temp_folder TEXT`: (Optional) Specifies a directory for storing intermediate files generated during the deployment process. Defaults to a timestamped folder in the system's temporary directory. *(Note: This option is generally not needed unless troubleshooting issues).)*
     * `--help`: Show the help message and exit.
 
     ##### Authenticated access

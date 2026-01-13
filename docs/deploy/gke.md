@@ -418,6 +418,7 @@ adk deploy gke [OPTIONS] AGENT_PATH
 | --cluster_name   | The name of your GKE cluster.    | Yes |
 | --region    | The Google Cloud region of your cluster (e.g., us-central1).    | Yes |
 | --with_ui   | Deploys both the agent's back-end API and a companion front-end user interface.    | No |
+| --allow_origins | A comma-separated list of origins to allow for CORS (Cross-Origin Resource Sharing). To allow a regular expression pattern, prefix the origin with `regex:`. For example: `http://localhost:8000,regex:https://.*\.example\.com`. | No |
 | --log_level   | Sets the logging level for the deployment process. Options: debug, info, warning, error.     | No |
 
 
