@@ -42,7 +42,7 @@ Before using the API Registry with your agent, you need to ensure the following:
     `bigquery.dataViewer` and `bigquery.jobUser`. For more information about
     required permissions, see [Authentication and access](#auth).
 
-You can check what MCP servers are enabled with API Registry using the follwing
+You can check what MCP servers are enabled with API Registry using the following
 gcloud command:
 
 ```console
