@@ -1,4 +1,4 @@
-# Agent Observability and Evalulation with Galileo
+# Agent Observability and Evaluation with Galileo
 
 [Galileo](https://app.galileo.ai/) is an
 AI evaluation and observability platform that delivers end-to-end tracing,
