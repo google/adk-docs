@@ -27,7 +27,7 @@ Optionally, use the `requirements.txt` from the [completed example](https://gith
 
 ## Set Environment Variables
 
-Configure environment variables :
+Configure environment variables:
 
 ```env title="Update: my_agent/.env"
 # Gemini environment variables
