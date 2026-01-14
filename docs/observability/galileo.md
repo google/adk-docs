@@ -107,7 +107,7 @@ adk run my_agent
 And ask it a question:
 
 ```console
-What is it in London?
+What time is it in London?
 ```
 
 ```console
