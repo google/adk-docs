@@ -15,7 +15,7 @@ docs.
 
 - A [Galileo API key](https://v2docs.galileo.ai/references/faqs/find-keys#galileo-api-key)
 - A Galileo Project and Log stream
-- A [Google API Key](https://aistudio.google.com/app/apikey?)
+- A [Gemini API Key](https://aistudio.google.com/app/apikey)
 
 ## Install dependencies
 
