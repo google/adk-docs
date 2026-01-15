@@ -250,6 +250,7 @@ nav:
         - Notion: tools/third-party/notion.md
         - PayPal: tools/third-party/paypal.md
         - Qdrant: tools/third-party/qdrant.md
+        - Stripe: tools/third-party/stripe.md
         - Agentic UI (AG-UI): tools/third-party/ag-ui.md
       - Tool limitations: tools/limitations.md
     - Custom Tools:
