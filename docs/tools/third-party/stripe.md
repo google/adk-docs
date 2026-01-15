@@ -8,11 +8,11 @@ operations.
 
 ## Use cases
 
-- **Automate Payment Operations**: Create payment links, process refunds,
-  and list payment intents through conversational commands.
+- **Automate Payment Operations**: Create payment links, process refunds, and
+  list payment intents through conversational commands.
 
-- **Streamline Invoicing**: Generate and finalize invoices, add line items,
-  and track outstanding payments without leaving your development environment.
+- **Streamline Invoicing**: Generate and finalize invoices, add line items, and
+  track outstanding payments without leaving your development environment.
 
 - **Access Business Insights**: Query account balances, list products and
   prices, and search across Stripe resources to make data-driven decisions.
