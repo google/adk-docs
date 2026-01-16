@@ -236,6 +236,7 @@ nav:
         - Code Execution with Agent Engine: tools/google-cloud/code-exec-agent-engine.md
         - GKE Code Executor: tools/google-cloud/gke-code-executor.md
         - MCP Toolbox for Databases: tools/google-cloud/mcp-toolbox-for-databases.md
+        - Pub/Sub: tools/google-cloud/pubsub.md
         - RAG Engine: tools/google-cloud/vertex-ai-rag-engine.md
         - Spanner: tools/google-cloud/spanner.md
         - Vertex AI Search: tools/google-cloud/vertex-ai-search.md
