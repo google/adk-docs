@@ -240,7 +240,7 @@ nav:
         - RAG Engine: tools/google-cloud/vertex-ai-rag-engine.md
         - Spanner: tools/google-cloud/spanner.md
         - Vertex AI Search: tools/google-cloud/vertex-ai-search.md
-        - Vertex AI Express Mode: tools/google-cloud/express-mode.md
+        - Vertex AI express mode: tools/google-cloud/express-mode.md
       - Third-party tools:
         - tools/third-party/index.md
         - Atlassian: tools/third-party/atlassian.md
@@ -311,7 +311,6 @@ nav:
         - Rewind sessions: sessions/rewind.md
       - State: sessions/state.md
       - Memory: sessions/memory.md
-
     - Callbacks:
       - callbacks/index.md
       - Types of callbacks: callbacks/types-of-callbacks.md

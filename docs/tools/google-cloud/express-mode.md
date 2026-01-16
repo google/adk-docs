@@ -68,17 +68,17 @@ Next, create your Agent Engine instance using the Vertex AI SDK.
       })
     ```
 
-3. Replace `YOUR_AGENT_ENGINE_DISPLAY_NAME` and `YOUR_AGENT_ENGINE_DESCRIPTION` with your use case.
-4. Get the Agent Engine name and ID from the response to use with Memories and Sessions.
+3. Get the Agent Engine name and ID from the response to use with Memories and Sessions.
 
     ```py
     APP_ID = agent_engine.api_resource.name.split('/')[-1]
     ```
 
-## Managing Sessions with a `VertexAiSessionService` {#vertex-ai-session-service}
+## Manage Sessions with `VertexAiSessionService` {#vertex-ai-session-service}
 
-[`VertexAiSessionService`](/adk-docs/sessions/session.md#sessionservice-implementations) is compatible with Vertex AI express mode API Keys. We can
-instead initialize the session object without any project or location.
+[`VertexAiSessionService`](/adk-docs/sessions/session.md#sessionservice-implementations)
+is compatible with Vertex AI express mode API Keys. You can instead initialize
+the session object without any project or location.
 
 ```py
 # Requires: pip install google-adk[vertexai]
@@ -103,10 +103,11 @@ session_service = VertexAiSessionService(agent_engine_id=APP_ID)
     - 10 Create, delete, or update Vertex AI Agent Engine sessions per minute
     - 30 Append event to Vertex AI Agent Engine sessions per minute
 
-## Managing Memories with a `VertexAiMemoryBankService` {#vertex-ai-memory-bank}
+## Manage Memory with `VertexAiMemoryBankService` {#vertex-ai-memory-bank}
 
-[`VertexAiMemoryBankService`](/adk-docs/sessions/memory.md#vertex-ai-memory-bank) is compatible with Vertex AI express mode API Keys. We can
-instead initialize the memory object without any project or location.
+[`VertexAiMemoryBankService`](/adk-docs/sessions/memory.md#vertex-ai-memory-bank)
+is compatible with Vertex AI express mode API Keys. You can instead initialize
+the memory object without any project or location.
 
 ```py
 # Requires: pip install google-adk[vertexai]
@@ -131,8 +132,11 @@ memory_service = VertexAiMemoryBankService(agent_engine_id=APP_ID)
     - 10 Create, delete, or update Vertex AI Agent Engine memory resources per minute
     - 10 Get, list, or retrieve from Vertex AI Agent Engine Memory Bank per minute
 
-### Code Sample: Weather Agent with Session and Memory using Vertex AI express mode
+### Code Sample: Weather Agent with Session and Memory
 
-In this sample, we create a weather agent that utilizes both `VertexAiSessionService` and `VertexAiMemoryBankService` for context management, allowing our agent to recall user preferences and conversations.
+This code sample shows a weather agent that utilizes both
+`VertexAiSessionService` and `VertexAiMemoryBankService` for context management,
+allowing your agent to recall user preferences and conversations.
 
-*   [Weather Agent with Session and Memory](https://github.com/google/adk-docs/blob/main/examples/python/notebooks/express-mode-weather-agent.ipynb) using Vertex AI express mode
+*   [Weather Agent with Session and Memory](https://github.com/google/adk-docs/blob/main/examples/python/notebooks/express-mode-weather-agent.ipynb)
+    using Vertex AI express mode
