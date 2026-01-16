@@ -168,7 +168,7 @@ Vertex AI.
 
     1.  **Vertex AI Environment:**
         *   Ensure your Google Cloud project and region are correctly set up.
-        *   **Application Default Credentials (ADC):** Make sure ADC is configured correctly in your environment. This is typically done by running `gcloud auth application-default login`. The Java client libraries will use these credentials to authenticate with Vertex AI. Follow the [Google Cloud Java documentation on ADC](https://cloud.google.com/java/docs/reference/google-auth-library/latest/com.google.auth.oauth2.GoogleCredentials#com_google_auth_oauth2_GoogleCredentials_getApplicationDefault__) for detailed setup.
+        *   **Application Default Credentials (ADC):** Make sure ADC is configured correctly in your environment. This is typically done by running `gcloud auth application-default login`. The Java client libraries use these credentials to authenticate with Vertex AI. Follow the [Google Cloud Java documentation on ADC](https://cloud.google.com/java/docs/reference/google-auth-library/latest/com.google.auth.oauth2.GoogleCredentials#com_google_auth_oauth2_GoogleCredentials_getApplicationDefault__) for detailed setup.
 
     2.  **Provider Library Dependencies:**
         *   **Third-Party Client Libraries (Often Transitive):** The ADK core library often includes the necessary client libraries for common third-party models on Vertex AI (like Anthropic's required classes) as **transitive dependencies**. This means you might not need to explicitly add a separate dependency for the Anthropic Vertex SDK in your `pom.xml` or `build.gradle`.
@@ -228,4 +228,45 @@ Vertex AI.
             }
         }
     }
+    ```
+
+## Open Models on Vertex AI {#open-models}
+
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
+</div>
+
+Vertex AI offers a curated selection of open-source models, such as Meta Llama, through Model-as-a-Service (MaaS). These models are accessible via managed APIs, allowing you to deploy and scale without managing the underlying infrastructure. For a full list of available options, see the [Vertex AI open models for MaaS](https://docs.cloud.google.com/vertex-ai/generative-ai/docs/maas/use-open-models#open-models) documentation.
+
+=== "Python"
+
+    You can use the [LiteLLM](https://docs.litellm.ai/) library to access open models like Meta's Llama on VertexAI MaaS
+
+    **Integration Method:** Use the `LiteLlm` wrapper class and set it
+    as the `model` parameter of `LlmAgent`. Make sure you go through the [LiteLLM model connector for ADK agents](/adk-docs/agents/models/litellm/#litellm-model-connector-for-adk-agents) documentation on how to use LiteLLM in ADK
+
+    **Setup:**
+
+    1. **Vertex AI Environment:** Ensure the consolidated Vertex AI setup (ADC, Env
+       Vars, `GOOGLE_GENAI_USE_VERTEXAI=TRUE`) is complete.
+
+    2. **Install LiteLLM:**
+            ```shell
+            pip install litellm
+            ```
+    
+    **Example:**
+
+    ```python
+    from google.adk.agents import LlmAgent
+    from google.adk.models.lite_llm import LiteLlm
+
+    # --- Example Agent using Meta's Llama 4 Scout ---
+    agent_llama_vertexai = LlmAgent(
+        model=LiteLlm(model="vertex_ai/meta/llama-4-scout-17b-16e-instruct-maas"), # LiteLLM model string format
+        name="llama4_agent",
+        instruction="You are a helpful assistant powered by Llama 4 Scout.",
+        # ... other agent parameters
+    )
+
     ```
