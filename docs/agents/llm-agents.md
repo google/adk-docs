@@ -522,7 +522,7 @@ Control whether the agent receives the prior conversation history.
    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
 </div>
 
-**`planner` (Optional):** Assign a `BasePlanner` instance to enable multi-step reasoning and planning before execution. There are two main planners:
+**`planner` (Optional):** Assign a `BasePlanner` instance to enable multistep reasoning and planning before execution. There are two main planners:
 
 * **`BuiltInPlanner`:** Leverages the model's built-in planning capabilities (e.g., Gemini's thinking feature). See [Gemini Thinking](https://ai.google.dev/gemini-api/docs/thinking) for details and examples.
 

@@ -71,7 +71,7 @@ To set up the required software libraries for the Computer Use Toolset:
 ## Use the tool
 
 Use the Computer Use Toolset by adding it as a tool to your agent. When you
-configure the tool, you must provide a implementation of the `BaseComputer`
+configure the tool, you must provide an implementation of the `BaseComputer`
 class which defines an interface for an agent to use a computer. In the
 following example, the `PlaywrightComputer` class is defined for this purpose.
 You can find the code for this implementation in `playwright.py` file of the
