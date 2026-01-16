@@ -160,6 +160,8 @@ You can customize the plugin using `BigQueryLoggerConfig`.
     types, refer to the [Event types and payloads](#event-types) section.
 -   **`content_formatter`** (`Optional[Callable[[Any, str], Any]]`, default: `None`): An optional function to format event content before logging.
 -   **`log_multi_modal_content`** (`bool`, default: `True`): Whether to log detailed content parts (including GCS references).
+-   **`queue_max_size`** (`int`, default: `10000`): The maximum number of events to hold in the in-memory queue before dropping new events.
+-   **`retry_config`** (`RetryConfig`, default: `RetryConfig()`): Configuration for retrying failed BigQuery writes (attributes: `max_retries`, `initial_delay`, `multiplier`, `max_delay`).
 
 
 The following code sample shows how to define a configuration for the
@@ -196,7 +198,8 @@ config = BigQueryLoggerConfig(
     client_close_timeout=2.0, # Wait up to 2s for BQ client to close
     max_content_length=500, # Truncate content to 500 chars
     content_formatter=redact_dollar_amounts, # Redact the dollar amounts in the logging content
-
+    queue_max_size=10000, # Max events to hold in memory
+    # retry_config=RetryConfig(max_retries=3), # Optional: Configure retries
 )
 
 plugin = BigQueryAgentAnalyticsPlugin(..., config=config)
@@ -237,7 +240,7 @@ CREATE TABLE `your-gcp-project-id.adk_agent_logs.agent_events_v2`
     part_attributes STRING,
     storage_mode STRING
   >> OPTIONS(description="Detailed content parts for multi-modal data."),
-  attributes JSON OPTIONS(description="Arbitrary key-value pairs for additional metadata."),
+  attributes JSON OPTIONS(description="Arbitrary key-value pairs for additional metadata (e.g., 'root_agent_name', 'model_version', 'usage_metadata')."),
   latency_ms JSON OPTIONS(description="Latency measurements (e.g., total_ms)."),
   status STRING OPTIONS(description="The outcome of the event, typically 'OK' or 'ERROR'."),
   error_message STRING OPTIONS(description="Populated if an error occurs."),
@@ -285,7 +288,8 @@ LLM.
       <td><p><pre>
 {
   "tools": ["tool_a", "tool_b"],
-  "llm_config": {"temperature": 0.5}
+  "llm_config": {"temperature": 0.5},
+  "root_agent_name": "my_root_agent"
 }
 </pre></p></td>
       <td><p><pre>
@@ -305,7 +309,16 @@ LLM.
   "usage": {...}
 }
 </pre></p></td>
-      <td><p><pre>{}</pre></p></td>
+      <td><p><pre>
+{
+  "model_version": "gemini-1.5-pro-001",
+  "usage_metadata": {
+    "prompt_token_count": 15,
+    "candidates_token_count": 7,
+    "total_token_count": 22
+  }
+}
+</pre></p></td>
       <td><p><pre>
 {
   "response": "The capital of France is Paris.",
@@ -565,8 +578,67 @@ WHERE trace_id = 'your-trace-id'
 ORDER BY timestamp ASC;
 ```
 
+
+### 7. AI-Powered Root Cause Analysis (Agent Ops)
+
+Automatically analyze failed sessions to determine the root cause of errors using BigQuery ML and Gemini.
+
+```sql
+DECLARE failed_session_id STRING;
+-- Find a recent failed session
+SET failed_session_id = (
+    SELECT session_id
+    FROM `your-gcp-project-id.your-dataset-id.agent_events_v2`
+    WHERE error_message IS NOT NULL
+    ORDER BY timestamp DESC
+    LIMIT 1
+);
+
+-- Reconstruct the full conversation context
+WITH SessionContext AS (
+    SELECT
+        session_id,
+        STRING_AGG(CONCAT(event_type, ': ', COALESCE(TO_JSON_STRING(content), '')), '\n' ORDER BY timestamp) as full_history
+    FROM `your-gcp-project-id.your-dataset-id.agent_events_v2`
+    WHERE session_id = failed_session_id
+    GROUP BY session_id
+)
+-- Ask Gemini to diagnose the issue
+SELECT
+    session_id,
+    AI.GENERATE(
+        ('Analyze this conversation log and explain the root cause of the failure. Log: ', full_history),
+        connection_id => 'your-gcp-project-id.us.my-connection',
+        endpoint => 'gemini-2.5-flash'
+    ).result AS root_cause_explanation
+FROM SessionContext;
+```
+
+
+## Conversational Analytics in BigQuery
+
+!!! note "Conversational Analytics"
+
+    **Conversational Analytics**
+
+    You can also use [BigQuery Conversational Analytics](https://cloud.google.com/bigquery/docs/conversational-analytics) to analyze your agent logs using natural language.
+    Just ask questions like:
+    * "Show me the error rate over time"
+    * "What are the most common tool calls?"
+    * "Identify sessions with high token usage"
+
+## Looker Studio Dashboard
+
+You can visualize your agent's performance using our pre-built [Looker Studio Dashboard template](https://lookerstudio.google.com/c/reporting/f1c5b513-3095-44f8-90a2-54953d41b125/page/8YdhF).
+
+To connect this dashboard to your own BigQuery table, use the following link format, replacing the placeholders with your specific project, dataset, and table IDs:
+
+```text
+https://lookerstudio.google.com/reporting/create?c.reportId=f1c5b513-3095-44f8-90a2-54953d41b125&ds.ds3.connector=bigQuery&ds.ds3.type=TABLE&ds.ds3.projectId=<your-project-id>&ds.ds3.datasetId=<your-dataset-id>&ds.ds3.tableId=<your-table-id>
+```
+
 ## Additional resources
 
 -   [BigQuery Storage Write API](https://cloud.google.com/bigquery/docs/write-api)
 -   [Introduction to Object Tables](https://cloud.google.com/bigquery/docs/object-tables-intro)
-
+-   [Interactive Demo Notebook](https://github.com/haiyuan-eng-google/demo_BQ_agent_analytics_plugin_notebook)
