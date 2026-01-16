@@ -87,7 +87,7 @@ documentation:
     package before getting started:
 
     ```shell
-    pip install toolbox-adk
+    pip install google-adk[toolbox]
     ```
 
     ### Loading Toolbox Tools
