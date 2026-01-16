@@ -5,7 +5,7 @@
 </div>
 
 **ApiHubToolset** lets you turn any documented API from Apigee API hub into a
-tool with a few lines of code. This section shows you the step by step
+tool with a few lines of code. This section shows you the step-by-step
 instructions including setting up authentication for a secure connection to your
 APIs.
 

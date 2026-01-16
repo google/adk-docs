@@ -249,7 +249,7 @@ ADK streams distinct event types through `runner.run_live()` to support differen
 
 ### Text Events
 
-The most common event type, containing the model's text responses when you specifying `response_modalities` in `RunConfig` to `["TEXT"]` mode:
+The most common event type, containing the model's text responses when you specify `response_modalities` in `RunConfig` to `["TEXT"]` mode:
 
 **Usage:**
 
