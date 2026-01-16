@@ -311,7 +311,7 @@ LLM.
 </pre></p></td>
       <td><p><pre>
 {
-  "model_version": "gemini-1.5-pro-001",
+  "model_version": "gemini-2.5-pro-001",
   "usage_metadata": {
     "prompt_token_count": 15,
     "candidates_token_count": 7,
