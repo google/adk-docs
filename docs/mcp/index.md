@@ -1,6 +1,8 @@
 # Model Context Protocol (MCP)
 
-## What is Model Context Protocol (MCP)?
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript</span><span class="lst-go">Go</span><span class="lst-java">Java</span>
+</div>
 
 The
 [Model Context Protocol (MCP)](https://modelcontextprotocol.io/introduction) is
@@ -22,7 +24,7 @@ ADK helps you both use and consume MCP tools in your agents, whether you're
 trying to build a tool to call an MCP service, or exposing an MCP server for
 other developers or agents to interact with your tools.
 
-Refer to the [MCP Tools documentation](../tools/mcp-tools.md) for code samples
+Refer to the [MCP Tools documentation](/adk-docs/tools-custom/mcp-tools/) for code samples
 and design patterns that help you use ADK together with MCP servers, including:
 
 - **Using Existing MCP Servers within ADK**: An ADK agent can act as an MCP
@@ -104,7 +106,7 @@ Databases. For getting started with the MCP Toolbox for Databases, a blog post [
 ## ADK Agent and FastMCP server
 [FastMCP](https://github.com/jlowin/fastmcp) handles all the complex MCP protocol details and server management, so you can focus on building great tools. It's designed to be high-level and Pythonic; in most cases, decorating a function is all you need.
 
-Refer to the [MCP Tools documentation](../tools/mcp-tools.md) documentation on
+Refer to the [MCP Tools documentation](/adk-docs/tools-custom/mcp-tools/) documentation on
 how you can use ADK together with the FastMCP server running on Cloud Run.
 
 ## MCP Servers for Google Cloud Genmedia

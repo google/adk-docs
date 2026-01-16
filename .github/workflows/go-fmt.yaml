@@ -1,0 +1,41 @@
+name: Go Fmt
+
+on:
+  pull_request:
+    paths:
+      - '**.go'
+
+jobs:
+  gofmt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch all history for all tags and branches
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+      - name: Run gofmt on changed files
+        run: |
+          # List changed Go files in the pull request.
+          # The `|| true` is to prevent the command from failing if no go files are found
+          changed_files=$(git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }} | grep '\.go$' || true)
+
+          if [ -z "$changed_files" ]; then
+            echo "No Go files changed in this PR."
+            exit 0
+          fi
+
+          echo "Checking formatting for the following files:"
+          echo "$changed_files"
+
+          # Check formatting of changed files
+          unformatted_files=$(gofmt -l $changed_files)
+
+          if [ -n "$unformatted_files" ]; then
+            echo "Unformatted Go files found:"
+            echo "$unformatted_files"
+            exit 1
+          else
+            echo "All changed Go files are formatted correctly."
+          fi

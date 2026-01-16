@@ -76,11 +76,13 @@ public class ScienceTeacherAgent {
   // (the agent must be initialized at declaration time)
   public static final BaseAgent ROOT_AGENT = initAgent();
 
+  // Please fill in the latest model id that supports live API from
+  // https://google.github.io/adk-docs/get-started/streaming/quickstart-streaming/#supported-models
   public static BaseAgent initAgent() {
     return LlmAgent.builder()
         .name("science-app")
         .description("Science teacher agent")
-        .model("gemini-2.0-flash-exp")
+        .model("...") // Pleaase fill in the latest model id for live API
         .instruction("""
             You are a helpful science teacher that explains
             science concepts to kids and teenagers.
@@ -89,10 +91,6 @@ public class ScienceTeacherAgent {
   }
 }
 ```
-
-!!!note "Troubleshooting"
-
-    The model `gemini-2.0-flash-exp` will be deprecated in the future. If you see any issues on using it, try using `gemini-2.0-flash-live-001` instead
 
 We will use `Dev UI` to run this agent later. For the tool to automatically recognize the agent, its Java class has to comply with the following two rules:
 
@@ -137,7 +135,12 @@ the dropdown. Select "science-app".
     If you do not see "science-app" in the dropdown menu, make sure you
     are running the `mvn` command from the root of your maven project.
 
-## Try Dev UI with text
+!!! warning "Caution: ADK Web for development only"
+
+    ADK Web is ***not meant for use in production deployments***. You should
+    use ADK Web for development and debugging purposes only.
+
+## Try Dev UI with voice and video
 
 With your favorite browser, navigate to: [http://127.0.0.1:8080/](http://127.0.0.1:8080/)
 
@@ -145,15 +148,13 @@ You should see the following interface:
 
 ![Dev UI](../../assets/quickstart-streaming-devui.png)
 
-Click the `Token Streaming` switch at the top right, and ask any questions for the science teacher such as `What's the electron?`. Then you should see the output text in streaming on the UI.
-
-As we saw, you do not have to write any specific code in the agent itself for the text streaming capability. It is provided as an ADK Agent feature by default.
-
-### Try with voice and video
-
-To try with voice, reload the web browser, click the microphone button to enable the voice input, and ask the same question in voice. You will hear the answer in voice in real-time.
+Click the microphone button to enable the voice input, and ask a question `What's the electron?` in voice. You will hear the answer in voice in real-time.
 
 To try with video, reload the web browser, click the camera button to enable the video input, and ask questions like "What do you see?". The agent will answer what they see in the video input.
+
+### Caveat
+
+- You can not use text chat with the native-audio models. You will see errors when entering text messages on `adk web`.
 
 ### Stop the tool
 
@@ -472,7 +473,7 @@ public final class LiveAudioRun {
 
         AtomicBoolean audioReceived = new AtomicBoolean(false);
         processEvent(event, audioReceived);
-        
+
         event.content().ifPresent(content -> content.parts().ifPresent(parts -> parts.forEach(part -> playAudioData(part, finalSpeakerLine))));
       }
 

@@ -13,6 +13,13 @@ set up and running a simple agent in less than 20 minutes.
 
     [:octicons-arrow-right-24: Start with Python](python.md) <br>
 
+-   :fontawesome-brands-golang:{ .lg .middle } **Go Quickstart**
+
+    ---
+    Create your first Go ADK agent in minutes.
+
+    [:octicons-arrow-right-24: Start with Go](go.md) <br>
+
 -   :fontawesome-brands-java:{ .lg .middle } **Java Quickstart**
 
     ---
@@ -20,4 +27,10 @@ set up and running a simple agent in less than 20 minutes.
 
     [:octicons-arrow-right-24: Start with Java](java.md) <br>
 
+-   :fontawesome-brands-js:{ .lg .middle } **TypeScript Quickstart**
+
+    ---
+    Create your first TypeScript ADK agent in minutes.
+
+    [:octicons-arrow-right-24: Start with TypeScript](typescript.md) <br>
 </div>

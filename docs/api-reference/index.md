@@ -16,6 +16,15 @@ The Agent Development Kit (ADK) provides comprehensive API references for both P
 
 <!-- This comment forces a block separation -->
 
+-   :fontawesome-brands-golang:{ .lg .middle } **Go API Reference**
+
+    ---
+    Explore the complete API documentation for the Go Agent Development Kit. Discover detailed information on all modules, classes, and functions to build sophisticated AI agents with Go.
+
+    [:octicons-arrow-right-24: View Go API Docs](https://pkg.go.dev/google.golang.org/adk) <br>
+
+<!-- This comment forces a block separation -->
+
 -   :fontawesome-brands-java:{ .lg .middle } **Java API Reference**
 
     ---
@@ -25,6 +34,17 @@ The Agent Development Kit (ADK) provides comprehensive API references for both P
     <!-- Assuming your Java API docs (Javadocs) are in a 'java' subdirectory -->
     <!-- Or link to an external Javadoc hosting site -->
     <!-- [:octicons-arrow-right-24: View Java API Docs](java/index.html) -->
+
+<!-- This comment forces a block separation -->
+
+-   :fontawesome-brands-js:{ .lg .middle } **Typescript API Reference**
+
+    ---
+    Access the complete API documentation for the TypeScript Agent Development Kit. Find detailed information on all packages, classes, and methods to build powerful and flexible AI agents with TypeScript.
+
+    [:octicons-arrow-right-24: View Typescript API Docs](typescript/index.html) <br>
+    <!-- Assuming your Typescript API docs are in a 'typescript' subdirectory -->
+    <!-- [:octicons-arrow-right-24: View Typescript API Docs](typescript/index.html) -->
 
 <!-- This comment forces a block separation -->
 

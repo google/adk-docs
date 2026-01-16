@@ -1,5 +1,9 @@
 # Plugins
 
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.7.0</span>
+</div>
+
 A Plugin in Agent Development Kit (ADK) is a custom code module that can be
 executed at various stages of an agent workflow lifecycle using callback hooks.
 You use Plugins for functionality that is applicable across your agent workflow.
@@ -12,8 +16,8 @@ Some typical applications of Plugins are as follows:
     prevent its execution if they do not have permission.
 -   **Monitoring and metrics**: Collect and export metrics on token usage,
     execution times, and invocation counts to monitoring systems such as
-    Prometheus or 
-    [Google Cloud Observability](https://cloud.google.com/stackdriver/docs) 
+    Prometheus or
+    [Google Cloud Observability](https://cloud.google.com/stackdriver/docs)
     (formerly Stackdriver).
 -   **Response caching**: Check if a request has been made before, so you
     can return a cached response, skipping expensive or time consuming AI model
@@ -23,13 +27,13 @@ Some typical applications of Plugins are as follows:
 
 !!! tip
     When implementing security guardrails and policies, use ADK Plugins for
-    better modularity and flexibility than Callbacks. For more details, see 
+    better modularity and flexibility than Callbacks. For more details, see
     [Callbacks and Plugins for Security Guardrails](/adk-docs/safety/#callbacks-and-plugins-for-security-guardrails).
 
 !!! warning "Caution"
-    Plugins are not supported by the 
-    [ADK web interface](../evaluate/#1-adk-web-run-evaluations-via-the-web-ui). 
-    If your ADK workflow uses Plugins, you must run your workflow without the 
+    Plugins are not supported by the
+    [ADK web interface](../evaluate/index.md#1-adk-web-run-evaluations-via-the-web-ui).
+    If your ADK workflow uses Plugins, you must run your workflow without the
     web interface.
 
 ## How do Plugins work?
@@ -42,7 +46,7 @@ Plugins in your agent application, see
 [Plugin callback hooks](#plugin-callback-hooks).
 
 Plugin functionality builds on
-[Callbacks](../callbacks/), which is a key design
+[Callbacks](../callbacks/index.md), which is a key design
 element of the ADK's extensible architecture. While a typical Agent Callback is
 configured on a *single agent, a single tool* for a *specific task*, a Plugin is
 registered *once* on the `Runner` and its callbacks apply *globally* to every
@@ -50,6 +54,24 @@ agent, tool, and LLM call managed by that runner. Plugins let you package
 related callback functions together to be used across a workflow. This makes
 Plugins an ideal solution for implementing features that cut across your entire
 agent application.
+
+## Prebuilt Plugins
+
+ADK includes several plugins that you can add to your agent workflows
+immediately:
+
+*   [**Reflect and Retry Tools**](/adk-docs/plugins/reflect-and-retry/):
+    Tracks tool failures and intelligently retries tool requests.
+*   [**BigQuery Analytics**](/adk-docs/observability/bigquery-agent-analytics/):
+    Enables agent logging and analysis with BigQuery.
+*   [**Context Filter**](https://github.com/google/adk-python/blob/main/src/google/adk/plugins/context_filter_plugin.py):
+    Filters the generative AI context to reduce its size.
+*   [**Global Instruction**](https://github.com/google/adk-python/blob/main/src/google/adk/plugins/global_instruction_plugin.py):
+    Plugin that provides global instructions functionality at the App level.
+*   [**Save Files as Artifacts**](https://github.com/google/adk-python/blob/main/src/google/adk/plugins/save_files_as_artifacts_plugin.py):
+    Saves files included in user messages as Artifacts.
+*   [**Logging**](https://github.com/google/adk-python/blame/main/src/google/adk/plugins/logging_plugin.py):
+    Log important information at each agent workflow callback point.
 
 ## Define and register Plugins
 
@@ -63,36 +85,84 @@ in the repository.
 Start by extending the `BasePlugin` class and add one or more `callback`
 methods, as shown in the following code example:
 
-```py title="count_plugin.py"
-from google.adk.agents.base_agent import BaseAgent
-from google.adk.agents.callback_context import CallbackContext
-from google.adk.models.llm_request import LlmRequest
-from google.adk.plugins.base_plugin import BasePlugin
+=== "Python"
 
-class CountInvocationPlugin(BasePlugin):
-  """A custom plugin that counts agent and tool invocations."""
+    ```py title="count_plugin.py"
+    from google.adk.agents.base_agent import BaseAgent
+    from google.adk.agents.callback_context import CallbackContext
+    from google.adk.models.llm_request import LlmRequest
+    from google.adk.plugins.base_plugin import BasePlugin
 
-  def __init__(self) -> None:
-    """Initialize the plugin with counters."""
-    super().__init__(name="count_invocation")
-    self.agent_count: int = 0
-    self.tool_count: int = 0
-    self.llm_request_count: int = 0
+    class CountInvocationPlugin(BasePlugin):
+    """A custom plugin that counts agent and tool invocations."""
 
-  async def before_agent_callback(
-      self, *, agent: BaseAgent, callback_context: CallbackContext
-  ) -> None:
-    """Count agent runs."""
-    self.agent_count += 1
-    print(f"[Plugin] Agent run count: {self.agent_count}")
+    def __init__(self) -> None:
+        """Initialize the plugin with counters."""
+        super().__init__(name="count_invocation")
+        self.agent_count: int = 0
+        self.tool_count: int = 0
+        self.llm_request_count: int = 0
 
-  async def before_model_callback(
-      self, *, callback_context: CallbackContext, llm_request: LlmRequest
-  ) -> None:
-    """Count LLM requests."""
-    self.llm_request_count += 1
-    print(f"[Plugin] LLM request count: {self.llm_request_count}")
-```
+    async def before_agent_callback(
+        self, *, agent: BaseAgent, callback_context: CallbackContext
+    ) -> None:
+        """Count agent runs."""
+        self.agent_count += 1
+        print(f"[Plugin] Agent run count: {self.agent_count}")
+
+    async def before_model_callback(
+        self, *, callback_context: CallbackContext, llm_request: LlmRequest
+    ) -> None:
+        """Count LLM requests."""
+        self.llm_request_count += 1
+        print(f"[Plugin] LLM request count: {self.llm_request_count}")
+    ```
+
+=== "Typescript"
+
+    ```typescript title="count_plugin.ts"
+    import { BaseAgent, BasePlugin, CallbackContext } from "@google/adk";
+    import type { LlmRequest, LlmResponse } from "@google/adk";
+    import type { Content } from "@google/genai";
+
+
+    /**
+     * A custom plugin that counts agent and tool invocations.
+     */
+    export class CountInvocationPlugin extends BasePlugin {
+        public agentCount = 0;
+        public toolCount = 0;
+        public llmRequestCount = 0;
+
+        constructor() {
+            super("count_invocation");
+        }
+
+        /**
+         * Count agent runs.
+         */
+        async beforeAgentCallback(
+            agent: BaseAgent,
+            callbackContext: CallbackContext
+        ): Promise<Content | undefined> {
+            this.agentCount++;
+            console.log(`[Plugin] Agent run count: ${this.agentCount}`);
+            return undefined;
+        }
+
+        /**
+         * Count LLM requests.
+         */
+        async beforeModelCallback(
+            callbackContext: CallbackContext,
+            llmRequest: LlmRequest
+        ): Promise<LlmResponse | undefined> {
+            this.llmRequestCount++;
+            console.log(`[Plugin] LLM request count: ${this.llmRequestCount}`);
+            return undefined;
+        }
+    }    
+    ```
 
 This example code implements callbacks for `before_agent_callback` and
 `before_model_callback` to count execution of these tasks during the lifecycle
@@ -106,69 +176,153 @@ multiple Plugins with this parameter. The following code example shows how to
 register the `CountInvocationPlugin` plugin defined in the previous section with
 a simple ADK agent.
 
-```py
-from google.adk.runners import InMemoryRunner
-from google.adk import Agent
-from google.adk.tools.tool_context import ToolContext
-from google.genai import types
-import asyncio
+=== "Python"
 
-# Import the plugin.
-from .count_plugin import CountInvocationPlugin
+    ```py
+    from google.adk.runners import InMemoryRunner
+    from google.adk import Agent
+    from google.adk.tools.tool_context import ToolContext
+    from google.genai import types
+    import asyncio
 
-async def hello_world(tool_context: ToolContext, query: str):
-  print(f'Hello world: query is [{query}]')
+    # Import the plugin.
+    from .count_plugin import CountInvocationPlugin
 
-root_agent = Agent(
-    model='gemini-2.0-flash',
-    name='hello_world',
-    description='Prints hello world with user query.',
-    instruction="""Use hello_world tool to print hello world and user query.
-    """,
-    tools=[hello_world],
-)
+    async def hello_world(tool_context: ToolContext, query: str):
+    print(f'Hello world: query is [{query}]')
 
-async def main():
-  """Main entry point for the agent."""
-  prompt = 'hello world'
-  runner = InMemoryRunner(
-      agent=root_agent,
-      app_name='test_app_with_plugin',
+    root_agent = Agent(
+        model='gemini-2.0-flash',
+        name='hello_world',
+        description='Prints hello world with user query.',
+        instruction="""Use hello_world tool to print hello world and user query.
+        """,
+        tools=[hello_world],
+    )
 
-      # Add your plugin here. You can add multiple plugins.
-      plugins=[CountInvocationPlugin()],
-  )
+    async def main():
+    """Main entry point for the agent."""
+    prompt = 'hello world'
+    runner = InMemoryRunner(
+        agent=root_agent,
+        app_name='test_app_with_plugin',
 
-  # The rest is the same as starting a regular ADK runner.
-  session = await runner.session_service.create_session(
-      user_id='user',
-      app_name='test_app_with_plugin',
-  )
+        # Add your plugin here. You can add multiple plugins.
+        plugins=[CountInvocationPlugin()],
+    )
 
-  async for event in runner.run_async(
-      user_id='user',
-      session_id=session.id,
-      new_message=types.Content(
-        role='user', parts=[types.Part.from_text(text=prompt)]
-      )
-  ):
-    print(f'** Got event from {event.author}')
+    # The rest is the same as starting a regular ADK runner.
+    session = await runner.session_service.create_session(
+        user_id='user',
+        app_name='test_app_with_plugin',
+    )
 
-if __name__ == "__main__":
-  asyncio.run(main())
-```
+    async for event in runner.run_async(
+        user_id='user',
+        session_id=session.id,
+        new_message=types.Content(
+            role='user', parts=[types.Part.from_text(text=prompt)]
+        )
+    ):
+        print(f'** Got event from {event.author}')
+
+    if __name__ == "__main__":
+    asyncio.run(main())
+    ```
+
+=== "Typescript"
+
+    ```typescript
+    import { InMemoryRunner, LlmAgent, FunctionTool } from "@google/adk";
+    import type { Content } from "@google/genai";
+    import { z } from "zod";
+
+    // Import the plugin.
+    import { CountInvocationPlugin } from "./count_plugin.ts";
+
+    const HelloWorldInput = z.object({
+        query: z.string().describe("The query string to print."),
+    });
+
+    async function helloWorld({ query }: z.infer<typeof HelloWorldInput>): Promise<{ result: string }> {
+        const output = `Hello world: query is [${query}]`;
+        console.log(output);
+        // Tools should return a string or JSON-compatible object
+        return { result: output };
+    }
+
+    const helloWorldTool = new FunctionTool({
+        name: "hello_world",
+        description: "Prints hello world with user query.",
+        parameters: HelloWorldInput,
+        execute: helloWorld,
+    });
+
+    const rootAgent = new LlmAgent({
+        model: "gemini-2.5-flash", // Preserved from your Python code
+        name: "hello_world",
+        description: "Prints hello world with user query.",
+        instruction: `Use hello_world tool to print hello world and user query.`,
+        tools: [helloWorldTool],
+    });
+
+    /**
+    * Main entry point for the agent.
+    */
+    async function main(): Promise<void> {
+        const prompt = "hello world";
+        const runner = new InMemoryRunner({
+            agent: rootAgent,
+            appName: "test_app_with_plugin",
+
+            // Add your plugin here. You can add multiple plugins.
+            plugins: [new CountInvocationPlugin()],
+        });
+
+        // The rest is the same as starting a regular ADK runner.
+        const session = await runner.sessionService.createSession({
+            userId: "user",
+            appName: "test_app_with_plugin",
+        });
+
+        // runAsync returns an async iterable stream in TypeScript
+        const runStream = runner.runAsync({
+            userId: "user",
+            sessionId: session.id,
+            newMessage: {
+            role: "user",
+            parts: [{ text: prompt }],
+            },
+        });
+
+        // Use 'for await...of' to loop through the async stream
+        for await (const event of runStream) {
+            console.log(`** Got event from ${event.author}`);
+        }
+    }
+
+    main();
+    ```
 
 ### Run the agent with the Plugin
 
 Run the plugin as you typically would. The following shows how to run the
 command line:
 
-```sh
-python3 -m path.to.main
-```
+=== "Python"
+
+    ```sh
+    python3 -m path.to.main.py
+    ```
+
+=== "Typescript"
+
+    ```sh
+    npx ts-node path.to.main.ts
+    ```
 
 Plugins are not supported by the
-[ADK web interface](../evaluate/#1-adk-web-run-evaluations-via-the-web-ui).
+[ADK web interface](../evaluate/index.md#1-adk-web-run-evaluations-via-the-web-ui).
 If your ADK workflow uses Plugins, you must run your workflow without the web
 interface.
 
@@ -187,7 +341,7 @@ Hello world: query is [hello world]
 
 
 For more information on running ADK agents, see the
-[Quickstart](/get-started/quickstart/#run-your-agent)
+[Quickstart](/adk-docs/get-started/quickstart/#run-your-agent)
 guide.
 
 ## Build workflows with Plugins
@@ -320,14 +474,27 @@ giving you a chance to inspect or modify the initial input.\
 
 The following code example shows the basic syntax of this callback:
 
-```py
-async def on_user_message_callback(
-    self,
-    *,
-    invocation_context: InvocationContext,
-    user_message: types.Content,
-) -> Optional[types.Content]:
-```
+=== "Python"
+
+    ```py
+    async def on_user_message_callback(
+        self,
+        *,
+        invocation_context: InvocationContext,
+        user_message: types.Content,
+    ) -> Optional[types.Content]:
+    ```
+
+=== "Typescript"
+
+    ```typescript
+    async onUserMessageCallback(
+        invocationContext: InvocationContext,
+        user_message: Content
+    ): Promise<Content | undefined> {
+      // Your implementation here
+    }
+    ```
 
 ### Runner start callbacks
 
@@ -345,11 +512,21 @@ logic begins.
 
 The following code example shows the basic syntax of this callback:
 
-```py
-async def before_run_callback(
-    self, *, invocation_context: InvocationContext
-) -> Optional[types.Content]:
-```
+=== "Python"
+
+    ```py
+    async def before_run_callback(
+        self, *, invocation_context: InvocationContext
+    ) -> Optional[types.Content]:
+    ```
+
+=== "Typescript"
+
+    ```typescript
+    async beforeRunCallback(invocationContext: InvocationContext): Promise<Content | undefined> {
+      // Your implementation here
+    }
+    ```
 
 ### Agent execution callbacks
 
@@ -367,7 +544,7 @@ callback is *not executed* (skipped).
 
 For more information about Agent callbacks defined as part of an Agent object,
 see
-[Types of Callbacks](../callbacks/types-of-callbacks/#agent-lifecycle-callbacks).
+[Types of Callbacks](../callbacks/types-of-callbacks.md#agent-lifecycle-callbacks).
 
 ### Model callbacks
 
@@ -405,15 +582,29 @@ normally.****
 
 The following code example shows the basic syntax of this callback:
 
-```py
-async def on_model_error_callback(
-    self,
-    *,
-    callback_context: CallbackContext,
-    llm_request: LlmRequest,
-    error: Exception,
-) -> Optional[LlmResponse]:
-```
+=== "Python"
+
+    ```py
+    async def on_model_error_callback(
+        self,
+        *,
+        callback_context: CallbackContext,
+        llm_request: LlmRequest,
+        error: Exception,
+    ) -> Optional[LlmResponse]:
+    ```
+
+=== "Typescript"
+
+    ```typescript
+    async onModelErrorCallback(
+        callbackContext: CallbackContext,
+        llmRequest: LlmRequest,
+        error: Error
+    ): Promise<LlmResponse | undefined> {
+        // Your implementation here
+    }  
+    ```
 
 ### Tool callbacks
 
@@ -452,16 +643,30 @@ works as follows:
 
 The following code example shows the basic syntax of this callback:
 
-```py
-async def on_tool_error_callback(
-    self,
-    *,
-    tool: BaseTool,
-    tool_args: dict[str, Any],
-    tool_context: ToolContext,
-    error: Exception,
-) -> Optional[dict]:
-```
+=== "Python"
+    ```py
+    async def on_tool_error_callback(
+        self,
+        *,
+        tool: BaseTool,
+        tool_args: dict[str, Any],
+        tool_context: ToolContext,
+        error: Exception,
+    ) -> Optional[dict]:
+    ```
+
+=== "Typescript"
+
+    ```typescript
+    async onToolErrorCallback(
+        tool: BaseTool,
+        toolArgs: { [key: string]: any },
+        toolContext: ToolContext,
+        error: Error
+    ): Promise<{ [key:string]: any } | undefined> {
+        // Your implementation here
+    }    
+    ```
 
 ### Event callbacks
 
@@ -479,11 +684,24 @@ before it's streamed to the client.
 
 The following code example shows the basic syntax of this callback:
 
-```py
-async def on_event_callback(
-    self, *, invocation_context: InvocationContext, event: Event
-) -> Optional[Event]:
-```
+=== "Python"
+
+    ```py
+    async def on_event_callback(
+        self, *, invocation_context: InvocationContext, event: Event
+    ) -> Optional[Event]:
+    ```
+
+=== "Typescript"
+
+    ```typescript
+    async onEventCallback(
+        invocationContext: InvocationContext,
+        event: Event
+    ): Promise<Event | undefined> {
+        // Your implementation here
+    }    
+    ```
 
 ### Runner end callbacks
 
@@ -501,11 +719,21 @@ cleanup and final reporting.
 
 The following code example shows the basic syntax of this callback:
 
-```py
-async def after_run_callback(
-    self, *, invocation_context: InvocationContext
-) -> Optional[None]:
-```
+=== "Python"
+
+    ```py
+    async def after_run_callback(
+        self, *, invocation_context: InvocationContext
+    ) -> Optional[None]:
+    ```
+
+=== "Typescript"
+
+    ```typescript
+    async afterRunCallback(invocationContext: InvocationContext): Promise<void> {
+        // Your implementation here
+    }    
+    ```
 
 ## Next steps
 

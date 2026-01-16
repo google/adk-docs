@@ -1,6 +1,8 @@
 # Why Evaluate Agents
 
-![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java support is planned/ coming soon."}
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
+</div>
 
 In traditional software development, unit tests and integration tests provide confidence that code functions as expected and remains stable through changes. These tests provide a clear "pass/fail" signal, guiding further development. However, LLM agents introduce a level of variability that makes traditional testing approaches insufficient.
 
@@ -41,16 +43,7 @@ expected_steps = ["determine_intent", "use_tool", "review_results", "report_gene
 actual_steps = ["determine_intent", "use_tool", "review_results", "report_generation"]
 ```
 
-Several ground-truth-based trajectory evaluations exist:
-
-1. **Exact match:** Requires a perfect match to the ideal trajectory.  
-2. **In-order match:** Requires the correct actions in the correct order, allows for extra actions.  
-3. **Any-order match:** Requires the correct actions in any order, allows for extra actions.  
-4. **Precision:** Measures the relevance/correctness of predicted actions.  
-5. **Recall:** Measures how many essential actions are captured in the prediction.  
-6. **Single-tool use:** Checks for the inclusion of a specific action.
-
-Choosing the right evaluation metric depends on the specific requirements and goals of your agent. For instance, in high-stakes scenarios, an exact match might be crucial, while in more flexible situations, an in-order or any-order match might suffice.
+ADK provides both groundtruth based and rubric based tool use evaluation metrics. To select the appropriate metric for your agent's specific requirements and goals, please refer to our [recommendations](#recommendations-on-criteria).
 
 ## How Evaluation works with the ADK
 
@@ -150,7 +143,7 @@ and initial session file can be ignored (or removed.)
 
 The evalset approach utilizes a dedicated dataset called an "evalset" for evaluating agent-model interactions. Similar to a test file, the evalset contains example interactions. However, an evalset can contain multiple, potentially lengthy sessions, making it ideal for simulating complex, multi-turn conversations. Due to its ability to represent complex sessions, the evalset is well-suited for integration tests. These tests are typically run less frequently than unit tests due to their more extensive nature.
 
-An evalset file contains multiple "evals," each representing a distinct session. Each eval consists of one or more "turns," which include the user query, expected tool use, expected intermediate agent responses, and a reference response. These fields have the same meaning as they do in the test file approach. Each eval is identified by a unique name. Furthermore, each eval includes an associated initial session state.
+An evalset file contains multiple "evals," each representing a distinct session. Each eval consists of one or more "turns," which include the user query, expected tool use, expected intermediate agent responses, and a reference response. These fields have the same meaning as they do in the test file approach. Alternatively, an eval can define a *conversation scenario* which is used to [dynamically simulate](./user-sim.md) a user interaction with the agent. Each eval is identified by a unique name. Furthermore, each eval includes an associated initial session state.
 
 Creating evalsets manually can be complex, therefore UI tools are provided to help capture relevant sessions and easily convert them into evals within your evalset. Learn more about using the web UI for evaluation below. Here is an example evalset containing two sessions. The eval set files are  backed by a formal Pydantic data model. The two key schema files are
 [Eval Set](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py) and
@@ -311,7 +304,7 @@ Based on who is maintaining the eval set data, there are two routes:
 
 ### Evaluation Criteria
 
-ADK provides several built-in criterion for evaluating agent performance, ranging
+ADK provides several built-in criteria for evaluating agent performance, ranging
 from tool trajectory matching to LLM-based response quality assessment. For a
 detailed list of available criteria and guidance on when to use them, please see
 [Evaluation Criteria](./criteria.md).
@@ -372,6 +365,22 @@ Choose criteria based on your evaluation goals:
 *   **Check for harmful content:** Use `safety_v1` to ensure that agent
     responses are safe and do not violate safety policies.
 
+In addition, criteria which require information on expected agent tool use
+and/or responses are not supported in combination with
+[User Simulation](./user-sim.md).
+Currently, only the `hallucinations_v1` and `safety_v1` criteria support such evals.
+
+### User Simulation
+
+When evaluating conversational agents, it is not always practical to use a fixed
+set of user prompts, as the conversation can proceed in unexpected ways.
+For example, if the agent needs the user to supply two values to perform a task,
+it may ask for those values one at a time or both at once.
+To resolve this issue, ADK allows you test the behavior of the agent in a
+specific *conversation scenario* with user prompts that are dynamically
+generated by an AI model.
+For details on how to set up an eval with user simulation, see
+[User Simulation](./user-sim.md).
 
 ## How to run Evaluation with the ADK
 

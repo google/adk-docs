@@ -1,5 +1,9 @@
 # Quickstart: Exposing a remote agent via A2A
 
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-preview">Experimental</span>
+</div>
+
 This quickstart covers the most common starting point for any developer: **"I have an agent. How do I expose it so that other agents can use my agent via A2A?"**. This is crucial for building complex multi-agent systems where different agents need to collaborate and interact.
 
 ## Overview
@@ -72,15 +76,15 @@ from a2a.types import AgentCard
 
 # Define A2A agent card
 my_agent_card = AgentCard(
-    "name": "file_agent",
-    "url": "http://example.com",
-    "description": "Test agent from file",
-    "version": "1.0.0",
-    "capabilities": {},
-    "skills": [],
-    "defaultInputModes": ["text/plain"],
-    "defaultOutputModes": ["text/plain"],
-    "supportsAuthenticatedExtendedCard": False,
+    name="file_agent",
+    url="http://example.com",
+    description="Test agent from file",
+    version="1.0.0",
+    capabilities={},
+    skills=[],
+    defaultInputModes=["text/plain"],
+    defaultOutputModes=["text/plain"],
+    supportsAuthenticatedExtendedCard=False,
 )
 a2a_app = to_a2a(root_agent, port=8001, agent_card=my_agent_card)
 ```
