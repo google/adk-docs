@@ -34,8 +34,7 @@ GEMINI_MODEL = "gemini-2.0-flash"
 # Define a tool configuration to block any write operations
 tool_config = BigQueryToolConfig(write_mode=WriteMode.BLOCKED)
 
-# Uses externally-managed Application Default Credentials (ADC) by default.
-# This decouples authentication from the agent / tool lifecycle.
+# Use Application Default Credentials (ADC) for BigQuery authentication
 # https://cloud.google.com/docs/authentication/provide-credentials-adc
 application_default_credentials, _ = google.auth.default()
 credentials_config = BigQueryCredentialsConfig(
