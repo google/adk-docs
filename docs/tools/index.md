@@ -253,6 +253,16 @@ Check out the following pre-built tools that you can use with ADK agents:
     </div>
   </a>
 
+  <a href="/adk-docs/tools/third-party/stripe/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="/adk-docs/assets/tools-stripe.png" alt="Stripe">
+    </div>
+    <div class="tool-card-content">
+      <h3>Stripe</h3>
+      <p>Manage payments, customers, subscriptions, and invoices</p>
+    </div>
+  </a>
+
 </div>
 
 ## Use pre-built tools with ADK agents

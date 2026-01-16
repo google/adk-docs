@@ -117,7 +117,7 @@ async def agent_to_client_sse(live_events):
                 print(f"[AGENT TO CLIENT]: audio/pcm: {len(audio_data)} bytes.")
                 continue
 
-        # If it's text and a parial text, send it
+        # If it's text and a partial text, send it
         if part.text and event.partial:
             message = {
                 "mime_type": "text/plain",
