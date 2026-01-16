@@ -999,10 +999,10 @@ ADK validates CFC compatibility at session initialization and will raise an erro
 
 **Use cases:**
 
-CFC is designed for complex, multi-step workflows that benefit from intelligent tool orchestration:
+CFC is designed for complex, multistep workflows that benefit from intelligent tool orchestration:
 
 - Data aggregation from multiple APIs simultaneously
-- Multi-step analysis pipelines where tools feed into each other
+- Multistep analysis pipelines where tools feed into each other
 - Complex research tasks requiring conditional exploration
 - Any scenario needing sophisticated tool coordination beyond sequential execution
 

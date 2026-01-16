@@ -47,7 +47,7 @@ adk-streaming/  # Project folder
 
 Copy-paste the following code block into the `agent.py` file.
 
-For `model`, please double check the model ID as described earlier in the [Models section](#supported-models).
+For `model`, please double-check the model ID as described earlier in the [Models section](#supported-models).
 
 ```py
 from google.adk.agents import Agent
