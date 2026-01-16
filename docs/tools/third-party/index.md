@@ -19,6 +19,16 @@ Check out the following third-party tools that you can use with ADK agents:
     </div>
   </a>
 
+  <a href="/adk-docs/tools/third-party/elevenlabs/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="/adk-docs/assets/tools-elevenlabs.png" alt="ElevenLabs">
+    </div>
+    <div class="tool-card-content">
+      <h3>ElevenLabs</h3>
+      <p>Generate speech, clone voices, transcribe audio, and create sound effects</p>
+    </div>
+  </a>
+
   <a href="/adk-docs/tools/third-party/github/" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="/adk-docs/assets/tools-github.png" alt="GitHub">
