@@ -56,7 +56,7 @@ AI experiences using natural language.
                             "ELEVENLABS_API_KEY": ELEVENLABS_API_KEY,
                         }
                     ),
-                    timeout=60,
+                    timeout=30,
                 ),
             )
         ],
