@@ -10,7 +10,7 @@ efficient method for running AI-generated code using the
 service. This tool is designed for fast execution, tailored for agentic workflows,
 and uses sandboxed environments for improved security. The Code Execution tool 
 allows code and data to persist over multiple requests, enabling complex, 
-multistep coding tasks, including:
+multi-step coding tasks, including:
 
 -   **Code development and debugging:** Create agent tasks that test and
     iterate on versions of code over multiple requests.
@@ -73,7 +73,7 @@ The `AgentEngineCodeExecutor` Tool maintains a single sandbox throughout an
 agent's task, meaning the sandbox's state persists across all operations within
 an ADK workflow session.
 
-1.  **Sandbox creation:** For multistep tasks requiring code execution,
+1.  **Sandbox creation:** For multi-step tasks requiring code execution,
     the Agent Engine creates a sandbox with specified language and machine
     configurations, isolating the code execution environment. If no sandbox is
     pre-created, the code execution tool will automatically create one using
