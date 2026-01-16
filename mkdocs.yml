@@ -244,6 +244,7 @@ nav:
       - Third-party tools:
         - tools/third-party/index.md
         - Atlassian: tools/third-party/atlassian.md
+        - Cartesia: tools/third-party/cartesia.md
         - GitHub: tools/third-party/github.md
         - GitLab: tools/third-party/gitlab.md
         - Hugging Face: tools/third-party/hugging-face.md
