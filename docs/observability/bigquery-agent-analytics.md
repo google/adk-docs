@@ -617,15 +617,13 @@ FROM SessionContext;
 
 ## Conversational Analytics in BigQuery
 
-!!! note "Conversational Analytics"
+You can also use 
+[BigQuery Conversational Analytics](https://cloud.google.com/bigquery/docs/conversational-analytics)
+to analyze your agent logs using natural language. Use this tool to answer questions like:
 
-    **Conversational Analytics**
-
-    You can also use [BigQuery Conversational Analytics](https://cloud.google.com/bigquery/docs/conversational-analytics) to analyze your agent logs using natural language.
-    Just ask questions like:
-    * "Show me the error rate over time"
-    * "What are the most common tool calls?"
-    * "Identify sessions with high token usage"
+*   "Show me the error rate over time"
+*   "What are the most common tool calls?"
+*   "Identify sessions with high token usage"
 
 ## Looker Studio Dashboard
 
