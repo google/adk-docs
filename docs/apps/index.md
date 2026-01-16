@@ -44,7 +44,7 @@ building complex agentic systems:
 
 The ***App*** class is used as the primary container of your agent workflow and
 contains the root agent of the project. The ***root agent*** is the container
-for the primary controller agent and any additonal sub-agents. 
+for the primary controller agent and any additional sub-agents. 
 
 ### Define app with root agent
 
