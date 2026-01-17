@@ -222,6 +222,7 @@ nav:
       - LiteLLM: agents/models/litellm.md
     - Tools for Agents:
       - tools/index.md
+      - Search Tools: tools/search.md
       - Gemini API tools:
         - tools/gemini-api/index.md
         - Code Execution: tools/gemini-api/code-execution.md
