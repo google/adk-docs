@@ -1,0 +1,85 @@
+
+# Pub/Sub Toolset
+
+The `PubSubToolset` allows agents to interact with Google Cloud Pub/Sub to publish, pull, and acknowledge messages.
+
+## Prerequisites
+
+Before using the `PubSubToolset`, you need to:
+
+1.  **Enable the Pub/Sub API** in your Google Cloud project.
+2.  **Authenticate and authorize**: Ensure that the principal (e.g., user, service account) running the agent has the necessary IAM permissions to perform Pub/Sub operations. For more information on Pub/Sub roles, see the [Pub/Sub access control documentation](https://cloud.google.com/pubsub/docs/access-control).
+
+## Usage
+
+The following example shows how to use the `PubSubToolset` with an agent.
+
+First, configure the toolset by creating instances of `PubSubCredentialsConfig` and `PubSubToolConfig`.
+
+```python
+from google.adk.agents.llm_agent import LlmAgent
+from google.adk.tools.pubsub.config import PubSubToolConfig
+from google.adk.tools.pubsub.pubsub_credentials import PubSubCredentialsConfig
+from google.adk.tools.pubsub.pubsub_toolset import PubSubToolset
+import google.auth
+
+# Use application default credentials
+# See https://cloud.google.com/docs/authentication/provide-credentials-adc
+application_default_credentials, _ = google.auth.default()
+credentials_config = PubSubCredentialsConfig(
+    credentials=application_default_credentials
+)
+
+# You can optionally set the project_id here, or let the agent infer it.
+tool_config = PubSubToolConfig(project_id="your-gcp-project-id")
+```
+
+Next, create an instance of the `PubSubToolset` and add it to your agent:
+
+```python
+pubsub_toolset = PubSubToolset(
+    credentials_config=credentials_config,
+    pubsub_tool_config=tool_config
+)
+
+root_agent = LlmAgent(
+    model="gemini-1.5-flash",
+    name="pubsub_agent",
+    description="Agent for interacting with Google Cloud Pub/Sub.",
+    tools=[pubsub_toolset],
+)
+```
+
+## Tools
+
+The `PubSubToolset` includes the following tools:
+
+### `publish_message`
+
+Publishes a message to a Pub/Sub topic.
+
+| Parameter      | Type                | Description                                                                                             |
+| -------------- | ------------------- | ------------------------------------------------------------------------------------------------------- |
+| `topic_name`   | `str`               | The name of the Pub/Sub topic (e.g., `projects/my-project/topics/my-topic`).                            |
+| `message`      | `str`               | The message content to publish.                                                                         |
+| `attributes`   | `dict[str, str]`    | (Optional) Attributes to attach to the message.                                                         |
+| `ordering_key` | `str`               | (Optional) The ordering key for the message. If you set this parameter, messages are published in order. |
+
+### `pull_messages`
+
+Pulls messages from a Pub/Sub subscription.
+
+| Parameter           | Type    | Description                                                                                                 |
+| ------------------- | ------- | ----------------------------------------------------------------------------------------------------------- |
+| `subscription_name` | `str`   | The name of the Pub/Sub subscription (e.g., `projects/my-project/subscriptions/my-sub`).                      |
+| `max_messages`      | `int`   | (Optional) The maximum number of messages to pull. Defaults to `1`.                                         |
+| `auto_ack`          | `bool`  | (Optional) Whether to automatically acknowledge the messages. Defaults to `False`.                            |
+
+### `acknowledge_messages`
+
+Acknowledges one or more messages on a Pub/Sub subscription.
+
+| Parameter           | Type          | Description                                                                                       |
+| ------------------- | ------------- | ------------------------------------------------------------------------------------------------- |
+| `subscription_name` | `str`         | The name of the Pub/Sub subscription (e.g., `projects/my-project/subscriptions/my-sub`).            |
+| `ack_ids`           | `list[str]`   | A list of acknowledgment IDs to acknowledge.                                                      |
