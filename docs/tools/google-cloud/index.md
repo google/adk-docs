@@ -128,5 +128,15 @@ connect your agents with:
     </div>
   </a>
 
+  <a href="/adk-docs/tools/google-cloud/pubsub/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="/adk-docs/assets/tools-pubsub.png" alt="Pub/Sub">
+    </div>
+    <div class="tool-card-content">
+      <h3>Pub/Sub Tools</h3>
+      <p>Publish, pull, and acknowledge messages from Google Cloud Pub/Sub</p>
+    </div>
+  </a>
+
 </div>
 

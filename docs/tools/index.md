@@ -163,6 +163,16 @@ Check out the following pre-built tools that you can use with ADK agents:
 
 <div class="tool-card-grid">
 
+  <a href="/adk-docs/tools/third-party/asana/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="/adk-docs/assets/tools-asana.png" alt="Asana">
+    </div>
+    <div class="tool-card-content">
+      <h3>Asana</h3>
+      <p>Manage projects, tasks, and goals for team collaboration</p>
+    </div>
+  </a>
+
   <a href="/adk-docs/tools/third-party/atlassian/" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="/adk-docs/assets/tools-atlassian.png" alt="Atlassian">
@@ -170,6 +180,26 @@ Check out the following pre-built tools that you can use with ADK agents:
     <div class="tool-card-content">
       <h3>Atlassian</h3>
       <p>Manage issues, search pages, and update team content</p>
+    </div>
+  </a>
+
+  <a href="/adk-docs/tools/third-party/cartesia/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="/adk-docs/assets/tools-cartesia.png" alt="Cartesia">
+    </div>
+    <div class="tool-card-content">
+      <h3>Cartesia</h3>
+      <p>Generate speech, localize voices, and create audio content</p>
+    </div>
+  </a>
+
+  <a href="/adk-docs/tools/third-party/elevenlabs/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="/adk-docs/assets/tools-elevenlabs.png" alt="ElevenLabs">
+    </div>
+    <div class="tool-card-content">
+      <h3>ElevenLabs</h3>
+      <p>Generate speech, clone voices, transcribe audio, and create sound effects</p>
     </div>
   </a>
 
@@ -230,6 +260,16 @@ Check out the following pre-built tools that you can use with ADK agents:
     <div class="tool-card-content">
       <h3>Notion</h3>
       <p>Search workspaces, create pages, and manage tasks and databases</p>
+    </div>
+  </a>
+
+  <a href="/adk-docs/tools/third-party/postman/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="/adk-docs/assets/tools-postman.png" alt="Postman">
+    </div>
+    <div class="tool-card-content">
+      <h3>Postman</h3>
+      <p>Manage API collections, workspaces, and generate client code</p>
     </div>
   </a>
 
