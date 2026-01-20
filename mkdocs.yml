@@ -144,6 +144,7 @@ plugins:
         'tools/google-cloud/bigquery-agent-analytics.md': 'observability/bigquery-agent-analytics.md'
         'tools/google-cloud-tools.md': 'tools/google-cloud/index.md'
         'tools/built-in-tools.md': 'tools/index.md'
+        'sessions/express-mode.md': 'tools/google-cloud/express-mode.md'
 
   - llmstxt:
       markdown_description: An open-source, code-first toolkit for building, evaluating, and deploying sophisticated AI agents with flexibility and control.
@@ -240,6 +241,7 @@ nav:
         - RAG Engine: tools/google-cloud/vertex-ai-rag-engine.md
         - Spanner: tools/google-cloud/spanner.md
         - Vertex AI Search: tools/google-cloud/vertex-ai-search.md
+        - Vertex AI express mode: tools/google-cloud/express-mode.md
       - Third-party tools:
         - tools/third-party/index.md
         - Atlassian: tools/third-party/atlassian.md
@@ -311,7 +313,6 @@ nav:
         - Rewind sessions: sessions/rewind.md
       - State: sessions/state.md
       - Memory: sessions/memory.md
-      - Vertex AI Express Mode: sessions/express-mode.md
     - Callbacks:
       - callbacks/index.md
       - Types of callbacks: callbacks/types-of-callbacks.md
