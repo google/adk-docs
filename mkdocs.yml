@@ -244,6 +244,7 @@ nav:
         - Vertex AI express mode: tools/google-cloud/express-mode.md
       - Third-party tools:
         - tools/third-party/index.md
+        - Asana: tools/third-party/asana.md
         - Atlassian: tools/third-party/atlassian.md
         - GitHub: tools/third-party/github.md
         - GitLab: tools/third-party/gitlab.md
