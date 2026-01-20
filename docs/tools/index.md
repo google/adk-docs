@@ -163,6 +163,16 @@ Check out the following pre-built tools that you can use with ADK agents:
 
 <div class="tool-card-grid">
 
+  <a href="/adk-docs/tools/third-party/asana/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="/adk-docs/assets/tools-asana.png" alt="Asana">
+    </div>
+    <div class="tool-card-content">
+      <h3>Asana</h3>
+      <p>Manage projects, tasks, and goals for team collaboration</p>
+    </div>
+  </a>
+
   <a href="/adk-docs/tools/third-party/atlassian/" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="/adk-docs/assets/tools-atlassian.png" alt="Atlassian">
