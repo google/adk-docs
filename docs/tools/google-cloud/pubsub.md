@@ -4,7 +4,9 @@
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.22.0</span>
 </div>
 
-The `PubSubToolset` allows agents to interact with Google Cloud Pub/Sub to publish, pull, and acknowledge messages.
+The `PubSubToolset` allows agents to interact with
+[Google Cloud Pub/Sub](https://cloud.google.com/pubsub)
+service to publish, pull, and acknowledge messages.
 
 ## Prerequisites
 
