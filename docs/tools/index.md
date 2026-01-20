@@ -183,6 +183,16 @@ Check out the following pre-built tools that you can use with ADK agents:
     </div>
   </a>
 
+  <a href="/adk-docs/tools/third-party/cartesia/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="/adk-docs/assets/tools-cartesia.png" alt="Cartesia">
+    </div>
+    <div class="tool-card-content">
+      <h3>Cartesia</h3>
+      <p>Generate speech, localize voices, and create audio content</p>
+    </div>
+  </a>
+
   <a href="/adk-docs/tools/third-party/elevenlabs/" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="/adk-docs/assets/tools-elevenlabs.png" alt="ElevenLabs">
