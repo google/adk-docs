@@ -1,0 +1,458 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>LoggingPlugin | ADK for TypeScript: API Reference</title><meta name="description" content="Documentation for ADK for TypeScript: API Reference"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script><style type="text/css">
+/* typedoc-theme-fresh */
+
+/* @view-transition {
+  navigation: auto;
+} */
+
+:root {
+  --light-color-background: #fafafe;
+  --light-color-background-active: #eaeced;
+  --light-color-text: #222222;
+  --light-color-text-aside: #5e5e5e;
+
+  --dark-color-background: #1a1a1c;
+  --dark-color-background-active: #2f2f2b;
+  --dark-color-text: #dfdfd6;
+  --dark-color-text-aside: #b0b0b0;
+
+  --dim-header-height: 2.5rem;
+  --dim-footer-height: 0px;
+
+  --light-code-background: #ffffff18;
+  --dark-code-background: #00000018;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+  & > .container.container-main {
+    margin: 0 auto;
+    margin-top: var(--dim-header-height);
+    --dim-container-main-margin-y: 0px;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  ::selection {
+    background-color: #11111a20;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  ::selection {
+    background-color: #bbbbff48;
+  }
+}
+
+:root[data-theme="light"] {
+  ::selection {
+    background-color: #11111a20;
+  }
+}
+
+:root[data-theme="dark"] {
+  ::selection {
+    background-color: #bbbbff48;
+  }
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 500;
+}
+
+.tsd-page-toolbar {
+  position: fixed;
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--color-background) 80%, transparent) 60%,
+    transparent
+  );
+  backdrop-filter: blur(2px);
+  border-bottom: none;
+
+  .title {
+    font-weight: 500;
+    font-size: 18px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    min-width: 0;
+    margin-right: auto;
+
+    &:hover {
+      color: var(--color-contrast-text);
+      text-decoration: none;
+    }
+  }
+
+  .tsd-theme-toggle {
+    display: flex;
+    position: relative;
+    margin-right: 12px;
+    color: var(--color-text-aside);
+    
+    select {
+      cursor: pointer;
+      border: 1px solid var(--color-background-active);
+      border-radius: 4px;
+      padding: 6px 8px;
+      padding-left: 32px;  /* Space for the icon */
+      font-size: 14px;
+      background: transparent;
+      transition: background-color 200ms;
+      color: var(--color-text-aside);
+      
+      /* for Firefox and Chrome: these are inconsistent */
+      -moz-appearance: none;
+      -webkit-appearance: none;
+      
+      &:hover {
+        background-color: var(--color-background-active);
+      }
+    }
+  }
+}
+
+.tsd-widget {
+  display: flex;
+  align-items: center;
+  height: auto;
+  width: auto;
+  padding: 4px;
+  font-size: 14px;
+  border-radius: 4px;
+  transition: background-color 200ms;
+  color: var(--color-text-aside);
+  opacity: 100%;
+
+  &:hover {
+    background-color: var(--color-background-active);
+  }
+}
+
+#tsd-search-results {
+  & > li {
+    padding-inline: 6px;
+    transition: background-color 200ms;
+  }
+
+  a:hover {
+    text-decoration: none;
+  }
+}
+
+.col-content {
+  overflow: hidden;
+  padding-block: 24px;
+
+  & > .tsd-typography {
+    padding-bottom: 24px;
+  }
+}
+
+.col-sidebar {
+  top: var(--dim-header-height);  /* Relevant for tablet layout. */
+}
+
+.site-menu {
+  top: var(--dim-header-height);
+  padding-block: 24px;
+  box-sizing: border-box;
+}
+
+.page-menu {
+  top: var(--dim-header-height);
+  padding-block: 48px 24px;
+  box-sizing: border-box;
+}
+
+.tsd-navigation,
+.tsd-page-navigation {
+  > details {
+    margin-bottom: 8px;
+  }
+
+  a {
+    border-radius: 4px;
+    padding-inline: 6px;
+    margin-bottom: 2px;
+  }
+  a:hover {
+    text-decoration: none;
+    background-color: var(--color-background-active);
+  }
+  a.current {
+    background-color: var(--color-background-active);
+    span {
+      color: var(--color-contrast-text);
+    }
+  }
+}
+
+.tsd-navigation {
+  & > a {
+    /* Top-level navigation anchor. */
+    margin-block: 16px;
+    font-size: 18px;
+    background: transparent !important;
+    padding: 0;
+    
+    &:hover {
+      color: var(--color-contrast-text);
+    }
+  }
+}
+
+.tsd-page-navigation {
+  border-left: 1px solid var(--color-background-active);
+  padding-left: 4px;
+  padding-block: 4px;
+}
+
+.tsd-page-navigation-section {
+  & > summary > svg {
+    margin-right: 0;
+  }
+  & > div {
+    margin-left: 24px;
+  }
+}
+
+.tsd-page-title {
+  color: var(--color-contrast-text);
+}
+
+h1 > code.tsd-tag {
+  margin-left: 12px;
+}
+
+code.tsd-tag {
+  display: inline-block;
+  transform: translateY(-0.1em);
+  background: var(--color-background-secondary);
+  border: 0;
+  border-radius: 8px;
+  padding: 2px 4px;
+}
+
+.tsd-breadcrumb {
+  margin-bottom: 12px;
+  li:after {
+    content: " › ";
+    opacity: 0.4;
+  }
+  li:last-of-type::after {
+    content: "";
+  }
+}
+
+.tsd-signature,
+.tsd-signatures .tsd-signature {
+  border: 0;
+  border-radius: 8px;
+  background: var(--color-background-secondary);
+  font-weight: 500;
+  padding: 10px 8px;
+  line-height: 1.3;
+}
+
+.tsd-anchor-icon {
+  color: var(--color-text-aside);
+  padding-bottom: 1px;
+}
+
+.tsd-kind-icon {
+  filter: grayscale(0.5) opacity(0.8);
+}
+
+/* Accordion icon */
+.tsd-accordion-summary > svg {
+  color: var(--color-text-aside);
+  opacity: 50%;
+  stroke-width: 1px;
+  transition: transform 200ms ease-in-out;
+}
+
+.tsd-accordion-summary > svg:has(+ h2) {
+  height: 24px;
+  width: 24px;
+}
+
+/* Desktop sizing */
+@media (min-width: 1200px) {
+  .container-main {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 2.5fr) minmax(0, 17rem);
+  }
+
+  .site-menu {
+    padding-right: 8px;
+  }
+  .page-menu {
+    padding-left: 24px;
+  }
+
+  .tsd-widget.menu {
+    display: none;
+  }
+}
+
+/* Tablet sizing */
+@media (min-width: 770px) and (max-width: 1199px) {
+  .page-menu {
+    padding-block: 24px 24px;
+  }
+  .site-menu {
+    padding-block: 0 24px;
+    margin-top: 0;
+  }
+
+  .tsd-widget.menu {
+    display: none;
+  }
+
+  .lg-show {
+    display: none !important;
+  }
+}
+
+/* Mobile sizing */
+@media (max-width: 769px) {
+  .page-menu {
+    display: none;
+  }
+  .site-menu {
+    padding: 0;
+  }
+
+  .container {
+    padding: 0 1rem;
+  }
+
+  .has-menu .col-sidebar {
+    padding: 0 1rem;
+    max-height: 100dvh;
+  }
+
+  .lg-show {
+    display: none !important;
+  }
+  .md-show {
+    display: none !important;
+  }
+}
+</style></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar"><div class="tsd-toolbar-contents container"><a href="../index.html" class="title">ADK for TypeScript: API Reference</a><div id="tsd-toolbar-links"></div><div class="tsd-theme-toggle md-show" style="position: relative"><div style="position: absolute; left: 8px; top: 4px; pointer-events: none"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sun-moon-icon lucide-sun-moon"><path d="M12 2v2"></path><path d="M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715"></path><path d="M16 12a4 4 0 0 0-4-4"></path><path d="m19 5-1.256 1.256"></path><path d="M20 12h2"></path></svg></div><select id="tsd-theme"><option value="os">System</option><option value="light">Light</option><option value="dark">Dark</option></select></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search" style="
+              border: 1px solid var(--color-background-active);
+              border-radius: 4px;
+              margin-left: 8px;
+            "><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search-icon lucide-search" style="margin-bottom: 1px; margin-left: 4px; margin-right: 4px;"><path d="m21 21-4.34-4.34"></path><circle cx="11" cy="11" r="8"></circle></svg><span class="lg-show" style="margin-left: 4px; margin-right: 12ch;">Search…</span></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/><ul role="listbox" id="tsd-search-results"></ul><div id="tsd-search-status" aria-live="polite" aria-atomic="true"><div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu" style="
+              border: 1px solid var(--color-background-active);
+              border-radius: 4px;
+              margin-left: 4px;
+            "><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-menu-icon lucide-menu" style="margin-left: 4px; margin-right: 4px;"><path d="M4 5h16"></path><path d="M4 12h16"></path><path d="M4 19h16"></path></svg></a></div></header><div class="container container-main"><div class="col-content"><div class="tsd-page-title"><ul class="tsd-breadcrumb" aria-label="Breadcrumb"><li><a href="" aria-current="page">LoggingPlugin</a></li></ul><h1>Class LoggingPlugin</h1></div><section class="tsd-panel tsd-comment"><div class="tsd-comment tsd-typography"><p>A plugin that logs important information at each callback point.</p>
+<p>This plugin helps printing all critical events in the console. It is not a
+replacement of existing logging in ADK. It rather helps terminal based
+debugging by showing all logs in the console, and serves as a simple demo for
+everyone to leverage when developing new plugins.</p>
+<p>This plugin helps users track the invocation status by logging:</p>
+<ul>
+<li>User messages and invocation context</li>
+<li>Agent execution flow</li>
+<li>LLM requests and responses</li>
+<li>Tool calls with arguments and results</li>
+<li>Events and final responses</li>
+<li>Errors during model and tool execution</li>
+</ul>
+<p>Example:</p>
+<pre><code class="typescript"><span class="hl-0">const</span><span class="hl-1"> </span><span class="hl-7">loggingPlugin</span><span class="hl-1"> = </span><span class="hl-0">new</span><span class="hl-1"> </span><span class="hl-4">LoggingPlugin</span><span class="hl-1">();</span><br/><span class="hl-0">const</span><span class="hl-1"> </span><span class="hl-7">runner</span><span class="hl-1"> = </span><span class="hl-0">new</span><span class="hl-1"> </span><span class="hl-4">Runner</span><span class="hl-1">({</span><br/><span class="hl-1">  </span><span class="hl-5">agents:</span><span class="hl-1"> [</span><span class="hl-5">myAgent</span><span class="hl-1">],</span><br/><span class="hl-1">  </span><span class="hl-9">// ...</span><br/><span class="hl-1">  </span><span class="hl-5">plugins:</span><span class="hl-1"> [</span><span class="hl-5">loggingPlugin</span><span class="hl-1">],</span><br/><span class="hl-1">});</span>
+</code><button type="button">Copy</button></pre>
+
+</div></section><section class="tsd-panel tsd-hierarchy" data-refl="967"><h4>Hierarchy (<a href="../hierarchy.html#LoggingPlugin">View Summary</a>)</h4><ul class="tsd-hierarchy"><li class="tsd-hierarchy-item"><a href="BasePlugin.html" class="tsd-signature-type tsd-kind-class">BasePlugin</a><ul class="tsd-hierarchy"><li class="tsd-hierarchy-item"><span class="tsd-hierarchy-target">LoggingPlugin</span></li></ul></li></ul></section><aside class="tsd-sources"><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/plugins/logging_plugin.ts#L47">core/src/plugins/logging_plugin.ts:47</a></li></ul></aside><div style="margin-top: 64px"></div><details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Constructors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg><h2>Constructors</h2></summary><section><section class="tsd-panel tsd-member"><h3 class="tsd-anchor-link" id="constructor"><span>constructor</span><a href="#constructor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures"><li class=""><div class="tsd-signature tsd-anchor-link" id="constructorloggingplugin"><span class="tsd-signature-keyword">new</span> <span class="tsd-kind-constructor-signature">LoggingPlugin</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">name</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">LoggingPlugin</a><a href="#constructorloggingplugin" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div><div class="tsd-description"><div class="tsd-comment tsd-typography"><p>Initialize the logging plugin.</p>
+</div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><span><span class="tsd-kind-parameter">name</span>: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &#39;logging_plugin&#39;</span></span><div class="tsd-comment tsd-typography"><p>The name of the plugin instance.</p>
+</div></li></ul></div><h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">LoggingPlugin</a></h4><aside class="tsd-sources"><p>Overrides <a href="BasePlugin.html">BasePlugin</a>.<a href="BasePlugin.html#constructor">constructor</a></p><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/plugins/logging_plugin.ts#L53">core/src/plugins/logging_plugin.ts:53</a></li></ul></aside></div></li></ul></section></section></details><details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg><h2>Properties</h2></summary><section><section class="tsd-panel tsd-member tsd-is-inherited"><h3 class="tsd-anchor-link" id="name"><code class="tsd-tag">Readonly</code><span>name</span><a href="#name" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><div class="tsd-signature"><span class="tsd-kind-property">name</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div><aside class="tsd-sources"><p>Inherited from <a href="BasePlugin.html">BasePlugin</a>.<a href="BasePlugin.html#name">name</a></p><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/plugins/base_plugin.ts#L102">core/src/plugins/base_plugin.ts:102</a></li></ul></aside></section></section></details><details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg><h2>Methods</h2></summary><section><section class="tsd-panel tsd-member"><h3 class="tsd-anchor-link" id="afteragentcallback"><span>after<wbr/>Agent<wbr/>Callback</span><a href="#afteragentcallback" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures"><li class=""><div class="tsd-signature tsd-anchor-link" id="afteragentcallback-1"><span class="tsd-kind-call-signature">afterAgentCallback</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">agent</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">agent</span><span class="tsd-signature-symbol">:</span> <a href="BaseAgent.html" class="tsd-signature-type tsd-kind-class">BaseAgent</a><span class="tsd-signature-symbol">;</span> <span class="tsd-kind-property">callbackContext</span><span class="tsd-signature-symbol">:</span> <a href="CallbackContext.html" class="tsd-signature-type tsd-kind-class">CallbackContext</a> <span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Content</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span><a href="#afteragentcallback-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div><div class="tsd-description"><div class="tsd-comment tsd-typography"><p>Callback executed after an agent's primary logic has completed.</p>
+<p>This callback can be used to inspect, log, or modify the agent's final
+result before it is returned.</p>
+</div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><span><span class="tsd-kind-parameter">agent</span>: <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">agent</span><span class="tsd-signature-symbol">:</span> <a href="BaseAgent.html" class="tsd-signature-type tsd-kind-class">BaseAgent</a><span class="tsd-signature-symbol">;</span> <span class="tsd-kind-property">callbackContext</span><span class="tsd-signature-symbol">:</span> <a href="CallbackContext.html" class="tsd-signature-type tsd-kind-class">CallbackContext</a> <span class="tsd-signature-symbol">}</span></span><div class="tsd-comment tsd-typography"><p>The agent that has just run.</p>
+</div></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Content</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span></h4><p>An optional <code>Content</code> object. If a value is returned, it will
+replace the agent's original result. Returning <code>undefined</code> uses the
+original, unmodified result.</p>
+<aside class="tsd-sources"><p>Overrides <a href="BasePlugin.html">BasePlugin</a>.<a href="BasePlugin.html#afteragentcallback">afterAgentCallback</a></p><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/plugins/logging_plugin.ts#L132">core/src/plugins/logging_plugin.ts:132</a></li></ul></aside></div></li></ul></section><section class="tsd-panel tsd-member"><h3 class="tsd-anchor-link" id="aftermodelcallback"><span>after<wbr/>Model<wbr/>Callback</span><a href="#aftermodelcallback" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures"><li class=""><div class="tsd-signature tsd-anchor-link" id="aftermodelcallback-1"><span class="tsd-kind-call-signature">afterModelCallback</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">callbackContext</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{</span><br/>        <span class="tsd-kind-property">callbackContext</span><span class="tsd-signature-symbol">:</span> <a href="CallbackContext.html" class="tsd-signature-type tsd-kind-class">CallbackContext</a><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">llmResponse</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/LlmResponse.html" class="tsd-signature-type tsd-kind-interface">LlmResponse</a><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/LlmResponse.html" class="tsd-signature-type tsd-kind-interface">LlmResponse</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span><a href="#aftermodelcallback-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div><div class="tsd-description"><div class="tsd-comment tsd-typography"><p>Callback executed after a response is received from the model.</p>
+<p>This is the ideal place to log model responses, collect metrics on token
+usage, or perform post-processing on the raw <code>LlmResponse</code>.</p>
+</div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><span><span class="tsd-kind-parameter">callbackContext</span>: <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">callbackContext</span><span class="tsd-signature-symbol">:</span> <a href="CallbackContext.html" class="tsd-signature-type tsd-kind-class">CallbackContext</a><span class="tsd-signature-symbol">;</span> <span class="tsd-kind-property">llmResponse</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/LlmResponse.html" class="tsd-signature-type tsd-kind-interface">LlmResponse</a> <span class="tsd-signature-symbol">}</span></span><div class="tsd-comment tsd-typography"><p>The context for the current agent call.</p>
+</div></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/LlmResponse.html" class="tsd-signature-type tsd-kind-interface">LlmResponse</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span></h4><p>An optional value. A non-<code>undefined</code> return may be used by the
+framework to modify or replace the response. Returning <code>undefined</code>
+allows the original response to be used.</p>
+<aside class="tsd-sources"><p>Overrides <a href="BasePlugin.html">BasePlugin</a>.<a href="BasePlugin.html#aftermodelcallback">afterModelCallback</a></p><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/plugins/logging_plugin.ts#L164">core/src/plugins/logging_plugin.ts:164</a></li></ul></aside></div></li></ul></section><section class="tsd-panel tsd-member"><h3 class="tsd-anchor-link" id="afterruncallback"><span>after<wbr/>Run<wbr/>Callback</span><a href="#afterruncallback" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures"><li class=""><div class="tsd-signature tsd-anchor-link" id="afterruncallback-1"><span class="tsd-kind-call-signature">afterRunCallback</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">invocationContext</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">invocationContext</span><span class="tsd-signature-symbol">:</span> <a href="InvocationContext.html" class="tsd-signature-type tsd-kind-class">InvocationContext</a> <span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><a href="#afterruncallback-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div><div class="tsd-description"><div class="tsd-comment tsd-typography"><p>Callback executed after an ADK runner run has completed.</p>
+<p>This is the final callback in the ADK lifecycle, suitable for cleanup,
+final logging, or reporting tasks.</p>
+</div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><span><span class="tsd-kind-parameter">invocationContext</span>: <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">invocationContext</span><span class="tsd-signature-symbol">:</span> <a href="InvocationContext.html" class="tsd-signature-type tsd-kind-class">InvocationContext</a> <span class="tsd-signature-symbol">}</span></span><div class="tsd-comment tsd-typography"><p>The context for the entire invocation.</p>
+</div></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><p>undefined</p>
+<aside class="tsd-sources"><p>Overrides <a href="BasePlugin.html">BasePlugin</a>.<a href="BasePlugin.html#afterruncallback">afterRunCallback</a></p><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/plugins/logging_plugin.ts#L111">core/src/plugins/logging_plugin.ts:111</a></li></ul></aside></div></li></ul></section><section class="tsd-panel tsd-member"><h3 class="tsd-anchor-link" id="aftertoolcallback"><span>after<wbr/>Tool<wbr/>Callback</span><a href="#aftertoolcallback" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures"><li class=""><div class="tsd-signature tsd-anchor-link" id="aftertoolcallback-1"><span class="tsd-kind-call-signature">afterToolCallback</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">tool</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{</span><br/>        <span class="tsd-kind-property">result</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">tool</span><span class="tsd-signature-symbol">:</span> <a href="BaseTool.html" class="tsd-signature-type tsd-kind-class">BaseTool</a><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">toolArgs</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">toolContext</span><span class="tsd-signature-symbol">:</span> <a href="ToolContext.html" class="tsd-signature-type tsd-kind-class">ToolContext</a><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span><a href="#aftertoolcallback-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div><div class="tsd-description"><div class="tsd-comment tsd-typography"><p>Callback executed after a tool has been called.</p>
+<p>This callback allows for inspecting, logging, or modifying the result
+returned by a tool.</p>
+</div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><span><span class="tsd-kind-parameter">tool</span>: <span class="tsd-signature-symbol">{</span><br/>    <span class="tsd-kind-property">result</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">tool</span><span class="tsd-signature-symbol">:</span> <a href="BaseTool.html" class="tsd-signature-type tsd-kind-class">BaseTool</a><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">toolArgs</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">toolContext</span><span class="tsd-signature-symbol">:</span> <a href="ToolContext.html" class="tsd-signature-type tsd-kind-class">ToolContext</a><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></span><div class="tsd-comment tsd-typography"><p>The tool instance that has just been executed.</p>
+</div></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span></h4><p>An optional dictionary. If a dictionary is returned, it will
+<strong>replace</strong> the original result from the tool. This allows for
+post-processing or altering tool outputs. Returning <code>undefined</code> uses
+the original, unmodified result.</p>
+<aside class="tsd-sources"><p>Overrides <a href="BasePlugin.html">BasePlugin</a>.<a href="BasePlugin.html#aftertoolcallback">afterToolCallback</a></p><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/plugins/logging_plugin.ts#L203">core/src/plugins/logging_plugin.ts:203</a></li></ul></aside></div></li></ul></section><section class="tsd-panel tsd-member"><h3 class="tsd-anchor-link" id="beforeagentcallback"><span>before<wbr/>Agent<wbr/>Callback</span><a href="#beforeagentcallback" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures"><li class=""><div class="tsd-signature tsd-anchor-link" id="beforeagentcallback-1"><span class="tsd-kind-call-signature">beforeAgentCallback</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">agent</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">agent</span><span class="tsd-signature-symbol">:</span> <a href="BaseAgent.html" class="tsd-signature-type tsd-kind-class">BaseAgent</a><span class="tsd-signature-symbol">;</span> <span class="tsd-kind-property">callbackContext</span><span class="tsd-signature-symbol">:</span> <a href="CallbackContext.html" class="tsd-signature-type tsd-kind-class">CallbackContext</a> <span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Content</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span><a href="#beforeagentcallback-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div><div class="tsd-description"><div class="tsd-comment tsd-typography"><p>Callback executed before an agent's primary logic is invoked.</p>
+<p>This callback can be used for logging, setup, or to short-circuit the
+agent's execution by returning a value.</p>
+</div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><span><span class="tsd-kind-parameter">agent</span>: <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">agent</span><span class="tsd-signature-symbol">:</span> <a href="BaseAgent.html" class="tsd-signature-type tsd-kind-class">BaseAgent</a><span class="tsd-signature-symbol">;</span> <span class="tsd-kind-property">callbackContext</span><span class="tsd-signature-symbol">:</span> <a href="CallbackContext.html" class="tsd-signature-type tsd-kind-class">CallbackContext</a> <span class="tsd-signature-symbol">}</span></span><div class="tsd-comment tsd-typography"><p>The agent that is about to run.</p>
+</div></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Content</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span></h4><p>An optional <code>Content</code> object. If a value is returned, it will
+bypass the agent's callbacks and its execution, and return this value
+directly. Returning <code>undefined</code> allows the agent to proceed normally.</p>
+<aside class="tsd-sources"><p>Overrides <a href="BasePlugin.html">BasePlugin</a>.<a href="BasePlugin.html#beforeagentcallback">beforeAgentCallback</a></p><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/plugins/logging_plugin.ts#L120">core/src/plugins/logging_plugin.ts:120</a></li></ul></aside></div></li></ul></section><section class="tsd-panel tsd-member"><h3 class="tsd-anchor-link" id="beforemodelcallback"><span>before<wbr/>Model<wbr/>Callback</span><a href="#beforemodelcallback" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures"><li class=""><div class="tsd-signature tsd-anchor-link" id="beforemodelcallback-1"><span class="tsd-kind-call-signature">beforeModelCallback</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">callbackContext</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{</span><br/>        <span class="tsd-kind-property">callbackContext</span><span class="tsd-signature-symbol">:</span> <a href="CallbackContext.html" class="tsd-signature-type tsd-kind-class">CallbackContext</a><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">llmRequest</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/LlmRequest.html" class="tsd-signature-type tsd-kind-interface">LlmRequest</a><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/LlmResponse.html" class="tsd-signature-type tsd-kind-interface">LlmResponse</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span><a href="#beforemodelcallback-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div><div class="tsd-description"><div class="tsd-comment tsd-typography"><p>Callback executed before a request is sent to the model.</p>
+<p>This provides an opportunity to inspect, log, or modify the <code>LlmRequest</code>
+object. It can also be used to implement caching by returning a cached
+<code>LlmResponse</code>, which would skip the actual model call.</p>
+</div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><span><span class="tsd-kind-parameter">callbackContext</span>: <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">callbackContext</span><span class="tsd-signature-symbol">:</span> <a href="CallbackContext.html" class="tsd-signature-type tsd-kind-class">CallbackContext</a><span class="tsd-signature-symbol">;</span> <span class="tsd-kind-property">llmRequest</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/LlmRequest.html" class="tsd-signature-type tsd-kind-interface">LlmRequest</a> <span class="tsd-signature-symbol">}</span></span><div class="tsd-comment tsd-typography"><p>The context for the current agent call.</p>
+</div></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/LlmResponse.html" class="tsd-signature-type tsd-kind-interface">LlmResponse</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span></h4><p>An optional value. The interpretation of a non-<code>undefined</code>
+trigger an early exit and returns the response immediately. Returning
+<code>undefined</code> allows the LLM request to proceed normally.</p>
+<aside class="tsd-sources"><p>Overrides <a href="BasePlugin.html">BasePlugin</a>.<a href="BasePlugin.html#beforemodelcallback">beforeModelCallback</a></p><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/plugins/logging_plugin.ts#L141">core/src/plugins/logging_plugin.ts:141</a></li></ul></aside></div></li></ul></section><section class="tsd-panel tsd-member"><h3 class="tsd-anchor-link" id="beforeruncallback"><span>before<wbr/>Run<wbr/>Callback</span><a href="#beforeruncallback" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures"><li class=""><div class="tsd-signature tsd-anchor-link" id="beforeruncallback-1"><span class="tsd-kind-call-signature">beforeRunCallback</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">invocationContext</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">invocationContext</span><span class="tsd-signature-symbol">:</span> <a href="InvocationContext.html" class="tsd-signature-type tsd-kind-class">InvocationContext</a> <span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Content</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span><a href="#beforeruncallback-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div><div class="tsd-description"><div class="tsd-comment tsd-typography"><p>Callback executed before the ADK runner runs.</p>
+<p>This is the first callback to be called in the lifecycle, ideal for global
+setup or initialization tasks.</p>
+</div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><span><span class="tsd-kind-parameter">invocationContext</span>: <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">invocationContext</span><span class="tsd-signature-symbol">:</span> <a href="InvocationContext.html" class="tsd-signature-type tsd-kind-class">InvocationContext</a> <span class="tsd-signature-symbol">}</span></span><div class="tsd-comment tsd-typography"><p>The context for the entire invocation, containing
+session information, the root agent, etc.</p>
+</div></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Content</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span></h4><p>An optional <code>Event</code> to be returned to the ADK. Returning a value
+to halt execution of the runner and ends the runner with that event.
+Return <code>undefined</code> to proceed normally.</p>
+<aside class="tsd-sources"><p>Overrides <a href="BasePlugin.html">BasePlugin</a>.<a href="BasePlugin.html#beforeruncallback">beforeRunCallback</a></p><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/plugins/logging_plugin.ts#L74">core/src/plugins/logging_plugin.ts:74</a></li></ul></aside></div></li></ul></section><section class="tsd-panel tsd-member"><h3 class="tsd-anchor-link" id="beforetoolcallback"><span>before<wbr/>Tool<wbr/>Callback</span><a href="#beforetoolcallback" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures"><li class=""><div class="tsd-signature tsd-anchor-link" id="beforetoolcallback-1"><span class="tsd-kind-call-signature">beforeToolCallback</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">tool</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{</span><br/>        <span class="tsd-kind-property">tool</span><span class="tsd-signature-symbol">:</span> <a href="BaseTool.html" class="tsd-signature-type tsd-kind-class">BaseTool</a><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">toolArgs</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">toolContext</span><span class="tsd-signature-symbol">:</span> <a href="ToolContext.html" class="tsd-signature-type tsd-kind-class">ToolContext</a><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span><a href="#beforetoolcallback-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div><div class="tsd-description"><div class="tsd-comment tsd-typography"><p>Callback executed before a tool is called.</p>
+<p>This callback is useful for logging tool usage, input validation, or
+modifying the arguments before they are passed to the tool.</p>
+</div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><span><span class="tsd-kind-parameter">tool</span>: <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">tool</span><span class="tsd-signature-symbol">:</span> <a href="BaseTool.html" class="tsd-signature-type tsd-kind-class">BaseTool</a><span class="tsd-signature-symbol">;</span> <span class="tsd-kind-property">toolArgs</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">;</span> <span class="tsd-kind-property">toolContext</span><span class="tsd-signature-symbol">:</span> <a href="ToolContext.html" class="tsd-signature-type tsd-kind-class">ToolContext</a> <span class="tsd-signature-symbol">}</span></span><div class="tsd-comment tsd-typography"><p>The tool instance that is about to be executed.</p>
+</div></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span></h4><p>An optional dictionary. If a dictionary is returned, it will stop
+the tool execution and return this response immediately. Returning
+<code>undefined</code> uses the original, unmodified arguments.</p>
+<aside class="tsd-sources"><p>Overrides <a href="BasePlugin.html">BasePlugin</a>.<a href="BasePlugin.html#beforetoolcallback">beforeToolCallback</a></p><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/plugins/logging_plugin.ts#L192">core/src/plugins/logging_plugin.ts:192</a></li></ul></aside></div></li></ul></section><section class="tsd-panel tsd-member"><h3 class="tsd-anchor-link" id="oneventcallback"><span>on<wbr/>Event<wbr/>Callback</span><a href="#oneventcallback" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures"><li class=""><div class="tsd-signature tsd-anchor-link" id="oneventcallback-1"><span class="tsd-kind-call-signature">onEventCallback</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">invocationContext</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{</span><br/>        <span class="tsd-kind-property">event</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/Event.html" class="tsd-signature-type tsd-kind-interface">Event</a><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">invocationContext</span><span class="tsd-signature-symbol">:</span> <a href="InvocationContext.html" class="tsd-signature-type tsd-kind-class">InvocationContext</a><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/Event.html" class="tsd-signature-type tsd-kind-interface">Event</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span><a href="#oneventcallback-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div><div class="tsd-description"><div class="tsd-comment tsd-typography"><p>Callback executed after an event is yielded from runner.</p>
+<p>This is the ideal place to make modification to the event before the event
+is handled by the underlying agent app.</p>
+</div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><span><span class="tsd-kind-parameter">invocationContext</span>: <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">event</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/Event.html" class="tsd-signature-type tsd-kind-interface">Event</a><span class="tsd-signature-symbol">;</span> <span class="tsd-kind-property">invocationContext</span><span class="tsd-signature-symbol">:</span> <a href="InvocationContext.html" class="tsd-signature-type tsd-kind-class">InvocationContext</a> <span class="tsd-signature-symbol">}</span></span><div class="tsd-comment tsd-typography"><p>The context for the entire invocation.</p>
+</div></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/Event.html" class="tsd-signature-type tsd-kind-interface">Event</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span></h4><p>An optional value. A non-<code>undefined</code> return may be used by the
+framework to modify or replace the response. Returning <code>undefined</code>
+allows the original response to be used.</p>
+<aside class="tsd-sources"><p>Overrides <a href="BasePlugin.html">BasePlugin</a>.<a href="BasePlugin.html#oneventcallback">onEventCallback</a></p><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/plugins/logging_plugin.ts#L83">core/src/plugins/logging_plugin.ts:83</a></li></ul></aside></div></li></ul></section><section class="tsd-panel tsd-member"><h3 class="tsd-anchor-link" id="onmodelerrorcallback"><span>on<wbr/>Model<wbr/>Error<wbr/>Callback</span><a href="#onmodelerrorcallback" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures"><li class=""><div class="tsd-signature tsd-anchor-link" id="onmodelerrorcallback-1"><span class="tsd-kind-call-signature">onModelErrorCallback</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">callbackContext</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{</span><br/>        <span class="tsd-kind-property">callbackContext</span><span class="tsd-signature-symbol">:</span> <a href="CallbackContext.html" class="tsd-signature-type tsd-kind-class">CallbackContext</a><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">error</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">llmRequest</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/LlmRequest.html" class="tsd-signature-type tsd-kind-interface">LlmRequest</a><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/LlmResponse.html" class="tsd-signature-type tsd-kind-interface">LlmResponse</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span><a href="#onmodelerrorcallback-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div><div class="tsd-description"><div class="tsd-comment tsd-typography"><p>Callback executed when a model call encounters an error.</p>
+<p>This callback provides an opportunity to handle model errors gracefully,
+potentially providing alternative responses or recovery mechanisms.</p>
+</div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><span><span class="tsd-kind-parameter">callbackContext</span>: <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">callbackContext</span><span class="tsd-signature-symbol">:</span> <a href="CallbackContext.html" class="tsd-signature-type tsd-kind-class">CallbackContext</a><span class="tsd-signature-symbol">;</span> <span class="tsd-kind-property">error</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">;</span> <span class="tsd-kind-property">llmRequest</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/LlmRequest.html" class="tsd-signature-type tsd-kind-interface">LlmRequest</a> <span class="tsd-signature-symbol">}</span></span><div class="tsd-comment tsd-typography"><p>The context for the current agent call.</p>
+</div></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/LlmResponse.html" class="tsd-signature-type tsd-kind-interface">LlmResponse</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span></h4><p>An optional LlmResponse. If an LlmResponse is returned, it will be
+used instead of propagating the error. Returning <code>undefined</code> allows
+the original error to be raised.</p>
+<aside class="tsd-sources"><p>Overrides <a href="BasePlugin.html">BasePlugin</a>.<a href="BasePlugin.html#onmodelerrorcallback">onModelErrorCallback</a></p><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/plugins/logging_plugin.ts#L215">core/src/plugins/logging_plugin.ts:215</a></li></ul></aside></div></li></ul></section><section class="tsd-panel tsd-member"><h3 class="tsd-anchor-link" id="ontoolerrorcallback"><span>on<wbr/>Tool<wbr/>Error<wbr/>Callback</span><a href="#ontoolerrorcallback" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures"><li class=""><div class="tsd-signature tsd-anchor-link" id="ontoolerrorcallback-1"><span class="tsd-kind-call-signature">onToolErrorCallback</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">tool</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{</span><br/>        <span class="tsd-kind-property">error</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">tool</span><span class="tsd-signature-symbol">:</span> <a href="BaseTool.html" class="tsd-signature-type tsd-kind-class">BaseTool</a><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">toolArgs</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">toolContext</span><span class="tsd-signature-symbol">:</span> <a href="ToolContext.html" class="tsd-signature-type tsd-kind-class">ToolContext</a><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span><a href="#ontoolerrorcallback-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div><div class="tsd-description"><div class="tsd-comment tsd-typography"><p>Callback executed when a tool call encounters an error.</p>
+<p>This callback provides an opportunity to handle tool errors gracefully,
+potentially providing alternative responses or recovery mechanisms.</p>
+</div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><span><span class="tsd-kind-parameter">tool</span>: <span class="tsd-signature-symbol">{</span><br/>    <span class="tsd-kind-property">error</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Error</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">tool</span><span class="tsd-signature-symbol">:</span> <a href="BaseTool.html" class="tsd-signature-type tsd-kind-class">BaseTool</a><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">toolArgs</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-kind-property">toolContext</span><span class="tsd-signature-symbol">:</span> <a href="ToolContext.html" class="tsd-signature-type tsd-kind-class">ToolContext</a><span class="tsd-signature-symbol">;</span><br/><span class="tsd-signature-symbol">}</span></span><div class="tsd-comment tsd-typography"><p>The tool instance that encountered an error.</p>
+</div></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span></h4><p>An optional dictionary. If a dictionary is returned, it will be
+used as the tool response instead of propagating the error. Returning
+<code>undefined</code> allows the original error to be raised.</p>
+<aside class="tsd-sources"><p>Overrides <a href="BasePlugin.html">BasePlugin</a>.<a href="BasePlugin.html#ontoolerrorcallback">onToolErrorCallback</a></p><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/plugins/logging_plugin.ts#L225">core/src/plugins/logging_plugin.ts:225</a></li></ul></aside></div></li></ul></section><section class="tsd-panel tsd-member"><h3 class="tsd-anchor-link" id="onusermessagecallback"><span>on<wbr/>User<wbr/>Message<wbr/>Callback</span><a href="#onusermessagecallback" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures"><li class=""><div class="tsd-signature tsd-anchor-link" id="onusermessagecallback-1"><span class="tsd-kind-call-signature">onUserMessageCallback</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">invocationContext</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{</span><br/>        <span class="tsd-kind-property">invocationContext</span><span class="tsd-signature-symbol">:</span> <a href="InvocationContext.html" class="tsd-signature-type tsd-kind-class">InvocationContext</a><span class="tsd-signature-symbol">;</span><br/>        <span class="tsd-kind-property">userMessage</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Content</span><span class="tsd-signature-symbol">;</span><br/>    <span class="tsd-signature-symbol">}</span><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Content</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span><a href="#onusermessagecallback-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div><div class="tsd-description"><div class="tsd-comment tsd-typography"><p>Callback executed when a user message is received before an invocation
+starts.</p>
+<p>This callback helps logging and modifying the user message before the
+runner starts the invocation.</p>
+</div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><span><span class="tsd-kind-parameter">invocationContext</span>: <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">invocationContext</span><span class="tsd-signature-symbol">:</span> <a href="InvocationContext.html" class="tsd-signature-type tsd-kind-class">InvocationContext</a><span class="tsd-signature-symbol">;</span> <span class="tsd-kind-property">userMessage</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Content</span> <span class="tsd-signature-symbol">}</span></span><div class="tsd-comment tsd-typography"><p>The context for the entire invocation.</p>
+</div></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Content</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span></h4><p>An optional <code>Content</code> to be returned to the ADK. Returning a
+value to replace the user message. Returning <code>undefined</code> to proceed
+normally.</p>
+<aside class="tsd-sources"><p>Overrides <a href="BasePlugin.html">BasePlugin</a>.<a href="BasePlugin.html#onusermessagecallback">onUserMessageCallback</a></p><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/plugins/logging_plugin.ts#L57">core/src/plugins/logging_plugin.ts:57</a></li></ul></aside></div></li></ul></section></section></details></div><div class="col-sidebar"><div class="page-menu"><div class="tsd-page-navigation"><details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Constructors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Constructors</summary><div><a href="#constructor"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Constructor"><use href="../assets/icons.svg#icon-512"></use></svg><span>constructor</span></a></div></details><details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Properties</summary><div><a href="#name" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>name</span></a></div></details><details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Methods</summary><div><a href="#afteragentcallback"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>after<wbr/>Agent<wbr/>Callback</span></a><a href="#aftermodelcallback"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>after<wbr/>Model<wbr/>Callback</span></a><a href="#afterruncallback"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>after<wbr/>Run<wbr/>Callback</span></a><a href="#aftertoolcallback"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>after<wbr/>Tool<wbr/>Callback</span></a><a href="#beforeagentcallback"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>before<wbr/>Agent<wbr/>Callback</span></a><a href="#beforemodelcallback"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>before<wbr/>Model<wbr/>Callback</span></a><a href="#beforeruncallback"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>before<wbr/>Run<wbr/>Callback</span></a><a href="#beforetoolcallback"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>before<wbr/>Tool<wbr/>Callback</span></a><a href="#oneventcallback"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>on<wbr/>Event<wbr/>Callback</span></a><a href="#onmodelerrorcallback"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>on<wbr/>Model<wbr/>Error<wbr/>Callback</span></a><a href="#ontoolerrorcallback"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>on<wbr/>Tool<wbr/>Error<wbr/>Callback</span></a><a href="#onusermessagecallback"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>on<wbr/>User<wbr/>Message<wbr/>Callback</span></a></div></details></div></div><div class="site-menu"><nav class="tsd-navigation"><a href="../index.html">ADK for TypeScript: API Reference</a><ul class="tsd-small-nested-navigation" id="tsd-nav-container"><li>Loading...</li></ul></nav></div></div></div><div class="overlay"></div></body></html>

@@ -37,6 +37,14 @@
     pip show google-adk
     ```
 
+=== "TypeScript"
+
+    ### Install ADK and ADK DevTools
+
+    ```bash
+    npm install @google/adk @google/adk-devtools
+    ```
+
 === "Go"
 
     ## Create a new Go module
@@ -91,13 +99,13 @@
             <dependency>
                 <groupId>com.google.adk</groupId>
                 <artifactId>google-adk</artifactId>
-                <version>0.3.0</version>
+                <version>0.5.0</version>
             </dependency>
             <!-- The ADK dev web UI to debug your agent -->
             <dependency>
                 <groupId>com.google.adk</groupId>
                 <artifactId>google-adk-dev</artifactId>
-                <version>0.3.0</version>
+                <version>0.5.0</version>
             </dependency>
         </dependencies>
 
@@ -110,13 +118,12 @@
 
     ```title="build.gradle"
     dependencies {
-        implementation 'com.google.adk:google-adk:0.2.0'
-        implementation 'com.google.adk:google-adk-dev:0.2.0'
+        implementation 'com.google.adk:google-adk:0.5.0'
+        implementation 'com.google.adk:google-adk-dev:0.5.0'
     }
     ```
 
     You should also configure Gradle to pass `-parameters` to `javac`. (Alternatively, use `@Schema(name = "...")`).
-
 
 ## Next steps
 

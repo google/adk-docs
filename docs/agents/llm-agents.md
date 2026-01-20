@@ -1,7 +1,11 @@
 # LLM Agent
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span>
+  <span class="lst-python">Python v0.1.0</span>
+  <span class="lst-typescript">Typescript v0.2.0</span>
+  <span class="lst-go">Go v0.1.0</span>
+  <span class="lst-java">Java v0.1.0</span>
 </div>
 
 The `LlmAgent` (often aliased simply as `Agent`) is a core component in ADK,
@@ -37,20 +41,32 @@ First, you need to establish what the agent *is* and what it's *for*.
   inquiries about current billing statements," not just "Billing agent").
 
 * **`model` (Required):** Specify the underlying LLM that will power this
-  agent's reasoning. This is a string identifier like `"gemini-2.0-flash"`. The
+  agent's reasoning. This is a string identifier like `"gemini-2.5-flash"`. The
   choice of model impacts the agent's capabilities, cost, and performance. See
-  the [Models](models.md) page for available options and considerations.
+  the [Models](/adk-docs/agents/models/) page for available options and considerations.
 
 === "Python"
 
     ```python
     # Example: Defining the basic identity
     capital_agent = LlmAgent(
-        model="gemini-2.0-flash",
+        model="gemini-2.5-flash",
         name="capital_agent",
         description="Answers user questions about the capital city of a given country."
         # instruction and tools will be added next
     )
+    ```
+
+=== "Typescript"
+
+    ```typescript
+    // Example: Defining the basic identity
+    const capitalAgent = new LlmAgent({
+        model: 'gemini-2.5-flash',
+        name: 'capital_agent',
+        description: 'Answers user questions about the capital city of a given country.',
+        // instruction and tools will be added next
+    });
     ```
 
 === "Go"
@@ -65,7 +81,7 @@ First, you need to establish what the agent *is* and what it's *for*.
     // Example: Defining the basic identity
     LlmAgent capitalAgent =
         LlmAgent.builder()
-            .model("gemini-2.0-flash")
+            .model("gemini-2.5-flash")
             .name("capital_agent")
             .description("Answers user questions about the capital city of a given country.")
             // instruction and tools will be added next
@@ -103,7 +119,7 @@ tells the agent:
     ```python
     # Example: Adding instructions
     capital_agent = LlmAgent(
-        model="gemini-2.0-flash",
+        model="gemini-2.5-flash",
         name="capital_agent",
         description="Answers user questions about the capital city of a given country.",
         instruction="""You are an agent that provides the capital city of a country.
@@ -118,6 +134,26 @@ tells the agent:
     )
     ```
 
+=== "Typescript"
+
+    ```typescript
+    // Example: Adding instructions
+    const capitalAgent = new LlmAgent({
+        model: 'gemini-2.5-flash',
+        name: 'capital_agent',
+        description: 'Answers user questions about the capital city of a given country.',
+        instruction: `You are an agent that provides the capital city of a country.
+            When a user asks for the capital of a country:
+            1. Identify the country name from the user's query.
+            2. Use the \`getCapitalCity\` tool to find the capital.
+            3. Respond clearly to the user, stating the capital city.
+            Example Query: "What's the capital of {country}?"
+            Example Response: "The capital of France is Paris."
+            `,
+        // tools will be added next
+    });
+    ```
+
 === "Go"
 
     ```go
@@ -130,7 +166,7 @@ tells the agent:
     // Example: Adding instructions
     LlmAgent capitalAgent =
         LlmAgent.builder()
-            .model("gemini-2.0-flash")
+            .model("gemini-2.5-flash")
             .name("capital_agent")
             .description("Answers user questions about the capital city of a given country.")
             .instruction(
@@ -158,7 +194,7 @@ reasoning. They allow the agent to interact with the outside world, perform
 calculations, fetch real-time data, or execute specific actions.
 
 * **`tools` (Optional):** Provide a list of tools the agent can use. Each item in the list can be:
-    * A native function or method (wrapped as a `FunctionTool`). Python ADK automatically wraps the native function into a `FuntionTool` whereas, you must explicitly wrap your Java methods using `FunctionTool.create(...)`
+    * A native function or method (wrapped as a `FunctionTool`). Python ADK automatically wraps the native function into a `FunctionTool` whereas, you must explicitly wrap your Java methods using `FunctionTool.create(...)`
     * An instance of a class inheriting from `BaseTool`.
     * An instance of another agent (`AgentTool`, enabling agent-to-agent delegation - see [Multi-Agents](multi-agents.md)).
 
@@ -175,15 +211,56 @@ on the conversation and its instructions.
       # Replace with actual logic (e.g., API call, database lookup)
       capitals = {"france": "Paris", "japan": "Tokyo", "canada": "Ottawa"}
       return capitals.get(country.lower(), f"Sorry, I don't know the capital of {country}.")
-    
+
     # Add the tool to the agent
     capital_agent = LlmAgent(
-        model="gemini-2.0-flash",
+        model="gemini-2.5-flash",
         name="capital_agent",
         description="Answers user questions about the capital city of a given country.",
         instruction="""You are an agent that provides the capital city of a country... (previous instruction text)""",
         tools=[get_capital_city] # Provide the function directly
     )
+    ```
+
+=== "Typescript"
+
+    ```typescript
+    import {z} from 'zod';
+    import { LlmAgent, FunctionTool } from '@google/adk';
+
+    // Define the schema for the tool's input parameters
+    const getCapitalCityParamsSchema = z.object({
+        country: z.string().describe('The country to get capital for.'),
+    });
+
+    // Define the tool function itself
+    async function getCapitalCity(params: z.infer<typeof getCapitalCityParamsSchema>): Promise<{ capitalCity: string }> {
+    const capitals: Record<string, string> = {
+        'france': 'Paris',
+        'japan': 'Tokyo',
+        'canada': 'Ottawa',
+    };
+    const result = capitals[params.country.toLowerCase()] ??
+        `Sorry, I don't know the capital of ${params.country}.`;
+    return {capitalCity: result}; // Tools must return an object
+    }
+
+    // Create an instance of the FunctionTool
+    const getCapitalCityTool = new FunctionTool({
+        name: 'getCapitalCity',
+        description: 'Retrieves the capital city for a given country.',
+        parameters: getCapitalCityParamsSchema,
+        execute: getCapitalCity,
+    });
+
+    // Add the tool to the agent
+    const capitalAgent = new LlmAgent({
+        model: 'gemini-2.5-flash',
+        name: 'capitalAgent',
+        description: 'Answers user questions about the capital city of a given country.',
+        instruction: 'You are an agent that provides the capital city of a country...', // Note: the full instruction is omitted for brevity
+        tools: [getCapitalCityTool], // Provide the FunctionTool instance in an array
+    });
     ```
 
 === "Go"
@@ -195,7 +272,7 @@ on the conversation and its instructions.
 === "Java"
 
     ```java
-    
+
     // Define a tool function
     // Retrieves the capital city of a given country.
     public static Map<String, Object> getCapitalCity(
@@ -206,18 +283,18 @@ on the conversation and its instructions.
       countryCapitals.put("canada", "Ottawa");
       countryCapitals.put("france", "Paris");
       countryCapitals.put("japan", "Tokyo");
-    
+
       String result =
               countryCapitals.getOrDefault(
                       country.toLowerCase(), "Sorry, I couldn't find the capital for " + country + ".");
       return Map.of("result", result); // Tools must return a Map
     }
-    
+
     // Add the tool to the agent
     FunctionTool capitalTool = FunctionTool.create(experiment.getClass(), "getCapitalCity");
     LlmAgent capitalAgent =
         LlmAgent.builder()
-            .model("gemini-2.0-flash")
+            .model("gemini-2.5-flash")
             .name("capital_agent")
             .description("Answers user questions about the capital city of a given country.")
             .instruction("You are an agent that provides the capital city of a country... (previous instruction text)")
@@ -231,7 +308,7 @@ Learn more about Tools in the [Tools](../tools/index.md) section.
 
 Beyond the core parameters, `LlmAgent` offers several options for finer control:
 
-### Configuring LLM Generation (`generate_content_config`) {#fine-tuning-llm-generation-generate_content_config}
+### Fine-Tuning LLM Generation (`generate_content_config`)
 
 You can adjust how the underlying LLM generates responses using `generate_content_config`.
 
@@ -255,6 +332,22 @@ You can adjust how the underlying LLM generates responses using `generate_conten
             ]
         )
     )
+    ```
+
+=== "Typescript"
+
+    ```typescript
+    import { GenerateContentConfig } from '@google/genai';
+
+    const generateContentConfig: GenerateContentConfig = {
+        temperature: 0.2, // More deterministic output
+        maxOutputTokens: 250,
+    };
+
+    const agent = new LlmAgent({
+        // ... other params
+        generateContentConfig,
+    });
     ```
 
 === "Go"
@@ -299,10 +392,10 @@ For scenarios requiring structured data exchange with an `LLM Agent`, the ADK pr
 
     ```python
     from pydantic import BaseModel, Field
-    
+
     class CapitalOutput(BaseModel):
         capital: str = Field(description="The capital of the country.")
-    
+
     structured_capital_agent = LlmAgent(
         # ... name, model, description
         instruction="""You are a Capital Information Agent. Given a country, respond ONLY with a JSON object containing the capital. Format: {"capital": "capital_name"}""",
@@ -310,6 +403,34 @@ For scenarios requiring structured data exchange with an `LLM Agent`, the ADK pr
         output_key="found_capital"  # Store result in state['found_capital']
         # Cannot use tools=[get_capital_city] effectively here
     )
+    ```
+
+=== "Typescript"
+
+    ```typescript
+    import {z} from 'zod';
+    import { Schema, Type } from '@google/genai';
+
+    // Define the schema for the output
+    const CapitalOutputSchema: Schema = {
+        type: Type.OBJECT,
+        properties: {
+            capital: {
+                type: Type.STRING,
+                description: 'The capital of the country.',
+            },
+        },
+        required: ['capital'],
+    };
+
+    // Create the LlmAgent instance
+    const structuredCapitalAgent = new LlmAgent({
+        // ... name, model, description
+        instruction: `You are a Capital Information Agent. Given a country, respond ONLY with a JSON object containing the capital. Format: {"capital": "capital_name"}`,
+        outputSchema: CapitalOutputSchema, // Enforce JSON output
+        outputKey: 'found_capital', // Store result in state['found_capital']
+        // Cannot use tools effectively here
+    });
     ```
 
 === "Go"
@@ -337,7 +458,7 @@ For scenarios requiring structured data exchange with an `LLM Agent`, the ADK pr
                         .description("The capital city of the country.")
                         .build()))
             .build();
-    
+
     LlmAgent structuredCapitalAgent =
         LlmAgent.builder()
             // ... name, model, description
@@ -366,6 +487,15 @@ Control whether the agent receives the prior conversation history.
     )
     ```
 
+=== "Typescript"
+
+    ```typescript
+    const statelessAgent = new LlmAgent({
+        // ... other params
+        includeContents: 'none',
+    });
+    ```
+
 === "Go"
 
     ```go
@@ -378,7 +508,7 @@ Control whether the agent receives the prior conversation history.
 
     ```java
     import com.google.adk.agents.LlmAgent.IncludeContents;
-    
+
     LlmAgent statelessAgent =
         LlmAgent.builder()
             // ... other params
@@ -414,7 +544,7 @@ Control whether the agent receives the prior conversation history.
         # ... your tools here
     )
     ```
-    
+
 * **`PlanReActPlanner`:** This planner instructs the model to follow a specific structure in its output: first create a plan, then execute actions (like calling tools), and provide reasoning for its steps. *It's particularly useful for models that don't have a built-in "thinking" feature*.
 
     ```python
@@ -422,7 +552,7 @@ Control whether the agent receives the prior conversation history.
     from google.adk.planners import PlanReActPlanner
 
     my_agent = Agent(
-        model="gemini-2.0-flash",
+        model="gemini-2.5-flash",
         planner=PlanReActPlanner(),
         # ... your tools here
     )
@@ -445,15 +575,8 @@ Control whether the agent receives the prior conversation history.
     ....
     ```
 
-### Code Execution
-
-<div class="language-support-tag">
-   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
-</div>
-
-* **`code_executor` (Optional):** Provide a `BaseCodeExecutor` instance to allow the agent to execute code blocks found in the LLM's response. ([See Tools/Built-in tools](../tools/built-in-tools.md)).
-
 Example for using built-in-planner:
+
 ```python
 from dotenv import load_dotenv
 
@@ -572,17 +695,45 @@ call_agent("If it's raining in New York right now, what is the current temperatu
 
 ```
 
+### Code Execution
+
+<div class="language-support-tag">
+   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+</div>
+
+- **`code_executor` (Optional):** Provide a `BaseCodeExecutor` instance to allow
+  the agent to execute code blocks found in the LLM's response. For more
+  information, see [Code Execution with Gemini API](/adk-docs/tools/gemini-api/code-execution/).
+
+=== "Python"
+
+    ```python
+    --8<-- "examples/python/snippets/tools/built-in-tools/code_execution.py"
+    ```
+
+=== "Java"
+
+    ```java
+    --8<-- "examples/java/snippets/src/main/java/tools/CodeExecutionAgentApp.java:full_code"
+    ```
+
 ## Putting It Together: Example
 
 ??? "Code"
     Here's the complete basic `capital_agent`:
 
     === "Python"
-    
+
         ```python
         --8<-- "examples/python/snippets/agents/llm-agent/capital_agent.py"
         ```
-    
+
+    === "Typescript"
+
+        ```javascript
+        --8<-- "examples/typescript/snippets/agents/llm-agent/capital_agent.ts"
+        ```
+
     === "Go"
 
         ```go
@@ -590,7 +741,7 @@ call_agent("If it's raining in New York right now, what is the current temperatu
         ```
 
     === "Java"
-    
+
         ```java
         --8<-- "examples/java/snippets/src/main/java/agents/LlmAgentExample.java:full_code"
         ```

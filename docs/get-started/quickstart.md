@@ -30,6 +30,35 @@ application entirely on your machine and is recommended for internal development
     pip install google-adk
     ```
 
+=== "TypeScript"
+
+    Create a new project directory, initialize it, and install dependencies:
+
+    ```bash
+    mkdir my-adk-agent
+    cd my-adk-agent
+    npm init -y
+    npm install @google/adk @google/adk-devtools
+    npm install -D typescript
+    ```
+
+    Create a `tsconfig.json` file with the following content. This configuration ensures your project correctly handles modern Node.js modules.
+
+    ```json title="tsconfig.json"
+    {
+      "compilerOptions": {
+        "target": "es2020",
+        "module": "nodenext",
+        "moduleResolution": "nodenext",
+        "esModuleInterop": true,
+        "strict": true,
+        "skipLibCheck": true,
+        // set to false to allow CommonJS module syntax:
+        "verbatimModuleSyntax": false
+      }
+    }
+    ```
+
 === "Java"
 
     To install ADK and setup the environment, proceed to the following steps.
@@ -113,6 +142,54 @@ application entirely on your machine and is recommended for internal development
 
     More instructions about this file are described in the next section on [Set up the model](#set-up-the-model).
 
+=== "TypeScript"
+
+    You will need to create the following project structure in your `my-adk-agent` directory:
+
+    ```console
+    my-adk-agent/
+        agent.ts
+        .env
+        package.json
+        tsconfig.json
+    ```
+
+    ### `agent.ts`
+
+    Create an `agent.ts` file in your project folder:
+
+    === "OS X &amp; Linux"
+        ```shell
+        touch agent.ts
+        ```
+
+    === "Windows"
+        ```shell
+        type nul > agent.ts
+        ```
+
+    Copy and paste the following code into `agent.ts`:
+
+    ```typescript title="agent.ts"
+    --8<-- "examples/typescript/snippets/get-started/multi_tool_agent/agent.ts"
+    ```
+
+    ### `.env`
+
+    Create a `.env` file in the same folder:
+
+    === "OS X &amp; Linux"
+        ```shell
+        touch .env
+        ```
+
+    === "Windows"
+        ```shell
+        type nul > .env
+        ```
+
+    More instructions about this file are described in the next section on [Set up the model](#set-up-the-model).
+
 === "Java"
 
     Java projects generally feature the following project structure:
@@ -150,7 +227,7 @@ valid authentication, the LLM service will deny the agent's requests, and the
 agent will be unable to function.
 
 !!!tip "Model Authentication guide"
-    For a detailed guide on authenticating to different models, see the [Authentication guide](../agents/models.md#google-ai-studio).
+    For a detailed guide on authenticating to different models, see the [Authentication guide](/adk-docs/agents/models/google-gemini#google-ai-studio).
     This is a critical step to ensure your agent can make calls to the LLM service.
 
 === "Gemini - Google AI Studio"
@@ -168,6 +245,13 @@ agent will be unable to function.
         ```console title="terminal"
         export GOOGLE_GENAI_USE_VERTEXAI=FALSE
         export GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_API_KEY_HERE
+        ```
+
+        When using TypeScript, the `.env` file is automatically loaded by the `import 'dotenv/config';` line at the top of your `agent.ts` file.
+
+        ```env title=""multi_tool_agent/.env"
+        GOOGLE_GENAI_USE_VERTEXAI=FALSE
+        GOOGLE_GENAI_API_KEY=PASTE_YOUR_ACTUAL_API_KEY_HERE
         ```
 
     3. Replace `PASTE_YOUR_ACTUAL_API_KEY_HERE` with your actual `API KEY`.
@@ -193,6 +277,14 @@ agent will be unable to function.
         export GOOGLE_CLOUD_LOCATION=LOCATION
         ```
 
+        When using TypeScript, the `.env` file is automatically loaded by the `import 'dotenv/config';` line at the top of your `agent.ts` file.
+
+        ```env title=".env"
+        GOOGLE_GENAI_USE_VERTEXAI=TRUE
+        GOOGLE_CLOUD_PROJECT=YOUR_PROJECT_ID
+        GOOGLE_CLOUD_LOCATION=LOCATION
+        ```
+
 === "Gemini - Google Cloud Vertex AI with Express Mode"
     1. You can sign up for a free Google Cloud project and use Gemini for free with an eligible account!
         * Set up a
@@ -211,6 +303,13 @@ agent will be unable to function.
         ```console title="terminal"
         export GOOGLE_GENAI_USE_VERTEXAI=TRUE
         export GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_EXPRESS_MODE_API_KEY_HERE
+        ```
+
+        When using TypeScript, the `.env` file is automatically loaded by the `import 'dotenv/config';` line at the top of your `agent.ts` file.
+
+        ```env title=".env"
+        GOOGLE_GENAI_USE_VERTEXAI=TRUE
+        GOOGLE_GENAI_API_KEY=PASTE_YOUR_ACTUAL_EXPRESS_MODE_API_KEY_HERE
         ```
 
 ## 4. Run Your Agent { #run-your-agent }
@@ -247,6 +346,11 @@ agent will be unable to function.
         ```shell
         adk web
         ```
+
+        !!! warning "Caution: ADK Web for development only"
+
+            ADK Web is ***not meant for use in production deployments***. You should
+            use ADK Web for development and debugging purposes only.
 
         !!!info "Note for Windows users"
 
@@ -332,6 +436,76 @@ agent will be unable to function.
         To learn how to use `adk api_server` for testing, refer to the
         [documentation on using the API server](/adk-docs/runtime/api-server/).
 
+=== "TypeScript"
+
+    Using the terminal, navigate to your agent project directory:
+
+    ```console
+    my-adk-agent/      <-- navigate to this directory
+        agent.ts
+        .env
+        package.json
+        tsconfig.json
+    ```
+
+    There are multiple ways to interact with your agent:
+
+    === "Dev UI (adk web)"
+
+        Run the following command to launch the **dev UI**.
+
+        ```shell
+        npx adk web
+        ```
+
+        **Step 1:** Open the URL provided (usually `http://localhost:8000` or
+        `http://127.0.0.1:8000`) directly in your browser.
+
+        **Step 2.** In the top-left corner of the UI, select your agent from the dropdown. The agents are listed by their filenames, so you should select "agent".
+
+        !!!note "Troubleshooting"
+
+            If you do not see "agent" in the dropdown menu, make sure you
+            are running `npx adk web` in the directory containing your `agent.ts` file.
+
+        **Step 3.** Now you can chat with your agent using the textbox:
+
+        ![adk-web-dev-ui-chat.png](../assets/adk-web-dev-ui-chat.png)
+
+
+        **Step 4.** By using the `Events` tab at the left, you can inspect
+        individual function calls, responses and model responses by clicking on the
+        actions:
+
+        ![adk-web-dev-ui-function-call.png](../assets/adk-web-dev-ui-function-call.png)
+
+        On the `Events` tab, you can also click the `Trace` button to see the trace logs for each event that shows the latency of each function calls:
+
+        ![adk-web-dev-ui-trace.png](../assets/adk-web-dev-ui-trace.png)
+
+    === "Terminal (adk run)"
+
+        Run the following command to chat with your agent.
+
+        ```
+        npx adk run agent.ts
+        ```
+
+        ![adk-run.png](../assets/adk-run.png)
+
+        To exit, use Cmd/Ctrl+C.
+
+    === "API Server (adk api_server)"
+
+        `npx adk api_server` enables you to create a local Express.js server in a single
+        command, enabling you to test local cURL requests before you deploy your
+        agent.
+
+        ![adk-api-server.png](../assets/adk-api-server.png)
+
+        To learn how to use `api_server` for testing, refer to the
+        [documentation on testing](/adk-docs/runtime/api-server/).
+
 === "Java"
 
     Using the terminal, navigate to the parent directory of your agent project
@@ -383,6 +557,11 @@ agent will be unable to function.
 
         ![adk-web-dev-ui-function-call.png](../assets/adk-web-dev-ui-function-call.png)
 
+        !!! warning "Caution: ADK Web for development only"
+
+            ADK Web is ***not meant for use in production deployments***. You should
+            use ADK Web for development and debugging purposes only.
+
     === "Maven"
 
         With Maven, run the `main()` method of your Java class
@@ -419,8 +598,6 @@ agent will be unable to function.
         ```console
         gradle runAgent
         ```
-
-
 
 ### 📝 Example prompts to try
 

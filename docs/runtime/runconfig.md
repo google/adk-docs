@@ -1,12 +1,12 @@
 # Runtime Configuration
 
 <div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
-`RunConfig` defines runtime behavior and options for agents in the ADK. It
-controls speech and streaming settings, function calling, artifact saving, and
-limits on LLM calls.
+`RunConfig` defines runtime behavior and options for agents in ADK. It controls
+speech and streaming settings, function calling, artifact saving, and limits on
+LLM calls.
 
 When constructing an agent run, you can pass a `RunConfig` to customize how the
 agent interacts with models, handles audio, and streams responses. By default,
@@ -21,6 +21,8 @@ The `RunConfig` class holds configuration parameters for an agent's runtime beha
 -   Go ADK has mutable structs by default.
 -   Java ADK typically uses immutable data classes.
 
+
+- TypeScript ADK uses a standard interface, with type safety provided by the TypeScript compiler.
 
 === "Python"
 
@@ -39,6 +41,27 @@ The `RunConfig` class holds configuration parameters for an agent's runtime beha
         streaming_mode: StreamingMode = StreamingMode.NONE
         output_audio_transcription: Optional[types.AudioTranscriptionConfig] = None
         max_llm_calls: int = 500
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    export interface RunConfig {
+      speechConfig?: SpeechConfig;
+      responseModalities?: Modality[];
+      saveInputBlobsAsArtifacts: boolean;
+      supportCfc: boolean;
+      streamingMode: StreamingMode;
+      outputAudioTranscription?: AudioTranscriptionConfig;
+      maxLlmCalls: number;
+      // ... and other properties
+    }
+
+    export enum StreamingMode {
+      NONE = 'none',
+      SSE = 'sse',
+      BIDI = 'bidi',
+    }
     ```
 
 === "Go"
@@ -87,15 +110,16 @@ The `RunConfig` class holds configuration parameters for an agent's runtime beha
 
 ## Runtime Parameters
 
-| Parameter                       | Python Type                                  | Go Type         | Java Type                                             | Default (Py / Go / Java )               | Description                                                                                                                  |
-| :------------------------------ | :------------------------------------------- |:----------------|:------------------------------------------------------|:----------------------------------------|:-----------------------------------------------------------------------------------------------------------------------------|
-| `speech_config`                 | `Optional[types.SpeechConfig]`               | N/A             | `SpeechConfig` (nullable via `@Nullable`)             | `None` / N/A / `null`                   | Configures speech synthesis (voice, language) using the `SpeechConfig` type.                                                 |
-| `response_modalities`           | `Optional[list[str]]`                        | N/A             | `ImmutableList<Modality>`                             | `None` / N/A / Empty `ImmutableList`    | List of desired output modalities (e.g., Python: `["TEXT", "AUDIO"]`; Java: uses structured `Modality` objects).             |
-| `save_input_blobs_as_artifacts` | `bool`                                       | `bool`          | `boolean`                                             | `False` / `false` / `false`             | If `true`, saves input blobs (e.g., uploaded files) as run artifacts for debugging/auditing.                                 |
-| `streaming_mode`                | `StreamingMode`                              | `StreamingMode` | `StreamingMode`                                       | `StreamingMode.NONE` / `agent.StreamingModeNone` / `StreamingMode.NONE` | Sets the streaming behavior: `NONE` (default), `SSE` (server-sent events), or `BIDI` (bidirectional) (**Python/Java**).                        |
-| `output_audio_transcription`    | `Optional[types.AudioTranscriptionConfig]`   | N/A             | `AudioTranscriptionConfig` (nullable via `@Nullable`) | `None` / N/A / `null`                   | Configures transcription of generated audio output using the `AudioTranscriptionConfig` type.                                |
-| `max_llm_calls`                 | `int`                                        | N/A             | `int`                                                 | `500` / N/A / `500`                     | Limits total LLM calls per run. `0` or negative means unlimited (warned); `sys.maxsize` raises `ValueError`.                 |
-| `support_cfc`                   | `bool`                                       | N/A             | `bool`                                                | `False` / N/A / `false`                 | **Python:** Enables Compositional Function Calling. Requires `streaming_mode=SSE` and uses the LIVE API. **Experimental.**   |
+| Parameter                       | Python Type                                  | TypeScript Type                       | Go Type         | Java Type                                             | Default (Py / TS / Go / Java)                                                                  | Description                                                                                                                                                 |
+| :------------------------------ | :------------------------------------------- | :------------------------------------ |:----------------|:------------------------------------------------------| :--------------------------------------------------------------------------------------------- |:------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `speech_config`                 | `Optional[types.SpeechConfig]`               | `SpeechConfig` (optional)             | N/A             | `SpeechConfig` (nullable via `@Nullable`)             | `None` / `undefined`/ N/A / `null`                                                             | Configures speech synthesis (voice, language) using the `SpeechConfig` type.                                                                                |
+| `response_modalities`           | `Optional[list[str]]`                        | `Modality[]` (optional)               | N/A             | `ImmutableList<Modality>`                             | `None` / `undefined` / N/A / Empty `ImmutableList`                                             | List of desired output modalities (e.g., Python: `["TEXT", "AUDIO"]`; Java/TS: uses structured `Modality` objects).                                         |
+| `save_input_blobs_as_artifacts` | `bool`                                       | `boolean`                             | `bool`          | `boolean`                                             | `False` / `false` / `false` / `false`                                                          | If `true`, saves input blobs (e.g., uploaded files) as run artifacts for debugging/auditing.                                                                |
+| `streaming_mode`                | `StreamingMode`                              | `StreamingMode`                       | `StreamingMode` | `StreamingMode`                                       | `StreamingMode.NONE` / `StreamingMode.NONE` / `agent.StreamingModeNone` / `StreamingMode.NONE` | Sets the streaming behavior: `NONE` (default), `SSE` (server-sent events), or `BIDI` (bidirectional).                                                       |
+| `output_audio_transcription`    | `Optional[types.AudioTranscriptionConfig]`   | `AudioTranscriptionConfig` (optional) | N/A             | `AudioTranscriptionConfig` (nullable via `@Nullable`) | `None` / `undefined` / N/A / `null`                                                            | Configures transcription of generated audio output using the `AudioTranscriptionConfig` type.                                                               |
+| `max_llm_calls`                 | `int`                                        | `number`                              | N/A             | `int`                                                 | `500` / `500` / N/A / `500`                                                                    | Limits total LLM calls per run. `0` or negative means unlimited. Exceeding language limits (e.g. `sys.maxsize`, `Number.MAX_SAFE_INTEGER`) raises an error. |
+| `support_cfc`                   | `bool`                                       | `boolean`                             | N/A             | `bool`                                                | `False` / `false` / N/A / `false`                                                              | **Python/TypeScript:** Enables Compositional Function Calling. Requires `streaming_mode=SSE` and uses the LIVE API. **Experimental.**                       |
+
 
 ### `speech_config`
 
@@ -232,14 +256,16 @@ limits is crucial.
 
 ## Validation Rules
 
-The `RunConfig` class validates its parameters to ensure proper agent operation. While Python ADK uses `Pydantic` for automatic type validation, Java ADK relies on its static typing and may include explicit checks in the RunConfig's construction.
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+</div>
+
+The `RunConfig` class validates its parameters to ensure proper agent operation. While Python ADK uses `Pydantic` for automatic type validation, Java and TypeScript ADK rely on their static type systems and may include explicit checks in the `RunConfig`'s constructor.
 For the `max_llm_calls` parameter specifically:
 
-1. Extremely large values (like `sys.maxsize` in Python or `Integer.MAX_VALUE` in Java) are typically disallowed to prevent issues.
+1. Extremely large values (like `sys.maxsize` in Python, `Integer.MAX_VALUE` in Java, or `Number.MAX_SAFE_INTEGER` in TypeScript) are typically disallowed to prevent issues.
 
 2. Values of zero or less will usually trigger a warning about unlimited LLM interactions.
-
-## Examples
 
 ### Basic runtime configuration
 
@@ -252,6 +278,17 @@ For the `max_llm_calls` parameter specifically:
         streaming_mode=StreamingMode.NONE,
         max_llm_calls=100
     )
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    import { RunConfig, StreamingMode } from '@google/adk';
+
+    const config: RunConfig = {
+      streamingMode: StreamingMode.NONE,
+      maxLlmCalls: 100,
+    };
     ```
 
 === "Go"
@@ -291,6 +328,17 @@ preferable.
         streaming_mode=StreamingMode.SSE,
         max_llm_calls=200
     )
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    import { RunConfig, StreamingMode } from '@google/adk';
+
+    const config: RunConfig = {
+      streamingMode: StreamingMode.SSE,
+      maxLlmCalls: 200,
+    };
     ```
 
 === "Go"
@@ -343,6 +391,31 @@ providing a more responsive feel for chatbots and assistants.
     )
     ```
 
+=== "TypeScript"
+
+    ```typescript
+    import { RunConfig, StreamingMode } from '@google/adk';
+
+    const config: RunConfig = {
+        speechConfig: {
+            languageCode: "en-US",
+            voiceConfig: {
+                prebuiltVoiceConfig: {
+                    voiceName: "Kore"
+                }
+            },
+        },
+        responseModalities: [
+          { modality: "AUDIO" },
+          { modality: "TEXT" }
+        ],
+        saveInputBlobsAsArtifacts: true,
+        supportCfc: true,
+        streamingMode: StreamingMode.SSE,
+        maxLlmCalls: 1000,
+    };
+    ```
+
 === "Java"
 
     ```java
@@ -379,25 +452,45 @@ This comprehensive example configures an agent with:
 * Speech capabilities using the "Kore" voice (US English)
 * Both audio and text output modalities
 * Artifact saving for input blobs (useful for debugging)
+* Experimental CFC support enabled **(Python and TypeScript)**
 * SSE streaming for responsive interaction
 * A limit of 1000 LLM calls
 
-### Enabling Experimental CFC Support
+### Enabling CFC Support
 
-<div class="language-support-tag" title="This feature is an experimental preview release.">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-preview">Experimental</span>
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-preview">Experimental</span>
 </div>
 
-    ```python
-        from google.genai.adk import RunConfig, StreamingMode
+=== "Python"
 
-        config = RunConfig(
-            streaming_mode=StreamingMode.SSE,
-            support_cfc=True,
-            max_llm_calls=150
-        )
+    ```python
+    from google.genai.adk import RunConfig, StreamingMode
+
+    config = RunConfig(
+        streaming_mode=StreamingMode.SSE,
+        support_cfc=True,
+        max_llm_calls=150
+    )
     ```
 
-Enabling Compositional Function Calling creates an agent that can dynamically
-execute functions based on model outputs, powerful for applications requiring
-complex workflows.
+=== "TypeScript"
+
+    ```typescript
+    import { RunConfig, StreamingMode } from '@google/adk';
+
+    const config: RunConfig = {
+        streamingMode: StreamingMode.SSE,
+        supportCfc: true,
+        maxLlmCalls: 150,
+    };
+    ```
+
+Enabling Compositional Function Calling (CFC) creates an agent that can
+dynamically execute functions based on model outputs, powerful for applications
+requiring complex workflows.
+
+!!! example "Experimental release"
+
+    The Compositional Function Calling (CFC) streaming feature is an
+    experimental release.

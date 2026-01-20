@@ -12,10 +12,11 @@ Criterion                                | Description                          
 `tool_trajectory_avg_score`              | Exact match of tool call trajectory                       | Yes             | No               | No             | No
 `response_match_score`                   | ROUGE-1 similarity to reference response                  | Yes             | No               | No             | No
 `final_response_match_v2`                | LLM-judged semantic match to reference response           | Yes             | No               | Yes            | No
-`rubric_based_final_response_quality_v1` | LLM-judged final response quality based on custom rubrics | No              | Yes              | Yes            | No
-`rubric_based_tool_use_quality_v1`       | LLM-judged tool usage quality based on custom rubrics     | No              | Yes              | Yes            | No
+`rubric_based_final_response_quality_v1` | LLM-judged final response quality based on custom rubrics | No              | Yes              | Yes            | Yes
+`rubric_based_tool_use_quality_v1`       | LLM-judged tool usage quality based on custom rubrics     | No              | Yes              | Yes            | Yes
 `hallucinations_v1`                      | LLM-judged groundedness of agent response against context | No              | No               | Yes            | Yes
 `safety_v1`                              | Safety/harmlessness of agent response                     | No              | No               | Yes            | Yes
+`per_turn_user_simulator_quality_v1`     | LLM-judged user simulator quality                         | No              | No               | Yes            | Yes
 
 ## tool_trajectory_avg_score
 
@@ -490,3 +491,56 @@ Example `EvalConfig` entry:
 The criterion returns a score between 0.0 and 1.0. Scores closer to 1.0 indicate
 that the response is safe, while scores closer to 0.0 indicate potential safety
 issues.
+
+## per_turn_user_simulator_quality_v1
+
+This criterion evaluates whether a user simulator is faithful to a conversation
+plan.
+
+#### When To Use This Criterion?
+
+Use this criterion when you need to evaluate a user simulator in a multi-turn
+conversation. It is designed to assess whether the simulator follows the
+conversation plan defined in the `ConversationScenario`.
+
+#### Details
+
+This criterion determines whether the a user simulator follows a defined
+`ConversationScenario` in a multi-turn conversation.
+
+For the first turn, this criterion checks if user simulator response matches the
+`starting_prompt` in the `ConversationScenario`. For subsequent turns, it uses
+LLM-as-a-judge to evaluate if the user response follows the `conversation_plan`
+in the `ConversationScenario`.
+
+#### How To Use This Criterion?
+
+This criterion allows you to configure the evaluation threshold, the judge model
+and the number of samples per invocation. The criterion also lets you specify a
+`stop_signal`, which signals the LLM judge that the conversation was completed.
+For best results, use the stop signal in `LlmBackedUserSimulator`.
+
+Example `EvalConfig` entry:
+
+```json
+{
+  "criteria": {
+    "per_turn_user_simulator_quality_v1": {
+      "threshold": 1.0,
+      "judge_model_options": {
+        "judge_model": "gemini-2.5-flash",
+        "num_samples": 5
+      },
+      "stop_signal": "</finished>"
+    }
+  }
+}
+```
+
+#### Output And How To Interpret
+
+The criterion returns a score between 0.0 and 1.0, representing the fraction of
+turns in which the user simulator's response was judged to be valid according to
+the conversation scenario. A score of 1.0 indicates that the simulator behaved
+as expected in all turns, while a score closer to 0.0 indicates that the
+simulator deviated in many turns. Higher values are better.

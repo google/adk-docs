@@ -1,7 +1,7 @@
 # Custom agents
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.2.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
 Custom agents provide the ultimate flexibility in ADK, allowing you to define **arbitrary orchestration logic** by inheriting directly from `BaseAgent` and implementing your own control flow. This goes beyond the predefined patterns of `SequentialAgent`, `LoopAgent`, and `ParallelAgent`, enabling you to build highly specific and complex agentic workflows.
@@ -14,10 +14,10 @@ Custom agents provide the ultimate flexibility in ADK, allowing you to define **
 
 ### What is a Custom Agent?
 
-A Custom Agent is essentially any class you create that inherits from `google.adk.agents.BaseAgent` and implements its core execution logic within the `_run_async_impl` asynchronous method. You have complete control over how this method calls other agents (sub-agents), manages state, and handles events. 
+A Custom Agent is essentially any class you create that inherits from `google.adk.agents.BaseAgent` and implements its core execution logic within the `_run_async_impl` asynchronous method. You have complete control over how this method calls other agents (sub-agents), manages state, and handles events.
 
 !!! Note
-    The specific method name for implementing an agent's core asynchronous logic may vary slightly by SDK language (e.g., `runAsyncImpl` in Java, `_run_async_impl` in Python). Refer to the language-specific API documentation for details.
+    The specific method name for implementing an agent's core asynchronous logic may vary slightly by SDK language (e.g., `runAsyncImpl` in Java, `_run_async_impl` in Python, or `runAsyncImpl` in TypeScript). Refer to the language-specific API documentation for details.
 
 ### Why Use Them?
 
@@ -40,10 +40,18 @@ The core of any custom agent is the method where you define its unique asynchron
 === "Python"
 
       The heart of any custom agent is the `_run_async_impl` method. This is where you define its unique behavior.
-      
+
       * **Signature:** `async def _run_async_impl(self, ctx: InvocationContext) -> AsyncGenerator[Event, None]:`
       * **Asynchronous Generator:** It must be an `async def` function and return an `AsyncGenerator`. This allows it to `yield` events produced by sub-agents or its own logic back to the runner.
       * **`ctx` (InvocationContext):** Provides access to crucial runtime information, most importantly `ctx.session.state`, which is the primary way to share data between steps orchestrated by your custom agent.
+
+=== "TypeScript"
+
+    The heart of any custom agent is the `runAsyncImpl` method. This is where you define its unique behavior.
+
+    *   **Signature:** `async* runAsyncImpl(ctx: InvocationContext): AsyncGenerator<Event, void, undefined>`
+    *   **Asynchronous Generator:** It must be an `async` generator function (`async*`).
+    *   **`ctx` (InvocationContext):** Provides access to crucial runtime information, most importantly `ctx.session.state`, which is the primary way to share data between steps orchestrated by your custom agent.
 
 === "Go"
 
@@ -75,21 +83,52 @@ The core of any custom agent is the method where you define its unique asynchron
           ```
 
     2. **Managing State:** Read from and write to the session state dictionary (`ctx.session.state`) to pass data between sub-agent calls or make decisions:
+
           ```python
           # Read data set by a previous agent
           previous_result = ctx.session.state.get("some_key")
-      
+
           # Make a decision based on state
           if previous_result == "some_value":
               # ... call a specific sub-agent ...
           else:
               # ... call another sub-agent ...
-      
+
           # Store a result for a later step (often done via a sub-agent's output_key)
           # ctx.session.state["my_custom_result"] = "calculated_value"
           ```
 
     3. **Implementing Control Flow:** Use standard Python constructs (`if`/`elif`/`else`, `for`/`while` loops, `try`/`except`) to create sophisticated, conditional, or iterative workflows involving your sub-agents.
+
+=== "TypeScript"
+
+    1.  **Calling Sub-Agents:** You invoke sub-agents (which are typically stored as instance properties like `this.myLlmAgent`) using their `run` method and yield their events:
+
+        ```typescript
+        for await (const event of this.someSubAgent.runAsync(ctx)) {
+            // Optionally inspect or log the event
+            yield event; // Pass the event up to the runner
+        }
+        ```
+
+    2.  **Managing State:** Read from and write to the session state object (`ctx.session.state`) to pass data between sub-agent calls or make decisions:
+
+        ```typescript
+        // Read data set by a previous agent
+        const previousResult = ctx.session.state['some_key'];
+
+        // Make a decision based on state
+        if (previousResult === 'some_value') {
+          // ... call a specific sub-agent ...
+        } else {
+          // ... call another sub-agent ...
+        }
+
+        // Store a result for a later step (often done via a sub-agent's outputKey)
+        // ctx.session.state['my_custom_result'] = 'calculated_value';
+        ```
+
+    3. **Implementing Control Flow:** Use standard TypeScript/JavaScript constructs (`if`/`else`, `for`/`while` loops, `try`/`catch`) to create sophisticated, conditional, or iterative workflows involving your sub-agents.
 
 === "Go"
 
@@ -142,22 +181,22 @@ The core of any custom agent is the method where you define its unique asynchron
            ```java
            // Example: Running one sub-agent
            // return someSubAgent.runAsync(ctx);
-      
+
            // Example: Running sub-agents sequentially
            Flowable<Event> firstAgentEvents = someSubAgent1.runAsync(ctx)
                .doOnNext(event -> System.out.println("Event from agent 1: " + event.id()));
-      
+
            Flowable<Event> secondAgentEvents = Flowable.defer(() ->
                someSubAgent2.runAsync(ctx)
                    .doOnNext(event -> System.out.println("Event from agent 2: " + event.id()))
            );
-      
+
            return firstAgentEvents.concatWith(secondAgentEvents);
            ```
            The `Flowable.defer()` is often used for subsequent stages if their execution depends on the completion or state after prior stages.
 
     2. **Managing State:** Read from and write to the session state to pass data between sub-agent calls or make decisions. The session state is a `java.util.concurrent.ConcurrentMap<String, Object>` obtained via `ctx.session().state()`.
-        
+
         ```java
         // Read data set by a previous agent
         Object previousResult = ctx.session().state().get("some_key");
@@ -201,9 +240,20 @@ Let's illustrate the power of custom agents with an example pattern: a multi-sta
 === "Python"
 
     We define the `StoryFlowAgent` inheriting from `BaseAgent`. In `__init__`, we store the necessary sub-agents (passed in) as instance attributes and tell the `BaseAgent` framework about the top-level agents this custom agent will directly orchestrate.
-    
+
     ```python
     --8<-- "examples/python/snippets/agents/custom-agent/storyflow_agent.py:init"
+    ```
+
+=== "TypeScript"
+
+    We define the `StoryFlowAgent` by extending `BaseAgent`. In its constructor, we:
+    1.  Create any internal composite agents (like `LoopAgent` or `SequentialAgent`).
+    2.  Pass the list of all top-level sub-agents to the `super()` constructor.
+    3.  Store the sub-agents (passed in or created internally) as instance properties (e.g., `this.storyGenerator`) so they can be accessed in the custom `runImpl` logic.
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/agents/custom-agent/storyflow_agent.ts:init"
     ```
 
 === "Go"
@@ -229,7 +279,7 @@ Let's illustrate the power of custom agents with an example pattern: a multi-sta
 === "Python"
 
     This method orchestrates the sub-agents using standard Python async/await and control flow.
-    
+
     ```python
     --8<-- "examples/python/snippets/agents/custom-agent/storyflow_agent.py:executionlogic"
     ```
@@ -239,6 +289,20 @@ Let's illustrate the power of custom agents with an example pattern: a multi-sta
     2. The `loop_agent` runs, which internally calls the `critic` and `reviser` sequentially for `max_iterations` times. They read/write `current_story` and `criticism` from/to the state.
     3. The `sequential_agent` runs, calling `grammar_check` then `tone_check`, reading `current_story` and writing `grammar_suggestions` and `tone_check_result` to the state.
     4. **Custom Part:** The `if` statement checks the `tone_check_result` from the state. If it's "negative", the `story_generator` is called *again*, overwriting the `current_story` in the state. Otherwise, the flow ends.
+
+=== "TypeScript"
+
+    The `runImpl` method orchestrates the sub-agents using standard TypeScript `async`/`await` and control flow. The `runLiveImpl` is also added to handle live streaming scenarios.
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/agents/custom-agent/storyflow_agent.ts:executionlogic"
+    ```
+    **Explanation of Logic:**
+
+    1.  The initial `storyGenerator` runs. Its output is expected to be in `ctx.session.state['current_story']`.
+    2.  The `loopAgent` runs, which internally calls the `critic` and `reviser` sequentially for `maxIterations` times. They read/write `current_story` and `criticism` from/to the state.
+    3.  The `sequentialAgent` runs, calling `grammarCheck` then `toneCheck`, reading `current_story` and writing `grammar_suggestions` and `tone_check_result` to the state.
+    4.  **Custom Part:** The `if` statement checks the `tone_check_result` from the state. If it's "negative", the `storyGenerator` is called *again*, overwriting the `current_story` in the state. Otherwise, the flow ends.
 
 === "Go"
 
@@ -255,7 +319,7 @@ Let's illustrate the power of custom agents with an example pattern: a multi-sta
     4. **Custom Part:** The code checks the `tone_check_result` from the state. If it's "negative", the `story_generator` is called *again*, overwriting the `current_story` in the state. Otherwise, the flow ends.
 
 === "Java"
-    
+
     The `runAsyncImpl` method orchestrates the sub-agents using RxJava's Flowable streams and operators for asynchronous control flow.
 
     ```java
@@ -283,16 +347,23 @@ These are standard `LlmAgent` definitions, responsible for specific tasks. Their
     GEMINI_2_FLASH = "gemini-2.0-flash" # Define model constant
     --8<-- "examples/python/snippets/agents/custom-agent/storyflow_agent.py:llmagents"
     ```
-=== "Java"
 
-    ```java
-    --8<-- "examples/java/snippets/src/main/java/agents/StoryFlowAgentExample.java:llmagents"
+=== "TypeScript"
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/agents/custom-agent/storyflow_agent.ts:llmagents"
     ```
 
 === "Go"
 
     ```go
     --8<-- "examples/go/snippets/agents/custom-agent/storyflow_agent.go:llmagents"
+    ```
+
+=== "Java"
+
+    ```java
+    --8<-- "examples/java/snippets/src/main/java/agents/StoryFlowAgentExample.java:llmagents"
     ```
 
 ---
@@ -305,6 +376,12 @@ Finally, you instantiate your `StoryFlowAgent` and use the `Runner` as usual.
 
     ```python
     --8<-- "examples/python/snippets/agents/custom-agent/storyflow_agent.py:story_flow_agent"
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/agents/custom-agent/storyflow_agent.ts:story_flow_agent"
     ```
 
 === "Go"
@@ -328,12 +405,20 @@ Finally, you instantiate your `StoryFlowAgent` and use the `Runner` as usual.
 ???+ "Storyflow Agent"
 
     === "Python"
-    
+
         ```python
         # Full runnable code for the StoryFlowAgent example
         --8<-- "examples/python/snippets/agents/custom-agent/storyflow_agent.py"
         ```
-    
+
+    === "TypeScript"
+
+        ```typescript
+        // Full runnable code for the StoryFlowAgent example
+
+        --8<-- "examples/typescript/snippets/agents/custom-agent/storyflow_agent.ts"
+        ```
+
     === "Go"
 
         ```go
@@ -342,7 +427,7 @@ Finally, you instantiate your `StoryFlowAgent` and use the `Runner` as usual.
         ```
 
     === "Java"
-    
+
         ```java
         # Full runnable code for the StoryFlowAgent example
         --8<-- "examples/java/snippets/src/main/java/agents/StoryFlowAgentExample.java:full_code"

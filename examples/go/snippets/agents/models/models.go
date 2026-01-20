@@ -41,12 +41,14 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to create agent: %v", err)
 	}
+	// --8<-- [end:gemini-example]
 
+	// --8<-- [start:gemini-example-2]
 	// --- Example using a powerful Gemini Pro model ---
 	// Note: Always check the official Gemini documentation for the latest model names,
 	// including specific preview versions if needed. Preview models might have
 	// different availability or quota limitations.
-	modelPro, err := gemini.NewModel(ctx, "gemini-2.5-pro-preview-03-25", &genai.ClientConfig{})
+	modelPro, err := gemini.NewModel(ctx, "gemini-2.5-pro", &genai.ClientConfig{})
 	if err != nil {
 		log.Fatalf("failed to create model: %v", err)
 	}
@@ -60,7 +62,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to create agent: %v", err)
 	}
-	// --8<-- [end:gemini-example]
+	// --8<-- [end:gemini-example-2]
 	log.Println("agentGeminiFlash created successfully.")
 	log.Println("agentGeminiPro created successfully.")
 	_, _ = agentGeminiFlash, agentGeminiPro // Avoid unused variable error

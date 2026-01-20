@@ -1,7 +1,7 @@
 # Session: Tracking Individual Conversations
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
 Following our Introduction, let's dive into the `Session`. Think back to the
@@ -61,6 +61,37 @@ are its key properties:
         temp_service = await temp_service.delete_session(app_name=example_session.app_name,
                                     user_id=example_session.user_id, session_id=example_session.id)
         print("The final status of temp_service - ", temp_service)
+       ```
+
+=== "TypeScript"
+
+       ```typescript
+        import { InMemorySessionService } from "@google/adk";
+
+        // Create a simple session to examine its properties
+        const tempService = new InMemorySessionService();
+        const exampleSession = await tempService.createSession({
+            appName: "my_app",
+            userId: "example_user",
+            state: {"initial_key": "initial_value"} // State can be initialized
+        });
+
+        console.log("--- Examining Session Properties ---");
+        console.log(`ID ('id'):                ${exampleSession.id}`);
+        console.log(`Application Name ('appName'): ${exampleSession.appName}`);
+        console.log(`User ID ('userId'):         ${exampleSession.userId}`);
+        console.log(`State ('state'):           ${JSON.stringify(exampleSession.state)}`); // Note: Only shows initial state here
+        console.log(`Events ('events'):         ${JSON.stringify(exampleSession.events)}`); // Initially empty
+        console.log(`Last Update ('lastUpdateTime'): ${exampleSession.lastUpdateTime}`);
+        console.log("---------------------------------");
+
+        // Clean up (optional for this example)
+        const finalStatus = await tempService.deleteSession({
+            appName: exampleSession.appName,
+            userId: exampleSession.userId,
+            sessionId: exampleSession.id
+        });
+        console.log("The final status of temp_service - ", finalStatus);
        ```
 
 === "Go"
@@ -144,6 +175,13 @@ the storage backend that best suits your needs:
             from google.adk.sessions import InMemorySessionService
             session_service = InMemorySessionService()
            ```
+    === "TypeScript"
+
+           ```typescript
+            import { InMemorySessionService } from "@google/adk";
+            const sessionService = new InMemorySessionService();
+           ```
+
     === "Go"
 
            ```go
@@ -161,6 +199,10 @@ the storage backend that best suits your needs:
 
 2.  **`VertexAiSessionService`**
 
+    <div class="language-support-tag">
+      <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+    </div>
+
     *   **How it works:** Uses Google Cloud Vertex AI infrastructure via API
         calls for session management.
     *   **Persistence:** Yes. Data is managed reliably and scalably via
@@ -171,7 +213,7 @@ the storage backend that best suits your needs:
             [step](https://cloud.google.com/vertex-ai/docs/pipelines/configure-project#storage).
         *   A Reasoning Engine resource name/ID that can setup following this
             [tutorial](https://google.github.io/adk-docs/deploy/agent-engine/).
-        *   If you do not have a Google Cloud project and you want to try the VertexAiSessionService for free, see how to [try Session and Memory for free.](express-mode.md)
+        *   If you do not have a Google Cloud project and you want to try the VertexAiSessionService, see [Vertex AI Express Mode](/adk-docs/tools/google-cloud/express-mode/).
     *   **Best for:** Scalable production applications deployed on Google Cloud,
         especially when integrating with other Vertex AI features.
 
@@ -252,9 +294,16 @@ the storage backend that best suits your needs:
     ```py
     from google.adk.sessions import DatabaseSessionService
     # Example using a local SQLite file:
-    db_url = "sqlite:///./my_agent_data.db"
+    # Note: The implementation requires an async database driver.
+    # For SQLite, use 'sqlite+aiosqlite' instead of 'sqlite' to ensure async compatibility.
+    db_url = "sqlite+aiosqlite:///./my_agent_data.db"
     session_service = DatabaseSessionService(db_url=db_url)
     ```
+
+    <div class="admonition warning">
+    <p class="admonition-title">Async Driver Requirement</p>
+    <p><code>DatabaseSessionService</code> requires an async database driver. When using SQLite, you must use <code>sqlite+aiosqlite</code> instead of <code>sqlite</code> in your connection string. For other databases (PostgreSQL, MySQL), ensure you're using an async-compatible driver (e.g., <code>asyncpg</code> for PostgreSQL, <code>aiomysql</code> for MySQL).</p>
+    </div>
 
 Choosing the right `SessionService` is key to defining how your agent's
 conversation history and temporary data are stored and persist.
