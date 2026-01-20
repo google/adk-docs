@@ -237,12 +237,14 @@ nav:
         - Code Execution with Agent Engine: tools/google-cloud/code-exec-agent-engine.md
         - GKE Code Executor: tools/google-cloud/gke-code-executor.md
         - MCP Toolbox for Databases: tools/google-cloud/mcp-toolbox-for-databases.md
+        - Pub/Sub: tools/google-cloud/pubsub.md
         - RAG Engine: tools/google-cloud/vertex-ai-rag-engine.md
         - Spanner: tools/google-cloud/spanner.md
         - Vertex AI Search: tools/google-cloud/vertex-ai-search.md
         - Vertex AI express mode: tools/google-cloud/express-mode.md
       - Third-party tools:
         - tools/third-party/index.md
+        - Asana: tools/third-party/asana.md
         - Atlassian: tools/third-party/atlassian.md
         - ElevenLabs: tools/third-party/elevenlabs.md
         - GitHub: tools/third-party/github.md
@@ -251,6 +253,7 @@ nav:
         - Linear: tools/third-party/linear.md
         - n8n: tools/third-party/n8n.md
         - Notion: tools/third-party/notion.md
+        - Postman: tools/third-party/postman.md
         - PayPal: tools/third-party/paypal.md
         - Qdrant: tools/third-party/qdrant.md
         - Stripe: tools/third-party/stripe.md

@@ -9,6 +9,16 @@ Check out the following third-party tools that you can use with ADK agents:
 
 <div class="tool-card-grid">
 
+  <a href="/adk-docs/tools/third-party/asana/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="/adk-docs/assets/tools-asana.png" alt="Asana">
+    </div>
+    <div class="tool-card-content">
+      <h3>Asana</h3>
+      <p>Manage projects, tasks, and goals for team collaboration</p>
+    </div>
+  </a>
+
   <a href="/adk-docs/tools/third-party/atlassian/" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="/adk-docs/assets/tools-atlassian.png" alt="Atlassian">
@@ -86,6 +96,16 @@ Check out the following third-party tools that you can use with ADK agents:
     <div class="tool-card-content">
       <h3>Notion</h3>
       <p>Search workspaces, create pages, and manage tasks and databases</p>
+    </div>
+  </a>
+
+  <a href="/adk-docs/tools/third-party/postman/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="/adk-docs/assets/tools-postman.png" alt="Postman">
+    </div>
+    <div class="tool-card-content">
+      <h3>Postman</h3>
+      <p>Manage API collections, workspaces, and generate client code</p>
     </div>
   </a>
 
