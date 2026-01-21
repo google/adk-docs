@@ -70,6 +70,17 @@ from google.adk.agents import Agent
 from google.adk.models.google_llm import Gemini
 from google.adk.tools.bigquery import BigQueryToolset, BigQueryCredentialsConfig
 
+
+# --- OpenTelemetry Initialization (Optional) ---
+# Recommended for enabling distributed tracing (populates trace_id, span_id).
+# If not configured, the plugin uses internal UUIDs for span correlation.
+try:
+    from opentelemetry import trace
+    from opentelemetry.sdk.trace import TracerProvider
+    trace.set_tracer_provider(TracerProvider())
+except ImportError:
+    pass # OpenTelemetry is optional
+
 # --- Configuration ---
 PROJECT_ID = os.environ.get("GOOGLE_CLOUD_PROJECT", "your-gcp-project-id")
 DATASET_ID = os.environ.get("BIG_QUERY_DATASET_ID", "your-big-query-dataset-id")
@@ -138,6 +149,16 @@ FROM `your-gcp-project-id.your-big-query-dataset-id.agent_events_v2`
 ORDER BY timestamp DESC
 LIMIT 20;
 ```
+
+```
+
+## Tracing and Observability
+
+The plugin supports **OpenTelemetry** for distributed tracing.
+
+- **Automatic Span Management**: The plugin automatically generates spans for Agent execution, LLM calls, and Tool executions.
+- **OpenTelemetry Integration**: If an OpenTelemetry `TracerProvider` is configured (as shown in the example above), the plugin will use valid OTel spans, populating `trace_id`, `span_id`, and `parent_span_id` with standard OTel identifiers. This allows you to correlate agent logs with other services in your distributed system.
+- **Fallback Mechanism**: If OpenTelemetry is not installed or configured, the plugin automatically falls back to generating internal UUIDs for spans and uses the `invocation_id` as the trace ID. This ensures that the parent-child hierarchy (Agent -> Span -> Tool/LLM) is *always* preserved in the BigQuery logs, even without a full OTel setup.
 
 ## Configuration options
 
