@@ -12,7 +12,7 @@ Custom agents provide the ultimate flexibility in ADK, allowing you to define **
 
 ## Introduction: Beyond Predefined Workflows
 
-### What is a Custom Agent?
+### What is a Custom Agent
 
 A Custom Agent is essentially any class you create that inherits from `google.adk.agents.BaseAgent` and implements its core execution logic within the `_run_async_impl` asynchronous method. You have complete control over how this method calls other agents (sub-agents), manages state, and handles events.
 
