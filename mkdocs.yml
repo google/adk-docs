@@ -145,6 +145,7 @@ plugins:
         'tools/google-cloud-tools.md': 'tools/google-cloud/index.md'
         'tools/built-in-tools.md': 'tools/index.md'
         'sessions/express-mode.md': 'tools/google-cloud/express-mode.md'
+        'sessions/rewind.md': 'sessions/session/rewind.md'
 
   - llmstxt:
       markdown_description: An open-source, code-first toolkit for building, evaluating, and deploying sophisticated AI agents with flexibility and control.
@@ -313,8 +314,9 @@ nav:
     - Sessions & Memory:
       - sessions/index.md
       - Sessions:
-        - Overview: sessions/session.md
-        - Rewind sessions: sessions/rewind.md
+        - sessions/session/index.md
+        - Rewind sessions: sessions/session/rewind.md
+        - Migrate sessions: sessions/session/migrate.md
       - State: sessions/state.md
       - Memory: sessions/memory.md
     - Callbacks:
