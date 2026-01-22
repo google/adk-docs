@@ -218,86 +218,86 @@ the storage backend that best suits your needs:
 
 === "Python"
 
-        ```py
-        # Requires: pip install google-adk[vertexai]
-        # Plus GCP setup and authentication
-        from google.adk.sessions import VertexAiSessionService
+    ```py
+    # Requires: pip install google-adk[vertexai]
+    # Plus GCP setup and authentication
+    from google.adk.sessions import VertexAiSessionService
 
-        PROJECT_ID = "your-gcp-project-id"
-        LOCATION = "us-central1"
-        # The app_name used with this service should be the Reasoning Engine ID or name
-        REASONING_ENGINE_APP_NAME = "projects/your-gcp-project-id/locations/us-central1/reasoningEngines/your-engine-id"
+    PROJECT_ID = "your-gcp-project-id"
+    LOCATION = "us-central1"
+    # The app_name used with this service should be the Reasoning Engine ID or name
+    REASONING_ENGINE_APP_NAME = "projects/your-gcp-project-id/locations/us-central1/reasoningEngines/your-engine-id"
 
-        session_service = VertexAiSessionService(project=PROJECT_ID, location=LOCATION)
-        # Use REASONING_ENGINE_APP_NAME when calling service methods, e.g.:
-        # session_service = await session_service.create_session(app_name=REASONING_ENGINE_APP_NAME, ...)
-        ```
+    session_service = VertexAiSessionService(project=PROJECT_ID, location=LOCATION)
+    # Use REASONING_ENGINE_APP_NAME when calling service methods, e.g.:
+    # session_service = await session_service.create_session(app_name=REASONING_ENGINE_APP_NAME, ...)
+    ```
 
 === "Go"
 
-      ```go
-      import "google.golang.org/adk/session"
+    ```go
+    import "google.golang.org/adk/session"
 
-      // 2. VertexAIService
-      // Before running, ensure your environment is authenticated:
-      // gcloud auth application-default login
-      // export GOOGLE_CLOUD_PROJECT="your-gcp-project-id"
-      // export GOOGLE_CLOUD_LOCATION="your-gcp-location"
+    // 2. VertexAIService
+    // Before running, ensure your environment is authenticated:
+    // gcloud auth application-default login
+    // export GOOGLE_CLOUD_PROJECT="your-gcp-project-id"
+    // export GOOGLE_CLOUD_LOCATION="your-gcp-location"
 
-      modelName := "gemini-3.0-flash" // Replace with your desired model
-      vertexService, err := session.VertexAIService(ctx, modelName)
-      if err != nil {
-        log.Printf("Could not initialize VertexAIService (this is expected if the gcloud project is not set): %v", err)
-      } else {
-        fmt.Println("Successfully initialized VertexAIService.")
-      }
-      ```
+    modelName := "gemini-flash-latest" // Replace with your desired model
+    vertexService, err := session.VertexAIService(ctx, modelName)
+    if err != nil {
+      log.Printf("Could not initialize VertexAIService (this is expected if the gcloud project is not set): %v", err)
+    } else {
+      fmt.Println("Successfully initialized VertexAIService.")
+    }
+    ```
 
 === "Java"
 
-        ```java
-        // Please look at the set of requirements above, consequently export the following in your bashrc file:
-        // export GOOGLE_CLOUD_PROJECT=my_gcp_project
-        // export GOOGLE_CLOUD_LOCATION=us-central1
-        // export GOOGLE_API_KEY=my_api_key
+    ```java
+    // Please look at the set of requirements above, consequently export the following in your bashrc file:
+    // export GOOGLE_CLOUD_PROJECT=my_gcp_project
+    // export GOOGLE_CLOUD_LOCATION=us-central1
+    // export GOOGLE_API_KEY=my_api_key
 
-        import com.google.adk.sessions.VertexAiSessionService;
-        import java.util.UUID;
+    import com.google.adk.sessions.VertexAiSessionService;
+    import java.util.UUID;
 
-        String sessionId = UUID.randomUUID().toString();
-        String reasoningEngineAppName = "123456789";
-        String userId = "u_123"; // Example user id
-        ConcurrentMap<String, Object> initialState = new
-            ConcurrentHashMap<>(); // No initial state needed for this example
+    String sessionId = UUID.randomUUID().toString();
+    String reasoningEngineAppName = "123456789";
+    String userId = "u_123"; // Example user id
+    ConcurrentMap<String, Object> initialState = new
+        ConcurrentHashMap<>(); // No initial state needed for this example
 
-        VertexAiSessionService sessionService = new VertexAiSessionService();
-        Session mySession =
-            sessionService
-                .createSession(reasoningEngineAppName, userId, initialState, Optional.of(sessionId))
-                .blockingGet();
-        ```
+    VertexAiSessionService sessionService = new VertexAiSessionService();
+    Session mySession =
+        sessionService
+            .createSession(reasoningEngineAppName, userId, initialState, Optional.of(sessionId))
+            .blockingGet();
+    ```
 
 ### `DatabaseSessionService`
 
-    <div class="language-support-tag">
-      <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span>
-    </div>
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span>
+</div>
 
-    *   **How it works:** Connects to a relational database (e.g., PostgreSQL,
-        MySQL, SQLite) to store session data persistently in tables.
-    *   **Persistence:** Yes. Data survives application restarts.
-    *   **Requires:** A configured database.
-    *   **Best for:** Applications needing reliable, persistent storage that you
-        manage yourself.
+*   **How it works:** Connects to a relational database (e.g., PostgreSQL,
+    MySQL, SQLite) to store session data persistently in tables.
+*   **Persistence:** Yes. Data survives application restarts.
+*   **Requires:** A configured database.
+*   **Best for:** Applications needing reliable, persistent storage that you
+    manage yourself.
 
-    ```py
-    from google.adk.sessions import DatabaseSessionService
-    # Example using a local SQLite file:
-    # Note: The implementation requires an async database driver.
-    # For SQLite, use 'sqlite+aiosqlite' instead of 'sqlite' to ensure async compatibility.
-    db_url = "sqlite+aiosqlite:///./my_agent_data.db"
-    session_service = DatabaseSessionService(db_url=db_url)
-    ```
+```py
+from google.adk.sessions import DatabaseSessionService
+# Example using a local SQLite file:
+# Note: The implementation requires an async database driver.
+# For SQLite, use 'sqlite+aiosqlite' instead of 'sqlite' to ensure async compatibility.
+db_url = "sqlite+aiosqlite:///./my_agent_data.db"
+session_service = DatabaseSessionService(db_url=db_url)
+```
 
 !!! warning "Async Driver Requirement"
 

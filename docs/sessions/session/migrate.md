@@ -42,5 +42,5 @@ Line Interface (CLI) `migrate session` command, as shown in the following exampl
 After running the migration, update your `DatabaseSessionService` configuration
 to use the new database URL you specified for `dest_db_url`.
 
-For detailed information on migrating between session databases versions, see the
+For detailed information on migrating between session database versions, see the
 [Sessions Migration README](https://github.com/google/adk-python/blob/main/src/google/adk/sessions/migration/README.md).
