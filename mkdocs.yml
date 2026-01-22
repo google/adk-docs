@@ -144,6 +144,8 @@ plugins:
         'tools/google-cloud/bigquery-agent-analytics.md': 'observability/bigquery-agent-analytics.md'
         'tools/google-cloud-tools.md': 'tools/google-cloud/index.md'
         'tools/built-in-tools.md': 'tools/index.md'
+        'sessions/express-mode.md': 'tools/google-cloud/express-mode.md'
+        'sessions/rewind.md': 'sessions/session/rewind.md'
 
   - llmstxt:
       markdown_description: An open-source, code-first toolkit for building, evaluating, and deploying sophisticated AI agents with flexibility and control.
@@ -210,7 +212,15 @@ nav:
       - Custom agents: agents/custom-agents.md
       - Multi-agent systems: agents/multi-agents.md
       - Agent Config: agents/config.md
-      - Models & Authentication: agents/models.md
+    - Models for Agents:
+      - agents/models/index.md
+      - Gemini: agents/models/google-gemini.md
+      - Claude: agents/models/anthropic.md
+      - Vertex AI hosted: agents/models/vertex.md
+      - Apigee AI Gateway: agents/models/apigee.md
+      - Ollama: agents/models/ollama.md
+      - vLLM: agents/models/vllm.md
+      - LiteLLM: agents/models/litellm.md
     - Tools for Agents:
       - tools/index.md
       - Gemini API tools:
@@ -228,20 +238,27 @@ nav:
         - Code Execution with Agent Engine: tools/google-cloud/code-exec-agent-engine.md
         - GKE Code Executor: tools/google-cloud/gke-code-executor.md
         - MCP Toolbox for Databases: tools/google-cloud/mcp-toolbox-for-databases.md
+        - Pub/Sub: tools/google-cloud/pubsub.md
         - RAG Engine: tools/google-cloud/vertex-ai-rag-engine.md
         - Spanner: tools/google-cloud/spanner.md
         - Vertex AI Search: tools/google-cloud/vertex-ai-search.md
+        - Vertex AI express mode: tools/google-cloud/express-mode.md
       - Third-party tools:
         - tools/third-party/index.md
+        - Asana: tools/third-party/asana.md
         - Atlassian: tools/third-party/atlassian.md
+        - Cartesia: tools/third-party/cartesia.md
+        - ElevenLabs: tools/third-party/elevenlabs.md
         - GitHub: tools/third-party/github.md
         - GitLab: tools/third-party/gitlab.md
         - Hugging Face: tools/third-party/hugging-face.md
         - Linear: tools/third-party/linear.md
         - n8n: tools/third-party/n8n.md
         - Notion: tools/third-party/notion.md
+        - Postman: tools/third-party/postman.md
         - PayPal: tools/third-party/paypal.md
         - Qdrant: tools/third-party/qdrant.md
+        - Stripe: tools/third-party/stripe.md
         - Agentic UI (AG-UI): tools/third-party/ag-ui.md
       - Tool limitations: tools/limitations.md
     - Custom Tools:
@@ -256,9 +273,12 @@ nav:
   - Run Agents:
     - Agent Runtime:
       - Agent Runtime: runtime/index.md
-      - Runtime Config: runtime/runconfig.md
+      - Web Interface: runtime/web-interface.md
+      - Command Line: runtime/command-line.md
       - API Server: runtime/api-server.md
       - Resume Agents: runtime/resume.md
+      - Runtime Config: runtime/runconfig.md
+      - Event Loop: runtime/event-loop.md
     - Deployment:
       - deploy/index.md
       - Agent Engine:
@@ -294,11 +314,11 @@ nav:
     - Sessions & Memory:
       - sessions/index.md
       - Sessions:
-        - Overview: sessions/session.md
-        - Rewind sessions: sessions/rewind.md
+        - sessions/session/index.md
+        - Rewind sessions: sessions/session/rewind.md
+        - Migrate sessions: sessions/session/migrate.md
       - State: sessions/state.md
       - Memory: sessions/memory.md
-      - Vertex AI Express Mode: sessions/express-mode.md
     - Callbacks:
       - callbacks/index.md
       - Types of callbacks: callbacks/types-of-callbacks.md

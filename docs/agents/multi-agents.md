@@ -397,7 +397,7 @@ Agents within a system often need to exchange data or trigger actions in one ano
 
 #### a) Shared Session State (`session.state`)
 
-The most fundamental way for agents operating within the same invocation (and thus sharing the same [`Session`](../sessions/session.md) object via the `InvocationContext`) to communicate passively.
+The most fundamental way for agents operating within the same invocation (and thus sharing the same [`Session`](/adk-docs/sessions/session/) object via the `InvocationContext`) to communicate passively.
 
 * **Mechanism:** One agent (or its tool/callback) writes a value (`context.state['data_key'] = processed_data`), and a subsequent agent reads it (`data = context.state.get('data_key')`). State changes are tracked via [`CallbackContext`](../callbacks/index.md).
 * **Convenience:** The `output_key` property on [`LlmAgent`](llm-agents.md) automatically saves the agent's final response text (or structured output) to the specified state key.

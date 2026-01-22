@@ -7,7 +7,7 @@
 The ADK Agent Config feature lets you build an ADK workflow without writing
 code. An Agent Config uses a YAML format text file with a brief description of
 the agent, allowing just about anyone to assemble and run an ADK agent. The
-following is a simple example of an basic Agent Config definition:
+following is a simple example of a basic Agent Config definition:
 
 ```
 name: assistant_agent
@@ -46,7 +46,7 @@ the Agent Config files.
     information about additional; functional restrictions, see
     [Known limitations](#known-limitations).
 
-To setup ADK for use with Agent Config:
+To set up ADK for use with Agent Config:
 
 1.  Install the ADK Python libraries by following the
     [Installation](/adk-docs/get-started/installation/#python)

@@ -154,159 +154,163 @@ Its core responsibilities include:
 *   **Cleaning Up:** Deleting `Session` objects and their associated data when
     conversations are finished or no longer needed.
 
-## `SessionService` Implementations
+## `SessionService` implementations
 
 ADK provides different `SessionService` implementations, allowing you to choose
 the storage backend that best suits your needs:
 
-1.  **`InMemorySessionService`**
+### `InMemorySessionService`
 
-    *   **How it works:** Stores all session data directly in the application's
-        memory.
-    *   **Persistence:** None. **All conversation data is lost if the
-        application restarts.**
-    *   **Requires:** Nothing extra.
-    *   **Best for:** Quick development, local testing, examples, and scenarios
-        where long-term persistence isn't required.
+*   **How it works:** Stores all session data directly in the application's
+    memory.
+*   **Persistence:** None. **All conversation data is lost if the
+    application restarts.**
+*   **Requires:** Nothing extra.
+*   **Best for:** Quick development, local testing, examples, and scenarios
+    where long-term persistence isn't required.
 
-    === "Python"
+=== "Python"
 
-           ```py
-            from google.adk.sessions import InMemorySessionService
-            session_service = InMemorySessionService()
-           ```
-    === "TypeScript"
+      ```py
+        from google.adk.sessions import InMemorySessionService
+        session_service = InMemorySessionService()
+      ```
+=== "TypeScript"
 
-           ```typescript
-            import { InMemorySessionService } from "@google/adk";
-            const sessionService = new InMemorySessionService();
-           ```
+      ```typescript
+        import { InMemorySessionService } from "@google/adk";
+        const sessionService = new InMemorySessionService();
+      ```
 
-    === "Go"
+=== "Go"
 
-           ```go
-            import "google.golang.org/adk/session"
+      ```go
+        import "google.golang.org/adk/session"
+        inMemoryService := session.InMemoryService()
+      ```
 
-            inMemoryService := session.InMemoryService()
-           ```
+=== "Java"
 
-    === "Java"
+      ```java
+        import com.google.adk.sessions.InMemorySessionService;
+        InMemorySessionService exampleSessionService = new InMemorySessionService();
+      ```
 
-           ```java
-            import com.google.adk.sessions.InMemorySessionService;
-            InMemorySessionService exampleSessionService = new InMemorySessionService();
-           ```
+### `VertexAiSessionService`
 
-2.  **`VertexAiSessionService`**
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+</div>
 
-    <div class="language-support-tag">
-      <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
-    </div>
+*   **How it works:** Uses Google Cloud Vertex AI infrastructure via API
+    calls for session management.
+*   **Persistence:** Yes. Data is managed reliably and scalably via
+    [Vertex AI Agent Engine](https://google.github.io/adk-docs/deploy/agent-engine/).
+*   **Requires:**
+    *   A Google Cloud project (`pip install vertexai`)
+    *   A Google Cloud storage bucket that can be configured by this
+        [step](https://cloud.google.com/vertex-ai/docs/pipelines/configure-project#storage).
+    *   A Reasoning Engine resource name/ID that can setup following this
+        [tutorial](https://google.github.io/adk-docs/deploy/agent-engine/).
+    *   If you do not have a Google Cloud project and you want to try the VertexAiSessionService, see [Vertex AI Express Mode](/adk-docs/tools/google-cloud/express-mode/).
+*   **Best for:** Scalable production applications deployed on Google Cloud,
+    especially when integrating with other Vertex AI features.
 
-    *   **How it works:** Uses Google Cloud Vertex AI infrastructure via API
-        calls for session management.
-    *   **Persistence:** Yes. Data is managed reliably and scalably via
-        [Vertex AI Agent Engine](https://google.github.io/adk-docs/deploy/agent-engine/).
-    *   **Requires:**
-        *   A Google Cloud project (`pip install vertexai`)
-        *   A Google Cloud storage bucket that can be configured by this
-            [step](https://cloud.google.com/vertex-ai/docs/pipelines/configure-project#storage).
-        *   A Reasoning Engine resource name/ID that can setup following this
-            [tutorial](https://google.github.io/adk-docs/deploy/agent-engine/).
-        *   If you do not have a Google Cloud project and you want to try the VertexAiSessionService for free, see how to [try Session and Memory for free.](express-mode.md)
-    *   **Best for:** Scalable production applications deployed on Google Cloud,
-        especially when integrating with other Vertex AI features.
-
-    === "Python"
-
-           ```py
-           # Requires: pip install google-adk[vertexai]
-           # Plus GCP setup and authentication
-           from google.adk.sessions import VertexAiSessionService
-
-           PROJECT_ID = "your-gcp-project-id"
-           LOCATION = "us-central1"
-           # The app_name used with this service should be the Reasoning Engine ID or name
-           REASONING_ENGINE_APP_NAME = "projects/your-gcp-project-id/locations/us-central1/reasoningEngines/your-engine-id"
-
-           session_service = VertexAiSessionService(project=PROJECT_ID, location=LOCATION)
-           # Use REASONING_ENGINE_APP_NAME when calling service methods, e.g.:
-           # session_service = await session_service.create_session(app_name=REASONING_ENGINE_APP_NAME, ...)
-           ```
-
-    === "Go"
-
-          ```go
-          import "google.golang.org/adk/session"
-
-          // 2. VertexAIService
-          // Before running, ensure your environment is authenticated:
-          // gcloud auth application-default login
-          // export GOOGLE_CLOUD_PROJECT="your-gcp-project-id"
-          // export GOOGLE_CLOUD_LOCATION="your-gcp-location"
-
-          modelName := "gemini-1.5-flash-001" // Replace with your desired model
-          vertexService, err := session.VertexAIService(ctx, modelName)
-          if err != nil {
-            log.Printf("Could not initialize VertexAIService (this is expected if the gcloud project is not set): %v", err)
-          } else {
-            fmt.Println("Successfully initialized VertexAIService.")
-          }
-          ```
-
-    === "Java"
-
-           ```java
-           // Please look at the set of requirements above, consequently export the following in your bashrc file:
-           // export GOOGLE_CLOUD_PROJECT=my_gcp_project
-           // export GOOGLE_CLOUD_LOCATION=us-central1
-           // export GOOGLE_API_KEY=my_api_key
-
-           import com.google.adk.sessions.VertexAiSessionService;
-           import java.util.UUID;
-
-           String sessionId = UUID.randomUUID().toString();
-           String reasoningEngineAppName = "123456789";
-           String userId = "u_123"; // Example user id
-           ConcurrentMap<String, Object> initialState = new
-               ConcurrentHashMap<>(); // No initial state needed for this example
-
-           VertexAiSessionService sessionService = new VertexAiSessionService();
-           Session mySession =
-               sessionService
-                   .createSession(reasoningEngineAppName, userId, initialState, Optional.of(sessionId))
-                   .blockingGet();
-           ```
-
-3.  **`DatabaseSessionService`**
-
-    <div class="language-support-tag">
-      <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span>
-    </div>
-
-    *   **How it works:** Connects to a relational database (e.g., PostgreSQL,
-        MySQL, SQLite) to store session data persistently in tables.
-    *   **Persistence:** Yes. Data survives application restarts.
-    *   **Requires:** A configured database.
-    *   **Best for:** Applications needing reliable, persistent storage that you
-        manage yourself.
+=== "Python"
 
     ```py
-    from google.adk.sessions import DatabaseSessionService
-    # Example using a local SQLite file:
-    # Note: The implementation requires an async database driver.
-    # For SQLite, use 'sqlite+aiosqlite' instead of 'sqlite' to ensure async compatibility.
-    db_url = "sqlite+aiosqlite:///./my_agent_data.db"
-    session_service = DatabaseSessionService(db_url=db_url)
+    # Requires: pip install google-adk[vertexai]
+    # Plus GCP setup and authentication
+    from google.adk.sessions import VertexAiSessionService
+
+    PROJECT_ID = "your-gcp-project-id"
+    LOCATION = "us-central1"
+    # The app_name used with this service should be the Reasoning Engine ID or name
+    REASONING_ENGINE_APP_NAME = "projects/your-gcp-project-id/locations/us-central1/reasoningEngines/your-engine-id"
+
+    session_service = VertexAiSessionService(project=PROJECT_ID, location=LOCATION)
+    # Use REASONING_ENGINE_APP_NAME when calling service methods, e.g.:
+    # session_service = await session_service.create_session(app_name=REASONING_ENGINE_APP_NAME, ...)
     ```
 
-    <div class="admonition warning">
-    <p class="admonition-title">Async Driver Requirement</p>
-    <p><code>DatabaseSessionService</code> requires an async database driver. When using SQLite, you must use <code>sqlite+aiosqlite</code> instead of <code>sqlite</code> in your connection string. For other databases (PostgreSQL, MySQL), ensure you're using an async-compatible driver (e.g., <code>asyncpg</code> for PostgreSQL, <code>aiomysql</code> for MySQL).</p>
-    </div>
+=== "Go"
 
-Choosing the right `SessionService` is key to defining how your agent's
-conversation history and temporary data are stored and persist.
+    ```go
+    import "google.golang.org/adk/session"
+
+    // 2. VertexAIService
+    // Before running, ensure your environment is authenticated:
+    // gcloud auth application-default login
+    // export GOOGLE_CLOUD_PROJECT="your-gcp-project-id"
+    // export GOOGLE_CLOUD_LOCATION="your-gcp-location"
+
+    modelName := "gemini-flash-latest" // Replace with your desired model
+    vertexService, err := session.VertexAIService(ctx, modelName)
+    if err != nil {
+      log.Printf("Could not initialize VertexAIService (this is expected if the gcloud project is not set): %v", err)
+    } else {
+      fmt.Println("Successfully initialized VertexAIService.")
+    }
+    ```
+
+=== "Java"
+
+    ```java
+    // Please look at the set of requirements above, consequently export the following in your bashrc file:
+    // export GOOGLE_CLOUD_PROJECT=my_gcp_project
+    // export GOOGLE_CLOUD_LOCATION=us-central1
+    // export GOOGLE_API_KEY=my_api_key
+
+    import com.google.adk.sessions.VertexAiSessionService;
+    import java.util.UUID;
+
+    String sessionId = UUID.randomUUID().toString();
+    String reasoningEngineAppName = "123456789";
+    String userId = "u_123"; // Example user id
+    ConcurrentMap<String, Object> initialState = new
+        ConcurrentHashMap<>(); // No initial state needed for this example
+
+    VertexAiSessionService sessionService = new VertexAiSessionService();
+    Session mySession =
+        sessionService
+            .createSession(reasoningEngineAppName, userId, initialState, Optional.of(sessionId))
+            .blockingGet();
+    ```
+
+### `DatabaseSessionService`
+
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span>
+</div>
+
+*   **How it works:** Connects to a relational database (e.g., PostgreSQL,
+    MySQL, SQLite) to store session data persistently in tables.
+*   **Persistence:** Yes. Data survives application restarts.
+*   **Requires:** A configured database.
+*   **Best for:** Applications needing reliable, persistent storage that you
+    manage yourself.
+
+```py
+from google.adk.sessions import DatabaseSessionService
+# Example using a local SQLite file:
+# Note: The implementation requires an async database driver.
+# For SQLite, use 'sqlite+aiosqlite' instead of 'sqlite' to ensure async compatibility.
+db_url = "sqlite+aiosqlite:///./my_agent_data.db"
+session_service = DatabaseSessionService(db_url=db_url)
+```
+
+!!! warning "Async Driver Requirement"
+
+    `DatabaseSessionService` requires an async database driver. When using SQLite,
+    you must use `sqlite+aiosqlite` instead of `sqlite` in your connection string.
+    For other databases (PostgreSQL, MySQL), ensure you're using an async-compatible
+    driver, such as `asyncpg` for PostgreSQL, `aiomysql` for MySQL.
+
+!!! note "Session database schema change in ADK Python v1.22.0"
+
+    The schema for the session database changed in ADK Python v1.22.0, which
+    requires migration of the Session Database. For more information, see
+    [Session database schema migration](/adk-docs/sessions/session/migrate/).
 
 ## The Session Lifecycle
 
