@@ -16,7 +16,7 @@ ADK primarily uses two mechanisms for model integration:
    hosted on Vertex AI endpoints. You access these models by providing the model name or endpoint resource string and ADK's internal registry
    resolves this string to the appropriate backend client.
 
-      *  [Gemini models](/adk-docs/agents/models/gemini/)
+      *  [Gemini models](/adk-docs/agents/models/google-gemini/)
       *  [Claude models](/adk-docs/agents/models/anthropic/)
       *  [Vertex AI hosted models](/adk-docs/agents/models/vertex/)
 
