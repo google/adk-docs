@@ -149,4 +149,14 @@ Check out the following third-party tools that you can use with ADK agents:
     </div>
   </a>
 
+  <a href="/adk-docs/tools/third-party/daytona/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="/adk-docs/assets/plugins-daytona.png" alt="Daytona">
+    </div>
+    <div class="tool-card-content">
+      <h3>Daytona</h3>
+      <p>Execute code, run shell commands, and manage files in secure sandboxes</p>
+    </div>
+  </a>
+
 </div>
