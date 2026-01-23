@@ -1,4 +1,4 @@
-# Data Agents as a Tool
+# Data Agent tools for ADK
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.1.0</span>
@@ -10,7 +10,7 @@ Data Agents are AI-powered agents that help you analyze your data using natural 
 
 **Prerequisites**
 
-Before using these tools, you must build and configure your Data Agents in Google Cloud.
+Before using these tools, you must build and configure your Data Agents in Google Cloud:
 
 * [Build a data agent using HTTP and Python](https://docs.cloud.google.com/gemini/docs/conversational-analytics-api/build-agent-http)
 * [Build a data agent using the Python SDK](https://docs.cloud.google.com/gemini/docs/conversational-analytics-api/build-agent-sdk)

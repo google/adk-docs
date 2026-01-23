@@ -1,4 +1,4 @@
-# BigQuery tool for ADK
+# BigQuery tools for ADK
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.1.0</span>
@@ -20,4 +20,4 @@ They are packaged in the toolset `BigQueryToolset`.
 --8<-- "examples/python/snippets/tools/built-in-tools/bigquery.py"
 ```
 
-Note: If you want to access a BigQuery data agent as a tool, see [Data Agents as a Tool](data-agent.md).
+Note: If you want to access a BigQuery data agent as a tool, see [Data Agent tools for ADK](data-agent.md).
