@@ -1,7 +1,7 @@
 # Data Agents tools for ADK
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.23.0</span>
 </div>
 
 These are a set of tools aimed to provide integration with Data Agents powered by [Conversational Analytics API](https://docs.cloud.google.com/gemini/docs/conversational-analytics-api/overview).
