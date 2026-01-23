@@ -6,11 +6,7 @@
 
 These are a set of tools aimed to provide integration with Data Agents powered by [Conversational Analytics API](https://docs.cloud.google.com/gemini/docs/conversational-analytics-api/overview).
 
-Data Agents are AI-powered agents that help you analyze your data using natural language. When configuring a Data Agent, you can choose from supported data sources, including:
-
-* **BigQuery**: Allows you to query and analyze data stored in BigQuery.
-* **Looker**: Allows you to query and analyze data modeled in Looker.
-* **Looker Studio**: Allows you to query and analyze data from Looker Studio.
+Data Agents are AI-powered agents that help you analyze your data using natural language. When configuring a Data Agent, you can choose from supported data sources, including **BigQuery**, **Looker**, and **Looker Studio**.
 
 **Prerequisites**
 
