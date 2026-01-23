@@ -20,4 +20,4 @@ They are packaged in the toolset `BigQueryToolset`.
 --8<-- "examples/python/snippets/tools/built-in-tools/bigquery.py"
 ```
 
-Note: If you want to access a BigQuery data agent as a tool, see [Data Agent tools for ADK](data-agent.md).
+Note: If you want to access a BigQuery data agent as a tool, see [Data Agents tools for ADK](data-agent.md).
