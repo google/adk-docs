@@ -1,4 +1,4 @@
-# Data Agent tool for ADK
+# Data Agent tools for ADK
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.1.0</span>
