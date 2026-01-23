@@ -92,11 +92,11 @@ def call_agent(query):
             print("AGENT:", final_response)
 
 
-call_agent("List accessible data agents in project bigframes-dev-perf.")
-call_agent("Get information about data_agent_2.")
+call_agent("List accessible data agents in project <PROJECT_ID>.")
+call_agent("Get information about <DATA_AGENT_NAME>.")
 # The data agent in this example is configured with the BigQuery table:
 # `bigquery-public-data.san_francisco.street_trees`
-call_agent("Ask data_agent_2 to count the rows in the table.")
+call_agent("Ask <DATA_AGENT_NAME> to count the rows in the table.")
 call_agent("What are the columns in the table?")
 call_agent("What are the top 5 tree species?")
 call_agent("For those species, what is the distribution of legal status?")
