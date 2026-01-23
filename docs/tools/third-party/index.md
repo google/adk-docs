@@ -89,6 +89,16 @@ Check out the following third-party tools that you can use with ADK agents:
     </div>
   </a>
 
+  <a href="/adk-docs/tools/third-party/mongodb/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="/adk-docs/assets/tools-mongodb.png" alt="MongoDB">
+    </div>
+    <div class="tool-card-content">
+      <h3>MongoDB</h3>
+      <p>Query collections, manage databases, and interact with Atlas</p>
+    </div>
+  </a>
+
   <a href="/adk-docs/tools/third-party/n8n/" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="/adk-docs/assets/tools-n8n.png" alt="n8n">
