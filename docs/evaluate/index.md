@@ -112,16 +112,16 @@ Here is a test file with a few examples:
               }
             ],
             "intermediate_responses": [] # Any intermediate sub-agent responses.
-          },
+          }
         }
       ],
       "session_input": { # Initial session input.
         "app_name": "home_automation_agent",
         "user_id": "test_user",
         "state": {}
-      },
+      }
     }
-  ],
+  ]
 }
 ```
 
