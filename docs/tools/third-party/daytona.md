@@ -1,6 +1,6 @@
 # Daytona
 
-The [Daytona ADK plugin](https://pypi.org/project/daytona-adk/) connects your ADK
+The [Daytona ADK plugin](https://github.com/daytonaio/daytona-adk-plugin) connects your ADK
 agent to [Daytona](https://www.daytona.io/) sandboxes. This integration gives
 your agent the ability to execute code, run shell commands, and manage files in
 isolated environments, enabling secure execution of AI-generated code.
