@@ -187,14 +187,14 @@ Creating evalsets manually can be complex, therefore UI tools are provided to he
           "intermediate_data": {
             "tool_uses": [],
             "intermediate_responses": []
-          },
-        },
+          }
+        }
       ],
       "session_input": {
         "app_name": "hello_world",
         "user_id": "user",
         "state": {}
-      },
+      }
     },
     {
       "eval_id": "session_02",
@@ -220,7 +220,7 @@ Creating evalsets manually can be complex, therefore UI tools are provided to he
           "intermediate_data": {
             "tool_uses": [],
             "intermediate_responses": []
-          },
+          }
         },
         {
           "invocation_id": "e-bf8549a1-2a61-4ecc-a4ee-4efbbf25a8ea",
@@ -276,16 +276,16 @@ Creating evalsets manually can be complex, therefore UI tools are provided to he
                 ]
               ]
             ]
-          },
+          }
         }
       ],
       "session_input": {
         "app_name": "hello_world",
         "user_id": "user",
         "state": {}
-      },
+      }
     }
-  ],
+  ]
 }
 ```
 
