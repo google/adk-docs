@@ -78,6 +78,16 @@ connect your agents with:
     </div>
   </a>
 
+  <a href="/adk-docs/tools/google-cloud/data-agent/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="/adk-docs/assets/tools-vertex-ai.png" alt="Data Agents">
+    </div>
+    <div class="tool-card-content">
+      <h3>Data Agents</h3>
+      <p>Analyze data using natural language with Data Agents</p>
+    </div>
+  </a>
+
   <a href="/adk-docs/tools/google-cloud/gke-code-executor/" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="/adk-docs/assets/tools-gke.png" alt="Google Kubernetes Engine">
@@ -118,7 +128,7 @@ connect your agents with:
     </div>
   </a>
 
-  <a href="/adk-docs/tools/google-cloud/vertex-ai-search/" class="tool-card">
+  <a href="/adk-docs/tools/google-cloud/vertex-ai-search/" class="tool.card">
     <div class="tool-card-image-wrapper">
       <img src="/adk-docs/assets/tools-vertex-ai.png" alt="Vertex AI">
     </div>
@@ -139,4 +149,3 @@ connect your agents with:
   </a>
 
 </div>
-
