@@ -91,7 +91,7 @@ Development Kit community.
     </div>
     <div class="card-content">
       <div class="type">Online Course</div>
-      <h3>5-Day AI Agents Intensive Course with Google</h3>
+      <h3>🎓 5-Day AI Agents Intensive Course with Google</h3>
       <p>Build with core ADK agent components including, models, tools, memory, evaluation, and deployment.</p>
     </div>
   </a>
@@ -142,7 +142,17 @@ Development Kit community.
     <div class="card-content">
       <div class="type">Blog Series</div>
       <h3>🎓 Building Intelligent Agents with Google ADK</h3>
-      <p>A developer's guide to building intelligent agents with Google’s code-first Python toolkit.</p>
+      <p>A developer's guide to building intelligent agents with Google's code-first Python toolkit.</p>
+    </div>
+  </a>
+  <a href="https://github.com/arjunprabhulal/google-adk-masterclass" class="resource-card">
+    <div class="card-image-wrapper">
+      <img src="../assets/community-adk-masterclass-hands-on.png" alt="Google ADK Masterclass Hands-on Series">
+    </div>
+    <div class="card-content">
+      <div class="type">Online Course</div>
+      <h3>🎓 Google ADK Masterclass: Hands-on Series</h3>
+      <p>Build production-ready AI agents with 20 modules covering agents, workflows, tools, memory, and MCP integrations.</p>
     </div>
   </a>
   <a href="https://www.youtube.com/playlist?list=PL0Zc2RFDZsM_MkHOzWNJpaT4EH5fQxA8n" class="resource-card">
@@ -208,6 +218,16 @@ Development Kit community.
       <div class="type">Video Demo</div>
       <h3>📺 Shopper's Concierge Demo</h3>
       <p>See how AI agents can revolutionize shopping with personalized, real-time recommendations.</p>
+    </div>
+  </a>
+  <a href="https://agentdirectory.folch.ai/" class="resource-card">
+    <div class="card-image-wrapper">
+      <img src="../assets/community-agent-directory.png" alt="ADK Agent Directory">
+    </div>
+    <div class="card-content">
+      <div class="type">Gallery</div>
+      <h3>📖 ADK Agent Directory</h3>
+      <p>Discover and test production-ready ADK agents for web search, image generation, research, and more.</p>
     </div>
   </a>
 </div>
