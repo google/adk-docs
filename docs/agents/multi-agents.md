@@ -623,6 +623,24 @@ Allows an [`LlmAgent`](llm-agents.md) to treat another `BaseAgent` instance as a
     # The resulting image Part is returned to the Artist agent as the tool result.
     ```
 
+!!! note "Controlling Plugin Inheritance"
+    When you wrap an agent with `AgentTool`, you can control whether it inherits plugins from the parent runner using the `include_plugins` parameter.
+
+    *   `include_plugins=True` (default): The child agent inherits all plugins from the parent.
+    *   `include_plugins=False`: The child agent runs in an isolated environment without inheriting any plugins from the parent. This is useful when you need to ensure an agent's execution is self-contained and not affected by the parent's plugin environment.
+
+    === "Python"
+
+        ```python
+        from google.adk.tools import agent_tool
+
+        # Isolate the image_agent from parent plugins
+        image_tool_isolated = agent_tool.AgentTool(
+            agent=image_agent,
+            include_plugins=False
+        )
+        ```
+
 === "Typescript"
 
     ```typescript
