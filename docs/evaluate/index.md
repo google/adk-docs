@@ -387,7 +387,7 @@ For details on how to set up an eval with user simulation, see
 As a developer, you can evaluate your agents using the ADK in the following ways:
 
 1. **Web-based UI (**`adk web`**):** Evaluate agents interactively through a web-based interface.  
-2. **Programmatically (**`pytest`**)**: Integrate evaluation into your testing pipeline using `pytest` and test files.  
+2. **Programmatically (**`pytest`**):** Integrate evaluation into your testing pipeline using `pytest` and test files.  
 3. **Command Line Interface (**`adk eval`**):** Run evaluations on an existing evaluation set file directly from the command line.
 
 ### 1\. `adk web` \- Run Evaluations via the Web UI
@@ -508,3 +508,32 @@ Here are the details for each command line argument:
   `This will only run eval_1, eval_2 and eval_3 from sample_eval_set_file.json`  
 * `CONFIG_FILE_PATH`: The path to the config file.  
 * `PRINT_DETAILED_RESULTS`: Prints detailed results on the console.
+
+### 4. Managing Eval Sets via CLI
+
+You can create and manage evaluation sets programmatically from the command line. This is useful for automating the creation of evaluation datasets.
+
+#### Create an Eval Set
+
+To create a new, empty evaluation set, use the `adk eval_set create` command:
+
+```shell
+adk eval_set create <AGENT_MODULE_FILE_PATH> <EVAL_SET_ID>
+```
+
+-   `AGENT_MODULE_FILE_PATH`: The path to the agent's source code folder.
+-   `EVAL_SET_ID`: The ID for the new eval set.
+
+
+#### Add Cases to an Eval Set
+
+Once you have an eval set, you can add cases to it using the `adk eval_set add_eval_case` command. For example, you can add cases from a conversation scenarios file:
+
+```shell
+adk eval_set add_eval_case <AGENT_MODULE_FILE_PATH> <EVAL_SET_ID> --scenarios_file <PATH_TO_SCENARIOS_FILE> --session_input_file <PATH_TO_SESSION_INPUT_FILE>
+```
+
+-   `AGENT_MODULE_FILE_PATH`: The path to the agent's source code folder.
+-   `EVAL_SET_ID`: The ID of the eval set to add cases to.
+-   `--scenarios_file`: A path to a file containing JSON serialized `ConversationScenarios`.
+-   `--session_input_file`: Path to a session file containing `SessionInput` in JSON format.
