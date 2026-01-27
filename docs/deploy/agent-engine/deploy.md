@@ -1,7 +1,7 @@
 # Deploy to Vertex AI Agent Engine
 
-<div class="language-support-tag" title="Vertex AI Agent Engine currently supports only Python.">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
+<div class=\"language-support-tag\" title=\"Vertex AI Agent Engine currently supports only Python.\">
+    <span class=\"lst-supported\">Supported in ADK</span><span class=\"lst-python\">Python</span>
 </div>
 
 This deployment procedure describes how to perform a standard deployment of
@@ -145,6 +145,28 @@ For `region`, you can find a list of the supported regions on the
 [Vertex AI Agent Builder locations page](https://docs.cloud.google.com/agent-builder/locations#supported-regions-agent-engine).
 To learn about the CLI options for the `adk deploy agent_engine` command, see the
 [ADK CLI Reference](https://google.github.io/adk-docs/api-reference/cli/cli.html#adk-deploy-agent-engine).
+
+### Deploy with an API key (Express Mode)
+
+If you don't have a Google Cloud project set up, you can still deploy your
+agent to Agent Engine using **Express Mode**, which authenticates using an
+API key. This is a quicker way to get started if you don't need the full
+capabilities of a Google Cloud project.
+
+To deploy in Express Mode, use the `--api_key` option with the
+`adk deploy agent_engine` command:
+
+```shell
+API_KEY=my-api-key
+
+adk deploy agent_engine \
+        --api_key=$API_KEY \
+        --display_name="My First Agent" \
+        multi_tool_agent
+```
+
+When you use the `--api_key` option, the ADK initializes the Vertex AI SDK
+with your API key instead of using project and location credentials.
 
 ### Deploy command output
 
