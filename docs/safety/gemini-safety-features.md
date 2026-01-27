@@ -1,4 +1,8 @@
-### Built-in Gemini Safety Features
+# Built-in Gemini Safety Features
+
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript</span><span class="lst-go">Go</span><span class="lst-java">Java</span>
+</div>
 
 Gemini models come with in-built safety mechanisms that can be leveraged to improve content and brand safety.
 

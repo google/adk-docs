@@ -1,4 +1,4 @@
-## What are In-Tool Guardrails?
+# In-Tool Guardrails?
 
 Tools can be designed with security in mind: we can create tools that expose the actions we want the model to take and nothing else. By limiting the range of actions we provide to the agents, we can deterministically eliminate classes of rogue actions that we never want the agent to take.
 
