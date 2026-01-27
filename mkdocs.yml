@@ -236,6 +236,7 @@ nav:
         - Bigtable: tools/google-cloud/bigtable.md
         - Cloud API Registry: tools/google-cloud/api-registry.md
         - Code Execution with Agent Engine: tools/google-cloud/code-exec-agent-engine.md
+        - Data Agents: tools/google-cloud/data-agent.md
         - GKE Code Executor: tools/google-cloud/gke-code-executor.md
         - MCP Toolbox for Databases: tools/google-cloud/mcp-toolbox-for-databases.md
         - Pub/Sub: tools/google-cloud/pubsub.md
@@ -248,6 +249,8 @@ nav:
         - Asana: tools/third-party/asana.md
         - Atlassian: tools/third-party/atlassian.md
         - Cartesia: tools/third-party/cartesia.md
+        - Chroma: tools/third-party/chroma.md
+        - Daytona: tools/third-party/daytona.md
         - ElevenLabs: tools/third-party/elevenlabs.md
         - GitHub: tools/third-party/github.md
         - GitLab: tools/third-party/gitlab.md
