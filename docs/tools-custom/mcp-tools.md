@@ -40,11 +40,35 @@ This section demonstrates how to integrate tools from external MCP (Model Contex
 
 The `McpToolset` class is ADK's primary mechanism for integrating tools from an MCP server. When you include an `McpToolset` instance in your agent's `tools` list, it automatically handles the interaction with the specified MCP server. Here's how it works:
 
-1.  **Connection Management:** On initialization, `McpToolset` establishes and manages the connection to the MCP server. This can be a local server process (using `StdioConnectionParams` for communication over standard input/output) or a remote server (using `SseConnectionParams` for Server-Sent Events). The toolset also handles the graceful shutdown of this connection when the agent or application terminates.
+1.  **Connection Management:** On initialization, `McpToolset` establishes and manages the connection to the MCP server. This can be a local server process (using `StdioConnectionParams` for communication over standard input/output) or a remote server (using `SseConnectionParams` for Server-Sent Events or `StreamableHTTPConnectionParams` for streamable HTTP). The toolset also handles the graceful shutdown of this connection when the agent or application terminates.
 2.  **Tool Discovery & Adaptation:** Once connected, `McpToolset` queries the MCP server for its available tools (via the `list_tools` MCP method). It then converts the schemas of these discovered MCP tools into ADK-compatible `BaseTool` instances.
 3.  **Exposure to Agent:** These adapted tools are then made available to your `LlmAgent` as if they were native ADK tools.
 4.  **Proxying Tool Calls:** When your `LlmAgent` decides to use one of these tools, `McpToolset` transparently proxies the call (using the `call_tool` MCP method) to the MCP server, sends the necessary arguments, and returns the server's response back to the agent.
 5.  **Filtering (Optional):** You can use the `tool_filter` parameter when creating an `McpToolset` to select a specific subset of tools from the MCP server, rather than exposing all of them to your agent.
+
+### Configuring Timeouts
+
+To enhance the stability of your MCP connections, especially in production environments, you can configure timeout values for the connection parameters. This helps prevent your agent from hanging indefinitely due to network issues.
+
+*   `timeout`: This parameter, available in `StdioConnectionParams`, `SseConnectionParams`, and `StreamableHTTPConnectionParams`, sets the maximum time in seconds to wait for the initial connection to be established.
+*   `sse_read_timeout`: This parameter, available in `SseConnectionParams` and `StreamableHTTPConnectionParams`, sets the maximum time in seconds to wait for data to be received from the server during an SSE connection.
+
+Here's an example of how to set timeouts in your `McpToolset` configuration:
+
+```python
+from google.adk.tools.mcp_tool import McpToolset
+from google.adk.tools.mcp_tool.mcp_session_manager import SseConnectionParams
+
+# ...
+
+McpToolset(
+    connection_params=SseConnectionParams(
+        url="http://remote-server:port/path",
+        timeout=10,  # 10-second connection timeout
+        sse_read_timeout=300,  # 5-minute read timeout
+    ),
+)
+```
 
 The following examples demonstrate how to use `McpToolset` within the `adk web` development environment. For scenarios where you need more fine-grained control over the MCP connection lifecycle or are not using `adk web`, refer to the "Using MCP Tools in your own Agent out of `adk web`" section later in this page.
 
@@ -870,7 +894,6 @@ if __name__ == '__main__':
     asyncio.run(async_main())
   except Exception as e:
     print(f"An error occurred: {e}")
-```
 
 
 ## Key considerations
