@@ -508,3 +508,51 @@ Here are the details for each command line argument:
   `This will only run eval_1, eval_2 and eval_3 from sample_eval_set_file.json`  
 * `CONFIG_FILE_PATH`: The path to the config file.  
 * `PRINT_DETAILED_RESULTS`: Prints detailed results on the console.
+
+### 4. Managing Eval Sets via CLI
+
+In addition to the web UI, you can manage evaluation datasets programmatically using the `adk eval_set` commands. This is useful for automating the creation and management of your evaluation data.
+
+#### `adk eval_set create`
+
+The `create` command allows you to create a new, empty evaluation set.
+
+**Command:**
+
+```shell
+adk eval_set create <AGENT_MODULE_FILE_PATH> <EVAL_SET_ID>
+```
+
+**Arguments:**
+
+*   `AGENT_MODULE_FILE_PATH`: The path to the agent's source code folder.
+*   `EVAL_SET_ID`: A unique identifier for the new evaluation set.
+
+**Example:**
+
+```shell
+adk eval_set create path/to/my_agent my_new_eval_set
+```
+
+#### `adk eval_set add_eval_case`
+
+The `add_eval_case` command allows you to add new evaluation cases to an existing evaluation set from a file containing conversation scenarios.
+
+**Command:**
+
+```shell
+adk eval_set add_eval_case <AGENT_MODULE_FILE_PATH> <EVAL_SET_ID> --scenarios_file <PATH_TO_SCENARIOS_FILE> --session_input_file <PATH_TO_SESSION_INPUT_FILE>
+```
+
+**Arguments:**
+
+*   `AGENT_MODULE_FILE_PATH`: The path to the agent's source code folder.
+*   `EVAL_SET_ID`: The ID of the evaluation set to which the cases will be added.
+*   `--scenarios_file`: The path to a JSON file containing the conversation scenarios.
+*   `--session_input_file`: The path to a JSON file containing the session input.
+
+**Example:**
+
+```shell
+adk eval_set add_eval_case path/to/my_agent my_new_eval_set --scenarios_file scenarios.json --session_input_file session_input.json
+```
