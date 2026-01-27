@@ -308,6 +308,12 @@ nav:
       - User Simulation: evaluate/user-sim.md
     - Safety and Security:
       - safety/index.md
+      - Identity and Authorization: safety/identity-authorization.md
+      - Guardrails:
+        - In-Tool Guardrails: safety/in-tool-guardrails.md
+        - Gemini Safety Features: safety/gemini-safety-features.md
+        - Security Callbacks and Plugins: safety/security-callbacks-plugins.md
+      - Other Risks and Best Practices: safety/other-risks-best-practices.md
   - Components:
     - Technical Overview: get-started/about.md
     - Context:
