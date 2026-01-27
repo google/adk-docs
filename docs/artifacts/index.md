@@ -134,4 +134,3 @@ Here are some typical scenarios where they prove valuable:
 
     * An agent frequently generates the same binary output based on certain inputs (e.g., a company logo image, a standard audio greeting).
 
-

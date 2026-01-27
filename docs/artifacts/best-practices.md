@@ -1,4 +1,8 @@
-## Best Practices
+# Best Practices
+
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+</div>
 
 To use artifacts effectively and maintainably:
 
@@ -16,3 +20,4 @@ To use artifacts effectively and maintainably:
     * Using GCS lifecycle policies on the bucket.
     * Building specific tools or administrative functions that utilize the `artifact_service.delete_artifact` method (note: delete is *not* exposed via context objects for safety).
     * Carefully managing filenames to allow pattern-based deletion if needed.
+

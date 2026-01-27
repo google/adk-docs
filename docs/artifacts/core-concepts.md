@@ -1,8 +1,12 @@
-## Core Concepts
+# Core Concepts
+
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+</div>
 
 Understanding artifacts involves grasping a few key components: the service that manages them, the data structure used to hold them, and how they are identified and versioned.
 
-### Artifact Service (`BaseArtifactService`)
+## Artifact Service (`BaseArtifactService`)
 
 * **Role:** The central component responsible for the actual storage and retrieval logic for artifacts. It defines *how* and *where* artifacts are persisted.
 
@@ -97,7 +101,7 @@ Understanding artifacts involves grasping a few key components: the service that
     // Now, contexts within runs managed by this runner can use artifact methods
     ```
 
-### Artifact Data
+## Artifact Data
 
 * **Standard Representation:** Artifact content is universally represented using the `google.genai.types.Part` object, the same structure used for parts of LLM messages.
 
@@ -159,13 +163,13 @@ Understanding artifacts involves grasping a few key components: the service that
     --8<-- "examples/java/snippets/src/main/java/artifacts/ArtifactDataExample.java:full_code"
     ```
 
-### Filename
+## Filename
 
 * **Identifier:** A simple string used to name and retrieve an artifact within its specific namespace.
 * **Uniqueness:** Filenames must be unique within their scope (either the session or the user namespace).
 * **Best Practice:** Use descriptive names, potentially including file extensions (e.g., `"monthly_report.pdf"`, `"user_avatar.jpg"`), although the extension itself doesn't dictate behavior – the `mime_type` does.
 
-### Versioning
+## Versioning
 
 * **Automatic Versioning:** The artifact service automatically handles versioning. When you call `save_artifact`, the service determines the next available version number (typically starting from 0 and incrementing) for that specific filename and scope.
 * **Returned by `save_artifact`:** The `save_artifact` method returns the integer version number that was assigned to the newly saved artifact.
@@ -174,7 +178,7 @@ Understanding artifacts involves grasping a few key components: the service that
   * `load_artifact(..., version=N)`: Retrieves the specific version `N`.
 * **Listing Versions:** The `list_versions` method (on the service, not context) can be used to find all existing version numbers for an artifact.
 
-### Namespacing (Session vs. User)
+## Namespacing (Session vs. User)
 
 * **Concept:** Artifacts can be scoped either to a specific session or more broadly to a user across all their sessions within the application. This scoping is determined by the `filename` format and handled internally by the `ArtifactService`.
 
@@ -250,3 +254,4 @@ Understanding artifacts involves grasping a few key components: the service that
     ```
 
 These core concepts work together to provide a flexible system for managing binary data within the ADK framework.
+

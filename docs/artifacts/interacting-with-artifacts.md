@@ -1,8 +1,12 @@
-## Interacting with Artifacts (via Context Objects)
+# Interacting with Artifacts (via Context Objects)
+
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+</div>
 
 The primary way you interact with artifacts within your agent's logic (specifically within callbacks or tools) is through methods provided by the `CallbackContext` and `ToolContext` objects. These methods abstract away the underlying storage details managed by the `ArtifactService`.
 
-### Prerequisite: Configuring the `ArtifactService`
+## Prerequisite: Configuring the `ArtifactService`
 
 Before you can use any artifact methods via the context objects, you **must** provide an instance of a [`BaseArtifactService` implementation](#available-implementations) (like [`InMemoryArtifactService`](#inmemoryartifactservice) or [`GcsArtifactService`](#gcsartifactservice)) when initializing your `Runner`.
 
@@ -105,11 +109,11 @@ Before you can use any artifact methods via the context objects, you **must** pr
     }
     ```
 
-### Accessing Methods
+## Accessing Methods
 
 The artifact interaction methods are available directly on instances of `CallbackContext` (passed to agent and model callbacks) and `ToolContext` (passed to tool callbacks). Remember that `ToolContext` inherits from `CallbackContext`.
 
-#### Saving Artifacts
+### Saving Artifacts
 
 *   **Code Example:**
 
@@ -214,7 +218,7 @@ The artifact interaction methods are available directly on instances of `Callbac
         }
         ```
 
-#### Loading Artifacts
+### Loading Artifacts
 
 *   **Code Example:**
 
@@ -386,7 +390,7 @@ The artifact interaction methods are available directly on instances of `Callbac
         }
         ```
 
-#### Listing Artifact Filenames
+### Listing Artifact Filenames
 
 *   **Code Example:**
 
