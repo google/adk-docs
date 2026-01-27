@@ -330,6 +330,9 @@ nav:
       - artifacts/index.md
     - Events:
       - events/index.md
+      - Understanding and Using Events: events/understanding-events.md
+      - How Events Flow and Common Examples: events/how-events-flow.md
+      - Additional Context and Best Practices: events/additional-context.md
     - Apps:
       - apps/index.md
     - Plugins:
