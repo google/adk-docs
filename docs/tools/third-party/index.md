@@ -95,7 +95,7 @@ Check out the following third-party tools that you can use with ADK agents:
     </div>
     <div class="tool-card-content">
       <h3>MongoDB</h3>
-      <p>Query collections, manage databases, and interact with Atlas</p>
+      <p>Query collections, manage databases, and analyze schemas</p>
     </div>
   </a>
 

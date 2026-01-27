@@ -40,8 +40,8 @@ using natural language.
     CONNECTION_STRING = "mongodb://localhost:27017/myDatabase"
 
     # For Atlas management, use API credentials:
-    # ATLAS_CLIENT_ID = "your-atlas-client-id"
-    # ATLAS_CLIENT_SECRET = "your-atlas-client-secret"
+    # ATLAS_CLIENT_ID = "YOUR_ATLAS_CLIENT_ID"
+    # ATLAS_CLIENT_SECRET = "YOUR_ATLAS_CLIENT_SECRET"
 
     root_agent = Agent(
         model="gemini-2.5-pro",
@@ -55,7 +55,7 @@ using natural language.
                         args=[
                             "-y",
                             "mongodb-mcp-server",
-                            "--readOnly",
+                            "--readOnly",  # Remove for write operations
                         ],
                         env={
                             # For database access, use:
@@ -71,11 +71,6 @@ using natural language.
         ],
     )
     ```
-
-!!! note
-
-    The example above uses `--readOnly` mode for safety. Remove this flag if
-    you need write operations like inserting documents or creating collections.
 
 ## Available tools
 
@@ -105,6 +100,11 @@ Tool | Description
 
 ### MongoDB Atlas tools
 
+!!! note
+
+    Atlas tools require API credentials. Set `MDB_MCP_API_CLIENT_ID` and
+    `MDB_MCP_API_CLIENT_SECRET` environment variables to enable them.
+
 Tool | Description
 ---- | -----------
 `atlas-list-orgs` | List MongoDB Atlas organizations
@@ -119,11 +119,6 @@ Tool | Description
 `atlas-inspect-access-list` | View IP access list entries
 `atlas-list-alerts` | List Atlas alerts
 `atlas-get-performance-advisor` | Get performance recommendations
-
-!!! note
-
-    Atlas tools require API credentials. Set `MDB_MCP_API_CLIENT_ID` and
-    `MDB_MCP_API_CLIENT_SECRET` environment variables to enable them.
 
 ## Configuration
 
