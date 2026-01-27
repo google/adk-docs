@@ -1,3 +1,8 @@
+# How Events Flow and Common Examples
+
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+</div>
 
 Events are created at different points and processed systematically by the framework. Understanding this flow helps clarify how actions and history are managed.
 
@@ -106,3 +111,4 @@ Here are concise examples of typical events you might see in the stream:
       "actions": {"escalate": true}
     }
     ```
+    

@@ -1,3 +1,8 @@
+# Additional Context and Best Practices
+
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+</div>
 
 Beyond the core concepts, here are a few specific details about context and events that are important for certain use cases:
 
