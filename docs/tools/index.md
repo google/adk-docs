@@ -193,6 +193,16 @@ Check out the following pre-built tools that you can use with ADK agents:
     </div>
   </a>
 
+  <a href="/adk-docs/tools/third-party/chroma/" class="tool-card">
+    <div class="tool-card-image-wrapper">
+      <img src="/adk-docs/assets/tools-chroma.png" alt="Chroma">
+    </div>
+    <div class="tool-card-content">
+      <h3>Chroma</h3>
+      <p>Store and retrieve information using semantic vector search</p>
+    </div>
+  </a>
+
   <a href="/adk-docs/tools/third-party/daytona/" class="tool-card">
     <div class="tool-card-image-wrapper">
       <img src="/adk-docs/assets/plugins-daytona.png" alt="Daytona">
