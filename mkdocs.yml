@@ -327,6 +327,10 @@ nav:
       - Callback patterns: callbacks/design-patterns-and-best-practices.md
     - Artifacts:
       - artifacts/index.md
+      - Core Concepts: artifacts/core-concepts.md
+      - Inteacting with Artifacts: artifacts/interacting-with-artifacts.md
+      - Available Implementations: artifacts/available-implementations.md
+      - Best Practices: artifacts/best-practices.md
     - Events:
       - events/index.md
     - Apps:
