@@ -13,6 +13,11 @@ others. You can run open-source models locally or self-host them and integrate
 them using LiteLLM for operational control, cost savings, privacy, or offline
 use cases.
 
+When you provide files as input to the model (e.g., images, PDFs), the ADK automatically
+handles them for providers that support it. For some providers, such as OpenAI and Azure,
+files are uploaded and referenced by an ID, while for others, the file content may be
+included directly in the request.
+
 You can use the LiteLLM library to access remote or locally hosted AI models:
 
 *   **Remote model host:** Use the `LiteLlm` wrapper class and set it
@@ -21,6 +26,13 @@ You can use the LiteLLM library to access remote or locally hosted AI models:
     point to your local model server. For examples of local model hosting
     solutions, see the [Ollama](/adk-docs/agents/models/ollama/)
     or [vLLM](/adk-docs/agents/models/vllm/) documentation.
+
+??? warning "Usage with Gemini Models"
+
+    When using `LiteLlm` with a Gemini model (e.g., `LiteLlm(model="gemini/gemini-pro")`),
+    you will see a warning recommending the use of the native `Gemini` model class
+    instead (e.g., `Gemini(model="gemini-pro")`). For better performance and reliability,
+    you should use the native `Gemini` integration when working with Gemini models.
 
 ??? warning "Windows Encoding with LiteLLM"
 
