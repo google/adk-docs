@@ -63,7 +63,7 @@ def get_weather(city: str) -> dict:
 # Create an agent with tools
 root_agent = Agent(
     name="weather_agent",
-    model="gemini-2.5-flash",
+    model="gemini-1.5-flash",
     description="Agent to answer questions using weather tools.",
     instruction="You must use the available tools to find an answer.",
     tools=[get_weather],
@@ -240,6 +240,16 @@ if __name__ == "__main__":
 
     asyncio.run(main())
 ```
+
+## Privacy and Data Capture
+
+ADK tracing now aligns with the OpenTelemetry Semantic Conventions for Generative AI, providing standardized and more detailed observability into your agent's operations. To enhance privacy and control over the data captured in traces, you can use the following environment variables:
+
+-   `ADK_CAPTURE_MESSAGE_CONTENT_IN_SPANS`: By default, ADK captures potentially sensitive information, such as LLM requests, responses, and tool arguments, in trace spans. To disable this and protect personally identifiable information (PII), set this environment variable to `'false'` or `'0'`. The default value is `'true'`.
+
+-   `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT`: To enable the logging of prompt and response content in spans instrumented by GenAI, set this environment variable to `'true'` or `'1'`. This provides more detailed insight into the data being processed by your agent.
+
+By configuring these variables, you can control the verbosity of your trace data and ensure that sensitive information is not logged unintentionally.
 
 ## Inspect Cloud Traces
 
