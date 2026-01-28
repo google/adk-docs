@@ -1,5 +1,9 @@
 # GitLab
 
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
+</div>
+
 The
 [GitLab MCP Server](https://docs.gitlab.com/user/gitlab_duo/model_context_protocol/mcp_server/)
 connects your ADK agent directly to [GitLab.com](https://gitlab.com/) or your
@@ -31,40 +35,76 @@ searches, and automate development workflows using natural language.
 
 ## Use with agent
 
-=== "Local MCP Server"
+=== "Python"
 
-    ```python
-    from google.adk.agents import Agent
-    from google.adk.tools.mcp_tool import McpToolset
-    from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
-    from mcp import StdioServerParameters
+    === "Local MCP Server"
 
-    # Replace with your instance URL if self-hosted (e.g., "gitlab.example.com")
-    GITLAB_INSTANCE_URL = "gitlab.com"
+        ```python
+        from google.adk.agents import Agent
+        from google.adk.tools.mcp_tool import McpToolset
+        from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
+        from mcp import StdioServerParameters
 
-    root_agent = Agent(
-        model="gemini-2.5-pro",
-        name="gitlab_agent",
-        instruction="Help users get information from GitLab",
-        tools=[
-            McpToolset(
-                connection_params=StdioConnectionParams(
-                    server_params = StdioServerParameters(
-                        command="npx",
-                        args=[
+        # Replace with your instance URL if self-hosted (e.g., "gitlab.example.com")
+        GITLAB_INSTANCE_URL = "gitlab.com"
+
+        root_agent = Agent(
+            model="gemini-2.5-pro",
+            name="gitlab_agent",
+            instruction="Help users get information from GitLab",
+            tools=[
+                McpToolset(
+                    connection_params=StdioConnectionParams(
+                        server_params = StdioServerParameters(
+                            command="npx",
+                            args=[
+                                "-y",
+                                "mcp-remote",
+                                f"https://{GITLAB_INSTANCE_URL}/api/v4/mcp",
+                                "--static-oauth-client-metadata",
+                                "{\"scope\": \"mcp\"}",
+                            ],
+                        ),
+                        timeout=30,
+                    ),
+                )
+            ],
+        )
+        ```
+
+=== "TypeScript"
+
+    === "Local MCP Server"
+
+        ```typescript
+        import { LlmAgent, MCPToolset } from "@google/adk";
+
+        // Replace with your instance URL if self-hosted (e.g., "gitlab.example.com")
+        const GITLAB_INSTANCE_URL = "gitlab.com";
+
+        const rootAgent = new LlmAgent({
+            model: "gemini-2.5-pro",
+            name: "gitlab_agent",
+            instruction: "Help users get information from GitLab",
+            tools: [
+                new MCPToolset({
+                    type: "StdioConnectionParams",
+                    serverParams: {
+                        command: "npx",
+                        args: [
                             "-y",
                             "mcp-remote",
-                            f"https://{GITLAB_INSTANCE_URL}/api/v4/mcp",
+                            `https://${GITLAB_INSTANCE_URL}/api/v4/mcp`,
                             "--static-oauth-client-metadata",
-                            "{\"scope\": \"mcp\"}",
+                            '{"scope": "mcp"}',
                         ],
-                    ),
-                    timeout=30,
-                ),
-            )
-        ],
-    )
-    ```
+                    },
+                }),
+            ],
+        });
+
+        export { rootAgent };
+        ```
 
 !!! note
 
