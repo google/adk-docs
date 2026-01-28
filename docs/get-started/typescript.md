@@ -3,19 +3,15 @@
 This guide shows you how to get up and running with Agent Development Kit
 for TypeScript. Before you start, make sure you have the following installed:
 
-*   Node.js 20.12.7 or later
-*   Node Package Manager (npm) 9.2.0 or later
+*   Node.js 22.6.0 or later (required for native TypeScript support)
+*   Node Package Manager (npm) 10.0.0 or later
 
 ## Create an agent project
 
-Create an agent project with the following files and directory structure:
+Create an empty `my-agent` directory for your project:
 
 ```none
 my-agent/
-    agent.ts        # main agent code
-    package.json    # project configuration
-    tsconfig.json   # TypeScript configuration
-    .env            # API keys or project IDs
 ```
 
 ??? tip "Create this project structure using the command line"
@@ -23,30 +19,20 @@ my-agent/
     === "MacOS / Linux"
 
         ```bash
-        mkdir -p my-agent/ && \
-            touch my-agent/agent.ts \
-            touch my-agent/package.json \
-            touch my-agent/.env
+        mkdir -p my-agent/
         ```
 
     === "Windows"
 
         ```console
-        mkdir my-agent\
-        type nul > my-agent\agent.ts
-        type nul > my-agent\package.json
-        type nul > my-agent\.env
+        mkdir my-agent
         ```
-
-    **Note:** Do not create `tsconfig.json`, you generate that
-    file in a later step.
 
 ### Define the agent code
 
 Create the code for a basic agent, including a simple implementation of an ADK
 [Function Tool](/adk-docs/tools/function-tools/), called `getCurrentTime`.
-Add the following code to the `agent.ts` file in your project
-directory:
+Create an `agent.ts` file in your project directory and add the following code:
 
 ```typescript title="my-agent/agent.ts"
 import {FunctionTool, LlmAgent} from '@google/adk';
@@ -79,18 +65,18 @@ export const rootAgent = new LlmAgent({
 Use the `npm` tool to install and configure dependencies for your project,
 including the package file, TypeScript configuration, ADK TypeScript main
 library and developer tools. Run the following commands from your
-`my-agent/` directory:
+`my-agent/` directory to create the `package.json` file and install the
+project dependencies:
 
 ```console
 cd my-agent/
-# initialize a project with default values
+# initialize a project as an ES module
 npm init --yes
-# configure TypeScript
-npm install -D typescript
-npx tsc --init
-# install ADK libraries
-npm install @google/adk
-npm install @google/adk-devtools
+npm pkg set type="module"
+# install ADK libraries and Zod
+npm install @google/adk zod
+# install dev tools as a dev dependency
+npm install -D @google/adk-devtools
 ```
 
 After completing these installation and configuration steps, open
@@ -103,36 +89,19 @@ well as the ADK library dependencies, as shown in this example:
   "name": "my-agent",
   "version": "1.0.0",
   "description": "My ADK Agent",
+  "type": "module",
   "main": "agent.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "devDependencies": {
-    "typescript": "^5.9.3"
-  },
   "dependencies": {
     "@google/adk": "^0.2.0",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
     "@google/adk-devtools": "^0.2.0"
   }
 }
-```
-
-For development convenience, in the `tsconfig.json` file, update the
-setting for `verbatimModuleSyntax` to `false` to allow simpler syntax
-when adding modules:
-
-```json title="my-agent/tsconfig.json"
-    // set to false to allow CommonJS module syntax:
-    "verbatimModuleSyntax": false,
-```
-
-### Compile the project
-
-After completing the project setup, compile the project to prepare for
-running your ADK agent:
-
-```console
-npx tsc
 ```
 
 ### Set your API key
