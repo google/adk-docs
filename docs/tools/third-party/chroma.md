@@ -1,5 +1,9 @@
 # Chroma
 
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
+</div>
+
 The [Chroma MCP Server](https://github.com/chroma-core/chroma-mcp) connects your
 ADK agent to [Chroma](https://www.trychroma.com/), an open-source embedding
 database. This integration gives your agent the ability to create collections,
@@ -26,55 +30,106 @@ search, and metadata filtering.
 
 ## Use with agent
 
-=== "Local MCP Server"
+=== "Python"
 
-    ```python
-    from google.adk.agents import Agent
-    from google.adk.tools.mcp_tool import McpToolset
-    from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
-    from mcp import StdioServerParameters
+    === "Local MCP Server"
 
-    # For local storage, use:
-    DATA_DIR = "/path/to/your/data/directory"
+        ```python
+        from google.adk.agents import Agent
+        from google.adk.tools.mcp_tool import McpToolset
+        from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
+        from mcp import StdioServerParameters
 
-    # For Chroma Cloud, use:
-    # CHROMA_TENANT = "your-tenant-id"
-    # CHROMA_DATABASE = "your-database-name"
-    # CHROMA_API_KEY = "your-api-key"
+        # For local storage, use:
+        DATA_DIR = "/path/to/your/data/directory"
 
-    root_agent = Agent(
-        model="gemini-2.5-pro",
-        name="chroma_agent",
-        instruction="Help users store and retrieve information using semantic search",
-        tools=[
-            McpToolset(
-                connection_params=StdioConnectionParams(
-                    server_params=StdioServerParameters(
-                        command="uvx",
-                        args=[
+        # For Chroma Cloud, use:
+        # CHROMA_TENANT = "your-tenant-id"
+        # CHROMA_DATABASE = "your-database-name"
+        # CHROMA_API_KEY = "your-api-key"
+
+        root_agent = Agent(
+            model="gemini-2.5-pro",
+            name="chroma_agent",
+            instruction="Help users store and retrieve information using semantic search",
+            tools=[
+                McpToolset(
+                    connection_params=StdioConnectionParams(
+                        server_params=StdioServerParameters(
+                            command="uvx",
+                            args=[
+                                "chroma-mcp",
+                                # For local storage, use:
+                                "--client-type",
+                                "persistent",
+                                "--data-dir",
+                                DATA_DIR,
+                                # For Chroma Cloud, use:
+                                # "--client-type",
+                                # "cloud",
+                                # "--tenant",
+                                # CHROMA_TENANT,
+                                # "--database",
+                                # CHROMA_DATABASE,
+                                # "--api-key",
+                                # CHROMA_API_KEY,
+                            ],
+                        ),
+                        timeout=30,
+                    ),
+                )
+            ],
+        )
+        ```
+
+=== "TypeScript"
+
+    === "Local MCP Server"
+
+        ```typescript
+        import { LlmAgent, MCPToolset } from "@google/adk";
+
+        // For local storage, use:
+        const DATA_DIR = "/path/to/your/data/directory";
+
+        // For Chroma Cloud, use:
+        // const CHROMA_TENANT = "your-tenant-id";
+        // const CHROMA_DATABASE = "your-database-name";
+        // const CHROMA_API_KEY = "your-api-key";
+
+        const rootAgent = new LlmAgent({
+            model: "gemini-2.5-pro",
+            name: "chroma_agent",
+            instruction: "Help users store and retrieve information using semantic search",
+            tools: [
+                new MCPToolset({
+                    type: "StdioConnectionParams",
+                    serverParams: {
+                        command: "uvx",
+                        args: [
                             "chroma-mcp",
-                            # For local storage, use:
+                            // For local storage, use:
                             "--client-type",
                             "persistent",
                             "--data-dir",
                             DATA_DIR,
-                            # For Chroma Cloud, use:
-                            # "--client-type",
-                            # "cloud",
-                            # "--tenant",
-                            # CHROMA_TENANT,
-                            # "--database",
-                            # CHROMA_DATABASE,
-                            # "--api-key",
-                            # CHROMA_API_KEY,
+                            // For Chroma Cloud, use:
+                            // "--client-type",
+                            // "cloud",
+                            // "--tenant",
+                            // CHROMA_TENANT,
+                            // "--database",
+                            // CHROMA_DATABASE,
+                            // "--api-key",
+                            // CHROMA_API_KEY,
                         ],
-                    ),
-                    timeout=30,
-                ),
-            )
-        ],
-    )
-    ```
+                    },
+                }),
+            ],
+        });
+
+        export { rootAgent };
+        ```
 
 ## Available tools
 
