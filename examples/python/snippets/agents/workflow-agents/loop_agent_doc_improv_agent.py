@@ -17,7 +17,7 @@
 
 import asyncio
 import os
-from google.adk.agents import LoopAgent, LlmAgent, BaseAgent, SequentialAgent
+from google.adk.agents import LoopAgent, LlmAgent, SequentialAgent
 from google.genai import types
 from google.adk.runners import InMemoryRunner
 from google.adk.agents.invocation_context import InvocationContext
