@@ -16,7 +16,7 @@
       {% include ".icons/" ~ icon ~ ".svg" %}
     </a>
   {% endif %}
-  {% set raw_url = page.edit_url | replace("github.com", "raw.githubusercontent.com") | replace("/edit/", "/") %}
+  {% set raw_url = page.url | url ~ "index.md" %}
   <button id="copy-page-btn" class="md-content__button md-icon" title="Copy page as Markdown" data-url="{{ raw_url }}">
     {% include ".icons/material/content-copy.svg" %}
   </button>
