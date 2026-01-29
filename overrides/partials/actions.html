@@ -17,7 +17,7 @@
     </a>
   {% endif %}
   {% set raw_url = page.edit_url | replace("github.com", "raw.githubusercontent.com") | replace("/edit/", "/") %}
-  <button class="md-content__button md-icon" title="Copy page as Markdown" onclick="var b=this,s=b.querySelector('svg'),o=s.innerHTML;fetch('{{ raw_url }}').then(r=>r.text()).then(t=>{navigator.clipboard.writeText(t);s.innerHTML='<path d=\'M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z\'/>';setTimeout(()=>s.innerHTML=o,1500)}).catch(()=>alert('Copy failed'))">
+  <button id="copy-page-btn" class="md-content__button md-icon" title="Copy page as Markdown" data-url="{{ raw_url }}">
     {% include ".icons/material/content-copy.svg" %}
   </button>
 {% endif %}

@@ -24,6 +24,10 @@ extra_css:
   - stylesheets/custom.css
   - stylesheets/language-tags.css
 
+# Custom JavaScript
+extra_javascript:
+  - javascript/copy-page.js
+
 # Additional config
 extra:
   first_repo_url: https://github.com/google/adk-python
