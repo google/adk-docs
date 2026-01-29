@@ -158,6 +158,7 @@ plugins:
         Build Agents:
         - get-started/*.md
         - tutorials/*.md
+        - visual-builder/*.md
         - agents/*.md
         - tools/*.md
         - tools-custom/*.md
@@ -180,6 +181,9 @@ plugins:
         - streaming/*.md
         - grounding/*.md
         Reference:
+        - release-notes.md
+        - community.md
+        - contributing-guide.md
         - api-reference/index.md
         - api-reference/rest/index.md
 
