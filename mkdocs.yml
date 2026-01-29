@@ -165,7 +165,7 @@ plugins:
         - runtime/*.md
         - deploy/*.md
         - observability/*.md
-        - evaluation/*.md
+        - evaluate/*.md
         - safety/*.md
         Components:
         - context/*.md
