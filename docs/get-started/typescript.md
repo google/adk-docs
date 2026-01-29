@@ -28,6 +28,49 @@ my-agent/
         mkdir my-agent
         ```
 
+### Configure project and dependencies
+
+Use the `npm` tool to install and configure dependencies for your project,
+including the package file, TypeScript configuration, ADK TypeScript main
+library and developer tools. Run the following commands from your
+`my-agent/` directory to create the `package.json` file and install the
+project dependencies:
+
+```console
+cd my-agent/
+# initialize a project as an ES module
+npm init --yes
+npm pkg set type="module"
+# install ADK libraries
+npm install @google/adk
+# install dev tools as a dev dependency
+npm install -D @google/adk-devtools
+```
+
+After completing these installation and configuration steps, open
+the `package.json` project file and verify that the `main:` value
+is set to `agent.ts`, that the TypeScript dependency is set, as
+well as the ADK library dependencies, as shown in this example:
+
+```json title="my-agent/package.json"
+{
+  "name": "my-agent",
+  "version": "1.0.0",
+  "description": "My ADK Agent",
+  "type": "module",
+  "main": "agent.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@google/adk": "^0.2.0"
+  },
+  "devDependencies": {
+    "@google/adk-devtools": "^0.2.0"
+  }
+}
+```
+
 ### Define the agent code
 
 Create the code for a basic agent, including a simple implementation of an ADK
@@ -58,50 +101,6 @@ export const rootAgent = new LlmAgent({
                 Use the 'getCurrentTime' tool for this purpose.`,
   tools: [getCurrentTime],
 });
-```
-
-### Configure project and dependencies
-
-Use the `npm` tool to install and configure dependencies for your project,
-including the package file, TypeScript configuration, ADK TypeScript main
-library and developer tools. Run the following commands from your
-`my-agent/` directory to create the `package.json` file and install the
-project dependencies:
-
-```console
-cd my-agent/
-# initialize a project as an ES module
-npm init --yes
-npm pkg set type="module"
-# install ADK libraries and Zod
-npm install @google/adk zod
-# install dev tools as a dev dependency
-npm install -D @google/adk-devtools
-```
-
-After completing these installation and configuration steps, open
-the `package.json` project file and verify that the `main:` value
-is set to `agent.ts`, that the TypeScript dependency is set, as
-well as the ADK library dependencies, as shown in this example:
-
-```json title="my-agent/package.json"
-{
-  "name": "my-agent",
-  "version": "1.0.0",
-  "description": "My ADK Agent",
-  "type": "module",
-  "main": "agent.ts",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "dependencies": {
-    "@google/adk": "^0.2.0",
-    "zod": "^4.0.0"
-  },
-  "devDependencies": {
-    "@google/adk-devtools": "^0.2.0"
-  }
-}
 ```
 
 ### Set your API key
