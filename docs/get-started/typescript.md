@@ -48,28 +48,6 @@ npm install @google/adk
 npm install -D @google/adk-devtools
 ```
 
-After completing these installation and configuration steps, open
-the `package.json` project file and verify that it matches this example:
-
-```json title="my-agent/package.json"
-{
-  "name": "my-agent",
-  "version": "1.0.0",
-  "description": "My ADK Agent",
-  "type": "module",
-  "main": "agent.ts",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "dependencies": {
-    "@google/adk": "^0.2.0"
-  },
-  "devDependencies": {
-    "@google/adk-devtools": "^0.2.0"
-  }
-}
-```
-
 ### Define the agent code
 
 Create the code for a basic agent, including a simple implementation of an ADK
@@ -133,7 +111,7 @@ Run your agent with the ADK TypeScript command-line interface tool
 using the following command:
 
 ```console
-npx @google/adk-devtools run agent.ts
+npx adk run agent.ts
 ```
 
 ![adk-run.png](/adk-docs/assets/adk-run.png)
@@ -143,7 +121,7 @@ npx @google/adk-devtools run agent.ts
 Run your agent with the ADK web interface using the following command:
 
 ```console
-npx @google/adk-devtools web
+npx adk web
 ```
 
 This command starts a web server with a chat interface for your agent. You can
