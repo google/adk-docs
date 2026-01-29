@@ -182,10 +182,10 @@ plugins:
         - grounding/*.md
         Reference:
         - release-notes.md
-        - community.md
-        - contributing-guide.md
         - api-reference/index.md
         - api-reference/rest/index.md
+        - community.md
+        - contributing-guide.md
 
 # Navigation
 nav:
