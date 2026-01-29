@@ -3,8 +3,8 @@
 This guide shows you how to get up and running with Agent Development Kit
 for TypeScript. Before you start, make sure you have the following installed:
 
-*   Node.js 22.6.0 or later (required for native TypeScript support)
-*   Node Package Manager (npm) 10.0.0 or later
+*   Node.js 24.13.0 or later
+*   Node Package Manager (npm) 11.8.0 or later
 
 ## Create an agent project
 
@@ -31,8 +31,8 @@ my-agent/
 ### Configure project and dependencies
 
 Use the `npm` tool to install and configure dependencies for your project,
-including the package file, TypeScript configuration, ADK TypeScript main
-library and developer tools. Run the following commands from your
+including the package file, ADK TypeScript main
+library, and developer tools. Run the following commands from your
 `my-agent/` directory to create the `package.json` file and install the
 project dependencies:
 
@@ -41,6 +41,7 @@ cd my-agent/
 # initialize a project as an ES module
 npm init --yes
 npm pkg set type="module"
+npm pkg set main="agent.ts"
 # install ADK libraries
 npm install @google/adk
 # install dev tools as a dev dependency
@@ -48,9 +49,7 @@ npm install -D @google/adk-devtools
 ```
 
 After completing these installation and configuration steps, open
-the `package.json` project file and verify that the `main:` value
-is set to `agent.ts`, that the TypeScript dependency is set, as
-well as the ADK library dependencies, as shown in this example:
+the `package.json` project file and verify that it matches this example:
 
 ```json title="my-agent/package.json"
 {
@@ -95,7 +94,7 @@ const getCurrentTime = new FunctionTool({
 
 export const rootAgent = new LlmAgent({
   name: 'hello_time_agent',
-  model: 'gemini-2.5-flash',
+  model: 'gemini-3.0-flash',
   description: 'Tells the current time in a specified city.',
   instruction: `You are a helpful assistant that tells the current time in a city.
                 Use the 'getCurrentTime' tool for this purpose.`,
