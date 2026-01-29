@@ -1,3 +1,8 @@
+---
+icon: assets/tools-bigquery.png
+description: Connect with BigQuery to retrieve data and perform analysis
+---
+
 # BigQuery tools for ADK
 
 <div class="language-support-tag">

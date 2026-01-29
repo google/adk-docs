@@ -20,4 +20,3 @@ They are packaged in the toolset `SpannerToolset`.
 --8<-- "examples/python/snippets/tools/built-in-tools/spanner.py"
 ```
 
-

@@ -124,6 +124,7 @@ markdown_extensions:
 # Plugins
 plugins:
   - search
+  - macros
   - redirects:
       redirect_maps:
         'get-started/local-testing.md': 'runtime/api-server.md'
