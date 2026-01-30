@@ -1,5 +1,9 @@
 # Daytona
 
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
+</div>
+
 The [Daytona ADK plugin](https://github.com/daytonaio/daytona-adk-plugin) connects your ADK
 agent to [Daytona](https://www.daytona.io/) sandboxes. This integration gives
 your agent the ability to execute code, run shell commands, and manage files in
