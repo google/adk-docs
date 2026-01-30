@@ -124,7 +124,17 @@ markdown_extensions:
 # Plugins
 plugins:
   - search
-  - macros
+  - macros:
+      # Set custom delimiters for J2 templates to avoid conflicts with Markdown
+      # alternative to {% %}
+      j2_block_start_string: '{{%'
+      j2_block_end_string: '%}}'
+      # alternative to {{ }}
+      j2_variable_start_string: '{{$'
+      j2_variable_end_string: '$}}'
+      # alternative to {# #}
+      j2_comment_start_string: '{{#'
+      j2_comment_end_string: '#}}'   
   - redirects:
       redirect_maps:
         'get-started/local-testing.md': 'runtime/api-server.md'

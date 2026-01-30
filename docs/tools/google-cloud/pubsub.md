@@ -1,6 +1,7 @@
 ---
-icon: assets/tools-pubsub.png
-description: Publish, pull, and acknowledge messages from Google Cloud Pub/Sub
+catalog_title: Pub/Sub Tools
+catalog_description: Publish, pull, and acknowledge messages from Google Cloud Pub/Sub
+catalog_icon: /adk-docs/assets/tools-pubsub.png
 ---
 
 # Pub/Sub Tools for ADK

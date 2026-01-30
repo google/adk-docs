@@ -3,11 +3,11 @@ hide:
   - toc
 ---
 
-# Tools for Agents
+# Tools and Integrations for Agents
 
-Check out the following pre-built tools that you can use with ADK agents:
+Check out the following pre-built tools and integrations that you can use with ADK agents:
 
-### Gemini tools
+### Gemini
 
 <div class="tool-card-grid">
 
@@ -43,11 +43,11 @@ Check out the following pre-built tools that you can use with ADK agents:
 
 </div>
 
-### Google Cloud tools
+### Google Cloud
 
-{{ render_catalog('tools/google-cloud/*.md') }}
+{{$ render_catalog('tools/google-cloud/*.md') $}}
 
-### Third-party tools
+### Third-party
 
 <div class="tool-card-grid">
 

@@ -43,7 +43,7 @@ def define_env(env):
                     frontmatter = {}
                 
                 # Get metadata
-                title = frontmatter.get('title')
+                title = frontmatter.get('catalog_title', frontmatter.get('title'))
                 # If title not in frontmatter, try to find first H1
                 if not title:
                     for line in content.splitlines():
@@ -54,8 +54,11 @@ def define_env(env):
                 if not title:
                     title = file_path.stem.replace('-', ' ').title()
 
-                description = frontmatter.get('description', '')
-                icon = frontmatter.get('icon', '/adk-docs/assets/tools-gemini.png') # Default icon
+                description = frontmatter.get('catalog_description',
+                    frontmatter.get('description', ''))
+                icon = frontmatter.get('catalog_icon', 
+                    frontmatter.get('tool_icon', 
+                    frontmatter.get('icon', '/adk-docs/assets/tools-gemini.png'))) # Default icon
                 
                 # Calculate relative link
                 # mkdocs uses site_url structure. We want /adk-docs/... 

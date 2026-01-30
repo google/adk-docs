@@ -1,6 +1,7 @@
 ---
-icon: assets/tools-bigquery.png
-description: Connect with BigQuery to retrieve data and perform analysis
+catalog_title: BigQuery Tools
+catalog_description: Connect with BigQuery to retrieve data and perform analysis
+catalog_icon: /adk-docs/assets/tools-bigquery.png
 ---
 
 # BigQuery tools for ADK
