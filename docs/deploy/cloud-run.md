@@ -99,7 +99,7 @@ gcloud secrets add-iam-policy-binding GOOGLE_API_KEY --member="serviceAccount:12
 
 ## Deployment payload {#payload}
 
-When you deploy your ADK agent workflow to the Google Cloud Run,
+When you deploy your ADK agent workflow to Google Cloud Run,
 the following content is uploaded to the service:
 
 - Your ADK agent code
@@ -442,7 +442,7 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
     ##### Minimal command
 
     ```bash
-    adk deploy cloud_run \
+    npx adk deploy cloud_run \
     --project=$GOOGLE_CLOUD_PROJECT \
     --region=$GOOGLE_CLOUD_LOCATION \
     $AGENT_PATH
@@ -451,7 +451,7 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
     ##### Full command with optional flags
 
     ```bash
-    adk deploy cloud_run \
+    npx adk deploy cloud_run \
     --project=$GOOGLE_CLOUD_PROJECT \
     --region=$GOOGLE_CLOUD_LOCATION \
     --service_name=$SERVICE_NAME \
@@ -641,57 +641,32 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
 
     3.  **Dependencies (`package.json`)**
 
-        Note that `typescript` and `@types/node` are `devDependencies`, as they are not needed in the final production container.
-
         ```json title="package.json"
         {
           "name": "your-cloud-run-ts-agent",
           "version": "1.0.0",
           "description": "A TypeScript ADK agent for Cloud Run",
-          "main": "dist/index.js",
+          "main": "src/index.ts",
           "scripts": {
-            "build": "tsc",
-            "start": "node dist/index.js"
+            "start": "node src/index.ts"
           },
           "dependencies": {
-            "@google-cloud/adk": "latest"
+            "@google/adk": "^0.2.5"
           },
           "devDependencies": {
-            "@types/node": "^20.0.0",
-            "typescript": "^5.0.0"
+            "@google/adk-devtools": "^0.2.5"
           }
         }
         ```
 
-    4.  **TypeScript Configuration (`tsconfig.json`)**
-
-        This file configures the TypeScript compiler to output JavaScript to the `dist` directory.
-
-        ```json title="tsconfig.json"
-        {
-          "compilerOptions": {
-            "target": "es2020",
-            "module": "commonjs",
-            "rootDir": "./src",
-            "outDir": "./dist",
-            "strict": true,
-            "esModuleInterop": true,
-            "skipLibCheck": true,
-            "forceConsistentCasingInFileNames": true
-          },
-          "include": ["src/**/*.ts"],
-          "exclude": ["node_modules"]
-        }
-        ```
-
-    5.  **Container Image (`Dockerfile`)**
+    4.  **Container Image (`Dockerfile`)**
 
         This multi-stage `Dockerfile` first builds the TypeScript code into JavaScript, then creates a slim production image containing only the necessary artifacts. This is a best practice for security and performance.
 
         ```dockerfile title="Dockerfile"
         # --- Builder Stage ---
         # Installs all dependencies and builds the TypeScript source.
-        FROM node:20-slim AS builder
+        FROM node:24-slim AS builder
         WORKDIR /app
 
         # Copy package files and install all dependencies
@@ -700,11 +675,10 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
 
         # Copy the rest of the source code and build
         COPY . .
-        RUN npm run build
 
         # --- Production Stage ---
         # Copies built code and production dependencies to a clean image.
-        FROM node:20-slim
+        FROM node:24-slim
         WORKDIR /app
 
         # Copy package files and install only production dependencies
