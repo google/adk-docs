@@ -46,7 +46,7 @@ To proceed, confirm that your agent code is configured as follows:
 
     1. Agent code is in a file called `agent.ts` within your agent directory.
     2. Your agent variable is named `rootAgent`.
-    3. Your `package.json` file is present in the agent directory with `@google-cloud/adk` and other dependencies.
+    3. Your `package.json` file is present in the agent directory with `@google/adk` and other dependencies.
     4. Your `tsconfig.json` file is present in the agent directory.
 
 
@@ -616,7 +616,7 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
         This file creates an Express server and uses the ADK's `getExpressApp` function to mount the agent routes and, optionally, the web UI.
 
         ```typescript title="src/index.ts"
-        import { getExpressApp } from "@google-cloud/adk/dev";
+        import { getExpressApp } from "@google/adk/dev";
         import path from "path";
 
         // Create an Express app with ADK serving capabilities.
