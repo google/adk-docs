@@ -1,7 +1,7 @@
 # Deploy to Cloud Run
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-go">Go</span><span class="lst-java">Java</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-go">Go</span><span class="lst-java">Java</span><span class="lst-typescript">TypeScript</span>
 </div>
 
 [Cloud Run](https://cloud.google.com/run)
@@ -41,6 +41,13 @@ To proceed, confirm that your agent code is configured as follows:
     3. Your agent definition is present in a static class method.
 
     Refer to the following section for more details. You can also find a [sample app](https://github.com/google/adk-docs/tree/main/examples/java/cloud-run) in the Github repo.
+
+=== "TypeScript"
+
+    1. Agent code is in a file called `agent.ts` within your agent directory.
+    2. Your agent variable is named `rootAgent`.
+    3. Your `package.json` file is present in the agent directory with `@google-cloud/adk` and other dependencies.
+    4. Your `tsconfig.json` file is present in the agent directory.
 
 
 ## Environment variables
@@ -401,6 +408,82 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
 
     Upon successful execution, the command deploys your agent to Cloud Run and provide a local URL to access the service through the proxy.
 
+=== "TypeScript - adk CLI"
+
+    ### adk CLI
+
+    The `adk deploy cloud_run` command deploys your agent code to Google Cloud Run.
+
+    Ensure you have authenticated with Google Cloud (`gcloud auth login` and `gcloud config set project <your-project-id>`).
+
+    #### Setup environment variables
+
+    Optional but recommended: Setting environment variables can make the deployment commands cleaner.
+
+    ```bash
+    # Set your Google Cloud Project ID
+    export GOOGLE_CLOUD_PROJECT="your-gcp-project-id"
+
+    # Set your desired Google Cloud Location
+    export GOOGLE_CLOUD_LOCATION="us-central1" # Example location
+
+    # Set the path to your agent code directory
+    export AGENT_PATH="./capital_agent" # Assuming capital_agent is in the current directory
+
+    # Set a name for your Cloud Run service (optional)
+    export SERVICE_NAME="capital-agent-service"
+
+    # Set an application name (optional)
+    export APP_NAME="capital_agent_app"
+    ```
+
+    #### Command usage
+
+    ##### Minimal command
+
+    ```bash
+    adk deploy cloud_run \
+    --project=$GOOGLE_CLOUD_PROJECT \
+    --region=$GOOGLE_CLOUD_LOCATION \
+    $AGENT_PATH
+    ```
+
+    ##### Full command with optional flags
+
+    ```bash
+    adk deploy cloud_run \
+    --project=$GOOGLE_CLOUD_PROJECT \
+    --region=$GOOGLE_CLOUD_LOCATION \
+    --service_name=$SERVICE_NAME \
+    --app_name=$APP_NAME \
+    --with_ui \
+    $AGENT_PATH
+    ```
+
+    ##### Arguments
+
+    * `AGENT_PATH`: (Required) Positional argument specifying the path to the directory containing your agent's source code (e.g., `$AGENT_PATH` in the examples, or `capital_agent/`). This directory must contain at least `package.json` and your main agent file (e.g., `agent.ts`).
+
+    ##### Options
+
+    * `--project TEXT`: (Required) Your Google Cloud project ID (e.g., `$GOOGLE_CLOUD_PROJECT`).
+    * `--region TEXT`: (Required) The Google Cloud location for deployment (e.g., `$GOOGLE_CLOUD_LOCATION`, `us-central1`).
+    * `--service_name TEXT`: (Optional) The name for the Cloud Run service (e.g., `$SERVICE_NAME`). Defaults to `adk-default-service-name`.
+    * `--app_name TEXT`: (Optional) The application name for the ADK API server (e.g., `$APP_NAME`). Defaults to the name of the directory specified by `AGENT_PATH` (e.g., `capital_agent` if `AGENT_PATH` is `./capital_agent`).
+    * `--agent_engine_id TEXT`: (Optional) If you are using a managed session service via Vertex AI Agent Engine, provide its resource ID here.
+    * `--port INTEGER`: (Optional) The port number the ADK API server will listen on within the container. Defaults to 8000.
+    * `--with_ui`: (Optional) If included, deploys the ADK dev UI alongside the agent API server. By default, only the API server is deployed.
+    * `--temp_folder TEXT`: (Optional) Specifies a directory for storing intermediate files generated during the deployment process. Defaults to a timestamped folder in the system's temporary directory. *(Note: This option is generally not needed unless troubleshooting issues).*
+    * `--help`: Show the help message and exit.
+
+    ##### Authenticated access
+    During the deployment process, you might be prompted: `Allow unauthenticated invocations to [your-service-name] (y/N)?`.
+
+    * Enter `y` to allow public access to your agent's API endpoint without authentication.
+    * Enter `N` (or press Enter for the default) to require authentication (e.g., using an identity token as shown in the "Testing your agent" section).
+
+    Upon successful execution, the command deploys your agent to Cloud Run and provide the URL of the deployed service.
+
 === "Java - gcloud CLI"
 
     ### gcloud CLI for Java
@@ -436,8 +519,8 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
 
            * The definition of the agent can be exposed in a static method or inlined during declaration.
 
-        See the code for the `CapitalAgent` example in the 
-        [examples](https://github.com/google/adk-docs/blob/main/examples/java/cloud-run/src/main/java/agents/capitalagent/CapitalAgent.java) 
+        See the code for the `CapitalAgent` example in the
+        [examples](https://github.com/google/adk-docs/blob/main/examples/java/cloud-run/src/main/java/agents/capitalagent/CapitalAgent.java)
         repository.
 
     2. Add the following dependencies and plugin to the pom.xml file.
@@ -497,6 +580,168 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
     `gcloud` will build the Docker image, push it to Google Artifact Registry, and deploy it to Cloud Run. Upon completion, it will output the URL of your deployed service.
 
     For a full list of deployment options, see the [`gcloud run deploy` reference documentation](https://cloud.google.com/sdk/gcloud/reference/run/deploy).
+
+=== "TypeScript - gcloud CLI"
+
+    ### gcloud CLI for TypeScript
+
+    You can deploy TypeScript Agents using the standard `gcloud run deploy` command and a `Dockerfile`.
+
+    Ensure you are [authenticated](https://cloud.google.com/docs/authentication/gcloud) with Google Cloud by running `gcloud auth login` and `gcloud config set project <your-project-id>`.
+
+    #### Project Structure
+
+    Organize your project files as follows. The ADK server will discover any agent defined in the `src/agents` directory.
+
+    ```txt
+    your-project-directory/
+    ├── src/
+    │   ├── agents/
+    │   │   └── capitalagent/
+    │   │       └── agent.ts    # Your agent code, exports a `rootAgent`
+    │   └── index.ts            # Express server entry point
+    ├── package.json
+    ├── tsconfig.json
+    └── Dockerfile
+    ```
+
+    #### Code files
+
+    1.  **Agent Definition (`agent.ts`)**
+
+        This is your agent code, which should export a `rootAgent` constant. See the [LLM agent](../agents/llm-agents.md) page for details. A complete example is available in the [examples repository](https://github.com/google/adk-docs/blob/main/examples/typescript/cloud-run/src/agents/capitalagent/agent.ts).
+
+    2.  **Server Entrypoint (`index.ts`)**
+
+        This file creates an Express server and uses the ADK's `getExpressApp` function to mount the agent routes and, optionally, the web UI.
+
+        ```typescript title="src/index.ts"
+        import { getExpressApp } from "@google-cloud/adk/dev";
+        import path from "path";
+
+        // Create an Express app with ADK serving capabilities.
+        const app = getExpressApp({
+          // The directory where your agent folders are located.
+          // ADK will scan this directory for agent definitions.
+          agentsDir: path.join(__dirname, "agents"),
+
+          // For production, use a persistent session service.
+          // See ADK documentation for session service options.
+          sessionServiceUri: "in-memory", // Using in-memory for simplicity.
+          allowedOrigins: ["*"], // Configure CORS for your environment.
+          web: true, // Serve the ADK web UI.
+        });
+
+        const port = process.env.PORT || 8080;
+
+        app.listen(port, () => {
+          console.log(`Server is running on port ${port}`);
+        });
+        ```
+
+    3.  **Dependencies (`package.json`)**
+
+        Note that `typescript` and `@types/node` are `devDependencies`, as they are not needed in the final production container.
+
+        ```json title="package.json"
+        {
+          "name": "your-cloud-run-ts-agent",
+          "version": "1.0.0",
+          "description": "A TypeScript ADK agent for Cloud Run",
+          "main": "dist/index.js",
+          "scripts": {
+            "build": "tsc",
+            "start": "node dist/index.js"
+          },
+          "dependencies": {
+            "@google-cloud/adk": "latest"
+          },
+          "devDependencies": {
+            "@types/node": "^20.0.0",
+            "typescript": "^5.0.0"
+          }
+        }
+        ```
+
+    4.  **TypeScript Configuration (`tsconfig.json`)**
+
+        This file configures the TypeScript compiler to output JavaScript to the `dist` directory.
+
+        ```json title="tsconfig.json"
+        {
+          "compilerOptions": {
+            "target": "es2020",
+            "module": "commonjs",
+            "rootDir": "./src",
+            "outDir": "./dist",
+            "strict": true,
+            "esModuleInterop": true,
+            "skipLibCheck": true,
+            "forceConsistentCasingInFileNames": true
+          },
+          "include": ["src/**/*.ts"],
+          "exclude": ["node_modules"]
+        }
+        ```
+
+    5.  **Container Image (`Dockerfile`)**
+
+        This multi-stage `Dockerfile` first builds the TypeScript code into JavaScript, then creates a slim production image containing only the necessary artifacts. This is a best practice for security and performance.
+
+        ```dockerfile title="Dockerfile"
+        # --- Builder Stage ---
+        # Installs all dependencies and builds the TypeScript source.
+        FROM node:20-slim AS builder
+        WORKDIR /app
+
+        # Copy package files and install all dependencies
+        COPY package*.json ./
+        RUN npm install
+
+        # Copy the rest of the source code and build
+        COPY . .
+        RUN npm run build
+
+        # --- Production Stage ---
+        # Copies built code and production dependencies to a clean image.
+        FROM node:20-slim
+        WORKDIR /app
+
+        # Copy package files and install only production dependencies
+        COPY package*.json ./
+        RUN npm install --production
+
+        # Copy the built application from the builder stage
+        COPY --from=builder /app/dist ./dist
+
+        # Create and switch to a non-root user for security
+        RUN adduser --disabled-password --gecos "" myuser
+        USER myuser
+
+        # Expose the port and start the application
+        EXPOSE 8080
+        CMD ["npm", "start"]
+        ```
+
+    #### Deploy using `gcloud`
+
+    Navigate to `your-project-directory` in your terminal and run the deployment command:
+
+    ```bash
+    gcloud run deploy capital-agent-service \
+      --source . \
+      --region $GOOGLE_CLOUD_LOCATION \
+      --project $GOOGLE_CLOUD_PROJECT \
+      --allow-unauthenticated \
+      --set-env-vars="GOOGLE_CLOUD_PROJECT=$GOOGLE_CLOUD_PROJECT,GOOGLE_CLOUD_LOCATION=$GOOGLE_CLOUD_LOCATION,GOOGLE_GENAI_USE_VERTEXAI=$GOOGLE_GENAI_USE_VERTEXAI"
+      # Add other environment variables your agent might need
+    ```
+
+    *   `capital-agent-service`: The name for your Cloud Run service.
+    *   `--source .`: Builds the container from the `Dockerfile` in the current directory.
+    *   `--allow-unauthenticated`: Allows public access. Omit this for a private service.
+
+    `gcloud` will build the image, push it to the Artifact Registry, and deploy it to Cloud Run, providing the service URL upon completion. See the [`gcloud run deploy` reference](https://cloud.google.com/sdk/gcloud/reference/run/deploy) for all options.
 
 ## Testing your agent
 
