@@ -1,0 +1,23 @@
+{% if page.edit_url and page.file.src_path != "index.md" %}
+  {% if "content.action.edit" in features %}
+    <a href="{{ page.edit_url }}" title="Edit this page on GitHub" class="md-content__button md-icon" rel="edit">
+      {% set icon = config.theme.icon.edit or "material/file-edit-outline" %}
+      {% include ".icons/" ~ icon ~ ".svg" %}
+    </a>
+  {% endif %}
+  {% if "content.action.view" in features %}
+    {% if "/blob/" in page.edit_url %}
+      {% set part = "blob" %}
+    {% else %}
+      {% set part = "edit" %}
+    {% endif %}
+    <a href="{{ page.edit_url | replace(part, 'raw') }}" title="View Markdown source" class="md-content__button md-icon">
+      {% set icon = config.theme.icon.view or "material/file-eye-outline" %}
+      {% include ".icons/" ~ icon ~ ".svg" %}
+    </a>
+  {% endif %}
+  {% set raw_url = page.url | url ~ "index.md" %}
+  <button id="copy-page-btn" class="md-content__button md-icon" title="Copy page as Markdown" data-url="{{ raw_url }}">
+    {% include ".icons/material/content-copy.svg" %}
+  </button>
+{% endif %}
