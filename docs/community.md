@@ -49,6 +49,8 @@ Development Kit community.
 
     Join the [ADK Community Google Group](https://groups.google.com/g/adk-community) for updates, calendar invites, and to connect with the ADK community.
 
+    See recent recordings below, or browse all past calls on our [YouTube playlist](https://www.youtube.com/playlist?list=PLwi6PfxEP7zZbBPmWiZ8QbPcuKyAY5RR3).
+
 <div class="resource-grid">
   <a href="https://www.youtube.com/watch?v=h9Lueiqo89E" class="resource-card">
     <div class="card-image-wrapper">
@@ -80,16 +82,7 @@ Development Kit community.
       <p>Discussions include the ADK Go launch, the reflect & retry plugin for error recovery, and time travel debugging for rewinding agent sessions.</p>
     </div>
   </a>
-  <a href="https://www.youtube.com/watch?v=A95mQaSRKik" class="resource-card">
-    <div class="card-image-wrapper">
-      <img src="https://img.youtube.com/vi/A95mQaSRKik/maxresdefault.jpg" alt="ADK Community Call Oct 2025">
-    </div>
-    <div class="card-content">
-      <div class="type">Community Call</div>
-      <h3>📞 Oct 2025 Recording</h3>
-      <p>Discussions include the ADK roadmap, context compaction and caching for reducing cost and latency, and community contribution guidelines.</p>
-    </div>
-  </a>
+
 </div>
 
 ## Courses & Deep Dives
