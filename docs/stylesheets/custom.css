@@ -78,6 +78,18 @@
   width: 100%;
 }
 
+/* Copy page button */
+
+button.md-content__button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+button.md-content__button:hover svg {
+  color: var(--md-accent-fg-color);
+}
+
 /* YouTube video grid */
 
 .video-grid {
