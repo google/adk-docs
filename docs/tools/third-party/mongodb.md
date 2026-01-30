@@ -1,5 +1,9 @@
 # MongoDB
 
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
+</div>
+
 The [MongoDB MCP Server](https://github.com/mongodb-js/mongodb-mcp-server)
 connects your ADK agent to [MongoDB](https://www.mongodb.com/) databases and
 MongoDB Atlas clusters. This integration gives your agent the ability to query
@@ -28,49 +32,94 @@ using natural language.
 
 ## Use with agent
 
-=== "Local MCP Server"
+=== "Python"
 
-    ```python
-    from google.adk.agents import Agent
-    from google.adk.tools.mcp_tool import McpToolset
-    from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
-    from mcp import StdioServerParameters
+    === "Local MCP Server"
 
-    # For database access, use a connection string:
-    CONNECTION_STRING = "mongodb://localhost:27017/myDatabase"
+        ```python
+        from google.adk.agents import Agent
+        from google.adk.tools.mcp_tool import McpToolset
+        from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
+        from mcp import StdioServerParameters
 
-    # For Atlas management, use API credentials:
-    # ATLAS_CLIENT_ID = "YOUR_ATLAS_CLIENT_ID"
-    # ATLAS_CLIENT_SECRET = "YOUR_ATLAS_CLIENT_SECRET"
+        # For database access, use a connection string:
+        CONNECTION_STRING = "mongodb://localhost:27017/myDatabase"
 
-    root_agent = Agent(
-        model="gemini-2.5-pro",
-        name="mongodb_agent",
-        instruction="Help users query and manage MongoDB databases",
-        tools=[
-            McpToolset(
-                connection_params=StdioConnectionParams(
-                    server_params=StdioServerParameters(
-                        command="npx",
-                        args=[
+        # For Atlas management, use API credentials:
+        # ATLAS_CLIENT_ID = "YOUR_ATLAS_CLIENT_ID"
+        # ATLAS_CLIENT_SECRET = "YOUR_ATLAS_CLIENT_SECRET"
+
+        root_agent = Agent(
+            model="gemini-2.5-pro",
+            name="mongodb_agent",
+            instruction="Help users query and manage MongoDB databases",
+            tools=[
+                McpToolset(
+                    connection_params=StdioConnectionParams(
+                        server_params=StdioServerParameters(
+                            command="npx",
+                            args=[
+                                "-y",
+                                "mongodb-mcp-server",
+                                "--readOnly",  # Remove for write operations
+                            ],
+                            env={
+                                # For database access, use:
+                                "MDB_MCP_CONNECTION_STRING": CONNECTION_STRING,
+                                # For Atlas management, use:
+                                # "MDB_MCP_API_CLIENT_ID": ATLAS_CLIENT_ID,
+                                # "MDB_MCP_API_CLIENT_SECRET": ATLAS_CLIENT_SECRET,
+                            },
+                        ),
+                        timeout=30,
+                    ),
+                )
+            ],
+        )
+        ```
+
+=== "TypeScript"
+
+    === "Local MCP Server"
+
+        ```typescript
+        import { LlmAgent, MCPToolset } from "@google/adk";
+
+        // For database access, use a connection string:
+        const CONNECTION_STRING = "mongodb://localhost:27017/myDatabase";
+
+        // For Atlas management, use API credentials:
+        // const ATLAS_CLIENT_ID = "YOUR_ATLAS_CLIENT_ID";
+        // const ATLAS_CLIENT_SECRET = "YOUR_ATLAS_CLIENT_SECRET";
+
+        const rootAgent = new LlmAgent({
+            model: "gemini-2.5-pro",
+            name: "mongodb_agent",
+            instruction: "Help users query and manage MongoDB databases",
+            tools: [
+                new MCPToolset({
+                    type: "StdioConnectionParams",
+                    serverParams: {
+                        command: "npx",
+                        args: [
                             "-y",
                             "mongodb-mcp-server",
-                            "--readOnly",  # Remove for write operations
+                            "--readOnly", // Remove for write operations
                         ],
-                        env={
-                            # For database access, use:
-                            "MDB_MCP_CONNECTION_STRING": CONNECTION_STRING,
-                            # For Atlas management, use:
-                            # "MDB_MCP_API_CLIENT_ID": ATLAS_CLIENT_ID,
-                            # "MDB_MCP_API_CLIENT_SECRET": ATLAS_CLIENT_SECRET,
+                        env: {
+                            // For database access, use:
+                            MDB_MCP_CONNECTION_STRING: CONNECTION_STRING,
+                            // For Atlas management, use:
+                            // MDB_MCP_API_CLIENT_ID: ATLAS_CLIENT_ID,
+                            // MDB_MCP_API_CLIENT_SECRET: ATLAS_CLIENT_SECRET,
                         },
-                    ),
-                    timeout=30,
-                ),
-            )
-        ],
-    )
-    ```
+                    },
+                }),
+            ],
+        });
+
+        export { rootAgent };
+        ```
 
 ## Available tools
 
