@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# --- Uncommented code for running the agent locally ---
+# --- Uncomment code for running the agent locally ---
 
 # import asyncio
 # import os
@@ -26,7 +26,7 @@
 # USER_ID = "dev_user_01"
 # SESSION_ID = "pipeline_session_02" # Use a unique session ID for each run if desired
 
-# --- End of uncommented code for running the agent locally ---
+# --- End of uncomment code for running the agent locally ---
 
 # --8<-- [start:init]
 # Part of agent.py --> Follow https://google.github.io/adk-docs/get-started/quickstart/ to learn the setup
