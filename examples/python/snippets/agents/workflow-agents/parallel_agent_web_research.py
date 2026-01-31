@@ -12,25 +12,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from google.adk.agents.parallel_agent import ParallelAgent
-from google.adk.agents.llm_agent import LlmAgent
-# Import SequentialAgent to orchestrate the parallel and merge steps
-from google.adk.agents.sequential_agent import SequentialAgent
-# Use InMemoryRunner for local testing/prototyping
-from google.adk.runners import InMemoryRunner
-from google.adk.tools import google_search
-from google.genai import types
+# # --- Uncomment code for running the agent locally ---
+# # Use InMemoryRunner for local testing/prototyping
+# from google.adk.runners import InMemoryRunner
+# from google.genai import types
 
-# --- Configuration ---
-APP_NAME = "parallel_research_app"
-USER_ID = "research_user_01"
-SESSION_ID = "parallel_research_session_with_merge"
-GEMINI_MODEL = "gemini-2.0-flash"
+# # --- Configuration ---
+# APP_NAME = "parallel_research_app"
+# USER_ID = "research_user_01"
+# SESSION_ID = "parallel_research_session_with_merge"
+# # --- End uncomment code for running the agent locally ---
 
 
 # --8<-- [start:init]
 # Part of agent.py --> Follow https://google.github.io/adk-docs/get-started/quickstart/ to learn the setup
 # --- 1. Define Researcher Sub-Agents (to run in parallel) ---
+
+from google.adk.agents.parallel_agent import ParallelAgent
+from google.adk.agents.llm_agent import LlmAgent
+# Import SequentialAgent to orchestrate the parallel and merge steps
+from google.adk.agents.sequential_agent import SequentialAgent
+from google.adk.tools import google_search
+
+# --- Constants ---
+GEMINI_MODEL = "gemini-2.0-flash"
 
 # Researcher 1: Renewable Energy
 researcher_agent_1 = LlmAgent(
