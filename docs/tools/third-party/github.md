@@ -1,3 +1,9 @@
+---
+catalog_title: GitHub
+catalog_description: Analyze code, manage issues and PRs, and automate workflows
+catalog_icon: /adk-docs/assets/tools-github.png
+---
+
 # GitHub
 
 The [GitHub MCP Server](https://github.com/github/github-mcp-server) connects AI

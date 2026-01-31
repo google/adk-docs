@@ -1,3 +1,9 @@
+---
+catalog_title: Notion
+catalog_description: Search workspaces, create pages, and manage tasks and databases
+catalog_icon: /adk-docs/assets/tools-notion.png
+---
+
 # Notion
 
 The [Notion MCP Server](https://github.com/makenotion/notion-mcp-server)

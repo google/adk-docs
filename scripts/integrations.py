@@ -1,6 +1,7 @@
 import os
 import yaml
 from pathlib import Path
+from mkdocs.plugins import log
 
 def define_env(env):
     """
@@ -58,7 +59,7 @@ def define_env(env):
                     frontmatter.get('description', ''))
                 icon = frontmatter.get('catalog_icon', 
                     frontmatter.get('tool_icon', 
-                    frontmatter.get('icon', '/adk-docs/assets/tools-gemini.png'))) # Default icon
+                    frontmatter.get('icon', '/adk-docs/assets/toolbox.svg'))) # Default icon
                 
                 # Calculate relative link
                 # mkdocs uses site_url structure. We want /adk-docs/... 
@@ -86,7 +87,7 @@ def define_env(env):
 """
                 cards_html += card
             except Exception as e:
-                print(f"Error processing {file_path}: {e}")
+                log.warning(f"Error processing {file_path}: {e}")
                 
         cards_html += '</div>'
         return cards_html

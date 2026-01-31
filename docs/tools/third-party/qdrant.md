@@ -1,3 +1,9 @@
+---
+catalog_title: Qdrant
+catalog_description: Store and retrieve information using semantic vector search
+catalog_icon: /adk-docs/assets/tools-qdrant.png
+---
+
 # Qdrant
 
 The [Qdrant MCP Server](https://github.com/qdrant/mcp-server-qdrant) connects

@@ -1,3 +1,9 @@
+---
+catalog_title: Hugging Face
+catalog_description: Access models, datasets, research papers, and AI tools
+catalog_icon: /adk-docs/assets/tools-hugging-face.png
+---
+
 # Hugging Face
 
 The [Hugging Face MCP Server](https://github.com/huggingface/hf-mcp-server) can be used to connect

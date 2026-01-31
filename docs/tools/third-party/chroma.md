@@ -1,3 +1,9 @@
+---
+catalog_title: Chroma
+catalog_description: Store and retrieve information using semantic vector search
+catalog_icon: /adk-docs/assets/tools-chroma.png
+---
+
 # Chroma
 
 The [Chroma MCP Server](https://github.com/chroma-core/chroma-mcp) connects your

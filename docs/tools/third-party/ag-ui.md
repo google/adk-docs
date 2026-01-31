@@ -1,3 +1,8 @@
+---
+catalog_title: AG-UI
+catalog_description: Build rich user experiences with CopilotKit and other clients
+---
+
 # Build chat experiences with AG-UI and CopilotKit
 
 As an agent builder, you want users to interact with your agents through a rich

@@ -1,3 +1,9 @@
+---
+catalog_title: Cartesia
+catalog_description: Generate speech, localize voices, and create audio content
+catalog_icon: /adk-docs/assets/tools-cartesia.png
+---
+
 # Cartesia
 
 The [Cartesia MCP Server](https://github.com/cartesia-ai/cartesia-mcp) connects

@@ -1,3 +1,9 @@
+---
+catalog_title: Daytona
+catalog_description: Execute code, run shell commands, and manage files in secure sandboxes
+catalog_icon: /adk-docs/assets/plugins-daytona.png
+---
+
 # Daytona
 
 The [Daytona ADK plugin](https://github.com/daytonaio/daytona-adk-plugin) connects your ADK

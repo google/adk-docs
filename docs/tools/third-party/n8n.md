@@ -1,3 +1,9 @@
+---
+catalog_title: n8n
+catalog_description: Trigger automated workflows, connect apps, and process data
+catalog_icon: /adk-docs/assets/tools-n8n.png
+---
+
 # n8n
 
 The [n8n MCP Server](https://docs.n8n.io/advanced-ai/accessing-n8n-mcp-server/)

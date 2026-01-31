@@ -1,3 +1,9 @@
+---
+catalog_title: GitLab
+catalog_description: Perform semantic code search, inspect pipelines, manage merge requests
+catalog_icon: /adk-docs/assets/tools-gitlab.png
+---
+
 # GitLab
 
 The

@@ -1,3 +1,9 @@
+---
+catalog_title: Paypal
+catalog_description: Manage payments, send invoices, and handle subscriptions
+catalog_icon: /adk-docs/assets/tools-paypal.png
+---
+
 # PayPal
 
 The [PayPal MCP Server](https://github.com/paypal/paypal-mcp-server) connects

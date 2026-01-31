@@ -1,3 +1,9 @@
+---
+catalog_title: Stripe
+catalog_description: Manage payments, customers, subscriptions, and invoices
+catalog_icon: /adk-docs/assets/tools-stripe.png
+---
+
 # Stripe
 
 The [Stripe MCP Server](https://docs.stripe.com/mcp) connects your ADK agent to

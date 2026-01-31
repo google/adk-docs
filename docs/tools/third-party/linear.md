@@ -1,3 +1,9 @@
+---
+catalog_title: Linear
+catalog_description: Manage issues, track projects, and streamline development
+catalog_icon: /adk-docs/assets/tools-linear.png
+---
+
 # Linear
 
 The [Linear MCP Server](https://linear.app/docs/mcp) connects your ADK agent to
