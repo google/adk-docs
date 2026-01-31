@@ -12,25 +12,35 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# # --- Uncomment code for running the agent locally ---
+
+# import asyncio
+# import os
+# from google.genai import types
+# from google.adk.runners import InMemoryRunner
+# from google.adk.agents.invocation_context import InvocationContext
+# from typing import AsyncGenerator, Optional
+# from google.adk.events import Event, EventActions
+
+# # --- Constants ---
+# APP_NAME = "doc_writing_app_v3" # New App Name
+# USER_ID = "dev_user_01"
+# SESSION_ID_BASE = "loop_exit_tool_session" # New Base Session ID
+# STATE_INITIAL_TOPIC = "initial_topic"
+
+# # --- End uncomment code for running the agent locally ---
+
 # --8<-- [start:init]
 # Part of agent.py --> Follow https://google.github.io/adk-docs/get-started/quickstart/ to learn the setup
 
-import asyncio
-import os
+# Part of agent.py --> Follow https://google.github.io/adk-docs/get-started/quickstart/ to learn the setup
+
 from google.adk.agents import LoopAgent, LlmAgent, SequentialAgent
-from google.genai import types
-from google.adk.runners import InMemoryRunner
-from google.adk.agents.invocation_context import InvocationContext
 from google.adk.tools.tool_context import ToolContext
-from typing import AsyncGenerator, Optional
-from google.adk.events import Event, EventActions
+from google.adk.agents.callback_context import CallbackContext
 
 # --- Constants ---
-APP_NAME = "doc_writing_app_v3" # New App Name
-USER_ID = "dev_user_01"
-SESSION_ID_BASE = "loop_exit_tool_session" # New Base Session ID
 GEMINI_MODEL = "gemini-2.0-flash"
-STATE_INITIAL_TOPIC = "initial_topic"
 
 # --- State Keys ---
 STATE_CURRENT_DOC = "current_document"
@@ -46,6 +56,11 @@ def exit_loop(tool_context: ToolContext):
   tool_context.actions.skip_summarization = True
   # Return empty dict as tools should typically return JSON-serializable output
   return {}
+
+# --- Before Agent Callback ---
+def update_initial_topic_state(callback_context: CallbackContext):
+    """Ensure 'initial_topic' is set in state before pipeline starts."""
+    callback_context.state['initial_topic'] = callback_context.state.get('initial_topic', 'a robot developing unexpected emotions')
 
 # --- Agent Definitions ---
 
@@ -143,6 +158,7 @@ root_agent = SequentialAgent(
         initial_writer_agent, # Run first to create initial doc
         refinement_loop       # Then run the critique/refine loop
     ],
+    before_agent_callback=update_initial_topic_state, # set initial topic in state
     description="Writes an initial document and then iteratively refines it with critique using an exit tool."
 )
 # --8<-- [end:init]
