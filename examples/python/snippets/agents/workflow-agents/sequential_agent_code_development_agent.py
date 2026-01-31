@@ -34,6 +34,7 @@
 from google.adk.agents.sequential_agent import SequentialAgent
 from google.adk.agents.llm_agent import LlmAgent
 
+# --- Constants ---
 GEMINI_MODEL = "gemini-2.0-flash"
 
 # --- 1. Define Sub-Agents for Each Pipeline Stage ---
