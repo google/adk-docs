@@ -12,24 +12,30 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import asyncio
-import os
-from google.adk.agents.sequential_agent import SequentialAgent
-from google.adk.agents.llm_agent import LlmAgent
-from google.genai import types
-# Change 1: Import InMemoryRunner instead of Runner/InMemorySessionService
-from google.adk.runners import InMemoryRunner
-from typing import Optional # For type hints
+# --- Uncommented code for running the agent locally ---
 
-# --- Constants ---
-APP_NAME = "code_pipeline_app"
-USER_ID = "dev_user_01"
-SESSION_ID = "pipeline_session_02" # Use a unique session ID for each run if desired
-GEMINI_MODEL = "gemini-2.0-flash"
+# import asyncio
+# import os
+# from google.genai import types
+# # Change 1: Import InMemoryRunner instead of Runner/InMemorySessionService
+# from google.adk.runners import InMemoryRunner
+# from typing import Optional # For type hints
 
+# # --- Constants ---
+# APP_NAME = "code_pipeline_app"
+# USER_ID = "dev_user_01"
+# SESSION_ID = "pipeline_session_02" # Use a unique session ID for each run if desired
+
+# --- End of uncommented code for running the agent locally ---
 
 # --8<-- [start:init]
 # Part of agent.py --> Follow https://google.github.io/adk-docs/get-started/quickstart/ to learn the setup
+
+from google.adk.agents.sequential_agent import SequentialAgent
+from google.adk.agents.llm_agent import LlmAgent
+
+# Constant for the Gemini model to be used
+GEMINI_MODEL = "gemini-2.0-flash"
 
 # --- 1. Define Sub-Agents for Each Pipeline Stage ---
 
