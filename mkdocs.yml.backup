@@ -15,33 +15,21 @@ edit_uri: edit/main/docs/
 # Copyright
 copyright: Copyright Google 2025&nbsp;&nbsp;|&nbsp;&nbsp;<a href="//policies.google.com/terms">Terms</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="//policies.google.com/privacy">Privacy</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="#__consent">Manage cookies</a>
 
-# Validation
-validation:
-  absolute_links: ignore
-
 # Custom CSS
 extra_css:
   - stylesheets/custom.css
   - stylesheets/language-tags.css
 
-# Custom JavaScript
-extra_javascript:
-  - javascript/copy-page.js
-
-# Additional config
 extra:
   first_repo_url: https://github.com/google/adk-python
   first_repo_name: adk-python
   first_repo_icon: fontawesome/brands/github
-  second_repo_url: https://github.com/google/adk-js
-  second_repo_name: adk-js
+  second_repo_url: https://github.com/google/adk-go
+  second_repo_name: adk-go
   second_repo_icon: fontawesome/brands/github
-  third_repo_url: https://github.com/google/adk-go
-  third_repo_name: adk-go
+  third_repo_url: https://github.com/google/adk-java
+  third_repo_name: adk-java
   third_repo_icon: fontawesome/brands/github
-  fourth_repo_url: https://github.com/google/adk-java
-  fourth_repo_name: adk-java
-  fourth_repo_icon: fontawesome/brands/github
   analytics:
     provider: google
     property: G-DKHZS27PHP
@@ -145,57 +133,16 @@ plugins:
         'tools/confirmation.md': 'tools-custom/confirmation.md'
         'tools/performance.md': 'tools-custom/performance.md'
         'tools/mcp-tools.md': 'tools-custom/mcp-tools.md'
-        'tools/google-cloud/bigquery-agent-analytics.md': 'observability/bigquery-agent-analytics.md'
-        'tools/google-cloud-tools.md': 'tools/google-cloud/index.md'
-        'tools/built-in-tools.md': 'tools/index.md'
-        'sessions/express-mode.md': 'tools/google-cloud/express-mode.md'
-        'sessions/rewind.md': 'sessions/session/rewind.md'
-
-  - llmstxt:
-      markdown_description: An open-source, code-first toolkit for building, evaluating, and deploying sophisticated AI agents with flexibility and control.
-      full_output: llms-full.txt
-      sections:
-        Build Agents:
-        - get-started/*.md
-        - tutorials/*.md
-        - visual-builder/*.md
-        - agents/*.md
-        - tools/*.md
-        - tools-custom/*.md
-        Run Agents:
-        - runtime/*.md
-        - deploy/*.md
-        - observability/*.md
-        - evaluate/*.md
-        - safety/*.md
-        Components:
-        - context/*.md
-        - sessions/*.md
-        - callbacks/*.md
-        - artifacts/*.md
-        - events/*.md
-        - apps/*.md
-        - plugins/*.md
-        - mcp/*.md
-        - a2a/*.md
-        - streaming/*.md
-        - grounding/*.md
-        Reference:
-        - release-notes.md
-        - api-reference/index.md
-        - api-reference/rest/index.md
-        - community.md
-        - contributing-guide.md
 
 # Navigation
 nav:
+<<<<<<< HEAD
   - Home:
     - index.md
   - Build Agents:
     - Get Started:
       - get-started/index.md
       - Python: get-started/python.md
-      - TypeScript: get-started/typescript.md
       - Go: get-started/go.md
       - Java: get-started/java.md
     - Build your Agent:
@@ -207,7 +154,6 @@ nav:
         - Python: get-started/streaming/quickstart-streaming.md
         - Java: get-started/streaming/quickstart-streaming-java.md
       - Visual Builder: visual-builder/index.md
-      - Coding with AI: tutorials/coding-with-ai.md
       - Advanced setup: get-started/installation.md
     - Agents:
       - agents/index.md
@@ -220,64 +166,33 @@ nav:
       - Custom agents: agents/custom-agents.md
       - Multi-agent systems: agents/multi-agents.md
       - Agent Config: agents/config.md
-    - Models for Agents:
-      - agents/models/index.md
-      - Gemini: agents/models/google-gemini.md
-      - Claude: agents/models/anthropic.md
-      - Vertex AI hosted: agents/models/vertex.md
-      - Apigee AI Gateway: agents/models/apigee.md
-      - Ollama: agents/models/ollama.md
-      - vLLM: agents/models/vllm.md
-      - LiteLLM: agents/models/litellm.md
+      - Models & Authentication: agents/models.md
     - Tools for Agents:
       - tools/index.md
+      - Built-in tools: tools/built-in-tools.md
       - Gemini API tools:
-        - tools/gemini-api/index.md
-        - Code Execution: tools/gemini-api/code-execution.md
-        - Computer use: tools/gemini-api/computer-use.md
-        - Google Search: tools/gemini-api/google-search.md
+        -  Computer use: tools/gemini-api/computer-use.md
       - Google Cloud tools:
-        - tools/google-cloud/index.md
-        - Apigee API Hub: tools/google-cloud/apigee-api-hub.md
-        - Application Integration: tools/google-cloud/application-integration.md
-        - BigQuery: tools/google-cloud/bigquery.md
-        - Bigtable: tools/google-cloud/bigtable.md
-        - Cloud API Registry: tools/google-cloud/api-registry.md
-        - Code Execution with Agent Engine: tools/google-cloud/code-exec-agent-engine.md
-        - Data Agents: tools/google-cloud/data-agent.md
-        - GKE Code Executor: tools/google-cloud/gke-code-executor.md
+        - Overview: tools/google-cloud-tools.md
         - MCP Toolbox for Databases: tools/google-cloud/mcp-toolbox-for-databases.md
-        - Pub/Sub: tools/google-cloud/pubsub.md
-        - RAG Engine: tools/google-cloud/vertex-ai-rag-engine.md
-        - Spanner: tools/google-cloud/spanner.md
-        - Vertex AI Search: tools/google-cloud/vertex-ai-search.md
-        - Vertex AI express mode: tools/google-cloud/express-mode.md
+        - BigQuery Agent Analytics: tools/google-cloud/bigquery-agent-analytics.md
+        - Code Execution with Agent Engine: tools/google-cloud/code-exec-agent-engine.md
       - Third-party tools:
         - tools/third-party/index.md
-        - Asana: tools/third-party/asana.md
-        - Atlassian: tools/third-party/atlassian.md
-        - Cartesia: tools/third-party/cartesia.md
-        - Chroma: tools/third-party/chroma.md
-        - Daytona: tools/third-party/daytona.md
-        - ElevenLabs: tools/third-party/elevenlabs.md
+        - AgentQL: tools/third-party/agentql.md
+        - Bright Data: tools/third-party/bright-data.md
+        - Browserbase: tools/third-party/browserbase.md
+        - Exa: tools/third-party/exa.md
+        - Firecrawl: tools/third-party/firecrawl.md
         - GitHub: tools/third-party/github.md
-        - GitLab: tools/third-party/gitlab.md
         - Hugging Face: tools/third-party/hugging-face.md
-        - Linear: tools/third-party/linear.md
-        - MongoDB: tools/third-party/mongodb.md
-        - n8n: tools/third-party/n8n.md
         - Notion: tools/third-party/notion.md
-        - Postman: tools/third-party/postman.md
-        - PayPal: tools/third-party/paypal.md
-        - Qdrant: tools/third-party/qdrant.md
-        - Stripe: tools/third-party/stripe.md
+        - Tavily: tools/third-party/tavily.md
         - Agentic UI (AG-UI): tools/third-party/ag-ui.md
-      - Tool limitations: tools/limitations.md
     - Custom Tools:
       - tools-custom/index.md
       - Function tools:
         - Overview: tools-custom/function-tools.md
-        - Best practices: tools-custom/best-practices.md
         - Tool performance: tools-custom/performance.md
         - Action confirmations: tools-custom/confirmation.md
       - MCP tools: tools-custom/mcp-tools.md
@@ -286,29 +201,20 @@ nav:
   - Run Agents:
     - Agent Runtime:
       - Agent Runtime: runtime/index.md
-      - Web Interface: runtime/web-interface.md
-      - Command Line: runtime/command-line.md
+      - Runtime Config: runtime/runconfig.md
       - API Server: runtime/api-server.md
       - Resume Agents: runtime/resume.md
-      - Runtime Config: runtime/runconfig.md
-      - Event Loop: runtime/event-loop.md
     - Deployment:
       - deploy/index.md
-      - Agent Engine:
-        - deploy/agent-engine/index.md
-        - Standard deployment: deploy/agent-engine/deploy.md
-        - Agent Starter Pack: deploy/agent-engine/asp.md
-        - Test deployed agents: deploy/agent-engine/test.md
+      - Agent Engine: deploy/agent-engine.md
       - Cloud Run: deploy/cloud-run.md
       - GKE: deploy/gke.md
     - Observability:
       - Logging: observability/logging.md
       - Cloud Trace: observability/cloud-trace.md
-      - BigQuery Agent Analytics: observability/bigquery-agent-analytics.md
       - AgentOps: observability/agentops.md
       - Arize AX: observability/arize-ax.md
       - Freeplay: observability/freeplay.md
-      - MLflow: observability/mlflow.md
       - Monocle: observability/monocle.md
       - Phoenix: observability/phoenix.md
       - W&B Weave: observability/weave.md
@@ -326,12 +232,10 @@ nav:
       - Context compression: context/compaction.md
     - Sessions & Memory:
       - sessions/index.md
-      - Sessions:
-        - sessions/session/index.md
-        - Rewind sessions: sessions/session/rewind.md
-        - Migrate sessions: sessions/session/migrate.md
+      - Session: sessions/session.md
       - State: sessions/state.md
       - Memory: sessions/memory.md
+      - Vertex AI Express Mode: sessions/express-mode.md
     - Callbacks:
       - callbacks/index.md
       - Types of callbacks: callbacks/types-of-callbacks.md
@@ -358,27 +262,133 @@ nav:
         - Go: a2a/quickstart-consuming-go.md
     - Bidi-streaming (live):
       - streaming/index.md
-      - Bidi-streaming development guide series:
-        - Part 1. Intro to streaming: streaming/dev-guide/part1.md
-        - Part 2. Sending messages: streaming/dev-guide/part2.md
-        - Part 3. Event handling: streaming/dev-guide/part3.md
-        - Part 4. Run configuration: streaming/dev-guide/part4.md
-        - Part 5. Audio, Images, and Video: streaming/dev-guide/part5.md
+      - Custom Audio Bidi-streaming app sample (WebSockets): streaming/custom-streaming-ws.md
+      - Bidi-streaming development guide series: streaming/dev-guide/part1.md
       - Streaming Tools: streaming/streaming-tools.md
-      - Configuring Bidi-streaming behavior: streaming/configuration.md
+      - Configurating Bidi-streaming behaviour: streaming/configuration.md
     - Grounding:
       - Understanding Google Search Grounding: grounding/google_search_grounding.md
       - Understanding Vertex AI Search Grounding: grounding/vertex_ai_search_grounding.md
   - Reference:
-    - Release Notes: release-notes.md
     - API Reference:
       - api-reference/index.md
       - Python ADK: api-reference/python/index.html
-      - Typescript ADK: api-reference/typescript/index.html
       - Go ADK: https://pkg.go.dev/google.golang.org/adk" target="_blank
       - Java ADK: api-reference/java/index.html
       - CLI Reference: api-reference/cli/index.html
-      - Agent Config Reference: api-reference/agentconfig/index.html
+      - Agent Config reference: api-reference/agentconfig/index.html
       - REST API: api-reference/rest/index.md
     - Community Resources: community.md
     - Contributing Guide: contributing-guide.md
+=======
+  - Home: index.md
+  - Get started:
+    - get-started/index.md
+    - Python: get-started/python.md
+    - Java: get-started/java.md
+  - Build your agent:
+    - tutorials/index.md
+    - Multi-tool agent: get-started/quickstart.md
+    - Agent team: tutorials/agent-team.md
+    - Streaming agent:
+      - get-started/streaming/index.md
+      - Python: get-started/streaming/quickstart-streaming.md
+      - Java: get-started/streaming/quickstart-streaming-java.md
+    - Testing: get-started/testing.md
+    - Code samples: https://github.com/google/adk-samples
+    - Advanced setup: get-started/installation.md
+  - Technical overview: get-started/about.md
+  - Agents:
+    - agents/index.md
+    - LLM agents: agents/llm-agents.md
+    - Workflow agents:
+      - agents/workflow-agents/index.md
+      - Sequential agents: agents/workflow-agents/sequential-agents.md
+      - Loop agents: agents/workflow-agents/loop-agents.md
+      - Parallel agents: agents/workflow-agents/parallel-agents.md
+    - Custom agents: agents/custom-agents.md
+    - Multi-agent systems: agents/multi-agents.md
+    - Agent Config: agents/config.md
+    - Models & Authentication: agents/models.md
+  - Tools for Agents:
+    - tools/index.md
+    - Built-in tools: tools/built-in-tools.md
+    - Google Cloud tools: tools/google-cloud-tools.md
+    - Third party tools: tools/third-party-tools.md
+    - OpenAPI tools: tools/openapi-tools.md
+  - Custom Tools:
+    - tools-custom/index.md
+    - Function tools:
+      - Overview: tools/function-tools.md
+      - Best practices: tools/best-practices.md
+      - Tool performance: tools/performance.md
+      - Action confirmations: tools/confirmation.md
+    - MCP tools: tools/mcp-tools.md
+    - Authentication: tools/authentication.md
+  - Running Agents:
+    - Agent Runtime: runtime/index.md
+    - Runtime Config: runtime/runconfig.md
+    - Resume Agents: runtime/resume.md
+  - Deploy:
+    - deploy/index.md
+    - Agent Engine: deploy/agent-engine.md
+    - Cloud Run: deploy/cloud-run.md
+    - GKE: deploy/gke.md
+  - Sessions & Memory:
+    - sessions/index.md
+    - Session: sessions/session.md
+    - State: sessions/state.md
+    - Memory: sessions/memory.md
+    - Vertex AI Express Mode: sessions/express-mode.md
+  - Callbacks:
+    - callbacks/index.md
+    - Types of callbacks: callbacks/types-of-callbacks.md
+    - Callback patterns: callbacks/design-patterns-and-best-practices.md
+  - Artifacts:
+    - artifacts/index.md
+  - Events:
+    - events/index.md
+  - Context:
+    - context/index.md
+  - Observability:
+    - Logging: observability/logging.md
+    - Cloud Trace: observability/cloud-trace.md
+    - AgentOps: observability/agentops.md
+    - Arize AX: observability/arize-ax.md
+    - Phoenix: observability/phoenix.md
+    - W&B Weave: observability/weave.md
+  - Evaluate:
+    - evaluate/index.md
+    - Criteria: evaluate/criteria.md
+  - MCP:
+    - mcp/index.md
+  - Plugins:
+    - plugins/index.md
+  - Bidi-streaming (live):
+    - streaming/index.md
+    - Custom Audio Bidi-streaming app sample (SSE): streaming/custom-streaming.md
+    - Custom Audio Bidi-streaming app sample (WebSockets): streaming/custom-streaming-ws.md
+    - Bidi-streaming development guide series: streaming/dev-guide/part1.md
+    - Streaming Tools: streaming/streaming-tools.md
+    - Configurating Bidi-streaming behaviour: streaming/configuration.md
+    - Google ADK + Vertex AI Live API (blog post): https://medium.com/google-cloud/google-adk-vertex-ai-live-api-125238982d5e
+  - Grounding:
+    - Understanding Google Search Grounding: grounding/google_search_grounding.md
+    - Understanding Vertex AI Search Grounding: grounding/vertex_ai_search_grounding.md
+  - Safety and Security: safety/index.md
+  - A2A Protocol:
+    - a2a/index.md
+    - Introduction to A2A: a2a/intro.md
+    - A2A Quickstart (Exposing): a2a/quickstart-exposing.md
+    - A2A Quickstart (Consuming): a2a/quickstart-consuming.md
+    - A2A Protocol Documentation: https://a2a-protocol.org
+  - Community Resources: community.md
+  - Contributing Guide: contributing-guide.md
+  - API Reference:
+    - api-reference/index.md
+    - Python ADK: api-reference/python/index.html
+    - Java ADK: api-reference/java/index.html
+    - CLI Reference: api-reference/cli/index.html
+    - Agent Config reference: api-reference/agentconfig/index.html
+    - REST API: api-reference/rest/index.md
+>>>>>>> 48a18a8 (docs: add best-practices.md to navigation)
