@@ -174,7 +174,7 @@ print("\nEnvironment configured.")
 
 ---
 
-## Step 1: Your First Agent \- Basic Weather Lookup
+## Step 1: Your First Agent - Basic Weather Lookup
 
 Let's begin by building the fundamental component of our Weather Bot: a single agent capable of performing a specific task – looking up weather information. This involves creating two core pieces:
 
@@ -183,13 +183,13 @@ Let's begin by building the fundamental component of our Weather Bot: a single a
 
 ---
 
-**1\. Define the Tool (`get_weather`)**
+**1. Define the Tool (`get_weather`)**
 
 In ADK, **Tools** are the building blocks that give agents concrete capabilities beyond just text generation. They are typically regular Python functions that perform specific actions, like calling an API, querying a database, or performing calculations.
 
 Our first tool will provide a *mock* weather report. This allows us to focus on the agent structure without needing external API keys yet. Later, you could easily swap this mock function with one that calls a real weather service.
 
-**Key Concept: Docstrings are Crucial\!** The agent's LLM relies heavily on the function's **docstring** to understand:
+**Key Concept: Docstrings are Crucial!** The agent's LLM relies heavily on the function's **docstring** to understand:
 
 * *What* the tool does.  
 * *When* to use it.  
@@ -235,7 +235,7 @@ print(get_weather("Paris"))
 
 ---
 
-**2\. Define the Agent (`weather_agent`)**
+**2. Define the Agent (`weather_agent`)**
 
 Now, let's create the **Agent** itself. An `Agent` in ADK orchestrates the interaction between the user, the LLM, and the available tools.
 
@@ -245,7 +245,7 @@ We configure it with several key parameters:
 * `model`: Specifies which LLM to use (e.g., `MODEL_GEMINI_2_5_FLASH`). We'll start with a specific Gemini model.  
 * `description`: A concise summary of the agent's overall purpose. This becomes crucial later when other agents need to decide whether to delegate tasks to *this* agent.  
 * `instruction`: Detailed guidance for the LLM on how to behave, its persona, its goals, and specifically *how and when* to utilize its assigned `tools`.  
-* `tools`: A list containing the actual Python tool functions the agent is allowed to use (e.g., `[get_weather]`).
+* `tools`: A list containing the actual Python tool functions the agent is allowed to use (e.g., `[get_weather]`)
 
 **Best Practice:** Provide clear and specific `instruction` prompts. The more detailed the instructions, the better the LLM can understand its role and how to use its tools effectively. Be explicit about error handling if needed.
 
@@ -274,11 +274,11 @@ print(f"Agent '{weather_agent.name}' created using model '{AGENT_MODEL}'.")
 
 ---
 
-**3\. Setup Runner and Session Service**
+**3. Setup Runner and Session Service**
 
 To manage conversations and execute the agent, we need two more components:
 
-* `SessionService`: Responsible for managing conversation history and state for different users and sessions. The `InMemorySessionService` is a simple implementation that stores everything in memory, suitable for testing and simple applications. It keeps track of the messages exchanged. We'll explore state persistence more in Step 4\.  
+* `SessionService`: Responsible for managing conversation history and state for different users and sessions. The `InMemorySessionService` is a simple implementation that stores everything in memory, suitable for testing and simple applications. It keeps track of the messages exchanged. We'll explore state persistence more in Step 4.  
 * `Runner`: The engine that orchestrates the interaction flow. It takes user input, routes it to the appropriate agent, manages calls to the LLM and tools based on the agent's logic, handles session updates via the `SessionService`, and yields events representing the progress of the interaction.
 
 
@@ -330,7 +330,7 @@ print(f"Runner created for agent '{runner.agent.name}'.")
 
 ---
 
-**4\. Interact with the Agent**
+**4. Interact with the Agent**
 
 We need a way to send messages to our agent and receive its responses. Since LLM calls and tool executions can take time, ADK's `Runner` operates asynchronously.
 
@@ -380,7 +380,7 @@ async def call_agent_async(query: str, runner, user_id, session_id):
 
 ---
 
-**5\. Run the Conversation**
+**5. Run the Conversation**
 
 Finally, let's test our setup by sending a few queries to the agent. We wrap our `async` calls in a main `async` function and run it using `await`.
 
@@ -427,7 +427,7 @@ await run_conversation()
 
 ---
 
-Congratulations\! You've successfully built and interacted with your first ADK agent. It understands the user's request, uses a tool to find information, and responds appropriately based on the tool's result.
+Congratulations! You've successfully built and interacted with your first ADK agent. It understands the user's request, uses a tool to find information, and responds appropriately based on the tool's result.
 
 In the next step, we'll explore how to easily switch the underlying Language Model powering this agent.
 
@@ -450,7 +450,7 @@ ADK makes switching between models seamless through its integration with the [**
 
 ---
 
-**1\. Import `LiteLlm`**
+**1. Import `LiteLlm`**
 
 We imported this during the initial setup (Step 0), but it's the key component for multi-model support:
 
@@ -460,7 +460,7 @@ We imported this during the initial setup (Step 0), but it's the key component f
 from google.adk.models.lite_llm import LiteLlm
 ```
 
-**2\. Define and Test Multi-Model Agents**
+**2. Define and Test Multi-Model Agents**
 
 Instead of passing only a model name string (which defaults to Google's Gemini models), we wrap the desired model identifier string within the `LiteLlm` class.
 
@@ -645,7 +645,7 @@ In the next step, we'll move beyond a single agent and build a small team where 
 
 ---
 
-## Step 3: Building an Agent Team \- Delegation for Greetings & Farewells
+## Step 3: Building an Agent Team - Delegation for Greetings & Farewells
 
 In Steps 1 and 2, we built and experimented with a single agent focused solely on weather lookups. While effective for its specific task, real-world applications often involve handling a wider variety of user interactions. We *could* keep adding more tools and complex instructions to our single weather agent, but this can quickly become unmanageable and less efficient.
 
@@ -667,12 +667,12 @@ A more robust approach is to build an **Agent Team**. This involves:
 1. Define simple tools for handling greetings (`say_hello`) and farewells (`say_goodbye`).  
 2. Create two new specialized sub-agents: `greeting_agent` and `farewell_agent`.  
 3. Update our main weather agent (`weather_agent_v2`) to act as the **root agent**.  
-4. Configure the root agent with its sub-agents, enabling **automatic delegation**.  
+4. Configure the root agent with its sub-agents and a robust `TransferToAgentTool` to make delegation reliable.  
 5. Test the delegation flow by sending different types of requests to the root agent.
 
 ---
 
-**1\. Define Tools for Sub-Agents**
+**1. Define Tools for Sub-Agents**
 
 First, let's create the simple Python functions that will serve as tools for our new specialist agents. Remember, clear docstrings are vital for the agents that will use them.
 
@@ -697,8 +697,8 @@ def say_hello(name: Optional[str] = None) -> str:
         greeting = f"Hello, {name}!"
         print(f"--- Tool: say_hello called with name: {name} ---")
     else:
-        greeting = "Hello there!" # Default greeting if name is None or not explicitly passed
-        print(f"--- Tool: say_hello called without a specific name (name_arg_value: {name}) ---")
+        greeting = "Hello there!"
+        print(f"--- Tool: say_hello called without a specific name ---")
     return greeting
 
 def say_goodbye() -> str:
@@ -710,13 +710,13 @@ print("Greeting and Farewell tools defined.")
 
 # Optional self-test
 print(say_hello("Alice"))
-print(say_hello()) # Test with no argument (should use default "Hello there!")
-print(say_hello(name=None)) # Test with name explicitly as None (should use default "Hello there!")
+print(say_hello())
+print(say_hello(name=None))
 ```
 
 ---
 
-**2\. Define the Sub-Agents (Greeting & Farewell)**
+**2. Define the Sub-Agents (Greeting & Farewell)**
 
 Now, create the `Agent` instances for our specialists. Notice their highly focused `instruction` and, critically, their clear `description`. The `description` is the primary information the *root agent* uses to decide *when* to delegate to these sub-agents.
 
@@ -774,20 +774,23 @@ except Exception as e:
 
 ---
 
-**3\. Define the Root Agent (Weather Agent v2) with Sub-Agents**
+**3. Define the Root Agent (Weather Agent v2) with Sub-Agents**
 
 Now, we upgrade our `weather_agent`. The key changes are:
 
-* Adding the `sub_agents` parameter: We pass a list containing the `greeting_agent` and `farewell_agent` instances we just created.  
-* Updating the `instruction`: We explicitly tell the root agent *about* its sub-agents and *when* it should delegate tasks to them.
+*   **Explicit Delegation Tool:** Instead of relying only on implicit delegation, we will now use the `TransferToAgentTool`. This is a best practice that makes delegation more reliable.
+*   **Adding `sub_agents`:** We still pass the list of sub-agents. This establishes the hierarchy and defines the potential targets for delegation.
+*   **Updating `tools`:** The root agent's tool list will now include its own `get_weather` tool *and* the new `TransferToAgentTool`.
+*   **Updating the `instruction`:** We explicitly tell the root agent to use the `transfer_to_agent` tool to delegate tasks.
 
-**Key Concept: Automatic Delegation (Auto Flow)** By providing the `sub_agents` list, ADK enables automatic delegation. When the root agent receives a user query, its LLM considers not only its own instructions and tools but also the `description` of each sub-agent. If the LLM determines that a query aligns better with a sub-agent's described capability (e.g., "Handles simple greetings"), it will automatically generate a special internal action to *transfer control* to that sub-agent for that turn. The sub-agent then processes the query using its own model, instructions, and tools.
+**Key Concept: Reliable Delegation with `TransferToAgentTool`**
 
-**Best Practice:** Ensure the root agent's instructions clearly guide its delegation decisions. Mention the sub-agents by name and describe the conditions under which delegation should occur.
+While ADK can automatically enable delegation when `sub_agents` are present (known as "Auto Flow"), this relies on the LLM correctly inferring the `transfer_to_agent` action. A more robust and explicit method is to add the `TransferToAgentTool` to the root agent's toolset. This tool is special because it constrains the LLM, forcing it to choose an `agent_name` from a predefined list of your sub-agents. This prevents the LLM from "hallucinating" and trying to delegate to an agent that doesn't exist, making your agent team much more reliable.
 
 
 ```python
 # @title Define the Root Agent with Sub-Agents
+from google.adk.tools import TransferToAgentTool
 
 # Ensure sub-agents were created successfully before defining the root agent.
 # Also ensure the original 'get_weather' tool is defined.
@@ -798,20 +801,22 @@ if greeting_agent and farewell_agent and 'get_weather' in globals():
     # Let's use a capable Gemini model for the root agent to handle orchestration
     root_agent_model = MODEL_GEMINI_2_5_FLASH
 
+    # Best Practice: Create the explicit transfer tool for reliability
+    transfer_tool = TransferToAgentTool(
+        agent_names=[greeting_agent.name, farewell_agent.name]
+    )
+
     weather_agent_team = Agent(
         name="weather_agent_v2", # Give it a new version name
         model=root_agent_model,
         description="The main coordinator agent. Handles weather requests and delegates greetings/farewells to specialists.",
         instruction="You are the main Weather Agent coordinating a team. Your primary responsibility is to provide weather information. "
                     "Use the 'get_weather' tool ONLY for specific weather requests (e.g., 'weather in London'). "
-                    "You have specialized sub-agents: "
-                    "1. 'greeting_agent': Handles simple greetings like 'Hi', 'Hello'. Delegate to it for these. "
-                    "2. 'farewell_agent': Handles simple farewells like 'Bye', 'See you'. Delegate to it for these. "
-                    "Analyze the user's query. If it's a greeting, delegate to 'greeting_agent'. If it's a farewell, delegate to 'farewell_agent'. "
-                    "If it's a weather request, handle it yourself using 'get_weather'. "
-                    "For anything else, respond appropriately or state you cannot handle it.",
-        tools=[get_weather], # Root agent still needs the weather tool for its core task
-        # Key change: Link the sub-agents here!
+                    "For greetings (like 'Hi', 'Hello') and farewells (like 'Bye', 'See you'), you MUST use the 'transfer_to_agent' tool to delegate to the correct specialist agent: 'greeting_agent' for greetings, and 'farewell_agent' for farewells. "
+                    "If it's a weather request, handle it yourself. For anything else, state you cannot handle it.",
+        # Key change: Add the transfer tool alongside other tools
+        tools=[get_weather, transfer_tool],
+        # Link the sub-agents to define the hierarchy
         sub_agents=[greeting_agent, farewell_agent]
     )
     print(f"✅ Root Agent '{weather_agent_team.name}' created using model '{root_agent_model}' with sub-agents: {[sa.name for sa in weather_agent_team.sub_agents]}")
@@ -827,9 +832,9 @@ else:
 
 ---
 
-**4\. Interact with the Agent Team**
+**4. Interact with the Agent Team**
 
-Now that we've defined our root agent (`weather_agent_team` - *Note: Ensure this variable name matches the one defined in the previous code block, likely `# @title Define the Root Agent with Sub-Agents`, which might have named it `root_agent`*) with its specialized sub-agents, let's test the delegation mechanism.
+Now that we've defined our root agent (`weather_agent_team`) with its specialized sub-agents and the explicit `TransferToAgentTool`, let's test the delegation mechanism.
 
 The following code block will:
 
@@ -842,11 +847,10 @@ The following code block will:
 We expect the following flow:
 
 1.  The "Hello there!" query goes to `runner_agent_team`.
-2.  The root agent (`weather_agent_team`) receives it and, based on its instructions and the `greeting_agent`'s description, delegates the task.
+2.  The root agent (`weather_agent_team`) receives it and, based on its instructions, uses the `transfer_to_agent` tool to delegate the task to `greeting_agent`.
 3.  `greeting_agent` handles the query, calls its `say_hello` tool, and generates the response.
 4.  The "What is the weather in New York?" query is *not* delegated and is handled directly by the root agent using its `get_weather` tool.
-5.  The "Thanks, bye!" query is delegated to the `farewell_agent`, which uses its `say_goodbye` tool.
-
+5.  The "Thanks, bye!" query is delegated to the `farewell_agent` via the `transfer_to_agent` tool, which then uses its `say_goodbye` tool.
 
 
 
@@ -858,13 +862,11 @@ import asyncio # Ensure asyncio is imported
 # Ensure the call_agent_async function is defined.
 
 # Check if the root agent variable exists before defining the conversation function
-root_agent_var_name = 'root_agent' # Default name from Step 3 guide
-if 'weather_agent_team' in globals(): # Check if user used this name instead
-    root_agent_var_name = 'weather_agent_team'
-elif 'root_agent' not in globals():
-    print("⚠️ Root agent ('root_agent' or 'weather_agent_team') not found. Cannot define run_team_conversation.")
+root_agent_var_name = 'weather_agent_team' # Default name from Step 3 guide
+if 'weather_agent_team' not in globals():
+    print("⚠️ Root agent ('weather_agent_team') not found. Cannot define run_team_conversation.")
     # Assign a dummy value to prevent NameError later if the code block runs anyway
-    root_agent = None # Or set a flag to prevent execution
+    weather_agent_team = None # Or set a flag to prevent execution
 
 # Only define and run if the root agent exists
 if root_agent_var_name in globals() and globals()[root_agent_var_name]:
@@ -944,9 +946,9 @@ Look closely at the output logs, especially the `--- Tool: ... called ---` messa
 *   For "What is the weather in New York?", the `get_weather` tool was called (indicating the root agent handled it).
 *   For "Thanks, bye!", the `say_goodbye` tool was called (indicating `farewell_agent` handled it).
 
-This confirms successful **automatic delegation**! The root agent, guided by its instructions and the `description`s of its `sub_agents`, correctly routed user requests to the appropriate specialist agent within the team.
+This confirms successful **explicit delegation**! The root agent, guided by its instructions and the `TransferToAgentTool`, correctly routed user requests to the appropriate specialist agent within the team.
 
-You've now structured your application with multiple collaborating agents. This modular design is fundamental for building more complex and capable agent systems. In the next step, we'll give our agents the ability to remember information across turns using session state.
+You've now structured your application with multiple collaborating agents using a reliable, explicit delegation pattern. This modular design is fundamental for building more complex and capable agent systems. In the next step, we'll give our agents the ability to remember information across turns using session state.
 
 ## Step 4: Adding Memory and Personalization with Session State
 
@@ -973,7 +975,7 @@ So far, our agent team can handle different tasks through delegation, but each i
 
 ---
 
-**1\. Initialize New Session Service and State**
+**1. Initialize New Session Service and State**
 
 To clearly demonstrate state management without interference from prior steps, we'll instantiate a new `InMemorySessionService`. We'll also create a session with an initial state defining the user's preferred temperature unit.
 
@@ -1019,7 +1021,7 @@ else:
 
 ---
 
-**2\. Create State-Aware Weather Tool (`get_weather_stateful`)**
+**2. Create State-Aware Weather Tool (`get_weather_stateful`)**
 
 Now, we create a new version of the weather tool. Its key feature is accepting `tool_context: ToolContext` which allows it to access `tool_context.state`. It will read the `user_preference_temperature_unit` and format the temperature accordingly.
 
@@ -1084,22 +1086,23 @@ print("✅ State-aware 'get_weather_stateful' tool defined.")
 
 ---
 
-**3\. Redefine Sub-Agents and Update Root Agent**
+**3. Redefine Sub-Agents and Update Root Agent**
 
-To ensure this step is self-contained and builds correctly, we first redefine the `greeting_agent` and `farewell_agent` exactly as they were in Step 3\. Then, we define our new root agent (`weather_agent_v4_stateful`):
+To ensure this step is self-contained and builds correctly, we first redefine the `greeting_agent` and `farewell_agent` exactly as they were in Step 3. Then, we define our new root agent (`weather_agent_v4_stateful`):
 
 * It uses the new `get_weather_stateful` tool.  
-* It includes the greeting and farewell sub-agents for delegation.  
+* It includes the greeting and farewell sub-agents for delegation, using the reliable `TransferToAgentTool`.  
 * **Crucially**, it sets `output_key="last_weather_report"` which automatically saves its final weather response to the session state.
 
 
 ```python
 # @title 3. Redefine Sub-Agents and Update Root Agent with output_key
 
-# Ensure necessary imports: Agent, LiteLlm, Runner
+# Ensure necessary imports: Agent, LiteLlm, Runner, TransferToAgentTool
 from google.adk.agents import Agent
 from google.adk.models.lite_llm import LiteLlm
 from google.adk.runners import Runner
+from google.adk.tools import TransferToAgentTool
 # Ensure tools 'say_hello', 'say_goodbye' are defined (from Step 3)
 # Ensure model constants MODEL_GPT_4O, MODEL_GEMINI_2_5_FLASH etc. are defined
 
@@ -1140,15 +1143,20 @@ if greeting_agent and farewell_agent and 'get_weather_stateful' in globals():
 
     root_agent_model = MODEL_GEMINI_2_5_FLASH # Choose orchestration model
 
+    # Create the explicit transfer tool for reliability
+    transfer_tool = TransferToAgentTool(
+        agent_names=[greeting_agent.name, farewell_agent.name]
+    )
+
     root_agent_stateful = Agent(
         name="weather_agent_v4_stateful", # New version name
         model=root_agent_model,
         description="Main agent: Provides weather (state-aware unit), delegates greetings/farewells, saves report to state.",
         instruction="You are the main Weather Agent. Your job is to provide weather using 'get_weather_stateful'. "
                     "The tool will format the temperature based on user preference stored in state. "
-                    "Delegate simple greetings to 'greeting_agent' and farewells to 'farewell_agent'. "
+                    "For greetings or farewells, you MUST use the 'transfer_to_agent' tool to delegate to the appropriate specialist. "
                     "Handle only weather requests, greetings, and farewells.",
-        tools=[get_weather_stateful], # Use the state-aware tool
+        tools=[get_weather_stateful, transfer_tool], # Use the state-aware tool and the transfer tool
         sub_agents=[greeting_agent, farewell_agent], # Include sub-agents
         output_key="last_weather_report" # <<< Auto-save agent's final weather response
     )
@@ -1172,7 +1180,7 @@ else:
 
 ---
 
-**4\. Interact and Test State Flow**
+**4. Interact and Test State Flow**
 
 Now, let's execute a conversation designed to test the state interactions using the `runner_root_stateful` (associated with our stateful agent and the `session_service_stateful`). We'll use the `call_agent_async` function defined earlier, ensuring we pass the correct runner, user ID (`USER_ID_STATEFUL`), and session ID (`SESSION_ID_STATEFUL`).
 
@@ -1307,7 +1315,7 @@ You've now successfully integrated session state to personalize agent behavior u
 
 ---
 
-## Step 5: Adding Safety \- Input Guardrail with `before_model_callback`
+## Step 5: Adding Safety - Input Guardrail with `before_model_callback`
 
 Our agent team is becoming more capable, remembering preferences and using tools effectively. However, in real-world scenarios, we often need safety mechanisms to control the agent's behavior *before* potentially problematic requests even reach the core Large Language Model (LLM).
 
@@ -1341,13 +1349,13 @@ ADK provides **Callbacks** – functions that allow you to hook into specific po
 **In this step, we will:**
 
 1. Define a `before_model_callback` function (`block_keyword_guardrail`) that checks the user's input for a specific keyword ("BLOCK").  
-2. Update our stateful root agent (`weather_agent_v4_stateful` from Step 4\) to use this callback.  
+2. Update our stateful root agent (`weather_agent_v4_stateful` from Step 4) to use this callback.  
 3. Create a new runner associated with this updated agent but using the *same stateful session service* to maintain state continuity.  
 4. Test the guardrail by sending both normal and keyword-containing requests.
 
 ---
 
-**1\. Define the Guardrail Callback Function**
+**1. Define the Guardrail Callback Function**
 
 This function will inspect the last user message within the `llm_request` content. If it finds "BLOCK" (case-insensitive), it constructs and returns an `LlmResponse` to block the flow; otherwise, it returns `None`.  
 
@@ -1412,7 +1420,7 @@ print("✅ block_keyword_guardrail function defined.")
 
 ---
 
-**2\. Update Root Agent to Use the Callback**
+**2. Update Root Agent to Use the Callback**
 
 We redefine the root agent, adding the `before_model_callback` parameter and pointing it to our new guardrail function. We'll give it a new version name for clarity.
 
@@ -1463,14 +1471,19 @@ if greeting_agent and farewell_agent and 'get_weather_stateful' in globals() and
     # Use a defined model constant
     root_agent_model = MODEL_GEMINI_2_5_FLASH
 
+    # Create the explicit transfer tool for reliability
+    transfer_tool = TransferToAgentTool(
+        agent_names=[greeting_agent.name, farewell_agent.name]
+    )
+
     root_agent_model_guardrail = Agent(
         name="weather_agent_v5_model_guardrail", # New version name for clarity
         model=root_agent_model,
         description="Main agent: Handles weather, delegates greetings/farewells, includes input keyword guardrail.",
         instruction="You are the main Weather Agent. Provide weather using 'get_weather_stateful'. "
-                    "Delegate simple greetings to 'greeting_agent' and farewells to 'farewell_agent'. "
+                    "For greetings or farewells, you MUST use the 'transfer_to_agent' tool to delegate to the appropriate specialist. "
                     "Handle only weather requests, greetings, and farewells.",
-        tools=[get_weather_stateful],
+        tools=[get_weather_stateful, transfer_tool],
         sub_agents=[greeting_agent, farewell_agent], # Reference the redefined sub-agents
         output_key="last_weather_report", # Keep output_key from Step 4
         before_model_callback=block_keyword_guardrail # <<< Assign the guardrail callback
@@ -1499,7 +1512,7 @@ else:
 
 ---
 
-**3\. Interact to Test the Guardrail**
+**3. Interact to Test the Guardrail**
 
 Let's test the guardrail's behavior. We'll use the *same session* (`SESSION_ID_STATEFUL`) as in Step 4 to show that state persists across these changes.
 
@@ -1591,12 +1604,12 @@ else:
 Observe the execution flow:
 
 1. **London Weather:** The callback runs for `weather_agent_v5_model_guardrail`, inspects the message, prints "Keyword not found. Allowing LLM call.", and returns `None`. The agent proceeds, calls the `get_weather_stateful` tool (which uses the "Fahrenheit" preference from Step 4's state change), and returns the weather. This response updates `last_weather_report` via `output_key`.  
-2. **BLOCK Request:** The callback runs again for `weather_agent_v5_model_guardrail`, inspects the message, finds "BLOCK", prints "Blocking LLM call\!", sets the state flag, and returns the predefined `LlmResponse`. The agent's underlying LLM is *never called* for this turn. The user sees the callback's blocking message.  
-3. **Hello Again:** The callback runs for `weather_agent_v5_model_guardrail`, allows the request. The root agent then delegates to `greeting_agent`. *Note: The `before_model_callback` defined on the root agent does NOT automatically apply to sub-agents.* The `greeting_agent` proceeds normally, calls its `say_hello` tool, and returns the greeting.
+2. **BLOCK Request:** The callback runs again for `weather_agent_v5_model_guardrail`, inspects the message, finds "BLOCK", prints "Blocking LLM call!", sets the state flag, and returns the predefined `LlmResponse`. The agent's underlying LLM is *never called* for this turn. The user sees the callback's blocking message.  
+3. **Hello Again:** The callback runs for `weather_agent_v5_model_guardrail`, allows the request. The root agent then uses its `transfer_to_agent` tool to delegate to `greeting_agent`. *Note: The `before_model_callback` defined on the root agent does NOT automatically apply to sub-agents.* The `greeting_agent` proceeds normally, calls its `say_hello` tool, and returns the greeting.
 
-You have successfully implemented an input safety layer\! The `before_model_callback` provides a powerful mechanism to enforce rules and control agent behavior *before* expensive or potentially risky LLM calls are made. Next, we'll apply a similar concept to add guardrails around tool usage itself.
+You have successfully implemented an input safety layer! The `before_model_callback` provides a powerful mechanism to enforce rules and control agent behavior *before* expensive or potentially risky LLM calls are made. Next, we'll apply a similar concept to add guardrails around tool usage itself.
 
-## Step 6: Adding Safety \- Tool Argument Guardrail (`before_tool_callback`)
+## Step 6: Adding Safety - Tool Argument Guardrail (`before_tool_callback`)
 
 In Step 5, we added a guardrail to inspect and potentially block user input *before* it reached the LLM. Now, we'll add another layer of control *after* the LLM has decided to use a tool but *before* that tool actually executes. This is useful for validating the *arguments* the LLM wants to pass to the tool.
 
@@ -1638,7 +1651,7 @@ ADK provides the `before_tool_callback` for this precise purpose.
 
 ---
 
-**1\. Define the Tool Guardrail Callback Function**
+**1. Define the Tool Guardrail Callback Function**
 
 This function targets the `get_weather_stateful` tool. It checks the `city` argument. If it's "Paris", it returns an error dictionary that looks like the tool's own error response. Otherwise, it allows the tool to run by returning `None`.
 
@@ -1700,9 +1713,9 @@ print("✅ block_paris_tool_guardrail function defined.")
 
 ---
 
-**2\. Update Root Agent to Use Both Callbacks**
+**2. Update Root Agent to Use Both Callbacks**
 
-We redefine the root agent again (`weather_agent_v6_tool_guardrail`), this time adding the `before_tool_callback` parameter alongside the `before_model_callback` from Step 5\.
+We redefine the root agent again (`weather_agent_v6_tool_guardrail`), this time adding the `before_tool_callback` parameter alongside the `before_model_callback` from Step 5.
 
 *Self-Contained Execution Note:* Similar to Step 5, ensure all prerequisites (sub-agents, tools, `before_model_callback`) are defined or available in the execution context before defining this agent.
 
@@ -1756,14 +1769,19 @@ if ('greeting_agent' in globals() and greeting_agent and
 
     root_agent_model = MODEL_GEMINI_2_5_FLASH
 
+    # Create the explicit transfer tool for reliability
+    transfer_tool = TransferToAgentTool(
+        agent_names=[greeting_agent.name, farewell_agent.name]
+    )
+
     root_agent_tool_guardrail = Agent(
         name="weather_agent_v6_tool_guardrail", # New version name
         model=root_agent_model,
         description="Main agent: Handles weather, delegates, includes input AND tool guardrails.",
         instruction="You are the main Weather Agent. Provide weather using 'get_weather_stateful'. "
-                    "Delegate greetings to 'greeting_agent' and farewells to 'farewell_agent'. "
+                    "For greetings or farewells, you MUST use the 'transfer_to_agent' tool to delegate to the appropriate specialist. "
                     "Handle only weather, greetings, and farewells.",
-        tools=[get_weather_stateful],
+        tools=[get_weather_stateful, transfer_tool],
         sub_agents=[greeting_agent, farewell_agent],
         output_key="last_weather_report",
         before_model_callback=block_keyword_guardrail, # Keep model guardrail
@@ -1790,7 +1808,7 @@ else:
 
 ---
 
-**3\. Interact to Test the Tool Guardrail**
+**3. Interact to Test the Tool Guardrail**
 
 Let's test the interaction flow, again using the same stateful session (`SESSION_ID_STATEFUL`) from the previous steps.
 
@@ -1882,7 +1900,7 @@ else:
 Analyze the output:
 
 1. **New York:** The `before_model_callback` allows the request. The LLM requests `get_weather_stateful`. The `before_tool_callback` runs, inspects the args (`{'city': 'New York'}`), sees it's not "Paris", prints "Allowing tool..." and returns `None`. The actual `get_weather_stateful` function executes, reads "Fahrenheit" from state, and returns the weather report. The agent relays this, and it gets saved via `output_key`.  
-2. **Paris:** The `before_model_callback` allows the request. The LLM requests `get_weather_stateful(city='Paris')`. The `before_tool_callback` runs, inspects the args, detects "Paris", prints "Blocking tool execution\!", sets the state flag, and returns the error dictionary `{'status': 'error', 'error_message': 'Policy restriction...'}`. The actual `get_weather_stateful` function is **never executed**. The agent receives the error dictionary *as if it were the tool's output* and formulates a response based on that error message.  
+2. **Paris:** The `before_model_callback` allows the request. The LLM requests `get_weather_stateful(city='Paris')`. The `before_tool_callback` runs, inspects the args, detects "Paris", prints "Blocking tool execution!", sets the state flag, and returns the error dictionary `{'status': 'error', 'error_message': 'Policy restriction...'}`. The actual `get_weather_stateful` function is **never executed**. The agent receives the error dictionary *as if it were the tool's output* and formulates a response based on that error message.  
 3. **London:** Behaves like New York, passing both callbacks and executing the tool successfully. The new London weather report overwrites the `last_weather_report` in the state.
 
 You've now added a crucial safety layer controlling not just *what* reaches the LLM, but also *how* the agent's tools can be used based on the specific arguments generated by the LLM. Callbacks like `before_model_callback` and `before_tool_callback` are essential for building robust, safe, and policy-compliant agent applications.
@@ -1900,7 +1918,7 @@ Congratulations! You've successfully journeyed from building a single, basic wea
 
 *   You started with a **fundamental agent** equipped with a single tool (`get_weather`).
 *   You explored ADK's **multi-model flexibility** using LiteLLM, running the same core logic with different LLMs like Gemini, GPT-4o, and Claude.
-*   You embraced **modularity** by creating specialized sub-agents (`greeting_agent`, `farewell_agent`) and enabling **automatic delegation** from a root agent.
+*   You embraced **modularity** by creating specialized sub-agents (`greeting_agent`, `farewell_agent`) and enabling **reliable, explicit delegation** from a root agent using the `TransferToAgentTool`.
 *   You gave your agents **memory** using **Session State**, allowing them to remember user preferences (`temperature_unit`) and past interactions (`output_key`).
 *   You implemented crucial **safety guardrails** using both `before_model_callback` (blocking specific input keywords) and `before_tool_callback` (blocking tool execution based on arguments like the city "Paris").
 
@@ -1910,7 +1928,7 @@ Through building this progressive Weather Bot team, you've gained hands-on exper
 
 *   **Agents & Tools:** The fundamental building blocks for defining capabilities and reasoning. Clear instructions and docstrings are paramount.
 *   **Runners & Session Services:** The engine and memory management system that orchestrate agent execution and maintain conversational context.
-*   **Delegation:** Designing multi-agent teams allows for specialization, modularity, and better management of complex tasks. Agent `description` is key for auto-flow.
+*   **Delegation (`TransferToAgentTool`):** Designing multi-agent teams with explicit delegation tools allows for specialization, modularity, and robust management of complex tasks.
 *   **Session State (`ToolContext`, `output_key`):** Essential for creating context-aware, personalized, and multi-turn conversational agents.
 *   **Callbacks (`before_model`, `before_tool`):** Powerful hooks for implementing safety, validation, policy enforcement, and dynamic modifications *before* critical operations (LLM calls or tool execution).
 *   **Flexibility (`LiteLlm`):** ADK empowers you to choose the best LLM for the job, balancing performance, cost, and features.
