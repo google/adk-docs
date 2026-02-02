@@ -139,7 +139,7 @@ plugins:
       j2_variable_end_string: '$}}'
       # alternative to {# #}
       j2_comment_start_string: '{{#'
-      j2_comment_end_string: '#}}'   
+      j2_comment_end_string: '#}}'
   - redirects:
       redirect_maps:
         'get-started/local-testing.md': 'runtime/api-server.md'
@@ -266,6 +266,7 @@ nav:
         - Vertex AI express mode: tools/google-cloud/express-mode.md
       - Third-party tools:
         - tools/third-party/index.md
+        - Agentic UI (AG-UI): tools/third-party/ag-ui.md
         - Asana: tools/third-party/asana.md
         - Atlassian: tools/third-party/atlassian.md
         - Cartesia: tools/third-party/cartesia.md
@@ -283,7 +284,6 @@ nav:
         - PayPal: tools/third-party/paypal.md
         - Qdrant: tools/third-party/qdrant.md
         - Stripe: tools/third-party/stripe.md
-        - Agentic UI (AG-UI): tools/third-party/ag-ui.md
       - Tool limitations: tools/limitations.md
     - Custom Tools:
       - tools-custom/index.md
