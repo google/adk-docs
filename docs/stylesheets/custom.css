@@ -326,8 +326,11 @@ nav.md-nav--primary .md-nav__item--section>.md-nav__link {
 }
 
 .tool-card-image-wrapper {
-  width: 70px;
-  height: auto;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background-color: transparent;
   padding: 0.5rem;
   box-sizing: border-box;
@@ -335,7 +338,9 @@ nav.md-nav--primary .md-nav__item--section>.md-nav__link {
 }
 
 .tool-card-image-wrapper img {
-  width: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
   height: auto;
   object-fit: contain;
 }
