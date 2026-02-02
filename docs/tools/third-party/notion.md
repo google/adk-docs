@@ -1,3 +1,9 @@
+---
+catalog_title: Notion
+catalog_description: Search workspaces, create pages, and manage tasks and databases
+catalog_icon: /adk-docs/assets/tools-notion.png
+---
+
 # Notion
 
 <div class="language-support-tag">

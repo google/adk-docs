@@ -1,3 +1,9 @@
+---
+catalog_title: Application Integration
+catalog_description: Link your agents to enterprise apps using Integration Connectors
+catalog_icon: /adk-docs/assets/tools-apigee-integration.png
+---
+
 # Application Integration Tools for ADK
 
 <div class="language-support-tag">

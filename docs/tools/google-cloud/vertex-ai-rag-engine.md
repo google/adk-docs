@@ -1,3 +1,9 @@
+---
+catalog_title: Vertex AI RAG Engine
+catalog_description: Perform private data retrieval using Vertex AI RAG Engine
+catalog_icon: /adk-docs/assets/tools-vertex-ai.png
+---
+
 # Vertex AI RAG Engine tool for ADK
 
 <div class="language-support-tag">

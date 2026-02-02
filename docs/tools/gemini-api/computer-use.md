@@ -1,3 +1,9 @@
+---
+catalog_title: Computer Use
+catalog_description: Operate computer user interfaces using Gemini models
+catalog_icon: /adk-docs/assets/tools-gemini-spark.svg
+---
+
 # Computer Use Toolset with Gemini API
 
 <div class="language-support-tag">

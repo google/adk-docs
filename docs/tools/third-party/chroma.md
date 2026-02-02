@@ -1,3 +1,9 @@
+---
+catalog_title: Chroma
+catalog_description: Store and retrieve information using semantic vector search
+catalog_icon: /adk-docs/assets/tools-chroma.png
+---
+
 # Chroma
 
 <div class="language-support-tag">

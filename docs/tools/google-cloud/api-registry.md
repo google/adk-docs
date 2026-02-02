@@ -1,3 +1,9 @@
+---
+catalog_title: API Registry
+catalog_description: Dynamically connect with Google Cloud services as MCP tools
+catalog_icon: /adk-docs/assets/developer-tools-color.svg
+---
+
 # Connect MCP tools from Cloud API Registry
 
 <div class="language-support-tag">

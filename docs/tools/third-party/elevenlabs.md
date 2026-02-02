@@ -1,3 +1,9 @@
+---
+catalog_title: ElevenLabs
+catalog_description: Generate speech, clone voices, transcribe audio, and create sound effects
+catalog_icon: /adk-docs/assets/tools-elevenlabs.png
+---
+
 # ElevenLabs
 
 <div class="language-support-tag">
@@ -9,6 +15,7 @@ connects your ADK agent to the [ElevenLabs](https://elevenlabs.io/) AI audio
 platform. This integration gives your agent the ability to generate speech,
 clone voices, transcribe audio, create sound effects, and build conversational
 AI experiences using natural language.
+
 
 ## Use cases
 

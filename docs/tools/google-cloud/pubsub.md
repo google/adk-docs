@@ -1,4 +1,10 @@
-# Pub/Sub tool for ADK
+---
+catalog_title: Pub/Sub Tools
+catalog_description: Publish, pull, and acknowledge messages from Google Cloud Pub/Sub
+catalog_icon: /adk-docs/assets/tools-pubsub.png
+---
+
+# Pub/Sub Tools for ADK
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.22.0</span>

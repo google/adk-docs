@@ -1,3 +1,9 @@
+---
+catalog_title: Atlassian
+catalog_description: Manage issues, search pages, and update team content
+catalog_icon: /adk-docs/assets/tools-atlassian.png
+---
+
 # Atlassian
 
 <div class="language-support-tag">

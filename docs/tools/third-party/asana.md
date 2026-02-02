@@ -1,3 +1,9 @@
+---
+catalog_title: Asana
+catalog_description: Manage projects, tasks, and goals for team collaboration
+catalog_icon: /adk-docs/assets/tools-asana.png
+---
+
 # Asana
 
 <div class="language-support-tag">
