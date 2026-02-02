@@ -35,7 +35,7 @@ from google.adk.agents.sequential_agent import SequentialAgent
 from google.adk.agents.llm_agent import LlmAgent
 
 # --- Constants ---
-GEMINI_MODEL = "gemini-2.0-flash"
+GEMINI_MODEL = "gemini-2.5-flash"
 
 # --- 1. Define Sub-Agents for Each Pipeline Stage ---
 
@@ -47,7 +47,7 @@ code_writer_agent = LlmAgent(
     # Change 3: Improved instruction
     instruction="""You are a Python Code Generator.
 Based *only* on the user's request, write Python code that fulfills the requirement.
-Output *only* the complete Python code block, enclosed in triple backticks (```python ... ```). 
+Output *only* the complete Python code block, enclosed in triple backticks (```python ... ```).
 Do not add any other text before or after the code block.
 """,
     description="Writes initial Python code based on a specification.",
@@ -60,7 +60,7 @@ code_reviewer_agent = LlmAgent(
     name="CodeReviewerAgent",
     model=GEMINI_MODEL,
     # Change 3: Improved instruction, correctly using state key injection
-    instruction="""You are an expert Python Code Reviewer. 
+    instruction="""You are an expert Python Code Reviewer.
     Your task is to provide constructive feedback on the provided code.
 
     **Code to Review:**
@@ -108,7 +108,7 @@ If the review comments state "No major issues found," return the original code u
 Ensure the final code is complete, functional, and includes necessary imports and docstrings.
 
 **Output:**
-Output *only* the final, refactored Python code block, enclosed in triple backticks (```python ... ```). 
+Output *only* the final, refactored Python code block, enclosed in triple backticks (```python ... ```).
 Do not add any other text before or after the code block.
 """,
     description="Refactors code based on review comments.",
@@ -148,7 +148,7 @@ root_agent = code_pipeline_agent
 #     # --- Explicit Session Creation/Check BEFORE run_async ---
 #     session_service = runner.session_service
 #     session = session_service.create_session(app_name=APP_NAME, user_id=user_id, session_id=session_id)
-  
+
 #     # --- Run the Agent ---
 #     async for event in runner.run_async(
 #         user_id=user_id, session_id=session_id, new_message=content
