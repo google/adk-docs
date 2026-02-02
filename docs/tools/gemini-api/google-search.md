@@ -1,3 +1,9 @@
+---
+catalog_title: Google Search
+catalog_description: Perform web searches using Google Search with Gemini
+catalog_icon: /adk-docs/assets/tools-google-search.png
+---
+
 # Google Search tool for ADK
 
 <div class="language-support-tag">

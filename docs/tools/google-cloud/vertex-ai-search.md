@@ -1,3 +1,9 @@
+---
+catalog_title: Vertex AI Search
+catalog_description: Search across your private, configured data stores in Vertex AI Search
+catalog_icon: /adk-docs/assets/tools-vertex-ai.png
+---
+
 # Vertex AI Search tool for ADK
 
 <div class="language-support-tag">

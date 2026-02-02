@@ -1,3 +1,9 @@
+---
+catalog_title: Code Execution
+catalog_description: Execute code and debug using Gemini models
+catalog_icon: /adk-docs/assets/tools-gemini-spark.svg
+---
+
 # Code Execution with Gemini API
 
 <div class="language-support-tag">
