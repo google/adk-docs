@@ -1,3 +1,9 @@
+---
+catalog_title: GKE Code Executor
+catalog_description: Run AI-generated code in a secure and scalable GKE environment
+catalog_icon: /adk-docs/assets/tools-gke.png
+---
+
 # GKE Code Executor tool for ADK
 
 <div class="language-support-tag">

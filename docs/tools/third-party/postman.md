@@ -1,3 +1,9 @@
+---
+catalog_title: Postman
+catalog_description: Manage API collections, workspaces, and generate client code
+catalog_icon: /adk-docs/assets/tools-postman.png
+---
+
 # Postman
 
 <div class="language-support-tag">

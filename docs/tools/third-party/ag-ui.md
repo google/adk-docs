@@ -1,3 +1,8 @@
+---
+catalog_title: AG-UI
+catalog_description: Build rich user experiences with CopilotKit and other clients
+---
+
 # Build chat experiences with AG-UI and CopilotKit
 
 Turn your ADK agents into full-featured applications with rich, responsive UIs.
