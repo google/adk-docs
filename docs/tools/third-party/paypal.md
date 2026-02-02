@@ -6,6 +6,10 @@ catalog_icon: /adk-docs/assets/tools-paypal.png
 
 # PayPal
 
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
+</div>
+
 The [PayPal MCP Server](https://github.com/paypal/paypal-mcp-server) connects
 your ADK agent to the [PayPal](https://www.paypal.com/) ecosystem. This
 integration gives your agent the ability to manage payments, invoices,
@@ -36,71 +40,111 @@ workflows and business insights.
 
 ## Use with agent
 
-=== "Local MCP Server"
+=== "Python"
 
-    ```python
-    from google.adk.agents import Agent
-    from google.adk.tools.mcp_tool import McpToolset
-    from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
-    from mcp import StdioServerParameters
+    === "Local MCP Server"
 
-    PAYPAL_ENVIRONMENT = "SANDBOX"  # Options: "SANDBOX" or "PRODUCTION"
-    PAYPAL_ACCESS_TOKEN = "YOUR_PAYPAL_ACCESS_TOKEN"
+        ```python
+        from google.adk.agents import Agent
+        from google.adk.tools.mcp_tool import McpToolset
+        from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
+        from mcp import StdioServerParameters
 
-    root_agent = Agent(
-        model="gemini-2.5-pro",
-        name="paypal_agent",
-        instruction="Help users manage their PayPal account",
-        tools=[
-            McpToolset(
-                connection_params=StdioConnectionParams(
-                    server_params=StdioServerParameters(
-                        command="npx",
-                        args=[
+        PAYPAL_ENVIRONMENT = "SANDBOX"  # Options: "SANDBOX" or "PRODUCTION"
+        PAYPAL_ACCESS_TOKEN = "YOUR_PAYPAL_ACCESS_TOKEN"
+
+        root_agent = Agent(
+            model="gemini-2.5-pro",
+            name="paypal_agent",
+            instruction="Help users manage their PayPal account",
+            tools=[
+                McpToolset(
+                    connection_params=StdioConnectionParams(
+                        server_params=StdioServerParameters(
+                            command="npx",
+                            args=[
+                                "-y",
+                                "@paypal/mcp",
+                                "--tools=all",
+                                # (Optional) Specify which tools to enable
+                                # "--tools=subscriptionPlans.list,subscriptionPlans.show",
+                            ],
+                            env={
+                                "PAYPAL_ACCESS_TOKEN": PAYPAL_ACCESS_TOKEN,
+                                "PAYPAL_ENVIRONMENT": PAYPAL_ENVIRONMENT,
+                            }
+                        ),
+                        timeout=300,
+                    ),
+                )
+            ],
+        )
+        ```
+
+    === "Remote MCP Server"
+
+        ```python
+        from google.adk.agents import Agent
+        from google.adk.tools.mcp_tool import McpToolset
+        from google.adk.tools.mcp_tool.mcp_session_manager import SseConnectionParams
+
+        PAYPAL_MCP_ENDPOINT = "https://mcp.sandbox.paypal.com/sse"  # Production: https://mcp.paypal.com/sse
+        PAYPAL_ACCESS_TOKEN = "YOUR_PAYPAL_ACCESS_TOKEN"
+
+        root_agent = Agent(
+            model="gemini-2.5-pro",
+            name="paypal_agent",
+            instruction="Help users manage their PayPal account",
+            tools=[
+                McpToolset(
+                    connection_params=SseConnectionParams(
+                        url=PAYPAL_MCP_ENDPOINT,
+                        headers={
+                            "Authorization": f"Bearer {PAYPAL_ACCESS_TOKEN}",
+                        },
+                    ),
+                )
+            ],
+        )
+        ```
+
+=== "TypeScript"
+
+    === "Local MCP Server"
+
+        ```typescript
+        import { LlmAgent, MCPToolset } from "@google/adk";
+
+        const PAYPAL_ENVIRONMENT = "SANDBOX"; // Options: "SANDBOX" or "PRODUCTION"
+        const PAYPAL_ACCESS_TOKEN = "YOUR_PAYPAL_ACCESS_TOKEN";
+
+        const rootAgent = new LlmAgent({
+            model: "gemini-2.5-pro",
+            name: "paypal_agent",
+            instruction: "Help users manage their PayPal account",
+            tools: [
+                new MCPToolset({
+                    type: "StdioConnectionParams",
+                    serverParams: {
+                        command: "npx",
+                        args: [
                             "-y",
                             "@paypal/mcp",
                             "--tools=all",
-                            # (Optional) Specify which tools to enable
-                            # "--tools=subscriptionPlans.list,subscriptionPlans.show",
+                            // (Optional) Specify which tools to enable
+                            // "--tools=subscriptionPlans.list,subscriptionPlans.show",
                         ],
-                        env={
-                            "PAYPAL_ACCESS_TOKEN": PAYPAL_ACCESS_TOKEN,
-                            "PAYPAL_ENVIRONMENT": PAYPAL_ENVIRONMENT,
-                        }
-                    ),
-                    timeout=300,
-                ),
-            )
-        ],
-    )
-    ```
-
-=== "Remote MCP Server"
-
-    ```python
-    from google.adk.agents import Agent
-    from google.adk.tools.mcp_tool import McpToolset
-    from google.adk.tools.mcp_tool.mcp_session_manager import SseConnectionParams
-
-    PAYPAL_MCP_ENDPOINT = "https://mcp.sandbox.paypal.com/sse"  # Production: https://mcp.paypal.com/sse
-    PAYPAL_ACCESS_TOKEN = "YOUR_PAYPAL_ACCESS_TOKEN"
-
-    root_agent = Agent(
-        model="gemini-2.5-pro",
-        name="paypal_agent",
-        instruction="Help users manage their PayPal account",
-        tools=[
-            McpToolset(
-                connection_params=SseConnectionParams(
-                    url=PAYPAL_MCP_ENDPOINT,
-                    headers={
-                        "Authorization": f"Bearer {PAYPAL_ACCESS_TOKEN}",
+                        env: {
+                            PAYPAL_ACCESS_TOKEN: PAYPAL_ACCESS_TOKEN,
+                            PAYPAL_ENVIRONMENT: PAYPAL_ENVIRONMENT,
+                        },
                     },
-                ),
-            )
-        ],
-    )
-    ```
+                }),
+            ],
+        });
+
+        export { rootAgent };
+        ```
 
 !!! note
 

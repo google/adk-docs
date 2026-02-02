@@ -6,6 +6,10 @@ catalog_icon: /adk-docs/assets/tools-qdrant.png
 
 # Qdrant
 
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
+</div>
+
 The [Qdrant MCP Server](https://github.com/qdrant/mcp-server-qdrant) connects
 your ADK agent to [Qdrant](https://qdrant.tech/), an open-source vector search engine. This integration gives your agent the ability to store and
 retrieve information using semantic search.
@@ -30,40 +34,76 @@ retrieve information using semantic search.
 
 ## Use with agent
 
-=== "Local MCP Server"
+=== "Python"
 
-    ```python
-    from google.adk.agents import Agent
-    from google.adk.tools.mcp_tool import McpToolset
-    from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
-    from mcp import StdioServerParameters
+    === "Local MCP Server"
 
-    QDRANT_URL = "http://localhost:6333"  # Or your Qdrant Cloud URL
-    COLLECTION_NAME = "my_collection"
-    # QDRANT_API_KEY = "YOUR_QDRANT_API_KEY"
+        ```python
+        from google.adk.agents import Agent
+        from google.adk.tools.mcp_tool import McpToolset
+        from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
+        from mcp import StdioServerParameters
 
-    root_agent = Agent(
-        model="gemini-2.5-pro",
-        name="qdrant_agent",
-        instruction="Help users store and retrieve information using semantic search",
-        tools=[
-            McpToolset(
-                connection_params=StdioConnectionParams(
-                    server_params=StdioServerParameters(
-                        command="uvx",
-                        args=["mcp-server-qdrant"],
-                        env={
-                            "QDRANT_URL": QDRANT_URL,
-                            "COLLECTION_NAME": COLLECTION_NAME,
-                            # "QDRANT_API_KEY": QDRANT_API_KEY,
-                        }
+        QDRANT_URL = "http://localhost:6333"  # Or your Qdrant Cloud URL
+        COLLECTION_NAME = "my_collection"
+        # QDRANT_API_KEY = "YOUR_QDRANT_API_KEY"
+
+        root_agent = Agent(
+            model="gemini-2.5-pro",
+            name="qdrant_agent",
+            instruction="Help users store and retrieve information using semantic search",
+            tools=[
+                McpToolset(
+                    connection_params=StdioConnectionParams(
+                        server_params=StdioServerParameters(
+                            command="uvx",
+                            args=["mcp-server-qdrant"],
+                            env={
+                                "QDRANT_URL": QDRANT_URL,
+                                "COLLECTION_NAME": COLLECTION_NAME,
+                                # "QDRANT_API_KEY": QDRANT_API_KEY,
+                            }
+                        ),
+                        timeout=30,
                     ),
-                    timeout=30,
-                ),
-            )
-        ],
-    )
-    ```
+                )
+            ],
+        )
+        ```
+
+=== "TypeScript"
+
+    === "Local MCP Server"
+
+        ```typescript
+        import { LlmAgent, MCPToolset } from "@google/adk";
+
+        const QDRANT_URL = "http://localhost:6333"; // Or your Qdrant Cloud URL
+        const COLLECTION_NAME = "my_collection";
+        // const QDRANT_API_KEY = "YOUR_QDRANT_API_KEY";
+
+        const rootAgent = new LlmAgent({
+            model: "gemini-2.5-pro",
+            name: "qdrant_agent",
+            instruction: "Help users store and retrieve information using semantic search",
+            tools: [
+                new MCPToolset({
+                    type: "StdioConnectionParams",
+                    serverParams: {
+                        command: "uvx",
+                        args: ["mcp-server-qdrant"],
+                        env: {
+                            QDRANT_URL: QDRANT_URL,
+                            COLLECTION_NAME: COLLECTION_NAME,
+                            // QDRANT_API_KEY: QDRANT_API_KEY,
+                        },
+                    },
+                }),
+            ],
+        });
+
+        export { rootAgent };
+        ```
 
 ## Available tools
 

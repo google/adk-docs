@@ -6,6 +6,10 @@ catalog_icon: /adk-docs/assets/tools-linear.png
 
 # Linear
 
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
+</div>
+
 The [Linear MCP Server](https://linear.app/docs/mcp) connects your ADK agent to
 [Linear](https://linear.app/), a purpose-built tool for planning and building
 products. This integration gives your agent the ability to manage issues, track
@@ -34,74 +38,139 @@ project cycles, and automate development workflows using natural language.
 
 ## Use with agent
 
-=== "Local MCP Server"
+=== "Python"
 
-    ```python
-    from google.adk.agents import Agent
-    from google.adk.tools.mcp_tool import McpToolset
-    from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
-    from mcp import StdioServerParameters
+    === "Local MCP Server"
 
-    root_agent = Agent(
-        model="gemini-2.5-pro",
-        name="linear_agent",
-        instruction="Help users manage issues, projects, and cycles in Linear",
-        tools=[
-            McpToolset(
-                connection_params=StdioConnectionParams(
-                    server_params=StdioServerParameters(
-                        command="npx",
-                        args=[
-                            "-y",
-                            "mcp-remote",
-                            "https://mcp.linear.app/mcp",
-                        ]
+        ```python
+        from google.adk.agents import Agent
+        from google.adk.tools.mcp_tool import McpToolset
+        from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
+        from mcp import StdioServerParameters
+
+        root_agent = Agent(
+            model="gemini-2.5-pro",
+            name="linear_agent",
+            instruction="Help users manage issues, projects, and cycles in Linear",
+            tools=[
+                McpToolset(
+                    connection_params=StdioConnectionParams(
+                        server_params=StdioServerParameters(
+                            command="npx",
+                            args=[
+                                "-y",
+                                "mcp-remote",
+                                "https://mcp.linear.app/mcp",
+                            ]
+                        ),
+                        timeout=30,
                     ),
-                    timeout=30,
-                ),
-            )
-        ],
-    )
-    ```
+                )
+            ],
+        )
+        ```
 
-    !!! note
+        !!! note
 
-        When you run this agent for the first time, a browser window will open
-        automatically to request access via OAuth. Alternatively, you can use
-        the authorization URL printed in the console. You must approve this
-        request to allow the agent to access your Linear data.
+            When you run this agent for the first time, a browser window will open
+            automatically to request access via OAuth. Alternatively, you can use
+            the authorization URL printed in the console. You must approve this
+            request to allow the agent to access your Linear data.
 
-=== "Remote MCP Server"
+    === "Remote MCP Server"
 
-    ```python
-    from google.adk.agents import Agent
-    from google.adk.tools.mcp_tool import McpToolset
-    from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPServerParams
+        ```python
+        from google.adk.agents import Agent
+        from google.adk.tools.mcp_tool import McpToolset
+        from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPServerParams
 
-    LINEAR_API_KEY = "YOUR_LINEAR_API_KEY"
+        LINEAR_API_KEY = "YOUR_LINEAR_API_KEY"
 
-    root_agent = Agent(
-        model="gemini-2.5-pro",
-        name="linear_agent",
-        instruction="Help users manage issues, projects, and cycles in Linear",
-        tools=[
-            McpToolset(
-                connection_params=StreamableHTTPServerParams(
-                    url="https://mcp.linear.app/mcp",
-                    headers={
-                        "Authorization": f"Bearer {LINEAR_API_KEY}",
+        root_agent = Agent(
+            model="gemini-2.5-pro",
+            name="linear_agent",
+            instruction="Help users manage issues, projects, and cycles in Linear",
+            tools=[
+                McpToolset(
+                    connection_params=StreamableHTTPServerParams(
+                        url="https://mcp.linear.app/mcp",
+                        headers={
+                            "Authorization": f"Bearer {LINEAR_API_KEY}",
+                        },
+                    ),
+                )
+            ],
+        )
+        ```
+
+        !!! note
+
+            This code example uses an API key for authentication. To use a
+            browser-based OAuth authentication flow instead, remove the `headers`
+            parameter and run the agent.
+
+=== "TypeScript"
+
+    === "Local MCP Server"
+
+        ```typescript
+        import { LlmAgent, MCPToolset } from "@google/adk";
+
+        const rootAgent = new LlmAgent({
+            model: "gemini-2.5-pro",
+            name: "linear_agent",
+            instruction: "Help users manage issues, projects, and cycles in Linear",
+            tools: [
+                new MCPToolset({
+                    type: "StdioConnectionParams",
+                    serverParams: {
+                        command: "npx",
+                        args: ["-y", "mcp-remote", "https://mcp.linear.app/mcp"],
                     },
-                ),
-            )
-        ],
-    )
-    ```
+                }),
+            ],
+        });
 
-    !!! note
+        export { rootAgent };
+        ```
 
-        This code example uses an API key for authentication. To use a
-        browser-based OAuth authentication flow instead, remove the `headers`
-        parameter and run the agent.
+        !!! note
+
+            When you run this agent for the first time, a browser window will open
+            automatically to request access via OAuth. Alternatively, you can use
+            the authorization URL printed in the console. You must approve this
+            request to allow the agent to access your Linear data.
+
+    === "Remote MCP Server"
+
+        ```typescript
+        import { LlmAgent, MCPToolset } from "@google/adk";
+
+        const LINEAR_API_KEY = "YOUR_LINEAR_API_KEY";
+
+        const rootAgent = new LlmAgent({
+            model: "gemini-2.5-pro",
+            name: "linear_agent",
+            instruction: "Help users manage issues, projects, and cycles in Linear",
+            tools: [
+                new MCPToolset({
+                    type: "StreamableHTTPConnectionParams",
+                    url: "https://mcp.linear.app/mcp",
+                    header: {
+                        Authorization: `Bearer ${LINEAR_API_KEY}`,
+                    },
+                }),
+            ],
+        });
+
+        export { rootAgent };
+        ```
+
+        !!! note
+
+            This code example uses an API key for authentication. To use a
+            browser-based OAuth authentication flow instead, remove the `header`
+            property and run the agent.
 
 ## Available tools
 

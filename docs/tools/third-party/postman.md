@@ -6,6 +6,10 @@ catalog_icon: /adk-docs/assets/tools-postman.png
 
 # Postman
 
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
+</div>
+
 The [Postman MCP Server](https://github.com/postmanlabs/postman-mcp-server)
 connects your ADK agent to the [Postman](https://www.postman.com/) ecosystem.
 This integration gives your agent the ability to access workspaces, manage
@@ -33,71 +37,137 @@ natural language interactions.
 
 ## Use with agent
 
-=== "Local MCP Server"
+=== "Python"
 
-    ```python
-    from google.adk.agents import Agent
-    from google.adk.tools.mcp_tool import McpToolset
-    from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
-    from mcp import StdioServerParameters
+    === "Local MCP Server"
 
-    POSTMAN_API_KEY = "YOUR_POSTMAN_API_KEY"
+        ```python
+        from google.adk.agents import Agent
+        from google.adk.tools.mcp_tool import McpToolset
+        from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
+        from mcp import StdioServerParameters
 
-    root_agent = Agent(
-        model="gemini-2.5-pro",
-        name="postman_agent",
-        instruction="Help users manage their Postman workspaces and collections",
-        tools=[
-            McpToolset(
-                connection_params=StdioConnectionParams(
-                    server_params=StdioServerParameters(
-                        command="npx",
-                        args=[
-                            "-y",
-                            "@postman/postman-mcp-server",
-                            # "--full",  # Use all 100+ tools
-                            # "--code",  # Use code generation tools
-                            # "--region", "eu",  # Use EU region
-                        ],
-                        env={
-                            "POSTMAN_API_KEY": POSTMAN_API_KEY,
+        POSTMAN_API_KEY = "YOUR_POSTMAN_API_KEY"
+
+        root_agent = Agent(
+            model="gemini-2.5-pro",
+            name="postman_agent",
+            instruction="Help users manage their Postman workspaces and collections",
+            tools=[
+                McpToolset(
+                    connection_params=StdioConnectionParams(
+                        server_params=StdioServerParameters(
+                            command="npx",
+                            args=[
+                                "-y",
+                                "@postman/postman-mcp-server",
+                                # "--full",  # Use all 100+ tools
+                                # "--code",  # Use code generation tools
+                                # "--region", "eu",  # Use EU region
+                            ],
+                            env={
+                                "POSTMAN_API_KEY": POSTMAN_API_KEY,
+                            },
+                        ),
+                        timeout=30,
+                    ),
+                )
+            ],
+        )
+        ```
+
+    === "Remote MCP Server"
+
+        ```python
+        from google.adk.agents import Agent
+        from google.adk.tools.mcp_tool import McpToolset
+        from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPServerParams
+
+        POSTMAN_API_KEY = "YOUR_POSTMAN_API_KEY"
+
+        root_agent = Agent(
+            model="gemini-2.5-pro",
+            name="postman_agent",
+            instruction="Help users manage their Postman workspaces and collections",
+            tools=[
+                McpToolset(
+                    connection_params=StreamableHTTPServerParams(
+                        url="https://mcp.postman.com/mcp",
+                        # (Optional) Use "/minimal" for essential tools only
+                        # (Optional) Use "/code" for code generation tools
+                        # (Optional) Use "https://mcp.eu.postman.com" for EU region
+                        headers={
+                            "Authorization": f"Bearer {POSTMAN_API_KEY}",
                         },
                     ),
-                    timeout=30,
-                ),
-            )
-        ],
-    )
-    ```
+                )
+            ],
+        )
+        ```
 
-=== "Remote MCP Server"
+=== "TypeScript"
 
-    ```python
-    from google.adk.agents import Agent
-    from google.adk.tools.mcp_tool import McpToolset
-    from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPServerParams
+    === "Local MCP Server"
 
-    POSTMAN_API_KEY = "YOUR_POSTMAN_API_KEY"
+        ```typescript
+        import { LlmAgent, MCPToolset } from "@google/adk";
 
-    root_agent = Agent(
-        model="gemini-2.5-pro",
-        name="postman_agent",
-        instruction="Help users manage their Postman workspaces and collections",
-        tools=[
-            McpToolset(
-                connection_params=StreamableHTTPServerParams(
-                    url="https://mcp.postman.com/mcp",
-                    # (Optional) Use "/minimal" for essential tools only
-                    # (Optional) Use "/code" for code generation tools
-                    # (Optional) Use "https://mcp.eu.postman.com" for EU region
-                    headers={
-                        "Authorization": f"Bearer {POSTMAN_API_KEY}",
+        const POSTMAN_API_KEY = "YOUR_POSTMAN_API_KEY";
+
+        const rootAgent = new LlmAgent({
+            model: "gemini-2.5-pro",
+            name: "postman_agent",
+            instruction: "Help users manage their Postman workspaces and collections",
+            tools: [
+                new MCPToolset({
+                    type: "StdioConnectionParams",
+                    serverParams: {
+                        command: "npx",
+                        args: [
+                            "-y",
+                            "@postman/postman-mcp-server",
+                            // "--full",  // Use all 100+ tools
+                            // "--code",  // Use code generation tools
+                            // "--region", "eu",  // Use EU region
+                        ],
+                        env: {
+                            POSTMAN_API_KEY: POSTMAN_API_KEY,
+                        },
                     },
-                ),
-            )
-        ],
-    )
-    ```
+                }),
+            ],
+        });
+
+        export { rootAgent };
+        ```
+
+    === "Remote MCP Server"
+
+        ```typescript
+        import { LlmAgent, MCPToolset } from "@google/adk";
+
+        const POSTMAN_API_KEY = "YOUR_POSTMAN_API_KEY";
+
+        const rootAgent = new LlmAgent({
+            model: "gemini-2.5-pro",
+            name: "postman_agent",
+            instruction: "Help users manage their Postman workspaces and collections",
+            tools: [
+                new MCPToolset({
+                    type: "StreamableHTTPConnectionParams",
+                    url: "https://mcp.postman.com/mcp",
+                    // (Optional) Use "/minimal" for essential tools only
+                    // (Optional) Use "/code" for code generation tools
+                    // (Optional) Use "https://mcp.eu.postman.com" for EU region
+                    header: {
+                        Authorization: `Bearer ${POSTMAN_API_KEY}`,
+                    },
+                }),
+            ],
+        });
+
+        export { rootAgent };
+        ```
 
 ## Configuration
 

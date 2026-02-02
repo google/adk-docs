@@ -24,6 +24,10 @@ extra_css:
   - stylesheets/custom.css
   - stylesheets/language-tags.css
 
+# Custom JavaScript
+extra_javascript:
+  - javascript/copy-page.js
+
 # Additional config
 extra:
   first_repo_url: https://github.com/google/adk-python
@@ -166,6 +170,7 @@ plugins:
         Build Agents:
         - get-started/*.md
         - tutorials/*.md
+        - visual-builder/*.md
         - agents/*.md
         - tools/*.md
         - tools-custom/*.md
@@ -173,7 +178,7 @@ plugins:
         - runtime/*.md
         - deploy/*.md
         - observability/*.md
-        - evaluation/*.md
+        - evaluate/*.md
         - safety/*.md
         Components:
         - context/*.md
@@ -188,8 +193,11 @@ plugins:
         - streaming/*.md
         - grounding/*.md
         Reference:
+        - release-notes.md
         - api-reference/index.md
         - api-reference/rest/index.md
+        - community.md
+        - contributing-guide.md
 
 # Navigation
 nav:
@@ -268,6 +276,7 @@ nav:
         - GitLab: tools/third-party/gitlab.md
         - Hugging Face: tools/third-party/hugging-face.md
         - Linear: tools/third-party/linear.md
+        - MongoDB: tools/third-party/mongodb.md
         - n8n: tools/third-party/n8n.md
         - Notion: tools/third-party/notion.md
         - Postman: tools/third-party/postman.md

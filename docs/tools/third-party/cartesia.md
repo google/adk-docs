@@ -6,6 +6,10 @@ catalog_icon: /adk-docs/assets/tools-cartesia.png
 
 # Cartesia
 
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
+</div>
+
 The [Cartesia MCP Server](https://github.com/cartesia-ai/cartesia-mcp) connects
 your ADK agent to the [Cartesia](https://cartesia.ai/) AI audio platform. This
 integration gives your agent the ability to generate speech, localize voices
@@ -35,37 +39,70 @@ across languages, and create audio content using natural language.
 
 ## Use with agent
 
-=== "Local MCP Server"
+=== "Python"
 
-    ```python
-    from google.adk.agents import Agent
-    from google.adk.tools.mcp_tool import McpToolset
-    from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
-    from mcp import StdioServerParameters
+    === "Local MCP Server"
 
-    CARTESIA_API_KEY = "YOUR_CARTESIA_API_KEY"
+        ```python
+        from google.adk.agents import Agent
+        from google.adk.tools.mcp_tool import McpToolset
+        from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
+        from mcp import StdioServerParameters
 
-    root_agent = Agent(
-        model="gemini-2.5-pro",
-        name="cartesia_agent",
-        instruction="Help users generate speech and work with audio content",
-        tools=[
-            McpToolset(
-                connection_params=StdioConnectionParams(
-                    server_params=StdioServerParameters(
-                        command="uvx",
-                        args=["cartesia-mcp"],
-                        env={
-                            "CARTESIA_API_KEY": CARTESIA_API_KEY,
-                            # "OUTPUT_DIRECTORY": "/path/to/output",  # Optional
-                        }
+        CARTESIA_API_KEY = "YOUR_CARTESIA_API_KEY"
+
+        root_agent = Agent(
+            model="gemini-2.5-pro",
+            name="cartesia_agent",
+            instruction="Help users generate speech and work with audio content",
+            tools=[
+                McpToolset(
+                    connection_params=StdioConnectionParams(
+                        server_params=StdioServerParameters(
+                            command="uvx",
+                            args=["cartesia-mcp"],
+                            env={
+                                "CARTESIA_API_KEY": CARTESIA_API_KEY,
+                                # "OUTPUT_DIRECTORY": "/path/to/output",  # Optional
+                            }
+                        ),
+                        timeout=30,
                     ),
-                    timeout=30,
-                ),
-            )
-        ],
-    )
-    ```
+                )
+            ],
+        )
+        ```
+
+=== "TypeScript"
+
+    === "Local MCP Server"
+
+        ```typescript
+        import { LlmAgent, MCPToolset } from "@google/adk";
+
+        const CARTESIA_API_KEY = "YOUR_CARTESIA_API_KEY";
+
+        const rootAgent = new LlmAgent({
+            model: "gemini-2.5-pro",
+            name: "cartesia_agent",
+            instruction: "Help users generate speech and work with audio content",
+            tools: [
+                new MCPToolset({
+                    type: "StdioConnectionParams",
+                    serverParams: {
+                        command: "uvx",
+                        args: ["cartesia-mcp"],
+                        env: {
+                            CARTESIA_API_KEY: CARTESIA_API_KEY,
+                            // OUTPUT_DIRECTORY: "/path/to/output",  // Optional
+                        },
+                    },
+                }),
+            ],
+        });
+
+        export { rootAgent };
+        ```
 
 ## Available tools
 
