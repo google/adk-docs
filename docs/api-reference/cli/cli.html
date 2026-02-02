@@ -122,7 +122,7 @@ agent, containing at least <cite>__init__.py</cite> and <cite>agent.py</cite> fi
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-adk-api_server-otel_to_cloud">
 <span class="sig-name descname"><span class="pre">--otel_to_cloud</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-api_server-otel_to_cloud" title="Link to this definition">¶</a></dt>
-<dd><p>EXPERIMENTAL Optional. Whether to write OTel data to Google Cloud Observability services - Cloud Trace and Cloud Logging.</p>
+<dd><p>Optional. Whether to write OTel data to Google Cloud Observability services - Cloud Trace and Cloud Logging.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Default<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
@@ -180,6 +180,7 @@ agent, containing at least <cite>__init__.py</cite> and <cite>agent.py</cite> fi
 <dt class="sig sig-object std" id="cmdoption-adk-api_server-session_service_uri">
 <span class="sig-name descname"><span class="pre">--session_service_uri</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;session_service_uri&gt;</span></span><a class="headerlink" href="#cmdoption-adk-api_server-session_service_uri" title="Link to this definition">¶</a></dt>
 <dd><p>Optional. The URI of the session service.
+- Leave unset to use the in-memory session service (default).
 - Use ‘agentengine://&lt;agent_engine&gt;’ to connect to Agent Engine</p>
 <blockquote>
 <div><p>sessions. &lt;agent_engine&gt; can either be the full qualified resource
@@ -187,19 +188,20 @@ name ‘projects/abc/locations/us-central1/reasoningEngines/123’ or
 the resource id ‘123’.</p>
 </div></blockquote>
 <ul class="simple">
-<li><p>Use ‘sqlite://&lt;path_to_sqlite_file&gt;’ to connect to an aio-sqlite
-based session service, which is good for local development.</p></li>
-<li><p>Use ‘postgresql://&lt;user&gt;:&lt;password&gt;&#64;&lt;host&gt;:&lt;port&gt;/&lt;database_name&gt;’
-to connect to a PostgreSQL DB.</p></li>
-<li><p>See <a class="reference external" href="https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls">https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls</a>
-for more details on other database URIs supported by SQLAlchemy.</p></li>
+<li><p>Use ‘memory://’ to run with the in-memory session service.</p></li>
+<li><p>Use ‘sqlite://&lt;path_to_sqlite_file&gt;’ to connect to a SQLite DB.</p></li>
+<li><p>See <a class="reference external" href="https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls">https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls</a> for more details on supported database URIs.</p></li>
 </ul>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-adk-api_server-artifact_service_uri">
 <span class="sig-name descname"><span class="pre">--artifact_service_uri</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;artifact_service_uri&gt;</span></span><a class="headerlink" href="#cmdoption-adk-api_server-artifact_service_uri" title="Link to this definition">¶</a></dt>
-<dd><p>Optional. The URI of the artifact service, supported URIs: gs://&lt;bucket name&gt; for GCS artifact service.</p>
+<dd><p>Optional. The URI of the artifact service.
+- Leave unset to store artifacts under ‘.adk/artifacts’ locally.
+- Use ‘gs://&lt;bucket_name&gt;’ to connect to the GCS artifact service.
+- Use ‘memory://’ to force the in-memory artifact service.
+- Use ‘file://&lt;path&gt;’ to store artifacts in a custom local directory.</p>
 </dd></dl>
 
 <dl class="std option">
@@ -213,6 +215,9 @@ for more details on other database URIs supported by SQLAlchemy.</p></li>
 name ‘projects/abc/locations/us-central1/reasoningEngines/123’ or
 the resource id ‘123’.</p>
 </div></blockquote>
+<ul class="simple">
+<li><p>Use ‘memory://’ to force the in-memory memory service.</p></li>
+</ul>
 </dd></dl>
 
 <dl class="std option">
@@ -626,7 +631,7 @@ my_agent</p>
 <dd><p>Optional. The ADK version used in Cloud Run deployment. (default: the version in the dev environment)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Default<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">'1.19.0'</span></code></p>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">'1.21.0'</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -652,6 +657,7 @@ my_agent</p>
 <dt class="sig sig-object std" id="cmdoption-adk-deploy-cloud_run-session_service_uri">
 <span class="sig-name descname"><span class="pre">--session_service_uri</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;session_service_uri&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-cloud_run-session_service_uri" title="Link to this definition">¶</a></dt>
 <dd><p>Optional. The URI of the session service.
+- Leave unset to use the in-memory session service (default).
 - Use ‘agentengine://&lt;agent_engine&gt;’ to connect to Agent Engine</p>
 <blockquote>
 <div><p>sessions. &lt;agent_engine&gt; can either be the full qualified resource
@@ -659,19 +665,20 @@ name ‘projects/abc/locations/us-central1/reasoningEngines/123’ or
 the resource id ‘123’.</p>
 </div></blockquote>
 <ul class="simple">
-<li><p>Use ‘sqlite://&lt;path_to_sqlite_file&gt;’ to connect to an aio-sqlite
-based session service, which is good for local development.</p></li>
-<li><p>Use ‘postgresql://&lt;user&gt;:&lt;password&gt;&#64;&lt;host&gt;:&lt;port&gt;/&lt;database_name&gt;’
-to connect to a PostgreSQL DB.</p></li>
-<li><p>See <a class="reference external" href="https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls">https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls</a>
-for more details on other database URIs supported by SQLAlchemy.</p></li>
+<li><p>Use ‘memory://’ to run with the in-memory session service.</p></li>
+<li><p>Use ‘sqlite://&lt;path_to_sqlite_file&gt;’ to connect to a SQLite DB.</p></li>
+<li><p>See <a class="reference external" href="https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls">https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls</a> for more details on supported database URIs.</p></li>
 </ul>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-adk-deploy-cloud_run-artifact_service_uri">
 <span class="sig-name descname"><span class="pre">--artifact_service_uri</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;artifact_service_uri&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-cloud_run-artifact_service_uri" title="Link to this definition">¶</a></dt>
-<dd><p>Optional. The URI of the artifact service, supported URIs: gs://&lt;bucket name&gt; for GCS artifact service.</p>
+<dd><p>Optional. The URI of the artifact service.
+- Leave unset to store artifacts under ‘.adk/artifacts’ locally.
+- Use ‘gs://&lt;bucket_name&gt;’ to connect to the GCS artifact service.
+- Use ‘memory://’ to force the in-memory artifact service.
+- Use ‘file://&lt;path&gt;’ to store artifacts in a custom local directory.</p>
 </dd></dl>
 
 <dl class="std option">
@@ -685,6 +692,9 @@ for more details on other database URIs supported by SQLAlchemy.</p></li>
 name ‘projects/abc/locations/us-central1/reasoningEngines/123’ or
 the resource id ‘123’.</p>
 </div></blockquote>
+<ul class="simple">
+<li><p>Use ‘memory://’ to force the in-memory memory service.</p></li>
+</ul>
 </dd></dl>
 
 <dl class="std option">
@@ -804,7 +814,7 @@ the resource id ‘123’.</p>
 <dd><p>Optional. The ADK version used in GKE deployment. (default: the version in the dev environment)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Default<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">'1.19.0'</span></code></p>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">'1.21.0'</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -813,6 +823,7 @@ the resource id ‘123’.</p>
 <dt class="sig sig-object std" id="cmdoption-adk-deploy-gke-session_service_uri">
 <span class="sig-name descname"><span class="pre">--session_service_uri</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;session_service_uri&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-gke-session_service_uri" title="Link to this definition">¶</a></dt>
 <dd><p>Optional. The URI of the session service.
+- Leave unset to use the in-memory session service (default).
 - Use ‘agentengine://&lt;agent_engine&gt;’ to connect to Agent Engine</p>
 <blockquote>
 <div><p>sessions. &lt;agent_engine&gt; can either be the full qualified resource
@@ -820,19 +831,20 @@ name ‘projects/abc/locations/us-central1/reasoningEngines/123’ or
 the resource id ‘123’.</p>
 </div></blockquote>
 <ul class="simple">
-<li><p>Use ‘sqlite://&lt;path_to_sqlite_file&gt;’ to connect to an aio-sqlite
-based session service, which is good for local development.</p></li>
-<li><p>Use ‘postgresql://&lt;user&gt;:&lt;password&gt;&#64;&lt;host&gt;:&lt;port&gt;/&lt;database_name&gt;’
-to connect to a PostgreSQL DB.</p></li>
-<li><p>See <a class="reference external" href="https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls">https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls</a>
-for more details on other database URIs supported by SQLAlchemy.</p></li>
+<li><p>Use ‘memory://’ to run with the in-memory session service.</p></li>
+<li><p>Use ‘sqlite://&lt;path_to_sqlite_file&gt;’ to connect to a SQLite DB.</p></li>
+<li><p>See <a class="reference external" href="https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls">https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls</a> for more details on supported database URIs.</p></li>
 </ul>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-adk-deploy-gke-artifact_service_uri">
 <span class="sig-name descname"><span class="pre">--artifact_service_uri</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;artifact_service_uri&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-gke-artifact_service_uri" title="Link to this definition">¶</a></dt>
-<dd><p>Optional. The URI of the artifact service, supported URIs: gs://&lt;bucket name&gt; for GCS artifact service.</p>
+<dd><p>Optional. The URI of the artifact service.
+- Leave unset to store artifacts under ‘.adk/artifacts’ locally.
+- Use ‘gs://&lt;bucket_name&gt;’ to connect to the GCS artifact service.
+- Use ‘memory://’ to force the in-memory artifact service.
+- Use ‘file://&lt;path&gt;’ to store artifacts in a custom local directory.</p>
 </dd></dl>
 
 <dl class="std option">
@@ -846,6 +858,9 @@ for more details on other database URIs supported by SQLAlchemy.</p></li>
 name ‘projects/abc/locations/us-central1/reasoningEngines/123’ or
 the resource id ‘123’.</p>
 </div></blockquote>
+<ul class="simple">
+<li><p>Use ‘memory://’ to force the in-memory memory service.</p></li>
+</ul>
 </dd></dl>
 
 <p class="rubric">Arguments</p>
@@ -1071,6 +1086,50 @@ only supports adding one using a conversation scenarios file.</p>
 </div>
 <p class="rubric">Options</p>
 <dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-run-session_service_uri">
+<span class="sig-name descname"><span class="pre">--session_service_uri</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;session_service_uri&gt;</span></span><a class="headerlink" href="#cmdoption-adk-run-session_service_uri" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. The URI of the session service.
+- Leave unset to use the in-memory session service (default).
+- Use ‘agentengine://&lt;agent_engine&gt;’ to connect to Agent Engine</p>
+<blockquote>
+<div><p>sessions. &lt;agent_engine&gt; can either be the full qualified resource
+name ‘projects/abc/locations/us-central1/reasoningEngines/123’ or
+the resource id ‘123’.</p>
+</div></blockquote>
+<ul class="simple">
+<li><p>Use ‘memory://’ to run with the in-memory session service.</p></li>
+<li><p>Use ‘sqlite://&lt;path_to_sqlite_file&gt;’ to connect to a SQLite DB.</p></li>
+<li><p>See <a class="reference external" href="https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls">https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls</a> for more details on supported database URIs.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-run-artifact_service_uri">
+<span class="sig-name descname"><span class="pre">--artifact_service_uri</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;artifact_service_uri&gt;</span></span><a class="headerlink" href="#cmdoption-adk-run-artifact_service_uri" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. The URI of the artifact service.
+- Leave unset to store artifacts under ‘.adk/artifacts’ locally.
+- Use ‘gs://&lt;bucket_name&gt;’ to connect to the GCS artifact service.
+- Use ‘memory://’ to force the in-memory artifact service.
+- Use ‘file://&lt;path&gt;’ to store artifacts in a custom local directory.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-run-memory_service_uri">
+<span class="sig-name descname"><span class="pre">--memory_service_uri</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;memory_service_uri&gt;</span></span><a class="headerlink" href="#cmdoption-adk-run-memory_service_uri" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. The URI of the memory service.
+- Use ‘rag://&lt;rag_corpus_id&gt;’ to connect to Vertex AI Rag Memory Service.
+- Use ‘agentengine://&lt;agent_engine&gt;’ to connect to Agent Engine</p>
+<blockquote>
+<div><p>sessions. &lt;agent_engine&gt; can either be the full qualified resource
+name ‘projects/abc/locations/us-central1/reasoningEngines/123’ or
+the resource id ‘123’.</p>
+</div></blockquote>
+<ul class="simple">
+<li><p>Use ‘memory://’ to force the in-memory memory service.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-adk-run-save_session">
 <span class="sig-name descname"><span class="pre">--save_session</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-run-save_session" title="Link to this definition">¶</a></dt>
 <dd><p>Optional. Whether to save the session to a json file on exit.</p>
@@ -1180,7 +1239,7 @@ agent, containing at least <cite>__init__.py</cite> and <cite>agent.py</cite> fi
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-adk-web-otel_to_cloud">
 <span class="sig-name descname"><span class="pre">--otel_to_cloud</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-web-otel_to_cloud" title="Link to this definition">¶</a></dt>
-<dd><p>EXPERIMENTAL Optional. Whether to write OTel data to Google Cloud Observability services - Cloud Trace and Cloud Logging.</p>
+<dd><p>Optional. Whether to write OTel data to Google Cloud Observability services - Cloud Trace and Cloud Logging.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Default<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
@@ -1250,6 +1309,7 @@ agent, containing at least <cite>__init__.py</cite> and <cite>agent.py</cite> fi
 <dt class="sig sig-object std" id="cmdoption-adk-web-session_service_uri">
 <span class="sig-name descname"><span class="pre">--session_service_uri</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;session_service_uri&gt;</span></span><a class="headerlink" href="#cmdoption-adk-web-session_service_uri" title="Link to this definition">¶</a></dt>
 <dd><p>Optional. The URI of the session service.
+- Leave unset to use the in-memory session service (default).
 - Use ‘agentengine://&lt;agent_engine&gt;’ to connect to Agent Engine</p>
 <blockquote>
 <div><p>sessions. &lt;agent_engine&gt; can either be the full qualified resource
@@ -1257,19 +1317,20 @@ name ‘projects/abc/locations/us-central1/reasoningEngines/123’ or
 the resource id ‘123’.</p>
 </div></blockquote>
 <ul class="simple">
-<li><p>Use ‘sqlite://&lt;path_to_sqlite_file&gt;’ to connect to an aio-sqlite
-based session service, which is good for local development.</p></li>
-<li><p>Use ‘postgresql://&lt;user&gt;:&lt;password&gt;&#64;&lt;host&gt;:&lt;port&gt;/&lt;database_name&gt;’
-to connect to a PostgreSQL DB.</p></li>
-<li><p>See <a class="reference external" href="https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls">https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls</a>
-for more details on other database URIs supported by SQLAlchemy.</p></li>
+<li><p>Use ‘memory://’ to run with the in-memory session service.</p></li>
+<li><p>Use ‘sqlite://&lt;path_to_sqlite_file&gt;’ to connect to a SQLite DB.</p></li>
+<li><p>See <a class="reference external" href="https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls">https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls</a> for more details on supported database URIs.</p></li>
 </ul>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-adk-web-artifact_service_uri">
 <span class="sig-name descname"><span class="pre">--artifact_service_uri</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;artifact_service_uri&gt;</span></span><a class="headerlink" href="#cmdoption-adk-web-artifact_service_uri" title="Link to this definition">¶</a></dt>
-<dd><p>Optional. The URI of the artifact service, supported URIs: gs://&lt;bucket name&gt; for GCS artifact service.</p>
+<dd><p>Optional. The URI of the artifact service.
+- Leave unset to store artifacts under ‘.adk/artifacts’ locally.
+- Use ‘gs://&lt;bucket_name&gt;’ to connect to the GCS artifact service.
+- Use ‘memory://’ to force the in-memory artifact service.
+- Use ‘file://&lt;path&gt;’ to store artifacts in a custom local directory.</p>
 </dd></dl>
 
 <dl class="std option">
@@ -1283,6 +1344,9 @@ for more details on other database URIs supported by SQLAlchemy.</p></li>
 name ‘projects/abc/locations/us-central1/reasoningEngines/123’ or
 the resource id ‘123’.</p>
 </div></blockquote>
+<ul class="simple">
+<li><p>Use ‘memory://’ to force the in-memory memory service.</p></li>
+</ul>
 </dd></dl>
 
 <dl class="std option">
@@ -1363,10 +1427,10 @@ the resource id ‘123’.</p>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &#169;2025, Google.
+      &#169;2026, Google.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.0.4</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
       &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |
