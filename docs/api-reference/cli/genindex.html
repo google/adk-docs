@@ -175,10 +175,43 @@
 </li>
       </ul></li>
       <li>
+    --dest_db_url
+
+      <ul>
+        <li><a href="cli.html#cmdoption-adk-migrate-session-dest_db_url">adk-migrate-session command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --disable_features
+
+      <ul>
+        <li><a href="cli.html#cmdoption-adk-api_server-disable_features">adk-api_server command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-adk-eval-disable_features">adk-eval command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-adk-run-disable_features">adk-run command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-adk-web-disable_features">adk-web command line option</a>
+</li>
+      </ul></li>
+      <li>
     --display_name
 
       <ul>
         <li><a href="cli.html#cmdoption-adk-deploy-agent_engine-display_name">adk-deploy-agent_engine command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --enable_features
+
+      <ul>
+        <li><a href="cli.html#cmdoption-adk-api_server-enable_features">adk-api_server command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-adk-eval-enable_features">adk-eval command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-adk-run-enable_features">adk-run command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-adk-web-enable_features">adk-web command line option</a>
 </li>
       </ul></li>
       <li>
@@ -237,6 +270,8 @@
 </li>
         <li><a href="cli.html#cmdoption-adk-eval_set-create-log_level">adk-eval_set-create command line option</a>
 </li>
+        <li><a href="cli.html#cmdoption-adk-migrate-session-log_level">adk-migrate-session command line option</a>
+</li>
         <li><a href="cli.html#cmdoption-adk-web-log_level">adk-web command line option</a>
 </li>
       </ul></li>
@@ -292,8 +327,6 @@
         <li><a href="cli.html#cmdoption-adk-web-reload">adk-web command line option</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     --no-trace_to_cloud
 
@@ -301,11 +334,34 @@
         <li><a href="cli.html#cmdoption-adk-deploy-agent_engine-trace_to_cloud">adk-deploy-agent_engine command line option</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    --no_use_local_storage
+
+      <ul>
+        <li><a href="cli.html#cmdoption-adk-api_server-use_local_storage">adk-api_server command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-adk-deploy-cloud_run-use_local_storage">adk-deploy-cloud_run command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-adk-deploy-gke-use_local_storage">adk-deploy-gke command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-adk-run-use_local_storage">adk-run command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-adk-web-use_local_storage">adk-web command line option</a>
+</li>
+      </ul></li>
       <li>
     --otel_to_cloud
 
       <ul>
         <li><a href="cli.html#cmdoption-adk-api_server-otel_to_cloud">adk-api_server command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-adk-deploy-agent_engine-otel_to_cloud">adk-deploy-agent_engine command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-adk-deploy-cloud_run-otel_to_cloud">adk-deploy-cloud_run command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-adk-deploy-gke-otel_to_cloud">adk-deploy-gke command line option</a>
 </li>
         <li><a href="cli.html#cmdoption-adk-web-otel_to_cloud">adk-web command line option</a>
 </li>
@@ -459,6 +515,13 @@
 </li>
       </ul></li>
       <li>
+    --source_db_url
+
+      <ul>
+        <li><a href="cli.html#cmdoption-adk-migrate-session-source_db_url">adk-migrate-session command line option</a>
+</li>
+      </ul></li>
+      <li>
     --staging_bucket
 
       <ul>
@@ -498,6 +561,21 @@
         <li><a href="cli.html#cmdoption-adk-api_server-url_prefix">adk-api_server command line option</a>
 </li>
         <li><a href="cli.html#cmdoption-adk-web-url_prefix">adk-web command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --use_local_storage
+
+      <ul>
+        <li><a href="cli.html#cmdoption-adk-api_server-use_local_storage">adk-api_server command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-adk-deploy-cloud_run-use_local_storage">adk-deploy-cloud_run command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-adk-deploy-gke-use_local_storage">adk-deploy-gke command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-adk-run-use_local_storage">adk-run command line option</a>
+</li>
+        <li><a href="cli.html#cmdoption-adk-web-use_local_storage">adk-web command line option</a>
 </li>
       </ul></li>
       <li>
@@ -566,6 +644,10 @@
 </li>
         <li><a href="cli.html#cmdoption-adk-api_server-artifact_storage_uri">--artifact_storage_uri</a>
 </li>
+        <li><a href="cli.html#cmdoption-adk-api_server-disable_features">--disable_features</a>
+</li>
+        <li><a href="cli.html#cmdoption-adk-api_server-enable_features">--enable_features</a>
+</li>
         <li><a href="cli.html#cmdoption-adk-api_server-eval_storage_uri">--eval_storage_uri</a>
 </li>
         <li><a href="cli.html#cmdoption-adk-api_server-extra_plugins">--extra_plugins</a>
@@ -577,6 +659,8 @@
         <li><a href="cli.html#cmdoption-adk-api_server-memory_service_uri">--memory_service_uri</a>
 </li>
         <li><a href="cli.html#cmdoption-adk-api_server-reload">--no-reload</a>
+</li>
+        <li><a href="cli.html#cmdoption-adk-api_server-use_local_storage">--no_use_local_storage</a>
 </li>
         <li><a href="cli.html#cmdoption-adk-api_server-otel_to_cloud">--otel_to_cloud</a>
 </li>
@@ -593,6 +677,8 @@
         <li><a href="cli.html#cmdoption-adk-api_server-trace_to_cloud">--trace_to_cloud</a>
 </li>
         <li><a href="cli.html#cmdoption-adk-api_server-url_prefix">--url_prefix</a>
+</li>
+        <li><a href="cli.html#cmdoption-adk-api_server-use_local_storage">--use_local_storage</a>
 </li>
         <li><a href="cli.html#cmdoption-adk-api_server-v">--verbose</a>
 </li>
@@ -656,6 +742,8 @@
 </li>
         <li><a href="cli.html#cmdoption-adk-deploy-agent_engine-trace_to_cloud">--no-trace_to_cloud</a>
 </li>
+        <li><a href="cli.html#cmdoption-adk-deploy-agent_engine-otel_to_cloud">--otel_to_cloud</a>
+</li>
         <li><a href="cli.html#cmdoption-adk-deploy-agent_engine-project">--project</a>
 </li>
         <li><a href="cli.html#cmdoption-adk-deploy-agent_engine-region">--region</a>
@@ -691,6 +779,10 @@
 </li>
         <li><a href="cli.html#cmdoption-adk-deploy-cloud_run-memory_service_uri">--memory_service_uri</a>
 </li>
+        <li><a href="cli.html#cmdoption-adk-deploy-cloud_run-use_local_storage">--no_use_local_storage</a>
+</li>
+        <li><a href="cli.html#cmdoption-adk-deploy-cloud_run-otel_to_cloud">--otel_to_cloud</a>
+</li>
         <li><a href="cli.html#cmdoption-adk-deploy-cloud_run-port">--port</a>
 </li>
         <li><a href="cli.html#cmdoption-adk-deploy-cloud_run-project">--project</a>
@@ -706,6 +798,8 @@
         <li><a href="cli.html#cmdoption-adk-deploy-cloud_run-temp_folder">--temp_folder</a>
 </li>
         <li><a href="cli.html#cmdoption-adk-deploy-cloud_run-trace_to_cloud">--trace_to_cloud</a>
+</li>
+        <li><a href="cli.html#cmdoption-adk-deploy-cloud_run-use_local_storage">--use_local_storage</a>
 </li>
         <li><a href="cli.html#cmdoption-adk-deploy-cloud_run-verbosity">--verbosity</a>
 </li>
@@ -730,6 +824,10 @@
 </li>
         <li><a href="cli.html#cmdoption-adk-deploy-gke-memory_service_uri">--memory_service_uri</a>
 </li>
+        <li><a href="cli.html#cmdoption-adk-deploy-gke-use_local_storage">--no_use_local_storage</a>
+</li>
+        <li><a href="cli.html#cmdoption-adk-deploy-gke-otel_to_cloud">--otel_to_cloud</a>
+</li>
         <li><a href="cli.html#cmdoption-adk-deploy-gke-port">--port</a>
 </li>
         <li><a href="cli.html#cmdoption-adk-deploy-gke-project">--project</a>
@@ -744,6 +842,8 @@
 </li>
         <li><a href="cli.html#cmdoption-adk-deploy-gke-trace_to_cloud">--trace_to_cloud</a>
 </li>
+        <li><a href="cli.html#cmdoption-adk-deploy-gke-use_local_storage">--use_local_storage</a>
+</li>
         <li><a href="cli.html#cmdoption-adk-deploy-gke-with_ui">--with_ui</a>
 </li>
         <li><a href="cli.html#cmdoption-adk-deploy-gke-arg-AGENT">AGENT</a>
@@ -756,6 +856,10 @@
 
       <ul>
         <li><a href="cli.html#cmdoption-adk-eval-config_file_path">--config_file_path</a>
+</li>
+        <li><a href="cli.html#cmdoption-adk-eval-disable_features">--disable_features</a>
+</li>
+        <li><a href="cli.html#cmdoption-adk-eval-enable_features">--enable_features</a>
 </li>
         <li><a href="cli.html#cmdoption-adk-eval-eval_storage_uri">--eval_storage_uri</a>
 </li>
@@ -799,12 +903,29 @@
 </li>
       </ul></li>
       <li>
+    adk-migrate-session command line option
+
+      <ul>
+        <li><a href="cli.html#cmdoption-adk-migrate-session-dest_db_url">--dest_db_url</a>
+</li>
+        <li><a href="cli.html#cmdoption-adk-migrate-session-log_level">--log_level</a>
+</li>
+        <li><a href="cli.html#cmdoption-adk-migrate-session-source_db_url">--source_db_url</a>
+</li>
+      </ul></li>
+      <li>
     adk-run command line option
 
       <ul>
         <li><a href="cli.html#cmdoption-adk-run-artifact_service_uri">--artifact_service_uri</a>
 </li>
+        <li><a href="cli.html#cmdoption-adk-run-disable_features">--disable_features</a>
+</li>
+        <li><a href="cli.html#cmdoption-adk-run-enable_features">--enable_features</a>
+</li>
         <li><a href="cli.html#cmdoption-adk-run-memory_service_uri">--memory_service_uri</a>
+</li>
+        <li><a href="cli.html#cmdoption-adk-run-use_local_storage">--no_use_local_storage</a>
 </li>
         <li><a href="cli.html#cmdoption-adk-run-replay">--replay</a>
 </li>
@@ -815,6 +936,8 @@
         <li><a href="cli.html#cmdoption-adk-run-session_id">--session_id</a>
 </li>
         <li><a href="cli.html#cmdoption-adk-run-session_service_uri">--session_service_uri</a>
+</li>
+        <li><a href="cli.html#cmdoption-adk-run-use_local_storage">--use_local_storage</a>
 </li>
         <li><a href="cli.html#cmdoption-adk-run-arg-AGENT">AGENT</a>
 </li>
@@ -830,6 +953,10 @@
         <li><a href="cli.html#cmdoption-adk-web-artifact_service_uri">--artifact_service_uri</a>
 </li>
         <li><a href="cli.html#cmdoption-adk-web-artifact_storage_uri">--artifact_storage_uri</a>
+</li>
+        <li><a href="cli.html#cmdoption-adk-web-disable_features">--disable_features</a>
+</li>
+        <li><a href="cli.html#cmdoption-adk-web-enable_features">--enable_features</a>
 </li>
         <li><a href="cli.html#cmdoption-adk-web-eval_storage_uri">--eval_storage_uri</a>
 </li>
@@ -847,6 +974,8 @@
 </li>
         <li><a href="cli.html#cmdoption-adk-web-reload">--no-reload</a>
 </li>
+        <li><a href="cli.html#cmdoption-adk-web-use_local_storage">--no_use_local_storage</a>
+</li>
         <li><a href="cli.html#cmdoption-adk-web-otel_to_cloud">--otel_to_cloud</a>
 </li>
         <li><a href="cli.html#cmdoption-adk-web-port">--port</a>
@@ -862,6 +991,8 @@
         <li><a href="cli.html#cmdoption-adk-web-trace_to_cloud">--trace_to_cloud</a>
 </li>
         <li><a href="cli.html#cmdoption-adk-web-url_prefix">--url_prefix</a>
+</li>
+        <li><a href="cli.html#cmdoption-adk-web-use_local_storage">--use_local_storage</a>
 </li>
         <li><a href="cli.html#cmdoption-adk-web-v">--verbose</a>
 </li>
