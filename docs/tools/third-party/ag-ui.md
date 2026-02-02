@@ -1,6 +1,7 @@
 ---
 catalog_title: AG-UI
-catalog_description: Build rich user experiences with CopilotKit and other clients
+catalog_description: Build interactive chat UIs with streaming, state sync, and agentic actions
+catalog_icon: /adk-docs/assets/tools-ag-ui.png
 ---
 
 # Build chat experiences with AG-UI and CopilotKit

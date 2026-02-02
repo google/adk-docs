@@ -1,3 +1,9 @@
+---
+catalog_title: MongoDB
+catalog_description: Query collections, manage databases, and analyze schemas
+catalog_icon: /adk-docs/assets/tools-mongodb.png
+---
+
 # MongoDB
 
 <div class="language-support-tag">
