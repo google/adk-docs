@@ -24,6 +24,10 @@ extra_css:
   - stylesheets/custom.css
   - stylesheets/language-tags.css
 
+# Custom JavaScript
+extra_javascript:
+  - javascript/copy-page.js
+
 # Additional config
 extra:
   first_repo_url: https://github.com/google/adk-python
@@ -124,6 +128,18 @@ markdown_extensions:
 # Plugins
 plugins:
   - search
+  - macros:
+      module_name: scripts/integrations
+      # Set custom delimiters for J2 templates to avoid conflicts with Markdown
+      # alternative to {% %}
+      j2_block_start_string: '{{%'
+      j2_block_end_string: '%}}'
+      # alternative to {{ }}
+      j2_variable_start_string: '{{$'
+      j2_variable_end_string: '$}}'
+      # alternative to {# #}
+      j2_comment_start_string: '{{#'
+      j2_comment_end_string: '#}}'
   - redirects:
       redirect_maps:
         'get-started/local-testing.md': 'runtime/api-server.md'
@@ -154,6 +170,7 @@ plugins:
         Build Agents:
         - get-started/*.md
         - tutorials/*.md
+        - visual-builder/*.md
         - agents/*.md
         - tools/*.md
         - tools-custom/*.md
@@ -161,7 +178,7 @@ plugins:
         - runtime/*.md
         - deploy/*.md
         - observability/*.md
-        - evaluation/*.md
+        - evaluate/*.md
         - safety/*.md
         Components:
         - context/*.md
@@ -176,8 +193,11 @@ plugins:
         - streaming/*.md
         - grounding/*.md
         Reference:
+        - release-notes.md
         - api-reference/index.md
         - api-reference/rest/index.md
+        - community.md
+        - contributing-guide.md
 
 # Navigation
 nav:
@@ -221,7 +241,7 @@ nav:
       - Ollama: agents/models/ollama.md
       - vLLM: agents/models/vllm.md
       - LiteLLM: agents/models/litellm.md
-    - Tools for Agents:
+    - Tools and Integrations:
       - tools/index.md
       - Gemini API tools:
         - tools/gemini-api/index.md
@@ -246,22 +266,24 @@ nav:
         - Vertex AI express mode: tools/google-cloud/express-mode.md
       - Third-party tools:
         - tools/third-party/index.md
+        - Agentic UI (AG-UI): tools/third-party/ag-ui.md
         - Asana: tools/third-party/asana.md
         - Atlassian: tools/third-party/atlassian.md
         - Cartesia: tools/third-party/cartesia.md
+        - Chroma: tools/third-party/chroma.md
         - Daytona: tools/third-party/daytona.md
         - ElevenLabs: tools/third-party/elevenlabs.md
         - GitHub: tools/third-party/github.md
         - GitLab: tools/third-party/gitlab.md
         - Hugging Face: tools/third-party/hugging-face.md
         - Linear: tools/third-party/linear.md
+        - MongoDB: tools/third-party/mongodb.md
         - n8n: tools/third-party/n8n.md
         - Notion: tools/third-party/notion.md
         - Postman: tools/third-party/postman.md
         - PayPal: tools/third-party/paypal.md
         - Qdrant: tools/third-party/qdrant.md
         - Stripe: tools/third-party/stripe.md
-        - Agentic UI (AG-UI): tools/third-party/ag-ui.md
       - Tool limitations: tools/limitations.md
     - Custom Tools:
       - tools-custom/index.md

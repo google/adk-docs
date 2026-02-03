@@ -1,4 +1,14 @@
+---
+catalog_title: Asana
+catalog_description: Manage projects, tasks, and goals for team collaboration
+catalog_icon: /adk-docs/assets/tools-asana.png
+---
+
 # Asana
+
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
+</div>
 
 The [Asana MCP Server](https://developers.asana.com/docs/using-asanas-mcp-server)
 connects your ADK agent to the [Asana](https://asana.com/) work management
@@ -22,35 +32,66 @@ tasks, goals, and team collaboration using natural language.
 
 ## Use with agent
 
-=== "Local MCP Server"
+=== "Python"
 
-    ```python
-    from google.adk.agents import Agent
-    from google.adk.tools.mcp_tool import McpToolset
-    from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
-    from mcp import StdioServerParameters
+    === "Local MCP Server"
 
-    root_agent = Agent(
-        model="gemini-2.5-pro",
-        name="asana_agent",
-        instruction="Help users manage projects, tasks, and goals in Asana",
-        tools=[
-            McpToolset(
-                connection_params=StdioConnectionParams(
-                    server_params=StdioServerParameters(
-                        command="npx",
-                        args=[
+        ```python
+        from google.adk.agents import Agent
+        from google.adk.tools.mcp_tool import McpToolset
+        from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
+        from mcp import StdioServerParameters
+
+        root_agent = Agent(
+            model="gemini-2.5-pro",
+            name="asana_agent",
+            instruction="Help users manage projects, tasks, and goals in Asana",
+            tools=[
+                McpToolset(
+                    connection_params=StdioConnectionParams(
+                        server_params=StdioServerParameters(
+                            command="npx",
+                            args=[
+                                "-y",
+                                "mcp-remote",
+                                "https://mcp.asana.com/sse",
+                            ]
+                        ),
+                        timeout=30,
+                    ),
+                )
+            ],
+        )
+        ```
+
+=== "TypeScript"
+
+    === "Local MCP Server"
+
+        ```typescript
+        import { LlmAgent, MCPToolset } from "@google/adk";
+
+        const rootAgent = new LlmAgent({
+            model: "gemini-2.5-pro",
+            name: "asana_agent",
+            instruction: "Help users manage projects, tasks, and goals in Asana",
+            tools: [
+                new MCPToolset({
+                    type: "StdioConnectionParams",
+                    serverParams: {
+                        command: "npx",
+                        args: [
                             "-y",
                             "mcp-remote",
                             "https://mcp.asana.com/sse",
-                        ]
-                    ),
-                    timeout=30,
-                ),
-            )
-        ],
-    )
-    ```
+                        ],
+                    },
+                }),
+            ],
+        });
+
+        export { rootAgent };
+        ```
 
 !!! note
 

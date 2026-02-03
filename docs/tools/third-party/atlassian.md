@@ -1,4 +1,14 @@
+---
+catalog_title: Atlassian
+catalog_description: Manage issues, search pages, and update team content
+catalog_icon: /adk-docs/assets/tools-atlassian.png
+---
+
 # Atlassian
+
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
+</div>
 
 The [Atlassian MCP Server](https://github.com/atlassian/atlassian-mcp-server)
 connects your ADK agent to the [Atlassian](https://www.atlassian.com/)
@@ -25,36 +35,67 @@ collaboration workflows using natural language.
 
 ## Use with agent
 
-=== "Local MCP Server"
+=== "Python"
 
-    ```python
-    from google.adk.agents import Agent
-    from google.adk.tools.mcp_tool import McpToolset
-    from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
-    from mcp import StdioServerParameters
+    === "Local MCP Server"
+
+        ```python
+        from google.adk.agents import Agent
+        from google.adk.tools.mcp_tool import McpToolset
+        from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
+        from mcp import StdioServerParameters
 
 
-    root_agent = Agent(
-        model="gemini-2.5-pro",
-        name="atlassian_agent",
-        instruction="Help users work with data in Atlassian products",
-        tools=[
-            McpToolset(
-                connection_params=StdioConnectionParams(
-                    server_params=StdioServerParameters(
-                        command="npx",
-                        args=[
+        root_agent = Agent(
+            model="gemini-2.5-pro",
+            name="atlassian_agent",
+            instruction="Help users work with data in Atlassian products",
+            tools=[
+                McpToolset(
+                    connection_params=StdioConnectionParams(
+                        server_params=StdioServerParameters(
+                            command="npx",
+                            args=[
+                                "-y",
+                                "mcp-remote",
+                                "https://mcp.atlassian.com/v1/mcp",
+                            ]
+                        ),
+                        timeout=30,
+                    ),
+                )
+            ],
+        )
+        ```
+
+=== "TypeScript"
+
+    === "Local MCP Server"
+
+        ```typescript
+        import { LlmAgent, MCPToolset } from "@google/adk";
+
+        const rootAgent = new LlmAgent({
+            model: "gemini-2.5-pro",
+            name: "atlassian_agent",
+            instruction: "Help users work with data in Atlassian products",
+            tools: [
+                new MCPToolset({
+                    type: "StdioConnectionParams",
+                    serverParams: {
+                        command: "npx",
+                        args: [
                             "-y",
                             "mcp-remote",
-                            "https://mcp.atlassian.com/v1/sse",
-                        ]
-                    ),
-                    timeout=30,
-                ),
-            )
-        ],
-    )
-    ```
+                            "https://mcp.atlassian.com/v1/mcp",
+                        ],
+                    },
+                }),
+            ],
+        });
+
+        export { rootAgent };
+        ```
 
 !!! note
 

@@ -1,3 +1,9 @@
+---
+catalog_title: Vertex AI express mode
+catalog_description: Try development with Vertex AI services at no cost
+catalog_icon: /adk-docs/assets/tools-vertex-ai.png
+---
+
 # Vertex AI express mode
 
 <div class="language-support-tag">

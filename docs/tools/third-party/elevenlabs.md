@@ -1,10 +1,21 @@
+---
+catalog_title: ElevenLabs
+catalog_description: Generate speech, clone voices, transcribe audio, and create sound effects
+catalog_icon: /adk-docs/assets/tools-elevenlabs.png
+---
+
 # ElevenLabs
+
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
+</div>
 
 The [ElevenLabs MCP Server](https://github.com/elevenlabs/elevenlabs-mcp)
 connects your ADK agent to the [ElevenLabs](https://elevenlabs.io/) AI audio
 platform. This integration gives your agent the ability to generate speech,
 clone voices, transcribe audio, create sound effects, and build conversational
 AI experiences using natural language.
+
 
 ## Use cases
 
@@ -32,36 +43,68 @@ AI experiences using natural language.
 
 ## Use with agent
 
-=== "Local MCP Server"
+=== "Python"
 
-    ```python
-    from google.adk.agents import Agent
-    from google.adk.tools.mcp_tool import McpToolset
-    from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
-    from mcp import StdioServerParameters
+    === "Local MCP Server"
 
-    ELEVENLABS_API_KEY = "YOUR_ELEVENLABS_API_KEY"
+        ```python
+        from google.adk.agents import Agent
+        from google.adk.tools.mcp_tool import McpToolset
+        from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
+        from mcp import StdioServerParameters
 
-    root_agent = Agent(
-        model="gemini-2.5-pro",
-        name="elevenlabs_agent",
-        instruction="Help users generate speech, clone voices, and process audio",
-        tools=[
-            McpToolset(
-                connection_params=StdioConnectionParams(
-                    server_params=StdioServerParameters(
-                        command="uvx",
-                        args=["elevenlabs-mcp"],
-                        env={
-                            "ELEVENLABS_API_KEY": ELEVENLABS_API_KEY,
-                        }
+        ELEVENLABS_API_KEY = "YOUR_ELEVENLABS_API_KEY"
+
+        root_agent = Agent(
+            model="gemini-2.5-pro",
+            name="elevenlabs_agent",
+            instruction="Help users generate speech, clone voices, and process audio",
+            tools=[
+                McpToolset(
+                    connection_params=StdioConnectionParams(
+                        server_params=StdioServerParameters(
+                            command="uvx",
+                            args=["elevenlabs-mcp"],
+                            env={
+                                "ELEVENLABS_API_KEY": ELEVENLABS_API_KEY,
+                            }
+                        ),
+                        timeout=30,
                     ),
-                    timeout=30,
-                ),
-            )
-        ],
-    )
-    ```
+                )
+            ],
+        )
+        ```
+
+=== "TypeScript"
+
+    === "Local MCP Server"
+
+        ```typescript
+        import { LlmAgent, MCPToolset } from "@google/adk";
+
+        const ELEVENLABS_API_KEY = "YOUR_ELEVENLABS_API_KEY";
+
+        const rootAgent = new LlmAgent({
+            model: "gemini-2.5-pro",
+            name: "elevenlabs_agent",
+            instruction: "Help users generate speech, clone voices, and process audio",
+            tools: [
+                new MCPToolset({
+                    type: "StdioConnectionParams",
+                    serverParams: {
+                        command: "uvx",
+                        args: ["elevenlabs-mcp"],
+                        env: {
+                            ELEVENLABS_API_KEY: ELEVENLABS_API_KEY,
+                        },
+                    },
+                }),
+            ],
+        });
+
+        export { rootAgent };
+        ```
 
 ## Available tools
 

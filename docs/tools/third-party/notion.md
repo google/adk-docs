@@ -1,4 +1,14 @@
+---
+catalog_title: Notion
+catalog_description: Search workspaces, create pages, and manage tasks and databases
+catalog_icon: /adk-docs/assets/tools-notion.png
+---
+
 # Notion
+
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
+</div>
 
 The [Notion MCP Server](https://github.com/makenotion/notion-mcp-server)
 connects your ADK agent to Notion, allowing it to search, create, and manage
@@ -34,39 +44,71 @@ language.
 
 ## Use with agent
 
-=== "Local MCP Server"
+=== "Python"
 
-    ```python
-    from google.adk.agents import Agent
-    from google.adk.tools.mcp_tool import McpToolset
-    from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
-    from mcp import StdioServerParameters
+    === "Local MCP Server"
 
-    NOTION_TOKEN = "YOUR_NOTION_TOKEN"
+        ```python
+        from google.adk.agents import Agent
+        from google.adk.tools.mcp_tool import McpToolset
+        from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
+        from mcp import StdioServerParameters
 
-    root_agent = Agent(
-        model="gemini-2.5-pro",
-        name="notion_agent",
-        instruction="Help users get information from Notion",
-        tools=[
-            McpToolset(
-                connection_params=StdioConnectionParams(
-                    server_params = StdioServerParameters(
-                        command="npx",
-                        args=[
-                            "-y",
-                            "@notionhq/notion-mcp-server",
-                        ],
-                        env={
-                            "NOTION_TOKEN": NOTION_TOKEN,
-                        }
+        NOTION_TOKEN = "YOUR_NOTION_TOKEN"
+
+        root_agent = Agent(
+            model="gemini-2.5-pro",
+            name="notion_agent",
+            instruction="Help users get information from Notion",
+            tools=[
+                McpToolset(
+                    connection_params=StdioConnectionParams(
+                        server_params = StdioServerParameters(
+                            command="npx",
+                            args=[
+                                "-y",
+                                "@notionhq/notion-mcp-server",
+                            ],
+                            env={
+                                "NOTION_TOKEN": NOTION_TOKEN,
+                            }
+                        ),
+                        timeout=30,
                     ),
-                    timeout=30,
-                ),
-            )
-        ],
-    )
-    ```
+                )
+            ],
+        )
+        ```
+
+=== "TypeScript"
+
+    === "Local MCP Server"
+
+        ```typescript
+        import { LlmAgent, MCPToolset } from "@google/adk";
+
+        const NOTION_TOKEN = "YOUR_NOTION_TOKEN";
+
+        const rootAgent = new LlmAgent({
+            model: "gemini-2.5-pro",
+            name: "notion_agent",
+            instruction: "Help users get information from Notion",
+            tools: [
+                new MCPToolset({
+                    type: "StdioConnectionParams",
+                    serverParams: {
+                        command: "npx",
+                        args: ["-y", "@notionhq/notion-mcp-server"],
+                        env: {
+                            NOTION_TOKEN: NOTION_TOKEN,
+                        },
+                    },
+                }),
+            ],
+        });
+
+        export { rootAgent };
+        ```
 
 ## Available tools
 
