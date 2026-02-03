@@ -23,6 +23,7 @@ Building an effective `LlmAgent` involves defining its identity, clearly guiding
 its behavior through instructions, and equipping it with the necessary tools and
 capabilities.
 
+
 ## Defining the Agent's Identity and Purpose
 
 First, you need to establish what the agent *is* and what it's *for*.
