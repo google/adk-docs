@@ -135,6 +135,12 @@ agents. Examples include [Atlassian](docs/tools/third-party/atlassian.md),
     Your documentation should include these sections:
 
     ````markdown
+    ---
+    catalog_title: Tool Name
+    catalog_description: A short description of what your tool does
+    catalog_icon: /adk-docs/assets/tools-<tool-name>.png
+    ---
+
     # Tool Name
 
     Brief description of the tool and what it connects to. Explain what capabilities it gives ADK agents.
@@ -180,14 +186,7 @@ agents. Examples include [Atlassian](docs/tools/third-party/atlassian.md),
     Add a logo image to `docs/assets/` named `tools-<tool-name>.png`.
     Images should be square and appropriately sized for display as a card.
 
-4.  **Update the index pages:**
-    Add a card entry to **both** of the following files in alphabetical order
-    within the "Third-party tools" section. Copy an existing card and modify it:
-
-    - `docs/tools/index.md` (main tools overview page)
-    - `docs/tools/third-party/index.md` (dedicated third-party tools page)
-
-5.  **Update the navigation:**
+4.  **Update the navigation:**
     Add an entry to `mkdocs.yml` under the `Third-party tools` section in
     alphabetical order:
 
