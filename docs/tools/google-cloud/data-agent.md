@@ -1,3 +1,9 @@
+---
+catalog_title: Data Agents
+catalog_description: Analyze data with AI-powered agents
+catalog_icon: /adk-docs/assets/tools-vertex-ai.png
+---
+
 # Data Agents tools for ADK
 
 <div class="language-support-tag">

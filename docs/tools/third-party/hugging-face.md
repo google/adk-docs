@@ -1,3 +1,9 @@
+---
+catalog_title: Hugging Face
+catalog_description: Access models, datasets, research papers, and AI tools
+catalog_icon: /adk-docs/assets/tools-hugging-face.png
+---
+
 # Hugging Face
 
 <div class="language-support-tag">
