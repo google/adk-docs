@@ -185,7 +185,9 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
 
     ###### Example:
 
-    `adk deploy cloud_run --project=[PROJECT_ID] --region=[REGION] path/to/my_agent    -- --no-allow-unauthenticated --min-instances=2`
+    ```bash
+    adk deploy cloud_run --project=[PROJECT_ID] --region=[REGION] path/to/my_agent    -- --no-allow-unauthenticated --min-instances=2
+    ```
 
     ##### Authenticated access
     During the deployment process, you might be prompted: `Allow unauthenticated invocations to [your-service-name] (y/N)?`.
