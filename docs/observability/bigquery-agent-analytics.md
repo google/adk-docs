@@ -183,6 +183,8 @@ You can customize the plugin using `BigQueryLoggerConfig`.
 -   **`log_multi_modal_content`** (`bool`, default: `True`): Whether to log detailed content parts (including GCS references).
 -   **`queue_max_size`** (`int`, default: `10000`): The maximum number of events to hold in the in-memory queue before dropping new events.
 -   **`retry_config`** (`RetryConfig`, default: `RetryConfig()`): Configuration for retrying failed BigQuery writes (attributes: `max_retries`, `initial_delay`, `multiplier`, `max_delay`).
+-   **`log_session_metadata`** (`bool`, default: `True`): If True, logs metadata from the `session` object (e.g., `session.metadata`) into the `attributes` column.
+-   **`custom_tags`** (`Dict[str, Any]`, default: `{}`): A dictionary of static tags (e.g., `{"env": "prod", "version": "1.0"}`) to be included in the `attributes` column for every event.
 
 
 The following code sample shows how to define a configuration for the
@@ -261,7 +263,7 @@ CREATE TABLE `your-gcp-project-id.adk_agent_logs.agent_events_v2`
     part_attributes STRING,
     storage_mode STRING
   >> OPTIONS(description="Detailed content parts for multi-modal data."),
-  attributes JSON OPTIONS(description="Arbitrary key-value pairs for additional metadata (e.g., 'root_agent_name', 'model_version', 'usage_metadata')."),
+  attributes JSON OPTIONS(description="Arbitrary key-value pairs for additional metadata (e.g., 'root_agent_name', 'model_version', 'usage_metadata', 'session_metadata', 'custom_tags')."),
   latency_ms JSON OPTIONS(description="Latency measurements (e.g., total_ms)."),
   status STRING OPTIONS(description="The outcome of the event, typically 'OK' or 'ERROR'."),
   error_message STRING OPTIONS(description="Populated if an error occurs."),
@@ -411,6 +413,35 @@ These events track the execution of tools by the agent.
       <td><p><pre>{}</pre></p></td>
       <td><p><pre>
 {"tool": "list_datasets", "args": {}}
+</pre></p></td>
+    </tr>
+  </tbody>
+</table>
+
+#### State Management
+
+These events track changes to the agent's state, typically triggered by tools.
+
+<table>
+  <thead>
+    <tr>
+      <th><strong>Event Type</strong></th>
+      <th><strong>Content (JSON) Structure</strong></th>
+      <th><strong>Attributes (JSON)</strong></th>
+      <th><strong>Example Content</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><p><pre>STATE_DELTA</pre></p></td>
+      <td><p><pre>
+{
+  "state_delta": {...}
+}
+</pre></p></td>
+      <td><p><pre>{}</pre></p></td>
+      <td><p><pre>
+{"state_delta": {"order_id": "123", "status": "confirmed"}}
 </pre></p></td>
     </tr>
   </tbody>
