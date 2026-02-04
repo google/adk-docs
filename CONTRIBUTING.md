@@ -5,13 +5,16 @@ share your patches and improvements with the project.
 
 ## Before You Start
 
+We're excited to have you contribute! To help your contribution go smoothly,
+please review the following sections before you begin.
+
 ### Find Something to Work On
 
 Check the [GitHub Issues](https://github.com/google/adk-docs/issues) for bug
 reports or feature requests. Feel free to pick up an existing issue or open a
 new one if you have an idea or find a bug.
 
-### Sign the CLA
+### Sign the Contributor License Agreement
 
 Contributions to this project must be accompanied by a
 [Contributor License Agreement](https://cla.developers.google.com/about) (CLA).
