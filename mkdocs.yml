@@ -378,8 +378,9 @@ nav:
       - Streaming Tools: streaming/streaming-tools.md
       - Configuring Bidi-streaming behavior: streaming/configuration.md
     - Grounding:
-      - Understanding Google Search Grounding: grounding/google_search_grounding.md
-      - Understanding Vertex AI Search Grounding: grounding/vertex_ai_search_grounding.md
+      - grounding/index.md
+      - Google Search Grounding: grounding/google_search_grounding.md
+      - Vertex AI Search Grounding: grounding/vertex_ai_search_grounding.md
   - Reference:
     - Release Notes: release-notes.md
     - API Reference:
