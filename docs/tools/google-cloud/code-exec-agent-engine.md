@@ -7,7 +7,7 @@ catalog_icon: /adk-docs/assets/tools-vertex-ai.png
 # Code Execution Tool with Agent Engine
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.17.0</span><span class="lst-preview">Preview</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.17.0</span>
 </div>
 
 The Agent Engine Code Execution ADK Tool provides a low-latency, highly
@@ -30,10 +30,6 @@ Code Execution feature in Agent Engine, see the
 [Agent Engine Code Execution](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/code-execution/overview)
 documentation.
 
-!!! example "Preview release"
-    The Agent Engine Code Execution feature is a Preview release. For
-    more information, see the
-    [launch stage descriptions](https://cloud.google.com/products#product-launch-stages).
 
 ## Use the Tool
 
