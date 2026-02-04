@@ -173,6 +173,18 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
     * `--temp_folder TEXT`: (Optional) Specifies a directory for storing intermediate files generated during the deployment process. Defaults to a timestamped folder in the system's temporary directory. *(Note: This option is generally not needed unless troubleshooting issues).*
     * `--help`: Show the help message and exit.
 
+    ##### Passing gcloud CLI Arguments
+
+    To pass specific gcloud flags through the `adk deploy cloud_run` command, use the double-dash separator (`--`) after the ADK arguments. Any flags following the `--` will be passed directly to the underlying gcloud command.
+
+    ###### Syntax Example:
+
+    `adk deploy cloud_run [ADK_FLAGS] -- [GCLOUD_FLAGS]`
+
+    ###### Example:
+
+    `adk deploy cloud_run --project=[PROJECT_ID] --region=[REGION] path/to/my_agent    -- --no-allow-unauthenticated --min-instances=2`
+
     ##### Authenticated access
     During the deployment process, you might be prompted: `Allow unauthenticated invocations to [your-service-name] (y/N)?`.
 
