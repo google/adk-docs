@@ -1,4 +1,14 @@
+---
+catalog_title: Hugging Face
+catalog_description: Access models, datasets, research papers, and AI tools
+catalog_icon: /adk-docs/assets/tools-hugging-face.png
+---
+
 # Hugging Face
+
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
+</div>
 
 The [Hugging Face MCP Server](https://github.com/huggingface/hf-mcp-server) can be used to connect
 your ADK agent to the Hugging Face Hub and thousands of Gradio AI Applications.
@@ -21,65 +31,122 @@ your ADK agent to the Hugging Face Hub and thousands of Gradio AI Applications.
 
 ## Use with agent
 
-=== "Local MCP Server"
+=== "Python"
 
-    ```python
-    from google.adk.agents import Agent
-    from google.adk.tools.mcp_tool import McpToolset
-    from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
-    from mcp import StdioServerParameters
+    === "Local MCP Server"
 
-    HUGGING_FACE_TOKEN = "YOUR_HUGGING_FACE_TOKEN"
+        ```python
+        from google.adk.agents import Agent
+        from google.adk.tools.mcp_tool import McpToolset
+        from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
+        from mcp import StdioServerParameters
 
-    root_agent = Agent(
-        model="gemini-2.5-pro",
-        name="hugging_face_agent",
-        instruction="Help users get information from Hugging Face",
-        tools=[
-            McpToolset(
-                connection_params=StdioConnectionParams(
-                    server_params = StdioServerParameters(
-                        command="npx",
-                        args=[
-                            "-y",
-                            "@llmindset/hf-mcp-server",
-                        ],
-                        env={
-                            "HF_TOKEN": HUGGING_FACE_TOKEN,
-                        }
+        HUGGING_FACE_TOKEN = "YOUR_HUGGING_FACE_TOKEN"
+
+        root_agent = Agent(
+            model="gemini-2.5-pro",
+            name="hugging_face_agent",
+            instruction="Help users get information from Hugging Face",
+            tools=[
+                McpToolset(
+                    connection_params=StdioConnectionParams(
+                        server_params = StdioServerParameters(
+                            command="npx",
+                            args=[
+                                "-y",
+                                "@llmindset/hf-mcp-server",
+                            ],
+                            env={
+                                "HF_TOKEN": HUGGING_FACE_TOKEN,
+                            }
+                        ),
+                        timeout=30,
                     ),
-                    timeout=30,
-                ),
-            )
-        ],
-    )
-    ```
+                )
+            ],
+        )
+        ```
 
-=== "Remote MCP Server"
+    === "Remote MCP Server"
 
-    ```python
-    from google.adk.agents import Agent
-    from google.adk.tools.mcp_tool import McpToolset
-    from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPServerParams
+        ```python
+        from google.adk.agents import Agent
+        from google.adk.tools.mcp_tool import McpToolset
+        from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPServerParams
 
-    HUGGING_FACE_TOKEN = "YOUR_HUGGING_FACE_TOKEN"
+        HUGGING_FACE_TOKEN = "YOUR_HUGGING_FACE_TOKEN"
 
-    root_agent = Agent(
-        model="gemini-2.5-pro",
-        name="hugging_face_agent",
-        instruction="Help users get information from Hugging Face",
-        tools=[
-            McpToolset(
-                connection_params=StreamableHTTPServerParams(
-                    url="https://huggingface.co/mcp",
-                    headers={
-                        "Authorization": f"Bearer {HUGGING_FACE_TOKEN}",
+        root_agent = Agent(
+            model="gemini-2.5-pro",
+            name="hugging_face_agent",
+            instruction="Help users get information from Hugging Face",
+            tools=[
+                McpToolset(
+                    connection_params=StreamableHTTPServerParams(
+                        url="https://huggingface.co/mcp",
+                        headers={
+                            "Authorization": f"Bearer {HUGGING_FACE_TOKEN}",
+                        },
+                    ),
+                )
+            ],
+        )
+        ```
+
+=== "TypeScript"
+
+    === "Local MCP Server"
+
+        ```typescript
+        import { LlmAgent, MCPToolset } from "@google/adk";
+
+        const HUGGING_FACE_TOKEN = "YOUR_HUGGING_FACE_TOKEN";
+
+        const rootAgent = new LlmAgent({
+            model: "gemini-2.5-pro",
+            name: "hugging_face_agent",
+            instruction: "Help users get information from Hugging Face",
+            tools: [
+                new MCPToolset({
+                    type: "StdioConnectionParams",
+                    serverParams: {
+                        command: "npx",
+                        args: ["-y", "@llmindset/hf-mcp-server"],
+                        env: {
+                            HF_TOKEN: HUGGING_FACE_TOKEN,
+                        },
                     },
-                ),
-            )
-        ],
-    )
-    ```
+                }),
+            ],
+        });
+
+        export { rootAgent };
+        ```
+
+    === "Remote MCP Server"
+
+        ```typescript
+        import { LlmAgent, MCPToolset } from "@google/adk";
+
+        const HUGGING_FACE_TOKEN = "YOUR_HUGGING_FACE_TOKEN";
+
+        const rootAgent = new LlmAgent({
+            model: "gemini-2.5-pro",
+            name: "hugging_face_agent",
+            instruction: "Help users get information from Hugging Face",
+            tools: [
+                new MCPToolset({
+                    type: "StreamableHTTPConnectionParams",
+                    url: "https://huggingface.co/mcp",
+                    header: {
+                        Authorization: `Bearer ${HUGGING_FACE_TOKEN}`,
+                    },
+                }),
+            ],
+        });
+
+        export { rootAgent };
+        ```
 
 ## Available tools
 

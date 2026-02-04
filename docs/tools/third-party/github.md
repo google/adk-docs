@@ -1,4 +1,14 @@
+---
+catalog_title: GitHub
+catalog_description: Analyze code, manage issues and PRs, and automate workflows
+catalog_icon: /adk-docs/assets/tools-github.png
+---
+
 # GitHub
+
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
+</div>
 
 The [GitHub MCP Server](https://github.com/github/github-mcp-server) connects AI
 tools directly to GitHub's platform. This gives your ADK agent the ability to
@@ -23,33 +33,64 @@ automate workflows using natural language.
 
 ## Use with agent
 
-=== "Remote MCP Server"
+=== "Python"
 
-    ```python
-    from google.adk.agents import Agent
-    from google.adk.tools.mcp_tool import McpToolset
-    from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPServerParams
+    === "Remote MCP Server"
 
-    GITHUB_TOKEN = "YOUR_GITHUB_TOKEN"
+        ```python
+        from google.adk.agents import Agent
+        from google.adk.tools.mcp_tool import McpToolset
+        from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPServerParams
 
-    root_agent = Agent(
-        model="gemini-2.5-pro",
-        name="github_agent",
-        instruction="Help users get information from GitHub",
-        tools=[
-            McpToolset(
-                connection_params=StreamableHTTPServerParams(
-                    url="https://api.githubcopilot.com/mcp/",
-                    headers={
-                        "Authorization": f"Bearer {GITHUB_TOKEN}",
+        GITHUB_TOKEN = "YOUR_GITHUB_TOKEN"
+
+        root_agent = Agent(
+            model="gemini-2.5-pro",
+            name="github_agent",
+            instruction="Help users get information from GitHub",
+            tools=[
+                McpToolset(
+                    connection_params=StreamableHTTPServerParams(
+                        url="https://api.githubcopilot.com/mcp/",
+                        headers={
+                            "Authorization": f"Bearer {GITHUB_TOKEN}",
+                            "X-MCP-Toolsets": "all",
+                            "X-MCP-Readonly": "true"
+                        },
+                    ),
+                )
+            ],
+        )
+        ```
+
+=== "TypeScript"
+
+    === "Remote MCP Server"
+
+        ```typescript
+        import { LlmAgent, MCPToolset } from "@google/adk";
+
+        const GITHUB_TOKEN = "YOUR_GITHUB_TOKEN";
+
+        const rootAgent = new LlmAgent({
+            model: "gemini-2.5-pro",
+            name: "github_agent",
+            instruction: "Help users get information from GitHub",
+            tools: [
+                new MCPToolset({
+                    type: "StreamableHTTPConnectionParams",
+                    url: "https://api.githubcopilot.com/mcp/",
+                    header: {
+                        Authorization: `Bearer ${GITHUB_TOKEN}`,
                         "X-MCP-Toolsets": "all",
-                        "X-MCP-Readonly": "true"
+                        "X-MCP-Readonly": "true",
                     },
-                ),
-            )
-        ],
-    )
-    ```
+                }),
+            ],
+        });
+
+        export { rootAgent };
+        ```
 
 ## Available tools
 

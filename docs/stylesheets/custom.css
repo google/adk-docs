@@ -15,6 +15,7 @@
  */
 
 /* Index page styling */
+
 .md-grid {
   max-width: 80%;
 }
@@ -69,22 +70,28 @@
   line-height: 1.4;
 }
 
-#centered-install-tabs .tabbed-labels.tabbed-labels--linked {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-}
+/* Centered install tabs */
 
-/* Centered install tabs in the homepage*/
 #centered-install-tabs .tabbed-labels {
   display: flex;
   justify-content: center;
   width: 100%;
 }
 
-/* Centered install tabs in the homepage*/
+/* Copy page button */
 
-/* YouTube Video Grid Layout - Community page*/
+button.md-content__button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+button.md-content__button:hover svg {
+  color: var(--md-accent-fg-color);
+}
+
+/* YouTube video grid */
+
 .video-grid {
   display: flex;
   flex-wrap: wrap;
@@ -93,7 +100,6 @@
   margin-bottom: 1.5em;
 }
 
-/* For 3 items per row: 100% / 3 = 33.333% */
 .video-item {
   flex: 0 1 calc(33.333% - 13.333px);
   box-sizing: border-box;
@@ -133,11 +139,13 @@
 }
 
 /* YouTube icon */
+
 .youtube-red-icon svg {
   fill: #FF0000 !important;
 }
 
-/* Replace full site name with "ADK" on mobile */
+/* Header styles */
+
 @media screen and (max-width: 76.1875em) {
   .md-header__topic .md-ellipsis {
     display: none;
@@ -150,33 +158,30 @@
   }
 }
 
-/* Custom styles for handling two repository links */
 .md-header__source {
   max-width: 480px;
   display: flex;
   align-items: center;
 }
 
-/* Hide the custom repository links on mobile viewports */
 @media screen and (max-width: 76.1875em) {
   .md-header__source {
     display: none;
   }
 }
 
-/* Hide repository stats but keep repository names visible */
 .md-source__facts {
   display: none !important;
 }
 
-/* Ensure repository names are fully visible */
 .md-source__repository {
   white-space: nowrap;
   max-width: none !important;
   overflow: visible !important;
 }
 
-/* Style for the main navigation section titles */
+/* Navigation section titles */
+
 nav.md-nav--primary .md-nav__item--section>.md-nav__link {
   color: #1565C0;
   font-weight: bold;
@@ -321,8 +326,11 @@ nav.md-nav--primary .md-nav__item--section>.md-nav__link {
 }
 
 .tool-card-image-wrapper {
-  width: 70px;
-  height: auto;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background-color: transparent;
   padding: 0.5rem;
   box-sizing: border-box;
@@ -330,7 +338,9 @@ nav.md-nav--primary .md-nav__item--section>.md-nav__link {
 }
 
 .tool-card-image-wrapper img {
-  width: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
   height: auto;
   object-fit: contain;
 }
@@ -355,4 +365,65 @@ nav.md-nav--primary .md-nav__item--section>.md-nav__link {
   line-height: 1.5;
   margin-top: 0.2rem;
   flex-grow: 1;
+}
+
+/* Dark mode styles */
+
+[data-md-color-scheme="slate"] nav.md-nav--primary,
+[data-md-color-scheme="slate"] .md-sidebar--primary,
+[data-md-color-scheme="slate"] .md-sidebar--primary .md-sidebar__scrollwrap,
+[data-md-color-scheme="slate"] .md-sidebar--primary .md-sidebar__inner {
+  background-color: var(--md-default-bg-color);
+}
+
+[data-md-color-scheme="slate"] .md-header,
+[data-md-color-scheme="slate"] .md-header__inner {
+  background-color: var(--md-default-bg-color);
+}
+
+[data-md-color-scheme="slate"] .md-header,
+[data-md-color-scheme="slate"] .md-header * {
+  color: var(--md-default-fg-color);
+}
+
+[data-md-color-scheme="slate"] .md-header svg,
+[data-md-color-scheme="slate"] .md-header path {
+  fill: var(--md-default-fg-color);
+}
+
+[data-md-color-scheme="slate"] .md-search__input {
+  color: var(--md-default-fg-color);
+  background-color: var(--md-default-bg-color);
+  border-color: var(--md-default-fg-color--light);
+}
+
+[data-md-color-scheme="slate"] .md-search__input::placeholder {
+  color: var(--md-default-fg-color--light);
+}
+
+[data-md-color-scheme="slate"] .md-search__icon svg,
+[data-md-color-scheme="slate"] .md-search__icon path {
+  fill: var(--md-default-fg-color);
+}
+
+[data-md-color-scheme="slate"] .resource-card,
+[data-md-color-scheme="slate"] .tool-card {
+  background: var(--md-default-bg-color);
+  border-color: var(--md-default-fg-color--lightest);
+}
+
+[data-md-color-scheme="slate"] .card-content h3,
+[data-md-color-scheme="slate"] .tool-card-content h3,
+[data-md-color-scheme="slate"] .translation-list a {
+  color: var(--md-default-fg-color);
+  background: var(--md-default-bg-color);
+}
+
+[data-md-color-scheme="slate"] .card-content p,
+[data-md-color-scheme="slate"] .tool-card-content p {
+  color: var(--md-default-fg-color--light);
+}
+
+[data-md-color-scheme="slate"] nav.md-nav--primary .md-nav__item--section>.md-nav__link {
+  color: var(--md-primary-fg-color);
 }

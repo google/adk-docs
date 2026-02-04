@@ -70,6 +70,17 @@ from google.adk.agents import Agent
 from google.adk.models.google_llm import Gemini
 from google.adk.tools.bigquery import BigQueryToolset, BigQueryCredentialsConfig
 
+
+# --- OpenTelemetry Initialization (Optional) ---
+# Recommended for enabling distributed tracing (populates trace_id, span_id).
+# If not configured, the plugin uses internal UUIDs for span correlation.
+try:
+    from opentelemetry import trace
+    from opentelemetry.sdk.trace import TracerProvider
+    trace.set_tracer_provider(TracerProvider())
+except ImportError:
+    pass # OpenTelemetry is optional
+
 # --- Configuration ---
 PROJECT_ID = os.environ.get("GOOGLE_CLOUD_PROJECT", "your-gcp-project-id")
 DATASET_ID = os.environ.get("BIG_QUERY_DATASET_ID", "your-big-query-dataset-id")
@@ -139,6 +150,16 @@ ORDER BY timestamp DESC
 LIMIT 20;
 ```
 
+```
+
+## Tracing and Observability
+
+The plugin supports **OpenTelemetry** for distributed tracing.
+
+- **Automatic Span Management**: The plugin automatically generates spans for Agent execution, LLM calls, and Tool executions.
+- **OpenTelemetry Integration**: If an OpenTelemetry `TracerProvider` is configured (as shown in the example above), the plugin will use valid OTel spans, populating `trace_id`, `span_id`, and `parent_span_id` with standard OTel identifiers. This allows you to correlate agent logs with other services in your distributed system.
+- **Fallback Mechanism**: If OpenTelemetry is not installed or configured, the plugin automatically falls back to generating internal UUIDs for spans and uses the `invocation_id` as the trace ID. This ensures that the parent-child hierarchy (Agent -> Span -> Tool/LLM) is *always* preserved in the BigQuery logs, even without a full OTel setup.
+
 ## Configuration options
 
 You can customize the plugin using `BigQueryLoggerConfig`.
@@ -162,6 +183,8 @@ You can customize the plugin using `BigQueryLoggerConfig`.
 -   **`log_multi_modal_content`** (`bool`, default: `True`): Whether to log detailed content parts (including GCS references).
 -   **`queue_max_size`** (`int`, default: `10000`): The maximum number of events to hold in the in-memory queue before dropping new events.
 -   **`retry_config`** (`RetryConfig`, default: `RetryConfig()`): Configuration for retrying failed BigQuery writes (attributes: `max_retries`, `initial_delay`, `multiplier`, `max_delay`).
+-   **`log_session_metadata`** (`bool`, default: `True`): If True, logs metadata from the `session` object (e.g., `session.metadata`) into the `attributes` column.
+-   **`custom_tags`** (`Dict[str, Any]`, default: `{}`): A dictionary of static tags (e.g., `{"env": "prod", "version": "1.0"}`) to be included in the `attributes` column for every event.
 
 
 The following code sample shows how to define a configuration for the
@@ -240,7 +263,7 @@ CREATE TABLE `your-gcp-project-id.adk_agent_logs.agent_events_v2`
     part_attributes STRING,
     storage_mode STRING
   >> OPTIONS(description="Detailed content parts for multi-modal data."),
-  attributes JSON OPTIONS(description="Arbitrary key-value pairs for additional metadata (e.g., 'root_agent_name', 'model_version', 'usage_metadata')."),
+  attributes JSON OPTIONS(description="Arbitrary key-value pairs for additional metadata (e.g., 'root_agent_name', 'model_version', 'usage_metadata', 'session_metadata', 'custom_tags')."),
   latency_ms JSON OPTIONS(description="Latency measurements (e.g., total_ms)."),
   status STRING OPTIONS(description="The outcome of the event, typically 'OK' or 'ERROR'."),
   error_message STRING OPTIONS(description="Populated if an error occurs."),
@@ -390,6 +413,35 @@ These events track the execution of tools by the agent.
       <td><p><pre>{}</pre></p></td>
       <td><p><pre>
 {"tool": "list_datasets", "args": {}}
+</pre></p></td>
+    </tr>
+  </tbody>
+</table>
+
+#### State Management
+
+These events track changes to the agent's state, typically triggered by tools.
+
+<table>
+  <thead>
+    <tr>
+      <th><strong>Event Type</strong></th>
+      <th><strong>Content (JSON) Structure</strong></th>
+      <th><strong>Attributes (JSON)</strong></th>
+      <th><strong>Example Content</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><p><pre>STATE_DELTA</pre></p></td>
+      <td><p><pre>
+{
+  "state_delta": {...}
+}
+</pre></p></td>
+      <td><p><pre>{}</pre></p></td>
+      <td><p><pre>
+{"state_delta": {"order_id": "123", "status": "confirmed"}}
 </pre></p></td>
     </tr>
   </tbody>

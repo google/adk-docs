@@ -52,7 +52,7 @@
 <section id="adk-api-server">
 <h3>api_server<a class="headerlink" href="#adk-api-server" title="Link to this heading">¶</a></h3>
 <p>Starts a FastAPI server for agents.</p>
-<p>AGENTS_DIR: The directory of agents, where each sub-directory is a single
+<p>AGENTS_DIR: The directory of agents, where each subdirectory is a single
 agent, containing at least <cite>__init__.py</cite> and <cite>agent.py</cite> files.</p>
 <p>Example:</p>
 <blockquote>
@@ -63,6 +63,18 @@ agent, containing at least <cite>__init__.py</cite> and <cite>agent.py</cite> fi
 </pre></div>
 </div>
 <p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-api_server-enable_features">
+<span class="sig-name descname"><span class="pre">--enable_features</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;enable_features&gt;</span></span><a class="headerlink" href="#cmdoption-adk-api_server-enable_features" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Comma-separated list of feature names to enable. This provides an alternative to environment variables for enabling experimental features. Example: –enable_features=JSON_SCHEMA_FOR_FUNC_DECL,PROGRESSIVE_SSE_STREAMING</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-api_server-disable_features">
+<span class="sig-name descname"><span class="pre">--disable_features</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;disable_features&gt;</span></span><a class="headerlink" href="#cmdoption-adk-api_server-disable_features" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Comma-separated list of feature names to disable. This provides an alternative to environment variables for disabling features. Example: –disable_features=JSON_SCHEMA_FOR_FUNC_DECL,PROGRESSIVE_SSE_STREAMING</p>
+</dd></dl>
+
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-adk-api_server-host">
 <span class="sig-name descname"><span class="pre">--host</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;host&gt;</span></span><a class="headerlink" href="#cmdoption-adk-api_server-host" title="Link to this definition">¶</a></dt>
@@ -83,7 +95,7 @@ agent, containing at least <cite>__init__.py</cite> and <cite>agent.py</cite> fi
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-adk-api_server-allow_origins">
 <span class="sig-name descname"><span class="pre">--allow_origins</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;allow_origins&gt;</span></span><a class="headerlink" href="#cmdoption-adk-api_server-allow_origins" title="Link to this definition">¶</a></dt>
-<dd><p>Optional. Any additional origins to allow for CORS.</p>
+<dd><p>Optional. Origins to allow for CORS. Can be literal origins (e.g., ‘<a class="reference external" href="https://example.com">https://example.com</a>’) or regex patterns prefixed with ‘regex:’ (e.g., ‘regex:https://.*.example.com’).</p>
 </dd></dl>
 
 <dl class="std option">
@@ -122,7 +134,7 @@ agent, containing at least <cite>__init__.py</cite> and <cite>agent.py</cite> fi
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-adk-api_server-otel_to_cloud">
 <span class="sig-name descname"><span class="pre">--otel_to_cloud</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-api_server-otel_to_cloud" title="Link to this definition">¶</a></dt>
-<dd><p>EXPERIMENTAL Optional. Whether to write OTel data to Google Cloud Observability services - Cloud Trace and Cloud Logging.</p>
+<dd><p>Optional. Whether to write OTel data to Google Cloud Observability services - Cloud Trace and Cloud Logging.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Default<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
@@ -180,6 +192,9 @@ agent, containing at least <cite>__init__.py</cite> and <cite>agent.py</cite> fi
 <dt class="sig sig-object std" id="cmdoption-adk-api_server-session_service_uri">
 <span class="sig-name descname"><span class="pre">--session_service_uri</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;session_service_uri&gt;</span></span><a class="headerlink" href="#cmdoption-adk-api_server-session_service_uri" title="Link to this definition">¶</a></dt>
 <dd><p>Optional. The URI of the session service.
+If set, ADK uses this service.</p>
+<p>If unset, ADK chooses a default session service (see
+–use_local_storage).
 - Use ‘agentengine://&lt;agent_engine&gt;’ to connect to Agent Engine</p>
 <blockquote>
 <div><p>sessions. &lt;agent_engine&gt; can either be the full qualified resource
@@ -187,19 +202,34 @@ name ‘projects/abc/locations/us-central1/reasoningEngines/123’ or
 the resource id ‘123’.</p>
 </div></blockquote>
 <ul class="simple">
-<li><p>Use ‘sqlite://&lt;path_to_sqlite_file&gt;’ to connect to an aio-sqlite
-based session service, which is good for local development.</p></li>
-<li><p>Use ‘postgresql://&lt;user&gt;:&lt;password&gt;&#64;&lt;host&gt;:&lt;port&gt;/&lt;database_name&gt;’
-to connect to a PostgreSQL DB.</p></li>
+<li><p>Use ‘memory://’ to run with the in-memory session service.</p></li>
+<li><p>Use ‘sqlite://&lt;path_to_sqlite_file&gt;’ to connect to a SQLite DB.</p></li>
 <li><p>See <a class="reference external" href="https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls">https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls</a>
-for more details on other database URIs supported by SQLAlchemy.</p></li>
+for supported database URIs.</p></li>
 </ul>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-adk-api_server-artifact_service_uri">
 <span class="sig-name descname"><span class="pre">--artifact_service_uri</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;artifact_service_uri&gt;</span></span><a class="headerlink" href="#cmdoption-adk-api_server-artifact_service_uri" title="Link to this definition">¶</a></dt>
-<dd><p>Optional. The URI of the artifact service, supported URIs: gs://&lt;bucket name&gt; for GCS artifact service.</p>
+<dd><p>Optional. The URI of the artifact service.
+If set, ADK uses this service.</p>
+<p>If unset, ADK chooses a default artifact service (see
+–use_local_storage).
+- Use ‘gs://&lt;bucket_name&gt;’ to connect to the GCS artifact service.
+- Use ‘memory://’ to force the in-memory artifact service.
+- Use ‘file://&lt;path&gt;’ to store artifacts in a custom local directory.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-api_server-use_local_storage">
+<span id="cmdoption-adk-api_server-no_use_local_storage"></span><span class="sig-name descname"><span class="pre">--use_local_storage</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no_use_local_storage</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-api_server-use_local_storage" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Whether to use local .adk storage when –session_service_uri and –artifact_service_uri are unset. Cannot be combined with explicit service URIs. When the agents directory isn’t writable (common in Cloud Run/Kubernetes), ADK falls back to in-memory unless overridden by ADK_FORCE_LOCAL_STORAGE=1 or ADK_DISABLE_LOCAL_STORAGE=1.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="std option">
@@ -213,6 +243,9 @@ for more details on other database URIs supported by SQLAlchemy.</p></li>
 name ‘projects/abc/locations/us-central1/reasoningEngines/123’ or
 the resource id ‘123’.</p>
 </div></blockquote>
+<ul class="simple">
+<li><p>Use ‘memory://’ to force the in-memory memory service.</p></li>
+</ul>
 </dd></dl>
 
 <dl class="std option">
@@ -405,8 +438,7 @@ adk deploy agent_engine –api_key=[api_key] my_agent</p>
 <p># With Google Cloud Project and Region
 adk deploy agent_engine –project=[project] –region=[region]</p>
 <blockquote>
-<div><p>–staging_bucket=[staging_bucket] –display_name=[app_name]
-my_agent</p>
+<div><p>–display_name=[app_name] my_agent</p>
 </div></blockquote>
 </div></blockquote>
 <p class="rubric">Usage</p>
@@ -435,7 +467,7 @@ my_agent</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-adk-deploy-agent_engine-staging_bucket">
 <span class="sig-name descname"><span class="pre">--staging_bucket</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;staging_bucket&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-agent_engine-staging_bucket" title="Link to this definition">¶</a></dt>
-<dd><p>Optional. GCS bucket for staging the deployment artifacts. It will be ignored if api_key is set.</p>
+<dd><p>Deprecated. This argument is no longer required or used.</p>
 </dd></dl>
 
 <dl class="std option">
@@ -448,6 +480,12 @@ my_agent</p>
 <dt class="sig sig-object std" id="cmdoption-adk-deploy-agent_engine-trace_to_cloud">
 <span id="cmdoption-adk-deploy-agent_engine-no-trace_to_cloud"></span><span class="sig-name descname"><span class="pre">--trace_to_cloud</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-trace_to_cloud</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-deploy-agent_engine-trace_to_cloud" title="Link to this definition">¶</a></dt>
 <dd><p>Optional. Whether to enable Cloud Trace for Agent Engine.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-agent_engine-otel_to_cloud">
+<span class="sig-name descname"><span class="pre">--otel_to_cloud</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-deploy-agent_engine-otel_to_cloud" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Whether to enable OpenTelemetry for Agent Engine.</p>
 </dd></dl>
 
 <dl class="std option">
@@ -582,6 +620,17 @@ my_agent</p>
 </dd></dl>
 
 <dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-cloud_run-otel_to_cloud">
+<span class="sig-name descname"><span class="pre">--otel_to_cloud</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-deploy-cloud_run-otel_to_cloud" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Whether to enable OpenTelemetry for Agent Engine.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-adk-deploy-cloud_run-with_ui">
 <span class="sig-name descname"><span class="pre">--with_ui</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-deploy-cloud_run-with_ui" title="Link to this definition">¶</a></dt>
 <dd><p>Optional. Deploy ADK Web UI if set. (default: deploy ADK API server only)</p>
@@ -626,7 +675,7 @@ my_agent</p>
 <dd><p>Optional. The ADK version used in Cloud Run deployment. (default: the version in the dev environment)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Default<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">'1.19.0'</span></code></p>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">'1.23.0'</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -645,13 +694,16 @@ my_agent</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-adk-deploy-cloud_run-allow_origins">
 <span class="sig-name descname"><span class="pre">--allow_origins</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;allow_origins&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-cloud_run-allow_origins" title="Link to this definition">¶</a></dt>
-<dd><p>Optional. Any additional origins to allow for CORS.</p>
+<dd><p>Optional. Origins to allow for CORS. Can be literal origins (e.g., ‘<a class="reference external" href="https://example.com">https://example.com</a>’) or regex patterns prefixed with ‘regex:’ (e.g., ‘regex:https://.*.example.com’).</p>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-adk-deploy-cloud_run-session_service_uri">
 <span class="sig-name descname"><span class="pre">--session_service_uri</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;session_service_uri&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-cloud_run-session_service_uri" title="Link to this definition">¶</a></dt>
 <dd><p>Optional. The URI of the session service.
+If set, ADK uses this service.</p>
+<p>If unset, ADK chooses a default session service (see
+–use_local_storage).
 - Use ‘agentengine://&lt;agent_engine&gt;’ to connect to Agent Engine</p>
 <blockquote>
 <div><p>sessions. &lt;agent_engine&gt; can either be the full qualified resource
@@ -659,19 +711,34 @@ name ‘projects/abc/locations/us-central1/reasoningEngines/123’ or
 the resource id ‘123’.</p>
 </div></blockquote>
 <ul class="simple">
-<li><p>Use ‘sqlite://&lt;path_to_sqlite_file&gt;’ to connect to an aio-sqlite
-based session service, which is good for local development.</p></li>
-<li><p>Use ‘postgresql://&lt;user&gt;:&lt;password&gt;&#64;&lt;host&gt;:&lt;port&gt;/&lt;database_name&gt;’
-to connect to a PostgreSQL DB.</p></li>
+<li><p>Use ‘memory://’ to run with the in-memory session service.</p></li>
+<li><p>Use ‘sqlite://&lt;path_to_sqlite_file&gt;’ to connect to a SQLite DB.</p></li>
 <li><p>See <a class="reference external" href="https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls">https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls</a>
-for more details on other database URIs supported by SQLAlchemy.</p></li>
+for supported database URIs.</p></li>
 </ul>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-adk-deploy-cloud_run-artifact_service_uri">
 <span class="sig-name descname"><span class="pre">--artifact_service_uri</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;artifact_service_uri&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-cloud_run-artifact_service_uri" title="Link to this definition">¶</a></dt>
-<dd><p>Optional. The URI of the artifact service, supported URIs: gs://&lt;bucket name&gt; for GCS artifact service.</p>
+<dd><p>Optional. The URI of the artifact service.
+If set, ADK uses this service.</p>
+<p>If unset, ADK chooses a default artifact service (see
+–use_local_storage).
+- Use ‘gs://&lt;bucket_name&gt;’ to connect to the GCS artifact service.
+- Use ‘memory://’ to force the in-memory artifact service.
+- Use ‘file://&lt;path&gt;’ to store artifacts in a custom local directory.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-cloud_run-use_local_storage">
+<span id="cmdoption-adk-deploy-cloud_run-no_use_local_storage"></span><span class="sig-name descname"><span class="pre">--use_local_storage</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no_use_local_storage</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-deploy-cloud_run-use_local_storage" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Whether to use local .adk storage when –session_service_uri and –artifact_service_uri are unset. Cannot be combined with explicit service URIs. When the agents directory isn’t writable (common in Cloud Run/Kubernetes), ADK falls back to in-memory unless overridden by ADK_FORCE_LOCAL_STORAGE=1 or ADK_DISABLE_LOCAL_STORAGE=1.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="std option">
@@ -685,6 +752,9 @@ for more details on other database URIs supported by SQLAlchemy.</p></li>
 name ‘projects/abc/locations/us-central1/reasoningEngines/123’ or
 the resource id ‘123’.</p>
 </div></blockquote>
+<ul class="simple">
+<li><p>Use ‘memory://’ to force the in-memory memory service.</p></li>
+</ul>
 </dd></dl>
 
 <dl class="std option">
@@ -771,6 +841,17 @@ the resource id ‘123’.</p>
 </dd></dl>
 
 <dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-gke-otel_to_cloud">
+<span class="sig-name descname"><span class="pre">--otel_to_cloud</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-deploy-gke-otel_to_cloud" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Whether to enable OpenTelemetry for GKE.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-adk-deploy-gke-with_ui">
 <span class="sig-name descname"><span class="pre">--with_ui</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-deploy-gke-with_ui" title="Link to this definition">¶</a></dt>
 <dd><p>Optional. Deploy ADK Web UI if set. (default: deploy ADK API server only)</p>
@@ -804,7 +885,7 @@ the resource id ‘123’.</p>
 <dd><p>Optional. The ADK version used in GKE deployment. (default: the version in the dev environment)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Default<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">'1.19.0'</span></code></p>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">'1.23.0'</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -813,6 +894,9 @@ the resource id ‘123’.</p>
 <dt class="sig sig-object std" id="cmdoption-adk-deploy-gke-session_service_uri">
 <span class="sig-name descname"><span class="pre">--session_service_uri</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;session_service_uri&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-gke-session_service_uri" title="Link to this definition">¶</a></dt>
 <dd><p>Optional. The URI of the session service.
+If set, ADK uses this service.</p>
+<p>If unset, ADK chooses a default session service (see
+–use_local_storage).
 - Use ‘agentengine://&lt;agent_engine&gt;’ to connect to Agent Engine</p>
 <blockquote>
 <div><p>sessions. &lt;agent_engine&gt; can either be the full qualified resource
@@ -820,19 +904,34 @@ name ‘projects/abc/locations/us-central1/reasoningEngines/123’ or
 the resource id ‘123’.</p>
 </div></blockquote>
 <ul class="simple">
-<li><p>Use ‘sqlite://&lt;path_to_sqlite_file&gt;’ to connect to an aio-sqlite
-based session service, which is good for local development.</p></li>
-<li><p>Use ‘postgresql://&lt;user&gt;:&lt;password&gt;&#64;&lt;host&gt;:&lt;port&gt;/&lt;database_name&gt;’
-to connect to a PostgreSQL DB.</p></li>
+<li><p>Use ‘memory://’ to run with the in-memory session service.</p></li>
+<li><p>Use ‘sqlite://&lt;path_to_sqlite_file&gt;’ to connect to a SQLite DB.</p></li>
 <li><p>See <a class="reference external" href="https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls">https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls</a>
-for more details on other database URIs supported by SQLAlchemy.</p></li>
+for supported database URIs.</p></li>
 </ul>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-adk-deploy-gke-artifact_service_uri">
 <span class="sig-name descname"><span class="pre">--artifact_service_uri</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;artifact_service_uri&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-gke-artifact_service_uri" title="Link to this definition">¶</a></dt>
-<dd><p>Optional. The URI of the artifact service, supported URIs: gs://&lt;bucket name&gt; for GCS artifact service.</p>
+<dd><p>Optional. The URI of the artifact service.
+If set, ADK uses this service.</p>
+<p>If unset, ADK chooses a default artifact service (see
+–use_local_storage).
+- Use ‘gs://&lt;bucket_name&gt;’ to connect to the GCS artifact service.
+- Use ‘memory://’ to force the in-memory artifact service.
+- Use ‘file://&lt;path&gt;’ to store artifacts in a custom local directory.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-gke-use_local_storage">
+<span id="cmdoption-adk-deploy-gke-no_use_local_storage"></span><span class="sig-name descname"><span class="pre">--use_local_storage</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no_use_local_storage</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-deploy-gke-use_local_storage" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Whether to use local .adk storage when –session_service_uri and –artifact_service_uri are unset. Cannot be combined with explicit service URIs. When the agents directory isn’t writable (common in Cloud Run/Kubernetes), ADK falls back to in-memory unless overridden by ADK_FORCE_LOCAL_STORAGE=1 or ADK_DISABLE_LOCAL_STORAGE=1.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="std option">
@@ -846,6 +945,9 @@ for more details on other database URIs supported by SQLAlchemy.</p></li>
 name ‘projects/abc/locations/us-central1/reasoningEngines/123’ or
 the resource id ‘123’.</p>
 </div></blockquote>
+<ul class="simple">
+<li><p>Use ‘memory://’ to force the in-memory memory service.</p></li>
+</ul>
 </dd></dl>
 
 <p class="rubric">Arguments</p>
@@ -908,6 +1010,18 @@ sample_eval_set_id:</p>
 </pre></div>
 </div>
 <p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-eval-enable_features">
+<span class="sig-name descname"><span class="pre">--enable_features</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;enable_features&gt;</span></span><a class="headerlink" href="#cmdoption-adk-eval-enable_features" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Comma-separated list of feature names to enable. This provides an alternative to environment variables for enabling experimental features. Example: –enable_features=JSON_SCHEMA_FOR_FUNC_DECL,PROGRESSIVE_SSE_STREAMING</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-eval-disable_features">
+<span class="sig-name descname"><span class="pre">--disable_features</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;disable_features&gt;</span></span><a class="headerlink" href="#cmdoption-adk-eval-disable_features" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Comma-separated list of feature names to disable. This provides an alternative to environment variables for disabling features. Example: –disable_features=JSON_SCHEMA_FOR_FUNC_DECL,PROGRESSIVE_SSE_STREAMING</p>
+</dd></dl>
+
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-adk-eval-config_file_path">
 <span class="sig-name descname"><span class="pre">--config_file_path</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;config_file_path&gt;</span></span><a class="headerlink" href="#cmdoption-adk-eval-config_file_path" title="Link to this definition">¶</a></dt>
@@ -1057,6 +1171,46 @@ only supports adding one using a conversation scenarios file.</p>
 
 </section>
 </section>
+<section id="adk-migrate">
+<h3>migrate<a class="headerlink" href="#adk-migrate" title="Link to this heading">¶</a></h3>
+<p>ADK migration commands.</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>adk<span class="w"> </span>migrate<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
+</pre></div>
+</div>
+<section id="adk-migrate-session">
+<h4>session<a class="headerlink" href="#adk-migrate-session" title="Link to this heading">¶</a></h4>
+<p>Migrates a session database to the latest schema version.</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>adk<span class="w"> </span>migrate<span class="w"> </span>session<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-migrate-session-source_db_url">
+<span class="sig-name descname"><span class="pre">--source_db_url</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;source_db_url&gt;</span></span><a class="headerlink" href="#cmdoption-adk-migrate-session-source_db_url" title="Link to this definition">¶</a></dt>
+<dd><p><strong>Required</strong> SQLAlchemy URL of source database in database session service, e.g. sqlite:///source.db.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-migrate-session-dest_db_url">
+<span class="sig-name descname"><span class="pre">--dest_db_url</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;dest_db_url&gt;</span></span><a class="headerlink" href="#cmdoption-adk-migrate-session-dest_db_url" title="Link to this definition">¶</a></dt>
+<dd><p><strong>Required</strong> SQLAlchemy URL of destination database in database session service, e.g. sqlite:///dest.db.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-migrate-session-log_level">
+<span class="sig-name descname"><span class="pre">--log_level</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;log_level&gt;</span></span><a class="headerlink" href="#cmdoption-adk-migrate-session-log_level" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Set the logging level</p>
+<dl class="field-list simple">
+<dt class="field-odd">Options<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DEBUG | INFO | WARNING | ERROR | CRITICAL</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
 <section id="adk-run">
 <h3>run<a class="headerlink" href="#adk-run" title="Link to this heading">¶</a></h3>
 <p>Runs an interactive CLI for a certain agent.</p>
@@ -1070,6 +1224,78 @@ only supports adding one using a conversation scenarios file.</p>
 </pre></div>
 </div>
 <p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-run-enable_features">
+<span class="sig-name descname"><span class="pre">--enable_features</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;enable_features&gt;</span></span><a class="headerlink" href="#cmdoption-adk-run-enable_features" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Comma-separated list of feature names to enable. This provides an alternative to environment variables for enabling experimental features. Example: –enable_features=JSON_SCHEMA_FOR_FUNC_DECL,PROGRESSIVE_SSE_STREAMING</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-run-disable_features">
+<span class="sig-name descname"><span class="pre">--disable_features</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;disable_features&gt;</span></span><a class="headerlink" href="#cmdoption-adk-run-disable_features" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Comma-separated list of feature names to disable. This provides an alternative to environment variables for disabling features. Example: –disable_features=JSON_SCHEMA_FOR_FUNC_DECL,PROGRESSIVE_SSE_STREAMING</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-run-session_service_uri">
+<span class="sig-name descname"><span class="pre">--session_service_uri</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;session_service_uri&gt;</span></span><a class="headerlink" href="#cmdoption-adk-run-session_service_uri" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. The URI of the session service.
+If set, ADK uses this service.</p>
+<p>If unset, ADK chooses a default session service (see
+–use_local_storage).
+- Use ‘agentengine://&lt;agent_engine&gt;’ to connect to Agent Engine</p>
+<blockquote>
+<div><p>sessions. &lt;agent_engine&gt; can either be the full qualified resource
+name ‘projects/abc/locations/us-central1/reasoningEngines/123’ or
+the resource id ‘123’.</p>
+</div></blockquote>
+<ul class="simple">
+<li><p>Use ‘memory://’ to run with the in-memory session service.</p></li>
+<li><p>Use ‘sqlite://&lt;path_to_sqlite_file&gt;’ to connect to a SQLite DB.</p></li>
+<li><p>See <a class="reference external" href="https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls">https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls</a>
+for supported database URIs.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-run-artifact_service_uri">
+<span class="sig-name descname"><span class="pre">--artifact_service_uri</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;artifact_service_uri&gt;</span></span><a class="headerlink" href="#cmdoption-adk-run-artifact_service_uri" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. The URI of the artifact service.
+If set, ADK uses this service.</p>
+<p>If unset, ADK chooses a default artifact service (see
+–use_local_storage).
+- Use ‘gs://&lt;bucket_name&gt;’ to connect to the GCS artifact service.
+- Use ‘memory://’ to force the in-memory artifact service.
+- Use ‘file://&lt;path&gt;’ to store artifacts in a custom local directory.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-run-use_local_storage">
+<span id="cmdoption-adk-run-no_use_local_storage"></span><span class="sig-name descname"><span class="pre">--use_local_storage</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no_use_local_storage</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-run-use_local_storage" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Whether to use local .adk storage when –session_service_uri and –artifact_service_uri are unset. Cannot be combined with explicit service URIs. When the agents directory isn’t writable (common in Cloud Run/Kubernetes), ADK falls back to in-memory unless overridden by ADK_FORCE_LOCAL_STORAGE=1 or ADK_DISABLE_LOCAL_STORAGE=1.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-run-memory_service_uri">
+<span class="sig-name descname"><span class="pre">--memory_service_uri</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;memory_service_uri&gt;</span></span><a class="headerlink" href="#cmdoption-adk-run-memory_service_uri" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. The URI of the memory service.
+- Use ‘rag://&lt;rag_corpus_id&gt;’ to connect to Vertex AI Rag Memory Service.
+- Use ‘agentengine://&lt;agent_engine&gt;’ to connect to Agent Engine</p>
+<blockquote>
+<div><p>sessions. &lt;agent_engine&gt; can either be the full qualified resource
+name ‘projects/abc/locations/us-central1/reasoningEngines/123’ or
+the resource id ‘123’.</p>
+</div></blockquote>
+<ul class="simple">
+<li><p>Use ‘memory://’ to force the in-memory memory service.</p></li>
+</ul>
+</dd></dl>
+
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-adk-run-save_session">
 <span class="sig-name descname"><span class="pre">--save_session</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-run-save_session" title="Link to this definition">¶</a></dt>
@@ -1110,7 +1336,7 @@ only supports adding one using a conversation scenarios file.</p>
 <section id="adk-web">
 <h3>web<a class="headerlink" href="#adk-web" title="Link to this heading">¶</a></h3>
 <p>Starts a FastAPI server with Web UI for agents.</p>
-<p>AGENTS_DIR: The directory of agents, where each sub-directory is a single
+<p>AGENTS_DIR: The directory of agents, where each subdirectory is a single
 agent, containing at least <cite>__init__.py</cite> and <cite>agent.py</cite> files.</p>
 <p>Example:</p>
 <blockquote>
@@ -1121,6 +1347,18 @@ agent, containing at least <cite>__init__.py</cite> and <cite>agent.py</cite> fi
 </pre></div>
 </div>
 <p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-web-enable_features">
+<span class="sig-name descname"><span class="pre">--enable_features</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;enable_features&gt;</span></span><a class="headerlink" href="#cmdoption-adk-web-enable_features" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Comma-separated list of feature names to enable. This provides an alternative to environment variables for enabling experimental features. Example: –enable_features=JSON_SCHEMA_FOR_FUNC_DECL,PROGRESSIVE_SSE_STREAMING</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-web-disable_features">
+<span class="sig-name descname"><span class="pre">--disable_features</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;disable_features&gt;</span></span><a class="headerlink" href="#cmdoption-adk-web-disable_features" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Comma-separated list of feature names to disable. This provides an alternative to environment variables for disabling features. Example: –disable_features=JSON_SCHEMA_FOR_FUNC_DECL,PROGRESSIVE_SSE_STREAMING</p>
+</dd></dl>
+
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-adk-web-host">
 <span class="sig-name descname"><span class="pre">--host</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;host&gt;</span></span><a class="headerlink" href="#cmdoption-adk-web-host" title="Link to this definition">¶</a></dt>
@@ -1141,7 +1379,7 @@ agent, containing at least <cite>__init__.py</cite> and <cite>agent.py</cite> fi
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-adk-web-allow_origins">
 <span class="sig-name descname"><span class="pre">--allow_origins</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;allow_origins&gt;</span></span><a class="headerlink" href="#cmdoption-adk-web-allow_origins" title="Link to this definition">¶</a></dt>
-<dd><p>Optional. Any additional origins to allow for CORS.</p>
+<dd><p>Optional. Origins to allow for CORS. Can be literal origins (e.g., ‘<a class="reference external" href="https://example.com">https://example.com</a>’) or regex patterns prefixed with ‘regex:’ (e.g., ‘regex:https://.*.example.com’).</p>
 </dd></dl>
 
 <dl class="std option">
@@ -1180,7 +1418,7 @@ agent, containing at least <cite>__init__.py</cite> and <cite>agent.py</cite> fi
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-adk-web-otel_to_cloud">
 <span class="sig-name descname"><span class="pre">--otel_to_cloud</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-web-otel_to_cloud" title="Link to this definition">¶</a></dt>
-<dd><p>EXPERIMENTAL Optional. Whether to write OTel data to Google Cloud Observability services - Cloud Trace and Cloud Logging.</p>
+<dd><p>Optional. Whether to write OTel data to Google Cloud Observability services - Cloud Trace and Cloud Logging.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Default<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
@@ -1250,6 +1488,9 @@ agent, containing at least <cite>__init__.py</cite> and <cite>agent.py</cite> fi
 <dt class="sig sig-object std" id="cmdoption-adk-web-session_service_uri">
 <span class="sig-name descname"><span class="pre">--session_service_uri</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;session_service_uri&gt;</span></span><a class="headerlink" href="#cmdoption-adk-web-session_service_uri" title="Link to this definition">¶</a></dt>
 <dd><p>Optional. The URI of the session service.
+If set, ADK uses this service.</p>
+<p>If unset, ADK chooses a default session service (see
+–use_local_storage).
 - Use ‘agentengine://&lt;agent_engine&gt;’ to connect to Agent Engine</p>
 <blockquote>
 <div><p>sessions. &lt;agent_engine&gt; can either be the full qualified resource
@@ -1257,19 +1498,34 @@ name ‘projects/abc/locations/us-central1/reasoningEngines/123’ or
 the resource id ‘123’.</p>
 </div></blockquote>
 <ul class="simple">
-<li><p>Use ‘sqlite://&lt;path_to_sqlite_file&gt;’ to connect to an aio-sqlite
-based session service, which is good for local development.</p></li>
-<li><p>Use ‘postgresql://&lt;user&gt;:&lt;password&gt;&#64;&lt;host&gt;:&lt;port&gt;/&lt;database_name&gt;’
-to connect to a PostgreSQL DB.</p></li>
+<li><p>Use ‘memory://’ to run with the in-memory session service.</p></li>
+<li><p>Use ‘sqlite://&lt;path_to_sqlite_file&gt;’ to connect to a SQLite DB.</p></li>
 <li><p>See <a class="reference external" href="https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls">https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls</a>
-for more details on other database URIs supported by SQLAlchemy.</p></li>
+for supported database URIs.</p></li>
 </ul>
 </dd></dl>
 
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-adk-web-artifact_service_uri">
 <span class="sig-name descname"><span class="pre">--artifact_service_uri</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;artifact_service_uri&gt;</span></span><a class="headerlink" href="#cmdoption-adk-web-artifact_service_uri" title="Link to this definition">¶</a></dt>
-<dd><p>Optional. The URI of the artifact service, supported URIs: gs://&lt;bucket name&gt; for GCS artifact service.</p>
+<dd><p>Optional. The URI of the artifact service.
+If set, ADK uses this service.</p>
+<p>If unset, ADK chooses a default artifact service (see
+–use_local_storage).
+- Use ‘gs://&lt;bucket_name&gt;’ to connect to the GCS artifact service.
+- Use ‘memory://’ to force the in-memory artifact service.
+- Use ‘file://&lt;path&gt;’ to store artifacts in a custom local directory.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-web-use_local_storage">
+<span id="cmdoption-adk-web-no_use_local_storage"></span><span class="sig-name descname"><span class="pre">--use_local_storage</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no_use_local_storage</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-web-use_local_storage" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Whether to use local .adk storage when –session_service_uri and –artifact_service_uri are unset. Cannot be combined with explicit service URIs. When the agents directory isn’t writable (common in Cloud Run/Kubernetes), ADK falls back to in-memory unless overridden by ADK_FORCE_LOCAL_STORAGE=1 or ADK_DISABLE_LOCAL_STORAGE=1.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="std option">
@@ -1283,6 +1539,9 @@ for more details on other database URIs supported by SQLAlchemy.</p></li>
 name ‘projects/abc/locations/us-central1/reasoningEngines/123’ or
 the resource id ‘123’.</p>
 </div></blockquote>
+<ul class="simple">
+<li><p>Use ‘memory://’ to force the in-memory memory service.</p></li>
+</ul>
 </dd></dl>
 
 <dl class="std option">
@@ -1363,10 +1622,10 @@ the resource id ‘123’.</p>
       <div class="clearer"></div>
     </div>
     <div class="footer">
-      &#169;2025, Google.
+      &#169;2026, Google.
       
       |
-      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.0.4</a>
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
       &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
       
       |

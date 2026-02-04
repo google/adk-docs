@@ -233,7 +233,7 @@ sequenceDiagram
 
 **Default Behavior:**
 
-Progressive SSE streaming is **enabled by default** in ADK. This means when you use `StreamingMode.SSE`, you automatically benefit from these improvements without any configuration.
+When you use `StreamingMode.SSE`, progressive SSE streaming is **enabled by default**. This means you automatically benefit from these improvements without any additional configuration.
 
 **Disabling the feature (if needed):**
 
