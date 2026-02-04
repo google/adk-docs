@@ -179,7 +179,9 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
 
     ###### Syntax Example:
 
-    `adk deploy cloud_run [ADK_FLAGS] -- [GCLOUD_FLAGS]`
+    ```bash
+    adk deploy cloud_run [ADK_FLAGS] -- [GCLOUD_FLAGS]
+    ```
 
     ###### Example:
 
