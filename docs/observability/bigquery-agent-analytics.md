@@ -150,8 +150,6 @@ ORDER BY timestamp DESC
 LIMIT 20;
 ```
 
-```
-
 ## Tracing and Observability
 
 The plugin supports **OpenTelemetry** for distributed tracing.
@@ -231,6 +229,31 @@ plugin = BigQueryAgentAnalyticsPlugin(..., config=config)
 
 ## Schema and production setup
 
+### Schema Reference
+
+The events table (`agent_events_v2`) uses a flexible schema. The following table provides a comprehensive reference with example values.
+
+| Field Name | Type | Mode | Description | Example Value |
+|:---|:---|:---|:---|:---|
+| **timestamp** | `TIMESTAMP` | `REQUIRED` | UTC timestamp of event creation. Acts as the primary ordering key and often the daily partitioning key. Precision is microsecond. | `2026-02-03 20:52:17 UTC` |
+| **event_type** | `STRING` | `NULLABLE` | The canonical event category. Standard values include `LLM_REQUEST`, `LLM_RESPONSE`, `TOOL_STARTING`, `TOOL_COMPLETED`, `AGENT_STARTING`, `AGENT_COMPLETED`, `STATE_DELTA`. Used for high-level filtering. | `LLM_REQUEST` |
+| **agent** | `STRING` | `NULLABLE` | The name of the agent responsible for this event. Defined during agent initialization or via the `root_agent_name` context. | `my_bq_agent` |
+| **session_id** | `STRING` | `NULLABLE` | A persistent identifier for the entire conversation thread. Stays constant across multiple turns and sub-agent calls. | `04275a01-1649-4a30-b6a7-5b443c69a7bc` |
+| **invocation_id** | `STRING` | `NULLABLE` | The unique identifier for a single execution turn or request cycle. Corresponds to `trace_id` in many contexts. | `e-b55b2000-68c6-4e8b-b3b3-ffb454a92e40` |
+| **user_id** | `STRING` | `NULLABLE` | The identifier of the user (human or system) initiating the session. Extracted from the `User` object or metadata. | `test_user` |
+| **trace_id** | `STRING` | `NULLABLE` | The **OpenTelemetry** Trace ID (32-char hex). Links all operations within a single distributed request lifecycle. | `e-b55b2000-68c6-4e8b-b3b3-ffb454a92e40` |
+| **span_id** | `STRING` | `NULLABLE` | The **OpenTelemetry** Span ID (16-char hex). Uniquely identifies this specific atomic operation. | `69867a836cd94798be2759d8e0d70215` |
+| **parent_span_id** | `STRING` | `NULLABLE` | The Span ID of the immediate caller. Used to reconstruct the parent-child execution tree (DAG). | `ef5843fe40764b4b8afec44e78044205` |
+| **content** | `JSON` | `NULLABLE` | The primary event payload. Structure is polymorphic based on `event_type`. | `{"system_prompt": "You are...", "prompt": [{"role": "user", "content": "hello"}], "response": "Hi", "usage": {"total": 15}}` |
+| **attributes** | `JSON` | `NULLABLE` | Metadata/Enrichment (usage stats, model info, custom tags). | `{"model": "gemini-2.5-flash", "usage_metadata": {"total_token_count": 15}, "state_delta": {"key": "val"}, "session_metadata": {"key": "val"}}` |
+| **latency_ms** | `JSON` | `NULLABLE` | Performance metrics. Standard keys are `total_ms` (wall-clock duration) and `time_to_first_token_ms` (streaming latency). | `{"total_ms": 1250, "time_to_first_token_ms": 450}` |
+| **status** | `STRING` | `NULLABLE` | High-level outcome. Values: `OK` (success) or `ERROR` (failure). | `OK` |
+| **error_message** | `STRING` | `NULLABLE` | Human-readable exception message or stack trace fragment. Populated only when `status` is `ERROR`. | `Error 404: Dataset not found` |
+| **is_truncated** | `BOOLEAN` | `NULLABLE` | `true` if `content` or `attributes` exceeded the BigQuery cell size limit (default 10MB) and were partially dropped. | `false` |
+| **content_parts** | `RECORD` | `REPEATED` | Array of multi-modal segments (Text, Image, Blob). Used when content cannot be serialized as simple JSON (e.g., large binaries or GCS refs). | `[{"mime_type": "text/plain", "text": "hello"}]` |
+
+### Production Setup
+
 The plugin automatically creates the table if it does not exist. However, for
 production, we recommend creating the table manually using the following DDL, which utilizes the **JSON** type for flexibility and **REPEATED RECORD**s for multimodal content.
 
@@ -285,167 +308,121 @@ The `content_parts` column provides a structured view of the content, especially
 
 #### LLM interactions (plugin lifecycle)
 
-These events track the raw requests sent to and responses received from the
-LLM.
+These events track the raw requests sent to and responses received from the LLM.
 
-<table>
-  <thead>
-    <tr>
-      <th><strong>Event Type</strong></th>
-      <th><strong>Content (JSON) Structure</strong></th>
-      <th><strong>Attributes (JSON)</strong></th>
-      <th><strong>Example Content (Simplified)</strong></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><p><pre>LLM_REQUEST</pre></p></td>
-      <td><p><pre>
+**1. LLM_REQUEST**
+
+Captures the prompt sent to the model, including conversation history and system instructions.
+
+```json
 {
-  "prompt": [
-    {"role": "user", "content": "..."}
-  ],
-  "system_prompt": "..."
-}
-</pre></p></td>
-      <td><p><pre>
-{
-  "tools": ["tool_a", "tool_b"],
-  "llm_config": {"temperature": 0.5},
-  "root_agent_name": "my_root_agent"
-}
-</pre></p></td>
-      <td><p><pre>
-{
-  "prompt": [
-    {"role": "user", "content": "What is the capital of France?"}
-  ],
-  "system_prompt": "You are a helpful geography assistant."
-}
-</pre></p></td>
-    </tr>
-    <tr>
-      <td><p><pre>LLM_RESPONSE</pre></p></td>
-      <td><p><pre>
-{
-  "response": "...",
-  "usage": {...}
-}
-</pre></p></td>
-      <td><p><pre>
-{
-  "model_version": "gemini-2.5-pro-001",
-  "usage_metadata": {
-    "prompt_token_count": 15,
-    "candidates_token_count": 7,
-    "total_token_count": 22
+  "event_type": "LLM_REQUEST",
+  "content": {
+    "system_prompt": "You are a helpful assistant...",
+    "prompt": [
+      {
+        "role": "user",
+        "content": "hello how are you today"
+      }
+    ]
+  },
+  "attributes": {
+    "model": "gemini-2.5-flash",
+    "llm_config": {
+      "temperature": 0.5,
+      "top_p": 0.9
+    }
   }
 }
-</pre></p></td>
-      <td><p><pre>
+```
+
+**2. LLM_RESPONSE**
+
+Captures the model's output and token usage statistics.
+
+```json
 {
-  "response": "The capital of France is Paris.",
-  "usage": {
-    "prompt": 15,
-    "completion": 7,
-    "total": 22
+  "event_type": "LLM_RESPONSE",
+  "content": {
+    "response": "text: 'Hello! I'm doing well...'",
+    "usage": {
+      "completion": 19,
+      "prompt": 10129,
+      "total": 10148
+    }
+  },
+  "attributes": {
+    "usage_metadata": {
+      "prompt_token_count": 10129,
+      "candidates_token_count": 19,
+      "total_token_count": 10148
+    }
+  },
+  "latency_ms": {
+    "time_to_first_token_ms": 2579,
+    "total_ms": 2579
   }
 }
-</pre></p></td>
-    </tr>
-    <tr>
-      <td><p><pre>LLM_ERROR</pre></p></td>
-      <td><p><pre>null</pre></p></td>
-      <td><p><pre>{}</pre></p></td>
-      <td><p><pre>null (See error_message column)</pre></p></td>
-    </tr>
-  </tbody>
-</table>
+```
 
 #### Tool usage (plugin lifecycle)
 
 These events track the execution of tools by the agent.
 
-<table>
-  <thead>
-    <tr>
-      <th><strong>Event Type</strong></th>
-      <th><strong>Content (JSON) Structure</strong></th>
-      <th><strong>Attributes (JSON)</strong></th>
-      <th><strong>Example Content</strong></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><p><pre>TOOL_STARTING</pre></p></td>
-      <td><p><pre>
+**3. TOOL_STARTING**
+
+Logged when an agent begins executing a tool.
+
+```json
 {
-  "tool": "...",
-  "args": {...}
+  "event_type": "TOOL_STARTING",
+  "content": {
+    "tool": "list_dataset_ids",
+    "args": {
+      "project_id": "bigquery-public-data"
+    }
+  }
 }
-</pre></p></td>
-      <td><p><pre>{}</pre></p></td>
-      <td><p><pre>
-{"tool": "list_datasets", "args": {"project_id": "my-project"}}
-</pre></p></td>
-    </tr>
-    <tr>
-      <td><p><pre>TOOL_COMPLETED</pre></p></td>
-      <td><p><pre>
+```
+
+**4. TOOL_COMPLETED**
+
+Logged when a tool execution finishes.
+
+```json
 {
-  "tool": "...",
-  "result": "..."
+  "event_type": "TOOL_COMPLETED",
+  "content": {
+    "tool": "list_dataset_ids",
+    "result": [
+      "austin_311",
+      "austin_bikeshare"
+    ]
+  },
+  "latency_ms": {
+    "total_ms": 467
+  }
 }
-</pre></p></td>
-      <td><p><pre>{}</pre></p></td>
-      <td><p><pre>
-{"tool": "list_datasets", "result": ["ds1", "ds2"]}
-</pre></p></td>
-    </tr>
-    <tr>
-      <td><p><pre>TOOL_ERROR</pre></p></td>
-      <td><p><pre>
-{
-  "tool": "...",
-  "args": {...}
-}
-</pre></p></td>
-      <td><p><pre>{}</pre></p></td>
-      <td><p><pre>
-{"tool": "list_datasets", "args": {}}
-</pre></p></td>
-    </tr>
-  </tbody>
-</table>
+```
 
 #### State Management
 
 These events track changes to the agent's state, typically triggered by tools.
 
-<table>
-  <thead>
-    <tr>
-      <th><strong>Event Type</strong></th>
-      <th><strong>Content (JSON) Structure</strong></th>
-      <th><strong>Attributes (JSON)</strong></th>
-      <th><strong>Example Content</strong></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><p><pre>STATE_DELTA</pre></p></td>
-      <td><p><pre>
+**5. STATE_DELTA**
+
+Tracks changes to the agent's internal state (e.g., token cache updates).
+
+```json
 {
-  "state_delta": {...}
+  "event_type": "STATE_DELTA",
+  "attributes": {
+    "state_delta": {
+      "bigquery_token_cache": "{\"token\": \"ya29...\", \"expiry\": \"...\"}"
+    }
+  }
 }
-</pre></p></td>
-      <td><p><pre>{}</pre></p></td>
-      <td><p><pre>
-{"state_delta": {"order_id": "123", "status": "confirmed"}}
-</pre></p></td>
-    </tr>
-  </tbody>
-</table>
+```
 
 #### Agent lifecycle & Generic Events
 
