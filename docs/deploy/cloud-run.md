@@ -175,7 +175,7 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
 
     ##### Passing gcloud CLI Arguments
 
-    To pass specific gcloud flags through the `adk deploy cloud_run` command, use the double-dash separator (`--`) after the ADK arguments. Any flags following the `--` will be passed directly to the underlying gcloud command.
+    To pass specific gcloud flags through the `adk deploy cloud_run` command, use the double-dash separator (`--`) after the ADK arguments. Any flags (except ADK-managed) following the `--` will be passed directly to the underlying gcloud command.
 
     ###### Syntax Example:
 
