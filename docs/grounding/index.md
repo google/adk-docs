@@ -1,4 +1,4 @@
-# Grounding and RAG in ADK
+# Grounding agents with data
 
 Grounding is the process that connects your AI agents to external information sources, allowing them to generate more accurate, current, and verifiable responses. By grounding agent responses in authoritative data, you can reduce hallucinations and provide users with answers backed by reliable sources.
 
