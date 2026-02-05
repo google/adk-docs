@@ -3,6 +3,9 @@
 # Generates CLI reference documentation for adk-python using Sphinx and
 # sphinx-click. Outputs HTML to docs/api-reference/cli/.
 #
+# This script runs in an isolated temporary directory and does not
+# modify any existing adk-python clones or Python environments.
+#
 # Prerequisites: uv, git, make
 # Run from: adk-docs repository root
 #
