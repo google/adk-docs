@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+#
+# Generates CLI reference documentation for adk-python using Sphinx and
+# sphinx-click. Outputs HTML to docs/api-reference/cli/.
+#
+# Prerequisites: uv, git, make
+# Run from: adk-docs repository root
+#
+# Usage: bash scripts/generate-python-cli-docs.sh <version>
+# Example: bash scripts/generate-python-cli-docs.sh 1.24.0
+
+set -e
+
+# Validate arguments
+VERSION="${1:-}"
+if [[ -z "$VERSION" ]]; then
+  echo "Usage: $0 <version>"
+  echo "Example: $0 1.24.0"
+  exit 1
+fi
+
+# Validate working directory
+TARGET_DIR="docs/api-reference/cli"
+if [[ ! -d "$TARGET_DIR" ]]; then
+  echo "Error: Run this script from the adk-docs repository root."
+  exit 1
+fi
+
+# Create temp workspace
+WORK_DIR=$(mktemp -d)
+trap "rm -rf $WORK_DIR" EXIT
+echo "Using temp workspace: $WORK_DIR"
+
+# Build docs in temp workspace
+pushd "$WORK_DIR" > /dev/null
+
+# Set up Python environment
+uv venv
+source .venv/bin/activate
+
+# Clone and install adk-python
+echo "Cloning adk-python v${VERSION}..."
+git clone --depth 1 --branch "v${VERSION}" https://github.com/google/adk-python adk-python
+uv pip install sphinx sphinx-click ./adk-python
+
+# Configure Sphinx
+echo "Configuring Sphinx..."
+mkdir docs_build && cd docs_build
+sphinx-quickstart -q -p "ADK CLI" -a "Google" -v "${VERSION}" --ext-autodoc
+echo "extensions.append('sphinx_click')" >> conf.py
+echo "html_sidebars = {'**': ['searchbox.html']}" >> conf.py
+
+# Write RST file
+cat > index.rst <<EOF
+ADK CLI documentation
+=====================
+
+This page contains the auto-generated command-line reference for ADK ${VERSION}.
+
+.. contents::
+   :local:
+   :depth: 2
+
+.. click:: google.adk.cli.cli_tools_click:main
+   :prog: adk
+   :nested: full
+EOF
+
+# Build HTML
+echo "Building HTML..."
+make html
+
+popd > /dev/null
+
+# Copy to output directory
+echo "Copying to $TARGET_DIR..."
+rm -rf "$TARGET_DIR"/*
+cp -r "$WORK_DIR/docs_build/_build/html"/* "$TARGET_DIR/"
+
+echo "Done."
