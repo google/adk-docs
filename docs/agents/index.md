@@ -51,4 +51,5 @@ Now that you have an overview of the different agent types available in ADK, div
 * [**Workflow Agents:**](workflow-agents/index.md) Learn how to orchestrate tasks using `SequentialAgent`, `ParallelAgent`, and `LoopAgent` for structured and predictable processes.
 * [**Custom Agents:**](custom-agents.md) Discover the principles of extending `BaseAgent` to build agents with unique logic and integrations tailored to your specific needs.
 * [**Multi-Agents:**](multi-agents.md) Understand how to combine different agent types to create sophisticated, collaborative systems capable of tackling complex problems.
+* [**Agent Optimization:**](optimization.md) Learn how to optimize agent performance by fine-tuning agent instructions.
 * [**Models:**](/adk-docs/agents/models/) Learn about the different LLM integrations available and how to select the right model for your agents.
