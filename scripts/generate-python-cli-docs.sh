@@ -19,6 +19,19 @@ if [[ -z "$VERSION" ]]; then
   exit 1
 fi
 
+if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+  echo "Error: Version must be in X.Y.Z format (e.g., 1.24.0)"
+  exit 1
+fi
+
+# Check prerequisites
+for cmd in uv git make; do
+  if ! command -v "$cmd" &> /dev/null; then
+    echo "Error: $cmd is required but not installed."
+    exit 1
+  fi
+done
+
 # Validate working directory
 TARGET_DIR="docs/api-reference/cli"
 if [[ ! -d "$TARGET_DIR" ]]; then
@@ -28,11 +41,11 @@ fi
 
 # Create temp workspace
 WORK_DIR=$(mktemp -d)
-trap "rm -rf $WORK_DIR" EXIT
+trap 'rm -rf "$WORK_DIR"' EXIT
 echo "Using temp workspace: $WORK_DIR"
 
 # Build docs in temp workspace
-pushd "$WORK_DIR" > /dev/null
+pushd "$WORK_DIR" > /dev/null || exit 1
 
 # Set up Python environment
 uv venv
@@ -70,7 +83,7 @@ EOF
 echo "Building HTML..."
 make html
 
-popd > /dev/null
+popd > /dev/null || exit 1
 
 # Copy to output directory
 echo "Copying to $TARGET_DIR..."
