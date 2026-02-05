@@ -146,6 +146,8 @@ For `region`, you can find a list of the supported regions on the
 To learn about the CLI options for the `adk deploy agent_engine` command, see the
 [ADK CLI Reference](https://google.github.io/adk-docs/api-reference/cli/cli.html#adk-deploy-agent-engine).
 
+> **Note:** To prevent deployment failures, `adk deploy agent_engine` can validate that your agent module can be imported correctly. This check, which is off by default, verifies that there are no missing dependencies or import errors. You can enable it by adding the `--validate-agent-import` flag. If you are using the Python API, set `skip_agent_import_validation=False` to perform this check.
+
 ### Deploy command output
 
 Once successfully deployed, you should see the following output:
