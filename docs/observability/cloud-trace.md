@@ -222,7 +222,7 @@ async def main():
         )
 
     user_content = Content(
-        role="user", parts=[Part(text="what's weather in paris?")]
+        role="user", parts=[Part(text="what\'s weather in paris?")]
     )
 
     final_response_content = "No response"
@@ -254,6 +254,14 @@ And then you will see all available traces produced by ADK agent which configure
 If you click on one of the traces, you will see the waterfall view of the detailed process, similar to what we see in the web development UI with `adk web` command.
 
 ![cloud-trace](../assets/cloud-trace3.png)
+
+## Privacy and Data Capture
+
+You can control the logging of sensitive content in traces using environment variables. This is important for privacy and compliance. ADK tracing aligns with OpenTelemetry Semantic Conventions for Generative AI.
+
+-   **ADK_CAPTURE_MESSAGE_CONTENT_IN_SPANS**: Set this environment variable to 'false' or '0' to disable capturing potentially personally identifiable information (PII) such as LLM requests, LLM responses, and tool arguments in ADK spans. By default, this is set to 'true'.
+
+-   **OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT**: Set this environment variable to 'true' or '1' to enable logging of prompt and response content in spans instrumented by the Generative AI instrumentation.
 
 ## Resources
 
