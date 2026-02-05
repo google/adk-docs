@@ -318,6 +318,7 @@ nav:
       - BigQuery Agent Analytics: observability/bigquery-agent-analytics.md
       - AgentOps: observability/agentops.md
       - Arize AX: observability/arize-ax.md
+      - Datadog: observability/datadog.md
       - Freeplay: observability/freeplay.md
       - MLflow: observability/mlflow.md
       - Monocle: observability/monocle.md
