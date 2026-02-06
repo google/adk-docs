@@ -1,0 +1,420 @@
+<!DOCTYPE html><html class="default" lang="en" data-base="../"><head><meta charset="utf-8"/><meta http-equiv="x-ua-compatible" content="IE=edge"/><title>ParallelAgent | ADK for TypeScript: API Reference</title><meta name="description" content="Documentation for ADK for TypeScript: API Reference"/><meta name="viewport" content="width=device-width, initial-scale=1"/><link rel="stylesheet" href="../assets/style.css"/><link rel="stylesheet" href="../assets/highlight.css"/><script defer src="../assets/main.js"></script><script async src="../assets/icons.js" id="tsd-icons-script"></script><script async src="../assets/search.js" id="tsd-search-script"></script><script async src="../assets/navigation.js" id="tsd-nav-script"></script><script async src="../assets/hierarchy.js" id="tsd-hierarchy-script"></script><style type="text/css">
+/* typedoc-theme-fresh */
+
+/* @view-transition {
+  navigation: auto;
+} */
+
+:root {
+  --light-color-background: #fafafe;
+  --light-color-background-active: #eaeced;
+  --light-color-text: #222222;
+  --light-color-text-aside: #5e5e5e;
+
+  --dark-color-background: #1a1a1c;
+  --dark-color-background-active: #2f2f2b;
+  --dark-color-text: #dfdfd6;
+  --dark-color-text-aside: #b0b0b0;
+
+  --dim-header-height: 2.5rem;
+  --dim-footer-height: 0px;
+
+  --light-code-background: #ffffff18;
+  --dark-code-background: #00000018;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+  & > .container.container-main {
+    margin: 0 auto;
+    margin-top: var(--dim-header-height);
+    --dim-container-main-margin-y: 0px;
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  ::selection {
+    background-color: #11111a20;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  ::selection {
+    background-color: #bbbbff48;
+  }
+}
+
+:root[data-theme="light"] {
+  ::selection {
+    background-color: #11111a20;
+  }
+}
+
+:root[data-theme="dark"] {
+  ::selection {
+    background-color: #bbbbff48;
+  }
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 500;
+}
+
+.tsd-page-toolbar {
+  position: fixed;
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--color-background) 80%, transparent) 60%,
+    transparent
+  );
+  backdrop-filter: blur(2px);
+  border-bottom: none;
+
+  .title {
+    font-weight: 500;
+    font-size: 18px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    min-width: 0;
+    margin-right: auto;
+
+    &:hover {
+      color: var(--color-contrast-text);
+      text-decoration: none;
+    }
+  }
+
+  .tsd-theme-toggle {
+    display: flex;
+    position: relative;
+    margin-right: 12px;
+    color: var(--color-text-aside);
+    
+    select {
+      cursor: pointer;
+      border: 1px solid var(--color-background-active);
+      border-radius: 4px;
+      padding: 6px 8px;
+      padding-left: 32px;  /* Space for the icon */
+      font-size: 14px;
+      background: transparent;
+      transition: background-color 200ms;
+      color: var(--color-text-aside);
+      
+      /* for Firefox and Chrome: these are inconsistent */
+      -moz-appearance: none;
+      -webkit-appearance: none;
+      
+      &:hover {
+        background-color: var(--color-background-active);
+      }
+    }
+  }
+}
+
+.tsd-widget {
+  display: flex;
+  align-items: center;
+  height: auto;
+  width: auto;
+  padding: 4px;
+  font-size: 14px;
+  border-radius: 4px;
+  transition: background-color 200ms;
+  color: var(--color-text-aside);
+  opacity: 100%;
+
+  &:hover {
+    background-color: var(--color-background-active);
+  }
+}
+
+#tsd-search-results {
+  & > li {
+    padding-inline: 6px;
+    transition: background-color 200ms;
+  }
+
+  a:hover {
+    text-decoration: none;
+  }
+}
+
+.col-content {
+  overflow: hidden;
+  padding-block: 24px;
+
+  & > .tsd-typography {
+    padding-bottom: 24px;
+  }
+}
+
+.col-sidebar {
+  top: var(--dim-header-height);  /* Relevant for tablet layout. */
+}
+
+.site-menu {
+  top: var(--dim-header-height);
+  padding-block: 24px;
+  box-sizing: border-box;
+}
+
+.page-menu {
+  top: var(--dim-header-height);
+  padding-block: 48px 24px;
+  box-sizing: border-box;
+}
+
+.tsd-navigation,
+.tsd-page-navigation {
+  > details {
+    margin-bottom: 8px;
+  }
+
+  a {
+    border-radius: 4px;
+    padding-inline: 6px;
+    margin-bottom: 2px;
+  }
+  a:hover {
+    text-decoration: none;
+    background-color: var(--color-background-active);
+  }
+  a.current {
+    background-color: var(--color-background-active);
+    span {
+      color: var(--color-contrast-text);
+    }
+  }
+}
+
+.tsd-navigation {
+  & > a {
+    /* Top-level navigation anchor. */
+    margin-block: 16px;
+    font-size: 18px;
+    background: transparent !important;
+    padding: 0;
+    
+    &:hover {
+      color: var(--color-contrast-text);
+    }
+  }
+}
+
+.tsd-page-navigation {
+  border-left: 1px solid var(--color-background-active);
+  padding-left: 4px;
+  padding-block: 4px;
+}
+
+.tsd-page-navigation-section {
+  & > summary > svg {
+    margin-right: 0;
+  }
+  & > div {
+    margin-left: 24px;
+  }
+}
+
+.tsd-page-title {
+  color: var(--color-contrast-text);
+}
+
+h1 > code.tsd-tag {
+  margin-left: 12px;
+}
+
+code.tsd-tag {
+  display: inline-block;
+  transform: translateY(-0.1em);
+  background: var(--color-background-secondary);
+  border: 0;
+  border-radius: 8px;
+  padding: 2px 4px;
+}
+
+.tsd-breadcrumb {
+  margin-bottom: 12px;
+  li:after {
+    content: " › ";
+    opacity: 0.4;
+  }
+  li:last-of-type::after {
+    content: "";
+  }
+}
+
+.tsd-signature,
+.tsd-signatures .tsd-signature {
+  border: 0;
+  border-radius: 8px;
+  background: var(--color-background-secondary);
+  font-weight: 500;
+  padding: 10px 8px;
+  line-height: 1.3;
+}
+
+.tsd-anchor-icon {
+  color: var(--color-text-aside);
+  padding-bottom: 1px;
+}
+
+.tsd-kind-icon {
+  filter: grayscale(0.5) opacity(0.8);
+}
+
+/* Accordion icon */
+.tsd-accordion-summary > svg {
+  color: var(--color-text-aside);
+  opacity: 50%;
+  stroke-width: 1px;
+  transition: transform 200ms ease-in-out;
+}
+
+.tsd-accordion-summary > svg:has(+ h2) {
+  height: 24px;
+  width: 24px;
+}
+
+/* Desktop sizing */
+@media (min-width: 1200px) {
+  .container-main {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 2.5fr) minmax(0, 17rem);
+  }
+
+  .site-menu {
+    padding-right: 8px;
+  }
+  .page-menu {
+    padding-left: 24px;
+  }
+
+  .tsd-widget.menu {
+    display: none;
+  }
+}
+
+/* Tablet sizing */
+@media (min-width: 770px) and (max-width: 1199px) {
+  .page-menu {
+    padding-block: 24px 24px;
+  }
+  .site-menu {
+    padding-block: 0 24px;
+    margin-top: 0;
+  }
+
+  .tsd-widget.menu {
+    display: none;
+  }
+
+  .lg-show {
+    display: none !important;
+  }
+}
+
+/* Mobile sizing */
+@media (max-width: 769px) {
+  .page-menu {
+    display: none;
+  }
+  .site-menu {
+    padding: 0;
+  }
+
+  .container {
+    padding: 0 1rem;
+  }
+
+  .has-menu .col-sidebar {
+    padding: 0 1rem;
+    max-height: 100dvh;
+  }
+
+  .lg-show {
+    display: none !important;
+  }
+  .md-show {
+    display: none !important;
+  }
+}
+</style></head><body><script>document.documentElement.dataset.theme = localStorage.getItem("tsd-theme") || "os";document.body.style.display="none";setTimeout(() => window.app?app.showPage():document.body.style.removeProperty("display"),500)</script><header class="tsd-page-toolbar"><div class="tsd-toolbar-contents container"><a href="../index.html" class="title">ADK for TypeScript: API Reference</a><div id="tsd-toolbar-links"></div><div class="tsd-theme-toggle md-show" style="position: relative"><div style="position: absolute; left: 8px; top: 4px; pointer-events: none"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sun-moon-icon lucide-sun-moon"><path d="M12 2v2"></path><path d="M14.837 16.385a6 6 0 1 1-7.223-7.222c.624-.147.97.66.715 1.248a4 4 0 0 0 5.26 5.259c.589-.255 1.396.09 1.248.715"></path><path d="M16 12a4 4 0 0 0-4-4"></path><path d="m19 5-1.256 1.256"></path><path d="M20 12h2"></path></svg></div><select id="tsd-theme"><option value="os">System</option><option value="light">Light</option><option value="dark">Dark</option></select></div><button id="tsd-search-trigger" class="tsd-widget" aria-label="Search" style="
+              border: 1px solid var(--color-background-active);
+              border-radius: 4px;
+              margin-left: 8px;
+            "><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-search-icon lucide-search" style="margin-bottom: 1px; margin-left: 4px; margin-right: 4px;"><path d="m21 21-4.34-4.34"></path><circle cx="11" cy="11" r="8"></circle></svg><span class="lg-show" style="margin-left: 4px; margin-right: 12ch;">Search…</span></button><dialog id="tsd-search" aria-label="Search"><input role="combobox" id="tsd-search-input" aria-controls="tsd-search-results" aria-autocomplete="list" aria-expanded="true" autocapitalize="off" autocomplete="off" placeholder="Search the docs" maxLength="100"/><ul role="listbox" id="tsd-search-results"></ul><div id="tsd-search-status" aria-live="polite" aria-atomic="true"><div>Preparing search index...</div></div></dialog><a href="#" class="tsd-widget menu" id="tsd-toolbar-menu-trigger" data-toggle="menu" aria-label="Menu" style="
+              border: 1px solid var(--color-background-active);
+              border-radius: 4px;
+              margin-left: 4px;
+            "><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-menu-icon lucide-menu" style="margin-left: 4px; margin-right: 4px;"><path d="M4 5h16"></path><path d="M4 12h16"></path><path d="M4 19h16"></path></svg></a></div></header><div class="container container-main"><div class="col-content"><div class="tsd-page-title"><ul class="tsd-breadcrumb" aria-label="Breadcrumb"><li><a href="" aria-current="page">ParallelAgent</a></li></ul><h1>Class ParallelAgent</h1></div><section class="tsd-panel tsd-comment"><div class="tsd-comment tsd-typography"><p>A shell agent that run its sub-agents in parallel in isolated manner.</p>
+<p>This approach is beneficial for scenarios requiring multiple perspectives or
+attempts on a single task, such as:</p>
+<ul>
+<li>Running different algorithms simultaneously.</li>
+<li>Generating multiple responses for review by a subsequent evaluation agent.</li>
+</ul>
+</div></section><section class="tsd-panel tsd-hierarchy" data-refl="554"><h4>Hierarchy (<a href="../hierarchy.html#ParallelAgent">View Summary</a>)</h4><ul class="tsd-hierarchy"><li class="tsd-hierarchy-item"><a href="BaseAgent.html" class="tsd-signature-type tsd-kind-class">BaseAgent</a><ul class="tsd-hierarchy"><li class="tsd-hierarchy-item"><span class="tsd-hierarchy-target">ParallelAgent</span></li></ul></li></ul></section><aside class="tsd-sources"><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/agents/parallel_agent.ts#L21">core/src/agents/parallel_agent.ts:21</a></li></ul></aside><div style="margin-top: 64px"></div><details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Constructors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg><h2>Constructors</h2></summary><section><section class="tsd-panel tsd-member"><h3 class="tsd-anchor-link" id="constructor"><span>constructor</span><a href="#constructor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures"><li class=""><div class="tsd-signature tsd-anchor-link" id="constructorparallelagent"><span class="tsd-signature-keyword">new</span> <span class="tsd-kind-constructor-signature">ParallelAgent</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">config</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">BaseAgentConfig</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">ParallelAgent</a><a href="#constructorparallelagent" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div><div class="tsd-description"><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><span><span class="tsd-kind-parameter">config</span>: <span class="tsd-signature-type">BaseAgentConfig</span></span></li></ul></div><h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">ParallelAgent</a></h4><aside class="tsd-sources"><p>Inherited from <a href="BaseAgent.html">BaseAgent</a>.<a href="BaseAgent.html#constructor">constructor</a></p><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/agents/base_agent.ts#L104">core/src/agents/base_agent.ts:104</a></li></ul></aside></div></li></ul></section></section></details><details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg><h2>Properties</h2></summary><section><section class="tsd-panel tsd-member tsd-is-inherited"><h3 class="tsd-anchor-link" id="afteragentcallback"><code class="tsd-tag">Readonly</code><span>after<wbr/>Agent<wbr/>Callback</span><a href="#afteragentcallback" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><div class="tsd-signature"><span class="tsd-kind-property">afterAgentCallback</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">SingleAgentCallback</span><span class="tsd-signature-symbol">[]</span></div><div class="tsd-comment tsd-typography"><p>Callback or list of callbacks to be invoked after the agent run.</p>
+<p>When a list of callbacks is provided, the callbacks will be called in the
+order they are listed until a callback does not return undefined.</p>
+</div><div class="tsd-comment tsd-typography"><div class="tsd-tag-param"><h4 class="tsd-anchor-link" id="param-callbackcontext">Param: callbackContext:<a href="#param-callbackcontext" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>MUST be named 'callbackContext' (enforced).</p>
+</div><div class="tsd-tag-returns"><h4 class="tsd-anchor-link" id="returns">Returns<a href="#returns" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Content: The content to return to the user. When the content is
+present, the provided content will be used as agent response and
+appended to event history as agent response.</p>
+</div></div><aside class="tsd-sources"><p>Inherited from <a href="BaseAgent.html">BaseAgent</a>.<a href="BaseAgent.html#afteragentcallback">afterAgentCallback</a></p><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/agents/base_agent.ts#L102">core/src/agents/base_agent.ts:102</a></li></ul></aside></section><section class="tsd-panel tsd-member tsd-is-inherited"><h3 class="tsd-anchor-link" id="beforeagentcallback"><code class="tsd-tag">Readonly</code><span>before<wbr/>Agent<wbr/>Callback</span><a href="#beforeagentcallback" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><div class="tsd-signature"><span class="tsd-kind-property">beforeAgentCallback</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">SingleAgentCallback</span><span class="tsd-signature-symbol">[]</span></div><div class="tsd-comment tsd-typography"><p>Callback or list of callbacks to be invoked before the agent run.</p>
+<p>When a list of callbacks is provided, the callbacks will be called in the
+order they are listed until a callback does not return undefined.</p>
+</div><div class="tsd-comment tsd-typography"><div class="tsd-tag-param"><h4 class="tsd-anchor-link" id="param-callbackcontext-1">Param: callbackContext:<a href="#param-callbackcontext-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>MUST be named 'callbackContext' (enforced).</p>
+</div><div class="tsd-tag-returns"><h4 class="tsd-anchor-link" id="returns-1">Returns<a href="#returns-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>Content: The content to return to the user. When the content is
+present, the agent run will be skipped and the provided content will be
+returned to user.</p>
+</div></div><aside class="tsd-sources"><p>Inherited from <a href="BaseAgent.html">BaseAgent</a>.<a href="BaseAgent.html#beforeagentcallback">beforeAgentCallback</a></p><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/agents/base_agent.ts#L88">core/src/agents/base_agent.ts:88</a></li></ul></aside></section><section class="tsd-panel tsd-member tsd-is-inherited"><h3 class="tsd-anchor-link" id="description"><code class="tsd-tag">Optional</code> <code class="tsd-tag">Readonly</code><span>description</span><a href="#description" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><div class="tsd-signature"><span class="tsd-kind-property">description</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div><div class="tsd-comment tsd-typography"><p>Description about the agent's capability.</p>
+<p>The model uses this to determine whether to delegate control to the agent.
+One-line description is enough and preferred.</p>
+</div><aside class="tsd-sources"><p>Inherited from <a href="BaseAgent.html">BaseAgent</a>.<a href="BaseAgent.html#description">description</a></p><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/agents/base_agent.ts#L51">core/src/agents/base_agent.ts:51</a></li></ul></aside></section><section class="tsd-panel tsd-member tsd-is-inherited"><h3 class="tsd-anchor-link" id="name"><code class="tsd-tag">Readonly</code><span>name</span><a href="#name" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><div class="tsd-signature"><span class="tsd-kind-property">name</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div><div class="tsd-comment tsd-typography"><p>The agent's name.
+Agent name must be a JS identifier and unique within the agent tree.
+Agent name cannot be &quot;user&quot;, since it's reserved for end-user's input.</p>
+</div><aside class="tsd-sources"><p>Inherited from <a href="BaseAgent.html">BaseAgent</a>.<a href="BaseAgent.html#name">name</a></p><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/agents/base_agent.ts#L43">core/src/agents/base_agent.ts:43</a></li></ul></aside></section><section class="tsd-panel tsd-member tsd-is-inherited"><h3 class="tsd-anchor-link" id="parentagent"><code class="tsd-tag">Optional</code><span>parent<wbr/>Agent</span><a href="#parentagent" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><div class="tsd-signature"><span class="tsd-kind-property">parentAgent</span><span class="tsd-signature-symbol">?:</span> <a href="BaseAgent.html" class="tsd-signature-type tsd-kind-class">BaseAgent</a></div><div class="tsd-comment tsd-typography"><p>The parent agent of this agent.</p>
+<p>Note that an agent can ONLY be added as sub-agent once.</p>
+<p>If you want to add one agent twice as sub-agent, consider to create two
+agent instances with identical config, but with different name and add them
+to the agent tree.</p>
+<p>The parent agent is the agent that created this agent.</p>
+</div><aside class="tsd-sources"><p>Inherited from <a href="BaseAgent.html">BaseAgent</a>.<a href="BaseAgent.html#parentagent">parentAgent</a></p><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/agents/base_agent.ts#L69">core/src/agents/base_agent.ts:69</a></li></ul></aside></section><section class="tsd-panel tsd-member tsd-is-inherited"><h3 class="tsd-anchor-link" id="rootagent"><code class="tsd-tag">Readonly</code><span>root<wbr/>Agent</span><a href="#rootagent" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><div class="tsd-signature"><span class="tsd-kind-property">rootAgent</span><span class="tsd-signature-symbol">:</span> <a href="BaseAgent.html" class="tsd-signature-type tsd-kind-class">BaseAgent</a></div><div class="tsd-comment tsd-typography"><p>Root agent of this agent.</p>
+</div><aside class="tsd-sources"><p>Inherited from <a href="BaseAgent.html">BaseAgent</a>.<a href="BaseAgent.html#rootagent">rootAgent</a></p><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/agents/base_agent.ts#L56">core/src/agents/base_agent.ts:56</a></li></ul></aside></section><section class="tsd-panel tsd-member tsd-is-inherited"><h3 class="tsd-anchor-link" id="subagents"><code class="tsd-tag">Readonly</code><span>sub<wbr/>Agents</span><a href="#subagents" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><div class="tsd-signature"><span class="tsd-kind-property">subAgents</span><span class="tsd-signature-symbol">:</span> <a href="BaseAgent.html" class="tsd-signature-type tsd-kind-class">BaseAgent</a><span class="tsd-signature-symbol">[]</span></div><div class="tsd-comment tsd-typography"><p>The sub-agents of this agent.</p>
+</div><aside class="tsd-sources"><p>Inherited from <a href="BaseAgent.html">BaseAgent</a>.<a href="BaseAgent.html#subagents">subAgents</a></p><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/agents/base_agent.ts#L74">core/src/agents/base_agent.ts:74</a></li></ul></aside></section></section></details><details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg><h2>Methods</h2></summary><section><section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited"><h3 class="tsd-anchor-link" id="createinvocationcontext"><code class="tsd-tag">Protected</code><span>create<wbr/>Invocation<wbr/>Context</span><a href="#createinvocationcontext" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures tsd-is-protected tsd-is-inherited"><li class="tsd-is-inherited"><div class="tsd-signature tsd-anchor-link" id="createinvocationcontext-1"><span class="tsd-kind-call-signature">createInvocationContext</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">parentContext</span><span class="tsd-signature-symbol">:</span> <a href="InvocationContext.html" class="tsd-signature-type tsd-kind-class">InvocationContext</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="InvocationContext.html" class="tsd-signature-type tsd-kind-class">InvocationContext</a><a href="#createinvocationcontext-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div><div class="tsd-description"><div class="tsd-comment tsd-typography"><p>Creates an invocation context for this agent.</p>
+</div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><span><span class="tsd-kind-parameter">parentContext</span>: <a href="InvocationContext.html" class="tsd-signature-type tsd-kind-class">InvocationContext</a></span><div class="tsd-comment tsd-typography"><p>The invocation context of the parent agent.</p>
+</div></li></ul></div><h4 class="tsd-returns-title">Returns <a href="InvocationContext.html" class="tsd-signature-type tsd-kind-class">InvocationContext</a></h4><p>The invocation context for this agent.</p>
+<aside class="tsd-sources"><p>Inherited from <a href="BaseAgent.html">BaseAgent</a>.<a href="BaseAgent.html#createinvocationcontext">createInvocationContext</a></p><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/agents/base_agent.ts#L237">core/src/agents/base_agent.ts:237</a></li></ul></aside></div></li></ul></section><section class="tsd-panel tsd-member tsd-is-inherited"><h3 class="tsd-anchor-link" id="findagent"><span>find<wbr/>Agent</span><a href="#findagent" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures tsd-is-inherited"><li class="tsd-is-inherited"><div class="tsd-signature tsd-anchor-link" id="findagent-1"><span class="tsd-kind-call-signature">findAgent</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">name</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="BaseAgent.html" class="tsd-signature-type tsd-kind-class">BaseAgent</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><a href="#findagent-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div><div class="tsd-description"><div class="tsd-comment tsd-typography"><p>Finds the agent with the given name in this agent and its descendants.</p>
+</div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><span><span class="tsd-kind-parameter">name</span>: <span class="tsd-signature-type">string</span></span><div class="tsd-comment tsd-typography"><p>The name of the agent to find.</p>
+</div></li></ul></div><h4 class="tsd-returns-title">Returns <a href="BaseAgent.html" class="tsd-signature-type tsd-kind-class">BaseAgent</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span></h4><p>The agent with the given name, or undefined if not found.</p>
+<aside class="tsd-sources"><p>Inherited from <a href="BaseAgent.html">BaseAgent</a>.<a href="BaseAgent.html#findagent">findAgent</a></p><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/agents/base_agent.ts#L206">core/src/agents/base_agent.ts:206</a></li></ul></aside></div></li></ul></section><section class="tsd-panel tsd-member tsd-is-inherited"><h3 class="tsd-anchor-link" id="findsubagent"><span>find<wbr/>Sub<wbr/>Agent</span><a href="#findsubagent" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures tsd-is-inherited"><li class="tsd-is-inherited"><div class="tsd-signature tsd-anchor-link" id="findsubagent-1"><span class="tsd-kind-call-signature">findSubAgent</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">name</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="BaseAgent.html" class="tsd-signature-type tsd-kind-class">BaseAgent</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><a href="#findsubagent-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div><div class="tsd-description"><div class="tsd-comment tsd-typography"><p>Finds the agent with the given name in this agent's descendants.</p>
+</div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><span><span class="tsd-kind-parameter">name</span>: <span class="tsd-signature-type">string</span></span><div class="tsd-comment tsd-typography"><p>The name of the agent to find.</p>
+</div></li></ul></div><h4 class="tsd-returns-title">Returns <a href="BaseAgent.html" class="tsd-signature-type tsd-kind-class">BaseAgent</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span></h4><p>The agent with the given name, or undefined if not found.</p>
+<aside class="tsd-sources"><p>Inherited from <a href="BaseAgent.html">BaseAgent</a>.<a href="BaseAgent.html#findsubagent">findSubAgent</a></p><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/agents/base_agent.ts#L220">core/src/agents/base_agent.ts:220</a></li></ul></aside></div></li></ul></section><section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited"><h3 class="tsd-anchor-link" id="handleafteragentcallback"><code class="tsd-tag">Protected</code><span>handle<wbr/>After<wbr/>Agent<wbr/>Callback</span><a href="#handleafteragentcallback" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures tsd-is-protected tsd-is-inherited"><li class="tsd-is-inherited"><div class="tsd-signature tsd-anchor-link" id="handleafteragentcallback-1"><span class="tsd-kind-call-signature">handleAfterAgentCallback</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">invocationContext</span><span class="tsd-signature-symbol">:</span> <a href="InvocationContext.html" class="tsd-signature-type tsd-kind-class">InvocationContext</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/Event.html" class="tsd-signature-type tsd-kind-interface">Event</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span><a href="#handleafteragentcallback-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div><div class="tsd-description"><div class="tsd-comment tsd-typography"><p>Runs the after agent callback if it exists.</p>
+</div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><span><span class="tsd-kind-parameter">invocationContext</span>: <a href="InvocationContext.html" class="tsd-signature-type tsd-kind-class">InvocationContext</a></span><div class="tsd-comment tsd-typography"><p>The invocation context of the agent.</p>
+</div></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/Event.html" class="tsd-signature-type tsd-kind-interface">Event</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span></h4><p>The event to return to the user, or undefined if no event is
+generated.</p>
+<aside class="tsd-sources"><p>Inherited from <a href="BaseAgent.html">BaseAgent</a>.<a href="BaseAgent.html#handleafteragentcallback">handleAfterAgentCallback</a></p><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/agents/base_agent.ts#L294">core/src/agents/base_agent.ts:294</a></li></ul></aside></div></li></ul></section><section class="tsd-panel tsd-member tsd-is-protected tsd-is-inherited"><h3 class="tsd-anchor-link" id="handlebeforeagentcallback"><code class="tsd-tag">Protected</code><span>handle<wbr/>Before<wbr/>Agent<wbr/>Callback</span><a href="#handlebeforeagentcallback" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures tsd-is-protected tsd-is-inherited"><li class="tsd-is-inherited"><div class="tsd-signature tsd-anchor-link" id="handlebeforeagentcallback-1"><span class="tsd-kind-call-signature">handleBeforeAgentCallback</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">invocationContext</span><span class="tsd-signature-symbol">:</span> <a href="InvocationContext.html" class="tsd-signature-type tsd-kind-class">InvocationContext</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/Event.html" class="tsd-signature-type tsd-kind-interface">Event</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span><a href="#handlebeforeagentcallback-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div><div class="tsd-description"><div class="tsd-comment tsd-typography"><p>Runs the before agent callback if it exists.</p>
+</div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><span><span class="tsd-kind-parameter">invocationContext</span>: <a href="InvocationContext.html" class="tsd-signature-type tsd-kind-class">InvocationContext</a></span><div class="tsd-comment tsd-typography"><p>The invocation context of the agent.</p>
+</div></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/Event.html" class="tsd-signature-type tsd-kind-interface">Event</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">&gt;</span></h4><p>The event to return to the user, or undefined if no event is
+generated.</p>
+<aside class="tsd-sources"><p>Inherited from <a href="BaseAgent.html">BaseAgent</a>.<a href="BaseAgent.html#handlebeforeagentcallback">handleBeforeAgentCallback</a></p><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/agents/base_agent.ts#L252">core/src/agents/base_agent.ts:252</a></li></ul></aside></div></li></ul></section><section class="tsd-panel tsd-member tsd-is-inherited"><h3 class="tsd-anchor-link" id="runasync"><span>run<wbr/>Async</span><a href="#runasync" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures tsd-is-inherited"><li class="tsd-is-inherited"><div class="tsd-signature tsd-anchor-link" id="runasync-1"><span class="tsd-kind-call-signature">runAsync</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">parentContext</span><span class="tsd-signature-symbol">:</span> <a href="InvocationContext.html" class="tsd-signature-type tsd-kind-class">InvocationContext</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">AsyncGenerator</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/Event.html" class="tsd-signature-type tsd-kind-interface">Event</a><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><a href="#runasync-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div><div class="tsd-description"><div class="tsd-comment tsd-typography"><p>Entry method to run an agent via text-based conversation.</p>
+</div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><span><span class="tsd-kind-parameter">parentContext</span>: <a href="InvocationContext.html" class="tsd-signature-type tsd-kind-class">InvocationContext</a></span><div class="tsd-comment tsd-typography"><p>The invocation context of the parent agent.</p>
+</div></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">AsyncGenerator</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/Event.html" class="tsd-signature-type tsd-kind-interface">Event</a><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><p>An AsyncGenerator that yields the events generated by the agent.</p>
+<div class="tsd-comment tsd-typography"><div class="tsd-tag-yields"><h4 class="tsd-anchor-link" id="yields">Yields<a href="#yields" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>The events generated by the agent.</p>
+</div></div><aside class="tsd-sources"><p>Inherited from <a href="BaseAgent.html">BaseAgent</a>.<a href="BaseAgent.html#runasync">runAsync</a></p><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/agents/base_agent.ts#L125">core/src/agents/base_agent.ts:125</a></li></ul></aside></div></li></ul></section><section class="tsd-panel tsd-member tsd-is-protected"><h3 class="tsd-anchor-link" id="runasyncimpl"><code class="tsd-tag">Protected</code><span>run<wbr/>Async<wbr/>Impl</span><a href="#runasyncimpl" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures tsd-is-protected"><li class=""><div class="tsd-signature tsd-anchor-link" id="runasyncimpl-1"><span class="tsd-kind-call-signature">runAsyncImpl</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">context</span><span class="tsd-signature-symbol">:</span> <a href="InvocationContext.html" class="tsd-signature-type tsd-kind-class">InvocationContext</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">AsyncGenerator</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/Event.html" class="tsd-signature-type tsd-kind-interface">Event</a><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><a href="#runasyncimpl-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div><div class="tsd-description"><div class="tsd-comment tsd-typography"><p>Core logic to run this agent via text-based conversation.</p>
+</div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><span><span class="tsd-kind-parameter">context</span>: <a href="InvocationContext.html" class="tsd-signature-type tsd-kind-class">InvocationContext</a></span><div class="tsd-comment tsd-typography"><p>The invocation context of the agent.</p>
+</div></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">AsyncGenerator</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/Event.html" class="tsd-signature-type tsd-kind-interface">Event</a><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><p>An AsyncGenerator that yields the events generated by the agent.</p>
+<div class="tsd-comment tsd-typography"><div class="tsd-tag-yields"><h4 class="tsd-anchor-link" id="yields-1">Yields<a href="#yields-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>The events generated by the agent.</p>
+</div></div><aside class="tsd-sources"><p>Overrides <a href="BaseAgent.html">BaseAgent</a>.<a href="BaseAgent.html#runasyncimpl">runAsyncImpl</a></p><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/agents/parallel_agent.ts#L23">core/src/agents/parallel_agent.ts:23</a></li></ul></aside></div></li></ul></section><section class="tsd-panel tsd-member tsd-is-inherited"><h3 class="tsd-anchor-link" id="runlive"><span>run<wbr/>Live</span><a href="#runlive" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures tsd-is-inherited"><li class="tsd-is-inherited"><div class="tsd-signature tsd-anchor-link" id="runlive-1"><span class="tsd-kind-call-signature">runLive</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">parentContext</span><span class="tsd-signature-symbol">:</span> <a href="InvocationContext.html" class="tsd-signature-type tsd-kind-class">InvocationContext</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">AsyncGenerator</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/Event.html" class="tsd-signature-type tsd-kind-interface">Event</a><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><a href="#runlive-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div><div class="tsd-description"><div class="tsd-comment tsd-typography"><p>Entry method to run an agent via video/audio-based conversation.</p>
+</div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><span><span class="tsd-kind-parameter">parentContext</span>: <a href="InvocationContext.html" class="tsd-signature-type tsd-kind-class">InvocationContext</a></span><div class="tsd-comment tsd-typography"><p>The invocation context of the parent agent.</p>
+</div></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">AsyncGenerator</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/Event.html" class="tsd-signature-type tsd-kind-interface">Event</a><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><p>An AsyncGenerator that yields the events generated by the agent.</p>
+<div class="tsd-comment tsd-typography"><div class="tsd-tag-yields"><h4 class="tsd-anchor-link" id="yields-2">Yields<a href="#yields-2" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>The events generated by the agent.</p>
+</div></div><aside class="tsd-sources"><p>Inherited from <a href="BaseAgent.html">BaseAgent</a>.<a href="BaseAgent.html#runlive">runLive</a></p><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/agents/base_agent.ts#L168">core/src/agents/base_agent.ts:168</a></li></ul></aside></div></li></ul></section><section class="tsd-panel tsd-member tsd-is-protected"><h3 class="tsd-anchor-link" id="runliveimpl"><code class="tsd-tag">Protected</code><span>run<wbr/>Live<wbr/>Impl</span><a href="#runliveimpl" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3><ul class="tsd-signatures tsd-is-protected"><li class=""><div class="tsd-signature tsd-anchor-link" id="runliveimpl-1"><span class="tsd-kind-call-signature">runLiveImpl</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">context</span><span class="tsd-signature-symbol">:</span> <a href="InvocationContext.html" class="tsd-signature-type tsd-kind-class">InvocationContext</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">AsyncGenerator</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/Event.html" class="tsd-signature-type tsd-kind-interface">Event</a><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span><a href="#runliveimpl-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div><div class="tsd-description"><div class="tsd-comment tsd-typography"><p>Core logic to run this agent via video/audio-based conversation.</p>
+</div><div class="tsd-parameters"><h4 class="tsd-parameters-title">Parameters</h4><ul class="tsd-parameter-list"><li><span><span class="tsd-kind-parameter">context</span>: <a href="InvocationContext.html" class="tsd-signature-type tsd-kind-class">InvocationContext</a></span><div class="tsd-comment tsd-typography"><p>The invocation context of the agent.</p>
+</div></li></ul></div><h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">AsyncGenerator</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/Event.html" class="tsd-signature-type tsd-kind-interface">Event</a><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4><p>An AsyncGenerator that yields the events generated by the agent.</p>
+<div class="tsd-comment tsd-typography"><div class="tsd-tag-yields"><h4 class="tsd-anchor-link" id="yields-3">Yields<a href="#yields-3" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h4><p>The events generated by the agent.</p>
+</div></div><aside class="tsd-sources"><p>Overrides <a href="BaseAgent.html">BaseAgent</a>.<a href="BaseAgent.html#runliveimpl">runLiveImpl</a></p><ul><li>Defined in <a href="https://github.com/google/adk-js/blob/6d1a56a15e0864ce1e83b259bc9964333503ff5a/core/src/agents/parallel_agent.ts#L36">core/src/agents/parallel_agent.ts:36</a></li></ul></aside></div></li></ul></section></section></details></div><div class="col-sidebar"><div class="page-menu"><div class="tsd-page-navigation"><details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Constructors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Constructors</summary><div><a href="#constructor"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Constructor"><use href="../assets/icons.svg#icon-512"></use></svg><span>constructor</span></a></div></details><details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Properties</summary><div><a href="#afteragentcallback" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>after<wbr/>Agent<wbr/>Callback</span></a><a href="#beforeagentcallback" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>before<wbr/>Agent<wbr/>Callback</span></a><a href="#description" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>description</span></a><a href="#name" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>name</span></a><a href="#parentagent" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>parent<wbr/>Agent</span></a><a href="#rootagent" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>root<wbr/>Agent</span></a><a href="#subagents" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>sub<wbr/>Agents</span></a></div></details><details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Methods</summary><div><a href="#createinvocationcontext" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>create<wbr/>Invocation<wbr/>Context</span></a><a href="#findagent" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>find<wbr/>Agent</span></a><a href="#findsubagent" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>find<wbr/>Sub<wbr/>Agent</span></a><a href="#handleafteragentcallback" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>handle<wbr/>After<wbr/>Agent<wbr/>Callback</span></a><a href="#handlebeforeagentcallback" class="tsd-is-protected tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>handle<wbr/>Before<wbr/>Agent<wbr/>Callback</span></a><a href="#runasync" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>run<wbr/>Async</span></a><a href="#runasyncimpl" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>run<wbr/>Async<wbr/>Impl</span></a><a href="#runlive" class="tsd-is-inherited"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>run<wbr/>Live</span></a><a href="#runliveimpl" class="tsd-is-protected"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>run<wbr/>Live<wbr/>Impl</span></a></div></details></div></div><div class="site-menu"><nav class="tsd-navigation"><a href="../index.html">ADK for TypeScript: API Reference</a><ul class="tsd-small-nested-navigation" id="tsd-nav-container"><li>Loading...</li></ul></nav></div></div></div><div class="overlay"></div></body></html>
