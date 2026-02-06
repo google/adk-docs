@@ -60,6 +60,8 @@ agent application.
 ADK includes several plugins that you can add to your agent workflows
 immediately:
 
+*   [**Agent Simulator**](/adk-docs/evaluate/agent-simulator/):
+    Simulate tool behaviors, mock responses, and inject faults (errors, latency) for testing and evaluation.
 *   [**Reflect and Retry Tools**](/adk-docs/plugins/reflect-and-retry/):
     Tracks tool failures and intelligently retries tool requests.
 *   [**BigQuery Analytics**](/adk-docs/observability/bigquery-agent-analytics/):
