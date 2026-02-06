@@ -7,7 +7,7 @@ catalog_icon: /adk-docs/integrations/assets/tools-qdrant.png
 # Qdrant MCP tool for ADK
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript</span>
 </div>
 
 The [Qdrant MCP Server](https://github.com/qdrant/mcp-server-qdrant) connects

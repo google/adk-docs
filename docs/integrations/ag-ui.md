@@ -7,6 +7,10 @@ catalog_tags: ["ui"]
 
 # AG-UI user interface for ADK
 
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript</span><span class="lst-go">Go</span><span class="lst-java">Java</span>
+</div>
+
 Turn your ADK agents into full-featured applications with rich, responsive UIs.
 [AG-UI](https://docs.ag-ui.com/) is an open protocol that handles streaming
 events, client state, and bi-directional communication between your agents and

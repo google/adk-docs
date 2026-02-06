@@ -6,6 +6,10 @@ catalog_tags: ["observability"]
 
 # AgentOps observability for ADK
 
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
+</div>
+
 **With just two lines of code**, [AgentOps](https://www.agentops.ai) provides session replays, metrics, and monitoring for agents.
 
 ## Why AgentOps for ADK?

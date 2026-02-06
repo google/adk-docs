@@ -145,22 +145,21 @@ plugins:
         'get-started/local-testing.md': 'runtime/api-server.md'
         'get-started/tutorial.md': 'tutorials/index.md'
         'guides/responsible-agents.md': 'safety/index.md'
-        'tools/third-party-tools.md': 'tools/third-party/index.md'
+        'tools/third-party-tools.md': 'integrations/index.md'
         'tools/third-party/openapi-tools.md': 'tools-custom/openapi-tools.md'
         'tools/openapi-tools.md': 'tools-custom/openapi-tools.md'
-        'tutorials/ag-ui.md': 'tools/third-party/ag-ui.md'
-        'tools/third-party/langchain.md': 'tools/index.md'
-        'tools/third-party/crewai.md': 'tools/index.md'
+        'tutorials/ag-ui.md': 'integrations/ag-ui.md'
+        'tools/third-party/langchain.md': 'integrations/index.md'
+        'tools/third-party/crewai.md': 'integrations/index.md'
         'get-started/testing.md': 'runtime/api-server.md'
         'tools/authentication.md': 'tools-custom/authentication.md'
         'tools/function-tools.md': 'tools-custom/function-tools.md'
         'tools/confirmation.md': 'tools-custom/confirmation.md'
         'tools/performance.md': 'tools-custom/performance.md'
         'tools/mcp-tools.md': 'tools-custom/mcp-tools.md'
-        'tools/google-cloud/bigquery-agent-analytics.md': 'observability/bigquery-agent-analytics.md'
-        'tools/google-cloud-tools.md': 'tools/google-cloud/index.md'
-        'tools/built-in-tools.md': 'tools/index.md'
-        'sessions/express-mode.md': 'tools/google-cloud/express-mode.md'
+        'tools/google-cloud/bigquery-agent-analytics.md': 'integrations/bigquery-agent-analytics.md'
+        'tools/google-cloud-tools.md': 'integrations/index.md'
+        'tools/built-in-tools.md': 'integrations/index.md'
         'sessions/rewind.md': 'sessions/session/rewind.md'
         'tools/third-party/ag-ui.md': 'integrations/ag-ui.md'
         'tools/google-cloud/api-registry.md': 'integrations/api-registry.md'
@@ -221,6 +220,7 @@ plugins:
         - tutorials/*.md
         - visual-builder/*.md
         - agents/*.md
+        - integrations/*.md
         - tools/*.md
         - tools-custom/*.md
         Run Agents:
@@ -301,6 +301,7 @@ nav:
       - MCP tools: tools-custom/mcp-tools.md
       - OpenAPI tools: tools-custom/openapi-tools.md
       - Authentication: tools-custom/authentication.md
+      - Tool limitations: tools/limitations.md
   - Run Agents:
     - Agent Runtime:
       - Agent Runtime: runtime/index.md
@@ -353,7 +354,6 @@ nav:
       - apps/index.md
     - Plugins:
       - plugins/index.md
-      - Reflect and retry: plugins/reflect-and-retry.md
     - MCP:
       - mcp/index.md
     - A2A Protocol:

@@ -6,6 +6,10 @@ catalog_tags: ["observability"]
 
 # Freeplay observability for ADK
 
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
+</div>
+
 [Freeplay](https://freeplay.ai/) provides an end-to-end workflow for building
 and optimizing AI agents, and it can be integrated with ADK. With Freeplay your
 whole team can easily collaborate to iterate on agent instructions (prompts),

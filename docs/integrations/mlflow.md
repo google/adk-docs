@@ -6,6 +6,10 @@ catalog_tags: ["observability"]
 
 # MLflow observability for ADK
 
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
+</div>
+
 [MLflow Tracing](https://mlflow.org/docs/latest/genai/tracing/) provides
 first-class support for ingesting OpenTelemetry (OTel) traces. Google ADK emits
 OTel spans for agent runs, tool calls, and model requests, which you can send

@@ -1,7 +1,8 @@
 ---
 catalog_title: BigQuery Agent Analytics Plugin
 catalog_description: In-depth agent analytics for behavior analysis and logging
-catalog_tags: ["observability", "google-cloud"]
+catalog_icon: /adk-docs/integrations/assets/tools-bigquery.png
+catalog_tags: ["observability", "google"]
 ---
 
 # BigQuery Agent Analytics plugin for ADK
