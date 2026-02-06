@@ -9,8 +9,8 @@
 # Prerequisites: uv, git, make
 # Run from: adk-docs repository root
 #
-# Usage: bash scripts/generate-python-cli-docs.sh <version>
-# Example: bash scripts/generate-python-cli-docs.sh 1.24.0
+# Usage: bash tools/python-cli-docs/generate.sh <version>
+# Example: bash tools/python-cli-docs/generate.sh 1.24.0
 
 set -e
 
@@ -65,6 +65,23 @@ mkdir docs_build && cd docs_build
 sphinx-quickstart -q -p "ADK CLI" -a "Google" -v "${VERSION}" --ext-autodoc
 echo "extensions.append('sphinx_click')" >> conf.py
 echo "html_sidebars = {'**': ['searchbox.html']}" >> conf.py
+
+# Add Google Analytics via Sphinx template
+mkdir -p _templates
+cat > _templates/layout.html <<'TMPL'
+{% extends "!layout.html" %}
+{% block extrahead %}
+{{ super() }}
+<!-- Google Analytics tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DKHZS27PHP"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-DKHZS27PHP');
+</script>
+{% endblock %}
+TMPL
 
 # Write RST file
 cat > index.rst <<EOF
