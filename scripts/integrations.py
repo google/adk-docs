@@ -37,7 +37,9 @@ def define_env(env):
         docs_dir = Path(env.conf['docs_dir'])
         files = sorted(docs_dir.glob(path_filter))
 
-        cards_html = '<div class="tool-card-grid">\n'
+        # Collect all tags and cards data first
+        all_tags = set()
+        cards_data = []
 
         for file_path in files:
             # Skip index.md files as they are usually container pages, not items
@@ -73,6 +75,14 @@ def define_env(env):
                 icon = frontmatter.get('catalog_icon',
                     frontmatter.get('tool_icon',
                     frontmatter.get('icon', '/adk-docs/integrations/assets/toolbox.svg'))) # Default icon
+                
+                tags = frontmatter.get('catalog_tags', [])
+                if isinstance(tags, str):
+                    tags = [tags]
+                
+                # Normalize tags to lowercase for consistent filtering
+                tags = [t.lower() for t in tags]
+                all_tags.update(tags)
 
                 # Calculate relative link
                 # mkdocs uses site_url structure. We want /adk-docs/...
@@ -86,21 +96,147 @@ def define_env(env):
                 # If icon starts with assets/, prepend /adk-docs/
                 if not icon.startswith('/') and not icon.startswith('http'):
                      icon = f"/adk-docs/{icon}"
+                
+                cards_data.append({
+                    'title': title,
+                    'description': description,
+                    'icon': icon,
+                    'link': link,
+                    'tags': tags
+                })
 
-                card = f"""
-  <a href="{link}" class="tool-card">
-    <div class="tool-card-image-wrapper">
-      <img src="{icon}" alt="{title}">
-    </div>
-    <div class="tool-card-content">
-      <h3>{title}</h3>
-      <p>{description}</p>
-    </div>
-  </a>
-"""
-                cards_html += card
             except Exception as e:
                 log.warning(f"Error processing {file_path}: {e}")
 
-        cards_html += '</div>'
-        return cards_html
+        # Sort tags alphabetically
+        sorted_tags = sorted(list(all_tags))
+
+        # ID for this specific catalog instance to avoid conflicts if multiple are on page
+        catalog_id = "catalog-integrations"
+
+        # Generate HTML
+        html_parts = []
+        
+        # Styles
+        html_parts.append("""
+<style>
+    .catalog-filter-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 24px;
+    }
+    .catalog-filter-btn {
+        padding: 6px 16px;
+        border: 1px solid var(--md-default-fg-color--lightest);
+        border-radius: 20px;
+        background: var(--md-default-bg-color);
+        color: var(--md-default-fg-color);
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: all 0.2s;
+    }
+    .catalog-filter-btn:hover {
+        background: var(--md-default-fg-color--lightest);
+    }
+    .catalog-filter-btn.active {
+        background: var(--md-primary-fg-color);
+        color: var(--md-primary-bg-color);
+        border-color: var(--md-primary-fg-color);
+    }
+    .tool-card.hidden {
+        display: none;
+    }
+</style>
+        """)
+
+        # Filter Buttons
+        html_parts.append(f'<div class="catalog-filter-bar" id="{catalog_id}-filters">')
+        html_parts.append(f'<button class="catalog-filter-btn active" data-filter="all">All</button>')
+        for tag in sorted_tags:
+            html_parts.append(f'<button class="catalog-filter-btn" data-filter="{tag}">{tag.title()}</button>')
+        html_parts.append('</div>')
+
+        # Grid
+        html_parts.append('<div class="tool-card-grid">')
+        for card in cards_data:
+            tags_str = " ".join(card['tags'])
+            
+            card_html = f"""
+  <a href="{card['link']}" class="tool-card" data-tags="{tags_str}">
+    <div class="tool-card-image-wrapper">
+      <img src="{card['icon']}" alt="{card['title']}">
+    </div>
+    <div class="tool-card-content">
+        <h3>{card['title']}</h3>
+        <p>{card['description']}</p>
+    </div>
+  </a>
+"""
+            html_parts.append(card_html)
+        html_parts.append('</div>')
+
+        # JavaScript
+        html_parts.append(f"""
+<script>
+    document.addEventListener('DOMContentLoaded', function() {{
+        const filterContainer = document.getElementById('{catalog_id}-filters');
+        if (!filterContainer) return;
+        
+        const buttons = filterContainer.querySelectorAll('.catalog-filter-btn');
+        const cards = document.querySelectorAll('.tool-card');
+
+        function filterCards(filterValue) {{
+            // Update buttons
+            buttons.forEach(btn => {{
+                if (btn.getAttribute('data-filter') === filterValue) {{
+                    btn.classList.add('active');
+                }} else {{
+                    btn.classList.remove('active');
+                }}
+            }});
+
+            // Filter cards
+            cards.forEach(card => {{
+                const cardTags = (card.getAttribute('data-tags') || '').split(' ');
+                if (filterValue === 'all' || cardTags.includes(filterValue)) {{
+                    card.style.display = 'flex'; // Restore flex display
+                }} else {{
+                    card.style.display = 'none';
+                }}
+            }});
+        }}
+
+        // Click handlers
+        buttons.forEach(btn => {{
+            btn.addEventListener('click', () => {{
+                const filter = btn.getAttribute('data-filter');
+                filterCards(filter);
+                
+                // Optional: Update URL without reload
+                const url = new URL(window.location);
+                if (filter === 'all') {{
+                    url.searchParams.delete('topic');
+                }} else {{
+                    url.searchParams.set('topic', filter);
+                }}
+                window.history.pushState({{}}, '', url);
+            }});
+        }});
+
+        // Check URL param on load
+        const urlParams = new URLSearchParams(window.location.search);
+        const topic = urlParams.get('topic');
+        if (topic) {{
+            // Validate topic exists in buttons to avoid empty states if possible
+            // or just try to filter
+            const matchingBtn = filterContainer.querySelector(`[data-filter="${{topic}}"]`);
+            if (matchingBtn) {{
+                filterCards(topic.toLowerCase());
+            }}
+        }}
+    }});
+</script>
+        """)
+
+        return "\n".join(html_parts)
