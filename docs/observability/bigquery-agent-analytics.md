@@ -119,7 +119,7 @@ bigquery_toolset = BigQueryToolset(
     credentials_config=BigQueryCredentialsConfig(credentials=credentials)
 )
 
-llm = Gemini(model="gemini-2.5-flash")
+llm = Gemini(model="gemini-1.5-flash")
 
 root_agent = Agent(
     model=llm,
@@ -334,7 +334,7 @@ LLM.
 </pre></p></td>
       <td><p><pre>
 {
-  "model_version": "gemini-2.5-pro-001",
+  "model_version": "gemini-1.5-pro-001",
   "usage_metadata": {
     "prompt_token_count": 15,
     "candidates_token_count": 7,
@@ -661,7 +661,7 @@ SELECT
     AI.GENERATE(
         ('Analyze this conversation log and explain the root cause of the failure. Log: ', full_history),
         connection_id => 'your-gcp-project-id.us.my-connection',
-        endpoint => 'gemini-2.5-flash'
+        endpoint => 'gemini-1.5-flash'
     ).result AS root_cause_explanation
 FROM SessionContext;
 ```
