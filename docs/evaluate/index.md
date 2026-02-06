@@ -370,6 +370,14 @@ and/or responses are not supported in combination with
 [User Simulation](./user-sim.md).
 Currently, only the `hallucinations_v1` and `safety_v1` criteria support such evals.
 
+### Agent Simulator
+When evaluating agents, it is often useful to simulate tool outputs rather than calling real APIs. This allows for:
+- Deterministic testing
+- Fault injection (errors, latency)
+- Cost savings
+
+The [Agent Simulator](./agent-simulator.md) provides a flexible way to mock tools and inject behaviors.
+
 ### User Simulation
 
 When evaluating conversational agents, it is not always practical to use a fixed
@@ -476,7 +484,7 @@ async def test_with_single_test_file():
     )
 ```
 
-This approach allows you to integrate agent evaluations into your CI/CD pipelines or larger test suites. If you want to specify the initial session state for your tests, you can do that by storing the session details in a file and passing that to `AgentEvaluator.evaluate` method.
+This approach allows you to integrate agent evaluations into your CI/CD pipelines or larger test suites. If you want to specify the.initial session state for your tests, you can do that by storing the session details in a file and passing that to `AgentEvaluator.evaluate` method.
 
 ### 3\. `adk eval` \- Run Evaluations via the CLI
 
