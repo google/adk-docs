@@ -266,6 +266,15 @@ If you click on one of the traces, you will see the waterfall view of the detail
 
 ![cloud-trace](../assets/cloud-trace3.png)
 
+### Captured Attributes
+
+ADK automatically enriches traces with the following attributes to help you filter and analyze your agent's behavior:
+- `gen_ai.agent.name`: The name of the agent being executed.
+- `user.id`: The ID of the user interacting with the agent.
+- `gcp.vertex.agent.invocation_id`: The unique ID of the invocation.
+- `gcp.vertex.agent.event_id`: The ID of the specific event.
+- `gen_ai.conversation.id`: The session ID.
+
 ## Resources
 
 - [Google Cloud Trace Documentation](https://cloud.google.com/trace)
