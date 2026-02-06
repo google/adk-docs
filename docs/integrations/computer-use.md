@@ -1,7 +1,7 @@
 ---
 catalog_title: Computer Use
 catalog_description: Operate computer user interfaces using Gemini models
-catalog_icon: /adk-docs/integrations/assets/tools-gemini-spark.svg
+catalog_icon: /adk-docs/integrations/assets/gemini-spark.svg
 ---
 
 # Gemini API Computer Use tool for ADK

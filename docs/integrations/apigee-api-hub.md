@@ -1,7 +1,7 @@
 ---
 catalog_title: Apigee API Hub
 catalog_description: Turn any documented API from Apigee API hub into a tool
-catalog_icon: /adk-docs/integrations/assets/tools-apigee.png
+catalog_icon: /adk-docs/integrations/assets/apigee.png
 ---
 
 # Apigee API Hub tool for ADK

@@ -1,7 +1,7 @@
 ---
 catalog_title: MongoDB
 catalog_description: Query collections, manage databases, and analyze schemas
-catalog_icon: /adk-docs/integrations/assets/tools-mongodb.png
+catalog_icon: /adk-docs/integrations/assets/mongodb.png
 ---
 
 # MongoDB MCP tool for ADK

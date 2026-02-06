@@ -1,7 +1,7 @@
 ---
 catalog_title: Code Execution Tool with Agent Engine
 catalog_description: Run AI-generated code in a secure and scalable GKE environment
-catalog_icon: /adk-docs/integrations/assets/tools-vertex-ai.png
+catalog_icon: /adk-docs/integrations/assets/vertex-ai.png
 ---
 
 # Agent Engine Code Execution tool for ADK

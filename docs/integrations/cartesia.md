@@ -1,7 +1,7 @@
 ---
 catalog_title: Cartesia
 catalog_description: Generate speech, localize voices, and create audio content
-catalog_icon: /adk-docs/integrations/assets/tools-cartesia.png
+catalog_icon: /adk-docs/integrations/assets/cartesia.png
 ---
 
 # Cartesia MCP tool for ADK

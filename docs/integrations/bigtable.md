@@ -1,7 +1,7 @@
 ---
 catalog_title: Bigtable Tools
 catalog_description: Interact with Bigtable to retrieve data and execute SQL
-catalog_icon: /adk-docs/integrations/assets/tools-bigtable.png
+catalog_icon: /adk-docs/integrations/assets/bigtable.png
 ---
 
 # Bigtable tool for ADK

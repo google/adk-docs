@@ -6,6 +6,8 @@ site_description: >-
 site_dir: site
 exclude_docs:
   api-reference/java/legal/*
+not_in_nav: |
+  /integrations/*.md
 
 # Repository
 repo_name: adk-docs

@@ -1,7 +1,7 @@
 ---
 catalog_title: AG-UI
 catalog_description: Build interactive chat UIs with streaming, state sync, and agentic actions
-catalog_icon: /adk-docs/integrations/assets/tools-ag-ui.png
+catalog_icon: /adk-docs/integrations/assets/ag-ui.png
 catalog_tags: ["ui"]
 ---
 

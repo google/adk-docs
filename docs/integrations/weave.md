@@ -1,16 +1,17 @@
 ---
-catalog_title: Weave by WandB
+catalog_title: W&B Weave
 catalog_description: Log, visualize, and analyze model calls and agent performance
+catalog_icon: /adk-docs/integrations/assets/weave.png
 catalog_tags: ["observability"]
 ---
 
-# Weave by WandB observability for ADK
+# W&B Weave observability for ADK
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
 </div>
 
-[Weave by Weights & Biases (WandB)](https://weave-docs.wandb.ai/) provides a powerful platform for logging and visualizing model calls. By integrating Google ADK with Weave, you can track and analyze your agent's performance and behavior using OpenTelemetry (OTEL) traces.
+[W&B Weave](https://weave-docs.wandb.ai/) provides a powerful platform for logging and visualizing model calls. By integrating Google ADK with Weave, you can track and analyze your agent's performance and behavior using OpenTelemetry (OTEL) traces.
 
 ## Prerequisites
 

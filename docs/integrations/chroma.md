@@ -1,7 +1,7 @@
 ---
 catalog_title: Chroma
 catalog_description: Store and retrieve information using semantic vector search
-catalog_icon: /adk-docs/integrations/assets/tools-chroma.png
+catalog_icon: /adk-docs/integrations/assets/chroma.png
 ---
 
 # Chroma MCP tool for ADK
