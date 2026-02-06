@@ -102,8 +102,8 @@ An ADK agent project requires this dependency in your
 <dependencies>
     <dependency>
         <groupId>com.google.adk</groupId>
-        <artifactId>adk-core</artifactId>
-        <version>0.3.0</version>
+        <artifactId>google-adk</artifactId>
+        <version>0.5.0</version>
     </dependency>
 </dependencies>
 ```
