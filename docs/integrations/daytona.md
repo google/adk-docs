@@ -1,7 +1,7 @@
 ---
 catalog_title: Daytona
 catalog_description: Execute code, run shell commands, and manage files in secure sandboxes
-catalog_icon: /adk-docs/integrations/assets/plugins-daytona.png
+catalog_icon: /adk-docs/integrations/assets/daytona.png
 ---
 
 # Daytona plugin for ADK

@@ -1,7 +1,7 @@
 ---
 catalog_title: Hugging Face
 catalog_description: Access models, datasets, research papers, and AI tools
-catalog_icon: /adk-docs/integrations/assets/tools-hugging-face.png
+catalog_icon: /adk-docs/integrations/assets/hugging-face.png
 ---
 
 # Hugging Face MCP tool for ADK

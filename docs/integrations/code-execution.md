@@ -1,7 +1,7 @@
 ---
 catalog_title: Code Execution
 catalog_description: Execute code and debug using Gemini models
-catalog_icon: /adk-docs/integrations/assets/tools-gemini-spark.svg
+catalog_icon: /adk-docs/integrations/assets/gemini-spark.svg
 ---
 
 # Gemini API Code Execution tool for ADK

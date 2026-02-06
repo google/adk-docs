@@ -1,6 +1,7 @@
 ---
 catalog_title: AgentOps
 catalog_description: Session replays, metrics, and monitoring for ADK agents
+catalog_icon: /adk-docs/integrations/assets/agentops.png
 catalog_tags: ["observability"]
 ---
 

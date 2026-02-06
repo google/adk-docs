@@ -1,7 +1,7 @@
 ---
 catalog_title: BigQuery Tools
 catalog_description: Connect with BigQuery to retrieve data and perform analysis
-catalog_icon: /adk-docs/integrations/assets/tools-bigquery.png
+catalog_icon: /adk-docs/integrations/assets/bigquery.png
 ---
 
 # BigQuery tool for ADK

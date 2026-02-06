@@ -1,7 +1,7 @@
 ---
 catalog_title: Notion
 catalog_description: Search workspaces, create pages, and manage tasks and databases
-catalog_icon: /adk-docs/integrations/assets/tools-notion.png
+catalog_icon: /adk-docs/integrations/assets/notion.png
 ---
 
 # Notion MCP tool for ADK
