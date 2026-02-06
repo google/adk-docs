@@ -48,6 +48,20 @@ The `McpToolset` class is ADK's primary mechanism for integrating tools from an 
 
 The following examples demonstrate how to use `McpToolset` within the `adk web` development environment. For scenarios where you need more fine-grained control over the MCP connection lifecycle or are not using `adk web`, refer to the "Using MCP Tools in your own Agent out of `adk web`" section later in this page.
 
+### Handling Progress Updates
+
+For long-running tools, `McpToolset` supports a `progress_callback`. This allows you to receive real-time updates from the MCP server. You can provide a simple callback function or a factory that creates callbacks with access to the runtime context (e.g., to update session state).
+
+```python
+async def my_progress_callback(progress: float, total: float, message: str):
+    print(f"Progress: {progress}/{total} - {message}")
+
+toolset = McpToolset(
+    connection_params=...,
+    progress_callback=my_progress_callback
+)
+```
+
 ### Example 1: File System MCP Server
 
 This Python example demonstrates connecting to a local MCP server that provides file system operations.
