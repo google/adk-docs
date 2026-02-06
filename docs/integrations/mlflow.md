@@ -1,6 +1,7 @@
 ---
 catalog_title: MLflow
 catalog_description: Ingest OpenTelemetry traces for agent runs, tool calls, and model requests
+catalog_icon: /adk-docs/integrations/assets/mlflow.png
 catalog_tags: ["observability"]
 ---
 

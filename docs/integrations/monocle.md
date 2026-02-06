@@ -1,6 +1,7 @@
 ---
 catalog_title: Monocle
 catalog_description: Open-source observability, tracing, and debugging of LLM applications
+catalog_icon: /adk-docs/integrations/assets/monocle.png
 catalog_tags: ["observability"]
 ---
 
@@ -214,4 +215,3 @@ All traces are generated in OpenTelemetry format, making them compatible with an
 - [Monocle GitHub Repository](https://github.com/monocle2ai/monocle)
 - [Google ADK Travel Agent Example](https://github.com/okahu-demos/adk-travel-agent)
 - [Discord Community](https://discord.gg/D8vDbSUhJX)
-

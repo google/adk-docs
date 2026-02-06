@@ -1,7 +1,7 @@
 ---
 catalog_title: GitHub
 catalog_description: Analyze code, manage issues and PRs, and automate workflows
-catalog_icon: /adk-docs/integrations/assets/tools-github.png
+catalog_icon: /adk-docs/integrations/assets/github.png
 ---
 
 # GitHub MCP tool for ADK

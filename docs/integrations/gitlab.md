@@ -1,7 +1,7 @@
 ---
 catalog_title: GitLab
 catalog_description: Perform semantic code search, inspect pipelines, manage merge requests
-catalog_icon: /adk-docs/integrations/assets/tools-gitlab.png
+catalog_icon: /adk-docs/integrations/assets/gitlab.png
 ---
 
 # GitLab MCP tool for ADK

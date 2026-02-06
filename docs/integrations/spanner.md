@@ -1,7 +1,7 @@
 ---
 catalog_title: Spanner Tools
 catalog_description: Interact with Spanner to retrieve data, search, and execute SQL
-catalog_icon: /adk-docs/integrations/assets/tools-spanner.png
+catalog_icon: /adk-docs/integrations/assets/spanner.png
 ---
 
 # Google Cloud Spanner tool for ADK

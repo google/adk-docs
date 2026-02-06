@@ -1,7 +1,7 @@
 ---
 catalog_title: Vertex AI express mode
 catalog_description: Try development with Vertex AI services at no cost
-catalog_icon: /adk-docs/integrations/assets/tools-vertex-ai.png
+catalog_icon: /adk-docs/integrations/assets/vertex-ai.png
 ---
 
 # Google Cloud Vertex AI express mode for ADK

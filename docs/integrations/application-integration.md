@@ -1,7 +1,7 @@
 ---
 catalog_title: Application Integration
 catalog_description: Link your agents to enterprise apps using Integration Connectors
-catalog_icon: /adk-docs/integrations/assets/tools-apigee-integration.png
+catalog_icon: /adk-docs/integrations/assets/apigee-integration.png
 ---
 
 # Google Cloud Application Integration tool for ADK

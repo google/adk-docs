@@ -1,7 +1,7 @@
 ---
 catalog_title: Paypal
 catalog_description: Manage payments, send invoices, and handle subscriptions
-catalog_icon: /adk-docs/integrations/assets/tools-paypal.png
+catalog_icon: /adk-docs/integrations/assets/paypal.png
 ---
 
 # PayPal MCP tool for ADK
