@@ -74,7 +74,7 @@ def get_weather(city: str) -> dict:
 # Create an agent with tools
 root_agent = Agent(
     name="weather_agent",
-    model="gemini-2.5-flash",
+    model="gemini-1.5-flash",
     description="Agent to answer questions using weather tools.",
     instruction="You must use the available tools to find an answer.",
     tools=[get_weather],
@@ -265,6 +265,15 @@ And then you will see all available traces produced by ADK agent which configure
 If you click on one of the traces, you will see the waterfall view of the detailed process, similar to what we see in the web development UI with `adk web` command.
 
 ![cloud-trace](../assets/cloud-trace3.png)
+
+### Captured Attributes
+
+ADK automatically enriches traces with the following attributes to help you filter and analyze your agent's behavior:
+- `gen_ai.agent.name`: The name of the agent being executed.
+- `user.id`: The ID of the user interacting with the agent.
+- `gcp.vertex.agent.invocation_id`: The unique ID of the invocation.
+- `gcp.vertex.agent.event_id`: The ID of the specific event.
+- `gen_ai.conversation.id`: The session ID.
 
 ## Resources
 
