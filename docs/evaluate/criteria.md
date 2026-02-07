@@ -544,3 +544,65 @@ turns in which the user simulator's response was judged to be valid according to
 the conversation scenario. A score of 1.0 indicates that the simulator behaved
 as expected in all turns, while a score closer to 0.0 indicates that the
 simulator deviated in many turns. Higher values are better.
+
+## Custom Metrics
+
+In addition to the standard evaluation criteria, you can define your own custom
+metrics using Python functions. This allows you to create evaluations tailored to
+your specific needs.
+
+### How to Define a Custom Metric
+
+To define a custom metric, you need to:
+
+1.  **Create a Python function** that takes an `EvalCase` object and a list of
+    `protos.adk.Invocation` objects as input and returns a score.
+2.  **Configure the custom metric** in your `test_config.json` file using the
+    `custom_metrics` field within the `EvalConfig`.
+
+The `custom_metrics` field is a dictionary where each key is the name of your
+custom metric. The value is an object that contains a `code_config` which points
+to your Python function.
+
+### Example Configuration
+
+Here is an example of how to configure custom metrics in your `test_config.json`:
+
+```json
+{
+  "criteria": {
+    "my_custom_metric": 0.5,
+    "my_simple_metric": 0.8
+  },
+  "custom_metrics": {
+    "my_simple_metric": {
+      "code_config": {
+        "name": "path.to.my.simple.metric.function"
+      }
+    },
+    "my_custom_metric": {
+      "code_config": {
+        "name": "path.to.my.custom.metric.function"
+      },
+      "metric": {
+        "metric_name": "my_custom_metric",
+        "min_value": -10.0,
+        "max_value": 10.0,
+        "description": "My custom metric."
+      }
+    }
+  }
+}
+```
+
+In this example:
+
+*   `my_custom_metric` and `my_simple_metric` are defined under `criteria` with
+    their respective thresholds.
+*   Under `custom_metrics`, `my_simple_metric` is mapped to a Python function
+    located at `path.to.my.simple.metric.function`.
+*   `my_custom_metric` is also mapped to a function and includes additional
+    metadata like `min_value`, `max_value`, and a `description`.
+
+This configuration tells the evaluation framework to use your custom Python
+functions for calculating the scores of these metrics.
