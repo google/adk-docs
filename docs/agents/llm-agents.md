@@ -302,7 +302,7 @@ on the conversation and its instructions.
             .build();
     ```
 
-Learn more about Tools in the [Tools](../tools/index.md) section.
+Learn more about Tools in [Custom Tools](/adk-docs/tools-custom/).
 
 ## Advanced Configuration & Control
 

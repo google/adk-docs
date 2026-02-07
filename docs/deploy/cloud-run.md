@@ -131,7 +131,7 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
     export SERVICE_NAME="capital-agent-service"
 
     # Set an application name (optional)
-    export APP_NAME="capital-agent-app"
+    export APP_NAME="capital_agent_app"
     ```
 
     #### Command usage
@@ -172,6 +172,22 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
     * `--with_ui`: (Optional) If included, deploys the ADK dev UI alongside the agent API server. By default, only the API server is deployed.
     * `--temp_folder TEXT`: (Optional) Specifies a directory for storing intermediate files generated during the deployment process. Defaults to a timestamped folder in the system's temporary directory. *(Note: This option is generally not needed unless troubleshooting issues).*
     * `--help`: Show the help message and exit.
+
+    ##### Passing gcloud CLI Arguments
+
+    To pass specific gcloud flags through the `adk deploy cloud_run` command, use the double-dash separator (`--`) after the ADK arguments. Any flags (except ADK-managed) following the `--` will be passed directly to the underlying gcloud command.
+
+    ###### Syntax Example:
+
+    ```bash
+    adk deploy cloud_run [ADK_FLAGS] -- [GCLOUD_FLAGS]
+    ```
+
+    ###### Example:
+
+    ```bash
+    adk deploy cloud_run --project=[PROJECT_ID] --region=[REGION] path/to/my_agent    -- --no-allow-unauthenticated --min-instances=2
+    ```
 
     ##### Authenticated access
     During the deployment process, you might be prompted: `Allow unauthenticated invocations to [your-service-name] (y/N)?`.

@@ -1,18 +1,12 @@
-.. adk cli documentation master file, created by
-   sphinx-quickstart on Mon Dec  8 09:40:29 2025.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
-adk cli documentation
+ADK CLI documentation
 =====================
 
-Add your content using ``reStructuredText`` syntax. See the
-`reStructuredText <https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html>`_
-documentation for details.
+This page contains the auto-generated command-line reference for ADK 1.24.0.
 
+.. contents::
+   :local:
+   :depth: 2
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
-
-   cli
+.. click:: google.adk.cli.cli_tools_click:main
+   :prog: adk
+   :nested: full

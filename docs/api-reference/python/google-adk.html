@@ -13,11 +13,11 @@
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="prev" title="google" href="index.html">
 
-    <!-- Generated with Sphinx 8.3.0 and Furo 2025.12.19 -->
+    <!-- Generated with Sphinx 8.2.3 and Furo 2025.12.19 -->
         <title>Submodules - Agent Development Kit documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=7bdb33bb" />
-    <link rel="stylesheet" type="text/css" href="_static/autodoc_pydantic.css?v=9e08a393" />
+    <link rel="stylesheet" type="text/css" href="_static/autodoc_pydantic.css?v=3a0b6c0a" />
     <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
     <link rel="stylesheet" type="text/css" href="_static/css/custom.css" />
     
@@ -265,7 +265,7 @@
 <li class="toctree-l1"><a class="reference internal" href="#module-google.adk.tools.preload_memory_tool">google.adk.tools.preload_memory_tool module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#module-google.adk.tools.retrieval">google.adk.tools.retrieval module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#module-google.adk.tools.tool_context">google.adk.tools.tool_context module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#google-adk-tools-toolbox-toolset-module">google.adk.tools.toolbox_toolset module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#module-google.adk.tools.toolbox_toolset">google.adk.tools.toolbox_toolset module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#module-google.adk.tools.transfer_to_agent_tool">google.adk.tools.transfer_to_agent_tool module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#module-google.adk.tools.url_context_tool">google.adk.tools.url_context_tool module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#module-google.adk.tools.vertex_ai_search_tool">google.adk.tools.vertex_ai_search_tool module</a></li>
@@ -3356,6 +3356,21 @@ is set to true at any time.</p>
 <span class="w">            </span><span class="p">},</span>
 <span class="w">            </span><span class="nt">&quot;credentials&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">               </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#/$defs/HttpCredentials&quot;</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="nt">&quot;additionalHeaders&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">               </span><span class="nt">&quot;anyOf&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                  </span><span class="p">{</span>
+<span class="w">                     </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">                     </span><span class="p">},</span>
+<span class="w">                     </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span>
+<span class="w">                  </span><span class="p">},</span>
+<span class="w">                  </span><span class="p">{</span>
+<span class="w">                     </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;null&quot;</span>
+<span class="w">                  </span><span class="p">}</span>
+<span class="w">               </span><span class="p">],</span>
+<span class="w">               </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">               </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Additionalheaders&quot;</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">         </span><span class="p">},</span>
 <span class="w">         </span><span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
@@ -4671,7 +4686,7 @@ is set to true at any time.</p>
 <span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span>
 <span class="w">      </span><span class="p">},</span>
 <span class="w">      </span><span class="nt">&quot;ResumabilityConfig&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The config of the resumability for an application.\n\nThe \&quot;resumability\&quot; in ADK refers to the ability to:\n1. pause an invocation upon a long running function call.\n2. resume an invocation from the last event, if it&#39;s paused or failed midway\nthrough.\n\nNote: ADK resumes the invocation in a best-effort manner:\n1. Tool call to resume needs to be idempotent because we only guarantee\nan at-least-once behavior once resumed.\n2. Any temporary / in-memory state will be lost upon resumption.&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The config of the resumability for an application.\n\nThe \&quot;resumability\&quot; in ADK refers to the ability to:\n1. pause an invocation upon a long-running function call.\n2. resume an invocation from the last event, if it&#39;s paused or failed midway\nthrough.\n\nNote: ADK resumes the invocation in a best-effort manner:\n1. Tool call to resume needs to be idempotent because we only guarantee\nan at-least-once behavior once resumed.\n2. Any temporary / in-memory state will be lost upon resumption.&quot;</span><span class="p">,</span>
 <span class="w">         </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">            </span><span class="nt">&quot;is_resumable&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">               </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
@@ -4829,6 +4844,17 @@ is set to true at any time.</p>
 <span class="w">               </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="w">               </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Save Live Blob&quot;</span><span class="p">,</span>
 <span class="w">               </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;boolean&quot;</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="nt">&quot;tool_thread_pool_config&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">               </span><span class="nt">&quot;anyOf&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                  </span><span class="p">{</span>
+<span class="w">                     </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#/$defs/ToolThreadPoolConfig&quot;</span>
+<span class="w">                  </span><span class="p">},</span>
+<span class="w">                  </span><span class="p">{</span>
+<span class="w">                     </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;null&quot;</span>
+<span class="w">                  </span><span class="p">}</span>
+<span class="w">               </span><span class="p">],</span>
+<span class="w">               </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
 <span class="w">            </span><span class="p">},</span>
 <span class="w">            </span><span class="nt">&quot;save_live_audio&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">               </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
@@ -5289,6 +5315,21 @@ is set to true at any time.</p>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">         </span><span class="p">},</span>
 <span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ToolConfirmation&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span>
+<span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;ToolThreadPoolConfig&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Configuration for the tool thread pool executor.\n\nAttributes:\n  max_workers: Maximum number of worker threads in the pool. Defaults to 4.&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;max_workers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">               </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
+<span class="w">               </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Maximum number of worker threads in the pool.&quot;</span><span class="p">,</span>
+<span class="w">               </span><span class="nt">&quot;minimum&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">               </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Max Workers&quot;</span><span class="p">,</span>
+<span class="w">               </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integer&quot;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">         </span><span class="p">},</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ToolThreadPoolConfig&quot;</span><span class="p">,</span>
 <span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span>
 <span class="w">      </span><span class="p">},</span>
 <span class="w">      </span><span class="nt">&quot;TrafficType&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -6712,18 +6753,24 @@ running.</p>
 <dt class="sig sig-object py" id="google.adk.agents.LiveRequest.activity_end">
 <em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">activity_end</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">types.ActivityEnd</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#google.adk.agents.LiveRequest.activity_end" title="Link to this definition">¶</a></dt>
 <dd><p>If set, signal the end of user activity to the model.</p>
+<p>When multiple fields are set, they are processed by priority (highest first):
+activity_start &gt; activity_end &gt; blob &gt; content.</p>
 </dd></dl>
 
 <dl class="py attribute pydantic_field">
 <dt class="sig sig-object py" id="google.adk.agents.LiveRequest.activity_start">
 <em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">activity_start</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">types.ActivityStart</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#google.adk.agents.LiveRequest.activity_start" title="Link to this definition">¶</a></dt>
 <dd><p>If set, signal the start of user activity to the model.</p>
+<p>When multiple fields are set, they are processed by priority (highest first):
+activity_start &gt; activity_end &gt; blob &gt; content.</p>
 </dd></dl>
 
 <dl class="py attribute pydantic_field">
 <dt class="sig sig-object py" id="google.adk.agents.LiveRequest.blob">
 <em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">blob</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">types.Blob</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#google.adk.agents.LiveRequest.blob" title="Link to this definition">¶</a></dt>
 <dd><p>If set, send the blob to the model in realtime mode.</p>
+<p>When multiple fields are set, they are processed by priority (highest first):
+activity_start &gt; activity_end &gt; blob &gt; content.</p>
 </dd></dl>
 
 <dl class="py attribute pydantic_field">
@@ -6736,6 +6783,8 @@ running.</p>
 <dt class="sig sig-object py" id="google.adk.agents.LiveRequest.content">
 <em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">content</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">types.Content</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#google.adk.agents.LiveRequest.content" title="Link to this definition">¶</a></dt>
 <dd><p>If set, send the content to the model in turn-by-turn mode.</p>
+<p>When multiple fields are set, they are processed by priority (highest first):
+activity_start &gt; activity_end &gt; blob &gt; content.</p>
 </dd></dl>
 
 </dd></dl>
@@ -8439,7 +8488,7 @@ stuck with one agent that cannot transfer to other agents in the agent tree.</p>
 <em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">generate_content_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">types.GenerateContentConfig</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#google.adk.agents.LlmAgent.generate_content_config" title="Link to this definition">¶</a></dt>
 <dd><p>The additional content generation configurations.</p>
 <p>NOTE: not all fields are usable, e.g. tools must be configured via <cite>tools</cite>,
-thinking_config must be configured via <cite>planner</cite> in LlmAgent.</p>
+thinking_config can be configured here or via the <cite>planner</cite>. If both are set, the planner’s configuration takes precedence.</p>
 <p>For example: use this config to adjust model temperature, configure safety
 settings, etc.</p>
 <dl class="field-list simple">
@@ -8789,6 +8838,17 @@ InstructionProvider.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<a class="reference internal" href="#google.adk.tools.base_tool.BaseTool" title="google.adk.tools.base_tool.BaseTool"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseTool</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="google.adk.agents.LlmAgent.model_post_init">
+<span class="sig-name descname"><span class="pre">model_post_init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_LlmAgent__context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.agents.LlmAgent.model_post_init" title="Link to this definition">¶</a></dt>
+<dd><p>Provides a warning if multiple thinking configurations are found.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -9273,6 +9333,17 @@ attempts on a single task, such as:</p>
 <span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Save Live Blob&quot;</span><span class="p">,</span>
 <span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;boolean&quot;</span>
 <span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;tool_thread_pool_config&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;anyOf&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">               </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#/$defs/ToolThreadPoolConfig&quot;</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">               </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;null&quot;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">         </span><span class="p">],</span>
+<span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
+<span class="w">      </span><span class="p">},</span>
 <span class="w">      </span><span class="nt">&quot;save_live_audio&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">         </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="w">         </span><span class="nt">&quot;deprecated&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
@@ -9727,6 +9798,21 @@ attempts on a single task, such as:</p>
 <span class="w">         </span><span class="p">],</span>
 <span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;StreamingMode&quot;</span>
 <span class="w">      </span><span class="p">},</span>
+<span class="w">      </span><span class="nt">&quot;ToolThreadPoolConfig&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">         </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Configuration for the tool thread pool executor.\n\nAttributes:\n  max_workers: Maximum number of worker threads in the pool. Defaults to 4.&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;max_workers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">               </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span>
+<span class="w">               </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Maximum number of worker threads in the pool.&quot;</span><span class="p">,</span>
+<span class="w">               </span><span class="nt">&quot;minimum&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">               </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Max Workers&quot;</span><span class="p">,</span>
+<span class="w">               </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;integer&quot;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">         </span><span class="p">},</span>
+<span class="w">         </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ToolThreadPoolConfig&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span>
+<span class="w">      </span><span class="p">},</span>
 <span class="w">      </span><span class="nt">&quot;TurnCoverage&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Options about which input is included in the user&#39;s turn.&quot;</span><span class="p">,</span>
 <span class="w">         </span><span class="nt">&quot;enum&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
@@ -9792,6 +9878,7 @@ attempts on a single task, such as:</p>
 <li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">speech_config</span> <span class="pre">(google.genai.types.SpeechConfig</span> <span class="pre">|</span> <span class="pre">None)</span></code></p></li>
 <li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">streaming_mode</span> <span class="pre">(google.adk.agents.run_config.StreamingMode)</span></code></p></li>
 <li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">support_cfc</span> <span class="pre">(bool)</span></code></p></li>
+<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tool_thread_pool_config</span> <span class="pre">(google.adk.agents.run_config.ToolThreadPoolConfig</span> <span class="pre">|</span> <span class="pre">None)</span></code></p></li>
 </ul>
 </dd>
 <dt class="field-even">Validators<span class="colon">:</span></dt>
@@ -9999,6 +10086,57 @@ in future releases.</p>
 </dl>
 </dd></dl>
 
+<dl class="py attribute pydantic_field">
+<dt class="sig sig-object py" id="google.adk.agents.RunConfig.tool_thread_pool_config">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tool_thread_pool_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ToolThreadPoolConfig</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#google.adk.agents.RunConfig.tool_thread_pool_config" title="Link to this definition">¶</a></dt>
+<dd><p>Configuration for running tools in a thread pool for live mode.</p>
+<p>When set, tool executions will run in a separate thread pool executor
+instead of the main event loop. When None (default), tools run in the
+main event loop.</p>
+<p>This helps keep the event loop responsive for:
+- User interruptions to be processed immediately
+- Model responses to continue being received</p>
+<p>Both sync and async tools are supported. Async tools are run in a new event
+loop within the background thread, which helps catch blocking I/O mistakenly
+used inside async functions.</p>
+<p>IMPORTANT - GIL (Global Interpreter Lock) Considerations:</p>
+<p>Thread pool HELPS with (GIL is released):
+- Blocking I/O: time.sleep(), network calls, file I/O, database queries
+- C extensions: numpy, hashlib, image processing libraries
+- Async functions containing blocking I/O (common user mistake)</p>
+<p>Thread pool does NOT help with (GIL is held):
+- Pure Python CPU-bound code: loops, calculations, recursive algorithms
+- The GIL prevents true parallel execution for Python bytecode</p>
+<p>For CPU-intensive Python code, consider alternatives:
+- Use C extensions that release the GIL
+- Break work into chunks with periodic <cite>await asyncio.sleep(0)</cite>
+- Use multiprocessing (ProcessPoolExecutor) for true parallelism</p>
+<p class="rubric">Example</p>
+<p><a href="#id14"><span class="problematic" id="id15">``</span></a><a href="#id16"><span class="problematic" id="id17">`</span></a>python
+from google.adk.agents.run_config import RunConfig, ToolThreadPoolConfig</p>
+<p># Enable thread pool with default settings
+run_config = RunConfig(</p>
+<blockquote>
+<div><p>tool_thread_pool_config=ToolThreadPoolConfig(),</p>
+</div></blockquote>
+<p>)</p>
+<p># Enable thread pool with custom max_workers
+run_config = RunConfig(</p>
+<blockquote>
+<div><p>tool_thread_pool_config=ToolThreadPoolConfig(max_workers=8),</p>
+</div></blockquote>
+<section id="id18">
+<h2>)<a class="headerlink" href="#id18" title="Link to this heading">¶</a></h2>
+<dl class="field-list simple">
+<dt class="field-odd">Validated by<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_for_deprecated_save_live_audio</span></code></p></li>
+</ul>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
 <dl class="py method pydantic_validator">
 <dt class="sig sig-object py" id="google.adk.agents.RunConfig.check_for_deprecated_save_live_audio">
 <em class="property"><span class="pre">validator</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">check_for_deprecated_save_live_audio</span></span><em class="autodoc_pydantic_validator_arrow property">&#160; <span class="pre">»</span>&#160; </em><em class="xref py py-obj"><span class="pre">all</span> <span class="pre">fields</span></em><a class="headerlink" href="#google.adk.agents.RunConfig.check_for_deprecated_save_live_audio" title="Link to this definition">¶</a></dt>
@@ -10055,14 +10193,14 @@ in future releases.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="id14">
-<span class="sig-name descname"><span class="pre">wrapped_property</span></span><a class="headerlink" href="#id14" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id19">
+<span class="sig-name descname"><span class="pre">wrapped_property</span></span><a class="headerlink" href="#id19" title="Link to this definition">¶</a></dt>
 <dd><p>The property instance if the deprecated field is a computed field, or <cite>None</cite>.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="id15">
-<span class="sig-name descname"><span class="pre">field_name</span></span><a class="headerlink" href="#id15" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id20">
+<span class="sig-name descname"><span class="pre">field_name</span></span><a class="headerlink" href="#id20" title="Link to this definition">¶</a></dt>
 <dd><p>The name of the field being deprecated.</p>
 </dd></dl>
 
@@ -11925,7 +12063,7 @@ and services to the entire system.</p>
 <span class="w">         </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span>
 <span class="w">      </span><span class="p">},</span>
 <span class="w">      </span><span class="nt">&quot;ResumabilityConfig&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
-<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The config of the resumability for an application.\n\nThe \&quot;resumability\&quot; in ADK refers to the ability to:\n1. pause an invocation upon a long running function call.\n2. resume an invocation from the last event, if it&#39;s paused or failed midway\nthrough.\n\nNote: ADK resumes the invocation in a best-effort manner:\n1. Tool call to resume needs to be idempotent because we only guarantee\nan at-least-once behavior once resumed.\n2. Any temporary / in-memory state will be lost upon resumption.&quot;</span><span class="p">,</span>
+<span class="w">         </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The config of the resumability for an application.\n\nThe \&quot;resumability\&quot; in ADK refers to the ability to:\n1. pause an invocation upon a long-running function call.\n2. resume an invocation from the last event, if it&#39;s paused or failed midway\nthrough.\n\nNote: ADK resumes the invocation in a best-effort manner:\n1. Tool call to resume needs to be idempotent because we only guarantee\nan at-least-once behavior once resumed.\n2. Any temporary / in-memory state will be lost upon resumption.&quot;</span><span class="p">,</span>
 <span class="w">         </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">            </span><span class="nt">&quot;is_resumable&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">               </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
@@ -12049,7 +12187,7 @@ If configured, will be applied to all agents in the app.</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
 <p>The config of the resumability for an application.</p>
 <p>The “resumability” in ADK refers to the ability to:
-1. pause an invocation upon a long running function call.
+1. pause an invocation upon a long-running function call.
 2. resume an invocation from the last event, if it’s paused or failed midway
 through.</p>
 <p>Note: ADK resumes the invocation in a best-effort manner:
@@ -12059,7 +12197,7 @@ an at-least-once behavior once resumed.
 <p><details  class="autodoc_pydantic_collapsable_json">
 <summary>Show JSON schema</summary><div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">   </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ResumabilityConfig&quot;</span><span class="p">,</span>
-<span class="w">   </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The config of the resumability for an application.\n\nThe \&quot;resumability\&quot; in ADK refers to the ability to:\n1. pause an invocation upon a long running function call.\n2. resume an invocation from the last event, if it&#39;s paused or failed midway\nthrough.\n\nNote: ADK resumes the invocation in a best-effort manner:\n1. Tool call to resume needs to be idempotent because we only guarantee\nan at-least-once behavior once resumed.\n2. Any temporary / in-memory state will be lost upon resumption.&quot;</span><span class="p">,</span>
+<span class="w">   </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;The config of the resumability for an application.\n\nThe \&quot;resumability\&quot; in ADK refers to the ability to:\n1. pause an invocation upon a long-running function call.\n2. resume an invocation from the last event, if it&#39;s paused or failed midway\nthrough.\n\nNote: ADK resumes the invocation in a best-effort manner:\n1. Tool call to resume needs to be idempotent because we only guarantee\nan at-least-once behavior once resumed.\n2. Any temporary / in-memory state will be lost upon resumption.&quot;</span><span class="p">,</span>
 <span class="w">   </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span><span class="p">,</span>
 <span class="w">   </span><span class="nt">&quot;properties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">      </span><span class="nt">&quot;is_resumable&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -12220,8 +12358,8 @@ result.</p>
 </dd>
 </dl>
 <dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="id16">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">code_block_delimiters</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[('```tool_code\n',</span> <span class="pre">'\n```'),</span> <span class="pre">('```python\n',</span> <span class="pre">'\n```')]</span></em><a class="headerlink" href="#id16" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id21">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">code_block_delimiters</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[('```tool_code\n',</span> <span class="pre">'\n```'),</span> <span class="pre">('```python\n',</span> <span class="pre">'\n```')]</span></em><a class="headerlink" href="#id21" title="Link to this definition">¶</a></dt>
 <dd><p>The list of the enclosing delimiters to identify the code blocks.</p>
 <p>For example, the delimiter (’<code class="docutils literal notranslate"><span class="pre">`python\n',</span> <span class="pre">'\n`</span></code>’) can be
 used to identify code blocks with the following format:</p>
@@ -12233,20 +12371,20 @@ print(&quot;hello&quot;)
 </dd></dl>
 
 <dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="id17">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">error_retry_attempts</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#id17" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id22">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">error_retry_attempts</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2</span></em><a class="headerlink" href="#id22" title="Link to this definition">¶</a></dt>
 <dd><p>The number of attempts to retry on consecutive code execution errors. Default to 2.</p>
 </dd></dl>
 
 <dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="id18">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">execution_result_delimiters</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('```tool_output\n',</span> <span class="pre">'\n```')</span></em><a class="headerlink" href="#id18" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id23">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">execution_result_delimiters</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('```tool_output\n',</span> <span class="pre">'\n```')</span></em><a class="headerlink" href="#id23" title="Link to this definition">¶</a></dt>
 <dd><p>The delimiters to format the code execution result.</p>
 </dd></dl>
 
 <dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="id19">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">optimize_data_file</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#id19" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id24">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">optimize_data_file</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#id24" title="Link to this definition">¶</a></dt>
 <dd><p>If true, extract and process data files from the model request
 and attach them to the code executor.</p>
 <p>Supported data file MimeTypes are [text/csv].
@@ -12254,8 +12392,8 @@ Default to False.</p>
 </dd></dl>
 
 <dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="id20">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">stateful</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#id20" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id25">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">stateful</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#id25" title="Link to this definition">¶</a></dt>
 <dd><p>Whether the code executor is stateful. Default to False.</p>
 </dd></dl>
 
@@ -15011,6 +15149,21 @@ taken by the agents like function calls, etc.</p>
 <span class="w">            </span><span class="p">},</span>
 <span class="w">            </span><span class="nt">&quot;credentials&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">               </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#/$defs/HttpCredentials&quot;</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="nt">&quot;additionalHeaders&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">               </span><span class="nt">&quot;anyOf&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                  </span><span class="p">{</span>
+<span class="w">                     </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">                     </span><span class="p">},</span>
+<span class="w">                     </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span>
+<span class="w">                  </span><span class="p">},</span>
+<span class="w">                  </span><span class="p">{</span>
+<span class="w">                     </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;null&quot;</span>
+<span class="w">                  </span><span class="p">}</span>
+<span class="w">               </span><span class="p">],</span>
+<span class="w">               </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">               </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Additionalheaders&quot;</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">         </span><span class="p">},</span>
 <span class="w">         </span><span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
@@ -17561,6 +17714,21 @@ one event has <cite>is_final_response()</cite> as True for each participating ag
 <span class="w">            </span><span class="p">},</span>
 <span class="w">            </span><span class="nt">&quot;credentials&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">               </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#/$defs/HttpCredentials&quot;</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="nt">&quot;additionalHeaders&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">               </span><span class="nt">&quot;anyOf&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                  </span><span class="p">{</span>
+<span class="w">                     </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">                     </span><span class="p">},</span>
+<span class="w">                     </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span>
+<span class="w">                  </span><span class="p">},</span>
+<span class="w">                  </span><span class="p">{</span>
+<span class="w">                     </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;null&quot;</span>
+<span class="w">                  </span><span class="p">}</span>
+<span class="w">               </span><span class="p">],</span>
+<span class="w">               </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">               </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Additionalheaders&quot;</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">         </span><span class="p">},</span>
 <span class="w">         </span><span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
@@ -19654,13 +19822,13 @@ function call id.</p>
 </dd>
 </dl>
 <dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="id21">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">input</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Content</span></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#id21" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id26">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">input</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">types.Content</span></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#id26" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="id22">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">output</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">Content</span><span class="p"><span class="pre">]</span></span></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#id22" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id27">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">output</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">list</span><span class="p"><span class="pre">[</span></span><span class="pre">types.Content</span><span class="p"><span class="pre">]</span></span></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#id27" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -19858,7 +20026,7 @@ not use Google AI Studio API key for this field. For more details, visit
 or <code class="docutils literal notranslate"><span class="pre">{rag_corpus_id}</span></code></p></li>
 <li><p><strong>similarity_top_k</strong> – The number of contexts to retrieve.</p></li>
 <li><p><strong>vector_distance_threshold</strong> – Only returns contexts with vector distance
-smaller than the threshold..</p></li>
+smaller than the threshold.</p></li>
 </ul>
 </dd>
 </dl>
@@ -20425,8 +20593,8 @@ invocation.</p>
 </dd>
 </dl>
 <dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="id23">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'gemini-2.5-flash'</span></em><a class="headerlink" href="#id23" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id28">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'gemini-2.5-flash'</span></em><a class="headerlink" href="#id28" title="Link to this definition">¶</a></dt>
 <dd><p>The name of the LLM, e.g. gemini-2.5-flash or gemini-2.5-pro.</p>
 </dd></dl>
 
@@ -20435,7 +20603,7 @@ invocation.</p>
 <em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">retry_options</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">types.HttpRetryOptions</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#google.adk.models.Gemini.retry_options" title="Link to this definition">¶</a></dt>
 <dd><p>Allow Gemini to retry failed responses.</p>
 <p>Sample:
-<a href="#id24"><span class="problematic" id="id25">``</span></a><a href="#id26"><span class="problematic" id="id27">`</span></a>python
+<a href="#id29"><span class="problematic" id="id30">``</span></a><a href="#id31"><span class="problematic" id="id32">`</span></a>python
 from google.genai import types</p>
 <p># …</p>
 <dl>
@@ -20446,8 +20614,8 @@ from google.genai import types</p>
 <p>)</p>
 </dd>
 </dl>
-<section id="id28">
-<h2>)<a class="headerlink" href="#id28" title="Link to this heading">¶</a></h2>
+<section id="id33">
+<h2>)<a class="headerlink" href="#id33" title="Link to this heading">¶</a></h2>
 </section>
 </dd></dl>
 
@@ -20457,8 +20625,8 @@ from google.genai import types</p>
 <dd></dd></dl>
 
 <dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="id29">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">use_interactions_api</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#id29" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id34">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">use_interactions_api</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></em><a class="headerlink" href="#id34" title="Link to this definition">¶</a></dt>
 <dd><p>Whether to use the interactions API for model invocation.</p>
 <p>When enabled, uses the interactions API (client.aio.interactions.create())
 instead of the traditional generate_content API. The interactions API
@@ -20467,13 +20635,13 @@ interactions using previous_interaction_id instead of sending full history.
 The response format will be converted to match the existing LlmResponse
 structure for compatibility.</p>
 <p>Sample:
-<a href="#id30"><span class="problematic" id="id31">``</span></a><a href="#id32"><span class="problematic" id="id33">`</span></a>python
+<a href="#id35"><span class="problematic" id="id36">``</span></a><a href="#id37"><span class="problematic" id="id38">`</span></a>python
 agent = Agent(</p>
 <blockquote>
 <div><p>model=Gemini(use_interactions_api=True)</p>
 </div></blockquote>
-<section id="id34">
-<h2>)<a class="headerlink" href="#id34" title="Link to this heading">¶</a></h2>
+<section id="id39">
+<h2>)<a class="headerlink" href="#id39" title="Link to this heading">¶</a></h2>
 </section>
 </dd></dl>
 
@@ -21117,8 +21285,8 @@ thinking.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="id35">
-<span class="sig-name descname"><span class="pre">thinking_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ThinkingConfig</span></em><a class="headerlink" href="#id35" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id40">
+<span class="sig-name descname"><span class="pre">thinking_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ThinkingConfig</span></em><a class="headerlink" href="#id40" title="Link to this definition">¶</a></dt>
 <dd><p>Config for model built-in thinking features. An error will be returned if this
 field is set for models that don’t support thinking.</p>
 </dd></dl>
@@ -21208,7 +21376,7 @@ the exactly same way. The modifications will be visible and passed to the next
 callback in the chain. For example, if a plugin modifies the tool input with
 before_tool_callback, the modified tool input will be passed to the
 before_tool_callback of the next plugin, and further passed to the agent
-callbacks if not short circuited.</p>
+callbacks if not short-circuited.</p>
 <p>To use a plugin, implement the desired callback methods and pass an instance
 of your custom plugin class to the ADK Runner.</p>
 <p class="rubric">Examples</p>
@@ -21549,11 +21717,197 @@ normally.</p>
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="google.adk.plugins.DebugLoggingPlugin">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">google.adk.plugins.</span></span><span class="sig-name descname"><span class="pre">DebugLoggingPlugin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'debug_logging_plugin'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'adk_debug.yaml'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_session_state</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_system_instruction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.plugins.DebugLoggingPlugin" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#google.adk.plugins.BasePlugin" title="google.adk.plugins.base_plugin.BasePlugin"><code class="xref py py-class docutils literal notranslate"><span class="pre">BasePlugin</span></code></a></p>
+<p>A plugin that captures complete debug information to a file.</p>
+<p>This plugin records detailed interaction data including:
+- LLM requests (model, system instruction, contents, tools)
+- LLM responses (content, usage metadata, errors)
+- Function calls with arguments
+- Function responses with results
+- Events yielded from the runner
+- Session state at the end of each invocation</p>
+<p>The output is written as YAML format for human readability. Each invocation
+is appended to the file as a separate YAML document (separated by —).
+This format is easy to read and can be shared for debugging purposes.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">debug_plugin</span> <span class="o">=</span> <span class="n">DebugLoggingPlugin</span><span class="p">(</span><span class="n">output_path</span><span class="o">=</span><span class="s2">&quot;/tmp/adk_debug.yaml&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">runner</span> <span class="o">=</span> <span class="n">Runner</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">agent</span><span class="o">=</span><span class="n">my_agent</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">plugins</span><span class="o">=</span><span class="p">[</span><span class="n">debug_plugin</span><span class="p">],</span>
+<span class="gp">... </span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="google.adk.plugins.DebugLoggingPlugin.output_path">
+<span class="sig-name descname"><span class="pre">output_path</span></span><a class="headerlink" href="#google.adk.plugins.DebugLoggingPlugin.output_path" title="Link to this definition">¶</a></dt>
+<dd><p>Path to the output file. Defaults to “adk_debug.yaml”.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="google.adk.plugins.DebugLoggingPlugin.include_session_state">
+<span class="sig-name descname"><span class="pre">include_session_state</span></span><a class="headerlink" href="#google.adk.plugins.DebugLoggingPlugin.include_session_state" title="Link to this definition">¶</a></dt>
+<dd><p>Whether to include session state in the output.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="google.adk.plugins.DebugLoggingPlugin.include_system_instruction">
+<span class="sig-name descname"><span class="pre">include_system_instruction</span></span><a class="headerlink" href="#google.adk.plugins.DebugLoggingPlugin.include_system_instruction" title="Link to this definition">¶</a></dt>
+<dd><p>Whether to include system instructions.</p>
+</dd></dl>
+
+<p>Initialize the debug logging plugin.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> – The name of the plugin instance.</p></li>
+<li><p><strong>output_path</strong> – Path to the output file. Defaults to “adk_debug.yaml”.</p></li>
+<li><p><strong>include_session_state</strong> – Whether to include session state snapshot.</p></li>
+<li><p><strong>include_system_instruction</strong> – Whether to include full system instructions.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="google.adk.plugins.DebugLoggingPlugin.after_agent_callback">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">after_agent_callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">agent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callback_context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.plugins.DebugLoggingPlugin.after_agent_callback" title="Link to this definition">¶</a></dt>
+<dd><p>Log agent execution completion.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Content</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="google.adk.plugins.DebugLoggingPlugin.after_model_callback">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">after_model_callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">callback_context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">llm_response</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.plugins.DebugLoggingPlugin.after_model_callback" title="Link to this definition">¶</a></dt>
+<dd><p>Log LLM response after receiving from model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">LlmResponse</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="google.adk.plugins.DebugLoggingPlugin.after_run_callback">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">after_run_callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">invocation_context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.plugins.DebugLoggingPlugin.after_run_callback" title="Link to this definition">¶</a></dt>
+<dd><p>Finalize and write debug data to file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="google.adk.plugins.DebugLoggingPlugin.after_tool_callback">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">after_tool_callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">tool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tool_args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tool_context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">result</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.plugins.DebugLoggingPlugin.after_tool_callback" title="Link to this definition">¶</a></dt>
+<dd><p>Log tool execution completion.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>] | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="google.adk.plugins.DebugLoggingPlugin.before_agent_callback">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">before_agent_callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">agent</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">callback_context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.plugins.DebugLoggingPlugin.before_agent_callback" title="Link to this definition">¶</a></dt>
+<dd><p>Log agent execution start.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Content</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="google.adk.plugins.DebugLoggingPlugin.before_model_callback">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">before_model_callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">callback_context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">llm_request</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.plugins.DebugLoggingPlugin.before_model_callback" title="Link to this definition">¶</a></dt>
+<dd><p>Log LLM request before sending to model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">LlmResponse</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="google.adk.plugins.DebugLoggingPlugin.before_run_callback">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">before_run_callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">invocation_context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.plugins.DebugLoggingPlugin.before_run_callback" title="Link to this definition">¶</a></dt>
+<dd><p>Initialize debug state for this invocation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Content</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="google.adk.plugins.DebugLoggingPlugin.before_tool_callback">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">before_tool_callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">tool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tool_args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tool_context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.plugins.DebugLoggingPlugin.before_tool_callback" title="Link to this definition">¶</a></dt>
+<dd><p>Log tool execution start.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>] | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="google.adk.plugins.DebugLoggingPlugin.on_event_callback">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">on_event_callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">invocation_context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.plugins.DebugLoggingPlugin.on_event_callback" title="Link to this definition">¶</a></dt>
+<dd><p>Log events yielded from the runner.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#google.adk.events.Event" title="google.adk.events.event.Event"><code class="xref py py-class docutils literal notranslate"><span class="pre">Event</span></code></a> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="google.adk.plugins.DebugLoggingPlugin.on_model_error_callback">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">on_model_error_callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">callback_context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">llm_request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.plugins.DebugLoggingPlugin.on_model_error_callback" title="Link to this definition">¶</a></dt>
+<dd><p>Log LLM error.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">LlmResponse</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="google.adk.plugins.DebugLoggingPlugin.on_tool_error_callback">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">on_tool_error_callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">tool</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tool_args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tool_context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">error</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.plugins.DebugLoggingPlugin.on_tool_error_callback" title="Link to this definition">¶</a></dt>
+<dd><p>Log tool error.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>] | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="google.adk.plugins.DebugLoggingPlugin.on_user_message_callback">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">on_user_message_callback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">invocation_context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">user_message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.plugins.DebugLoggingPlugin.on_user_message_callback" title="Link to this definition">¶</a></dt>
+<dd><p>Log user message and invocation start.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Content</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="google.adk.plugins.LoggingPlugin">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">google.adk.plugins.</span></span><span class="sig-name descname"><span class="pre">LoggingPlugin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'logging_plugin'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.plugins.LoggingPlugin" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#google.adk.plugins.BasePlugin" title="google.adk.plugins.base_plugin.BasePlugin"><code class="xref py py-class docutils literal notranslate"><span class="pre">BasePlugin</span></code></a></p>
 <p>A plugin that logs important information at each callback point.</p>
-<p>This plugin helps printing all critical events in the console. It is not a
+<p>This plugin helps print all critical events in the console. It is not a
 replacement of existing logging in ADK. It rather helps terminal based
 debugging by showing all logs in the console, and serves as a simple demo for
 everyone to leverage when developing new plugins.</p>
@@ -21951,7 +22305,7 @@ that</p>
 method.</p>
 </div></blockquote>
 <p><strong>Example:</strong>
-<a href="#id36"><span class="problematic" id="id37">``</span></a><a href="#id38"><span class="problematic" id="id39">`</span></a>python
+<a href="#id41"><span class="problematic" id="id42">``</span></a><a href="#id43"><span class="problematic" id="id44">`</span></a>python
 from my_project.plugins import ReflectAndRetryToolPlugin, TrackingScope</p>
 <p># Example 1: (MOST COMMON USAGE):
 # Track failures only within the current agent invocation (default).
@@ -21971,7 +22325,7 @@ throw_exception_if_retry_exceeded=False)</p>
 # Track failures in successful tool responses that contain errors.
 class CustomRetryPlugin(ReflectAndRetryToolPlugin):</p>
 <blockquote>
-<div><p>async def extract_error_from_result(self, <a href="#id40"><span class="problematic" id="id41">*</span></a>, tool, tool_args,tool_context,
+<div><p>async def extract_error_from_result(self, <a href="#id45"><span class="problematic" id="id46">*</span></a>, tool, tool_args,tool_context,
 result):</p>
 <blockquote>
 <div><p># Detect error based on response content
@@ -21983,7 +22337,7 @@ if result.get(‘status’) == ‘error’:</p>
 </div></blockquote>
 </div></blockquote>
 <p>error_handling_plugin = CustomRetryPlugin(max_retries=5)
-<a href="#id42"><span class="problematic" id="id43">``</span></a><a href="#id44"><span class="problematic" id="id45">`</span></a></p>
+<a href="#id47"><span class="problematic" id="id48">``</span></a><a href="#id49"><span class="problematic" id="id50">`</span></a></p>
 <p>Initializes the ReflectAndRetryToolPlugin.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -22113,7 +22467,7 @@ execution.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="google.adk.runners.Runner">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">google.adk.runners.</span></span><span class="sig-name descname"><span class="pre">Runner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">app</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">app_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plugins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">artifact_service</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session_service</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory_service</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">credential_service</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plugin_close_timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.runners.Runner" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">google.adk.runners.</span></span><span class="sig-name descname"><span class="pre">Runner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">app</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">app_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plugins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">artifact_service</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session_service</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory_service</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">credential_service</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plugin_close_timeout</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auto_create_session</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.runners.Runner" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>The Runner class is used to run agents.</p>
 <p>It manages the execution of an agent within a session, handling message
@@ -22175,16 +22529,22 @@ artifact storage, session management, and memory.</p>
 
 <p>Initializes the Runner.</p>
 <p>Developers should provide either an <cite>app</cite> instance or both <cite>app_name</cite> and
-<cite>agent</cite>. Providing a mix of <cite>app</cite> and <cite>app_name</cite>/<cite>agent</cite> will result in a
-<cite>ValueError</cite>. Providing <cite>app</cite> is the recommended way to create a runner.</p>
+<cite>agent</cite>. When <cite>app</cite> is provided, <cite>app_name</cite> can optionally override the
+app’s name (useful for deployment scenarios like Agent Engine where the
+resource name differs from the app’s identifier). However, <cite>agent</cite> should
+not be provided when <cite>app</cite> is provided. Providing <cite>app</cite> is the recommended
+way to create a runner.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>app</strong> – An optional <cite>App</cite> instance. If provided, <cite>app_name</cite> and <cite>agent</cite>
-should not be specified.</p></li>
+<li><p><strong>app</strong> – An optional <cite>App</cite> instance. If provided, <cite>agent</cite> should not be
+specified. <cite>app_name</cite> can optionally override <cite>app.name</cite>.</p></li>
 <li><p><strong>app_name</strong> – The application name of the runner. Required if <cite>app</cite> is not
-provided.</p></li>
-<li><p><strong>agent</strong> – The root agent to run. Required if <cite>app</cite> is not provided.</p></li>
+provided. If <cite>app</cite> is provided, this can optionally override <cite>app.name</cite>
+(e.g., for deployment scenarios where a resource name differs from the
+app identifier).</p></li>
+<li><p><strong>agent</strong> – The root agent to run. Required if <cite>app</cite> is not provided. Should
+not be provided when <cite>app</cite> is provided.</p></li>
 <li><p><strong>plugins</strong> – Deprecated. A list of plugins for the runner. Please use the
 <cite>app</cite> argument to provide plugins instead.</p></li>
 <li><p><strong>artifact_service</strong> – The artifact service for the runner.</p></li>
@@ -22192,11 +22552,14 @@ provided.</p></li>
 <li><p><strong>memory_service</strong> – The memory service for the runner.</p></li>
 <li><p><strong>credential_service</strong> – The credential service for the runner.</p></li>
 <li><p><strong>plugin_close_timeout</strong> – The timeout in seconds for plugin close methods.</p></li>
+<li><p><strong>auto_create_session</strong> – Whether to automatically create a session when
+not found. Defaults to False. If False, a missing session raises
+ValueError with a helpful message.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ValueError</strong> – If <cite>app</cite> is provided along with <cite>app_name</cite> or <cite>plugins</cite>, or
-    if <cite>app</cite> is not provided but either <cite>app_name</cite> or <cite>agent</cite> is missing.</p>
+<dd class="field-even"><p><strong>ValueError</strong> – If <cite>app</cite> is provided along with <cite>agent</cite> or <cite>plugins</cite>, or if
+    <cite>app</cite> is not provided but either <cite>app_name</cite> or <cite>agent</cite> is missing.</p>
 </dd>
 </dl>
 <dl class="py attribute">
@@ -22205,20 +22568,20 @@ provided.</p></li>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="id46">
-<span class="sig-name descname"><span class="pre">agent</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#google.adk.agents.BaseAgent" title="google.adk.agents.base_agent.BaseAgent"><span class="pre">BaseAgent</span></a></em><a class="headerlink" href="#id46" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id51">
+<span class="sig-name descname"><span class="pre">agent</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#google.adk.agents.BaseAgent" title="google.adk.agents.base_agent.BaseAgent"><span class="pre">BaseAgent</span></a></em><a class="headerlink" href="#id51" title="Link to this definition">¶</a></dt>
 <dd><p>The root agent to run.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="id47">
-<span class="sig-name descname"><span class="pre">app_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#id47" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id52">
+<span class="sig-name descname"><span class="pre">app_name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#id52" title="Link to this definition">¶</a></dt>
 <dd><p>The app name of the runner.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="id48">
-<span class="sig-name descname"><span class="pre">artifact_service</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#google.adk.artifacts.BaseArtifactService" title="google.adk.artifacts.base_artifact_service.BaseArtifactService"><span class="pre">BaseArtifactService</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id48" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id53">
+<span class="sig-name descname"><span class="pre">artifact_service</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#google.adk.artifacts.BaseArtifactService" title="google.adk.artifacts.base_artifact_service.BaseArtifactService"><span class="pre">BaseArtifactService</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id53" title="Link to this definition">¶</a></dt>
 <dd><p>The artifact service for the runner.</p>
 </dd></dl>
 
@@ -22229,32 +22592,32 @@ provided.</p></li>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="id49">
-<span class="sig-name descname"><span class="pre">context_cache_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ContextCacheConfig</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id49" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id54">
+<span class="sig-name descname"><span class="pre">context_cache_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ContextCacheConfig</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id54" title="Link to this definition">¶</a></dt>
 <dd><p>The context cache config for the runner.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="id50">
-<span class="sig-name descname"><span class="pre">credential_service</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">BaseCredentialService</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id50" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id55">
+<span class="sig-name descname"><span class="pre">credential_service</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">BaseCredentialService</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id55" title="Link to this definition">¶</a></dt>
 <dd><p>The credential service for the runner.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="id51">
-<span class="sig-name descname"><span class="pre">memory_service</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#google.adk.memory.BaseMemoryService" title="google.adk.memory.base_memory_service.BaseMemoryService"><span class="pre">BaseMemoryService</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id51" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id56">
+<span class="sig-name descname"><span class="pre">memory_service</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#google.adk.memory.BaseMemoryService" title="google.adk.memory.base_memory_service.BaseMemoryService"><span class="pre">BaseMemoryService</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id56" title="Link to this definition">¶</a></dt>
 <dd><p>The memory service for the runner.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="id52">
-<span class="sig-name descname"><span class="pre">plugin_manager</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#google.adk.plugins.PluginManager" title="google.adk.plugins.plugin_manager.PluginManager"><span class="pre">PluginManager</span></a></em><a class="headerlink" href="#id52" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id57">
+<span class="sig-name descname"><span class="pre">plugin_manager</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#google.adk.plugins.PluginManager" title="google.adk.plugins.plugin_manager.PluginManager"><span class="pre">PluginManager</span></a></em><a class="headerlink" href="#id57" title="Link to this definition">¶</a></dt>
 <dd><p>The plugin manager for the runner.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="id53">
-<span class="sig-name descname"><span class="pre">resumability_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#google.adk.apps.ResumabilityConfig" title="google.adk.apps.app.ResumabilityConfig"><span class="pre">ResumabilityConfig</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id53" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id58">
+<span class="sig-name descname"><span class="pre">resumability_config</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#google.adk.apps.ResumabilityConfig" title="google.adk.apps.app.ResumabilityConfig"><span class="pre">ResumabilityConfig</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id58" title="Link to this definition">¶</a></dt>
 <dd><p>The resumability config for the application.</p>
 </dd></dl>
 
@@ -22420,7 +22783,7 @@ yielded events are saved to the session. Here’s a breakdown:</p>
 </div></blockquote>
 <ul class="simple">
 <li><p><strong>Live Model Audio Events with File Data:</strong> Both input and ouput audio
-data are aggregated into a audio file saved into artifacts. The
+data are aggregated into an audio file saved into artifacts. The
 reference to the file is saved in the event as <cite>file_data</cite>.</p></li>
 <li><p><strong>Usage Metadata:</strong> Events containing token usage.</p></li>
 <li><p><strong>Transcription Events:</strong> Both partial and non-partial transcription
@@ -22431,7 +22794,7 @@ events are yielded.</p></li>
 <p><strong>Events Saved to the Session:</strong>
 *   <strong>Live Model Audio Events with File Data:</strong> Both input and ouput audio</p>
 <blockquote>
-<div><p>data are aggregated into a audio file saved into artifacts. The
+<div><p>data are aggregated into an audio file saved into artifacts. The
 reference to the file is saved as event in the <cite>file_data</cite> to session
 if RunConfig.save_live_model_audio_to_session is True.</p>
 </div></blockquote>
@@ -22477,8 +22840,8 @@ in future releases.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="id54">
-<span class="sig-name descname"><span class="pre">session_service</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#google.adk.sessions.BaseSessionService" title="google.adk.sessions.base_session_service.BaseSessionService"><span class="pre">BaseSessionService</span></a></em><a class="headerlink" href="#id54" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id59">
+<span class="sig-name descname"><span class="pre">session_service</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#google.adk.sessions.BaseSessionService" title="google.adk.sessions.base_session_service.BaseSessionService"><span class="pre">BaseSessionService</span></a></em><a class="headerlink" href="#id59" title="Link to this definition">¶</a></dt>
 <dd><p>The session service for the runner.</p>
 </dd></dl>
 
@@ -24990,6 +25353,21 @@ users.</p></li>
 <span class="w">            </span><span class="p">},</span>
 <span class="w">            </span><span class="nt">&quot;credentials&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">               </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#/$defs/HttpCredentials&quot;</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="nt">&quot;additionalHeaders&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">               </span><span class="nt">&quot;anyOf&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                  </span><span class="p">{</span>
+<span class="w">                     </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">                     </span><span class="p">},</span>
+<span class="w">                     </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span>
+<span class="w">                  </span><span class="p">},</span>
+<span class="w">                  </span><span class="p">{</span>
+<span class="w">                     </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;null&quot;</span>
+<span class="w">                  </span><span class="p">}</span>
+<span class="w">               </span><span class="p">],</span>
+<span class="w">               </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">               </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Additionalheaders&quot;</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">         </span><span class="p">},</span>
 <span class="w">         </span><span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
@@ -26736,7 +27114,7 @@ users.</p></li>
 <span id="google-adk-telemetry-module"></span><h1>google.adk.telemetry module<a class="headerlink" href="#module-google.adk.telemetry" title="Link to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="google.adk.telemetry.trace_call_llm">
-<span class="sig-prename descclassname"><span class="pre">google.adk.telemetry.</span></span><span class="sig-name descname"><span class="pre">trace_call_llm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">invocation_context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">llm_request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">llm_response</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.telemetry.trace_call_llm" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">google.adk.telemetry.</span></span><span class="sig-name descname"><span class="pre">trace_call_llm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">invocation_context</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">event_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">llm_request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">llm_response</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">span</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.telemetry.trace_call_llm" title="Link to this definition">¶</a></dt>
 <dd><p>Traces a call to the LLM.</p>
 <p>This function records details about the LLM request and response as
 attributes on the current OpenTelemetry span.</p>
@@ -26899,6 +27277,20 @@ lifecycle or when the toolset is no longer needed. Implementations
 should ensure that any open connections, files, or other managed
 resources are properly released to prevent leaks.</p>
 </div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="google.adk.tools.APIHubToolset.get_auth_config">
+<span class="sig-name descname"><span class="pre">get_auth_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.tools.APIHubToolset.get_auth_config" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the auth config for this toolset.</p>
+<p>ADK will populate exchanged_auth_credential on this config before calling
+get_tools(). The toolset can then access the ready-to-use credential via
+self._auth_config.exchanged_auth_credential.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">AuthConfig</span></code>]</span></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -27352,6 +27744,21 @@ returned by the toolset.</p></li>
 <span class="w">            </span><span class="p">},</span>
 <span class="w">            </span><span class="nt">&quot;credentials&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
 <span class="w">               </span><span class="nt">&quot;$ref&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;#/$defs/HttpCredentials&quot;</span>
+<span class="w">            </span><span class="p">},</span>
+<span class="w">            </span><span class="nt">&quot;additionalHeaders&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">               </span><span class="nt">&quot;anyOf&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                  </span><span class="p">{</span>
+<span class="w">                     </span><span class="nt">&quot;additionalProperties&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;string&quot;</span>
+<span class="w">                     </span><span class="p">},</span>
+<span class="w">                     </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;object&quot;</span>
+<span class="w">                  </span><span class="p">},</span>
+<span class="w">                  </span><span class="p">{</span>
+<span class="w">                     </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;null&quot;</span>
+<span class="w">                  </span><span class="p">}</span>
+<span class="w">               </span><span class="p">],</span>
+<span class="w">               </span><span class="nt">&quot;default&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">               </span><span class="nt">&quot;title&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Additionalheaders&quot;</span>
 <span class="w">            </span><span class="p">}</span>
 <span class="w">         </span><span class="p">},</span>
 <span class="w">         </span><span class="nt">&quot;required&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
@@ -28489,6 +28896,31 @@ gracefully to avoid blocking application shutdown.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="google.adk.tools.McpToolset.get_auth_config">
+<span class="sig-name descname"><span class="pre">get_auth_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.tools.McpToolset.get_auth_config" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the auth config for this toolset.</p>
+<p>ADK will populate exchanged_auth_credential on this config before calling
+get_tools(). The toolset can then access the ready-to-use credential via
+self._auth_config.exchanged_auth_credential.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">AuthConfig</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="google.adk.tools.McpToolset.get_resource_info">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_resource_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">readonly_context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.tools.McpToolset.get_resource_info" title="Link to this definition">¶</a></dt>
+<dd><p>Returns metadata about a specific resource (name, MIME type, etc.).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="google.adk.tools.McpToolset.get_tools">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_tools</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">readonly_context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.tools.McpToolset.get_tools" title="Link to this definition">¶</a></dt>
 <dd><p>Return all tools in the toolset based on the provided context.</p>
@@ -28505,6 +28937,37 @@ If None, all tools in the toolset are returned.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>List[<a class="reference internal" href="#google.adk.tools.BaseTool" title="google.adk.tools.BaseTool">BaseTool</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="google.adk.tools.McpToolset.list_resources">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">list_resources</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">readonly_context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.tools.McpToolset.list_resources" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a list of resource names available on the MCP server.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="google.adk.tools.McpToolset.read_resource">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_resource</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">readonly_context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.tools.McpToolset.read_resource" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches and returns a list of contents of the named resource.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>name</strong> – The name of the resource to fetch.</p></li>
+<li><p><strong>readonly_context</strong> – Context used to provide headers for the MCP session.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of contents of the resource.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -28555,9 +29018,19 @@ to map function call response to the original function call.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="google.adk.tools.ToolContext.get_auth_response">
 <span class="sig-name descname"><span class="pre">get_auth_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">auth_config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.tools.ToolContext.get_auth_response" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Gets the auth response credential from session state.</p>
+<p>This method retrieves an authentication credential that was previously
+stored in session state after a user completed an OAuth flow or other
+authentication process.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">AuthCredential</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>auth_config</strong> – The authentication configuration for the credential.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The auth credential from the auth response, or None if not found.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -28641,6 +29114,29 @@ hallucinating invalid agent names by restricting choices to only valid agents.</
 <dd><p>The Vertex AI search engine resource ID.</p>
 </dd></dl>
 
+<p>To dynamically customize the search configuration at runtime (e.g., set
+filter based on user context), subclass this tool and override the
+<cite>_build_vertex_ai_search_config</cite> method.</p>
+<p class="rubric">Example</p>
+<p><a href="#id60"><span class="problematic" id="id61">``</span></a><a href="#id62"><span class="problematic" id="id63">`</span></a>python
+class DynamicFilterSearchTool(VertexAiSearchTool):</p>
+<blockquote>
+<div><dl>
+<dt>def _build_vertex_ai_search_config(</dt><dd><p>self, ctx: ReadonlyContext</p>
+</dd>
+<dt>) -&gt; types.VertexAISearch:</dt><dd><p>user_id = ctx.state.get(‘user_id’)
+return types.VertexAISearch(</p>
+<blockquote>
+<div><p>datastore=self.data_store_id,
+engine=self.search_engine_id,
+filter=f”user_id = ‘{user_id}’”,
+max_results=self.max_results,</p>
+</div></blockquote>
+<p>)</p>
+</dd>
+</dl>
+</div></blockquote>
+<p><a href="#id64"><span class="problematic" id="id65">``</span></a><a href="#id66"><span class="problematic" id="id67">`</span></a></p>
 <p>Initializes the Vertex AI Search tool.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -29013,6 +29509,20 @@ resources are properly released to prevent leaks.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="google.adk.tools.apihub_tool.APIHubToolset.get_auth_config">
+<span class="sig-name descname"><span class="pre">get_auth_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.tools.apihub_tool.APIHubToolset.get_auth_config" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the auth config for this toolset.</p>
+<p>ADK will populate exchanged_auth_credential on this config before calling
+get_tools(). The toolset can then access the ready-to-use credential via
+self._auth_config.exchanged_auth_credential.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">AuthConfig</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="google.adk.tools.apihub_tool.APIHubToolset.get_tools">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_tools</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">readonly_context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.tools.apihub_tool.APIHubToolset.get_tools" title="Link to this definition">¶</a></dt>
 <dd><p>Retrieves all available tools.</p>
@@ -29119,6 +29629,20 @@ lifecycle or when the toolset is no longer needed. Implementations
 should ensure that any open connections, files, or other managed
 resources are properly released to prevent leaks.</p>
 </div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="google.adk.tools.application_integration_tool.ApplicationIntegrationToolset.get_auth_config">
+<span class="sig-name descname"><span class="pre">get_auth_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.tools.application_integration_tool.ApplicationIntegrationToolset.get_auth_config" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the auth config for this toolset.</p>
+<p>ADK will populate exchanged_auth_credential on this config before calling
+get_tools(). The toolset can then access the ready-to-use credential via
+self._auth_config.exchanged_auth_credential.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">AuthConfig</span></code>]</span></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -29512,6 +30036,29 @@ tool config.</p></li>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The toolset instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="google.adk.tools.base_toolset.BaseToolset.get_auth_config">
+<span class="sig-name descname"><span class="pre">get_auth_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.tools.base_toolset.BaseToolset.get_auth_config" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the auth config for this toolset. ADK will make sure the
+‘exchanged_auth_credential’ field in the config is populated with
+ready-to-use credential (e.g. oauth token for OAuth flow) before calling
+get_tools method or execute any tools returned by this toolset. Thus toolset
+can use this credential either for tool listing or tool calling. If tool
+calling needs a different credential from ADK client, call
+tool_context.request_credential in the tool.</p>
+<p>Toolsets that support authentication should override this method to return
+an AuthConfig constructed from their auth_scheme, auth_credential, and
+optional credential_key parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">AuthConfig</span></code>]</span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>AuthConfig if the toolset has authentication configured, None otherwise.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -31189,7 +31736,7 @@ GOOGLE_GENAI_USE_VERTEXAI=TRUE)</p>
 <span id="google-adk-tools-google-search-tool-module"></span><h1>google.adk.tools.google_search_tool module<a class="headerlink" href="#module-google.adk.tools.google_search_tool" title="Link to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="google.adk.tools.google_search_tool.GoogleSearchTool">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">google.adk.tools.google_search_tool.</span></span><span class="sig-name descname"><span class="pre">GoogleSearchTool</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">bypass_multi_tools_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.tools.google_search_tool.GoogleSearchTool" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">google.adk.tools.google_search_tool.</span></span><span class="sig-name descname"><span class="pre">GoogleSearchTool</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">bypass_multi_tools_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.tools.google_search_tool.GoogleSearchTool" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#google.adk.tools.base_tool.BaseTool" title="google.adk.tools.base_tool.BaseTool"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseTool</span></code></a></p>
 <p>A built-in tool that is automatically invoked by Gemini 2 models to retrieve search results from Google Search.</p>
 <p>This tool operates internally within the model and does not require or perform
@@ -31197,8 +31744,13 @@ local code execution.</p>
 <p>Initializes the Google search tool.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>bypass_multi_tools_limit</strong> – Whether to bypass the multi tools limitation,
-so that the tool can be used with other tools in the same agent.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bypass_multi_tools_limit</strong> – Whether to bypass the multi tools limitation,
+so that the tool can be used with other tools in the same agent.</p></li>
+<li><p><strong>model</strong> – Optional model name to use for processing the LLM request. If
+provided, this model will be used instead of the model from the
+incoming llm_request.</p></li>
+</ul>
 </dd>
 </dl>
 <dl class="py method">
@@ -32284,7 +32836,6 @@ user.</p></li>
 </section>
 <section id="module-google.adk.tools.load_web_page">
 <span id="google-adk-tools-load-web-page-module"></span><h1>google.adk.tools.load_web_page module<a class="headerlink" href="#module-google.adk.tools.load_web_page" title="Link to this heading">¶</a></h1>
-<p>Tool for web browse.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="google.adk.tools.load_web_page.load_web_page">
 <span class="sig-prename descclassname"><span class="pre">google.adk.tools.load_web_page.</span></span><span class="sig-name descname"><span class="pre">load_web_page</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.tools.load_web_page.load_web_page" title="Link to this definition">¶</a></dt>
@@ -32557,6 +33108,31 @@ gracefully to avoid blocking application shutdown.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="google.adk.tools.mcp_tool.McpToolset.get_auth_config">
+<span class="sig-name descname"><span class="pre">get_auth_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.tools.mcp_tool.McpToolset.get_auth_config" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the auth config for this toolset.</p>
+<p>ADK will populate exchanged_auth_credential on this config before calling
+get_tools(). The toolset can then access the ready-to-use credential via
+self._auth_config.exchanged_auth_credential.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">AuthConfig</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="google.adk.tools.mcp_tool.McpToolset.get_resource_info">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_resource_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">readonly_context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.tools.mcp_tool.McpToolset.get_resource_info" title="Link to this definition">¶</a></dt>
+<dd><p>Returns metadata about a specific resource (name, MIME type, etc.).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="google.adk.tools.mcp_tool.McpToolset.get_tools">
 <em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_tools</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">readonly_context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.tools.mcp_tool.McpToolset.get_tools" title="Link to this definition">¶</a></dt>
 <dd><p>Return all tools in the toolset based on the provided context.</p>
@@ -32573,6 +33149,37 @@ If None, all tools in the toolset are returned.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>List[<a class="reference internal" href="#google.adk.tools.BaseTool" title="google.adk.tools.BaseTool">BaseTool</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="google.adk.tools.mcp_tool.McpToolset.list_resources">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">list_resources</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">readonly_context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.tools.mcp_tool.McpToolset.list_resources" title="Link to this definition">¶</a></dt>
+<dd><p>Returns a list of resource names available on the MCP server.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="google.adk.tools.mcp_tool.McpToolset.read_resource">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read_resource</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">readonly_context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.tools.mcp_tool.McpToolset.read_resource" title="Link to this definition">¶</a></dt>
+<dd><p>Fetches and returns a list of contents of the named resource.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>name</strong> – The name of the resource to fetch.</p></li>
+<li><p><strong>readonly_context</strong> – Context used to provide headers for the MCP session.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of contents of the resource.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -32663,23 +33270,23 @@ server.</p>
 </dd>
 </dl>
 <dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="id55">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">headers</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id55" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id68">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">headers</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id68" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="id56">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sse_read_timeout</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">300.0</span></em><a class="headerlink" href="#id56" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id69">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sse_read_timeout</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">300.0</span></em><a class="headerlink" href="#id69" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="id57">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">timeout</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5.0</span></em><a class="headerlink" href="#id57" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id70">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">timeout</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5.0</span></em><a class="headerlink" href="#id70" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="id58">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">url</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#id58" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id71">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">url</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#id71" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -32800,13 +33407,13 @@ stdio server.</p>
 </dd>
 </dl>
 <dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="id59">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">server_params</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">StdioServerParameters</span></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#id59" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id72">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">server_params</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">StdioServerParameters</span></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#id72" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="id60">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">timeout</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5.0</span></em><a class="headerlink" href="#id60" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id73">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">timeout</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5.0</span></em><a class="headerlink" href="#id73" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -32919,33 +33526,33 @@ not provided, a default factory will be used.</p>
 </dd>
 </dl>
 <dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="id61">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">headers</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id61" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id74">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">headers</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id74" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="id62">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">httpx_client_factory</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">CheckableMcpHttpClientFactory</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;function</span> <span class="pre">create_mcp_http_client&gt;</span></em><a class="headerlink" href="#id62" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id75">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">httpx_client_factory</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">CheckableMcpHttpClientFactory</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;function</span> <span class="pre">create_mcp_http_client&gt;</span></em><a class="headerlink" href="#id75" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="id63">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sse_read_timeout</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">300.0</span></em><a class="headerlink" href="#id63" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id76">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sse_read_timeout</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">300.0</span></em><a class="headerlink" href="#id76" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="id64">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">terminate_on_close</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#id64" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id77">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">terminate_on_close</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">True</span></em><a class="headerlink" href="#id77" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="id65">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">timeout</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5.0</span></em><a class="headerlink" href="#id65" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id78">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">timeout</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">5.0</span></em><a class="headerlink" href="#id78" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute pydantic_field">
-<dt class="sig sig-object py" id="id66">
-<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">url</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#id66" title="Link to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="id79">
+<em class="property"><span class="pre">field</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">url</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"> <span class="pre">[Required]</span></em><a class="headerlink" href="#id79" title="Link to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -33002,7 +33609,7 @@ print(mcp_tool)</p>
 <span id="google-adk-tools-openapi-tool-module"></span><h1>google.adk.tools.openapi_tool module<a class="headerlink" href="#module-google.adk.tools.openapi_tool" title="Link to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="google.adk.tools.openapi_tool.OpenAPIToolset">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">google.adk.tools.openapi_tool.</span></span><span class="sig-name descname"><span class="pre">OpenAPIToolset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">spec_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spec_str</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spec_str_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'json'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auth_scheme</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auth_credential</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tool_filter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tool_name_prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ssl_verify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header_provider</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.tools.openapi_tool.OpenAPIToolset" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">google.adk.tools.openapi_tool.</span></span><span class="sig-name descname"><span class="pre">OpenAPIToolset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">spec_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spec_str</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spec_str_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'json'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auth_scheme</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auth_credential</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">credential_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tool_filter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tool_name_prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ssl_verify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header_provider</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.tools.openapi_tool.OpenAPIToolset" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#google.adk.tools.base_toolset.BaseToolset" title="google.adk.tools.base_toolset.BaseToolset"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseToolset</span></code></a></p>
 <p>Class for parsing OpenAPI spec into a list of RestApiTool.</p>
 <p>Usage:</p>
@@ -33054,6 +33661,8 @@ helpers in <code class="docutils literal notranslate"><span class="pre">google.a
 <li><p><strong>auth_credential</strong> – The auth credential to use for all tools. Use
 AuthCredential or use helpers in
 <code class="docutils literal notranslate"><span class="pre">google.adk.tools.openapi_tool.auth.auth_helpers</span></code></p></li>
+<li><p><strong>credential_key</strong> – Optional stable key used for interactive auth and
+credential caching across all tools in this toolset.</p></li>
 <li><p><strong>tool_filter</strong> – The filter used to filter the tools in the toolset. It can be
 either a tool predicate or a list of tool names of the tools to expose.</p></li>
 <li><p><strong>tool_name_prefix</strong> – The prefix to prepend to the names of the tools returned
@@ -33107,6 +33716,19 @@ TLS-intercepting proxy with a custom CA certificate.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="google.adk.tools.openapi_tool.OpenAPIToolset.get_auth_config">
+<span class="sig-name descname"><span class="pre">get_auth_config</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.tools.openapi_tool.OpenAPIToolset.get_auth_config" title="Link to this definition">¶</a></dt>
+<dd><p>Returns the auth config for this toolset.</p>
+<p>Note: This returns a copy so any exchanged credentials populated by the ADK
+framework do not persist on the toolset instance across invocations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">AuthConfig</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="google.adk.tools.openapi_tool.OpenAPIToolset.get_tool">
 <span class="sig-name descname"><span class="pre">get_tool</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tool_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.tools.openapi_tool.OpenAPIToolset.get_tool" title="Link to this definition">¶</a></dt>
 <dd><p>Get a tool by name.</p>
@@ -33132,7 +33754,7 @@ TLS-intercepting proxy with a custom CA certificate.</p>
 
 <dl class="py class">
 <dt class="sig sig-object py" id="google.adk.tools.openapi_tool.RestApiTool">
-<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">google.adk.tools.openapi_tool.</span></span><span class="sig-name descname"><span class="pre">RestApiTool</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">endpoint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auth_scheme</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auth_credential</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">should_parse_operation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ssl_verify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header_provider</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.tools.openapi_tool.RestApiTool" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">google.adk.tools.openapi_tool.</span></span><span class="sig-name descname"><span class="pre">RestApiTool</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">endpoint</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auth_scheme</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auth_credential</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">should_parse_operation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ssl_verify</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header_provider</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">credential_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.tools.openapi_tool.RestApiTool" title="Link to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#google.adk.tools.base_tool.BaseTool" title="google.adk.tools.base_tool.BaseTool"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseTool</span></code></a></p>
 <p>A generic tool that interacts with a REST API.</p>
 <ul class="simple">
@@ -33182,6 +33804,8 @@ included in API requests. The callable receives the ReadonlyContext as
 an argument, allowing dynamic header generation based on the current
 context. Useful for adding custom headers like correlation IDs,
 authentication tokens, or other request metadata.</p></li>
+<li><p><strong>credential_key</strong> – Optional stable key used for interactive auth and
+credential caching.</p></li>
 </ul>
 </dd>
 </dl>
@@ -33228,6 +33852,12 @@ The dict is converted to an AuthCredential object.</p>
 converted to a AuthScheme object.</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="google.adk.tools.openapi_tool.RestApiTool.configure_credential_key">
+<span class="sig-name descname"><span class="pre">configure_credential_key</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">credential_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.tools.openapi_tool.RestApiTool.configure_credential_key" title="Link to this definition">¶</a></dt>
+<dd><p>Configures the credential key for interactive auth / caching.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -33417,9 +34047,19 @@ to map function call response to the original function call.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="google.adk.tools.tool_context.ToolContext.get_auth_response">
 <span class="sig-name descname"><span class="pre">get_auth_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">auth_config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.tools.tool_context.ToolContext.get_auth_response" title="Link to this definition">¶</a></dt>
-<dd><dl class="field-list simple">
+<dd><p>Gets the auth response credential from session state.</p>
+<p>This method retrieves an authentication credential that was previously
+stored in session state after a user completed an OAuth flow or other
+authentication process.</p>
+<dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">AuthCredential</span></code></span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>auth_config</strong> – The authentication configuration for the credential.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The auth credential from the auth response, or None if not found.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -33465,8 +34105,85 @@ to map function call response to the original function call.</p>
 </dd></dl>
 
 </section>
-<section id="google-adk-tools-toolbox-toolset-module">
-<h1>google.adk.tools.toolbox_toolset module<a class="headerlink" href="#google-adk-tools-toolbox-toolset-module" title="Link to this heading">¶</a></h1>
+<section id="module-google.adk.tools.toolbox_toolset">
+<span id="google-adk-tools-toolbox-toolset-module"></span><h1>google.adk.tools.toolbox_toolset module<a class="headerlink" href="#module-google.adk.tools.toolbox_toolset" title="Link to this heading">¶</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="google.adk.tools.toolbox_toolset.ToolboxToolset">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">google.adk.tools.toolbox_toolset.</span></span><span class="sig-name descname"><span class="pre">ToolboxToolset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">server_url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">toolset_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tool_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auth_token_getters</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bound_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">credentials</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">additional_headers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.tools.toolbox_toolset.ToolboxToolset" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#google.adk.tools.base_toolset.BaseToolset" title="google.adk.tools.base_toolset.BaseToolset"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseToolset</span></code></a></p>
+<p>A class that provides access to toolbox toolsets.</p>
+<p>Example:
+<code class="docutils literal notranslate"><span class="pre">`python</span>
+<span class="pre">toolbox_toolset</span> <span class="pre">=</span> <span class="pre">ToolboxToolset(&quot;http://127.0.0.1:5000&quot;)</span>
+<span class="pre">`</span></code></p>
+<p>Initializes the ToolboxToolset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>server_url</strong> – The URL of the toolbox server.</p></li>
+<li><p><strong>toolset_name</strong> – (Optional) The name of the toolbox toolset to load.</p></li>
+<li><p><strong>tool_names</strong> – (Optional) The names of the tools to load.</p></li>
+<li><p><strong>auth_token_getters</strong> – <p>(Optional) A mapping of authentication service names
+to callables that return the corresponding authentication token. see:
+<a class="reference external" href="https://github.com/googleapis/mcp-toolbox-sdk-python/tree/main/packages/toolbox-core#authenticating-tools">https://github.com/googleapis/mcp-toolbox-sdk-python/tree/main/packages/toolbox-core#authenticating-tools</a></p>
+<blockquote>
+<div><p>for details.</p>
+</div></blockquote>
+</p></li>
+<li><p><strong>bound_params</strong> – <p>(Optional) A mapping of parameter names to bind to specific
+values or callables that are called to produce values as needed. see:
+<a class="reference external" href="https://github.com/googleapis/mcp-toolbox-sdk-python/tree/main/packages/toolbox-core#binding-parameter-values">https://github.com/googleapis/mcp-toolbox-sdk-python/tree/main/packages/toolbox-core#binding-parameter-values</a></p>
+<blockquote>
+<div><p>for details.</p>
+</div></blockquote>
+</p></li>
+<li><p><strong>credentials</strong> – (Optional) toolbox_adk.CredentialConfig object.</p></li>
+<li><p><strong>additional_headers</strong> – (Optional) Static headers mapping.</p></li>
+<li><p><strong>**kwargs</strong> – Additional arguments passed to the underlying
+toolbox_adk.ToolboxToolset.</p></li>
+</ul>
+</dd>
+</dl>
+<p>The resulting ToolboxToolset will contain both tools loaded by tool_names
+and toolset_name.</p>
+<p>Note: toolset_name and tool_names are optional.
+If both are omitted, all tools are loaded.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="google.adk.tools.toolbox_toolset.ToolboxToolset.close">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.tools.toolbox_toolset.ToolboxToolset.close" title="Link to this definition">¶</a></dt>
+<dd><p>Performs cleanup and releases resources held by the toolset.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This method is invoked, for example, at the end of an agent server’s
+lifecycle or when the toolset is no longer needed. Implementations
+should ensure that any open connections, files, or other managed
+resources are properly released to prevent leaks.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="google.adk.tools.toolbox_toolset.ToolboxToolset.get_tools">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_tools</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">readonly_context</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#google.adk.tools.toolbox_toolset.ToolboxToolset.get_tools" title="Link to this definition">¶</a></dt>
+<dd><p>Return all tools in the toolset based on the provided context.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<a class="reference internal" href="#google.adk.tools.base_tool.BaseTool" title="google.adk.tools.base_tool.BaseTool"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseTool</span></code></a>]</span></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>readonly_context</strong> (<em>ReadonlyContext</em><em>, </em><em>optional</em>) – Context used to filter tools
+available to the agent. If None, all tools in the toolset are returned.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of tools available under the specified context.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list[<a class="reference internal" href="#google.adk.tools.BaseTool" title="google.adk.tools.BaseTool">BaseTool</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </section>
 <section id="module-google.adk.tools.transfer_to_agent_tool">
 <span id="google-adk-tools-transfer-to-agent-tool-module"></span><h1>google.adk.tools.transfer_to_agent_tool module<a class="headerlink" href="#module-google.adk.tools.transfer_to_agent_tool" title="Link to this heading">¶</a></h1>
@@ -33568,6 +34285,29 @@ local code execution.</p>
 <dd><p>The Vertex AI search engine resource ID.</p>
 </dd></dl>
 
+<p>To dynamically customize the search configuration at runtime (e.g., set
+filter based on user context), subclass this tool and override the
+<cite>_build_vertex_ai_search_config</cite> method.</p>
+<p class="rubric">Example</p>
+<p><a href="#id80"><span class="problematic" id="id81">``</span></a><a href="#id82"><span class="problematic" id="id83">`</span></a>python
+class DynamicFilterSearchTool(VertexAiSearchTool):</p>
+<blockquote>
+<div><dl>
+<dt>def _build_vertex_ai_search_config(</dt><dd><p>self, ctx: ReadonlyContext</p>
+</dd>
+<dt>) -&gt; types.VertexAISearch:</dt><dd><p>user_id = ctx.state.get(‘user_id’)
+return types.VertexAISearch(</p>
+<blockquote>
+<div><p>datastore=self.data_store_id,
+engine=self.search_engine_id,
+filter=f”user_id = ‘{user_id}’”,
+max_results=self.max_results,</p>
+</div></blockquote>
+<p>)</p>
+</dd>
+</dl>
+</div></blockquote>
+<p><a href="#id84"><span class="problematic" id="id85">``</span></a><a href="#id86"><span class="problematic" id="id87">`</span></a></p>
 <p>Initializes the Vertex AI Search tool.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>

@@ -5,6 +5,12 @@ agent workflow. This page lists these tool limitations and workarounds, if avail
 
 ## One tool per agent limitation {#one-tool-one-agent}
 
+!!! note "ONLY for Search in ADK Python v1.15.0 and lower"
+
+    This limitation only applies to the use of Google Search and Vertex AI Search
+    tools in ADK Python v1.15.0 and lower. ADK Python release v1.16.0 and higher
+    provides a built-in workaround to remove this limitation.
+
 In general, you can use more than one tool in an agent, but use of specific
 tools within an agent excludes the use of any other tools in that agent. The
 following ADK Tools can only be used by themselves, without any other tools, in
