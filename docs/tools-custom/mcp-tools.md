@@ -46,6 +46,17 @@ The `McpToolset` class is ADK's primary mechanism for integrating tools from an 
 4.  **Proxying Tool Calls:** When your `LlmAgent` decides to use one of these tools, `McpToolset` transparently proxies the call (using the `call_tool` MCP method) to the MCP server, sends the necessary arguments, and returns the server's response back to the agent.
 5.  **Filtering (Optional):** You can use the `tool_filter` parameter when creating an `McpToolset` to select a specific subset of tools from the MCP server, rather than exposing all of them to your agent.
 
+### Authentication for Remote MCP Servers
+
+When connecting to a remote MCP server that requires authentication (for example, using `SseConnectionParams` or `StreamableHTTPConnectionParams`), you can provide authentication details directly to the `McpToolset`.
+
+The `McpToolset` constructor accepts two parameters for this purpose:
+
+*   `auth_scheme`: Defines the authentication method to be used (e.g., `Bearer`, `Basic`, or an API key scheme).
+*   `auth_credential`: Provides the necessary credentials, such as a token or username/password.
+
+ADK uses these parameters to automatically construct and attach the appropriate `Authorization` header to all requests sent to the MCP server. This simplifies the process of securely communicating with protected MCP endpoints.
+
 The following examples demonstrate how to use `McpToolset` within the `adk web` development environment. For scenarios where you need more fine-grained control over the MCP connection lifecycle or are not using `adk web`, refer to the "Using MCP Tools in your own Agent out of `adk web`" section later in this page.
 
 ### Example 1: File System MCP Server
@@ -741,7 +752,7 @@ from . import agent
     python3 /path/to/your/my_adk_mcp_server.py
     ```
     It will print "Launching MCP Server..." and wait. The ADK agent (run via `adk web`) will then connect to this process if the `command` in `StdioConnectionParams` is set up to execute it.
-    *(Alternatively, `McpToolset` will start this server script as a subprocess automatically when the agent initializes).*
+    *(Alternatively, `McpToolset` will start this server script as a subprocess automatically when the agent initializes).)*
 
 2.  **Run `adk web` for the client agent:**
     Navigate to the parent directory of `mcp_client_agent` (e.g., `adk_agent_samples`) and run:
