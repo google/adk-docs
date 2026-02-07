@@ -183,9 +183,7 @@ tells the agent:
             .build();
     ```
 
-*(Note: For instructions that apply to *all* agents in a system, consider using
-`global_instruction` on the root agent, detailed further in the
-[Multi-Agents](multi-agents.md) section.)*
+*(Note: For instructions that apply to *all* agents in a system, consider using `GlobalInstructionPlugin`. The `global_instruction` parameter on the root agent is **DEPRECATED**. See the [Multi-Agents](multi-agents.md) section for more details.)*
 
 ## Equipping the Agent: Tools (`tools`)
 
@@ -463,7 +461,7 @@ For scenarios requiring structured data exchange with an `LLM Agent`, the ADK pr
         LlmAgent.builder()
             // ... name, model, description
             .instruction(
-                    "You are a Capital Information Agent. Given a country, respond ONLY with a JSON object containing the capital. Format: {\"capital\": \"capital_name\"}")
+                    "You are a Capital Information Agent. Given a country, respond ONLY with a JSON object containing the capital. Format: {\\"capital\\": \\"capital_name\\"}")
             .outputSchema(capitalOutput) // Enforce JSON output
             .outputKey("found_capital") // Store result in state.get("found_capital")
             // Cannot use tools(getCapitalCity) effectively here
@@ -753,4 +751,4 @@ _(This example demonstrates the core concepts. More complex agents might incorpo
 While this page covers the core configuration of `LlmAgent`, several related concepts provide more advanced control and are detailed elsewhere:
 
 * **Callbacks:** Intercepting execution points (before/after model calls, before/after tool calls) using `before_model_callback`, `after_model_callback`, etc. See [Callbacks](../callbacks/types-of-callbacks.md).
-* **Multi-Agent Control:** Advanced strategies for agent interaction, including planning (`planner`), controlling agent transfer (`disallow_transfer_to_parent`, `disallow_transfer_to_peers`), and system-wide instructions (`global_instruction`). See [Multi-Agents](multi-agents.md).
+* **Multi-Agent Control:** Advanced strategies for agent interaction, including planning (`planner`), controlling agent transfer (`disallow_transfer_to_parent`, `disallow_transfer_to_peers`), and system-wide instructions (**DEPRECATED**: `global_instruction`, use `GlobalInstructionPlugin` instead). See [Multi-Agents](multi-agents.md).
