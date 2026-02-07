@@ -64,6 +64,29 @@ You can use the LiteLLM library to access remote or locally hosted AI models:
       [LiteLLM Providers Documentation](https://docs.litellm.ai/docs/providers)
       for the correct environment variable names for other providers.*
 
+## Automatic file handling
+
+When you work with files, such as images or documents, the `LiteLlm` model
+connector automatically handles file uploads for providers that require it. For
+example, if you are using a model from OpenAI or Azure, any file data that you
+provide in your agent's reasoning prompts is automatically uploaded and
+referenced by its ID, so you don't need to manage the file uploading process
+manually.
+
+??? warning "Using Gemini models with LiteLLM"
+
+    If you use a Gemini model with the `LiteLlm` model connector (for example,
+    `LiteLlm(model="gemini/gemini-1.5-pro-latest")`), you will receive a
+    warning message suggesting that you use the native `Gemini` model class instead.
+    For better performance and reliability, and to get access to the latest
+    features, use the native `Gemini` integration.
+
+    To switch to the native `Gemini` integration, replace your `LiteLlm` model
+    connector with a `Gemini` model connector. For example:
+
+    Replace `LiteLlm(model='gemini/gemini-1.5-pro-latest')` with
+    `Gemini(model='gemini-1.5-pro-latest')`.
+
 ## Example implementation
 
 ```python
