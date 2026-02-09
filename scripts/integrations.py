@@ -163,15 +163,15 @@ def define_env(env):
             tags_str = " ".join(card['tags'])
             
             card_html = f"""
-  <a href="{card['link']}" class="tool-card" data-tags="{tags_str}">
+<a href="{card['link']}" class="tool-card" data-tags="{tags_str}">
     <div class="tool-card-image-wrapper">
-      <img src="{card['icon']}" alt="{card['title']}">
+        <img src="{card['icon']}" alt="{card['title']}">
     </div>
     <div class="tool-card-content">
         <h3>{card['title']}</h3>
         <p>{card['description']}</p>
     </div>
-  </a>
+</a>
 """
             html_parts.append(card_html)
         html_parts.append('</div>')
