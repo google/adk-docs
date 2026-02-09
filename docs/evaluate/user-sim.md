@@ -158,3 +158,12 @@ which controls the model behavior.
 * `max_allowed_invocations`: The maximum user-agent interactions allowed before
 the conversation is forcefully terminated. This should be set to be greater than
 the longest reasonable user-agent interaction in your `EvalSet`.
+* `custom_instructions`: Optional. Overrides the default instructions for the
+user simulator. The instruction string must contain the following formatting
+placeholders exactly as shown below (*do not substitute values in advance!*):
+    * `{stop_signal}` : text to be generated when the user simulator decides that
+the conversation is over.
+    * `{conversation_plan}` : the overall plan for the conversation that the user
+simulator must follow.
+    * `{conversation_history}` : the conversation between the user and the agent
+so far.
