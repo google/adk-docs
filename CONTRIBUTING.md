@@ -93,7 +93,7 @@ We review contributions for integrations based on the following criteria:
 | [Documentation fixes](#documentation-fixes) | Fix typos, broken links, or minor wording improvements |
 | [New documentation](#new-documentation) | Add a new guide, tutorial, or reference page |
 | [Major changes](#major-changes) | Large-scale reorganization or refactoring |
-| [Integrations](#integrations) | Third-party tools, plugins, or observability platforms for ADK agents |
+| [Integrations](#integrations) | Tools, plugins, observability libraries, user interfaces, or any extensions to ADK agents or agent development |
 
 ### Documentation Fixes
 
