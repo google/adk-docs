@@ -1,7 +1,7 @@
 ADK CLI documentation
 =====================
 
-This page contains the auto-generated command-line reference for ADK 1.24.0.
+This page contains the auto-generated command-line reference for ADK 1.24.1.
 
 .. contents::
    :local:
