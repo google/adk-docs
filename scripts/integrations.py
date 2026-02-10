@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import yaml
+import html
 from pathlib import Path
 from mkdocs.plugins import log
 
@@ -124,7 +125,8 @@ def define_env(env):
         html_parts.append(f'<span class="catalog-filter-label">Filter:</span>')
         html_parts.append(f'<button class="catalog-filter-btn active" data-filter="all">All</button>')
         for tag in sorted_tags:
-            html_parts.append(f'<button class="catalog-filter-btn" data-filter="{tag}">{tag.title()}</button>')
+            safe_tag = html.escape(tag)
+            html_parts.append(f'<button class="catalog-filter-btn" data-filter="{safe_tag}">{safe_tag.title()}</button>')
         html_parts.append('</div>')
 
         # Grid
@@ -132,14 +134,21 @@ def define_env(env):
         for card in cards_data:
             tags_str = " ".join(card['tags'])
             
+            # Escape content to prevent XSS
+            safe_tags = html.escape(tags_str)
+            safe_link = html.escape(card['link'])
+            safe_icon = html.escape(card['icon'])
+            safe_title = html.escape(card['title'])
+            safe_desc = html.escape(card['description'])
+            
             card_html = f"""
-<a href="{card['link']}" class="tool-card" data-tags="{tags_str}">
+<a href="{safe_link}" class="tool-card" data-tags="{safe_tags}">
     <div class="tool-card-image-wrapper">
-        <img src="{card['icon']}" alt="{card['title']}">
+        <img src="{safe_icon}" alt="{safe_title}">
     </div>
     <div class="tool-card-content">
-        <h3>{card['title']}</h3>
-        <p>{card['description']}</p>
+        <h3>{safe_title}</h3>
+        <p>{safe_desc}</p>
     </div>
 </a>
 """
@@ -200,7 +209,7 @@ def define_env(env):
         if (topic) {{
             // Validate topic exists in buttons to avoid empty states if possible
             // or just try to filter
-            const matchingBtn = filterContainer.querySelector(`[data-filter="${{topic}}"]`);
+            const matchingBtn = Array.from(buttons).find(btn => btn.getAttribute('data-filter') === topic);
             if (matchingBtn) {{
                 filterCards(topic.toLowerCase());
             }}
