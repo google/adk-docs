@@ -578,7 +578,8 @@ Leverages an [`LlmAgent`](llm-agents.md)'s understanding to dynamically route ta
 
 #### c) Explicit Invocation (`AgentTool`)
 
-Allows an [`LlmAgent`](llm-agents.md) to treat another `BaseAgent` instance as a callable function or [Tool](../tools/index.md).
+Allows an [`LlmAgent`](llm-agents.md) to treat another `BaseAgent` instance as a callable function or 
+[Tool](/adk-docs/tools-custom/).
 
 * **Mechanism:** Wrap the target agent instance in `AgentTool` and include it in the parent `LlmAgent`'s `tools` list. `AgentTool` generates a corresponding function declaration for the LLM.
 * **Handling:** When the parent LLM generates a function call targeting the `AgentTool`, the framework executes `AgentTool.run_async`. This method runs the target agent, captures its final response, forwards any state/artifact changes back to the parent's context, and returns the response as the tool's result.
