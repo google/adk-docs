@@ -518,8 +518,8 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
 
            * The definition of the agent can be exposed in a static method or inlined during declaration.
 
-        See the code for the `CapitalAgent` example in the
-        [examples](https://github.com/google/adk-docs/blob/main/examples/java/cloud-run/src/main/java/agents/capitalagent/CapitalAgent.java)
+        See the code for the `CapitalAgent` example in the 
+        [examples](https://github.com/google/adk-docs/blob/main/examples/java/cloud-run/src/main/java/agents/capitalagent/CapitalAgent.java) 
         repository.
 
     2. Add the following dependencies and plugin to the pom.xml file.
