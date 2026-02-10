@@ -117,41 +117,11 @@ def define_env(env):
         # Generate HTML
         html_parts = []
         
-        # Styles
-        html_parts.append("""
-<style>
-    .catalog-filter-bar {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-        margin-bottom: 24px;
-    }
-    .catalog-filter-btn {
-        padding: 6px 16px;
-        border: 1px solid var(--md-default-fg-color--lightest);
-        border-radius: 20px;
-        background: var(--md-default-bg-color);
-        color: var(--md-default-fg-color);
-        cursor: pointer;
-        font-size: 0.9rem;
-        transition: all 0.2s;
-    }
-    .catalog-filter-btn:hover {
-        background: var(--md-default-fg-color--lightest);
-    }
-    .catalog-filter-btn.active {
-        background: var(--md-primary-fg-color);
-        color: var(--md-primary-bg-color);
-        border-color: var(--md-primary-fg-color);
-    }
-    .tool-card.hidden {
-        display: none;
-    }
-</style>
-        """)
+        # Styles in docs/stylesheets/custom.css
 
         # Filter Buttons
         html_parts.append(f'<div class="catalog-filter-bar" id="{catalog_id}-filters">')
+        html_parts.append(f'<span class="catalog-filter-label">Filter:</span>')
         html_parts.append(f'<button class="catalog-filter-btn active" data-filter="all">All</button>')
         for tag in sorted_tags:
             html_parts.append(f'<button class="catalog-filter-btn" data-filter="{tag}">{tag.title()}</button>')
