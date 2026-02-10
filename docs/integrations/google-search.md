@@ -2,6 +2,7 @@
 catalog_title: Google Search
 catalog_description: Perform web searches using Google Search with Gemini
 catalog_icon: /adk-docs/integrations/assets/google-search.png
+catalog_tags: ["search","google"]
 ---
 
 # Gemini API Google Search tool for ADK
