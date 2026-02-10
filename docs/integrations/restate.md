@@ -1,14 +1,22 @@
 ---
 catalog_title: Restate
-catalog_description: Resilient agent execution and orchestration with durable sessions and human approvals.
+catalog_description: Resilient agent execution and orchestration with durable sessions and human approvals
 catalog_icon: /adk-docs/integrations/assets/restate.svg
 ---
 
-[Restate](https://restate.dev) makes your ADK agents durable and failure-resistant. 
+# Restate plugin for ADK
+
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
+</div>
+
+[Restate](https://restate.dev) is a durable execution engine that makes your ADK
+agents failure-resistant. It journals LLM calls and tool executions so that if
+your agent crashes, it picks up exactly where it left off.
 
 ## Use cases
 
-The Restate plugin gives your agents: 
+The Restate plugin gives your agents:
 
 - **Durable execution**: Never lose progress. If your agent crashes, it picks up exactly where it left off, with automatic retries and recovery.
 - **Human-in-the-loop**: Pause execution for days or weeks until a human approves, then resume where you left off.
@@ -20,12 +28,12 @@ The Restate plugin gives your agents:
 ## Prerequisites
 
 - Python 3.12+
-- A [Google API key](https://aistudio.google.com/app/api-keys)
+- A [Gemini API key](https://aistudio.google.com/app/api-keys)
 
 ## Installation
 
 ```bash
-pip install restate-sdk[serde]
+pip install "restate-sdk[serde]"
 ```
 
 ## Use with agent
@@ -90,14 +98,14 @@ View the execution journal in the Restate UI, inspect failures and pause, resume
 
 ## Capabilities
 
-| Capability | Description                                                                                                 |
-|---|-------------------------------------------------------------------------------------------------------------|
-| Durable tool execution | Wraps tool logic with `restate_object_context().run_typed()` so it retries and recovers automatically       |
+| Capability | Description |
+| --- | --- |
+| Durable tool execution | Wraps tool logic with `restate_object_context().run_typed()` so it retries and recovers automatically |
 | Human-in-the-loop | Pauses execution with `restate_object_context().awakeable()` until an external signal (e.g. human approval) |
-| Persistent sessions | `RestateSessionService()` stores agent memory and conversation state durably                                |
-| Durable LLM calls | `RestatePlugin()` journals LLM calls with automatic retries                                                 |
-| Multi-agent communication | Durable cross-agent HTTP calls with `restate_object_context().service_call()`                               |
-| Parallel execution | Run tools and agents concurrently with `restate.gather()` for deterministic recovery                        |
+| Persistent sessions | `RestateSessionService()` stores agent memory and conversation state durably |
+| Durable LLM calls | `RestatePlugin()` journals LLM calls with automatic retries |
+| Multi-agent communication | Durable cross-agent HTTP calls with `restate_object_context().service_call()` |
+| Parallel execution | Run tools and agents concurrently with `restate.gather()` for deterministic recovery |
 
 ## Additional resources
 
