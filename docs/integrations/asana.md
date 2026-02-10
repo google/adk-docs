@@ -2,6 +2,7 @@
 catalog_title: Asana
 catalog_description: Manage projects, tasks, and goals for team collaboration
 catalog_icon: /adk-docs/integrations/assets/asana.png
+catalog_tags: ["mcp"]
 ---
 
 # Asana MCP tool for ADK
