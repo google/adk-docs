@@ -102,7 +102,7 @@ documentation:
     from your server using ADK:
 
     ```python
-    from google.adk.agents import Agent
+    from google.adk import Agent
     from google.adk.tools.toolbox_toolset import ToolboxToolset
 
     toolset = ToolboxToolset(
@@ -138,11 +138,10 @@ documentation:
 
     ### Advanced Configuration
 
-    You can configure parameter binding, request hooks, and additional headers. See the [Toolbox ADK documentation](https://github.com/googleapis/mcp-toolbox-sdk-python/tree/main/packages/toolbox-adk) for details.
+    You can configure parameter binding and additional headers. See the [Toolbox ADK documentation](https://github.com/googleapis/mcp-toolbox-sdk-python/tree/main/packages/toolbox-adk) for details. For example, you can bind values to tool parameters.
 
-    #### Parameter Binding
-
-    Bind values to tool parameters globally. These values are hidden from the model.
+    !!! Note
+        These values are hidden from the model.
 
     ```python
     toolset = ToolboxToolset(
@@ -151,20 +150,6 @@ documentation:
             "region": "us-central1",
             "api_key": lambda: get_api_key() # Can be a callable
         }
-    )
-    ```
-
-    #### Usage with Hooks
-
-    Attach `pre_hook` and `post_hook` functions to execute logic before and after tool invocation.
-
-    ```python
-    async def log_start(context, args):
-        print(f"Starting tool with args: {args}")
-
-    toolset = ToolboxToolset(
-        server_url="...",
-        pre_hook=log_start
     )
     ```
 
