@@ -6,6 +6,8 @@ site_description: >-
 site_dir: site
 exclude_docs:
   api-reference/java/legal/*
+not_in_nav: |
+  /integrations/*.md
 
 # Repository
 repo_name: adk-docs
@@ -13,7 +15,7 @@ repo_url: https://github.com/google/adk-docs
 edit_uri: edit/main/docs/
 
 # Copyright
-copyright: Copyright Google 2025&nbsp;&nbsp;|&nbsp;&nbsp;<a href="//policies.google.com/terms">Terms</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="//policies.google.com/privacy">Privacy</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="#__consent">Manage cookies</a>
+copyright: Copyright Google 2026&nbsp;&nbsp;|&nbsp;&nbsp;<a href="//policies.google.com/terms">Terms</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="//policies.google.com/privacy">Privacy</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a href="#__consent">Manage cookies</a>
 
 # Validation
 validation:
@@ -145,23 +147,71 @@ plugins:
         'get-started/local-testing.md': 'runtime/api-server.md'
         'get-started/tutorial.md': 'tutorials/index.md'
         'guides/responsible-agents.md': 'safety/index.md'
-        'tools/third-party-tools.md': 'tools/third-party/index.md'
+        'tools/third-party-tools.md': 'integrations/index.md'
         'tools/third-party/openapi-tools.md': 'tools-custom/openapi-tools.md'
         'tools/openapi-tools.md': 'tools-custom/openapi-tools.md'
-        'tutorials/ag-ui.md': 'tools/third-party/ag-ui.md'
-        'tools/third-party/langchain.md': 'tools/index.md'
-        'tools/third-party/crewai.md': 'tools/index.md'
+        'tutorials/ag-ui.md': 'integrations/ag-ui.md'
+        'tools/third-party/langchain.md': 'integrations/index.md'
+        'tools/third-party/crewai.md': 'integrations/index.md'
         'get-started/testing.md': 'runtime/api-server.md'
         'tools/authentication.md': 'tools-custom/authentication.md'
         'tools/function-tools.md': 'tools-custom/function-tools.md'
         'tools/confirmation.md': 'tools-custom/confirmation.md'
         'tools/performance.md': 'tools-custom/performance.md'
         'tools/mcp-tools.md': 'tools-custom/mcp-tools.md'
-        'tools/google-cloud/bigquery-agent-analytics.md': 'observability/bigquery-agent-analytics.md'
-        'tools/google-cloud-tools.md': 'tools/google-cloud/index.md'
-        'tools/built-in-tools.md': 'tools/index.md'
-        'sessions/express-mode.md': 'tools/google-cloud/express-mode.md'
+        'tools/google-cloud/bigquery-agent-analytics.md': 'integrations/bigquery-agent-analytics.md'
+        'tools/google-cloud-tools.md': 'integrations/index.md'
+        'tools/built-in-tools.md': 'integrations/index.md'
         'sessions/rewind.md': 'sessions/session/rewind.md'
+        'tools/third-party/ag-ui.md': 'integrations/ag-ui.md'
+        'tools/google-cloud/api-registry.md': 'integrations/api-registry.md'
+        'tools/google-cloud/apigee-api-hub.md': 'integrations/apigee-api-hub.md'
+        'tools/google-cloud/application-integration.md': 'integrations/application-integration.md'
+        'tools/third-party/asana.md': 'integrations/asana.md'
+        'tools/third-party/atlassian.md': 'integrations/atlassian.md'
+        'tools/google-cloud/bigquery.md': 'integrations/bigquery.md'
+        'tools/google-cloud/bigtable.md': 'integrations/bigtable.md'
+        'tools/third-party/cartesia.md': 'integrations/cartesia.md'
+        'tools/third-party/chroma.md': 'integrations/chroma.md'
+        'tools/google-cloud/code-exec-agent-engine.md': 'integrations/code-exec-agent-engine.md'
+        'tools/gemini-api/code-execution.md': 'integrations/code-execution.md'
+        'tools/gemini-api/computer-use.md': 'integrations/computer-use.md'
+        'tools/google-cloud/data-agent.md': 'integrations/data-agent.md'
+        'tools/third-party/daytona.md': 'integrations/daytona.md'
+        'tools/third-party/elevenlabs.md': 'integrations/elevenlabs.md'
+        'tools/google-cloud/express-mode.md': 'integrations/express-mode.md'
+        'tools/third-party/github.md': 'integrations/github.md'
+        'tools/third-party/gitlab.md': 'integrations/gitlab.md'
+        'tools/google-cloud/gke-code-executor.md': 'integrations/gke-code-executor.md'
+        'tools/gemini-api/google-search.md': 'integrations/google-search.md'
+        'tools/third-party/hugging-face.md': 'integrations/hugging-face.md'
+        'tools/third-party/linear.md': 'integrations/linear.md'
+        'tools/google-cloud/mcp-toolbox-for-databases.md': 'integrations/mcp-toolbox-for-databases.md'
+        'tools/third-party/mongodb.md': 'integrations/mongodb.md'
+        'tools/third-party/n8n.md': 'integrations/n8n.md'
+        'tools/third-party/notion.md': 'integrations/notion.md'
+        'tools/third-party/paypal.md': 'integrations/paypal.md'
+        'tools/third-party/postman.md': 'integrations/postman.md'
+        'tools/google-cloud/pubsub.md': 'integrations/pubsub.md'
+        'tools/third-party/qdrant.md': 'integrations/qdrant.md'
+        'tools/google-cloud/spanner.md': 'integrations/spanner.md'
+        'tools/third-party/stripe.md': 'integrations/stripe.md'
+        'tools/google-cloud/vertex-ai-rag-engine.md': 'integrations/vertex-ai-rag-engine.md'
+        'tools/google-cloud/vertex-ai-search.md': 'integrations/vertex-ai-search.md'
+        'tools/index.md': 'integrations/index.md'
+        'tools/gemini-api/index.md': 'integrations/index.md'
+        'tools/google-cloud/index.md': 'integrations/index.md'
+        'tools/third-party/index.md': 'integrations/index.md'
+        'plugins/reflect-and-retry.md': 'integrations/reflect-and-retry.md'
+        'observability/bigquery-agent-analytics.md': 'integrations/bigquery-agent-analytics.md'
+        'observability/cloud-trace.md': 'integrations/cloud-trace.md'
+        'observability/freeplay.md': 'integrations/freeplay.md'
+        'observability/mlflow.md': 'integrations/mlflow.md'
+        'observability/monocle.md': 'integrations/monocle.md'
+        'observability/phoenix.md': 'integrations/phoenix.md'
+        'observability/weave.md': 'integrations/weave.md'
+        'observability/agentops.md': 'integrations/agentops.md'
+        'observability/arize-ax.md': 'integrations/arize-ax.md'
 
   - llmstxt:
       markdown_description: An open-source, code-first toolkit for building, evaluating, and deploying sophisticated AI agents with flexibility and control.
@@ -172,6 +222,7 @@ plugins:
         - tutorials/*.md
         - visual-builder/*.md
         - agents/*.md
+        - integrations/*.md
         - tools/*.md
         - tools-custom/*.md
         Run Agents:
@@ -242,49 +293,7 @@ nav:
       - vLLM: agents/models/vllm.md
       - LiteLLM: agents/models/litellm.md
     - Tools and Integrations:
-      - tools/index.md
-      - Gemini API tools:
-        - tools/gemini-api/index.md
-        - Code Execution: tools/gemini-api/code-execution.md
-        - Computer use: tools/gemini-api/computer-use.md
-        - Google Search: tools/gemini-api/google-search.md
-      - Google Cloud tools:
-        - tools/google-cloud/index.md
-        - Apigee API Hub: tools/google-cloud/apigee-api-hub.md
-        - Application Integration: tools/google-cloud/application-integration.md
-        - BigQuery: tools/google-cloud/bigquery.md
-        - Bigtable: tools/google-cloud/bigtable.md
-        - Cloud API Registry: tools/google-cloud/api-registry.md
-        - Code Execution with Agent Engine: tools/google-cloud/code-exec-agent-engine.md
-        - Data Agents: tools/google-cloud/data-agent.md
-        - GKE Code Executor: tools/google-cloud/gke-code-executor.md
-        - MCP Toolbox for Databases: tools/google-cloud/mcp-toolbox-for-databases.md
-        - Pub/Sub: tools/google-cloud/pubsub.md
-        - RAG Engine: tools/google-cloud/vertex-ai-rag-engine.md
-        - Spanner: tools/google-cloud/spanner.md
-        - Vertex AI Search: tools/google-cloud/vertex-ai-search.md
-        - Vertex AI express mode: tools/google-cloud/express-mode.md
-      - Third-party tools:
-        - tools/third-party/index.md
-        - Agentic UI (AG-UI): tools/third-party/ag-ui.md
-        - Asana: tools/third-party/asana.md
-        - Atlassian: tools/third-party/atlassian.md
-        - Cartesia: tools/third-party/cartesia.md
-        - Chroma: tools/third-party/chroma.md
-        - Daytona: tools/third-party/daytona.md
-        - ElevenLabs: tools/third-party/elevenlabs.md
-        - GitHub: tools/third-party/github.md
-        - GitLab: tools/third-party/gitlab.md
-        - Hugging Face: tools/third-party/hugging-face.md
-        - Linear: tools/third-party/linear.md
-        - MongoDB: tools/third-party/mongodb.md
-        - n8n: tools/third-party/n8n.md
-        - Notion: tools/third-party/notion.md
-        - Postman: tools/third-party/postman.md
-        - PayPal: tools/third-party/paypal.md
-        - Qdrant: tools/third-party/qdrant.md
-        - Stripe: tools/third-party/stripe.md
-      - Tool limitations: tools/limitations.md
+      - integrations/index.md
     - Custom Tools:
       - tools-custom/index.md
       - Function tools:
@@ -294,6 +303,7 @@ nav:
       - MCP tools: tools-custom/mcp-tools.md
       - OpenAPI tools: tools-custom/openapi-tools.md
       - Authentication: tools-custom/authentication.md
+      - Tool limitations: tools/limitations.md
   - Run Agents:
     - Agent Runtime:
       - Agent Runtime: runtime/index.md
@@ -314,15 +324,6 @@ nav:
       - GKE: deploy/gke.md
     - Observability:
       - Logging: observability/logging.md
-      - Cloud Trace: observability/cloud-trace.md
-      - BigQuery Agent Analytics: observability/bigquery-agent-analytics.md
-      - AgentOps: observability/agentops.md
-      - Arize AX: observability/arize-ax.md
-      - Freeplay: observability/freeplay.md
-      - MLflow: observability/mlflow.md
-      - Monocle: observability/monocle.md
-      - Phoenix: observability/phoenix.md
-      - W&B Weave: observability/weave.md
     - Evaluation:
       - evaluate/index.md
       - Criteria: evaluate/criteria.md
@@ -355,7 +356,6 @@ nav:
       - apps/index.md
     - Plugins:
       - plugins/index.md
-      - Reflect and retry: plugins/reflect-and-retry.md
     - MCP:
       - mcp/index.md
     - A2A Protocol:
@@ -378,8 +378,9 @@ nav:
       - Streaming Tools: streaming/streaming-tools.md
       - Configuring Bidi-streaming behavior: streaming/configuration.md
     - Grounding:
-      - Understanding Google Search Grounding: grounding/google_search_grounding.md
-      - Understanding Vertex AI Search Grounding: grounding/vertex_ai_search_grounding.md
+      - grounding/index.md
+      - Google Search Grounding: grounding/google_search_grounding.md
+      - Vertex AI Search Grounding: grounding/vertex_ai_search_grounding.md
   - Reference:
     - Release Notes: release-notes.md
     - API Reference:

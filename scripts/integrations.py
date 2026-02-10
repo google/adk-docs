@@ -72,7 +72,7 @@ def define_env(env):
                     frontmatter.get('description', ''))
                 icon = frontmatter.get('catalog_icon',
                     frontmatter.get('tool_icon',
-                    frontmatter.get('icon', '/adk-docs/assets/toolbox.svg'))) # Default icon
+                    frontmatter.get('icon', '/adk-docs/integrations/assets/toolbox.svg'))) # Default icon
 
                 # Calculate relative link
                 # mkdocs uses site_url structure. We want /adk-docs/...

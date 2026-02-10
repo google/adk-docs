@@ -1,4 +1,4 @@
-# Understanding Vertex AI Search Grounding
+# Vertex AI Search Grounding for agents
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
