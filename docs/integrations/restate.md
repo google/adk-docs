@@ -1,6 +1,6 @@
 ---
 catalog_title: Restate
-catalog_description: 
+catalog_description: Resilient agent execution and orchestration with durable sessions and human approvals.
 catalog_icon: /adk-docs/integrations/assets/restate.svg
 ---
 
@@ -11,7 +11,7 @@ catalog_icon: /adk-docs/integrations/assets/restate.svg
 The Restate plugin gives your agents: 
 
 - **Durable execution**: Never lose progress. If your agent crashes, it picks up exactly where it left off, with automatic retries and recovery.
-- **Human-in-the-loop**: Pause execution for days or weeks until a human approves, then resume seamlessly.
+- **Human-in-the-loop**: Pause execution for days or weeks until a human approves, then resume where you left off.
 - **Durable state**: Agent memory and conversation history persist across restarts with built-in session management.
 - **Observability & Task control**: See exactly what your agent did and kill, pause, and resume agent executions at any time.
 - **Multi-agent orchestration**: Run resilient workflows across multiple agents with parallel execution.
