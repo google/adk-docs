@@ -126,7 +126,9 @@ def define_env(env):
         html_parts.append(f'<button class="catalog-filter-btn active" data-filter="all">All</button>')
         for tag in sorted_tags:
             safe_tag = html.escape(tag)
-            html_parts.append(f'<button class="catalog-filter-btn" data-filter="{safe_tag}">{safe_tag.title()}</button>')
+            # handle MCP button all caps display exception:
+            display_name = "MCP" if tag.lower() == "mcp" else safe_tag.title()
+            html_parts.append(f'<button class="catalog-filter-btn" data-filter="{safe_tag}">{display_name}</button>')
         html_parts.append('</div>')
 
         # Grid
@@ -158,63 +160,72 @@ def define_env(env):
         # JavaScript
         html_parts.append(f"""
 <script>
-    document.addEventListener('DOMContentLoaded', function() {{
-        const filterContainer = document.getElementById('{catalog_id}-filters');
-        if (!filterContainer) return;
-        
-        const buttons = filterContainer.querySelectorAll('.catalog-filter-btn');
-        const cards = document.querySelectorAll('.tool-card');
+    (function() {{
+        function initCatalog() {{
+            const filterContainer = document.getElementById('{catalog_id}-filters');
+            if (!filterContainer) return;
+            
+            const buttons = filterContainer.querySelectorAll('.catalog-filter-btn');
+            const cards = document.querySelectorAll('.tool-card');
 
-        function filterCards(filterValue) {{
-            // Update buttons
+            function filterCards(filterValue) {{
+                // Update buttons
+                buttons.forEach(btn => {{
+                    if (btn.getAttribute('data-filter') === filterValue) {{
+                        btn.classList.add('active');
+                    }} else {{
+                        btn.classList.remove('active');
+                    }}
+                }});
+
+                // Filter cards
+                cards.forEach(card => {{
+                    const cardTags = (card.getAttribute('data-tags') || '').split(' ');
+                    if (filterValue === 'all' || cardTags.includes(filterValue)) {{
+                        card.style.display = 'flex'; // Restore flex display
+                    }} else {{
+                        card.style.display = 'none';
+                    }}
+                }});
+            }}
+
+            // Click handlers
             buttons.forEach(btn => {{
-                if (btn.getAttribute('data-filter') === filterValue) {{
-                    btn.classList.add('active');
-                }} else {{
-                    btn.classList.remove('active');
-                }}
+                btn.addEventListener('click', () => {{
+                    const filter = btn.getAttribute('data-filter');
+                    filterCards(filter);
+                    
+                    // Optional: Update URL without reload
+                    const url = new URL(window.location);
+                    if (filter === 'all') {{
+                        url.searchParams.delete('topic');
+                    }} else {{
+                        url.searchParams.set('topic', filter);
+                    }}
+                    window.history.pushState({{}}, '', url);
+                }});
             }});
 
-            // Filter cards
-            cards.forEach(card => {{
-                const cardTags = (card.getAttribute('data-tags') || '').split(' ');
-                if (filterValue === 'all' || cardTags.includes(filterValue)) {{
-                    card.style.display = 'flex'; // Restore flex display
-                }} else {{
-                    card.style.display = 'none';
+            // Check URL param on load
+            const urlParams = new URLSearchParams(window.location.search);
+            const topic = urlParams.get('topic');
+            if (topic) {{
+                // Validate topic exists in buttons to avoid empty states if possible
+                // or just try to filter
+                const matchingBtn = Array.from(buttons).find(btn => btn.getAttribute('data-filter') === topic);
+                if (matchingBtn) {{
+                    filterCards(topic.toLowerCase());
                 }}
-            }});
-        }}
-
-        // Click handlers
-        buttons.forEach(btn => {{
-            btn.addEventListener('click', () => {{
-                const filter = btn.getAttribute('data-filter');
-                filterCards(filter);
-                
-                // Optional: Update URL without reload
-                const url = new URL(window.location);
-                if (filter === 'all') {{
-                    url.searchParams.delete('topic');
-                }} else {{
-                    url.searchParams.set('topic', filter);
-                }}
-                window.history.pushState({{}}, '', url);
-            }});
-        }});
-
-        // Check URL param on load
-        const urlParams = new URLSearchParams(window.location.search);
-        const topic = urlParams.get('topic');
-        if (topic) {{
-            // Validate topic exists in buttons to avoid empty states if possible
-            // or just try to filter
-            const matchingBtn = Array.from(buttons).find(btn => btn.getAttribute('data-filter') === topic);
-            if (matchingBtn) {{
-                filterCards(topic.toLowerCase());
             }}
         }}
-    }});
+
+        // Run immediately if DOM is ready, otherwise wait for DOMContentLoaded
+        if (document.readyState === 'loading') {{
+            document.addEventListener('DOMContentLoaded', initCatalog);
+        }} else {{
+            initCatalog();
+        }}
+    }})();
 </script>
         """)
 
