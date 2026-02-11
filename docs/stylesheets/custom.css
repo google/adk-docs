@@ -427,3 +427,58 @@ nav.md-nav--primary .md-nav__item--section>.md-nav__link {
 [data-md-color-scheme="slate"] nav.md-nav--primary .md-nav__item--section>.md-nav__link {
   color: var(--md-primary-fg-color);
 }
+
+/* Catalog filter buttons */
+.catalog-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+  align-items: center;
+}
+.catalog-filter-label {
+  font-family: "Google Sans", sans-serif;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #5f6368;
+  padding-right: 4px;
+}
+[data-md-color-scheme="slate"] .catalog-filter-label {
+  color: var(--md-default-fg-color--light);
+}
+.catalog-filter-btn {
+  padding: 8px 20px;
+  border: none;
+  border-radius: 20px;
+  background: #e8eef6;
+  color: #3c4043;
+  cursor: pointer;
+  font-family: "Google Sans", sans-serif;
+  font-size: 0.84rem;
+  font-weight: 500;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+.catalog-filter-btn:hover {
+  background: #dae2ee;
+}
+.catalog-filter-btn.active {
+  background: #1a73e8;
+  color: #ffffff;
+}
+.catalog-filter-btn.active:hover {
+  background: #1765cc;
+}
+[data-md-color-scheme="slate"] .catalog-filter-btn {
+  background: #2d3748;
+  color: #c9d1d9;
+}
+[data-md-color-scheme="slate"] .catalog-filter-btn:hover {
+  background: #374151;
+}
+[data-md-color-scheme="slate"] .catalog-filter-btn.active {
+  background: #4285F4;
+  color: #ffffff;
+}
+[data-md-color-scheme="slate"] .catalog-filter-btn.active:hover {
+  background: #3b78de;
+}

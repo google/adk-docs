@@ -2,6 +2,7 @@
 catalog_title: ElevenLabs
 catalog_description: Generate speech, clone voices, transcribe audio, and create sound effects
 catalog_icon: /adk-docs/integrations/assets/elevenlabs.png
+catalog_tags: ["mcp"]
 ---
 
 # ElevenLabs MCP tool for ADK

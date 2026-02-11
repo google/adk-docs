@@ -2,6 +2,7 @@
 catalog_title: Postman
 catalog_description: Manage API collections, workspaces, and generate client code
 catalog_icon: /adk-docs/integrations/assets/postman.png
+catalog_tags: ["mcp"]
 ---
 
 # Postman MCP tool for ADK

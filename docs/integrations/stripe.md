@@ -2,6 +2,7 @@
 catalog_title: Stripe
 catalog_description: Manage payments, customers, subscriptions, and invoices
 catalog_icon: /adk-docs/integrations/assets/stripe.png
+catalog_tags: ["mcp"]
 ---
 
 # Stripe MCP tool for ADK

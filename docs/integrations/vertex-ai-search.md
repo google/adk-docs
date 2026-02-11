@@ -2,6 +2,7 @@
 catalog_title: Vertex AI Search
 catalog_description: Search across your private, configured data stores in Vertex AI Search
 catalog_icon: /adk-docs/integrations/assets/vertex-ai.png
+catalog_tags: ["search","google"]
 ---
 
 # Vertex AI Search tool for ADK
