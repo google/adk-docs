@@ -2,6 +2,7 @@
 catalog_title: Qdrant
 catalog_description: Store and retrieve information using semantic vector search
 catalog_icon: /adk-docs/integrations/assets/qdrant.png
+catalog_tags: ["data","mcp"]
 ---
 
 # Qdrant MCP tool for ADK

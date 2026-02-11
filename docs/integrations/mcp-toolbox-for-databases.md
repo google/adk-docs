@@ -2,6 +2,7 @@
 catalog_title: MCP Toolbox for Databases
 catalog_description: Connect over 30 different data sources to your agents
 catalog_icon: /adk-docs/integrations/assets/mcp-toolbox-for-databases.png
+catalog_tags: ["mcp","data","google"]
 ---
 
 # MCP Toolbox for Databases tool for ADK
@@ -16,11 +17,11 @@ production-quality in mind. It enables you to develop tools easier, faster, and
 more securely by handling the complexities such as connection pooling,
 authentication, and more.
 
-Google’s Agent Development Kit (ADK) has built in support for Toolbox. For more
+Google’s Agent Development Kit (ADK) has built in support for MCP Toolbox. For more
 information on
 [getting started](https://googleapis.github.io/genai-toolbox/getting-started/) or
 [configuring](https://googleapis.github.io/genai-toolbox/getting-started/configure/)
-Toolbox, see the
+MCP Toolbox, see the
 [documentation](https://googleapis.github.io/genai-toolbox/getting-started/introduction/).
 
 ![MCP Toolbox for Databases](/adk-docs/integrations/assets/mcp-db-toolbox.png)
@@ -78,31 +79,31 @@ MCP Toolbox provides out-of-the-box toolsets for the following databases and dat
 
 ## Configure and deploy
 
-Toolbox is an open source server that you deploy and manage yourself. For more
+MCP Toolbox is an open source server that you deploy and manage yourself. For more
 instructions on deploying and configuring, see the official Toolbox
 documentation:
 
 * [Installing the Server](https://googleapis.github.io/genai-toolbox/getting-started/introduction/#installing-the-server)
-* [Configuring Toolbox](https://googleapis.github.io/genai-toolbox/getting-started/configure/)
+* [Configuring MCP Toolbox](https://googleapis.github.io/genai-toolbox/getting-started/configure/)
 
 ## Install Client SDK for ADK
 
 === "Python"
 
-    ADK relies on the `toolbox-adk` python package to use Toolbox. Install the
+    ADK relies on the `toolbox-adk` python package to use MCP Toolbox. Install the
     package before getting started:
 
     ```shell
     pip install google-adk[toolbox]
     ```
 
-    ### Loading Toolbox Tools
+    ### Loading MCP Toolbox Tools
 
-    Once your Toolbox server is configured, up and running, you can load tools
+    Once your MCP Toolbox server is configured, up and running, you can load tools
     from your server using ADK:
 
     ```python
-    from google.adk.agents import Agent
+    from google.adk import Agent
     from google.adk.tools.toolbox_toolset import ToolboxToolset
 
     toolset = ToolboxToolset(
@@ -117,7 +118,7 @@ documentation:
 
     ### Authentication
 
-    The `ToolboxToolset` supports various authentication strategies including Workload Identity (ADC), User Identity (OAuth2), and API Keys. For full documentation, see the [Toolbox ADK Authentication Guide](https://github.com/googleapis/mcp-toolbox-sdk-python/tree/main/packages/toolbox-adk#authentication).
+    The `ToolboxToolset` supports various authentication strategies including Workload Identity (ADC), User Identity (OAuth2), and API Keys. For full documentation, see the [MCP Toolbox ADK Authentication Guide](https://github.com/googleapis/mcp-toolbox-sdk-python/tree/main/packages/toolbox-adk#authentication).
 
     **Example: Workload Identity (ADC)**
 
@@ -127,7 +128,7 @@ documentation:
     from google.adk.tools.toolbox_toolset import ToolboxToolset
     from toolbox_adk import CredentialStrategy
 
-    # target_audience: The URL of your Toolbox server
+    # target_audience: The URL of your MCP Toolbox server
     creds = CredentialStrategy.workload_identity(target_audience="<TOOLBOX_URL>")
 
     toolset = ToolboxToolset(
@@ -138,11 +139,10 @@ documentation:
 
     ### Advanced Configuration
 
-    You can configure parameter binding, request hooks, and additional headers. See the [Toolbox ADK documentation](https://github.com/googleapis/mcp-toolbox-sdk-python/tree/main/packages/toolbox-adk) for details.
+    You can configure parameter binding and additional headers. See the [MCP Toolbox ADK documentation](https://github.com/googleapis/mcp-toolbox-sdk-python/tree/main/packages/toolbox-adk) for details. For example, you can bind values to tool parameters.
 
-    #### Parameter Binding
-
-    Bind values to tool parameters globally. These values are hidden from the model.
+    !!! Note
+        These values are hidden from the model.
 
     ```python
     toolset = ToolboxToolset(
@@ -154,32 +154,18 @@ documentation:
     )
     ```
 
-    #### Usage with Hooks
-
-    Attach `pre_hook` and `post_hook` functions to execute logic before and after tool invocation.
-
-    ```python
-    async def log_start(context, args):
-        print(f"Starting tool with args: {args}")
-
-    toolset = ToolboxToolset(
-        server_url="...",
-        pre_hook=log_start
-    )
-    ```
-
 === "Typescript"
 
-    ADK relies on the `@toolbox-sdk/adk` TS package to use Toolbox. Install the
+    ADK relies on the `@toolbox-sdk/adk` TS package to use MCP Toolbox. Install the
     package before getting started:
 
     ```shell
     npm install @toolbox-sdk/adk
     ```
 
-    ### Loading Toolbox Tools
+    ### Loading MCP Toolbox Tools
 
-    Once you’re Toolbox server is configured and up and running, you can load tools
+    Once your MCP Toolbox server is configured and up and running, you can load tools
     from your server using ADK:
 
     ```typescript
@@ -231,16 +217,16 @@ documentation:
 
 === "Go"
 
-    ADK relies on the `mcp-toolbox-sdk-go` go module to use Toolbox. Install the
+    ADK relies on the `mcp-toolbox-sdk-go` go module to use MCP Toolbox. Install the
     module before getting started:
 
     ```shell
     go get github.com/googleapis/mcp-toolbox-sdk-go
     ```
 
-    ### Loading Toolbox Tools
+    ### Loading MCP Toolbox Tools
 
-    Once you’re Toolbox server is configured and up and running, you can load tools
+    Once your MCP Toolbox server is configured and up and running, you can load tools
     from your server using ADK:
 
     ```go
@@ -264,7 +250,7 @@ documentation:
       // Load a specific set of tools
       toolboxtools, err := toolboxClient.LoadToolset("my-toolset-name", ctx)
       if err != nil {
-        return fmt.Sprintln("Could not load Toolbox Toolset", err)
+        return fmt.Sprintln("Could not load MCP Toolbox Toolset", err)
       }
 
       toolsList := make([]tool.Tool, len(toolboxtools))
@@ -280,7 +266,7 @@ documentation:
       // Load a single tool
       tool, err := client.LoadTool("my-tool-name", ctx)
       if err != nil {
-        return fmt.Sprintln("Could not load Toolbox Tool", err)
+        return fmt.Sprintln("Could not load MCP Toolbox Tool", err)
       }
 
       llmagent, err := llmagent.New(llmagent.Config{
@@ -290,9 +276,9 @@ documentation:
     }
     ```
 
-## Advanced Toolbox Features
+## Advanced MCP Toolbox Features
 
-Toolbox has a variety of features to make developing Gen AI tools for databases.
+MCP Toolbox has a variety of features to make developing Gen AI tools for databases.
 For more information, read more about the following features:
 
 * [Authenticated Parameters](https://googleapis.github.io/genai-toolbox/resources/tools/#authenticated-parameters): bind tool inputs to values from OIDC tokens automatically, making it easy to run sensitive queries without potentially leaking data

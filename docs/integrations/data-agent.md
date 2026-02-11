@@ -2,6 +2,7 @@
 catalog_title: Data Agents
 catalog_description: Analyze data with AI-powered agents
 catalog_icon: /adk-docs/integrations/assets/vertex-ai.png
+catalog_tags: ["data", "google"]
 ---
 
 # Google Cloud Data Agents tool for ADK
