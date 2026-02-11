@@ -31,6 +31,12 @@ The following table provides a high-level comparison to help distinguish between
 | **Determinism**  | Non-deterministic (Flexible)        | Deterministic (Predictable)                 | Can be either, based on implementation   |
 | **Primary Use**  | Language tasks, Dynamic decisions   | Structured processes, Orchestration         | Tailored requirements, Specific workflows|
 
+## Extending Agents with the Skills Framework
+
+In addition to the core agent categories, ADK provides a **Skills Framework** that allows you to extend agent capabilities with modular, reusable components called **Skills**.
+
+- [**Skills**](skills.md): Discover how to package an agent's abilities into a `Skill`, a self-contained unit of instructions and resources. You can use the `SkillToolset` to make these skills available to your agents, enabling them to perform more complex and specialized tasks.
+
 ## Agents Working Together: Multi-Agent Systems
 
 While each agent type serves a distinct purpose, the true power often comes from combining them. Complex applications frequently employ [multi-agent architectures](multi-agents.md) where:
