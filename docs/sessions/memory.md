@@ -125,12 +125,14 @@ This example demonstrates the basic flow using the `InMemoryMemoryService` for s
         completed_session1 = await runner1.session_service.get_session(app_name=APP_NAME, user_id=USER_ID, session_id=session1_id)
 
         # Add this session's content to the Memory Service
-        print("\n--- Adding Session 1 to Memory ---")
+        print("
+--- Adding Session 1 to Memory ---")
         await memory_service.add_session_to_memory(completed_session1)
         print("Session added to memory.")
 
         # Turn 2: Recall the information in a new session
-        print("\n--- Turn 2: Recalling Information ---")
+        print("
+--- Turn 2: Recalling Information ---")
         runner2 = Runner(
             # Use the second agent, which has the memory tool
             agent=memory_recall_agent,
@@ -224,6 +226,80 @@ Or, you can configure your agent to use the Memory Bank by manually instantiatin
   runner = adk.Runner(
       ...
       memory_service=memory_service
+  )
+  ```
+
+### Incremental Memory Updates
+
+While `add_session_to_memory` is useful for ingesting a completed conversation, it can be inefficient for long-running sessions where you only need to add the latest turn. For this, you can use `add_events_to_memory`.
+
+This method allows you to add a specific list of `Event` objects (a delta) to the memory store without re-processing the entire session history.
+
+=== "Python"
+  ```py
+  from google.adk.memory import VertexAiMemoryBankService
+
+  # Assume memory_service is an instance of a MemoryService
+  # and you have a list of new events from the latest turn.
+  latest_events = [...] 
+
+  await memory_service.add_events_to_memory(
+      app_name="your-app",
+      user_id="a-user",
+      events=latest_events,
+      session_id="optional-session-id"
+  )
+  ```
+
+### Custom Metadata (Vertex AI Memory Bank)
+
+When using `VertexAiMemoryBankService`, you can provide additional configuration to the underlying Vertex AI Agent Engine API via the `custom_metadata` parameter. This is supported in both `add_session_to_memory` and `add_events_to_memory`.
+
+This is useful for controlling advanced features like Time-to-Live (TTL) for memories.
+
+**Supported Metadata Keys:**
+
+*   `ttl`: Sets the expiration time for the memory.
+*   `revision_ttl`: Sets the expiration time for the revision of the memory.
+
+=== "Python"
+  ```py
+  from google.adk.memory import VertexAiMemoryBankService
+
+  # Assume memory_service is an instance of VertexAiMemoryBankService
+  
+  # Example with add_events_to_memory
+  await memory_service.add_events_to_memory(
+      app_name="your-app",
+      user_id="a-user",
+      events=[...],
+      custom_metadata={
+          "ttl": "3600s" # Expire memory in 1 hour
+      }
+  )
+
+  # Example with add_session_to_memory
+  # You would typically pass this when creating the service or in a callback
+  # This example is simplified to show the parameter.
+  # In a real scenario, you'd wrap the service or extend it.
+  # The following is a conceptual illustration.
+  
+  # A more practical approach is to define a helper function or a custom service
+  async def add_session_with_metadata(service, session, metadata):
+      # The base add_session_to_memory doesn't accept custom_metadata directly.
+      # So we call add_events_to_memory with all the session's events.
+      await service.add_events_to_memory(
+          app_name=session.app_name,
+          user_id=session.user_id,
+          events=session.events,
+          session_id=session.session_id,
+          custom_metadata=metadata
+      )
+  
+  await add_session_with_metadata(
+      memory_service, 
+      completed_session, 
+      {"revision_ttl": "7200s"}
   )
   ```
 
