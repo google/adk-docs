@@ -38,6 +38,20 @@ You set up authentication when defining your tool:
     *   **Database/Persistent Storage:** **Strongly consider encrypting** the token data before storing it in the database using a robust encryption library (like `cryptography`) and managing encryption keys securely (e.g., using a key management service).
     *   **Secure Secret Stores:** For production environments, storing sensitive credentials in a dedicated secret manager (like Google Cloud Secret Manager or HashiCorp Vault) is the **most recommended approach**. Your tool could potentially store only short-lived access tokens or secure references (not the refresh token itself) in the session state, fetching the necessary secrets from the secure store when needed.
 
+## Using External Access Tokens
+
+For Google credentials, you can configure `external_access_token_key` to instruct the tool to retrieve an existing access token from `tool_context.state` instead of performing authentication itself.
+This is useful when the agent is invoked in an environment where the user is already authenticated (e.g., a frontend passing the token).
+Example:
+```python
+AuthCredential(
+    auth_type=AuthCredentialTypes.GOOGLE_CREDENTIALS,
+    google_credentials_config=GoogleCredentialsConfig(
+        external_access_token_key="my_access_token"
+    )
+)
+```
+
 ---
 
 ## Journey 1: Building Agentic Applications with Authenticated Tools
@@ -144,7 +158,7 @@ Pass the scheme and credential during toolset initialization. The toolset applie
       auth_scheme = OpenIdConnectWithConfig(
           authorization_endpoint=OAUTH2_AUTH_ENDPOINT_URL,
           token_endpoint=OAUTH2_TOKEN_ENDPOINT_URL,
-          scopes=['openid', 'YOUR_OAUTH_SCOPES"]
+          scopes=['openid', 'YOUR_OAUTH_SCOPES']
       )
       auth_credential = AuthCredential(
           auth_type=AuthCredentialTypes.OPEN_ID_CONNECT,
