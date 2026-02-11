@@ -19,7 +19,7 @@ In simple terms:
 1. The `Runner` receives a user query and asks the main `Agent` to start processing.
 2. The `Agent` (and its associated logic) runs until it has something to report (like a response, a request to use a tool, or a state change) – it then **yields** or **emits** an `Event`.
 3. The `Runner` receives this `Event`, processes any associated actions (like saving state changes via `Services`), and forwards the event onwards (e.g., to the user interface).
-4. Only *after* the `Runner` has processed the event does the `Agent`'s logic **resume** from where it paused, now potentially seeing the effects of the changes committed by the Runner.
+4. Only *after* the `Runner` has processed the event, the `Agent`'s logic **resume** from where it paused, now potentially seeing the effects of the changes committed by the Runner.
 5. This cycle repeats until the agent has no more events to yield for the current user query.
 
 This event-driven loop is the fundamental pattern governing how ADK executes your agent code.
