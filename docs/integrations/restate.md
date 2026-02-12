@@ -148,12 +148,11 @@ View the execution journal in the Restate UI, inspect failures and pause, resume
         Restate registers each deployment as an immutable snapshot. When you deploy a new version, ongoing executions finish on the original deployment while new requests route to the latest one. Learn more about [version-aware routing](https://docs.restate.dev/services/versioning).
 
 6. **Send a request to the agent**
-   
-    ```bash
-    curl localhost:8080/WeatherAgent/session-1/run \
-      --json '"What is the weather in New York?"' 
-    ```
-   
+
+    Click on the `run` handler of the `WeatherAgent` service in the UI to open the playground and send a request:
+
+    ![Send request in the UI](./assets/restate-request.png)
+
     !!! tip "Durable sessions and retries"
         This request goes through Restate, which persists it before forwarding to your agent. Each session (here `session-1`) is isolated, stateful, and durable. If the agent crashes mid-execution, Restate automatically retries and resumes from the last journaled step, without losing progress.
 
