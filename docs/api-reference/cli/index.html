@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>ADK CLI documentation &#8212; ADK CLI 1.24.1 documentation</title>
+    <title>ADK CLI documentation &#8212; ADK CLI 1.25.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
     <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
-    <script src="_static/documentation_options.js?v=92325ecb"></script>
+    <script src="_static/documentation_options.js?v=479f908b"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -43,7 +43,7 @@
             
   <section id="adk-cli-documentation">
 <h1>ADK CLI documentation<a class="headerlink" href="#adk-cli-documentation" title="Link to this heading">¶</a></h1>
-<p>This page contains the auto-generated command-line reference for ADK 1.24.1.</p>
+<p>This page contains the auto-generated command-line reference for ADK 1.25.0.</p>
 <nav class="contents local" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#adk" id="id21">adk</a></p>
@@ -290,6 +290,12 @@ If set, ADK uses this service.</p>
 <dd><p>Deprecated. Use –artifact_service_uri instead.</p>
 </dd></dl>
 
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-api_server-auto_create_session">
+<span class="sig-name descname"><span class="pre">--auto_create_session</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-api_server-auto_create_session" title="Link to this definition">¶</a></dt>
+<dd><p>Automatically create a session if it doesn’t exist when calling /run.</p>
+</dd></dl>
+
 <p class="rubric">Arguments</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-adk-api_server-arg-AGENTS_DIR">
@@ -339,7 +345,7 @@ interactions or evaluating live execution results.</p>
 <p>PATHS can be any number of folder paths. Each folder can either:
 - Contain a spec.yaml file directly (single test case)
 - Contain subdirectories with spec.yaml files (multiple test cases)</p>
-<p>If no paths are provided, defaults to searching the ‘tests’ folder.</p>
+<p>If no paths are provided, defaults to searching for the ‘tests’ folder.</p>
 <p>TEST MODES:</p>
 <div class="line-block">
 <div class="line">replay  : Verifies agent interactions match previously recorded behaviors</div>
@@ -361,6 +367,9 @@ interactions or evaluating live execution results.</p>
 </div>
 </div>
 </div>
+<p>REPORT GENERATION:</p>
+<p>Use –generate_report to create a Markdown report of test results.
+Use –report_dir to specify where the report should be saved.</p>
 <p>EXAMPLES:</p>
 <div class="line-block">
 <div class="line"># Run all tests in current directory’s ‘tests’ folder</div>
@@ -377,6 +386,14 @@ interactions or evaluating live execution results.</p>
 <div class="line-block">
 <div class="line"># Run in live mode (when available)</div>
 <div class="line">adk conformance test –mode=live tests/core</div>
+</div>
+<div class="line-block">
+<div class="line"># Generate a test report</div>
+<div class="line">adk conformance test –generate_report</div>
+</div>
+<div class="line-block">
+<div class="line"># Generate a test report in a specific directory</div>
+<div class="line">adk conformance test –generate_report –report_dir=reports</div>
 </div>
 <p class="rubric">Usage</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>adk<span class="w"> </span>conformance<span class="w"> </span><span class="nb">test</span><span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span><span class="o">[</span>PATHS<span class="o">]</span>...
@@ -395,6 +412,23 @@ interactions or evaluating live execution results.</p>
 <dd class="field-even"><p>replay | live</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-conformance-test-generate_report">
+<span class="sig-name descname"><span class="pre">--generate_report</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-conformance-test-generate_report" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Whether to generate a Markdown report of the test results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-conformance-test-report_dir">
+<span class="sig-name descname"><span class="pre">--report_dir</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;report_dir&gt;</span></span><a class="headerlink" href="#cmdoption-adk-conformance-test-report_dir" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Directory to store the generated report. Defaults to current directory.</p>
 </dd></dl>
 
 <p class="rubric">Arguments</p>
@@ -653,7 +687,7 @@ adk deploy agent_engine –project=[project] –region=[region]</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-adk-deploy-cloud_run-trace_to_cloud">
 <span class="sig-name descname"><span class="pre">--trace_to_cloud</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-deploy-cloud_run-trace_to_cloud" title="Link to this definition">¶</a></dt>
-<dd><p>Optional. Whether to enable Cloud Trace for cloud run.</p>
+<dd><p>Optional. Whether to enable Cloud Trace export for Cloud Run deployments.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Default<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
@@ -664,7 +698,7 @@ adk deploy agent_engine –project=[project] –region=[region]</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-adk-deploy-cloud_run-otel_to_cloud">
 <span class="sig-name descname"><span class="pre">--otel_to_cloud</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-deploy-cloud_run-otel_to_cloud" title="Link to this definition">¶</a></dt>
-<dd><p>Optional. Whether to enable OpenTelemetry for Agent Engine.</p>
+<dd><p>Optional. Whether to enable OpenTelemetry export to GCP for Cloud Run deployments.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Default<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
@@ -717,7 +751,7 @@ adk deploy agent_engine –project=[project] –region=[region]</p>
 <dd><p>Optional. The ADK version used in Cloud Run deployment. (default: the version in the dev environment)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Default<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">'1.24.1'</span></code></p>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">'1.25.0'</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -931,7 +965,7 @@ If set, ADK uses this service.</p>
 <dd><p>Optional. The ADK version used in GKE deployment. (default: the version in the dev environment)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Default<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">'1.24.1'</span></code></p>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">'1.25.0'</span></code></p>
 </dd>
 </dl>
 </dd></dl>
