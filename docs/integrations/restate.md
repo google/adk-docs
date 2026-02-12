@@ -110,7 +110,7 @@ View the execution journal in the Restate UI, inspect failures and pause, resume
 
 ## Quickstart
 
-1. **Clone the [example repository](https://github.com/restatedev/restate-google-adk-example)**
+1. **Clone the [example repository](https://github.com/restatedev/restate-google-adk-example/tree/main/examples/hello-world)**
 
     ```bash
     git clone git@github.com:restatedev/restate-google-adk-example.git && cd restate-google-adk-example/examples/hello-world
@@ -122,7 +122,7 @@ View the execution journal in the Restate UI, inspect failures and pause, resume
     export GOOGLE_API_KEY=your-api-key
     ```
 
-3. **Start the agent**
+3. **Start the weather agent**
 
     ```bash
     uv run .
