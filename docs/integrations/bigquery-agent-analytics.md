@@ -13,7 +13,7 @@ catalog_tags: ["observability", "google"]
 
 !!! important "Version Requirement"
 
-   Use the ***latest version*** of the ADK (version 1.21.0 or higher) to make full use of the features described in this document.
+    Use ADK Python version 1.21.0 or higher to make full use of the features described in this document.
 
 The BigQuery Agent Analytics Plugin significantly enhances the Agent Development Kit (ADK) by providing a robust solution for in-depth agent behavior analysis. Using the ADK Plugin architecture and the **BigQuery Storage Write API**, it captures and logs critical operational events directly into a Google BigQuery table, empowering you with advanced capabilities for debugging, real-time monitoring, and comprehensive offline performance evaluation.
 

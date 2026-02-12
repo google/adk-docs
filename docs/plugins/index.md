@@ -25,16 +25,14 @@ Some typical applications of Plugins are as follows:
 -   **Request or response modification**: Dynamically add information to AI
     model prompts or standardize tool output responses.
 
-!!! tip
+!!! tip "Tip: Use Plugins for safety features"
     When implementing security guardrails and policies, use ADK Plugins for
     better modularity and flexibility than Callbacks. For more details, see
     [Callbacks and Plugins for Security Guardrails](/adk-docs/safety/#callbacks-and-plugins-for-security-guardrails).
 
-!!! warning "Caution"
-    Plugins are not supported by the
-    [ADK web interface](../evaluate/index.md#1-adk-web-run-evaluations-via-the-web-ui).
-    If your ADK workflow uses Plugins, you must run your workflow without the
-    web interface.
+!!! tip "Tip: ADK Integrations"
+    For a list of pre-built plugins and other integrations for ADK, see
+    [Tools and Integrations](/adk-docs/integrations/).
 
 ## How do Plugins work?
 
@@ -161,7 +159,7 @@ methods, as shown in the following code example:
             console.log(`[Plugin] LLM request count: ${this.llmRequestCount}`);
             return undefined;
         }
-    }    
+    }
     ```
 
 This example code implements callbacks for `before_agent_callback` and
@@ -320,11 +318,6 @@ command line:
     ```sh
     npx ts-node path.to.main.ts
     ```
-
-Plugins are not supported by the
-[ADK web interface](../evaluate/index.md#1-adk-web-run-evaluations-via-the-web-ui).
-If your ADK workflow uses Plugins, you must run your workflow without the web
-interface.
 
 The output of this previously described agent should look similar to the
 following:
@@ -603,7 +596,7 @@ The following code example shows the basic syntax of this callback:
         error: Error
     ): Promise<LlmResponse | undefined> {
         // Your implementation here
-    }  
+    }
     ```
 
 ### Tool callbacks
@@ -665,7 +658,7 @@ The following code example shows the basic syntax of this callback:
         error: Error
     ): Promise<{ [key:string]: any } | undefined> {
         // Your implementation here
-    }    
+    }
     ```
 
 ### Event callbacks
@@ -700,7 +693,7 @@ The following code example shows the basic syntax of this callback:
         event: Event
     ): Promise<Event | undefined> {
         // Your implementation here
-    }    
+    }
     ```
 
 ### Runner end callbacks
@@ -732,7 +725,7 @@ The following code example shows the basic syntax of this callback:
     ```typescript
     async afterRunCallback(invocationContext: InvocationContext): Promise<void> {
         // Your implementation here
-    }    
+    }
     ```
 
 ## Next steps
@@ -742,5 +735,5 @@ projects:
 
 -   For more ADK Plugin code examples, see the
     [ADK Python repository](https://github.com/google/adk-python/tree/main/src/google/adk/plugins).
--   For information on applying Plugins for security purposes, see 
+-   For information on applying Plugins for security purposes, see
     [Callbacks and Plugins for Security Guardrails](/adk-docs/safety/#callbacks-and-plugins-for-security-guardrails).
