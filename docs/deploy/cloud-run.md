@@ -365,8 +365,7 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
 
     #### Command usage
 
-    This deployment command should be run from the directory of your agent code:
-    where your `package.json` file is located.
+    This deployment command should be run from the directory of your agent code, where your `package.json` file is located.
 
     ##### Minimal command
 
