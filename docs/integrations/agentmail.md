@@ -131,7 +131,7 @@ Tool | Description
 `send_message` | Send a new email from an inbox
 `reply_to_message` | Reply to an existing message
 `forward_message` | Forward a message to another recipient
-`update_message` | Update message properties (e.g., read status)
+`update_message` | Update message properties such as read status
 
 ## Additional resources
 
