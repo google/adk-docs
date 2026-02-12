@@ -359,25 +359,21 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
     # Set your desired Google Cloud Location
     export GOOGLE_CLOUD_LOCATION="us-central1" # Example location
 
-    # Set the path to your agent code directory
-    export AGENT_PATH="./capital_agent" # Assuming capital_agent is in the current directory
-
     # Set a name for your Cloud Run service (optional)
     export SERVICE_NAME="capital-agent-service"
-
-    # Set an application name (optional)
-    export APP_NAME="capital_agent_app"
     ```
 
     #### Command usage
+
+    This deployment command should be run from the directory of your agent code:
+    where your `package.json` file is located.
 
     ##### Minimal command
 
     ```bash
     npx adk deploy cloud_run \
     --project=$GOOGLE_CLOUD_PROJECT \
-    --region=$GOOGLE_CLOUD_LOCATION \
-    $AGENT_PATH
+    --region=$GOOGLE_CLOUD_LOCATION
     ```
 
     ##### Full command with optional flags
@@ -387,22 +383,15 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
     --project=$GOOGLE_CLOUD_PROJECT \
     --region=$GOOGLE_CLOUD_LOCATION \
     --service_name=$SERVICE_NAME \
-    --app_name=$APP_NAME \
-    --with_ui \
-    $AGENT_PATH
+    --with_ui
     ```
-
-    ##### Arguments
-
-    * `AGENT_PATH`: (Required) Positional argument specifying the path to the directory containing your agent's source code (e.g., `$AGENT_PATH` in the examples, or `capital_agent/`). This directory must contain at least `package.json` and your main agent file (e.g., `agent.ts`).
 
     ##### Options
 
     * `--project TEXT`: (Required) Your Google Cloud project ID (e.g., `$GOOGLE_CLOUD_PROJECT`).
     * `--region TEXT`: (Required) The Google Cloud location for deployment (e.g., `$GOOGLE_CLOUD_LOCATION`, `us-central1`).
     * `--service_name TEXT`: (Optional) The name for the Cloud Run service (e.g., `$SERVICE_NAME`). Defaults to `adk-default-service-name`.
-    * `--app_name TEXT`: (Optional) The application name for the ADK API server (e.g., `$APP_NAME`). Defaults to the name of the directory specified by `AGENT_PATH` (e.g., `capital_agent` if `AGENT_PATH` is `./capital_agent`).
-    * `--agent_engine_id TEXT`: (Optional) If you are using a managed session service via Vertex AI Agent Engine, provide its resource ID here.
+    * `--app_name TEXT`: (Optional) The application name for the ADK API server (e.g., `$APP_NAME`).
     * `--port INTEGER`: (Optional) The port number the ADK API server will listen on within the container. Defaults to 8000.
     * `--with_ui`: (Optional) If included, deploys the ADK dev UI alongside the agent API server. By default, only the API server is deployed.
     * `--temp_folder TEXT`: (Optional) Specifies a directory for storing intermediate files generated during the deployment process. Defaults to a timestamped folder in the system's temporary directory. *(Note: This option is generally not needed unless troubleshooting issues).*
@@ -414,7 +403,7 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
     * Enter `y` to allow public access to your agent's API endpoint without authentication.
     * Enter `N` (or press Enter for the default) to require authentication (e.g., using an identity token as shown in the "Testing your agent" section).
 
-    Upon successful execution, the command deploys your agent to Cloud Run and provide the URL of the deployed service.
+    Upon successful execution, the command deploys your agent to Cloud Run and provides the URL of the deployed service.
 
 === "Go - adkgo CLI"
 
