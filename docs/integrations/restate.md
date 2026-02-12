@@ -10,19 +10,22 @@ catalog_icon: /adk-docs/integrations/assets/restate.svg
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
 </div>
 
-[Restate](https://restate.dev) is a durable execution engine that makes your ADK
-agents failure-resistant. It journals LLM calls and tool executions so that if
-your agent crashes, it picks up exactly where it left off.
+[Restate](https://restate.dev) is a durable execution engine that turns ADK agents into innately resilient, robust systems. 
+It provides persistent sessions, pause/resume for human approvals, 
+resilient multi-agent orchestration, safe versioning, and full
+observability and control over every execution. All LLM calls and tool executions
+are journaled, so if anything fails, your agent recovers from exactly where it
+left off.
 
 ## Use cases
 
 The Restate plugin gives your agents:
 
 - **Durable execution**: Never lose progress. If your agent crashes, it picks up exactly where it left off, with automatic retries and recovery.
-- **Human-in-the-loop**: Pause execution for days or weeks until a human approves, then resume where you left off.
+- **Pause/resume for human-in-the-loop**: Pause execution for days or weeks until a human approves, then resume where you left off.
 - **Durable state**: Agent memory and conversation history persist across restarts with built-in session management.
 - **Observability & Task control**: See exactly what your agent did and kill, pause, and resume agent executions at any time.
-- **Multi-agent orchestration**: Run resilient workflows across multiple agents with parallel execution.
+- **Resilient multi-agent orchestration**: Run resilient workflows across multiple agents with parallel execution.
 - **Safe versioning**: Deploy new versions without breaking ongoing executions via immutable deployments.
 
 ## Prerequisites
@@ -92,9 +95,7 @@ async def run(ctx: restate.ObjectContext, message: str) -> str | None:
 
 View the execution journal in the Restate UI, inspect failures and pause, resume or kill executions:
 
-![Restate journal in the UI](/adk-docs/integrations/assets/restate-journal.png)
-
-[Visit the example repository for a complete example and instructions on how to run it locally.](https://github.com/restatedev/restate-google-adk-example)
+[Visit the example repository for the complete, latest example.](https://github.com/restatedev/restate-google-adk-example)
 
 ## Capabilities
 
@@ -106,6 +107,64 @@ View the execution journal in the Restate UI, inspect failures and pause, resume
 | Durable LLM calls | `RestatePlugin()` journals LLM calls with automatic retries |
 | Multi-agent communication | Durable cross-agent HTTP calls with `restate_object_context().service_call()` |
 | Parallel execution | Run tools and agents concurrently with `restate.gather()` for deterministic recovery |
+
+## Quickstart
+
+1. **Clone the [example repository](https://github.com/restatedev/restate-google-adk-example)**
+
+    ```bash
+    git clone git@github.com:restatedev/restate-google-adk-example.git && cd restate-google-adk-example/examples/hello-world
+    ```
+
+2. **Export your Gemini API key**
+
+    ```bash
+    export GOOGLE_API_KEY=your-api-key
+    ```
+
+3. **Start the agent**
+
+    ```bash
+    uv run .
+    ```
+
+4. **Start Restate in another terminal**
+
+    ```bash
+    docker run --name restate --rm -p 8080:8080 -p 9070:9070 -d \
+      --add-host host.docker.internal:host-gateway \
+      docker.restate.dev/restatedev/restate:latest
+    ```
+
+    Other install methods: [Brew, npm, binary downloads](https://docs.restate.dev/develop/local_dev#running-restate-server--cli-locally)
+
+5. **Register the agent**
+
+    Open the Restate UI at `localhost:9070` and register your agent deployment (`http://host.docker.internal:9080`):
+
+    ![Restate registration](./assets/restate-registration.png)
+
+    !!! tip "Safe versioning"
+        Restate registers each deployment as an immutable snapshot. When you deploy a new version, ongoing executions finish on the original deployment while new requests route to the latest one. Learn more about [version-aware routing](https://docs.restate.dev/services/versioning).
+
+6. **Send a request to the agent**
+   
+    ```bash
+    curl localhost:8080/WeatherAgent/session-1/run \
+      --json '"What is the weather in New York?"' 
+    ```
+   
+    !!! tip "Durable sessions and retries"
+        This request goes through Restate, which persists it before forwarding to your agent. Each session (here `session-1`) is isolated, stateful, and durable. If the agent crashes mid-execution, Restate automatically retries and resumes from the last journaled step, without losing progress.
+6. **Inspect the execution journal**
+
+    Click on the Invocations tab and then on your invocation to see the execution journal.
+
+    ![Restate journal in the UI](./assets/restate-journal.png)
+
+    !!! tip "Full control over agent executions"
+        Every LLM call and tool execution is recorded in the journal. From the UI, you can pause, resume, restart from any intermediate step, or kill an execution. Check the State tab to inspect your agent's current session data.
+
 
 ## Additional resources
 
