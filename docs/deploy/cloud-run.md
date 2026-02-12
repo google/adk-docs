@@ -391,7 +391,6 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
     * `--project TEXT`: (Required) Your Google Cloud project ID (e.g., `$GOOGLE_CLOUD_PROJECT`).
     * `--region TEXT`: (Required) The Google Cloud location for deployment (e.g., `$GOOGLE_CLOUD_LOCATION`, `us-central1`).
     * `--service_name TEXT`: (Optional) The name for the Cloud Run service (e.g., `$SERVICE_NAME`). Defaults to `adk-default-service-name`.
-    * `--app_name TEXT`: (Optional) The application name for the ADK API server (e.g., `$APP_NAME`).
     * `--port INTEGER`: (Optional) The port number the ADK API server will listen on within the container. Defaults to 8000.
     * `--with_ui`: (Optional) If included, deploys the ADK dev UI alongside the agent API server. By default, only the API server is deployed.
     * `--temp_folder TEXT`: (Optional) Specifies a directory for storing intermediate files generated during the deployment process. Defaults to a timestamped folder in the system's temporary directory. *(Note: This option is generally not needed unless troubleshooting issues).*
