@@ -156,7 +156,8 @@ View the execution journal in the Restate UI, inspect failures and pause, resume
    
     !!! tip "Durable sessions and retries"
         This request goes through Restate, which persists it before forwarding to your agent. Each session (here `session-1`) is isolated, stateful, and durable. If the agent crashes mid-execution, Restate automatically retries and resumes from the last journaled step, without losing progress.
-6. **Inspect the execution journal**
+
+7. **Inspect the execution journal**
 
     Click on the Invocations tab and then on your invocation to see the execution journal.
 
