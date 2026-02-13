@@ -11,11 +11,11 @@ catalog_tags: ["data"]
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
 </div>
 
-The [Goodmem ADK plugin](https://github.com/PAIR-code/goodmem-adk) connects your
-ADK agent to [Goodmem](https://goodmem.ai), a vector-based semantic memory
-service. This integration gives your agent persistent, searchable memory across
-conversations, enabling it to recall past interactions, user preferences, and
-uploaded documents.
+The [Goodmem ADK plugin](https://github.com/PAIR-Systems-Inc/goodmem-adk)
+connects your ADK agent to [Goodmem](https://goodmem.ai), a vector-based
+semantic memory service. This integration gives your agent persistent,
+searchable memory across conversations, enabling it to recall past interactions,
+user preferences, and uploaded documents.
 
 There are two integration approaches:
 
