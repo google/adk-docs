@@ -39,7 +39,7 @@ There are two integration approaches:
 
 - A [Goodmem](https://goodmem.ai/quick-start) instance (self-hosted or cloud)
 - Goodmem API key
-- Google API key (for auto-creating embeddings with Gemini)
+- [Gemini API key](https://aistudio.google.com/app/api-keys) (for auto-creating embeddings with Gemini)
 
 ## Installation
 
