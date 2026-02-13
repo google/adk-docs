@@ -49,7 +49,7 @@ pip install goodmem-adk
 
 ## Use with agent
 
-=== "Plugin (automatic memory)"
+=== "Plugin (Automatic memory)"
 
     ```python
     import os
