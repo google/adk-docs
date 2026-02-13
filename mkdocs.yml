@@ -304,6 +304,8 @@ nav:
       - OpenAPI tools: tools-custom/openapi-tools.md
       - Authentication: tools-custom/authentication.md
       - Tool limitations: tools/limitations.md
+    - Skills for Agents:
+      - skills/index.md
   - Run Agents:
     - Agent Runtime:
       - Agent Runtime: runtime/index.md
