@@ -72,7 +72,7 @@ pip install goodmem-adk
     app = App(name="GoodmemPluginDemo", root_agent=agent, plugins=[plugin])
     ```
 
-=== "Tools (agent-controlled memory)"
+=== "Tools (Agent-controlled memory)"
 
     ```python
     import os
