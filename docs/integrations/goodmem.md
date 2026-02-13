@@ -151,7 +151,6 @@ If no space is configured, one is auto-created per user:
 
 ## Additional resources
 
-- [GoodMem ADK on PyPI](https://pypi.org/project/goodmem-adk/)
 - [GoodMem ADK on GitHub](https://github.com/PAIR-Systems-Inc/goodmem-adk)
 - [GoodMem Documentation](https://goodmem.ai)
 - [GoodMem ADK on PyPI](https://pypi.org/project/goodmem-adk/)
