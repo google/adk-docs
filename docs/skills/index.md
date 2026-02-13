@@ -103,7 +103,7 @@ my_agent/
                 *.py          # utility scripts
 ```
 
-!!! caution "Script execution not supported"
+!!! warning "Script execution not supported"
     Scripts execution is not yet supported and is a
     [known limitation](#known-limitations).
 
