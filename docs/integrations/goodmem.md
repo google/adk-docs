@@ -26,11 +26,14 @@ There are two integration approaches:
 
 ## Use cases
 
-- **Persistent memory for agents**: Give your agents a long-term memory that they can rely on across conversations.
-
-- **Hands-free, multimodal memory management**: Automatically saves and retrieves information in conversations, including user messages, agent responses, and file attachments (PDF, DOCX, etc.).
-
-- **Never start from scratch**: Agents recall who you are, what you've discussed, and solutions you've already worked through — saving tokens and avoiding redundant work.
+- **Persistent memory for agents**: Give your agents long-term memory that
+  they can rely on across conversations.
+- **Hands-free, multimodal memory management**: Automatically saves and
+  retrieves information in conversations, including user messages, agent
+  responses, and file attachments (PDF, DOCX, etc.).
+- **Never start from scratch**: Agents recall who you are, what you've
+  discussed, and solutions you've already worked through — saving tokens and
+  avoiding redundant work.
 
 ## Prerequisites
 
