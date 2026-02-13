@@ -135,8 +135,8 @@ context.
 
 Variable | Required | Description
 -------- | -------- | -----------
-`GOODMEM_BASE_URL` | Yes | Goodmem server URL (without `/v1` suffix)
-`GOODMEM_API_KEY` | Yes | API key for Goodmem
+`GOODMEM_BASE_URL` | Yes | GoodMem server URL (without `/v1` suffix)
+`GOODMEM_API_KEY` | Yes | API key for GoodMem
 `GOOGLE_API_KEY` | Yes | Gemini API key for auto-creating Gemini embedder
 `GOODMEM_EMBEDDER_ID` | No | Pin a specific embedder (must exist)
 `GOODMEM_SPACE_ID` | No | Pin a specific memory space (must exist)
