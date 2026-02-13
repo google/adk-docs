@@ -125,7 +125,9 @@ Tool | Description
 `goodmem_save` | Save text content and file attachments to persistent memory
 `goodmem_fetch` | Search memories using semantic similarity queries
 
-The tools are non-deterministically summoned by the agent, so it can choose when/what to save (may with rewrites) or retrieve information based on the conversation context.
+These tools are invoked by the agent on demand, and the agent can choose when to
+save (possibly with rewrites) or retrieve information based on the conversation
+context.
 
 ## Configuration
 
