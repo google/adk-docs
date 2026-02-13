@@ -112,7 +112,9 @@ Callback | Description
 `before_model_callback` | Retrieves relevant memories and injects them into the prompt
 `after_model_callback` | Saves the agent's response to memory
 
-The callbacks are deterministic and always run at the appropriate times, faithfully logs all information passed through agents to memory. So the agent doesn't need to decide when to save or retrieve information.
+These callbacks are deterministic and run during every agent interaction, saving
+all information passed through the agent to memory. The agent doesn't need to
+decide when to save or retrieve information.
 
 ### Tools
 
