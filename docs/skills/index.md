@@ -9,7 +9,7 @@ can use to perform a specific task. An agent Skill encapsulates the necessary
 instructions, resources, and tools required for a task, based on the
 [Agent Skill specification](https://agentskills.io/specification).
 The structure of a Skill allows it to be loaded incrementally to minimize the
-impact on operating context window of the agent.
+impact on the operating context window of the agent.
 
 !!! example "Experimental"
     The Skills feature is experimental and has some
@@ -20,7 +20,7 @@ impact on operating context window of the agent.
 
 Use the `SkillToolset` class to include one or more Skills in your agent
 definition and then add to your agent's tools list. You can define a
-[Skill in code](#inline-skill),
+[Skill in code](#inline-skills),
 or load the skill from a file definition, as shown below:
 
 ```python
@@ -142,7 +142,7 @@ The Skills feature is experimental and includes the following
 limitations:
 
 -   **Script execution:** The Skills feature does not currently support
-    script execution (scripts/ directory).
+    script execution (`scripts/` directory).
 
 ## Next steps
 

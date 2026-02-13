@@ -225,6 +225,7 @@ plugins:
         - integrations/*.md
         - tools/*.md
         - tools-custom/*.md
+        - skills/*.md
         Run Agents:
         - runtime/*.md
         - deploy/*.md
