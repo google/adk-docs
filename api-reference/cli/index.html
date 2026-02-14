@@ -1,0 +1,1699 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>ADK CLI documentation &#8212; ADK CLI 1.25.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
+    <script src="_static/documentation_options.js?v=479f908b"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+<!-- Google Analytics tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DKHZS27PHP"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-DKHZS27PHP');
+</script>
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="adk-cli-documentation">
+<h1>ADK CLI documentation<a class="headerlink" href="#adk-cli-documentation" title="Link to this heading">¶</a></h1>
+<p>This page contains the auto-generated command-line reference for ADK 1.25.0.</p>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#adk" id="id21">adk</a></p>
+<ul>
+<li><p><a class="reference internal" href="#adk-api-server" id="id22">api_server</a></p></li>
+<li><p><a class="reference internal" href="#adk-conformance" id="id23">conformance</a></p></li>
+<li><p><a class="reference internal" href="#adk-create" id="id24">create</a></p></li>
+<li><p><a class="reference internal" href="#adk-deploy" id="id25">deploy</a></p></li>
+<li><p><a class="reference internal" href="#adk-eval" id="id26">eval</a></p></li>
+<li><p><a class="reference internal" href="#adk-eval-set" id="id27">eval_set</a></p></li>
+<li><p><a class="reference internal" href="#adk-migrate" id="id28">migrate</a></p></li>
+<li><p><a class="reference internal" href="#adk-run" id="id29">run</a></p></li>
+<li><p><a class="reference internal" href="#adk-web" id="id30">web</a></p></li>
+</ul>
+</li>
+</ul>
+</nav>
+<section id="adk">
+<h2><a class="toc-backref" href="#id21" role="doc-backlink">adk</a><a class="headerlink" href="#adk" title="Link to this heading">¶</a></h2>
+<p>Agent Development Kit CLI tools.</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>adk<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-version">
+<span class="sig-name descname"><span class="pre">--version</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-version" title="Link to this definition">¶</a></dt>
+<dd><p>Show the version and exit.</p>
+</dd></dl>
+
+<section id="adk-api-server">
+<h3><a class="toc-backref" href="#id22" role="doc-backlink">api_server</a><a class="headerlink" href="#adk-api-server" title="Link to this heading">¶</a></h3>
+<p>Starts a FastAPI server for agents.</p>
+<p>AGENTS_DIR: The directory of agents, where each subdirectory is a single
+agent, containing at least <cite>__init__.py</cite> and <cite>agent.py</cite> files.</p>
+<p>Example:</p>
+<blockquote>
+<div><p>adk api_server –session_service_uri=[uri] –port=[port] path/to/agents_dir</p>
+</div></blockquote>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>adk<span class="w"> </span>api_server<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span><span class="o">[</span>AGENTS_DIR<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-api_server-enable_features">
+<span class="sig-name descname"><span class="pre">--enable_features</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;enable_features&gt;</span></span><a class="headerlink" href="#cmdoption-adk-api_server-enable_features" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Comma-separated list of feature names to enable. This provides an alternative to environment variables for enabling experimental features. Example: –enable_features=JSON_SCHEMA_FOR_FUNC_DECL,PROGRESSIVE_SSE_STREAMING</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-api_server-disable_features">
+<span class="sig-name descname"><span class="pre">--disable_features</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;disable_features&gt;</span></span><a class="headerlink" href="#cmdoption-adk-api_server-disable_features" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Comma-separated list of feature names to disable. This provides an alternative to environment variables for disabling features. Example: –disable_features=JSON_SCHEMA_FOR_FUNC_DECL,PROGRESSIVE_SSE_STREAMING</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-api_server-host">
+<span class="sig-name descname"><span class="pre">--host</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;host&gt;</span></span><a class="headerlink" href="#cmdoption-adk-api_server-host" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. The binding host of the server</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">'127.0.0.1'</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-api_server-port">
+<span class="sig-name descname"><span class="pre">--port</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;port&gt;</span></span><a class="headerlink" href="#cmdoption-adk-api_server-port" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. The port of the server</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-api_server-allow_origins">
+<span class="sig-name descname"><span class="pre">--allow_origins</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;allow_origins&gt;</span></span><a class="headerlink" href="#cmdoption-adk-api_server-allow_origins" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Origins to allow for CORS. Can be literal origins (e.g., ‘<a class="reference external" href="https://example.com">https://example.com</a>’) or regex patterns prefixed with ‘regex:’ (e.g., ‘regex:https://.*.example.com’).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-api_server-v">
+<span id="cmdoption-adk-api_server-verbose"></span><span class="sig-name descname"><span class="pre">-v</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--verbose</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-api_server-v" title="Link to this definition">¶</a></dt>
+<dd><p>Enable verbose (DEBUG) logging. Shortcut for –log_level DEBUG.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-api_server-log_level">
+<span class="sig-name descname"><span class="pre">--log_level</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;log_level&gt;</span></span><a class="headerlink" href="#cmdoption-adk-api_server-log_level" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Set the logging level</p>
+<dl class="field-list simple">
+<dt class="field-odd">Options<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DEBUG | INFO | WARNING | ERROR | CRITICAL</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-api_server-trace_to_cloud">
+<span class="sig-name descname"><span class="pre">--trace_to_cloud</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-api_server-trace_to_cloud" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Whether to enable cloud trace for telemetry.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-api_server-otel_to_cloud">
+<span class="sig-name descname"><span class="pre">--otel_to_cloud</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-api_server-otel_to_cloud" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Whether to write OTel data to Google Cloud Observability services - Cloud Trace and Cloud Logging.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-api_server-reload">
+<span id="cmdoption-adk-api_server-no-reload"></span><span class="sig-name descname"><span class="pre">--reload</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-reload</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-api_server-reload" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Whether to enable auto reload for server. Not supported for Cloud Run.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-api_server-a2a">
+<span class="sig-name descname"><span class="pre">--a2a</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-api_server-a2a" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Whether to enable A2A endpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-api_server-reload_agents">
+<span class="sig-name descname"><span class="pre">--reload_agents</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-api_server-reload_agents" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Whether to enable live reload for agents changes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-api_server-eval_storage_uri">
+<span class="sig-name descname"><span class="pre">--eval_storage_uri</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;eval_storage_uri&gt;</span></span><a class="headerlink" href="#cmdoption-adk-api_server-eval_storage_uri" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. The evals storage URI to store agent evals, supported URIs: gs://&lt;bucket name&gt;.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-api_server-extra_plugins">
+<span class="sig-name descname"><span class="pre">--extra_plugins</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;extra_plugins&gt;</span></span><a class="headerlink" href="#cmdoption-adk-api_server-extra_plugins" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Comma-separated list of extra plugin classes or instances to enable (e.g., my.module.MyPluginClass or my.module.my_plugin_instance).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-api_server-url_prefix">
+<span class="sig-name descname"><span class="pre">--url_prefix</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;url_prefix&gt;</span></span><a class="headerlink" href="#cmdoption-adk-api_server-url_prefix" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. URL path prefix when the application is mounted behind a reverse proxy or API gateway (e.g., ‘/api/v1’, ‘/adk’). This ensures generated URLs and redirects work correctly when the app is not served at the root path. Must start with ‘/’ if provided.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-api_server-session_service_uri">
+<span class="sig-name descname"><span class="pre">--session_service_uri</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;session_service_uri&gt;</span></span><a class="headerlink" href="#cmdoption-adk-api_server-session_service_uri" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. The URI of the session service.
+If set, ADK uses this service.</p>
+<div class="line-block">
+<div class="line">If unset, ADK chooses a default session service (see</div>
+<div class="line">–use_local_storage).</div>
+<div class="line">- Use ‘agentengine://&lt;agent_engine&gt;’ to connect to Agent Engine</div>
+<div class="line-block">
+<div class="line">sessions. &lt;agent_engine&gt; can either be the full qualified resource</div>
+<div class="line">name ‘projects/abc/locations/us-central1/reasoningEngines/123’ or</div>
+<div class="line">the resource id ‘123’.</div>
+</div>
+<div class="line">- Use ‘memory://’ to run with the in-memory session service.</div>
+<div class="line">- Use ‘sqlite://&lt;path_to_sqlite_file&gt;’ to connect to a SQLite DB.</div>
+<div class="line">- See <a class="reference external" href="https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls">https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls</a></div>
+<div class="line-block">
+<div class="line">for supported database URIs.</div>
+</div>
+</div>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-api_server-artifact_service_uri">
+<span class="sig-name descname"><span class="pre">--artifact_service_uri</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;artifact_service_uri&gt;</span></span><a class="headerlink" href="#cmdoption-adk-api_server-artifact_service_uri" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. The URI of the artifact service.
+If set, ADK uses this service.</p>
+<div class="line-block">
+<div class="line">If unset, ADK chooses a default artifact service (see</div>
+<div class="line">–use_local_storage).</div>
+<div class="line">- Use ‘gs://&lt;bucket_name&gt;’ to connect to the GCS artifact service.</div>
+<div class="line">- Use ‘memory://’ to force the in-memory artifact service.</div>
+<div class="line">- Use ‘<a class="reference external" href="file:/">file:/</a>/&lt;path&gt;’ to store artifacts in a custom local directory.</div>
+</div>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-api_server-use_local_storage">
+<span id="cmdoption-adk-api_server-no_use_local_storage"></span><span class="sig-name descname"><span class="pre">--use_local_storage</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no_use_local_storage</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-api_server-use_local_storage" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Whether to use local .adk storage when –session_service_uri and –artifact_service_uri are unset. Cannot be combined with explicit service URIs. When the agents directory isn’t writable (common in Cloud Run/Kubernetes), ADK falls back to in-memory unless overridden by ADK_FORCE_LOCAL_STORAGE=1 or ADK_DISABLE_LOCAL_STORAGE=1.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-api_server-memory_service_uri">
+<span class="sig-name descname"><span class="pre">--memory_service_uri</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;memory_service_uri&gt;</span></span><a class="headerlink" href="#cmdoption-adk-api_server-memory_service_uri" title="Link to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Optional. The URI of the memory service.</div>
+<div class="line">- Use ‘rag://&lt;rag_corpus_id&gt;’ to connect to Vertex AI Rag Memory Service.</div>
+<div class="line">- Use ‘agentengine://&lt;agent_engine&gt;’ to connect to Agent Engine</div>
+<div class="line-block">
+<div class="line">sessions. &lt;agent_engine&gt; can either be the full qualified resource</div>
+<div class="line">name ‘projects/abc/locations/us-central1/reasoningEngines/123’ or</div>
+<div class="line">the resource id ‘123’.</div>
+</div>
+<div class="line">- Use ‘memory://’ to force the in-memory memory service.</div>
+</div>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-api_server-session_db_url">
+<span class="sig-name descname"><span class="pre">--session_db_url</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;session_db_url&gt;</span></span><a class="headerlink" href="#cmdoption-adk-api_server-session_db_url" title="Link to this definition">¶</a></dt>
+<dd><p>Deprecated. Use –session_service_uri instead.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-api_server-artifact_storage_uri">
+<span class="sig-name descname"><span class="pre">--artifact_storage_uri</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;artifact_storage_uri&gt;</span></span><a class="headerlink" href="#cmdoption-adk-api_server-artifact_storage_uri" title="Link to this definition">¶</a></dt>
+<dd><p>Deprecated. Use –artifact_service_uri instead.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-api_server-auto_create_session">
+<span class="sig-name descname"><span class="pre">--auto_create_session</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-api_server-auto_create_session" title="Link to this definition">¶</a></dt>
+<dd><p>Automatically create a session if it doesn’t exist when calling /run.</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-api_server-arg-AGENTS_DIR">
+<span class="sig-name descname"><span class="pre">AGENTS_DIR</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-api_server-arg-AGENTS_DIR" title="Link to this definition">¶</a></dt>
+<dd><p>Optional argument</p>
+</dd></dl>
+
+</section>
+<section id="adk-conformance">
+<h3><a class="toc-backref" href="#id23" role="doc-backlink">conformance</a><a class="headerlink" href="#adk-conformance" title="Link to this heading">¶</a></h3>
+<p>Conformance testing tools for ADK.</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>adk<span class="w"> </span>conformance<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
+</pre></div>
+</div>
+<section id="adk-conformance-record">
+<h4>record<a class="headerlink" href="#adk-conformance-record" title="Link to this heading">¶</a></h4>
+<p>Generate ADK conformance test YAML files from TestCaseInput specifications.</p>
+<p>NOTE: this is work in progress.</p>
+<p>This command reads TestCaseInput specifications from input.yaml files,
+executes the specified test cases against agents, and generates conformance
+test files with recorded agent interactions as test.yaml files.</p>
+<p>Expected directory structure:
+category/name/input.yaml (TestCaseInput) -&gt; category/name/test.yaml (TestCase)</p>
+<p>PATHS: One or more directories containing test case specifications.
+If no paths are provided, defaults to ‘tests/’ directory.</p>
+<p>Examples:</p>
+<p>Use default directory: adk conformance record</p>
+<p>Custom directories: adk conformance record tests/core tests/tools</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>adk<span class="w"> </span>conformance<span class="w"> </span>record<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span><span class="o">[</span>PATHS<span class="o">]</span>...
+</pre></div>
+</div>
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-conformance-record-arg-PATHS">
+<span class="sig-name descname"><span class="pre">PATHS</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-conformance-record-arg-PATHS" title="Link to this definition">¶</a></dt>
+<dd><p>Optional argument(s)</p>
+</dd></dl>
+
+</section>
+<section id="adk-conformance-test">
+<h4>test<a class="headerlink" href="#adk-conformance-test" title="Link to this heading">¶</a></h4>
+<p>Run conformance tests to verify agent behavior consistency.</p>
+<p>Validates that agents produce consistent outputs by comparing against recorded
+interactions or evaluating live execution results.</p>
+<p>PATHS can be any number of folder paths. Each folder can either:
+- Contain a spec.yaml file directly (single test case)
+- Contain subdirectories with spec.yaml files (multiple test cases)</p>
+<p>If no paths are provided, defaults to searching for the ‘tests’ folder.</p>
+<p>TEST MODES:</p>
+<div class="line-block">
+<div class="line">replay  : Verifies agent interactions match previously recorded behaviors</div>
+<div class="line-block">
+<div class="line">exactly. Compares LLM requests/responses and tool calls/results.</div>
+</div>
+<div class="line">live    : Runs evaluation-based verification (not yet implemented)</div>
+</div>
+<p>DIRECTORY STRUCTURE:</p>
+<p>Test cases must follow this structure:</p>
+<div class="line-block">
+<div class="line">category/</div>
+<div class="line-block">
+<div class="line">test_name/</div>
+<div class="line-block">
+<div class="line">spec.yaml                    # Test specification</div>
+<div class="line">generated-recordings.yaml    # Recorded interactions (replay mode)</div>
+<div class="line">generated-session.yaml       # Session data (replay mode)</div>
+</div>
+</div>
+</div>
+<p>REPORT GENERATION:</p>
+<p>Use –generate_report to create a Markdown report of test results.
+Use –report_dir to specify where the report should be saved.</p>
+<p>EXAMPLES:</p>
+<div class="line-block">
+<div class="line"># Run all tests in current directory’s ‘tests’ folder</div>
+<div class="line">adk conformance test</div>
+</div>
+<div class="line-block">
+<div class="line"># Run tests from specific folders</div>
+<div class="line">adk conformance test tests/core tests/tools</div>
+</div>
+<div class="line-block">
+<div class="line"># Run a single test case</div>
+<div class="line">adk conformance test tests/core/description_001</div>
+</div>
+<div class="line-block">
+<div class="line"># Run in live mode (when available)</div>
+<div class="line">adk conformance test –mode=live tests/core</div>
+</div>
+<div class="line-block">
+<div class="line"># Generate a test report</div>
+<div class="line">adk conformance test –generate_report</div>
+</div>
+<div class="line-block">
+<div class="line"># Generate a test report in a specific directory</div>
+<div class="line">adk conformance test –generate_report –report_dir=reports</div>
+</div>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>adk<span class="w"> </span>conformance<span class="w"> </span><span class="nb">test</span><span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span><span class="o">[</span>PATHS<span class="o">]</span>...
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-conformance-test-mode">
+<span class="sig-name descname"><span class="pre">--mode</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;mode&gt;</span></span><a class="headerlink" href="#cmdoption-adk-conformance-test-mode" title="Link to this definition">¶</a></dt>
+<dd><p>Test mode: ‘replay’ verifies against recorded interactions, ‘live’ runs evaluation-based verification.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">'replay'</span></code></p>
+</dd>
+<dt class="field-even">Options<span class="colon">:</span></dt>
+<dd class="field-even"><p>replay | live</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-conformance-test-generate_report">
+<span class="sig-name descname"><span class="pre">--generate_report</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-conformance-test-generate_report" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Whether to generate a Markdown report of the test results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-conformance-test-report_dir">
+<span class="sig-name descname"><span class="pre">--report_dir</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;report_dir&gt;</span></span><a class="headerlink" href="#cmdoption-adk-conformance-test-report_dir" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Directory to store the generated report. Defaults to current directory.</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-conformance-test-arg-PATHS">
+<span class="sig-name descname"><span class="pre">PATHS</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-conformance-test-arg-PATHS" title="Link to this definition">¶</a></dt>
+<dd><p>Optional argument(s)</p>
+</dd></dl>
+
+</section>
+</section>
+<section id="adk-create">
+<h3><a class="toc-backref" href="#id24" role="doc-backlink">create</a><a class="headerlink" href="#adk-create" title="Link to this heading">¶</a></h3>
+<p>Creates a new app in the current folder with prepopulated agent template.</p>
+<p>APP_NAME: required, the folder of the agent source code.</p>
+<p>Example:</p>
+<blockquote>
+<div><p>adk create path/to/my_app</p>
+</div></blockquote>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>adk<span class="w"> </span>create<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>APP_NAME
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-create-model">
+<span class="sig-name descname"><span class="pre">--model</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;model&gt;</span></span><a class="headerlink" href="#cmdoption-adk-create-model" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. The model used for the root agent.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-create-api_key">
+<span class="sig-name descname"><span class="pre">--api_key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;api_key&gt;</span></span><a class="headerlink" href="#cmdoption-adk-create-api_key" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. The API Key needed to access the model, e.g. Google AI API Key.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-create-project">
+<span class="sig-name descname"><span class="pre">--project</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;project&gt;</span></span><a class="headerlink" href="#cmdoption-adk-create-project" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. The Google Cloud Project for using VertexAI as backend.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-create-region">
+<span class="sig-name descname"><span class="pre">--region</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;region&gt;</span></span><a class="headerlink" href="#cmdoption-adk-create-region" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. The Google Cloud Region for using VertexAI as backend.</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-create-arg-APP_NAME">
+<span class="sig-name descname"><span class="pre">APP_NAME</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-create-arg-APP_NAME" title="Link to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+<section id="adk-deploy">
+<h3><a class="toc-backref" href="#id25" role="doc-backlink">deploy</a><a class="headerlink" href="#adk-deploy" title="Link to this heading">¶</a></h3>
+<p>Deploys agent to hosted environments.</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>adk<span class="w"> </span>deploy<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
+</pre></div>
+</div>
+<section id="adk-deploy-agent-engine">
+<h4>agent_engine<a class="headerlink" href="#adk-deploy-agent-engine" title="Link to this heading">¶</a></h4>
+<p>Deploys an agent to Agent Engine.</p>
+<p>Example:</p>
+<blockquote>
+<div><p># With Express Mode API Key
+adk deploy agent_engine –api_key=[api_key] my_agent</p>
+<p># With Google Cloud Project and Region
+adk deploy agent_engine –project=[project] –region=[region]</p>
+<blockquote>
+<div><p>–display_name=[app_name] my_agent</p>
+</div></blockquote>
+</div></blockquote>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>adk<span class="w"> </span>deploy<span class="w"> </span>agent_engine<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>AGENT
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-agent_engine-api_key">
+<span class="sig-name descname"><span class="pre">--api_key</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;api_key&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-agent_engine-api_key" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. The API key to use for Express Mode. If not provided, the API key from the GOOGLE_API_KEY environment variable will be used. It will only be used if GOOGLE_GENAI_USE_VERTEXAI is true. (It will override GOOGLE_API_KEY in the .env file if it exists.)</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-agent_engine-project">
+<span class="sig-name descname"><span class="pre">--project</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;project&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-agent_engine-project" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Google Cloud project to deploy the agent. It will override GOOGLE_CLOUD_PROJECT in the .env file (if it exists). It will be ignored if api_key is set.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-agent_engine-region">
+<span class="sig-name descname"><span class="pre">--region</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;region&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-agent_engine-region" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Google Cloud region to deploy the agent. It will override GOOGLE_CLOUD_LOCATION in the .env file (if it exists). It will be ignored if api_key is set.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-agent_engine-staging_bucket">
+<span class="sig-name descname"><span class="pre">--staging_bucket</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;staging_bucket&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-agent_engine-staging_bucket" title="Link to this definition">¶</a></dt>
+<dd><p>Deprecated. This argument is no longer required or used.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-agent_engine-agent_engine_id">
+<span class="sig-name descname"><span class="pre">--agent_engine_id</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;agent_engine_id&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-agent_engine-agent_engine_id" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. ID of the Agent Engine instance to update if it exists (default: None, which means a new instance will be created). If project and region are set, this should be the resource ID, and the corresponding resource name in Agent Engine will be: <cite>projects/{project}/locations/{region}/reasoningEngines/{agent_engine_id}</cite>. If api_key is set, then agent_engine_id is required to be the full resource name (i.e. <cite>projects/*/locations/*/reasoningEngines/*</cite>).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-agent_engine-trace_to_cloud">
+<span id="cmdoption-adk-deploy-agent_engine-no-trace_to_cloud"></span><span class="sig-name descname"><span class="pre">--trace_to_cloud</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-trace_to_cloud</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-deploy-agent_engine-trace_to_cloud" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Whether to enable Cloud Trace for Agent Engine.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-agent_engine-otel_to_cloud">
+<span class="sig-name descname"><span class="pre">--otel_to_cloud</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-deploy-agent_engine-otel_to_cloud" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Whether to enable OpenTelemetry for Agent Engine.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-agent_engine-display_name">
+<span class="sig-name descname"><span class="pre">--display_name</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;display_name&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-agent_engine-display_name" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Display name of the agent in Agent Engine.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">''</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-agent_engine-description">
+<span class="sig-name descname"><span class="pre">--description</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;description&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-agent_engine-description" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Description of the agent in Agent Engine.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">''</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-agent_engine-adk_app">
+<span class="sig-name descname"><span class="pre">--adk_app</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;adk_app&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-agent_engine-adk_app" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Python file for defining the ADK application (default: a file named agent_engine_app.py)</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-agent_engine-temp_folder">
+<span class="sig-name descname"><span class="pre">--temp_folder</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;temp_folder&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-agent_engine-temp_folder" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Temp folder for the generated Agent Engine source files. If the folder already exists, its contents will be removed. (default: a timestamped folder in the current working directory).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-agent_engine-adk_app_object">
+<span class="sig-name descname"><span class="pre">--adk_app_object</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;adk_app_object&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-agent_engine-adk_app_object" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Python object corresponding to the root ADK agent or app. It can only be <cite>root_agent</cite> or <cite>app</cite>. (default: <cite>root_agent</cite>)</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-agent_engine-env_file">
+<span class="sig-name descname"><span class="pre">--env_file</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;env_file&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-agent_engine-env_file" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. The filepath to the <cite>.env</cite> file for environment variables. (default: the <cite>.env</cite> file in the <cite>agent</cite> directory, if any.)</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-agent_engine-requirements_file">
+<span class="sig-name descname"><span class="pre">--requirements_file</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;requirements_file&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-agent_engine-requirements_file" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. The filepath to the <cite>requirements.txt</cite> file to use. (default: the <cite>requirements.txt</cite> file in the <cite>agent</cite> directory, if any.)</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-agent_engine-absolutize_imports">
+<span class="sig-name descname"><span class="pre">--absolutize_imports</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;absolutize_imports&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-agent_engine-absolutize_imports" title="Link to this definition">¶</a></dt>
+<dd><p>NOTE: This flag is deprecated and will be removed in the future.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-agent_engine-agent_engine_config_file">
+<span class="sig-name descname"><span class="pre">--agent_engine_config_file</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;agent_engine_config_file&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-agent_engine-agent_engine_config_file" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. The filepath to the <cite>.agent_engine_config.json</cite> file to use. The values in this file will be overridden by the values set by other flags. (default: the <cite>.agent_engine_config.json</cite> file in the <cite>agent</cite> directory, if any.)</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-agent_engine-validate-agent-import">
+<span id="cmdoption-adk-deploy-agent_engine-no-validate-agent-import"></span><span class="sig-name descname"><span class="pre">--validate-agent-import</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-validate-agent-import</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-deploy-agent_engine-validate-agent-import" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Validate that the agent module can be imported before deployment. This requires your local environment to have the same dependencies as the deployment environment. (default: disabled)</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-agent_engine-skip-agent-import-validation">
+<span class="sig-name descname"><span class="pre">--skip-agent-import-validation</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-deploy-agent_engine-skip-agent-import-validation" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Skip pre-deployment import validation of <cite>agent.py</cite>. This is the default; use –validate-agent-import to enable validation.</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-agent_engine-arg-AGENT">
+<span class="sig-name descname"><span class="pre">AGENT</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-deploy-agent_engine-arg-AGENT" title="Link to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+<section id="adk-deploy-cloud-run">
+<h4>cloud_run<a class="headerlink" href="#adk-deploy-cloud-run" title="Link to this heading">¶</a></h4>
+<p>Deploys an agent to Cloud Run.</p>
+<p>AGENT: The path to the agent source code folder.</p>
+<p>Use ‘–’ to separate gcloud arguments from adk arguments.</p>
+<p>Examples:</p>
+<blockquote>
+<div><p>adk deploy cloud_run –project=[project] –region=[region] path/to/my_agent</p>
+<dl class="simple">
+<dt>adk deploy cloud_run –project=[project] –region=[region] path/to/my_agent</dt><dd><p>– –no-allow-unauthenticated –min-instances=2</p>
+</dd>
+</dl>
+</div></blockquote>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>adk<span class="w"> </span>deploy<span class="w"> </span>cloud_run<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>AGENT
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-cloud_run-project">
+<span class="sig-name descname"><span class="pre">--project</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;project&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-cloud_run-project" title="Link to this definition">¶</a></dt>
+<dd><p>Required. Google Cloud project to deploy the agent. When absent, default project from gcloud config is used.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-cloud_run-region">
+<span class="sig-name descname"><span class="pre">--region</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;region&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-cloud_run-region" title="Link to this definition">¶</a></dt>
+<dd><p>Required. Google Cloud region to deploy the agent. When absent, gcloud run deploy will prompt later.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-cloud_run-service_name">
+<span class="sig-name descname"><span class="pre">--service_name</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;service_name&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-cloud_run-service_name" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. The service name to use in Cloud Run (default: ‘adk-default-service-name’).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-cloud_run-app_name">
+<span class="sig-name descname"><span class="pre">--app_name</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;app_name&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-cloud_run-app_name" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. App name of the ADK API server (default: the folder name of the AGENT source code).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-cloud_run-port">
+<span class="sig-name descname"><span class="pre">--port</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;port&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-cloud_run-port" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. The port of the ADK API server (default: 8000).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-cloud_run-trace_to_cloud">
+<span class="sig-name descname"><span class="pre">--trace_to_cloud</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-deploy-cloud_run-trace_to_cloud" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Whether to enable Cloud Trace export for Cloud Run deployments.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-cloud_run-otel_to_cloud">
+<span class="sig-name descname"><span class="pre">--otel_to_cloud</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-deploy-cloud_run-otel_to_cloud" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Whether to enable OpenTelemetry export to GCP for Cloud Run deployments.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-cloud_run-with_ui">
+<span class="sig-name descname"><span class="pre">--with_ui</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-deploy-cloud_run-with_ui" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Deploy ADK Web UI if set. (default: deploy ADK API server only)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-cloud_run-temp_folder">
+<span class="sig-name descname"><span class="pre">--temp_folder</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;temp_folder&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-cloud_run-temp_folder" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Temp folder for the generated Cloud Run source files (default: a timestamped folder in the system temp directory).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-cloud_run-log_level">
+<span class="sig-name descname"><span class="pre">--log_level</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;log_level&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-cloud_run-log_level" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Set the logging level</p>
+<dl class="field-list simple">
+<dt class="field-odd">Options<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DEBUG | INFO | WARNING | ERROR | CRITICAL</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-cloud_run-verbosity">
+<span class="sig-name descname"><span class="pre">--verbosity</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;verbosity&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-cloud_run-verbosity" title="Link to this definition">¶</a></dt>
+<dd><p>Deprecated. Use –log_level instead.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Options<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DEBUG | INFO | WARNING | ERROR | CRITICAL</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-cloud_run-adk_version">
+<span class="sig-name descname"><span class="pre">--adk_version</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;adk_version&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-cloud_run-adk_version" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. The ADK version used in Cloud Run deployment. (default: the version in the dev environment)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">'1.25.0'</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-cloud_run-a2a">
+<span class="sig-name descname"><span class="pre">--a2a</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-deploy-cloud_run-a2a" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Whether to enable A2A endpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-cloud_run-allow_origins">
+<span class="sig-name descname"><span class="pre">--allow_origins</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;allow_origins&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-cloud_run-allow_origins" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Origins to allow for CORS. Can be literal origins (e.g., ‘<a class="reference external" href="https://example.com">https://example.com</a>’) or regex patterns prefixed with ‘regex:’ (e.g., ‘regex:https://.*.example.com’).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-cloud_run-session_service_uri">
+<span class="sig-name descname"><span class="pre">--session_service_uri</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;session_service_uri&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-cloud_run-session_service_uri" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. The URI of the session service.
+If set, ADK uses this service.</p>
+<div class="line-block">
+<div class="line">If unset, ADK chooses a default session service (see</div>
+<div class="line">–use_local_storage).</div>
+<div class="line">- Use ‘agentengine://&lt;agent_engine&gt;’ to connect to Agent Engine</div>
+<div class="line-block">
+<div class="line">sessions. &lt;agent_engine&gt; can either be the full qualified resource</div>
+<div class="line">name ‘projects/abc/locations/us-central1/reasoningEngines/123’ or</div>
+<div class="line">the resource id ‘123’.</div>
+</div>
+<div class="line">- Use ‘memory://’ to run with the in-memory session service.</div>
+<div class="line">- Use ‘sqlite://&lt;path_to_sqlite_file&gt;’ to connect to a SQLite DB.</div>
+<div class="line">- See <a class="reference external" href="https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls">https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls</a></div>
+<div class="line-block">
+<div class="line">for supported database URIs.</div>
+</div>
+</div>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-cloud_run-artifact_service_uri">
+<span class="sig-name descname"><span class="pre">--artifact_service_uri</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;artifact_service_uri&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-cloud_run-artifact_service_uri" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. The URI of the artifact service.
+If set, ADK uses this service.</p>
+<div class="line-block">
+<div class="line">If unset, ADK chooses a default artifact service (see</div>
+<div class="line">–use_local_storage).</div>
+<div class="line">- Use ‘gs://&lt;bucket_name&gt;’ to connect to the GCS artifact service.</div>
+<div class="line">- Use ‘memory://’ to force the in-memory artifact service.</div>
+<div class="line">- Use ‘<a class="reference external" href="file:/">file:/</a>/&lt;path&gt;’ to store artifacts in a custom local directory.</div>
+</div>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-cloud_run-use_local_storage">
+<span id="cmdoption-adk-deploy-cloud_run-no_use_local_storage"></span><span class="sig-name descname"><span class="pre">--use_local_storage</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no_use_local_storage</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-deploy-cloud_run-use_local_storage" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Whether to use local .adk storage when –session_service_uri and –artifact_service_uri are unset. Cannot be combined with explicit service URIs. When the agents directory isn’t writable (common in Cloud Run/Kubernetes), ADK falls back to in-memory unless overridden by ADK_FORCE_LOCAL_STORAGE=1 or ADK_DISABLE_LOCAL_STORAGE=1.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-cloud_run-memory_service_uri">
+<span class="sig-name descname"><span class="pre">--memory_service_uri</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;memory_service_uri&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-cloud_run-memory_service_uri" title="Link to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Optional. The URI of the memory service.</div>
+<div class="line">- Use ‘rag://&lt;rag_corpus_id&gt;’ to connect to Vertex AI Rag Memory Service.</div>
+<div class="line">- Use ‘agentengine://&lt;agent_engine&gt;’ to connect to Agent Engine</div>
+<div class="line-block">
+<div class="line">sessions. &lt;agent_engine&gt; can either be the full qualified resource</div>
+<div class="line">name ‘projects/abc/locations/us-central1/reasoningEngines/123’ or</div>
+<div class="line">the resource id ‘123’.</div>
+</div>
+<div class="line">- Use ‘memory://’ to force the in-memory memory service.</div>
+</div>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-cloud_run-session_db_url">
+<span class="sig-name descname"><span class="pre">--session_db_url</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;session_db_url&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-cloud_run-session_db_url" title="Link to this definition">¶</a></dt>
+<dd><p>Deprecated. Use –session_service_uri instead.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-cloud_run-artifact_storage_uri">
+<span class="sig-name descname"><span class="pre">--artifact_storage_uri</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;artifact_storage_uri&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-cloud_run-artifact_storage_uri" title="Link to this definition">¶</a></dt>
+<dd><p>Deprecated. Use –artifact_service_uri instead.</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-cloud_run-arg-AGENT">
+<span class="sig-name descname"><span class="pre">AGENT</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-deploy-cloud_run-arg-AGENT" title="Link to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+<section id="adk-deploy-gke">
+<h4>gke<a class="headerlink" href="#adk-deploy-gke" title="Link to this heading">¶</a></h4>
+<p>Deploys an agent to GKE.</p>
+<p>AGENT: The path to the agent source code folder.</p>
+<p>Example:</p>
+<blockquote>
+<div><dl class="simple">
+<dt>adk deploy gke –project=[project] –region=[region]</dt><dd><p>–cluster_name=[cluster_name] path/to/my_agent</p>
+</dd>
+</dl>
+</div></blockquote>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>adk<span class="w"> </span>deploy<span class="w"> </span>gke<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>AGENT
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-gke-project">
+<span class="sig-name descname"><span class="pre">--project</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;project&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-gke-project" title="Link to this definition">¶</a></dt>
+<dd><p>Required. Google Cloud project to deploy the agent. When absent, default project from gcloud config is used.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-gke-region">
+<span class="sig-name descname"><span class="pre">--region</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;region&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-gke-region" title="Link to this definition">¶</a></dt>
+<dd><p>Required. Google Cloud region to deploy the agent. When absent, gcloud run deploy will prompt later.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-gke-cluster_name">
+<span class="sig-name descname"><span class="pre">--cluster_name</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;cluster_name&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-gke-cluster_name" title="Link to this definition">¶</a></dt>
+<dd><p>Required. The name of the GKE cluster.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-gke-service_name">
+<span class="sig-name descname"><span class="pre">--service_name</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;service_name&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-gke-service_name" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. The service name to use in GKE (default: ‘adk-default-service-name’).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-gke-app_name">
+<span class="sig-name descname"><span class="pre">--app_name</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;app_name&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-gke-app_name" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. App name of the ADK API server (default: the folder name of the AGENT source code).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-gke-port">
+<span class="sig-name descname"><span class="pre">--port</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;port&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-gke-port" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. The port of the ADK API server (default: 8000).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-gke-trace_to_cloud">
+<span class="sig-name descname"><span class="pre">--trace_to_cloud</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-deploy-gke-trace_to_cloud" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Whether to enable Cloud Trace for GKE.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-gke-otel_to_cloud">
+<span class="sig-name descname"><span class="pre">--otel_to_cloud</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-deploy-gke-otel_to_cloud" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Whether to enable OpenTelemetry for GKE.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-gke-with_ui">
+<span class="sig-name descname"><span class="pre">--with_ui</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-deploy-gke-with_ui" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Deploy ADK Web UI if set. (default: deploy ADK API server only)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-gke-log_level">
+<span class="sig-name descname"><span class="pre">--log_level</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;log_level&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-gke-log_level" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Set the logging level</p>
+<dl class="field-list simple">
+<dt class="field-odd">Options<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DEBUG | INFO | WARNING | ERROR | CRITICAL</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-gke-temp_folder">
+<span class="sig-name descname"><span class="pre">--temp_folder</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;temp_folder&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-gke-temp_folder" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Temp folder for the generated GKE source files (default: a timestamped folder in the system temp directory).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-gke-adk_version">
+<span class="sig-name descname"><span class="pre">--adk_version</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;adk_version&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-gke-adk_version" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. The ADK version used in GKE deployment. (default: the version in the dev environment)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">'1.25.0'</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-gke-session_service_uri">
+<span class="sig-name descname"><span class="pre">--session_service_uri</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;session_service_uri&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-gke-session_service_uri" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. The URI of the session service.
+If set, ADK uses this service.</p>
+<div class="line-block">
+<div class="line">If unset, ADK chooses a default session service (see</div>
+<div class="line">–use_local_storage).</div>
+<div class="line">- Use ‘agentengine://&lt;agent_engine&gt;’ to connect to Agent Engine</div>
+<div class="line-block">
+<div class="line">sessions. &lt;agent_engine&gt; can either be the full qualified resource</div>
+<div class="line">name ‘projects/abc/locations/us-central1/reasoningEngines/123’ or</div>
+<div class="line">the resource id ‘123’.</div>
+</div>
+<div class="line">- Use ‘memory://’ to run with the in-memory session service.</div>
+<div class="line">- Use ‘sqlite://&lt;path_to_sqlite_file&gt;’ to connect to a SQLite DB.</div>
+<div class="line">- See <a class="reference external" href="https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls">https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls</a></div>
+<div class="line-block">
+<div class="line">for supported database URIs.</div>
+</div>
+</div>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-gke-artifact_service_uri">
+<span class="sig-name descname"><span class="pre">--artifact_service_uri</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;artifact_service_uri&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-gke-artifact_service_uri" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. The URI of the artifact service.
+If set, ADK uses this service.</p>
+<div class="line-block">
+<div class="line">If unset, ADK chooses a default artifact service (see</div>
+<div class="line">–use_local_storage).</div>
+<div class="line">- Use ‘gs://&lt;bucket_name&gt;’ to connect to the GCS artifact service.</div>
+<div class="line">- Use ‘memory://’ to force the in-memory artifact service.</div>
+<div class="line">- Use ‘<a class="reference external" href="file:/">file:/</a>/&lt;path&gt;’ to store artifacts in a custom local directory.</div>
+</div>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-gke-use_local_storage">
+<span id="cmdoption-adk-deploy-gke-no_use_local_storage"></span><span class="sig-name descname"><span class="pre">--use_local_storage</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no_use_local_storage</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-deploy-gke-use_local_storage" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Whether to use local .adk storage when –session_service_uri and –artifact_service_uri are unset. Cannot be combined with explicit service URIs. When the agents directory isn’t writable (common in Cloud Run/Kubernetes), ADK falls back to in-memory unless overridden by ADK_FORCE_LOCAL_STORAGE=1 or ADK_DISABLE_LOCAL_STORAGE=1.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-gke-memory_service_uri">
+<span class="sig-name descname"><span class="pre">--memory_service_uri</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;memory_service_uri&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-gke-memory_service_uri" title="Link to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Optional. The URI of the memory service.</div>
+<div class="line">- Use ‘rag://&lt;rag_corpus_id&gt;’ to connect to Vertex AI Rag Memory Service.</div>
+<div class="line">- Use ‘agentengine://&lt;agent_engine&gt;’ to connect to Agent Engine</div>
+<div class="line-block">
+<div class="line">sessions. &lt;agent_engine&gt; can either be the full qualified resource</div>
+<div class="line">name ‘projects/abc/locations/us-central1/reasoningEngines/123’ or</div>
+<div class="line">the resource id ‘123’.</div>
+</div>
+<div class="line">- Use ‘memory://’ to force the in-memory memory service.</div>
+</div>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-gke-arg-AGENT">
+<span class="sig-name descname"><span class="pre">AGENT</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-deploy-gke-arg-AGENT" title="Link to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+</section>
+<section id="adk-eval">
+<h3><a class="toc-backref" href="#id26" role="doc-backlink">eval</a><a class="headerlink" href="#adk-eval" title="Link to this heading">¶</a></h3>
+<p>Evaluates an agent given the eval sets.</p>
+<p>AGENT_MODULE_FILE_PATH: The path to the __init__.py file that contains a
+module by the name “agent”. “agent” module contains a root_agent.</p>
+<p>EVAL_SET_FILE_PATH_OR_ID: You can specify one or more eval set file paths or
+eval set id.</p>
+<p>Mixing of eval set file paths with eval set ids is not allowed.</p>
+<p><em>Eval Set File Path</em>
+For each file, all evals will be run by default.</p>
+<p>If you want to run only specific evals from an eval set, first create a comma
+separated list of eval names and then add that as a suffix to the eval set
+file name, demarcated by a <cite>:</cite>.</p>
+<p>For example, we have <cite>sample_eval_set_file.json</cite> file that has following the
+eval cases:
+sample_eval_set_file.json:</p>
+<blockquote>
+<div><p><a href="#id1"><span class="problematic" id="id2">|</span></a>……. eval_1
+<a href="#id3"><span class="problematic" id="id4">|</span></a>……. eval_2
+<a href="#id5"><span class="problematic" id="id6">|</span></a>……. eval_3
+<a href="#id7"><span class="problematic" id="id8">|</span></a>……. eval_4
+<a href="#id9"><span class="problematic" id="id10">|</span></a>……. eval_5</p>
+</div></blockquote>
+<p>sample_eval_set_file.json:eval_1,eval_2,eval_3</p>
+<p>This will only run eval_1, eval_2 and eval_3 from sample_eval_set_file.json.</p>
+<p><em>Eval Set ID</em>
+For each eval set, all evals will be run by default.</p>
+<p>If you want to run only specific evals from an eval set, first create a comma
+separated list of eval names and then add that as a suffix to the eval set
+file name, demarcated by a <cite>:</cite>.</p>
+<p>For example, we have <cite>sample_eval_set_id</cite> that has following the eval cases:
+sample_eval_set_id:</p>
+<blockquote>
+<div><p><a href="#id11"><span class="problematic" id="id12">|</span></a>……. eval_1
+<a href="#id13"><span class="problematic" id="id14">|</span></a>……. eval_2
+<a href="#id15"><span class="problematic" id="id16">|</span></a>……. eval_3
+<a href="#id17"><span class="problematic" id="id18">|</span></a>……. eval_4
+<a href="#id19"><span class="problematic" id="id20">|</span></a>……. eval_5</p>
+</div></blockquote>
+<dl class="simple">
+<dt>If we did:</dt><dd><p>sample_eval_set_id:eval_1,eval_2,eval_3</p>
+</dd>
+</dl>
+<p>This will only run eval_1, eval_2 and eval_3 from sample_eval_set_id.</p>
+<p>CONFIG_FILE_PATH: The path to config file.</p>
+<p>PRINT_DETAILED_RESULTS: Prints detailed results on the console.</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>adk<span class="w"> </span><span class="nb">eval</span><span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>AGENT_MODULE_FILE_PATH<span class="w"> </span><span class="o">[</span>EVAL_SET_FILE_PATH_OR_ID<span class="o">]</span>...
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-eval-enable_features">
+<span class="sig-name descname"><span class="pre">--enable_features</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;enable_features&gt;</span></span><a class="headerlink" href="#cmdoption-adk-eval-enable_features" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Comma-separated list of feature names to enable. This provides an alternative to environment variables for enabling experimental features. Example: –enable_features=JSON_SCHEMA_FOR_FUNC_DECL,PROGRESSIVE_SSE_STREAMING</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-eval-disable_features">
+<span class="sig-name descname"><span class="pre">--disable_features</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;disable_features&gt;</span></span><a class="headerlink" href="#cmdoption-adk-eval-disable_features" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Comma-separated list of feature names to disable. This provides an alternative to environment variables for disabling features. Example: –disable_features=JSON_SCHEMA_FOR_FUNC_DECL,PROGRESSIVE_SSE_STREAMING</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-eval-config_file_path">
+<span class="sig-name descname"><span class="pre">--config_file_path</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;config_file_path&gt;</span></span><a class="headerlink" href="#cmdoption-adk-eval-config_file_path" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. The path to config file.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-eval-print_detailed_results">
+<span class="sig-name descname"><span class="pre">--print_detailed_results</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-eval-print_detailed_results" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Whether to print detailed results on console or not.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-eval-eval_storage_uri">
+<span class="sig-name descname"><span class="pre">--eval_storage_uri</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;eval_storage_uri&gt;</span></span><a class="headerlink" href="#cmdoption-adk-eval-eval_storage_uri" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. The evals storage URI to store agent evals, supported URIs: gs://&lt;bucket name&gt;.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-eval-log_level">
+<span class="sig-name descname"><span class="pre">--log_level</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;log_level&gt;</span></span><a class="headerlink" href="#cmdoption-adk-eval-log_level" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Set the logging level</p>
+<dl class="field-list simple">
+<dt class="field-odd">Options<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DEBUG | INFO | WARNING | ERROR | CRITICAL</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-eval-arg-AGENT_MODULE_FILE_PATH">
+<span class="sig-name descname"><span class="pre">AGENT_MODULE_FILE_PATH</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-eval-arg-AGENT_MODULE_FILE_PATH" title="Link to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-eval-arg-EVAL_SET_FILE_PATH_OR_ID">
+<span class="sig-name descname"><span class="pre">EVAL_SET_FILE_PATH_OR_ID</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-eval-arg-EVAL_SET_FILE_PATH_OR_ID" title="Link to this definition">¶</a></dt>
+<dd><p>Optional argument(s)</p>
+</dd></dl>
+
+</section>
+<section id="adk-eval-set">
+<h3><a class="toc-backref" href="#id27" role="doc-backlink">eval_set</a><a class="headerlink" href="#adk-eval-set" title="Link to this heading">¶</a></h3>
+<p>Manage Eval Sets.</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>adk<span class="w"> </span>eval_set<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
+</pre></div>
+</div>
+<section id="adk-eval-set-add-eval-case">
+<h4>add_eval_case<a class="headerlink" href="#adk-eval-set-add-eval-case" title="Link to this heading">¶</a></h4>
+<p>Adds eval cases to the given eval set.</p>
+<p>There are several ways that an eval case can be created, for now this method
+only supports adding one using a conversation scenarios file.</p>
+<p>If an eval case for the generated id already exists, then we skip adding it.</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>adk<span class="w"> </span>eval_set<span class="w"> </span>add_eval_case<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>AGENT_MODULE_FILE_PATH<span class="w"> </span>EVAL_SET_ID
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-eval_set-add_eval_case-scenarios_file">
+<span class="sig-name descname"><span class="pre">--scenarios_file</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;scenarios_file&gt;</span></span><a class="headerlink" href="#cmdoption-adk-eval_set-add_eval_case-scenarios_file" title="Link to this definition">¶</a></dt>
+<dd><p><strong>Required</strong> A path to file containing JSON serialized ConversationScenarios.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-eval_set-add_eval_case-session_input_file">
+<span class="sig-name descname"><span class="pre">--session_input_file</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;session_input_file&gt;</span></span><a class="headerlink" href="#cmdoption-adk-eval_set-add_eval_case-session_input_file" title="Link to this definition">¶</a></dt>
+<dd><p><strong>Required</strong> Path to session file containing SessionInput in JSON format.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-eval_set-add_eval_case-eval_storage_uri">
+<span class="sig-name descname"><span class="pre">--eval_storage_uri</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;eval_storage_uri&gt;</span></span><a class="headerlink" href="#cmdoption-adk-eval_set-add_eval_case-eval_storage_uri" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. The evals storage URI to store agent evals, supported URIs: gs://&lt;bucket name&gt;.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-eval_set-add_eval_case-log_level">
+<span class="sig-name descname"><span class="pre">--log_level</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;log_level&gt;</span></span><a class="headerlink" href="#cmdoption-adk-eval_set-add_eval_case-log_level" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Set the logging level</p>
+<dl class="field-list simple">
+<dt class="field-odd">Options<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DEBUG | INFO | WARNING | ERROR | CRITICAL</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-eval_set-add_eval_case-arg-AGENT_MODULE_FILE_PATH">
+<span class="sig-name descname"><span class="pre">AGENT_MODULE_FILE_PATH</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-eval_set-add_eval_case-arg-AGENT_MODULE_FILE_PATH" title="Link to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-eval_set-add_eval_case-arg-EVAL_SET_ID">
+<span class="sig-name descname"><span class="pre">EVAL_SET_ID</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-eval_set-add_eval_case-arg-EVAL_SET_ID" title="Link to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+<section id="adk-eval-set-create">
+<h4>create<a class="headerlink" href="#adk-eval-set-create" title="Link to this heading">¶</a></h4>
+<p>Creates an empty EvalSet given the agent_module_file_path and eval_set_id.</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>adk<span class="w"> </span>eval_set<span class="w"> </span>create<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>AGENT_MODULE_FILE_PATH<span class="w"> </span>EVAL_SET_ID
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-eval_set-create-eval_storage_uri">
+<span class="sig-name descname"><span class="pre">--eval_storage_uri</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;eval_storage_uri&gt;</span></span><a class="headerlink" href="#cmdoption-adk-eval_set-create-eval_storage_uri" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. The evals storage URI to store agent evals, supported URIs: gs://&lt;bucket name&gt;.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-eval_set-create-log_level">
+<span class="sig-name descname"><span class="pre">--log_level</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;log_level&gt;</span></span><a class="headerlink" href="#cmdoption-adk-eval_set-create-log_level" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Set the logging level</p>
+<dl class="field-list simple">
+<dt class="field-odd">Options<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DEBUG | INFO | WARNING | ERROR | CRITICAL</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-eval_set-create-arg-AGENT_MODULE_FILE_PATH">
+<span class="sig-name descname"><span class="pre">AGENT_MODULE_FILE_PATH</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-eval_set-create-arg-AGENT_MODULE_FILE_PATH" title="Link to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-eval_set-create-arg-EVAL_SET_ID">
+<span class="sig-name descname"><span class="pre">EVAL_SET_ID</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-eval_set-create-arg-EVAL_SET_ID" title="Link to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+</section>
+<section id="adk-migrate">
+<h3><a class="toc-backref" href="#id28" role="doc-backlink">migrate</a><a class="headerlink" href="#adk-migrate" title="Link to this heading">¶</a></h3>
+<p>ADK migration commands.</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>adk<span class="w"> </span>migrate<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
+</pre></div>
+</div>
+<section id="adk-migrate-session">
+<h4>session<a class="headerlink" href="#adk-migrate-session" title="Link to this heading">¶</a></h4>
+<p>Migrates a session database to the latest schema version.</p>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>adk<span class="w"> </span>migrate<span class="w"> </span>session<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-migrate-session-source_db_url">
+<span class="sig-name descname"><span class="pre">--source_db_url</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;source_db_url&gt;</span></span><a class="headerlink" href="#cmdoption-adk-migrate-session-source_db_url" title="Link to this definition">¶</a></dt>
+<dd><p><strong>Required</strong> SQLAlchemy URL of source database in database session service, e.g. sqlite:///source.db.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-migrate-session-dest_db_url">
+<span class="sig-name descname"><span class="pre">--dest_db_url</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;dest_db_url&gt;</span></span><a class="headerlink" href="#cmdoption-adk-migrate-session-dest_db_url" title="Link to this definition">¶</a></dt>
+<dd><p><strong>Required</strong> SQLAlchemy URL of destination database in database session service, e.g. sqlite:///dest.db.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-migrate-session-log_level">
+<span class="sig-name descname"><span class="pre">--log_level</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;log_level&gt;</span></span><a class="headerlink" href="#cmdoption-adk-migrate-session-log_level" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Set the logging level</p>
+<dl class="field-list simple">
+<dt class="field-odd">Options<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DEBUG | INFO | WARNING | ERROR | CRITICAL</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+<section id="adk-run">
+<h3><a class="toc-backref" href="#id29" role="doc-backlink">run</a><a class="headerlink" href="#adk-run" title="Link to this heading">¶</a></h3>
+<p>Runs an interactive CLI for a certain agent.</p>
+<p>AGENT: The path to the agent source code folder.</p>
+<p>Example:</p>
+<blockquote>
+<div><p>adk run path/to/my_agent</p>
+</div></blockquote>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>adk<span class="w"> </span>run<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>AGENT
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-run-enable_features">
+<span class="sig-name descname"><span class="pre">--enable_features</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;enable_features&gt;</span></span><a class="headerlink" href="#cmdoption-adk-run-enable_features" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Comma-separated list of feature names to enable. This provides an alternative to environment variables for enabling experimental features. Example: –enable_features=JSON_SCHEMA_FOR_FUNC_DECL,PROGRESSIVE_SSE_STREAMING</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-run-disable_features">
+<span class="sig-name descname"><span class="pre">--disable_features</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;disable_features&gt;</span></span><a class="headerlink" href="#cmdoption-adk-run-disable_features" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Comma-separated list of feature names to disable. This provides an alternative to environment variables for disabling features. Example: –disable_features=JSON_SCHEMA_FOR_FUNC_DECL,PROGRESSIVE_SSE_STREAMING</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-run-session_service_uri">
+<span class="sig-name descname"><span class="pre">--session_service_uri</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;session_service_uri&gt;</span></span><a class="headerlink" href="#cmdoption-adk-run-session_service_uri" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. The URI of the session service.
+If set, ADK uses this service.</p>
+<div class="line-block">
+<div class="line">If unset, ADK chooses a default session service (see</div>
+<div class="line">–use_local_storage).</div>
+<div class="line">- Use ‘agentengine://&lt;agent_engine&gt;’ to connect to Agent Engine</div>
+<div class="line-block">
+<div class="line">sessions. &lt;agent_engine&gt; can either be the full qualified resource</div>
+<div class="line">name ‘projects/abc/locations/us-central1/reasoningEngines/123’ or</div>
+<div class="line">the resource id ‘123’.</div>
+</div>
+<div class="line">- Use ‘memory://’ to run with the in-memory session service.</div>
+<div class="line">- Use ‘sqlite://&lt;path_to_sqlite_file&gt;’ to connect to a SQLite DB.</div>
+<div class="line">- See <a class="reference external" href="https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls">https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls</a></div>
+<div class="line-block">
+<div class="line">for supported database URIs.</div>
+</div>
+</div>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-run-artifact_service_uri">
+<span class="sig-name descname"><span class="pre">--artifact_service_uri</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;artifact_service_uri&gt;</span></span><a class="headerlink" href="#cmdoption-adk-run-artifact_service_uri" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. The URI of the artifact service.
+If set, ADK uses this service.</p>
+<div class="line-block">
+<div class="line">If unset, ADK chooses a default artifact service (see</div>
+<div class="line">–use_local_storage).</div>
+<div class="line">- Use ‘gs://&lt;bucket_name&gt;’ to connect to the GCS artifact service.</div>
+<div class="line">- Use ‘memory://’ to force the in-memory artifact service.</div>
+<div class="line">- Use ‘<a class="reference external" href="file:/">file:/</a>/&lt;path&gt;’ to store artifacts in a custom local directory.</div>
+</div>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-run-use_local_storage">
+<span id="cmdoption-adk-run-no_use_local_storage"></span><span class="sig-name descname"><span class="pre">--use_local_storage</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no_use_local_storage</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-run-use_local_storage" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Whether to use local .adk storage when –session_service_uri and –artifact_service_uri are unset. Cannot be combined with explicit service URIs. When the agents directory isn’t writable (common in Cloud Run/Kubernetes), ADK falls back to in-memory unless overridden by ADK_FORCE_LOCAL_STORAGE=1 or ADK_DISABLE_LOCAL_STORAGE=1.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-run-memory_service_uri">
+<span class="sig-name descname"><span class="pre">--memory_service_uri</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;memory_service_uri&gt;</span></span><a class="headerlink" href="#cmdoption-adk-run-memory_service_uri" title="Link to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Optional. The URI of the memory service.</div>
+<div class="line">- Use ‘rag://&lt;rag_corpus_id&gt;’ to connect to Vertex AI Rag Memory Service.</div>
+<div class="line">- Use ‘agentengine://&lt;agent_engine&gt;’ to connect to Agent Engine</div>
+<div class="line-block">
+<div class="line">sessions. &lt;agent_engine&gt; can either be the full qualified resource</div>
+<div class="line">name ‘projects/abc/locations/us-central1/reasoningEngines/123’ or</div>
+<div class="line">the resource id ‘123’.</div>
+</div>
+<div class="line">- Use ‘memory://’ to force the in-memory memory service.</div>
+</div>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-run-save_session">
+<span class="sig-name descname"><span class="pre">--save_session</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-run-save_session" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Whether to save the session to a json file on exit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-run-session_id">
+<span class="sig-name descname"><span class="pre">--session_id</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;session_id&gt;</span></span><a class="headerlink" href="#cmdoption-adk-run-session_id" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. The session ID to save the session to on exit when –save_session is set to true. User will be prompted to enter a session ID if not set.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-run-replay">
+<span class="sig-name descname"><span class="pre">--replay</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;replay&gt;</span></span><a class="headerlink" href="#cmdoption-adk-run-replay" title="Link to this definition">¶</a></dt>
+<dd><p>The json file that contains the initial state of the session and user queries. A new session will be created using this state. And user queries are run against the newly created session. Users cannot continue to interact with the agent.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-run-resume">
+<span class="sig-name descname"><span class="pre">--resume</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;resume&gt;</span></span><a class="headerlink" href="#cmdoption-adk-run-resume" title="Link to this definition">¶</a></dt>
+<dd><p>The json file that contains a previously saved session (by –save_session option). The previous session will be re-displayed. And user can continue to interact with the agent.</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-run-arg-AGENT">
+<span class="sig-name descname"><span class="pre">AGENT</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-run-arg-AGENT" title="Link to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+<section id="adk-web">
+<h3><a class="toc-backref" href="#id30" role="doc-backlink">web</a><a class="headerlink" href="#adk-web" title="Link to this heading">¶</a></h3>
+<p>Starts a FastAPI server with Web UI for agents.</p>
+<p>AGENTS_DIR: The directory of agents, where each subdirectory is a single
+agent, containing at least <cite>__init__.py</cite> and <cite>agent.py</cite> files.</p>
+<p>Example:</p>
+<blockquote>
+<div><p>adk web –session_service_uri=[uri] –port=[port] path/to/agents_dir</p>
+</div></blockquote>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>adk<span class="w"> </span>web<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span><span class="o">[</span>AGENTS_DIR<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-web-enable_features">
+<span class="sig-name descname"><span class="pre">--enable_features</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;enable_features&gt;</span></span><a class="headerlink" href="#cmdoption-adk-web-enable_features" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Comma-separated list of feature names to enable. This provides an alternative to environment variables for enabling experimental features. Example: –enable_features=JSON_SCHEMA_FOR_FUNC_DECL,PROGRESSIVE_SSE_STREAMING</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-web-disable_features">
+<span class="sig-name descname"><span class="pre">--disable_features</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;disable_features&gt;</span></span><a class="headerlink" href="#cmdoption-adk-web-disable_features" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Comma-separated list of feature names to disable. This provides an alternative to environment variables for disabling features. Example: –disable_features=JSON_SCHEMA_FOR_FUNC_DECL,PROGRESSIVE_SSE_STREAMING</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-web-host">
+<span class="sig-name descname"><span class="pre">--host</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;host&gt;</span></span><a class="headerlink" href="#cmdoption-adk-web-host" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. The binding host of the server</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">'127.0.0.1'</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-web-port">
+<span class="sig-name descname"><span class="pre">--port</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;port&gt;</span></span><a class="headerlink" href="#cmdoption-adk-web-port" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. The port of the server</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-web-allow_origins">
+<span class="sig-name descname"><span class="pre">--allow_origins</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;allow_origins&gt;</span></span><a class="headerlink" href="#cmdoption-adk-web-allow_origins" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Origins to allow for CORS. Can be literal origins (e.g., ‘<a class="reference external" href="https://example.com">https://example.com</a>’) or regex patterns prefixed with ‘regex:’ (e.g., ‘regex:https://.*.example.com’).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-web-v">
+<span id="cmdoption-adk-web-verbose"></span><span class="sig-name descname"><span class="pre">-v</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--verbose</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-web-v" title="Link to this definition">¶</a></dt>
+<dd><p>Enable verbose (DEBUG) logging. Shortcut for –log_level DEBUG.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-web-log_level">
+<span class="sig-name descname"><span class="pre">--log_level</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;log_level&gt;</span></span><a class="headerlink" href="#cmdoption-adk-web-log_level" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Set the logging level</p>
+<dl class="field-list simple">
+<dt class="field-odd">Options<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DEBUG | INFO | WARNING | ERROR | CRITICAL</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-web-trace_to_cloud">
+<span class="sig-name descname"><span class="pre">--trace_to_cloud</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-web-trace_to_cloud" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Whether to enable cloud trace for telemetry.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-web-otel_to_cloud">
+<span class="sig-name descname"><span class="pre">--otel_to_cloud</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-web-otel_to_cloud" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Whether to write OTel data to Google Cloud Observability services - Cloud Trace and Cloud Logging.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-web-reload">
+<span id="cmdoption-adk-web-no-reload"></span><span class="sig-name descname"><span class="pre">--reload</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no-reload</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-web-reload" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Whether to enable auto reload for server. Not supported for Cloud Run.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-web-a2a">
+<span class="sig-name descname"><span class="pre">--a2a</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-web-a2a" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Whether to enable A2A endpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-web-reload_agents">
+<span class="sig-name descname"><span class="pre">--reload_agents</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-web-reload_agents" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Whether to enable live reload for agents changes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-web-eval_storage_uri">
+<span class="sig-name descname"><span class="pre">--eval_storage_uri</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;eval_storage_uri&gt;</span></span><a class="headerlink" href="#cmdoption-adk-web-eval_storage_uri" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. The evals storage URI to store agent evals, supported URIs: gs://&lt;bucket name&gt;.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-web-extra_plugins">
+<span class="sig-name descname"><span class="pre">--extra_plugins</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;extra_plugins&gt;</span></span><a class="headerlink" href="#cmdoption-adk-web-extra_plugins" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Comma-separated list of extra plugin classes or instances to enable (e.g., my.module.MyPluginClass or my.module.my_plugin_instance).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-web-url_prefix">
+<span class="sig-name descname"><span class="pre">--url_prefix</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;url_prefix&gt;</span></span><a class="headerlink" href="#cmdoption-adk-web-url_prefix" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. URL path prefix when the application is mounted behind a reverse proxy or API gateway (e.g., ‘/api/v1’, ‘/adk’). This ensures generated URLs and redirects work correctly when the app is not served at the root path. Must start with ‘/’ if provided.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-web-logo-text">
+<span class="sig-name descname"><span class="pre">--logo-text</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;logo_text&gt;</span></span><a class="headerlink" href="#cmdoption-adk-web-logo-text" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. The text to display in the logo of the web UI.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-web-logo-image-url">
+<span class="sig-name descname"><span class="pre">--logo-image-url</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;logo_image_url&gt;</span></span><a class="headerlink" href="#cmdoption-adk-web-logo-image-url" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. The URL of the image to display in the logo of the web UI.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-web-session_service_uri">
+<span class="sig-name descname"><span class="pre">--session_service_uri</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;session_service_uri&gt;</span></span><a class="headerlink" href="#cmdoption-adk-web-session_service_uri" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. The URI of the session service.
+If set, ADK uses this service.</p>
+<div class="line-block">
+<div class="line">If unset, ADK chooses a default session service (see</div>
+<div class="line">–use_local_storage).</div>
+<div class="line">- Use ‘agentengine://&lt;agent_engine&gt;’ to connect to Agent Engine</div>
+<div class="line-block">
+<div class="line">sessions. &lt;agent_engine&gt; can either be the full qualified resource</div>
+<div class="line">name ‘projects/abc/locations/us-central1/reasoningEngines/123’ or</div>
+<div class="line">the resource id ‘123’.</div>
+</div>
+<div class="line">- Use ‘memory://’ to run with the in-memory session service.</div>
+<div class="line">- Use ‘sqlite://&lt;path_to_sqlite_file&gt;’ to connect to a SQLite DB.</div>
+<div class="line">- See <a class="reference external" href="https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls">https://docs.sqlalchemy.org/en/20/core/engines.html#backend-specific-urls</a></div>
+<div class="line-block">
+<div class="line">for supported database URIs.</div>
+</div>
+</div>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-web-artifact_service_uri">
+<span class="sig-name descname"><span class="pre">--artifact_service_uri</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;artifact_service_uri&gt;</span></span><a class="headerlink" href="#cmdoption-adk-web-artifact_service_uri" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. The URI of the artifact service.
+If set, ADK uses this service.</p>
+<div class="line-block">
+<div class="line">If unset, ADK chooses a default artifact service (see</div>
+<div class="line">–use_local_storage).</div>
+<div class="line">- Use ‘gs://&lt;bucket_name&gt;’ to connect to the GCS artifact service.</div>
+<div class="line">- Use ‘memory://’ to force the in-memory artifact service.</div>
+<div class="line">- Use ‘<a class="reference external" href="file:/">file:/</a>/&lt;path&gt;’ to store artifacts in a custom local directory.</div>
+</div>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-web-use_local_storage">
+<span id="cmdoption-adk-web-no_use_local_storage"></span><span class="sig-name descname"><span class="pre">--use_local_storage</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--no_use_local_storage</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-web-use_local_storage" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Whether to use local .adk storage when –session_service_uri and –artifact_service_uri are unset. Cannot be combined with explicit service URIs. When the agents directory isn’t writable (common in Cloud Run/Kubernetes), ADK falls back to in-memory unless overridden by ADK_FORCE_LOCAL_STORAGE=1 or ADK_DISABLE_LOCAL_STORAGE=1.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Default<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-web-memory_service_uri">
+<span class="sig-name descname"><span class="pre">--memory_service_uri</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;memory_service_uri&gt;</span></span><a class="headerlink" href="#cmdoption-adk-web-memory_service_uri" title="Link to this definition">¶</a></dt>
+<dd><div class="line-block">
+<div class="line">Optional. The URI of the memory service.</div>
+<div class="line">- Use ‘rag://&lt;rag_corpus_id&gt;’ to connect to Vertex AI Rag Memory Service.</div>
+<div class="line">- Use ‘agentengine://&lt;agent_engine&gt;’ to connect to Agent Engine</div>
+<div class="line-block">
+<div class="line">sessions. &lt;agent_engine&gt; can either be the full qualified resource</div>
+<div class="line">name ‘projects/abc/locations/us-central1/reasoningEngines/123’ or</div>
+<div class="line">the resource id ‘123’.</div>
+</div>
+<div class="line">- Use ‘memory://’ to force the in-memory memory service.</div>
+</div>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-web-session_db_url">
+<span class="sig-name descname"><span class="pre">--session_db_url</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;session_db_url&gt;</span></span><a class="headerlink" href="#cmdoption-adk-web-session_db_url" title="Link to this definition">¶</a></dt>
+<dd><p>Deprecated. Use –session_service_uri instead.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-web-artifact_storage_uri">
+<span class="sig-name descname"><span class="pre">--artifact_storage_uri</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;artifact_storage_uri&gt;</span></span><a class="headerlink" href="#cmdoption-adk-web-artifact_storage_uri" title="Link to this definition">¶</a></dt>
+<dd><p>Deprecated. Use –artifact_service_uri instead.</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-web-arg-AGENTS_DIR">
+<span class="sig-name descname"><span class="pre">AGENTS_DIR</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-web-arg-AGENTS_DIR" title="Link to this definition">¶</a></dt>
+<dd><p>Optional argument</p>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2026, Google.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 9.1.0</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
