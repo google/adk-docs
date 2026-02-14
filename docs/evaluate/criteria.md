@@ -544,3 +544,79 @@ turns in which the user simulator's response was judged to be valid according to
 the conversation scenario. A score of 1.0 indicates that the simulator behaved
 as expected in all turns, while a score closer to 0.0 indicates that the
 simulator deviated in many turns. Higher values are better.
+
+## Custom Metrics
+
+In addition to the standard criteria, you can define and use your own custom
+metrics to evaluate agent performance. This allows you to tailor the evaluation
+to your specific needs by providing your own Python functions to calculate
+scores.
+
+### When To Use Custom Metrics?
+
+Use custom metrics when you need to:
+
+*   Evaluate aspects of agent performance that are not covered by the standard
+    criteria.
+*   Implement a domain-specific scoring logic that is unique to your use case.
+*   Experiment with new or alternative evaluation methods.
+
+### How To Use Custom Metrics?
+
+To use a custom metric, you need to:
+
+1.  **Define the metric in a Python function.** This function takes the agent's
+    `Trajectory` and the `EvalCase` as input and returns a score.
+
+2.  **Configure the metric in your `test_config.json` file.** You need to add
+    your metric to the `criteria` dictionary and provide its implementation
+    details in the `custom_metrics` section.
+
+Under the `custom_metrics` field, you specify a `code_config` that points to the
+Python function for your metric.
+
+Example `EvalConfig` entry:
+
+```json
+{
+  "criteria": {
+    "my_custom_metric": 0.5,
+    "my_simple_metric": 0.8
+  },
+  "custom_metrics": {
+    "my_simple_metric": {
+      "code_config": {
+        "name": "path.to.my.simple.metric.function"
+      }
+    },
+    "my_custom_metric": {
+      "code_config": {
+        "name": "path.to.my.custom.metric.function"
+      },
+      "metric": {
+        "metric_name": "my_custom_metric",
+        "min_value": -10.0,
+        "max_value": 10.0,
+        "description": "My custom metric."
+      }
+    }
+  }
+}
+```
+
+In this example:
+
+*   `my_custom_metric` and `my_simple_metric` are two custom metrics.
+*   The `criteria` dictionary sets the passing thresholds for these metrics.
+*   The `custom_metrics` dictionary maps each metric to its configuration.
+*   `code_config.name` provides the import path to the Python function that
+    implements the metric's logic.
+*   You can also optionally provide `metric` information like `min_value`,
+    `max_value`, and a `description`.
+
+### Output And How To Interpret
+
+The output of a custom metric is a score, which is interpreted based on the
+logic you define in your Python function. The score is then compared against the
+threshold set in the `criteria` dictionary to determine if the test passes or
+fails.
