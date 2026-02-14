@@ -122,3 +122,71 @@ adk run --session_service_uri "sqlite:///my_sessions.db" path/to/my_agent
 | `--replay` | Path to an input file for non-interactive replay |
 | `--session_service_uri` | Custom session storage URI |
 | `--artifact_service_uri` | Custom artifact storage URI |
+
+## Conformance Testing
+
+Use `adk conformance` to run conformance tests and verify that your agent's
+behavior is consistent and correct.
+
+### Run tests
+
+To run all conformance tests in the `tests/` directory, use the following
+command:
+
+```shell
+adk conformance test
+```
+
+You can also specify paths to specific test directories:
+
+```shell
+adk conformance test tests/core tests/tools
+```
+
+### Generate reports
+
+To generate a Markdown report of the test results, use the `--generate_report`
+flag:
+
+```shell
+adk conformance test --generate_report
+```
+
+By default, the report is saved in the current directory. To specify a
+different directory, use the `--report_dir` option:
+
+```shell
+adk conformance test --generate_report --report_dir=reports
+```
+
+## API Server
+
+Use `adk api_server` to start a local server that exposes your agent's
+endpoints. This is useful for testing integrations and interacting with your
+agent programmatically.
+
+### Start the server
+
+To start the API server for the agents in the current directory, use the
+following command:
+
+```shell
+adk api_server
+```
+
+You can also specify the directory containing your agents:
+
+```shell
+adk api_server path/to/my_agents
+```
+
+### Automatic session creation
+
+When you interact with the `/run` endpoint, you typically need to create a
+session first. To simplify this process during development, use the
+`--auto_create_session` flag. This flag automatically creates a session if one
+doesn't exist.
+
+```shell
+adk api_server --auto_create_session
+```
