@@ -34,7 +34,9 @@ app = App(
     root_agent=root_agent,
     events_compaction_config=EventsCompactionConfig(
         compaction_interval=3,  # Trigger compaction every 3 new invocations.
-        overlap_size=1          # Include last invocation from the previous window.
+        overlap_size=1,         # Include last invocation from the previous window.
+        token_threshold=1000,   # Trigger compaction when token count exceeds 1000.
+        event_retention_size=2, # Keep the last 2 raw events uncompressed.
     ),
 )
 ```
@@ -61,6 +63,14 @@ With this example configuration, the context compression tasks happen as follows
 1.  **Event 9 completes**: Events 6 to 9 are compressed, including the overlap
     of 1 prior event
 
+## Token-based Compaction
+
+As an alternative to sliding window compaction, you can configure compaction based on the estimated token count of the session history. This allows for more dynamic context management based on actual token usage rather than just the number of events.
+
+When you configure token-based compaction, the ADK estimates the token count of the session history after each turn. If the estimated token count exceeds the `token_threshold` you set, compaction is triggered. The `event_retention_size` parameter determines how many of the most recent raw events are kept uncompressed, and the older events are compacted into a summary.
+
+If both token-based and sliding window compaction are configured, token-based compaction takes precedence. If a compaction is triggered by the token threshold, the sliding window compaction for that turn is skipped.
+
 ## Configuration settings
 
 The configuration settings for this feature control how frequently event data is compressed
@@ -71,6 +81,8 @@ a compactor object
     of the prior event data.
 *   **`overlap_size`**: Set how many of the previously compacted events are included in a
     newly compacted context set.
+*   **`token_threshold`**: The token count that triggers compaction.
+*   **`event_retention_size`**: The number of recent raw events to keep uncompressed.
 *   **`summarizer`**: (Optional) Define a summarizer object including a specific AI model
     to use for summarization. For more information, see
     [Define a Summarizer](#define-summarizer).
@@ -86,7 +98,7 @@ from google.adk.apps.llm_event_summarizer import LlmEventSummarizer
 from google.adk.models import Gemini
 
 # Define the AI model to be used for summarization:
-summarization_llm = Gemini(model="gemini-2.5-flash")
+summarization_llm = Gemini(model="gemini-1.5-flash")
 
 # Create the summarizer with the custom model:
 my_summarizer = LlmEventSummarizer(llm=summarization_llm)
