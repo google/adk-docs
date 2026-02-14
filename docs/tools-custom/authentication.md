@@ -19,7 +19,27 @@ The general flow involves providing these details when configuring a tool. ADK t
 * **HTTP:** Can represent Basic Auth (not recommended/supported for exchange) or already obtained Bearer tokens. If it's a Bearer token, no exchange is needed.
 * **OAUTH2:** For standard OAuth 2.0 flows. Requires configuration (client ID, secret, scopes) and often triggers the interactive flow for user consent.
 * **OPEN\_ID\_CONNECT:** For authentication based on OpenID Connect. Similar to OAuth2, often requires configuration and user interaction.
+* **GOOGLE_CREDENTIALS:** For Google credentials. This can be used with an external access token.
 * **SERVICE\_ACCOUNT:** For Google Cloud Service Account credentials (JSON key or Application Default Credentials). Typically exchanged for a Bearer token.
+
+
+### Using External Access Tokens
+
+For Google credentials, you can configure `external_access_token_key` to instruct the tool to retrieve an existing access token from `tool_context.state` instead of performing authentication itself.
+This is useful when the agent is invoked in an environment where the user is already authenticated (e.g., a frontend passing the token).
+
+Example:
+```python
+from google.adk.auth import AuthCredential, AuthCredentialTypes
+from google.adk.tools.google_api_tool import GoogleCredentialsConfig
+
+AuthCredential(
+    auth_type=AuthCredentialTypes.GOOGLE_CREDENTIALS,
+    google_credentials_config=GoogleCredentialsConfig(
+        external_access_token_key="my_access_token"
+    )
+)
+```
 
 ## Configuring Authentication on Tools
 
