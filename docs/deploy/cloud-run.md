@@ -593,7 +593,7 @@ Once your agent is deployed to Cloud Run, you can interact with it via the deplo
 
     If you deployed your agent with the UI enabled:
 
-    *   **adk CLI:** You included the `--webui` flag during deployment.
+    *   **adk CLI:** You included the corresponding flag (`--webui` in Go or `--with_ui` in Python or Typescript) during deployment.
     *   **gcloud CLI:** You set `SERVE_WEB_INTERFACE = True` in your `main.py`.
 
     You can test your agent by simply navigating to the Cloud Run service URL provided after deployment in your web browser.
