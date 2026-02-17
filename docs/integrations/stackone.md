@@ -1,5 +1,5 @@
 ---
-catalog_title: StackOne Agent Connectors
+catalog_title: StackOne
 catalog_description: Connect agents to 200+ SaaS providers
 catalog_icon: /adk-docs/integrations/assets/stackone.png
 catalog_tags: ["connectors"]
@@ -13,41 +13,17 @@ catalog_tags: ["connectors"]
 
 The [StackOne ADK Plugin](https://github.com/StackOneHQ/stackone-adk-plugin)
 connects your ADK agent to hundreds of providers through
-[StackOne's](https://stackone.com) unified AI Integration gateway. Instead of manually defining tool functions for each API, this plugin dynamically discovers available tools from your connected providers and exposes them as native Google ADK tools. It supports HRIS, ATS, CRM, Productivity tools, scheduling, and many more [integrations]( https://www.stackone.com/connectors).
+[StackOne's](https://stackone.com) unified AI Integration gateway. Instead of manually defining tool functions for each API, this plugin dynamically discovers available tools from your connected providers and exposes them as native tools in ADK. It supports Human Resources Information Systems (HRIS), Applicant Tracking Systems (ATS), Customer Relationship Management (CRM), productivity and scheduling tools, and many more [integrations](https://www.stackone.com/connectors).
 
 ## Use cases
 
-- **Sales and Revenue Operations**: Build agents that look up leads in HubSpot
-  or Salesforce, enrich contact data, draft personalized outreach, and
-  automatically log activities back to your CRM -- all in one conversation.
+- **Sales and Revenue Operations**: Build agents that find leads in your CRM (e.g. HubSpot, Salesforce), enrich contact data, draft personalized outreach, and log activity back — all within one conversation.
 
-- **Recruiting and Talent Acquisition**: Create hiring agents that screen
-  candidates in Greenhouse or Ashby, schedule interviews via Calendly, collect
-  scorecards, and move applicants through pipeline stages without manual
-  intervention.
+- **People Operations**: Create agents that screen candidates in your ATS (e.g. Greenhouse, Ashby), check availability in your calendar tool (e.g. Google Calendar, Calendly), collect interview scorecards, move applicants through pipeline stages, and automate onboarding into your HRIS (e.g. BambooHR, Workday) — covering the full employee lifecycle without manual intervention.
 
-- **HR and People Operations**: Automate employee onboarding workflows that
-  provision accounts, assign training courses in your LMS, update records in
-  BambooHR or Workday, and answer policy questions using data from your HRIS.
+- **Marketing Automation**: Build campaign agents that sync audience segments from your CRM to your email platform (e.g. Mailchimp, Klaviyo), trigger email sequences, and report on engagement metrics across channels.
 
-- **Marketing Automation**: Build campaign agents that sync audience segments
-  from your CRM to Mailchimp or Klaviyo, trigger email sequences, and report
-  on engagement metrics across channels.
-
-- **Product Management**: Create agents that triage incoming feature requests
-  from Intercom or Zendesk, create and prioritize issues in Linear or Jira,
-  and surface relevant customer feedback from your support tools.
-
-- **Engineering and SRE**: Build on-call agents that pull incident data from
-  PagerDuty, create postmortem tickets in Jira, notify teams via Slack, and
-  cross-reference deployment logs from GitHub -- bridging operational tools in
-  a single agentic workflow.
-
-- **Cross-Functional Workflows**: Combine data and actions across multiple SaaS
-  providers in a single agent. For example, an agent that detects a closed-won
-  deal in Salesforce, triggers onboarding tasks in Asana, provisions the
-  customer in your billing system, and sends a welcome sequence via your
-  marketing platform.
+- **Product Delivery**: Create agents that triage incoming feedback from your support tools (e.g. Intercom, Zendesk, Slack), prioritize and create issues in your project management tool (e.g. Linear, Jira), and resolve incidents using insights from observability platform (e.g. PagerDuty, Datadog) — uniting product research, delivery, and reliability in a single workflow.
 
 ## Prerequisites
 
@@ -80,7 +56,7 @@ uv add stackone-adk
     export GOOGLE_API_KEY="your-google-api-key"
     ```
 
-    Once `STACKONE_API_KEY` is set, the plugin automatically reads it and discovers your connected accounts. Pass `account_id` only if you want to scope tools to a specific account.
+    Once `STACKONE_API_KEY` is set, the plugin automatically reads it and discovers your connected accounts.
 
 === "Python"
 
@@ -96,11 +72,12 @@ uv add stackone-adk
 
         async def main():
             plugin = StackOnePlugin(account_id="YOUR_ACCOUNT_ID")
+            # Optional: omit to use all connected accounts
 
             agent = Agent(
                 model="gemini-2.5-flash",
                 name="scheduling_agent",
-                instruction="You are a scheduling assistant with access to Calendly.",
+                instruction="You are a helpful assistant with access to scheduling (Calendly), HR (HiBob), CRM (HubSpot) and many more tools via StackOne.",
                 tools=plugin.get_tools(),
             )
 
@@ -128,11 +105,12 @@ uv add stackone-adk
 
         async def main():
             plugin = StackOnePlugin(account_id="YOUR_ACCOUNT_ID")
+            # Optional: omit to use all connected accounts
 
             agent = Agent(
                 model="gemini-2.5-flash",
                 name="scheduling_agent",
-                instruction="You are a scheduling assistant with access to Calendly.",
+                instruction="You are a helpful assistant with access to scheduling (Calendly), HR (HiBob), CRM (HubSpot) and many more tools via StackOne.",
                 tools=plugin.get_tools(),
             )
 
@@ -156,6 +134,7 @@ To list discovered tools:
 
 ```python
 plugin = StackOnePlugin(account_id="YOUR_ACCOUNT_ID")
+# Optional: omit to use all connected accounts
 for tool in plugin.get_tools():
     print(f"{tool.name}: {tool.description}")
 ```
@@ -176,7 +155,7 @@ Commerce | Shopify, BigCommerce, WooCommerce, Etsy
 Developer Tools | GitHub, GitLab, Twilio
 
 For a complete list of 200+ supported providers, visit the
-[StackOne integrations page](https://www.stackone.com/integrations).
+[StackOne integrations page](https://www.stackone.com/connectors).
 
 ## Configuration
 
@@ -184,13 +163,13 @@ For a complete list of 200+ supported providers, visit the
 
 Parameter | Type | Default | Description
 --------- | ---- | ------- | -----------
-`api_key` | `str \| None` | `None` | StackOne API key. Falls back to `STACKONE_API_KEY` env var.
-`account_id` | `str \| None` | `None` | Default account ID for all tools.
-`base_url` | `str \| None` | `None` | API URL override (default: `https://api.stackone.com`).
+`api_key` | `str | None` | `None` | StackOne API key. Falls back to `STACKONE_API_KEY` env var.
+`account_id` | `str | None` | `None` | Default account ID for all tools.
+`base_url` | `str | None` | `None` | API URL override (default: `https://api.stackone.com`).
 `plugin_name` | `str` | `"stackone_plugin"` | Plugin identifier for ADK.
-`providers` | `list[str] \| None` | `None` | Filter by provider names (e.g., `["calendly", "hibob"]`).
-`actions` | `list[str] \| None` | `None` | Filter by action patterns using glob syntax.
-`account_ids` | `list[str] \| None` | `None` | Scope tools to specific connected account IDs.
+`providers` | `list[str] | None` | `None` | Filter by provider names (e.g., `["calendly", "hibob"]`).
+`actions` | `list[str] | None` | `None` | Filter by action patterns using glob syntax.
+`account_ids` | `list[str] | None` | `None` | Scope tools to specific connected account IDs.
 
 ### Tool filtering
 
