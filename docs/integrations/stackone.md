@@ -12,11 +12,8 @@ catalog_tags: ["connectors"]
 </div>
 
 The [StackOne ADK Plugin](https://github.com/StackOneHQ/stackone-adk-plugin)
-connects your ADK agent to over 200 SaaS providers through
-[StackOne's](https://stackone.com) unified API gateway. Instead of manually
-defining tool functions for each API, this plugin dynamically discovers available
-tools from your connected providers and exposes them as native Google ADK tools.
-It supports HRIS, ATS, CRM, scheduling, and many more integration categories.
+connects your ADK agent to connects your ADK agent to hundreds of providers through
+[StackOne's](https://stackone.com) unified AI Integrationgateway. Instead of manually defining tool functions for each API, this plugin dynamically discovers available tools from your connected providers and exposes them as native Google ADK tools. It supports HRIS, ATS, CRM, Productivity tools, scheduling, and many more [integrations]( https://www.stackone.com/connectors). Free account [available](https://www.stackone.com/request-free-access).
 
 ## Use cases
 
@@ -83,8 +80,7 @@ uv add stackone-adk
     export GOOGLE_API_KEY="your-google-api-key"
     ```
 
-    Once `STACKONE_API_KEY` is set, the plugin automatically reads it and
-    discovers your connected accounts — no constructor arguments needed.
+    Once `STACKONE_API_KEY` is set, the plugin automatically reads it and discovers your connected accounts. Pass `account_id` only if you want to scope tools to a specific account.
 
 === "Python"
 
