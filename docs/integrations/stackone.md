@@ -12,8 +12,10 @@ catalog_tags: ["connectors"]
 </div>
 
 The [StackOne ADK Plugin](https://github.com/StackOneHQ/stackone-adk-plugin)
-connects your ADK agent to connects your ADK agent to hundreds of providers through
-[StackOne's](https://stackone.com) unified AI Integrationgateway. Instead of manually defining tool functions for each API, this plugin dynamically discovers available tools from your connected providers and exposes them as native Google ADK tools. It supports HRIS, ATS, CRM, Productivity tools, scheduling, and many more [integrations]( https://www.stackone.com/connectors). Free account [available](https://www.stackone.com/request-free-access).
+connects your ADK agent to hundreds of providers through
+[StackOne's](https://stackone.com) unified AI Integrationgateway. Instead of manually defining tool functions for each API, this plugin dynamically discovers available tools from your connected providers and exposes them as native Google ADK tools. It supports HRIS, ATS, CRM, Productivity tools, scheduling, and many more [integrations]( https://www.stackone.com/connectors), (see [https://www.stackone.com/connectors](https://www.stackone.com/connectors) for further details).
+
+Free account available on [https://www.stackone.com/request-free-access](https://www.stackone.com/request-free-access).
 
 ## Use cases
 
