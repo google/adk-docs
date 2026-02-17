@@ -1,8 +1,8 @@
 ---
-catalog_title: StackOne
+catalog_title: StackOne Agent Connectors
 catalog_description: Connect agents to 200+ SaaS providers
 catalog_icon: /adk-docs/integrations/assets/stackone.png
-catalog_tags: ["connectors", "mcp"]
+catalog_tags: ["connectors"]
 ---
 
 # StackOne plugin for ADK
@@ -74,6 +74,18 @@ uv add stackone-adk
 
 ## Use with agent
 
+!!! tip "Environment variables"
+
+    Set your API keys as environment variables before running the examples below:
+
+    ```bash
+    export STACKONE_API_KEY="your-stackone-api-key"
+    export GOOGLE_API_KEY="your-google-api-key"
+    ```
+
+    Once `STACKONE_API_KEY` is set, the plugin automatically reads it and
+    discovers your connected accounts — no constructor arguments needed.
+
 === "Python"
 
     === "With App (Recommended)"
@@ -86,13 +98,8 @@ uv add stackone-adk
         from google.adk.runners import InMemoryRunner
         from stackone_adk import StackOnePlugin
 
-        STACKONE_API_KEY = "YOUR_STACKONE_API_KEY"
-
         async def main():
-            plugin = StackOnePlugin(
-                api_key=STACKONE_API_KEY,
-                providers=["calendly"],
-            )
+            plugin = StackOnePlugin(account_id="YOUR_ACCOUNT_ID")
 
             agent = Agent(
                 model="gemini-2.5-flash",
@@ -123,13 +130,8 @@ uv add stackone-adk
         from google.adk.runners import InMemoryRunner
         from stackone_adk import StackOnePlugin
 
-        STACKONE_API_KEY = "YOUR_STACKONE_API_KEY"
-
         async def main():
-            plugin = StackOnePlugin(
-                api_key=STACKONE_API_KEY,
-                providers=["calendly"],
-            )
+            plugin = StackOnePlugin(account_id="YOUR_ACCOUNT_ID")
 
             agent = Agent(
                 model="gemini-2.5-flash",
@@ -147,21 +149,6 @@ uv add stackone-adk
         asyncio.run(main())
         ```
 
-!!! tip "Environment variables"
-
-    Instead of passing the API key directly, you can set environment variables:
-
-    ```bash
-    export STACKONE_API_KEY="your-stackone-api-key"
-    export GOOGLE_API_KEY="your-google-api-key"
-    ```
-
-    Then initialize the plugin without arguments:
-
-    ```python
-    plugin = StackOnePlugin()
-    ```
-
 ## Available tools
 
 Unlike integrations with a fixed set of tools, StackOne tools are **dynamically
@@ -172,7 +159,7 @@ tools depend on which SaaS providers you have connected in your
 To list discovered tools:
 
 ```python
-plugin = StackOnePlugin(providers=["calendly"])
+plugin = StackOnePlugin(account_id="YOUR_ACCOUNT_ID")
 for tool in plugin.get_tools():
     print(f"{tool.name}: {tool.description}")
 ```
@@ -214,11 +201,8 @@ Parameter | Type | Default | Description
 Filter tools by provider, action pattern, account ID, or any combination:
 
 ```python
-# Single provider
-plugin = StackOnePlugin(providers=["calendly"])
-
-# Multiple providers
-plugin = StackOnePlugin(providers=["hibob", "bamboohr"])
+# Specify accounts
+plugin = StackOnePlugin(account_ids=["acct-hibob-1", "acct-bamboohr-1"])
 
 # Read-only operations
 plugin = StackOnePlugin(actions=["*_list_*", "*_get_*"])
@@ -226,12 +210,8 @@ plugin = StackOnePlugin(actions=["*_list_*", "*_get_*"])
 # Specific actions with glob patterns
 plugin = StackOnePlugin(actions=["calendly_list_events", "calendly_get_event_*"])
 
-# Specific accounts
-plugin = StackOnePlugin(account_ids=["acct-hibob-1", "acct-bamboohr-1"])
-
 # Combined filters
 plugin = StackOnePlugin(
-    providers=["hibob", "bamboohr"],
     actions=["*_list_*", "*_get_*"],
     account_ids=["acct-hibob-1"],
 )
