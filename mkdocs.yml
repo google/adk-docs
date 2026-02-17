@@ -2,7 +2,7 @@
 site_name: Agent Development Kit (ADK)
 site_url: https://google.github.io/adk-docs
 site_description: >-
-  Build powerful multi-agent systems with Google Agent Development Kit (ADK)
+  Build powerful multi-agent systems with Agent Development Kit (ADK)
 site_dir: site
 exclude_docs:
   api-reference/java/legal/*
