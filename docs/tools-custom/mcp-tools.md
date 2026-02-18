@@ -744,7 +744,7 @@ from . import agent
     python3 /path/to/your/my_adk_mcp_server.py
     ```
     It will print "Launching MCP Server..." and wait. The ADK agent (run via `adk web`) will then connect to this process if the `command` in `StdioConnectionParams` is set up to execute it.
-    *(Alternatively, `McpToolset` will start this server script as a subprocess automatically when the agent initializes).*
+    *(Alternatively, `McpToolset` will start this server script as a subprocess automatically when the agent initializes).)*
 
 2.  **Run `adk web` for the client agent:**
     Navigate to the parent directory of `mcp_client_agent` (e.g., `adk_agent_samples`) and run:
@@ -892,7 +892,8 @@ When working with MCP and ADK, keep these points in mind:
 * **Stateful sessions (MCP):** MCP establishes stateful, persistent connections between a client and server instance. This differs from typical stateless REST APIs.
 
     * **Deployment:** This statefulness can pose challenges for scaling and deployment, especially for remote servers handling many users. The original MCP design often assumed client and server were co-located. Managing these persistent connections requires careful infrastructure considerations (e.g., load balancing, session affinity).
-    * **ADK McpToolset:** Manages this connection lifecycle. The exit\_stack pattern shown in the examples is crucial for ensuring the connection (and potentially the server process) is properly terminated when the ADK agent finishes.
+    * **ADK McpToolset:** Manages this connection lifecycle. The exit_stack pattern shown in the examples is crucial for ensuring the connection (and potentially the server process) is properly terminated when the ADK agent finishes.
+    * **Serialization (Pickling):** The underlying `MCPSessionManager` supports Python pickling. This enables serialization of session manager state (useful for caching or multiprocessing), though active connections are not preserved and will need to be re-established after unpickling.
 
 ## Deploying Agents with MCP Tools
 
@@ -1282,4 +1283,4 @@ McpToolset(
 
 * [Model Context Protocol Documentation](https://modelcontextprotocol.io/ )
 * [MCP Specification](https://modelcontextprotocol.io/specification/)
-* [MCP Python SDK & Examples](https://github.com/modelcontextprotocol/)
+* [MCP Python SDK & Examples](https://github.com/modelcontextprotocol/mcp-python)
