@@ -70,15 +70,26 @@ uv add stackone-adk
         from google.adk.runners import InMemoryRunner
         from stackone_adk import StackOnePlugin
 
+
         async def main():
-            plugin = StackOnePlugin(account_id="YOUR_ACCOUNT_ID")
-            # Optional: omit to use all connected accounts
+            plugin = StackOnePlugin()
+            # Or scope to a specific account:
+            # plugin = StackOnePlugin(account_id="YOUR_ACCOUNT_ID")
+
+            tools = plugin.get_tools()
+            print(f"Discovered {len(tools)} tools")
 
             agent = Agent(
                 model="gemini-2.5-flash",
                 name="scheduling_agent",
-                instruction="You are a helpful assistant with access to scheduling (Calendly), HR (HiBob), CRM (HubSpot) and many more tools via StackOne.",
-                tools=plugin.get_tools(),
+                description="Manages scheduling, HR, and CRM through StackOne.",
+                instruction=(
+                    "You are a helpful assistant powered by StackOne. "
+                    "You help users manage their scheduling, HR, and CRM tasks "
+                    "by using the available tools.\n\n"
+                    "Always be helpful and provide clear, organized responses."
+                ),
+                tools=tools,
             )
 
             app = App(
@@ -88,8 +99,18 @@ uv add stackone-adk
             )
 
             async with InMemoryRunner(app=app) as runner:
-                response = await runner.run_debug("What event types do I have?")
-                print(response)
+                events = await runner.run_debug(
+                    "Get my most recent scheduled meeting from Calendly.",
+                    quiet=True,
+                )
+                # Extract the agent's final text response
+                for event in reversed(events):
+                    if event.content and event.content.parts:
+                        text_parts = [p.text for p in event.content.parts if p.text]
+                        if text_parts:
+                            print("".join(text_parts))
+                            break
+
 
         asyncio.run(main())
         ```
@@ -100,25 +121,47 @@ uv add stackone-adk
         import asyncio
 
         from google.adk.agents import Agent
+        from google.adk.apps import App
         from google.adk.runners import InMemoryRunner
         from stackone_adk import StackOnePlugin
 
+
         async def main():
-            plugin = StackOnePlugin(account_id="YOUR_ACCOUNT_ID")
-            # Optional: omit to use all connected accounts
+            plugin = StackOnePlugin()
+            # Or scope to a specific account:
+            # plugin = StackOnePlugin(account_id="YOUR_ACCOUNT_ID")
+
+            tools = plugin.get_tools()
+            print(f"Discovered {len(tools)} tools")
 
             agent = Agent(
                 model="gemini-2.5-flash",
                 name="scheduling_agent",
-                instruction="You are a helpful assistant with access to scheduling (Calendly), HR (HiBob), CRM (HubSpot) and many more tools via StackOne.",
-                tools=plugin.get_tools(),
+                description="Manages scheduling, HR, and CRM through StackOne.",
+                instruction=(
+                    "You are a helpful assistant powered by StackOne. "
+                    "You help users manage their scheduling, HR, and CRM tasks "
+                    "by using the available tools.\n\n"
+                    "Always be helpful and provide clear, organized responses."
+                ),
+                tools=tools,
             )
 
-            async with InMemoryRunner(
-                app_name="scheduling_app", agent=agent
-            ) as runner:
-                response = await runner.run_debug("List my events")
-                print(response)
+            app = App(name="scheduling_app", root_agent=agent, plugins=[plugin])
+
+            async with InMemoryRunner(app=app) as runner:
+                events = await runner.run_debug(
+                    "Get my most recent scheduled meeting from Calendly.",
+                    quiet=True,
+                )
+                # Extract the agent's final text response
+                for event in reversed(events):
+                    if event.content and event.content.parts:
+                        text_parts = [p.text for p in event.content.parts if p.text]
+                        if text_parts:
+                            print("".join(text_parts))
+                            break
+
 
         asyncio.run(main())
         ```
