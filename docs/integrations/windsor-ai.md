@@ -45,21 +45,21 @@ business data using natural language, without writing SQL or custom scripts.
         ```python
         from google.adk.agents import Agent
         from google.adk.tools.mcp_tool import McpToolset
-        from google.adk.tools.mcp_tool.mcp_session_manager import SseConnectionParams
+        from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPServerParams
 
         WINDSOR_API_KEY = "YOUR_WINDSOR_API_KEY"
 
         root_agent = Agent(
             model="gemini-2.5-pro",
             name="windsor_agent",
-            instruction=(
-                "Help users analyze their marketing and business data. "
-                f"Use this Windsor.ai API key when requested: {WINDSOR_API_KEY}"
-            ),
+            instruction="Help users analyze their marketing and business data.",
             tools=[
                 McpToolset(
-                    connection_params=SseConnectionParams(
-                        url="https://mcp.windsor.ai/sse",
+                    connection_params=StreamableHTTPServerParams(
+                        url="https://mcp.windsor.ai",
+                        headers={
+                            "Authorization": f"Bearer {WINDSOR_API_KEY}",
+                        },
                     ),
                 )
             ],
@@ -78,25 +78,20 @@ business data using natural language, without writing SQL or custom scripts.
         const rootAgent = new LlmAgent({
             model: "gemini-2.5-pro",
             name: "windsor_agent",
-            instruction:
-                "Help users analyze their marketing and business data. " +
-                `Use this Windsor.ai API key when requested: ${WINDSOR_API_KEY}`,
+            instruction: "Help users analyze their marketing and business data.",
             tools: [
                 new MCPToolset({
                     type: "StreamableHTTPConnectionParams",
                     url: "https://mcp.windsor.ai",
+                    header: {
+                        Authorization: `Bearer ${WINDSOR_API_KEY}`,
+                    },
                 }),
             ],
         });
 
         export { rootAgent };
         ```
-
-!!! note
-
-    The server will prompt for your API key
-    during the initial interaction. Provide your Windsor.ai API key when
-    requested to start querying your integrated data.
 
 ## Capabilities
 
