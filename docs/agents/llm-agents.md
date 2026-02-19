@@ -381,6 +381,13 @@ For scenarios requiring structured data exchange with an `LLM Agent`, the ADK pr
 
 * **`output_schema` (Optional):** Define a schema representing the desired output structure. If set, the agent's final response *must* be a JSON string conforming to this schema.
 
+!!! warning "Warning: Using `output_schema` with `tools`"
+
+    Using `output_schema` with `tools` in the same LLM request
+    is only supported by specific models, including [Gemini 3.0](https://ai.google.dev/gemini-api/docs/function-calling?example=meeting#structured-output).
+    For other models, workarounds using [function tools](https://github.com/google/adk-python/blob/main/src/google/adk/flows/llm_flows/_output_schema_processor.py)) in ADK
+    may not work reliably. In such cases, consider using sub-agents that handle output formatting separately.
+
 * **`output_key` (Optional):** Provide a string key. If set, the text content of the agent's *final* response will be automatically saved to the session's state dictionary under this key. This is useful for passing results between agents or steps in a workflow.
     * In Python, this might look like: `session.state[output_key] = agent_response_text`
     * In Java: `session.state().put(outputKey, agentResponseText)`
