@@ -11,6 +11,10 @@ Gemini and Claude communicate with external applications, data sources, and
 tools. Think of it as a universal connection mechanism that simplifies how LLMs
 obtain context, execute actions, and interact with various systems.
 
+!!! tip "MCP tools for ADK"
+    For a list of pre-built MCP tools for ADK, see
+    [Tools and Integrations](/adk-docs/integrations/?topic=mcp).
+
 ## How does MCP work?
 
 MCP follows a client-server architecture, defining how data (resources),

@@ -126,7 +126,9 @@ def define_env(env):
         html_parts.append(f'<button class="catalog-filter-btn active" data-filter="all">All</button>')
         for tag in sorted_tags:
             safe_tag = html.escape(tag)
-            html_parts.append(f'<button class="catalog-filter-btn" data-filter="{safe_tag}">{safe_tag.title()}</button>')
+            # handle MCP button all caps display exception:
+            display_name = "MCP" if tag.lower() == "mcp" else safe_tag.title()
+            html_parts.append(f'<button class="catalog-filter-btn" data-filter="{safe_tag}">{display_name}</button>')
         html_parts.append('</div>')
 
         # Grid

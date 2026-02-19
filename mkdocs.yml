@@ -1,8 +1,8 @@
 # Project information
-site_name: Agent Development Kit
+site_name: Agent Development Kit (ADK)
 site_url: https://google.github.io/adk-docs
 site_description: >-
-  Build powerful multi-agent systems with Agent Development Kit
+  Build powerful multi-agent systems with Agent Development Kit (ADK)
 site_dir: site
 exclude_docs:
   api-reference/java/legal/*
@@ -225,6 +225,7 @@ plugins:
         - integrations/*.md
         - tools/*.md
         - tools-custom/*.md
+        - skills/*.md
         Run Agents:
         - runtime/*.md
         - deploy/*.md
@@ -304,6 +305,8 @@ nav:
       - OpenAPI tools: tools-custom/openapi-tools.md
       - Authentication: tools-custom/authentication.md
       - Tool limitations: tools/limitations.md
+    - Skills for Agents:
+      - skills/index.md
   - Run Agents:
     - Agent Runtime:
       - Agent Runtime: runtime/index.md
@@ -323,6 +326,7 @@ nav:
       - Cloud Run: deploy/cloud-run.md
       - GKE: deploy/gke.md
     - Observability:
+      - observability/index.md
       - Logging: observability/logging.md
     - Evaluation:
       - evaluate/index.md

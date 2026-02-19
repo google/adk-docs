@@ -278,6 +278,7 @@ Community-provided translations of the ADK documentation.
   <li><a href="https://adk.wiki/">🇨🇳 Chinese (中文) Documentation</a></li>
   <li><a href="https://adk-labs.github.io/adk-docs/ko/">🇰🇷 Korean (한국어) Documentation</a></li>
   <li><a href="https://adk-labs.github.io/adk-docs/ja/">🇯🇵 Japanese (日本語) Documentation</a></li>
+  <li><a href="https://adk-es.fabian-castro-c.dev/">🇪🇸 Spanish (Español) Documentation</a></li>
 </ul>
 
 ## Contributing Your Resource
