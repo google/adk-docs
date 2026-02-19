@@ -23,7 +23,7 @@ connects your ADK agent to hundreds of providers through
 
 - **Marketing Automation**: Build campaign agents that sync audience segments from your CRM to your email platform (e.g. Mailchimp, Klaviyo), trigger email sequences, and report on engagement metrics across channels.
 
-- **Product Delivery**: Create agents that triage incoming feedback from your support tools (e.g. Intercom, Zendesk, Slack), prioritize and create issues in your project management tool (e.g. Linear, Jira), and resolve incidents using insights from observability platform (e.g. PagerDuty, Datadog) — uniting product research, delivery, and reliability in a single workflow.
+ **Product Delivery**: Create agents that triage incoming feedback from your support tools (e.g. Intercom, Zendesk, Slack), prioritize and create issues in your project management tool (e.g. Linear, Jira), and resolve incidents using insights from an observability platform (e.g. PagerDuty, Datadog) — uniting product research, delivery, and reliability in a single workflow.
 
 ## Prerequisites
 
@@ -121,7 +121,6 @@ uv add stackone-adk
         import asyncio
 
         from google.adk.agents import Agent
-        from google.adk.apps import App
         from google.adk.runners import InMemoryRunner
         from stackone_adk import StackOnePlugin
 
@@ -147,9 +146,9 @@ uv add stackone-adk
                 tools=tools,
             )
 
-            app = App(name="scheduling_app", root_agent=agent, plugins=[plugin])
-
-            async with InMemoryRunner(app=app) as runner:
+            async with InMemoryRunner(
+                app_name="scheduling_app", agent=agent
+            ) as runner:
                 events = await runner.run_debug(
                     "Get my most recent scheduled meeting from Calendly.",
                     quiet=True,
@@ -176,8 +175,7 @@ tools depend on which SaaS providers you have connected in your
 To list discovered tools:
 
 ```python
-plugin = StackOnePlugin(account_id="YOUR_ACCOUNT_ID")
-# Optional: omit to use all connected accounts
+plugin = StackOnePlugin(account_id="YOUR_ACCOUNT_ID") # Optional: omit to use all connected accounts
 for tool in plugin.get_tools():
     print(f"{tool.name}: {tool.description}")
 ```
