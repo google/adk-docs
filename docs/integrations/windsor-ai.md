@@ -43,9 +43,13 @@ business data using natural language, without writing SQL or custom scripts.
     === "Remote MCP Server"
 
         ```python
+        import os
         from google.adk.agents import Agent
         from google.adk.tools.mcp_tool import McpToolset
         from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPServerParams
+
+        # Required for recursive $ref in MCP schema (https://github.com/google/adk-python/issues/3870)
+        os.environ["ADK_ENABLE_JSON_SCHEMA_FOR_FUNC_DECL"] = "1"
 
         WINDSOR_API_KEY = "YOUR_WINDSOR_API_KEY"
 
