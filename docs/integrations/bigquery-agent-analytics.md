@@ -736,5 +736,5 @@ We welcome your feedback on BigQuery Agent Analytics. If you have questions, sug
 ## Additional resources
 
 -   [BigQuery Storage Write API](https://cloud.google.com/bigquery/docs/write-api)
--   [Introduction to Object Tables](https://cloud.google.com/bigquery/docs/object-tables-intro)
+-   [Introduction to Object Tables](https://docs.cloud.google.com/bigquery/docs/object-table-introduction)
 -   [Interactive Demo Notebook](https://github.com/haiyuan-eng-google/demo_BQ_agent_analytics_plugin_notebook)
