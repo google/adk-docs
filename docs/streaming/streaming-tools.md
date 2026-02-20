@@ -18,7 +18,7 @@ To define a streaming tool, you must adhere to the following:
 
 
 We support two types of streaming tools:
-- Simple type. This is a one type of streaming tools that only take non video/audio streams(the streams that you feed to adk web or adk runner) as input.
+- Simple type. This is a one type of streaming tools that only take non-video/-audio streams(the streams that you feed to adk web or adk runner) as input.
 - Video streaming tools. This only works in video streaming and the video stream(the streams that you feed to adk web or adk runner) will be passed into this function.
 
 Now let's define an agent that can monitor stock price changes and monitor the video stream changes. 

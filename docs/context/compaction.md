@@ -103,7 +103,7 @@ app = App(
 )
 ```
 
-You can further refine the operation of the `SlidingWindowCompactor` by
+You can further refine the operation of the `SlidingWindowCompactor`
 by modifying its summarizer class `LlmEventSummarizer` including changing
 the `prompt_template` setting of that class. For more details, see the
 [`LlmEventSummarizer` code](https://github.com/google/adk-python/blob/main/src/google/adk/apps/llm_event_summarizer.py#L60).

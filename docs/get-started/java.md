@@ -102,14 +102,14 @@ An ADK agent project requires this dependency in your
 <dependencies>
     <dependency>
         <groupId>com.google.adk</groupId>
-        <artifactId>adk-core</artifactId>
-        <version>0.3.0</version>
+        <artifactId>google-adk</artifactId>
+        <version>0.5.0</version>
     </dependency>
 </dependencies>
 ```
 
 Update the `pom.xml` project file to include this dependency and
-addtional settings with the following configuration code:
+additional settings with the following configuration code:
 
 ??? info "Complete `pom.xml` configuration for project"
     The following code shows a complete `pom.xml` configuration for

@@ -65,7 +65,7 @@ This approach involves creating individual test files, each representing a singl
     through the right path to generate final response.
 -   `Final Response`: The expected final response from the agent.
 
-You can give the file any name for example `evaluation.test.json`.The framework only checks for the `.test.json` suffix, and the preceding part of the filename is not constrained. The test files are backed by a formal Pydantic data model. The two key schema files are
+You can give the file any name for example `evaluation.test.json`. The framework only checks for the `.test.json` suffix, and the preceding part of the filename is not constrained. The test files are backed by a formal Pydantic data model. The two key schema files are
 [Eval Set](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py) and
 [Eval Case](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_case.py).
 Here is a test file with a few examples:
@@ -112,16 +112,16 @@ Here is a test file with a few examples:
               }
             ],
             "intermediate_responses": [] # Any intermediate sub-agent responses.
-          },
+          }
         }
       ],
       "session_input": { # Initial session input.
         "app_name": "home_automation_agent",
         "user_id": "test_user",
         "state": {}
-      },
+      }
     }
-  ],
+  ]
 }
 ```
 
@@ -187,14 +187,14 @@ Creating evalsets manually can be complex, therefore UI tools are provided to he
           "intermediate_data": {
             "tool_uses": [],
             "intermediate_responses": []
-          },
-        },
+          }
+        }
       ],
       "session_input": {
         "app_name": "hello_world",
         "user_id": "user",
         "state": {}
-      },
+      }
     },
     {
       "eval_id": "session_02",
@@ -220,7 +220,7 @@ Creating evalsets manually can be complex, therefore UI tools are provided to he
           "intermediate_data": {
             "tool_uses": [],
             "intermediate_responses": []
-          },
+          }
         },
         {
           "invocation_id": "e-bf8549a1-2a61-4ecc-a4ee-4efbbf25a8ea",
@@ -276,16 +276,16 @@ Creating evalsets manually can be complex, therefore UI tools are provided to he
                 ]
               ]
             ]
-          },
+          }
         }
       ],
       "session_input": {
         "app_name": "hello_world",
         "user_id": "user",
         "state": {}
-      },
+      }
     }
-  ],
+  ]
 }
 ```
 

@@ -4,7 +4,7 @@
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript</span><span class="lst-go">Go</span><span class="lst-java">Java</span>
 </div>
 
-In the Agent Development Kit (ADK), an **Agent** is a self-contained execution unit designed to act autonomously to achieve specific goals. Agents can perform tasks, interact with users, utilize external tools, and coordinate with other agents.
+In Agent Development Kit (ADK), an **Agent** is a self-contained execution unit designed to act autonomously to achieve specific goals. Agents can perform tasks, interact with users, utilize external tools, and coordinate with other agents.
 
 The foundation for all agents in ADK is the `BaseAgent` class. It serves as the fundamental blueprint. To create functional agents, you typically extend `BaseAgent` in one of three main ways, catering to different needs – from intelligent reasoning to structured process control.
 
@@ -41,9 +41,44 @@ While each agent type serves a distinct purpose, the true power often comes from
 
 Understanding these core types is the first step toward building sophisticated, capable AI applications with ADK.
 
----
+## Extend Agent Capabilities
 
-## What's Next?
+Beyond the core agent types, ADK allows you to significantly expand what your
+agents can do through several key mechanisms:
+
+*   [**AI Models**](/adk-docs/agents/models/):
+    Swap the underlying intelligence of your agents by integrating with
+    different generative AI models from Google and other providers.
+
+*   [**Artifacts**](/adk-docs/artifacts/):
+    Enable agents to create and manage persistent outputs like files, code, or
+    documents that exist beyond the conversation lifecycle.
+
+*   [**Pre-built tools and integrations**](/adk-docs/integrations/):
+    Equip your agents with a wide array tools, plugins, and other integrations
+    to interact with the world, including web sites, MCP tools, applications,
+    databases, programming interfaces, and more.
+
+*   [**Custom tools**](/adk-docs/tools-custom/):
+    Create your own, task-specific tools for solving specific problems with
+    precision and control.
+
+*   [**Plugins**](/adk-docs/plugins/):
+    Integrate complex, pre-packaged behaviors and third-party services directly
+    into your agent's workflow.
+
+*   [**Skills**](/adk-docs/skills/):
+    Use prebuilt or custom [Agent Skills](https://agentskills.io/) to extend
+    agent capabilities in a way that works efficiently inside AI context window
+    limits.
+
+*   [**Callbacks**](/adk-docs/callbacks/):
+    Hook into specific events during an agent's execution lifecycle to add
+    logging, monitoring, or custom side-effects without altering core agent
+    logic.
+
+
+## Next Steps
 
 Now that you have an overview of the different agent types available in ADK, dive deeper into how they work and how to use them effectively:
 
@@ -51,4 +86,4 @@ Now that you have an overview of the different agent types available in ADK, div
 * [**Workflow Agents:**](workflow-agents/index.md) Learn how to orchestrate tasks using `SequentialAgent`, `ParallelAgent`, and `LoopAgent` for structured and predictable processes.
 * [**Custom Agents:**](custom-agents.md) Discover the principles of extending `BaseAgent` to build agents with unique logic and integrations tailored to your specific needs.
 * [**Multi-Agents:**](multi-agents.md) Understand how to combine different agent types to create sophisticated, collaborative systems capable of tackling complex problems.
-* [**Models:**](models.md) Learn about the different LLM integrations available and how to select the right model for your agents.
+* [**Models:**](/adk-docs/agents/models/) Learn about the different LLM integrations available and how to select the right model for your agents.

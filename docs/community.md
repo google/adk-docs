@@ -43,6 +43,48 @@ Development Kit community.
   </a>
 </div>
 
+## ADK Community Calls
+
+!!! tip "Stay Connected"
+
+    Join the [ADK Community Google Group](https://groups.google.com/g/adk-community) for updates, calendar invites, and to connect with the ADK community.
+
+    See recent recordings below, or browse all past calls on our [YouTube playlist](https://www.youtube.com/playlist?list=PLwi6PfxEP7zZbBPmWiZ8QbPcuKyAY5RR3).
+
+<div class="resource-grid">
+  <a href="https://www.youtube.com/watch?v=h9Lueiqo89E" class="resource-card">
+    <div class="card-image-wrapper">
+      <img src="https://img.youtube.com/vi/h9Lueiqo89E/maxresdefault.jpg" alt="ADK Community Call Jan 2026">
+    </div>
+    <div class="card-content">
+      <div class="type">Community Call</div>
+      <h3>📞 Jan 2026 Recording</h3>
+      <p>Discussions include Session Service schema for cross-language support, TypeScript multi-agent demo, API Registry for MCP servers, and third-party tool integrations.</p>
+    </div>
+  </a>
+  <a href="https://www.youtube.com/watch?v=cNVWhrbdn-E" class="resource-card">
+    <div class="card-image-wrapper">
+      <img src="https://img.youtube.com/vi/cNVWhrbdn-E/maxresdefault.jpg" alt="ADK Community Call Dec 2025">
+    </div>
+    <div class="card-content">
+      <div class="type">Community Call</div>
+      <h3>📞 Dec 2025 Recording</h3>
+      <p>Discussions include the ADK TypeScript launch, Gemini 3 Flash support, bidirectional streaming for voice agents, and the Visual Builder UI.</p>
+    </div>
+  </a>
+  <a href="https://www.youtube.com/watch?v=bftUz-WBqyw" class="resource-card">
+    <div class="card-image-wrapper">
+      <img src="https://img.youtube.com/vi/bftUz-WBqyw/maxresdefault.jpg" alt="ADK Community Call Nov 2025">
+    </div>
+    <div class="card-content">
+      <div class="type">Community Call</div>
+      <h3>📞 Nov 2025 Recording</h3>
+      <p>Discussions include the ADK Go launch, the reflect & retry plugin for error recovery, and time travel debugging for rewinding agent sessions.</p>
+    </div>
+  </a>
+
+</div>
+
 ## Courses & Deep Dives
 
 <div class="resource-grid">
@@ -52,7 +94,7 @@ Development Kit community.
     </div>
     <div class="card-content">
       <div class="type">Online Course</div>
-      <h3>5-Day AI Agents Intensive Course with Google</h3>
+      <h3>🎓 5-Day AI Agents Intensive Course with Google</h3>
       <p>Build with core ADK agent components including, models, tools, memory, evaluation, and deployment.</p>
     </div>
   </a>
@@ -103,7 +145,17 @@ Development Kit community.
     <div class="card-content">
       <div class="type">Blog Series</div>
       <h3>🎓 Building Intelligent Agents with Google ADK</h3>
-      <p>A developer's guide to building intelligent agents with Google’s code-first Python toolkit.</p>
+      <p>A developer's guide to building intelligent agents with Google's code-first Python toolkit.</p>
+    </div>
+  </a>
+  <a href="https://github.com/arjunprabhulal/google-adk-masterclass" class="resource-card">
+    <div class="card-image-wrapper">
+      <img src="../assets/community-adk-masterclass-hands-on.png" alt="Google ADK Masterclass Hands-on Series">
+    </div>
+    <div class="card-content">
+      <div class="type">Online Course</div>
+      <h3>🎓 Google ADK Masterclass: Hands-on Series</h3>
+      <p>Build production-ready AI agents with 20 modules covering agents, workflows, tools, memory, and MCP integrations.</p>
     </div>
   </a>
   <a href="https://www.youtube.com/playlist?list=PL0Zc2RFDZsM_MkHOzWNJpaT4EH5fQxA8n" class="resource-card">
@@ -171,6 +223,16 @@ Development Kit community.
       <p>See how AI agents can revolutionize shopping with personalized, real-time recommendations.</p>
     </div>
   </a>
+  <a href="https://agentdirectory.folch.ai/" class="resource-card">
+    <div class="card-image-wrapper">
+      <img src="../assets/community-agent-directory.png" alt="ADK Agent Directory">
+    </div>
+    <div class="card-content">
+      <div class="type">Gallery</div>
+      <h3>📖 ADK Agent Directory</h3>
+      <p>Discover and test production-ready ADK agents for web search, image generation, research, and more.</p>
+    </div>
+  </a>
 </div>
 
 ## ADK for Java
@@ -216,6 +278,7 @@ Community-provided translations of the ADK documentation.
   <li><a href="https://adk.wiki/">🇨🇳 Chinese (中文) Documentation</a></li>
   <li><a href="https://adk-labs.github.io/adk-docs/ko/">🇰🇷 Korean (한국어) Documentation</a></li>
   <li><a href="https://adk-labs.github.io/adk-docs/ja/">🇯🇵 Japanese (日本語) Documentation</a></li>
+  <li><a href="https://adk-es.fabian-castro-c.dev/">🇪🇸 Spanish (Español) Documentation</a></li>
 </ul>
 
 ## Contributing Your Resource
