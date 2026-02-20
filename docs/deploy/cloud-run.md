@@ -9,6 +9,23 @@ is a fully managed platform that enables you to run your code directly on top of
 
 To deploy your agent, you can use either the `adk deploy cloud_run` command _(recommended for Python)_, or with `gcloud run deploy` command through Cloud Run.
 
+??? note "Production deployment with Terraform"
+    For production deployments with infrastructure-as-code, consider using the [Agent Starter Pack](https://github.com/GoogleCloudPlatform/agent-starter-pack).
+    Run the following command in your existing ADK project directory:
+    
+    ```bash
+    uvx agent-starter-pack enhance --adk -d cloud_run
+    ```
+    
+    This command upgrades your existing agent project, seamlessly adding:
+    
+    **Dockerfile & server** • **Terraform infrastructure** • **Automated CI/CD pipeline** • **Cloud-native observability**
+    
+    For more information on using Agent Starter Pack and its command line tools, see the
+    [CLI reference](https://googlecloudplatform.github.io/agent-starter-pack/cli/enhance.html)
+    and
+    [Development guide](https://googlecloudplatform.github.io/agent-starter-pack/guide/development-guide.html).
+
 ## Agent sample
 
 For each of the commands, we will reference the `Capital Agent` sample defined on the [LLM agent](../agents/llm-agents.md) page. We will assume it's in a directory (eg: `capital_agent`).
