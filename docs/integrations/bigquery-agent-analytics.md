@@ -117,7 +117,7 @@ bq_config = BigQueryLoggerConfig(
 bq_logging_plugin = BigQueryAgentAnalyticsPlugin(
     project_id=PROJECT_ID,
     dataset_id=DATASET_ID,
-    table_id="agent_events_v2", # default table name is agent_events_v2
+    table_id="agent_events", # default table name is agent_events
     config=bq_config,
     location=LOCATION
 )
@@ -154,7 +154,7 @@ been processed, you can view the data for them in the [BigQuery Console](https:/
 
 ```sql
 SELECT timestamp, event_type, content
-FROM `your-gcp-project-id.your-big-query-dataset-id.agent_events_v2`
+FROM `your-gcp-project-id.your-big-query-dataset-id.agent_events`
 ORDER BY timestamp DESC
 LIMIT 20;
 ```
@@ -172,7 +172,7 @@ The plugin supports **OpenTelemetry** for distributed tracing. OpenTelemetry is 
 You can customize the plugin using `BigQueryLoggerConfig`.
 
 -   **`enabled`** (`bool`, default: `True`): To disable the plugin from logging agent data to the BigQuery table, set this parameter to False.
--   **`table_id`** (`str`, default: `"agent_events_v2"`): The BigQuery table ID within the dataset. Can also be overridden by the `table_id` parameter on the `BigQueryAgentAnalyticsPlugin` constructor, which takes precedence.
+-   **`table_id`** (`str`, default: `"agent_events"`): The BigQuery table ID within the dataset. Can also be overridden by the `table_id` parameter on the `BigQueryAgentAnalyticsPlugin` constructor, which takes precedence.
 -   **`clustering_fields`** (`List[str]`, default: `["event_type", "agent", "user_id"]`): The fields used to cluster the BigQuery table when it is automatically created.
 -   **`gcs_bucket_name`** (`Optional[str]`, default: `None`): The name of the GCS bucket to offload large content (images, blobs, large text) to. If not provided, large content may be truncated or replaced with placeholders.
 -   **`connection_id`** (`Optional[str]`, default: `None`): The BigQuery connection ID (e.g., `us.my-connection`) to use as the authorizer for `ObjectRef` columns. Required for using `ObjectRef` with BigQuery ML.
@@ -246,7 +246,7 @@ plugin = BigQueryAgentAnalyticsPlugin(..., config=config)
 
 ### Schema Reference
 
-The events table (`agent_events_v2`) uses a flexible schema. The following table provides a comprehensive reference with example values.
+The events table (`agent_events`) uses a flexible schema. The following table provides a comprehensive reference with example values.
 
 | Field Name | Type | Mode | Description | Example Value |
 |:---|:---|:---|:---|:---|
@@ -273,7 +273,7 @@ production, we recommend creating the table manually using the following DDL, wh
 **Recommended DDL:**
 
 ```sql
-CREATE TABLE `your-gcp-project-id.adk_agent_logs.agent_events_v2`
+CREATE TABLE `your-gcp-project-id.adk_agent_logs.agent_events`
 (
   timestamp TIMESTAMP NOT NULL OPTIONS(description="The UTC time at which the event was logged."),
   event_type STRING OPTIONS(description="Indicates the type of event being logged (e.g., 'LLM_REQUEST', 'TOOL_COMPLETED')."),
@@ -636,7 +636,7 @@ SELECT
   part.object_ref.uri AS gcs_uri,
   -- Generate a signed URL to read the content directly (requires connection_id configuration)
   STRING(OBJ.GET_ACCESS_URL(part.object_ref, 'r').access_urls.read_url) AS signed_url
-FROM `your-gcp-project-id.your-dataset-id.agent_events_v2`,
+FROM `your-gcp-project-id.your-dataset-id.agent_events`,
 UNNEST(content_parts) AS part
 WHERE part.storage_mode = 'GCS_REFERENCE'
 ORDER BY timestamp DESC
@@ -649,7 +649,7 @@ LIMIT 10;
 
 ```sql
 SELECT timestamp, event_type, agent, JSON_VALUE(content, '$.response') as summary
-FROM `your-gcp-project-id.your-dataset-id.agent_events_v2`
+FROM `your-gcp-project-id.your-dataset-id.agent_events`
 WHERE trace_id = 'your-trace-id'
 ORDER BY timestamp ASC;
 ```
@@ -659,7 +659,7 @@ ORDER BY timestamp ASC;
 ```sql
 SELECT
   AVG(CAST(JSON_VALUE(content, '$.usage.total') AS INT64)) as avg_tokens
-FROM `your-gcp-project-id.your-dataset-id.agent_events_v2`
+FROM `your-gcp-project-id.your-dataset-id.agent_events`
 WHERE event_type = 'LLM_RESPONSE';
 ```
 
@@ -670,7 +670,7 @@ SELECT
   timestamp,
   part.mime_type,
   part.object_ref.uri as gcs_uri
-FROM `your-gcp-project-id.your-dataset-id.agent_events_v2`,
+FROM `your-gcp-project-id.your-dataset-id.agent_events`,
 UNNEST(content_parts) as part
 WHERE part.mime_type LIKE 'image/%'
 ORDER BY timestamp DESC;
@@ -688,7 +688,7 @@ SELECT
     ('Describe this image briefly. What company logo?', parts.object_ref)
   ) AS generated_result
 FROM
-  `your-gcp-project-id.your-dataset-id.agent_events_v2` logs,
+  `your-gcp-project-id.your-dataset-id.agent_events` logs,
   UNNEST(logs.content_parts) AS parts
 WHERE
   parts.mime_type LIKE 'image/%'
@@ -702,7 +702,7 @@ LIMIT 1;
 SELECT
   event_type,
   AVG(CAST(JSON_VALUE(latency_ms, '$.total_ms') AS INT64)) as avg_latency_ms
-FROM `your-gcp-project-id.your-dataset-id.agent_events_v2`
+FROM `your-gcp-project-id.your-dataset-id.agent_events`
 WHERE event_type IN ('LLM_RESPONSE', 'TOOL_COMPLETED')
 GROUP BY event_type;
 ```
@@ -722,7 +722,7 @@ SELECT
     JSON_VALUE(content, '$.tool'),
     'LLM_CALL'
   ) as operation
-FROM `your-gcp-project-id.your-dataset-id.agent_events_v2`
+FROM `your-gcp-project-id.your-dataset-id.agent_events`
 WHERE trace_id = 'your-trace-id'
   AND event_type IN ('LLM_RESPONSE', 'TOOL_COMPLETED')
 ORDER BY timestamp ASC;
@@ -738,7 +738,7 @@ SELECT
   error_message,
   JSON_VALUE(content, '$.tool') as tool_name,
   CAST(JSON_VALUE(latency_ms, '$.total_ms') AS INT64) as latency_ms
-FROM `your-gcp-project-id.your-dataset-id.agent_events_v2`
+FROM `your-gcp-project-id.your-dataset-id.agent_events`
 WHERE event_type IN ('LLM_ERROR', 'TOOL_ERROR')
 ORDER BY timestamp DESC
 LIMIT 20;
@@ -752,7 +752,7 @@ SELECT
   JSON_VALUE(content, '$.tool') as tool_name,
   COUNT(*) as call_count,
   AVG(CAST(JSON_VALUE(latency_ms, '$.total_ms') AS INT64)) as avg_latency_ms
-FROM `your-gcp-project-id.your-dataset-id.agent_events_v2`
+FROM `your-gcp-project-id.your-dataset-id.agent_events`
 WHERE event_type = 'TOOL_COMPLETED'
 GROUP BY tool_origin, tool_name
 ORDER BY call_count DESC;
@@ -767,7 +767,7 @@ SELECT
   session_id,
   JSON_VALUE(content, '$.tool') as hitl_tool,
   content
-FROM `your-gcp-project-id.your-dataset-id.agent_events_v2`
+FROM `your-gcp-project-id.your-dataset-id.agent_events`
 WHERE event_type LIKE 'HITL_%'
 ORDER BY timestamp DESC
 LIMIT 20;
@@ -783,7 +783,7 @@ DECLARE failed_session_id STRING;
 -- Find a recent failed session
 SET failed_session_id = (
     SELECT session_id
-    FROM `your-gcp-project-id.your-dataset-id.agent_events_v2`
+    FROM `your-gcp-project-id.your-dataset-id.agent_events`
     WHERE error_message IS NOT NULL
     ORDER BY timestamp DESC
     LIMIT 1
@@ -794,7 +794,7 @@ WITH SessionContext AS (
     SELECT
         session_id,
         STRING_AGG(CONCAT(event_type, ': ', COALESCE(TO_JSON_STRING(content), '')), '\n' ORDER BY timestamp) as full_history
-    FROM `your-gcp-project-id.your-dataset-id.agent_events_v2`
+    FROM `your-gcp-project-id.your-dataset-id.agent_events`
     WHERE session_id = failed_session_id
     GROUP BY session_id
 )
