@@ -1,7 +1,7 @@
 ---
 catalog_title: Temporal
-catalog_description: Resilient, scalable agents, long-running agents and tools, human approvals, safe versioning, and more using the world's leading durable execution provider.
-catalog_icon: /adk-docs/integrations/assets/temporal.svg
+catalog_description: Resilient, scalable agents, long-running agents and tools, human approvals, safe versioning, and more.
+catalog_icon: /adk-docs/integrations/assets/temporal.png
 ---
 
 # Temporal plugin for ADK
@@ -10,7 +10,7 @@ catalog_icon: /adk-docs/integrations/assets/temporal.svg
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
 </div>
 
-[Temporal](https://temporal.io) is a durable execution platform that makes ADK
+[Temporal](https://temporal.io) is a general-purpose durable execution platform that makes ADK
 agents resilient, scalable, and production-ready. LLM calls and tool executions
 run as Temporal [Activities](https://docs.temporal.io/activities) with automatic
 retries and recovery. If anything fails, your agent picks up exactly where it
@@ -22,33 +22,26 @@ The Temporal plugin gives your agents:
 
 - **Durable execution**: Never lose progress. If your agent crashes or stalls,
   Temporal automatically recovers from the last successful step - no manual
-  [session resumption](https://google.github.io/adk-docs/runtime/resume/#resume-a-stopped-workflow)
+  [session resumption](/adk-docs/runtime/resume/#resume-a-stopped-workflow)
   required.
 - **Built-in retries and rate limiting**: Configurable
   [retry policies](https://docs.temporal.io/encyclopedia/retry-policies) with
   backoff, plus mechanisms for handling backpressure from LLM providers.
-- **Long-running and ambient agents**: Support for agents that run for hours,
-  days, or indefinitely using blocking awaits and
-  [worker versioning](https://docs.temporal.io/production-deployment/worker-deployments/worker-versioning).
+- **Long-running and ambient agents**: Support for agents and tools that run for hours,
+  days, or indefinitely using blocking awaits.
 - **Human-in-the-loop**: Pause execution until a human approves, then resume
   where you left off. Temporal's
   [task routing](https://docs.temporal.io/task-routing) scalably routes incoming
   signals (such as user chats or approvals) to the correct workflow.
-- **Long-running tools**: Execute tools that take minutes or hours as
-  [Activities](https://docs.temporal.io/activities) with heartbeating, timeouts,
-  and retries - no separate microservices needed.
 - **Observability and debugging**: Inspect every step of your agent's execution,
   replay workflows deterministically, and pinpoint failures using the
   [Temporal UI](https://docs.temporal.io/web-ui).
-- **Safe versioning**: Deploy new agent versions without breaking in-flight
-  executions via
-  [worker versioning](https://docs.temporal.io/production-deployment/worker-deployments/worker-versioning).
 
 ## Prerequisites
 
 - Python 3.9+
 - A [Gemini API key](https://aistudio.google.com/app/api-keys) (or any
-  [supported model](https://google.github.io/adk-docs/agents/models/))
+  [supported model](/adk-docs/agents/models/))
 - A running Temporal server
   ([local dev server](https://docs.temporal.io/cli#start-dev-server),
   [self-hosted](https://docs.temporal.io/self-hosted-guide), or
@@ -81,8 +74,8 @@ Create an ADK agent and wrap it in a Temporal Workflow. Use `TemporalModel` to
 route LLM calls through Temporal Activities:
 
 ```python
-from datetime import timedelta
 from google.adk.agents import Agent
+from google.adk.runners import InMemoryRunner
 from temporalio import workflow
 from temporalio.contrib.google_adk_agents import TemporalModel
 
@@ -98,7 +91,6 @@ agent = Agent(
 class WeatherAgentWorkflow:
     @workflow.run
     async def run(self, user_message: str) -> str:
-        # Run the ADK agent inside a Temporal Workflow
         runner = InMemoryRunner(agent=agent)
         result = await runner.run_async(user_message)
         return result
@@ -115,13 +107,15 @@ from temporalio.worker import Worker
 from temporalio.contrib.google_adk_agents import TemporalAdkPlugin
 
 async def main():
-    client = await Client.connect("localhost:7233")
+    client = await Client.connect(
+        "localhost:7233",
+        plugins=[TemporalAdkPlugin()]
+    )
 
     worker = Worker(
         client,
         task_queue="adk-task-queue",
         workflows=[WeatherAgentWorkflow],
-        plugins=[TemporalAdkPlugin()],
     )
     await worker.run()
 
@@ -132,9 +126,13 @@ asyncio.run(main())
 
 ```python
 from temporalio.client import Client
+from temporalio.contrib.google_adk_agents import TemporalAdkPlugin
 
 async def start():
-    client = await Client.connect("localhost:7233")
+    client = await Client.connect(
+        "localhost:7233",
+        plugins=[TemporalAdkPlugin()]
+    )
     result = await client.execute_workflow(
         WeatherAgentWorkflow.run,
         "What's the weather in San Francisco?",
@@ -144,16 +142,18 @@ async def start():
     print(result)
 ```
 
-### Using custom tools as Activities
+### Agents calling custom Activities as tools
 
 Wrap Temporal Activities as ADK tools using `activity_tool`, so tool executions
 get full retry and timeout guarantees:
 
 ```python
 from datetime import timedelta
+from google.adk.agents import Agent
 from temporalio import activity
+from temporalio.common import RetryPolicy
+from temporalio.contrib.google_adk_agents import TemporalModel
 from temporalio.contrib.google_adk_agents.workflow import activity_tool
-from temporalio.workflow import ActivityConfig
 
 @activity.defn
 async def get_weather(city: str) -> str:
@@ -178,12 +178,13 @@ agent = Agent(
 
 ### Using MCP tools
 
-Execute [MCP](https://google.github.io/adk-docs/mcp/) tools as Temporal
+Execute [MCP](/adk-docs/mcp/) tools as Temporal
 Activities:
 
 ```python
+from google.adk.agents import Agent
 from temporalio.contrib.google_adk_agents import (
-    TemporalAdkPlugin,
+    TemporalModel,
     TemporalMcpToolSet,
     TemporalMcpToolSetProvider,
 )
@@ -198,12 +199,10 @@ agent = Agent(
     toolsets=[TemporalMcpToolSet("my-tools")],
 )
 
-# Configure the worker with the toolset provider
-worker = Worker(
-    client,
-    task_queue="adk-task-queue",
-    workflows=[ToolAgentWorkflow],
-    plugins=[TemporalAdkPlugin(toolset_providers=[provider])],
+# Configure the client with the toolset provider
+client = await Client.connect(
+    "localhost:7233",
+    plugins=[TemporalAdkPlugin(toolset_providers=[provider])]
 )
 ```
 
