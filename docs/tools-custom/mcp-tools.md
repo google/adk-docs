@@ -49,6 +49,24 @@ The `McpToolset` class is ADK's primary mechanism for integrating tools from an 
 4.  **Proxying Tool Calls:** When your `LlmAgent` decides to use one of these tools, `McpToolset` transparently proxies the call (using the `call_tool` MCP method) to the MCP server, sends the necessary arguments, and returns the server's response back to the agent.
 5.  **Filtering (Optional):** You can use the `tool_filter` parameter when creating an `McpToolset` to select a specific subset of tools from the MCP server, rather than exposing all of them to your agent.
 
+### Authentication for Remote MCP Servers
+
+When connecting to a remote MCP server that requires authentication, you can
+provide authentication details to the `McpToolset`. This is particularly useful
+when using `SseConnectionParams` to connect to a secure server.
+
+The `McpToolset` constructor accepts two parameters for this purpose:
+
+*   `auth_scheme`: An `AuthScheme` object that defines the authentication method
+    (e.g., Bearer, Basic, API Key).
+*   `auth_credential`: An `AuthCredential` object that holds the credentials
+    (e.g., token, username/password).
+
+These parameters are used to generate the necessary `Authorization` header for
+the MCP connection. The ADK will handle the authentication flow, including
+any necessary OAuth 2.0 token exchanges, and inject the correct header into
+the requests sent to the MCP server.
+
 The following examples demonstrate how to use `McpToolset` within the `adk web` development environment. For scenarios where you need more fine-grained control over the MCP connection lifecycle or are not using `adk web`, refer to the "Using MCP Tools in your own Agent out of `adk web`" section later in this page.
 
 ### Example 1: File System MCP Server
@@ -873,7 +891,6 @@ if __name__ == '__main__':
     asyncio.run(async_main())
   except Exception as e:
     print(f"An error occurred: {e}")
-```
 
 
 ## Key considerations
@@ -1282,4 +1299,4 @@ McpToolset(
 
 * [Model Context Protocol Documentation](https://modelcontextprotocol.io/ )
 * [MCP Specification](https://modelcontextprotocol.io/specification/)
-* [MCP Python SDK & Examples](https://github.com/modelcontextprotocol/)
+* [MCP Python SDK & Examples](https://github.com/modelcontextprotocol/mcp-python)
