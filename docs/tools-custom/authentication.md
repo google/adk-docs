@@ -38,6 +38,33 @@ You set up authentication when defining your tool:
     *   **Database/Persistent Storage:** **Strongly consider encrypting** the token data before storing it in the database using a robust encryption library (like `cryptography`) and managing encryption keys securely (e.g., using a key management service).
     *   **Secure Secret Stores:** For production environments, storing sensitive credentials in a dedicated secret manager (like Google Cloud Secret Manager or HashiCorp Vault) is the **most recommended approach**. Your tool could potentially store only short-lived access tokens or secure references (not the refresh token itself) in the session state, fetching the necessary secrets from the secure store when needed.
 
+## Toolset Authentication
+
+In addition to the tool-level authentication flows described below, you can also use proactive authentication at the Toolset level.
+
+The `BaseLlmFlow` automatically checks for authentication requirements for each `BaseToolset` *before* any tools are listed or executed. It does this by calling the `get_auth_config()` method on your toolset.
+
+If your toolset returns an `AuthConfig` object from this method and the necessary credentials are not already available in the session, the ADK framework will:
+
+1.  Pause the current execution.
+2.  Issue an `adk_request_credential` event to the client, similar to the interactive flow in "Journey 1".
+
+This allows you to define authentication requirements for an entire set of tools in one central place. The framework then ensures that the necessary authentication is resolved before attempting to use any of the tools in the toolset.
+
+To enable this, override the `get_auth_config()` method in your custom `BaseToolset` subclass:
+
+```python
+from google.adk.tools import BaseToolset
+from google.adk.auth import AuthConfig
+
+class MyAuthenticatedToolset(BaseToolset):
+    # ... other toolset methods ...
+
+    def get_auth_config(self) -> AuthConfig | None:
+        # Return the AuthConfig required for this toolset
+        return AuthConfig(...)
+```
+
 ---
 
 ## Journey 1: Building Agentic Applications with Authenticated Tools
