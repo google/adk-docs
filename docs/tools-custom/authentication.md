@@ -40,6 +40,27 @@ You set up authentication when defining your tool:
 
 ---
 
+## Proactive Toolset Authentication
+
+In addition to the tool-level authentication flows described below, ADK
+provides a proactive authentication mechanism for toolsets.
+
+The `BaseLlmFlow` automatically checks the `BaseToolset.get_auth_config()` method
+before any tools are listed or executed. If this method returns an `AuthConfig`
+object and the necessary credentials are not already available in the session, the
+framework will:
+
+1.  Pause the current execution.
+2.  Issue a special `adk_request_credential` event to the client.
+
+This process is identical to the interactive authentication flow initiated by an
+individual tool. It allows you to define authentication requirements at the
+toolset level, ensuring that credentials for a whole set of tools are resolved
+proactively before any of them are called. This simplifies toolset design and
+improves the user experience by handling authentication upfront.
+
+---
+
 ## Journey 1: Building Agentic Applications with Authenticated Tools
 
 This section focuses on using pre-existing tools (like those from `RestApiTool/ OpenAPIToolset`, `APIHubToolset`, `GoogleApiToolSet`) that require authentication within your agentic application. Your main responsibility is configuring the tools and handling the client-side part of interactive authentication flows (if required by the tool).
@@ -144,7 +165,7 @@ Pass the scheme and credential during toolset initialization. The toolset applie
       auth_scheme = OpenIdConnectWithConfig(
           authorization_endpoint=OAUTH2_AUTH_ENDPOINT_URL,
           token_endpoint=OAUTH2_TOKEN_ENDPOINT_URL,
-          scopes=['openid', 'YOUR_OAUTH_SCOPES"]
+          scopes=['openid', 'YOUR_OAUTH_SCOPES']
       )
       auth_credential = AuthCredential(
           auth_type=AuthCredentialTypes.OPEN_ID_CONNECT,
