@@ -299,6 +299,7 @@ nav:
       - tools-custom/index.md
       - Function tools:
         - Overview: tools-custom/function-tools.md
+        - Best practices: tools-custom/best-practices.md
         - Tool performance: tools-custom/performance.md
         - Action confirmations: tools-custom/confirmation.md
       - MCP tools: tools-custom/mcp-tools.md
