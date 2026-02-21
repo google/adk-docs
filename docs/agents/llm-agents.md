@@ -184,8 +184,9 @@ tells the agent:
     ```
 
 *(Note: For instructions that apply to *all* agents in a system, consider using
-`global_instruction` on the root agent, detailed further in the
-[Multi-Agents](multi-agents.md) section.)*
+the `GlobalInstructionPlugin`. The `global_instruction` parameter on the root
+agent is **DEPRECATED** and will be removed in a future version. See the
+[Multi-Agents](multi-agents.md) section for more details.)*
 
 ## Equipping the Agent: Tools (`tools`)
 
@@ -693,10 +694,15 @@ def call_agent(query):
     events = runner.run(user_id=USER_ID, session_id=SESSION_ID, new_message=content)
 
     for event in events:
-        print(f"\nDEBUG EVENT: {event}\n")
+        print(f"
+DEBUG EVENT: {event}
+")
         if event.is_final_response() and event.content:
             final_answer = event.content.parts[0].text.strip()
-            print("\n🟢 FINAL ANSWER\n", final_answer, "\n")
+            print("
+🟢 FINAL ANSWER
+", final_answer, "
+")
 
 call_agent("If it's raining in New York right now, what is the current temperature?")
 
@@ -760,4 +766,4 @@ _(This example demonstrates the core concepts. More complex agents might incorpo
 While this page covers the core configuration of `LlmAgent`, several related concepts provide more advanced control and are detailed elsewhere:
 
 * **Callbacks:** Intercepting execution points (before/after model calls, before/after tool calls) using `before_model_callback`, `after_model_callback`, etc. See [Callbacks](../callbacks/types-of-callbacks.md).
-* **Multi-Agent Control:** Advanced strategies for agent interaction, including planning (`planner`), controlling agent transfer (`disallow_transfer_to_parent`, `disallow_transfer_to_peers`), and system-wide instructions (`global_instruction`). See [Multi-Agents](multi-agents.md).
+* **Multi-Agent Control:** Advanced strategies for agent interaction, including planning (`planner`), controlling agent transfer (`disallow_transfer_to_parent`, `disallow_transfer_to_peers`), and system-wide instructions (using `GlobalInstructionPlugin` instead of the deprecated `global_instruction`). See [Multi-Agents](multi-agents.md).
