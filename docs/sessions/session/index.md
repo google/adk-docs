@@ -312,6 +312,19 @@ session_service = DatabaseSessionService(db_url=db_url)
     requires migration of the Session Database. For more information, see
     [Session database schema migration](/adk-docs/sessions/session/migrate/).
 
+!!! note "Concurrency and Locking"
+    To ensure data consistency in concurrent environments, `DatabaseSessionService`
+    implements locking mechanisms to prevent race conditions.
+
+    *   **In-Process Locking:** The service uses internal, in-process locks to
+        serialize updates to the same session, preventing race conditions when
+        multiple requests within the same application process try to modify the
+        same session simultaneously.
+    *   **Row-Level Locking:** For PostgreSQL, MySQL, and MariaDB backends, the
+        service uses row-level locking (`SELECT ... FOR UPDATE`) in the database.
+        This provides a robust, cross-process locking mechanism that prevents
+        conflicting updates from different application instances.
+
 ## The Session Lifecycle
 
 <img src="../../assets/session_lifecycle.png" alt="Session lifecycle">
