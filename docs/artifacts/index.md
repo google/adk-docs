@@ -520,7 +520,11 @@ The artifact interaction methods are available directly on instances of `Callbac
             filename = "generated_report.pdf"
 
             try:
-                version = await context.save_artifact(filename=filename, artifact=report_artifact)
+                version = await context.save_artifact(
+                    filename=filename, 
+                    artifact=report_artifact,
+                    custom_metadata={"generator": "report_tool_v2"}
+                )
                 print(f"Successfully saved Python artifact '{filename}' as version {version}.")
                 # The event generated after this callback will contain:
                 # event.actions.artifact_delta == {"generated_report.pdf": version}
@@ -787,7 +791,7 @@ The artifact interaction methods are available directly on instances of `Callbac
         ```python
         from google.adk.tools.tool_context import ToolContext
 
-        def list_user_files_py(tool_context: ToolContext) -> str:
+        async def list_user_files_py(tool_context: ToolContext) -> str:
             """Tool to list available artifacts for the user."""
             try:
                 available_files = await tool_context.list_artifacts()
@@ -927,6 +931,59 @@ The artifact interaction methods are available directly on instances of `Callbac
         }
         ```
 
+#### Getting Artifact Version
+
+*   **Code Example:**
+
+    === "Python"
+
+        ```python
+        from google.adk.tools.tool_context import ToolContext
+
+        async def get_artifact_version_py(tool_context: ToolContext, filename: str) -> str:
+            """Tool to get the latest version of an artifact."""
+            try:
+                artifact_version = await tool_context.get_artifact_version(filename)
+                if not artifact_version:
+                    return f"Artifact '{filename}' not found."
+                else:
+                    return f"The latest version of '{filename}' is {artifact_version.version}."
+            except ValueError as e:
+                print(f"Error getting artifact version: {e}.")
+                return "Error: Could not get artifact version."
+
+        # This function would typically be wrapped in a FunctionTool
+        # from google.adk.tools import FunctionTool
+        # get_version_tool = FunctionTool(func=get_artifact_version_py)
+        ```
+
+#### Listing Artifact Versions
+
+*   **Code Example:**
+
+    === "Python"
+
+        ```python
+        from google.adk.tools.tool_context import ToolContext
+
+        async def list_artifact_versions_py(tool_context: ToolContext, filename: str) -> str:
+            """Tool to list all versions of an artifact."""
+            try:
+                versions = await tool_context.list_artifact_versions(filename)
+                if not versions:
+                    return f"Artifact '{filename}' not found."
+                else:
+                    version_list = "\n".join([f"- Version: {v.version}, Mime-type: {v.mime_type}" for v in versions])
+                    return f"Available versions for '{filename}':\n{version_list}"
+            except ValueError as e:
+                print(f"Error listing artifact versions: {e}.")
+                return "Error: Could not list artifact versions."
+
+        # This function would typically be wrapped in a FunctionTool
+        # from google.adk.tools import FunctionTool
+        # list_versions_tool = FunctionTool(func=list_artifact_versions_py)
+        ```
+
 These methods for saving, loading, and listing provide a convenient and consistent way to manage binary data persistence within ADK, whether using Python's context objects or directly interacting with the `BaseArtifactService` in Java, regardless of the chosen backend storage implementation.
 
 ## Available Implementations
@@ -1051,6 +1108,38 @@ ADK provides concrete implementations of the `BaseArtifactService` interface, of
         --8<-- "examples/java/snippets/src/main/java/artifacts/GcsServiceSetup.java:full_code"
         ```
 
+### FileArtifactService
+
+*   **Storage Mechanism:** Stores artifacts on the local filesystem under a specified root directory. Each version of an artifact is stored in a separate subdirectory.
+*   **Key Features:**
+    *   **Local Persistence:** Artifacts are stored on the local disk and persist between application runs.
+    *   **Simple Setup:** Requires only a local directory path for configuration.
+    *   **Development and Testing:** Ideal for local development and testing when you need to inspect or interact with stored artifacts directly on your filesystem.
+*   **Use Cases:**
+    *   Local development where you need to persist artifacts across runs.
+    *   Scenarios where you need to easily access and debug stored artifacts.
+    *   Not suitable for distributed or multi-instance deployments, as each instance would have its own separate local storage.
+*   **Instantiation:**
+
+    === "Python"
+
+        ```python
+        from google.adk.artifacts import FileArtifactService
+
+        # Specify the root directory for storing artifacts
+        artifact_root_dir = "/tmp/my-adk-artifacts"
+
+        try:
+            file_service_py = FileArtifactService(root_dir=artifact_root_dir)
+            print(f"Python FileArtifactService initialized at: {artifact_root_dir}")
+
+            # Then pass it to the Runner
+            # runner = Runner(..., artifact_service=file_service_py)
+
+        except Exception as e:
+            print(f"Error initializing Python FileArtifactService: {e}")
+        ```
+
 Choosing the appropriate `ArtifactService` implementation depends on your application's requirements for data persistence, scalability, and operational environment.
 
 ## Best Practices
@@ -1071,3 +1160,7 @@ To use artifacts effectively and maintainably:
     * Using GCS lifecycle policies on the bucket.
     * Building specific tools or administrative functions that utilize the `artifact_service.delete_artifact` method (note: delete is *not* exposed via context objects for safety).
     * Carefully managing filenames to allow pattern-based deletion if needed.
+
+## Examples
+
+*   [Context Offloading with Artifacts](https://github.com/google/adk-python/tree/main/contributing/samples/context_offloading_with_artifact): This sample demonstrates how to offload context to artifacts to manage the context window size.
