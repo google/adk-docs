@@ -173,3 +173,54 @@ By reading the logger name, you can immediately pinpoint the source of the log a
     -   How long it takes for the model to respond?
 
 This detailed output allows you to diagnose a wide range of issues, from incorrect prompt engineering to problems with tool definitions, directly from the log files.
+
+## Logging Plugins
+
+For more advanced logging and debugging scenarios, the ADK provides dedicated logging plugins. These plugins can be attached to your `Runner` to capture detailed information about agent invocations.
+
+### Console Logging with `LoggingPlugin`
+
+The `LoggingPlugin` provides a convenient way to see a summary of the agent's execution flow directly in your console. It logs key events such as:
+
+*   User messages and invocation context
+*   Agent execution flow
+*   LLM requests and responses
+*   Tool calls with arguments and results
+
+This is useful for real-time monitoring and terminal-based debugging.
+
+**Example:**
+
+```python
+from google.adk.plugins import LoggingPlugin
+
+logging_plugin = LoggingPlugin()
+runner = Runner(
+    agents=[my_agent],
+    # ...
+    plugins=[logging_plugin],
+)
+```
+
+### Advanced Debugging with `DebugLoggingPlugin`
+
+For more comprehensive debugging, the `DebugLoggingPlugin` captures complete interaction data to a YAML file. This is ideal for offline analysis and sharing debug information. The captured data includes:
+
+*   LLM requests with full details (model, system instruction, etc.)
+*   LLM responses with metadata
+*   Function calls and their results
+*   Session state at the end of each invocation
+
+**Example:**
+
+```python
+from google.adk.plugins import DebugLoggingPlugin
+
+debug_plugin = DebugLoggingPlugin(output_path="/tmp/adk_debug.yaml")
+runner = Runner(
+    agent=my_agent,
+    plugins=[debug_plugin],
+)
+```
+
+By using these plugins, you can gain deeper insights into your agent's behavior and more effectively debug complex issues.
