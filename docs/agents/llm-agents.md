@@ -187,6 +187,38 @@ tells the agent:
 `global_instruction` on the root agent, detailed further in the
 [Multi-Agents](multi-agents.md) section.)*
 
+### Dynamic Instructions with `McpInstructionProvider`
+
+For more dynamic and flexible agent instruction management, you can use the `McpInstructionProvider`. This class allows you to fetch agent instructions from an MCP (Model-Context-Protocol) server.
+
+The `McpInstructionProvider` is initialized with connection parameters for your MCP server and the name of the prompt to fetch. You then pass an instance of this class to the `instruction` parameter of your `LlmAgent`.
+
+```python
+from google.adk.agents import LlmAgent
+from google.adk.agents.mcp_instruction_provider import McpInstructionProvider
+
+# Define MCP connection parameters
+mcp_connection_params = {
+    "api_key": "YOUR_MCP_API_KEY",
+    "base_url": "https://your-mcp-server.com",
+}
+
+# Create an instance of the McpInstructionProvider
+instruction_provider = McpInstructionProvider(
+    connection_params=mcp_connection_params,
+    prompt_name="my-agent-prompt",
+)
+
+# Use the instruction provider in your agent
+my_agent = LlmAgent(
+    model="gemini-2.0-flash",
+    name="my_mcp_agent",
+    instruction=instruction_provider,
+)
+```
+
+When the agent runs, the `McpInstructionProvider` will be called to fetch the latest version of the "my-agent-prompt" from the MCP server and use it as the agent's instruction.
+
 ## Equipping the Agent: Tools (`tools`)
 
 Tools give your `LlmAgent` capabilities beyond the LLM's built-in knowledge or
