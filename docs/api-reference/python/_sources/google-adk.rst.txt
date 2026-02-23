@@ -49,6 +49,14 @@ google.adk.cli module
     :undoc-members:
     :show-inheritance:
 
+google.adk.cli.fast_api module
+------------------------------
+
+.. automodule:: google.adk.cli.fast_api
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 google.adk.code_executors module
 --------------------------------
 
