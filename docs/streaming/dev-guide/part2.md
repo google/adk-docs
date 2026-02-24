@@ -1,6 +1,6 @@
 # Part 2: Sending messages with LiveRequestQueue
 
-In Part 1, you learned the four-phase lifecycle of ADK Bidi-streaming applications. This part focuses on the upstream flow—how your application sends messages to the agent using `LiveRequestQueue`.
+In Part 1, you learned the four-phase lifecycle of ADK Gemini Live API Toolkit applications. This part focuses on the upstream flow—how your application sends messages to the agent using `LiveRequestQueue`.
 
 Unlike traditional APIs where different message types require different endpoints or channels, ADK provides a single unified interface through `LiveRequestQueue` and its `LiveRequest` message model. This part covers:
 
@@ -78,21 +78,21 @@ content = types.Content(parts=[types.Part(text=json_message["text"])])
 live_request_queue.send_content(content)
 ```
 
-**Using Content and Part with ADK Bidi-streaming:**
+**Using Content and Part with ADK Gemini Live API Toolkit:**
 
 - **`Content`** (`google.genai.types.Content`): A container that represents a single message or turn in the conversation. It holds an array of `Part` objects that together compose the complete message.
 
-- **`Part`** (`google.genai.types.Part`): An individual piece of content within a message. For ADK Bidi-streaming with Live API, you'll use:
+- **`Part`** (`google.genai.types.Part`): An individual piece of content within a message. For ADK Gemini Live API Toolkit with Live API, you'll use:
   - `text`: Text content (including code) that you send to the model
 
-In practice, most messages use a single text Part for ADK Bidi-streaming. The multi-part structure is designed for scenarios like:
+In practice, most messages use a single text Part for ADK Gemini Live API Toolkit. The multi-part structure is designed for scenarios like:
 - Mixing text with function responses (automatically handled by ADK)
 - Combining text explanations with structured data
 - Future extensibility for new content types
 
 For Live API, multimodal inputs (audio/video) use different mechanisms (see `send_realtime()` below), not multi-part Content.
 
-!!! note "Content and Part usage in ADK Bidi-streaming"
+!!! note "Content and Part Usage in ADK Gemini Live API Toolkit"
     
     While the Gemini API `Part` type supports many fields (`inline_data`, `file_data`, `function_call`, `function_response`, etc.), most are either handled automatically by ADK or use different mechanisms in Live API:
     
@@ -155,7 +155,7 @@ live_request_queue.send_activity_end()  # Signal: user stopped speaking
 
 ### Control Signals
 
-The `close` signal provides graceful termination semantics for streaming sessions. It signals the system to cleanly close the model connection and end the Bidi-stream. In ADK Bidi-streaming, your application is responsible for sending the `close` signal explicitly:
+The `close` signal provides graceful termination semantics for streaming sessions. It signals the system to cleanly close the model connection and end the Bidi-stream. In ADK Gemini Live API Toolkit, your application is responsible for sending the `close` signal explicitly:
 
 **Manual closure in BIDI mode:** When using `StreamingMode.BIDI` (Bidi-streaming), your application should manually call `close()` when the session terminates or when errors occur. This practice minimizes session resource usage.
 
@@ -261,4 +261,4 @@ In this part, you learned how `LiveRequestQueue` provides a unified interface fo
 
 ---
 
-← [Previous: Part 1: Introduction to ADK Bidi-streaming](part1.md) | [Next: Part 3: Event Handling with run_live()](part3.md) →
+← [Previous: Part 1: Introduction to ADK Gemini Live API Toolkit](part1.md) | [Next: Part 3: Event Handling with run_live()](part3.md) →

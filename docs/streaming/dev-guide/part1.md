@@ -1,16 +1,16 @@
-# Part 1: Introduction to ADK Bidi-streaming
+# Part 1: Introduction to ADK Gemini Live API Toolkit
 
 Google's Agent Development Kit ([ADK](https://google.github.io/adk-docs/)) provides a production-ready framework for building Bidi-streaming applications with Gemini models. This guide introduces ADK's streaming architecture, which enables real-time, two-way communication between users and AI agents through multimodal channels (text, audio, video).
 
 **What you'll learn**: This part covers the fundamentals of Bidi-streaming, the underlying Live API technology (Gemini Live API and Vertex AI Live API), ADK's architectural components (`LiveRequestQueue`, `Runner`, `Agent`), and a complete FastAPI implementation example. You'll understand how ADK handles session management, tool orchestration, and platform abstraction—reducing months of infrastructure development to declarative configuration.
 
-## ADK Bidi-streaming Demo
+## ADK Gemini Live API Toolkit Demo
 
 To help you understand the concepts in this guide, we provide a working demo application that showcases ADK bidirectional streaming in action. This FastAPI-based demo implements the complete streaming lifecycle with a practical, real-world architecture.
 
 **Demo Repository**: [adk-samples/python/agents/bidi-demo](https://github.com/google/adk-samples/tree/main/python/agents/bidi-demo)
 
-![ADK Bidi-streaming Demo](assets/bidi-demo-screen.png)
+![ADK Gemini Live API Toolkit Demo](assets/bidi-demo-screen.png)
 
 The demo features:
 
@@ -183,15 +183,15 @@ Both APIs provide the same core Live API technology, but differ in deployment pl
 
     **Official Documentation**: [Gemini Live API Guide](https://ai.google.dev/gemini-api/docs/live-guide) | [Vertex AI Live API Overview](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api)
 
-## 1.3 ADK Bidi-streaming: For Building Realtime Agent Applications
+## 1.3 ADK Gemini Live API Toolkit: For Building Realtime Agent Applications
 
 Building realtime Agent applications from scratch presents significant engineering challenges. While Live API provides the underlying streaming technology, integrating it into production applications requires solving complex problems: managing WebSocket connections and reconnection logic, orchestrating tool execution and response handling, persisting conversation state across sessions, coordinating concurrent data flows for multimodal inputs, and handling platform differences between development and production environments.
 
 ADK transforms these challenges into simple, declarative APIs. Instead of spending months building infrastructure for session management, tool orchestration, and state persistence, developers can focus on defining agent behavior and creating user experiences. This section explores what ADK handles automatically and why it's the recommended path for building production-ready streaming applications.
 
-**Raw Live API v. ADK Bidi-streaming:**
+**Raw Live API v. ADK Gemini Live API Toolkit:**
 
-| Feature | Raw Live API (`google-genai` SDK) | ADK Bidi-streaming (`adk-python` and `adk-java` SDK) |
+| Feature | Raw Live API (`google-genai` SDK) | ADK Gemini Live API Toolkit (`adk-python` and `adk-java` SDK) |
 |---------|-----------------------------------|------------------------------------------------------|
 | **Agent Framework** | ❌ Not available | ✅ Single agent, multi-agent with sub-agents, and sequential workflow agents, Tool ecosystem, Deployment ready, Evaluation, Security and more (see [ADK Agent docs](https://google.github.io/adk-docs/agents/)) |
 | **Tool Execution** | ❌ Manual tool execution and response handling | ✅ Automatic tool execution (see [Part 3: Tool Call Events](part3.md#tool-call-events)) |
@@ -247,7 +247,7 @@ GOOGLE_CLOUD_LOCATION=us-central1
 
 By handling the complexity of session management, tool orchestration, state persistence, and platform differences, ADK lets you focus on building intelligent agent experiences rather than wrestling with streaming infrastructure. The same code works seamlessly across development and production environments, giving you the full power of Bidi-streaming without the implementation burden.
 
-## 1.4 ADK Bidi-streaming Architecture Overview
+## 1.4 ADK Gemini Live API Toolkit Architecture Overview
 
 Now that you understand Live API technology and why ADK adds value, let's explore how ADK actually works. This section maps the complete data flow from your application through ADK's pipeline to Live API and back, showing which components handle which responsibilities.
 
@@ -268,7 +268,7 @@ graph TB
     end
 
     subgraph "ADK"
-        subgraph "ADK Bidi-streaming"
+        subgraph "ADK Gemini Live API Toolkit"
             L1[LiveRequestQueue]
             L2[Runner]
             L3[Agent]
@@ -306,9 +306,9 @@ graph TB
 
 This architecture demonstrates ADK's clear separation of concerns: your application handles user interaction and transport protocols, ADK manages the streaming orchestration and state, and Live API provide the AI intelligence. By abstracting away the complexity of LLM-side streaming connection management, event loops, and protocol translation, ADK enables you to focus on building agent behavior and user experiences rather than streaming infrastructure.
 
-## 1.5 ADK Bidi-streaming Application Lifecycle
+## 1.5 ADK Gemini Live API Toolkit Application Lifecycle
 
-ADK Bidi-streaming integrates Live API session into the ADK framework's application lifecycle. This integration creates a four-phase lifecycle that combines ADK's agent management with Live API's real-time streaming capabilities:
+ADK Gemini Live API Toolkit integrates Live API session into the ADK framework's application lifecycle. This integration creates a four-phase lifecycle that combines ADK's agent management with Live API's real-time streaming capabilities:
 
 - **Phase 1: Application Initialization** (Once at Startup)
   - ADK Application initialization
@@ -319,8 +319,8 @@ ADK Bidi-streaming integrates Live API session into the ADK framework's applicat
 - **Phase 2: Session Initialization** (Once per User Session)
   - ADK `Session` initialization:
     - Get or Create an ADK `Session` using the `SessionService`
-  - ADK Bidi-streaming initialization:
-    - Create a [RunConfig](part4.md) for configuring ADK Bidi-streaming
+  - ADK Gemini Live API Toolkit initialization:
+    - Create a [RunConfig](part4.md) for configuring ADK Gemini Live API Toolkit
     - Create a [LiveRequestQueue](part2.md) for sending user messages to the `Agent`
     - Start a [run_live()](part3.md) event loop
 
@@ -415,7 +415,7 @@ These components are created once when your application starts and shared across
 The `Agent` is the core of your streaming application—it defines what your AI can do, how it should behave, and which AI model powers it. You configure your agent with a specific model, tools it can use (like Google Search or custom APIs), and instructions that shape its personality and behavior.
 
 ```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/google_search_agent/agent.py#L10-L15" target="_blank">agent.py:10-15</a>'
-"""Google Search Agent definition for ADK Bidi-streaming demo."""
+"""Google Search Agent definition for ADK Gemini Live API Toolkit demo."""
 
 import os
 from google.adk.agents import Agent
@@ -498,7 +498,7 @@ The `app_name` parameter is required and identifies your application in session 
 
 #### Get or Create Session
 
-ADK `Session` provides a "conversation thread" of the Bidi-streaming application. Just like you wouldn't start every text message from scratch, agents need context regarding the ongoing interaction. `Session` is the ADK object designed specifically to track and manage these individual conversation threads.
+ADK `Session` provides a "conversation thread" of the ADK Gemini Live API Toolkit application. Just like you wouldn't start every text message from scratch, agents need context regarding the ongoing interaction. `Session` is the ADK object designed specifically to track and manage these individual conversation threads.
 
 ##### ADK `Session` vs Live API session
 
@@ -861,7 +861,7 @@ This example shows the core pattern. For production applications, consider:
 
 ## 1.6 What We Will Learn
 
-This guide takes you through ADK's Bidi-streaming architecture step by step, following the natural flow of streaming applications: how messages travel upstream from users to agents, how events flow downstream from agents to users, how to configure session behaviors, and how to implement multimodal features. Each part focuses on a specific component of the streaming architecture with practical patterns you can apply immediately:
+This guide takes you through ADK Gemini Live API Toolkit's architecture step by step, following the natural flow of streaming applications: how messages travel upstream from users to agents, how events flow downstream from agents to users, how to configure session behaviors, and how to implement multimodal features. Each part focuses on a specific component of the streaming architecture with practical patterns you can apply immediately:
 
 - **[Part 2: Sending messages with LiveRequestQueue](part2.md)** - Learn how ADK's `LiveRequestQueue` provides a unified interface for handling text, audio, and control messages. You'll understand the `LiveRequest` message model, how to send different types of content, manage user activity signals, and handle graceful session termination through a single, elegant API.
 
@@ -873,7 +873,7 @@ This guide takes you through ADK's Bidi-streaming architecture step by step, fol
 
 ### Prerequisites and Learning Resources
 
-For building an ADK Bidi-streaming application in production, we recommend having basic knowledge of the following technologies:
+For building an ADK Gemini Live API Toolkit application in production, we recommend having basic knowledge of the following technologies:
 
 **[ADK (Agent Development Kit)](https://google.github.io/adk-docs/)**
 
