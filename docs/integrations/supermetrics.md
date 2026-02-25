@@ -1,6 +1,6 @@
 ---
 catalog_title: Supermetrics
-catalog_description: Query marketing data from Google Ads, Meta Ads, LinkedIn Ads, and 50+ platforms
+catalog_description: Provides marketing data analytics to your agent by connecting 100+ platforms from Google Ads, Meta Ads, LinkedIn Ads to TikTok and HubSpot
 catalog_icon: /adk-docs/integrations/assets/supermetrics.png
 catalog_tags: ["mcp", "marketing", "analytics"]
 ---
@@ -13,8 +13,8 @@ catalog_tags: ["mcp", "marketing", "analytics"]
 
 The [Supermetrics MCP Server](https://mcp.supermetrics.com) connects your ADK
 agent to the [Supermetrics](https://supermetrics.com/) platform, giving it
-access to marketing performance data across 50+ sources including Google Ads,
-Meta Ads, LinkedIn Ads, and Google Analytics. Your agent can discover data
+access to marketing data across 100+ sources including Google Ads,
+Meta Ads, LinkedIn Ads, and Google Analytics 4. Your agent can discover data
 sources, explore available metrics, and run queries against your connected
 accounts using natural language.
 
@@ -41,7 +41,6 @@ accounts using natural language.
 - Create a [Supermetrics account](https://supermetrics.com/) (a 14-day free
   trial is created automatically on first login)
 - Generate an API key from the [Supermetrics Hub](https://hub.supermetrics.com/)
-  — keys begin with `api_`
 
 ## Use with agent
 
@@ -102,7 +101,8 @@ accounts using natural language.
 
 !!! note "Query workflow"
 
-    Data retrieval follows a multi-step workflow: discover a data source with
+    Data retrieval follows a multi-step workflow: on a user request, first fetch
+    the current date with `get_today`. Next discover a data source with
     `data_source_discovery`, find connected accounts with `accounts_discovery`,
     inspect available fields with `field_discovery`, submit a query with
     `data_query`, then poll `get_async_query_results` with the returned
