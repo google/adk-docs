@@ -1,8 +1,8 @@
 ---
 catalog_title: Supermetrics
-catalog_description: Provides marketing data analytics to your agent by connecting 100+ platforms from Google Ads, Meta Ads, LinkedIn Ads to TikTok and HubSpot
+catalog_description: Consume and analyze your real-time marketing, advertising, and CRM data
 catalog_icon: /adk-docs/integrations/assets/supermetrics.png
-catalog_tags: ["mcp", "marketing", "analytics"]
+catalog_tags: ["mcp", "data"]
 ---
 
 # Supermetrics MCP tool for ADK
@@ -50,8 +50,7 @@ accounts using natural language.
 
         ```python
         from google.adk.agents import Agent
-        from google.adk.tools.mcp_tool import McpToolset
-        from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPServerParams
+        from google.adk.tools.mcp_tool import McpToolset, StreamableHTTPConnectionParams
 
         SUPERMETRICS_API_KEY = "YOUR_SUPERMETRICS_API_KEY"
 
@@ -61,7 +60,7 @@ accounts using natural language.
             instruction="Help users query and analyze their marketing data from Supermetrics",
             tools=[
                 McpToolset(
-                    connection_params=StreamableHTTPServerParams(
+                    connection_params=StreamableHTTPConnectionParams(
                         url="https://mcp.supermetrics.com/mcp",
                         headers={
                             "Authorization": f"Bearer {SUPERMETRICS_API_KEY}",
@@ -89,8 +88,12 @@ accounts using natural language.
                 new MCPToolset({
                     type: "StreamableHTTPConnectionParams",
                     url: "https://mcp.supermetrics.com/mcp",
-                    header: {
-                        Authorization: `Bearer ${SUPERMETRICS_API_KEY}`,
+                    transportOptions: {
+                        requestInit: {
+                            headers: {
+                                Authorization: `Bearer ${SUPERMETRICS_API_KEY}`,
+                            },
+                        },
                     },
                 }),
             ],
