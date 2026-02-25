@@ -184,4 +184,4 @@ Congratulations\! You've successfully created and interacted with your first Str
 
 ## Next steps: build custom streaming app
 
-The [Bidi-streaming development guide series](../../streaming/dev-guide/part1.md) gives an overview of the server and client code for a custom asynchronous web app built with ADK Streaming, enabling real-time, bidirectional audio and text communication.
+The [Gemini Live API Toolkit development guide series](../../streaming/dev-guide/part1.md) gives an overview of the server and client code for a custom asynchronous web app built with ADK Streaming, enabling real-time, bidirectional audio and text communication.
