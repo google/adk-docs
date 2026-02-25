@@ -196,7 +196,7 @@ plugins:
         'tools/third-party/qdrant.md': 'integrations/qdrant.md'
         'tools/google-cloud/spanner.md': 'integrations/spanner.md'
         'tools/third-party/stripe.md': 'integrations/stripe.md'
-    'tools/third-party/spraay.md': 'integrations/spraay.md'
+        'tools/third-party/spraay.md': 'integrations/spraay.md'
         'tools/google-cloud/vertex-ai-rag-engine.md': 'integrations/vertex-ai-rag-engine.md'
         'tools/google-cloud/vertex-ai-search.md': 'integrations/vertex-ai-search.md'
         'tools/index.md': 'integrations/index.md'
