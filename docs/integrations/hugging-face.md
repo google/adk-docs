@@ -139,8 +139,12 @@ your ADK agent to the Hugging Face Hub and thousands of Gradio AI Applications.
                 new MCPToolset({
                     type: "StreamableHTTPConnectionParams",
                     url: "https://huggingface.co/mcp",
-                    header: {
-                        Authorization: `Bearer ${HUGGING_FACE_TOKEN}`,
+                    transportOptions: {
+                        requestInit: {
+                            headers: {
+                                Authorization: `Bearer ${HUGGING_FACE_TOKEN}`,
+                            },
+                        },
                     },
                 }),
             ],
