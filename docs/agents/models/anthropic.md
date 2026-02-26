@@ -14,7 +14,7 @@ section. You can also use Anthropic models through the
 
 ## Get started
 
-The following code examples show a basic implementation for using Gemini models
+The following code examples show a basic implementation for using Anthropic models
 in your agents:
 
 ```java
