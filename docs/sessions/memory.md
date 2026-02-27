@@ -16,7 +16,14 @@ Think of it this way:
 The `BaseMemoryService` defines the interface for managing this searchable, long-term knowledge store. Its primary responsibilities are:
 
 1. **Ingesting Information (`add_session_to_memory`):** Taking the contents of a (usually completed) `Session` and adding relevant information to the long-term knowledge store.
-2. **Searching Information (`search_memory`):** Allowing an agent (typically via a `Tool`) to query the knowledge store and retrieve relevant snippets or context based on a search query.
+2. **Adding Memory Directly (`add_memory`):** In addition to ingesting entire sessions, you can directly add discrete pieces of information to the memory. This is useful for explicitly providing facts, instructions, or data that don't originate from a conversational session.
+
+    When using `VertexAiMemoryBankService`, the `add_memory` method offers two ways to handle this:
+
+    *   **Direct Creation (`memories.create`):** By default, `add_memory` calls the underlying `memories.create` API. This treats each memory item as a distinct, new fact and adds it to the Memory Bank without any transformation.
+
+    *   **Consolidation (`memories.generate`):** If you set `enable_consolidation` to `True` in the `custom_metadata` when calling `add_memory`, the service will instead use the `memories.generate` API. This allows the Memory Bank to process and consolidate the new information with existing memories, potentially summarizing, correcting, or merging facts to maintain a more coherent and less redundant knowledge base.
+3. **Searching Information (`search_memory`):** Allowing an agent (typically via a `Tool`) to query the knowledge store and retrieve relevant snippets or context based on a search query.
 
 ## Choosing the Right Memory Service
 
