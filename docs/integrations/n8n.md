@@ -170,8 +170,12 @@ for detailed setup instructions.
                 new MCPToolset({
                     type: "StreamableHTTPConnectionParams",
                     url: `${N8N_INSTANCE_URL}/mcp-server/http`,
-                    header: {
-                        Authorization: `Bearer ${N8N_MCP_TOKEN}`,
+                    transportOptions: {
+                        requestInit: {
+                            headers: {
+                                Authorization: `Bearer ${N8N_MCP_TOKEN}`,
+                            },
+                        },
                     },
                 }),
             ],
