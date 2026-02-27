@@ -495,13 +495,13 @@ issues.
 ## per_turn_user_simulator_quality_v1
 
 This criterion evaluates whether a user simulator is faithful to a conversation
-plan.
+plan and persona.
 
 #### When To Use This Criterion?
 
 Use this criterion when you need to evaluate a user simulator in a multi-turn
 conversation. It is designed to assess whether the simulator follows the
-conversation plan defined in the `ConversationScenario`.
+conversation plan and persona defined in the `ConversationScenario`.
 
 #### Details
 
@@ -511,7 +511,8 @@ This criterion determines whether the a user simulator follows a defined
 For the first turn, this criterion checks if user simulator response matches the
 `starting_prompt` in the `ConversationScenario`. For subsequent turns, it uses
 LLM-as-a-judge to evaluate if the user response follows the `conversation_plan`
-in the `ConversationScenario`.
+and `user_persona` in the `ConversationScenario`. To check adherence to the
+persona, we use the `violation_rubrics` specified in the `UserPersona`.
 
 #### How To Use This Criterion?
 

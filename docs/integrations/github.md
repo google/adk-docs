@@ -81,10 +81,14 @@ automate workflows using natural language.
                 new MCPToolset({
                     type: "StreamableHTTPConnectionParams",
                     url: "https://api.githubcopilot.com/mcp/",
-                    header: {
-                        Authorization: `Bearer ${GITHUB_TOKEN}`,
-                        "X-MCP-Toolsets": "all",
-                        "X-MCP-Readonly": "true",
+                    transportOptions: {
+                        requestInit: {
+                            headers: {
+                                Authorization: `Bearer ${GITHUB_TOKEN}`,
+                                "X-MCP-Toolsets": "all",
+                                "X-MCP-Readonly": "true",
+                            },
+                        },
                     },
                 }),
             ],
