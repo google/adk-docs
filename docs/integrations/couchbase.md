@@ -13,13 +13,14 @@ catalog_tags: ["data", "mcp"]
 
 The [Couchbase MCP Server](https://github.com/Couchbase-Ecosystem/mcp-server-couchbase)
 connects your ADK agent to [Couchbase](https://www.couchbase.com/) clusters. This
-integration gives your agent the ability to explore schemas, run SQL++ queries,
-and analyze query performance using natural language.
+integration gives your agent the ability to explore Couchbase data using natural
+language, including exploring data, running queries, and analyzing performance
+issues.
 
 ## Use cases
 
 - **Data Exploration**: Discover buckets, scopes, collections, and document
-  schemas, then query data using natural language translated to SQL++ queries.
+  schemas, query data using natural language queries.
 
 - **Database Administration**: Monitor cluster health, check running services,
   and manage bucket, scope, and collection structures through conversational
@@ -33,7 +34,8 @@ and analyze query performance using natural language.
 - A running Couchbase cluster. You can:
     - Use [Couchbase Capella](https://cloud.couchbase.com/) (managed cloud service)
     - Run Couchbase Server 7.x+ locally or self-hosted
-- Connection string and credentials (username/password) for the cluster
+- Connection string and credentials (username/password or client certificate
+  for mTLS) for the cluster
 - [`uv`](https://docs.astral.sh/uv/) package manager installed (for the `uvx`
   command)
 
@@ -67,7 +69,7 @@ and analyze query performance using natural language.
                                 "CB_CONNECTION_STRING": CB_CONNECTION_STRING,
                                 "CB_USERNAME": CB_USERNAME,
                                 "CB_PASSWORD": CB_PASSWORD,
-                                "CB_MCP_READ_ONLY_MODE": "true",
+                                "CB_MCP_READ_ONLY_MODE": "true",  # Prevents write operations
                             },
                         ),
                         timeout=60,
@@ -102,7 +104,7 @@ and analyze query performance using natural language.
                             CB_CONNECTION_STRING: CB_CONNECTION_STRING,
                             CB_USERNAME: CB_USERNAME,
                             CB_PASSWORD: CB_PASSWORD,
-                            CB_MCP_READ_ONLY_MODE: "true",
+                            CB_MCP_READ_ONLY_MODE: "true", // Prevents write operations
                         },
                     },
                 })
@@ -114,7 +116,7 @@ and analyze query performance using natural language.
 
 ## Available tools
 
-### Cluster health tools
+### Cluster setup and health tools
 
 Tool | Description
 ---- | -----------
@@ -122,29 +124,33 @@ Tool | Description
 `test_cluster_connection` | Check the cluster credentials by connecting to the cluster
 `get_cluster_health_and_services` | Get cluster health status and list of all running services
 
-### Schema discovery tools
+### Data model and schema discovery tools
 
 Tool | Description
 ---- | -----------
-`get_buckets_in_cluster` | Get a list of all buckets in the cluster
-`get_scopes_in_bucket` | Get a list of all scopes in a bucket
-`get_collections_in_scope` | Get a list of all collections in a scope and bucket
-`get_scopes_and_collections_in_bucket` | Get all scopes and collections in a bucket
-`get_schema_for_collection` | Get the document structure for a collection
+`get_buckets_in_cluster` | Get a list of all the buckets in the cluster
+`get_scopes_in_bucket` | Get a list of all the scopes in the specified bucket
+`get_collections_in_scope` | Get a list of all the collections in a specified scope and bucket
+`get_scopes_and_collections_in_bucket` | Get a list of all the scopes and collections in the specified bucket
+`get_schema_for_collection` | Get the structure for a collection
 
-### Key-value operations tools
+### Document KV operations tools
 
 Tool | Description
 ---- | -----------
 `get_document_by_id` | Get a document by ID from a specified scope and collection
+`upsert_document_by_id` | Upsert a document by ID to a specified scope and collection. **Disabled when `CB_MCP_READ_ONLY_MODE=true`.**
+`insert_document_by_id` | Insert a new document by ID (fails if document exists). **Disabled when `CB_MCP_READ_ONLY_MODE=true`.**
+`replace_document_by_id` | Replace an existing document by ID (fails if document doesn't exist). **Disabled when `CB_MCP_READ_ONLY_MODE=true`.**
+`delete_document_by_id` | Delete a document by ID from a specified scope and collection. **Disabled when `CB_MCP_READ_ONLY_MODE=true`.**
 
-### SQL++ query and indexing tools
+### Query and indexing tools
 
 Tool | Description
 ---- | -----------
-`run_sql_plus_plus_query` | Run a SQL++ query on a specified scope
-`list_indexes` | List all indexes in the cluster with optional filtering
-`get_index_advisor_recommendations` | Get index recommendations for a SQL++ query
+`run_sql_plus_plus_query` | Run a [SQL++ query](https://www.couchbase.com/sqlplusplus/) on a specified scope
+`list_indexes` | List all indexes in the cluster with their definitions, with optional filtering by bucket, scope, collection and index name
+`get_index_advisor_recommendations` | Get index recommendations from Couchbase Index Advisor for a given SQL++ query to optimize query performance
 
 ### Query performance analysis tools
 
@@ -156,7 +162,7 @@ Tool | Description
 `get_queries_with_large_result_count` | Get queries with the largest result counts
 `get_queries_using_primary_index` | Get queries that use a primary index (potential performance concern)
 `get_queries_not_using_covering_index` | Get queries that don't use a covering index
-`get_queries_not_selective` | Get queries that are not selective (high scan-to-result ratio)
+`get_queries_not_selective` | Get queries that are not selective (index scans return many more documents than final result)
 
 ## Configuration
 
@@ -165,11 +171,13 @@ Tool | Description
 Variable | Description | Default
 -------- | ----------- | -------
 `CB_CONNECTION_STRING` | Connection string to the Couchbase cluster | Required
-`CB_USERNAME` | Username for basic authentication | Required
-`CB_PASSWORD` | Password for basic authentication | Required
+`CB_USERNAME` | Username for basic authentication | Required (or client certificate for mTLS)
+`CB_PASSWORD` | Password for basic authentication | Required (or client certificate for mTLS)
+`CB_CLIENT_CERT_PATH` | Path to the client certificate file for mTLS authentication | None
+`CB_CLIENT_KEY_PATH` | Path to the client key file for mTLS authentication | None
+`CB_CA_CERT_PATH` | Path to server root certificate for TLS (not required for Capella) | None
 `CB_MCP_READ_ONLY_MODE` | Prevent all data modifications (KV and query) | `true`
 `CB_MCP_DISABLED_TOOLS` | Comma-separated list of tools to disable | None
-`CB_CA_CERT_PATH` | Path to server root certificate for TLS | None
 
 ### Read-only mode
 
