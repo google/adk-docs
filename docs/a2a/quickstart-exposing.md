@@ -97,6 +97,21 @@ from google.adk.a2a.utils.agent_to_a2a import to_a2a
 a2a_app = to_a2a(root_agent, port=8001, agent_card="/path/to/your/agent-card.json")
 ```
 
+You can also configure a custom store for push notifications using the `push_config_store` parameter. If you do not provide a value for this parameter, push notifications use an in-memory store.
+
+**Example with `push_config_store`:**
+```python
+from google.adk.a2a.utils.agent_to_a2a import to_a2a
+from a2a.server.tasks import InMemoryPushNotificationConfigStore
+
+# Make your agent A2A-compatible with a custom push notification store
+a2a_app = to_a2a(
+    root_agent,
+    port=8001,
+    push_config_store=InMemoryPushNotificationConfigStore()
+)
+```
+
 Now let's dive into the sample code.
 
 ### 1. Getting the Sample Code { #getting-the-sample-code }
