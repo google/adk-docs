@@ -11,9 +11,17 @@ it may ask for those values one at a time or both at once.
 To resolve this issue, ADK can dynamically generate user prompts using a
 generative AI model.
 
-To use this feature, you must specify a
-[`ConversationScenario`](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/conversation_scenarios.py)
-which dictates the user's goals in their conversation with the agent.
+To use this feature, you must specify a [`ConversationScenario`](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/conversation_scenarios.py) which dictates the user's goals in their conversation with the agent. You may also specify a user persona that you expect the user to adhere to.
+
+A `ConversationScenario` consists of the following components:
+
+*   `starting_prompt`: A fixed initial prompt that the user should use to start
+    the conversation with the agent.
+*   `conversation_plan`: A high-level guideline for the goals the user must
+    achieve.
+*   `user_persona`: A definition of the user's traits, such as technical
+    expertise or linguistic style.
+
 A sample conversation scenario for the
 [`hello_world`](https://github.com/google/adk-python/tree/main/contributing/samples/hello_world)
 agent is shown below:
@@ -24,16 +32,20 @@ agent is shown below:
   "conversation_plan": "Ask the agent to roll a 20-sided die. After you get the result, ask the agent to check if it is prime."
 }
 ```
+The LLM uses the `conversation_plan`, along with the conversation history, to
+dynamically generate user prompts.
 
-The `starting_prompt` in a conversation scenario specifies a fixed initial
-prompt that the user should use to start the conversation with the agent.
-Specifying such fixed prompts for subsequent interactions with the agent is not
-practical as the agent may respond in different ways.
-Instead, the `conversation_plan` provides a guideline for how the rest of the
-conversation with the agent should proceed.
-An LLM uses this conversation plan, along with the conversation history, to
-dynamically generate user prompts until it judges that the conversation is
-complete.
+You can also specify a pre-built `user_persona` in the following manner:
+
+```json
+{
+  "starting_prompt": "What can you do for me?",
+  "conversation_plan": "Ask the agent to roll a 20-sided die. After you get the result, ask the agent to check if it is prime.",
+  "user_persona": "NOVICE"
+}
+```
+
+While the conversation plan dictates what must be accomplished, the persona dictates how the model phrases its queries and reacts to the agent's responses.
 
 !!! tip "Try it in Colab"
 
@@ -41,6 +53,50 @@ complete.
     [Simulating User Conversations to Dynamically Evaluate ADK Agents](https://github.com/google/adk-samples/blob/main/python/notebooks/evaluation/user_simulation_in_adk_evals.ipynb).
     You'll define a conversation scenario, run a "dry run" to check the
     dialogue, and then perform a full evaluation to score the agent's responses.
+
+## User Personas
+
+A User Persona is a role that the simulated user adopts during the conversation.
+It is defined by a set of **behaviors** that dictate how the user interacts with
+the agent, such as their communication style, how they provide information, and
+how they react to errors.
+
+A `UserPersona` consists of the following fields:
+
+*   `id`: A unique identifier for the persona.
+*   `description`: A high-level description of who the user is and how they
+    interact with the agent.
+*   `behaviors`: A list of `UserBehavior` objects that define specific traits.
+
+Each `UserBehavior` includes:
+
+*   `name`: The name of the behavior.
+*   `description`: A summary of the expected behavior.
+*   `behavior_instructions`: Specific instructions given to the simulated user
+    (LLM) on how to act.
+*   `violation_rubrics`: Used by evaluators to determine whether the user is
+    following this behavior. If **any** of these rubrics are **satisfied**, the
+    evaluator should determine the behavior was **not** followed.
+
+## Pre-built Personas
+
+ADK provides a set of pre-built personas composed of common behaviors. The table
+below summarizes the behaviors for each persona:
+
+| Behavior        | **EXPERT**        | **NOVICE**     | **EVALUATOR** persona |
+:                 : persona           : persona        :                       :
+| :-------------- | :---------------- | :------------- | :-------------------- |
+| **Advance**     | Detail oriented   | Goal oriented  | Detail oriented       |
+:                 : (proactively      : (waits to be   :                       :
+:                 : provides details) : asked for      :                       :
+:                 :                   : details)       :                       :
+| **Answer**      | Relevant          | Answer all     | Relevant questions    |
+:                 : questions only    : questions      : only                  :
+| **Correct Agent | Yes               | No             | No                    |
+: Inaccuracies**  :                   :                :                       :
+| **Troubleshoot  | Once              | Never          | Never                 |
+: Agent Errors**  :                   :                :                       :
+| **Tone**        | Professional      | Conversational | Conversational        |
 
 ## Example: Evaluating the [`hello_world`](https://github.com/google/adk-python/tree/main/contributing/samples/hello_world) agent with conversation scenarios
 
@@ -56,11 +112,13 @@ Try saving the following to
   "scenarios": [
     {
       "starting_prompt": "What can you do for me?",
-      "conversation_plan": "Ask the agent to roll a 20-sided die. After you get the result, ask the agent to check if it is prime."
+      "conversation_plan": "Ask the agent to roll a 20-sided die. After you get the result, ask the agent to check if it is prime.",
+      "user_persona": "NOVICE"
     },
     {
       "starting_prompt": "Hi, I'm running a tabletop RPG in which prime numbers are bad!",
-      "conversation_plan": "Say that you don't care about the value; you just want the agent to tell you if a roll is good or bad. Once the agent agrees, ask it to roll a 6-sided die. Finally, ask the agent to do the same with 2 20-sided dice."
+      "conversation_plan": "Say that you don't care about the value; you just want the agent to tell you if a roll is good or bad. Once the agent agrees, ask it to roll a 6-sided die. Finally, ask the agent to do the same with 2 20-sided dice.",
+      "user_persona": "EXPERT"
     }
   ]
 }
@@ -151,19 +209,57 @@ The below `EvalConfig` shows the default user simulator configuration:
 }
 ```
 
-* `model`: The model backing the user simulator.
-* `model_configuration`: A
-[`GenerateContentConfig`](https://github.com/googleapis/python-genai/blob/6196b1b4251007e33661bb5d7dc27bafee3feefe/google/genai/types.py#L4295)
-which controls the model behavior.
-* `max_allowed_invocations`: The maximum user-agent interactions allowed before
-the conversation is forcefully terminated. This should be set to be greater than
-the longest reasonable user-agent interaction in your `EvalSet`.
-* `custom_instructions`: Optional. Overrides the default instructions for the
-user simulator. The instruction string must contain the following formatting
-placeholders exactly as shown below (*do not substitute values in advance!*):
-    * `{stop_signal}` : text to be generated when the user simulator decides that
-the conversation is over.
-    * `{conversation_plan}` : the overall plan for the conversation that the user
-simulator must follow.
-    * `{conversation_history}` : the conversation between the user and the agent
-so far.
+*   `model`: The model backing the user simulator.
+*   `model_configuration`: A
+    [`GenerateContentConfig`](https://github.com/googleapis/python-genai/blob/6196b1b4251007e33661bb5d7dc27bafee3feefe/google/genai/types.py#L4295)
+    which controls the model behavior.
+*   `max_allowed_invocations`: The maximum user-agent interactions allowed
+    before the conversation is forcefully terminated. This should be set to be
+    greater than the longest reasonable user-agent interaction in your
+    `EvalSet`.
+*   `custom_instructions`: Optional. Overrides the default instructions for the
+    user simulator. The instruction string must contain the following formatting
+    placeholders using
+    [Jinja](https://jinja.palletsprojects.com/en/stable/templates/#) syntax (*do
+    not substitute values in advance!*):
+    *   `{{ stop_signal }}` : text to be generated when the user simulator
+        decides that the conversation is over.
+    *   `{{ conversation_plan }}` : the overall plan for the conversation that
+        the user simulator must follow.
+    *   `{{ conversation_history }}` : the conversation between the user and the
+        agent so far.
+    *   You can also access the `UserPersona` object through the `{{ persona }}`
+        placeholder.
+
+## Custom Personas
+
+You can define your own custom persona by providing a `UserPersona` object in
+the `ConversationScenario`.
+
+Example of a custom persona definition:
+
+```json
+{
+  "starting_prompt": "I need help with my account.",
+  "conversation_plan": "Ask the agent to reset your password.",
+  "user_persona": {
+    "id": "IMPATIENT_USER",
+    "description": "A user who is in a rush and gets easily frustrated.",
+    "behaviors": [
+      {
+        "name": "Short responses",
+        "description": "The user should provide very short, sometimes incomplete responses.",
+        "behavior_instructions": [
+            "Keep your responses under 10 words.",
+            "Omit polite phrases."
+        ],
+        "violation_rubrics": [
+            "The user response is over 10 words.",
+            "The user response is overly polite."
+        ]
+      }
+    ]
+  }
+}
+```
+

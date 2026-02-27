@@ -211,6 +211,7 @@ Or, you can configure your agent to use the Memory Bank by manually instantiatin
 
 === "Python"
   ```py
+  from google import adk
   from google.adk.memory import VertexAiMemoryBankService
 
   agent_engine_id = agent_engine.api_resource.name.split("/")[-1]
@@ -253,6 +254,7 @@ To extract memories from your session, you need to call `add_session_to_memory`.
 
 === "Python"
 ```python
+from google.adk.agents import Agent
 from google import adk
 
 async def auto_save_session_to_memory_callback(callback_context):
