@@ -182,11 +182,12 @@ Understanding artifacts involves grasping a few key components: the service that
     import { InMemoryRunner } from '@google/adk';
     import { LlmAgent } from '@google/adk';
     import { InMemoryArtifactService } from '@google/adk';
+	import { InMemorySessionService } from '@google/adk';
 
     // Example: Configuring the Runner with an Artifact Service
     const myAgent = new LlmAgent({name: "artifact_user_agent", model: "gemini-2.5-flash"});
     const artifactService = new InMemoryArtifactService(); // Choose an implementation
-    const sessionService = new InMemoryArtifactService();
+    const sessionService = new InMemorySessionService();
 
     const runner = new InMemoryRunner({
         agent: myAgent,
@@ -426,7 +427,7 @@ Before you can use any artifact methods via the context objects, you **must** pr
 === "Typescript"
 
     ```typescript
-    import { LlmAgent, InMemoryRunner, InMemoryArtifactService } from '@google/adk';
+    import { LlmAgent, InMemoryRunner, InMemoryArtifactService, InMemorySessionService } from '@google/adk';
 
     // Your agent definition
     const agent = new LlmAgent({name: "my_agent", model: "gemini-2.5-flash"});
@@ -438,7 +439,7 @@ Before you can use any artifact methods via the context objects, you **must** pr
     const runner = new InMemoryRunner({
         agent: agent,
         appName: "artifact_app",
-        sessionService: new InMemoryArtifactService(),
+        sessionService: new InMemorySessionService(),
         artifactService: artifactService, // Service must be provided here
     });
     // If no artifactService is configured, calling artifact methods on context objects will throw an error.

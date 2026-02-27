@@ -1,4 +1,4 @@
-# Bidi-streaming (live) in ADK
+# Gemini Live API Toolkit in ADK
 
 <div class="language-support-tag">
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.5.0</span><span class="lst-preview">Experimental</span>
@@ -16,7 +16,7 @@ text, audio, and video inputs, and they can provide text and audio output.
 <div class="video-grid">
   <div class="video-item">
     <div class="video-container">
-      <iframe src="https://www.youtube-nocookie.com/embed/vLUkAGeLR1k" title="ADK Bidi-streaming in 5 minutes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+      <iframe src="https://www.youtube-nocookie.com/embed/vLUkAGeLR1k" title="ADK Gemini Live API Toolkit in 5 minutes" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
     </div>
   </div>
   <div class="video-item">
@@ -30,38 +30,38 @@ text, audio, and video inputs, and they can provide text and audio output.
 
 <div class="grid cards" markdown>
 
--   :material-console-line: **Quickstart (Bidi-streaming)**
+-   :material-console-line: **Quickstart (Gemini Live API Toolkit)**
 
     ---
 
     In this quickstart, you'll build a simple agent and use streaming in ADK to
     implement low-latency and bidirectional voice and video communication.
 
-    - [Quickstart (Bidi-streaming)](../get-started/streaming/quickstart-streaming.md)
+    - [Quickstart (Gemini Live API Toolkit)](../get-started/streaming/quickstart-streaming.md)
 
--   :material-console-line: **Bidi-streaming Demo Application**
+-   :material-console-line: **Gemini Live API Toolkit Demo Application**
 
     ---
 
     A production-ready reference implementation showcasing ADK bidirectional streaming with multimodal support (text, audio, image). This FastAPI-based demo demonstrates real-time WebSocket communication, automatic transcription, tool calling with Google Search, and complete streaming lifecycle management. This demo is extensively referenced throughout the development guide series.
 
-    - [ADK Bidi-streaming Demo](https://github.com/google/adk-samples/tree/main/python/agents/bidi-demo)
+    - [ADK Gemini Live API Toolkit Demo](https://github.com/google/adk-samples/tree/main/python/agents/bidi-demo)
 
--   :material-console-line: **Blog post: ADK Bidi-streaming Visual Guide**
-
-    ---
-
-    A visual guide to real-time multimodal AI agent development with ADK Bidi-streaming. This article provides intuitive diagrams and illustrations to help you understand how Bidi-streaming works and how to build interactive AI agents.
-
-    - [Blog post: ADK Bidi-streaming Visual Guide](https://medium.com/google-cloud/adk-bidi-streaming-a-visual-guide-to-real-time-multimodal-ai-agent-development-62dd08c81399)
-
--   :material-console-line: **Bidi-streaming development guide series**
+-   :material-console-line: **Blog post: ADK Gemini Live API Toolkit Visual Guide**
 
     ---
 
-    A series of articles for diving deeper into the Bidi-streaming development with ADK. You can learn basic concepts and use cases, the core API, and end-to-end application design.
+    A visual guide to real-time multimodal AI agent development with ADK Gemini Live API Toolkit. This article provides intuitive diagrams and illustrations to help you understand how streaming works and how to build interactive AI agents.
 
-    - [Part 1: Introduction to ADK Bidi-streaming](dev-guide/part1.md) - Fundamentals of Bidi-streaming, Live API technology, ADK architecture components, and complete application lifecycle with FastAPI examples
+    - [Blog post: ADK Gemini Live API Toolkit Visual Guide](https://medium.com/google-cloud/adk-bidi-streaming-a-visual-guide-to-real-time-multimodal-ai-agent-development-62dd08c81399)
+
+-   :material-console-line: **Gemini Live API Toolkit development guide series**
+
+    ---
+
+    A series of articles for diving deeper into the Gemini Live API Toolkit development with ADK. You can learn basic concepts and use cases, the core API, and end-to-end application design.
+
+    - [Part 1: Introduction to ADK Gemini Live API Toolkit](dev-guide/part1.md) - Fundamentals of streaming, Live API technology, ADK architecture components, and complete application lifecycle with FastAPI examples
     - [Part 2: Sending messages with LiveRequestQueue](dev-guide/part2.md) - Upstream message flow, sending text/audio/video, activity signals, and concurrency patterns
     - [Part 3: Event handling with run_live()](dev-guide/part3.md) - Processing events, handling text/audio/transcriptions, automatic tool execution, and multi-agent workflows
     - [Part 4: Understanding RunConfig](dev-guide/part4.md) - Response modalities, streaming modes, session management, session resumption, context window compression, and quota management
@@ -79,7 +79,7 @@ text, audio, and video inputs, and they can provide text and audio output.
 
     ---
 
-    This article shows how to use Bidi-streaming (live) in ADK for real-time audio/video streaming. It offers a Python server example using LiveRequestQueue to build custom, interactive AI agents.
+    This article shows how to use Gemini Live API Toolkit in ADK for real-time audio/video streaming. It offers a Python server example using LiveRequestQueue to build custom, interactive AI agents.
 
     - [Blog post: Google ADK + Vertex AI Live API](https://medium.com/google-cloud/google-adk-vertex-ai-live-api-125238982d5e)
 
@@ -87,7 +87,7 @@ text, audio, and video inputs, and they can provide text and audio output.
 
     ---
 
-    This article demonstrates how to use Claude Code Skills to accelerate ADK development, with an example of building a Bidi-streaming chat app. Learn how to leverage AI-powered coding assistance to build better agents faster.
+    This article demonstrates how to use Claude Code Skills to accelerate ADK development, with an example of building a streaming chat app. Learn how to leverage AI-powered coding assistance to build better agents faster.
 
     - [Blog post: Supercharge ADK Development with Claude Code Skills](https://medium.com/@kazunori279/supercharge-adk-development-with-claude-code-skills-d192481cbe72)
 

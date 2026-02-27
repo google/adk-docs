@@ -102,8 +102,8 @@ An ADK agent project requires this dependency in your
 <dependencies>
     <dependency>
         <groupId>com.google.adk</groupId>
-        <artifactId>adk-core</artifactId>
-        <version>0.3.0</version>
+        <artifactId>google-adk</artifactId>
+        <version>0.6.0</version>
     </dependency>
 </dependencies>
 ```
@@ -138,13 +138,13 @@ additional settings with the following configuration code:
             <dependency>
                 <groupId>com.google.adk</groupId>
                 <artifactId>google-adk</artifactId>
-                <version>0.3.0</version>
+                <version>0.6.0</version>
             </dependency>
             <!-- The ADK dev web UI to debug your agent -->
             <dependency>
                 <groupId>com.google.adk</groupId>
                 <artifactId>google-adk-dev</artifactId>
-                <version>0.3.0</version>
+                <version>0.6.0</version>
             </dependency>
         </dependencies>
 

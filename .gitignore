@@ -194,3 +194,7 @@ docs/site
 
 # Bash files
 ***/*.sh
+
+# Ignore a local build but keep the directory
+/site/*
+!/site/.gitkeep

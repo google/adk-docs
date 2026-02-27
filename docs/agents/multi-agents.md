@@ -397,7 +397,7 @@ Agents within a system often need to exchange data or trigger actions in one ano
 
 #### a) Shared Session State (`session.state`)
 
-The most fundamental way for agents operating within the same invocation (and thus sharing the same [`Session`](../sessions/session.md) object via the `InvocationContext`) to communicate passively.
+The most fundamental way for agents operating within the same invocation (and thus sharing the same [`Session`](/adk-docs/sessions/session/) object via the `InvocationContext`) to communicate passively.
 
 * **Mechanism:** One agent (or its tool/callback) writes a value (`context.state['data_key'] = processed_data`), and a subsequent agent reads it (`data = context.state.get('data_key')`). State changes are tracked via [`CallbackContext`](../callbacks/index.md).
 * **Convenience:** The `output_key` property on [`LlmAgent`](llm-agents.md) automatically saves the agent's final response text (or structured output) to the specified state key.
@@ -578,7 +578,8 @@ Leverages an [`LlmAgent`](llm-agents.md)'s understanding to dynamically route ta
 
 #### c) Explicit Invocation (`AgentTool`)
 
-Allows an [`LlmAgent`](llm-agents.md) to treat another `BaseAgent` instance as a callable function or [Tool](../tools/index.md).
+Allows an [`LlmAgent`](llm-agents.md) to treat another `BaseAgent` instance as a callable function or 
+[Tool](/adk-docs/tools-custom/).
 
 * **Mechanism:** Wrap the target agent instance in `AgentTool` and include it in the parent `LlmAgent`'s `tools` list. `AgentTool` generates a corresponding function declaration for the LLM.
 * **Handling:** When the parent LLM generates a function call targeting the `AgentTool`, the framework executes `AgentTool.run_async`. This method runs the target agent, captures its final response, forwards any state/artifact changes back to the parent's context, and returns the response as the tool's result.

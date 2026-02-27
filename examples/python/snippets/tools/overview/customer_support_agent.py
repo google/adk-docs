@@ -38,8 +38,8 @@ escalation_tool = FunctionTool(func=check_and_transfer)
 main_agent = Agent(
     model='gemini-2.0-flash',
     name='main_agent',
-    instruction="""You are the first point of contact for customer support of an analytics tool. Answer general queries. If the user indicates urgency, use the 'check_and_transfer' tool.""",
-    tools=[check_and_transfer]
+    instruction="""You are the first point of contact for customer support of an analytics tool. Answer general queries. If the user indicates urgency, use the 'escalation_tool' tool.""",
+    tools=[escalation_tool]
 )
 
 support_agent = Agent(
