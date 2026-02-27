@@ -83,20 +83,13 @@ Each `UserBehavior` includes:
 ADK provides a set of pre-built personas composed of common behaviors. The table
 below summarizes the behaviors for each persona:
 
-| Behavior        | **EXPERT**        | **NOVICE**     | **EVALUATOR** persona |
-:                 : persona           : persona        :                       :
-| :-------------- | :---------------- | :------------- | :-------------------- |
-| **Advance**     | Detail oriented   | Goal oriented  | Detail oriented       |
-:                 : (proactively      : (waits to be   :                       :
-:                 : provides details) : asked for      :                       :
-:                 :                   : details)       :                       :
-| **Answer**      | Relevant          | Answer all     | Relevant questions    |
-:                 : questions only    : questions      : only                  :
-| **Correct Agent | Yes               | No             | No                    |
-: Inaccuracies**  :                   :                :                       :
-| **Troubleshoot  | Once              | Never          | Never                 |
-: Agent Errors**  :                   :                :                       :
-| **Tone**        | Professional      | Conversational | Conversational        |
+| Behavior | **EXPERT** persona | **NOVICE** persona | **EVALUATOR** persona |
+| :--- | :--- | :--- | :--- |
+| **Advance** | Detail oriented (proactively provides details) | Goal oriented (waits to be asked for details) | Detail oriented |
+| **Answer** | Relevant questions only | Answer all questions | Relevant questions only |
+| **Correct Agent Inaccuracies** | Yes | No | No |
+| **Troubleshoot Agent Errors** | Once | Never | Never |
+| **Tone** | Professional | Conversational | Conversational |
 
 ## Example: Evaluating the [`hello_world`](https://github.com/google/adk-python/tree/main/contributing/samples/hello_world) agent with conversation scenarios
 

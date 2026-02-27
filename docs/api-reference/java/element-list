@@ -6,6 +6,7 @@ com.google.adk
 com.google.adk.a2a
 com.google.adk.a2a.common
 com.google.adk.a2a.converters
+com.google.adk.a2a.executor
 com.google.adk.agents
 com.google.adk.apps
 com.google.adk.artifacts
@@ -33,6 +34,7 @@ com.google.adk.summarizer
 com.google.adk.telemetry
 com.google.adk.tools
 com.google.adk.tools.applicationintegrationtoolset
+com.google.adk.tools.computeruse
 com.google.adk.tools.mcp
 com.google.adk.tools.retrieval
 com.google.adk.tutorials
