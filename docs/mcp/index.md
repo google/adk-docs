@@ -38,6 +38,11 @@ and design patterns that help you use ADK together with MCP servers, including:
 - **Exposing ADK Tools via an MCP Server**: How to build an MCP server that
   wraps ADK tools, making them accessible to any MCP client.
 
+!!! note "MCP Session Persistence"
+    The `MCPSessionManager` now supports pickling. This feature enables
+    session persistence, allowing you to save and restore the state of MCP
+    sessions when using MCP tools.
+
 ## ADK Agent and FastMCP server
 ADK uses [FastMCP](https://github.com/jlowin/fastmcp) to handle all the
 complex MCP protocol details and server management, so you can focus on
