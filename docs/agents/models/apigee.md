@@ -18,18 +18,26 @@ Apigee proxy, you immediately gain enterprise-grade capabilities:
 
 - **Monitoring & Visibility:** Get granular monitoring, analysis, and auditing of all your AI requests.
 
-!!! note
+## Model Support
 
-    The `ApigeeLLM` wrapper is currently designed for use with Vertex AI
-    and the Gemini API (generateContent). We are continually expanding support for
-    other models and interfaces.
+The `ApigeeLlm` wrapper supports the following model types:
+
+-   **Vertex AI and Gemini API**: The `ApigeeLlm` wrapper is designed for use
+    with Vertex AI and the Gemini API (`generateContent`). This is the default
+    behavior.
+
+-   **OpenAI-compatible APIs**: You can use `ApigeeLlm` with any
+    OpenAI-compatible API (for example, using the `/chat/completions` endpoint).
+    To do this, you can either:
+    -   Set the `api_type` parameter to `chat_completions`.
+    -   Use a model string with the prefix `apigee/openai/`.
 
 ## Example implementation
 
 Integrate Apigee's governance into your agent's workflow by instantiating the
 `ApigeeLlm` wrapper object and pass it to an `LlmAgent` or other agent type.
 
-=== "Python"
+=== "Python (Gemini)"
 
     ```python
 
@@ -51,6 +59,33 @@ Integrate Apigee's governance into your agent's workflow by instantiating the
         model=model,
         name="my_governed_agent",
         instruction="You are a helpful assistant powered by Gemini and governed by Apigee.",
+        # ... other agent parameters
+    )
+
+    ```
+
+=== "Python (OpenAI-compatible)"
+
+    ```python
+
+    from google.adk.agents import LlmAgent
+    from google.adk.models.apigee_llm import ApigeeLlm
+
+    # Instantiate the ApigeeLlm wrapper
+    model = ApigeeLlm(
+        # Specify a model string that is compatible with your OpenAI API.
+        model="apigee/openai/gpt-4",
+        # The proxy URL of your deployed Apigee proxy including the base path
+        proxy_url=f"https://{APIGEE_PROXY_URL}",
+        # Pass necessary authentication/authorization headers (like an API key)
+        custom_headers={"Authorization": "Bearer {OPENAI_API_KEY}"}
+    )
+
+    # Pass the configured model wrapper to your LlmAgent
+    agent = LlmAgent(
+        model=model,
+        name="my_governed_agent",
+        instruction="You are a helpful assistant powered by GPT-4 and governed by Apigee.",
         # ... other agent parameters
     )
 
