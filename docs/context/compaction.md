@@ -50,7 +50,7 @@ increases size of the second summary compression, and each summary afterwards,
 as shown in Figure 1.
 
 ![Context compaction example illustration](/adk-docs/assets/context-compaction.svg)
-**Figure 1.** Ilustration of event compaction configuration with a interval of 3
+**Figure 1.** Illustration of event compaction configuration with an interval of 3
 and overlap of 1.
 
 With this example configuration, the context compression tasks happen as follows:

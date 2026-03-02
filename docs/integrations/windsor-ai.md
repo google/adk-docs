@@ -87,8 +87,12 @@ business data using natural language, without writing SQL or custom scripts.
                 new MCPToolset({
                     type: "StreamableHTTPConnectionParams",
                     url: "https://mcp.windsor.ai",
-                    header: {
-                        Authorization: `Bearer ${WINDSOR_API_KEY}`,
+                    transportOptions: {
+                        requestInit: {
+                            headers: {
+                                Authorization: `Bearer ${WINDSOR_API_KEY}`,
+                            },
+                        },
                     },
                 }),
             ],
