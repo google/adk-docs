@@ -26,7 +26,7 @@ purposes:
 *   **[Agent Starter Pack deployment](/adk-docs/deploy/agent-engine/asp/)**:
     Follow this accelerated deployment path to set up a fully configured Google 
     Cloud environment with CI/CD, infrastructure-as-code, and deployment pipelines 
-    for your ADK agent. You will need a Google Cloud project with billing enabled.
+    for your ADK agent. You need a Google Cloud project with billing enabled.
     The Agent Starter Pack (ASP) helps you deploy ADK projects quickly and it 
     includes advanced service configurations that extend the core capabilities of 
     the Agent Engine runtime for more mature use cases.
