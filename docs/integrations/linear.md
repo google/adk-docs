@@ -157,8 +157,12 @@ project cycles, and automate development workflows using natural language.
                 new MCPToolset({
                     type: "StreamableHTTPConnectionParams",
                     url: "https://mcp.linear.app/mcp",
-                    header: {
-                        Authorization: `Bearer ${LINEAR_API_KEY}`,
+                    transportOptions: {
+                        requestInit: {
+                            headers: {
+                                Authorization: `Bearer ${LINEAR_API_KEY}`,
+                            },
+                        },
                     },
                 }),
             ],

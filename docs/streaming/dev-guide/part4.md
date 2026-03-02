@@ -31,7 +31,7 @@ This table provides a quick reference for all RunConfig parameters covered in th
 
 !!! note "Source Reference"
 
-    [`run_config.py`](https://github.com/google/adk-python/blob/29c1115959b0084ac1169748863b35323da3cf50/src/google/adk/agents/run_config.py)
+    [`run_config.py`](https://github.com/google/adk-python/blob/427a983b18088bdc22272d02714393b0a779ecdf/src/google/adk/agents/run_config.py)
 
 **Platform Support Legend:**
 
@@ -223,39 +223,26 @@ sequenceDiagram
 
 ### Progressive SSE Streaming
 
-**Progressive SSE streaming** is a feature that enhances how SSE mode delivers streaming responses. This feature improves response aggregation by:
+**Progressive SSE streaming** is an experimental feature that enhances how SSE mode delivers streaming responses. When enabled, this feature improves response aggregation by:
 
 - **Content ordering preservation**: Maintains the original order of mixed content types (text, function calls, inline data)
 - **Intelligent text merging**: Only merges consecutive text parts of the same type (regular text vs thought text)
 - **Progressive delivery**: Marks all intermediate chunks as `partial=True`, with a single final aggregated response at the end
-- **Deferred function execution**: Skips executing function calls in partial events, only executing them in the final aggregated event to ensure parallel function calls are executed together rather than sequentially
-- **Function call argument streaming**: Supports progressive building of function call arguments through `partial_args`, enabling real-time display of function call construction
+- **Deferred function execution**: Skips executing function calls in partial events, only executing them in the final aggregated event to avoid duplicate executions
 
-**Default Behavior:**
+**Enabling the feature:**
 
-When you use `StreamingMode.SSE`, progressive SSE streaming is **enabled by default**. This means you automatically benefit from these improvements without any additional configuration.
-
-**Disabling the feature (if needed):**
-
-If you need to revert to the legacy SSE streaming behavior (simple text accumulation), you can disable it via environment variable:
+This is an experimental (WIP stage) feature disabled by default. Enable it via environment variable:
 
 ```bash
-export ADK_DISABLE_PROGRESSIVE_SSE_STREAMING=1
+export ADK_ENABLE_PROGRESSIVE_SSE_STREAMING=1
 ```
 
-!!! warning "Legacy Behavior Trade-offs"
+**When to use:**
 
-    Disabling progressive SSE streaming reverts to simple text accumulation, which:
-    - May lose original content ordering when mixing text and function calls
-    - Does not support function call argument streaming via `partial_args`
-    - Is provided for backward compatibility only—new applications should use the default progressive mode
-
-**When progressive SSE streaming helps:**
-
-- You're using `StreamingMode.SSE` and have mixed content types (text + function calls)
+- You're using `StreamingMode.SSE` and need better handling of mixed content types (text + function calls)
 - Your responses include thought text (extended thinking) mixed with regular text
 - You want to ensure function calls execute only once after complete response aggregation
-- You need to display function call construction in real-time as arguments stream in
 
 **Note:** This feature only affects `StreamingMode.SSE`. It does not apply to `StreamingMode.BIDI` (the focus of this guide), which uses the Live API's native bidirectional protocol.
 
@@ -309,11 +296,11 @@ While this guide focuses on Bidi-streaming with Gemini 2.0 Live models, ADK also
 
 ## Understanding Live API Connections and Sessions
 
-When building ADK Bidi-streaming applications, it's essential to understand how ADK manages the communication layer between itself and the  Live API backend. This section explores the fundamental distinction between **connections** (the WebSocket transport links that ADK establishes to Live API) and **sessions** (the logical conversation contexts maintained by Live API). Unlike traditional request-response APIs, the Bidi-streaming architecture introduces unique constraints: connection timeouts, session duration limits that vary by modality (audio-only vs audio+video), finite context windows, and concurrent session quotas that differ between Gemini Live API and Vertex AI Live API.
+When building ADK Gemini Live API Toolkit applications, it's essential to understand how ADK manages the communication layer between itself and the  Live API backend. This section explores the fundamental distinction between **connections** (the WebSocket transport links that ADK establishes to Live API) and **sessions** (the logical conversation contexts maintained by Live API). Unlike traditional request-response APIs, the Bidi-streaming architecture introduces unique constraints: connection timeouts, session duration limits that vary by modality (audio-only vs audio+video), finite context windows, and concurrent session quotas that differ between Gemini Live API and Vertex AI Live API.
 
 ### ADK `Session` vs Live API Session
 
-Understanding the distinction between **ADK `Session`** and **Live API session** is crucial for building reliable streaming applications with ADK Bidi-streaming.
+Understanding the distinction between **ADK `Session`** and **Live API session** is crucial for building reliable streaming applications with ADK Gemini Live API Toolkit.
 
 **ADK `Session`** (managed by SessionService):
 - Persistent conversation storage for conversation history, events, and state, created via `SessionService.create_session()` 
@@ -395,7 +382,7 @@ Now that we understand the difference between ADK `Session` objects and Live API
 
 ### Live API Connections and Sessions
 
-Understanding the distinction between **connections** and **sessions** at the Live API level is crucial for building reliable ADK Bidi-streaming applications.
+Understanding the distinction between **connections** and **sessions** at the Live API level is crucial for building reliable ADK Gemini Live API Toolkit applications.
 
 **Connection**: The physical WebSocket link between ADK and the Live API server. This is the network transport layer that carries bidirectional streaming data.
 
@@ -988,7 +975,7 @@ ADK validates CFC compatibility at session initialization and will raise an erro
 
 - ✅ **Supported**: `gemini-2.x` models (e.g., `gemini-2.5-flash-native-audio-preview-12-2025`)
 - ❌ **Not supported**: `gemini-1.5-x` models
-- **Validation**: ADK checks that the model name starts with `gemini-2` when `support_cfc=True` ([`runners.py:1322-1328`](https://github.com/google/adk-python/blob/fd2c0f556b786417a9f6add744827b07e7a06b7d/src/google/adk/runners.py#L1361-L1367))
+- **Validation**: ADK checks that the model name starts with `gemini-2` when `support_cfc=True` ([`runners.py:1354-1360`](https://github.com/google/adk-python/blob/427a983b18088bdc22272d02714393b0a779ecdf/src/google/adk/runners.py#L1354-L1360))
 - **Code executor**: ADK automatically injects `BuiltInCodeExecutor` when CFC is enabled for safe parallel tool execution
 
 **CFC capabilities:**
@@ -1011,12 +998,12 @@ CFC is designed for complex, multi-step workflows that benefit from intelligent 
 **Learn more:**
 
 - [Gemini Function Calling Guide](https://ai.google.dev/gemini-api/docs/function-calling) - Official documentation on compositional and parallel function calling
-- [ADK Parallel Functions Example](https://github.com/google/adk-python/blob/29c1115959b0084ac1169748863b35323da3cf50/contributing/samples/parallel_functions/agent.py) - Working example with async tools
+- [ADK Parallel Functions Example](https://github.com/google/adk-python/blob/427a983b18088bdc22272d02714393b0a779ecdf/contributing/samples/parallel_functions/agent.py) - Working example with async tools
 - [ADK Performance Guide](https://google.github.io/adk-docs/tools/performance/) - Best practices for parallel-ready tools
 
 ## Summary
 
-In this part, you learned how RunConfig enables sophisticated control over ADK Bidi-streaming sessions through declarative configuration. We covered response modalities and their constraints, explored the differences between BIDI and SSE streaming modes, examined the relationship between ADK Sessions and Live API sessions, and learned how to manage session duration with session resumption and context window compression. You now understand how to handle concurrent session quotas, implement architectural patterns for quota management, configure cost controls through `max_llm_calls` and audio persistence options. With RunConfig mastery, you can build production-ready streaming applications that balance feature richness with operational constraints—enabling extended conversations, managing platform limits, controlling costs effectively, and monitoring resource consumption.
+In this part, you learned how RunConfig enables sophisticated control over ADK Gemini Live API Toolkit sessions through declarative configuration. We covered response modalities and their constraints, explored the differences between BIDI and SSE streaming modes, examined the relationship between ADK Sessions and Live API sessions, and learned how to manage session duration with session resumption and context window compression. You now understand how to handle concurrent session quotas, implement architectural patterns for quota management, configure cost controls through `max_llm_calls` and audio persistence options. With RunConfig mastery, you can build production-ready streaming applications that balance feature richness with operational constraints—enabling extended conversations, managing platform limits, controlling costs effectively, and monitoring resource consumption.
 
 ---
 
