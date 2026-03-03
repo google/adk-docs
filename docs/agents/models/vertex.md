@@ -241,7 +241,7 @@ Vertex AI.
 
         public static LlmAgent createAgent() throws IOException {
             // Model name for Claude 3 Sonnet on Vertex AI (or other versions)
-            String claudeModelVertexAi = "claude-3-sonnet@20240229"; // Or any other Claude model
+            String claudeModelVertexAi = "claude-3-7-sonnet"; // Or any other Claude model
 
             // Configure the AnthropicOkHttpClient with the VertexBackend
             AnthropicClient anthropicClient = AnthropicOkHttpClient.builder()
@@ -286,8 +286,6 @@ Vertex AI.
 
 Vertex AI offers a curated selection of open-source models, such as Meta Llama, through Model-as-a-Service (MaaS). These models are accessible via managed APIs, allowing you to deploy and scale without managing the underlying infrastructure. For a full list of available options, see the [Vertex AI open models for MaaS](https://docs.cloud.google.com/vertex-ai/generative-ai/docs/maas/use-open-models#open-models) documentation.
 
-**Example:**
-
 === "Python"
 
     You can use the [LiteLLM](https://docs.litellm.ai/) library to access open models like Meta's Llama on VertexAI MaaS
@@ -305,6 +303,8 @@ Vertex AI offers a curated selection of open-source models, such as Meta Llama, 
             pip install litellm
             ```
     
+    **Example:**
+
     ```python
     from google.adk.agents import LlmAgent
     from google.adk.models.lite_llm import LiteLlm
