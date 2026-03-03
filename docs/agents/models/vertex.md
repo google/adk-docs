@@ -101,7 +101,7 @@ Vertex AI.
 === "Python"
 
     **Integration Method:** Uses the direct model string (e.g.,
-    `"claude-3-sonnet@20240229"`), *but requires manual registration* within ADK.
+    `"claude-sonnet-4-6"`), *but requires manual registration* within ADK.
 
     **Why Registration?** ADK's registry automatically recognizes `gemini-*` strings
     and standard Vertex AI endpoint strings (`projects/.../endpoints/...`) and
@@ -144,15 +144,15 @@ Vertex AI.
        # --- Register Claude class (do this once at startup) ---
        LLMRegistry.register(Claude)
 
-       # --- Example Agent using Claude 3 Sonnet on Vertex AI ---
+       # --- Example Agent using Claude 4 Sonnet on Vertex AI ---
 
-       # Standard model name for Claude 3 Sonnet on Vertex AI
-       claude_model_vertexai = "claude-3-sonnet@20240229"
+       # Standard model name for Claude 4 Sonnet on Vertex AI
+       claude_model_vertexai = "claude-sonnet-4-6"
 
        agent_claude_vertexai = LlmAgent(
            model=claude_model_vertexai, # Pass the direct string after registration
            name="claude_vertexai_agent",
-           instruction="You are an assistant powered by Claude 3 Sonnet on Vertex AI.",
+           instruction="You are an assistant powered by Claude 4 Sonnet on Vertex AI.",
            generate_content_config=types.GenerateContentConfig(max_output_tokens=4096),
            # ... other agent parameters
        )
@@ -192,8 +192,8 @@ Vertex AI.
     public class ClaudeVertexAiAgent {
 
         public static LlmAgent createAgent() throws IOException {
-            // Model name for Claude 3 Sonnet on Vertex AI (or other versions)
-            String claudeModelVertexAi = "claude-3-7-sonnet"; // Or any other Claude model
+            // Model name for Claude 4 Sonnet on Vertex AI (or other versions)
+            String claudeModelVertexAi = "claude-sonnet-4-6"; // Or any other Claude model
 
             // Configure the AnthropicOkHttpClient with the VertexBackend
             AnthropicClient anthropicClient = AnthropicOkHttpClient.builder()
@@ -209,7 +209,7 @@ Vertex AI.
             LlmAgent agentClaudeVertexAi = LlmAgent.builder()
                 .model(new Claude(claudeModelVertexAi, anthropicClient)) // Pass the Claude instance
                 .name("claude_vertexai_agent")
-                .instruction("You are an assistant powered by Claude 3 Sonnet on Vertex AI.")
+                .instruction("You are an assistant powered by Claude 4 Sonnet on Vertex AI.")
                 // .generateContentConfig(...) // Optional: Add generation config if needed
                 // ... other agent parameters
                 .build();
