@@ -318,26 +318,3 @@ Vertex AI offers a curated selection of open-source models, such as Meta Llama, 
     )
 
     ```
-
-=== "Java"
-
-    ```java
-    import com.google.adk.agents.LlmAgent;
-    import com.google.adk.models.Gemini;
-
-    // ...
-
-    // Use the Vertex AI model resource name for MaaS models
-    // e.g. "publishers/meta/models/llama-3.1-405b-instruct-maas"
-    // or full hierarchy "projects/PROJECT/locations/LOCATION/publishers/meta/models/..."
-    String llamaModel = "publishers/meta/models/llama-3.1-405b-instruct-maas";
-
-    LlmAgent agentLlamaVertex = LlmAgent.builder()
-        .model(Gemini.builder()
-            .modelName(llamaModel)
-            .build())
-        .name("llama_agent")
-        .instruction("You are a helpful assistant powered by Llama on Vertex AI.")
-        // ... other agent parameters
-        .build();
-    ```
