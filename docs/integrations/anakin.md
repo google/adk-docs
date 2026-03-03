@@ -12,7 +12,7 @@ catalog_tags: ["data"]
 </div>
 
 The [Anakin ADK plugin](https://github.com/Anakin-Inc/anakin-adk) connects your
-ADK agent to [Anakin](https://useanakin.com) for web data extraction. This
+ADK agent to [Anakin](https://anakin.io) for web data extraction. This
 integration gives your agent the ability to scrape web pages, run AI-powered
 searches, batch-scrape multiple URLs, and perform autonomous deep research
 across the web.
@@ -34,7 +34,7 @@ across the web.
 
 ## Prerequisites
 
-- An [Anakin](https://useanakin.com) account
+- An [Anakin](https://anakin.io) account
 - `anakin-cli` installed and authenticated (`pip install anakin-cli && anakin auth`)
 
 ## Installation
@@ -70,5 +70,5 @@ Tool | Description
 
 - [Anakin ADK on PyPI](https://pypi.org/project/anakin-adk/)
 - [Anakin ADK on GitHub](https://github.com/Anakin-Inc/anakin-adk)
-- [Anakin CLI Documentation](https://docs.useanakin.com)
-- [Anakin Website](https://useanakin.com)
+- [Anakin CLI Documentation](https://docs.anakin.io)
+- [Anakin Website](https://anakin.io)
