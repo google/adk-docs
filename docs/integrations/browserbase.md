@@ -2,10 +2,10 @@
 catalog_title: Browserbase
 catalog_description: AI browser automation with Browserbase MCP and Stagehand
 catalog_icon: /adk-docs/integrations/assets/browserbase.png
-catalog_tags: ["mcp", "automation"]
+catalog_tags: ["mcp"]
 ---
 
-# Browserbase MCP for ADK
+# Browserbase MCP tool for ADK
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript</span>
@@ -49,12 +49,12 @@ npm install @google/adk
 
 === "Python"
 
-    === "Hosted MCP Server (recommended)"
+    === "Remote MCP Server"
 
         ```python
         from google.adk.agents import Agent
         from google.adk.tools.mcp_tool import McpToolset
-        from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPConnectionParams
+        from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPServerParams
 
         root_agent = Agent(
             model="gemini-2.5-pro",
@@ -62,7 +62,7 @@ npm install @google/adk
             instruction="Help users automate websites and extract web information.",
             tools=[
                 McpToolset(
-                    connection_params=StreamableHTTPConnectionParams(
+                    connection_params=StreamableHTTPServerParams(
                         url="YOUR_SMITHERY_STREAMABLE_HTTP_URL",
                     ),
                 )
@@ -70,7 +70,7 @@ npm install @google/adk
         )
         ```
 
-    === "Local MCP Server (STDIO)"
+    === "Local MCP Server"
 
         ```python
         from google.adk.agents import Agent
@@ -106,7 +106,7 @@ npm install @google/adk
 
 === "TypeScript"
 
-    === "Hosted MCP Server (recommended)"
+    === "Remote MCP Server"
 
         ```typescript
         import { LlmAgent, MCPToolset } from "@google/adk";
@@ -126,7 +126,7 @@ npm install @google/adk
         export { rootAgent };
         ```
 
-    === "Local MCP Server (STDIO)"
+    === "Local MCP Server"
 
         ```typescript
         import { LlmAgent, MCPToolset } from "@google/adk";
@@ -171,7 +171,7 @@ Tool | Description
 `browserbase_session_create` | Create a browser session
 `browserbase_session_close` | Close the current browser session
 
-## Resources
+## Additional resources
 
 - [Browserbase MCP docs](https://docs.browserbase.com/integrations/mcp/introduction)
 - [Browserbase Google ADK setup docs](https://docs.browserbase.com/integrations/google-adk/setup)
