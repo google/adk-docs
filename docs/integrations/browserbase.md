@@ -98,6 +98,7 @@ npm install @google/adk
                                 "GEMINI_API_KEY": GEMINI_API_KEY,
                             },
                         ),
+                        timeout=30,
                     ),
                 )
             ],
