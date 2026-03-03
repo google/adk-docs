@@ -171,10 +171,10 @@ Tool | Description
 `browserbase_session_create` | Create a browser session
 `browserbase_session_close` | Close the current browser session
 
-## Additional resources
+## Resources
 
 - [Browserbase MCP docs](https://docs.browserbase.com/integrations/mcp/introduction)
 - [Browserbase Google ADK setup docs](https://docs.browserbase.com/integrations/google-adk/setup)
-- [Browserbase MCP server package](https://www.npmjs.com/package/@browserbasehq/mcp-server-browserbase)
+- [Browserbase MCP server repository](https://github.com/browserbase/mcp-server-browserbase)
 - [Stagehand documentation](https://docs.stagehand.dev/)
-- [Smithery Browserbase server page](https://smithery.ai/server/@browserbasehq/mcp-browserbase)
+- [Browserbase](https://www.browserbase.com/)
