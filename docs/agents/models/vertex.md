@@ -35,7 +35,7 @@ Ensure your environment is configured for Vertex AI:
 ## Model Garden Deployments
 
 <div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.2.0</span><span class="lst-java">Java v0.1.0</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.2.0</span>
 </div>
 
 You can deploy various open and proprietary models from the
@@ -44,55 +44,28 @@ to an endpoint.
 
 **Example:**
 
-=== "Python"
+```python
+from google.adk.agents import LlmAgent
+from google.genai import types # For config objects
 
-    ```python
-    from google.adk.agents import LlmAgent
-    from google.genai import types # For config objects
+# --- Example Agent using a Llama 3 model deployed from Model Garden ---
 
-    # --- Example Agent using a Llama 3 model deployed from Model Garden ---
+# Replace with your actual Vertex AI Endpoint resource name
+llama3_endpoint = "projects/YOUR_PROJECT_ID/locations/us-central1/endpoints/YOUR_LLAMA3_ENDPOINT_ID"
 
-    # Replace with your actual Vertex AI Endpoint resource name
-    llama3_endpoint = "projects/YOUR_PROJECT_ID/locations/us-central1/endpoints/YOUR_LLAMA3_ENDPOINT_ID"
-
-    agent_llama3_vertex = LlmAgent(
-        model=llama3_endpoint,
-        name="llama3_vertex_agent",
-        instruction="You are a helpful assistant based on Llama 3, hosted on Vertex AI.",
-        generate_content_config=types.GenerateContentConfig(max_output_tokens=2048),
-        # ... other agent parameters
-    )
-    ```
-
-=== "Java"
-
-    ```java
-    import com.google.adk.agents.LlmAgent;
-    import com.google.adk.models.Gemini;
-    import com.google.genai.types.GenerateContentConfig;
-
-    // ...
-
-    // Replace with your actual Vertex AI Endpoint resource name
-    String llama3Endpoint = "projects/YOUR_PROJECT_ID/locations/us-central1/endpoints/YOUR_LLAMA3_ENDPOINT_ID";
-
-    LlmAgent agentLlama3Vertex = LlmAgent.builder()
-        .model(Gemini.builder()
-            .modelName(llama3Endpoint)
-            .build())
-        .name("llama3_vertex_agent")
-        .instruction("You are a helpful assistant based on Llama 3, hosted on Vertex AI.")
-        .generateContentConfig(GenerateContentConfig.builder()
-            .maxOutputTokens(2048)
-            .build())
-        // ... other agent parameters
-        .build();
-    ```
+agent_llama3_vertex = LlmAgent(
+    model=llama3_endpoint,
+    name="llama3_vertex_agent",
+    instruction="You are a helpful assistant based on Llama 3, hosted on Vertex AI.",
+    generate_content_config=types.GenerateContentConfig(max_output_tokens=2048),
+    # ... other agent parameters
+)
+```
 
 ## Fine-tuned Model Endpoints
 
 <div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.2.0</span><span class="lst-java">Java v0.1.0</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.2.0</span>
 </div>
 
 Deploying your fine-tuned models (whether based on Gemini or other architectures
@@ -100,44 +73,21 @@ supported by Vertex AI) results in an endpoint that can be used directly.
 
 **Example:**
 
-=== "Python"
+```python
+from google.adk.agents import LlmAgent
 
-    ```python
-    from google.adk.agents import LlmAgent
+# --- Example Agent using a fine-tuned Gemini model endpoint ---
 
-    # --- Example Agent using a fine-tuned Gemini model endpoint ---
+# Replace with your fine-tuned model's endpoint resource name
+finetuned_gemini_endpoint = "projects/YOUR_PROJECT_ID/locations/us-central1/endpoints/YOUR_FINETUNED_ENDPOINT_ID"
 
-    # Replace with your fine-tuned model's endpoint resource name
-    finetuned_gemini_endpoint = "projects/YOUR_PROJECT_ID/locations/us-central1/endpoints/YOUR_FINETUNED_ENDPOINT_ID"
-
-    agent_finetuned_gemini = LlmAgent(
-        model=finetuned_gemini_endpoint,
-        name="finetuned_gemini_agent",
-        instruction="You are a specialized assistant trained on specific data.",
-        # ... other agent parameters
-    )
-    ```
-
-=== "Java"
-
-    ```java
-    import com.google.adk.agents.LlmAgent;
-    import com.google.adk.models.Gemini;
-
-    // ...
-
-    // Replace with your fine-tuned model's endpoint resource name
-    String finetunedGeminiEndpoint = "projects/YOUR_PROJECT_ID/locations/us-central1/endpoints/YOUR_FINETUNED_ENDPOINT_ID";
-
-    LlmAgent agentFinetunedGemini = LlmAgent.builder()
-        .model(Gemini.builder()
-            .modelName(finetunedGeminiEndpoint)
-            .build())
-        .name("finetuned_gemini_agent")
-        .instruction("You are a specialized assistant trained on specific data.")
-        // ... other agent parameters
-        .build();
-    ```
+agent_finetuned_gemini = LlmAgent(
+    model=finetuned_gemini_endpoint,
+    name="finetuned_gemini_agent",
+    instruction="You are a specialized assistant trained on specific data.",
+    # ... other agent parameters
+)
+```
 
 ## Anthropic Claude on Vertex AI {#third-party-models-on-vertex-ai-eg-anthropic-claude}
 
@@ -148,12 +98,10 @@ supported by Vertex AI) results in an endpoint that can be used directly.
 Some providers, like Anthropic, make their models available directly through
 Vertex AI.
 
-**Example:**
-
 === "Python"
 
     **Integration Method:** Uses the direct model string (e.g.,
-    `"claude-sonnet-4-6"`), *but requires manual registration* within ADK.
+    `"claude-3-sonnet@20240229"`), *but requires manual registration* within ADK.
 
     **Why Registration?** ADK's registry automatically recognizes `gemini-*` strings
     and standard Vertex AI endpoint strings (`projects/.../endpoints/...`) and
@@ -185,6 +133,8 @@ Vertex AI.
         LLMRegistry.register(Claude)
         ```
 
+       **Example:**
+
        ```python
        from google.adk.agents import LlmAgent
        from google.adk.models.anthropic_llm import Claude # Import needed for registration
@@ -194,15 +144,15 @@ Vertex AI.
        # --- Register Claude class (do this once at startup) ---
        LLMRegistry.register(Claude)
 
-       # --- Example Agent using Claude 4 Sonnet on Vertex AI ---
+       # --- Example Agent using Claude 3 Sonnet on Vertex AI ---
 
-       # Standard model name for Claude 4 Sonnet on Vertex AI
-       claude_model_vertexai = "claude-sonnet-4-6"
+       # Standard model name for Claude 3 Sonnet on Vertex AI
+       claude_model_vertexai = "claude-3-sonnet@20240229"
 
        agent_claude_vertexai = LlmAgent(
            model=claude_model_vertexai, # Pass the direct string after registration
            name="claude_vertexai_agent",
-           instruction="You are an assistant powered by Claude 4 Sonnet on Vertex AI.",
+           instruction="You are an assistant powered by Claude 3 Sonnet on Vertex AI.",
            generate_content_config=types.GenerateContentConfig(max_output_tokens=4096),
            # ... other agent parameters
        )
@@ -226,6 +176,8 @@ Vertex AI.
     3.  **Instantiate and Configure the Model:**
         When creating your `LlmAgent`, instantiate the `Claude` class (or the equivalent for another provider) and configure its `VertexBackend`.
 
+    **Example:**
+
     ```java
     import com.anthropic.client.AnthropicClient;
     import com.anthropic.client.okhttp.AnthropicOkHttpClient;
@@ -240,8 +192,8 @@ Vertex AI.
     public class ClaudeVertexAiAgent {
 
         public static LlmAgent createAgent() throws IOException {
-            // Model name for Claude 4 Sonnet on Vertex AI (or other versions)
-            String claudeModelVertexAi = "claude-sonnet-4-6"; // Or any other Claude model
+            // Model name for Claude 3 Sonnet on Vertex AI (or other versions)
+            String claudeModelVertexAi = "claude-3-7-sonnet"; // Or any other Claude model
 
             // Configure the AnthropicOkHttpClient with the VertexBackend
             AnthropicClient anthropicClient = AnthropicOkHttpClient.builder()
@@ -257,7 +209,7 @@ Vertex AI.
             LlmAgent agentClaudeVertexAi = LlmAgent.builder()
                 .model(new Claude(claudeModelVertexAi, anthropicClient)) // Pass the Claude instance
                 .name("claude_vertexai_agent")
-                .instruction("You are an assistant powered by Claude 4 Sonnet on Vertex AI.")
+                .instruction("You are an assistant powered by Claude 3 Sonnet on Vertex AI.")
                 // .generateContentConfig(...) // Optional: Add generation config if needed
                 // ... other agent parameters
                 .build();
@@ -281,12 +233,10 @@ Vertex AI.
 ## Open Models on Vertex AI {#open-models}
 
 <div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
 </div>
 
 Vertex AI offers a curated selection of open-source models, such as Meta Llama, through Model-as-a-Service (MaaS). These models are accessible via managed APIs, allowing you to deploy and scale without managing the underlying infrastructure. For a full list of available options, see the [Vertex AI open models for MaaS](https://docs.cloud.google.com/vertex-ai/generative-ai/docs/maas/use-open-models#open-models) documentation.
-
-**Example:**
 
 === "Python"
 
@@ -305,6 +255,8 @@ Vertex AI offers a curated selection of open-source models, such as Meta Llama, 
             pip install litellm
             ```
     
+    **Example:**
+
     ```python
     from google.adk.agents import LlmAgent
     from google.adk.models.lite_llm import LiteLlm
@@ -317,27 +269,4 @@ Vertex AI offers a curated selection of open-source models, such as Meta Llama, 
         # ... other agent parameters
     )
 
-    ```
-
-=== "Java"
-
-    ```java
-    import com.google.adk.agents.LlmAgent;
-    import com.google.adk.models.Gemini;
-
-    // ...
-
-    // Use the Vertex AI model resource name for MaaS models
-    // e.g. "publishers/meta/models/llama-3.1-405b-instruct-maas"
-    // or full hierarchy "projects/PROJECT/locations/LOCATION/publishers/meta/models/..."
-    String llamaModel = "publishers/meta/models/llama-3.1-405b-instruct-maas";
-
-    LlmAgent agentLlamaVertex = LlmAgent.builder()
-        .model(Gemini.builder()
-            .modelName(llamaModel)
-            .build())
-        .name("llama_agent")
-        .instruction("You are a helpful assistant powered by Llama on Vertex AI.")
-        // ... other agent parameters
-        .build();
     ```
