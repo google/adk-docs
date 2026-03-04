@@ -6,7 +6,6 @@
 
 [LiteRT-LM](https://github.com/google-ai-edge/LiteRT-LM) is a C++ library to
 efficiently run language models across edge platforms.
-
 On desktop (Linux, macOS, and Windows), ADK integrates with LiteRT-LM-hosted
 models through the LiteRT-LM server launched by the LiteRT-LM CLI `lit`.
 
@@ -15,8 +14,8 @@ models through the LiteRT-LM server launched by the LiteRT-LM CLI `lit`.
 LiteRT-LM works with the `Gemini` class. You only have to set the `base_url` and
 `model` parameters.
 
-1.  Set `base_url` to the LiteRT-LM server URL (e.g. `localhost:8001`).
-2.  Set `model` to the LiteRT-LM model name (e.g. `gemma3n-e2b`).
+1.  Set `base_url` to the LiteRT-LM server URL, for example: `localhost:8001`.
+2.  Set `model` to the LiteRT-LM model name, for example: `gemma3n-e2b`.
 
 ```py
 from google.adk.agents import Agent
