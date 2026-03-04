@@ -205,4 +205,3 @@ env={
 - [Couchbase MCP Server Repository](https://github.com/Couchbase-Ecosystem/mcp-server-couchbase)
 - [Couchbase Documentation](https://docs.couchbase.com/)
 - [Couchbase Capella](https://cloud.couchbase.com/)
-- [ADK Sample Agent](https://github.com/google/adk-python/tree/main/contributing/samples/mcp_couchbase_agent)
