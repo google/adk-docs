@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { LlmAgent, FunctionTool, ToolContext, BaseToolset, InMemoryRunner, isFinalResponse, BaseTool, stringifyContent } from "@google/adk";
+import { LlmAgent, FunctionTool, Context, BaseToolset, InMemoryRunner, isFinalResponse, BaseTool, stringifyContent } from '@google/adk';
 import { z } from "zod";
 import { Content, createUserContent } from "@google/genai";
 
-function addNumbers(params: { a: number; b: number }, toolContext?: ToolContext): Record<string, any> {
+function addNumbers(params: { a: number; b: number }, toolContext?: Context): Record<string, any> {
   if (!toolContext) {
-    throw new Error("ToolContext is required for this tool.");
+    throw new Error("Context is required for this tool.");
   }
   const result = params.a + params.b;
   toolContext.state.set("last_math_result", result);

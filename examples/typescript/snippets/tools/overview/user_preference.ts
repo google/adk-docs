@@ -1,9 +1,9 @@
-import { ToolContext } from "@google/adk";
+import { Context } from '@google/adk';
 
 // Updates a user-specific preference.
 export function updateUserThemePreference(
   value: string,
-  toolContext: ToolContext
+  toolContext: Context
 ): Record<string, any> {
   const userPrefsKey = "user:preferences";
 

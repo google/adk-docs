@@ -1,13 +1,13 @@
 import { Part } from "@google/genai";
-import { ToolContext } from "@google/adk";
+import { Context } from '@google/adk';
 
 // Analyzes a document using context from memory.
 export async function processDocument(
   params: { documentName: string; analysisQuery: string },
-  toolContext?: ToolContext
+  toolContext?: Context
 ): Promise<Record<string, any>> {
   if (!toolContext) {
-    throw new Error("ToolContext is required for this tool.");
+    throw new Error("Context is required for this tool.");
   }
 
   // 1. List all available artifacts

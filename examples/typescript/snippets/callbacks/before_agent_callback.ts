@@ -14,12 +14,7 @@
  * limitations under the License.
  */
 
-import {
-  LlmAgent,
-  InMemoryRunner,
-  CallbackContext,
-  isFinalResponse,
-} from "@google/adk";
+import { LlmAgent, InMemoryRunner, Context, isFinalResponse } from '@google/adk';
 import { Content, createUserContent } from "@google/genai";
 
 const MODEL_NAME = "gemini-2.5-flash";
@@ -31,7 +26,7 @@ const SESSION_ID_SKIP = "session_will_skip";
 
 // --- 1. Define the Callback Function ---
 function checkIfAgentShouldRun(
-  callbackContext: CallbackContext
+  callbackContext: Context
 ): Content | undefined {
   /**
    * Logs entry and checks 'skip_llm_agent' in session state.
