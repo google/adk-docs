@@ -100,8 +100,7 @@ To use Gemini models via Vertex AI for local development, use Application Defaul
     should say "API Enabled".
 
 5. **Grant IAM permissions**
-    * If you don't have Owner role or other wider permissions, make sure to grant the following IAM permissions to your Google account so it has permissions to call Gemini models:
-        * `aiplatform.googleapis.com/user`
+    * To call Gemini models, your Google account requires the "Vertex AI User" role (roles/aiplatform.user). If you do not have the Owner role or equivalent broad permissions, ensure this role is granted to your account (or any other user requiring access).
     * You can grant these permissions in the console following these steps:
         1. Go to the [IAM & Admin](https://console.cloud.google.com/iam-admin/iam) page.
         2. Click on the "Add" button.
@@ -115,6 +114,7 @@ To use Gemini models via Vertex AI for local development, use Application Defaul
 
 
 #### Authentication with Vertex AI {#adc-authentication}
+With your project ready and permissions set, the final step is to authenticate your environment.
 
 1.  **Install the gcloud CLI:** Follow the official [installation instructions](https://cloud.google.com/sdk/docs/install).
 2.  **Log in using ADC:** This command opens a browser to authenticate your user account for local development.
