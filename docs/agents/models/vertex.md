@@ -35,7 +35,7 @@ Ensure your environment is configured for Vertex AI:
 ## Model Garden Deployments
 
 <div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.2.0</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.2.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
 You can deploy various open and proprietary models from the
@@ -44,28 +44,55 @@ to an endpoint.
 
 **Example:**
 
-```python
-from google.adk.agents import LlmAgent
-from google.genai import types # For config objects
+=== "Python"
 
-# --- Example Agent using a Llama 3 model deployed from Model Garden ---
+    ```python
+    from google.adk.agents import LlmAgent
+    from google.genai import types # For config objects
 
-# Replace with your actual Vertex AI Endpoint resource name
-llama3_endpoint = "projects/YOUR_PROJECT_ID/locations/us-central1/endpoints/YOUR_LLAMA3_ENDPOINT_ID"
+    # --- Example Agent using a Llama 3 model deployed from Model Garden ---
 
-agent_llama3_vertex = LlmAgent(
-    model=llama3_endpoint,
-    name="llama3_vertex_agent",
-    instruction="You are a helpful assistant based on Llama 3, hosted on Vertex AI.",
-    generate_content_config=types.GenerateContentConfig(max_output_tokens=2048),
-    # ... other agent parameters
-)
-```
+    # Replace with your actual Vertex AI Endpoint resource name
+    llama3_endpoint = "projects/YOUR_PROJECT_ID/locations/us-central1/endpoints/YOUR_LLAMA3_ENDPOINT_ID"
+
+    agent_llama3_vertex = LlmAgent(
+        model=llama3_endpoint,
+        name="llama3_vertex_agent",
+        instruction="You are a helpful assistant based on Llama 3, hosted on Vertex AI.",
+        generate_content_config=types.GenerateContentConfig(max_output_tokens=2048),
+        # ... other agent parameters
+    )
+    ```
+
+=== "Java"
+
+    ```java
+    import com.google.adk.agents.LlmAgent;
+    import com.google.adk.models.Gemini;
+    import com.google.genai.types.GenerateContentConfig;
+
+    // ...
+
+    // Replace with your actual Vertex AI Endpoint resource name
+    String llama3Endpoint = "projects/YOUR_PROJECT_ID/locations/us-central1/endpoints/YOUR_LLAMA3_ENDPOINT_ID";
+
+    LlmAgent agentLlama3Vertex = LlmAgent.builder()
+        .model(Gemini.builder()
+            .modelName(llama3Endpoint)
+            .build())
+        .name("llama3_vertex_agent")
+        .instruction("You are a helpful assistant based on Llama 3, hosted on Vertex AI.")
+        .generateContentConfig(GenerateContentConfig.builder()
+            .maxOutputTokens(2048)
+            .build())
+        // ... other agent parameters
+        .build();
+    ```
 
 ## Fine-tuned Model Endpoints
 
 <div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.2.0</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.2.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
 Deploying your fine-tuned models (whether based on Gemini or other architectures
@@ -73,21 +100,44 @@ supported by Vertex AI) results in an endpoint that can be used directly.
 
 **Example:**
 
-```python
-from google.adk.agents import LlmAgent
+=== "Python"
 
-# --- Example Agent using a fine-tuned Gemini model endpoint ---
+    ```python
+    from google.adk.agents import LlmAgent
 
-# Replace with your fine-tuned model's endpoint resource name
-finetuned_gemini_endpoint = "projects/YOUR_PROJECT_ID/locations/us-central1/endpoints/YOUR_FINETUNED_ENDPOINT_ID"
+    # --- Example Agent using a fine-tuned Gemini model endpoint ---
 
-agent_finetuned_gemini = LlmAgent(
-    model=finetuned_gemini_endpoint,
-    name="finetuned_gemini_agent",
-    instruction="You are a specialized assistant trained on specific data.",
-    # ... other agent parameters
-)
-```
+    # Replace with your fine-tuned model's endpoint resource name
+    finetuned_gemini_endpoint = "projects/YOUR_PROJECT_ID/locations/us-central1/endpoints/YOUR_FINETUNED_ENDPOINT_ID"
+
+    agent_finetuned_gemini = LlmAgent(
+        model=finetuned_gemini_endpoint,
+        name="finetuned_gemini_agent",
+        instruction="You are a specialized assistant trained on specific data.",
+        # ... other agent parameters
+    )
+    ```
+
+=== "Java"
+
+    ```java
+    import com.google.adk.agents.LlmAgent;
+    import com.google.adk.models.Gemini;
+
+    // ...
+
+    // Replace with your fine-tuned model's endpoint resource name
+    String finetunedGeminiEndpoint = "projects/YOUR_PROJECT_ID/locations/us-central1/endpoints/YOUR_FINETUNED_ENDPOINT_ID";
+
+    LlmAgent agentFinetunedGemini = LlmAgent.builder()
+        .model(Gemini.builder()
+            .modelName(finetunedGeminiEndpoint)
+            .build())
+        .name("finetuned_gemini_agent")
+        .instruction("You are a specialized assistant trained on specific data.")
+        // ... other agent parameters
+        .build();
+    ```
 
 ## Anthropic Claude on Vertex AI {#third-party-models-on-vertex-ai-eg-anthropic-claude}
 
@@ -97,6 +147,8 @@ agent_finetuned_gemini = LlmAgent(
 
 Some providers, like Anthropic, make their models available directly through
 Vertex AI.
+
+**Example:**
 
 === "Python"
 
@@ -132,8 +184,6 @@ Vertex AI.
 
         LLMRegistry.register(Claude)
         ```
-
-       **Example:**
 
        ```python
        from google.adk.agents import LlmAgent
@@ -175,8 +225,6 @@ Vertex AI.
 
     3.  **Instantiate and Configure the Model:**
         When creating your `LlmAgent`, instantiate the `Claude` class (or the equivalent for another provider) and configure its `VertexBackend`.
-
-    **Example:**
 
     ```java
     import com.anthropic.client.AnthropicClient;
@@ -233,7 +281,7 @@ Vertex AI.
 ## Open Models on Vertex AI {#open-models}
 
 <div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
 Vertex AI offers a curated selection of open-source models, such as Meta Llama, through Model-as-a-Service (MaaS). These models are accessible via managed APIs, allowing you to deploy and scale without managing the underlying infrastructure. For a full list of available options, see the [Vertex AI open models for MaaS](https://docs.cloud.google.com/vertex-ai/generative-ai/docs/maas/use-open-models#open-models) documentation.
