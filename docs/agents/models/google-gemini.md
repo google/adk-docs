@@ -90,7 +90,7 @@ To use Gemini models via Vertex AI for local development, use Application Defaul
     * You can use existing project or create a new one on the [Create Project](https://console.cloud.google.com/projectcreate) page. Find more details in [GCP documentation](https://docs.cloud.google.com/resource-manager/docs/creating-managing-projects).
 
 3. **Get your Google Cloud Project ID**
-    * Make sure to note the Project ID (inmutable alphanumeric with hyphens),
+    * Make sure to note the Project ID (immutable alphanumeric with hyphens),
       _not_ the project number (numeric) or project name (mutable human-readable).
 
     <img src="/adk-docs/assets/project-id.png" alt="Google Cloud Project ID">
