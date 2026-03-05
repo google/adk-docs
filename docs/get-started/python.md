@@ -91,12 +91,7 @@ root_agent = Agent(
 
 This guide uses a Gemini model for your agent. The ADK supports both [Vertex AI API](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/overview) (available via Google Cloud Console) and [Gemini API](https://ai.google.dev/gemini-api/docs) (available via Google AI Studio) to access Gemini models. See [Choosing Vertex AI API or Gemini API](/adk-docs/agents/models/google-gemini/#choosing-api) for guidance.
  
-=== "Vertex AI (Google Cloud)"
-    --8<-- "docs/_snippets/vertex-adc-setup.md"
-=== "Gemini API (Google AI Studio)"
-    --8<-- "docs/_snippets/gemini-api-setup.md"
-=== "Vertex AI Express Mode"
-    --8<-- "docs/_snippets/vertex-ai-express-mode-setup.md"
+--8<-- "docs/_snippets/gemini-authentication.md"
 
 ??? tip "Using other AI models with ADK"
     ADK supports the use of many generative AI models. For more

@@ -6,7 +6,7 @@ The standard way to authenticate to Vertex AI is using [Application Default Cred
     gcloud auth application-default login
     ```
     
-3.  **Set environment variables:** Create a `.env` file (Python) or `.properties` (Java) in your project's root directory and add the following lines. ADK will automatically load this file.
+3.  **Set environment variables:** Create or validate that a `.env` file or `.properties` (Java) is in your project's root directory and add the following lines. ADK will automatically load this file.
     ```shell
     GOOGLE_CLOUD_PROJECT="YOUR_PROJECT_ID"
     GOOGLE_CLOUD_LOCATION="YOUR_VERTEX_AI_LOCATION" # e.g., us-central1
