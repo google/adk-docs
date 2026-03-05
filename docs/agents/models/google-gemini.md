@@ -9,23 +9,23 @@ There are two primary APIs for accessing the Gemini model family: [Vertex AI API
 ## ADK Integration
 The ADK does not utilize a proprietary API; instead, it acts as a robust abstraction layer that supports accessing Gemini models through both Vertex AI and the Gemini API. By providing a unified interface, the ADK enables you to easily integrate advanced Gemini features, including:
 
-[Code Execution](/adk-docs/tools/gemini-api/code-execution/): Run generated code in a secure environment.
+- [Code Execution](/adk-docs/tools/gemini-api/code-execution/): Run generated code in a secure environment.
 
-[Google Search](/adk-docs/tools/gemini-api/google-search/): Ground model responses with real-time web results.
+- [Google Search](/adk-docs/tools/gemini-api/google-search/): Ground model responses with real-time web results.
 
-[Context Caching](/adk-docs/context/caching/): Optimize performance and cost for long-context prompts.
+- [Context Caching](/adk-docs/context/caching/): Optimize performance and cost for long-context prompts.
 
-[Computer use](/adk-docs/tools/gemini-api/computer-use/): Enable models to interact with digital interfaces.
+- [Computer use](/adk-docs/tools/gemini-api/computer-use/): Enable models to interact with digital interfaces.
 
-[Interactions API](/adk-docs/tools/gemini-api/interactions-api/): Manage complex conversational flows.
+- [Interactions API](/adk-docs/tools/gemini-api/interactions-api/): Manage complex conversational flows.
 
 
-## Choosing Vertex API or Gemini API for you agent {#choosing-api}
-### Vertex AI
+## Choosing Vertex AI API or Gemini API {#choosing-api}
+### When to use Vertex AI
 
 Vertex AI is a Google Cloud-managed machine learning platform that provides a unified environment for the entire AI lifecycle. It allows developers, data scientists, and ML engineers to access the latest Gemini models while seamlessly integrating with other Vertex AI services and the broader Google Cloud ecosystem.
 
-#### When to use Vertex AI:
+Consider using Vertex AI in the following cases:
 
 * **Existing Google Cloud Infrastructure:** Ideal for teams already leveraging Google Cloud services. Vertex AI uses the same IAM authentication as other GCP services, providing a seamless experience if you are already using the Google Cloud Console.
 
@@ -39,13 +39,13 @@ Vertex AI is a Google Cloud-managed machine learning platform that provides a un
 
 * **Advanced MLOps:** Optimized for teams needing managed tools for model monitoring, evaluation, and fine-tuning, or those deploying third-party and open-source models alongside Gemini.
 
-### Gemini API
+### When to use Gemini API (Google AI Studio)
 
 The Gemini API, accessible through Google AI Studio, is an interface dedicated to generative AI models, designed for rapid development and application building. It allows developers to quickly prototype and deploy applications using Gemini models with minimal setup.
 
 It is the ideal choice for developers, startups, and businesses that prioritize speed and agility, offering a straightforward path to production without the initial need for complex cloud infrastructure or enterprise-level governance.
 
-#### When to use Gemini API
+Consider using the Gemini API in the following cases:
 
 * **Speed of Implementation:** Start building in minutes using a simple API key, avoiding the overhead of complex project configurations.
 
@@ -59,7 +59,7 @@ It is the ideal choice for developers, startups, and businesses that prioritize 
 ## Gemini model authentication
 
 A primary difference between Vertex AI and the Gemini API is the authentication mechanism. Vertex AI leverages standard Google Cloud authentication methods—including Application Default Credentials (ADC) for local development—while the Gemini API uses API Keys directly. See 
-[Choosing API](/adk-docs/agents/models/google-gemini/#choosing-api) for more guidance to select Vertex AI or Gemini API.
+[Choosing API](#choosing-api) for more guidance to select Vertex AI or Gemini API.
 
 This section explains how to authenticate for local development using both platforms.
 
@@ -106,68 +106,54 @@ To use Gemini models via Vertex AI for local development, use Application Defaul
         2. Click on the "Add" button.
         3. In the "New principals" field, enter your email address.
         4. In the "Select a role" field, select "Vertex AI User".
-    * Or by running the following command (See gcloud [installation instructions](https://cloud.google.com/sdk/docs/install)):
+    * Or by running the following command in the terminal (See gcloud [installation instructions](https://cloud.google.com/sdk/docs/install)):
         ```bash
         gcloud projects add-iam-policy-binding YOUR_PROJECT_ID --member="user:YOUR_EMAIL_ADDRESS" --role="roles/aiplatform.user"
         ```
         Find more details and best practices in [GCP IAM documentation](https://docs.cloud.google.com/iam/docs/using-iam-securely)
 
+#### Authentication with Vertex AI {#adc-authentication} 
 
-#### Authentication with Vertex AI {#adc-authentication}
-With your project ready and permissions set, the final step is to authenticate your environment.
+With your project ready and permissions set, the final step is to authenticate your environment using Application Default Credentials (ADC) with your user account. 
+See [ADC documentation](https://docs.cloud.google.com/docs/authentication/application-default-credentials) to understand how ADC works.
 
-1.  **Install the gcloud CLI:** Follow the official [installation instructions](https://cloud.google.com/sdk/docs/install).
-2.  **Log in using ADC:** This command opens a browser to authenticate your user account for local development.
-    ```bash
-    gcloud auth application-default login
-    ```
+=== "Set up Application Default Credentials"
     
-3.  **Set environment variables:**
-    ```shell
-    export GOOGLE_CLOUD_PROJECT="YOUR_PROJECT_ID"
-    export GOOGLE_CLOUD_LOCATION="YOUR_VERTEX_AI_LOCATION" # e.g., us-central1
-    ```
 
-    Explicitly tell the library to use Vertex AI:
-    ```shell
-    export GOOGLE_GENAI_USE_VERTEXAI=TRUE
-    ```
-
-4. **Models:** Find available model IDs in the
-  [Vertex AI documentation](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/models).
-
-#### Authentication with Vertex AI in **Express Mode**
-
-Vertex AI also offers [Vertex AI Express Mode](https://cloud.google.com/vertex-ai/generative-ai/docs/start/express-mode/overview), a simplified, API-key-based setup designed for rapid prototyping. This allows new users to quickly access Gemini models for a 90-day period without the immediate need for full Google Cloud project configuration.
-
-
-1.  **Sign up for Express Mode** to get your API key.
-2.  **Set environment variables:**
-    ```shell
-    export GOOGLE_API_KEY="PASTE_YOUR_EXPRESS_MODE_API_KEY_HERE"
-    export GOOGLE_GENAI_USE_VERTEXAI=TRUE
-    ```
-
-### Google AI Studio
-
-This is the simplest method and is recommended for getting started quickly.
-
-*   **Authentication Method:** API Key
-*   **Setup:**
-    1.  **Get an API key:** Obtain your key from [Google AI Studio](https://aistudio.google.com/apikey).
-    2.  **Set environment variables:** Create a `.env` file (Python) or `.properties` (Java) in your project's root directory and add the following lines. ADK will automatically load this file.
-
+    1.  **Install the gcloud CLI:** Follow the official [installation instructions](https://cloud.google.com/sdk/docs/install).
+    2.  **Log in using ADC:** This command opens a browser to authenticate your user account for local development.
+        ```bash
+        gcloud auth application-default login
+        ```
+        
+    3.  **Set environment variables:** Create a `.env` file (Python) or `.properties` (Java) in your project's root directory and add the following lines. ADK will automatically load this file.
         ```shell
-        export GOOGLE_API_KEY="YOUR_GOOGLE_API_KEY"
-        export GOOGLE_GENAI_USE_VERTEXAI=FALSE
+        GOOGLE_CLOUD_PROJECT="YOUR_PROJECT_ID"
+        GOOGLE_CLOUD_LOCATION="YOUR_VERTEX_AI_LOCATION" # e.g., us-central1
+        GOOGLE_GENAI_USE_VERTEXAI=TRUE # Explicitly tell the library to use Vertex AI
         ```
 
-        (or)
 
-        Pass these variables during the model initialization via the `Client` (see example below).
+=== "Authentication with Vertex AI in **Express Mode**"
+    Vertex AI also offers [Vertex AI Express Mode](https://cloud.google.com/vertex-ai/generative-ai/docs/start/express-mode/overview), a simplified, API-key-based setup designed for rapid prototyping. This allows new users to quickly access Gemini models for a 90-day period without the immediate need for full Google Cloud project configuration.
 
-* **Models:** Find all available models on the
-  [Google AI for Developers site](https://ai.google.dev/gemini-api/docs/models).
+    1.  **Sign up for Express Mode** to get your API key.
+    2.  **Set environment variables:** Create a `.env` file (Python) or `.properties` (Java) in your project's root directory and add the following lines. ADK will automatically load this file.
+        ```shell
+        GOOGLE_API_KEY="PASTE_YOUR_EXPRESS_MODE_API_KEY_HERE"
+        GOOGLE_GENAI_USE_VERTEXAI=TRUE
+        ```
+
+### Gemini API (Google AI Studio)
+
+This is the **simplest** and **fastest** method to use Gemini models and is recommended for getting started quickly by using API Keys for authentication.
+
+1.  **Get an API key:** Obtain your key from [Google AI Studio](https://aistudio.google.com/apikey).
+2.  **Set environment variables:** Create a `.env` file (Python) or `.properties` (Java) in your project's root directory and add the following lines. ADK will automatically load this file.
+        ```shell
+        GOOGLE_API_KEY="YOUR_GOOGLE_API_KEY"
+        GOOGLE_GENAI_USE_VERTEXAI=FALSE
+        ```
 
 
 !!! warning "Secure Your Credentials"
@@ -186,7 +172,7 @@ This is the simplest method and is recommended for getting started quickly.
 
 ## Using Gemini in your agents
 
-Once you have authenticated and set the required environment variables (GOOGLE_GENAI_USE_VERTEXAI and your credentials), using Gemini models is seamless. The ADK uses these variables to automatically route requests to either Vertex AI or Google AI Studio. The following code examples show a basic implementation for using Gemini models in your agents:
+Once you have authenticated and set the required environment variables (.env file), using Gemini models is seamless. The ADK uses these variables to automatically route requests to either Vertex AI or Google AI Studio. The following code examples show a basic implementation for using Gemini models in your agents:
 
 === "Python"
 
@@ -208,7 +194,7 @@ Once you have authenticated and set the required environment variables (GOOGLE_G
     ```typescript
     import {LlmAgent} from '@google/adk';
 
-    // --- Example #2: using a powerful Gemini Pro model with API Key in model ---
+    // --- Example #2: using a powerful Gemini model with API Key in model ---
     export const rootAgent = new LlmAgent({
       name: 'hello_time_agent',
       model: 'gemini-2.5-flash',
