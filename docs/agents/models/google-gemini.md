@@ -25,6 +25,8 @@ The ADK does not utilize a proprietary API; instead, it acts as a robust abstrac
 
 Vertex AI is a Google Cloud-managed machine learning platform that provides a unified environment for the entire AI lifecycle. It allows developers, data scientists, and ML engineers to access the latest Gemini models while seamlessly integrating with other Vertex AI services and the broader Google Cloud ecosystem.
 
+Find **available model IDs** in the [Vertex AI documentation](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/models).
+
 Consider using Vertex AI in the following cases:
 
 * **Existing Google Cloud Infrastructure:** Ideal for teams already leveraging Google Cloud services. Vertex AI uses the same IAM authentication as other GCP services, providing a seamless experience if you are already using the Google Cloud Console.
@@ -44,6 +46,8 @@ Consider using Vertex AI in the following cases:
 The Gemini API, accessible through Google AI Studio, is an interface dedicated to generative AI models, designed for rapid development and application building. It allows developers to quickly prototype and deploy applications using Gemini models with minimal setup.
 
 It is the ideal choice for developers, startups, and businesses that prioritize speed and agility, offering a straightforward path to production without the initial need for complex cloud infrastructure or enterprise-level governance.
+
+Find all **available models** on the [Google AI for Developers site](https://ai.google.dev/gemini-api/docs/models).
 
 Consider using the Gemini API in the following cases:
 
