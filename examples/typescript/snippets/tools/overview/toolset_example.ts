@@ -17,12 +17,12 @@ import { LlmAgent, FunctionTool, Context, BaseToolset, InMemoryRunner, isFinalRe
 import { z } from "zod";
 import { Content, createUserContent } from "@google/genai";
 
-function addNumbers(params: { a: number; b: number }, toolContext?: Context): Record<string, any> {
-  if (!toolContext) {
+function addNumbers(params: { a: number; b: number }, context?: Context): Record<string, any> {
+  if (!context) {
     throw new Error("Context is required for this tool.");
   }
   const result = params.a + params.b;
-  toolContext.state.set("last_math_result", result);
+  context.state.set("last_math_result", result);
   return { result: result };
 }
 

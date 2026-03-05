@@ -506,10 +506,10 @@ For more comprehensive details on context objects, refer to the [Context documen
 
     ```typescript
     // In an agent callback or tool function
-    import { Context } from "@google/adk"; // or Context
+    import { Context } from "@google/adk";
 
     function myCallbackOrToolFunction(
-        context: Context, // Or Context
+        context: Context,
         // ... other parameters ...
     ) {
         // Update existing state
