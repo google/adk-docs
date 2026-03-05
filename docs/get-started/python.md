@@ -8,12 +8,6 @@ This guide shows you how to get up and running with Agent Development Kit
 
 ## Installation
 
-Install ADK by running the following command:
-
-```shell
-pip install google-adk
-```
-
 ??? tip "Recommended: create and activate a Python virtual environment"
 
     Create a Python virtual environment:
@@ -41,6 +35,13 @@ pip install google-adk
         ```bash
         source .venv/bin/activate
         ```
+
+Install ADK by running the following command:
+
+```shell
+pip install google-adk
+```
+
 
 ## Create an agent project
 
@@ -86,17 +87,16 @@ root_agent = Agent(
 )
 ```
 
-### Set your API key
+## Authentication {#authentication}
 
-This project uses the Gemini API, which requires an API key. If you
-don't already have Gemini API key, create a key in Google AI Studio on the
-[API Keys](https://aistudio.google.com/app/apikey) page.
-
-In a terminal window, write your API key into an `.env` file as an environment variable:
-
-```console title="Update: my_agent/.env"
-echo 'GOOGLE_API_KEY="YOUR_API_KEY"' > .env
-```
+This guide uses a Gemini model for your agent. The ADK supports both [Vertex AI API](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/overview) (available via Google Cloud Console) and [Gemini API](https://ai.google.dev/gemini-api/docs) (available via Google AI Studio) to access Gemini models. See [Choosing Vertex AI API or Gemini API](/adk-docs/agents/models/google-gemini/#choosing-api) for guidance.
+ 
+=== "Vertex AI (Google Cloud)"
+    --8<-- "docs/_snippets/vertex-adc-setup.md"
+=== "Gemini API (Google AI Studio)"
+    --8<-- "docs/_snippets/gemini-api-setup.md"
+=== "Vertex AI Express Mode"
+    --8<-- "docs/_snippets/vertex-ai-express-mode-setup.md"
 
 ??? tip "Using other AI models with ADK"
     ADK supports the use of many generative AI models. For more
@@ -141,10 +141,10 @@ upper left corner and type a request.
 
 ![adk-web-dev-ui-chat.png](/adk-docs/assets/adk-web-dev-ui-chat.png)
 
-!!! warning "Caution: ADK Web for development only"
+!!! warning "Caution: ADK Web and ADK run for development only"
 
-    ADK Web is ***not meant for use in production deployments***. You should
-    use ADK Web for development and debugging purposes only.
+    ADK Web and ADK run are ***not meant for use in production deployments***. You should
+    use ADK Web and ADK run for development and debugging purposes only.
 
 ## Next: Build your agent
 
