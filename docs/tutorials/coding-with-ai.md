@@ -1,10 +1,29 @@
 # Coding with AI
 
-The Agent Development Kit (ADK) documentation supports the
-[`/llms.txt` standard](https://llmstxt.org/), providing a machine-readable index
-of the documentation optimized for Large Language Models (LLMs). This allows you
-to easily use the ADK documentation as context in your AI-powered development
-environment.
+The Agent Development Kit (ADK) provides native support for AI coding assistants and agents to help you build applications faster. You can enhance your agent's capabilities by adding ADK development skills directly to your project, or by using our `llms.txt` documentation index as context.
+
+## ADK Development Skills
+
+You can supercharge your coding agents with a complete set of ADK development skills and supporting infrastructure. This package provides your AI agent with deep context, best practices, and scaffolding tools tailored for ADK development.
+
+The skills package includes:
+
+*   **`adk-cheatsheet`**: Python ADK API quick reference (agents, tools, auth, orchestration, callbacks, state) and a documentation index.
+*   **`adk-dev-guide`**: Development lifecycle and mandatory coding guidelines, including spec-driven workflows, code preservation, model selection, and troubleshooting.
+*   **`adk-deploy-guide`**: Deployment patterns and guides for Agent Engine, Cloud Run, GKE, CI/CD, secrets, and observability.
+*   **`adk-eval-guide`**: Evaluation methodology covering eval metrics, `evalset` schemas, LLM-as-judge, and tool trajectory scoring.
+*   **`adk-observability-guide`**: Setup guides for Cloud Trace, logging, and third-party integrations.
+*   **`adk-scaffold`**: Project scaffolding for quickly bootstrapping new or enhanced ADK agent projects.
+
+**Installation:**
+
+To add these skills to your project workspace, run the following command in your terminal:
+
+```bash
+npx skills add google/adk-docs/skills -y
+```
+
+ADK Development Skills work seameslly with your interface of choice (e.g. GeminiCLI, Cloude Code, Antigravity, etc.)
 
 ## What is llms.txt?
 
