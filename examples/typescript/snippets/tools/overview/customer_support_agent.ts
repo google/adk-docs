@@ -13,21 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { LlmAgent, FunctionTool, ToolContext, InMemoryRunner, isFinalResponse, stringifyContent } from "@google/adk";
+import { LlmAgent, FunctionTool, Context, InMemoryRunner, isFinalResponse, stringifyContent } from '@google/adk';
 import { z } from "zod";
 import { Content, createUserContent } from "@google/genai";
 
 function checkAndTransfer(
   params: { query: string },
-  toolContext?: ToolContext
+  context?: Context
 ): Record<string, any> {
-  if (!toolContext) {
+  if (!context) {
     // This should not happen in a normal ADK flow where the tool is called by an agent.
-    throw new Error("ToolContext is required to transfer agents.");
+    throw new Error("Context is required to transfer agents.");
   }
   if (params.query.toLowerCase().includes("urgent")) {
     console.log("Tool: Urgent query detected, transferring to support_agent.");
-    toolContext.actions.transferToAgent = "support_agent";
+    context.actions.transferToAgent = "support_agent";
     return { status: "success", message: "Transferring to support agent." };
   }
 
