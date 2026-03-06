@@ -17,7 +17,7 @@ catalog_tags: ["observability", "google"]
 
 The BigQuery Agent Analytics Plugin significantly enhances the Agent Development Kit (ADK) by providing a robust solution for in-depth agent behavior analysis. Using the ADK Plugin architecture and the **BigQuery Storage Write API**, it captures and logs critical operational events directly into a Google BigQuery table, empowering you with advanced capabilities for debugging, real-time monitoring, and comprehensive offline performance evaluation.
 
-Version 1.26.0 adds **Auto Schema Upgrade** (safely add new columns to existing tables), **Tool Provenance** tracking (LOCAL, MCP, SUB_AGENT, A2A, TRANSFER_AGENT), and **HITL Event Tracing** for human-in-the-loop interactions.
+Version 1.26.0 adds **Auto Schema Upgrade** (safely add new columns to existing tables), **Tool Provenance** tracking (LOCAL, MCP, SUB_AGENT, A2A, TRANSFER_AGENT), and **HITL Event Tracing** for human-in-the-loop interactions. Version 1.27.0 adds **Automatic View Creation** (generate flat, query-friendly event views).
 
 !!! example "Preview release"
 
@@ -42,6 +42,7 @@ Version 1.26.0 adds **Auto Schema Upgrade** (safely add new columns to existing 
 -   **Distributed Tracing**: Built-in support for OpenTelemetry-style tracing (`trace_id`, `span_id`) to visualize agent execution flows.
 -   **Tool Provenance**: Track the origin of each tool call (local function, MCP server, sub-agent, A2A remote agent, or transfer agent).
 -   **Human-in-the-Loop (HITL) Tracing**: Dedicated event types for credential requests, confirmation prompts, and user input requests.
+-   **Queryable Event Views**: Automatically create flat, per-event-type BigQuery views (e.g., `v_llm_request`, `v_tool_completed`) to simplify downstream analytics by unnesting JSON payload data.
 
 The agent event data recorded varies based on the ADK event type. For more
 information, see [Event types and payloads](#event-types).
@@ -194,6 +195,7 @@ You can customize the plugin using `BigQueryLoggerConfig`.
 -   **`log_session_metadata`** (`bool`, default: `True`): If True, logs session information into the `attributes` column, including `session_id`, `app_name`, `user_id`, and the session `state` dictionary (e.g., custom state like gchat thread-id, customer_id).
 -   **`custom_tags`** (`Dict[str, Any]`, default: `{}`): A dictionary of static tags (e.g., `{"env": "prod", "version": "1.0"}`) to be included in the `attributes` column for every event.
 -   **`auto_schema_upgrade`** (`bool`, default: `True`): When enabled, the plugin automatically adds new columns to an existing table when the plugin schema evolves. Only additive changes are made (columns are never dropped or altered). A version label (`adk_schema_version`) on the table ensures the diff runs at most once per schema version. Safe to leave enabled.
+-   **`create_views`** (`bool`, default: `True`): Added in 1.27.0. When enabled, automatically generates per-event-type BigQuery views that unnest structured JSON data (such as `content` or `attributes`) into flat, typed columns, significantly simplifying SQL queries.
 
 
 The following code sample shows how to define a configuration for the
@@ -235,6 +237,7 @@ config = BigQueryLoggerConfig(
     content_formatter=redact_dollar_amounts, # Redact the dollar amounts in the logging content
     queue_max_size=10000, # Max events to hold in memory
     auto_schema_upgrade=True, # Automatically add new columns to existing tables
+    create_views=True, # Automatically create per-event-type views
     # retry_config=RetryConfig(max_retries=3), # Optional: Configure retries
 )
 
@@ -308,6 +311,20 @@ CREATE TABLE `your-gcp-project-id.adk_agent_logs.agent_events`
 PARTITION BY DATE(timestamp)
 CLUSTER BY event_type, agent, user_id;
 ```
+
+### Automatically Created Views (1.27.0+)
+
+When `create_views=True` (the default in 1.27.0 and higher), the plugin automatically generates views for each event type that unnest common JSON structures into flat, typed columns. This significantly simplifies SQL, eliminating the need to write complex `JSON_VALUE` or `JSON_QUERY` functions explicitly.
+
+For example, the view `v_llm_request` includes the following schema:
+
+| Field Name | Type | Description |
+|:---|:---|:---|
+| **(Common Columns)** | `VARIES` | Includes standard metadata: `timestamp`, `event_type`, `agent`, `session_id`, `invocation_id`, `user_id`, `trace_id`, `span_id`, `parent_span_id`, `status`, `error_message`, `is_truncated`. |
+| **model** | `STRING` | The name of the LLM model used for the request. |
+| **request_content** | `JSON` | The raw LLM request payload. |
+| **llm_config** | `JSON` | The configuration parameters passed to the LLM (temperature, top_p, etc.). |
+| **tools** | `JSON` | Array of tools available during the request. |
 
 ### Event types and payloads {#event-types}
 

@@ -296,8 +296,8 @@ nav:
       - Apigee AI Gateway: agents/models/apigee.md
       - Ollama: agents/models/ollama.md
       - vLLM: agents/models/vllm.md
-      - LiteLLM: agents/models/litellm.md
-      
+      - LiteLLM: agents/models/litellm.md      
+      - LiteRT-LM: agents/models/litert-lm.md
     - Tools and Integrations:
       - integrations/index.md
     - Custom Tools:
