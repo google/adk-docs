@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { LlmAgent, FunctionTool, InMemoryRunner, isFinalResponse, stringifyContent } from "@google/adk";
+import { LlmAgent, FunctionTool, InMemoryRunner, isFinalResponse, stringifyContent } from '@google/adk';
 import { z } from "zod";
 import { Content, createUserContent } from "@google/genai";
 

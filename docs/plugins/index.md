@@ -119,7 +119,7 @@ methods, as shown in the following code example:
 === "Typescript"
 
     ```typescript title="count_plugin.ts"
-    import { BaseAgent, BasePlugin, CallbackContext } from "@google/adk";
+    import { BaseAgent, BasePlugin, Context } from "@google/adk";
     import type { LlmRequest, LlmResponse } from "@google/adk";
     import type { Content } from "@google/genai";
 
@@ -141,7 +141,7 @@ methods, as shown in the following code example:
          */
         async beforeAgentCallback(
             agent: BaseAgent,
-            callbackContext: CallbackContext
+            context: Context
         ): Promise<Content | undefined> {
             this.agentCount++;
             console.log(`[Plugin] Agent run count: ${this.agentCount}`);
@@ -152,7 +152,7 @@ methods, as shown in the following code example:
          * Count LLM requests.
          */
         async beforeModelCallback(
-            callbackContext: CallbackContext,
+            context: Context,
             llmRequest: LlmRequest
         ): Promise<LlmResponse | undefined> {
             this.llmRequestCount++;
@@ -591,7 +591,7 @@ The following code example shows the basic syntax of this callback:
 
     ```typescript
     async onModelErrorCallback(
-        callbackContext: CallbackContext,
+        context: Context,
         llmRequest: LlmRequest,
         error: Error
     ): Promise<LlmResponse | undefined> {
@@ -654,7 +654,7 @@ The following code example shows the basic syntax of this callback:
     async onToolErrorCallback(
         tool: BaseTool,
         toolArgs: { [key: string]: any },
-        toolContext: ToolContext,
+        context: Context,
         error: Error
     ): Promise<{ [key:string]: any } | undefined> {
         // Your implementation here

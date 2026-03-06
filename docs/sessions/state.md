@@ -469,6 +469,8 @@ For more complex scenarios (updating multiple keys, non-string values, specific 
 
 **3. Via `CallbackContext` or `ToolContext` (Recommended for Callbacks and Tools)**
 
+*(Note: In TypeScript, this is done via the unified `Context` type.)*
+
 Modifying state within agent callbacks (e.g., `on_before_agent_call`, `on_after_agent_call`) or tool functions is best done using the `state` attribute of the `CallbackContext` or `ToolContext` provided to your function.
 
 *   `callback_context.state['my_key'] = my_value`
@@ -504,10 +506,10 @@ For more comprehensive details on context objects, refer to the [Context documen
 
     ```typescript
     // In an agent callback or tool function
-    import { CallbackContext } from "@google/adk"; // or ToolContext
+    import { Context } from "@google/adk";
 
     function myCallbackOrToolFunction(
-        context: CallbackContext, // Or ToolContext
+        context: Context,
         // ... other parameters ...
     ) {
         // Update existing state
