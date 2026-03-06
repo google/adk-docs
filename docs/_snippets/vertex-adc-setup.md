@@ -13,4 +13,4 @@ The standard way to authenticate to Vertex AI is using [Application Default Cred
     GOOGLE_GENAI_USE_VERTEXAI=TRUE # Explicitly tell the library to use Vertex AI
     ```
 
-See [ADC documentation](https://docs.cloud.google.com/docs/authentication/application-default-credentials) to get more details and understand how ADC works.
+Note: See [ADC documentation](https://docs.cloud.google.com/docs/authentication/application-default-credentials) to get more details and understand how ADC works.
