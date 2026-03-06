@@ -4,11 +4,8 @@ com.example.helloworld
 com.example.mcpfilesystem
 com.google.adk
 com.google.adk.a2a
-com.google.adk.a2a.common
 com.google.adk.a2a.converters
-com.google.adk.a2a.executor
 com.google.adk.agents
-com.google.adk.apps
 com.google.adk.artifacts
 com.google.adk.codeexecutors
 com.google.adk.events
@@ -29,12 +26,11 @@ com.google.adk.models.springai.properties
 com.google.adk.plugins
 com.google.adk.plugins.recordings
 com.google.adk.runner
+com.google.adk.samples.a2a_remote
 com.google.adk.sessions
 com.google.adk.summarizer
-com.google.adk.telemetry
 com.google.adk.tools
 com.google.adk.tools.applicationintegrationtoolset
-com.google.adk.tools.computeruse
 com.google.adk.tools.mcp
 com.google.adk.tools.retrieval
 com.google.adk.tutorials
@@ -45,3 +41,6 @@ com.google.adk.web.controller
 com.google.adk.web.dto
 com.google.adk.web.service
 com.google.adk.web.websocket
+com.google.adk.webservice
+remote_prime_agent
+src.main.java.com.google.adk.samples.a2a_remote
