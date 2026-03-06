@@ -16,12 +16,21 @@ name: Build Docs
 
 on:
   pull_request:
+    paths:
+      - 'docs/**'
+      - 'mkdocs.yml'
+      - 'skills/**/*.md'
+
+permissions:
+  contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
       - uses: actions/setup-python@v5
         with:
           python-version: 3.x
@@ -34,3 +43,16 @@ jobs:
             mkdocs-material-
       - run: pip install -r requirements.txt
       - run: mkdocs build --strict
+      - name: Sync docs-index.md
+        if: github.event.pull_request.head.repo.full_name == github.repository
+        run: |
+          cp site/llms.txt skills/adk-cheatsheet/references/docs-index.md
+          if git diff --quiet skills/adk-cheatsheet/references/docs-index.md; then
+            echo "docs-index.md is up to date"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add skills/adk-cheatsheet/references/docs-index.md
+            git commit -m "chore: sync docs-index.md from generated llms.txt"
+            git push
+          fi
