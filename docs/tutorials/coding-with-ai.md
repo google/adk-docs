@@ -23,7 +23,7 @@ To add these skills to your project workspace, run the following command in your
 npx skills add google/adk-docs/skills -y
 ```
 
-ADK Development Skills work seameslly with your interface of choice (e.g. GeminiCLI, Cloude Code, Antigravity, etc.)
+ADK Development Skills work seameslly with your interface of choice (e.g. GeminiCLI, Cloude Code, Antigravity, etc.).
 
 ## What is llms.txt?
 
