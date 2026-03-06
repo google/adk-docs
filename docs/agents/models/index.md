@@ -30,3 +30,4 @@ ADK primarily uses two mechanisms for model integration:
       *  [LiteLLM models](/adk-docs/agents/models/litellm/)
       *  [Ollama model hosting](/adk-docs/agents/models/ollama/)
       *  [vLLM model hosting](/adk-docs/agents/models/vllm/)
+      *  [LiteRT-LM model hosting](/adk-docs/agents/models/litert-lm/)
