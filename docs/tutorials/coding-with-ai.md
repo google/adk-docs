@@ -31,7 +31,7 @@ GitHub](https://github.com/google/adk-docs/tree/main/skills), which include:
 | Skill | Description |
 |-------|-------------|
 | `adk-cheatsheet` | Python API quick reference and docs index |
-| `adk-deploy-guide` | Agent Engine, Cloud Run, and GKE deployment |
+| `adk-deploy-guide` | Agent Engine and Cloud Run deployment |
 | `adk-dev-guide` | Development lifecycle and coding guidelines |
 | `adk-eval-guide` | Evaluation methodology and scoring |
 | `adk-observability-guide` | Tracing, logging, and integrations |
