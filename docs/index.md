@@ -18,6 +18,14 @@ development feel more like software development, to make it easier for
 developers to create, deploy, and orchestrate agentic architectures that range
 from simple tasks to complex workflows.
 
+??? tip "News: ADK Python Skills released!"
+
+    ADK Python development [Agent Skills](https://agentskills.io/)
+    allow you to code ADK agents quickly and more effectively with
+    AI-powered development environments. For more details, check out
+    the [Coding with AI](/adk-docs/tutorials/coding-with-ai/#adk-skills),
+    ADK Skills docs.
+
 <div id="centered-install-tabs" class="install-command-container" markdown="1">
 
 <p class="get-started-text" style="text-align: center;">Get started:</p>
