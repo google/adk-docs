@@ -16,11 +16,9 @@ Navigate through the guides below to learn about ADK's A2A capabilities:
   *   **[A2A Quickstart (Exposing) for Go](./quickstart-exposing-go.md)**
 
   These guides show you how to allow your agent to use another, remote agent using A2A protocol:
-
   *   **[A2A Quickstart (Consuming) for Python](./quickstart-consuming.md)**
+      * **[A2A Extension: V2 Implementation](./a2a-extension.md)**
   *   **[A2A Quickstart (Consuming) for Go](./quickstart-consuming-go.md)**
-
-
   [**Official Website for Agent2Agent (A2A) Protocol**](https://a2a-protocol.org/)
 
   The official website for A2A Protocol.
