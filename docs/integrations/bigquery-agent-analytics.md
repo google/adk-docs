@@ -791,7 +791,7 @@ LIMIT 20;
 ```
 
 
-### 7. AI-Powered Root Cause Analysis (Agent Ops)
+**AI-Powered Root Cause Analysis (Agent Ops)**
 
 Automatically analyze failed sessions to determine the root cause of errors using BigQuery ML and Gemini.
 
