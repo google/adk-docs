@@ -12,25 +12,37 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: Build Docs
+name: Sync Docs Index
 
 on:
-  pull_request:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'docs/**'
+      - 'mkdocs.yml'
+
+permissions:
+  contents: write
 
 jobs:
-  build:
+  sync-docs-index:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: 3.x
-      - run: echo "cache_id=$(date --utc '+%V')" >> $GITHUB_ENV
-      - uses: actions/cache@v4
-        with:
-          key: mkdocs-material-${{ env.cache_id }}
-          path: .cache
-          restore-keys: |
-            mkdocs-material-
       - run: pip install -r requirements.txt
       - run: mkdocs build --strict
+      - name: Sync docs-index.md
+        run: |
+          cp site/llms.txt skills/adk-cheatsheet/references/docs-index.md
+          if git diff --quiet skills/adk-cheatsheet/references/docs-index.md; then
+            echo "docs-index.md is up to date"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add skills/adk-cheatsheet/references/docs-index.md
+            git commit -m "chore: sync docs-index.md from generated llms.txt"
+            git push
+          fi
