@@ -33,10 +33,10 @@ const exitLoopTool = new FunctionTool({
     name: 'exit_loop',
     description: 'Call this function ONLY when the critique indicates no further changes are needed, signaling the iterative process should end.',
     parameters: z.object({}),
-    execute: (input, toolContext) => {
-        if (toolContext) {
-            console.log(`  [Tool Call] exit_loop triggered by ${toolContext.agentName} with input: ${input}`);
-            toolContext.actions.escalate = true;
+    execute: (input, context) => {
+        if (context) {
+            console.log(`  [Tool Call] exit_loop triggered by ${context.agentName} with input: ${input}`);
+            context.actions.escalate = true;
         }
         return {};
     },

@@ -12,14 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {
-  ParallelAgent,
-  LlmAgent,
-  SequentialAgent,
-  InMemoryRunner,
-  GOOGLE_SEARCH,
-  isFinalResponse,
-} from "@google/adk";
+import { ParallelAgent, LlmAgent, SequentialAgent, InMemoryRunner, GOOGLE_SEARCH, isFinalResponse } from '@google/adk';
 
 import {createUserContent} from '@google/genai';
 
