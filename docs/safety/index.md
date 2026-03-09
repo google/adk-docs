@@ -70,7 +70,7 @@ Tools can be designed with security in mind: we can create tools that expose the
 
 In-tool guardrails is an approach to create common and re-usable tools that expose deterministic controls that can be used by developers to set limits on each tool instantiation.
 
-This approach relies on the fact that tools receive two types of input: arguments,  which are set by the model, and [**`Tool Context`**](../tools-custom/index.md#tool-context), which can be set deterministically by the agent developer. We can rely on the deterministically set information to validate that the model is behaving as-expected.
+This approach relies on the fact that tools receive two types of input: arguments,  which are set by the model, and [**`Tool Context`**](../tools-custom/index.md#tool-context), which can be set deterministically by the agent developer. We can rely on the deterministically set information to validate that the model is behaving as-expected. *(Note: In TypeScript, `Tool Context` corresponds to the unified `Context` type.)*
 
 For example, a query tool can be designed to expect a policy to be read from the Tool Context.
 
@@ -100,13 +100,13 @@ For example, a query tool can be designed to expect a policy to be read from the
     ```typescript
     // Conceptual example: Setting policy data intended for tool context
     // In a real ADK app, this might be set in InvocationContext.session.state
-    // or passed during tool initialization, then retrieved via ToolContext.
+    // or passed during tool initialization, then retrieved via Context.
 
     const policy: {[key: string]: any} = {}; // Assuming policy is an object
     policy['select_only'] = true;
     policy['tables'] = ['mytable1', 'mytable2'];
 
-    // Conceptual: Storing policy where the tool can access it via ToolContext later.
+    // Conceptual: Storing policy where the tool can access it via Context later.
     // This specific line might look different in practice.
     // For example, storing in session state:
     invocationContext.session.state["query_tool_policy"] = policy;
@@ -161,7 +161,7 @@ For example, a query tool can be designed to expect a policy to be read from the
     // For this example, we'll assume it gets stored somewhere accessible.
     ```
 
-During the tool execution, [**`Tool Context`**](../tools-custom/index.md#tool-context) will be passed to the tool:
+During the tool execution, [**`Tool Context`**](../tools-custom/index.md#tool-context) will be passed to the tool *(Note: In TypeScript, this is passed as the unified `Context` type)*:
 
 === "Python"
 
@@ -191,9 +191,9 @@ During the tool execution, [**`Tool Context`**](../tools-custom/index.md#tool-co
 === "TypeScript"
 
     ```typescript
-    function query(query: string, toolContext: ToolContext): string | object {
+    function query(query: string, context: Context): string | object {
         // Assume 'policy' is retrieved from context, e.g., via session state:
-        const policy = toolContext.state.get('query_tool_policy', {}) as {[key: string]: any};
+        const policy = context.state.get('query_tool_policy', {}) as {[key: string]: any};
 
         // --- Placeholder Policy Enforcement ---
         const actual_tables = explainQuery(query); // Hypothetical function call
@@ -383,7 +383,7 @@ When modifications to the tools to add guardrails aren't possible, the [**`Befor
         {tool, args, context}: {
             tool: BaseTool,
             args: {[key: string]: any},
-            context: ToolContext
+            context: Context
         }
     ): {[key: string]: any} | undefined {
         console.log(`Callback triggered for tool: ${tool.name}, args: ${JSON.stringify(args)}`);
