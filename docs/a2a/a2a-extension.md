@@ -1,4 +1,4 @@
-# A2A Extension: V2 Implementation
+# A2A Extension: A2aAgentExecutor-V2.0
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
@@ -6,7 +6,7 @@
 
 ## Overview
 
-This extension acts as a feature flag, allowing a requesting client to opt-in to using the new, updated [implementation](https://github.com/google/adk-python/blob/main/src/google/adk/a2a/executor/a2a_agent_executor_impl.py) of the agent executor within ADK.
+This extension acts as a feature flag, allowing a requesting client to opt-in to using the new, updated [implementation](https://github.com/google/adk-python/blob/main/src/google/adk/a2a/executor/a2a_agent_executor_impl.py) of the agent executor within ADK Python.
 
 ## Background
 
@@ -14,7 +14,7 @@ To enable architectural changes to the core agent execution logic, a [new agent 
 
 ## Extension activation
 
-Clients indicate their desire to use this extension by specifying it via the transport-defined A2A extension activation mechanism.
+Clients indicate their desire to use this extension by specifying it via the transport-defined [A2A extension](https://a2a-protocol.org/latest/topics/extensions/) activation mechanism.
 For JSON-RPC and HTTP transports, this is indicated via the X-A2A-Extensions HTTP header.
 For gRPC, this is indicated via the X-A2A-Extensions metadata value.
 
