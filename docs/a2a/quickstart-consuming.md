@@ -162,8 +162,8 @@ prime_agent = RemoteA2aAgent(
 <...code truncated>
 ```
 
-!!! note "Using the new agent executor"
-    By setting `use_legacy=False`, the agent will use the new agent executor implementation. In this way, it will send the [A2A extension](a2a-extension.md) to the remote agent.
+!!! note "Using the new A2A integration"
+    By setting `use_legacy=False`, the agent will use the new ADK-A2A integration, as it will send the [A2A extension](a2a-extension.md) to the remote agent.
 
 Then, you can simply use the `RemoteA2aAgent` in your agent. In this case, `prime_agent` is used as one of the sub-agents in the `root_agent` below:
 
@@ -201,7 +201,7 @@ root_agent = Agent(
 
 ### Advanced Configuration: Custom Converters and Interceptors
 
-Internally, the `RemoteA2aAgent` translates between the A2A protocol format and the ADK's native `Event` system. You can customize this behaviour by passing an [`A2aRemoteAgentConfig`](https://github.com/google/adk-python/blob/main/src/google/adk/a2a/agent/config.py) object via the `remote_agent_config` parameter to `RemoteA2aAgent`.
+Internally, the `RemoteA2aAgent` translates between the A2A protocol format and the ADK's native `Event` system. You can customize this behaviour by passing an [`A2aRemoteAgentConfig`](https://github.com/google/adk-python/blob/main/src/google/adk/a2a/agent/config.py) object via the `config` parameter to `RemoteA2aAgent`.
 
 This allows you to define custom type mappings, inject request parameters, and intercept requests or responses.
 
@@ -229,7 +229,7 @@ Through interceptors, you can also modify the `ParametersConfig` for the A2A req
 *   **`request_metadata`**: Pass custom metadata dictionaries into the request headers.
 *   **`client_call_context`**: Inject specific client call contexts for the underlying transport.
 
-```python title="a2a_basic/agent.py"
+```python
 <...code truncated...>
 
 from google.adk.agents.remote_a2a_agent import AGENT_CARD_WELL_KNOWN_PATH
@@ -242,7 +242,7 @@ prime_agent = RemoteA2aAgent(
         f"http://localhost:8001/a2a/check_prime_agent{AGENT_CARD_WELL_KNOWN_PATH}"
     ),
     use_legacy=False,
-    remote_agent_config=A2aRemoteAgentConfig(
+    config=A2aRemoteAgentConfig(
         a2a_message_converter=my_a2a_message_converter,
         request_interceptors=[my_request_interceptor],
     ),
