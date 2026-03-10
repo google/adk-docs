@@ -242,19 +242,7 @@ Result: Infrastructure files adapted to the actual project
 
 ### `uvx` command not found
 
-Install `uv`:
-
-```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
-```
-
-!!! tip
-    The installation script may be inspected before use:
-    ```bash
-    curl -LsSf https://astral.sh/uv/install.sh | less
-    ```
-
-For more installation options, see the [official installation guide](https://docs.astral.sh/uv/getting-started/installation/).
+Install `uv` following the [official installation guide](https://docs.astral.sh/uv/getting-started/installation/).
 
 If `uv` is not an option, use pip instead:
 
