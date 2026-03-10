@@ -102,7 +102,7 @@ uvx agent-starter-pack create <project-name> \
 | `--auto-approve` | `-y` | off | Skip confirmation prompts |
 | `--skip-checks` | `-s` | off | Skip GCP/Vertex AI verification checks |
 | `--agent-directory` | `-dir` | `app` | Agent code directory name |
-| `--google-api-key` | `-k` | — | Use Google AI Studio instead of Vertex AI |
+| `--google-api-key` | `-k` | — | Use Google AI Studio instead of Vertex AI (set via environment variable, never hardcode) |
 | `--agent-guidance-filename` | | `GEMINI.md` | Guidance file name (`CLAUDE.md`, `AGENTS.md`) |
 | `--debug` | | off | Enable debug logging for troubleshooting |
 
@@ -242,7 +242,12 @@ Result: Infrastructure files adapted to the actual project
 
 ### `uvx` command not found
 
-Install `uv`: `curl -LsSf https://astral.sh/uv/install.sh | sh`
+Install `uv` following the official installation instructions at https://docs.astral.sh/uv/getting-started/installation/
+
+**Security note**: Always verify installation scripts before execution. For manual installation:
+1. Download the install script: `curl -LsSf https://astral.sh/uv/install.sh -o install-uv.sh`
+2. Review the script contents: `less install-uv.sh` or `cat install-uv.sh`
+3. Execute only after verification: `sh install-uv.sh`
 
 If `uv` is not an option, use pip instead:
 
