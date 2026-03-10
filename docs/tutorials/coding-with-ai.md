@@ -25,13 +25,14 @@ directory:
 npx skills add google/adk-docs/skills -y
 ```
 
-The ADK skills package includes:
+Browse the [ADK skills on
+GitHub](https://github.com/google/adk-docs/tree/main/skills), which include:
 
 | Skill | Description |
 |-------|-------------|
 | `adk-cheatsheet` | Python API quick reference and docs index |
+| `adk-deploy-guide` | Agent Engine and Cloud Run deployment |
 | `adk-dev-guide` | Development lifecycle and coding guidelines |
-| `adk-deploy-guide` | Agent Engine, Cloud Run, and GKE deployment |
 | `adk-eval-guide` | Evaluation methodology and scoring |
 | `adk-observability-guide` | Tracing, logging, and integrations |
 | `adk-scaffold` | Project scaffolding |

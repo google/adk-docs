@@ -9,7 +9,7 @@ For example, we can use streaming tools to monitor the changes of the stock pric
 
 !!! info
 
-    This is only supported in streaming(live) agents/api.
+    This is only supported in ADK Gemini Live APIs.
 
 To define a streaming tool, you must adhere to the following:
 
