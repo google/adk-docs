@@ -74,8 +74,7 @@ Create an ADK agent and wrap it in a Temporal Workflow. Use `TemporalModel` to
 route LLM calls through Temporal Activities:
 
 ```python
-from google.adk.agents import Agent
-from google.adk.runners import InMemoryRunner
+from google.adk.agents import Agent, Runner
 from temporalio import workflow
 from temporalio.contrib.google_adk_agents import TemporalModel
 
@@ -91,6 +90,7 @@ agent = Agent(
 class WeatherAgentWorkflow:
     @workflow.run
     async def run(self, user_message: str) -> str:
+        # For testing; for production, use Runner()
         runner = InMemoryRunner(agent=agent)
         result = await runner.run_async(user_message)
         return result
@@ -208,25 +208,23 @@ client = await Client.connect(
 
 ## How it works
 
-The plugin ensures your ADK agent runs deterministically inside Temporal:
+The plugin ensures your ADK agent runs deterministically inside Temporal Workflow code, and causes inputs and outputs to be serialized and recorded for robust recovery.  For example:
 
 - **LLM calls** are executed as Temporal Activities via `TemporalModel`. If a
   call fails or the worker crashes, Temporal retries or replays from the last
   successful step, adding resilience and reducing token spend.
-- **Non-deterministic operations** When run in Workflow code (as opposed to Activity code), 
-  (`time.time()`, `uuid.uuid4()`) are
+- **Non-deterministic operations** like (`time.time()`, `uuid.uuid4()`) are
   automatically replaced with Temporal's deterministic equivalents
-  (`workflow.now()`, `workflow.uuid4()`).
+  (`workflow.now()`, `workflow.uuid4()`) when run in Workflow code (but not Activity code).
 - **ADK and Gemini modules** are configured for Temporal's
   [sandbox](https://docs.temporal.io/develop/python/sandbox-environment)
   environment with automatic passthrough.
 - **Pydantic serialization** is configured automatically for ADK's data types.
 
-## Capabilities
+## Additional capabilities
 
 | Capability | Description |
 | --- | --- |
-| Durable LLM calls | `TemporalModel` executes model invocations as Activities with configurable timeouts and automatic retries |
 | Durable tool execution | `activity_tool` wraps tool functions as Activities, supporting long-running tools, automatic retries, and heartbeating |
 | MCP tool support | `TemporalMcpToolSet` executes MCP tools as Activities with full event propagation |
 | Human-in-the-loop | Your Agent Workflow can wait for [Signals](https://docs.temporal.io/signals) and [Updates](https://docs.temporal.io/messages#updates) to wait for human input, and clients can send those to resume the Agent |
@@ -235,6 +233,7 @@ The plugin ensures your ADK agent runs deterministically inside Temporal:
 | Observability | Work with your favorite Observability solution using OpenTelemetry, with cross-process spans that are resilient to crashes.
 | Safe versioning | Deploy new agent versions using [Temporal Worker Versioning](https://docs.temporal.io/production-deployment/worker-deployments/worker-versioning) without disrupting in-flight executions |
 | Multi-agent orchestration | Compose multiple agents within a Workflow, or scale them to more complex use cases by using [Child Workflows](https://docs.temporal.io/child-workflows) or [Nexus](https://docs.temporal.io/nexus) |
+
 
 ## Additional resources
 
