@@ -5,7 +5,7 @@ You can use AI coding assistants to build agents with Agent Development Kit
 into your project, or by connecting it to ADK documentation through an MCP
 server.
 
-- [**ADK Skills**](#adk-skills): Install ADK development skills directly into
+- [**ADK Dev Skills**](#adk-dev-skills): Install ADK development skills directly into
   your project.
 - [**ADK Docs MCP Server**](#adk-docs-mcp-server): Connect your coding tool to
   ADK documentation through an MCP server.
