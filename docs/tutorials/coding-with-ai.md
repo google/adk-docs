@@ -25,7 +25,8 @@ directory:
 npx skills add google/adk-docs/skills -y -g
 ```
 
-The ADK Dev skills package includes:
+Browse the [ADK Dev Skills on
+GitHub](https://github.com/google/adk-docs/tree/main/skills), which include:
 
 | Skill | Description |
 |-------|-------------|
