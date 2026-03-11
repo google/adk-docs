@@ -12,7 +12,7 @@ server.
 - [**ADK Docs Index**](#adk-docs-index): Machine-readable documentation files
   following the `llms.txt` standard.
 
-## ADK Skills
+## ADK Dev Skills
 
 ADK provides a set of development [skills](https://agentskills.io/) that cover
 APIs, coding patterns, deployment, and evaluation. The skills work with any
@@ -22,10 +22,10 @@ To install the ADK development skills, run the following in your project
 directory:
 
 ```bash
-npx skills add google/adk-docs/skills -y
+npx skills add google/adk-docs/skills -y -g
 ```
 
-Browse the [ADK skills on
+Browse the [ADK Dev Skills on
 GitHub](https://github.com/google/adk-docs/tree/main/skills), which include:
 
 | Skill | Description |
