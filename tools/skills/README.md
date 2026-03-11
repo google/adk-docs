@@ -167,18 +167,3 @@ python tools/skills/validate_links.py
 # Run on specific file
 python tools/skills/validate_callback_signatures.py skills/adk-cheatsheet/references/python.md
 ```
-
-## Future Enhancements
-
-### Potential Additions
-1. **Auto-generate signatures from source**: Parse ADK source code to extract signatures automatically
-2. **Runtime examples**: Execute more code snippets to verify they work
-3. **Version compatibility**: Test against multiple ADK versions
-4. **Deprecation detection**: Flag when docs use deprecated APIs
-
-### Contributing
-When adding validation tools:
-1. Add script to `tools/skills/`
-2. Update this README
-3. Add to `.github/workflows/skills-check.yaml`
-4. Test locally before submitting PR
