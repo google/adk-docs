@@ -30,8 +30,8 @@ The ADK Dev skills package includes:
 | Skill | Description |
 |-------|-------------|
 | `adk-cheatsheet` | Python API quick reference and docs index |
+| `adk-deploy-guide` | Agent Engine and Cloud Run deployment |
 | `adk-dev-guide` | Development lifecycle and coding guidelines |
-| `adk-deploy-guide` | Agent Engine, Cloud Run, and GKE deployment |
 | `adk-eval-guide` | Evaluation methodology and scoring |
 | `adk-observability-guide` | Tracing, logging, and integrations |
 | `adk-scaffold` | Project scaffolding |
