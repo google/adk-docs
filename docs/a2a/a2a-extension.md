@@ -28,7 +28,7 @@ Clients indicate their desire to use this extension by specifying it via the tra
 For JSON-RPC and HTTP transports, this is indicated via the X-A2A-Extensions HTTP header.
 For gRPC, this is indicated via the X-A2A-Extensions metadata value.
 
-To activate the extension, the client can instantiate the `RemoteA2aAgent` with `use_legacy=False`. This will add `https://google.github.io/adk-docs/a2a/a2a-extension/` among the requested extensions of the request sent by the client.
+To activate the extension, the client can instantiate the `RemoteA2aAgent` with `use_legacy=False`. This will add `https://google.github.io/adk-docs/a2a/a2a-extension/` among the requested extensions of the sent request.
 Activating this extension implies that the server will use the new agent executor implementation.
 
 ```python
