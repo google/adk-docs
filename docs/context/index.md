@@ -1147,7 +1147,7 @@ Use artifacts to handle files or large data blobs associated with the session. C
 ### Handling Tool Authentication
 
 <div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-java">Java v0.2.0</span>
 </div>
 
 Securely manage API keys or other credentials needed by tools.
@@ -1266,12 +1266,66 @@ Securely manage API keys or other credentials needed by tools.
     }
     ```
 
+=== "Java"
+
+    ```java
+    // Example: Tool requiring auth
+    import com.google.adk.tools.ToolContext;
+    import java.util.Map;
+
+    // Note: AuthConfig, requestCredential, and getAuthResponse are not yet 
+    // fully implemented in the Java ADK public API. 
+    // This example relies on external auth population into the session state.
+
+    public class SecureApiTool {
+      private static final String AUTH_STATE_KEY = "user:my_api_credential";
+
+      public Map<String, String> callSecureApi(ToolContext context, String requestData) {
+        // 1. Check if credential already exists in state
+        Object credential = context.state().get(AUTH_STATE_KEY);
+
+        if (credential == null) {
+          // 2. If not, request it
+          System.out.println("Credential not found, requesting...");
+          try {
+            // context.requestCredential(MY_API_AUTH_CONFIG); // Not yet implemented in Java ADK
+            // The framework handles yielding the event. The tool execution stops here for this turn.
+            return Map.of("status", "Authentication required. Please provide credentials.");
+          } catch (Exception e) {
+            return Map.of("error", "Auth or credential request error: " + e.getMessage());
+          }
+        }
+
+        // 3. If credential exists (might be from a previous turn after request)
+        //    or if this is a subsequent call after auth flow completed externally
+        try {
+          // Optionally, re-validate/retrieve if needed, or use directly
+          // String apiKey = context.getAuthResponse(MY_API_AUTH_CONFIG).getApiKey();
+          String apiKey = credential.toString(); // Simplified for example
+
+          // Store it back in state for future calls within the session
+          context.state().put(AUTH_STATE_KEY, apiKey);
+
+          System.out.println("Using retrieved credential to call API with data: " + requestData);
+          // ... Make the actual API call using apiKey ...
+          String apiResult = "API result for " + requestData;
+
+          return Map.of("result", apiResult);
+        } catch (Exception e) {
+          // Handle errors retrieving/using the credential
+          System.err.println("Error using credential: " + e.getMessage());
+          return Map.of("error", "Failed to use credential");
+        }
+      }
+    }
+    ```
+
 *Remember: `request_credential` pauses the tool and signals the need for authentication. The user/system provides credentials, and on a subsequent call, `get_auth_response` (or checking state again) allows the tool to proceed.* The `tool_context.function_call_id` is used implicitly by the framework to link the request and response.
 
 ### Leveraging Memory
 
 <div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-java">Java v0.2.0</span>
 </div>
 
 Access relevant information from the past or external sources.
@@ -1321,10 +1375,37 @@ Access relevant information from the past or external sources.
     }
     ```
 
+=== "Java"
+
+    ```java
+    // Example: Tool using memory search
+    import com.google.adk.tools.ToolContext;
+    import com.google.adk.memory.SearchMemoryResponse;
+    import io.reactivex.rxjava3.core.Single;
+    import java.util.Map;
+
+    public class MemorySearchTool {
+      public Single<Map<String, String>> findRelatedInfo(ToolContext context, String topic) {
+        return context.searchMemory("Information about " + topic)
+            .map(searchResults -> {
+              if (searchResults != null && searchResults.results() != null && !searchResults.results().isEmpty()) {
+                System.out.println("Found " + searchResults.results().size() + " memory results for '" + topic + "'");
+                // Process searchResults.results
+                String topResultText = searchResults.results().get(0).text();
+                return Map.of("memory_snippet", topResultText);
+              } else {
+                return Map.of("message", "No relevant memories found.");
+              }
+            })
+            .onErrorReturnItem(Map.of("error", "Memory service error"));
+      }
+    }
+    ```
+
 ### Advanced: Direct `InvocationContext` Usage
 
 <div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-java">Java v0.2.0</span>
 </div>
 
 While most interactions happen via `CallbackContext` or `ToolContext`, sometimes the agent's core logic (`_run_async_impl`/`_run_live_impl`) needs direct access.
@@ -1386,6 +1467,50 @@ While most interactions happen via `CallbackContext` or `ToolContext`, sometimes
 
         // ... Normal agent processing ...
         yield; // ... event ...
+      }
+    }
+    ```
+
+=== "Java"
+
+    ```java
+    // Example: Inside agent's runAsyncImpl
+    import com.google.adk.agents.BaseAgent;
+    import com.google.adk.agents.InvocationContext;
+    import com.google.adk.events.Event;
+    import com.google.genai.types.Content;
+    import com.google.genai.types.Part;
+    import io.reactivex.rxjava3.core.Flowable;
+    import java.util.List;
+
+    public class MyControllingAgent extends BaseAgent {
+
+      @Override
+      protected Flowable<Event> runAsyncImpl(InvocationContext ctx) {
+        // Example: Check if a specific service is available
+        if (ctx.memoryService() == null) {
+          System.out.println("Memory service is not available for this invocation.");
+          // Potentially change agent behavior
+        }
+
+        // Example: Early termination based on some condition
+        Boolean criticalError = (Boolean) ctx.session().state().getOrDefault("critical_error_flag", false);
+        if (criticalError != null && criticalError) {
+          System.out.println("Critical error detected, ending invocation.");
+          ctx.setEndInvocation(true); // Signal framework to stop processing
+          
+          Event errorEvent = Event.builder()
+              .author(name())
+              .invocationId(ctx.invocationId())
+              .content(Content.builder().parts(List.of(Part.builder().text("Stopping due to critical error.").build())).build())
+              .build();
+              
+          return Flowable.just(errorEvent); // Stop this agent's execution
+        }
+
+        // ... Normal agent processing ...
+        // return Flowable.just(normalEvent);
+        return Flowable.empty();
       }
     }
     ```
