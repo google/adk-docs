@@ -585,6 +585,7 @@ Allows an [`LlmAgent`](llm-agents.md) to treat another `BaseAgent` instance as a
 * **Handling:** When the parent LLM generates a function call targeting the `AgentTool`, the framework executes `AgentTool.run_async`. This method runs the target agent, captures its final response, forwards any state/artifact changes back to the parent's context, and returns the response as the tool's result.
 * **Nature:** Synchronous (within the parent's flow), explicit, controlled invocation like any other tool.
 * **(Note:** `AgentTool` needs to be imported and used explicitly).
+* **Plugin Inheritance:** The `AgentTool`'s `include_plugins` parameter (default: `True`) controls whether the wrapped agent inherits the plugins from the parent agent's runner. Setting `include_plugins=False` allows you to run the wrapped agent in an isolated environment, without the parent's plugins.
 
 === "Python"
 
@@ -608,7 +609,7 @@ Allows an [`LlmAgent`](llm-agents.md) to treat another `BaseAgent` instance as a
 
 
     image_agent = ImageGeneratorAgent()
-    image_tool = agent_tool.AgentTool(agent=image_agent) # Wrap the agent
+    image_tool = agent_tool.AgentTool(agent=image_agent, include_plugins=False) # Wrap the agent to run in isolation
 
 
     # Parent agent uses the AgentTool
@@ -1124,7 +1125,7 @@ By combining ADK's composition primitives, you can implement various established
     const summarizer = new LlmAgent({name: 'Summarizer', description: 'Summarizes text.'});
 
     // Mid-level agent combining tools
-    const researchAssistant = new LlmAgent({
+    const research_assistant = new LlmAgent({
         name: 'ResearchAssistant',
         model: 'gemini-2.5-flash',
         description: 'Finds and summarizes information on a topic.',
