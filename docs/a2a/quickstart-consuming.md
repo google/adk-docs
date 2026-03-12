@@ -215,6 +215,9 @@ Converters handle the translation of incoming A2A responses into native ADK obje
 *   **`a2a_artifact_update_converter`**: Converts A2A `TaskArtifactUpdateEvent`s into ADK `Event` objects.
 *   **`a2a_part_converter`**: A foundational low-level hook utilized internally by other converters to convert individual A2A Message Parts into GenAI `Part` objects.
 
+!!! note
+    These custom client converters are used only when the response is coming from the new implementation of the [agent executor](https://github.com/google/adk-python/blob/main/src/google/adk/a2a/executor/a2a_agent_executor_impl.py). For more details, see the [A2A extension](a2a-extension.md).
+
 #### Request Interceptors
 
 You can inject a list of `request_interceptors` to add middleware logic to A2A requests:

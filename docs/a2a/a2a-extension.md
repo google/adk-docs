@@ -12,7 +12,16 @@ This extension acts as a feature flag, allowing a requesting client to opt-in to
 
 To enable architectural changes to the core agent execution logic, a [new agent executor implementation](https://github.com/google/adk-python/blob/main/src/google/adk/a2a/executor/a2a_agent_executor_impl.py) has been developed. To ensure backward compatibility and allow for a gradual migration, the legacy implementation remains the default. This extension was introduced to allow clients to explicitly request the use of this new implementation on a per-request basis.
 
-## Extension activation
+## Extension Benefits
+
+Activating this extension instructs the server to use the updated agent executor implementation. While this transition offers several general advantages, it primarily resolves critical limitations found in the legacy A2A-ADK implementation when both A2A and ADK operate in streaming mode.
+
+Specifically, the new implementation fixes the following:
+- **Message duplication:** Prevents user messages from being duplicated in the task history.
+- **Output misclassification:** Stops remote agent ADK outputs from being incorrectly converted into root agent thoughts.
+- **Sub-agent data loss:** Ensures ADK outputs from remote agents are reliably preserved, eliminating data loss when multiple agents are nested within the remote agent's sub-agent tree.
+
+## Client-side extension activation
 
 Clients indicate their desire to use this extension by specifying it via the transport-defined [A2A extension](https://a2a-protocol.org/latest/topics/extensions/) activation mechanism.
 For JSON-RPC and HTTP transports, this is indicated via the X-A2A-Extensions HTTP header.
