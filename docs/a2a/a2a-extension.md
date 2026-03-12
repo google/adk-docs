@@ -17,8 +17,9 @@ To enable architectural changes to the core agent execution logic, a [new agent 
 Activating this extension instructs the server to use the updated agent executor implementation. While this transition offers several general advantages, it primarily resolves critical limitations found in the legacy A2A-ADK implementation when both A2A and ADK operate in streaming mode.
 
 Specifically, the new implementation fixes the following:
+
 - **Message duplication:** Prevents user messages from being duplicated in the task history.
-- **Output misclassification:** Stops remote agent ADK outputs from being incorrectly converted into root agent thoughts.
+- **Output misclassification:** Stops remote agent ADK outputs from being incorrectly converted into event thoughts.
 - **Sub-agent data loss:** Ensures ADK outputs from remote agents are reliably preserved, eliminating data loss when multiple agents are nested within the remote agent's sub-agent tree.
 
 ## Client-side extension activation

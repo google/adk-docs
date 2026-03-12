@@ -253,7 +253,10 @@ However, you can also bypass the extension and force the server to use the new e
 ```python
 from google.adk.a2a.executor import A2aAgentExecutor
 
-executor = A2aAgentExecutor(agent=agent, force_new_version=True)
+executor = A2aAgentExecutor(
+            ...,
+            force_new_version=True
+        )
 ```
 
 
