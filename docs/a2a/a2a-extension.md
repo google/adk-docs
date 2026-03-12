@@ -6,7 +6,7 @@
 
 ## Overview
 
-This extension acts as a feature flag, allowing a requesting client to opt-in to using the new, updated [implementation](https://github.com/google/adk-python/blob/main/src/google/adk/a2a/executor/a2a_agent_executor_impl.py) of the agent executor within ADK Python.
+This extension - `https://google.github.io/adk-docs/a2a/a2a-extension/` - acts as a feature flag, allowing a requesting client to opt-in to using the new, updated [implementation](https://github.com/google/adk-python/blob/main/src/google/adk/a2a/executor/a2a_agent_executor_impl.py) of the agent executor within ADK Python.
 
 ## Background
 
@@ -28,7 +28,7 @@ Clients indicate their desire to use this extension by specifying it via the tra
 For JSON-RPC and HTTP transports, this is indicated via the X-A2A-Extensions HTTP header.
 For gRPC, this is indicated via the X-A2A-Extensions metadata value.
 
-To activate the extension, the client can instantiate the `RemoteA2aAgent` with `use_legacy=False`.
+To activate the extension, the client can instantiate the `RemoteA2aAgent` with `use_legacy=False`. This will add `https://google.github.io/adk-docs/a2a/a2a-extension/` among the requested extensions of the request sent by the client.
 Activating this extension implies that the server will use the new agent executor implementation.
 
 ```python
