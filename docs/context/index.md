@@ -25,20 +25,19 @@ The central piece holding all this information together for a single, complete u
     ```python
     # How the framework provides context to your agent internally:
 
-    # runner = Runner(agent=my_root_agent, session_service=..., artifact_service=...)
+    runner = Runner(agent=my_root_agent, session_service=..., artifact_service=...)
     # ...
-    # invocation_context = InvocationContext(
-    #     invocation_id="e-1234abcd",
-    #     session=session,
-    #     user_content=types.Content(role="user", parts=[types.Part.from_text("Hello")]),
-    #     agent=my_root_agent,
-    #     session_service=session_service,
-    #     artifact_service=artifact_service,
-    #     memory_service=memory_service,
-    #     # ... other necessary fields
-    # )
-    #
-    # await my_root_agent.run_async(invocation_context)
+    invocation_context = InvocationContext(
+        invocation_id="e-1234abcd",
+        session=session,
+        user_content=types.Content(role="user", parts=[types.Part.from_text("Hello")]),
+        agent=my_root_agent,
+        session_service=session_service,
+        artifact_service=artifact_service,
+        memory_service=memory_service,
+        # ... other necessary fields
+    )
+    await my_root_agent.run_async(invocation_context)
     ```
 
 === "TypeScript"
@@ -81,20 +80,19 @@ The central piece holding all this information together for a single, complete u
     ```java
     // How the framework provides context to your agent internally:
     
-    // InMemoryRunner runner = InMemoryRunner.builder().agent(agent).build();
+    InMemoryRunner runner = InMemoryRunner.builder().agent(agent).build();
     // ...
-    //
-    // InvocationContext invocationContext = InvocationContext.builder()
-    //     .invocationId("e-1234abcd")
-    //     .session(session)
-    //     .userContent(userContent)
-    //     .agent(agent)
-    //     .sessionService(runner.sessionService())
-    //     .artifactService(runner.artifactService())
-    //     .memoryService(runner.memoryService())
-    //     .build();
-    //     
-    // The InvocationContext is then passed to the agent implicitly during runAsync()
+    InvocationContext invocationContext = InvocationContext.builder()
+        .invocationId("e-1234abcd")
+        .session(session)
+        .userContent(userContent)
+        .agent(agent)
+        .sessionService(runner.sessionService())
+        .artifactService(runner.artifactService())
+        .memoryService(runner.memoryService())
+        .build();
+        
+    The InvocationContext is then passed to the agent implicitly during runAsync()
     ```
 
 ## The Different types of Context
