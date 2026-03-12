@@ -1,7 +1,7 @@
 # Deploy to Vertex AI Agent Engine
 
-<div class="language-support-tag" title="Vertex AI Agent Engine currently supports only Python.">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
+<div class=\"language-support-tag\" title=\"Vertex AI Agent Engine currently supports only Python.\">
+    <span class=\"lst-supported\">Supported in ADK</span><span class=\"lst-python\">Python</span>
 </div>
 
 This deployment procedure describes how to perform a standard deployment of
@@ -54,14 +54,14 @@ To deploy your agent to Agent Engine, you need a Google Cloud project:
       homepage. Make sure to note the Project ID (alphanumeric with hyphens),
       _not_ the project number (numeric).
 
-    <img src="/adk-docs/assets/project-id.png" alt="Google Cloud Project ID">
+    <img src=\"/adk-docs/assets/project-id.png\" alt=\"Google Cloud Project ID\">
 
 4. **Enable Vertex AI in your project**
-    * To use Agent Engine, you need to [enable the Vertex AI API](https://console.cloud.google.com/apis/library/aiplatform.googleapis.com). Click on the "Enable" button to enable the API. Once enabled, it
-    should say "API Enabled".
+    * To use Agent Engine, you need to [enable the Vertex AI API](https://console.cloud.google.com/apis/library/aiplatform.googleapis.com). Click on the \"Enable\" button to enable the API. Once enabled, it
+    should say \"API Enabled\".
 
 5. **Enable Cloud Resource Manager API in your project**
-    * To use Agent Engine, you need to [enable the Cloud Resource Manager API](https://console.developers.google.com/apis/api/cloudresourcemanager.googleapis.com/overview). Click on the "Enable" button to enable the API. Once enabled, it should say "API Enabled".
+    * To use Agent Engine, you need to [enable the Cloud Resource Manager API](https://console.developers.google.com/apis/api/cloudresourcemanager.googleapis.com/overview). Click on the \"Enable\" button to enable the API. Once enabled, it should say \"API Enabled\".
 
 ## Set up your coding environment {#prerequisites-coding-env}
 
@@ -137,7 +137,7 @@ LOCATION_ID=us-central1
 adk deploy agent_engine \
         --project=$PROJECT_ID \
         --region=$LOCATION_ID \
-        --display_name="My First Agent" \
+        --display_name=\"My First Agent\" \
         multi_tool_agent
 ```
 
@@ -145,6 +145,31 @@ For `region`, you can find a list of the supported regions on the
 [Vertex AI Agent Builder locations page](https://docs.cloud.google.com/agent-builder/locations#supported-regions-agent-engine).
 To learn about the CLI options for the `adk deploy agent_engine` command, see the
 [ADK CLI Reference](https://google.github.io/adk-docs/api-reference/cli/cli.html#adk-deploy-agent-engine).
+
+### Deploy with an API key
+
+You can also deploy your agent with an API key for authentication, also known as
+Vertex AI Express Mode. This method is useful for development and testing
+because it does not require you to set up a full Google Cloud project with
+billing and extensive permissions.
+
+To deploy with an API key, use the `--api_key` flag with the
+`adk deploy agent_engine` command:
+
+```shell
+API_KEY=\"YOUR_API_KEY\"
+
+adk deploy agent_engine \
+        --api_key=$API_KEY \
+        --display_name=\"My First Agent\" \
+        multi_tool_agent
+```
+
+When you use the `--api_key` flag, the ADK initializes the Vertex AI client with
+your API key and bypasses the need for `--project` and `--region` credentials.
+
+To learn more about Vertex AI Express Mode and how to obtain an API key, see the
+[Vertex AI documentation](https://cloud.google.com/vertex-ai/docs/start/express-mode).
 
 ### Deploy command output
 
@@ -173,10 +198,10 @@ and how to construct URLs to interact with your agent's REST API.
 
 To interact with your agent on Agent Engine, you need the following:
 
-*   **PROJECT_ID** (example: "my-project-id") which you can find on your
+*   **PROJECT_ID** (example: \"my-project-id\") which you can find on your
     [project details page](https://console.cloud.google.com/iam-admin/settings)
-*   **LOCATION_ID** (example: "us-central1"), that you used to deploy your agent
-*   **RESOURCE_ID** (example: "751619551677906944"), which you can find on the
+*   **LOCATION_ID** (example: \"us-central1\"), that you used to deploy your agent
+*   **RESOURCE_ID** (example: \"751619551677906944\"), which you can find on the
     [Agent Engine UI](https://console.cloud.google.com/vertex-ai/agents/agent-engines)
 
 The query URL structure is as follows:
