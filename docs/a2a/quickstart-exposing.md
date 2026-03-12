@@ -259,7 +259,6 @@ executor = A2aAgentExecutor(
         )
 ```
 
-
 ## Next Steps
 
 Now that you have created an agent that's exposing a remote agent via an A2A server, the next step is to learn how to consume it from another agent.
