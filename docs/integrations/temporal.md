@@ -98,23 +98,23 @@ class WeatherAgentWorkflow:
 
 **2. Configure and start the worker**
 
-Use `TemporalAdkPlugin` to configure the worker to make ADK ready to run in a Workflow on a distributed system:
+Use `GoogleAdkPlugin` to configure the worker to make ADK ready to run in a Workflow on a distributed system:
 
 ```python
 import asyncio
 from temporalio.client import Client
 from temporalio.worker import Worker
-from temporalio.contrib.google_adk_agents import TemporalAdkPlugin
+from temporalio.contrib.google_adk_agents import GoogleAdkPlugin
 
 async def main():
     client = await Client.connect(
         "localhost:7233",
-        plugins=[TemporalAdkPlugin()]
+        plugins=[GoogleAdkPlugin()]
     )
 
     worker = Worker(
         client,
-        task_queue="adk-task-queue",
+        task_queue="my-agent-task-queue",
         workflows=[WeatherAgentWorkflow],
     )
     await worker.run()
@@ -126,12 +126,12 @@ asyncio.run(main())
 
 ```python
 from temporalio.client import Client
-from temporalio.contrib.google_adk_agents import TemporalAdkPlugin
+from temporalio.contrib.google_adk_agents import GoogleAdkPlugin
 
 async def start():
     client = await Client.connect(
         "localhost:7233",
-        plugins=[TemporalAdkPlugin()]
+        plugins=[GoogleAdkPlugin()]
     )
     result = await client.execute_workflow(
         WeatherAgentWorkflow.run,
@@ -202,7 +202,7 @@ agent = Agent(
 # Configure the client with the toolset provider
 client = await Client.connect(
     "localhost:7233",
-    plugins=[TemporalAdkPlugin(toolset_providers=[provider])]
+    plugins=[GoogleAdkPlugin(toolset_providers=[provider])]
 )
 ```
 
@@ -228,7 +228,7 @@ The plugin ensures your ADK agent runs deterministically inside Temporal Workflo
 | Durable tool execution | `activity_tool` wraps tool functions as Activities, supporting long-running tools, automatic retries, and heartbeating |
 | MCP tool support | `TemporalMcpToolSet` executes MCP tools as Activities with full event propagation |
 | Human-in-the-loop | Your Agent Workflow can wait for [Signals](https://docs.temporal.io/signals) and [Updates](https://docs.temporal.io/messages#updates) to wait for human input, and clients can send those to resume the Agent |
-| Deterministic runtime | `TemporalAdkPlugin` replaces non-deterministic calls with Temporal-safe equivalents |
+| Deterministic runtime | `GoogleAdkPlugin` replaces non-deterministic calls with Temporal-safe equivalents |
 | Debuggability | Every LLM call and tool execution is visible as an Activity in the Temporal UI, making it trivial to debug faults. |
 | Observability | Work with your favorite Observability solution using OpenTelemetry, with cross-process spans that are resilient to crashes.
 | Safe versioning | Deploy new agent versions using [Temporal Worker Versioning](https://docs.temporal.io/production-deployment/worker-deployments/worker-versioning) without disrupting in-flight executions |
