@@ -1,7 +1,7 @@
 # Build agents with Agent Config
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.11.0</span><span class="lst-preview">Experimental</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.11.0</span><span class="lst-java">Java v0.3.0</span><span class="lst-preview">Experimental</span>
 </div>
 
 The ADK Agent Config feature lets you build an ADK workflow without writing
@@ -9,7 +9,7 @@ code. An Agent Config uses a YAML format text file with a brief description of
 the agent, allowing just about anyone to assemble and run an ADK agent. The
 following is a simple example of a basic Agent Config definition:
 
-```
+```yaml
 name: assistant_agent
 model: gemini-2.5-flash
 description: A helper agent that can answer users' questions.
@@ -144,6 +144,41 @@ topic in the
 For more information about the ADK command line options, see the
 [ADK CLI reference](/adk-docs/api-reference/cli/).
 
+### Run programmatically
+
+You can also bypass the CLI and dynamically load and execute a configuration-based agent directly in your code. The utility loads the configuration and instantiates the proper agent class (such as `LlmAgent`) transparently as a `BaseAgent` subclass.
+
+=== "Python"
+
+    ```python
+    import asyncio
+    from google.adk.agents import config_agent_utils
+    from google.adk.agents import Runner
+
+    async def main():
+        # Load the agent directly from the YAML config file
+        agent = config_agent_utils.from_config("my_agent/root_agent.yaml")
+        # ...
+
+    if __name__ == "__main__":
+        asyncio.run(main())
+    ```
+
+=== "Java"
+
+    ```java
+    import com.google.adk.agents.BaseAgent;
+    import com.google.adk.agents.ConfigAgentUtils;
+
+    public class AgentApp {
+        public static void main(String[] args) throws Exception {
+            // Load the agent directly from the YAML config file
+            BaseAgent agent = ConfigAgentUtils.fromConfig("my_agent/root_agent.yaml");
+            // ...
+        }
+    }
+    ```
+
 ## Example configs
 
 This section shows examples of Agent Config files to get you started building
@@ -243,7 +278,7 @@ limitations:
 -   **Model support:** Only Gemini models are currently supported.
     Integration with third-party models is in progress.
 -   **Programming language:** The Agent Config feature currently supports
-    only Python code for tools and other functionality requiring programming code.
+    Python and Java code for tools and other functionality requiring programming code.
 -   **ADK Tool support:** The following ADK tools are supported by the Agent
     Config feature, but *not all tools are fully supported*:
     -   `google_search`

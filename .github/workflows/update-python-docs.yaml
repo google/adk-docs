@@ -21,14 +21,14 @@ jobs:
 
     steps:
       - name: Checkout ADK Python repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: google/adk-python
           path: ./adk-python
           token: ${{ secrets.ADK_BOT_GITHUB_TOKEN }}
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.11'
 
