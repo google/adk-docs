@@ -12,25 +12,8 @@ This includes models from Model Garden or your own fine-tuned models.
 
 Ensure your environment is configured for Vertex AI:
 
-1. **Authentication:** Use Application Default Credentials (ADC):
+--8<-- "docs/_snippets/gemini-authentication.md"
 
-    ```shell
-    gcloud auth application-default login
-    ```
-
-2. **Environment Variables:** Set your project and location:
-
-    ```shell
-    export GOOGLE_CLOUD_PROJECT="YOUR_PROJECT_ID"
-    export GOOGLE_CLOUD_LOCATION="YOUR_VERTEX_AI_LOCATION" # e.g., us-central1
-    ```
-
-3. **Enable Vertex Backend:** Crucially, ensure the `google-genai` library
-   targets Vertex AI:
-
-    ```shell
-    export GOOGLE_GENAI_USE_VERTEXAI=TRUE
-    ```
 
 ## Model Garden Deployments
 

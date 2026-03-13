@@ -1,0 +1,6 @@
+=== "Vertex AI (Google Cloud)"
+    --8<-- "docs/_snippets/vertex-adc-setup.md"
+=== "Gemini API (Google AI Studio)"
+    --8<-- "docs/_snippets/gemini-api-setup.md"
+=== "Vertex AI Express Mode"
+    --8<-- "docs/_snippets/vertex-ai-express-mode-setup.md"

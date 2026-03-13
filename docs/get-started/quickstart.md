@@ -227,90 +227,11 @@ valid authentication, the LLM service will deny the agent's requests, and the
 agent will be unable to function.
 
 !!!tip "Model Authentication guide"
-    For a detailed guide on authenticating to different models, see the [Authentication guide](/adk-docs/agents/models/google-gemini#google-ai-studio).
+    For a detailed guide on authenticating to different models, see the [Authentication guide](/adk-docs/agents/models/google-gemini#gemini-model-authentication).
     This is a critical step to ensure your agent can make calls to the LLM service.
 
-=== "Gemini - Google AI Studio"
-    1. Get an API key from [Google AI Studio](https://aistudio.google.com/apikey).
-    2. When using Python, open the **`.env`** file located inside (`multi_tool_agent/`)
-    and copy-paste the following code.
-
-        ```env title="multi_tool_agent/.env"
-        GOOGLE_GENAI_USE_VERTEXAI=FALSE
-        GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_API_KEY_HERE
-        ```
-
-        When using Java, define environment variables:
-
-        ```console title="terminal"
-        export GOOGLE_GENAI_USE_VERTEXAI=FALSE
-        export GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_API_KEY_HERE
-        ```
-
-        When using TypeScript, the `.env` file is automatically loaded by the `import 'dotenv/config';` line at the top of your `agent.ts` file.
-
-        ```env title=""multi_tool_agent/.env"
-        GOOGLE_GENAI_USE_VERTEXAI=FALSE
-        GOOGLE_GENAI_API_KEY=PASTE_YOUR_ACTUAL_API_KEY_HERE
-        ```
-
-    3. Replace `PASTE_YOUR_ACTUAL_API_KEY_HERE` with your actual `API KEY`.
-
-=== "Gemini - Google Cloud Vertex AI"
-    1. Set up a [Google Cloud project](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-gcp) and [enable the Vertex AI API](https://console.cloud.google.com/flows/enableapi?apiid=aiplatform.googleapis.com).
-    2. Set up the [gcloud CLI](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-local).
-    3. Authenticate to Google Cloud from the terminal by running `gcloud auth application-default login`.
-    4. When using Python, open the **`.env`** file located inside (`multi_tool_agent/`). Copy-paste
-    the following code and update the project ID and location.
-
-        ```env title="multi_tool_agent/.env"
-        GOOGLE_GENAI_USE_VERTEXAI=TRUE
-        GOOGLE_CLOUD_PROJECT=YOUR_PROJECT_ID
-        GOOGLE_CLOUD_LOCATION=LOCATION
-        ```
-
-        When using Java, define environment variables:
-
-        ```console title="terminal"
-        export GOOGLE_GENAI_USE_VERTEXAI=TRUE
-        export GOOGLE_CLOUD_PROJECT=YOUR_PROJECT_ID
-        export GOOGLE_CLOUD_LOCATION=LOCATION
-        ```
-
-        When using TypeScript, the `.env` file is automatically loaded by the `import 'dotenv/config';` line at the top of your `agent.ts` file.
-
-        ```env title=".env"
-        GOOGLE_GENAI_USE_VERTEXAI=TRUE
-        GOOGLE_CLOUD_PROJECT=YOUR_PROJECT_ID
-        GOOGLE_CLOUD_LOCATION=LOCATION
-        ```
-
-=== "Gemini - Google Cloud Vertex AI with Express Mode"
-    1. You can sign up for a free Google Cloud project and use Gemini for free with an eligible account!
-        * Set up a
-          [Google Cloud project with Vertex AI Express Mode](https://cloud.google.com/vertex-ai/generative-ai/docs/start/express-mode/overview)
-        * Get an API key from your Express mode project. This key can be used with ADK to use Gemini models for free, as well as access to Agent Engine services.
-    2. When using Python, open the **`.env`** file located inside (`multi_tool_agent/`). Copy-paste
-    the following code and update the project ID and location.
-
-        ```env title="multi_tool_agent/.env"
-        GOOGLE_GENAI_USE_VERTEXAI=TRUE
-        GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_EXPRESS_MODE_API_KEY_HERE
-        ```
-
-        When using Java, define environment variables:
-
-        ```console title="terminal"
-        export GOOGLE_GENAI_USE_VERTEXAI=TRUE
-        export GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_EXPRESS_MODE_API_KEY_HERE
-        ```
-
-        When using TypeScript, the `.env` file is automatically loaded by the `import 'dotenv/config';` line at the top of your `agent.ts` file.
-
-        ```env title=".env"
-        GOOGLE_GENAI_USE_VERTEXAI=TRUE
-        GOOGLE_GENAI_API_KEY=PASTE_YOUR_ACTUAL_EXPRESS_MODE_API_KEY_HERE
-        ```
+#### Gemini Authentication
+--8<-- "docs/_snippets/gemini-authentication.md"
 
 ## 4. Run Your Agent { #run-your-agent }
 

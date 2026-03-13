@@ -82,29 +82,10 @@ To create an ADK project for use with Agent Config:
     This command generates a `my_agent/` folder, containing a
     `root_agent.yaml` file and an `.env` file.
 
-1.  In the `my_agent/.env` file, set environment variables for your agent to
-    access generative AI models and other services:
+2.  Set up authentication to Gemini 
+--8<-- "docs/_snippets/gemini-authentication.md"
 
-    1.  For Gemini model access through Google API, add a line to the
-        file with your API key:
-
-            GOOGLE_GENAI_USE_VERTEXAI=0
-            GOOGLE_API_KEY=<your-Google-Gemini-API-key>
-
-        You can get an API key from the Google AI Studio
-        [API Keys](https://aistudio.google.com/app/apikey) page.
-
-    1.  For Gemini model access through Google Cloud, add these lines to the file:
-
-            GOOGLE_GENAI_USE_VERTEXAI=1
-            GOOGLE_CLOUD_PROJECT=<your_gcp_project>
-            GOOGLE_CLOUD_LOCATION=us-central1
-
-        For information on creating a Cloud Project, see the Google Cloud docs
-        for
-        [Creating and managing projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects).
-
-1.  Using text editor, edit the Agent Config file
+3.  Using text editor, edit the Agent Config file
     `my_agent/root_agent.yaml`, as shown below:
 
 ```
