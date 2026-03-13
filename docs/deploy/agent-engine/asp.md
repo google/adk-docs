@@ -6,20 +6,15 @@
 
 This deployment procedure describes how to perform a deployment using the
 [Agent Starter Pack](https://github.com/GoogleCloudPlatform/agent-starter-pack)
-(ASP) and the ADK command line interface (CLI) tool. Using ASP for deployment to
-the Agent Engine runtime is an accelerated path, and you should use it for
-_*development and testing*_ only. The ASP tool configures Google Cloud resources
-that are not strictly necessary for running an ADK agent workflow, and you
-should thoroughly review that configuration before using it in a production
-deployment.
+(ASP) and the ADK command line interface (CLI) tool. Deploying to the Agent Engine runtime via ASP provides an accelerated path to a production-ready environment. ASP automatically configures Google Cloud resources, CI/CD pipelines, and Infrastructure-as-Code (Terraform) to support the entire development lifecycle. As a best practice, always ensure you review the generated configurations to align with your organization’s security and compliance standards before production deployment.
 
 This deployment guide uses the ASP tool to apply a project template to your
 existing project, add deployment artifacts, and prepare your agent project for
 deployment. These instructions show you how to use ASP to provision a Google
 Cloud project with services needed for deploying your ADK project, as follows:
 
--   [Prerequisites](#prerequisites-ad): Setup Google Cloud
-    account, a project, and install required software.
+-   [Prerequisites](#prerequisites-ad): Set up Google Cloud
+    project, IAM permissions, and install required software.
 -   [Prepare your ADK project](#prepare-ad): Modify your
     existing ADK project files to get ready for deployment.
 -   [Connect to your Google Cloud project](#connect-ad):
@@ -39,11 +34,15 @@ and
 
 You need the following resources configured to use this deployment path:
 
--   **Google Cloud account**: with administrator access to the following:
-    -   **Google Cloud Project**: An empty Google Cloud project with
-        [billing enabled](https://cloud.google.com/billing/docs/how-to/modify-project).
-        For information on creating projects, see
-        [Creating and managing projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects).
+-   **Google Cloud Project and Permissions**: A Google Cloud project with [billing enabled](https://cloud.google.com/billing/docs/how-to/modify-project).
+    You can use an existing project or create a new one. You must have one of the following IAM roles assigned within this project:
+    -   **Vertex AI User role** — sufficient to deploy an agent to Agent Engine.
+    -   **Owner role** — required for the full production setup (Terraform infrastructure provisioning, CI/CD pipelines, IAM configuration).    
+
+!!! tip "Note"
+    An empty project is recommended to avoid conflicts with existing resources.
+    For new projects, see [Creating and managing projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects).
+
 -   **Python Environment**: A Python version supported by the
     [ASP project](https://googlecloudplatform.github.io/agent-starter-pack/guide/getting-started.html).
 -   **uv Tool:** Manage Python development environment and running ASP
