@@ -69,6 +69,8 @@ The `to_a2a()` function will even auto-generate an agent card in-memory behind-t
 
 You can also provide your own agent card by using the `agent_card` parameter. The value can be an `AgentCard` object or a path to an agent card JSON file.
 
+You can also configure a custom store for push notifications using the `push_config_store` parameter. If you do not provide a value, the store defaults to an in-memory store.
+
 **Example with an `AgentCard` object:**
 ```python
 from google.adk.a2a.utils.agent_to_a2a import to_a2a
