@@ -42,6 +42,28 @@ app = App(
 Once configured, the ADK `Runner` handles the compaction process in the
 background each time the session reaches the interval.
 
+## Token-based compaction
+
+In addition to event-based compaction, the ADK `SingleFlow` agent workflow
+includes a `CompactionRequestProcessor` that can trigger context compaction
+based on the total number of tokens in the event history. This feature is
+automatically enabled when you use `SingleFlow` and configure the
+`token_threshold` settings in the `EventsCompactionConfig` object.
+
+```python
+from google.adk.apps.app import App, EventsCompactionConfig
+
+app = App(
+    name='my-agent',
+    root_agent=root_agent,
+    events_compaction_config=EventsCompactionConfig(
+        token_threshold=8000,
+        token_margin=2000,
+        token_min_compaction=4000
+    ),
+)
+```
+
 ## Example of context compaction
 
 If you set `compaction_interval` to 3 and `overlap_size` to 1, the event data is
@@ -71,6 +93,10 @@ a compactor object
     of the prior event data.
 *   **`overlap_size`**: Set how many of the previously compacted events are included in a
     newly compacted context set.
+*   **`token_threshold`**: Set the number of tokens that triggers compaction.
+*   **`token_margin`**: Set the number of tokens to preserve when compaction
+    is triggered by `token_threshold`.
+*   **`token_min_compaction`**: Set the minimum number of tokens to compact.
 *   **`summarizer`**: (Optional) Define a summarizer object including a specific AI model
     to use for summarization. For more information, see
     [Define a Summarizer](#define-summarizer).
@@ -86,7 +112,7 @@ from google.adk.apps.llm_event_summarizer import LlmEventSummarizer
 from google.adk.models import Gemini
 
 # Define the AI model to be used for summarization:
-summarization_llm = Gemini(model="gemini-2.5-flash")
+summarization_llm = Gemini(model="gemini-1.5-flash")
 
 # Create the summarizer with the custom model:
 my_summarizer = LlmEventSummarizer(llm=summarization_llm)
