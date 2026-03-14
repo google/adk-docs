@@ -42,6 +42,28 @@ app = App(
 Once configured, the ADK `Runner` handles the compaction process in the
 background each time the session reaches the interval.
 
+## Configure token-based compaction
+
+In addition to event-based compaction, you can configure context compaction to trigger based on the number of tokens in the context. This is particularly useful for managing context size and improving performance in long-running sessions. The `SingleFlow` in ADK includes a `CompactionRequestProcessor` that automatically handles token-based compaction.
+
+To enable token-based compaction, you need to set the `token_threshold` and `event_retention_size` parameters in the `EventsCompactionConfig`.
+
+```python
+from google.adk.apps.app import App
+from google.adk.apps.app import EventsCompactionConfig
+
+app = App(
+    name='my-agent',
+    root_agent=root_agent,
+    events_compaction_config=EventsCompactionConfig(
+        token_threshold=1000,
+        event_retention_size=5
+    ),
+)
+```
+
+When token-based compaction is triggered, the ADK summarizes the context, excluding the number of events specified by `event_retention_size`, to reduce the overall token count. This process is handled automatically by the `CompactionRequestProcessor` within `SingleFlow`.
+
 ## Example of context compaction
 
 If you set `compaction_interval` to 3 and `overlap_size` to 1, the event data is
@@ -71,6 +93,8 @@ a compactor object
     of the prior event data.
 *   **`overlap_size`**: Set how many of the previously compacted events are included in a
     newly compacted context set.
+*   **`token_threshold`**: Set the token limit that triggers compaction. When the number of tokens in the context meets or exceeds this threshold, compaction is initiated.
+*   **`event_retention_size`**: Set the number of recent events to exclude from compaction. This ensures that the most recent interactions are preserved in their original form.
 *   **`summarizer`**: (Optional) Define a summarizer object including a specific AI model
     to use for summarization. For more information, see
     [Define a Summarizer](#define-summarizer).
