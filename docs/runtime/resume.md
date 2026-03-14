@@ -142,8 +142,8 @@ Agent to support a workflow Resume.
         defines the discrete, savable steps of the agent.
 -   **Add initial agent state:** Modify your agent's async run function to
     set the initial state of your agent.
--   **Add agent state checkpoints**: Modify your agent's async run function
-    to generate and save the agent state for each completed step of the agent's
+-   **Add agent state checkpoints**: Modify your agent's async run function to
+    generate and save the agent state for each completed step of the agent's
     overall task.
 -   **Add end of agent status to track agent state:** Modify your agent's
     async run function to include an `end_of_agent=True` status upon successful
@@ -242,4 +242,12 @@ async def _run_async_impl(
 
     logger.info(f"[{self.name}] Workflow finished.")
     yield self._create_agent_state_event(ctx, end_of_agent=True)
-```
+
+## Error handling
+
+When you resume a workflow, you might encounter a `SessionNotFoundError`.
+This exception is raised when the `session_id` you provide to the runner does
+not correspond to a previously run session.
+
+To handle this error, ensure that the `session_id` you are using to resume the
+workflow is valid and that the session data is available.
