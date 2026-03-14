@@ -4,6 +4,8 @@
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.18.0</span>
 </div>
 
+> **Note:** User Personas and Jinja templates for custom instructions were introduced in v1.26.0.
+
 When evaluating conversational agents, it is not always practical to use a fixed
 set of user prompts, as the conversation can proceed in unexpected ways.
 For example, if the agent needs the user to supply two values to perform a task,
@@ -109,8 +111,8 @@ Try saving the following to
       "user_persona": "NOVICE"
     },
     {
-      "starting_prompt": "Hi, I'm running a tabletop RPG in which prime numbers are bad!",
-      "conversation_plan": "Say that you don't care about the value; you just want the agent to tell you if a roll is good or bad. Once the agent agrees, ask it to roll a 6-sided die. Finally, ask the agent to do the same with 2 20-sided dice.",
+      "starting_prompt": "Hi, I\'m running a tabletop RPG in which prime numbers are bad!",
+      "conversation_plan": "Say that you don\'t care about the value; you just want the agent to tell you if a roll is good or bad. Once the agent agrees, ask it to roll a 6-sided die. Finally, ask the agent to do the same with 2 20-sided dice.",
       "user_persona": "EXPERT"
     }
   ]
@@ -255,4 +257,3 @@ Example of a custom persona definition:
   }
 }
 ```
-
