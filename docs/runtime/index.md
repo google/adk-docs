@@ -49,3 +49,13 @@ pages:
   previous state.
 - **[Runtime Config](runconfig.md)**: Configure runtime behavior with
   RunConfig.
+
+## Error Handling
+
+When you use the ADK runtime, you might encounter specific exceptions that you
+can handle in your code.
+
+### SessionNotFoundError
+
+This exception is raised when a session cannot be found. This can happen, for
+example, when you are trying to resume a session that does not exist.
