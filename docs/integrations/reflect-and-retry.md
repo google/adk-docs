@@ -28,18 +28,44 @@ agent workflows, including the following capabilities:
 Add this plugin to your ADK workflow by adding it to the plugins setting of your
 ADK project's App object, as shown below:
 
-```python
-from google.adk.apps.app import App
-from google.adk.plugins import ReflectAndRetryToolPlugin
 
-app = App(
-    name="my_app",
-    root_agent=root_agent,
-    plugins=[
-        ReflectAndRetryToolPlugin(max_retries=3),
-    ],
-)
-```
+=== "Python"
+
+    ```python
+    from google.adk.apps.app import App
+    from google.adk.plugins import ReflectAndRetryToolPlugin
+
+    app = App(
+        name="my_app",
+        root_agent=root_agent,
+        plugins=[
+            ReflectAndRetryToolPlugin(max_retries=3),
+        ],
+    )
+    ```
+
+=== "Go"
+
+    ```go
+    import (
+    	"google.golang.org/adk/plugin/retryandreflect"
+    	"google.golang.org/adk/runner"
+    )
+
+    // ... create rootAgent and sessionService ...
+
+    r, err := runner.New(runner.Config{
+    	AppName:        "my_app",
+    	Agent:          rootAgent,
+    	SessionService: sessionService,
+    	PluginConfig: runner.PluginConfig{
+    		Plugins: []*plugin.Plugin{
+    			retryandreflect.MustNew(retryandreflect.WithMaxRetries(3)),
+    		},
+    	},
+    })
+    ```
+
 
 With this configuration, if any tool called by an agent returns an error, the
 request is updated and tried again, up to a maximum of 3 attempts, per tool.
