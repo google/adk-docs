@@ -48,6 +48,7 @@ The `McpToolset` class is ADK's primary mechanism for integrating tools from an 
 3.  **Exposure to Agent:** These adapted tools are then made available to your `LlmAgent` as if they were native ADK tools.
 4.  **Proxying Tool Calls:** When your `LlmAgent` decides to use one of these tools, `McpToolset` transparently proxies the call (using the `call_tool` MCP method) to the MCP server, sends the necessary arguments, and returns the server's response back to the agent.
 5.  **Filtering (Optional):** You can use the `tool_filter` parameter when creating an `McpToolset` to select a specific subset of tools from the MCP server, rather than exposing all of them to your agent.
+6.  **UI Rendering (Experimental):** If an MCP tool defines a UI resource (via `meta.ui.resourceUri`), the ADK automatically detects it and signals the client to render the tool's UI widget. This allows for rich, interactive tool experiences.
 
 The following examples demonstrate how to use `McpToolset` within the `adk web` development environment. For scenarios where you need more fine-grained control over the MCP connection lifecycle or are not using `adk web`, refer to the "Using MCP Tools in your own Agent out of `adk web`" section later in this page.
 
@@ -744,7 +745,7 @@ from . import agent
     python3 /path/to/your/my_adk_mcp_server.py
     ```
     It will print "Launching MCP Server..." and wait. The ADK agent (run via `adk web`) will then connect to this process if the `command` in `StdioConnectionParams` is set up to execute it.
-    *(Alternatively, `McpToolset` will start this server script as a subprocess automatically when the agent initializes).*
+    *(Alternatively, `McpToolset` will start this server script as a subprocess automatically when the agent initializes).)*
 
 2.  **Run `adk web` for the client agent:**
     Navigate to the parent directory of `mcp_client_agent` (e.g., `adk_agent_samples`) and run:
