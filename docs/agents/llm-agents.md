@@ -380,11 +380,12 @@ For scenarios requiring structured data exchange with an `LLM Agent`, the ADK pr
 * **`input_schema` (Optional):** Define a schema representing the expected input structure. If set, the user message content passed to this agent *must* be a JSON string conforming to this schema. Your instructions should guide the user or preceding agent accordingly.
 
 * **`output_schema` (Optional):** Define a schema representing the desired output structure. If set, the agent's final response *must* be a JSON string conforming to this schema.
+    *   Supports: `type[BaseModel]`, `list[type[BaseModel]]`, `list[primitive]`, `dict`, and `google.genai.types.Schema`.
 
 !!! warning "Warning: Using `output_schema` with `tools`"
 
     Using `output_schema` with `tools` in the same LLM request
-    is only supported by specific models, including [Gemini 3.0](https://ai.google.dev/gemini-api/docs/function-calling?example=meeting#structured-output).
+    is only supported by specific models, including [Gemini 1.5](https://ai.google.dev/gemini-api/docs/function-calling?example=meeting#structured-output).
     For other models, workarounds using [function tools](https://github.com/google/adk-python/blob/main/src/google/adk/flows/llm_flows/_output_schema_processor.py)) in ADK
     may not work reliably. In such cases, consider using sub-agents that handle output formatting separately.
 
