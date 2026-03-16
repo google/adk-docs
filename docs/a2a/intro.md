@@ -86,6 +86,14 @@ interacting with the remote agent feels just like interacting with a local tool
 or function. The ADK abstracts away the network layer, making distributed agent
 systems as easy to work with as local ones.
 
+## Supported Capabilities
+
+The ADK A2A implementation supports the following advanced features:
+
+1. **Reasoning Models**: Support for transmitting "thought" traces from reasoning models (like Gemini 2.0 Flash Thinking).
+2. **Long-Running Tools**: Built-in handling for tools that require significant time to execute.
+3. **Artifact Streaming**: Support for streaming large data or files as artifacts between agents.
+
 ## Visualizing the A2A Workflow
 
 To further clarify the A2A workflow, let's look at the "before and after" for
