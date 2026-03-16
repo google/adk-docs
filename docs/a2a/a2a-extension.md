@@ -1,26 +1,25 @@
-# A2A Extension: A2aAgentExecutor-V2.0
+# A2A extension for improved reliablity
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python 1.27.0</span>
 </div>
 
-## Overview
+ADK provides an extension for Agent2Agent (A2A) support to improved message and data handling as part of
+an updated [A2aAgentExecutor]((https://github.com/google/adk-python/blob/main/src/google/adk/a2a/executor/a2a_agent_executor_impl.py)
+class. The updated version includes updates to architectural changes to the core agent execution logic
+and extensions for A2A to improve data handling, while also providing backward compatibility with 
+existing A2A agents.
 
-This extension - `https://google.github.io/adk-docs/a2a/a2a-extension/` - acts as a feature flag, allowing a requesting client to opt-in to using the new, updated [implementation](https://github.com/google/adk-python/blob/main/src/google/adk/a2a/executor/a2a_agent_executor_impl.py) of the agent executor within ADK Python.
+Activating the A2A extension option instructs the server to use the updated agent executor implementation.
+While this update offers several general advantages, it primarily resolves critical limitations found in
+the legacy A2A-ADK implementation when both A2A and ADK operate in streaming mode. The new implementation 
+addresses the following issues:
 
-## Background
-
-To enable architectural changes to the core agent execution logic, a [new agent executor implementation](https://github.com/google/adk-python/blob/main/src/google/adk/a2a/executor/a2a_agent_executor_impl.py) has been developed. To ensure backward compatibility and allow for a gradual migration, the legacy implementation remains the default. This extension was introduced to allow clients to explicitly request the use of this new implementation on a per-request basis.
-
-## Extension Benefits
-
-Activating this extension instructs the server to use the updated agent executor implementation. While this transition offers several general advantages, it primarily resolves critical limitations found in the legacy A2A-ADK implementation when both A2A and ADK operate in streaming mode.
-
-Specifically, the new implementation fixes the following:
-
-- **Message duplication:** Prevents user messages from being duplicated in the task history.
-- **Output misclassification:** Stops remote agent ADK outputs from being incorrectly converted into event thoughts.
-- **Sub-agent data loss:** Ensures ADK outputs from remote agents are reliably preserved, eliminating data loss when multiple agents are nested within the remote agent's sub-agent tree.
+-   **Message duplication:** Prevents user messages from being duplicated in the task history.
+-   **Output misclassification:** Stops remote agent ADK outputs from being incorrectly converted into
+    event thoughts.
+-   **Sub-agent data loss:** Ensures ADK outputs from remote agents are reliably preserved, eliminating
+    data loss when multiple agents are nested within the remote agent's sub-agent tree.
 
 ## Client-side extension activation
 
