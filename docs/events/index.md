@@ -462,12 +462,13 @@ The `event.actions` object signals changes that occurred or should occur. Always
         }
         ```
 
-*   **Control Flow Signals:** Check boolean flags or string values:
+*   **Control Flow Signals & UI:** Check boolean flags or string values:
 
     === "Python"
         *   `event.actions.transfer_to_agent` (string): Control should pass to the named agent.
         *   `event.actions.escalate` (bool): A loop should terminate.
         *   `event.actions.skip_summarization` (bool): A tool result should not be summarized by the LLM.
+        *   `event.actions.render_ui_widgets` (list[UiWidget]): A list of UI widgets to be rendered by the client.
         ```python
         if event.actions:
             if event.actions.transfer_to_agent:
