@@ -30,12 +30,12 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         fetch-depth: 0
 
     - name: Set up Python
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
       with:
         python-version: 3.x
 
@@ -62,6 +62,16 @@ jobs:
       run: |
         python tools/skills/validate_links.py ${{ steps.changed-files.outputs.changed_files }}
 
+    - name: Validate callback signatures (PR only)
+      if: github.event_name == 'pull_request' && steps.changed-files.outputs.changed_files != ''
+      run: |
+        python tools/skills/validate_callback_signatures.py ${{ steps.changed-files.outputs.changed_files }}
+
+    - name: Integration test for callbacks (PR only)
+      if: github.event_name == 'pull_request' && steps.changed-files.outputs.changed_files != ''
+      run: |
+        python tools/skills/test_callback_snippets.py
+
     # --- Scheduled Checks ---
 
     - name: Validate all snippets (Scheduled)
@@ -73,3 +83,13 @@ jobs:
       if: github.event_name == 'schedule'
       run: |
         python tools/skills/validate_links.py
+
+    - name: Validate all callback signatures (Scheduled)
+      if: github.event_name == 'schedule'
+      run: |
+        python tools/skills/validate_callback_signatures.py
+
+    - name: Integration test for callbacks (Scheduled)
+      if: github.event_name == 'schedule'
+      run: |
+        python tools/skills/test_callback_snippets.py

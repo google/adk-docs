@@ -102,9 +102,10 @@ uvx agent-starter-pack create <project-name> \
 | `--auto-approve` | `-y` | off | Skip confirmation prompts |
 | `--skip-checks` | `-s` | off | Skip GCP/Vertex AI verification checks |
 | `--agent-directory` | `-dir` | `app` | Agent code directory name |
-| `--google-api-key` | `-k` | — | Use Google AI Studio instead of Vertex AI |
 | `--agent-guidance-filename` | | `GEMINI.md` | Guidance file name (`CLAUDE.md`, `AGENTS.md`) |
 | `--debug` | | off | Enable debug logging for troubleshooting |
+
+By default, the scaffolded project uses Google Cloud credentials (Vertex AI). For API key setup and model configuration, see [Configuring Gemini models](https://google.github.io/adk-docs/agents/models/google-gemini/index.md) and [Supported models](https://google.github.io/adk-docs/agents/models/index.md).
 
 ### Enhance an Existing Project
 
@@ -242,7 +243,7 @@ Result: Infrastructure files adapted to the actual project
 
 ### `uvx` command not found
 
-Install `uv`: `curl -LsSf https://astral.sh/uv/install.sh | sh`
+Install `uv` following the [official installation guide](https://docs.astral.sh/uv/getting-started/installation/index.md).
 
 If `uv` is not an option, use pip instead:
 
@@ -255,3 +256,5 @@ python -m venv .venv && .venv\Scripts\activate
 pip install agent-starter-pack
 agent-starter-pack create <project-name> ...
 ```
+
+For all available options, run `uvx agent-starter-pack create --help`.

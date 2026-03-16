@@ -124,6 +124,22 @@ To inject a value from the session state, enclose the key of the desired state v
     --8<-- "examples/go/snippets/sessions/instruction_template/instruction_template_example.go:key_template"
     ```
 
+=== "Java"
+
+    ```java
+    import com.google.adk.agents.LlmAgent;
+
+    LlmAgent storyGenerator = LlmAgent.builder()
+        .name("StoryGenerator")
+        .model("gemini-2.5-flash")
+        .instruction("Write a short story about a cat, focusing on the theme: " + topic)
+        .build();
+
+    // Assuming session.state().put("topic", "friendship"), the LLM
+    // will receive the following instruction:
+    // "Write a short story about a cat, focusing on the theme: friendship."
+    ```
+
 #### Important Considerations
 
 * Key Existence: Ensure that the key you reference in the instruction string exists in the session.state. If the key is missing, the agent will throw an error. To use a key that may or may not be present, you can include a question mark (?) after the key (e.g. {topic?}).
@@ -183,6 +199,29 @@ The `InstructionProvider` function receives a `ReadonlyContext` object, which yo
     --8<-- "examples/go/snippets/sessions/instruction_provider/instruction_provider_example.go:bypass_state_injection"
     ```
 
+=== "Java"
+
+    ```java
+    import com.google.adk.agents.Instruction;
+    import com.google.adk.agents.LlmAgent;
+    import com.google.adk.agents.ReadonlyContext;
+    import io.reactivex.rxjava3.core.Single;
+
+    // This is an Instruction.Provider
+    Instruction.Provider myInstructionProvider = new Instruction.Provider(
+        (ReadonlyContext context) -> {
+            // No state injection occurs — curly braces are treated as literal text.
+            return Single.just("Format your output as JSON: {\"city\": \"<name>\", \"population\": <number>}");
+        }
+    );
+
+    LlmAgent agent = LlmAgent.builder()
+        .model("gemini-2.5-flash")
+        .name("template_helper_agent")
+        .instruction(myInstructionProvider)
+        .build();
+    ```
+
 If you want to both use an `InstructionProvider` *and* inject state into your instructions, you can use the `inject_session_state` utility function. Only `{key}` placeholders matching valid state variable names will be replaced; other text (including curly braces that don't match valid identifiers) will be left as-is.
 
 === "Python"
@@ -209,6 +248,31 @@ If you want to both use an `InstructionProvider` *and* inject state into your in
 
     ```go
     --8<-- "examples/go/snippets/sessions/instruction_provider/instruction_provider_example.go:manual_state_injection"
+    ```
+
+=== "Java"
+
+    ```java
+    import com.google.adk.agents.Instruction;
+    import com.google.adk.agents.LlmAgent;
+    import com.google.adk.agents.ReadonlyContext;
+    import com.google.adk.utils.InstructionUtils;
+    import io.reactivex.rxjava3.core.Single;
+
+    Instruction.Provider myDynamicInstructionProvider = new Instruction.Provider(
+        (ReadonlyContext context) -> {
+            String template = "This is a " + adjective + " instruction. Use JSON like: {\"key\": \"value\"}.";
+            // This will inject the 'adjective' state variable.
+            // The JSON braces are left alone because their content is not a valid identifier.
+            return InstructionUtils.injectSessionState(context.invocationContext(), template);
+        }
+    );
+
+    LlmAgent agent = LlmAgent.builder()
+        .model("gemini-2.5-flash")
+        .name("dynamic_template_helper_agent")
+        .instruction(myDynamicInstructionProvider)
+        .build();
     ```
 
 **Benefits of Direct Injection**

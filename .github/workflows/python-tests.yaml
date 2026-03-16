@@ -45,7 +45,7 @@ jobs:
       - get_sample_dirs
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
@@ -57,7 +57,7 @@ jobs:
           echo "SAMPLE_DIRS: $SAMPLE_DIRS"  # For debugging
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
           cache: "pip"
@@ -84,7 +84,7 @@ jobs:
           fi
 
       - name: Upload pytest test results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v7
         with:
           name: pytest-results-${{ matrix.python-version }}-${{ matrix.sample_dir }}
           path: |
