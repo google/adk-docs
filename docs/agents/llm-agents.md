@@ -471,7 +471,7 @@ For scenarios requiring structured data exchange with an `LLM Agent`, the ADK pr
             // ... name, model, description
             .instruction(
                     "You are a Capital Information Agent. Given a country, respond ONLY with a JSON object containing the capital. Format: {\"capital\": \"capital_name\"}")
-            .outputSchema(capitalOutput) // Enforce JSON output
+            .outputSchema(CAPITAL_OUTPUT) // Enforce JSON output
             .outputKey("found_capital") // Store result in state.get("found_capital")
             // Cannot use tools(getCapitalCity) effectively here
             .build();
