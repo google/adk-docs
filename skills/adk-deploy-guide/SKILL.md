@@ -324,31 +324,7 @@ curl -X POST "$SERVICE_URL/run_sse" \
 
 ### GKE Deployment
 
-GKE LoadBalancer services are public by default — no auth header needed (unlike Cloud Run).
-
-```bash
-# Get the external IP
-EXTERNAL_IP=$(kubectl get svc SERVICE_NAME -n NAMESPACE -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
-SERVICE_URL="http://$EXTERNAL_IP:8080"
-
-# Test health endpoint
-curl "$SERVICE_URL/"
-
-# Create a session
-curl -X POST "$SERVICE_URL/apps/app/users/test-user/sessions" \
-  -H "Content-Type: application/json" \
-  -d '{}'
-
-# Send a message via SSE streaming
-curl -X POST "$SERVICE_URL/run_sse" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "app_name": "app",
-    "user_id": "test-user",
-    "session_id": "SESSION_ID",
-    "new_message": {"role": "user", "parts": [{"text": "Hello!"}]}
-  }'
-```
+GKE LoadBalancer services are public by default — no auth header needed (unlike Cloud Run). See `references/gke.md` for curl examples and endpoint details.
 
 ### Load Tests
 
