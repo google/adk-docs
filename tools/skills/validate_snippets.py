@@ -47,6 +47,7 @@ OPTIONAL_IMPORT_PREFIXES = (
     "fastapi",
     "uvicorn",
     "my_agent",  # example user module in docs
+    "a2a",  # optional extra: pip install google-adk[a2a]
 )
 
 # ── Data types ───────────────────────────────────────────────────────────────
@@ -187,8 +188,11 @@ def validate_imports(
             imported_names = _extract_imported_names(stmt)
             report.add("PASS", loc, f"import: {', '.join(imported_names)}")
         except ImportError as e:
+            error_str = str(e).lower()
             is_optional = any(
                 module.startswith(prefix) for prefix in OPTIONAL_IMPORT_PREFIXES
+            ) or any(
+                prefix in error_str for prefix in OPTIONAL_IMPORT_PREFIXES
             )
             if is_optional:
                 report.add("WARN", loc, f"import (optional dep): {e}")

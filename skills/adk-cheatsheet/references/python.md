@@ -665,6 +665,28 @@ Use `before_model_callback` to filter input or `after_model_callback` to filter 
 
 ---
 
+## 11. A2A Protocol
+
+Requires `pip install google-adk[a2a]`.
+
+```python
+# Expose an agent as an A2A service
+# Prefer scaffolding over manual code — use --agent adk_a2a (see /adk-scaffold)
+from google.adk.a2a.utils.agent_to_a2a import to_a2a
+from a2a.types import AgentCard
+to_a2a(root_agent, port=8001)
+
+# Consume a remote A2A agent
+from google.adk.agents.remote_a2a_agent import RemoteA2aAgent, AGENT_CARD_WELL_KNOWN_PATH
+remote = RemoteA2aAgent(
+    name="remote_agent",
+    description="...",
+    agent_card=f"http://remote-host:8001{AGENT_CARD_WELL_KNOWN_PATH}",
+)
+```
+
+---
+
 ## Quick Reference
 
 ### Running Agents Programmatically

@@ -225,6 +225,7 @@ This is useful for:
 - **Agent Engine clears session_type** — if deploying to `agent_engine`, remove any `session_type` setting from your code
 - **Start with `--prototype`** for quick iteration — add deployment later with `enhance`
 - **Project names** must be ≤26 characters, lowercase, letters/numbers/hyphens only
+- **NEVER write A2A code from scratch** — the A2A Python API surface (import paths, `AgentCard` schema, `to_a2a()` signature) is non-trivial and changes across versions. Always use `--agent adk_a2a` to scaffold A2A projects.
 
 ---
 
@@ -237,6 +238,15 @@ Actions:
 2. Copy relevant files (Dockerfile, etc.) from /tmp/ref
 3. Delete temp project
 Result: Infrastructure files adapted to the actual project
+
+---
+
+A2A project:
+User says: "Build me a Python agent that exposes A2A and deploys to Cloud Run"
+Actions:
+1. Follow the standard flow (gather requirements, DESIGN_SPEC, scaffold)
+2. `uvx agent-starter-pack create my-a2a-agent --agent adk_a2a --deployment-target cloud_run --prototype -y`
+Result: Valid A2A imports and Dockerfile — no manual A2A code written.
 
 ---
 
