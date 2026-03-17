@@ -97,6 +97,15 @@ from google.adk.a2a.utils.agent_to_a2a import to_a2a
 a2a_app = to_a2a(root_agent, port=8001, agent_card="/path/to/your/agent-card.json")
 ```
 
+### Under the hood: to_a2a() method
+
+When you call `to_a2a()`, the ADK automatically handles several setup steps to expose your agent:
+
+* **`A2aAgentExecutor` setup:** An `A2aAgentExecutor` is initialized to act as the bridge between the A2A protocol and your ADK agent. If you don't provide a custom `Runner`, it automatically creates a default one backed by in-memory services (for artifacts, sessions, memory, and credentials).
+* **State Management:** It creates an `InMemoryTaskStore` to track A2A tasks and an `InMemoryPushNotificationConfigStore` for handling push notifications.
+* **Request Handling:** A `DefaultRequestHandler` is created to route incoming A2A HTTP requests to the `A2aAgentExecutor` and the state stores.
+* **Starlette App & Agent Card:** It creates a Starlette application. During the application's startup phase, it either loads your provided Agent Card or automatically builds one from your agent's configuration using an `AgentCardBuilder`. It then mounts all the necessary A2A API routes.
+
 Now let's dive into the sample code.
 
 ### 1. Getting the Sample Code { #getting-the-sample-code }
@@ -211,6 +220,43 @@ This interaction uses both the local Roll Agent and the remote Prime Agent:
 User: Roll a 10-sided die and check if it's prime
 Bot: I rolled an 8 for you.
 Bot: 8 is not a prime number.
+```
+
+## Advanced Configuration: Custom Converters and Interceptors
+
+In scenarios where you want more granular control than what `to_a2a()` provides, you may instantiate and pass an [`A2aAgentExecutorConfig`](https://github.com/google/adk-python/blob/main/src/google/adk/a2a/executor/config.py) directly to the `A2aAgentExecutor`. This allows you to override default data converters and inject execution middleware.
+
+### Converters
+
+Converters handle the bidirectional translation between A2A protocol payloads and ADK's native `Event` or `Part` objects. You can provide your own mapping functions for the following hooks:
+
+*   **`a2a_part_converter`**: Converts A2A Message Parts into ADK `Part` objects.
+*   **`gen_ai_part_converter`**: Converts native ADK `Part` objects into A2A Message Parts.
+*   **`request_converter`**: Converts an incoming A2A request into an ADK `RunRequest`.
+*   **`event_converter`**: *(Legacy)* Converts an ADK Event into an A2A Event, used by the legacy executor implementation.
+*   **`adk_event_converter`**: *(New)* Converts an ADK Event into an A2A Event, used by the new, updated executor implementation.
+
+### Execute Interceptors
+
+You can inject a list of `execute_interceptors` to add middleware logic to the `A2aAgentExecutor` payload processing:
+
+*   **`before_agent`**: Executed before the agent starts processing the request. It allows you to inspect or modify the incoming `RequestContext`.
+*   **`after_event`**: Executed *after* an ADK event is converted to an A2A event. Allows you to mutate the outgoing event before it is enqueued, or return `None` to filter out and drop the event entirely.
+*   **`after_agent`**: Executed after the agent finishes and the final event is prepared. Use this to inspect or modify the terminal status event (e.g., `completed` or `failed`) before it is sent.
+
+## Agent Executor V2
+
+The new version of the [agent executor](https://github.com/google/adk-python/blob/main/src/google/adk/a2a/executor/a2a_agent_executor_impl.py) is typically enabled when a client sends the required [A2A extension](a2a-extension.md).
+
+However, you can also bypass the extension and force the server to use the new executor version by setting the `force_new_version=True` flag when instantiating the `A2aAgentExecutor`. This allows you to use the new executor logic without needing to modify existing clients to send the extension.
+
+```python
+from google.adk.a2a.executor import A2aAgentExecutor
+
+executor = A2aAgentExecutor(
+            ...,
+            force_new_version=True
+        )
 ```
 
 ## Next Steps
