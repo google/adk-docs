@@ -25,6 +25,7 @@ For deeper details, consult these reference files in `references/`:
 
 - **`cloud-run.md`** — Scaling defaults, Dockerfile, session types, networking
 - **`agent-engine.md`** — deploy.py CLI, AdkApp pattern, Terraform resource, deployment metadata, CI/CD differences
+- **`gke.md`** — GKE Autopilot cluster, Kubernetes manifests, Workload Identity, session types, networking
 - **`terraform-patterns.md`** — Custom infrastructure, IAM, state management, importing resources
 - **`event-driven.md`** — Pub/Sub, Eventarc, BigQuery Remote Function triggers via custom `fast_api_app.py` endpoints
 
@@ -41,11 +42,11 @@ Choose the right deployment target based on your requirements:
 | **Languages** | Python | Python | Python (+ others via custom containers) |
 | **Scaling** | Managed auto-scaling (configurable min/max, concurrency) | Fully configurable (min/max instances, concurrency, CPU allocation) | Full Kubernetes scaling (HPA, VPA, node auto-provisioning) |
 | **Networking** | VPC-SC and PSC supported | Full VPC support, direct VPC egress, IAP, ingress rules | Full Kubernetes networking|
-| **Session state** | Native `VertexAiSessionService` (persistent, managed) | In-memory (dev), Cloud SQL, or Agent Engine session backend | Custom (any Kubernetes-compatible store) |
+| **Session state** | Native `VertexAiSessionService` (persistent, managed) | In-memory (dev), Cloud SQL, or Agent Engine session backend | In-memory (dev), Cloud SQL, or Agent Engine session backend |
 | **Batch/event processing** | Not supported | `/invoke` endpoint for Pub/Sub, Eventarc, BigQuery | Custom (Kubernetes Jobs, Pub/Sub) |
 | **Cost model** | vCPU-hours + memory-hours (not billed when idle) | Per-instance-second + min instance costs | Node pool costs (always-on or auto-provisioned) |
 | **Setup complexity** | Lower (managed, purpose-built for agents) | Medium (Dockerfile, Terraform, networking) | Higher (Kubernetes expertise required) |
-| **Best for** | Managed infrastructure, minimal ops | Custom infra, event-driven workloads | Full control, open models, GPU workloads |
+| **Best for** | Managed infrastructure, minimal ops | Custom infra, event-driven workloads | Full Kubernetes control |
 
 **Ask the user** which deployment target fits their needs. Each is a valid production choice with different trade-offs.
 
@@ -208,6 +209,12 @@ For detailed infrastructure configuration (deploy.py flags, AdkApp pattern, Terr
 
 ---
 
+## GKE Specifics
+
+For detailed infrastructure configuration (Kubernetes manifests, Terraform resources, Workload Identity, session types, networking), see `references/gke.md`. For ADK docs on GKE deployment, fetch `https://google.github.io/adk-docs/deploy/gke/index.md`.
+
+---
+
 ## Service Account Architecture
 
 Scaffolded projects use two service accounts:
@@ -237,7 +244,7 @@ echo -n "YOUR_API_KEY" | gcloud secrets create MY_SECRET_NAME --data-file=-
 echo -n "NEW_API_KEY" | gcloud secrets versions add MY_SECRET_NAME --data-file=-
 ```
 
-**Grant access:** For Cloud Run, grant `secretmanager.secretAccessor` to `app_sa`. For Agent Engine, grant it to the platform-managed SA (`service-PROJECT_NUMBER@gcp-sa-aiplatform-re.iam.gserviceaccount.com`).
+**Grant access:** For Cloud Run, grant `secretmanager.secretAccessor` to `app_sa`. For Agent Engine, grant it to the platform-managed SA (`service-PROJECT_NUMBER@gcp-sa-aiplatform-re.iam.gserviceaccount.com`). For GKE, grant `secretmanager.secretAccessor` to `app_sa`. Access secrets via Kubernetes Secrets or directly via the Secret Manager API with Workload Identity.
 
 **Pass secrets at deploy time (Agent Engine):**
 ```bash
@@ -315,6 +322,10 @@ curl -X POST "$SERVICE_URL/run_sse" \
 
 > **Common mistake:** Using `{"message": "Hello!", "user_id": "...", "session_id": "..."}` returns `422 Field required`. The ADK HTTP server expects the `new_message` / `parts` schema shown above, and the session must already exist.
 
+### GKE Deployment
+
+GKE LoadBalancer services are public by default — no auth header needed (unlike Cloud Run). See `references/gke.md` for curl examples and endpoint details.
+
 ### Load Tests
 
 ```bash
@@ -355,6 +366,12 @@ gcloud run services update-traffic SERVICE_NAME \
 ```
 
 Agent Engine doesn't support revision-based rollback — fix and redeploy via `make deploy`.
+
+For GKE rollback, use `kubectl rollout undo`:
+```bash
+kubectl rollout undo deployment/DEPLOYMENT_NAME -n NAMESPACE
+kubectl rollout status deployment/DEPLOYMENT_NAME -n NAMESPACE
+```
 
 ---
 
