@@ -1,4 +1,4 @@
-# A2A extension for improved reliablity
+# A2A extension for improved reliabilty
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python 1.27.0</span>
