@@ -47,6 +47,7 @@ OPTIONAL_IMPORT_PREFIXES = (
     "fastapi",
     "uvicorn",
     "my_agent",  # example user module in docs
+    "a2a",  # optional extra: pip install google-adk[a2a]
 )
 
 # ── Data types ───────────────────────────────────────────────────────────────
