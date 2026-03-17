@@ -81,7 +81,7 @@ from temporalio.contrib.google_adk_agents import TemporalModel
 # Create an agent with a Temporal-aware model
 agent = Agent(
     name="weather_agent",
-    model=TemporalModel("gemini-2.5-pro"),
+    model=TemporalModel("gemini-2.5-pro", activity_options=ActivityConfig(summary="Weather Agent")),
     instruction="You are a helpful weather assistant.",
     tools=[get_weather],  # your tool functions
 )
@@ -168,10 +168,12 @@ weather_tool = activity_tool(
     retry_policy=RetryPolicy(maximum_attempts=3),
 )
 
-# Use in your agent
+# Use your agent
 agent = Agent(
     name="weather_agent",
-    model=TemporalModel("gemini-2.5-pro"),
+    model=TemporalModel(
+      "gemini-2.5-pro",   
+      activity_options=ActivityConfig(summary="Weather Agent")),
     tools=[weather_tool],
 )
 ```
