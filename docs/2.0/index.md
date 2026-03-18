@@ -59,7 +59,7 @@ To install ADK 2.0, follow these steps:
 1.  Enable a Python virtual environment. See below for instructions.
 
 1.  Install the package using pip using `--pre` to select the current,
-    pre-release version of ADK 2.0:
+    pre-GA version of ADK 2.0:
 
     ```bash
     pip install google-adk --pre
