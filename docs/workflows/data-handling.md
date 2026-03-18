@@ -143,7 +143,7 @@ async def read_state_node(ctx: WorkflowContext):
 
 root_agent = Workflow(
     name="root_agent",
-    edges=Edge.chain("START", init_state_node, task_attempt_node, read_state_node),
+    edges=[("START", init_state_node, task_attempt_node, read_state_node)],
 )
 ```
 
