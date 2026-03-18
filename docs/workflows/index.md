@@ -69,9 +69,9 @@ class CityTime(BaseModel):
     time_info: str  # time information
     city: str       # city name
 
-def lookup_time_function(city: str):
+def lookup_time_function(node_input: str):
     """Simulate returning the current time in the specified city."""
-    return Event(output=CityTime(time_info="10:10 AM", city=city))
+    return CityTime(time_info="10:10 AM", city=node_input)
 
 city_report_agent = Agent(
     name="city_report_agent",
