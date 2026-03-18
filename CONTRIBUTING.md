@@ -93,6 +93,7 @@ We review contributions for integrations based on the following criteria:
 | [Documentation fixes](#documentation-fixes) | Fix typos, broken links, or minor wording improvements |
 | [New documentation](#new-documentation) | Add a new guide, tutorial, or reference page |
 | [Major changes](#major-changes) | Large-scale reorganization or refactoring |
+| [API and CLI reference](#api-and-cli-reference) | Pre-built reference docs generated from upstream ADK repositories |
 | [Integrations](#integrations) | Tools, plugins, observability libraries, user interfaces, or any extensions to ADK agents or agent development |
 
 ### Documentation Fixes
@@ -119,6 +120,22 @@ For large-scale reorganization or refactoring:
 1. **Open an issue first** to discuss the scope and approach
 2. Wait for maintainer feedback before starting work
 3. Consider breaking large changes into smaller, reviewable PRs
+
+### API and CLI Reference
+
+For changes to the API and CLI reference pages, **do not edit files in
+`docs/api-reference/` directly.** These are pre-built HTML generated from the
+upstream ADK source repositories and are overwritten each time the docs are
+regenerated.
+
+To contribute to API and CLI reference documentation, make your changes in the
+ADK source repository for the relevant language (for example, adding or updating
+docstrings, exporting new public symbols, etc.).
+
+The reference docs are regenerated periodically, and your changes will be
+included in the next update. See the [ADK Contributing
+Guide](https://google.github.io/adk-docs/contributing-guide/) for links to each
+language-specific repository.
 
 ### Integrations
 

@@ -152,8 +152,12 @@ operations.
                 new MCPToolset({
                     type: "StreamableHTTPConnectionParams",
                     url: "https://mcp.stripe.com",
-                    header: {
-                        Authorization: `Bearer ${STRIPE_SECRET_KEY}`,
+                    transportOptions: {
+                        requestInit: {
+                            headers: {
+                                Authorization: `Bearer ${STRIPE_SECRET_KEY}`,
+                            },
+                        },
                     },
                 }),
             ],
