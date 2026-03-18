@@ -136,6 +136,20 @@ greeting_skill = models.Skill(
 )
 ```
 
+## Discover skills
+
+Browse community-created skills compatible with ADK at
+[agentskill.sh](https://agentskill.sh), a directory of over 110,000 skills
+following the [Agent Skill specification](https://agentskills.io/specification).
+You can search by keyword, platform, or category and filter by security score.
+
+To use a skill from the directory, download the skill folder and load it
+with `load_skill_from_dir()` as shown in [Get started](#get-started).
+
+You can also connect your agent to agentskill.sh directly using the
+[agentskill.sh MCP integration](../integrations/agentskill.md), which lets
+your agent search and install skills at runtime.
+
 ## Known limitations {#known-limitations}
 
 The Skills feature is experimental and includes the following
@@ -152,3 +166,5 @@ Check out these resources for building agents with Skills:
     [skills_agent](https://github.com/google/adk-python/tree/main/contributing/samples/skills_agent).
 *   Agent Skills
     [specification documentation](https://agentskills.io/)
+*   Browse skills:
+    [agentskill.sh](https://agentskill.sh)
