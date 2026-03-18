@@ -48,7 +48,11 @@ incompatibilities you encounter through our
 ## Install ADK 2.0 {#install}
 
 While ADK 2.0 is available as a pre-GA release, it is not installed automatically.
-You must select it as a installation option.
+You must select it as an installation option. This version has the following
+system requirements:
+
+*   **Python 3.11** or later
+*   `pip` for installing packages
 
 To install ADK 2.0, follow these steps:
 
