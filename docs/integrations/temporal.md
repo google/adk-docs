@@ -71,28 +71,68 @@ the **worker side** (which hosts the execution environment).
 **1. Define your agent and workflow**
 
 Create an ADK agent and wrap it in a Temporal Workflow. Use `TemporalModel` to
-route LLM calls through Temporal Activities:
+route LLM calls through Temporal Activities.
 
 ```python
-from google.adk.agents import Agent, Runner
-from temporalio import workflow
+from contextlib import aclosing
+from datetime import timedelta
+from google.adk.agents import Agent
+from google.adk.runners import InMemoryRunner
+from google.genai import types
+from temporalio import activity, workflow
+from temporalio.common import RetryPolicy
 from temporalio.contrib.google_adk_agents import TemporalModel
+from temporalio.contrib.google_adk_agents.workflow import activity_tool
+from temporalio.workflow import ActivityConfig
 
-# Create an agent with a Temporal-aware model
+# A Temporal Activity
+
+@activity.defn
+async def get_weather(city: str) -> str:
+    """Get current weather for a city."""
+    # Your weather API call here
+    return f"72°F and sunny in {city}"
+
+# Wrap the activity as an ADK tool.  This tool will get memoized, retried, and timed out.
+weather_tool = activity_tool(
+    get_weather,
+    start_to_close_timeout=timedelta(seconds=30),
+    retry_policy=RetryPolicy(maximum_attempts=3),
+)
+
+# Use your agent
 agent = Agent(
     name="weather_agent",
-    model=TemporalModel("gemini-2.5-pro", activity_options=ActivityConfig(summary="Weather Agent")),
-    instruction="You are a helpful weather assistant.",
-    tools=[get_weather],  # your tool functions
+    model=TemporalModel(
+      "gemini-2.5-pro",
+      activity_options=ActivityConfig(summary="Weather Agent")),
+    tools=[weather_tool],
 )
+
+# Drop your agent in a Workflow to give it durable execution.
 
 @workflow.defn
 class WeatherAgentWorkflow:
     @workflow.run
     async def run(self, user_message: str) -> str:
         # For testing; for production, use Runner()
-        runner = InMemoryRunner(agent=agent)
-        result = await runner.run_async(user_message)
+        runner = InMemoryRunner(agent=agent, app_name="weather_app")
+        session = await runner.session_service.create_session(
+            user_id="user", app_name="weather_app"
+        )
+        result = ""
+        async with aclosing(runner.run_async(
+            user_id="user",
+            session_id=session.id,
+            new_message=types.Content(
+                role="user", parts=[types.Part.from_text(text=user_message)]
+            ),
+        )) as events:
+            async for event in events:
+                if event.content and event.content.parts:
+                    for part in event.content.parts:
+                        if part.text:
+                            result = part.text
         return result
 ```
 
@@ -137,46 +177,11 @@ async def start():
         WeatherAgentWorkflow.run,
         "What's the weather in San Francisco?",
         id="weather-agent-1",
-        task_queue="adk-task-queue",
+        task_queue="my-agent-task-queue",
     )
     print(result)
 ```
 
-### Agents calling custom Activities as tools
-
-Wrap Temporal Activities as ADK tools using `activity_tool`, so tool executions
-get full retry and timeout guarantees:
-
-```python
-from datetime import timedelta
-from google.adk.agents import Agent
-from temporalio import activity
-from temporalio.common import RetryPolicy
-from temporalio.contrib.google_adk_agents import TemporalModel
-from temporalio.contrib.google_adk_agents.workflow import activity_tool
-
-@activity.defn
-async def get_weather(city: str) -> str:
-    """Get current weather for a city."""
-    # Your weather API call here
-    return f"72°F and sunny in {city}"
-
-# Wrap the activity as an ADK tool
-weather_tool = activity_tool(
-    get_weather,
-    start_to_close_timeout=timedelta(seconds=30),
-    retry_policy=RetryPolicy(maximum_attempts=3),
-)
-
-# Use your agent
-agent = Agent(
-    name="weather_agent",
-    model=TemporalModel(
-      "gemini-2.5-pro",   
-      activity_options=ActivityConfig(summary="Weather Agent")),
-    tools=[weather_tool],
-)
-```
 
 ### Using MCP tools
 
@@ -232,7 +237,7 @@ The plugin ensures your ADK agent runs deterministically inside Temporal Workflo
 | Human-in-the-loop | Your Agent Workflow can wait for [Signals](https://docs.temporal.io/signals) and [Updates](https://docs.temporal.io/messages#updates) to wait for human input, and clients can send those to resume the Agent |
 | Deterministic runtime | `GoogleAdkPlugin` replaces non-deterministic calls with Temporal-safe equivalents |
 | Debuggability | Every LLM call and tool execution is visible as an Activity in the Temporal UI, making it trivial to debug faults. |
-| Observability | Work with your favorite Observability solution using OpenTelemetry, with cross-process spans that are resilient to crashes.
+| Observability | Work with your favorite Observability solution using OpenTelemetry, with cross-process spans that are resilient to crashes. |
 | Safe versioning | Deploy new agent versions using [Temporal Worker Versioning](https://docs.temporal.io/production-deployment/worker-deployments/worker-versioning) without disrupting in-flight executions |
 | Multi-agent orchestration | Compose multiple agents within a Workflow, or scale them to more complex use cases by using [Child Workflows](https://docs.temporal.io/child-workflows) or [Nexus](https://docs.temporal.io/nexus) |
 
