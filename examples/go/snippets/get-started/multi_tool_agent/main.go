@@ -67,4 +67,5 @@ func main() {
 		log.Fatalf("Run failed: %v\n\n%s", err, l.CommandLineSyntax())
 	}
 }
+
 // --8<-- [end:full_code]
