@@ -146,7 +146,7 @@ graph, such as ***SequentialAgent***, ***ParallelAgent***, the agent executes
 its task. Upon completion, control automatically advances to the next node based
 on the logic of the workflow agent's graph.
 
-**As a transferee from an *LlmAgent*:** When a parent ***LlmAgent*** transfers
+**As a transferee from an LlmAgent:** When a parent ***LlmAgent*** transfers
 control to a task agent via `request_task`, the task agent executes until it
 calls `complete_task`. At that point, control automatically returns to the
 originating agent that initiated the transfer. This behavior differs from
