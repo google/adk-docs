@@ -25,7 +25,7 @@ For deeper details, consult these reference files in `references/`:
 
 - **`cloud-run.md`** — Scaling defaults, Dockerfile, session types, networking
 - **`agent-engine.md`** — deploy.py CLI, AdkApp pattern, Terraform resource, deployment metadata, CI/CD differences
-- **`gke.md`** — GKE Autopilot cluster, Kubernetes manifests, Workload Identity, session types, networking
+- **`gke.md`** — GKE Autopilot cluster, Terraform-managed Kubernetes resources, Workload Identity, session types, networking
 - **`terraform-patterns.md`** — Custom infrastructure, IAM, state management, importing resources
 - **`event-driven.md`** — Pub/Sub, Eventarc, BigQuery Remote Function triggers via custom `fast_api_app.py` endpoints
 
@@ -211,7 +211,7 @@ For detailed infrastructure configuration (deploy.py flags, AdkApp pattern, Terr
 
 ## GKE Specifics
 
-For detailed infrastructure configuration (Kubernetes manifests, Terraform resources, Workload Identity, session types, networking), see `references/gke.md`. For ADK docs on GKE deployment, fetch `https://google.github.io/adk-docs/deploy/gke/index.md`.
+For detailed infrastructure configuration (Terraform-managed Kubernetes resources, Workload Identity, session types, networking), see `references/gke.md`. For ADK docs on GKE deployment, fetch `https://google.github.io/adk-docs/deploy/gke/index.md`.
 
 ---
 
