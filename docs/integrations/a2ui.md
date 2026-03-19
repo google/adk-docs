@@ -36,15 +36,15 @@ The `A2uiSchemaManager` loads component catalogs and generates system prompts
 that teach the LLM how to produce valid A2UI JSON.
 
 ```python
-from a2ui.core.schema.constants import VERSION_0_8
+from a2ui.core.schema.constants import VERSION_0_9
 from a2ui.core.schema.manager import A2uiSchemaManager
 from a2ui.basic_catalog.provider import BasicCatalog
 
 schema_manager = A2uiSchemaManager(
-    version=VERSION_0_8,
+    version=VERSION_0_9,
     catalogs=[
         BasicCatalog.get_config(
-            version=VERSION_0_8,
+            version=VERSION_0_9,
             examples_path="examples",
         ),
     ],
@@ -55,7 +55,9 @@ schema_manager = A2uiSchemaManager(
     If you omit the `catalogs` parameter, the schema manager uses the
     [Basic Catalog](https://a2ui.org/latest/catalogs/) maintained by the
     A2UI team, which includes common components like Text, Card, Button,
-    Image, and more.
+    Image, and more. You can also create [custom catalogs](#custom-catalogs)
+    with domain-specific components, or mix the basic catalog with your own
+    — see [Advanced patterns](#advanced-patterns) below.
 
 ### 2. Generate the system prompt
 
@@ -82,7 +84,7 @@ Use the generated instruction as the agent's system prompt:
 from google.adk.agents.llm_agent import LlmAgent
 
 agent = LlmAgent(
-    model="gemini-2.0-flash",
+    model="gemini-flash-latest",
     name="ui_agent",
     description="An agent that generates rich UI responses.",
     instruction=instruction,
@@ -170,9 +172,9 @@ You can define your own component catalogs for domain-specific UI:
 from a2ui.core.schema.manager import CatalogConfig
 
 schema_manager = A2uiSchemaManager(
-    version=VERSION_0_8,
+    version=VERSION_0_9,
     catalogs=[
-        BasicCatalog.get_config(version=VERSION_0_8),
+        BasicCatalog.get_config(version=VERSION_0_9),
         CatalogConfig.from_path(
             name="my_dashboard_catalog",
             catalog_path="catalogs/dashboard.json",
@@ -194,7 +196,7 @@ from a2ui.a2a import get_a2ui_agent_extension
 supported_catalog_ids = set()
 for subagent in subagents:
     for extension in subagent_card.capabilities.extensions:
-        if extension.uri == "https://a2ui.org/a2a-extension/a2ui/v0.8":
+        if extension.uri == "https://a2ui.org/a2a-extension/a2ui/v0.9":
             supported_catalog_ids.update(
                 extension.params.get("supportedCatalogIds") or []
             )
