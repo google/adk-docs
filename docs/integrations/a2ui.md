@@ -10,24 +10,17 @@ catalog_icon: /adk-docs/integrations/assets/a2ui.png
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
 </div>
 
-[A2UI](https://a2ui.org/) is an open protocol for agents to generate rich,
-structured user interfaces. Instead of returning plain text, your ADK agent
-emits **JSON component trees** that client-side renderers turn into interactive
-UI — forms, cards, charts, tables, and more.
+A2UI lets your agent generate **real UI** — cards, forms, charts, tables — not
+just text. Your agent outputs structured JSON, and a renderer on the client
+turns it into interactive components.
 
-A2UI works alongside [A2A](https://google.github.io/A2A/) (Agent-to-Agent):
-the agent sends A2UI payloads inside A2A `DataPart` messages, and any
-A2UI-compatible renderer on the client displays them.
+It's transport-agnostic: A2UI payloads work over A2A, MCP, REST, WebSockets,
+or any other protocol. The agent describes *what* to show; the client decides
+*how* to render it.
 
-## Why A2UI?
-
-| Capability | Plain text | A2UI |
-|---|---|---|
-| Layout control | ❌ | ✅ Cards, columns, tabs |
-| Interactive inputs | ❌ | ✅ Buttons, forms, selects |
-| Data visualization | ❌ | ✅ Charts, tables, maps |
-| Validation | ❌ | ✅ Schema-validated JSON |
-| Cross-platform | N/A | ✅ Same payload, any renderer |
+!!! info "Learn more about A2UI"
+    [a2ui.org](https://a2ui.org/) has the full specification, component
+    gallery, catalog reference, and renderer documentation.
 
 ## Quickstart
 
