@@ -93,6 +93,15 @@ To install ADK 2.0, follow these steps:
         source .venv/bin/activate
         ```
 
+!!! note "Note: Updating existing ADK 1.0 projects"
+
+    The `--pre` option does not install the ADK 2.0 libraries if you already have
+    ADK 1.0 libraries installed in a Python environment. You can force installation
+    of the ADK 2.0 library by adding the `--force` option to the install command
+    shown above. Remember to use Python virtual environments for ADK 2.0, and
+    **ensure you have backups of ADK 1.0 projects *before* updating them to
+    use ADK 2.0 libraries.**
+
 ## Next steps
 
 Read the developer guides for building agents with ADK 2.0 features:
