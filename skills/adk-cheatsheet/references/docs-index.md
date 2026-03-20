@@ -64,6 +64,7 @@ An open-source, code-first toolkit for building, evaluating, and deploying sophi
 - [Agent Engine Code Execution tool for ADK](https://google.github.io/adk-docs/integrations/code-exec-agent-engine/index.md)
 - [Gemini API Code Execution tool for ADK](https://google.github.io/adk-docs/integrations/code-execution/index.md)
 - [Gemini API Computer Use tool for ADK](https://google.github.io/adk-docs/integrations/computer-use/index.md)
+- [Couchbase MCP tool for ADK](https://google.github.io/adk-docs/integrations/couchbase/index.md)
 - [Google Cloud Data Agents tool for ADK](https://google.github.io/adk-docs/integrations/data-agent/index.md)
 - [Daytona plugin for ADK](https://google.github.io/adk-docs/integrations/daytona/index.md)
 - [ElevenLabs MCP tool for ADK](https://google.github.io/adk-docs/integrations/elevenlabs/index.md)
