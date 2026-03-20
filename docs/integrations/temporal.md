@@ -39,26 +39,24 @@ The Temporal plugin gives your agents:
 
 ## Prerequisites
 
-- Python 3.9+
+- Python 3.10+
 - A [Gemini API key](https://aistudio.google.com/app/api-keys) (or any
   [supported model](/adk-docs/agents/models/))
 - A running Temporal server
   ([local dev server](https://docs.temporal.io/cli#start-dev-server),
   [self-hosted](https://docs.temporal.io/self-hosted-guide), or
   [Temporal Cloud](https://temporal.io/cloud))
+- Temporal Python SDK [1.24.0](https://github.com/temporalio/sdk-python/releases/tag/1.24.0)
+
+Note that as of Temporal Python 1.24.0, this integration experimental and there may be future breaking changes.
+
 
 ## Installation
 
-Install the Temporal Python SDK:
+Install the Temporal Python SDK along with the google-adk extra:
 
 ```bash
-pip install temporalio
-```
-
-Install ADK:
-
-```bash
-pip install google-adk
+pip install temporalio[google-adk]
 ```
 
 ## Use with agent
@@ -190,26 +188,41 @@ Activities:
 
 ```python
 from google.adk.agents import Agent
+from google.adk.tools.mcp_tool import McpToolset
+from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
+from mcp import StdioServerParameters
+from temporalio.client import Client
 from temporalio.contrib.google_adk_agents import (
+    GoogleAdkPlugin,
     TemporalModel,
     TemporalMcpToolSet,
     TemporalMcpToolSetProvider,
 )
 
-# Define a factory for your MCP toolset
-provider = TemporalMcpToolSetProvider("my-tools", my_toolset_factory)
-
-# Use in your agent workflow
-agent = Agent(
-    name="tool_agent",
-    model=TemporalModel("gemini-2.5-pro"),
-    toolsets=[TemporalMcpToolSet("my-tools")],
+# Define a factory that lets Temporal instantiate your MCPToolset as needed.
+toolset_provider = TemporalMcpToolSetProvider(
+    "my-tools",
+    lambda _: McpToolset(
+        connection_params=StdioConnectionParams(
+            server_params=StdioServerParameters(
+                command="npx",
+                args=["-y", "@modelcontextprotocol/server-filesystem", "/path/to/dir"],
+            ),
+        ),
+    ),
 )
 
 # Configure the client with the toolset provider
 client = await Client.connect(
     "localhost:7233",
-    plugins=[GoogleAdkPlugin(toolset_providers=[provider])]
+    plugins=[GoogleAdkPlugin(toolset_providers=[toolset_provider])]
+)
+
+# Reference the toolset by name in when you declare your Agent (inside a @workflow.run)
+agent = Agent(
+    name="tool_agent",
+    model=TemporalModel("gemini-2.5-pro"),
+    tools=[TemporalMcpToolSet("my-tools")],
 )
 ```
 
