@@ -36,20 +36,22 @@ The `A2uiSchemaManager` loads component catalogs and generates system prompts
 that teach the LLM how to produce valid A2UI JSON.
 
 ```python
-from a2ui.core.schema.constants import VERSION_0_9
 from a2ui.core.schema.manager import A2uiSchemaManager
 from a2ui.basic_catalog.provider import BasicCatalog
 
 schema_manager = A2uiSchemaManager(
-    version=VERSION_0_9,
     catalogs=[
         BasicCatalog.get_config(
-            version=VERSION_0_9,
             examples_path="examples",
         ),
     ],
 )
 ```
+
+!!! note
+    The schema manager will automatically detect the A2UI version from
+    incoming client requests. You can also set a version explicitly by
+    passing `version=VERSION_0_9` if needed.
 
 !!! tip
     If you omit the `catalogs` parameter, the schema manager uses the
@@ -172,9 +174,8 @@ You can define your own component catalogs for domain-specific UI:
 from a2ui.core.schema.manager import CatalogConfig
 
 schema_manager = A2uiSchemaManager(
-    version=VERSION_0_9,
     catalogs=[
-        BasicCatalog.get_config(version=VERSION_0_9),
+        BasicCatalog.get_config(),
         CatalogConfig.from_path(
             name="my_dashboard_catalog",
             catalog_path="catalogs/dashboard.json",
