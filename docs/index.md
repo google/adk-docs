@@ -1,5 +1,6 @@
 ---
 hide:
+  - navigation
   - toc
 ---
 
@@ -17,6 +18,12 @@ ADK is **model-agnostic**, **deployment-agnostic**, and is built for
 development feel more like software development, to make it easier for
 developers to create, deploy, and orchestrate agentic architectures that range
 from simple tasks to complex workflows.
+
+??? warning "News: ADK Python 2.0 Alpha with graph-based workflows!"
+
+    ADK 2.0 Alpha release provides a huge orchestration upgrade for agents with
+    support for graph-based workflows. Download the Alpha release and
+    [try out ADK 2.0](/adk-docs/2.0/).
 
 ??? tip "News: ADK Python Skills released!"
 
