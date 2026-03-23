@@ -79,7 +79,7 @@ credentials_config = BigQueryCredentialsConfig(credentials=credentials)
 bigquery_toolset = BigQueryToolset(credentials_config=credentials_config)
 ```
 
-### External Auth Integration (Gemini Enterprise)
+### External Auth Integration (e.g. Gemini Enterprise)
 
 If you are integrating with an external authentication provider where the token is managed by the platform (like Gemini Enterprise), use `external_access_token_key`.
 
@@ -116,7 +116,7 @@ The following sample code demonstrates how to use the `BigQueryToolset` in an AD
 --8<-- "examples/python/snippets/tools/built-in-tools/bigquery.py"
 ```
 
-## Reference Implementation
+## Sample Agent
 
 For a complete, ready-to-run sample of a BigQuery-powered agent with detailed authentication examples, see the [BigQuery Sample Agent](https://github.com/google/adk-python/tree/main/contributing/samples/bigquery) on GitHub.
 
