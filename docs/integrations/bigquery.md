@@ -79,6 +79,35 @@ credentials_config = BigQueryCredentialsConfig(credentials=credentials)
 bigquery_toolset = BigQueryToolset(credentials_config=credentials_config)
 ```
 
+### External Auth Integration (Gemini Enterprise)
+
+If you are integrating with an external authentication provider where the token is managed by the platform (like Gemini Enterprise), use `external_access_token_key`.
+
+```python
+from google.adk.tools.bigquery import BigQueryToolset, BigQueryCredentialsConfig
+
+# The key used to look up the access token in the session state
+credentials_config = BigQueryCredentialsConfig(
+    external_access_token_key="YOUR_AUTH_ID"
+)
+bigquery_toolset = BigQueryToolset(credentials_config=credentials_config)
+```
+
+### Interactive Auth (ADK Web)
+
+When using the `adk web` interface for interactive sessions, you can provide OAuth 2.0 client credentials to trigger a login flow.
+
+```python
+from google.adk.tools.bigquery import BigQueryToolset, BigQueryCredentialsConfig
+
+# Provide OAuth 2.0 Client ID and Secret
+credentials_config = BigQueryCredentialsConfig(
+    client_id="YOUR_CLIENT_ID",
+    client_secret="YOUR_CLIENT_SECRET"
+)
+bigquery_toolset = BigQueryToolset(credentials_config=credentials_config)
+```
+
 ```py
 --8<-- "examples/python/snippets/tools/built-in-tools/bigquery.py"
 ```
