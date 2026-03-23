@@ -549,6 +549,12 @@ Let's create a basic example of a toolset that provides simple arithmetic operat
     --8<-- "examples/typescript/snippets/tools/overview/toolset_example.ts"
     ```
 
+=== "Java"
+
+    ```java
+    --8<-- "examples/java/snippets/src/main/java/tools/SimpleMathToolsetApp.java:init"
+    ```
+
 In this example:
 
 *   `SimpleMathToolset` implements `BaseToolset` and its `get_tools()` method returns `FunctionTool` instances for `add_numbers` and `subtract_numbers`. It also customizes their names using a prefix.

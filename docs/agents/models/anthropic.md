@@ -14,7 +14,7 @@ section. You can also use Anthropic models through the
 
 ## Get started
 
-The following code examples show a basic implementation for using Gemini models
+The following code examples show a basic implementation for using Anthropic models
 in your agents:
 
 ```java
@@ -25,7 +25,7 @@ public static LlmAgent createAgent() {
       .build();
 
   Claude claudeModel = new Claude(
-      "claude-3-7-sonnet-latest", anthropicClient
+      "claude-sonnet-4-6", anthropicClient
   );
 
   return LlmAgent.builder()
@@ -61,7 +61,7 @@ import com.anthropic.client.okhttp.AnthropicOkHttpClient; // From Anthropic's SD
 
 public class DirectAnthropicAgent {
 
-  private static final String CLAUDE_MODEL_ID = "claude-3-7-sonnet-latest"; // Or your preferred Claude model
+  private static final String CLAUDE_MODEL_ID = "claude-sonnet-4-6"; // Or your preferred Claude model
 
   public static LlmAgent createAgent() {
 

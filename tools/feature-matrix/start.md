@@ -34,7 +34,7 @@ The following matrix shows which ADK features are currently supported in each la
 | | **Artifacts** | [Supported](https://google.github.io/adk-docs/artifacts/#what-are-artifacts) | [Supported](https://google.github.io/adk-docs/artifacts/#what-are-artifacts) |
 | | **Callbacks** | [Supported](https://google.github.io/adk-docs/callbacks/types-of-callbacks/#before-agent-callback) | [Supported](https://google.github.io/adk-docs/callbacks/types-of-callbacks/#before-agent-callback) |
 | | **Plugins** | [Supported](https://google.github.io/adk-docs/plugins/#define-and-register-plugins) | Not Supported |
-| **Advanced Capabilities** | **Streaming (Live/Bidi)** | [Supported](https://google.github.io/adk-docs/get-started/streaming/quickstart-streaming/#2-project-structure) | [Supported](https://google.github.io/adk-docs/get-started/streaming/quickstart-streaming-java/#creating-an-agent) |
+| **Advanced Capabilities** | **Streaming (Gemini Live API Toolkit)** | [Supported](https://google.github.io/adk-docs/get-started/streaming/quickstart-streaming/#2-project-structure) | [Supported](https://google.github.io/adk-docs/get-started/streaming/quickstart-streaming-java/#creating-an-agent) |
 | | **Streaming Tools** | [Supported](https://google.github.io/adk-docs/streaming/streaming-tools/) | Not Supported |
 | | **Multi-Model: LiteLLM** | [Supported](https://google.github.io/adk-docs/agents/models/#using-cloud-proprietary-models-via-litellm) | Not Supported |
 | | **Multi-Model: Direct Anthropic** | Not Supported | [Supported](https://google.github.io/adk-docs/agents/models/#using-anthropic-models) |
@@ -76,7 +76,7 @@ Based on the documentation, ADK delivers a comprehensive set of features for bui
 *   **Callbacks & Plugins**: Hook into the agent's execution lifecycle to implement logging, guardrails, caching, and other cross-cutting concerns.
 
 ### Advanced Capabilities
-*   **Streaming (Live/Bidi)**: Build real-time, interactive experiences with native support for bidirectional streaming of text, audio, and video.
+*   **Streaming (Gemini Live API Toolkit)**: Build real-time, interactive experiences with native support for bidirectional streaming of text, audio, and video.
 *   **Streaming Tools**: Create tools that can stream intermediate results back to the agent for real-time monitoring and reaction.
 *   **Multi-Model Support**: Flexibly use different LLMs (Gemini, GPT, Claude, etc.) within your agents, powered by integrations like LiteLLM.
 
