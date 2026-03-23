@@ -65,7 +65,7 @@ bigquery_toolset = BigQueryToolset(credentials_config=credentials_config)
 
 ### External Auth Token
 
-For applications that need to act on behalf of an end-user, you can pass user credentials (e.g., from an OAuth2 flow or an external IDP).
+For applications that need to act on behalf of an end-user, you can pass user credentials directly instantiated from an access token (e.g. from an OAuth2 flow or an external IDP).
 
 ```python
 from google.oauth2.credentials import Credentials
