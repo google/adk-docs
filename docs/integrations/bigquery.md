@@ -63,7 +63,7 @@ credentials_config = BigQueryCredentialsConfig(credentials=credentials)
 bigquery_toolset = BigQueryToolset(credentials_config=credentials_config)
 ```
 
-### User Credentials (External IDP)
+### External Auth Token
 
 For applications that need to act on behalf of an end-user, you can pass user credentials (e.g., from an OAuth2 flow or an external IDP).
 
@@ -79,7 +79,7 @@ credentials_config = BigQueryCredentialsConfig(credentials=credentials)
 bigquery_toolset = BigQueryToolset(credentials_config=credentials_config)
 ```
 
-### External Auth Integration (e.g. Gemini Enterprise)
+### External Auth Provider (e.g. Gemini Enterprise)
 
 If you are integrating with an external authentication provider where the token is managed by the platform (like Gemini Enterprise), use `external_access_token_key`.
 
