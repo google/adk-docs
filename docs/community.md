@@ -233,6 +233,16 @@ Development Kit community.
       <p>Discover and test production-ready ADK agents for web search, image generation, research, and more.</p>
     </div>
   </a>
+  <a href="https://github.com/SemanticDataCharter/SDC_Agents" class="resource-card">
+    <div class="card-image-wrapper">
+      <img src="../assets/community-sdc-agents.png" alt="SDC Agents">
+    </div>
+    <div class="card-content">
+      <div class="type">Integration</div>
+      <h3>📖 SDC Agents — Semantic Data Governance for ADK</h3>
+      <p>Nine purpose-scoped agents with 32 tools that transform SQL, CSV, JSON, and MongoDB data into validated, self-describing SDC4 artifacts with full audit trails.</p>
+    </div>
+  </a>
 </div>
 
 ## ADK for Java
