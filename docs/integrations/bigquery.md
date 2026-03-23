@@ -108,6 +108,10 @@ credentials_config = BigQueryCredentialsConfig(
 bigquery_toolset = BigQueryToolset(credentials_config=credentials_config)
 ```
 
+## Sample Code
+
+The following sample code demonstrates how to use the `BigQueryToolset` in an ADK agent using Application Default Credentials (ADC).
+
 ```py
 --8<-- "examples/python/snippets/tools/built-in-tools/bigquery.py"
 ```
