@@ -1,6 +1,6 @@
 ---
 catalog_title: Temporal
-catalog_description: Resilient, scalable agents, long-running agents and tools, human approvals, safe versioning, and more.
+catalog_description: Resilient, scalable agents, long-running agents and tools, human approvals, and safe versioning
 catalog_icon: /adk-docs/integrations/assets/temporal.png
 ---
 
@@ -48,7 +48,8 @@ The Temporal plugin gives your agents:
   [Temporal Cloud](https://temporal.io/cloud))
 - Temporal Python SDK [1.24.0](https://github.com/temporalio/sdk-python/releases/tag/1.24.0)
 
-Note that as of Temporal Python 1.24.0, this integration experimental and there may be future breaking changes.
+Note that as of Temporal Python 1.24.0, this integration is experimental and
+there may be future breaking changes.
 
 
 ## Installation
@@ -56,7 +57,7 @@ Note that as of Temporal Python 1.24.0, this integration experimental and there 
 Install the Temporal Python SDK along with the google-adk extra:
 
 ```bash
-pip install temporalio[google-adk]
+pip install "temporalio[google-adk]"
 ```
 
 ## Use with agent
@@ -103,7 +104,7 @@ agent = Agent(
     name="weather_agent",
     model=TemporalModel(
       "gemini-2.5-pro",
-      activity_options=ActivityConfig(summary="Weather Agent")),
+      activity_config=ActivityConfig(summary="Weather Agent")),
     tools=[weather_tool],
 )
 
@@ -154,6 +155,7 @@ async def main():
         client,
         task_queue="my-agent-task-queue",
         workflows=[WeatherAgentWorkflow],
+        activities=[get_weather],
     )
     await worker.run()
 
@@ -163,6 +165,7 @@ asyncio.run(main())
 **3. Start a workflow execution**
 
 ```python
+import asyncio
 from temporalio.client import Client
 from temporalio.contrib.google_adk_agents import GoogleAdkPlugin
 
@@ -178,6 +181,8 @@ async def start():
         task_queue="my-agent-task-queue",
     )
     print(result)
+
+asyncio.run(start())
 ```
 
 
@@ -218,7 +223,7 @@ client = await Client.connect(
     plugins=[GoogleAdkPlugin(toolset_providers=[toolset_provider])]
 )
 
-# Reference the toolset by name in when you declare your Agent (inside a @workflow.run)
+# Reference the toolset by name when you declare your Agent (inside a @workflow.run)
 agent = Agent(
     name="tool_agent",
     model=TemporalModel("gemini-2.5-pro"),
