@@ -95,7 +95,7 @@ bigquery_toolset = BigQueryToolset(credentials_config=credentials_config)
 
 ### Interactive Auth (ADK Web)
 
-When using the `adk web` interface for interactive sessions, you can provide OAuth 2.0 client credentials to trigger a login flow.
+When using the `adk web` interface for interactive sessions, you can provide OAuth 2.0 client credentials to trigger a login flow. This mechanism works for both local development and when your ADK agent is deployed to environments like Cloud Run.
 
 ```python
 from google.adk.tools.bigquery import BigQueryToolset, BigQueryCredentialsConfig
