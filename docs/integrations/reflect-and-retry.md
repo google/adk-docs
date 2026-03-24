@@ -2,7 +2,7 @@
 catalog_title: Reflect and Retry Plugin
 catalog_description: Automatically retry tool calls that fail
 catalog_icon: /adk-docs/integrations/assets/adk.png
-catalog_tags: ["google"]
+catalog_tags: ["google", "resilience"]
 ---
 
 # Reflect and Retry plugin for ADK
