@@ -161,34 +161,36 @@ Now let's define an agent that can monitor stock price changes and monitor the v
     import com.google.adk.agents.LlmAgent;
     import com.google.adk.tools.Annotations.Schema;
     import com.google.adk.tools.FunctionTool;
-    import com.google.genai.ApiClient;
+    import com.google.genai.Client;
     import com.google.genai.types.Content;
     import com.google.genai.types.GenerateContentConfig;
     import com.google.genai.types.GenerateContentResponse;
     import com.google.genai.types.Part;
     import io.reactivex.rxjava3.core.Flowable;
     import java.util.Arrays;
+    import java.util.Collections;
+    import java.util.Map;
     import java.util.concurrent.TimeUnit;
 
     public class StreamingTools {
 
       @Schema(description = "This function will monitor the price for the given stock_symbol in a continuous, streaming and asynchronously way.")
-      public static Flowable<String> monitorStockPrice(@Schema(name = "stockSymbol") String stockSymbol) {
+      public static Flowable<Map<String, Object>> monitorStockPrice(@Schema(name = "stockSymbol") String stockSymbol) {
         System.out.println("Start monitor stock price for " + stockSymbol + "!");
 
         return Flowable.concat(
-            Flowable.just("the price for " + stockSymbol + " is 300").delay(4, TimeUnit.SECONDS),
-            Flowable.just("the price for " + stockSymbol + " is 400").delay(4, TimeUnit.SECONDS),
-            Flowable.just("the price for " + stockSymbol + " is 900").delay(20, TimeUnit.SECONDS),
-            Flowable.just("the price for " + stockSymbol + " is 500").delay(20, TimeUnit.SECONDS)
+            Flowable.<Map<String, Object>>just(Collections.singletonMap("result", "the price for " + stockSymbol + " is 300")).delay(4, TimeUnit.SECONDS),
+            Flowable.<Map<String, Object>>just(Collections.singletonMap("result", "the price for " + stockSymbol + " is 400")).delay(4, TimeUnit.SECONDS),
+            Flowable.<Map<String, Object>>just(Collections.singletonMap("result", "the price for " + stockSymbol + " is 900")).delay(20, TimeUnit.SECONDS),
+            Flowable.<Map<String, Object>>just(Collections.singletonMap("result", "the price for " + stockSymbol + " is 500")).delay(20, TimeUnit.SECONDS)
         );
       }
 
       // for video streaming, `inputStream` is required and reserved parameter for ADK to pass the video streams in.
       @Schema(description = "Monitor how many people are in the video streams.")
-      public static Flowable<String> monitorVideoStream(LiveRequestQueue inputStream) {
+      public static Flowable<Map<String, Object>> monitorVideoStream(@Schema(name = "inputStream") LiveRequestQueue inputStream) {
         System.out.println("start monitor_video_stream!");
-        ApiClient client = ApiClient.builder().build();
+        Client client = Client.builder().build();
         String promptText = "Count the number of people in this image. Just respond with a numeric number.";
         
         // We use RxJava to process the stream
@@ -212,7 +214,7 @@ Now let's define an agent that can monitor stock price changes and monitor the v
                       )).build())
                       .build()
               );
-              return response.text();
+              return (Map<String, Object>) Collections.<String, Object>singletonMap("result", response.text());
             })
             .distinctUntilChanged()
             .doOnNext(res -> System.out.println("response: " + res));
