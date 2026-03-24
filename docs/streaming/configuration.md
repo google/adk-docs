@@ -1,7 +1,7 @@
 # Configuring streaming behaviour
 
 <div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.5.0</span><span class="lst-preview">Experimental</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.5.0</span><span class="lst-java">Java v0.2.0</span><span class="lst-preview">Experimental</span>
 </div>
 
 There are some configurations you can set for live(streaming) agents. 
@@ -22,7 +22,7 @@ For example, if you want to set voice config, you can leverage speech_config.
     run_config = RunConfig(speech_config=speech_config)
 
     runner.run_live(
-        ...,
+        # ...,
         run_config=run_config,
     )
     ```
@@ -30,6 +30,11 @@ For example, if you want to set voice config, you can leverage speech_config.
 === "Java"
 
     ```java
+    import com.google.adk.agents.RunConfig;
+    import com.google.genai.types.PrebuiltVoiceConfig;
+    import com.google.genai.types.SpeechConfig;
+    import com.google.genai.types.VoiceConfig;
+
     VoiceConfig voiceConfig =
         VoiceConfig.builder()
             .prebuiltVoiceConfig(PrebuiltVoiceConfig.builder().voiceName("Aoede").build())
@@ -38,7 +43,7 @@ For example, if you want to set voice config, you can leverage speech_config.
     RunConfig runConfig = RunConfig.builder().setSpeechConfig(speechConfig).build();
 
     runner.runLive(
-        ...,
+        // ...,
         runConfig);
     ```
 
