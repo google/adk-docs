@@ -77,13 +77,21 @@ city_report_agent = Agent(
     name="city_report_agent",
     model="gemini-2.5-flash",
     input_schema=CityTime,
-    instruction="""Output the data provided by the previous node.""",
+    instruction="""Output following line:
+    It is {CityTime.time_info} in {CityTime.city} right now.""",
+    output_schema=str,
 )
+
+def completed_message_function(node_input: str):
+    return Event(
+        message=f"{node_input}\n WORKFLOW COMPLETED.",
+    )
 
 root_agent = Workflow(
     name="root_agent",
     edges=[
-        ("START", city_generator_agent, lookup_time_function, city_report_agent)
+        ("START", city_generator_agent, lookup_time_function,
+          city_report_agent, completed_message_function)
     ],
 )
 ```
