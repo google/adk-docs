@@ -11,11 +11,16 @@ catalog_tags: ["observability", "evaluation"]
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
 </div>
 
-[LangWatch](https://langwatch.ai) is an open-source LLMOps platform for observability, evaluation, and prompt optimization. It provides comprehensive tracing for Google ADK agents using [OpenInference instrumentation](https://github.com/Arize-ai/openinference/tree/main/python/instrumentation/openinference-instrumentation-google-adk), allowing you to monitor, debug, and improve your agents in development and production.
+[LangWatch](https://langwatch.ai) is an open-source LLMOps platform for
+observability, evaluation, and prompt optimization. It provides comprehensive
+tracing for ADK agents using [OpenInference
+instrumentation](https://github.com/Arize-ai/openinference/tree/main/python/instrumentation/openinference-instrumentation-google-adk),
+allowing you to monitor, debug, and improve your agents in development and
+production.
 
 ## Overview
 
-LangWatch captures traces from Google ADK using its built-in OpenTelemetry support, giving you:
+LangWatch captures traces from ADK using its built-in OpenTelemetry support, giving you:
 
 - **Automatic tracing** - Capture every agent run, tool call, and model request with full context
 - **Online evaluation** - Continuously score production traffic for quality and safety
@@ -25,7 +30,7 @@ LangWatch captures traces from Google ADK using its built-in OpenTelemetry suppo
 
 ## Installation
 
-### 1. Install Required Packages { #install-required-packages }
+Install the required packages:
 
 ```bash
 pip install langwatch openinference-instrumentation-google-adk google-adk
@@ -33,16 +38,16 @@ pip install langwatch openinference-instrumentation-google-adk google-adk
 
 ## Setup
 
-### 1. Configure LangWatch { #configure-langwatch }
-
-Sign up at [langwatch.ai](https://langwatch.ai) or [self-host](https://langwatch.ai/docs/self-hosting/overview) the platform, then set your API key:
+Sign up at [langwatch.ai](https://langwatch.ai) or
+[self-host](https://langwatch.ai/docs/self-hosting/overview) the platform, then
+set your API key:
 
 ```bash
 export LANGWATCH_API_KEY="your-langwatch-api-key"
 export GOOGLE_API_KEY="your-gemini-api-key"
 ```
 
-### 2. Initialize Tracing { #initialize-tracing }
+Initialize tracing:
 
 ```python
 import langwatch
@@ -53,11 +58,13 @@ langwatch.setup(
 )
 ```
 
-That's it. All ADK agent activity will now be traced and sent to your LangWatch dashboard automatically.
+That's it. All ADK agent activity will now be traced and sent to your LangWatch
+dashboard automatically.
 
 ## Observe
 
-With tracing initialized, run your ADK agent as usual and all interactions will appear in LangWatch:
+With tracing initialized, run your ADK agent as usual and all interactions will
+appear in LangWatch:
 
 ```python
 import langwatch
@@ -130,7 +137,8 @@ async for event in runner.run_async(
 
 ## Adding Custom Metadata
 
-Use the `@langwatch.trace()` decorator to attach additional context to your traces:
+Use the `@langwatch.trace()` decorator to attach additional context to your
+traces:
 
 ```python
 @langwatch.trace(name="ADK Weather Agent")
@@ -162,6 +170,6 @@ def run_agent(user_message: str):
 ## Support and Resources
 
 - [LangWatch Documentation](https://langwatch.ai/docs)
-- [Google ADK Integration Guide](https://langwatch.ai/docs/integration/python/integrations/google-ai)
-- [GitHub Repository](https://github.com/langwatch/langwatch)
+- [ADK Integration Guide](https://langwatch.ai/docs/integration/python/integrations/google-ai)
+- [LangWatch Repository on GitHub](https://github.com/langwatch/langwatch)
 - [Community Discord](https://discord.gg/langwatch)
