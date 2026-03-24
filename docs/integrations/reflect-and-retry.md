@@ -8,7 +8,7 @@ catalog_tags: ["google"]
 # Reflect and Retry plugin for ADK
 
 <div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.16.0</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.16.0</span><span class="lst-go">Go v0.5.0</span>
 </div>
 
 The Reflect and Retry plugin can help your agent recover from error
