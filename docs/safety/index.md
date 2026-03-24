@@ -554,3 +554,13 @@ However, identity and perimeters only provide coarse controls around agent actio
 #### Always Escape Model-Generated Content in UIs
 
 Care must be taken when agent output is visualized in a browser: if HTML or JS content isn't properly escaped in the UI, the text returned by the model could be executed, leading to data exfiltration. For example, an indirect prompt injection can trick a model to include an img tag tricking the browser to send the session content to a 3rd party site; or construct URLs that, if clicked, send data to external sites. Proper escaping of such content must ensure that model-generated text isn't interpreted as code by browsers.
+
+---
+
+## Going to Production?
+
+Once you have reviewed the concepts on this page, use the
+[Production Readiness Checklist](production-checklist.md) to verify that your
+deployment covers authentication, input validation, sandboxed execution,
+external HTTP call hardening, session management, secret handling, logging
+hygiene, and scalability requirements before going live.
