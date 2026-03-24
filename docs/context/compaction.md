@@ -12,18 +12,27 @@ increasing processing time and slowing down responses. The ADK Context
 Compaction feature is designed to reduce the size of context as an agent
 is running by summarizing older parts of the agent workflow event history.
 
-The Context Compaction feature uses a *sliding window* approach for collecting
-and summarizing agent workflow event data within a
-[Session](/adk-docs/sessions/session/). When you configure this feature in your
-agent, it summarizes data from older events once it reaches a threshold of a
-specific number of workflow events, or invocations, with the current Session.
+The Context Compaction feature can be configured in two ways:
+
+*   **Sliding window**: Collects and summarizes agent workflow event data based on
+    a specific number of workflow events, or invocations.
+*   **Token-based**: Collects and summarizes agent workflow event data based on
+    the estimated token count of the session history.
+
+### Token-based Compaction
+
+You can alternatively configure compaction based on the estimated token count of
+the session history. This provides more dynamic context management based on actual
+token usage.
+
+If you configure token-based compaction, it takes precedence over sliding window
+compaction for that turn when triggered.
 
 ## Configure context compaction
 
 Add context compaction to your agent workflow by adding an Events Compaction
-Configuration setting to the App object of your workflow. As part of the
-configuration, you must specify a compaction interval and overlap size, as shown
-in the following sample code:
+Configuration setting to the App object of your workflow. The following sample
+code shows how to configure both sliding window and token-based compaction:
 
 ```python
 from google.adk.apps.app import App
@@ -33,14 +42,18 @@ app = App(
     name='my-agent',
     root_agent=root_agent,
     events_compaction_config=EventsCompactionConfig(
-        compaction_interval=3,  # Trigger compaction every 3 new invocations.
-        overlap_size=1          # Include last invocation from the previous window.
+        # Sliding window settings
+        compaction_interval=10,
+        overlap_size=2,
+        # Token-based settings
+        token_threshold=2000,
+        event_retention_size=5
     ),
 )
 ```
 
 Once configured, the ADK `Runner` handles the compaction process in the
-background each time the session reaches the interval.
+background each time the session reaches the configured threshold.
 
 ## Example of context compaction
 
@@ -67,10 +80,13 @@ The configuration settings for this feature control how frequently event data is
 and how much data is retained as the agent workflow runs. Optionally, you can configure
 a compactor object
 
-*   **`compaction_interval`**: Set the number of completed events that triggers compaction
-    of the prior event data.
+*   **`compaction_interval`**: Set the number of completed events that triggers sliding
+    window compaction.
 *   **`overlap_size`**: Set how many of the previously compacted events are included in a
     newly compacted context set.
+*   **`token_threshold`**: The token count that triggers token-based compaction.
+*   **`event_retention_size`**: The number of recent raw events to keep
+    uncompressed after token-based compaction occurs.
 *   **`summarizer`**: (Optional) Define a summarizer object including a specific AI model
     to use for summarization. For more information, see
     [Define a Summarizer](#define-summarizer).
@@ -86,7 +102,7 @@ from google.adk.apps.llm_event_summarizer import LlmEventSummarizer
 from google.adk.models import Gemini
 
 # Define the AI model to be used for summarization:
-summarization_llm = Gemini(model="gemini-2.5-flash")
+summarization_llm = Gemini(model="gemini-1.5-flash")
 
 # Create the summarizer with the custom model:
 my_summarizer = LlmEventSummarizer(llm=summarization_llm)
