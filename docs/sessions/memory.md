@@ -13,7 +13,7 @@ Think of it this way:
 
 ## The `MemoryService` Role
 
-The `BaseMemoryService` defines the interface for managing this searchable, long-term knowledge store. Its primary responsibilities are:
+The `BaseMemoryService` (or `Service` in Go) defines the interface for managing this searchable, long-term knowledge store. Its primary responsibilities are:
 
 1. **Ingesting Information (`add_session_to_memory`):** Taking the contents of a (usually completed) `Session` and adding relevant information to the long-term knowledge store.
 2. **Searching Information (`search_memory`):** Allowing an agent (typically via a `Tool`) to query the knowledge store and retrieve relevant snippets or context based on a search query.
@@ -31,6 +31,9 @@ The ADK offers two distinct `MemoryService` implementations, each tailored to di
 | **Setup Complexity** | None. It's the default. | Low. Requires an [Agent Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/memory-bank/overview) instance in Vertex AI. |
 | **Dependencies** | None. | Google Cloud Project, Vertex AI API |
 | **When to use it** | When you want to search across multiple sessions’ chat histories for prototyping. | When you want your agent to remember and learn from past interactions. |
+
+!!! note "Go Support"
+    Currently, the Go ADK supports `InMemoryMemoryService`. `VertexAiMemoryBankService` support is coming soon.
 
 ## In-Memory Memory
 
@@ -364,6 +367,22 @@ agent = Agent(
 )
 ```
 
+=== "Go"
+```go
+import (
+    "google.golang.org/adk/agent/llmagent"
+    "google.golang.org/adk/tool"
+    "google.golang.org/adk/tool/preloadmemorytool"
+)
+
+agent, _ := llmagent.New(llmagent.Config{
+    Model:       model,
+    Name:        "weather_sentiment_agent",
+    Instruction: "...",
+    Tools:       []tool.Tool{preloadmemorytool.New()},
+})
+```
+
 === "Java"
 ```java
 import com.google.adk.agents.LlmAgent;
@@ -395,6 +414,33 @@ agent = Agent(
     tools=[adk.tools.preload_memory_tool.PreloadMemoryTool()],
     after_agent_callback=auto_save_session_to_memory_callback,
 )
+```
+
+=== "Go"
+```go
+import (
+    "context"
+    "google.golang.org/adk/agent"
+    "google.golang.org/adk/agent/llmagent"
+    "google.golang.org/adk/session"
+    "google.golang.org/adk/tool"
+    "google.golang.org/adk/tool/loadmemorytool"
+)
+
+func autoSaveSessionToMemoryCallback(ctx agent.CallbackContext, s session.Session) (*genai.Content, error) {
+    if err := ctx.Memory().AddSessionToMemory(context.Background(), s); err != nil {
+        return nil, err
+    }
+    return nil, nil
+}
+
+agent, _ := llmagent.New(llmagent.Config{
+    Model:               model,
+    Name:                "Generic_QA_Agent",
+    Instruction:         "Answer the user's questions",
+    Tools:               []tool.Tool{loadmemorytool.New()},
+    AfterAgentCallbacks: []agent.AfterAgentCallback{autoSaveSessionToMemoryCallback},
+})
 ```
 
 === "Java"
