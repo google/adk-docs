@@ -151,7 +151,7 @@ For scalable and production-oriented use cases, Vertex AI is the recommended pla
 1.  **Sign up for Express Mode** to get your API key.
 2.  **Set environment variables:**
     ```shell
-    export GOOGLE_API_KEY="PASTE_YOUR_EXPRESS_MODE_API_KEY_HERE"
+    export GOOGLE_GENAI_API_KEY="PASTE_YOUR_EXPRESS_MODE_API_KEY_HERE"
     export GOOGLE_GENAI_USE_VERTEXAI=TRUE
     ```
 
