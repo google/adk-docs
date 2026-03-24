@@ -26,6 +26,11 @@
             <artifactId>google-adk-dev</artifactId>
             <version>0.9.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.yahoofinance-api</groupId>
+            <artifactId>YahooFinanceAPI</artifactId>
+            <version>3.17.0</version>
+        </dependency>
     </dependencies>
 
     <build>
