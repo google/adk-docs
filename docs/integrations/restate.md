@@ -2,7 +2,7 @@
 catalog_title: Restate
 catalog_description: Resilient agent execution and orchestration with durable sessions and human approvals
 catalog_icon: /adk-docs/integrations/assets/restate.svg
-catalog_tags: ["durability"]
+catalog_tags: ["durable execution"]
 ---
 
 # Restate plugin for ADK
