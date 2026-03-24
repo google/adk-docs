@@ -560,7 +560,7 @@ Care must be taken when agent output is visualized in a browser: if HTML or JS c
 ## Going to Production?
 
 Once you have reviewed the concepts on this page, use the
-[Production Readiness Checklist](production-checklist.md) to verify that your
+[Production Readiness Checklist](production_checklist.md) to verify that your
 deployment covers authentication, input validation, sandboxed execution,
 external HTTP call hardening, session management, secret handling, logging
 hygiene, and scalability requirements before going live.
