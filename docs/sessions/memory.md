@@ -355,113 +355,113 @@ When a memory service is configured, your agent can use a tool or callback to re
 **Example:**
 
 === "Python"
-```python
-from google.adk.agents import Agent
-from google.adk.tools.preload_memory_tool import PreloadMemoryTool
+    ```python
+    from google.adk.agents import Agent
+    from google.adk.tools.preload_memory_tool import PreloadMemoryTool
 
-agent = Agent(
-    model=MODEL_ID,
-    name='weather_sentiment_agent',
-    instruction="...",
-    tools=[PreloadMemoryTool()]
-)
-```
+    agent = Agent(
+        model=MODEL_ID,
+        name='weather_sentiment_agent',
+        instruction="...",
+        tools=[PreloadMemoryTool()]
+    )
+    ```
 
 === "Go"
-```go
-import (
-    "google.golang.org/adk/agent/llmagent"
-    "google.golang.org/adk/tool"
-    "google.golang.org/adk/tool/preloadmemorytool"
-)
+    ```go
+    import (
+        "google.golang.org/adk/agent/llmagent"
+        "google.golang.org/adk/tool"
+        "google.golang.org/adk/tool/preloadmemorytool"
+    )
 
-agent, _ := llmagent.New(llmagent.Config{
-    Model:       model,
-    Name:        "weather_sentiment_agent",
-    Instruction: "...",
-    Tools:       []tool.Tool{preloadmemorytool.New()},
-})
-```
+    agent, _ := llmagent.New(llmagent.Config{
+        Model:       model,
+        Name:        "weather_sentiment_agent",
+        Instruction: "...",
+        Tools:       []tool.Tool{preloadmemorytool.New()},
+    })
+    ```
 
 === "Java"
-```java
-import com.google.adk.agents.LlmAgent;
-import com.google.adk.tools.LoadMemoryTool;
+    ```java
+    import com.google.adk.agents.LlmAgent;
+    import com.google.adk.tools.LoadMemoryTool;
 
-LlmAgent agent = new LlmAgent.Builder()
-    .model(MODEL_ID)
-    .name("weather_sentiment_agent")
-    .instruction("...")
-    .tools(new LoadMemoryTool())
-    .build();
-```
+    LlmAgent agent = new LlmAgent.Builder()
+        .model(MODEL_ID)
+        .name("weather_sentiment_agent")
+        .instruction("...")
+        .tools(new LoadMemoryTool())
+        .build();
+    ```
 
 To extract memories from your session, you need to call `add_session_to_memory`. For example, you can automate this via a callback:
 
 === "Python"
-```python
-from google.adk.agents import Agent
-from google import adk
+    ```python
+    from google.adk.agents import Agent
+    from google import adk
 
-async def auto_save_session_to_memory_callback(callback_context):
-    await callback_context._invocation_context.memory_service.add_session_to_memory(
-        callback_context._invocation_context.session)
+    async def auto_save_session_to_memory_callback(callback_context):
+        await callback_context._invocation_context.memory_service.add_session_to_memory(
+            callback_context._invocation_context.session)
 
-agent = Agent(
-    model=MODEL,
-    name="Generic_QA_Agent",
-    instruction="Answer the user's questions",
-    tools=[adk.tools.preload_memory_tool.PreloadMemoryTool()],
-    after_agent_callback=auto_save_session_to_memory_callback,
-)
-```
+    agent = Agent(
+        model=MODEL,
+        name="Generic_QA_Agent",
+        instruction="Answer the user's questions",
+        tools=[adk.tools.preload_memory_tool.PreloadMemoryTool()],
+        after_agent_callback=auto_save_session_to_memory_callback,
+    )
+    ```
 
 === "Go"
-```go
-import (
-    "context"
-    "google.golang.org/adk/agent"
-    "google.golang.org/adk/agent/llmagent"
-    "google.golang.org/adk/session"
-    "google.golang.org/adk/tool"
-    "google.golang.org/adk/tool/loadmemorytool"
-)
+    ```go
+    import (
+        "context"
+        "google.golang.org/adk/agent"
+        "google.golang.org/adk/agent/llmagent"
+        "google.golang.org/adk/session"
+        "google.golang.org/adk/tool"
+        "google.golang.org/adk/tool/loadmemorytool"
+    )
 
-func autoSaveSessionToMemoryCallback(ctx agent.CallbackContext, s session.Session) (*genai.Content, error) {
-    if err := ctx.Memory().AddSessionToMemory(context.Background(), s); err != nil {
-        return nil, err
+    func autoSaveSessionToMemoryCallback(ctx agent.CallbackContext, s session.Session) (*genai.Content, error) {
+        if err := ctx.Memory().AddSessionToMemory(context.Background(), s); err != nil {
+            return nil, err
+        }
+        return nil, nil
     }
-    return nil, nil
-}
 
-agent, _ := llmagent.New(llmagent.Config{
-    Model:               model,
-    Name:                "Generic_QA_Agent",
-    Instruction:         "Answer the user's questions",
-    Tools:               []tool.Tool{loadmemorytool.New()},
-    AfterAgentCallbacks: []agent.AfterAgentCallback{autoSaveSessionToMemoryCallback},
-})
-```
+    agent, _ := llmagent.New(llmagent.Config{
+        Model:               model,
+        Name:                "Generic_QA_Agent",
+        Instruction:         "Answer the user's questions",
+        Tools:               []tool.Tool{loadmemorytool.New()},
+        AfterAgentCallbacks: []agent.AfterAgentCallback{autoSaveSessionToMemoryCallback},
+    })
+    ```
 
 === "Java"
-```java
-import com.google.adk.agents.LlmAgent;
-import com.google.adk.tools.LoadMemoryTool;
-import io.reactivex.rxjava3.core.Maybe;
-import java.util.Optional;
+    ```java
+    import com.google.adk.agents.LlmAgent;
+    import com.google.adk.tools.LoadMemoryTool;
+    import io.reactivex.rxjava3.core.Maybe;
+    import java.util.Optional;
 
-LlmAgent agent = new LlmAgent.Builder()
-    .model(MODEL)
-    .name("Generic_QA_Agent")
-    .instruction("Answer the user's questions")
-    .tools(new LoadMemoryTool())
-    .afterAgentCallback((context) -> {
-        return context.invocationContext().memoryService()
-            .addSessionToMemory(context.invocationContext().session())
-            .andThen(Maybe.empty());
-    })
-    .build();
-```
+    LlmAgent agent = new LlmAgent.Builder()
+        .model(MODEL)
+        .name("Generic_QA_Agent")
+        .instruction("Answer the user's questions")
+        .tools(new LoadMemoryTool())
+        .afterAgentCallback((context) -> {
+            return context.invocationContext().memoryService()
+                .addSessionToMemory(context.invocationContext().session())
+                .andThen(Maybe.empty());
+        })
+        .build();
+    ```
 
 ## Advanced Concepts
 
