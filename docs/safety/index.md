@@ -339,8 +339,8 @@ Gemini models come with in-built safety mechanisms that can be leveraged to impr
         generate_content_config=types.GenerateContentConfig(
             safety_settings=[
                 types.SafetySetting(
-                    category="HARM_CATEGORY_HATE_SPEECH",
-                    threshold="BLOCK_LOW_AND_ABOVE",
+                    category=types.HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+                    threshold=types.HarmBlockThreshold.OFF,
                 ),
             ],
         ),
