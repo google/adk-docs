@@ -32,8 +32,6 @@ The ADK offers two distinct `MemoryService` implementations, each tailored to di
 | **Dependencies** | None. | Google Cloud Project, Vertex AI API |
 | **When to use it** | When you want to search across multiple sessions’ chat histories for prototyping. | When you want your agent to remember and learn from past interactions. |
 
-!!! note "Go Support"
-    Currently, the Go ADK supports `InMemoryMemoryService`. `VertexAiMemoryBankService` support is coming soon.
 
 ## In-Memory Memory
 
@@ -443,25 +441,6 @@ To extract memories from your session, you need to call `add_session_to_memory`.
     })
     ```
 
-=== "Java"
-    ```java
-    import com.google.adk.agents.LlmAgent;
-    import com.google.adk.tools.LoadMemoryTool;
-    import io.reactivex.rxjava3.core.Maybe;
-    import java.util.Optional;
-
-    LlmAgent agent = new LlmAgent.Builder()
-        .model(MODEL)
-        .name("Generic_QA_Agent")
-        .instruction("Answer the user's questions")
-        .tools(new LoadMemoryTool())
-        .afterAgentCallback((context) -> {
-            return context.invocationContext().memoryService()
-                .addSessionToMemory(context.invocationContext().session())
-                .andThen(Maybe.empty());
-        })
-        .build();
-    ```
 
 ## Advanced Concepts
 
