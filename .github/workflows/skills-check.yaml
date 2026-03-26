@@ -31,8 +31,6 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v6
-      with:
-        fetch-depth: 0
 
     - name: Set up Python
       uses: actions/setup-python@v6
@@ -42,54 +40,18 @@ jobs:
     - name: Install dependencies
       run: pip install -r tools/skills/requirements.txt
 
-    # --- PR-Specific Checks ---
-
-    - name: Get changed skills markdown files (PR only)
-      if: github.event_name == 'pull_request'
-      id: changed-files
-      run: |
-        CHANGED_FILES=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} -- 'skills/**/*.md' | tr '\n' ' ')
-        echo "changed_files=${CHANGED_FILES}" >> $GITHUB_OUTPUT
-        echo "Detected changes in: ${CHANGED_FILES}"
-
-    - name: Validate changed snippets (PR only)
-      if: github.event_name == 'pull_request' && steps.changed-files.outputs.changed_files != ''
-      run: |
-        python tools/skills/validate_snippets.py ${{ steps.changed-files.outputs.changed_files }}
-
-    - name: Validate links in changed files (PR only)
-      if: github.event_name == 'pull_request' && steps.changed-files.outputs.changed_files != ''
-      run: |
-        python tools/skills/validate_links.py ${{ steps.changed-files.outputs.changed_files }}
-
-    - name: Validate callback signatures (PR only)
-      if: github.event_name == 'pull_request' && steps.changed-files.outputs.changed_files != ''
-      run: |
-        python tools/skills/validate_callback_signatures.py ${{ steps.changed-files.outputs.changed_files }}
-
-    - name: Integration test for callbacks (PR only)
-      if: github.event_name == 'pull_request' && steps.changed-files.outputs.changed_files != ''
-      run: |
-        python tools/skills/test_callback_snippets.py
-
-    # --- Scheduled Checks ---
-
-    - name: Validate all snippets (Scheduled)
-      if: github.event_name == 'schedule'
+    - name: Validate all snippets
       run: |
         python tools/skills/validate_snippets.py
 
-    - name: Validate all links (Scheduled)
-      if: github.event_name == 'schedule'
+    - name: Validate all links
       run: |
         python tools/skills/validate_links.py
 
-    - name: Validate all callback signatures (Scheduled)
-      if: github.event_name == 'schedule'
+    - name: Validate all callback signatures
       run: |
         python tools/skills/validate_callback_signatures.py
 
-    - name: Integration test for callbacks (Scheduled)
-      if: github.event_name == 'schedule'
+    - name: Integration test for callbacks
       run: |
         python tools/skills/test_callback_snippets.py
