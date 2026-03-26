@@ -1,7 +1,7 @@
-# Optimize an Agent
+# Optimize agents
 
 <div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.24.0</span>
 </div>
 
 ADK provides an extendable framework for automated agent optimization based on
