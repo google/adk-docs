@@ -2,6 +2,7 @@
 catalog_title: Temporal
 catalog_description: Resilient, scalable agents, long-running agents and tools, human approvals, and safe versioning
 catalog_icon: /adk-docs/integrations/assets/temporal.png
+catalog_tags: ["resilience"]
 ---
 
 # Temporal plugin for ADK

@@ -83,7 +83,7 @@ project cycles, and automate development workflows using natural language.
         ```python
         from google.adk.agents import Agent
         from google.adk.tools.mcp_tool import McpToolset
-        from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPServerParams
+        from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPConnectionParams
 
         LINEAR_API_KEY = "YOUR_LINEAR_API_KEY"
 
@@ -93,7 +93,7 @@ project cycles, and automate development workflows using natural language.
             instruction="Help users manage issues, projects, and cycles in Linear",
             tools=[
                 McpToolset(
-                    connection_params=StreamableHTTPServerParams(
+                    connection_params=StreamableHTTPConnectionParams(
                         url="https://mcp.linear.app/mcp",
                         headers={
                             "Authorization": f"Bearer {LINEAR_API_KEY}",

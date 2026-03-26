@@ -82,7 +82,7 @@ natural language interactions.
         ```python
         from google.adk.agents import Agent
         from google.adk.tools.mcp_tool import McpToolset
-        from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPServerParams
+        from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPConnectionParams
 
         POSTMAN_API_KEY = "YOUR_POSTMAN_API_KEY"
 
@@ -92,7 +92,7 @@ natural language interactions.
             instruction="Help users manage their Postman workspaces and collections",
             tools=[
                 McpToolset(
-                    connection_params=StreamableHTTPServerParams(
+                    connection_params=StreamableHTTPConnectionParams(
                         url="https://mcp.postman.com/mcp",
                         # (Optional) Use "/minimal" for essential tools only
                         # (Optional) Use "/code" for code generation tools
