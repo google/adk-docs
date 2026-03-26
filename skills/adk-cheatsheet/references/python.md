@@ -782,4 +782,4 @@ google/adk/
 
 Use Glob/Grep/Read on the installed package to find exact implementations, method signatures, and configuration options.
 
-For the full ADK documentation index with WebFetch URLs, see `references/docs-index.md`.
+For the full ADK documentation index, use `curl https://google.github.io/adk-docs/llms.txt`.
