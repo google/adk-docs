@@ -80,7 +80,7 @@ operations.
         ```python
         from google.adk.agents import Agent
         from google.adk.tools.mcp_tool import McpToolset
-        from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPServerParams
+        from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPConnectionParams
 
         STRIPE_SECRET_KEY = "YOUR_STRIPE_SECRET_KEY"
 
@@ -90,7 +90,7 @@ operations.
             instruction="Help users manage their Stripe account",
             tools=[
                 McpToolset(
-                    connection_params=StreamableHTTPServerParams(
+                    connection_params=StreamableHTTPConnectionParams(
                         url="https://mcp.stripe.com",
                         headers={
                             "Authorization": f"Bearer {STRIPE_SECRET_KEY}",
