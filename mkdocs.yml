@@ -335,6 +335,7 @@ nav:
       - evaluate/index.md
       - Criteria: evaluate/criteria.md
       - User Simulation: evaluate/user-sim.md
+      - Custom Metrics: evaluate/custom_metrics.md
       - Optimization: optimize/index.md
     - Safety and Security:
       - safety/index.md
