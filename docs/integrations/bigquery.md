@@ -31,9 +31,9 @@ They are packaged in the toolset `BigQueryToolset`.
 
 The `BigQueryToolset` supports several authentication mechanisms through `BigQueryCredentialsConfig`.
 
-### Application Default Credentials (ADC)
+### Application Default Credentials
 
-This is the recommended approach for local development and running on Google Cloud services (Cloud Run, GKE, etc.).
+You should use this approach for local development and running on Google Cloud services, such as Cloud Run and GKE.
 
 ```python
 import google.auth
@@ -65,7 +65,7 @@ bigquery_toolset = BigQueryToolset(credentials_config=credentials_config)
 
 ### External Access Token
 
-For applications that need to act on behalf of an end-user, you can pass user credentials directly instantiated from an access token (e.g. from an OAuth2 flow or an external IDP).
+For applications that need to act on behalf of an end-user, you can pass user credentials directly instantiated from an access token, such as from an OAuth2 flow or an external IDP.
 
 ```python
 from google.oauth2.credentials import Credentials
@@ -79,9 +79,9 @@ credentials_config = BigQueryCredentialsConfig(credentials=credentials)
 bigquery_toolset = BigQueryToolset(credentials_config=credentials_config)
 ```
 
-### External Auth Provider (e.g. Gemini Enterprise)
+### External Auth Providers
 
-If you are integrating with an external authentication provider where the token is managed by the platform (like Gemini Enterprise), use `external_access_token_key`.
+If you are integrating with an external authentication provider where the token is managed by the platform, such as Gemini Enterprise, use `external_access_token_key`.
 
 ```python
 from google.adk.tools.bigquery import BigQueryToolset, BigQueryCredentialsConfig
