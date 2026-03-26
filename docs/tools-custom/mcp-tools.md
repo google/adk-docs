@@ -29,7 +29,7 @@ Before you begin, ensure you have the following set up:
 * **Setup Node.js and npx:** **(Python only)** Many community MCP servers are distributed as Node.js packages and run using `npx`. Install Node.js (which includes npx) if you haven't already. For details, see [https://nodejs.org/en](https://nodejs.org/en).
 * **Verify Installations:** **(Python only)** Confirm `adk` and `npx` are in your PATH within the activated virtual environment:
 
-=== "Unix"
+=== "MacOS / Linux"
 
   ```shell
   # Both commands should print the path to the executables.
