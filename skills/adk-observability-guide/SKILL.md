@@ -62,7 +62,8 @@ invocation
 |-----------|-------|
 | **Agent Engine** | Automatic — traces are exported to Cloud Trace by default |
 | **Cloud Run (scaffolded)** | Automatic — `otel_to_cloud=True` in the FastAPI app |
-| **Cloud Run (manual)** | Configure OpenTelemetry exporter in your app |
+| **GKE (scaffolded)** | Automatic — `otel_to_cloud=True` in the FastAPI app |
+| **Cloud Run / GKE (manual)** | Configure OpenTelemetry exporter in your app |
 | **Local dev** | Works with `make playground`; traces visible in Cloud Console |
 
 View traces: **Cloud Console → Trace → Trace explorer**

@@ -1,5 +1,6 @@
 ---
 hide:
+  - navigation
   - toc
 ---
 
@@ -17,6 +18,24 @@ ADK is **model-agnostic**, **deployment-agnostic**, and is built for
 development feel more like software development, to make it easier for
 developers to create, deploy, and orchestrate agentic architectures that range
 from simple tasks to complex workflows.
+
+??? danger "ADK Python Security Advisory: LiteLLM supply chain compromise"
+
+    Unauthorized code was identified in LiteLLM versions 1.82.7 and 1.82.8 on
+    PyPI on March 24, 2026. If you use ADK Python with the `eval` or
+    `extensions` extras, update to the latest version of ADK Python immediately.
+    If you installed or upgraded LiteLLM during this period, rotate all secrets
+    and credentials. For details and required actions, refer to the [ADK
+    security advisory](https://github.com/google/adk-python/issues/5005) and
+    [LiteLLM's Security Update: Suspected Supply Chain
+    Incident](https://docs.litellm.ai/blog/security-update-march-2026).
+
+
+??? warning "News: ADK Python 2.0 Alpha with graph-based workflows!"
+
+    ADK 2.0 Alpha release provides a huge orchestration upgrade for agents with
+    support for graph-based workflows. Download the Alpha release and
+    [try out ADK 2.0](/adk-docs/2.0/).
 
 ??? tip "News: ADK Python Skills released!"
 

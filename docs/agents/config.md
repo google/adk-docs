@@ -153,7 +153,7 @@ You can also bypass the CLI and dynamically load and execute a configuration-bas
     ```python
     import asyncio
     from google.adk.agents import config_agent_utils
-    from google.adk.agents import Runner
+    from google.adk.runners import Runner
 
     async def main():
         # Load the agent directly from the YAML config file

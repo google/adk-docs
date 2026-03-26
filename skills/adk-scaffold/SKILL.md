@@ -24,7 +24,7 @@ Start with the use case, then ask follow-ups based on answers.
 1. **What problem will the agent solve?** — Core purpose and capabilities
 2. **External APIs or data sources needed?** — Tools, integrations, auth requirements
 3. **Safety constraints?** — What the agent must NOT do, guardrails
-4. **Deployment preference?** — Prototype first (recommended) or full deployment? If deploying: Agent Engine or Cloud Run?
+4. **Deployment preference?** — Prototype first (recommended) or full deployment? If deploying: Agent Engine, Cloud Run, or GKE?
 
 **Ask based on context:**
 
@@ -33,7 +33,7 @@ Start with the use case, then ask follow-ups based on answers.
   - `vertex_ai_search` — for document search, search engine
 - If agent should be **available to other agents** → **A2A protocol?** Use `--agent adk_a2a` to expose the agent as an A2A-compatible service.
 - If **full deployment** chosen → **CI/CD runner?** GitHub Actions (default) or Google Cloud Build?
-- If **Cloud Run** chosen → **Session storage?** In-memory (default), Cloud SQL (persistent), or Agent Engine (managed).
+- If **Cloud Run** or **GKE** chosen → **Session storage?** In-memory (default), Cloud SQL (persistent), or Agent Engine (managed).
 - If **deployment with CI/CD** chosen → **Git repository?** Does one already exist, or should one be created? If creating, public or private?
 
 
@@ -93,7 +93,7 @@ uvx agent-starter-pack create <project-name> \
 | Flag | Short | Default | Description |
 |------|-------|---------|-------------|
 | `--agent` | `-a` | `adk` | Agent template (see template table below) |
-| `--deployment-target` | `-d` | `agent_engine` | Deployment target (`agent_engine`, `cloud_run`, `none`) |
+| `--deployment-target` | `-d` | `agent_engine` | Deployment target (`agent_engine`, `cloud_run`, `gke`, `none`) |
 | `--region` | | `us-central1` | GCP region |
 | `--prototype` | `-p` | off | Skip CI/CD and Terraform (recommended for first pass) |
 | `--cicd-runner` | | `skip` | `github_actions` or `google_cloud_build` |
@@ -152,9 +152,9 @@ uvx agent-starter-pack enhance . --deployment-target cloud_run --dry-run -y
 
 | Template | Deployment | Description |
 |----------|------------|-------------|
-| `adk` | Agent Engine, Cloud Run | Standard ADK agent (default) |
-| `adk_a2a` | Agent Engine, Cloud Run | Agent-to-agent coordination (A2A protocol) |
-| `agentic_rag` | Agent Engine, Cloud Run | RAG with data ingestion pipeline |
+| `adk` | Agent Engine, Cloud Run, GKE | Standard ADK agent (default) |
+| `adk_a2a` | Agent Engine, Cloud Run, GKE | Agent-to-agent coordination (A2A protocol) |
+| `agentic_rag` | Agent Engine, Cloud Run, GKE | RAG with data ingestion pipeline |
 
 ---
 
@@ -164,6 +164,7 @@ uvx agent-starter-pack enhance . --deployment-target cloud_run --dry-run -y
 |--------|-------------|
 | `agent_engine` | Managed by Google (Vertex AI Agent Engine). Sessions handled automatically. |
 | `cloud_run` | Container-based deployment. More control, requires Dockerfile. |
+| `gke` | Container-based on GKE Autopilot. Full Kubernetes control. |
 | `none` | No deployment scaffolding. Code only. |
 
 ### "Prototype First" Pattern (Recommended)
@@ -224,6 +225,7 @@ This is useful for:
 - **Agent Engine clears session_type** — if deploying to `agent_engine`, remove any `session_type` setting from your code
 - **Start with `--prototype`** for quick iteration — add deployment later with `enhance`
 - **Project names** must be ≤26 characters, lowercase, letters/numbers/hyphens only
+- **NEVER write A2A code from scratch** — the A2A Python API surface (import paths, `AgentCard` schema, `to_a2a()` signature) is non-trivial and changes across versions. Always use `--agent adk_a2a` to scaffold A2A projects.
 
 ---
 
@@ -236,6 +238,15 @@ Actions:
 2. Copy relevant files (Dockerfile, etc.) from /tmp/ref
 3. Delete temp project
 Result: Infrastructure files adapted to the actual project
+
+---
+
+A2A project:
+User says: "Build me a Python agent that exposes A2A and deploys to Cloud Run"
+Actions:
+1. Follow the standard flow (gather requirements, DESIGN_SPEC, scaffold)
+2. `uvx agent-starter-pack create my-a2a-agent --agent adk_a2a --deployment-target cloud_run --prototype -y`
+Result: Valid A2A imports and Dockerfile — no manual A2A code written.
 
 ---
 
