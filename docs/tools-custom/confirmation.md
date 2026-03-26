@@ -52,23 +52,38 @@ example, if you have a tool called `reimburse`, you can enable a confirmation
 step by wrapping it with the `FunctionTool` class and setting the
 `require_confirmation` parameter to `True`, as shown in the following example:
 
-```
-# From agent.py
-root_agent = Agent(
-   ...
-   tools=[
-        # Set require_confirmation to True to require user confirmation
-        # for the tool call.
-        FunctionTool(reimburse, require_confirmation=True),
-    ],
-...
-```
+=== "Python"
 
-This implementation method requires minimal code, but is limited to simple
-approvals from the user or confirming system. For a complete example of this
-approach, see the
-[human_tool_confirmation](https://github.com/google/adk-python/blob/fc90ce968f114f84b14829f8117797a4c256d710/contributing/samples/human_tool_confirmation/agent.py)
-code sample.
+    ```python
+    root_agent = Agent(
+        # ...
+        tools = [
+            # Set require_confirmation to True to require user confirmation
+            # for the tool call.
+            FunctionTool(reimburse, require_confirmation=True),
+        ],
+        # ...
+    )
+
+    # This implementation method requires minimal code, but is limited to simple
+    # approvals from the user or confirming system. For a complete example of this
+    # approach, see the following code sample for a more detailed example:
+    # https://github.com/google/adk-python/blob/main/contributing/samples/human_tool_confirmation/agent.py
+    ```
+
+=== "Java"
+
+    ```java
+    LlmAgent rootAgent = LlmAgent.builder()
+        // ...
+        .tools(
+            // Set requireConfirmation to true to require user confirmation
+            // for the tool call.
+            FunctionTool.create(myClassInstance, "reimburse", true)
+        )
+        // ...
+        .build();
+    ```
 
 ### Require confirmation function
 
@@ -76,30 +91,58 @@ You can modify the behavior `require_confirmation` response by replacing its
 input value with a function that returns a boolean response. The following
 example shows a function for determining if a confirmation is required:
 
-```
-async def confirmation_threshold(
-    amount: int, tool_context: ToolContext
-) -> bool:
-  """Returns true if the amount is greater than 1000."""
-  return amount > 1000
-```
+=== "Python"
 
-This function than then be set as the parameter value for the
-`require_confirmation` parameter:
+    ```python
+    async def confirmation_threshold(
+        amount: int, tool_context: ToolContext
+    ) -> bool:
+      """Returns true if the amount is greater than 1000."""
+      return amount > 1000
 
-```
-root_agent = Agent(
-   ...
-   tools=[
-        # Set require_confirmation to True to require user confirmation
-        FunctionTool(reimburse, require_confirmation=confirmation_threshold),
-    ],
-...
-```
+    root_agent = Agent(
+        # ...
+        tools = [
+            # Pass the threshold function to dynamically require confirmation
+            FunctionTool(reimburse, require_confirmation=confirmation_threshold),
+        ],
+        # ...
+    )
+    ```
 
-For a complete example of this implementation, see the
-[human_tool_confirmation](https://github.com/google/adk-python/blob/fc90ce968f114f84b14829f8117797a4c256d710/contributing/samples/human_tool_confirmation/agent.py)
-code sample.
+=== "Java"
+
+    ```java
+    // In ADK Java, dynamic threshold confirmation logic is evaluated directly 
+    // inside the tool logic using the ToolContext rather than via a lambda parameter.
+    public Map<String, Object> reimburse(
+        @Schema(name="amount") int amount, ToolContext toolContext) {
+      
+      // 1. Dynamic threshold check
+      if (amount > 1000) { 
+        Optional<ToolConfirmation> toolConfirmation = toolContext.toolConfirmation();
+        if (toolConfirmation.isEmpty()) {
+           toolContext.requestConfirmation("Amount > 1000 requires approval.");
+           return Map.of("status", "Pending manager approval.");
+        } else if (!toolConfirmation.get().confirmed()) {
+           return Map.of("status", "Reimbursement rejected.");
+        }
+      }
+      
+      // 2. Proceed with actual tool logic
+      return Map.of("status", "ok", "reimbursedAmount", amount);
+    }
+
+    LlmAgent rootAgent = LlmAgent.builder()
+        // ...
+        .tools(
+            // No requireConfirmation flag is set because the custom threshold
+            // logic is already handled inside the method!
+            FunctionTool.create(this, "reimburse")
+        )
+        // ...
+        .build();    
+    ```
 
 ## Advanced confirmation {#advanced-confirmation}
 
@@ -129,35 +172,73 @@ tool_confirmation object, the `tool_context.request_confirmation()` method with
 The following code shows an example implementation for a tool that processes
 time off requests for an employee:
 
-```
-def request_time_off(days: int, tool_context: ToolContext):
-  """Request day off for the employee."""
-  ...
-  tool_confirmation = tool_context.tool_confirmation
-  if not tool_confirmation:
-    tool_context.request_confirmation(
-        hint=(
-            'Please approve or reject the tool call request_time_off() by'
-            ' responding with a FunctionResponse with an expected'
-            ' ToolConfirmation payload.'
-        ),
-        payload={
-            'approved_days': 0,
-        },
-    )
-    # Return intermediate status indicating that the tool is waiting for
-    # a confirmation response:
-    return {'status': 'Manager approval is required.'}
+=== "Python"
 
-  approved_days = tool_confirmation.payload['approved_days']
-  approved_days = min(approved_days, days)
-  if approved_days == 0:
-    return {'status': 'The time off request is rejected.', 'approved_days': 0}
-  return {
-      'status': 'ok',
-      'approved_days': approved_days,
-  }
-```
+    ```python
+    def request_time_off(days: int, tool_context: ToolContext):
+        """Request day off for the employee."""
+        # ...
+        tool_confirmation = tool_context.tool_confirmation
+        if not tool_confirmation:
+            tool_context.request_confirmation(
+                hint=(
+                    'Please approve or reject the tool call request_time_off() by'
+                    ' responding with a FunctionResponse with an expected'
+                    ' ToolConfirmation payload.'
+                ),
+                payload={
+                    'approved_days': 0,
+                },
+            )
+            # Return intermediate status indicating that the tool is waiting for
+            # a confirmation response:
+            return {'status': 'Manager approval is required.'}
+
+        approved_days = tool_confirmation.payload['approved_days']
+        approved_days = min(approved_days, days)
+        if approved_days == 0:
+            return {'status': 'The time off request is rejected.', 'approved_days': 0}
+        return {
+            'status': 'ok',
+            'approved_days': approved_days,
+        }
+    ```
+
+=== "Java"
+
+    ```java
+    public Map<String, Object> requestTimeOff(
+        @Schema(name="days") int days, 
+        ToolContext toolContext) {
+        // Request day off for the employee.
+        // ...
+        Optional<ToolConfirmation> toolConfirmation = toolContext.toolConfirmation();
+        if (toolConfirmation.isEmpty()) {
+            toolContext.requestConfirmation(
+                "Please approve or reject the tool call requestTimeOff() by " +
+                "responding with a FunctionResponse with an expected " +
+                "ToolConfirmation payload.",
+                Map.of("approved_days", 0)
+            );
+            // Return intermediate status indicating that the tool is waiting for
+            // a confirmation response:
+            return Map.of("status", "Manager approval is required.");
+        }
+
+        Map<String, Object> payload = (Map<String, Object>) toolConfirmation.get().payload();
+        int approvedDays = (int) payload.get("approved_days");
+        approvedDays = Math.min(approvedDays, days);
+        
+        if (approvedDays == 0) {
+            return Map.of("status", "The time off request is rejected.", "approved_days", 0);
+        }
+        
+        return Map.of(
+            "status", "ok",
+            "approved_days", approvedDays
+        );
+    }
+    ```
 
 For a complete example of this approach, see the
 [human_tool_confirmation](https://github.com/google/adk-python/blob/fc90ce968f114f84b14829f8117797a4c256d710/contributing/samples/human_tool_confirmation/agent.py)
@@ -178,7 +259,7 @@ You can send the request to the ADK API server's `/run` or `/run_sse` endpoint,
 or directly to the ADK runner. The following example uses a  `curl` command to
 send the confirmation to the  `/run_sse` endpoint:
 
-```
+```bash
  curl -X POST http://localhost:8000/run_sse \
  -H "Content-Type: application/json" \
  -d '{
