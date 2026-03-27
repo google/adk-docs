@@ -372,9 +372,11 @@ nav:
       - A2A Quickstart (Exposing):
         - Python: a2a/quickstart-exposing.md
         - Go: a2a/quickstart-exposing-go.md
+        - Java: a2a/quickstart-exposing-java.md
       - A2A Quickstart (Consuming):
         - Python: a2a/quickstart-consuming.md
         - Go: a2a/quickstart-consuming-go.md
+        - Java: a2a/quickstart-consuming-java.md
       - A2A Extension: a2a/a2a-extension.md
     - Gemini Live API Toolkit:
       - streaming/index.md
