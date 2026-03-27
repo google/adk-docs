@@ -11,17 +11,17 @@ This quickstart covers the most common starting point for any developer: **"Ther
 This sample demonstrates the **Agent2Agent (A2A)** architecture in the Agent Development Kit (ADK) for Java, showcasing how multiple agents can work together to handle complex tasks.
 
 ```text
-┌─────────────────┐    ┌──────────────────┐    ┌────────────────────┐
-│   Root Agent    │───▶│   Roll Agent     │    │   Remote Prime     │
-│  (Local)        │    │   (Local)        │    │   Agent            │
-│                 │    │                  │    │  (localhost:8001)  │
-│                 │───▶│                  │◀───│                    │
-└─────────────────┘    └──────────────────┘    └────────────────────┘
+┌─────────────────┐    ┌─────────────────┐    ┌────────────────────────┐
+│   Root Agent    │───▶│   Roll Agent    │    │   Remote Prime Agent   │
+│   (Local)       │    │   (Local)       │    │   (localhost:8001)     │
+│                 │───▶│                 │◀───│                        │
+└─────────────────┘    └─────────────────┘    └────────────────────────┘
 ```
 
 The A2A Basic sample consists of:
 
 - **Root Agent** (`root_agent`): The main orchestrator that delegates tasks to specialized sub-agents
+- **Roll Agent** (`roll_agent`): A local sub-agent that handles dice rolling operations
 - **Prime Agent** (`prime_agent`): A remote A2A agent that checks if numbers are prime, this agent is running on a separate A2A server
 
 ## Consuming Your Agent Using the ADK Java SDK
@@ -53,7 +53,8 @@ Once running successfully, the agent will be accessible via HTTP endpoints local
 
 A2A Protocol requires that each agent have an agent card that describes what it does to other nodes over the network. In an A2A server, the agent card is generated dynamically on boot and hosted statically.
 
-For an ADK Java webservice, the agent card is generally accessible dynamically using the `.well-known/agent-card.json` standard endpoint format relative to its base URL. 
+For an ADK Java webservice, the agent card is generally accessible dynamically using the [`.well-known/agent-card.json`](http://localhost:9090/.well-known/agent-card.json) standard endpoint format relative to its base URL.
+
 ### 4. Run the Main (Consuming) Agent { #run-the-main-consuming-agent }
 
 In another terminal, you can run the client agent:

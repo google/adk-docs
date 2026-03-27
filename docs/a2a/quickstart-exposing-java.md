@@ -15,7 +15,7 @@ In Java, you build an A2A server natively by relying on the ADK A2A extension. T
 ```text
 ┌─────────────────┐                             ┌───────────────────────────────┐
 │   Root Agent    │       A2A Protocol          │ A2A-Exposed Check Prime Agent │
-│                 │────────────────────────────▶│      (localhost: 9090)        │
+│                 │────────────────────────────▶│       (localhost:9090)        │
 └─────────────────┘                             └───────────────────────────────┘
 ```
 
@@ -81,6 +81,6 @@ You should be able to see the name dynamically mirrored from your agent configur
 
 ## Next Steps
 
-Now that you have created an agent that's exposing a remote agent via A2A, the next step is to learn how to consume it from another agent orchestrator natively.
+Now that you have exposed your agent via A2A, the next step is to learn how to consume it from another agent orchestrator natively.
 
 - [**A2A Quickstart (Consuming) for Java**](./quickstart-consuming-java.md): Learn how your agent orchestrator wrapper connects downstream to exposed services.
