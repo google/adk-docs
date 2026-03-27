@@ -249,7 +249,6 @@ plugins:
         Reference:
         - release-notes.md
         - api-reference/index.md
-        - api-reference/rest/index.html
         - community.md
         - contributing-guide.md
 
