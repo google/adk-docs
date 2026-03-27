@@ -8,7 +8,7 @@ This quickstart covers the most common starting point for any developer: **"Ther
 
 ## Overview
 
-This sample demonstrates the **Agent-to-Agent (A2A)** architecture in the Agent Development Kit (ADK) for Java, showcasing how multiple agents can work together to handle complex tasks.
+This sample demonstrates the **Agent2Agent (A2A)** architecture in the Agent Development Kit (ADK) for Java, showcasing how multiple agents can work together to handle complex tasks.
 
 ```text
 ┌─────────────────┐    ┌──────────────────┐    ┌────────────────────┐
