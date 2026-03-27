@@ -249,7 +249,6 @@ plugins:
         Reference:
         - release-notes.md
         - api-reference/index.md
-        - api-reference/rest/index.md
         - community.md
         - contributing-guide.md
 
@@ -402,7 +401,7 @@ nav:
       - Java ADK: api-reference/java/index.html
       - CLI Reference: api-reference/cli/index.html
       - Agent Config Reference: api-reference/agentconfig/index.html
-      - REST API: api-reference/rest/index.md
+      - REST API: api-reference/rest/index.html
     - Community Resources: community.md
     - Contributing Guide: contributing-guide.md
     - Release Notes: release-notes.md
