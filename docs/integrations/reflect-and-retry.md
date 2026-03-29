@@ -2,7 +2,7 @@
 catalog_title: Reflect and Retry Plugin
 catalog_description: Automatically retry tool calls that fail
 catalog_icon: /adk-docs/integrations/assets/adk.png
-catalog_tags: ["google"]
+catalog_tags: ["google", "resilience"]
 ---
 
 # Reflect and Retry plugin for ADK
@@ -107,7 +107,7 @@ error_handling_plugin = CustomRetryPlugin(max_retries=5)
 
 ## Next steps
 
-For complete code samples using the Reflect and Retry plugin, see the following: 
+For complete code samples using the Reflect and Retry plugin, see the following:
 
 *   [Basic](https://github.com/google/adk-python/tree/main/contributing/samples/plugin_reflect_tool_retry/basic)
     code sample
