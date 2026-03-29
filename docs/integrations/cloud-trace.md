@@ -23,6 +23,66 @@ Cloud Trace is built on [OpenTelemetry](https://opentelemetry.io/), an open-sour
 - **Debug issues**: Quickly diagnose latency issues and errors by analyzing detailed traces. This is crucial for understanding issues that manifest as increased communication latency across different services or during specific agent actions like tool calls.
 - **In-depth Analysis and Visualization**: Trace Explorer is the primary tool for analyzing traces, offering visual aids like heatmaps for span duration and waterfall views to easily identify bottlenecks and sources of errors within your agent's execution path.
 
+The following example will assume the following agent directory structure:
+
+=== "Python"
+    ```python
+    working_dir/
+    ├── weather_agent/
+    │   ├── agent.py
+    │   └── __init__.py
+    └── deploy_agent_engine.py
+    └── deploy_fast_api_app.py
+    └── agent_runner.py
+    ```
+
+=== "Python"
+    ```python
+    # weather_agent/agent.py
+
+    import os
+    from google.adk.agents import Agent
+
+    os.environ.setdefault("GOOGLE_CLOUD_PROJECT", "{your-project-id}")
+    os.environ.setdefault("GOOGLE_CLOUD_LOCATION", "global")
+    os.environ.setdefault("GOOGLE_GENAI_USE_VERTEXAI", "True")
+
+
+    # Define a tool function
+    def get_weather(city: str) -> dict:
+        """Retrieves the current weather report for a specified city.
+
+        Args:
+            city (str): The name of the city for which to retrieve the weather report.
+
+        Returns:
+            dict: status and result or error msg.
+        """
+        if city.lower() == "new york":
+            return {
+                "status": "success",
+                "report": (
+                    "The weather in New York is sunny with a temperature of 25 degrees"
+                    " Celsius (77 degrees Fahrenheit)."
+                ),
+            }
+        else:
+            return {
+                "status": "error",
+                "error_message": f"Weather information for '{city}' is not available.",
+            }
+
+
+    # Create an agent with tools
+    root_agent = Agent(
+        name="weather_agent",
+        model="gemini-2.5-flash",
+        description="Agent to answer questions using weather tools.",
+        instruction="You must use the available tools to find an answer.",
+        tools=[get_weather],
+    )
+    ```
+
 ## Cloud Trace Setup
 
 ### Using the ADK CLI
@@ -40,9 +100,9 @@ You can enable cloud tracing by adding a flag when deploying or running your age
     ```
 
 === "Go"
-    When running your agent using the `adkgo` command:
+    When running your agent built with the ADK Go launcher:
     ```bash
-    adkgo web --otel_to_cloud
+    adkgo web -otel_to_cloud
     ```
 
 ### Programmatic Setup
@@ -75,25 +135,36 @@ For fully customized agent runtimes, you can enable cloud tracing by using the b
     # Initialize and set global OTel providers
     telemetry.maybe_set_otel_providers(otel_hooks_to_setup=[hooks])
     ```
-
 === "Go"
     ```go
     import (
     	"context"
+    	"log"
+    	"time"
+
     	"google.golang.org/adk/telemetry"
     )
 
     func main() {
     	ctx := context.Background()
 
-    	// Initialize telemetry with cloud export enabled
+    	// Initialize telemetry with cloud export enabled.
+    	// By default, the GCP project ID is read from the GOOGLE_CLOUD_PROJECT environment variable.
+    	// You can also specify it explicitly using telemetry.WithGcpResourceProject("my-project").
     	telemetryProviders, err := telemetry.New(ctx,
     		telemetry.WithOtelToCloud(true),
+    		// telemetry.WithGcpResourceProject("your-project-id"),
     	)
     	if err != nil {
-    		log.Fatal(err)
+    		log.Fatalf("failed to initialize telemetry: %v", err)
     	}
-    	defer telemetryProviders.Shutdown(ctx)
+    	defer func() {
+    		shutdownCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+    		defer cancel()
+    		if err := telemetryProviders.Shutdown(shutdownCtx); err != nil {
+    			log.Printf("failed to shutdown telemetry: %v", err)
+    		}
+    	}()
 
     	// Register as global OTel providers
     	telemetryProviders.SetGlobalOtelProviders()
@@ -123,7 +194,7 @@ After the setup is complete, whenever you interact with the agent, it will autom
 
 ![cloud-trace](../assets/cloud-trace1.png)
 
-You will see all available traces produced by the ADK agent, with span names such as `invocation`, `agent_run`, `call_llm`, and `execute_tool`.
+You will see all available traces produced by the ADK agent, with span names such as `invoke_agent`, `generate_content`, `call_llm`, and `execute_tool`.
 
 ![cloud-trace](../assets/cloud-trace2.png)
 
