@@ -1,7 +1,7 @@
 # Get action confirmation for ADK Tools
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.14.0</span><span class="lst-go">Go</span><span class="lst-preview">Experimental</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.14.0</span><span class="lst-go">Go v0.3.0</span><span class="lst-preview">Experimental</span>
 </div>
 
 Some agent workflows require confirmation for decision making, verification,
@@ -47,8 +47,10 @@ agent pattern.
 ## Boolean confirmation {#boolean-confirmation}
 
 When your tool only requires a simple `yes` or `no` from the user, you can
-append a confirmation step using the built-in configuration. For example, if you have a tool called `reimburse`, you can enable a confirmation
-step by setting the `require_confirmation` parameter to `True` (Python) or `RequireConfirmation` to `true` (Go).
+append a confirmation step using the `FunctionTool` class as a wrapper. For
+example, if you have a tool called `reimburse`, you can enable a confirmation
+step by wrapping it with the `FunctionTool` class and setting the
+`require_confirmation` parameter to `True`, as shown in the following example:
 
 === "Python"
 
@@ -180,7 +182,15 @@ You can modify the behavior of the confirmation requirement by using a function 
 ## Advanced confirmation {#advanced-confirmation}
 
 When a tool confirmation requires more details for the user or a more complex
-response, use the manual confirmation request implementation in your tool's logic. This approach uses the `ToolContext` object to provide a text description of the request and allows for complex response data via a payload.
+response, use a tool_confirmation implementation. This approach extends the
+`ToolContext` object to add a text description of the request for the user and
+allows for more complex response data. When implementing tool confirmation this
+way, you can pause a tool's execution, request specific information, and then
+resume the tool with the provided data.
+
+This confirmation flow has a request stage where the system assembles and sends
+an input request human response, and a response stage where the system receives
+and processes the returned data.
 
 ### Confirmation definition
 
@@ -188,6 +198,13 @@ When creating a Tool with advanced confirmation, use the `Tool Context Request C
 
 -   `hint`: Descriptive message that explains what is needed from the user.
 -   `payload`: The structure of the data you expect in return. This must be serializable into a JSON-formatted string.
+
+For a complete example of this approach, see the
+[human_tool_confirmation](https://github.com/google/adk-python/blob/fc90ce968f114f84b14829f8117797a4c256d710/contributing/samples/human_tool_confirmation/agent.py)
+code sample. Keep in mind that the agent workflow tool execution pauses while a
+confirmation is obtained. After confirmation is received, you can access the
+confirmation response in the `tool_confirmation.payload` object and then proceed
+with the execution of the workflow.
 
 The following code shows an example implementation for a tool that processes
 time off requests for an employee:
@@ -293,7 +310,16 @@ time off requests for an employee:
 
 ## Remote confirmation with REST API {#remote-response}
 
-If there is no active user interface for human confirmation, you can handle it via the ADK API server's `/run` or `/run_sse` endpoint by sending a `FunctionResponse` event with the tool confirmation data.
+If there is no active user interface for a human confirmation of an agent
+workflow, you can handle the confirmation through a command-line interface or by
+routing it through another channel like email or a chat application. To confirm
+the tool call, the user or calling application needs to send a
+`FunctionResponse` event with the tool confirmation data.
+
+You can send the request to the ADK API server's `/run` or `/run_sse` endpoint,
+or directly to the ADK runner. The following example uses a  `curl` command to
+send the confirmation to the  `/run_sse` endpoint:
+
 
 ```bash
  curl -X POST http://localhost:8000/run_sse \
@@ -330,6 +356,20 @@ requirements:
 -   The `name` should be `adk_request_confirmation`.
 -   The `response` object contains the `confirmed` status and any
     additional `payload` data.
+
+    !!! note "Note: Confirmation with Resume feature"
+
+    If your ADK agent workflow is configured with the 
+    [Resume](/adk-docs/runtime/resume/) feature, you also must include
+    the Invocation ID (`invocation_id`) parameter with the confirmation
+    response. The Invocation ID you provide must be the same invocation
+    that generated the confirmation request, otherwise the system
+    starts a new invocation with the confirmation response. If your
+    agent uses the Resume feature, consider including the Invocation ID
+    as a parameter with your confirmation request, so it can be
+    included with the response. For more details on using the Resume
+    feature, see
+    [Resume stopped agents](/adk-docs/runtime/resume/).
 
 ## Known limitations {#known-limitations}
 
