@@ -38,7 +38,7 @@ agent behavior.
 
 ## Get started
 
-The following code example shows how to set operating modes modes for
+The following code example shows how to set operating modes for
 a small team of subagents and assign them to a coordinator agent:
 
 ```python
