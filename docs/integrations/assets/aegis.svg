@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+  <defs>
+    <clipPath id="shield-clip">
+      <path d="M200 40 L340 100 C340 100 330 300 200 370 C70 300 60 100 60 100 Z"/>
+    </clipPath>
+  </defs>
+
+  <!-- Shield body -->
+  <path
+    d="M200 40 L340 100 C340 100 330 300 200 370 C70 300 60 100 60 100 Z"
+    fill="#2563eb"
+  />
+
+  <!-- Inner shield highlight -->
+  <path
+    d="M200 65 L320 115 C320 115 311 290 200 350 C89 290 80 115 80 115 Z"
+    fill="none"
+    stroke="rgba(255,255,255,0.25)"
+    stroke-width="2"
+  />
+
+  <!-- Central chevron / check mark -->
+  <polyline
+    points="150,200 190,245 260,165"
+    fill="none"
+    stroke="#ffffff"
+    stroke-width="22"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+</svg>
