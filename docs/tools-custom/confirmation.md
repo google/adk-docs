@@ -73,12 +73,15 @@ step by setting the `require_confirmation` parameter to `True` (Python) or `Requ
 
     ```go
     reimburseTool, _ := functiontool.New(functiontool.Config{
-        Name:                "reimburse",
-        Description:         "Reimburse an amount",
+        Name:        "reimburse",
+        Description: "Reimburse an amount",
         // Set RequireConfirmation to true to require user confirmation
         // for the tool call.
         RequireConfirmation: true,
-    }, reimburse)
+    }, func(ctx tool.Context, args ReimburseArgs) (ReimburseResult, error) {
+        // actual implementation
+        return ReimburseResult{Status: "ok"}, nil
+    })
 
     rootAgent, _ := llmagent.New(llmagent.Config{
         // ...
@@ -134,7 +137,10 @@ You can modify the behavior of the confirmation requirement by using a function 
         RequireConfirmationProvider: func(args ReimburseArgs) bool {
             return args.Amount > 1000
         },
-    }, reimburse)
+    }, func(ctx tool.Context, args ReimburseArgs) (ReimburseResult, error) {
+        // actual implementation
+        return ReimburseResult{Status: "ok"}, nil
+    })
     ```
 
 === "Java"
@@ -178,7 +184,7 @@ response, use the manual confirmation request implementation in your tool's logi
 
 ### Confirmation definition
 
-When creating a Tool with advanced confirmation, use the `tool_context.request_confirmation()` method (Python/Go) or `toolContext.requestConfirmation()` (Java) with `hint` and `payload` parameters:
+When creating a Tool with advanced confirmation, use the `Tool Context Request Confirmation` method with `hint` and `payload` parameters:
 
 -   `hint`: Descriptive message that explains what is needed from the user.
 -   `payload`: The structure of the data you expect in return. This must be serializable into a JSON-formatted string.
@@ -234,6 +240,7 @@ time off requests for an employee:
         }
 
         payload := confirmation.Payload.(map[string]any)
+        // Values in map[string]any from JSON are float64 by default in Go
         approvedDays := int(payload["approved_days"].(float64))
         approvedDays = min(approvedDays, args.Days)
         
