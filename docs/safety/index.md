@@ -325,8 +325,8 @@ During the tool execution, [**`Tool Context`**](../tools-custom/index.md#tool-co
 Gemini models come with in-built safety mechanisms that can be leveraged to improve content and brand safety.
 
 * **Content safety filters**:  [Content filters](https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/configure-safety-attributes) can help block the output of harmful content. They function independently from Gemini models as part of a layered defense against threat actors who attempt to jailbreak the model. Gemini models on Vertex AI use two types of content filters:
-* **Non-configurable safety filters** automatically block outputs containing prohibited content, such as child sexual abuse material (CSAM) and personally identifiable information (PII).
-* **Configurable content filters** allow you to define blocking thresholds in four harm categories (hate speech, harassment, sexually explicit, and dangerous content,) based on probability and severity scores. These filters are default off but you can configure them according to your needs.
+    * **Non-configurable safety filters** automatically block outputs containing prohibited content, such as child sexual abuse material (CSAM) and personally identifiable information (PII).
+    * **Configurable content filters** allow you to define blocking thresholds in four harm categories (hate speech, harassment, sexually explicit, and dangerous content,) based on probability and severity scores. These filters are default off but you can configure them according to your needs.
 
 === "Python"
 
@@ -406,7 +406,7 @@ When modifications to the tools to add guardrails aren't possible, the [**`Befor
 
     # Hypothetical Agent setup
     root_agent = LlmAgent( # Use specific agent type
-        model='gemini-2.0-flash',
+        model='gemini-2.5-flash',
         name='root_agent',
         instruction="...",
         before_tool_callback=validate_tool_params, # Assign the callback
@@ -452,8 +452,8 @@ When modifications to the tools to add guardrails aren't possible, the [**`Befor
         instruction: "...",
         beforeToolCallback: validateToolParams, // Assign the callback
         tools: [
-          # ... list of tool functions or Tool instances ...
-          # e.g., queryToolInstance
+          // ... list of tool functions or Tool instances ...
+          // e.g., queryToolInstance
         ]
     });
     ```
@@ -497,9 +497,11 @@ When modifications to the tools to add guardrails aren't possible, the [**`Befor
 
     // Hypothetical Agent setup
     // agent, _ := llmagent.New(llmagent.Config{
-    // 	// ...
+    // 	Model: "gemini-2.5-flash",
+    // 	Name: "root_agent",
+    // 	Instruction: "...",
     // 	BeforeToolCallbacks: []llmagent.BeforeToolCallback{validateToolParams},
-    // })
+    // 	Tools: []tool.Tool{queryToolInstance},
     ```
 
 === "Java"
@@ -533,7 +535,7 @@ When modifications to the tools to add guardrails aren't possible, the [**`Befor
     public void runAgent() {
     LlmAgent agent =
         LlmAgent.builder()
-            .model("gemini-2.0-flash")
+            .model("gemini-2.5-flash")
             .name("AgentWithBeforeToolCallback")
             .instruction("...")
             .beforeToolCallback(this::validateToolParams) // Assign the callback
