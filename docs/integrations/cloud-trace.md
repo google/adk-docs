@@ -8,7 +8,7 @@ catalog_tags: ["observability", "google"]
 # Google Cloud Trace observability for ADK
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-go">Go</span><span class="lst-typescript">TypeScript</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript</span><span class="lst-go">Go</span>
 </div>
 
 With ADK, you can already inspect and observe your agent interaction locally utilizing the powerful web development UI discussed in [here](https://google.github.io/adk-docs/evaluate/#debugging-with-the-trace-view). However, for cloud deployment, you will need a centralized dashboard to observe real traffic.
@@ -25,16 +25,15 @@ Cloud Trace is built on [OpenTelemetry](https://opentelemetry.io/), an open-sour
 
 The following example will assume the following agent directory structure:
 
-=== "Python"
-    ```python
-    working_dir/
-    ├── weather_agent/
-    │   ├── agent.py
-    │   └── __init__.py
-    └── deploy_agent_engine.py
-    └── deploy_fast_api_app.py
-    └── agent_runner.py
-    ```
+```
+working_dir/
+├── weather_agent/
+│   ├── agent.py
+│   └── __init__.py
+└── deploy_agent_engine.py
+└── deploy_fast_api_app.py
+└── agent_runner.py
+```
 
 === "Python"
     ```python
@@ -135,6 +134,22 @@ For fully customized agent runtimes, you can enable cloud tracing by using the b
     # Initialize and set global OTel providers
     telemetry.maybe_set_otel_providers(otel_hooks_to_setup=[hooks])
     ```
+
+=== "TypeScript"
+    ```typescript
+    import { getGcpExporters, maybeSetOtelProviders } from '@google/adk';
+
+    // Get GCP exporters configuration
+    const gcpExporters = await getGcpExporters({
+      enableTracing: true,
+    });
+
+    // Initialize and set global OTel providers
+    maybeSetOtelProviders([gcpExporters]);
+
+    // ... your agent code ...
+    ```
+
 === "Go"
     ```go
     import (
@@ -171,21 +186,6 @@ For fully customized agent runtimes, you can enable cloud tracing by using the b
 
     	// ... your agent code ...
     }
-    ```
-
-=== "TypeScript"
-    ```typescript
-    import { getGcpExporters, maybeSetOtelProviders } from '@google/adk';
-
-    // Get GCP exporters configuration
-    const gcpExporters = await getGcpExporters({
-      enableTracing: true,
-    });
-
-    // Initialize and set global OTel providers
-    maybeSetOtelProviders([gcpExporters]);
-
-    // ... your agent code ...
     ```
 
 ## Inspect Cloud Traces
