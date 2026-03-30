@@ -1,7 +1,7 @@
 # Build agents with Agent Config
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.11.0</span><span class="lst-java">Java v0.3.0</span><span class="lst-preview">Experimental</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.11.0</span><span class="lst-java">Java v0.3.0</span><span class="lst-go">Go v0.3.0</span><span class="lst-preview">Experimental</span>
 </div>
 
 The ADK Agent Config feature lets you build an ADK workflow without writing
@@ -282,6 +282,7 @@ limitations:
 -   **ADK Tool support:** The following ADK tools are supported by the Agent
     Config feature, but *not all tools are fully supported*:
     -   `google_search`
+    -   `google_maps_grounding`
     -   `load_artifacts`
     -   `url_context`
     -   `exit_loop`
@@ -290,13 +291,14 @@ limitations:
     -   `enterprise_web_search`
     -   `load_web_page`: Requires a fully-qualified path to access web
         pages.
+    -   `AgentTool`: Allows an agent to call another agent.
+    -   `LongRunningFunctionTool`: Supports long-running functions.
+    -   `McpToolset`: Connects to Model Context Protocol (MCP) servers.
+    -   `ExampleTool`: Provides example-based few-shot learning for tools.
 -   **Agent Type Support:** The `LangGraphAgent` and `A2aAgent` types are
     not yet supported.
-    -   `AgentTool`
-    -   `LongRunningFunctionTool`
-    -   `VertexAiSearchTool`
-    -   `McpToolset`
-    -   `ExampleTool`
+-   **Vertex AI Search:** The `VertexAiSearchTool` is currently supported in
+    Python and Java Agent Configs.
 
 ## Next steps
 
