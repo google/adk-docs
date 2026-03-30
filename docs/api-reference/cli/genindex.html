@@ -4,11 +4,11 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Index &#8212; ADK CLI 1.26.0 documentation</title>
+    <title>Index &#8212; ADK CLI 1.28.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
     <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
-    <script src="_static/documentation_options.js?v=d5e04e60"></script>
+    <script src="_static/documentation_options.js?v=1226abbd"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <link rel="index" title="Index" href="#" />
@@ -48,6 +48,7 @@
  | <a href="#A"><strong>A</strong></a>
  | <a href="#E"><strong>E</strong></a>
  | <a href="#P"><strong>P</strong></a>
+ | <a href="#S"><strong>S</strong></a>
  
 </div>
 <h2 id="Symbols">Symbols</h2>
@@ -296,6 +297,8 @@
 </li>
         <li><a href="index.html#cmdoption-adk-migrate-session-log_level">adk-migrate-session command line option</a>
 </li>
+        <li><a href="index.html#cmdoption-adk-optimize-log_level">adk-optimize command line option</a>
+</li>
         <li><a href="index.html#cmdoption-adk-web-log_level">adk-web command line option</a>
 </li>
       </ul></li>
@@ -365,8 +368,6 @@
         <li><a href="index.html#cmdoption-adk-deploy-agent_engine-validate-agent-import">adk-deploy-agent_engine command line option</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     --no_use_local_storage
 
@@ -380,6 +381,15 @@
         <li><a href="index.html#cmdoption-adk-run-use_local_storage">adk-run command line option</a>
 </li>
         <li><a href="index.html#cmdoption-adk-web-use_local_storage">adk-web command line option</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    --optimizer_config_file_path
+
+      <ul>
+        <li><a href="index.html#cmdoption-adk-optimize-optimizer_config_file_path">adk-optimize command line option</a>
 </li>
       </ul></li>
       <li>
@@ -415,6 +425,8 @@
 
       <ul>
         <li><a href="index.html#cmdoption-adk-eval-print_detailed_results">adk-eval command line option</a>
+</li>
+        <li><a href="index.html#cmdoption-adk-optimize-print_detailed_results">adk-optimize command line option</a>
 </li>
       </ul></li>
       <li>
@@ -490,6 +502,13 @@
 </li>
       </ul></li>
       <li>
+    --sampler_config_file_path
+
+      <ul>
+        <li><a href="index.html#cmdoption-adk-optimize-sampler_config_file_path">adk-optimize command line option</a>
+</li>
+      </ul></li>
+      <li>
     --save_session
 
       <ul>
@@ -510,6 +529,13 @@
         <li><a href="index.html#cmdoption-adk-deploy-cloud_run-service_name">adk-deploy-cloud_run command line option</a>
 </li>
         <li><a href="index.html#cmdoption-adk-deploy-gke-service_name">adk-deploy-gke command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --service_type
+
+      <ul>
+        <li><a href="index.html#cmdoption-adk-deploy-gke-service_type">adk-deploy-gke command line option</a>
 </li>
       </ul></li>
       <li>
@@ -571,6 +597,13 @@
 
       <ul>
         <li><a href="index.html#cmdoption-adk-deploy-agent_engine-staging_bucket">adk-deploy-agent_engine command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --streaming-mode
+
+      <ul>
+        <li><a href="index.html#cmdoption-adk-conformance-test-streaming-mode">adk-conformance-test command line option</a>
 </li>
       </ul></li>
       <li>
@@ -747,6 +780,8 @@
       <ul>
         <li><a href="index.html#cmdoption-adk-conformance-record-arg-PATHS">PATHS</a>
 </li>
+        <li><a href="index.html#cmdoption-adk-conformance-record-arg-STREAMING_MODE">STREAMING_MODE</a>
+</li>
       </ul></li>
       <li>
     adk-conformance-test command line option
@@ -757,6 +792,8 @@
         <li><a href="index.html#cmdoption-adk-conformance-test-mode">--mode</a>
 </li>
         <li><a href="index.html#cmdoption-adk-conformance-test-report_dir">--report_dir</a>
+</li>
+        <li><a href="index.html#cmdoption-adk-conformance-test-streaming-mode">--streaming-mode</a>
 </li>
         <li><a href="index.html#cmdoption-adk-conformance-test-arg-PATHS">PATHS</a>
 </li>
@@ -900,6 +937,8 @@
 </li>
         <li><a href="index.html#cmdoption-adk-deploy-gke-service_name">--service_name</a>
 </li>
+        <li><a href="index.html#cmdoption-adk-deploy-gke-service_type">--service_type</a>
+</li>
         <li><a href="index.html#cmdoption-adk-deploy-gke-session_service_uri">--session_service_uri</a>
 </li>
         <li><a href="index.html#cmdoption-adk-deploy-gke-temp_folder">--temp_folder</a>
@@ -975,6 +1014,21 @@
         <li><a href="index.html#cmdoption-adk-migrate-session-log_level">--log_level</a>
 </li>
         <li><a href="index.html#cmdoption-adk-migrate-session-source_db_url">--source_db_url</a>
+</li>
+      </ul></li>
+      <li>
+    adk-optimize command line option
+
+      <ul>
+        <li><a href="index.html#cmdoption-adk-optimize-log_level">--log_level</a>
+</li>
+        <li><a href="index.html#cmdoption-adk-optimize-optimizer_config_file_path">--optimizer_config_file_path</a>
+</li>
+        <li><a href="index.html#cmdoption-adk-optimize-print_detailed_results">--print_detailed_results</a>
+</li>
+        <li><a href="index.html#cmdoption-adk-optimize-sampler_config_file_path">--sampler_config_file_path</a>
+</li>
+        <li><a href="index.html#cmdoption-adk-optimize-arg-AGENT_MODULE_FILE_PATH">AGENT_MODULE_FILE_PATH</a>
 </li>
       </ul></li>
       <li>
@@ -1088,6 +1142,8 @@
 </li>
         <li><a href="index.html#cmdoption-adk-eval_set-create-arg-AGENT_MODULE_FILE_PATH">adk-eval_set-create command line option</a>
 </li>
+        <li><a href="index.html#cmdoption-adk-optimize-arg-AGENT_MODULE_FILE_PATH">adk-optimize command line option</a>
+</li>
       </ul></li>
       <li>
     AGENTS_DIR
@@ -1142,6 +1198,19 @@
         <li><a href="index.html#cmdoption-adk-conformance-record-arg-PATHS">adk-conformance-record command line option</a>
 </li>
         <li><a href="index.html#cmdoption-adk-conformance-test-arg-PATHS">adk-conformance-test command line option</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="S">S</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    STREAMING_MODE
+
+      <ul>
+        <li><a href="index.html#cmdoption-adk-conformance-record-arg-STREAMING_MODE">adk-conformance-record command line option</a>
 </li>
       </ul></li>
   </ul></td>

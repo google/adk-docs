@@ -82,9 +82,9 @@ my_agent_card = AgentCard(
     version="1.0.0",
     capabilities={},
     skills=[],
-    defaultInputModes=["text/plain"],
-    defaultOutputModes=["text/plain"],
-    supportsAuthenticatedExtendedCard=False,
+    default_input_modes=["text/plain"],
+    default_output_modes=["text/plain"],
+    supports_authenticated_extended_card=False,
 )
 a2a_app = to_a2a(root_agent, port=8001, agent_card=my_agent_card)
 ```

@@ -19,19 +19,31 @@ development feel more like software development, to make it easier for
 developers to create, deploy, and orchestrate agentic architectures that range
 from simple tasks to complex workflows.
 
-??? warning "News: ADK Python 2.0 Alpha with graph-based workflows!"
+??? tip "News: ADK Go 1.0.0 released!"
 
-    ADK 2.0 Alpha release provides a huge orchestration upgrade for agents with
-    support for graph-based workflows. Download the Alpha release and
-    [try out ADK 2.0](/adk-docs/2.0/).
+    ADK Go 1.0.0 release adds several major features, including a replay plugin, 
+    model support through Apigee, improved parallel function call execution, and
+    simplified agent execution. For more details on this release, see the
+    [ADK Go v1.0.0 release notes](https://github.com/google/adk-go/releases/tag/v1.0.0).
 
-??? tip "News: ADK Python Skills released!"
+??? tip "News: ADK Java 1.0.0 released!"
 
-    ADK Python development [Agent Skills](https://agentskills.io/)
-    allow you to code ADK agents quickly and more effectively with
-    AI-powered development environments. For more details, check out
-    the [Coding with AI](/adk-docs/tutorials/coding-with-ai/#adk-skills),
-    ADK Skills docs.
+    ADK Java 1.0.0 is now available! This release includes several 
+    bug fixes and enhancements. Read more about it in the 
+    [blog announcement](https://developers.googleblog.com/announcing-adk-for-java-100-building-the-future-of-ai-agents-in-java/). 
+    Upgrade to ADK Java 1.0.0 to take advantage of these enhancements 
+    and ensure optimal performance in your applications.
+
+??? danger "ADK Python Security Advisory: LiteLLM supply chain compromise"
+
+    Unauthorized code was identified in LiteLLM versions 1.82.7 and 1.82.8 on
+    PyPI on March 24, 2026. If you use ADK Python with the `eval` or
+    `extensions` extras, update to the latest version of ADK Python immediately.
+    If you installed or upgraded LiteLLM during this period, rotate all secrets
+    and credentials. For details and required actions, refer to the [ADK
+    security advisory](https://github.com/google/adk-python/issues/5005) and
+    [LiteLLM's Security Update: Suspected Supply Chain
+    Incident](https://docs.litellm.ai/blog/security-update-march-2026).
 
 <div id="centered-install-tabs" class="install-command-container" markdown="1">
 
@@ -61,13 +73,13 @@ from simple tasks to complex workflows.
     <dependency>
         <groupId>com.google.adk</groupId>
         <artifactId>google-adk</artifactId>
-        <version>0.6.0</version>
+        <version>1.0.0</version>
     </dependency>
     ```
 
     ```gradle title="build.gradle"
     dependencies {
-        implementation 'com.google.adk:google-adk:0.6.0'
+        implementation 'com.google.adk:google-adk:1.0.0'
     }
     ```
 
