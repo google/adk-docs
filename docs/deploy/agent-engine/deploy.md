@@ -130,15 +130,27 @@ managed Agent Engine service. This process can take several minutes.
 The following example deploy command uses the `multi_tool_agent` sample code as
 the project to be deployed:
 
+**Option 1: Deploy with Google Cloud Project (Standard)**
+
 ```shell
 PROJECT_ID=my-project-id
 LOCATION_ID=us-central1
+GCS_BUCKET=gs://MY-CLOUD-STORAGE-BUCKET
 
 adk deploy agent_engine \
         --project=$PROJECT_ID \
         --region=$LOCATION_ID \
+        --staging_bucket=$GCS_BUCKET \
         --display_name="My First Agent" \
         multi_tool_agent
+```
+
+**Option 2: Deploy with API Key (Express Mode)**
+
+If you are using Express Mode, you can deploy using your API Key:
+
+```shell
+adk deploy agent_engine --api_key=YOUR_API_KEY my_agent
 ```
 
 For `region`, you can find a list of the supported regions on the
