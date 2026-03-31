@@ -79,6 +79,12 @@ To create an ADK project for use with Agent Config:
 
         adk create --type=config my_agent
 
+    !!! note "Agent naming constraints"
+        The agent name must be a valid Python identifier. It can only contain
+        letters, numbers, and underscores (e.g., `my_agent_1`). Names that
+        contain dashes or other special characters (like `my-agent`) will
+        result in a loading error.
+
     This command generates a `my_agent/` folder, containing a
     `root_agent.yaml` file and an `.env` file.
 

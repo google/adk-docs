@@ -50,6 +50,12 @@ Run the `adk create` command to start a new agent project.
 adk create my_agent
 ```
 
+!!! note "Agent naming constraints"
+    The agent name must be a valid Python identifier. It can only contain
+    letters, numbers, and underscores (e.g., `my_agent_1`). Names that
+    contain dashes or other special characters (like `my-agent`) will
+    result in a loading error.
+
 ### Explore the agent project
 
 The created agent project has the following structure, with the `agent.py`
