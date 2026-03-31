@@ -160,6 +160,258 @@ ORDER BY timestamp DESC
 LIMIT 20;
 ```
 
+## Deploy to Agent Engine with the plugin {#deploy-agent-engine}
+
+You can deploy an agent with the BigQuery Agent Analytics plugin to
+[Vertex AI Agent Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview).
+This section walks through the steps to deploy using the ADK CLI, and
+alternatively using the Vertex AI SDK programmatically.
+
+!!! important "Version Requirement"
+
+    Use ADK Python version **1.24.0 or higher** to deploy with this plugin to
+    Agent Engine. Earlier versions had an issue where the plugin's asynchronous
+    log writer could be terminated by the serverless runtime before flushing
+    pending events. Starting from 1.24.0, the plugin performs a synchronous
+    flush at the end of each invocation to ensure all events are written.
+
+### Prerequisites
+
+Before deploying, ensure you have completed the general
+[Agent Engine setup](/adk-docs/deploy/agent-engine/deploy/#setup-cloud-project),
+including:
+
+1.  A Google Cloud project with the **Vertex AI API** and **Cloud Resource
+    Manager API** enabled.
+2.  A **BigQuery dataset** in the target project (or a cross-project dataset
+    with the correct permissions).
+3.  A **Cloud Storage staging bucket** for deployment artifacts.
+4.  The deploying service account has the IAM roles listed in
+    [IAM permissions](#iam-permissions).
+5.  Your coding environment is
+    [authenticated](/adk-docs/deploy/agent-engine/deploy/#prerequisites-coding-env)
+    with `gcloud auth login` and `gcloud auth application-default login`.
+
+### Step 1: Define the agent and plugin
+
+Create your agent project folder with an `App` object that includes the plugin.
+The `App` object is required for Agent Engine deployments with plugins.
+
+```
+my_bq_agent/
+├── __init__.py
+├── agent.py
+└── requirements.txt
+```
+
+```python title="my_bq_agent/__init__.py"
+from . import agent
+```
+
+```python title="my_bq_agent/agent.py"
+import os
+import google.auth
+from google.adk.agents import Agent
+from google.adk.apps import App
+from google.adk.models.google_llm import Gemini
+from google.adk.plugins.bigquery_agent_analytics_plugin import (
+    BigQueryAgentAnalyticsPlugin,
+    BigQueryLoggerConfig,
+)
+from google.adk.tools.bigquery import BigQueryToolset, BigQueryCredentialsConfig
+
+# --- Configuration ---
+PROJECT_ID = os.environ.get("GOOGLE_CLOUD_PROJECT", "your-gcp-project-id")
+DATASET_ID = os.environ.get("BQ_DATASET", "agent_analytics")
+LOCATION = os.environ.get("GOOGLE_CLOUD_LOCATION", "US")
+
+os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "True"
+
+# --- Plugin ---
+bq_analytics_plugin = BigQueryAgentAnalyticsPlugin(
+    project_id=PROJECT_ID,
+    dataset_id=DATASET_ID,
+    config=BigQueryLoggerConfig(
+        batch_size=1,
+        batch_flush_interval=0.5,
+        log_session_metadata=True,
+    ),
+)
+
+# --- Tools ---
+credentials, _ = google.auth.default(
+    scopes=["https://www.googleapis.com/auth/cloud-platform"]
+)
+bigquery_toolset = BigQueryToolset(
+    credentials_config=BigQueryCredentialsConfig(credentials=credentials)
+)
+
+# --- Agent ---
+root_agent = Agent(
+    model=Gemini(model="gemini-2.5-flash"),
+    name="my_bq_agent",
+    instruction="You are a helpful assistant with access to BigQuery tools.",
+    tools=[bigquery_toolset],
+)
+
+# --- App (required for Agent Engine with plugins) ---
+app = App(
+    name="my_bq_agent",
+    root_agent=root_agent,
+    plugins=[bq_analytics_plugin],
+)
+```
+
+```text title="my_bq_agent/requirements.txt"
+google-adk[bigquery]
+google-cloud-bigquery-storage
+pyarrow
+opentelemetry-api
+opentelemetry-sdk
+```
+
+### Step 2: Deploy using ADK CLI
+
+Use the `adk deploy agent_engine` command to deploy the agent. The `--adk_app`
+flag tells the CLI which `App` object to use:
+
+```shell
+PROJECT_ID=your-gcp-project-id
+LOCATION=us-central1
+
+adk deploy agent_engine \
+    --project=$PROJECT_ID \
+    --region=$LOCATION \
+    --staging_bucket=gs://your-staging-bucket \
+    --display_name="My BQ Analytics Agent" \
+    --adk_app=agent.app \
+    my_bq_agent
+```
+
+!!! tip "`--adk_app` flag"
+
+    The `--adk_app` flag specifies the module path and variable name of the
+    `App` object (in the format `module.variable`). In this example,
+    `agent.app` refers to the `app` variable in `agent.py`. This ensures the
+    deployment correctly picks up the plugin configuration.
+
+Once successfully deployed, you should see output like:
+
+```shell
+AgentEngine created. Resource name: projects/123456789/locations/us-central1/reasoningEngines/751619551677906944
+```
+
+Note the **Resource name** for the next step.
+
+### Step 3: Test the deployed agent
+
+After deployment, you can query the agent using the Vertex AI SDK:
+
+```python title="test_deployed_agent.py"
+import uuid
+import vertexai
+
+PROJECT_ID = "your-gcp-project-id"
+LOCATION = "us-central1"
+AGENT_ID = "751619551677906944"  # from deployment output
+
+vertexai.init(project=PROJECT_ID, location=LOCATION)
+client = vertexai.Client(project=PROJECT_ID, location=LOCATION)
+
+agent = client.agent_engines.get(
+    name=f"projects/{PROJECT_ID}/locations/{LOCATION}/reasoningEngines/{AGENT_ID}"
+)
+
+user_id = f"test_user_{uuid.uuid4().hex[:8]}"
+for chunk in agent.stream_query(
+    message="List datasets in my project", user_id=user_id
+):
+    print(chunk, end="", flush=True)
+```
+
+### Step 4: Verify events in BigQuery
+
+After sending a few queries to the deployed agent, verify that events are being
+logged by querying your BigQuery table:
+
+```sql
+SELECT timestamp, event_type, agent, content
+FROM `your-gcp-project-id.agent_analytics.agent_events`
+ORDER BY timestamp DESC
+LIMIT 20;
+```
+
+You should see events such as `INVOCATION_STARTING`, `LLM_REQUEST`,
+`LLM_RESPONSE`, `TOOL_STARTING`, `TOOL_COMPLETED`, and `INVOCATION_COMPLETED`.
+
+### Alternative: Deploy using the Vertex AI SDK
+
+You can also deploy programmatically using the Vertex AI SDK directly. This is
+useful for CI/CD pipelines or custom deployment workflows:
+
+```python title="deploy.py"
+import vertexai
+from vertexai import agent_engines
+from my_bq_agent.agent import app
+
+PROJECT_ID = "your-gcp-project-id"
+LOCATION = "us-central1"
+STAGING_BUCKET = "gs://your-staging-bucket"
+
+vertexai.init(
+    project=PROJECT_ID, location=LOCATION, staging_bucket=STAGING_BUCKET
+)
+client = vertexai.Client(project=PROJECT_ID, location=LOCATION)
+
+remote_app = client.agent_engines.create(
+    agent=app,
+    config={
+        "display_name": "My BQ Analytics Agent",
+        "staging_bucket": STAGING_BUCKET,
+        "requirements": [
+            "google-adk[bigquery]",
+            "google-cloud-aiplatform[agent_engines]",
+            "google-cloud-bigquery-storage",
+            "pyarrow",
+            "opentelemetry-api",
+            "opentelemetry-sdk",
+        ],
+    },
+)
+print(f"Deployed agent: {remote_app.api_resource.name}")
+```
+
+### Troubleshooting
+
+If events are not appearing in your BigQuery table after deployment:
+
+1.  **Check ADK version**: Ensure `google-adk>=1.24.0` is in your requirements.
+    Earlier versions do not flush pending events before the serverless runtime
+    suspends the process.
+
+2.  **Enable debug logging**: Add the following to the top of your `agent.py` to
+    surface any silent errors:
+
+    ```python
+    import logging
+    logging.basicConfig(level=logging.INFO)
+    logging.getLogger("google_adk").setLevel(logging.DEBUG)
+    ```
+
+3.  **Check IAM permissions**: The Agent Engine service account needs
+    `roles/bigquery.dataEditor` on the target table and `roles/bigquery.jobUser`
+    on the project. For **cross-project** logging, also ensure the BigQuery API
+    is enabled in the source project and the service account has
+    `bigquery.tables.updateData` on the destination table.
+
+4.  **Verify plugin initialization**: In Cloud Logging, filter by
+    `resource.type="reasoning_engine"` and look for plugin startup messages or
+    error logs.
+
+5.  **Use immediate flush for debugging**: Set `batch_size=1` and
+    `batch_flush_interval=0.1` in `BigQueryLoggerConfig` to rule out buffering
+    issues.
+
 ## Tracing and Observability
 
 The plugin supports **OpenTelemetry** for distributed tracing. OpenTelemetry is included as a core dependency of ADK and is always available.
