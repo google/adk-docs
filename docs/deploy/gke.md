@@ -137,7 +137,7 @@ Create the following files (`main.py`, `requirements.txt`, `Dockerfile`, `capita
 
     # Define a tool function
     def get_capital_city(country: str) -> str:
-      """Retrieves the capital city for a given country."""
+      '''Retrieves the capital city for a given country.'''
       # Replace with actual logic (e.g., API call, database lookup)
       capitals = {"france": "Paris", "japan": "Tokyo", "canada": "Ottawa"}
       return capitals.get(country.lower(), f"Sorry, I don't know the capital of {country}.")
@@ -147,7 +147,7 @@ Create the following files (`main.py`, `requirements.txt`, `Dockerfile`, `capita
         model="gemini-2.0-flash",
         name="capital_agent", #name of your agent
         description="Answers user questions about the capital city of a given country.",
-        instruction="""You are an agent that provides the capital city of a country... (previous instruction text)""",
+        instruction='''You are an agent that provides the capital city of a country... (previous instruction text)''',
         tools=[get_capital_city] # Provide the function directly
     )
 
@@ -417,6 +417,7 @@ adk deploy gke [OPTIONS] AGENT_PATH
 | --project | The Google Cloud Project ID where your GKE cluster is located.     | Yes | 
 | --cluster_name   | The name of your GKE cluster.    | Yes |
 | --region    | The Google Cloud region of your cluster (e.g., us-central1).    | Yes |
+| --service_type | The type of Kubernetes service to create. Accepts `ClusterIP` (default) or `LoadBalancer`. | No |
 | --with_ui   | Deploys both the agent's back-end API and a companion front-end user interface.    | No |
 | --log_level   | Sets the logging level for the deployment process. Options: debug, info, warning, error.     | No |
 
@@ -434,7 +435,7 @@ When you run the `adk deploy gke` command, the ADK performs the following steps 
 
 The `Deployment` instructs GKE to pull the container image from Artifact Registry and run it in one or more Pods.
 
-The `Service` creates a stable network endpoint for your agent. By default, this is a LoadBalancer service, which provisions a public IP address to expose your agent to the internet.
+The `Service` creates a stable network endpoint for your agent. It defaults to a `ClusterIP` service, which is only accessible within the cluster. To expose your agent to the internet with a public IP address, you must specify `--service_type=LoadBalancer`.
 
 
 ### Example Usage
@@ -460,15 +461,29 @@ kubectl get pods
 ```
 You should see output like `adk-default-service-name-xxxx-xxxx ... 1/1 Running` in the default namespace.
 
-2. Find the External IP: Get the public IP address for your agent's service.
+2. Check the Service: Get information about your agent's service.
 
 ```bash
 kubectl get service
+```
+By default, the service type is `ClusterIP`, and `EXTERNAL-IP` will be `<none>`.
+```
+NAME                       TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)   AGE
+adk-default-service-name   ClusterIP   10.12.1.2       <none>        80/TCP    2m
+```
+To test your agent, you can use port-forwarding:
+```bash
+kubectl port-forward svc/adk-default-service-name 8080:80
+```
+You can then access your agent at `http://localhost:8080`.
+
+If you deployed with `--service_type=LoadBalancer`, it may take a few minutes for an external IP to be assigned.
+```
 NAME                       TYPE           CLUSTER-IP      EXTERNAL-IP     PORT(S)        AGE
 adk-default-service-name   LoadBalancer   34.118.228.70   34.63.153.253   80:32581/TCP   5d20h
 ```
+Once the `EXTERNAL-IP` is available, you can navigate to it to interact with your agent.
 
-We can navigate to the external IP and interact with the agent via UI
 ![alt text](../assets/agent-gke-deployment.png)
 
 ## Testing your agent
@@ -533,7 +548,7 @@ Once your agent is deployed to GKE, you can interact with it via the deployed UI
 
     #### Run the Agent
 
-    Send a prompt to your agent. Replace `capital_agent` with your app name and adjust the user/session IDs and prompt as needed.
+    Send a prompt to your agent. Replace `capital_agent` with your app name and and adjust the user/session IDs and prompt as needed.
 
     ```bash
     curl -X POST $APP_URL/run_sse \
