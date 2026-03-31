@@ -1098,6 +1098,83 @@ To connect this dashboard to your own BigQuery table, use the following link for
 https://lookerstudio.google.com/reporting/create?c.reportId=f1c5b513-3095-44f8-90a2-54953d41b125&ds.ds3.connector=bigQuery&ds.ds3.type=TABLE&ds.ds3.projectId=<your-project-id>&ds.ds3.datasetId=<your-dataset-id>&ds.ds3.tableId=<your-table-id>
 ```
 
+## Security: Avoid logging sensitive credentials {#security-credentials}
+
+!!! warning "Do not log OAuth tokens, API keys, or client secrets"
+
+    The BigQuery Agent Analytics plugin captures detailed event payloads,
+    including tool arguments, LLM prompts, and authentication-related events
+    (such as HITL credential requests). If your agent uses **authenticated
+    tools** (e.g., `AuthenticatedFunctionTool` with OAuth2), the plugin may
+    log sensitive values such as `client_secret`, `access_token`, or API keys
+    into the `content` column of your BigQuery table.
+
+    This is a known concern
+    ([google/adk-python#3845](https://github.com/google/adk-python/issues/3845))
+    and can lead to credential exposure in your analytics data.
+
+To prevent sensitive credentials from being persisted in BigQuery, use one or
+more of the following approaches:
+
+### Use `content_formatter` to redact secrets
+
+Provide a custom `content_formatter` function in `BigQueryLoggerConfig` to
+strip or mask sensitive fields before they are written:
+
+```python
+import json
+import re
+from typing import Any
+
+SENSITIVE_KEYS = {"client_secret", "access_token", "refresh_token", "api_key", "secret"}
+
+def redact_credentials(event_content: Any, event_type: str) -> str:
+    """Redact OAuth secrets and tokens from logged content."""
+    if isinstance(event_content, dict):
+        text = json.dumps(event_content)
+    else:
+        text = str(event_content)
+
+    for key in SENSITIVE_KEYS:
+        # Redact values in JSON-like strings: "client_secret": "GOCSPX-xxx"
+        text = re.sub(
+            rf'("{key}"\s*:\s*)"[^"]*"',
+            rf'\1"[REDACTED]"',
+            text,
+            flags=re.IGNORECASE,
+        )
+    return text
+
+config = BigQueryLoggerConfig(
+    content_formatter=redact_credentials,
+    # ... other options
+)
+```
+
+### Use `event_denylist` to skip credential events
+
+If you do not need to log authentication-related events, exclude them entirely:
+
+```python
+config = BigQueryLoggerConfig(
+    event_denylist=[
+        "HITL_CREDENTIAL_REQUEST",
+        "HITL_CREDENTIAL_REQUEST_COMPLETED",
+    ],
+    # ... other options
+)
+```
+
+### General best practices
+
+-   **Never hardcode secrets** in agent source code. Use environment variables
+    or a secret manager (e.g., Google Cloud Secret Manager) for OAuth client
+    secrets and API keys.
+-   **Restrict BigQuery table access** using IAM to limit who can read logged
+    event data.
+-   **Audit your logs** periodically to verify no unexpected sensitive data is
+    being captured.
+
 ## Feedback
 We welcome your feedback on BigQuery Agent Analytics. If you have questions, suggestions, or encounter any issues, please reach out to the team at bqaa-feedback@google.com.
 
