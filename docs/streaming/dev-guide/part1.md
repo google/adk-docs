@@ -432,7 +432,7 @@ agent = Agent(
 )
 ```
 
-The agent instance is **stateless and reusable**—you create it once and use it for all streaming sessions. Agent configuration is covered in the [ADK Agent documentation](agents/).
+The agent instance is **stateless and reusable**—you create it once and use it for all streaming sessions. Agent configuration is covered in the [ADK Agent documentation](/agents/).
 
 !!! note "Model Availability"
 

@@ -999,7 +999,7 @@ CFC is designed for complex, multi-step workflows that benefit from intelligent 
 
 - [Gemini Function Calling Guide](https://ai.google.dev/gemini-api/docs/function-calling) - Official documentation on compositional and parallel function calling
 - [ADK Parallel Functions Example](https://github.com/google/adk-python/blob/427a983b18088bdc22272d02714393b0a779ecdf/contributing/samples/parallel_functions/agent.py) - Working example with async tools
-- [ADK Performance Guide](h/tools/performance/) - Best practices for parallel-ready tools
+- [ADK Performance Guide](/tools/performance/) - Best practices for parallel-ready tools
 
 ## Summary
 
