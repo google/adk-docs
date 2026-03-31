@@ -1,7 +1,7 @@
 ---
 catalog_title: Pub/Sub Tools
 catalog_description: Publish, pull, and acknowledge messages from Google Cloud Pub/Sub
-catalog_icon: /adk-docs/integrations/assets/pubsub.png
+catalog_icon: /integrations/assets/pubsub.png
 catalog_tags: ["google"]
 ---
 

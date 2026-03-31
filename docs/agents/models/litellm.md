@@ -30,8 +30,8 @@ You can use the LiteLLM library to access remote or locally hosted AI models:
     as the `model` parameter of `LlmAgent`.
 *   **Local model host:** Use the `LiteLlm` wrapper class configured to
     point to your local model server. For examples of local model hosting
-    solutions, see the [Ollama](/adk-docs/agents/models/ollama/)
-    or [vLLM](/adk-docs/agents/models/vllm/) documentation.
+    solutions, see the [Ollama](/agents/models/ollama/)
+    or [vLLM](/agents/models/vllm/) documentation.
 
 ??? warning "Windows Encoding with LiteLLM"
 

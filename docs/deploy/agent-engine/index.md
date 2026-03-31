@@ -16,19 +16,19 @@ of agent services provided by the Agent Engine product.
 This guide includes the following deployment paths, which serve different
 purposes:
 
-*   **[Standard deployment](/adk-docs/deploy/agent-engine/deploy/)**: Follow
+*   **[Standard deployment](/deploy/agent-engine/deploy/)**: Follow
     this standard deployment path if you want to carefully manage deploying an ADK agent to the Agent
     Engine runtime. This deployment path uses Cloud Console, ADK command line
     interface, and provides step-by-step instructions. This path is recommended
     for users who are already familiar with configuring Google Cloud projects,
     and users preparing for production deployments.
 
-*   **[Agent Starter Pack deployment](/adk-docs/deploy/agent-engine/asp/)**:
-    Follow this accelerated deployment path to set up a fully configured Google 
-    Cloud environment with CI/CD, infrastructure-as-code, and deployment pipelines 
+*   **[Agent Starter Pack deployment](/deploy/agent-engine/asp/)**:
+    Follow this accelerated deployment path to set up a fully configured Google
+    Cloud environment with CI/CD, infrastructure-as-code, and deployment pipelines
     for your ADK agent. You need a Google Cloud project with billing enabled.
-    The Agent Starter Pack (ASP) helps you deploy ADK projects quickly and it 
-    includes advanced service configurations that extend the core capabilities of 
+    The Agent Starter Pack (ASP) helps you deploy ADK projects quickly and it
+    includes advanced service configurations that extend the core capabilities of
     the Agent Engine runtime for more mature use cases.
 
 !!! note "Agent Engine service on Google Cloud"

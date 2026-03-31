@@ -1,7 +1,7 @@
 ---
 catalog_title: Galileo
 catalog_description: End-to-end tracing, evaluation, and monitoring for ADK agents
-catalog_icon: /adk-docs/integrations/assets/galileo.png
+catalog_icon: /integrations/assets/galileo.png
 catalog_tags: ["observability"]
 ---
 

@@ -13,7 +13,7 @@ logic, this approach allows you to define a specific, step-wise process workflow
 in code, providing improved precision and reliability over purely prompt-based
 agents.
 
-![Graph-based flight upgrade agent](/adk-docs/assets/graph-workflow-router.svg)
+![Graph-based flight upgrade agent](/assets/graph-workflow-router.svg)
 
 ```python
 root_agent = Workflow(
@@ -50,7 +50,7 @@ defined steps and process management.
     [feedback](https://github.com/google/adk-python/issues/new?template=feature_request.md&labels=v2)!
 
 Get started with graph-based workflows in ADK by checking out
-[Graph-based agent workflows](/adk-docs/workflows/).
+[Graph-based agent workflows](/workflows/).
 
 ## Nodes
 
@@ -69,7 +69,7 @@ def my_function_node(node_input: str):
 ```
 
 For more information about transferring data between nodes, see .
-[Data handling for agent workflows](/adk-docs/workflows/data-handling/).
+[Data handling for agent workflows](/workflows/data-handling/).
 
 ## Workflow graphs syntax
 
@@ -92,7 +92,7 @@ root_agent = Workflow(
     You can add ***Agents***, or ***LlmAgents***, to graph-based workflows,
     however they must be set to a task or single-turn mode. For more
     information about agent modes, see
-    [Build collaborative agent teams](/adk-docs/workflows/collaboration/#mode-configuration-and-behaviors).
+    [Build collaborative agent teams](/workflows/collaboration/#mode-configuration-and-behaviors).
 
 ### Route sequences
 
@@ -164,7 +164,7 @@ You accomplish this by using a ***JoinNode*** object, which waits for each
 parallel task to complete and then passes the collection of outputs from these
 nodes to the next node.
 
-![Tasks connecting to a JoinNode](/adk-docs/assets/graph-joinnode.svg)
+![Tasks connecting to a JoinNode](/assets/graph-joinnode.svg)
 
 **Figure 2.** The output of parallel task nodes can be assembled using a
 JoinNode object.
@@ -199,7 +199,7 @@ functionality for specific tasks into reusable workflows. One or more
 ***Workflow*** objects can be used as a node within the graph of another
 workflow agent to accomplish this goal.
 
-![Nested Workflows inside a parent Workflow](/adk-docs/assets/graph-workflow-nodes.svg)
+![Nested Workflows inside a parent Workflow](/assets/graph-workflow-nodes.svg)
 
 **Figure 3.** Nested ***Workflows*** as nodes inside a parent ***Workflow***.
 

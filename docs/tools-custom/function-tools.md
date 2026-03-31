@@ -79,10 +79,10 @@ A well-defined function signature is crucial for the LLM to use your tool correc
         public static Map<String, Object> getWeather(
             @Schema(description = "The city and state, e.g., San Francisco, CA", name = "location")
             String location,
-            
+
             @Schema(description = "The temperature unit, either 'Celsius' or 'Fahrenheit'", name = "unit")
             String unit) {
-            
+
             // ... function logic ...
             return Map.of("status", "success", "report", "Weather for " + location + " is sunny.");
         }
@@ -142,13 +142,13 @@ A well-defined function signature is crucial for the LLM to use your tool correc
         public static Map<String, Object> searchFlights(
             @Schema(description = "The destination city.", name = "destination")
             String destination,
-            
+
             @Schema(description = "The desired departure date.", name = "departureDate")
             String departureDate,
-            
+
             @Schema(description = "Number of flexible days for the search. Defaults to 0.", name = "flexibleDays")
             Optional<Integer> flexibleDays) {
-            
+
             // ... function logic ...
             int days = flexibleDays.orElse(0);
             if (days > 0) {
@@ -284,7 +284,7 @@ While you have considerable flexibility in defining your function, remember that
 * **Simple Data Types:** Favor primitive data types like `str` and `int` over custom classes whenever possible.
 * **Meaningful Names:** The function's name and parameter names significantly influence how the LLM interprets and utilizes the tool. Choose names that clearly reflect the function's purpose and the meaning of its inputs. Avoid generic names like `do_stuff()` or `beAgent()`.
 * **Build for Parallel Execution:** Improve function calling performance when multiple tools are run by building for asynchronous operation. For information on enabling parallel execution for tools, see
-[Increase tool performance with parallel execution](/adk-docs/tools-custom/performance/).
+[Increase tool performance with parallel execution](/tools-custom/performance/).
 
 ## Long Running Function Tools {#long-run-tool}
 
@@ -302,7 +302,7 @@ When using a `LongRunningFunctionTool`, your function can initiate the long-runn
     Depending on the type of tool you are building, designing for asynchronous
     operation may be a better solution than creating a long running tool. For
     more information, see
-    [Increase tool performance with parallel execution](/adk-docs/tools-custom/performance/).
+    [Increase tool performance with parallel execution](/tools-custom/performance/).
 
 ### How it Works
 
@@ -397,7 +397,7 @@ Agent client received an event with long running function calls and check the st
 !!! note "Note: Long running function response with Resume feature"
 
     If your ADK agent workflow is configured with the
-    [Resume](/adk-docs/runtime/resume/) feature, you also must include
+    [Resume](/runtime/resume/) feature, you also must include
     the Invocation ID (`invocation_id`) parameter with the long running
     function response. The Invocation ID you provide must be the same
     invocation that generated the long running function request, otherwise
@@ -406,7 +406,7 @@ Agent client received an event with long running function calls and check the st
     as a parameter with your long running function request, so it can be
     included with the response. For more details on using the Resume
     feature, see
-    [Resume stopped agents](/adk-docs/runtime/resume/).
+    [Resume stopped agents](/runtime/resume/).
 
 ??? Tip "Applies to only Java ADK"
 

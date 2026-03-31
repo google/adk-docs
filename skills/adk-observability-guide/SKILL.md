@@ -68,7 +68,7 @@ invocation
 
 View traces: **Cloud Console → Trace → Trace explorer**
 
-For detailed setup instructions (Agent Engine CLI/SDK, Cloud Run, custom deployments), fetch `https://google.github.io/adk-docs/integrations/cloud-trace/index.md`.
+For detailed setup instructions (Agent Engine CLI/SDK, Cloud Run, custom deployments), fetch `https://adk.dev/integrations/cloud-trace/index.md`.
 
 ---
 
@@ -80,7 +80,7 @@ Key env var: `OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT` — set to `NO
 
 For scaffolded project details (Terraform resources, env vars, privacy modes, enabling/disabling, verification commands), see `references/cloud-trace-and-logging.md`.
 
-For ADK logging docs (log levels, configuration, debugging), fetch `https://google.github.io/adk-docs/observability/logging/index.md`.
+For ADK logging docs (log levels, configuration, debugging), fetch `https://adk.dev/observability/logging/index.md`.
 
 ---
 
@@ -128,14 +128,14 @@ For detailed documentation beyond what this skill covers, fetch these pages:
 
 | Topic | URL |
 |-------|-----|
-| Observability overview | `https://google.github.io/adk-docs/observability/index.md` |
-| Agent activity logging | `https://google.github.io/adk-docs/observability/logging/index.md` |
-| Cloud Trace integration | `https://google.github.io/adk-docs/integrations/cloud-trace/index.md` |
-| BigQuery Agent Analytics | `https://google.github.io/adk-docs/integrations/bigquery-agent-analytics/index.md` |
-| AgentOps | `https://google.github.io/adk-docs/integrations/agentops/index.md` |
-| Arize AX | `https://google.github.io/adk-docs/integrations/arize-ax/index.md` |
-| Phoenix (Arize) | `https://google.github.io/adk-docs/integrations/phoenix/index.md` |
-| MLflow tracing | `https://google.github.io/adk-docs/integrations/mlflow/index.md` |
-| Monocle | `https://google.github.io/adk-docs/integrations/monocle/index.md` |
-| W&B Weave | `https://google.github.io/adk-docs/integrations/weave/index.md` |
-| Freeplay | `https://google.github.io/adk-docs/integrations/freeplay/index.md` |
+| Observability overview | `https://adk.dev/observability/index.md` |
+| Agent activity logging | `https://adk.dev/observability/logging/index.md` |
+| Cloud Trace integration | `https://adk.dev/integrations/cloud-trace/index.md` |
+| BigQuery Agent Analytics | `https://adk.dev/integrations/bigquery-agent-analytics/index.md` |
+| AgentOps | `https://adk.dev/integrations/agentops/index.md` |
+| Arize AX | `https://adk.dev/integrations/arize-ax/index.md` |
+| Phoenix (Arize) | `https://adk.dev/integrations/phoenix/index.md` |
+| MLflow tracing | `https://adk.dev/integrations/mlflow/index.md` |
+| Monocle | `https://adk.dev/integrations/monocle/index.md` |
+| W&B Weave | `https://adk.dev/integrations/weave/index.md` |
+| Freeplay | `https://adk.dev/integrations/freeplay/index.md` |

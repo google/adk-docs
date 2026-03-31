@@ -28,11 +28,11 @@ Some typical applications of Plugins are as follows:
 !!! tip "Tip: Use Plugins for safety features"
     When implementing security guardrails and policies, use ADK Plugins for
     better modularity and flexibility than Callbacks. For more details, see
-    [Callbacks and Plugins for Security Guardrails](/adk-docs/safety/#callbacks-and-plugins-for-security-guardrails).
+    [Callbacks and Plugins for Security Guardrails](/safety/#callbacks-and-plugins-for-security-guardrails).
 
 !!! tip "Tip: ADK Integrations"
     For a list of pre-built plugins and other integrations for ADK, see
-    [Tools and Integrations](/adk-docs/integrations/).
+    [Tools and Integrations](/integrations/).
 
 ## How do Plugins work?
 
@@ -58,9 +58,9 @@ agent application.
 ADK includes several plugins that you can add to your agent workflows
 immediately:
 
-*   [**Reflect and Retry Tools**](/adk-docs/plugins/reflect-and-retry/):
+*   [**Reflect and Retry Tools**](/plugins/reflect-and-retry/):
     Tracks tool failures and intelligently retries tool requests.
-*   [**BigQuery Analytics**](/adk-docs/observability/bigquery-agent-analytics/):
+*   [**BigQuery Analytics**](/observability/bigquery-agent-analytics/):
     Enables agent logging and analysis with BigQuery.
 *   [**Context Filter**](https://github.com/google/adk-python/blob/main/src/google/adk/plugins/context_filter_plugin.py):
     Filters the generative AI context to reduce its size.
@@ -412,7 +412,7 @@ a simple ADK agent.
     // import com.example.CountInvocationPlugin;
 
     public class Main {
-    
+
       public static class HelloTool {
         @Schema(name = "hello_world", description = "Prints hello world with user query.")
         public static Map<String, Object> helloWorld(
@@ -614,7 +614,7 @@ Hello world: query is [hello world]
 
 
 For more information on running ADK agents, see the
-[Quickstart](/adk-docs/get-started/quickstart/#run-your-agent)
+[Quickstart](/get-started/quickstart/#run-your-agent)
 guide.
 
 ## Build workflows with Plugins
@@ -1132,4 +1132,4 @@ projects:
 -   For more ADK Plugin code examples, see the
     [ADK Samples repository](https://github.com/google/adk-samples).
 -   For information on applying Plugins for security purposes, see
-    [Callbacks and Plugins for Security Guardrails](/adk-docs/safety/#callbacks-and-plugins-for-security-guardrails).
+    [Callbacks and Plugins for Security Guardrails](/safety/#callbacks-and-plugins-for-security-guardrails).

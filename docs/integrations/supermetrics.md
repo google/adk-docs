@@ -1,7 +1,7 @@
 ---
 catalog_title: Supermetrics
 catalog_description: Consume and analyze your real-time marketing, advertising, and CRM data
-catalog_icon: /adk-docs/integrations/assets/supermetrics.png
+catalog_icon: /integrations/assets/supermetrics.png
 catalog_tags: ["mcp", "data"]
 ---
 

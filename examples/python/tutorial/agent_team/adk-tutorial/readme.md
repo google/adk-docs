@@ -102,7 +102,7 @@ The `adk run` command allows you to interact with an agent directly from your te
     # Make sure you are in the main 'adk-tutorial' folder
     adk run step_1
     ```
-*   For detailed usage and options for `adk run`, please refer to the [Official ADK Documentation - Run Your Agent](https://google.github.io/adk-docs/get-started/quickstart/#terminal-adk-run).
+*   For detailed usage and options for `adk run`, please refer to the [Official ADK Documentation - Run Your Agent](https://adk.dev/get-started/quickstart/#terminal-adk-run).
 
 ### Using `adk api_server` (Exposing as API)
 
@@ -113,7 +113,7 @@ The `adk api_server` command starts a FastAPI server, exposing your agent via an
     # Make sure you are in the main 'adk-tutorial' folder
     adk api_server
     ```
-*   For detailed usage, API endpoint structure, and options for `adk api_server`, please consult the [Official ADK Documentation - Testing your Agents](https://google.github.io/adk-docs/runtime/api-server/).
+*   For detailed usage, API endpoint structure, and options for `adk api_server`, please consult the [Official ADK Documentation - Testing your Agents](https://adk.dev/runtime/api-server/).
 
 ## Directory Structure
 
@@ -150,6 +150,6 @@ You might notice that "Step 4: Adding Memory and Personalization with Session St
 
 The demonstration of session state concepts in Step 4, particularly the direct manipulation of `InMemorySessionService` for illustrative purposes, is best experienced in an interactive notebook environment (like Google Colab). This allows for immediate code execution and inspection of state changes that are less direct when using the ADK's built-in server tools.
 
-## To experience the full tutorial including Step 4, please refer to the [interactive notebook version here](https://google.github.io/adk-docs/tutorials/agent-team/#step-4-adding-memory-and-personalization-with-session-state)
+## To experience the full tutorial including Step 4, please refer to the [interactive notebook version here](https://adk.dev/tutorials/agent-team/#step-4-adding-memory-and-personalization-with-session-state)
 
 The subsequent steps in this folder-based tutorial (Step 5 onwards) build upon the concepts from Steps 1-3 and are designed to run correctly here, focusing on features like callbacks that are fully demonstrable with `adk web`/`run`.

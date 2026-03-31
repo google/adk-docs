@@ -1,7 +1,7 @@
 ---
 catalog_title: Mailgun
 catalog_description: Send emails, track delivery metrics, and manage mailing lists
-catalog_icon: /adk-docs/integrations/assets/mailgun.png
+catalog_icon: /integrations/assets/mailgun.png
 catalog_tags: ["mcp"]
 ---
 

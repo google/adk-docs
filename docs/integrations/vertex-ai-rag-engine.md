@@ -1,7 +1,7 @@
 ---
 catalog_title: Vertex AI RAG Engine
 catalog_description: Perform private data retrieval using Vertex AI RAG Engine
-catalog_icon: /adk-docs/integrations/assets/vertex-ai.png
+catalog_icon: /integrations/assets/vertex-ai.png
 catalog_tags: ["data","google"]
 ---
 
@@ -21,7 +21,7 @@ Please refer to the [RAG ADK agent sample](https://github.com/google/adk-samples
 
     This tool can only be used ***by itself*** within an agent instance.
     For more information about this limitation and workarounds, see
-    [Limitations for ADK tools](/adk-docs/tools/limitations/).
+    [Limitations for ADK tools](/tools/limitations/).
 
 === "Python"
 

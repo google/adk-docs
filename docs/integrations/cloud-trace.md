@@ -1,7 +1,7 @@
 ---
 catalog_title: Google Cloud Trace
 catalog_description: Monitor, debug, and trace ADK agent interactions
-catalog_icon: /adk-docs/integrations/assets/cloud-trace.svg
+catalog_icon: /integrations/assets/cloud-trace.svg
 catalog_tags: ["observability", "google"]
 ---
 
@@ -11,7 +11,7 @@ catalog_tags: ["observability", "google"]
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript</span><span class="lst-go">Go</span>
 </div>
 
-With ADK, you can already inspect and observe your agent interaction locally utilizing the powerful web development UI discussed in [here](https://google.github.io/adk-docs/evaluate/#debugging-with-the-trace-view). However, for cloud deployment, you will need a centralized dashboard to observe real traffic.
+With ADK, you can already inspect and observe your agent interaction locally utilizing the powerful web development UI discussed in [here](/evaluate/#debugging-with-the-trace-view). However, for cloud deployment, you will need a centralized dashboard to observe real traffic.
 
 Cloud Trace is a component of Google Cloud Observability. It is a powerful tool for monitoring, debugging, and improving the performance of your applications by focusing specifically on tracing capabilities. For Agent Development Kit (ADK) applications, Cloud Trace enables comprehensive tracing, helping you understand how requests flow through your agent's interactions and identify performance bottlenecks or errors within your AI agents.
 

@@ -291,7 +291,7 @@ Vertex AI offers a curated selection of open-source models, such as Meta Llama, 
     You can use the [LiteLLM](https://docs.litellm.ai/) library to access open models like Meta's Llama on VertexAI MaaS
 
     **Integration Method:** Use the `LiteLlm` wrapper class and set it
-    as the `model` parameter of `LlmAgent`. Make sure you go through the [LiteLLM model connector for ADK agents](/adk-docs/agents/models/litellm/#litellm-model-connector-for-adk-agents) documentation on how to use LiteLLM in ADK
+    as the `model` parameter of `LlmAgent`. Make sure you go through the [LiteLLM model connector for ADK agents](/agents/models/litellm/#litellm-model-connector-for-adk-agents) documentation on how to use LiteLLM in ADK
 
     **Setup:**
 
@@ -302,7 +302,7 @@ Vertex AI offers a curated selection of open-source models, such as Meta Llama, 
             ```shell
             pip install litellm
             ```
-    
+
     **Example:**
 
     ```python
