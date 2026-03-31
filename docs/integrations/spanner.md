@@ -27,3 +27,14 @@ They are packaged in the toolset `SpannerToolset`.
 --8<-- "examples/python/snippets/tools/built-in-tools/spanner.py"
 ```
 
+## Spanner Admin Toolset
+
+The `SpannerAdminToolset` allows you to perform administrative operations on your Spanner instances. The available tools are:
+
+* **`spanner_list_instances`**: List Spanner instances within a project.
+* **`spanner_get_instance`**: Get details of a Spanner instance.
+* **`spanner_create_database`**: Create a Spanner database.
+* **`spanner_list_databases`**: List Spanner databases within an instance.
+* **`spanner_create_instance`**: Create a Spanner instance.
+* **`spanner_list_instance_configs`**: List Spanner instance configs available for a project.
+* **`spanner_get_instance_config`**: Get details of a Spanner instance config.
