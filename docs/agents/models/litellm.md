@@ -33,6 +33,16 @@ You can use the LiteLLM library to access remote or locally hosted AI models:
     solutions, see the [Ollama](/adk-docs/agents/models/ollama/)
     or [vLLM](/adk-docs/agents/models/vllm/) documentation.
 
+### Anthropic Reasoning and `thinking_blocks`
+
+When you use Anthropic's Claude models (such as Claude 3.7 Sonnet) through the
+`LiteLlm` connector, ADK provides full support for their structured reasoning
+feature, known as "thinking blocks." This means that ADK automatically
+extracts and preserves the `thinking_blocks` and their signatures across tool
+call boundaries. This allows you to leverage Claude's advanced reasoning
+capabilities within your ADK agents, ensuring that the model's thought processes
+are maintained throughout multi-turn interactions.
+
 ??? warning "Windows Encoding with LiteLLM"
 
     When using ADK agents with LiteLLM on Windows, you might encounter a
