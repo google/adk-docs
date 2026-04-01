@@ -21,10 +21,10 @@ from simple tasks to complex workflows.
 
 ??? tip "News: ADK Go 1.0.0 released!"
 
-    ADK Go 1.0.0 release adds several major features, including a replay plugin, 
-    model support through Apigee, improved parallel function call execution, and
-    simplified agent execution. For more details on this release, see the
-    [ADK Go v1.0.0 release notes](https://github.com/google/adk-go/releases/tag/v1.0.0).
+    ADK Go 1.0.0 release adds several major features, including OpenTelemetry 
+    integration, self-healing logic using plugins, and improved human input support. 
+    For more details on this release, see the
+    [ADK Go v1.0 announcement](https://developers.googleblog.com/adk-go-10-arrives/).
 
 ??? tip "News: ADK Java 1.0.0 released!"
 
