@@ -7,10 +7,12 @@ agents, you may need these features to help debug and diagnose their
 in-process behavior. Basic input and output monitoring is typically
 insufficient for agents with any significant level of complexity.
 
-Agent Development Kit (ADK) provides configurable
-[logging](/adk-docs/observability/logging/)
-functionality for monitoring and debugging agents. However, you may
-need to consider more advanced
+Agent Development Kit (ADK) provides comprehensive observability features:
+
+- **[Logging](/adk-docs/observability/logging/)** - Configure structured logging for agent activity and debugging
+- **[OpenTelemetry Tracing for Agent Engine](/adk-docs/observability/tracing-agent-engine/)** - Implement distributed tracing for production deployments
+
+For additional observability capabilities, consider
 [observability ADK Integrations](/adk-docs/integrations/?topic=observability)
 for monitoring and analysis.
 
