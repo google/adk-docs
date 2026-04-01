@@ -134,7 +134,7 @@ docstrings, exporting new public symbols, etc.).
 
 The reference docs are regenerated periodically, and your changes will be
 included in the next update. See the [ADK Contributing
-Guide](https://adk.dev/contributing-guide/) for links to each
+Guide](https://adk.dev/community/contributing-guide/) for links to each
 language-specific repository.
 
 ### Integrations
