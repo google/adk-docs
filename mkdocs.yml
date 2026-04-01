@@ -250,8 +250,8 @@ plugins:
         Reference:
         - release-notes.md
         - api-reference/index.md
-        - community.md
-        - contributing-guide.md
+        Community:
+        - community/*.md
 
 # Navigation
 nav:
