@@ -285,6 +285,6 @@ Community-provided translations of the ADK documentation.
 
 Have an ADK resource to share (tutorial, translation, tool, video, or example)?
 
-Refer to the steps in the **[Contributing Guide](contributing-guide.md)** for more information on how to get involved!
+Refer to the steps in the **[Contributing Guide](/community/contributing-guide/)** for more information on how to get involved!
 
 Thank you for your contributions to Agent Development Kit! ❤️
