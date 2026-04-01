@@ -6,7 +6,7 @@
 
 Tools such as [vLLM](https://github.com/vllm-project/vllm) allow you to host
 models efficiently and serve them as an OpenAI-compatible API endpoint. You can
-use vLLM models through the [LiteLLM](/adk-docs/agents/models/litellm/) library
+use vLLM models through the [LiteLLM](/agents/models/litellm/) library
 for Python.
 
 ## Setup

@@ -1,7 +1,7 @@
 ---
 catalog_title: A2UI
 catalog_description: Generate rich, structured UIs from your agents using the Agent-to-UI protocol
-catalog_icon: /adk-docs/integrations/assets/a2ui.svg
+catalog_icon: /integrations/assets/a2ui.svg
 ---
 
 # A2UI — Agent-to-UI for ADK

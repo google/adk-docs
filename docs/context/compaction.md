@@ -14,7 +14,7 @@ is running by summarizing older parts of the agent workflow event history.
 
 The Context Compaction feature uses a *sliding window* approach for collecting
 and summarizing agent workflow event data within a
-[Session](/adk-docs/sessions/session/). When you configure this feature in your
+[Session](/sessions/session/). When you configure this feature in your
 agent, it summarizes data from older events once it reaches a threshold of a
 specific number of workflow events, or invocations, with the current Session.
 
@@ -30,7 +30,7 @@ in the following sample code:
     ```python
     from google.adk.apps.app import App
     from google.adk.apps.app import EventsCompactionConfig
-    
+
     app = App(
         name='my-agent',
         root_agent=root_agent,
@@ -46,7 +46,7 @@ in the following sample code:
     ```java
     import com.google.adk.apps.App;
     import com.google.adk.summarizer.EventsCompactionConfig;
-    
+
     App app = App.builder()
         .name("my-agent")
         .rootAgent(rootAgent)
@@ -67,7 +67,7 @@ compressed upon completion of events 3, 6, 9, and so on. The overlap setting
 increases size of the second summary compression, and each summary afterwards,
 as shown in Figure 1.
 
-![Context compaction example illustration](/adk-docs/assets/context-compaction.svg)
+![Context compaction example illustration](/assets/context-compaction.svg)
 **Figure 1.** Illustration of event compaction configuration with an interval of 3
 and overlap of 1.
 
@@ -104,13 +104,13 @@ The following code example demonstrates how to define and configure a custom sum
     from google.adk.apps.app import App, EventsCompactionConfig
     from google.adk.apps.llm_event_summarizer import LlmEventSummarizer
     from google.adk.models import Gemini
-    
+
     # Define the AI model to be used for summarization:
     summarization_llm = Gemini(model="gemini-2.5-flash")
-    
+
     # Create the summarizer with the custom model:
     my_summarizer = LlmEventSummarizer(llm=summarization_llm)
-    
+
     # Configure the App with the custom summarizer and compaction settings:
     app = App(
         name='my-agent',
@@ -130,15 +130,15 @@ The following code example demonstrates how to define and configure a custom sum
     import com.google.adk.models.Gemini;
     import com.google.adk.summarizer.EventsCompactionConfig;
     import com.google.adk.summarizer.LlmEventSummarizer;
-    
+
     // Define the AI model to be used for summarization:
     Gemini summarizationLlm = Gemini.builder()
         .model("gemini-2.5-flash")
         .build();
-    
+
     // Create the summarizer with the custom model:
     LlmEventSummarizer mySummarizer = new LlmEventSummarizer(summarizationLlm);
-    
+
     // Configure the App with the custom summarizer and compaction settings:
     App app = App.builder()
         .name("my-agent")

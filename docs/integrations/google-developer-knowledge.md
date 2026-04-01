@@ -1,7 +1,7 @@
 ---
 catalog_title: Google Developer Knowledge
 catalog_description: Search Google's official developer documentation for code and guidance
-catalog_icon: /adk-docs/integrations/assets/google-developer-knowledge.png
+catalog_icon: /integrations/assets/google-developer-knowledge.png
 catalog_tags: ["mcp"]
 ---
 

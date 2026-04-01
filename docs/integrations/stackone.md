@@ -1,7 +1,7 @@
 ---
 catalog_title: StackOne
 catalog_description: Connect agents to 200+ SaaS providers
-catalog_icon: /adk-docs/integrations/assets/stackone.png
+catalog_icon: /integrations/assets/stackone.png
 catalog_tags: ["connectors"]
 ---
 

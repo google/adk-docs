@@ -1,7 +1,7 @@
 ---
 catalog_title: Vertex AI express mode
 catalog_description: Try development with Vertex AI services at no cost
-catalog_icon: /adk-docs/integrations/assets/vertex-ai.png
+catalog_icon: /integrations/assets/vertex-ai.png
 catalog_tags: ["google"]
 ---
 
@@ -83,7 +83,7 @@ Next, create your Agent Engine instance using the Vertex AI SDK.
 
 ## Manage Sessions with `VertexAiSessionService` {#vertex-ai-session-service}
 
-[`VertexAiSessionService`](/adk-docs/sessions/session.md#sessionservice-implementations)
+[`VertexAiSessionService`](/sessions/session.md#sessionservice-implementations)
 is compatible with Vertex AI express mode API Keys. You can instead initialize
 the session object without any project or location.
 
@@ -112,7 +112,7 @@ session_service = VertexAiSessionService(agent_engine_id=APP_ID)
 
 ## Manage Memory with `VertexAiMemoryBankService` {#vertex-ai-memory-bank}
 
-[`VertexAiMemoryBankService`](/adk-docs/sessions/memory.md#vertex-ai-memory-bank)
+[`VertexAiMemoryBankService`](/sessions/memory.md#vertex-ai-memory-bank)
 is compatible with Vertex AI express mode API Keys. You can instead initialize
 the memory object without any project or location.
 

@@ -1,7 +1,7 @@
 ---
 catalog_title: Linear
 catalog_description: Manage issues, track projects, and streamline development
-catalog_icon: /adk-docs/integrations/assets/linear.png
+catalog_icon: /integrations/assets/linear.png
 catalog_tags: ["mcp"]
 ---
 

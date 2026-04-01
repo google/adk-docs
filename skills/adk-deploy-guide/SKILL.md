@@ -16,7 +16,7 @@ metadata:
 
 > **Scaffolded project?** Use the `make` commands throughout this guide — they wrap Terraform, Docker, and deployment into a tested pipeline.
 >
-> **No scaffold?** See [Quick Deploy](#quick-deploy-adk-cli) below, or the [ADK deployment docs](https://google.github.io/adk-docs/deploy/).
+> **No scaffold?** See [Quick Deploy](#quick-deploy-adk-cli) below, or the [ADK deployment docs](https://adk.dev/deploy/).
 > For production infrastructure, scaffold with `/adk-scaffold`.
 
 ### Reference Files
@@ -69,7 +69,7 @@ adk deploy gke --project=PROJECT --cluster_name=CLUSTER --region=REGION path/to/
 
 All commands support `--with_ui` to deploy the ADK dev UI. Cloud Run also accepts extra `gcloud` flags after `--` (e.g., `-- --no-allow-unauthenticated`).
 
-See `adk deploy --help` or the [ADK deployment docs](https://google.github.io/adk-docs/deploy/) for full flag reference.
+See `adk deploy --help` or the [ADK deployment docs](https://adk.dev/deploy/) for full flag reference.
 
 > For CI/CD, observability, or production infrastructure, scaffold with `/adk-scaffold` and use the sections below.
 
@@ -193,7 +193,7 @@ gcloud builds approve BUILD_ID --project=PROD_PROJECT
 
 ## Cloud Run Specifics
 
-For detailed infrastructure configuration (scaling defaults, Dockerfile, FastAPI endpoints, session types, networking), see `references/cloud-run.md`. For ADK docs on Cloud Run deployment, fetch `https://google.github.io/adk-docs/deploy/cloud-run/index.md`.
+For detailed infrastructure configuration (scaling defaults, Dockerfile, FastAPI endpoints, session types, networking), see `references/cloud-run.md`. For ADK docs on Cloud Run deployment, fetch `https://adk.dev/deploy/cloud-run/index.md`.
 
 ---
 
@@ -205,13 +205,13 @@ Agent Engine is a managed Vertex AI service for deploying Python ADK agents. Use
 
 Deployments can take 5-10 minutes. If `make deploy` times out, check if the engine was created and manually populate `deployment_metadata.json` with the engine resource ID (see reference for details).
 
-For detailed infrastructure configuration (deploy.py flags, AdkApp pattern, Terraform resource, deployment metadata, session/artifact services, CI/CD differences), see `references/agent-engine.md`. For ADK docs on Agent Engine deployment, fetch `https://google.github.io/adk-docs/deploy/agent-engine/index.md`.
+For detailed infrastructure configuration (deploy.py flags, AdkApp pattern, Terraform resource, deployment metadata, session/artifact services, CI/CD differences), see `references/agent-engine.md`. For ADK docs on Agent Engine deployment, fetch `https://adk.dev/deploy/agent-engine/index.md`.
 
 ---
 
 ## GKE Specifics
 
-For detailed infrastructure configuration (Terraform-managed Kubernetes resources, Workload Identity, session types, networking), see `references/gke.md`. For ADK docs on GKE deployment, fetch `https://google.github.io/adk-docs/deploy/gke/index.md`.
+For detailed infrastructure configuration (Terraform-managed Kubernetes resources, Workload Identity, session types, networking), see `references/gke.md`. For ADK docs on GKE deployment, fetch `https://adk.dev/deploy/gke/index.md`.
 
 ---
 

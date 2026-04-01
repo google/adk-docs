@@ -1,6 +1,6 @@
 # Agent Engine Infrastructure
 
-> **Assumes `/adk-scaffold` scaffolding.** For non-scaffolded projects, fetch `https://google.github.io/adk-docs/deploy/agent-engine/index.md`.
+> **Assumes `/adk-scaffold` scaffolding.** For non-scaffolded projects, fetch `https://adk.dev/deploy/agent-engine/index.md`.
 
 ## Deployment Architecture
 

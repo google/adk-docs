@@ -1,6 +1,6 @@
 # Part 1: Introduction to ADK Gemini Live API Toolkit
 
-Google's Agent Development Kit ([ADK](https://google.github.io/adk-docs/)) provides a production-ready framework for building Bidi-streaming applications with Gemini models. This guide introduces ADK's streaming architecture, which enables real-time, two-way communication between users and AI agents through multimodal channels (text, audio, video).
+Google's Agent Development Kit ([ADK](https://adk.dev)) provides a production-ready framework for building Bidi-streaming applications with Gemini models. This guide introduces ADK's streaming architecture, which enables real-time, two-way communication between users and AI agents through multimodal channels (text, audio, video).
 
 **What you'll learn**: This part covers the fundamentals of Bidi-streaming, the underlying Live API technology (Gemini Live API and Vertex AI Live API), ADK's architectural components (`LiveRequestQueue`, `Runner`, `Agent`), and a complete FastAPI implementation example. You'll understand how ADK handles session management, tool orchestration, and platform abstraction—reducing months of infrastructure development to declarative configuration.
 
@@ -193,12 +193,12 @@ ADK transforms these challenges into simple, declarative APIs. Instead of spendi
 
 | Feature | Raw Live API (`google-genai` SDK) | ADK Gemini Live API Toolkit (`adk-python` and `adk-java` SDK) |
 |---------|-----------------------------------|------------------------------------------------------|
-| **Agent Framework** | ❌ Not available | ✅ Single agent, multi-agent with sub-agents, and sequential workflow agents, Tool ecosystem, Deployment ready, Evaluation, Security and more (see [ADK Agent docs](https://google.github.io/adk-docs/agents/)) |
+| **Agent Framework** | ❌ Not available | ✅ Single agent, multi-agent with sub-agents, and sequential workflow agents, Tool ecosystem, Deployment ready, Evaluation, Security and more (see [ADK Agent docs](/agents/)) |
 | **Tool Execution** | ❌ Manual tool execution and response handling | ✅ Automatic tool execution (see [Part 3: Tool Call Events](part3.md#tool-call-events)) |
 | **Connection Management** | ❌ Manual reconnection and session resumption | ✅ Automatic reconnection and session resumption (see [Part 4: Live API Session Resumption](part4.md#live-api-session-resumption)) |
 | **Event Model** | ❌ Custom event structures and serialization | ✅ Unified event model with metadata (see [Part 3: Event Handling](part3.md)) |
 | **Async Event Processing Framework** | ❌ Manual async coordination and stream handling | ✅ `LiveRequestQueue`, `run_live()` async generator, automatic bidirectional flow coordination (see [Part 2](part2.md) and [Part 3](part3.md)) |
-| **App-level Session Persistence** | ❌ Manual implementation | ✅ SQL databases (PostgreSQL, MySQL, SQLite), Vertex AI, in-memory (see [ADK Session docs](https://google.github.io/adk-docs/sessions/)) |
+| **App-level Session Persistence** | ❌ Manual implementation | ✅ SQL databases (PostgreSQL, MySQL, SQLite), Vertex AI, in-memory (see [ADK Session docs](/sessions/)) |
 
 ### Platform Flexibility
 
@@ -312,9 +312,9 @@ ADK Gemini Live API Toolkit integrates Live API session into the ADK framework's
 
 - **Phase 1: Application Initialization** (Once at Startup)
   - ADK Application initialization
-    - Create an [Agent](https://google.github.io/adk-docs/agents/): for interacting with users, utilize external tools, and coordinate with other agents.
-    - Create a [SessionService](https://google.github.io/adk-docs/sessions/session/#managing-sessions-with-a-sessionservice): for getting or creating ADK `Session`
-    - Create a [Runner](https://google.github.io/adk-docs/runtime/): for providing a runtime for the Agent
+    - Create an [Agent](/agents/): for interacting with users, utilize external tools, and coordinate with other agents.
+    - Create a [SessionService](/sessions/session/#managing-sessions-with-a-sessionservice): for getting or creating ADK `Session`
+    - Create a [Runner](/runtime/): for providing a runtime for the Agent
 
 - **Phase 2: Session Initialization** (Once per User Session)
   - ADK `Session` initialization:
@@ -432,7 +432,7 @@ agent = Agent(
 )
 ```
 
-The agent instance is **stateless and reusable**—you create it once and use it for all streaming sessions. Agent configuration is covered in the [ADK Agent documentation](https://google.github.io/adk-docs/agents/).
+The agent instance is **stateless and reusable**—you create it once and use it for all streaming sessions. Agent configuration is covered in the [ADK Agent documentation](/agents/).
 
 !!! note "Model Availability"
 
@@ -444,9 +444,9 @@ The agent instance is **stateless and reusable**—you create it once and use it
 
 #### Define Your SessionService
 
-The ADK [Session](https://google.github.io/adk-docs/sessions/session/) manages conversation state and history across streaming sessions. It stores and retrieves session data, enabling features like conversation resumption and context persistence.
+The ADK [Session](/sessions/session/) manages conversation state and history across streaming sessions. It stores and retrieves session data, enabling features like conversation resumption and context persistence.
 
-To create a `Session`, or get an existing one for a specified `session_id`, every ADK application needs to have a [SessionService](https://google.github.io/adk-docs/sessions/session/#managing-sessions-with-a-sessionservice). For development purpose, ADK provides a simple `InMemorySessionService` that will lose the `Session` state when the application shuts down.
+To create a `Session`, or get an existing one for a specified `session_id`, every ADK application needs to have a [SessionService](/sessions/session/#managing-sessions-with-a-sessionservice). For development purpose, ADK provides a simple `InMemorySessionService` that will lose the `Session` state when the application shuts down.
 
 ```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L37" target="_blank">main.py:37</a>'
 from google.adk.sessions import InMemorySessionService
@@ -473,11 +473,11 @@ For production applications, choose a persistent session service based on your i
 - You need tight integration with Vertex AI features
 - Example: `VertexAiSessionService(project="my-project")`
 
-Both provide session persistence capabilities—choose based on your infrastructure and scale requirements. With persistent session services, the state of the `Session` will be preserved even after application shutdown. See the [ADK Session Management documentation](https://google.github.io/adk-docs/sessions/) for more details.
+Both provide session persistence capabilities—choose based on your infrastructure and scale requirements. With persistent session services, the state of the `Session` will be preserved even after application shutdown. See the [ADK Session Management documentation](/sessions/) for more details.
 
 #### Define Your Runner
 
-The [Runner](https://google.github.io/adk-docs/runtime/) provides the runtime for the `Agent`. It manages the conversation flow, coordinates tool execution, handles events, and integrates with session storage. You create one runner instance at application startup and reuse it for all streaming sessions.
+The [Runner](/runtime/) provides the runtime for the `Agent`. It manages the conversation flow, coordinates tool execution, handles events, and integrates with session storage. You create one runner instance at application startup and reuse it for all streaming sessions.
 
 ```python title='Demo implementation: <a href="https://github.com/google/adk-samples/blob/31847c0723fbf16ddf6eed411eb070d1c76afd1a/python/agents/bidi-demo/app/main.py#L50" target="_blank">main.py:50,53</a>'
 from google.adk.runners import Runner
@@ -857,7 +857,7 @@ This example shows the core pattern. For production applications, consider:
 - **Authentication and authorization**: Implement authentication and authorization for your endpoints
 - **Rate limiting and quotas**: Add rate limiting and timeout controls. For guidance on concurrent sessions and quota management, see [Part 4: Concurrent Live API Sessions and Quota Management](part4.md#concurrent-live-api-sessions-and-quota-management).
 - **Structured logging**: Use structured logging for debugging.
-- **Persistent session services**: Consider using persistent session services (`DatabaseSessionService` or `VertexAiSessionService`). See the [ADK Session Services documentation](https://google.github.io/adk-docs/sessions/) for more details.
+- **Persistent session services**: Consider using persistent session services (`DatabaseSessionService` or `VertexAiSessionService`). See the [ADK Session Services documentation](/sessions/) for more details.
 
 ## 1.6 What We Will Learn
 
@@ -875,7 +875,7 @@ This guide takes you through ADK Gemini Live API Toolkit's architecture step by 
 
 For building an ADK Gemini Live API Toolkit application in production, we recommend having basic knowledge of the following technologies:
 
-**[ADK (Agent Development Kit)](https://google.github.io/adk-docs/)**
+**[ADK (Agent Development Kit)](https://adk.dev)**
 
 Google's production-ready framework for building AI agents with streaming capabilities. ADK provides high-level abstractions for session management, tool orchestration, and state persistence, eliminating the need to implement low-level streaming infrastructure from scratch.
 

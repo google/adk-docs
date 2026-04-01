@@ -1,7 +1,7 @@
 ---
 catalog_title: Windsor.ai
 catalog_description: Query and analyze marketing, sales, and customer data from 325+ platforms
-catalog_icon: /adk-docs/integrations/assets/windsor-ai.png
+catalog_icon: /integrations/assets/windsor-ai.png
 catalog_tags: ["mcp", "data"]
 ---
 

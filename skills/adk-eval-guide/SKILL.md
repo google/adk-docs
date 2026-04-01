@@ -295,9 +295,9 @@ Models with "thinking" enabled may skip tool calls. Use `tool_config` with `mode
 
 For the official evaluation documentation, fetch these pages:
 
-- **Evaluation overview**: `https://google.github.io/adk-docs/evaluate/index.md`
-- **Criteria reference**: `https://google.github.io/adk-docs/evaluate/criteria/index.md`
-- **User simulation**: `https://google.github.io/adk-docs/evaluate/user-sim/index.md`
+- **Evaluation overview**: `https://adk.dev/evaluate/index.md`
+- **Criteria reference**: `https://adk.dev/evaluate/criteria/index.md`
+- **User simulation**: `https://adk.dev/evaluate/user-sim/index.md`
 
 ---
 
