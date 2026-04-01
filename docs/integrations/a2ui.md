@@ -27,7 +27,7 @@ or any other protocol. The agent describes *what* to show; the client decides
 ### Install the SDK
 
 ```bash
-pip install a2ui
+pip install a2ui-agent-sdk
 ```
 
 ### 1. Set up the Schema Manager
@@ -229,7 +229,7 @@ The A2UI repository includes ADK sample agents you can run immediately:
 
 - [A2UI specification](https://a2ui.org/)
 - [A2UI GitHub repository](https://github.com/google/A2UI)
-- [A2UI Python SDK (`a2ui`)](https://pypi.org/project/a2ui/)
+- [A2UI Python SDK (`a2ui-agent-sdk`)](https://pypi.org/project/a2ui-agent-sdk/)
 - [Agent development guide](https://github.com/google/A2UI/blob/main/agent_sdks/python/agent_development.md)
 - [Component gallery](https://a2ui.org/latest/reference/components/)
 - [A2A protocol](https://google.github.io/A2A/)
