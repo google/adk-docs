@@ -6,8 +6,8 @@
 
 ADK agents can use the [Google Gemma](https://ai.google.dev/gemma/docs) family of generative AI models that offer a
 wide range of capabilities. ADK supports many Gemma features,
-including [Tool Calling](/adk-docs/tools-custom/)
-and [Structured Output](/adk-docs/agents/llm-agents/#structuring-data-input_schema-output_schema-output_key).
+including [Tool Calling](/tools-custom/)
+and [Structured Output](/agents/llm-agents/#structuring-data-input_schema-output_schema-output_key).
 
 You can use Gemma 4 through the [Gemini API](https://ai.google.dev/gemini-api/docs),
 or by using one of many self-hosting options on Google Cloud:
@@ -38,7 +38,7 @@ root_agent = LlmAgent(
 ## Self-hosted vLLM Example
 
 To access Gemma 4 endpoints in these services,
-you can use vLLM models through the [LiteLLM](/adk-docs/agents/models/litellm/) library
+you can use vLLM models through the [LiteLLM](/agents/models/litellm/) library
 for Python.
 
 The following example shows how to use a Gemma 4 vLLM endpoint with ADK agents.
@@ -117,12 +117,15 @@ This sample shows how to build a personalized food tour agent using Gemma 4, ADK
 - ADK installed and configured in your Python environment
 
 ### Project structure
+```bash
 food_tour_app/
 ├── __init__.py
 └── agent.py
+```
+**Full project can be found [here](https://github.com/google/adk-samples/tree/main/python/agents/gemma-food-tour-guide)** 
 
 `agent.py`
-```
+```python
 import os
 import dotenv
 from google.adk.agents import LlmAgent
@@ -191,7 +194,8 @@ To test out the capabilities of the Food Tour Agent, try pasting one of these pr
 - *"I'm in Downtown Austin looking for an authentic BBQ tour. Let's keep the budget under $100. Build a walking route between 3 highly-rated spots and give me insider tips on the best cuts of meat to get."*
 
 The agent will:
+
 1. Infer the likely cuisine or dish style
-2. search for relevant places using Google Maps MCP tools
+2. Search for relevant places using Google Maps MCP tools
 3. Compute a walking route between selected stops
 4. Return a structured food tour with recommendations and insider tips
