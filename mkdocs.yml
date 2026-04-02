@@ -289,6 +289,7 @@ nav:
     - Models for Agents:
       - agents/models/index.md
       - Gemini: agents/models/google-gemini.md
+      - Gemma: agents/models/google-gemma.md
       - Claude: agents/models/anthropic.md
       - Vertex AI hosted: agents/models/vertex.md
       - Apigee AI Gateway: agents/models/apigee.md
