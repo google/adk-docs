@@ -38,7 +38,7 @@ root_agent = LlmAgent(
 ## Self-hosted vLLM Example
 
 To access Gemma 4 endpoints in these services,
-you can use vLLM models through the [LiteLLM](agents/models/litellm/) library
+you can use vLLM models through the [LiteLLM](/agents/models/litellm/) library
 for Python.
 
 The following example shows how to use a Gemma 4 vLLM endpoint with ADK agents.
