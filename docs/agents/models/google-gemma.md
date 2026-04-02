@@ -90,7 +90,7 @@ root_agent = LlmAgent(
 This sample shows how to build a personalized food tour agent using Gemma 4, ADK, and the Google Maps MCP server. The agent takes a user’s dish photo or text description, a location, and an optional budget, then recommends places to eat and organizes them into a walking route.
 
 ### Prerequisites
-- Deploy Gemma 4 using one of the options listed in the [Self-hosted vLLM Example](#self-hosted-vllm-example) section.
+- Deploy Gemma 4 using one of the options listed in the [vLLM Example](#vllm-example) section.
   Set `VLLM_API_BASE_URL` environment variable to the base URL of your deployed model (must end with `/v1`).
 - Enable [Google Maps API](https://console.cloud.google.com/maps-api/) on Google Cloud Console.
 - Create a [Google Maps Platform API key](https://console.cloud.google.com/maps-api/credentials).
