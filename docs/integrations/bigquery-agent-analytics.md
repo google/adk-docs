@@ -94,7 +94,11 @@ trace.set_tracer_provider(TracerProvider())
 # --- Configuration ---
 PROJECT_ID = os.environ.get("GOOGLE_CLOUD_PROJECT", "your-gcp-project-id")
 DATASET_ID = os.environ.get("BIG_QUERY_DATASET_ID", "your-big-query-dataset-id")
-LOCATION = os.environ.get("GOOGLE_CLOUD_LOCATION", "US") # default location is US in the plugin
+# GOOGLE_CLOUD_LOCATION must be a valid Vertex AI region (e.g., "us-central1").
+# BQ_LOCATION is the BigQuery dataset location, which can be a multi-region
+# like "US" or "EU", or a single region like "us-central1".
+VERTEX_LOCATION = os.environ.get("GOOGLE_CLOUD_LOCATION", "us-central1")
+BQ_LOCATION = os.environ.get("BQ_LOCATION", "US")
 GCS_BUCKET = os.environ.get("GCS_BUCKET_NAME", "your-gcs-bucket-name") # Optional
 
 if PROJECT_ID == "your-gcp-project-id":
@@ -102,7 +106,7 @@ if PROJECT_ID == "your-gcp-project-id":
 
 # --- CRITICAL: Set environment variables BEFORE Gemini instantiation ---
 os.environ['GOOGLE_CLOUD_PROJECT'] = PROJECT_ID
-os.environ['GOOGLE_CLOUD_LOCATION'] = LOCATION
+os.environ['GOOGLE_CLOUD_LOCATION'] = VERTEX_LOCATION
 os.environ['GOOGLE_GENAI_USE_VERTEXAI'] = 'True'
 
 # --- Initialize the Plugin with Config ---
@@ -120,7 +124,7 @@ bq_logging_plugin = BigQueryAgentAnalyticsPlugin(
     dataset_id=DATASET_ID,
     table_id="agent_events", # default table name is agent_events
     config=bq_config,
-    location=LOCATION
+    location=BQ_LOCATION
 )
 
 # --- Initialize Tools and Model ---
@@ -223,7 +227,10 @@ from google.adk.tools.bigquery import BigQueryToolset, BigQueryCredentialsConfig
 # --- Configuration ---
 PROJECT_ID = os.environ.get("GOOGLE_CLOUD_PROJECT", "your-gcp-project-id")
 DATASET_ID = os.environ.get("BQ_DATASET", "agent_analytics")
-LOCATION = os.environ.get("GOOGLE_CLOUD_LOCATION", "US")
+# BQ_LOCATION is the BigQuery dataset location (multi-region "US"/"EU" or
+# a single region like "us-central1"). This is separate from the Vertex AI
+# region used by GOOGLE_CLOUD_LOCATION.
+BQ_LOCATION = os.environ.get("BQ_LOCATION", "US")
 
 os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "True"
 
@@ -231,6 +238,7 @@ os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "True"
 bq_analytics_plugin = BigQueryAgentAnalyticsPlugin(
     project_id=PROJECT_ID,
     dataset_id=DATASET_ID,
+    location=BQ_LOCATION,
     config=BigQueryLoggerConfig(
         batch_size=1,
         batch_flush_interval=0.5,
