@@ -179,7 +179,7 @@ root_agent = LlmAgent(
             },
             "skip_special_tokens": False # Should be set to False
         },
-    )
+    ),
     name="food_tour_agent",
     instruction=system_instruction,
     tools=[maps_toolset],
