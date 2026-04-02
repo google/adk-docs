@@ -170,7 +170,7 @@ root_agent = LlmAgent(
         model="openai/google/gemma-4-31b-it",
         api_base=os.getenv("VLLM_API_BASE_URL"),
         # Pass authentication headers if needed
-        extra_headers=auth_headers
+        extra_headers=auth_headers,
         # Alternatively, if endpoint uses an API key:
         # api_key="YOUR_ENDPOINT_API_KEY",
         extra_body={
