@@ -9,10 +9,34 @@ wide range of capabilities. ADK supports many Gemma features,
 including [Tool Calling](/tools-custom/)
 and [Structured Output](/agents/llm-agents/#structuring-data-input_schema-output_schema-output_key).
 
-You can use Gemma 4 through one of many self-hosting options on Google Cloud:
+You can use Gemma 4 through the [Gemini API](https://ai.google.dev/gemini-api/docs),
+or with one of many self-hosting options on Google Cloud:
 [Vertex AI](https://console.cloud.google.com/vertex-ai/publishers/google/model-garden/gemma4),
 [Google Kubernetes Engine](https://docs.cloud.google.com/kubernetes-engine/docs/tutorials/serve-gemma-gpu-vllm),
 [Cloud Run](https://docs.cloud.google.com/run/docs/run-gemma-on-cloud-run).
+
+## Gemini API Example
+
+Create an API key in [Google AI Studio](https://aistudio.google.com/app/apikey).
+
+```python
+# Set GEMINI_API_KEY environment variable to your API key
+# export GEMINI_API_KEY="YOUR_API_KEY"
+
+from google.adk.agents import LlmAgent
+from google.adk.models import Gemini
+
+# Simple tool to try
+def get_weather(location: str) -> str:
+    return f"Location: {location}. Weather: sunny, 76 degrees Fahrenheit, 8 mph wind."
+
+root_agent = LlmAgent(
+    model=Gemini(model="gemma-4-31b-it"),
+    name="weather_agent",
+    instruction="You are a helpful assistant that can provide current weather.",
+    tools=[get_weather]
+)
+```
 
 ## vLLM Example
 
@@ -90,12 +114,13 @@ root_agent = LlmAgent(
 This sample shows how to build a personalized food tour agent using Gemma 4, ADK, and the Google Maps MCP server. The agent takes a user’s dish photo or text description, a location, and an optional budget, then recommends places to eat and organizes them into a walking route.
 
 ### Prerequisites
-- Deploy Gemma 4 using one of the options listed in the [vLLM Example](#vllm-example) section.
-  Set `VLLM_API_BASE_URL` environment variable to the base URL of your deployed model (must end with `/v1`).
+
+- Get an API key in [Google AI Studio](https://aistudio.google.com/app/apikey).
+  Set `GEMINI_API_KEY` environment variable to your Gemini API key.
 - Enable [Google Maps API](https://console.cloud.google.com/maps-api/) on Google Cloud Console.
 - Create a [Google Maps Platform API key](https://console.cloud.google.com/maps-api/credentials).
   Set `MAPS_API_KEY` environment variable to your API key.
-- ADK installed and configured in your Python environment
+- Install ADK and configure it in your Python environment.
 
 ### Project structure
 ```bash
@@ -108,10 +133,9 @@ food_tour_app/
 `agent.py`
 ```python
 import os
-import subprocess
 import dotenv
 from google.adk.agents import LlmAgent
-from google.adk.models.lite_llm import LiteLlm
+from google.adk.models import Gemini
 from google.adk.tools.mcp_tool.mcp_toolset import MCPToolset
 from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPConnectionParams
 
@@ -154,32 +178,8 @@ def get_maps_mcp_toolset():
 
 maps_toolset = get_maps_mcp_toolset()
 
-# Authentication (Example: using gcloud identity token for a Cloud Run deployment)
-# Adapt this based on your endpoint's security
-try:
-    gcloud_token = subprocess.check_output(
-        ["gcloud", "auth", "print-identity-token", "-q"]
-    ).decode().strip()
-    auth_headers = {"Authorization": f"Bearer {gcloud_token}"}
-except Exception as e:
-    print(f"Warning: Could not get gcloud token - {e}.")
-    auth_headers = None # Or handle error appropriately
-
 root_agent = LlmAgent(
-    model=LiteLlm(
-        model="openai/google/gemma-4-31b-it",
-        api_base=os.getenv("VLLM_API_BASE_URL"),
-        # Pass authentication headers if needed
-        extra_headers=auth_headers,
-        # Alternatively, if endpoint uses an API key:
-        # api_key="YOUR_ENDPOINT_API_KEY",
-        extra_body={
-            "chat_template_kwargs": {
-                "enable_thinking": True # Enable thinking
-            },
-            "skip_special_tokens": False # Should be set to False
-        },
-    ),
+    model=Gemini(model="gemma-4-31b-it"),
     name="food_tour_agent",
     instruction=system_instruction,
     tools=[maps_toolset],
@@ -190,7 +190,7 @@ root_agent = LlmAgent(
 Set the required environment variables before running the agent.
 ```
 export MAPS_API_KEY="YOUR_GOOGLE_MAPS_API_KEY"
-export VLLM_API_BASE_URL="YOUR_VLLM_API_BASE_URL"
+export GEMINI_API_KEY="YOUR_GEMINI_API_KEY"
 ```
 
 ### Example usage
