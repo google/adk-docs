@@ -4,7 +4,7 @@ These instructions explain how to test an ADK agent deployed to the
 [Agent Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview)
 runtime environment. Before using these instructions, you need to have completed
 the deployment of your agent to the Agent Engine runtime environment using one
-of the [available methods](/adk-docs/deploy/agent-engine/). This guide shows you
+of the [available methods](/deploy/agent-engine/). This guide shows you
 how to view, interact, and test your deployed agent through the Google Cloud
 Console, and interact with the agent using REST API calls or the Vertex AI SDK
 for Python.

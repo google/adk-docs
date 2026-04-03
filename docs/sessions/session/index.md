@@ -205,14 +205,14 @@ the storage backend that best suits your needs:
 *   **How it works:** Uses Google Cloud Vertex AI infrastructure via API
     calls for session management.
 *   **Persistence:** Yes. Data is managed reliably and scalably via
-    [Vertex AI Agent Engine](https://google.github.io/adk-docs/deploy/agent-engine/).
+    [Vertex AI Agent Engine](/deploy/agent-engine/).
 *   **Requires:**
     *   A Google Cloud project (`pip install vertexai`)
     *   A Google Cloud storage bucket that can be configured by this
         [step](https://cloud.google.com/vertex-ai/docs/pipelines/configure-project#storage).
     *   A Reasoning Engine resource name/ID that can setup following this
-        [tutorial](https://google.github.io/adk-docs/deploy/agent-engine/).
-    *   If you do not have a Google Cloud project and you want to try the VertexAiSessionService, see [Vertex AI Express Mode](/adk-docs/tools/google-cloud/express-mode/).
+        [tutorial](/deploy/agent-engine/).
+    *   If you do not have a Google Cloud project and you want to try the VertexAiSessionService, see [Vertex AI Express Mode](/tools/google-cloud/express-mode/).
 *   **Best for:** Scalable production applications deployed on Google Cloud,
     especially when integrating with other Vertex AI features.
 
@@ -310,7 +310,7 @@ session_service = DatabaseSessionService(db_url=db_url)
 
     The schema for the session database changed in ADK Python v1.22.0, which
     requires migration of the Session Database. For more information, see
-    [Session database schema migration](/adk-docs/sessions/session/migrate/).
+    [Session database schema migration](/sessions/session/migrate/).
 
 ## The Session Lifecycle
 

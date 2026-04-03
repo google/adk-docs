@@ -31,7 +31,7 @@ server's REST API. When using the confirmation feature with the ADK web user
 interface, the agent workflow displays a dialog box to the user to request
 input, as shown in Figure 1:
 
-![Screenshot of default user interface for tool confirmation](/adk-docs/assets/confirmation-ui.png)
+![Screenshot of default user interface for tool confirmation](/assets/confirmation-ui.png)
 
 **Figure 1.** Example confirmation response request dialog box using an
 advanced, tool response implementation.
@@ -41,7 +41,7 @@ scenarios. For a complete code sample, see the
 [human_tool_confirmation](https://github.com/google/adk-python/blob/fc90ce968f114f84b14829f8117797a4c256d710/contributing/samples/human_tool_confirmation/agent.py)
 example. There are additional ways to incorporate human input into your agent
 workflow, for more details, see the
-[Human-in-the-loop](/adk-docs/agents/multi-agents/#human-in-the-loop-pattern)
+[Human-in-the-loop](/agents/multi-agents/#human-in-the-loop-pattern)
 agent pattern.
 
 ## Boolean confirmation {#boolean-confirmation}
@@ -134,7 +134,7 @@ You can modify the behavior of the confirmation requirement by using a function 
     reimburseTool, _ := functiontool.New(functiontool.Config{
         Name:        "reimburse",
         Description: "Reimburse an amount",
-        // RequireConfirmationProvider allows for dynamic determination 
+        // RequireConfirmationProvider allows for dynamic determination
         // of whether user confirmation is needed.
         RequireConfirmationProvider: func(args ReimburseArgs) bool {
             return args.Amount > 1000
@@ -148,13 +148,13 @@ You can modify the behavior of the confirmation requirement by using a function 
 === "Java"
 
     ```java
-    // In ADK Java, dynamic threshold confirmation logic is evaluated directly 
+    // In ADK Java, dynamic threshold confirmation logic is evaluated directly
     // inside the tool logic using the ToolContext rather than via a lambda parameter.
     public Map<String, Object> reimburse(
         @Schema(name="amount") int amount, ToolContext toolContext) {
-      
+
       // 1. Dynamic threshold check
-      if (amount > 1000) { 
+      if (amount > 1000) {
         Optional<ToolConfirmation> toolConfirmation = toolContext.toolConfirmation();
         if (toolConfirmation.isEmpty()) {
            toolContext.requestConfirmation("Amount > 1000 requires approval.");
@@ -163,7 +163,7 @@ You can modify the behavior of the confirmation requirement by using a function 
            return Map.of("status", "Reimbursement rejected.");
         }
       }
-      
+
       // 2. Proceed with actual tool logic
       return Map.of("status", "ok", "reimbursedAmount", amount);
     }
@@ -176,7 +176,7 @@ You can modify the behavior of the confirmation requirement by using a function 
             FunctionTool.create(this, "reimburse")
         )
         // ...
-        .build();    
+        .build();
     ```
 
 ## Advanced confirmation {#advanced-confirmation}
@@ -260,11 +260,11 @@ time off requests for an employee:
         // Values in map[string]any from JSON are float64 by default in Go
         approvedDays := int(payload["approved_days"].(float64))
         approvedDays = min(approvedDays, args.Days)
-        
+
         if approvedDays == 0 {
             return map[string]any{"status": "The time off request is rejected.", "approved_days": 0}, nil
         }
-        
+
         return map[string]any{
             "status": "ok",
             "approved_days": approvedDays,
@@ -276,7 +276,7 @@ time off requests for an employee:
 
     ```java
     public Map<String, Object> requestTimeOff(
-        @Schema(name="days") int days, 
+        @Schema(name="days") int days,
         ToolContext toolContext) {
         // Request day off for the employee.
         // ...
@@ -296,11 +296,11 @@ time off requests for an employee:
         Map<String, Object> payload = (Map<String, Object>) toolConfirmation.get().payload();
         int approvedDays = (int) payload.get("approved_days");
         approvedDays = Math.min(approvedDays, days);
-        
+
         if (approvedDays == 0) {
             return Map.of("status", "The time off request is rejected.", "approved_days", 0);
         }
-        
+
         return Map.of(
             "status", "ok",
             "approved_days", approvedDays
@@ -359,8 +359,8 @@ requirements:
 
     !!! note "Note: Confirmation with Resume feature"
 
-    If your ADK agent workflow is configured with the 
-    [Resume](/adk-docs/runtime/resume/) feature, you also must include
+    If your ADK agent workflow is configured with the
+    [Resume](/runtime/resume/) feature, you also must include
     the Invocation ID (`invocation_id`) parameter with the confirmation
     response. The Invocation ID you provide must be the same invocation
     that generated the confirmation request, otherwise the system
@@ -369,18 +369,18 @@ requirements:
     as a parameter with your confirmation request, so it can be
     included with the response. For more details on using the Resume
     feature, see
-    [Resume stopped agents](/adk-docs/runtime/resume/).
+    [Resume stopped agents](/runtime/resume/).
 
 ## Known limitations {#known-limitations}
 
 The tool confirmation feature has the following limitations:
 
--   [DatabaseSessionService](/adk-docs/api-reference/python/google-adk.html#google.adk.sessions.DatabaseSessionService)
+-   [DatabaseSessionService](/api-reference/python/google-adk.html#google.adk.sessions.DatabaseSessionService)
     is not supported by this feature.
--   [VertexAiSessionService](/adk-docs/api-reference/python/google-adk.html#google.adk.sessions.VertexAiSessionService)
+-   [VertexAiSessionService](/api-reference/python/google-adk.html#google.adk.sessions.VertexAiSessionService)
     is not supported by this feature.
 
 ## Next steps
 
 For more information on building ADK tools for agent workflows, see [Function
-tools](/adk-docs/tools-custom/function-tools/).
+tools](/tools-custom/function-tools/).

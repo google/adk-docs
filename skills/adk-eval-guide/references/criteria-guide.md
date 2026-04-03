@@ -42,4 +42,4 @@ Higher `num_samples` reduces LLM variance (majority vote). Default: 5.
 ## Full Reference
 
 For complete configuration examples, custom metrics API, and detailed algorithm descriptions:
-- Fetch `https://google.github.io/adk-docs/evaluate/criteria/index.md`
+- Fetch `https://adk.dev/evaluate/criteria/index.md`

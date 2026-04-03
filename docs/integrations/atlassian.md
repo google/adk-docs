@@ -1,7 +1,7 @@
 ---
 catalog_title: Atlassian
 catalog_description: Manage issues, search pages, and update team content
-catalog_icon: /adk-docs/integrations/assets/atlassian.png
+catalog_icon: /integrations/assets/atlassian.png
 catalog_tags: ["mcp"]
 ---
 

@@ -18,9 +18,9 @@ programming functions with an ADK Tool, such as:
 *   Retrieving information from documents (RAG)
 *   Interacting with other software or services
 
-!!! tip "[ADK Tools list](/adk-docs/tools/)"
+!!! tip "[ADK Tools list](/tools/)"
     Before building your own Tools for ADK, check out the
-    **[ADK Tools list](/adk-docs/tools/)**
+    **[ADK Tools list](/tools/)**
     for pre-built tools you can use with ADK Agents.
 
 ## What is a Tool?
@@ -63,11 +63,11 @@ Think of the tools as a specialized toolkit that the agent's intelligent core (t
 
 ADK offers flexibility by supporting several types of tools:
 
-1. **[Function Tools](/adk-docs/tools-custom/function-tools/):** Tools created by you, tailored to your specific application's needs.
-    * **[Functions/Methods](/adk-docs/tools-custom/function-tools/#1-function-tool):** Define standard synchronous functions or methods in your code (e.g., Python def).
-    * **[Agents-as-Tools](/adk-docs/tools-custom/function-tools/#3-agent-as-a-tool):** Use another, potentially specialized, agent as a tool for a parent agent.
-    * **[Long Running Function Tools](/adk-docs/tools-custom/function-tools/#2-long-running-function-tool):** Support for tools that perform asynchronous operations or take significant time to complete.
-2. **[Built-in Tools](/adk-docs/tools/built-in-tools/):** Ready-to-use tools provided by the framework for common tasks.
+1. **[Function Tools](/tools-custom/function-tools/):** Tools created by you, tailored to your specific application's needs.
+    * **[Functions/Methods](/tools-custom/function-tools/#1-function-tool):** Define standard synchronous functions or methods in your code (e.g., Python def).
+    * **[Agents-as-Tools](/tools-custom/function-tools/#3-agent-as-a-tool):** Use another, potentially specialized, agent as a tool for a parent agent.
+    * **[Long Running Function Tools](/tools-custom/function-tools/#2-long-running-function-tool):** Support for tools that perform asynchronous operations or take significant time to complete.
+2. **[Built-in Tools](/tools/built-in-tools/):** Ready-to-use tools provided by the framework for common tasks.
         Examples: Google Search, Code Execution, Retrieval-Augmented Generation (RAG).
 3. **Third-Party Tools:** Integrate tools seamlessly from popular external libraries.
 

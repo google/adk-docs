@@ -71,7 +71,7 @@ To add the ADK docs MCP server to [Antigravity](https://antigravity.google/)
             "mcpdoc",
             "mcpdoc",
             "--urls",
-            "AgentDevelopmentKit:https://google.github.io/adk-docs/llms.txt",
+            "AgentDevelopmentKit:https://adk.dev/llms.txt",
             "--transport",
             "stdio"
           ]
@@ -86,7 +86,7 @@ To add the ADK docs MCP server to
 [Claude Code](https://code.claude.com/docs/en/overview):
 
 ```bash
-claude mcp add adk-docs --transport stdio -- uvx --from mcpdoc mcpdoc --urls AgentDevelopmentKit:https://google.github.io/adk-docs/llms.txt --transport stdio
+claude mcp add adk-docs --transport stdio -- uvx --from mcpdoc mcpdoc --urls AgentDevelopmentKit:https://adk.dev/llms.txt --transport stdio
 ```
 
 ### Cursor
@@ -108,7 +108,7 @@ To add the ADK docs MCP server to [Cursor](https://cursor.com/) (requires
             "mcpdoc",
             "mcpdoc",
             "--urls",
-            "AgentDevelopmentKit:https://google.github.io/adk-docs/llms.txt",
+            "AgentDevelopmentKit:https://adk.dev/llms.txt",
             "--transport",
             "stdio"
           ]
@@ -131,5 +131,5 @@ every documentation update and are always up to date.
 
 | File | Description | URL |
 |------|-------------|-----|
-| `llms.txt` | Documentation index with links | [`google.github.io/adk-docs/llms.txt`](https://google.github.io/adk-docs/llms.txt) |
-| `llms-full.txt` | Full documentation in a single file | [`google.github.io/adk-docs/llms-full.txt`](https://google.github.io/adk-docs/llms-full.txt) |
+| `llms.txt` | Documentation index with links | [`adk.dev/llms.txt`](https://adk.dev/llms.txt) |
+| `llms-full.txt` | Full documentation in a single file | [`adk.dev/llms-full.txt`](https://adk.dev/llms-full.txt) |

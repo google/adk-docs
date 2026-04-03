@@ -68,7 +68,7 @@ identifies and assigns tasks to the subagents. When a subagent completes
 a task, it automatically returns to the coordinator agent.
 For more information about structuring data using ***input_schema*** and
 ***output_schema*** with agents, subagents, and workflow nodes, see
-[Data handling for agent workflows](/adk-docs/workflows/data-handling/).
+[Data handling for agent workflows](/workflows/data-handling/).
 
 ## Mode configuration and behaviors
 

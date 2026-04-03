@@ -13,14 +13,14 @@ helps you structure agents to execute challenging tasks with more control,
 predictability, and reliability. ADK 2.0 is available as an Alpha release for
 Python and includes the following key features:
 
--   [**Graph-based workflows**](/adk-docs/workflows/): Build deterministic agent
+-   [**Graph-based workflows**](/workflows/): Build deterministic agent
     workflows with more control over how tasks are routed and executed.
 
--   [**Collaborative agents**](/adk-docs/workflows/collaboration/):
+-   [**Collaborative agents**](/workflows/collaboration/):
     Build complex agent architectures with coordinator agents and multiple
     subagents working together.
 
--   [**Dynamic workflows**](/adk-docs/workflows/dynamic/):
+-   [**Dynamic workflows**](/workflows/dynamic/):
     Use code-based logic for building more complex workflows including
     iterative loops and complex decision-based branching.
 
@@ -106,9 +106,9 @@ To install ADK 2.0, follow these steps:
 
 Read the developer guides for building agents with ADK 2.0 features:
 
--   [**Graph-based workflows**](/adk-docs/workflows/)
--   [**Collaborative agents**](/adk-docs/workflows/collaboration/)
--   [**Dynamic workflows**](/adk-docs/workflows/dynamic/)
+-   [**Graph-based workflows**](/workflows/)
+-   [**Collaborative agents**](/workflows/collaboration/)
+-   [**Dynamic workflows**](/workflows/dynamic/)
 
 Check out these ADK 2.0 code samples for testing and inspiration:
 

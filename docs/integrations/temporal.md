@@ -1,7 +1,7 @@
 ---
 catalog_title: Temporal
 catalog_description: Resilient, scalable agents, long-running agents and tools, human approvals, and safe versioning
-catalog_icon: /adk-docs/integrations/assets/temporal.png
+catalog_icon: /integrations/assets/temporal.png
 catalog_tags: ["resilience"]
 ---
 
@@ -23,7 +23,7 @@ The Temporal plugin gives your agents:
 
 - **Durable execution**: Never lose progress. If your agent crashes or stalls,
   Temporal automatically recovers from the last successful step - no manual
-  [session resumption](/adk-docs/runtime/resume/#resume-a-stopped-workflow)
+  [session resumption](/runtime/resume/#resume-a-stopped-workflow)
   required.
 - **Built-in retries and rate limiting**: Configurable
   [retry policies](https://docs.temporal.io/encyclopedia/retry-policies) with
@@ -42,7 +42,7 @@ The Temporal plugin gives your agents:
 
 - Python 3.10+
 - A [Gemini API key](https://aistudio.google.com/app/api-keys) (or any
-  [supported model](/adk-docs/agents/models/))
+  [supported model](/agents/models/))
 - A running Temporal server
   ([local dev server](https://docs.temporal.io/cli#start-dev-server),
   [self-hosted](https://docs.temporal.io/self-hosted-guide), or
@@ -189,7 +189,7 @@ asyncio.run(start())
 
 ### Using MCP tools
 
-Execute [MCP](/adk-docs/mcp/) tools as Temporal
+Execute [MCP](/mcp/) tools as Temporal
 Activities:
 
 ```python

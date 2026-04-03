@@ -47,35 +47,35 @@ from simple tasks to complex workflows.
 
 You can use Agent Development Kit (ADK) with your preferred language:
 
-- **[Get started with ADK Python](https://google.github.io/adk-docs/get-started/python/)**
+- **[Get started with ADK Python](https://adk.dev/get-started/python/)**
 
-- **[Get started with ADK TypeScript](https://google.github.io/adk-docs/get-started/typescript/)**
+- **[Get started with ADK TypeScript](https://adk.dev/get-started/typescript/)**
 
-- **[Get started with ADK Go](https://google.github.io/adk-docs/get-started/go/)**
+- **[Get started with ADK Go](https://adk.dev/get-started/go/)**
 
-- **[Get started with ADK Java](https://google.github.io/adk-docs/get-started/java/)**
+- **[Get started with ADK Java](https://adk.dev/get-started/java/)**
 
 ## 📚 Documentation
 
 Explore the full documentation for detailed guides on building, evaluating, and
 deploying agents:
 
-- **[Documentation](https://google.github.io/adk-docs)**
+- **[Documentation](https://adk.dev)**
 
 ## ✨ Vibe Coding
 
 Accelerate your ADK agent development workflow with AI-assisted coding. ADK
 provides optimized documentation context compatible with AI code editors:
 
-- **[llms.txt](https://google.github.io/adk-docs/llms.txt)**: A structured index
+- **[llms.txt](https://adk.dev/llms.txt)**: A structured index
   of ADK documentation, designed to help LLMs navigate and locate specific
   topics and guides.
-- **[llms-full.txt](https://google.github.io/adk-docs/llms-full.txt)**: The
+- **[llms-full.txt](https://adk.dev/llms-full.txt)**: The
   comprehensive documentation reference, ideal for complex implementations or
   models with large context windows.
 
 You can also visit our
-**[Coding with AI](https://google.github.io/adk-docs/tutorials/coding-with-ai/)**
+**[Coding with AI](https://adk.dev/tutorials/coding-with-ai/)**
 guide for instructions on using these files with development tools like Gemini
 CLI and Antigravity.
 
