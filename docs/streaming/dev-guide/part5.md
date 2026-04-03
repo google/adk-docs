@@ -584,7 +584,7 @@ ADK provides special tool support for processing video frames during streaming s
 
 **Important**: You must provide a `stop_streaming(function_name: str)` function as a tool to allow the model to explicitly stop streaming operations.
 
-For implementing custom video streaming tools that process and yield video frames to the model, see the [Streaming Tools documentation](https://google.github.io/adk-docs/streaming/streaming-tools/).
+For implementing custom video streaming tools that process and yield video frames to the model, see the [Streaming Tools documentation](/streaming/streaming-tools/).
 
 ## Understanding Audio Model Architectures
 

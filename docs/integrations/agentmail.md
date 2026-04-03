@@ -1,7 +1,7 @@
 ---
 catalog_title: AgentMail
 catalog_description: Create email inboxes for AI agents to send, receive, and manage messages
-catalog_icon: /adk-docs/integrations/assets/agentmail.png
+catalog_icon: /integrations/assets/agentmail.png
 catalog_tags: ["mcp"]
 ---
 

@@ -105,7 +105,7 @@ uvx agent-starter-pack create <project-name> \
 | `--agent-guidance-filename` | | `GEMINI.md` | Guidance file name (`CLAUDE.md`, `AGENTS.md`) |
 | `--debug` | | off | Enable debug logging for troubleshooting |
 
-By default, the scaffolded project uses Google Cloud credentials (Vertex AI). For API key setup and model configuration, see [Configuring Gemini models](https://google.github.io/adk-docs/agents/models/google-gemini/index.md) and [Supported models](https://google.github.io/adk-docs/agents/models/index.md).
+By default, the scaffolded project uses Google Cloud credentials (Vertex AI). For API key setup and model configuration, see [Configuring Gemini models](https://adk.dev/agents/models/google-gemini/index.md) and [Supported models](https://adk.dev/agents/models/index.md).
 
 ### Enhance an Existing Project
 

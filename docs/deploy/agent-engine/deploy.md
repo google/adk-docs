@@ -54,7 +54,7 @@ To deploy your agent to Agent Engine, you need a Google Cloud project:
       homepage. Make sure to note the Project ID (alphanumeric with hyphens),
       _not_ the project number (numeric).
 
-    <img src="/adk-docs/assets/project-id.png" alt="Google Cloud Project ID">
+    <img src="/assets/project-id.png" alt="Google Cloud Project ID">
 
 4. **Enable Vertex AI in your project**
     * To use Agent Engine, you need to [enable the Vertex AI API](https://console.cloud.google.com/apis/library/aiplatform.googleapis.com). Click on the "Enable" button to enable the API. Once enabled, it
@@ -144,7 +144,7 @@ adk deploy agent_engine \
 For `region`, you can find a list of the supported regions on the
 [Vertex AI Agent Builder locations page](https://docs.cloud.google.com/agent-builder/locations#supported-regions-agent-engine).
 To learn about the CLI options for the `adk deploy agent_engine` command, see the
-[ADK CLI Reference](https://google.github.io/adk-docs/api-reference/cli/cli.html#adk-deploy-agent-engine).
+[ADK CLI Reference](/api-reference/cli/cli.html#adk-deploy-agent-engine).
 
 ### Deploy command output
 
@@ -191,7 +191,7 @@ on how to make requests, see the instructions in the Agent Engine documentation
 You can also check the Agent Engine documentation to learn about how to manage your
 [deployed agent](https://docs.cloud.google.com/agent-builder/agent-engine/manage/overview).
 For more information on testing and interacting with a deployed agent, see
-[Test deployed agents in Agent Engine](/adk-docs/deploy/agent-engine/test/).
+[Test deployed agents in Agent Engine](/deploy/agent-engine/test/).
 
 ### Monitoring and verification
 
@@ -208,4 +208,4 @@ For more information on testing and interacting with a deployed agent, see
 After completing deployment of your ADK agent you should test the workflow in
 its new hosted environment. For more information on testing an ADK agent
 deployed to Agent Engine, see
-[Test deployed agents in Agent Engine](/adk-docs/deploy/agent-engine/test/).
+[Test deployed agents in Agent Engine](/deploy/agent-engine/test/).

@@ -23,6 +23,6 @@ metadata:
 | `references/python.md` | Python ADK API quick reference — agents, tools, auth, orchestration, callbacks, plugins, state, artifacts, context caching/compaction, session rewind |
 Read `references/python.md` for the full API quick reference.
 
-For the ADK docs index (titles and URLs for fetching documentation pages), use `curl https://google.github.io/adk-docs/llms.txt`.
+For the ADK docs index (titles and URLs for fetching documentation pages), use `curl https://adk.dev/llms.txt`.
 
 > **Creating a new agent project?** Use `/adk-scaffold` instead — this skill is for writing code in existing projects.

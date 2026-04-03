@@ -1,7 +1,7 @@
 ---
 catalog_title: GoodMem
 catalog_description: Add persistent semantic memory to agents across conversations
-catalog_icon: /adk-docs/integrations/assets/goodmem.svg
+catalog_icon: /integrations/assets/goodmem.svg
 catalog_tags: ["data"]
 ---
 

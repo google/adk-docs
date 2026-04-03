@@ -38,7 +38,7 @@
 
 </div>
 
-This tutorial extends from the [Quickstart example](https://google.github.io/adk-docs/get-started/quickstart/) for [Agent Development Kit](https://google.github.io/adk-docs/get-started/). Now, you're ready to dive deeper and construct a more sophisticated, **multi-agent system**.
+This tutorial extends from the [Quickstart example](/get-started/quickstart/) for [Agent Development Kit](/get-started/). Now, you're ready to dive deeper and construct a more sophisticated, **multi-agent system**.
 
 We'll embark on building a **Weather Bot agent team**, progressively layering advanced features onto a simple foundation. Starting with a single agent that can look up weather, we will incrementally add capabilities like:
 
@@ -178,7 +178,7 @@ print("\nEnvironment configured.")
 
 Let's begin by building the fundamental component of our Weather Bot: a single agent capable of performing a specific task – looking up weather information. This involves creating two core pieces:
 
-1. **A Tool:** A Python function that equips the agent with the *ability* to fetch weather data.  
+1. **A Tool:** A Python function that equips the agent with the *ability* to fetch weather data.
 2. **An Agent:** The AI "brain" that understands the user's request, knows it has a weather tool, and decides when and how to use it.
 
 ---
@@ -191,9 +191,9 @@ Our first tool will provide a *mock* weather report. This allows us to focus on 
 
 **Key Concept: Docstrings are Crucial\!** The agent's LLM relies heavily on the function's **docstring** to understand:
 
-* *What* the tool does.  
-* *When* to use it.  
-* *What arguments* it requires (`city: str`).  
+* *What* the tool does.
+* *When* to use it.
+* *What arguments* it requires (`city: str`).
 * *What information* it returns.
 
 **Best Practice:** Write clear, descriptive, and accurate docstrings for your tools. This is essential for the LLM to use the tool correctly.
@@ -241,10 +241,10 @@ Now, let's create the **Agent** itself. An `Agent` in ADK orchestrates the inter
 
 We configure it with several key parameters:
 
-* `name`: A unique identifier for this agent (e.g., "weather\_agent\_v1").  
-* `model`: Specifies which LLM to use (e.g., `MODEL_GEMINI_2_5_FLASH`). We'll start with a specific Gemini model.  
-* `description`: A concise summary of the agent's overall purpose. This becomes crucial later when other agents need to decide whether to delegate tasks to *this* agent.  
-* `instruction`: Detailed guidance for the LLM on how to behave, its persona, its goals, and specifically *how and when* to utilize its assigned `tools`.  
+* `name`: A unique identifier for this agent (e.g., "weather\_agent\_v1").
+* `model`: Specifies which LLM to use (e.g., `MODEL_GEMINI_2_5_FLASH`). We'll start with a specific Gemini model.
+* `description`: A concise summary of the agent's overall purpose. This becomes crucial later when other agents need to decide whether to delegate tasks to *this* agent.
+* `instruction`: Detailed guidance for the LLM on how to behave, its persona, its goals, and specifically *how and when* to utilize its assigned `tools`.
 * `tools`: A list containing the actual Python tool functions the agent is allowed to use (e.g., `[get_weather]`).
 
 **Best Practice:** Provide clear and specific `instruction` prompts. The more detailed the instructions, the better the LLM can understand its role and how to use its tools effectively. Be explicit about error handling if needed.
@@ -278,7 +278,7 @@ print(f"Agent '{weather_agent.name}' created using model '{AGENT_MODEL}'.")
 
 To manage conversations and execute the agent, we need two more components:
 
-* `SessionService`: Responsible for managing conversation history and state for different users and sessions. The `InMemorySessionService` is a simple implementation that stores everything in memory, suitable for testing and simple applications. It keeps track of the messages exchanged. We'll explore state persistence more in Step 4\.  
+* `SessionService`: Responsible for managing conversation history and state for different users and sessions. The `InMemorySessionService` is a simple implementation that stores everything in memory, suitable for testing and simple applications. It keeps track of the messages exchanged. We'll explore state persistence more in Step 4\.
 * `Runner`: The engine that orchestrates the interaction flow. It takes user input, routes it to the appropriate agent, manages calls to the LLM and tools based on the agent's logic, handles session updates via the `SessionService`, and yields events representing the progress of the interaction.
 
 
@@ -315,7 +315,7 @@ print(f"Session created: App='{APP_NAME}', User='{USER_ID}', Session='{SESSION_I
 #     )
 #     print(f"Session created: App='{app_name}', User='{user_id}', Session='{session_id}'")
 #     return session
-# 
+#
 # session = asyncio.run(init_session(APP_NAME,USER_ID,SESSION_ID))
 
 # --- Runner ---
@@ -336,10 +336,10 @@ We need a way to send messages to our agent and receive its responses. Since LLM
 
 We'll define an `async` helper function (`call_agent_async`) that:
 
-1. Takes a user query string.  
-2. Packages it into the ADK `Content` format.  
-3. Calls `runner.run_async`, providing the user/session context and the new message.  
-4. Iterates through the **Events** yielded by the runner. Events represent steps in the agent's execution (e.g., tool call requested, tool result received, intermediate LLM thought, final response).  
+1. Takes a user query string.
+2. Packages it into the ADK `Content` format.
+3. Calls `runner.run_async`, providing the user/session context and the new message.
+4. Iterates through the **Events** yielded by the runner. Events represent steps in the agent's execution (e.g., tool call requested, tool result received, intermediate LLM thought, final response).
 5. Identifies and prints the **final response** event using `event.is_final_response()`.
 
 **Why `async`?** Interactions with LLMs and potentially tools (like external APIs) are I/O-bound operations. Using `asyncio` allows the program to handle these operations efficiently without blocking execution.
@@ -386,8 +386,8 @@ Finally, let's test our setup by sending a few queries to the agent. We wrap our
 
 Watch the output:
 
-* See the user queries.  
-* Notice the `--- Tool: get_weather called... ---` logs when the agent uses the tool.  
+* See the user queries.
+* Notice the `--- Tool: get_weather called... ---` logs when the agent uses the tool.
 * Observe the agent's final responses, including how it handles the case where weather data isn't available (for Paris).
 
 
@@ -651,23 +651,23 @@ In Steps 1 and 2, we built and experimented with a single agent focused solely o
 
 A more robust approach is to build an **Agent Team**. This involves:
 
-1. Creating multiple, **specialized agents**, each designed for a specific capability (e.g., one for weather, one for greetings, one for calculations).  
-2. Designating a **root agent** (or orchestrator) that receives the initial user request.  
+1. Creating multiple, **specialized agents**, each designed for a specific capability (e.g., one for weather, one for greetings, one for calculations).
+2. Designating a **root agent** (or orchestrator) that receives the initial user request.
 3. Enabling the root agent to **delegate** the request to the most appropriate specialized sub-agent based on the user's intent.
 
 **Why build an Agent Team?**
 
-* **Modularity:** Easier to develop, test, and maintain individual agents.  
-* **Specialization:** Each agent can be fine-tuned (instructions, model choice) for its specific task.  
-* **Scalability:** Simpler to add new capabilities by adding new agents.  
+* **Modularity:** Easier to develop, test, and maintain individual agents.
+* **Specialization:** Each agent can be fine-tuned (instructions, model choice) for its specific task.
+* **Scalability:** Simpler to add new capabilities by adding new agents.
 * **Efficiency:** Allows using potentially simpler/cheaper models for simpler tasks (like greetings).
 
 **In this step, we will:**
 
-1. Define simple tools for handling greetings (`say_hello`) and farewells (`say_goodbye`).  
-2. Create two new specialized sub-agents: `greeting_agent` and `farewell_agent`.  
-3. Update our main weather agent (`weather_agent_v2`) to act as the **root agent**.  
-4. Configure the root agent with its sub-agents, enabling **automatic delegation**.  
+1. Define simple tools for handling greetings (`say_hello`) and farewells (`say_goodbye`).
+2. Create two new specialized sub-agents: `greeting_agent` and `farewell_agent`.
+3. Update our main weather agent (`weather_agent_v2`) to act as the **root agent**.
+4. Configure the root agent with its sub-agents, enabling **automatic delegation**.
 5. Test the delegation flow by sending different types of requests to the root agent.
 
 ---
@@ -778,7 +778,7 @@ except Exception as e:
 
 Now, we upgrade our `weather_agent`. The key changes are:
 
-* Adding the `sub_agents` parameter: We pass a list containing the `greeting_agent` and `farewell_agent` instances we just created.  
+* Adding the `sub_agents` parameter: We pass a list containing the `greeting_agent` and `farewell_agent` instances we just created.
 * Updating the `instruction`: We explicitly tell the root agent *about* its sub-agents and *when* it should delegate tasks to them.
 
 **Key Concept: Automatic Delegation (Auto Flow)** By providing the `sub_agents` list, ADK enables automatic delegation. When the root agent receives a user query, its LLM considers not only its own instructions and tools but also the `description` of each sub-agent. If the LLM determines that a query aligns better with a sub-agent's described capability (e.g., "Handles simple greetings"), it will automatically generate a special internal action to *transfer control* to that sub-agent for that turn. The sub-agent then processes the query using its own model, instructions, and tools.
@@ -954,21 +954,21 @@ So far, our agent team can handle different tasks through delegation, but each i
 
 **What is Session State?**
 
-* It's a Python dictionary (`session.state`) tied to a specific user session (identified by `APP_NAME`, `USER_ID`, `SESSION_ID`).  
-* It persists information *across multiple conversational turns* within that session.  
+* It's a Python dictionary (`session.state`) tied to a specific user session (identified by `APP_NAME`, `USER_ID`, `SESSION_ID`).
+* It persists information *across multiple conversational turns* within that session.
 * Agents and Tools can read from and write to this state, allowing them to remember details, adapt behavior, and personalize responses.
 
 **How Agents Interact with State:**
 
-1. **`ToolContext` (Primary Method):** Tools can accept a `ToolContext` object (automatically provided by ADK if declared as the last argument). This object gives direct access to the session state via `tool_context.state`, allowing tools to read preferences or save results *during* execution.  
+1. **`ToolContext` (Primary Method):** Tools can accept a `ToolContext` object (automatically provided by ADK if declared as the last argument). This object gives direct access to the session state via `tool_context.state`, allowing tools to read preferences or save results *during* execution.
 2. **`output_key` (Auto-Save Agent Response):** An `Agent` can be configured with an `output_key="your_key"`. ADK will then automatically save the agent's final textual response for a turn into `session.state["your_key"]`.
 
 **In this step, we will enhance our Weather Bot team by:**
 
-1. Using a **new** `InMemorySessionService` to demonstrate state in isolation.  
-2. Initializing session state with a user preference for `temperature_unit`.  
-3. Creating a state-aware version of the weather tool (`get_weather_stateful`) that reads this preference via `ToolContext` and adjusts its output format (Celsius/Fahrenheit).  
-4. Updating the root agent to use this stateful tool and configuring it with an `output_key` to automatically save its final weather report to the session state.  
+1. Using a **new** `InMemorySessionService` to demonstrate state in isolation.
+2. Initializing session state with a user preference for `temperature_unit`.
+3. Creating a state-aware version of the weather tool (`get_weather_stateful`) that reads this preference via `ToolContext` and adjusts its output format (Celsius/Fahrenheit).
+4. Updating the root agent to use this stateful tool and configuring it with an `output_key` to automatically save its final weather report to the session state.
 5. Running a conversation to observe how the initial state affects the tool, how manual state changes alter subsequent behavior, and how `output_key` persists the agent's response.
 
 ---
@@ -1088,8 +1088,8 @@ print("✅ State-aware 'get_weather_stateful' tool defined.")
 
 To ensure this step is self-contained and builds correctly, we first redefine the `greeting_agent` and `farewell_agent` exactly as they were in Step 3\. Then, we define our new root agent (`weather_agent_v4_stateful`):
 
-* It uses the new `get_weather_stateful` tool.  
-* It includes the greeting and farewell sub-agents for delegation.  
+* It uses the new `get_weather_stateful` tool.
+* It includes the greeting and farewell sub-agents for delegation.
 * **Crucially**, it sets `output_key="last_weather_report"` which automatically saves its final weather response to the session state.
 
 
@@ -1315,41 +1315,41 @@ ADK provides **Callbacks** – functions that allow you to hook into specific po
 
 **What is `before_model_callback`?**
 
-* It's a Python function you define that ADK executes *just before* an agent sends its compiled request (including conversation history, instructions, and the latest user message) to the underlying LLM.  
+* It's a Python function you define that ADK executes *just before* an agent sends its compiled request (including conversation history, instructions, and the latest user message) to the underlying LLM.
 * **Purpose:** Inspect the request, modify it if necessary, or block it entirely based on predefined rules.
 
 **Common Use Cases:**
 
-* **Input Validation/Filtering:** Check if user input meets criteria or contains disallowed content (like PII or keywords).  
-* **Guardrails:** Prevent harmful, off-topic, or policy-violating requests from being processed by the LLM.  
+* **Input Validation/Filtering:** Check if user input meets criteria or contains disallowed content (like PII or keywords).
+* **Guardrails:** Prevent harmful, off-topic, or policy-violating requests from being processed by the LLM.
 * **Dynamic Prompt Modification:** Add timely information (e.g., from session state) to the LLM request context just before sending.
 
 **How it Works:**
 
-1. Define a function accepting `callback_context: CallbackContext` and `llm_request: LlmRequest`.  
+1. Define a function accepting `callback_context: CallbackContext` and `llm_request: LlmRequest`.
 
-    * `callback_context`: Provides access to agent info, session state (`callback_context.state`), etc.  
-    * `llm_request`: Contains the full payload intended for the LLM (`contents`, `config`).  
+    * `callback_context`: Provides access to agent info, session state (`callback_context.state`), etc.
+    * `llm_request`: Contains the full payload intended for the LLM (`contents`, `config`).
 
-2. Inside the function: 
+2. Inside the function:
 
-    * **Inspect:** Examine `llm_request.contents` (especially the last user message).  
-    * **Modify (Use Caution):** You *can* change parts of `llm_request`.  
-    * **Block (Guardrail):** Return an `LlmResponse` object. ADK will send this response back immediately, *skipping* the LLM call for that turn.  
+    * **Inspect:** Examine `llm_request.contents` (especially the last user message).
+    * **Modify (Use Caution):** You *can* change parts of `llm_request`.
+    * **Block (Guardrail):** Return an `LlmResponse` object. ADK will send this response back immediately, *skipping* the LLM call for that turn.
     * **Allow:** Return `None`. ADK proceeds to call the LLM with the (potentially modified) request.
 
 **In this step, we will:**
 
-1. Define a `before_model_callback` function (`block_keyword_guardrail`) that checks the user's input for a specific keyword ("BLOCK").  
-2. Update our stateful root agent (`weather_agent_v4_stateful` from Step 4\) to use this callback.  
-3. Create a new runner associated with this updated agent but using the *same stateful session service* to maintain state continuity.  
+1. Define a `before_model_callback` function (`block_keyword_guardrail`) that checks the user's input for a specific keyword ("BLOCK").
+2. Update our stateful root agent (`weather_agent_v4_stateful` from Step 4\) to use this callback.
+3. Create a new runner associated with this updated agent but using the *same stateful session service* to maintain state continuity.
 4. Test the guardrail by sending both normal and keyword-containing requests.
 
 ---
 
 **1\. Define the Guardrail Callback Function**
 
-This function will inspect the last user message within the `llm_request` content. If it finds "BLOCK" (case-insensitive), it constructs and returns an `LlmResponse` to block the flow; otherwise, it returns `None`.  
+This function will inspect the last user message within the `llm_request` content. If it finds "BLOCK" (case-insensitive), it constructs and returns an `LlmResponse` to block the flow; otherwise, it returns `None`.
 
 
 ```python
@@ -1503,8 +1503,8 @@ else:
 
 Let's test the guardrail's behavior. We'll use the *same session* (`SESSION_ID_STATEFUL`) as in Step 4 to show that state persists across these changes.
 
-1. Send a normal weather request (should pass the guardrail and execute).  
-2. Send a request containing "BLOCK" (should be intercepted by the callback).  
+1. Send a normal weather request (should pass the guardrail and execute).
+2. Send a request containing "BLOCK" (should be intercepted by the callback).
 3. Send a greeting (should pass the root agent's guardrail, be delegated, and execute normally).
 
 
@@ -1590,8 +1590,8 @@ else:
 
 Observe the execution flow:
 
-1. **London Weather:** The callback runs for `weather_agent_v5_model_guardrail`, inspects the message, prints "Keyword not found. Allowing LLM call.", and returns `None`. The agent proceeds, calls the `get_weather_stateful` tool (which uses the "Fahrenheit" preference from Step 4's state change), and returns the weather. This response updates `last_weather_report` via `output_key`.  
-2. **BLOCK Request:** The callback runs again for `weather_agent_v5_model_guardrail`, inspects the message, finds "BLOCK", prints "Blocking LLM call\!", sets the state flag, and returns the predefined `LlmResponse`. The agent's underlying LLM is *never called* for this turn. The user sees the callback's blocking message.  
+1. **London Weather:** The callback runs for `weather_agent_v5_model_guardrail`, inspects the message, prints "Keyword not found. Allowing LLM call.", and returns `None`. The agent proceeds, calls the `get_weather_stateful` tool (which uses the "Fahrenheit" preference from Step 4's state change), and returns the weather. This response updates `last_weather_report` via `output_key`.
+2. **BLOCK Request:** The callback runs again for `weather_agent_v5_model_guardrail`, inspects the message, finds "BLOCK", prints "Blocking LLM call\!", sets the state flag, and returns the predefined `LlmResponse`. The agent's underlying LLM is *never called* for this turn. The user sees the callback's blocking message.
 3. **Hello Again:** The callback runs for `weather_agent_v5_model_guardrail`, allows the request. The root agent then delegates to `greeting_agent`. *Note: The `before_model_callback` defined on the root agent does NOT automatically apply to sub-agents.* The `greeting_agent` proceeds normally, calls its `say_hello` tool, and returns the greeting.
 
 You have successfully implemented an input safety layer\! The `before_model_callback` provides a powerful mechanism to enforce rules and control agent behavior *before* expensive or potentially risky LLM calls are made. Next, we'll apply a similar concept to add guardrails around tool usage itself.
@@ -1604,36 +1604,36 @@ ADK provides the `before_tool_callback` for this precise purpose.
 
 **What is `before_tool_callback`?**
 
-* It's a Python function executed just *before* a specific tool function runs, after the LLM has requested its use and decided on the arguments.  
+* It's a Python function executed just *before* a specific tool function runs, after the LLM has requested its use and decided on the arguments.
 * **Purpose:** Validate tool arguments, prevent tool execution based on specific inputs, modify arguments dynamically, or enforce resource usage policies.
 
 **Common Use Cases:**
 
-* **Argument Validation:** Check if arguments provided by the LLM are valid, within allowed ranges, or conform to expected formats.  
-* **Resource Protection:** Prevent tools from being called with inputs that might be costly, access restricted data, or cause unwanted side effects (e.g., blocking API calls for certain parameters).  
+* **Argument Validation:** Check if arguments provided by the LLM are valid, within allowed ranges, or conform to expected formats.
+* **Resource Protection:** Prevent tools from being called with inputs that might be costly, access restricted data, or cause unwanted side effects (e.g., blocking API calls for certain parameters).
 * **Dynamic Argument Modification:** Adjust arguments based on session state or other contextual information before the tool runs.
 
 **How it Works:**
 
-1. Define a function accepting `tool: BaseTool`, `args: Dict[str, Any]`, and `tool_context: ToolContext`.  
+1. Define a function accepting `tool: BaseTool`, `args: Dict[str, Any]`, and `tool_context: ToolContext`.
 
-    * `tool`: The tool object about to be called (inspect `tool.name`).  
-    * `args`: The dictionary of arguments the LLM generated for the tool.  
-    * `tool_context`: Provides access to session state (`tool_context.state`), agent info, etc.  
+    * `tool`: The tool object about to be called (inspect `tool.name`).
+    * `args`: The dictionary of arguments the LLM generated for the tool.
+    * `tool_context`: Provides access to session state (`tool_context.state`), agent info, etc.
 
-2. Inside the function:  
+2. Inside the function:
 
-    * **Inspect:** Examine the `tool.name` and the `args` dictionary.  
-    * **Modify:** Change values within the `args` dictionary *directly*. If you return `None`, the tool runs with these modified args.  
-    * **Block/Override (Guardrail):** Return a **dictionary**. ADK treats this dictionary as the *result* of the tool call, completely *skipping* the execution of the original tool function. The dictionary should ideally match the expected return format of the tool it's blocking.  
+    * **Inspect:** Examine the `tool.name` and the `args` dictionary.
+    * **Modify:** Change values within the `args` dictionary *directly*. If you return `None`, the tool runs with these modified args.
+    * **Block/Override (Guardrail):** Return a **dictionary**. ADK treats this dictionary as the *result* of the tool call, completely *skipping* the execution of the original tool function. The dictionary should ideally match the expected return format of the tool it's blocking.
     * **Allow:** Return `None`. ADK proceeds to execute the actual tool function with the (potentially modified) arguments.
 
 **In this step, we will:**
 
-1. Define a `before_tool_callback` function (`block_paris_tool_guardrail`) that specifically checks if the `get_weather_stateful` tool is called with the city "Paris".  
-2. If "Paris" is detected, the callback will block the tool and return a custom error dictionary.  
-3. Update our root agent (`weather_agent_v6_tool_guardrail`) to include *both* the `before_model_callback` and this new `before_tool_callback`.  
-4. Create a new runner for this agent, using the same stateful session service.  
+1. Define a `before_tool_callback` function (`block_paris_tool_guardrail`) that specifically checks if the `get_weather_stateful` tool is called with the city "Paris".
+2. If "Paris" is detected, the callback will block the tool and return a custom error dictionary.
+3. Update our root agent (`weather_agent_v6_tool_guardrail`) to include *both* the `before_model_callback` and this new `before_tool_callback`.
+4. Create a new runner for this agent, using the same stateful session service.
 5. Test the flow by requesting weather for allowed cities and the blocked city ("Paris").
 
 ---
@@ -1794,8 +1794,8 @@ else:
 
 Let's test the interaction flow, again using the same stateful session (`SESSION_ID_STATEFUL`) from the previous steps.
 
-1. Request weather for "New York": Passes both callbacks, tool executes (using Fahrenheit preference from state).  
-2. Request weather for "Paris": Passes `before_model_callback`. LLM decides to call `get_weather_stateful(city='Paris')`. `before_tool_callback` intercepts, blocks the tool, and returns the error dictionary. Agent relays this error.  
+1. Request weather for "New York": Passes both callbacks, tool executes (using Fahrenheit preference from state).
+2. Request weather for "Paris": Passes `before_model_callback`. LLM decides to call `get_weather_stateful(city='Paris')`. `before_tool_callback` intercepts, blocks the tool, and returns the error dictionary. Agent relays this error.
 3. Request weather for "London": Passes both callbacks, tool executes normally.
 
 
@@ -1881,8 +1881,8 @@ else:
 
 Analyze the output:
 
-1. **New York:** The `before_model_callback` allows the request. The LLM requests `get_weather_stateful`. The `before_tool_callback` runs, inspects the args (`{'city': 'New York'}`), sees it's not "Paris", prints "Allowing tool..." and returns `None`. The actual `get_weather_stateful` function executes, reads "Fahrenheit" from state, and returns the weather report. The agent relays this, and it gets saved via `output_key`.  
-2. **Paris:** The `before_model_callback` allows the request. The LLM requests `get_weather_stateful(city='Paris')`. The `before_tool_callback` runs, inspects the args, detects "Paris", prints "Blocking tool execution\!", sets the state flag, and returns the error dictionary `{'status': 'error', 'error_message': 'Policy restriction...'}`. The actual `get_weather_stateful` function is **never executed**. The agent receives the error dictionary *as if it were the tool's output* and formulates a response based on that error message.  
+1. **New York:** The `before_model_callback` allows the request. The LLM requests `get_weather_stateful`. The `before_tool_callback` runs, inspects the args (`{'city': 'New York'}`), sees it's not "Paris", prints "Allowing tool..." and returns `None`. The actual `get_weather_stateful` function executes, reads "Fahrenheit" from state, and returns the weather report. The agent relays this, and it gets saved via `output_key`.
+2. **Paris:** The `before_model_callback` allows the request. The LLM requests `get_weather_stateful(city='Paris')`. The `before_tool_callback` runs, inspects the args, detects "Paris", prints "Blocking tool execution\!", sets the state flag, and returns the error dictionary `{'status': 'error', 'error_message': 'Policy restriction...'}`. The actual `get_weather_stateful` function is **never executed**. The agent receives the error dictionary *as if it were the tool's output* and formulates a response based on that error message.
 3. **London:** Behaves like New York, passing both callbacks and executing the tool successfully. The new London weather report overwrites the `last_weather_report` in the state.
 
 You've now added a crucial safety layer controlling not just *what* reaches the LLM, but also *how* the agent's tools can be used based on the specific arguments generated by the LLM. Callbacks like `before_model_callback` and `before_tool_callback` are essential for building robust, safe, and policy-compliant agent applications.

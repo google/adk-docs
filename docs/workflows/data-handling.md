@@ -247,4 +247,4 @@ root_agent = Workflow(
 ```
 
 For a complete, but simplified version of this workflow, see
-[Graph-based agent workflows](/adk-docs/workflows/#get-started).
+[Graph-based agent workflows](/workflows/#get-started).

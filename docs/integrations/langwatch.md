@@ -1,8 +1,8 @@
 ---
 catalog_title: LangWatch
 catalog_description: Observability, tracing, evaluation, and prompt optimization for ADK agents
-catalog_icon: /adk-docs/integrations/assets/langwatch.png
-catalog_tags: ["observability", "evaluation"]
+catalog_icon: /integrations/assets/langwatch.png
+catalog_tags: ["observability"]
 ---
 
 # LangWatch observability for ADK

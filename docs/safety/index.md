@@ -123,7 +123,7 @@ For example, a query tool can be designed to expect a policy to be read from the
     // In a real ADK app, this might be set using the session state service.
     // `ctx` is an `agent.Context` available in callbacks or custom agents.
 
-    policy := map[string]interface{}{
+    policy := map[string]any{
     	"select_only": true,
     	"tables":      []string{"mytable1", "mytable2"},
     }
@@ -204,7 +204,7 @@ During the tool execution, [**`Tool Context`**](../tools-custom/index.md#tool-co
         if (!isSubset) {
             // Return an error message for the model
             const allowed = (policy['tables'] || ['(None defined)']).join(', ');
-            return `Error: Query targets unauthorized tables. Allowed: ${allowed}`;
+            return `Error: Query targets unauthorized tables. Allowed: {allowed}`;
         }
 
         if (policy['select_only']) {
@@ -229,13 +229,14 @@ During the tool execution, [**`Tool Context`**](../tools-custom/index.md#tool-co
     	"google.golang.org/adk/tool"
     )
 
-    func query(query string, toolContext *tool.Context) (any, error) {
+    func query(ctx tool.Context, args QueryArgs) (map[string]any, error) {
     	// Assume 'policy' is retrieved from context, e.g., via session state:
-    	policyAny, err := toolContext.State().Get("query_tool_policy")
+    	policyAny, err := ctx.Session().State().Get("query_tool_policy")
     	if err != nil {
     		return nil, fmt.Errorf("could not retrieve policy: %w", err)
-    	}    	policy, _ := policyAny.(map[string]interface{})
-    	actualTables := explainQuery(query) // Hypothetical function call
+    	}
+    	policy, _ := policyAny.(map[string]any)
+    	actualTables := explainQuery(args.Query) // Hypothetical function call
 
     	// --- Placeholder Policy Enforcement ---
     	if tables, ok := policy["tables"].([]string); ok {
@@ -250,14 +251,14 @@ During the tool execution, [**`Tool Context`**](../tools-custom/index.md#tool-co
     	}
 
     	if selectOnly, _ := policy["select_only"].(bool); selectOnly {
-    		if !strings.HasPrefix(strings.ToUpper(strings.TrimSpace(query)), "SELECT") {
+    		if !strings.HasPrefix(strings.ToUpper(strings.TrimSpace(args.Query)), "SELECT") {
     			return nil, fmt.Errorf("policy restricts queries to SELECT statements only")
     		}
     	}
     	// --- End Policy Enforcement ---
 
-    	fmt.Printf("Executing validated query (hypothetical): %s\n", query)
-    	return map[string]interface{}{"status": "success", "results": []string{"..."}}, nil
+    	fmt.Printf("Executing validated query (hypothetical): %s\n", args.Query)
+    	return map[string]any{"status": "success", "results": []string{"..."}}, nil
     }
 
     // Helper function to check if a is a subset of b
@@ -324,8 +325,49 @@ During the tool execution, [**`Tool Context`**](../tools-custom/index.md#tool-co
 Gemini models come with in-built safety mechanisms that can be leveraged to improve content and brand safety.
 
 * **Content safety filters**:  [Content filters](https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/configure-safety-attributes) can help block the output of harmful content. They function independently from Gemini models as part of a layered defense against threat actors who attempt to jailbreak the model. Gemini models on Vertex AI use two types of content filters:
-* **Non-configurable safety filters** automatically block outputs containing prohibited content, such as child sexual abuse material (CSAM) and personally identifiable information (PII).
-* **Configurable content filters** allow you to define blocking thresholds in four harm categories (hate speech, harassment, sexually explicit, and dangerous content,) based on probability and severity scores. These filters are default off but you can configure them according to your needs.
+    * **Non-configurable safety filters** automatically block outputs containing prohibited content, such as child sexual abuse material (CSAM) and personally identifiable information (PII).
+    * **Configurable content filters** allow you to define blocking thresholds in four harm categories (hate speech, harassment, sexually explicit, and dangerous content,) based on probability and severity scores. These filters are default off but you can configure them according to your needs.
+
+=== "Python"
+
+    ```python
+    from google.adk.agents import Agent
+    from google.genai import types
+
+    agent = Agent(
+        # ...
+        generate_content_config=types.GenerateContentConfig(
+            safety_settings=[
+                types.SafetySetting(
+                    category=types.HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+                    threshold=types.HarmBlockThreshold.OFF,
+                ),
+            ],
+        ),
+    )
+    ```
+
+=== "Go"
+
+    ```go
+    import (
+    	"google.golang.org/adk/agent/llmagent"
+    	"google.golang.org/genai"
+    )
+
+    agent, _ := llmagent.New(llmagent.Config{
+    	// ...
+    	GenerateContentConfig: &genai.GenerateContentConfig{
+    		SafetySettings: []*genai.SafetySetting{
+    			{
+    				Category:  genai.HarmCategoryHateSpeech,
+    				Threshold: genai.HarmBlockThresholdBlockLowAndAbove,
+    			},
+    		},
+    	},
+    })
+    ```
+
 * **System instructions for safety**: [System instructions](https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/safety-system-instructions) for Gemini models in Vertex AI provide direct guidance to the model on how to behave and what type of content to generate. By providing specific instructions, you can proactively steer the model away from generating undesirable content to meet your organization’s unique needs. You can craft system instructions to define content safety guidelines, such as prohibited and sensitive topics, and disclaimer language, as well as brand safety guidelines to ensure the model's outputs align with your brand's voice, tone, values, and target audience.
 
 While these measures are robust against content safety, you need additional checks to reduce agent misalignment, unsafe actions, and brand safety risks.
@@ -364,7 +406,7 @@ When modifications to the tools to add guardrails aren't possible, the [**`Befor
 
     # Hypothetical Agent setup
     root_agent = LlmAgent( # Use specific agent type
-        model='gemini-2.0-flash',
+        model='gemini-2.5-flash',
         name='root_agent',
         instruction="...",
         before_tool_callback=validate_tool_params, # Assign the callback
@@ -421,7 +463,6 @@ When modifications to the tools to add guardrails aren't possible, the [**`Befor
     ```go
     import (
     	"fmt"
-    	"reflect"
 
     	"google.golang.org/adk/agent/llmagent"
     	"google.golang.org/adk/tool"
@@ -436,49 +477,31 @@ When modifications to the tools to add guardrails aren't possible, the [**`Befor
     	fmt.Printf("Callback triggered for tool: %s, args: %v\n", t.Name(), args)
 
     	// Example validation: Check if a required user ID from state matches an arg
-    	expectedUserID, err := ctx.State().Get("session_user_id")
+    	expectedUserIDVal, err := ctx.Session().State().Get("session_user_id")
     	if err != nil {
-    		// This is an unexpected failure, return an error.
-    		return nil, fmt.Errorf("internal error: session_user_id not found in state: %w", err)
-    	}
-    	    	expectedUserID, ok := expectedUserIDVal.(string)
-    	if !ok {
-    		return nil, fmt.Errorf("internal error: session_user_id in state is not a string, got %T", expectedUserIDVal)
-    	}
-
-    	actualUserIDInArgs, exists := args["user_id_param"]
-    	if !exists {
-    		// Handle case where user_id_param is not in args
-    		fmt.Println("Validation Failed: user_id_param missing from arguments!")
-    		return map[string]any{"error": "Tool call blocked: user_id_param missing from arguments."}, nil
-    	}
-
-    	actualUserID, ok := actualUserIDInArgs.(string)
-    	if !ok {
-    		// Handle case where user_id_param is not a string
-    		fmt.Println("Validation Failed: user_id_param is not a string!")
-    		return map[string]any{"error": "Tool call blocked: user_id_param is not a string."}, nil
-    	}
-
-    	if actualUserID != expectedUserID {
-    		fmt.Println("Validation Failed: User ID mismatch!")
     		// Return a map to prevent tool execution and provide feedback to the model.
-    		// This is not a Go error, but a message for the agent.
+    		return map[string]any{"error": "Tool call blocked: User ID not found."}, nil
+    	}
+    	expectedUserID, _ := expectedUserIDVal.(string)
+
+    	actualUserID, ok := args["user_id_param"].(string)
+    	if !ok || actualUserID != expectedUserID {
+    		fmt.Println("Validation Failed: User ID mismatch!")
     		return map[string]any{"error": "Tool call blocked: User ID mismatch."}, nil
     	}
+
     	// Return nil, nil to allow the tool call to proceed if validation passes
     	fmt.Println("Callback validation passed.")
     	return nil, nil
     }
 
     // Hypothetical Agent setup
-    // rootAgent, err := llmagent.New(llmagent.Config{
-    // 	Model: "gemini-2.0-flash",
+    // agent, _ := llmagent.New(llmagent.Config{
+    // 	Model: "gemini-2.5-flash",
     // 	Name: "root_agent",
     // 	Instruction: "...",
     // 	BeforeToolCallbacks: []llmagent.BeforeToolCallback{validateToolParams},
     // 	Tools: []tool.Tool{queryToolInstance},
-    // })
     ```
 
 === "Java"
@@ -512,7 +535,7 @@ When modifications to the tools to add guardrails aren't possible, the [**`Befor
     public void runAgent() {
     LlmAgent agent =
         LlmAgent.builder()
-            .model("gemini-2.0-flash")
+            .model("gemini-2.5-flash")
             .name("AgentWithBeforeToolCallback")
             .instruction("...")
             .beforeToolCallback(this::validateToolParams) // Assign the callback
@@ -529,13 +552,13 @@ Some examples include:
 
 * **Model Armor Plugin**: A plugin that queries the model armor API to check for potential content safety violations at specified points of agent execution. Similar to the _Gemini as a Judge_ plugin, if Model Armor finds matches of harmful content, it returns a predetermined response to the user.
 
-* **PII Redaction Plugin**: A specialized plugin with design for the [Before Tool Callback](/adk-docs/plugins/#tool-callbacks) and specifically created to redact personally identifiable information before it’s processed by a tool or sent to an external service.
+* **PII Redaction Plugin**: A specialized plugin with design for the [Before Tool Callback](/plugins/#tool-callbacks) and specifically created to redact personally identifiable information before it’s processed by a tool or sent to an external service.
 
 ### Sandboxed Code Execution
 
 Code execution is a special tool that has extra security implications: sandboxing must be used to prevent model-generated code to compromise the local environment, potentially creating security issues.
 
-Google and the ADK provide several options for safe code execution. [Vertex Gemini Enterprise API code execution feature](https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/code-execution-api) enables agents to take advantage of sandboxed code execution server-side by enabling the tool\_execution tool. For code performing data analysis, you can use the [Code Executor](/adk-docs/tools/gemini-api/code-execution/) tool in ADK to call the [Vertex Code Interpreter Extension](https://cloud.google.com/vertex-ai/generative-ai/docs/extensions/code-interpreter).
+Google and the ADK provide several options for safe code execution. [Vertex Gemini Enterprise API code execution feature](https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/code-execution-api) enables agents to take advantage of sandboxed code execution server-side by enabling the tool\_execution tool. For code performing data analysis, you can use the [Code Executor](/tools/gemini-api/code-execution/) tool in ADK to call the [Vertex Code Interpreter Extension](https://cloud.google.com/vertex-ai/generative-ai/docs/extensions/code-interpreter).
 
 If none of these options satisfy your requirements, you can build your own code executor using the building blocks provided by the ADK. We recommend creating execution environments that are hermetic: no network connections and API calls permitted to avoid uncontrolled data exfiltration; and full cleanup of data across execution to not create cross-user exfiltration concerns.
 

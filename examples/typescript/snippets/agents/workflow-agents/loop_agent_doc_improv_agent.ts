@@ -13,7 +13,7 @@
 // limitations under the License.
 
 // --8<-- [start:init]
-// Part of agent.ts --> Follow https://google.github.io/adk-docs/get-started/quickstart/ to learn the setup
+// Part of agent.ts --> Follow https://adk.dev/get-started/quickstart/ to learn the setup
 
 import { LoopAgent, LlmAgent, SequentialAgent, FunctionTool } from '@google/adk';
 import { z } from 'zod';
@@ -70,9 +70,9 @@ const criticAgentInLoop = new LlmAgent({
     instruction: `You are a Constructive Critic AI reviewing a short document draft (typically 2-6 sentences). Your goal is balanced feedback.
 
     **Document to Review:**
-    
+
     {{current_document}}
-    
+
 
     **Task:**
     Review the document for clarity, engagement, and basic coherence according to the initial topic (if known).
@@ -98,9 +98,9 @@ const refinerAgentInLoop = new LlmAgent({
     includeContents: 'none',
     instruction: `You are a Creative Writing Assistant refining a document based on feedback OR exiting the process.
     **Current Document:**
-    
+
     {{current_document}}
-    
+
     **Critique/Suggestions:**
     {{criticism}}
 

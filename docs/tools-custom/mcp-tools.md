@@ -7,7 +7,7 @@
 This guide walks you through two ways of integrating Model Context Protocol (MCP) with ADK.
 
 !!! tip "MCP tools for ADK"
-    For a list of pre-built MCP tools for ADK, see [Tools and Integrations](/adk-docs/integrations/?topic=mcp).
+    For a list of pre-built MCP tools for ADK, see [Tools and Integrations](/integrations/?topic=mcp).
 
 ## What is Model Context Protocol (MCP)?
 

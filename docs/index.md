@@ -19,31 +19,20 @@ development feel more like software development, to make it easier for
 developers to create, deploy, and orchestrate agentic architectures that range
 from simple tasks to complex workflows.
 
+??? tip "News: ADK Go 1.0.0 released!"
+
+    ADK Go 1.0.0 release adds several major features, including OpenTelemetry
+    integration, self-healing logic using plugins, and improved human input support.
+    For more details on this release, see the
+    [ADK Go v1.0 announcement](https://developers.googleblog.com/adk-go-10-arrives/).
+
 ??? tip "News: ADK Java 1.0.0 released!"
 
-    ADK Java 1.0.0 is now available! This release includes several 
-    bug fixes and enhancements. Read more about it in the 
-    [blog announcement](https://developers.googleblog.com/announcing-adk-for-java-100-building-the-future-of-ai-agents-in-java/). 
-    Upgrade to ADK Java 1.0.0 to take advantage of these enhancements 
+    ADK Java 1.0.0 is now available! This release includes several
+    bug fixes and enhancements. Read more about it in the
+    [blog announcement](https://developers.googleblog.com/announcing-adk-for-java-100-building-the-future-of-ai-agents-in-java/).
+    Upgrade to ADK Java 1.0.0 to take advantage of these enhancements
     and ensure optimal performance in your applications.
-
-??? danger "ADK Python Security Advisory: LiteLLM supply chain compromise"
-
-    Unauthorized code was identified in LiteLLM versions 1.82.7 and 1.82.8 on
-    PyPI on March 24, 2026. If you use ADK Python with the `eval` or
-    `extensions` extras, update to the latest version of ADK Python immediately.
-    If you installed or upgraded LiteLLM during this period, rotate all secrets
-    and credentials. For details and required actions, refer to the [ADK
-    security advisory](https://github.com/google/adk-python/issues/5005) and
-    [LiteLLM's Security Update: Suspected Supply Chain
-    Incident](https://docs.litellm.ai/blog/security-update-march-2026).
-
-
-??? warning "News: ADK Python 2.0 Alpha with graph-based workflows!"
-
-    ADK 2.0 Alpha release provides a huge orchestration upgrade for agents with
-    support for graph-based workflows. Download the Alpha release and
-    [try out ADK 2.0](/adk-docs/2.0/).
 
 <div id="centered-install-tabs" class="install-command-container" markdown="1">
 
@@ -86,10 +75,10 @@ from simple tasks to complex workflows.
 </div>
 
 <p style="text-align:center;">
-  <a href="/adk-docs/get-started/python/" class="md-button" style="margin:3px">Start with Python</a>
-  <a href="/adk-docs/get-started/typescript/" class="md-button" style="margin:3px">Start with TypeScript</a>
-  <a href="/adk-docs/get-started/go/" class="md-button" style="margin:3px">Start with Go</a>
-  <a href="/adk-docs/get-started/java/" class="md-button" style="margin:3px">Start with Java</a>
+  <a href="/get-started/python/" class="md-button" style="margin:3px">Start with Python</a>
+  <a href="/get-started/typescript/" class="md-button" style="margin:3px">Start with TypeScript</a>
+  <a href="/get-started/go/" class="md-button" style="margin:3px">Start with Go</a>
+  <a href="/get-started/java/" class="md-button" style="margin:3px">Start with Java</a>
 </p>
 
 ---
