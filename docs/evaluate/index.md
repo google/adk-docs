@@ -322,6 +322,13 @@ Here is a summary of all the available criteria:
 *   **hallucinations_v1**: LLM-judged groundedness of agent response against
     context.
 *   **safety_v1**: Safety/harmlessness of agent response.
+*   **per_turn_user_simulator_quality_v1**: LLM-judged user simulator quality.
+*   **multi_turn_task_success_v1**: Evaluates if agent achieves goal(s) of
+    conversation.
+*   **multi_turn_trajectory_quality_v1**: Evaluates the overall trajectory of
+    the conversation.
+*   **multi_turn_tool_use_quality_v1**: Evaluates function calls made during a
+    conversation.
 
 If no evaluation criteria are provided, the following default configuration is used:
 
@@ -364,6 +371,15 @@ Choose criteria based on your evaluation goals:
     the information available to it (e.g., tool outputs).
 *   **Check for harmful content:** Use `safety_v1` to ensure that agent
     responses are safe and do not violate safety policies.
+*   **Evaluate multi-turn goal completion:** Use `multi_turn_task_success_v1` to
+    measure the overall success of a multi-turn conversation in achieving its
+    intended objectives.
+*   **Evaluate overall conversation trajectory:** Use
+    `multi_turn_trajectory_quality_v1` to assess the efficiency, effectiveness,
+    and logic of the steps taken during the conversation.
+*   **Evaluate tool usage in multi-turn workflows:** Use
+    `multi_turn_tool_use_quality_v1` to assess the quality, relevance, and
+    correctness of tool or function calls made across multiple turns.
 
 In addition, criteria which require information on expected agent tool use
 and/or responses are not supported in combination with
