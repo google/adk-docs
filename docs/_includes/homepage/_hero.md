@@ -2,7 +2,7 @@
 <div class="hero-grid">
   <div class="hero-content">
     <h1>Build production agents, <span class="hero-punchline">not prototypes.</span></h1>
-    <p>ADK is the open-source agent development framework that lets you build, debug, deploy reliable AI agents at enterprise scale. Available in Python, Go, Java, and TypeScript.</p>
+    <p>ADK is the open-source agent development framework that lets you build, debug, and deploy reliable AI agents at enterprise scale. Available in Python, TypeScript, Go, and Java.</p>
     <div class="hero-actions">
       <a href="get-started/" class="btn btn-primary">Start building</a>
       <!-- <a href="skills/" class="btn btn-accent">Agent skills</a> -->

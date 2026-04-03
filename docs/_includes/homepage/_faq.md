@@ -32,7 +32,7 @@
 
   <details class="faq-item-arrow">
     <summary>When should I use an agent framework to work with generative AI?</summary>
-    <p>AI chat conversations can accomplish many tasks, but when you need to accomplish complex, multi-step processes, an agent framework lets you create a managed, repeatable task structure that can run hands off with minimal human input. Agent frameworks like ADK can automatically initiate tasks, make multiple iterative AI models requests, manage context, handle tool calls, record data, run parallel jobs, handle failures, and resume tasks if they get stopped.</p>
+    <p>AI chat conversations can accomplish many tasks, but when you need to accomplish complex, multi-step processes, an agent framework lets you create a managed, repeatable task structure that can run <em>hands-off</em> with minimal human input. Agent frameworks like ADK can automatically initiate tasks, make multiple iterative AI model requests, manage context, handle tool calls, record data, run parallel jobs, handle failures, and resume tasks if they get stopped.</p>
   </details>
 
   </div>

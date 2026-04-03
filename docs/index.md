@@ -31,9 +31,6 @@ hide:
 <!-- Eval Section -->
 {{% include '_includes/homepage/_eval.md' %}}
 
-<!-- Visual Debug Section -->
-{{% include '_includes/homepage/_visual-debug.md' %}}
-
 <!-- Ready to Build CTA Section -->
 {{% include '_includes/homepage/_build-cta.md' %}}
 
