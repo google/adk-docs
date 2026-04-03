@@ -19,30 +19,60 @@ or with one of many self-hosting options on Google Cloud:
 
 Create an API key in [Google AI Studio](https://aistudio.google.com/app/apikey).
 
-```python
-# Set GEMINI_API_KEY environment variable to your API key
-# export GEMINI_API_KEY="YOUR_API_KEY"
+=== "Python"
+    ```python
+    # Set GEMINI_API_KEY environment variable to your API key
+    # export GEMINI_API_KEY="YOUR_API_KEY"
+    
+    from google.adk.agents import LlmAgent
+    from google.adk.models import Gemini
+    
+    # Simple tool to try
+    def get_weather(location: str) -> str:
+        return f"Location: {location}. Weather: sunny, 76 degrees Fahrenheit, 8 mph wind."
+    
+    root_agent = LlmAgent(
+        model=Gemini(model="gemma-4-31b-it"),
+        name="weather_agent",
+        instruction="You are a helpful assistant that can provide current weather.",
+        tools=[get_weather]
+    )
+    ```
 
-from google.adk.agents import LlmAgent
-from google.adk.models import Gemini
+=== "Java"
+    ```java
+    // Set GEMINI_API_KEY environment variable to your API key
+    // export GEMINI_API_KEY="YOUR_API_KEY"
 
-# Simple tool to try
-def get_weather(location: str) -> str:
-    return f"Location: {location}. Weather: sunny, 76 degrees Fahrenheit, 8 mph wind."
+    import com.google.adk.agents.LlmAgent;
+    import com.google.adk.tools.Annotations.Schema;
+    import com.google.adk.tools.FunctionTool;
 
-root_agent = LlmAgent(
-    model=Gemini(model="gemma-4-31b-it"),
-    name="weather_agent",
-    instruction="You are a helpful assistant that can provide current weather.",
-    tools=[get_weather]
-)
-```
+    LlmAgent weatherAgent = LlmAgent.builder()
+        .model("gemma-4-31b-it")
+        .name("weather_agent")
+        .instruction("""
+            You are a helpful assistant that can provide current weather.
+        """)
+        .tools(FunctionTool.create(this, "getWeather")]    
+        .build();
+
+    @Schema(name = "getWeather", 
+            description = "Retrieve the weather forecast for a given location")
+    public Map<String, String> getWeather(
+        @Schema(name = "location",
+                description = "The location for the weather forecast")
+        String location) {
+        return Map.of("forecast", "Location: " + location 
+            + ". Weather: sunny, 76 degrees Fahrenheit, 8 mph wind.");
+    }
+    ```
 
 ## vLLM Example
 
 To access Gemma 4 endpoints in these services,
-you can use vLLM models through the [LiteLLM](/agents/models/litellm/) library
-for Python.
+you can use vLLM models through the [LiteLLM](/agents/models/litellm/) library for Python, 
+and through [LangChain4j](https://docs.langchain4j.dev/) for Java.
 
 The following example shows how to use a Gemma 4 vLLM endpoint with ADK agents.
 
@@ -61,54 +91,131 @@ The following example shows how to use a Gemma 4 vLLM endpoint with ADK agents.
 
 ### Code
 
-```python
-import subprocess
-from google.adk.agents import LlmAgent
-from google.adk.models.lite_llm import LiteLlm
-
-# --- Example Agent using a model hosted on a vLLM endpoint ---
-
-# Endpoint URL provided by your model deployment
-api_base_url = "https://your-vllm-endpoint.run.app/v1"
-
-# Model name as recognized by *your* vLLM endpoint configuration
-model_name_at_endpoint = "openai/google/gemma-4-31B-it"
-
-# Simple tool to try
-def get_weather(location: str) -> str:
-    return f"Location: {location}. Weather: sunny, 76 degrees Fahrenheit, 8 mph wind."
-
-# Authentication (Example: using gcloud identity token for a Cloud Run deployment)
-# Adapt this based on your endpoint's security
-try:
-    gcloud_token = subprocess.check_output(
-        ["gcloud", "auth", "print-identity-token", "-q"]
-    ).decode().strip()
-    auth_headers = {"Authorization": f"Bearer {gcloud_token}"}
-except Exception as e:
-    print(f"Warning: Could not get gcloud token - {e}.")
-    auth_headers = None # Or handle error appropriately
-
-root_agent = LlmAgent(
-    model=LiteLlm(
-        model=model_name_at_endpoint,
-        api_base=api_base_url,
-        # Pass authentication headers if needed
-        extra_headers=auth_headers
-        # Alternatively, if endpoint uses an API key:
-        # api_key="YOUR_ENDPOINT_API_KEY",
-        extra_body={
-            "chat_template_kwargs": {
-                "enable_thinking": True # Enable thinking
+=== "Python"
+    ```python
+    import subprocess
+    from google.adk.agents import LlmAgent
+    from google.adk.models.lite_llm import LiteLlm
+    
+    # --- Example Agent using a model hosted on a vLLM endpoint ---
+    
+    # Endpoint URL provided by your model deployment
+    api_base_url = "https://your-vllm-endpoint.run.app/v1"
+    
+    # Model name as recognized by *your* vLLM endpoint configuration
+    model_name_at_endpoint = "openai/google/gemma-4-31B-it"
+    
+    # Simple tool to try
+    def get_weather(location: str) -> str:
+        return f"Location: {location}. Weather: sunny, 76 degrees Fahrenheit, 8 mph wind."
+    
+    # Authentication (Example: using gcloud identity token for a Cloud Run deployment)
+    # Adapt this based on your endpoint's security
+    try:
+        gcloud_token = subprocess.check_output(
+            ["gcloud", "auth", "print-identity-token", "-q"]
+        ).decode().strip()
+        auth_headers = {"Authorization": f"Bearer {gcloud_token}"}
+    except Exception as e:
+        print(f"Warning: Could not get gcloud token - {e}.")
+        auth_headers = None # Or handle error appropriately
+    
+    root_agent = LlmAgent(
+        model=LiteLlm(
+            model=model_name_at_endpoint,
+            api_base=api_base_url,
+            # Pass authentication headers if needed
+            extra_headers=auth_headers
+            # Alternatively, if endpoint uses an API key:
+            # api_key="YOUR_ENDPOINT_API_KEY",
+            extra_body={
+                "chat_template_kwargs": {
+                    "enable_thinking": True # Enable thinking
+                },
+                "skip_special_tokens": False # Should be set to False
             },
-            "skip_special_tokens": False # Should be set to False
-        },
-    ),
-    name="weather_agent",
-    instruction="You are a helpful assistant that can provide current weather.",
-    tools=[get_weather] # Tools!
-)
-```
+        ),
+        name="weather_agent",
+        instruction="You are a helpful assistant that can provide current weather.",
+        tools=[get_weather] # Tools!
+    )
+    ```
+
+=== "Java"
+    To use Gemma hosted on vLLM, you must use an OpenAI compatible library.
+    LangChain4j offers an OpenAI dependency that you can add to your `pom.xml`:
+    ```xml
+    <!-- LangChain4j to ADK bridge -->
+    <dependency>
+        <groupId>com.google.adk</groupId>
+        <artifactId>google-adk-langchain4j</artifactId>
+        <version>${adk.version}</version>
+    </dependency>
+    <!-- Core LangChain4j library -->
+    <dependency>
+        <groupId>dev.langchain4j</groupId>
+        <artifactId>langchain4j-core</artifactId>
+        <version>${langchain4j.version}</version>
+    </dependency>
+    <!-- OpenAI compatible model -->
+    <dependency>
+        <groupId>dev.langchain4j</groupId>
+        <artifactId>langchain4j-open-ai</artifactId>
+        <version>${langchain4j.version}</version>
+    </dependency>
+    ```
+
+    Create an OpenAI compatible chat model (streaming or non-streaming),
+    wrap it with the `LangChain4j` wrapper,
+    then pass it to the `LlmAgent`:
+    ```java
+    import com.google.adk.agents.LlmAgent;
+    import com.google.adk.tools.Annotations.Schema;
+    import com.google.adk.tools.FunctionTool;
+    import dev.langchain4j.model.chat.StreamingChatModel;
+    import dev.langchain4j.model.openai.OpenAiStreamingChatModel;
+
+    // Endpoint URL provided by your model deployment
+    String apiBaseUrl = "https://your-vllm-endpoint.run.app/v1";
+
+    // Model name as recognized by *your* vLLM endpoint configuration
+    String gemmaModelName = "gg-hf-gg/gemma-4-31b-it";
+
+    // First, define an OpenAI compatible chat model with LangChain4j
+    StreamingChatModel model =
+        OpenAiStreamingChatModel.builder()
+            .modelName(gemmaModelName)
+            // If your endpoint requires an API key
+            // .apiKey("YOUR_ENDPOINT_API_KEY")
+            .baseUrl(apiBaseUrl)
+            .customParameters(
+                Map.of(
+                    "skip_special_tokens", false,
+                    "chat_template_kwargs", Map.of("enable_thinking", true)
+                )
+            )
+            .build();
+
+    // Configure the agent with the LangChain4j wrapper model
+    LlmAgent weatherAgent = LlmAgent.builder()
+        .model(new LangChain4j(model))
+        .name("weather_agent")
+        .instruction("""
+            You are a helpful assistant that can provide the current weather.
+        """)
+        .tools(FunctionTool.create(this, "getWeather")]    
+        .build();
+
+    @Schema(name = "getWeather", 
+            description = "Retrieve the weather forecast for a given location")
+    public Map<String, String> getWeather(
+        @Schema(name = "location",
+                description = "The location for the weather forecast")
+        String location) {
+        return Map.of("forecast", "Location: " + location 
+            + ". Weather: sunny, 76 degrees Fahrenheit, 8 mph wind.");
+    }
+    ```
 
 ## Build a food tour agent with Gemma 4, ADK, and Google Maps MCP
 This sample shows how to build a personalized food tour agent using Gemma 4, ADK, and the Google Maps MCP server. The agent takes a user’s dish photo or text description, a location, and an optional budget, then recommends places to eat and organizes them into a walking route.
@@ -120,7 +227,8 @@ This sample shows how to build a personalized food tour agent using Gemma 4, ADK
 - Enable [Google Maps API](https://console.cloud.google.com/maps-api/) on Google Cloud Console.
 - Create a [Google Maps Platform API key](https://console.cloud.google.com/maps-api/credentials).
   Set `MAPS_API_KEY` environment variable to your API key.
-- Install ADK and configure it in your Python environment.
+- Install ADK and configure it in your Python environment 
+  or configure the Java dependencies in your Java project.
 
 ### Project structure
 ```bash
