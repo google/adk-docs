@@ -38,7 +38,7 @@ jobs:
     outputs:
       sample_dirs: ${{ steps.get_dirs.outputs.sample_dirs }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
@@ -61,7 +61,7 @@ jobs:
       fail-fast: false # Important: Don't stop if one matrix configuration fails
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
