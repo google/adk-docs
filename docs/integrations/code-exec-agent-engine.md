@@ -1,7 +1,7 @@
 ---
 catalog_title: Code Execution Tool with Agent Engine
 catalog_description: Run AI-generated code in a secure and scalable GKE environment
-catalog_icon: /adk-docs/integrations/assets/vertex-ai.png
+catalog_icon: /integrations/assets/vertex-ai.png
 catalog_tags: ["code", "google"]
 ---
 
@@ -15,8 +15,8 @@ The Agent Engine Code Execution ADK Tool provides a low-latency, highly
 efficient method for running AI-generated code using the
 [Google Cloud Agent Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview)
 service. This tool is designed for fast execution, tailored for agentic workflows,
-and uses sandboxed environments for improved security. The Code Execution tool 
-allows code and data to persist over multiple requests, enabling complex, 
+and uses sandboxed environments for improved security. The Code Execution tool
+allows code and data to persist over multiple requests, enabling complex,
 multi-step coding tasks, including:
 
 -   **Code development and debugging:** Create agent tasks that test and
@@ -46,7 +46,7 @@ To use the Code Execution tool with your ADK agent:
 1.  Create an ADK agent with settings to access the Google Cloud project
     where you created the sandbox environment.
 1.  The following code example shows an agent configured to use the Code
-    Executor tool. Replace `SANDBOX_RESOURCE_NAME` with the sandbox environment 
+    Executor tool. Replace `SANDBOX_RESOURCE_NAME` with the sandbox environment
     resource name you created.
 
 ```python
@@ -67,7 +67,7 @@ For details on the expected format of the `sandbox_resource_name` value, and the
 alternative `agent_engine_resource_name` parameter, see [Configuration
 parameters](#config-parameters). For a more advanced example, including
 recommended system instructions for the tool, see the [Advanced
-example](#advanced-example) or the full 
+example](#advanced-example) or the full
 [agent code example](https://github.com/google/adk-python/tree/main/contributing/samples/agent_engine_code_execution).
 
 ## How it works
@@ -126,7 +126,7 @@ one of the following resource parameters:
 string format is as follows:
     ```
     projects/{$PROJECT_ID}/locations/{$LOCATION_ID}/reasoningEngines/{$REASONING_ENGINE_ID}/sandboxEnvironments/{$SANDBOX_ENVIRONMENT_ID}
-    
+
     # Example:
     projects/my-vertex-agent-project/locations/us-central1/reasoningEngines/6842888880301111172/sandboxEnvironments/6545148888889161728
     ```
@@ -134,7 +134,7 @@ string format is as follows:
 creates a sandbox environment. The expected string format is as follows:
     ```
     projects/{$PROJECT_ID}/locations/{$LOCATION_ID}/reasoningEngines/{$REASONING_ENGINE_ID}
-    
+
     # Example:
     projects/my-vertex-agent-project/locations/us-central1/reasoningEngines/6842888880301111172
     ```

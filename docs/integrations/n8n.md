@@ -1,7 +1,7 @@
 ---
 catalog_title: n8n
 catalog_description: Trigger automated workflows, connect apps, and process data
-catalog_icon: /adk-docs/integrations/assets/n8n.png
+catalog_icon: /integrations/assets/n8n.png
 catalog_tags: ["mcp", "connectors"]
 ---
 
@@ -97,7 +97,7 @@ for detailed setup instructions.
         ```python
         from google.adk.agents import Agent
         from google.adk.tools.mcp_tool import McpToolset
-        from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPServerParams
+        from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPConnectionParams
 
         N8N_INSTANCE_URL = "https://localhost:5678"
         N8N_MCP_TOKEN = "YOUR_N8N_MCP_TOKEN"
@@ -108,7 +108,7 @@ for detailed setup instructions.
             instruction="Help users manage and execute workflows in n8n",
             tools=[
                 McpToolset(
-                    connection_params=StreamableHTTPServerParams(
+                    connection_params=StreamableHTTPConnectionParams(
                         url=f"{N8N_INSTANCE_URL}/mcp-server/http",
                         headers={
                             "Authorization": f"Bearer {N8N_MCP_TOKEN}",

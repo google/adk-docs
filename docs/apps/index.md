@@ -1,23 +1,23 @@
 # Apps: workflow management class
 
 <div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.14.0</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.14.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
 The ***App*** class is a top-level container for an entire Agent Development Kit
 (ADK) agent workflow. It is designed to manage the lifecycle, configuration, and
 state for a collection of agents grouped by a ***root agent***. The **App** class
 separates the concerns of an agent workflow's overall operational infrastructure
-from individual agents' task-oriented reasoning. 
+from individual agents' task-oriented reasoning.
 
 Defining an ***App*** object in your ADK workflow is optional and changes how you
 organize your agent code and run your agents. From a practical perspective, you
 use the ***App*** class to configure the following features for your agent workflow:
 
-*   [**Context caching**](/adk-docs/context/caching/)
-*   [**Context compression**](/adk-docs/context/compaction/)
-*   [**Agent resume**](/adk-docs/runtime/resume/)
-*   [**Plugins**](/adk-docs/plugins/)
+*   [**Context caching**](/context/caching/)
+*   [**Context compression**](/context/compaction/)
+*   [**Agent resume**](/runtime/resume/)
+*   [**Plugins**](/plugins/)
 
 This guide explains how to use the App class for configuring and managing your
 ADK agent workflows.
@@ -44,7 +44,7 @@ building complex agentic systems:
 
 The ***App*** class is used as the primary container of your agent workflow and
 contains the root agent of the project. The ***root agent*** is the container
-for the primary controller agent and any additional sub-agents. 
+for the primary controller agent and any additional sub-agents.
 
 ### Define app with root agent
 
@@ -53,68 +53,129 @@ Create a ***root agent*** for your workflow by creating a subclass from the
 the ***root agent*** object and optional features, as shown in the following
 sample code:
 
-```python title="agent.py"
-from google.adk.agents.llm_agent import Agent
-from google.adk.apps import App
+=== "Python"
 
-root_agent = Agent(
-    model='gemini-2.5-flash',
-    name='greeter_agent',
-    description='An agent that provides a friendly greeting.',
-    instruction='Reply with Hello, World!',
-)
+    ```python title="agent.py"
+    from google.adk.agents.llm_agent import Agent
+    from google.adk.apps import App
 
-app = App(
-    name="agents",
-    root_agent=root_agent,
-    # Optionally include App-level features:
-    # plugins, context_cache_config, resumability_config
-)
-```
+    root_agent = Agent(
+        model='gemini-2.5-flash',
+        name='greeter_agent',
+        description='An agent that provides a friendly greeting.',
+        instruction='Reply with Hello, World!',
+    )
+
+    app = App(
+        name="agents",
+        root_agent=root_agent,
+        # Optionally include App-level features:
+        # plugins, context_cache_config, resumability_config
+    )
+    ```
+
+=== "Java"
+
+    ```java title="AgentConfiguration.java"
+    import com.google.adk.agents.LlmAgent;
+    import com.google.adk.apps.App;
+
+    LlmAgent rootAgent = LlmAgent.builder()
+        .model("gemini-2.5-flash")
+        .name("greeter_agent")
+        .description("An agent that provides a friendly greeting.")
+        .instruction("Reply with Hello, World!")
+        .build();
+
+    App app = App.builder()
+        .name("agents")
+        .rootAgent(rootAgent)
+        // Optionally include App-level features:
+        // .plugins(plugins)
+        // .contextCacheConfig(contextCacheConfig)
+        // .eventsCompactionConfig(eventsCompactionConfig)
+        .build();
+    ```
 
 !!! tip "Recommended: Use `app` variable name"
 
     In your agent project code, set your ***App*** object to the variable name
-    `app` so it is compatible with the ADK command line interface runner tools. 
+    `app` so it is compatible with the ADK command line interface runner tools.
 
 ### Run your App agent
 
 You can use the ***Runner*** class to run your agent workflow using the
 `app` parameter, as shown in the following code sample:
 
-```python title="main.py"
-import asyncio
-from dotenv import load_dotenv
-from google.adk.runners import InMemoryRunner
-from agent import app # import code from agent.py
+=== "Python"
 
-load_dotenv() # load API keys and settings
-# Set a Runner using the imported application object
-runner = InMemoryRunner(app=app)
+    ```python title="main.py"
+    import asyncio
+    from dotenv import load_dotenv
+    from google.adk.runners import InMemoryRunner
+    from agent import app # import code from agent.py
 
-async def main():
-    try:  # run_debug() requires ADK Python 1.18 or higher:
-        response = await runner.run_debug("Hello there!")
-        
-    except Exception as e:
-        print(f"An error occurred during agent execution: {e}")
+    load_dotenv() # load API keys and settings
+    # Set a Runner using the imported application object
+    runner = InMemoryRunner(app=app)
 
-if __name__ == "__main__":
-    asyncio.run(main())
+    async def main():
+        try:  # run_debug() requires ADK Python 1.18 or higher:
+            response = await runner.run_debug("Hello there!")
 
-```
+        except Exception as e:
+            print(f"An error occurred during agent execution: {e}")
+
+    if __name__ == "__main__":
+        asyncio.run(main())
+
+    ```
+
+=== "Java"
+
+    ```java title="AppMain.java"
+    import com.google.adk.agents.Content;
+    import com.google.adk.runner.Runner;
+
+    public class AppMain {
+
+      public static void main(String[] args) throws Exception {
+        // Set a Runner using the application object
+
+        App app = ...;
+
+        Runner runner = Runner.builder()
+            .app(app) // Use the 'app' object defined previously
+            .build();
+
+        runner.runAsync("user", "session-1", Content.fromParts(Part.fromText("Hello there!")))
+            .filter(event -> event.finalResponse() && event.content().isPresent())
+            .blockingSubscribe(event -> System.out.println("Response: " + event.stringifyContent()));
+      }
+    }
+    ```
 
 !!! note "Version requirement for `Runner.run_debug()` "
 
     The `Runner.run_debug()` command requires ADK Python v1.18.0 or higher.
     You can also use `Runner.run()`, which requires more setup code. For
-    more details, see the 
+    more details, see the
 
-Run your App agent with the `main.py` code using the following command:
+=== "Python"
 
-```console
-python main.py
-```
+    Run your App agent with the `main.py` code using the following command:
+
+    ```console
+    python main.py
+    ```
+
+=== "Java"
+
+    Run your App agent with the `AppMain.java` code using your build tool (e.g. Gradle `application` plugin):
+
+    ```console
+    ./gradlew run
+    ```
 
 ## Next steps
 

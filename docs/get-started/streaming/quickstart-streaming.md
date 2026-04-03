@@ -58,7 +58,7 @@ root_agent = Agent(
    name="basic_search_agent",
    # The Large Language Model (LLM) that agent will use.
    # Please fill in the latest model id that supports live from
-   # https://google.github.io/adk-docs/get-started/streaming/quickstart-streaming/#supported-models
+   # https://adk.dev/get-started/streaming/quickstart-streaming/#supported-models
    model="...",
    # A short description of the agent's purpose.
    description="Agent to answer questions using Google Search.",

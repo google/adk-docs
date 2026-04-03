@@ -1,7 +1,7 @@
 ---
 catalog_title: MCP Toolbox for Databases
 catalog_description: Connect over 30 different data sources to your agents
-catalog_icon: /adk-docs/integrations/assets/mcp-toolbox-for-databases.png
+catalog_icon: /integrations/assets/mcp-toolbox-for-databases.png
 catalog_tags: ["mcp","data","google"]
 ---
 
@@ -24,7 +24,7 @@ information on
 MCP Toolbox, see the
 [documentation](https://googleapis.github.io/genai-toolbox/getting-started/introduction/).
 
-![MCP Toolbox for Databases](/adk-docs/integrations/assets/mcp-db-toolbox.png)
+![MCP Toolbox for Databases](/integrations/assets/mcp-db-toolbox.png)
 
 ## Supported Data Sources
 

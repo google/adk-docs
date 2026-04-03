@@ -150,7 +150,7 @@ Before finalizing any code replacement, verify:
 *   **Troubleshooting:**
     *   Check `/adk-cheatsheet` first — it covers most common patterns
     *   Search the installed ADK package with Glob/Grep/Read (find it with `python -c "import google.adk; print(google.adk.__path__[0])"` — use `uv run python` if using uv)
-    *   For ADK docs, see `references/docs-index.md` in the cheatsheet skill for WebFetch URLs
+    *   For ADK docs index, use `curl https://adk.dev/llms.txt`
     *   For framework questions or GCP products, check official documentation
     *   When encountering persistent errors, a targeted Google Search often finds solutions faster
 

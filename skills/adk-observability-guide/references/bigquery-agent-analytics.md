@@ -25,4 +25,4 @@ Infrastructure (BigQuery dataset, GCS offloading) is provisioned automatically b
 - Distributed tracing via OpenTelemetry span context
 - SQL-queryable event log for all agent interactions
 
-For full schema, SQL query examples, and Looker Studio setup, fetch `https://google.github.io/adk-docs/integrations/bigquery-agent-analytics/index.md`.
+For full schema, SQL query examples, and Looker Studio setup, fetch `https://adk.dev/integrations/bigquery-agent-analytics/index.md`.

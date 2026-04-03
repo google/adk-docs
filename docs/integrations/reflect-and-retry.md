@@ -1,18 +1,18 @@
 ---
 catalog_title: Reflect and Retry Plugin
 catalog_description: Automatically retry tool calls that fail
-catalog_icon: /adk-docs/integrations/assets/adk.png
-catalog_tags: ["google"]
+catalog_icon: /integrations/assets/adk.png
+catalog_tags: ["google", "resilience"]
 ---
 
 # Reflect and Retry plugin for ADK
 
 <div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.16.0</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.16.0</span><span class="lst-go">Go v0.5.0</span>
 </div>
 
 The Reflect and Retry plugin can help your agent recover from error
-responses from ADK [Tools](/adk-docs/tools-custom/) and automatically retry the
+responses from ADK [Tools](/tools-custom/) and automatically retry the
 tool request. This plugin intercepts tool failures, provides structured guidance
 to the AI model for reflection and correction, and retries the operation up to a
 configurable limit. This plugin can help you build more resilience into your
@@ -28,18 +28,44 @@ agent workflows, including the following capabilities:
 Add this plugin to your ADK workflow by adding it to the plugins setting of your
 ADK project's App object, as shown below:
 
-```python
-from google.adk.apps.app import App
-from google.adk.plugins import ReflectAndRetryToolPlugin
 
-app = App(
-    name="my_app",
-    root_agent=root_agent,
-    plugins=[
-        ReflectAndRetryToolPlugin(max_retries=3),
-    ],
-)
-```
+=== "Python"
+
+    ```python
+    from google.adk.apps.app import App
+    from google.adk.plugins import ReflectAndRetryToolPlugin
+
+    app = App(
+        name="my_app",
+        root_agent=root_agent,
+        plugins=[
+            ReflectAndRetryToolPlugin(max_retries=3),
+        ],
+    )
+    ```
+
+=== "Go"
+
+    ```go
+    import (
+    	"google.golang.org/adk/plugin/retryandreflect"
+    	"google.golang.org/adk/runner"
+    )
+
+    // ... create rootAgent and sessionService ...
+
+    r, err := runner.New(runner.Config{
+    	AppName:        "my_app",
+    	Agent:          rootAgent,
+    	SessionService: sessionService,
+    	PluginConfig: runner.PluginConfig{
+    		Plugins: []*plugin.Plugin{
+    			retryandreflect.MustNew(retryandreflect.WithMaxRetries(3)),
+    		},
+    	},
+    })
+    ```
+
 
 With this configuration, if any tool called by an agent returns an error, the
 request is updated and tried again, up to a maximum of 3 attempts, per tool.
@@ -81,7 +107,7 @@ error_handling_plugin = CustomRetryPlugin(max_retries=5)
 
 ## Next steps
 
-For complete code samples using the Reflect and Retry plugin, see the following: 
+For complete code samples using the Reflect and Retry plugin, see the following:
 
 *   [Basic](https://github.com/google/adk-python/tree/main/contributing/samples/plugin_reflect_tool_retry/basic)
     code sample

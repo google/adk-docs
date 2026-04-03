@@ -1,7 +1,7 @@
 ---
 catalog_title: Pinecone
 catalog_description: Store data, perform semantic search, and rerank results
-catalog_icon: /adk-docs/integrations/assets/pinecone.png
+catalog_icon: /integrations/assets/pinecone.png
 catalog_tags: ["data","mcp"]
 ---
 

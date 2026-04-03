@@ -37,7 +37,7 @@ my_agent/
 ### Define the agent code
 
 Create the code for a basic agent that uses the built-in
-[Google Search tool](/adk-docs/tools/built-in-tools/#google-search). Add the
+[Google Search tool](/tools/built-in-tools/#google-search). Add the
 following code to the `my_agent/agent.go` file in your project directory:
 
 ```go title="my_agent/agent.go"
@@ -61,7 +61,7 @@ import (
 func main() {
 	ctx := context.Background()
 
-	model, err := gemini.NewModel(ctx, "gemini-3-pro-preview", &genai.ClientConfig{
+	model, err := gemini.NewModel(ctx, "gemini-2.5-flash", &genai.ClientConfig{
 		APIKey: os.Getenv("GOOGLE_API_KEY"),
 	})
 	if err != nil {
@@ -126,7 +126,7 @@ your project to set environment variables:
 ??? tip "Using other AI models with ADK"
     ADK supports the use of many generative AI models. For more
     information on configuring other models in ADK agents, see
-    [Models & Authentication](/adk-docs/agents/models).
+    [Models & Authentication](/agents/models).
 
 
 ## Run your agent
@@ -145,7 +145,7 @@ Run your agent using the following Go command:
 go run agent.go
 ```
 
-![adk-run.png](/adk-docs/assets/adk-run.png)
+![adk-run.png](/assets/adk-run.png)
 
 ### Run with web interface
 
@@ -160,7 +160,7 @@ This command starts a web server with a chat interface for your agent. You can
 access the web interface at (http://localhost:8080). Select your agent at the
 upper left corner and type a request.
 
-![adk-web-dev-ui-chat.png](/adk-docs/assets/adk-web-dev-ui-chat.png)
+![adk-web-dev-ui-chat.png](/assets/adk-web-dev-ui-chat.png)
 
 !!! warning "Caution: ADK Web for development only"
 
@@ -172,4 +172,4 @@ upper left corner and type a request.
 Now that you have ADK installed and your first agent running, try building
 your own agent with our build guides:
 
-*  [Build your agent](/adk-docs/tutorials/)
+*  [Build your agent](/tutorials/)

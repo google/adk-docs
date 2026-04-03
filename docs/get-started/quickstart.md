@@ -63,6 +63,28 @@ application entirely on your machine and is recommended for internal development
 
     To install ADK and setup the environment, proceed to the following steps.
 
+=== "Go"
+
+    ## Create a new Go module
+
+    If you are starting a new project, you can create a new Go module:
+
+    ```bash
+    mkdir my-adk-agent
+    cd my-adk-agent
+    go mod init example.com/my-agent
+    ```
+
+    ## Install ADK
+
+    To add the ADK to your project, run the following command:
+
+    ```bash
+    go get google.golang.org/adk
+    ```
+
+    This will add the ADK as a dependency to your `go.mod` file.
+
 ## 2. Create Agent Project { #create-agent-project }
 
 ### Project structure
@@ -216,6 +238,51 @@ application entirely on your machine and is recommended for internal development
     --8<-- "examples/java/cloud-run/src/main/java/agents/multitool/MultiToolAgent.java:full_code"
     ```
 
+=== "Go"
+
+    You will need to create the following project structure:
+
+    ```console
+    my-adk-agent/
+        agent.go
+        .env
+        go.mod
+    ```
+
+    ### `agent.go`
+
+    Create an `agent.go` file in your project folder:
+
+    === "OS X &amp; Linux"
+        ```bash
+        touch agent.go
+        ```
+
+    === "Windows"
+        ```console
+        type nul > agent.go
+        ```
+
+    Copy and paste the following code into `agent.go`:
+
+    ```go title="agent.go"
+    --8<-- "examples/go/snippets/get-started/multi_tool_agent/main.go:full_code"
+    ```
+
+    ### `.env`
+
+    Create a `.env` file in the same folder:
+
+    === "OS X &amp; Linux"
+        ```bash
+        touch .env
+        ```
+
+    === "Windows"
+        ```console
+        type nul > .env
+        ```
+
 ![intro_components.png](../assets/quickstart-flow-tool.png)
 
 ## 3. Set up the model { #set-up-the-model }
@@ -227,7 +294,7 @@ valid authentication, the LLM service will deny the agent's requests, and the
 agent will be unable to function.
 
 !!!tip "Model Authentication guide"
-    For a detailed guide on authenticating to different models, see the [Authentication guide](/adk-docs/agents/models/google-gemini#google-ai-studio).
+    For a detailed guide on authenticating to different models, see the [Authentication guide](/agents/models/google-gemini#google-ai-studio).
     This is a critical step to ensure your agent can make calls to the LLM service.
 
 === "Gemini - Google AI Studio"
@@ -249,9 +316,16 @@ agent will be unable to function.
 
         When using TypeScript, the `.env` file is automatically loaded by the `import 'dotenv/config';` line at the top of your `agent.ts` file.
 
-        ```env title=""multi_tool_agent/.env"
+        ```env title="multi_tool_agent/.env"
         GOOGLE_GENAI_USE_VERTEXAI=FALSE
         GOOGLE_GENAI_API_KEY=PASTE_YOUR_ACTUAL_API_KEY_HERE
+        ```
+
+        When using Go, define environment variables in your terminal or use a `.env` file:
+
+        ```bash title="terminal"
+        export GOOGLE_GENAI_USE_VERTEXAI=FALSE
+        export GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_API_KEY_HERE
         ```
 
     3. Replace `PASTE_YOUR_ACTUAL_API_KEY_HERE` with your actual `API KEY`.
@@ -285,6 +359,14 @@ agent will be unable to function.
         GOOGLE_CLOUD_LOCATION=LOCATION
         ```
 
+        When using Go, define environment variables in your terminal or use a `.env` file:
+
+        ```bash title="terminal"
+        export GOOGLE_GENAI_USE_VERTEXAI=TRUE
+        export GOOGLE_CLOUD_PROJECT=YOUR_PROJECT_ID
+        export GOOGLE_CLOUD_LOCATION=LOCATION
+        ```
+
 === "Gemini - Google Cloud Vertex AI with Express Mode"
     1. You can sign up for a free Google Cloud project and use Gemini for free with an eligible account!
         * Set up a
@@ -310,6 +392,13 @@ agent will be unable to function.
         ```env title=".env"
         GOOGLE_GENAI_USE_VERTEXAI=TRUE
         GOOGLE_GENAI_API_KEY=PASTE_YOUR_ACTUAL_EXPRESS_MODE_API_KEY_HERE
+        ```
+
+        When using Go, define environment variables in your terminal or use a `.env` file:
+
+        ```bash title="terminal"
+        export GOOGLE_GENAI_USE_VERTEXAI=TRUE
+        export GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_EXPRESS_MODE_API_KEY_HERE
         ```
 
 ## 4. Run Your Agent { #run-your-agent }
@@ -434,7 +523,7 @@ agent will be unable to function.
         ![adk-api-server.png](../assets/adk-api-server.png)
 
         To learn how to use `adk api_server` for testing, refer to the
-        [documentation on using the API server](/adk-docs/runtime/api-server/).
+        [documentation on using the API server](/runtime/api-server/).
 
 === "TypeScript"
 
@@ -504,7 +593,46 @@ agent will be unable to function.
         ![adk-api-server.png](../assets/adk-api-server.png)
 
         To learn how to use `api_server` for testing, refer to the
-        [documentation on testing](/adk-docs/runtime/api-server/).
+        [documentation on testing](/runtime/api-server/).
+
+=== "Go"
+
+    Using the terminal, navigate to your agent project directory:
+
+    ```console
+    my-adk-agent/      <-- navigate to this directory
+        agent.go
+        .env
+        go.mod
+    ```
+
+    There are multiple ways to interact with your agent:
+
+    === "Dev UI (web)"
+
+        Run the following command to launch the **dev UI**. You must specify which sub-launchers to activate (e.g., `webui`, `api`).
+
+        ```bash
+        go run agent.go web webui api
+        ```
+
+        **Step 1:** Open the URL provided (usually `http://localhost:8080`) directly in your browser.
+
+        **Step 2.** In the top-left corner of the UI, select your agent from the dropdown. It should be "weather_time_agent".
+
+        **Step 3.** Now you can chat with your agent using the textbox.
+
+    === "Terminal (console)"
+
+        Run the following command to chat with your agent in the terminal.
+
+        ```bash
+        go run agent.go console
+        ```
+
+        **Note:** If `console` is the first sublauncher in your code (as it is with `full.NewLauncher()`), you can also just run `go run agent.go`.
+
+        To exit, use Cmd/Ctrl+C.
 
 === "Java"
 

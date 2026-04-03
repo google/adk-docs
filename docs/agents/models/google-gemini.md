@@ -7,10 +7,10 @@
 ADK supports the Google Gemini family of generative AI models that provide a
 powerful set of models with a wide range of features. ADK provides support for many
 Gemini features, including
-[Code Execution](/adk-docs/tools/gemini-api/code-execution/),
-[Google Search](/adk-docs/tools/gemini-api/google-search/),
-[Context caching](/adk-docs/context/caching/),
-[Computer use](/adk-docs/tools/gemini-api/computer-use/)
+[Code Execution](/tools/gemini-api/code-execution/),
+[Google Search](/tools/gemini-api/google-search/),
+[Context caching](/context/caching/),
+[Computer use](/tools/gemini-api/computer-use/)
 and the [Interactions API](#interactions-api).
 
 ## Get started
@@ -151,7 +151,7 @@ For scalable and production-oriented use cases, Vertex AI is the recommended pla
 1.  **Sign up for Express Mode** to get your API key.
 2.  **Set environment variables:**
     ```shell
-    export GOOGLE_API_KEY="PASTE_YOUR_EXPRESS_MODE_API_KEY_HERE"
+    export GOOGLE_GENAI_API_KEY="PASTE_YOUR_EXPRESS_MODE_API_KEY_HERE"
     export GOOGLE_GENAI_USE_VERTEXAI=TRUE
     ```
 
@@ -200,37 +200,89 @@ To mitigate this, you can do one of the following:
     You would use this option if you are instantiating this model adapter by
     yourself.
 
-    ```python
-    root_agent = Agent(
-        model='gemini-2.5-flash',
-        ...
-        generate_content_config=types.GenerateContentConfig(
-            ...
-            http_options=types.HttpOptions(
-                ...
-                retry_options=types.HttpRetryOptions(initial_delay=1, attempts=2),
-                ...
-            ),
-            ...
-        )
-    ```
+    === "Python"
+
+        ```python
+        root_agent = Agent(
+            model='gemini-2.5-flash',
+            # ...
+            generate_content_config=types.GenerateContentConfig(
+                # ...
+                http_options=types.HttpOptions(
+                    # ...
+                    retry_options=types.HttpRetryOptions(initial_delay=1, attempts=2),
+                    # ...
+                ),
+                # ...
+            )
+        ```
+
+    === "Java"
+
+        ```java
+        import com.google.adk.agents.LlmAgent;
+        import com.google.genai.types.GenerateContentConfig;
+        import com.google.genai.types.HttpOptions;
+        import com.google.genai.types.HttpRetryOptions;
+
+        // ...
+
+        LlmAgent rootAgent = LlmAgent.builder()
+            .model("gemini-2.5-flash")
+            // ...
+            .generateContentConfig(GenerateContentConfig.builder()
+                // ...
+                .httpOptions(HttpOptions.builder()
+                    // ...
+                    .retryOptions(HttpRetryOptions.builder().initialDelay(1.0).attempts(2).build())
+                    // ...
+                    .build())
+                // ...
+                .build())
+            .build();
+        ```
 
     **Option 2:** Retry options on this model adapter.
 
     You would use this option if you were instantiating the instance of adapter
     by yourself.
 
-    ```python
-    from google.genai import types
+    === "Python"
 
-    # ...
+        ```python
+        from google.genai import types
 
-    agent = Agent(
-        model=Gemini(
-        retry_options=types.HttpRetryOptions(initial_delay=1, attempts=2),
+        # ...
+
+        agent = Agent(
+            model=Gemini(
+            retry_options=types.HttpRetryOptions(initial_delay=1, attempts=2),
+            )
         )
-    )
-    ```
+        ```
+
+    === "Java"
+
+        ```java
+        import com.google.adk.agents.LlmAgent;
+        import com.google.adk.models.Gemini;
+        import com.google.genai.Client;
+        import com.google.genai.types.HttpOptions;
+        import com.google.genai.types.HttpRetryOptions;
+
+        // ...
+
+        LlmAgent agent = LlmAgent.builder()
+            .model(Gemini.builder()
+                .modelName("gemini-2.5-flash")
+                .apiClient(Client.builder()
+                    .httpOptions(HttpOptions.builder()
+                        .retryOptions(HttpRetryOptions.builder().initialDelay(1.0).attempts(2).build())
+                        .build())
+                    .build())
+                .build())
+            .build();
+        ```
 
 ## Gemini Interactions API {#interactions-api}
 
@@ -248,23 +300,45 @@ You can enable the Interactions API by setting the `use_interactions_api=True`
 parameter in the Gemini model configuration, as shown in the following code
 snippet:
 
-```python
-from google.adk.agents.llm_agent import Agent
-from google.adk.models.google_llm import Gemini
-from google.adk.tools.google_search_tool import GoogleSearchTool
+=== "Python"
 
-root_agent = Agent(
-    model=Gemini(
-        model="gemini-2.5-flash",
-        use_interactions_api=True,  # Enable Interactions API
-    ),
-    name="interactions_test_agent",
-    tools=[
-        GoogleSearchTool(bypass_multi_tools_limit=True),  # Converted to function tool
-        get_current_weather,  # Custom function tool
-    ],
-)
-```
+    ```python
+    from google.adk.agents.llm_agent import Agent
+    from google.adk.models.google_llm import Gemini
+    from google.adk.tools.google_search_tool import GoogleSearchTool
+
+    root_agent = Agent(
+        model=Gemini(
+            model="gemini-2.5-flash",
+            use_interactions_api=True,  # Enable Interactions API
+        ),
+        name="interactions_test_agent",
+        tools=[
+            GoogleSearchTool(bypass_multi_tools_limit=True),  # Converted to function tool
+            get_current_weather,  # Custom function tool
+        ],
+    )
+    ```
+
+=== "Java"
+
+    ```java
+    import com.google.adk.agents.LlmAgent;
+    import com.google.adk.models.Gemini;
+    import com.google.adk.tools.GoogleSearchTool;
+
+    // Note: Interactions API support in Java ADK is currently under development.
+    LlmAgent rootAgent = LlmAgent.builder()
+        .model(Gemini.builder()
+            .modelName("gemini-2.5-flash")
+            .build())
+        .name("interactions_test_agent")
+        .tools(
+            GoogleSearchTool.INSTANCE, // Search tool
+            getCurrentWeather // Custom function tool
+        )
+        .build();
+    ```
 
 For a complete code sample, see the
 [Interactions API sample](https://github.com/google/adk-python/tree/main/contributing/samples/interactions_api).
@@ -273,15 +347,25 @@ For a complete code sample, see the
 
 The Interactions API **does not** support mixing custom function calling tools with
 built-in tools, such as the
-[Google Search](/adk-docs/tools/built-in-tools/#google-search),
+[Google Search](/tools/built-in-tools/#google-search),
 tool, within the same agent. You can work around this limitation by configuring the
 the built-in tool to operate as a custom tool using the `bypass_multi_tools_limit`
 parameter:
 
-```python
-# Use bypass_multi_tools_limit=True to convert google_search to a function tool
-GoogleSearchTool(bypass_multi_tools_limit=True)
-```
+=== "Python"
+
+    ```python
+    # Use bypass_multi_tools_limit=True to convert google_search to a function tool
+    GoogleSearchTool(bypass_multi_tools_limit=True)
+    ```
+
+=== "Java"
+
+    ```java
+    // Note: bypassMultiToolsLimit is Python-specific.
+    // In Java, simply use the tool instance.
+    GoogleSearchTool.INSTANCE;
+    ```
 
 In this example, this option converts the built-in google_search to a function
 calling tool (via GoogleSearchAgentTool), which allows it to work alongside
