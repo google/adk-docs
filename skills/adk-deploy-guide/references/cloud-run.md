@@ -1,6 +1,6 @@
 # Cloud Run Infrastructure
 
-> **Assumes `/adk-scaffold` scaffolding.** For non-scaffolded projects, fetch `https://google.github.io/adk-docs/deploy/cloud-run/index.md`.
+> **Assumes `/adk-scaffold` scaffolding.** For non-scaffolded projects, fetch `https://adk.dev/deploy/cloud-run/index.md`.
 
 ## Scaling & Resource Defaults
 

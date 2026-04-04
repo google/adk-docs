@@ -1,6 +1,6 @@
 # Project information
 site_name: Agent Development Kit (ADK)
-site_url: https://google.github.io/adk-docs
+site_url: https://adk.dev
 site_description: >-
   Build powerful multi-agent systems with Agent Development Kit (ADK)
 site_dir: site
@@ -213,6 +213,7 @@ plugins:
         'observability/weave.md': 'integrations/weave.md'
         'observability/agentops.md': 'integrations/agentops.md'
         'observability/arize-ax.md': 'integrations/arize-ax.md'
+        'contributing-guide.md': 'community/contributing-guide.md'
 
   - llmstxt:
       markdown_description: An open-source, code-first toolkit for building, evaluating, and deploying sophisticated AI agents with flexibility and control.
@@ -249,9 +250,8 @@ plugins:
         Reference:
         - release-notes.md
         - api-reference/index.md
-        - api-reference/rest/index.md
-        - community.md
-        - contributing-guide.md
+        Community:
+        - community/*.md
 
 # Navigation
 nav:
@@ -289,6 +289,7 @@ nav:
     - Models for Agents:
       - agents/models/index.md
       - Gemini: agents/models/google-gemini.md
+      - Gemma: agents/models/google-gemma.md
       - Claude: agents/models/anthropic.md
       - Vertex AI hosted: agents/models/vertex.md
       - Apigee AI Gateway: agents/models/apigee.md
@@ -335,6 +336,8 @@ nav:
       - evaluate/index.md
       - Criteria: evaluate/criteria.md
       - User Simulation: evaluate/user-sim.md
+      - Custom Metrics: evaluate/custom_metrics.md
+      - Optimization: optimize/index.md
     - Safety and Security:
       - safety/index.md
   - Components:
@@ -371,9 +374,11 @@ nav:
       - A2A Quickstart (Exposing):
         - Python: a2a/quickstart-exposing.md
         - Go: a2a/quickstart-exposing-go.md
+        - Java: a2a/quickstart-exposing-java.md
       - A2A Quickstart (Consuming):
         - Python: a2a/quickstart-consuming.md
         - Go: a2a/quickstart-consuming-go.md
+        - Java: a2a/quickstart-consuming-java.md
       - A2A Extension: a2a/a2a-extension.md
     - Gemini Live API Toolkit:
       - streaming/index.md
@@ -400,10 +405,11 @@ nav:
       - Java ADK: api-reference/java/index.html
       - CLI Reference: api-reference/cli/index.html
       - Agent Config Reference: api-reference/agentconfig/index.html
-      - REST API: api-reference/rest/index.md
-    - Community Resources: community.md
-    - Contributing Guide: contributing-guide.md
+      - REST API: api-reference/rest/index.html
     - Release Notes: release-notes.md
+  - Community:
+    - community/index.md
+    - Contributing Guide: community/contributing-guide.md
   - ADK 2.0:
     - Overview: 2.0/index.md
     - Graph-based workflows:

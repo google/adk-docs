@@ -9,41 +9,41 @@ The following matrix shows which ADK features are currently supported in each la
 
 | Feature Category | Feature | Python (`adk-python`) | Java (`adk-java`) |
 | :--- | :--- | :--- | :--- |
-| **Core Agent Architecture** | **LLM Agents** | [Supported](https://google.github.io/adk-docs/agents/llm-agents/#defining-the-agents-identity-and-purpose) | [Supported](https://google.github.io/adk-docs/agents/llm-agents/#defining-the-agents-identity-and-purpose) |
-| | **Multi-Agent Systems** | [Supported](https://google.github.io/adk-docs/agents/multi-agents/#agent-hierarchy-parent-agent-sub-agents) | [Supported](https://google.github.io/adk-docs/agents/multi-agents/#agent-hierarchy-parent-agent-sub-agents) |
-| | **Workflow: Sequential Agents** | [Supported](https://google.github.io/adk-docs/agents/workflow-agents/sequential-agents/#full-example-code-development-pipeline) | [Supported](https://google.github.io/adk-docs/agents/workflow-agents/sequential-agents/#full-example-code-development-pipeline) |
-| | **Workflow: Loop Agents** | [Supported](https://google.github.io/adk-docs/agents/workflow-agents/loop-agents/#full-example-iterative-document-improvement) | [Supported](https://google.github.io/adk-docs/agents/workflow-agents/loop-agents/#full-example-iterative-document-improvement) |
-| | **Workflow: Parallel Agents** | [Supported](https://google.github.io/adk-docs/agents/workflow-agents/parallel-agents/#full-example-parallel-web-research) | [Supported](https://google.github.io/adk-docs/agents/workflow-agents/parallel-agents/#full-example-parallel-web-research) |
-| | **Custom Agents** | [Supported](https://google.github.io/adk-docs/agents/custom-agents/#part-1-simplified-custom-agent-initialization) | [Supported](https://google.github.io/adk-docs/agents/custom-agents/#part-1-simplified-custom-agent-initialization) |
-| | **Agent Config (YAML)** | [Supported](https://google.github.io/adk-docs/agents/config/#build-an-agent) | [No](https://google.github.io/adk-docs/agents/config/#known-limitations) |
-| **Tooling & Integrations** | **Function Tools** | [Supported](https://google.github.io/adk-docs/tools/function-tools/#example) | [Supported](https://google.github.io/adk-docs/tools/function-tools/#example) |
-| | **Long-Running Function Tools** | [Supported](https://google.github.io/adk-docs/tools/function-tools/#creating-the-tool) | [Supported](https://google.github.io/adk-docs/tools/function-tools/#creating-the-tool) |
-| | **Agents-as-a-Tool** | [Supported](https://google.github.io/adk-docs/tools/function-tools/#example) | [Supported](https://google.github.io/adk-docs/tools/function-tools/#example) |
-| | **Built-in: Google Search** | [Supported](https://google.github.io/adk-docs/tools/built-in-tools/#google-search) | [Supported](https://google.github.io/adk-docs/tools/built-in-tools/#google-search) |
-| | **Built-in: Code Execution** | [Supported](https://google.github.io/adk-docs/tools/built-in-tools/#code-execution) | [Supported](https://google.github.io/adk-docs/tools/built-in-tools/#code-execution) |
-| | **Built-in: GKE Code Executor** | [Supported](https://google.github.io/adk-docs/tools/built-in-tools/#gke-code-executor) | Not Supported |
-| | **Built-in: Vertex AI RAG** | [Supported](https://google.github.io/adk-docs/tools/built-in-tools/#vertex-ai-rag-engine) | Not Supported |
-| | **Built-in: Vertex AI Search** | [Supported](https://google.github.io/adk-docs/tools/built-in-tools/#vertex-ai-search) | Not Supported |
-| | **Built-in: BigQuery, Spanner, Bigtable** | [Supported](https://google.github.io/adk-docs/tools/built-in-tools/#bigquery) | Not Supported |
-| | **Google Cloud Tools (API Hub, etc.)** | [Supported](https://google.github.io/adk-docs/tools/google-cloud-tools/#apigee-api-hub-tools) | Not Supported |
-| | **MCP Tools** | [Supported](https://google.github.io/adk-docs/tools/mcp-tools/#example-1-file-system-mcp-server) | [Supported](https://google.github.io/adk-docs/tools/mcp-tools/#example-1-file-system-mcp-server) |
-| | **Tool Confirmation** | [Supported](https://google.github.io/adk-docs/tools/confirmation/#boolean-confirmation) | Not Supported |
-| | **Tool Authentication** | [Supported](https://google.github.io/adk-docs/tools/authentication/#1-configuring-tools-with-authentication) | Not Supported |
-| **Runtime & Context** | **Session & State Management** | [Supported](https://google.github.io/adk-docs/sessions/session/#example-examining-session-properties) | [Supported](https://google.github.io/adk-docs/sessions/session/#example-examining-session-properties) |
-| | **Memory** | [Supported](https://google.github.io/adk-docs/sessions/memory/#example-adding-and-searching-memory) | Not Supported |
-| | **Artifacts** | [Supported](https://google.github.io/adk-docs/artifacts/#what-are-artifacts) | [Supported](https://google.github.io/adk-docs/artifacts/#what-are-artifacts) |
-| | **Callbacks** | [Supported](https://google.github.io/adk-docs/callbacks/types-of-callbacks/#before-agent-callback) | [Supported](https://google.github.io/adk-docs/callbacks/types-of-callbacks/#before-agent-callback) |
-| | **Plugins** | [Supported](https://google.github.io/adk-docs/plugins/#define-and-register-plugins) | Not Supported |
-| **Advanced Capabilities** | **Streaming (Gemini Live API Toolkit)** | [Supported](https://google.github.io/adk-docs/get-started/streaming/quickstart-streaming/#2-project-structure) | [Supported](https://google.github.io/adk-docs/get-started/streaming/quickstart-streaming-java/#creating-an-agent) |
-| | **Streaming Tools** | [Supported](https://google.github.io/adk-docs/streaming/streaming-tools/) | Not Supported |
-| | **Multi-Model: LiteLLM** | [Supported](https://google.github.io/adk-docs/agents/models/#using-cloud-proprietary-models-via-litellm) | Not Supported |
-| | **Multi-Model: Direct Anthropic** | Not Supported | [Supported](https://google.github.io/adk-docs/agents/models/#using-anthropic-models) |
-| **Development Lifecycle** | **Evaluation** | [Supported](https://google.github.io/adk-docs/evaluate/#how-evaluation-works-with-the-adk) | Not Supported |
-| | **Observability (AgentOps, Arize, etc.)** | [Supported](https://google.github.io/adk-docs/observability/agentops/) | Not Supported |
-| | **Deployment: Vertex AI Agent Engine** | [Supported](https://google.github.io/adk-docs/deploy/agent-engine/#standard-deployment) | [No](https://google.github.io/adk-docs/deploy/agent-engine/) |
-| | **Deployment: Cloud Run** | [Supported](https://google.github.io/adk-docs/deploy/cloud-run/#deployment-commands) | [Supported](https://google.github.io/adk-docs/deploy/cloud-run/#deployment-commands) |
-| | **Deployment: GKE** | [Supported](https://google.github.io/adk-docs/deploy/gke/#option-1-manual-deployment-using-gcloud-and-kubectl) | Not Supported |
-| | **Agent2Agent (A2A) Protocol** | [Supported](https://google.github.io/adk-docs/a2a/quickstart-consuming/#getting-the-sample-code) | Not Supported |
+| **Core Agent Architecture** | **LLM Agents** | [Supported](https://adk.dev/agents/llm-agents/#defining-the-agents-identity-and-purpose) | [Supported](https://adk.dev/agents/llm-agents/#defining-the-agents-identity-and-purpose) |
+| | **Multi-Agent Systems** | [Supported](https://adk.dev/agents/multi-agents/#agent-hierarchy-parent-agent-sub-agents) | [Supported](https://adk.dev/agents/multi-agents/#agent-hierarchy-parent-agent-sub-agents) |
+| | **Workflow: Sequential Agents** | [Supported](https://adk.dev/agents/workflow-agents/sequential-agents/#full-example-code-development-pipeline) | [Supported](https://adk.dev/agents/workflow-agents/sequential-agents/#full-example-code-development-pipeline) |
+| | **Workflow: Loop Agents** | [Supported](https://adk.dev/agents/workflow-agents/loop-agents/#full-example-iterative-document-improvement) | [Supported](https://adk.dev/agents/workflow-agents/loop-agents/#full-example-iterative-document-improvement) |
+| | **Workflow: Parallel Agents** | [Supported](https://adk.dev/agents/workflow-agents/parallel-agents/#full-example-parallel-web-research) | [Supported](https://adk.dev/agents/workflow-agents/parallel-agents/#full-example-parallel-web-research) |
+| | **Custom Agents** | [Supported](https://adk.dev/agents/custom-agents/#part-1-simplified-custom-agent-initialization) | [Supported](https://adk.dev/agents/custom-agents/#part-1-simplified-custom-agent-initialization) |
+| | **Agent Config (YAML)** | [Supported](https://adk.dev/agents/config/#build-an-agent) | [No](https://adk.dev/agents/config/#known-limitations) |
+| **Tooling & Integrations** | **Function Tools** | [Supported](https://adk.dev/tools/function-tools/#example) | [Supported](https://adk.dev/tools/function-tools/#example) |
+| | **Long-Running Function Tools** | [Supported](https://adk.dev/tools/function-tools/#creating-the-tool) | [Supported](https://adk.dev/tools/function-tools/#creating-the-tool) |
+| | **Agents-as-a-Tool** | [Supported](https://adk.dev/tools/function-tools/#example) | [Supported](https://adk.dev/tools/function-tools/#example) |
+| | **Built-in: Google Search** | [Supported](https://adk.dev/tools/built-in-tools/#google-search) | [Supported](https://adk.dev/tools/built-in-tools/#google-search) |
+| | **Built-in: Code Execution** | [Supported](https://adk.dev/tools/built-in-tools/#code-execution) | [Supported](https://adk.dev/tools/built-in-tools/#code-execution) |
+| | **Built-in: GKE Code Executor** | [Supported](https://adk.dev/tools/built-in-tools/#gke-code-executor) | Not Supported |
+| | **Built-in: Vertex AI RAG** | [Supported](https://adk.dev/tools/built-in-tools/#vertex-ai-rag-engine) | Not Supported |
+| | **Built-in: Vertex AI Search** | [Supported](https://adk.dev/tools/built-in-tools/#vertex-ai-search) | Not Supported |
+| | **Built-in: BigQuery, Spanner, Bigtable** | [Supported](https://adk.dev/tools/built-in-tools/#bigquery) | Not Supported |
+| | **Google Cloud Tools (API Hub, etc.)** | [Supported](https://adk.dev/tools/google-cloud-tools/#apigee-api-hub-tools) | Not Supported |
+| | **MCP Tools** | [Supported](https://adk.dev/tools/mcp-tools/#example-1-file-system-mcp-server) | [Supported](https://adk.dev/tools/mcp-tools/#example-1-file-system-mcp-server) |
+| | **Tool Confirmation** | [Supported](https://adk.dev/tools/confirmation/#boolean-confirmation) | Not Supported |
+| | **Tool Authentication** | [Supported](https://adk.dev/tools/authentication/#1-configuring-tools-with-authentication) | Not Supported |
+| **Runtime & Context** | **Session & State Management** | [Supported](https://adk.dev/sessions/session/#example-examining-session-properties) | [Supported](https://adk.dev/sessions/session/#example-examining-session-properties) |
+| | **Memory** | [Supported](https://adk.dev/sessions/memory/#example-adding-and-searching-memory) | Not Supported |
+| | **Artifacts** | [Supported](https://adk.dev/artifacts/#what-are-artifacts) | [Supported](https://adk.dev/artifacts/#what-are-artifacts) |
+| | **Callbacks** | [Supported](https://adk.dev/callbacks/types-of-callbacks/#before-agent-callback) | [Supported](https://adk.dev/callbacks/types-of-callbacks/#before-agent-callback) |
+| | **Plugins** | [Supported](https://adk.dev/plugins/#define-and-register-plugins) | Not Supported |
+| **Advanced Capabilities** | **Streaming (Gemini Live API Toolkit)** | [Supported](https://adk.dev/get-started/streaming/quickstart-streaming/#2-project-structure) | [Supported](https://adk.dev/get-started/streaming/quickstart-streaming-java/#creating-an-agent) |
+| | **Streaming Tools** | [Supported](https://adk.dev/streaming/streaming-tools/) | Not Supported |
+| | **Multi-Model: LiteLLM** | [Supported](https://adk.dev/agents/models/#using-cloud-proprietary-models-via-litellm) | Not Supported |
+| | **Multi-Model: Direct Anthropic** | Not Supported | [Supported](https://adk.dev/agents/models/#using-anthropic-models) |
+| **Development Lifecycle** | **Evaluation** | [Supported](https://adk.dev/evaluate/#how-evaluation-works-with-the-adk) | Not Supported |
+| | **Observability (AgentOps, Arize, etc.)** | [Supported](https://adk.dev/observability/agentops/) | Not Supported |
+| | **Deployment: Vertex AI Agent Engine** | [Supported](https://adk.dev/deploy/agent-engine/#standard-deployment) | [No](https://adk.dev/deploy/agent-engine/) |
+| | **Deployment: Cloud Run** | [Supported](https://adk.dev/deploy/cloud-run/#deployment-commands) | [Supported](https://adk.dev/deploy/cloud-run/#deployment-commands) |
+| | **Deployment: GKE** | [Supported](https://adk.dev/deploy/gke/#option-1-manual-deployment-using-gcloud-and-kubectl) | Not Supported |
+| | **Agent2Agent (A2A) Protocol** | [Supported](https://adk.dev/a2a/quickstart-consuming/#getting-the-sample-code) | Not Supported |
 
 ## Details
 

@@ -1,6 +1,6 @@
 # GKE Infrastructure
 
-> **Assumes `/adk-scaffold` scaffolding.** For non-scaffolded projects, fetch `https://google.github.io/adk-docs/deploy/gke/index.md`.
+> **Assumes `/adk-scaffold` scaffolding.** For non-scaffolded projects, fetch `https://adk.dev/deploy/gke/index.md`.
 
 ## Deployment Architecture
 

@@ -157,4 +157,4 @@ Use `per_turn_user_simulator_quality_v1` to verify the simulator follows the con
 ## Deep Dive
 
 For the full user simulation guide with examples:
-- Fetch `https://google.github.io/adk-docs/evaluate/user-sim/index.md`
+- Fetch `https://adk.dev/evaluate/user-sim/index.md`

@@ -253,4 +253,4 @@ concerns and easy integration of specialized agents.
 Now that you understand the "why" of A2A, let's dive into the "how."
 
 - **Continue to the next guide:**
-  [Quickstart: Exposing Your Agent](./quickstart-exposing.md)
+  Quickstart: Exposing Your Agent, [in Python](./quickstart-exposing.md), [in Go](./quickstart-exposing-go.md), [in Java](./quickstart-exposing-java.md)

@@ -303,7 +303,7 @@ When building ADK Gemini Live API Toolkit applications, it's essential to unders
 Understanding the distinction between **ADK `Session`** and **Live API session** is crucial for building reliable streaming applications with ADK Gemini Live API Toolkit.
 
 **ADK `Session`** (managed by SessionService):
-- Persistent conversation storage for conversation history, events, and state, created via `SessionService.create_session()` 
+- Persistent conversation storage for conversation history, events, and state, created via `SessionService.create_session()`
 - Storage options: in-memory, database (PostgreSQL/MySQL/SQLite), or Vertex AI
 - Survives across multiple `run_live()` calls and application restarts (with the persistent `SessionService`)
 
@@ -840,8 +840,8 @@ This parameter controls whether audio and video streams are persisted to ADK's s
 
 Currently, **only audio is persisted** by ADK's implementation. When enabled, ADK persists audio streams to:
 
-- **[Session service](https://google.github.io/adk-docs/sessions/)**: Conversation history includes audio references
-- **[Artifact service](https://google.github.io/adk-docs/artifacts/)**: Audio files stored with unique IDs
+- **[Session service](/sessions/)**: Conversation history includes audio references
+- **[Artifact service](/artifacts/)**: Audio files stored with unique IDs
 
 **Use cases:**
 
@@ -999,7 +999,7 @@ CFC is designed for complex, multi-step workflows that benefit from intelligent 
 
 - [Gemini Function Calling Guide](https://ai.google.dev/gemini-api/docs/function-calling) - Official documentation on compositional and parallel function calling
 - [ADK Parallel Functions Example](https://github.com/google/adk-python/blob/427a983b18088bdc22272d02714393b0a779ecdf/contributing/samples/parallel_functions/agent.py) - Working example with async tools
-- [ADK Performance Guide](https://google.github.io/adk-docs/tools/performance/) - Best practices for parallel-ready tools
+- [ADK Performance Guide](/tools/performance/) - Best practices for parallel-ready tools
 
 ## Summary
 

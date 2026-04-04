@@ -43,7 +43,7 @@ First, you need to establish what the agent *is* and what it's *for*.
 * **`model` (Required):** Specify the underlying LLM that will power this
   agent's reasoning. This is a string identifier like `"gemini-2.5-flash"`. The
   choice of model impacts the agent's capabilities, cost, and performance. See
-  the [Models](/adk-docs/agents/models/) page for available options and considerations.
+  the [Models](/agents/models/) page for available options and considerations.
 
 === "Python"
 
@@ -302,7 +302,7 @@ on the conversation and its instructions.
             .build();
     ```
 
-Learn more about Tools in [Custom Tools](/adk-docs/tools-custom/).
+Learn more about Tools in [Custom Tools](/tools-custom/).
 
 ## Advanced Configuration & Control
 
@@ -710,7 +710,7 @@ call_agent("If it's raining in New York right now, what is the current temperatu
 
 - **`code_executor` (Optional):** Provide a `BaseCodeExecutor` instance to allow
   the agent to execute code blocks found in the LLM's response. For more
-  information, see [Code Execution with Gemini API](/adk-docs/tools/gemini-api/code-execution/).
+  information, see [Code Execution with Gemini API](/tools/gemini-api/code-execution/).
 
 === "Python"
 

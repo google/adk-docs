@@ -4,7 +4,7 @@
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
-[Vertex AI Search](/adk-docs/tools/google-cloud/vertex-ai-search/) is a powerful tool for the Agent Development Kit (ADK) that enables AI agents to access information from your private enterprise documents and data repositories. By connecting your agents to indexed enterprise content, you can provide users with answers grounded in your organization's knowledge base.
+[Vertex AI Search](/tools/google-cloud/vertex-ai-search/) is a powerful tool for the Agent Development Kit (ADK) that enables AI agents to access information from your private enterprise documents and data repositories. By connecting your agents to indexed enterprise content, you can provide users with answers grounded in your organization's knowledge base.
 
 This feature is particularly valuable for enterprise-specific queries requiring information from internal documentation, policies, research papers, or any proprietary content that has been indexed in your [Vertex AI Search](https://cloud.google.com/enterprise-search) datastore. When your agent determines that information from your knowledge base is needed, it automatically searches your indexed documents and incorporates the results into its response with proper attribution.
 
@@ -18,7 +18,7 @@ Before creating a grounded agent, you must have an existing Vertex AI Search Dat
 
 * Set up the [gcloud CLI](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-local)
 * Authenticate to Google Cloud, from the terminal by running `gcloud auth login`.
-* For Python, open the **`.env`** file and specify your project ID and location. 
+* For Python, open the **`.env`** file and specify your project ID and location.
 * For Java, ensure your application environment has Google Cloud default credentials configured (`GOOGLE_APPLICATION_CREDENTIALS`).
 
 ```env title=".env"
@@ -36,10 +36,10 @@ To enable Vertex AI Search Grounding, you include the search tool in your agent 
     ```python
     from google.adk.agents import Agent
     from google.adk.tools import VertexAiSearchTool
-    
+
     # Configuration
     DATASTORE_ID = "projects/YOUR_PROJECT_ID/locations/global/collections/default_collection/dataStores/YOUR_DATASTORE_ID"
-    
+
     root_agent = Agent(
         name="vertex_search_agent",
         model="gemini-2.5-flash",
@@ -54,10 +54,10 @@ To enable Vertex AI Search Grounding, you include the search tool in your agent 
     ```java
     import com.google.adk.agents.LlmAgent;
     import com.google.adk.tools.VertexAiSearchTool;
-    
+
     // Configuration
     String DATASTORE_ID = "projects/YOUR_PROJECT_ID/locations/global/collections/default_collection/dataStores/YOUR_DATASTORE_ID";
-    
+
     LlmAgent rootAgent = LlmAgent.builder()
         .name("vertex_search_agent")
         .model("gemini-2.5-flash")
@@ -170,7 +170,7 @@ Since grounding metadata is provided, you can choose to implement citation displ
     for event in events:
         if event.is_final_response():
             print(event.content.parts[0].text)
-            
+
             # Optional: Show source count
             if event.grounding_metadata:
                 print(f"\nBased on {len(event.grounding_metadata.grounding_chunks)} documents")
@@ -182,7 +182,7 @@ Since grounding metadata is provided, you can choose to implement citation displ
     for (Event event : events) {
         if (event.finalResponse()) {
             System.out.println(event.content().parts().get(0).text());
-            
+
             // Optional: Show source count
             if (event.groundingMetadata().isPresent()) {
                 System.out.println("\nBased on " + event.groundingMetadata().get().groundingChunks().size() + " documents");

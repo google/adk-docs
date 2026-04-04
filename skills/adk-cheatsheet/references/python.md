@@ -303,7 +303,7 @@ from google.adk.models import Gemini
 agent = Agent(model=Gemini(model="gemini-3-flash-preview"), ...)
 ```
 
-Provider guides: [Anthropic](https://google.github.io/adk-docs/agents/models/anthropic/index.md), [Ollama](https://google.github.io/adk-docs/agents/models/ollama/index.md), [vLLM](https://google.github.io/adk-docs/agents/models/vllm/index.md), [LiteLLM](https://google.github.io/adk-docs/agents/models/litellm/index.md)
+Provider guides: [Anthropic](https://adk.dev/agents/models/anthropic/index.md), [Ollama](https://adk.dev/agents/models/ollama/index.md), [vLLM](https://adk.dev/agents/models/vllm/index.md), [LiteLLM](https://adk.dev/agents/models/litellm/index.md)
 
 ---
 
@@ -408,7 +408,7 @@ transfer_tool = FunctionTool(transfer_money, require_confirmation=needs_approval
 | OAuth2 / OIDC | `AuthCredential(auth_type=AuthCredentialTypes.OAUTH2, oauth2=OAuth2Auth(client_id=..., client_secret=...))` |
 | Custom FunctionTool | `tool_context.request_credential(AuthConfig(...))` to initiate, `tool_context.get_auth_response(AuthConfig(...))` to retrieve |
 
-Helpers: `from google.adk.tools.openapi_tool.auth.auth_helpers import token_to_scheme_credential, service_account_dict_to_scheme_credential`. Pass `auth_scheme` + `auth_credential` to `OpenAPIToolset(...)`. [Full docs](https://google.github.io/adk-docs/tools-custom/authentication/)
+Helpers: `from google.adk.tools.openapi_tool.auth.auth_helpers import token_to_scheme_credential, service_account_dict_to_scheme_credential`. Pass `auth_scheme` + `auth_credential` to `OpenAPIToolset(...)`. [Full docs](https://adk.dev/tools-custom/authentication/)
 
 ### OpenAPI Tools
 
@@ -419,7 +419,7 @@ toolset = OpenAPIToolset(spec_str=open("openapi.json").read(), spec_str_type="js
 agent = Agent(name="api_agent", tools=[toolset], ...)
 ```
 
-Pass `auth_scheme` + `auth_credential` from the auth helpers above for authenticated APIs. Tool names derive from `operationId` (snake_case, max 60 chars). [Full docs](https://google.github.io/adk-docs/tools-custom/openapi-tools/index.md)
+Pass `auth_scheme` + `auth_credential` from the auth helpers above for authenticated APIs. Tool names derive from `operationId` (snake_case, max 60 chars). [Full docs](https://adk.dev/tools-custom/openapi-tools/index.md)
 
 ### MCP Tools
 
@@ -657,11 +657,11 @@ runner = Runner(app=app, session_service=...)
 
 Built-in plugins: `ReflectAndRetryToolPlugin` (retry failed tools), `BigQueryAgentAnalyticsPlugin` (log to BQ), `ContextFilterPlugin` (reduce context size), `GlobalInstructionPlugin` (shared system prompt), `SaveFilesAsArtifactsPlugin`, `LoggingPlugin`, `DebugLoggingPlugin`, `MultimodalToolResultsPlugin`.
 
-Hooks: `before/after_agent_callback`, `before/after_model_callback`, `before/after_tool_callback`, `on_model_error_callback`, `on_tool_error_callback`, `on_user_message_callback`, `before/after_run_callback`, `on_event_callback`. [Full docs](https://google.github.io/adk-docs/plugins/index.md)
+Hooks: `before/after_agent_callback`, `before/after_model_callback`, `before/after_tool_callback`, `on_model_error_callback`, `on_tool_error_callback`, `on_user_message_callback`, `before/after_run_callback`, `on_event_callback`. [Full docs](https://adk.dev/plugins/index.md)
 
 ### Safety Guardrails
 
-Use `before_model_callback` to filter input or `after_model_callback` to filter output. Return `None` to pass through, or return a modified `LlmResponse` to block/replace. Evaluate with `safety_v1` criterion. [Full docs](https://google.github.io/adk-docs/safety/index.md)
+Use `before_model_callback` to filter input or `after_model_callback` to filter output. Return `None` to pass through, or return a modified `LlmResponse` to block/replace. Evaluate with `safety_v1` criterion. [Full docs](https://adk.dev/safety/index.md)
 
 ---
 
@@ -747,7 +747,7 @@ Data flows between sequential sub-agents via conversation history and `output_ke
 
 ### Further Reading
 
-- [ADK Documentation](https://google.github.io/adk-docs/llms.txt)
+- [ADK Documentation](https://adk.dev/llms.txt)
 - [ADK Samples](https://github.com/google/adk-samples)
 
 ---
@@ -782,4 +782,4 @@ google/adk/
 
 Use Glob/Grep/Read on the installed package to find exact implementations, method signatures, and configuration options.
 
-For the full ADK documentation index with WebFetch URLs, see `references/docs-index.md`.
+For the full ADK documentation index, use `curl https://adk.dev/llms.txt`.

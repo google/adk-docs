@@ -1,4 +1,4 @@
-# A2A extension for improved reliabilty
+# A2A extension for improved reliability
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python 1.27.0</span>
@@ -7,12 +7,12 @@
 ADK provides an extension for Agent2Agent (A2A) support to improved message and data handling as part of
 an updated [A2aAgentExecutor](https://github.com/google/adk-python/blob/main/src/google/adk/a2a/executor/a2a_agent_executor_impl.py)
 class. The updated version includes updates to architectural changes to the core agent execution logic
-and extensions for A2A to improve data handling, while also providing backward compatibility with 
+and extensions for A2A to improve data handling, while also providing backward compatibility with
 existing A2A agents.
 
 Activating the A2A extension option instructs the server to use the updated agent executor implementation.
 While this update offers several general advantages, it primarily resolves critical limitations found in
-the legacy A2A-ADK implementation when both A2A and ADK operate in streaming mode. The new implementation 
+the legacy A2A-ADK implementation when both A2A and ADK operate in streaming mode. The new implementation
 addresses the following issues:
 
 -   **Message duplication:** Prevents user messages from being duplicated in the task history.

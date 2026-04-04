@@ -197,9 +197,9 @@ def validate_imports(
             if is_optional:
                 report.add("WARN", loc, f"import (optional dep): {e}")
             else:
-                report.add("FAIL", loc, f"import: {e}")
+                report.add("FAIL", loc, f"import ({type(e).__name__}): {e}")
         except Exception as e:
-            report.add("WARN", loc, f"import (exec error): {e}")
+            report.add("WARN", loc, f"import ({type(e).__name__}): {e}")
 
 
 def _extract_imported_names(stmt: str) -> list[str]:

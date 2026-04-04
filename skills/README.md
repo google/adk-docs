@@ -1,6 +1,6 @@
 # ADK Skills
 
-Development skills for building agents with [Google ADK](https://google.github.io/adk-docs). Install into any coding agent via [`npx skills`](https://github.com/vercel-labs/skills).
+Development skills for building agents with [Google ADK](https://adk.dev). Install into any coding agent via [`npx skills`](https://github.com/vercel-labs/skills).
 
 ## Install
 
