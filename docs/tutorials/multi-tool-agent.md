@@ -744,8 +744,8 @@ You've successfully created and interacted with your first agent using ADK!
 
 * **Go to the tutorial**: Learn how to add memory, session, state to your agent:
   [tutorial](/tutorials/).
-* **Delve into advanced configuration:** Explore the [setup](installation.md)
+* **Delve into advanced configuration:** Explore the [setup](/get-started/installation/)
   section for deeper dives into project structure, configuration, and other
   interfaces.
 * **Understand Core Concepts:** Learn about
-  [agents concepts](../agents/index.md).
+  [agents concepts](/agents/).
