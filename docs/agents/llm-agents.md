@@ -43,7 +43,7 @@ First, you need to establish what the agent *is* and what it's *for*.
 * **`model` (Required):** Specify the underlying LLM that will power this
   agent's reasoning. This is a string identifier like `"gemini-2.5-flash"`. The
   choice of model impacts the agent's capabilities, cost, and performance. See
-  the [Models](/adk-docs/agents/models/) page for available options and considerations.
+  the [Models](/agents/models/) page for available options and considerations.
 
 === "Python"
 
@@ -302,7 +302,7 @@ on the conversation and its instructions.
             .build();
     ```
 
-Learn more about Tools in [Custom Tools](/adk-docs/tools-custom/).
+Learn more about Tools in [Custom Tools](/tools-custom/).
 
 ## Advanced Configuration & Control
 
@@ -471,7 +471,7 @@ For scenarios requiring structured data exchange with an `LLM Agent`, the ADK pr
             // ... name, model, description
             .instruction(
                     "You are a Capital Information Agent. Given a country, respond ONLY with a JSON object containing the capital. Format: {\"capital\": \"capital_name\"}")
-            .outputSchema(capitalOutput) // Enforce JSON output
+            .outputSchema(CAPITAL_OUTPUT) // Enforce JSON output
             .outputKey("found_capital") // Store result in state.get("found_capital")
             // Cannot use tools(getCapitalCity) effectively here
             .build();
@@ -710,7 +710,7 @@ call_agent("If it's raining in New York right now, what is the current temperatu
 
 - **`code_executor` (Optional):** Provide a `BaseCodeExecutor` instance to allow
   the agent to execute code blocks found in the LLM's response. For more
-  information, see [Code Execution with Gemini API](/adk-docs/tools/gemini-api/code-execution/).
+  information, see [Code Execution with Gemini API](/tools/gemini-api/code-execution/).
 
 === "Python"
 

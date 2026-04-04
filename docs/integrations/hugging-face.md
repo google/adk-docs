@@ -1,7 +1,7 @@
 ---
 catalog_title: Hugging Face
 catalog_description: Access models, datasets, research papers, and AI tools
-catalog_icon: /adk-docs/integrations/assets/hugging-face.png
+catalog_icon: /integrations/assets/hugging-face.png
 catalog_tags: ["mcp"]
 ---
 
@@ -73,7 +73,7 @@ your ADK agent to the Hugging Face Hub and thousands of Gradio AI Applications.
         ```python
         from google.adk.agents import Agent
         from google.adk.tools.mcp_tool import McpToolset
-        from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPServerParams
+        from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPConnectionParams
 
         HUGGING_FACE_TOKEN = "YOUR_HUGGING_FACE_TOKEN"
 
@@ -83,7 +83,7 @@ your ADK agent to the Hugging Face Hub and thousands of Gradio AI Applications.
             instruction="Help users get information from Hugging Face",
             tools=[
                 McpToolset(
-                    connection_params=StreamableHTTPServerParams(
+                    connection_params=StreamableHTTPConnectionParams(
                         url="https://huggingface.co/mcp",
                         headers={
                             "Authorization": f"Bearer {HUGGING_FACE_TOKEN}",

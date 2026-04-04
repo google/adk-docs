@@ -4,6 +4,17 @@
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
 </div>
 
+??? danger "ADK Python Security Advisory: LiteLLM supply chain compromise"
+
+    Unauthorized code was identified in LiteLLM versions 1.82.7 and 1.82.8 on
+    PyPI on March 24, 2026. If you use ADK Python with the `eval` or
+    `extensions` extras, update to the latest version of ADK Python immediately.
+    If you installed or upgraded LiteLLM during this period, rotate all secrets
+    and credentials. For details and required actions, refer to the [ADK
+    security advisory](https://github.com/google/adk-python/issues/5005) and
+    [LiteLLM's Security Update: Suspected Supply Chain
+    Incident](https://docs.litellm.ai/blog/security-update-march-2026).
+
 [LiteLLM](https://docs.litellm.ai/) is a Python library that acts as a
 translation layer for models and model hosting services, providing a
 standardized, OpenAI-compatible interface to over 100+ LLMs. ADK provides
@@ -19,8 +30,8 @@ You can use the LiteLLM library to access remote or locally hosted AI models:
     as the `model` parameter of `LlmAgent`.
 *   **Local model host:** Use the `LiteLlm` wrapper class configured to
     point to your local model server. For examples of local model hosting
-    solutions, see the [Ollama](/adk-docs/agents/models/ollama/)
-    or [vLLM](/adk-docs/agents/models/vllm/) documentation.
+    solutions, see the [Ollama](/agents/models/ollama/)
+    or [vLLM](/agents/models/vllm/) documentation.
 
 ??? warning "Windows Encoding with LiteLLM"
 

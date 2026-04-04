@@ -16,7 +16,7 @@ metadata:
 
 > **Scaffolded project?** Use the `make` commands throughout this guide — they wrap Terraform, Docker, and deployment into a tested pipeline.
 >
-> **No scaffold?** See [Quick Deploy](#quick-deploy-adk-cli) below, or the [ADK deployment docs](https://google.github.io/adk-docs/deploy/).
+> **No scaffold?** See [Quick Deploy](#quick-deploy-adk-cli) below, or the [ADK deployment docs](https://adk.dev/deploy/).
 > For production infrastructure, scaffold with `/adk-scaffold`.
 
 ### Reference Files
@@ -25,6 +25,7 @@ For deeper details, consult these reference files in `references/`:
 
 - **`cloud-run.md`** — Scaling defaults, Dockerfile, session types, networking
 - **`agent-engine.md`** — deploy.py CLI, AdkApp pattern, Terraform resource, deployment metadata, CI/CD differences
+- **`gke.md`** — GKE Autopilot cluster, Terraform-managed Kubernetes resources, Workload Identity, session types, networking
 - **`terraform-patterns.md`** — Custom infrastructure, IAM, state management, importing resources
 - **`event-driven.md`** — Pub/Sub, Eventarc, BigQuery Remote Function triggers via custom `fast_api_app.py` endpoints
 
@@ -41,11 +42,11 @@ Choose the right deployment target based on your requirements:
 | **Languages** | Python | Python | Python (+ others via custom containers) |
 | **Scaling** | Managed auto-scaling (configurable min/max, concurrency) | Fully configurable (min/max instances, concurrency, CPU allocation) | Full Kubernetes scaling (HPA, VPA, node auto-provisioning) |
 | **Networking** | VPC-SC and PSC supported | Full VPC support, direct VPC egress, IAP, ingress rules | Full Kubernetes networking|
-| **Session state** | Native `VertexAiSessionService` (persistent, managed) | In-memory (dev), Cloud SQL, or Agent Engine session backend | Custom (any Kubernetes-compatible store) |
+| **Session state** | Native `VertexAiSessionService` (persistent, managed) | In-memory (dev), Cloud SQL, or Agent Engine session backend | In-memory (dev), Cloud SQL, or Agent Engine session backend |
 | **Batch/event processing** | Not supported | `/invoke` endpoint for Pub/Sub, Eventarc, BigQuery | Custom (Kubernetes Jobs, Pub/Sub) |
 | **Cost model** | vCPU-hours + memory-hours (not billed when idle) | Per-instance-second + min instance costs | Node pool costs (always-on or auto-provisioned) |
 | **Setup complexity** | Lower (managed, purpose-built for agents) | Medium (Dockerfile, Terraform, networking) | Higher (Kubernetes expertise required) |
-| **Best for** | Managed infrastructure, minimal ops | Custom infra, event-driven workloads | Full control, open models, GPU workloads |
+| **Best for** | Managed infrastructure, minimal ops | Custom infra, event-driven workloads | Full Kubernetes control |
 
 **Ask the user** which deployment target fits their needs. Each is a valid production choice with different trade-offs.
 
@@ -68,7 +69,7 @@ adk deploy gke --project=PROJECT --cluster_name=CLUSTER --region=REGION path/to/
 
 All commands support `--with_ui` to deploy the ADK dev UI. Cloud Run also accepts extra `gcloud` flags after `--` (e.g., `-- --no-allow-unauthenticated`).
 
-See `adk deploy --help` or the [ADK deployment docs](https://google.github.io/adk-docs/deploy/) for full flag reference.
+See `adk deploy --help` or the [ADK deployment docs](https://adk.dev/deploy/) for full flag reference.
 
 > For CI/CD, observability, or production infrastructure, scaffold with `/adk-scaffold` and use the sections below.
 
@@ -192,7 +193,7 @@ gcloud builds approve BUILD_ID --project=PROD_PROJECT
 
 ## Cloud Run Specifics
 
-For detailed infrastructure configuration (scaling defaults, Dockerfile, FastAPI endpoints, session types, networking), see `references/cloud-run.md`. For ADK docs on Cloud Run deployment, fetch `https://google.github.io/adk-docs/deploy/cloud-run/index.md`.
+For detailed infrastructure configuration (scaling defaults, Dockerfile, FastAPI endpoints, session types, networking), see `references/cloud-run.md`. For ADK docs on Cloud Run deployment, fetch `https://adk.dev/deploy/cloud-run/index.md`.
 
 ---
 
@@ -204,7 +205,13 @@ Agent Engine is a managed Vertex AI service for deploying Python ADK agents. Use
 
 Deployments can take 5-10 minutes. If `make deploy` times out, check if the engine was created and manually populate `deployment_metadata.json` with the engine resource ID (see reference for details).
 
-For detailed infrastructure configuration (deploy.py flags, AdkApp pattern, Terraform resource, deployment metadata, session/artifact services, CI/CD differences), see `references/agent-engine.md`. For ADK docs on Agent Engine deployment, fetch `https://google.github.io/adk-docs/deploy/agent-engine/index.md`.
+For detailed infrastructure configuration (deploy.py flags, AdkApp pattern, Terraform resource, deployment metadata, session/artifact services, CI/CD differences), see `references/agent-engine.md`. For ADK docs on Agent Engine deployment, fetch `https://adk.dev/deploy/agent-engine/index.md`.
+
+---
+
+## GKE Specifics
+
+For detailed infrastructure configuration (Terraform-managed Kubernetes resources, Workload Identity, session types, networking), see `references/gke.md`. For ADK docs on GKE deployment, fetch `https://adk.dev/deploy/gke/index.md`.
 
 ---
 
@@ -237,7 +244,7 @@ echo -n "YOUR_API_KEY" | gcloud secrets create MY_SECRET_NAME --data-file=-
 echo -n "NEW_API_KEY" | gcloud secrets versions add MY_SECRET_NAME --data-file=-
 ```
 
-**Grant access:** For Cloud Run, grant `secretmanager.secretAccessor` to `app_sa`. For Agent Engine, grant it to the platform-managed SA (`service-PROJECT_NUMBER@gcp-sa-aiplatform-re.iam.gserviceaccount.com`).
+**Grant access:** For Cloud Run, grant `secretmanager.secretAccessor` to `app_sa`. For Agent Engine, grant it to the platform-managed SA (`service-PROJECT_NUMBER@gcp-sa-aiplatform-re.iam.gserviceaccount.com`). For GKE, grant `secretmanager.secretAccessor` to `app_sa`. Access secrets via Kubernetes Secrets or directly via the Secret Manager API with Workload Identity.
 
 **Pass secrets at deploy time (Agent Engine):**
 ```bash
@@ -315,6 +322,10 @@ curl -X POST "$SERVICE_URL/run_sse" \
 
 > **Common mistake:** Using `{"message": "Hello!", "user_id": "...", "session_id": "..."}` returns `422 Field required`. The ADK HTTP server expects the `new_message` / `parts` schema shown above, and the session must already exist.
 
+### GKE Deployment
+
+GKE LoadBalancer services are public by default — no auth header needed (unlike Cloud Run). See `references/gke.md` for curl examples and endpoint details.
+
 ### Load Tests
 
 ```bash
@@ -355,6 +366,12 @@ gcloud run services update-traffic SERVICE_NAME \
 ```
 
 Agent Engine doesn't support revision-based rollback — fix and redeploy via `make deploy`.
+
+For GKE rollback, use `kubectl rollout undo`:
+```bash
+kubectl rollout undo deployment/DEPLOYMENT_NAME -n NAMESPACE
+kubectl rollout status deployment/DEPLOYMENT_NAME -n NAMESPACE
+```
 
 ---
 

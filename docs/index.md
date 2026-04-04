@@ -1,5 +1,6 @@
 ---
 hide:
+  - navigation
   - toc
 ---
 
@@ -18,13 +19,20 @@ development feel more like software development, to make it easier for
 developers to create, deploy, and orchestrate agentic architectures that range
 from simple tasks to complex workflows.
 
-??? tip "News: ADK Python Skills released!"
+??? tip "News: ADK Go 1.0.0 released!"
 
-    ADK Python development [Agent Skills](https://agentskills.io/)
-    allow you to code ADK agents quickly and more effectively with
-    AI-powered development environments. For more details, check out
-    the [Coding with AI](/adk-docs/tutorials/coding-with-ai/#adk-skills),
-    ADK Skills docs.
+    ADK Go 1.0.0 release adds several major features, including OpenTelemetry
+    integration, self-healing logic using plugins, and improved human input support.
+    For more details on this release, see the
+    [ADK Go v1.0 announcement](https://developers.googleblog.com/adk-go-10-arrives/).
+
+??? tip "News: ADK Java 1.0.0 released!"
+
+    ADK Java 1.0.0 is now available! This release includes several
+    bug fixes and enhancements. Read more about it in the
+    [blog announcement](https://developers.googleblog.com/announcing-adk-for-java-100-building-the-future-of-ai-agents-in-java/).
+    Upgrade to ADK Java 1.0.0 to take advantage of these enhancements
+    and ensure optimal performance in your applications.
 
 <div id="centered-install-tabs" class="install-command-container" markdown="1">
 
@@ -54,23 +62,23 @@ from simple tasks to complex workflows.
     <dependency>
         <groupId>com.google.adk</groupId>
         <artifactId>google-adk</artifactId>
-        <version>0.6.0</version>
+        <version>1.0.0</version>
     </dependency>
     ```
 
     ```gradle title="build.gradle"
     dependencies {
-        implementation 'com.google.adk:google-adk:0.6.0'
+        implementation 'com.google.adk:google-adk:1.0.0'
     }
     ```
 
 </div>
 
 <p style="text-align:center;">
-  <a href="/adk-docs/get-started/python/" class="md-button" style="margin:3px">Start with Python</a>
-  <a href="/adk-docs/get-started/typescript/" class="md-button" style="margin:3px">Start with TypeScript</a>
-  <a href="/adk-docs/get-started/go/" class="md-button" style="margin:3px">Start with Go</a>
-  <a href="/adk-docs/get-started/java/" class="md-button" style="margin:3px">Start with Java</a>
+  <a href="/get-started/python/" class="md-button" style="margin:3px">Start with Python</a>
+  <a href="/get-started/typescript/" class="md-button" style="margin:3px">Start with TypeScript</a>
+  <a href="/get-started/go/" class="md-button" style="margin:3px">Start with Go</a>
+  <a href="/get-started/java/" class="md-button" style="margin:3px">Start with Java</a>
 </p>
 
 ---

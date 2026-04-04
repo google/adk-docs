@@ -68,6 +68,27 @@ A well-defined function signature is crucial for the LLM to use your tool correc
         ```
     In this example, both `location` and `unit` are mandatory.
 
+=== "Java"
+    In Java, primitive types (e.g., `int`, `double`, `boolean`) are inherently **required** because they cannot be null. For object types (like `String` or `Integer`), they are typically considered required unless explicitly marked as optional.
+
+    The `@Schema` annotation is used to provide the argument's description and can explicitly define parameter properties. This is crucial for the LLM to understand what the argument is for.
+
+    ???+ "Example: Required Parameters"
+        ```java
+        // The @Schema annotation on the parameter provides the description.
+        public static Map<String, Object> getWeather(
+            @Schema(description = "The city and state, e.g., San Francisco, CA", name = "location")
+            String location,
+
+            @Schema(description = "The temperature unit, either 'Celsius' or 'Fahrenheit'", name = "unit")
+            String unit) {
+
+            // ... function logic ...
+            return Map.of("status", "success", "report", "Weather for " + location + " is sunny.");
+        }
+        ```
+    In this example, both `location` and `unit` are mandatory.
+
 ##### Optional Parameters
 
 === "Python"
@@ -110,6 +131,34 @@ A well-defined function signature is crucial for the LLM to use your tool correc
         ```
     Here, `unit` and `days` are optional. The LLM can choose to provide them, but they are not required.
 
+=== "Java"
+    A parameter can be considered **optional** in Java by using object types that allow `null` values (such as `Integer` instead of `int`), or by explicitly defining it as optional using `java.util.Optional`.
+
+    ???+ "Example: Optional Parameters"
+        ```java
+        import java.util.Map;
+        import java.util.Optional;
+
+        public static Map<String, Object> searchFlights(
+            @Schema(description = "The destination city.", name = "destination")
+            String destination,
+
+            @Schema(description = "The desired departure date.", name = "departureDate")
+            String departureDate,
+
+            @Schema(description = "Number of flexible days for the search. Defaults to 0.", name = "flexibleDays")
+            Optional<Integer> flexibleDays) {
+
+            // ... function logic ...
+            int days = flexibleDays.orElse(0);
+            if (days > 0) {
+                return Map.of("status", "success", "report", "Found flexible flights to " + destination + ".");
+            }
+            return Map.of("status", "success", "report", "Found flights to " + destination + " on " + departureDate + ".");
+        }
+        ```
+    Here, `flexibleDays` is optional. The LLM can choose to provide it, but it's not required.
+
 ##### Optional Parameters with `typing.Optional`
 You can also mark a parameter as optional using `typing.Optional[SomeType]` or the `| None` syntax (Python 3.10+). This signals that the parameter can be `None`. When combined with a default value of `None`, it behaves as a standard optional parameter.
 
@@ -137,13 +186,13 @@ While you can include `*args` (variable positional arguments) and `**kwargs` (va
 
 #### Return Type
 
-The preferred return type for a Function Tool is a **dictionary** in Python, a **Map** in Java, or an **object** in TypeScript. This allows you to structure the response with key-value pairs, providing context and clarity to the LLM. If your function returns a type other than a dictionary, the framework automatically wraps it into a dictionary with a single key named **"result"**.
+The preferred return type for a Function Tool is a **dictionary** in Python, a **Map** or custom **Record or POJO** in Java, or an **object** in TypeScript. This allows you to structure the response with key-value pairs, providing context and clarity to the LLM. If your function returns a type other than a dictionary or map, the framework automatically wraps it into a dictionary with a single key named **"result"**.
 
 Strive to make your return values as descriptive as possible. *For example,* instead of returning a numeric error code, return a dictionary with an "error_message" key containing a human-readable explanation. **Remember that the LLM**, not a piece of code, needs to understand the result. As a best practice, include a "status" key in your return dictionary to indicate the overall outcome (e.g., "success", "error", "pending"), providing the LLM with a clear signal about the operation's state.
 
 #### Docstrings
 
-The docstring of your function serves as the tool's **description** and is sent to the LLM. Therefore, a well-written and comprehensive docstring is crucial for the LLM to understand how to use the tool effectively. Clearly explain the purpose of the function, the meaning of its parameters, and the expected return values.
+The docstring of your function serves as the tool's **description** and is sent to the LLM. Therefore, a well-written and comprehensive docstring is crucial for the LLM to understand how to use the tool effectively. Clearly explain the purpose of the function, the meaning of its parameters, and the expected return values. In Java, you can use Javadoc comments or the `@Schema(description="...")` annotation on your method to serve as this description.
 
 ### Passing Data Between Tools
 
@@ -235,7 +284,7 @@ While you have considerable flexibility in defining your function, remember that
 * **Simple Data Types:** Favor primitive data types like `str` and `int` over custom classes whenever possible.
 * **Meaningful Names:** The function's name and parameter names significantly influence how the LLM interprets and utilizes the tool. Choose names that clearly reflect the function's purpose and the meaning of its inputs. Avoid generic names like `do_stuff()` or `beAgent()`.
 * **Build for Parallel Execution:** Improve function calling performance when multiple tools are run by building for asynchronous operation. For information on enabling parallel execution for tools, see
-[Increase tool performance with parallel execution](/adk-docs/tools-custom/performance/).
+[Increase tool performance with parallel execution](/tools-custom/performance/).
 
 ## Long Running Function Tools {#long-run-tool}
 
@@ -253,7 +302,7 @@ When using a `LongRunningFunctionTool`, your function can initiate the long-runn
     Depending on the type of tool you are building, designing for asynchronous
     operation may be a better solution than creating a long running tool. For
     more information, see
-    [Increase tool performance with parallel execution](/adk-docs/tools-custom/performance/).
+    [Increase tool performance with parallel execution](/tools-custom/performance/).
 
 ### How it Works
 
@@ -348,7 +397,7 @@ Agent client received an event with long running function calls and check the st
 !!! note "Note: Long running function response with Resume feature"
 
     If your ADK agent workflow is configured with the
-    [Resume](/adk-docs/runtime/resume/) feature, you also must include
+    [Resume](/runtime/resume/) feature, you also must include
     the Invocation ID (`invocation_id`) parameter with the long running
     function response. The Invocation ID you provide must be the same
     invocation that generated the long running function request, otherwise
@@ -357,7 +406,7 @@ Agent client received an event with long running function calls and check the st
     as a parameter with your long running function request, so it can be
     included with the response. For more details on using the Resume
     feature, see
-    [Resume stopped agents](/adk-docs/runtime/resume/).
+    [Resume stopped agents](/runtime/resume/).
 
 ??? Tip "Applies to only Java ADK"
 

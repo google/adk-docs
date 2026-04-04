@@ -23,7 +23,7 @@
 # import os
 # os.environ["GOOGLE_API_KEY"] = "YOUR_API_KEY_HERE" # <--- REPLACE with your actual key
 # # Or learn about other authentication methods (like Vertex AI):
-# # https://google.github.io/adk-docs/agents/models/
+# # https://adk.dev/agents/models/
 
 # ADK Imports
 from google.adk.agents import LlmAgent

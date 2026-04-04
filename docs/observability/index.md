@@ -14,8 +14,13 @@ Agent Development Kit (ADK) provides comprehensive observability features:
 
 For additional observability capabilities, consider
 [observability ADK Integrations](/adk-docs/integrations/?topic=observability)
+Agent Development Kit (ADK) provides configurable
+[logging](/observability/logging/)
+functionality for monitoring and debugging agents. However, you may
+need to consider more advanced
+[observability ADK Integrations](/integrations/?topic=observability)
 for monitoring and analysis.
 
 !!! tip "ADK Integrations for observability"
     For a list of pre-built observability libraries for ADK, see
-    [Tools and Integrations](/adk-docs/integrations/?topic=observability).
+    [Tools and Integrations](/integrations/?topic=observability).

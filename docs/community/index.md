@@ -52,6 +52,16 @@ Development Kit community.
     See recent recordings below, or browse all past calls on our [YouTube playlist](https://www.youtube.com/playlist?list=PLwi6PfxEP7zZbBPmWiZ8QbPcuKyAY5RR3).
 
 <div class="resource-grid">
+  <a href="https://www.youtube.com/watch?v=bPngDY7EuOQ" class="resource-card">
+    <div class="card-image-wrapper">
+      <img src="https://img.youtube.com/vi/bPngDY7EuOQ/maxresdefault.jpg" alt="ADK Community Call Mar 2026">
+    </div>
+    <div class="card-content">
+      <div class="type">Community Call</div>
+      <h3>📞 Mar 2026 Recording</h3>
+      <p>Discussions include the ADK 2.0 alpha release, Workflows for graph-based agent composition, Agent Modes for structured multi-agent coordination, and a community spotlight on Restate durable agents.</p>
+    </div>
+  </a>
   <a href="https://www.youtube.com/watch?v=cXDr4RYJxK0" class="resource-card">
     <div class="card-image-wrapper">
       <img src="https://img.youtube.com/vi/cXDr4RYJxK0/maxresdefault.jpg" alt="ADK Community Call Feb 2026">
@@ -70,16 +80,6 @@ Development Kit community.
       <div class="type">Community Call</div>
       <h3>📞 Jan 2026 Recording</h3>
       <p>Discussions include Session Service schema for cross-language support, TypeScript multi-agent demo, API Registry for MCP servers, and third-party tool integrations.</p>
-    </div>
-  </a>
-  <a href="https://www.youtube.com/watch?v=cNVWhrbdn-E" class="resource-card">
-    <div class="card-image-wrapper">
-      <img src="https://img.youtube.com/vi/cNVWhrbdn-E/maxresdefault.jpg" alt="ADK Community Call Dec 2025">
-    </div>
-    <div class="card-content">
-      <div class="type">Community Call</div>
-      <h3>📞 Dec 2025 Recording</h3>
-      <p>Discussions include the ADK TypeScript launch, Gemini 3 Flash support, bidirectional streaming for voice agents, and the Visual Builder UI.</p>
     </div>
   </a>
 
@@ -285,6 +285,6 @@ Community-provided translations of the ADK documentation.
 
 Have an ADK resource to share (tutorial, translation, tool, video, or example)?
 
-Refer to the steps in the **[Contributing Guide](contributing-guide.md)** for more information on how to get involved!
+Refer to the steps in the **[Contributing Guide](/community/contributing-guide/)** for more information on how to get involved!
 
 Thank you for your contributions to Agent Development Kit! ❤️

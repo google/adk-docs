@@ -16,9 +16,9 @@ tools within an agent excludes the use of any other tools in that agent. The
 following ADK Tools can only be used by themselves, without any other tools, in
 a single agent object:
 
-*   [Code Execution](/adk-docs/tools/gemini-api/code-execution/) with Gemini API
-*   [Google Search](/adk-docs/tools/gemini-api/google-search/) with Gemini API
-*   [Vertex AI Search](/adk-docs/tools/google-cloud/vertex-ai-search/)
+*   [Code Execution](/tools/gemini-api/code-execution/) with Gemini API
+*   [Google Search](/tools/gemini-api/google-search/) with Gemini API
+*   [Vertex AI Search](/tools/google-cloud/vertex-ai-search/)
 
 For example, the following approach that uses one of these tools along with
 other tools, within a single agent, is ***not supported***:
