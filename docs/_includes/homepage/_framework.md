@@ -12,4 +12,3 @@
     </div>
   </div>
 </div>
-<!-- requires: Asciinema player script -->

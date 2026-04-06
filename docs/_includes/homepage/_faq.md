@@ -1,7 +1,7 @@
 <!-- FAQ Section -->
 <div class="faq-section">
   <h2>Frequently Asked Questions</h2>
-  <p class="section-subtitle">You're still here? Maybe you have questions about ADK. Here are some answers:</p>
+  <p class="section-subtitle">Still have questions about ADK? Here are some answers:</p>
 
   <div class="faq-grid">
 
@@ -22,7 +22,7 @@
 
   <details class="faq-item-arrow">
     <summary>How does ADK handle context management?</summary>
-    <p>Unlike tools that simply paste strings together until the context window overflows, ADK <b>compiles</b> your context. We treat context like source code—sessions, memory, tool outputs, and artifacts are compiled into an optimized view where every token earns its place. ADK automatically deduplicates tool results, summarizes older conversational turns, indexes artifacts, and budgets token usage. This keeps your agents fast, efficient, and reliable by default, while giving you the controls to fully customize how context is managed for complex tasks.</p>
+    <p>Unlike tools that simply paste strings together until the context window overflows, ADK <b>manages</b> your context. We treat context like source code—sessions, memory, tool outputs, and artifacts are assembled into a structured view where every token earns its place. ADK automatically filters irrelevant events, summarizes older conversational turns, lazy-loads artifacts, and tracks token usage. This approach keeps your agents fast, efficient, and reliable by default, while giving you the controls to fully customize how context is managed for complex tasks.</p>
   </details>
 
   <details class="faq-item-arrow">
