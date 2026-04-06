@@ -608,9 +608,9 @@ steps taken during the conversation.
 
 #### Details
 
-This is a reference-free metric that assesses the quality of the interaction
-trajectory across multiple turns. It delegates the evaluation to the Vertex AI
-General AI Eval SDK.
+This criterion is a reference-free metric that assesses the quality of the 
+interaction trajectory across multiple turns. It delegates the evaluation to the
+Vertex AI General AI Eval SDK.
 
 #### How To Use This Criterion?
 
