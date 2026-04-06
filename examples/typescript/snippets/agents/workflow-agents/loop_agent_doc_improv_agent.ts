@@ -13,7 +13,7 @@
 // limitations under the License.
 
 // --8<-- [start:init]
-// Part of agent.ts --> Follow https://adk.dev/get-started/quickstart/ to learn the setup
+// Part of agent.ts --> Follow https://adk.dev/get-started/ to learn the setup
 
 import { LoopAgent, LlmAgent, SequentialAgent, FunctionTool } from '@google/adk';
 import { z } from 'zod';
