@@ -63,12 +63,9 @@ project and then adds files to your project for deployment purposes.
 
 These instructions assume you have an existing ADK project that you are modifying
 for deployment. If you do not have an ADK project, or want to use a test
-project, complete the Python
-[Quickstart](/get-started/quickstart/) guide,
-which creates a
-[multi_tool_agent](https://github.com/google/adk-docs/tree/main/examples/python/snippets/get-started/multi_tool_agent)
-project. The following instructions use the `multi_tool_agent` project as an
-example.
+project, complete one of the [Get started](/get-started/) guides,
+which creates an agent project. The following instructions use the `my_agent`
+project as an example.
 
 To prepare your ADK project for deployment to Agent Engine:
 
@@ -78,7 +75,7 @@ To prepare your ADK project for deployment to Agent Engine:
 
     ```
     your-project-directory/
-    ├── multi_tool_agent/
+    ├── my_agent/
     │   ├── __init__.py
     │   ├── agent.py
     │   └── .env
@@ -184,7 +181,7 @@ project as a reference example. The original project has the following file
 structure to start with:
 
 ```
-multi_tool_agent/
+my_agent/
 ├─ __init__.py
 ├─ agent.py
 └─ .env
@@ -194,7 +191,7 @@ After running the ASP enhance command to add Agent Engine deployment
 information, the new structure is as follows:
 
 ```
-multi-tool-agent/
+my-agent/
 ├─ app/                 # Core application code
 │   ├─ agent.py         # Main agent logic
 │   ├─ agent_engine_app.py # Agent Engine application logic

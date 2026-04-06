@@ -102,7 +102,7 @@ The `adk run` command allows you to interact with an agent directly from your te
     # Make sure you are in the main 'adk-tutorial' folder
     adk run step_1
     ```
-*   For detailed usage and options for `adk run`, please refer to the [Official ADK Documentation - Run Your Agent](https://adk.dev/get-started/quickstart/#terminal-adk-run).
+*   For detailed usage and options for `adk run`, please refer to the ADK Agent Runtime [Command Line](https://adk.dev/runtime/command-line/) topic.
 
 ### Using `adk api_server` (Exposing as API)
 
@@ -113,7 +113,7 @@ The `adk api_server` command starts a FastAPI server, exposing your agent via an
     # Make sure you are in the main 'adk-tutorial' folder
     adk api_server
     ```
-*   For detailed usage, API endpoint structure, and options for `adk api_server`, please consult the [Official ADK Documentation - Testing your Agents](https://adk.dev/runtime/api-server/).
+*   For detailed usage, API endpoint structure, and options for `adk api_server`, see the ADK [API Server](https://adk.dev/runtime/api-server/) page.
 
 ## Directory Structure
 

@@ -23,7 +23,7 @@ const GEMINI_MODEL = "gemini-2.5-flash";
 
 
 // --8<-- [start:init]
-// Part of agent.ts --> Follow https://adk.dev/get-started/quickstart/ to learn the setup
+// Part of agent.ts --> Follow https://adk.dev/get-started/ to learn the setup
 
 // --- 1. Define Sub-Agents for Each Pipeline Stage ---
 

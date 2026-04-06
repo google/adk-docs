@@ -214,6 +214,7 @@ plugins:
         'observability/agentops.md': 'integrations/agentops.md'
         'observability/arize-ax.md': 'integrations/arize-ax.md'
         'contributing-guide.md': 'community/contributing-guide.md'
+        'get-started/quickstart.md': get-started/index.md
 
   - llmstxt:
       markdown_description: An open-source, code-first toolkit for building, evaluating, and deploying sophisticated AI agents with flexibility and control.
@@ -266,7 +267,7 @@ nav:
       - Java: get-started/java.md
     - Build your Agent:
       - tutorials/index.md
-      - Multi-tool agent: get-started/quickstart.md
+      - Multi-tool agent: tutorials/multi-tool-agent.md
       - Agent team: tutorials/agent-team.md
       - Streaming agent:
         - get-started/streaming/index.md
