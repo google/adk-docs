@@ -94,7 +94,11 @@ trace.set_tracer_provider(TracerProvider())
 # --- Configuration ---
 PROJECT_ID = os.environ.get("GOOGLE_CLOUD_PROJECT", "your-gcp-project-id")
 DATASET_ID = os.environ.get("BIG_QUERY_DATASET_ID", "your-big-query-dataset-id")
-LOCATION = os.environ.get("GOOGLE_CLOUD_LOCATION", "US") # default location is US in the plugin
+# GOOGLE_CLOUD_LOCATION must be a valid Vertex AI region (e.g., "us-central1").
+# BQ_LOCATION is the BigQuery dataset location, which can be a multi-region
+# like "US" or "EU", or a single region like "us-central1".
+VERTEX_LOCATION = os.environ.get("GOOGLE_CLOUD_LOCATION", "us-central1")
+BQ_LOCATION = os.environ.get("BQ_LOCATION", "US")
 GCS_BUCKET = os.environ.get("GCS_BUCKET_NAME", "your-gcs-bucket-name") # Optional
 
 if PROJECT_ID == "your-gcp-project-id":
@@ -102,7 +106,7 @@ if PROJECT_ID == "your-gcp-project-id":
 
 # --- CRITICAL: Set environment variables BEFORE Gemini instantiation ---
 os.environ['GOOGLE_CLOUD_PROJECT'] = PROJECT_ID
-os.environ['GOOGLE_CLOUD_LOCATION'] = LOCATION
+os.environ['GOOGLE_CLOUD_LOCATION'] = VERTEX_LOCATION
 os.environ['GOOGLE_GENAI_USE_VERTEXAI'] = 'True'
 
 # --- Initialize the Plugin with Config ---
@@ -120,7 +124,7 @@ bq_logging_plugin = BigQueryAgentAnalyticsPlugin(
     dataset_id=DATASET_ID,
     table_id="agent_events", # default table name is agent_events
     config=bq_config,
-    location=LOCATION
+    location=BQ_LOCATION
 )
 
 # --- Initialize Tools and Model ---
@@ -159,6 +163,262 @@ FROM `your-gcp-project-id.your-big-query-dataset-id.agent_events`
 ORDER BY timestamp DESC
 LIMIT 20;
 ```
+
+## Deploy to Agent Engine with the plugin {#deploy-agent-engine}
+
+You can deploy an agent with the BigQuery Agent Analytics plugin to
+[Vertex AI Agent Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview).
+This section walks through the steps to deploy using the ADK CLI, and
+alternatively using the Vertex AI SDK programmatically.
+
+!!! important "Version Requirement"
+
+    Use ADK Python version **1.24.0 or higher** to deploy with this plugin to
+    Agent Engine. Earlier versions had an issue where the plugin's asynchronous
+    log writer could be terminated by the serverless runtime before flushing
+    pending events. Starting from 1.24.0, the plugin performs a synchronous
+    flush at the end of each invocation to ensure all events are written.
+
+### Prerequisites
+
+Before deploying, ensure you have completed the general
+[Agent Engine setup](/deploy/agent-engine/deploy/#setup-cloud-project),
+including:
+
+1.  A Google Cloud project with the **Vertex AI API** and **Cloud Resource
+    Manager API** enabled.
+2.  A **BigQuery dataset** in the target project (or a cross-project dataset
+    with the correct permissions).
+3.  A **Cloud Storage staging bucket** for deployment artifacts.
+4.  The deploying service account has the IAM roles listed in
+    [IAM permissions](#iam-permissions).
+5.  Your coding environment is
+    [authenticated](/deploy/agent-engine/deploy/#prerequisites-coding-env)
+    with `gcloud auth login` and `gcloud auth application-default login`.
+
+### Step 1: Define the agent and plugin
+
+Create your agent project folder with an `App` object that includes the plugin.
+The `App` object is required for Agent Engine deployments with plugins.
+
+```
+my_bq_agent/
+├── __init__.py
+├── agent.py
+└── requirements.txt
+```
+
+```python title="my_bq_agent/__init__.py"
+from . import agent
+```
+
+```python title="my_bq_agent/agent.py"
+import os
+import google.auth
+from google.adk.agents import Agent
+from google.adk.apps import App
+from google.adk.models.google_llm import Gemini
+from google.adk.plugins.bigquery_agent_analytics_plugin import (
+    BigQueryAgentAnalyticsPlugin,
+    BigQueryLoggerConfig,
+)
+from google.adk.tools.bigquery import BigQueryToolset, BigQueryCredentialsConfig
+
+# --- Configuration ---
+PROJECT_ID = os.environ.get("GOOGLE_CLOUD_PROJECT", "your-gcp-project-id")
+DATASET_ID = os.environ.get("BQ_DATASET", "agent_analytics")
+# BQ_LOCATION is the BigQuery dataset location (multi-region "US"/"EU" or
+# a single region like "us-central1"). This is separate from the Vertex AI
+# region used by GOOGLE_CLOUD_LOCATION.
+BQ_LOCATION = os.environ.get("BQ_LOCATION", "US")
+
+os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "True"
+
+# --- Plugin ---
+bq_analytics_plugin = BigQueryAgentAnalyticsPlugin(
+    project_id=PROJECT_ID,
+    dataset_id=DATASET_ID,
+    location=BQ_LOCATION,
+    config=BigQueryLoggerConfig(
+        batch_size=1,
+        batch_flush_interval=0.5,
+        log_session_metadata=True,
+    ),
+)
+
+# --- Tools ---
+credentials, _ = google.auth.default(
+    scopes=["https://www.googleapis.com/auth/cloud-platform"]
+)
+bigquery_toolset = BigQueryToolset(
+    credentials_config=BigQueryCredentialsConfig(credentials=credentials)
+)
+
+# --- Agent ---
+root_agent = Agent(
+    model=Gemini(model="gemini-2.5-flash"),
+    name="my_bq_agent",
+    instruction="You are a helpful assistant with access to BigQuery tools.",
+    tools=[bigquery_toolset],
+)
+
+# --- App (required for Agent Engine with plugins) ---
+app = App(
+    name="my_bq_agent",
+    root_agent=root_agent,
+    plugins=[bq_analytics_plugin],
+)
+```
+
+```text title="my_bq_agent/requirements.txt"
+google-adk[bigquery]
+google-cloud-bigquery-storage
+pyarrow
+opentelemetry-api
+opentelemetry-sdk
+```
+
+### Step 2: Deploy using ADK CLI
+
+Use the `adk deploy agent_engine` command to deploy the agent. The `--adk_app`
+flag tells the CLI which `App` object to use:
+
+```shell
+PROJECT_ID=your-gcp-project-id
+LOCATION=us-central1
+
+adk deploy agent_engine \
+    --project=$PROJECT_ID \
+    --region=$LOCATION \
+    --staging_bucket=gs://your-staging-bucket \
+    --display_name="My BQ Analytics Agent" \
+    --adk_app=agent.app \
+    my_bq_agent
+```
+
+!!! tip "`--adk_app` flag"
+
+    The `--adk_app` flag specifies the module path and variable name of the
+    `App` object (in the format `module.variable`). In this example,
+    `agent.app` refers to the `app` variable in `agent.py`. This ensures the
+    deployment correctly picks up the plugin configuration.
+
+Once successfully deployed, you should see output like:
+
+```shell
+AgentEngine created. Resource name: projects/123456789/locations/us-central1/reasoningEngines/751619551677906944
+```
+
+Note the **Resource name** for the next step.
+
+### Step 3: Test the deployed agent
+
+After deployment, you can query the agent using the Vertex AI SDK:
+
+```python title="test_deployed_agent.py"
+import uuid
+import vertexai
+
+PROJECT_ID = "your-gcp-project-id"
+LOCATION = "us-central1"
+AGENT_ID = "751619551677906944"  # from deployment output
+
+vertexai.init(project=PROJECT_ID, location=LOCATION)
+client = vertexai.Client(project=PROJECT_ID, location=LOCATION)
+
+agent = client.agent_engines.get(
+    name=f"projects/{PROJECT_ID}/locations/{LOCATION}/reasoningEngines/{AGENT_ID}"
+)
+
+user_id = f"test_user_{uuid.uuid4().hex[:8]}"
+for chunk in agent.stream_query(
+    message="List datasets in my project", user_id=user_id
+):
+    print(chunk, end="", flush=True)
+```
+
+### Step 4: Verify events in BigQuery
+
+After sending a few queries to the deployed agent, verify that events are being
+logged by querying your BigQuery table:
+
+```sql
+SELECT timestamp, event_type, agent, content
+FROM `your-gcp-project-id.agent_analytics.agent_events`
+ORDER BY timestamp DESC
+LIMIT 20;
+```
+
+You should see events such as `INVOCATION_STARTING`, `LLM_REQUEST`,
+`LLM_RESPONSE`, `TOOL_STARTING`, `TOOL_COMPLETED`, and `INVOCATION_COMPLETED`.
+
+### Alternative: Deploy using the Vertex AI SDK
+
+You can also deploy programmatically using the Vertex AI SDK directly. This is
+useful for CI/CD pipelines or custom deployment workflows:
+
+```python title="deploy.py"
+import vertexai
+from vertexai import agent_engines
+from my_bq_agent.agent import app
+
+PROJECT_ID = "your-gcp-project-id"
+LOCATION = "us-central1"
+STAGING_BUCKET = "gs://your-staging-bucket"
+
+vertexai.init(
+    project=PROJECT_ID, location=LOCATION, staging_bucket=STAGING_BUCKET
+)
+client = vertexai.Client(project=PROJECT_ID, location=LOCATION)
+
+remote_app = client.agent_engines.create(
+    agent=app,
+    config={
+        "display_name": "My BQ Analytics Agent",
+        "staging_bucket": STAGING_BUCKET,
+        "requirements": [
+            "google-adk[bigquery]",
+            "google-cloud-aiplatform[agent_engines]",
+            "google-cloud-bigquery-storage",
+            "pyarrow",
+            "opentelemetry-api",
+            "opentelemetry-sdk",
+        ],
+    },
+)
+print(f"Deployed agent: {remote_app.api_resource.name}")
+```
+
+### Troubleshooting
+
+If events are not appearing in your BigQuery table after deployment:
+
+1.  **Check ADK version**: Ensure `google-adk>=1.24.0` is in your requirements.
+    Earlier versions do not flush pending events before the serverless runtime
+    suspends the process.
+
+2.  **Enable debug logging**: Add the following to the top of your `agent.py` to
+    surface any silent errors:
+
+    ```python
+    import logging
+    logging.basicConfig(level=logging.INFO)
+    logging.getLogger("google_adk").setLevel(logging.DEBUG)
+    ```
+
+3.  **Check IAM permissions**: The Agent Engine service account needs
+    `roles/bigquery.dataEditor` on the target table and `roles/bigquery.jobUser`
+    on the project. For **cross-project** logging, also ensure the BigQuery API
+    is enabled in the source project and the service account has
+    `bigquery.tables.updateData` on the destination table.
+
+4.  **Verify plugin initialization**: In Cloud Logging, filter by
+    `resource.type="reasoning_engine"` and look for plugin startup messages or
+    error logs.
+
+5.  **Use immediate flush for debugging**: Set `batch_size=1` and
+    `batch_flush_interval=0.1` in `BigQueryLoggerConfig` to rule out buffering
+    issues.
 
 ## Tracing and Observability
 
@@ -845,6 +1105,83 @@ To connect this dashboard to your own BigQuery table, use the following link for
 ```text
 https://lookerstudio.google.com/reporting/create?c.reportId=f1c5b513-3095-44f8-90a2-54953d41b125&ds.ds3.connector=bigQuery&ds.ds3.type=TABLE&ds.ds3.projectId=<your-project-id>&ds.ds3.datasetId=<your-dataset-id>&ds.ds3.tableId=<your-table-id>
 ```
+
+## Security: Avoid logging sensitive credentials {#security-credentials}
+
+!!! warning "Do not log OAuth tokens, API keys, or client secrets"
+
+    The BigQuery Agent Analytics plugin captures detailed event payloads,
+    including tool arguments, LLM prompts, and authentication-related events
+    (such as HITL credential requests). If your agent uses **authenticated
+    tools** (e.g., `AuthenticatedFunctionTool` with OAuth2), the plugin may
+    log sensitive values such as `client_secret`, `access_token`, or API keys
+    into the `content` column of your BigQuery table.
+
+    This is a known concern
+    ([google/adk-python#3845](https://github.com/google/adk-python/issues/3845))
+    and can lead to credential exposure in your analytics data.
+
+To prevent sensitive credentials from being persisted in BigQuery, use one or
+more of the following approaches:
+
+### Use `content_formatter` to redact secrets
+
+Provide a custom `content_formatter` function in `BigQueryLoggerConfig` to
+strip or mask sensitive fields before they are written:
+
+```python
+import json
+import re
+from typing import Any
+
+SENSITIVE_KEYS = {"client_secret", "access_token", "refresh_token", "api_key", "secret"}
+
+def redact_credentials(event_content: Any, event_type: str) -> str:
+    """Redact OAuth secrets and tokens from logged content."""
+    if isinstance(event_content, dict):
+        text = json.dumps(event_content)
+    else:
+        text = str(event_content)
+
+    for key in SENSITIVE_KEYS:
+        # Redact values in JSON-like strings: "client_secret": "GOCSPX-xxx"
+        text = re.sub(
+            rf'("{key}"\s*:\s*)"[^"]*"',
+            rf'\1"[REDACTED]"',
+            text,
+            flags=re.IGNORECASE,
+        )
+    return text
+
+config = BigQueryLoggerConfig(
+    content_formatter=redact_credentials,
+    # ... other options
+)
+```
+
+### Use `event_denylist` to skip credential events
+
+If you do not need to log authentication-related events, exclude them entirely:
+
+```python
+config = BigQueryLoggerConfig(
+    event_denylist=[
+        "HITL_CREDENTIAL_REQUEST",
+        "HITL_CREDENTIAL_REQUEST_COMPLETED",
+    ],
+    # ... other options
+)
+```
+
+### General best practices
+
+-   **Never hardcode secrets** in agent source code. Use environment variables
+    or a secret manager (e.g., Google Cloud Secret Manager) for OAuth client
+    secrets and API keys.
+-   **Restrict BigQuery table access** using IAM to limit who can read logged
+    event data.
+-   **Audit your logs** periodically to verify no unexpected sensitive data is
+    being captured.
 
 ## Feedback
 We welcome your feedback on BigQuery Agent Analytics. If you have questions, suggestions, or encounter any issues, please reach out to the team at bqaa-feedback@google.com.
