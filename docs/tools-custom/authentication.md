@@ -54,11 +54,11 @@ encrypted local storage only when needed.
 ### In-memory secrets
 
 This method *should only be used in the early development* and testing of your
-agent. With this approach, credentials are stored in a
-***InMemorySessionService*** instance, and the data is removed when the session
-ends. You should carefully consider the risks of using this method based on how
-long an agent session may last, who has access to the agent, and the security of
-the environment where the agent is running.
+agent. With this approach, credentials are stored in the current
+***InMemorySessionService*** instance. The data exists only in session memory
+and is not persisted. However, you should carefully consider the risks of using
+this method based on how long an agent session may last, who has access to the
+agent, and the security of the environment where the agent is running.
 
 ## Framework components
 
@@ -87,13 +87,13 @@ specific interactive process with your ***Agent Client*** application.
 
 ### Supported initial credential types
 
-*   **API\_KEY:** Provides simple key value authentication, which usually
+*   **API\_KEY:** Provides simple key-value authentication, which usually
     requires no authentication exchange.
 *   **HTTP:** Provides Basic Auth which is not recommended and may not be
     supported for exchange, or already obtained Bearer tokens. Bearer tokens do
     not require an authentication exchange.
 *   **OAUTH2:** Provides standard OAuth 2.0 authentication flows, and requires
-    configuration with client ID, secret, and  scopes. This method often
+    configuration with client ID, secret, and scopes. This method often
     triggers an interactive flow for user consent.
 *   **OPEN\_ID\_CONNECT:** Provides authentication based on OpenID Connect.
     Similar to OAuth2, this type often requires configuration and user
