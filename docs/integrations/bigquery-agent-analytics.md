@@ -1,7 +1,7 @@
 ---
 catalog_title: BigQuery Agent Analytics Plugin
 catalog_description: In-depth agent analytics for behavior analysis and logging
-catalog_icon: /adk-docs/integrations/assets/bigquery.png
+catalog_icon: /integrations/assets/bigquery.png
 catalog_tags: ["observability", "google"]
 ---
 
@@ -182,7 +182,7 @@ alternatively using the Vertex AI SDK programmatically.
 ### Prerequisites
 
 Before deploying, ensure you have completed the general
-[Agent Engine setup](/adk-docs/deploy/agent-engine/deploy/#setup-cloud-project),
+[Agent Engine setup](/deploy/agent-engine/deploy/#setup-cloud-project),
 including:
 
 1.  A Google Cloud project with the **Vertex AI API** and **Cloud Resource
@@ -193,7 +193,7 @@ including:
 4.  The deploying service account has the IAM roles listed in
     [IAM permissions](#iam-permissions).
 5.  Your coding environment is
-    [authenticated](/adk-docs/deploy/agent-engine/deploy/#prerequisites-coding-env)
+    [authenticated](/deploy/agent-engine/deploy/#prerequisites-coding-env)
     with `gcloud auth login` and `gcloud auth application-default login`.
 
 ### Step 1: Define the agent and plugin
