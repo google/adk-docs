@@ -614,8 +614,8 @@ Hello world: query is [hello world]
 
 
 For more information on running ADK agents, see the
-[Quickstart](/get-started/quickstart/#run-your-agent)
-guide.
+[Agent Runtime](/runtime/#ways-to-run-agents)
+guides.
 
 ## Build workflows with Plugins
 
