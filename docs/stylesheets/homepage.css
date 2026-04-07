@@ -22,22 +22,12 @@
   padding: 0 clamp(16px, 4vw, 48px) !important;
 }
 
-.md-sidebar:has(~ .md-content .adk-landing) {
-  display: none !important;
-}
-
-.md-footer:has(~ .adk-landing) {
-  display: none;
-}
-
 /* JS fallback via body class */
 body.adk-landing-page { overflow-x: hidden !important; }
 body.adk-landing-page .md-grid { max-width: 100% !important; width: 100% !important; }
-body.adk-landing-page .md-sidebar { display: none !important; }
 body.adk-landing-page .md-main__inner { max-width: none !important; margin: 0 !important; padding: 0 !important; }
 body.adk-landing-page .md-content { max-width: none !important; margin: 0 !important; flex-grow: 1 !important; }
 body.adk-landing-page .md-content__inner { max-width: 1280px !important; margin: 0 auto !important; padding: 0 clamp(16px, 4vw, 48px) !important; box-sizing: border-box !important; overflow-x: hidden !important; }
-body.adk-landing-page .md-footer { display: none !important; }
 body.adk-landing-page .md-header__inner { max-width: 100% !important; overflow-x: hidden !important; padding-right: 20px !important; }
 
 /* Responsive header repo links — full text → icons only (≤1200px) → hidden (≤900px) */
@@ -1278,56 +1268,6 @@ html[data-md-color-scheme="slate"] .adk-landing .carousel-card:hover {
 
 .md-typeset .adk-landing .cc-text-good {
   color: #4ade80;
-}
-
-/* ========================
-   ANNOUNCEMENT BANNER
-   Adapts to light/dark via [data-md-color-scheme].
-   ======================== */
-[data-md-color-scheme="default"] .md-banner {
-  background: #1e293b;
-  color: #e2e8f0;
-}
-
-[data-md-color-scheme="default"] .md-banner a {
-  color: #93c5fd;
-}
-
-[data-md-color-scheme="slate"] .md-banner {
-  background: #1e1b4b;
-  color: #c7d2fe;
-}
-
-[data-md-color-scheme="slate"] .md-banner a {
-  color: #a5b4fc;
-}
-
-.md-banner {
-  font-size: 0.8rem;
-}
-
-.md-banner .announce-items {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.md-banner .announce-items a {
-  text-decoration: none;
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-.md-banner .announce-items a:hover {
-  text-decoration: underline;
-}
-
-.md-banner .announce-sep {
-  opacity: 0.5;
-  font-weight: 300;
-  user-select: none;
 }
 
 /* ========================
