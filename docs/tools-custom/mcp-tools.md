@@ -284,6 +284,7 @@ export const rootAgent = new LlmAgent({
 [Google Maps Platform Grounding Lite](https://developers.google.com/maps/ai/grounding-lite) is a service with Model Context Protocol (MCP) support that makes it easy to ground your AI applications with trusted geospatial data from Google Maps. The MCP server provides tools that allow LLMs to access capabilities for places, weather, and routes. You can try out Grounding Lite by enabling it in any tool that supports MCP servers.
 
 Grounding Lite provides tools that allow LLMs to access the following Google Maps capabilities:
+
 * **Search places:** Request information about places and get AI-generated place data summaries, as well as Place IDs, latitude and longitude coordinates, and Google Maps links for each of the places included in the summary. You can use the returned Place IDs and latitude and longitude coordinates with other Google Maps Platform APIs to show places on a map.
 * **Lookup weather:** Request information about weather and return current conditions, hourly forecasts, and daily forecasts.
 * **Compute routes:** Request information about driving or walking routes between two locations and return route distance and duration information.
