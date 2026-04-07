@@ -1,5 +1,9 @@
 # Environment simulation for evaluations
 
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.24.0</span>
+</div>
+
 When evaluating agents that rely on external dependencies — such as APIs,
 databases, or third-party services — running those tools live during testing can
 be slow, costly, or unreliable. The **Environment Simulator** lets you safely
@@ -17,8 +21,8 @@ Overall, this feature lets you:
 *   Produce reproducible test runs by seeding probabilistic injections.
 
 The Environment Simulation integrates with ADK's tool execution pipeline via the
-[`before_tool_callback`](https://google.github.io/adk-docs/callbacks/types-of-callbacks/#tool-execution-callbacks)
-hook or the [plugin system](https://google.github.io/adk-docs/plugins/), so no
+[`before_tool_callback`](/callbacks/types-of-callbacks/#tool-execution-callbacks)
+hook or the [plugin system](/plugins/), so no
 changes to your agent code are required.
 
 ```
@@ -28,7 +32,7 @@ releases.
 
 ## How it works
 
-While [User Simulation](https://google.github.io/adk-docs/evaluate/user-sim/)
+While [User Simulation](/evaluate/user-sim/)
 drives the conversation forward, Environment Simulation provides the stable
 backend. At a high level, the Environment Simulator sits between your agent and
 its tools. When the agent calls a tool, the simulator intercepts the call and
@@ -56,6 +60,9 @@ The `EnvironmentSimulationFactory` class provides two integration points:
     integrates with the ADK plugin system.
 
 ### Using as a callback
+
+The following example shows how to create an environment simulation as one of the adk agent callbacks.
+
 
 ```python
 from google.adk.agents import LlmAgent
@@ -92,6 +99,8 @@ agent = LlmAgent(
 ```
 
 ### Using as a plugin
+
+The following example shows how to create environment simulation as an ADK agent plugin.
 
 ```python
 from google.adk.apps import App
@@ -188,6 +197,8 @@ criteria are met (and whose probability check passes) is applied.
 
 ### Injecting errors
 
+The following example shows how to inject errors with specific error code and error message to the agent.
+
 ```python
 from google.adk.tools.environment_simulation.environment_simulation_config import (
     InjectedError,
@@ -213,6 +224,8 @@ declined."}` instead of a real tool result, allowing you to evaluate how the
 agent handles payment failures.
 
 ### Injecting fixed responses
+
+Use the following InjectionConfig to specify a success response with fixed response payload. 
 
 ```python
 InjectionConfig(
