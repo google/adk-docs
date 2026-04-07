@@ -138,9 +138,8 @@ To run your Agent Config-defined agent:
     -   `adk api_server` - Run your agent as a service that can be
         used by other applications.
 
-For more information on the ways to run your agent, see the *Run Your Agent*
-topic in the
-[Quickstart](/get-started/quickstart/#run-your-agent).
+For more information on the ways to run your agent, see
+[Agent Runtime](/runtime/#ways-to-run-agents).
 For more information about the ADK command line options, see the
 [ADK CLI reference](/api-reference/cli/).
 
