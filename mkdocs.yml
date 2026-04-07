@@ -256,8 +256,7 @@ plugins:
 
 # Navigation
 nav:
-  - Home:
-    - index.md
+  - Home: index.md
   - Build Agents:
     - Get Started:
       - get-started/index.md
