@@ -279,67 +279,63 @@ export const rootAgent = new LlmAgent({
 
 
 
-### Example 2: Google Maps MCP Server
+### Example 2: Google Maps Grounding Lite MCP Server
 
-This example demonstrates connecting to the Google Maps MCP server.
+[Google Maps Platform Grounding Lite](https://developers.google.com/maps/ai/grounding-lite) is a service with Model Context Protocol (MCP) support that makes it easy to ground your AI applications with trusted geospatial data from Google Maps. The MCP server provides tools that allow LLMs to access capabilities for places, weather, and routes. You can try out Grounding Lite by enabling it in any tool that supports MCP servers.
 
-#### Step 1: Get API Key and Enable APIs
+Grounding Lite provides tools that allow LLMs to access the following Google Maps capabilities:
 
-1.  **Google Maps API Key:** Follow the directions at [Use API keys](https://developers.google.com/maps/documentation/javascript/get-api-key#create-api-keys) to obtain a Google Maps API Key.
-2.  **Enable APIs:** In your Google Cloud project, ensure the following APIs are enabled:
-    *   Directions API
-    *   Routes API
-    For instructions, see the [Getting started with Google Maps Platform](https://developers.google.com/maps/get-started#enable-api-sdk) documentation.
+* **Search places:** Request information about places and get AI-generated place data summaries, as well as Place IDs, latitude and longitude coordinates, and Google Maps links for each of the places included in the summary. You can use the returned Place IDs and latitude and longitude coordinates with other Google Maps Platform APIs to show places on a map.
+* **Lookup weather:** Request information about weather and return current conditions, hourly forecasts, and daily forecasts.
+* **Compute routes:** Request information about driving or walking routes between two locations and return route distance and duration information.
 
-#### Step 2: Define your Agent with `McpToolset` for Google Maps
+#### Step 1: Enable the Maps Grounding Lite service on your Google Cloud project
+
+1. [Set up your Google Cloud project](https://developers.google.com/maps/get-started#create-project) if you haven’t got one.
+2. In the [Google Cloud Console](https://console.developers.google.com), choose the project you want to use for Grounding Lite.
+3. Enable Grounding Lite in the [Google Cloud Console API Library](https://console.developers.google.com/apis/library/mapstools.googleapis.com).
+4. [Get a Google Maps Platform API Key](https://developers.google.com/maps/get-started#api-key)
+
+#### Step 2: Define your Agent with `McpToolset` for Google Maps Grounding Lite
 
 Modify your `agent.py` file (e.g., in `./adk_agent_samples/mcp_agent/agent.py`). Replace `YOUR_GOOGLE_MAPS_API_KEY` with the actual API key you obtained.
 
 ```python
 # ./adk_agent_samples/mcp_agent/agent.py
 import os
-from google.adk.agents import LlmAgent
+from google.adk.agents.llm_agent import Agent
 from google.adk.tools.mcp_tool import McpToolset
-from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
-from mcp import StdioServerParameters
+from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPConnectionParams
 
 # Retrieve the API key from an environment variable or directly insert it.
 # Using an environment variable is generally safer.
 # Ensure this environment variable is set in the terminal where you run 'adk web'.
 # Example: export GOOGLE_MAPS_API_KEY="YOUR_ACTUAL_KEY"
-google_maps_api_key = os.environ.get("GOOGLE_MAPS_API_KEY")
+GOOGLE_MAPS_API_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
 
-if not google_maps_api_key:
+if not GOOGLE_MAPS_API_KEY:
     # Fallback or direct assignment for testing - NOT RECOMMENDED FOR PRODUCTION
-    google_maps_api_key = "YOUR_GOOGLE_MAPS_API_KEY_HERE" # Replace if not using env var
-    if google_maps_api_key == "YOUR_GOOGLE_MAPS_API_KEY_HERE":
+    GOOGLE_MAPS_API_KEY = "YOUR_GOOGLE_MAPS_API_KEY_HERE" # Replace if not using env var
+    if GOOGLE_MAPS_API_KEY == "YOUR_GOOGLE_MAPS_API_KEY_HERE":
         print("WARNING: GOOGLE_MAPS_API_KEY is not set. Please set it as an environment variable or in the script.")
         # You might want to raise an error or exit if the key is crucial and not found.
 
-root_agent = LlmAgent(
-    model='gemini-2.5-flash',
-    name='maps_assistant_agent',
-    instruction='Help the user with mapping, directions, and finding places using Google Maps tools.',
+root_agent = Agent(
+    model='gemini-3-flash-preview',
+    name='travel_planner_agent',
+    description='A helpful assistant for planning travel routes.',
     tools=[
         McpToolset(
-            connection_params=StdioConnectionParams(
-                server_params = StdioServerParameters(
-                    command='npx',
-                    args=[
-                        "-y",
-                        "@modelcontextprotocol/server-google-maps",
-                    ],
-                    # Pass the API key as an environment variable to the npx process
-                    # This is how the MCP server for Google Maps expects the key.
-                    env={
-                        "GOOGLE_MAPS_API_KEY": google_maps_api_key
-                    }
-                ),
-            ),
-            # You can filter for specific Maps tools if needed:
-            # tool_filter=['get_directions', 'find_place_by_id']
+            connection_params=StreamableHTTPConnectionParams(
+                url="https://mapstools.googleapis.com/mcp",
+                headers={
+                    "X-Goog-Api-Key": GOOGLE_MAPS_API_KEY,
+                    "Content-Type": "application/json",
+                    "Accept": "application/json, text/event-stream"
+                }
+            )
         )
-    ],
+    ]
 )
 ```
 
@@ -369,15 +365,15 @@ from . import agent
     ```
 
 3.  **Interact in the UI**:
-    *   Select the `maps_assistant_agent`.
+    *   Select the `travel_planner_agent`.
     *   Try prompts like:
-        *   "Get directions from GooglePlex to SFO."
+        *   "I will be in San Francisco tomorrow. What’s the weather like?"
         *   "Find coffee shops near Golden Gate Park."
-        *   "What's the route from Paris, France to Berlin, Germany?"
+        *   "Get directions from GooglePlex to SFO."
 
-You should see the agent use the Google Maps MCP tools to provide directions or location-based information.
+You should see the agent use the Google Maps Grounding Lite MCP tools to provide directions or location-based information.
 
-<img src="../../assets/adk-tool-mcp-maps-adk-web-demo.png" alt="MCP with ADK Web - Google Maps Example">
+<img src="../../assets/adk-tool-maps-lite-mcp-adk-web-demo.png" alt="Google Maps Grounding Lite MCP with ADK Web Example">
 
 
 For Java, refer to the following sample to define an agent that initializes the `McpToolset`:
@@ -393,45 +389,50 @@ import com.google.adk.tools.mcp.StdioServerParameters;
 import com.google.genai.types.Content;
 import com.google.genai.types.Part;
 
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class MapsAgentCreator {
 
     /**
-     * Initializes an McpToolset for Google Maps, retrieves tools,
+     * Initializes an McpToolset for Google Maps Grounding Lite, 
      * creates an LlmAgent, sends a map-related prompt, and closes the toolset.
-     * @param args Command line arguments (not used).
      */
     public static void main(String[] args) {
-        // TODO: Replace with your actual Google Maps API key, on a project with the Places API enabled.
-        String googleMapsApiKey = "YOUR_GOOGLE_MAPS_API_KEY";
+        // Read from environment variables
+        String googleMapsApiKey = System.getenv("GOOGLE_MAPS_API_KEY");
 
-        Map<String, String> envVariables = new HashMap<>();
-        envVariables.put("GOOGLE_MAPS_API_KEY", googleMapsApiKey);
+        if (googleMapsApiKey == null || googleMapsApiKey.trim().isEmpty()) {
+            // Fallback or direct assignment for testing - NOT RECOMMENDED FOR PRODUCTION
+            googleMapsApiKey = "YOUR_GOOGLE_MAPS_API_KEY_HERE"; // Replace if not using env var
+            if ("YOUR_GOOGLE_MAPS_API_KEY_HERE".equals(googleMapsApiKey)) {
+                System.out.println("WARNING: GOOGLE_MAPS_API_KEY is not set. Please set it as an environment variable or in the script.");
+            }
+        }
 
-        StdioServerParameters serverParams = StdioServerParameters.builder()
-                .command("npx")
-                .args(List.of(
-                        "-y",
-                        "@modelcontextprotocol/server-google-maps"
-                ))
-                .env(envVariables)
+        // Setup the headers for the remote MCP connection
+        Map<String, String> headers = new HashMap<>();
+        headers.put("X-Goog-Api-Key", googleMapsApiKey);
+        headers.put("Content-Type", "application/json");
+        headers.put("Accept", "application/json, text/event-stream");
+
+        // Use StreamableHttpServerParameters for the remote HTTP MCP server connection
+        StreamableHttpServerParameters serverParams = StreamableHttpServerParameters.builder("https://mapstools.googleapis.com/mcp")
+                .headers(headers)
                 .build();
 
-        try (McpToolset toolset = new McpToolset(serverParams.toServerParameters())) {
+        try (McpToolset toolset = new McpToolset(serverParams)) {
+            // Build the Agent with the configured Toolset
             LlmAgent agent = LlmAgent.builder()
-                    .model("gemini-2.5-flash")
-                    .name("maps_assistant")
-                    .description("Maps assistant")
-                    .instruction("Help user with mapping and directions using available tools.")
+                    .model("gemini-3-flash-preview")
+                    .name("travel_planner_agent")
+                    .description("A helpful assistant for planning travel routes.")
                     .tools(toolset)
                     .build();
 
             System.out.println("Agent created: " + agent.name());
 
+            // Set up the runner and session
             InMemoryRunner runner = new InMemoryRunner(agent);
             String userId = "maps-user-" + System.currentTimeMillis();
             String sessionId = "maps-session-" + System.currentTimeMillis();
@@ -446,6 +447,7 @@ public class MapsAgentCreator {
 
             System.out.println("\nSending prompt: \"" + promptText + "\" to agent...\n");
 
+            // Execute the prompt asynchronously and print the streamed events
             runner.runAsync(sessionKey, promptContent)
                     .blockingForEach(event -> {
                         System.out.println("Event received: " + event.toJson());
@@ -456,11 +458,6 @@ public class MapsAgentCreator {
         }
     }
 }
-```
-
-A successful response will look like this:
-```shell
-Event received: {"id":"1a4deb46-c496-4158-bd41-72702c773368","invocationId":"e-48994aa0-531c-47be-8c57-65215c3e0319","author":"maps_assistant","content":{"parts":[{"text":"OK. I see a few options. The closest one is CVS Pharmacy at 5 Pennsylvania Plaza, New York, NY 10001, United States. Would you like directions?\n"}],"role":"model"},"actions":{"stateDelta":{},"artifactDelta":{},"requestedAuthConfigs":{}},"timestamp":1747380026642}
 ```
 
 For TypeScript, refer to the following sample to define an agent that initializes the `MCPToolset`:
@@ -474,40 +471,29 @@ import {LlmAgent, MCPToolset} from "@google/adk";
 // Example: export GOOGLE_MAPS_API_KEY="YOUR_ACTUAL_KEY"
 const googleMapsApiKey = process.env.GOOGLE_MAPS_API_KEY;
 if (!googleMapsApiKey) {
+    console.warn("WARNING: GOOGLE_MAPS_API_KEY is not set.");
+    // We throw an error here to prevent the agent from booting without its crucial grounding key
     throw new Error('GOOGLE_MAPS_API_KEY is not provided, please run "export GOOGLE_MAPS_API_KEY=YOUR_ACTUAL_KEY" to add that.');
 }
 
 export const rootAgent = new LlmAgent({
-    model: "gemini-2.5-flash",
-    name: "maps_assistant_agent",
-    instruction: "Help the user with mapping, directions, and finding places using Google Maps tools.",
+    model: "gemini-3-flash-preview",
+    name: "travel_planner_agent",
+    description: "A helpful assistant for planning travel.",
     tools: [
-        new MCPToolset(
-            {
-                type: "StdioConnectionParams",
-                serverParams: {
-                    command: "npx",
-                    args: [
-                        "-y",
-                        "@modelcontextprotocol/server-google-maps",
-                    ],
-                    // Pass the API key as an environment variable to the npx process
-                    // This is how the MCP server for Google Maps expects the key.
-                    env: {
-                        "GOOGLE_MAPS_API_KEY": googleMapsApiKey
-                    }
-                },
-            },
-            // You can filter for specific Maps tools if needed:
-            // ['get_directions', 'find_place_by_id']
-        )
+        new MCPToolset({
+            // Using SseConnectionParams to connect to the remote Grounding Lite service,
+            // mirroring Python's StreamableHTTPConnectionParams.
+            type: "SseConnectionParams", 
+            url: "https://mapstools.googleapis.com/mcp",
+            headers: {
+                "X-Goog-Api-Key": googleMapsApiKey,
+                "Content-Type": "application/json",
+                "Accept": "application/json, text/event-stream"
+            }
+        })
     ],
 });
-```
-
-A successful response will look like this:
-```shell
-Event received: {"id":"1a4deb46-c496-4158-bd41-72702c773368","invocationId":"e-48994aa0-531c-47be-8c57-65215c3e0319","author":"maps_assistant","content":{"parts":[{"text":"OK. I see a few options. The closest one is CVS Pharmacy at 5 Pennsylvania Plaza, New York, NY 10001, United States. Would you like directions?\n"}],"role":"model"},"actions":{"stateDelta":{},"artifactDelta":{},"requestedAuthConfigs":{}},"timestamp":1747380026642}
 ```
 
 ## 2. Building an MCP server with ADK tools (MCP server exposing ADK)
