@@ -28,15 +28,16 @@ agent = <span class="fn">Agent</span>(
     tools=[google_search],
 )</pre></div>
 
-<div class="code-content" id="code-typescript" style="display:none"><pre><span class="kw">import</span> { <span class="fn">Agent</span> } <span class="kw">from</span> <span class="str">'@google/adk'</span>;
-<span class="kw">import</span> { googleSearch } <span class="kw">from</span> <span class="str">'@google/adk/tools'</span>;
+<div class="code-content" id="code-typescript" style="display:none"><pre><span class="kw">import</span> { <span class="fn">LlmAgent, GOOGLE_SEARCH</span> } <span class="kw">from</span> <span class="str">'@google/adk'</span>;
 
-<span class="kw">const</span> agent = <span class="kw">new</span> <span class="fn">Agent</span>({
+<span class="kw">const</span> agent = <span class="kw">new</span> <span class="fn">LlmAgent</span>({
   name: <span class="str">'researcher'</span>,
   model: <span class="str">'gemini-flash-latest'</span>,
   instruction: <span class="str">'You help users research topics thoroughly.'</span>,
-  tools: [googleSearch],
-});</pre></div>
+  tools: [GOOGLE_SEARCH],
+});
+
+</pre></div>
 
 <div class="code-content" id="code-go" style="display:none"><pre><span class="kw">import</span> <span class="str">"google.golang.org/adk/agent"</span>
 
