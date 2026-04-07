@@ -151,7 +151,7 @@ Once the ADK Web UI loads in your browser:
 
 You should see the agent interacting with the MCP file system server, and the server's responses (file listings, file content) relayed through the agent. The `adk web` console (terminal where you ran the command) might also show logs from the `npx` process if it outputs to stderr.
 
-<img src="../../assets/adk-tool-mcp-filesystem-adk-web-demo.png" alt="MCP with ADK Web - FileSystem Example">
+<img src="../../assets/adk-tool-maps-lite-mcp-adk-web-demo.png" alt="MCP with ADK Web - FileSystem Example">
 
 
 
