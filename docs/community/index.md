@@ -10,16 +10,14 @@ Development Kit community.
 
 ## Join the Community
 
-Want to discuss ADK, ask questions, or talk about all things agents? Head to
-**[r/agentdevelopmentkit](https://www.reddit.com/r/agentdevelopmentkit/)** on
-Reddit.
-
-Want updates on the monthly community call? Join the **[ADK Community Google
-Group](https://groups.google.com/g/adk-community)**.
-
-Want to file a bug or contribute to the ADK framework? Check out the
-**[Contributing Guide](/community/contributing-guide/)** to find the right repo
-and get started.
+- Want to discuss ADK, ask questions, or talk about all things agents? Head to
+  **[r/agentdevelopmentkit](https://www.reddit.com/r/agentdevelopmentkit/)** on
+  Reddit.
+- Want updates on the monthly community call? Join the
+  **[ADK Community Google Group](https://groups.google.com/g/adk-community)**.
+- Want to file a bug or contribute to the ADK framework? Check out the
+  **[Contributing Guide](/community/contributing-guide/)** to find the right
+  repo and get started.
 
 ## Getting Started
 
