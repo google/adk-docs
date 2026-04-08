@@ -3,14 +3,14 @@
  * Copyright 2026 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
-
-// [START full_example]
+// --8<-- [start:full_example]
 import { 
     LlmAgent, 
     Runner, 
     InMemorySessionService, 
     InMemoryMemoryService, 
-    LOAD_MEMORY 
+    LOAD_MEMORY, 
+    isFinalResponse 
 } from '@google/adk';
 import { createUserContent } from '@google/genai';
 
@@ -107,4 +107,4 @@ runScenario().catch(err => {
     console.error(err);
     process.exit(1);
 });
-// [END full_example]
+// --8<-- [end:full_example]
