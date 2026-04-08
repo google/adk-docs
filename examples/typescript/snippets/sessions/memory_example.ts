@@ -4,13 +4,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+// [START full_example]
 import { 
     LlmAgent, 
     Runner, 
     InMemorySessionService, 
     InMemoryMemoryService, 
-    LOAD_MEMORY, 
-    isFinalResponse 
+    LOAD_MEMORY 
 } from '@google/adk';
 import { createUserContent } from '@google/genai';
 
@@ -36,12 +36,15 @@ const memoryRecallAgent = new LlmAgent({
     tools: [LOAD_MEMORY]
 });
 
+// Export for 'adk run' compatibility (to avoid 'No BaseAgent found' error)
+export const root_agent = memoryRecallAgent;
+
 // --- Services ---
-// Services must be shared across runners to share state and memory
 const sessionService = new InMemorySessionService();
 const memoryService = new InMemoryMemoryService();
 
 async function runScenario() {
+    // --- Turn 1: Capture some information in a session ---
     console.log("--- Turn 1: Capturing Information ---");
     const runner1 = new Runner({
         agent: infoCaptureAgent,
@@ -56,8 +59,10 @@ async function runScenario() {
 
     let finalResponseText = "(No final response)";
     for await (const event of runner1.runAsync({ userId: USER_ID, sessionId: session1Id, newMessage: userInput1 })) {
-        if (isFinalResponse(event) && event.content?.parts?.length) {
-            finalResponseText = event.content.parts[0].text ?? "";
+        // Capture any text response from the agent
+        if (event.author === infoCaptureAgent.name && event.content?.parts) {
+            const text = event.content.parts.map(p => p.text || "").join("").trim();
+            if (text) finalResponseText = text;
         }
     }
     console.log(`Agent 1 Response: ${finalResponseText}`);
@@ -70,6 +75,7 @@ async function runScenario() {
         console.log("Session added to memory.");
     }
 
+    // --- Turn 2: Recall the information in a new session ---
     console.log("\n--- Turn 2: Recalling Information ---");
     const runner2 = new Runner({
         agent: memoryRecallAgent,
@@ -84,12 +90,21 @@ async function runScenario() {
 
     let finalResponseText2 = "(No final response)";
     for await (const event of runner2.runAsync({ userId: USER_ID, sessionId: session2Id, newMessage: userInput2 })) {
-        if (isFinalResponse(event) && event.content?.parts?.length) {
-            finalResponseText2 = event.content.parts[0].text ?? "";
+        // Capture any text response from the agent
+        if (event.author === memoryRecallAgent.name && event.content?.parts) {
+            const text = event.content.parts.map(p => p.text || "").join("").trim();
+            if (text) finalResponseText2 = text;
         }
     }
     console.log(`Agent 2 Response: ${finalResponseText2}`);
+
+    // Exit immediately to prevent the ADK CLI from starting an interactive loop
+    process.exit(0);
 }
 
 // Execute the scenario
-runScenario().catch(console.error);
+runScenario().catch(err => {
+    console.error(err);
+    process.exit(1);
+});
+// [END full_example]
