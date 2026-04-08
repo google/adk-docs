@@ -1,7 +1,7 @@
 ---
 catalog_title: Google Cloud Agent Registry
 catalog_description: Discover, look up, and connect to AI Agents and MCP Servers cataloged within the Google Cloud Agent Registry.
-catalog_icon: /adk-docs/integrations/assets/google_cloud.png
+catalog_icon: /integrations/assets/google_cloud.png
 catalog_tags: ["google", "mcp", "connectors"]
 ---
 
@@ -100,7 +100,7 @@ The AgentRegistry constructor accepts the following arguments:
 
 - `project_id` (str, required): The Google Cloud project ID.
 - `location` (str, required): The Google Cloud location/region, such as "global", "us-central1".
-- `header_provider` (Callable, optional): A callable that takes a ReadonlyContext and returns a dictionary of custom headers to be included in requests made by the [McpToolset](https://google.github.io/adk-docs/tools-custom/mcp-tools/#mcptoolset-class) or [RemoteA2aAgent](https://google.github.io/adk-docs/a2a/quickstart-consuming-go/#quickstart-consuming-a-remote-agent-via-a2a) to the target services. This does not affect headers used to call the Agent Registry API itself.
+- `header_provider` (Callable, optional): A callable that takes a ReadonlyContext and returns a dictionary of custom headers to be included in requests made by the [McpToolset](/tools-custom/mcp-tools/#mcptoolset-class) or [RemoteA2aAgent](/a2a/quickstart-consuming-go/#quickstart-consuming-a-remote-agent-via-a2a) to the target services. This does not affect headers used to call the Agent Registry API itself.
 
 ## Additional resources
 - [Sample Agent Code](https://github.com/google/adk-python/tree/main/contributing/samples/agent_registry_agent)
