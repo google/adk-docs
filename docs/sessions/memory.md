@@ -44,6 +44,13 @@ The `InMemoryMemoryService` stores session information in the application's memo
     memory_service = InMemoryMemoryService()
     ```
 
+=== "TypeScript"
+
+    ```typescript
+    import { InMemoryMemoryService } from '@google/adk';
+    const memoryService = new InMemoryMemoryService();
+    ```
+
 === "Go"
     ```go
     import (
@@ -163,6 +170,98 @@ This example demonstrates the basic flow using the `InMemoryMemoryService` for s
     # await run_scenario()
     ```
 
+=== "TypeScript"
+
+    ```typescript
+    import { LlmAgent, Runner, InMemorySessionService, InMemoryMemoryService, LOAD_MEMORY, isFinalResponse } from '@google/adk';
+
+    // --- Constants ---
+    const APP_NAME = "memory_example_app";
+    const USER_ID = "mem_user";
+    const MODEL = "gemini-2.0-flash";
+
+    // --- Agent Definitions ---
+    // Agent 1: Simple agent to capture information
+    const infoCaptureAgent = new LlmAgent({
+        model: MODEL,
+        name: "InfoCaptureAgent",
+        instruction: "Acknowledge the user's statement.",
+    });
+
+    // Agent 2: Agent that can use memory
+    const memoryRecallAgent = new LlmAgent({
+        model: MODEL,
+        name: "MemoryRecallAgent",
+        instruction: "Answer the user's question. Use the 'load_memory' tool if the answer might be in past conversations.",
+        tools: [LOAD_MEMORY] // Give the agent the tool
+    });
+
+    // --- Services ---
+    // Services must be shared across runners to share state and memory
+    const sessionService = new InMemorySessionService();
+    const memoryService = new InMemoryMemoryService(); // Use in-memory for demo
+
+    async function runScenario() {
+        // --- Scenario ---
+
+        // Turn 1: Capture some information in a session
+        console.log("--- Turn 1: Capturing Information ---");
+        const runner1 = new Runner({
+            agent: infoCaptureAgent,
+            appName: APP_NAME,
+            sessionService,
+            memoryService // Provide the memory service to the Runner
+        });
+        
+        const session1Id = "session_info";
+        await sessionService.createSession({ appName: APP_NAME, userId: USER_ID, sessionId: session1Id });
+        const userInput1 = { parts: [{ text: "My favorite project is Project Alpha." }], role: "user" };
+
+        // Run the agent
+        let finalResponseText = "(No final response)";
+        for await (const event of runner1.runAsync({ userId: USER_ID, sessionId: session1Id, newMessage: userInput1 })) {
+            if (isFinalResponse(event) && event.content?.parts?.length) {
+                finalResponseText = event.content.parts[0].text ?? "";
+            }
+        }
+        console.log(`Agent 1 Response: ${finalResponseText}`);
+
+        // Get the completed session
+        const completedSession1 = await sessionService.getSession({ appName: APP_NAME, userId: USER_ID, sessionId: session1Id });
+
+        // Add this session's content to the Memory Service
+        console.log("\n--- Adding Session 1 to Memory ---");
+        if (completedSession1) {
+            await memoryService.addSessionToMemory(completedSession1);
+            console.log("Session added to memory.");
+        }
+
+        // Turn 2: Recall the information in a new session
+        console.log("\n--- Turn 2: Recalling Information ---");
+        const runner2 = new Runner({
+            agent: memoryRecallAgent,
+            appName: APP_NAME,
+            sessionService, // Reuse the same service
+            memoryService   // Reuse the same service
+        });
+        
+        const session2Id = "session_recall";
+        await sessionService.createSession({ appName: APP_NAME, userId: USER_ID, sessionId: session2Id });
+        const userInput2 = { parts: [{ text: "What is my favorite project?" }], role: "user" };
+
+        // Run the second agent
+        let finalResponseText2 = "(No final response)";
+        for await (const event of runner2.runAsync({ userId: USER_ID, sessionId: session2Id, newMessage: userInput2 })) {
+            if (isFinalResponse(event) && event.content?.parts?.length) {
+                finalResponseText2 = event.content.parts[0].text ?? "";
+            }
+        }
+        console.log(`Agent 2 Response: ${finalResponseText2}`);
+    }
+
+    runScenario();
+    ```
+
 === "Go"
 
     ```go
@@ -273,6 +372,20 @@ You can also search memory from within a custom tool by using the `tool.Context`
     --8<-- "examples/go/snippets/sessions/memory_example/memory_example.go:tool_search"
     ```
 
+=== "TypeScript"
+
+    ```typescript
+    // Within a tool implementation
+    async runAsync({ args, toolContext }: RunAsyncToolRequest) {
+      const query = args['query'] as string;
+      const response = await toolContext.searchMemory(query);
+      // process response
+      return {
+        memories: response.memories.map(m => m.content.parts?.map(p => p.text).join(' ')).join('\n')
+      };
+    }
+    ```
+
 === "Java"
 
     ```java
@@ -365,6 +478,18 @@ When a memory service is configured, your agent can use a tool or callback to re
     )
     ```
 
+=== "TypeScript"
+    ```typescript
+    import { LlmAgent, PRELOAD_MEMORY } from '@google/adk';
+
+    const agent = new LlmAgent({
+        model: MODEL_ID,
+        name: 'weather_sentiment_agent',
+        instruction: "...",
+        tools: [PRELOAD_MEMORY]
+    });
+    ```
+
 === "Go"
     ```go
     import (
@@ -412,6 +537,27 @@ To extract memories from your session, you need to call `add_session_to_memory`.
         tools=[adk.tools.preload_memory_tool.PreloadMemoryTool()],
         after_agent_callback=auto_save_session_to_memory_callback,
     )
+    ```
+
+=== "TypeScript"
+    ```typescript
+    import { LlmAgent, PRELOAD_MEMORY, SingleAgentCallback } from '@google/adk';
+
+    const autoSaveSessionToMemoryCallback: SingleAgentCallback = async (callbackContext) => {
+        if (callbackContext.invocationContext.memoryService) {
+            await callbackContext.invocationContext.memoryService.addSessionToMemory(
+                callbackContext.invocationContext.session
+            );
+        }
+    };
+
+    const agent = new LlmAgent({
+        model: MODEL,
+        name: "Generic_QA_Agent",
+        instruction: "Answer the user's questions",
+        tools: [PRELOAD_MEMORY],
+        afterAgentCallback: autoSaveSessionToMemoryCallback,
+    });
     ```
 
 === "Go"
