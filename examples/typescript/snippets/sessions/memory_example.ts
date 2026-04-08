@@ -4,13 +4,12 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 // --8<-- [start:full_example]
-import { 
-    LlmAgent, 
-    Runner, 
-    InMemorySessionService, 
-    InMemoryMemoryService, 
-    LOAD_MEMORY, 
-    isFinalResponse 
+import {
+    InMemoryMemoryService,
+    InMemorySessionService,
+    LOAD_MEMORY,
+    LlmAgent,
+    Runner
 } from '@google/adk';
 import { createUserContent } from '@google/genai';
 
