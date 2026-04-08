@@ -1,7 +1,7 @@
 # Get action confirmation for ADK Tools
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.14.0</span><span class="lst-go">Go v0.3.0</span><span class="lst-preview">Experimental</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.14.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.3.0</span><span class="lst-preview">Experimental</span>
 </div>
 
 Some agent workflows require confirmation for decision making, verification,
@@ -71,6 +71,42 @@ step by wrapping it with the `FunctionTool` class and setting the
     # https://github.com/google/adk-python/blob/main/contributing/samples/human_tool_confirmation/agent.py
     ```
 
+=== "TypeScript"
+
+    ```typescript
+    // In ADK TypeScript, confirmation logic is evaluated directly 
+    // inside the tool logic using the ToolContext.
+    const reimburseTool = new FunctionTool({
+      name: "reimburse",
+      description: "Reimburse an amount",
+      parameters: z.object({
+        amount: z.number()
+      }),
+      execute: async ({ amount }, toolContext) => {
+        const confirmation = toolContext.toolConfirmation;
+        
+        if (!confirmation) {
+          toolContext.requestConfirmation({
+            hint: "Do you want to reimburse " + amount + "?"
+          });
+          return { status: "Pending approval" };
+        }
+
+        if (!confirmation.confirmed) {
+          return { status: "Reimbursement rejected" };
+        }
+
+        // Proceed with actual tool logic
+        return { status: "ok", reimbursedAmount: amount };
+      }
+    });
+
+    const rootAgent = new LlmAgent({
+      // ...
+      tools: [reimburseTool]
+    });
+    ```
+
 === "Go"
 
     ```go
@@ -126,6 +162,45 @@ You can modify the behavior of the confirmation requirement by using a function 
         ],
         # ...
     )
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    // In ADK TypeScript, dynamic threshold confirmation logic is evaluated directly 
+    // inside the tool logic using the ToolContext.
+    const reimburseTool = new FunctionTool({
+      name: "reimburse",
+      description: "Reimburse an amount",
+      parameters: z.object({
+        amount: z.number()
+      }),
+      execute: async ({ amount }, toolContext) => {
+        // 1. Dynamic threshold check
+        if (amount > 1000) {
+          const confirmation = toolContext.toolConfirmation;
+          
+          if (!confirmation) {
+            toolContext.requestConfirmation({
+              hint: "Amount > 1000 requires approval."
+            });
+            return { status: "Pending manager approval." };
+          }
+
+          if (!confirmation.confirmed) {
+            return { status: "Reimbursement rejected." };
+          }
+        }
+
+        // 2. Proceed with actual tool logic
+        return { status: "ok", reimbursedAmount: amount };
+      }
+    });
+
+    const rootAgent = new LlmAgent({
+      // ...
+      tools: [reimburseTool]
+    });
     ```
 
 === "Go"
@@ -239,6 +314,40 @@ time off requests for an employee:
             'status': 'ok',
             'approved_days': approved_days,
         }
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    async function requestTimeOff({ days }: { days: number }, toolContext: ToolContext) {
+      const confirmation = toolContext.toolConfirmation;
+      if (!confirmation) {
+        toolContext.requestConfirmation({
+          hint:
+            "Please approve or reject the tool call requestTimeOff() by " +
+            "responding with a FunctionResponse with an expected " +
+            "ToolConfirmation payload.",
+          payload: {
+            approved_days: 0,
+          },
+        });
+        // Return intermediate status indicating that the tool is waiting for
+        // a confirmation response:
+        return { status: "Manager approval is required." };
+      }
+
+      let approvedDays = (confirmation.payload as any)["approved_days"] as number;
+      approvedDays = Math.min(approvedDays, days);
+
+      if (approvedDays === 0) {
+        return { status: "The time off request is rejected.", approved_days: 0 };
+      }
+
+      return {
+        status: "ok",
+        approved_days: approvedDays,
+      };
+    }
     ```
 
 === "Go"
