@@ -4,6 +4,16 @@ components, which are listed below.
 
 This guide provides information on how to get involved.
 
+## Join the community
+
+- Want to discuss ADK, ask questions, or talk about all things agents? Head to
+  **[r/agentdevelopmentkit](https://www.reddit.com/r/agentdevelopmentkit/)** on
+  Reddit.
+- Want updates on the monthly community call? Join the
+  **[ADK Community Google Group](https://groups.google.com/g/adk-community)**.
+- Want to file a bug or contribute to the ADK framework? See the sections
+  below for how to find the right repo and get started.
+
 ## Preparing to contribute
 
 ### Choose the right repository
@@ -44,21 +54,6 @@ sign a new one.
 
 This project follows
 [Google's Open Source Community Guidelines](https://opensource.google/conduct/).
-
-## Join the discussion
-
-Have questions, want to share ideas, or discuss how you're using ADK? Head over
-to our **[Python](https://github.com/google/adk-python/discussions)**,
-**[TypeScript](https://github.com/google/adk-js/discussions)**,
-**[Go](https://github.com/google/adk-go/discussions)**, or
-**[Java](https://github.com/google/adk-java/discussions)** Discussions!
-
-This is the primary place for:
-
-* Asking questions and getting help from the community and maintainers.
-* Sharing your projects or use cases (`Show and Tell`).
-* Discussing potential features or improvements before creating a formal issue.
-* General conversation about ADK.
 
 ## How to contribute
 
