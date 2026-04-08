@@ -8,6 +8,17 @@ Development Kit community.
     Google and the ADK team do not provide support for the content linked in
     these external community resources.
 
+## Join the Community
+
+- Want to discuss ADK, ask questions, or talk about all things agents? Head to
+  **[r/agentdevelopmentkit](https://www.reddit.com/r/agentdevelopmentkit/)** on
+  Reddit.
+- Want updates on the monthly community call? Join the
+  **[ADK Community Google Group](https://groups.google.com/g/adk-community)**.
+- Want to file a bug or contribute to the ADK framework? Check out the
+  **[Contributing Guide](/community/contributing-guide/)** to find the right
+  repo and get started.
+
 ## Getting Started
 
 <div class="resource-grid">
@@ -45,11 +56,10 @@ Development Kit community.
 
 ## ADK Community Calls
 
-!!! tip "Stay Connected"
-
-    Join the [ADK Community Google Group](https://groups.google.com/g/adk-community) for updates, calendar invites, and to connect with the ADK community.
-
-    See recent recordings below, or browse all past calls on our [YouTube playlist](https://www.youtube.com/playlist?list=PLwi6PfxEP7zZbBPmWiZ8QbPcuKyAY5RR3).
+Join the [ADK Community Google Group](https://groups.google.com/g/adk-community)
+for updates on the next call. Recent recordings are below, or browse the full
+[YouTube
+playlist](https://www.youtube.com/playlist?list=PLwi6PfxEP7zZbBPmWiZ8QbPcuKyAY5RR3).
 
 <div class="resource-grid">
   <a href="https://www.youtube.com/watch?v=bPngDY7EuOQ" class="resource-card">
