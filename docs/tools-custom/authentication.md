@@ -152,6 +152,10 @@ Here is a quick guide to authentication for key ADK toolsets:
 For more authentication details for other pre-built tools and integrations
 see the [ADK Integrations](/integrations) catalog.
 
+## Authentication over A2A Protocol
+
+ADK seamlessly supports interactive authentication across remote agents. When an A2A-exposed agent requests credentials, it emits an A2A `TaskState.auth_required`. The consuming `RemoteA2aAgent` automatically translates this back into the standard `adk_request_credential` flow, meaning the client-side interactive flow works identically whether the tool is local or remote.
+
 ---
 
 ## Journey 1: Building Agentic Applications with Authenticated Tools
@@ -219,7 +223,7 @@ Pass the scheme and credential during toolset initialization. The toolset applie
 
       calendar_api_toolset = OpenAPIToolset(
           spec_str=google_calendar_openapi_spec_str, # Fill this with an openapi spec
-          spec_str_type='yaml',
+          spec_str_type=\'yaml\',
           auth_scheme=auth_scheme,
           auth_credential=auth_credential,
       )
@@ -240,7 +244,7 @@ Pass the scheme and credential during toolset initialization. The toolset applie
       )
       sample_toolset = OpenAPIToolset(
           spec_str=sa_openapi_spec_str, # Fill this with an openapi spec
-          spec_str_type='json',
+          spec_str_type=\'json\',
           auth_scheme=auth_scheme,
           auth_credential=auth_credential,
       )
@@ -258,7 +262,7 @@ Pass the scheme and credential during toolset initialization. The toolset applie
       auth_scheme = OpenIdConnectWithConfig(
           authorization_endpoint=OAUTH2_AUTH_ENDPOINT_URL,
           token_endpoint=OAUTH2_TOKEN_ENDPOINT_URL,
-          scopes=['openid', 'YOUR_OAUTH_SCOPES"]
+          scopes=[\'openid\', \'YOUR_OAUTH_SCOPES"]
       )
       auth_credential = AuthCredential(
           auth_type=AuthCredentialTypes.OPEN_ID_CONNECT,
@@ -270,7 +274,7 @@ Pass the scheme and credential during toolset initialization. The toolset applie
 
       userinfo_toolset = OpenAPIToolset(
           spec_str=content, # Fill in an actual spec
-          spec_str_type='yaml',
+          spec_str_type=\'yaml\',
           auth_scheme=auth_scheme,
           auth_credential=auth_credential,
       )
@@ -294,7 +298,7 @@ calendar_tool_set.configure_auth(
     client_id=oauth_client_id, client_secret=oauth_client_secret
 )
 
-# agent = LlmAgent(..., tools=calendar_tool_set.get_tool('calendar_tool_set'))
+# agent = LlmAgent(..., tools=calendar_tool_set.get_tool(\'calendar_tool_set\'))
 ```
 
 The sequence diagram of auth request flow (where tools are requesting auth credentials) looks like below:
@@ -328,11 +332,11 @@ Here's the step-by-step process for your client application:
 
 # runner = Runner(...)
 # session = await session_service.create_session(...)
-# content = types.Content(...) # User's initial query
+# content = types.Content(...) # User\'s initial query
 
-print("\nRunning agent...")
+print("\\nRunning agent...")
 events_async = runner.run_async(
-    session_id=session.id, user_id='user', new_message=content
+    session_id=session.id, user_id=\'user\', new_message=content
 )
 
 auth_request_function_call_id, auth_config = None, None
@@ -343,13 +347,13 @@ async for event in events_async:
         print("--> Authentication required by agent.")
         # Store the ID needed to respond later
         if not (auth_request_function_call_id := auth_request_function_call.id):
-            raise ValueError(f'Cannot get function call id from function call: {auth_request_function_call}')
+            raise ValueError(f\'Cannot get function call id from function call: {auth_request_function_call}\')
         # Get the AuthConfig containing the auth_uri etc.
         auth_config = get_auth_config(auth_request_function_call)
         break # Stop processing events for now, need user interaction
 
 if not auth_request_function_call_id:
-    print("\nAuth not required or agent finished.")
+    print("\\nAuth not required or agent finished.")
     # return # Or handle final response if received
 
 ```
@@ -369,7 +373,7 @@ def get_auth_request_function_call(event: Event) -> types.FunctionCall:
         if (
             part
             and part.function_call
-            and part.function_call.name == 'adk_request_credential'
+            and part.function_call.name == \'adk_request_credential\'
             and event.long_running_tool_ids
             and part.function_call.id in event.long_running_tool_ids
         ):
@@ -378,19 +382,19 @@ def get_auth_request_function_call(event: Event) -> types.FunctionCall:
 
 def get_auth_config(auth_request_function_call: types.FunctionCall) -> AuthConfig:
     # Extracts the AuthConfig object from the arguments of the auth request function call
-    if not auth_request_function_call.args or not (auth_config := auth_request_function_call.args.get('authConfig')):
-        raise ValueError(f'Cannot get auth config from function call: {auth_request_function_call}')
+    if not auth_request_function_call.args or not (auth_config := auth_request_function_call.args.get(\'authConfig\')):
+        raise ValueError(f\'Cannot get auth config from function call: {auth_request_function_call}\')
     if isinstance(auth_config, dict):
         auth_config = AuthConfig.model_validate(auth_config)
     elif not isinstance(auth_config, AuthConfig):
-        raise ValueError(f'Cannot get auth config {auth_config} is not an instance of AuthConfig.')
+        raise ValueError(f\'Cannot get auth config {auth_config} is not an instance of AuthConfig.\')
     return auth_config
 ```
 
 **Step 2: Redirect User for Authorization**
 
 * Get the authorization URL (`auth_uri`) from the `auth_config` extracted in the previous step.
-* **Crucially, append your application's**  redirect\_uri as a query parameter to this `auth_uri`. This `redirect_uri` must be pre-registered with your OAuth provider (e.g., [Google Cloud Console](https://developers.google.com/identity/protocols/oauth2/web-server#creatingcred), [Okta admin panel](https://developer.okta.com/docs/guides/sign-into-web-app-redirect/spring-boot/main/#create-an-app-integration-in-the-admin-console)).
+* **Crucially, append your application\'s**  redirect\_uri as a query parameter to this `auth_uri`. This `redirect_uri` must be pre-registered with your OAuth provider (e.g., [Google Cloud Console](https://developers.google.com/identity/protocols/oauth2/web-server#creatingcred), [Okta admin panel](https://developer.okta.com/docs/guides/sign-into-web-app-redirect/spring-boot/main/#create-an-app-integration-in-the-admin-console)).
 * Direct the user to this complete URL (e.g., open it in their browser).
 
 ```py
@@ -401,9 +405,9 @@ if auth_request_function_call_id and auth_config:
     base_auth_uri = auth_config.exchanged_auth_credential.oauth2.auth_uri
 
     if base_auth_uri:
-        redirect_uri = 'http://localhost:8000/callback' # MUST match your OAuth client app config
+        redirect_uri = \'http://localhost:8000/callback\' # MUST match your OAuth client app config
         # Append redirect_uri (use urlencode in production)
-        auth_request_uri = base_auth_uri + f'&redirect_uri={redirect_uri}'
+        auth_request_uri = base_auth_uri + f\'&redirect_uri={redirect_uri}\'
         # Now you need to redirect your end user to this auth_request_uri or ask them to open this auth_request_uri in their browser
         # This auth_request_uri should be served by the corresponding auth provider and the end user should login and authorize your application to access their data
         # And then the auth provider will redirect the end user to the redirect_uri you provided
@@ -426,7 +430,7 @@ if auth_request_function_call_id and auth_config:
 * Once you have the full callback URL (containing the authorization code), retrieve the `auth_request_function_call_id` and the `auth_config` object saved in Client Step 1\.
 * Set the captured callback URL in the `exchanged_auth_credential.oauth2.auth_response_uri` field. Also ensure `exchanged_auth_credential.oauth2.redirect_uri` contains the redirect URI you used.
 * Create a `types.Content` object containing a `types.Part` with a `types.FunctionResponse`.
-      * Set `name` to `"adk_request_credential"`. (Note: This is a special name for ADK to proceed with authentication. Do not use other names.)
+      * Set `name` to `\"adk_request_credential\"`. (Note: This is a special name for ADK to proceed with authentication. Do not use other names.)
       * Set `id` to the `auth_request_function_call_id` you saved.
       * Set `response` to the *serialized* (e.g., `.model_dump()`) updated `AuthConfig` object.
 * Call `runner.run_async` **again** for the same session, passing this `FunctionResponse` content as the `new_message`.
@@ -436,7 +440,7 @@ if auth_request_function_call_id and auth_config:
 
     # Simulate getting the callback URL (e.g., from user paste or web handler)
     auth_response_uri = await get_user_input(
-        f'Paste the full callback URL here:\n> '
+        f\'Paste the full callback URL here:\\n> \'
     )
     auth_response_uri = auth_response_uri.strip() # Clean input
 
@@ -451,12 +455,12 @@ if auth_request_function_call_id and auth_config:
 
     # Construct the FunctionResponse Content object
     auth_content = types.Content(
-        role='user', # Role can be 'user' when sending a FunctionResponse
+        role=\'user\', # Role can be \'user\' when sending a FunctionResponse
         parts=[
             types.Part(
                 function_response=types.FunctionResponse(
                     id=auth_request_function_call_id,       # Link to the original request
-                    name='adk_request_credential', # Special framework function name
+                    name=\'adk_request_credential\', # Special framework function name
                     response=auth_config.model_dump() # Send back the *updated* AuthConfig
                 )
             )
@@ -464,15 +468,15 @@ if auth_request_function_call_id and auth_config:
     )
 
     # --- Resume Execution ---
-    print("\nSubmitting authentication details back to the agent...")
+    print("\\nSubmitting authentication details back to the agent...")
     events_async_after_auth = runner.run_async(
         session_id=session.id,
-        user_id='user',
+        user_id=\'user\',
         new_message=auth_content, # Send the FunctionResponse back
     )
 
     # --- Process Final Agent Output ---
-    print("\n--- Agent Response after Authentication ---")
+    print("\\n--- Agent Response after Authentication ---")
     async for event in events_async_after_auth:
         # Process events normally, expecting the tool call to succeed now
         print(event) # Print the full event for inspection
@@ -571,7 +575,7 @@ else:
 
 **Step 2: Check for Auth Response from Client**
 
-* If Step 1 didn't yield valid credentials, check if the client just completed the interactive flow by calling `exchanged_credential = tool_context.get_auth_response()`.
+* If Step 1 didn\'t yield valid credentials, check if the client just completed the interactive flow by calling `exchanged_credential = tool_context.get_auth_response()`.
 * This returns the updated `exchanged_credential` object sent back by the client (containing the callback URL in `auth_response_uri`).
 
 ```py
@@ -609,7 +613,7 @@ If no valid credentials (Step 1.) and no auth response (Step 2.) are found, the 
     auth_scheme=auth_scheme,
     raw_auth_credential=auth_credential,
   ))
-  return {'pending': true, 'message': 'Awaiting user authentication.'}
+  return {\'pending\': true, \'message\': \'Awaiting user authentication.\'}
 
 # By setting request_credential, ADK detects a pending authentication event. It pauses execution and ask end user to login.
 ```
@@ -623,7 +627,7 @@ ADK automatically generates oauth authorization URL and presents it to your ***A
 After successfully obtaining the token from ADK (Step 2) or if the token is still valid (Step 1), **immediately store** the new `Credentials` object in `tool_context.state` (serialized, e.g., as JSON) using your cache key.
 
 ```py
-# Inside your tool function, after obtaining 'creds' (either refreshed or newly exchanged)
+# Inside your tool function, after obtaining \'creds\' (either refreshed or newly exchanged)
 # Cache the new/refreshed tokens
 tool_context.state[TOKEN_CACHE_KEY] = json.loads(creds.to_json())
 print(f"DEBUG: Cached/updated tokens under key: {TOKEN_CACHE_KEY}")
@@ -637,7 +641,7 @@ print(f"DEBUG: Cached/updated tokens under key: {TOKEN_CACHE_KEY}")
 * Include error handling, especially for `HttpError` 401/403, which might mean the token expired or was revoked between calls. If you get such an error, consider clearing the cached token (`tool_context.state.pop(...)`) and potentially returning the `auth_required` status again to force re-authentication.
 
 ```py
-# Inside your tool function, using the valid 'creds' object
+# Inside your tool function, using the valid \'creds\' object
 # Ensure creds is valid before proceeding
 if not creds or not creds.valid:
    return {"status": "error", "error_message": "Cannot proceed without valid credentials."}
@@ -712,7 +716,7 @@ except Exception as e:
                      - email
                      - profile
                responses:
-               '200':
+               \'200\':
                   description: Successfully retrieved user information.
                   content:
                      application/json:
@@ -729,12 +733,12 @@ except Exception as e:
                            example: "Example LastName"
                            locale:
                            type: string
-                           description: User's locale, e.g., en-US or en_US.
+                           description: User\'s locale, e.g., en-US or en_US.
                            example: "en_US"
                            email:
                            type: string
                            format: email
-                           description: User's primary email address.
+                           description: User\'s primary email address.
                            example: "username@example.com"
                            preferred_username:
                            type: string
@@ -750,16 +754,16 @@ except Exception as e:
                            example: "LastName"
                            zoneinfo:
                            type: string
-                           description: User's timezone, e.g., America/Los_Angeles.
+                           description: User\'s timezone, e.g., America/Los_Angeles.
                            example: "America/Los_Angeles"
                            updated_at:
                            type: integer
                            format: int64 # Using int64 for Unix timestamp
-                           description: Timestamp when the user's profile was last updated (Unix epoch time).
+                           description: Timestamp when the user\'s profile was last updated (Unix epoch time).
                            example: 1743617719
                            email_verified:
                            type: boolean
-                           description: Indicates if the user's email address has been verified.
+                           description: Indicates if the user\'s email address has been verified.
                            example: true
                         required:
                            - sub
@@ -772,18 +776,18 @@ except Exception as e:
                            - zoneinfo
                            - updated_at
                            - email_verified
-               '401':
+               \'401\':
                   description: Unauthorized. The provided Bearer token is missing, invalid, or expired.
                   content:
                      application/json:
                      schema:
-                        $ref: '#/components/schemas/Error'
-               '403':
+                        $ref: \'#/components/schemas/Error\'
+               \'403\':
                   description: Forbidden. The provided token does not have the required scopes or permissions to access this resource.
                   content:
                      application/json:
                      schema:
-                        $ref: '#/components/schemas/Error'
+                        $ref: \'#/components/schemas/Error\'
          components:
          securitySchemes:
             okta_oidc:
