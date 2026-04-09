@@ -38,7 +38,7 @@ from google.adk.tools.environment import EnvironmentToolset
 root_agent = Agent(
     model="gemini-flash-latest",
     name="my_agent",
-   instruction="""
+    instruction="""
     You are a helpful AI assistant that can use the local environment
     to execute commands and file I/O. Follow the rules of the
     environment and the user's instructions.
@@ -141,7 +141,7 @@ down, for example, when exiting an ADK Web session. However, if you set a
 removed* after the agent shuts down.
 
 **Tip:** If you want more control over how files are persisted between agent
-sessions, use [***Artifacts***](https://adk.dev/artifacts/) and the Artifact
+sessions, use [***Artifacts***](/artifacts/) and the Artifact
 Service to upload and download files to the environment.
 
 ## Custom environments
