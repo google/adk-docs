@@ -110,6 +110,18 @@ DiceAgent/
     You can edit the generated files in your development environment. However,
     some changes may not be compatible with Visual Builder.
 
+## Security
+
+!!! warning "Blocked `args` key"
+    For security reasons, the `args` key is not allowed in any part of the agent
+    configuration files (`.yaml`). If you upload a YAML file that contains the
+    `args` key, the upload will fail with an error. This restriction applies to
+    `CodeConfig.args`, `ToolConfig.args`, and any other usage of the `args` key
+    in the YAML configuration.
+
+    This measure is in place to prevent arbitrary Remote Code Execution (RCE)
+    and ensure the security of your agents.
+
 ## Next steps
 
 Using the Visual Builder development Assistant, try building a new agent using
