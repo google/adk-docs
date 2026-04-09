@@ -105,6 +105,13 @@ DiceAgent/
         dice_tool.py   # tool code
 ```
 
+!!! warning "Security Note"
+    When you upload or provide YAML agent configurations (for example,
+    `root_agent.yaml`), the `args` key (used in `CodeConfig.args` or
+    `ToolConfig.args`) is strictly blocked. If this key is present in your
+    configuration, it will result in an upload error. This is a security
+measure to prevent arbitrary Remote Code Execution (RCE).
+
 !!! note "Editing generated agents"
 
     You can edit the generated files in your development environment. However,
