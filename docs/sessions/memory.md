@@ -44,6 +44,13 @@ The `InMemoryMemoryService` stores session information in the application's memo
     memory_service = InMemoryMemoryService()
     ```
 
+=== "TypeScript"
+
+    ```typescript
+    import { InMemoryMemoryService } from '@google/adk';
+    const memoryService = new InMemoryMemoryService();
+    ```
+
 === "Go"
     ```go
     import (
@@ -163,6 +170,12 @@ This example demonstrates the basic flow using the `InMemoryMemoryService` for s
     # await run_scenario()
     ```
 
+=== "TypeScript"
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/sessions/memory_example.ts:full_example"
+    ```
+
 === "Go"
 
     ```go
@@ -273,6 +286,20 @@ You can also search memory from within a custom tool by using the `tool.Context`
     --8<-- "examples/go/snippets/sessions/memory_example/memory_example.go:tool_search"
     ```
 
+=== "TypeScript"
+
+    ```typescript
+    // Within a tool implementation
+    async runAsync({ args, toolContext }: RunAsyncToolRequest) {
+      const query = args['query'] as string;
+      const response = await toolContext.searchMemory(query);
+      // process response
+      return {
+        memories: response.memories.map(m => m.content.parts?.map(p => p.text).join(' ')).join('\n')
+      };
+    }
+    ```
+
 === "Java"
 
     ```java
@@ -365,6 +392,18 @@ When a memory service is configured, your agent can use a tool or callback to re
     )
     ```
 
+=== "TypeScript"
+    ```typescript
+    import { LlmAgent, PRELOAD_MEMORY } from '@google/adk';
+
+    const agent = new LlmAgent({
+        model: MODEL_ID,
+        name: 'weather_sentiment_agent',
+        instruction: "...",
+        tools: [PRELOAD_MEMORY]
+    });
+    ```
+
 === "Go"
     ```go
     import (
@@ -412,6 +451,27 @@ To extract memories from your session, you need to call `add_session_to_memory`.
         tools=[adk.tools.preload_memory_tool.PreloadMemoryTool()],
         after_agent_callback=auto_save_session_to_memory_callback,
     )
+    ```
+
+=== "TypeScript"
+    ```typescript
+    import { LlmAgent, PRELOAD_MEMORY, SingleAgentCallback } from '@google/adk';
+
+    const autoSaveSessionToMemoryCallback: SingleAgentCallback = async (callbackContext) => {
+        if (callbackContext.invocationContext.memoryService) {
+            await callbackContext.invocationContext.memoryService.addSessionToMemory(
+                callbackContext.invocationContext.session
+            );
+        }
+    };
+
+    const agent = new LlmAgent({
+        model: MODEL,
+        name: "Generic_QA_Agent",
+        instruction: "Answer the user's questions",
+        tools: [PRELOAD_MEMORY],
+        afterAgentCallback: autoSaveSessionToMemoryCallback,
+    });
     ```
 
 === "Go"

@@ -127,4 +127,4 @@
 
 ## Next steps
 
-* Try creating your first agent with the [**Quickstart**](quickstart.md)
+* Try creating your first agent with the [**Get started**](/get-started/) guides.
