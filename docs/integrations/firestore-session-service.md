@@ -1,6 +1,6 @@
 ---
 catalog_title: Firestore Session Service
-catalog_description: Session state management for ADK agents using Google Cloud Firestore
+catalog_description: Session state management for ADK agents using Firestore
 catalog_icon: /integrations/assets/firestore-session.jpg
 catalog_tags: ["data", "google"]
 ---
