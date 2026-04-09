@@ -50,6 +50,14 @@ Run the `adk create` command to start a new agent project.
 adk create my_agent
 ```
 
+When you run this command, you will be presented with an interactive prompt to choose a backend for your agent:
+
+*   **Google AI**: This option uses the Gemini API, which requires an API key.
+*   **Vertex AI**: This option uses Vertex AI, which requires a Google Cloud project.
+*   **Login with Google**: This option uses your Application Default Credentials (ADC) to authenticate. If you don't have a project set up, it can automatically provision a new Vertex AI project for you using Express Mode.
+
+For more information on the different backends and how to set them up, see the [Models & Authentication](/agents/models) page.
+
 ### Explore the agent project
 
 The created agent project has the following structure, with the `agent.py`
@@ -61,6 +69,9 @@ my_agent/
     .env          # API keys or project IDs
     __init__.py
 ```
+
+!!! warning "Secure your environment variables"
+    The `.env` file is created to store secrets like your `GOOGLE_API_KEY`. To prevent accidentally committing these secrets to version control, you should add the `.env` file to your `.gitignore`.
 
 ## Update your agent project
 
