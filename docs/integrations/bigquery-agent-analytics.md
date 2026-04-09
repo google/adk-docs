@@ -434,7 +434,7 @@ You can customize the plugin using `BigQueryLoggerConfig`.
 
 -   **`enabled`** (`bool`, default: `True`): To disable the plugin from logging agent data to the BigQuery table, set this parameter to False.
 -   **`table_id`** (`str`, default: `"agent_events"`): The BigQuery table ID within the dataset. Can also be overridden by the `table_id` parameter on the `BigQueryAgentAnalyticsPlugin` constructor, which takes precedence.
--   **`clustering_fields`** (`List[str]`, default: `["event_type", "agent", "user_id"]`): The fields used to cluster the BigQuery table when it is automatically created.
+-   **`clustering_fields`** (`List[str]`, default: `[\"event_type\", \"agent\", \"user_id\"]`): The fields used to cluster the BigQuery table when it is automatically created.
 -   **`gcs_bucket_name`** (`Optional[str]`, default: `None`): The name of the GCS bucket to offload large content (images, blobs, large text) to. If not provided, large content may be truncated or replaced with placeholders.
 -   **`connection_id`** (`Optional[str]`, default: `None`): The BigQuery connection ID (e.g., `us.my-connection`) to use as the authorizer for `ObjectRef` columns. Required for using `ObjectRef` with BigQuery ML.
 -   **`max_content_length`** (`int`, default: `500 * 1024`): The maximum length (in characters) of text content to store **inline** in BigQuery before offloading to GCS (if configured) or truncating. Default is 500 KB.
@@ -453,9 +453,10 @@ You can customize the plugin using `BigQueryLoggerConfig`.
 -   **`queue_max_size`** (`int`, default: `10000`): The maximum number of events to hold in the in-memory queue before dropping new events.
 -   **`retry_config`** (`RetryConfig`, default: `RetryConfig()`): Configuration for retrying failed BigQuery writes (attributes: `max_retries`, `initial_delay`, `multiplier`, `max_delay`).
 -   **`log_session_metadata`** (`bool`, default: `True`): If True, logs session information into the `attributes` column, including `session_id`, `app_name`, `user_id`, and the session `state` dictionary (e.g., custom state like gchat thread-id, customer_id).
--   **`custom_tags`** (`Dict[str, Any]`, default: `{}`): A dictionary of static tags (e.g., `{"env": "prod", "version": "1.0"}`) to be included in the `attributes` column for every event.
+-   **`custom_tags`** (`Dict[str, Any]`, default: `{}`): A dictionary of static tags (e.g., `{\"env\": \"prod\", \"version\": \"1.0\"}`) to be included in the `attributes` column for every event.
 -   **`auto_schema_upgrade`** (`bool`, default: `True`): When enabled, the plugin automatically adds new columns to an existing table when the plugin schema evolves. Only additive changes are made (columns are never dropped or altered). A version label (`adk_schema_version`) on the table ensures the diff runs at most once per schema version. Safe to leave enabled.
 -   **`create_views`** (`bool`, default: `True`): Added in 1.27.0. When enabled, automatically generates per-event-type BigQuery views that unnest structured JSON data (such as `content` or `attributes`) into flat, typed columns, significantly simplifying SQL queries.
+-   **`view_prefix`** (`str`, default: `"v"`): The prefix for auto-created view names. For example, the default `"v"` produces views like `v_llm_request`. Set a distinct prefix per table when multiple plugin instances share one dataset to avoid view-name collisions.
 
 
 The following code sample shows how to define a configuration for the
@@ -522,13 +523,13 @@ The events table (`agent_events`) uses a flexible schema. The following table pr
 | **trace_id** | `STRING` | `NULLABLE` | The **OpenTelemetry** Trace ID (32-char hex). Links all operations within a single distributed request lifecycle. | `e-b55b2000-68c6-4e8b-b3b3-ffb454a92e40` |
 | **span_id** | `STRING` | `NULLABLE` | The **OpenTelemetry** Span ID (16-char hex). Uniquely identifies this specific atomic operation. | `69867a836cd94798be2759d8e0d70215` |
 | **parent_span_id** | `STRING` | `NULLABLE` | The Span ID of the immediate caller. Used to reconstruct the parent-child execution tree (DAG). | `ef5843fe40764b4b8afec44e78044205` |
-| **content** | `JSON` | `NULLABLE` | The primary event payload. Structure is polymorphic based on `event_type`. | `{"system_prompt": "You are...", "prompt": [{"role": "user", "content": "hello"}], "response": "Hi", "usage": {"total": 15}}` |
-| **attributes** | `JSON` | `NULLABLE` | Metadata/Enrichment (usage stats, model info, tool provenance, custom tags). | `{"model": "gemini-2.5-flash", "usage_metadata": {"total_token_count": 15}, "session_metadata": {"session_id": "...", "app_name": "...", "user_id": "...", "state": {}}, "custom_tags": {"env": "prod"}}` |
-| **latency_ms** | `JSON` | `NULLABLE` | Performance metrics. Standard keys are `total_ms` (wall-clock duration) and `time_to_first_token_ms` (streaming latency). | `{"total_ms": 1250, "time_to_first_token_ms": 450}` |
+| **content** | `JSON` | `NULLABLE` | The primary event payload. Structure is polymorphic based on `event_type`. | `{\"system_prompt\": \"You are...\", \"prompt\": [{\"role\": \"user\", \"content\": \"hello\"}], \"response\": \"Hi\", \"usage\": {\"total\": 15}}` |
+| **attributes** | `JSON` | `NULLABLE` | Metadata/Enrichment (usage stats, model info, tool provenance, custom tags). | `{\"model\": \"gemini-2.5-flash\", \"usage_metadata\": {\"total_token_count\": 15}, \"session_metadata\": {\"session_id\": \"...\", \"app_name\": \"...\", \"user_id\": \"...\", \"state\": {}}, \"custom_tags\": {\"env\": \"prod\"}}` |
+| **latency_ms** | `JSON` | `NULLABLE` | Performance metrics. Standard keys are `total_ms` (wall-clock duration) and `time_to_first_token_ms` (streaming latency). | `{\"total_ms\": 1250, \"time_to_first_token_ms\": 450}` |
 | **status** | `STRING` | `NULLABLE` | High-level outcome. Values: `OK` (success) or `ERROR` (failure). | `OK` |
 | **error_message** | `STRING` | `NULLABLE` | Human-readable exception message or stack trace fragment. Populated only when `status` is `ERROR`. | `Error 404: Dataset not found` |
 | **is_truncated** | `BOOLEAN` | `NULLABLE` | `true` if `content` or `attributes` exceeded the BigQuery cell size limit (default 10MB) and were partially dropped. | `false` |
-| **content_parts** | `RECORD` | `REPEATED` | Array of multi-modal segments (Text, Image, Blob). Used when content cannot be serialized as simple JSON (e.g., large binaries or GCS refs). | `[{"mime_type": "text/plain", "text": "hello"}]` |
+| **content_parts** | `RECORD` | `REPEATED` | Array of multi-modal segments (Text, Image, Blob). Used when content cannot be serialized as simple JSON (e.g., large binaries or GCS refs). | `[{\"mime_type\": \"text/plain\", \"text\": \"hello\"}]` |
 
 The plugin automatically creates the table if it does not exist. However, for
 production, we recommend creating the table manually using the following DDL, which utilizes the **JSON** type for flexibility and **REPEATED RECORD**s for multimodal content.
@@ -796,7 +797,7 @@ Tracks changes to the agent's internal state (e.g., token cache updates).
     </tr>
     <tr>
       <td><p><pre>USER_MESSAGE_RECEIVED</pre></p></td>
-      <td><p><pre>{"text_summary": "Help me book a flight."}</pre></p></td>
+      <td><p><pre>{\"text_summary\": \"Help me book a flight.\"}</pre></p></td>
     </tr>
 
   </tbody>
@@ -824,32 +825,32 @@ The following HITL tool names are recognized:
     <tr>
       <td><p><pre>HITL_CREDENTIAL_REQUEST</pre></p></td>
       <td>Agent calls <code>adk_request_credential</code></td>
-      <td><p><pre>{"tool": "adk_request_credential", "args": {...}}</pre></p></td>
+      <td><p><pre>{\"tool\": \"adk_request_credential\", \"args\": {...}}</pre></p></td>
     </tr>
     <tr>
       <td><p><pre>HITL_CREDENTIAL_REQUEST_COMPLETED</pre></p></td>
       <td>User provides credential response</td>
-      <td><p><pre>{"tool": "adk_request_credential", "result": {...}}</pre></p></td>
+      <td><p><pre>{\"tool\": \"adk_request_credential\", \"result\": {...}}</pre></p></td>
     </tr>
     <tr>
       <td><p><pre>HITL_CONFIRMATION_REQUEST</pre></p></td>
       <td>Agent calls <code>adk_request_confirmation</code></td>
-      <td><p><pre>{"tool": "adk_request_confirmation", "args": {...}}</pre></p></td>
+      <td><p><pre>{\"tool\": \"adk_request_confirmation\", \"args\": {...}}</pre></p></td>
     </tr>
     <tr>
       <td><p><pre>HITL_CONFIRMATION_REQUEST_COMPLETED</pre></p></td>
       <td>User provides confirmation response</td>
-      <td><p><pre>{"tool": "adk_request_confirmation", "result": {...}}</pre></p></td>
+      <td><p><pre>{\"tool\": \"adk_request_confirmation\", \"result\": {...}}</pre></p></td>
     </tr>
     <tr>
       <td><p><pre>HITL_INPUT_REQUEST</pre></p></td>
       <td>Agent calls <code>adk_request_input</code></td>
-      <td><p><pre>{"tool": "adk_request_input", "args": {...}}</pre></p></td>
+      <td><p><pre>{\"tool\": \"adk_request_input\", \"args\": {...}}</pre></p></td>
     </tr>
     <tr>
       <td><p><pre>HITL_INPUT_REQUEST_COMPLETED</pre></p></td>
       <td>User provides input response</td>
-      <td><p><pre>{"tool": "adk_request_input", "result": {...}}</pre></p></td>
+      <td><p><pre>{\"tool\": \"adk_request_input\", \"result\": {...}}</pre></p></td>
     </tr>
   </tbody>
 </table>
@@ -1108,6 +1109,8 @@ https://lookerstudio.google.com/reporting/create?c.reportId=f1c5b513-3095-44f8-9
 
 ## Security: Avoid logging sensitive credentials {#security-credentials}
 
+By default, the plugin automatically redacts common sensitive keys (`client_secret`, `access_token`, `refresh_token`, `id_token`, `api_key`, `password`) and any state keys with the prefix `temp:`. The values for these keys are replaced with `[REDACTED]` before being logged to BigQuery. This provides a baseline level of protection for credentials. For more advanced redaction, you can use a custom content formatter.
+
 !!! warning "Do not log OAuth tokens, API keys, or client secrets"
 
     The BigQuery Agent Analytics plugin captures detailed event payloads,
@@ -1146,8 +1149,8 @@ def redact_credentials(event_content: Any, event_type: str) -> str:
     for key in SENSITIVE_KEYS:
         # Redact values in JSON-like strings: "client_secret": "GOCSPX-xxx"
         text = re.sub(
-            rf'("{key}"\s*:\s*)"[^"]*"',
-            rf'\1"[REDACTED]"',
+            rf'(\"{key}\"\s*:\s*)\"[^\"]*\"',
+            rf'\1\"[REDACTED]\"',
             text,
             flags=re.IGNORECASE,
         )
