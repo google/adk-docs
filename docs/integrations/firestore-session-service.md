@@ -5,7 +5,7 @@ catalog_icon: /integrations/assets/firestore-session.jpg
 catalog_tags: ["data", "google"]
 ---
 
-# Session State Management for ADK agents using Google Cloud Firestore
+# Session State Management using Firestore
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-java">Java</span>
