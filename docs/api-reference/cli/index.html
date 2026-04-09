@@ -5,11 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>ADK CLI documentation &#8212; ADK CLI 1.28.0 documentation</title>
+    <title>ADK CLI documentation &#8212; ADK CLI 1.29.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
     <link rel="stylesheet" type="text/css" href="_static/basic.css?v=b08954a9" />
     <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=27fed22d" />
-    <script src="_static/documentation_options.js?v=1226abbd"></script>
+    <script src="_static/documentation_options.js?v=63f3e1e4"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -43,7 +43,7 @@
             
   <section id="adk-cli-documentation">
 <h1>ADK CLI documentation<a class="headerlink" href="#adk-cli-documentation" title="Link to this heading">¶</a></h1>
-<p>This page contains the auto-generated command-line reference for ADK 1.28.0.</p>
+<p>This page contains the auto-generated command-line reference for ADK 1.29.0.</p>
 <nav class="contents local" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#adk" id="id21">adk</a></p>
@@ -213,6 +213,12 @@ agent, containing at least <cite>__init__.py</cite> and <cite>agent.py</cite> fi
 <dt class="sig sig-object std" id="cmdoption-adk-api_server-url_prefix">
 <span class="sig-name descname"><span class="pre">--url_prefix</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;url_prefix&gt;</span></span><a class="headerlink" href="#cmdoption-adk-api_server-url_prefix" title="Link to this definition">¶</a></dt>
 <dd><p>Optional. URL path prefix when the application is mounted behind a reverse proxy or API gateway (e.g., ‘/api/v1’, ‘/adk’). This ensures generated URLs and redirects work correctly when the app is not served at the root path. Must start with ‘/’ if provided.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-api_server-trigger_sources">
+<span class="sig-name descname"><span class="pre">--trigger_sources</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;trigger_sources&gt;</span></span><a class="headerlink" href="#cmdoption-adk-api_server-trigger_sources" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Comma-separated list of trigger sources to enable (e.g., ‘pubsub,eventarc’). Registers /apps/{app_name}/trigger/* endpoints for batch and event-driven agent invocations.</p>
 </dd></dl>
 
 <dl class="std option">
@@ -730,7 +736,7 @@ adk deploy agent_engine –project=[project] –region=[region]</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-adk-deploy-cloud_run-with_ui">
 <span class="sig-name descname"><span class="pre">--with_ui</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-deploy-cloud_run-with_ui" title="Link to this definition">¶</a></dt>
-<dd><p>Optional. Deploy ADK Web UI if set. (default: deploy ADK API server only)</p>
+<dd><p>Optional. Deploy ADK Web UI if set. (default: deploy ADK API server only). WARNING: The web UI is for development and testing only — do not use in production.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Default<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
@@ -772,7 +778,7 @@ adk deploy agent_engine –project=[project] –region=[region]</p>
 <dd><p>Optional. The ADK version used in Cloud Run deployment. (default: the version in the dev environment)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Default<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">'1.28.0'</span></code></p>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">'1.29.0'</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -786,6 +792,12 @@ adk deploy agent_engine –project=[project] –region=[region]</p>
 <dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-cloud_run-trigger_sources">
+<span class="sig-name descname"><span class="pre">--trigger_sources</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;trigger_sources&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-cloud_run-trigger_sources" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Comma-separated list of trigger sources to enable (e.g., ‘pubsub,eventarc’). Registers /trigger/* endpoints for batch and event-driven agent invocations.</p>
 </dd></dl>
 
 <dl class="std option">
@@ -955,7 +967,7 @@ If set, ADK uses this service.</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-adk-deploy-gke-with_ui">
 <span class="sig-name descname"><span class="pre">--with_ui</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-deploy-gke-with_ui" title="Link to this definition">¶</a></dt>
-<dd><p>Optional. Deploy ADK Web UI if set. (default: deploy ADK API server only)</p>
+<dd><p>Optional. Deploy ADK Web UI if set. (default: deploy ADK API server only). WARNING: The web UI is for development and testing only — do not use in production.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Default<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p>
@@ -1000,9 +1012,15 @@ If set, ADK uses this service.</p>
 <dd><p>Optional. The ADK version used in GKE deployment. (default: the version in the dev environment)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Default<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">'1.28.0'</span></code></p>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">'1.29.0'</span></code></p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-deploy-gke-trigger_sources">
+<span class="sig-name descname"><span class="pre">--trigger_sources</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;trigger_sources&gt;</span></span><a class="headerlink" href="#cmdoption-adk-deploy-gke-trigger_sources" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Comma-separated list of trigger sources to enable (e.g., ‘pubsub,eventarc’). Registers /trigger/* endpoints for batch and event-driven agent invocations.</p>
 </dd></dl>
 
 <dl class="std option">
@@ -1285,6 +1303,62 @@ only supports adding one using a conversation scenarios file.</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-adk-eval_set-create-arg-EVAL_SET_ID">
 <span class="sig-name descname"><span class="pre">EVAL_SET_ID</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-eval_set-create-arg-EVAL_SET_ID" title="Link to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+<section id="adk-eval-set-generate-eval-cases">
+<h4>generate_eval_cases<a class="headerlink" href="#adk-eval-set-generate-eval-cases" title="Link to this heading">¶</a></h4>
+<p>Generates eval cases dynamically and adds them to the given eval set.</p>
+<p>Uses Vertex AI Eval SDK to generate conversation scenarios based on an
+Agent’s info and definitions. It will automatically create the empty eval_set
+if it has not been created in advance.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>agent_module_file_path: The path to the agent module file.
+eval_set_id: The id of the eval set to generate cases for.
+user_simulation_config_file: The path to the user simulation config file.
+eval_storage_uri: The eval storage uri.
+log_level: The log level.</p>
+</dd>
+</dl>
+<p class="rubric">Usage</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>adk<span class="w"> </span>eval_set<span class="w"> </span>generate_eval_cases<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>AGENT_MODULE_FILE_PATH<span class="w"> </span>EVAL_SET_ID
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-eval_set-generate_eval_cases-user_simulation_config_file">
+<span class="sig-name descname"><span class="pre">--user_simulation_config_file</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;user_simulation_config_file&gt;</span></span><a class="headerlink" href="#cmdoption-adk-eval_set-generate_eval_cases-user_simulation_config_file" title="Link to this definition">¶</a></dt>
+<dd><p><strong>Required</strong> A path to file containing JSON serialized UserScenarioGenerationConfig dict.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-eval_set-generate_eval_cases-eval_storage_uri">
+<span class="sig-name descname"><span class="pre">--eval_storage_uri</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;eval_storage_uri&gt;</span></span><a class="headerlink" href="#cmdoption-adk-eval_set-generate_eval_cases-eval_storage_uri" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. The evals storage URI to store agent evals, supported URIs: gs://&lt;bucket name&gt;.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-eval_set-generate_eval_cases-log_level">
+<span class="sig-name descname"><span class="pre">--log_level</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;log_level&gt;</span></span><a class="headerlink" href="#cmdoption-adk-eval_set-generate_eval_cases-log_level" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Set the logging level</p>
+<dl class="field-list simple">
+<dt class="field-odd">Options<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DEBUG | INFO | WARNING | ERROR | CRITICAL</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-eval_set-generate_eval_cases-arg-AGENT_MODULE_FILE_PATH">
+<span class="sig-name descname"><span class="pre">AGENT_MODULE_FILE_PATH</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-eval_set-generate_eval_cases-arg-AGENT_MODULE_FILE_PATH" title="Link to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-eval_set-generate_eval_cases-arg-EVAL_SET_ID">
+<span class="sig-name descname"><span class="pre">EVAL_SET_ID</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-adk-eval_set-generate_eval_cases-arg-EVAL_SET_ID" title="Link to this definition">¶</a></dt>
 <dd><p>Required argument</p>
 </dd></dl>
 
@@ -1657,6 +1731,12 @@ agent, containing at least <cite>__init__.py</cite> and <cite>agent.py</cite> fi
 <dt class="sig sig-object std" id="cmdoption-adk-web-url_prefix">
 <span class="sig-name descname"><span class="pre">--url_prefix</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;url_prefix&gt;</span></span><a class="headerlink" href="#cmdoption-adk-web-url_prefix" title="Link to this definition">¶</a></dt>
 <dd><p>Optional. URL path prefix when the application is mounted behind a reverse proxy or API gateway (e.g., ‘/api/v1’, ‘/adk’). This ensures generated URLs and redirects work correctly when the app is not served at the root path. Must start with ‘/’ if provided.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-adk-web-trigger_sources">
+<span class="sig-name descname"><span class="pre">--trigger_sources</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;trigger_sources&gt;</span></span><a class="headerlink" href="#cmdoption-adk-web-trigger_sources" title="Link to this definition">¶</a></dt>
+<dd><p>Optional. Comma-separated list of trigger sources to enable (e.g., ‘pubsub,eventarc’). Registers /apps/{app_name}/trigger/* endpoints for batch and event-driven agent invocations.</p>
 </dd></dl>
 
 <dl class="std option">

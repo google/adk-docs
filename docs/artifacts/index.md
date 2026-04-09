@@ -163,7 +163,7 @@ Understanding artifacts involves grasping a few key components: the service that
     from google.adk.sessions import InMemorySessionService
 
     # Example: Configuring the Runner with an Artifact Service
-    my_agent = LlmAgent(name="artifact_user_agent", model="gemini-2.0-flash")
+    my_agent = LlmAgent(name="artifact_user_agent", model="gemini-flash-latest")
     artifact_service = InMemoryArtifactService() # Choose an implementation
     session_service = InMemorySessionService()
 
@@ -185,7 +185,7 @@ Understanding artifacts involves grasping a few key components: the service that
 	import { InMemorySessionService } from '@google/adk';
 
     // Example: Configuring the Runner with an Artifact Service
-    const myAgent = new LlmAgent({name: "artifact_user_agent", model: "gemini-2.5-flash"});
+    const myAgent = new LlmAgent({name: "artifact_user_agent", model: "gemini-flash-latest"});
     const artifactService = new InMemoryArtifactService(); // Choose an implementation
     const sessionService = new InMemorySessionService();
 
@@ -227,7 +227,7 @@ Understanding artifacts involves grasping a few key components: the service that
     // Example: Configuring the Runner with an Artifact Service
     LlmAgent myAgent =  LlmAgent.builder()
       .name("artifact_user_agent")
-      .model("gemini-2.0-flash")
+      .model("gemini-flash-latest")
       .build();
     InMemoryArtifactService artifactService = new InMemoryArtifactService(); // Choose an implementation
     InMemorySessionService sessionService = new InMemorySessionService();
@@ -411,7 +411,7 @@ Before you can use any artifact methods via the context objects, you **must** pr
     from google.adk.sessions import InMemorySessionService
 
     # Your agent definition
-    agent = LlmAgent(name="my_agent", model="gemini-2.0-flash")
+    agent = LlmAgent(name="my_agent", model="gemini-flash-latest")
 
     # Instantiate the desired artifact service
     artifact_service = InMemoryArtifactService()
@@ -432,7 +432,7 @@ Before you can use any artifact methods via the context objects, you **must** pr
     import { LlmAgent, InMemoryRunner, InMemoryArtifactService, InMemorySessionService } from '@google/adk';
 
     // Your agent definition
-    const agent = new LlmAgent({name: "my_agent", model: "gemini-2.5-flash"});
+    const agent = new LlmAgent({name: "my_agent", model: "gemini-flash-latest"});
 
     // Instantiate the desired artifact service
     const artifactService = new InMemoryArtifactService();
@@ -483,7 +483,7 @@ Before you can use any artifact methods via the context objects, you **must** pr
         // Your agent definition
         LlmAgent agent = LlmAgent.builder()
             .name("my_agent")
-            .model("gemini-2.0-flash")
+            .model("gemini-flash-latest")
             .build();
 
         // Instantiate the desired artifact service

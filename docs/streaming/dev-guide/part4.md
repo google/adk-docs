@@ -277,8 +277,8 @@ While this guide focuses on Bidi-streaming with Gemini 2.0 Live models, ADK also
 
 **Models:**
 
-- `gemini-1.5-pro`
-- `gemini-1.5-flash`
+- `gemini-pro-latest`
+- `gemini-flash-latest`
 
 **Supported:**
 

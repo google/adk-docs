@@ -28,7 +28,7 @@ other tools, within a single agent, is ***not supported***:
     ```py
     root_agent = Agent(
         name="RootAgent",
-        model="gemini-2.5-flash",
+        model="gemini-flash-latest",
         description="Code Agent",
         tools=[custom_function],
         code_executor=BuiltInCodeExecutor() # <-- NOT supported when used with tools
@@ -65,7 +65,7 @@ to use built-in tools with other tools by using multiple agents:
     from google.adk.code_executors import BuiltInCodeExecutor
 
     search_agent = Agent(
-        model='gemini-2.0-flash',
+        model='gemini-flash-latest',
         name='SearchAgent',
         instruction="""
         You're a specialist in Google Search
@@ -73,7 +73,7 @@ to use built-in tools with other tools by using multiple agents:
         tools=[google_search],
     )
     coding_agent = Agent(
-        model='gemini-2.0-flash',
+        model='gemini-flash-latest',
         name='CodeAgent',
         instruction="""
         You're a specialist in Code Execution
@@ -82,7 +82,7 @@ to use built-in tools with other tools by using multiple agents:
     )
     root_agent = Agent(
         name="RootAgent",
-        model="gemini-2.0-flash",
+        model="gemini-flash-latest",
         description="Root Agent",
         tools=[AgentTool(agent=search_agent), AgentTool(agent=coding_agent)],
     )
@@ -100,7 +100,7 @@ to use built-in tools with other tools by using multiple agents:
 
     public class NestedAgentApp {
 
-      private static final String MODEL_ID = "gemini-2.0-flash";
+      private static final String MODEL_ID = "gemini-flash-latest";
 
       public static void main(String[] args) {
 
@@ -171,7 +171,7 @@ is **not supported**:
 
     ```py
     url_context_agent = Agent(
-        model='gemini-2.5-flash',
+        model='gemini-flash-latest',
         name='UrlContextAgent',
         instruction="""
         You're a specialist in URL Context
@@ -179,7 +179,7 @@ is **not supported**:
         tools=[url_context],
     )
     coding_agent = Agent(
-        model='gemini-2.5-flash',
+        model='gemini-flash-latest',
         name='CodeAgent',
         instruction="""
         You're a specialist in Code Execution
@@ -188,7 +188,7 @@ is **not supported**:
     )
     root_agent = Agent(
         name="RootAgent",
-        model="gemini-2.5-flash",
+        model="gemini-flash-latest",
         description="Root Agent",
         sub_agents=[
             url_context_agent,
@@ -202,7 +202,7 @@ is **not supported**:
     ```java
     LlmAgent searchAgent =
         LlmAgent.builder()
-            .model("gemini-2.5-flash")
+            .model("gemini-flash-latest")
             .name("SearchAgent")
             .instruction("You're a specialist in Google Search")
             .tools(new GoogleSearchTool())
@@ -210,7 +210,7 @@ is **not supported**:
 
     LlmAgent codingAgent =
         LlmAgent.builder()
-            .model("gemini-2.5-flash")
+            .model("gemini-flash-latest")
             .name("CodeAgent")
             .instruction("You're a specialist in Code Execution")
             .tools(new BuiltInCodeExecutionTool())
@@ -220,7 +220,7 @@ is **not supported**:
     LlmAgent rootAgent =
         LlmAgent.builder()
             .name("RootAgent")
-            .model("gemini-2.5-flash")
+            .model("gemini-flash-latest")
             .description("Root Agent")
             .subAgents(searchAgent, codingAgent) // Not supported, as the sub agents use built in tools.
             .build();

@@ -17,6 +17,9 @@ Criterion                                | Description                          
 `hallucinations_v1`                      | LLM-judged groundedness of agent response against context | No              | No               | Yes            | Yes
 `safety_v1`                              | Safety/harmlessness of agent response                     | No              | No               | Yes            | Yes
 `per_turn_user_simulator_quality_v1`     | LLM-judged user simulator quality                         | No              | No               | Yes            | Yes
+`multi_turn_task_success_v1`             | Evaluates if agent achieves goal(s) of conversation       | No              | No               | Yes            | Yes
+`multi_turn_trajectory_quality_v1`       | Evaluates the overall trajectory of the conversation      | No              | No               | Yes            | Yes
+`multi_turn_tool_use_quality_v1`         | Evaluates function calls made during a conversation       | No              | No               | Yes            | Yes
 
 ## tool_trajectory_avg_score
 
@@ -227,7 +230,7 @@ Example `EvalConfig` entry:
     "final_response_match_v2": {
       "threshold": 0.8,
       "judge_model_options": {
-            "judge_model": "gemini-2.5-flash",
+            "judge_model": "gemini-flash-latest",
             "num_samples": 5
           }
         }
@@ -286,7 +289,7 @@ Example `EvalConfig` entry:
     "rubric_based_final_response_quality_v1": {
       "threshold": 0.8,
       "judge_model_options": {
-        "judge_model": "gemini-2.5-flash",
+        "judge_model": "gemini-flash-latest",
         "num_samples": 5
       },
       "rubrics": [
@@ -359,7 +362,7 @@ Example `EvalConfig` entry:
     "rubric_based_tool_use_quality_v1": {
       "threshold": 1.0,
       "judge_model_options": {
-        "judge_model": "gemini-2.5-flash",
+        "judge_model": "gemini-flash-latest",
         "num_samples": 5
       },
       "rubrics": [
@@ -431,7 +434,7 @@ Example `EvalConfig` entry:
     "hallucinations_v1": {
       "threshold": 0.8,
       "judge_model_options": {
-            "judge_model": "gemini-2.5-flash",
+            "judge_model": "gemini-flash-latest",
           },
       "evaluate_intermediate_nl_responses": true
     }
@@ -529,7 +532,7 @@ Example `EvalConfig` entry:
     "per_turn_user_simulator_quality_v1": {
       "threshold": 1.0,
       "judge_model_options": {
-        "judge_model": "gemini-2.5-flash",
+        "judge_model": "gemini-flash-latest",
         "num_samples": 5
       },
       "stop_signal": "</finished>"
@@ -545,3 +548,139 @@ turns in which the user simulator's response was judged to be valid according to
 the conversation scenario. A score of 1.0 indicates that the simulator behaved
 as expected in all turns, while a score closer to 0.0 indicates that the
 simulator deviated in many turns. Higher values are better.
+
+### multi_turn_task_success_v1
+
+This criterion evaluates if the agent achieved the goal or goals of the
+conversation.
+
+#### When To Use This Criterion?
+
+Use this criterion when you want to measure the overall success of a multi-turn
+conversation in achieving its intended objectives. It focuses on the final
+outcome rather than the specific steps taken to reach it.
+
+#### Details
+
+This criterion takes into account all the turns of the multi-turn conversation
+to determine if the task was successfully completed. It delegates the evaluation
+to the Vertex AI General AI Eval SDK.
+
+#### How To Use This Criterion?
+
+Using this criterion requires a Google Cloud Project. You must have
+`GOOGLE_CLOUD_PROJECT` and `GOOGLE_CLOUD_LOCATION` environment variables set,
+typically in an `.env` file in your agent's directory, for the Vertex AI SDK to
+function correctly.
+
+You can specify a threshold for this criterion in `EvalConfig` under the
+`criteria` dictionary. The value should be a float between 0.0 and 1.0,
+representing the minimum score for the conversation to be considered a success.
+
+Example `EvalConfig` entry:
+
+```json
+{
+  "criteria": {
+    "multi_turn_task_success_v1": 0.8
+  }
+}
+```
+
+#### Output And How To Interpret
+
+The criterion returns a score between 0.0 and 1.0. Scores closer to 1.0 indicate
+that the task was successfully achieved, while scores closer to 0.0 indicate
+failure to achieve the goals.
+
+### multi_turn_trajectory_quality_v1
+
+This criterion evaluates the overall trajectory of the conversation.
+
+#### When To Use This Criterion?
+
+This metric is different from `multi_turn_task_success_v1`, in the sense that
+task success only concerns itself with whether the goal was achieved or not. How
+that was achieved is not its concern. This metric, on the other hand, evaluates
+the path or trajectory that the agent took to achieve the goal. Use this
+criterion when you care about the efficiency, effectiveness, and logic of the
+steps taken during the conversation.
+
+#### Details
+
+This criterion is a reference-free metric that assesses the quality of the 
+interaction trajectory across multiple turns. It delegates the evaluation to the
+Vertex AI General AI Eval SDK.
+
+#### How To Use This Criterion?
+
+Using this criterion requires a Google Cloud Project. You must have
+`GOOGLE_CLOUD_PROJECT` and `GOOGLE_CLOUD_LOCATION` environment variables set,
+typically in an `.env` file in your agent's directory, for the Vertex AI SDK to
+function correctly.
+
+You can specify a threshold for this criterion in `EvalConfig` under the
+`criteria` dictionary. The value should be a float between 0.0 and 1.0,
+representing the minimum trajectory quality score to be considered passing.
+
+Example `EvalConfig` entry:
+
+```json
+{
+  "criteria": {
+    "multi_turn_trajectory_quality_v1": 0.8
+  }
+}
+```
+
+#### Output And How To Interpret
+
+The criterion returns a score between 0.0 and 1.0. Scores closer to 1.0 indicate
+a high-quality trajectory, while scores closer to 0.0 indicate a poor or
+inefficient trajectory.
+
+### multi_turn_tool_use_quality_v1
+
+This criterion evaluates the function calls made during a multi-turn
+conversation.
+
+#### When To Use This Criterion?
+
+Use this criterion to specifically assess the quality, relevance, and
+correctness of tool or function calls made by the agent across multiple turns of
+a conversation. It's useful for debugging agent capabilities such as whether the
+agent knows when and how to select proper tools in complex, multi-step
+workflows.
+
+#### Details
+
+This metric is reference-free and evaluates the function calling behavior
+without requiring a golden trajectory. It delegates the evaluation to the Vertex
+AI General AI Eval SDK.
+
+#### How To Use This Criterion?
+
+Using this criterion requires a Google Cloud Project. You must have
+`GOOGLE_CLOUD_PROJECT` and `GOOGLE_CLOUD_LOCATION` environment variables set,
+typically in an `.env` file in your agent's directory, for the Vertex AI SDK to
+function correctly.
+
+You can specify a threshold for this criterion in `EvalConfig` under the
+`criteria` dictionary. The value should be a float between 0.0 and 1.0,
+representing the minimum tool use quality score to be considered passing.
+
+Example `EvalConfig` entry:
+
+```json
+{
+  "criteria": {
+    "multi_turn_tool_use_quality_v1": 0.8
+  }
+}
+```
+
+#### Output And How To Interpret
+
+The criterion returns a score between 0.0 and 1.0. Scores closer to 1.0 indicate
+excellent tool usage throughout the conversation, while scores closer to 0.0
+indicate poor

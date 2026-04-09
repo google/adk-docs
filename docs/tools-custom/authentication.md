@@ -4,39 +4,153 @@
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
 </div>
 
-Many tools need to access protected resources (like user data in Google Calendar, Salesforce records, etc.) and require authentication. ADK provides a system to handle various authentication methods securely.
+The tools and services you use within ADK agents may require access to protected
+resources, such as user data in email or calendar applications, or sales records
+in databases. Getting access to these resources typically requires an
+authentication process that includes credentials and access keys which must
+be carefully managed and protected. The requirements for managing authentication
+data can also change if you are running your agent locally or deploying it
+to a hosted service. If multiple users, with potentially different access
+permissions, are interacting with the agent, this creates another layer of
+authentication management requirements.
 
-The key components involved are:
+!!! danger "WARNING: Credential storage and security risks"
 
-1. **`AuthScheme`**: Defines *how* an API expects authentication credentials (e.g., as an API Key in a header, an OAuth 2.0 Bearer token). ADK supports the same types of authentication schemes as OpenAPI 3.0. To know more about what each type of credential is, refer to [OpenAPI doc: Authentication](https://swagger.io/docs/specification/v3_0/authentication/). ADK uses specific classes like `APIKey`, `HTTPBearer`, `OAuth2`, `OpenIdConnectWithConfig`.
-2. **`AuthCredential`**: Holds the *initial* information needed to *start* the authentication process (e.g., your application's OAuth Client ID/Secret, an API key value). It includes an `auth_type` (like `API_KEY`, `OAUTH2`, `SERVICE_ACCOUNT`) specifying the credential type.
+    Storing sensitive credentials such as access tokens and especially refresh
+    tokens directly in the session state can pose security risks depending on
+    your session storage backend, your ***SessionService*** implementation,
+    and overall application security posture. Carefully consider how you manage
+    credentials in ADK agents before deploying them for general use.
 
-The general flow involves providing these details when configuring a tool. ADK then attempts to automatically exchange the initial credential for a usable one (like an access token) before the tool makes an API call. For flows requiring user interaction (like OAuth consent), a specific interactive process involving the Agent Client application is triggered.
+## Authentication and credential management
 
-## Supported Initial Credential Types
+There are several ways to manage authentication and credentials in ADK
+agents. Each of these methods carries some amount of risk, so you should
+carefully consider which approach best serves your application and customers.
 
-* **API\_KEY:** For simple key/value authentication. Usually requires no exchange.
-* **HTTP:** Can represent Basic Auth (not recommended/supported for exchange) or already obtained Bearer tokens. If it's a Bearer token, no exchange is needed.
-* **OAUTH2:** For standard OAuth 2.0 flows. Requires configuration (client ID, secret, scopes) and often triggers the interactive flow for user consent.
-* **OPEN\_ID\_CONNECT:** For authentication based on OpenID Connect. Similar to OAuth2, often requires configuration and user interaction.
-* **SERVICE\_ACCOUNT:** For Google Cloud Service Account credentials (JSON key or Application Default Credentials). Typically exchanged for a Bearer token.
+### Recommended: Authentication manager services {#authentication-manager}
 
-## Configuring Authentication on Tools
+When deploying agents to production hosted environments, your agent's ability to
+properly authenticate to restricted tools and services becomes more challenging
+and more important to properly manage. This authentication challenge can become
+even more complicated when users of your agent have varying levels of access to
+restricted tools and data. Rather than writing code to handle the authentication
+process and credential managment for various tools used by your agent, use an
+*authentication manager* service that manages *both* for you. This service
+should handle the storage of keys and secrets, as well as the acquisition,
+management, and storage of OAuth access or refresh tokens.
 
-You set up authentication when defining your tool:
+### Self-managed authentication
 
-* **RestApiTool / OpenAPIToolset**: Pass `auth_scheme` and `auth_credential` during initialization
+If you decide to manage your own authentication process with ADK helper functions
+and your own code, consider these recommendations:
 
-* **GoogleApiToolSet Tools**: ADK has built-in 1st party tools like Google Calendar, BigQuery etc,. Use the toolset's specific method.
+*   **API keys and client secrets:** For any API keys and client secrets used
+    inside ADK code, when running on a local compute environment use a local
+    `.env` file excluded from version control. When your agent is hosted or
+    otherwise in a production environment, use a secrets manager. For more
+    details on secrets managers, see the [next section](#secrets-manager).
+*   **Interactive authentication:** When using interactive three-legged auth
+    (3LO) OAuth or OpenID Connect (OIDC) for authentication to tools, write a
+    service on the client application to acquire, manage access, and refresh
+    tokens. Make sure to store these tokens against an authenticated user
+    identifier in an encrypted database.
 
-* **APIHubToolset / ApplicationIntegrationToolset**: Pass `auth_scheme` and `auth_credential`during initialization, if the API managed in API Hub / provided by Application Integration requires authentication.
+### Secrets manager services {#secrets-manager}
 
-!!! tip "WARNING"
-    Storing sensitive credentials like access tokens and especially refresh tokens directly in the session state might pose security risks depending on your session storage backend (`SessionService`) and overall application security posture.
+For production environments, if you are not using an
+[authentication manager](#authentication-manager) service, you should store
+credentials in a dedicated secret manager service to protect that data. With
+this approach, a secret manager securely stores the credentials for any tools or
+services accessed by the agent as needed, and those secrets are not resident in
+agent's operating memory. For example, a custom ADK Tool using this method would
+have only short-lived access tokens or secure references in session memory, and
+retrieve longer-lived refresh tokens from the secrets manager when needed. When
+selecting a secrets manager, consider services from well-established providers,
+such as
+[Google Cloud Secret Manager](https://cloud.google.com/security/products/secret-manager)
+or other secret management services.
 
-    *   **`InMemorySessionService`:** Suitable for testing and development, but data is lost when the process ends. Less risk as it's transient.
-    *   **Database/Persistent Storage:** **Strongly consider encrypting** the token data before storing it in the database using a robust encryption library (like `cryptography`) and managing encryption keys securely (e.g., using a key management service).
-    *   **Secure Secret Stores:** For production environments, storing sensitive credentials in a dedicated secret manager (like Google Cloud Secret Manager or HashiCorp Vault) is the **most recommended approach**. Your tool could potentially store only short-lived access tokens or secure references (not the refresh token itself) in the session state, fetching the necessary secrets from the secure store when needed.
+### Local encrypted secrets storage
+
+For agent applications that are less security sensitive, keeping credentials in
+local, encrypted storage can be a viable option. Consider using dedicated local
+secrets storage system or encrypting the data in a local database using a robust
+encryption library, and then managing the encryption keys securely using a key
+management service. Take care to only keep short-lived access tokens in
+operating memory and access long-lived credentials and refresh tokens from
+encrypted local storage only when needed.
+
+### In-memory secrets
+
+This method *should only be used in the early development* and testing of your
+agent. With this approach, credentials are stored in the current
+***InMemorySessionService*** instance. The data exists only in session memory
+and is not persisted. However, you should carefully consider the risks of using
+this method based on how long an agent session may last, who has access to the
+agent, and the security of the environment where the agent is running.
+
+## Framework components
+
+Within the ADK framework, the ***AuthScheme*** and ***AuthCredential*** are the
+key components for handling authentication methods and managing credential data:
+
+*   ***AuthScheme***: Defines *how* an API expects authentication credentials,
+    such as an API Key in a header or an OAuth 2.0 Bearer token. ADK supports
+    the same types of authentication schemes as OpenAPI 3.0 and uses specific
+    classes for credential types, including ***APIKey***, ***HTTPBearer***,
+    ***OAuth2***, and ***OpenIdConnectWithConfig***. For more details on each
+    OpenAPI credential type, see
+    [OpenAPI doc: Authentication](https://swagger.io/docs/specification/v3_0/authentication/).
+
+*   ***AuthCredential***: Holds the *initial* information needed to *start* the
+    authentication process, such as your application's OAuth Client ID or
+    Secret, or an API key value. An instance of this class includes an
+    **auth_type**, such as `API_KEY`, `OAUTH2`, `SERVICE_ACCOUNT`, specifying
+    the credential type.
+
+The general authentication flow involves providing these details when
+configuring a tool. ADK then attempts to automatically exchange the initial
+credential, such as an access token, before the tool makes an API call. For
+flows requiring user interaction, including OAuth consent, ADK triggers a
+specific interactive process with your ***Agent Client*** application.
+
+### Supported initial credential types
+
+*   **API\_KEY:** Provides simple key-value authentication, which usually
+    requires no authentication exchange.
+*   **HTTP:** Provides Basic Auth which is not recommended and may not be
+    supported for exchange, or already obtained Bearer tokens. Bearer tokens do
+    not require an authentication exchange.
+*   **OAUTH2:** Provides standard OAuth 2.0 authentication flows, and requires
+    configuration with client ID, secret, and scopes. This method often
+    triggers an interactive flow for user consent.
+*   **OPEN\_ID\_CONNECT:** Provides authentication based on OpenID Connect.
+    Similar to OAuth2, this type often requires configuration and user
+    interaction.
+*   **SERVICE\_ACCOUNT:** Provides Google Cloud Service Account credentials as a
+    JSON key or Application Default Credentials. This type typically exchanges a
+    Bearer token.
+
+## Tools and integrations quick guide
+
+Here is a quick guide to authentication for key ADK toolsets:
+
+*   [***RestApiTool***](/tools-custom/openapi-tools/):
+    Set `auth_scheme` and `auth_credential` during initialization
+*   [***OpenAPIToolset***](/tools-custom/openapi-tools/):
+    Set `auth_scheme` and `auth_credential` during initialization
+*   [***APIHubToolset***](/integrations/apigee-api-hub/):
+    Set `auth_scheme` and `auth_credential` during initialization, *if* the API
+    requires authentication.
+*   [***ApplicationIntegrationToolset***](/integrations/application-integration/):
+    Set `auth_scheme` and `auth_credential` during initialization, *if* the API
+    requires authentication.
+*   [***GoogleApiToolSet***](https://github.com/google/adk-python/blob/main/src/google/adk/tools/google_api_tool/google_api_toolset.py):
+    Use this toolset's specific authentication method.
+
+For more authentication details for other pre-built tools and integrations
+see the [ADK Integrations](/integrations) catalog.
 
 ---
 
@@ -190,10 +304,10 @@ The sequence diagram of auth request flow (where tools are requesting auth crede
 
 ### 2. Handling the Interactive OAuth/OIDC Flow (Client-Side)
 
-If a tool requires user login/consent (typically OAuth 2.0 or OIDC), the ADK framework pauses execution and signals your **Agent Client** application. There are two cases:
+If a tool requires user login/consent (typically OAuth 2.0 or OIDC), the ADK framework pauses execution and signals your ***Agent Client*** application. There are two cases:
 
-* **Agent Client** application runs the agent directly (via `runner.run_async`) in the same process. e.g. UI backend, CLI app, or Spark job etc.
-* **Agent Client** application interacts with ADK's fastapi server via `/run` or `/run_sse` endpoint. While ADK's fastapi server could be setup on the same server or different server as **Agent Client** application
+* ***Agent Client*** application runs the agent directly (via `runner.run_async`) in the same process. e.g. UI backend, CLI app, or Spark job etc.
+* ***Agent Client*** application interacts with ADK's fastapi server via `/run` or `/run_sse` endpoint. While ADK's fastapi server could be setup on the same server or different server as ***Agent Client*** application
 
 The second case is a special case of first case, because `/run` or `/run_sse` endpoint also invokes `runner.run_async`. The only differences are:
 
@@ -291,7 +405,7 @@ if auth_request_function_call_id and auth_config:
         # Append redirect_uri (use urlencode in production)
         auth_request_uri = base_auth_uri + f'&redirect_uri={redirect_uri}'
         # Now you need to redirect your end user to this auth_request_uri or ask them to open this auth_request_uri in their browser
-        # This auth_request_uri should be served by the corresponding auth provider and the end user should login and authorize your applicaiton to access their data
+        # This auth_request_uri should be served by the corresponding auth provider and the end user should login and authorize your application to access their data
         # And then the auth provider will redirect the end user to the redirect_uri you provided
         # Next step: Get this callback URL from the user (or your web server handler)
     else:
@@ -310,7 +424,7 @@ if auth_request_function_call_id and auth_config:
 **Step 4. Send Authentication Result Back to ADK (Client):**
 
 * Once you have the full callback URL (containing the authorization code), retrieve the `auth_request_function_call_id` and the `auth_config` object saved in Client Step 1\.
-* Set the captured callback URL into the `exchanged_auth_credential.oauth2.auth_response_uri` field. Also ensure `exchanged_auth_credential.oauth2.redirect_uri` contains the redirect URI you used.
+* Set the captured callback URL in the `exchanged_auth_credential.oauth2.auth_response_uri` field. Also ensure `exchanged_auth_credential.oauth2.redirect_uri` contains the redirect URI you used.
 * Create a `types.Content` object containing a `types.Part` with a `types.FunctionResponse`.
       * Set `name` to `"adk_request_credential"`. (Note: This is a special name for ADK to proceed with authentication. Do not use other names.)
       * Set `id` to the `auth_request_function_call_id` you saved.
@@ -383,14 +497,14 @@ if auth_request_function_call_id and auth_config:
 
 * ADK receives the `FunctionResponse` for `adk_request_credential`.
 * It uses the information in the updated `AuthConfig` (including the callback URL containing the code) to perform the OAuth **token exchange** with the provider's token endpoint, obtaining the access token (and possibly refresh token).
-* ADK internally makes these tokens available by setting them in the session state).
+* ADK internally makes these tokens available by setting them in the session state.
 * ADK **automatically retries** the original tool call (the one that initially failed due to missing auth).
 * This time, the tool finds the valid tokens (via `tool_context.get_auth_response()`) and successfully executes the authenticated API call.
 * The agent receives the actual result from the tool and generates its final response to the user.
 
 ---
 
-The sequence diagram of auth response flow (where Agent Client send back the auth response and ADK retries tool calling) looks like below:
+The sequence diagram of auth response flow, where the ***Agent Client*** sends back the auth response and ADK retries the tool, is as follows:
 
 ![Authentication](../assets/auth_part2.svg)
 
@@ -468,7 +582,7 @@ exchanged_credential = tool_context.get_auth_response(AuthConfig(
   auth_scheme=auth_scheme,
   raw_auth_credential=auth_credential,
 ))
-# If exchanged_credential is not None, then there is already an exchanged credetial from the auth response.
+# If exchanged_credential is not None, then there is already an exchanged credential from the auth response.
 if exchanged_credential:
    # ADK exchanged the access token already for us
         access_token = exchanged_credential.oauth2.access_token
@@ -502,7 +616,7 @@ If no valid credentials (Step 1.) and no auth response (Step 2.) are found, the 
 
 **Step 4: Exchange Authorization Code for Tokens**
 
-ADK automatically generates oauth authorization URL and presents it to your Agent Client application. your Agent Client application should follow the same way described in Journey 1 to redirect the user to the authorization URL (with `redirect_uri` appended). Once a user completes the login flow following the authorization URL and ADK extracts the authentication callback url from Agent Client applications, automatically parses the auth code, and generates auth token. At the next Tool call, `tool_context.get_auth_response` in step 2 will contain a valid credential to use in subsequent API calls.
+ADK automatically generates oauth authorization URL and presents it to your ***Agent Client*** application. your ***Agent Client*** application should follow the same way described in Journey 1 to redirect the user to the authorization URL (with `redirect_uri` appended). Once a user completes the login flow, ADK extracts the authentication callback url from ***Agent Client*** applications, automatically parses the auth code, and generates auth token. At the next Tool call, `tool_context.get_auth_response` in step 2 will contain a valid credential to use in subsequent API calls.
 
 **Step 5: Cache Obtained Credentials**
 

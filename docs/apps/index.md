@@ -60,7 +60,7 @@ sample code:
     from google.adk.apps import App
 
     root_agent = Agent(
-        model='gemini-2.5-flash',
+        model='gemini-flash-latest',
         name='greeter_agent',
         description='An agent that provides a friendly greeting.',
         instruction='Reply with Hello, World!',
@@ -81,7 +81,7 @@ sample code:
     import com.google.adk.apps.App;
 
     LlmAgent rootAgent = LlmAgent.builder()
-        .model("gemini-2.5-flash")
+        .model("gemini-flash-latest")
         .name("greeter_agent")
         .description("An agent that provides a friendly greeting.")
         .instruction("Reply with Hello, World!")
