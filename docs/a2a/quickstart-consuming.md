@@ -254,6 +254,15 @@ prime_agent = RemoteA2aAgent(
 <...code truncated>
 ```
 
+### Human-in-the-Loop and Authentication
+
+When a remote agent that you are consuming uses a long-running tool (human-in-the-loop) or requests End User Credentials for authentication, the ADK A2A server seamlessly handles these scenarios. The server converts these requests into the appropriate A2A task states:
+
+*   **`TaskState.input_required`**:  For long-running tools that require user input.
+*   **`TaskState.auth_required`**: When the remote agent needs end-user credentials.
+
+Your consuming agent will receive these task states, allowing you to maintain the human-in-the-loop or authentication flow. The client is then expected to provide a function response to continue the process.
+
 
 ## Example Interactions
 
