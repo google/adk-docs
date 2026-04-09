@@ -323,6 +323,34 @@ curl -X GET http://localhost:8000/list-apps
 ["my_sample_agent", "another_agent"]
 ```
 
+#### Get application info
+
+Returns the details of a specific application.
+
+*   **Method:** `GET`
+*   **Path:** `/apps/{app_name}/app-info`
+
+**Example Request**
+```shell
+curl -X GET http://localhost:8000/apps/my_sample_agent/app-info
+```
+
+---
+
+### Event Trigger Endpoints
+
+These endpoints enable the server to directly process Pub/Sub push messages and Eventarc CloudEvents without requiring pre-created sessions. They include built-in concurrency limits and automatic retries with exponential backoff for transient 429 errors.
+
+#### Pub/Sub Trigger
+
+*   **Method:** `POST`
+*   **Path:** `/apps/{app_name}/trigger/pubsub`
+
+#### Eventarc Trigger
+
+*   **Method:** `POST`
+*   **Path:** `/apps/{app_name}/trigger/eventarc`
+
 ---
 
 ### Session management
