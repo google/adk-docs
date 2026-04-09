@@ -1,7 +1,7 @@
 # Events
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
 Events are the fundamental units of information flow within the Agent Development Kit (ADK). They represent every significant occurrence during an agent's interaction lifecycle, from initial user input to the final response and all the steps in between. Understanding events is crucial because they are the primary way components communicate, state is managed, and control flow is directed.
@@ -32,6 +32,27 @@ An `Event` in ADK is an immutable record representing a specific point in the ag
     #     actions: EventActions # Important for side-effects & control
     #     branch: Optional[str] # Hierarchy path
     #     # ...
+    ```
+
+=== "TypeScript"
+    In TypeScript, this is an interface of type `Event`.
+
+    ```typescript
+    /**
+     * Conceptual Structure of an Event (TypeScript)
+     * 
+     * interface Event extends LlmResponse {
+     *   id: string;              // Unique ID for this specific event
+     *   invocationId: string;    // ID for the whole interaction run
+     *   author?: string;         // 'user' or agent name
+     *   actions: EventActions;   // Important for side-effects & control
+     *   timestamp: number;       // Creation time
+     *   partial?: boolean;       // Is it streaming output?
+     *   turnComplete?: boolean;  // Is the turn finished?
+     *   branch?: string;         // Hierarchy path
+     *   longRunningToolIds?: string[];
+     *   // ... other LlmResponse fields like content, errorCode, errorMessage
+     */
     ```
 
 === "Go"
@@ -144,6 +165,46 @@ Quickly determine what an event represents by checking:
     #         print("  Type: State/Artifact Update")
     #     else:
     #         print("  Type: Control Signal or Other")
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    // Pseudocode: Basic event identification (TypeScript)
+    import {
+        Event,
+        getFunctionCalls,
+        getFunctionResponses
+    } from '@google/adk';
+
+    export async function processEvents(runnerEvents: AsyncIterable<Event>) {
+        for await (const event of runnerEvents) {
+            console.log(`Event from: ${event.author}`);
+
+            if (event.content && event.content.parts) {
+            if (getFunctionCalls(event).length > 0) {
+                console.log('  Type: Tool Call Request');
+            } else if (getFunctionResponses(event).length > 0) {
+                console.log('  Type: Tool Result');
+            } else if (event.content.parts[0]?.text) {
+                if (event.partial) {
+                console.log('  Type: Streaming Text Chunk');
+                } else {
+                console.log('  Type: Complete Text Message');
+                }
+            } else {
+                console.log('  Type: Other Content (e.g., code result)');
+            }
+            } else if (
+            Object.keys(event.actions.stateDelta).length > 0 ||
+            Object.keys(event.actions.artifactDelta).length > 0
+            ) {
+            console.log('  Type: State/Artifact Update');
+            } else {
+            console.log('  Type: Control Signal or Other');
+            }
+        }
+        }
     ```
 
 === "Go"
@@ -268,6 +329,21 @@ Once you know the event type, access the relevant data:
                 # Application might dispatch execution based on this
         ```
 
+    === "TypeScript"
+
+        ```typescript
+        export function handleFunctionCalls(event: Event) {
+            const calls = getFunctionCalls(event);
+            if (calls.length > 0) {
+                for (const call of calls) {
+                    const toolName = call.name;
+                    const argumentsDict = call.args; // This is an object
+                    console.log(`  Tool: ${toolName}, Args: ${JSON.stringify(argumentsDict)}`);
+                }
+            }
+        }
+        ```
+
     === "Go"
 
         ```go
@@ -323,6 +399,22 @@ Once you know the event type, access the relevant data:
                 tool_name = response.name
                 result_dict = response.response # The dictionary returned by the tool
                 print(f"  Tool Result: {tool_name} -> {result_dict}")
+        ```
+
+    === "TypeScript"
+
+        ```typescript
+        // Pseudocode: Handle function responses (TypeScript)
+        export function handleFunctionResponses(event: Event) {
+            const responses = getFunctionResponses(event);
+            if (responses.length > 0) {
+                for (const response of responses) {
+                    const toolName = response.name;
+                    const result = response.response; // The object returned by the tool
+                    console.log(`  Tool Result: ${toolName} -> ${JSON.stringify(result)}`);
+                }
+            }
+        }
         ```
 
     === "Go"
@@ -383,6 +475,18 @@ The `event.actions` object signals changes that occurred or should occur. Always
             print(f"  State changes: {event.actions.state_delta}")
             # Update local UI or application state if necessary
         ```
+
+    === "TypeScript"
+        `delta = event.actions.stateDelta` (an object of `{key: value}` pairs).
+        ```typescript
+        export function handleStateChanges(event: Event) {
+            if (event.actions && Object.keys(event.actions.stateDelta).length > 0) {
+                console.log(`  State changes: ${JSON.stringify(event.actions.stateDelta)}`);
+                // Update local UI or application state if necessary
+            }
+        }
+        ```
+
     === "Go"
         `delta := event.Actions.StateDelta` (a `map[string]any`)
         ```go
@@ -422,6 +526,17 @@ The `event.actions` object signals changes that occurred or should occur. Always
         if event.actions and event.actions.artifact_delta:
             print(f"  Artifacts saved: {event.actions.artifact_delta}")
             # UI might refresh an artifact list
+        ```
+
+    === "TypeScript"
+        `artifact_changes = event.actions.artifactDelta` (an object of `{filename: version}`).
+        ```typescript
+        export function handleArtifactChanges(event: Event) {
+            if (event.actions && Object.keys(event.actions.artifactDelta).length > 0) {
+                console.log(`  Artifacts saved: ${JSON.stringify(event.actions.artifactDelta)}`);
+                // UI might refresh an artifact list
+            }
+        }
         ```
 
     === "Go"
@@ -476,6 +591,26 @@ The `event.actions` object signals changes that occurred or should occur. Always
                 print("  Signal: Escalate (terminate loop)")
             if event.actions.skip_summarization:
                 print("  Signal: Skip summarization for tool result")
+        ```
+
+    === "TypeScript"
+        *   `event.actions.transferToAgent` (string): Control should pass to the named agent.
+        *   `event.actions.escalate` (boolean): A loop should terminate.
+        *   `event.actions.skipSummarization` (boolean): A tool result should not be summarized by the LLM.
+        ```typescript
+        export function handleControlFlow(event: Event) {
+            if (event.actions) {
+                if (event.actions.transferToAgent) {
+                    console.log(`  Signal: Transfer to ${event.actions.transferToAgent}`);
+                }
+                if (event.actions.escalate) {
+                    console.log('  Signal: Escalate (terminate loop)');
+                }
+                if (event.actions.skipSummarization) {
+                    console.log('  Signal: Skip summarization for tool result');
+                }
+            }
+        }
         ```
 
     === "Go"
@@ -571,6 +706,53 @@ Use the built-in helper method `event.is_final_response()` to identify events su
         #         else:
         #              # Handle other types of final responses if applicable
         #              print("Display: Final non-textual response or signal.")
+        ```
+
+    === "TypeScript"
+        ```typescript
+        // Pseudocode: Handling final responses in application (TypeScript)
+        import {
+            Event,
+            getFunctionResponses,
+            isFinalResponse,
+            stringifyContent
+        } from '@google/adk';
+
+        async function handleFinalResponses(runnerEvents: AsyncIterable<Event>) {
+            let fullResponseText = '';
+
+            for await (const event of runnerEvents) {
+                // Accumulate streaming text if needed...
+                if (event.partial) {
+                    fullResponseText += stringifyContent(event);
+                }
+
+                // Check if it's a final, displayable event
+                if (isFinalResponse(event)) {
+                    console.log('\n--- Final Output Detected ---');
+
+                    const eventText = stringifyContent(event);
+                    if (fullResponseText || eventText) {
+                        // If it's the final part of a stream (or a single message), use accumulated text
+                        const finalText = fullResponseText + (event.partial ? '' : eventText);
+                        console.log(`Display to user: ${finalText.trim()}`);
+                        fullResponseText = ''; // Reset accumulator
+                    } else if (
+                        event.actions?.skipSummarization &&
+                        getFunctionResponses(event).length > 0
+                    ) {
+                        // Handle displaying the raw tool result if needed
+                        const responseData = getFunctionResponses(event)[0].response;
+                        console.log(`Display raw tool result: ${JSON.stringify(responseData)}`);
+                    } else if (event.longRunningToolIds && event.longRunningToolIds.length > 0) {
+                        console.log('Display message: Tool is running in background...');
+                    } else {
+                        // Handle other types of final responses if applicable
+                        console.log('Display: Final non-textual response or signal.');
+                    }
+                }
+            }
+        }
         ```
 
     === "Go"
@@ -848,6 +1030,9 @@ To use events effectively in your ADK applications:
 
     === "Python"
         Use `yield Event(author=self.name, ...)` in `BaseAgent` subclasses.
+
+    === "TypeScript"
+        When constructing an `Event` in your custom agent logic, set the author, for example: `createEvent({ author: this.name, ... })`
 
     === "Go"
         In custom agent `Run` methods, the framework typically handles authorship. If creating an event manually, set the author: `yield(&session.Event{Author: a.name, ...}, nil)`
