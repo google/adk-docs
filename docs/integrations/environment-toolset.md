@@ -95,7 +95,7 @@ The ***LocalEnvironment*** class supports the following parameters:
 -   **working_dir**: (optional) The directory where the agent will perform
     file operations and execute commands. Setting a working directory means
     that any generated files are still accessible after the agent runs. For
-    more details, see [File persistence](?tab=t.0#heading=h.dr0lj6o4vahc).
+    more details, see [File persistence](#file-persistence).
 -   **env_vars**: (optional) A dictionary of environment variables to be set
     for the execution context.
 
@@ -132,7 +132,7 @@ Commands executed with ***LocalEnvironment*** use
 `asyncio.create_subprocess_shell`, ensuring that the agent remains responsive
 during long-running tasks.
 
-### File persistence
+### File persistence {#file-persistence}
 
 Files and file output generated with the ***LocalEnvironment*** are placed in a
 temporary directory by default. That directory is removed when an agent is shut
@@ -141,7 +141,7 @@ down, for example, when exiting an ADK Web session. However, if you set a
 removed* after the agent shuts down.
 
 **Tip:** If you want more control over how files are persisted between agent
-sessions, use ***[Artifacts***](https://adk.dev/artifacts/) and the Artifact
+sessions, use [***Artifacts***](https://adk.dev/artifacts/) and the Artifact
 Service to upload and download files to the environment.
 
 ## Custom environments
