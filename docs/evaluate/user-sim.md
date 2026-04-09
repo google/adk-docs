@@ -178,6 +178,16 @@ adk eval \
     --print_detailed_results
 ```
 
+### Automatically generating conversation scenarios
+
+In addition to manually adding conversation scenarios, you can use the ADK to automatically generate them. The `adk eval_set generate_eval_cases` command uses the Vertex AI Eval SDK (`ScenarioGenerator`) to dynamically generate a suite of conversation scenarios and automatically adds them to the specified eval set based on a user simulation config file.
+
+Here is an example of how to use the command:
+
+```bash
+adk eval_set generate_eval_cases <agent_path> <eval_set_id> --user_simulation_config_file <path>
+```
+
 ## User simulator configuration
 
 You can override the default user simulator configuration to change the model,
@@ -255,4 +265,3 @@ Example of a custom persona definition:
   }
 }
 ```
-
