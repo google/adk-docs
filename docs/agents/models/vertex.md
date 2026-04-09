@@ -8,9 +8,30 @@ This includes models from Model Garden or your own fine-tuned models.
 (`projects/PROJECT_ID/locations/LOCATION/endpoints/ENDPOINT_ID`) directly to the
 `model` parameter of `LlmAgent`.
 
+## Using Fully Qualified Resource Names
+
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.29.0</span>
+</div>
+
+As a more direct alternative to setting environment variables, you can pass a fully qualified Vertex AI model or endpoint resource name directly into the `model` parameter. The ADK automatically parses the Project ID, location, and model name from the string, configuring the client to use the Vertex AI backend.
+
+This method is convenient when working with models from Model Garden or when your application needs to access models across different Google Cloud projects.
+
+When you use a fully qualified resource name, you do **not** need to set the following environment variables for that model:
+- `GOOGLE_CLOUD_PROJECT`
+- `GOOGLE_CLOUD_LOCATION`
+- `GOOGLE_GENAI_USE_VERTEXAI`
+
+**Examples of fully qualified names:**
+
+- **Google Model:** `projects/YOUR_PROJECT/locations/YOUR_REGION/publishers/google/models/gemini-1.5-flash`
+- **Third-Party Model:** `projects/YOUR_PROJECT/locations/YOUR_REGION/publishers/anthropic/models/claude-3-5-sonnet@20240620`
+- **Endpoint:** `projects/YOUR_PROJECT/locations/YOUR_REGION/endpoints/YOUR_ENDPOINT_ID`
+
 ## Vertex AI Setup
 
-Ensure your environment is configured for Vertex AI:
+If you are **not** using fully qualified resource names, you must ensure your environment is configured for Vertex AI:
 
 1. **Authentication:** Use Application Default Credentials (ADC):
 
@@ -152,17 +173,16 @@ Vertex AI.
 
 === "Python"
 
-    **Integration Method:** Uses the direct model string (e.g.,
-    `"claude-3-sonnet@20240229"`), *but requires manual registration* within ADK.
+    **Integration Method:** You can use a fully qualified resource name (e.g., `"projects/.../models/claude-3-sonnet@20240229"`) or a simple model string (e.g., `"claude-3-sonnet@20240229"`). Using the simple string *requires manual registration* within ADK.
 
     **Why Registration?** ADK's registry automatically recognizes `gemini-*` strings
-    and standard Vertex AI endpoint strings (`projects/.../endpoints/...`) and
+    and standard Vertex AI resource names (`projects/.../endpoints/...`, `projects/.../models/...`) and
     routes them via the `google-genai` library. For other model types used directly
-    via Vertex AI (like Claude), you must explicitly tell the ADK registry which
+    via Vertex AI (like Claude), if you use the simple model string, you must explicitly tell the ADK registry which
     specific wrapper class (`Claude` in this case) knows how to handle that model
     identifier string with the Vertex AI backend.
 
-    **Setup:**
+    **Setup (with simple model string):**
 
     1. **Vertex AI Environment:** Ensure the consolidated Vertex AI setup (ADC, Env
        Vars, `GOOGLE_GENAI_USE_VERTEXAI=TRUE`) is complete.
@@ -295,10 +315,7 @@ Vertex AI offers a curated selection of open-source models, such as Meta Llama, 
 
     **Setup:**
 
-    1. **Vertex AI Environment:** Ensure the consolidated Vertex AI setup (ADC, Env
-       Vars, `GOOGLE_GENAI_USE_VERTEXAI=TRUE`) is complete.
-
-    2. **Install LiteLLM:**
+    1. **Install LiteLLM:**
             ```shell
             pip install litellm
             ```
