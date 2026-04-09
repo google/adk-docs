@@ -133,7 +133,7 @@ bigquery_toolset = BigQueryToolset(
     credentials_config=BigQueryCredentialsConfig(credentials=credentials)
 )
 
-llm = Gemini(model="gemini-2.5-flash")
+llm = Gemini(model="gemini-flash-latest")
 
 root_agent = Agent(
     model=llm,
@@ -523,7 +523,7 @@ The events table (`agent_events`) uses a flexible schema. The following table pr
 | **span_id** | `STRING` | `NULLABLE` | The **OpenTelemetry** Span ID (16-char hex). Uniquely identifies this specific atomic operation. | `69867a836cd94798be2759d8e0d70215` |
 | **parent_span_id** | `STRING` | `NULLABLE` | The Span ID of the immediate caller. Used to reconstruct the parent-child execution tree (DAG). | `ef5843fe40764b4b8afec44e78044205` |
 | **content** | `JSON` | `NULLABLE` | The primary event payload. Structure is polymorphic based on `event_type`. | `{"system_prompt": "You are...", "prompt": [{"role": "user", "content": "hello"}], "response": "Hi", "usage": {"total": 15}}` |
-| **attributes** | `JSON` | `NULLABLE` | Metadata/Enrichment (usage stats, model info, tool provenance, custom tags). | `{"model": "gemini-2.5-flash", "usage_metadata": {"total_token_count": 15}, "session_metadata": {"session_id": "...", "app_name": "...", "user_id": "...", "state": {}}, "custom_tags": {"env": "prod"}}` |
+| **attributes** | `JSON` | `NULLABLE` | Metadata/Enrichment (usage stats, model info, tool provenance, custom tags). | `{"model": "gemini-flash-latest", "usage_metadata": {"total_token_count": 15}, "session_metadata": {"session_id": "...", "app_name": "...", "user_id": "...", "state": {}}, "custom_tags": {"env": "prod"}}` |
 | **latency_ms** | `JSON` | `NULLABLE` | Performance metrics. Standard keys are `total_ms` (wall-clock duration) and `time_to_first_token_ms` (streaming latency). | `{"total_ms": 1250, "time_to_first_token_ms": 450}` |
 | **status** | `STRING` | `NULLABLE` | High-level outcome. Values: `OK` (success) or `ERROR` (failure). | `OK` |
 | **error_message** | `STRING` | `NULLABLE` | Human-readable exception message or stack trace fragment. Populated only when `status` is `ERROR`. | `Error 404: Dataset not found` |
@@ -618,7 +618,7 @@ Captures the prompt sent to the model, including conversation history and system
   },
   "attributes": {
     "root_agent_name": "my_bq_agent",
-    "model": "gemini-2.5-flash",
+    "model": "gemini-flash-latest",
     "tools": ["list_dataset_ids", "execute_sql"],
     "llm_config": {
       "temperature": 0.5,
@@ -645,7 +645,7 @@ Captures the model's output and token usage statistics.
   },
   "attributes": {
     "root_agent_name": "my_bq_agent",
-    "model_version": "gemini-2.5-flash-001",
+    "model_version": "gemini-flash-latest-001",
     "usage_metadata": {
       "prompt_token_count": 10129,
       "candidates_token_count": 19,
@@ -1080,7 +1080,7 @@ SELECT
     session_id,
     AI.GENERATE(
         ('Analyze this conversation log and explain the root cause of the failure. Log: ', full_history),
-        endpoint => 'gemini-2.5-flash'
+        endpoint => 'gemini-flash-latest'
     ).result AS root_cause_explanation
 FROM SessionContext;
 ```

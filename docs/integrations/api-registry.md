@@ -93,7 +93,7 @@ registry_tools = api_registry.get_toolset(
 
 # Create an agent with the tools
 root_agent = LlmAgent(
-    model="gemini-1.5-flash", # Or your preferred model
+    model="gemini-flash-latest", # Or your preferred model
     name="bigquery_assistant",
     instruction="""
 Help user access their BigQuery data using the available tools.

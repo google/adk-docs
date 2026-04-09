@@ -59,7 +59,7 @@ from pydantic import BaseModel
 
 city_generator_agent = Agent(
     name="city_generator_agent",
-    model="gemini-2.5-flash",
+    model="gemini-flash-latest",
     instruction="""Return the name of a random city.
       Return only the name, nothing else.""",
     output_schema=str,
@@ -75,7 +75,7 @@ def lookup_time_function(node_input: str):
 
 city_report_agent = Agent(
     name="city_report_agent",
-    model="gemini-2.5-flash",
+    model="gemini-flash-latest",
     input_schema=CityTime,
     instruction="""Output following line:
     It is {CityTime.time_info} in {CityTime.city} right now.""",
@@ -137,7 +137,7 @@ translated into a graph-based agent using the ***Workflow*** class:
 ```python
 process_message = Agent(
     name="process_message",
-    model="gemini-2.5-flash",
+    model="gemini-flash-latest",
     instruction="""Classify user message into either "BUG", "CUSTOMER_SUPPORT",
       or "LOGISTICS". If you think a message applies to more than one category,
       reply with a comma separated list of categories.

@@ -106,7 +106,7 @@ The following code example demonstrates how to define and configure a custom sum
     from google.adk.models import Gemini
 
     # Define the AI model to be used for summarization:
-    summarization_llm = Gemini(model="gemini-2.5-flash")
+    summarization_llm = Gemini(model="gemini-flash-latest")
 
     # Create the summarizer with the custom model:
     my_summarizer = LlmEventSummarizer(llm=summarization_llm)
@@ -133,7 +133,7 @@ The following code example demonstrates how to define and configure a custom sum
 
     // Define the AI model to be used for summarization:
     Gemini summarizationLlm = Gemini.builder()
-        .model("gemini-2.5-flash")
+        .model("gemini-flash-latest")
         .build();
 
     // Create the summarizer with the custom model:
