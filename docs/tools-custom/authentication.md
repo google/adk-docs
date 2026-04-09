@@ -28,7 +28,7 @@ There are several ways to manage authentication and credentials in ADK
 agents. Each of these methods carries some amount of risk, so you should
 carefully consider which approach best serves your application and customers.
 
-### Recommended: Authentication manager services
+### Recommended: Authentication manager services {#authentication-manager}
 
 When deploying agents to production hosted environments, your agent's ability to
 properly authenticate to restricted tools and services becomes more challenging
@@ -58,15 +58,16 @@ and your own code, consider these recommendations:
 
 ### Secrets manager services {#secrets-manager}
 
-For production environments, if not using an authentication manager service, you
-should store credentials in a dedicated secret manager service to protect that
-data. With this approach, a secret manager securely stores the credentials for
-any tools or services accessed by the agent as needed, and those secrets are not
-resident in agent's operating memory. For example, a custom ADK Tool using this
-method would store only short-lived access tokens or secure references, and
+For production environments, if you are not using an
+[authentication manager](#authentication-manager) service, you should store
+credentials in a dedicated secret manager service to protect that data. With
+this approach, a secret manager securely stores the credentials for any tools or
+services accessed by the agent as needed, and those secrets are not resident in
+agent's operating memory. For example, a custom ADK Tool using this method would
+have only short-lived access tokens or secure references in session memory, and
 retrieve longer-lived refresh tokens from the secrets manager when needed. When
-selecting a secrets manager service, consider services from well-established
-providers, such as
+selecting a secrets manager, consider services from well-established providers,
+such as
 [Google Cloud Secret Manager](https://cloud.google.com/security/products/secret-manager)
 or other secret management services.
 
