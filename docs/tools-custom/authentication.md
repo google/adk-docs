@@ -154,6 +154,12 @@ see the [ADK Integrations](/integrations) catalog.
 
 ---
 
+## Authentication over A2A Protocol
+
+ADK seamlessly supports interactive authentication across remote agents. When an A2A-exposed agent requests credentials, it emits an A2A `TaskState.auth_required`. The consuming `RemoteA2aAgent` automatically translates this back into the standard `adk_request_credential` flow, meaning the client-side interactive flow works identically whether the tool is local or remote.
+
+---
+
 ## Journey 1: Building Agentic Applications with Authenticated Tools
 
 This section focuses on using pre-existing tools (like those from `RestApiTool/ OpenAPIToolset`, `APIHubToolset`, `GoogleApiToolSet`) that require authentication within your agentic application. Your main responsibility is configuring the tools and handling the client-side part of interactive authentication flows (if required by the tool).
