@@ -133,7 +133,7 @@ bigquery_toolset = BigQueryToolset(
     credentials_config=BigQueryCredentialsConfig(credentials=credentials)
 )
 
-llm = Gemini(model="gemini-2.5-flash")
+llm = Gemini(model="gemini-1.5-flash")
 
 root_agent = Agent(
     model=llm,
@@ -256,7 +256,7 @@ bigquery_toolset = BigQueryToolset(
 
 # --- Agent ---
 root_agent = Agent(
-    model=Gemini(model="gemini-2.5-flash"),
+    model=Gemini(model="gemini-1.5-flash"),
     name="my_bq_agent",
     instruction="You are a helpful assistant with access to BigQuery tools.",
     tools=[bigquery_toolset],
@@ -456,6 +456,7 @@ You can customize the plugin using `BigQueryLoggerConfig`.
 -   **`custom_tags`** (`Dict[str, Any]`, default: `{}`): A dictionary of static tags (e.g., `{"env": "prod", "version": "1.0"}`) to be included in the `attributes` column for every event.
 -   **`auto_schema_upgrade`** (`bool`, default: `True`): When enabled, the plugin automatically adds new columns to an existing table when the plugin schema evolves. Only additive changes are made (columns are never dropped or altered). A version label (`adk_schema_version`) on the table ensures the diff runs at most once per schema version. Safe to leave enabled.
 -   **`create_views`** (`bool`, default: `True`): Added in 1.27.0. When enabled, automatically generates per-event-type BigQuery views that unnest structured JSON data (such as `content` or `attributes`) into flat, typed columns, significantly simplifying SQL queries.
+-   **`view_prefix`** (`str`, default: `"v"`): Used to prefix auto-created view names to prevent collisions when multiple plugin instances share a dataset. For example, the default `"v"` produces views like `v_llm_request`.
 
 
 The following code sample shows how to define a configuration for the
@@ -523,7 +524,7 @@ The events table (`agent_events`) uses a flexible schema. The following table pr
 | **span_id** | `STRING` | `NULLABLE` | The **OpenTelemetry** Span ID (16-char hex). Uniquely identifies this specific atomic operation. | `69867a836cd94798be2759d8e0d70215` |
 | **parent_span_id** | `STRING` | `NULLABLE` | The Span ID of the immediate caller. Used to reconstruct the parent-child execution tree (DAG). | `ef5843fe40764b4b8afec44e78044205` |
 | **content** | `JSON` | `NULLABLE` | The primary event payload. Structure is polymorphic based on `event_type`. | `{"system_prompt": "You are...", "prompt": [{"role": "user", "content": "hello"}], "response": "Hi", "usage": {"total": 15}}` |
-| **attributes** | `JSON` | `NULLABLE` | Metadata/Enrichment (usage stats, model info, tool provenance, custom tags). | `{"model": "gemini-2.5-flash", "usage_metadata": {"total_token_count": 15}, "session_metadata": {"session_id": "...", "app_name": "...", "user_id": "...", "state": {}}, "custom_tags": {"env": "prod"}}` |
+| **attributes** | `JSON` | `NULLABLE` | Metadata/Enrichment (usage stats, model info, tool provenance, custom tags). | `{"model": "gemini-1.5-flash", "usage_metadata": {"total_token_count": 15}, "session_metadata": {"session_id": "...", "app_name": "...", "user_id": "...", "state": {}}, "custom_tags": {"env": "prod"}}` |
 | **latency_ms** | `JSON` | `NULLABLE` | Performance metrics. Standard keys are `total_ms` (wall-clock duration) and `time_to_first_token_ms` (streaming latency). | `{"total_ms": 1250, "time_to_first_token_ms": 450}` |
 | **status** | `STRING` | `NULLABLE` | High-level outcome. Values: `OK` (success) or `ERROR` (failure). | `OK` |
 | **error_message** | `STRING` | `NULLABLE` | Human-readable exception message or stack trace fragment. Populated only when `status` is `ERROR`. | `Error 404: Dataset not found` |
@@ -618,7 +619,7 @@ Captures the prompt sent to the model, including conversation history and system
   },
   "attributes": {
     "root_agent_name": "my_bq_agent",
-    "model": "gemini-2.5-flash",
+    "model": "gemini-1.5-flash",
     "tools": ["list_dataset_ids", "execute_sql"],
     "llm_config": {
       "temperature": 0.5,
@@ -645,7 +646,7 @@ Captures the model's output and token usage statistics.
   },
   "attributes": {
     "root_agent_name": "my_bq_agent",
-    "model_version": "gemini-2.5-flash-001",
+    "model_version": "gemini-1.5-flash-001",
     "usage_metadata": {
       "prompt_token_count": 10129,
       "candidates_token_count": 19,
@@ -1080,7 +1081,7 @@ SELECT
     session_id,
     AI.GENERATE(
         ('Analyze this conversation log and explain the root cause of the failure. Log: ', full_history),
-        endpoint => 'gemini-2.5-flash'
+        endpoint => 'gemini-1.5-flash'
     ).result AS root_cause_explanation
 FROM SessionContext;
 ```
@@ -1120,6 +1121,8 @@ https://lookerstudio.google.com/reporting/create?c.reportId=f1c5b513-3095-44f8-9
     This is a known concern
     ([google/adk-python#3845](https://github.com/google/adk-python/issues/3845))
     and can lead to credential exposure in your analytics data.
+
+The plugin now automatically redacts sensitive keys (`client_secret`, `access_token`, `refresh_token`, `id_token`, `api_key`, `password`) and any state keys starting with `temp:` before they are logged to BigQuery.
 
 To prevent sensitive credentials from being persisted in BigQuery, use one or
 more of the following approaches:
