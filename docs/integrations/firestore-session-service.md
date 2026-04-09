@@ -31,7 +31,7 @@ ADK provides a native integration for managing persistent agent session states u
 
 !!! note
 
-   Ensure you use the same version for both `google-adk` and `google-adk-firestore-session-service` to guarantee compatibility.
+    Ensure you use the same version for both `google-adk` and `google-adk-firestore-session-service` to guarantee compatibility.
 
 Add the following dependencies to your `pom.xml` (Maven) or `build.gradle` (Gradle), replacing `1.0.0` with your target ADK version:
 
