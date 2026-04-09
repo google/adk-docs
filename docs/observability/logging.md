@@ -155,7 +155,7 @@ By reading the logger name, you can immediately pinpoint the source of the log a
 3.  **Inspect the Logs:** Look through the console output for a message from the `google.adk.models.google_llm` logger that starts with `LLM Request:`.
     ```log
     ...
-    2025-07-10 15:26:13,778 - DEBUG - google_adk.google.adk.models.google_llm - Sending out request, model: gemini-2.0-flash, backend: GoogleLLMVariant.GEMINI_API, stream: False
+    2025-07-10 15:26:13,778 - DEBUG - google_adk.google.adk.models.google_llm - Sending out request, model: gemini-flash-latest, backend: GoogleLLMVariant.GEMINI_API, stream: False
     2025-07-10 15:26:13,778 - DEBUG - google_adk.google.adk.models.google_llm -
     LLM Request:
     -----------------------------------------------------------

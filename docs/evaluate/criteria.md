@@ -227,7 +227,7 @@ Example `EvalConfig` entry:
     "final_response_match_v2": {
       "threshold": 0.8,
       "judge_model_options": {
-            "judge_model": "gemini-2.5-flash",
+            "judge_model": "gemini-flash-latest",
             "num_samples": 5
           }
         }
@@ -286,7 +286,7 @@ Example `EvalConfig` entry:
     "rubric_based_final_response_quality_v1": {
       "threshold": 0.8,
       "judge_model_options": {
-        "judge_model": "gemini-2.5-flash",
+        "judge_model": "gemini-flash-latest",
         "num_samples": 5
       },
       "rubrics": [
@@ -359,7 +359,7 @@ Example `EvalConfig` entry:
     "rubric_based_tool_use_quality_v1": {
       "threshold": 1.0,
       "judge_model_options": {
-        "judge_model": "gemini-2.5-flash",
+        "judge_model": "gemini-flash-latest",
         "num_samples": 5
       },
       "rubrics": [
@@ -431,7 +431,7 @@ Example `EvalConfig` entry:
     "hallucinations_v1": {
       "threshold": 0.8,
       "judge_model_options": {
-            "judge_model": "gemini-2.5-flash",
+            "judge_model": "gemini-flash-latest",
           },
       "evaluate_intermediate_nl_responses": true
     }
@@ -529,7 +529,7 @@ Example `EvalConfig` entry:
     "per_turn_user_simulator_quality_v1": {
       "threshold": 1.0,
       "judge_model_options": {
-        "judge_model": "gemini-2.5-flash",
+        "judge_model": "gemini-flash-latest",
         "num_samples": 5
       },
       "stop_signal": "</finished>"

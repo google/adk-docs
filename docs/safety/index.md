@@ -406,7 +406,7 @@ When modifications to the tools to add guardrails aren't possible, the [**`Befor
 
     # Hypothetical Agent setup
     root_agent = LlmAgent( # Use specific agent type
-        model='gemini-2.5-flash',
+        model='gemini-flash-latest',
         name='root_agent',
         instruction="...",
         before_tool_callback=validate_tool_params, # Assign the callback
@@ -447,7 +447,7 @@ When modifications to the tools to add guardrails aren't possible, the [**`Befor
 
     // Hypothetical Agent setup
     const rootAgent = new LlmAgent({
-        model: 'gemini-2.5-flash',
+        model: 'gemini-flash-latest',
         name: 'root_agent',
         instruction: "...",
         beforeToolCallback: validateToolParams, // Assign the callback
@@ -497,7 +497,7 @@ When modifications to the tools to add guardrails aren't possible, the [**`Befor
 
     // Hypothetical Agent setup
     // agent, _ := llmagent.New(llmagent.Config{
-    // 	Model: "gemini-2.5-flash",
+    // 	Model: "gemini-flash-latest",
     // 	Name: "root_agent",
     // 	Instruction: "...",
     // 	BeforeToolCallbacks: []llmagent.BeforeToolCallback{validateToolParams},
@@ -535,7 +535,7 @@ When modifications to the tools to add guardrails aren't possible, the [**`Befor
     public void runAgent() {
     LlmAgent agent =
         LlmAgent.builder()
-            .model("gemini-2.5-flash")
+            .model("gemini-flash-latest")
             .name("AgentWithBeforeToolCallback")
             .instruction("...")
             .beforeToolCallback(this::validateToolParams) // Assign the callback

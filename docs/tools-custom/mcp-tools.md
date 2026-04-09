@@ -90,7 +90,7 @@ TARGET_FOLDER_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "/
 # If you created ./adk_agent_samples/mcp_agent/your_folder,
 
 root_agent = LlmAgent(
-    model='gemini-2.5-flash',
+    model='gemini-flash-latest',
     name='filesystem_assistant_agent',
     instruction='Help the user manage their files. You can list files, read files, etc.',
     tools=[
@@ -193,7 +193,7 @@ public class McpAgentCreator {
 
         try (McpToolset toolset = new McpToolset(serverParams.toServerParameters())) {
             LlmAgent agent = LlmAgent.builder()
-                    .model("gemini-2.5-flash")
+                    .model("gemini-flash-latest")
                     .name("enterprise_assistant")
                     .description("An agent to help users access their file systems")
                     .instruction(
@@ -249,7 +249,7 @@ import {LlmAgent, MCPToolset} from "@google/adk";
 const TARGET_FOLDER_PATH = "/path/to/your/folder";
 
 export const rootAgent = new LlmAgent({
-    model: "gemini-2.5-flash",
+    model: "gemini-flash-latest",
     name: "filesystem_assistant_agent",
     instruction: "Help the user manage their files. You can list files, read files, etc.",
     tools: [
@@ -317,7 +317,7 @@ if not google_maps_api_key:
         # You might want to raise an error or exit if the key is crucial and not found.
 
 root_agent = LlmAgent(
-    model='gemini-2.5-flash',
+    model='gemini-flash-latest',
     name='maps_assistant_agent',
     instruction='Help the user with mapping, directions, and finding places using Google Maps tools.',
     tools=[
@@ -423,7 +423,7 @@ public class MapsAgentCreator {
 
         try (McpToolset toolset = new McpToolset(serverParams.toServerParameters())) {
             LlmAgent agent = LlmAgent.builder()
-                    .model("gemini-2.5-flash")
+                    .model("gemini-flash-latest")
                     .name("maps_assistant")
                     .description("Maps assistant")
                     .instruction("Help user with mapping and directions using available tools.")
@@ -478,7 +478,7 @@ if (!googleMapsApiKey) {
 }
 
 export const rootAgent = new LlmAgent({
-    model: "gemini-2.5-flash",
+    model: "gemini-flash-latest",
     name: "maps_assistant_agent",
     instruction: "Help the user with mapping, directions, and finding places using Google Maps tools.",
     tools: [
@@ -683,7 +683,7 @@ if PATH_TO_YOUR_MCP_SERVER_SCRIPT == "/path/to/your/my_adk_mcp_server.py":
     # Optionally, raise an error if the path is critical
 
 root_agent = LlmAgent(
-    model='gemini-2.5-flash',
+    model='gemini-flash-latest',
     name='web_reader_mcp_client_agent',
     instruction="Use the 'load_web_page' tool to fetch content from a URL provided by the user.",
     tools=[
@@ -792,7 +792,7 @@ async def get_agent_async():
 
   # Use in an agent
   root_agent = LlmAgent(
-      model='gemini-2.5-flash', # Adjust model name if needed based on availability
+      model='gemini-flash-latest', # Adjust model name if needed based on availability
       name='enterprise_assistant',
       instruction='Help user accessing their file systems',
       tools=[toolset], # Provide the MCP tools to the ADK agent
@@ -883,7 +883,7 @@ from mcp import StdioServerParameters
 _allowed_path = os.path.dirname(os.path.abspath(__file__))
 
 root_agent = LlmAgent(
-    model='gemini-2.5-flash',
+    model='gemini-flash-latest',
     name='enterprise_assistant',
     instruction=f'Help user accessing their file systems. Allowed directory: {_allowed_path}',
     tools=[
