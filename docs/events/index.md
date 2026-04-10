@@ -38,21 +38,34 @@ An `Event` in ADK is an immutable record representing a specific point in the ag
     In TypeScript, this is an interface of type `Event`.
 
     ```typescript
+    import {Content} from '@google/genai';
+
     /**
      * Conceptual Structure of an Event (TypeScript)
-     * 
-     * interface Event extends LlmResponse {
-     *   id: string;              // Unique ID for this specific event
-     *   invocationId: string;    // ID for the whole interaction run
-     *   author?: string;         // 'user' or agent name
-     *   actions: EventActions;   // Important for side-effects & control
-     *   timestamp: number;       // Creation time
-     *   partial?: boolean;       // Is it streaming output?
-     *   turnComplete?: boolean;  // Is the turn finished?
-     *   branch?: string;         // Hierarchy path
-     *   longRunningToolIds?: string[];
-     *   // ... other LlmResponse fields like content, errorCode, errorMessage
      */
+    export interface Event extends LlmResponse {
+      /** Unique ID for this specific event. */
+      id: string;
+      /** ID for the whole interaction run. */
+      invocationId: string;
+      /** 'user' or agent name. */
+      author?: string;
+      /** Important for side-effects & control. */
+      actions: EventActions;
+      /** Creation time. */
+      timestamp: number;
+      /** Is it streaming output? */
+      partial?: boolean;
+      /** Is the turn finished? */
+      turnComplete?: boolean;
+      /** Hierarchy path. */
+      branch?: string;
+      /** List of IDs for long-running tools. */
+      longRunningToolIds?: string[];
+      /** The content of the response. */
+      content?: Content;
+      // ... other LlmResponse fields like errorCode, errorMessage
+    }
     ```
 
 === "Go"
@@ -172,39 +185,40 @@ Quickly determine what an event represents by checking:
     ```typescript
     // Pseudocode: Basic event identification (TypeScript)
     import {
-        Event,
-        getFunctionCalls,
-        getFunctionResponses
+      Event,
+      getFunctionCalls,
+      getFunctionResponses
     } from '@google/adk';
 
     export async function processEvents(runnerEvents: AsyncIterable<Event>) {
-        for await (const event of runnerEvents) {
-            console.log(`Event from: ${event.author}`);
+      for await (const event of runnerEvents) {
+        console.log(`Event from: ${event.author}`);
 
-            if (event.content && event.content.parts) {
-            if (getFunctionCalls(event).length > 0) {
-                console.log('  Type: Tool Call Request');
-            } else if (getFunctionResponses(event).length > 0) {
-                console.log('  Type: Tool Result');
-            } else if (event.content.parts[0]?.text) {
-                if (event.partial) {
-                console.log('  Type: Streaming Text Chunk');
-                } else {
-                console.log('  Type: Complete Text Message');
-                }
+        if (event.content && event.content.parts && event.content.parts.length > 0) {
+          if (getFunctionCalls(event).length > 0) {
+            console.log('  Type: Tool Call Request');
+          } else if (getFunctionResponses(event).length > 0) {
+            console.log('  Type: Tool Result');
+          } else if (event.content.parts[0].text) {
+            if (event.partial) {
+              console.log('  Type: Streaming Text Chunk');
             } else {
-                console.log('  Type: Other Content (e.g., code result)');
+              console.log('  Type: Complete Text Message');
             }
-            } else if (
-            Object.keys(event.actions.stateDelta).length > 0 ||
-            Object.keys(event.actions.artifactDelta).length > 0
-            ) {
-            console.log('  Type: State/Artifact Update');
-            } else {
-            console.log('  Type: Control Signal or Other');
-            }
+          } else {
+            console.log('  Type: Other Content (e.g., code result)');
+          }
+        } else if (
+          event.actions &&
+          (Object.keys(event.actions.stateDelta).length > 0 ||
+            Object.keys(event.actions.artifactDelta).length > 0)
+        ) {
+          console.log('  Type: State/Artifact Update');
+        } else {
+          console.log('  Type: Control Signal or Other');
         }
-        }
+      }
+    }
     ```
 
 === "Go"
