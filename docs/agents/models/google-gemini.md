@@ -77,7 +77,7 @@ in your agents:
 
     Most code examples in ADK documentation use `gemini-flash-latest` to select the
     [latest available](https://ai.google.dev/gemini-api/docs/models#latest)
-    Gemini Flash version. However, if you access Gemini from a regional end point,
+    Gemini Flash version. However, if you access Gemini from a regional endpoint,
     such as `us-central1`, this selection string may not work. In that case,
     use a specific model version string from the
     [Gemini models](https://ai.google.dev/gemini-api/docs/models) page or
