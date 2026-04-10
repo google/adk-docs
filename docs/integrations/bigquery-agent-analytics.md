@@ -57,6 +57,16 @@ information, see [Event types and payloads](#event-types).
     -   **Local:** Run `gcloud auth application-default login`.
     -   **Cloud:** Ensure your service account has the required permissions.
 
+??? note "Note: Gemini model selector `gemini-flash-latest`"
+
+    Most code examples in ADK documentation use `gemini-flash-latest` to select the
+    [latest available](https://ai.google.dev/gemini-api/docs/models#latest)
+    Gemini Flash version. However, if you access Gemini from a regional end point,
+    such as `us-central1`, this selection string may not work. In that case,
+    use a specific model version string from the
+    [Gemini models](https://ai.google.dev/gemini-api/docs/models) page or
+    Google Cloud [Gemini models](https://docs.cloud.google.com/vertex-ai/generative-ai/docs/models) list.
+
 ### IAM permissions
 
 For the agent to work properly, the principal (e.g., service account, user account) under which the agent is running needs these Google Cloud roles:
@@ -256,7 +266,7 @@ bigquery_toolset = BigQueryToolset(
 
 # --- Agent ---
 root_agent = Agent(
-    model=Gemini(model="gemini-2.5-flash"),
+    model=Gemini(model="gemini-flash-latest"),
     name="my_bq_agent",
     instruction="You are a helpful assistant with access to BigQuery tools.",
     tools=[bigquery_toolset],
@@ -645,7 +655,7 @@ Captures the model's output and token usage statistics.
   },
   "attributes": {
     "root_agent_name": "my_bq_agent",
-    "model_version": "gemini-flash-latest-001",
+    "model_version": "gemini-flash-latest",
     "usage_metadata": {
       "prompt_token_count": 10129,
       "candidates_token_count": 19,
