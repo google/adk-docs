@@ -73,6 +73,15 @@ in your agents:
             .build();
     ```
 
+??? note "Note: Gemini model selector `gemini-flash-latest`"
+
+    Most code examples in ADK documentation use `gemini-flash-latest` to select the
+    [latest available](https://ai.google.dev/gemini-api/docs/models#latest)
+    Gemini Flash version. However, if you access Gemini from a regional endpoint,
+    such as `us-central1`, this selection string may not work. In that case,
+    use a specific model version string from the
+    [Gemini models](https://ai.google.dev/gemini-api/docs/models) page or
+    Google Cloud [Gemini models](https://docs.cloud.google.com/vertex-ai/generative-ai/docs/models) list.
 
 ## Gemini model authentication
 
