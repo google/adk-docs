@@ -64,7 +64,7 @@ Follow these steps to integrate an OpenAPI spec into your agent:
 
     my_agent = LlmAgent(
         name="api_interacting_agent",
-        model="gemini-2.0-flash", # Or your preferred model
+        model="gemini-flash-latest", # Or your preferred model
         tools=[toolset], # Pass the toolset
         # ... other agent config ...
     )

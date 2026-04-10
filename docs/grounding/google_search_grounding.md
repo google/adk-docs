@@ -18,7 +18,7 @@ To enable Google Search Grounding, you include the search tool in your agent def
 
     root_agent = Agent(
         name="google_search_agent",
-        model="gemini-2.5-flash",
+        model="gemini-flash-latest",
         instruction="Answer questions using Google Search when needed. Always cite sources.",
         description="Professional search assistant with Google Search capabilities",
         tools=[google_search]
@@ -32,7 +32,7 @@ To enable Google Search Grounding, you include the search tool in your agent def
 
     const rootAgent = new LlmAgent({
         name: "google_search_agent",
-        model: "gemini-2.5-flash",
+        model: "gemini-flash-latest",
         instruction: "Answer questions using Google Search when needed. Always cite sources.",
         description: "Professional search assistant with Google Search capabilities",
         tools: [GOOGLE_SEARCH],
@@ -47,7 +47,7 @@ To enable Google Search Grounding, you include the search tool in your agent def
 
     LlmAgent rootAgent = LlmAgent.builder()
         .name("google_search_agent")
-        .model("gemini-2.5-flash")
+        .model("gemini-flash-latest")
         .instruction("Answer questions using Google Search when needed. Always cite sources.")
         .description("Professional search assistant with Google Search capabilities")
         .tools(GoogleSearchTool.INSTANCE)

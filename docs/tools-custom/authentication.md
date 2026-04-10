@@ -28,16 +28,46 @@ There are several ways to manage authentication and credentials in ADK
 agents. Each of these methods carries some amount of risk, so you should
 carefully consider which approach best serves your application and customers.
 
-### Recommended: Secrets manager services
+### Recommended: Authentication manager services {#authentication-manager}
 
-For production environments, storing sensitive credentials in a dedicated secret
-manager is the **most recommended approach**. With this approach, the secret
-manager securely stores the credentials for any tools or services accessed by
-the agent as needed, and those secrets are not resident in agent's operating
-memory. For example, a custom ADK Tool using this method would store only
-short-lived access tokens or secure references, and retrieve longer-lived
-refresh tokens from the secrets manager when needed. When selecting a secrets
-manager service, consider services from well-established providers, such as
+When deploying agents to production hosted environments, your agent's ability to
+properly authenticate to restricted tools and services becomes more challenging
+and more important to properly manage. This authentication challenge can become
+even more complicated when users of your agent have varying levels of access to
+restricted tools and data. Rather than writing code to handle the authentication
+process and credential managment for various tools used by your agent, use an
+*authentication manager* service that manages *both* for you. This service
+should handle the storage of keys and secrets, as well as the acquisition,
+management, and storage of OAuth access or refresh tokens.
+
+### Self-managed authentication
+
+If you decide to manage your own authentication process with ADK helper functions
+and your own code, consider these recommendations:
+
+*   **API keys and client secrets:** For any API keys and client secrets used
+    inside ADK code, when running on a local compute environment use a local
+    `.env` file excluded from version control. When your agent is hosted or
+    otherwise in a production environment, use a secrets manager. For more
+    details on secrets managers, see the [next section](#secrets-manager).
+*   **Interactive authentication:** When using interactive three-legged auth
+    (3LO) OAuth or OpenID Connect (OIDC) for authentication to tools, write a
+    service on the client application to acquire, manage access, and refresh
+    tokens. Make sure to store these tokens against an authenticated user
+    identifier in an encrypted database.
+
+### Secrets manager services {#secrets-manager}
+
+For production environments, if you are not using an
+[authentication manager](#authentication-manager) service, you should store
+credentials in a dedicated secret manager service to protect that data. With
+this approach, a secret manager securely stores the credentials for any tools or
+services accessed by the agent as needed, and those secrets are not resident in
+agent's operating memory. For example, a custom ADK Tool using this method would
+have only short-lived access tokens or secure references in session memory, and
+retrieve longer-lived refresh tokens from the secrets manager when needed. When
+selecting a secrets manager, consider services from well-established providers,
+such as
 [Google Cloud Secret Manager](https://cloud.google.com/security/products/secret-manager)
 or other secret management services.
 

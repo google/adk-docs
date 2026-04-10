@@ -11,7 +11,7 @@ following is a simple example of a basic Agent Config definition:
 
 ```yaml
 name: assistant_agent
-model: gemini-2.5-flash
+model: gemini-flash-latest
 description: A helper agent that can answer users' questions.
 instruction: You are an agent to help answer users' various questions.
 ```
@@ -110,7 +110,7 @@ To create an ADK project for use with Agent Config:
 ```
 # yaml-language-server: $schema=https://raw.githubusercontent.com/google/adk-python/refs/heads/main/src/google/adk/agents/config_schemas/AgentConfig.json
 name: assistant_agent
-model: gemini-2.5-flash
+model: gemini-flash-latest
 description: A helper agent that can answer users' questions.
 instruction: You are an agent to help answer users' various questions.
 ```
@@ -193,7 +193,7 @@ tool to reply to user requests.
 ```
 # yaml-language-server: $schema=https://raw.githubusercontent.com/google/adk-python/refs/heads/main/src/google/adk/agents/config_schemas/AgentConfig.json
 name: search_agent
-model: gemini-2.0-flash
+model: gemini-flash-latest
 description: 'an agent whose job it is to perform Google search queries and answer questions about the results.'
 instruction: You are an agent whose job is to perform Google search queries and answer questions about the results.
 tools:
@@ -212,7 +212,7 @@ list of numbers provided by the user are prime numbers.
 ```
 # yaml-language-server: $schema=https://raw.githubusercontent.com/google/adk-python/refs/heads/main/src/google/adk/agents/config_schemas/AgentConfig.json
 agent_class: LlmAgent
-model: gemini-2.5-flash
+model: gemini-flash-latest
 name: prime_agent
 description: Handles checking if numbers are prime.
 instruction: |
@@ -238,7 +238,7 @@ YAML files.
 ```
 # yaml-language-server: $schema=https://raw.githubusercontent.com/google/adk-python/refs/heads/main/src/google/adk/agents/config_schemas/AgentConfig.json
 agent_class: LlmAgent
-model: gemini-2.5-flash
+model: gemini-flash-latest
 name: root_agent
 description: Learning assistant that provides tutoring in code and math.
 instruction: |
