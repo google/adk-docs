@@ -11,7 +11,7 @@ catalog_tags: ["mcp", "connectors"]
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript</span>
 </div>
 
-The [Adspirer MCP Server](https://www.adspirer.com/) connects your ADK agent to
+The [Adspirer MCP Server](https://github.com/amekala/ads-mcp) connects your ADK agent to
 [Adspirer](https://www.adspirer.com/), an AI-powered advertising platform with
 100+ tools across Google Ads, Meta Ads, LinkedIn Ads, and TikTok Ads. This
 integration gives your agent the ability to create, manage, and optimize ad
@@ -65,8 +65,7 @@ agent can operate autonomously with built-in protections.
 
 ## Prerequisites
 
-- An [Adspirer](https://www.adspirer.com/) account (free tier includes 15 tool
-  calls/month, no credit card required)
+- An [Adspirer](https://www.adspirer.com/) account (free tier available)
 - At least one connected ad platform (Google Ads, Meta Ads, LinkedIn Ads, or
   TikTok Ads) — connect via your Adspirer dashboard after signing up
 - See the [Quickstart guide](https://www.adspirer.com/docs/quickstart) for
@@ -89,7 +88,7 @@ agent can operate autonomously with built-in protections.
         from mcp import StdioServerParameters
 
         root_agent = Agent(
-            model="gemini-3.0-pro",
+            model="gemini-2.5-pro",
             name="advertising_agent",
             instruction=(
                 "You are an advertising agent that helps users create, manage, "
@@ -126,7 +125,7 @@ agent can operate autonomously with built-in protections.
         ADSPIRER_ACCESS_TOKEN = "YOUR_ADSPIRER_ACCESS_TOKEN"
 
         root_agent = Agent(
-            model="gemini-3.0-pro",
+            model="gemini-2.5-pro",
             name="advertising_agent",
             instruction=(
                 "You are an advertising agent that helps users create, manage, "
@@ -158,7 +157,7 @@ agent can operate autonomously with built-in protections.
         import { LlmAgent, MCPToolset } from "@google/adk";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-3.0-pro",
+            model: "gemini-2.5-pro",
             name: "advertising_agent",
             instruction:
                 "You are an advertising agent that helps users create, manage, " +
@@ -193,7 +192,7 @@ agent can operate autonomously with built-in protections.
         const ADSPIRER_ACCESS_TOKEN = "YOUR_ADSPIRER_ACCESS_TOKEN";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-3.0-pro",
+            model: "gemini-2.5-pro",
             name: "advertising_agent",
             instruction:
                 "You are an advertising agent that helps users create, manage, " +
@@ -245,6 +244,7 @@ TikTok Ads | 4 | Campaign management and performance analysis
 ## Additional resources
 
 - [Adspirer Website](https://www.adspirer.com/)
+- [Adspirer MCP Server on GitHub](https://github.com/amekala/ads-mcp)
 - [Quickstart Guide](https://www.adspirer.com/docs/quickstart)
 - [Tool Catalog](https://www.adspirer.com/docs/agent-skills/tools)
 - [Core Workflows](https://www.adspirer.com/docs/agent-skills/workflows)
