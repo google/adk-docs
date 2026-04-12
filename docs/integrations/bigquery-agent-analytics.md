@@ -471,7 +471,7 @@ plugin = BigQueryAgentAnalyticsPlugin(
 -   **`log_multi_modal_content`** (`bool`, default: `True`): Whether to log detailed content parts (including GCS references).
 -   **`queue_max_size`** (`int`, default: `10000`): The maximum number of events to hold in the in-memory queue before dropping new events.
 -   **`retry_config`** (`RetryConfig`, default: `RetryConfig()`): Configuration for retrying failed BigQuery writes. Sub-fields: `max_retries` (default `3`), `initial_delay` (default `1.0` seconds), `multiplier` (default `2.0`), `max_delay` (default `10.0` seconds).
--   **`log_session_metadata`** (`bool`, default: `True`): If True, logs session information into the `attributes` column, including `session_id`, `app_name`, `user_id`, and the session `state` dictionary (e.g., custom state like gchat thread-id, customer_id). State keys prefixed with `secret:` or `temp:` are automatically redacted. See [Built-in redaction](#built-in-redaction).
+-   **`log_session_metadata`** (`bool`, default: `True`): If True, logs session information into the `attributes` column, including `session_id`, `app_name`, `user_id`, and the session `state` dictionary (e.g., custom state like gchat thread-id, customer_id). State keys prefixed with `temp:` are automatically redacted. See [Built-in redaction](#built-in-redaction).
 -   **`custom_tags`** (`Dict[str, Any]`, default: `{}`): A dictionary of static tags (e.g., `{"env": "prod", "version": "1.0"}`) to be included in the `attributes` column for every event.
 -   **`auto_schema_upgrade`** (`bool`, default: `True`): When enabled, the plugin automatically adds new columns to an existing table when the plugin schema evolves. Only additive changes are made (columns are never dropped or altered). A version label (`adk_schema_version`) on the table ensures the diff runs at most once per schema version. Safe to leave enabled.
 -   **`create_views`** (`bool`, default: `True`): Added in 1.27.0. When enabled, automatically generates per-event-type BigQuery views that unnest structured JSON data (such as `content` or `attributes`) into flat, typed columns, significantly simplifying SQL queries.
@@ -524,6 +524,23 @@ config = BigQueryLoggerConfig(
 plugin = BigQueryAgentAnalyticsPlugin(..., config=config)
 ```
 
+### Public methods
+
+The plugin exposes several public methods for lifecycle management:
+
+-   **`await plugin.flush()`**: Flush all pending events to BigQuery. Call this before shutdown to avoid data loss.
+-   **`await plugin.shutdown(timeout=None)`**: Gracefully shut down the plugin, flushing pending events and releasing resources. The optional `timeout` parameter overrides `shutdown_timeout` from the config.
+-   **`await plugin.create_analytics_views()`**: Manually (re-)create all per-event-type analytics views. Useful after a schema upgrade or when views need to be refreshed.
+-   **Async context manager**: The plugin supports `async with` for automatic startup and shutdown:
+
+    ```python
+    async with BigQueryAgentAnalyticsPlugin(
+        project_id=PROJECT_ID, dataset_id=DATASET_ID
+    ) as plugin:
+        # plugin is initialized and ready to use
+        ...
+    # plugin.shutdown() is called automatically on exit
+    ```
 
 ## Schema and production setup
 
@@ -812,7 +829,7 @@ Tracks changes to the agent's internal state (e.g., custom application state upd
 
 !!! note "Built-in redaction"
 
-    State keys prefixed with `secret:` or `temp:` are automatically redacted
+    State keys prefixed with `temp:` are automatically redacted
     to `[REDACTED]` in the logged `state_delta`. See
     [Built-in redaction](#built-in-redaction) for details.
 
@@ -1233,11 +1250,8 @@ JSON:
 `client_secret`, `access_token`, `refresh_token`, `id_token`, `api_key`,
 `password`
 
-In addition, any state key prefixed with **`temp:`** or **`secret:`** is
-automatically replaced with `[REDACTED]` in the logged `state_delta`.
-This means ADK session state stored under the `secret:` scope (such as
-OAuth tokens cached by `SessionStateCredentialService` or
-`BigQueryCredentialsConfig`) is never persisted in BigQuery.
+In addition, any state key prefixed with **`temp:`** is automatically
+replaced with `[REDACTED]` in the logged `state_delta`.
 
 !!! info "No configuration required"
 
