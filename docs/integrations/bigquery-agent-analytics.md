@@ -1221,9 +1221,11 @@ OAuth tokens cached by `SessionStateCredentialService` or
 
 !!! info "No configuration required"
 
-    Built-in redaction is always active and cannot be disabled. It runs
-    before any custom `content_formatter` and applies recursively to
-    nested dictionaries and JSON-encoded strings within attribute values.
+    Built-in redaction is always active for structured attributes and
+    state logging, and applies recursively to nested dictionaries and
+    JSON-encoded strings within attribute values. Custom
+    `content_formatter` runs **first** on raw content, so use it to add
+    masking for secrets that may appear in free-form payloads.
 
 ### Use `content_formatter` to redact additional secrets
 
