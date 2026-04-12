@@ -121,7 +121,7 @@ The `GkeCodeExecutor` can be configured with the following parameters:
     # Example with an Agent:
     gke_sandbox_agent = LlmAgent(
         name="gke_sandbox_coding_agent",
-        model="gemini-2.5-flash",
+        model="gemini-flash-latest",
         instruction="You are a helpful AI agent that writes and executes Python code using sandboxes.",
         code_executor=gke_sandbox_executor,
     )
@@ -153,7 +153,7 @@ The `GkeCodeExecutor` can be configured with the following parameters:
     # Example with an Agent:
     gke_agent = LlmAgent(
         name="gke_coding_agent",
-        model="gemini-2.5-flash",
+        model="gemini-flash-latest",
         instruction="You are a helpful AI agent that writes and executes Python code.",
         code_executor=gke_executor,
     )

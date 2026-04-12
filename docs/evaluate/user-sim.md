@@ -190,7 +190,7 @@ The below `EvalConfig` shows the default user simulator configuration:
     # same as before
   },
   "user_simulator_config": {
-    "model": "gemini-2.5-flash",
+    "model": "gemini-flash-latest",
     "model_configuration": {
       "thinking_config": {
         "include_thoughts": true,
