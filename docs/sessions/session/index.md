@@ -58,7 +58,7 @@ are its key properties:
         print(f"---------------------------------")
 
         # Clean up (optional for this example)
-        temp_service = await temp_service.delete_session(app_name=example_session.app_name,
+        await temp_service.delete_session(app_name=example_session.app_name,
                                     user_id=example_session.user_id, session_id=example_session.id)
         print("The final status of temp_service - ", temp_service)
        ```
