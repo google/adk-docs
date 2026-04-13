@@ -117,7 +117,8 @@ a compactor object
 
 ### Define a Summarizer {#define-summarizer}
 You can customize the process of context compression by defining a summarizer.
-The LlmEventSummarizer class allows you to specify a particular model for summarization.
+The `LlmEventSummarizer` (Python/Java) or `LlmSummarizer` (TypeScript) class allows
+you to specify a particular model for summarization.
 The following code example demonstrates how to define and configure a custom summarizer:
 
 === "Python"
@@ -198,8 +199,8 @@ The following code example demonstrates how to define and configure a custom sum
     });
     ```
 
-You can further refine the operation of the `SlidingWindowCompactor` (Python/Java) or `TokenBasedContextCompactor` (TypeScript)
-by modifying its summarizer class `LlmEventSummarizer` (Python/Java) or `LlmSummarizer` (TypeScript),
-including changing the `prompt_template` (Python/Java) or `prompt` (TypeScript) setting of that class. For more details, see the
+You can further refine the compactor by modifying its summarizer. In Python and Java,
+customize the `prompt_template` on `LlmEventSummarizer`. In TypeScript, customize
+the `prompt` on `LlmSummarizer`. For more details, see the
 [`LlmEventSummarizer` code](https://github.com/google/adk-python/blob/main/src/google/adk/apps/llm_event_summarizer.py#L60) or
 [`LlmSummarizer` code](https://github.com/google/adk-js/blob/main/core/src/context/summarizers/llm_summarizer.ts).
