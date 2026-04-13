@@ -190,7 +190,7 @@ The below `EvalConfig` shows the default user simulator configuration:
     # same as before
   },
   "user_simulator_config": {
-    "model": "gemini-3.1-pro-preview",
+    "model": "gemini-flash-latest",
     "model_configuration": {
       "thinking_config": {
         "include_thoughts": true,
@@ -282,7 +282,7 @@ The `--user_simulation_config_file` expects a JSON file matching the `Conversati
   "count": 5,
   "generation_instruction": "Generate scenarios where the user asks to control home devices under different conditions.",
   "environment_context": "Available devices: device_1 (Light), device_2 (Thermostat).",
-  "model_name": "gemini-3.1-pro-preview"
+  "model_name": "ggemini-flash-latest"
 }
 ```
 
@@ -291,4 +291,4 @@ The `--user_simulation_config_file` expects a JSON file matching the `Conversati
 *   **`count`** (required): The number of conversation scenarios to generate.
 *   **`generation_instruction`** (optional): A natural language prompt guiding the specific types of scenarios or goals you want to test.
 *   **`environment_context`** (optional): Context describing the backend data or state accessible to the agent's tools. This helps the generator create queries that are grounded in realistic data (e.g., valid device IDs).
-*   **`model_name`** (required): The Gemini model used for generation (e.g., `gemini-3.1-pro-preview`).
+*   **`model_name`** (required): The Gemini model used for generation (e.g., `gemini-flash-latest`).

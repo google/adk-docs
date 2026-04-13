@@ -89,7 +89,7 @@ calculator_tool = FunctionTool(func=calculator)
 
 root_agent = LlmAgent(
     name="MathAgent",
-    model="gemini-2.0-flash-exp",
+    model="gemini-flash-latest",
     instruction=(
         "You are a helpful assistant that can do math. "
         "When asked a math problem, use the calculator tool to solve it."

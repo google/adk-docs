@@ -41,7 +41,7 @@ First, you need to establish what the agent *is* and what it's *for*.
   inquiries about current billing statements," not just "Billing agent").
 
 * **`model` (Required):** Specify the underlying LLM that will power this
-  agent's reasoning. This is a string identifier like `"gemini-2.5-flash"`. The
+  agent's reasoning. This is a string identifier like `"gemini-flash-latest"`. The
   choice of model impacts the agent's capabilities, cost, and performance. See
   the [Models](/agents/models/) page for available options and considerations.
 
@@ -50,7 +50,7 @@ First, you need to establish what the agent *is* and what it's *for*.
     ```python
     # Example: Defining the basic identity
     capital_agent = LlmAgent(
-        model="gemini-2.5-flash",
+        model="gemini-flash-latest",
         name="capital_agent",
         description="Answers user questions about the capital city of a given country."
         # instruction and tools will be added next
@@ -62,7 +62,7 @@ First, you need to establish what the agent *is* and what it's *for*.
     ```typescript
     // Example: Defining the basic identity
     const capitalAgent = new LlmAgent({
-        model: 'gemini-2.5-flash',
+        model: 'gemini-flash-latest',
         name: 'capital_agent',
         description: 'Answers user questions about the capital city of a given country.',
         // instruction and tools will be added next
@@ -81,7 +81,7 @@ First, you need to establish what the agent *is* and what it's *for*.
     // Example: Defining the basic identity
     LlmAgent capitalAgent =
         LlmAgent.builder()
-            .model("gemini-2.5-flash")
+            .model("gemini-flash-latest")
             .name("capital_agent")
             .description("Answers user questions about the capital city of a given country.")
             // instruction and tools will be added next
@@ -119,7 +119,7 @@ tells the agent:
     ```python
     # Example: Adding instructions
     capital_agent = LlmAgent(
-        model="gemini-2.5-flash",
+        model="gemini-flash-latest",
         name="capital_agent",
         description="Answers user questions about the capital city of a given country.",
         instruction="""You are an agent that provides the capital city of a country.
@@ -139,7 +139,7 @@ tells the agent:
     ```typescript
     // Example: Adding instructions
     const capitalAgent = new LlmAgent({
-        model: 'gemini-2.5-flash',
+        model: 'gemini-flash-latest',
         name: 'capital_agent',
         description: 'Answers user questions about the capital city of a given country.',
         instruction: `You are an agent that provides the capital city of a country.
@@ -166,7 +166,7 @@ tells the agent:
     // Example: Adding instructions
     LlmAgent capitalAgent =
         LlmAgent.builder()
-            .model("gemini-2.5-flash")
+            .model("gemini-flash-latest")
             .name("capital_agent")
             .description("Answers user questions about the capital city of a given country.")
             .instruction(
@@ -214,7 +214,7 @@ on the conversation and its instructions.
 
     # Add the tool to the agent
     capital_agent = LlmAgent(
-        model="gemini-2.5-flash",
+        model="gemini-flash-latest",
         name="capital_agent",
         description="Answers user questions about the capital city of a given country.",
         instruction="""You are an agent that provides the capital city of a country... (previous instruction text)""",
@@ -255,7 +255,7 @@ on the conversation and its instructions.
 
     // Add the tool to the agent
     const capitalAgent = new LlmAgent({
-        model: 'gemini-2.5-flash',
+        model: 'gemini-flash-latest',
         name: 'capitalAgent',
         description: 'Answers user questions about the capital city of a given country.',
         instruction: 'You are an agent that provides the capital city of a country...', // Note: the full instruction is omitted for brevity
@@ -294,7 +294,7 @@ on the conversation and its instructions.
     FunctionTool capitalTool = FunctionTool.create(experiment.getClass(), "getCapitalCity");
     LlmAgent capitalAgent =
         LlmAgent.builder()
-            .model("gemini-2.5-flash")
+            .model("gemini-flash-latest")
             .name("capital_agent")
             .description("Answers user questions about the capital city of a given country.")
             .instruction("You are an agent that provides the capital city of a country... (previous instruction text)")
@@ -541,7 +541,7 @@ Control whether the agent receives the prior conversation history.
     from google.genai import types
 
     my_agent = Agent(
-        model="gemini-2.5-flash",
+        model="gemini-flash-latest",
         planner=BuiltInPlanner(
             thinking_config=types.ThinkingConfig(
                 include_thoughts=True,
@@ -559,7 +559,7 @@ Control whether the agent receives the prior conversation history.
     from google.adk.planners import PlanReActPlanner
 
     my_agent = Agent(
-        model="gemini-2.5-flash",
+        model="gemini-flash-latest",
         planner=PlanReActPlanner(),
         # ... your tools here
     )
