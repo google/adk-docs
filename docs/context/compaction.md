@@ -180,7 +180,7 @@ The following code example demonstrates how to define and configure a custom sum
     import {Gemini, LlmAgent, LlmSummarizer, TokenBasedContextCompactor} from '@google/adk';
 
     // Define the AI model to be used for summarization:
-    const summarizationLlm = new Gemini({model: 'gemini-2.5-flash'});
+    const summarizationLlm = new Gemini({model: 'gemini-flash-latest'});
 
     // Create the summarizer with the custom model:
     const mySummarizer = new LlmSummarizer({llm: summarizationLlm});
