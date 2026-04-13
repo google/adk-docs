@@ -70,7 +70,7 @@ To install ADK 2.0, follow these steps:
     Create a Python virtual environment:
 
     ```shell
-    python -m venv .venv
+    python3 -m venv .venv
     ```
 
     Activate the Python virtual environment:
