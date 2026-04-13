@@ -261,7 +261,7 @@ Example of a custom persona definition:
 Writing evaluation cases manually can be time-consuming and may not cover all potential failure modes. ADK provides a command to automatically generate diverse and realistic conversation scenarios based on your agent's definition using the Vertex AI Eval SDK.
 
 !!! warning "Prerequisites: Vertex AI Credentials"
-    Generating evaluation cases uses the [Vertex Gen AI Evaluation Service API](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/evaluation). You must have a Google Cloud project with the Vertex AI API enabled and valid Application Default Credentials (ADC) configured in your environment.
+    Generating evaluation cases uses the [Vertex Gen AI Evaluation Service API](https://docs.cloud.google.com/vertex-ai/generative-ai/docs/models/evaluation-overview). You must have a Google Cloud project with the Vertex AI API enabled and valid Application Default Credentials (ADC) configured in your environment.
 
 
 ### Command Syntax
