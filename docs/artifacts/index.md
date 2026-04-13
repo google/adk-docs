@@ -44,14 +44,16 @@ In ADK, **Artifacts** represent a crucial mechanism for managing named, versione
 === "Typescript"
 
     ```typescript
-    import type { Part } from '@google/genai';
-    import { createPartFromBase64 } from '@google/genai';
+    import {createPartFromBase64, type Part} from '@google/genai';
 
-    // Assume 'imageBytes' contains the binary data of a PNG image
-    const imageBytes = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]); // Placeholder
+    // Assume 'imageBytes' contains the binary data of a PNG image.
+    const imageBytes = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
 
-    // Using Buffer.from(bytes).toString('base64') for Node.js environments
-    const imageArtifact: Part = createPartFromBase64(Buffer.from(imageBytes).toString('base64'), "image/png");
+    // Using Buffer.from(bytes).toString('base64') for Node.js environments.
+    const imageArtifact: Part = createPartFromBase64(
+      Buffer.from(imageBytes).toString('base64'),
+      'image/png',
+    );
 
     console.log(`Artifact MIME Type: ${imageArtifact.inlineData?.mimeType}`);
     // Note: Accessing raw bytes would require decoding from base64.
@@ -180,23 +182,28 @@ Understanding artifacts involves grasping a few key components: the service that
 === "Typescript"
 
     ```typescript
-    import { Runner } from '@google/adk';
-    import { LlmAgent } from '@google/adk';
-    import { InMemoryArtifactService } from '@google/adk';
-	import { InMemorySessionService } from '@google/adk';
+    import {
+      InMemoryArtifactService,
+      InMemorySessionService,
+      LlmAgent,
+      Runner,
+    } from '@google/adk';
 
     // Example: Configuring the Runner with an Artifact Service
-    const myAgent = new LlmAgent({name: "artifact_user_agent", model: "gemini-flash-latest"});
-    const artifactService = new InMemoryArtifactService(); // Choose an implementation
+    const myAgent = new LlmAgent({
+      name: 'artifact_user_agent',
+      model: 'gemini-flash-latest',
+    });
+    const artifactService = new InMemoryArtifactService();
     const sessionService = new InMemorySessionService();
 
     const runner = new Runner({
-        agent: myAgent,
-        appName: "my_artifact_app",
-        sessionService: sessionService,
-        artifactService: artifactService, // Provide the service instance here
+      agent: myAgent,
+      appName: 'my_artifact_app',
+      sessionService: sessionService,
+      artifactService: artifactService,
     });
-    // Now, contexts within runs managed by this runner can use artifact methods
+    // Now, contexts within runs managed by this runner can use artifact methods.
     ```
 
 === "Go"
@@ -269,15 +276,17 @@ Understanding artifacts involves grasping a few key components: the service that
 === "Typescript"
 
     ```typescript
-    import type { Part } from '@google/genai';
-    import { createPartFromBase64 } from '@google/genai';
+    import {createPartFromBase64, type Part} from '@google/genai';
 
-    // Example: Creating an artifact Part from raw bytes
-    const pdfBytes = new Uint8Array([0x25, 0x50, 0x44, 0x46, 0x2d, 0x31, 0x2e, 0x34]); // Your raw PDF data
-    const pdfMimeType = "application/pdf";
+    // Example: Creating an artifact Part from raw bytes.
+    const pdfBytes = new Uint8Array([0x25, 0x50, 0x44, 0x46, 0x2d, 0x31, 0x2e, 0x34]);
+    const pdfMimeType = 'application/pdf';
 
-    // Using Buffer.from(bytes).toString('base64') for Node.js environments
-    const pdfArtifact: Part = createPartFromBase64(Buffer.from(pdfBytes).toString('base64'), pdfMimeType);
+    // Using Buffer.from(bytes).toString('base64') for Node.js environments.
+    const pdfArtifact: Part = createPartFromBase64(
+      Buffer.from(pdfBytes).toString('base64'),
+      pdfMimeType,
+    );
     console.log(`Created TypeScript artifact with MIME Type: ${pdfArtifact.inlineData?.mimeType}`);
     ```
 
@@ -431,20 +440,25 @@ Before you can use any artifact methods via the context objects, you **must** pr
 === "Typescript"
 
     ```typescript
-    import { LlmAgent, Runner, InMemoryArtifactService, InMemorySessionService } from '@google/adk';
+    import {
+      InMemoryArtifactService,
+      InMemorySessionService,
+      LlmAgent,
+      Runner,
+    } from '@google/adk';
 
-    // Your agent definition
-    const agent = new LlmAgent({name: "my_agent", model: "gemini-flash-latest"});
+    // Your agent definition.
+    const agent = new LlmAgent({name: 'my_agent', model: 'gemini-flash-latest'});
 
-    // Instantiate the desired artifact service
+    // Instantiate the desired artifact service.
     const artifactService = new InMemoryArtifactService();
 
-    // Provide it to the Runner
+    // Provide it to the Runner.
     const runner = new Runner({
-        agent: agent,
-        appName: "artifact_app",
-        sessionService: new InMemorySessionService(),
-        artifactService: artifactService, // Service must be provided here
+      agent: agent,
+      appName: 'artifact_app',
+      sessionService: new InMemorySessionService(),
+      artifactService: artifactService,
     });
     // If no artifactService is configured, calling artifact methods on context objects will throw an error.
     ```
@@ -544,22 +558,26 @@ The artifact interaction methods are available directly on instances of `Callbac
     === "Typescript"
 
         ```typescript
-        import type { Part } from '@google/genai';
-        import { createPartFromBase64 } from '@google/genai';
-        import { Context } from '@google/adk';
+        import {Context} from '@google/adk';
+        import {createPartFromBase64, type Part} from '@google/genai';
 
         async function saveGeneratedReport(context: Context, reportBytes: Uint8Array): Promise<void> {
-            /**Saves generated PDF report bytes as an artifact.*/
-            const reportArtifact: Part = createPartFromBase64(Buffer.from(reportBytes).toString('base64'), "application/pdf");
+          /** Saves generated PDF report bytes as an artifact. */
+          const reportArtifact: Part = createPartFromBase64(
+            Buffer.from(reportBytes).toString('base64'),
+            'application/pdf',
+          );
 
-            const filename = "generated_report.pdf";
+          const filename = 'generated_report.pdf';
 
-            try {
-                const version = await context.saveArtifact(filename, reportArtifact);
-                console.log(`Successfully saved TypeScript artifact '${filename}' as version ${version}.`);
-            } catch (e: any) {
-                console.error(`Error saving TypeScript artifact: ${e.message}. Is ArtifactService configured in Runner?`);
-            }
+          try {
+            const version = await context.saveArtifact(filename, reportArtifact);
+            console.log(`Successfully saved TypeScript artifact '${filename}' as version ${version}.`);
+          } catch (e: any) {
+            console.error(
+              `Error saving TypeScript artifact: ${e.message}. Is ArtifactService configured in Runner?`,
+            );
+          }
         }
         ```
     === "Go"
@@ -657,29 +675,30 @@ The artifact interaction methods are available directly on instances of `Callbac
     === "Typescript"
 
         ```typescript
-        import { Context } from '@google/adk';
+        import {Context} from '@google/adk';
 
         async function processLatestReport(context: Context): Promise<void> {
-            /**Loads the latest report artifact and processes its data.*/
-            const filename = "generated_report.pdf";
-            try {
-                // Load the latest version
-                const reportArtifact = await context.loadArtifact(filename);
+          /** Loads the latest report artifact and processes its data. */
+          const filename = 'generated_report.pdf';
+          try {
+            // Load the latest version
+            const reportArtifact = await context.loadArtifact(filename);
 
-                if (reportArtifact?.inlineData) {
-                    console.log(`Successfully loaded latest TypeScript artifact '${filename}'.`);
-                    console.log(`MIME Type: ${reportArtifact.inlineData.mimeType}`);
-                    // Process the reportArtifact.inlineData.data (base64 string)
-                    const pdfData = Buffer.from(reportArtifact.inlineData.data || '', 'base64');
-                    console.log(`Report size: ${pdfData.length} bytes.`);
-                    // ... further processing ...
-                } else {
-                    console.log(`TypeScript artifact '${filename}' not found.`);
-                }
-
-            } catch (e: any) {
-                console.error(`Error loading TypeScript artifact: ${e.message}. Is ArtifactService configured?`);
+            if (reportArtifact?.inlineData) {
+              console.log(`Successfully loaded latest TypeScript artifact '${filename}'.`);
+              console.log(`MIME Type: ${reportArtifact.inlineData.mimeType}`);
+              // Process the reportArtifact.inlineData.data (base64 string)
+              const pdfData = Buffer.from(reportArtifact.inlineData.data || '', 'base64');
+              console.log(`Report size: ${pdfData.length} bytes.`);
+              // ... further processing ...
+            } else {
+              console.log(`TypeScript artifact '${filename}' not found.`);
             }
+          } catch (e: any) {
+            console.error(
+              `Error loading TypeScript artifact: ${e.message}. Is ArtifactService configured?`,
+            );
+          }
         }
         ```
 
@@ -816,23 +835,25 @@ The artifact interaction methods are available directly on instances of `Callbac
     === "Typescript"
 
         ```typescript
-        import { Context } from '@google/adk';
+        import {Context} from '@google/adk';
 
         async function listUserFiles(context: Context): Promise<string> {
-            /**Tool to list available artifacts for the user.*/
-            try {
-                const availableFiles = await context.listArtifacts();
-                if (!availableFiles || availableFiles.length === 0) {
-                    return "You have no saved artifacts.";
-                } else {
-                    // Format the list for the user/LLM
-                    const fileListStr = availableFiles.map(fname => `- ${fname}`).join("\n");
-                    return `Here are your available TypeScript artifacts:\n${fileListStr}`;
-                }
-            } catch (e: any) {
-                console.error(`Error listing TypeScript artifacts: ${e.message}. Is ArtifactService configured?`);
-                return "Error: Could not list TypeScript artifacts.";
+          /** Tool to list available artifacts for the user. */
+          try {
+            const availableFiles = await context.listArtifacts();
+            if (!availableFiles || availableFiles.length === 0) {
+              return 'You have no saved artifacts.';
+            } else {
+              // Format the list for the user/LLM
+              const fileListStr = availableFiles.map((fname) => `- ${fname}`).join('\n');
+              return `Here are your available TypeScript artifacts:\n${fileListStr}`;
             }
+          } catch (e: any) {
+            console.error(
+              `Error listing TypeScript artifacts: ${e.message}. Is ArtifactService configured?`,
+            );
+            return 'Error: Could not list TypeScript artifacts.';
+          }
         }
         ```
 
@@ -966,15 +987,15 @@ ADK provides concrete implementations of the `BaseArtifactService` interface, of
     === "Typescript"
 
         ```typescript
-        import { InMemoryArtifactService } from '@google/adk';
+        import {InMemoryArtifactService} from '@google/adk';
 
         // Simply instantiate the class
         const inMemoryService = new InMemoryArtifactService();
 
         // This instance would then be provided to your Runner.
         // const runner = new Runner({
-        //     /* other services */,
-        //     artifactService: inMemoryService
+        //   /* other services */,
+        //   artifactService: inMemoryService
         // });
         ```
 
@@ -1052,23 +1073,22 @@ ADK provides concrete implementations of the `BaseArtifactService` interface, of
     === "Typescript"
 
         ```typescript
-        import { GcsArtifactService } from '@google/adk';
+        import {GcsArtifactService} from '@google/adk';
 
-        // Specify the GCS bucket name
-        const gcsBucketName = "your-gcs-bucket-for-adk-artifacts"; // Replace with your bucket name
+        // Specify the GCS bucket name.
+        const gcsBucketName = 'your-gcs-bucket-for-adk-artifacts';
 
         try {
-            const gcsService = new GcsArtifactService(gcsBucketName);
-            console.log(`TypeScript GcsArtifactService initialized for bucket: ${gcsBucketName}`);
-            // Ensure your environment has credentials to access this bucket.
-            // e.g., via Application Default Credentials (ADC)
+          const gcsService = new GcsArtifactService(gcsBucketName);
+          console.log(`TypeScript GcsArtifactService initialized for bucket: ${gcsBucketName}`);
+          // Ensure your environment has credentials to access this bucket.
+          // e.g., via Application Default Credentials (ADC).
 
-            // Then pass it to the Runner
-            // const runner = new Runner({..., artifactService: gcsService});
-
+          // Then pass it to the Runner.
+          // const runner = new Runner({..., artifactService: gcsService});
         } catch (e: any) {
-            // Catch potential errors during GCS client initialization (e.g., auth issues)
-            console.error(`Error initializing TypeScript GcsArtifactService: ${e.message}`);
+          // Catch potential errors during GCS client initialization (e.g., auth issues).
+          console.error(`Error initializing TypeScript GcsArtifactService: ${e.message}`);
         }
         ```
 
