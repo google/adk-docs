@@ -256,3 +256,39 @@ Example of a custom persona definition:
 }
 ```
 
+## Generating Evaluation Cases via User Simulation
+
+Writing evaluation cases manually can be time-consuming and may not cover all potential failure modes. ADK provides a command to automatically generate diverse and realistic conversation scenarios based on your agent's definition using the Vertex AI Eval SDK.
+
+!!! warning "Prerequisites: Vertex AI Credentials"
+    Generating evaluation cases uses the [Vertex Gen AI Evaluation Service API](https://docs.cloud.google.com/vertex-ai/generative-ai/docs/models/evaluation-overview). You must have a Google Cloud project with the Vertex AI API enabled and valid Application Default Credentials (ADC) configured in your environment.
+
+
+### Command Syntax
+
+```bash
+adk eval_set generate_eval_cases \
+    <AGENT_MODULE_FILE_PATH> \
+    <EVAL_SET_ID> \
+    --user_simulation_config_file=<PATH_TO_CONFIG_FILE>
+```
+
+### Configuration File Format
+
+The `--user_simulation_config_file` expects a JSON file matching the `ConversationGenerationConfig` schema:
+
+```json
+{
+  "count": 5,
+  "generation_instruction": "Generate scenarios where the user asks to control home devices under different conditions.",
+  "environment_context": "Available devices: device_1 (Light), device_2 (Thermostat).",
+  "model_name": "gemini-flash-latest"
+}
+```
+
+### Configuration Fields
+
+*   **`count`** (required): The number of conversation scenarios to generate.
+*   **`generation_instruction`** (optional): A natural language prompt guiding the specific types of scenarios or goals you want to test.
+*   **`environment_context`** (optional): Context describing the backend data or state accessible to the agent's tools. This helps the generator create queries that are grounded in realistic data (e.g., valid device IDs).
+*   **`model_name`** (required): The Gemini model used for generation (e.g., `gemini-flash-latest`).
