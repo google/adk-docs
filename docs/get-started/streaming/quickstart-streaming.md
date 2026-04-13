@@ -17,7 +17,7 @@ Create & Activate Virtual Environment (Recommended):
 
 ```bash
 # Create
-python -m venv .venv
+python3 -m venv .venv
 # Activate (each new terminal)
 # macOS/Linux: source .venv/bin/activate
 # Windows CMD: .venv\Scripts\activate.bat
@@ -128,12 +128,12 @@ Also, set `SSL_CERT_FILE` variable with the following command. This is required 
 
 === "OS X &amp; Linux"
     ```bash
-    export SSL_CERT_FILE=$(python -m certifi)
+    export SSL_CERT_FILE=$(python3 -m certifi)
     ```
 
 === "Windows"
     ```powershell
-    $env:SSL_CERT_FILE = (python -m certifi)
+    $env:SSL_CERT_FILE = (python3 -m certifi)
     ```
 
 

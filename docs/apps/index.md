@@ -166,7 +166,7 @@ You can use the ***Runner*** class to run your agent workflow using the
     Run your App agent with the `main.py` code using the following command:
 
     ```console
-    python main.py
+    python3 main.py
     ```
 
 === "Java"
