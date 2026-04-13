@@ -282,7 +282,7 @@ The `--user_simulation_config_file` expects a JSON file matching the `Conversati
   "count": 5,
   "generation_instruction": "Generate scenarios where the user asks to control home devices under different conditions.",
   "environment_context": "Available devices: device_1 (Light), device_2 (Thermostat).",
-  "model_name": "ggemini-flash-latest"
+  "model_name": "gemini-flash-latest"
 }
 ```
 
