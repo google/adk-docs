@@ -17,7 +17,7 @@ application entirely on your machine and is recommended for internal development
 
     ```bash
     # Create
-    python -m venv .venv
+    python3 -m venv .venv
     # Activate (each new terminal)
     # macOS/Linux: source .venv/bin/activate
     # Windows CMD: .venv\Scripts\activate.bat
