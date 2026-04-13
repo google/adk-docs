@@ -56,5 +56,10 @@
 .lst-preview {
  background-color: #7c4dff;
  padding: 4px 6px;
- display: inline-block;  
+ display: inline-block;
+}
+.lst-ga {
+ background-color: #2e7d32;
+ padding: 4px 6px;
+ display: inline-block;
 }
