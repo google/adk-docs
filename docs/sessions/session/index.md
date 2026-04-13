@@ -314,7 +314,7 @@ session_service = DatabaseSessionService(db_url=db_url)
 
 ## The Session Lifecycle
 
-<img src="../../assets/session_lifecycle.png" alt="Session lifecycle">
+<img src="../../assets/event-loop.png" alt="Session lifecycle">
 
 Here’s a simplified flow of how `Session` and `SessionService` work together
 during a conversation turn:

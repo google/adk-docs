@@ -482,3 +482,38 @@ nav.md-nav--primary .md-nav__item--section>.md-nav__link {
 [data-md-color-scheme="slate"] .catalog-filter-btn.active:hover {
   background: #3b78de;
 }
+
+/* ========================
+   ANNOUNCEMENT BANNER
+   Adapts to light/dark via [data-md-color-scheme].
+   ======================== */
+[data-md-color-scheme="default"] .md-banner {
+  background: #1e293b;
+  color: #e2e8f0;
+}
+
+[data-md-color-scheme="default"] .md-banner a {
+  color: #93c5fd;
+}
+
+[data-md-color-scheme="slate"] .md-banner {
+  background: #1e1b4b;
+  color: #c7d2fe;
+}
+
+[data-md-color-scheme="slate"] .md-banner a {
+  color: #a5b4fc;
+}
+
+.md-banner {
+  font-size: 0.8rem;
+}
+
+.md-banner .announce-item {
+  display: flex; align-items: center; justify-content: center;
+  gap: 8px; flex-wrap: wrap;
+}
+.md-banner .announce-item a {
+  text-decoration: none; font-weight: 500; white-space: nowrap;
+}
+.md-banner .announce-item a:hover { text-decoration: underline; }

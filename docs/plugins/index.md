@@ -282,7 +282,7 @@ a simple ADK agent.
         print(f'Hello world: query is [{query}]')
 
         root_agent = Agent(
-            model='gemini-2.0-flash',
+            model='gemini-flash-latest',
             name='hello_world',
             description='Prints hello world with user query.',
             instruction="""Use hello_world tool to print hello world and user query.
@@ -349,7 +349,7 @@ a simple ADK agent.
     });
 
     const rootAgent = new LlmAgent({
-        model: "gemini-2.5-flash", // Preserved from your Python code
+        model: "gemini-flash-latest", // Preserved from your Python code
         name: "hello_world",
         description: "Prints hello world with user query.",
         instruction: `Use hello_world tool to print hello world and user query.`,
@@ -425,7 +425,7 @@ a simple ADK agent.
 
       public static void main(String[] args) {
         LlmAgent rootAgent = LlmAgent.builder()
-            .model("gemini-2.0-flash")
+            .model("gemini-flash-latest")
             .name("hello_world")
             .description("Prints hello world with user query.")
             .instruction("Use hello_world tool to print hello world and user query.")
@@ -501,7 +501,7 @@ a simple ADK agent.
 
     func main() {
     	ctx := context.Background()
-    	model, err := gemini.NewModel(ctx, "gemini-2.0-flash", &genai.ClientConfig{})
+    	model, err := gemini.NewModel(ctx, "gemini-flash-latest", &genai.ClientConfig{})
     	if err != nil {
     		log.Fatalf("failed to create model: %v", err)
     	}

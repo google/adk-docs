@@ -8,6 +8,7 @@ exclude_docs:
   api-reference/java/legal/*
 not_in_nav: |
   /integrations/*.md
+  /_includes/**
 
 # Repository
 repo_name: adk-docs
@@ -256,8 +257,7 @@ plugins:
 
 # Navigation
 nav:
-  - Home:
-    - index.md
+  - Home: index.md
   - Build Agents:
     - Get Started:
       - get-started/index.md
@@ -337,6 +337,7 @@ nav:
       - evaluate/index.md
       - Criteria: evaluate/criteria.md
       - User Simulation: evaluate/user-sim.md
+      - Environment Simulation: evaluate/environment_simulation.md
       - Custom Metrics: evaluate/custom_metrics.md
       - Optimization: optimize/index.md
     - Safety and Security:
