@@ -103,10 +103,6 @@ my_agent/
                 *.py          # utility scripts
 ```
 
-!!! warning "Script execution not supported"
-    Scripts execution is not yet supported and is a
-    [known limitation](#known-limitations).
-
 ### Define Skills in code {#inline-skills}
 
 In ADK agents, you can also define Skills within the code of the agent, using
@@ -136,13 +132,22 @@ greeting_skill = models.Skill(
 )
 ```
 
-## Known limitations {#known-limitations}
+### Execute scripts
 
-The Skills feature is experimental and includes the following
-limitations:
+The `SkillToolset` now supports running scripts from a skill's `scripts/`
+directory via the `run_skill_script` tool. This allows you to include
+executable code as part of your skill, which the agent can then run to
+perform specific actions.
 
--   **Script execution:** The Skills feature does not currently support
-    script execution (`scripts/` directory).
+Supported script types are: `.py`, `.sh`, and `.bash`.
+
+When calling the `run_skill_script` tool, you can pass arguments to your
+script using the following parameters:
+
+*   `args`: A dictionary of long options (e.g., `{"--verbose": "True"}`) or a
+    list of strings.
+*   `short_options`: A dictionary of short options (e.g., `{"-v": ""}`).
+*   `positional_args`: A list of positional arguments.
 
 ## Next steps
 
@@ -151,4 +156,4 @@ Check out these resources for building agents with Skills:
 *   ADK Skills agent code sample:
     [skills_agent](https://github.com/google/adk-python/tree/main/contributing/samples/skills_agent).
 *   Agent Skills
-    [specification documentation](https://agentskills.io/)
+    [specification documentation](https://agentskills.io/).
