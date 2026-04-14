@@ -178,22 +178,22 @@ Tool | Description
 ---- | -----------
 `list_numbers` | List all phone numbers in account
 `buy_number` | Purchase a new phone number with optional country and area code
-`release_number` | Permanently release a phone number back to carrier pool
 
 ### SMS / Messages
 
 Tool | Description
 ---- | -----------
+`send_message` | Send an SMS or iMessage from an agent's phone number
 `get_messages` | Get SMS messages for a specific phone number
-`list_conversations` | List SMS conversation threads across all numbers
+`list_conversations` | List SMS conversation threads, optionally filtered by agent
 `get_conversation` | Get a specific conversation with full message history
+`update_conversation` | Set or clear metadata on a conversation
 
 ### Voice calls
 
 Tool | Description
 ---- | -----------
-`list_calls` | List recent calls across all numbers
-`list_calls_for_number` | List calls for a specific phone number
+`list_calls` | List recent calls with optional agent, number, status, or direction filters
 `get_call` | Get call details and transcript with optional long-polling
 `make_call` | Place an outbound call using webhook for conversation handling
 `make_conversation_call` | Place an autonomous AI call that returns the full transcript
@@ -208,18 +208,22 @@ Tool | Description
 `delete_agent` | Delete an agent
 `get_agent` | Get agent details including numbers and voice config
 `attach_number` | Assign a phone number to an agent
+`detach_number` | Detach a phone number from an agent
 `list_voices` | List available voice options
 
 ### Webhooks
 
+All webhook tools accept an optional `agent_id` parameter. When provided, the
+operation targets that agent's webhook. When omitted, it targets the
+project-level default. Agent-level webhooks take priority over project-level.
+
 Tool | Description
 ---- | -----------
-`get_webhook` | Get project-level webhook configuration
-`set_webhook` | Set project-level webhook for inbound messages and call events
-`delete_webhook` | Remove project-level webhook
-`get_agent_webhook` | Get webhook for a specific agent
-`set_agent_webhook` | Set agent-specific webhook (overrides project-level)
-`delete_agent_webhook` | Remove agent-specific webhook
+`get_webhook` | Get webhook configuration
+`set_webhook` | Set webhook URL for inbound messages and call events
+`delete_webhook` | Remove a webhook
+`test_webhook` | Send a test event to verify a webhook is working
+`list_webhook_deliveries` | View recent webhook delivery history
 
 ## Configuration
 
