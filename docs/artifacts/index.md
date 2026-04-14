@@ -448,7 +448,10 @@ Before you can use any artifact methods via the context objects, you **must** pr
     } from '@google/adk';
 
     // Your agent definition.
-    const agent = new LlmAgent({name: 'my_agent', model: 'gemini-flash-latest'});
+    const agent = new LlmAgent({
+      name: 'my_agent',
+      model: 'gemini-flash-latest',
+    });
 
     // Instantiate the desired artifact service.
     const artifactService = new InMemoryArtifactService();
