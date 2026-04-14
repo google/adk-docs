@@ -136,6 +136,56 @@ greeting_skill = models.Skill(
 )
 ```
 
+## Skill processing and validation
+
+When you include skills in your agent, the agent uses a standardized process
+to interact with them. This process includes a system-level instruction for
+how to use skills, a defined format for how skills are represented, and a set
+of validation rules for skill definitions.
+
+### System instructions for using skills
+
+The `SkillToolset` provides a default system instruction to the agent that
+outlines how it should interact with skills. These instructions are contained
+in the `DEFAULT_SKILL_SYSTEM_INSTRUCTION` and include the following key points:
+
+*   You must use the `load_skill` tool to read a skill's instructions before
+    using it.
+*   You must follow the instructions in the skill definition exactly.
+*   You must use the `load_skill_resource` tool to view files within a skill's
+    directory.
+*   You must use the `run_skill_script` to run scripts from a skill's `scripts/`
+    directory.
+
+### Skill representation
+
+When the agent discovers skills, it represents them in an XML format that
+includes the skill's name and description. This allows the agent to understand
+the available skills and their capabilities. The following example shows how a
+skill is represented:
+
+```xml
+<available_skills>
+  <skill>
+    <name>SKILL_NAME</name>
+    <description>SKILL_DESCRIPTION</description>
+  </skill>
+</available_skills>
+```
+
+### Skill validation
+
+The frontmatter of a skill's `SKILL.md` file is validated to ensure that it
+meets the following requirements:
+
+*   **name**:
+    *   Must be 64 characters or less.
+    *   Must be in lowercase, kebab-case (a-z, 0-9, and hyphens).
+    *   Must not have leading, trailing, or consecutive hyphens.
+*   **description**:
+    *   Must not be empty.
+    *   Must be 1024 characters or less.
+
 ## Known limitations {#known-limitations}
 
 The Skills feature is experimental and includes the following
