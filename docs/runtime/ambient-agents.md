@@ -98,10 +98,37 @@ This pattern works with any event source that can make an HTTP request.
 
 Use trigger endpoints when your event sources are Pub/Sub or Eventarc and you
 want ADK to handle payload parsing, session creation, concurrency, and retries.
+
+### How events are processed
+
+Pub/Sub and Eventarc deliver events to your agent as HTTP POST requests.
+When a trigger endpoint receives an event, it:
+
+1. **Parses the request** according to the source format (Pub/Sub push message
+   or CloudEvent).
+2. **Decodes the payload.** Base64-encoded message data is decoded and, if
+   possible, parsed as JSON.
+3. **Creates a session** automatically with a generated UUID. Unlike the `/run`
+   endpoint, you do not need to enable `--auto_create_session` — trigger
+   endpoints always create a new session per event.
+4. **Runs your agent** with the decoded event as a user message.
+5. **Returns a status code.** A `200` response tells Pub/Sub or Eventarc that
+   the event was processed successfully. A `500` response signals a failure,
+   and the event source retries delivery based on its retry policy.
+
+### Supported sources
+
+| Source | Endpoint | Description |
+| :----- | :------- | :---------- |
+| **Pub/Sub** | `/apps/{app_name}/trigger/pubsub` | Receives messages from a [Pub/Sub push subscription](https://cloud.google.com/pubsub/docs/push). |
+| **Eventarc** | `/apps/{app_name}/trigger/eventarc` | Receives [CloudEvents](https://cloudevents.io/) delivered by [Eventarc](https://cloud.google.com/eventarc) ([Standard](https://cloud.google.com/eventarc/standard/docs/overview) or [Advanced](https://cloud.google.com/eventarc/advanced/docs/overview)), supporting both structured and binary content modes. |
+
+### Enable triggers
+
 Trigger endpoints are disabled by default. Enable them with the CLI or
 programmatically.
 
-### Enable via CLI
+#### Via CLI
 
 Pass the `--trigger_sources` flag with a comma-separated list of sources:
 
@@ -113,7 +140,7 @@ adk api_server --trigger_sources "pubsub,eventarc" path/to/your/agent
 adk web --trigger_sources "pubsub" path/to/your/agent
 ```
 
-### Enable programmatically
+#### Programmatically
 
 When building a custom FastAPI application, pass the `trigger_sources` parameter:
 
@@ -170,26 +197,6 @@ A successful response:
 ```
 
 ## Trigger sources
-
-### Supported sources
-
-| Source | Endpoint | Description |
-| :----- | :------- | :---------- |
-| **Pub/Sub** | `/apps/{app_name}/trigger/pubsub` | Receives messages from a [Pub/Sub push subscription](https://cloud.google.com/pubsub/docs/push). |
-| **Eventarc** | `/apps/{app_name}/trigger/eventarc` | Receives [CloudEvents](https://cloudevents.io/) delivered by [Eventarc](https://cloud.google.com/eventarc) ([Standard](https://cloud.google.com/eventarc/standard/docs/overview) or [Advanced](https://cloud.google.com/eventarc/advanced/docs/overview)), supporting both structured and binary content modes. |
-
-### How events are processed
-
-When a trigger endpoint receives an event, it:
-
-1. **Parses the request** according to the source format (Pub/Sub push message
-   or CloudEvent).
-2. **Decodes the payload.** Base64-encoded message data is decoded and, if
-   possible, parsed as JSON.
-3. **Creates a session** automatically with a generated UUID.
-4. **Runs your agent** with the decoded event as a user message.
-5. **Returns the result** to the event source, which determines whether to
-   retry delivery.
 
 ### Parameter mapping
 
