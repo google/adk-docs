@@ -1207,13 +1207,13 @@ to analyze your agent logs using natural language. Use this tool to answer quest
 *   "What are the most common tool calls?"
 *   "Identify sessions with high token usage"
 
-## Consuming logged data
+## Consuming logged data with BigQuery Agent Analytics SDK
 
 The [BigQuery Agent Analytics SDK](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-SDK/tree/main) provides a convenient way to consume and analyze the data logged by the BigQuery Agent Analytics plugin. The SDK offers pre-built utilities for querying, aggregating, and visualizing your agent's operational data directly from BigQuery.
 
 ### Dashboard
 
-You can visualize your agent's performance using the pre-built [dashboard notebook](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-SDK/blob/main/examples/dashboard_v2.ipynb).
+The BigQuery Agent Analytics SDK includes an [example Jupyter notebook](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-SDK/blob/main/examples/dashboard_v2.ipynb) that demonstrates how to query and visualize your agent's performance data. Use it as a starting point to build your own custom dashboards tailored to your BigQuery Agent Analytics dataset.
 
 ## Security: Avoid logging sensitive credentials {#security-credentials}
 
