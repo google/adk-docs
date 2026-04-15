@@ -55,7 +55,7 @@ schema_manager = A2uiSchemaManager(
 
 !!! tip
     If you omit the `catalogs` parameter, the schema manager uses the
-    [Basic Catalog](https://a2ui.org/latest/catalogs/) maintained by the
+    [Basic Catalog](https://a2ui.org/concepts/catalogs/) maintained by the
     A2UI team, which includes common components like Text, Card, Button,
     Image, and more. You can also create [custom catalogs](#custom-catalogs)
     with domain-specific components, or mix the basic catalog with your own
@@ -231,5 +231,5 @@ The A2UI repository includes ADK sample agents you can run immediately:
 - [A2UI GitHub repository](https://github.com/google/A2UI)
 - [A2UI Python SDK (`a2ui-agent-sdk`)](https://pypi.org/project/a2ui-agent-sdk/)
 - [Agent development guide](https://github.com/google/A2UI/blob/main/agent_sdks/python/agent_development.md)
-- [Component gallery](https://a2ui.org/latest/reference/components/)
+- [Component gallery](https://a2ui.org/reference/components/)
 - [A2A protocol](https://google.github.io/A2A/)
