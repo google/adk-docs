@@ -220,7 +220,6 @@ The A2UI repository includes ADK sample agents you can run immediately:
 
 | Sample | Description |
 |---|---|
-| [contact_lookup](https://github.com/google/A2UI/tree/main/samples/agent/adk/contact_lookup) | Simple agent with static schema — looks up contacts and displays results as cards |
 | [restaurant_finder](https://github.com/google/A2UI/tree/main/samples/agent/adk/restaurant_finder) | Static schema agent for searching and displaying restaurant information |
 | [rizzcharts](https://github.com/google/A2UI/tree/main/samples/agent/adk/rizzcharts) | Dynamic catalog agent that selects chart components based on context |
 | [orchestrator](https://github.com/google/A2UI/tree/main/samples/agent/adk/orchestrator) | Multi-agent setup that delegates to sub-agents and aggregates UI capabilities |

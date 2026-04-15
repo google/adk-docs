@@ -10,3 +10,6 @@
 
 # Requires authentication
 ^https://postman\.postman\.co/settings/me/
+
+# Rate limits automated requests
+^https://www\.gnu\.org/
