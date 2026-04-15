@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# --8<-- [start:triggers]
 import os
 
 import uvicorn
@@ -26,4 +27,5 @@ app = get_fast_api_app(
 )
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
+    uvicorn.run(app, host="0.0.0.0", port=int(os.environ.get("PORT", 8000)))
+# --8<-- [end:triggers]

@@ -94,6 +94,22 @@ This pattern works with any event source that can make an HTTP request.
         return ("ok", 200)
     ```
 
+??? "Example: Send an event with curl"
+
+    ```bash
+    curl -X POST http://localhost:8000/apps/my_agent/run \
+      -H "Content-Type: application/json" \
+      -d '{
+        "app_name": "my_agent",
+        "user_id": "webhook-caller",
+        "session_id": "session-123",
+        "new_message": {
+          "role": "user",
+          "parts": [{"text": "{\"order_id\": \"1234\", \"status\": \"new\"}"}]
+        }
+      }'
+    ```
+
 ## Using trigger endpoints
 
 Use trigger endpoints when your event sources are Pub/Sub or Eventarc and you
@@ -123,61 +139,50 @@ When a trigger endpoint receives an event, it:
 | **Pub/Sub** | `/apps/{app_name}/trigger/pubsub` | Receives messages from a [Pub/Sub push subscription](https://cloud.google.com/pubsub/docs/push). |
 | **Eventarc** | `/apps/{app_name}/trigger/eventarc` | Receives [CloudEvents](https://cloudevents.io/) delivered by [Eventarc](https://cloud.google.com/eventarc) ([Standard](https://cloud.google.com/eventarc/standard/docs/overview) or [Advanced](https://cloud.google.com/eventarc/advanced/docs/overview)), supporting both structured and binary content modes. |
 
-### Enable triggers
-
-Trigger endpoints are disabled by default. Enable them with the CLI or
-programmatically.
-
-#### Via CLI
-
-Pass the `--trigger_sources` flag with a comma-separated list of sources:
-
-```bash
-# Enable both Pub/Sub and Eventarc triggers
-adk api_server --trigger_sources "pubsub,eventarc" path/to/your/agent
-
-# Enable only Pub/Sub triggers
-adk web --trigger_sources "pubsub" path/to/your/agent
-```
-
-#### Programmatically
-
-When building a custom FastAPI application, pass the `trigger_sources` parameter:
-
-```python
-from google.adk.cli.fast_api import get_fast_api_app
-
-app = get_fast_api_app(
-    agents_dir="/path/to/agents",
-    web=False,
-    trigger_sources=["pubsub", "eventarc"],
-)
-```
-
 ### Example agent
 
-The following example shows an agent that processes events from a Pub/Sub
-trigger. The agent parses the incoming event data and takes action based on its
-contents.
+The following agent processes events from a trigger endpoint. It uses a
+`parse_event` tool to extract the event data and attributes, then analyzes
+the contents.
 
-???+ "Agent code"
-
-    === "Python"
-        ```python
-        --8<-- "examples/python/snippets/runtime/triggers/event_processing_agent/agent.py"
-        ```
-
-??? "Deployment entry point"
+???+ "Agent code (`event_processing_agent/agent.py`)"
 
     === "Python"
         ```python
-        --8<-- "examples/python/snippets/runtime/triggers/main.py"
+        --8<-- "examples/python/snippets/runtime/triggers/event_processing_agent/agent.py:event_processor"
         ```
 
-### Test with curl
+### Enable triggers
+
+Trigger endpoints are disabled by default. Enable them with the
+`--trigger_sources` flag:
 
 ```bash
-curl -X POST http://localhost:8000/apps/my_agent/trigger/pubsub \
+adk api_server --trigger_sources "pubsub,eventarc" path/to/your/agent
+```
+
+For production deployments, you can enable triggers programmatically in a
+custom FastAPI entry point:
+
+???+ "Deployment entry point (`main.py`)"
+
+    === "Python"
+        ```python
+        --8<-- "examples/python/snippets/runtime/triggers/main.py:triggers"
+        ```
+
+### Try it locally
+
+**1. Start the server with triggers enabled:**
+
+```bash
+adk api_server --trigger_sources "pubsub" event_processing_agent
+```
+
+**2. Send a test event:**
+
+```bash
+curl -X POST http://localhost:8000/apps/event_processing_agent/trigger/pubsub \
   -H "Content-Type: application/json" \
   -d '{
     "message": {

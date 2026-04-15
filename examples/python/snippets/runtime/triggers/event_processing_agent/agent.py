@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# --8<-- [start:event_processor]
 import json
 
 from google.adk.agents import LlmAgent
@@ -35,7 +36,7 @@ def parse_event(raw_event: str) -> dict:
 
 
 root_agent = LlmAgent(
-    model="gemini-2.5-flash",
+    model="gemini-flash-latest",
     name="event_processor",
     instruction="""You are an event-processing agent that handles incoming
 events from Pub/Sub and Eventarc triggers.
@@ -48,3 +49,4 @@ When you receive an event:
 Be concise and structured in your responses.""",
     tools=[parse_event],
 )
+# --8<-- [end:event_processor]
