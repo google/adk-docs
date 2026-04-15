@@ -192,8 +192,6 @@ docs/site
 # Claude Code
 .claude
 
-# Lychee link checker cache
-.lycheecache
 
 # Bash files
 ***/*.sh
