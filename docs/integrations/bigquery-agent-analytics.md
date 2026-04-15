@@ -57,6 +57,16 @@ information, see [Event types and payloads](#event-types).
     -   **Local:** Run `gcloud auth application-default login`.
     -   **Cloud:** Ensure your service account has the required permissions.
 
+??? note "Note: Gemini model selector `gemini-flash-latest`"
+
+    Most code examples in ADK documentation use `gemini-flash-latest` to select the
+    [latest available](https://ai.google.dev/gemini-api/docs/models#latest)
+    Gemini Flash version. However, if you access Gemini from a regional endpoint,
+    such as `us-central1`, this selection string may not work. In that case,
+    use a specific model version string from the
+    [Gemini models](https://ai.google.dev/gemini-api/docs/models) page or
+    Google Cloud [Gemini models](https://docs.cloud.google.com/vertex-ai/generative-ai/docs/models) list.
+
 ### IAM permissions
 
 For the agent to work properly, the principal (e.g., service account, user account) under which the agent is running needs these Google Cloud roles:
@@ -133,7 +143,7 @@ bigquery_toolset = BigQueryToolset(
     credentials_config=BigQueryCredentialsConfig(credentials=credentials)
 )
 
-llm = Gemini(model="gemini-2.5-flash")
+llm = Gemini(model="gemini-flash-latest")
 
 root_agent = Agent(
     model=llm,
@@ -256,7 +266,7 @@ bigquery_toolset = BigQueryToolset(
 
 # --- Agent ---
 root_agent = Agent(
-    model=Gemini(model="gemini-2.5-flash"),
+    model=Gemini(model="gemini-flash-latest"),
     name="my_bq_agent",
     instruction="You are a helpful assistant with access to BigQuery tools.",
     tools=[bigquery_toolset],
@@ -430,7 +440,16 @@ The plugin supports **OpenTelemetry** for distributed tracing. OpenTelemetry is 
 
 ## Configuration options
 
-You can customize the plugin using `BigQueryLoggerConfig`.
+You can customize the plugin using `BigQueryLoggerConfig`. The `BigQueryAgentAnalyticsPlugin` constructor also accepts `**kwargs`, which are forwarded directly to `BigQueryLoggerConfig`. This lets you pass config fields (like `batch_size` or `enabled`) without creating a separate config object:
+
+```python
+plugin = BigQueryAgentAnalyticsPlugin(
+    project_id="my-project",
+    dataset_id="my_dataset",
+    batch_size=10,           # forwarded to BigQueryLoggerConfig
+    shutdown_timeout=5.0,    # forwarded to BigQueryLoggerConfig
+)
+```
 
 -   **`enabled`** (`bool`, default: `True`): To disable the plugin from logging agent data to the BigQuery table, set this parameter to False.
 -   **`table_id`** (`str`, default: `"agent_events"`): The BigQuery table ID within the dataset. Can also be overridden by the `table_id` parameter on the `BigQueryAgentAnalyticsPlugin` constructor, which takes precedence.
@@ -451,11 +470,12 @@ You can customize the plugin using `BigQueryLoggerConfig`.
 -   **`content_formatter`** (`Optional[Callable[[Any, str], Any]]`, default: `None`): An optional function to format event content before logging. The function receives two arguments: the raw content and the event type string (e.g., `"LLM_REQUEST"`).
 -   **`log_multi_modal_content`** (`bool`, default: `True`): Whether to log detailed content parts (including GCS references).
 -   **`queue_max_size`** (`int`, default: `10000`): The maximum number of events to hold in the in-memory queue before dropping new events.
--   **`retry_config`** (`RetryConfig`, default: `RetryConfig()`): Configuration for retrying failed BigQuery writes (attributes: `max_retries`, `initial_delay`, `multiplier`, `max_delay`).
--   **`log_session_metadata`** (`bool`, default: `True`): If True, logs session information into the `attributes` column, including `session_id`, `app_name`, `user_id`, and the session `state` dictionary (e.g., custom state like gchat thread-id, customer_id).
+-   **`retry_config`** (`RetryConfig`, default: `RetryConfig()`): Configuration for retrying failed BigQuery writes. Sub-fields: `max_retries` (default `3`), `initial_delay` (default `1.0` seconds), `multiplier` (default `2.0`), `max_delay` (default `10.0` seconds).
+-   **`log_session_metadata`** (`bool`, default: `True`): If True, logs session information into the `attributes` column, including `session_id`, `app_name`, `user_id`, and the session `state` dictionary (e.g., custom state like gchat thread-id, customer_id). State keys prefixed with `temp:` or `secret:` are automatically redacted. See [Built-in redaction](#built-in-redaction).
 -   **`custom_tags`** (`Dict[str, Any]`, default: `{}`): A dictionary of static tags (e.g., `{"env": "prod", "version": "1.0"}`) to be included in the `attributes` column for every event.
 -   **`auto_schema_upgrade`** (`bool`, default: `True`): When enabled, the plugin automatically adds new columns to an existing table when the plugin schema evolves. Only additive changes are made (columns are never dropped or altered). A version label (`adk_schema_version`) on the table ensures the diff runs at most once per schema version. Safe to leave enabled.
 -   **`create_views`** (`bool`, default: `True`): Added in 1.27.0. When enabled, automatically generates per-event-type BigQuery views that unnest structured JSON data (such as `content` or `attributes`) into flat, typed columns, significantly simplifying SQL queries.
+-   **`view_prefix`** (`str`, default: `"v"`): Prefix for auto-created view names. The default `"v"` produces views like `v_llm_request`. Set a distinct prefix per table when multiple plugin instances share the same dataset to avoid view-name collisions (e.g., `"v_staging"` produces `v_staging_llm_request`). Must be non-empty.
 
 
 The following code sample shows how to define a configuration for the
@@ -504,6 +524,23 @@ config = BigQueryLoggerConfig(
 plugin = BigQueryAgentAnalyticsPlugin(..., config=config)
 ```
 
+### Public methods
+
+The plugin exposes several public methods for lifecycle management:
+
+-   **`await plugin.flush()`**: Flush all pending events to BigQuery. Call this before shutdown to avoid data loss.
+-   **`await plugin.shutdown(timeout=None)`**: Gracefully shut down the plugin, flushing pending events and releasing resources. The optional `timeout` parameter overrides `shutdown_timeout` from the config.
+-   **`await plugin.create_analytics_views()`**: Manually (re-)create all per-event-type analytics views. Useful after a schema upgrade or when views need to be refreshed.
+-   **Async context manager**: The plugin supports `async with` for automatic startup and shutdown:
+
+    ```python
+    async with BigQueryAgentAnalyticsPlugin(
+        project_id=PROJECT_ID, dataset_id=DATASET_ID
+    ) as plugin:
+        # plugin is initialized and ready to use
+        ...
+    # plugin.shutdown() is called automatically on exit
+    ```
 
 ## Schema and production setup
 
@@ -523,7 +560,7 @@ The events table (`agent_events`) uses a flexible schema. The following table pr
 | **span_id** | `STRING` | `NULLABLE` | The **OpenTelemetry** Span ID (16-char hex). Uniquely identifies this specific atomic operation. | `69867a836cd94798be2759d8e0d70215` |
 | **parent_span_id** | `STRING` | `NULLABLE` | The Span ID of the immediate caller. Used to reconstruct the parent-child execution tree (DAG). | `ef5843fe40764b4b8afec44e78044205` |
 | **content** | `JSON` | `NULLABLE` | The primary event payload. Structure is polymorphic based on `event_type`. | `{"system_prompt": "You are...", "prompt": [{"role": "user", "content": "hello"}], "response": "Hi", "usage": {"total": 15}}` |
-| **attributes** | `JSON` | `NULLABLE` | Metadata/Enrichment (usage stats, model info, tool provenance, custom tags). | `{"model": "gemini-2.5-flash", "usage_metadata": {"total_token_count": 15}, "session_metadata": {"session_id": "...", "app_name": "...", "user_id": "...", "state": {}}, "custom_tags": {"env": "prod"}}` |
+| **attributes** | `JSON` | `NULLABLE` | Metadata/Enrichment (usage stats, model info, tool provenance, custom tags). | `{"model": "gemini-flash-latest", "usage_metadata": {"total_token_count": 15}, "session_metadata": {"session_id": "...", "app_name": "...", "user_id": "...", "state": {}}, "custom_tags": {"env": "prod"}}` |
 | **latency_ms** | `JSON` | `NULLABLE` | Performance metrics. Standard keys are `total_ms` (wall-clock duration) and `time_to_first_token_ms` (streaming latency). | `{"total_ms": 1250, "time_to_first_token_ms": 450}` |
 | **status** | `STRING` | `NULLABLE` | High-level outcome. Values: `OK` (success) or `ERROR` (failure). | `OK` |
 | **error_message** | `STRING` | `NULLABLE` | Human-readable exception message or stack trace fragment. Populated only when `status` is `ERROR`. | `Error 404: Dataset not found` |
@@ -576,15 +613,48 @@ CLUSTER BY event_type, agent, user_id;
 
 When `create_views=True` (the default in 1.27.0 and higher), the plugin automatically generates views for each event type that unnest common JSON structures into flat, typed columns. This significantly simplifies SQL, eliminating the need to write complex `JSON_VALUE` or `JSON_QUERY` functions explicitly.
 
-For example, the view `v_llm_request` includes the following schema:
+View names follow the convention `{view_prefix}_{event_type_lowercase}` (for example, with the default prefix `"v"`, `LLM_REQUEST` becomes `v_llm_request`). Set `view_prefix` in `BigQueryLoggerConfig` to a distinct value when multiple plugin instances write to different tables in the same dataset, preventing view-name collisions:
 
-| Field Name | Type | Description |
-|:---|:---|:---|
-| **(Common Columns)** | `VARIES` | Includes standard metadata: `timestamp`, `event_type`, `agent`, `session_id`, `invocation_id`, `user_id`, `trace_id`, `span_id`, `parent_span_id`, `status`, `error_message`, `is_truncated`. |
-| **model** | `STRING` | The name of the LLM model used for the request. |
-| **request_content** | `JSON` | The raw LLM request payload. |
-| **llm_config** | `JSON` | The configuration parameters passed to the LLM (temperature, top_p, etc.). |
-| **tools** | `JSON` | Array of tools available during the request. |
+```python
+# Two plugins in the same dataset with distinct view prefixes
+plugin_prod = BigQueryAgentAnalyticsPlugin(
+    project_id=PROJECT_ID, dataset_id=DATASET_ID,
+    table_id="agent_events_prod",
+    config=BigQueryLoggerConfig(view_prefix="v_prod"),
+)
+# Creates views: v_prod_llm_request, v_prod_tool_completed, ...
+
+plugin_staging = BigQueryAgentAnalyticsPlugin(
+    project_id=PROJECT_ID, dataset_id=DATASET_ID,
+    table_id="agent_events_staging",
+    config=BigQueryLoggerConfig(view_prefix="v_staging"),
+)
+# Creates views: v_staging_llm_request, v_staging_tool_completed, ...
+```
+
+You can also call the public async method `await plugin.create_analytics_views()` to manually refresh views, for example after a schema upgrade.
+
+Every view includes these **common columns**: `timestamp`, `event_type`, `agent`, `session_id`, `invocation_id`, `user_id`, `trace_id`, `span_id`, `parent_span_id`, `status`, `error_message`, `is_truncated`.
+
+The following table lists all 15 auto-created views and their event-specific columns:
+
+| View Name | Event-Specific Columns |
+|:---|:---|
+| **`v_user_message_received`** | *(common columns only)* |
+| **`v_llm_request`** | `model` (STRING), `request_content` (JSON), `llm_config` (JSON), `tools` (JSON) |
+| **`v_llm_response`** | `response` (JSON), `usage_prompt_tokens` (INT64), `usage_completion_tokens` (INT64), `usage_total_tokens` (INT64), `total_ms` (INT64), `ttft_ms` (INT64), `model_version` (STRING), `usage_metadata` (JSON) |
+| **`v_llm_error`** | `total_ms` (INT64) |
+| **`v_tool_starting`** | `tool_name` (STRING), `tool_args` (JSON), `tool_origin` (STRING) |
+| **`v_tool_completed`** | `tool_name` (STRING), `tool_result` (JSON), `tool_origin` (STRING), `total_ms` (INT64) |
+| **`v_tool_error`** | `tool_name` (STRING), `tool_args` (JSON), `tool_origin` (STRING), `total_ms` (INT64) |
+| **`v_agent_starting`** | `agent_instruction` (STRING) |
+| **`v_agent_completed`** | `total_ms` (INT64) |
+| **`v_invocation_starting`** | *(common columns only)* |
+| **`v_invocation_completed`** | *(common columns only)* |
+| **`v_state_delta`** | `state_delta` (JSON) |
+| **`v_hitl_credential_request`** | `tool_name` (STRING), `tool_args` (JSON) |
+| **`v_hitl_confirmation_request`** | `tool_name` (STRING), `tool_args` (JSON) |
+| **`v_hitl_input_request`** | `tool_name` (STRING), `tool_args` (JSON) |
 
 ### Event types and payloads {#event-types}
 
@@ -618,7 +688,7 @@ Captures the prompt sent to the model, including conversation history and system
   },
   "attributes": {
     "root_agent_name": "my_bq_agent",
-    "model": "gemini-2.5-flash",
+    "model": "gemini-flash-latest",
     "tools": ["list_dataset_ids", "execute_sql"],
     "llm_config": {
       "temperature": 0.5,
@@ -645,7 +715,7 @@ Captures the model's output and token usage statistics.
   },
   "attributes": {
     "root_agent_name": "my_bq_agent",
-    "model_version": "gemini-2.5-flash-001",
+    "model_version": "gemini-flash-latest",
     "usage_metadata": {
       "prompt_token_count": 10129,
       "candidates_token_count": 19,
@@ -755,14 +825,21 @@ These events track changes to the agent's state, typically triggered by tools.
 
 **7. STATE_DELTA**
 
-Tracks changes to the agent's internal state (e.g., token cache updates).
+Tracks changes to the agent's internal state (e.g., custom application state updated by tools).
+
+!!! note "Built-in redaction"
+
+    State keys prefixed with `temp:` or `secret:` are automatically
+    redacted to `[REDACTED]` in the logged `state_delta`. See
+    [Built-in redaction](#built-in-redaction) for details.
 
 ```json
 {
   "event_type": "STATE_DELTA",
   "attributes": {
     "state_delta": {
-      "bigquery_token_cache": "{\"token\": \"ya29...\", \"expiry\": \"...\"}"
+      "customer_tier": "enterprise",
+      "last_query_dataset": "bigquery-public-data.samples"
     }
   }
 }
@@ -856,6 +933,15 @@ The following HITL tool names are recognized:
 
 HITL request events are detected from `function_call` parts in `on_event_callback`. HITL completion events are detected from `function_response` parts in both `on_event_callback` and `on_user_message_callback`.
 
+!!! note "Views for HITL events"
+
+    Auto-created views exist only for the three **request** event types
+    (`v_hitl_credential_request`, `v_hitl_confirmation_request`,
+    `v_hitl_input_request`). The three `*_COMPLETED` event types are logged
+    to the base table but do not have dedicated views. Query them directly
+    from the `agent_events` table using
+    `WHERE event_type LIKE 'HITL_%_COMPLETED'`.
+
 #### GCS Offloading Examples (Multimodal & Large Text)
 
 When `gcs_bucket_name` is configured, large text and multimodal content (images, audio, etc.) are automatically offloaded to GCS. The `content` column will contain a summary or placeholder, while `content_parts` contains the `object_ref` pointing to the GCS URI.
@@ -931,7 +1017,19 @@ WHERE trace_id = 'your-trace-id'
 ORDER BY timestamp ASC;
 ```
 
-### Token usage analysis (accessing JSON fields)
+### Token usage analysis
+
+Using the `v_llm_response` view (recommended):
+
+```sql
+SELECT
+  AVG(usage_total_tokens) as avg_tokens,
+  AVG(usage_prompt_tokens) as avg_prompt_tokens,
+  AVG(usage_completion_tokens) as avg_completion_tokens
+FROM `your-gcp-project-id.your-dataset-id.v_llm_response`;
+```
+
+Or using the base table with JSON extraction:
 
 ```sql
 SELECT
@@ -975,6 +1073,22 @@ LIMIT 1;
 
 ### Latency Analysis (LLM & Tools)
 
+Using views (recommended):
+
+```sql
+-- LLM latency
+SELECT AVG(total_ms) as avg_llm_ms, AVG(ttft_ms) as avg_ttft_ms
+FROM `your-gcp-project-id.your-dataset-id.v_llm_response`;
+
+-- Tool latency by tool name
+SELECT tool_name, tool_origin, AVG(total_ms) as avg_tool_ms
+FROM `your-gcp-project-id.your-dataset-id.v_tool_completed`
+GROUP BY tool_name, tool_origin
+ORDER BY avg_tool_ms DESC;
+```
+
+Or using the base table:
+
 ```sql
 SELECT
   event_type,
@@ -1007,30 +1121,33 @@ ORDER BY timestamp ASC;
 
 ### Error Analysis (LLM & Tool Errors)
 
+Using views (recommended):
+
 ```sql
-SELECT
-  timestamp,
-  event_type,
-  agent,
-  error_message,
-  JSON_VALUE(content, '$.tool') as tool_name,
-  CAST(JSON_VALUE(latency_ms, '$.total_ms') AS INT64) as latency_ms
-FROM `your-gcp-project-id.your-dataset-id.agent_events`
-WHERE event_type IN ('LLM_ERROR', 'TOOL_ERROR')
+-- Tool errors with provenance
+SELECT timestamp, agent, tool_name, tool_origin, error_message, total_ms
+FROM `your-gcp-project-id.your-dataset-id.v_tool_error`
+ORDER BY timestamp DESC
+LIMIT 20;
+
+-- LLM errors
+SELECT timestamp, agent, error_message, total_ms
+FROM `your-gcp-project-id.your-dataset-id.v_llm_error`
 ORDER BY timestamp DESC
 LIMIT 20;
 ```
 
 ### Tool Provenance Analysis
 
+Using the `v_tool_completed` view (recommended):
+
 ```sql
 SELECT
-  JSON_VALUE(content, '$.tool_origin') as tool_origin,
-  JSON_VALUE(content, '$.tool') as tool_name,
+  tool_origin,
+  tool_name,
   COUNT(*) as call_count,
-  AVG(CAST(JSON_VALUE(latency_ms, '$.total_ms') AS INT64)) as avg_latency_ms
-FROM `your-gcp-project-id.your-dataset-id.agent_events`
-WHERE event_type = 'TOOL_COMPLETED'
+  AVG(total_ms) as avg_latency_ms
+FROM `your-gcp-project-id.your-dataset-id.v_tool_completed`
 GROUP BY tool_origin, tool_name
 ORDER BY call_count DESC;
 ```
@@ -1080,7 +1197,7 @@ SELECT
     session_id,
     AI.GENERATE(
         ('Analyze this conversation log and explain the root cause of the failure. Log: ', full_history),
-        endpoint => 'gemini-2.5-flash'
+        endpoint => 'gemini-flash-latest'
     ).result AS root_cause_explanation
 FROM SessionContext;
 ```
@@ -1121,10 +1238,33 @@ https://lookerstudio.google.com/reporting/create?c.reportId=f1c5b513-3095-44f8-9
     ([google/adk-python#3845](https://github.com/google/adk-python/issues/3845))
     and can lead to credential exposure in your analytics data.
 
-To prevent sensitive credentials from being persisted in BigQuery, use one or
-more of the following approaches:
+The plugin includes **built-in redaction** that automatically protects
+common secrets. For additional control, you can layer custom redaction on top.
 
-### Use `content_formatter` to redact secrets
+### Built-in redaction {#built-in-redaction}
+
+The plugin automatically redacts values for the following well-known key
+names (case-insensitive) wherever they appear in `content` or `attributes`
+JSON:
+
+`client_secret`, `access_token`, `refresh_token`, `id_token`, `api_key`,
+`password`
+
+In addition, any state key prefixed with **`temp:`** or **`secret:`** is
+automatically replaced with `[REDACTED]` in the logged `state_delta`.
+This means ADK session state stored under the `secret:` scope (such as
+OAuth tokens cached by credential services) is never persisted in
+BigQuery.
+
+!!! info "No configuration required"
+
+    Built-in redaction is always active for structured attributes and
+    state logging, and applies recursively to nested dictionaries and
+    JSON-encoded strings within attribute values. Custom
+    `content_formatter` runs **first** on raw content, so use it to add
+    masking for secrets that may appear in free-form payloads.
+
+### Use `content_formatter` to redact additional secrets
 
 Provide a custom `content_formatter` function in `BigQueryLoggerConfig` to
 strip or mask sensitive fields before they are written:

@@ -42,7 +42,7 @@ To enable Vertex AI Search Grounding, you include the search tool in your agent 
 
     root_agent = Agent(
         name="vertex_search_agent",
-        model="gemini-2.5-flash",
+        model="gemini-flash-latest",
         instruction="Answer questions using Vertex AI Search to find information from internal documents. Always cite sources when available.",
         description="Enterprise document search assistant with Vertex AI Search capabilities",
         tools=[VertexAiSearchTool(data_store_id=DATASTORE_ID)]
@@ -60,7 +60,7 @@ To enable Vertex AI Search Grounding, you include the search tool in your agent 
 
     LlmAgent rootAgent = LlmAgent.builder()
         .name("vertex_search_agent")
-        .model("gemini-2.5-flash")
+        .model("gemini-flash-latest")
         .instruction("Answer questions using Vertex AI Search to find information from internal documents. Always cite sources when available.")
         .description("Enterprise document search assistant with Vertex AI Search capabilities")
         .tools(VertexAiSearchTool.builder().dataStoreId(DATASTORE_ID).build())

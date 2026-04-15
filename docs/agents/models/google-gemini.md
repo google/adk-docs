@@ -26,7 +26,7 @@ in your agents:
     # --- Example using a stable Gemini Flash model ---
     agent_gemini_flash = LlmAgent(
         # Use the latest stable Flash model identifier
-        model="gemini-2.5-flash",
+        model="gemini-flash-latest",
         name="gemini_flash_agent",
         instruction="You are a fast and helpful Gemini assistant.",
         # ... other agent parameters
@@ -41,7 +41,7 @@ in your agents:
     // --- Example #2: using a powerful Gemini Pro model with API Key in model ---
     export const rootAgent = new LlmAgent({
       name: 'hello_time_agent',
-      model: 'gemini-2.5-flash',
+      model: 'gemini-flash-latest',
       description: 'Gemini flash agent',
       instruction: `You are a fast and helpful Gemini assistant.`,
     });
@@ -66,13 +66,22 @@ in your agents:
     LlmAgent agentGeminiFlash =
         LlmAgent.builder()
             // Use the latest stable Flash model identifier
-            .model("gemini-2.5-flash") // Set ENV variables to use this model
+            .model("gemini-flash-latest") // Set ENV variables to use this model
             .name("gemini_flash_agent")
             .instruction("You are a fast and helpful Gemini assistant.")
             // ... other agent parameters
             .build();
     ```
 
+??? note "Note: Gemini model selector `gemini-flash-latest`"
+
+    Most code examples in ADK documentation use `gemini-flash-latest` to select the
+    [latest available](https://ai.google.dev/gemini-api/docs/models#latest)
+    Gemini Flash version. However, if you access Gemini from a regional endpoint,
+    such as `us-central1`, this selection string may not work. In that case,
+    use a specific model version string from the
+    [Gemini models](https://ai.google.dev/gemini-api/docs/models) page or
+    Google Cloud [Gemini models](https://docs.cloud.google.com/vertex-ai/generative-ai/docs/models) list.
 
 ## Gemini model authentication
 
@@ -204,7 +213,7 @@ To mitigate this, you can do one of the following:
 
         ```python
         root_agent = Agent(
-            model='gemini-2.5-flash',
+            model='gemini-flash-latest',
             # ...
             generate_content_config=types.GenerateContentConfig(
                 # ...
@@ -228,7 +237,7 @@ To mitigate this, you can do one of the following:
         // ...
 
         LlmAgent rootAgent = LlmAgent.builder()
-            .model("gemini-2.5-flash")
+            .model("gemini-flash-latest")
             // ...
             .generateContentConfig(GenerateContentConfig.builder()
                 // ...
@@ -274,7 +283,7 @@ To mitigate this, you can do one of the following:
 
         LlmAgent agent = LlmAgent.builder()
             .model(Gemini.builder()
-                .modelName("gemini-2.5-flash")
+                .modelName("gemini-flash-latest")
                 .apiClient(Client.builder()
                     .httpOptions(HttpOptions.builder()
                         .retryOptions(HttpRetryOptions.builder().initialDelay(1.0).attempts(2).build())
@@ -309,7 +318,7 @@ snippet:
 
     root_agent = Agent(
         model=Gemini(
-            model="gemini-2.5-flash",
+            model="gemini-flash-latest",
             use_interactions_api=True,  # Enable Interactions API
         ),
         name="interactions_test_agent",
@@ -330,7 +339,7 @@ snippet:
     // Note: Interactions API support in Java ADK is currently under development.
     LlmAgent rootAgent = LlmAgent.builder()
         .model(Gemini.builder()
-            .modelName("gemini-2.5-flash")
+            .modelName("gemini-flash-latest")
             .build())
         .name("interactions_test_agent")
         .tools(

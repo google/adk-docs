@@ -39,7 +39,7 @@ my_skill_toolset = skill_toolset.SkillToolset(
 )
 
 root_agent = Agent(
-    model="gemini-2.5-flash",
+    model="gemini-flash-latest",
     name="skill_user_agent",
     description="An agent that can use specialized skills.",
     instruction=(
