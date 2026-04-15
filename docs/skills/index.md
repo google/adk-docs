@@ -102,8 +102,6 @@ my_agent/
                 *.py          # utility scripts
 ```
 
-
-
 ### Define Skills in code {#inline-skills}
 
 In ADK agents, you can also define Skills within the code of the agent, using
@@ -132,8 +130,6 @@ greeting_skill = models.Skill(
     ),
 )
 ```
-
-
 
 ## Next steps
 
