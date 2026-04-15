@@ -1,0 +1,3 @@
+# Lychee link checker ignore file
+# Add regular expressions (one per line) for URLs to exclude from checking.
+# See: https://github.com/lycheeverse/lychee-action
