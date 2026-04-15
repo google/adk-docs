@@ -232,4 +232,4 @@ The A2UI repository includes ADK sample agents you can run immediately:
 - [A2UI Python SDK (`a2ui-agent-sdk`)](https://pypi.org/project/a2ui-agent-sdk/)
 - [Agent development guide](https://github.com/google/A2UI/blob/main/agent_sdks/python/agent_development.md)
 - [Component gallery](https://a2ui.org/reference/components/)
-- [A2A protocol](https://google.github.io/A2A/)
+- [A2A protocol](https://a2a-protocol.org)
