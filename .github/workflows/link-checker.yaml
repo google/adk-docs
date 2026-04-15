@@ -37,6 +37,9 @@ jobs:
           --timeout 30
           --max-retries 5
           --retry-wait-time 30
+          --root-dir "$(pwd)/docs"
+          --index-files index.md
+          --fallback-extensions md
           './**/*.md'
         fail: true
         failIfEmpty: true
