@@ -8,7 +8,7 @@ catalog_tags: ["observability", "google"]
 # BigQuery Agent Analytics plugin for ADK
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.21.0</span><span class="lst-preview">Preview</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.21.0</span>
 </div>
 
 !!! important "Version Requirement"
@@ -18,12 +18,6 @@ catalog_tags: ["observability", "google"]
 The BigQuery Agent Analytics Plugin significantly enhances the Agent Development Kit (ADK) by providing a robust solution for in-depth agent behavior analysis. Using the ADK Plugin architecture and the **BigQuery Storage Write API**, it captures and logs critical operational events directly into a Google BigQuery table, empowering you with advanced capabilities for debugging, real-time monitoring, and comprehensive offline performance evaluation.
 
 Version 1.26.0 adds **Auto Schema Upgrade** (safely add new columns to existing tables), **Tool Provenance** tracking (LOCAL, MCP, SUB_AGENT, A2A, TRANSFER_AGENT), and **HITL Event Tracing** for human-in-the-loop interactions. Version 1.27.0 adds **Automatic View Creation** (generate flat, query-friendly event views).
-
-!!! example "Preview release"
-
-    The BigQuery Agent Analytics Plugin is in Preview release. For more
-    information, see the
-    [launch stage descriptions](https://cloud.google.com/products#product-launch-stages).
 
 !!! warning "BigQuery Storage Write API"
 
@@ -1213,15 +1207,13 @@ to analyze your agent logs using natural language. Use this tool to answer quest
 *   "What are the most common tool calls?"
 *   "Identify sessions with high token usage"
 
-## Looker Studio Dashboard
+## Consuming logged data
 
-You can visualize your agent's performance using our pre-built [Looker Studio Dashboard template](https://lookerstudio.google.com/c/reporting/f1c5b513-3095-44f8-90a2-54953d41b125/page/8YdhF).
+The [BigQuery Agent Analytics SDK](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-SDK/tree/main) provides a convenient way to consume and analyze the data logged by the BigQuery Agent Analytics plugin. The SDK offers pre-built utilities for querying, aggregating, and visualizing your agent's operational data directly from BigQuery.
 
-To connect this dashboard to your own BigQuery table, use the following link format, replacing the placeholders with your specific project, dataset, and table IDs:
+### Dashboard
 
-```text
-https://lookerstudio.google.com/reporting/create?c.reportId=f1c5b513-3095-44f8-90a2-54953d41b125&ds.ds3.connector=bigQuery&ds.ds3.type=TABLE&ds.ds3.projectId=<your-project-id>&ds.ds3.datasetId=<your-dataset-id>&ds.ds3.tableId=<your-table-id>
-```
+You can visualize your agent's performance using the pre-built [dashboard notebook](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-SDK/blob/main/examples/dashboard_v2.ipynb).
 
 ## Security: Avoid logging sensitive credentials {#security-credentials}
 
