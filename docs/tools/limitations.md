@@ -7,7 +7,7 @@ agent workflow. This page lists these tool limitations and workarounds, if avail
 
 !!! note "ONLY for Search in ADK Python v1.15.0 and lower"
 
-    This limitation only applies to the use of Google Search and Vertex AI Search
+    This limitation only applies to the use of Google Search and Agent Search
     tools in ADK Python v1.15.0 and lower. ADK Python release v1.16.0 and higher
     provides a built-in workaround to remove this limitation.
 
@@ -18,7 +18,7 @@ a single agent object:
 
 *   [Code Execution](/tools/gemini-api/code-execution/) with Gemini API
 *   [Google Search](/tools/gemini-api/google-search/) with Gemini API
-*   [Vertex AI Search](/tools/google-cloud/vertex-ai-search/)
+*   [Agent Search](/tools/google-cloud/vertex-ai-search/)
 
 For example, the following approach that uses one of these tools along with
 other tools, within a single agent, is ***not supported***:

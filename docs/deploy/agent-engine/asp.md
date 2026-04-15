@@ -1,6 +1,6 @@
 # Deploy to Agent Engine with Agent Starter Pack
 
-<div class="language-support-tag" title="Vertex AI Agent Engine currently supports only Python.">
+<div class="language-support-tag" title="Agent Runtime currently supports only Python.">
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
 </div>
 
@@ -36,7 +36,7 @@ You need the following resources configured to use this deployment path:
 
 -   **Google Cloud Project and Permissions**: A Google Cloud project with [billing enabled](https://cloud.google.com/billing/docs/how-to/modify-project).
     You can use an existing project or create a new one. You must have one of the following IAM roles assigned within this project:
-    -   **Vertex AI User role** — sufficient to deploy an agent to Agent Engine.
+    -   **Agent Platform User role** — sufficient to deploy an agent to Agent Engine.
     -   **Owner role** — required for the full production setup (Terraform infrastructure provisioning, CI/CD pipelines, IAM configuration).
 
 !!! tip "Note"

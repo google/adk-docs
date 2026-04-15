@@ -296,7 +296,7 @@ limitations:
     -   `ExampleTool`: Provides example-based few-shot learning for tools.
 -   **Agent Type Support:** The `LangGraphAgent` and `A2aAgent` types are
     not yet supported.
--   **Vertex AI Search:** The `VertexAiSearchTool` is currently supported in
+-   **Agent Search:** The `VertexAiSearchTool` is currently supported in
     Python and Java Agent Configs.
 
 ## Next steps
