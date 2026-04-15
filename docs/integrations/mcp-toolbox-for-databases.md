@@ -11,7 +11,7 @@ catalog_tags: ["mcp","data","google"]
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">Typescript</span><span class="lst-go">Go</span>
 </div>
 
-[MCP Toolbox for Databases](https://github.com/googleapis/genai-toolbox) is an
+[MCP Toolbox for Databases](https://github.com/googleapis/mcp-toolbox) is an
 open source MCP server for databases. It was designed with enterprise-grade and
 production-quality in mind. It enables you to develop tools easier, faster, and
 more securely by handling the complexities such as connection pooling,
@@ -292,6 +292,6 @@ documentation:
 MCP Toolbox has a variety of features to make developing Gen AI tools for databases.
 For more information, read more about the following features:
 
-* [Authenticated Parameters](https://mcp-toolbox.dev/): bind tool inputs to values from OIDC tokens automatically, making it easy to run sensitive queries without potentially leaking data
-* [Authorized Invocations:](https://mcp-toolbox.dev/)  restrict access to use a tool based on the users Auth token
-* [OpenTelemetry](https://mcp-toolbox.dev/): get metrics and tracing from Toolbox with OpenTelemetry
+* [Authenticated Parameters](https://mcp-toolbox.dev/documentation/connect-to/toolbox-sdks/python-sdk/core/#parameter-binding): bind tool inputs to values from OIDC tokens automatically, making it easy to run sensitive queries without potentially leaking data
+* [Authorized Invocations:](https://mcp-toolbox.dev/documentation/connect-to/toolbox-sdks/python-sdk/core/#client-to-server-authentication)  restrict access to use a tool based on the users Auth token
+* [OpenTelemetry](https://mcp-toolbox.dev/documentation/connect-to/toolbox-sdks/python-sdk/core/#opentelemetry): get metrics and tracing from Toolbox with OpenTelemetry
