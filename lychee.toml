@@ -5,11 +5,6 @@
 # 403 is included to avoid false positives from bot-blocking sites
 accept = ["200", "206", "302", "403"]
 
-# Timeout and retry settings
-timeout = 30
-max_retries = 5
-retry_wait_time = 30
-
 # Exclude localhost/loopback links (used in code examples throughout the docs)
 exclude_loopback = true
 
