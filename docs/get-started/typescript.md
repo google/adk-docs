@@ -51,7 +51,7 @@ npm install -D @google/adk-devtools
 ### Define the agent code
 
 Create the code for a basic agent, including a simple implementation of an ADK
-[Function Tool](/tools/function-tools/), called `getCurrentTime`.
+[Function Tool](/tools-custom/function-tools/), called `getCurrentTime`.
 Create an `agent.ts` file in your project directory and add the following code:
 
 ```typescript title="my-agent/agent.ts"
