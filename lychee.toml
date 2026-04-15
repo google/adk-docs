@@ -9,7 +9,7 @@ accept = ["200", "206", "302", "403"]
 exclude_loopback = true
 
 # Resolve directory links to index.md and try .md extension for missing files
-index_files = ["index.md"]
+index_files = ["index.md", "index.html"]
 fallback_extensions = ["md"]
 
 # Exclude file paths from checking
