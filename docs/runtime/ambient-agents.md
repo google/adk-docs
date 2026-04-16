@@ -35,7 +35,7 @@ outputs to a notification channel. Common patterns include:
 
 ADK provides two approaches:
 
-| | [`/run`](api-server.md#run) | Trigger endpoints |
+| | [`/run`](api-server.md) | Trigger endpoints |
 | :--- | :--- | :--- |
 | **Event sources** | Any (Pub/Sub, webhooks, cron, custom services) | [Cloud Pub/Sub](https://cloud.google.com/pubsub), [Eventarc](https://cloud.google.com/eventarc) ([Standard](https://cloud.google.com/eventarc/standard/docs/overview) and [Advanced](https://cloud.google.com/eventarc/advanced/docs/overview)) |
 | **Payload parsing** | You handle it | Automatic (Base64 decoding, CloudEvent parsing) |
@@ -47,7 +47,7 @@ ADK provides two approaches:
 
 ## Using `/run`
 
-Use the [`/run`](api-server.md#run) endpoint when you need full control over
+Use the [`/run`](api-server.md) endpoint when you need full control over
 the integration or are working with non-GCP event sources. Enable
 `--auto_create_session` so that sessions are created automatically, then
 connect any HTTP client to call `/run` when events arrive.
