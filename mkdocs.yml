@@ -203,6 +203,7 @@ plugins:
         'integrations/vertex-ai-rag-engine.md': 'integrations/rag-engine.md'
         'tools/google-cloud/vertex-ai-search.md': 'integrations/agent-search.md'
         'integrations/vertex-ai-search.md': 'integrations/agent-search.md'
+        'grounding/vertex_ai_search_grounding.md': 'grounding/grounding_with_search.md'
         'deploy/agent-engine/index.md': 'deploy/agent-runtime/index.md'
         'deploy/agent-engine/deploy.md': 'deploy/agent-runtime/deploy.md'
         'deploy/agent-engine/asp.md': 'deploy/agent-runtime/asp.md'
@@ -403,7 +404,7 @@ nav:
     - Grounding:
       - grounding/index.md
       - Google Search Grounding: grounding/google_search_grounding.md
-      - Grounding with Search: grounding/vertex_ai_search_grounding.md
+      - Grounding with Search: grounding/grounding_with_search.md
   - Integrations:
     - integrations/index.md
   - Reference:

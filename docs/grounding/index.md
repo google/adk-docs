@@ -24,7 +24,7 @@ ADK supports multiple grounding approaches:
 
     Connect your agents to indexed enterprise documents and private data repositories. Learn how to configure Agent Search datastores, ground responses in your organization's knowledge base, and provide source attribution.
 
-    - [Understanding Grounding with Search](vertex_ai_search_grounding.md)
+    - [Understanding Grounding with Search](grounding_with_search.md)
 
 -   :material-post: **Blog post: 10-minute Agentic RAG with Vector Search 2.0 and ADK**
 

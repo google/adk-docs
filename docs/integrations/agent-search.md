@@ -16,7 +16,7 @@ agent to search across your private, configured data stores (e.g., internal
 documents, company policies, knowledge bases). This built-in tool requires you
 to provide the specific data store ID during configuration. For further details
 of the tool, see
-[Understanding Grounding with Search](/grounding/vertex_ai_search_grounding/).
+[Understanding Grounding with Search](/grounding/grounding_with_search/).
 
 !!! warning "Warning: Single tool per agent limitation"
 
