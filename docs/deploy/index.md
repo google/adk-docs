@@ -14,7 +14,7 @@ on your needs for production readiness or custom flexibility:
 
 ### Agent Runtime on Agent Platform
 
-[Agent Engine](agent-runtime/index.md) is a fully managed auto-scaling service on Google Cloud
+[Agent Runtime](agent-runtime/index.md) is a fully managed auto-scaling service on Google Cloud
 specifically designed for deploying, managing, and scaling AI agents built with
 frameworks such as ADK.
 

@@ -330,7 +330,7 @@ The service handles two key operations:
 Before you can use this feature, you must have:
 
 1.  **A Google Cloud Project:** With the Agent Platform API enabled.
-2.  **An Agent Engine:** You need to create an Agent Engine on Agent Platform. You do not need to deploy your agent to Agent Engine Runtime to use Memory Bank. This will provide you with the **Agent Engine ID** required for configuration.
+2.  **An Agent Runtime:** You need to create an Agent Runtime on Agent Platform. You do not need to deploy your agent to Agent Runtime to use Memory Bank. This will provide you with the **Agent Runtime ID** required for configuration.
 3.  **Authentication:** Ensure your local environment is authenticated to access Google Cloud services. The simplest way is to run:
     ```bash
     gcloud auth application-default login
@@ -509,7 +509,7 @@ To extract memories from your session, you need to call `add_session_to_memory`.
 The memory workflow internally involves these steps:
 
 1. **Session Interaction:** A user interacts with an agent via a `Session`, managed by a `SessionService`. Events are added, and state might be updated.
-2. **Ingestion into Memory:** At some point (often when a session is considered complete or has yielded significant information), your application calls `memory_service.add_session_to_memory(session)`. This extracts relevant information from the session's events and adds it to the long-term knowledge store (in-memory dictionary or Agent Engine Memory Bank).
+2. **Ingestion into Memory:** At some point (often when a session is considered complete or has yielded significant information), your application calls `memory_service.add_session_to_memory(session)`. This extracts relevant information from the session's events and adds it to the long-term knowledge store (in-memory dictionary or Agent Runtime Memory Bank).
 3. **Later Query:** In a *different* (or the same) session, the user might ask a question requiring past context (e.g., "What did we discuss about project X last week?").
 4. **Agent Uses Memory Tool:** An agent equipped with a memory-retrieval tool (like the built-in `load_memory` tool) recognizes the need for past context. It calls the tool, providing a search query (e.g., "discussion project X last week").
 5. **Search Execution:** The tool internally calls `memory_service.search_memory(app_name, user_id, query)`.

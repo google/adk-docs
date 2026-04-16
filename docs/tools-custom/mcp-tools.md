@@ -1208,7 +1208,7 @@ McpToolset(
 
 #### Agent Runtime
 ```python
-# Agent Engine managed deployment
+# Agent Runtime managed deployment
 # Prefer lightweight, self-contained MCP servers or external services
 McpToolset(
     connection_params=SseConnectionParams(

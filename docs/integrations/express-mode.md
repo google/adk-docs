@@ -34,11 +34,11 @@ For more information, see
 
     Agent Platform express mode projects are only valid for 90 days and only select
     services are available to be used with limited quota. For example, the number of
-    Agent Engines is restricted to 10 and deployment to Agent Engine requires paid
+    Agent Runtime instances are restricted to 10 and deployment to Agent Runtime requires paid
     access. To remove the quota restrictions and use all of Agent Platform's services,
     add a billing account to your express mode project.
 
-## Configure Agent Engine container
+## Configure Agent Runtime container
 
 When using Agent Platform express mode, create an `AgentEngine` object to enable
 Agent Platform management of agent components such as `Session` and `Memory` objects.
@@ -51,7 +51,7 @@ GOOGLE_GENAI_USE_VERTEXAI=TRUE
 GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_EXPRESS_MODE_API_KEY_HERE
 ```
 
-Next, create your Agent Engine instance using the Agent Platform SDK.
+Next, create your Agent Runtime instance using the Agent Platform SDK.
 
 1. Import Agent Platform SDK.
 
@@ -63,19 +63,19 @@ Next, create your Agent Engine instance using the Agent Platform SDK.
 2. Initialize the Agent Platform Client with your API key and create an agent engine instance.
 
     ```py
-    # Create Agent Engine with Gen AI SDK
+    # Create Agent Runtime with Gen AI SDK
     client = vertexai.Client(
       api_key="YOUR_API_KEY",
     )
 
     agent_engine = client.agent_engines.create(
       config={
-        "display_name": "Demo Agent Engine",
-        "description": "Agent Engine for Session and Memory",
+        "display_name": "Demo Agent Runtime",
+        "description": "Agent Runtime for Session and Memory",
       })
     ```
 
-3. Get the Agent Engine name and ID from the response to use with Memories and Sessions.
+3. Get the Agent Runtime name and ID from the response to use with Memories and Sessions.
 
     ```py
     APP_ID = agent_engine.api_resource.name.split('/')[-1]

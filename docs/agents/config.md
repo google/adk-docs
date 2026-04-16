@@ -262,11 +262,11 @@ For more details, see the full code for this sample in the
 
 You can deploy Agent Config agents with
 [Cloud Run](/deploy/cloud-run/) and
-[Agent Engine](/deploy/agent-runtime/),
+[Agent Runtime](/deploy/agent-runtime/),
 using the same procedure as code-based agents. For more information on how
 to prepare and deploy Agent Config-based agents, see the
 [Cloud Run](/deploy/cloud-run/) and
-[Agent Engine](/deploy/agent-runtime/)
+[Agent Runtime](/deploy/agent-runtime/)
 deployment guides.
 
 ## Known limitations {#known-limitations}

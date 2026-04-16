@@ -168,7 +168,7 @@ ORDER BY timestamp DESC
 LIMIT 20;
 ```
 
-## Deploy to Agent Engine with the plugin {#deploy-agent-engine}
+## Deploy to Agent Runtime with the plugin {#deploy-agent-runtime}
 
 You can deploy an agent with the BigQuery Agent Analytics plugin to
 [Agent Runtime](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview).
@@ -178,7 +178,7 @@ alternatively using the Agent Platform SDK programmatically.
 !!! important "Version Requirement"
 
     Use ADK Python version **1.24.0 or higher** to deploy with this plugin to
-    Agent Engine. Earlier versions had an issue where the plugin's asynchronous
+    Agent Runtime. Earlier versions had an issue where the plugin's asynchronous
     log writer could be terminated by the serverless runtime before flushing
     pending events. Starting from 1.24.0, the plugin performs a synchronous
     flush at the end of each invocation to ensure all events are written.
@@ -186,7 +186,7 @@ alternatively using the Agent Platform SDK programmatically.
 ### Prerequisites
 
 Before deploying, ensure you have completed the general
-[Agent Engine setup](/deploy/agent-runtime/deploy/#setup-cloud-project),
+[Agent Runtime setup](/deploy/agent-runtime/deploy/#setup-cloud-project),
 including:
 
 1.  A Google Cloud project with the **Agent Platform API** and **Cloud Resource
@@ -203,7 +203,7 @@ including:
 ### Step 1: Define the agent and plugin
 
 Create your agent project folder with an `App` object that includes the plugin.
-The `App` object is required for Agent Engine deployments with plugins.
+The `App` object is required for Agent Runtime deployments with plugins.
 
 ```
 my_bq_agent/
@@ -266,7 +266,7 @@ root_agent = Agent(
     tools=[bigquery_toolset],
 )
 
-# --- App (required for Agent Engine with plugins) ---
+# --- App (required for Agent Runtime with plugins) ---
 app = App(
     name="my_bq_agent",
     root_agent=root_agent,
@@ -410,7 +410,7 @@ If events are not appearing in your BigQuery table after deployment:
     logging.getLogger("google_adk").setLevel(logging.DEBUG)
     ```
 
-3.  **Check IAM permissions**: The Agent Engine service account needs
+3.  **Check IAM permissions**: The Agent Runtime service account needs
     `roles/bigquery.dataEditor` on the target table and `roles/bigquery.jobUser`
     on the project. For **cross-project** logging, also ensure the BigQuery API
     is enabled in the source project and the service account has

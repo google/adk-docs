@@ -371,7 +371,7 @@ agent will be unable to function.
     1. You can sign up for a free Google Cloud project and use Gemini for free with an eligible account!
         * Set up a
           [Google Cloud project with Agent Platform Express Mode](https://cloud.google.com/vertex-ai/generative-ai/docs/start/express-mode/overview)
-        * Get an API key from your Express mode project. This key can be used with ADK to use Gemini models for free, as well as access to Agent Engine services.
+        * Get an API key from your Express mode project. This key can be used with ADK to use Gemini models for free, as well as access to Agent Runtime services.
     2. When using Python, open the **`.env`** file located inside (`multi_tool_agent/`). Copy-paste
     the following code and update the project ID and location.
 
