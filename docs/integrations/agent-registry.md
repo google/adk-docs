@@ -31,6 +31,22 @@ The [Agent Registry](https://docs.cloud.google.com/agent-registry/overview) inte
 pip install google-adk
 ```
 
+### Optional Dependencies
+
+To use the full capabilities of the AgentRegistry integration, you may need to install additional extras depending on your use case:
+
+**For A2A (Agent-to-Agent) Support:** If you plan to use `get_remote_a2a_agent` or interact with remote A2A-compliant agents, install the `a2a` extra:
+
+```bash
+pip install "google-adk[a2a]"
+```
+
+**For Agent Identity (GCP Auth Provider):** If you need to use the `GcpAuthProvider` (e.g., when `get_mcp_toolset` automatically resolves authentication via IAM bindings for registered MCP servers), install the `agent-identity` extra:
+
+```bash
+pip install "google-adk[agent-identity]"
+```
+
 ## Use with Agent
 
 The primary way to use the Agent Registry integration within an ADK agent is to dynamically fetch remote agents or toolsets using the AgentRegistry client.
