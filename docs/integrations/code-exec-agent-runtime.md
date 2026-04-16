@@ -1,17 +1,17 @@
 ---
-catalog_title: Code Execution Tool with Agent Engine
+catalog_title: Code Execution Tool with Agent Runtime
 catalog_description: Run AI-generated code in a secure and scalable GKE environment
 catalog_icon: /integrations/assets/vertex-ai.png
 catalog_tags: ["code", "google"]
 ---
 
-# Agent Engine Code Execution tool for ADK
+# Agent Runtime Code Execution tool for ADK
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.17.0</span>
 </div>
 
-The Agent Engine Code Execution ADK Tool provides a low-latency, highly
+The Agent Runtime Code Execution ADK Tool provides a low-latency, highly
 efficient method for running AI-generated code using the
 [Google Cloud Agent Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview)
 service. This tool is designed for fast execution, tailored for agentic workflows,
@@ -24,23 +24,23 @@ multi-step coding tasks, including:
 -   **Code with data analysis:** Upload data files up to 100MB, and run
     multiple code-based analyses without the need to reload data for each code run.
 
-This code execution tool is part of the Agent Engine suite, however you do not
-have to deploy your agent to Agent Engine to use it. You can run your agent
+This code execution tool is part of the Agent Runtime suite, however you do not
+have to deploy your agent to Agent Runtime to use it. You can run your agent
 locally or with other services and use this tool. For more information about the
-Code Execution feature in Agent Engine, see the
+Code Execution feature in Agent Runtime, see the
 [Agent Engine Code Execution](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/code-execution/overview)
 documentation.
 
 
 ## Use the Tool
 
-Using the Agent Engine Code Execution tool requires that you create a sandbox
-environment with Google Cloud Agent Engine before using the tool with an ADK
+Using the Agent Runtime Code Execution tool requires that you create a sandbox
+environment with Google Cloud Agent Runtime before using the tool with an ADK
 agent.
 
 To use the Code Execution tool with your ADK agent:
 
-1.  Follow the instructions in the Agent Engine
+1.  Follow the instructions in the Agent Runtime
     [Code Execution quickstart](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/code-execution/quickstart)
     to create a code execution sandbox environment.
 1.  Create an ADK agent with settings to access the Google Cloud project
@@ -77,7 +77,7 @@ agent's task, meaning the sandbox's state persists across all operations within
 an ADK workflow session.
 
 1.  **Sandbox creation:** For multi-step tasks requiring code execution,
-    the Agent Engine creates a sandbox with specified language and machine
+    the Agent Runtime creates a sandbox with specified language and machine
     configurations, isolating the code execution environment. If no sandbox is
     pre-created, the code execution tool will automatically create one using
     default settings.
@@ -98,7 +98,7 @@ an ADK workflow session.
     variable context must carry over between multiple tool calls.
 -   **Targeted Isolation:** Provides robust process-level isolation,
     ensuring that tool code execution is safe while remaining lightweight.
--   **Agent Engine integration:** Tightly integrated into the Agent Engine
+-   **Agent Runtime integration:** Tightly integrated into the Agent Runtime
     tool-use and orchestration layer.
 -   **Low-latency performance:** Designed for speed, allowing agents to
     execute complex tool-use workflows efficiently without significant overhead.
@@ -107,7 +107,7 @@ an ADK workflow session.
 
 ## System requirements¶
 
-The following requirements must be met to successfully use the Agent Engine
+The following requirements must be met to successfully use the Agent Runtime
 Code Execution tool with your ADK agents:
 
 -   Google Cloud project with Vertex API enabled
@@ -118,7 +118,7 @@ Code Execution tool with your ADK agents:
 
 ## Configuration parameters {#config-parameters}
 
-The Agent Engine Code Execution tool has the following parameters. You must set
+The Agent Runtime Code Execution tool has the following parameters. You must set
 one of the following resource parameters:
 
 -   **`sandbox_resource_name`** : A sandbox resource path to an
@@ -130,7 +130,7 @@ string format is as follows:
     # Example:
     projects/my-vertex-agent-project/locations/us-central1/reasoningEngines/6842888880301111172/sandboxEnvironments/6545148888889161728
     ```
--   **`agent_engine_resource_name`**: Agent Engine resource name where the tool
+-   **`agent_engine_resource_name`**: Agent Runtime resource name where the tool
 creates a sandbox environment. The expected string format is as follows:
     ```
     projects/{$PROJECT_ID}/locations/{$LOCATION_ID}/reasoningEngines/{$REASONING_ENGINE_ID}
@@ -139,15 +139,15 @@ creates a sandbox environment. The expected string format is as follows:
     projects/my-vertex-agent-project/locations/us-central1/reasoningEngines/6842888880301111172
     ```
 
-You can use Google Cloud Agent Engine's API to configure Agent Engine sandbox
+You can use Google Cloud Agent Runtime's API to configure Agent Runtime sandbox
 environments separately using a Google Cloud client connection, including the
 following settings:
 
 -   **Programming languages,** including Python and JavaScript
 -   **Compute environment**, including CPU and memory sizes
 
-For more information on connecting to Google Cloud Agent Engine and configuring
-sandbox environments, see the Agent Engine
+For more information on connecting to Google Cloud Agent Runtime and configuring
+sandbox environments, see the Agent Runtime
 [Code Execution quickstart](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/code-execution/quickstart#create_a_sandbox).
 
 ## Advanced example {#advanced-example}

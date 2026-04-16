@@ -1,6 +1,6 @@
-# Deploy to Vertex AI Agent Engine
+# Deploy to Agent Runtime
 
-<div class="language-support-tag" title="Vertex AI Agent Engine currently supports only Python.">
+<div class="language-support-tag" title="Agent Runtime currently supports only Python.">
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
 </div>
 
@@ -56,8 +56,8 @@ To deploy your agent to Agent Engine, you need a Google Cloud project:
 
     <img src="/assets/project-id.png" alt="Google Cloud Project ID">
 
-4. **Enable Vertex AI in your project**
-    * To use Agent Engine, you need to [enable the Vertex AI API](https://console.cloud.google.com/apis/library/aiplatform.googleapis.com). Click on the "Enable" button to enable the API. Once enabled, it
+4. **Enable Agent Platform in your project**
+    * To use Agent Engine, you need to [enable the Agent Platform API](https://console.cloud.google.com/apis/library/aiplatform.googleapis.com). Click on the "Enable" button to enable the API. Once enabled, it
     should say "API Enabled".
 
 5. **Enable Cloud Resource Manager API in your project**
@@ -142,7 +142,7 @@ adk deploy agent_engine \
 ```
 
 For `region`, you can find a list of the supported regions on the
-[Vertex AI Agent Builder locations page](https://docs.cloud.google.com/agent-builder/locations#supported-regions-agent-engine).
+[Agent Builder locations page](https://docs.cloud.google.com/agent-builder/locations#supported-regions-agent-engine).
 To learn about the CLI options for the `adk deploy agent_engine` command, see the
 [ADK CLI Reference](/api-reference/cli/cli.html#adk-deploy-agent-engine).
 
@@ -167,7 +167,7 @@ with the other values to use your agent on Agent Engine.
 ## Using an agent on Agent Engine
 
 Once you have completed deployment of your ADK project, you can query the agent
-using the Vertex AI SDK, Python requests library, or a REST API client. This
+using the Agent Platform SDK, Python requests library, or a REST API client. This
 section provides some information on what you need to interact with your agent
 and how to construct URLs to interact with your agent's REST API.
 
@@ -191,7 +191,7 @@ on how to make requests, see the instructions in the Agent Engine documentation
 You can also check the Agent Engine documentation to learn about how to manage your
 [deployed agent](https://docs.cloud.google.com/agent-builder/agent-engine/manage/overview).
 For more information on testing and interacting with a deployed agent, see
-[Test deployed agents in Agent Engine](/deploy/agent-engine/test/).
+[Test deployed agents in Agent Engine](/deploy/agent-runtime/test/).
 
 ### Monitoring and verification
 
@@ -208,4 +208,4 @@ For more information on testing and interacting with a deployed agent, see
 After completing deployment of your ADK agent you should test the workflow in
 its new hosted environment. For more information on testing an ADK agent
 deployed to Agent Engine, see
-[Test deployed agents in Agent Engine](/deploy/agent-engine/test/).
+[Test deployed agents in Agent Engine](/deploy/agent-runtime/test/).

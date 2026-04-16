@@ -186,7 +186,7 @@ alternatively using the Agent Platform SDK programmatically.
 ### Prerequisites
 
 Before deploying, ensure you have completed the general
-[Agent Engine setup](/deploy/agent-engine/deploy/#setup-cloud-project),
+[Agent Engine setup](/deploy/agent-runtime/deploy/#setup-cloud-project),
 including:
 
 1.  A Google Cloud project with the **Agent Platform API** and **Cloud Resource
@@ -197,7 +197,7 @@ including:
 4.  The deploying service account has the IAM roles listed in
     [IAM permissions](#iam-permissions).
 5.  Your coding environment is
-    [authenticated](/deploy/agent-engine/deploy/#prerequisites-coding-env)
+    [authenticated](/deploy/agent-runtime/deploy/#prerequisites-coding-env)
     with `gcloud auth login` and `gcloud auth application-default login`.
 
 ### Step 1: Define the agent and plugin

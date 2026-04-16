@@ -169,7 +169,7 @@ development environment, by running the following ASP make command:
 Once this process completes successfully, you should be able to interact with
 the agent running on Google Cloud Agent Engine. For details on testing the
 deployed agent, see
-[Test deployed agent](/deploy/agent-engine/test/).
+[Test deployed agent](/deploy/agent-runtime/test/).
 
 ### Changes to your ADK project {#adk-asp-changes}
 
@@ -214,4 +214,4 @@ For more information on using Agent Starter Pack, see the
 After completing deployment of your ADK agent you should test the workflow in
 its new hosted environment. For more information on testing an ADK agent
 deployed to Agent Engine, see
-[Test deployed agents in Agent Engine](/deploy/agent-engine/test/).
+[Test deployed agents in Agent Engine](/deploy/agent-runtime/test/).

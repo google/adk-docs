@@ -4,9 +4,9 @@ These instructions explain how to test an ADK agent deployed to the
 [Agent Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview)
 runtime environment. Before using these instructions, you need to have completed
 the deployment of your agent to the Agent Engine runtime environment using one
-of the [available methods](/deploy/agent-engine/). This guide shows you
+of the [available methods](/deploy/agent-runtime/). This guide shows you
 how to view, interact, and test your deployed agent through the Google Cloud
-Console, and interact with the agent using REST API calls or the Vertex AI SDK
+Console, and interact with the agent using REST API calls or the Agent Platform SDK
 for Python.
 
 ## View deployed agent in Cloud Console
@@ -28,8 +28,8 @@ You need the address and resource identification for your project (`PROJECT_ID`,
 `LOCATION_ID`, `RESOURCE_ID`) to be able to test your deployment. You can use Cloud
 Console or the `gcloud` command line tool to find this information.
 
-??? note "Vertex AI express mode API key"
-    If you are using Vertex AI express mode, you can skip this step and use your API key.
+??? note "Agent Platform express mode API key"
+    If you are using Agent Platform express mode, you can skip this step and use your API key.
 
 To find your project information with Google Cloud Console:
 
@@ -86,7 +86,7 @@ To send a REST call and get a response from deployed agent:
             "https://$(LOCATION_ID)-aiplatform.googleapis.com/v1/projects/$(PROJECT_ID)/locations/$(LOCATION_ID)/reasoningEngines"
         ```
 
-    === "Vertex AI express mode"
+    === "Agent Platform express mode"
 
         ```shell
         curl -X GET \
@@ -127,7 +127,7 @@ To test interaction with the deployed agent via REST:
             -d '{"class_method": "async_create_session", "input": {"user_id": "u_123"},}'
         ```
 
-    === "Vertex AI express mode"
+    === "Agent Platform express mode"
 
         ```shell
         curl \
@@ -173,7 +173,7 @@ To test interaction with the deployed agent via REST:
         }'
         ```
 
-    === "Vertex AI express mode"
+    === "Agent Platform express mode"
 
         ```shell
         curl \

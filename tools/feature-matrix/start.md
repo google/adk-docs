@@ -40,7 +40,7 @@ The following matrix shows which ADK features are currently supported in each la
 | | **Multi-Model: Direct Anthropic** | Not Supported | [Supported](https://adk.dev/agents/models/#using-anthropic-models) |
 | **Development Lifecycle** | **Evaluation** | [Supported](https://adk.dev/evaluate/#how-evaluation-works-with-the-adk) | Not Supported |
 | | **Observability (AgentOps, Arize, etc.)** | [Supported](https://adk.dev/observability/agentops/) | Not Supported |
-| | **Deployment: Agent Runtime** | [Supported](https://adk.dev/deploy/agent-engine/#standard-deployment) | [No](https://adk.dev/deploy/agent-engine/) |
+| | **Deployment: Agent Runtime** | [Supported](https://adk.dev/deploy/agent-runtime/#standard-deployment) | [No](https://adk.dev/deploy/agent-runtime/) |
 | | **Deployment: Cloud Run** | [Supported](https://adk.dev/deploy/cloud-run/#deployment-commands) | [Supported](https://adk.dev/deploy/cloud-run/#deployment-commands) |
 | | **Deployment: GKE** | [Supported](https://adk.dev/deploy/gke/#option-1-manual-deployment-using-gcloud-and-kubectl) | Not Supported |
 | | **Agent2Agent (A2A) Protocol** | [Supported](https://adk.dev/a2a/quickstart-consuming/#getting-the-sample-code) | Not Supported |

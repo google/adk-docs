@@ -175,7 +175,8 @@ plugins:
         'tools/google-cloud/bigtable.md': 'integrations/bigtable.md'
         'tools/third-party/cartesia.md': 'integrations/cartesia.md'
         'tools/third-party/chroma.md': 'integrations/chroma.md'
-        'tools/google-cloud/code-exec-agent-engine.md': 'integrations/code-exec-agent-engine.md'
+        'tools/google-cloud/code-exec-agent-engine.md': 'integrations/code-exec-agent-runtime.md'
+        'integrations/code-exec-agent-engine.md': 'integrations/code-exec-agent-runtime.md'
         'tools/gemini-api/code-execution.md': 'integrations/code-execution.md'
         'tools/gemini-api/computer-use.md': 'integrations/computer-use.md'
         'tools/google-cloud/data-agent.md': 'integrations/data-agent.md'
@@ -200,6 +201,10 @@ plugins:
         'tools/third-party/stripe.md': 'integrations/stripe.md'
         'tools/google-cloud/vertex-ai-rag-engine.md': 'integrations/vertex-ai-rag-engine.md'
         'tools/google-cloud/vertex-ai-search.md': 'integrations/vertex-ai-search.md'
+        'deploy/agent-engine/index.md': 'deploy/agent-runtime/index.md'
+        'deploy/agent-engine/deploy.md': 'deploy/agent-runtime/deploy.md'
+        'deploy/agent-engine/asp.md': 'deploy/agent-runtime/asp.md'
+        'deploy/agent-engine/test.md': 'deploy/agent-runtime/test.md'
         'tools/index.md': 'integrations/index.md'
         'tools/gemini-api/index.md': 'integrations/index.md'
         'tools/google-cloud/index.md': 'integrations/index.md'
@@ -324,11 +329,11 @@ nav:
       - Event Loop: runtime/event-loop.md
     - Deployment:
       - deploy/index.md
-      - Agent Engine:
-        - deploy/agent-engine/index.md
-        - Standard deployment: deploy/agent-engine/deploy.md
-        - Agent Starter Pack: deploy/agent-engine/asp.md
-        - Test deployed agents: deploy/agent-engine/test.md
+      - Agent Runtime:
+        - deploy/agent-runtime/index.md
+        - Standard deployment: deploy/agent-runtime/deploy.md
+        - Agent Starter Pack: deploy/agent-runtime/asp.md
+        - Test deployed agents: deploy/agent-runtime/test.md
       - Cloud Run: deploy/cloud-run.md
       - GKE: deploy/gke.md
     - Observability:
