@@ -403,8 +403,8 @@ Understanding the constraints of each platform is critical for production planni
 |----------------|---------------------------------------|--------------------------------------|-------|
 | **Connection duration** | ~10 minutes | Not documented separately | Each Gemini WebSocket connection auto-terminates; ADK reconnects transparently with session resumption |
 | **Session Duration (Audio-only)** | 15 minutes | 10 minutes | Maximum session duration without context window compression. Both platforms: unlimited with context window compression enabled |
-| **Session Duration (Audio + video)** | 2 minutes | 10 minutes | Gemini has shorter limit for video; Vertex treats all sessions equally. Both platforms: unlimited with context window compression enabled |
-| **Concurrent sessions** | 50 (Tier 1)<br>1,000 (Tier 2+) | Up to 1,000 | Gemini limits vary by API tier; Vertex limit is per Google Cloud project |
+| **Session Duration (Audio + video)** | 2 minutes | 10 minutes | Gemini has shorter limit for video; Agent Platform treats all sessions equally. Both platforms: unlimited with context window compression enabled |
+| **Concurrent sessions** | 50 (Tier 1)<br>1,000 (Tier 2+) | Up to 1,000 | Gemini limits vary by API tier; Agent Platform limit is per Google Cloud project |
 
 !!! note "Source References"
 
@@ -420,7 +420,7 @@ By default, the Live API limits connection duration to approximately 10 minutesâ
 
 ### Scope of ADK's Reconnection Management
 
-ADK manages the **ADK-to-Live API connection** (the WebSocket between ADK and the Gemini/Vertex Live API backend). This is transparent to your application code.
+ADK manages the **ADK-to-Live API connection** (the WebSocket between ADK and the Gemini Live API backend). This is transparent to your application code.
 
 **Your application remains responsible for**:
 
@@ -613,7 +613,7 @@ While compression enables unlimited session duration, consider these trade-offs:
 
 | Aspect | With Compression | Without Compression | Best For |
 |--------|------------------|---------------------|----------|
-| **Session Duration** | Unlimited | 15 min (audio)<br>2 min (video) Gemini<br>10 min Vertex | Compression: Long sessions<br>No compression: Short sessions |
+| **Session Duration** | Unlimited | 15 min (audio)<br>2 min (video) Gemini<br>10 min Agent Platform | Compression: Long sessions<br>No compression: Short sessions |
 | **Context Quality** | Older context summarized | Full verbatim history | Compression: General conversation<br>No compression: Precision-critical |
 | **Latency** | Compression overhead | No overhead | Compression: Async scenarios<br>No compression: Real-time |
 | **Memory Usage** | Bounded | Grows with session | Compression: Long sessions<br>No compression: Short sessions |

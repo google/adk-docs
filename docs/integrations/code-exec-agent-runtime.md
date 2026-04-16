@@ -110,7 +110,7 @@ an ADK workflow session.
 The following requirements must be met to successfully use the Agent Runtime
 Code Execution tool with your ADK agents:
 
--   Google Cloud project with Vertex API enabled
+-   Google Cloud project with Agent Platform API enabled
 -   Agent's service account requires **roles/aiplatform.user** role, which
     allow it to:
     -   Create, get, list and delete code execution sandboxes

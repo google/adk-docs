@@ -25,7 +25,7 @@ Ensure your environment is configured for Agent Platform:
     export GOOGLE_CLOUD_LOCATION="YOUR_VERTEX_AI_LOCATION" # e.g., us-central1
     ```
 
-3. **Enable Vertex Backend:** Crucially, ensure the `google-genai` library
+3. **Enable Agent Platform Backend:** Crucially, ensure the `google-genai` library
    targets Agent Platform:
 
     ```shell
