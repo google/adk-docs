@@ -1,16 +1,16 @@
-# Vertex AI hosted models for ADK agents
+# Agent Platform hosted models for ADK agents
 
 For enterprise-grade scalability, reliability, and integration with Google
-Cloud's MLOps ecosystem, you can use models deployed to Vertex AI Endpoints.
+Cloud's MLOps ecosystem, you can use models deployed to Agent Platform Endpoints.
 This includes models from Model Garden or your own fine-tuned models.
 
-**Integration Method:** Pass the full Vertex AI Endpoint resource string
+**Integration Method:** Pass the full Agent Platform Endpoint resource string
 (`projects/PROJECT_ID/locations/LOCATION/endpoints/ENDPOINT_ID`) directly to the
 `model` parameter of `LlmAgent`.
 
-## Vertex AI Setup
+## Agent Platform Setup
 
-Ensure your environment is configured for Vertex AI:
+Ensure your environment is configured for Agent Platform:
 
 1. **Authentication:** Use Application Default Credentials (ADC):
 
@@ -26,7 +26,7 @@ Ensure your environment is configured for Vertex AI:
     ```
 
 3. **Enable Vertex Backend:** Crucially, ensure the `google-genai` library
-   targets Vertex AI:
+   targets Agent Platform:
 
     ```shell
     export GOOGLE_GENAI_USE_VERTEXAI=TRUE
@@ -39,7 +39,7 @@ Ensure your environment is configured for Vertex AI:
 </div>
 
 You can deploy various open and proprietary models from the
-[Vertex AI Model Garden](https://console.cloud.google.com/vertex-ai/model-garden)
+[Model Garden](https://console.cloud.google.com/vertex-ai/model-garden)
 to an endpoint.
 
 **Example:**
@@ -52,13 +52,13 @@ to an endpoint.
 
     # --- Example Agent using a Llama 3 model deployed from Model Garden ---
 
-    # Replace with your actual Vertex AI Endpoint resource name
+    # Replace with your actual Agent Platform Endpoint resource name
     llama3_endpoint = "projects/YOUR_PROJECT_ID/locations/us-central1/endpoints/YOUR_LLAMA3_ENDPOINT_ID"
 
     agent_llama3_vertex = LlmAgent(
         model=llama3_endpoint,
         name="llama3_vertex_agent",
-        instruction="You are a helpful assistant based on Llama 3, hosted on Vertex AI.",
+        instruction="You are a helpful assistant based on Llama 3, hosted on Agent Platform.",
         generate_content_config=types.GenerateContentConfig(max_output_tokens=2048),
         # ... other agent parameters
     )
@@ -73,7 +73,7 @@ to an endpoint.
 
     // ...
 
-    // Replace with your actual Vertex AI Endpoint resource name
+    // Replace with your actual Agent Platform Endpoint resource name
     String llama3Endpoint = "projects/YOUR_PROJECT_ID/locations/us-central1/endpoints/YOUR_LLAMA3_ENDPOINT_ID";
 
     LlmAgent agentLlama3Vertex = LlmAgent.builder()
@@ -81,7 +81,7 @@ to an endpoint.
             .modelName(llama3Endpoint)
             .build())
         .name("llama3_vertex_agent")
-        .instruction("You are a helpful assistant based on Llama 3, hosted on Vertex AI.")
+        .instruction("You are a helpful assistant based on Llama 3, hosted on Agent Platform.")
         .generateContentConfig(GenerateContentConfig.builder()
             .maxOutputTokens(2048)
             .build())
@@ -96,7 +96,7 @@ to an endpoint.
 </div>
 
 Deploying your fine-tuned models (whether based on Gemini or other architectures
-supported by Vertex AI) results in an endpoint that can be used directly.
+supported by Agent Platform) results in an endpoint that can be used directly.
 
 **Example:**
 
@@ -139,14 +139,14 @@ supported by Vertex AI) results in an endpoint that can be used directly.
         .build();
     ```
 
-## Anthropic Claude on Vertex AI {#third-party-models-on-vertex-ai-eg-anthropic-claude}
+## Anthropic Claude on Agent Platform {#anthropic-claude}
 
 <div class="language-support-tag">
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.2.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
 Some providers, like Anthropic, make their models available directly through
-Vertex AI.
+Agent Platform.
 
 **Example:**
 
@@ -156,19 +156,19 @@ Vertex AI.
     `"claude-3-sonnet@20240229"`), *but requires manual registration* within ADK.
 
     **Why Registration?** ADK's registry automatically recognizes `gemini-*` strings
-    and standard Vertex AI endpoint strings (`projects/.../endpoints/...`) and
+    and standard Agent Platform endpoint strings (`projects/.../endpoints/...`) and
     routes them via the `google-genai` library. For other model types used directly
-    via Vertex AI (like Claude), you must explicitly tell the ADK registry which
+    via Agent Platform (like Claude), you must explicitly tell the ADK registry which
     specific wrapper class (`Claude` in this case) knows how to handle that model
-    identifier string with the Vertex AI backend.
+    identifier string with the Agent Platform backend.
 
     **Setup:**
 
-    1. **Vertex AI Environment:** Ensure the consolidated Vertex AI setup (ADC, Env
+    1. **Agent Platform Environment:** Ensure the consolidated Agent Platform setup (ADC, Env
        Vars, `GOOGLE_GENAI_USE_VERTEXAI=TRUE`) is complete.
 
     2. **Install Provider Library:** Install the necessary client library configured
-       for Vertex AI.
+       for Agent Platform.
 
         ```shell
         pip install "anthropic[vertex]"
@@ -178,7 +178,7 @@ Vertex AI.
        *before* creating an agent using the Claude model string:
 
         ```python
-        # Required for using Claude model strings directly via Vertex AI with LlmAgent
+        # Required for using Claude model strings directly via Agent Platform with LlmAgent
         from google.adk.models.anthropic_llm import Claude
         from google.adk.models.registry import LLMRegistry
 
@@ -194,15 +194,15 @@ Vertex AI.
        # --- Register Claude class (do this once at startup) ---
        LLMRegistry.register(Claude)
 
-       # --- Example Agent using Claude 3 Sonnet on Vertex AI ---
+       # --- Example Agent using Claude 3 Sonnet on Agent Platform ---
 
-       # Standard model name for Claude 3 Sonnet on Vertex AI
+       # Standard model name for Claude 3 Sonnet on Agent Platform
        claude_model_vertexai = "claude-3-sonnet@20240229"
 
        agent_claude_vertexai = LlmAgent(
            model=claude_model_vertexai, # Pass the direct string after registration
            name="claude_vertexai_agent",
-           instruction="You are an assistant powered by Claude 3 Sonnet on Vertex AI.",
+           instruction="You are an assistant powered by Claude 3 Sonnet on Agent Platform.",
            generate_content_config=types.GenerateContentConfig(max_output_tokens=4096),
            # ... other agent parameters
        )
@@ -210,18 +210,18 @@ Vertex AI.
 
 === "Java"
 
-    **Integration Method:** Directly instantiate the provider-specific model class (e.g., `com.google.adk.models.Claude`) and configure it with a Vertex AI backend.
+    **Integration Method:** Directly instantiate the provider-specific model class (e.g., `com.google.adk.models.Claude`) and configure it with an Agent Platform backend.
 
-    **Why Direct Instantiation?** The Java ADK's `LlmRegistry` primarily handles Gemini models by default. For third-party models like Claude on Vertex AI, you directly provide an instance of the ADK's wrapper class (e.g., `Claude`) to the `LlmAgent`. This wrapper class is responsible for interacting with the model via its specific client library, configured for Vertex AI.
+    **Why Direct Instantiation?** The Java ADK's `LlmRegistry` primarily handles Gemini models by default. For third-party models like Claude on Agent Platform, you directly provide an instance of the ADK's wrapper class (e.g., `Claude`) to the `LlmAgent`. This wrapper class is responsible for interacting with the model via its specific client library, configured for Agent Platform.
 
     **Setup:**
 
-    1.  **Vertex AI Environment:**
+    1.  **Agent Platform Environment:**
         *   Ensure your Google Cloud project and region are correctly set up.
-        *   **Application Default Credentials (ADC):** Make sure ADC is configured correctly in your environment. This is typically done by running `gcloud auth application-default login`. The Java client libraries use these credentials to authenticate with Vertex AI. Follow the [Google Cloud Java documentation on ADC](https://cloud.google.com/java/docs/reference/google-auth-library/latest/com.google.auth.oauth2.GoogleCredentials#com_google_auth_oauth2_GoogleCredentials_getApplicationDefault__) for detailed setup.
+        *   **Application Default Credentials (ADC):** Make sure ADC is configured correctly in your environment. This is typically done by running `gcloud auth application-default login`. The Java client libraries use these credentials to authenticate with Agent Platform. Follow the [Google Cloud Java documentation on ADC](https://cloud.google.com/java/docs/reference/google-auth-library/latest/com.google.auth.oauth2.GoogleCredentials#com_google_auth_oauth2_GoogleCredentials_getApplicationDefault__) for detailed setup.
 
     2.  **Provider Library Dependencies:**
-        *   **Third-Party Client Libraries (Often Transitive):** The ADK core library often includes the necessary client libraries for common third-party models on Vertex AI (like Anthropic's required classes) as **transitive dependencies**. This means you might not need to explicitly add a separate dependency for the Anthropic Vertex SDK in your `pom.xml` or `build.gradle`.
+        *   **Third-Party Client Libraries (Often Transitive):** The ADK core library often includes the necessary client libraries for common third-party models on Agent Platform (like Anthropic's required classes) as **transitive dependencies**. This means you might not need to explicitly add a separate dependency for the Anthropic Vertex SDK in your `pom.xml` or `build.gradle`.
 
     3.  **Instantiate and Configure the Model:**
         When creating your `LlmAgent`, instantiate the `Claude` class (or the equivalent for another provider) and configure its `VertexBackend`.
@@ -240,14 +240,14 @@ Vertex AI.
     public class ClaudeVertexAiAgent {
 
         public static LlmAgent createAgent() throws IOException {
-            // Model name for Claude 3 Sonnet on Vertex AI (or other versions)
+            // Model name for Claude 3 Sonnet on Agent Platform (or other versions)
             String claudeModelVertexAi = "claude-3-7-sonnet"; // Or any other Claude model
 
             // Configure the AnthropicOkHttpClient with the VertexBackend
             AnthropicClient anthropicClient = AnthropicOkHttpClient.builder()
                 .backend(
                     VertexBackend.builder()
-                        .region("us-east5") // Specify your Vertex AI region
+                        .region("us-east5") // Specify your Agent Platform region
                         .project("your-gcp-project-id") // Specify your GCP Project ID
                         .googleCredentials(GoogleCredentials.getApplicationDefault())
                         .build())
@@ -257,7 +257,7 @@ Vertex AI.
             LlmAgent agentClaudeVertexAi = LlmAgent.builder()
                 .model(new Claude(claudeModelVertexAi, anthropicClient)) // Pass the Claude instance
                 .name("claude_vertexai_agent")
-                .instruction("You are an assistant powered by Claude 3 Sonnet on Vertex AI.")
+                .instruction("You are an assistant powered by Claude 3 Sonnet on Agent Platform.")
                 // .generateContentConfig(...) // Optional: Add generation config if needed
                 // ... other agent parameters
                 .build();
@@ -278,24 +278,24 @@ Vertex AI.
     }
     ```
 
-## Open Models on Vertex AI {#open-models}
+## Open Models on Agent Platform {#open-models}
 
 <div class="language-support-tag">
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
-Vertex AI offers a curated selection of open-source models, such as Meta Llama, through Model-as-a-Service (MaaS). These models are accessible via managed APIs, allowing you to deploy and scale without managing the underlying infrastructure. For a full list of available options, see the [Vertex AI open models for MaaS](https://docs.cloud.google.com/vertex-ai/generative-ai/docs/maas/use-open-models#open-models) documentation.
+Agent Platform offers a curated selection of open-source models, such as Meta Llama, through Model-as-a-Service (MaaS). These models are accessible via managed APIs, allowing you to deploy and scale without managing the underlying infrastructure. For a full list of available options, see the [Agent Platform open models for MaaS](https://docs.cloud.google.com/vertex-ai/generative-ai/docs/maas/use-open-models#open-models) documentation.
 
 === "Python"
 
-    You can use the [LiteLLM](https://docs.litellm.ai/) library to access open models like Meta's Llama on VertexAI MaaS
+    You can use the [LiteLLM](https://docs.litellm.ai/) library to access open models like Meta's Llama on Agent Platform MaaS
 
     **Integration Method:** Use the `LiteLlm` wrapper class and set it
     as the `model` parameter of `LlmAgent`. Make sure you go through the [LiteLLM model connector for ADK agents](/agents/models/litellm/#litellm-model-connector-for-adk-agents) documentation on how to use LiteLLM in ADK
 
     **Setup:**
 
-    1. **Vertex AI Environment:** Ensure the consolidated Vertex AI setup (ADC, Env
+    1. **Agent Platform Environment:** Ensure the consolidated Agent Platform setup (ADC, Env
        Vars, `GOOGLE_GENAI_USE_VERTEXAI=TRUE`) is complete.
 
     2. **Install LiteLLM:**

@@ -18,7 +18,7 @@ ADK primarily uses two mechanisms for model integration:
 
       *  [Gemini models](/agents/models/google-gemini/)
       *  [Claude models](/agents/models/anthropic/)
-      *  [Agent Platform hosted models](/agents/models/vertex/)
+      *  [Agent Platform hosted models](/agents/models/agent-platform/)
 
 2. **Model connectors:** For broader compatibility, especially models
    outside the Google ecosystem or those requiring specific client
