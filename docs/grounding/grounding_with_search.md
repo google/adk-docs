@@ -75,7 +75,7 @@ Grounding with Search is the process that connects your agent to your organizati
 
 This diagram illustrates the step-by-step process of how a user query results in a grounded response.
 
-![Grounding with Search Data Flow](../assets/vertex_ai_search_grd_dataflow.png)
+![Grounding with Search Data Flow](../assets/grounding-with-search-data-flow.png)
 
 ### Detailed Description
 

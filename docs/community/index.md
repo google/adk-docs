@@ -215,7 +215,7 @@ playlist](https://www.youtube.com/playlist?list=PLwi6PfxEP7zZbBPmWiZ8QbPcuKyAY5R
   </a>
   <a href="https://medium.com/google-cloud/google-adk-vertex-ai-live-api-125238982d5e" class="resource-card">
     <div class="card-image-wrapper">
-      <img src="../assets/community-adk-vertex-ai-live-api.png" alt="ADK + Gemini Live API">
+      <img src="../assets/community-adk-gemini-live-api.png" alt="ADK + Gemini Live API">
     </div>
     <div class="card-content">
       <div class="type">Blog Post</div>

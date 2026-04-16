@@ -1,7 +1,7 @@
 ---
 catalog_title: RAG Engine
 catalog_description: Perform private data retrieval using RAG Engine
-catalog_icon: /integrations/assets/vertex-ai.png
+catalog_icon: /integrations/assets/agent-platform.png
 catalog_tags: ["data","google"]
 ---
 
