@@ -98,7 +98,7 @@ trace.set_tracer_provider(TracerProvider())
 # --- Configuration ---
 PROJECT_ID = os.environ.get("GOOGLE_CLOUD_PROJECT", "your-gcp-project-id")
 DATASET_ID = os.environ.get("BIG_QUERY_DATASET_ID", "your-big-query-dataset-id")
-# GOOGLE_CLOUD_LOCATION must be a valid Vertex AI region (e.g., "us-central1").
+# GOOGLE_CLOUD_LOCATION must be a valid Agent Platform region (e.g., "us-central1").
 # BQ_LOCATION is the BigQuery dataset location, which can be a multi-region
 # like "US" or "EU", or a single region like "us-central1".
 VERTEX_LOCATION = os.environ.get("GOOGLE_CLOUD_LOCATION", "us-central1")
@@ -171,9 +171,9 @@ LIMIT 20;
 ## Deploy to Agent Engine with the plugin {#deploy-agent-engine}
 
 You can deploy an agent with the BigQuery Agent Analytics plugin to
-[Vertex AI Agent Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview).
+[Agent Runtime](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview).
 This section walks through the steps to deploy using the ADK CLI, and
-alternatively using the Vertex AI SDK programmatically.
+alternatively using the Agent Platform SDK programmatically.
 
 !!! important "Version Requirement"
 
@@ -189,7 +189,7 @@ Before deploying, ensure you have completed the general
 [Agent Engine setup](/deploy/agent-engine/deploy/#setup-cloud-project),
 including:
 
-1.  A Google Cloud project with the **Vertex AI API** and **Cloud Resource
+1.  A Google Cloud project with the **Agent Platform API** and **Cloud Resource
     Manager API** enabled.
 2.  A **BigQuery dataset** in the target project (or a cross-project dataset
     with the correct permissions).
@@ -232,7 +232,7 @@ from google.adk.tools.bigquery import BigQueryToolset, BigQueryCredentialsConfig
 PROJECT_ID = os.environ.get("GOOGLE_CLOUD_PROJECT", "your-gcp-project-id")
 DATASET_ID = os.environ.get("BQ_DATASET", "agent_analytics")
 # BQ_LOCATION is the BigQuery dataset location (multi-region "US"/"EU" or
-# a single region like "us-central1"). This is separate from the Vertex AI
+# a single region like "us-central1"). This is separate from the Agent Platform
 # region used by GOOGLE_CLOUD_LOCATION.
 BQ_LOCATION = os.environ.get("BQ_LOCATION", "US")
 
@@ -317,7 +317,7 @@ Note the **Resource name** for the next step.
 
 ### Step 3: Test the deployed agent
 
-After deployment, you can query the agent using the Vertex AI SDK:
+After deployment, you can query the agent using the Agent Platform SDK:
 
 ```python title="test_deployed_agent.py"
 import uuid
@@ -356,9 +356,9 @@ LIMIT 20;
 You should see events such as `INVOCATION_STARTING`, `LLM_REQUEST`,
 `LLM_RESPONSE`, `TOOL_STARTING`, `TOOL_COMPLETED`, and `INVOCATION_COMPLETED`.
 
-### Alternative: Deploy using the Vertex AI SDK
+### Alternative: Deploy using the Agent Platform SDK
 
-You can also deploy programmatically using the Vertex AI SDK directly. This is
+You can also deploy programmatically using the Agent Platform SDK directly. This is
 useful for CI/CD pipelines or custom deployment workflows:
 
 ```python title="deploy.py"

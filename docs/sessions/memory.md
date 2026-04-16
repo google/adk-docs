@@ -24,12 +24,12 @@ The ADK offers two distinct `MemoryService` implementations, each tailored to di
 
 | **Feature** | **InMemoryMemoryService** | **VertexAiMemoryBankService** |
 | :--- | :--- | :--- |
-| **Persistence** | None (data is lost on restart) | Yes (Managed by Vertex AI) |
+| **Persistence** | None (data is lost on restart) | Yes (Managed by Agent Platform) |
 | **Primary Use Case** | Prototyping, local development, and simple testing. | Building meaningful, evolving memories from user conversations. |
 | **Memory Extraction** | Stores full conversation | Extracts [meaningful information](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/memory-bank/generate-memories) from conversations and consolidates it with existing memories (powered by LLM) |
 | **Search Capability** | Basic keyword matching. | Advanced semantic search. |
-| **Setup Complexity** | None. It's the default. | Low. Requires an [Agent Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/memory-bank/overview) instance in Vertex AI. |
-| **Dependencies** | None. | Google Cloud Project, Vertex AI API |
+| **Setup Complexity** | None. It's the default. | Low. Requires an [Agent Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/memory-bank/overview) instance on Agent Platform. |
+| **Dependencies** | None. | Google Cloud Project, Agent Platform API |
 | **When to use it** | When you want to search across multiple sessions’ chat histories for prototyping. | When you want your agent to remember and learn from past interactions. |
 
 
@@ -314,9 +314,9 @@ You can also search memory from within a custom tool by using the `tool.Context`
     }
     ```
 
-## Vertex AI Memory Bank
+## Memory Bank
 
-The `VertexAiMemoryBankService` connects your agent to [Vertex AI Memory Bank](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/memory-bank/overview), a fully managed Google Cloud service that provides sophisticated, persistent memory capabilities for conversational agents.
+The `VertexAiMemoryBankService` connects your agent to [Memory Bank](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/memory-bank/overview), a fully managed Google Cloud service that provides sophisticated, persistent memory capabilities for conversational agents.
 
 ### How It Works
 
@@ -329,8 +329,8 @@ The service handles two key operations:
 
 Before you can use this feature, you must have:
 
-1.  **A Google Cloud Project:** With the Vertex AI API enabled.
-2.  **An Agent Engine:** You need to create an Agent Engine in Vertex AI. You do not need to deploy your agent to Agent Engine Runtime to use Memory Bank. This will provide you with the **Agent Engine ID** required for configuration.
+1.  **A Google Cloud Project:** With the Agent Platform API enabled.
+2.  **An Agent Engine:** You need to create an Agent Engine on Agent Platform. You do not need to deploy your agent to Agent Engine Runtime to use Memory Bank. This will provide you with the **Agent Engine ID** required for configuration.
 3.  **Authentication:** Ensure your local environment is authenticated to access Google Cloud services. The simplest way is to run:
     ```bash
     gcloud auth application-default login
