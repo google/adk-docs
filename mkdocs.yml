@@ -396,7 +396,7 @@ nav:
     - Grounding:
       - grounding/index.md
       - Google Search Grounding: grounding/google_search_grounding.md
-      - Agent Search Grounding: grounding/vertex_ai_search_grounding.md
+      - Grounding with Search: grounding/vertex_ai_search_grounding.md
   - Integrations:
     - integrations/index.md
   - Reference:
