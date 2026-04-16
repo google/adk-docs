@@ -26,5 +26,5 @@ Please refer to the [RAG ADK agent sample](https://github.com/google/adk-samples
 === "Python"
 
     ```py
-    --8<-- "examples/python/snippets/tools/built-in-tools/vertexai_rag_engine.py"
+    --8<-- "examples/python/snippets/tools/built-in-tools/rag_engine.py"
     ```

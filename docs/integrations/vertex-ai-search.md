@@ -25,5 +25,5 @@ of the tool, see
     [Limitations for ADK tools](/tools/limitations/#one-tool-one-agent).
 
 ```py
---8<-- "examples/python/snippets/tools/built-in-tools/vertexai_search.py"
+--8<-- "examples/python/snippets/tools/built-in-tools/agent_search.py"
 ```

@@ -20,7 +20,7 @@ from google.adk.sessions import InMemorySessionService
 from google.genai import types
 from google.adk.tools import VertexAiSearchTool
 
-# Replace with your Vertex AI Search Datastore ID, and respective region (e.g. us-central1 or global).
+# Replace with your Agent Search Datastore ID, and respective region (e.g. us-central1 or global).
 # Format: projects/<PROJECT_ID>/locations/<REGION>/collections/default_collection/dataStores/<DATASTORE_ID>
 DATASTORE_PATH = "DATASTORE_PATH_HERE"
 
@@ -44,7 +44,7 @@ doc_qa_agent = LlmAgent(
     Use the search tool to find relevant information before answering.
     If the answer isn't in the documents, say that you couldn't find the information.
     """,
-    description="Answers questions using a specific Vertex AI Search datastore.",
+    description="Answers questions using a specific Agent Search datastore.",
 )
 
 # Session and Runner Setup
@@ -61,7 +61,7 @@ session_vsearch = session_service_vsearch.create_session(
 
 # Agent Interaction Function
 async def call_vsearch_agent_async(query):
-    print("\n--- Running Vertex AI Search Agent ---")
+    print("\n--- Running Search Agent ---")
     print(f"Query: {query}")
     if "DATASTORE_PATH_HERE" in DATASTORE_PATH:
         print(
