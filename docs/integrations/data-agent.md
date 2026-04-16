@@ -1,7 +1,7 @@
 ---
 catalog_title: Data Agents
 catalog_description: Analyze data with AI-powered agents
-catalog_icon: /integrations/assets/agent-platform.png
+catalog_icon: /integrations/assets/agent-platform.svg
 catalog_tags: ["data", "google"]
 ---
 

@@ -1,7 +1,7 @@
 ---
 catalog_title: Agent Search
 catalog_description: Search across your private, configured data stores in Agent Search
-catalog_icon: /integrations/assets/agent-platform.png
+catalog_icon: /integrations/assets/agent-platform.svg
 catalog_tags: ["search","google"]
 ---
 

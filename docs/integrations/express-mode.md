@@ -1,7 +1,7 @@
 ---
 catalog_title: Agent Platform Express Mode
 catalog_description: Try development with Agent Platform services at no cost
-catalog_icon: /integrations/assets/agent-platform.png
+catalog_icon: /integrations/assets/agent-platform.svg
 catalog_tags: ["google"]
 ---
 
