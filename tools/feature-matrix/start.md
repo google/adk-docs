@@ -23,7 +23,7 @@ The following matrix shows which ADK features are currently supported in each la
 | | **Built-in: Code Execution** | [Supported](https://adk.dev/tools/built-in-tools/#code-execution) | [Supported](https://adk.dev/tools/built-in-tools/#code-execution) |
 | | **Built-in: GKE Code Executor** | [Supported](https://adk.dev/tools/built-in-tools/#gke-code-executor) | Not Supported |
 | | **Built-in: RAG Engine** | [Supported](https://adk.dev/tools/built-in-tools/#rag-engine) | Not Supported |
-| | **Built-in: Agent Search** | [Supported](https://adk.dev/tools/built-in-tools/#vertex-ai-search) | Not Supported |
+| | **Built-in: Agent Search** | [Supported](https://adk.dev/tools/built-in-tools/#agent-search) | Not Supported |
 | | **Built-in: BigQuery, Spanner, Bigtable** | [Supported](https://adk.dev/tools/built-in-tools/#bigquery) | Not Supported |
 | | **Google Cloud Tools (API Hub, etc.)** | [Supported](https://adk.dev/tools/google-cloud-tools/#apigee-api-hub-tools) | Not Supported |
 | | **MCP Tools** | [Supported](https://adk.dev/tools/mcp-tools/#example-1-file-system-mcp-server) | [Supported](https://adk.dev/tools/mcp-tools/#example-1-file-system-mcp-server) |
