@@ -24,7 +24,7 @@ ADK provides a native integration for managing persistent agent session states u
 ## Prerequisites
 
 - A [Google Cloud Project](https://cloud.google.com/) with Firestore enabled
-- A [Firestore database](https://cloud.google.com/firestore/docs/setup) in your Google Cloud Project
+- A [Firestore database](https://cloud.google.com/firestore/native/docs/create-database-server-client-library) in your Google Cloud Project
 - Appropriate [Google Cloud credentials](https://cloud.google.com/docs/authentication/provide-credentials-adc) configured in your environment
 
 ## Install dependencies
