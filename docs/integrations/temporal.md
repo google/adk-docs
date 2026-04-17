@@ -205,18 +205,20 @@ from temporalio.contrib.google_adk_agents import (
     TemporalMcpToolSetProvider,
 )
 
-# Define a factory that lets Temporal instantiate your MCPToolset as needed.
-toolset_provider = TemporalMcpToolSetProvider(
-    "my-tools",
-    lambda _: McpToolset(
+# Define a shared factory for your MCP toolset.
+# Both the worker (TemporalMcpToolSetProvider) and agent (TemporalMcpToolSet) use it.
+def toolset_factory(_):
+    return McpToolset(
         connection_params=StdioConnectionParams(
             server_params=StdioServerParameters(
                 command="npx",
                 args=["-y", "@modelcontextprotocol/server-filesystem", "/path/to/dir"],
             ),
         ),
-    ),
-)
+    )
+
+# The provider tells the worker how to instantiate the toolset.
+toolset_provider = TemporalMcpToolSetProvider("my-tools", toolset_factory)
 
 # Configure the client with the toolset provider
 client = await Client.connect(
@@ -224,13 +226,27 @@ client = await Client.connect(
     plugins=[GoogleAdkPlugin(toolset_providers=[toolset_provider])]
 )
 
-# Reference the toolset by name when you declare your Agent (inside a @workflow.run)
+# Reference the toolset by name when you declare your Agent (inside a @workflow.run).
+# not_in_workflow_toolset lets this agent also run locally with `adk web`.
 agent = Agent(
     name="tool_agent",
     model=TemporalModel("gemini-2.5-pro"),
-    tools=[TemporalMcpToolSet("my-tools")],
+    tools=[TemporalMcpToolSet("my-tools", not_in_workflow_toolset=toolset_factory)],
 )
 ```
+
+### Local development with `adk web`
+
+For ease of local development, the Temporal wrappers automatically fall back to
+direct execution when run outside a Temporal Workflow, so you can use `adk web` 
+and other ADK development commands without a running Temporal server.  You won't 
+get the benefits of durable execution in this mode, nor will you be precisely testing 
+the production behavior.
+
+- `TemporalModel` and `activity_tool` work automatically — they detect they're
+  outside a workflow and call the underlying LLM or function directly.
+- `TemporalMcpToolSet` requires the `not_in_workflow_toolset` parameter (shown
+  in the MCP example above) so it knows how to instantiate the toolset locally.
 
 ## How it works
 
