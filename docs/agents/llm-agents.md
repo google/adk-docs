@@ -710,7 +710,7 @@ call_agent("If it's raining in New York right now, what is the current temperatu
 
 - **`code_executor` (Optional):** Provide a `BaseCodeExecutor` instance to allow
   the agent to execute code blocks found in the LLM's response. For more
-  information, see [Code Execution with Gemini API](/tools/gemini-api/code-execution/).
+  information, see [Code Execution with Gemini API](/integrations/code-execution/).
 
 === "Python"
 

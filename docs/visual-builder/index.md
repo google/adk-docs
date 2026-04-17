@@ -75,7 +75,7 @@ The tool supports all the essential components for building an ADK agent workflo
     *   [**Parallel Agent:**](/agents/workflow-agents/parallel-agents/)
         A workflow agent that executes multiple sub-agents concurrently.
 *   **Tools**
-    *   [**Prebuilt tools:**](/tools/built-in-tools/)
+    *   [**Prebuilt tools:**](/integrations/)
         A limited set of ADK-provided tools can be added to agents.
     *   [**Custom tools:**](/tools-custom/)
         You can build and add custom tools to your workflow.
