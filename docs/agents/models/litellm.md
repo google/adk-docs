@@ -19,10 +19,11 @@
 translation layer for models and model hosting services, providing a
 standardized, OpenAI-compatible interface to over 100+ LLMs. ADK provides
 integration through the LiteLLM library, allowing you to access a vast range of
-LLMs from providers like OpenAI, Anthropic (non-Vertex AI), Cohere, and many
-others. You can run open-source models locally or self-host them and integrate
-them using LiteLLM for operational control, cost savings, privacy, or offline
-use cases.
+LLMs from providers like OpenAI, Anthropic (non-Vertex AI), Cohere,
+[Doubleword](https://doubleword.ai), and many others. You can run open-source
+models locally or self-host them, or route requests through an AI model gateway
+like Doubleword for unified routing, cost savings, and batch pricing. LiteLLM
+gives you operational control, privacy, or offline use cases.
 
 You can use the LiteLLM library to access remote or locally hosted AI models:
 
@@ -71,6 +72,12 @@ You can use the LiteLLM library to access remote or locally hosted AI models:
         export ANTHROPIC_API_KEY="YOUR_ANTHROPIC_API_KEY"
         ```
 
+    * *Example for [Doubleword](https://doubleword.ai):*
+
+        ```shell
+        export DOUBLEWORD_API_KEY="YOUR_DOUBLEWORD_API_KEY"
+        ```
+
     * *Consult the
       [LiteLLM Providers Documentation](https://docs.litellm.ai/docs/providers)
       for the correct environment variable names for other providers.*
@@ -78,6 +85,8 @@ You can use the LiteLLM library to access remote or locally hosted AI models:
 ## Example implementation
 
 ```python
+import os
+
 from google.adk.agents import LlmAgent
 from google.adk.models.lite_llm import LiteLlm
 
@@ -96,6 +105,22 @@ agent_claude_direct = LlmAgent(
     model=LiteLlm(model="anthropic/claude-3-haiku-20240307"),
     name="claude_direct_agent",
     instruction="You are an assistant powered by Claude Haiku.",
+    # ... other agent parameters
+)
+
+# --- Example Agent using Doubleword Inference API ---
+# (Requires DOUBLEWORD_API_KEY)
+# Doubleword (https://doubleword.ai) is an AI model gateway that provides
+# unified routing across providers, with batch pricing for up to 90% savings.
+# See https://docs.doubleword.ai for available models and documentation.
+agent_doubleword = LlmAgent(
+    model=LiteLlm(
+        model="openai/Qwen/Qwen3.5-397B-A17B-FP8",
+        api_base="https://api.doubleword.ai/v1",
+        api_key=os.environ["DOUBLEWORD_API_KEY"],
+    ),
+    name="doubleword_agent",
+    instruction="You are a helpful assistant.",
     # ... other agent parameters
 )
 ```
