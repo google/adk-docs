@@ -45,3 +45,4 @@ snippets/agents/llm-agents/main.go
 snippets/sessions/memory_example/memory_example.go
 snippets/tools-custom/customer_support_agent/main.go
 snippets/get-started/multi_tool_agent/main.go
+snippets/runtime/triggers/event_processing_agent.go
