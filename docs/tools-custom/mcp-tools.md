@@ -151,9 +151,7 @@ Once the ADK Web UI loads in your browser:
 
 You should see the agent interacting with the MCP file system server, and the server's responses (file listings, file content) relayed through the agent. The `adk web` console (terminal where you ran the command) might also show logs from the `npx` process if it outputs to stderr.
 
-<img src="../../assets/adk-tool-mcp-filesystem-adk-web-demo.png" alt="MCP with ADK Web - FileSystem Example">
-
-
+![MCP with ADK Web - FileSystem Example](../assets/adk-tool-mcp-filesystem-adk-web-demo.png)
 
 For Java, refer to the following sample to define an agent that initializes the `McpToolset`:
 
@@ -373,8 +371,7 @@ from . import agent
 
 You should see the agent use the Google Maps Grounding Lite MCP tools to provide directions or location-based information.
 
-<img src="../../assets/adk-tool-maps-lite-mcp-adk-web-demo.png" alt="Google Maps Grounding Lite MCP with ADK Web Example">
-
+![Google Maps Grounding Lite MCP with ADK Web Example](../assets/adk-tool-maps-lite-mcp-adk-web-demo.png)
 
 For Java, refer to the following sample to define an agent that initializes the `McpToolset`:
 
@@ -395,7 +392,7 @@ import java.util.Map;
 public class MapsAgentCreator {
 
     /**
-     * Initializes an McpToolset for Google Maps Grounding Lite, 
+     * Initializes an McpToolset for Google Maps Grounding Lite,
      * creates an LlmAgent, sends a map-related prompt, and closes the toolset.
      */
     public static void main(String[] args) {
@@ -484,7 +481,7 @@ export const rootAgent = new LlmAgent({
         new MCPToolset({
             // Using SseConnectionParams to connect to the remote Grounding Lite service,
             // mirroring Python's StreamableHTTPConnectionParams.
-            type: "SseConnectionParams", 
+            type: "SseConnectionParams",
             url: "https://mapstools.googleapis.com/mcp",
             headers: {
                 "X-Goog-Api-Key": googleMapsApiKey,

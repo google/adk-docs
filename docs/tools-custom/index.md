@@ -18,10 +18,10 @@ programming functions with an ADK Tool, such as:
 *   Retrieving information from documents (RAG)
 *   Interacting with other software or services
 
-!!! tip "[ADK Tools list](/tools/)"
-    Before building your own Tools for ADK, check out the
-    **[ADK Tools list](/tools/)**
-    for pre-built tools you can use with ADK Agents.
+!!! tip "[ADK Tools and Integrations](/integrations/)"
+    Before building your own tools for ADK, check out the **[ADK Tools and
+    Integrations](/integrations/)** for pre-built tools and integrations you can
+    use with ADK Agents.
 
 ## What is a Tool?
 
@@ -67,7 +67,7 @@ ADK offers flexibility by supporting several types of tools:
     * **[Functions/Methods](/tools-custom/function-tools/#1-function-tool):** Define standard synchronous functions or methods in your code (e.g., Python def).
     * **[Agents-as-Tools](/tools-custom/function-tools/#3-agent-as-a-tool):** Use another, potentially specialized, agent as a tool for a parent agent.
     * **[Long Running Function Tools](/tools-custom/function-tools/#2-long-running-function-tool):** Support for tools that perform asynchronous operations or take significant time to complete.
-2. **[Built-in Tools](/tools/built-in-tools/):** Ready-to-use tools provided by the framework for common tasks.
+2. **[Built-in Tools](/integrations/):** Ready-to-use tools provided by the framework for common tasks.
         Examples: Google Search, Code Execution, Retrieval-Augmented Generation (RAG).
 3. **Third-Party Tools:** Integrate tools seamlessly from popular external libraries.
 

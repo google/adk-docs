@@ -83,7 +83,7 @@ Next, create your Agent Engine instance using the Vertex AI SDK.
 
 ## Manage Sessions with `VertexAiSessionService` {#vertex-ai-session-service}
 
-[`VertexAiSessionService`](/sessions/session.md#sessionservice-implementations)
+[`VertexAiSessionService`](/sessions/session/#sessionservice-implementations)
 is compatible with Vertex AI express mode API Keys. You can instead initialize
 the session object without any project or location.
 
