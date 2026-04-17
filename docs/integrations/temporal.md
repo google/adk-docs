@@ -11,11 +11,12 @@ catalog_tags: ["resilience"]
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
 </div>
 
-[Temporal](https://temporal.io) is a general-purpose durable execution platform that makes ADK
-agents resilient, scalable, and production-ready. LLM calls and tool executions
-run as Temporal [Activities](https://docs.temporal.io/activities) with automatic
-retries and recovery. If anything fails, your agent picks up exactly where it
-left off - no manual session management or external database required.
+[Temporal](https://temporal.io) is a general-purpose durable execution platform
+that makes ADK agents resilient, scalable, and production-ready. LLM calls and
+tool executions run as Temporal
+[Activities](https://docs.temporal.io/activities) with automatic retries and
+recovery. If anything fails, your agent picks up exactly where it left off - no
+manual session management or external database required.
 
 ## Use cases
 
@@ -51,7 +52,6 @@ The Temporal plugin gives your agents:
 
 Note that as of Temporal Python 1.24.0, this integration is experimental and
 there may be future breaking changes.
-
 
 ## Installation
 
@@ -138,7 +138,8 @@ class WeatherAgentWorkflow:
 
 **2. Configure and start the worker**
 
-Use `GoogleAdkPlugin` to configure the worker to make ADK ready to run in a Workflow on a distributed system:
+Use `GoogleAdkPlugin` to configure the worker to make ADK ready to run in a
+Workflow on a distributed system:
 
 ```python
 import asyncio
@@ -185,7 +186,6 @@ async def start():
 
 asyncio.run(start())
 ```
-
 
 ### Using MCP tools
 
@@ -238,10 +238,10 @@ agent = Agent(
 ### Local development with `adk web`
 
 For ease of local development, the Temporal wrappers automatically fall back to
-direct execution when run outside a Temporal Workflow, so you can use `adk web` 
-and other ADK development commands without a running Temporal server.  You won't 
-get the benefits of durable execution in this mode, nor will you be precisely testing 
-the production behavior.
+direct execution when run outside a Temporal Workflow, so you can use `adk web`
+and other ADK development commands without a running Temporal server. You won't
+get the benefits of durable execution in this mode, nor will you be precisely
+testing the production behavior.
 
 - `TemporalModel` and `activity_tool` work automatically — they detect they're
   outside a workflow and call the underlying LLM or function directly.
@@ -250,7 +250,9 @@ the production behavior.
 
 ## How it works
 
-The plugin ensures your ADK agent runs deterministically inside Temporal Workflow code, and causes inputs and outputs to be serialized and recorded for robust recovery.  For example:
+The plugin ensures your ADK agent runs deterministically inside Temporal
+Workflow code, and causes inputs and outputs to be serialized and recorded for
+robust recovery. For example:
 
 - **LLM calls** are executed as Temporal Activities via `TemporalModel`. If a
   call fails or the worker crashes, Temporal retries or replays from the last
@@ -275,7 +277,6 @@ The plugin ensures your ADK agent runs deterministically inside Temporal Workflo
 | Observability | Work with your favorite Observability solution using OpenTelemetry, with cross-process spans that are resilient to crashes. |
 | Safe versioning | Deploy new agent versions using [Temporal Worker Versioning](https://docs.temporal.io/production-deployment/worker-deployments/worker-versioning) without disrupting in-flight executions |
 | Multi-agent orchestration | Compose multiple agents within a Workflow, or scale them to more complex use cases by using [Child Workflows](https://docs.temporal.io/child-workflows) or [Nexus](https://docs.temporal.io/nexus) |
-
 
 ## Additional resources
 
