@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "ADK REST API Reference",
-    "version": "1.29.0"
+    "version": "1.31.0"
   },
   "paths": {
     "/health": {
@@ -624,7 +624,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/EvalSet-Output"
+                  "$ref": "#/components/schemas/EvalSet"
                 }
               }
             }
@@ -1158,7 +1158,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/EvalCase-Output"
+                  "$ref": "#/components/schemas/EvalCase"
                 }
               }
             }
@@ -1215,7 +1215,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/EvalCase-Input"
+                "$ref": "#/components/schemas/EvalCase"
               }
             }
           }
@@ -1341,7 +1341,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/EvalCase-Output"
+                  "$ref": "#/components/schemas/EvalCase"
                 }
               }
             }
@@ -1398,7 +1398,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/EvalCase-Input"
+                "$ref": "#/components/schemas/EvalCase"
               }
             }
           }
@@ -1747,7 +1747,7 @@
                 "schema": {
                   "anyOf": [
                     {
-                      "$ref": "#/components/schemas/Part-Output"
+                      "$ref": "#/components/schemas/Part"
                     },
                     {
                       "type": "null"
@@ -1962,7 +1962,7 @@
                 "schema": {
                   "anyOf": [
                     {
-                      "$ref": "#/components/schemas/Part-Output"
+                      "$ref": "#/components/schemas/Part"
                     },
                     {
                       "type": "null"
@@ -2890,7 +2890,7 @@
                 "$ref": "#/components/schemas/HTTPBase"
               },
               {
-                "$ref": "#/components/schemas/OAuth2-Input"
+                "$ref": "#/components/schemas/OAuth2"
               },
               {
                 "$ref": "#/components/schemas/OpenIdConnect"
@@ -2910,7 +2910,7 @@
           "rawAuthCredential": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/AuthCredential-Input"
+                "$ref": "#/components/schemas/AuthCredential"
               },
               {
                 "type": "null"
@@ -2920,7 +2920,7 @@
           "exchangedAuthCredential": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/AuthCredential-Input"
+                "$ref": "#/components/schemas/AuthCredential"
               },
               {
                 "type": "null"
@@ -3051,73 +3051,7 @@
         "title": "AuthConfigOidcConfig",
         "description": "Config for user OIDC auth.\n\nThis data type is not supported in Gemini API."
       },
-      "AuthCredential-Input": {
-        "properties": {
-          "authType": {
-            "$ref": "#/components/schemas/AuthCredentialTypes"
-          },
-          "resourceRef": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Resourceref"
-          },
-          "apiKey": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Apikey"
-          },
-          "http": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/HttpAuth"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "serviceAccount": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/ServiceAccount"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "oauth2": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/OAuth2Auth"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          }
-        },
-        "additionalProperties": true,
-        "type": "object",
-        "required": [
-          "authType"
-        ],
-        "title": "AuthCredential",
-        "description": "Data class representing an authentication credential.\n\nTo exchange for the actual credential, please use\nCredentialExchanger.exchange_credential().\n\nExamples: API Key Auth\nAuthCredential(\n    auth_type=AuthCredentialTypes.API_KEY,\n    api_key=\"1234\",\n)\n\nExample: HTTP Auth\nAuthCredential(\n    auth_type=AuthCredentialTypes.HTTP,\n    http=HttpAuth(\n        scheme=\"basic\",\n        credentials=HttpCredentials(username=\"user\", password=\"password\"),\n    ),\n)\n\nExample: OAuth2 Bearer Token in HTTP Header\nAuthCredential(\n    auth_type=AuthCredentialTypes.HTTP,\n    http=HttpAuth(\n        scheme=\"bearer\",\n        credentials=HttpCredentials(token=\"eyAkaknabna....\"),\n    ),\n)\n\nExample: OAuth2 Auth with Authorization Code Flow\nAuthCredential(\n    auth_type=AuthCredentialTypes.OAUTH2,\n    oauth2=OAuth2Auth(\n        client_id=\"1234\",\n        client_secret=\"secret\",\n    ),\n)\n\nExample: OpenID Connect Auth\nAuthCredential(\n    auth_type=AuthCredentialTypes.OPEN_ID_CONNECT,\n    oauth2=OAuth2Auth(\n        client_id=\"1234\",\n        client_secret=\"secret\",\n        redirect_uri=\"https://example.com\",\n        scopes=[\"scope1\", \"scope2\"],\n    ),\n)\n\nExample: Auth with resource reference\nAuthCredential(\n    auth_type=AuthCredentialTypes.API_KEY,\n    resource_ref=\"projects/1234/locations/us-central1/resources/resource1\",\n)"
-      },
-      "AuthCredential-Output": {
+      "AuthCredential": {
         "properties": {
           "authType": {
             "$ref": "#/components/schemas/AuthCredentialTypes"
@@ -3432,30 +3366,7 @@
         "title": "Citation",
         "description": "A citation for a piece of generatedcontent.\n\nThis data type is not supported in Gemini API."
       },
-      "CitationMetadata-Input": {
-        "properties": {
-          "citations": {
-            "anyOf": [
-              {
-                "items": {
-                  "$ref": "#/components/schemas/Citation"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Citations",
-            "description": "Contains citation information when the model directly quotes, at\n      length, from another source. Can include traditional websites and code\n      repositories.\n      "
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "title": "CitationMetadata",
-        "description": "Citation information when the model quotes another source."
-      },
-      "CitationMetadata-Output": {
+      "CitationMetadata": {
         "properties": {
           "citations": {
             "anyOf": [
@@ -3555,13 +3466,13 @@
         "title": "ComputerUse",
         "description": "Tool to support computer use."
       },
-      "Content-Input": {
+      "Content": {
         "properties": {
           "parts": {
             "anyOf": [
               {
                 "items": {
-                  "$ref": "#/components/schemas/Part-Input"
+                  "$ref": "#/components/schemas/Part"
                 },
                 "type": "array"
               },
@@ -3590,72 +3501,7 @@
         "title": "Content",
         "description": "Contains the multi-part content of a message."
       },
-      "Content-Output": {
-        "properties": {
-          "parts": {
-            "anyOf": [
-              {
-                "items": {
-                  "$ref": "#/components/schemas/Part-Output"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Parts",
-            "description": "List of parts that constitute a single message. Each part may have\n      a different IANA MIME type."
-          },
-          "role": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Role",
-            "description": "Optional. The producer of the content. Must be either 'user' or 'model'. If not set, the service will default to 'user'."
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "title": "Content",
-        "description": "Contains the multi-part content of a message."
-      },
-      "ConversationScenario-Input": {
-        "properties": {
-          "startingPrompt": {
-            "type": "string",
-            "title": "Startingprompt"
-          },
-          "conversationPlan": {
-            "type": "string",
-            "title": "Conversationplan"
-          },
-          "userPersona": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/UserPersona"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "required": [
-          "startingPrompt",
-          "conversationPlan"
-        ],
-        "title": "ConversationScenario",
-        "description": "Scenario for a conversation between a simulated user and the Agent under test."
-      },
-      "ConversationScenario-Output": {
+      "ConversationScenario": {
         "properties": {
           "startingPrompt": {
             "type": "string",
@@ -3688,7 +3534,7 @@
       "CreateEvalSetRequest": {
         "properties": {
           "evalSet": {
-            "$ref": "#/components/schemas/EvalSet-Input"
+            "$ref": "#/components/schemas/EvalSet"
           }
         },
         "type": "object",
@@ -3841,7 +3687,7 @@
         "title": "Environment",
         "description": "The environment being operated."
       },
-      "EvalCase-Input": {
+      "EvalCase": {
         "properties": {
           "evalId": {
             "type": "string",
@@ -3851,7 +3697,7 @@
             "anyOf": [
               {
                 "items": {
-                  "$ref": "#/components/schemas/Invocation-Input"
+                  "$ref": "#/components/schemas/Invocation"
                 },
                 "type": "array"
               },
@@ -3864,87 +3710,7 @@
           "conversationScenario": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/ConversationScenario-Input"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "sessionInput": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/SessionInput"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "creationTimestamp": {
-            "type": "number",
-            "title": "Creationtimestamp",
-            "default": 0.0
-          },
-          "rubrics": {
-            "anyOf": [
-              {
-                "items": {
-                  "$ref": "#/components/schemas/Rubric"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Rubrics"
-          },
-          "finalSessionState": {
-            "anyOf": [
-              {
-                "additionalProperties": true,
-                "type": "object"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Finalsessionstate"
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "required": [
-          "evalId"
-        ],
-        "title": "EvalCase",
-        "description": "An eval case."
-      },
-      "EvalCase-Output": {
-        "properties": {
-          "evalId": {
-            "type": "string",
-            "title": "Evalid"
-          },
-          "conversation": {
-            "anyOf": [
-              {
-                "items": {
-                  "$ref": "#/components/schemas/Invocation-Output"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Conversation"
-          },
-          "conversationScenario": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/ConversationScenario-Output"
+                "$ref": "#/components/schemas/ConversationScenario"
               },
               {
                 "type": "null"
@@ -4253,13 +4019,13 @@
       "EvalMetricResultPerInvocation": {
         "properties": {
           "actualInvocation": {
-            "$ref": "#/components/schemas/Invocation-Output",
+            "$ref": "#/components/schemas/Invocation",
             "description": "The actual invocation, usually obtained by inferencing the agent."
           },
           "expectedInvocation": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/Invocation-Output"
+                "$ref": "#/components/schemas/Invocation"
               },
               {
                 "type": "null"
@@ -4327,7 +4093,7 @@
         "title": "EvalResult",
         "description": "This class has no field intentionally.\n\nThe goal here is to just give a new name to the class to align with the API\nendpoint."
       },
-      "EvalSet-Input": {
+      "EvalSet": {
         "properties": {
           "eval_set_id": {
             "type": "string",
@@ -4357,56 +4123,7 @@
           },
           "eval_cases": {
             "items": {
-              "$ref": "#/components/schemas/EvalCase-Input"
-            },
-            "type": "array",
-            "title": "Eval Cases"
-          },
-          "creation_timestamp": {
-            "type": "number",
-            "title": "Creation Timestamp",
-            "default": 0.0
-          }
-        },
-        "type": "object",
-        "required": [
-          "eval_set_id",
-          "eval_cases"
-        ],
-        "title": "EvalSet",
-        "description": "A set of eval cases."
-      },
-      "EvalSet-Output": {
-        "properties": {
-          "eval_set_id": {
-            "type": "string",
-            "title": "Eval Set Id"
-          },
-          "name": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Name"
-          },
-          "description": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Description"
-          },
-          "eval_cases": {
-            "items": {
-              "$ref": "#/components/schemas/EvalCase-Output"
+              "$ref": "#/components/schemas/EvalCase"
             },
             "type": "array",
             "title": "Eval Cases"
@@ -4492,7 +4209,7 @@
           "content": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/Content-Input"
+                "$ref": "#/components/schemas/Content"
               },
               {
                 "type": "null"
@@ -4502,7 +4219,7 @@
           "groundingMetadata": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/GroundingMetadata-Input"
+                "$ref": "#/components/schemas/GroundingMetadata"
               },
               {
                 "type": "null"
@@ -4589,7 +4306,7 @@
           "usageMetadata": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/GenerateContentResponseUsageMetadata-Input"
+                "$ref": "#/components/schemas/GenerateContentResponseUsageMetadata"
               },
               {
                 "type": "null"
@@ -4605,6 +4322,17 @@
                 "type": "null"
               }
             ]
+          },
+          "liveSessionId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Livesessionid"
           },
           "goAway": {
             "anyOf": [
@@ -4650,7 +4378,7 @@
           "logprobsResult": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/LogprobsResult-Input"
+                "$ref": "#/components/schemas/LogprobsResult"
               },
               {
                 "type": "null"
@@ -4670,7 +4398,7 @@
           "citationMetadata": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/CitationMetadata-Input"
+                "$ref": "#/components/schemas/CitationMetadata"
               },
               {
                 "type": "null"
@@ -4759,7 +4487,7 @@
           "content": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/Content-Output"
+                "$ref": "#/components/schemas/Content"
               },
               {
                 "type": "null"
@@ -4769,7 +4497,7 @@
           "groundingMetadata": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/GroundingMetadata-Output"
+                "$ref": "#/components/schemas/GroundingMetadata"
               },
               {
                 "type": "null"
@@ -4856,7 +4584,7 @@
           "usageMetadata": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/GenerateContentResponseUsageMetadata-Output"
+                "$ref": "#/components/schemas/GenerateContentResponseUsageMetadata"
               },
               {
                 "type": "null"
@@ -4872,6 +4600,17 @@
                 "type": "null"
               }
             ]
+          },
+          "liveSessionId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Livesessionid"
           },
           "goAway": {
             "anyOf": [
@@ -4917,7 +4656,7 @@
           "logprobsResult": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/LogprobsResult-Output"
+                "$ref": "#/components/schemas/LogprobsResult"
               },
               {
                 "type": "null"
@@ -4937,7 +4676,7 @@
           "citationMetadata": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/CitationMetadata-Output"
+                "$ref": "#/components/schemas/CitationMetadata"
               },
               {
                 "type": "null"
@@ -5074,7 +4813,7 @@
           "compaction": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/EventCompaction-Input"
+                "$ref": "#/components/schemas/EventCompaction"
               },
               {
                 "type": "null"
@@ -5184,7 +4923,7 @@
           },
           "requestedAuthConfigs": {
             "additionalProperties": {
-              "$ref": "#/components/schemas/google__adk__auth__auth_tool__AuthConfig-Output"
+              "$ref": "#/components/schemas/google__adk__auth__auth_tool__AuthConfig"
             },
             "type": "object",
             "title": "Requestedauthconfigs"
@@ -5199,7 +4938,7 @@
           "compaction": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/EventCompaction-Output"
+                "$ref": "#/components/schemas/EventCompaction"
               },
               {
                 "type": "null"
@@ -5260,7 +4999,7 @@
         "title": "EventActions",
         "description": "Represents the actions attached to an event."
       },
-      "EventCompaction-Input": {
+      "EventCompaction": {
         "properties": {
           "startTimestamp": {
             "type": "number",
@@ -5271,31 +5010,7 @@
             "title": "Endtimestamp"
           },
           "compactedContent": {
-            "$ref": "#/components/schemas/Content-Input"
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "required": [
-          "startTimestamp",
-          "endTimestamp",
-          "compactedContent"
-        ],
-        "title": "EventCompaction",
-        "description": "The compaction of the events."
-      },
-      "EventCompaction-Output": {
-        "properties": {
-          "startTimestamp": {
-            "type": "number",
-            "title": "Starttimestamp"
-          },
-          "endTimestamp": {
-            "type": "number",
-            "title": "Endtimestamp"
-          },
-          "compactedContent": {
-            "$ref": "#/components/schemas/Content-Output"
+            "$ref": "#/components/schemas/Content"
           }
         },
         "additionalProperties": false,
@@ -5749,90 +5464,7 @@
         "title": "FunctionDeclaration",
         "description": "Structured representation of a function declaration as defined by the [OpenAPI 3.0 specification](https://spec.openapis.org/oas/v3.0.3).\n\nIncluded in this declaration are the function name, description, parameters\nand response type. This FunctionDeclaration is a representation of a block of\ncode that can be used as a `Tool` by the model and executed by the client."
       },
-      "FunctionResponse-Input": {
-        "properties": {
-          "willContinue": {
-            "anyOf": [
-              {
-                "type": "boolean"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Willcontinue",
-            "description": "Signals that function call continues, and more responses will be returned, turning the function call into a generator. Is only applicable to NON_BLOCKING function calls (see FunctionDeclaration.behavior for details), ignored otherwise. If false, the default, future responses will not be considered. Is only applicable to NON_BLOCKING function calls, is ignored otherwise. If set to false, future responses will not be considered. It is allowed to return empty `response` with `will_continue=False` to signal that the function call is finished."
-          },
-          "scheduling": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/FunctionResponseScheduling"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Specifies how the response should be scheduled in the conversation. Only applicable to NON_BLOCKING function calls, is ignored otherwise. Defaults to WHEN_IDLE."
-          },
-          "parts": {
-            "anyOf": [
-              {
-                "items": {
-                  "$ref": "#/components/schemas/FunctionResponsePart"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Parts",
-            "description": "List of parts that constitute a function response. Each part may\n      have a different IANA MIME type."
-          },
-          "id": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Id",
-            "description": "Optional. The id of the function call this response is for. Populated by the client to match the corresponding function call `id`."
-          },
-          "name": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Name",
-            "description": "Required. The name of the function to call. Matches [FunctionDeclaration.name] and [FunctionCall.name]."
-          },
-          "response": {
-            "anyOf": [
-              {
-                "additionalProperties": true,
-                "type": "object"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Response",
-            "description": "Required. The function response in JSON object format. Use \"output\" key to specify function output and \"error\" key to specify error details (if any). If \"output\" and \"error\" keys are not specified, then whole \"response\" is treated as function output."
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "title": "FunctionResponse",
-        "description": "A function response."
-      },
-      "FunctionResponse-Output": {
+      "FunctionResponse": {
         "properties": {
           "willContinue": {
             "anyOf": [
@@ -6046,158 +5678,7 @@
         "title": "FunctionResponseScheduling",
         "description": "Specifies how the response should be scheduled in the conversation."
       },
-      "GenerateContentResponseUsageMetadata-Input": {
-        "properties": {
-          "cacheTokensDetails": {
-            "anyOf": [
-              {
-                "items": {
-                  "$ref": "#/components/schemas/ModalityTokenCount"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Cachetokensdetails",
-            "description": "Output only. A detailed breakdown of the token count for each modality in the cached content."
-          },
-          "cachedContentTokenCount": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Cachedcontenttokencount",
-            "description": "Output only. The number of tokens in the cached content that was used for this request."
-          },
-          "candidatesTokenCount": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Candidatestokencount",
-            "description": "The total number of tokens in the generated candidates."
-          },
-          "candidatesTokensDetails": {
-            "anyOf": [
-              {
-                "items": {
-                  "$ref": "#/components/schemas/ModalityTokenCount"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Candidatestokensdetails",
-            "description": "Output only. A detailed breakdown of the token count for each modality in the generated candidates."
-          },
-          "promptTokenCount": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Prompttokencount",
-            "description": "The total number of tokens in the prompt. This includes any text, images, or other media provided in the request. When `cached_content` is set, this also includes the number of tokens in the cached content."
-          },
-          "promptTokensDetails": {
-            "anyOf": [
-              {
-                "items": {
-                  "$ref": "#/components/schemas/ModalityTokenCount"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Prompttokensdetails",
-            "description": "Output only. A detailed breakdown of the token count for each modality in the prompt."
-          },
-          "thoughtsTokenCount": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Thoughtstokencount",
-            "description": "Output only. The number of tokens that were part of the model's generated \"thoughts\" output, if applicable."
-          },
-          "toolUsePromptTokenCount": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Tooluseprompttokencount",
-            "description": "Output only. The number of tokens in the results from tool executions, which are provided back to the model as input, if applicable."
-          },
-          "toolUsePromptTokensDetails": {
-            "anyOf": [
-              {
-                "items": {
-                  "$ref": "#/components/schemas/ModalityTokenCount"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Tooluseprompttokensdetails",
-            "description": "Output only. A detailed breakdown by modality of the token counts from the results of tool executions, which are provided back to the model as input."
-          },
-          "totalTokenCount": {
-            "anyOf": [
-              {
-                "type": "integer"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Totaltokencount",
-            "description": "The total number of tokens for the entire request. This is the sum of `prompt_token_count`, `candidates_token_count`, `tool_use_prompt_token_count`, and `thoughts_token_count`."
-          },
-          "trafficType": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/TrafficType"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Output only. The traffic type for this request."
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "title": "GenerateContentResponseUsageMetadata",
-        "description": "Usage metadata about the content generation request and response.\n\nThis message provides a detailed breakdown of token usage and other relevant\nmetrics. This data type is not supported in Gemini API."
-      },
-      "GenerateContentResponseUsageMetadata-Output": {
+      "GenerateContentResponseUsageMetadata": {
         "properties": {
           "cacheTokensDetails": {
             "anyOf": [
@@ -6511,7 +5992,7 @@
         "title": "GoogleTypeDate",
         "description": "Represents a whole or partial calendar date, such as a birthday.\n\nThe time of day and time zone are either specified elsewhere or are\ninsignificant. The date is relative to the Gregorian Calendar. This can\nrepresent one of the following: * A full date, with non-zero year, month, and\nday values. * A month and day, with a zero year (for example, an anniversary).\n* A year on its own, with a zero month and a zero day. * A year and month,\nwith a zero day (for example, a credit card expiration date). Related types: *\ngoogle.type.TimeOfDay * google.type.DateTime * google.protobuf.Timestamp. This\ndata type is not supported in Gemini API."
       },
-      "GroundingChunk-Input": {
+      "GroundingChunk": {
         "properties": {
           "image": {
             "anyOf": [
@@ -6527,7 +6008,7 @@
           "maps": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/GroundingChunkMaps-Input"
+                "$ref": "#/components/schemas/GroundingChunkMaps"
               },
               {
                 "type": "null"
@@ -6538,59 +6019,7 @@
           "retrievedContext": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/GroundingChunkRetrievedContext-Input"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "A grounding chunk from a data source retrieved by a retrieval tool, such as Vertex AI Search. See the `RetrievedContext` message for details"
-          },
-          "web": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/GroundingChunkWeb"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "A grounding chunk from a web page, typically from Google Search. See the `Web` message for details."
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "title": "GroundingChunk",
-        "description": "A piece of evidence that supports a claim made by the model.\n\nThis is used to show a citation for a claim made by the model. When grounding\nis enabled, the model returns a `GroundingChunk` that contains a reference to\nthe source of the information."
-      },
-      "GroundingChunk-Output": {
-        "properties": {
-          "image": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/GroundingChunkImage"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "A grounding chunk from an image search result. See the `Image` message for details."
-          },
-          "maps": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/GroundingChunkMaps-Output"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "A `Maps` chunk is a piece of evidence that comes from Google Maps.\n\n      It contains information about a place, such as its name, address, and\n      reviews. This is used to provide the user with rich, location-based\n      information."
-          },
-          "retrievedContext": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/GroundingChunkRetrievedContext-Output"
+                "$ref": "#/components/schemas/GroundingChunkRetrievedContext"
               },
               {
                 "type": "null"
@@ -6726,12 +6155,12 @@
         "title": "GroundingChunkImage",
         "description": "An `Image` chunk is a piece of evidence that comes from an image search result.\n\nIt contains the URI of the image search result and the URI of the image. This\nis used to provide the user with a link to the source of the information."
       },
-      "GroundingChunkMaps-Input": {
+      "GroundingChunkMaps": {
         "properties": {
           "placeAnswerSources": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/GroundingChunkMapsPlaceAnswerSources-Input"
+                "$ref": "#/components/schemas/GroundingChunkMapsPlaceAnswerSources"
               },
               {
                 "type": "null"
@@ -6804,135 +6233,7 @@
         "title": "GroundingChunkMaps",
         "description": "A `Maps` chunk is a piece of evidence that comes from Google Maps.\n\nIt contains information about a place, such as its name, address, and reviews.\nThis is used to provide the user with rich, location-based information."
       },
-      "GroundingChunkMaps-Output": {
-        "properties": {
-          "placeAnswerSources": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/GroundingChunkMapsPlaceAnswerSources-Output"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "The sources that were used to generate the place answer.\n\n      This includes review snippets and photos that were used to generate the\n      answer, as well as URIs to flag content."
-          },
-          "placeId": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Placeid",
-            "description": "This Place's resource name, in `places/{place_id}` format.\n\n      This can be used to look up the place in the Google Maps API."
-          },
-          "text": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Text",
-            "description": "The text of the place answer."
-          },
-          "title": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Title",
-            "description": "The title of the place."
-          },
-          "uri": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Uri",
-            "description": "The URI of the place."
-          },
-          "route": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/GroundingChunkMapsRoute"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Output only. Route information."
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "title": "GroundingChunkMaps",
-        "description": "A `Maps` chunk is a piece of evidence that comes from Google Maps.\n\nIt contains information about a place, such as its name, address, and reviews.\nThis is used to provide the user with rich, location-based information."
-      },
-      "GroundingChunkMapsPlaceAnswerSources-Input": {
-        "properties": {
-          "reviewSnippet": {
-            "anyOf": [
-              {
-                "items": {
-                  "$ref": "#/components/schemas/GroundingChunkMapsPlaceAnswerSourcesReviewSnippet"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Reviewsnippet",
-            "description": "Snippets of reviews that were used to generate the answer."
-          },
-          "flagContentUri": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Flagcontenturi",
-            "description": "A link where users can flag a problem with the generated answer."
-          },
-          "reviewSnippets": {
-            "anyOf": [
-              {
-                "items": {
-                  "$ref": "#/components/schemas/GroundingChunkMapsPlaceAnswerSourcesReviewSnippet"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Reviewsnippets",
-            "description": "Snippets of reviews that were used to generate the answer."
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "title": "GroundingChunkMapsPlaceAnswerSources",
-        "description": "The sources that were used to generate the place answer.\n\nThis includes review snippets and photos that were used to generate the\nanswer, as well as URIs to flag content."
-      },
-      "GroundingChunkMapsPlaceAnswerSources-Output": {
+      "GroundingChunkMapsPlaceAnswerSources": {
         "properties": {
           "reviewSnippet": {
             "anyOf": [
@@ -7161,101 +6462,7 @@
         "title": "GroundingChunkMapsRoute",
         "description": "Route information from Google Maps.\n\nThis data type is not supported in Gemini API."
       },
-      "GroundingChunkRetrievedContext-Input": {
-        "properties": {
-          "documentName": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Documentname",
-            "description": "Output only. The full resource name of the referenced Vertex AI Search document. This is used to identify the specific document that was retrieved. The format is `projects/{project}/locations/{location}/collections/{collection}/dataStores/{data_store}/branches/{branch}/documents/{document}`. This field is not supported in Gemini API."
-          },
-          "ragChunk": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/RagChunk"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Additional context for a Retrieval-Augmented Generation (RAG) retrieval result. This is populated only when the RAG retrieval tool is used. This field is not supported in Gemini API."
-          },
-          "text": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Text",
-            "description": "The content of the retrieved data source."
-          },
-          "title": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Title",
-            "description": "The title of the retrieved data source."
-          },
-          "uri": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Uri",
-            "description": "The URI of the retrieved data source."
-          },
-          "customMetadata": {
-            "anyOf": [
-              {
-                "items": {
-                  "$ref": "#/components/schemas/GroundingChunkCustomMetadata"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Custommetadata",
-            "description": "Optional. User-provided metadata about the retrieved context. This field is not supported in Vertex AI."
-          },
-          "fileSearchStore": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Filesearchstore",
-            "description": "Optional. Name of the `FileSearchStore` containing the document. Example: `fileSearchStores/123`. This field is not supported in Vertex AI."
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "title": "GroundingChunkRetrievedContext",
-        "description": "Context retrieved from a data source to ground the model's response.\n\nThis is used when a retrieval tool fetches information from a user-provided\ncorpus or a public dataset."
-      },
-      "GroundingChunkRetrievedContext-Output": {
+      "GroundingChunkRetrievedContext": {
         "properties": {
           "documentName": {
             "anyOf": [
@@ -7416,7 +6623,7 @@
         "title": "GroundingChunkWeb",
         "description": "A `Web` chunk is a piece of evidence that comes from a web page.\n\nIt contains the URI of the web page, the title of the page, and the domain of\nthe page. This is used to provide the user with a link to the source of the\ninformation."
       },
-      "GroundingMetadata-Input": {
+      "GroundingMetadata": {
         "properties": {
           "imageSearchQueries": {
             "anyOf": [
@@ -7437,139 +6644,7 @@
             "anyOf": [
               {
                 "items": {
-                  "$ref": "#/components/schemas/GroundingChunk-Input"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Groundingchunks",
-            "description": "A list of supporting references retrieved from the grounding\n      source. This field is populated when the grounding source is Google\n      Search, Vertex AI Search, or Google Maps.\n      "
-          },
-          "groundingSupports": {
-            "anyOf": [
-              {
-                "items": {
-                  "$ref": "#/components/schemas/GroundingSupport"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Groundingsupports",
-            "description": "List of grounding support."
-          },
-          "retrievalMetadata": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/RetrievalMetadata"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Metadata related to retrieval in the grounding flow."
-          },
-          "searchEntryPoint": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/SearchEntryPoint"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Optional. Google search entry for the following-up web\n      searches."
-          },
-          "webSearchQueries": {
-            "anyOf": [
-              {
-                "items": {
-                  "type": "string"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Websearchqueries",
-            "description": "Web search queries for the following-up web search."
-          },
-          "googleMapsWidgetContextToken": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Googlemapswidgetcontexttoken",
-            "description": "Optional. Output only. A token that can be used to render a Google Maps widget with the contextual data. This field is populated only when the grounding source is Google Maps."
-          },
-          "retrievalQueries": {
-            "anyOf": [
-              {
-                "items": {
-                  "type": "string"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Retrievalqueries",
-            "description": "Optional. The queries that were executed by the retrieval tools. This field is populated only when the grounding source is a retrieval tool, such as Vertex AI Search. This field is not supported in Gemini API."
-          },
-          "sourceFlaggingUris": {
-            "anyOf": [
-              {
-                "items": {
-                  "$ref": "#/components/schemas/GroundingMetadataSourceFlaggingUri"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Sourceflagginguris",
-            "description": "Optional. Output only. A list of URIs that can be used to flag a place or review for inappropriate content. This field is populated only when the grounding source is Google Maps. This field is not supported in Gemini API."
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "title": "GroundingMetadata",
-        "description": "Information for various kinds of grounding."
-      },
-      "GroundingMetadata-Output": {
-        "properties": {
-          "imageSearchQueries": {
-            "anyOf": [
-              {
-                "items": {
-                  "type": "string"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Imagesearchqueries",
-            "description": "Optional. The image search queries that were used to generate the content. This field is populated only when the grounding source is Google Search with the Image Search search_type enabled."
-          },
-          "groundingChunks": {
-            "anyOf": [
-              {
-                "items": {
-                  "$ref": "#/components/schemas/GroundingChunk-Output"
+                  "$ref": "#/components/schemas/GroundingChunk"
                 },
                 "type": "array"
               },
@@ -7951,7 +7026,7 @@
         "title": "ImageSearch",
         "description": "Image search for grounding and related configurations."
       },
-      "IntermediateData-Input": {
+      "IntermediateData": {
         "properties": {
           "toolUses": {
             "items": {
@@ -7963,7 +7038,7 @@
           },
           "toolResponses": {
             "items": {
-              "$ref": "#/components/schemas/FunctionResponse-Input"
+              "$ref": "#/components/schemas/FunctionResponse"
             },
             "type": "array",
             "title": "Toolresponses",
@@ -7977,7 +7052,7 @@
                 },
                 {
                   "items": {
-                    "$ref": "#/components/schemas/Part-Input"
+                    "$ref": "#/components/schemas/Part"
                   },
                   "type": "array"
                 }
@@ -7996,52 +7071,7 @@
         "title": "IntermediateData",
         "description": "Container for intermediate data that an agent would generate as it responds with a final answer."
       },
-      "IntermediateData-Output": {
-        "properties": {
-          "toolUses": {
-            "items": {
-              "$ref": "#/components/schemas/FunctionCall"
-            },
-            "type": "array",
-            "title": "Tooluses",
-            "default": []
-          },
-          "toolResponses": {
-            "items": {
-              "$ref": "#/components/schemas/FunctionResponse-Output"
-            },
-            "type": "array",
-            "title": "Toolresponses",
-            "default": []
-          },
-          "intermediateResponses": {
-            "items": {
-              "prefixItems": [
-                {
-                  "type": "string"
-                },
-                {
-                  "items": {
-                    "$ref": "#/components/schemas/Part-Output"
-                  },
-                  "type": "array"
-                }
-              ],
-              "type": "array",
-              "maxItems": 2,
-              "minItems": 2
-            },
-            "type": "array",
-            "title": "Intermediateresponses",
-            "default": []
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "title": "IntermediateData",
-        "description": "Container for intermediate data that an agent would generate as it responds with a final answer."
-      },
-      "Invocation-Input": {
+      "Invocation": {
         "properties": {
           "invocationId": {
             "type": "string",
@@ -8049,12 +7079,12 @@
             "default": ""
           },
           "userContent": {
-            "$ref": "#/components/schemas/Content-Input"
+            "$ref": "#/components/schemas/Content"
           },
           "finalResponse": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/Content-Input"
+                "$ref": "#/components/schemas/Content"
               },
               {
                 "type": "null"
@@ -8064,10 +7094,10 @@
           "intermediateData": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/IntermediateData-Input"
+                "$ref": "#/components/schemas/IntermediateData"
               },
               {
-                "$ref": "#/components/schemas/InvocationEvents-Input"
+                "$ref": "#/components/schemas/InvocationEvents"
               },
               {
                 "type": "null"
@@ -8113,79 +7143,7 @@
         "title": "Invocation",
         "description": "Represents a single invocation."
       },
-      "Invocation-Output": {
-        "properties": {
-          "invocationId": {
-            "type": "string",
-            "title": "Invocationid",
-            "default": ""
-          },
-          "userContent": {
-            "$ref": "#/components/schemas/Content-Output"
-          },
-          "finalResponse": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/Content-Output"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "intermediateData": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/IntermediateData-Output"
-              },
-              {
-                "$ref": "#/components/schemas/InvocationEvents-Output"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Intermediatedata"
-          },
-          "creationTimestamp": {
-            "type": "number",
-            "title": "Creationtimestamp",
-            "default": 0.0
-          },
-          "rubrics": {
-            "anyOf": [
-              {
-                "items": {
-                  "$ref": "#/components/schemas/Rubric"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Rubrics"
-          },
-          "appDetails": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/AppDetails"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "required": [
-          "userContent"
-        ],
-        "title": "Invocation",
-        "description": "Represents a single invocation."
-      },
-      "InvocationEvent-Input": {
+      "InvocationEvent": {
         "properties": {
           "author": {
             "type": "string",
@@ -8194,7 +7152,7 @@
           "content": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/Content-Input"
+                "$ref": "#/components/schemas/Content"
               },
               {
                 "type": "null"
@@ -8211,52 +7169,11 @@
         "title": "InvocationEvent",
         "description": "An immutable record representing a specific point in the agent's invocation.\n\nIt captures agent's replies, requests to use tools (function calls), and tool\nresults.\n\nThis structure is a simple projection of the actual `Event` datamodel that\nis intended for the Eval System."
       },
-      "InvocationEvent-Output": {
-        "properties": {
-          "author": {
-            "type": "string",
-            "title": "Author"
-          },
-          "content": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/Content-Output"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "required": [
-          "author",
-          "content"
-        ],
-        "title": "InvocationEvent",
-        "description": "An immutable record representing a specific point in the agent's invocation.\n\nIt captures agent's replies, requests to use tools (function calls), and tool\nresults.\n\nThis structure is a simple projection of the actual `Event` datamodel that\nis intended for the Eval System."
-      },
-      "InvocationEvents-Input": {
+      "InvocationEvents": {
         "properties": {
           "invocationEvents": {
             "items": {
-              "$ref": "#/components/schemas/InvocationEvent-Input"
-            },
-            "type": "array",
-            "title": "Invocationevents"
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "title": "InvocationEvents",
-        "description": "A container for events that occur during the course of an invocation."
-      },
-      "InvocationEvents-Output": {
-        "properties": {
-          "invocationEvents": {
-            "items": {
-              "$ref": "#/components/schemas/InvocationEvent-Output"
+              "$ref": "#/components/schemas/InvocationEvent"
             },
             "type": "array",
             "title": "Invocationevents"
@@ -8404,57 +7321,7 @@
         "title": "LiveServerSessionResumptionUpdate",
         "description": "Update of the session resumption state.\n\nOnly sent if `session_resumption` was set in the connection config."
       },
-      "LogprobsResult-Input": {
-        "properties": {
-          "chosenCandidates": {
-            "anyOf": [
-              {
-                "items": {
-                  "$ref": "#/components/schemas/LogprobsResultCandidate"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Chosencandidates",
-            "description": "A list of the chosen candidate tokens at each decoding step. The length of this list is equal to the total number of decoding steps. Note that the chosen candidate might not be in `top_candidates`."
-          },
-          "topCandidates": {
-            "anyOf": [
-              {
-                "items": {
-                  "$ref": "#/components/schemas/LogprobsResultTopCandidates"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Topcandidates",
-            "description": "A list of the top candidate tokens at each decoding step. The length of this list is equal to the total number of decoding steps."
-          },
-          "logProbabilitySum": {
-            "anyOf": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Logprobabilitysum",
-            "description": "Sum of log probabilities for all tokens. This field is not supported in Vertex AI."
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "title": "LogprobsResult",
-        "description": "The log probabilities of the tokens generated by the model.\n\nThis is useful for understanding the model's confidence in its predictions and\nfor debugging. For example, you can use log probabilities to identify when the\nmodel is making a less confident prediction or to explore alternative\nresponses that the model considered. A low log probability can also indicate\nthat the model is \"hallucinating\" or generating factually incorrect\ninformation."
-      },
-      "LogprobsResult-Output": {
+      "LogprobsResult": {
         "properties": {
           "chosenCandidates": {
             "anyOf": [
@@ -8691,35 +7558,7 @@
         "title": "ModalityTokenCount",
         "description": "Represents token counting info for a single modality."
       },
-      "OAuth2-Input": {
-        "properties": {
-          "type": {
-            "$ref": "#/components/schemas/SecuritySchemeType",
-            "default": "oauth2"
-          },
-          "description": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Description"
-          },
-          "flows": {
-            "$ref": "#/components/schemas/OAuthFlows"
-          }
-        },
-        "additionalProperties": true,
-        "type": "object",
-        "required": [
-          "flows"
-        ],
-        "title": "OAuth2"
-      },
-      "OAuth2-Output": {
+      "OAuth2": {
         "properties": {
           "type": {
             "$ref": "#/components/schemas/SecuritySchemeType",
@@ -9249,7 +8088,7 @@
         "title": "Outcome",
         "description": "Outcome of the code execution."
       },
-      "Part-Input": {
+      "Part": {
         "properties": {
           "mediaResolution": {
             "anyOf": [
@@ -9309,176 +8148,7 @@
           "functionResponse": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/FunctionResponse-Input"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Optional. The result of a function call. This is used to provide the model with the result of a function call that it predicted."
-          },
-          "inlineData": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/Blob"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Optional. The inline data content of the part. This can be used to include images, audio, or video in a request."
-          },
-          "text": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Text",
-            "description": "Optional. The text content of the part. When sent from the VSCode Gemini Code Assist extension, references to @mentioned items will be converted to markdown boldface text. For example `@my-repo` will be converted to and sent as `**my-repo**` by the IDE agent."
-          },
-          "thought": {
-            "anyOf": [
-              {
-                "type": "boolean"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Thought",
-            "description": "Optional. Indicates whether the `part` represents the model's thought process or reasoning."
-          },
-          "thoughtSignature": {
-            "anyOf": [
-              {
-                "type": "string",
-                "contentEncoding": "base64",
-                "contentMediaType": "application/octet-stream"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Thoughtsignature",
-            "description": "Optional. An opaque signature for the thought so it can be reused in subsequent requests."
-          },
-          "videoMetadata": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/VideoMetadata"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Optional. Video metadata. The metadata should only be specified while the video data is presented in inline_data or file_data."
-          },
-          "toolCall": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/ToolCall"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Server-side tool call. This field is populated when the model predicts a tool invocation that should be executed on the server. The client is expected to echo this message back to the API."
-          },
-          "toolResponse": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/ToolResponse"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "The output from a server-side ToolCall execution. This field is populated by the client with the results of executing the corresponding ToolCall."
-          },
-          "partMetadata": {
-            "anyOf": [
-              {
-                "additionalProperties": true,
-                "type": "object"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Partmetadata",
-            "description": "Custom metadata associated with the Part. Agents using genai.Part as content representation may need to keep track of the additional information. For example it can be name of a file/source from which the Part originates or a way to multiplex multiple Part streams. This field is not supported in Vertex AI."
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "title": "Part",
-        "description": "A datatype containing media content.\n\nExactly one field within a Part should be set, representing the specific type\nof content being conveyed. Using multiple fields within the same `Part`\ninstance is considered invalid."
-      },
-      "Part-Output": {
-        "properties": {
-          "mediaResolution": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/PartMediaResolution"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Media resolution for the input media.\n    "
-          },
-          "codeExecutionResult": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/CodeExecutionResult"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Optional. The result of executing the ExecutableCode."
-          },
-          "executableCode": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/ExecutableCode"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Optional. Code generated by the model that is intended to be executed."
-          },
-          "fileData": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/FileData"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Optional. The URI-based data of the part. This can be used to include files from Google Cloud Storage."
-          },
-          "functionCall": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/FunctionCall"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Optional. A predicted function call returned from the model. This contains the name of the function to call and the arguments to pass to the function."
-          },
-          "functionResponse": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/FunctionResponse-Output"
+                "$ref": "#/components/schemas/FunctionResponse"
               },
               {
                 "type": "null"
@@ -10173,7 +8843,7 @@
           "newMessage": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/Content-Input"
+                "$ref": "#/components/schemas/Content"
               },
               {
                 "type": "null"
@@ -10358,7 +9028,7 @@
             "description": "Artifact filename."
           },
           "artifact": {
-            "$ref": "#/components/schemas/Part-Input",
+            "$ref": "#/components/schemas/Part",
             "description": "Artifact payload encoded as google.genai.types.Part."
           },
           "customMetadata": {
@@ -11920,7 +10590,7 @@
         "title": "WebSearch",
         "description": "Standard web search for grounding and related configurations.\n\nOnly text results are returned."
       },
-      "google__adk__auth__auth_tool__AuthConfig-Output": {
+      "google__adk__auth__auth_tool__AuthConfig": {
         "properties": {
           "authScheme": {
             "anyOf": [
@@ -11931,7 +10601,7 @@
                 "$ref": "#/components/schemas/HTTPBase"
               },
               {
-                "$ref": "#/components/schemas/OAuth2-Output"
+                "$ref": "#/components/schemas/OAuth2"
               },
               {
                 "$ref": "#/components/schemas/OpenIdConnect"
@@ -11951,7 +10621,7 @@
           "rawAuthCredential": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/AuthCredential-Output"
+                "$ref": "#/components/schemas/AuthCredential"
               },
               {
                 "type": "null"
@@ -11961,7 +10631,7 @@
           "exchangedAuthCredential": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/AuthCredential-Output"
+                "$ref": "#/components/schemas/AuthCredential"
               },
               {
                 "type": "null"
