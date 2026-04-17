@@ -261,7 +261,7 @@ robust recovery. For example:
   automatically replaced with Temporal's deterministic equivalents
   (`workflow.now()`, `workflow.uuid4()`) when run in Workflow code (but not Activity code).
 - **ADK and Gemini modules** are configured for Temporal's
-  [sandbox](https://docs.temporal.io/develop/python/sandbox-environment)
+  [sandbox](https://docs.temporal.io/develop/python/best-practices/python-sdk-sandbox)
   environment with automatic passthrough.
 - **Pydantic serialization** is configured automatically for ADK's data types.
 
@@ -271,7 +271,7 @@ robust recovery. For example:
 | --- | --- |
 | Durable tool execution | `activity_tool` wraps tool functions as Activities, supporting long-running tools, automatic retries, and heartbeating |
 | MCP tool support | `TemporalMcpToolSet` executes MCP tools as Activities with full event propagation |
-| Human-in-the-loop | Your Agent Workflow can wait for [Signals](https://docs.temporal.io/signals) and [Updates](https://docs.temporal.io/messages#updates) to wait for human input, and clients can send those to resume the Agent |
+| Human-in-the-loop | Your Agent Workflow can wait for [Signals](https://docs.temporal.io/sending-messages#sending-signals) and [Updates](https://docs.temporal.io/sending-messages#sending-updates) to wait for human input, and clients can send those to resume the Agent |
 | Deterministic runtime | `GoogleAdkPlugin` replaces non-deterministic calls with Temporal-safe equivalents |
 | Debuggability | Every LLM call and tool execution is visible as an Activity in the Temporal UI, making it trivial to debug faults. |
 | Observability | Work with your favorite Observability solution using OpenTelemetry, with cross-process spans that are resilient to crashes. |

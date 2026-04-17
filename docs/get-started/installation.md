@@ -8,7 +8,7 @@
     [venv](https://docs.python.org/3/library/venv.html):
 
     ```shell
-    python -m venv .venv
+    python3 -m venv .venv
     ```
 
     Now, you can activate the virtual environment using the appropriate command for
@@ -127,4 +127,4 @@
 
 ## Next steps
 
-* Try creating your first agent with the [**Quickstart**](quickstart.md)
+* Try creating your first agent with the [**Get started**](/get-started/) guides.

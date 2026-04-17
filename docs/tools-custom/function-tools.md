@@ -563,9 +563,9 @@ The `AgentTool` class provides the following attributes for customizing its beha
 
 ### How it works
 
-1. When the `main_agent` receives the long text, its instruction tells it to use the 'summarize' tool for long texts.
+1. When the `root_agent` receives the long text, its instruction tells it to use the 'summarize' tool for long texts.
 2. The framework recognizes 'summarize' as an `AgentTool` that wraps the `summary_agent`.
-3. Behind the scenes, the `main_agent` will call the `summary_agent` with the long text as input.
+3. Behind the scenes, the `root_agent` will call the `summary_agent` with the long text as input.
 4. The `summary_agent` will process the text according to its instruction and generate a summary.
-5. **The response from the `summary_agent` is then passed back to the `main_agent`.**
-6. The `main_agent` can then take the summary and formulate its final response to the user (e.g., "Here's a summary of the text: ...")
+5. **The response from the `summary_agent` is then passed back to the `root_agent`.**
+6. The `root_agent` can then take the summary and formulate its final response to the user (e.g., "Here's a summary of the text: ...")

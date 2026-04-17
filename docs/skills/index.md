@@ -12,8 +12,7 @@ The structure of a Skill allows it to be loaded incrementally to minimize the
 impact on the operating context window of the agent.
 
 !!! example "Experimental"
-    The Skills feature is experimental and has some
-    [known limitations](#known-limitations). We welcome your
+    The Skills feature is experimental. We welcome your
     [feedback](https://github.com/google/adk-python/issues/new?template=feature_request.md&labels=skills)!
 
 ## Get started
@@ -39,7 +38,7 @@ my_skill_toolset = skill_toolset.SkillToolset(
 )
 
 root_agent = Agent(
-    model="gemini-2.5-flash",
+    model="gemini-flash-latest",
     name="skill_user_agent",
     description="An agent that can use specialized skills.",
     instruction=(
@@ -103,10 +102,6 @@ my_agent/
                 *.py          # utility scripts
 ```
 
-!!! warning "Script execution not supported"
-    Scripts execution is not yet supported and is a
-    [known limitation](#known-limitations).
-
 ### Define Skills in code {#inline-skills}
 
 In ADK agents, you can also define Skills within the code of the agent, using
@@ -135,14 +130,6 @@ greeting_skill = models.Skill(
     ),
 )
 ```
-
-## Known limitations {#known-limitations}
-
-The Skills feature is experimental and includes the following
-limitations:
-
--   **Script execution:** The Skills feature does not currently support
-    script execution (`scripts/` directory).
 
 ## Next steps
 

@@ -37,7 +37,7 @@ to be able to use the Computer Use Toolset.
     Create a Python virtual environment:
 
     ```shell
-    python -m venv .venv
+    python3 -m venv .venv
     ```
 
     Activate the Python virtual environment:

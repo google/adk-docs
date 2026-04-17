@@ -17,7 +17,7 @@ application entirely on your machine and is recommended for internal development
 
     ```bash
     # Create
-    python -m venv .venv
+    python3 -m venv .venv
     # Activate (each new terminal)
     # macOS/Linux: source .venv/bin/activate
     # Windows CMD: .venv\Scripts\activate.bat
@@ -743,9 +743,9 @@ You've successfully created and interacted with your first agent using ADK!
 ## 🛣️ Next steps
 
 * **Go to the tutorial**: Learn how to add memory, session, state to your agent:
-  [tutorial](../tutorials/index.md).
-* **Delve into advanced configuration:** Explore the [setup](installation.md)
+  [tutorial](/tutorials/).
+* **Delve into advanced configuration:** Explore the [setup](/get-started/installation/)
   section for deeper dives into project structure, configuration, and other
   interfaces.
 * **Understand Core Concepts:** Learn about
-  [agents concepts](../agents/index.md).
+  [agents concepts](/agents/).
