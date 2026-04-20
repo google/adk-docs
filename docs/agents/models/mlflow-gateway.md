@@ -19,6 +19,8 @@ Since MLflow AI Gateway exposes an OpenAI-compatible endpoint, you can connect A
 
 2. **Create a gateway endpoint** in the MLflow UI at `http://localhost:5000`. Navigate to **AI Gateway → Create Endpoint**, select a provider and model, and enter your provider API key (stored encrypted on the server). See the [MLflow AI Gateway documentation](https://mlflow.org/docs/latest/genai/governance/ai-gateway/endpoints/) for details.
 
+    ![MLflow AI Gateway — Create Endpoint](assets/mlflow-gateway-create-endpoint.png)
+
 3. **Install LiteLLM:**
 
     ```bash
