@@ -79,10 +79,10 @@ You can swap the underlying LLM provider at any time by reconfiguring the gatewa
 
 - The `api_key` parameter is required by LiteLLM but not validated by the gateway — set it to any non-empty string.
 - Behind a proxy or on a remote host, replace `localhost:5000` with your server address.
-- Combine with [MLflow Tracing](/integrations/mlflow/) for end-to-end observability of your ADK agents.
+- Combine with [MLflow Tracing](/integrations/mlflow-tracing/) for end-to-end observability of your ADK agents.
 
 ## Resources
 
 - [MLflow AI Gateway Documentation](https://mlflow.org/docs/latest/genai/governance/ai-gateway/): Official documentation for MLflow AI Gateway covering endpoint management, query APIs, and gateway features.
-- [MLflow Tracing for ADK](/integrations/mlflow/): Set up observability for your ADK agents with MLflow Tracing.
+- [MLflow Tracing for ADK](/integrations/mlflow-tracing/): Set up observability for your ADK agents with MLflow Tracing.
 - [LiteLLM model connector](/agents/models/litellm/): Documentation for the LiteLLM wrapper used to connect ADK agents to OpenAI-compatible endpoints.
