@@ -8,6 +8,7 @@ exclude_docs:
   api-reference/java/legal/*
 not_in_nav: |
   /integrations/*.md
+  /_includes/**
 
 # Repository
 repo_name: adk-docs
@@ -207,7 +208,8 @@ plugins:
         'observability/bigquery-agent-analytics.md': 'integrations/bigquery-agent-analytics.md'
         'observability/cloud-trace.md': 'integrations/cloud-trace.md'
         'observability/freeplay.md': 'integrations/freeplay.md'
-        'observability/mlflow.md': 'integrations/mlflow.md'
+        'observability/mlflow.md': 'integrations/mlflow-tracing.md'
+        'integrations/mlflow.md': 'integrations/mlflow-tracing.md'
         'observability/monocle.md': 'integrations/monocle.md'
         'observability/phoenix.md': 'integrations/phoenix.md'
         'observability/weave.md': 'integrations/weave.md'
@@ -317,6 +319,7 @@ nav:
       - Web Interface: runtime/web-interface.md
       - Command Line: runtime/command-line.md
       - API Server: runtime/api-server.md
+      - Ambient Agents: runtime/ambient-agents.md
       - Resume Agents: runtime/resume.md
       - Runtime Config: runtime/runconfig.md
       - Event Loop: runtime/event-loop.md

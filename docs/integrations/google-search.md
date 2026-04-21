@@ -35,7 +35,7 @@ The `google_search` tool allows the agent to perform web searches using Google S
     import {GOOGLE_SEARCH, LlmAgent} from '@google/adk';
 
     export const rootAgent = new LlmAgent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-flash-latest',
       name: 'root_agent',
       description:
           'an agent whose job it is to perform Google search queries and answer questions about the results.',

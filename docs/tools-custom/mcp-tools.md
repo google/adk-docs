@@ -90,7 +90,7 @@ TARGET_FOLDER_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "/
 # If you created ./adk_agent_samples/mcp_agent/your_folder,
 
 root_agent = LlmAgent(
-    model='gemini-2.5-flash',
+    model='gemini-flash-latest',
     name='filesystem_assistant_agent',
     instruction='Help the user manage their files. You can list files, read files, etc.',
     tools=[
@@ -151,9 +151,7 @@ Once the ADK Web UI loads in your browser:
 
 You should see the agent interacting with the MCP file system server, and the server's responses (file listings, file content) relayed through the agent. The `adk web` console (terminal where you ran the command) might also show logs from the `npx` process if it outputs to stderr.
 
-<img src="../../assets/adk-tool-mcp-filesystem-adk-web-demo.png" alt="MCP with ADK Web - FileSystem Example">
-
-
+![MCP with ADK Web - FileSystem Example](../assets/adk-tool-mcp-filesystem-adk-web-demo.png)
 
 For Java, refer to the following sample to define an agent that initializes the `McpToolset`:
 
@@ -193,7 +191,7 @@ public class McpAgentCreator {
 
         try (McpToolset toolset = new McpToolset(serverParams.toServerParameters())) {
             LlmAgent agent = LlmAgent.builder()
-                    .model("gemini-2.5-flash")
+                    .model("gemini-flash-latest")
                     .name("enterprise_assistant")
                     .description("An agent to help users access their file systems")
                     .instruction(
@@ -249,7 +247,7 @@ import {LlmAgent, MCPToolset} from "@google/adk";
 const TARGET_FOLDER_PATH = "/path/to/your/folder";
 
 export const rootAgent = new LlmAgent({
-    model: "gemini-2.5-flash",
+    model: "gemini-flash-latest",
     name: "filesystem_assistant_agent",
     instruction: "Help the user manage their files. You can list files, read files, etc.",
     tools: [
@@ -321,7 +319,7 @@ if not GOOGLE_MAPS_API_KEY:
         # You might want to raise an error or exit if the key is crucial and not found.
 
 root_agent = Agent(
-    model='gemini-3-flash-preview',
+    model='gemini-flash-latest',
     name='travel_planner_agent',
     description='A helpful assistant for planning travel routes.',
     tools=[
@@ -373,8 +371,7 @@ from . import agent
 
 You should see the agent use the Google Maps Grounding Lite MCP tools to provide directions or location-based information.
 
-<img src="../../assets/adk-tool-maps-lite-mcp-adk-web-demo.png" alt="Google Maps Grounding Lite MCP with ADK Web Example">
-
+![Google Maps Grounding Lite MCP with ADK Web Example](../assets/adk-tool-maps-lite-mcp-adk-web-demo.png)
 
 For Java, refer to the following sample to define an agent that initializes the `McpToolset`:
 
@@ -395,7 +392,7 @@ import java.util.Map;
 public class MapsAgentCreator {
 
     /**
-     * Initializes an McpToolset for Google Maps Grounding Lite, 
+     * Initializes an McpToolset for Google Maps Grounding Lite,
      * creates an LlmAgent, sends a map-related prompt, and closes the toolset.
      */
     public static void main(String[] args) {
@@ -424,7 +421,7 @@ public class MapsAgentCreator {
         try (McpToolset toolset = new McpToolset(serverParams)) {
             // Build the Agent with the configured Toolset
             LlmAgent agent = LlmAgent.builder()
-                    .model("gemini-3-flash-preview")
+                    .model("gemini-flash-latest")
                     .name("travel_planner_agent")
                     .description("A helpful assistant for planning travel routes.")
                     .tools(toolset)
@@ -477,14 +474,14 @@ if (!googleMapsApiKey) {
 }
 
 export const rootAgent = new LlmAgent({
-    model: "gemini-3-flash-preview",
+    model: "gemini-flash-latest",
     name: "travel_planner_agent",
     description: "A helpful assistant for planning travel.",
     tools: [
         new MCPToolset({
             // Using SseConnectionParams to connect to the remote Grounding Lite service,
             // mirroring Python's StreamableHTTPConnectionParams.
-            type: "SseConnectionParams", 
+            type: "SseConnectionParams",
             url: "https://mapstools.googleapis.com/mcp",
             headers: {
                 "X-Goog-Api-Key": googleMapsApiKey,
@@ -669,7 +666,7 @@ if PATH_TO_YOUR_MCP_SERVER_SCRIPT == "/path/to/your/my_adk_mcp_server.py":
     # Optionally, raise an error if the path is critical
 
 root_agent = LlmAgent(
-    model='gemini-2.5-flash',
+    model='gemini-flash-latest',
     name='web_reader_mcp_client_agent',
     instruction="Use the 'load_web_page' tool to fetch content from a URL provided by the user.",
     tools=[
@@ -778,7 +775,7 @@ async def get_agent_async():
 
   # Use in an agent
   root_agent = LlmAgent(
-      model='gemini-2.5-flash', # Adjust model name if needed based on availability
+      model='gemini-flash-latest', # Adjust model name if needed based on availability
       name='enterprise_assistant',
       instruction='Help user accessing their file systems',
       tools=[toolset], # Provide the MCP tools to the ADK agent
@@ -869,7 +866,7 @@ from mcp import StdioServerParameters
 _allowed_path = os.path.dirname(os.path.abspath(__file__))
 
 root_agent = LlmAgent(
-    model='gemini-2.5-flash',
+    model='gemini-flash-latest',
     name='enterprise_assistant',
     instruction=f'Help user accessing their file systems. Allowed directory: {_allowed_path}',
     tools=[

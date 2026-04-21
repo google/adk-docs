@@ -227,7 +227,7 @@ To create an Application Integration Toolset for Integration Connectors, follow 
     from .tools import connector_tool
 
     root_agent = LlmAgent(
-        model='gemini-2.0-flash',
+        model='gemini-flash-latest',
         name='connector_agent',
         instruction="Help user, leverage the tools you have access to",
         tools=[connector_tool],
@@ -333,7 +333,7 @@ workflow as a tool for your agent or create a new one.
           from .tools import integration_tool, connector_tool
 
           root_agent = LlmAgent(
-              model='gemini-2.0-flash',
+              model='gemini-flash-latest',
               name='integration_agent',
               instruction="Help user, leverage the tools you have access to",
               tools=[integration_tool],
@@ -361,7 +361,7 @@ workflow as a tool for your agent or create a new one.
                     LlmAgent rootAgent = LlmAgent.builder()
                             .name("science-teacher")
                             .description("Science teacher agent")
-                            .model("gemini-2.0-flash")
+                            .model("gemini-flash-latest")
                             .instruction(
                                     "Help user, leverage the tools you have access to."
                             )

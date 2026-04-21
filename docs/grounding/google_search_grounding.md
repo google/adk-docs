@@ -4,7 +4,7 @@
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
-[Google Search Grounding tool](/tools/gemini-api/google-search/) is a powerful feature in the Agent Development Kit (ADK) that connects your AI agents directly to Google Search. By giving your agents access to real-time, authoritative information from the web, they can answer questions about recent events, current weather, stock prices, or any other dynamic data that falls outside the model's training window. The agent automatically decides when to search and seamlessly incorporates the results into its responses with proper citations.
+[Google Search Grounding tool](/integrations/google-search/) is a powerful feature in the Agent Development Kit (ADK) that connects your AI agents directly to Google Search. By giving your agents access to real-time, authoritative information from the web, they can answer questions about recent events, current weather, stock prices, or any other dynamic data that falls outside the model's training window. The agent automatically decides when to search and seamlessly incorporates the results into its responses with proper citations.
 
 ## Creating a Grounded Agent
 
@@ -18,7 +18,7 @@ To enable Google Search Grounding, you include the search tool in your agent def
 
     root_agent = Agent(
         name="google_search_agent",
-        model="gemini-2.5-flash",
+        model="gemini-flash-latest",
         instruction="Answer questions using Google Search when needed. Always cite sources.",
         description="Professional search assistant with Google Search capabilities",
         tools=[google_search]
@@ -32,7 +32,7 @@ To enable Google Search Grounding, you include the search tool in your agent def
 
     const rootAgent = new LlmAgent({
         name: "google_search_agent",
-        model: "gemini-2.5-flash",
+        model: "gemini-flash-latest",
         instruction: "Answer questions using Google Search when needed. Always cite sources.",
         description: "Professional search assistant with Google Search capabilities",
         tools: [GOOGLE_SEARCH],
@@ -47,7 +47,7 @@ To enable Google Search Grounding, you include the search tool in your agent def
 
     LlmAgent rootAgent = LlmAgent.builder()
         .name("google_search_agent")
-        .model("gemini-2.5-flash")
+        .model("gemini-flash-latest")
         .instruction("Answer questions using Google Search when needed. Always cite sources.")
         .description("Professional search assistant with Google Search capabilities")
         .tools(GoogleSearchTool.INSTANCE)
