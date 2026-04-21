@@ -298,7 +298,6 @@ nav:
       - vLLM: agents/models/vllm.md
       - LiteLLM: agents/models/litellm.md
       - LiteRT-LM: agents/models/litert-lm.md
-      - MLflow AI Gateway: agents/models/mlflow-gateway.md
     - Tools and Integrations:
       - integrations/index.md
     - Custom Tools:
