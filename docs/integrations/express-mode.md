@@ -83,8 +83,8 @@ Next, create your Agent Runtime instance using the Agent Platform SDK.
 
 ## Manage Sessions with `VertexAiSessionService` {#agent-runtime-session-service}
 
-[`VertexAiSessionService`](/sessions/session.md#sessionservice-implementations)
-is compatible with Agent Platform express mode API Keys. You can instead initialize
+[`VertexAiSessionService`](/sessions/session#sessionservice-implementations)
+is compatible with Agent Platform Express Mode API Keys. You can instead initialize
 the session object without any project or location.
 
 ```py

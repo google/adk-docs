@@ -1116,7 +1116,7 @@ ADK supports advanced tool patterns that integrate seamlessly with `run_live()`:
 
     **Code reference**: See `runners.py:828-865` (tool detection) and `function_tool.py:238-253` (parameter injection) for implementation details.
 
-    See the [Tools Guide](/tools/) for implementation examples.
+    See the [Tools Guide](/integrations/) for implementation examples.
 
 ### Key Takeaway
 

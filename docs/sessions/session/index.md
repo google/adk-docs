@@ -212,7 +212,7 @@ the storage backend that best suits your needs:
         [step](https://cloud.google.com/vertex-ai/docs/pipelines/configure-project#storage).
     *   A Reasoning Engine resource name/ID that can setup following this
         [tutorial](/deploy/agent-runtime/).
-    *   If you do not have a Google Cloud project and you want to try the VertexAiSessionService, see [Agent Platform Express Mode](/tools/google-cloud/express-mode/).
+    *   If you do not have a Google Cloud project and you want to try the VertexAiSessionService, see [Agent Platform Express Mode](/integrations/express-mode/).
 *   **Best for:** Scalable production applications deployed on Google Cloud,
     especially when integrating with other Agent Platform features.
 

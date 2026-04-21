@@ -37,7 +37,7 @@ my_agent/
 ### Define the agent code
 
 Create the code for a basic agent that uses the built-in
-[Google Search tool](/tools/built-in-tools/#google-search). Add the
+[Google Search tool](/integrations/google-search/). Add the
 following code to the `my_agent/agent.go` file in your project directory:
 
 ```go title="my_agent/agent.go"

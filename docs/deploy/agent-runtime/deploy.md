@@ -144,7 +144,7 @@ adk deploy agent_engine \
 For `region`, you can find a list of the supported regions on the
 [Agent Builder locations page](https://docs.cloud.google.com/agent-builder/locations#supported-regions-agent-engine).
 To learn about the CLI options for the `adk deploy agent_engine` command, see the
-[ADK CLI Reference](/api-reference/cli/cli.html#adk-deploy-agent-engine).
+[ADK CLI Reference](/api-reference/cli/#adk-deploy-agent-engine).
 
 ### Deploy command output
 
