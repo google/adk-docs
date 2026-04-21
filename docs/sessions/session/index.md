@@ -58,7 +58,7 @@ are its key properties:
         print(f"---------------------------------")
 
         # Clean up (optional for this example)
-        temp_service = await temp_service.delete_session(app_name=example_session.app_name,
+        await temp_service.delete_session(app_name=example_session.app_name,
                                     user_id=example_session.user_id, session_id=example_session.id)
         print("The final status of temp_service - ", temp_service)
        ```
@@ -212,7 +212,7 @@ the storage backend that best suits your needs:
         [step](https://cloud.google.com/vertex-ai/docs/pipelines/configure-project#storage).
     *   A Reasoning Engine resource name/ID that can setup following this
         [tutorial](/deploy/agent-engine/).
-    *   If you do not have a Google Cloud project and you want to try the VertexAiSessionService, see [Vertex AI Express Mode](/tools/google-cloud/express-mode/).
+    *   If you do not have a Google Cloud project and you want to try the VertexAiSessionService, see [Vertex AI Express Mode](/integrations/express-mode/).
 *   **Best for:** Scalable production applications deployed on Google Cloud,
     especially when integrating with other Vertex AI features.
 

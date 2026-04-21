@@ -1,0 +1,19 @@
+# Lychee link checker configuration
+# https://github.com/lycheeverse/lychee
+
+# Accepted HTTP status codes
+# 403 is included to avoid false positives from bot-blocking sites
+accept = ["200", "206", "302", "403"]
+
+# Exclude localhost/loopback links (used in code examples throughout the docs)
+exclude_loopback = true
+
+# Resolve directory links to index.md and try .md extension for missing files
+index_files = ["index.md", "index.html"]
+fallback_extensions = ["md"]
+
+# Exclude file paths from checking
+# Add paths here for directories containing partial/template files
+exclude_path = [
+    "_includes",
+]

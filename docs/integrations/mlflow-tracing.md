@@ -1,5 +1,5 @@
 ---
-catalog_title: MLflow
+catalog_title: MLflow Tracing
 catalog_description: Ingest OpenTelemetry traces for agent runs, tool calls, and model requests
 catalog_icon: /integrations/assets/mlflow.png
 catalog_tags: ["observability"]
@@ -89,7 +89,7 @@ calculator_tool = FunctionTool(func=calculator)
 
 root_agent = LlmAgent(
     name="MathAgent",
-    model="gemini-2.0-flash-exp",
+    model="gemini-flash-latest",
     instruction=(
         "You are a helpful assistant that can do math. "
         "When asked a math problem, use the calculator tool to solve it."

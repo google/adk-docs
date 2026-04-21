@@ -12,8 +12,7 @@ The structure of a Skill allows it to be loaded incrementally to minimize the
 impact on the operating context window of the agent.
 
 !!! example "Experimental"
-    The Skills feature is experimental and has some
-    [known limitations](#known-limitations). We welcome your
+    The Skills feature is experimental. We welcome your
     [feedback](https://github.com/google/adk-python/issues/new?template=feature_request.md&labels=skills)!
 
 ## Get started
@@ -114,11 +113,6 @@ my_agent/
                 *.ts          # utility scripts (TypeScript)
 ```
 
-!!! warning "Script execution support"
-    Scripts execution is supported in the TypeScript ADK when a `codeExecutor` is
-    configured. For the Python ADK, script execution is not yet supported and is a
-    [known limitation](#known-limitations).
-
 ### Define Skills in code {#inline-skills}
 
 In ADK agents, you can also define Skills within the code of the agent, as shown below. This method of Skill definition enables
@@ -154,15 +148,6 @@ you to dynamically modify skills from your ADK agent code.
     ```typescript
     --8<-- "examples/typescript/snippets/skills/inline_skill.ts:full_example"
     ```
-
-## Known limitations {#known-limitations}
-
-The Skills feature is experimental and includes the following
-limitations:
-
--   **Script execution (Python):** The Skills feature does not currently support
-    script execution (`scripts/` directory) in the Python ADK. This is
-    supported in the TypeScript ADK.
 
 ## Next steps
 

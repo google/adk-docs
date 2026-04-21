@@ -89,7 +89,7 @@ This example demonstrates the basic flow using the `InMemoryMemoryService` for s
     # --- Constants ---
     APP_NAME = "memory_example_app"
     USER_ID = "mem_user"
-    MODEL = "gemini-2.0-flash" # Use a valid model
+    MODEL = "gemini-flash-latest" # Use a valid model
 
     # --- Agent Definitions ---
     # Agent 1: Simple agent to capture information
@@ -201,7 +201,7 @@ This example demonstrates the basic flow using the `InMemoryMemoryService` for s
 
       private static final String APP_NAME = "memory_example_app";
       private static final String USER_ID = "mem_user";
-      private static final String MODEL = "gemini-2.0-flash";
+      private static final String MODEL = "gemini-flash-latest";
 
       public static void main(String[] args) {
         // Services
