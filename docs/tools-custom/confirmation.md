@@ -47,10 +47,13 @@ agent pattern.
 ## Boolean confirmation {#boolean-confirmation}
 
 When your tool only requires a simple `yes` or `no` from the user, you can
-append a confirmation step using the `FunctionTool` class as a wrapper. For
-example, if you have a tool called `reimburse`, you can enable a confirmation
-step by wrapping it with the `FunctionTool` class and setting the
-`require_confirmation` parameter to `True`, as shown in the following example:
+append a confirmation step. In Python, Go, and Java, you can enable this by
+wrapping the tool with the `FunctionTool` class and setting the
+`require_confirmation` parameter (or equivalent) to `True`. In TypeScript, you
+implement this logic manually within the `execute` function using the
+`ToolContext`.
+
+The following examples show how to enable boolean confirmation:
 
 === "Python"
 
@@ -73,38 +76,12 @@ step by wrapping it with the `FunctionTool` class and setting the
 
 === "TypeScript"
 
+    !!! note
+        ADK for TypeScript currently requires manual implementation of
+        confirmation logic within the tool's `execute` function.
+
     ```typescript
-    // In ADK TypeScript, confirmation logic is evaluated directly 
-    // inside the tool logic using the ToolContext.
-    const reimburseTool = new FunctionTool({
-      name: "reimburse",
-      description: "Reimburse an amount",
-      parameters: z.object({
-        amount: z.number()
-      }),
-      execute: async ({ amount }, toolContext) => {
-        const confirmation = toolContext.toolConfirmation;
-        
-        if (!confirmation) {
-          toolContext.requestConfirmation({
-            hint: "Do you want to reimburse " + amount + "?"
-          });
-          return { status: "Pending approval" };
-        }
-
-        if (!confirmation.confirmed) {
-          return { status: "Reimbursement rejected" };
-        }
-
-        // Proceed with actual tool logic
-        return { status: "ok", reimbursedAmount: amount };
-      }
-    });
-
-    const rootAgent = new LlmAgent({
-      // ...
-      tools: [reimburseTool]
-    });
+    --8<-- "examples/typescript/snippets/tools/confirmation/boolean_confirmation.ts:boolean_confirmation"
     ```
 
 === "Go"
@@ -143,7 +120,7 @@ step by wrapping it with the `FunctionTool` class and setting the
 
 ### Require confirmation function
 
-You can modify the behavior of the confirmation requirement by using a function that returns a boolean response based on the tool's input.
+You can modify the behavior of the confirmation requirement by using a function that returns a boolean response based on the tool's input. In TypeScript, this is handled by adding conditional logic to your `execute` function.
 
 === "Python"
 
@@ -167,40 +144,7 @@ You can modify the behavior of the confirmation requirement by using a function 
 === "TypeScript"
 
     ```typescript
-    // In ADK TypeScript, dynamic threshold confirmation logic is evaluated directly 
-    // inside the tool logic using the ToolContext.
-    const reimburseTool = new FunctionTool({
-      name: "reimburse",
-      description: "Reimburse an amount",
-      parameters: z.object({
-        amount: z.number()
-      }),
-      execute: async ({ amount }, toolContext) => {
-        // 1. Dynamic threshold check
-        if (amount > 1000) {
-          const confirmation = toolContext.toolConfirmation;
-          
-          if (!confirmation) {
-            toolContext.requestConfirmation({
-              hint: "Amount > 1000 requires approval."
-            });
-            return { status: "Pending manager approval." };
-          }
-
-          if (!confirmation.confirmed) {
-            return { status: "Reimbursement rejected." };
-          }
-        }
-
-        // 2. Proceed with actual tool logic
-        return { status: "ok", reimbursedAmount: amount };
-      }
-    });
-
-    const rootAgent = new LlmAgent({
-      // ...
-      tools: [reimburseTool]
-    });
+    --8<-- "examples/typescript/snippets/tools/confirmation/boolean_confirmation.ts:dynamic_confirmation"
     ```
 
 === "Go"
@@ -319,35 +263,7 @@ time off requests for an employee:
 === "TypeScript"
 
     ```typescript
-    async function requestTimeOff({ days }: { days: number }, toolContext: ToolContext) {
-      const confirmation = toolContext.toolConfirmation;
-      if (!confirmation) {
-        toolContext.requestConfirmation({
-          hint:
-            "Please approve or reject the tool call requestTimeOff() by " +
-            "responding with a FunctionResponse with an expected " +
-            "ToolConfirmation payload.",
-          payload: {
-            approved_days: 0,
-          },
-        });
-        // Return intermediate status indicating that the tool is waiting for
-        // a confirmation response:
-        return { status: "Manager approval is required." };
-      }
-
-      let approvedDays = (confirmation.payload as any)["approved_days"] as number;
-      approvedDays = Math.min(approvedDays, days);
-
-      if (approvedDays === 0) {
-        return { status: "The time off request is rejected.", approved_days: 0 };
-      }
-
-      return {
-        status: "ok",
-        approved_days: approvedDays,
-      };
-    }
+    --8<-- "examples/typescript/snippets/tools/confirmation/confirmation_example.ts:advanced_confirmation"
     ```
 
 === "Go"
