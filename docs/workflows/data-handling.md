@@ -221,7 +221,7 @@ def lookup_time_function(city: str):
 
 city_report_agent = Agent(
     name="city_report_agent",
-    model="gemini-2.5-flash",
+    model="gemini-flash-latest",
     input_schema=CityTime,
 
     # data selection based on class and parameter

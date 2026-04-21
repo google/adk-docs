@@ -406,7 +406,7 @@ When modifications to the tools to add guardrails aren't possible, the [**`Befor
 
     # Hypothetical Agent setup
     root_agent = LlmAgent( # Use specific agent type
-        model='gemini-2.5-flash',
+        model='gemini-flash-latest',
         name='root_agent',
         instruction="...",
         before_tool_callback=validate_tool_params, # Assign the callback
@@ -447,7 +447,7 @@ When modifications to the tools to add guardrails aren't possible, the [**`Befor
 
     // Hypothetical Agent setup
     const rootAgent = new LlmAgent({
-        model: 'gemini-2.5-flash',
+        model: 'gemini-flash-latest',
         name: 'root_agent',
         instruction: "...",
         beforeToolCallback: validateToolParams, // Assign the callback
@@ -497,7 +497,7 @@ When modifications to the tools to add guardrails aren't possible, the [**`Befor
 
     // Hypothetical Agent setup
     // agent, _ := llmagent.New(llmagent.Config{
-    // 	Model: "gemini-2.5-flash",
+    // 	Model: "gemini-flash-latest",
     // 	Name: "root_agent",
     // 	Instruction: "...",
     // 	BeforeToolCallbacks: []llmagent.BeforeToolCallback{validateToolParams},
@@ -535,7 +535,7 @@ When modifications to the tools to add guardrails aren't possible, the [**`Befor
     public void runAgent() {
     LlmAgent agent =
         LlmAgent.builder()
-            .model("gemini-2.5-flash")
+            .model("gemini-flash-latest")
             .name("AgentWithBeforeToolCallback")
             .instruction("...")
             .beforeToolCallback(this::validateToolParams) // Assign the callback
@@ -558,7 +558,7 @@ Some examples include:
 
 Code execution is a special tool that has extra security implications: sandboxing must be used to prevent model-generated code to compromise the local environment, potentially creating security issues.
 
-Google and the ADK provide several options for safe code execution. [Vertex Gemini Enterprise API code execution feature](https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/code-execution-api) enables agents to take advantage of sandboxed code execution server-side by enabling the tool\_execution tool. For code performing data analysis, you can use the [Code Executor](/tools/gemini-api/code-execution/) tool in ADK to call the [Vertex Code Interpreter Extension](https://cloud.google.com/vertex-ai/generative-ai/docs/extensions/code-interpreter).
+Google and the ADK provide several options for safe code execution. [Vertex Gemini Enterprise API code execution feature](https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/code-execution-api) enables agents to take advantage of sandboxed code execution server-side by enabling the tool\_execution tool. For code performing data analysis, you can use the [Code Executor](/integrations/code-execution/) tool in ADK to call the [Vertex Code Interpreter Extension](https://cloud.google.com/vertex-ai/generative-ai/docs/extensions/code-interpreter).
 
 If none of these options satisfy your requirements, you can build your own code executor using the building blocks provided by the ADK. We recommend creating execution environments that are hermetic: no network connections and API calls permitted to avoid uncontrolled data exfiltration; and full cleanup of data across execution to not create cross-user exfiltration concerns.
 

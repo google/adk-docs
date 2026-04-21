@@ -4,7 +4,7 @@
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
-[Vertex AI Search](/tools/google-cloud/vertex-ai-search/) is a powerful tool for the Agent Development Kit (ADK) that enables AI agents to access information from your private enterprise documents and data repositories. By connecting your agents to indexed enterprise content, you can provide users with answers grounded in your organization's knowledge base.
+[Vertex AI Search](/integrations/vertex-ai-search/) is a powerful tool for the Agent Development Kit (ADK) that enables AI agents to access information from your private enterprise documents and data repositories. By connecting your agents to indexed enterprise content, you can provide users with answers grounded in your organization's knowledge base.
 
 This feature is particularly valuable for enterprise-specific queries requiring information from internal documentation, policies, research papers, or any proprietary content that has been indexed in your [Vertex AI Search](https://cloud.google.com/enterprise-search) datastore. When your agent determines that information from your knowledge base is needed, it automatically searches your indexed documents and incorporates the results into its response with proper attribution.
 
@@ -42,7 +42,7 @@ To enable Vertex AI Search Grounding, you include the search tool in your agent 
 
     root_agent = Agent(
         name="vertex_search_agent",
-        model="gemini-2.5-flash",
+        model="gemini-flash-latest",
         instruction="Answer questions using Vertex AI Search to find information from internal documents. Always cite sources when available.",
         description="Enterprise document search assistant with Vertex AI Search capabilities",
         tools=[VertexAiSearchTool(data_store_id=DATASTORE_ID)]
@@ -60,7 +60,7 @@ To enable Vertex AI Search Grounding, you include the search tool in your agent 
 
     LlmAgent rootAgent = LlmAgent.builder()
         .name("vertex_search_agent")
-        .model("gemini-2.5-flash")
+        .model("gemini-flash-latest")
         .instruction("Answer questions using Vertex AI Search to find information from internal documents. Always cite sources when available.")
         .description("Enterprise document search assistant with Vertex AI Search capabilities")
         .tools(VertexAiSearchTool.builder().dataStoreId(DATASTORE_ID).build())
