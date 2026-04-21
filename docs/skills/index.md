@@ -42,7 +42,7 @@ or load the skill from a file definition, as shown below:
     )
 
     root_agent = Agent(
-        model="gemini-2.0-flash",
+        model="gemini-flash-latest",
         name="skill_user_agent",
         description="An agent that can use specialized skills.",
         instruction=(
