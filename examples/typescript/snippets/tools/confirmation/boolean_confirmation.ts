@@ -9,35 +9,40 @@ import {z} from 'zod';
 
 // --8<-- [start:boolean_confirmation]
 /**
- * Basic boolean confirmation logic.
+ * A reimbursement tool with dynamic confirmation logic.
  */
 export const reimburseTool = new FunctionTool({
   name: 'reimburse',
-  description: 'Reimburse an amount. The user must confirm the amount before processing.',
+  description: 'Reimburse an amount. Large amounts (>1000) require manager approval.',
   parameters: z.object({
-    // Using coerce to number to handle cases where the model might pass a string like "600".
     amount: z.coerce.number().describe('The amount to reimburse.'),
   }),
   execute: async ({amount}, toolContext) => {
-    // Check if we already have a confirmed response from the system.
+    // 1. Check if we already have a confirmed response.
     if (toolContext?.toolConfirmation?.confirmed) {
+      const isLarge = amount > 1000;
       return {
         status: 'SUCCESS',
-        message: `Reimbursement of ${amount} has been successfully processed.`,
+        message: isLarge 
+          ? `Large reimbursement of ${amount} approved by manager and processed.`
+          : `Reimbursement of ${amount} has been successfully processed.`,
       };
     }
 
-    // Otherwise, request a tool confirmation.
-    // This will pause the agent and trigger a confirmation UI in supported frontends.
+    // 2. Request a tool confirmation.
+    const isLarge = amount > 1000;
     toolContext?.requestConfirmation({
-      hint: `Do you want to reimburse ${amount}?`,
+      hint: isLarge 
+        ? `The amount ${amount} exceeds the $1000 limit and requires manager approval.`
+        : `Do you want to reimburse ${amount}?`,
       payload: {amount},
     });
 
-    // Return a status that tells the agent we are waiting.
+    // 3. Return a status that tells the agent we are waiting.
+    // Note: The model won't see this until the turn resumes after confirmation.
     return {
-      status: 'AWAITING_CONFIRMATION',
-      message: 'This request requires user approval to proceed.',
+      status: isLarge ? 'AWAITING_MANAGER_APPROVAL' : 'AWAITING_CONFIRMATION',
+      message: 'This request requires approval to proceed.',
     };
   },
 });
@@ -48,9 +53,15 @@ export const rootAgent = new LlmAgent({
   instruction: `You are a Finance Assistant. 
   - You MUST use the 'reimburse' tool for ALL reimbursement requests.
   - MANDATORY: Every tool call MUST be accompanied by a text response in the same message.
-  - EXAMPLE:
-    User: "Reimburse me $300"
-    Model: "I am initiating the reimbursement request for 300. Please confirm it to proceed." [Tool Call: reimburse(amount=300)]
+  - THRESHOLD LOGIC:
+    - For amounts <= 1000: Say "I am initiating the reimbursement request for [amount]. Please confirm it to proceed."
+    - For amounts > 1000: Say "I am initiating the reimbursement request for [amount]. Since this exceeds $1000, manager approval is required. Please confirm the request to submit it for review."
+  - EXAMPLES:
+    User: "Reimburse me $45"
+    Model: "I am initiating the reimbursement request for 45. Please confirm it to proceed." [Tool Call: reimburse(amount=45)]
+
+    User: "Reimburse me $2500"
+    Model: "I am initiating the reimbursement request for 2500. Since this exceeds $1000, manager approval is required. Please confirm the request to submit it for review." [Tool Call: reimburse(amount=2500)]
   - If the user provides a currency symbol (like $), ignore it and pass only the number to the tool.
   - In the Web UI, the user will see a 'Confirm' button. In the terminal, the user should simulate a confirmation response.`,
   tools: [reimburseTool],
@@ -58,37 +69,8 @@ export const rootAgent = new LlmAgent({
 // --8<-- [end:boolean_confirmation]
 
 // --8<-- [start:dynamic_confirmation]
-/**
- * Dynamic threshold confirmation logic.
- */
-export const dynamicReimburseTool = new FunctionTool({
-  name: 'reimburse_with_threshold',
-  description: 'Reimburse an amount with a $1000 automatic approval limit.',
-  parameters: z.object({
-    amount: z.coerce.number().describe('The amount to reimburse.'),
-  }),
-  execute: async ({amount}, toolContext) => {
-    // 1. If it's a large amount, check for confirmation.
-    if (amount > 1000) {
-      if (toolContext?.toolConfirmation?.confirmed) {
-        return {
-          status: 'SUCCESS',
-          message: `Large reimbursement of ${amount} approved and processed.`,
-        };
-      }
-
-      toolContext?.requestConfirmation({
-        hint: `The amount ${amount} exceeds the $1000 limit. Do you authorize this?`,
-        payload: {amount},
-      });
-      return {status: 'AWAITING_MANAGER_APPROVAL'};
-    }
-
-    // 2. Automatic approval for small amounts.
-    return {
-      status: 'SUCCESS',
-      message: `Reimbursement of ${amount} processed automatically.`,
-    };
-  },
-});
+/* 
+  Note: In TypeScript, dynamic threshold logic is implemented 
+  directly within the tool's 'execute' function as shown above.
+*/
 // --8<-- [end:dynamic_confirmation]
