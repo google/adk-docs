@@ -5,7 +5,7 @@
  */
 
 // [START full_example]
-import {Skill} from '@google/adk';
+import {Agent, Skill, SkillToolset} from '@google/adk';
 
 const greetingSkill: Skill = {
   frontmatter: {
@@ -21,4 +21,16 @@ const greetingSkill: Skill = {
     },
   },
 };
+
+const mySkillToolset = new SkillToolset([greetingSkill]);
+
+const rootAgent = new Agent({
+  model: 'gemini-flash-latest',
+  name: 'greeting_agent',
+  description: 'An agent that uses an inline greeting skill.',
+  instruction: 'You are a helpful assistant that uses skills to greet people.',
+  tools: [mySkillToolset],
+});
+
+export default rootAgent;
 // [END full_example]

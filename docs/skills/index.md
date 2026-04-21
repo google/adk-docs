@@ -37,7 +37,8 @@ or load the skill from a file definition, as shown below:
     )
 
     my_skill_toolset = skill_toolset.SkillToolset(
-        skills=[weather_skill]
+        skills=[weather_skill],
+        additional_tools=[get_weather_tool],
     )
 
     root_agent = Agent(

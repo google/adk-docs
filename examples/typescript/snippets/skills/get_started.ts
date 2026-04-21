@@ -5,20 +5,35 @@
  */
 
 // [START full_example]
-import {Agent, SkillToolset, loadSkillFromDir} from '@google/adk';
+import {Agent, FunctionTool, SkillToolset, loadSkillFromDir} from '@google/adk';
 import * as path from 'node:path';
-import {fileURLToPath} from 'node:url';
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+import {z} from 'zod';
 
 const weatherSkill = await loadSkillFromDir(
-  path.join(__dirname, 'skills', 'weather_skill')
+  path.join(__dirname, 'skills/weather_skill')
 );
 
-const mySkillToolset = new SkillToolset([weatherSkill]);
+const getWeatherTool = new FunctionTool({
+  name: 'get_weather',
+  description: 'Gets the weather for a given location.',
+  parameters: z.object({
+    location: z.string().describe('The city and state, e.g. San Francisco, CA'),
+  }),
+  execute: async ({location}) => {
+    return {
+      location,
+      temperature: '72°F',
+      condition: 'Sunny',
+    };
+  },
+});
+
+const mySkillToolset = new SkillToolset([weatherSkill], {
+  additionalTools: [getWeatherTool],
+});
 
 const rootAgent = new Agent({
-  model: 'gemini-2.0-flash',
+  model: 'gemini-flash-latest',
   name: 'skill_user_agent',
   description: 'An agent that can use specialized skills.',
   instruction:
