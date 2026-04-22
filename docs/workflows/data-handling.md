@@ -20,12 +20,6 @@ data format schemas and specific instruction syntax.
     welcome your
     [feedback](https://github.com/google/adk-python/issues/new?template=feature_request.md&labels=v2)!
 
-!!! danger "WARNING: DO NOT MIX ADK 2.0 and ADK 1.0 data storage systems"
-
-    If you use persistent storage for ADK 2.0 projects, **DO NOT allow ADK 2.0
-    projects to share storage with ADK 1.0 projects**, including, but not limited to,
-    session storage, memory systems, and evaluation data. Doing so may result in
-    loss of data or make the data unusable in ADK 1.0 projects.
 
 ## Workflow graph Events
 

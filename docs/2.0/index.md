@@ -38,12 +38,6 @@ issues so we have a chance to address them. Report any ADK 1.0 to ADK 2.0
 incompatibilities you encounter through our
 [issue tracker](https://github.com/google/adk-python/issues/new?template=bug_report.md&labels=v2).
 
-!!! danger "WARNING: DO NOT MIX ADK 2.0 and ADK 1.0 data storage systems"
-
-    If you use persistent storage for ADK 2.0 projects, **DO NOT allow ADK 2.0
-    projects to share storage with ADK 1.0 projects**, including, but not limited to,
-    session storage, memory systems, and evaluation data. Doing so may result in
-    loss of data or make the data unusable in ADK 1.0 projects.
 
 ## Install ADK 2.0 {#install}
 
@@ -51,7 +45,7 @@ While ADK 2.0 is available as a pre-GA release, it is not installed automaticall
 You must select it as an installation option. This version has the following
 system requirements:
 
-*   **Python 3.11** or later
+*   **Python 3.10** or later
 *   `pip` for installing packages
 
 To install ADK 2.0, follow these steps:
