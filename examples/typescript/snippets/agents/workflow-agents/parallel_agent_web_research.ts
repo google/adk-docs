@@ -12,14 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import {
-  ParallelAgent,
-  LlmAgent,
-  SequentialAgent,
-  InMemoryRunner,
-  GOOGLE_SEARCH,
-  isFinalResponse,
-} from "@google/adk";
+import { ParallelAgent, LlmAgent, SequentialAgent, InMemoryRunner, GOOGLE_SEARCH, isFinalResponse } from '@google/adk';
 
 import {createUserContent} from '@google/genai';
 
@@ -31,7 +24,7 @@ const GEMINI_MODEL = "gemini-2.5-flash";
 
 
 // --8<-- [start:init]
-// Part of agent.ts --> Follow https://google.github.io/adk-docs/get-started/quickstart/ to learn the setup
+// Part of agent.ts --> Follow https://adk.dev/get-started/ to learn the setup
 // --- 1. Define Researcher Sub-Agents (to run in parallel) ---
 
 const researchTools = [GOOGLE_SEARCH];

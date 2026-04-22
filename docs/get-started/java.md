@@ -43,7 +43,7 @@ my_agent/
 ### Define the agent code
 
 Create the code for a basic agent, including a simple implementation of an ADK
-[Function Tool](/adk-docs/tools-custom/function-tools/), called `getCurrentTime()`.
+[Function Tool](/tools-custom/function-tools/), called `getCurrentTime()`.
 Add the following code to the `HelloTimeAgent.java` file in your project
 directory:
 
@@ -69,7 +69,7 @@ public class HelloTimeAgent {
                 You are a helpful assistant that tells the current time in a city.
                 Use the 'getCurrentTime' tool for this purpose.
                 """)
-            .model("gemini-2.5-flash")
+            .model("gemini-flash-latest")
             .tools(FunctionTool.create(HelloTimeAgent.class, "getCurrentTime"))
             .build();
     }
@@ -102,14 +102,14 @@ An ADK agent project requires this dependency in your
 <dependencies>
     <dependency>
         <groupId>com.google.adk</groupId>
-        <artifactId>adk-core</artifactId>
-        <version>0.3.0</version>
+        <artifactId>google-adk</artifactId>
+        <version>1.0.0</version>
     </dependency>
 </dependencies>
 ```
 
 Update the `pom.xml` project file to include this dependency and
-addtional settings with the following configuration code:
+additional settings with the following configuration code:
 
 ??? info "Complete `pom.xml` configuration for project"
     The following code shows a complete `pom.xml` configuration for
@@ -138,13 +138,13 @@ addtional settings with the following configuration code:
             <dependency>
                 <groupId>com.google.adk</groupId>
                 <artifactId>google-adk</artifactId>
-                <version>0.3.0</version>
+                <version>1.0.0</version>
             </dependency>
             <!-- The ADK dev web UI to debug your agent -->
             <dependency>
                 <groupId>com.google.adk</groupId>
                 <artifactId>google-adk-dev</artifactId>
-                <version>0.3.0</version>
+                <version>1.0.0</version>
             </dependency>
         </dependencies>
 
@@ -175,7 +175,7 @@ to set environment variables:
 ??? tip "Using other AI models with ADK"
     ADK supports the use of many generative AI models. For more
     information on configuring other models in ADK agents, see
-    [Models & Authentication](/adk-docs/agents/models).
+    [Models & Authentication](/agents/models).
 
 ### Create an agent command-line interface
 
@@ -249,7 +249,7 @@ using the following Maven command:
 mvn compile exec:java -Dexec.mainClass="com.example.agent.AgentCliRunner"
 ```
 
-![adk-run.png](/adk-docs/assets/adk-run.png)
+![adk-run.png](/assets/adk-run.png)
 
 ### Run with web interface
 
@@ -266,7 +266,7 @@ This command starts a web server with a chat interface for your agent. You can
 access the web interface at (http://localhost:8000). Select your agent at the
 upper left corner and type a request.
 
-![adk-web-dev-ui-chat.png](/adk-docs/assets/adk-web-dev-ui-chat.png)
+![adk-web-dev-ui-chat.png](/assets/adk-web-dev-ui-chat.png)
 
 !!! warning "Caution: ADK Web for development only"
 
@@ -278,4 +278,4 @@ upper left corner and type a request.
 Now that you have ADK installed and your first agent running, try building
 your own agent with our build guides:
 
-*  [Build your agent](/adk-docs/tutorials/)
+*  [Build your agent](/tutorials/)

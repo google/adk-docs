@@ -8,7 +8,7 @@
     [venv](https://docs.python.org/3/library/venv.html):
 
     ```shell
-    python -m venv .venv
+    python3 -m venv .venv
     ```
 
     Now, you can activate the virtual environment using the appropriate command for
@@ -99,13 +99,13 @@
             <dependency>
                 <groupId>com.google.adk</groupId>
                 <artifactId>google-adk</artifactId>
-                <version>0.3.0</version>
+                <version>1.0.0</version>
             </dependency>
             <!-- The ADK dev web UI to debug your agent -->
             <dependency>
                 <groupId>com.google.adk</groupId>
                 <artifactId>google-adk-dev</artifactId>
-                <version>0.3.0</version>
+                <version>1.0.0</version>
             </dependency>
         </dependencies>
 
@@ -118,8 +118,8 @@
 
     ```title="build.gradle"
     dependencies {
-        implementation 'com.google.adk:google-adk:0.2.0'
-        implementation 'com.google.adk:google-adk-dev:0.2.0'
+        implementation 'com.google.adk:google-adk:1.0.0'
+        implementation 'com.google.adk:google-adk-dev:1.0.0'
     }
     ```
 
@@ -127,4 +127,4 @@
 
 ## Next steps
 
-* Try creating your first agent with the [**Quickstart**](quickstart.md)
+* Try creating your first agent with the [**Get started**](/get-started/) guides.

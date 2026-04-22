@@ -36,7 +36,7 @@ The process involves these main steps when you use `OpenAPIToolset`:
     * **Execution**: When called by the LLM, it constructs the correct HTTP request (URL, headers, query params, body) using the arguments provided by the LLM and the details from the OpenAPI spec. It handles authentication (if configured) and executes the API call using the `requests` library.
     * **Response Handling**: Returns the API response (typically JSON) back to the agent flow.
 
-5. **Authentication**: You can configure global authentication (like API keys or OAuth - see [Authentication](/adk-docs/tools/authentication/) for details) when initializing `OpenAPIToolset`. This authentication configuration is automatically applied to all generated `RestApiTool` instances.
+5. **Authentication**: You can configure global authentication (like API keys or OAuth - see [Authentication](/tools-custom/authentication/) for details) when initializing `OpenAPIToolset`. This authentication configuration is automatically applied to all generated `RestApiTool` instances.
 
 ## Usage Workflow
 
@@ -64,7 +64,7 @@ Follow these steps to integrate an OpenAPI spec into your agent:
 
     my_agent = LlmAgent(
         name="api_interacting_agent",
-        model="gemini-2.0-flash", # Or your preferred model
+        model="gemini-flash-latest", # Or your preferred model
         tools=[toolset], # Pass the toolset
         # ... other agent config ...
     )

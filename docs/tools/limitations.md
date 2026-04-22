@@ -5,14 +5,23 @@ agent workflow. This page lists these tool limitations and workarounds, if avail
 
 ## One tool per agent limitation {#one-tool-one-agent}
 
+!!! note "ONLY for Search in ADK Python v1.15.0 and lower"
+
+    This limitation only applies to the use of Google Search and Agent Search
+    tools in ADK Python v1.15.0 and lower. ADK Python release v1.16.0 and higher
+    provides a built-in workaround to remove this limitation.
+
 In general, you can use more than one tool in an agent, but use of specific
 tools within an agent excludes the use of any other tools in that agent. The
 following ADK Tools can only be used by themselves, without any other tools, in
 a single agent object:
 
-*   [Code Execution](/adk-docs/tools/gemini-api/code-execution/) with Gemini API
-*   [Google Search](/adk-docs/tools/gemini-api/google-search/) with Gemini API
-*   [Vertex AI Search](/adk-docs/tools/google-cloud/vertex-ai-search/)
+* [Code Execution](/integrations/code-execution/) with Gemini API (Note: in
+  TypeScript, this requires Gemini 2.0+ and does not have this limitation)
+* [Google Search](/integrations/google-search/) with Gemini API (Note:
+  limitation only applies to Gemini 1.x models in TypeScript)
+* [Agent Search](/integrations/agent-search/) (Note: currently unavailable in
+  TypeScript)
 
 For example, the following approach that uses one of these tools along with
 other tools, within a single agent, is ***not supported***:
@@ -22,11 +31,25 @@ other tools, within a single agent, is ***not supported***:
     ```py
     root_agent = Agent(
         name="RootAgent",
-        model="gemini-2.5-flash",
+        model="gemini-flash-latest",
         description="Code Agent",
         tools=[custom_function],
         code_executor=BuiltInCodeExecutor() # <-- NOT supported when used with tools
     )
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    import {Agent, BuiltInCodeExecutor} from '@google/adk';
+
+    const rootAgent = new Agent({
+      name: 'RootAgent',
+      model: 'gemini-flash-latest',
+      description: 'Code Agent',
+      tools: [myCustomTool], // Assume myCustomTool is defined
+      codeExecutor: new BuiltInCodeExecutor(), // <-- NOT supported when used with tools
+    });
     ```
 
 === "Java"
@@ -44,7 +67,7 @@ other tools, within a single agent, is ***not supported***:
 ### Workaround #1: AgentTool.create() method
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-java">Java</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript (v0.6.1+)</span><span class="lst-java">Java</span>
 </div>
 
 The following code sample demonstrates how to use multiple built-in tools or how
@@ -59,7 +82,7 @@ to use built-in tools with other tools by using multiple agents:
     from google.adk.code_executors import BuiltInCodeExecutor
 
     search_agent = Agent(
-        model='gemini-2.0-flash',
+        model='gemini-flash-latest',
         name='SearchAgent',
         instruction="""
         You're a specialist in Google Search
@@ -67,7 +90,7 @@ to use built-in tools with other tools by using multiple agents:
         tools=[google_search],
     )
     coding_agent = Agent(
-        model='gemini-2.0-flash',
+        model='gemini-flash-latest',
         name='CodeAgent',
         instruction="""
         You're a specialist in Code Execution
@@ -76,10 +99,37 @@ to use built-in tools with other tools by using multiple agents:
     )
     root_agent = Agent(
         name="RootAgent",
-        model="gemini-2.0-flash",
+        model="gemini-flash-latest",
         description="Root Agent",
         tools=[AgentTool(agent=search_agent), AgentTool(agent=coding_agent)],
     )
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    import {Agent, AgentTool, BuiltInCodeExecutor, GOOGLE_SEARCH} from '@google/adk';
+
+    const searchAgent = new Agent({
+      model: 'gemini-flash-latest',
+      name: 'SearchAgent',
+      instruction: "You're a specialist in Google Search",
+      tools: [GOOGLE_SEARCH],
+    });
+
+    const codingAgent = new Agent({
+      model: 'gemini-flash-latest', // Built-in code execution requires Gemini 2.0+ in ADK JS
+      name: 'CodeAgent',
+      instruction: "You're a specialist in Code Execution",
+      codeExecutor: new BuiltInCodeExecutor(),
+    });
+
+    const rootAgent = new Agent({
+      name: 'RootAgent',
+      model: 'gemini-flash-latest',
+      description: 'Root Agent',
+      tools: [new AgentTool({agent: searchAgent}), new AgentTool({agent: codingAgent})],
+    });
     ```
 
 === "Java"
@@ -94,7 +144,7 @@ to use built-in tools with other tools by using multiple agents:
 
     public class NestedAgentApp {
 
-      private static final String MODEL_ID = "gemini-2.0-flash";
+      private static final String MODEL_ID = "gemini-flash-latest";
 
       public static void main(String[] args) {
 
@@ -165,7 +215,7 @@ is **not supported**:
 
     ```py
     url_context_agent = Agent(
-        model='gemini-2.5-flash',
+        model='gemini-flash-latest',
         name='UrlContextAgent',
         instruction="""
         You're a specialist in URL Context
@@ -173,7 +223,7 @@ is **not supported**:
         tools=[url_context],
     )
     coding_agent = Agent(
-        model='gemini-2.5-flash',
+        model='gemini-flash-latest',
         name='CodeAgent',
         instruction="""
         You're a specialist in Code Execution
@@ -182,7 +232,7 @@ is **not supported**:
     )
     root_agent = Agent(
         name="RootAgent",
-        model="gemini-2.5-flash",
+        model="gemini-flash-latest",
         description="Root Agent",
         sub_agents=[
             url_context_agent,
@@ -191,12 +241,39 @@ is **not supported**:
     )
     ```
 
+=== "TypeScript"
+
+    ```typescript
+    import {Agent, BuiltInCodeExecutor} from '@google/adk';
+
+    const urlContextAgent = new Agent({
+      model: 'gemini-flash-latest',
+      name: 'UrlContextAgent',
+      instruction: "You're a specialist in URL Context",
+      tools: [myCustomTool], // Assume myCustomTool is defined
+    });
+
+    const codingAgent = new Agent({
+      model: 'gemini-flash-latest',
+      name: 'CodeAgent',
+      instruction: "You're a specialist in Code Execution",
+      codeExecutor: new BuiltInCodeExecutor(),
+    });
+
+    const rootAgent = new Agent({
+      name: 'RootAgent',
+      model: 'gemini-flash-latest',
+      description: 'Root Agent',
+      subAgents: [urlContextAgent, codingAgent], // NOT supported when sub-agents use built-in tools
+    });
+    ```
+
 === "Java"
 
     ```java
     LlmAgent searchAgent =
         LlmAgent.builder()
-            .model("gemini-2.5-flash")
+            .model("gemini-flash-latest")
             .name("SearchAgent")
             .instruction("You're a specialist in Google Search")
             .tools(new GoogleSearchTool())
@@ -204,7 +281,7 @@ is **not supported**:
 
     LlmAgent codingAgent =
         LlmAgent.builder()
-            .model("gemini-2.5-flash")
+            .model("gemini-flash-latest")
             .name("CodeAgent")
             .instruction("You're a specialist in Code Execution")
             .tools(new BuiltInCodeExecutionTool())
@@ -214,7 +291,7 @@ is **not supported**:
     LlmAgent rootAgent =
         LlmAgent.builder()
             .name("RootAgent")
-            .model("gemini-2.5-flash")
+            .model("gemini-flash-latest")
             .description("Root Agent")
             .subAgents(searchAgent, codingAgent) // Not supported, as the sub agents use built in tools.
             .build();

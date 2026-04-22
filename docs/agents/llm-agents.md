@@ -41,16 +41,16 @@ First, you need to establish what the agent *is* and what it's *for*.
   inquiries about current billing statements," not just "Billing agent").
 
 * **`model` (Required):** Specify the underlying LLM that will power this
-  agent's reasoning. This is a string identifier like `"gemini-2.0-flash"`. The
+  agent's reasoning. This is a string identifier like `"gemini-flash-latest"`. The
   choice of model impacts the agent's capabilities, cost, and performance. See
-  the [Models](models.md) page for available options and considerations.
+  the [Models](/agents/models/) page for available options and considerations.
 
 === "Python"
 
     ```python
     # Example: Defining the basic identity
     capital_agent = LlmAgent(
-        model="gemini-2.0-flash",
+        model="gemini-flash-latest",
         name="capital_agent",
         description="Answers user questions about the capital city of a given country."
         # instruction and tools will be added next
@@ -62,7 +62,7 @@ First, you need to establish what the agent *is* and what it's *for*.
     ```typescript
     // Example: Defining the basic identity
     const capitalAgent = new LlmAgent({
-        model: 'gemini-2.5-flash',
+        model: 'gemini-flash-latest',
         name: 'capital_agent',
         description: 'Answers user questions about the capital city of a given country.',
         // instruction and tools will be added next
@@ -81,7 +81,7 @@ First, you need to establish what the agent *is* and what it's *for*.
     // Example: Defining the basic identity
     LlmAgent capitalAgent =
         LlmAgent.builder()
-            .model("gemini-2.0-flash")
+            .model("gemini-flash-latest")
             .name("capital_agent")
             .description("Answers user questions about the capital city of a given country.")
             // instruction and tools will be added next
@@ -119,7 +119,7 @@ tells the agent:
     ```python
     # Example: Adding instructions
     capital_agent = LlmAgent(
-        model="gemini-2.0-flash",
+        model="gemini-flash-latest",
         name="capital_agent",
         description="Answers user questions about the capital city of a given country.",
         instruction="""You are an agent that provides the capital city of a country.
@@ -139,7 +139,7 @@ tells the agent:
     ```typescript
     // Example: Adding instructions
     const capitalAgent = new LlmAgent({
-        model: 'gemini-2.5-flash',
+        model: 'gemini-flash-latest',
         name: 'capital_agent',
         description: 'Answers user questions about the capital city of a given country.',
         instruction: `You are an agent that provides the capital city of a country.
@@ -166,7 +166,7 @@ tells the agent:
     // Example: Adding instructions
     LlmAgent capitalAgent =
         LlmAgent.builder()
-            .model("gemini-2.0-flash")
+            .model("gemini-flash-latest")
             .name("capital_agent")
             .description("Answers user questions about the capital city of a given country.")
             .instruction(
@@ -214,7 +214,7 @@ on the conversation and its instructions.
 
     # Add the tool to the agent
     capital_agent = LlmAgent(
-        model="gemini-2.0-flash",
+        model="gemini-flash-latest",
         name="capital_agent",
         description="Answers user questions about the capital city of a given country.",
         instruction="""You are an agent that provides the capital city of a country... (previous instruction text)""",
@@ -255,7 +255,7 @@ on the conversation and its instructions.
 
     // Add the tool to the agent
     const capitalAgent = new LlmAgent({
-        model: 'gemini-2.5-flash',
+        model: 'gemini-flash-latest',
         name: 'capitalAgent',
         description: 'Answers user questions about the capital city of a given country.',
         instruction: 'You are an agent that provides the capital city of a country...', // Note: the full instruction is omitted for brevity
@@ -294,7 +294,7 @@ on the conversation and its instructions.
     FunctionTool capitalTool = FunctionTool.create(experiment.getClass(), "getCapitalCity");
     LlmAgent capitalAgent =
         LlmAgent.builder()
-            .model("gemini-2.0-flash")
+            .model("gemini-flash-latest")
             .name("capital_agent")
             .description("Answers user questions about the capital city of a given country.")
             .instruction("You are an agent that provides the capital city of a country... (previous instruction text)")
@@ -302,7 +302,7 @@ on the conversation and its instructions.
             .build();
     ```
 
-Learn more about Tools in the [Tools](../tools/index.md) section.
+Learn more about Tools in [Custom Tools](/tools-custom/).
 
 ## Advanced Configuration & Control
 
@@ -380,6 +380,13 @@ For scenarios requiring structured data exchange with an `LLM Agent`, the ADK pr
 * **`input_schema` (Optional):** Define a schema representing the expected input structure. If set, the user message content passed to this agent *must* be a JSON string conforming to this schema. Your instructions should guide the user or preceding agent accordingly.
 
 * **`output_schema` (Optional):** Define a schema representing the desired output structure. If set, the agent's final response *must* be a JSON string conforming to this schema.
+
+!!! warning "Warning: Using `output_schema` with `tools`"
+
+    Using `output_schema` with `tools` in the same LLM request
+    is only supported by specific models, including [Gemini 3.0](https://ai.google.dev/gemini-api/docs/function-calling?example=meeting#structured-output).
+    For other models, workarounds using [function tools](https://github.com/google/adk-python/blob/main/src/google/adk/flows/llm_flows/_output_schema_processor.py)) in ADK
+    may not work reliably. In such cases, consider using sub-agents that handle output formatting separately.
 
 * **`output_key` (Optional):** Provide a string key. If set, the text content of the agent's *final* response will be automatically saved to the session's state dictionary under this key. This is useful for passing results between agents or steps in a workflow.
     * In Python, this might look like: `session.state[output_key] = agent_response_text`
@@ -464,7 +471,7 @@ For scenarios requiring structured data exchange with an `LLM Agent`, the ADK pr
             // ... name, model, description
             .instruction(
                     "You are a Capital Information Agent. Given a country, respond ONLY with a JSON object containing the capital. Format: {\"capital\": \"capital_name\"}")
-            .outputSchema(capitalOutput) // Enforce JSON output
+            .outputSchema(CAPITAL_OUTPUT) // Enforce JSON output
             .outputKey("found_capital") // Store result in state.get("found_capital")
             // Cannot use tools(getCapitalCity) effectively here
             .build();
@@ -534,7 +541,7 @@ Control whether the agent receives the prior conversation history.
     from google.genai import types
 
     my_agent = Agent(
-        model="gemini-2.5-flash",
+        model="gemini-flash-latest",
         planner=BuiltInPlanner(
             thinking_config=types.ThinkingConfig(
                 include_thoughts=True,
@@ -552,7 +559,7 @@ Control whether the agent receives the prior conversation history.
     from google.adk.planners import PlanReActPlanner
 
     my_agent = Agent(
-        model="gemini-2.0-flash",
+        model="gemini-flash-latest",
         planner=PlanReActPlanner(),
         # ... your tools here
     )
@@ -703,7 +710,7 @@ call_agent("If it's raining in New York right now, what is the current temperatu
 
 - **`code_executor` (Optional):** Provide a `BaseCodeExecutor` instance to allow
   the agent to execute code blocks found in the LLM's response. For more
-  information, see [Code Execution with Gemini API](/adk-docs/tools/gemini-api/code-execution/).
+  information, see [Code Execution with Gemini API](/integrations/code-execution/).
 
 === "Python"
 

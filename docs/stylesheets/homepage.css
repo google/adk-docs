@@ -1,0 +1,1449 @@
+/* =============================================================
+   ADK Homepage — all rules scoped under .adk-landing
+   Uses Material CSS variables for automatic light/dark support
+   ============================================================= */
+
+/* --- Hide Material chrome on homepage --- */
+/* Use :has() for modern browsers + JS fallback adds body.adk-landing-page */
+.md-content:has(.adk-landing) {
+  max-width: none !important;
+  margin: 0 !important;
+}
+
+.md-main__inner:has(.adk-landing) {
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.md-content__inner:has(.adk-landing) {
+  max-width: 1280px !important;
+  margin: 0 auto !important;
+  padding: 0 clamp(16px, 4vw, 48px) !important;
+}
+
+/* JS fallback via body class */
+body.adk-landing-page { overflow-x: hidden !important; }
+body.adk-landing-page .md-main .md-grid { max-width: 100% !important; width: 100% !important; }
+body.adk-landing-page .md-main__inner { max-width: none !important; margin: 0 !important; padding: 0 !important; }
+body.adk-landing-page .md-content { max-width: none !important; margin: 0 !important; flex-grow: 1 !important; }
+body.adk-landing-page .md-content__inner { max-width: 1280px !important; margin: 0 auto !important; padding: 0 clamp(16px, 4vw, 48px) !important; box-sizing: border-box !important; overflow-x: hidden !important; }
+body.adk-landing-page .md-header__inner { overflow-x: hidden !important; }
+
+/* Responsive header repo links — full text → icons only (≤1200px) → hidden (≤900px) */
+.md-header__title { flex-shrink: 1 !important; min-width: 120px !important; overflow: hidden !important; }
+.md-header__source { flex-shrink: 0 !important; display: flex !important; gap: 2px !important; flex-wrap: nowrap !important; max-width: none !important; width: auto !important; }
+
+.md-header .md-source { min-width: auto !important; width: auto !important; margin-right: 2px !important; }
+.md-header .md-source__repository { font-size: 0.65rem; white-space: nowrap; }
+.md-header .md-source__icon svg { width: 1rem !important; height: 1rem !important; }
+
+@media (max-width: 1200px) {
+  .md-header .md-source__repository { display: none !important; }
+  .md-header .md-source { margin-right: 4px !important; position: relative; }
+  .md-header .md-source::after {
+    content: ''; display: inline-block; width: 16px; height: 16px;
+    background-size: contain; background-repeat: no-repeat; background-position: center;
+    position: absolute; right: 4px; top: 50%; transform: translateY(-50%);
+  }
+  .md-header .md-source { padding-right: 22px !important; min-width: 0 !important; width: auto !important; }
+  .md-header .md-source[href*="adk-python"]::after { background-image: url('https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg'); }
+  .md-header .md-source[href*="adk-js"]::after { background-image: url('https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/typescript/typescript-original.svg'); }
+  .md-header .md-source[href*="adk-go"]::after { background-image: url('https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/go/go-original.svg'); }
+  .md-header .md-source[href*="adk-java"]::after { background-image: url('https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg'); }
+}
+
+@media (max-width: 900px) {
+  .md-header .md-source { display: none !important; }
+}
+
+/* --- Landing wrapper variables (adapts to light/dark via Material) --- */
+.md-typeset .adk-landing {
+  --landing-bg: var(--md-default-bg-color);
+  --landing-fg: var(--md-default-fg-color);
+  --landing-muted: var(--md-default-fg-color--light);
+  --landing-fg-muted: var(--md-default-fg-color--light);
+  --landing-surface: var(--md-code-bg-color);
+  --landing-border: var(--md-default-fg-color--lightest);
+  --landing-accent: #3b82f6;
+  --landing-accent2: #8b5cf6;
+  --landing-accent-gradient: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+    /* --font-sans: 'Inter', system-ui, -apple-system, sans-serif; */
+  --font-sans: 'Roboto', system-ui, -apple-system, sans-serif;
+  --font-mono: 'Roboto Mono', 'JetBrains Mono', monospace;
+
+  position: relative;
+  font-family: var(--font-sans);
+  color: var(--landing-fg);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* Reset md-typeset interference inside landing */
+.md-typeset .adk-landing {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--landing-fg);
+}
+
+.md-typeset .adk-landing h1,
+.md-typeset .adk-landing h2,
+.md-typeset .adk-landing h3 {
+  color: var(--landing-fg);
+  margin-top: 0;
+  font-family: var(--font-sans);
+  letter-spacing: -0.02em;
+}
+
+.md-typeset .adk-landing p {
+  color: var(--landing-muted);
+}
+
+.md-typeset .adk-landing a {
+  color: inherit;
+}
+
+/* --- Ambient Glows (subtle, dark mode only) --- */
+.md-typeset .adk-landing .glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+}
+
+html[data-md-color-scheme="slate"] .adk-landing .glow {
+  opacity: 0.35;
+}
+
+.md-typeset .adk-landing .glow-tl {
+  top: -10%;
+  left: -10%;
+  width: 500px;
+  height: 500px;
+  background: rgba(59, 130, 246, 0.25);
+}
+
+.md-typeset .adk-landing .glow-tr {
+  top: -5%;
+  right: -5%;
+  width: 600px;
+  height: 600px;
+  background: rgba(139, 92, 246, 0.15);
+}
+
+.md-typeset .adk-landing .glow-mr {
+  top: 40%;
+  right: -10%;
+  width: 400px;
+  height: 400px;
+  background: rgba(59, 130, 246, 0.15);
+}
+
+/* ========================
+   HERO SECTION
+   ======================== */
+.md-typeset .adk-landing .hero-grid {
+  padding: clamp(48px, 8vw, 96px) 0;
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: clamp(32px, 5vw, 64px);
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.md-typeset .adk-landing .hero-content h1 {
+  font-size: clamp(1.75rem, 4vw, 3rem);
+  line-height: 1.15;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin-bottom: 20px;
+}
+
+.md-typeset .adk-landing .hero-dim {
+  color: var(--landing-muted);
+  font-weight: 600;
+}
+
+.md-typeset .adk-landing .hero-punchline {
+  background: var(--landing-accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Gradient text in dark mode, solid in light */
+html[data-md-color-scheme="slate"] .adk-landing .hero-content h1 {
+  background: linear-gradient(to right, #ffffff, #a1a1aa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.md-typeset .adk-landing .hero-content>p {
+  font-size: clamp(1rem, 1.5vw, 1.2rem);
+  color: var(--landing-muted);
+  margin-bottom: 32px;
+  max-width: 540px;
+}
+
+.md-typeset .adk-landing .hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* --- Buttons --- */
+.md-typeset .adk-landing .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  text-decoration: none !important;
+  transition: all 0.2s;
+  cursor: pointer;
+  border: none;
+}
+
+.md-typeset .adk-landing .btn-primary {
+  background: var(--landing-accent-gradient);
+  color: #fff !important;
+  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.25);
+}
+
+.md-typeset .adk-landing .btn-primary:hover {
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+  transform: translateY(-1px);
+}
+
+.md-typeset .adk-landing .btn-secondary {
+  background: var(--landing-surface);
+  color: var(--landing-fg) !important;
+  border: 1px solid var(--landing-border);
+}
+
+.md-typeset .adk-landing .btn-secondary:hover {
+  background: var(--md-code-bg-color);
+  border-color: var(--landing-muted);
+  transform: translateY(-1px);
+}
+
+.md-typeset .adk-landing .btn-accent {
+  background: rgba(99, 102, 241, 0.1);
+  color: var(--landing-fg) !important;
+  border: 1px solid rgba(99, 102, 241, 0.35);
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.1);
+}
+
+.md-typeset .adk-landing .btn-accent:hover {
+  background: rgba(99, 102, 241, 0.18);
+  border-color: rgba(99, 102, 241, 0.5);
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.2);
+  transform: translateY(-1px);
+}
+
+/* --- GitHub link button (inside tab area) --- */
+.md-typeset .adk-landing .github-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--landing-muted) !important;
+  text-decoration: none !important;
+  transition: all 0.2s;
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--landing-border);
+  background: var(--md-code-bg-color);
+}
+
+.md-typeset .adk-landing .github-link:hover {
+  color: var(--landing-fg) !important;
+  background: var(--landing-surface);
+  transform: translateY(-1px);
+}
+
+.md-typeset .adk-landing .github-link svg {
+  width: 20px !important;
+  height: 20px !important;
+  max-width: 20px !important;
+  fill: currentColor;
+}
+
+.md-typeset .adk-landing svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ========================
+   MAC-STYLE CODE WINDOW
+   ======================== */
+.md-typeset .adk-landing .mac-window {
+  background: var(--landing-surface);
+  border: 1px solid var(--landing-border);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+html[data-md-color-scheme="slate"] .adk-landing .mac-window {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.md-typeset .adk-landing .window-header {
+  background: var(--md-code-bg-color);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--landing-border);
+}
+
+.md-typeset .adk-landing .window-dots {
+  display: flex;
+  gap: 8px;
+}
+
+.md-typeset .adk-landing .window-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.md-typeset .adk-landing .window-dot.red {
+  background: #ff5f56;
+}
+
+.md-typeset .adk-landing .window-dot.yellow {
+  background: #ffbd2e;
+}
+
+.md-typeset .adk-landing .window-dot.green {
+  background: #27c93f;
+}
+
+.md-typeset .adk-landing .window-title {
+  flex: 1;
+  text-align: center;
+  color: var(--landing-muted);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  margin-left: -44px;
+}
+
+/* --- iTerm-style tabs --- */
+.md-typeset .adk-landing .iterm-tab-bar {
+  display: flex;
+  background: var(--landing-surface);
+  padding: 0;
+  border-bottom: 1px solid var(--landing-border);
+  overflow: hidden;
+}
+
+.md-typeset .adk-landing .iterm-tab {
+  padding: 10px 20px;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--landing-fg-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+  border-right: 1px solid var(--landing-border);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  user-select: none;
+  position: relative;
+}
+
+.md-typeset .adk-landing .iterm-tab .lang-icon {
+  width: 20px !important;
+  height: 20px !important;
+  max-width: 20px !important;
+  fill: currentColor;
+  vertical-align: middle;
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+.md-typeset .adk-landing .iterm-tab.active .lang-icon {
+  opacity: 1;
+}
+
+.md-typeset .adk-landing .iterm-tab:hover {
+  color: var(--landing-fg);
+}
+
+.md-typeset .adk-landing .iterm-tab.active {
+  color: var(--landing-fg);
+  border-bottom: 2px solid var(--landing-accent);
+  background: var(--md-code-bg-color);
+}
+
+/* --- Code content --- */
+.md-typeset .adk-landing .code-content {
+  padding: 24px;
+  font-family: var(--font-mono);
+  font-size: clamp(0.78rem, 1vw, 0.9rem);
+  line-height: 1.6;
+  color: #e2e8f0;
+  overflow-x: auto;
+  background: #0f172a;
+}
+
+.md-typeset .adk-landing .code-content pre {
+  margin: 0;
+  white-space: pre;
+  background: transparent !important;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+.md-typeset .adk-landing .kw {
+  color: #c678dd;
+}
+
+.md-typeset .adk-landing .str {
+  color: #98c379;
+}
+
+.md-typeset .adk-landing .fn {
+  color: #61afef;
+}
+
+html[data-md-color-scheme="default"] .adk-landing .kw {
+  color: #a626a4;
+}
+
+html[data-md-color-scheme="default"] .adk-landing .str {
+  color: #50a14f;
+}
+
+html[data-md-color-scheme="default"] .adk-landing .fn {
+  color: #4078f2;
+}
+
+/* --- Install info bar --- */
+.md-typeset .adk-landing .install-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 20px;
+  background: var(--landing-surface);
+  border-top: 1px solid var(--landing-border);
+}
+
+.md-typeset .adk-landing .install-cmd {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.md-typeset .adk-landing .install-cmd code {
+  background: var(--md-code-bg-color);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--landing-fg);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.md-typeset .adk-landing .copy-btn {
+  background: none;
+  border: 1px solid var(--landing-border);
+  border-radius: 6px;
+  cursor: pointer;
+  padding: 4px 8px;
+  font-size: 0.8rem;
+  line-height: 1;
+  opacity: 0.5;
+  transition: opacity 0.2s, background 0.2s;
+  color: var(--landing-fg);
+}
+
+.md-typeset .adk-landing .copy-btn:hover {
+  opacity: 1;
+  background: var(--landing-border);
+}
+
+.md-typeset .adk-landing .install-badges {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.md-typeset .adk-landing .install-badges a {
+  display: inline-block;
+  line-height: 0;
+}
+
+.md-typeset .adk-landing .install-badges img {
+  height: 20px;
+}
+
+/* ========================
+   FEATURE SPLIT SECTIONS
+   ======================== */
+.md-typeset .adk-landing .feature-split {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: clamp(40px, 6vw, 80px);
+  align-items: center;
+  padding: clamp(48px, 8vw, 100px) 0;
+  position: relative;
+  z-index: 1;
+}
+
+.md-typeset .adk-landing .feature-split.reverse {
+  grid-template-columns: 1.2fr 1fr;
+}
+
+.md-typeset .adk-landing .feature-split.reverse .feature-text {
+  order: 2;
+}
+
+.md-typeset .adk-landing .feature-split.reverse .feature-visual {
+  order: 1;
+}
+
+.md-typeset .adk-landing .feature-badge {
+  display: inline-block;
+  padding: 6px 14px;
+  background: rgba(139, 92, 246, 0.08);
+  color: #7c3aed;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  border: 1px solid rgba(139, 92, 246, 0.15);
+}
+
+html[data-md-color-scheme="slate"] .adk-landing .feature-badge {
+  background: rgba(139, 92, 246, 0.1);
+  color: #a78bfa;
+  border-color: rgba(139, 92, 246, 0.2);
+}
+
+.md-typeset .adk-landing .feature-text h2 {
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  margin-bottom: 20px;
+}
+
+.md-typeset .adk-landing .feature-text p {
+  font-size: clamp(0.95rem, 1.2vw, 1.1rem);
+  color: var(--landing-muted);
+  margin-bottom: 20px;
+}
+
+/* --- Terminal window --- */
+.md-typeset .adk-landing .terminal .terminal-body {
+  padding: 24px;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  line-height: 1.6;
+  height: 340px;
+  overflow-y: auto;
+  color: var(--landing-fg);
+}
+
+.md-typeset .adk-landing .term-line {
+  margin-bottom: 8px;
+}
+
+.md-typeset .adk-landing .term-prompt {
+  color: #10b981;
+  margin-right: 8px;
+}
+
+.md-typeset .adk-landing .term-cmd {
+  color: var(--landing-fg);
+}
+
+.md-typeset .adk-landing .term-spinner {
+  color: var(--landing-accent);
+  display: inline-block;
+  animation: adkSpin 1s linear infinite;
+  margin-right: 8px;
+}
+
+.md-typeset .adk-landing .term-system {
+  color: var(--landing-muted);
+}
+
+.md-typeset .adk-landing .term-success {
+  color: #10b981;
+}
+
+.md-typeset .adk-landing .term-code-block {
+  background: var(--md-code-bg-color);
+  padding: 16px;
+  border-radius: 6px;
+  margin: 12px 0;
+  border: 1px solid var(--landing-border);
+}
+
+.md-typeset .adk-landing .term-code-block pre {
+  margin: 0;
+}
+
+.md-typeset .adk-landing .term-code-block code {
+  font-size: 0.82rem;
+  color: var(--landing-fg);
+}
+
+@keyframes adkSpin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* --- Dev UI image --- */
+.md-typeset .adk-landing .ui-wrapper {
+  position: relative;
+  border-radius: 12px;
+  padding: 8px;
+  background: var(--landing-surface);
+  border: 1px solid var(--landing-border);
+}
+
+.md-typeset .adk-landing .devui-img {
+  max-width: 100%;
+  max-height: 500px;
+  object-fit: contain;
+  border-radius: 8px;
+  display: block;
+  margin: 0 auto;
+}
+
+/* ========================
+   EVAL SECTION
+   ======================== */
+.md-typeset .adk-landing .eval-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.md-typeset .adk-landing .eval-card {
+  background: var(--landing-surface);
+  border: 1px solid var(--landing-border);
+  border-radius: 8px;
+  padding: 14px;
+}
+
+.md-typeset .adk-landing .eval-card.pass {
+  border-left: 3px solid #10b981;
+}
+
+.md-typeset .adk-landing .eval-card.fail {
+  border-left: 3px solid #ef4444;
+}
+
+.md-typeset .adk-landing .eval-title {
+  font-size: 0.82rem;
+  font-family: var(--font-mono);
+  color: var(--landing-fg);
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.md-typeset .adk-landing .eval-status.pass {
+  color: #10b981;
+}
+
+.md-typeset .adk-landing .eval-status.fail {
+  color: #ef4444;
+}
+
+.md-typeset .adk-landing .eval-desc {
+  font-size: 0.82rem;
+  color: var(--landing-muted);
+}
+
+/* --- Metrics Dashboard --- */
+.md-typeset .adk-landing .metrics-dashboard {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 20px;
+  background: var(--landing-surface);
+  border: 1px solid var(--landing-border);
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.md-typeset .adk-landing .metrics-chart-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--landing-muted);
+  margin-bottom: 12px;
+}
+
+.md-typeset .adk-landing .metrics-svg {
+  width: 100%;
+  height: auto;
+}
+
+.md-typeset .adk-landing .metrics-svg line {
+  stroke: var(--landing-border);
+}
+
+.md-typeset .adk-landing .metrics-svg text {
+  fill: var(--landing-muted);
+}
+
+.md-typeset .adk-landing .metrics-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+  font-family: var(--font-mono);
+}
+
+.md-typeset .adk-landing .metrics-table th {
+  text-align: left;
+  padding: 8px 10px;
+  color: var(--landing-muted);
+  border-bottom: 1px solid var(--landing-border);
+  font-weight: 600;
+}
+
+.md-typeset .adk-landing .metrics-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--landing-border);
+  color: var(--landing-fg);
+}
+
+.md-typeset .adk-landing .delta-green {
+  color: #10b981;
+  font-weight: 600;
+}
+
+.md-typeset .adk-landing .delta-red {
+  color: #ef4444;
+  font-weight: 600;
+}
+
+.md-typeset .adk-landing .delta-neutral {
+  color: var(--landing-muted);
+}
+
+.md-typeset .adk-landing .metric-green td:first-child {
+  border-left: 3px solid #10b981;
+}
+
+.md-typeset .adk-landing .metric-red td:first-child {
+  border-left: 3px solid #ef4444;
+}
+
+.md-typeset .adk-landing .metric-neutral td:first-child {
+  border-left: 3px solid var(--landing-border);
+}
+
+/* ========================
+   LOW FLOOR HIGH CEILING
+   ======================== */
+.md-typeset .adk-landing .ceiling-section {
+  padding: clamp(48px, 8vw, 100px) 0;
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  overflow: hidden;
+}
+
+.md-typeset .adk-landing .ceiling-section h2 {
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin-bottom: 8px;
+}
+
+.md-typeset .adk-landing .ceiling-section .section-subtitle {
+  color: var(--landing-muted);
+  font-size: clamp(1rem, 1.3vw, 1.15rem);
+  max-width: 600px;
+  margin: 0 auto 40px;
+}
+
+/* Static features grid (replaces Splide carousel) */
+.md-typeset .adk-landing .features-grid {
+  display: grid;
+  /* grid-template-columns: repeat(3, 1fr); */
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  padding: 0 clamp(16px, 4vw, 40px);
+  text-align: left;
+}
+
+@media (max-width: 1024px) {
+  .md-typeset .adk-landing .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .md-typeset .adk-landing .features-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Card styles (shared with carousel-card) */
+.md-typeset .adk-landing .carousel-card {
+  background: var(--landing-surface);
+  border: 1px solid var(--landing-border);
+  border-radius: 12px;
+  padding: 28px 24px;
+  text-align: left;
+  transition: transform 0.2s, box-shadow 0.2s;
+  text-decoration: none !important;
+  color: inherit !important;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.md-typeset .adk-landing .carousel-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+html[data-md-color-scheme="slate"] .adk-landing .carousel-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.md-typeset .adk-landing .carousel-card .card-icon {
+  font-size: 2rem;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.md-typeset .adk-landing .carousel-card h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--landing-fg);
+}
+
+.md-typeset .adk-landing .carousel-card p {
+  font-size: 0.9rem;
+  color: var(--landing-muted);
+  line-height: 1.5;
+  margin: 0;
+  flex: 1;
+}
+
+.md-typeset .adk-landing .carousel-card .card-learn-more {
+  display: block;
+  margin-top: 16px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--landing-accent) !important;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.md-typeset .adk-landing .carousel-card:hover .card-learn-more {
+  opacity: 1;
+}
+
+/* ========================
+   RESPONSIVE
+   ======================== */
+@media (max-width: 1200px) {
+  .md-typeset .adk-landing .hero-grid {
+    grid-template-columns: 1fr !important;
+    text-align: center;
+    gap: 40px;
+  }
+
+  .md-typeset .adk-landing .hero-visual {
+    text-align: left !important;
+  }
+
+  .md-typeset .adk-landing .hero-content>p {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .md-typeset .adk-landing .hero-actions {
+    justify-content: center;
+  }
+
+  .md-typeset .adk-landing .feature-split,
+  .md-typeset .adk-landing .feature-split.reverse {
+    grid-template-columns: 1fr !important;
+    gap: 32px;
+  }
+
+  .md-typeset .adk-landing .feature-split.reverse .feature-text {
+    order: 1;
+  }
+
+  .md-typeset .adk-landing .feature-split.reverse .feature-visual {
+    order: 2;
+  }
+
+  .md-typeset .adk-landing .metrics-dashboard {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .md-typeset .adk-landing .eval-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .md-typeset .adk-landing .iterm-tab {
+    padding: 8px 12px;
+    font-size: 0.75rem;
+  }
+
+  .md-typeset .adk-landing .install-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .adk-landing .iterm-tab span {
+    display: none;
+  }
+
+  .adk-landing .hero-content h1 {
+    font-size: 1.75rem !important;
+  }
+
+  .adk-landing .code-content {
+    font-size: 0.72rem !important;
+  }
+
+  .adk-landing .code-content pre {
+    overflow-x: auto !important;
+  }
+}
+
+/* Prevent horizontal overflow on all sizes */
+.md-typeset .adk-landing {
+  overflow-x: hidden !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.md-typeset .adk-landing * {
+  box-sizing: border-box;
+}
+
+.md-typeset .adk-landing .hero-content,
+.md-typeset .adk-landing .hero-visual,
+.md-typeset .adk-landing .feature-text,
+.md-typeset .adk-landing .hero-content,
+.md-typeset .adk-landing .hero-visual,
+.md-typeset .adk-landing .feature-text,
+.md-typeset .adk-landing .feature-visual {
+  min-width: 0 !important;
+}
+
+.md-typeset .adk-landing .code-content {
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+}
+
+.md-typeset .adk-landing .tabbed-area,
+.md-typeset .adk-landing .mac-window {
+  max-width: 100% !important;
+  min-width: 0 !important;
+}
+
+.md-typeset .adk-landing .iterm-tab-bar {
+  overflow-x: auto !important;
+}
+
+.md-typeset .adk-landing .code-content pre {
+  overflow-x: auto !important;
+  max-width: 100% !important;
+}
+
+/* --- Add homepage body class via CSS page identifier --- */
+/* Material adds data-md-component to body; we use the hide metadata to detect homepage */
+
+/* === Fix Material svg/pre/code interference === */
+.md-typeset .adk-landing .mac-window pre,
+.md-typeset .adk-landing .terminal-body pre,
+.md-typeset .adk-landing .term-code-block pre {
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  overflow: visible !important;
+  line-height: inherit !important;
+  font-size: inherit !important;
+}
+
+.md-typeset .adk-landing pre>code,
+.md-typeset .adk-landing .code-content code {
+  padding: 0 !important;
+  background: transparent !important;
+  font-size: inherit !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.md-typeset .adk-landing .install-cmd code {
+  background: var(--md-code-bg-color) !important;
+  padding: 6px 12px !important;
+  border-radius: 6px !important;
+}
+
+.md-typeset .adk-landing table {
+  border: none !important;
+}
+
+.md-typeset .adk-landing table td,
+.md-typeset .adk-landing table th {
+  border: none !important;
+}
+
+/* === CRITICAL OVERRIDES for Material theme interference === */
+.md-typeset .adk-landing .hero-grid {
+  display: grid !important;
+  grid-template-columns: 1fr 1.1fr !important;
+}
+
+.md-typeset .adk-landing .hero-visual {
+  display: block !important;
+  min-height: 300px !important;
+}
+
+.md-typeset .adk-landing .tabbed-area {
+  display: block !important;
+}
+
+.md-typeset .adk-landing .mac-window {
+  display: block !important;
+  background: var(--landing-surface) !important;
+  border: 1px solid var(--landing-border) !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+}
+
+.md-typeset .adk-landing .iterm-tab-bar {
+  display: flex !important;
+}
+
+.md-typeset .adk-landing .iterm-tab {
+  display: flex !important;
+}
+
+.md-typeset .adk-landing .code-content {
+  padding: 24px !important;
+  text-align: left !important;
+}
+
+.md-typeset .adk-landing .install-info[style*="display:none"] {
+  display: none !important;
+}
+
+.md-typeset .adk-landing .code-content[style*="display:none"] {
+  display: none !important;
+}
+
+.md-typeset .adk-landing .code-content pre {
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+.md-typeset .adk-landing .code-content pre>code {
+  padding: 0 !important;
+  background: transparent !important;
+  font-size: inherit !important;
+}
+
+.md-typeset .adk-landing .install-info {
+  display: flex;
+}
+
+.md-typeset .adk-landing .feature-split {
+  display: grid !important;
+  grid-template-columns: 1fr 1.2fr !important;
+}
+
+.md-typeset .adk-landing .feature-badge {
+  display: inline-block !important;
+}
+
+.md-typeset .adk-landing .eval-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+}
+
+.md-typeset .adk-landing .eval-card {
+  display: block !important;
+}
+
+.md-typeset .adk-landing .metrics-dashboard {
+  display: grid !important;
+}
+
+.md-typeset .adk-landing .features-grid {
+  display: grid !important;
+}
+
+.md-typeset .adk-landing .carousel-card {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+@media (max-width: 1200px) {
+  .md-typeset .adk-landing .hero-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .md-typeset .adk-landing .feature-split,
+  .md-typeset .adk-landing .feature-split.reverse {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Asciinema player styling */
+.md-typeset .adk-landing #asciinema-demo {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.md-typeset .adk-landing #asciinema-demo .ap-player {
+  border-radius: 12px;
+}
+
+/* ========================
+   CONTEXT COMPILER COMPARE
+   ======================== */
+.md-typeset .adk-landing .cc-compare {
+  display: flex;
+  align-items: stretch;
+  gap: 16px;
+}
+
+.md-typeset .adk-landing .cc-side {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.md-typeset .adk-landing .cc-side-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+  text-align: center;
+}
+
+.md-typeset .adk-landing .cc-label-dim {
+  color: var(--landing-fg-muted);
+}
+
+.md-typeset .adk-landing .cc-label-bright {
+  color: #4ade80;
+}
+
+.md-typeset .adk-landing .cc-stack {
+  border-radius: 8px;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.md-typeset .adk-landing .cc-stack-bad {
+  border: 1px dashed var(--landing-border);
+  background: var(--landing-surface);
+}
+
+.md-typeset .adk-landing .cc-stack-good {
+  border: 1px solid rgba(34, 197, 94, 0.2);
+  background: var(--landing-surface);
+}
+
+.md-typeset .adk-landing .cc-row {
+  padding: 4px 8px;
+  border-radius: 3px;
+  font-size: 0.65rem;
+  font-family: var(--font-mono);
+  color: var(--landing-fg);
+  background: var(--md-code-bg-color);
+}
+
+.md-typeset .adk-landing .cc-compact {
+  font-size: 0.6rem;
+  padding: 3px 8px;
+  color: var(--landing-fg-muted);
+}
+
+.md-typeset .adk-landing .cc-italic {
+  font-style: italic;
+}
+
+.md-typeset .adk-landing .cc-dim {
+  opacity: 0.4;
+}
+
+.md-typeset .adk-landing .cc-gone {
+  opacity: 0.15;
+  text-decoration: line-through;
+}
+
+.md-typeset .adk-landing .cc-arrow {
+  display: flex;
+  align-items: center;
+  font-size: 1.5rem;
+  color: var(--landing-fg-muted);
+  opacity: 0.4;
+  padding-top: 20px;
+}
+
+/* Meters */
+.md-typeset .adk-landing .cc-meter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.md-typeset .adk-landing .cc-meter-track {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--landing-surface);
+  border: 1px solid var(--landing-border);
+  overflow: hidden;
+}
+
+.md-typeset .adk-landing .cc-meter-fill {
+  height: 100%;
+  border-radius: 3px;
+}
+
+.md-typeset .adk-landing .cc-meter-bad {
+  width: 98%;
+  background: #ef4444;
+  opacity: 0.7;
+}
+
+.md-typeset .adk-landing .cc-meter-good {
+  width: 9%;
+  background: #22c55e;
+  opacity: 0.8;
+}
+
+.md-typeset .adk-landing .cc-meter-text {
+  font-size: 0.7rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.md-typeset .adk-landing .cc-text-bad {
+  color: #f87171;
+}
+
+.md-typeset .adk-landing .cc-text-good {
+  color: #4ade80;
+}
+
+/* ========================
+   FAQ SECTION
+   ======================== */
+.md-typeset .adk-landing .faq-section {
+  padding: clamp(48px, 8vw, 80px) clamp(16px, 4vw, 40px);
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.md-typeset .adk-landing .faq-section h2 {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 800;
+  color: var(--landing-fg);
+  margin: 0 0 8px;
+  letter-spacing: -0.02em;
+}
+
+.md-typeset .adk-landing .faq-section .section-subtitle {
+  color: var(--landing-fg-muted);
+  font-size: 0.95rem;
+  margin: 0 0 32px;
+}
+
+.md-typeset .adk-landing .faq-grid {
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.md-typeset .adk-landing .faq-item {
+  border-bottom: 1px solid var(--landing-border);
+  padding: 0;
+}
+
+.md-typeset .adk-landing .faq-item:first-child {
+  border-top: 1px solid var(--landing-border);
+}
+
+.md-typeset .adk-landing .faq-item summary {
+  padding: 16px 4px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--landing-fg);
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  transition: color 0.15s;
+}
+
+.md-typeset .adk-landing .faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.md-typeset .adk-landing .faq-item summary::after {
+  content: "+";
+  font-size: 1.2rem;
+  font-weight: 300;
+  color: var(--landing-fg-muted);
+  transition: transform 0.2s;
+  flex-shrink: 0;
+}
+
+.md-typeset .adk-landing .faq-item[open] summary::after {
+  content: "−";
+}
+
+.md-typeset .adk-landing .faq-item summary:hover {
+  color: var(--landing-accent, #818cf8);
+}
+
+.md-typeset .adk-landing .faq-item p {
+  padding: 0 4px 16px;
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.7;
+  color: var(--landing-fg-muted);
+}
+
+.md-typeset .adk-landing .faq-item code {
+  background: var(--md-code-bg-color);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.82rem;
+}
+
+/* FAQ bottom padding */
+.md-typeset .adk-landing .faq-section {
+  padding-bottom: 40px;
+}
+
+/* ========================
+   FAQ SECTION (ARROW)
+   ======================== */
+
+/* .md-typeset .adk-landing .faq-item-arrow {
+  border-bottom: 1px solid var(--landing-border);
+  border-left: none !important;
+  border-right: none !important;
+  padding: 0;
+} */
+
+/* .md-typeset .adk-landing .faq-item-arrow:first-child {
+  border-top: 1px solid var(--landing-border);
+} */
+
+.md-typeset .adk-landing .faq-item-arrow summary {
+  padding: 16px 24px; /* added 24px padding */
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--landing-fg);
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  transition: color 0.15s;
+}
+
+.md-typeset .adk-landing .faq-item-arrow summary::-webkit-details-marker {
+  display: none;
+}
+
+.md-typeset .adk-landing .faq-item-arrow summary::before {
+  display: none !important;
+  content: none !important;
+  background: none !important;
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
+}
+
+.md-typeset .adk-landing .faq-item-arrow summary::after {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border: none !important;
+  border-right: 2px solid var(--landing-fg-muted) !important;
+  border-bottom: 2px solid var(--landing-fg-muted) !important;
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform 0.2s;
+  flex-shrink: 0;
+  margin-right: 4px;
+  background: none !important;
+  -webkit-mask-image: none !important;
+  mask-image: none !important;
+  position: static !important;
+  box-shadow: none !important;
+}
+
+.md-typeset .adk-landing .faq-item-arrow[open] summary::after {
+  transform: translateY(2px) rotate(225deg);
+}
+
+.md-typeset .adk-landing .faq-item-arrow summary:hover {
+  color: var(--landing-accent, #818cf8);
+}
+
+.md-typeset .adk-landing .faq-item-arrow p {
+  padding: 0 24px 16px;
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.7;
+  color: var(--landing-fg-muted);
+}
+
+.md-typeset .adk-landing .faq-item-arrow code {
+  background: var(--md-code-bg-color);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.82rem;
+}

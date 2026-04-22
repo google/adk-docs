@@ -1,5 +1,5 @@
 <!--
- Copyright 2025 Google LLC
+ Copyright 2026 Google LLC
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
@@ -18,21 +18,44 @@
 
 {% block extrahead %}
   <!-- HTML Meta Tags -->
-  <title>Agent Development Kit</title>
-  <meta name="description" content="Build powerful multi-agent systems with Agent Development Kit">
+  <title>Agent Development Kit (ADK)</title>
+  <meta name="description" content="Build powerful multi-agent systems with Agent Development Kit (ADK)">
 
   <!-- Facebook Meta Tags -->
-  <meta property="og:url" content="https://google.github.io/adk-docs">
+  <meta property="og:url" content="https://adk.dev">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="Agent Development Kit">
-  <meta property="og:description" content="Build powerful multi-agent systems with Agent Development Kit">
-  <meta property="og:image" content="https://google.github.io/adk-docs/assets/adk-social-card.png">
+  <meta property="og:title" content="Agent Development Kit (ADK)">
+  <meta property="og:description" content="Build powerful multi-agent systems with Agent Development Kit (ADK)">
+  <meta property="og:image" content="https://adk.dev/assets/adk-social-card.png">
 
   <!-- Twitter Meta Tags -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta property="twitter:domain" content="google.github.io">
-  <meta property="twitter:url" content="https://google.github.io/adk-docs">
-  <meta name="twitter:title" content="Agent Development Kit">
-  <meta name="twitter:description" content="Build powerful multi-agent systems with Agent Development Kit">
-  <meta name="twitter:image" content="https://google.github.io/adk-docs/assets/adk-social-card.png">
+  <meta property="twitter:domain" content="adk.dev">
+  <meta property="twitter:url" content="https://adk.dev">
+  <meta name="twitter:title" content="Agent Development Kit (ADK)">
+  <meta name="twitter:description" content="Build powerful multi-agent systems with Agent Development Kit (ADK)">
+  <meta name="twitter:image" content="https://adk.dev/assets/adk-social-card.png">
+{% endblock %}
+
+<!-- top of page announcement banner here: -->
+<!--
+<span class="announce-item">
+  <strong>Headline!</strong> descriptive text
+  <a href="get-started/" target="_blank" rel="noopener">
+    Link text
+  </a>
+</span>
+-->
+{% block announce %}
+<span class="announce-item">
+  <strong>New Releases!</strong> Explore
+  <a href="/2.0/">
+    ADK Python 2.0 Beta
+  </a>
+  with workflows and agent teams, and
+  <a href="https://github.com/google/adk-js/releases/tag/adk-v1.0.0" target="_blank" rel="noopener">
+    ADK TypeScript 1.0
+  </a>
+  is now available
+</span>
 {% endblock %}

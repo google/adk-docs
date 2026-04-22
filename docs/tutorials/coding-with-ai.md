@@ -1,79 +1,78 @@
 # Coding with AI
 
-The Agent Development Kit (ADK) documentation supports the
-[`/llms.txt` standard](https://llmstxt.org/), providing a machine-readable index
-of the documentation optimized for Large Language Models (LLMs). This allows you
-to easily use the ADK documentation as context in your AI-powered development
-environment.
+You can use AI coding assistants to build agents with Agent Development Kit
+(ADK). Give your coding agent ADK expertise by installing development skills
+into your project, or by connecting it to ADK documentation through an MCP
+server.
 
-## What is llms.txt?
+- [**agents-cli**](#agents-cli): Command-line tool and coding skills for ADK development.
+- [**ADK Docs MCP Server**](#adk-docs-mcp-server): Connect your coding tool to
+  ADK documentation through an MCP server.
+- [**ADK Docs Index**](#adk-docs-index): Machine-readable documentation files
+  following the `llms.txt` standard.
 
-`llms.txt` is a standardized text file that acts as a map for LLMs, listing the
-most important documentation pages and their descriptions. This helps AI tools
-understand the structure of the ADK documentation and retrieve relevant
-information to answer your questions.
+## agents-cli
 
-The ADK documentation provides the following files that are automatically
-generated with every update:
+[agents-cli](https://google.github.io/agents-cli/) is the command-line tool for
+ADK development. It provides scaffolding commands, deployment tools, and
+development skills that work with any compatible coding assistant, including
+Gemini CLI, Antigravity, Claude Code, and Cursor.
 
-File | Best For... | URL
----- | ----------- | ---
-**`llms.txt`** | Tools that can fetch links dynamically | [`https://google.github.io/adk-docs/llms.txt`](https://google.github.io/adk-docs/llms.txt)
-**`llms-full.txt`** | Tools that need a single, static text dump of the entire site | [`https://google.github.io/adk-docs/llms-full.txt`](https://google.github.io/adk-docs/llms-full.txt)
+To install agents-cli and set up ADK development skills:
 
-## Usage in Development Tools
+```bash
+uvx google-agents-cli setup
+```
 
-You can use these files to power your AI coding assistants with ADK knowledge.
-This functionality allows your agents to autonomously search and read the ADK
-documentation while planning tasks and generating code.
+This installs both the CLI and coding skills. Browse the [agents-cli
+documentation](https://google.github.io/agents-cli/) for more details.
+
+### CLI Commands
+
+| Command | Description |
+|---------|-------------|
+| `agents-cli scaffold create` | Create a new ADK agent project |
+| `agents-cli scaffold enhance` | Add deployment to existing project |
+| `agents-cli eval` | Run agent evaluations |
+| `agents-cli deploy` | Deploy to Agent Runtime or Cloud Run |
+| `agents-cli publish` | Publish agent to Agent Store |
+
+### Development Skills
+
+After setup, the following skills are available in your coding tool:
+
+| Skill | Description |
+|-------|-------------|
+| `google-agents-cli-adk-code` | Python API quick reference and docs index |
+| `google-agents-cli-adk-deploy` | Agent Runtime and Cloud Run deployment |
+| `google-agents-cli-adk-dev` | Development lifecycle and coding guidelines |
+| `google-agents-cli-adk-eval` | Evaluation methodology and scoring |
+| `google-agents-cli-adk-observe` | Tracing, logging, and integrations |
+| `google-agents-cli-adk-scaffold` | Project scaffolding |
+
+## ADK Docs MCP Server
+
+You can configure your coding tool to search and read ADK documentation using an
+MCP server. Below are setup instructions for popular tools.
 
 ### Gemini CLI
 
-The [Gemini CLI](https://geminicli.com/) can be configured to query the ADK
-documentation using the
-[ADK Docs Extension](https://github.com/derailed-dash/adk-docs-ext).
-
-**Installation:**
-
-To install the extension, run the following command:
+To add the ADK docs MCP server to [Gemini CLI](https://geminicli.com/), install
+the [ADK Docs Extension](https://github.com/derailed-dash/adk-docs-ext):
 
 ```bash
 gemini extensions install https://github.com/derailed-dash/adk-docs-ext
 ```
 
-**Usage:**
-
-Once installed, the extension is automatically enabled. You can ask questions
-about ADK directly in the Gemini CLI, and it will use the `llms.txt` file and
-ADK documentation to provide accurate answers and generate code.
-
-For example, you can ask the following question from within Gemini CLI:
-
-> How do I create a function tool using Agent Development Kit?
-
----
-
 ### Antigravity
 
-The [Antigravity](https://antigravity.google/) IDE can be configured to access
-the ADK documentation by running a custom MCP server that points to the
-`llms.txt` file for ADK.
-
-**Prerequisites:**
-
-Ensure you have the [`uv`](https://docs.astral.sh/uv/) tool installed, as this
-configuration uses `uvx` to run the documentation server without manual
-installation.
-
-**Configuration:**
+To add the ADK docs MCP server to [Antigravity](https://antigravity.google/)
+(requires [`uv`](https://docs.astral.sh/uv/)):
 
 1. Open the MCP store via the **...** (more) menu at the top of the editor's
    agent panel.
-2. Click on **Manage MCP Servers**.
-3. Click on **View raw config**.
-4. Add the following entry to `mcp_config.json` with your custom MCP server
-   configuration. If this is your first MCP server, you can paste the entire
-   code block:
+2. Click on **Manage MCP Servers** then **View raw config**.
+3. Add the following to `mcp_config.json`:
 
     ```json
     {
@@ -85,7 +84,7 @@ installation.
             "mcpdoc",
             "mcpdoc",
             "--urls",
-            "AgentDevelopmentKit:https://google.github.io/adk-docs/llms.txt",
+            "AgentDevelopmentKit:https://adk.dev/llms.txt",
             "--transport",
             "stdio"
           ]
@@ -93,66 +92,24 @@ installation.
       }
     }
     ```
-
-Refer to the
-[Antigravity MCP documentation](https://antigravity.google/docs/mcp) for more
-information on managing MCP servers.
-
-**Usage:**
-
-Once configured, you can prompt the coding agent with instructions like:
-
-> Use the ADK docs to build a multi-tool agent that uses Gemini 2.5 Pro and
-> includes a mock weather lookup tool and a custom calculator tool. Verify the
-> agent using `adk run`.
-
----
 
 ### Claude Code
 
-[Claude Code](https://code.claude.com/docs/en/overview) can be configured to
-query the ADK documentation by adding an
-[MCP server](https://code.claude.com/docs/en/mcp).
-
-**Installation:**
-
-To add an MCP server for the ADK docs to Claude Code, run the following command:
+To add the ADK docs MCP server to
+[Claude Code](https://code.claude.com/docs/en/overview):
 
 ```bash
-claude mcp add adk-docs --transport stdio -- uvx --from mcpdoc mcpdoc --urls AgentDevelopmentKit:https://google.github.io/adk-docs/llms.txt --transport stdio
+claude mcp add adk-docs --transport stdio -- uvx --from mcpdoc mcpdoc --urls AgentDevelopmentKit:https://adk.dev/llms.txt --transport stdio
 ```
-
-**Usage:**
-
-Once installed, the MCP server is automatically enabled. You can ask questions
-about ADK directly in Claude Code, and it will use the `llms.txt` file and ADK
-documentation to provide accurate answers and generate code.
-
-For example, you can ask the following question from within Claude Code:
-
-> How do I create a function tool using Agent Development Kit?
-
----
 
 ### Cursor
 
-The [Cursor](https://cursor.com/) IDE can be configured to access the ADK
-documentation by running a custom MCP server that points to the `llms.txt` file
-for ADK.
-
-**Prerequisites:**
-
-Ensure you have the [`uv`](https://docs.astral.sh/uv/) tool installed, as this
-configuration uses `uvx` to run the documentation server without manual
-installation.
-
-**Configuration:**
+To add the ADK docs MCP server to [Cursor](https://cursor.com/) (requires
+[`uv`](https://docs.astral.sh/uv/)):
 
 1. Open **Cursor Settings** and navigate to the **Tools & MCP** tab.
 2. Click on **New MCP Server**, which will open `mcp.json` for editing.
-3. Add the following entry to `mcp.json` with your custom MCP server
-   configuration. If this is your first MCP server, you can paste the entire
-   code block:
+3. Add the following to `mcp.json`:
 
     ```json
     {
@@ -164,7 +121,7 @@ installation.
             "mcpdoc",
             "mcpdoc",
             "--urls",
-            "AgentDevelopmentKit:https://google.github.io/adk-docs/llms.txt",
+            "AgentDevelopmentKit:https://adk.dev/llms.txt",
             "--transport",
             "stdio"
           ]
@@ -173,22 +130,19 @@ installation.
     }
     ```
 
-Refer to the [Cursor MCP documentation](https://cursor.com/docs/context/mcp) for
-more information on managing MCP servers.
-
-**Usage:**
-
-Once configured, you can prompt the coding agent with instructions like:
-
-> Use the ADK docs to build a multi-tool agent that uses Gemini 2.5 Pro and
-> includes a mock weather lookup tool and a custom calculator tool. Verify the
-> agent using `adk run`.
-
----
-
 ### Other Tools
 
-Any tool that supports the `llms.txt` standard or can ingest documentation from
-a URL can benefit from these files. You can provide the URL
-`https://google.github.io/adk-docs/llms.txt` (or `llms-full.txt`) to your tool's
-knowledge base configuration or MCP server configuration.
+Any coding tool that supports MCP servers can use the same server configuration
+shown above. Adapt the JSON example from the Antigravity or Cursor sections for
+your tool's MCP settings.
+
+## ADK Docs Index
+
+The ADK documentation is available as machine-readable files following the
+[`llms.txt` standard](https://llmstxt.org/). These files are generated with
+every documentation update and are always up to date.
+
+| File | Description | URL |
+|------|-------------|-----|
+| `llms.txt` | Documentation index with links | [`adk.dev/llms.txt`](https://adk.dev/llms.txt) |
+| `llms-full.txt` | Full documentation in a single file | [`adk.dev/llms-full.txt`](https://adk.dev/llms-full.txt) |

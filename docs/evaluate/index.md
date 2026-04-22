@@ -65,7 +65,7 @@ This approach involves creating individual test files, each representing a singl
     through the right path to generate final response.
 -   `Final Response`: The expected final response from the agent.
 
-You can give the file any name for example `evaluation.test.json`.The framework only checks for the `.test.json` suffix, and the preceding part of the filename is not constrained. The test files are backed by a formal Pydantic data model. The two key schema files are
+You can give the file any name for example `evaluation.test.json`. The framework only checks for the `.test.json` suffix, and the preceding part of the filename is not constrained. The test files are backed by a formal Pydantic data model. The two key schema files are
 [Eval Set](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py) and
 [Eval Case](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_case.py).
 Here is a test file with a few examples:
@@ -112,16 +112,16 @@ Here is a test file with a few examples:
               }
             ],
             "intermediate_responses": [] # Any intermediate sub-agent responses.
-          },
+          }
         }
       ],
       "session_input": { # Initial session input.
         "app_name": "home_automation_agent",
         "user_id": "test_user",
         "state": {}
-      },
+      }
     }
-  ],
+  ]
 }
 ```
 
@@ -187,14 +187,14 @@ Creating evalsets manually can be complex, therefore UI tools are provided to he
           "intermediate_data": {
             "tool_uses": [],
             "intermediate_responses": []
-          },
-        },
+          }
+        }
       ],
       "session_input": {
         "app_name": "hello_world",
         "user_id": "user",
         "state": {}
-      },
+      }
     },
     {
       "eval_id": "session_02",
@@ -220,7 +220,7 @@ Creating evalsets manually can be complex, therefore UI tools are provided to he
           "intermediate_data": {
             "tool_uses": [],
             "intermediate_responses": []
-          },
+          }
         },
         {
           "invocation_id": "e-bf8549a1-2a61-4ecc-a4ee-4efbbf25a8ea",
@@ -276,16 +276,16 @@ Creating evalsets manually can be complex, therefore UI tools are provided to he
                 ]
               ]
             ]
-          },
+          }
         }
       ],
       "session_input": {
         "app_name": "hello_world",
         "user_id": "user",
         "state": {}
-      },
+      }
     }
-  ],
+  ]
 }
 ```
 
@@ -322,6 +322,13 @@ Here is a summary of all the available criteria:
 *   **hallucinations_v1**: LLM-judged groundedness of agent response against
     context.
 *   **safety_v1**: Safety/harmlessness of agent response.
+*   **per_turn_user_simulator_quality_v1**: LLM-judged user simulator quality.
+*   **multi_turn_task_success_v1**: Evaluates if agent achieves goal(s) of
+    conversation.
+*   **multi_turn_trajectory_quality_v1**: Evaluates the overall trajectory of
+    the conversation.
+*   **multi_turn_tool_use_quality_v1**: Evaluates function calls made during a
+    conversation.
 
 If no evaluation criteria are provided, the following default configuration is used:
 
@@ -364,6 +371,15 @@ Choose criteria based on your evaluation goals:
     the information available to it (e.g., tool outputs).
 *   **Check for harmful content:** Use `safety_v1` to ensure that agent
     responses are safe and do not violate safety policies.
+*   **Evaluate multi-turn goal completion:** Use `multi_turn_task_success_v1` to
+    measure the overall success of a multi-turn conversation in achieving its
+    intended objectives.
+*   **Evaluate overall conversation trajectory:** Use
+    `multi_turn_trajectory_quality_v1` to assess the efficiency, effectiveness,
+    and logic of the steps taken during the conversation.
+*   **Evaluate tool usage in multi-turn workflows:** Use
+    `multi_turn_tool_use_quality_v1` to assess the quality, relevance, and
+    correctness of tool or function calls made across multiple turns.
 
 In addition, criteria which require information on expected agent tool use
 and/or responses are not supported in combination with

@@ -1,7 +1,7 @@
 # Plugins
 
 <div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.7.0</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.7.0</span><span class="lst-typescript">TypeScript v0.2.5</span><span class="lst-go">Go v0.4.0</span><span class="lst-java">Java v0.3.0</span>
 </div>
 
 A Plugin in Agent Development Kit (ADK) is a custom code module that can be
@@ -25,16 +25,14 @@ Some typical applications of Plugins are as follows:
 -   **Request or response modification**: Dynamically add information to AI
     model prompts or standardize tool output responses.
 
-!!! tip
+!!! tip "Tip: Use Plugins for safety features"
     When implementing security guardrails and policies, use ADK Plugins for
     better modularity and flexibility than Callbacks. For more details, see
-    [Callbacks and Plugins for Security Guardrails](/adk-docs/safety/#callbacks-and-plugins-for-security-guardrails).
+    [Callbacks and Plugins for Security Guardrails](/safety/#callbacks-and-plugins-for-security-guardrails).
 
-!!! warning "Caution"
-    Plugins are not supported by the
-    [ADK web interface](../evaluate/index.md#1-adk-web-run-evaluations-via-the-web-ui).
-    If your ADK workflow uses Plugins, you must run your workflow without the
-    web interface.
+!!! tip "Tip: ADK Integrations"
+    For a list of pre-built plugins and other integrations for ADK, see
+    [Tools and Integrations](/integrations/).
 
 ## How do Plugins work?
 
@@ -60,9 +58,9 @@ agent application.
 ADK includes several plugins that you can add to your agent workflows
 immediately:
 
-*   [**Reflect and Retry Tools**](/adk-docs/plugins/reflect-and-retry/):
+*   [**Reflect and Retry Tools**](/integrations/reflect-and-retry/):
     Tracks tool failures and intelligently retries tool requests.
-*   [**BigQuery Analytics**](/adk-docs/observability/bigquery-agent-analytics/):
+*   [**BigQuery Analytics**](/integrations/bigquery-agent-analytics/):
     Enables agent logging and analysis with BigQuery.
 *   [**Context Filter**](https://github.com/google/adk-python/blob/main/src/google/adk/plugins/context_filter_plugin.py):
     Filters the generative AI context to reduce its size.
@@ -121,7 +119,7 @@ methods, as shown in the following code example:
 === "Typescript"
 
     ```typescript title="count_plugin.ts"
-    import { BaseAgent, BasePlugin, CallbackContext } from "@google/adk";
+    import { BaseAgent, BasePlugin, Context } from "@google/adk";
     import type { LlmRequest, LlmResponse } from "@google/adk";
     import type { Content } from "@google/genai";
 
@@ -143,7 +141,7 @@ methods, as shown in the following code example:
          */
         async beforeAgentCallback(
             agent: BaseAgent,
-            callbackContext: CallbackContext
+            context: Context
         ): Promise<Content | undefined> {
             this.agentCount++;
             console.log(`[Plugin] Agent run count: ${this.agentCount}`);
@@ -154,14 +152,106 @@ methods, as shown in the following code example:
          * Count LLM requests.
          */
         async beforeModelCallback(
-            callbackContext: CallbackContext,
+            context: Context,
             llmRequest: LlmRequest
         ): Promise<LlmResponse | undefined> {
             this.llmRequestCount++;
             console.log(`[Plugin] LLM request count: ${this.llmRequestCount}`);
             return undefined;
         }
-    }    
+    }
+    ```
+
+=== "Java"
+
+    ```java title="CountInvocationPlugin.java"
+    import com.google.adk.agents.BaseAgent;
+    import com.google.adk.agents.CallbackContext;
+    import com.google.adk.models.LlmRequest;
+    import com.google.adk.models.LlmResponse;
+    import com.google.adk.plugins.BasePlugin;
+    import com.google.genai.types.Content;
+    import io.reactivex.rxjava3.core.Maybe;
+
+    /** A custom plugin that counts agent and tool invocations. */
+    public class CountInvocationPlugin extends BasePlugin {
+      public int agentCount = 0;
+      public int toolCount = 0;
+      public int llmRequestCount = 0;
+
+      public CountInvocationPlugin() {
+        super("count_invocation");
+      }
+
+      /** Count agent runs. */
+      @Override
+      public Maybe<Content> beforeAgentCallback(BaseAgent agent, CallbackContext callbackContext) {
+        agentCount++;
+        System.out.println("[Plugin] Agent run count: " + agentCount);
+        return Maybe.empty();
+      }
+
+      /** Count LLM requests. */
+      @Override
+      public Maybe<LlmResponse> beforeModelCallback(
+          CallbackContext callbackContext, LlmRequest.Builder llmRequest) {
+        llmRequestCount++;
+        System.out.println("[Plugin] LLM request count: " + llmRequestCount);
+        return Maybe.empty();
+      }
+    }
+    ```
+
+=== "Go"
+
+    ```go title="count_plugin.go"
+    package main
+
+    import (
+    	"fmt"
+
+    	"google.golang.org/adk/agent"
+    	"google.golang.org/adk/agent/llmagent"
+    	"google.golang.org/adk/model"
+    	"google.golang.org/adk/plugin"
+        "google.golang.org/genai"
+    )
+
+    /**
+     * A custom plugin that counts agent and tool invocations.
+     */
+    type CountInvocationPlugin struct {
+    	AgentCount      int
+    	ToolCount       int
+    	LlmRequestCount int
+    }
+
+    func NewCountInvocationPlugin() (*plugin.Plugin, error) {
+    	p := &CountInvocationPlugin{}
+    	return plugin.New(plugin.Config{
+    		Name:                "count_invocation",
+    		BeforeAgentCallback: p.BeforeAgentCallback,
+    		BeforeModelCallback: p.BeforeModelCallback,
+    	})
+    }
+
+    /**
+     * Count agent runs.
+     */
+    func (p *CountInvocationPlugin) BeforeAgentCallback(ctx agent.CallbackContext) (*genai.Content, error) {
+    	p.AgentCount++
+    	fmt.Printf("[Plugin] Agent run count: %d\n", p.AgentCount)
+    	return nil, nil
+    }
+
+    /**
+     * Count LLM requests.
+     */
+    func (p *CountInvocationPlugin) BeforeModelCallback(ctx agent.CallbackContext, req *model.LLMRequest) (*model.LLMResponse, error) {
+    	p.LlmRequestCount++
+    	fmt.Printf("[Plugin] LLM request count: %d\n", p.LlmRequestCount)
+    	return nil, nil
+    }
     ```
 
 This example code implements callbacks for `before_agent_callback` and
@@ -189,45 +279,45 @@ a simple ADK agent.
     from .count_plugin import CountInvocationPlugin
 
     async def hello_world(tool_context: ToolContext, query: str):
-    print(f'Hello world: query is [{query}]')
+        print(f'Hello world: query is [{query}]')
 
-    root_agent = Agent(
-        model='gemini-2.0-flash',
-        name='hello_world',
-        description='Prints hello world with user query.',
-        instruction="""Use hello_world tool to print hello world and user query.
-        """,
-        tools=[hello_world],
-    )
+        root_agent = Agent(
+            model='gemini-flash-latest',
+            name='hello_world',
+            description='Prints hello world with user query.',
+            instruction="""Use hello_world tool to print hello world and user query.
+            """,
+            tools=[hello_world],
+        )
 
     async def main():
-    """Main entry point for the agent."""
-    prompt = 'hello world'
-    runner = InMemoryRunner(
-        agent=root_agent,
-        app_name='test_app_with_plugin',
+        """Main entry point for the agent."""
+        prompt = 'hello world'
+        runner = InMemoryRunner(
+            agent=root_agent,
+            app_name='test_app_with_plugin',
 
-        # Add your plugin here. You can add multiple plugins.
-        plugins=[CountInvocationPlugin()],
-    )
-
-    # The rest is the same as starting a regular ADK runner.
-    session = await runner.session_service.create_session(
-        user_id='user',
-        app_name='test_app_with_plugin',
-    )
-
-    async for event in runner.run_async(
-        user_id='user',
-        session_id=session.id,
-        new_message=types.Content(
-            role='user', parts=[types.Part.from_text(text=prompt)]
+            # Add your plugin here. You can add multiple plugins.
+            plugins=[CountInvocationPlugin()],
         )
-    ):
-        print(f'** Got event from {event.author}')
+
+        # The rest is the same as starting a regular ADK runner.
+        session = await runner.session_service.create_session(
+            user_id='user',
+            app_name='test_app_with_plugin',
+        )
+
+        async for event in runner.run_async(
+            user_id='user',
+            session_id=session.id,
+            new_message=types.Content(
+                role='user', parts=[types.Part.from_text(text=prompt)]
+            )
+        ):
+            print(f'** Got event from {event.author}')
 
     if __name__ == "__main__":
-    asyncio.run(main())
+        asyncio.run(main())
     ```
 
 === "Typescript"
@@ -259,7 +349,7 @@ a simple ADK agent.
     });
 
     const rootAgent = new LlmAgent({
-        model: "gemini-2.5-flash", // Preserved from your Python code
+        model: "gemini-flash-latest", // Preserved from your Python code
         name: "hello_world",
         description: "Prints hello world with user query.",
         instruction: `Use hello_world tool to print hello world and user query.`,
@@ -304,6 +394,182 @@ a simple ADK agent.
     main();
     ```
 
+=== "Java"
+
+    ```java
+    import com.google.adk.agents.LlmAgent;
+    import com.google.adk.runner.InMemoryRunner;
+    import com.google.adk.sessions.Session;
+    import com.google.adk.tools.Annotations.Schema;
+    import com.google.adk.tools.FunctionTool;
+    import com.google.genai.types.Content;
+    import com.google.genai.types.Part;
+    import java.util.Collections;
+    import java.util.List;
+    import java.util.Map;
+
+    // Import the plugin.
+    // import com.example.CountInvocationPlugin;
+
+    public class Main {
+
+      public static class HelloTool {
+        @Schema(name = "hello_world", description = "Prints hello world with user query.")
+        public static Map<String, Object> helloWorld(
+            @Schema(name = "query", description = "The query string to print.") String query) {
+          String output = "Hello world: query is [" + query + "]";
+          System.out.println(output);
+          return Map.of("result", output);
+        }
+      }
+
+      public static void main(String[] args) {
+        LlmAgent rootAgent = LlmAgent.builder()
+            .model("gemini-flash-latest")
+            .name("hello_world")
+            .description("Prints hello world with user query.")
+            .instruction("Use hello_world tool to print hello world and user query.")
+            .tools(FunctionTool.create(HelloTool.class, "helloWorld"))
+            .build();
+
+        // Add your plugin here. You can add multiple plugins.
+        InMemoryRunner runner = new InMemoryRunner(
+            rootAgent,
+            "test_app_with_plugin",
+            Collections.singletonList(new CountInvocationPlugin())
+        );
+
+        // The rest is the same as starting a regular ADK runner.
+        Session session = runner.sessionService().createSession(
+            "test_app_with_plugin",
+            "user"
+        ).blockingGet();
+
+        String prompt = "hello world";
+        Content newContent = Content.builder()
+            .role("user")
+            .parts(List.of(Part.builder().text(prompt).build()))
+            .build();
+
+        runner.runAsync(
+            "user",
+            session.id(),
+            newContent
+        ).blockingForEach(event -> {
+             if (event.author() != null) {
+                System.out.println("** Got event from " + event.author());
+            }
+        });
+      }
+    }
+    ```
+
+=== "Go"
+
+    ```go
+    package main
+
+    import (
+    	"context"
+    	"fmt"
+    	"log"
+
+    	"google.golang.org/adk/agent"
+    	"google.golang.org/adk/agent/llmagent"
+    	"google.golang.org/adk/model/gemini"
+    	"google.golang.org/adk/plugin"
+    	"google.golang.org/adk/runner"
+    	"google.golang.org/adk/session"
+    	"google.golang.org/adk/tool"
+    	"google.golang.org/adk/tool/functiontool"
+    	"google.golang.org/genai"
+    )
+
+    type helloWorldArgs struct {
+    	Query string `json:"query"`
+    }
+
+    type helloWorldResult struct {
+    	Result string `json:"result"`
+    }
+
+    func helloWorld(ctx tool.Context, args helloWorldArgs) (helloWorldResult, error) {
+    	output := fmt.Sprintf("Hello world: query is [%s]", args.Query)
+    	fmt.Println(output)
+    	return helloWorldResult{Result: output}, nil
+    }
+
+    func main() {
+    	ctx := context.Background()
+    	model, err := gemini.NewModel(ctx, "gemini-flash-latest", &genai.ClientConfig{})
+    	if err != nil {
+    		log.Fatalf("failed to create model: %v", err)
+    	}
+
+    	helloWorldTool, err := functiontool.New(functiontool.Config{
+    		Name:        "hello_world",
+    		Description: "Prints hello world with user query.",
+    	}, helloWorld)
+    	if err != nil {
+    		log.Fatalf("failed to create tool: %v", err)
+    	}
+
+    	rootAgent, err := llmagent.New(llmagent.Config{
+    		Model:       model,
+    		Name:        "hello_world",
+    		Description: "Prints hello world with user query.",
+    		Instruction: "Use hello_world tool to print hello world and user query.",
+    		Tools:       []tool.Tool{helloWorldTool},
+    	})
+    	if err != nil {
+    		log.Fatalf("failed to create agent: %v", err)
+    	}
+
+    	// Create your plugin.
+    	countPlugin, err := NewCountInvocationPlugin()
+    	if err != nil {
+    		log.Fatalf("failed to create plugin: %v", err)
+    	}
+
+    	sessionService := session.InMemoryService()
+    	// Add your plugin here. You can add multiple plugins.
+    	r, err := runner.New(runner.Config{
+    		AppName:        "test_app_with_plugin",
+    		Agent:          rootAgent,
+    		SessionService: sessionService,
+    		PluginConfig: runner.PluginConfig{
+    			Plugins: []*plugin.Plugin{countPlugin},
+    		},
+    	})
+    	if err != nil {
+    		log.Fatalf("failed to create runner: %v", err)
+    	}
+
+    	// The rest is the same as starting a regular ADK runner.
+    	sessResp, err := sessionService.Create(ctx, &session.CreateRequest{
+    		AppName: "test_app_with_plugin",
+    		UserID:  "user",
+    	})
+    	if err != nil {
+    		log.Fatalf("failed to create session: %v", err)
+    	}
+    	sess := sessResp.Session
+
+    	prompt := "hello world"
+    	input := genai.NewContentFromText(prompt, genai.RoleUser)
+
+    	for event, err := range r.Run(ctx, "user", sess.ID(), input, agent.RunConfig{}) {
+    		if err != nil {
+    			log.Printf("AGENT_ERROR: %v", err)
+    			continue
+    		}
+    		if event.Author != "" {
+    			fmt.Printf("** Got event from %s\n", event.Author)
+    		}
+    	}
+    }
+    ```
+
 ### Run the agent with the Plugin
 
 Run the plugin as you typically would. The following shows how to run the
@@ -321,10 +587,17 @@ command line:
     npx ts-node path.to.main.ts
     ```
 
-Plugins are not supported by the
-[ADK web interface](../evaluate/index.md#1-adk-web-run-evaluations-via-the-web-ui).
-If your ADK workflow uses Plugins, you must run your workflow without the web
-interface.
+=== "Java"
+
+    ```sh
+    ./mvnw -q clean compile exec:java -Dexec.mainClass="com.example.Main"
+    ```
+
+=== "Go"
+
+    ```sh
+    go run path/to/main.go
+    ```
 
 The output of this previously described agent should look similar to the
 following:
@@ -341,8 +614,8 @@ Hello world: query is [hello world]
 
 
 For more information on running ADK agents, see the
-[Quickstart](/adk-docs/get-started/quickstart/#run-your-agent)
-guide.
+[Agent Runtime](/runtime/#ways-to-run-agents)
+guides.
 
 ## Build workflows with Plugins
 
@@ -496,6 +769,26 @@ The following code example shows the basic syntax of this callback:
     }
     ```
 
+=== "Java"
+
+    ```java
+    @Override
+    public Maybe<Content> onUserMessageCallback(
+      InvocationContext invocationContext, Content userMessage) {
+      // Your implementation here
+      return Maybe.empty();
+    }
+    ```
+
+=== "Go"
+
+    ```go
+    func (p *MyPlugin) OnUserMessageCallback(ctx agent.InvocationContext, msg *genai.Content) (*genai.Content, error) {
+      // Your implementation here
+      return nil, nil
+    }
+    ```
+
 ### Runner start callbacks
 
 A *Runner start* callback (`before_run_callback`) happens when the `Runner`
@@ -525,6 +818,25 @@ The following code example shows the basic syntax of this callback:
     ```typescript
     async beforeRunCallback(invocationContext: InvocationContext): Promise<Content | undefined> {
       // Your implementation here
+    }
+    ```
+
+=== "Java"
+
+    ```java
+    @Override
+    public Maybe<Content> beforeRunCallback(InvocationContext invocationContext) {
+      // Your implementation here
+      return Maybe.empty();
+    }
+    ```
+
+=== "Go"
+
+    ```go
+    func (p *MyPlugin) BeforeRunCallback(ctx agent.InvocationContext) (*genai.Content, error) {
+      // Your implementation here
+      return nil, nil
     }
     ```
 
@@ -598,12 +910,32 @@ The following code example shows the basic syntax of this callback:
 
     ```typescript
     async onModelErrorCallback(
-        callbackContext: CallbackContext,
+        context: Context,
         llmRequest: LlmRequest,
         error: Error
     ): Promise<LlmResponse | undefined> {
         // Your implementation here
-    }  
+    }
+    ```
+
+=== "Java"
+
+    ```java
+    @Override
+    public Maybe<LlmResponse> onModelErrorCallback(
+      CallbackContext callbackContext, LlmRequest.Builder llmRequest, Throwable error) {
+      // Your implementation here
+      return Maybe.empty();
+    }
+    ```
+
+=== "Go"
+
+    ```go
+    func (p *MyPlugin) OnModelErrorCallback(ctx agent.CallbackContext, req *model.LLMRequest, err error) (*model.LLMResponse, error) {
+      // Your implementation here
+      return nil, nil
+    }
     ```
 
 ### Tool callbacks
@@ -661,11 +993,31 @@ The following code example shows the basic syntax of this callback:
     async onToolErrorCallback(
         tool: BaseTool,
         toolArgs: { [key: string]: any },
-        toolContext: ToolContext,
+        context: Context,
         error: Error
     ): Promise<{ [key:string]: any } | undefined> {
         // Your implementation here
-    }    
+    }
+    ```
+
+=== "Java"
+
+    ```java
+    @Override
+    public Maybe<Map<String, Object>> onToolErrorCallback(
+      BaseTool tool, Map<String, Object> toolArgs, ToolContext toolContext, Throwable error) {
+      // Your implementation here
+      return Maybe.empty();
+    }
+    ```
+
+=== "Go"
+
+    ```go
+    func (p *MyPlugin) OnToolErrorCallback(ctx tool.Context, t tool.Tool, args map[string]any, err error) (map[string]any, error) {
+      // Your implementation here
+      return nil, nil
+    }
     ```
 
 ### Event callbacks
@@ -700,7 +1052,26 @@ The following code example shows the basic syntax of this callback:
         event: Event
     ): Promise<Event | undefined> {
         // Your implementation here
-    }    
+    }
+    ```
+
+=== "Java"
+
+    ```java
+    @Override
+    public Maybe<Event> onEventCallback(InvocationContext invocationContext, Event event) {
+      // Your implementation here
+      return Maybe.empty();
+    }
+    ```
+
+=== "Go"
+
+    ```go
+    func (p *MyPlugin) OnEventCallback(ctx agent.InvocationContext, event *session.Event) (*session.Event, error) {
+      // Your implementation here
+      return nil, nil
+    }
     ```
 
 ### Runner end callbacks
@@ -732,7 +1103,25 @@ The following code example shows the basic syntax of this callback:
     ```typescript
     async afterRunCallback(invocationContext: InvocationContext): Promise<void> {
         // Your implementation here
-    }    
+    }
+    ```
+
+=== "Java"
+
+    ```java
+    @Override
+    public Completable afterRunCallback(InvocationContext invocationContext) {
+      // Your implementation here
+      return Completable.complete();
+    }
+    ```
+
+=== "Go"
+
+    ```go
+    func (p *MyPlugin) AfterRunCallback(ctx agent.InvocationContext) {
+      // Your implementation here
+    }
     ```
 
 ## Next steps
@@ -741,6 +1130,6 @@ Check out these resources for developing and applying Plugins to your ADK
 projects:
 
 -   For more ADK Plugin code examples, see the
-    [ADK Python repository](https://github.com/google/adk-python/tree/main/src/google/adk/plugins).
--   For information on applying Plugins for security purposes, see 
-    [Callbacks and Plugins for Security Guardrails](/adk-docs/safety/#callbacks-and-plugins-for-security-guardrails).
+    [ADK Samples repository](https://github.com/google/adk-samples).
+-   For information on applying Plugins for security purposes, see
+    [Callbacks and Plugins for Security Guardrails](/safety/#callbacks-and-plugins-for-security-guardrails).

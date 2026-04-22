@@ -1,157 +1,103 @@
 ---
+title: Agent Development Kit (ADK)
 hide:
+  - navigation
   - toc
 ---
+<link rel="stylesheet" type="text/css" href="stylesheets/homepage.css" />
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/asciinema-player@3.9.0/dist/bundle/asciinema-player.css" />
+<script src="https://cdn.jsdelivr.net/npm/asciinema-player@3.9.0/dist/bundle/asciinema-player.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>document.body.classList.add('adk-landing-page');</script>
 
-<div style="text-align: center;">
-  <div class="centered-logo-text-group">
-    <img src="assets/agent-development-kit.png" alt="Agent Development Kit Logo" width="100">
-    <h1>Agent Development Kit</h1>
-  </div>
-</div>
+<div class="adk-landing">
 
-Agent Development Kit (ADK) is a flexible and modular framework for **developing
-and deploying AI agents**. While optimized for Gemini and the Google ecosystem,
-ADK is **model-agnostic**, **deployment-agnostic**, and is built for
-**compatibility with other frameworks**. ADK was designed to make agent
-development feel more like software development, to make it easier for
-developers to create, deploy, and orchestrate agentic architectures that range
-from simple tasks to complex workflows.
+<!-- Ambient Glows -->
+<div class="glow glow-tl"></div>
+<div class="glow glow-tr"></div>
+<div class="glow glow-mr"></div>
 
-??? tip "News: ADK TypeScript v0.2.0 released!"
+<!-- Hero Section -->
+{{% include '_includes/homepage/_hero.md' %}}
 
-    ADK TypeScript v0.2.0 is officially released! By popular demand, the ADK
-    team has brought the power of Agent Development Kit to one of the most
-    popular programming languages on the planet. For details, check out the
-    [blog post](https://developers.googleblog.com/introducing-agent-development-kit-for-typescript-build-ai-agents-with-the-power-of-a-code-first-approach/).
+<!-- Framework -->
+{{% include '_includes/homepage/_framework.md' %}}
 
-??? tip "News: ADK Go v0.3.0 released!"
+<!-- Ecosystem -->
+{{% include '_includes/homepage/_ecosystem.md' %}}
 
-    ADK Go release v0.3.0 includes numerous bug fixes, introduces new features
-    such as agent-to-agent request callbacks and extendability, and updates
-    dependencies like the GenAI SDK and the ADK Web UI.
-    For release details, check out the
-    [release notes](https://github.com/google/adk-go/releases/tag/v0.3.0).
+<!-- AI Dev Tools -->
+{{% include '_includes/homepage/_ai-dev-tools.md' %}}
 
-??? tip "News: ADK Java v0.5.0 released!"
+<!-- Eval Section -->
+{{% include '_includes/homepage/_eval.md' %}}
 
-    The ADK Java v0.5.0 release adds new features for tool execution mode
-    configuration and model versioning, along with numerous bug fixes,
-    dependency updates, and significant refactoring to improve the agent
-    and runner architecture. For release details, check out the
-    [release notes](https://github.com/google/adk-java/releases/tag/v0.5.0).
+<!-- Ready to Build CTA Section -->
+{{% include '_includes/homepage/_build-cta.md' %}}
 
-<div id="centered-install-tabs" class="install-command-container" markdown="1">
+<!-- Community Section -->
+{{% include '_includes/homepage/_community.md' %}}
 
-<p class="get-started-text" style="text-align: center;">Get started:</p>
+<!-- FAQ Section -->
+{{% include '_includes/homepage/_faq.md' %}}
 
-=== "Python"
-    <br>
-    <p style="text-align: center;">
-    <code>pip install google-adk</code>
-    </p>
+<script>
+function initHomepage() {
+  // Asciinema player (for _agent-cli.md)
+  var playerEl = document.getElementById('asciinema-demo');
+  if (playerEl && !playerEl.hasChildNodes() && typeof AsciinemaPlayer !== 'undefined') {
+    AsciinemaPlayer.create('assets/adk-demo.cast', playerEl, {
+      theme: 'monokai',
+      fit: 'width',
+      autoPlay: true,
+      loop: true,
+      speed: 1,
+      idleTimeLimit: 2,
+      cols: 85,
+      rows: 24,
+      poster: 'npt:0:18'
+    });
+  }
+}
 
-=== "TypeScript"
-    <br>
-    <p style="text-align: center;">
-    <code>npm install @google/adk</code>
-    </p>
+// Event delegation for tab switching and copy buttons.
+// Attaching to `document` means these handlers survive DOM replacement
+// during MkDocs Material instant (SPA) navigation.
+document.addEventListener('click', function(e) {
+  // Tab switching
+  var tab = e.target.closest('.iterm-tab');
+  if (tab) {
+    var lang = tab.getAttribute('data-lang');
+    var allTabs = document.querySelectorAll('.iterm-tab');
+    var langs = ['python', 'go', 'java', 'typescript'];
+    allTabs.forEach(function(t) { t.classList.remove('active'); });
+    tab.classList.add('active');
+    langs.forEach(function(l) {
+      var codeEl = document.getElementById('code-' + l);
+      var installEl = document.getElementById('install-' + l);
+      if (codeEl) codeEl.style.display = l === lang ? 'block' : 'none';
+      if (installEl) installEl.style.display = l === lang ? 'flex' : 'none';
+    });
+    return;
+  }
 
-=== "Go"
-    <br>
-    <p style="text-align: center;">
-    <code>go get google.golang.org/adk</code>
-    </p>
+  // Copy-to-clipboard buttons
+  var btn = e.target.closest('.copy-btn');
+  if (btn) {
+    var text = btn.getAttribute('data-copy');
+    navigator.clipboard.writeText(text).then(function() {
+      var orig = btn.textContent;
+      btn.textContent = '✅';
+      setTimeout(function() { btn.textContent = orig; }, 1500);
+    });
+  }
+});
 
-=== "Java"
+// Initialize on first load
+document.addEventListener('DOMContentLoaded', initHomepage);
 
-    ```xml title="pom.xml"
-    <dependency>
-        <groupId>com.google.adk</groupId>
-        <artifactId>google-adk</artifactId>
-        <version>0.3.0</version>
-    </dependency>
-    ```
-
-    ```gradle title="build.gradle"
-    dependencies {
-        implementation 'com.google.adk:google-adk:0.3.0'
-    }
-    ```
-
-</div>
-
-<p style="text-align:center;">
-  <a href="/adk-docs/get-started/python/" class="md-button" style="margin:3px">Start with Python</a>
-  <a href="/adk-docs/get-started/typescript/" class="md-button" style="margin:3px">Start with TypeScript</a>
-  <a href="/adk-docs/get-started/go/" class="md-button" style="margin:3px">Start with Go</a>
-  <a href="/adk-docs/get-started/java/" class="md-button" style="margin:3px">Start with Java</a>
-</p>
-
----
-
-## Learn more
-
-[:fontawesome-brands-youtube:{.youtube-red-icon} Watch "Introducing Agent Development Kit"!](https://www.youtube.com/watch?v=zgrOwow_uTQ){:target="_blank" rel="noopener noreferrer"}
-
-<div class="grid cards" markdown>
-
--   :material-transit-connection-variant: **Flexible Orchestration**
-
-    ---
-
-    Define workflows using workflow agents (`Sequential`, `Parallel`, `Loop`)
-    for predictable pipelines, or leverage LLM-driven dynamic routing
-    (`LlmAgent` transfer) for adaptive behavior.
-
-    [**Learn about agents**](agents/index.md)
-
--   :material-graph: **Multi-Agent Architecture**
-
-    ---
-
-    Build modular and scalable applications by composing multiple specialized
-    agents in a hierarchy. Enable complex coordination and delegation.
-
-    [**Explore multi-agent systems**](agents/multi-agents.md)
-
--   :material-toolbox-outline: **Rich Tool Ecosystem**
-
-    ---
-
-    Equip agents with diverse capabilities: use pre-built tools (Search, Code
-    Exec), create custom functions, integrate 3rd-party libraries, or even use
-    other agents as tools.
-
-    [**Browse tools**](tools/index.md)
-
--   :material-rocket-launch-outline: **Deployment Ready**
-
-    ---
-
-    Containerize and deploy your agents anywhere – run locally, scale with
-    Vertex AI Agent Engine, or integrate into custom infrastructure using Cloud
-    Run or Docker.
-
-    [**Deploy agents**](deploy/index.md)
-
--   :material-clipboard-check-outline: **Built-in Evaluation**
-
-    ---
-
-    Systematically assess agent performance by evaluating both the final
-    response quality and the step-by-step execution trajectory against
-    predefined test cases.
-
-    [**Evaluate agents**](evaluate/index.md)
-
--   :material-console-line: **Building Safe and Secure Agents**
-
-    ---
-
-    Learn how to building powerful and trustworthy agents by implementing
-    security and safety patterns and best practices into your agent's design.
-
-    [**Safety and Security**](safety/index.md)
-
-</div>
+// Re-initialize after MkDocs Material instant navigation
+if (typeof document$ !== 'undefined') {
+  document$.subscribe(function() { initHomepage(); });
+}
+</script>
