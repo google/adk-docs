@@ -1,16 +1,16 @@
-# Deploy to Agent Runtime with Agent Starter Pack
+# Deploy to Agent Runtime with agents-cli
 
 <div class="language-support-tag" title="Agent Runtime currently supports only Python.">
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
 </div>
 
-This deployment procedure describes how to perform a deployment using the
-[Agent Starter Pack](https://github.com/GoogleCloudPlatform/agent-starter-pack)
-(ASP) and the ADK command line interface (CLI) tool. Deploying to the Agent Runtime runtime via ASP provides an accelerated path to a production-ready environment. ASP automatically configures Google Cloud resources, CI/CD pipelines, and Infrastructure-as-Code (Terraform) to support the entire development lifecycle. As a best practice, always ensure you review the generated configurations to align with your organization’s security and compliance standards before production deployment.
+This deployment procedure describes how to perform a deployment using
+[agents-cli](https://google.github.io/agents-cli/)
+and the ADK. Deploying to Agent Runtime via agents-cli provides an accelerated path to a production-ready environment. agents-cli automatically configures Google Cloud resources, CI/CD pipelines, and Infrastructure-as-Code (Terraform) to support the entire development lifecycle. As a best practice, always ensure you review the generated configurations to align with your organization’s security and compliance standards before production deployment.
 
-This deployment guide uses the ASP tool to apply a project template to your
+This deployment guide uses agents-cli to apply a project template to your
 existing project, add deployment artifacts, and prepare your agent project for
-deployment. These instructions show you how to use ASP to provision a Google
+deployment. These instructions show you how to use agents-cli to provision a Google
 Cloud project with services needed for deploying your ADK project, as follows:
 
 -   [Prerequisites](#prerequisites-ad): Set up Google Cloud
@@ -24,11 +24,11 @@ Cloud project with services needed for deploying your ADK project, as follows:
     required services in your Google Cloud project and upload your ADK project code.
 
 For information on testing a deployed agent, see [Test deployed agent](test.md).
-For more information on using Agent Starter Pack and its command line tools,
+For more information on using agents-cli and its command line tools,
 see the
-[CLI reference](https://googlecloudplatform.github.io/agent-starter-pack/cli/enhance.html)
+[CLI reference](https://google.github.io/agents-cli/cli/)
 and
-[Development guide](https://googlecloudplatform.github.io/agent-starter-pack/guide/development-guide.html).
+[Development guide](https://google.github.io/agents-cli/guide/).
 
 ### Prerequisites {#prerequisites-ad}
 
@@ -43,9 +43,9 @@ You need the following resources configured to use this deployment path:
     An empty project is recommended to avoid conflicts with existing resources.
     For new projects, see [Creating and managing projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects).
 
--   **Python Environment**: A Python version supported by the
-    [ASP project](https://googlecloudplatform.github.io/agent-starter-pack/guide/getting-started.html).
--   **uv Tool:** Manage Python development environment and running ASP
+-   **Python Environment**: A Python version supported by
+    [agents-cli](https://google.github.io/agents-cli/guide/getting-started/).
+-   **uv Tool:** Manage Python development environment and running agents-cli
     tools. For installation details, see
     [Install uv](https://docs.astral.sh/uv/getting-started/installation/).
 -   **Google Cloud CLI tool**: The gcloud command line interface. For
@@ -58,7 +58,7 @@ You need the following resources configured to use this deployment path:
 ### Prepare your ADK project {#prepare-ad}
 
 When you deploy an ADK project to Agent Runtime, you need some additional files
-to support the deployment operation. The following ASP command backs up your
+to support the deployment operation. The following agents-cli command backs up your
 project and then adds files to your project for deployment purposes.
 
 These instructions assume you have an existing ADK project that you are modifying
@@ -83,14 +83,14 @@ To prepare your ADK project for deployment to Agent Runtime:
 
     Navigate to `your-project-directory/`
 
-1.  Run the ASP `enhance` command to add the files required for deployment into
+1.  Run the agents-cli `scaffold enhance` command to add the files required for deployment into
     your project.
 
     ```shell
-    uvx agent-starter-pack enhance --adk -d agent_engine
+    agents-cli scaffold enhance --deployment-target agent_engine
     ```
 
-1.  Follow the instructions from the ASP tool. In general, you can accept
+1.  Follow the instructions from the agents-cli tool. In general, you can accept
     the default answers to all questions. However for the **GCP region**,
     option, make sure you select one of the
     [supported regions](https://docs.cloud.google.com/agent-builder/locations#supported-regions-agent-engine)
@@ -103,11 +103,11 @@ When you successfully complete this process, the tool shows the following messag
 ```
 
 !!! tip "Note"
-    The ASP tool may show a reminder to connect to Google Cloud while
+    The agents-cli tool may show a reminder to connect to Google Cloud while
     running, but that connection is *not required* at this stage.
 
-For more information about the changes ASP makes to your ADK project, see
-[Changes to your ADK project](#adk-asp-changes).
+For more information about the changes agents-cli makes to your ADK project, see
+[Changes to your ADK project](#adk-agents-cli-changes).
 
 ### Connect to your Google Cloud project {#connect-ad}
 
@@ -142,7 +142,7 @@ ID, you are ready to deploy your ADK project files to Agent Runtime.
 
 ### Deploy your ADK project {#deploy-ad}
 
-When using the ASP tool, you deploy in stages. In the first stage, you run a
+When using agents-cli, you deploy in stages. In the first stage, you run a
 `make` command that provisions the services needed to run your ADK workflow on
 Agent Runtime. In the second stage, the tool uploads your project code to the
 Agent Runtime service and runs it in the hosted environment
@@ -160,7 +160,7 @@ To deploy your ADK project to Agent Runtime in your Google Cloud project:
     `your-project-directory/`) that contains your agent folder.
 
 1.  Deploy the code from the updated local project into the Google Cloud
-development environment, by running the following ASP make command:
+development environment, by running the following make command:
 
     ```shell
     make backend
@@ -171,9 +171,9 @@ the agent running on Google Cloud Agent Runtime. For details on testing the
 deployed agent, see
 [Test deployed agent](/deploy/agent-runtime/test/).
 
-### Changes to your ADK project {#adk-asp-changes}
+### Changes to your ADK project {#adk-agents-cli-changes}
 
-The ASP tools add more files to your project for deployment. The procedure
+The agents-cli tools add more files to your project for deployment. The procedure
 below backs up your existing project files before modifying them. This guide
 uses the
 [multi_tool_agent](https://github.com/google/adk-docs/tree/main/examples/python/snippets/get-started/multi_tool_agent)
@@ -187,7 +187,7 @@ my_agent/
 └─ .env
 ```
 
-After running the ASP enhance command to add Agent Runtime deployment
+After running the agents-cli scaffold enhance command to add Agent Runtime deployment
 information, the new structure is as follows:
 
 ```
@@ -206,8 +206,8 @@ my-agent/
 ```
 
 See the *README.md* file in your updated ADK project folder for more information.
-For more information on using Agent Starter Pack, see the
-[Development guide](https://googlecloudplatform.github.io/agent-starter-pack/guide/development-guide.html).
+For more information on using agents-cli, see the
+[Development guide](https://google.github.io/agents-cli/guide/).
 
 ## Test deployed agents
 
