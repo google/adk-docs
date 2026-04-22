@@ -90,9 +90,7 @@ async def initial_prompt(ctx: Context):
            Hobby,
            Example of attraction you liked
    """
-   resp = {"user_response": str}
-
-   yield RequestInput(message=input_message, response_schema=resp)
+   yield RequestInput(message=input_message, response_schema=str)
 ```
 
 ### Request input with data payload
@@ -109,6 +107,10 @@ class ActivitiesList(BaseModel):
    activity has a name and a description"""
    itinerary: List[Dict[str, str]]
 
+class UserFeedback(BaseModel):
+   """Expected response structure from the user."""
+   user_response: str
+
 async def get_user_feedback(node_input: ActivitiesList):
    """
    Retrieves the user's thoughts on the agents initial itinerary in order to
@@ -124,6 +126,6 @@ async def get_user_feedback(node_input: ActivitiesList):
    yield RequestInput(
        message=message,
        payload=node_input,
-       response_schema={"user":"response"}
+        response_schema=UserFeedback,
    )
 ```

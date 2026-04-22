@@ -75,8 +75,8 @@ containing the data, as shown in the following code sample:
 def my_function_node_1():
     return Event(output="The Result")
 
-def my_function_node_2(node_input: Content):
-    output_value = node_input.parts[0].text.lower()
+def my_function_node_2(node_input: str):
+    output_value = node_input.lower()
     return Event(output=output_value) # "the result"
 ```
 
@@ -138,7 +138,7 @@ async def task_attempt_node(node_input: Content, attempts: int):
       },
   )
 
-async def read_state_node(ctx: WorkflowContext):
+async def read_state_node(ctx: Context):
   print(f"attempts state: {ctx.state}") # attempts state: attempts: 1
 
 root_agent = Workflow(
@@ -188,7 +188,7 @@ flight_searcher = Agent(
     input_schema=FlightSearchInput,
     output_schema=FlightSearchOutput,
     tools=[search_flights_api],
-    mode="single-turn",
+    mode="single_turn",
     ...
 )
 

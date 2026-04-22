@@ -42,7 +42,7 @@ The following code example shows how to set operating modes for
 a small team of subagents and assign them to a coordinator agent:
 
 ```python
-from google.adk.workflow.agents.llm_agent import Agent
+from google.adk import Agent
 
 weather_agent = Agent(
     name="weather_checker",
