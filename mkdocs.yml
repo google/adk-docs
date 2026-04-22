@@ -207,7 +207,8 @@ plugins:
         'agents/models/vertex.md': 'agents/models/agent-platform.md'
         'deploy/agent-engine/index.md': 'deploy/agent-runtime/index.md'
         'deploy/agent-engine/deploy.md': 'deploy/agent-runtime/deploy.md'
-        'deploy/agent-engine/asp.md': 'deploy/agent-runtime/asp.md'
+        'deploy/agent-engine/asp.md': 'deploy/agent-runtime/agents-cli.md'
+        'deploy/agent-runtime/asp.md': 'deploy/agent-runtime/agents-cli.md'
         'deploy/agent-engine/test.md': 'deploy/agent-runtime/test.md'
         'tools/index.md': 'integrations/index.md'
         'tools/gemini-api/index.md': 'integrations/index.md'
@@ -337,7 +338,7 @@ nav:
       - Agent Runtime:
         - deploy/agent-runtime/index.md
         - Standard deployment: deploy/agent-runtime/deploy.md
-        - Agent Starter Pack: deploy/agent-runtime/asp.md
+        - Agent Starter Pack: deploy/agent-runtime/agents-cli.md
         - Test deployed agents: deploy/agent-runtime/test.md
       - Cloud Run: deploy/cloud-run.md
       - GKE: deploy/gke.md
