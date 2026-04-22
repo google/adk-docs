@@ -7,7 +7,7 @@
 [Apigee](https://docs.cloud.google.com/apigee/docs/api-platform/get-started/what-apigee)
 provides a powerful [AI Gateway](https://cloud.google.com/solutions/apigee-ai),
 transforming how you manage and govern your generative AI model traffic. By
-exposing your AI model endpoint (like Vertex AI or the Gemini API) through an
+exposing your AI model endpoint (like Agent Platform or the Gemini API) through an
 Apigee proxy, you immediately gain enterprise-grade capabilities:
 
 - **Model Safety:** Implement security policies like Model Armor for threat protection.
@@ -20,7 +20,7 @@ Apigee proxy, you immediately gain enterprise-grade capabilities:
 
 !!! note
 
-    The `ApigeeLLM` wrapper is currently designed for use with Vertex AI
+    The `ApigeeLLM` wrapper is currently designed for use with Agent Platform
     and the Gemini API (generateContent). We are continually expanding support for
     other models and interfaces.
 

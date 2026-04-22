@@ -1,19 +1,19 @@
-# Test deployed agents in Agent Engine
+# Test deployed agents in Agent Runtime
 
 These instructions explain how to test an ADK agent deployed to the
-[Agent Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview)
+[Agent Runtime](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview)
 runtime environment. Before using these instructions, you need to have completed
-the deployment of your agent to the Agent Engine runtime environment using one
-of the [available methods](/deploy/agent-engine/). This guide shows you
+the deployment of your agent to the Agent Runtime runtime environment using one
+of the [available methods](/deploy/agent-runtime/). This guide shows you
 how to view, interact, and test your deployed agent through the Google Cloud
-Console, and interact with the agent using REST API calls or the Vertex AI SDK
+Console, and interact with the agent using REST API calls or the Agent Platform SDK
 for Python.
 
 ## View deployed agent in Cloud Console
 
 To view your deployed agent in the Cloud Console:
 
--   Navigate to the Agent Engine page in the Google Cloud Console:
+-   Navigate to the Agent Runtime page in the Google Cloud Console:
     [https://console.cloud.google.com/vertex-ai/agents/agent-engines](https://console.cloud.google.com/vertex-ai/agents/agent-engines)
 
 This page lists all deployed agents in your currently selected Google Cloud
@@ -28,12 +28,12 @@ You need the address and resource identification for your project (`PROJECT_ID`,
 `LOCATION_ID`, `RESOURCE_ID`) to be able to test your deployment. You can use Cloud
 Console or the `gcloud` command line tool to find this information.
 
-??? note "Vertex AI express mode API key"
-    If you are using Vertex AI express mode, you can skip this step and use your API key.
+??? note "Agent Platform express mode API key"
+    If you are using Agent Platform express mode, you can skip this step and use your API key.
 
 To find your project information with Google Cloud Console:
 
-1.  In the Google Cloud Console, navigate to the Agent Engine page:
+1.  In the Google Cloud Console, navigate to the Agent Runtime page:
     [https://console.cloud.google.com/vertex-ai/agents/agent-engines](https://console.cloud.google.com/vertex-ai/agents/agent-engines)
 
 1.  At the top of the page, select **API URLs**, and then copy the **Query
@@ -62,7 +62,7 @@ To find your project information with the `gcloud` command line tool:
 
 ## Test using REST calls
 
-A simple way to interact with your deployed agent in Agent Engine is to use REST
+A simple way to interact with your deployed agent in Agent Runtime is to use REST
 calls with the `curl` tool. This section describes how to check your
 connection to the agent and also to test processing of a request by the deployed
 agent.
@@ -70,7 +70,7 @@ agent.
 ### Check connection to agent
 
 You can check your connection to the running agent using the **Query URL**
-available in the Agent Engine section of the Cloud Console. This check does not
+available in the Agent Runtime section of the Cloud Console. This check does not
 execute the deployed agent, but returns information about the agent.
 
 To send a REST call and get a response from deployed agent:
@@ -86,7 +86,7 @@ To send a REST call and get a response from deployed agent:
             "https://$(LOCATION_ID)-aiplatform.googleapis.com/v1/projects/$(PROJECT_ID)/locations/$(LOCATION_ID)/reasoningEngines"
         ```
 
-    === "Vertex AI express mode"
+    === "Agent Platform express mode"
 
         ```shell
         curl -X GET \
@@ -98,7 +98,7 @@ If your deployment was successful, this request responds with a list of valid
 requests and expected data formats.
 
 !!! tip "Remove `:query` parameter for connection URL"
-    If you use the **Query URL** available in the Agent Engine section of the Cloud
+    If you use the **Query URL** available in the Agent Runtime section of the Cloud
     Console, make sure to remove the `:query` parameter from end of the address.
 
 !!! tip "Access for agent connections"
@@ -127,7 +127,7 @@ To test interaction with the deployed agent via REST:
             -d '{"class_method": "async_create_session", "input": {"user_id": "u_123"},}'
         ```
 
-    === "Vertex AI express mode"
+    === "Agent Platform express mode"
 
         ```shell
         curl \
@@ -173,7 +173,7 @@ To test interaction with the deployed agent via REST:
         }'
         ```
 
-    === "Vertex AI express mode"
+    === "Agent Platform express mode"
 
         ```shell
         curl \
@@ -191,16 +191,16 @@ To test interaction with the deployed agent via REST:
 
 This request should generate a response from your deployed agent code in JSON
 format. For more information about interacting with a deployed ADK agent in
-Agent Engine using REST calls, see
+Agent Runtime using REST calls, see
 [Manage deployed agents](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/manage/overview#console)
 and
 [Use an Agent Development Kit agent](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/use/adk)
-in the Agent Engine documentation.
+in the Agent Runtime documentation.
 
 ## Test using Python
 
 You can use Python code for more sophisticated and repeatable testing of your
-agent deployed in Agent Engine. These instructions describe how to create
+agent deployed in Agent Runtime. These instructions describe how to create
 a session with the deployed agent, and then send a request to the agent for
 processing.
 
@@ -227,7 +227,7 @@ Expected output for `create_session` (remote):
 ```
 
 The `id` value is the session ID, and `app_name` is the resource ID of the
-deployed agent on Agent Engine.
+deployed agent on Agent Runtime.
 
 #### Send queries to your remote agent
 
@@ -249,11 +249,11 @@ Expected output for `async_stream_query` (remote):
 ```
 
 For more information about interacting with a deployed ADK agent in
-Agent Engine, see
+Agent Runtime, see
 [Manage deployed agents](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/manage/overview)
 and
 [Use a Agent Development Kit agent](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/use/adk)
-in the Agent Engine documentation.
+in the Agent Runtime documentation.
 
 ### Sending Multimodal Queries
 
@@ -283,7 +283,7 @@ async for event in remote_app.async_stream_query(
 !!!note
     While the underlying communication with the model may involve Base64
     encoding for images, the recommended and supported method for sending image
-    data to an agent deployed on Agent Engine is by providing a GCS URI.
+    data to an agent deployed on Agent Runtime is by providing a GCS URI.
 
 ## Clean up deployments
 
@@ -298,5 +298,5 @@ remote_app.delete(force=True)
 The `force=True` parameter also deletes any child resources that were generated
 from the deployed agent, such as sessions. You can also delete your deployed
 agent via the
-[Agent Engine UI](https://console.cloud.google.com/vertex-ai/agents/agent-engines)
+[Agent Runtime UI](https://console.cloud.google.com/vertex-ai/agents/agent-engines)
 on Google Cloud.

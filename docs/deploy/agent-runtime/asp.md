@@ -1,12 +1,12 @@
-# Deploy to Agent Engine with Agent Starter Pack
+# Deploy to Agent Runtime with Agent Starter Pack
 
-<div class="language-support-tag" title="Vertex AI Agent Engine currently supports only Python.">
+<div class="language-support-tag" title="Agent Runtime currently supports only Python.">
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
 </div>
 
 This deployment procedure describes how to perform a deployment using the
 [Agent Starter Pack](https://github.com/GoogleCloudPlatform/agent-starter-pack)
-(ASP) and the ADK command line interface (CLI) tool. Deploying to the Agent Engine runtime via ASP provides an accelerated path to a production-ready environment. ASP automatically configures Google Cloud resources, CI/CD pipelines, and Infrastructure-as-Code (Terraform) to support the entire development lifecycle. As a best practice, always ensure you review the generated configurations to align with your organization’s security and compliance standards before production deployment.
+(ASP) and the ADK command line interface (CLI) tool. Deploying to the Agent Runtime runtime via ASP provides an accelerated path to a production-ready environment. ASP automatically configures Google Cloud resources, CI/CD pipelines, and Infrastructure-as-Code (Terraform) to support the entire development lifecycle. As a best practice, always ensure you review the generated configurations to align with your organization’s security and compliance standards before production deployment.
 
 This deployment guide uses the ASP tool to apply a project template to your
 existing project, add deployment artifacts, and prepare your agent project for
@@ -36,7 +36,7 @@ You need the following resources configured to use this deployment path:
 
 -   **Google Cloud Project and Permissions**: A Google Cloud project with [billing enabled](https://cloud.google.com/billing/docs/how-to/modify-project).
     You can use an existing project or create a new one. You must have one of the following IAM roles assigned within this project:
-    -   **Vertex AI User role** — sufficient to deploy an agent to Agent Engine.
+    -   **Agent Platform User role** — sufficient to deploy an agent to Agent Runtime.
     -   **Owner role** — required for the full production setup (Terraform infrastructure provisioning, CI/CD pipelines, IAM configuration).
 
 !!! tip "Note"
@@ -57,7 +57,7 @@ You need the following resources configured to use this deployment path:
 
 ### Prepare your ADK project {#prepare-ad}
 
-When you deploy an ADK project to Agent Engine, you need some additional files
+When you deploy an ADK project to Agent Runtime, you need some additional files
 to support the deployment operation. The following ASP command backs up your
 project and then adds files to your project for deployment purposes.
 
@@ -67,7 +67,7 @@ project, complete one of the [Get started](/get-started/) guides,
 which creates an agent project. The following instructions use the `my_agent`
 project as an example.
 
-To prepare your ADK project for deployment to Agent Engine:
+To prepare your ADK project for deployment to Agent Runtime:
 
 1.  In a terminal window of your development environment, navigate to the
     **parent directory** that contains your agent folder. For example, if your
@@ -94,7 +94,7 @@ To prepare your ADK project for deployment to Agent Engine:
     the default answers to all questions. However for the **GCP region**,
     option, make sure you select one of the
     [supported regions](https://docs.cloud.google.com/agent-builder/locations#supported-regions-agent-engine)
-    for Agent Engine.
+    for Agent Runtime.
 
 When you successfully complete this process, the tool shows the following message:
 
@@ -138,14 +138,14 @@ To connect to Google Cloud and list your project:
     ```
 
 Once you have successfully connected to Google Cloud and set your Cloud Project
-ID, you are ready to deploy your ADK project files to Agent Engine.
+ID, you are ready to deploy your ADK project files to Agent Runtime.
 
 ### Deploy your ADK project {#deploy-ad}
 
 When using the ASP tool, you deploy in stages. In the first stage, you run a
 `make` command that provisions the services needed to run your ADK workflow on
-Agent Engine. In the second stage, the tool uploads your project code to the
-Agent Engine service and runs it in the hosted environment
+Agent Runtime. In the second stage, the tool uploads your project code to the
+Agent Runtime service and runs it in the hosted environment
 
 !!! warning "Important"
     *Make sure your Google Cloud target deployment project is set as your ***current
@@ -154,7 +154,7 @@ Agent Engine service and runs it in the hosted environment
     information on setting and checking your current project, see
     [Connect to your Google Cloud project](#connect-ad).
 
-To deploy your ADK project to Agent Engine in your Google Cloud project:
+To deploy your ADK project to Agent Runtime in your Google Cloud project:
 
 1.  In a terminal window, ensure you are in the parent directory (e.g.,
     `your-project-directory/`) that contains your agent folder.
@@ -167,9 +167,9 @@ development environment, by running the following ASP make command:
     ```
 
 Once this process completes successfully, you should be able to interact with
-the agent running on Google Cloud Agent Engine. For details on testing the
+the agent running on Google Cloud Agent Runtime. For details on testing the
 deployed agent, see
-[Test deployed agent](/deploy/agent-engine/test/).
+[Test deployed agent](/deploy/agent-runtime/test/).
 
 ### Changes to your ADK project {#adk-asp-changes}
 
@@ -187,14 +187,14 @@ my_agent/
 └─ .env
 ```
 
-After running the ASP enhance command to add Agent Engine deployment
+After running the ASP enhance command to add Agent Runtime deployment
 information, the new structure is as follows:
 
 ```
 my-agent/
 ├─ app/                 # Core application code
 │   ├─ agent.py         # Main agent logic
-│   ├─ agent_engine_app.py # Agent Engine application logic
+│   ├─ agent_engine_app.py # Agent Runtime application logic
 │   └─ utils/           # Utility functions and helpers
 ├─ .cloudbuild/         # CI/CD pipeline configurations for Google Cloud Build
 ├─ deployment/          # Infrastructure and deployment scripts
@@ -213,5 +213,5 @@ For more information on using Agent Starter Pack, see the
 
 After completing deployment of your ADK agent you should test the workflow in
 its new hosted environment. For more information on testing an ADK agent
-deployed to Agent Engine, see
-[Test deployed agents in Agent Engine](/deploy/agent-engine/test/).
+deployed to Agent Runtime, see
+[Test deployed agents in Agent Runtime](/deploy/agent-runtime/test/).

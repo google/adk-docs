@@ -1,12 +1,12 @@
-# Deploy to Vertex AI Agent Engine
+# Deploy to Agent Runtime
 
-<div class="language-support-tag" title="Vertex AI Agent Engine currently supports only Python.">
+<div class="language-support-tag" title="Agent Runtime currently supports only Python.">
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
 </div>
 
 This deployment procedure describes how to perform a standard deployment of
 ADK agent code to Google Cloud
-[Agent Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview).
+[Agent Runtime](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview).
 You should follow this deployment path if you have an existing Google Cloud
 project and if you want to carefully manage deploying an ADK agent to Agent
 Engine runtime environment. These instructions use Cloud Console, the gcloud
@@ -23,7 +23,7 @@ Engine runtime environment, which includes the following stages:
 
 ## Setup Google Cloud project {#setup-cloud-project}
 
-To deploy your agent to Agent Engine, you need a Google Cloud project:
+To deploy your agent to Agent Runtime, you need a Google Cloud project:
 
 1. **Sign into Google Cloud**:
     * If you're an **existing user** of Google Cloud:
@@ -56,12 +56,12 @@ To deploy your agent to Agent Engine, you need a Google Cloud project:
 
     <img src="/assets/project-id.png" alt="Google Cloud Project ID">
 
-4. **Enable Vertex AI in your project**
-    * To use Agent Engine, you need to [enable the Vertex AI API](https://console.cloud.google.com/apis/library/aiplatform.googleapis.com). Click on the "Enable" button to enable the API. Once enabled, it
+4. **Enable Agent Platform in your project**
+    * To use Agent Runtime, you need to [enable the Agent Platform API](https://console.cloud.google.com/apis/library/aiplatform.googleapis.com). Click on the "Enable" button to enable the API. Once enabled, it
     should say "API Enabled".
 
 5. **Enable Cloud Resource Manager API in your project**
-    * To use Agent Engine, you need to [enable the Cloud Resource Manager API](https://console.developers.google.com/apis/api/cloudresourcemanager.googleapis.com/overview). Click on the "Enable" button to enable the API. Once enabled, it should say "API Enabled".
+    * To use Agent Runtime, you need to [enable the Cloud Resource Manager API](https://console.developers.google.com/apis/api/cloudresourcemanager.googleapis.com/overview). Click on the "Enable" button to enable the API. Once enabled, it should say "API Enabled".
 
 ## Set up your coding environment {#prerequisites-coding-env}
 
@@ -125,7 +125,7 @@ code sample.
 
 You can deploy from your terminal using the `adk deploy` command line tool. This
 process packages your code, builds it into a container, and deploys it to the
-managed Agent Engine service. This process can take several minutes.
+managed Agent Runtime service. This process can take several minutes.
 
 The following example deploy command uses the `multi_tool_agent` sample code as
 the project to be deployed:
@@ -142,7 +142,7 @@ adk deploy agent_engine \
 ```
 
 For `region`, you can find a list of the supported regions on the
-[Vertex AI Agent Builder locations page](https://docs.cloud.google.com/agent-builder/locations#supported-regions-agent-engine).
+[Agent Builder locations page](https://docs.cloud.google.com/agent-builder/locations#supported-regions-agent-engine).
 To learn about the CLI options for the `adk deploy agent_engine` command, see the
 [ADK CLI Reference](/api-reference/cli/#adk-deploy-agent-engine).
 
@@ -162,22 +162,22 @@ Cleaning up the temp folder: /var/folders/k5/pv70z5m92s30k0n7hfkxszfr00mz24/T/ag
 
 Note that you now have a `RESOURCE_ID` where your agent has been deployed (which
 in the example above is `751619551677906944`). You need this ID number along
-with the other values to use your agent on Agent Engine.
+with the other values to use your agent on Agent Runtime.
 
-## Using an agent on Agent Engine
+## Using an agent on Agent Runtime
 
 Once you have completed deployment of your ADK project, you can query the agent
-using the Vertex AI SDK, Python requests library, or a REST API client. This
+using the Agent Platform SDK, Python requests library, or a REST API client. This
 section provides some information on what you need to interact with your agent
 and how to construct URLs to interact with your agent's REST API.
 
-To interact with your agent on Agent Engine, you need the following:
+To interact with your agent on Agent Runtime, you need the following:
 
 *   **PROJECT_ID** (example: "my-project-id") which you can find on your
     [project details page](https://console.cloud.google.com/iam-admin/settings)
 *   **LOCATION_ID** (example: "us-central1"), that you used to deploy your agent
 *   **RESOURCE_ID** (example: "751619551677906944"), which you can find on the
-    [Agent Engine UI](https://console.cloud.google.com/vertex-ai/agents/agent-engines)
+    [Agent Runtime UI](https://console.cloud.google.com/vertex-ai/agents/agent-engines)
 
 The query URL structure is as follows:
 
@@ -186,19 +186,19 @@ https://$(LOCATION_ID)-aiplatform.googleapis.com/v1/projects/$(PROJECT_ID)/locat
 ```
 
 You can make requests from your agent using this URL structure. For more information
-on how to make requests, see the instructions in the Agent Engine documentation
+on how to make requests, see the instructions in the Agent Runtime documentation
 [Use an Agent Development Kit agent](https://docs.cloud.google.com/agent-builder/agent-engine/use/adk#rest-api).
-You can also check the Agent Engine documentation to learn about how to manage your
+You can also check the Agent Runtime documentation to learn about how to manage your
 [deployed agent](https://docs.cloud.google.com/agent-builder/agent-engine/manage/overview).
 For more information on testing and interacting with a deployed agent, see
-[Test deployed agents in Agent Engine](/deploy/agent-engine/test/).
+[Test deployed agents in Agent Runtime](/deploy/agent-runtime/test/).
 
 ### Monitoring and verification
 
 *   You can monitor the deployment status in the
-    [Agent Engine UI](https://console.cloud.google.com/vertex-ai/agents/agent-engines)
+    [Agent Runtime UI](https://console.cloud.google.com/vertex-ai/agents/agent-engines)
     in the Google Cloud Console.
-*   For additional details, you can visit the Agent Engine documentation
+*   For additional details, you can visit the Agent Runtime documentation
     [deploying an agent](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/deploy)
     and
     [managing deployed agents](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/manage/overview).
@@ -207,5 +207,5 @@ For more information on testing and interacting with a deployed agent, see
 
 After completing deployment of your ADK agent you should test the workflow in
 its new hosted environment. For more information on testing an ADK agent
-deployed to Agent Engine, see
-[Test deployed agents in Agent Engine](/deploy/agent-engine/test/).
+deployed to Agent Runtime, see
+[Test deployed agents in Agent Runtime](/deploy/agent-runtime/test/).

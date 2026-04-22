@@ -148,4 +148,4 @@ The `searchEntryPoint` object in the `groundingMetadata` contains pre-formatted 
 
 **Rendered HTML from searchEntryPoint:** The metadata provides the necessary HTML and CSS to render the search suggestions bar, which includes the Google logo and chips for related queries. Integrating this HTML directly into your application's front end will display the suggestions as intended.
 
-For more information, consult [using Google Search Suggestions](https://cloud.google.com/vertex-ai/generative-ai/docs/grounding/grounding-search-suggestions) in Vertex AI documentation.
+For more information, consult [using Google Search Suggestions](https://cloud.google.com/vertex-ai/generative-ai/docs/grounding/grounding-search-suggestions) in Agent Platform documentation.

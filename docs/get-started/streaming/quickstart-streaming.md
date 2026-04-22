@@ -9,7 +9,7 @@ With this quickstart, you'll learn to create a simple agent and use ADK Streamin
 In order to use voice/video streaming in ADK, you will need to use Gemini models that support the Live API. You can find the **model ID(s)** that supports the Gemini Live API in the documentation:
 
 - [Google AI Studio: Gemini Live API](https://ai.google.dev/gemini-api/docs/models#live-api)
-- [Vertex AI: Gemini Live API](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api)
+- [Agent Platform: Gemini Live API](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api)
 
 ## 1. Setup Environment & Install ADK { #setup-environment-install-adk }
 
@@ -83,7 +83,7 @@ from . import agent
 
 ## 3\. Set up the platform { #set-up-the-platform }
 
-To run the agent, choose a platform from either Google AI Studio or Google Cloud Vertex AI:
+To run the agent, choose a platform from either Google AI Studio or Google Cloud Agent Platform:
 
 === "Gemini - Google AI Studio"
     1. Get an API key from [Google AI Studio](https://aistudio.google.com/apikey).
@@ -96,7 +96,7 @@ To run the agent, choose a platform from either Google AI Studio or Google Cloud
 
     3. Replace `PASTE_YOUR_ACTUAL_API_KEY_HERE` with your actual `API KEY`.
 
-=== "Gemini - Google Cloud Vertex AI"
+=== "Gemini - Google Cloud Agent Platform"
     1. You need an existing
        [Google Cloud](https://cloud.google.com/?e=48754805&hl=en) account and a
        project.
@@ -106,7 +106,7 @@ To run the agent, choose a platform from either Google AI Studio or Google Cloud
           [gcloud CLI](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-local)
         * Authenticate to Google Cloud, from the terminal by running
           `gcloud auth login`.
-        * [Enable the Vertex AI API](https://console.cloud.google.com/flows/enableapi?apiid=aiplatform.googleapis.com).
+        * [Enable the Agent Platform API](https://console.cloud.google.com/flows/enableapi?apiid=aiplatform.googleapis.com).
     2. Open the **`.env`** file located inside (`app/`). Copy-paste
        the following code and update the project ID and location.
 

@@ -849,7 +849,7 @@ When working with MCP and ADK, keep these points in mind:
 
 ## Deploying Agents with MCP Tools
 
-When deploying ADK agents that use MCP tools to production environments like Cloud Run, GKE, or Vertex AI Agent Engine, you need to consider how MCP connections will work in containerized and distributed environments.
+When deploying ADK agents that use MCP tools to production environments like Cloud Run, GKE, or Agent Runtime, you need to consider how MCP connections will work in containerized and distributed environments.
 
 ### Critical Deployment Requirement: Synchronous Agent Definition
 
@@ -898,7 +898,7 @@ async def get_agent():  # This won't work for deployment
 
 ### Quick Deployment Commands
 
-#### Vertex AI Agent Engine
+#### Agent Runtime
 ```bash
 uv run adk deploy agent_engine \
   --project=<your-gcp-project-id> \
@@ -1203,9 +1203,9 @@ McpToolset(
 )
 ```
 
-#### Vertex AI Agent Engine
+#### Agent Runtime
 ```python
-# Agent Engine managed deployment
+# Agent Runtime managed deployment
 # Prefer lightweight, self-contained MCP servers or external services
 McpToolset(
     connection_params=SseConnectionParams(

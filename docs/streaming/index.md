@@ -101,13 +101,13 @@ text, audio, and video inputs, and they can provide text and audio output.
 
     - [Streaming Tools](streaming-tools.md)
 
--   :material-console-line: **Blog post: Google ADK + Vertex AI Live API**
+-   :material-console-line: **Blog post: Google ADK + Gemini Live API**
 
     ---
 
     This article shows how to use Gemini Live API Toolkit in ADK for real-time audio/video streaming. It offers a Python server example using LiveRequestQueue to build custom, interactive AI agents.
 
-    - [Blog post: Google ADK + Vertex AI Live API](https://medium.com/google-cloud/google-adk-vertex-ai-live-api-125238982d5e)
+    - [Blog post: Google ADK + Gemini Live API](https://medium.com/google-cloud/google-adk-vertex-ai-live-api-125238982d5e)
 
 -   :material-console-line: **Blog post: Supercharge ADK Development with Claude Code Skills**
 
