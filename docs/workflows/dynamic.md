@@ -5,7 +5,7 @@
 </div>
 
 The ADK framework provides a programmatic way to define workflows as a more
-flexible and powerful alternative to [graph-based workflows](/adk-docs/workflows/).
+flexible and powerful alternative to [graph-based workflows](/workflows/).
 Using a graph-based approach provides a convenient way to compose multi-step,
 static process structures with workflow nodes. However, if the logic path for
 your workflow is more complex, with iterative loops or complex branching logic,
@@ -39,7 +39,7 @@ the benefits of dynamic workflows in ADK:
     [feedback](https://github.com/google/adk-python/issues/new?template=feature_request.md&labels=v2)!
 
 For information on installing ADK 2.0 to test this feature, see
-[Welcome to ADK 2.0](/adk-docs/2.0/).
+[Welcome to ADK 2.0](/2.0/).
 
 ## Get started
 
@@ -141,7 +141,7 @@ root_agent = Workflow(
 ## Data handling
 
 When using dynamic workflows with ADK, passing data is simpler than
-[graph-based workflows](/adk-docs/workflows/) because, with a workflow,
+[graph-based workflows](/workflows/) because, with a workflow,
 the ***Context*** class's ***run_node()*** method returns the node's output
 directly. This eliminates the need to directly handle session state or complex
 routing outputs for data transfer. The following code example shows how you can
@@ -181,7 +181,7 @@ def city_time_function(city: str):
 
 city_report_agent = Agent(
     name="city_report_agent",
-    model="gemini-2.5-flash",
+    model="gemini-flash-latest",
     input_schema=CityTime,
     instruction="""output the data provided by the previous node.""",
 )
@@ -195,12 +195,12 @@ async def city_workflow(ctx: Context):
 ```
 
 For more information on data handling between workflow nodes, see
-[Data handling for agent workflows](/adk-docs/workflows/data-handling/).
+[Data handling for agent workflows](/workflows/data-handling/).
 
 ## Workflow routes
 
 Dynamic workflows in ADK provide more flexibility in terms of routing logic
-compared to [graph-based workflows](/adk-docs/workflows/), including
+compared to [graph-based workflows](/workflows/), including
 iterative loops or more complex branching logic. This section describes some of
 the techniques that you can use for routing.
 
@@ -230,7 +230,7 @@ workflow loop for generating, reviewing, and updating code:
 ```python
 coder_agent = LlmAgent(
     name="generator_agent",
-    model="gemini-2.5-flash",
+    model="gemini-flash-latest",
     instruction="Write python code for user request.",
     output_schema=str,
 )
@@ -240,7 +240,7 @@ compile_lint_check = ApiNode()
 
 fixer_agent = LlmAgent(
     name="generator_agent",
-    model="gemini-2.5-flash",
+    model="gemini-flash-latest",
     instruction="""Refactor current code {code}.
         Based on compile & lint review: {findings}""",
     output_schema=str,

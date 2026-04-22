@@ -77,7 +77,7 @@ public class ScienceTeacherAgent {
   public static final BaseAgent ROOT_AGENT = initAgent();
 
   // Please fill in the latest model id that supports live API from
-  // https://google.github.io/adk-docs/get-started/streaming/quickstart-streaming/#supported-models
+  // https://adk.dev/get-started/streaming/quickstart-streaming/#supported-models
   public static BaseAgent initAgent() {
     return LlmAgent.builder()
         .name("science-app")
@@ -106,7 +106,7 @@ We will use `Dev UI` to run this agent later. For the tool to automatically reco
 To run the server, you’ll need to export two environment variables:
 
 * a Gemini key that you can [get from AI Studio](https://ai.google.dev/gemini-api/docs/api-key),
-* a variable to specify we’re not using Vertex AI this time.
+* a variable to specify we’re not using Agent Platform this time.
 
 ```shell
 export GOOGLE_GENAI_USE_VERTEXAI=FALSE

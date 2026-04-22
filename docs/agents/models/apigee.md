@@ -7,7 +7,7 @@
 [Apigee](https://docs.cloud.google.com/apigee/docs/api-platform/get-started/what-apigee)
 provides a powerful [AI Gateway](https://cloud.google.com/solutions/apigee-ai),
 transforming how you manage and govern your generative AI model traffic. By
-exposing your AI model endpoint (like Vertex AI or the Gemini API) through an
+exposing your AI model endpoint (like Agent Platform or the Gemini API) through an
 Apigee proxy, you immediately gain enterprise-grade capabilities:
 
 - **Model Safety:** Implement security policies like Model Armor for threat protection.
@@ -20,7 +20,7 @@ Apigee proxy, you immediately gain enterprise-grade capabilities:
 
 !!! note
 
-    The `ApigeeLLM` wrapper is currently designed for use with Vertex AI
+    The `ApigeeLLM` wrapper is currently designed for use with Agent Platform
     and the Gemini API (generateContent). We are continually expanding support for
     other models and interfaces.
 
@@ -39,7 +39,7 @@ Integrate Apigee's governance into your agent's workflow by instantiating the
     # Instantiate the ApigeeLlm wrapper
     model = ApigeeLlm(
         # Specify the Apigee route to your model. For more info, check out the ApigeeLlm documentation (https://github.com/google/adk-python/tree/main/contributing/samples/hello_world_apigeellm).
-        model="apigee/gemini-2.5-flash",
+        model="apigee/gemini-flash-latest",
         # The proxy URL of your deployed Apigee proxy including the base path
         proxy_url=f"https://{APIGEE_PROXY_URL}",
         # Pass necessary authentication/authorization headers (like an API key)
@@ -65,7 +65,7 @@ Integrate Apigee's governance into your agent's workflow by instantiating the
 
     ApigeeLlm apigeeLlm =
             ApigeeLlm.builder()
-                .modelName("apigee/gemini-2.5-flash") // Specify the Apigee route to your model. For more info, check out the ApigeeLlm documentation
+                .modelName("apigee/gemini-flash-latest") // Specify the Apigee route to your model. For more info, check out the ApigeeLlm documentation
                 .proxyUrl(APIGEE_PROXY_URL) //The proxy URL of your deployed Apigee proxy including the base path
                 .customHeaders(ImmutableMap.of("foo", "bar")) //Pass necessary authentication/authorization headers (like an API key)
                 .build();

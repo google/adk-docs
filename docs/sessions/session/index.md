@@ -58,7 +58,7 @@ are its key properties:
         print(f"---------------------------------")
 
         # Clean up (optional for this example)
-        temp_service = await temp_service.delete_session(app_name=example_session.app_name,
+        await temp_service.delete_session(app_name=example_session.app_name,
                                     user_id=example_session.user_id, session_id=example_session.id)
         print("The final status of temp_service - ", temp_service)
        ```
@@ -202,19 +202,19 @@ the storage backend that best suits your needs:
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
-*   **How it works:** Uses Google Cloud Vertex AI infrastructure via API
+*   **How it works:** Uses Google Cloud Agent Platform infrastructure via API
     calls for session management.
 *   **Persistence:** Yes. Data is managed reliably and scalably via
-    [Vertex AI Agent Engine](https://google.github.io/adk-docs/deploy/agent-engine/).
+    [Agent Runtime](/deploy/agent-runtime/).
 *   **Requires:**
     *   A Google Cloud project (`pip install vertexai`)
     *   A Google Cloud storage bucket that can be configured by this
         [step](https://cloud.google.com/vertex-ai/docs/pipelines/configure-project#storage).
     *   A Reasoning Engine resource name/ID that can setup following this
-        [tutorial](https://google.github.io/adk-docs/deploy/agent-engine/).
-    *   If you do not have a Google Cloud project and you want to try the VertexAiSessionService, see [Vertex AI Express Mode](/adk-docs/tools/google-cloud/express-mode/).
+        [tutorial](/deploy/agent-runtime/).
+    *   If you do not have a Google Cloud project and you want to try the VertexAiSessionService, see [Agent Platform Express Mode](/integrations/express-mode/).
 *   **Best for:** Scalable production applications deployed on Google Cloud,
-    especially when integrating with other Vertex AI features.
+    especially when integrating with other Agent Platform features.
 
 === "Python"
 
@@ -310,11 +310,11 @@ session_service = DatabaseSessionService(db_url=db_url)
 
     The schema for the session database changed in ADK Python v1.22.0, which
     requires migration of the Session Database. For more information, see
-    [Session database schema migration](/adk-docs/sessions/session/migrate/).
+    [Session database schema migration](/sessions/session/migrate/).
 
 ## The Session Lifecycle
 
-<img src="../../assets/session_lifecycle.png" alt="Session lifecycle">
+<img src="../../assets/event-loop.png" alt="Session lifecycle">
 
 Here’s a simplified flow of how `Session` and `SessionService` work together
 during a conversation turn:

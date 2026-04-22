@@ -13,7 +13,7 @@ Think of it this way:
 
 ## The `MemoryService` Role
 
-The `BaseMemoryService` defines the interface for managing this searchable, long-term knowledge store. Its primary responsibilities are:
+The `BaseMemoryService` (or `Service` in Go) defines the interface for managing this searchable, long-term knowledge store. Its primary responsibilities are:
 
 1. **Ingesting Information (`add_session_to_memory`):** Taking the contents of a (usually completed) `Session` and adding relevant information to the long-term knowledge store.
 2. **Searching Information (`search_memory`):** Allowing an agent (typically via a `Tool`) to query the knowledge store and retrieve relevant snippets or context based on a search query.
@@ -24,13 +24,14 @@ The ADK offers two distinct `MemoryService` implementations, each tailored to di
 
 | **Feature** | **InMemoryMemoryService** | **VertexAiMemoryBankService** |
 | :--- | :--- | :--- |
-| **Persistence** | None (data is lost on restart) | Yes (Managed by Vertex AI) |
+| **Persistence** | None (data is lost on restart) | Yes (Managed by Agent Platform) |
 | **Primary Use Case** | Prototyping, local development, and simple testing. | Building meaningful, evolving memories from user conversations. |
 | **Memory Extraction** | Stores full conversation | Extracts [meaningful information](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/memory-bank/generate-memories) from conversations and consolidates it with existing memories (powered by LLM) |
 | **Search Capability** | Basic keyword matching. | Advanced semantic search. |
-| **Setup Complexity** | None. It's the default. | Low. Requires an [Agent Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/memory-bank/overview) instance in Vertex AI. |
-| **Dependencies** | None. | Google Cloud Project, Vertex AI API |
+| **Setup Complexity** | None. It's the default. | Low. Requires an [Agent Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/memory-bank/overview) instance on Agent Platform. |
+| **Dependencies** | None. | Google Cloud Project, Agent Platform API |
 | **When to use it** | When you want to search across multiple sessions’ chat histories for prototyping. | When you want your agent to remember and learn from past interactions. |
+
 
 ## In-Memory Memory
 
@@ -41,6 +42,13 @@ The `InMemoryMemoryService` stores session information in the application's memo
     ```py
     from google.adk.memory import InMemoryMemoryService
     memory_service = InMemoryMemoryService()
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    import { InMemoryMemoryService } from '@google/adk';
+    const memoryService = new InMemoryMemoryService();
     ```
 
 === "Go"
@@ -81,7 +89,7 @@ This example demonstrates the basic flow using the `InMemoryMemoryService` for s
     # --- Constants ---
     APP_NAME = "memory_example_app"
     USER_ID = "mem_user"
-    MODEL = "gemini-2.0-flash" # Use a valid model
+    MODEL = "gemini-flash-latest" # Use a valid model
 
     # --- Agent Definitions ---
     # Agent 1: Simple agent to capture information
@@ -162,6 +170,12 @@ This example demonstrates the basic flow using the `InMemoryMemoryService` for s
     # await run_scenario()
     ```
 
+=== "TypeScript"
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/sessions/memory_example.ts:full_example"
+    ```
+
 === "Go"
 
     ```go
@@ -187,7 +201,7 @@ This example demonstrates the basic flow using the `InMemoryMemoryService` for s
 
       private static final String APP_NAME = "memory_example_app";
       private static final String USER_ID = "mem_user";
-      private static final String MODEL = "gemini-2.0-flash";
+      private static final String MODEL = "gemini-flash-latest";
 
       public static void main(String[] args) {
         // Services
@@ -272,6 +286,20 @@ You can also search memory from within a custom tool by using the `tool.Context`
     --8<-- "examples/go/snippets/sessions/memory_example/memory_example.go:tool_search"
     ```
 
+=== "TypeScript"
+
+    ```typescript
+    // Within a tool implementation
+    async runAsync({ args, toolContext }: RunAsyncToolRequest) {
+      const query = args['query'] as string;
+      const response = await toolContext.searchMemory(query);
+      // process response
+      return {
+        memories: response.memories.map(m => m.content.parts?.map(p => p.text).join(' ')).join('\n')
+      };
+    }
+    ```
+
 === "Java"
 
     ```java
@@ -286,9 +314,9 @@ You can also search memory from within a custom tool by using the `tool.Context`
     }
     ```
 
-## Vertex AI Memory Bank
+## Memory Bank
 
-The `VertexAiMemoryBankService` connects your agent to [Vertex AI Memory Bank](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/memory-bank/overview), a fully managed Google Cloud service that provides sophisticated, persistent memory capabilities for conversational agents.
+The `VertexAiMemoryBankService` connects your agent to [Memory Bank](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/memory-bank/overview), a fully managed Google Cloud service that provides sophisticated, persistent memory capabilities for conversational agents.
 
 ### How It Works
 
@@ -301,8 +329,8 @@ The service handles two key operations:
 
 Before you can use this feature, you must have:
 
-1.  **A Google Cloud Project:** With the Vertex AI API enabled.
-2.  **An Agent Engine:** You need to create an Agent Engine in Vertex AI. You do not need to deploy your agent to Agent Engine Runtime to use Memory Bank. This will provide you with the **Agent Engine ID** required for configuration.
+1.  **A Google Cloud Project:** With the Agent Platform API enabled.
+2.  **An Agent Runtime:** You need to create an Agent Runtime on Agent Platform. You do not need to deploy your agent to Agent Runtime to use Memory Bank. This will provide you with the **Agent Runtime ID** required for configuration.
 3.  **Authentication:** Ensure your local environment is authenticated to access Google Cloud services. The simplest way is to run:
     ```bash
     gcloud auth application-default login
@@ -352,70 +380,127 @@ When a memory service is configured, your agent can use a tool or callback to re
 **Example:**
 
 === "Python"
-```python
-from google.adk.agents import Agent
-from google.adk.tools.preload_memory_tool import PreloadMemoryTool
+    ```python
+    from google.adk.agents import Agent
+    from google.adk.tools.preload_memory_tool import PreloadMemoryTool
 
-agent = Agent(
-    model=MODEL_ID,
-    name='weather_sentiment_agent',
-    instruction="...",
-    tools=[PreloadMemoryTool()]
-)
-```
+    agent = Agent(
+        model=MODEL_ID,
+        name='weather_sentiment_agent',
+        instruction="...",
+        tools=[PreloadMemoryTool()]
+    )
+    ```
+
+=== "TypeScript"
+    ```typescript
+    import { LlmAgent, PRELOAD_MEMORY } from '@google/adk';
+
+    const agent = new LlmAgent({
+        model: MODEL_ID,
+        name: 'weather_sentiment_agent',
+        instruction: "...",
+        tools: [PRELOAD_MEMORY]
+    });
+    ```
+
+=== "Go"
+    ```go
+    import (
+        "google.golang.org/adk/agent/llmagent"
+        "google.golang.org/adk/tool"
+        "google.golang.org/adk/tool/preloadmemorytool"
+    )
+
+    agent, _ := llmagent.New(llmagent.Config{
+        Model:       model,
+        Name:        "weather_sentiment_agent",
+        Instruction: "...",
+        Tools:       []tool.Tool{preloadmemorytool.New()},
+    })
+    ```
 
 === "Java"
-```java
-import com.google.adk.agents.LlmAgent;
-import com.google.adk.tools.LoadMemoryTool;
+    ```java
+    import com.google.adk.agents.LlmAgent;
+    import com.google.adk.tools.LoadMemoryTool;
 
-LlmAgent agent = new LlmAgent.Builder()
-    .model(MODEL_ID)
-    .name("weather_sentiment_agent")
-    .instruction("...")
-    .tools(new LoadMemoryTool())
-    .build();
-```
+    LlmAgent agent = new LlmAgent.Builder()
+        .model(MODEL_ID)
+        .name("weather_sentiment_agent")
+        .instruction("...")
+        .tools(new LoadMemoryTool())
+        .build();
+    ```
 
 To extract memories from your session, you need to call `add_session_to_memory`. For example, you can automate this via a callback:
 
 === "Python"
-```python
-from google.adk.agents import Agent
-from google import adk
+    ```python
+    from google.adk.agents import Agent
+    from google import adk
 
-async def auto_save_session_to_memory_callback(callback_context):
-    await callback_context._invocation_context.memory_service.add_session_to_memory(
-        callback_context._invocation_context.session)
+    async def auto_save_session_to_memory_callback(callback_context):
+        await callback_context._invocation_context.memory_service.add_session_to_memory(
+            callback_context._invocation_context.session)
 
-agent = Agent(
-    model=MODEL,
-    name="Generic_QA_Agent",
-    instruction="Answer the user's questions",
-    tools=[adk.tools.preload_memory_tool.PreloadMemoryTool()],
-    after_agent_callback=auto_save_session_to_memory_callback,
-)
-```
+    agent = Agent(
+        model=MODEL,
+        name="Generic_QA_Agent",
+        instruction="Answer the user's questions",
+        tools=[adk.tools.preload_memory_tool.PreloadMemoryTool()],
+        after_agent_callback=auto_save_session_to_memory_callback,
+    )
+    ```
 
-=== "Java"
-```java
-import com.google.adk.agents.LlmAgent;
-import com.google.adk.tools.LoadMemoryTool;
-import io.reactivex.rxjava3.core.Maybe;
-import java.util.Optional;
+=== "TypeScript"
+    ```typescript
+    import { LlmAgent, PRELOAD_MEMORY, SingleAgentCallback } from '@google/adk';
 
-LlmAgent agent = new LlmAgent.Builder()
-    .model(MODEL)
-    .name("Generic_QA_Agent")
-    .instruction("Answer the user's questions")
-    .tools(new LoadMemoryTool())
-    .afterAgentCallback((context) -> {
-        return context.invocationContext().memoryService()
-            .addSessionToMemory(context.invocationContext().session())
-            .andThen(Maybe.empty());
+    const autoSaveSessionToMemoryCallback: SingleAgentCallback = async (callbackContext) => {
+        if (callbackContext.invocationContext.memoryService) {
+            await callbackContext.invocationContext.memoryService.addSessionToMemory(
+                callbackContext.invocationContext.session
+            );
+        }
+    };
+
+    const agent = new LlmAgent({
+        model: MODEL,
+        name: "Generic_QA_Agent",
+        instruction: "Answer the user's questions",
+        tools: [PRELOAD_MEMORY],
+        afterAgentCallback: autoSaveSessionToMemoryCallback,
+    });
+    ```
+
+=== "Go"
+    ```go
+    import (
+        "context"
+        "google.golang.org/adk/agent"
+        "google.golang.org/adk/agent/llmagent"
+        "google.golang.org/adk/session"
+        "google.golang.org/adk/tool"
+        "google.golang.org/adk/tool/loadmemorytool"
+    )
+
+    func autoSaveSessionToMemoryCallback(ctx agent.CallbackContext, s session.Session) (*genai.Content, error) {
+        if err := ctx.Memory().AddSessionToMemory(context.Background(), s); err != nil {
+            return nil, err
+        }
+        return nil, nil
+    }
+
+    agent, _ := llmagent.New(llmagent.Config{
+        Model:               model,
+        Name:                "Generic_QA_Agent",
+        Instruction:         "Answer the user's questions",
+        Tools:               []tool.Tool{loadmemorytool.New()},
+        AfterAgentCallbacks: []agent.AfterAgentCallback{autoSaveSessionToMemoryCallback},
     })
-    .build();
-```
+    ```
+
 
 ## Advanced Concepts
 
@@ -424,7 +509,7 @@ LlmAgent agent = new LlmAgent.Builder()
 The memory workflow internally involves these steps:
 
 1. **Session Interaction:** A user interacts with an agent via a `Session`, managed by a `SessionService`. Events are added, and state might be updated.
-2. **Ingestion into Memory:** At some point (often when a session is considered complete or has yielded significant information), your application calls `memory_service.add_session_to_memory(session)`. This extracts relevant information from the session's events and adds it to the long-term knowledge store (in-memory dictionary or Agent Engine Memory Bank).
+2. **Ingestion into Memory:** At some point (often when a session is considered complete or has yielded significant information), your application calls `memory_service.add_session_to_memory(session)`. This extracts relevant information from the session's events and adds it to the long-term knowledge store (in-memory dictionary or Agent Runtime Memory Bank).
 3. **Later Query:** In a *different* (or the same) session, the user might ask a question requiring past context (e.g., "What did we discuss about project X last week?").
 4. **Agent Uses Memory Tool:** An agent equipped with a memory-retrieval tool (like the built-in `load_memory` tool) recognizes the need for past context. It calls the tool, providing a search query (e.g., "discussion project X last week").
 5. **Search Execution:** The tool internally calls `memory_service.search_memory(app_name, user_id, query)`.

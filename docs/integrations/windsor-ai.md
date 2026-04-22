@@ -1,7 +1,7 @@
 ---
 catalog_title: Windsor.ai
 catalog_description: Query and analyze marketing, sales, and customer data from 325+ platforms
-catalog_icon: /adk-docs/integrations/assets/windsor-ai.png
+catalog_icon: /integrations/assets/windsor-ai.png
 catalog_tags: ["mcp", "data"]
 ---
 
@@ -46,7 +46,7 @@ business data using natural language, without writing SQL or custom scripts.
         import os
         from google.adk.agents import Agent
         from google.adk.tools.mcp_tool import McpToolset
-        from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPServerParams
+        from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPConnectionParams
 
         # Required for recursive $ref in MCP schema (https://github.com/google/adk-python/issues/3870)
         os.environ["ADK_ENABLE_JSON_SCHEMA_FOR_FUNC_DECL"] = "1"
@@ -59,7 +59,7 @@ business data using natural language, without writing SQL or custom scripts.
             instruction="Help users analyze their marketing and business data.",
             tools=[
                 McpToolset(
-                    connection_params=StreamableHTTPServerParams(
+                    connection_params=StreamableHTTPConnectionParams(
                         url="https://mcp.windsor.ai",
                         headers={
                             "Authorization": f"Bearer {WINDSOR_API_KEY}",

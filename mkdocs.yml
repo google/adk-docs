@@ -1,6 +1,6 @@
 # Project information
 site_name: Agent Development Kit (ADK)
-site_url: https://google.github.io/adk-docs
+site_url: https://adk.dev
 site_description: >-
   Build powerful multi-agent systems with Agent Development Kit (ADK)
 site_dir: site
@@ -8,6 +8,7 @@ exclude_docs:
   api-reference/java/legal/*
 not_in_nav: |
   /integrations/*.md
+  /_includes/**
 
 # Repository
 repo_name: adk-docs
@@ -174,7 +175,8 @@ plugins:
         'tools/google-cloud/bigtable.md': 'integrations/bigtable.md'
         'tools/third-party/cartesia.md': 'integrations/cartesia.md'
         'tools/third-party/chroma.md': 'integrations/chroma.md'
-        'tools/google-cloud/code-exec-agent-engine.md': 'integrations/code-exec-agent-engine.md'
+        'tools/google-cloud/code-exec-agent-engine.md': 'integrations/code-exec-agent-runtime.md'
+        'integrations/code-exec-agent-engine.md': 'integrations/code-exec-agent-runtime.md'
         'tools/gemini-api/code-execution.md': 'integrations/code-execution.md'
         'tools/gemini-api/computer-use.md': 'integrations/computer-use.md'
         'tools/google-cloud/data-agent.md': 'integrations/data-agent.md'
@@ -197,8 +199,16 @@ plugins:
         'tools/third-party/qdrant.md': 'integrations/qdrant.md'
         'tools/google-cloud/spanner.md': 'integrations/spanner.md'
         'tools/third-party/stripe.md': 'integrations/stripe.md'
-        'tools/google-cloud/vertex-ai-rag-engine.md': 'integrations/vertex-ai-rag-engine.md'
-        'tools/google-cloud/vertex-ai-search.md': 'integrations/vertex-ai-search.md'
+        'tools/google-cloud/vertex-ai-rag-engine.md': 'integrations/rag-engine.md'
+        'integrations/vertex-ai-rag-engine.md': 'integrations/rag-engine.md'
+        'tools/google-cloud/vertex-ai-search.md': 'integrations/agent-search.md'
+        'integrations/vertex-ai-search.md': 'integrations/agent-search.md'
+        'grounding/vertex_ai_search_grounding.md': 'grounding/grounding_with_search.md'
+        'agents/models/vertex.md': 'agents/models/agent-platform.md'
+        'deploy/agent-engine/index.md': 'deploy/agent-runtime/index.md'
+        'deploy/agent-engine/deploy.md': 'deploy/agent-runtime/deploy.md'
+        'deploy/agent-engine/asp.md': 'deploy/agent-runtime/asp.md'
+        'deploy/agent-engine/test.md': 'deploy/agent-runtime/test.md'
         'tools/index.md': 'integrations/index.md'
         'tools/gemini-api/index.md': 'integrations/index.md'
         'tools/google-cloud/index.md': 'integrations/index.md'
@@ -207,12 +217,15 @@ plugins:
         'observability/bigquery-agent-analytics.md': 'integrations/bigquery-agent-analytics.md'
         'observability/cloud-trace.md': 'integrations/cloud-trace.md'
         'observability/freeplay.md': 'integrations/freeplay.md'
-        'observability/mlflow.md': 'integrations/mlflow.md'
+        'observability/mlflow.md': 'integrations/mlflow-tracing.md'
+        'integrations/mlflow.md': 'integrations/mlflow-tracing.md'
         'observability/monocle.md': 'integrations/monocle.md'
         'observability/phoenix.md': 'integrations/phoenix.md'
         'observability/weave.md': 'integrations/weave.md'
         'observability/agentops.md': 'integrations/agentops.md'
         'observability/arize-ax.md': 'integrations/arize-ax.md'
+        'contributing-guide.md': 'community/contributing-guide.md'
+        'get-started/quickstart.md': get-started/index.md
 
   - llmstxt:
       markdown_description: An open-source, code-first toolkit for building, evaluating, and deploying sophisticated AI agents with flexibility and control.
@@ -249,14 +262,12 @@ plugins:
         Reference:
         - release-notes.md
         - api-reference/index.md
-        - api-reference/rest/index.md
-        - community.md
-        - contributing-guide.md
+        Community:
+        - community/*.md
 
 # Navigation
 nav:
-  - Home:
-    - index.md
+  - Home: index.md
   - Build Agents:
     - Get Started:
       - get-started/index.md
@@ -266,7 +277,7 @@ nav:
       - Java: get-started/java.md
     - Build your Agent:
       - tutorials/index.md
-      - Multi-tool agent: get-started/quickstart.md
+      - Multi-tool agent: tutorials/multi-tool-agent.md
       - Agent team: tutorials/agent-team.md
       - Streaming agent:
         - get-started/streaming/index.md
@@ -289,8 +300,9 @@ nav:
     - Models for Agents:
       - agents/models/index.md
       - Gemini: agents/models/google-gemini.md
+      - Gemma: agents/models/google-gemma.md
       - Claude: agents/models/anthropic.md
-      - Vertex AI hosted: agents/models/vertex.md
+      - Agent Platform hosted: agents/models/agent-platform.md
       - Apigee AI Gateway: agents/models/apigee.md
       - Ollama: agents/models/ollama.md
       - vLLM: agents/models/vllm.md
@@ -316,16 +328,17 @@ nav:
       - Web Interface: runtime/web-interface.md
       - Command Line: runtime/command-line.md
       - API Server: runtime/api-server.md
+      - Ambient Agents: runtime/ambient-agents.md
       - Resume Agents: runtime/resume.md
       - Runtime Config: runtime/runconfig.md
       - Event Loop: runtime/event-loop.md
     - Deployment:
       - deploy/index.md
-      - Agent Engine:
-        - deploy/agent-engine/index.md
-        - Standard deployment: deploy/agent-engine/deploy.md
-        - Agent Starter Pack: deploy/agent-engine/asp.md
-        - Test deployed agents: deploy/agent-engine/test.md
+      - Agent Runtime:
+        - deploy/agent-runtime/index.md
+        - Standard deployment: deploy/agent-runtime/deploy.md
+        - Agent Starter Pack: deploy/agent-runtime/asp.md
+        - Test deployed agents: deploy/agent-runtime/test.md
       - Cloud Run: deploy/cloud-run.md
       - GKE: deploy/gke.md
     - Observability:
@@ -335,6 +348,9 @@ nav:
       - evaluate/index.md
       - Criteria: evaluate/criteria.md
       - User Simulation: evaluate/user-sim.md
+      - Environment Simulation: evaluate/environment_simulation.md
+      - Custom Metrics: evaluate/custom_metrics.md
+      - Optimization: optimize/index.md
     - Safety and Security:
       - safety/index.md
   - Components:
@@ -371,9 +387,11 @@ nav:
       - A2A Quickstart (Exposing):
         - Python: a2a/quickstart-exposing.md
         - Go: a2a/quickstart-exposing-go.md
+        - Java: a2a/quickstart-exposing-java.md
       - A2A Quickstart (Consuming):
         - Python: a2a/quickstart-consuming.md
         - Go: a2a/quickstart-consuming-go.md
+        - Java: a2a/quickstart-consuming-java.md
       - A2A Extension: a2a/a2a-extension.md
     - Gemini Live API Toolkit:
       - streaming/index.md
@@ -388,7 +406,7 @@ nav:
     - Grounding:
       - grounding/index.md
       - Google Search Grounding: grounding/google_search_grounding.md
-      - Vertex AI Search Grounding: grounding/vertex_ai_search_grounding.md
+      - Grounding with Search: grounding/grounding_with_search.md
   - Integrations:
     - integrations/index.md
   - Reference:
@@ -400,10 +418,11 @@ nav:
       - Java ADK: api-reference/java/index.html
       - CLI Reference: api-reference/cli/index.html
       - Agent Config Reference: api-reference/agentconfig/index.html
-      - REST API: api-reference/rest/index.md
-    - Community Resources: community.md
-    - Contributing Guide: contributing-guide.md
+      - REST API: api-reference/rest/index.html
     - Release Notes: release-notes.md
+  - Community:
+    - community/index.md
+    - Contributing Guide: community/contributing-guide.md
   - ADK 2.0:
     - Overview: 2.0/index.md
     - Graph-based workflows:

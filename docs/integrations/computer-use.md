@@ -1,7 +1,7 @@
 ---
 catalog_title: Computer Use
 catalog_description: Operate computer user interfaces using Gemini models
-catalog_icon: /adk-docs/integrations/assets/gemini-spark.svg
+catalog_icon: /integrations/assets/gemini-spark.svg
 catalog_tags: ["google"]
 ---
 
@@ -19,7 +19,7 @@ web pages by taking screenshots, clicking, typing, and navigating.
 
 For more information about the computer use model, see
 Gemini API [Computer use](https://ai.google.dev/gemini-api/docs/computer-use)
-or the Google Cloud Vertex AI API
+or the Agent Platform API
 [Computer use](https://cloud.google.com/vertex-ai/generative-ai/docs/computer-use).
 
 !!! example "Preview release"
@@ -37,7 +37,7 @@ to be able to use the Computer Use Toolset.
     Create a Python virtual environment:
 
     ```shell
-    python -m venv .venv
+    python3 -m venv .venv
     ```
 
     Activate the Python virtual environment:

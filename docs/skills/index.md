@@ -1,7 +1,7 @@
 # Skills for ADK agents
 
 <div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.25.0</span><span class="lst-preview">Experimental</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.25.0</span><span class="lst-typescript">TypeScript v0.6.1</span><span class="lst-preview">Experimental</span>
 </div>
 
 An agent ***Skill*** is a self-contained unit of functionality that an ADK agent
@@ -12,8 +12,7 @@ The structure of a Skill allows it to be loaded incrementally to minimize the
 impact on the operating context window of the agent.
 
 !!! example "Experimental"
-    The Skills feature is experimental and has some
-    [known limitations](#known-limitations). We welcome your
+    The Skills feature is experimental. We welcome your
     [feedback](https://github.com/google/adk-python/issues/new?template=feature_request.md&labels=skills)!
 
 ## Get started
@@ -23,33 +22,42 @@ definition and then add to your agent's tools list. You can define a
 [Skill in code](#inline-skills),
 or load the skill from a file definition, as shown below:
 
-```python
-import pathlib
+=== "Python"
 
-from google.adk import Agent
-from google.adk.skills import load_skill_from_dir
-from google.adk.tools import skill_toolset
+    ```python
+    import pathlib
 
-weather_skill = load_skill_from_dir(
-    pathlib.Path(__file__).parent / "skills" / "weather_skill"
-)
+    from google.adk import Agent
+    from google.adk.skills import load_skill_from_dir
+    from google.adk.tools import skill_toolset
 
-my_skill_toolset = skill_toolset.SkillToolset(
-    skills=[weather_skill]
-)
+    weather_skill = load_skill_from_dir(
+        pathlib.Path(__file__).parent / "skills" / "weather_skill"
+    )
 
-root_agent = Agent(
-    model="gemini-2.5-flash",
-    name="skill_user_agent",
-    description="An agent that can use specialized skills.",
-    instruction=(
-        "You are a helpful assistant that can leverage skills to perform tasks."
-    ),
-    tools=[
-        my_skill_toolset,
-    ],
-)
-```
+    my_skill_toolset = skill_toolset.SkillToolset(
+        skills=[weather_skill],
+        additional_tools=[get_weather_tool],
+    )
+
+    root_agent = Agent(
+        model="gemini-flash-latest",
+        name="skill_user_agent",
+        description="An agent that can use specialized skills.",
+        instruction=(
+            "You are a helpful assistant that can leverage skills to perform tasks."
+        ),
+        tools=[
+            my_skill_toolset,
+        ],
+    )
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/skills/get_started.ts:full_example"
+    ```
 
 For a complete code example of an ADK agent with a Skill, including both
 file-based and in-line Skill definitions, see the code sample
@@ -88,7 +96,7 @@ file structure. Only the `SKILL.md` file is required.
 
 ```
 my_agent/
-    agent.py
+    agent.py (or agent.ts)
     .env
     skills/
         example_skill/        # Skill
@@ -100,49 +108,46 @@ my_agent/
             assets/
                 *.*           # templates, images, data
             scripts/
-                *.py          # utility scripts
+                *.py          # utility scripts (Python)
+                *.js          # utility scripts (JavaScript)
+                *.ts          # utility scripts (TypeScript)
 ```
-
-!!! warning "Script execution not supported"
-    Scripts execution is not yet supported and is a
-    [known limitation](#known-limitations).
 
 ### Define Skills in code {#inline-skills}
 
-In ADK agents, you can also define Skills within the code of the agent, using
-the `Skill` model class, as shown below. This method of Skill definition enables
+In ADK agents, you can also define Skills within the code of the agent, as shown below. This method of Skill definition enables
 you to dynamically modify skills from your ADK agent code.
 
-```python
-from google.adk.skills import models
+=== "Python"
 
-greeting_skill = models.Skill(
-    frontmatter=models.Frontmatter(
-        name="greeting-skill",
-        description=(
-            "A friendly greeting skill that can say hello to a specific person."
+    ```python
+    from google.adk.skills import models
+
+    greeting_skill = models.Skill(
+        frontmatter=models.Frontmatter(
+            name="greeting-skill",
+            description=(
+                "A friendly greeting skill that can say hello to a specific person."
+            ),
         ),
-    ),
-    instructions=(
-        "Step 1: Read the 'references/hello_world.txt' file to understand how"
-        " to greet the user. Step 2: Return a greeting based on the reference."
-    ),
-    resources=models.Resources(
-        references={
-            "hello_world.txt": "Hello! So glad to have you here!",
-            "example.md": "This is an example reference.",
-        },
-    ),
-)
-```
+        instructions=(
+            "Step 1: Read the 'references/hello_world.txt' file to understand how"
+            " to greet the user. Step 2: Return a greeting based on the reference."
+        ),
+        resources=models.Resources(
+            references={
+                "hello_world.txt": "Hello! So glad to have you here!",
+                "example.md": "This is an example reference.",
+            },
+        ),
+    )
+    ```
 
-## Known limitations {#known-limitations}
+=== "TypeScript"
 
-The Skills feature is experimental and includes the following
-limitations:
-
--   **Script execution:** The Skills feature does not currently support
-    script execution (`scripts/` directory).
+    ```typescript
+    --8<-- "examples/typescript/snippets/skills/inline_skill.ts:full_example"
+    ```
 
 ## Next steps
 

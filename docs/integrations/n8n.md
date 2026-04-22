@@ -1,7 +1,7 @@
 ---
 catalog_title: n8n
 catalog_description: Trigger automated workflows, connect apps, and process data
-catalog_icon: /adk-docs/integrations/assets/n8n.png
+catalog_icon: /integrations/assets/n8n.png
 catalog_tags: ["mcp", "connectors"]
 ---
 
@@ -11,11 +11,12 @@ catalog_tags: ["mcp", "connectors"]
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript</span>
 </div>
 
-The [n8n MCP Server](https://docs.n8n.io/advanced-ai/accessing-n8n-mcp-server/)
-connects your ADK agent to [n8n](https://n8n.io/), an extendable workflow
-automation tool. This integration allows your agent to securely connect to an
-n8n instance to search, inspect, and trigger workflows directly from a natural
-language interface.
+The [n8n MCP
+Server](https://docs.n8n.io/advanced-ai/mcp/accessing-n8n-mcp-server/) connects
+your ADK agent to [n8n](https://n8n.io/), an extendable workflow automation
+tool. This integration allows your agent to securely connect to an n8n instance
+to search, inspect, and trigger workflows directly from a natural language
+interface.
 
 !!! note "Alternative: Workflow-level MCP Server"
 
@@ -48,8 +49,8 @@ language interface.
 - MCP access enabled in settings
 - A valid MCP access token
 
-Refer to the
-[n8n MCP documentation](https://docs.n8n.io/advanced-ai/accessing-n8n-mcp-server/)
+Refer to the [n8n MCP
+documentation](https://docs.n8n.io/advanced-ai/mcp/accessing-n8n-mcp-server/)
 for detailed setup instructions.
 
 ## Use with agent
@@ -97,7 +98,7 @@ for detailed setup instructions.
         ```python
         from google.adk.agents import Agent
         from google.adk.tools.mcp_tool import McpToolset
-        from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPServerParams
+        from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPConnectionParams
 
         N8N_INSTANCE_URL = "https://localhost:5678"
         N8N_MCP_TOKEN = "YOUR_N8N_MCP_TOKEN"
@@ -108,7 +109,7 @@ for detailed setup instructions.
             instruction="Help users manage and execute workflows in n8n",
             tools=[
                 McpToolset(
-                    connection_params=StreamableHTTPServerParams(
+                    connection_params=StreamableHTTPConnectionParams(
                         url=f"{N8N_INSTANCE_URL}/mcp-server/http",
                         headers={
                             "Authorization": f"Bearer {N8N_MCP_TOKEN}",
@@ -207,4 +208,4 @@ criteria:
 
 ## Additional resources
 
-- [n8n MCP Server Documentation](https://docs.n8n.io/advanced-ai/accessing-n8n-mcp-server/)
+- [n8n MCP Server Documentation](https://docs.n8n.io/advanced-ai/mcp/accessing-n8n-mcp-server/)

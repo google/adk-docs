@@ -10,14 +10,14 @@ capabilities. Graph-based workflows allow you to define your agent logic as a
 graph of execution nodes and edges, combining AI-powered agents with
 deterministic tools and code.
 
-![Graph-based flight upgrade agent](/adk-docs/assets/workflow-design.svg)
+![Graph-based flight upgrade agent](/assets/workflow-design.svg)
 
 **Figure 1.** A graph-based agent design for flight upgrades, combining workflow
 nodes of different types, including Functions, human input, Tools, and LLM
 capabilities.
 
-Prebuilt ADK [workflow agents](/adk-docs/agents/workflow-agents/),
-such as [Sequential Agents](/adk-docs/agents/workflow-agents/sequential-agents/),
+Prebuilt ADK [workflow agents](/agents/workflow-agents/),
+such as [Sequential Agents](/agents/workflow-agents/sequential-agents/),
 provide a defined process flow control only across a set of agents. You can continue to
 build standard ADK agents with long prompts, tools, and use them in graph-based
 workflow agents. When you need more precise control, workflow agent graphs give
@@ -41,7 +41,7 @@ provide the following advantages:
     welcome your
     [feedback](https://github.com/google/adk-python/issues/new?template=feature_request.md&labels=v2)!
 
-Follow the instructions for [installing ADK 2.0](/adk-docs/2.0/#install) and then
+Follow the instructions for [installing ADK 2.0](/2.0/#install) and then
 check out the instructions below to get started with graph-based workflows.
 
 ## Get started
@@ -59,7 +59,7 @@ from pydantic import BaseModel
 
 city_generator_agent = Agent(
     name="city_generator_agent",
-    model="gemini-2.5-flash",
+    model="gemini-flash-latest",
     instruction="""Return the name of a random city.
       Return only the name, nothing else.""",
     output_schema=str,
@@ -75,7 +75,7 @@ def lookup_time_function(node_input: str):
 
 city_report_agent = Agent(
     name="city_report_agent",
-    model="gemini-2.5-flash",
+    model="gemini-flash-latest",
     input_schema=CityTime,
     instruction="""Output following line:
     It is {CityTime.time_info} in {CityTime.city} right now.""",
@@ -103,7 +103,7 @@ with a longer prompt and a tool call, the graph-based approach gives you precise
 control over the task execution order and the data output from each step.
 
 For more information about data handling with graph-based workflows, see
-[Data handling with workflow nodes and agents](/adk-docs/workflows/data-handling/).
+[Data handling with workflow nodes and agents](/workflows/data-handling/).
 
 ## Build processes with graphs
 
@@ -120,7 +120,7 @@ as an execution ***Node*** in a graph and each node can be an AI agent, Tool, or
 your programmed code. The following diagram illustrates how a simple
 prompt-based agent would translate into a workflow agent graph:
 
-![Prompt-based agent to graph-based workflow](/adk-docs/assets/prompts-to-graphs.svg)
+![Prompt-based agent to graph-based workflow](/assets/prompts-to-graphs.svg)
 
 **Figure 2.** Structure of prompt-based agent instructions translated into a
 graph-based workflow.
@@ -137,7 +137,7 @@ translated into a graph-based agent using the ***Workflow*** class:
 ```python
 process_message = Agent(
     name="process_message",
-    model="gemini-2.5-flash",
+    model="gemini-flash-latest",
     instruction="""Classify user message into either "BUG", "CUSTOMER_SUPPORT",
       or "LOGISTICS". If you think a message applies to more than one category,
       reply with a comma separated list of categories.
@@ -178,7 +178,7 @@ This sample code demonstrates how you can use an ***edges*** array to define a
 graph with routes between a set of *nodes*, which are discrete tasks that can
 include agents, Tools, your code, and even additional ***Workflows***. For
 information about building advanced graphs for workflows, see
-[Build graph routes for workflow agents](/adk-docs/workflows/graph-routes/).
+[Build graph routes for workflow agents](/workflows/graph-routes/).
 
 ## Known limitations {#known-limitations}
 
@@ -188,5 +188,5 @@ are *not compatible* with the following ADK features:
 -   **Live Streaming** functionality is not compatible with graph-based
     workflows.
 -   **Integrations:** Some third-party
-    [Integrations](/adk-docs/integrations/) may not be
+    [Integrations](/integrations/) may not be
     compatible with graph-based workflows.

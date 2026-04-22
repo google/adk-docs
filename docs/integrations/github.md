@@ -1,7 +1,7 @@
 ---
 catalog_title: GitHub
 catalog_description: Analyze code, manage issues and PRs, and automate workflows
-catalog_icon: /adk-docs/integrations/assets/github.png
+catalog_icon: /integrations/assets/github.png
 catalog_tags: ["code", "mcp"]
 ---
 
@@ -41,7 +41,7 @@ automate workflows using natural language.
         ```python
         from google.adk.agents import Agent
         from google.adk.tools.mcp_tool import McpToolset
-        from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPServerParams
+        from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPConnectionParams
 
         GITHUB_TOKEN = "YOUR_GITHUB_TOKEN"
 
@@ -51,7 +51,7 @@ automate workflows using natural language.
             instruction="Help users get information from GitHub",
             tools=[
                 McpToolset(
-                    connection_params=StreamableHTTPServerParams(
+                    connection_params=StreamableHTTPConnectionParams(
                         url="https://api.githubcopilot.com/mcp/",
                         headers={
                             "Authorization": f"Bearer {GITHUB_TOKEN}",

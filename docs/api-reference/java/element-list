@@ -27,6 +27,7 @@ com.google.adk.models.springai.error
 com.google.adk.models.springai.observability
 com.google.adk.models.springai.properties
 com.google.adk.plugins
+com.google.adk.plugins.agentanalytics
 com.google.adk.plugins.recordings
 com.google.adk.runner
 com.google.adk.samples.a2aagent

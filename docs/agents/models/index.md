@@ -12,13 +12,13 @@ including those hosted externally or running locally.
 ADK primarily uses two mechanisms for model integration:
 
 1. **Direct String / Registry:** For models tightly integrated with Google Cloud,
-   such as Gemini models accessed via Google AI Studio or Vertex AI, or models
-   hosted on Vertex AI endpoints. You access these models by providing the model name or endpoint resource string and ADK's internal registry
+   such as Gemini models accessed via Google AI Studio or Agent Platform, or models
+   hosted on Agent Platform endpoints. You access these models by providing the model name or endpoint resource string and ADK's internal registry
    resolves this string to the appropriate backend client.
 
-      *  [Gemini models](/adk-docs/agents/models/google-gemini/)
-      *  [Claude models](/adk-docs/agents/models/anthropic/)
-      *  [Vertex AI hosted models](/adk-docs/agents/models/vertex/)
+      *  [Gemini models](/agents/models/google-gemini/)
+      *  [Claude models](/agents/models/anthropic/)
+      *  [Agent Platform hosted models](/agents/models/agent-platform/)
 
 2. **Model connectors:** For broader compatibility, especially models
    outside the Google ecosystem or those requiring specific client
@@ -26,8 +26,8 @@ ADK primarily uses two mechanisms for model integration:
    `LiteLlm`, and pass this object as the `model` parameter
    to your `LlmAgent`.
 
-      *  [Apigee models](/adk-docs/agents/models/apigee/)
-      *  [LiteLLM models](/adk-docs/agents/models/litellm/)
-      *  [Ollama model hosting](/adk-docs/agents/models/ollama/)
-      *  [vLLM model hosting](/adk-docs/agents/models/vllm/)
-      *  [LiteRT-LM model hosting](/adk-docs/agents/models/litert-lm/)
+      *  [Apigee models](/agents/models/apigee/)
+      *  [LiteLLM models](/agents/models/litellm/)
+      *  [Ollama model hosting](/agents/models/ollama/)
+      *  [vLLM model hosting](/agents/models/vllm/)
+      *  [LiteRT-LM model hosting](/agents/models/litert-lm/)

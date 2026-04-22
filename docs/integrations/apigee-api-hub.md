@@ -1,7 +1,7 @@
 ---
 catalog_title: Apigee API Hub
 catalog_description: Turn any documented API from Apigee API hub into a tool
-catalog_icon: /adk-docs/integrations/assets/apigee.png
+catalog_icon: /integrations/assets/apigee.png
 catalog_tags: ["connectors", "google"]
 ---
 
@@ -18,7 +18,7 @@ APIs.
 
 **Prerequisites**
 
-1. [Install ADK](/adk-docs/get-started/installation/)
+1. [Install ADK](/get-started/installation/)
 2. Install the
    [Google Cloud CLI](https://cloud.google.com/sdk/docs/install?db=bigtable-docs#installation_instructions).
 3. [Apigee API hub](https://cloud.google.com/apigee/docs/apihub/what-is-api-hub)
@@ -104,7 +104,7 @@ you only need to follow a subset of these steps.
     from .tools import sample_toolset
 
     root_agent = LlmAgent(
-        model='gemini-2.0-flash',
+        model='gemini-flash-latest',
         name='enterprise_assistant',
         instruction='Help user, leverage the tools you have access to',
         tools=sample_toolset.get_tools(),
