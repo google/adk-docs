@@ -1,11 +1,16 @@
 ---
 catalog_title: Datadog
-catalog_description: Develop, evaluate, and monitor LLM applications.
+catalog_description: Develop, evaluate, and monitor LLM applications
 catalog_icon: /integrations/assets/datadog.png
 catalog_tags: ["observability"]
 ---
 
 # Datadog Observability for ADK
+
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in:</span>
+    <span class="lst-python">Python</span>
+</div>
 
 [Datadog LLM
 Observability](https://www.datadoghq.com/product/llm-observability/) helps AI
@@ -45,14 +50,15 @@ pip install ddtrace
 
 ### Create an Application using the Google ADK
 
-If you do not have an application using the Google ADK, follow the steps in the [ADK Getting Started Guide](https://google.github.io/adk-docs/get-started/) to create a sample ADK agent.
+If you do not have an application using the Google ADK, follow the steps in the
+[ADK Getting Started Guide](https://google.github.io/adk-docs/get-started/) to
+create a sample ADK agent.
 
 ### Configure Environment Variables
 
-You will also need to specify an ML Application name in the following
-environment variables. An ML Application is a grouping of LLM Observability
-traces associated with a specific LLM-based application. See [ML Application
-Naming
+You will need to specify an ML Application name in the following environment
+variables. An ML Application is a grouping of LLM Observability traces
+associated with a specific LLM-based application. See [ML Application Naming
 Guidelines](https://docs.datadoghq.com/llm_observability/instrumentation/sdk?tab=python#application-naming-guidelines)
 for more information on limitations with ML Application names.
 
@@ -65,7 +71,9 @@ export DD_LLMOBS_AGENTLESS_ENABLED=true
 export DD_APM_TRACING_ENABLED=false  # Only set this if you are not using Datadog APM
 ```
 
-These variables must be exported before running your application so the following `ddtrace-run` command can use them, as opposed to putting them in the agent's `.env` file.
+These variables must be exported before running your application so the
+following `ddtrace-run` command can use them, as opposed to putting them in the
+agent's `.env` file.
 
 ### Run Your Application
 
