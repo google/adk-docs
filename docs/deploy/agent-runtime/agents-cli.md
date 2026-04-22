@@ -28,7 +28,7 @@ For more information on using agents-cli and its command line tools,
 see the
 [CLI reference](https://google.github.io/agents-cli/cli/)
 and
-[Development guide](https://google.github.io/agents-cli/guide/).
+[Guide](https://google.github.io/agents-cli/).
 
 ### Prerequisites {#prerequisites-ad}
 
@@ -218,7 +218,7 @@ my-agent/
 
 See the *README.md* file in your updated ADK project folder for more information.
 For more information on using agents-cli, see the
-[Development guide](https://google.github.io/agents-cli/guide/).
+[agents-cli documentation](https://google.github.io/agents-cli/).
 
 ## Test deployed agents
 
