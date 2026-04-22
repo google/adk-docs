@@ -335,7 +335,7 @@ class GetInput(BaseNode):
     def get_name(self) -> str:
         return self.name
 
-    async def run(self) -> AsyncGenerator[Any, None]:
+    async def _run_impl(self) -> AsyncGenerator[Any, None]:
         # Yielding the request tells the workflow to pause and wait for input
         yield self.request
 
