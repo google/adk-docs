@@ -1,8 +1,8 @@
-# Welcome to ADK 2.0 Alpha
+# Welcome to ADK 2.0 Beta
 
-!!! example "Alpha Release"
+!!! example "Beta Release"
 
-    ADK 2.0 is an Alpha release and may cause breaking changes when used with prior
+    ADK 2.0 is a Beta release and may cause breaking changes when used with prior
     versions of ADK. Do not use ADK 2.0 if you require backwards compatibility, such
     as in production environments. We encourage you to test this release and we
     welcome your
@@ -10,7 +10,7 @@
 
 ADK 2.0 introduces powerful tools for building sophisticated AI agents, and
 helps you structure agents to execute challenging tasks with more control,
-predictability, and reliability. ADK 2.0 is available as an Alpha release for
+predictability, and reliability. ADK 2.0 is available as a Beta release for
 Python and includes the following key features:
 
 -   [**Graph-based workflows**](/workflows/): Build deterministic agent

@@ -1,7 +1,7 @@
 # Build graph routes for agent workflows
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span><span class="lst-preview">Alpha</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span><span class="lst-preview">Beta</span>
 </div>
 
 Graph-based workflows in ADK define agent logic as a graph of execution nodes
@@ -41,9 +41,9 @@ tasks are routed and executed. This structured node definition improves the
 predictability of agents and enhances reliability for complex tasks that require
 defined steps and process management.
 
-!!! example "Alpha Release"
+!!! example "Beta Release"
 
-    ADK 2.0 is an Alpha release and may cause breaking changes when used with prior
+    ADK 2.0 is a Beta release and may cause breaking changes when used with prior
     versions of ADK. Do not use ADK 2.0 if you require backwards compatibility, such
     as in production environments. We encourage you to test this release and we
     welcome your

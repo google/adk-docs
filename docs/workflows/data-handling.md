@@ -1,7 +1,7 @@
 # Data handling for agent workflows
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span><span class="lst-preview">Alpha</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span><span class="lst-preview">Beta</span>
 </div>
 
 Structuring and managing data between agents and graph-based notes is critical
@@ -12,9 +12,9 @@ the essential parameters for events, data, content, and state, and explains how
 to implement structured data transfer for both function and agent nodes using
 data format schemas and specific instruction syntax.
 
-!!! example "Alpha Release"
+!!! example "Beta Release"
 
-    ADK 2.0 is an Alpha release and may cause breaking changes when used with prior
+    ADK 2.0 is a Beta release and may cause breaking changes when used with prior
     versions of ADK. Do not use ADK 2.0 if you require backwards compatibility, such
     as in production environments. We encourage you to test this release and we
     welcome your
