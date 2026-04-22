@@ -142,29 +142,40 @@ ID, you are ready to deploy your ADK project files to Agent Runtime.
 
 ### Deploy your ADK project {#deploy-ad}
 
-When using agents-cli, you deploy in stages. In the first stage, you run a
-`make` command that provisions the services needed to run your ADK workflow on
-Agent Runtime. In the second stage, the tool uploads your project code to the
-Agent Runtime service and runs it in the hosted environment
+When using agents-cli, you deploy using the `agents-cli deploy` command. This
+command builds a container from your agent code, pushes it to a registry, and
+deploys it to Agent Runtime in the hosted environment.
 
 !!! warning "Important"
     *Make sure your Google Cloud target deployment project is set as your ***current
-    project*** before performing these steps*. The `make backend` command uses
+    project*** before performing these steps*. The `agents-cli deploy` command uses
     your currently set Google Cloud project when it performs a deployment. For
     information on setting and checking your current project, see
     [Connect to your Google Cloud project](#connect-ad).
 
 To deploy your ADK project to Agent Runtime in your Google Cloud project:
 
-1.  In a terminal window, ensure you are in the parent directory (e.g.,
-    `your-project-directory/`) that contains your agent folder.
+1.  In a terminal window, navigate to your agent project directory (e.g.,
+    `your-project-directory/`).
 
-1.  Deploy the code from the updated local project into the Google Cloud
-development environment, by running the following make command:
+2.  Deploy your agent code to the Google Cloud development environment:
 
     ```shell
-    make backend
+    agents-cli deploy
     ```
+
+    The command reads your `deployment_target` from `pyproject.toml` and deploys
+    to the configured target (Agent Runtime, Cloud Run, or GKE).
+
+3.  (Optional) To enable observability features like prompt-response logging and
+    content logs, provision the telemetry infrastructure:
+
+    ```shell
+    agents-cli infra single-project
+    ```
+
+    For more details, see the
+    [Observability Guide](https://google.github.io/agents-cli/guide/observability/).
 
 Once this process completes successfully, you should be able to interact with
 the agent running on Google Cloud Agent Runtime. For details on testing the
