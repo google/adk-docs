@@ -1,31 +1,50 @@
 ---
 catalog_title: Google Cloud Agent Registry
-catalog_description: Discover, look up, and connect to AI Agents and MCP Servers cataloged within the Google Cloud Agent Registry.
-catalog_icon: /integrations/assets/google_cloud.png
+catalog_description: Discover and connect to AI Agents and MCP Servers
+catalog_icon: /integrations/assets/agent-platform.svg
 catalog_tags: ["google", "mcp", "connectors"]
 ---
 
 # Google Cloud Agent Registry
 
-The Agent Registry client library within the Agent Development Kit (ADK) allows developers to discover, look up, and connect to AI Agents and MCP Servers cataloged within the [Google Cloud Agent Registry](https://docs.cloud.google.com/agent-registry/overview). This enables dynamic composition of agent-based applications using governed components.
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.26.0</span><span class="lst-preview">Preview</span>
+</div>
+
+The Agent Registry client library withins Agent Development Kit (ADK) allows
+developers to discover, look up, and connect to AI Agents and MCP Servers
+cataloged within the [Google Cloud Agent
+Registry](https://docs.cloud.google.com/agent-registry/overview). This enables
+dynamic composition of agent-based applications using governed components.
 
 ## Use cases
 
--   **Accelerated Development**: Easily find and reuse existing agents and tools (MCP Servers) from the central catalog instead of rebuilding them.
--   **Dynamic Integration**: Discover agent and MCP Server endpoints at runtime, making applications more robust to changes in the environment.
--   **Enhanced Governance**: Utilize governed and verified components from the registry within your ADK applications.
+- **Accelerated Development**: Easily find and reuse existing agents and tools
+  (MCP Servers) from the central catalog instead of rebuilding them.
+- **Dynamic Integration**: Discover agent and MCP Server endpoints at runtime,
+  making applications more robust to changes in the environment.
+- **Enhanced Governance**: Utilize governed and verified components from the
+  registry within your ADK applications.
 
 ## Prerequisites
 
--   A [Google Cloud project](https://docs.cloud.google.com/resource-manager/docs/creating-managing-projects).
--   The [Agent Registry API](https://docs.cloud.google.com/agent-registry/setup) enabled in your Google Cloud project.
--   Authentication configured for your environment. You should log in using [Application Default Credentials](https://docs.cloud.google.com/docs/authentication/application-default-credentials) (`gcloud auth application-default login`).
--   Environment variables `GOOGLE_CLOUD_PROJECT` set to your project ID and `GOOGLE_CLOUD_LOCATION` set to the appropriate region (e.g., `global`, `us-central1`).
--   `google-adk` library installed.
+- A [Google Cloud
+  project](https://docs.cloud.google.com/resource-manager/docs/creating-managing-projects).
+- The [Agent Registry API](https://docs.cloud.google.com/agent-registry/setup)
+  enabled in your Google Cloud project.
+- Authentication configured for your environment. You should log in using
+  [Application Default
+  Credentials](https://docs.cloud.google.com/docs/authentication/application-default-credentials)
+  (`gcloud auth application-default login`).
+- Environment variables `GOOGLE_CLOUD_PROJECT` set to your project ID and
+  `GOOGLE_CLOUD_LOCATION` set to the appropriate region (e.g., `global`,
+  `us-central1`).
+- `google-adk` library installed.
 
 ## Installation
 
-The [Agent Registry](https://docs.cloud.google.com/agent-registry/overview) integration is part of the core ADK library.
+The [Agent Registry](https://docs.cloud.google.com/agent-registry/overview)
+integration is part of the core ADK library.
 
 ```bash
 pip install google-adk
@@ -33,15 +52,20 @@ pip install google-adk
 
 ### Optional Dependencies
 
-To use the full capabilities of the AgentRegistry integration, you may need to install additional extras depending on your use case:
+To use the full capabilities of the AgentRegistry integration, you may need to
+install additional extras depending on your use case:
 
-**For A2A (Agent-to-Agent) Support:** If you plan to use `get_remote_a2a_agent` or interact with remote A2A-compliant agents, install the `a2a` extra:
+**For A2A (Agent-to-Agent) Support:** If you plan to use `get_remote_a2a_agent`
+or interact with remote A2A-compliant agents, install the `a2a` extra:
 
 ```bash
 pip install "google-adk[a2a]"
 ```
 
-**For Agent Identity (GCP Auth Provider):** If you need to use the `GcpAuthProvider` (e.g., when `get_mcp_toolset` automatically resolves authentication via IAM bindings for registered MCP servers), install the `agent-identity` extra:
+**For Agent Identity (GCP Auth Provider):** If you need to use the
+`GcpAuthProvider` (e.g., when `get_mcp_toolset` automatically resolves
+authentication via IAM bindings for registered MCP servers), install the
+`agent-identity` extra:
 
 ```bash
 pip install "google-adk[agent-identity]"
@@ -49,7 +73,8 @@ pip install "google-adk[agent-identity]"
 
 ## Use with Agent
 
-The primary way to use the Agent Registry integration within an ADK agent is to dynamically fetch remote agents or toolsets using the AgentRegistry client.
+The primary way to use the Agent Registry integration within an ADK agent is to
+dynamically fetch remote agents or toolsets using the AgentRegistry client.
 
 ```py
 from google.adk.agents.llm_agent import LlmAgent
@@ -69,12 +94,12 @@ registry = AgentRegistry(
 )
 
 # 2. Listing Resources
-print("\\nListing Agents...")
+print("Listing Agents...")
 agents_response = registry.list_agents()
 for agent in agents_response.get("agents", []):
     print(f"  - {agent.get('name')} ({agent.get('displayName')})")
 
-print("\\nListing MCP Servers...")
+print("Listing MCP Servers...")
 mcp_servers_response = registry.list_mcp_servers()
 for server in mcp_servers_response.get("mcpServers", []):
     print(f"  - {server.get('name')} ({server.get('displayName')})")
@@ -91,7 +116,7 @@ my_mcp_toolset = registry.get_mcp_toolset(mcp_server_name=mcp_server_name)
 
 # 5. Example Agent Composition
 main_agent = LlmAgent(
-    model="gemini-3.0-flash", # Or your preferred model
+    model="gemini-flash-latest", # Or your preferred model
     name="demo_agent",
     instruction="You can leverage registered tools and sub-agents.",
     tools=[my_mcp_toolset],
@@ -102,7 +127,10 @@ main_agent = LlmAgent(
 ## Authentication for Google MCP Servers and Remote A2A Agents
 
 ### Remote A2A Agents
-If you are connecting to a Google A2A agent, you need to pass an `httpx.AsyncClient` configured with Google authentication headers to the `get_remote_a2a_agent` method.
+
+If you are connecting to a Google A2A agent, you need to pass an
+`httpx.AsyncClient` configured with Google authentication headers to the
+`get_remote_a2a_agent` method.
 
 Example:
 ```python
@@ -127,7 +155,11 @@ remote_agent = registry.get_remote_a2a_agent(
 ```
 
 ### Google MCP Servers
-For Google MCP servers, authentication headers are automatically passed in. However, if automatic authentication is not working as expected, you can manually provide headers using the `header_provider` argument in the `AgentRegistry` constructor.
+
+For Google MCP servers, authentication headers are automatically passed in.
+However, if automatic authentication is not working as expected, you can
+manually provide headers using the `header_provider` argument in the
+`AgentRegistry` constructor.
 
 Example:
 ```python
@@ -148,24 +180,37 @@ registry = AgentRegistry(
 )
 ```
 
-## Available Tools
+## API Reference
 
 The AgentRegistry class provides the following core methods:
 
-- `list_mcp_servers(self, filter_str, page_size, page_token)`: Fetches a list of registered MCP Servers.
-- `get_mcp_server(self, name)`: Retrieves detailed metadata of a specific MCP Server.
-- `get_mcp_toolset(self, mcp_server_name)`: Constructs an ADK McpToolset instance from a registered MCP Server.
-- `list_agents(self, filter_str, page_size, page_token)`: Fetches a list of registered A2A Agents.
-- `get_agent_info(self, name)`: Retrieves detailed metadata of a specific A2A Agent.
-- `get_remote_a2a_agent(self, agent_name)`: Creates an ADK RemoteA2aAgent instance for a registered A2A Agent.
+- `list_mcp_servers(self, filter_str, page_size, page_token)`: Fetches a list of
+  registered MCP Servers.
+- `get_mcp_server(self, name)`: Retrieves detailed metadata of a specific MCP
+  Server.
+- `get_mcp_toolset(self, mcp_server_name)`: Constructs an ADK McpToolset
+  instance from a registered MCP Server.
+- `list_agents(self, filter_str, page_size, page_token)`: Fetches a list of
+  registered A2A Agents.
+- `get_agent_info(self, name)`: Retrieves detailed metadata of a specific A2A
+  Agent.
+- `get_remote_a2a_agent(self, agent_name)`: Creates an ADK RemoteA2aAgent
+  instance for a registered A2A Agent.
 
 ## Configuration Options
 
 The AgentRegistry constructor accepts the following arguments:
 
 - `project_id` (str, required): The Google Cloud project ID.
-- `location` (str, required): The Google Cloud location/region, such as "global", "us-central1".
-- `header_provider` (Callable, optional): A callable that takes a ReadonlyContext and returns a dictionary of custom headers to be included in requests made by the [McpToolset](/tools-custom/mcp-tools/#mcptoolset-class) or [RemoteA2aAgent](/a2a/quickstart-consuming-go/#quickstart-consuming-a-remote-agent-via-a2a) to the target services. This does not affect headers used to call the Agent Registry API itself.
+- `location` (str, required): The Google Cloud location/region, such as
+  "global", "us-central1".
+- `header_provider` (Callable, optional): A callable that takes a
+  ReadonlyContext and returns a dictionary of custom headers to be included in
+  requests made by the [McpToolset](/tools-custom/mcp-tools/#mcptoolset-class)
+  or
+  [RemoteA2aAgent](/a2a/quickstart-consuming-go/#quickstart-consuming-a-remote-agent-via-a2a)
+  to the target services. This does not affect headers used to call the Agent
+  Registry API itself.
 
 ## Additional resources
 - [Sample Agent Code](https://github.com/google/adk-python/tree/main/contributing/samples/agent_registry_agent)
