@@ -5,37 +5,50 @@ You can use AI coding assistants to build agents with Agent Development Kit
 into your project, or by connecting it to ADK documentation through an MCP
 server.
 
-- [**ADK Dev Skills**](#adk-dev-skills): Install ADK development skills directly into
-  your project.
+- [**agents-cli**](#agents-cli): Command-line tool and coding skills for ADK development.
 - [**ADK Docs MCP Server**](#adk-docs-mcp-server): Connect your coding tool to
   ADK documentation through an MCP server.
 - [**ADK Docs Index**](#adk-docs-index): Machine-readable documentation files
   following the `llms.txt` standard.
 
-## ADK Dev Skills
+## agents-cli
 
-ADK provides a set of development [skills](https://agentskills.io/) that cover
-APIs, coding patterns, deployment, and evaluation. The skills work with any
-compatible tool, including Gemini CLI, Antigravity, Claude Code, and Cursor.
+[agents-cli](https://google.github.io/agents-cli/) is the command-line tool for
+ADK development. It provides scaffolding commands, deployment tools, and
+development skills that work with any compatible coding assistant, including
+Gemini CLI, Antigravity, Claude Code, and Cursor.
 
-To install the ADK development skills, run the following in your project
-directory:
+To install agents-cli and set up ADK development skills:
 
 ```bash
-npx skills add google/adk-docs/skills -y -g
+uvx google-agents-cli setup
 ```
 
-Browse the [ADK Dev Skills on
-GitHub](https://github.com/google/adk-docs/tree/main/skills), which include:
+This installs both the CLI and coding skills. Browse the [agents-cli
+documentation](https://google.github.io/agents-cli/) for more details.
+
+### CLI Commands
+
+| Command | Description |
+|---------|-------------|
+| `agents-cli scaffold create` | Create a new ADK agent project |
+| `agents-cli scaffold enhance` | Add deployment to existing project |
+| `agents-cli eval` | Run agent evaluations |
+| `agents-cli deploy` | Deploy to Agent Runtime or Cloud Run |
+| `agents-cli publish` | Publish agent to Agent Store |
+
+### Development Skills
+
+After setup, the following skills are available in your coding tool:
 
 | Skill | Description |
 |-------|-------------|
-| `adk-cheatsheet` | Python API quick reference and docs index |
-| `adk-deploy-guide` | Agent Runtime and Cloud Run deployment |
-| `adk-dev-guide` | Development lifecycle and coding guidelines |
-| `adk-eval-guide` | Evaluation methodology and scoring |
-| `adk-observability-guide` | Tracing, logging, and integrations |
-| `adk-scaffold` | Project scaffolding |
+| `google-agents-cli-adk-code` | Python API quick reference and docs index |
+| `google-agents-cli-adk-deploy` | Agent Runtime and Cloud Run deployment |
+| `google-agents-cli-adk-dev` | Development lifecycle and coding guidelines |
+| `google-agents-cli-adk-eval` | Evaluation methodology and scoring |
+| `google-agents-cli-adk-observe` | Tracing, logging, and integrations |
+| `google-agents-cli-adk-scaffold` | Project scaffolding |
 
 ## ADK Docs MCP Server
 
