@@ -18,7 +18,7 @@ purposes:
 
 *   **[Standard deployment](/deploy/agent-runtime/deploy/)**: Follow
     this standard deployment path if you want to carefully manage deploying an ADK agent to the Agent
-    Engine runtime. This deployment path uses Cloud Console, ADK command line
+    Runtime runtime. This deployment path uses Cloud Console, ADK command line
     interface, and provides step-by-step instructions. This path is recommended
     for users who are already familiar with configuring Google Cloud projects,
     and users preparing for production deployments.
