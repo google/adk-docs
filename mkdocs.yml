@@ -338,7 +338,7 @@ nav:
       - Agent Runtime:
         - deploy/agent-runtime/index.md
         - Standard deployment: deploy/agent-runtime/deploy.md
-        - Agent Starter Pack: deploy/agent-runtime/agents-cli.md
+        - agents-cli: deploy/agent-runtime/agents-cli.md
         - Test deployed agents: deploy/agent-runtime/test.md
       - Cloud Run: deploy/cloud-run.md
       - GKE: deploy/gke.md
