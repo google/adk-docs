@@ -1,81 +1,77 @@
-# Copyright 2026 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
+from typing import Any
 
-import datetime
-from zoneinfo import ZoneInfo
-from google.adk.agents import Agent
-
-def get_weather(city: str) -> dict:
-    """Retrieves the current weather report for a specified city.
-
-    Args:
-        city (str): The name of the city for which to retrieve the weather report.
-
-    Returns:
-        dict: status and result or error msg.
-    """
-    if city.lower() == "new york":
-        return {
-            "status": "success",
-            "report": (
-                "The weather in New York is sunny with a temperature of 25 degrees"
-                " Celsius (77 degrees Fahrenheit)."
-            ),
-        }
-    else:
-        return {
-            "status": "error",
-            "error_message": f"Weather information for '{city}' is not available.",
-        }
+from google.adk.agents import llm_agent
+from google.adk.sessions import vertex_ai_session_service
+from vertexai.preview.reasoning_engines import AdkApp
+from google.adk.tools import agent_tool
+from google.adk.tools.google_search_tool import GoogleSearchTool
+from google.adk.tools import url_context
 
 
-def get_current_time(city: str) -> dict:
-    """Returns the current time in a specified city.
 
-    Args:
-        city (str): The name of the city for which to retrieve the current time.
+VertexAiSessionService = vertex_ai_session_service.VertexAiSessionService
 
-    Returns:
-        dict: status and result or error msg.
-    """
 
-    if city.lower() == "new york":
-        tz_identifier = "America/New_York"
-    else:
-        return {
-            "status": "error",
-            "error_message": (
-                f"Sorry, I don't have timezone information for {city}."
-            ),
-        }
+class AgentClass:
 
-    tz = ZoneInfo(tz_identifier)
-    now = datetime.datetime.now(tz)
-    report = (
-        f'The current time in {city} is {now.strftime("%Y-%m-%d %H:%M:%S %Z%z")}'
+  def __init__(self):
+    self.app = None
+
+  def session_service_builder(self):
+    return VertexAiSessionService()
+
+  def set_up(self):
+    """Sets up the ADK application."""
+    my_agent_google_search_agent = llm_agent.LlmAgent(
+      name='My_Agent_google_search_agent',
+      model='gemini-2.5-pro',
+      description=(
+          'Agent specialized in performing Google searches.'
+      ),
+      sub_agents=[],
+      instruction='Use the GoogleSearchTool to find information on the web.',
+      tools=[
+        GoogleSearchTool()
+      ],
     )
-    return {"status": "success", "report": report}
+    my_agent_url_context_agent = llm_agent.LlmAgent(
+      name='My_Agent_url_context_agent',
+      model='gemini-2.5-pro',
+      description=(
+          'Agent specialized in fetching content from URLs.'
+      ),
+      sub_agents=[],
+      instruction='Use the UrlContextTool to retrieve content from provided URLs.',
+      tools=[
+        url_context
+      ],
+    )
+    root_agent = llm_agent.LlmAgent(
+      name='My_Agent',
+      model='gemini-2.5-pro',
+      description=(
+          ''
+      ),
+      sub_agents=[],
+      instruction='',
+      tools=[
+        agent_tool.AgentTool(agent=my_agent_google_search_agent),
+        agent_tool.AgentTool(agent=my_agent_url_context_agent)
+      ],
+    )
+
+    self.app = AdkApp(
+        agent=root_agent,
+        session_service_builder=self.session_service_builder
+    )
+
+  async def stream_query(self, query: str, user_id: str = 'test') -> Any:
+    """Streaming query."""
+    async for chunk in self.app.async_stream_query(
+        message=query,
+        user_id=user_id,
+    ):
+      yield chunk
 
 
-root_agent = Agent(
-    name="weather_time_agent",
-    model="gemini-2.5-flash",
-    description=(
-        "Agent to answer questions about the time and weather in a city."
-    ),
-    instruction=(
-        "You are a helpful agent who can answer user questions about the time and weather in a city."
-    ),
-    tools=[get_weather, get_current_time],
-)
+app = AgentClass()
