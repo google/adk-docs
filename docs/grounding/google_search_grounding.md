@@ -4,7 +4,7 @@
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
-[Google Search Grounding tool](/tools/gemini-api/google-search/) is a powerful feature in the Agent Development Kit (ADK) that connects your AI agents directly to Google Search. By giving your agents access to real-time, authoritative information from the web, they can answer questions about recent events, current weather, stock prices, or any other dynamic data that falls outside the model's training window. The agent automatically decides when to search and seamlessly incorporates the results into its responses with proper citations.
+[Google Search Grounding tool](/integrations/google-search/) is a powerful feature in the Agent Development Kit (ADK) that connects your AI agents directly to Google Search. By giving your agents access to real-time, authoritative information from the web, they can answer questions about recent events, current weather, stock prices, or any other dynamic data that falls outside the model's training window. The agent automatically decides when to search and seamlessly incorporates the results into its responses with proper citations.
 
 ## Creating a Grounded Agent
 
@@ -148,4 +148,4 @@ The `searchEntryPoint` object in the `groundingMetadata` contains pre-formatted 
 
 **Rendered HTML from searchEntryPoint:** The metadata provides the necessary HTML and CSS to render the search suggestions bar, which includes the Google logo and chips for related queries. Integrating this HTML directly into your application's front end will display the suggestions as intended.
 
-For more information, consult [using Google Search Suggestions](https://cloud.google.com/vertex-ai/generative-ai/docs/grounding/grounding-search-suggestions) in Vertex AI documentation.
+For more information, consult [using Google Search Suggestions](https://cloud.google.com/vertex-ai/generative-ai/docs/grounding/grounding-search-suggestions) in Agent Platform documentation.

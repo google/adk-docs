@@ -1,7 +1,7 @@
 # Build collaborative agent teams
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span><span class="lst-preview">Alpha</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span><span class="lst-preview">Beta</span>
 </div>
 
 Some complex tasks may require multiple agents with specific responsibilities
@@ -28,9 +28,9 @@ available for collaboration modes:
 This guide covers how to use modes for your subagents and how these modes impact
 agent behavior.
 
-!!! example "Alpha Release"
+!!! example "Beta Release"
 
-    ADK 2.0 is an Alpha release and may cause breaking changes when used with prior
+    ADK 2.0 is a Beta release and may cause breaking changes when used with prior
     versions of ADK. Do not use ADK 2.0 if you require backwards compatibility, such
     as in production environments. We encourage you to test this release and we
     welcome your
@@ -42,7 +42,7 @@ The following code example shows how to set operating modes for
 a small team of subagents and assign them to a coordinator agent:
 
 ```python
-from google.adk.workflow.agents.llm_agent import Agent
+from google.adk import Agent
 
 weather_agent = Agent(
     name="weather_checker",

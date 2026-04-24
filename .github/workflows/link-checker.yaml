@@ -21,12 +21,24 @@ on:
   pull_request:
 
 jobs:
-  markdown-link-check:
+  link-check:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v6
-    - uses: tcort/github-action-markdown-link-check@v1
+
+    - name: Check links
+      uses: lycheeverse/lychee-action@v2
       with:
-        use-quiet-mode: 'yes'
-        use-verbose-mode: 'yes'
-        config-file: '.link-checker-config.json'
+        args: >-
+          --verbose
+          --no-progress
+          --max-retries 5
+          --retry-wait-time 3
+          --host-concurrency 2
+          --host-request-interval 1s
+          --root-dir "$(pwd)/docs"
+          './**/*.md'
+        fail: true
+        failIfEmpty: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

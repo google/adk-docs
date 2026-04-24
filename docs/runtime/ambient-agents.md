@@ -524,7 +524,7 @@ trigger endpoint:
 
 - **Pub/Sub**: Create a [push subscription](https://cloud.google.com/pubsub/docs/push)
   pointing to `/apps/{app_name}/trigger/pubsub`.
-- **Eventarc**: Create an [Eventarc Standard trigger](https://cloud.google.com/eventarc/standard/docs/creating-triggers)
+- **Eventarc**: Create an [Eventarc Standard trigger](https://docs.cloud.google.com/eventarc/standard/docs/event-providers-targets)
   or an [Eventarc Advanced pipeline](https://cloud.google.com/eventarc/advanced/docs/overview)
   routing to `/apps/{app_name}/trigger/eventarc`.
 - **Cloud Scheduler**: Create a [scheduler job](https://cloud.google.com/scheduler/docs/creating)

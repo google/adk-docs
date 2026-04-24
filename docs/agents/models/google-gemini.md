@@ -7,10 +7,10 @@
 ADK supports the Google Gemini family of generative AI models that provide a
 powerful set of models with a wide range of features. ADK provides support for many
 Gemini features, including
-[Code Execution](/tools/gemini-api/code-execution/),
-[Google Search](/tools/gemini-api/google-search/),
+[Code Execution](/integrations/code-execution/),
+[Google Search](/integrations/google-search/),
 [Context caching](/context/caching/),
-[Computer use](/tools/gemini-api/computer-use/)
+[Computer use](/integrations/computer-use/)
 and the [Interactions API](#interactions-api).
 
 ## Get started
@@ -85,7 +85,7 @@ in your agents:
 
 ## Gemini model authentication
 
-This section covers authenticating with Google's Gemini models, either through Google AI Studio for rapid development or Google Cloud Vertex AI for enterprise applications. This is the most direct way to use Google's flagship models within ADK.
+This section covers authenticating with Google's Gemini models, either through Google AI Studio for rapid development or Google Cloud Agent Platform for enterprise applications. This is the most direct way to use Google's flagship models within ADK.
 
 **Integration Method:** Once you are authenticated using one of the below methods, you can pass the model's identifier string directly to the
 `model` parameter of `LlmAgent`.
@@ -94,7 +94,7 @@ This section covers authenticating with Google's Gemini models, either through G
 !!! tip
 
     The `google-genai` library, used internally by ADK for Gemini models, can connect
-    through either Google AI Studio or Vertex AI.
+    through either Google AI Studio or Agent Platform.
 
     **Model support for voice/video streaming**
 
@@ -103,7 +103,7 @@ This section covers authenticating with Google's Gemini models, either through G
     support the Gemini Live API in the documentation:
 
     - [Google AI Studio: Gemini Live API](https://ai.google.dev/gemini-api/docs/models#live-api)
-    - [Vertex AI: Gemini Live API](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api)
+    - [Agent Platform: Gemini Live API](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api)
 
 ### Google AI Studio
 
@@ -126,11 +126,11 @@ This is the simplest method and is recommended for getting started quickly.
 * **Models:** Find all available models on the
   [Google AI for Developers site](https://ai.google.dev/gemini-api/docs/models).
 
-### Google Cloud Vertex AI
+### Google Cloud Agent Platform
 
-For scalable and production-oriented use cases, Vertex AI is the recommended platform. Gemini on Vertex AI supports enterprise-grade features, security, and compliance controls. Based on your development environment and usecase, *choose one of the below methods to authenticate*.
+For scalable and production-oriented use cases, Agent Platform is the recommended platform. Gemini on Agent Platform supports enterprise-grade features, security, and compliance controls. Based on your development environment and usecase, *choose one of the below methods to authenticate*.
 
-**Pre-requisites:** A Google Cloud Project with [Vertex AI enabled](https://console.cloud.google.com/apis/enableflow;apiid=aiplatform.googleapis.com).
+**Pre-requisites:** A Google Cloud Project with [Agent Platform enabled](https://console.cloud.google.com/apis/enableflow;apiid=aiplatform.googleapis.com).
 
 ### **Method A: User Credentials (for Local Development)**
 
@@ -145,17 +145,17 @@ For scalable and production-oriented use cases, Vertex AI is the recommended pla
     export GOOGLE_CLOUD_LOCATION="YOUR_VERTEX_AI_LOCATION" # e.g., us-central1
     ```
 
-    Explicitly tell the library to use Vertex AI:
+    Explicitly tell the library to use Agent Platform:
 
     ```shell
     export GOOGLE_GENAI_USE_VERTEXAI=TRUE
     ```
 
 4. **Models:** Find available model IDs in the
-  [Vertex AI documentation](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/models).
+  [Agent Platform documentation](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/models).
 
-### **Method B: Vertex AI Express Mode**
-[Vertex AI Express Mode](https://cloud.google.com/vertex-ai/generative-ai/docs/start/express-mode/overview) offers a simplified, API-key-based setup for rapid prototyping.
+### **Method B: Agent Platform Express Mode**
+[Agent Platform Express Mode](https://cloud.google.com/vertex-ai/generative-ai/docs/start/express-mode/overview) offers a simplified, API-key-based setup for rapid prototyping.
 
 1.  **Sign up for Express Mode** to get your API key.
 2.  **Set environment variables:**
@@ -168,7 +168,7 @@ For scalable and production-oriented use cases, Vertex AI is the recommended pla
 
 For deployed applications, a service account is the standard method.
 
-1.  [**Create a Service Account**](https://cloud.google.com/iam/docs/service-accounts-create#console) and grant it the `Vertex AI User` role.
+1.  [**Create a Service Account**](https://cloud.google.com/iam/docs/service-accounts-create#console) and grant it the `Agent Platform User` role.
 2.  **Provide credentials to your application:**
     *   **On Google Cloud:** If you are running the agent in Cloud Run, GKE, VM or other Google Cloud services, the environment can automatically provide the service account credentials. You don't have to create a key file.
     *   **Elsewhere:** Create a [service account key file](https://cloud.google.com/iam/docs/keys-create-delete#console) and point to it with an environment variable:
@@ -356,7 +356,7 @@ For a complete code sample, see the
 
 The Interactions API **does not** support mixing custom function calling tools with
 built-in tools, such as the
-[Google Search](/tools/built-in-tools/#google-search),
+[Google Search](/integrations/google-search/),
 tool, within the same agent. You can work around this limitation by configuring the
 the built-in tool to operate as a custom tool using the `bypass_multi_tools_limit`
 parameter:

@@ -29,8 +29,12 @@ create autonomous AI voice agents using natural language.
 - **Phone Number Management**: Provision phone numbers with specific area codes,
   assign them to agents, and release them when no longer needed.
 
-- **AI Voice Agents**: Create agents with configurable voices and system prompts
-  that autonomously handle inbound and outbound calls without requiring webhooks.
+- **AI Voice Agents**: Create agents with configurable voices, system prompts,
+  and model tiers (turbo, balanced, max) that autonomously handle inbound and
+  outbound calls without requiring webhooks.
+
+- **Call Transfer & Voicemail**: Configure agents to transfer calls to a human
+  and set up voicemail greetings for unanswered calls.
 
 - **Webhook Integration**: Set up project-level or per-agent webhooks to receive
   real-time notifications for inbound messages and call events.
@@ -195,16 +199,16 @@ Tool | Description
 ---- | -----------
 `list_calls` | List recent calls with optional agent, number, status, or direction filters
 `get_call` | Get call details and transcript with optional long-polling
-`make_call` | Place an outbound call using webhook for conversation handling
-`make_conversation_call` | Place an autonomous AI call that returns the full transcript
+`make_call` | Place an outbound call with optional voice override, using webhook for conversation handling
+`make_conversation_call` | Place an autonomous AI call with optional voice override that returns the full transcript
 
 ### Agents
 
 Tool | Description
 ---- | -----------
 `list_agents` | List all agents with phone numbers and voice config
-`create_agent` | Create a new agent with configurable voice and system prompt
-`update_agent` | Update agent configuration
+`create_agent` | Create a new agent with voice, system prompt, model tier, call transfer, and voicemail
+`update_agent` | Update agent configuration including voice, model tier, transfer, and voicemail
 `delete_agent` | Delete an agent
 `get_agent` | Get agent details including numbers and voice config
 `attach_number` | Assign a phone number to an agent

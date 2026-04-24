@@ -152,7 +152,7 @@ These events are ephemeral and only yielded to callers during active streaming:
 
 ## Understanding Events
 
-Events are the core communication mechanism in ADK Gemini Live API Toolkit's streaming system. This section explores the complete lifecycle of events—from how they're generated through multiple pipeline layers, to concurrent processing patterns that enable true real-time interaction, to practical handling of interruptions and turn completion. You'll learn about event types (text, audio, transcriptions, tool calls), serialization strategies for network transport, and the connection lifecycle that manages streaming sessions across both Gemini Live API and Vertex AI Live API platforms.
+Events are the core communication mechanism in ADK Gemini Live API Toolkit's streaming system. This section explores the complete lifecycle of events—from how they're generated through multiple pipeline layers, to concurrent processing patterns that enable true real-time interaction, to practical handling of interruptions and turn completion. You'll learn about event types (text, audio, transcriptions, tool calls), serialization strategies for network transport, and the connection lifecycle that manages streaming sessions across both Gemini Live API and Gemini Live API platforms.
 
 ### The Event Class
 
@@ -642,8 +642,8 @@ For complete error code listings and descriptions, refer to the official documen
 
 !!! note "Official Documentation"
 
-    - **FinishReason** (when model stops generating tokens): [Google AI for Developers](https://ai.google.dev/api/python/google/ai/generativelanguage/Candidate/FinishReason) | [Vertex AI](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/gemini)
-    - **BlockedReason** (when prompts are blocked by content filters): [Google AI for Developers](https://ai.google.dev/api/python/google/ai/generativelanguage/GenerateContentResponse/PromptFeedback/BlockReason) | [Vertex AI](https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/configure-safety-attributes)
+    - **FinishReason** (when model stops generating tokens): [Google AI for Developers](https://ai.google.dev/api/python/google/ai/generativelanguage/Candidate/FinishReason) | [Agent Platform](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/gemini)
+    - **BlockedReason** (when prompts are blocked by content filters): [Google AI for Developers](https://ai.google.dev/api/python/google/ai/generativelanguage/GenerateContentResponse/PromptFeedback/BlockReason) | [Agent Platform](https://cloud.google.com/vertex-ai/generative-ai/docs/multimodal/configure-safety-attributes)
     - **ADK Implementation**: [`llm_response.py:145-200`](https://github.com/google/adk-python/blob/427a983b18088bdc22272d02714393b0a779ecdf/src/google/adk/models/llm_response.py#L145-L200)
 
 **Best practices for error handling:**
@@ -1116,7 +1116,7 @@ ADK supports advanced tool patterns that integrate seamlessly with `run_live()`:
 
     **Code reference**: See `runners.py:828-865` (tool detection) and `function_tool.py:238-253` (parameter injection) for implementation details.
 
-    See the [Tools Guide](/tools/) for implementation examples.
+    See the [Tools Guide](/integrations/) for implementation examples.
 
 ### Key Takeaway
 
