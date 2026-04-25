@@ -15,8 +15,10 @@ Think of it this way:
 
 The `BaseMemoryService` (or `Service` in Go) defines the interface for managing this searchable, long-term knowledge store. Its primary responsibilities are:
 
-1. **Ingesting Information (`add_session_to_memory`):** Taking the contents of a (usually completed) `Session` and adding relevant information to the long-term knowledge store.
-2. **Searching Information (`search_memory`):** Allowing an agent (typically via a `Tool`) to query the knowledge store and retrieve relevant snippets or context based on a search query.
+*   **Ingesting Information:**
+    *   **`add_session_to_memory`**: Takes a completed `Session` and adds relevant information to the long-term knowledge store. This is ideal for automatically capturing the essence of a conversation.
+    *   **`add_memory`**: Allows you to add explicit `MemoryEntry` objects directly to the memory. This gives you fine-grained control and is useful for injecting specific facts from other sources.
+*   **Searching Information (`search_memory`):** Allowing an agent (typically via a `Tool`) to query the knowledge store and retrieve relevant snippets or context based on a search query.
 
 ## Choosing the Right Memory Service
 
@@ -325,6 +327,42 @@ The service handles two key operations:
 *   **Generating Memories:** At the end of a conversation, you can send the session's events to the Memory Bank, which intelligently processes and stores the information as "memories."
 *   **Retrieving Memories:** Your agent code can issue a search query against the Memory Bank to retrieve relevant memories from past conversations.
 
+### Direct Memory Ingestion with `add_memory`
+
+Besides generating memories from session history, `VertexAiMemoryBankService` also supports direct memory ingestion via the `add_memory` method. This gives you precise control over the facts stored in the Memory Bank.
+
+How it works depends on the `enable_consolidation` option:
+
+*   **Direct Creation (Default):** By default, `add_memory` calls the underlying `memories.create` API. Each `MemoryEntry` you provide is added as a distinct, separate memory item.
+
+    ```python
+    from google.adk.memory import MemoryEntry, VertexAiMemoryBankService
+    from google.genai.types import Content, Part
+
+    memory_service = VertexAiMemoryBankService(...)
+
+    await memory_service.add_memory(
+        app_name="my-app",
+        user_id="user-123",
+        memories=[
+            MemoryEntry(content=Content(parts=[Part(text="The user's favorite color is blue.")]))
+        ]
+    )
+    ```
+
+*   **Creation with Consolidation:** If you set `enable_consolidation` to `True` in the `custom_metadata`, the service uses the `memories.generate` API. This allows the Memory Bank to intelligently consolidate the new memory items with existing related memories, preventing redundancy and building a more coherent knowledge base.
+
+    ```python
+    await memory_service.add_memory(
+        app_name="my-app",
+        user_id="user-123",
+        memories=[
+            MemoryEntry(content=Content(parts=[Part(text="The user's favorite color is light blue.")]))
+        ],
+        custom_metadata={"enable_consolidation": True}
+    )
+    ```
+
 ### Prerequisites
 
 Before you can use this feature, you must have:
@@ -374,7 +412,7 @@ Or, you can configure your agent to use the Memory Bank by manually instantiatin
 
 When a memory service is configured, your agent can use a tool or callback to retrieve memories. ADK includes two pre-built tools for retrieving memories:
 
-* `PreloadMemory`: Always retrieve memory at the beginning of each turn (similar to a callback).
+* `PreloadMemory`: Always retrieve memory at the beginning of each turn (similar to a a callback).
 * `LoadMemory`: Retrieve memory when your agent decides it would be helpful.
 
 **Example:**
