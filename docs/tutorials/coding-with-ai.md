@@ -34,8 +34,8 @@ documentation](https://google.github.io/agents-cli/) for more details.
 | `agents-cli scaffold create` | Create a new ADK agent project |
 | `agents-cli scaffold enhance` | Add deployment to existing project |
 | `agents-cli eval` | Run agent evaluations |
-| `agents-cli deploy` | Deploy to Agent Runtime or Cloud Run |
-| `agents-cli publish` | Publish agent to Agent Store |
+| `agents-cli deploy` | Deploy to Agent Runtime, Cloud Run, or GKE |
+| `agents-cli publish` | Publish to Gemini Enterprise |
 
 ### Development Skills
 
@@ -43,12 +43,13 @@ After setup, the following skills are available in your coding tool:
 
 | Skill | Description |
 |-------|-------------|
+| `google-agents-cli-workflow` | Development lifecycle and coding guidelines |
 | `google-agents-cli-adk-code` | Python API quick reference and docs index |
-| `google-agents-cli-adk-deploy` | Agent Runtime and Cloud Run deployment |
-| `google-agents-cli-adk-dev` | Development lifecycle and coding guidelines |
-| `google-agents-cli-adk-eval` | Evaluation methodology and scoring |
-| `google-agents-cli-adk-observe` | Tracing, logging, and integrations |
-| `google-agents-cli-adk-scaffold` | Project scaffolding |
+| `google-agents-cli-scaffold` | Project scaffolding |
+| `google-agents-cli-eval` | Evaluation methodology and scoring |
+| `google-agents-cli-deploy` | Agent Runtime, Cloud Run, and GKE deployment |
+| `google-agents-cli-publish` | Gemini Enterprise registration |
+| `google-agents-cli-observability` | Tracing, logging, and integrations |
 
 ## ADK Docs MCP Server
 
