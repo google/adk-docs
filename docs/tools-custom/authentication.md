@@ -157,6 +157,33 @@ Here is a quick guide to authentication for key ADK toolsets:
 For more authentication details for other pre-built tools and integrations
 see the [ADK Integrations](/integrations) catalog.
 
+## Toolset Authentication
+
+In addition to the tool-level authentication flows described below, you can also use proactive authentication at the Toolset level.
+
+The `BaseLlmFlow` automatically checks for authentication requirements for each `BaseToolset` *before* any tools are listed or executed. It does this by calling the `get_auth_config()` method on your toolset.
+
+If your toolset returns an `AuthConfig` object from this method and the necessary credentials are not already available in the session, the ADK framework will:
+
+1.  Pause the current execution.
+2.  Issue an `adk_request_credential` event to the client, similar to the interactive flow in "Journey 1".
+
+This allows you to define authentication requirements for an entire set of tools in one central place. The framework then ensures that the necessary authentication is resolved before attempting to use any of the tools in the toolset.
+
+To enable this, override the `get_auth_config()` method in your custom `BaseToolset` subclass:
+
+```python
+from google.adk.tools import BaseToolset
+from google.adk.auth import AuthConfig
+
+class MyAuthenticatedToolset(BaseToolset):
+    # ... other toolset methods ...
+
+    def get_auth_config(self) -> AuthConfig | None:
+        # Return the AuthConfig required for this toolset
+        return AuthConfig(...)
+```
+
 ---
 
 ## Journey 1: Building Agentic Applications with Authenticated Tools
