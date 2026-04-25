@@ -1,16 +1,16 @@
-# Deploy to Agent Runtime with agents-cli
+# Deploy to Agent Runtime with Agents CLI
 
 <div class="language-support-tag" title="Agent Runtime currently supports only Python.">
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
 </div>
 
 This deployment procedure describes how to perform a deployment using
-[agents-cli](https://google.github.io/agents-cli/)
-and the ADK. Deploying to Agent Runtime via agents-cli provides an accelerated path to a production-ready environment. agents-cli automatically configures Google Cloud resources, CI/CD pipelines, and Infrastructure-as-Code (Terraform) to support the entire development lifecycle. As a best practice, always ensure you review the generated configurations to align with your organization’s security and compliance standards before production deployment.
+[Agents CLI in Agent Platform](https://google.github.io/agents-cli/)
+and the ADK. Deploying to Agent Runtime via Agents CLI provides an accelerated path to a production-ready environment. Agents CLI automatically configures Google Cloud resources, CI/CD pipelines, and Infrastructure-as-Code (Terraform) to support the entire development lifecycle. As a best practice, always ensure you review the generated configurations to align with your organization’s security and compliance standards before production deployment.
 
-This deployment guide uses agents-cli to apply a project template to your
+This deployment guide uses Agents CLI to apply a project template to your
 existing project, add deployment artifacts, and prepare your agent project for
-deployment. These instructions show you how to use agents-cli to provision a Google
+deployment. These instructions show you how to use Agents CLI to provision a Google
 Cloud project with services needed for deploying your ADK project, as follows:
 
 -   [Prerequisites](#prerequisites-ad): Set up Google Cloud
@@ -24,7 +24,7 @@ Cloud project with services needed for deploying your ADK project, as follows:
     required services in your Google Cloud project and upload your ADK project code.
 
 For information on testing a deployed agent, see [Test deployed agent](test.md).
-For more information on using agents-cli and its command line tools,
+For more information on using Agents CLI and its command line tools,
 see the
 [CLI reference](https://google.github.io/agents-cli/cli/)
 and
@@ -44,7 +44,7 @@ You need the following resources configured to use this deployment path:
     For new projects, see [Creating and managing projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects).
 
 -   **Python Environment**: A Python version supported by
-    [agents-cli](https://google.github.io/agents-cli/guide/getting-started/).
+    [Agents CLI](https://google.github.io/agents-cli/guide/getting-started/).
 -   **uv Tool:** Manage Python development environment and running agents-cli
     tools. For installation details, see
     [Install uv](https://docs.astral.sh/uv/getting-started/installation/).
@@ -58,7 +58,7 @@ You need the following resources configured to use this deployment path:
 ### Prepare your ADK project {#prepare-ad}
 
 When you deploy an ADK project to Agent Runtime, you need some additional files
-to support the deployment operation. The following agents-cli command backs up your
+to support the deployment operation. The following Agents CLI command backs up your
 project and then adds files to your project for deployment purposes.
 
 These instructions assume you have an existing ADK project that you are modifying
@@ -83,14 +83,14 @@ To prepare your ADK project for deployment to Agent Runtime:
 
     Navigate to `your-project-directory/`
 
-1.  Run the agents-cli `scaffold enhance` command to add the files required for deployment into
+1.  Run the Agents CLI `scaffold enhance` command to add the files required for deployment into
     your project.
 
     ```shell
     agents-cli scaffold enhance --deployment-target agent_engine
     ```
 
-1.  Follow the instructions from the agents-cli tool. In general, you can accept
+1.  Follow the instructions from the Agents CLI tool. In general, you can accept
     the default answers to all questions. However for the **GCP region**,
     option, make sure you select one of the
     [supported regions](https://docs.cloud.google.com/agent-builder/locations#supported-regions-agent-engine)
@@ -103,10 +103,10 @@ When you successfully complete this process, the tool shows the following messag
 ```
 
 !!! tip "Note"
-    The agents-cli tool may show a reminder to connect to Google Cloud while
+    The Agents CLI tool may show a reminder to connect to Google Cloud while
     running, but that connection is *not required* at this stage.
 
-For more information about the changes agents-cli makes to your ADK project, see
+For more information about the changes Agents CLI makes to your ADK project, see
 [Changes to your ADK project](#adk-agents-cli-changes).
 
 ### Connect to your Google Cloud project {#connect-ad}
@@ -142,7 +142,7 @@ ID, you are ready to deploy your ADK project files to Agent Runtime.
 
 ### Deploy your ADK project {#deploy-ad}
 
-When using agents-cli, you deploy using the `agents-cli deploy` command. This
+When using Agents CLI, you deploy using the `agents-cli deploy` command. This
 command builds a container from your agent code, pushes it to a registry, and
 deploys it to Agent Runtime in the hosted environment.
 
@@ -184,7 +184,7 @@ deployed agent, see
 
 ### Changes to your ADK project {#adk-agents-cli-changes}
 
-The agents-cli tools add more files to your project for deployment. The procedure
+The Agents CLI tools add more files to your project for deployment. The procedure
 below backs up your existing project files before modifying them. This guide
 uses the
 [multi_tool_agent](https://github.com/google/adk-docs/tree/main/examples/python/snippets/get-started/multi_tool_agent)
@@ -198,7 +198,7 @@ my_agent/
 └─ .env
 ```
 
-After running the agents-cli scaffold enhance command to add Agent Runtime deployment
+After running the Agents CLI scaffold enhance command to add Agent Runtime deployment
 information, the new structure is as follows:
 
 ```
@@ -217,8 +217,8 @@ my-agent/
 ```
 
 See the *README.md* file in your updated ADK project folder for more information.
-For more information on using agents-cli, see the
-[agents-cli documentation](https://google.github.io/agents-cli/).
+For more information on using Agents CLI, see the
+[Agents CLI documentation](https://google.github.io/agents-cli/).
 
 ## Test deployed agents
 
