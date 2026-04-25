@@ -63,6 +63,19 @@ For a complete code example of an ADK agent with a Skill, including both
 file-based and in-line Skill definitions, see the code sample
 [skills_agent](https://github.com/google/adk-python/tree/main/contributing/samples/skills_agent).
 
+## SkillToolset
+
+The `SkillToolset` class is the primary way to manage and interact with agent
+Skills. When you add the `SkillToolset` to your agent's tools, it automatically
+configures the agent with a default system instruction for using Skills. This
+instruction, `DEFAULT_SKILL_SYSTEM_INSTRUCTION`, guides the agent on how to discover,
+load, and execute Skills.
+
+The `SkillToolset` presents the available Skills to the agent in an XML format,
+allowing the agent to reason about them. This XML representation includes each
+Skill's name and description, which helps the agent decide when to use a
+particular Skill.
+
 ## Define Skills
 
 The Skills feature allows you to create modular packages of Skill instructions
@@ -85,6 +98,19 @@ three levels:
     -   `assets/`: Resource materials such as database schemas, API
         documentation, templates, or examples.
     -   `scripts/`: Executable scripts supported by the agent runtime.
+
+### Frontmatter validation
+
+The frontmatter of a Skill's `SKILL.md` file is subject to the following validation
+rules:
+
+*   **name**:
+    *   Must be at most 64 characters.
+    *   Must be lowercase kebab-case (a-z, 0-9, hyphens).
+    *   Cannot have leading, trailing, or consecutive hyphens.
+*   **description**:
+    *   Cannot be empty.
+    *   Must be at most 1024 characters.
 
 ### Define Skills with files
 
@@ -156,4 +182,4 @@ Check out these resources for building agents with Skills:
 *   ADK Skills agent code sample:
     [skills_agent](https://github.com/google/adk-python/tree/main/contributing/samples/skills_agent).
 *   Agent Skills
-    [specification documentation](https://agentskills.io/)
+    [specification documentation](https://agentskills.io/specification).
