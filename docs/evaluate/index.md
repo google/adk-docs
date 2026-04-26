@@ -152,6 +152,7 @@ Creating evalsets manually can be complex, therefore UI tools are provided to he
 !!! warning
     This evalset evaluation method requires the use of a paid service,
     [Vertex Gen AI Evaluation Service API](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/evaluation).
+    You can authenticate by providing a `GOOGLE_API_KEY` environment variable, or by using Google Cloud Project credentials (Application Default Credentials).
 
 *(Note: Comments are included for explanatory purposes and should be removed for the JSON to be valid.)*
 
