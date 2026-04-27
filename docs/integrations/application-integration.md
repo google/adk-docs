@@ -107,7 +107,7 @@ Workflows):
     - roles/connectors.invoker
     - roles/secretmanager.secretAccessor
 
-**Note:** When using Agent Engine (AE) for deployment, don't use
+**Note:** When using Agent Runtime for deployment, don't use
 `roles/integrations.integrationInvoker`, as it can result in 403 errors. Use
 `roles/integrations.integrationEditor` instead.
 

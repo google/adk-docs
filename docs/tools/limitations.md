@@ -7,7 +7,7 @@ agent workflow. This page lists these tool limitations and workarounds, if avail
 
 !!! note "ONLY for Search in ADK Python v1.15.0 and lower"
 
-    This limitation only applies to the use of Google Search and Vertex AI Search
+    This limitation only applies to the use of Google Search and Agent Search
     tools in ADK Python v1.15.0 and lower. ADK Python release v1.16.0 and higher
     provides a built-in workaround to remove this limitation.
 
@@ -16,9 +16,12 @@ tools within an agent excludes the use of any other tools in that agent. The
 following ADK Tools can only be used by themselves, without any other tools, in
 a single agent object:
 
-*   [Code Execution](/integrations/code-execution/) with Gemini API (Note: in TypeScript, this requires Gemini 2.0+ and does not have this limitation)
-*   [Google Search](/integrations/google-search/) with Gemini API (Note: limitation only applies to Gemini 1.x models in TypeScript)
-*   [Vertex AI Search](/integrations/vertex-ai-search/) (Note: currently unavailable in TypeScript)
+* [Code Execution](/integrations/code-execution/) with Gemini API (Note: in
+  TypeScript, this requires Gemini 2.0+ and does not have this limitation)
+* [Google Search](/integrations/google-search/) with Gemini API (Note:
+  limitation only applies to Gemini 1.x models in TypeScript)
+* [Agent Search](/integrations/agent-search/) (Note: currently unavailable in
+  TypeScript)
 
 For example, the following approach that uses one of these tools along with
 other tools, within a single agent, is ***not supported***:

@@ -1,7 +1,7 @@
 # Data handling for agent workflows
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span><span class="lst-preview">Alpha</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span><span class="lst-preview">Beta</span>
 </div>
 
 Structuring and managing data between agents and graph-based notes is critical
@@ -12,20 +12,14 @@ the essential parameters for events, data, content, and state, and explains how
 to implement structured data transfer for both function and agent nodes using
 data format schemas and specific instruction syntax.
 
-!!! example "Alpha Release"
+!!! example "Beta Release"
 
-    ADK 2.0 is an Alpha release and may cause breaking changes when used with prior
+    ADK 2.0 is a Beta release and may cause breaking changes when used with prior
     versions of ADK. Do not use ADK 2.0 if you require backwards compatibility, such
     as in production environments. We encourage you to test this release and we
     welcome your
     [feedback](https://github.com/google/adk-python/issues/new?template=feature_request.md&labels=v2)!
 
-!!! danger "WARNING: DO NOT MIX ADK 2.0 and ADK 1.0 data storage systems"
-
-    If you use persistent storage for ADK 2.0 projects, **DO NOT allow ADK 2.0
-    projects to share storage with ADK 1.0 projects**, including, but not limited to,
-    session storage, memory systems, and evaluation data. Doing so may result in
-    loss of data or make the data unusable in ADK 1.0 projects.
 
 ## Workflow graph Events
 
@@ -75,8 +69,8 @@ containing the data, as shown in the following code sample:
 def my_function_node_1():
     return Event(output="The Result")
 
-def my_function_node_2(node_input: Content):
-    output_value = node_input.parts[0].text.lower()
+def my_function_node_2(node_input: str):
+    output_value = node_input.lower()
     return Event(output=output_value) # "the result"
 ```
 
@@ -138,7 +132,7 @@ async def task_attempt_node(node_input: Content, attempts: int):
       },
   )
 
-async def read_state_node(ctx: WorkflowContext):
+async def read_state_node(ctx: Context):
   print(f"attempts state: {ctx.state}") # attempts state: attempts: 1
 
 root_agent = Workflow(
@@ -188,7 +182,7 @@ flight_searcher = Agent(
     input_schema=FlightSearchInput,
     output_schema=FlightSearchOutput,
     tools=[search_flights_api],
-    mode="single-turn",
+    mode="single_turn",
     ...
 )
 

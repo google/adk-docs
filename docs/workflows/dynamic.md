@@ -1,7 +1,7 @@
 # Dynamic workflows
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span><span class="lst-preview">Alpha</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span><span class="lst-preview">Beta</span>
 </div>
 
 The ADK framework provides a programmatic way to define workflows as a more
@@ -30,9 +30,9 @@ the benefits of dynamic workflows in ADK:
     internally compose lower-level nodes, keeping the overall workflow graph
     clean and manageable.
 
-!!! example "Alpha Release"
+!!! example "Beta Release"
 
-    ADK 2.0 is an Alpha release and may cause breaking changes when used with prior
+    ADK 2.0 is a Beta release and may cause breaking changes when used with prior
     versions of ADK. Do not use ADK 2.0 if you require backwards compatibility, such
     as in production environments. We encourage you to test this release and we
     welcome your
@@ -47,9 +47,9 @@ The following dynamic workflow code example shows how to define a basic
 workflow containing a single node with a function:
 
 ```python
-from google.adk import Workflow
-from google.adk import Event
 from google.adk import Context
+from google.adk import Workflow
+from google.adk.workflow import node
 from typing import Any
 
 @node(name="hello_node")
@@ -60,7 +60,7 @@ def my_node(node_input: Any):
 @node(rerun_on_resume=True)
 async def my_workflow(ctx: Context, node_input: str) -> str:
     # run_node executes a node and returns its output
-    result = await ctx.run_node(my_node, input_data="hello")
+    result = await ctx.run_node(my_node, node_input="hello")
     return result
 
 # Run the workflow
@@ -127,8 +127,8 @@ for those nodes, as shown in the following code sample:
 @node(rerun_on_resume=True)
 async def my_workflow(ctx):
     # run_node executes a node and returns its output
-    result = await ctx.run_node(my_function_node, input_data="Hello")
-    result_formatted = await ctx.run_node(my_formatting_node, input_data=result)
+    result = await ctx.run_node(my_function_node, node_input="Hello")
+    result_formatted = await ctx.run_node(my_formatting_node, node_input=result)
     return result_formatted
 
 # Run the workflow
@@ -149,6 +149,7 @@ pass string data between an agent node and a function node:
 
 ```python
 from google.adk import Context
+from google.adk.workflow import node
 
 @node(rerun_on_resume=True)
 async def editorial_workflow(ctx: Context, user_request: str):
@@ -168,6 +169,7 @@ following code example:
 ```python
 from google.adk import Agent
 from google.adk import Context
+from google.adk.workflow import node
 from pydantic import BaseModel
 
 class CityTime(BaseModel):
@@ -228,6 +230,11 @@ following code example shows how to use dynamic workflows to construct a
 workflow loop for generating, reviewing, and updating code:
 
 ```python
+from google.adk import Context
+from google.adk import Event
+from google.adk.agents import LlmAgent
+from google.adk.workflow import node
+
 coder_agent = LlmAgent(
     name="generator_agent",
     model="gemini-flash-latest",
@@ -236,10 +243,14 @@ coder_agent = LlmAgent(
 )
 
 @node(name="lint_reviewer")
-compile_lint_check = ApiNode()
+async def compile_lint_check(ctx: Context, code: str):
+    # Simulate API call or lint check
+    class Response:
+        findings = ""
+    return Response()
 
 fixer_agent = LlmAgent(
-    name="generator_agent",
+    name="fixer_agent",
     model="gemini-flash-latest",
     instruction="""Refactor current code {code}.
         Based on compile & lint review: {findings}""",
@@ -247,13 +258,13 @@ fixer_agent = LlmAgent(
 )
 
 @node # workflow node
-async def code_workflow(ctx):
-  code = await ctx.run_node(coder_agent)
+async def code_workflow(ctx: Context, user_request: str):
+  code = await ctx.run_node(coder_agent, user_request)
   check_resp = await ctx.run_node(compile_lint_check, code)
 
   while check_resp.findings:
     yield Event(state={"code": code, "findings": check_resp.findings})
-    code = await ctx.run_node(fixer_agent)
+    code = await ctx.run_node(fixer_agent, {"code": code, "findings": check_resp.findings})
 
     check_resp = await ctx.run_node(compile_lint_check, code)
 
@@ -263,33 +274,30 @@ async def code_workflow(ctx):
 ### Parallel execution routes
 
 Dynamic workflows in ADK can support parallel execution, and you can use
-standard asynchronous libraries, such as the `asyncio`, to build this
+standard asynchronous libraries, such as `asyncio`, to build this
 functionality. The following code example shows how to build a workflow node
-that supports parallel execution, which can then be integrated into a larger
-workflow:
+that supports parallel execution using `@node` and `asyncio.gather`:
 
 ```python
-from google.adk.workflow import BaseNode
-from google.adk import Context
-from typing import Any
 import asyncio
+from typing import Any
+from google.adk import Context
+from google.adk.workflow import BaseNode, node
 
-class ParallelNode(BaseNode):
-    """A supervisor node that runs a worker node in parallel."""
-    real_node: BaseNode
 
-    async def run(self, ctx: Context, node_input: list[Any]):
-        tasks = []
+@node(rerun_on_resume=True)
+async def parallel_supervisor(
+    ctx: Context, node_input: list[Any], real_node: BaseNode
+):
+    """Runs a worker node in parallel for each item in the input list."""
+    tasks = []
+    for item in node_input:
+        # ctx.run_node returns a future. Append instead of awaiting immediately.
+        tasks.append(ctx.run_node(real_node, item))
 
-        # Dynamically schedule worker nodes for each item in the input list
-        for item in node_input:
-            # ctx.run_node returns an awaitable future for the ephemeral node
-            tasks.append(ctx.run_node(self.real_node, item))
-
-        # Use asyncio to gather results in parallel
-        results = await asyncio.gather(*tasks)
-
-        return results
+    # Collect all results in parallel
+    results = await asyncio.gather(*tasks)
+    return results
 ```
 
 !!! tip "Tip: Resuming parallel nodes"
@@ -301,47 +309,38 @@ class ParallelNode(BaseNode):
 ## Human input
 
 Dynamic workflows in ADK can also include human input or human in the loop
-(HITL) steps. You build human input into workflows by creating a ***BaseNode***
-subclass that interrupts the workflow, combined with a ***RequestInput***
-instance for providing a request to the user and retrieving the response. The
-following code example shows how to build a human input node and include it in a
-workflow:
+(HITL) steps. You build human input into workflows by yielding a
+***RequestInput*** from a `@node` function, which pauses the workflow and waits
+for user input. The following code example shows how to build a human input node
+and include it in a workflow:
 
 ```python
-from google.adk.workflow import BaseNode
+from typing import Any
 from google.adk import Context
 from google.adk.events import RequestInput
-from typing import Any, AsyncGenerator
+from google.adk.workflow import node
 
-class GetInput(BaseNode):
-    """A node that pauses execution and waits for human input."""
-    rerun_on_resume = False  # Ensure the response is yielded as output on resume
 
-    def __init__(self, request: RequestInput, name: str):
-        self.request = request
-        self.name = name
+@node(rerun_on_resume=False)
+async def get_user_approval(ctx: Context, node_input: Any):
+    """Yields a RequestInput to pause the workflow and wait for user input."""
+    yield RequestInput(message="Please approve this request (Yes/No)")
 
-    def get_name(self) -> str:
-        return self.name
 
-    async def run(self) -> AsyncGenerator[Any, None]:
-        # Yielding the request tells the workflow to pause and wait for input
-        yield self.request
-
-async def approval_process_node(ctx: Context, node_input: Any):
-    """A parent node that coordinates a human approval step."""
-
-    # Define the request for the user
-    request = RequestInput(message="Please approve this request (Yes/No)")
-
-    # Invoke the HITL node dynamically. The workflow pauses here.
-    user_response = await ctx.run_node(GetInput(request, name="approval_step"))
+@node(rerun_on_resume=True)
+async def handle_process(ctx: Context, node_input: Any):
+    """The orchestrator calling the interactive step."""
+    user_response = await ctx.run_node(get_user_approval)
 
     if user_response.lower() == "yes":
-        return "Request Approved"
-    else:
-        return "Request Denied"
+        return "Approved"
+    return "Denied"
 ```
+
+!!! important "Important: Parent nodes with `ctx.run_node`"
+
+    Parent nodes in dynamic workflows that call `ctx.run_node` must set
+    `rerun_on_resume=True` to handle interruptions properly.
 
 ## Advanced features
 
@@ -376,21 +375,33 @@ executing node in a workflow:
     system attempts to re-run those nodes in your workflow.
 
 ```python
+from google.adk import Context
+from google.adk.workflow import node
+from pydantic import BaseModel
+from typing import Any
+import asyncio
+
 class Order(BaseModel):
   order_id: str
   cart_items: list[Product]
 
-def shorten_link(ctx, node_input: str):
-
+@node(rerun_on_resume=True)
+async def process_all_orders(ctx: Context, node_input: Any):
   orders = await get_orders()
 
   process_tasks = []
-  for i, order in enumerate(orders):
-    task = ctx.run_node(process_order, order, name=order.order_id))
-
+  for order in orders:
+    # Use run_id to provide a custom identifier.
+    # Custom run_ids must contain at least one non-numeric character
+    # to avoid collision with auto-generated sequential numeric IDs.
+    task = ctx.run_node(process_order, order, run_id=f"order-{order.order_id}")
     process_tasks.append(task)
 
-  result = asyncio.gather(*process_tasks)
-
-  yield result
+  results = await asyncio.gather(*process_tasks)
+  return results
 ```
+
+By default, auto-generated run IDs are sequential integers starting from
+`"1"` (represented as strings). Custom `run_id` values must contain at
+least one non-numeric character to avoid collisions with these
+auto-generated IDs.

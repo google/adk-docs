@@ -12,13 +12,13 @@ including those hosted externally or running locally.
 ADK primarily uses two mechanisms for model integration:
 
 1. **Direct String / Registry:** For models tightly integrated with Google Cloud,
-   such as Gemini models accessed via Google AI Studio or Vertex AI, or models
-   hosted on Vertex AI endpoints. You access these models by providing the model name or endpoint resource string and ADK's internal registry
+   such as Gemini models accessed via Google AI Studio or Agent Platform, or models
+   hosted on Agent Platform endpoints. You access these models by providing the model name or endpoint resource string and ADK's internal registry
    resolves this string to the appropriate backend client.
 
       *  [Gemini models](/agents/models/google-gemini/)
       *  [Claude models](/agents/models/anthropic/)
-      *  [Vertex AI hosted models](/agents/models/vertex/)
+      *  [Agent Platform hosted models](/agents/models/agent-platform/)
 
 2. **Model connectors:** For broader compatibility, especially models
    outside the Google ecosystem or those requiring specific client

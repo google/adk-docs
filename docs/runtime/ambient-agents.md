@@ -1,7 +1,7 @@
 # Ambient Agents
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-go">Go</span>
 </div>
 
 ADK supports **ambient agents**, autonomous agents that process data, monitor
@@ -141,43 +141,71 @@ When a trigger endpoint receives an event, it:
 
 ### Example agent
 
-The following agent processes events from a trigger endpoint. It uses a
-`parse_event` tool to extract the event data and attributes, then analyzes
-the contents.
+=== "Python"
+    The following agent processes events from a trigger endpoint. It uses a
+    `parse_event` tool to extract the event data and attributes, then analyzes
+    the contents.
 
-???+ "Agent code (`event_processing_agent/agent.py`)"
+    ???+ "Agent code (`event_processing_agent/agent.py`)"
 
-    === "Python"
         ```python
         --8<-- "examples/python/snippets/runtime/triggers/event_processing_agent/agent.py:event_processor"
         ```
 
+=== "Go"
+    The following agent processes events from a trigger endpoint. It extracts the event data and attributes, then analyzes the contents.
+
+    ???+ "Agent code (`event_processing_agent.go`)"
+
+        ```go
+        --8<-- "examples/go/snippets/runtime/triggers/event_processing_agent.go:event_processor"
+        ```
+
 ### Enable triggers
 
-Trigger endpoints are disabled by default. Enable them with the
-`--trigger_sources` flag:
+=== "Python"
 
-```bash
-adk api_server --trigger_sources "pubsub,eventarc" path/to/your/agent
-```
+    Trigger endpoints are disabled by default. Enable them with the
+    `--trigger_sources` flag:
 
-For production deployments, you can enable triggers programmatically in a
-custom FastAPI entry point:
+    ```shell
+    adk api_server --trigger_sources "pubsub,eventarc" path/to/your/agent
+    ```
 
-???+ "Deployment entry point (`main.py`)"
+    For production deployments, you can enable triggers programmatically in a
+    custom FastAPI entry point:
 
-    === "Python"
-        ```python
-        --8<-- "examples/python/snippets/runtime/triggers/main.py:triggers"
-        ```
+    ???+ "Deployment entry point (`main.py`)"
+
+        === "Python"
+            ```python
+            --8<-- "examples/python/snippets/runtime/triggers/main.py:triggers"
+            ```
+
+=== "Go"
+
+    Trigger endpoints are disabled by default. Enable them with the
+    corresponding trigger flag:
+
+    ```shell
+    go run agent.go web api pubsub eventarc
+    ```
 
 ### Try it locally
 
 **1. Start the server with triggers enabled:**
 
-```bash
-adk api_server --trigger_sources "pubsub" event_processing_agent
-```
+=== "Python"
+
+    ```bash
+    adk api_server --trigger_sources "pubsub" event_processing_agent
+    ```
+
+=== "Go"
+
+    ```bash
+    go run event_processing_agent.go web api pubsub
+    ```
 
 **2. Send a test event:**
 
@@ -342,19 +370,35 @@ Trigger endpoints use a semaphore to limit the number of concurrent agent
 invocations. This prevents your agent from exceeding your LLM model quota
 during bursts of events.
 
-| Setting | Default | Environment Variable |
-| :------ | :------ | :------------------- |
-| Max concurrent invocations | 10 | `ADK_TRIGGER_MAX_CONCURRENT` |
+=== "Python"
+
+    | Setting | Default | Environment Variable |
+    | :------ | :------ | :------------------- |
+    | Max concurrent invocations | 10 | `ADK_TRIGGER_MAX_CONCURRENT` |
+
+=== "Go"
+
+    | Setting | Default | Flag |
+    | :------ | :------ | :------------------- |
+    | Max concurrent invocations | 10 | `--trigger_max_concurrent_runs` |
 
 When the concurrency limit is reached, incoming requests are queued and processed
 as slots become available. Concurrency control is per process. If you deploy
 multiple Cloud Run instances, each instance maintains its own independent
 semaphore.
 
-```bash
-# Allow up to 5 concurrent agent invocations
-export ADK_TRIGGER_MAX_CONCURRENT=5
-```
+=== "Python"
+
+    ```bash
+    # Allow up to 5 concurrent agent invocations
+    export ADK_TRIGGER_MAX_CONCURRENT=5
+    ```
+
+=== "Go"
+
+    ```bash
+    go run event_processing_agent.go web api pubsub --trigger_max_concurrent_runs=5
+    ```
 
 ### Automatic retry with backoff
 
@@ -362,11 +406,21 @@ Trigger endpoints include built-in retry logic for transient errors such as
 `429 RESOURCE_EXHAUSTED` responses. When a transient error is detected, the
 request is retried with exponential backoff and jitter.
 
-| Setting | Default | Environment Variable |
-| :------ | :------ | :------------------- |
-| Max retry attempts | 3 | `ADK_TRIGGER_MAX_RETRIES` |
-| Base backoff delay | 1.0s | `ADK_TRIGGER_RETRY_BASE_DELAY` |
-| Max backoff delay | 30.0s | `ADK_TRIGGER_RETRY_MAX_DELAY` |
+=== "Python"
+
+    | Setting | Default | Environment Variable |
+    | :------ | :------ | :------------------- |
+    | Max retry attempts | 3 | `ADK_TRIGGER_MAX_RETRIES` |
+    | Base backoff delay | 1.0s | `ADK_TRIGGER_RETRY_BASE_DELAY` |
+    | Max backoff delay | 30.0s | `ADK_TRIGGER_RETRY_MAX_DELAY` |
+
+=== "Go"
+
+    | Setting | Default | Flag |
+    | :------ | :------ | :------------------- |
+    | Max retry attempts | 3 | `--trigger_max_retries` |
+    | Base backoff delay | 1.0s | `--trigger_base_delay` |
+    | Max backoff delay | 30.0s | `--trigger_max_delay` |
 
 If all retries are exhausted, the endpoint returns HTTP 500, signaling
 Pub/Sub or Eventarc to retry delivery at a higher level.
@@ -438,16 +492,32 @@ deploying ambient agents with trigger endpoints.
     authenticate using [service account](https://cloud.google.com/iam/docs/service-accounts)
     identities. See each service's documentation for details.
 
-Deploy your agent to Cloud Run with triggers enabled using the
-`--trigger_sources` flag:
+=== "Python"
 
-```bash
-adk deploy cloud_run \
-  --project=$GOOGLE_CLOUD_PROJECT \
-  --region=$GOOGLE_CLOUD_LOCATION \
-  --trigger_sources="pubsub,eventarc" \
-  path/to/your/agent
-```
+    Deploy your agent to Cloud Run with triggers enabled using the
+    `--trigger_sources` flag:
+
+    ```bash
+    adk deploy cloud_run \
+      --project=$GOOGLE_CLOUD_PROJECT \
+      --region=$GOOGLE_CLOUD_LOCATION \
+      --trigger_sources="pubsub,eventarc" \
+      path/to/your/agent
+    ```
+
+=== "Go"
+
+    Deploy your agent to Cloud Run with triggers enabled using the corresponding trigger flag (all the settings are prefixed with trigger type)
+
+    ```bash
+    adk deploy cloud_run \
+      --project=$GOOGLE_CLOUD_PROJECT \
+      --region=$GOOGLE_CLOUD_LOCATION \
+      --pubsub \
+      --pubsub_max_concurrent_runs=5 \
+      --eventarc \
+      --eventarc_max_concurrent_runs=5
+    ```
 
 After deployment, connect the appropriate GCP infrastructure to your agent's
 trigger endpoint:

@@ -19,7 +19,7 @@ web pages by taking screenshots, clicking, typing, and navigating.
 
 For more information about the computer use model, see
 Gemini API [Computer use](https://ai.google.dev/gemini-api/docs/computer-use)
-or the Google Cloud Vertex AI API
+or the Agent Platform API
 [Computer use](https://cloud.google.com/vertex-ai/generative-ai/docs/computer-use).
 
 !!! example "Preview release"
