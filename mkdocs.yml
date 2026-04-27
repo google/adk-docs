@@ -345,6 +345,7 @@ nav:
     - Observability:
       - observability/index.md
       - Logging: observability/logging.md
+      - Tracing for Agent Engine: observability/tracing-agent-engine.md
     - Evaluation:
       - evaluate/index.md
       - Criteria: evaluate/criteria.md
