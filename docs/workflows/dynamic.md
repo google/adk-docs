@@ -310,9 +310,9 @@ async def parallel_supervisor(
 
 Dynamic workflows in ADK can also include human input or human in the loop
 (HITL) steps. You build human input into workflows by yielding a
-***RequestInput*** from a `@node` function, which pauses the workflow and waits
-for user input. The following code example shows how to build a human input node
-and include it in a workflow:
+***RequestInput*** from a node, which pauses the workflow and waits for user
+input. The following code example shows how to build a human input node and
+include it in a workflow:
 
 ```python
 from typing import Any
