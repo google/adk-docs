@@ -23,11 +23,11 @@ purposes:
     for users who are already familiar with configuring Google Cloud projects,
     and users preparing for production deployments.
 
-*   **[agents-cli deployment](/deploy/agent-runtime/agents-cli/)**:
+*   **[Agents CLI deployment](/deploy/agent-runtime/agents-cli/)**:
     Follow this accelerated deployment path to set up a fully configured Google
     Cloud environment with CI/CD, infrastructure-as-code, and deployment pipelines
     for your ADK agent. You need a Google Cloud project with billing enabled.
-    agents-cli in Agent Platform helps you deploy ADK projects quickly and it
+    Agents CLI in Agent Platform helps you deploy ADK projects quickly and it
     includes advanced service configurations that extend the core capabilities of
     the Agent Runtime runtime for more mature use cases.
 
