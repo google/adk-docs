@@ -97,6 +97,25 @@ from google.adk.a2a.utils.agent_to_a2a import to_a2a
 a2a_app = to_a2a(root_agent, port=8001, agent_card="/path/to/your/agent-card.json")
 ```
 
+### Managing application lifecycle with `lifespan`
+
+The `to_a2a` function also accepts a `lifespan` argument that allows you to manage the application's lifecycle. This is useful for performing setup and teardown tasks, such as initializing a database connection when the application starts and closing it when the application shuts down.
+
+You can provide an `@asynccontextmanager` to the `lifespan` argument. The context manager will receive the Starlette `app` instance, and you can use `app.state` to store resources that need to be accessed across the application.
+
+**Example with `lifespan`:**
+```python
+from contextlib import asynccontextmanager
+
+@asynccontextmanager
+async def lifespan(app):
+    app.state.db = await init_db()
+    yield
+    await app.state.db.close()
+
+app = to_a2a(agent, lifespan=lifespan)
+```
+
 ### Under the hood: to_a2a() method
 
 When you call `to_a2a()`, the ADK automatically handles several setup steps to expose your agent:
