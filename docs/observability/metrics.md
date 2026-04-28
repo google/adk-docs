@@ -6,7 +6,7 @@
 
 Agent Development Kit (ADK) provides built-in, vendor-neutral metrics collection to help you understand the performance, cost, and usage patterns of your agents. While logs provide a detailed narrative of *what* happened, metrics give you aggregated, quantitative data to answer *how often* and *how fast* things are happening.
 
-## Metrics Philosophy
+## Metrics philosophy
 
 ADK's approach to metrics is designed to be lightweight, standardized, and entirely agnostic to your choice of monitoring backend.
 
