@@ -312,6 +312,15 @@ session_service = DatabaseSessionService(db_url=db_url)
     requires migration of the Session Database. For more information, see
     [Session database schema migration](/sessions/session/migrate/).
 
+!!! note "Concurrency"
+
+    `DatabaseSessionService` now checks for stale sessions using optimistic
+    concurrency control. If an application tries to append an event (`append_event`)
+    to a session that has been modified elsewhere (e.g., by another concurrent
+    worker) since it was loaded, it will raise a `ValueError` indicating the
+    session is stale. You must catch this error, reload the session (`get_session`),
+    and retry.
+
 ## The Session Lifecycle
 
 <img src="../../assets/event-loop.png" alt="Session lifecycle">
