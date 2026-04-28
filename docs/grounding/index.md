@@ -6,7 +6,7 @@ ADK supports multiple grounding approaches:
 
 - **Google Search Grounding**: Connect agents to real-time web information for queries requiring current data like news, weather, or facts that may have changed since the model's training.
 - **Grounding with Search**: Connect agents to your organization's private documents and enterprise data for queries requiring proprietary information.
-- **Agentic RAG**: Build agents that reason about how to search, constructing queries and filters dynamically using Vector Search 2.0, Knowledge Engine, or other retrieval systems.
+- **Agentic RAG**: Build agents that reason about how to search, constructing queries and filters dynamically using Agent Retrieval, Knowledge Engine, or other retrieval systems.
 
 <div class="grid cards" markdown>
 
