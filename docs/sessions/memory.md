@@ -13,24 +13,30 @@ Think of it this way:
 
 ## The `MemoryService` Role
 
-The `BaseMemoryService` (or `Service` in Go) defines the interface for managing this searchable, long-term knowledge store. Its primary responsibilities are:
+The `BaseMemoryService` (or `Service` in Go) defines the interface for managing this searchable, long-term knowledge store. It supports four operations:
 
-1. **Ingesting Information (`add_session_to_memory`):** Taking the contents of a (usually completed) `Session` and adding relevant information to the long-term knowledge store.
-2. **Searching Information (`search_memory`):** Allowing an agent (typically via a `Tool`) to query the knowledge store and retrieve relevant snippets or context based on a search query.
+1. **Ingesting a session (`add_session_to_memory`):** Take the contents of a (usually completed) `Session` and add relevant information to the long-term knowledge store.
+2. **Ingesting events incrementally (`add_events_to_memory`):** Append a delta of events (e.g., the latest turn) without re-ingesting the full session. Useful when you want to write to memory partway through a long-running session.
+3. **Writing memory items directly (`add_memory`):** Insert pre-built `MemoryEntry` items, for services that support direct writes alongside event-based extraction.
+4. **Searching (`search_memory`):** Allow an agent (typically via a `Tool`) to query the knowledge store and retrieve relevant snippets based on a search query.
+
+Operations 2 and 3 are optional — the base class implementations of `add_events_to_memory` and `add_memory` raise `NotImplementedError`, so check your concrete service before relying on them.
 
 ## Choosing the Right Memory Service
 
-The ADK offers two distinct `MemoryService` implementations, each tailored to different use cases. Use the table below to decide which is the best fit for your agent.
+The Python ADK ships three `MemoryService` implementations. Use the table below to decide which is the best fit for your agent.
 
-| **Feature** | **InMemoryMemoryService** | **VertexAiMemoryBankService** |
-| :--- | :--- | :--- |
-| **Persistence** | None (data is lost on restart) | Yes (Managed by Agent Platform) |
-| **Primary Use Case** | Prototyping, local development, and simple testing. | Building meaningful, evolving memories from user conversations. |
-| **Memory Extraction** | Stores full conversation | Extracts [meaningful information](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/memory-bank/generate-memories) from conversations and consolidates it with existing memories (powered by LLM) |
-| **Search Capability** | Basic keyword matching. | Advanced semantic search. |
-| **Setup Complexity** | None. It's the default. | Low. Requires an [Agent Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/memory-bank/overview) instance on Agent Platform. |
-| **Dependencies** | None. | Google Cloud Project, Agent Platform API |
-| **When to use it** | When you want to search across multiple sessions’ chat histories for prototyping. | When you want your agent to remember and learn from past interactions. |
+| **Feature** | **InMemoryMemoryService** | **VertexAiMemoryBankService** | **VertexAiRagMemoryService** |
+| :--- | :--- | :--- | :--- |
+| **Persistence** | None (data is lost on restart) | Yes (Managed by Agent Platform) | Yes (stored in a Vertex AI RAG corpus) |
+| **Primary Use Case** | Prototyping, local development, and simple testing. | Building meaningful, evolving memories from user conversations. | Vector-search retrieval over the full conversation corpus, or alongside other RAG-indexed content. |
+| **Memory Extraction** | Stores full conversation | Extracts [meaningful information](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/memory-bank/generate-memories) from conversations and consolidates it with existing memories (powered by LLM) | Stores full conversation, indexed by [Vertex AI RAG Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/rag-engine/rag-overview). |
+| **Search Capability** | Basic keyword matching. | Advanced semantic search. | Vector similarity search over the RAG corpus. |
+| **Setup Complexity** | None. It's the default. | Low. Requires an [Agent Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/memory-bank/overview) instance on Agent Platform. | Medium. Requires a [Vertex AI RAG corpus](https://cloud.google.com/vertex-ai/generative-ai/docs/rag-engine/manage-your-rag-corpus). |
+| **Dependencies** | None. | Google Cloud Project, Agent Platform API | Google Cloud Project, Vertex AI RAG Engine, the Vertex SDK (optional install). |
+| **When to use it** | When you want to search across multiple sessions’ chat histories for prototyping. | When you want your agent to remember and learn from past interactions. | When you already have RAG infrastructure or want to retrieve over raw conversation transcripts. |
+
+`VertexAiRagMemoryService` is only exported from `google.adk.memory` when the Vertex SDK is installed. Memory Bank and RAG-backed memory are documented in [Memory Bank](#memory-bank) and [RAG Memory](#rag-memory) below.
 
 
 ## In-Memory Memory
@@ -278,7 +284,26 @@ This example demonstrates the basic flow using the `InMemoryMemoryService` for s
 
 ### Searching Memory Within a Tool
 
-You can also search memory from within a custom tool by using the `tool.Context`.
+You can also search memory from within a custom tool by using the tool context.
+
+=== "Python"
+
+    ```python
+    from google.adk.tools import ToolContext
+
+    async def search_past_conversations(
+        query: str, tool_context: ToolContext
+    ) -> dict:
+        response = await tool_context.search_memory(query)
+        return {
+            "results": [
+                part.text
+                for entry in response.memories
+                for part in (entry.content.parts or [])
+                if part.text
+            ]
+        }
+    ```
 
 === "Go"
 
@@ -370,6 +395,22 @@ Or, you can configure your agent to use the Memory Bank by manually instantiatin
   )
   ```
 
+## RAG Memory
+
+The `VertexAiRagMemoryService` stores conversations in a [Vertex AI RAG corpus](https://cloud.google.com/vertex-ai/generative-ai/docs/rag-engine/rag-overview) and retrieves them by vector similarity. Use it when you already have RAG infrastructure or want raw transcript retrieval rather than the LLM-extracted memories produced by Memory Bank. Requires the Vertex SDK.
+
+=== "Python"
+
+    ```py
+    from google.adk.memory import VertexAiRagMemoryService
+
+    memory_service = VertexAiRagMemoryService(
+        rag_corpus="projects/PROJECT_ID/locations/LOCATION/ragCorpora/CORPUS_ID",
+        similarity_top_k=5,
+        vector_distance_threshold=0.6,
+    )
+    ```
+
 ## Using Memory in Your Agent
 
 When a memory service is configured, your agent can use a tool or callback to retrieve memories. ADK includes two pre-built tools for retrieving memories:
@@ -441,8 +482,7 @@ To extract memories from your session, you need to call `add_session_to_memory`.
     from google import adk
 
     async def auto_save_session_to_memory_callback(callback_context):
-        await callback_context._invocation_context.memory_service.add_session_to_memory(
-            callback_context._invocation_context.session)
+        await callback_context.add_session_to_memory()
 
     agent = Agent(
         model=MODEL,
@@ -512,56 +552,59 @@ The memory workflow internally involves these steps:
 2. **Ingestion into Memory:** At some point (often when a session is considered complete or has yielded significant information), your application calls `memory_service.add_session_to_memory(session)`. This extracts relevant information from the session's events and adds it to the long-term knowledge store (in-memory dictionary or Agent Runtime Memory Bank).
 3. **Later Query:** In a *different* (or the same) session, the user might ask a question requiring past context (e.g., "What did we discuss about project X last week?").
 4. **Agent Uses Memory Tool:** An agent equipped with a memory-retrieval tool (like the built-in `load_memory` tool) recognizes the need for past context. It calls the tool, providing a search query (e.g., "discussion project X last week").
-5. **Search Execution:** The tool internally calls `memory_service.search_memory(app_name, user_id, query)`.
-6. **Results Returned:** The `MemoryService` searches its store (using keyword matching or semantic search) and returns relevant snippets as a `SearchMemoryResponse` containing a list of `MemoryResult` objects (each potentially holding events from a relevant past session).
+5. **Search Execution:** The tool internally calls `memory_service.search_memory(app_name=..., user_id=..., query=...)`.
+6. **Results Returned:** The `MemoryService` searches its store (using keyword matching or semantic search) and returns matching snippets as a `SearchMemoryResponse` containing a list of `MemoryEntry` objects (each holding `content`, optional `author`, optional `timestamp`, and optional `custom_metadata`).
 7. **Agent Uses Results:** The tool returns these results to the agent, usually as part of the context or function response. The agent can then use this retrieved information to formulate its final answer to the user.
 
 ### Can an agent have access to more than one memory service?
 
-*   **Through Standard Configuration: No.** The framework (`adk web`, `adk api_server`) is designed to be configured with one single memory service at a time via the `--memory_service_uri` flag. This single service is then provided to the agent and accessed through the built-in `self.search_memory()` method. From a configuration standpoint, you can only choose one backend (`InMemory`, `VertexAiMemoryBankService`) for all agents served by that process.
+*   **Through Standard Configuration: No.** The framework (`adk web`, `adk api_server`) is designed to be configured with one memory service at a time via the `--memory_service_uri` flag. That single service is wired into the runner and exposed through `tool_context.search_memory()` and `callback_context.search_memory()`.
 
-*   **Within Your Agent's Code: Yes, absolutely.** There is nothing preventing you from manually importing and instantiating another memory service directly inside your agent's code. This allows you to access multiple memory sources within a single agent turn.
+*   **Within Your Agent's Code: Yes.** Nothing stops you from importing and instantiating a second `BaseMemoryService` directly. The cleanest place to consult it is from a custom tool, which already has a `ToolContext` for the framework-configured service.
 
-For example, your agent could use the framework-configured `InMemoryMemoryService` to recall conversational history, and also manually instantiate a `VertexAiMemoryBankService` to look up information in a technical manual.
+For example, your agent can use the framework-configured `InMemoryMemoryService` for conversation history and manually instantiate a second service (a `VertexAiMemoryBankService`, a `VertexAiRagMemoryService` over a docs corpus, or any other `BaseMemoryService` implementation) for a separate knowledge base.
 
 #### Example: Using Two Memory Services
 
-Here’s how you could implement that in your agent's code:
-
 === "Python"
-```python
-from google.adk.agents import Agent
-from google.adk.memory import InMemoryMemoryService, VertexAiMemoryBankService
-from google.genai import types
+    ```python
+    from google.adk.agents import Agent
+    from google.adk.memory import InMemoryMemoryService
+    from google.adk.tools import ToolContext
 
-class MultiMemoryAgent(Agent):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    # Second memory service for docs lookup; could be any BaseMemoryService.
+    docs_memory = InMemoryMemoryService()
 
-        self.memory_service = InMemoryMemoryService()
-        # Manually instantiate a second memory service for document lookups
-        self.vertexai_memorybank_service = VertexAiMemoryBankService(
-            project="PROJECT_ID",
-            location="LOCATION",
-            agent_engine_id="AGENT_ENGINE_ID"
+
+    async def search_all_memory(query: str, tool_context: ToolContext) -> dict:
+        """Search both the conversational memory and the docs corpus."""
+        conversational = await tool_context.search_memory(query)
+        docs = await docs_memory.search_memory(
+            app_name="docs", user_id="shared", query=query
         )
+        return {
+            "from_conversations": [
+                part.text
+                for entry in conversational.memories
+                for part in (entry.content.parts or [])
+                if part.text
+            ],
+            "from_docs": [
+                part.text
+                for entry in docs.memories
+                for part in (entry.content.parts or [])
+                if part.text
+            ],
+        }
 
-    async def run(self, request: types.Content, **kwargs) -> types.Content:
-        user_query = request.parts[0].text
 
-        # 1. Search conversational history using the framework-provided memory
-        #    (This would be InMemoryMemoryService if configured)
-        conversation_context = await self.memory_service.search_memory(query=user_query)
-
-        # 2. Search the document knowledge base using the manually created service
-        document_context = await self.vertexai_memorybank_service.search_memory(query=user_query)
-
-        # Combine the context from both sources to generate a better response
-        prompt = "From our past conversations, I remember:\n"
-        prompt += f"{conversation_context.memories}\n\n"
-        prompt += "From the technical manuals, I found:\n"
-        prompt += f"{document_context.memories}\n\n"
-        prompt += f"Based on all this, here is my answer to '{user_query}':"
-
-        return await self.llm.generate_content_async(prompt)
-```
+    agent = Agent(
+        model="gemini-flash-latest",
+        name="multi_memory_agent",
+        instruction=(
+            "Answer questions using both your conversation history and the "
+            "docs knowledge base. Use the search_all_memory tool."
+        ),
+        tools=[search_all_memory],
+    )
+    ```
