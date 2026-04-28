@@ -50,6 +50,20 @@ Run the `adk create` command to start a new agent project.
 adk create my_agent
 ```
 
+When you run `adk create`, you are prompted to select a backend for your new
+agent. You can choose between Google AI, Vertex AI, or "Login with Google".
+
+If you select "Login with Google", the ADK uses your Application Default
+Credentials (ADC) to authenticate you. It can then automatically provision a new
+Vertex AI project for you in Express Mode.
+
+!!! warning "Secure your API keys"
+
+    The `adk create` command generates a `.env` file which may contain secrets
+    like your `GOOGLE_API_KEY`. To prevent accidentally committing these secrets
+    to version control, you must add the `.env` file to your project's
+    `.gitignore` file.
+
 ### Explore the agent project
 
 The created agent project has the following structure, with the `agent.py`
