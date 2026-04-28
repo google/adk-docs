@@ -89,5 +89,5 @@ gcp_exporters = get_gcp_exporters(
 )
 os.environ["OTEL_SERVICE_NAME"] = "your-adk-agent"
 os.environ["OTEL_RESOURCE_ATTRIBUTES"] = "key1=value1,key2=value2"
-maybe_set_otel_providers(gcp_exporters)
+maybe_set_otel_providers([gcp_exporters])
 ```
