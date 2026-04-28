@@ -14,15 +14,15 @@ impact on the operating context window of the agent.
 !!! example "Experimental"
     The Skills feature is experimental. We welcome your feedback via the
     respective ADK GitHub repositories:
-    [feedback for Python](https://github.com/google/adk-python/issues/new?template=feature_request.md&labels=skills),
-    [feedback for Go](https://github.com/google/adk-go/issues/new?template=feature_request.md&labels=skills)
+    [ADK Python](https://github.com/google/adk-python/issues/new?template=feature_request.md&labels=skills),
+    [ADK TypeScript](https://github.com/google/adk-js/issues/new?template=feature_request.md&labels=skills),
+    [ADK Go](https://github.com/google/adk-go/issues/new?template=feature_request.md&labels=skills).
 
 ## Get started
 
 Use the `SkillToolset` class to make one or more Skills available to your agent.
-You can define [skills in code](#inline-skills), load
-[skills from a filesystem](#filesystem-skills), or provision
-[skills dynamically](#dynamic-skills).
+You can define [skills in code](#inline-skills) or load
+[skills from a filesystem](#filesystem-skills).
 
 === "Python"
 
@@ -72,7 +72,6 @@ You can define [skills in code](#inline-skills), load
         "context"
         "os"
 
-        "google.golang.org/adk/agent"
         "google.golang.org/adk/agent/llmagent"
         "google.golang.org/adk/tool/skilltoolset/skill"
         "google.golang.org/adk/tool/skilltoolset"
@@ -124,7 +123,7 @@ three levels:
         documentation, templates, or examples.
     -   `scripts/`: Executable scripts supported by the agent runtime.
 
-### Recommended Skills directory structure
+### Skills directory structure
 
 The following directory structure shows the recommended way to include Skills in
 your ADK agent project. The `example-skill/` directory shown below, and any
@@ -153,9 +152,8 @@ my_agent/
 
 ## Skill sources
 
-You can define [skills within the code](#inline-skills),
-read [skills from a filesystem](#filesystem-skills),
-or provision [skills dynamically](#dynamic-skills).
+You can define [skills within the code](#inline-skills) or read
+[skills from a filesystem](#filesystem-skills).
 
 ### Define Skills in code {#inline-skills}
 
@@ -201,6 +199,15 @@ You can define Skills within the code of your agent, as shown below.
         interface yourself, as shown below.
 
     ```go
+    import (
+        "context"
+        "io"
+        "slices"
+        "strings"
+
+        "google.golang.org/adk/tool/skilltoolset/skill"
+    )
+
     // Example implementation of a static in-memory skill.Source:
     type StaticSource struct{}
 
@@ -249,6 +256,10 @@ You can define Skills within the code of your agent, as shown below.
     }
     ```
 
+!!! note
+    The `Source` interface can be backed by any data store (such as a database)
+    to support dynamic use cases like live updates and personalization.
+
 ### Read Skills from filesystem {#filesystem-skills}
 
 === "Python"
@@ -267,7 +278,7 @@ You can define Skills within the code of your agent, as shown below.
     )
 
     my_skill_toolset = skill_toolset.SkillToolset(
-        skills=[weather_skill, greating_skill],
+        skills=[weather_skill, greeting_skill],
     )
     ```
 
@@ -287,8 +298,8 @@ You can define Skills within the code of your agent, as shown below.
 
     // This example doesn't use any optional wrappers, but you can use them if
     // needed, e.g.:
-    //   source, _, err = skill.WithFrontmatterPreloadSource(source)
-    //   source, _, err = skill.WithCompletePreloadSource(source)
+    //   source, _, err = skill.WithFrontmatterPreloadSource(ctx, source)
+    //   source, _, err = skill.WithCompletePreloadSource(ctx, source)
     // For more information about these and other wrappers, see
     // https://pkg.go.dev/google.golang.org/adk/tool/skilltoolset/skill#Source.
 
@@ -300,37 +311,12 @@ You can define Skills within the code of your agent, as shown below.
     }
     ```
 
-### Advanced. Provision Skills dynamically {#dynamic-skills}
 
-When starting out, defining skills statically—whether through local files,
-embedded assets, or in-line code definitions—is usually everything you need.
-
-However, as you move to production, you might face two common challenges:
-
-1.  **Enabling zero-downtime skill updates:** Rebuilding and deploying code
-    every time a skill definition or reference asset needs a slight adjustment
-    slows your team down.
-2.  **Running A/B experiments and skill personalization:** Giving every user
-    the exact same static skills makes it difficult to run targeted experiments
-    or tailor the skill set per tenant.
-
-=== "Go"
-
-**Custom skill.Source implementation**
-
-    -   **Live updates:** By writing a custom `Source` connected to a database
-        or a custom deployment pipeline, your backend fetches the freshest skill
-        components on demand, letting you update skills instantly without ever
-        restarting your server.
-    -   **Targeted skills:** Because your custom `Source` runs normal Go code
-        for each incoming query, it can check the current context and decide
-        exactly which skills to return, making basic A/B testing and
-        personalization easy to build.
 
 ## Next steps
 
 Check out these resources for building agents with Skills:
 
-*   [Skills in Python - code sample](https://github.com/google/adk-python/tree/main/contributing/samples/skills_agent).
-*   [Skills in Go - code sample](https://github.com/google/adk-go/tree/main/examples/skills).
-*   Agent Skills [specification documentation](https://agentskills.io/).
+- [Skills in Python - code sample](https://github.com/google/adk-python/tree/main/contributing/samples/skills_agent)
+- [Skills in Go - code sample](https://github.com/google/adk-go/tree/main/examples/skills)
+- Agent Skills [specification documentation](https://agentskills.io/)
