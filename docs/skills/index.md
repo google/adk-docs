@@ -1,7 +1,7 @@
 # Skills for ADK agents
 
 <div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.25.0</span><span class="lst-typescript">TypeScript v0.6.1</span><span class="lst-preview">Experimental</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.25.0</span><span class="lst-typescript">TypeScript v0.6.1</span><span class="lst-go">Go v1.2.0</span><span class="lst-preview">Experimental</span>
 </div>
 
 An agent ***Skill*** is a self-contained unit of functionality that an ADK agent
@@ -12,15 +12,17 @@ The structure of a Skill allows it to be loaded incrementally to minimize the
 impact on the operating context window of the agent.
 
 !!! example "Experimental"
-    The Skills feature is experimental. We welcome your
-    [feedback](https://github.com/google/adk-python/issues/new?template=feature_request.md&labels=skills)!
+    The Skills feature is experimental. We welcome your feedback via the
+    respective ADK GitHub repositories:
+    [ADK Python](https://github.com/google/adk-python/issues/new?template=feature_request.md&labels=skills),
+    [ADK TypeScript](https://github.com/google/adk-js/issues/new?template=feature_request.md&labels=skills),
+    [ADK Go](https://github.com/google/adk-go/issues/new?template=feature_request.md&labels=skills).
 
 ## Get started
 
-Use the `SkillToolset` class to include one or more Skills in your agent
-definition and then add to your agent's tools list. You can define a
-[Skill in code](#inline-skills),
-or load the skill from a file definition, as shown below:
+Use the `SkillToolset` class to make one or more Skills available to your agent.
+You can define [skills in code](#inline-skills) or load
+[skills from a filesystem](#filesystem-skills).
 
 === "Python"
 
@@ -53,17 +55,52 @@ or load the skill from a file definition, as shown below:
     )
     ```
 
+    For a complete code example of an ADK agent with a Skill, including both
+    file-based and in-line Skill definitions, see the code sample
+    [skills_agent](https://github.com/google/adk-python/tree/main/contributing/samples/skills_agent).
+
 === "TypeScript"
 
     ```typescript
     --8<-- "examples/typescript/snippets/skills/get_started.ts:full_example"
     ```
 
-For a complete code example of an ADK agent with a Skill, including both
-file-based and in-line Skill definitions, see the code sample
-[skills_agent](https://github.com/google/adk-python/tree/main/contributing/samples/skills_agent).
+=== "Go"
 
-## Define Skills
+    ```go
+    import (
+        "context"
+        "os"
+
+        "google.golang.org/adk/agent/llmagent"
+        "google.golang.org/adk/tool/skilltoolset/skill"
+        "google.golang.org/adk/tool/skilltoolset"
+        "google.golang.org/adk/tool"
+    )
+
+    mySkillToolset, err := skilltoolset.New(ctx, skilltoolset.Config{
+        Source: skill.NewFileSystemSource(os.DirFS("./skills")),
+    })
+    if err != nil {
+        // handle error
+    }
+
+    rootAgent, err := llmagent.New(llmagent.Config{
+        Name:        "skill_user_agent",
+        Model:       model,
+        Description: "An agent that can use specialized skills.",
+        Instruction: "You are a helpful assistant that can leverage skills to perform tasks.",
+        Toolsets:    []tool.Toolset{mySkillToolset},
+    })
+    if err != nil {
+        // handle error
+    }
+    ```
+
+    For a complete example, see the code sample in
+    [skills](https://github.com/google/adk-go/tree/main/examples/skills).
+
+## Understand Skills
 
 The Skills feature allows you to create modular packages of Skill instructions
 and resources that agents can load on demand. This approach helps you organize
@@ -86,20 +123,20 @@ three levels:
         documentation, templates, or examples.
     -   `scripts/`: Executable scripts supported by the agent runtime.
 
-### Define Skills with files
+### Skills directory structure
 
 The following directory structure shows the recommended way to include Skills in
-your ADK agent project. The `example_skill/` directory shown below, and any
+your ADK agent project. The `example-skill/` directory shown below, and any
 parallel Skill directories, must follow the
-[Agent Skill specification](https://agentskills.io/specification)
-file structure. Only the `SKILL.md` file is required.
+[Agent Skill specification](https://agentskills.io/specification) file
+structure. Only the `SKILL.md` file is required.
 
 ```
 my_agent/
-    agent.py (or agent.ts)
+    agent.py (or agent.ts / main.go)
     .env
     skills/
-        example_skill/        # Skill
+        example-skill/        # Skill
             SKILL.md          # main instructions (required)
             references/
                 REFERENCE.md  # detailed API reference
@@ -113,10 +150,14 @@ my_agent/
                 *.ts          # utility scripts (TypeScript)
 ```
 
+## Skill sources
+
+You can define [skills within the code](#inline-skills) or read
+[skills from a filesystem](#filesystem-skills).
+
 ### Define Skills in code {#inline-skills}
 
-In ADK agents, you can also define Skills within the code of the agent, as shown below. This method of Skill definition enables
-you to dynamically modify skills from your ADK agent code.
+You can define Skills within the code of your agent, as shown below.
 
 === "Python"
 
@@ -149,11 +190,133 @@ you to dynamically modify skills from your ADK agent code.
     --8<-- "examples/typescript/snippets/skills/inline_skill.ts:full_example"
     ```
 
+=== "Go"
+
+    !!! note
+        ADK Go does not currently provide a standard Source for inline skills,
+        though this may be added in the future.
+        To define skills directly in code, you must implement the `skill.Source`
+        interface yourself, as shown below.
+
+    ```go
+    import (
+        "context"
+        "io"
+        "slices"
+        "strings"
+
+        "google.golang.org/adk/tool/skilltoolset/skill"
+    )
+
+    // Example implementation of a static in-memory skill.Source:
+    type StaticSource struct{}
+
+    func (s *StaticSource) ListFrontmatters(ctx context.Context) ([]*skill.Frontmatter, error) {
+        return []*skill.Frontmatter{
+            {Name: "greeting-skill", Description: "A friendly greeting skill that can say hello to a specific person."},
+        }, nil
+    }
+
+    func (s *StaticSource) LoadFrontmatter(ctx context.Context, name string) (*skill.Frontmatter, error) {
+        if name != "greeting-skill" {
+            return nil, skill.ErrSkillNotFound
+        }
+        return &skill.Frontmatter{Name: "greeting-skill", Description: "A friendly greeting skill that can say hello to a specific person."}, nil
+    }
+
+    func (s *StaticSource) LoadInstructions(ctx context.Context, name string) (string, error) {
+        if name != "greeting-skill" {
+            return "", skill.ErrSkillNotFound
+        }
+        return "Step 1: Read the 'references/hello_world.txt' file to understand how to greet the user. Step 2: Return a greeting based on the reference.", nil
+    }
+
+    func (s *StaticSource) ListResources(ctx context.Context, name, subpath string) ([]string, error) {
+        if name != "greeting-skill" {
+            return nil, skill.ErrSkillNotFound
+        }
+        if !slices.Contains([]string{"", ".", "references", "references/"}, subpath) {
+            return nil, skill.ErrResourceNotFound
+        }
+        return []string{"references/hello_world.txt", "references/example.md"}, nil
+    }
+
+    func (s *StaticSource) LoadResource(ctx context.Context, name, resourcePath string) (io.ReadCloser, error) {
+        if name != "greeting-skill" {
+            return nil, skill.ErrSkillNotFound
+        }
+        switch resourcePath {
+        case "references/hello_world.txt":
+            return io.NopCloser(strings.NewReader("Hello! So glad to have you here!")), nil
+        case "references/example.md":
+            return io.NopCloser(strings.NewReader("This is an example reference.")), nil
+        default:
+            return nil, skill.ErrResourceNotFound
+        }
+    }
+    ```
+
+!!! note
+    The `Source` interface can be backed by any data store (such as a database)
+    to support dynamic use cases like live updates and personalization.
+
+### Read Skills from filesystem {#filesystem-skills}
+
+=== "Python"
+
+    ```python
+    import pathlib
+
+    from google.adk.skills import load_skill_from_dir
+    from google.adk.tools import skill_toolset
+
+    greeting_skill = load_skill_from_dir(
+        pathlib.Path(__file__).parent / "skills" / "greeting-skill"
+    )
+    weather_skill = load_skill_from_dir(
+        pathlib.Path(__file__).parent / "skills" / "weather-skill"
+    )
+
+    my_skill_toolset = skill_toolset.SkillToolset(
+        skills=[weather_skill, greeting_skill],
+    )
+    ```
+
+=== "Go"
+
+    ```go
+    import (
+        "os"
+    
+        "google.golang.org/adk/tool/skilltoolset/skill"
+        "google.golang.org/adk/tool/skilltoolset"
+    )
+    
+    // ...
+
+    source := skill.NewFileSystemSource(os.DirFS("./skills"))
+
+    // This example doesn't use any optional wrappers, but you can use them if
+    // needed, e.g.:
+    //   source, _, err = skill.WithFrontmatterPreloadSource(ctx, source)
+    //   source, _, err = skill.WithCompletePreloadSource(ctx, source)
+    // For more information about these and other wrappers, see
+    // https://pkg.go.dev/google.golang.org/adk/tool/skilltoolset/skill#Source.
+
+    skillToolset, err := skilltoolset.New(ctx, skilltoolset.Config{
+        Source: source,
+    })
+    if err != nil {
+        // handle error
+    }
+    ```
+
+
+
 ## Next steps
 
 Check out these resources for building agents with Skills:
 
-*   ADK Skills agent code sample:
-    [skills_agent](https://github.com/google/adk-python/tree/main/contributing/samples/skills_agent).
-*   Agent Skills
-    [specification documentation](https://agentskills.io/)
+- [Skills in Python - code sample](https://github.com/google/adk-python/tree/main/contributing/samples/skills_agent)
+- [Skills in Go - code sample](https://github.com/google/adk-go/tree/main/examples/skills)
+- Agent Skills [specification documentation](https://agentskills.io/)
