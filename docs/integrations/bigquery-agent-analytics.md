@@ -17,7 +17,7 @@ catalog_tags: ["observability", "google"]
 
 The BigQuery Agent Analytics Plugin significantly enhances the Agent Development Kit (ADK) by providing a robust solution for in-depth agent behavior analysis. Using the ADK Plugin architecture and the **BigQuery Storage Write API**, it captures and logs critical operational events directly into a Google BigQuery table, empowering you with advanced capabilities for debugging, real-time monitoring, and comprehensive offline performance evaluation.
 
-Version 1.26.0 adds **Auto Schema Upgrade** (safely add new columns to existing tables), **Tool Provenance** tracking (LOCAL, MCP, SUB_AGENT, A2A, TRANSFER_AGENT), and **HITL Event Tracing** for human-in-the-loop interactions. Version 1.27.0 adds **Automatic View Creation** (generate flat, query-friendly event views).
+Version 1.26.0 adds **Auto Schema Upgrade** (safely add new columns to existing tables), **Tool Provenance** tracking (LOCAL, MCP, SUB_AGENT, A2A, TRANSFER_AGENT, TRANSFER_A2A), and **HITL Event Tracing** for human-in-the-loop interactions. Version 1.27.0 adds **Automatic View Creation** (generate flat, query-friendly event views).
 
 !!! warning "BigQuery Storage Write API"
 
@@ -434,7 +434,16 @@ The plugin supports **OpenTelemetry** for distributed tracing. OpenTelemetry is 
 
 ## Configuration options
 
-You can customize the plugin using `BigQueryLoggerConfig`. The `BigQueryAgentAnalyticsPlugin` constructor also accepts `**kwargs`, which are forwarded directly to `BigQueryLoggerConfig`. This lets you pass config fields (like `batch_size` or `enabled`) without creating a separate config object:
+The `BigQueryAgentAnalyticsPlugin` constructor accepts the following parameters:
+
+-   **`project_id`** (`str`): The Google Cloud project ID.
+-   **`dataset_id`** (`str`): The BigQuery dataset ID.
+-   **`table_id`** (`Optional[str]`, default: `None`): The BigQuery table ID. Overrides `table_id` in `BigQueryLoggerConfig` if both are set.
+-   **`config`** (`Optional[BigQueryLoggerConfig]`, default: `None`): A `BigQueryLoggerConfig` instance for detailed configuration.
+-   **`location`** (`str`, default: `"US"`): The BigQuery dataset location (e.g., `"US"`, `"EU"`, `"us-central1"`).
+-   **`credentials`** (`Optional[google.auth.credentials.Credentials]`, default: `None`): Explicit Google credentials for the plugin's BigQuery and GCS clients. If `None`, the plugin uses [Application Default Credentials](https://cloud.google.com/docs/authentication/application-default-credentials). Use this for service-account, impersonated, or cross-project setups.
+
+The constructor also accepts `**kwargs`, which are forwarded directly to `BigQueryLoggerConfig`. This lets you pass config fields (like `batch_size` or `enabled`) without creating a separate config object:
 
 ```python
 plugin = BigQueryAgentAnalyticsPlugin(
@@ -630,13 +639,13 @@ You can also call the public async method `await plugin.create_analytics_views()
 
 Every view includes these **common columns**: `timestamp`, `event_type`, `agent`, `session_id`, `invocation_id`, `user_id`, `trace_id`, `span_id`, `parent_span_id`, `status`, `error_message`, `is_truncated`.
 
-The following table lists all 15 auto-created views and their event-specific columns:
+The following table lists all 16 auto-created views and their event-specific columns:
 
 | View Name | Event-Specific Columns |
 |:---|:---|
 | **`v_user_message_received`** | *(common columns only)* |
 | **`v_llm_request`** | `model` (STRING), `request_content` (JSON), `llm_config` (JSON), `tools` (JSON) |
-| **`v_llm_response`** | `response` (JSON), `usage_prompt_tokens` (INT64), `usage_completion_tokens` (INT64), `usage_total_tokens` (INT64), `total_ms` (INT64), `ttft_ms` (INT64), `model_version` (STRING), `usage_metadata` (JSON) |
+| **`v_llm_response`** | `response` (JSON), `usage_prompt_tokens` (INT64), `usage_completion_tokens` (INT64), `usage_total_tokens` (INT64), `usage_cached_tokens` (INT64), `total_ms` (INT64), `ttft_ms` (INT64), `model_version` (STRING), `usage_metadata` (JSON), `cache_metadata` (JSON), `context_cache_hit_rate` (FLOAT64) |
 | **`v_llm_error`** | `total_ms` (INT64) |
 | **`v_tool_starting`** | `tool_name` (STRING), `tool_args` (JSON), `tool_origin` (STRING) |
 | **`v_tool_completed`** | `tool_name` (STRING), `tool_result` (JSON), `tool_origin` (STRING), `total_ms` (INT64) |
@@ -649,6 +658,7 @@ The following table lists all 15 auto-created views and their event-specific col
 | **`v_hitl_credential_request`** | `tool_name` (STRING), `tool_args` (JSON) |
 | **`v_hitl_confirmation_request`** | `tool_name` (STRING), `tool_args` (JSON) |
 | **`v_hitl_input_request`** | `tool_name` (STRING), `tool_args` (JSON) |
+| **`v_a2a_interaction`** | `response_content` (JSON), `a2a_task_id` (STRING), `a2a_context_id` (STRING), `a2a_request` (JSON), `a2a_response` (JSON) |
 
 ### Event types and payloads {#event-types}
 
@@ -751,7 +761,8 @@ These events track the execution of tools by the agent. Each tool event includes
 | `MCP` | Model Context Protocol tools (`McpTool` instances) |
 | `SUB_AGENT` | `AgentTool` instances (sub-agents) |
 | `A2A` | Remote Agent-to-Agent instances (`RemoteA2aAgent`) |
-| `TRANSFER_AGENT` | `TransferToAgentTool` instances |
+| `TRANSFER_AGENT` | `TransferToAgentTool` instances (generic agent transfer) |
+| `TRANSFER_A2A` | `TransferToAgentTool` instances that transfer to a `RemoteA2aAgent` (classified at call-level) |
 | `UNKNOWN` | Unclassified tools |
 
 **4. TOOL_STARTING**
@@ -935,6 +946,27 @@ HITL request events are detected from `function_call` parts in `on_event_callbac
     to the base table but do not have dedicated views. Query them directly
     from the `agent_events` table using
     `WHERE event_type LIKE 'HITL_%_COMPLETED'`.
+
+#### A2A Interaction Events
+
+When your agent communicates with a remote agent via the Agent-to-Agent (A2A) protocol, the plugin logs an `A2A_INTERACTION` event capturing the request and response details.
+
+**A2A_INTERACTION**
+
+Logged when an A2A remote agent call completes.
+
+```json
+{
+  "event_type": "A2A_INTERACTION",
+  "content": {
+    "response_content": "The remote agent's response...",
+    "a2a_task_id": "task-abc123",
+    "a2a_context_id": "ctx-def456",
+    "a2a_request": { ... },
+    "a2a_response": { ... }
+  }
+}
+```
 
 #### GCS Offloading Examples (Multimodal & Large Text)
 
@@ -1314,6 +1346,21 @@ config = BigQueryLoggerConfig(
     event data.
 -   **Audit your logs** periodically to verify no unexpected sensitive data is
     being captured.
+
+## Multiprocessing and fork safety
+
+The plugin is fork-aware: it sets `GRPC_ENABLE_FORK_SUPPORT=1` before loading the gRPC C-core library and registers an `os.register_at_fork` handler that resets inherited runtime state (gRPC channels, write streams, event loops) in child processes. This means the plugin can survive `os.fork()` without leaking file descriptors or sending data on a parent's connection.
+
+However, **`spawn` is the recommended multiprocessing start method** for production deployments. `fork` copies the parent's address space — including any in-flight gRPC state — and the post-fork reset adds latency to the first write in each child. With `spawn`, each worker initializes the plugin cleanly.
+
+For Gunicorn deployments specifically:
+
+-   Prefer `--preload` combined with lazy plugin initialization (the plugin defers setup until the first event is logged), or
+-   Initialize the plugin inside a `post_fork` hook so each worker gets its own client.
+
+!!! note
+
+    The fork-safety mechanism resets runtime state only. It does **not** replay events that were queued but not yet flushed in the parent process at the time of fork. Call `await plugin.flush()` before forking if you need to guarantee delivery.
 
 ## Feedback
 We welcome your feedback on BigQuery Agent Analytics. If you have questions, suggestions, or encounter any issues, please reach out to the team at bqaa-feedback@google.com.
