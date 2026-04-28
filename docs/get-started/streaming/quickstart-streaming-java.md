@@ -191,7 +191,7 @@ Replace your existing pom.xml with the following.
     <auto-value.version>1.11.0</auto-value.version>
     <!-- Main class for exec-maven-plugin -->
     <exec.mainClass>samples.liveaudio.LiveAudioRun</exec.mainClass>
-    <google-adk.version>0.1.0</google-adk.version>
+    <google-adk.version>1.2.0</google-adk.version>
   </properties>
 
   <dependencyManagement>
