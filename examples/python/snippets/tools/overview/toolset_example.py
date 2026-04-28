@@ -57,7 +57,7 @@ def subtract_numbers(a: int, b: int) -> Dict[str, Any]:
 class SimpleMathToolset(BaseToolset):
     def __init__(self, prefix: str = "math_"):
         self.prefix = prefix
-        super().__init__(tool_name_prefix=self.prefix)
+        super().__init__(tool_name_prefix=self.prefix) # Toolset can customize names by passing a prefix
 
         # Create FunctionTool instances once
         self._add_tool = FunctionTool(
@@ -81,7 +81,7 @@ class SimpleMathToolset(BaseToolset):
         # For this simple example, always return both tools
         tools_to_return = [self._add_tool, self._subtract_tool]
         print(f"SimpleMathToolset providing tools: {[t.name for t in tools_to_return]}")
-        return tools_to_return # type: ignore
+        return tools_to_return
 
     async def close(self) -> None:
         # No resources to clean up in this simple example
