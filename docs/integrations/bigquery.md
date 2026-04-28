@@ -27,6 +27,27 @@ These are a set of tools aimed to provide integration with BigQuery, namely:
 
 They are packaged in the toolset `BigQueryToolset`.
 
+## BigQuery AI/ML Skill
+
+In addition to the tools listed above, the ADK provides a pre-packaged "skill" that helps the LLM use BigQuery's AI/ML features. You should prefer this skill over the high-level `forecast` and `detect_anomalies` tools. This skill guides the LLM to write standard SQL using `AI.*` functions (such as `AI.FORECAST`, `AI.CLASSIFY`, `AI.DETECT_ANOMALIES`, `AI.GENERATE`, etc.) via the `execute_sql` tool.
+
+To use this skill, import the `get_bigquery_skill` function and the `SkillToolset` and pass them to your agent along with the `BigQueryToolset`.
+
+```python
+from google.adk.tools.bigquery import BigQueryToolset
+from google.adk.tools.bigquery.bigquery_skill import get_bigquery_skill
+from google.adk.tools.skill_toolset import SkillToolset
+
+# In addition to the BigQueryToolset, add the BigQuery skill.
+bq_skill = get_bigquery_skill()
+skill_toolset = SkillToolset(skills=[bq_skill])
+
+# Pass both toolsets to your agent.
+# Note that you still need to configure authentication for the BigQueryToolset.
+# See the "Authentication" section for details.
+agent = LlmAgent(tools=[bigquery_toolset, skill_toolset])
+```
+
 ## Authentication
 
 The `BigQueryToolset` supports several authentication mechanisms through `BigQueryCredentialsConfig`.
