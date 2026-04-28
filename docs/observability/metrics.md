@@ -84,7 +84,7 @@ from google.adk.telemetry.google_cloud import get_gcp_exporters
 from google.adk.telemetry.setup import maybe_set_otel_providers
 import os
 
-gcp_exporters = google_cloud.get_gcp_exporters(
+gcp_exporters = get_gcp_exporters(
   enable_cloud_metrics = True,
 )
 os.environ["OTEL_SERVICE_NAME"] = "your-adk-agent"
