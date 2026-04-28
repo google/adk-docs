@@ -274,33 +274,30 @@ async def code_workflow(ctx: Context, user_request: str):
 ### Parallel execution routes
 
 Dynamic workflows in ADK can support parallel execution, and you can use
-standard asynchronous libraries, such as the `asyncio`, to build this
+standard asynchronous libraries, such as `asyncio`, to build this
 functionality. The following code example shows how to build a workflow node
-that supports parallel execution, which can then be integrated into a larger
-workflow:
+that supports parallel execution using `@node` and `asyncio.gather`:
 
 ```python
-from google.adk.workflow import BaseNode
-from google.adk import Context
-from typing import Any
 import asyncio
+from typing import Any
+from google.adk import Context
+from google.adk.workflow import BaseNode, node
 
-class ParallelNode(BaseNode):
-    """A supervisor node that runs a worker node in parallel."""
-    real_node: BaseNode
 
-    async def run(self, ctx: Context, node_input: list[Any]):
-        tasks = []
+@node(rerun_on_resume=True)
+async def parallel_supervisor(
+    ctx: Context, node_input: list[Any], real_node: BaseNode
+):
+    """Runs a worker node in parallel for each item in the input list."""
+    tasks = []
+    for item in node_input:
+        # ctx.run_node returns a future. Append instead of awaiting immediately.
+        tasks.append(ctx.run_node(real_node, item))
 
-        # Dynamically schedule worker nodes for each item in the input list
-        for item in node_input:
-            # ctx.run_node returns an awaitable future for the ephemeral node
-            tasks.append(ctx.run_node(self.real_node, item))
-
-        # Use asyncio to gather results in parallel
-        results = await asyncio.gather(*tasks)
-
-        return results
+    # Collect all results in parallel
+    results = await asyncio.gather(*tasks)
+    return results
 ```
 
 !!! tip "Tip: Resuming parallel nodes"
@@ -312,47 +309,38 @@ class ParallelNode(BaseNode):
 ## Human input
 
 Dynamic workflows in ADK can also include human input or human in the loop
-(HITL) steps. You build human input into workflows by creating a ***BaseNode***
-subclass that interrupts the workflow, combined with a ***RequestInput***
-instance for providing a request to the user and retrieving the response. The
-following code example shows how to build a human input node and include it in a
-workflow:
+(HITL) steps. You build human input into workflows by yielding a
+***RequestInput*** from a `@node` function, which pauses the workflow and waits
+for user input. The following code example shows how to build a human input node
+and include it in a workflow:
 
 ```python
-from google.adk.workflow import BaseNode
+from typing import Any
 from google.adk import Context
 from google.adk.events import RequestInput
-from typing import Any, AsyncGenerator
+from google.adk.workflow import node
 
-class GetInput(BaseNode):
-    """A node that pauses execution and waits for human input."""
-    rerun_on_resume = False  # Ensure the response is yielded as output on resume
 
-    def __init__(self, request: RequestInput, name: str):
-        self.request = request
-        self.name = name
+@node(rerun_on_resume=False)
+async def get_user_approval(ctx: Context, node_input: Any):
+    """Yields a RequestInput to pause the workflow and wait for user input."""
+    yield RequestInput(message="Please approve this request (Yes/No)")
 
-    def get_name(self) -> str:
-        return self.name
 
-    async def run(self) -> AsyncGenerator[Any, None]:
-        # Yielding the request tells the workflow to pause and wait for input
-        yield self.request
-
-async def approval_process_node(ctx: Context, node_input: Any):
-    """A parent node that coordinates a human approval step."""
-
-    # Define the request for the user
-    request = RequestInput(message="Please approve this request (Yes/No)")
-
-    # Invoke the HITL node dynamically. The workflow pauses here.
-    user_response = await ctx.run_node(GetInput(request, name="approval_step"))
+@node(rerun_on_resume=True)
+async def handle_process(ctx: Context, node_input: Any):
+    """The orchestrator calling the interactive step."""
+    user_response = await ctx.run_node(get_user_approval)
 
     if user_response.lower() == "yes":
-        return "Request Approved"
-    else:
-        return "Request Denied"
+        return "Approved"
+    return "Denied"
 ```
+
+!!! important "Important: Parent nodes with `ctx.run_node`"
+
+    Parent nodes in dynamic workflows that call `ctx.run_node` must set
+    `rerun_on_resume=True` to handle interruptions properly.
 
 ## Advanced features
 

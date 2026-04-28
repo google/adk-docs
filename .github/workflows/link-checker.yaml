@@ -32,6 +32,10 @@ jobs:
         args: >-
           --verbose
           --no-progress
+          --max-retries 5
+          --retry-wait-time 3
+          --host-concurrency 2
+          --host-request-interval 1s
           --root-dir "$(pwd)/docs"
           './**/*.md'
         fail: true
