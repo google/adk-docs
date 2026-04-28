@@ -66,7 +66,6 @@ class SimpleMathToolset(BaseToolset):
         self._subtract_tool = FunctionTool(
             func=subtract_numbers,
         )
-
         print(f"SimpleMathToolset initialized with prefix '{self.prefix}'")
 
     async def get_tools(
