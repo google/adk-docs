@@ -53,7 +53,7 @@ across languages, and create audio content using natural language.
         CARTESIA_API_KEY = "YOUR_CARTESIA_API_KEY"
 
         root_agent = Agent(
-            model="gemini-2.5-pro",
+            model="gemini-flash-latest",
             name="cartesia_agent",
             instruction="Help users generate speech and work with audio content",
             tools=[
@@ -84,7 +84,7 @@ across languages, and create audio content using natural language.
         const CARTESIA_API_KEY = "YOUR_CARTESIA_API_KEY";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-2.5-pro",
+            model: "gemini-flash-latest",
             name: "cartesia_agent",
             instruction: "Help users generate speech and work with audio content",
             tools: [

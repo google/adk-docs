@@ -69,7 +69,7 @@ for detailed setup instructions.
         N8N_MCP_TOKEN = "YOUR_N8N_MCP_TOKEN"
 
         root_agent = Agent(
-            model="gemini-2.5-pro",
+            model="gemini-flash-latest",
             name="n8n_agent",
             instruction="Help users manage and execute workflows in n8n",
             tools=[
@@ -104,7 +104,7 @@ for detailed setup instructions.
         N8N_MCP_TOKEN = "YOUR_N8N_MCP_TOKEN"
 
         root_agent = Agent(
-            model="gemini-2.5-pro",
+            model="gemini-flash-latest",
             name="n8n_agent",
             instruction="Help users manage and execute workflows in n8n",
             tools=[
@@ -131,7 +131,7 @@ for detailed setup instructions.
         const N8N_MCP_TOKEN = "YOUR_N8N_MCP_TOKEN";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-2.5-pro",
+            model: "gemini-flash-latest",
             name: "n8n_agent",
             instruction: "Help users manage and execute workflows in n8n",
             tools: [
@@ -164,7 +164,7 @@ for detailed setup instructions.
         const N8N_MCP_TOKEN = "YOUR_N8N_MCP_TOKEN";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-2.5-pro",
+            model: "gemini-flash-latest",
             name: "n8n_agent",
             instruction: "Help users manage and execute workflows in n8n",
             tools: [

@@ -52,7 +52,7 @@ language.
         AGENTMAIL_API_KEY = "YOUR_AGENTMAIL_API_KEY"
 
         root_agent = Agent(
-            model="gemini-2.5-pro",
+            model="gemini-flash-latest",
             name="agentmail_agent",
             instruction="Help users manage email inboxes and send messages",
             tools=[
@@ -85,7 +85,7 @@ language.
         const AGENTMAIL_API_KEY = "YOUR_AGENTMAIL_API_KEY";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-2.5-pro",
+            model: "gemini-flash-latest",
             name: "agentmail_agent",
             instruction: "Help users manage email inboxes and send messages",
             tools: [

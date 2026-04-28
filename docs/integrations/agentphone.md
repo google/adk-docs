@@ -59,7 +59,7 @@ create autonomous AI voice agents using natural language.
         AGENTPHONE_API_KEY = "YOUR_AGENTPHONE_API_KEY"
 
         root_agent = Agent(
-            model="gemini-2.5-pro",
+            model="gemini-flash-latest",
             name="agentphone_agent",
             instruction="Help users make phone calls, send SMS, and manage phone numbers",
             tools=[
@@ -92,7 +92,7 @@ create autonomous AI voice agents using natural language.
         AGENTPHONE_API_KEY = "YOUR_AGENTPHONE_API_KEY"
 
         root_agent = Agent(
-            model="gemini-2.5-pro",
+            model="gemini-flash-latest",
             name="agentphone_agent",
             instruction="Help users make phone calls, send SMS, and manage phone numbers",
             tools=[
@@ -118,7 +118,7 @@ create autonomous AI voice agents using natural language.
         const AGENTPHONE_API_KEY = "YOUR_AGENTPHONE_API_KEY";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-2.5-pro",
+            model: "gemini-flash-latest",
             name: "agentphone_agent",
             instruction: "Help users make phone calls, send SMS, and manage phone numbers",
             tools: [
@@ -146,7 +146,7 @@ create autonomous AI voice agents using natural language.
         const AGENTPHONE_API_KEY = "YOUR_AGENTPHONE_API_KEY";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-2.5-pro",
+            model: "gemini-flash-latest",
             name: "agentphone_agent",
             instruction: "Help users make phone calls, send SMS, and manage phone numbers",
             tools: [

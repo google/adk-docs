@@ -50,7 +50,7 @@ plugin = DaytonaPlugin(
 )
 
 root_agent = Agent(
-    model="gemini-2.5-pro",
+    model="gemini-flash-latest",
     name="sandbox_agent",
     instruction="Help users execute code and commands in a secure sandbox",
     tools=plugin.get_tools(),
