@@ -129,13 +129,28 @@ specific interactive process with your ***Agent Client*** application.
     not require an authentication exchange.
 *   **OAUTH2:** Provides standard OAuth 2.0 authentication flows, and requires
     configuration with client ID, secret, and scopes. This method often
-    triggers an interactive flow for user consent.
+    triggers an interactive flow for user consent. `OAuth2Auth` also now
+    includes a `nonce` field, which can be used to securely bind the user's
+    session to the authorization request during OIDC flows.
 *   **OPEN\_ID\_CONNECT:** Provides authentication based on OpenID Connect.
     Similar to OAuth2, this type often requires configuration and user
     interaction.
 *   **SERVICE\_ACCOUNT:** Provides Google Cloud Service Account credentials as a
     JSON key or Application Default Credentials. This type typically exchanges a
     Bearer token.
+
+### Custom authentication schemes
+
+In addition to the standard OpenAPI authentication schemes, you can define
+your own custom authentication schemes by subclassing `CustomAuthScheme`.
+This is useful for integrating with proprietary or legacy authentication systems
+that don't follow OpenAPI standards. When subclassing, ensure that the `type_`
+field has a default value.
+
+To simplify registration of custom authentication providers, you can define a
+`supported_auth_schemes` property on your `BaseAuthProvider` implementation.
+This property should return a tuple of the custom scheme types your provider
+supports.
 
 ## Tools and integrations quick guide
 
