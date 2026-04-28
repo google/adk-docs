@@ -12,17 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+## --8<-- [start:init]
+
 import asyncio
 from typing import Optional, List, Dict, Any
 
-from google.adk.agents import LlmAgent, ReadonlyContext
-from google.adk.tools import BaseTool, FunctionTool, BaseToolset
-from google.adk.tools.tool_context import ToolContext  # For tool implementation
-from google.adk.runners import Runner  # For conceptual run
-from google.adk.sessions import InMemorySessionService  # For conceptual run
-from google.genai.types import Content, Part
-
-## --8<-- [start:init]
+from google.adk.agents import LlmAgent
+from google.adk.agents.readonly_context import ReadonlyContext
+from google.adk.tools import BaseTool, FunctionTool
+from google.adk.tools.base_toolset import BaseToolset
+from google.adk.tools.tool_context import ToolContext
+from google.adk.runners import InMemoryRunner
 
 
 # 1. Define the individual tool functions
@@ -55,7 +55,7 @@ def subtract_numbers(a: int, b: int) -> Dict[str, Any]:
 
 # 2. Create the Toolset by implementing BaseToolset
 class SimpleMathToolset(BaseToolset):
-    def __init__(self, prefix: str = "math_"):
+    def __init__(self, prefix: str = "math"):
         self.prefix = prefix
         super().__init__(tool_name_prefix=self.prefix) # Toolset can customize names by passing a prefix
 
@@ -98,12 +98,12 @@ def greet_user(name: str = "User") -> Dict[str, str]:
 greet_tool = FunctionTool(func=greet_user)
 
 # 4. Instantiate the toolset
-math_toolset_instance = SimpleMathToolset(prefix="calculator_")
+math_toolset_instance = SimpleMathToolset(prefix="calculator")
 
 # 5. Define an agent that uses both the individual tool and the toolset
 calculator_agent = LlmAgent(
     name="CalculatorAgent",
-    model="gemini-2.0-flash",  # Replace with your desired model
+    model="gemini-flash-latest",  # Replace with your desired model
     instruction="You are a helpful calculator and greeter. "
     "Use 'greet_user' for greetings. "
     "Use 'calculator_add_numbers' to add and 'calculator_subtract_numbers' to subtract. "
@@ -111,31 +111,17 @@ calculator_agent = LlmAgent(
     tools=[greet_tool, math_toolset_instance],  # Individual tool  # Toolset instance
 )
 
+# 6. Run the agent
+runner = InMemoryRunner(agent=calculator_agent, app_name="toolset_example_app")
+
+async def main():
+    print("\n--- Query 1: Greeting ---")
+    await runner.run_debug("Hi there!")
+    print("\n--- Query 2: Addition ---")
+    await runner.run_debug("What is 5 plus 3?")
+    await math_toolset_instance.close()
+
+if __name__ == "__main__":
+    asyncio.run(main())
+
 ##  --8<-- [end:init]
-
-# print(f"Agent '{calculator_agent.name}' created.")
-
-# async def main():
-#     session_service = InMemorySessionService()
-#     runner = Runner(
-#         agent=calculator_agent,
-#         app_name="toolset_example_app",
-#         session_service=session_service
-#     )
-#     session = await session_service.create_session(app_name="toolset_example_app", user_id="test_user")
-#
-#     user_query1 = Content(parts=[Part(text="Hi there!")])
-#     print("\n--- Query 1: Greeting ---")
-#     async for event in runner.run_async(session_id=session.id, new_message=user_query1):
-#         if event.is_final_response(): print(f"Agent Response: {event.content.parts[0].text}")
-#
-#     user_query2 = Content(parts=[Part(text="What is 5 plus 3?")])
-#     print("\n--- Query 2: Addition ---")
-#     async for event in runner.run_async(session_id=session.id, new_message=user_query2):
-#         if event.is_final_response(): print(f"Agent Response: {event.content.parts[0].text}")
-#
-#     # Important: Clean up the toolset if it manages resources
-#     await math_toolset_instance.close()
-#
-# if __name__ == "__main__":
-#    asyncio.run(main())
