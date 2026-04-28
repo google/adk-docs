@@ -50,7 +50,7 @@ retrieve information using semantic search.
         # QDRANT_API_KEY = "YOUR_QDRANT_API_KEY"
 
         root_agent = Agent(
-            model="gemini-2.5-pro",
+            model="gemini-flash-latest",
             name="qdrant_agent",
             instruction="Help users store and retrieve information using semantic search",
             tools=[
@@ -84,7 +84,7 @@ retrieve information using semantic search.
         // const QDRANT_API_KEY = "YOUR_QDRANT_API_KEY";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-2.5-pro",
+            model: "gemini-flash-latest",
             name: "qdrant_agent",
             instruction: "Help users store and retrieve information using semantic search",
             tools: [

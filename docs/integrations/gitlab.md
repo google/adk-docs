@@ -56,7 +56,7 @@ searches, and automate development workflows using natural language.
         GITLAB_INSTANCE_URL = "gitlab.com"
 
         root_agent = Agent(
-            model="gemini-2.5-pro",
+            model="gemini-flash-latest",
             name="gitlab_agent",
             instruction="Help users get information from GitLab",
             tools=[
@@ -90,7 +90,7 @@ searches, and automate development workflows using natural language.
         const GITLAB_INSTANCE_URL = "gitlab.com";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-2.5-pro",
+            model: "gemini-flash-latest",
             name: "gitlab_agent",
             instruction: "Help users get information from GitLab",
             tools: [

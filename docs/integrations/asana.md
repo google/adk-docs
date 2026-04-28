@@ -44,7 +44,7 @@ tasks, goals, and team collaboration using natural language.
         from mcp import StdioServerParameters
 
         root_agent = Agent(
-            model="gemini-2.5-pro",
+            model="gemini-flash-latest",
             name="asana_agent",
             instruction="Help users manage projects, tasks, and goals in Asana",
             tools=[
@@ -73,7 +73,7 @@ tasks, goals, and team collaboration using natural language.
         import { LlmAgent, MCPToolset } from "@google/adk";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-2.5-pro",
+            model: "gemini-flash-latest",
             name: "asana_agent",
             instruction: "Help users manage projects, tasks, and goals in Asana",
             tools: [

@@ -50,7 +50,7 @@ project cycles, and automate development workflows using natural language.
         from mcp import StdioServerParameters
 
         root_agent = Agent(
-            model="gemini-2.5-pro",
+            model="gemini-flash-latest",
             name="linear_agent",
             instruction="Help users manage issues, projects, and cycles in Linear",
             tools=[
@@ -88,7 +88,7 @@ project cycles, and automate development workflows using natural language.
         LINEAR_API_KEY = "YOUR_LINEAR_API_KEY"
 
         root_agent = Agent(
-            model="gemini-2.5-pro",
+            model="gemini-flash-latest",
             name="linear_agent",
             instruction="Help users manage issues, projects, and cycles in Linear",
             tools=[
@@ -118,7 +118,7 @@ project cycles, and automate development workflows using natural language.
         import { LlmAgent, MCPToolset } from "@google/adk";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-2.5-pro",
+            model: "gemini-flash-latest",
             name: "linear_agent",
             instruction: "Help users manage issues, projects, and cycles in Linear",
             tools: [
@@ -150,7 +150,7 @@ project cycles, and automate development workflows using natural language.
         const LINEAR_API_KEY = "YOUR_LINEAR_API_KEY";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-2.5-pro",
+            model: "gemini-flash-latest",
             name: "linear_agent",
             instruction: "Help users manage issues, projects, and cycles in Linear",
             tools: [

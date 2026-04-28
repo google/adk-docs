@@ -49,7 +49,7 @@ natural language.
         MAILGUN_API_KEY = "YOUR_MAILGUN_API_KEY"
 
         root_agent = Agent(
-            model="gemini-2.5-pro",
+            model="gemini-flash-latest",
             name="mailgun_agent",
             instruction="Help users send emails and manage their Mailgun account",
             tools=[
@@ -83,7 +83,7 @@ natural language.
         const MAILGUN_API_KEY = "YOUR_MAILGUN_API_KEY";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-2.5-pro",
+            model: "gemini-flash-latest",
             name: "mailgun_agent",
             instruction: "Help users send emails and manage their Mailgun account",
             tools: [

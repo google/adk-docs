@@ -58,7 +58,7 @@ language.
         NOTION_TOKEN = "YOUR_NOTION_TOKEN"
 
         root_agent = Agent(
-            model="gemini-2.5-pro",
+            model="gemini-flash-latest",
             name="notion_agent",
             instruction="Help users get information from Notion",
             tools=[
@@ -91,7 +91,7 @@ language.
         const NOTION_TOKEN = "YOUR_NOTION_TOKEN";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-2.5-pro",
+            model: "gemini-flash-latest",
             name: "notion_agent",
             instruction: "Help users get information from Notion",
             tools: [

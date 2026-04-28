@@ -48,7 +48,7 @@ filtering, and search across multiple indexes with reranking.
         PINECONE_API_KEY = "YOUR_PINECONE_API_KEY"
 
         root_agent = Agent(
-            model="gemini-2.5-pro",
+            model="gemini-flash-latest",
             name="pinecone_agent",
             instruction="Help users manage and search their Pinecone vector indexes",
             tools=[
@@ -81,7 +81,7 @@ filtering, and search across multiple indexes with reranking.
         const PINECONE_API_KEY = "YOUR_PINECONE_API_KEY";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-2.5-pro",
+            model: "gemini-flash-latest",
             name: "pinecone_agent",
             instruction: "Help users manage and search their Pinecone vector indexes",
             tools: [

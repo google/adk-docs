@@ -51,7 +51,7 @@ natural language interactions.
         POSTMAN_API_KEY = "YOUR_POSTMAN_API_KEY"
 
         root_agent = Agent(
-            model="gemini-2.5-pro",
+            model="gemini-flash-latest",
             name="postman_agent",
             instruction="Help users manage their Postman workspaces and collections",
             tools=[
@@ -87,7 +87,7 @@ natural language interactions.
         POSTMAN_API_KEY = "YOUR_POSTMAN_API_KEY"
 
         root_agent = Agent(
-            model="gemini-2.5-pro",
+            model="gemini-flash-latest",
             name="postman_agent",
             instruction="Help users manage their Postman workspaces and collections",
             tools=[
@@ -116,7 +116,7 @@ natural language interactions.
         const POSTMAN_API_KEY = "YOUR_POSTMAN_API_KEY";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-2.5-pro",
+            model: "gemini-flash-latest",
             name: "postman_agent",
             instruction: "Help users manage their Postman workspaces and collections",
             tools: [
@@ -150,7 +150,7 @@ natural language interactions.
         const POSTMAN_API_KEY = "YOUR_POSTMAN_API_KEY";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-2.5-pro",
+            model: "gemini-flash-latest",
             name: "postman_agent",
             instruction: "Help users manage their Postman workspaces and collections",
             tools: [

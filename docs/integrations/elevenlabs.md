@@ -57,7 +57,7 @@ AI experiences using natural language.
         ELEVENLABS_API_KEY = "YOUR_ELEVENLABS_API_KEY"
 
         root_agent = Agent(
-            model="gemini-2.5-pro",
+            model="gemini-flash-latest",
             name="elevenlabs_agent",
             instruction="Help users generate speech, clone voices, and process audio",
             tools=[
@@ -87,7 +87,7 @@ AI experiences using natural language.
         const ELEVENLABS_API_KEY = "YOUR_ELEVENLABS_API_KEY";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-2.5-pro",
+            model: "gemini-flash-latest",
             name: "elevenlabs_agent",
             instruction: "Help users generate speech, clone voices, and process audio",
             tools: [

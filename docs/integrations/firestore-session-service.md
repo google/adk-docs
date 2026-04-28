@@ -154,7 +154,7 @@ public class YourAgentApplication {
                 You are a helpful assistant that tells the current time in a city.
                 Use the 'getCurrentTime' tool for this purpose.
                 \""")
-            .model("gemini-3.1-pro-preview")
+            .model("gemini-flash-latest")
             .tools(FunctionTool.create(YourAgentApplication.class, "getCurrentTime"))
             .build();
     }

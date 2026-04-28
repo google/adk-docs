@@ -56,7 +56,7 @@ search, and metadata filtering.
         # CHROMA_API_KEY = "your-api-key"
 
         root_agent = Agent(
-            model="gemini-2.5-pro",
+            model="gemini-flash-latest",
             name="chroma_agent",
             instruction="Help users store and retrieve information using semantic search",
             tools=[
@@ -105,7 +105,7 @@ search, and metadata filtering.
         // const CHROMA_API_KEY = "your-api-key";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-2.5-pro",
+            model: "gemini-flash-latest",
             name: "chroma_agent",
             instruction: "Help users store and retrieve information using semantic search",
             tools: [
