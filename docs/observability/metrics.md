@@ -35,7 +35,7 @@ When metrics are enabled, ADK automatically instruments the agent's lifecycle, w
 
 ### Metrics export in ADK Web
 
-If you are running your agent using the `adk run` or `adk web` CLI commands, you can configure metrics export.
+If you are running your agent using the `adk web` or `adk api_server` CLI commands, you can configure metrics export.
 
 
 #### OTLP export
