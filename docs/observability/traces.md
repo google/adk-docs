@@ -6,7 +6,7 @@
 
 Agent Development Kit (ADK) provides distributed tracing capabilities to help you visualize the end-to-end journey of a request as it travels through your agent's architecture. While metrics tell you *how long* a process took and logs tell you *what* happened, traces connect these events, showing you exactly *where* the time was spent and the hierarchical relationship between LLM reasoning, tool calls, and external APIs.
 
-## Traces Philosophy
+## Traces philosophy
 
 ADK's approach to tracing is built on standard protocols to ensure seamless integration with your existing observability stack.
 
