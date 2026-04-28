@@ -9,13 +9,13 @@ ADK agent code to Google Cloud
 [Agent Runtime](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview).
 You should follow this deployment path if you have an existing Google Cloud
 project and if you want to carefully manage deploying an ADK agent to Agent
-Engine runtime environment. These instructions use Cloud Console, the gcloud
+Runtime environment. These instructions use Cloud Console, the gcloud
 command line interface, and the ADK command line interface (ADK CLI). This path
 is recommended for users who are already familiar with configuring Google Cloud
 projects, and users preparing for production deployments.
 
 These instructions describe how to deploy an ADK project to Google Cloud Agent
-Engine runtime environment, which includes the following stages:
+Runtime environment, which includes the following stages:
 
 *   [Setup Google Cloud project](#setup-cloud-project)
 *   [Prepare agent project folder](#define-your-agent)
