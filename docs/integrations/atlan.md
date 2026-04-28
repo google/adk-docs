@@ -39,7 +39,7 @@ your warehouses, lakes, BI tools, and pipelines using natural language.
 
 === "Python"
 
-    === "Remote MCP Server"
+    === "Local MCP Server"
 
         ```python
         from google.adk.agents import Agent
@@ -49,7 +49,7 @@ your warehouses, lakes, BI tools, and pipelines using natural language.
 
 
         root_agent = Agent(
-            model="gemini-2.5-pro",
+            model="gemini-flash-latest",
             name="atlan_agent",
             instruction="Help users search, explore, and govern data assets in Atlan",
             tools=[
@@ -72,13 +72,13 @@ your warehouses, lakes, BI tools, and pipelines using natural language.
 
 === "TypeScript"
 
-    === "Remote MCP Server"
+    === "Local MCP Server"
 
         ```typescript
         import { LlmAgent, MCPToolset } from "@google/adk";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-2.5-pro",
+            model: "gemini-flash-latest",
             name: "atlan_agent",
             instruction: "Help users search, explore, and govern data assets in Atlan",
             tools: [
