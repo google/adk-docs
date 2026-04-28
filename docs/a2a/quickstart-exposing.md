@@ -226,6 +226,16 @@ Bot: 8 is not a prime number.
 
 In scenarios where you want more granular control than what `to_a2a()` provides, you may instantiate and pass an [`A2aAgentExecutorConfig`](https://github.com/google/adk-python/blob/main/src/google/adk/a2a/executor/config.py) directly to the `A2aAgentExecutor`. This allows you to override default data converters and inject execution middleware.
 
+### Suppressing Experimental Feature Warnings
+
+When you use experimental A2A features, ADK displays warnings. If you are knowingly using these features and want cleaner logs, you can suppress these warnings.
+
+To disable warnings for experimental A2A features, set the `ADK_SUPPRESS_A2A_EXPERIMENTAL_FEATURE_WARNINGS` environment variable to `true`.
+
+```bash
+export ADK_SUPPRESS_A2A_EXPERIMENTAL_FEATURE_WARNINGS=true
+```
+
 ### Converters
 
 Converters handle the bidirectional translation between A2A protocol payloads and ADK's native `Event` or `Part` objects. You can provide your own mapping functions for the following hooks:
