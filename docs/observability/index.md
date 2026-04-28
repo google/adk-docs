@@ -8,13 +8,10 @@ in-process behavior. Basic input and output monitoring is typically
 insufficient for agents with any significant level of complexity.
 
 Agent Development Kit (ADK) provides built-in observability through
-[logging](/observability/logging/),
-[metrics](/observability/metrics/), and
-[traces](/observability/traces/)
-to help you monitor and debug your agents. However, you may
-need to consider more advanced
-[observability ADK Integrations](/integrations/?topic=observability)
-for monitoring and analysis.
+[logging](/observability/logging/), [metrics](/observability/metrics/), and
+[traces](/observability/traces/) to help you monitor and debug your agents.
+However, you may need to consider more advanced [observability ADK
+Integrations](/integrations/?topic=observability) for monitoring and analysis.
 
 !!! tip "ADK Integrations for observability"
     For a list of pre-built observability libraries for ADK, see
