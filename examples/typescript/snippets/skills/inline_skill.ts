@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-// [START full_example]
+// --8<-- [start:full_example]
 import {Agent, Skill, SkillToolset} from '@google/adk';
 
 const greetingSkill: Skill = {
@@ -33,4 +33,4 @@ const rootAgent = new Agent({
 });
 
 export default rootAgent;
-// [END full_example]
+// --8<-- [end:full_example]

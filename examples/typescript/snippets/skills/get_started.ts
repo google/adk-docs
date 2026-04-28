@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-// [START full_example]
+// --8<-- [start:full_example]
 import {Agent, FunctionTool, SkillToolset, loadSkillFromDir} from '@google/adk';
 import * as path from 'node:path';
 import {z} from 'zod';
@@ -42,4 +42,4 @@ const rootAgent = new Agent({
 });
 
 export default rootAgent;
-// [END full_example]
+// --8<-- [end:full_example]
