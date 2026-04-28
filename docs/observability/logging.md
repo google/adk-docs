@@ -61,6 +61,7 @@ The available log levels for the `--log_level` option are:
 | **`ERROR`** | A serious error that prevented an operation from completing. | <ul><li>Failed API calls to external services (e.g., LLM, Session Service).</li><li>Unhandled exceptions during agent execution.</li><li>Configuration errors.</li></ul> |
 
 **Note:** It is recommended to use `INFO` or `WARNING` in production environments. Only enable `DEBUG` when actively troubleshooting an issue, as `DEBUG` logs can be very verbose and may contain sensitive information.
+
 ---
 
 ## Configuring Logging in Go
@@ -91,9 +92,9 @@ import (
 
 func main() {
 	ctx := context.Background()
-	
+
 	// Initialize telemetry with prompt content logging enabled
-	tp, err := telemetry.New(ctx, 
+	tp, err := telemetry.New(ctx,
 		telemetry.WithGenAICaptureMessageContent(true),
 		// Add other options like WithOtelToCloud(true) for GCP export
 	)
@@ -101,10 +102,10 @@ func main() {
 		// handle error
 	}
 	defer tp.Shutdown(ctx)
-	
+
 	// Register as global OTel providers
 	tp.SetGlobalOtelProviders()
-	
+
 	// Your ADK agent code follows...
 }
 ```
@@ -144,6 +145,7 @@ By reading the logger name, you can immediately pinpoint the source of the log a
 
 **Scenario:** Your agent is not producing the expected output, and you suspect the prompt being sent to the LLM is incorrect.
 **Steps:**
+
 1.  **Enable DEBUG Logging:** In your `main.py`, set the logging level to `DEBUG` as shown in the configuration example.
     ```python
     logging.basicConfig(
@@ -151,8 +153,11 @@ By reading the logger name, you can immediately pinpoint the source of the log a
         format='%(asctime)s - %(levelname)s - %(name)s - %(message)s'
     )
     ```
+
 2.  **Run Your Agent:** Execute your agent's task as you normally would.
+
 3.  **Inspect the Logs:** Look through the console output for a message from the `google.adk.models.google_llm` logger that starts with `LLM Request:`.
+
     ```log
     ...
     2025-07-10 15:26:13,778 - DEBUG - google_adk.google.adk.models.google_llm - Sending out request, model: gemini-flash-latest, backend: GoogleLLMVariant.GEMINI_API, stream: False
@@ -195,6 +200,7 @@ By reading the logger name, you can immediately pinpoint the source of the log a
     I have rolled a 6 sided die, and the result is 2.
     ...
     ```
+
 4.  **Analyze the Prompt:** By examining the `System Instruction`, `contents`, `functions` sections of the logged request, you can verify:
     -   Is the system instruction correct?
     -   Is the conversation history (`user` and `model` turns) accurate?
