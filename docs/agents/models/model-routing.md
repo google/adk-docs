@@ -54,5 +54,5 @@ and falls back to a secondary model if the primary fails. The router checks
 === "TypeScript"
 
     ```typescript
-    --8<-- "examples/typescript/snippets/agents/model-routing/basic_usage.ts:full"
+    --8<-- "examples/typescript/snippets/agents/model-routing/basic-usage.ts:full"
     ```

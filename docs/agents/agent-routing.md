@@ -65,7 +65,7 @@ on an external configuration value that can change between invocations:
 === "TypeScript"
 
     ```typescript
-    --8<-- "examples/typescript/snippets/agents/agent-routing/basic_usage.ts:full"
+    --8<-- "examples/typescript/snippets/agents/agent-routing/basic-usage.ts:full"
     ```
 
 Change `config.selectedAgent` to `'agent_b'` before the next invocation to
@@ -98,7 +98,7 @@ The following example shows a different `RoutedAgent` configuration. See
 === "TypeScript"
 
     ```typescript
-    --8<-- "examples/typescript/snippets/agents/agent-routing/planning_mode.ts:config"
+    --8<-- "examples/typescript/snippets/agents/agent-routing/planning-mode.ts:config"
     ```
 
 Set `planningMode = true` before an invocation to route to the planning agent
@@ -116,5 +116,5 @@ The following example shows a different `RoutedAgent` configuration. See
 === "TypeScript"
 
     ```typescript
-    --8<-- "examples/typescript/snippets/agents/agent-routing/auto_routing.ts:config"
+    --8<-- "examples/typescript/snippets/agents/agent-routing/auto-routing.ts:config"
     ```
