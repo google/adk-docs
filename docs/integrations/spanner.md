@@ -18,8 +18,8 @@ These are a set of tools aimed to provide integration with Spanner, namely:
 * **`list_table_index_columns`**: Fetches table index columns present in a GCP Spanner database.
 * **`list_named_schemas`**: Fetches named schema for a Spanner database.
 * **`get_table_schema`**: Fetches Spanner database table schema and metadata information.
-* **`execute_sql`**: Runs a SQL query in Spanner database and fetch the result.
-* **`similarity_search`**: Similarity search in Spanner using a text query.
+* **`execute_sql`**: Runs a SQL query in Spanner database and fetch the result. This is an async function and must be awaited.
+* **`similarity_search`**: Similarity search in Spanner using a text query. This is an async function and must be awaited.
 
 They are packaged in the toolset `SpannerToolset`.
 
