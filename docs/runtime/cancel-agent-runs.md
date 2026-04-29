@@ -17,42 +17,7 @@ Create an `AbortController`, pass its `signal` to `runner.runAsync()`, and call
 === "TypeScript"
 
     ```typescript
-    import { Runner, InMemorySessionService, LlmAgent, FunctionTool } from '@google/adk';
-    import { z } from 'zod';
-
-    const getInfo = new FunctionTool({
-      name: 'get_info',
-      description: 'Gets information about a topic.',
-      parameters: z.object({ topic: z.string() }),
-      execute: (args) => ({ result: `Info about ${args.topic}` }),
-    });
-
-    const agent = new LlmAgent({
-      name: 'my_agent',
-      model: 'gemini-flash-latest',
-      instruction: 'Always use the get_info tool before answering.',
-      tools: [getInfo],
-    });
-
-    const sessionService = new InMemorySessionService();
-    const runner = new Runner({ agent, appName: 'my_app', sessionService });
-    const session = await sessionService.createSession({ appName: 'my_app', userId: 'user_1' });
-
-    const controller = new AbortController();
-    const run = runner.runAsync({
-      userId: session.userId,
-      sessionId: session.id,
-      newMessage: { role: 'user', parts: [{ text: 'Tell me about quantum computing.' }] },
-      abortSignal: controller.signal,
-    });
-
-    let count = 0;
-    for await (const event of run) {
-      count++;
-      console.log('Event:', event.author);
-      controller.abort(); // Without this, 3+ events; with it, only 1.
-    }
-    console.log(`Done. Received ${count} event(s).`);
+    --8<-- "examples/typescript/snippets/runtime/cancel-agent-runs/basic-usage.ts:full"
     ```
 
 ## Cancellation with a timeout
@@ -66,19 +31,7 @@ everything from `const controller` onwards with:
 === "TypeScript"
 
     ```typescript
-    const run = runner.runAsync({
-      userId: session.userId,
-      sessionId: session.id,
-      newMessage: { role: 'user', parts: [{ text: 'Tell me about quantum computing.' }] },
-      abortSignal: AbortSignal.timeout(2_000), // Cancel after 2 seconds
-    });
-
-    let count = 0;
-    for await (const event of run) {
-      count++;
-      console.log('Event:', event.author);
-    }
-    console.log(`Done. Received ${count} event(s).`);
+    --8<-- "examples/typescript/snippets/runtime/cancel-agent-runs/timeout.ts:run"
     ```
 
 You can also combine a timeout with programmatic cancellation using
@@ -88,21 +41,7 @@ controller` onwards with:
 === "TypeScript"
 
     ```typescript
-    const controller = new AbortController();
-
-    // Cancel on timeout OR programmatically via controller.abort()
-    // e.g.: cancelButton.addEventListener('click', () => controller.abort());
-    const combinedSignal = AbortSignal.any([
-      controller.signal,
-      AbortSignal.timeout(60_000),
-    ]);
-
-    const run = runner.runAsync({
-      userId: session.userId,
-      sessionId: session.id,
-      newMessage: { role: 'user', parts: [{ text: 'Tell me about quantum computing.' }] },
-      abortSignal: combinedSignal,
-    });
+    --8<-- "examples/typescript/snippets/runtime/cancel-agent-runs/combined-signal.ts:run"
     ```
 
 ## How cancellation propagates
@@ -134,31 +73,7 @@ the pattern for checking the abort signal inside a custom tool:
 === "TypeScript"
 
     ```typescript
-    import { FunctionTool } from '@google/adk';
-    import { z } from 'zod';
-
-    const longRunningTool = new FunctionTool({
-      name: 'process_data',
-      description: 'Processes data in multiple steps.',
-      parameters: z.object({
-        dataId: z.string(),
-      }),
-      execute: async (args, toolContext) => {
-        const items = await fetchItems(args.dataId);
-
-        const results = [];
-        for (const item of items) {
-          // Check the abort signal before each step
-          if (toolContext?.abortSignal?.aborted) {
-            return { status: 'cancelled', processed: results.length };
-          }
-
-          results.push(await processItem(item));
-        }
-
-        return { status: 'complete', processed: results.length };
-      },
-    });
+    --8<-- "examples/typescript/snippets/runtime/cancel-agent-runs/custom-tool.ts:tool"
     ```
 
 ## Behavior on cancellation
