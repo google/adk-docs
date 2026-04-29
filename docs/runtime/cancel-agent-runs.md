@@ -125,7 +125,7 @@ The `InvocationContext` also registers a listener on the signal that
 automatically sets `endInvocation = true` when triggered, signaling all
 components to wind down.
 
-## Accessing AbortSignal in custom tools
+## AbortSignal in custom tools
 
 When you pass an `AbortSignal` to `runner.runAsync()`, it is available on
 `toolContext.abortSignal` inside your custom tools. The following example shows
