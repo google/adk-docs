@@ -251,6 +251,28 @@ Pass the scheme and credential during toolset initialization. The toolset applie
       )
       ```
 
+=== "Service Account with ID Token"
+
+      Create a tool that authenticates using a Service Account and an ID Token. This is required for services like Cloud Run and Cloud Functions.
+
+      ```py
+      from google.adk.tools.openapi_tool.auth.auth_helpers import service_account_dict_to_scheme_credential
+      from google.adk.tools.openapi_tool.openapi_spec_parser.openapi_toolset import OpenAPIToolset
+
+      service_account_cred = json.loads(service_account_json_str)
+      auth_scheme, auth_credential = service_account_dict_to_scheme_credential(
+          config=service_account_cred,
+          use_id_token=True,
+          audience="YOUR_AUDIENCE"  # e.g., the URL of your Cloud Run service
+      )
+      sample_toolset = OpenAPIToolset(
+          spec_str=sa_openapi_spec_str, # Fill this with an openapi spec
+          spec_str_type='json',
+          auth_scheme=auth_scheme,
+          auth_credential=auth_credential,
+      )
+      ```
+
 === "OpenID connect"
 
       Create a tool requiring OpenID connect.
