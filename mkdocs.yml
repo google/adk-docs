@@ -298,6 +298,7 @@ nav:
         - Parallel agents: agents/workflow-agents/parallel-agents.md
       - Custom agents: agents/custom-agents.md
       - Multi-agent systems: agents/multi-agents.md
+      - Agent routing: agents/agent-routing.md
       - Agent Config: agents/config.md
     - Models for Agents:
       - agents/models/index.md
@@ -306,6 +307,7 @@ nav:
       - Claude: agents/models/anthropic.md
       - Agent Platform hosted: agents/models/agent-platform.md
       - Apigee AI Gateway: agents/models/apigee.md
+      - Model routing: agents/models/model-routing.md
       - Ollama: agents/models/ollama.md
       - vLLM: agents/models/vllm.md
       - LiteLLM: agents/models/litellm.md

@@ -9,7 +9,7 @@ integrate various Large Language Models (LLMs) into your agents. This section
 details how to leverage Gemini and integrate other popular models effectively,
 including those hosted externally or running locally.
 
-ADK primarily uses two mechanisms for model integration:
+ADK provides several mechanisms for model integration:
 
 1. **Direct String / Registry:** For models tightly integrated with Google Cloud,
    such as Gemini models accessed via Google AI Studio or Agent Platform, or models
@@ -31,3 +31,7 @@ ADK primarily uses two mechanisms for model integration:
       *  [Ollama model hosting](/agents/models/ollama/)
       *  [vLLM model hosting](/agents/models/vllm/)
       *  [LiteRT-LM model hosting](/agents/models/litert-lm/)
+
+3. **[Model routing](/agents/models/model-routing/):** For dynamically selecting
+   between multiple models at runtime using a router function, with automatic
+   failover on error.
