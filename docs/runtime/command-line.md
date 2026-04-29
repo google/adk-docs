@@ -122,3 +122,65 @@ adk run --session_service_uri "sqlite:///my_sessions.db" path/to/my_agent
 | `--replay` | Path to an input file for non-interactive replay |
 | `--session_service_uri` | Custom session storage URI |
 | `--artifact_service_uri` | Custom artifact storage URI |
+
+## Conformance Testing
+
+The `adk conformance` command allows you to run conformance tests to verify that
+your agent's behavior is consistent and correct.
+
+### Run conformance tests
+
+To run the conformance tests, use the `test` subcommand:
+
+```shell
+adk conformance test
+```
+
+This command validates that your agent produces consistent outputs by comparing
+against recorded interactions or evaluating live execution results.
+
+### Conformance testing options
+
+| Option | Description |
+|---|---|
+| `--generate_report` | Generate a Markdown report of the test results. |
+| `--report_dir` | Directory to store the generated report. Defaults to the current directory. |
+
+### Example with conformance testing options
+
+To run the tests and generate a report in a specific directory:
+
+```shell
+adk conformance test --generate_report --report_dir=reports
+```
+
+## API Server
+
+The `adk api_server` command starts a FastAPI server for your agents, allowing
+you to interact with them via an API.
+
+### Start the API server
+
+To start the API server, run the following command in your project's root
+directory:
+
+```shell
+adk api_server
+```
+
+This will start the server, and you can see the available API endpoints by
+navigating to `http://127.0.0.1:8000/docs` in your browser.
+
+### API Server options
+
+| Option | Description |
+|---|---|
+| `--auto_create_session` | Automatically create a session if it doesn't exist when calling `/run`. |
+
+### Example with API server options
+
+To start the server with the `--auto_create_session` flag:
+
+```shell
+adk api_server --auto_create_session
+```
