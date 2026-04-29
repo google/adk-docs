@@ -157,6 +157,20 @@ Here is a quick guide to authentication for key ADK toolsets:
 For more authentication details for other pre-built tools and integrations
 see the [ADK Integrations](/integrations) catalog.
 
+## Using External Access Tokens
+
+For Google credentials, you can configure `external_access_token_key` to instruct the tool to retrieve an existing access token from `tool_context.state` instead of performing authentication itself.
+This is useful when the agent is invoked in an environment where the user is already authenticated (e.g., a frontend passing the token).
+Example:
+```python
+AuthCredential(
+    auth_type=AuthCredentialTypes.GOOGLE_CREDENTIALS,
+    google_credentials_config=GoogleCredentialsConfig(
+        external_access_token_key="my_access_token"
+    )
+)
+```
+
 ---
 
 ## Journey 1: Building Agentic Applications with Authenticated Tools
@@ -263,7 +277,7 @@ Pass the scheme and credential during toolset initialization. The toolset applie
       auth_scheme = OpenIdConnectWithConfig(
           authorization_endpoint=OAUTH2_AUTH_ENDPOINT_URL,
           token_endpoint=OAUTH2_TOKEN_ENDPOINT_URL,
-          scopes=['openid', 'YOUR_OAUTH_SCOPES"]
+          scopes=['openid', 'YOUR_OAUTH_SCOPES']
       )
       auth_credential = AuthCredential(
           auth_type=AuthCredentialTypes.OPEN_ID_CONNECT,
