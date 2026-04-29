@@ -23,6 +23,8 @@ These are a set of tools aimed to provide integration with Spanner, namely:
 
 They are packaged in the toolset `SpannerToolset`.
 
+**Note:** The `execute_sql` and `similarity_search` functions are asynchronous and must be awaited when called directly.
+
 ```py
 --8<-- "examples/python/snippets/tools/built-in-tools/spanner.py"
 ```
