@@ -6,7 +6,7 @@
 
 Agent Development Kit (ADK) provides flexible and powerful logging capabilities to monitor agent behavior and debug issues effectively. Understanding how to configure and interpret these logs is crucial for monitoring agent behavior and debugging issues effectively.
 
-## Logging Philosophy
+## Logging philosophy
 
 ADK's approach to logging is to provide detailed diagnostic information without being overly verbose by default. It is designed to be configured by the application developer, allowing you to tailor the log output to your specific needs, whether in a development or production environment.
 
@@ -16,42 +16,19 @@ ADK's approach to logging is to provide detailed diagnostic information without 
 
 ---
 
-## Configuring Logging in Python
+## Logging schema
 
-In Python, ADK uses the standard `logging` module.
+ADK emits logs using standard library facilities and structured GenAI events via OpenTelemetry.
 
-### Example Configuration
+### Structured GenAI logs
 
-To enable detailed logging, including `DEBUG` level messages, add the following to the top of your script:
+Structured GenAI logs emitted via OpenTelemetry follow the [Semantic Conventions for GenAI](https://github.com/open-telemetry/semantic-conventions/blob/main/docs/gen-ai/gen-ai-events.md).
 
-```python
-import logging
+In Go, prompt content is elided in logs for security by default. You can enable prompt logging using environment variables or programmatic configuration (see Setup section below).
 
-logging.basicConfig(
-    level=logging.DEBUG,
-    format='%(asctime)s - %(levelname)s - %(name)s - %(message)s'
-)
-```
+### Log levels (Python)
 
-### Configuring Logging with the ADK CLI (Python)
-
-When running Python agents using the ADK's built-in web or API servers, you can easily control the log verbosity directly from the command line. The `adk web`, `adk api_server`, and `adk deploy cloud_run` commands all accept a `--log_level` option.
-
-To start the web server with `DEBUG` level logging, run:
-
-```bash
-adk web --log_level DEBUG path/to/your/agents_dir
-```
-
-The available log levels for the `--log_level` option are:
-
-- `DEBUG`
-- `INFO` (default)
-- `WARNING`
-- `ERROR`
-- `CRITICAL`
-
-### Log Levels (Python)
+The following table describes what is logged at different levels in Python when using the standard logger:
 
 | Level | Description | Type of Information Logged  |
 | :--- | :--- | :--- |
@@ -64,27 +41,109 @@ The available log levels for the `--log_level` option are:
 
 ---
 
-## Configuring Logging in Go
+## Logging setup
 
-In Go, ADK uses the standard `log` package for general events and OpenTelemetry for GenAI activity logging.
+### Logging in ADK Web
 
-### OpenTelemetry Logging
+When running agents using the ADK's built-in web or API servers, you can control the log verbosity or destination.
 
-ADK Go uses OpenTelemetry (OTel) to log GenAI requests and responses. By default, prompt content is elided in logs for security. You can enable prompt logging using environment variables or programmatic configuration.
+#### Logging level
 
-#### Enabling Prompt Logging
+The `adk web`, `adk api_server`, and `adk deploy cloud_run` commands all accept a `--log_level` option.
 
-Set the following environment variable to `true` to include full prompts in your OTel logs:
+To start the web server with `DEBUG` level logging, run:
+
+```bash
+adk web --log_level DEBUG path/to/your/agents_dir
+```
+
+The available log levels for the `--log_level` option are: `DEBUG`, `INFO` (default), `WARNING`, `ERROR`, `CRITICAL`.
+
+#### OTLP export
+
+To export traces to an OTLP-compatible backend, set the standard OTel environment variables:
+
+```bash
+export OTEL_EXPORTER_OTLP_LOGS_ENDPOINT="http://your-collector:4318/v1/logs"
+adk web path/to/your/agents_dir
+```
+
+> **Note:**  You can also set the general `OTEL_EXPORTER_OTLP_ENDPOINT` environment variable if you would like to send metrics and traces to the same endpoint in addition to logs.
+
+
+#### GCP export setup
+
+You can enable GCP export using the `-otel_to_cloud` flag:
+
+```bash
+adk web -otel_to_cloud path/to/your/agents_dir
+```
+
+### Programmatic logging setup
+
+You can also configure logging programmatically in your application code.
+
+#### Python programmatic configuration
+
+#### Logging level
+
+In Python, you can use the standard `logging` module. To enable detailed logging, including `DEBUG` level messages, add the following to the top of your script:
+
+```python
+import logging
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s - %(levelname)s - %(name)s - %(message)s'
+)
+```
+
+#### OTLP export
+
+To export logs to an OpenTelemetry Collector (or an OTLP-compatible backend) programmatically:
+
+```python
+from google.adk.telemetry.setup import maybe_set_otel_providers
+import os
+
+os.environ["OTEL_EXPORTER_OTLP_LOGS_ENDPOINT"] = "http://your-collector:4318/v1/logs"
+os.environ["OTEL_SERVICE_NAME"] = "your-adk-agent"
+os.environ["OTEL_RESOURCE_ATTRIBUTES"] = "key1=value1,key2=value2"
+maybe_set_otel_providers()
+```
+
+#### GCP export setup
+
+To export metrics to Google Cloud Logging programmatically, use the OpenTelemetry Google Cloud exporter. Here is an example in Python:
+
+```python
+from google.adk.telemetry.google_cloud import get_gcp_exporters
+from google.adk.telemetry.setup import maybe_set_otel_providers
+import os
+
+gcp_exporters = get_gcp_exporters(
+  enable_cloud_logging = True,
+)
+os.environ["OTEL_SERVICE_NAME"] = "your-adk-agent"
+os.environ["OTEL_RESOURCE_ATTRIBUTES"] = "key1=value1,key2=value2"
+maybe_set_otel_providers([gcp_exporters])
+```
+
+### Go programmatic configuration
+
+#### Logging level
+
+By default, prompt content is elided in logs for security. You can enable prompt logging using the environment variable:
 
 ```bash
 export OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=true
 ```
 
-#### Programmatic Configuration
-
-You can configure telemetry providers using the `google.golang.org/adk/telemetry` package.
+Or programmatically when initializing telemetry:
 
 ```go
+package main
+
 import (
 	"context"
 	"google.golang.org/adk/telemetry"
@@ -92,58 +151,71 @@ import (
 
 func main() {
 	ctx := context.Background()
-
-	// Initialize telemetry with prompt content logging enabled
 	tp, err := telemetry.New(ctx,
 		telemetry.WithGenAICaptureMessageContent(true),
-		// Add other options like WithOtelToCloud(true) for GCP export
 	)
 	if err != nil {
 		// handle error
 	}
 	defer tp.Shutdown(ctx)
-
-	// Register as global OTel providers
 	tp.SetGlobalOtelProviders()
-
-	// Your ADK agent code follows...
 }
 ```
 
-### General Logging
+#### OTLP export
+
+To export logs to an OTLP-compatible backend, configure the standard OpenTelemetry environment variables (e.g., `OTEL_EXPORTER_OTLP_ENDPOINT` or `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT`). The ADK telemetry package will automatically use these settings when initialized.
+
+#### GCP export setup
+
+To export logs to Google Cloud Logging, use the `WithOtelToCloud` option:
+
+```go
+package main
+
+import (
+	"context"
+	"google.golang.org/adk/telemetry"
+)
+
+func main() {
+	ctx := context.Background()
+	tp, err := telemetry.New(ctx,
+		telemetry.WithOtelToCloud(true),
+	)
+	if err != nil {
+		// handle error
+	}
+	defer tp.Shutdown(ctx)
+	tp.SetGlobalOtelProviders()
+}
+```
 
 General events (like server startup or HTTP requests) are logged using the standard Go `log` package. These logs are written to `stderr` by default.
 
-### Configuring Logging with the ADK Go Launcher
-
-When using the ADK Go `full.Launcher` or `prod.Launcher`, telemetry is automatically initialized. You can enable GCP export using the `-otel_to_cloud` flag:
-
-```bash
-go run main.go web -otel_to_cloud a2a
-```
-
 ---
 
-## Reading and Understanding the Logs
+## Reading and understanding the logs
 
-The structure of logs depends on your configuration. Structured GenAI logs emitted via OpenTelemetry follow the [Semantic Conventions for GenAI](https://github.com/open-telemetry/semantic-conventions/blob/main/docs/gen-ai/gen-ai-events.md).
-
-### Sample Python Log Entry
+### Sample Python log entry
 
 ```text
 2025-07-08 11:22:33,456 - DEBUG - google_adk.models.google_llm - LLM Request: contents { ... }
 ```
+
 | Log Segment                     | Format Specifier | Meaning                                        |
 | ------------------------------- | ---------------- | ---------------------------------------------- |
 | `2025-07-08 11:22:33,456`       | `%(asctime)s`    | Timestamp                                      |
 | `DEBUG`                         | `%(levelname)s`  | Severity level                                 |
 | `google_adk.models.google_llm`  | `%(name)s`       | Logger name (the module that produced the log) |
 | `LLM Request: contents { ... }` | `%(message)s`    | The actual log message                         |
+
 By reading the logger name, you can immediately pinpoint the source of the log and understand its context within the agent's architecture.
 
-### Debugging with Logs: A Practical Example (Python)
+### Debugging with logs: A practical example (Python)
 
 **Scenario:** Your agent is not producing the expected output, and you suspect the prompt being sent to the LLM is incorrect.
+
 **Steps:**
 
 1.  **Enable DEBUG Logging:** In your `main.py`, set the logging level to `DEBUG` as shown in the configuration example.
@@ -176,7 +248,7 @@ By reading the logger name, you can immediately pinpoint the source of the log a
           When you are asked to roll a die and check prime numbers, you should always make the following two function calls:
           1. You should first call the roll_die tool to get a roll. Wait for the function response before calling the check_prime tool.
           2. After you get the function response from roll_die tool, you should call the check_prime tool with the roll_die result.
-            2.1 If user asks you to check primes based on previous rolls, make sure you include the previous rolls in the list.
+          2.1 If user asks you to check primes based on previous rolls, make sure you include the previous rolls in the list.
           3. When you respond, you must include the roll_die result from step 1.
           You should always perform the previous 3 steps when asking for a roll and checking prime numbers.
           You should not rely on the previous history on prime results.
