@@ -1,7 +1,7 @@
 # Cancel agent runs
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-typescript">Typescript v1.0.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-typescript">TypeScript v1.0.0</span>
 </div>
 
 Long-running agent invocations can be gracefully cancelled using
