@@ -346,7 +346,6 @@ nav:
     - Observability:
       - observability/index.md
       - Logging: observability/logging.md
-      - Metrics: observability/metrics.md
       - Traces: observability/traces.md
     - Evaluation:
       - evaluate/index.md
