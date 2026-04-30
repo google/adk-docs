@@ -58,7 +58,7 @@ purposes:
 
     - Your ADK project source code
 
-    Please mind that Agent Runtime has it's own API for querying the agent. All you have to do is use a dedicated launcher:
+    Please mind that Agent Runtime has its own API for querying the agent. All you have to do is use a dedicated launcher:
     ```go
 	l := agentengine.NewLauncher(agentEngineID)
     err := l.Execute(ctx, config, os.Args[1:])
