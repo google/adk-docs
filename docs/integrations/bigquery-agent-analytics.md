@@ -76,6 +76,7 @@ from google.adk.models.google_llm import Gemini
 from google.adk.plugins.bigquery_agent_analytics_plugin import BigQueryAgentAnalyticsPlugin
 
 os.environ['GOOGLE_CLOUD_PROJECT'] = 'your-gcp-project-id'
+os.environ['GOOGLE_CLOUD_LOCATION'] = 'us-central1'
 os.environ['GOOGLE_GENAI_USE_VERTEXAI'] = 'True'
 
 plugin = BigQueryAgentAnalyticsPlugin(
@@ -431,7 +432,7 @@ The following table lists all 16 auto-created views and their event-specific col
 | **`v_hitl_input_request`** | `tool_name` (STRING), `tool_args` (JSON) |
 | **`v_a2a_interaction`** | `response_content` (JSON), `a2a_task_id` (STRING), `a2a_context_id` (STRING), `a2a_request` (JSON), `a2a_response` (JSON) |
 
-### Event types and payloads {#event-types}
+## Event types and payloads {#event-types}
 
 The `content` column now contains a **JSON** object specific to the `event_type`.
 The `content_parts` column provides a structured view of the content, especially useful for images or offloaded data.
@@ -441,7 +442,7 @@ The `content_parts` column provides a structured view of the content, especially
     - Variable content fields are truncated to `max_content_length` (configured in `BigQueryLoggerConfig`, default 500KB).
     - If `gcs_bucket_name` is configured, large content is offloaded to GCS instead of being truncated, and a reference is stored in `content_parts.object_ref`.
 
-#### LLM interactions (plugin lifecycle)
+### LLM interactions (plugin lifecycle)
 
 These events track the raw requests sent to and responses received from the LLM.
 
@@ -522,7 +523,7 @@ Logged when an LLM call fails with an exception. The error message is captured a
 }
 ```
 
-#### Tool usage (plugin lifecycle)
+### Tool usage (plugin lifecycle)
 
 These events track the execution of tools by the agent. Each tool event includes a `tool_origin` field that classifies the tool's provenance:
 
@@ -595,7 +596,7 @@ Logged when a tool execution fails with an exception. Captures the tool name, ar
 }
 ```
 
-#### State Management
+### State Management
 
 These events track changes to the agent's state, typically triggered by tools.
 
@@ -621,7 +622,7 @@ Tracks changes to the agent's internal state (e.g., custom application state upd
 }
 ```
 
-#### Agent lifecycle & Generic Events
+### Agent lifecycle & Generic Events
 
 <table>
   <thead>
@@ -655,7 +656,7 @@ Tracks changes to the agent's internal state (e.g., custom application state upd
   </tbody>
 </table>
 
-#### Human-in-the-Loop (HITL) Events {#hitl-events}
+### Human-in-the-Loop (HITL) Events {#hitl-events}
 
 The plugin automatically detects calls to ADK's synthetic HITL tools and emits dedicated event types for them. These events are logged **in addition to** the normal `TOOL_STARTING` / `TOOL_COMPLETED` events.
 
@@ -718,7 +719,7 @@ HITL request events are detected from `function_call` parts in `on_event_callbac
     from the `agent_events` table using
     `WHERE event_type LIKE 'HITL_%_COMPLETED'`.
 
-#### A2A Interaction Events
+### A2A Interaction Events
 
 When your agent communicates with a remote agent via the Agent-to-Agent (A2A) protocol, the plugin logs an `A2A_INTERACTION` event capturing the request and response details.
 
