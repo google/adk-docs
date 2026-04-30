@@ -1,10 +1,10 @@
 # Agent activity logging
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span>
 </div>
 
-Agent Development Kit (ADK) provides flexible and powerful logging capabilities to monitor agent behavior and debug issues effectively. Understanding how to configure and interpret these logs is crucial for monitoring agent behavior and debugging issues effectively.
+Agent Development Kit (ADK) provides flexible and powerful logging capabilities to monitor agent behavior and debug issues effectively.
 
 ## Logging philosophy
 
@@ -69,7 +69,7 @@ export OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=true
 
 #### OTLP export
 
-To export traces to an OTLP-compatible backend, set the standard OTel environment variables:
+To export logs to an OTLP-compatible backend, set the standard OTel environment variables:
 
 ```bash
 export OTEL_EXPORTER_OTLP_LOGS_ENDPOINT="http://your-collector:4318/v1/logs"
@@ -87,15 +87,13 @@ You can enable GCP export using the `-otel_to_cloud` flag:
 adk web -otel_to_cloud path/to/your/agents_dir
 ```
 
-### Programmatic logging setup
+### Python programmatic setup
 
-You can also configure logging programmatically in your application code.
-
-#### Python programmatic configuration
+In Python, ADK uses the standard `logging` module and OpenTelemetry for structured GenAI logs.
 
 #### Logging level
 
-In Python, you can use the standard `logging` module. To enable detailed logging, including `DEBUG` level messages, add the following to the top of your script:
+To enable detailed logging, including `DEBUG` level messages, add the following to the top of your script:
 
 ```python
 import logging
@@ -113,7 +111,7 @@ You can enable full prompt logging programmatically by setting an environment va
 ```python
 import os
 
-os.environ["OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT"] = True
+os.environ["OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT"] = "true"
 ```
 
 #### OTLP export
@@ -132,7 +130,7 @@ maybe_set_otel_providers()
 
 #### GCP export setup
 
-To export metrics to Google Cloud Logging programmatically, use the OpenTelemetry Google Cloud exporter. Here is an example in Python:
+To export logs to Google Cloud Logging programmatically, use the OpenTelemetry Google Cloud exporter. Here is an example in Python:
 
 ```python
 from google.adk.telemetry.google_cloud import get_gcp_exporters
@@ -147,7 +145,9 @@ os.environ["OTEL_RESOURCE_ATTRIBUTES"] = "key1=value1,key2=value2"
 maybe_set_otel_providers([gcp_exporters])
 ```
 
-### Go programmatic configuration
+### Go programmatic setup
+
+In Go, ADK uses the `google.golang.org/adk/telemetry` package for OpenTelemetry configuration and the standard `log` package for general events.
 
 #### Capture prompt content
 
@@ -201,6 +201,12 @@ func main() {
 	defer tp.Shutdown(ctx)
 	tp.SetGlobalOtelProviders()
 }
+```
+
+If using the Go launcher, you can also enable GCP export via the CLI flag:
+
+```bash
+go run main.go web -otel_to_cloud
 ```
 
 General events (like server startup or HTTP requests) are logged using the standard Go `log` package. These logs are written to `stderr` by default.
