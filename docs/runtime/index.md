@@ -36,6 +36,15 @@ the method that best fits your development workflow.
 
     [:octicons-arrow-right-24: Use the API Server](api-server.md)
 
+-   :material-access-point:{ .lg .middle } **Ambient Agents**
+
+    ---
+
+    Build autonomous agents that process events, monitor systems, and respond
+    asynchronously without human intervention.
+
+    [:octicons-arrow-right-24: Use Ambient Agents](ambient-agents.md)
+
 </div>
 
 ## Technical reference
@@ -47,5 +56,7 @@ pages:
   ADK, including the yield/pause/resume cycle.
 - **[Resume Agents](resume.md)**: Learn how to resume agent execution from a
   previous state.
+- **[Cancel Agent Runs](cancel-agent-runs.md)**: Gracefully cancel running
+  agent invocations using AbortSignal (TypeScript).
 - **[Runtime Config](runconfig.md)**: Configure runtime behavior with
   RunConfig.

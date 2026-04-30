@@ -332,6 +332,7 @@ nav:
       - API Server: runtime/api-server.md
       - Ambient Agents: runtime/ambient-agents.md
       - Resume Agents: runtime/resume.md
+      - Cancel Agent Runs: runtime/cancel-agent-runs.md
       - Runtime Config: runtime/runconfig.md
       - Event Loop: runtime/event-loop.md
     - Deployment:
