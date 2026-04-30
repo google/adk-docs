@@ -5,7 +5,7 @@
 # Google Cloud Console (requires authentication, returns HTTP/2 errors)
 ^https://console\.(cloud\.google|developers\.google)\.com
 
-# Placeholder URL with user-specific path
+# URL contains bracket placeholder (e.g. /s/[project-id])
 ^https://app\.phoenix\.arize\.com/s/\[
 
 # Requires authentication
@@ -13,3 +13,6 @@
 
 # Rate limits automated requests
 ^https://www\.gnu\.org/
+
+# Interactions API docs page returns 404 to unauthenticated clients
+^https://ai\.google\.dev/gemini-api/docs/interactions
