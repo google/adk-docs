@@ -24,7 +24,7 @@ ADK emits logs using standard library facilities and structured GenAI events via
 
 Structured GenAI logs emitted via OpenTelemetry follow the [Semantic Conventions for GenAI](https://github.com/open-telemetry/semantic-conventions/blob/main/docs/gen-ai/gen-ai-events.md).
 
-In Go, prompt content is elided in logs for security by default. You can enable prompt logging using environment variables or programmatic configuration (see Setup section below).
+By default prompt content is elided in logs for security. You can enable prompt logging using environment variables or programmatic configuration (see Setup section below).
 
 ### Log levels (Python)
 
@@ -45,11 +45,9 @@ The following table describes what is logged at different levels in Python when 
 
 ### Logging in ADK Web
 
-When running agents using the ADK's built-in web or API servers, you can control the log verbosity or destination.
+When running agents using the ADK's `adk web`, `adk api_server`, `adk deploy cloud_run` and `adk deploy gke` commands, you can control the log verbosity or destination.
 
 #### Logging level
-
-The `adk web`, `adk api_server`, and `adk deploy cloud_run` commands all accept a `--log_level` option.
 
 To start the web server with `DEBUG` level logging, run:
 
@@ -58,6 +56,16 @@ adk web --log_level DEBUG path/to/your/agents_dir
 ```
 
 The available log levels for the `--log_level` option are: `DEBUG`, `INFO` (default), `WARNING`, `ERROR`, `CRITICAL`.
+
+#### Capture prompt content
+
+By default a prompt content is elided in logs for security. You can enable prompt logging using the environment variable:
+
+```bash
+export OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=true
+```
+
+> **Note:**  The OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT setting logs the full content of user prompts and agent responses. This is useful for debugging but may capture sensitive data or PII. In production, set this to false or ensure you have appropriate data handling policies in place.
 
 #### OTLP export
 
@@ -98,6 +106,16 @@ logging.basicConfig(
 )
 ```
 
+#### Capture prompt content
+
+You can enable full prompt logging programmatically by setting an environment variable:
+
+```python
+import os
+
+os.environ["OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT"] = True
+```
+
 #### OTLP export
 
 To export logs to an OpenTelemetry Collector (or an OTLP-compatible backend) programmatically:
@@ -131,15 +149,9 @@ maybe_set_otel_providers([gcp_exporters])
 
 ### Go programmatic configuration
 
-#### Logging level
+#### Capture prompt content
 
-By default, prompt content is elided in logs for security. You can enable prompt logging using the environment variable:
-
-```bash
-export OTEL_INSTRUMENTATION_GENAI_CAPTURE_MESSAGE_CONTENT=true
-```
-
-Or programmatically when initializing telemetry:
+You can enable full prompt logging programmatically when initializing telemetry:
 
 ```go
 package main
