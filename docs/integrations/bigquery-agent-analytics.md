@@ -64,7 +64,137 @@ The following table lists all event types the plugin logs. For detailed payload 
 | `HITL_INPUT_REQUEST_COMPLETED` | User provides input response | synthetic tool name, result | *(base table only)* |
 | `A2A_INTERACTION` | Remote A2A call completes | response, task ID, context ID, request/response | `v_a2a_interaction` |
 
-## Prerequisites
+## Quickstart
+
+Add the plugin to your agent's `App` object. For prerequisites, see [Prerequisites](#prerequisites).
+
+```python title="agent.py"
+import os
+from google.adk.agents import Agent
+from google.adk.apps import App
+from google.adk.models.google_llm import Gemini
+from google.adk.plugins.bigquery_agent_analytics_plugin import BigQueryAgentAnalyticsPlugin
+
+os.environ['GOOGLE_CLOUD_PROJECT'] = 'your-gcp-project-id'
+os.environ['GOOGLE_GENAI_USE_VERTEXAI'] = 'True'
+
+plugin = BigQueryAgentAnalyticsPlugin(
+    project_id="your-gcp-project-id",
+    dataset_id="your-big-query-dataset-id",
+)
+
+root_agent = Agent(
+    model=Gemini(model="gemini-flash-latest"),
+    name='my_agent',
+    instruction="You are a helpful assistant.",
+)
+
+app = App(
+    name="my_agent",
+    root_agent=root_agent,
+    plugins=[plugin],
+)
+```
+
+### Run and test agent
+
+Test the plugin by running the agent and making a few requests through the chat
+interface, such as "tell me what you can do" or  "List datasets in my cloud project <your-gcp-project-id> ". These actions create events which are
+recorded in your Google Cloud project BigQuery instance. Once these events have
+been processed, you can view the data for them in the [BigQuery Console](https://console.cloud.google.com/bigquery), using this query
+
+```sql
+SELECT timestamp, event_type, content
+FROM `your-gcp-project-id.your-big-query-dataset-id.agent_events`
+ORDER BY timestamp DESC
+LIMIT 20;
+```
+
+??? example "Full example with GCS offloading, OpenTelemetry, and BigQuery tools"
+
+    ```python title="my_bq_agent/agent.py"
+    # my_bq_agent/agent.py
+    import os
+    import google.auth
+    from google.adk.apps import App
+    from google.adk.plugins.bigquery_agent_analytics_plugin import BigQueryAgentAnalyticsPlugin, BigQueryLoggerConfig
+    from google.adk.agents import Agent
+    from google.adk.models.google_llm import Gemini
+    from google.adk.tools.bigquery import BigQueryToolset, BigQueryCredentialsConfig
+
+
+    # --- OpenTelemetry TracerProvider Setup (Optional) ---
+    # ADK includes OpenTelemetry as a core dependency.
+    # Configuring a TracerProvider enables full distributed tracing
+    # (populates trace_id, span_id with standard OTel identifiers).
+    # If no TracerProvider is configured, the plugin falls back to internal
+    # UUIDs for span correlation while still preserving the parent-child hierarchy.
+    from opentelemetry import trace
+    from opentelemetry.sdk.trace import TracerProvider
+    trace.set_tracer_provider(TracerProvider())
+
+    # --- Configuration ---
+    PROJECT_ID = os.environ.get("GOOGLE_CLOUD_PROJECT", "your-gcp-project-id")
+    DATASET_ID = os.environ.get("BIG_QUERY_DATASET_ID", "your-big-query-dataset-id")
+    # GOOGLE_CLOUD_LOCATION must be a valid Agent Platform region (e.g., "us-central1").
+    # BQ_LOCATION is the BigQuery dataset location, which can be a multi-region
+    # like "US" or "EU", or a single region like "us-central1".
+    VERTEX_LOCATION = os.environ.get("GOOGLE_CLOUD_LOCATION", "us-central1")
+    BQ_LOCATION = os.environ.get("BQ_LOCATION", "US")
+    GCS_BUCKET = os.environ.get("GCS_BUCKET_NAME", "your-gcs-bucket-name") # Optional
+
+    if PROJECT_ID == "your-gcp-project-id":
+        raise ValueError("Please set GOOGLE_CLOUD_PROJECT or update the code.")
+
+    # --- CRITICAL: Set environment variables BEFORE Gemini instantiation ---
+    os.environ['GOOGLE_CLOUD_PROJECT'] = PROJECT_ID
+    os.environ['GOOGLE_CLOUD_LOCATION'] = VERTEX_LOCATION
+    os.environ['GOOGLE_GENAI_USE_VERTEXAI'] = 'True'
+
+    # --- Initialize the Plugin with Config ---
+    bq_config = BigQueryLoggerConfig(
+        enabled=True,
+        gcs_bucket_name=GCS_BUCKET, # Enable GCS offloading for multimodal content
+        log_multi_modal_content=True,
+        max_content_length=500 * 1024, # 500 KB limit for inline text
+        batch_size=1, # Default is 1 for low latency, increase for high throughput
+        shutdown_timeout=10.0
+    )
+
+    bq_logging_plugin = BigQueryAgentAnalyticsPlugin(
+        project_id=PROJECT_ID,
+        dataset_id=DATASET_ID,
+        table_id="agent_events", # default table name is agent_events
+        config=bq_config,
+        location=BQ_LOCATION
+    )
+
+    # --- Initialize Tools and Model ---
+    credentials, _ = google.auth.default(scopes=["https://www.googleapis.com/auth/cloud-platform"])
+    bigquery_toolset = BigQueryToolset(
+        credentials_config=BigQueryCredentialsConfig(credentials=credentials)
+    )
+
+    llm = Gemini(model="gemini-flash-latest")
+
+    root_agent = Agent(
+        model=llm,
+        name='my_bq_agent',
+        instruction="You are a helpful assistant with access to BigQuery tools.",
+        tools=[bigquery_toolset]
+    )
+
+    # --- Create the App ---
+    app = App(
+        name="my_bq_agent",
+        root_agent=root_agent,
+        plugins=[bq_logging_plugin],
+    )
+    ```
+
+> Deploying to Agent Runtime? See [Deploy to Agent Runtime](#deploy-agent-runtime).
+
+## Prerequisites {#prerequisites}
 
 -   **Google Cloud Project** with the **BigQuery API** enabled.
 -   **BigQuery Dataset:** Create a dataset to store logging tables before
@@ -91,371 +221,7 @@ For the agent to work properly, the principal (e.g., service account, user accou
 * `roles/bigquery.dataEditor` at Table Level to write log/event data.
 * **If using GCS offloading:** `roles/storage.objectCreator` and `roles/storage.objectViewer` on the target bucket.
 
-## Use with agent
-
-You use the BigQuery Agent Analytics Plugin by configuring and registering it with
-your ADK agent's App object. The following example shows an implementation of an
-agent with this plugin, including GCS offloading:
-
-```python title="my_bq_agent/agent.py"
-# my_bq_agent/agent.py
-import os
-import google.auth
-from google.adk.apps import App
-from google.adk.plugins.bigquery_agent_analytics_plugin import BigQueryAgentAnalyticsPlugin, BigQueryLoggerConfig
-from google.adk.agents import Agent
-from google.adk.models.google_llm import Gemini
-from google.adk.tools.bigquery import BigQueryToolset, BigQueryCredentialsConfig
-
-
-# --- OpenTelemetry TracerProvider Setup (Optional) ---
-# ADK includes OpenTelemetry as a core dependency.
-# Configuring a TracerProvider enables full distributed tracing
-# (populates trace_id, span_id with standard OTel identifiers).
-# If no TracerProvider is configured, the plugin falls back to internal
-# UUIDs for span correlation while still preserving the parent-child hierarchy.
-from opentelemetry import trace
-from opentelemetry.sdk.trace import TracerProvider
-trace.set_tracer_provider(TracerProvider())
-
-# --- Configuration ---
-PROJECT_ID = os.environ.get("GOOGLE_CLOUD_PROJECT", "your-gcp-project-id")
-DATASET_ID = os.environ.get("BIG_QUERY_DATASET_ID", "your-big-query-dataset-id")
-# GOOGLE_CLOUD_LOCATION must be a valid Agent Platform region (e.g., "us-central1").
-# BQ_LOCATION is the BigQuery dataset location, which can be a multi-region
-# like "US" or "EU", or a single region like "us-central1".
-VERTEX_LOCATION = os.environ.get("GOOGLE_CLOUD_LOCATION", "us-central1")
-BQ_LOCATION = os.environ.get("BQ_LOCATION", "US")
-GCS_BUCKET = os.environ.get("GCS_BUCKET_NAME", "your-gcs-bucket-name") # Optional
-
-if PROJECT_ID == "your-gcp-project-id":
-    raise ValueError("Please set GOOGLE_CLOUD_PROJECT or update the code.")
-
-# --- CRITICAL: Set environment variables BEFORE Gemini instantiation ---
-os.environ['GOOGLE_CLOUD_PROJECT'] = PROJECT_ID
-os.environ['GOOGLE_CLOUD_LOCATION'] = VERTEX_LOCATION
-os.environ['GOOGLE_GENAI_USE_VERTEXAI'] = 'True'
-
-# --- Initialize the Plugin with Config ---
-bq_config = BigQueryLoggerConfig(
-    enabled=True,
-    gcs_bucket_name=GCS_BUCKET, # Enable GCS offloading for multimodal content
-    log_multi_modal_content=True,
-    max_content_length=500 * 1024, # 500 KB limit for inline text
-    batch_size=1, # Default is 1 for low latency, increase for high throughput
-    shutdown_timeout=10.0
-)
-
-bq_logging_plugin = BigQueryAgentAnalyticsPlugin(
-    project_id=PROJECT_ID,
-    dataset_id=DATASET_ID,
-    table_id="agent_events", # default table name is agent_events
-    config=bq_config,
-    location=BQ_LOCATION
-)
-
-# --- Initialize Tools and Model ---
-credentials, _ = google.auth.default(scopes=["https://www.googleapis.com/auth/cloud-platform"])
-bigquery_toolset = BigQueryToolset(
-    credentials_config=BigQueryCredentialsConfig(credentials=credentials)
-)
-
-llm = Gemini(model="gemini-flash-latest")
-
-root_agent = Agent(
-    model=llm,
-    name='my_bq_agent',
-    instruction="You are a helpful assistant with access to BigQuery tools.",
-    tools=[bigquery_toolset]
-)
-
-# --- Create the App ---
-app = App(
-    name="my_bq_agent",
-    root_agent=root_agent,
-    plugins=[bq_logging_plugin],
-)
-```
-
-### Run and test agent
-
-Test the plugin by running the agent and making a few requests through the chat
-interface, such as "tell me what you can do" or  "List datasets in my cloud project <your-gcp-project-id> ". These actions create events which are
-recorded in your Google Cloud project BigQuery instance. Once these events have
-been processed, you can view the data for them in the [BigQuery Console](https://console.cloud.google.com/bigquery), using this query
-
-```sql
-SELECT timestamp, event_type, content
-FROM `your-gcp-project-id.your-big-query-dataset-id.agent_events`
-ORDER BY timestamp DESC
-LIMIT 20;
-```
-
-## Deploy to Agent Runtime with the plugin {#deploy-agent-runtime}
-
-You can deploy an agent with the BigQuery Agent Analytics plugin to
-[Agent Runtime](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview).
-This section walks through the steps to deploy using the ADK CLI, and
-alternatively using the Agent Platform SDK programmatically.
-
-!!! important "Version Requirement"
-
-    Use ADK Python version **1.24.0 or higher** to deploy with this plugin to
-    Agent Runtime. Earlier versions had an issue where the plugin's asynchronous
-    log writer could be terminated by the serverless runtime before flushing
-    pending events. Starting from 1.24.0, the plugin performs a synchronous
-    flush at the end of each invocation to ensure all events are written.
-
-### Prerequisites
-
-Before deploying, ensure you have completed the general
-[Agent Runtime setup](/deploy/agent-runtime/deploy/#setup-cloud-project),
-including:
-
-1.  A Google Cloud project with the **Agent Platform API** and **Cloud Resource
-    Manager API** enabled.
-2.  A **BigQuery dataset** in the target project (or a cross-project dataset
-    with the correct permissions).
-3.  A **Cloud Storage staging bucket** for deployment artifacts.
-4.  The deploying service account has the IAM roles listed in
-    [IAM permissions](#iam-permissions).
-5.  Your coding environment is
-    [authenticated](/deploy/agent-runtime/deploy/#prerequisites-coding-env)
-    with `gcloud auth login` and `gcloud auth application-default login`.
-
-### Step 1: Define the agent and plugin
-
-Create your agent project folder with an `App` object that includes the plugin.
-The `App` object is required for Agent Runtime deployments with plugins.
-
-```
-my_bq_agent/
-├── __init__.py
-├── agent.py
-└── requirements.txt
-```
-
-```python title="my_bq_agent/__init__.py"
-from . import agent
-```
-
-```python title="my_bq_agent/agent.py"
-import os
-import google.auth
-from google.adk.agents import Agent
-from google.adk.apps import App
-from google.adk.models.google_llm import Gemini
-from google.adk.plugins.bigquery_agent_analytics_plugin import (
-    BigQueryAgentAnalyticsPlugin,
-    BigQueryLoggerConfig,
-)
-from google.adk.tools.bigquery import BigQueryToolset, BigQueryCredentialsConfig
-
-# --- Configuration ---
-PROJECT_ID = os.environ.get("GOOGLE_CLOUD_PROJECT", "your-gcp-project-id")
-DATASET_ID = os.environ.get("BQ_DATASET", "agent_analytics")
-# BQ_LOCATION is the BigQuery dataset location (multi-region "US"/"EU" or
-# a single region like "us-central1"). This is separate from the Agent Platform
-# region used by GOOGLE_CLOUD_LOCATION.
-BQ_LOCATION = os.environ.get("BQ_LOCATION", "US")
-
-os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "True"
-
-# --- Plugin ---
-bq_analytics_plugin = BigQueryAgentAnalyticsPlugin(
-    project_id=PROJECT_ID,
-    dataset_id=DATASET_ID,
-    location=BQ_LOCATION,
-    config=BigQueryLoggerConfig(
-        batch_size=1,
-        batch_flush_interval=0.5,
-        log_session_metadata=True,
-    ),
-)
-
-# --- Tools ---
-credentials, _ = google.auth.default(
-    scopes=["https://www.googleapis.com/auth/cloud-platform"]
-)
-bigquery_toolset = BigQueryToolset(
-    credentials_config=BigQueryCredentialsConfig(credentials=credentials)
-)
-
-# --- Agent ---
-root_agent = Agent(
-    model=Gemini(model="gemini-flash-latest"),
-    name="my_bq_agent",
-    instruction="You are a helpful assistant with access to BigQuery tools.",
-    tools=[bigquery_toolset],
-)
-
-# --- App (required for Agent Runtime with plugins) ---
-app = App(
-    name="my_bq_agent",
-    root_agent=root_agent,
-    plugins=[bq_analytics_plugin],
-)
-```
-
-```text title="my_bq_agent/requirements.txt"
-google-adk[bigquery]
-google-cloud-bigquery-storage
-pyarrow
-opentelemetry-api
-opentelemetry-sdk
-```
-
-### Step 2: Deploy using ADK CLI
-
-Use the `adk deploy agent_engine` command to deploy the agent. The `--adk_app`
-flag tells the CLI which `App` object to use:
-
-```shell
-PROJECT_ID=your-gcp-project-id
-LOCATION=us-central1
-
-adk deploy agent_engine \
-    --project=$PROJECT_ID \
-    --region=$LOCATION \
-    --staging_bucket=gs://your-staging-bucket \
-    --display_name="My BQ Analytics Agent" \
-    --adk_app=agent.app \
-    my_bq_agent
-```
-
-!!! tip "`--adk_app` flag"
-
-    The `--adk_app` flag specifies the module path and variable name of the
-    `App` object (in the format `module.variable`). In this example,
-    `agent.app` refers to the `app` variable in `agent.py`. This ensures the
-    deployment correctly picks up the plugin configuration.
-
-Once successfully deployed, you should see output like:
-
-```shell
-AgentEngine created. Resource name: projects/123456789/locations/us-central1/reasoningEngines/751619551677906944
-```
-
-Note the **Resource name** for the next step.
-
-### Step 3: Test the deployed agent
-
-After deployment, you can query the agent using the Agent Platform SDK:
-
-```python title="test_deployed_agent.py"
-import uuid
-import vertexai
-
-PROJECT_ID = "your-gcp-project-id"
-LOCATION = "us-central1"
-AGENT_ID = "751619551677906944"  # from deployment output
-
-vertexai.init(project=PROJECT_ID, location=LOCATION)
-client = vertexai.Client(project=PROJECT_ID, location=LOCATION)
-
-agent = client.agent_engines.get(
-    name=f"projects/{PROJECT_ID}/locations/{LOCATION}/reasoningEngines/{AGENT_ID}"
-)
-
-user_id = f"test_user_{uuid.uuid4().hex[:8]}"
-for chunk in agent.stream_query(
-    message="List datasets in my project", user_id=user_id
-):
-    print(chunk, end="", flush=True)
-```
-
-### Step 4: Verify events in BigQuery
-
-After sending a few queries to the deployed agent, verify that events are being
-logged by querying your BigQuery table:
-
-```sql
-SELECT timestamp, event_type, agent, content
-FROM `your-gcp-project-id.agent_analytics.agent_events`
-ORDER BY timestamp DESC
-LIMIT 20;
-```
-
-You should see events such as `INVOCATION_STARTING`, `LLM_REQUEST`,
-`LLM_RESPONSE`, `TOOL_STARTING`, `TOOL_COMPLETED`, and `INVOCATION_COMPLETED`.
-
-### Alternative: Deploy using the Agent Platform SDK
-
-You can also deploy programmatically using the Agent Platform SDK directly. This is
-useful for CI/CD pipelines or custom deployment workflows:
-
-```python title="deploy.py"
-import vertexai
-from vertexai import agent_engines
-from my_bq_agent.agent import app
-
-PROJECT_ID = "your-gcp-project-id"
-LOCATION = "us-central1"
-STAGING_BUCKET = "gs://your-staging-bucket"
-
-vertexai.init(
-    project=PROJECT_ID, location=LOCATION, staging_bucket=STAGING_BUCKET
-)
-client = vertexai.Client(project=PROJECT_ID, location=LOCATION)
-
-remote_app = client.agent_engines.create(
-    agent=app,
-    config={
-        "display_name": "My BQ Analytics Agent",
-        "staging_bucket": STAGING_BUCKET,
-        "requirements": [
-            "google-adk[bigquery]",
-            "google-cloud-aiplatform[agent_engines]",
-            "google-cloud-bigquery-storage",
-            "pyarrow",
-            "opentelemetry-api",
-            "opentelemetry-sdk",
-        ],
-    },
-)
-print(f"Deployed agent: {remote_app.api_resource.name}")
-```
-
-### Troubleshooting
-
-If events are not appearing in your BigQuery table after deployment:
-
-1.  **Check ADK version**: Ensure `google-adk>=1.24.0` is in your requirements.
-    Earlier versions do not flush pending events before the serverless runtime
-    suspends the process.
-
-2.  **Enable debug logging**: Add the following to the top of your `agent.py` to
-    surface any silent errors:
-
-    ```python
-    import logging
-    logging.basicConfig(level=logging.INFO)
-    logging.getLogger("google_adk").setLevel(logging.DEBUG)
-    ```
-
-3.  **Check IAM permissions**: The Agent Runtime service account needs
-    `roles/bigquery.dataEditor` on the target table and `roles/bigquery.jobUser`
-    on the project. For **cross-project** logging, also ensure the BigQuery API
-    is enabled in the source project and the service account has
-    `bigquery.tables.updateData` on the destination table.
-
-4.  **Verify plugin initialization**: In Cloud Logging, filter by
-    `resource.type="reasoning_engine"` and look for plugin startup messages or
-    error logs.
-
-5.  **Use immediate flush for debugging**: Set `batch_size=1` and
-    `batch_flush_interval=0.1` in `BigQueryLoggerConfig` to rule out buffering
-    issues.
-
-## Tracing and Observability
-
-The plugin supports **OpenTelemetry** for distributed tracing. OpenTelemetry is included as a core dependency of ADK and is always available.
-
-- **Automatic Span Management**: The plugin automatically generates spans for Agent execution, LLM calls, and Tool executions.
-- **OpenTelemetry Integration**: If a `TracerProvider` is configured (as shown in the example above), the plugin will use valid OTel spans, populating `trace_id`, `span_id`, and `parent_span_id` with standard OTel identifiers. This allows you to correlate agent logs with other services in your distributed system.
-- **Fallback Mechanism**: If no `TracerProvider` is configured (i.e., only the default no-op provider is active), the plugin automatically falls back to generating internal UUIDs for spans and uses the `invocation_id` as the trace ID. This ensures that the parent-child hierarchy (Agent -> Span -> Tool/LLM) is *always* preserved in the BigQuery logs, even without a configured `TracerProvider`.
-
-## Configuration options
+## Configuration options {#configuration-options}
 
 ### Constructor parameters
 
@@ -550,24 +316,6 @@ config = BigQueryLoggerConfig(
 
 plugin = BigQueryAgentAnalyticsPlugin(..., config=config)
 ```
-
-### Public methods
-
-The plugin exposes several public methods for lifecycle management:
-
--   **`await plugin.flush()`**: Flush all pending events to BigQuery. Call this before shutdown to avoid data loss.
--   **`await plugin.shutdown(timeout=None)`**: Gracefully shut down the plugin, flushing pending events and releasing resources. The optional `timeout` parameter overrides `shutdown_timeout` from the config.
--   **`await plugin.create_analytics_views()`**: Manually (re-)create all per-event-type analytics views. Useful after a schema upgrade or when views need to be refreshed.
--   **Async context manager**: The plugin supports `async with` for automatic startup and shutdown:
-
-    ```python
-    async with BigQueryAgentAnalyticsPlugin(
-        project_id=PROJECT_ID, dataset_id=DATASET_ID
-    ) as plugin:
-        # plugin is initialized and ready to use
-        ...
-    # plugin.shutdown() is called automatically on exit
-    ```
 
 ## Schema and production setup
 
@@ -991,11 +739,11 @@ Logged when an A2A remote agent call completes.
 }
 ```
 
-#### GCS Offloading Examples (Multimodal & Large Text)
+## Storage behavior: GCS offloading
 
-When `gcs_bucket_name` is configured, large text and multimodal content (images, audio, etc.) are automatically offloaded to GCS. The `content` column will contain a summary or placeholder, while `content_parts` contains the `object_ref` pointing to the GCS URI.
+When `gcs_bucket_name` is configured in `BigQueryLoggerConfig`, the plugin automatically offloads large text and multimodal content (images, audio, etc.) to Google Cloud Storage. The `content` column will contain a summary or placeholder, while `content_parts` stores the `object_ref` pointing to the GCS URI. See also `connection_id` and `max_content_length` in [Configuration options](#configuration-options).
 
-**Offloaded Text Example**
+### Offloaded Text Example
 
 ```json
 {
@@ -1016,7 +764,7 @@ When `gcs_bucket_name` is configured, large text and multimodal content (images,
 }
 ```
 
-**Offloaded Image Example**
+### Offloaded Image Example
 
 ```json
 {
@@ -1037,7 +785,7 @@ When `gcs_bucket_name` is configured, large text and multimodal content (images,
 }
 ```
 
-**Querying Offloaded Content (Get Signed URLs)**
+### Querying Offloaded Content (Get Signed URLs)
 
 ```sql
 SELECT
@@ -1055,9 +803,11 @@ ORDER BY timestamp DESC
 LIMIT 10;
 ```
 
-## Advanced analysis queries
+## Query recipes
 
-### Trace a specific conversation turn using trace_id
+### Debug a run
+
+#### Trace a specific conversation turn using trace_id
 
 ```sql
 SELECT timestamp, event_type, agent, JSON_VALUE(content, '$.response') as summary
@@ -1066,7 +816,48 @@ WHERE trace_id = 'your-trace-id'
 ORDER BY timestamp ASC;
 ```
 
-### Token usage analysis
+#### Span Hierarchy & Duration Analysis
+
+```sql
+SELECT
+  span_id,
+  parent_span_id,
+  event_type,
+  timestamp,
+  -- Extract duration from latency_ms for completed operations
+  CAST(JSON_VALUE(latency_ms, '$.total_ms') AS INT64) as duration_ms,
+  -- Identify the specific tool or operation
+  COALESCE(
+    JSON_VALUE(content, '$.tool'),
+    'LLM_CALL'
+  ) as operation
+FROM `your-gcp-project-id.your-dataset-id.agent_events`
+WHERE trace_id = 'your-trace-id'
+  AND event_type IN ('LLM_RESPONSE', 'TOOL_COMPLETED')
+ORDER BY timestamp ASC;
+```
+
+#### Error Analysis (LLM & Tool Errors)
+
+Using views (recommended):
+
+```sql
+-- Tool errors with provenance
+SELECT timestamp, agent, tool_name, tool_origin, error_message, total_ms
+FROM `your-gcp-project-id.your-dataset-id.v_tool_error`
+ORDER BY timestamp DESC
+LIMIT 20;
+
+-- LLM errors
+SELECT timestamp, agent, error_message, total_ms
+FROM `your-gcp-project-id.your-dataset-id.v_llm_error`
+ORDER BY timestamp DESC
+LIMIT 20;
+```
+
+### Monitor cost and performance
+
+#### Token usage analysis
 
 Using the `v_llm_response` view (recommended):
 
@@ -1087,40 +878,7 @@ FROM `your-gcp-project-id.your-dataset-id.agent_events`
 WHERE event_type = 'LLM_RESPONSE';
 ```
 
-### Querying Multimodal Content (using content_parts and ObjectRef)
-
-```sql
-SELECT
-  timestamp,
-  part.mime_type,
-  part.object_ref.uri as gcs_uri
-FROM `your-gcp-project-id.your-dataset-id.agent_events`,
-UNNEST(content_parts) as part
-WHERE part.mime_type LIKE 'image/%'
-ORDER BY timestamp DESC;
-```
-
-### Analyze Multimodal Content with BigQuery Remote Model (Gemini)
-
-```sql
-SELECT
-  logs.session_id,
-  -- Get a signed URL for the image
-  STRING(OBJ.GET_ACCESS_URL(parts.object_ref, "r").access_urls.read_url) as signed_url,
-  -- Analyze the image using a remote model (e.g., gemini-pro-vision)
-  AI.GENERATE(
-    ('Describe this image briefly. What company logo?', parts.object_ref)
-  ) AS generated_result
-FROM
-  `your-gcp-project-id.your-dataset-id.agent_events` logs,
-  UNNEST(logs.content_parts) AS parts
-WHERE
-  parts.mime_type LIKE 'image/%'
-ORDER BY logs.timestamp DESC
-LIMIT 1;
-```
-
-### Latency Analysis (LLM & Tools)
+#### Latency Analysis (LLM & Tools)
 
 Using views (recommended):
 
@@ -1147,46 +905,9 @@ WHERE event_type IN ('LLM_RESPONSE', 'TOOL_COMPLETED')
 GROUP BY event_type;
 ```
 
-### Span Hierarchy & Duration Analysis
+### Inspect tools and interactions
 
-```sql
-SELECT
-  span_id,
-  parent_span_id,
-  event_type,
-  timestamp,
-  -- Extract duration from latency_ms for completed operations
-  CAST(JSON_VALUE(latency_ms, '$.total_ms') AS INT64) as duration_ms,
-  -- Identify the specific tool or operation
-  COALESCE(
-    JSON_VALUE(content, '$.tool'),
-    'LLM_CALL'
-  ) as operation
-FROM `your-gcp-project-id.your-dataset-id.agent_events`
-WHERE trace_id = 'your-trace-id'
-  AND event_type IN ('LLM_RESPONSE', 'TOOL_COMPLETED')
-ORDER BY timestamp ASC;
-```
-
-### Error Analysis (LLM & Tool Errors)
-
-Using views (recommended):
-
-```sql
--- Tool errors with provenance
-SELECT timestamp, agent, tool_name, tool_origin, error_message, total_ms
-FROM `your-gcp-project-id.your-dataset-id.v_tool_error`
-ORDER BY timestamp DESC
-LIMIT 20;
-
--- LLM errors
-SELECT timestamp, agent, error_message, total_ms
-FROM `your-gcp-project-id.your-dataset-id.v_llm_error`
-ORDER BY timestamp DESC
-LIMIT 20;
-```
-
-### Tool Provenance Analysis
+#### Tool Provenance Analysis
 
 Using the `v_tool_completed` view (recommended):
 
@@ -1201,7 +922,7 @@ GROUP BY tool_origin, tool_name
 ORDER BY call_count DESC;
 ```
 
-### HITL Interaction Analysis
+#### HITL Interaction Analysis
 
 ```sql
 SELECT
@@ -1216,8 +937,42 @@ ORDER BY timestamp DESC
 LIMIT 20;
 ```
 
+### Analyze multimodal content
 
-### AI-Powered Root Cause Analysis (Agent Ops)
+#### Querying Multimodal Content (using content_parts and ObjectRef)
+
+```sql
+SELECT
+  timestamp,
+  part.mime_type,
+  part.object_ref.uri as gcs_uri
+FROM `your-gcp-project-id.your-dataset-id.agent_events`,
+UNNEST(content_parts) as part
+WHERE part.mime_type LIKE 'image/%'
+ORDER BY timestamp DESC;
+```
+
+#### Analyze Multimodal Content with BigQuery Remote Model (Gemini)
+
+```sql
+SELECT
+  logs.session_id,
+  -- Get a signed URL for the image
+  STRING(OBJ.GET_ACCESS_URL(parts.object_ref, "r").access_urls.read_url) as signed_url,
+  -- Analyze the image using a remote model (e.g., gemini-pro-vision)
+  AI.GENERATE(
+    ('Describe this image briefly. What company logo?', parts.object_ref)
+  ) AS generated_result
+FROM
+  `your-gcp-project-id.your-dataset-id.agent_events` logs,
+  UNNEST(logs.content_parts) AS parts
+WHERE
+  parts.mime_type LIKE 'image/%'
+ORDER BY logs.timestamp DESC
+LIMIT 1;
+```
+
+### AI-powered root cause analysis
 
 Automatically analyze failed sessions to determine the root cause of errors using BigQuery ML and Gemini.
 
@@ -1260,13 +1015,261 @@ You can also use [BigQuery Conversational Analytics](https://cloud.google.com/bi
 *   "What are the most common tool calls?"
 *   "Identify sessions with high token usage"
 
-## Consuming logged data with BigQuery Agent Analytics SDK
+## Deploy to Agent Runtime with the plugin {#deploy-agent-runtime}
 
-The [BigQuery Agent Analytics SDK](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-SDK/tree/main) provides a convenient way to consume and analyze the data logged by the BigQuery Agent Analytics plugin. The SDK offers pre-built utilities for querying, aggregating, and visualizing your agent's operational data directly from BigQuery.
+You can deploy an agent with the BigQuery Agent Analytics plugin to
+[Agent Runtime](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview).
+This section walks through the steps to deploy using the ADK CLI, and
+alternatively using the Agent Platform SDK programmatically.
 
-### Dashboard
+!!! important "Version Requirement"
 
-The BigQuery Agent Analytics SDK includes an [example Jupyter notebook](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-SDK/blob/main/examples/dashboard_v2.ipynb) that demonstrates how to query and visualize your agent's performance data. Use it as a starting point to build your own custom dashboards tailored to your BigQuery Agent Analytics dataset.
+    Use ADK Python version **1.24.0 or higher** to deploy with this plugin to
+    Agent Runtime. Earlier versions had an issue where the plugin's asynchronous
+    log writer could be terminated by the serverless runtime before flushing
+    pending events. Starting from 1.24.0, the plugin performs a synchronous
+    flush at the end of each invocation to ensure all events are written.
+
+### Prerequisites
+
+Before deploying, ensure you have completed the general
+[Agent Runtime setup](/deploy/agent-runtime/deploy/#setup-cloud-project),
+including:
+
+1.  A Google Cloud project with the **Agent Platform API** and **Cloud Resource
+    Manager API** enabled.
+2.  A **BigQuery dataset** in the target project (or a cross-project dataset
+    with the correct permissions).
+3.  A **Cloud Storage staging bucket** for deployment artifacts.
+4.  The deploying service account has the IAM roles listed in
+    [IAM permissions](#iam-permissions).
+5.  Your coding environment is
+    [authenticated](/deploy/agent-runtime/deploy/#prerequisites-coding-env)
+    with `gcloud auth login` and `gcloud auth application-default login`.
+
+### Step 1: Define the agent and plugin
+
+Create your agent project folder with an `App` object that includes the plugin.
+The `App` object is required for Agent Runtime deployments with plugins.
+
+```
+my_bq_agent/
+├── __init__.py
+├── agent.py
+└── requirements.txt
+```
+
+```python title="my_bq_agent/__init__.py"
+from . import agent
+```
+
+```python title="my_bq_agent/agent.py"
+import os
+import google.auth
+from google.adk.agents import Agent
+from google.adk.apps import App
+from google.adk.models.google_llm import Gemini
+from google.adk.plugins.bigquery_agent_analytics_plugin import (
+    BigQueryAgentAnalyticsPlugin,
+    BigQueryLoggerConfig,
+)
+from google.adk.tools.bigquery import BigQueryToolset, BigQueryCredentialsConfig
+
+# --- Configuration ---
+PROJECT_ID = os.environ.get("GOOGLE_CLOUD_PROJECT", "your-gcp-project-id")
+DATASET_ID = os.environ.get("BQ_DATASET", "agent_analytics")
+# BQ_LOCATION is the BigQuery dataset location (multi-region "US"/"EU" or
+# a single region like "us-central1"). This is separate from the Agent Platform
+# region used by GOOGLE_CLOUD_LOCATION.
+BQ_LOCATION = os.environ.get("BQ_LOCATION", "US")
+
+os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "True"
+
+# --- Plugin ---
+bq_analytics_plugin = BigQueryAgentAnalyticsPlugin(
+    project_id=PROJECT_ID,
+    dataset_id=DATASET_ID,
+    location=BQ_LOCATION,
+    config=BigQueryLoggerConfig(
+        batch_size=1,
+        batch_flush_interval=0.5,
+        log_session_metadata=True,
+    ),
+)
+
+# --- Tools ---
+credentials, _ = google.auth.default(
+    scopes=["https://www.googleapis.com/auth/cloud-platform"]
+)
+bigquery_toolset = BigQueryToolset(
+    credentials_config=BigQueryCredentialsConfig(credentials=credentials)
+)
+
+# --- Agent ---
+root_agent = Agent(
+    model=Gemini(model="gemini-flash-latest"),
+    name="my_bq_agent",
+    instruction="You are a helpful assistant with access to BigQuery tools.",
+    tools=[bigquery_toolset],
+)
+
+# --- App (required for Agent Runtime with plugins) ---
+app = App(
+    name="my_bq_agent",
+    root_agent=root_agent,
+    plugins=[bq_analytics_plugin],
+)
+```
+
+```text title="my_bq_agent/requirements.txt"
+google-adk[bigquery]
+google-cloud-bigquery-storage
+pyarrow
+opentelemetry-api
+opentelemetry-sdk
+```
+
+### Step 2: Deploy using ADK CLI
+
+Use the `adk deploy agent_engine` command to deploy the agent. The `--adk_app`
+flag tells the CLI which `App` object to use:
+
+```shell
+PROJECT_ID=your-gcp-project-id
+LOCATION=us-central1
+
+adk deploy agent_engine \
+    --project=$PROJECT_ID \
+    --region=$LOCATION \
+    --staging_bucket=gs://your-staging-bucket \
+    --display_name="My BQ Analytics Agent" \
+    --adk_app=agent.app \
+    my_bq_agent
+```
+
+!!! tip "`--adk_app` flag"
+
+    The `--adk_app` flag specifies the module path and variable name of the
+    `App` object (in the format `module.variable`). In this example,
+    `agent.app` refers to the `app` variable in `agent.py`. This ensures the
+    deployment correctly picks up the plugin configuration.
+
+Once successfully deployed, you should see output like:
+
+```shell
+AgentEngine created. Resource name: projects/123456789/locations/us-central1/reasoningEngines/751619551677906944
+```
+
+Note the **Resource name** for the next step.
+
+### Step 3: Test the deployed agent
+
+After deployment, you can query the agent using the Agent Platform SDK:
+
+```python title="test_deployed_agent.py"
+import uuid
+import vertexai
+
+PROJECT_ID = "your-gcp-project-id"
+LOCATION = "us-central1"
+AGENT_ID = "751619551677906944"  # from deployment output
+
+vertexai.init(project=PROJECT_ID, location=LOCATION)
+client = vertexai.Client(project=PROJECT_ID, location=LOCATION)
+
+agent = client.agent_engines.get(
+    name=f"projects/{PROJECT_ID}/locations/{LOCATION}/reasoningEngines/{AGENT_ID}"
+)
+
+user_id = f"test_user_{uuid.uuid4().hex[:8]}"
+for chunk in agent.stream_query(
+    message="List datasets in my project", user_id=user_id
+):
+    print(chunk, end="", flush=True)
+```
+
+### Step 4: Verify events in BigQuery
+
+After sending a few queries to the deployed agent, verify that events are being
+logged by querying your BigQuery table:
+
+```sql
+SELECT timestamp, event_type, agent, content
+FROM `your-gcp-project-id.agent_analytics.agent_events`
+ORDER BY timestamp DESC
+LIMIT 20;
+```
+
+You should see events such as `INVOCATION_STARTING`, `LLM_REQUEST`,
+`LLM_RESPONSE`, `TOOL_STARTING`, `TOOL_COMPLETED`, and `INVOCATION_COMPLETED`.
+
+### Alternative: Deploy using the Agent Platform SDK
+
+You can also deploy programmatically using the Agent Platform SDK directly. This is
+useful for CI/CD pipelines or custom deployment workflows:
+
+```python title="deploy.py"
+import vertexai
+from vertexai import agent_engines
+from my_bq_agent.agent import app
+
+PROJECT_ID = "your-gcp-project-id"
+LOCATION = "us-central1"
+STAGING_BUCKET = "gs://your-staging-bucket"
+
+vertexai.init(
+    project=PROJECT_ID, location=LOCATION, staging_bucket=STAGING_BUCKET
+)
+client = vertexai.Client(project=PROJECT_ID, location=LOCATION)
+
+remote_app = client.agent_engines.create(
+    agent=app,
+    config={
+        "display_name": "My BQ Analytics Agent",
+        "staging_bucket": STAGING_BUCKET,
+        "requirements": [
+            "google-adk[bigquery]",
+            "google-cloud-aiplatform[agent_engines]",
+            "google-cloud-bigquery-storage",
+            "pyarrow",
+            "opentelemetry-api",
+            "opentelemetry-sdk",
+        ],
+    },
+)
+print(f"Deployed agent: {remote_app.api_resource.name}")
+```
+
+### Troubleshooting
+
+If events are not appearing in your BigQuery table after deployment:
+
+1.  **Check ADK version**: Ensure `google-adk>=1.24.0` is in your requirements.
+    Earlier versions do not flush pending events before the serverless runtime
+    suspends the process.
+
+2.  **Enable debug logging**: Add the following to the top of your `agent.py` to
+    surface any silent errors:
+
+    ```python
+    import logging
+    logging.basicConfig(level=logging.INFO)
+    logging.getLogger("google_adk").setLevel(logging.DEBUG)
+    ```
+
+3.  **Check IAM permissions**: The Agent Runtime service account needs
+    `roles/bigquery.dataEditor` on the target table and `roles/bigquery.jobUser`
+    on the project. For **cross-project** logging, also ensure the BigQuery API
+    is enabled in the source project and the service account has
+    `bigquery.tables.updateData` on the destination table.
+
+4.  **Verify plugin initialization**: In Cloud Logging, filter by
+    `resource.type="reasoning_engine"` and look for plugin startup messages or
+    error logs.
+
+5.  **Use immediate flush for debugging**: Set `batch_size=1` and
+    `batch_flush_interval=0.1` in `BigQueryLoggerConfig` to rule out buffering
+    issues.
 
 ## Security: Avoid logging sensitive credentials {#security-credentials}
 
@@ -1368,7 +1371,35 @@ config = BigQueryLoggerConfig(
 -   **Audit your logs** periodically to verify no unexpected sensitive data is
     being captured.
 
-## Multiprocessing and fork safety
+## Operations
+
+### Tracing and observability
+
+The plugin supports **OpenTelemetry** for distributed tracing. OpenTelemetry is included as a core dependency of ADK and is always available.
+
+- **Automatic Span Management**: The plugin automatically generates spans for Agent execution, LLM calls, and Tool executions.
+- **OpenTelemetry Integration**: If a `TracerProvider` is configured (as shown in the example above), the plugin will use valid OTel spans, populating `trace_id`, `span_id`, and `parent_span_id` with standard OTel identifiers. This allows you to correlate agent logs with other services in your distributed system.
+- **Fallback Mechanism**: If no `TracerProvider` is configured (i.e., only the default no-op provider is active), the plugin automatically falls back to generating internal UUIDs for spans and uses the `invocation_id` as the trace ID. This ensures that the parent-child hierarchy (Agent -> Span -> Tool/LLM) is *always* preserved in the BigQuery logs, even without a configured `TracerProvider`.
+
+### Public methods
+
+The plugin exposes several public methods for lifecycle management:
+
+-   **`await plugin.flush()`**: Flush all pending events to BigQuery. Call this before shutdown to avoid data loss.
+-   **`await plugin.shutdown(timeout=None)`**: Gracefully shut down the plugin, flushing pending events and releasing resources. The optional `timeout` parameter overrides `shutdown_timeout` from the config.
+-   **`await plugin.create_analytics_views()`**: Manually (re-)create all per-event-type analytics views. Useful after a schema upgrade or when views need to be refreshed.
+-   **Async context manager**: The plugin supports `async with` for automatic startup and shutdown:
+
+    ```python
+    async with BigQueryAgentAnalyticsPlugin(
+        project_id=PROJECT_ID, dataset_id=DATASET_ID
+    ) as plugin:
+        # plugin is initialized and ready to use
+        ...
+    # plugin.shutdown() is called automatically on exit
+    ```
+
+### Multiprocessing and fork safety
 
 The plugin is fork-aware: it sets `GRPC_ENABLE_FORK_SUPPORT=1` before loading the gRPC C-core library and registers an `os.register_at_fork` handler that resets inherited runtime state (gRPC channels, write streams, event loops) in child processes. This means the plugin can survive `os.fork()` without leaking file descriptors or sending data on a parent's connection.
 
@@ -1382,6 +1413,14 @@ For Gunicorn deployments specifically:
 !!! note
 
     The fork-safety mechanism resets runtime state only. It does **not** replay events that were queued but not yet flushed in the parent process at the time of fork. Call `await plugin.flush()` before forking if you need to guarantee delivery.
+
+## Consuming logged data with BigQuery Agent Analytics SDK
+
+The [BigQuery Agent Analytics SDK](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-SDK/tree/main) provides a convenient way to consume and analyze the data logged by the BigQuery Agent Analytics plugin. The SDK offers pre-built utilities for querying, aggregating, and visualizing your agent's operational data directly from BigQuery.
+
+### Dashboard
+
+The BigQuery Agent Analytics SDK includes an [example Jupyter notebook](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-SDK/blob/main/examples/dashboard_v2.ipynb) that demonstrates how to query and visualize your agent's performance data. Use it as a starting point to build your own custom dashboards tailored to your BigQuery Agent Analytics dataset.
 
 ## Feedback
 We welcome your feedback on BigQuery Agent Analytics. If you have questions, suggestions, or encounter any issues, please reach out to the team at bqaa-feedback@google.com.
