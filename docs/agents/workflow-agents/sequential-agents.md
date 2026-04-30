@@ -22,6 +22,62 @@ When the `SequentialAgent`'s `Run Async` method is called, it performs the follo
 
 ![Sequential Agent](../../assets/sequential-agent.png){: width="600"}
 
+### Early Exit with `exit_sequence`
+
+The `SequentialAgent` supports early termination when a sub-agent encounters a terminal condition that makes continuing the sequence unnecessary or impossible.
+
+#### When to use early exit:
+- **Validation failures:** A validation agent detects critical errors
+- **Empty results:** A search agent finds no data to process
+- **Blocking conditions:** An agent hits an unrecoverable state
+- **Conditional logic:** Based on input analysis, remaining steps aren't needed
+
+#### Usage
+
+Sub-agents can call the `exit_sequence` tool to terminate the sequence early:
+
+```python
+from google.adk.tools import exit_sequence
+
+# In your agent's tool function
+def validate_input(tool_context: ToolContext):
+    if critical_validation_fails:
+        exit_sequence(tool_context)  # Stops the sequence here
+        return "Validation failed - terminating sequence"
+```
+
+#### Example: Search → Analysis → Report Pipeline
+
+```python
+from google.adk.agents import LlmAgent, SequentialAgent
+from google.adk.tools import exit_sequence, google_search
+
+search_agent = LlmAgent(
+    name="SearchAgent",
+    instruction="Search for results. If no useful results found, call exit_sequence.",
+    tools=[google_search, exit_sequence]
+)
+
+analysis_agent = LlmAgent(
+    name="AnalysisAgent", 
+    instruction="Analyze the search results."
+)
+
+report_agent = LlmAgent(
+    name="ReportAgent",
+    instruction="Generate final report."
+)
+
+# If search finds no results, analysis and report agents won't execute
+pipeline = SequentialAgent(sub_agents=[search_agent, analysis_agent, report_agent])
+```
+
+!!! note "Live Mode Support"
+    Early exit via `exit_sequence` is supported in both async and live streaming modes. In live mode, the escalate action provides immediate termination, whilst `task_completed()` remains available for natural completion signals.
+
+!!! info "Similar to LoopAgent"
+    The `exit_sequence` tool works similarly to [`exit_loop`](loop-agents.md) in LoopAgent, providing a consistent early-exit pattern across workflow agents.
+
 ### Full Example: Code Development Pipeline
 
 Consider a simplified code development pipeline:
