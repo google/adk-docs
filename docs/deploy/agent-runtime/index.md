@@ -1,7 +1,7 @@
 # Deploy to Agent Runtime
 
-<div class="language-support-tag" title="Agent Runtime currently supports only Python.">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
+<div class="language-support-tag" title="Agent Runtime currently supports Python and Go.">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-go">Go v1.2.0</span>
 </div>
 
 Google Cloud Agent Platform
@@ -39,12 +39,27 @@ purposes:
 
 ## Deployment payload {#payload}
 
-When you deploy your ADK agent project to Agent Runtime, the following content is
-uploaded to the service:
 
-- Your ADK agent code
-- Any dependencies declared in your ADK agent code
+=== "Python"
 
-The deployment *does not* include the ADK API server or the ADK web user
-interface libraries. The Agent Runtime service provides the libraries for ADK API
-server functionality.
+    When you deploy your ADK agent project to Agent Runtime, the following content is
+    uploaded to the service:
+
+    - Your ADK agent code
+    - Any dependencies declared in your ADK agent code
+
+    The deployment *does not* include the ADK API server or the ADK web user
+    interface libraries. The Agent Runtime service provides the libraries for ADK API
+    server functionality.
+
+=== "Go"
+
+    When you deploy your ADK project to Agent Runtime, the following content is uploaded to the server:
+
+    - Your ADK project source code
+
+    Please mind that Agent Runtime has it's own API for querying the agent. All you have to do is use a dedicated launcher:
+    ```go
+	l := agentengine.NewLauncher(agentEngineID)
+    err := l.Execute(ctx, config, os.Args[1:])
+    ```
