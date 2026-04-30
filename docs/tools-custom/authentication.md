@@ -136,6 +136,10 @@ specific interactive process with your ***Agent Client*** application.
 *   **SERVICE\_ACCOUNT:** Provides Google Cloud Service Account credentials as a
     JSON key or Application Default Credentials. This type typically exchanges a
     Bearer token.
+*   **GCP_AUTH_PROVIDER:** Leverages the GCP Agent Identity integration
+    ([`GcpAuthProviderScheme`](/integrations/agent-identity)) to automatically
+    handle 2-legged and 3-legged OAuth flows using Google Cloud's IAM
+    Connector Credentials service.
 
 ## Tools and integrations quick guide
 
