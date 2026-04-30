@@ -40,7 +40,7 @@ Version 1.26.0 adds **Auto Schema Upgrade** (safely add new columns to existing 
 
 ### Captured events summary
 
-The following table lists every event the plugin logs. For detailed payload examples, see [Event types and payloads](#event-types).
+The following table lists all event types the plugin logs. For detailed payload examples, see [Event types and payloads](#event-types).
 
 | Event Type | Captured When | Key Payload Fields | View |
 |:---|:---|:---|:---|
@@ -59,7 +59,9 @@ The following table lists every event the plugin logs. For detailed payload exam
 | `HITL_CREDENTIAL_REQUEST` | Credential request is emitted | synthetic tool name, args | `v_hitl_credential_request` |
 | `HITL_CONFIRMATION_REQUEST` | Confirmation request is emitted | synthetic tool name, args | `v_hitl_confirmation_request` |
 | `HITL_INPUT_REQUEST` | User input request is emitted | synthetic tool name, args | `v_hitl_input_request` |
-| `HITL_*_COMPLETED` | HITL response is received | synthetic tool name, result | *(base table only)* |
+| `HITL_CREDENTIAL_REQUEST_COMPLETED` | User provides credential response | synthetic tool name, result | *(base table only)* |
+| `HITL_CONFIRMATION_REQUEST_COMPLETED` | User provides confirmation response | synthetic tool name, result | *(base table only)* |
+| `HITL_INPUT_REQUEST_COMPLETED` | User provides input response | synthetic tool name, result | *(base table only)* |
 | `A2A_INTERACTION` | Remote A2A call completes | response, task ID, context ID, request/response | `v_a2a_interaction` |
 
 ## Prerequisites
