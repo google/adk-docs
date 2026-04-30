@@ -341,6 +341,7 @@ nav:
         - Standard deployment: deploy/agent-runtime/deploy.md
         - agents-cli: deploy/agent-runtime/agents-cli.md
         - Test deployed agents: deploy/agent-runtime/test.md
+        - Supported methods: deploy/agent-runtime/methods.md
       - Cloud Run: deploy/cloud-run.md
       - GKE: deploy/gke.md
     - Observability:

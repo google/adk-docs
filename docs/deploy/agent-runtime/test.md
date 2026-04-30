@@ -36,8 +36,9 @@ To find your project information with Google Cloud Console:
 1.  In the Google Cloud Console, navigate to the Agent Runtime page:
     [https://console.cloud.google.com/vertex-ai/agents/agent-engines](https://console.cloud.google.com/vertex-ai/agents/agent-engines)
 
-1.  At the top of the page, select **API URLs**, and then copy the **Query
-    URL** string for your deployed agent, which should be in this format:
+1.  Choose the right instance
+
+1.  At the top of the page, select **Copy query URL**, which should be in this format:
 
         https://$(LOCATION_ID)-aiplatform.googleapis.com/v1/projects/$(PROJECT_ID)/locations/$(LOCATION_ID)/reasoningEngines/$(RESOURCE_ID):query
 
@@ -188,6 +189,10 @@ To test interaction with the deployed agent via REST:
         }
         }'
         ```
+
+
+
+
 
 This request should generate a response from your deployed agent code in JSON
 format. For more information about interacting with a deployed ADK agent in
