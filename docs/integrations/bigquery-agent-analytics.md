@@ -38,8 +38,29 @@ Version 1.26.0 adds **Auto Schema Upgrade** (safely add new columns to existing 
 -   **Human-in-the-Loop (HITL) Tracing**: Dedicated event types for credential requests, confirmation prompts, and user input requests.
 -   **Queryable Event Views**: Automatically create flat, per-event-type BigQuery views (e.g., `v_llm_request`, `v_tool_completed`) to simplify downstream analytics by unnesting JSON payload data.
 
-The agent event data recorded varies based on the ADK event type. For more
-information, see [Event types and payloads](#event-types).
+### Captured events summary
+
+The following table lists every event the plugin logs. For detailed payload examples, see [Event types and payloads](#event-types).
+
+| Event Type | Captured When | Key Payload Fields | View |
+|:---|:---|:---|:---|
+| `USER_MESSAGE_RECEIVED` | A user message enters the invocation | text summary / content parts | `v_user_message_received` |
+| `INVOCATION_STARTING` | An invocation begins | *(common columns only)* | `v_invocation_starting` |
+| `INVOCATION_COMPLETED` | An invocation ends | *(common columns only)* | `v_invocation_completed` |
+| `AGENT_STARTING` | Agent execution begins | instruction summary | `v_agent_starting` |
+| `AGENT_COMPLETED` | Agent execution ends | latency | `v_agent_completed` |
+| `LLM_REQUEST` | A model request is sent | model, prompt, config, tools | `v_llm_request` |
+| `LLM_RESPONSE` | A model response is received | response, usage tokens, cache metadata, latency, TTFT | `v_llm_response` |
+| `LLM_ERROR` | A model call fails | error message, latency | `v_llm_error` |
+| `TOOL_STARTING` | A tool begins execution | tool name, args, origin | `v_tool_starting` |
+| `TOOL_COMPLETED` | A tool succeeds | tool name, result, origin, latency | `v_tool_completed` |
+| `TOOL_ERROR` | A tool fails | tool name, args, origin, error, latency | `v_tool_error` |
+| `STATE_DELTA` | Session state changes | state delta | `v_state_delta` |
+| `HITL_CREDENTIAL_REQUEST` | Credential request is emitted | synthetic tool name, args | `v_hitl_credential_request` |
+| `HITL_CONFIRMATION_REQUEST` | Confirmation request is emitted | synthetic tool name, args | `v_hitl_confirmation_request` |
+| `HITL_INPUT_REQUEST` | User input request is emitted | synthetic tool name, args | `v_hitl_input_request` |
+| `HITL_*_COMPLETED` | HITL response is received | synthetic tool name, result | *(base table only)* |
+| `A2A_INTERACTION` | Remote A2A call completes | response, task ID, context ID, request/response | `v_a2a_interaction` |
 
 ## Prerequisites
 
@@ -434,16 +455,18 @@ The plugin supports **OpenTelemetry** for distributed tracing. OpenTelemetry is 
 
 ## Configuration options
 
-The `BigQueryAgentAnalyticsPlugin` constructor accepts the following parameters:
+### Constructor parameters
 
--   **`project_id`** (`str`): The Google Cloud project ID.
--   **`dataset_id`** (`str`): The BigQuery dataset ID.
--   **`table_id`** (`Optional[str]`, default: `None`): The BigQuery table ID. Overrides `table_id` in `BigQueryLoggerConfig` if both are set.
--   **`config`** (`Optional[BigQueryLoggerConfig]`, default: `None`): A `BigQueryLoggerConfig` instance for detailed configuration.
--   **`location`** (`str`, default: `"US"`): The BigQuery dataset location (e.g., `"US"`, `"EU"`, `"us-central1"`).
--   **`credentials`** (`Optional[google.auth.credentials.Credentials]`, default: `None`): Explicit Google credentials for the plugin's BigQuery and GCS clients. If `None`, the plugin uses [Application Default Credentials](https://cloud.google.com/docs/authentication/application-default-credentials). Use this for service-account, impersonated, or cross-project setups.
+The `BigQueryAgentAnalyticsPlugin` constructor accepts these parameters. It also accepts `**kwargs`, which are forwarded directly to `BigQueryLoggerConfig` (see below).
 
-The constructor also accepts `**kwargs`, which are forwarded directly to `BigQueryLoggerConfig`. This lets you pass config fields (like `batch_size` or `enabled`) without creating a separate config object:
+| Parameter | Type | Default | Use when |
+|:---|:---|:---|:---|
+| `project_id` | `str` | *(required)* | Select the Google Cloud project |
+| `dataset_id` | `str` | *(required)* | Select the BigQuery dataset |
+| `table_id` | `Optional[str]` | `None` | Use a custom table name (overrides config `table_id`) |
+| `config` | `Optional[BigQueryLoggerConfig]` | `None` | Pass a config object for detailed tuning |
+| `location` | `str` | `"US"` | Match the BigQuery dataset location (e.g., `"US"`, `"EU"`, `"us-central1"`) |
+| `credentials` | `Optional[google.auth.credentials.Credentials]` | `None` | Use explicit service-account, impersonated, or cross-project credentials instead of [ADC](https://cloud.google.com/docs/authentication/application-default-credentials) |
 
 ```python
 plugin = BigQueryAgentAnalyticsPlugin(
@@ -454,31 +477,30 @@ plugin = BigQueryAgentAnalyticsPlugin(
 )
 ```
 
--   **`enabled`** (`bool`, default: `True`): To disable the plugin from logging agent data to the BigQuery table, set this parameter to False.
--   **`table_id`** (`str`, default: `"agent_events"`): The BigQuery table ID within the dataset. Can also be overridden by the `table_id` parameter on the `BigQueryAgentAnalyticsPlugin` constructor, which takes precedence.
--   **`clustering_fields`** (`List[str]`, default: `["event_type", "agent", "user_id"]`): The fields used to cluster the BigQuery table when it is automatically created.
--   **`gcs_bucket_name`** (`Optional[str]`, default: `None`): The name of the GCS bucket to offload large content (images, blobs, large text) to. If not provided, large content may be truncated or replaced with placeholders.
--   **`connection_id`** (`Optional[str]`, default: `None`): The BigQuery connection ID (e.g., `us.my-connection`) to use as the authorizer for `ObjectRef` columns. Required for using `ObjectRef` with BigQuery ML.
--   **`max_content_length`** (`int`, default: `500 * 1024`): The maximum length (in characters) of text content to store **inline** in BigQuery before offloading to GCS (if configured) or truncating. Default is 500 KB.
--   **`batch_size`** (`int`, default: `1`): The number of events to batch before writing to BigQuery.
--   **`batch_flush_interval`** (`float`, default: `1.0`): The maximum time (in seconds) to wait before flushing a partial batch.
--   **`shutdown_timeout`** (`float`, default: `10.0`): Seconds to wait for logs to flush during shutdown.
--   **`event_allowlist`** (`Optional[List[str]]`, default: `None`): A list
-    of event types to log. If `None`, all events are logged except those in
-    `event_denylist`. For a comprehensive list of supported event types, refer
-    to the [Event types and payloads](#event-types) section.
--   **`event_denylist`** (`Optional[List[str]]`, default: `None`): A list of
-    event types to skip logging. For a comprehensive list of supported event
-    types, refer to the [Event types and payloads](#event-types) section.
--   **`content_formatter`** (`Optional[Callable[[Any, str], Any]]`, default: `None`): An optional function to format event content before logging. The function receives two arguments: the raw content and the event type string (e.g., `"LLM_REQUEST"`).
--   **`log_multi_modal_content`** (`bool`, default: `True`): Whether to log detailed content parts (including GCS references).
--   **`queue_max_size`** (`int`, default: `10000`): The maximum number of events to hold in the in-memory queue before dropping new events.
--   **`retry_config`** (`RetryConfig`, default: `RetryConfig()`): Configuration for retrying failed BigQuery writes. Sub-fields: `max_retries` (default `3`), `initial_delay` (default `1.0` seconds), `multiplier` (default `2.0`), `max_delay` (default `10.0` seconds).
--   **`log_session_metadata`** (`bool`, default: `True`): If True, logs session information into the `attributes` column, including `session_id`, `app_name`, `user_id`, and the session `state` dictionary (e.g., custom state like gchat thread-id, customer_id). State keys prefixed with `temp:` or `secret:` are automatically redacted. See [Built-in redaction](#built-in-redaction).
--   **`custom_tags`** (`Dict[str, Any]`, default: `{}`): A dictionary of static tags (e.g., `{"env": "prod", "version": "1.0"}`) to be included in the `attributes` column for every event.
--   **`auto_schema_upgrade`** (`bool`, default: `True`): When enabled, the plugin automatically adds new columns to an existing table when the plugin schema evolves. Only additive changes are made (columns are never dropped or altered). A version label (`adk_schema_version`) on the table ensures the diff runs at most once per schema version. Safe to leave enabled.
--   **`create_views`** (`bool`, default: `True`): Added in 1.27.0. When enabled, automatically generates per-event-type BigQuery views that unnest structured JSON data (such as `content` or `attributes`) into flat, typed columns, significantly simplifying SQL queries.
--   **`view_prefix`** (`str`, default: `"v"`): Prefix for auto-created view names. The default `"v"` produces views like `v_llm_request`. Set a distinct prefix per table when multiple plugin instances share the same dataset to avoid view-name collisions (e.g., `"v_staging"` produces `v_staging_llm_request`). Must be non-empty.
+### BigQueryLoggerConfig options
+
+| Option | Type | Default | Use when |
+|:---|:---|:---|:---|
+| `enabled` | `bool` | `True` | Temporarily disable logging |
+| `table_id` | `str` | `"agent_events"` | Use a custom table name (constructor value takes precedence) |
+| `clustering_fields` | `List[str]` | `["event_type", "agent", "user_id"]` | Customize table clustering on creation |
+| `gcs_bucket_name` | `Optional[str]` | `None` | Offload large text and multimodal content to GCS |
+| `connection_id` | `Optional[str]` | `None` | Use BigQuery ObjectRef / object tables (e.g., `us.my-connection`) |
+| `max_content_length` | `int` | `500 * 1024` | Control inline payload size before offloading/truncating |
+| `batch_size` | `int` | `1` | Tune write throughput vs. latency |
+| `batch_flush_interval` | `float` | `1.0` | Flush partial batches periodically (seconds) |
+| `shutdown_timeout` | `float` | `10.0` | Wait for final flush on shutdown (seconds) |
+| `event_allowlist` | `Optional[List[str]]` | `None` | Log only selected [event types](#event-types) |
+| `event_denylist` | `Optional[List[str]]` | `None` | Skip sensitive or noisy [event types](#event-types) |
+| `content_formatter` | `Optional[Callable]` | `None` | Apply custom masking/formatting per event (receives `(content, event_type)`) |
+| `log_multi_modal_content` | `bool` | `True` | Capture `content_parts` details including GCS references |
+| `queue_max_size` | `int` | `10000` | Bound the in-memory event queue |
+| `retry_config` | `RetryConfig` | `RetryConfig()` | Tune retry behavior (`max_retries=3`, `initial_delay=1.0`, `multiplier=2.0`, `max_delay=10.0`) |
+| `log_session_metadata` | `bool` | `True` | Add session info to `attributes` (`session_id`, `app_name`, `user_id`, `state`). Keys prefixed `temp:` or `secret:` are [redacted](#built-in-redaction). |
+| `custom_tags` | `Dict[str, Any]` | `{}` | Add static tags (e.g., `{"env": "prod"}`) to every event's `attributes` |
+| `auto_schema_upgrade` | `bool` | `True` | Automatically add new columns to existing tables (additive only) |
+| `create_views` | `bool` | `True` | Create per-event-type BigQuery views (1.27.0+) |
+| `view_prefix` | `str` | `"v"` | Avoid view-name collisions when multiple plugins share a dataset (e.g., `"v_staging"`) |
 
 
 The following code sample shows how to define a configuration for the
@@ -570,47 +592,46 @@ The events table (`agent_events`) uses a flexible schema. The following table pr
 | **is_truncated** | `BOOLEAN` | `NULLABLE` | `true` if `content` or `attributes` exceeded the BigQuery cell size limit (default 10MB) and were partially dropped. | `false` |
 | **content_parts** | `RECORD` | `REPEATED` | Array of multi-modal segments (Text, Image, Blob). Used when content cannot be serialized as simple JSON (e.g., large binaries or GCS refs). | `[{"mime_type": "text/plain", "text": "hello"}]` |
 
-The plugin automatically creates the table if it does not exist. However, for
-production, we recommend creating the table manually using the following DDL, which utilizes the **JSON** type for flexibility and **REPEATED RECORD**s for multimodal content.
+The plugin automatically creates the table if it does not exist. For production, you can optionally create the table manually using the DDL below.
 
-**Recommended DDL:**
+??? example "Manual DDL for production setup"
 
-```sql
-CREATE TABLE `your-gcp-project-id.adk_agent_logs.agent_events`
-(
-  timestamp TIMESTAMP NOT NULL OPTIONS(description="The UTC time at which the event was logged."),
-  event_type STRING OPTIONS(description="Indicates the type of event being logged (e.g., 'LLM_REQUEST', 'TOOL_COMPLETED')."),
-  agent STRING OPTIONS(description="The name of the ADK agent or author associated with the event."),
-  session_id STRING OPTIONS(description="A unique identifier to group events within a single conversation or user session."),
-  invocation_id STRING OPTIONS(description="A unique identifier for each individual agent execution or turn within a session."),
-  user_id STRING OPTIONS(description="The identifier of the user associated with the current session."),
-  trace_id STRING OPTIONS(description="OpenTelemetry trace ID for distributed tracing."),
-  span_id STRING OPTIONS(description="OpenTelemetry span ID for this specific operation."),
-  parent_span_id STRING OPTIONS(description="OpenTelemetry parent span ID to reconstruct hierarchy."),
-  content JSON OPTIONS(description="The event-specific data (payload) stored as JSON."),
-  content_parts ARRAY<STRUCT<
-    mime_type STRING,
-    uri STRING,
-    object_ref STRUCT<
-      uri STRING,
-      version STRING,
-      authorizer STRING,
-      details JSON
-    >,
-    text STRING,
-    part_index INT64,
-    part_attributes STRING,
-    storage_mode STRING
-  >> OPTIONS(description="Detailed content parts for multi-modal data."),
-  attributes JSON OPTIONS(description="Arbitrary key-value pairs for additional metadata (e.g., 'root_agent_name', 'model_version', 'usage_metadata', 'session_metadata', 'custom_tags')."),
-  latency_ms JSON OPTIONS(description="Latency measurements (e.g., total_ms)."),
-  status STRING OPTIONS(description="The outcome of the event, typically 'OK' or 'ERROR'."),
-  error_message STRING OPTIONS(description="Populated if an error occurs."),
-  is_truncated BOOLEAN OPTIONS(description="Flag indicates if content was truncated.")
-)
-PARTITION BY DATE(timestamp)
-CLUSTER BY event_type, agent, user_id;
-```
+    ```sql
+    CREATE TABLE `your-gcp-project-id.adk_agent_logs.agent_events`
+    (
+      timestamp TIMESTAMP NOT NULL OPTIONS(description="The UTC time at which the event was logged."),
+      event_type STRING OPTIONS(description="Indicates the type of event being logged (e.g., 'LLM_REQUEST', 'TOOL_COMPLETED')."),
+      agent STRING OPTIONS(description="The name of the ADK agent or author associated with the event."),
+      session_id STRING OPTIONS(description="A unique identifier to group events within a single conversation or user session."),
+      invocation_id STRING OPTIONS(description="A unique identifier for each individual agent execution or turn within a session."),
+      user_id STRING OPTIONS(description="The identifier of the user associated with the current session."),
+      trace_id STRING OPTIONS(description="OpenTelemetry trace ID for distributed tracing."),
+      span_id STRING OPTIONS(description="OpenTelemetry span ID for this specific operation."),
+      parent_span_id STRING OPTIONS(description="OpenTelemetry parent span ID to reconstruct hierarchy."),
+      content JSON OPTIONS(description="The event-specific data (payload) stored as JSON."),
+      content_parts ARRAY<STRUCT<
+        mime_type STRING,
+        uri STRING,
+        object_ref STRUCT<
+          uri STRING,
+          version STRING,
+          authorizer STRING,
+          details JSON
+        >,
+        text STRING,
+        part_index INT64,
+        part_attributes STRING,
+        storage_mode STRING
+      >> OPTIONS(description="Detailed content parts for multi-modal data."),
+      attributes JSON OPTIONS(description="Arbitrary key-value pairs for additional metadata (e.g., 'root_agent_name', 'model_version', 'usage_metadata', 'session_metadata', 'custom_tags')."),
+      latency_ms JSON OPTIONS(description="Latency measurements (e.g., total_ms)."),
+      status STRING OPTIONS(description="The outcome of the event, typically 'OK' or 'ERROR'."),
+      error_message STRING OPTIONS(description="Populated if an error occurs."),
+      is_truncated BOOLEAN OPTIONS(description="Flag indicates if content was truncated.")
+    )
+    PARTITION BY DATE(timestamp)
+    CLUSTER BY event_type, agent, user_id;
+    ```
 
 ### Automatically Created Views (1.27.0+)
 
@@ -1229,11 +1250,9 @@ FROM SessionContext;
 ```
 
 
-## Conversational Analytics in BigQuery
+### Conversational Analytics
 
-You can also use
-[BigQuery Conversational Analytics](https://cloud.google.com/bigquery/docs/conversational-analytics)
-to analyze your agent logs using natural language. Use this tool to answer questions like:
+You can also use [BigQuery Conversational Analytics](https://cloud.google.com/bigquery/docs/conversational-analytics) to analyze your agent logs using natural language. Example questions:
 
 *   "Show me the error rate over time"
 *   "What are the most common tool calls?"
