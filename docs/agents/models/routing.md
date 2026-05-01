@@ -13,7 +13,7 @@ is called again with error context so it can select a different model.
 
 Use `RoutedLlm` when only the model varies between routes. If you also need to
 switch instructions, tools, or sub-agents, use
-[`RoutedAgent`](../agent-routing.md) instead, which routes between entire agent
+[`RoutedAgent`](../routing.md) instead, which routes between entire agent
 configurations.
 
 ## How routing works
@@ -36,7 +36,7 @@ explicit keys, or an array of `BaseLlm` instances. If an array is provided,
 each model's name is used as its key.
 
 Failover follows the same rules as
-[`RoutedAgent`](../agent-routing.md#how-routing-works): the router is re-called
+[`RoutedAgent`](../routing.md#how-routing-works): the router is re-called
 with `errorContext` only if the selected model fails before yielding any
 response. After yielding, errors propagate without retry. The router can return
 `undefined` to stop retrying and propagate the last error.
@@ -54,5 +54,5 @@ and falls back to a secondary model if the primary fails. The router checks
 === "TypeScript"
 
     ```typescript
-    --8<-- "examples/typescript/snippets/agents/model-routing/basic-usage.ts:full"
+    --8<-- "examples/typescript/snippets/agents/models/routing/basic-usage.ts:full"
     ```

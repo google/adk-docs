@@ -11,18 +11,18 @@ auto-routing by input complexity. If the selected agent fails before producing
 any output, the router is called again with error context so it can select a
 fallback.
 
-`RoutedAgent` is different from [workflow agents](workflow-agents/index.md)
-like `SequentialAgent` or `ParallelAgent`, which orchestrate multiple agents in
-a fixed pattern, and from
-[LLM-driven delegation](multi-agents.md#b-llm-driven-delegation-agent-transfer),
-where the LLM decides which agent to hand off to. With `RoutedAgent`, you write
-an explicit routing function that selects **one** agent per invocation. For
-model-level routing, see [Model routing](models/model-routing.md).
+`RoutedAgent` is different from [workflow agents](workflow-agents/index.md) like
+`SequentialAgent` or `ParallelAgent`, which orchestrate multiple agents in a
+fixed pattern, and from [LLM-driven
+delegation](multi-agents.md#b-llm-driven-delegation-agent-transfer), where the
+LLM decides which agent to hand off to. With `RoutedAgent`, you write an
+explicit routing function that selects **one** agent per invocation. For
+model-level routing, see [Model routing](models/routing.md).
 
 ## How routing works
 
-Both `RoutedAgent` and [`RoutedLlm`](models/model-routing.md) are powered by a
-shared routing utility that handles selection and failover.
+Both `RoutedAgent` and [`RoutedLlm`](models/routing.md) are powered by a shared
+routing utility that handles selection and failover.
 
 The router function receives the map of available agents and the current
 context, and returns the key of the agent to run. It can be synchronous or
@@ -65,7 +65,7 @@ on an external configuration value that can change between invocations:
 === "TypeScript"
 
     ```typescript
-    --8<-- "examples/typescript/snippets/agents/agent-routing/basic-usage.ts:full"
+    --8<-- "examples/typescript/snippets/agents/routing/basic-usage.ts:full"
     ```
 
 Change `config.selectedAgent` to `'agent_b'` before the next invocation to
@@ -74,14 +74,14 @@ route to a different agent.
 ## Fallback on error
 
 When an agent fails, the router is called again with `errorContext` so it can
-select a fallback. Failover only applies if the agent fails before yielding
-any events (see [How routing works](#how-routing-works)). The following example
+select a fallback. Failover only applies if the agent fails before yielding any
+events (see [How routing works](#how-routing-works)). The following example
 checks `errorContext.failedKeys` to avoid re-selecting the failed agent:
 
 === "TypeScript"
 
     ```typescript
-    --8<-- "examples/typescript/snippets/agents/agent-routing/fallback.ts:config"
+    --8<-- "examples/typescript/snippets/agents/routing/fallback.ts:config"
     ```
 
 ## Planning mode
@@ -92,13 +92,13 @@ the agent switches behavior dynamically. For example, a basic agent might have
 read and write tools, while a planning agent is restricted to read-only access
 and uses a more powerful model for analysis.
 
-The following example shows a different `RoutedAgent` configuration. See
-[basic usage](#basic-usage) for the full runner setup.
+The following example shows a different `RoutedAgent` configuration. See [basic
+usage](#basic-usage) for the full runner setup.
 
 === "TypeScript"
 
     ```typescript
-    --8<-- "examples/typescript/snippets/agents/agent-routing/planning-mode.ts:config"
+    --8<-- "examples/typescript/snippets/agents/routing/planning-mode.ts:config"
     ```
 
 Set `planningMode = true` before an invocation to route to the planning agent
@@ -110,11 +110,11 @@ The router function can call a lightweight classifier model to categorize input
 and route to different agents accordingly. Because the router can be async, you
 can make LLM calls inside it before selecting an agent.
 
-The following example shows a different `RoutedAgent` configuration. See
-[basic usage](#basic-usage) for the full runner setup.
+The following example shows a different `RoutedAgent` configuration. See [basic
+usage](#basic-usage) for the full runner setup.
 
 === "TypeScript"
 
     ```typescript
-    --8<-- "examples/typescript/snippets/agents/agent-routing/auto-routing.ts:config"
+    --8<-- "examples/typescript/snippets/agents/routing/auto-routing.ts:config"
     ```

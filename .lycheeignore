@@ -13,6 +13,3 @@
 
 # Rate limits automated requests
 ^https://www\.gnu\.org/
-
-# Interactions API docs page returns 404 to unauthenticated clients
-^https://ai\.google\.dev/gemini-api/docs/interactions
