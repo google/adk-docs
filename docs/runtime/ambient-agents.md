@@ -1,12 +1,15 @@
-# Ambient Agents
+# Trigger actions with ambient agents
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-go">Go</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.29.0</span><span class="lst-go">Go v1.1.0</span>
 </div>
 
-ADK supports **ambient agents**, autonomous agents that process data, monitor
-events, and respond asynchronously without human intervention. Use ambient
-agents to:
+When running an agent workflow, you may want to activate it in response to an
+event or new data being available, rather than waiting for input from a human.
+You can configure ADK agents with triggers to respond to events and perform
+work, known as *ambient agents*. These agents can run as background processes
+to process data, monitor events, and respond asynchronously without human 
+intervention. You can use ambient agents to:
 
 - **React to cloud events.** Process a file when it's uploaded to
   [Cloud Storage](https://cloud.google.com/storage), respond to database
