@@ -14,7 +14,7 @@ Pass an `AbortSignal` to `runner.runAsync()` to cancel the entire invocation at
 any point in the execution stack, including agent execution, LLM generation,
 tool execution, and plugin callbacks.
 
-## Basic usage
+## Get started
 
 Create an `AbortController`, pass its `signal` to `runner.runAsync()`, and call
 `controller.abort()` when you want to cancel execution:
@@ -23,30 +23,6 @@ Create an `AbortController`, pass its `signal` to `runner.runAsync()`, and call
 
     ```typescript
     --8<-- "examples/typescript/snippets/runtime/cancel-agent-runs/basic-usage.ts:full"
-    ```
-
-## Cancellation with a timeout
-
-Use `AbortSignal.timeout()` to automatically cancel an agent run after a
-specified duration. This is useful for enforcing time limits on agent execution.
-
-Using the same agent and runner setup from the basic usage example, replace
-everything from `const controller` onwards with:
-
-=== "TypeScript"
-
-    ```typescript
-    --8<-- "examples/typescript/snippets/runtime/cancel-agent-runs/timeout.ts:run"
-    ```
-
-You can also combine a timeout with programmatic cancellation using
-`AbortSignal.any()`. Using the same setup, replace everything from `const
-controller` onwards with:
-
-=== "TypeScript"
-
-    ```typescript
-    --8<-- "examples/typescript/snippets/runtime/cancel-agent-runs/combined-signal.ts:run"
     ```
 
 ## How cancellation propagates
@@ -69,19 +45,7 @@ The `InvocationContext` also registers a listener on the signal that
 automatically sets `endInvocation = true` when triggered, signaling all
 components to wind down.
 
-## AbortSignal in custom tools
-
-When you pass an `AbortSignal` to `runner.runAsync()`, it is available on
-`toolContext.abortSignal` inside your custom tools. The following example shows
-the pattern for checking the abort signal inside a custom tool:
-
-=== "TypeScript"
-
-    ```typescript
-    --8<-- "examples/typescript/snippets/runtime/cancel-agent-runs/custom-tool.ts:tool"
-    ```
-
-## Behavior on cancellation
+### Behavior on cancellation
 
 When an `AbortSignal` is triggered, the following applies:
 
@@ -94,3 +58,44 @@ When an `AbortSignal` is triggered, the following applies:
   discarded.
 - **Resource cleanup:** In-flight LLM requests to the Gemini API are cancelled
   through the SDK's native `AbortSignal` support, freeing network resources.
+
+## Advanced examples
+
+The following examples show additional cancellation patterns beyond the basic
+`AbortController` usage.
+
+### Cancellation with a timeout
+
+Use `AbortSignal.timeout()` to automatically cancel an agent run after a
+specified duration. This is useful for enforcing time limits on agent execution.
+
+Using the same agent and runner setup from the get started example, replace
+everything from `const controller` onwards with:
+
+=== "TypeScript"
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/runtime/cancel-agent-runs/timeout.ts:run"
+    ```
+
+You can also combine a timeout with programmatic cancellation using
+`AbortSignal.any()`. Using the same setup, replace everything from `const
+controller` onwards with:
+
+=== "TypeScript"
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/runtime/cancel-agent-runs/combined-signal.ts:run"
+    ```
+
+### AbortSignal in custom tools
+
+When you pass an `AbortSignal` to `runner.runAsync()`, it is available on
+`toolContext.abortSignal` inside your custom tools. The following example shows
+the pattern for checking the abort signal inside a custom tool:
+
+=== "TypeScript"
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/runtime/cancel-agent-runs/custom-tool.ts:tool"
+    ```
