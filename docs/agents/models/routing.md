@@ -4,6 +4,12 @@
   <span class="lst-supported">Supported in ADK</span><span class="lst-typescript">TypeScript v1.0.0</span><span class="lst-preview">Experimental</span>
 </div>
 
+!!! example "Experimental"
+
+    Model routing is experimental and may change in future releases. We welcome
+    your
+    [feedback](https://github.com/google/adk-js/issues/new?template=feature_request.md)!
+
 An `LlmAgent` uses a single model by default. When you need to dynamically
 select between different models for each request, you can define a routing
 function that chooses which model to use. `RoutedLlm` provides this capability,

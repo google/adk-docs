@@ -4,6 +4,12 @@
   <span class="lst-supported">Supported in ADK</span><span class="lst-typescript">TypeScript v1.0.0</span><span class="lst-preview">Experimental</span>
 </div>
 
+!!! example "Experimental"
+
+    Agent routing is experimental and may change in future releases. We welcome
+    your
+    [feedback](https://github.com/google/adk-js/issues/new?template=feature_request.md)!
+
 When building agents for different tasks, you can define a routing function that
 selects which one handles each invocation at runtime. `RoutedAgent` provides
 this capability, enabling agent fallback on error, A/B testing, planning modes,
