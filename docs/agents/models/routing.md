@@ -4,17 +4,16 @@
   <span class="lst-supported">Supported in ADK</span><span class="lst-typescript">TypeScript v1.0.0</span><span class="lst-preview">Experimental</span>
 </div>
 
-`RoutedLlm` wraps multiple LLM instances and uses a router function to
-dynamically select which model handles each request. Pass a `RoutedLlm` as an
-`LlmAgent`'s `model` parameter to get dynamic model selection. This enables
-model fallback on error, A/B testing between models, and auto-routing by input
-complexity. If the selected model fails before producing any output, the router
-is called again with error context so it can select a different model.
+When you have multiple models and need to select which one handles each request,
+you can define a routing function that chooses between them. `RoutedLlm`
+provides this capability, enabling model fallback on error, A/B testing between
+models, and auto-routing by input complexity. If the selected model fails before
+producing any output, the routing function is called again with error context so
+it can select a different model.
 
-Use `RoutedLlm` when only the model varies between routes. If you also need to
-switch instructions, tools, or sub-agents, use
-[`RoutedAgent`](../routing.md) instead, which routes between entire agent
-configurations.
+Pass a `RoutedLlm` as an `LlmAgent`'s `model` parameter. Use `RoutedLlm` when
+only the model varies between routes. If you also need to switch instructions,
+tools, or sub-agents, use [`RoutedAgent`](../routing.md) instead.
 
 ## How routing works
 
@@ -31,14 +30,14 @@ The `LlmRouter` function receives the map of available models and the current
     ) => Promise<string | undefined> | string | undefined;
     ```
 
-The `models` parameter accepts either a `Record<string, BaseLlm>` with
-explicit keys, or an array of `BaseLlm` instances. If an array is provided,
-each model's name is used as its key.
+The `models` parameter accepts either a `Record<string, BaseLlm>` with explicit
+keys, or an array of `BaseLlm` instances. If an array is provided, each model's
+name is used as its key.
 
 Failover follows the same rules as
-[`RoutedAgent`](../routing.md#how-routing-works): the router is re-called
-with `errorContext` only if the selected model fails before yielding any
-response. After yielding, errors propagate without retry. The router can return
+[`RoutedAgent`](../routing.md#how-routing-works): the router is re-called with
+`errorContext` only if the selected model fails before yielding any response.
+After yielding, errors propagate without retry. The router can return
 `undefined` to stop retrying and propagate the last error.
 
 **Live connections:** `RoutedLlm.connect()` selects the model at connection
@@ -47,8 +46,8 @@ mid-stream.
 
 ## Basic usage
 
-The following example creates a `RoutedLlm` that tries a primary model first
-and falls back to a secondary model if the primary fails. The router checks
+The following example creates a `RoutedLlm` that tries a primary model first and
+falls back to a secondary model if the primary fails. The router checks
 `errorContext.failedKeys` to avoid re-selecting the failed model:
 
 === "TypeScript"

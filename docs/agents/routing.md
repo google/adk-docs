@@ -4,12 +4,12 @@
   <span class="lst-supported">Supported in ADK</span><span class="lst-typescript">TypeScript v1.0.0</span><span class="lst-preview">Experimental</span>
 </div>
 
-`RoutedAgent` wraps multiple agents and uses a router function to dynamically
-select which one handles each invocation at runtime. This enables agent fallback
-on error, A/B testing between agent configurations, planning modes, and
-auto-routing by input complexity. If the selected agent fails before producing
-any output, the router is called again with error context so it can select a
-fallback.
+When you have multiple agents and need to select which one handles each
+invocation at runtime, you can define a routing function that chooses between
+them. `RoutedAgent` provides this capability, enabling agent fallback on error,
+A/B testing, planning modes, and auto-routing by input complexity. If the
+selected agent fails before producing any output, the routing function is called
+again with error context so it can select a fallback.
 
 `RoutedAgent` is different from [workflow agents](workflow-agents/index.md) like
 `SequentialAgent` or `ParallelAgent`, which orchestrate multiple agents in a
