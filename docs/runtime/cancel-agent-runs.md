@@ -4,10 +4,15 @@
   <span class="lst-supported">Supported in ADK</span><span class="lst-typescript">TypeScript v1.0.0</span>
 </div>
 
-Long-running agent invocations can be gracefully cancelled using
-`AbortController` and `AbortSignal`. Pass an `AbortSignal` to
-`runner.runAsync()` to cancel operations at any point in the execution stack,
-including agent execution, LLM generation, tool execution, and plugin callbacks.
+When an agent run takes too long, encounters changing conditions, or is no
+longer needed, you may want to cancel it without losing the work already
+completed. Cancellation in ADK is non-destructive: events already committed to
+the session remain persisted.
+
+ADK supports graceful cancellation using `AbortController` and `AbortSignal`.
+Pass an `AbortSignal` to `runner.runAsync()` to cancel the entire invocation at
+any point in the execution stack, including agent execution, LLM generation,
+tool execution, and plugin callbacks.
 
 ## Basic usage
 
