@@ -56,7 +56,7 @@ pages:
   ADK, including the yield/pause/resume cycle.
 - **[Resume Agents](resume.md)**: Learn how to resume agent execution from a
   previous state.
-- **[Cancel Agent Runs](cancel-agent-runs.md)**: Gracefully cancel running
+- **[Cancel Agent Runs](cancel.md)**: Gracefully cancel running
   agent invocations using AbortSignal (TypeScript).
 - **[Runtime Config](runconfig.md)**: Configure runtime behavior with
   RunConfig.
