@@ -1,4 +1,4 @@
-# Model routing
+# Route between models
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-typescript">TypeScript v1.0.0</span><span class="lst-preview">Experimental</span>
