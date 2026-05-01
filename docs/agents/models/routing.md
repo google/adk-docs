@@ -4,12 +4,13 @@
   <span class="lst-supported">Supported in ADK</span><span class="lst-typescript">TypeScript v1.0.0</span><span class="lst-preview">Experimental</span>
 </div>
 
-When you have multiple models and need to select which one handles each request,
-you can define a routing function that chooses between them. `RoutedLlm`
-provides this capability, enabling model fallback on error, A/B testing between
-models, and auto-routing by input complexity. If the selected model fails before
-producing any output, the routing function is called again with error context so
-it can select a different model.
+An `LlmAgent` uses a single model by default. When you need to dynamically
+select between different models for each request, you can define a routing
+function that chooses which model to use. `RoutedLlm` provides this capability,
+enabling model fallback on error, A/B testing between models, and auto-routing
+by input complexity. If the selected model fails before producing any output,
+the routing function is called again with error context so it can select a
+different model.
 
 Pass a `RoutedLlm` as an `LlmAgent`'s `model` parameter. Use `RoutedLlm` when
 only the model varies between routes. If you also need to switch instructions,
