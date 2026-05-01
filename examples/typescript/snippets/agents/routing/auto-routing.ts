@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import { InMemoryRunner } from '@google/adk';
+
 // --8<-- [start:config]
 import {
   BaseAgent,
@@ -19,7 +21,6 @@ import {
   InvocationContext,
   LlmAgent,
   RoutedAgent,
-  InMemoryRunner,
 } from '@google/adk';
 
 const simpleAgent = new LlmAgent({
