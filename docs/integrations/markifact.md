@@ -238,5 +238,4 @@ Organic & social | Facebook, Instagram, LinkedIn, Google Business Profile
 
 - [Markifact Website](https://www.markifact.com)
 - [Markifact MCP Server on GitHub](https://github.com/markifact/markifact-mcp)
-- [MCP Registry Entry (`com.markifact/mcp`)](https://registry.modelcontextprotocol.io/v0.1/servers?search=com.markifact/mcp)
 - [Skills on skills.sh](https://skills.sh/markifact/markifact-mcp)
