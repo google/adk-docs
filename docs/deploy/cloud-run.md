@@ -83,6 +83,17 @@ export GOOGLE_API_KEY=your-api-key
 
 Please make sure you have created a secret which can be read by your service account.
 
+
+### Cloud Build Permissions
+
+Since the `adk deploy` command uses Google Cloud Build to automate the build process, you must set your default compute service account to have permission to use Cloud Build.
+The following command example shows how to grant this permission:
+
+```bash
+gcloud projects add-iam-policy-binding [PROJECT_ID] \
+    --member="serviceAccount:[PROJECT_NUMBER]-compute@developer.gserviceaccount.com" \
+    --role="roles/cloudbuild.builds.builder"
+
 ### Entry for GOOGLE_API_KEY secret
 
 You can create your secret manually or use CLI:
