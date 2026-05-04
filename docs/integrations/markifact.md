@@ -1,6 +1,6 @@
 ---
 catalog_title: Markifact
-catalog_description: Manage 300+ marketing operations across Google Ads, Meta Ads, GA4, TikTok Ads, LinkedIn Ads, Shopify, HubSpot, and 15+ more platforms
+catalog_description: Manage marketing operations across Google Ads, Meta, GA4, TikTok, and 15+ more platforms
 catalog_icon: /integrations/assets/markifact.png
 catalog_tags: ["mcp", "connectors"]
 ---
@@ -11,71 +11,37 @@ catalog_tags: ["mcp", "connectors"]
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript</span>
 </div>
 
-[Markifact](https://www.markifact.com) is a remote MCP server that gives your
-ADK agent a single, governed entry point into the full performance marketing
-stack — paid media, analytics, e-commerce, CRM, and messaging — across 20+
-platforms and 300+ operations. The [open-source MCP
-server](https://github.com/markifact/markifact-mcp) handles OAuth, account
-resolution, and write-time approval prompts, so your agent can plan and
-execute end-to-end campaigns without you wiring up a separate API client per
-platform.
-
-## How it works
-
-Rather than exposing all 300+ operations as tools (which blows up context and
-degrades model accuracy), Markifact ships a small **meta-tool surface** that
-your agent uses to look operations up at runtime:
-
-- `find_operations` — semantic search over the operation registry, scoped by
-  platform and intent. Returns a `requires_approval` flag that tells the agent
-  whether to dispatch to the read or write path.
-- `get_operation_inputs` — JSON Schema for a specific operation's inputs.
-- `run_operation` / `run_write_operation` — execute reads and writes; writes
-  follow a four-step approval protocol so spend never moves without explicit
-  user confirmation.
-- `list_connections`, `get_file_url`, `read_file`, `upload_media` —
-  housekeeping for OAuth state and asset handoff.
-
-A typical session looks like: the user describes an outcome ("audit last week's
-Google Ads spend"), the agent searches the registry, inspects inputs, runs
-reads, summarises, and only then proposes writes for approval. Connections
-resolve automatically from the user's Markifact workspace; ad account selection
-is always explicit.
+The [Markifact MCP Server](https://github.com/markifact/markifact-mcp) connects
+your ADK agent to [Markifact](https://www.markifact.com), an AI marketing
+automation platform with 300+ operations across 20+ platforms including Google
+Ads, Meta Ads, GA4, TikTok Ads, and Shopify. This integration gives your agent
+the ability to manage campaigns, analyze performance, and automate marketing
+workflows using natural language, with approval prompts on every write operation.
 
 ## Use cases
 
-- **Spend hygiene** — surface wasted budget across Google Ads, Meta, TikTok and
+- **Spend hygiene**: surface wasted budget across Google Ads, Meta, TikTok and
   LinkedIn with concrete pause and reallocation recommendations.
-- **Unified reporting** — one prompt produces blended spend, ROAS, CAC and
+- **Unified reporting**: one prompt produces blended spend, ROAS, CAC and
   conversion deltas across every connected channel and GA4.
-- **Briefs to live campaigns** — go from a one-line brief to drafted Search,
+- **Briefs to live campaigns**: go from a one-line brief to drafted Search,
   Performance Max, Meta Advantage+, TikTok or LinkedIn campaigns ready for
   human approval.
-- **Creative lifecycle** — detect fatigue, generate variants, and rotate
-  creative on a schedule without leaving the agent.
-- **Funnel analysis** — query GA4 paths, identify drop-off, and tie events back
-  to the ad sets and keywords that drove them.
-- **Commerce ↔ ads loop** — reconcile Shopify product performance against ad
-  spend to find over- and under-invested SKUs.
-- **Lead handoff** — sweep Meta and LinkedIn lead forms, enrich in HubSpot or
+- **Lead handoff**: sweep Meta and LinkedIn lead forms, enrich in HubSpot or
   Klaviyo, and trigger WhatsApp or Slack follow-ups.
 
 ## Prerequisites
 
-- A [Markifact](https://www.markifact.com) account (free tier available).
+- A [Markifact](https://www.markifact.com) account (free tier available)
 - At least one platform connected from the Markifact dashboard (Google Ads,
-  Meta, GA4, Shopify, etc.).
-- See the [Markifact docs](https://www.markifact.com) for connection setup.
+  Meta, GA4, Shopify, etc.)
+- See the [Markifact docs](https://docs.markifact.com) for connection setup
 
 ## Use with agent
 
 === "Python"
 
     === "Local MCP Server"
-
-        When you run this agent for the first time, a browser window opens
-        automatically to request access via OAuth. Approve the request in
-        your browser to grant the agent access to your connected accounts.
 
         ```python
         from google.adk.agents import Agent
@@ -111,10 +77,13 @@ is always explicit.
         )
         ```
 
-    === "Remote MCP Server"
+        !!! note
 
-        If you already have a Markifact access token, you can connect directly
-        using Streamable HTTP without the OAuth browser flow.
+            When you run this agent for the first time, a browser window opens
+            automatically to request access via OAuth. Approve the request in
+            your browser to grant the agent access to your connected accounts.
+
+    === "Remote MCP Server"
 
         ```python
         from google.adk.agents import Agent
@@ -145,13 +114,14 @@ is always explicit.
         )
         ```
 
+        !!! note
+
+            If you already have a Markifact access token, you can connect
+            directly using Streamable HTTP without the OAuth browser flow.
+
 === "TypeScript"
 
     === "Local MCP Server"
-
-        When you run this agent for the first time, a browser window opens
-        automatically to request access via OAuth. Approve the request in
-        your browser to grant the agent access to your connected accounts.
 
         ```typescript
         import { LlmAgent, MCPToolset } from "@google/adk";
@@ -183,10 +153,13 @@ is always explicit.
         export { rootAgent };
         ```
 
-    === "Remote MCP Server"
+        !!! note
 
-        If you already have a Markifact access token, you can connect directly
-        using Streamable HTTP without the OAuth browser flow.
+            When you run this agent for the first time, a browser window opens
+            automatically to request access via OAuth. Approve the request in
+            your browser to grant the agent access to your connected accounts.
+
+    === "Remote MCP Server"
 
         ```typescript
         import { LlmAgent, MCPToolset } from "@google/adk";
@@ -220,10 +193,25 @@ is always explicit.
         export { rootAgent };
         ```
 
-## Capabilities
+        !!! note
 
-Operations are discovered at runtime through the meta-tool surface, so adding
-or updating platforms doesn't change your agent code or its context window.
+            If you already have a Markifact access token, you can connect
+            directly using Streamable HTTP without the OAuth browser flow.
+
+## Available tools
+
+Tool | Description
+---- | -----------
+`find_operations` | Semantic search over the operation registry, scoped by platform and intent
+`get_operation_inputs` | Returns JSON Schema for a specific operation's inputs
+`run_operation` | Execute read operations
+`run_write_operation` | Execute write operations with approval protocol
+`list_connections` | List OAuth connections in the workspace
+`get_file_url` | Get URLs for reports and exports
+`read_file` | Read file contents
+`upload_media` | Upload media assets
+
+## Capabilities
 
 Capability | Description
 ---------- | -----------
