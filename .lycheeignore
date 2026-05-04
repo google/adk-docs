@@ -13,3 +13,4 @@
 
 # Rate limits automated requests
 ^https://www\.gnu\.org/
+^https://www\.markifact\.com
