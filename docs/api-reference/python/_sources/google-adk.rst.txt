@@ -41,13 +41,29 @@ google.adk.auth module
     :undoc-members:
     :show-inheritance:
 
-google.adk.cli module
----------------------
+google.adk.cli commands
+-----------------------
 
-.. automodule:: google.adk.cli
+.. click:: google.adk.cli.cli_tools_click:main
+   :prog: adk
+   :nested: full
+
+google.adk.cli.cli module
+-------------------------
+
+.. automodule:: google.adk.cli.cli
     :members:
     :undoc-members:
     :show-inheritance:
+
+google.adk.cli.cli_tools_click module
+-------------------------------------
+
+.. automodule:: google.adk.cli.cli_tools_click
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 google.adk.code_executors module
 --------------------------------
