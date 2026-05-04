@@ -86,9 +86,8 @@ Please make sure you have created a secret which can be read by your service acc
 
 ### Cloud Build Permissions
 
-Because `adk deploy` uses Google Cloud Build to automate the build process, the default compute service account must have permission to use Cloud Build.
-
-Run the following command to grant the necessary permission:
+Since the `adk deploy` command uses Google Cloud Build to automate the build process, you must set your default compute service account to have permission to use Cloud Build.
+The following command example shows how to grant this permission:
 
 ```bash
 gcloud projects add-iam-policy-binding [PROJECT_ID] \
