@@ -4,9 +4,6 @@
 # Accepted HTTP status codes
 accept = ["200", "206", "302", "403", "429"]
 
-# Accept timeouts so slow external sites don't fail CI after retries are exhausted
-accept_timeouts = true
-
 # Website timeout in seconds
 timeout = 30
 
