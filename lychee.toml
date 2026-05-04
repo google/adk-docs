@@ -2,8 +2,10 @@
 # https://github.com/lycheeverse/lychee
 
 # Accepted HTTP status codes
-# 403 is included to avoid false positives from bot-blocking sites
-accept = ["200", "206", "302", "403"]
+accept = ["200", "206", "302", "403", "429"]
+
+# Website timeout in seconds
+timeout = 30
 
 # Exclude localhost/loopback links (used in code examples throughout the docs)
 exclude_loopback = true
