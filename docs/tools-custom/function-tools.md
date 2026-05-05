@@ -94,6 +94,8 @@ A well-defined function signature is crucial for the LLM to use your tool correc
 === "Python"
     A parameter is considered **optional** if you provide a **default value**. This is the standard Python way to define optional arguments. You can also mark a parameter as optional using `typing.Optional[SomeType]` or the `| None` syntax (Python 3.10+).
 
+    Use defaults only for values that are truly optional. Do not add defaults for information the model should derive from the user request or ask the user to provide.
+
     ???+ "Example: Optional Parameters"
         ```python
         def search_flights(destination: str, departure_date: str, flexible_days: int = 0):
