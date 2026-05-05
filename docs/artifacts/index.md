@@ -804,6 +804,45 @@ The artifact interaction methods are available directly on instances of `Callbac
         }
         ```
 
+#### Letting the Agent Load Artifacts On Demand
+
+For Python agents, you can add `LoadArtifactsTool` when the model should decide
+which available artifacts to load before answering. This is useful when users
+ask follow-up questions about uploaded files or large generated outputs that are
+stored as artifacts instead of kept in the conversation context.
+
+`LoadArtifactsTool` lists available artifacts in the model instructions. When
+the model calls the `load_artifacts` tool, ADK temporarily appends the selected
+artifact contents to that request so the model can answer with the file content
+in context. The loaded artifact content is not permanently saved back into the
+session history, so the model should call the tool again when it needs the same
+artifact in a later turn.
+
+=== "Python"
+
+    ```python
+    from google.adk.agents import LlmAgent
+    from google.adk.tools.load_artifacts_tool import LoadArtifactsTool
+
+    root_agent = LlmAgent(
+        name="artifact_reader",
+        model="gemini-2.5-flash",
+        instruction=(
+            "Answer questions about available user files. "
+            "Call load_artifacts before answering when you need file contents."
+        ),
+        tools=[
+            LoadArtifactsTool(),
+        ],
+    )
+    ```
+
+    Make sure the `Runner` for this agent is configured with an
+    `artifact_service`; otherwise artifact listing and loading will fail. If
+    your artifacts need human-readable summaries, subclass `LoadArtifactsTool`
+    and customize its request instructions before loading the selected artifact
+    contents.
+
 #### Listing Artifact Filenames
 
 *   **Code Example:**
