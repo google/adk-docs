@@ -117,10 +117,16 @@ your project to set environment variables:
     echo 'export GOOGLE_API_KEY="YOUR_API_KEY"' > .env
     ```
 
-=== "Windows"
+=== "Windows PowerShell"
 
     ```console title="Update: my_agent/env.bat"
     echo 'set GOOGLE_API_KEY="YOUR_API_KEY"' > env.bat
+    ```
+
+=== "Windows Command Prompt"
+
+    ```console title="Update: my_agent/env.bat"
+    echo set GOOGLE_API_KEY="YOUR_API_KEY" > env.bat
     ```
 
 ??? tip "Using other AI models with ADK"
