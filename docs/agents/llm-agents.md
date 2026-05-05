@@ -88,6 +88,36 @@ First, you need to establish what the agent *is* and what it's *for*.
             .build();
     ```
 
+### Configuring Model Retry Options
+
+In Python, Gemini model instances can be configured with
+`google.genai.types.HttpRetryOptions` to retry transient model API failures.
+Pass a configured `Gemini` model object to `LlmAgent.model` when you need to
+override the default retry behavior. See the
+[`Gemini.retry_options`](/api-reference/python/google-adk.html#google.adk.models.Gemini.retry_options)
+API reference for the full field definition.
+
+=== "Python"
+
+    ```python
+    from google.adk.agents import LlmAgent
+    from google.adk.models import Gemini
+    from google.genai import types
+
+    agent = LlmAgent(
+        name="retrying_agent",
+        model=Gemini(
+            model="gemini-flash-latest",
+            retry_options=types.HttpRetryOptions(
+                initial_delay=1,
+                attempts=3,
+                http_status_codes=[429, 500, 502, 503],
+            ),
+        ),
+        instruction="Answer user questions.",
+    )
+    ```
+
 ## Guiding the Agent: Instructions (`instruction`)
 
 The `instruction` parameter is arguably the most critical for shaping an
