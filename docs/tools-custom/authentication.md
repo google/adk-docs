@@ -137,6 +137,17 @@ specific interactive process with your ***Agent Client*** application.
     JSON key or Application Default Credentials. This type typically exchanges a
     Bearer token.
 
+### Managed authentication with Agent Identity
+
+If you use Google Cloud Agent Identity Credentials, configure toolsets with
+`GcpAuthProviderScheme` and register `GcpAuthProvider` with the
+`CredentialManager`. This lets ADK delegate access-token retrieval to a managed
+provider instead of handling every polling, consent, and refresh step in your
+agent code.
+
+For setup details, see the
+[Agent Identity integration](/integrations/agent-identity/).
+
 ## Tools and integrations quick guide
 
 Here is a quick guide to authentication for key ADK toolsets:
