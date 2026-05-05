@@ -13,6 +13,23 @@ These callbacks are available on *any* agent that inherits from `BaseAgent` (inc
 !!! Note
     The specific method names or return types may vary slightly by SDK language (e.g., return `None` in Python, return `Optional.empty()` or `Maybe.empty()` in Java). Refer to the language-specific API documentation for details.
 
+!!! Important "Use the documented callback parameter names"
+    In Python, callback function parameter names must match the documented
+    names exactly because ADK passes callback arguments by keyword. For example,
+    use `callback_context` for agent and model callbacks, and `tool_context` for
+    tool callbacks. Renaming these parameters to aliases such as `ctx` can cause
+    runtime `TypeError` failures.
+
+    ```python
+    # Correct
+    def before_agent_callback(callback_context):
+        ...
+
+    # Incorrect
+    def before_agent_callback(ctx):
+        ...
+    ```
+
 ### Before Agent Callback
 
 **When:** Called *immediately before* the agent's `_run_async_impl` (or `_run_live_impl`) method is executed. It runs after the agent's `InvocationContext` is created but *before* its core logic begins.
