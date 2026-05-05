@@ -5,8 +5,8 @@
 </div>
 
 Starting with Agent Development Kit (ADK) version 1.10.0 for Python, the framework
-attempts to run any agent-requested 
-[function tools](/adk-docs/tools-custom/function-tools/) 
+attempts to run any agent-requested
+[function tools](/tools-custom/function-tools/)
 in parallel. This behavior can significantly improve the performance and
 responsiveness of your agents, particularly for agents that rely on multiple
 external APIs or long-running tasks. For example, if you have 3 tools that each
@@ -149,7 +149,7 @@ parallel.
   Examples:
   - "Get weather for London and currency rate USD to EUR" → Call both functions
     simultaneously
-  - "Compare cities A and B" → Call get_weather, get_population, get_distance in 
+  - "Compare cities A and B" → Call get_weather, get_population, get_distance in
     parallel
   - "Analyze multiple stocks" → Call get_stock_price for each stock in parallel
 
@@ -178,7 +178,7 @@ efficient use through parallel execution:
 ## Next steps
 
 For more information on building Tools for agents and function calling, see
-[Function Tools](/adk-docs/tools-custom/function-tools/). For
+[Function Tools](/tools-custom/function-tools/). For
 more detailed examples of tools that take advantage of parallel processing, see
 the samples in the
 [adk-python](https://github.com/google/adk-python/tree/main/contributing/samples/parallel_functions)

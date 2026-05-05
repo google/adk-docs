@@ -1,7 +1,7 @@
 ---
 catalog_title: StackOne
 catalog_description: Connect agents to 200+ SaaS providers
-catalog_icon: /adk-docs/integrations/assets/stackone.png
+catalog_icon: /integrations/assets/stackone.png
 catalog_tags: ["connectors"]
 ---
 
@@ -80,7 +80,7 @@ uv add stackone-adk
             print(f"Discovered {len(tools)} tools")
 
             agent = Agent(
-                model="gemini-2.5-flash",
+                model="gemini-flash-latest",
                 name="scheduling_agent",
                 description="Manages scheduling, HR, and CRM through StackOne.",
                 instruction=(
@@ -134,7 +134,7 @@ uv add stackone-adk
             print(f"Discovered {len(tools)} tools")
 
             agent = Agent(
-                model="gemini-2.5-flash",
+                model="gemini-flash-latest",
                 name="scheduling_agent",
                 description="Manages scheduling, HR, and CRM through StackOne.",
                 instruction=(

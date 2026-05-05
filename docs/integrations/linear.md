@@ -1,7 +1,7 @@
 ---
 catalog_title: Linear
 catalog_description: Manage issues, track projects, and streamline development
-catalog_icon: /adk-docs/integrations/assets/linear.png
+catalog_icon: /integrations/assets/linear.png
 catalog_tags: ["mcp"]
 ---
 
@@ -50,7 +50,7 @@ project cycles, and automate development workflows using natural language.
         from mcp import StdioServerParameters
 
         root_agent = Agent(
-            model="gemini-2.5-pro",
+            model="gemini-flash-latest",
             name="linear_agent",
             instruction="Help users manage issues, projects, and cycles in Linear",
             tools=[
@@ -83,17 +83,17 @@ project cycles, and automate development workflows using natural language.
         ```python
         from google.adk.agents import Agent
         from google.adk.tools.mcp_tool import McpToolset
-        from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPServerParams
+        from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPConnectionParams
 
         LINEAR_API_KEY = "YOUR_LINEAR_API_KEY"
 
         root_agent = Agent(
-            model="gemini-2.5-pro",
+            model="gemini-flash-latest",
             name="linear_agent",
             instruction="Help users manage issues, projects, and cycles in Linear",
             tools=[
                 McpToolset(
-                    connection_params=StreamableHTTPServerParams(
+                    connection_params=StreamableHTTPConnectionParams(
                         url="https://mcp.linear.app/mcp",
                         headers={
                             "Authorization": f"Bearer {LINEAR_API_KEY}",
@@ -118,7 +118,7 @@ project cycles, and automate development workflows using natural language.
         import { LlmAgent, MCPToolset } from "@google/adk";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-2.5-pro",
+            model: "gemini-flash-latest",
             name: "linear_agent",
             instruction: "Help users manage issues, projects, and cycles in Linear",
             tools: [
@@ -150,15 +150,19 @@ project cycles, and automate development workflows using natural language.
         const LINEAR_API_KEY = "YOUR_LINEAR_API_KEY";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-2.5-pro",
+            model: "gemini-flash-latest",
             name: "linear_agent",
             instruction: "Help users manage issues, projects, and cycles in Linear",
             tools: [
                 new MCPToolset({
                     type: "StreamableHTTPConnectionParams",
                     url: "https://mcp.linear.app/mcp",
-                    header: {
-                        Authorization: `Bearer ${LINEAR_API_KEY}`,
+                    transportOptions: {
+                        requestInit: {
+                            headers: {
+                                Authorization: `Bearer ${LINEAR_API_KEY}`,
+                            },
+                        },
                     },
                 }),
             ],

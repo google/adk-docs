@@ -39,14 +39,14 @@ The foundation for structuring multi-agent systems is the parent-child relations
 
 
     # Define individual agents
-    greeter = LlmAgent(name="Greeter", model="gemini-2.0-flash")
+    greeter = LlmAgent(name="Greeter", model="gemini-flash-latest")
     task_doer = BaseAgent(name="TaskExecutor") # Custom non-LLM agent
 
 
     # Create parent agent and assign children via sub_agents
     coordinator = LlmAgent(
         name="Coordinator",
-        model="gemini-2.0-flash",
+        model="gemini-flash-latest",
         description="I coordinate greetings and tasks.",
         sub_agents=[ # Assign sub_agents here
             greeter,
@@ -84,13 +84,13 @@ The foundation for structuring multi-agent systems is the parent-child relations
     }
 
     // Define individual agents
-    const greeter = new LlmAgent({name: 'Greeter', model: 'gemini-2.5-flash'});
+    const greeter = new LlmAgent({name: 'Greeter', model: 'gemini-flash-latest'});
     const taskDoer = new TaskExecutorAgent({name: 'TaskExecutor'}); // Custom non-LLM agent
 
     // Create parent agent and assign children via subAgents
     const coordinator = new LlmAgent({
         name: 'Coordinator',
-        model: 'gemini-2.5-flash',
+        model: 'gemini-flash-latest',
         description: 'I coordinate greetings and tasks.',
         subAgents: [ // Assign subAgents here
             greeter,
@@ -123,14 +123,14 @@ The foundation for structuring multi-agent systems is the parent-child relations
 
 
     // Define individual agents
-    LlmAgent greeter = LlmAgent.builder().name("Greeter").model("gemini-2.0-flash").build();
+    LlmAgent greeter = LlmAgent.builder().name("Greeter").model("gemini-flash-latest").build();
     SequentialAgent taskDoer = SequentialAgent.builder().name("TaskExecutor").subAgents(...).build(); // Sequential Agent
 
 
     // Create parent agent and assign sub_agents
     LlmAgent coordinator = LlmAgent.builder()
         .name("Coordinator")
-        .model("gemini-2.0-flash")
+        .model("gemini-flash-latest")
         .description("I coordinate greetings and tasks")
         .subAgents(greeter, taskDoer) // Assign sub_agents here
         .build();
@@ -397,7 +397,7 @@ Agents within a system often need to exchange data or trigger actions in one ano
 
 #### a) Shared Session State (`session.state`)
 
-The most fundamental way for agents operating within the same invocation (and thus sharing the same [`Session`](/adk-docs/sessions/session/) object via the `InvocationContext`) to communicate passively.
+The most fundamental way for agents operating within the same invocation (and thus sharing the same [`Session`](/sessions/session/) object via the `InvocationContext`) to communicate passively.
 
 * **Mechanism:** One agent (or its tool/callback) writes a value (`context.state['data_key'] = processed_data`), and a subsequent agent reads it (`data = context.state.get('data_key')`). State changes are tracked via [`CallbackContext`](../callbacks/index.md).
 * **Convenience:** The `output_key` property on [`LlmAgent`](llm-agents.md) automatically saves the agent's final response text (or structured output) to the specified state key.
@@ -498,7 +498,7 @@ Leverages an [`LlmAgent`](llm-agents.md)'s understanding to dynamically route ta
 
     coordinator = LlmAgent(
         name="Coordinator",
-        model="gemini-2.0-flash",
+        model="gemini-flash-latest",
         instruction="You are an assistant. Delegate booking tasks to Booker and info requests to Info.",
         description="Main coordinator.",
         # AutoFlow is typically used implicitly here
@@ -520,7 +520,7 @@ Leverages an [`LlmAgent`](llm-agents.md)'s understanding to dynamically route ta
 
     const coordinator = new LlmAgent({
         name: 'Coordinator',
-        model: 'gemini-2.5-flash',
+        model: 'gemini-flash-latest',
         instruction: 'You are an assistant. Delegate booking tasks to Booker and info requests to Info.',
         description: 'Main coordinator.',
         // AutoFlow is typically used implicitly here
@@ -563,7 +563,7 @@ Leverages an [`LlmAgent`](llm-agents.md)'s understanding to dynamically route ta
     // Define the coordinator agent
     LlmAgent coordinator = LlmAgent.builder()
         .name("Coordinator")
-        .model("gemini-2.0-flash") // Or your desired model
+        .model("gemini-flash-latest") // Or your desired model
         .instruction("You are an assistant. Delegate booking tasks to Booker and info requests to Info.")
         .description("Main coordinator.")
         // AutoFlow will be used by default (implicitly) because subAgents are present
@@ -578,8 +578,8 @@ Leverages an [`LlmAgent`](llm-agents.md)'s understanding to dynamically route ta
 
 #### c) Explicit Invocation (`AgentTool`)
 
-Allows an [`LlmAgent`](llm-agents.md) to treat another `BaseAgent` instance as a callable function or 
-[Tool](/adk-docs/tools-custom/).
+Allows an [`LlmAgent`](llm-agents.md) to treat another `BaseAgent` instance as a callable function or
+[Tool](/tools-custom/).
 
 * **Mechanism:** Wrap the target agent instance in `AgentTool` and include it in the parent `LlmAgent`'s `tools` list. `AgentTool` generates a corresponding function declaration for the LLM.
 * **Handling:** When the parent LLM generates a function call targeting the `AgentTool`, the framework executes `AgentTool.run_async`. This method runs the target agent, captures its final response, forwards any state/artifact changes back to the parent's context, and returns the response as the tool's result.
@@ -614,7 +614,7 @@ Allows an [`LlmAgent`](llm-agents.md) to treat another `BaseAgent` instance as a
     # Parent agent uses the AgentTool
     artist_agent = LlmAgent(
         name="Artist",
-        model="gemini-2.0-flash",
+        model="gemini-flash-latest",
         instruction="Create a prompt and use the ImageGen tool to generate the image.",
         tools=[image_tool] # Include the AgentTool
     )
@@ -656,7 +656,7 @@ Allows an [`LlmAgent`](llm-agents.md) to treat another `BaseAgent` instance as a
     // Parent agent uses the AgentTool
     const artistAgent = new LlmAgent({
         name: 'Artist',
-        model: 'gemini-2.5-flash',
+        model: 'gemini-flash-latest',
         instruction: 'Create a prompt and use the ImageGen tool to generate the image.',
         tools: [imageTool] // Include the AgentTool
     });
@@ -733,7 +733,7 @@ Allows an [`LlmAgent`](llm-agents.md) to treat another `BaseAgent` instance as a
     // Parent agent uses the AgentTool
     LlmAgent artistAgent = LlmAgent.builder()
             .name("Artist")
-            .model("gemini-2.0-flash")
+            .model("gemini-flash-latest")
             .instruction(
                     "You are an artist. Create a detailed prompt for an image and then " +
                             "use the 'ImageGen' tool to generate the image. " +
@@ -779,7 +779,7 @@ By combining ADK's composition primitives, you can implement various established
 
     coordinator = LlmAgent(
         name="HelpDeskCoordinator",
-        model="gemini-2.0-flash",
+        model="gemini-flash-latest",
         instruction="Route user requests: Use Billing agent for payment issues, Support agent for technical problems.",
         description="Main help desk router.",
         # allow_transfer=True is often implicit with sub_agents in AutoFlow
@@ -800,7 +800,7 @@ By combining ADK's composition primitives, you can implement various established
 
     const coordinator = new LlmAgent({
         name: 'HelpDeskCoordinator',
-        model: 'gemini-2.5-flash',
+        model: 'gemini-flash-latest',
         instruction: 'Route user requests: Use Billing agent for payment issues, Support agent for technical problems.',
         description: 'Main help desk router.',
         // allowTransfer=true is often implicit with subAgents in AutoFlow
@@ -839,7 +839,7 @@ By combining ADK's composition primitives, you can implement various established
 
     LlmAgent coordinator = LlmAgent.builder()
         .name("HelpDeskCoordinator")
-        .model("gemini-2.0-flash")
+        .model("gemini-flash-latest")
         .instruction("Route user requests: Use Billing agent for payment issues, Support agent for technical problems.")
         .description("Main help desk router.")
         .subAgents(billingAgent, supportAgent)
@@ -1093,7 +1093,7 @@ By combining ADK's composition primitives, you can implement various established
     # Mid-level agent combining tools
     research_assistant = LlmAgent(
         name="ResearchAssistant",
-        model="gemini-2.0-flash",
+        model="gemini-flash-latest",
         description="Finds and summarizes information on a topic.",
         tools=[agent_tool.AgentTool(agent=web_searcher), agent_tool.AgentTool(agent=summarizer)]
     )
@@ -1102,7 +1102,7 @@ By combining ADK's composition primitives, you can implement various established
     # High-level agent delegating research
     report_writer = LlmAgent(
         name="ReportWriter",
-        model="gemini-2.0-flash",
+        model="gemini-flash-latest",
         instruction="Write a report on topic X. Use the ResearchAssistant to gather information.",
         tools=[agent_tool.AgentTool(agent=research_assistant)]
         # Alternatively, could use LLM Transfer if research_assistant is a sub_agent
@@ -1126,7 +1126,7 @@ By combining ADK's composition primitives, you can implement various established
     // Mid-level agent combining tools
     const researchAssistant = new LlmAgent({
         name: 'ResearchAssistant',
-        model: 'gemini-2.5-flash',
+        model: 'gemini-flash-latest',
         description: 'Finds and summarizes information on a topic.',
         tools: [new AgentTool({agent: webSearcher}), new AgentTool({agent: summarizer})]
     });
@@ -1134,7 +1134,7 @@ By combining ADK's composition primitives, you can implement various established
     // High-level agent delegating research
     const reportWriter = new LlmAgent({
         name: 'ReportWriter',
-        model: 'gemini-2.5-flash',
+        model: 'gemini-flash-latest',
         instruction: 'Write a report on topic X. Use the ResearchAssistant to gather information.',
         tools: [new AgentTool({agent: researchAssistant})]
         // Alternatively, could use LLM Transfer if researchAssistant is a subAgent
@@ -1181,7 +1181,7 @@ By combining ADK's composition primitives, you can implement various established
     // Mid-level agent combining tools
     LlmAgent researchAssistant = LlmAgent.builder()
         .name("ResearchAssistant")
-        .model("gemini-2.0-flash")
+        .model("gemini-flash-latest")
         .description("Finds and summarizes information on a topic.")
         .tools(AgentTool.create(webSearcher), AgentTool.create(summarizer))
         .build();
@@ -1190,7 +1190,7 @@ By combining ADK's composition primitives, you can implement various established
     // High-level agent delegating research
     LlmAgent reportWriter = LlmAgent.builder()
         .name("ReportWriter")
-        .model("gemini-2.0-flash")
+        .model("gemini-flash-latest")
         .instruction("Write a report on topic X. Use the ResearchAssistant to gather information.")
         .tools(AgentTool.create(researchAssistant))
         // Alternatively, could use LLM Transfer if research_assistant is a subAgent
@@ -1696,7 +1696,7 @@ A conceptual example of using a `CustomPolicyEngine` to require user confirmatio
     ```typescript
     const rootAgent = new LlmAgent({
       name: 'weather_time_agent',
-      model: 'gemini-2.5-flash',
+      model: 'gemini-flash-latest',
       description:
           'Agent to answer questions about the time and weather in a city.',
       instruction:

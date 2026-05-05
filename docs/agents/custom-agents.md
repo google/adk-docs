@@ -344,7 +344,7 @@ These are standard `LlmAgent` definitions, responsible for specific tasks. Their
 === "Python"
 
     ```python
-    GEMINI_2_FLASH = "gemini-2.0-flash" # Define model constant
+    GEMINI_2_FLASH = "gemini-flash-latest" # Define model constant
     --8<-- "examples/python/snippets/agents/custom-agent/storyflow_agent.py:llmagents"
     ```
 

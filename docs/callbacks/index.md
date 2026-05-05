@@ -29,7 +29,7 @@ Callbacks are a cornerstone feature of ADK, providing a powerful mechanism to ho
 !!! tip
     When implementing security guardrails and policies, use ADK Plugins for
     better modularity and flexibility than Callbacks. For more details, see
-    [Callbacks and Plugins for Security Guardrails](/adk-docs/safety/#callbacks-and-plugins-for-security-guardrails).
+    [Callbacks and Plugins for Security Guardrails](/safety/#callbacks-and-plugins-for-security-guardrails).
 
 **How are they added:**
 
@@ -45,7 +45,7 @@ Callbacks are a cornerstone feature of ADK, providing a powerful mechanism to ho
         ```typescript
         --8<-- "examples/typescript/snippets/callbacks/callback_basic.ts:callback_basic"
         ```
-    
+
     === "Go"
 
         ```go

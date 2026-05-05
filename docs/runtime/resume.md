@@ -14,7 +14,7 @@ interruption.
 
 This guide explains how to configure your ADK agent workflow to be resumable.
 If you use Custom Agents, you can update them to be resumable. For more
-information, see 
+information, see
 [Add resume to custom Agents](#custom-agents).
 
 ## Add resumable configuration
@@ -36,9 +36,9 @@ app = App(
 
 !!! warning "Caution: Long Running Functions, Confirmations, Authentication"
     For agents that use
-    [Long Running Functions](/adk-docs/tools-custom/function-tools/#long-run-tool),
-    [Confirmations](/adk-docs/tools-custom/confirmation/), or
-    [Authentication](/adk-docs/tools-custom/authentication/)
+    [Long Running Functions](/tools-custom/function-tools/#long-run-tool),
+    [Confirmations](/tools-custom/confirmation/), or
+    [Authentication](/tools-custom/authentication/)
     requiring user input, adding a resumable confirmation changes how these features
     operate. For more information, see the documentation for those features.
 
@@ -46,7 +46,7 @@ app = App(
     Resume is not supported by default for Custom Agents. You must
     update the agent code for a Custom Agent to support the Resume feature. For
     information on modifying Custom Agents to support incremental resume
-    functionality, see 
+    functionality, see
     [Add resume to custom Agents](#custom-agents).
 
 ## Resume a stopped workflow
@@ -54,7 +54,7 @@ app = App(
 When an ADK workflow stops execution you can resume the workflow using a
 command containing the Invocation ID for the workflow instance, which can be
 found in the
-[Event](/adk-docs/events/#understanding-and-using-events)
+[Event](/events/#understanding-and-using-events)
 history of the workflow. Make sure the ADK API server is running, in case it was
 interrupted or powered off, and then run the following command to resume the
 workflow, as shown in the following API request example.
@@ -78,7 +78,7 @@ You can also resume a workflow using the Runner object Run Async method, as
 shown below:
 
 ```python
-runner.run_async(user_id='u_123', session_id='s_abc', 
+runner.run_async(user_id='u_123', session_id='s_abc',
     invocation_id='invocation-123')
 
 # When new_message is set to a function response,
@@ -93,8 +93,8 @@ runner.run_async(user_id='u_123', session_id='s_abc',
 
 The Resume feature works by logging completed Agent workflow tasks,
 including incremental steps using
-[Events](/adk-docs/events/) and
-[Event Actions](/adk-docs/events/#detecting-actions-and-side-effects).
+[Events](/events/) and
+[Event Actions](/events/#detecting-actions-and-side-effects).
 tracking completion of agent tasks within a resumable workflow. If a workflow is
 interrupted and then later restarted, the system resumes the workflow by setting
 the completion state of each agent. If an agent did not complete, the workflow
@@ -123,7 +123,7 @@ tools A and B, and resumes the workflow by re-running the tool C request.
     check for and prevent duplicate runs.
 
 !!! note "Note: Workflow modification with Resume not supported"
-    Do not modify a stopped agent workflow before resuming it. 
+    Do not modify a stopped agent workflow before resuming it.
     For example adding or removing agents from workflow that has stopped
     and then resuming that workflow is not supported.
 
@@ -151,7 +151,7 @@ Agent to support a workflow Resume.
 
 The following example shows the required code modifications to the example
 StoryFlowAgent class shown in the
-[Custom Agents](/adk-docs/agents/custom-agents/#full-code-example)
+[Custom Agents](/agents/custom-agents/#full-code-example)
 guide:
 
 ```python
