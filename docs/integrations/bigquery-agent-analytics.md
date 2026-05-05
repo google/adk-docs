@@ -40,7 +40,7 @@ Version 1.26.0 adds **Auto Schema Upgrade** (safely add new columns to existing 
 
 ### Captured events summary
 
-The following table lists all event types the plugin logs. For detailed payload examples, see [Event types and payloads](#event-types).
+The following table lists all event types the plugin logs. For detailed payload examples, see [Event types and payloads](#event-types). The **View** column shows the BigQuery view optionally created when [`create_views`](#configuration-options) is enabled (the default).
 
 | Event Type | Captured When | Key Payload Fields | View |
 |:---|:---|:---|:---|
@@ -247,6 +247,8 @@ plugin = BigQueryAgentAnalyticsPlugin(
 ```
 
 ### BigQueryLoggerConfig options
+
+All options below are optional and have sensible defaults. Pass them to `BigQueryLoggerConfig` or as `**kwargs` to the plugin constructor.
 
 | Option | Type | Default | Use when |
 |:---|:---|:---|:---|
@@ -1010,7 +1012,7 @@ FROM SessionContext;
 
 ### Conversational Analytics
 
-You can also use [BigQuery Conversational Analytics](https://cloud.google.com/bigquery/docs/conversational-analytics) to analyze your agent logs using natural language. Example questions:
+You can also use [BigQuery Conversational Analytics](https://cloud.google.com/bigquery/docs/conversational-analytics) to analyze your agent logs using natural language. Create a conversational analytics agent in the [BigQuery Agents Hub](https://console.cloud.google.com/bigquery/agents_hub) connected to your `agent_events` table, then ask questions like:
 
 *   "Show me the error rate over time"
 *   "What are the most common tool calls?"
@@ -1415,16 +1417,22 @@ For Gunicorn deployments specifically:
 
     The fork-safety mechanism resets runtime state only. It does **not** replay events that were queued but not yet flushed in the parent process at the time of fork. Call `await plugin.flush()` before forking if you need to guarantee delivery.
 
-## Consuming logged data with BigQuery Agent Analytics SDK
+## Additional ways to consume logged data
 
-The [BigQuery Agent Analytics SDK](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-SDK/tree/main) provides a convenient way to consume and analyze the data logged by the BigQuery Agent Analytics plugin. The SDK offers pre-built utilities for querying, aggregating, and visualizing your agent's operational data directly from BigQuery.
+### BigQuery Agent Analytics SDK
 
-### Dashboard
+The [BigQuery Agent Analytics SDK](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-SDK/tree/main) provides a programmatic way to consume and analyze the data logged by the plugin. Use the SDK for:
 
-The BigQuery Agent Analytics SDK includes an [example Jupyter notebook](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-SDK/blob/main/examples/dashboard_v2.ipynb) that demonstrates how to query and visualize your agent's performance data. Use it as a starting point to build your own custom dashboards tailored to your BigQuery Agent Analytics dataset.
+-   **Agent evaluation** — compare agent runs against expected outcomes.
+-   **Golden trajectory matching** — validate that agent execution paths match approved sequences.
+-   **Trace visualization** — reconstruct and visualize agent execution flows from logged spans.
+
+### Build a dashboard
+
+The BigQuery Agent Analytics SDK includes an [example Jupyter notebook](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-SDK/blob/main/examples/dashboard_v2.ipynb) that demonstrates how to query and visualize your agent's performance data. Use it as a starting point to build your own custom dashboards tailored to your BigQuery Agent Analytics dataset. You can also publish the notebook as an interactive dashboard using [BigQuery Data app](https://cloud.google.com/bigquery/docs/data-app-overview).
 
 ## Feedback
-We welcome your feedback on BigQuery Agent Analytics. If you have questions, suggestions, or encounter any issues, please reach out to the team at bqaa-feedback@google.com.
+We welcome your feedback on BigQuery Agent Analytics. If you have questions, suggestions, or encounter any issues, please reach out to the team at [bqaa-feedback@google.com](mailto:bqaa-feedback@google.com).
 
 ## Additional resources
 
