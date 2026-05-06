@@ -65,7 +65,7 @@ shows the BigQuery view optionally created when
 [`create_views`](#configuration-options) is enabled (the default).
 
 | Event Type | Captured When | Key Payload Fields | View |
-|:---|:---|:---|:---|
+| --- | --- | --- | --- |
 | `USER_MESSAGE_RECEIVED` | A user message enters the invocation | text summary / content parts | `v_user_message_received` |
 | `INVOCATION_STARTING` | An invocation begins | *(common columns only)* | `v_invocation_starting` |
 | `INVOCATION_COMPLETED` | An invocation ends | *(common columns only)* | `v_invocation_completed` |
@@ -264,7 +264,7 @@ accepts `**kwargs`, which are forwarded directly to `BigQueryLoggerConfig` (see
 below).
 
 | Parameter | Type | Default | Use when |
-|:---|:---|:---|:---|
+| --- | --- | --- | --- |
 | `project_id` | `str` | *(required)* | Select the Google Cloud project |
 | `dataset_id` | `str` | *(required)* | Select the BigQuery dataset |
 | `table_id` | `Optional[str]` | `None` | Use a custom table name (overrides config `table_id`) |
@@ -287,7 +287,7 @@ All options below are optional and have sensible defaults. Pass them to
 `BigQueryLoggerConfig` or as `**kwargs` to the plugin constructor.
 
 | Option | Type | Default | Use when |
-|:---|:---|:---|:---|
+| --- | --- | --- | --- |
 | `enabled` | `bool` | `True` | Temporarily disable logging |
 | `table_id` | `str` | `"agent_events"` | Use a custom table name (constructor value takes precedence) |
 | `clustering_fields` | `List[str]` | `["event_type", "agent", "user_id"]` | Customize table clustering on creation |
@@ -368,7 +368,7 @@ The events table (`agent_events`) uses a flexible schema. The following table
 provides a comprehensive reference with example values.
 
 | Field Name | Type | Mode | Description | Example Value |
-|:---|:---|:---|:---|:---|
+| --- | --- | --- | --- | --- |
 | **timestamp** | `TIMESTAMP` | `REQUIRED` | UTC timestamp of event creation. Acts as the primary ordering key and the daily partitioning key. Precision is microsecond. | `2026-02-03 20:52:17 UTC` |
 | **event_type** | `STRING` | `NULLABLE` | The canonical event category. Standard values include `LLM_REQUEST`, `LLM_RESPONSE`, `LLM_ERROR`, `TOOL_STARTING`, `TOOL_COMPLETED`, `TOOL_ERROR`, `AGENT_STARTING`, `AGENT_COMPLETED`, `STATE_DELTA`, `INVOCATION_STARTING`, `INVOCATION_COMPLETED`, `USER_MESSAGE_RECEIVED`, and HITL events (see [HITL events](#hitl-events)). Used for high-level filtering. | `LLM_REQUEST` |
 | **agent** | `STRING` | `NULLABLE` | The name of the agent responsible for this event. Defined during agent initialization or via the `root_agent_name` context. | `my_bq_agent` |
@@ -470,7 +470,7 @@ The following table lists all 16 auto-created views and their event-specific
 columns:
 
 | View Name | Event-Specific Columns |
-|:---|:---|
+| --- | --- |
 | **`v_user_message_received`** | *(common columns only)* |
 | **`v_llm_request`** | `model` (STRING), `request_content` (JSON), `llm_config` (JSON), `tools` (JSON) |
 | **`v_llm_response`** | `response` (JSON), `usage_prompt_tokens` (INT64), `usage_completion_tokens` (INT64), `usage_total_tokens` (INT64), `usage_cached_tokens` (INT64), `total_ms` (INT64), `ttft_ms` (INT64), `model_version` (STRING), `usage_metadata` (JSON), `cache_metadata` (JSON), `context_cache_hit_rate` (FLOAT64) |
@@ -591,7 +591,7 @@ These events track the execution of tools by the agent. Each tool event includes
 a `tool_origin` field that classifies the tool's provenance:
 
 | Tool Origin | Description |
-|:---|:---|
+| --- | --- |
 | `LOCAL` | `FunctionTool` instances (local Python functions) |
 | `MCP` | Model Context Protocol tools (`McpTool` instances) |
 | `SUB_AGENT` | `AgentTool` instances (sub-agents) |
