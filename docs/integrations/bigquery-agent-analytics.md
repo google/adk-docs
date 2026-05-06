@@ -689,37 +689,13 @@ updated by tools).
 
 ### Agent lifecycle & Generic Events
 
-<table>
-  <thead>
-    <tr>
-      <th><strong>Event Type</strong></th>
-      <th><strong>Content (JSON) Structure</strong></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><p><pre>INVOCATION_STARTING</pre></p></td>
-      <td><p><pre>{}</pre></p></td>
-    </tr>
-    <tr>
-      <td><p><pre>INVOCATION_COMPLETED</pre></p></td>
-      <td><p><pre>{}</pre></p></td>
-    </tr>
-    <tr>
-      <td><p><pre>AGENT_STARTING</pre></p></td>
-      <td><p><pre>"You are a helpful agent..."</pre></p></td>
-    </tr>
-    <tr>
-      <td><p><pre>AGENT_COMPLETED</pre></p></td>
-      <td><p><pre>{}</pre></p></td>
-    </tr>
-    <tr>
-      <td><p><pre>USER_MESSAGE_RECEIVED</pre></p></td>
-      <td><p><pre>{"text_summary": "Help me book a flight."}</pre></p></td>
-    </tr>
-
-  </tbody>
-</table>
+| Event Type | Content (JSON) Structure |
+| ---------- | ------------------------ |
+| `INVOCATION_STARTING` | `{}` |
+| `INVOCATION_COMPLETED` | `{}` |
+| `AGENT_STARTING` | `"You are a helpful agent..."` |
+| `AGENT_COMPLETED` | `{}` |
+| `USER_MESSAGE_RECEIVED` | `{"text_summary": "Help me book a flight."}` |
 
 ### Human-in-the-Loop (HITL) Events {#hitl-events}
 
@@ -733,47 +709,14 @@ The following HITL tool names are recognized:
 - `adk_request_confirmation` — Request for user confirmation before proceeding
 - `adk_request_input` — Request for free-form user input
 
-<table>
-  <thead>
-    <tr>
-      <th><strong>Event Type</strong></th>
-      <th><strong>Trigger</strong></th>
-      <th><strong>Content (JSON) Structure</strong></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><p><pre>HITL_CREDENTIAL_REQUEST</pre></p></td>
-      <td>Agent calls <code>adk_request_credential</code></td>
-      <td><p><pre>{"tool": "adk_request_credential", "args": {...}}</pre></p></td>
-    </tr>
-    <tr>
-      <td><p><pre>HITL_CREDENTIAL_REQUEST_COMPLETED</pre></p></td>
-      <td>User provides credential response</td>
-      <td><p><pre>{"tool": "adk_request_credential", "result": {...}}</pre></p></td>
-    </tr>
-    <tr>
-      <td><p><pre>HITL_CONFIRMATION_REQUEST</pre></p></td>
-      <td>Agent calls <code>adk_request_confirmation</code></td>
-      <td><p><pre>{"tool": "adk_request_confirmation", "args": {...}}</pre></p></td>
-    </tr>
-    <tr>
-      <td><p><pre>HITL_CONFIRMATION_REQUEST_COMPLETED</pre></p></td>
-      <td>User provides confirmation response</td>
-      <td><p><pre>{"tool": "adk_request_confirmation", "result": {...}}</pre></p></td>
-    </tr>
-    <tr>
-      <td><p><pre>HITL_INPUT_REQUEST</pre></p></td>
-      <td>Agent calls <code>adk_request_input</code></td>
-      <td><p><pre>{"tool": "adk_request_input", "args": {...}}</pre></p></td>
-    </tr>
-    <tr>
-      <td><p><pre>HITL_INPUT_REQUEST_COMPLETED</pre></p></td>
-      <td>User provides input response</td>
-      <td><p><pre>{"tool": "adk_request_input", "result": {...}}</pre></p></td>
-    </tr>
-  </tbody>
-</table>
+| Event Type | Trigger | Content (JSON) Structure |
+| ---------- | ------- | ------------------------ |
+| `HITL_CREDENTIAL_REQUEST` | Agent calls `adk_request_credential` | `{"tool": "adk_request_credential", "args": {...}}` |
+| `HITL_CREDENTIAL_REQUEST_COMPLETED` | User provides credential response | `{"tool": "adk_request_credential", "result": {...}}` |
+| `HITL_CONFIRMATION_REQUEST` | Agent calls `adk_request_confirmation` | `{"tool": "adk_request_confirmation", "args": {...}}` |
+| `HITL_CONFIRMATION_REQUEST_COMPLETED` | User provides confirmation response | `{"tool": "adk_request_confirmation", "result": {...}}` |
+| `HITL_INPUT_REQUEST` | Agent calls `adk_request_input` | `{"tool": "adk_request_input", "args": {...}}` |
+| `HITL_INPUT_REQUEST_COMPLETED` | User provides input response | `{"tool": "adk_request_input", "result": {...}}` |
 
 HITL request events are detected from `function_call` parts in
 `on_event_callback`. HITL completion events are detected from
