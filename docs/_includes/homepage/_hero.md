@@ -2,7 +2,7 @@
 <div class="hero-grid">
   <div class="hero-content">
     <h1>Build production agents, <span class="hero-punchline">not prototypes.</span></h1>
-    <p>ADK is the open-source agent development framework that lets you build, debug, and deploy reliable AI agents at enterprise scale. Available in Python, TypeScript, Go, and Java.</p>
+    <p>ADK is the open-source agent development framework that lets you build, debug, and deploy reliable AI agents at enterprise scale. Available in Python, TypeScript, Go, Java, and Kotlin.</p>
     <div class="hero-actions">
       <a href="get-started/" class="btn btn-primary">Start building</a>
       <!-- <a href="skills/" class="btn btn-accent">Agent skills</a> -->
@@ -17,6 +17,7 @@
           <div class="iterm-tab" data-lang="typescript">TypeScript</div>
           <div class="iterm-tab" data-lang="go">Go</div>
           <div class="iterm-tab" data-lang="java">Java</div>
+          <div class="iterm-tab" data-lang="kotlin">Kotlin</div>
         </div>
 <div class="code-content" id="code-python"><pre><span class="kw">from</span> google.adk <span class="kw">import</span> <span class="fn">Agent</span>
 <span class="kw">from</span> google.adk.tools <span class="kw">import</span> google_search
@@ -60,6 +61,18 @@ a := agent.<span class="fn">New</span>(<span class="str">"researcher"</span>,
     .tools(<span class="kw">new</span> <span class="fn">GoogleSearchTool()</span>)
     .build();</pre></div>
 
+<div class="code-content" id="code-kotlin" style="display:none"><pre><span class="kw">import</span> com.google.adk.kt.agents.<span class="fn">LlmAgent</span>
+<span class="kw">import</span> com.google.adk.kt.tools.<span class="fn">GoogleSearchTool</span>
+
+<span class="kw">val</span> agent = <span class="fn">LlmAgent</span>(
+    config = <span class="fn">LlmAgentConfig</span>(
+        agentConfig = <span class="fn">AgentConfig</span>(name = <span class="str">"researcher"</span>),
+        model = <span class="fn">GeminiModel</span>(name = <span class="str">"gemini-flash-latest"</span>),
+        instruction = <span class="fn">Instruction</span>(<span class="str">"You help users research topics thoroughly."</span>),
+        tools = listOf(<span class="fn">GoogleSearchTool</span>()),
+    )
+)</pre></div>
+
 </div>
       <!-- Install info synced with tabs -->
       <div class="install-info" id="install-python">
@@ -84,6 +97,12 @@ a := agent.<span class="fn">New</span>(<span class="str">"researcher"</span>,
         <div class="install-cmd">
           <code>com.google.adk:google-adk</code>
           <button class="copy-btn" data-copy="com.google.adk:google-adk" title="Copy to clipboard">📋</button>
+        </div>
+      </div>
+      <div class="install-info" id="install-kotlin" style="display:none">
+        <div class="install-cmd">
+          <code>com.google.adk:google-adk-kotlin-core</code>
+          <button class="copy-btn" data-copy="com.google.adk:google-adk-kotlin-core" title="Copy to clipboard">📋</button>
         </div>
       </div>
     </div>

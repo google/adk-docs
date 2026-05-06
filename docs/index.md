@@ -69,7 +69,7 @@ document.addEventListener('click', function(e) {
   if (tab) {
     var lang = tab.getAttribute('data-lang');
     var allTabs = document.querySelectorAll('.iterm-tab');
-    var langs = ['python', 'go', 'java', 'typescript'];
+    var langs = ['python', 'go', 'java', 'typescript', 'kotlin'];
     allTabs.forEach(function(t) { t.classList.remove('active'); });
     tab.classList.add('active');
     langs.forEach(function(l) {
