@@ -13,11 +13,12 @@ These callbacks are available on *any* agent that inherits from `BaseAgent` (inc
 !!! Note
     The specific method names or return types may vary slightly by SDK language (e.g., return `None` in Python, return `Optional.empty()` or `Maybe.empty()` in Java). Refer to the language-specific API documentation for details.
 
-!!! Important "Use the documented callback parameter names"
+??? warning "Python: Use the documented callback parameter names"
+
     In Python, callback function parameter names must match the documented
     names exactly because ADK passes callback arguments by keyword. For example,
     use `callback_context` for agent and model callbacks, and `tool_context` for
-    tool callbacks. Renaming these parameters to aliases such as `ctx` can cause
+    tool callbacks. Renaming these parameters to aliases such as `ctx` will cause
     runtime `TypeError` failures.
 
     ```python
@@ -29,6 +30,15 @@ These callbacks are available on *any* agent that inherits from `BaseAgent` (inc
     def before_agent_callback(ctx):
         ...
     ```
+
+    | Callback | Required parameter names |
+    |---|---|
+    | `before_agent_callback` | `callback_context` |
+    | `after_agent_callback` | `callback_context` |
+    | `before_model_callback` | `callback_context`, `llm_request` |
+    | `after_model_callback` | `callback_context`, `llm_response` |
+    | `before_tool_callback` | `tool`, `args`, `tool_context` |
+    | `after_tool_callback` | `tool`, `args`, `tool_context`, `tool_response` |
 
 ### Before Agent Callback
 
