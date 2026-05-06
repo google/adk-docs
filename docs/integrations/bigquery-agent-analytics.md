@@ -353,7 +353,11 @@ config = BigQueryLoggerConfig(
     # retry_config=RetryConfig(max_retries=3), # Optional: Configure retries
 )
 
-plugin = BigQueryAgentAnalyticsPlugin(..., config=config)
+plugin = BigQueryAgentAnalyticsPlugin(
+    project_id="my-project",
+    dataset_id="my_dataset",
+    config=config,
+)
 ```
 
 ## Schema and production setup
