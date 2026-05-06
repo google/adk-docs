@@ -705,9 +705,9 @@ normal `TOOL_STARTING` / `TOOL_COMPLETED` events.
 
 The following HITL tool names are recognized:
 
-- `adk_request_credential` — Request for user credentials (e.g., OAuth tokens)
-- `adk_request_confirmation` — Request for user confirmation before proceeding
-- `adk_request_input` — Request for free-form user input
+- `adk_request_credential`: Request for user credentials (e.g., OAuth tokens)
+- `adk_request_confirmation`: Request for user confirmation before proceeding
+- `adk_request_input`: Request for free-form user input
 
 | Event Type | Trigger | Content (JSON) Structure |
 | ---------- | ------- | ------------------------ |
@@ -775,7 +775,7 @@ options](#configuration-options).
       "storage_mode": "GCS_REFERENCE",
       "text": "AAAA... [OFFLOADED]",
       "object_ref": {
-        "uri": "gs://haiyuan-adk-debug-verification-1765319132/2025-12-10/e-f9545d6d/ae5235e6_p1.txt",
+        "uri": "gs://sample-bucket-name/2025-12-10/e-f9545d6d/ae5235e6_p1.txt",
         "authorizer": "us.bqml_connection",
         "details": {"gcs_metadata": {"content_type": "text/plain"}}
       }
@@ -796,7 +796,7 @@ options](#configuration-options).
       "storage_mode": "GCS_REFERENCE",
       "text": "[MEDIA OFFLOADED]",
       "object_ref": {
-        "uri": "gs://haiyuan-adk-debug-verification-1765319132/2025-12-10/e-f9545d6d/ae5235e6_p2.png",
+        "uri": "gs://sample-bucket-name/2025-12-10/e-f9545d6d/ae5235e6_p2.png",
         "authorizer": "us.bqml_connection",
         "details": {"gcs_metadata": {"content_type": "image/png"}}
       }
@@ -1448,9 +1448,9 @@ child processes. This means the plugin can survive `os.fork()` without leaking
 file descriptors or sending data on a parent's connection.
 
 However, **`spawn` is the recommended multiprocessing start method** for
-production deployments. `fork` copies the parent's address space — including any
-in-flight gRPC state — and the post-fork reset adds latency to the first write
-in each child. With `spawn`, each worker initializes the plugin cleanly.
+production deployments. `fork` copies the parent's address space, including any
+in-flight gRPC state, and the post-fork reset adds latency to the first write in
+each child. With `spawn`, each worker initializes the plugin cleanly.
 
 For Gunicorn deployments specifically:
 
@@ -1475,11 +1475,11 @@ SDK](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-SDK/tree/ma
 provides a programmatic way to consume and analyze the data logged by the
 plugin. Use the SDK for:
 
-- **Agent evaluation** — compare agent runs against expected outcomes.
-- **Golden trajectory matching** — validate that agent execution paths match
-  approved sequences.
-- **Trace visualization** — reconstruct and visualize agent execution flows from
-  logged spans.
+- **Agent evaluation**: Compare agent runs against expected outcomes
+- **Golden trajectory matching**: Validate that agent execution paths match
+  approved sequences
+- **Trace visualization**: Reconstruct and visualize agent execution flows from
+  logged spans
 
 ### Build a dashboard
 
