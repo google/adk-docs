@@ -13,34 +13,56 @@ catalog_tags: ["observability", "google"]
 
 !!! important "Version Requirement"
 
-    Use ADK Python version 1.26.0 or higher to make full use of the features described in this document, including auto-schema-upgrade, tool provenance tracking, and HITL event tracing.
+    Use ADK Python version 1.26.0 or higher to make full use of the features
+    described in this document, including auto-schema-upgrade, tool provenance
+    tracking, and HITL event tracing.
 
-The BigQuery Agent Analytics Plugin significantly enhances the Agent Development Kit (ADK) by providing a robust solution for in-depth agent behavior analysis. Using the ADK Plugin architecture and the **BigQuery Storage Write API**, it captures and logs critical operational events directly into a Google BigQuery table, empowering you with advanced capabilities for debugging, real-time monitoring, and comprehensive offline performance evaluation.
+The BigQuery Agent Analytics Plugin significantly enhances the Agent Development
+Kit (ADK) by providing a robust solution for in-depth agent behavior analysis.
+Using the ADK Plugin architecture and the **BigQuery Storage Write API**, it
+captures and logs critical operational events directly into a Google BigQuery
+table, empowering you with advanced capabilities for debugging, real-time
+monitoring, and comprehensive offline performance evaluation.
 
-Version 1.26.0 adds **Auto Schema Upgrade** (safely add new columns to existing tables), **Tool Provenance** tracking (LOCAL, MCP, SUB_AGENT, A2A, TRANSFER_AGENT, TRANSFER_A2A), and **HITL Event Tracing** for human-in-the-loop interactions. Version 1.27.0 adds **Automatic View Creation** (generate flat, query-friendly event views).
+Version 1.26.0 adds **Auto Schema Upgrade** (safely add new columns to existing
+tables), **Tool Provenance** tracking (LOCAL, MCP, SUB_AGENT, A2A,
+TRANSFER_AGENT, TRANSFER_A2A), and **HITL Event Tracing** for human-in-the-loop
+interactions. Version 1.27.0 adds **Automatic View Creation** (generate flat,
+query-friendly event views).
 
 !!! warning "BigQuery Storage Write API"
 
     This feature uses **BigQuery Storage Write API**, which is a paid service.
-    For information on costs, see the
-    [BigQuery documentation](https://cloud.google.com/bigquery/pricing?e=48754805&hl=en#data-ingestion-pricing).
+    For information on costs, see the [BigQuery
+    documentation](https://cloud.google.com/bigquery/pricing?e=48754805&hl=en#data-ingestion-pricing).
 
 ## Use cases
 
--   **Agent workflow debugging and analysis:** Capture a wide range of
-    *plugin lifecycle events* (LLM calls, tool usage) and *agent-yielded
-    events* (user input, model responses), into a well-defined schema.
--   **High-volume analysis and debugging:** Logging operations are performed
-    asynchronously using the Storage Write API to allow high throughput and low latency.
--   **Multimodal Analysis**: Log and analyze text, images, and other modalities. Large files are offloaded to GCS, making them accessible to BigQuery ML via Object Tables.
--   **Distributed Tracing**: Built-in support for OpenTelemetry-style tracing (`trace_id`, `span_id`) to visualize agent execution flows.
--   **Tool Provenance**: Track the origin of each tool call (local function, MCP server, sub-agent, A2A remote agent, or transfer agent).
--   **Human-in-the-Loop (HITL) Tracing**: Dedicated event types for credential requests, confirmation prompts, and user input requests.
--   **Queryable Event Views**: Automatically create flat, per-event-type BigQuery views (e.g., `v_llm_request`, `v_tool_completed`) to simplify downstream analytics by unnesting JSON payload data.
+- **Agent workflow debugging and analysis:** Capture a wide range of *plugin
+  lifecycle events* (LLM calls, tool usage) and *agent-yielded events* (user
+  input, model responses), into a well-defined schema.
+- **High-volume analysis and debugging:** Logging operations are performed
+  asynchronously using the Storage Write API to allow high throughput and low
+  latency.
+- **Multimodal Analysis**: Log and analyze text, images, and other modalities.
+  Large files are offloaded to GCS, making them accessible to BigQuery ML via
+  Object Tables.
+- **Distributed Tracing**: Built-in support for OpenTelemetry-style tracing
+  (`trace_id`, `span_id`) to visualize agent execution flows.
+- **Tool Provenance**: Track the origin of each tool call (local function, MCP
+  server, sub-agent, A2A remote agent, or transfer agent).
+- **Human-in-the-Loop (HITL) Tracing**: Dedicated event types for credential
+  requests, confirmation prompts, and user input requests.
+- **Queryable Event Views**: Automatically create flat, per-event-type BigQuery
+  views (e.g., `v_llm_request`, `v_tool_completed`) to simplify downstream
+  analytics by unnesting JSON payload data.
 
 ### Captured events summary
 
-The following table lists all event types the plugin logs. For detailed payload examples, see [Event types and payloads](#event-types). The **View** column shows the BigQuery view optionally created when [`create_views`](#configuration-options) is enabled (the default).
+The following table lists all event types the plugin logs. For detailed payload
+examples, see [Event types and payloads](#event-types). The **View** column
+shows the BigQuery view optionally created when
+[`create_views`](#configuration-options) is enabled (the default).
 
 | Event Type | Captured When | Key Payload Fields | View |
 |:---|:---|:---|:---|
@@ -66,7 +88,8 @@ The following table lists all event types the plugin logs. For detailed payload 
 
 ## Quickstart
 
-Add the plugin to your agent's `App` object. For prerequisites, see [Prerequisites](#prerequisites).
+Add the plugin to your agent's `App` object. For prerequisites, see
+[Prerequisites](#prerequisites).
 
 ```python title="agent.py"
 import os
@@ -100,9 +123,11 @@ app = App(
 ### Run and test agent
 
 Test the plugin by running the agent and making a few requests through the chat
-interface, such as "tell me what you can do" or  "List datasets in my cloud project <your-gcp-project-id> ". These actions create events which are
-recorded in your Google Cloud project BigQuery instance. Once these events have
-been processed, you can view the data for them in the [BigQuery Console](https://console.cloud.google.com/bigquery), using this query
+interface, such as "tell me what you can do" or "List datasets in my cloud
+project <your-gcp-project-id>". These actions create events which are recorded
+in your Google Cloud project BigQuery instance. Once these events have been
+processed, you can view the data for them in the [BigQuery
+Console](https://console.cloud.google.com/bigquery), using this query:
 
 ```sql
 SELECT timestamp, event_type, content
@@ -197,36 +222,46 @@ LIMIT 20;
 
 ## Prerequisites {#prerequisites}
 
--   **Google Cloud Project** with the **BigQuery API** enabled.
--   **BigQuery Dataset:** Create a dataset to store logging tables before
-    using the plugin. The plugin automatically creates the necessary events table within the dataset if the table does not exist.
--   **Google Cloud Storage Bucket (Optional):** If you plan to log multimodal content (images, audio, etc.), creating a GCS bucket is recommended for offloading large files.
--   **Authentication:**
-    -   **Local:** Run `gcloud auth application-default login`.
-    -   **Cloud:** Ensure your service account has the required permissions.
+- **Google Cloud Project** with the **BigQuery API** enabled.
+- **BigQuery Dataset:** Create a dataset to store logging tables before using
+  the plugin. The plugin automatically creates the necessary events table within
+  the dataset if the table does not exist.
+- **Google Cloud Storage Bucket (Optional):** If you plan to log multimodal
+  content (images, audio, etc.), creating a GCS bucket is recommended for
+  offloading large files.
+- **Authentication:**
+    - **Local:** Run `gcloud auth application-default login`.
+    - **Cloud:** Ensure your service account has the required permissions.
 
 ??? note "Note: Gemini model selector `gemini-flash-latest`"
 
-    Most code examples in ADK documentation use `gemini-flash-latest` to select the
-    [latest available](https://ai.google.dev/gemini-api/docs/models#latest)
-    Gemini Flash version. However, if you access Gemini from a regional endpoint,
-    such as `us-central1`, this selection string may not work. In that case,
-    use a specific model version string from the
-    [Gemini models](https://ai.google.dev/gemini-api/docs/models) page or
-    Google Cloud [Gemini models](https://docs.cloud.google.com/vertex-ai/generative-ai/docs/models) list.
+    Most code examples in ADK documentation use `gemini-flash-latest` to select
+    the [latest available](https://ai.google.dev/gemini-api/docs/models#latest)
+    Gemini Flash version. However, if you access Gemini from a regional
+    endpoint, such as `us-central1`, this selection string may not work. In that
+    case, use a specific model version string from the [Gemini
+    models](https://ai.google.dev/gemini-api/docs/models) page or Google Cloud
+    [Gemini
+    models](https://docs.cloud.google.com/vertex-ai/generative-ai/docs/models)
+    list.
 
 ### IAM permissions
 
-For the agent to work properly, the principal (e.g., service account, user account) under which the agent is running needs these Google Cloud roles:
-* `roles/bigquery.jobUser` at Project Level to run BigQuery queries.
-* `roles/bigquery.dataEditor` at Table Level to write log/event data.
-* **If using GCS offloading:** `roles/storage.objectCreator` and `roles/storage.objectViewer` on the target bucket.
+For the agent to work properly, the principal (e.g., service account, user
+account) under which the agent is running needs these Google Cloud roles:
+
+- `roles/bigquery.jobUser` at Project Level to run BigQuery queries.
+- `roles/bigquery.dataEditor` at Table Level to write log/event data.
+- **If using GCS offloading:** `roles/storage.objectCreator` and
+  `roles/storage.objectViewer` on the target bucket.
 
 ## Configuration options {#configuration-options}
 
 ### Constructor parameters
 
-The `BigQueryAgentAnalyticsPlugin` constructor accepts these parameters. It also accepts `**kwargs`, which are forwarded directly to `BigQueryLoggerConfig` (see below).
+The `BigQueryAgentAnalyticsPlugin` constructor accepts these parameters. It also
+accepts `**kwargs`, which are forwarded directly to `BigQueryLoggerConfig` (see
+below).
 
 | Parameter | Type | Default | Use when |
 |:---|:---|:---|:---|
@@ -248,7 +283,8 @@ plugin = BigQueryAgentAnalyticsPlugin(
 
 ### BigQueryLoggerConfig options
 
-All options below are optional and have sensible defaults. Pass them to `BigQueryLoggerConfig` or as `**kwargs` to the plugin constructor.
+All options below are optional and have sensible defaults. Pass them to
+`BigQueryLoggerConfig` or as `**kwargs` to the plugin constructor.
 
 | Option | Type | Default | Use when |
 |:---|:---|:---|:---|
@@ -274,8 +310,8 @@ All options below are optional and have sensible defaults. Pass them to `BigQuer
 | `view_prefix` | `str` | `"v"` | Avoid view-name collisions when multiple plugins share a dataset (e.g., `"v_staging"`) |
 
 
-The following code sample shows how to define a configuration for the
-BigQuery Agent Analytics plugin:
+The following code sample shows how to define a configuration for the BigQuery
+Agent Analytics plugin:
 
 ```python
 import json
@@ -324,7 +360,8 @@ plugin = BigQueryAgentAnalyticsPlugin(..., config=config)
 
 ### Schema Reference
 
-The events table (`agent_events`) uses a flexible schema. The following table provides a comprehensive reference with example values.
+The events table (`agent_events`) uses a flexible schema. The following table
+provides a comprehensive reference with example values.
 
 | Field Name | Type | Mode | Description | Example Value |
 |:---|:---|:---|:---|:---|
@@ -345,7 +382,8 @@ The events table (`agent_events`) uses a flexible schema. The following table pr
 | **is_truncated** | `BOOLEAN` | `NULLABLE` | `true` if `content` or `attributes` exceeded the BigQuery cell size limit (default 10MB) and were partially dropped. | `false` |
 | **content_parts** | `RECORD` | `REPEATED` | Array of multi-modal segments (Text, Image, Blob). Used when content cannot be serialized as simple JSON (e.g., large binaries or GCS refs). | `[{"mime_type": "text/plain", "text": "hello"}]` |
 
-The plugin automatically creates the table if it does not exist. For production, you can optionally create the table manually using the DDL below.
+The plugin automatically creates the table if it does not exist. For production,
+you can optionally create the table manually using the DDL below.
 
 ??? example "Manual DDL for production setup"
 
@@ -388,9 +426,17 @@ The plugin automatically creates the table if it does not exist. For production,
 
 ### Automatically Created Views (1.27.0+)
 
-When `create_views=True` (the default in 1.27.0 and higher), the plugin automatically generates views for each event type that unnest common JSON structures into flat, typed columns. This significantly simplifies SQL, eliminating the need to write complex `JSON_VALUE` or `JSON_QUERY` functions explicitly.
+When `create_views=True` (the default in 1.27.0 and higher), the plugin
+automatically generates views for each event type that unnest common JSON
+structures into flat, typed columns. This significantly simplifies SQL,
+eliminating the need to write complex `JSON_VALUE` or `JSON_QUERY` functions
+explicitly.
 
-View names follow the convention `{view_prefix}_{event_type_lowercase}` (for example, with the default prefix `"v"`, `LLM_REQUEST` becomes `v_llm_request`). Set `view_prefix` in `BigQueryLoggerConfig` to a distinct value when multiple plugin instances write to different tables in the same dataset, preventing view-name collisions:
+View names follow the convention `{view_prefix}_{event_type_lowercase}` (for
+example, with the default prefix `"v"`, `LLM_REQUEST` becomes `v_llm_request`).
+Set `view_prefix` in `BigQueryLoggerConfig` to a distinct value when multiple
+plugin instances write to different tables in the same dataset, preventing
+view-name collisions:
 
 ```python
 # Two plugins in the same dataset with distinct view prefixes
@@ -409,11 +455,15 @@ plugin_staging = BigQueryAgentAnalyticsPlugin(
 # Creates views: v_staging_llm_request, v_staging_tool_completed, ...
 ```
 
-You can also call the public async method `await plugin.create_analytics_views()` to manually refresh views, for example after a schema upgrade.
+You can also call the public async method `await plugin.create_analytics_views()`
+to manually refresh views, for example after a schema upgrade.
 
-Every view includes these **common columns**: `timestamp`, `event_type`, `agent`, `session_id`, `invocation_id`, `user_id`, `trace_id`, `span_id`, `parent_span_id`, `status`, `error_message`, `is_truncated`.
+Every view includes these **common columns**: `timestamp`, `event_type`,
+`agent`, `session_id`, `invocation_id`, `user_id`, `trace_id`, `span_id`,
+`parent_span_id`, `status`, `error_message`, `is_truncated`.
 
-The following table lists all 16 auto-created views and their event-specific columns:
+The following table lists all 16 auto-created views and their event-specific
+columns:
 
 | View Name | Event-Specific Columns |
 |:---|:---|
@@ -436,13 +486,17 @@ The following table lists all 16 auto-created views and their event-specific col
 
 ## Event types and payloads {#event-types}
 
-The `content` column now contains a **JSON** object specific to the `event_type`.
-The `content_parts` column provides a structured view of the content, especially useful for images or offloaded data.
+The `content` column now contains a **JSON** object specific to the
+`event_type`. The `content_parts` column provides a structured view of the
+content, especially useful for images or offloaded data.
 
 !!! note "Content Truncation"
 
-    - Variable content fields are truncated to `max_content_length` (configured in `BigQueryLoggerConfig`, default 500KB).
-    - If `gcs_bucket_name` is configured, large content is offloaded to GCS instead of being truncated, and a reference is stored in `content_parts.object_ref`.
+    - Variable content fields are truncated to `max_content_length` (configured
+      in `BigQueryLoggerConfig`, default 500KB).
+    - If `gcs_bucket_name` is configured, large content is offloaded to GCS
+      instead of being truncated, and a reference is stored in
+      `content_parts.object_ref`.
 
 ### LLM interactions (plugin lifecycle)
 
@@ -450,7 +504,8 @@ These events track the raw requests sent to and responses received from the LLM.
 
 **1. LLM_REQUEST**
 
-Captures the prompt sent to the model, including conversation history and system instructions.
+Captures the prompt sent to the model, including conversation history and system
+instructions.
 
 ```json
 {
@@ -509,7 +564,8 @@ Captures the model's output and token usage statistics.
 
 **3. LLM_ERROR**
 
-Logged when an LLM call fails with an exception. The error message is captured and the span is closed.
+Logged when an LLM call fails with an exception. The error message is captured
+and the span is closed.
 
 ```json
 {
@@ -527,7 +583,8 @@ Logged when an LLM call fails with an exception. The error message is captured a
 
 ### Tool usage (plugin lifecycle)
 
-These events track the execution of tools by the agent. Each tool event includes a `tool_origin` field that classifies the tool's provenance:
+These events track the execution of tools by the agent. Each tool event includes
+a `tool_origin` field that classifies the tool's provenance:
 
 | Tool Origin | Description |
 |:---|:---|
@@ -579,7 +636,8 @@ Logged when a tool execution finishes.
 
 **6. TOOL_ERROR**
 
-Logged when a tool execution fails with an exception. Captures the tool name, arguments, tool origin, and error message.
+Logged when a tool execution fails with an exception. Captures the tool name,
+arguments, tool origin, and error message.
 
 ```json
 {
@@ -604,13 +662,14 @@ These events track changes to the agent's state, typically triggered by tools.
 
 **7. STATE_DELTA**
 
-Tracks changes to the agent's internal state (e.g., custom application state updated by tools).
+Tracks changes to the agent's internal state (e.g., custom application state
+updated by tools).
 
 !!! note "Built-in redaction"
 
-    State keys prefixed with `temp:` or `secret:` are automatically
-    redacted to `[REDACTED]` in the logged `state_delta`. See
-    [Built-in redaction](#built-in-redaction) for details.
+    State keys prefixed with `temp:` or `secret:` are automatically redacted to
+    `[REDACTED]` in the logged `state_delta`. See [Built-in
+    redaction](#built-in-redaction) for details.
 
 ```json
 {
@@ -660,7 +719,9 @@ Tracks changes to the agent's internal state (e.g., custom application state upd
 
 ### Human-in-the-Loop (HITL) Events {#hitl-events}
 
-The plugin automatically detects calls to ADK's synthetic HITL tools and emits dedicated event types for them. These events are logged **in addition to** the normal `TOOL_STARTING` / `TOOL_COMPLETED` events.
+The plugin automatically detects calls to ADK's synthetic HITL tools and emits
+dedicated event types for them. These events are logged **in addition to** the
+normal `TOOL_STARTING` / `TOOL_COMPLETED` events.
 
 The following HITL tool names are recognized:
 
@@ -710,20 +771,24 @@ The following HITL tool names are recognized:
   </tbody>
 </table>
 
-HITL request events are detected from `function_call` parts in `on_event_callback`. HITL completion events are detected from `function_response` parts in both `on_event_callback` and `on_user_message_callback`.
+HITL request events are detected from `function_call` parts in
+`on_event_callback`. HITL completion events are detected from
+`function_response` parts in both `on_event_callback` and
+`on_user_message_callback`.
 
 !!! note "Views for HITL events"
 
     Auto-created views exist only for the three **request** event types
     (`v_hitl_credential_request`, `v_hitl_confirmation_request`,
-    `v_hitl_input_request`). The three `*_COMPLETED` event types are logged
-    to the base table but do not have dedicated views. Query them directly
-    from the `agent_events` table using
-    `WHERE event_type LIKE 'HITL_%_COMPLETED'`.
+    `v_hitl_input_request`). The three `*_COMPLETED` event types are logged to
+    the base table but do not have dedicated views. Query them directly from the
+    `agent_events` table using `WHERE event_type LIKE 'HITL_%_COMPLETED'`.
 
 ### A2A Interaction Events
 
-When your agent communicates with a remote agent via the Agent-to-Agent (A2A) protocol, the plugin logs an `A2A_INTERACTION` event capturing the request and response details.
+When your agent communicates with a remote agent via the Agent-to-Agent (A2A)
+protocol, the plugin logs an `A2A_INTERACTION` event capturing the request and
+response details.
 
 **A2A_INTERACTION**
 
@@ -744,7 +809,12 @@ Logged when an A2A remote agent call completes.
 
 ## Storage behavior: GCS offloading
 
-When `gcs_bucket_name` is configured in `BigQueryLoggerConfig`, the plugin automatically offloads large text and multimodal content (images, audio, etc.) to Google Cloud Storage. The `content` column will contain a summary or placeholder, while `content_parts` stores the `object_ref` pointing to the GCS URI. See also `connection_id` and `max_content_length` in [Configuration options](#configuration-options).
+When `gcs_bucket_name` is configured in `BigQueryLoggerConfig`, the plugin
+automatically offloads large text and multimodal content (images, audio, etc.)
+to Google Cloud Storage. The `content` column will contain a summary or
+placeholder, while `content_parts` stores the `object_ref` pointing to the GCS
+URI. See also `connection_id` and `max_content_length` in [Configuration
+options](#configuration-options).
 
 ### Offloaded Text Example
 
@@ -977,7 +1047,8 @@ LIMIT 1;
 
 ### AI-powered root cause analysis
 
-Automatically analyze failed sessions to determine the root cause of errors using BigQuery ML and Gemini.
+Automatically analyze failed sessions to determine the root cause of errors
+using BigQuery ML and Gemini.
 
 ```sql
 DECLARE failed_session_id STRING;
@@ -1012,16 +1083,21 @@ FROM SessionContext;
 
 ### Conversational Analytics
 
-You can also use [BigQuery Conversational Analytics](https://cloud.google.com/bigquery/docs/conversational-analytics) to analyze your agent logs using natural language. Create a conversational analytics agent in the [BigQuery Agents Hub](https://console.cloud.google.com/bigquery/agents_hub) connected to your `agent_events` table, then ask questions like:
+You can also use [BigQuery Conversational
+Analytics](https://cloud.google.com/bigquery/docs/conversational-analytics) to
+analyze your agent logs using natural language. Create a conversational
+analytics agent in the [BigQuery Agents
+Hub](https://console.cloud.google.com/bigquery/agents_hub) connected to your
+`agent_events` table, then ask questions like:
 
-*   "Show me the error rate over time"
-*   "What are the most common tool calls?"
-*   "Identify sessions with high token usage"
+- "Show me the error rate over time"
+- "What are the most common tool calls?"
+- "Identify sessions with high token usage"
 
 ## Deploy to Agent Runtime with the plugin {#deploy-agent-runtime}
 
-You can deploy an agent with the BigQuery Agent Analytics plugin to
-[Agent Runtime](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview).
+You can deploy an agent with the BigQuery Agent Analytics plugin to [Agent
+Runtime](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview).
 This section walks through the steps to deploy using the ADK CLI, and
 alternatively using the Agent Platform SDK programmatically.
 
@@ -1035,20 +1111,19 @@ alternatively using the Agent Platform SDK programmatically.
 
 ### Prerequisites
 
-Before deploying, ensure you have completed the general
-[Agent Runtime setup](/deploy/agent-runtime/deploy/#setup-cloud-project),
-including:
+Before deploying, ensure you have completed the general [Agent Runtime
+setup](/deploy/agent-runtime/deploy/#setup-cloud-project), including:
 
-1.  A Google Cloud project with the **Agent Platform API** and **Cloud Resource
-    Manager API** enabled.
-2.  A **BigQuery dataset** in the target project (or a cross-project dataset
-    with the correct permissions).
-3.  A **Cloud Storage staging bucket** for deployment artifacts.
-4.  The deploying service account has the IAM roles listed in
-    [IAM permissions](#iam-permissions).
-5.  Your coding environment is
-    [authenticated](/deploy/agent-runtime/deploy/#prerequisites-coding-env)
-    with `gcloud auth login` and `gcloud auth application-default login`.
+1. A Google Cloud project with the **Agent Platform API** and **Cloud Resource
+   Manager API** enabled.
+2. A **BigQuery dataset** in the target project (or a cross-project dataset with
+   the correct permissions).
+3. A **Cloud Storage staging bucket** for deployment artifacts.
+4. The deploying service account has the IAM roles listed in [IAM
+   permissions](#iam-permissions).
+5. Your coding environment is
+   [authenticated](/deploy/agent-runtime/deploy/#prerequisites-coding-env) with
+   `gcloud auth login` and `gcloud auth application-default login`.
 
 ### Step 1: Define the agent and plugin
 
@@ -1153,9 +1228,9 @@ adk deploy agent_engine \
 !!! tip "`--adk_app` flag"
 
     The `--adk_app` flag specifies the module path and variable name of the
-    `App` object (in the format `module.variable`). In this example,
-    `agent.app` refers to the `app` variable in `agent.py`. This ensures the
-    deployment correctly picks up the plugin configuration.
+    `App` object (in the format `module.variable`). In this example, `agent.app`
+    refers to the `app` variable in `agent.py`. This ensures the deployment
+    correctly picks up the plugin configuration.
 
 Once successfully deployed, you should see output like:
 
@@ -1208,8 +1283,8 @@ You should see events such as `INVOCATION_STARTING`, `LLM_REQUEST`,
 
 ### Alternative: Deploy using the Agent Platform SDK
 
-You can also deploy programmatically using the Agent Platform SDK directly. This is
-useful for CI/CD pipelines or custom deployment workflows:
+You can also deploy programmatically using the Agent Platform SDK directly. This
+is useful for CI/CD pipelines or custom deployment workflows:
 
 ```python title="deploy.py"
 import vertexai
@@ -1247,12 +1322,12 @@ print(f"Deployed agent: {remote_app.api_resource.name}")
 
 If events are not appearing in your BigQuery table after deployment:
 
-1.  **Check ADK version**: Ensure `google-adk>=1.24.0` is in your requirements.
-    Earlier versions do not flush pending events before the serverless runtime
-    suspends the process.
+1. **Check ADK version**: Ensure `google-adk>=1.24.0` is in your requirements.
+   Earlier versions do not flush pending events before the serverless runtime
+   suspends the process.
 
-2.  **Enable debug logging**: Add the following to the top of your `agent.py` to
-    surface any silent errors:
+2. **Enable debug logging**: Add the following to the top of your `agent.py` to
+   surface any silent errors:
 
     ```python
     import logging
@@ -1260,19 +1335,19 @@ If events are not appearing in your BigQuery table after deployment:
     logging.getLogger("google_adk").setLevel(logging.DEBUG)
     ```
 
-3.  **Check IAM permissions**: The Agent Runtime service account needs
-    `roles/bigquery.dataEditor` on the target table and `roles/bigquery.jobUser`
-    on the project. For **cross-project** logging, also ensure the BigQuery API
-    is enabled in the source project and the service account has
-    `bigquery.tables.updateData` on the destination table.
+3. **Check IAM permissions**: The Agent Runtime service account needs
+   `roles/bigquery.dataEditor` on the target table and `roles/bigquery.jobUser`
+   on the project. For **cross-project** logging, also ensure the BigQuery API
+   is enabled in the source project and the service account has
+   `bigquery.tables.updateData` on the destination table.
 
-4.  **Verify plugin initialization**: In Cloud Logging, filter by
-    `resource.type="reasoning_engine"` and look for plugin startup messages or
-    error logs.
+4. **Verify plugin initialization**: In Cloud Logging, filter by
+   `resource.type="reasoning_engine"` and look for plugin startup messages or
+   error logs.
 
-5.  **Use immediate flush for debugging**: Set `batch_size=1` and
-    `batch_flush_interval=0.1` in `BigQueryLoggerConfig` to rule out buffering
-    issues.
+5. **Use immediate flush for debugging**: Set `batch_size=1` and
+   `batch_flush_interval=0.1` in `BigQueryLoggerConfig` to rule out buffering
+   issues.
 
 ## Security: Avoid logging sensitive credentials {#security-credentials}
 
@@ -1281,44 +1356,42 @@ If events are not appearing in your BigQuery table after deployment:
     The BigQuery Agent Analytics plugin captures detailed event payloads,
     including tool arguments, LLM prompts, and authentication-related events
     (such as HITL credential requests). If your agent uses **authenticated
-    tools** (e.g., `AuthenticatedFunctionTool` with OAuth2), the plugin may
-    log sensitive values such as `client_secret`, `access_token`, or API keys
-    into the `content` column of your BigQuery table.
+    tools** (e.g., `AuthenticatedFunctionTool` with OAuth2), the plugin may log
+    sensitive values such as `client_secret`, `access_token`, or API keys into
+    the `content` column of your BigQuery table.
 
     This is a known concern
     ([google/adk-python#3845](https://github.com/google/adk-python/issues/3845))
     and can lead to credential exposure in your analytics data.
 
-The plugin includes **built-in redaction** that automatically protects
-common secrets. For additional control, you can layer custom redaction on top.
+The plugin includes **built-in redaction** that automatically protects common
+secrets. For additional control, you can layer custom redaction on top.
 
 ### Built-in redaction {#built-in-redaction}
 
-The plugin automatically redacts values for the following well-known key
-names (case-insensitive) wherever they appear in `content` or `attributes`
-JSON:
+The plugin automatically redacts values for the following well-known key names
+(case-insensitive) wherever they appear in `content` or `attributes` JSON:
 
 `client_secret`, `access_token`, `refresh_token`, `id_token`, `api_key`,
 `password`
 
 In addition, any state key prefixed with **`temp:`** or **`secret:`** is
-automatically replaced with `[REDACTED]` in the logged `state_delta`.
-This means ADK session state stored under the `secret:` scope (such as
-OAuth tokens cached by credential services) is never persisted in
-BigQuery.
+automatically replaced with `[REDACTED]` in the logged `state_delta`. This means
+ADK session state stored under the `secret:` scope (such as OAuth tokens cached
+by credential services) is never persisted in BigQuery.
 
 !!! info "No configuration required"
 
-    Built-in redaction is always active for structured attributes and
-    state logging, and applies recursively to nested dictionaries and
-    JSON-encoded strings within attribute values. Custom
-    `content_formatter` runs **first** on raw content, so use it to add
-    masking for secrets that may appear in free-form payloads.
+    Built-in redaction is always active for structured attributes and state
+    logging, and applies recursively to nested dictionaries and JSON-encoded
+    strings within attribute values. Custom `content_formatter` runs **first**
+    on raw content, so use it to add masking for secrets that may appear in
+    free-form payloads.
 
 ### Use `content_formatter` to redact additional secrets
 
-Provide a custom `content_formatter` function in `BigQueryLoggerConfig` to
-strip or mask sensitive fields before they are written:
+Provide a custom `content_formatter` function in `BigQueryLoggerConfig` to strip
+or mask sensitive fields before they are written:
 
 ```python
 import json
@@ -1366,32 +1439,49 @@ config = BigQueryLoggerConfig(
 
 ### General best practices
 
--   **Never hardcode secrets** in agent source code. Use environment variables
-    or a secret manager (e.g., Google Cloud Secret Manager) for OAuth client
-    secrets and API keys.
--   **Restrict BigQuery table access** using IAM to limit who can read logged
-    event data.
--   **Audit your logs** periodically to verify no unexpected sensitive data is
-    being captured.
+- **Never hardcode secrets** in agent source code. Use environment variables or
+  a secret manager (e.g., Google Cloud Secret Manager) for OAuth client secrets
+  and API keys.
+- **Restrict BigQuery table access** using IAM to limit who can read logged
+  event data.
+- **Audit your logs** periodically to verify no unexpected sensitive data is
+  being captured.
 
 ## Operations
 
 ### Tracing and observability
 
-The plugin supports **OpenTelemetry** for distributed tracing. OpenTelemetry is included as a core dependency of ADK and is always available.
+The plugin supports **OpenTelemetry** for distributed tracing. OpenTelemetry is
+included as a core dependency of ADK and is always available.
 
-- **Automatic Span Management**: The plugin automatically generates spans for Agent execution, LLM calls, and Tool executions.
-- **OpenTelemetry Integration**: If a `TracerProvider` is configured (as shown in the example above), the plugin will use valid OTel spans, populating `trace_id`, `span_id`, and `parent_span_id` with standard OTel identifiers. This allows you to correlate agent logs with other services in your distributed system.
-- **Fallback Mechanism**: If no `TracerProvider` is configured (i.e., only the default no-op provider is active), the plugin automatically falls back to generating internal UUIDs for spans and uses the `invocation_id` as the trace ID. This ensures that the parent-child hierarchy (Agent -> Span -> Tool/LLM) is *always* preserved in the BigQuery logs, even without a configured `TracerProvider`.
+- **Automatic Span Management**: The plugin automatically generates spans for
+  Agent execution, LLM calls, and Tool executions.
+- **OpenTelemetry Integration**: If a `TracerProvider` is configured (as shown
+  in the example above), the plugin will use valid OTel spans, populating
+  `trace_id`, `span_id`, and `parent_span_id` with standard OTel identifiers.
+  This allows you to correlate agent logs with other services in your
+  distributed system.
+- **Fallback Mechanism**: If no `TracerProvider` is configured (i.e., only the
+  default no-op provider is active), the plugin automatically falls back to
+  generating internal UUIDs for spans and uses the `invocation_id` as the trace
+  ID. This ensures that the parent-child hierarchy (Agent -> Span -> Tool/LLM)
+  is *always* preserved in the BigQuery logs, even without a configured
+  `TracerProvider`.
 
 ### Public methods
 
 The plugin exposes several public methods for lifecycle management:
 
--   **`await plugin.flush()`**: Flush all pending events to BigQuery. Call this before shutdown to avoid data loss.
--   **`await plugin.shutdown(timeout=None)`**: Gracefully shut down the plugin, flushing pending events and releasing resources. The optional `timeout` parameter overrides `shutdown_timeout` from the config.
--   **`await plugin.create_analytics_views()`**: Manually (re-)create all per-event-type analytics views. Useful after a schema upgrade or when views need to be refreshed.
--   **Async context manager**: The plugin supports `async with` for automatic startup and shutdown:
+- **`await plugin.flush()`**: Flush all pending events to BigQuery. Call this
+  before shutdown to avoid data loss.
+- **`await plugin.shutdown(timeout=None)`**: Gracefully shut down the plugin,
+  flushing pending events and releasing resources. The optional `timeout`
+  parameter overrides `shutdown_timeout` from the config.
+- **`await plugin.create_analytics_views()`**: Manually (re-)create all
+  per-event-type analytics views. Useful after a schema upgrade or when views
+  need to be refreshed.
+- **Async context manager**: The plugin supports `async with` for automatic
+  startup and shutdown:
 
     ```python
     async with BigQueryAgentAnalyticsPlugin(
@@ -1404,38 +1494,64 @@ The plugin exposes several public methods for lifecycle management:
 
 ### Multiprocessing and fork safety
 
-The plugin is fork-aware: it sets `GRPC_ENABLE_FORK_SUPPORT=1` before loading the gRPC C-core library and registers an `os.register_at_fork` handler that resets inherited runtime state (gRPC channels, write streams, event loops) in child processes. This means the plugin can survive `os.fork()` without leaking file descriptors or sending data on a parent's connection.
+The plugin is fork-aware: it sets `GRPC_ENABLE_FORK_SUPPORT=1` before loading
+the gRPC C-core library and registers an `os.register_at_fork` handler that
+resets inherited runtime state (gRPC channels, write streams, event loops) in
+child processes. This means the plugin can survive `os.fork()` without leaking
+file descriptors or sending data on a parent's connection.
 
-However, **`spawn` is the recommended multiprocessing start method** for production deployments. `fork` copies the parent's address space — including any in-flight gRPC state — and the post-fork reset adds latency to the first write in each child. With `spawn`, each worker initializes the plugin cleanly.
+However, **`spawn` is the recommended multiprocessing start method** for
+production deployments. `fork` copies the parent's address space — including any
+in-flight gRPC state — and the post-fork reset adds latency to the first write
+in each child. With `spawn`, each worker initializes the plugin cleanly.
 
 For Gunicorn deployments specifically:
 
--   Prefer `--preload` combined with lazy plugin initialization (the plugin defers setup until the first event is logged), or
--   Initialize the plugin inside a `post_fork` hook so each worker gets its own client.
+- Prefer `--preload` combined with lazy plugin initialization (the plugin defers
+  setup until the first event is logged), or
+- Initialize the plugin inside a `post_fork` hook so each worker gets its own
+  client.
 
 !!! note
 
-    The fork-safety mechanism resets runtime state only. It does **not** replay events that were queued but not yet flushed in the parent process at the time of fork. Call `await plugin.flush()` before forking if you need to guarantee delivery.
+    The fork-safety mechanism resets runtime state only. It does **not** replay
+    events that were queued but not yet flushed in the parent process at the
+    time of fork. Call `await plugin.flush()` before forking if you need to
+    guarantee delivery.
 
 ## Additional ways to consume logged data
 
 ### BigQuery Agent Analytics SDK
 
-The [BigQuery Agent Analytics SDK](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-SDK/tree/main) provides a programmatic way to consume and analyze the data logged by the plugin. Use the SDK for:
+The [BigQuery Agent Analytics
+SDK](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-SDK/tree/main)
+provides a programmatic way to consume and analyze the data logged by the
+plugin. Use the SDK for:
 
--   **Agent evaluation** — compare agent runs against expected outcomes.
--   **Golden trajectory matching** — validate that agent execution paths match approved sequences.
--   **Trace visualization** — reconstruct and visualize agent execution flows from logged spans.
+- **Agent evaluation** — compare agent runs against expected outcomes.
+- **Golden trajectory matching** — validate that agent execution paths match
+  approved sequences.
+- **Trace visualization** — reconstruct and visualize agent execution flows from
+  logged spans.
 
 ### Build a dashboard
 
-The BigQuery Agent Analytics SDK includes an [example Jupyter notebook](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-SDK/blob/main/examples/dashboard_v2.ipynb) that demonstrates how to query and visualize your agent's performance data. Use it as a starting point to build your own custom dashboards tailored to your BigQuery Agent Analytics dataset. You can also publish the notebook as an interactive dashboard using [BigQuery Data app](https://cloud.google.com/bigquery/docs/data-app-overview).
+The BigQuery Agent Analytics SDK includes an [example Jupyter
+notebook](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-SDK/blob/main/examples/dashboard_v2.ipynb)
+that demonstrates how to query and visualize your agent's performance data. Use
+it as a starting point to build your own custom dashboards tailored to your
+BigQuery Agent Analytics dataset. You can also publish the notebook as an
+interactive dashboard using [BigQuery Data
+app](https://cloud.google.com/bigquery/docs/data-app-overview).
 
 ## Feedback
-We welcome your feedback on BigQuery Agent Analytics. If you have questions, suggestions, or encounter any issues, please reach out to the team at [bqaa-feedback@google.com](mailto:bqaa-feedback@google.com).
+
+We welcome your feedback on BigQuery Agent Analytics. If you have questions,
+suggestions, or encounter any issues, please reach out to the team at
+[bqaa-feedback@google.com](mailto:bqaa-feedback@google.com).
 
 ## Additional resources
 
--   [BigQuery Storage Write API](https://cloud.google.com/bigquery/docs/write-api)
--   [Introduction to Object Tables](https://docs.cloud.google.com/bigquery/docs/object-table-introduction)
--   [Interactive Demo Notebook](https://github.com/haiyuan-eng-google/demo_BQ_agent_analytics_plugin_notebook)
+- [BigQuery Storage Write API](https://cloud.google.com/bigquery/docs/write-api)
+- [Introduction to Object Tables](https://docs.cloud.google.com/bigquery/docs/object-table-introduction)
+- [Interactive Demo Notebook](https://github.com/haiyuan-eng-google/demo_BQ_agent_analytics_plugin_notebook)
