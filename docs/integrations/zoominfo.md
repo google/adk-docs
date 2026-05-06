@@ -2,7 +2,7 @@
 catalog_title: ZoomInfo
 catalog_description: Find companies, enrich contacts, and surface go-to-market intelligence
 catalog_icon: /integrations/assets/zoominfo.png
-catalog_tags: ["mcp"]
+catalog_tags: ["mcp", "connectors"]
 ---
 
 # ZoomInfo MCP tool for ADK
@@ -11,29 +11,30 @@ catalog_tags: ["mcp"]
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript</span>
 </div>
 
-The [ZoomInfo MCP Server](https://mcp.zoominfo.com/mcp)
-connects your ADK agent to the [ZoomInfo](https://www.zoominfo.com/)
-B2B intelligence platform, giving it access to 100M+ company profiles,
-300M+ professional contacts, and go-to-market signals. This integration
-gives your agent the ability to find prospects, enrich records, surface
-intent signals, and research accounts using natural language.
+The [ZoomInfo MCP Server](https://docs.zoominfo.com/docs/zi-api-mcp-overview)
+connects your ADK agent to the [ZoomInfo](https://www.zoominfo.com/) B2B
+intelligence platform, giving it access to 100M+ company profiles, 300M+
+professional contacts, and go-to-market signals. This integration gives your
+agent the ability to find prospects, enrich records, surface intent signals, and
+research accounts using natural language.
 
 ## Use cases
 
 - **Prospect Discovery**: Find companies and contacts matching your ICP using
-  filters like industry, location, company size, job title, seniority, and
-  tech stack.
+  filters like industry, location, company size, job title, seniority, and tech
+  stack.
 
-- **Account & Contact Enrichment**: Append verified firmographic and
-  demographic data — revenue, headcount, emails, direct dials, and funding —
-  to existing records inside agent workflows.
+- **Account & Contact Enrichment**: Append verified firmographic and demographic
+  data — revenue, headcount, emails, direct dials, and funding — to existing
+  records inside agent workflows.
 
-- **Go-to-Market Signal Detection**: Surface intent signals, leadership
-  changes, and strategic scoops to reach buyers at the right moment.
+- **Go-to-Market Signal Detection**: Surface intent signals, leadership changes,
+  and strategic scoops to reach buyers at the right moment.
 
 ## Prerequisites
 
-- Sign up for a [ZoomInfo account](https://www.zoominfo.com/free-trial-contact-sales)
+- Sign up for a [ZoomInfo
+  account](https://www.zoominfo.com/free-trial-contact-sales)
 - A ZoomInfo SalesOS or Copilot subscription
 
 ## Use with agent
