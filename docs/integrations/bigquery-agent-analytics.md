@@ -1541,8 +1541,8 @@ notebook](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-SDK/bl
 that demonstrates how to query and visualize your agent's performance data. Use
 it as a starting point to build your own custom dashboards tailored to your
 BigQuery Agent Analytics dataset. You can also publish the notebook as an
-interactive dashboard using [BigQuery Data
-app](https://cloud.google.com/bigquery/docs/data-app-overview).
+interactive dashboard using [Colab Data
+Apps](https://docs.cloud.google.com/bigquery/docs/colab-data-apps).
 
 ## Feedback
 
