@@ -14,6 +14,11 @@
  * limitations under the License.
  */
 
+/* Prevent layout shift from scrollbar appearing/disappearing */
+html {
+  scrollbar-gutter: stable;
+}
+
 /* Index page styling */
 
 .md-grid {
@@ -158,26 +163,61 @@ button.md-content__button:hover svg {
   }
 }
 
-.md-header__source {
-  max-width: 480px;
-  display: flex;
-  align-items: center;
+.md-header__title {
+  flex-shrink: 1 !important;
+  min-width: 120px !important;
+  overflow: hidden !important;
 }
 
-@media screen and (max-width: 76.1875em) {
-  .md-header__source {
-    display: none;
+.md-header__source {
+  flex-shrink: 0 !important;
+  display: flex !important;
+  align-items: center;
+  gap: 2px !important;
+  flex-wrap: nowrap !important;
+  max-width: none !important;
+  width: auto !important;
+}
+
+.md-header .md-source {
+  min-width: auto !important;
+  width: auto !important;
+  margin-right: 2px !important;
+}
+
+.md-header .md-source__repository {
+  font-size: 0.65rem;
+  white-space: nowrap;
+  max-width: none !important;
+  overflow: visible !important;
+}
+
+.md-header .md-source__icon svg {
+  width: 1rem !important;
+  height: 1rem !important;
+}
+
+@media (max-width: 1200px) {
+  .md-header .md-source__repository { display: none !important; }
+  .md-header .md-source { margin-right: 4px !important; position: relative; }
+  .md-header .md-source::after {
+    content: ''; display: inline-block; width: 16px; height: 16px;
+    background-size: contain; background-repeat: no-repeat; background-position: center;
+    position: absolute; right: 4px; top: 50%; transform: translateY(-50%);
   }
+  .md-header .md-source { padding-right: 22px !important; min-width: 0 !important; width: auto !important; }
+  .md-header .md-source[href*="adk-python"]::after { background-image: url('https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg'); }
+  .md-header .md-source[href*="adk-js"]::after { background-image: url('https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/typescript/typescript-original.svg'); }
+  .md-header .md-source[href*="adk-go"]::after { background-image: url('https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/go/go-original.svg'); }
+  .md-header .md-source[href*="adk-java"]::after { background-image: url('https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg'); }
+}
+
+@media (max-width: 900px) {
+  .md-header .md-source { display: none !important; }
 }
 
 .md-source__facts {
   display: none !important;
-}
-
-.md-source__repository {
-  white-space: nowrap;
-  max-width: none !important;
-  overflow: visible !important;
 }
 
 /* Navigation section titles */

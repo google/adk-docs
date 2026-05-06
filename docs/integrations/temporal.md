@@ -104,7 +104,7 @@ weather_tool = activity_tool(
 agent = Agent(
     name="weather_agent",
     model=TemporalModel(
-      "gemini-2.5-pro",
+      "gemini-flash-latest",
       activity_config=ActivityConfig(summary="Weather Agent")),
     tools=[weather_tool],
 )
@@ -230,7 +230,7 @@ client = await Client.connect(
 # not_in_workflow_toolset lets this agent also run locally with `adk web`.
 agent = Agent(
     name="tool_agent",
-    model=TemporalModel("gemini-2.5-pro"),
+    model=TemporalModel("gemini-flash-latest"),
     tools=[TemporalMcpToolSet("my-tools", not_in_workflow_toolset=toolset_factory)],
 )
 ```

@@ -28,12 +28,12 @@ The Python ADK ships three `MemoryService` implementations. Use the table below 
 
 | **Feature** | **InMemoryMemoryService** | **VertexAiMemoryBankService** | **VertexAiRagMemoryService** |
 | :--- | :--- | :--- | :--- |
-| **Persistence** | None (data is lost on restart) | Yes (Managed by Agent Platform) | Yes (stored in RAG Engine) |
+| **Persistence** | None (data is lost on restart) | Yes (Managed by Agent Platform) | Yes (stored in Knowledge Engine) |
 | **Primary Use Case** | Prototyping, local development, and simple testing. | Building meaningful, evolving memories from user conversations. | Vector-search retrieval over the full conversation corpus, or alongside other RAG-indexed content. |
-| **Memory Extraction** | Stores full conversation | Extracts [meaningful information](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/memory-bank/generate-memories) from conversations and consolidates it with existing memories (powered by LLM) | Stores full conversation, indexed by [RAG Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/rag-engine/rag-overview). |
-| **Search Capability** | Basic keyword matching. | Advanced semantic search. | Vector similarity search over RAG Engine. |
-| **Setup Complexity** | None. It's the default. | Low. Requires an [Agent Runtime](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/memory-bank/overview) instance on Agent Platform. | Medium. Requires [RAG Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/rag-engine/manage-your-rag-corpus). |
-| **Dependencies** | None. | Google Cloud Project, Agent Platform API | Google Cloud Project, RAG Engine, the Agent Platform SDK (optional install). |
+| **Memory Extraction** | Stores full conversation | Extracts [meaningful information](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/memory-bank/generate-memories) from conversations and consolidates it with existing memories (powered by LLM) | Stores full conversation, indexed by [Knowledge Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/rag-engine/rag-overview). |
+| **Search Capability** | Basic keyword matching. | Advanced semantic search. | Vector similarity search over Knowledge Engine. |
+| **Setup Complexity** | None. It's the default. | Low. Requires an [Agent Runtime](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/memory-bank/overview) instance on Agent Platform. | Medium. Requires [Knowledge Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/rag-engine/manage-your-rag-corpus). |
+| **Dependencies** | None. | Google Cloud Project, Agent Platform API | Google Cloud Project, Knowledge Engine, the Agent Platform SDK (optional install). |
 | **When to use it** | When you want to search across multiple sessions’ chat histories for prototyping. | When you want your agent to remember and learn from past interactions. | When you already have RAG infrastructure or want to retrieve over raw conversation transcripts. |
 
 `VertexAiRagMemoryService` is only exported from `google.adk.memory` when the Agent Platform SDK is installed. Memory Bank and RAG-backed memory are documented in [Memory Bank](#memory-bank) and [RAG Memory](#rag-memory) below.
@@ -397,7 +397,7 @@ Or, you can configure your agent to use the Memory Bank by manually instantiatin
 
 ## RAG Memory
 
-The `VertexAiRagMemoryService` stores conversations in [RAG Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/rag-engine/rag-overview) and retrieves them by vector similarity. Use it when you already have RAG infrastructure or want raw transcript retrieval rather than the LLM-extracted memories produced by Memory Bank. Requires the Agent Platform SDK.
+The `VertexAiRagMemoryService` stores conversations in [Knowledge Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/rag-engine/rag-overview) and retrieves them by vector similarity. Use it when you already have RAG infrastructure or want raw transcript retrieval rather than the LLM-extracted memories produced by Memory Bank. Requires the Agent Platform SDK.
 
 === "Python"
 

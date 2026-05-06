@@ -210,7 +210,7 @@ the storage backend that best suits your needs:
     *   A Google Cloud project (`pip install vertexai`)
     *   A Google Cloud storage bucket that can be configured by this
         [step](https://cloud.google.com/vertex-ai/docs/pipelines/configure-project#storage).
-    *   A Reasoning Engine resource name/ID that can setup following this
+    *   An Agent Runtime resource name/ID that can setup following this
         [tutorial](/deploy/agent-runtime/).
     *   If you do not have a Google Cloud project and you want to try the VertexAiSessionService, see [Agent Platform Express Mode](/integrations/express-mode/).
 *   **Best for:** Scalable production applications deployed on Google Cloud,
