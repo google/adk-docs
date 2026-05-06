@@ -41,61 +41,65 @@ research accounts using natural language.
 
 === "Python"
 
-    ```python
-    from google.adk.agents import Agent
-    from google.adk.tools.mcp_tool import McpToolset
-    from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
-    from mcp import StdioServerParameters
+    === "Local MCP Server"
+
+        ```python
+        from google.adk.agents import Agent
+        from google.adk.tools.mcp_tool import McpToolset
+        from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
+        from mcp import StdioServerParameters
 
 
-    root_agent = Agent(
-        model="gemini-flash-latest",
-        name="zoominfo_agent",
-        instruction="Help users find companies, enrich contacts, and surface go-to-market insights using ZoomInfo",
-        tools=[
-            McpToolset(
-                connection_params=StdioConnectionParams(
-                    server_params=StdioServerParameters(
-                        command="npx",
-                        args=[
-                            "-y",
-                            "mcp-remote",
-                            "https://mcp.zoominfo.com/mcp",
-                        ]
+        root_agent = Agent(
+            model="gemini-flash-latest",
+            name="zoominfo_agent",
+            instruction="Help users find companies, enrich contacts, and surface go-to-market insights using ZoomInfo",
+            tools=[
+                McpToolset(
+                    connection_params=StdioConnectionParams(
+                        server_params=StdioServerParameters(
+                            command="npx",
+                            args=[
+                                "-y",
+                                "mcp-remote",
+                                "https://mcp.zoominfo.com/mcp",
+                            ]
+                        ),
+                        timeout=30,
                     ),
-                    timeout=30,
-                ),
-            )
-        ],
-    )
-    ```
+                )
+            ],
+        )
+        ```
 
 === "TypeScript"
 
-    ```typescript
-    import { LlmAgent, MCPToolset } from "@google/adk";
+    === "Local MCP Server"
 
-    const rootAgent = new LlmAgent({
-        model: "gemini-flash-latest",
-        name: "zoominfo_agent",
-        instruction: "Help users find companies, enrich contacts, and surface go-to-market insights using ZoomInfo",
-        tools: [
-            new MCPToolset({
-                type: "StdioConnectionParams",
-                serverParams: {
-                    command: "npx",
-                    args: [
-                        "-y",
-                        "mcp-remote",
-                        "https://mcp.zoominfo.com/mcp",
-                    ],
-                },
-            }),
-        ],
-    });
+        ```typescript
+        import { LlmAgent, MCPToolset } from "@google/adk";
 
-    export { rootAgent };
-    ```
+        const rootAgent = new LlmAgent({
+            model: "gemini-flash-latest",
+            name: "zoominfo_agent",
+            instruction: "Help users find companies, enrich contacts, and surface go-to-market insights using ZoomInfo",
+            tools: [
+                new MCPToolset({
+                    type: "StdioConnectionParams",
+                    serverParams: {
+                        command: "npx",
+                        args: [
+                            "-y",
+                            "mcp-remote",
+                            "https://mcp.zoominfo.com/mcp",
+                        ],
+                    },
+                }),
+            ],
+        });
+
+        export { rootAgent };
+        ```
 
 !!! note
 
