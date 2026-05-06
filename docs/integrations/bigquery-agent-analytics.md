@@ -17,12 +17,12 @@ catalog_tags: ["observability", "google"]
     described in this document, including auto-schema-upgrade, tool provenance
     tracking, and HITL event tracing.
 
-The BigQuery Agent Analytics Plugin significantly enhances the Agent Development
-Kit (ADK) by providing a robust solution for in-depth agent behavior analysis.
-Using the ADK Plugin architecture and the **BigQuery Storage Write API**, it
-captures and logs critical operational events directly into a Google BigQuery
-table, empowering you with advanced capabilities for debugging, real-time
-monitoring, and comprehensive offline performance evaluation.
+The BigQuery Agent Analytics Plugin significantly enhances Agent Development Kit
+(ADK) by providing a robust solution for in-depth agent behavior analysis. Using
+the ADK Plugin architecture and the **BigQuery Storage Write API**, it captures
+and logs critical operational events directly into a Google BigQuery table,
+empowering you with advanced capabilities for debugging, real-time monitoring,
+and comprehensive offline performance evaluation.
 
 Version 1.26.0 adds **Auto Schema Upgrade** (safely add new columns to existing
 tables), **Tool Provenance** tracking (LOCAL, MCP, SUB_AGENT, A2A,
@@ -595,7 +595,7 @@ a `tool_origin` field that classifies the tool's provenance:
 | `LOCAL` | `FunctionTool` instances (local Python functions) |
 | `MCP` | Model Context Protocol tools (`McpTool` instances) |
 | `SUB_AGENT` | `AgentTool` instances (sub-agents) |
-| `A2A` | Remote Agent-to-Agent instances (`RemoteA2aAgent`) |
+| `A2A` | Remote Agent2Agent instances (`RemoteA2aAgent`) |
 | `TRANSFER_AGENT` | `TransferToAgentTool` instances (generic agent transfer) |
 | `TRANSFER_A2A` | `TransferToAgentTool` instances that transfer to a `RemoteA2aAgent` (classified at call-level) |
 | `UNKNOWN` | Unclassified tools |
@@ -733,7 +733,7 @@ HITL request events are detected from `function_call` parts in
 
 ### A2A Interaction Events
 
-When your agent communicates with a remote agent via the Agent-to-Agent (A2A)
+When your agent communicates with a remote agent via the Agent2Agent (A2A)
 protocol, the plugin logs an `A2A_INTERACTION` event capturing the request and
 response details.
 
