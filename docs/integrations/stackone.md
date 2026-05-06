@@ -165,6 +165,90 @@ uv add stackone-adk
         asyncio.run(main())
         ```
 
+## Search and execute mode
+
+With `mode="search_and_execute"`, the plugin registers exactly two tools,
+`tool_search` and `tool_execute`. The model uses them at runtime to discover
+the right StackOne tool and invoke it, instead of seeing the full catalog
+upfront.
+
+Registering every tool definition with the model has three costs:
+
+- **Token overhead:** Tool schemas consume prompt tokens that could otherwise
+  be available for reasoning.
+- **Payload limits:** Large catalogs can exceed provider payload limits.
+  Gemini, for example, imposes hard limits on the size and number of function
+  declarations per request.
+- **Selection accuracy:** Tool-selection quality degrades as the tool
+  candidate set grows, since the model has more near-duplicates to
+  disambiguate.
+
+This mode keeps the registered tool count at two regardless of catalog size.
+The model resolves the right tool through a natural-language query at
+runtime.
+
+This mode requires `stackone-adk>=0.2.0`.
+
+=== "Python"
+
+    ```python
+    import asyncio
+
+    from google.adk.agents import Agent
+    from google.adk.apps import App
+    from google.adk.runners import InMemoryRunner
+    from stackone_adk import StackOnePlugin
+
+
+    async def main():
+        plugin = StackOnePlugin(
+            mode="search_and_execute",
+            account_ids=["YOUR_ACCOUNT_ID"],
+            search={"method": "auto", "top_k": 10},
+        )
+
+        agent = Agent(
+            model="gemini-flash-latest",
+            name="stackone_agent",
+            description="Connects to multiple SaaS providers through StackOne.",
+            instruction=(
+                "You are an assistant powered by StackOne. To answer the "
+                "user's request, first call tool_search with a short query "
+                "to find the right action, then call tool_execute with the "
+                "chosen tool name and parameters that match the schema "
+                "returned by tool_search."
+            ),
+            tools=plugin.get_tools(),
+        )
+
+        app = App(
+            name="stackone_app",
+            root_agent=agent,
+            plugins=[plugin],
+        )
+
+        async with InMemoryRunner(app=app) as runner:
+            events = await runner.run_debug(
+                "List the first 3 workers.",
+                quiet=True,
+            )
+            for event in reversed(events):
+                if event.content and event.content.parts:
+                    text_parts = [p.text for p in event.content.parts if p.text]
+                    if text_parts:
+                        print("".join(text_parts))
+                        break
+
+
+    asyncio.run(main())
+    ```
+
+The model first calls `tool_search` with a natural-language query and receives
+a short list of candidate tools, each with its name, description, and
+parameter schema. The model then calls `tool_execute` with the selected tool
+name and parameters that match the schema. Both calls route through StackOne's
+AI Integration Gateway via the SDK.
+
 ## Available tools
 
 Unlike integrations with a fixed set of tools, StackOne tools are **dynamically
@@ -211,6 +295,10 @@ Parameter | Type | Default | Description
 `providers` | `list[str] | None` | `None` | Filter by provider names (e.g., `["calendly", "hibob"]`).
 `actions` | `list[str] | None` | `None` | Filter by action patterns using glob syntax.
 `account_ids` | `list[str] | None` | `None` | Scope tools to specific connected account IDs.
+`mode` | `Literal["search_and_execute"] | None` | `None` | Tool registration strategy. With `None`, every discovered tool is registered with the agent. With `"search_and_execute"`, the plugin registers two tools (`tool_search` and `tool_execute`), and the model selects and invokes tools at runtime.
+`search` | `SearchConfig | None` | `None` | Search backend configuration forwarded to `StackOneToolSet`. Takes effect when `mode="search_and_execute"`. Defaults to `{"method": "auto"}` in that mode.
+`execute` | `ExecuteToolsConfig | None` | `None` | Execution configuration forwarded to `StackOneToolSet`.
+`timeout` | `float` | `180.0` | Per-request timeout in seconds for HTTP calls (account discovery and tool execution). Increase for slow connectors.
 
 ### Tool filtering
 
