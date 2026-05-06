@@ -804,12 +804,12 @@ The artifact interaction methods are available directly on instances of `Callbac
         }
         ```
 
-#### Letting the Agent Load Artifacts On Demand
+#### Using `LoadArtifactsTool`
 
-For Python agents, you can add `LoadArtifactsTool` when the model should decide
-which available artifacts to load before answering. This is useful when users
-ask follow-up questions about uploaded files or large generated outputs that are
-stored as artifacts instead of kept in the conversation context.
+You can add `LoadArtifactsTool` when the model should decide which available
+artifacts to load before answering. This is useful when users ask follow-up
+questions about uploaded files or large generated outputs that are stored as
+artifacts instead of kept in the conversation context.
 
 `LoadArtifactsTool` lists available artifacts in the model instructions. When
 the model calls the `load_artifacts` tool, ADK temporarily appends the selected
@@ -826,7 +826,7 @@ artifact in a later turn.
 
     root_agent = LlmAgent(
         name="artifact_reader",
-        model="gemini-2.5-flash",
+        model="gemini-flash-latest",
         instruction=(
             "Answer questions about available user files. "
             "Call load_artifacts before answering when you need file contents."
@@ -842,6 +842,29 @@ artifact in a later turn.
     your artifacts need human-readable summaries, subclass `LoadArtifactsTool`
     and customize its request instructions before loading the selected artifact
     contents.
+
+=== "Go"
+
+    ```go
+    import (
+      "google.golang.org/adk/agent/llmagent"
+      "google.golang.org/adk/tool"
+      "google.golang.org/adk/tool/loadartifactstool"
+    )
+
+    agent, err := llmagent.New(llmagent.Config{
+        Name:        "artifact_reader",
+        Model:       model,
+        Instruction: "Answer questions about available user files. " +
+            "When user asks about artifacts, load them and describe them.",
+        Tools: []tool.Tool{
+            loadartifactstool.New(),
+        },
+    })
+    ```
+
+    Make sure the `runner.Config` for this agent includes an
+    `ArtifactService`; otherwise artifact listing and loading will fail.
 
 #### Listing Artifact Filenames
 
