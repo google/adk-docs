@@ -218,7 +218,9 @@ LIMIT 20;
     )
     ```
 
-> Deploying to Agent Runtime? See [Deploy to Agent Runtime](#deploy-agent-runtime).
+!!! tip "Deploying to Agent Runtime?"
+
+    See [Deploy to Agent Runtime](#deploy-agent-runtime).
 
 ## Prerequisites {#prerequisites}
 
@@ -1235,7 +1237,6 @@ is useful for CI/CD pipelines or custom deployment workflows:
 
 ```python title="deploy.py"
 import vertexai
-from vertexai import agent_engines
 from my_bq_agent.agent import app
 
 PROJECT_ID = "your-gcp-project-id"
