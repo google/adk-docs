@@ -14,6 +14,12 @@ exclude_loopback = true
 index_files = ["index.md", "index.html"]
 fallback_extensions = ["md"]
 
+# Retry configuration
+max_retries = 5
+retry_wait_time = 5
+host_concurrency = 2
+host_request_interval = "1s"
+
 # Exclude file paths from checking
 # Add paths here for directories containing partial/template files
 exclude_path = [
