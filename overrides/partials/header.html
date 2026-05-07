@@ -74,6 +74,13 @@
       </div>
     </div>
 
+    <!-- Language SDK repository links -->
+    {% if config.repo_url %}
+      <div class="md-header__source">
+        {% include "partials/source.html" %}
+      </div>
+    {% endif %}
+
     <!-- Color palette toggle -->
     {% if config.theme.palette %}
       {% if not config.theme.palette is mapping %}
@@ -105,13 +112,6 @@
         <!-- Search interface -->
         {% include "partials/search.html" %}
       {% endif %}
-    {% endif %}
-
-    <!-- Repository information -->
-    {% if config.repo_url %}
-      <div class="md-header__source">
-        {% include "partials/source.html" %}
-      </div>
     {% endif %}
   </nav>
 
