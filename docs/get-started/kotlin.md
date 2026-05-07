@@ -13,7 +13,8 @@ Create an agent project with the following files and directory structure:
 ```none
 my_agent/
     src/main/kotlin/com/example/agent/
-                        HelloTimeAgent.kt   # main agent code
+                        HelloTimeAgent.kt   # agent definition + tool
+                        Main.kt             # entry point
     build.gradle.kts                        # project configuration
     .env                                    # API keys or project IDs
 ```
@@ -25,6 +26,7 @@ my_agent/
         ```console
         mkdir my_agent\src\main\kotlin\com\example\agent
         type nul > my_agent\src\main\kotlin\com\example\agent\HelloTimeAgent.kt
+        type nul > my_agent\src\main\kotlin\com\example\agent\Main.kt
         type nul > my_agent\build.gradle.kts
         type nul > my_agent\.env
         ```
@@ -34,6 +36,7 @@ my_agent/
         ```bash
         mkdir -p my_agent/src/main/kotlin/com/example/agent && \
             touch my_agent/src/main/kotlin/com/example/agent/HelloTimeAgent.kt && \
+            touch my_agent/src/main/kotlin/com/example/agent/Main.kt && \
             touch my_agent/build.gradle.kts my_agent/.env
         ```
 
@@ -47,10 +50,8 @@ directory:
 ```kotlin title="my_agent/src/main/kotlin/com/example/agent/HelloTimeAgent.kt"
 package com.example.agent
 
-import com.google.adk.kt.agents.AgentConfig
 import com.google.adk.kt.agents.Instruction
 import com.google.adk.kt.agents.LlmAgent
-import com.google.adk.kt.agents.LlmAgentConfig
 import com.google.adk.kt.models.GeminiModel
 import com.google.adk.kt.tools.AdkParam
 import com.google.adk.kt.tools.AdkTool
@@ -68,34 +69,40 @@ class TimeService {
 object HelloTimeAgent {
     @JvmField
     val rootAgent = LlmAgent(
-        config = LlmAgentConfig(
-            agentConfig = AgentConfig(
-                name = "hello_time_agent",
-                description = "Tells the current time in a specified city."
-            ),
-            model = GeminiModel(
-                System.getenv("GEMINI_API_KEY")
-                    ?: error("GEMINI_API_KEY environment variable not set."),
-                name = "gemini-2.5-flash",
-            ),
-            instruction = Instruction(
-                "You are a helpful assistant that tells the current time in a city. "
-                    + "Use the 'getCurrentTime' tool for this purpose."
-            ),
-            tools = TimeService().adkTools(),
-        )
+        name = "hello_time_agent",
+        description = "Tells the current time in a specified city.",
+        model = GeminiModel(
+            System.getenv("GOOGLE_API_KEY")
+                ?: error("GOOGLE_API_KEY environment variable not set."),
+            name = "gemini-flash-latest",
+        ),
+        instruction = Instruction(
+            "You are a helpful assistant that tells the current time in a city. "
+                + "Use the 'getCurrentTime' tool for this purpose."
+        ),
+        tools = TimeService().adkTools(),
     )
 }
 ```
 
+!!! note "About `@AdkTool` and KSP"
+
+    The `@AdkTool` annotation marks a function as a tool that the agent can
+    call. At compile time, a KSP (Kotlin Symbol Processing) annotation
+    processor generates the `.adkTools()` extension function used above.
+    This is a zero-reflection approach to function tool registration. The
+    required KSP plugin and processor dependency are included in the
+    `build.gradle.kts` configuration below.
+
 ### Configure project and dependencies
 
-An ADK Kotlin agent project requires the following dependency in your
+An ADK Kotlin agent project requires the following dependencies in your
 `build.gradle.kts` project file:
 
 ```kotlin title="my_agent/build.gradle.kts (partial)"
 dependencies {
     implementation("com.google.adk:google-adk-kotlin-core:0.1.0")
+    ksp("com.google.adk:google-adk-kotlin-processor:0.1.0")
 }
 ```
 
@@ -106,6 +113,7 @@ dependencies {
     ```kotlin title="my_agent/build.gradle.kts"
     plugins {
         kotlin("jvm") version "2.1.0"
+        id("com.google.devtools.ksp") version "2.1.0-1.0.29"
         application
     }
 
@@ -115,10 +123,19 @@ dependencies {
 
     dependencies {
         implementation("com.google.adk:google-adk-kotlin-core:0.1.0")
+        implementation("com.google.adk:google-adk-kotlin-webserver:0.1.0")
+        ksp("com.google.adk:google-adk-kotlin-processor:0.1.0")
     }
 
     kotlin {
         jvmToolchain(17)
+    }
+
+    application {
+        mainClass.set(
+            project.findProperty("mainClass") as? String
+                ?: "com.example.agent.MainKt"
+        )
     }
     ```
 
@@ -134,19 +151,19 @@ to set environment variables:
 === "MacOS / Linux"
 
     ```bash title="Update: my_agent/.env"
-    echo 'export GEMINI_API_KEY="YOUR_API_KEY"' > .env
+    echo 'export GOOGLE_API_KEY="YOUR_API_KEY"' > .env
     ```
 
 === "Windows PowerShell"
 
     ```console title="Update: my_agent/env.bat"
-    echo 'set GEMINI_API_KEY="YOUR_API_KEY"' > env.bat
+    echo 'set GOOGLE_API_KEY="YOUR_API_KEY"' > env.bat
     ```
 
 === "Windows Command Prompt"
 
     ```console title="Update: my_agent/env.bat"
-    echo set GEMINI_API_KEY="YOUR_API_KEY" > env.bat
+    echo set GOOGLE_API_KEY="YOUR_API_KEY" > env.bat
     ```
 
 ??? tip "Using other AI models with ADK"
@@ -154,18 +171,116 @@ to set environment variables:
     information on configuring other models in ADK agents, see
     [Models & Authentication](/agents/models).
 
+### Create an entry point
+
+Create a `Main.kt` file to run and interact with `HelloTimeAgent` from the
+command line. The `DebugRunner` provides a built-in interactive REPL that
+manages sessions and console I/O for you.
+
+```kotlin title="my_agent/src/main/kotlin/com/example/agent/Main.kt"
+package com.example.agent
+
+import com.google.adk.kt.runners.DebugRunner
+
+fun main() {
+    val runner = DebugRunner(HelloTimeAgent.rootAgent)
+    runner.start()
+}
+```
+
 ## Run your agent
 
-<!-- TODO: Add CLI runner instructions for Kotlin ADK -->
-<!-- TODO: Add web UI runner instructions for Kotlin ADK -->
+You can run your ADK agent using the interactive command-line interface
+provided by `DebugRunner` or the ADK web user interface provided by
+`AdkWebServer`. Both options allow you to test and interact with your agent.
 
 ### Run with command-line interface
 
-TODO: Add instructions for running a Kotlin ADK agent from the command line.
+Run your agent with the command-line interface using the Gradle `run` task:
+
+```console
+# Remember to load keys and settings: source .env OR env.bat
+gradle run
+```
+
+The agent starts an interactive session. Type a message and press Enter:
+
+```
+Agent hello_time_agent is ready. Type 'exit' to quit.
+
+You > What time is it in New York?
+
+hello_time_agent > The current time in New York is 10:30am.
+
+You > exit
+Exiting agent.
+```
+
+![adk-run.png](/assets/adk-run.png)
 
 ### Run with web interface
 
-TODO: Add instructions for running a Kotlin ADK agent with the ADK web UI.
+To run your agent with the ADK web interface, add the webserver dependency
+to your `build.gradle.kts`:
+
+```kotlin title="my_agent/build.gradle.kts (add to dependencies)"
+dependencies {
+    implementation("com.google.adk:google-adk-kotlin-core:0.1.0")
+    implementation("com.google.adk:google-adk-kotlin-webserver:0.1.0")
+    ksp("com.google.adk:google-adk-kotlin-processor:0.1.0")
+}
+```
+
+Then create a `WebMain.kt` file alongside your `Main.kt`:
+
+```kotlin title="my_agent/src/main/kotlin/com/example/agent/WebMain.kt"
+package com.example.agent
+
+import com.google.adk.kt.artifacts.InMemoryArtifactService
+import com.google.adk.kt.runners.InMemoryRunner
+import com.google.adk.kt.sessions.InMemorySessionService
+import com.google.adk.kt.webserver.AdkWebServer
+import com.google.adk.kt.webserver.AgentLoader
+import com.google.adk.kt.webserver.telemetry.ApiServerSpanExporter
+
+fun main() {
+    val agent = HelloTimeAgent.rootAgent
+    val sessionService = InMemorySessionService()
+    val artifactService = InMemoryArtifactService()
+
+    val server = AdkWebServer(
+        port = 8080,
+        sessionService = sessionService,
+        artifactService = artifactService,
+        agentLoader = object : AgentLoader {
+            override fun listAgents() = listOf(agent.name)
+            override fun loadAgent(agentName: String) =
+                if (agentName == agent.name) agent else null
+        },
+        runner = InMemoryRunner(
+            agent = agent,
+            sessionService = sessionService,
+            artifactService = artifactService,
+        ),
+        apiServerSpanExporter = ApiServerSpanExporter(),
+    )
+
+    println("Starting ADK web server on http://localhost:8080...")
+    server.start(wait = true)
+}
+```
+
+Run the web server using the `-PmainClass` property to select the web
+entry point:
+
+```console
+# Remember to load keys and settings: source .env OR env.bat
+gradle run -PmainClass=com.example.agent.WebMainKt
+```
+
+This command starts a web server with a chat interface for your agent. You can
+access the web interface at (http://localhost:8080). Select your agent at the
+upper left corner and type a request.
 
 ![adk-web-dev-ui-chat.png](/assets/adk-web-dev-ui-chat.png)
 

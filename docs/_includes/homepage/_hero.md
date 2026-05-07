@@ -65,12 +65,10 @@ a := agent.<span class="fn">New</span>(<span class="str">"researcher"</span>,
 <span class="kw">import</span> com.google.adk.kt.tools.<span class="fn">GoogleSearchTool</span>
 
 <span class="kw">val</span> agent = <span class="fn">LlmAgent</span>(
-    config = <span class="fn">LlmAgentConfig</span>(
-        agentConfig = <span class="fn">AgentConfig</span>(name = <span class="str">"researcher"</span>),
-        model = <span class="fn">GeminiModel</span>(name = <span class="str">"gemini-flash-latest"</span>),
-        instruction = <span class="fn">Instruction</span>(<span class="str">"You help users research topics thoroughly."</span>),
-        tools = listOf(<span class="fn">GoogleSearchTool</span>()),
-    )
+    name = <span class="str">"researcher"</span>,
+    model = <span class="fn">GeminiModel</span>(name = <span class="str">"gemini-flash-latest"</span>),
+    instruction = <span class="fn">Instruction</span>(<span class="str">"You help users research topics thoroughly."</span>),
+    tools = listOf(<span class="fn">GoogleSearchTool</span>()),
 )</pre></div>
 
 </div>
