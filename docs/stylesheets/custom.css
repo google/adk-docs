@@ -180,19 +180,13 @@ button.md-content__button:hover svg {
 }
 
 /* Language SDK icons in header */
-.md-header__source {
-  flex-shrink: 0 !important;
-  display: flex !important;
+.lang-header-repos {
+  flex-shrink: 0;
+  display: flex;
   align-items: center;
-  gap: 12px !important;
-  flex-wrap: nowrap !important;
-  max-width: none !important;
-  width: auto !important;
-  margin-right: 1rem !important;
-}
-
-.md-source__facts {
-  display: none !important;
+  gap: 12px;
+  flex-wrap: nowrap;
+  margin-right: 1rem;
 }
 
 /* Language SDK icon links */
