@@ -1,4 +1,4 @@
----
+--- 
 catalog_title: Environment Toolset
 catalog_description: Create local and custom compute environments for files, scripts, and code execution
 catalog_icon: /integrations/assets/adk.png
@@ -29,6 +29,8 @@ implementation for use with the Environment Toolset framework.
 
 Enable local environment interactions by adding the ***EnvironmentToolset***
 with a ***LocalEnvironment*** instance to your agent's tools.
+
+You can use the optional `max_output_chars` parameter when initializing `EnvironmentToolset` to limit the maximum number of characters returned from file reads or command executions. This helps prevent large file contents or command outputs from exceeding the agent's context window limit.
 
 ```python
 from google.adk import Agent
@@ -141,7 +143,7 @@ down, for example, when exiting an ADK Web session. However, if you set a
 removed* after the agent shuts down.
 
 **Tip:** If you want more control over how files are persisted between agent
-sessions, use [***Artifacts***](/artifacts/) and the Artifact
+'sessions, use [***Artifacts***](/artifacts/) and the Artifact
 Service to upload and download files to the environment.
 
 ## Custom environments
