@@ -71,6 +71,7 @@ shows the BigQuery view optionally created when
 | `INVOCATION_COMPLETED` | An invocation ends | *(common columns only)* | `v_invocation_completed` |
 | `AGENT_STARTING` | Agent execution begins | instruction summary | `v_agent_starting` |
 | `AGENT_COMPLETED` | Agent execution ends | latency | `v_agent_completed` |
+| `AGENT_RESPONSE` | Final response text emitted by the agent | response text, source event ID | `v_agent_response` |
 | `LLM_REQUEST` | A model request is sent | model, prompt, config, tools | `v_llm_request` |
 | `LLM_RESPONSE` | A model response is received | response, usage tokens, cache metadata, latency, TTFT | `v_llm_response` |
 | `LLM_ERROR` | A model call fails | error message, latency | `v_llm_error` |
@@ -468,7 +469,7 @@ Every view includes these **common columns**: `timestamp`, `event_type`,
 `agent`, `session_id`, `invocation_id`, `user_id`, `trace_id`, `span_id`,
 `parent_span_id`, `status`, `error_message`, `is_truncated`.
 
-The following table lists all 16 auto-created views and their event-specific
+The following table lists all 17 auto-created views and their event-specific
 columns:
 
 | View Name | Event-Specific Columns |
@@ -482,6 +483,7 @@ columns:
 | **`v_tool_error`** | `tool_name` (STRING), `tool_args` (JSON), `tool_origin` (STRING), `total_ms` (INT64) |
 | **`v_agent_starting`** | `agent_instruction` (STRING) |
 | **`v_agent_completed`** | `total_ms` (INT64) |
+| **`v_agent_response`** | `response_text` (STRING), `source_event_id` (STRING) |
 | **`v_invocation_starting`** | *(common columns only)* |
 | **`v_invocation_completed`** | *(common columns only)* |
 | **`v_state_delta`** | `state_delta` (JSON) |
