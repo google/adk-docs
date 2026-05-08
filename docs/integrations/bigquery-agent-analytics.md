@@ -482,6 +482,7 @@ columns:
 | **`v_tool_error`** | `tool_name` (STRING), `tool_args` (JSON), `tool_origin` (STRING), `total_ms` (INT64) |
 | **`v_agent_starting`** | `agent_instruction` (STRING) |
 | **`v_agent_completed`** | `total_ms` (INT64) |
+| **`v_agent_response`** | `response_text` (STRING), `source_event_id` (STRING), `source_event_author` (STRING), `source_event_branch` (STRING) |
 | **`v_invocation_starting`** | *(common columns only)* |
 | **`v_invocation_completed`** | *(common columns only)* |
 | **`v_state_delta`** | `state_delta` (JSON) |
