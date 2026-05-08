@@ -108,23 +108,63 @@ your warehouses, lakes, BI tools, and pipelines using natural language.
 
 ## Available tools
 
+### Discovery and search
+
 Tool | Description
 ---- | -----------
 `semantic_search_tool` | Natural-language search across all data assets using AI-powered semantic understanding
+`search_assets_tool` | Search assets using structured filters and conditions
 `traverse_lineage_tool` | Trace data flow upstream (sources) or downstream (consumers) for an asset
-`update_assets_tool` | Update asset descriptions, certificate status, README, terms, or custom metadata
+`query_assets_tool` | Execute SQL queries against connected data sources
+`get_asset_tool` | Get detailed information about a single asset by GUID or qualified name (including custom metadata, data quality checks, and README)
+`resolve_metadata_tool` | Discover metadata entities by name or description (users, classifications, custom metadata sets, glossaries, domains, data products)
+`get_groups_tool` | List workspace groups and their members
+`search_atlan_docs_tool` | Search Atlan's product documentation and return an LLM-generated answer with source citations
+
+### Asset updates
+
+Tool | Description
+---- | -----------
+`update_assets_tool` | Update asset descriptions, certificate status, README, or terms
+`manage_announcements_tool` | Add or remove announcements (information, warning, issue) on assets
+`manage_asset_lifecycle_tool` | Archive, restore, or permanently purge assets
+
+### Glossaries and domains
+
+Tool | Description
+---- | -----------
 `create_glossaries` | Create new glossaries
 `create_glossary_terms` | Create terms within glossaries
 `create_glossary_categories` | Create categories within glossaries
 `create_domains` | Create data domains and subdomains
 `create_data_products` | Create data products linked to domains and assets
+
+### Data quality rules
+
+Tool | Description
+---- | -----------
 `create_dq_rules_tool` | Create data quality rules (null checks, uniqueness, regex, custom SQL, etc.)
 `update_dq_rules_tool` | Update existing data quality rules
 `schedule_dq_rules_tool` | Schedule data quality rule execution with cron expressions
 `delete_dq_rules_tool` | Delete data quality rules
-`search_assets_tool` | Search assets using structured filters and conditions (enabled per tenant)
-`get_assets_by_dsl_tool` | Query assets using Atlan's DSL for advanced filtering (enabled per tenant)
-`query_assets_tool` | Execute SQL queries against connected data sources (enabled per tenant)
+
+### Custom metadata
+
+Tool | Description
+---- | -----------
+`create_custom_metadata_set_tool` | Create custom metadata sets with typed attributes
+`add_attributes_to_cm_set_tool` | Add new attributes to an existing custom metadata set
+`remove_attributes_from_cm_set_tool` | Archive (soft-delete) attributes from a custom metadata set
+`delete_custom_metadata_set_tool` | Permanently delete a custom metadata set and clear its values from all assets
+`update_custom_metadata_tool` | Update custom metadata values on one or more assets
+`remove_custom_metadata_tool` | Remove a custom metadata set's values from an asset
+
+### Atlan tags
+
+Tool | Description
+---- | -----------
+`add_atlan_tags_tool` | Add Atlan tags to one or more assets
+`remove_atlan_tag_tool` | Remove an Atlan tag from one or more assets
 
 ## Additional resources
 
