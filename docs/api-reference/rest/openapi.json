@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "ADK REST API Reference",
-    "version": "1.32.0"
+    "version": "1.33.0"
   },
   "paths": {
     "/health": {
@@ -6561,6 +6561,18 @@
             ],
             "title": "Pagenumber",
             "description": "Optional. Page number of the retrieved context. This field is not supported in Vertex AI."
+          },
+          "mediaId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mediaid",
+            "description": "Optional. Media ID. This field is not supported in Vertex AI."
           }
         },
         "additionalProperties": false,
