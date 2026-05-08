@@ -1,7 +1,7 @@
 # Graph-based agent workflows
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span><span class="lst-preview">Alpha</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span><span class="lst-preview">Beta</span>
 </div>
 
 Graph-based workflows in ADK let you build agents with more precise control,
@@ -33,9 +33,9 @@ provide the following advantages:
 -   **Enhance reliability:** Improve the predictability of your agents by
     relying on structured node definitions rather than prompts alone.
 
-!!! example "Alpha Release"
+!!! example "Beta Release"
 
-    ADK 2.0 is an Alpha release and may cause breaking changes when used with prior
+    ADK 2.0 is a Beta release and may cause breaking changes when used with prior
     versions of ADK. Do not use ADK 2.0 if you require backwards compatibility, such
     as in production environments. We encourage you to test this release and we
     welcome your
@@ -59,7 +59,7 @@ from pydantic import BaseModel
 
 city_generator_agent = Agent(
     name="city_generator_agent",
-    model="gemini-2.5-flash",
+    model="gemini-flash-latest",
     instruction="""Return the name of a random city.
       Return only the name, nothing else.""",
     output_schema=str,
@@ -75,7 +75,7 @@ def lookup_time_function(node_input: str):
 
 city_report_agent = Agent(
     name="city_report_agent",
-    model="gemini-2.5-flash",
+    model="gemini-flash-latest",
     input_schema=CityTime,
     instruction="""Output following line:
     It is {CityTime.time_info} in {CityTime.city} right now.""",
@@ -137,7 +137,7 @@ translated into a graph-based agent using the ***Workflow*** class:
 ```python
 process_message = Agent(
     name="process_message",
-    model="gemini-2.5-flash",
+    model="gemini-flash-latest",
     instruction="""Classify user message into either "BUG", "CUSTOMER_SUPPORT",
       or "LOGISTICS". If you think a message applies to more than one category,
       reply with a comma separated list of categories.

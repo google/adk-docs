@@ -55,7 +55,7 @@ schema_manager = A2uiSchemaManager(
 
 !!! tip
     If you omit the `catalogs` parameter, the schema manager uses the
-    [Basic Catalog](https://a2ui.org/latest/catalogs/) maintained by the
+    [Basic Catalog](https://a2ui.org/concepts/catalogs/) maintained by the
     A2UI team, which includes common components like Text, Card, Button,
     Image, and more. You can also create [custom catalogs](#custom-catalogs)
     with domain-specific components, or mix the basic catalog with your own
@@ -220,7 +220,6 @@ The A2UI repository includes ADK sample agents you can run immediately:
 
 | Sample | Description |
 |---|---|
-| [contact_lookup](https://github.com/google/A2UI/tree/main/samples/agent/adk/contact_lookup) | Simple agent with static schema — looks up contacts and displays results as cards |
 | [restaurant_finder](https://github.com/google/A2UI/tree/main/samples/agent/adk/restaurant_finder) | Static schema agent for searching and displaying restaurant information |
 | [rizzcharts](https://github.com/google/A2UI/tree/main/samples/agent/adk/rizzcharts) | Dynamic catalog agent that selects chart components based on context |
 | [orchestrator](https://github.com/google/A2UI/tree/main/samples/agent/adk/orchestrator) | Multi-agent setup that delegates to sub-agents and aggregates UI capabilities |
@@ -231,5 +230,5 @@ The A2UI repository includes ADK sample agents you can run immediately:
 - [A2UI GitHub repository](https://github.com/google/A2UI)
 - [A2UI Python SDK (`a2ui-agent-sdk`)](https://pypi.org/project/a2ui-agent-sdk/)
 - [Agent development guide](https://github.com/google/A2UI/blob/main/agent_sdks/python/agent_development.md)
-- [Component gallery](https://a2ui.org/latest/reference/components/)
-- [A2A protocol](https://google.github.io/A2A/)
+- [Component gallery](https://a2ui.org/reference/components/)
+- [A2A protocol](https://a2a-protocol.org)

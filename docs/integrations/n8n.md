@@ -11,11 +11,12 @@ catalog_tags: ["mcp", "connectors"]
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript</span>
 </div>
 
-The [n8n MCP Server](https://docs.n8n.io/advanced-ai/accessing-n8n-mcp-server/)
-connects your ADK agent to [n8n](https://n8n.io/), an extendable workflow
-automation tool. This integration allows your agent to securely connect to an
-n8n instance to search, inspect, and trigger workflows directly from a natural
-language interface.
+The [n8n MCP
+Server](https://docs.n8n.io/advanced-ai/mcp/accessing-n8n-mcp-server/) connects
+your ADK agent to [n8n](https://n8n.io/), an extendable workflow automation
+tool. This integration allows your agent to securely connect to an n8n instance
+to search, inspect, and trigger workflows directly from a natural language
+interface.
 
 !!! note "Alternative: Workflow-level MCP Server"
 
@@ -48,8 +49,8 @@ language interface.
 - MCP access enabled in settings
 - A valid MCP access token
 
-Refer to the
-[n8n MCP documentation](https://docs.n8n.io/advanced-ai/accessing-n8n-mcp-server/)
+Refer to the [n8n MCP
+documentation](https://docs.n8n.io/advanced-ai/mcp/accessing-n8n-mcp-server/)
 for detailed setup instructions.
 
 ## Use with agent
@@ -68,7 +69,7 @@ for detailed setup instructions.
         N8N_MCP_TOKEN = "YOUR_N8N_MCP_TOKEN"
 
         root_agent = Agent(
-            model="gemini-2.5-pro",
+            model="gemini-flash-latest",
             name="n8n_agent",
             instruction="Help users manage and execute workflows in n8n",
             tools=[
@@ -103,7 +104,7 @@ for detailed setup instructions.
         N8N_MCP_TOKEN = "YOUR_N8N_MCP_TOKEN"
 
         root_agent = Agent(
-            model="gemini-2.5-pro",
+            model="gemini-flash-latest",
             name="n8n_agent",
             instruction="Help users manage and execute workflows in n8n",
             tools=[
@@ -130,7 +131,7 @@ for detailed setup instructions.
         const N8N_MCP_TOKEN = "YOUR_N8N_MCP_TOKEN";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-2.5-pro",
+            model: "gemini-flash-latest",
             name: "n8n_agent",
             instruction: "Help users manage and execute workflows in n8n",
             tools: [
@@ -163,7 +164,7 @@ for detailed setup instructions.
         const N8N_MCP_TOKEN = "YOUR_N8N_MCP_TOKEN";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-2.5-pro",
+            model: "gemini-flash-latest",
             name: "n8n_agent",
             instruction: "Help users manage and execute workflows in n8n",
             tools: [
@@ -207,4 +208,4 @@ criteria:
 
 ## Additional resources
 
-- [n8n MCP Server Documentation](https://docs.n8n.io/advanced-ai/accessing-n8n-mcp-server/)
+- [n8n MCP Server Documentation](https://docs.n8n.io/advanced-ai/mcp/accessing-n8n-mcp-server/)

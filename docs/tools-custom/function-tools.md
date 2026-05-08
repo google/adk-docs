@@ -94,6 +94,8 @@ A well-defined function signature is crucial for the LLM to use your tool correc
 === "Python"
     A parameter is considered **optional** if you provide a **default value**. This is the standard Python way to define optional arguments. You can also mark a parameter as optional using `typing.Optional[SomeType]` or the `| None` syntax (Python 3.10+).
 
+    Use defaults only for values that are truly optional. Do not add defaults for information the model should derive from the user request or ask the user to provide.
+
     ???+ "Example: Optional Parameters"
         ```python
         def search_flights(destination: str, departure_date: str, flexible_days: int = 0):
@@ -563,9 +565,9 @@ The `AgentTool` class provides the following attributes for customizing its beha
 
 ### How it works
 
-1. When the `main_agent` receives the long text, its instruction tells it to use the 'summarize' tool for long texts.
+1. When the `root_agent` receives the long text, its instruction tells it to use the 'summarize' tool for long texts.
 2. The framework recognizes 'summarize' as an `AgentTool` that wraps the `summary_agent`.
-3. Behind the scenes, the `main_agent` will call the `summary_agent` with the long text as input.
+3. Behind the scenes, the `root_agent` will call the `summary_agent` with the long text as input.
 4. The `summary_agent` will process the text according to its instruction and generate a summary.
-5. **The response from the `summary_agent` is then passed back to the `main_agent`.**
-6. The `main_agent` can then take the summary and formulate its final response to the user (e.g., "Here's a summary of the text: ...")
+5. **The response from the `summary_agent` is then passed back to the `root_agent`.**
+6. The `root_agent` can then take the summary and formulate its final response to the user (e.g., "Here's a summary of the text: ...")

@@ -94,7 +94,7 @@ def get_current_time(city: str) -> dict:
 
 
 root_agent = Agent(
-    model="gemini-3-flash-preview",
+    model="gemini-flash-latest",
     name="root_agent",
     description="Tells the current time in a specified city.",
     instruction=(

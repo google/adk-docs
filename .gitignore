@@ -192,6 +192,7 @@ docs/site
 # Claude Code
 .claude
 
+
 # Bash files
 ***/*.sh
 

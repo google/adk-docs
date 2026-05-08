@@ -101,7 +101,7 @@ Now let's define an agent that can monitor stock price changes and monitor the v
 
           # Call the model to generate content based on the provided image and prompt
           response = client.models.generate_content(
-              model="gemini-2.0-flash-exp",
+              model="gemini-flash-latest",
               contents=contents,
               config=genai_types.GenerateContentConfig(
                   system_instruction=(
@@ -135,7 +135,7 @@ Now let's define an agent that can monitor stock price changes and monitor the v
 
 
     root_agent = Agent(
-        model="gemini-2.0-flash-exp",
+        model="gemini-flash-latest",
         name="video_streaming_agent",
         instruction="""
           You are a monitoring agent. You can do video monitoring and stock price monitoring
@@ -206,7 +206,7 @@ Now let's define an agent that can monitor stock price changes and monitor the v
                   .build();
 
               GenerateContentResponse response = client.models().generateContent(
-                  "gemini-2.5-flash",
+                  "gemini-flash-latest",
                   contents,
                   GenerateContentConfig.builder()
                       .systemInstruction(Content.builder().parts(Arrays.asList(
@@ -229,7 +229,7 @@ Now let's define an agent that can monitor stock price changes and monitor the v
 
       public static void main(String[] args) {
         LlmAgent rootAgent = LlmAgent.builder()
-            .model("gemini-2.0-flash-exp")
+            .model("gemini-flash-latest")
             .name("video_streaming_agent")
             .instruction(
                 "You are a monitoring agent. You can do video monitoring and stock price monitoring\n" +

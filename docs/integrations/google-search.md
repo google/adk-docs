@@ -15,7 +15,7 @@ The `google_search` tool allows the agent to perform web searches using Google S
 
 !!! warning "Additional requirements when using the `google_search` tool"
     When you use grounding with Google Search, and you receive Search suggestions in your response, you must display the Search suggestions in production and in your applications.
-    For more information on grounding with Google Search, see Grounding with Google Search documentation for [Google AI Studio](https://ai.google.dev/gemini-api/docs/grounding/search-suggestions) or [Vertex AI](https://cloud.google.com/vertex-ai/generative-ai/docs/grounding/grounding-search-suggestions). The UI code (HTML) is returned in the Gemini response as `renderedContent`, and you will need to show the HTML in your app, in accordance with the policy.
+    For more information on grounding with Google Search, see Grounding with Google Search documentation for [Google AI Studio](https://ai.google.dev/gemini-api/docs/grounding/search-suggestions) or [Agent Platform](https://cloud.google.com/vertex-ai/generative-ai/docs/grounding/grounding-search-suggestions). The UI code (HTML) is returned in the Gemini response as `renderedContent`, and you will need to show the HTML in your app, in accordance with the policy.
 
 !!! warning "Warning: Single tool per agent limitation"
 
@@ -35,7 +35,7 @@ The `google_search` tool allows the agent to perform web searches using Google S
     import {GOOGLE_SEARCH, LlmAgent} from '@google/adk';
 
     export const rootAgent = new LlmAgent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-flash-latest',
       name: 'root_agent',
       description:
           'an agent whose job it is to perform Google search queries and answer questions about the results.',

@@ -41,7 +41,7 @@ from simple tasks to complex workflows.
   workflows.
 
 - **Deploy Anywhere**: Easily containerize and deploy agents on Cloud Run or GKE, or
-  scale seamlessly with Vertex AI Agent Engine.
+  scale seamlessly with Agent Runtime.
 
 ## 🚀 Usage
 

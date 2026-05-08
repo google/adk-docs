@@ -93,7 +93,7 @@ To inject a value from the session state, enclose the key of the desired state v
 
     story_generator = LlmAgent(
         name="StoryGenerator",
-        model="gemini-2.0-flash",
+        model="gemini-flash-latest",
         instruction="""Write a short story about a cat, focusing on the theme: {topic}."""
     )
 
@@ -109,7 +109,7 @@ To inject a value from the session state, enclose the key of the desired state v
 
     const storyGenerator = new LlmAgent({
         name: "StoryGenerator",
-        model: "gemini-2.5-flash",
+        model: "gemini-flash-latest",
         instruction: "Write a short story about a cat, focusing on the theme: {topic}."
     });
 
@@ -131,7 +131,7 @@ To inject a value from the session state, enclose the key of the desired state v
 
     LlmAgent storyGenerator = LlmAgent.builder()
         .name("StoryGenerator")
-        .model("gemini-2.5-flash")
+        .model("gemini-flash-latest")
         .instruction("Write a short story about a cat, focusing on the theme: " + topic)
         .build();
 
@@ -169,7 +169,7 @@ The `InstructionProvider` function receives a `ReadonlyContext` object, which yo
         return 'Format your output as JSON: {"city": "<name>", "population": <number>}'
 
     agent = LlmAgent(
-        model="gemini-2.0-flash",
+        model="gemini-flash-latest",
         name="template_helper_agent",
         instruction=my_instruction_provider
     )
@@ -187,7 +187,7 @@ The `InstructionProvider` function receives a `ReadonlyContext` object, which yo
     }
 
     const agent = new LlmAgent({
-        model: "gemini-2.5-flash",
+        model: "gemini-flash-latest",
         name: "template_helper_agent",
         instruction: myInstructionProvider
     });
@@ -216,7 +216,7 @@ The `InstructionProvider` function receives a `ReadonlyContext` object, which yo
     );
 
     LlmAgent agent = LlmAgent.builder()
-        .model("gemini-2.5-flash")
+        .model("gemini-flash-latest")
         .name("template_helper_agent")
         .instruction(myInstructionProvider)
         .build();
@@ -238,7 +238,7 @@ If you want to both use an `InstructionProvider` *and* inject state into your in
         return await instructions_utils.inject_session_state(template, context)
 
     agent = LlmAgent(
-        model="gemini-2.0-flash",
+        model="gemini-flash-latest",
         name="dynamic_template_helper_agent",
         instruction=my_dynamic_instruction_provider
     )
@@ -269,7 +269,7 @@ If you want to both use an `InstructionProvider` *and* inject state into your in
     );
 
     LlmAgent agent = LlmAgent.builder()
-        .model("gemini-2.5-flash")
+        .model("gemini-flash-latest")
         .name("dynamic_template_helper_agent")
         .instruction(myDynamicInstructionProvider)
         .build();
@@ -309,7 +309,7 @@ This is the simplest method for saving an agent's final text response directly i
     # Define agent with output_key
     greeting_agent = LlmAgent(
         name="Greeter",
-        model="gemini-2.0-flash", # Use a valid model
+        model="gemini-flash-latest", # Use a valid model
         instruction="Generate a short, friendly greeting.",
         output_key="last_greeting" # Save response to state['last_greeting']
     )
@@ -352,7 +352,7 @@ This is the simplest method for saving an agent's final text response directly i
     // Define agent with outputKey
     const greetingAgent = new LlmAgent({
         name: "Greeter",
-        model: "gemini-2.5-flash",
+        model: "gemini-flash-latest",
         instruction: "Generate a short, friendly greeting.",
         outputKey: "last_greeting" // Save response to state['last_greeting']
     });

@@ -1,7 +1,7 @@
 # Get action confirmation for ADK Tools
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.14.0</span><span class="lst-go">Go v0.3.0</span><span class="lst-preview">Experimental</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.14.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.3.0</span><span class="lst-preview">Experimental</span>
 </div>
 
 Some agent workflows require confirmation for decision making, verification,
@@ -47,10 +47,13 @@ agent pattern.
 ## Boolean confirmation {#boolean-confirmation}
 
 When your tool only requires a simple `yes` or `no` from the user, you can
-append a confirmation step using the `FunctionTool` class as a wrapper. For
-example, if you have a tool called `reimburse`, you can enable a confirmation
-step by wrapping it with the `FunctionTool` class and setting the
-`require_confirmation` parameter to `True`, as shown in the following example:
+append a confirmation step. In Python, Go, and Java, you can enable this by
+wrapping the tool with the `FunctionTool` class and setting the
+`require_confirmation` parameter (or equivalent) to `True`. In TypeScript, you
+implement this logic manually within the `execute` function using the
+`ToolContext`.
+
+The following examples show how to enable boolean confirmation:
 
 === "Python"
 
@@ -69,6 +72,16 @@ step by wrapping it with the `FunctionTool` class and setting the
     # approvals from the user or confirming system. For a complete example of this
     # approach, see the following code sample for a more detailed example:
     # https://github.com/google/adk-python/blob/main/contributing/samples/human_tool_confirmation/agent.py
+    ```
+
+=== "TypeScript"
+
+    !!! note
+        ADK for TypeScript currently requires manual implementation of
+        confirmation logic within the tool's `execute` function.
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/tools/confirmation/boolean_confirmation.ts:boolean_confirmation"
     ```
 
 === "Go"
@@ -107,7 +120,7 @@ step by wrapping it with the `FunctionTool` class and setting the
 
 ### Require confirmation function
 
-You can modify the behavior of the confirmation requirement by using a function that returns a boolean response based on the tool's input.
+You can modify the behavior of the confirmation requirement by using a function that returns a boolean response based on the tool's input. In TypeScript, this is handled by adding conditional logic to your `execute` function.
 
 === "Python"
 
@@ -126,6 +139,12 @@ You can modify the behavior of the confirmation requirement by using a function 
         ],
         # ...
     )
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/tools/confirmation/boolean_confirmation.ts:dynamic_confirmation"
     ```
 
 === "Go"
@@ -239,6 +258,12 @@ time off requests for an employee:
             'status': 'ok',
             'approved_days': approved_days,
         }
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/tools/confirmation/confirmation_example.ts:advanced_confirmation"
     ```
 
 === "Go"
