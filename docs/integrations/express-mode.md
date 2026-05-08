@@ -19,7 +19,7 @@ powerful Agent Platform services, including:
 - [Agent Runtime SessionService](#agent-runtime-session-service)
 - [Agent Runtime MemoryBankService](#memory-bank)
 
-You can sign up for an express mode account using a Gmail account and receive an
+You can sign up for an express mode account using a Google account and receive an
 API key to use with the ADK. Obtain an API key through the
 [Google Cloud Console](https://console.cloud.google.com/expressmode).
 For more information, see

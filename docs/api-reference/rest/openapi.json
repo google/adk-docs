@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "ADK REST API Reference",
-    "version": "1.31.0"
+    "version": "1.32.0"
   },
   "paths": {
     "/health": {
@@ -6549,6 +6549,18 @@
             ],
             "title": "Filesearchstore",
             "description": "Optional. Name of the `FileSearchStore` containing the document. Example: `fileSearchStores/123`. This field is not supported in Vertex AI."
+          },
+          "pageNumber": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pagenumber",
+            "description": "Optional. Page number of the retrieved context. This field is not supported in Vertex AI."
           }
         },
         "additionalProperties": false,

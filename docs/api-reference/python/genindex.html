@@ -1,16 +1,14 @@
 <!doctype html>
 <html class="no-js" lang="en" data-content_root="./">
-  <head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-DKHZS27PHP"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-DKHZS27PHP');
-</script>
-<meta charset="utf-8">
+  <head><meta charset="utf-8">
+<!-- Google Analytics tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-DKHZS27PHP"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-DKHZS27PHP');
+  </script>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="#"><link rel="search" title="Search" href="search.html">
 
@@ -222,7 +220,9 @@
 <li class="toctree-l1"><a class="reference internal" href="google-adk.html#module-google.adk.artifacts">google.adk.artifacts module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="google-adk.html#module-google.adk.apps">google.adk.apps package</a></li>
 <li class="toctree-l1"><a class="reference internal" href="google-adk.html#module-google.adk.auth">google.adk.auth module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="google-adk.html#module-google.adk.cli">google.adk.cli module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="google-adk.html#google-adk-cli-commands">google.adk.cli commands</a></li>
+<li class="toctree-l1"><a class="reference internal" href="google-adk.html#module-google.adk.cli.cli">google.adk.cli.cli module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="google-adk.html#module-google.adk.cli.cli_tools_click">google.adk.cli.cli_tools_click module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="google-adk.html#module-google.adk.code_executors">google.adk.code_executors module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="google-adk.html#module-google.adk.errors">google.adk.errors module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="google-adk.html#module-google.adk.evaluation">google.adk.evaluation module</a></li>
@@ -246,7 +246,7 @@
 <li class="toctree-l1"><a class="reference internal" href="google-adk.html#module-google.adk.tools.base_tool">google.adk.tools.base_tool module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="google-adk.html#module-google.adk.tools.base_toolset">google.adk.tools.base_toolset module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="google-adk.html#module-google.adk.tools.bigquery">google.adk.tools.bigquery module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="google-adk.html#module-google.adk.tools.crewai_tool">google.adk.tools.crewai_tool module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="google-adk.html#google-adk-tools-crewai-tool-module">google.adk.tools.crewai_tool module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="google-adk.html#module-google.adk.tools.enterprise_search_tool">google.adk.tools.enterprise_search_tool module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="google-adk.html#module-google.adk.tools.example_tool">google.adk.tools.example_tool module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="google-adk.html#module-google.adk.tools.exit_loop_tool">google.adk.tools.exit_loop_tool module</a></li>
@@ -306,8 +306,690 @@
 
 <section class="genindex-section">
   <h1 id="index">Index</h1>
-  <div class="genindex-jumpbox"><a href="#A"><strong>A</strong></a> | <a href="#B"><strong>B</strong></a> | <a href="#C"><strong>C</strong></a> | <a href="#D"><strong>D</strong></a> | <a href="#E"><strong>E</strong></a> | <a href="#F"><strong>F</strong></a> | <a href="#G"><strong>G</strong></a> | <a href="#H"><strong>H</strong></a> | <a href="#I"><strong>I</strong></a> | <a href="#L"><strong>L</strong></a> | <a href="#M"><strong>M</strong></a> | <a href="#N"><strong>N</strong></a> | <a href="#O"><strong>O</strong></a> | <a href="#P"><strong>P</strong></a> | <a href="#R"><strong>R</strong></a> | <a href="#S"><strong>S</strong></a> | <a href="#T"><strong>T</strong></a> | <a href="#U"><strong>U</strong></a> | <a href="#V"><strong>V</strong></a> | <a href="#W"><strong>W</strong></a> | <a href="#Y"><strong>Y</strong></a></div>
+  <div class="genindex-jumpbox"><a href="#Symbols"><strong>Symbols</strong></a> | <a href="#A"><strong>A</strong></a> | <a href="#B"><strong>B</strong></a> | <a href="#C"><strong>C</strong></a> | <a href="#D"><strong>D</strong></a> | <a href="#E"><strong>E</strong></a> | <a href="#F"><strong>F</strong></a> | <a href="#G"><strong>G</strong></a> | <a href="#H"><strong>H</strong></a> | <a href="#I"><strong>I</strong></a> | <a href="#L"><strong>L</strong></a> | <a href="#M"><strong>M</strong></a> | <a href="#N"><strong>N</strong></a> | <a href="#O"><strong>O</strong></a> | <a href="#P"><strong>P</strong></a> | <a href="#Q"><strong>Q</strong></a> | <a href="#R"><strong>R</strong></a> | <a href="#S"><strong>S</strong></a> | <a href="#T"><strong>T</strong></a> | <a href="#U"><strong>U</strong></a> | <a href="#V"><strong>V</strong></a> | <a href="#W"><strong>W</strong></a> | <a href="#Y"><strong>Y</strong></a></div>
 </section>
+<section id="Symbols" class="genindex-section">
+  <h2>Symbols</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li>
+    --a2a
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-a2a">adk-api_server command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-cloud_run-a2a">adk-deploy-cloud_run command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-a2a">adk-web command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --absolutize_imports
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-agent_engine-absolutize_imports">adk-deploy-agent_engine command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --adk_app
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-agent_engine-adk_app">adk-deploy-agent_engine command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --adk_app_object
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-agent_engine-adk_app_object">adk-deploy-agent_engine command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --adk_version
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-cloud_run-adk_version">adk-deploy-cloud_run command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-gke-adk_version">adk-deploy-gke command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --agent_engine_config_file
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-agent_engine-agent_engine_config_file">adk-deploy-agent_engine command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --agent_engine_id
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-agent_engine-agent_engine_id">adk-deploy-agent_engine command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --allow_origins
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-allow_origins">adk-api_server command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-cloud_run-allow_origins">adk-deploy-cloud_run command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-allow_origins">adk-web command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --api_key
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-create-api_key">adk-create command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-agent_engine-api_key">adk-deploy-agent_engine command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --app_name
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-cloud_run-app_name">adk-deploy-cloud_run command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-gke-app_name">adk-deploy-gke command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --artifact_service_uri
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-artifact_service_uri">adk-api_server command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-cloud_run-artifact_service_uri">adk-deploy-cloud_run command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-gke-artifact_service_uri">adk-deploy-gke command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-run-artifact_service_uri">adk-run command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-artifact_service_uri">adk-web command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --artifact_storage_uri
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-artifact_storage_uri">adk-api_server command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-cloud_run-artifact_storage_uri">adk-deploy-cloud_run command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-artifact_storage_uri">adk-web command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --auto_create_session
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-auto_create_session">adk-api_server command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --cluster_name
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-gke-cluster_name">adk-deploy-gke command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --config_file_path
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-eval-config_file_path">adk-eval command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --description
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-agent_engine-description">adk-deploy-agent_engine command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --dest_db_url
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-migrate-session-dest_db_url">adk-migrate-session command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --disable_features
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-disable_features">adk-api_server command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-eval-disable_features">adk-eval command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-run-disable_features">adk-run command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-disable_features">adk-web command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --display_name
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-agent_engine-display_name">adk-deploy-agent_engine command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --enable_features
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-enable_features">adk-api_server command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-eval-enable_features">adk-eval command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-run-enable_features">adk-run command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-enable_features">adk-web command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --env_file
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-agent_engine-env_file">adk-deploy-agent_engine command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --eval_storage_uri
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-eval_storage_uri">adk-api_server command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-eval-eval_storage_uri">adk-eval command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-eval_set-add_eval_case-eval_storage_uri">adk-eval_set-add_eval_case command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-eval_set-create-eval_storage_uri">adk-eval_set-create command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-eval_set-generate_eval_cases-eval_storage_uri">adk-eval_set-generate_eval_cases command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-eval_storage_uri">adk-web command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --extra_plugins
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-extra_plugins">adk-api_server command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-extra_plugins">adk-web command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --generate_report
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-conformance-test-generate_report">adk-conformance-test command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --host
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-host">adk-api_server command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-host">adk-web command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --log_level
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-log_level">adk-api_server command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-cloud_run-log_level">adk-deploy-cloud_run command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-gke-log_level">adk-deploy-gke command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-eval-log_level">adk-eval command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-eval_set-add_eval_case-log_level">adk-eval_set-add_eval_case command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-eval_set-create-log_level">adk-eval_set-create command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-eval_set-generate_eval_cases-log_level">adk-eval_set-generate_eval_cases command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-migrate-session-log_level">adk-migrate-session command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-optimize-log_level">adk-optimize command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-log_level">adk-web command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --logo-image-url
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-web-logo-image-url">adk-web command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --logo-text
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-web-logo-text">adk-web command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --memory_service_uri
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-memory_service_uri">adk-api_server command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-cloud_run-memory_service_uri">adk-deploy-cloud_run command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-gke-memory_service_uri">adk-deploy-gke command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-run-memory_service_uri">adk-run command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-memory_service_uri">adk-web command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --mode
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-conformance-test-mode">adk-conformance-test command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --model
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-create-model">adk-create command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --no-reload
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-reload">adk-api_server command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-reload">adk-web command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --no-trace_to_cloud
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-agent_engine-trace_to_cloud">adk-deploy-agent_engine command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --no-validate-agent-import
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-agent_engine-validate-agent-import">adk-deploy-agent_engine command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --no_use_local_storage
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-use_local_storage">adk-api_server command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-cloud_run-use_local_storage">adk-deploy-cloud_run command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-gke-use_local_storage">adk-deploy-gke command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-run-use_local_storage">adk-run command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-use_local_storage">adk-web command line option</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li>
+    --optimizer_config_file_path
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-optimize-optimizer_config_file_path">adk-optimize command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --otel_to_cloud
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-otel_to_cloud">adk-api_server command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-agent_engine-otel_to_cloud">adk-deploy-agent_engine command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-cloud_run-otel_to_cloud">adk-deploy-cloud_run command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-gke-otel_to_cloud">adk-deploy-gke command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-otel_to_cloud">adk-web command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --port
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-port">adk-api_server command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-cloud_run-port">adk-deploy-cloud_run command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-gke-port">adk-deploy-gke command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-port">adk-web command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --print_detailed_results
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-eval-print_detailed_results">adk-eval command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-optimize-print_detailed_results">adk-optimize command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --project
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-create-project">adk-create command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-agent_engine-project">adk-deploy-agent_engine command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-cloud_run-project">adk-deploy-cloud_run command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-gke-project">adk-deploy-gke command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --region
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-create-region">adk-create command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-agent_engine-region">adk-deploy-agent_engine command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-cloud_run-region">adk-deploy-cloud_run command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-gke-region">adk-deploy-gke command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --reload
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-reload">adk-api_server command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-reload">adk-web command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --reload_agents
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-reload_agents">adk-api_server command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-reload_agents">adk-web command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --replay
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-run-replay">adk-run command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --report_dir
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-conformance-test-report_dir">adk-conformance-test command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --requirements_file
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-agent_engine-requirements_file">adk-deploy-agent_engine command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --resume
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-run-resume">adk-run command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --sampler_config_file_path
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-optimize-sampler_config_file_path">adk-optimize command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --save_session
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-run-save_session">adk-run command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --scenarios_file
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-eval_set-add_eval_case-scenarios_file">adk-eval_set-add_eval_case command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --service_name
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-cloud_run-service_name">adk-deploy-cloud_run command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-gke-service_name">adk-deploy-gke command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --service_type
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-gke-service_type">adk-deploy-gke command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --session_db_url
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-session_db_url">adk-api_server command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-cloud_run-session_db_url">adk-deploy-cloud_run command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-session_db_url">adk-web command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --session_id
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-run-session_id">adk-run command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --session_input_file
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-eval_set-add_eval_case-session_input_file">adk-eval_set-add_eval_case command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --session_service_uri
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-session_service_uri">adk-api_server command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-cloud_run-session_service_uri">adk-deploy-cloud_run command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-gke-session_service_uri">adk-deploy-gke command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-run-session_service_uri">adk-run command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-session_service_uri">adk-web command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --skip-agent-import-validation
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-agent_engine-skip-agent-import-validation">adk-deploy-agent_engine command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --source_db_url
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-migrate-session-source_db_url">adk-migrate-session command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --staging_bucket
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-agent_engine-staging_bucket">adk-deploy-agent_engine command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --streaming-mode
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-conformance-test-streaming-mode">adk-conformance-test command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --temp_folder
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-agent_engine-temp_folder">adk-deploy-agent_engine command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-cloud_run-temp_folder">adk-deploy-cloud_run command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-gke-temp_folder">adk-deploy-gke command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --trace_to_cloud
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-trace_to_cloud">adk-api_server command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-agent_engine-trace_to_cloud">adk-deploy-agent_engine command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-cloud_run-trace_to_cloud">adk-deploy-cloud_run command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-gke-trace_to_cloud">adk-deploy-gke command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-trace_to_cloud">adk-web command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --trigger_sources
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-trigger_sources">adk-api_server command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-cloud_run-trigger_sources">adk-deploy-cloud_run command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-gke-trigger_sources">adk-deploy-gke command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-trigger_sources">adk-web command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --url_prefix
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-url_prefix">adk-api_server command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-url_prefix">adk-web command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --use_local_storage
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-use_local_storage">adk-api_server command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-cloud_run-use_local_storage">adk-deploy-cloud_run command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-gke-use_local_storage">adk-deploy-gke command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-run-use_local_storage">adk-run command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-use_local_storage">adk-web command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --user_simulation_config_file
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-eval_set-generate_eval_cases-user_simulation_config_file">adk-eval_set-generate_eval_cases command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --validate-agent-import
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-agent_engine-validate-agent-import">adk-deploy-agent_engine command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --verbose
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-v">adk-api_server command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-v">adk-web command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --verbosity
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-cloud_run-verbosity">adk-deploy-cloud_run command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --version
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-version">adk command line option</a>
+</li>
+        </ul></li>
+        <li>
+    --with_ui
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-cloud_run-with_ui">adk-deploy-cloud_run command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-gke-with_ui">adk-deploy-gke command line option</a>
+</li>
+        </ul></li>
+        <li>
+    -v
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-v">adk-api_server command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-v">adk-web command line option</a>
+</li>
+        </ul></li>
+    </ul></td>
+  </tr></table>
+</section>
+
 <section id="A" class="genindex-section">
   <h2>A</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
@@ -358,6 +1040,440 @@
           <li><a href="google-adk.html#google.adk.memory.VertexAiRagMemoryService.add_session_to_memory">(google.adk.memory.VertexAiRagMemoryService method)</a>
 </li>
         </ul></li>
+        <li>
+    adk command line option
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-version">--version</a>
+</li>
+        </ul></li>
+        <li>
+    adk-api_server command line option
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-a2a">--a2a</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-allow_origins">--allow_origins</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-artifact_service_uri">--artifact_service_uri</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-artifact_storage_uri">--artifact_storage_uri</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-auto_create_session">--auto_create_session</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-disable_features">--disable_features</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-enable_features">--enable_features</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-eval_storage_uri">--eval_storage_uri</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-extra_plugins">--extra_plugins</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-host">--host</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-log_level">--log_level</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-memory_service_uri">--memory_service_uri</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-reload">--no-reload</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-use_local_storage">--no_use_local_storage</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-otel_to_cloud">--otel_to_cloud</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-port">--port</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-reload">--reload</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-reload_agents">--reload_agents</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-session_db_url">--session_db_url</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-session_service_uri">--session_service_uri</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-trace_to_cloud">--trace_to_cloud</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-trigger_sources">--trigger_sources</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-url_prefix">--url_prefix</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-use_local_storage">--use_local_storage</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-v">--verbose</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-v">-v</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-arg-AGENTS_DIR">AGENTS_DIR</a>
+</li>
+        </ul></li>
+        <li>
+    adk-conformance-record command line option
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-conformance-record-arg-PATHS">PATHS</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-conformance-record-arg-STREAMING_MODE">STREAMING_MODE</a>
+</li>
+        </ul></li>
+        <li>
+    adk-conformance-test command line option
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-conformance-test-generate_report">--generate_report</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-conformance-test-mode">--mode</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-conformance-test-report_dir">--report_dir</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-conformance-test-streaming-mode">--streaming-mode</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-conformance-test-arg-PATHS">PATHS</a>
+</li>
+        </ul></li>
+        <li>
+    adk-create command line option
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-create-api_key">--api_key</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-create-model">--model</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-create-project">--project</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-create-region">--region</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-create-arg-APP_NAME">APP_NAME</a>
+</li>
+        </ul></li>
+        <li>
+    adk-deploy-agent_engine command line option
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-agent_engine-absolutize_imports">--absolutize_imports</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-agent_engine-adk_app">--adk_app</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-agent_engine-adk_app_object">--adk_app_object</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-agent_engine-agent_engine_config_file">--agent_engine_config_file</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-agent_engine-agent_engine_id">--agent_engine_id</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-agent_engine-api_key">--api_key</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-agent_engine-description">--description</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-agent_engine-display_name">--display_name</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-agent_engine-env_file">--env_file</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-agent_engine-trace_to_cloud">--no-trace_to_cloud</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-agent_engine-validate-agent-import">--no-validate-agent-import</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-agent_engine-otel_to_cloud">--otel_to_cloud</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-agent_engine-project">--project</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-agent_engine-region">--region</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-agent_engine-requirements_file">--requirements_file</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-agent_engine-skip-agent-import-validation">--skip-agent-import-validation</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-agent_engine-staging_bucket">--staging_bucket</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-agent_engine-temp_folder">--temp_folder</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-agent_engine-trace_to_cloud">--trace_to_cloud</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-agent_engine-validate-agent-import">--validate-agent-import</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-agent_engine-arg-AGENT">AGENT</a>
+</li>
+        </ul></li>
+        <li>
+    adk-deploy-cloud_run command line option
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-cloud_run-a2a">--a2a</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-cloud_run-adk_version">--adk_version</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-cloud_run-allow_origins">--allow_origins</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-cloud_run-app_name">--app_name</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-cloud_run-artifact_service_uri">--artifact_service_uri</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-cloud_run-artifact_storage_uri">--artifact_storage_uri</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-cloud_run-log_level">--log_level</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-cloud_run-memory_service_uri">--memory_service_uri</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-cloud_run-use_local_storage">--no_use_local_storage</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-cloud_run-otel_to_cloud">--otel_to_cloud</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-cloud_run-port">--port</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-cloud_run-project">--project</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-cloud_run-region">--region</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-cloud_run-service_name">--service_name</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-cloud_run-session_db_url">--session_db_url</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-cloud_run-session_service_uri">--session_service_uri</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-cloud_run-temp_folder">--temp_folder</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-cloud_run-trace_to_cloud">--trace_to_cloud</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-cloud_run-trigger_sources">--trigger_sources</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-cloud_run-use_local_storage">--use_local_storage</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-cloud_run-verbosity">--verbosity</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-cloud_run-with_ui">--with_ui</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-cloud_run-arg-AGENT">AGENT</a>
+</li>
+        </ul></li>
+        <li>
+    adk-deploy-gke command line option
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-gke-adk_version">--adk_version</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-gke-app_name">--app_name</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-gke-artifact_service_uri">--artifact_service_uri</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-gke-cluster_name">--cluster_name</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-gke-log_level">--log_level</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-gke-memory_service_uri">--memory_service_uri</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-gke-use_local_storage">--no_use_local_storage</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-gke-otel_to_cloud">--otel_to_cloud</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-gke-port">--port</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-gke-project">--project</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-gke-region">--region</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-gke-service_name">--service_name</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-gke-service_type">--service_type</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-gke-session_service_uri">--session_service_uri</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-gke-temp_folder">--temp_folder</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-gke-trace_to_cloud">--trace_to_cloud</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-gke-trigger_sources">--trigger_sources</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-gke-use_local_storage">--use_local_storage</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-gke-with_ui">--with_ui</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-gke-arg-AGENT">AGENT</a>
+</li>
+        </ul></li>
+        <li>
+    adk-eval command line option
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-eval-config_file_path">--config_file_path</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-eval-disable_features">--disable_features</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-eval-enable_features">--enable_features</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-eval-eval_storage_uri">--eval_storage_uri</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-eval-log_level">--log_level</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-eval-print_detailed_results">--print_detailed_results</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-eval-arg-AGENT_MODULE_FILE_PATH">AGENT_MODULE_FILE_PATH</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-eval-arg-EVAL_SET_FILE_PATH_OR_ID">EVAL_SET_FILE_PATH_OR_ID</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li>
+    adk-eval_set-add_eval_case command line option
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-eval_set-add_eval_case-eval_storage_uri">--eval_storage_uri</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-eval_set-add_eval_case-log_level">--log_level</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-eval_set-add_eval_case-scenarios_file">--scenarios_file</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-eval_set-add_eval_case-session_input_file">--session_input_file</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-eval_set-add_eval_case-arg-AGENT_MODULE_FILE_PATH">AGENT_MODULE_FILE_PATH</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-eval_set-add_eval_case-arg-EVAL_SET_ID">EVAL_SET_ID</a>
+</li>
+        </ul></li>
+        <li>
+    adk-eval_set-create command line option
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-eval_set-create-eval_storage_uri">--eval_storage_uri</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-eval_set-create-log_level">--log_level</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-eval_set-create-arg-AGENT_MODULE_FILE_PATH">AGENT_MODULE_FILE_PATH</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-eval_set-create-arg-EVAL_SET_ID">EVAL_SET_ID</a>
+</li>
+        </ul></li>
+        <li>
+    adk-eval_set-generate_eval_cases command line option
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-eval_set-generate_eval_cases-eval_storage_uri">--eval_storage_uri</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-eval_set-generate_eval_cases-log_level">--log_level</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-eval_set-generate_eval_cases-user_simulation_config_file">--user_simulation_config_file</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-eval_set-generate_eval_cases-arg-AGENT_MODULE_FILE_PATH">AGENT_MODULE_FILE_PATH</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-eval_set-generate_eval_cases-arg-EVAL_SET_ID">EVAL_SET_ID</a>
+</li>
+        </ul></li>
+        <li>
+    adk-migrate-session command line option
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-migrate-session-dest_db_url">--dest_db_url</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-migrate-session-log_level">--log_level</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-migrate-session-source_db_url">--source_db_url</a>
+</li>
+        </ul></li>
+        <li>
+    adk-optimize command line option
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-optimize-log_level">--log_level</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-optimize-optimizer_config_file_path">--optimizer_config_file_path</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-optimize-print_detailed_results">--print_detailed_results</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-optimize-sampler_config_file_path">--sampler_config_file_path</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-optimize-arg-AGENT_MODULE_FILE_PATH">AGENT_MODULE_FILE_PATH</a>
+</li>
+        </ul></li>
+        <li>
+    adk-run command line option
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-run-artifact_service_uri">--artifact_service_uri</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-run-disable_features">--disable_features</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-run-enable_features">--enable_features</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-run-memory_service_uri">--memory_service_uri</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-run-use_local_storage">--no_use_local_storage</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-run-replay">--replay</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-run-resume">--resume</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-run-save_session">--save_session</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-run-session_id">--session_id</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-run-session_service_uri">--session_service_uri</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-run-use_local_storage">--use_local_storage</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-run-arg-AGENT">AGENT</a>
+</li>
+        </ul></li>
+        <li>
+    adk-web command line option
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-web-a2a">--a2a</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-allow_origins">--allow_origins</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-artifact_service_uri">--artifact_service_uri</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-artifact_storage_uri">--artifact_storage_uri</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-disable_features">--disable_features</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-enable_features">--enable_features</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-eval_storage_uri">--eval_storage_uri</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-extra_plugins">--extra_plugins</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-host">--host</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-log_level">--log_level</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-logo-image-url">--logo-image-url</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-logo-text">--logo-text</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-memory_service_uri">--memory_service_uri</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-reload">--no-reload</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-use_local_storage">--no_use_local_storage</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-otel_to_cloud">--otel_to_cloud</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-port">--port</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-reload">--reload</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-reload_agents">--reload_agents</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-session_db_url">--session_db_url</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-session_service_uri">--session_service_uri</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-trace_to_cloud">--trace_to_cloud</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-trigger_sources">--trigger_sources</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-url_prefix">--url_prefix</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-use_local_storage">--use_local_storage</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-v">--verbose</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-v">-v</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-arg-AGENTS_DIR">AGENTS_DIR</a>
+</li>
+        </ul></li>
+        <li><a href="google-adk.html#google.adk.cli.cli_tools_click.adk_services_options">adk_services_options() (in module google.adk.cli.cli_tools_click)</a>
+</li>
         <li><a href="google-adk.html#google.adk.tools.mcp_tool.adk_to_mcp_tool_type">adk_to_mcp_tool_type() (in module google.adk.tools.mcp_tool)</a>
 </li>
         <li><a href="google-adk.html#google.adk.agents.BaseAgent.after_agent_callback">after_agent_callback (google.adk.agents.BaseAgent attribute)</a>
@@ -400,14 +1516,25 @@
           <li><a href="google-adk.html#google.adk.plugins.ReflectAndRetryToolPlugin.after_tool_callback">(google.adk.plugins.ReflectAndRetryToolPlugin method)</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
+        <li>
+    AGENT
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-agent_engine-arg-AGENT">adk-deploy-agent_engine command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-cloud_run-arg-AGENT">adk-deploy-cloud_run command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-deploy-gke-arg-AGENT">adk-deploy-gke command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-run-arg-AGENT">adk-run command line option</a>
+</li>
+        </ul></li>
         <li><a href="google-adk.html#google.adk.agents.InvocationContext.agent">agent (google.adk.agents.InvocationContext attribute)</a>
 
         <ul>
           <li><a href="google-adk.html#google.adk.runners.InMemoryRunner.agent">(google.adk.runners.InMemoryRunner attribute)</a>
 </li>
-          <li><a href="google-adk.html#google.adk.runners.Runner.agent">(google.adk.runners.Runner attribute)</a>, <a href="google-adk.html#id65">[1]</a>
+          <li><a href="google-adk.html#google.adk.runners.Runner.agent">(google.adk.runners.Runner attribute)</a>, <a href="google-adk.html#id85">[1]</a>
 </li>
           <li><a href="google-adk.html#google.adk.tools.agent_tool.AgentTool.agent">(google.adk.tools.agent_tool.AgentTool attribute)</a>
 </li>
@@ -418,6 +1545,21 @@
         </ul></li>
         <li><a href="google-adk.html#google.adk.agents.Agent">Agent (in module google.adk.agents)</a>
 </li>
+        <li>
+    AGENT_MODULE_FILE_PATH
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-eval-arg-AGENT_MODULE_FILE_PATH">adk-eval command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-eval_set-add_eval_case-arg-AGENT_MODULE_FILE_PATH">adk-eval_set-add_eval_case command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-eval_set-create-arg-AGENT_MODULE_FILE_PATH">adk-eval_set-create command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-eval_set-generate_eval_cases-arg-AGENT_MODULE_FILE_PATH">adk-eval_set-generate_eval_cases command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-optimize-arg-AGENT_MODULE_FILE_PATH">adk-optimize command line option</a>
+</li>
+        </ul></li>
         <li><a href="google-adk.html#google.adk.tools.transfer_to_agent_tool.TransferToAgentTool.agent_names">agent_names (google.adk.tools.transfer_to_agent_tool.TransferToAgentTool attribute)</a>
 
         <ul>
@@ -430,6 +1572,15 @@
 </li>
         <li><a href="google-adk.html#google.adk.evaluation.AgentEvaluator">AgentEvaluator (class in google.adk.evaluation)</a>
 </li>
+        <li>
+    AGENTS_DIR
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-api_server-arg-AGENTS_DIR">adk-api_server command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-web-arg-AGENTS_DIR">adk-web command line option</a>
+</li>
+        </ul></li>
         <li><a href="google-adk.html#google.adk.tools.AgentTool">AgentTool (class in google.adk.tools)</a>
 
         <ul>
@@ -446,12 +1597,19 @@
         </ul></li>
         <li><a href="google-adk.html#google.adk.tools.ApiRegistry">ApiRegistry (class in google.adk.tools)</a>
 </li>
+        <li>
+    APP_NAME
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-create-arg-APP_NAME">adk-create command line option</a>
+</li>
+        </ul></li>
         <li><a href="google-adk.html#google.adk.agents.InvocationContext.app_name">app_name (google.adk.agents.InvocationContext property)</a>
 
         <ul>
           <li><a href="google-adk.html#google.adk.runners.InMemoryRunner.app_name">(google.adk.runners.InMemoryRunner attribute)</a>
 </li>
-          <li><a href="google-adk.html#google.adk.runners.Runner.app_name">(google.adk.runners.Runner attribute)</a>, <a href="google-adk.html#id66">[1]</a>
+          <li><a href="google-adk.html#google.adk.runners.Runner.app_name">(google.adk.runners.Runner attribute)</a>, <a href="google-adk.html#id86">[1]</a>
 </li>
           <li><a href="google-adk.html#google.adk.sessions.Session.app_name">(google.adk.sessions.Session attribute)</a>
 </li>
@@ -475,7 +1633,7 @@
         <li><a href="google-adk.html#google.adk.agents.InvocationContext.artifact_service">artifact_service (google.adk.agents.InvocationContext attribute)</a>
 
         <ul>
-          <li><a href="google-adk.html#google.adk.runners.Runner.artifact_service">(google.adk.runners.Runner attribute)</a>, <a href="google-adk.html#id67">[1]</a>
+          <li><a href="google-adk.html#google.adk.runners.Runner.artifact_service">(google.adk.runners.Runner attribute)</a>, <a href="google-adk.html#id87">[1]</a>
 </li>
         </ul></li>
         <li><a href="google-adk.html#google.adk.artifacts.InMemoryArtifactService.artifacts">artifacts (google.adk.artifacts.InMemoryArtifactService attribute)</a>
@@ -664,7 +1822,7 @@
           <li><a href="google-adk.html#google.adk.tools.toolbox_toolset.ToolboxToolset.close">(google.adk.tools.toolbox_toolset.ToolboxToolset method)</a>
 </li>
         </ul></li>
-        <li><a href="google-adk.html#google.adk.code_executors.BaseCodeExecutor.code_block_delimiters">code_block_delimiters (google.adk.code_executors.BaseCodeExecutor attribute)</a>, <a href="google-adk.html#id29">[1]</a>
+        <li><a href="google-adk.html#google.adk.code_executors.BaseCodeExecutor.code_block_delimiters">code_block_delimiters (google.adk.code_executors.BaseCodeExecutor attribute)</a>, <a href="google-adk.html#id49">[1]</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
@@ -723,7 +1881,7 @@
         <ul>
           <li><a href="google-adk.html#google.adk.apps.App.context_cache_config">(google.adk.apps.App attribute)</a>
 </li>
-          <li><a href="google-adk.html#google.adk.runners.Runner.context_cache_config">(google.adk.runners.Runner attribute)</a>, <a href="google-adk.html#id68">[1]</a>
+          <li><a href="google-adk.html#google.adk.runners.Runner.context_cache_config">(google.adk.runners.Runner attribute)</a>, <a href="google-adk.html#id88">[1]</a>
 </li>
         </ul></li>
         <li><a href="google-adk.html#google.adk.agents.RunConfig.context_window_compression">context_window_compression (google.adk.agents.RunConfig attribute)</a>
@@ -738,14 +1896,14 @@
         </ul></li>
         <li><a href="google-adk.html#google.adk.sessions.InMemorySessionService.create_session_sync">create_session_sync() (google.adk.sessions.InMemorySessionService method)</a>
 </li>
+        <li><a href="google-adk.html#google.adk.agents.InvocationContext.credential_by_key">credential_by_key (google.adk.agents.InvocationContext attribute)</a>
+</li>
         <li><a href="google-adk.html#google.adk.agents.InvocationContext.credential_service">credential_service (google.adk.agents.InvocationContext attribute)</a>
 
         <ul>
-          <li><a href="google-adk.html#google.adk.runners.Runner.credential_service">(google.adk.runners.Runner attribute)</a>, <a href="google-adk.html#id69">[1]</a>
+          <li><a href="google-adk.html#google.adk.runners.Runner.credential_service">(google.adk.runners.Runner attribute)</a>, <a href="google-adk.html#id89">[1]</a>
 </li>
         </ul></li>
-        <li><a href="google-adk.html#google.adk.tools.crewai_tool.CrewaiTool">CrewaiTool (class in google.adk.tools.crewai_tool)</a>
-</li>
         <li><a href="google-adk.html#google.adk.agents.RunConfig.custom_metadata">custom_metadata (google.adk.agents.RunConfig attribute)</a>
 
         <ul>
@@ -794,14 +1952,14 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="google-adk.html#google.adk.sessions.InMemorySessionService.delete_session_sync">delete_session_sync() (google.adk.sessions.InMemorySessionService method)</a>
 </li>
+        <li><a href="google-adk.html#google.adk.cli.cli_tools_click.deprecated_adk_services_options">deprecated_adk_services_options() (in module google.adk.cli.cli_tools_click)</a>
+</li>
         <li><a href="google-adk.html#google.adk.agents.BaseAgent.description">description (google.adk.agents.BaseAgent attribute)</a>
 
         <ul>
           <li><a href="google-adk.html#google.adk.tools.base_tool.BaseTool.description">(google.adk.tools.base_tool.BaseTool attribute)</a>
 </li>
           <li><a href="google-adk.html#google.adk.tools.BaseTool.description">(google.adk.tools.BaseTool attribute)</a>
-</li>
-          <li><a href="google-adk.html#google.adk.tools.crewai_tool.CrewaiToolConfig.description">(google.adk.tools.crewai_tool.CrewaiToolConfig attribute)</a>
 </li>
           <li><a href="google-adk.html#google.adk.tools.langchain_tool.LangchainToolConfig.description">(google.adk.tools.langchain_tool.LangchainToolConfig attribute)</a>
 </li>
@@ -836,14 +1994,36 @@
 </li>
         <li><a href="google-adk.html#google.adk.tools.enterprise_search_tool.EnterpriseWebSearchTool">EnterpriseWebSearchTool (class in google.adk.tools.enterprise_search_tool)</a>
 </li>
-        <li><a href="google-adk.html#google.adk.code_executors.BaseCodeExecutor.error_retry_attempts">error_retry_attempts (google.adk.code_executors.BaseCodeExecutor attribute)</a>, <a href="google-adk.html#id30">[1]</a>
+        <li><a href="google-adk.html#google.adk.code_executors.BaseCodeExecutor.error_retry_attempts">error_retry_attempts (google.adk.code_executors.BaseCodeExecutor attribute)</a>, <a href="google-adk.html#id50">[1]</a>
 </li>
         <li><a href="google-adk.html#google.adk.events.EventActions.escalate">escalate (google.adk.events.EventActions attribute)</a>
 </li>
+        <li><a href="google-adk.html#google.adk.cli.cli_tools_click.eval_options">eval_options() (in module google.adk.cli.cli_tools_click)</a>
+</li>
+        <li>
+    EVAL_SET_FILE_PATH_OR_ID
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-eval-arg-EVAL_SET_FILE_PATH_OR_ID">adk-eval command line option</a>
+</li>
+        </ul></li>
+        <li>
+    EVAL_SET_ID
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-eval_set-add_eval_case-arg-EVAL_SET_ID">adk-eval_set-add_eval_case command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-eval_set-create-arg-EVAL_SET_ID">adk-eval_set-create command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-eval_set-generate_eval_cases-arg-EVAL_SET_ID">adk-eval_set-generate_eval_cases command line option</a>
+</li>
+        </ul></li>
         <li><a href="google-adk.html#google.adk.evaluation.AgentEvaluator.evaluate">evaluate() (google.adk.evaluation.AgentEvaluator static method)</a>
 </li>
         <li><a href="google-adk.html#google.adk.evaluation.AgentEvaluator.evaluate_eval_set">evaluate_eval_set() (google.adk.evaluation.AgentEvaluator static method)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="google-adk.html#google.adk.sessions.Session.events">events (google.adk.sessions.Session attribute)</a>
 </li>
         <li><a href="google-adk.html#google.adk.agents.InvocationContext.events_compaction_config">events_compaction_config (google.adk.agents.InvocationContext attribute)</a>
@@ -852,8 +2032,6 @@
           <li><a href="google-adk.html#google.adk.apps.App.events_compaction_config">(google.adk.apps.App attribute)</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="google-adk.html#google.adk.tools.example_tool.ExampleTool.examples">examples (google.adk.tools.example_tool.ExampleTool attribute)</a>
 
         <ul>
@@ -878,7 +2056,7 @@
           <li><a href="google-adk.html#google.adk.code_executors.UnsafeLocalCodeExecutor.execute_code">(google.adk.code_executors.UnsafeLocalCodeExecutor method)</a>
 </li>
         </ul></li>
-        <li><a href="google-adk.html#google.adk.code_executors.BaseCodeExecutor.execution_result_delimiters">execution_result_delimiters (google.adk.code_executors.BaseCodeExecutor attribute)</a>, <a href="google-adk.html#id31">[1]</a>
+        <li><a href="google-adk.html#google.adk.code_executors.BaseCodeExecutor.execution_result_delimiters">execution_result_delimiters (google.adk.code_executors.BaseCodeExecutor attribute)</a>, <a href="google-adk.html#id51">[1]</a>
 </li>
         <li><a href="google-adk.html#google.adk.tools.exit_loop">exit_loop() (in module google.adk.tools)</a>
 
@@ -896,6 +2074,10 @@
   <h2>F</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="google-adk.html#google.adk.cli.cli_tools_click.fast_api_common_options">fast_api_common_options() (in module google.adk.cli.cli_tools_click)</a>
+</li>
+        <li><a href="google-adk.html#google.adk.cli.cli_tools_click.feature_options">feature_options() (in module google.adk.cli.cli_tools_click)</a>
+</li>
         <li><a href="google-adk.html#google.adk.agents.RunConfig.field_name">field_name (google.adk.agents.RunConfig attribute)</a>, <a href="google-adk.html#id28">[1]</a>
 </li>
         <li><a href="google-adk.html#google.adk.artifacts.FileArtifactService">FileArtifactService (class in google.adk.artifacts)</a>
@@ -918,8 +2100,6 @@
           <li><a href="google-adk.html#google.adk.tools.base_toolset.BaseToolset.from_config">(google.adk.tools.base_toolset.BaseToolset class method)</a>
 </li>
           <li><a href="google-adk.html#google.adk.tools.BaseTool.from_config">(google.adk.tools.BaseTool class method)</a>
-</li>
-          <li><a href="google-adk.html#google.adk.tools.crewai_tool.CrewaiTool.from_config">(google.adk.tools.crewai_tool.CrewaiTool class method)</a>
 </li>
           <li><a href="google-adk.html#google.adk.tools.example_tool.ExampleTool.from_config">(google.adk.tools.example_tool.ExampleTool class method)</a>
 </li>
@@ -1128,10 +2308,17 @@
 </li>
         </ul></li>
         <li>
-    google.adk.cli
+    google.adk.cli.cli
 
         <ul>
-          <li><a href="google-adk.html#module-google.adk.cli">module</a>
+          <li><a href="google-adk.html#module-google.adk.cli.cli">module</a>
+</li>
+        </ul></li>
+        <li>
+    google.adk.cli.cli_tools_click
+
+        <ul>
+          <li><a href="google-adk.html#module-google.adk.cli.cli_tools_click">module</a>
 </li>
         </ul></li>
         <li>
@@ -1183,6 +2370,8 @@
           <li><a href="google-adk.html#module-google.adk.memory">module</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li>
     google.adk.models
 
@@ -1190,8 +2379,6 @@
           <li><a href="google-adk.html#module-google.adk.models">module</a>
 </li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li>
     google.adk.planners
 
@@ -1295,13 +2482,6 @@
 
         <ul>
           <li><a href="google-adk.html#module-google.adk.tools.bigquery">module</a>
-</li>
-        </ul></li>
-        <li>
-    google.adk.tools.crewai_tool
-
-        <ul>
-          <li><a href="google-adk.html#module-google.adk.tools.crewai_tool">module</a>
 </li>
         </ul></li>
         <li>
@@ -1492,18 +2672,20 @@
 </li>
         <li><a href="google-adk.html#google.adk.events.Event.has_trailing_code_execution_result">has_trailing_code_execution_result() (google.adk.events.Event method)</a>
 </li>
-        <li><a href="google-adk.html#google.adk.tools.mcp_tool.SseConnectionParams.headers">headers (google.adk.tools.mcp_tool.SseConnectionParams attribute)</a>, <a href="google-adk.html#id106">[1]</a>
+        <li><a href="google-adk.html#google.adk.tools.mcp_tool.SseConnectionParams.headers">headers (google.adk.tools.mcp_tool.SseConnectionParams attribute)</a>, <a href="google-adk.html#id124">[1]</a>
 
         <ul>
-          <li><a href="google-adk.html#google.adk.tools.mcp_tool.StreamableHTTPConnectionParams.headers">(google.adk.tools.mcp_tool.StreamableHTTPConnectionParams attribute)</a>, <a href="google-adk.html#id113">[1]</a>
+          <li><a href="google-adk.html#google.adk.tools.mcp_tool.StreamableHTTPConnectionParams.headers">(google.adk.tools.mcp_tool.StreamableHTTPConnectionParams attribute)</a>, <a href="google-adk.html#id131">[1]</a>
 </li>
         </ul></li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="google-adk.html#google.adk.tools.mcp_tool.SseConnectionParams.httpx_client_factory">httpx_client_factory (google.adk.tools.mcp_tool.SseConnectionParams attribute)</a>, <a href="google-adk.html#id107">[1]</a>
+        <li><a href="google-adk.html#google.adk.cli.cli_tools_click.HelpfulCommand">HelpfulCommand (class in google.adk.cli.cli_tools_click)</a>
+</li>
+        <li><a href="google-adk.html#google.adk.tools.mcp_tool.SseConnectionParams.httpx_client_factory">httpx_client_factory (google.adk.tools.mcp_tool.SseConnectionParams attribute)</a>, <a href="google-adk.html#id125">[1]</a>
 
         <ul>
-          <li><a href="google-adk.html#google.adk.tools.mcp_tool.StreamableHTTPConnectionParams.httpx_client_factory">(google.adk.tools.mcp_tool.StreamableHTTPConnectionParams attribute)</a>, <a href="google-adk.html#id114">[1]</a>
+          <li><a href="google-adk.html#google.adk.tools.mcp_tool.StreamableHTTPConnectionParams.httpx_client_factory">(google.adk.tools.mcp_tool.StreamableHTTPConnectionParams attribute)</a>, <a href="google-adk.html#id132">[1]</a>
 </li>
         </ul></li>
     </ul></td>
@@ -1544,7 +2726,7 @@
 </li>
         <li><a href="google-adk.html#google.adk.sessions.InMemorySessionService">InMemorySessionService (class in google.adk.sessions)</a>
 </li>
-        <li><a href="google-adk.html#google.adk.examples.Example.input">input (google.adk.examples.Example attribute)</a>, <a href="google-adk.html#id35">[1]</a>
+        <li><a href="google-adk.html#google.adk.examples.Example.input">input (google.adk.examples.Example attribute)</a>, <a href="google-adk.html#id55">[1]</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
@@ -1650,7 +2832,7 @@
 </li>
         <li><a href="google-adk.html#google.adk.agents.LiveRequestQueue">LiveRequestQueue (class in google.adk.agents)</a>
 </li>
-        <li><a href="google-adk.html#google.adk.models.LiteLlm.llm_client">llm_client (google.adk.models.LiteLlm attribute)</a>, <a href="google-adk.html#id53">[1]</a>
+        <li><a href="google-adk.html#google.adk.models.LiteLlm.llm_client">llm_client (google.adk.models.LiteLlm attribute)</a>, <a href="google-adk.html#id73">[1]</a>
 </li>
         <li><a href="google-adk.html#google.adk.models.LLMRegistry">LLMRegistry (class in google.adk.models)</a>
 </li>
@@ -1721,7 +2903,7 @@
         <li><a href="google-adk.html#google.adk.agents.InvocationContext.memory_service">memory_service (google.adk.agents.InvocationContext attribute)</a>
 
         <ul>
-          <li><a href="google-adk.html#google.adk.runners.Runner.memory_service">(google.adk.runners.Runner attribute)</a>, <a href="google-adk.html#id70">[1]</a>
+          <li><a href="google-adk.html#google.adk.runners.Runner.memory_service">(google.adk.runners.Runner attribute)</a>, <a href="google-adk.html#id90">[1]</a>
 </li>
         </ul></li>
         <li><a href="google-adk.html#google.adk.evaluation.AgentEvaluator.migrate_eval_data_to_new_schema">migrate_eval_data_to_new_schema() (google.adk.evaluation.AgentEvaluator static method)</a>
@@ -1731,9 +2913,9 @@
         <ul>
           <li><a href="google-adk.html#google.adk.models.BaseLlm.model">(google.adk.models.BaseLlm attribute)</a>
 </li>
-          <li><a href="google-adk.html#google.adk.models.Claude.model">(google.adk.models.Claude attribute)</a>, <a href="google-adk.html#id37">[1]</a>
+          <li><a href="google-adk.html#google.adk.models.Claude.model">(google.adk.models.Claude attribute)</a>, <a href="google-adk.html#id57">[1]</a>
 </li>
-          <li><a href="google-adk.html#google.adk.models.Gemini.model">(google.adk.models.Gemini attribute)</a>, <a href="google-adk.html#id38">[1]</a>
+          <li><a href="google-adk.html#google.adk.models.Gemini.model">(google.adk.models.Gemini attribute)</a>, <a href="google-adk.html#id58">[1]</a>
 </li>
           <li><a href="google-adk.html#google.adk.models.Gemma.model">(google.adk.models.Gemma attribute)</a>
 </li>
@@ -1772,7 +2954,9 @@
 </li>
           <li><a href="google-adk.html#module-google.adk.auth">google.adk.auth</a>
 </li>
-          <li><a href="google-adk.html#module-google.adk.cli">google.adk.cli</a>
+          <li><a href="google-adk.html#module-google.adk.cli.cli">google.adk.cli.cli</a>
+</li>
+          <li><a href="google-adk.html#module-google.adk.cli.cli_tools_click">google.adk.cli.cli_tools_click</a>
 </li>
           <li><a href="google-adk.html#module-google.adk.code_executors">google.adk.code_executors</a>
 </li>
@@ -1819,8 +3003,6 @@
           <li><a href="google-adk.html#module-google.adk.tools.base_toolset">google.adk.tools.base_toolset</a>
 </li>
           <li><a href="google-adk.html#module-google.adk.tools.bigquery">google.adk.tools.bigquery</a>
-</li>
-          <li><a href="google-adk.html#module-google.adk.tools.crewai_tool">google.adk.tools.crewai_tool</a>
 </li>
           <li><a href="google-adk.html#module-google.adk.tools.enterprise_search_tool">google.adk.tools.enterprise_search_tool</a>
 </li>
@@ -1892,8 +3074,6 @@
 </li>
           <li><a href="google-adk.html#google.adk.tools.BaseTool.name">(google.adk.tools.BaseTool attribute)</a>
 </li>
-          <li><a href="google-adk.html#google.adk.tools.crewai_tool.CrewaiToolConfig.name">(google.adk.tools.crewai_tool.CrewaiToolConfig attribute)</a>
-</li>
           <li><a href="google-adk.html#google.adk.tools.langchain_tool.LangchainToolConfig.name">(google.adk.tools.langchain_tool.LangchainToolConfig attribute)</a>
 </li>
         </ul></li>
@@ -1953,7 +3133,7 @@
         </ul></li>
         <li><a href="google-adk.html#google.adk.tools.openapi_tool.OpenAPIToolset">OpenAPIToolset (class in google.adk.tools.openapi_tool)</a>
 </li>
-        <li><a href="google-adk.html#google.adk.code_executors.BaseCodeExecutor.optimize_data_file">optimize_data_file (google.adk.code_executors.BaseCodeExecutor attribute)</a>, <a href="google-adk.html#id32">[1]</a>
+        <li><a href="google-adk.html#google.adk.code_executors.BaseCodeExecutor.optimize_data_file">optimize_data_file (google.adk.code_executors.BaseCodeExecutor attribute)</a>, <a href="google-adk.html#id52">[1]</a>
 
         <ul>
           <li><a href="google-adk.html#google.adk.code_executors.UnsafeLocalCodeExecutor.optimize_data_file">(google.adk.code_executors.UnsafeLocalCodeExecutor attribute)</a>
@@ -1961,7 +3141,7 @@
         </ul></li>
         <li><a href="google-adk.html#google.adk.tools.application_integration_tool.IntegrationConnectorTool.OPTIONAL_FIELDS">OPTIONAL_FIELDS (google.adk.tools.application_integration_tool.IntegrationConnectorTool attribute)</a>
 </li>
-        <li><a href="google-adk.html#google.adk.examples.Example.output">output (google.adk.examples.Example attribute)</a>, <a href="google-adk.html#id36">[1]</a>
+        <li><a href="google-adk.html#google.adk.examples.Example.output">output (google.adk.examples.Example attribute)</a>, <a href="google-adk.html#id56">[1]</a>
 </li>
         <li><a href="google-adk.html#google.adk.agents.RunConfig.output_audio_transcription">output_audio_transcription (google.adk.agents.RunConfig attribute)</a>
 </li>
@@ -1983,6 +3163,17 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="google-adk.html#google.adk.agents.BaseAgent.parent_agent">parent_agent (google.adk.agents.BaseAgent attribute)</a>
 </li>
+        <li><a href="google-adk.html#google.adk.cli.cli_tools_click.HelpfulCommand.parse_args">parse_args() (google.adk.cli.cli_tools_click.HelpfulCommand method)</a>
+</li>
+        <li>
+    PATHS
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-conformance-record-arg-PATHS">adk-conformance-record command line option</a>
+</li>
+          <li><a href="google-adk.html#cmdoption-adk-conformance-test-arg-PATHS">adk-conformance-test command line option</a>
+</li>
+        </ul></li>
         <li><a href="google-adk.html#google.adk.agents.LlmAgent.planner">planner (google.adk.agents.LlmAgent attribute)</a>
 </li>
         <li><a href="google-adk.html#google.adk.planners.PlanReActPlanner">PlanReActPlanner (class in google.adk.planners)</a>
@@ -1990,7 +3181,7 @@
         <li><a href="google-adk.html#google.adk.agents.InvocationContext.plugin_manager">plugin_manager (google.adk.agents.InvocationContext attribute)</a>
 
         <ul>
-          <li><a href="google-adk.html#google.adk.runners.Runner.plugin_manager">(google.adk.runners.Runner attribute)</a>, <a href="google-adk.html#id71">[1]</a>
+          <li><a href="google-adk.html#google.adk.runners.Runner.plugin_manager">(google.adk.runners.Runner attribute)</a>, <a href="google-adk.html#id91">[1]</a>
 </li>
         </ul></li>
         <li><a href="google-adk.html#google.adk.plugins.PluginManager">PluginManager (class in google.adk.plugins)</a>
@@ -2055,6 +3246,16 @@
   </tr></table>
 </section>
 
+<section id="Q" class="genindex-section">
+  <h2>Q</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="google-adk.html#google.adk.cli.cli.InputFile.queries">queries (google.adk.cli.cli.InputFile attribute)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
 <section id="R" class="genindex-section">
   <h2>R</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
@@ -2102,7 +3303,7 @@
         <ul>
           <li><a href="google-adk.html#google.adk.apps.App.resumability_config">(google.adk.apps.App attribute)</a>
 </li>
-          <li><a href="google-adk.html#google.adk.runners.Runner.resumability_config">(google.adk.runners.Runner attribute)</a>, <a href="google-adk.html#id72">[1]</a>
+          <li><a href="google-adk.html#google.adk.runners.Runner.resumability_config">(google.adk.runners.Runner attribute)</a>, <a href="google-adk.html#id92">[1]</a>
 </li>
         </ul></li>
         <li><a href="google-adk.html#google.adk.models.Gemini.retry_options">retry_options (google.adk.models.Gemini attribute)</a>
@@ -2125,10 +3326,10 @@
 </li>
         <li><a href="google-adk.html#google.adk.plugins.PluginManager.run_after_run_callback">run_after_run_callback() (google.adk.plugins.PluginManager method)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="google-adk.html#google.adk.plugins.PluginManager.run_after_tool_callback">run_after_tool_callback() (google.adk.plugins.PluginManager method)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="google-adk.html#google.adk.agents.BaseAgent.run_async">run_async() (google.adk.agents.BaseAgent method)</a>
 
         <ul>
@@ -2147,8 +3348,6 @@
           <li><a href="google-adk.html#google.adk.tools.base_tool.BaseTool.run_async">(google.adk.tools.base_tool.BaseTool method)</a>
 </li>
           <li><a href="google-adk.html#google.adk.tools.BaseTool.run_async">(google.adk.tools.BaseTool method)</a>
-</li>
-          <li><a href="google-adk.html#google.adk.tools.crewai_tool.CrewaiTool.run_async">(google.adk.tools.crewai_tool.CrewaiTool method)</a>
 </li>
           <li><a href="google-adk.html#google.adk.tools.function_tool.FunctionTool.run_async">(google.adk.tools.function_tool.FunctionTool method)</a>
 </li>
@@ -2171,9 +3370,15 @@
 </li>
         <li><a href="google-adk.html#google.adk.plugins.PluginManager.run_before_tool_callback">run_before_tool_callback() (google.adk.plugins.PluginManager method)</a>
 </li>
+        <li><a href="google-adk.html#google.adk.cli.cli.run_cli">run_cli() (in module google.adk.cli.cli)</a>
+</li>
         <li><a href="google-adk.html#google.adk.agents.InvocationContext.run_config">run_config (google.adk.agents.InvocationContext attribute)</a>
 </li>
         <li><a href="google-adk.html#google.adk.runners.Runner.run_debug">run_debug() (google.adk.runners.Runner method)</a>
+</li>
+        <li><a href="google-adk.html#google.adk.cli.cli.run_input_file">run_input_file() (in module google.adk.cli.cli)</a>
+</li>
+        <li><a href="google-adk.html#google.adk.cli.cli.run_interactively">run_interactively() (in module google.adk.cli.cli)</a>
 </li>
         <li><a href="google-adk.html#google.adk.agents.BaseAgent.run_live">run_live() (google.adk.agents.BaseAgent method)</a>
 
@@ -2251,7 +3456,7 @@
 </li>
         <li><a href="google-adk.html#google.adk.agents.LiveRequestQueue.send_realtime">send_realtime() (google.adk.agents.LiveRequestQueue method)</a>
 </li>
-        <li><a href="google-adk.html#google.adk.tools.mcp_tool.StdioConnectionParams.server_params">server_params (google.adk.tools.mcp_tool.StdioConnectionParams attribute)</a>, <a href="google-adk.html#id111">[1]</a>
+        <li><a href="google-adk.html#google.adk.tools.mcp_tool.StdioConnectionParams.server_params">server_params (google.adk.tools.mcp_tool.StdioConnectionParams attribute)</a>, <a href="google-adk.html#id129">[1]</a>
 </li>
         <li><a href="google-adk.html#google.adk.agents.InvocationContext.session">session (google.adk.agents.InvocationContext attribute)</a>
 </li>
@@ -2260,17 +3465,17 @@
         <li><a href="google-adk.html#google.adk.agents.InvocationContext.session_service">session_service (google.adk.agents.InvocationContext attribute)</a>
 
         <ul>
-          <li><a href="google-adk.html#google.adk.runners.Runner.session_service">(google.adk.runners.Runner attribute)</a>, <a href="google-adk.html#id73">[1]</a>
+          <li><a href="google-adk.html#google.adk.runners.Runner.session_service">(google.adk.runners.Runner attribute)</a>, <a href="google-adk.html#id93">[1]</a>
 </li>
         </ul></li>
         <li><a href="google-adk.html#google.adk.agents.InvocationContext.set_agent_state">set_agent_state() (google.adk.agents.InvocationContext method)</a>
 </li>
         <li><a href="google-adk.html#google.adk.tools.openapi_tool.RestApiTool.set_default_headers">set_default_headers() (google.adk.tools.openapi_tool.RestApiTool method)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="google-adk.html#google.adk.agents.LlmAgent.set_default_model">set_default_model() (google.adk.agents.LlmAgent class method)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="google-adk.html#google.adk.code_executors.CodeExecutorContext.set_execution_id">set_execution_id() (google.adk.code_executors.CodeExecutorContext method)</a>
 </li>
         <li><a href="google-adk.html#google.adk.tools.google_api_tool.GoogleApiToolset.set_tool_filter">set_tool_filter() (google.adk.tools.google_api_tool.GoogleApiToolset method)</a>
@@ -2299,10 +3504,10 @@
           <li><a href="google-adk.html#google.adk.models.Gemini.speech_config">(google.adk.models.Gemini attribute)</a>
 </li>
         </ul></li>
-        <li><a href="google-adk.html#google.adk.tools.mcp_tool.SseConnectionParams.sse_read_timeout">sse_read_timeout (google.adk.tools.mcp_tool.SseConnectionParams attribute)</a>, <a href="google-adk.html#id108">[1]</a>
+        <li><a href="google-adk.html#google.adk.tools.mcp_tool.SseConnectionParams.sse_read_timeout">sse_read_timeout (google.adk.tools.mcp_tool.SseConnectionParams attribute)</a>, <a href="google-adk.html#id126">[1]</a>
 
         <ul>
-          <li><a href="google-adk.html#google.adk.tools.mcp_tool.StreamableHTTPConnectionParams.sse_read_timeout">(google.adk.tools.mcp_tool.StreamableHTTPConnectionParams attribute)</a>, <a href="google-adk.html#id115">[1]</a>
+          <li><a href="google-adk.html#google.adk.tools.mcp_tool.StreamableHTTPConnectionParams.sse_read_timeout">(google.adk.tools.mcp_tool.StreamableHTTPConnectionParams attribute)</a>, <a href="google-adk.html#id133">[1]</a>
 </li>
         </ul></li>
         <li><a href="google-adk.html#google.adk.sessions.State">State (class in google.adk.sessions)</a>
@@ -2310,12 +3515,14 @@
         <li><a href="google-adk.html#google.adk.agents.Context.state">state (google.adk.agents.Context property)</a>
 
         <ul>
+          <li><a href="google-adk.html#google.adk.cli.cli.InputFile.state">(google.adk.cli.cli.InputFile attribute)</a>
+</li>
           <li><a href="google-adk.html#google.adk.sessions.Session.state">(google.adk.sessions.Session attribute)</a>
 </li>
         </ul></li>
         <li><a href="google-adk.html#google.adk.events.EventActions.state_delta">state_delta (google.adk.events.EventActions attribute)</a>
 </li>
-        <li><a href="google-adk.html#google.adk.code_executors.BaseCodeExecutor.stateful">stateful (google.adk.code_executors.BaseCodeExecutor attribute)</a>, <a href="google-adk.html#id33">[1]</a>
+        <li><a href="google-adk.html#google.adk.code_executors.BaseCodeExecutor.stateful">stateful (google.adk.code_executors.BaseCodeExecutor attribute)</a>, <a href="google-adk.html#id53">[1]</a>
 
         <ul>
           <li><a href="google-adk.html#google.adk.code_executors.UnsafeLocalCodeExecutor.stateful">(google.adk.code_executors.UnsafeLocalCodeExecutor attribute)</a>
@@ -2323,6 +3530,13 @@
         </ul></li>
         <li><a href="google-adk.html#google.adk.agents.LlmAgent.static_instruction">static_instruction (google.adk.agents.LlmAgent attribute)</a>
 </li>
+        <li>
+    STREAMING_MODE
+
+        <ul>
+          <li><a href="google-adk.html#cmdoption-adk-conformance-record-arg-STREAMING_MODE">adk-conformance-record command line option</a>
+</li>
+        </ul></li>
         <li><a href="google-adk.html#google.adk.agents.RunConfig.streaming_mode">streaming_mode (google.adk.agents.RunConfig attribute)</a>
 </li>
         <li><a href="google-adk.html#google.adk.agents.BaseAgent.sub_agents">sub_agents (google.adk.agents.BaseAgent attribute)</a>
@@ -2351,19 +3565,19 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="google-adk.html#google.adk.sessions.State.TEMP_PREFIX">TEMP_PREFIX (google.adk.sessions.State attribute)</a>
 </li>
-        <li><a href="google-adk.html#google.adk.tools.mcp_tool.StreamableHTTPConnectionParams.terminate_on_close">terminate_on_close (google.adk.tools.mcp_tool.StreamableHTTPConnectionParams attribute)</a>, <a href="google-adk.html#id116">[1]</a>
+        <li><a href="google-adk.html#google.adk.tools.mcp_tool.StreamableHTTPConnectionParams.terminate_on_close">terminate_on_close (google.adk.tools.mcp_tool.StreamableHTTPConnectionParams attribute)</a>, <a href="google-adk.html#id134">[1]</a>
 </li>
-        <li><a href="google-adk.html#google.adk.planners.BuiltInPlanner.thinking_config">thinking_config (google.adk.planners.BuiltInPlanner attribute)</a>, <a href="google-adk.html#id54">[1]</a>
+        <li><a href="google-adk.html#google.adk.planners.BuiltInPlanner.thinking_config">thinking_config (google.adk.planners.BuiltInPlanner attribute)</a>, <a href="google-adk.html#id74">[1]</a>
 </li>
-        <li><a href="google-adk.html#google.adk.tools.mcp_tool.SseConnectionParams.timeout">timeout (google.adk.tools.mcp_tool.SseConnectionParams attribute)</a>, <a href="google-adk.html#id109">[1]</a>
+        <li><a href="google-adk.html#google.adk.tools.mcp_tool.SseConnectionParams.timeout">timeout (google.adk.tools.mcp_tool.SseConnectionParams attribute)</a>, <a href="google-adk.html#id127">[1]</a>
 
         <ul>
-          <li><a href="google-adk.html#google.adk.tools.mcp_tool.StdioConnectionParams.timeout">(google.adk.tools.mcp_tool.StdioConnectionParams attribute)</a>, <a href="google-adk.html#id112">[1]</a>
+          <li><a href="google-adk.html#google.adk.tools.mcp_tool.StdioConnectionParams.timeout">(google.adk.tools.mcp_tool.StdioConnectionParams attribute)</a>, <a href="google-adk.html#id130">[1]</a>
 </li>
-          <li><a href="google-adk.html#google.adk.tools.mcp_tool.StreamableHTTPConnectionParams.timeout">(google.adk.tools.mcp_tool.StreamableHTTPConnectionParams attribute)</a>, <a href="google-adk.html#id117">[1]</a>
+          <li><a href="google-adk.html#google.adk.tools.mcp_tool.StreamableHTTPConnectionParams.timeout">(google.adk.tools.mcp_tool.StreamableHTTPConnectionParams attribute)</a>, <a href="google-adk.html#id135">[1]</a>
 </li>
         </ul></li>
-        <li><a href="google-adk.html#google.adk.code_executors.BaseCodeExecutor.timeout_seconds">timeout_seconds (google.adk.code_executors.BaseCodeExecutor attribute)</a>, <a href="google-adk.html#id34">[1]</a>
+        <li><a href="google-adk.html#google.adk.code_executors.BaseCodeExecutor.timeout_seconds">timeout_seconds (google.adk.code_executors.BaseCodeExecutor attribute)</a>, <a href="google-adk.html#id54">[1]</a>
 </li>
         <li><a href="google-adk.html#google.adk.events.Event.timestamp">timestamp (google.adk.events.Event attribute)</a>
 </li>
@@ -2371,20 +3585,14 @@
 </li>
         <li><a href="google-adk.html#google.adk.agents.InvocationContext.token_compaction_checked">token_compaction_checked (google.adk.agents.InvocationContext attribute)</a>
 </li>
-        <li><a href="google-adk.html#google.adk.tools.crewai_tool.CrewaiTool.tool">tool (google.adk.tools.crewai_tool.CrewaiTool attribute)</a>
-
-        <ul>
-          <li><a href="google-adk.html#google.adk.tools.crewai_tool.CrewaiToolConfig.tool">(google.adk.tools.crewai_tool.CrewaiToolConfig attribute)</a>
+        <li><a href="google-adk.html#google.adk.tools.langchain_tool.LangchainToolConfig.tool">tool (google.adk.tools.langchain_tool.LangchainToolConfig attribute)</a>
 </li>
-          <li><a href="google-adk.html#google.adk.tools.langchain_tool.LangchainToolConfig.tool">(google.adk.tools.langchain_tool.LangchainToolConfig attribute)</a>
-</li>
-        </ul></li>
         <li><a href="google-adk.html#google.adk.agents.Context.tool_confirmation">tool_confirmation (google.adk.agents.Context property)</a>
+</li>
+        <li><a href="google-adk.html#google.adk.agents.RunConfig.tool_thread_pool_config">tool_thread_pool_config (google.adk.agents.RunConfig attribute)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="google-adk.html#google.adk.agents.RunConfig.tool_thread_pool_config">tool_thread_pool_config (google.adk.agents.RunConfig attribute)</a>
-</li>
         <li><a href="google-adk.html#google.adk.tools.toolbox_toolset.ToolboxToolset">ToolboxToolset (class in google.adk.tools.toolbox_toolset)</a>
 </li>
         <li><a href="google-adk.html#google.adk.tools.ToolContext">ToolContext (in module google.adk.tools)</a>
@@ -2429,17 +3637,17 @@
 </li>
         <li><a href="google-adk.html#google.adk.code_executors.CodeExecutorContext.update_code_execution_result">update_code_execution_result() (google.adk.code_executors.CodeExecutorContext method)</a>
 </li>
-        <li><a href="google-adk.html#google.adk.tools.mcp_tool.SseConnectionParams.url">url (google.adk.tools.mcp_tool.SseConnectionParams attribute)</a>, <a href="google-adk.html#id110">[1]</a>
+        <li><a href="google-adk.html#google.adk.tools.mcp_tool.SseConnectionParams.url">url (google.adk.tools.mcp_tool.SseConnectionParams attribute)</a>, <a href="google-adk.html#id128">[1]</a>
 
         <ul>
-          <li><a href="google-adk.html#google.adk.tools.mcp_tool.StreamableHTTPConnectionParams.url">(google.adk.tools.mcp_tool.StreamableHTTPConnectionParams attribute)</a>, <a href="google-adk.html#id118">[1]</a>
+          <li><a href="google-adk.html#google.adk.tools.mcp_tool.StreamableHTTPConnectionParams.url">(google.adk.tools.mcp_tool.StreamableHTTPConnectionParams attribute)</a>, <a href="google-adk.html#id136">[1]</a>
 </li>
         </ul></li>
         <li><a href="google-adk.html#google.adk.tools.url_context_tool.UrlContextTool">UrlContextTool (class in google.adk.tools.url_context_tool)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="google-adk.html#google.adk.models.Gemini.use_interactions_api">use_interactions_api (google.adk.models.Gemini attribute)</a>, <a href="google-adk.html#id44">[1]</a>
+        <li><a href="google-adk.html#google.adk.models.Gemini.use_interactions_api">use_interactions_api (google.adk.models.Gemini attribute)</a>, <a href="google-adk.html#id64">[1]</a>
 </li>
         <li><a href="google-adk.html#google.adk.agents.InvocationContext.user_content">user_content (google.adk.agents.InvocationContext attribute)</a>
 </li>
@@ -2459,6 +3667,8 @@
   <h2>V</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="google-adk.html#google.adk.cli.cli_tools_click.validate_exclusive">validate_exclusive() (in module google.adk.cli.cli_tools_click)</a>
+</li>
         <li><a href="google-adk.html#google.adk.agents.LlmAgent.validate_generate_content_config">validate_generate_content_config() (google.adk.agents.LlmAgent class method)</a>
 </li>
         <li><a href="google-adk.html#google.adk.agents.RunConfig.validate_max_llm_calls">validate_max_llm_calls() (google.adk.agents.RunConfig class method)</a>
@@ -2492,6 +3702,10 @@
 <section id="W" class="genindex-section">
   <h2>W</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="google-adk.html#google.adk.cli.cli_tools_click.web_options">web_options() (in module google.adk.cli.cli_tools_click)</a>
+</li>
+    </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="google-adk.html#google.adk.agents.RunConfig.wrapped_property">wrapped_property (google.adk.agents.RunConfig attribute)</a>, <a href="google-adk.html#id27">[1]</a>
 </li>

@@ -23,39 +23,10 @@
 }
 
 /* JS fallback via body class */
-body.adk-landing-page { overflow-x: hidden !important; }
 body.adk-landing-page .md-main .md-grid { max-width: 100% !important; width: 100% !important; }
 body.adk-landing-page .md-main__inner { max-width: none !important; margin: 0 !important; padding: 0 !important; }
 body.adk-landing-page .md-content { max-width: none !important; margin: 0 !important; flex-grow: 1 !important; }
 body.adk-landing-page .md-content__inner { max-width: 1280px !important; margin: 0 auto !important; padding: 0 clamp(16px, 4vw, 48px) !important; box-sizing: border-box !important; overflow-x: hidden !important; }
-body.adk-landing-page .md-header__inner { overflow-x: hidden !important; }
-
-/* Responsive header repo links — full text → icons only (≤1200px) → hidden (≤900px) */
-.md-header__title { flex-shrink: 1 !important; min-width: 120px !important; overflow: hidden !important; }
-.md-header__source { flex-shrink: 0 !important; display: flex !important; gap: 2px !important; flex-wrap: nowrap !important; max-width: none !important; width: auto !important; }
-
-.md-header .md-source { min-width: auto !important; width: auto !important; margin-right: 2px !important; }
-.md-header .md-source__repository { font-size: 0.65rem; white-space: nowrap; }
-.md-header .md-source__icon svg { width: 1rem !important; height: 1rem !important; }
-
-@media (max-width: 1200px) {
-  .md-header .md-source__repository { display: none !important; }
-  .md-header .md-source { margin-right: 4px !important; position: relative; }
-  .md-header .md-source::after {
-    content: ''; display: inline-block; width: 16px; height: 16px;
-    background-size: contain; background-repeat: no-repeat; background-position: center;
-    position: absolute; right: 4px; top: 50%; transform: translateY(-50%);
-  }
-  .md-header .md-source { padding-right: 22px !important; min-width: 0 !important; width: auto !important; }
-  .md-header .md-source[href*="adk-python"]::after { background-image: url('https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg'); }
-  .md-header .md-source[href*="adk-js"]::after { background-image: url('https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/typescript/typescript-original.svg'); }
-  .md-header .md-source[href*="adk-go"]::after { background-image: url('https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/go/go-original.svg'); }
-  .md-header .md-source[href*="adk-java"]::after { background-image: url('https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg'); }
-}
-
-@media (max-width: 900px) {
-  .md-header .md-source { display: none !important; }
-}
 
 /* --- Landing wrapper variables (adapts to light/dark via Material) --- */
 .md-typeset .adk-landing {

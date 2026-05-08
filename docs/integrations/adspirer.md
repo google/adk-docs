@@ -88,7 +88,7 @@ agent can operate autonomously with built-in protections.
         from mcp import StdioServerParameters
 
         root_agent = Agent(
-            model="gemini-2.5-pro",
+            model="gemini-flash-latest",
             name="advertising_agent",
             instruction=(
                 "You are an advertising agent that helps users create, manage, "
@@ -125,7 +125,7 @@ agent can operate autonomously with built-in protections.
         ADSPIRER_ACCESS_TOKEN = "YOUR_ADSPIRER_ACCESS_TOKEN"
 
         root_agent = Agent(
-            model="gemini-2.5-pro",
+            model="gemini-flash-latest",
             name="advertising_agent",
             instruction=(
                 "You are an advertising agent that helps users create, manage, "
@@ -157,7 +157,7 @@ agent can operate autonomously with built-in protections.
         import { LlmAgent, MCPToolset } from "@google/adk";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-2.5-pro",
+            model: "gemini-flash-latest",
             name: "advertising_agent",
             instruction:
                 "You are an advertising agent that helps users create, manage, " +
@@ -192,7 +192,7 @@ agent can operate autonomously with built-in protections.
         const ADSPIRER_ACCESS_TOKEN = "YOUR_ADSPIRER_ACCESS_TOKEN";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-2.5-pro",
+            model: "gemini-flash-latest",
             name: "advertising_agent",
             instruction:
                 "You are an advertising agent that helps users create, manage, " +

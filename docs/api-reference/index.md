@@ -9,7 +9,7 @@ The Agent Development Kit (ADK) provides comprehensive API references for both P
     ---
     Explore the complete API documentation for the Python Agent Development Kit. Discover detailed information on all modules, classes, functions, and examples to build sophisticated AI agents with Python.
 
-    [:octicons-arrow-right-24: View Python API Docs](python/index.html) <br>
+    [:octicons-arrow-right-24: View Python API Docs](https://adk.dev/api-reference/python/) <br>
     <!-- Assuming your Python API docs are in a 'python' subdirectory -->
     <!-- Or link to an external ReadTheDocs, etc. -->
     <!-- [:octicons-arrow-right-24: View Python API Docs](python/index.html) -->
@@ -30,7 +30,7 @@ The Agent Development Kit (ADK) provides comprehensive API references for both P
     ---
     Access the comprehensive Javadoc for the Java Agent Development Kit. This reference provides detailed specifications for all packages, classes, interfaces, and methods, enabling you to develop robust AI agents using Java.
 
-    [:octicons-arrow-right-24: View Java API Docs](java/index.html) <br>
+    [:octicons-arrow-right-24: View Java API Docs](https://adk.dev/api-reference/java/) <br>
     <!-- Assuming your Java API docs (Javadocs) are in a 'java' subdirectory -->
     <!-- Or link to an external Javadoc hosting site -->
     <!-- [:octicons-arrow-right-24: View Java API Docs](java/index.html) -->
@@ -42,7 +42,7 @@ The Agent Development Kit (ADK) provides comprehensive API references for both P
     ---
     Access the complete API documentation for the TypeScript Agent Development Kit. Find detailed information on all packages, classes, and methods to build powerful and flexible AI agents with TypeScript.
 
-    [:octicons-arrow-right-24: View Typescript API Docs](typescript/index.html) <br>
+    [:octicons-arrow-right-24: View Typescript API Docs](https://adk.dev/api-reference/typescript/) <br>
     <!-- Assuming your Typescript API docs are in a 'typescript' subdirectory -->
     <!-- [:octicons-arrow-right-24: View Typescript API Docs](typescript/index.html) -->
 
@@ -54,7 +54,7 @@ The Agent Development Kit (ADK) provides comprehensive API references for both P
     Explore the complete API documentation for the CLI including all of the
     valid options and subcommands.
 
-    [:octicons-arrow-right-24: View CLI Docs](cli/index.html) <br>
+    [:octicons-arrow-right-24: View CLI Docs](https://adk.dev/api-reference/cli/) <br>
 
 <!-- This comment forces a block separation -->
 
@@ -64,7 +64,7 @@ The Agent Development Kit (ADK) provides comprehensive API references for both P
     View the full Agent Config syntax for configuring ADK with
     YAML text files.
 
-    [:octicons-arrow-right-24: View Agent Config reference](agentconfig/index.html) <br>
+    [:octicons-arrow-right-24: View Agent Config reference](https://adk.dev/api-reference/agentconfig/) <br>
 
 <!-- This comment forces a block separation -->
 
@@ -73,6 +73,6 @@ The Agent Development Kit (ADK) provides comprehensive API references for both P
     ---
     Explore the REST API for the ADK web server. This reference provides details on the available endpoints, request and response formats, and more.
 
-    [:octicons-arrow-right-24: View REST API Docs](rest/index.html) <br>
+    [:octicons-arrow-right-24: View REST API Docs](https://adk.dev/api-reference/rest/) <br>
 
 </div>

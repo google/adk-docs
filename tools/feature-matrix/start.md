@@ -22,7 +22,7 @@ The following matrix shows which ADK features are currently supported in each la
 | | **Built-in: Google Search** | [Supported](https://adk.dev/tools/built-in-tools/#google-search) | [Supported](https://adk.dev/tools/built-in-tools/#google-search) |
 | | **Built-in: Code Execution** | [Supported](https://adk.dev/tools/built-in-tools/#code-execution) | [Supported](https://adk.dev/tools/built-in-tools/#code-execution) |
 | | **Built-in: GKE Code Executor** | [Supported](https://adk.dev/tools/built-in-tools/#gke-code-executor) | Not Supported |
-| | **Built-in: RAG Engine** | [Supported](https://adk.dev/tools/built-in-tools/#rag-engine) | Not Supported |
+| | **Built-in: Knowledge Engine** | [Supported](https://adk.dev/integrations/knowledge-engine/) | Not Supported |
 | | **Built-in: Agent Search** | [Supported](https://adk.dev/tools/built-in-tools/#agent-search) | Not Supported |
 | | **Built-in: BigQuery, Spanner, Bigtable** | [Supported](https://adk.dev/tools/built-in-tools/#bigquery) | Not Supported |
 | | **Google Cloud Tools (API Hub, etc.)** | [Supported](https://adk.dev/tools/google-cloud-tools/#apigee-api-hub-tools) | Not Supported |

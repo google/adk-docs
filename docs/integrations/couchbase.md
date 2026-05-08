@@ -56,7 +56,7 @@ issues.
         CB_PASSWORD = "password"
 
         root_agent = Agent(
-            model="gemini-2.5-pro",
+            model="gemini-flash-latest",
             name="couchbase_agent",
             instruction="Help users explore and query Couchbase databases",
             tools=[
@@ -91,7 +91,7 @@ issues.
         const CB_PASSWORD = "password";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-2.5-pro",
+            model: "gemini-flash-latest",
             name: "couchbase_agent",
             instruction: "Help users explore and query Couchbase databases",
             tools: [

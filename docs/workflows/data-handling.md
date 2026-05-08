@@ -4,7 +4,7 @@
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span><span class="lst-preview">Beta</span>
 </div>
 
-Structuring and managing data between agents and graph-based notes is critical
+Structuring and managing data between agents and graph-based nodes is critical
 for building reliable processes with ADK. This guide explains data handling
 within graph-based workflows and collaboration agents, including how information
 is transmitted and received between graph nodes using ***Events***. It covers

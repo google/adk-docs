@@ -289,7 +289,7 @@ async for event in remote_app.async_stream_query(
 
 If you have performed deployments as tests, it is a good practice to clean up
 your cloud resources after you have finished. You can delete the deployed Agent
-Engine instance to avoid any unexpected charges on your Google Cloud account.
+Runtime instance to avoid any unexpected charges on your Google Cloud account.
 
 ```python
 remote_app.delete(force=True)
