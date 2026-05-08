@@ -11,49 +11,51 @@ catalog_tags: ["resilience"]
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
 </div>
 
-[Dapr](https://dapr.io) is a distributed workflow orchestration engine that makes ADK agents resilient to failures.
-LLM calls and tool executions run as Dapr
+[Dapr](https://dapr.io) is a distributed workflow orchestration engine that
+makes ADK agents resilient to failures. LLM calls and tool executions run as
+Dapr
 [Workflow](https://docs.dapr.io/developing-applications/building-blocks/workflow/workflow-overview/)
-activities with automatic retries and recovery. If anything fails, your agent automatically
-picks up exactly where it left off.
+activities with automatic retries and recovery. If anything fails, your agent
+automatically picks up exactly where it left off.
 
 ## Use cases
 
 The Dapr plugin gives your agents:
 
 - **Durable execution**: Never lose progress. If your agent crashes or stalls,
-  Dapr automatically recovers from the last successful activity - no manual
-  [session resumption](/runtime/resume/#resume-a-stopped-workflow)
-  required.
-- **Built-in retries and backoff**: Configurable
-  [retry policies](https://docs.dapr.io/developing-applications/building-blocks/workflow/workflow-features-concepts/#retry-policies)
+  Dapr automatically recovers from the last successful activity with no need to
+  [manually resume](/runtime/resume/#resume-a-stopped-workflow).
+- **Built-in retries and backoff**: Configurable [retry
+  policies](https://docs.dapr.io/developing-applications/building-blocks/workflow/workflow-features-concepts/#retry-policies)
   with exponential backoff to handle transient failures from LLM providers and
   tool APIs.
-- **Long-running and ambient agents**: Support for agents and tools that run
-  for hours, days, or indefinitely, backed by Dapr's persistent state stores.
-- **Portable infrastructure**: Swap 15+ databases (Redis, GCP Firestore, PostgreSQL, DynamoDB, Cosmos DB,
-  and
-  [many more](https://docs.dapr.io/reference/components-reference/supported-state-stores/))
+- **Long-running and ambient agents**: Support for agents and tools that run for
+  hours, days, or indefinitely, backed by Dapr's persistent state stores.
+- **Portable infrastructure**: Swap 15+ databases (Redis, GCP Firestore,
+  PostgreSQL, DynamoDB, Cosmos DB, and [many
+  more](https://docs.dapr.io/reference/components-reference/supported-state-stores/))
   without changing agent code. Dapr's pluggable component model lets you move
   from local dev to any cloud.
 - **Observability and debugging**: Inspect every step of your agent's execution
   using Dapr's workflow APIs, and emit traces and metrics through Dapr's
-  built-in
-  [OpenTelemetry integration](https://docs.dapr.io/operations/observability/tracing/tracing-overview/).
+  built-in [OpenTelemetry
+  integration](https://docs.dapr.io/operations/observability/tracing/tracing-overview/).
 
 ## Prerequisites
 
 - Python 3.11+
 - A [Gemini API key](https://aistudio.google.com/app/api-keys) (or any
   [supported model](/agents/models/))
-- Dapr CLI and runtime installed ([install guide](https://docs.dapr.io/getting-started/install-dapr-cli/))
-- Dapr Python SDK 1.17.3 or later
-- A configured Dapr [state store component](https://docs.dapr.io/reference/components-reference/supported-state-stores/)
+- Dapr CLI and runtime installed ([install
+  guide](https://docs.dapr.io/getting-started/install-dapr-cli/))
+- A configured Dapr [state store
+  component](https://docs.dapr.io/reference/components-reference/supported-state-stores/)
   for workflow persistence
 
 ## Installation
 
-Install the Diagrid Agent package for Dapr, which includes the ADK extension:
+Install the [Diagrid Agent package](https://pypi.org/project/diagrid/) for Dapr,
+which includes the ADK extension:
 
 ```bash
 pip install diagrid
@@ -65,7 +67,7 @@ Initialize Dapr:
 dapr init
 ```
 
-## Make your agent durable
+## Use with agent
 
 ### Basic setup
 
@@ -74,7 +76,7 @@ runs as a durable Dapr Workflow activity. The runner handles workflow
 registration, starts the Dapr workflow runtime, and exposes an async interface
 for invoking the agent.
 
-**1. Define your agent and runner**
+**Define your agent and runner**
 
 Create an ADK agent as usual and pass it to `DaprWorkflowAgentRunner`.
 
@@ -101,7 +103,7 @@ def get_weather(city: str) -> str:
 # Define the ADK agent
 agent = LlmAgent(
     name="weather_agent",
-    model="gemini-2.5-flash",
+    model="gemini-flash-latest",
     instruction="You are a helpful assistant that can check the weather.",
     tools=[FunctionTool(get_weather)],
 )
@@ -133,15 +135,21 @@ if __name__ == "__main__":
     asyncio.run(main())
 ```
 
-**2. Run the agent with Dapr**
+**Run the agent with Dapr**
 
-Dapr Workflow uses a lightweight sidecar and a configured state store. Use this command to run Dapr locally and your agent alongside it:
+Dapr Workflow uses a lightweight sidecar and a configured state store. Use this
+command to run Dapr locally and your agent alongside it:
 
 ```bash
 dapr run --app-id weather-agent -- python3 agent.py
 ```
 
-*Note: By default Dapr uses the Redis component installed with Dapr, located at ~/.dapr/components/statestore.yaml. See [supported state stores](https://docs.dapr.io/reference/components-reference/supported-state-stores/) to change the state store used.*
+!!! note
+
+    By default Dapr uses the Redis component installed with Dapr, located at
+    `~/.dapr/components/statestore.yaml`. See [supported state
+    stores](https://docs.dapr.io/reference/components-reference/supported-state-stores/)
+    to change the state store used.
 
 ### Crash recovery
 
@@ -165,7 +173,7 @@ async for event in runner.run_async(
 
 Because the `session_id` and workflow instance ID are stable, relaunching the
 same app with Dapr causes the sidecar to pick up in-flight workflows and drive
-them to completion, without any needing for manual resumption.
+them to completion, without needing to manually resume.
 
 ## How it works
 
@@ -181,14 +189,14 @@ checkpointed, retried, and automatically replayable:
   workflow fans out parallel tool calls via Dapr's `when_all` primitive and
   waits for them to complete before re-invoking the LLM.
 - **Workflow state** (messages, tool calls, tool results) is serialized and
-  stored in the configured Dapr state store after every activity, so any
-  replica with access to the state store can take over execution.
+  stored in the configured Dapr state store after every activity, so any replica
+  with access to the state store can take over execution.
 - **Deterministic orchestration**: the `agent_workflow` function contains only
   deterministic control flow; all side effects (LLM calls, tool invocations)
-  happen inside activities, which is the model Dapr Workflow requires for
-  replay safety.
+  happen inside activities, which is the model Dapr Workflow requires for replay
+  safety.
 
-## Additional capabilities
+## Capabilities
 
 | Capability | Description |
 | --- | --- |
@@ -201,9 +209,7 @@ checkpointed, retried, and automatically replayable:
 
 ## Additional resources
 
-- [Dapr Workflow documentation](https://docs.dapr.io/developing-applications/building-blocks/workflow/) -
-  Full reference for Dapr's workflow building block
-- [Dapr Community Discord](https://bit.ly/dapr-discord) - Questions,
-  bug reports, and community discussion
-- [Supported state stores](https://docs.dapr.io/reference/components-reference/supported-state-stores/) -
-  List of state store components compatible with Dapr Workflow
+- [Dapr Workflow documentation](https://docs.dapr.io/developing-applications/building-blocks/workflow/) - Full reference for Dapr's workflow building block
+- [Diagrid Agent SDK on GitHub](https://github.com/diagridio/python-ai) - Source code for the Dapr ADK integration
+- [Dapr Community Discord](https://bit.ly/dapr-discord) - Questions, bug reports, and community discussion
+- [Supported state stores](https://docs.dapr.io/reference/components-reference/supported-state-stores/) - List of state store components compatible with Dapr Workflow
