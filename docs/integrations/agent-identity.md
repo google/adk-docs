@@ -8,7 +8,7 @@ catalog_icon: /integrations/assets/agent-identity.png
 
 The Agent Identity Auth Manager service provides a streamlined, Google-managed solution for managing the complete lifecycle of auth credentials, including storing key configurations, generating and storing tokens, and auditing. This allows for a secure and simplified agent development experience.
 
-Available from ADK version **1.30.0**.
+Available from ADK version **1.30.0**...
 
 ## Use cases
 
