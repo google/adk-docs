@@ -1,7 +1,7 @@
 ---
 catalog_title: Agent Identity Auth Manager
 catalog_description: A streamlined, Google-managed solution for managing the complete lifecycle of auth credentials.
-catalog_icon: /integrations/assets/agent-identity.png
+catalog_icon: /integrations/assets/agent-identity.svg
 ---
 
 # Agent Identity Auth Manager
