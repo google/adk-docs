@@ -135,10 +135,7 @@ summarizer = DBOSEventSummarizer.from_llm(Gemini(model="gemini-2.5-flash"))
 
 ## Additional resources
 
-- [DBOS Python SDK documentation](https://docs.dbos.dev/python/programming-guide) -
-  Full reference for DBOS workflows, steps, and queues
-- [dbos-google-adk on PyPI](https://pypi.org/project/dbos-google-adk/) - Python
-  package
-- [DBOS GitHub repository](https://github.com/dbos-inc/dbos-transact-py) -
-  Source code and examples
+- [DBOS Python documentation](https://docs.dbos.dev/python/programming-guide) - Full reference for DBOS workflows, steps, and queues
+- [dbos-google-adk on PyPI](https://pypi.org/project/dbos-google-adk/) - Python package
+- [DBOS GitHub repository](https://github.com/dbos-inc/dbos-transact-py) - Source code and examples
 - [DBOS Discord](https://discord.gg/eMUHrvbu67) - Questions and community discussion
