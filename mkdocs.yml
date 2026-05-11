@@ -412,6 +412,7 @@ nav:
       - Typescript ADK: api-reference/typescript/index.html
       - Go ADK: https://pkg.go.dev/google.golang.org/adk" target="_blank
       - Java ADK: api-reference/java/index.html
+      - Kotlin ADK: api-reference/kotlin/index.html
       - CLI Reference: api-reference/cli/index.html
       - Agent Config Reference: api-reference/agentconfig/index.html
       - REST API: api-reference/rest/index.html
