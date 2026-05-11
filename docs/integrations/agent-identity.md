@@ -1,22 +1,41 @@
-# Agent Identity Auth Manager Integration
+---
+catalog_title: Agent Identity Auth Manager
+catalog_description: A streamlined, Google-managed solution for managing the complete lifecycle of auth credentials.
+catalog_icon: /integrations/assets/agent-identity.png
+---
+
+# Agent Identity Auth Manager
 
 The Agent Identity Auth Manager service provides a streamlined, Google-managed solution for managing the complete lifecycle of auth credentials, including storing key configurations, generating and storing tokens, and auditing. This allows for a secure and simplified agent development experience.
 
 Available from ADK version **1.30.0**.
 
-For more details on the service itself, see the [Google Cloud Agent Identity Overview](https://docs.cloud.google.com/iam/docs/agent-identity-overview).
+## Use cases
+
+- **Simplified OAuth Flow**: Manage the complete lifecycle of auth credentials without building custom infrastructure.
+- **Secure Token Storage**: Securely store key configurations and generate or store tokens.
+- **Audit Logging**: Audit access on credentials effectively using Google Cloud's built-in auditing capabilities.
+
+## Prerequisites
+
+- A Google Cloud Project with the IAM Credentials API enabled.
+- An Agent Identity Auth Manager connector configured in your Google Cloud Project.
+- ADK version **1.30.0** or later.
+
+## Installation
+
+Install the `agent-identity` extra package group to download the necessary client libraries.
+
+```bash
+pip install "google-adk[agent-identity]"
+```
 
 ## Use with agent
 
 Follow these steps to use the Agent Identity Auth Manager within ADK:
 
-### 1. Install required package dependencies
-Install the `agent-identity` extra package group to download the necessary client libraries.
-```shell
-pip install "google-adk[agent-identity]"
-```
+### 1. Register Auth Provider
 
-### 2. Register Auth Provider
 In order for ADK to understand what `BaseAuthProvider` to use to process the given `CustomAuthScheme`, register the `GcpAuthProvider` instance with the `CredentialManager`. This should be done once in the agent code.
 
 ```python
@@ -26,7 +45,8 @@ from google.adk.integrations.agent_identity import GcpAuthProvider
 CredentialManager.register_auth_provider(GcpAuthProvider())
 ```
 
-### 3. Configure Tools (e.g., McpToolset, OpenAPIToolset)
+### 2. Configure Tools (e.g., McpToolset, OpenAPIToolset)
+
 Specify the Agent Identity auth provider configurations using the `GcpAuthProviderScheme` object and pass them as the `auth_scheme` field of the `Tool` or `Toolset`.
 
 ```python
@@ -44,20 +64,24 @@ toolset = McpToolset(
 )
 ```
 
-### 4. Handling the Interactive OAuth Flow (Client-Side)
+### 3. Handling the Interactive OAuth Flow (Client-Side)
+
 *   **Detecting the Auth Request**: Similar to the existing flow, whenever user consent is required, a `FunctionCall` event with name `adk-request-credential` will be generated containing the `auth_uri` field. The user app should open this `auth_uri` in a popup.
 *   **Commit Endpoint Handler**: Once the user completes the OAuth consent flow, a redirect happens to the `continue_uri`. The agent application backend service must handle this redirect by submitting a POST request to the IAM credentials endpoint: `https://iamconnectorcredentials.googleapis.com/v1alpha/{connector_name}/credentials:finalize`.
 *   After credentials are finalized, resume the agent conversation. Unlike the native user consent flow, no auth code is needed to be sent back to the agent.
 
 ## Security Considerations (Preventing Account Confusion)
+
 As noted in the security review for this feature, developers must ensure the UI handling the consent flow is safe:
 *   **No Auto-Popups**: Do not trigger the OAuth permission window automatically upon opening the app or clicking a deep link.
 *   **Explicit Click**: Require the user to explicitly click a "Connect" button to start the flow.
 *   **Identity Display**: Display the identity (e.g., email or account name) currently logged into the app on the connection screen so the user can verify they are connecting the correct account.
 
 ## Best practices
+
 *   **Avoid caching access tokens** to allow the Agent Identity Auth Manager to audit access on these credentials effectively.
 
-## Examples
-*   A complete code sample and testing instructions can be found at: [adk-python samples](https://github.com/google/adk-python/tree/main/contributing/samples/gcp_auth).
-SSS
+## Resources
+
+- [Google Cloud Agent Identity Overview](https://docs.cloud.google.com/iam/docs/agent-identity-overview)
+- [ADK Python Samples: GCP Auth](https://github.com/google/adk-python/tree/main/contributing/samples/gcp_auth)
