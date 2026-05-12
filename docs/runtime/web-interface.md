@@ -81,7 +81,7 @@ Use the following command to start the ADK web interface:
         ```
 
 
-    In Java, the Web Interface and the API server are bundled together.
+    In Java, the web interface and the API server are bundled together.
 
 Once started, the server prints the access URL to the console. Open it in your
 browser to use the web interface:
@@ -119,7 +119,7 @@ adk web --port 3000 --session_service_uri "sqlite:///sessions.db"
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.18.0</span><span class="lst-preview">Experimental</span>
 </div>
 
-The ADK Visual Builder is a feature of the ADK Web interface that provides a
+The ADK Visual Builder is a feature of the ADK web interface that provides a
 visual workflow design environment for creating and managing agents. The Visual
 Builder allows you to design, build, and test agents in a beginner-friendly
 graphical interface, and includes an AI-powered assistant to help you build
@@ -133,17 +133,18 @@ agents.
 
 ### Create an agent
 
-To use the Visual Builder, [start the web interface](#start-the-web-interface),
-then follow the steps below to create an agent.
+To use the Visual Builder, [start the ADK web
+interface](#start-the-web-interface), then follow the steps below to create an
+agent.
 
 ??? tip "Tip: Run from a code development directory"
 
     The Visual Builder tool writes project files to new subdirectories located
-    in the directory where you run the ADK Web tool. Make sure you run this
+    in the directory where you run the ADK web tool. Make sure you run this
     command from a developer directory location where you have write access.
 
 ![Visual Agent Builder start](../assets/visual-builder-start.png)
-**Figure 1:** ADK Web controls to start the Visual Builder tool.
+**Figure 1:** ADK web controls to start the Visual Builder tool.
 
 To create an agent with Visual Builder:
 
@@ -211,7 +212,7 @@ Config [Known limitations](/agents/config/#known-limitations).
 The Visual Builder tool generates code in the [Agent Config](/agents/config/)
 format, using `.yaml` configuration files for agents and Python code for custom
 tools. These files are generated in a subfolder of the directory where you ran
-the ADK Web interface. The following listing shows an example layout for a
+the ADK web interface. The following listing shows an example layout for a
 DiceAgent project:
 
 ```none
