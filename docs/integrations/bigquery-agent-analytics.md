@@ -469,7 +469,7 @@ Every view includes these **common columns**: `timestamp`, `event_type`,
 `agent`, `session_id`, `invocation_id`, `user_id`, `trace_id`, `span_id`,
 `parent_span_id`, `status`, `error_message`, `is_truncated`.
 
-The following table lists all 17 auto-created views and their event-specific
+The following table lists all auto-created views and their event-specific
 columns:
 
 | View Name | Event-Specific Columns |
