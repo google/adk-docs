@@ -119,10 +119,11 @@ adk web --port 3000 --session_service_uri "sqlite:///sessions.db"
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.18.0</span><span class="lst-preview">Experimental</span>
 </div>
 
-The ADK Visual Builder is a web-based tool that provides a visual workflow
-design environment for creating and managing ADK agents. It allows you to
-design, build, and test your agents in a beginner-friendly graphical interface,
-and includes an AI-powered assistant to help you build agents.
+The ADK Visual Builder is a feature of the ADK Web interface that provides a
+visual workflow design environment for creating and managing agents. The Visual
+Builder allows you to design, build, and test agents in a beginner-friendly
+graphical interface, and includes an AI-powered assistant to help you build
+agents.
 
 ![Visual Agent Builder](../assets/visual-builder.png)
 
@@ -132,9 +133,8 @@ and includes an AI-powered assistant to help you build agents.
 
 ### Create an agent
 
-The Visual Builder interface is part of the ADK Web tool user interface. [Start
-the web interface](#start-the-web-interface), then follow the steps below to
-create an agent.
+To use the Visual Builder, [start the web interface](#start-the-web-interface),
+then follow the steps below to create an agent.
 
 ??? tip "Tip: Run from a code development directory"
 
