@@ -140,11 +140,11 @@ agent.
 ??? tip "Tip: Run from a code development directory"
 
     The Visual Builder tool writes project files to new subdirectories located
-    in the directory where you run the ADK web tool. Make sure you run this
+    in the directory where you run ADK Web. Make sure you run this
     command from a developer directory location where you have write access.
 
 ![Visual Agent Builder start](../assets/visual-builder-start.png)
-**Figure 1:** ADK web controls to start the Visual Builder tool.
+**Figure 1:** ADK Web controls to start the Visual Builder tool.
 
 To create an agent with Visual Builder:
 
