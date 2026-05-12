@@ -227,6 +227,7 @@ plugins:
         'observability/agentops.md': 'integrations/agentops.md'
         'observability/arize-ax.md': 'integrations/arize-ax.md'
         'contributing-guide.md': 'community/contributing-guide.md'
+        'visual-builder/index.md': 'runtime/web-interface.md'
         'get-started/quickstart.md': get-started/index.md
 
   - llmstxt:
@@ -236,7 +237,6 @@ plugins:
         Build Agents:
         - get-started/*.md
         - tutorials/*.md
-        - visual-builder/*.md
         - agents/*.md
         - workflows/*.md
         - integrations/*.md
@@ -285,7 +285,6 @@ nav:
         - get-started/streaming/index.md
         - Python: get-started/streaming/quickstart-streaming.md
         - Java: get-started/streaming/quickstart-streaming-java.md
-      - Visual Builder: visual-builder/index.md
       - Coding with AI: tutorials/coding-with-ai.md
       - Advanced setup: get-started/installation.md
     - Agents:
