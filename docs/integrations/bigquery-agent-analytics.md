@@ -85,7 +85,7 @@ shows the BigQuery view optionally created when
 | `HITL_CONFIRMATION_REQUEST_COMPLETED` | User provides confirmation response | synthetic tool name, result | *(base table only)* |
 | `HITL_INPUT_REQUEST_COMPLETED` | User provides input response | synthetic tool name, result | *(base table only)* |
 | `A2A_INTERACTION` | Remote A2A call completes | response, task ID, context ID, request/response | `v_a2a_interaction` |
-| `AGENT_RESPONSE` | Final agent response is yielded | response text, source event metadata | `v_agent_response` |
+| `AGENT_RESPONSE` | Final agent response is yielded | response (content), source event ID/author/branch (attributes) | `v_agent_response` |
 
 ## Quickstart
 
@@ -700,17 +700,19 @@ updated by tools).
 | `AGENT_STARTING` | `"You are a helpful agent..."` |
 | `AGENT_COMPLETED` | `{}` |
 | `USER_MESSAGE_RECEIVED` | `{"text_summary": "Help me book a flight."}` |
-| `AGENT_RESPONSE` | `{"response_text": "Here are the flights...", "source_event_id": "...", "source_event_author": "flight_agent", "source_event_branch": "main"}` |
+| `AGENT_RESPONSE` | `{"response": "Here are the flights..."}` |
 
 **AGENT_RESPONSE**
 
-Logged when the agent yields a final response to the user. Captures the response text along with metadata about the source event that produced it.
+Logged when the agent yields a final response to the user. The response text is stored in `content`, while the source event metadata is stored in `attributes`.
 
 ```json
 {
   "event_type": "AGENT_RESPONSE",
   "content": {
-    "response_text": "Here are the available flights...",
+    "response": "Here are the available flights..."
+  },
+  "attributes": {
     "source_event_id": "evt-abc123",
     "source_event_author": "flight_agent",
     "source_event_branch": "main"
