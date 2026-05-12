@@ -1,6 +1,6 @@
 ---
 catalog_title: Atlan
-catalog_description: Search, explore, and govern data assets in your Atlan catalog
+catalog_description: Bring your organization's full context into ADK — the knowledge, data, and semantics your AI agents need
 catalog_icon: /integrations/assets/atlan.png
 catalog_tags: ["mcp"]
 ---
@@ -11,22 +11,29 @@ catalog_tags: ["mcp"]
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript</span>
 </div>
 
-The [Atlan MCP Server](https://github.com/atlanhq/agent-toolkit) connects your
-ADK agent to your [Atlan](https://www.atlan.com/) data catalog, giving the
-agent the ability to discover, explore, govern, and manage data assets across
-your warehouses, lakes, BI tools, and pipelines using natural language.
+[Atlan](https://www.atlan.com/) is the context layer for enterprise AI. The
+[Atlan MCP Server](https://github.com/atlanhq/agent-toolkit) connects your ADK
+agent to your organization's context repos — the knowledge, data, and semantics
+your AI agents need to build effectively. Use Atlan's agent skills to search &
+discover enterprise context, traverse end-to-end lineage, access governed data
+definitions and glossaries, execute SQL, curate your metadata graph, and ensure
+data quality — so every agent task is grounded in trusted organizational context.
 
 ## Use cases
 
-- **Asset Discovery**: Search across tables, columns, dashboards, and pipelines
-  with semantic search to find the right data for an analysis or feature.
+- **Search and discover enterprise context** — find tables, columns, dashboards,
+  glossary terms, and data products across your entire stack with natural
+  language.
 
-- **Lineage and Impact Analysis**: Trace upstream sources or downstream
-  consumers of an asset to understand dependencies before a schema change.
+- **Traverse end-to-end lineage** — trace data flow upstream and downstream
+  across systems to understand dependencies before a schema change.
 
-- **Governance and Stewardship**: Update descriptions, certify assets,
-  manage glossaries and data domains, and create or schedule data quality
-  rules from the agent.
+- **Access governed data definitions** — use glossaries, data domains, and
+  certified metadata to ground agent output in trusted organizational context.
+
+- **Curate your metadata graph** — update descriptions, certify assets, manage
+  glossaries, define data quality rules and schedules, and execute SQL — all
+  from your agent.
 
 ## Prerequisites
 
@@ -51,7 +58,7 @@ your warehouses, lakes, BI tools, and pipelines using natural language.
         root_agent = Agent(
             model="gemini-flash-latest",
             name="atlan_agent",
-            instruction="Help users search, explore, and govern data assets in Atlan",
+            instruction="Help users search, discover, and manage enterprise data assets using Atlan",
             tools=[
                 McpToolset(
                     connection_params=StdioConnectionParams(
@@ -80,7 +87,7 @@ your warehouses, lakes, BI tools, and pipelines using natural language.
         const rootAgent = new LlmAgent({
             model: "gemini-flash-latest",
             name: "atlan_agent",
-            instruction: "Help users search, explore, and govern data assets in Atlan",
+            instruction: "Help users search, discover, and manage enterprise data assets using Atlan",
             tools: [
                 new MCPToolset({
                     type: "StdioConnectionParams",
