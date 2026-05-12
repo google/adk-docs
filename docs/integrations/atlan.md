@@ -26,15 +26,15 @@ every agent task is grounded in trusted organizational context.
   glossary terms, and data products across your entire stack with natural
   language.
 
-- **Traverse end-to-end lineage**: Trace data flow upstream and downstream across
-  systems to understand dependencies before a schema change.
+- **Traverse end-to-end lineage**: Trace data flow upstream and downstream
+  across systems to understand dependencies before a schema change.
 
 - **Access governed data definitions**: Use glossaries, data domains, and
   certified metadata to ground agent output in trusted organizational context.
 
 - **Curate your metadata graph**: Update descriptions, certify assets, manage
-  glossaries, define data quality rules and schedules, and execute SQL — all
-  from your agent.
+  glossaries, define data quality rules and schedules, and execute SQL, all from
+  your agent.
 
 ## Prerequisites
 
