@@ -1,6 +1,6 @@
 ---
 catalog_title: Atlan
-catalog_description: Bring your organization's full context into ADK — the knowledge, data, and semantics your AI agents need
+catalog_description: Search, explore, and govern metadata, lineage, and business knowledge
 catalog_icon: /integrations/assets/atlan.png
 catalog_tags: ["mcp"]
 ---
@@ -11,27 +11,28 @@ catalog_tags: ["mcp"]
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript</span>
 </div>
 
-[Atlan](https://www.atlan.com/) is the context layer for enterprise AI. The
-[Atlan MCP Server](https://github.com/atlanhq/agent-toolkit) connects your ADK
-agent to your organization's context repos — the knowledge, data, and semantics
-your AI agents need to build effectively. Use Atlan's agent skills to search &
-discover enterprise context, traverse end-to-end lineage, access governed data
-definitions and glossaries, execute SQL, curate your metadata graph, and ensure
-data quality — so every agent task is grounded in trusted organizational context.
+The [Atlan MCP Server](https://github.com/atlanhq/agent-toolkit) connects your
+ADK agent to [Atlan](https://www.atlan.com/), the context layer for enterprise
+AI, giving your agent access to your organization's context repos: the
+knowledge, data, and semantics your AI agents need to build effectively. This
+integration gives your agent the ability to search and discover enterprise
+context, traverse end-to-end lineage, access governed data definitions and
+glossaries, execute SQL, curate your metadata graph, and ensure data quality, so
+every agent task is grounded in trusted organizational context.
 
 ## Use cases
 
-- **Search and discover enterprise context** — find tables, columns, dashboards,
+- **Search and discover enterprise context**: Find tables, columns, dashboards,
   glossary terms, and data products across your entire stack with natural
   language.
 
-- **Traverse end-to-end lineage** — trace data flow upstream and downstream
-  across systems to understand dependencies before a schema change.
+- **Traverse end-to-end lineage**: Trace data flow upstream and downstream across
+  systems to understand dependencies before a schema change.
 
-- **Access governed data definitions** — use glossaries, data domains, and
+- **Access governed data definitions**: Use glossaries, data domains, and
   certified metadata to ground agent output in trusted organizational context.
 
-- **Curate your metadata graph** — update descriptions, certify assets, manage
+- **Curate your metadata graph**: Update descriptions, certify assets, manage
   glossaries, define data quality rules and schedules, and execute SQL — all
   from your agent.
 
