@@ -6,6 +6,13 @@ for Kotlin. Before you start, make sure you have the following installed:
 *   Java 17 or later
 *   Gradle 8.0 or later
 
+??? tip "Building for Android?"
+
+    This quickstart covers Kotlin on the JVM. If you're building an
+    Android app, complete this quickstart first to learn the agent API,
+    then see [Using ADK Kotlin in Android projects](/get-started/installation/#kotlin)
+    for Android-specific project setup and on-device models.
+
 ## Create an agent project
 
 Create an agent project with the following files and directory structure:
@@ -48,41 +55,7 @@ Add the following code to the `HelloTimeAgent.kt` file in your project
 directory:
 
 ```kotlin title="my_agent/src/main/kotlin/com/example/agent/HelloTimeAgent.kt"
-package com.example.agent
-
-import com.google.adk.kt.agents.Instruction
-import com.google.adk.kt.agents.LlmAgent
-import com.google.adk.kt.models.GeminiModel
-import com.google.adk.kt.tools.AdkParam
-import com.google.adk.kt.tools.AdkTool
-
-class TimeService {
-    /** Mock tool implementation */
-    @AdkTool
-    fun getCurrentTime(
-        @AdkParam("Name of the city to get the time for") city: String
-    ): Map<String, String> {
-        return mapOf("city" to city, "time" to "The time is 10:30am.")
-    }
-}
-
-object HelloTimeAgent {
-    @JvmField
-    val rootAgent = LlmAgent(
-        name = "hello_time_agent",
-        description = "Tells the current time in a specified city.",
-        model = GeminiModel(
-            System.getenv("GOOGLE_API_KEY")
-                ?: error("GOOGLE_API_KEY environment variable not set."),
-            name = "gemini-flash-latest",
-        ),
-        instruction = Instruction(
-            "You are a helpful assistant that tells the current time in a city. "
-                + "Use the 'getCurrentTime' tool for this purpose."
-        ),
-        tools = TimeService().adkTools(),
-    )
-}
+--8<-- "examples/kotlin/snippets/get-started/HelloTimeAgent.kt:full_code"
 ```
 
 !!! note "About `@AdkTool` and KSP"
@@ -295,3 +268,4 @@ Now that you have ADK installed and your first agent running, try building
 your own agent with our build guides:
 
 *  [Build your agent](/tutorials/)
+*  [Use ADK Kotlin in Android projects](/get-started/installation/#kotlin)
