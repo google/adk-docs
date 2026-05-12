@@ -24,7 +24,7 @@ The server is fully hosted — no local installation, Docker containers, or serv
 
 ## Prerequisites
 
-- A [Grafana Cloud](https://grafana.com/cloud/) account
+- Access to a [Grafana Cloud](https://grafana.com/cloud/) instance
 - An administrator must accept the Grafana Assistant terms and conditions
 - The **Assistant Cloud MCP User** role or `grafana-assistant-app.cloud-mcp:access` permission (users with **Editor** role or higher have this by default)
 
