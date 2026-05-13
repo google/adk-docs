@@ -47,7 +47,7 @@ Follow these steps to use the Agent Identity Auth Manager within ADK:
 
 ### Register auth provider
 
-In order for ADK to understand what `BaseAuthProvider` to use to process the
+In order for ADK to understand what `BaseAuthProvider` to use to process the 
 given `CustomAuthScheme`, register the `GcpAuthProvider` instance with the
 `CredentialManager`. This should be done once in the agent code.
 
@@ -81,18 +81,13 @@ toolset = McpToolset(
 )
 ```
 
-You can also use `GcpAuthProviderScheme` with `AuthenticatedFunctionTool` by
-wrapping it in an `AuthConfig`. See the [GCP Auth
-sample](https://github.com/google/adk-python/tree/main/contributing/samples/gcp_auth)
-for a complete example.
-
 ### Handle OAuth consent
 
 - **Detecting the Auth Request**: Similar to existing flow, whenever user consent is required, a `FunctionCall` event with `adk-request-credential` name will be generated containing the `auth_uri` field. The user app should open this `auth_uri` in a pop up for continuing the user consent flow.
-- **Commit Endpoint Handler**:
-  - Once the user completes the OAuth consent flow on the third-party provider's website, a final redirect will happen to the `continue_uri` callback defined earlier in the `GcpAuthProviderScheme`. The agent application backend service MUST handle this redirect. To finalize issuance, your backend must submit a POST request to this Credentials endpoint `https://iamconnectorcredentials.googleapis.com/v1alpha/{connector_name}/credentials:finalize`. 
-  - After the credentials are finalized successfully, the web application should resume the agent. The FunctionResponse should be sent. Refer https://docs.cloud.google.com/iam/docs/auth-with-3lo#resume-conversation for the example. Unlike the native user consent flow, here no auth code is needed to send back the agent.
-  - Refer [this](https://docs.cloud.google.com/iam/docs/auth-with-3lo#validation-endpoint) complete example for the above endpoint implementation. 
+- **Continue URI Handler**:
+  - Once the user completes the OAuth consent flow on the third-party provider's website, a final redirect will happen to the `continue_uri` callback defined earlier in the `GcpAuthProviderScheme`. The agent application service MUST implement this redirect. To finalize issuance, your handler must submit a POST request to this Credentials endpoint `https://iamconnectorcredentials.googleapis.com/v1alpha/{connector_name}/credentials:finalize`. 
+  - After the credentials are finalized successfully, the web application should resume the agent, by sending the `FunctionResponse`. Refer [this](https://docs.cloud.google.com/iam/docs/auth-with-3lo#resume-conversation) for a sample code. Unlike the native user consent flow, here no auth code is needed to send back the agent.
+  - Refer [this](https://docs.cloud.google.com/iam/docs/auth-with-3lo#validation-endpoint) for the sample handler implementation. 
 - **Resume the conversation**: Irrespective of the status of the consent flow (successful or unsuccessful), the agent app should resume the agent to complete the conversation turn. The ADK will automatically determine if the consent was successfully completed or not and will raise an error if not.
 
 ## Resources
