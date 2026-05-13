@@ -1,0 +1,15 @@
+# This file lists Kotlin snippet files to be built and run by runner.sh.
+# Each line represents a single build/run target.
+#
+# Format:
+# - Lines starting with '#' are treated as comments and ignored.
+# - Each non-comment line should contain one or more Kotlin file paths,
+#   relative to the 'examples/kotlin/' directory.
+# - If multiple files are on a single line, they are treated as part of the same project
+#   and built together.
+#
+# Examples:
+#   # Single file example
+#   snippets/get-started/HelloTimeAgent.kt
+
+snippets/get-started/HelloTimeAgent.kt
