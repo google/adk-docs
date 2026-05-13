@@ -13,7 +13,7 @@ catalog_tags: ["google"]
   <span class="lst-preview">Preview</span>
 </div>
 
-The [Google Cloud Agent Identity](https://docs.cloud.google.com/iam/docs/agent-identity-overview) service provides a streamlined, Google-managed solution for managing the complete lifecycle of auth credentials, including storing credential configurations, generating and storing tokens, and auditing the access. This allows for a secure and simplified agent development experience.
+The [Google Cloud Agent Identity](https://docs.cloud.google.com/iam/docs/agent-identity-overview) service provides a streamlined, Google-managed solution for managing the complete lifecycle of auth credentials, including storing credential configurations, generating and storing tokens, and auditing access. This allows for a secure and simplified agent development experience.
 
 !!! example "Preview release"
 
@@ -22,7 +22,7 @@ The Agent Identity Auth Manager feature is a Preview release. For more informati
 ## Use cases
 
 *   **Simplified OAuth Flow**: Manage the complete lifecycle of auth credentials without building custom infrastructure.
-*   **Secure Exchange and Storage of Tokens**: Securely store credential configurations, and exchange tokens.
+*   **Secure Exchange and Storage of Tokens**: Securely store credential configurations and exchange tokens.
 *   **Audit Logging**: View and audit access to stored credentials.
 
 ## Prerequisites
@@ -47,9 +47,7 @@ Follow these steps to use the Agent Identity Auth Manager within ADK:
 
 ### Register auth provider
 
-In order for ADK to understand what `BaseAuthProvider` to use to process the 
-given `CustomAuthScheme`, register the `GcpAuthProvider` instance with the
-`CredentialManager`. This should be done once in the agent code.
+To enable ADK to determine which `BaseAuthProvider` to use for a given `CustomAuthScheme`, register the `GcpAuthProvider` instance with the `CredentialManager`. This needs to be done only once in the agent code.
 
 ```python
 from google.adk.auth.credential_manager import CredentialManager
@@ -86,8 +84,8 @@ toolset = McpToolset(
 - **Detecting the Auth Request**: Similar to existing flow, whenever user consent is required, a `FunctionCall` event with `adk-request-credential` name will be generated containing the `auth_uri` field. The user app should open this `auth_uri` in a pop up for continuing the user consent flow.
 - **Continue URI Handler**:
   - Once the user completes the OAuth consent flow on the third-party provider's website, a final redirect will happen to the `continue_uri` callback defined earlier in the `GcpAuthProviderScheme`. The agent application service MUST implement this redirect. To finalize issuance, your handler must submit a POST request to this Credentials endpoint `https://iamconnectorcredentials.googleapis.com/v1alpha/{connector_name}/credentials:finalize`. 
-  - After the credentials are finalized successfully, the web application should resume the agent, by sending the `FunctionResponse`. Refer [this](https://docs.cloud.google.com/iam/docs/auth-with-3lo#resume-conversation) for a sample code. Unlike the native user consent flow, here no auth code is needed to send back the agent.
-  - Refer [this](https://docs.cloud.google.com/iam/docs/auth-with-3lo#validation-endpoint) for the sample handler implementation. 
+  - After the credentials are finalized successfully, the web application should resume the agent, by sending a `FunctionResponse` to the agent. Please refer [this](https://docs.cloud.google.com/iam/docs/auth-with-3lo#resume-conversation) for a sample code. Unlike the native user consent flow, here no auth code is needed to send back the agent.
+  - For more details, refer to the [sample handler implementation](https://docs.cloud.google.com/iam/docs/auth-with-3lo#validation-endpoint).
 - **Resume the conversation**: Irrespective of the status of the consent flow (successful or unsuccessful), the agent app should resume the agent to complete the conversation turn. The ADK will automatically determine if the consent was successfully completed or not and will raise an error if not.
 
 ## Resources
