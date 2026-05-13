@@ -8,46 +8,34 @@ catalog_tags: ["google"]
 # Agent Identity Auth Manager for ADK
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span> <span class="lst-python">Python v1.30.0</span> <span class="lst-preview">Preview</span>
+  <span class="lst-supported">Supported in ADK</span>
+  <span class="lst-python">Python v1.30.0</span>
+  <span class="lst-preview">Preview</span>
 </div>
 
-The [Google Cloud Agent Identity](https://docs.cloud.google.com/iam/docs/agent-identity-overview) 
-service provides a streamlined, Google-managed solution for managing the complete lifecycle of auth credentials, including
-storing credential configurations, generating and storing tokens, and auditing the access. This
-allows for a secure and simplified agent development experience.
+The [Google Cloud Agent Identity](https://docs.cloud.google.com/iam/docs/agent-identity-overview) service provides a streamlined, Google-managed solution for managing the complete lifecycle of auth credentials, including storing credential configurations, generating and storing tokens, and auditing the access. This allows for a secure and simplified agent development experience.
 
 !!! example "Preview release"
 
-The Agent Identity Auth Manager feature is a Preview release. For more
-information, see the [launch stage descriptions](https://cloud.google.com/products#product-launch-stages).
+The Agent Identity Auth Manager feature is a Preview release. For more information, see the [launch stage descriptions](https://cloud.google.com/products#product-launch-stages).
 
 ## Use cases
 
-- **Simplified OAuth Flow**: Manage the complete lifecycle of auth credentials
-  without building custom infrastructure.
-- **Secure Exchange and Storage of Tokens**: Securely store credential configurations, and exchange tokens.
-- **Audit Logging**: View and audit access to stored credentials.
+*   **Simplified OAuth Flow**: Manage the complete lifecycle of auth credentials without building custom infrastructure.
+*   **Secure Exchange and Storage of Tokens**: Securely store credential configurations, and exchange tokens.
+*   **Audit Logging**: View and audit access to stored credentials.
 
 ## Prerequisites
 
-- A [Google Cloud
-  project](https://cloud.google.com/resource-manager/docs/creating-managing-projects)
-- One or more Agent Identity [auth
-  providers](https://cloud.google.com/iam/docs/manage-auth-providers) created in
-  your project
-- The caller identity must have the
-  [`iamconnectors.user`](https://docs.cloud.google.com/iam/docs/roles-permissions/iamconnectors#iamconnectors.user)
-  role or equivalent permissions
-- Authentication configured via [Application Default
-  Credentials](https://docs.cloud.google.com/docs/authentication/application-default-credentials)
-  (`gcloud auth application-default login`)
+*   A [Google Cloud project](https://cloud.google.com/resource-manager/docs/creating-managing-projects)
+*   One or more Agent Identity [auth providers](https://cloud.google.com/iam/docs/manage-auth-providers) created in your project
+*   The caller identity must have the [`iamconnectors.user`](https://docs.cloud.google.com/iam/docs/roles-permissions/iamconnectors#iamconnectors.user) role or equivalent permissions
+*   Authentication configured via [Application Default Credentials](https://docs.cloud.google.com/docs/authentication/application-default-credentials) (`gcloud auth application-default login`)
+
 
 ## Installation
 
-Make sure the Agent Identity service is enabled and appropriate permissions are set for 
-your agent to access it. To install necessary package dependencies for this feature, install 
-the agent-identity additional package group. This will download the client SDK for the above 
-Google Cloud service.
+Install the `agent-identity` extra package group to download the necessary client libraries.
 
 ```bash
 pip install "google-adk[agent-identity]"
