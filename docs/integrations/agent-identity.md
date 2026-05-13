@@ -8,28 +8,25 @@ catalog_tags: ["google"]
 # Agent Identity Auth Manager for ADK
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.30.0</span><span class="lst-preview">Preview</span>
+  <span class="lst-supported">Supported in ADK</span> <span class="lst-python">Python v1.30.0</span> <span class="lst-preview">Preview</span>
 </div>
 
-The Agent Identity Auth Manager service provides a streamlined, Google-managed
-solution for managing the complete lifecycle of auth credentials, including
-storing key configurations, generating and storing tokens, and auditing. This
+The Google Cloud [Agent Identity](https://docs.cloud.google.com/iam/docs/agent-identity-overview) 
+service provides a streamlined, Google-managed solution for managing the complete lifecycle of auth credentials, including
+storing credential configurations, generating and storing tokens, and auditing the access. This
 allows for a secure and simplified agent development experience.
 
 !!! example "Preview release"
 
-    The Agent Identity Auth Manager feature is a Preview release. For more
-    information, see the [launch stage
-    descriptions](https://cloud.google.com/products#product-launch-stages).
+The Agent Identity Auth Manager feature is a Preview release. For more
+information, see the [launch stage descriptions](https://cloud.google.com/products#product-launch-stages).
 
 ## Use cases
 
 - **Simplified OAuth Flow**: Manage the complete lifecycle of auth credentials
   without building custom infrastructure.
-- **Secure Token Storage**: Securely store key configurations and generate or
-  store tokens.
-- **Audit Logging**: Audit access on credentials effectively using Google
-  Cloud's built-in auditing capabilities.
+- **Secure Exchange and Storage of Tokens**: Securely store credential configurations, and exchange tokens.
+- **Audit Logging**: View and audit access to stored credentials.
 
 ## Prerequisites
 
@@ -47,8 +44,9 @@ allows for a secure and simplified agent development experience.
 
 ## Installation
 
-Install the `agent-identity` extra package group to download the necessary
-client libraries.
+Make sure the Agent Identity service is enabled and appropriate permissions are set for 
+your agent to access it. To install necessary package dependencies for this feature, install 
+the agent-identity additional package group. This will download the client for the above GCP service.
 
 ```bash
 pip install "google-adk[agent-identity]"
