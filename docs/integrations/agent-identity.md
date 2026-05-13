@@ -58,9 +58,7 @@ CredentialManager.register_auth_provider(GcpAuthProvider())
 
 ### Configure tools
 
-Specify the Agent Identity auth provider configurations using the
-`GcpAuthProviderScheme` object and pass them as the `auth_scheme` field of the
-`Tool` or `Toolset`.
+Configure the Agent Identity auth provider using a `GcpAuthProviderScheme` object, then pass it to the `auth_scheme` parameter of any supported `Tool` or `Toolset`. Below sample code shows its usage with `McpToolset`, but it could also be used for other tools like `AuthenticatedFunctionTool` etc.  
 
 ```python
 from google.adk.integrations.agent_identity import GcpAuthProviderScheme
@@ -84,7 +82,7 @@ toolset = McpToolset(
 - **Detecting the Auth Request**: Similar to existing flow, whenever user consent is required, a `FunctionCall` event with `adk-request-credential` name will be generated containing the `auth_uri` field. The user app should open this `auth_uri` in a pop up for continuing the user consent flow.
 - **Continue URI Handler**:
   - Once the user completes the OAuth consent flow on the third-party provider's website, a final redirect will happen to the `continue_uri` callback defined earlier in the `GcpAuthProviderScheme`. The agent application service MUST implement this redirect. To finalize issuance, your handler must submit a POST request to this Credentials endpoint `https://iamconnectorcredentials.googleapis.com/v1alpha/{connector_name}/credentials:finalize`. 
-  - After the credentials are finalized successfully, the web application should resume the agent, by sending a `FunctionResponse` to the agent. Please refer [this](https://docs.cloud.google.com/iam/docs/auth-with-3lo#resume-conversation) for a sample code. Unlike the native user consent flow, here no auth code is needed to send back the agent.
+  - After credentials are successfully finalized, the web application should resume the agent by sending a FunctionResponse. For a sample implementation, refer to the [sample code](https://docs.cloud.google.com/iam/docs/auth-with-3lo#resume-conversation). Unlike the native user consent flow, no authorization code is required to resume the agent.
   - For more details, refer to the [sample handler implementation](https://docs.cloud.google.com/iam/docs/auth-with-3lo#validation-endpoint).
 - **Resume the conversation**: Irrespective of the status of the consent flow (successful or unsuccessful), the agent app should resume the agent to complete the conversation turn. The ADK will automatically determine if the consent was successfully completed or not and will raise an error if not.
 
