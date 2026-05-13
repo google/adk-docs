@@ -11,7 +11,7 @@ catalog_tags: ["google"]
   <span class="lst-supported">Supported in ADK</span> <span class="lst-python">Python v1.30.0</span> <span class="lst-preview">Preview</span>
 </div>
 
-The Google Cloud [Agent Identity](https://docs.cloud.google.com/iam/docs/agent-identity-overview) 
+The [Google Cloud Agent Identity](https://docs.cloud.google.com/iam/docs/agent-identity-overview) 
 service provides a streamlined, Google-managed solution for managing the complete lifecycle of auth credentials, including
 storing credential configurations, generating and storing tokens, and auditing the access. This
 allows for a secure and simplified agent development experience.
@@ -46,7 +46,8 @@ information, see the [launch stage descriptions](https://cloud.google.com/produc
 
 Make sure the Agent Identity service is enabled and appropriate permissions are set for 
 your agent to access it. To install necessary package dependencies for this feature, install 
-the agent-identity additional package group. This will download the client for the above GCP service.
+the agent-identity additional package group. This will download the client SDK for the above 
+Google Cloud service.
 
 ```bash
 pip install "google-adk[agent-identity]"
@@ -99,36 +100,12 @@ for a complete example.
 
 ### Handle OAuth consent
 
-- **Detecting the Auth Request**: Similar to the existing flow, whenever user
-  consent is required, a `FunctionCall` event with name `adk-request-credential`
-  will be generated containing the `auth_uri` field. The user app should open
-  this `auth_uri` in a popup.
-- **Commit Endpoint Handler**: Once the user completes the OAuth consent flow, a
-  redirect happens to the `continue_uri`. The agent application backend service
-  must handle this redirect by submitting a POST request to the IAM credentials
-  endpoint:
-  `https://iamconnectorcredentials.googleapis.com/v1alpha/{connector_name}/credentials:finalize`.
-- **Resume the conversation**: After credentials are finalized, resume the
-  agent conversation. Unlike the native user consent flow, no auth code is
-  needed to be sent back to the agent.
-
-## Security considerations
-
-When implementing the consent flow, developers must ensure the UI follows these
-security practices:
-
-- **No Auto-Popups**: Do not trigger the OAuth permission window automatically
-  upon opening the app or clicking a deep link.
-- **Explicit Click**: Require the user to explicitly click a "Connect" button to
-  start the flow.
-- **Identity Display**: Display the identity (e.g., email or account name)
-  currently logged into the app on the connection screen so the user can verify
-  they are connecting the correct account.
-
-## Best practices
-
-- **Avoid caching access tokens** to allow the Agent Identity Auth Manager to
-  audit access on these credentials effectively.
+- **Detecting the Auth Request**: Similar to existing flow, whenever user consent is required, a `FunctionCall` event with `adk-request-credential` name will be generated containing the `auth_uri` field. The user app should open this `auth_uri` in a pop up for continuing the user consent flow.
+- **Commit Endpoint Handler**:
+  - Once the user completes the OAuth consent flow on the third-party provider's website, a final redirect will happen to the `continue_uri` callback defined earlier in the `GcpAuthProviderScheme`. The agent application backend service MUST handle this redirect. To finalize issuance, your backend must submit a POST request to this Credentials endpoint `https://iamconnectorcredentials.googleapis.com/v1alpha/{connector_name}/credentials:finalize`. 
+  - After the credentials are finalized successfully, the web application should resume the agent. The FunctionResponse should be sent. Refer https://docs.cloud.google.com/iam/docs/auth-with-3lo#resume-conversation for the example. Unlike the native user consent flow, here no auth code is needed to send back the agent.
+  - Refer [this](https://docs.cloud.google.com/iam/docs/auth-with-3lo#validation-endpoint) complete example for the above endpoint implementation. 
+- **Resume the conversation**: Irrespective of the status of the consent flow (successful or unsuccessful), the agent app should resume the agent to complete the conversation turn. The ADK will automatically determine if the consent was successfully completed or not and will raise an error if not.
 
 ## Resources
 
