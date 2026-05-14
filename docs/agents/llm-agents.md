@@ -6,6 +6,7 @@
   <span class="lst-typescript">Typescript v0.2.0</span>
   <span class="lst-go">Go v0.1.0</span>
   <span class="lst-java">Java v0.1.0</span>
+  <span class="lst-kotlin">Kotlin v0.1</span>
 </div>
 
 The `LlmAgent` (often aliased simply as `Agent`) is a core component in ADK,
@@ -86,6 +87,12 @@ First, you need to establish what the agent *is* and what it's *for*.
             .description("Answers user questions about the capital city of a given country.")
             // instruction and tools will be added next
             .build();
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/agents/llm-agent/capital_agent.kt:identity"
     ```
 
 ## Guiding the Agent: Instructions (`instruction`)
@@ -183,6 +190,12 @@ tells the agent:
             .build();
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/agents/llm-agent/capital_agent.kt:instruction"
+    ```
+
 *(Note: For instructions that apply to *all* agents in a system, consider using
 `global_instruction` on the root agent, detailed further in the
 [Multi-Agents](multi-agents.md) section.)*
@@ -194,7 +207,7 @@ reasoning. They allow the agent to interact with the outside world, perform
 calculations, fetch real-time data, or execute specific actions.
 
 * **`tools` (Optional):** Provide a list of tools the agent can use. Each item in the list can be:
-    * A native function or method (wrapped as a `FunctionTool`). Python ADK automatically wraps the native function into a `FunctionTool` whereas, you must explicitly wrap your Java methods using `FunctionTool.create(...)`
+    * A native function or method (wrapped as a `FunctionTool`). Python ADK automatically wraps the native function into a `FunctionTool` whereas, you must explicitly wrap your Java methods using `FunctionTool.create(...)`. In Kotlin, you can use the `@AdkTool` annotation to automatically generate a `FunctionTool` at compile-time.
     * An instance of a class inheriting from `BaseTool`.
     * An instance of another agent (`AgentTool`, enabling agent-to-agent delegation - see [Multi-Agents](multi-agents.md)).
 
@@ -302,6 +315,15 @@ on the conversation and its instructions.
             .build();
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/agents/llm-agent/capital_agent.kt:tool_definition"
+
+    // Add the tool to the agent
+    --8<-- "examples/kotlin/snippets/agents/llm-agent/capital_agent.kt:tool_usage"
+    ```
+
 Learn more about Tools in [Custom Tools](/tools-custom/).
 
 ## Advanced Configuration & Control
@@ -371,6 +393,12 @@ You can adjust how the underlying LLM generates responses using `generate_conten
                 .maxOutputTokens(250)
                 .build())
             .build();
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/agents/llm-agent/capital_agent.kt:gen_config"
     ```
 
 ### Structuring Data (`input_schema`, `output_schema`, `output_key`)
@@ -751,6 +779,12 @@ call_agent("If it's raining in New York right now, what is the current temperatu
 
         ```java
         --8<-- "examples/java/snippets/src/main/java/agents/LlmAgentExample.java:full_code"
+        ```
+
+    === "Kotlin"
+
+        ```kotlin
+        --8<-- "examples/kotlin/snippets/agents/llm-agent/capital_agent.kt:full_example"
         ```
 
 _(This example demonstrates the core concepts. More complex agents might incorporate schemas, context control, planning, etc.)_
