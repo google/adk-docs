@@ -118,6 +118,27 @@ An `Event` in ADK is an immutable record representing a specific point in the ag
     // }
     ```
 
+=== "Kotlin"
+    In Kotlin, this is an instance of the `com.google.adk.kt.events.Event` class.
+
+    ```kotlin
+    // Conceptual Structure of an Event (Kotlin)
+    // data class Event(
+    //     val author: String,
+    //     val content: Content? = null,
+    //     val actions: EventActions = EventActions(),
+    //     val invocationId: String? = null,
+    //     val branch: String? = null,
+    //     val timestamp: Long = Clock.System.now().toEpochMilliseconds(),
+    //     val id: String = Uuid.random(),
+    //     val partial: Boolean = false,
+    //     val turnComplete: Boolean = false,
+    //     val longRunningToolIds: Set<String> = emptySet()
+    // )
+    ```
+
+
+
 Events are central to ADK's operation for several key reasons:
 
 1.  **Communication:** They serve as the standard message format between the user interface, the `Runner`, agents, the LLM, and tools. Everything flows as an `Event`.
@@ -320,6 +341,36 @@ Quickly determine what an event represents by checking:
     //         System.out.println("  Type: Control Signal or Other");
     //     }
     // });
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    // Pseudocode: Basic event identification (Kotlin)
+    // runner.runAsync(...).collect { event ->
+    //     println("Event from: ${event.author}")
+    //
+    //     val content = event.content
+    //     if (content != null && content.parts.isNotEmpty()) {
+    //         if (event.functionCalls().isNotEmpty()) {
+    //             println("  Type: Tool Call Request")
+    //         } else if (event.functionResponses().isNotEmpty()) {
+    //             println("  Type: Tool Result")
+    //         } else if (content.parts[0].text != null) {
+    //             if (event.partial) {
+    //                 println("  Type: Streaming Text Chunk")
+    //             } else {
+    //                 println("  Type: Complete Text Message")
+    //             }
+    //         } else {
+    //             println("  Type: Other Content (e.g., code result)")
+    //         }
+    //     } else if (event.actions.stateDelta.isNotEmpty() || event.actions.artifactDelta.isNotEmpty()) {
+    //         println("  Type: State/Artifact Update")
+    //     } else {
+    //         println("  Type: Control Signal or Other")
+    //     }
+    // }
     ```
 
 ### Extracting Key Information
