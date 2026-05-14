@@ -102,6 +102,7 @@ markdown_extensions:
       pygments_lang_class: true
   - pymdownx.inlinehilite
   - pymdownx.snippets:
+      check_paths: true
       dedent_subsections: true
   - pymdownx.superfences:
       custom_fences:
