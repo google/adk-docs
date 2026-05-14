@@ -1,10 +1,3 @@
----
-catalog_title: Google Cloud Skill Registry
-catalog_description: Discover and fetch reusable Skills dynamically on-demand
-catalog_icon: /integrations/assets/agent-platform.svg
-catalog_tags: ["google", "skills"]
----
-
 # Google Cloud Skill Registry
 
 <div class="language-support-tag">
