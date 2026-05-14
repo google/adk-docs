@@ -1,3 +1,10 @@
+---
+catalog_title: Google Cloud Skill Registry
+catalog_description: Dynamically search, discover, and fetch remote Skills
+catalog_icon: /integrations/assets/agent-platform.svg
+catalog_tags: ["google", "skills", "connectors"]
+---
+
 # Google Cloud Skill Registry
 
 <div class="language-support-tag">
@@ -24,6 +31,9 @@ Rather than statically injecting every available skill into your agent's context
 *   The **Skill Registry API** enabled in your Google Cloud project.
 *   Authentication configured for your environment. We recommend logging in using [Application Default Credentials](https://docs.cloud.google.com/docs/authentication/application-default-credentials) (`gcloud auth application-default login`).
 *   Environment variables `GOOGLE_CLOUD_PROJECT` set to your project ID and `GOOGLE_CLOUD_LOCATION` set to your deployment region (e.g., `us-central1`).
+
+!!! warning "Internet Access Requirements"
+    Since the GCP Skill Registry interacts with Vertex AI services using the Vertex AI Client SDK, agents running in sandboxed environments without outbound network access to Vertex AI endpoints will fail to reach the registry. Ensure proper network access is configured, or else the system falls back to local, filesystem-loaded skills.
 
 ---
 
@@ -106,12 +116,14 @@ sequenceDiagram
     Agent-->>User: Fulfills request utilizing BigQuery skill instructions!
 ```
 
-### 1. Semantic Discovery (`search_skills`)
+### Semantic Discovery (`search_skills`)
 If the agent determines that its current system instructions are insufficient to answer a user query, it automatically invokes the `search_skills` tool. 
+
 *   **Collision Prevention**: To prevent namespace conflicts, ADK automatically filters out registry skills that duplicate the name of any locally loaded skills.
 
-### 2. On-Demand Loading (`load_skill`)
+### On-Demand Loading (`load_skill`)
 Once the agent identifies a matching remote skill (e.g., `"bigquery"`), it invokes the `load_skill` tool.
+
 *   **SDK Fetch**: ADK calls the Vertex AI Client SDK to retrieve the remote skill.
 *   **Extraction & Parsing**: The remote payload is unpacked and parsed into an executable `Skill` object.
 *   **Agent Session Caching**: The skill instructions and resources are cached in the current agent session state so subsequent turns do not require additional remote API calls.
@@ -136,6 +148,3 @@ The `GCPSkillRegistry` client constructor accepts the following options:
     Performs a semantic or keyword query against the registry catalog, returning a list of skill frontmatter metadata (names and descriptions).
 *   **`get_skill(name: str, version: Optional[str] = None) -> Skill`**:
     Fetches the remote skill payload using the Vertex AI Client SDK for a specific skill name (and optional revision/version), unpacks it, and returns a loaded `Skill` object.
-
-!!! warning "Internet Access Requirements"
-    Because the GCP Skill Registry interacts with Vertex AI services using the Vertex AI Client SDK, agents running in sandboxed environments without outbound network access to Vertex AI endpoints will fail to reach the registry. Ensure proper network access is configured or fall back to local, filesystem-loaded skills.
