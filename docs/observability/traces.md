@@ -50,10 +50,10 @@ adk web path/to/your/agents_dir
 
 #### GCP export
 
-To enable trace export to Google Cloud Trace, use the `-otel_to_cloud` flag:
+To enable trace export to Google Cloud Trace, use the `--otel_to_cloud` flag:
 
 ```bash
-adk web -otel_to_cloud path/to/your/agents_dir
+adk web --otel_to_cloud path/to/your/agents_dir
 ```
 
 ### Programmatic traces export

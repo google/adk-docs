@@ -24,13 +24,13 @@ pip install google-adk
 
     Activate the Python virtual environment:
 
-    === "Windows CMD"
+    === "Windows Command Prompt"
 
         ```console
         .venv\Scripts\activate.bat
         ```
 
-    === "Windows Powershell"
+    === "Windows PowerShell"
 
         ```console
         .venv\Scripts\Activate.ps1
@@ -94,9 +94,23 @@ don't already have Gemini API key, create a key in Google AI Studio on the
 
 In a terminal window, write your API key into an `.env` file as an environment variable:
 
-```console title="Update: my_agent/.env"
-echo 'GOOGLE_API_KEY="YOUR_API_KEY"' > .env
-```
+=== "MacOS / Linux"
+
+    ```bash title="Update: my_agent/.env"
+    echo 'GOOGLE_API_KEY="YOUR_API_KEY"' > .env
+    ```
+
+=== "Windows PowerShell"
+
+    ```console title="Update: my_agent/.env"
+    echo 'GOOGLE_API_KEY="YOUR_API_KEY"' > .env
+    ```
+
+=== "Windows Command Prompt"
+
+    ```console title="Update: my_agent/.env"
+    echo GOOGLE_API_KEY="YOUR_API_KEY" > .env
+    ```
 
 ??? tip "Using other AI models with ADK"
     ADK supports the use of many generative AI models. For more
