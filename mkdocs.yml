@@ -324,6 +324,7 @@ nav:
       - Tool limitations: tools/limitations.md
     - Skills for Agents:
       - skills/index.md
+      - Skill Registry: skills/registry.md
   - Run Agents:
     - Agent Runtime:
       - Agent Runtime: runtime/index.md
