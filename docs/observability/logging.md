@@ -107,10 +107,10 @@ adk web path/to/your/agents_dir
 
 #### GCP export setup
 
-You can enable GCP export using the `-otel_to_cloud` flag:
+You can enable GCP export using the `--otel_to_cloud` flag:
 
 ```bash
-adk web -otel_to_cloud path/to/your/agents_dir
+adk web --otel_to_cloud path/to/your/agents_dir
 ```
 
 ### Python programmatic setup
