@@ -1,9 +1,8 @@
 # LLM Auditor (Kotlin)
 
-An automated fact-checking agent built with the
-[Agent Development Kit (ADK)](https://google.github.io/adk-docs/) for Kotlin. It
-uses a sequential multi-agent pipeline to verify LLM-generated answers and
-correct any inaccuracies.
+An automated fact-checking agent built with [Agent Development Kit
+(ADK)](https://adk.dev) for Kotlin. It uses a sequential multi-agent pipeline to
+verify LLM-generated answers and correct any inaccuracies.
 
 ## Overview
 

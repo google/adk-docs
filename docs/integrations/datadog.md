@@ -47,11 +47,11 @@ pip install ddtrace
 
 ## Setup
 
-### Create an Application using the Google ADK
+### Create an Application using ADK
 
-If you do not have an application using the Google ADK, follow the steps in the
-[ADK Getting Started Guide](https://google.github.io/adk-docs/get-started/) to
-create a sample ADK agent.
+If you do not have an application using ADK, follow the steps in the [ADK
+Getting Started Guide](https://adk.dev/get-started/) to create a sample ADK
+agent.
 
 ### Configure Environment Variables
 

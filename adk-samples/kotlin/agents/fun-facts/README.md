@@ -1,9 +1,8 @@
 # Fun Facts Agent (Kotlin)
 
-A simple agent built with the
-[Agent Development Kit (ADK)](https://google.github.io/adk-docs/) for Kotlin. It
-uses the Gemini model and Google Search grounding to provide interesting and
-surprising fun facts about any topic you ask about.
+A simple agent built with [Agent Development Kit (ADK)](https://adk.dev) for
+Kotlin. It uses the Gemini model and Google Search grounding to provide
+interesting and surprising fun facts about any topic you ask about.
 
 ## Overview
 
