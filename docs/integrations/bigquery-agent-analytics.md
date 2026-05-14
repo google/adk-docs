@@ -85,6 +85,7 @@ shows the BigQuery view optionally created when
 | `HITL_CONFIRMATION_REQUEST_COMPLETED` | User provides confirmation response | synthetic tool name, result | *(base table only)* |
 | `HITL_INPUT_REQUEST_COMPLETED` | User provides input response | synthetic tool name, result | *(base table only)* |
 | `A2A_INTERACTION` | Remote A2A call completes | response, task ID, context ID, request/response | `v_a2a_interaction` |
+| `AGENT_RESPONSE` | Final agent response is yielded | response (content), source event ID/author/branch (attributes) | `v_agent_response` |
 
 ## Quickstart
 
@@ -468,7 +469,7 @@ Every view includes these **common columns**: `timestamp`, `event_type`,
 `agent`, `session_id`, `invocation_id`, `user_id`, `trace_id`, `span_id`,
 `parent_span_id`, `status`, `error_message`, `is_truncated`.
 
-The following table lists all 16 auto-created views and their event-specific
+The following table lists all auto-created views and their event-specific
 columns:
 
 | View Name | Event-Specific Columns |
@@ -489,6 +490,7 @@ columns:
 | **`v_hitl_confirmation_request`** | `tool_name` (STRING), `tool_args` (JSON) |
 | **`v_hitl_input_request`** | `tool_name` (STRING), `tool_args` (JSON) |
 | **`v_a2a_interaction`** | `response_content` (JSON), `a2a_task_id` (STRING), `a2a_context_id` (STRING), `a2a_request` (JSON), `a2a_response` (JSON) |
+| **`v_agent_response`** | `response_text` (STRING), `source_event_id` (STRING), `source_event_author` (STRING), `source_event_branch` (STRING) |
 
 ## Event types and payloads {#event-types}
 
@@ -698,6 +700,25 @@ updated by tools).
 | `AGENT_STARTING` | `"You are a helpful agent..."` |
 | `AGENT_COMPLETED` | `{}` |
 | `USER_MESSAGE_RECEIVED` | `{"text_summary": "Help me book a flight."}` |
+| `AGENT_RESPONSE` | `{"response": "Here are the flights..."}` |
+
+**AGENT_RESPONSE**
+
+Logged when the agent yields a final response to the user. The response text is stored in `content`, while the source event metadata is stored in `attributes`.
+
+```json
+{
+  "event_type": "AGENT_RESPONSE",
+  "content": {
+    "response": "Here are the available flights..."
+  },
+  "attributes": {
+    "source_event_id": "evt-abc123",
+    "source_event_author": "flight_agent",
+    "source_event_branch": "main"
+  }
+}
+```
 
 ### Human-in-the-Loop (HITL) Events {#hitl-events}
 
