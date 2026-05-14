@@ -71,19 +71,15 @@ theme:
   features:
     - content.action.edit
     - content.action.view
-    - content.code.annotate
     - content.code.copy
-    - content.code.select
     - content.tabs.link
     - content.tooltips
-    - navigation.footer
     - navigation.indexes
     - navigation.instant
     - navigation.instant.progress
     - navigation.path
     - navigation.sections
     - navigation.top
-    - navigation.tracking
     - navigation.tabs
     - toc.follow
 
