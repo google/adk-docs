@@ -241,6 +241,15 @@ across supported languages. For a guided introduction, start with the
     --8<-- "examples/kotlin/snippets/get-started/HelloTimeAgent.kt:full_code"
     ```
 
+    !!! warning "Do not embed API keys in client apps"
+
+        Do not include your API key directly in a published application.
+        This quickstart is intended for prototyping only. For production
+        use cases, call cloud models through your own backend service or
+        through
+        [Firebase AI Logic](https://firebase.google.com/docs/ai-logic)
+        so that API keys are never exposed in client code.
+
     **Run the agent from your Android app**
 
     On Android, `DebugRunner` and `AdkWebServer` are not available. Instead, use
