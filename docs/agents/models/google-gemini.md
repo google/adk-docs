@@ -293,6 +293,33 @@ To mitigate this, you can do one of the following:
             .build();
         ```
 
+    === "Kotlin"
+
+        In Kotlin, you can achieve this by creating the `Client` instance yourself and passing it to the `GeminiModel` constructor.
+
+        ```kotlin
+        import com.google.adk.kt.agents.LlmAgent
+        import com.google.adk.kt.models.GeminiModel
+        import com.google.genai.Client
+        import com.google.genai.types.HttpOptions
+        import com.google.genai.types.HttpRetryOptions
+
+        val client = Client.builder()
+            .apiKey("YOUR_API_KEY")
+            .httpOptions(HttpOptions.builder()
+                .retryOptions(HttpRetryOptions.builder().initialDelay(1.0).attempts(2).build())
+                .build())
+            .build()
+
+        val model = GeminiModel(client = client, name = "gemini-flash-latest")
+
+        val agent = LlmAgent(
+            name = "my_agent",
+            model = model
+            // ...
+        )
+        ```
+
 ## Gemini Interactions API {#interactions-api}
 
 <div class="language-support-tag" title="Java ADK currently supports Gemini and Anthropic models.">
