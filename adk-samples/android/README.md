@@ -1,48 +1,71 @@
-# ADK Demo App Sample
+# Agent Development Kit (ADK) Android Samples
 
-This is a sample Android application demonstrating the use of the Google ADK (Agent Development Kit) to create a fun facts agent.
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 
-## Setup Instructions
+<img src="https://github.com/google/adk-docs/blob/main/docs/assets/agent-development-kit.png" alt="Agent Development Kit Logo" width="150">
 
-To run this sample app, you need to provide a Gemini API key. This key is used by the `FunFactsAgent` to communicate with the Gemini model.
+This collection provides ready-to-use sample agents built as native Android
+applications on top of [ADK
+Kotlin](https://github.com/google/adk-kotlin). Each sample is a complete
+Android app that demonstrates how to integrate ADK agents into a mobile
+experience using Jetpack Compose.
 
-### 1. Get a Gemini API Key
+## Getting Started with Android Samples
 
-If you don't have one already, you can obtain an API key from the [Google AI Studio](https://aistudio.google.com/).
+Follow these steps to set up and run the sample agents:
 
-### 2. Configure the API Key
+1.  **Prerequisites:**
+    *   **Install ADK Kotlin:** Follow the
+        [Android setup guide](https://adk.dev/get-started/installation/#kotlin)
+        for project configuration and dependency setup.
+    *   **Android Studio** (latest stable release) with Android SDK
+        (compileSdk 34+, minSdk 26+).
+    *   **Java 17 or later.**
+    *   **Set Up API Key:** Each sample requires a Gemini API key. You can
+        create a key in Google AI Studio on the
+        [API Keys](https://aistudio.google.com/app/apikey) page. Provide it
+        via the `GOOGLE_API_KEY` environment variable or in
+        `local.properties`.
 
-The project is configured to read the API key during the build process. You can provide it in one of the following ways:
+2.  **Clone this repository:**
 
-#### Option A: Using an Environment Variable (Recommended)
+    To start working with the ADK Android samples, first clone the public
+    `adk-samples` repository:
+    ```bash
+    git clone https://github.com/google/adk-samples.git
+    cd adk-samples/android
+    ```
 
-Set an environment variable named `GEMINI_API_KEY` or `GOOGLE_API_KEY` on your development machine:
+3.  **Explore the Agents:**
 
+    *   Navigate to the `agents/` directory.
+    *   Browse the subdirectories. Each contains a complete Android
+        application with its own `README.md`.
+
+4.  **Run an Agent:**
+    *   Choose an agent from the `agents/` directory.
+    *   Open the agent's directory as a project in Android Studio (e.g.,
+        `agents/fun-facts`).
+    *   Follow the instructions in *that agent's* `README.md` file for
+        specific setup and running the app.
+
+**Notes:**
+
+These agents have been built and tested using
+[Google models](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/models).
+You can test these samples with other models as well. Please refer to
+[ADK Tutorials](https://adk.dev/tutorials/) to use other
+models for these samples.
+
+## Repository Structure
 ```bash
-export GEMINI_API_KEY="your_api_key_here"
+.
+├── android                     # Contains all the Android sample code
+│   ├── agents                  # Contains individual agent samples
+│   │   ├── agent1              # Specific agent directory (complete Android app)
+│   │   │   └── README.md       # Agent-specific instructions
+│   │   ├── agent2
+│   │   │   └── README.md
+│   │   ├── ...
+│   └── README.md               # This file (Repository overview)
 ```
-
-#### Option B: Using local.properties
-
-Alternatively, you can add the key to your `local.properties` file in the project root:
-
-1. Open `local.properties` (create it if it doesn't exist).
-2. Add the following line:
-
-```properties
-GEMINI_API_KEY=your_api_key_here
-```
-
-### 3. Build and Run
-
-Once the key is configured, you can build and run the app from Android Studio or using Gradle:
-
-```bash
-./gradlew :app:assembleDebug
-```
-
-## How it Works
-
-- **Agent Definition**: See `FunFactsAgent.kt` for how the `LlmAgent` is configured.
-- **Business Logic**: `ChatViewModel.kt` handles the interaction with the agent using `InMemoryRunner`.
-- **UI**: `MainActivity.kt` provides a simple Compose-based chat interface.
