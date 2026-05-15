@@ -149,8 +149,8 @@ across supported languages. For a guided introduction, start with the
 
     ```kotlin title="build.gradle.kts"
     plugins {
-        kotlin("jvm") version "2.1.0"
-        id("com.google.devtools.ksp") version "2.1.0-1.0.29"
+        kotlin("jvm") version "2.3.21"
+        id("com.google.devtools.ksp") version "2.3.7"
     }
 
     dependencies {
@@ -159,7 +159,7 @@ across supported languages. For a guided introduction, start with the
     }
     ```
 
-    The KSP processor generates code for the `@AdkTool` annotation used to
+    The KSP processor generates code for the `@Tool` annotation used to
     register function tools. See the [Kotlin Quickstart](/get-started/kotlin/)
     for a complete project setup.
 
@@ -174,7 +174,7 @@ across supported languages. For a guided introduction, start with the
     **Prerequisites**
 
     - [Android Studio](https://developer.android.com/studio)
-    - Android SDK (compileSdk 34 or later, minSdk 24 or later)
+    - Android SDK (compileSdk 34 or later, minSdk 26 or later)
 
     **Configure your Android project**
 
@@ -185,7 +185,7 @@ across supported languages. For a guided introduction, start with the
     plugins {
         id("com.android.application")
         kotlin("android")
-        id("com.google.devtools.ksp") version "2.1.0-1.0.29"
+        id("com.google.devtools.ksp") version "2.3.7"
     }
 
     dependencies {
@@ -200,7 +200,7 @@ across supported languages. For a guided introduction, start with the
         plugins {
             id("com.android.application")
             kotlin("android")
-            id("com.google.devtools.ksp") version "2.1.0-1.0.29"
+            id("com.google.devtools.ksp") version "2.3.7"
         }
 
         android {
@@ -209,7 +209,7 @@ across supported languages. For a guided introduction, start with the
 
             defaultConfig {
                 applicationId = "com.example.agent"
-                minSdk = 24
+                minSdk = 26
                 targetSdk = 34
             }
         }
@@ -234,7 +234,7 @@ across supported languages. For a guided introduction, start with the
 
     The agent code is identical to the
     [Kotlin Quickstart](/get-started/kotlin/#define-the-agent-code). The
-    same `HelloTimeAgent` with `@AdkTool`, `@AdkParam`, and `.adkTools()`
+    same `HelloTimeAgent` with `@Tool`, `@Param`, and `.generatedTools()`
     works unchanged on Android:
 
     ```kotlin title="HelloTimeAgent.kt"
@@ -252,7 +252,7 @@ across supported languages. For a guided introduction, start with the
 
     **Run the agent from your Android app**
 
-    On Android, `DebugRunner` and `AdkWebServer` are not available. Instead, use
+    On Android, `AdkWebServer` is not available. Instead, use
     `InMemoryRunner` to invoke the agent and collect responses from a coroutine:
 
     ```kotlin title="Call an ADK agent from Android code"
@@ -297,7 +297,7 @@ across supported languages. For a guided introduction, start with the
         access, keeping data on the device.
 
         To use an on-device model, create a `GenaiPrompt` model instead
-        of `GeminiModel`:
+        of `Gemini`:
 
         ```kotlin
         import com.google.adk.kt.models.mlkit.GenaiPrompt
@@ -319,7 +319,7 @@ across supported languages. For a guided introduction, start with the
         ```
 
         You can also combine cloud and on-device models in a multi-agent
-        system: use a cloud-based `GeminiModel` for the root orchestrator
+        system: use a cloud-based `Gemini` for the root orchestrator
         and on-device `GenaiPrompt` models for sub-agents that handle
         privacy-sensitive tasks. For more on this pattern, see the
         [ADK for Kotlin and Android blog post](https://android-developers.googleblog.com/2026/05/adk-kotlin-android-building-ai-agents.html).

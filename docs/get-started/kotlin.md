@@ -58,11 +58,11 @@ directory:
 --8<-- "examples/kotlin/snippets/get-started/HelloTimeAgent.kt:full_code"
 ```
 
-!!! note "About `@AdkTool` and KSP"
+!!! note "About `@Tool` and KSP"
 
-    The `@AdkTool` annotation marks a function as a tool that the agent can
+    The `@Tool` annotation marks a function as a tool that the agent can
     call. At compile time, a KSP (Kotlin Symbol Processing) annotation
-    processor generates the `.adkTools()` extension function used above.
+    processor generates the `.generatedTools()` extension function used above.
     This is a zero-reflection approach to function tool registration. The
     required KSP plugin and processor dependency are included in the
     `build.gradle.kts` configuration below.
@@ -85,8 +85,8 @@ dependencies {
 
     ```kotlin title="my_agent/build.gradle.kts"
     plugins {
-        kotlin("jvm") version "2.1.0"
-        id("com.google.devtools.ksp") version "2.1.0-1.0.29"
+        kotlin("jvm") version "2.3.21"
+        id("com.google.devtools.ksp") version "2.3.7"
         application
     }
 
@@ -147,24 +147,43 @@ to set environment variables:
 ### Create an entry point
 
 Create a `Main.kt` file to run and interact with `HelloTimeAgent` from the
-command line. The `DebugRunner` provides a built-in interactive REPL that
-manages sessions and console I/O for you.
+command line. The `InMemoryRunner` lets you invoke the agent programmatically
+and collect responses from a coroutine.
 
 ```kotlin title="my_agent/src/main/kotlin/com/example/agent/Main.kt"
 package com.example.agent
 
-import com.google.adk.kt.runners.DebugRunner
+import com.google.adk.kt.runners.InMemoryRunner
+import com.google.adk.kt.types.Content
+import com.google.adk.kt.types.Part
+import com.google.adk.kt.types.Role
+import kotlinx.coroutines.runBlocking
 
-fun main() {
-    val runner = DebugRunner(HelloTimeAgent.rootAgent)
-    runner.start()
+fun main() = runBlocking {
+    val runner = InMemoryRunner(agent = HelloTimeAgent.rootAgent)
+
+    print("You > ")
+    val input = readlnOrNull() ?: return@runBlocking
+    runner.runAsync(
+        userId = "user",
+        sessionId = "session",
+        newMessage = Content(
+            role = Role.USER,
+            parts = listOf(Part(text = input)),
+        ),
+    ).collect { event ->
+        val text = event.content?.parts?.firstOrNull()?.text
+        if (event.turnComplete && !text.isNullOrBlank()) {
+            println("\n${event.author} > $text")
+        }
+    }
 }
 ```
 
 ## Run your agent
 
 You can run your ADK agent using the interactive command-line interface
-provided by `DebugRunner` or the ADK web user interface provided by
+the command-line entry point above or the ADK web user interface provided by
 `AdkWebServer`. Both options allow you to test and interact with your agent.
 
 ### Run with command-line interface
@@ -213,7 +232,7 @@ import com.google.adk.kt.artifacts.InMemoryArtifactService
 import com.google.adk.kt.runners.InMemoryRunner
 import com.google.adk.kt.sessions.InMemorySessionService
 import com.google.adk.kt.webserver.AdkWebServer
-import com.google.adk.kt.webserver.AgentLoader
+import com.google.adk.kt.webserver.loaders.SingleAgentLoader
 import com.google.adk.kt.webserver.telemetry.ApiServerSpanExporter
 
 fun main() {
@@ -225,11 +244,7 @@ fun main() {
         port = 8080,
         sessionService = sessionService,
         artifactService = artifactService,
-        agentLoader = object : AgentLoader {
-            override fun listAgents() = listOf(agent.name)
-            override fun loadAgent(agentName: String) =
-                if (agentName == agent.name) agent else null
-        },
+        agentLoader = SingleAgentLoader(agent),
         runner = InMemoryRunner(
             agent = agent,
             sessionService = sessionService,

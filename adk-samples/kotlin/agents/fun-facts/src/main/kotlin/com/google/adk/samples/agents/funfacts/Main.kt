@@ -16,9 +16,28 @@
 
 package com.google.adk.samples.agents.funfacts
 
-import com.google.adk.kt.runners.DebugRunner
+import com.google.adk.kt.runners.InMemoryRunner
+import com.google.adk.kt.types.Content
+import com.google.adk.kt.types.Part
+import com.google.adk.kt.types.Role
+import kotlinx.coroutines.runBlocking
 
-fun main() {
-    val runner = DebugRunner(FunFactsAgent.rootAgent)
-    runner.start()
+fun main() = runBlocking {
+    val runner = InMemoryRunner(agent = FunFactsAgent.rootAgent)
+
+    print("You > ")
+    val input = readlnOrNull() ?: return@runBlocking
+    runner.runAsync(
+        userId = "user",
+        sessionId = "session",
+        newMessage = Content(
+            role = Role.USER,
+            parts = listOf(Part(text = input)),
+        ),
+    ).collect { event ->
+        val text = event.content?.parts?.firstOrNull()?.text
+        if (event.turnComplete && !text.isNullOrBlank()) {
+            println("\n${event.author} > $text")
+        }
+    }
 }

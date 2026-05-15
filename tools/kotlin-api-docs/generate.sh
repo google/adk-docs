@@ -82,22 +82,6 @@ echo "Cloning adk-kotlin v${VERSION}..."
 git clone --depth 1 --branch "v${VERSION}" https://github.com/google/adk-kotlin adk-kotlin
 cd adk-kotlin
 
-# Workaround: Remove Bazel BUILD file if present. On macOS (case-insensitive
-# filesystem), this file conflicts with Gradle's build/ output directory.
-if [[ -f "BUILD" ]]; then
-  echo "Removing Bazel BUILD file (macOS case-insensitive filesystem workaround)..."
-  rm -f BUILD
-fi
-
-# Workaround: Regenerate Gradle wrapper if the checked-in gradlew script
-# references a non-standard classpath
-if grep -q "wrapper_files" gradlew 2>/dev/null; then
-  GRADLE_VERSION=$(grep distributionUrl gradle/wrapper/gradle-wrapper.properties \
-    | sed 's|.*gradle-\(.*\)-bin.zip|\1|')
-  echo "Fixing non-standard Gradle wrapper (regenerating for Gradle ${GRADLE_VERSION})..."
-  gradle wrapper --gradle-version "$GRADLE_VERSION"
-fi
-
 # Build Dokka HTML docs (multi-module generates a unified site with module index)
 echo "Building Kotlin API docs with Dokka..."
 ./gradlew clean dokkaHtmlMultiModule
