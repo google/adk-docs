@@ -41,7 +41,7 @@ management for various tools used by your agent, use an *authentication manager*
 service that manages *both* for you. This service should handle the storage of
 keys and secrets, as well as the acquisition, management, and storage of OAuth
 access or refresh tokens. Learn more about 
-[Agent Identity integration](https://adk.dev/integrations/agent-identity/) with ADK.
+[Agent Identity integration](/integrations/agent-identity/) with ADK.
 
 ### Self-managed authentication
 
