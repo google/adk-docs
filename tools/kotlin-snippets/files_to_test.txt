@@ -13,3 +13,5 @@
 #   snippets/get-started/HelloTimeAgent.kt
 
 snippets/get-started/HelloTimeAgent.kt
+snippets/artifacts/ArtifactExamples.kt  
+snippets/agents/llm-agent/capital_agent.kt

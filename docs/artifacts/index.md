@@ -94,6 +94,12 @@ In ADK, **Artifacts** represent a crucial mechanism for managing named, versione
     }
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/artifacts/ArtifactExamples.kt:representation"
+    ```
+
 *   **Persistence & Management:** Artifacts are not stored directly within the agent or session state. Their storage and retrieval are managed by a dedicated **Artifact Service** (an implementation of `BaseArtifactService`, defined in `google.adk.artifacts`. ADK provides various implementations, such as:
     *   An in-memory service for testing or temporary storage (e.g., `InMemoryArtifactService` in Python, defined in `google.adk.artifacts.in_memory_artifact_service.py`).
     *   A service for persistent storage using Google Cloud Storage (GCS) (e.g., `GcsArtifactService` in Python, defined in `google.adk.artifacts.gcs_artifact_service.py`).
@@ -244,6 +250,12 @@ Understanding artifacts involves grasping a few key components: the service that
     // Now, contexts within runs managed by this runner can use artifact methods
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/artifacts/ArtifactExamples.kt:configure_runner"
+    ```
+
 ### Artifact Data
 
 * **Standard Representation:** Artifact content is universally represented using the `google.genai.types.Part` object, the same structure used for parts of LLM messages.
@@ -307,6 +319,12 @@ Understanding artifacts involves grasping a few key components: the service that
 
     ```java
     --8<-- "examples/java/snippets/src/main/java/artifacts/ArtifactDataExample.java:full_code"
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/artifacts/ArtifactExamples.kt:artifact_data"
     ```
 
 ### Filename
@@ -397,6 +415,12 @@ Understanding artifacts involves grasping a few key components: the service that
     // the ArtifactService implementation should recognize the "user:" prefix
     // and scope it to app_name and user_id, making it accessible across sessions for that user.
     // artifactService.saveArtifact(appName, userId, sessionId1, userConfigFilename, someData);
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/artifacts/ArtifactExamples.kt:namespacing"
     ```
 
 These core concepts work together to provide a flexible system for managing binary data within the ADK framework.
@@ -518,6 +542,15 @@ Before you can use any artifact methods via the context objects, you **must** pr
     }
     ```
 
+=== "Kotlin"
+
+    In Kotlin, you provide this instance when initializing your `Runner`.
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/artifacts/ArtifactExamples.kt:configure_runner"
+    ```
+    If no `artifactService` is configured, calling `saveArtifact`, `loadArtifact`, or `listArtifacts` on the context objects will throw an exception.
+
 ### Accessing Methods
 
 The artifact interaction methods are available directly on instances of `CallbackContext` (passed to agent and model callbacks) and `ToolContext` (passed to tool callbacks) in Python, Go, and Java and available on the unified `Context` in TypeScript.
@@ -629,6 +662,14 @@ The artifact interaction methods are available directly on instances of `Callbac
             // Due to async nature, in a real app, ensure program waits or handles completion.
           }
         }
+        ```
+
+    === "Kotlin"
+
+        In Kotlin, you access the `ArtifactService` from the `ToolContext` (or `CallbackContext` via `invocationContext`) to save an artifact.
+
+        ```kotlin
+        --8<-- "examples/kotlin/snippets/artifacts/ArtifactExamples.kt:interaction_save"
         ```
 
 #### Loading Artifacts
@@ -804,6 +845,14 @@ The artifact interaction methods are available directly on instances of `Callbac
         }
         ```
 
+    === "Kotlin"
+
+        In Kotlin, you can load an artifact directly from the `ToolContext` (or `CallbackContext`) using `context.loadArtifact(name)`.
+
+        ```kotlin
+        --8<-- "examples/kotlin/snippets/artifacts/ArtifactExamples.kt:interaction_load"
+        ```
+
 #### Using `LoadArtifactsTool`
 
 You can add `LoadArtifactsTool` when the model should decide which available
@@ -865,6 +914,15 @@ artifact in a later turn.
 
     Make sure the `runner.Config` for this agent includes an
     `ArtifactService`; otherwise artifact listing and loading will fail.
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/artifacts/ArtifactExamples.kt:load_artifacts_tool"
+    ```
+
+    Make sure the `Runner` for this agent is configured with an
+    `artifactService`; otherwise artifact listing and loading will fail.
 
 #### Listing Artifact Filenames
 
@@ -1017,6 +1075,12 @@ artifact in a later turn.
         }
         ```
 
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/artifacts/ArtifactExamples.kt:listing_artifacts"
+    ```
+
 These methods for saving, loading, and listing provide a convenient and consistent way to manage binary data persistence within ADK, whether using Python's context objects or directly interacting with the `BaseArtifactService` in Java, regardless of the chosen backend storage implementation.
 
 ## Available Implementations
@@ -1096,6 +1160,11 @@ ADK provides concrete implementations of the `BaseArtifactService` interface, of
         }
         ```
 
+    === "Kotlin"
+
+        ```kotlin
+        --8<-- "examples/kotlin/snippets/artifacts/ArtifactExamples.kt:in_memory_service"
+        ```
 ### GcsArtifactService
 
 
@@ -1163,6 +1232,11 @@ ADK provides concrete implementations of the `BaseArtifactService` interface, of
         --8<-- "examples/java/snippets/src/main/java/artifacts/GcsServiceSetup.java:full_code"
         ```
 
+    === "Kotlin"
+
+        ```kotlin
+        --8<-- "examples/kotlin/snippets/artifacts/ArtifactExamples.kt:gcs_service"
+        ```
 Choosing the appropriate `ArtifactService` implementation depends on your application's requirements for data persistence, scalability, and operational environment.
 
 ## Best Practices
