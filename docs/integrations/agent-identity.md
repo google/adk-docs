@@ -4,7 +4,7 @@ catalog_description: Manage OAuth tokens and API keys for your agents
 catalog_icon: /integrations/assets/agent-identity.svg
 catalog_tags: ["google"]
 ---
-(test)
+
 # Agent Identity Auth Manager for ADK
 
 <div class="language-support-tag">
@@ -128,4 +128,8 @@ toolset = McpToolset(
 ## Resources
 
 - [Google Cloud Agent Identity Overview](https://docs.cloud.google.com/iam/docs/agent-identity-overview)
+- [2-legged OAuth using Google Cloud Agent Identity](https://docs.cloud.google.com/iam/docs/auth-with-2lo)
+- [3-legged OAuth using Google Cloud Agent Identity](https://docs.cloud.google.com/iam/docs/auth-with-3lo)
+- [API key auth using Google Cloud Agent Identity](https://docs.cloud.google.com/iam/docs/auth-with-api-key)
 - [Sample agent code](https://github.com/google/adk-python/tree/main/contributing/samples/gcp_auth)
+
