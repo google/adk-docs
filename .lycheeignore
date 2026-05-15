@@ -17,7 +17,6 @@
 ^https://postman\.postman\.co/settings/me/
 
 # TODO: Remove at release time
-^https://android-developers\.googleblog\.com/2026/05/adk-kotlin-android
 ^https://github\.com/google/adk-kotlin
 ^https://adk\.dev/api-reference/kotlin/
 ^https://adk\.dev/get-started/kotlin
