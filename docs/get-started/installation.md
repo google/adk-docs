@@ -322,6 +322,3 @@ across supported languages. For a guided introduction, start with the
         system: use a cloud-based `Gemini` for the root orchestrator
         and on-device `GenaiPrompt` models for sub-agents that handle
         privacy-sensitive tasks.
-
-    For a complete working Activity and more examples, see the
-    [ADK Kotlin examples on GitHub](https://github.com/google/adk-kotlin/tree/main/internal/examples).
