@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     kotlin("jvm") version "2.1.0"
     id("com.google.devtools.ksp") version "2.1.0-1.0.29"
@@ -21,12 +22,12 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
     implementation("com.google.cloud:google-cloud-storage:2.48.2")
 }
+
 kotlin {
     jvmToolchain(17)
 }
 
 ktlint {
-...
     android.set(false)
     ignoreFailures.set(false)
     reporters {
