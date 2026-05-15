@@ -43,7 +43,7 @@ keys and secrets, as well as the acquisition, management, and storage of OAuth
 access or refresh tokens. Learn more about Agent Identity Authentication Manager
 for [2-legged OAuth](https://docs.cloud.google.com/iam/docs/auth-with-2lo),
 [3-legged OAuth](https://docs.cloud.google.com/iam/docs/auth-with-3lo), and [API
-key](https://docs.cloud.google.com/iam/docs/auth-with-api-key).
+key](https://docs.cloud.google.com/iam/docs/auth-with-api-key).[Agent Identity integration](https://adk.dev/integrations/agent-identity/)
 
 ### Self-managed authentication
 
