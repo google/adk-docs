@@ -36,11 +36,26 @@ The `RunConfig` class holds configuration parameters for an agent's runtime beha
 
         speech_config: Optional[types.SpeechConfig] = None
         response_modalities: Optional[list[str]] = None
-        save_input_blobs_as_artifacts: bool = False
+        avatar_config: Optional[types.AvatarConfig] = None
+        save_input_blobs_as_artifacts: bool = False  # DEPRECATED: use SaveFilesAsArtifactsPlugin
         support_cfc: bool = False
         streaming_mode: StreamingMode = StreamingMode.NONE
-        output_audio_transcription: Optional[types.AudioTranscriptionConfig] = None
+        output_audio_transcription: Optional[types.AudioTranscriptionConfig] = Field(
+            default_factory=types.AudioTranscriptionConfig
+        )
+        input_audio_transcription: Optional[types.AudioTranscriptionConfig] = Field(
+            default_factory=types.AudioTranscriptionConfig
+        )
+        realtime_input_config: Optional[types.RealtimeInputConfig] = None
+        enable_affective_dialog: Optional[bool] = None
+        proactivity: Optional[types.ProactivityConfig] = None
+        session_resumption: Optional[types.SessionResumptionConfig] = None
+        context_window_compression: Optional[types.ContextWindowCompressionConfig] = None
+        save_live_blob: bool = False
+        tool_thread_pool_config: Optional[ToolThreadPoolConfig] = None
         max_llm_calls: int = 500
+        custom_metadata: Optional[dict[str, Any]] = None
+        get_session_config: Optional[GetSessionConfig] = None
     ```
 
 === "TypeScript"
@@ -116,9 +131,20 @@ The `RunConfig` class holds configuration parameters for an agent's runtime beha
 | `response_modalities`           | `Optional[list[str]]`                        | `Modality[]` (optional)               | N/A             | `ImmutableList<Modality>`                             | `None` / `undefined` / N/A / Empty `ImmutableList`                                             | List of desired output modalities (e.g., Python: `["TEXT", "AUDIO"]`; Java/TS: uses structured `Modality` objects).                                         |
 | `save_input_blobs_as_artifacts` | `bool`                                       | `boolean`                             | `bool`          | `boolean`                                             | `False` / `false` / `false` / `false`                                                          | If `true`, saves input blobs (e.g., uploaded files) as run artifacts for debugging/auditing.                                                                |
 | `streaming_mode`                | `StreamingMode`                              | `StreamingMode`                       | `StreamingMode` | `StreamingMode`                                       | `StreamingMode.NONE` / `StreamingMode.NONE` / `agent.StreamingModeNone` / `StreamingMode.NONE` | Sets the streaming behavior: `NONE` (default), `SSE` (server-sent events), or `BIDI` (bidirectional).                                                       |
-| `output_audio_transcription`    | `Optional[types.AudioTranscriptionConfig]`   | `AudioTranscriptionConfig` (optional) | N/A             | `AudioTranscriptionConfig` (nullable via `@Nullable`) | `None` / `undefined` / N/A / `null`                                                            | Configures transcription of generated audio output using the `AudioTranscriptionConfig` type.                                                               |
+| `output_audio_transcription`    | `Optional[types.AudioTranscriptionConfig]`   | `AudioTranscriptionConfig` (optional) | N/A             | `AudioTranscriptionConfig` (nullable via `@Nullable`) | `AudioTranscriptionConfig()` / `undefined` / N/A / `null`                                      | Configures transcription of generated audio output using the `AudioTranscriptionConfig` type.                                                               |
 | `max_llm_calls`                 | `int`                                        | `number`                              | N/A             | `int`                                                 | `500` / `500` / N/A / `500`                                                                    | Limits total LLM calls per run. `0` or negative means unlimited. Exceeding language limits (e.g. `sys.maxsize`, `Number.MAX_SAFE_INTEGER`) raises an error. |
 | `support_cfc`                   | `bool`                                       | `boolean`                             | N/A             | `bool`                                                | `False` / `false` / N/A / `false`                                                              | **Python/TypeScript:** Enables Compositional Function Calling. Requires `streaming_mode=SSE` and uses the LIVE API. **Experimental.**                       |
+| `avatar_config`                 | `Optional[types.AvatarConfig]`               | N/A                                   | N/A             | N/A                                                   | `None`                                                                                         | Avatar configuration for live agents.                                                                                                                       |
+| `input_audio_transcription`     | `Optional[types.AudioTranscriptionConfig]`   | N/A                                   | N/A             | N/A                                                   | `AudioTranscriptionConfig()`                                                                   | Configures transcription of audio input from the user in live agents.                                                                                       |
+| `realtime_input_config`         | `Optional[types.RealtimeInputConfig]`        | N/A                                   | N/A             | N/A                                                   | `None`                                                                                         | Realtime input configuration for live agents with audio input.                                                                                              |
+| `enable_affective_dialog`       | `Optional[bool]`                             | N/A                                   | N/A             | N/A                                                   | `None`                                                                                         | When enabled, the model detects emotions and adapts its responses accordingly.                                                                               |
+| `proactivity`                   | `Optional[types.ProactivityConfig]`          | N/A                                   | N/A             | N/A                                                   | `None`                                                                                         | Configures model proactivity — allows the model to respond proactively and ignore irrelevant input.                                                          |
+| `session_resumption`            | `Optional[types.SessionResumptionConfig]`    | N/A                                   | N/A             | N/A                                                   | `None`                                                                                         | Configures transparent session resumption. Only transparent mode is currently supported.                                                                    |
+| `context_window_compression`    | `Optional[types.ContextWindowCompressionConfig]` | N/A                                | N/A             | N/A                                                   | `None`                                                                                         | Enables context window compression for LLM input when set.                                                                                                  |
+| `save_live_blob`                | `bool`                                       | N/A                                   | N/A             | N/A                                                   | `False`                                                                                        | Saves live video and audio data to the session and artifact service.                                                                                         |
+| `tool_thread_pool_config`       | `Optional[ToolThreadPoolConfig]`             | N/A                                   | N/A             | N/A                                                   | `None`                                                                                         | Runs tools in a thread pool in live mode to keep the event loop responsive for user interruptions. See `ToolThreadPoolConfig`.                               |
+| `custom_metadata`               | `Optional[dict[str, Any]]`                   | N/A                                   | N/A             | N/A                                                   | `None`                                                                                         | Arbitrary custom metadata attached to the current invocation.                                                                                                |
+| `get_session_config`            | `Optional[GetSessionConfig]`                 | N/A                                   | N/A             | N/A                                                   | `None`                                                                                         | Controls which events are fetched when loading a session (e.g. `num_recent_events`). Useful with `EventsCompactionConfig`.                                  |
 
 
 ### `speech_config`
@@ -196,6 +222,9 @@ various channels (e.g., text, audio).
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
+!!! warning "Deprecated"
+    `save_input_blobs_as_artifacts` is deprecated. Use `SaveFilesAsArtifactsPlugin` instead for better control and flexibility. See `google.adk.plugins.SaveFilesAsArtifactsPlugin`.
+
 When enabled, input blobs will be saved as artifacts during agent execution.
 This is useful for debugging and audit purposes, allowing developers to review
 the exact data received by agents.
@@ -225,9 +254,9 @@ Configures the streaming behavior of the agent. Possible values:
 
 * `StreamingMode.NONE`: No streaming; responses delivered as complete units
 * `StreamingMode.SSE`: Server-Sent Events streaming; one-way streaming from server to client
-* `StreamingMode.BIDI`: Bidirectional streaming; simultaneous communication in both directions
+* `StreamingMode.BIDI`: Reserved for bidirectional streaming. **Not currently used** in the standard `run_async()` execution path. For real bidirectional streaming, use `runner.run_live()` instead.
 
-Streaming modes affect both performance and user experience. SSE streaming lets users see partial responses as they're generated, while BIDI streaming enables real-time interactive experiences.
+Streaming modes affect both performance and user experience. SSE streaming lets users see partial responses as they're generated.
 
 ### `output_audio_transcription`
 
@@ -254,6 +283,113 @@ This parameter prevents excessive API usage and potential runaway processes.
 Since LLM calls often incur costs and consume resources, setting appropriate
 limits is crucial.
 
+### `input_audio_transcription`
+
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
+</div>
+
+Configures transcription of audio input received from the user in live agents.
+Defaults to an `AudioTranscriptionConfig()` instance.
+
+### `realtime_input_config`
+
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
+</div>
+
+Provides realtime input configuration for live agents that accept audio from users.
+
+### `enable_affective_dialog`
+
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
+</div>
+
+When set to `True`, the model detects user emotions from the conversation and adapts its tone and responses accordingly.
+
+### `proactivity`
+
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
+</div>
+
+Configures the proactivity of the model using `types.ProactivityConfig`. Allows the model to respond proactively to input and ignore irrelevant messages.
+
+### `session_resumption`
+
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
+</div>
+
+Configures session resumption via `types.SessionResumptionConfig`. Only transparent session resumption mode is currently supported.
+
+### `context_window_compression`
+
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
+</div>
+
+When set, enables context window compression for LLM input using `types.ContextWindowCompressionConfig`. Useful for long-running sessions that approach model context limits.
+
+### `save_live_blob`
+
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
+</div>
+
+When `True`, saves live video and audio data to the session and artifact service. Replaces the deprecated `save_live_audio` field.
+
+### `tool_thread_pool_config`
+
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
+</div>
+
+When set, tool executions in live mode run in a background thread pool instead of the main event loop. This keeps the event loop responsive to user interruptions and incoming model events.
+
+```python
+from google.adk.agents.run_config import RunConfig, ToolThreadPoolConfig
+
+# Default thread pool (4 workers)
+run_config = RunConfig(
+    tool_thread_pool_config=ToolThreadPoolConfig(),
+)
+
+# Custom thread pool
+run_config = RunConfig(
+    tool_thread_pool_config=ToolThreadPoolConfig(max_workers=8),
+)
+```
+
+!!! note "GIL considerations"
+    Thread pools help with blocking I/O and C extensions that release the GIL (e.g. `time.sleep()`, network calls, numpy). They do **not** help with pure Python CPU-bound code since the GIL prevents true parallel execution of Python bytecode.
+
+### `custom_metadata`
+
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
+</div>
+
+A `dict[str, Any]` of arbitrary metadata attached to the current invocation. Useful for tracing or logging custom context alongside agent runs.
+
+### `get_session_config`
+
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
+</div>
+
+Controls which events are fetched when loading a session. Accepts a `GetSessionConfig` instance (e.g. `num_recent_events`, `after_timestamp`). Especially useful in combination with `EventsCompactionConfig` to avoid loading the full event history on every invocation.
+
+```python
+from google.adk.agents.run_config import RunConfig
+from google.adk.sessions.base_session_service import GetSessionConfig
+
+run_config = RunConfig(
+    get_session_config=GetSessionConfig(num_recent_events=50),
+)
+```
+
 ## Validation Rules
 
 <div class="language-support-tag">
@@ -272,7 +408,7 @@ For the `max_llm_calls` parameter specifically:
 === "Python"
 
     ```python
-    from google.genai.adk import RunConfig, StreamingMode
+    from google.adk.agents.run_config import RunConfig, StreamingMode
 
     config = RunConfig(
         streaming_mode=StreamingMode.NONE,
@@ -322,7 +458,7 @@ preferable.
 === "Python"
 
     ```python
-    from google.genai.adk import RunConfig, StreamingMode
+    from google.adk.agents.run_config import RunConfig, StreamingMode
 
     config = RunConfig(
         streaming_mode=StreamingMode.SSE,
@@ -371,9 +507,11 @@ providing a more responsive feel for chatbots and assistants.
 === "Python"
 
     ```python
-    from google.genai.adk import RunConfig, StreamingMode
+    from google.adk.agents.run_config import RunConfig, StreamingMode
     from google.genai import types
 
+    # To save input blobs as artifacts, register SaveFilesAsArtifactsPlugin
+    # on the runner instead of using the deprecated save_input_blobs_as_artifacts flag.
     config = RunConfig(
         speech_config=types.SpeechConfig(
             language_code="en-US",
@@ -384,7 +522,6 @@ providing a more responsive feel for chatbots and assistants.
             ),
         ),
         response_modalities=["AUDIO", "TEXT"],
-        save_input_blobs_as_artifacts=True,
         support_cfc=True,
         streaming_mode=StreamingMode.SSE,
         max_llm_calls=1000,
@@ -451,7 +588,7 @@ This comprehensive example configures an agent with:
 
 * Speech capabilities using the "Kore" voice (US English)
 * Both audio and text output modalities
-* Artifact saving for input blobs (useful for debugging)
+* Artifact saving for input blobs in TypeScript/Java (in Python, prefer `SaveFilesAsArtifactsPlugin`)
 * Experimental CFC support enabled **(Python and TypeScript)**
 * SSE streaming for responsive interaction
 * A limit of 1000 LLM calls
@@ -465,7 +602,7 @@ This comprehensive example configures an agent with:
 === "Python"
 
     ```python
-    from google.genai.adk import RunConfig, StreamingMode
+    from google.adk.agents.run_config import RunConfig, StreamingMode
 
     config = RunConfig(
         streaming_mode=StreamingMode.SSE,
