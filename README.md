@@ -56,6 +56,8 @@ You can use Agent Development Kit (ADK) with your preferred language:
 
 - **[Get started with ADK Java](https://adk.dev/get-started/java/)**
 
+- **[Get started with ADK Kotlin](https://adk.dev/get-started/kotlin/)**
+
 ## 📚 Documentation
 
 Explore the full documentation for detailed guides on building, evaluating, and
