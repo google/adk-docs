@@ -87,7 +87,7 @@ First, you need to establish what the agent *is* and what it's *for*.
 === "Kotlin"
 
     ```kotlin
-    --8<-- "examples/kotlin/snippets/agents/llm-agent/capital_agent.kt:identity"
+    --8<-- "examples/kotlin/snippets/agents/llm-agent/CapitalAgent.kt:identity"
     ```
 
 ## Guiding the Agent: Instructions (`instruction`)
@@ -188,7 +188,7 @@ tells the agent:
 === "Kotlin"
 
     ```kotlin
-    --8<-- "examples/kotlin/snippets/agents/llm-agent/capital_agent.kt:instruction"
+    --8<-- "examples/kotlin/snippets/agents/llm-agent/CapitalAgent.kt:instruction"
     ```
 
 *(Note: For instructions that apply to *all* agents in a system, consider using
@@ -202,7 +202,7 @@ reasoning. They allow the agent to interact with the outside world, perform
 calculations, fetch real-time data, or execute specific actions.
 
 * **`tools` (Optional):** Provide a list of tools the agent can use. Each item in the list can be:
-    * A native function or method (wrapped as a `FunctionTool`). Python ADK automatically wraps the native function into a `FunctionTool` whereas, you must explicitly wrap your Java methods using `FunctionTool.create(...)`. In Kotlin, you can use the `@AdkTool` annotation to automatically generate a `FunctionTool` at compile-time.
+    * A native function or method (wrapped as a `FunctionTool`). Python ADK automatically wraps the native function into a `FunctionTool` whereas, you must explicitly wrap your Java methods using `FunctionTool.create(...)`. In Kotlin, you can use the `@Tool` annotation to automatically generate a `FunctionTool` at compile-time.
     * An instance of a class inheriting from `BaseTool`.
     * An instance of another agent (`AgentTool`, enabling agent-to-agent delegation - see [Multi-Agents](multi-agents.md)).
 
@@ -313,10 +313,10 @@ on the conversation and its instructions.
 === "Kotlin"
 
     ```kotlin
-    --8<-- "examples/kotlin/snippets/agents/llm-agent/capital_agent.kt:tool_definition"
+    --8<-- "examples/kotlin/snippets/agents/llm-agent/CapitalAgent.kt:tool_definition"
 
     // Add the tool to the agent
-    --8<-- "examples/kotlin/snippets/agents/llm-agent/capital_agent.kt:tool_usage"
+    --8<-- "examples/kotlin/snippets/agents/llm-agent/CapitalAgent.kt:tool_usage"
     ```
 
 Learn more about Tools in [Custom Tools](/tools-custom/).
@@ -393,7 +393,7 @@ You can adjust how the underlying LLM generates responses using `generate_conten
 === "Kotlin"
 
     ```kotlin
-    --8<-- "examples/kotlin/snippets/agents/llm-agent/capital_agent.kt:gen_config"
+    --8<-- "examples/kotlin/snippets/agents/llm-agent/CapitalAgent.kt:gen_config"
     ```
 
 ### Structuring Data (`input_schema`, `output_schema`, `output_key`)
@@ -779,7 +779,7 @@ call_agent("If it's raining in New York right now, what is the current temperatu
     === "Kotlin"
 
         ```kotlin
-        --8<-- "examples/kotlin/snippets/agents/llm-agent/capital_agent.kt:full_example"
+        --8<-- "examples/kotlin/snippets/agents/llm-agent/CapitalAgent.kt:full_example"
         ```
 
 _(This example demonstrates the core concepts. More complex agents might incorporate schemas, context control, planning, etc.)_
