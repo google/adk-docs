@@ -62,7 +62,7 @@
   <div class="breadcrumbs"><a href="../../index.html">google-adk-kotlin-core</a><span class="delimiter">/</span><a href="../index.html">com.google.adk.kt.skills</a><span class="delimiter">/</span><span class="current">SkillSourceException</span></div>
   <div class="cover ">
     <h1 class="cover"><span>Skill</span><wbr><span>Source</span><wbr><span><span>Exception</span></span></h1>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">SkillSourceException</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">message<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">cause<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-throwable/index.html">Throwable</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span></div><p class="paragraph">The exception type returned by <a href="../-skill-source/index.html">SkillSource</a> methods.</p><p class="paragraph">A <a href="../-skill-source/index.html">SkillSource</a> wraps this exception in Result.failure for any skill related failures, for example: the skill does not exist, the requested resource path is malformed, the resource file is missing, or the source itself is misconfigured. The message describes the specific cause and is intended to be forwarded to the LLM, so it MUST be precise and self-contained, and MUST NOT leak sensitive internal detail.</p></div></div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">SkillSourceException</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">message<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">cause<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-throwable/index.html">Throwable</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span> : <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-exception/index.html">Exception</a></div><p class="paragraph">The exception type returned by <a href="../-skill-source/index.html">SkillSource</a> methods.</p><p class="paragraph">A <a href="../-skill-source/index.html">SkillSource</a> wraps this exception in <a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-result/-companion/failure.html">Result.failure</a> for any skill related failures, for example: the skill does not exist, the requested resource path is malformed, the resource file is missing, or the source itself is misconfigured. The <a href="../../../google-adk-kotlin-core/com.google.adk.kt.skills/-skill-source-exception/message.html">message</a> describes the specific cause and is intended to be forwarded to the LLM, so it MUST be precise and self-contained, and MUST NOT leak sensitive internal detail.</p></div></div>
   </div>
   <div class="tabbedcontent">
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
@@ -80,6 +80,40 @@
               <div>
                 <div class="title">
                   <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">message<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">cause<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-throwable/index.html">Throwable</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="-654012527%2FProperties%2F-1644122207" anchor-label="cause" id="-654012527%2FProperties%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#-654012527%2FProperties%2F-1644122207"><span><span>cause</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-654012527%2FProperties%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">val </span><a href="index.html#-654012527%2FProperties%2F-1644122207">cause</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-throwable/index.html">Throwable</a><span class="token operator">?</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1824300659%2FProperties%2F-1644122207" anchor-label="message" id="1824300659%2FProperties%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="index.html#1824300659%2FProperties%2F-1644122207"><span><span>message</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1824300659%2FProperties%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">val </span><a href="index.html#1824300659%2FProperties%2F-1644122207">message</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span></div></div></div>
                 </div>
               </div>
             </div>
