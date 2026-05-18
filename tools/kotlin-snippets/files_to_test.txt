@@ -11,8 +11,6 @@
 # Examples:
 #   # Single file example
 #   snippets/get-started/HelloTimeAgent.kt
-
-snippets/get-started/HelloTimeAgent.kt
 snippets/artifacts/ArtifactExamples.kt  
 snippets/agents/llm-agent/CapitalAgent.kt
 snippets/callbacks/CallbackBasic.kt
