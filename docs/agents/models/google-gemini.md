@@ -295,11 +295,11 @@ To mitigate this, you can do one of the following:
 
     === "Kotlin"
 
-        In Kotlin, you can achieve this by creating the `Client` instance yourself and passing it to the `GeminiModel` constructor.
+        In Kotlin, you can achieve this by creating the `Client` instance yourself and passing it to the `Gemini` constructor.
 
         ```kotlin
         import com.google.adk.kt.agents.LlmAgent
-        import com.google.adk.kt.models.GeminiModel
+        import com.google.adk.kt.models.Gemini
         import com.google.genai.Client
         import com.google.genai.types.HttpOptions
         import com.google.genai.types.HttpRetryOptions
@@ -311,7 +311,7 @@ To mitigate this, you can do one of the following:
                 .build())
             .build()
 
-        val model = GeminiModel(client = client, name = "gemini-flash-latest")
+        val model = Gemini(client = client, name = "gemini-flash-latest")
 
         val agent = LlmAgent(
             name = "my_agent",

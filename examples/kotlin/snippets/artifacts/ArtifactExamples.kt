@@ -2,7 +2,7 @@ package com.google.adk.kt.examples.artifacts
 
 import com.google.adk.kt.agents.LlmAgent
 import com.google.adk.kt.agents.Instruction
-import com.google.adk.kt.models.GeminiModel
+import com.google.adk.kt.models.Gemini
 import com.google.adk.kt.runners.InMemoryRunner
 import com.google.adk.kt.sessions.InMemorySessionService
 import com.google.adk.kt.artifacts.InMemoryArtifactService
@@ -33,7 +33,7 @@ fun artifactRepresentationExample() {
 
 // --8<-- [start:configure_runner]
 fun configureRunnerExample() {
-    val myAgent = LlmAgent(name = "artifact_user_agent", model = GeminiModel("gemini-flash-latest"))
+    val myAgent = LlmAgent(name = "artifact_user_agent", model = Gemini("gemini-flash-latest"))
     val artifactService = InMemoryArtifactService()
     val sessionService = InMemorySessionService()
 
@@ -112,7 +112,7 @@ suspend fun processLatestReport(context: ToolContext) {
 fun loadArtifactsToolExample() {
     val rootAgent = LlmAgent(
         name = "artifact_reader",
-        model = GeminiModel("gemini-flash-latest"),
+        model = Gemini("gemini-flash-latest"),
         instruction = Instruction(
             "Answer questions about available user files. " +
             "Call load_artifacts before answering when you need file contents."

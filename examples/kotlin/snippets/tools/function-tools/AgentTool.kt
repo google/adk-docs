@@ -39,8 +39,7 @@ fun main() = runBlocking {
     // Create an InMemoryRunner
     val runner = InMemoryRunner(agent = rootAgent, appName = appName)
 
-    // Create a session using the runner's session service
-    val session = runner.sessionService.createSession(com.google.adk.kt.sessions.SessionKey(appName, userId))
+    val sessionId = "session_001"
 
     val longText = """
         Quantum computing represents a fundamentally different approach to computation, 
@@ -56,7 +55,7 @@ fun main() = runBlocking {
     val userMessage = Content(parts = listOf(Part(text = longText)))
 
     // Run the agent and collect events
-    runner.runAsync(userId, session.key.id!!, newMessage = userMessage).collect { event ->
+    runner.runAsync(userId = userId, sessionId = sessionId, newMessage = userMessage).collect { event ->
         if (event.isFinalResponse) {
             val finalResponse = event.content?.parts?.firstOrNull()?.text
             println("Agent Response: $finalResponse")

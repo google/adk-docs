@@ -87,8 +87,9 @@ fun main() = runBlocking {
     
     // Use runAsync to get a Flow of events
     runner.runAsync(userId = "user123", sessionId = "session456", newMessage = userMessage).collect { event ->
-        if (event.turnComplete && event.content != null) {
-            println(event.content!!.parts[0].text)
+        if (event.isFinalResponse) {
+            val finalResponse = event.content?.parts?.firstOrNull()?.text
+            println(finalResponse)
         }
     }
     // --8<-- [end:full_example]

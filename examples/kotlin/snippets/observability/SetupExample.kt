@@ -23,6 +23,7 @@ import com.google.adk.kt.plugins.PluginManager
 import com.google.adk.kt.runners.InMemoryRunner
 import com.google.adk.kt.telemetry.TelemetryConfig
 import com.google.adk.kt.types.Content
+import com.google.adk.kt.types.Role
 import io.opentelemetry.api.common.AttributeKey
 import io.opentelemetry.api.common.Attributes
 import io.opentelemetry.exporter.otlp.trace.OtlpGrpcSpanExporter
@@ -69,7 +70,7 @@ suspend fun main() {
     runner.run(
         userId = "user123",
         sessionId = "session456",
-        newMessage = Content.fromText("user", "Hello!"),
+        newMessage = Content.fromText(Role.USER, "Hello!"),
     )
     // --8<-- [end:full_example]
 }

@@ -40,16 +40,15 @@ agent = <span class="fn">Agent</span>(
 
 </pre></div>
 
-<div class="code-content" id="code-go" style="display:none"><pre><span class="kw">import</span> <span class="str">"google.golang.org/adk/agent"</span>
+<div class="code-content" id="code-go" style="display:none"><pre><span class="kw">import</span> <span class="str">"google.golang.org/adk/agent/llmagent"</span>
 
-a := agent.<span class="fn">New</span>(<span class="str">"researcher"</span>,
-    agent.<span class="fn">WithModel</span>(<span class="str">"gemini-flash-latest"</span>),
-    agent.<span class="fn">WithInstruction</span>(<span class="str">"You help users research topics thoroughly."</span>),
-    agent.<span class="fn">WithTools</span>(googleSearch),
-)
-
-
-</pre></div>
+model, _ := gemini.<span class="fn">NewModel</span>(context.<span class="fn">Background</span>(), <span class="str">"gemini-flash-latest"</span>, <span class="kw">nil</span>)
+a, _ := llmagent.<span class="fn">New</span>(llmagent.<span class="fn">Config</span>{
+    Name:        <span class="str">"researcher"</span>,
+    Model:       model,
+    Instruction: <span class="str">"You help users research topics thoroughly."</span>,
+    Tools:       []tool.Tool{geminitool.<span class="fn">GoogleSearch</span>{}},
+})</pre></div>
 
 <div class="code-content" id="code-java" style="display:none"><pre><span class="kw">import</span> com.google.adk.agents.<span class="fn">LlmAgent</span>;
 <span class="kw">import</span> com.google.adk.tools.<span class="fn">GoogleSearchTool</span>;
