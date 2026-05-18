@@ -176,6 +176,27 @@ os.environ["OTEL_RESOURCE_ATTRIBUTES"] = "key1=value1,key2=value2"
 maybe_set_otel_providers([gcp_exporters])
 ```
 
+### Kotlin programmatic setup
+
+In Kotlin, ADK uses standard JVM logging facilities (defaulting to Flogger) and OpenTelemetry for structured GenAI logs.
+
+#### Capture prompt content
+
+You can enable full prompt logging by configuring the global `TelemetryConfig`:
+
+```kotlin
+--8<-- "examples/kotlin/snippets/observability/LoggingExamples.kt:
+capture_content"
+```
+
+#### Activity logging with Plugins
+
+To get detailed logs of agent activity (user messages, model requests/responses, tool calls) in the console, use the `LoggingPlugin`:
+
+```kotlin
+--8<-- "examples/kotlin/snippets/observability/LoggingExamples.kt:logging_plugin"
+```
+
 ### Go programmatic setup
 
 In Go, ADK uses the `google.golang.org/adk/telemetry` package for OpenTelemetry

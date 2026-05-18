@@ -91,3 +91,15 @@ os.environ["OTEL_SERVICE_NAME"] = "your-adk-agent"
 os.environ["OTEL_RESOURCE_ATTRIBUTES"] = "key1=value1,key2=value2"
 maybe_set_otel_providers([gcp_exporters])
 ```
+
+### Kotlin programmatic setup
+
+In Kotlin, ADK uses the standard `GlobalOpenTelemetry` to manage metrics. Configuring your OpenTelemetry SDK with a `MeterProvider` will enable metric collection.
+
+#### OTLP export setup
+
+To enable metrics and export them to an OpenTelemetry Collector, configure the OpenTelemetry SDK with the appropriate metrics exporter:
+
+```kotlin
+--8<-- "examples/kotlin/snippets/observability/SetupExample.kt:full_example"
+```

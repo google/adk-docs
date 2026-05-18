@@ -21,6 +21,8 @@ dependencies {
     ksp("com.google.adk:google-adk-kotlin-processor:0.1.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
     implementation("com.google.cloud:google-cloud-storage:2.48.2")
+    implementation("io.opentelemetry:opentelemetry-sdk:1.56.0")
+    implementation("io.opentelemetry:opentelemetry-exporter-otlp:1.56.0")
 }
 
 kotlin {
