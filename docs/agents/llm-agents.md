@@ -373,6 +373,34 @@ You can adjust how the underlying LLM generates responses using `generate_conten
             .build();
     ```
 
+### Configuring a Default Model
+
+You can set a system-wide default model for all `LlmAgent` instances using the `set_default_model` class method. If you do not specify a model when creating an agent, it will use this default. This is useful for avoiding redundant model specifications and for easily changing the model for all agents at once.
+
+The built-in default model is `gemini-2.5-flash`.
+
+=== "Python"
+
+    ```python
+    from google.adk.agents import LlmAgent
+
+    # Set a new default model for all agents
+    LlmAgent.set_default_model("gemini-pro")
+
+    # This agent will now use "gemini-pro" by default
+    agent_with_default_model = LlmAgent(
+        name="default_model_agent",
+        instruction="You are a helpful assistant."
+    )
+
+    # You can still override the default for specific agents
+    specific_agent = LlmAgent(
+        name="specific_model_agent",
+        model="gemini-2.5-flash",
+        instruction="You are a creative writer."
+    )
+    ```
+
 ### Structuring Data (`input_schema`, `output_schema`, `output_key`)
 
 For scenarios requiring structured data exchange with an `LLM Agent`, the ADK provides mechanisms to define expected input and desired output formats using schema definitions.
