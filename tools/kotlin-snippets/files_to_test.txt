@@ -13,6 +13,7 @@
 #   snippets/get-started/HelloTimeAgent.kt
 snippets/artifacts/ArtifactExamples.kt  
 snippets/agents/llm-agent/CapitalAgent.kt
+snippets/agents/multi-agent/MultiAgentExample.kt
 snippets/callbacks/CallbackBasic.kt
 snippets/callbacks/BeforeModelCallback.kt
 snippets/observability/LoggingExamples.kt
