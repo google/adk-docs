@@ -3,15 +3,8 @@
 This guide shows you how to get up and running with Agent Development Kit
 for Kotlin. Before you start, make sure you have the following installed:
 
-*   Java 17 or later
-*   Gradle 8.0 or later
-
-??? tip "Building for Android?"
-
-    This quickstart covers Kotlin on the JVM. If you're building an
-    Android app, complete this quickstart first to learn the agent API,
-    then see [Using ADK Kotlin in Android projects](/get-started/installation/#kotlin)
-    for Android-specific project setup and on-device models.
+- Java 17 or later
+- Gradle 8.0 or later
 
 ## Create an agent project
 
@@ -262,5 +255,4 @@ upper left corner and type a request.
 Now that you have ADK installed and your first agent running, try building
 your own agent with our build guides:
 
-*  [Build your agent](/tutorials/)
-*  [Use ADK Kotlin in Android projects](/get-started/installation/#kotlin)
+- [Build your agent](/tutorials/)
