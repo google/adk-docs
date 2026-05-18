@@ -27,7 +27,7 @@ surprising information, then presents it as fun facts with maximum "wow" factor.
 fun-facts/
     src/main/kotlin/com/google/adk/samples/agents/funfacts/
         FunFactsAgent.kt       # Agent definition
-        Main.kt                # CLI entry point (InMemoryRunner)
+        Main.kt                # CLI entry point (ReplRunner)
         WebMain.kt             # Web UI entry point (AdkWebServer)
     build.gradle.kts           # Project configuration
     settings.gradle.kts

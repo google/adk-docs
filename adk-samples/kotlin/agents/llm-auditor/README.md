@@ -51,7 +51,7 @@ llm-auditor/
         CriticPrompt.kt       # Critic system prompt
         ReviserAgent.kt       # Reviser sub-agent (after-model callback)
         ReviserPrompt.kt      # Reviser system prompt
-        Main.kt               # CLI entry point (InMemoryRunner)
+        Main.kt               # CLI entry point (ReplRunner)
         WebMain.kt            # Web UI entry point (AdkWebServer)
     build.gradle.kts
     settings.gradle.kts

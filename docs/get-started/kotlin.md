@@ -147,44 +147,24 @@ to set environment variables:
 ### Create an entry point
 
 Create a `Main.kt` file to run and interact with `HelloTimeAgent` from the
-command line. The `InMemoryRunner` lets you invoke the agent programmatically
-and collect responses from a coroutine.
+command line. `ReplRunner` provides a built-in interactive REPL that handles
+user input, agent responses, and tool confirmation prompts.
 
 ```kotlin title="my_agent/src/main/kotlin/com/example/agent/Main.kt"
 package com.example.agent
 
-import com.google.adk.kt.runners.InMemoryRunner
-import com.google.adk.kt.types.Content
-import com.google.adk.kt.types.Part
-import com.google.adk.kt.types.Role
-import kotlinx.coroutines.runBlocking
+import com.google.adk.kt.runners.ReplRunner
 
-fun main() = runBlocking {
-    val runner = InMemoryRunner(agent = HelloTimeAgent.rootAgent)
-
-    print("You > ")
-    val input = readlnOrNull() ?: return@runBlocking
-    runner.runAsync(
-        userId = "user",
-        sessionId = "session",
-        newMessage = Content(
-            role = Role.USER,
-            parts = listOf(Part(text = input)),
-        ),
-    ).collect { event ->
-        val text = event.content?.parts?.firstOrNull()?.text
-        if (event.turnComplete && !text.isNullOrBlank()) {
-            println("\n${event.author} > $text")
-        }
-    }
+fun main() {
+    ReplRunner(HelloTimeAgent.rootAgent).start()
 }
 ```
 
 ## Run your agent
 
-You can run your ADK agent using the interactive command-line interface
-the command-line entry point above or the ADK web user interface provided by
-`AdkWebServer`. Both options allow you to test and interact with your agent.
+You can run your ADK agent using the interactive command-line REPL
+or the ADK web user interface provided by `AdkWebServer`. Both options
+allow you to test and interact with your agent.
 
 ### Run with command-line interface
 

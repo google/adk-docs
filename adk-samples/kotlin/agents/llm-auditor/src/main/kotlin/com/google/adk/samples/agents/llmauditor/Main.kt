@@ -16,28 +16,8 @@
 
 package com.google.adk.samples.agents.llmauditor
 
-import com.google.adk.kt.runners.InMemoryRunner
-import com.google.adk.kt.types.Content
-import com.google.adk.kt.types.Part
-import com.google.adk.kt.types.Role
-import kotlinx.coroutines.runBlocking
+import com.google.adk.kt.runners.ReplRunner
 
-fun main() = runBlocking {
-    val runner = InMemoryRunner(agent = LlmAuditorAgent.rootAgent)
-
-    print("You > ")
-    val input = readlnOrNull() ?: return@runBlocking
-    runner.runAsync(
-        userId = "user",
-        sessionId = "session",
-        newMessage = Content(
-            role = Role.USER,
-            parts = listOf(Part(text = input)),
-        ),
-    ).collect { event ->
-        val text = event.content?.parts?.firstOrNull()?.text
-        if (event.turnComplete && !text.isNullOrBlank()) {
-            println("\n${event.author} > $text")
-        }
-    }
+fun main() {
+    ReplRunner(LlmAuditorAgent.rootAgent).start()
 }
