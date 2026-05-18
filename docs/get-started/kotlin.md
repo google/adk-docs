@@ -85,8 +85,8 @@ dependencies {
 
     ```kotlin title="my_agent/build.gradle.kts"
     plugins {
-        kotlin("jvm") version "2.3.21"
-        id("com.google.devtools.ksp") version "2.3.7"
+        kotlin("jvm") version "2.1.20"
+        id("com.google.devtools.ksp") version "2.1.20-2.0.1"
         application
     }
 

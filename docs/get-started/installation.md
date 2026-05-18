@@ -149,8 +149,8 @@ across supported languages. For a guided introduction, start with the
 
     ```kotlin title="build.gradle.kts"
     plugins {
-        kotlin("jvm") version "2.3.21"
-        id("com.google.devtools.ksp") version "2.3.7"
+        kotlin("jvm") version "2.1.20"
+        id("com.google.devtools.ksp") version "2.1.20-2.0.1"
     }
 
     dependencies {
@@ -185,7 +185,7 @@ across supported languages. For a guided introduction, start with the
     plugins {
         id("com.android.application")
         kotlin("android")
-        id("com.google.devtools.ksp") version "2.3.7"
+        id("com.google.devtools.ksp") version "2.1.20-2.0.1"
     }
 
     dependencies {
@@ -200,7 +200,7 @@ across supported languages. For a guided introduction, start with the
         plugins {
             id("com.android.application")
             kotlin("android")
-            id("com.google.devtools.ksp") version "2.3.7"
+            id("com.google.devtools.ksp") version "2.1.20-2.0.1"
         }
 
         android {
