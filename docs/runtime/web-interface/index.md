@@ -22,7 +22,8 @@ Key features of the ADK web interface include:
 - **State inspection**: View and modify session state during development
 - **Event history**: Inspect all events generated during agent execution
 - **Visual Builder**: Design agents visually with a drag-and-drop workflow
-  editor and an AI-powered assistant (Python only, [learn more](visual-builder.md))
+  editor and an AI-powered assistant (Python only, [learn
+  more](/visual-builder/))
 
 ## Start the web interface
 

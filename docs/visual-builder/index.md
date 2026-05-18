@@ -10,7 +10,7 @@ Builder allows you to design, build, and test agents in a beginner-friendly
 graphical interface, and includes an AI-powered assistant to help you build
 agents.
 
-![Visual Agent Builder](../../assets/visual-builder.png)
+![Visual Agent Builder](../assets/visual-builder.png)
 
 !!! example "Experimental"
 
@@ -33,7 +33,7 @@ Then follow the steps below to create an agent.
     in the directory where you run ADK Web. Make sure you run this
     command from a developer directory location where you have write access.
 
-![Visual Agent Builder start](../../assets/visual-builder-start.png)
+![Visual Agent Builder start](../assets/visual-builder-start.png)
 **Figure 1:** ADK Web controls to start the Visual Builder tool.
 
 To create an agent with Visual Builder:
