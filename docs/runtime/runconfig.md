@@ -1,333 +1,28 @@
 # Runtime Configuration
 
 <div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
-`RunConfig` defines runtime behavior and options for agents in ADK. It controls
-speech and streaming settings, function calling, artifact saving, and limits on
-LLM calls.
-
-When constructing an agent run, you can pass a `RunConfig` to customize how the
-agent interacts with models, handles audio, and streams responses. By default,
-no streaming is enabled and inputs aren’t retained as artifacts. Use `RunConfig`
-to override these defaults.
-
-## Class Definition
-
-The `RunConfig` class holds configuration parameters for an agent's runtime behavior.
-
--   Python ADK uses Pydantic for this validation.
--   Go ADK has mutable structs by default.
--   Java ADK typically uses immutable data classes.
-
-
-- TypeScript ADK uses a standard interface, with type safety provided by the TypeScript compiler.
+`RunConfig` controls how agents behave at runtime, including streaming mode,
+speech settings, LLM call limits, and live agent options. Pass a `RunConfig`
+to `runner.run_async()` or `runner.run_live()` to override default behavior.
 
 === "Python"
 
     ```python
-    class RunConfig(BaseModel):
-        """Configs for runtime behavior of agents."""
-
-        model_config = ConfigDict(
-            extra='forbid',
-        )
-
-        speech_config: Optional[types.SpeechConfig] = None
-        response_modalities: Optional[list[str]] = None
-        save_input_blobs_as_artifacts: bool = False
-        support_cfc: bool = False
-        streaming_mode: StreamingMode = StreamingMode.NONE
-        output_audio_transcription: Optional[types.AudioTranscriptionConfig] = None
-        max_llm_calls: int = 500
-    ```
-
-=== "TypeScript"
-
-    ```typescript
-    export interface RunConfig {
-      speechConfig?: SpeechConfig;
-      responseModalities?: Modality[];
-      saveInputBlobsAsArtifacts: boolean;
-      supportCfc: boolean;
-      streamingMode: StreamingMode;
-      outputAudioTranscription?: AudioTranscriptionConfig;
-      maxLlmCalls: number;
-      // ... and other properties
-    }
-
-    export enum StreamingMode {
-      NONE = 'none',
-      SSE = 'sse',
-      BIDI = 'bidi',
-    }
-    ```
-
-=== "Go"
-
-    ```go
-    type StreamingMode string
-
-    const (
-    	StreamingModeNone StreamingMode = "none"
-    	StreamingModeSSE  StreamingMode = "sse"
-    )
-
-    // RunConfig controls runtime behavior.
-    type RunConfig struct {
-    	// Streaming mode, None or StreamingMode.SSE.
-    	StreamingMode StreamingMode
-    	// Whether or not to save the input blobs as artifacts
-    	SaveInputBlobsAsArtifacts bool
-    }
-    ```
-
-=== "Java"
-
-    ```java
-    public abstract class RunConfig {
-
-      public enum StreamingMode {
-        NONE,
-        SSE,
-        BIDI
-      }
-
-      public abstract @Nullable SpeechConfig speechConfig();
-
-      public abstract ImmutableList<Modality> responseModalities();
-
-      public abstract boolean saveInputBlobsAsArtifacts();
-
-      public abstract @Nullable AudioTranscriptionConfig outputAudioTranscription();
-
-      public abstract int maxLlmCalls();
-
-      // ...
-    }
-    ```
-
-## Runtime Parameters
-
-| Parameter                       | Python Type                                  | TypeScript Type                       | Go Type         | Java Type                                             | Default (Py / TS / Go / Java)                                                                  | Description                                                                                                                                                 |
-| :------------------------------ | :------------------------------------------- | :------------------------------------ |:----------------|:------------------------------------------------------| :--------------------------------------------------------------------------------------------- |:------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `speech_config`                 | `Optional[types.SpeechConfig]`               | `SpeechConfig` (optional)             | N/A             | `SpeechConfig` (nullable via `@Nullable`)             | `None` / `undefined`/ N/A / `null`                                                             | Configures speech synthesis (voice, language) using the `SpeechConfig` type.                                                                                |
-| `response_modalities`           | `Optional[list[str]]`                        | `Modality[]` (optional)               | N/A             | `ImmutableList<Modality>`                             | `None` / `undefined` / N/A / Empty `ImmutableList`                                             | List of desired output modalities (e.g., Python: `["TEXT", "AUDIO"]`; Java/TS: uses structured `Modality` objects).                                         |
-| `save_input_blobs_as_artifacts` | `bool`                                       | `boolean`                             | `bool`          | `boolean`                                             | `False` / `false` / `false` / `false`                                                          | If `true`, saves input blobs (e.g., uploaded files) as run artifacts for debugging/auditing.                                                                |
-| `streaming_mode`                | `StreamingMode`                              | `StreamingMode`                       | `StreamingMode` | `StreamingMode`                                       | `StreamingMode.NONE` / `StreamingMode.NONE` / `agent.StreamingModeNone` / `StreamingMode.NONE` | Sets the streaming behavior: `NONE` (default), `SSE` (server-sent events), or `BIDI` (bidirectional).                                                       |
-| `output_audio_transcription`    | `Optional[types.AudioTranscriptionConfig]`   | `AudioTranscriptionConfig` (optional) | N/A             | `AudioTranscriptionConfig` (nullable via `@Nullable`) | `None` / `undefined` / N/A / `null`                                                            | Configures transcription of generated audio output using the `AudioTranscriptionConfig` type.                                                               |
-| `max_llm_calls`                 | `int`                                        | `number`                              | N/A             | `int`                                                 | `500` / `500` / N/A / `500`                                                                    | Limits total LLM calls per run. `0` or negative means unlimited. Exceeding language limits (e.g. `sys.maxsize`, `Number.MAX_SAFE_INTEGER`) raises an error. |
-| `support_cfc`                   | `bool`                                       | `boolean`                             | N/A             | `bool`                                                | `False` / `false` / N/A / `false`                                                              | **Python/TypeScript:** Enables Compositional Function Calling. Requires `streaming_mode=SSE` and uses the LIVE API. **Experimental.**                       |
-
-
-### `speech_config`
-
-<div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span>
-</div>
-
-!!! Note
-    The interface or definition of `SpeechConfig` is the same, irrespective of the language.
-
-Speech configuration settings for live agents with audio capabilities. The
-`SpeechConfig` class has the following structure:
-
-```python
-class SpeechConfig(_common.BaseModel):
-    """The speech generation configuration."""
-
-    voice_config: Optional[VoiceConfig] = Field(
-        default=None,
-        description="""The configuration for the speaker to use.""",
-    )
-    language_code: Optional[str] = Field(
-        default=None,
-        description="""Language code (ISO 639. e.g. en-US) for the speech synthesization.
-        Only available for Live API.""",
-    )
-```
-
-The `voice_config` parameter uses the `VoiceConfig` class:
-
-```python
-class VoiceConfig(_common.BaseModel):
-    """The configuration for the voice to use."""
-
-    prebuilt_voice_config: Optional[PrebuiltVoiceConfig] = Field(
-        default=None,
-        description="""The configuration for the speaker to use.""",
-    )
-```
-
-And `PrebuiltVoiceConfig` has the following structure:
-
-```python
-class PrebuiltVoiceConfig(_common.BaseModel):
-    """The configuration for the prebuilt speaker to use."""
-
-    voice_name: Optional[str] = Field(
-        default=None,
-        description="""The name of the prebuilt voice to use.""",
-    )
-```
-
-These nested configuration classes allow you to specify:
-
-* `voice_config`: The name of the prebuilt voice to use (in the `PrebuiltVoiceConfig`)
-* `language_code`: ISO 639 language code (e.g., "en-US") for speech synthesis
-
-When implementing voice-enabled agents, configure these parameters to control
-how your agent sounds when speaking.
-
-### `response_modalities`
-
-<div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span>
-</div>
-
-Defines the output modalities for the agent. If not set, defaults to AUDIO.
-Response modalities determine how the agent communicates with users through
-various channels (e.g., text, audio).
-
-### `save_input_blobs_as_artifacts`
-
-<div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
-</div>
-
-When enabled, input blobs will be saved as artifacts during agent execution.
-This is useful for debugging and audit purposes, allowing developers to review
-the exact data received by agents.
-
-### `support_cfc`
-
-<div class="language-support-tag" title="This feature is an experimental preview release.">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-preview">Experimental</span>
-</div>
-
-Enables Compositional Function Calling (CFC) support. Only applicable when using
-StreamingMode.SSE. When enabled, the LIVE API will be invoked as only it
-supports CFC functionality.
-
-!!! example "Experimental release"
-
-    The `support_cfc` feature is experimental and its API or behavior might
-    change in future releases.
-
-### `streaming_mode`
-
-<div class="language-support-tag" title="This feature is an experimental preview release.">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span>
-</div>
-
-Configures the streaming behavior of the agent. Possible values:
-
-* `StreamingMode.NONE`: No streaming; responses delivered as complete units
-* `StreamingMode.SSE`: Server-Sent Events streaming; one-way streaming from server to client
-* `StreamingMode.BIDI`: Bidirectional streaming; simultaneous communication in both directions
-
-Streaming modes affect both performance and user experience. SSE streaming lets users see partial responses as they're generated, while BIDI streaming enables real-time interactive experiences.
-
-### `output_audio_transcription`
-
-<div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span>
-</div>
-
-Configuration for transcribing audio outputs from live agents with audio
-response capability. This enables automatic transcription of audio responses for
-accessibility, record-keeping, and multi-modal applications.
-
-### `max_llm_calls`
-
-<div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span>
-</div>
-
-Sets a limit on the total number of LLM calls for a given agent run.
-
-* Values greater than 0 and less than `sys.maxsize`: Enforces a bound on LLM calls
-* Values less than or equal to 0: Allows unbounded LLM calls *(not recommended for production)*
-
-This parameter prevents excessive API usage and potential runaway processes.
-Since LLM calls often incur costs and consume resources, setting appropriate
-limits is crucial.
-
-## Validation Rules
-
-<div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
-</div>
-
-The `RunConfig` class validates its parameters to ensure proper agent operation. While Python ADK uses `Pydantic` for automatic type validation, Java and TypeScript ADK rely on their static type systems and may include explicit checks in the `RunConfig`'s constructor.
-For the `max_llm_calls` parameter specifically:
-
-1. Extremely large values (like `sys.maxsize` in Python, `Integer.MAX_VALUE` in Java, or `Number.MAX_SAFE_INTEGER` in TypeScript) are typically disallowed to prevent issues.
-
-2. Values of zero or less will usually trigger a warning about unlimited LLM interactions.
-
-### Basic runtime configuration
-
-=== "Python"
-
-    ```python
-    from google.genai.adk import RunConfig, StreamingMode
-
-    config = RunConfig(
-        streaming_mode=StreamingMode.NONE,
-        max_llm_calls=100
-    )
-    ```
-
-=== "TypeScript"
-
-    ```typescript
-    import { RunConfig, StreamingMode } from '@google/adk';
-
-    const config: RunConfig = {
-      streamingMode: StreamingMode.NONE,
-      maxLlmCalls: 100,
-    };
-    ```
-
-=== "Go"
-
-    ```go
-    import "google.golang.org/adk/agent"
-
-    config := agent.RunConfig{
-        StreamingMode: agent.StreamingModeNone,
-    }
-    ```
-
-=== "Java"
-
-    ```java
-    import com.google.adk.agents.RunConfig;
-    import com.google.adk.agents.RunConfig.StreamingMode;
-
-    RunConfig config = RunConfig.builder()
-            .setStreamingMode(StreamingMode.NONE)
-            .setMaxLlmCalls(100)
-            .build();
-    ```
-
-This configuration creates a non-streaming agent with a limit of 100 LLM calls,
-suitable for simple task-oriented agents where complete responses are
-preferable.
-
-### Enabling streaming
-
-=== "Python"
-
-    ```python
-    from google.genai.adk import RunConfig, StreamingMode
+    from google.adk.agents.run_config import RunConfig, StreamingMode
 
     config = RunConfig(
         streaming_mode=StreamingMode.SSE,
-        max_llm_calls=200
+        max_llm_calls=200,
     )
+
+    async for event in runner.run_async(
+        ...,
+        run_config=config,
+    ):
+        ...
     ```
 
 === "TypeScript"
@@ -358,119 +53,67 @@ preferable.
     import com.google.adk.agents.RunConfig.StreamingMode;
 
     RunConfig config = RunConfig.builder()
-        .setStreamingMode(StreamingMode.SSE)
-        .setMaxLlmCalls(200)
+        .streamingMode(StreamingMode.SSE)
+        .maxLlmCalls(200)
         .build();
     ```
 
-Using SSE streaming allows users to see responses as they're generated,
-providing a more responsive feel for chatbots and assistants.
+## Manage sessions and context
 
-### Enabling speech support
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
+</div>
+
+For long-running sessions, you can control how much history is loaded and
+whether the context window is compressed:
+
+- `get_session_config`: Limits which events are fetched when loading a session.
+  Use `num_recent_events` or `after_timestamp` to avoid loading the full event
+  history on every invocation.
+- `context_window_compression`: Enables context window compression for LLM
+  input, useful when sessions approach model context limits.
 
 === "Python"
 
     ```python
-    from google.genai.adk import RunConfig, StreamingMode
-    from google.genai import types
+    from google.adk.agents.run_config import RunConfig
+    from google.adk.sessions.base_session_service import GetSessionConfig
 
     config = RunConfig(
-        speech_config=types.SpeechConfig(
-            language_code="en-US",
-            voice_config=types.VoiceConfig(
-                prebuilt_voice_config=types.PrebuiltVoiceConfig(
-                    voice_name="Kore"
-                )
-            ),
-        ),
-        response_modalities=["AUDIO", "TEXT"],
-        save_input_blobs_as_artifacts=True,
-        support_cfc=True,
-        streaming_mode=StreamingMode.SSE,
-        max_llm_calls=1000,
+        get_session_config=GetSessionConfig(num_recent_events=50),
     )
     ```
 
-=== "TypeScript"
+## Enable streaming
 
-    ```typescript
-    import { RunConfig, StreamingMode } from '@google/adk';
+To control how the agent delivers responses, set the `streaming_mode` parameter:
 
-    const config: RunConfig = {
-        speechConfig: {
-            languageCode: "en-US",
-            voiceConfig: {
-                prebuiltVoiceConfig: {
-                    voiceName: "Kore"
-                }
-            },
-        },
-        responseModalities: [
-          { modality: "AUDIO" },
-          { modality: "TEXT" }
-        ],
-        saveInputBlobsAsArtifacts: true,
-        supportCfc: true,
-        streamingMode: StreamingMode.SSE,
-        maxLlmCalls: 1000,
-    };
-    ```
+- **`StreamingMode.NONE`** (default): The runner returns one complete response
+  per turn. Suitable for CLI tools, batch processing, and synchronous workflows.
+- **`StreamingMode.SSE`**: Server-Sent Events streaming. The runner yields
+  partial events as the LLM generates, enabling typewriter-style UIs and
+  real-time chat displays.
+- **`StreamingMode.BIDI`**: Reserved for bidirectional streaming, but **not
+  used** in the standard `run_async()` path. For bidirectional streaming, use
+  `runner.run_live()` instead.
 
-=== "Java"
+Set `support_cfc=True` alongside `StreamingMode.SSE` to enable Compositional
+Function Calling (CFC), which allows the model to dynamically compose and
+execute function calls. CFC uses the Live API under the hood.
 
-    ```java
-    import com.google.adk.agents.RunConfig;
-    import com.google.adk.agents.RunConfig.StreamingMode;
-    import com.google.common.collect.ImmutableList;
-    import com.google.genai.types.Content;
-    import com.google.genai.types.Modality;
-    import com.google.genai.types.Part;
-    import com.google.genai.types.PrebuiltVoiceConfig;
-    import com.google.genai.types.SpeechConfig;
-    import com.google.genai.types.VoiceConfig;
-
-    RunConfig runConfig =
-        RunConfig.builder()
-            .setStreamingMode(StreamingMode.SSE)
-            .setMaxLlmCalls(1000)
-            .setSaveInputBlobsAsArtifacts(true)
-            .setResponseModalities(ImmutableList.of(new Modality("AUDIO"), new Modality("TEXT")))
-            .setSpeechConfig(
-                SpeechConfig.builder()
-                    .voiceConfig(
-                        VoiceConfig.builder()
-                            .prebuiltVoiceConfig(
-                                PrebuiltVoiceConfig.builder().voiceName("Kore").build())
-                            .build())
-                    .languageCode("en-US")
-                    .build())
-            .build();
-    ```
-
-This comprehensive example configures an agent with:
-
-* Speech capabilities using the "Kore" voice (US English)
-* Both audio and text output modalities
-* Artifact saving for input blobs (useful for debugging)
-* Experimental CFC support enabled **(Python and TypeScript)**
-* SSE streaming for responsive interaction
-* A limit of 1000 LLM calls
-
-### Enabling CFC Support
-
-<div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-preview">Experimental</span>
-</div>
+!!! example "Experimental"
+    CFC support is experimental and its API or behavior may change in future
+    releases.
 
 === "Python"
 
     ```python
-    from google.genai.adk import RunConfig, StreamingMode
+    from google.adk.agents.run_config import RunConfig, StreamingMode
 
     config = RunConfig(
         streaming_mode=StreamingMode.SSE,
         support_cfc=True,
-        max_llm_calls=150
+        max_llm_calls=150,
     )
     ```
 
@@ -486,11 +129,188 @@ This comprehensive example configures an agent with:
     };
     ```
 
-Enabling Compositional Function Calling (CFC) creates an agent that can
-dynamically execute functions based on model outputs, powerful for applications
-requiring complex workflows.
+=== "Go"
 
-!!! example "Experimental release"
+    ```go
+    import "google.golang.org/adk/agent"
 
-    The Compositional Function Calling (CFC) streaming feature is an
-    experimental release.
+    config := agent.RunConfig{
+        StreamingMode: agent.StreamingModeSSE,
+    }
+    ```
+
+=== "Java"
+
+    ```java
+    import com.google.adk.agents.RunConfig;
+    import com.google.adk.agents.RunConfig.StreamingMode;
+
+    RunConfig config = RunConfig.builder()
+        .streamingMode(StreamingMode.SSE)
+        .maxLlmCalls(150)
+        .build();
+    ```
+
+## Configure audio and speech
+
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript</span><span class="lst-java">Java</span>
+</div>
+
+For voice-enabled agents, configure speech synthesis, audio transcription, and
+response modalities.
+
+- `speech_config`: Sets the voice and language for speech output (e.g., the
+  "Kore" voice with `en-US`).
+- `response_modalities`: Controls output formats. Set to `["AUDIO", "TEXT"]` for
+  agents that both speak and return text.
+- `output_audio_transcription` / `input_audio_transcription`: Enable
+  transcription of audio output from the model and audio input from the user.
+  Both default to `AudioTranscriptionConfig()` in Python.
+
+=== "Python"
+
+    ```python
+    from google.adk.agents.run_config import RunConfig, StreamingMode
+    from google.genai import types
+
+    config = RunConfig(
+        speech_config=types.SpeechConfig(
+            language_code="en-US",
+            voice_config=types.VoiceConfig(
+                prebuilt_voice_config=types.PrebuiltVoiceConfig(
+                    voice_name="Kore"
+                )
+            ),
+        ),
+        response_modalities=["AUDIO", "TEXT"],
+        streaming_mode=StreamingMode.SSE,
+        max_llm_calls=1000,
+    )
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    import { RunConfig, StreamingMode } from '@google/adk';
+    import { Modality } from '@google/genai';
+
+    const config: RunConfig = {
+        speechConfig: {
+            languageCode: "en-US",
+            voiceConfig: {
+                prebuiltVoiceConfig: {
+                    voiceName: "Kore"
+                }
+            },
+        },
+        responseModalities: [Modality.AUDIO, Modality.TEXT],
+        streamingMode: StreamingMode.SSE,
+        maxLlmCalls: 1000,
+    };
+    ```
+
+=== "Java"
+
+    ```java
+    import com.google.adk.agents.RunConfig;
+    import com.google.adk.agents.RunConfig.StreamingMode;
+    import com.google.common.collect.ImmutableList;
+    import com.google.genai.types.Modality;
+    import com.google.genai.types.PrebuiltVoiceConfig;
+    import com.google.genai.types.SpeechConfig;
+    import com.google.genai.types.VoiceConfig;
+
+    RunConfig runConfig =
+        RunConfig.builder()
+            .streamingMode(StreamingMode.SSE)
+            .maxLlmCalls(1000)
+            .responseModalities(ImmutableList.of(new Modality(Modality.Known.AUDIO), new Modality(Modality.Known.TEXT)))
+            .speechConfig(
+                SpeechConfig.builder()
+                    .voiceConfig(
+                        VoiceConfig.builder()
+                            .prebuiltVoiceConfig(
+                                PrebuiltVoiceConfig.builder().voiceName("Kore").build())
+                            .build())
+                    .languageCode("en-US")
+                    .build())
+            .build();
+    ```
+
+## Configure live agents
+
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript</span>
+</div>
+
+When using `runner.run_live()`, configure real-time behavior with these
+additional parameters:
+
+- `realtime_input_config`: Configures how audio input is received from users.
+- `proactivity`: Allows the model to respond proactively and ignore irrelevant
+  input.
+- `enable_affective_dialog`: When `True`, the model detects user emotions and
+  adapts its tone accordingly.
+- `avatar_config`: Configures an avatar for live agents.
+- `session_resumption`: Enables transparent session resumption across
+  disconnects.
+- `save_live_blob`: When `True`, saves live audio and video data to the session
+  and artifact service.
+- `tool_thread_pool_config`: Runs tool executions in a background thread pool
+  to keep the event loop responsive to user interruptions.
+
+Not all parameters are available in every language. See the
+[API reference](#api-reference) for language-specific details.
+
+=== "Python"
+
+    ```python
+    from google.adk.agents.run_config import RunConfig, ToolThreadPoolConfig
+
+    config = RunConfig(
+        save_live_blob=True,
+        tool_thread_pool_config=ToolThreadPoolConfig(max_workers=8),
+    )
+    ```
+
+    !!! note "Thread pool and the GIL"
+        Thread pools help with blocking I/O and C extensions that release the
+        GIL (e.g. `time.sleep()`, network calls, numpy). They do **not** help
+        with pure Python CPU-bound code since the GIL prevents true parallel
+        execution of Python bytecode.
+
+=== "TypeScript"
+
+    ```typescript
+    import { RunConfig } from '@google/adk';
+
+    const config: RunConfig = {
+        enableAffectiveDialog: true,
+        proactivity: {
+            proactiveAudio: true,
+        },
+    };
+    ```
+
+## Configure runtime limits and debugging
+
+Use these parameters to control runtime guardrails and debugging:
+
+- `max_llm_calls`: Caps the total number of LLM calls per run (default: 500).
+  Set to 0 or negative for unlimited calls, though this is not recommended for
+  production. Values at or above `sys.maxsize` raise an error.
+- `save_input_blobs_as_artifacts`: When `True`, saves input blobs (e.g.,
+  uploaded files) as run artifacts for debugging and auditing.
+- `custom_metadata`: A `dict[str, Any]` of arbitrary metadata attached to the
+  invocation, useful for tracing or logging.
+
+## API reference
+
+For the complete list of fields, types, and defaults, see the API reference for
+your language:
+
+- [Python API reference](../api-reference/python/google-adk.html#google.adk.agents.RunConfig)
+- [TypeScript API reference](../api-reference/typescript/interfaces/RunConfig.html)
+- [Go API reference](https://pkg.go.dev/google.golang.org/adk/agent#RunConfig)
+- [Java API reference](../api-reference/java/com/google/adk/agents/RunConfig.html)
