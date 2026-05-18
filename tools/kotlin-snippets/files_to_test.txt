@@ -17,3 +17,10 @@ snippets/artifacts/ArtifactExamples.kt
 snippets/agents/llm-agent/CapitalAgent.kt
 snippets/sessions/MemoryExample.kt
 snippets/sessions/StateExample.kt
+snippets/tools/function-tools/RequiredParams.kt
+snippets/tools/function-tools/OptionalParams.kt
+snippets/tools/function-tools/FuncTool.kt
+snippets/tools/function-tools/LongRunningTool.kt
+snippets/tools/function-tools/AgentTool.kt
+snippets/tools/function-tools/PassData.kt
+snippets/tools/LimitationsWorkaround.kt

@@ -64,10 +64,21 @@ other tools, within a single agent, is ***not supported***:
                 .build();
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    val searchAgent = LlmAgent(
+        name = "SearchAgent",
+        model = Gemini(name = "gemini-flash-latest"),
+        instruction = Instruction("You're a specialist in Google Search"),
+        tools = listOf(GoogleSearchTool(), YourCustomTool()) // <-- NOT supported
+    )
+    ```
+
 ### Workaround #1: AgentTool.create() method
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript (v0.6.1+)</span><span class="lst-java">Java</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript (v0.6.1+)</span><span class="lst-java">Java</span><span class="lst-kotlin">Kotlin v0.1</span>
 </div>
 
 The following code sample demonstrates how to use multiple built-in tools or how
@@ -190,10 +201,16 @@ to use built-in tools with other tools by using multiple agents:
     }
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/tools/LimitationsWorkaround.kt:workaround_1"
+    ```
+
 ### Workaround #2: bypass_multi_tools_limit
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-java">Java</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-java">Java</span><span class="lst-kotlin">Kotlin v0.1</span>
 </div>
 
 ADK Python has a built-in workaround which bypasses this limitation for
@@ -295,4 +312,30 @@ is **not supported**:
             .description("Root Agent")
             .subAgents(searchAgent, codingAgent) // Not supported, as the sub agents use built in tools.
             .build();
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    val searchAgent = LlmAgent(
+        model = Gemini(name = "gemini-flash-latest"),
+        name = "SearchAgent",
+        instruction = Instruction("You're a specialist in Google Search"),
+        tools = listOf(GoogleSearchTool())
+    )
+
+    val codingAgent = LlmAgent(
+        model = Gemini(name = "gemini-flash-latest"),
+        name = "CodeAgent",
+        instruction = Instruction("You're a specialist in Code Execution")
+        // Kotlin currently doesn't have a BuiltInCodeExecutionTool in core
+    )
+
+
+    val rootAgent = LlmAgent(
+        name = "RootAgent",
+        model = Gemini(name = "gemini-flash-latest"),
+        description = "Root Agent",
+        subAgents = listOf(searchAgent, codingAgent) // Not supported when sub-agents use built-in tools
+    )
     ```
