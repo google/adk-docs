@@ -1,6 +1,6 @@
 ---
 catalog_title: e2a
-catalog_description: Authenticated email inboxes for AI agents with SPF/DKIM verification and human-in-the-loop approval
+catalog_description: Authenticated email gateway for AI agents with human-in-the-loop approval
 catalog_icon: /integrations/assets/e2a.png
 catalog_tags: ["mcp"]
 ---
