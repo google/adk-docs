@@ -7,16 +7,27 @@
 The ADK web interface lets you test your agents directly in the browser. This
 tool provides a simple way to interactively develop and debug your agents.
 
-![ADK Web Interface](../assets/adk-web-dev-ui-chat.png)
+![ADK Web Interface](../../assets/adk-web-dev-ui-chat.png)
 
 !!! warning "Caution: ADK Web for development only"
 
-    ADK Web is ***not meant for use in production deployments***. You should
-    use ADK Web for development and debugging purposes only.
+    ADK Web is ***not meant for use in production deployments***. You should use
+    ADK Web for development and debugging purposes only.
+
+Key features of the ADK web interface include:
+
+- **Chat interface**: Send messages to your agents and view responses in
+  real-time
+- **Session management**: Create and switch between sessions
+- **State inspection**: View and modify session state during development
+- **Event history**: Inspect all events generated during agent execution
+- **Visual Builder**: Design agents visually with a drag-and-drop workflow
+  editor and an AI-powered assistant (Python only, [learn
+  more](/visual-builder/))
 
 ## Start the web interface
 
-Use the following command to run your agent in the ADK web interface:
+Use the following command to start the ADK web interface:
 
 === "Python"
 
@@ -43,7 +54,7 @@ Use the following command to run your agent in the ADK web interface:
         With Maven, compile and run the ADK web server:
         ```console
         mvn compile exec:java \
-         -Dexec.args="--adk.agents.source-dir=src/main/java/agents --server.port=8080"
+         -Dexec.args="--adk.agents.source-dir=src/main/java/agents --server.port=8000"
         ```
     === "Gradle"
         With Gradle, the `build.gradle` or `build.gradle.kts` build file should have the following Java plugin in its plugins section:
@@ -61,7 +72,7 @@ Use the following command to run your agent in the ADK web interface:
             dependsOn classes
             classpath = sourceSets.main.runtimeClasspath
             mainClass = 'com.google.adk.web.AdkWebServer'
-            args '--adk.agents.source-dir=src/main/java/agents', '--server.port=8080'
+            args '--adk.agents.source-dir=src/main/java/agents', '--server.port=8000'
         }
         ```
 
@@ -71,9 +82,10 @@ Use the following command to run your agent in the ADK web interface:
         ```
 
 
-    In Java, the Web Interface and the API server are bundled together.
+    In Java, the web interface and the API server are bundled together.
 
-The server starts on `http://localhost:8000` by default:
+Once started, the server prints the access URL to the console. Open it in your
+browser to use the web interface:
 
 ```shell
 +-----------------------------------------------------------------------------+
@@ -83,16 +95,10 @@ The server starts on `http://localhost:8000` by default:
 +-----------------------------------------------------------------------------+
 ```
 
-## Features
-
-Key features of the ADK web interface include:
-
-- **Chat interface**: Send messages to your agents and view responses in real-time
-- **Session management**: Create and switch between sessions
-- **State inspection**: View and modify session state during development
-- **Event history**: Inspect all events generated during agent execution
-
 ## Common options
+
+Here are some commonly used options for the `adk web` command. Run `adk web
+--help` to see all available options.
 
 | Option | Description | Default |
 |--------|-------------|---------|
@@ -102,7 +108,7 @@ Key features of the ADK web interface include:
 | `--artifact_service_uri` | Custom artifact storage URI | Local `.adk/artifacts` |
 | `--reload/--no-reload` | Enable auto-reload on code changes | `true` |
 
-### Example with options
+For example:
 
 ```shell
 adk web --port 3000 --session_service_uri "sqlite:///sessions.db"
