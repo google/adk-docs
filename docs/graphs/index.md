@@ -92,7 +92,7 @@ with a longer prompt and a tool call, the graph-based approach gives you precise
 control over the task execution order and the data output from each step.
 
 For more information about data handling with graph-based workflows, see
-[Data handling with workflow nodes and agents](/workflows/data-handling/).
+[Data handling with workflow nodes and agents](/graphs/data-handling/).
 
 ## Build processes with graphs
 

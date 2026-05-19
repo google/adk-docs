@@ -180,5 +180,5 @@ You can use the ***Runner*** class to run your agent workflow using the
 ## Next steps
 
 For a more complete sample code implementation, see the
-[Hello World App](https://github.com/google/adk-python/tree/main/contributing/samples/hello_world_app)
+[Hello World App](https://github.com/google/adk-python/tree/main/contributing/samples/core/app)
 code example.

@@ -181,5 +181,5 @@ For more information on building Tools for agents and function calling, see
 [Function Tools](/tools-custom/function-tools/). For
 more detailed examples of tools that take advantage of parallel processing, see
 the samples in the
-[adk-python](https://github.com/google/adk-python/tree/main/contributing/samples/parallel_functions)
+[adk-python](https://github.com/google/adk-python/tree/main/contributing/samples/tools/parallel_functions)
 repository.
