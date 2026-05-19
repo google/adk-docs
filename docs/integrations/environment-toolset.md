@@ -11,19 +11,27 @@ catalog_tags: ["code", "google"]
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.29.0</span><span class="lst-preview">Experimental</span>
 </div>
 
-Some types of tasks, particularly coding and file operations, require an agent
-to interact with a compute environment that can run code and operate on files
-that persist across multiple agent requests. The ***EnvironmentToolset*** class
-for ADK allows agents to interact with an environment to perform file operations
-and execute shell commands. The Environment Toolset is designed as a general
-framework for configuring and using local or remote execution environments with
-ADK agents. ADK provides a [***LocalEnvironment***](#local-environment)
+To handle complex tasks like coding and file manipulation, AI agents need a persistent compute environment.
+The ***EnvironmentToolset*** class provides a unified framework to connect your ADK agents to either local or remote execution environments, allowing them to run shell commands and manage files seamlessly across multiple user requests. 
+ADK provides a [***LocalEnvironment***](#local-environment)
 implementation for use with the Environment Toolset framework.
 
 !!! example "Experimental"
     The Environment Toolset feature is experimental and may be updated.
     We welcome your
     [feedback](https://github.com/google/adk-python/issues/new?template=feature_request.md)!
+
+## This page helps you to:
+- **Enable File and Command Execution**: Give your agents the ability to read, write, edit files, and execute terminal commands.
+- **Configure Environments**: Set up custom working directories and environment variables for your agent's workspace.
+- **Ensure Persistence**: Control whether files disappear after a session or persist locally.
+- **Build Custom Toolsets**: Extend the base classes to build specialized or remote execution environments.
+
+## Prerequisites
+Before implementing the Environment Toolset, ensure your setup meets the following requirements:
+- **Python 3.10+** installed in your system.
+- **ADK Python Package** installed (v1.29.0 or higher).
+- **An Active API Key** configured.
 
 ## Get started
 
@@ -68,10 +76,10 @@ its contents, and finally execute it using a command.
 
 Based on these instructions, the agent performs the following operations:
 
--   Write File: The agent writes a `hello.py` file with the content "Hello
+-   **Write File**: The agent writes a `hello.py` file with the content "Hello
     from ADK!".
--   Read File: The agent reads the `hello.py` file and verifies its content.
--   Execute: The agent runs the `hello.py` file and returns the output.
+-   **Read File**: The agent reads the `hello.py` file and verifies its content.
+-   **Execute**: The agent runs the `hello.py` file and returns the output.
 
 ## LocalEnvironment {#local-environment}
 
@@ -154,3 +162,8 @@ the
 class. You can review the code for the
 [LocalEnvironment](https://github.com/google/adk-python/blob/main/src/google/adk/environment/_local_environment.py)
 implementation to help you get started.
+
+## Additional Resources
+- **Components and Security**: Read more about framework safety in the [Safety and Security Overview](https://github.com/google/adk-docs/blob/main/docs/safety/index.md).
+- **Feedback**: Share your thoughts on this experimental feature through our [Feedback Portal](https://github.com/google/adk-python/issues/new?template=feature_request.md).
+
