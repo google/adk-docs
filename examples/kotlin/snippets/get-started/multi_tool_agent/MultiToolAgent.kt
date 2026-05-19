@@ -72,7 +72,7 @@ class MultiToolService {
 
 fun main() =
     runBlocking {
-        val model = Gemini(apiKey = "YOUR_API_KEY", name = "gemini-2.5-flash")
+        val model = Gemini(name = "gemini-flash-latest")
 
         val agent =
             LlmAgent(
@@ -107,7 +107,7 @@ fun main() =
             if (userInput.lowercase() == "quit") break
 
             val userContent = Content(role = Role.USER, parts = listOf(Part(text = userInput)))
-            val events = runner.runAsync(userId, sessionId, newMessage = userContent).toList()
+            val events = runner.runAsync(userId = userId, sessionId = sessionId, newMessage = userContent).toList()
 
             print("\nAgent > ")
             for (event in events) {

@@ -29,7 +29,7 @@ fun main() = runBlocking {
     // --8<-- [start:identity]
     val capitalAgent = LlmAgent(
         name = "capital_agent",
-        model = Gemini("gemini-flash-latest"),
+        model = Gemini(name = "gemini-flash-latest"),
         description = "Answers user questions about the capital city of a given country."
     )
     // --8<-- [end:identity]
@@ -37,7 +37,7 @@ fun main() = runBlocking {
     // --8<-- [start:instruction]
     val instructedAgent = LlmAgent(
         name = "capital_agent",
-        model = Gemini("gemini-flash-latest"),
+        model = Gemini(name = "gemini-flash-latest"),
         instruction = Instruction("""
             You are an agent that provides the capital city of a country.
             When a user asks for the capital of a country:
@@ -55,7 +55,7 @@ fun main() = runBlocking {
     // In a real project, you would need to set up the ADK KSP processor.
     // val agentWithTools = LlmAgent(
     //     name = "capital_agent",
-    //     model = Gemini("gemini-flash-latest"),
+    //     model = Gemini(name = "gemini-flash-latest"),
     //     tools = capitalService.generatedTools() 
     // )
     // --8<-- [end:tool_usage]
@@ -63,7 +63,7 @@ fun main() = runBlocking {
     // --8<-- [start:gen_config]
     val agentWithConfig = LlmAgent(
         name = "capital_agent",
-        model = Gemini("gemini-flash-latest"),
+        model = Gemini(name = "gemini-flash-latest"),
         generateContentConfig = GenerateContentConfig(
             temperature = 0.2f,
             maxOutputTokens = 250
@@ -74,7 +74,7 @@ fun main() = runBlocking {
     // --8<-- [start:full_example]
     val finalAgent = LlmAgent(
         name = "capital_agent",
-        model = Gemini("gemini-flash-latest"),
+        model = Gemini(name = "gemini-flash-latest"),
         description = "Answers user questions about the capital city of a given country.",
         instruction = Instruction("You are an agent that provides the capital city of a country...")
         // tools = capitalService.generatedTools() // Assuming tools are added

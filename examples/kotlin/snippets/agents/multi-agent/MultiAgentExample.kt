@@ -70,7 +70,7 @@ class ExternalApprovalTool : BaseTool(
 // --8<-- [end:human_in_loop_pattern]
 
 fun main() {
-    val model = Gemini(name = "gemini-1.5-flash")
+    val model = Gemini(name = "gemini-flash-latest")
 
     // --8<-- [start:hierarchy]
     val greeter = LlmAgent(name = "Greeter", model = model)

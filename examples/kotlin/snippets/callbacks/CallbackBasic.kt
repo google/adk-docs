@@ -14,11 +14,7 @@ fun main() {
     // --8<-- [start:callback_basic]
     val agent = LlmAgent(
         name = "callback_agent",
-        model = Gemini(
-            name = "gemini-flash-latest",
-            apiKey = System.getenv("GOOGLE_API_KEY")
-                ?: error("GOOGLE_API_KEY environment variable not set."),
-        ),
+        model = Gemini(name = "gemini-flash-latest"),
         beforeAgentCallbacks = listOf(
             BeforeAgentCallback { context ->
                 println("Before Agent Callback triggered")

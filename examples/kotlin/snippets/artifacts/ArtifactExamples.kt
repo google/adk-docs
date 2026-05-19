@@ -33,7 +33,7 @@ fun artifactRepresentationExample() {
 
 // --8<-- [start:configure_runner]
 fun configureRunnerExample() {
-    val myAgent = LlmAgent(name = "artifact_user_agent", model = Gemini("gemini-flash-latest"))
+    val myAgent = LlmAgent(name = "artifact_user_agent", model = Gemini(name = "gemini-flash-latest"))
     val artifactService = InMemoryArtifactService()
     val sessionService = InMemorySessionService()
 
@@ -112,7 +112,7 @@ suspend fun processLatestReport(context: ToolContext) {
 fun loadArtifactsToolExample() {
     val rootAgent = LlmAgent(
         name = "artifact_reader",
-        model = Gemini("gemini-flash-latest"),
+        model = Gemini(name = "gemini-flash-latest"),
         instruction = Instruction(
             "Answer questions about available user files. " +
             "Call load_artifacts before answering when you need file contents."
