@@ -12,7 +12,7 @@ class DataPassingService {
     @Tool
     fun storeValue(
         context: ToolContext,
-        @Param("The value to store.") value: String
+        @Param("The value to store.") value: String,
     ): String {
         // Store data in the 'temp:' state.
         context.invocationContext.session.state["temp:my_key"] = value
