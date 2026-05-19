@@ -1,7 +1,7 @@
 # Custom agent template workflows
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 Custom agents and agent-based workflows allow you to define arbitrary
@@ -382,6 +382,13 @@ The foundation for structuring multi-agent systems is the parent-child relations
     // assert taskDoer.parentAgent().equals(coordinator);
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/agents/multi-agent/MultiAgentExample.kt:custom_agent"
+    --8<-- "examples/kotlin/snippets/agents/multi-agent/MultiAgentExample.kt:hierarchy"
+    ```
+
 ### Workflow agents as orchestrators
 
 ADK includes specialized agents derived from `BaseAgent` that don't perform tasks themselves but orchestrate the execution flow of their `sub_agents`.
@@ -439,6 +446,12 @@ ADK includes specialized agents derived from `BaseAgent` that don't perform task
 
     SequentialAgent pipeline = SequentialAgent.builder().name("MyPipeline").subAgents(step1, step2).build();
     // When pipeline runs, Step2 can access the state.get("data") set by Step1.
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/agents/multi-agent/MultiAgentExample.kt:sequential_pipeline"
     ```
 
 * **[`ParallelAgent`](workflow-agents/parallel-agents.md):** Executes its `sub_agents` in parallel. Events from sub-agents may be interleaved.
@@ -513,6 +526,12 @@ ADK includes specialized agents derived from `BaseAgent` that don't perform task
 
     // When gatherer runs, WeatherFetcher and NewsFetcher run concurrently.
     // A subsequent agent could read state['weather'] and state['news'].
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/agents/multi-agent/MultiAgentExample.kt:parallel_execution"
     ```
 
   * **[`LoopAgent`](workflow-agents/loop-agents.md):** Executes its `sub_agents` sequentially in a loop.
@@ -628,6 +647,13 @@ ADK includes specialized agents derived from `BaseAgent` that don't perform task
     // until Checker escalates (state.get("status") == "completed") or 10 iterations pass.
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/agents/multi-agent/MultiAgentExample.kt:check_condition_agent"
+    --8<-- "examples/kotlin/snippets/agents/multi-agent/MultiAgentExample.kt:loop_with_condition"
+    ```
+
 ### Interaction and communication mechanisms
 
 Agents within a system often need to exchange data or trigger actions in one another. ADK facilitates this through:
@@ -711,6 +737,12 @@ The most fundamental way for agents operating within the same invocation (and th
     SequentialAgent pipeline = SequentialAgent.builder().name("CityInfo").subAgents(agentA, agentB).build();
     // AgentA runs, saves "Paris" to state('capital_city').
     // AgentB runs, its instruction processor reads state.get("capital_city") to get "Paris".
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/agents/multi-agent/MultiAgentExample.kt:output_key_state"
     ```
 
 #### LLM delegation and agent transfer {#delegation}
@@ -811,6 +843,12 @@ Leverages an [`LlmAgent`](llm-agents.md)'s understanding to dynamically route ta
     // If coordinator receives "Book a flight", its LLM should generate:
     // FunctionCall.builder.name("transferToAgent").args(ImmutableMap.of("agent_name", "Booker")).build()
     // ADK framework then routes execution to bookingAgent.
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/agents/multi-agent/MultiAgentExample.kt:llm_transfer"
     ```
 
 #### Explicit invocation with `AgentTool`
@@ -987,6 +1025,12 @@ Allows an [`LlmAgent`](llm-agents.md) to treat another `BaseAgent` instance as a
     // FunctionCall(name='ImageGen', args={'imagePrompt': 'a cat wearing a hat'})
     // Framework calls imageTool.runAsync(...), which runs ImageGeneratorAgent.
     // The resulting image Part is returned to the Artist agent as the tool result.
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/agents/multi-agent/MultiAgentExample.kt:agent_as_tool"
     ```
 
 These primitives provide the flexibility to design multi-agent interactions ranging from tightly coupled sequential workflows to dynamic, LLM-driven delegation networks.
