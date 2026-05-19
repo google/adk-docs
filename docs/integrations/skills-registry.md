@@ -11,9 +11,14 @@ catalog_tags: ["google", "skills", "connectors"]
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.27.0</span><span class="lst-preview">Preview</span>
 </div>
 
-The **Skill Registry** integration within the Agent Development Kit (ADK) allows developers to dynamically search, discover, and fetch remote Skills cataloged within a central repository. 
+The **Google Cloud Skill Registry** integration within the Agent Development Kit (ADK) allows developers to dynamically search, discover, and fetch remote Skills cataloged within a central repository. 
 
-Rather than statically injecting every available skill into your agent's context window at initialization, the Skill Registry enables **on-demand targeted retrieval**. As your catalog of specialized capabilities scales to hundreds or thousands of skills, agents can dynamically discover, download, and activate the exact instructions and tools they need based on user intent.
+Rather than statically injecting every available skill into your agent's context window at initialization, the Skill Registry enables **on-demand targeted retrieval**. As your catalog of specialized capabilities scales to hundreds or thousands of skills, agents can dynamically discover, download, and activate the exact instructions and tools they need based on user intent. For more information about the Skills Registry service, see the [Google Cloud Skills Registry](https://docs.cloud.google.com/gemini-enterprise-agent-platform/build/skill-registry) documentation.
+
+!!! example "Preview release"
+    The Google Cloud Skills Registry feature is a Preview release. For
+    more information, see the
+    [launch stage descriptions](https://cloud.google.com/products#product-launch-stages).
 
 ---
 
