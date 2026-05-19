@@ -1,11 +1,11 @@
-# Dynamic workflows
+# Dynamic agent workflows
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span><span class="lst-preview">Beta</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span>
 </div>
 
 The ADK framework provides a programmatic way to define workflows as a more
-flexible and powerful alternative to [graph-based workflows](/workflows/).
+flexible and powerful alternative to [graph-based workflows](/graphs/).
 Using a graph-based approach provides a convenient way to compose multi-step,
 static process structures with workflow nodes. However, if the logic path for
 your workflow is more complex, with iterative loops or complex branching logic,
@@ -29,17 +29,6 @@ the benefits of dynamic workflows in ADK:
 -   **Encapsulation:** Wrap business logic into *parent* nodes that
     internally compose lower-level nodes, keeping the overall workflow graph
     clean and manageable.
-
-!!! example "Beta Release"
-
-    ADK 2.0 is a Beta release and may cause breaking changes when used with prior
-    versions of ADK. Do not use ADK 2.0 if you require backwards compatibility, such
-    as in production environments. We encourage you to test this release and we
-    welcome your
-    [feedback](https://github.com/google/adk-python/issues/new?template=feature_request.md&labels=v2)!
-
-For information on installing ADK 2.0 to test this feature, see
-[Welcome to ADK 2.0](/2.0/).
 
 ## Get started
 
@@ -141,7 +130,7 @@ root_agent = Workflow(
 ## Data handling
 
 When using dynamic workflows with ADK, passing data is simpler than
-[graph-based workflows](/workflows/) because, with a workflow,
+[graph-based workflows](/graphs/) because, with a workflow,
 the ***Context*** class's ***run_node()*** method returns the node's output
 directly. This eliminates the need to directly handle session state or complex
 routing outputs for data transfer. The following code example shows how you can
@@ -197,12 +186,12 @@ async def city_workflow(ctx: Context):
 ```
 
 For more information on data handling between workflow nodes, see
-[Data handling for agent workflows](/workflows/data-handling/).
+[Data handling for agent workflows](/graphs/data-handling/).
 
 ## Workflow routes
 
 Dynamic workflows in ADK provide more flexibility in terms of routing logic
-compared to [graph-based workflows](/workflows/), including
+compared to [graph-based workflows](/graphs/), including
 iterative loops or more complex branching logic. This section describes some of
 the techniques that you can use for routing.
 

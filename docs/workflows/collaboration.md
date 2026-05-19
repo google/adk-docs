@@ -1,7 +1,7 @@
 # Build collaborative agent teams
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span><span class="lst-preview">Beta</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span>
 </div>
 
 Some complex tasks may require multiple agents with specific responsibilities
@@ -28,13 +28,11 @@ available for collaboration modes:
 This guide covers how to use modes for your subagents and how these modes impact
 agent behavior.
 
-!!! example "Beta Release"
+!!! warning "Disabled: Task mode in graph-based workflows"
 
-    ADK 2.0 is a Beta release and may cause breaking changes when used with prior
-    versions of ADK. Do not use ADK 2.0 if you require backwards compatibility, such
-    as in production environments. We encourage you to test this release and we
-    welcome your
-    [feedback](https://github.com/google/adk-python/issues/new?template=feature_request.md&labels=v2)!
+    The collaborative mode `task` behavior is disabled for use in
+    graph-based workflows in ADK Python v2.0.0. This feature
+    is expected to be re-enabled in a future release.
 
 ## Get started
 

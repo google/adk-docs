@@ -1,7 +1,7 @@
 # Build graph routes for agent workflows
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span><span class="lst-preview">Beta</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span>
 </div>
 
 Graph-based workflows in ADK define agent logic as a graph of execution nodes
@@ -41,16 +41,8 @@ tasks are routed and executed. This structured node definition improves the
 predictability of agents and enhances reliability for complex tasks that require
 defined steps and process management.
 
-!!! example "Beta Release"
-
-    ADK 2.0 is a Beta release and may cause breaking changes when used with prior
-    versions of ADK. Do not use ADK 2.0 if you require backwards compatibility, such
-    as in production environments. We encourage you to test this release and we
-    welcome your
-    [feedback](https://github.com/google/adk-python/issues/new?template=feature_request.md&labels=v2)!
-
 Get started with graph-based workflows in ADK by checking out
-[Graph-based agent workflows](/workflows/).
+[Graph-based agent workflows](/graphs/).
 
 ## Nodes
 
@@ -69,7 +61,7 @@ def my_function_node(node_input: str):
 ```
 
 For more information about transferring data between nodes, see .
-[Data handling for agent workflows](/workflows/data-handling/).
+[Data handling for agent workflows](/graphs/data-handling/).
 
 ## Workflow graphs syntax
 
