@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     kotlin("jvm") version "2.1.20"
     id("com.google.devtools.ksp") version "2.1.20-2.0.1"
@@ -39,7 +37,7 @@ ktlint {
         include(fileTree("scripts"))
     }
     filter {
-        exclude("**/generated/**")
+        exclude("**/build/**")
     }
 }
 
@@ -49,7 +47,7 @@ ktlint {
 sourceSets {
     main {
         kotlin {
-            setSrcDirs(listOf("snippets", "build/generated/ksp/main/kotlin"))
+            setSrcDirs(listOf("snippets"))
         }
     }
 }
