@@ -98,7 +98,12 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
       fi
       
       # For Kotlin, we use Gradle to build/lint the project.
-      execute_and_check "(cd examples/kotlin && gradle ${GRADLE_TASK})" "${file}"
+      # Use the wrapper if available.
+      GRADLE_CMD="gradle"
+      if [[ -f "examples/kotlin/gradlew" ]]; then
+        GRADLE_CMD="./gradlew"
+      fi
+      execute_and_check "(cd examples/kotlin && ${GRADLE_CMD} ${GRADLE_TASK})" "${file}"
       
       if [ ${EXIT_CODE} -ne 0 ]; then
         break
@@ -107,7 +112,11 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
   else
     echo "Running full Kotlin snippet ${ACTION}..."
     echo
-    execute_and_check "(cd examples/kotlin && gradle ${GRADLE_TASK})" "Full Gradle ${ACTION}"
+    GRADLE_CMD="gradle"
+    if [[ -f "examples/kotlin/gradlew" ]]; then
+      GRADLE_CMD="./gradlew"
+    fi
+    execute_and_check "(cd examples/kotlin && ${GRADLE_CMD} ${GRADLE_TASK})" "Full Gradle ${ACTION}"
   fi
 
   echo
