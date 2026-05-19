@@ -1,7 +1,7 @@
 # Agent activity traces
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.17.0</span><span class="lst-go">Go v1.0.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.17.0</span><span class="lst-go">Go v1.0.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 Agent Development Kit (ADK) provides distributed tracing capabilities to help you visualize the end-to-end journey of a request as it travels through your agent's architecture. While metrics tell you *how long* a process took and logs tell you *what* happened, traces connect these events, showing you exactly *where* the time was spent and the hierarchical relationship between LLM reasoning, tool calls, and external APIs.
@@ -89,4 +89,16 @@ gcp_exporters = get_gcp_exporters(
 os.environ["OTEL_SERVICE_NAME"] = "your-adk-agent"
 os.environ["OTEL_RESOURCE_ATTRIBUTES"] = "key1=value1,key2=value2"
 maybe_set_otel_providers([gcp_exporters])
+```
+
+### Kotlin programmatic setup
+
+In Kotlin, ADK automatically uses the `GlobalOpenTelemetry` instance to export traces. You should configure your OpenTelemetry SDK before starting the agent.
+
+#### OTLP export setup
+
+To enable tracing and export spans to an OpenTelemetry Collector, configure the OpenTelemetry SDK and register it globally:
+
+```kotlin
+--8<-- "examples/kotlin/snippets/observability/SetupExample.kt:full_example"
 ```
