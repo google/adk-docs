@@ -1,7 +1,7 @@
 # Human input for agent workflows
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span><span class="lst-preview">Beta</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span>
 </div>
 
 Being able to request human input for data input, decision verification, or
@@ -10,15 +10,6 @@ Graph-based workflows in ADK can include human in the loop (HITL) nodes
 specifically built for obtaining input from humans as part of a workflow. These
 nodes do not require artificial intelligence (AI) models to run, which can make
 the input process more predictable and reliable.
-
-!!! example "Beta Release"
-
-    ADK 2.0 is a Beta release and may cause breaking changes when used with prior
-    versions of ADK. Do not use ADK 2.0 if you require backwards compatibility, such
-    as in production environments. We encourage you to test this release and we
-    welcome your
-    [feedback](https://github.com/google/adk-python/issues/new?template=feature_request.md&labels=v2)!
-
 
 ## Get started
 

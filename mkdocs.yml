@@ -228,6 +228,12 @@ plugins:
         'observability/arize-ax.md': 'integrations/arize-ax.md'
         'contributing-guide.md': 'community/contributing-guide.md'
         'get-started/quickstart.md': get-started/index.md
+        'agents/multi-agents.md': workflows/index.md
+        'workflows/graphs.md': graphs/index.md
+        'workflows/graph-routes.md': graphs/routes.md
+        'workflows/human-input.md': graphs/human-input.md
+        'workflows/data-handling.md': graphs/data-handling.md
+        'workflows/dynamic.md': graphs/dynamic.md
 
   - llmstxt:
       markdown_description: An open-source, code-first toolkit for building, evaluating, and deploying sophisticated AI agents with flexibility and control.
@@ -238,11 +244,9 @@ plugins:
         - tutorials/*.md
         - visual-builder/*.md
         - agents/*.md
+        - graphs/*.md
         - workflows/*.md
         - integrations/*.md
-        - tools/*.md
-        - tools-custom/*.md
-        - skills/*.md
         Run Agents:
         - runtime/*.md
         - deploy/*.md
@@ -250,6 +254,9 @@ plugins:
         - evaluate/*.md
         - safety/*.md
         Components:
+        - tools/*.md
+        - tools-custom/*.md
+        - skills/*.md
         - context/*.md
         - sessions/*.md
         - callbacks/*.md
@@ -263,6 +270,7 @@ plugins:
         - grounding/*.md
         Reference:
         - release-notes.md
+        - 2.0/index.md
         - api-reference/index.md
         Community:
         - community/*.md
@@ -270,6 +278,7 @@ plugins:
 # Navigation
 nav:
   - Home: index.md
+
   - Build Agents:
     - Get Started:
       - get-started/index.md
@@ -277,6 +286,7 @@ nav:
       - TypeScript: get-started/typescript.md
       - Go: get-started/go.md
       - Java: get-started/java.md
+      - Installation: get-started/installation.md
     - Build your Agent:
       - tutorials/index.md
       - Multi-tool agent: tutorials/multi-tool-agent.md
@@ -285,21 +295,29 @@ nav:
         - get-started/streaming/index.md
         - Python: get-started/streaming/quickstart-streaming.md
         - Java: get-started/streaming/quickstart-streaming-java.md
+      - Code with AI: tutorials/coding-with-ai.md
       - Visual Builder: visual-builder/index.md
-      - Coding with AI: tutorials/coding-with-ai.md
-      - Advanced setup: get-started/installation.md
+      - Agent Config: agents/config.md
     - Agents:
       - agents/index.md
-      - LLM agents: agents/llm-agents.md
-      - Workflow agents:
+      - Simple agents: agents/llm-agents.md
+    - Graph Workflows:
+      - graphs/index.md
+      - Graph routes: graphs/routes.md
+      - Data handling: graphs/data-handling.md
+      - Human input: graphs/human-input.md
+      - Dynamic workflows: graphs/dynamic.md
+    - Multi-Agent Workflows:
+      - workflows/index.md
+      - Collaborative workflows: workflows/collaboration.md
+      - Template workflows:
         - agents/workflow-agents/index.md
-        - Sequential agents: agents/workflow-agents/sequential-agents.md
-        - Loop agents: agents/workflow-agents/loop-agents.md
-        - Parallel agents: agents/workflow-agents/parallel-agents.md
-      - Custom agents: agents/custom-agents.md
-      - Multi-agent systems: agents/multi-agents.md
+        - Sequential workflow: agents/workflow-agents/sequential-agents.md
+        - Loop workflow: agents/workflow-agents/loop-agents.md
+        - Parallel workflow: agents/workflow-agents/parallel-agents.md
+        - Custom template workflows: agents/custom-agents.md
       - Agent routing: agents/routing.md
-      - Agent Config: agents/config.md
+      - Workflow patterns: workflows/patterns.md
     - Models for Agents:
       - agents/models/index.md
       - Gemini: agents/models/google-gemini.md
@@ -312,20 +330,7 @@ nav:
       - vLLM: agents/models/vllm.md
       - LiteLLM: agents/models/litellm.md
       - LiteRT-LM: agents/models/litert-lm.md
-    - Tools and Integrations:
-      - integrations/index.md
-    - Custom Tools:
-      - tools-custom/index.md
-      - Function tools:
-        - Overview: tools-custom/function-tools.md
-        - Tool performance: tools-custom/performance.md
-        - Action confirmations: tools-custom/confirmation.md
-      - MCP tools: tools-custom/mcp-tools.md
-      - OpenAPI tools: tools-custom/openapi-tools.md
-      - Authentication: tools-custom/authentication.md
-      - Tool limitations: tools/limitations.md
-    - Skills for Agents:
-      - skills/index.md
+
   - Run Agents:
     - Agent Runtime:
       - Agent Runtime: runtime/index.md
@@ -360,32 +365,43 @@ nav:
       - Optimization: optimize/index.md
     - Safety and Security:
       - safety/index.md
+
   - Components:
     - Technical Overview: get-started/about.md
+    - Custom Tools:
+      - tools-custom/index.md
+      - Function tools:
+        - Overview: tools-custom/function-tools.md
+        - Tool performance: tools-custom/performance.md
+        - Action confirmations: tools-custom/confirmation.md
+      - MCP tools: tools-custom/mcp-tools.md
+      - OpenAPI tools: tools-custom/openapi-tools.md
+      - Authentication: tools-custom/authentication.md
+      - Tool limitations: tools/limitations.md
+    - Artifacts:
+      - artifacts/index.md
+    - Skills for Agents:
+      - skills/index.md
+    - App management:
+      - apps/index.md
+      - Callbacks:
+        - callbacks/index.md
+        - Types of callbacks: callbacks/types-of-callbacks.md
+        - Callback patterns: callbacks/design-patterns-and-best-practices.md
+      - Plugins: plugins/index.md
     - Context:
       - context/index.md
       - Context caching: context/caching.md
       - Context compression: context/compaction.md
-    - Sessions & Memory:
+    - Sessions and Memory:
       - sessions/index.md
       - Sessions:
         - sessions/session/index.md
         - Rewind sessions: sessions/session/rewind.md
         - Migrate sessions: sessions/session/migrate.md
       - State: sessions/state.md
+      - Events: events/index.md
       - Memory: sessions/memory.md
-    - Callbacks:
-      - callbacks/index.md
-      - Types of callbacks: callbacks/types-of-callbacks.md
-      - Callback patterns: callbacks/design-patterns-and-best-practices.md
-    - Artifacts:
-      - artifacts/index.md
-    - Events:
-      - events/index.md
-    - Apps:
-      - apps/index.md
-    - Plugins:
-      - plugins/index.md
     - MCP:
       - mcp/index.md
     - A2A Protocol:
@@ -414,8 +430,10 @@ nav:
       - grounding/index.md
       - Google Search Grounding: grounding/google_search_grounding.md
       - Grounding with Search: grounding/grounding_with_search.md
+
   - Integrations:
     - integrations/index.md
+
   - Reference:
     - API Reference:
       - api-reference/index.md
@@ -427,15 +445,10 @@ nav:
       - Agent Config Reference: api-reference/agentconfig/index.html
       - REST API: api-reference/rest/index.html
     - Release Notes: release-notes.md
+
   - Community:
     - community/index.md
     - Contributing Guide: community/contributing-guide.md
+
   - ADK 2.0:
-    - Overview: 2.0/index.md
-    - Graph-based workflows:
-      - workflows/index.md
-      - Graph routes: workflows/graph-routes.md
-      - Data handling: workflows/data-handling.md
-      - Human input: workflows/human-input.md
-    - Collaborative agents: workflows/collaboration.md
-    - Dynamic workflows: workflows/dynamic.md
+    - 2.0/index.md
