@@ -1,7 +1,7 @@
 # Multi-agent workflow patterns
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 This guide provides a number of agent patterns which you can implement with
@@ -104,6 +104,12 @@ your project requirements before committing to a full implementation.
     // transferToAgent(agentName='Support')
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/agents/multi-agent/MultiAgentExample.kt:coordinator_pattern"
+    ```
+
 ## Sequential pipeline
 
 * **Structure:** A [`SequentialAgent`](/agents/workflow-agents/sequential-agents/) contains `sub_agents` executed in a fixed order.
@@ -200,6 +206,12 @@ your project requirements before committing to a full implementation.
     // validator runs -> saves to state['validation_status']
     // processor runs -> reads state['validation_status'], saves to state['result']
     // reporter runs -> reads state['result']
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/agents/multi-agent/MultiAgentExample.kt:sequential_pipeline_pattern"
     ```
 
 ## Parallel fan-out and gather
@@ -318,6 +330,12 @@ your project requirements before committing to a full implementation.
 
     // fetch_api1 and fetch_api2 run concurrently, saving to state.
     // synthesizer runs afterwards, reading state['api1_data'] and state['api2_data'].
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/agents/multi-agent/MultiAgentExample.kt:parallel_gather_pattern"
     ```
 
 ## Hierarchical task decomposition
@@ -454,6 +472,12 @@ your project requirements before committing to a full implementation.
     // Results flow back up.
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/agents/multi-agent/MultiAgentExample.kt:hierarchical_pattern"
+    ```
+
 ## Generate and review pattern
 
 * **Structure:** Typically involves two agents within a [`SequentialAgent`](/agents/workflow-agents/sequential-agents/): a generator agent and a critic reviewer agent.
@@ -567,6 +591,12 @@ your project requirements before committing to a full implementation.
 
     // generator runs -> saves draft to state['draft_text']
     // reviewer runs -> reads state['draft_text'], saves status to state['review_status']
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/agents/multi-agent/MultiAgentExample.kt:generator_critic_pattern"
     ```
 
 ## Iterative refinement
@@ -749,6 +779,12 @@ your project requirements before committing to a full implementation.
     // iterations.
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/agents/multi-agent/MultiAgentExample.kt:iterative_refinement_pattern"
+    ```
+
 ## Human-in-the-loop
 
 * **Structure:** Integrates human intervention points within an agent workflow.
@@ -923,6 +959,12 @@ your project requirements before committing to a full implementation.
         .name("HumanApprovalWorkflow")
         .subAgents(prepareRequest, requestApproval, processDecision)
         .build();
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/agents/multi-agent/MultiAgentExample.kt:human_in_loop_pattern"
     ```
 
 ### Human in the loop with Policy
