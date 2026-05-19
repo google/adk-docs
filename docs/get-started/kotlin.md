@@ -8,10 +8,10 @@ for Kotlin. Before you start, make sure you have the following installed:
 
 ??? tip "Building for Android?"
 
-    This quickstart covers Kotlin on the JVM. If you're building an
-    Android app, complete this quickstart first to learn the agent API,
-    then see [Build ADK agents for Android](https://developer.android.com/ai/adk)
-    for Android-specific project setup and on-device models.
+    This quickstart covers Kotlin on the JVM. If you're building an Android app,
+    complete this quickstart first to learn the agent API, then see [Build ADK
+    agents for Android](https://developer.android.com/ai/adk) for
+    Android-specific project setup and on-device models.
 
 ## Create an agent project
 
