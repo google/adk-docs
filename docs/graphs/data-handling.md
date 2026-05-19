@@ -1,7 +1,7 @@
 # Data handling for agent workflows
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span><span class="lst-preview">Beta</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span>
 </div>
 
 Structuring and managing data between agents and graph-based nodes is critical
@@ -11,15 +11,6 @@ is transmitted and received between graph nodes using ***Events***. It covers
 the essential parameters for events, data, content, and state, and explains how
 to implement structured data transfer for both function and agent nodes using
 data format schemas and specific instruction syntax.
-
-!!! example "Beta Release"
-
-    ADK 2.0 is a Beta release and may cause breaking changes when used with prior
-    versions of ADK. Do not use ADK 2.0 if you require backwards compatibility, such
-    as in production environments. We encourage you to test this release and we
-    welcome your
-    [feedback](https://github.com/google/adk-python/issues/new?template=feature_request.md&labels=v2)!
-
 
 ## Workflow graph Events
 
@@ -241,4 +232,4 @@ root_agent = Workflow(
 ```
 
 For a complete, but simplified version of this workflow, see
-[Graph-based agent workflows](/workflows/#get-started).
+[Graph-based agent workflows](/graphs/#get-started).

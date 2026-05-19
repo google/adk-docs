@@ -1,4 +1,4 @@
-# Apps: workflow management class
+# App workflow management class
 
 <div class="language-support-tag">
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.14.0</span><span class="lst-java">Java v0.1.0</span>

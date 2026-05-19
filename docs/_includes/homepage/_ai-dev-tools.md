@@ -1,5 +1,5 @@
 <!-- Developer Tools -->
-<div class="feature-split reverse">
+<div class="feature-split">
   <div class="feature-text">
     <span class="feature-badge">AI Dev Tools</span>
     <h2>Build agents <i>with</i> agents.</h2>
