@@ -213,6 +213,6 @@ The AgentRegistry constructor accepts the following arguments:
   Registry API itself.
 
 ## Additional resources
-- [Sample Agent Code](https://github.com/google/adk-python/tree/main/contributing/samples/agent_registry_agent)
+- [Sample Agent Code](https://github.com/google/adk-python/tree/main/contributing/samples/integrations/agent_registry_agent)
 - [Agent Registry Client](https://github.com/google/adk-python/blob/main/src/google/adk/integrations/agent_registry/agent_registry.py)
 - [Google Auth Library](https://google-auth.readthedocs.io/en/latest/)
