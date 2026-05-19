@@ -11,17 +11,26 @@ catalog_tags: ["observability"]
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
 </div>
 
-[Future AGI](https://futureagi.com) is an observability and evaluation platform for AI agents. The [`traceai-google-adk`](https://pypi.org/project/traceai-google-adk/) package auto-instruments Google ADK agents and exports every agent run, model call, tool execution, and event-loop cycle to Future AGI as OpenTelemetry spans, where you can inspect the run tree, evaluate behavior, and run experiments.
+[Future AGI](https://futureagi.com) is an observability and evaluation platform
+for AI agents. The
+[`traceai-google-adk`](https://pypi.org/project/traceai-google-adk/) package
+auto-instruments ADK agents and exports every agent run, model call, tool
+execution, and event-loop cycle to Future AGI as OpenTelemetry spans, where you
+can inspect the run tree, evaluate behavior, and run experiments.
 
 ![Future AGI ADK traces](assets/future_agi_traces.png)
 
 ## Overview
 
-`traceai-google-adk` adds OpenTelemetry instrumentation for Google ADK, allowing you to:
+The `traceai-google-adk` package adds OpenTelemetry instrumentation for ADK,
+allowing you to:
 
-- **Trace agent runs** — capture every agent invocation, tool call, model request, and response with prompts, completions, parameters, and token usage.
-- **Evaluate behavior** — run pre-built or custom evaluators against the captured traces.
-- **Debug agents** — drill into hierarchical run trees to find failed tool calls, latency hotspots, and unexpected branches.
+- **Trace agent runs:** Capture every agent invocation, tool call, model
+  request, and response with prompts, completions, parameters, and token usage.
+- **Evaluate behavior:** Run pre-built or custom evaluators against the captured
+  traces.
+- **Debug agents:** Drill into hierarchical run trees to find failed tool calls,
+  latency hotspots, and unexpected branches.
 
 ## Prerequisites
 
@@ -35,17 +44,20 @@ catalog_tags: ["observability"]
    export GOOGLE_API_KEY=<your-google-api-key>
    ```
 
-## Install Dependencies
+## Installation
 
 ```bash
 pip install traceai-google-adk
 ```
 
-`traceai-google-adk` declares `google-adk` and `google-genai` as runtime dependencies, so they install transitively.
+The `traceai-google-adk` package declares `google-adk` and `google-genai` as
+runtime dependencies, so they install transitively.
 
 ## Sending Traces to Future AGI
 
-Register the Future AGI tracer once at startup and attach the `GoogleADKInstrumentor` **before** running any agent. Every subsequent ADK agent invocation is captured automatically.
+Register the Future AGI tracer once at startup and attach the
+`GoogleADKInstrumentor` **before** running any agent. Every subsequent ADK agent
+invocation is captured automatically.
 
 ```python
 import asyncio
@@ -79,7 +91,7 @@ def get_weather(city: str) -> dict:
 
 agent = Agent(
     name="weather_agent",
-    model="gemini-2.5-flash",
+    model="gemini-flash-latest",
     description="Agent to answer weather questions.",
     instruction="You must use the available tools to find an answer.",
     tools=[get_weather],
@@ -109,7 +121,10 @@ if __name__ == "__main__":
 
 ## View Traces in the Dashboard
 
-Run the agent, then open your project in the [Future AGI dashboard](https://app.futureagi.com). Each ADK agent run produces a hierarchical trace with prompts, completions, model parameters, token usage, tool inputs and outputs, and event-loop cycles laid out for inspection.
+Run the agent, then open your project in the [Future AGI
+dashboard](https://app.futureagi.com). Each ADK agent run produces a
+hierarchical trace with prompts, completions, model parameters, token usage,
+tool inputs and outputs, and event-loop cycles laid out for inspection.
 
 ## Resources
 
