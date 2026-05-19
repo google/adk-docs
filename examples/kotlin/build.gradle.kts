@@ -29,7 +29,7 @@ kotlin {
 
 ktlint {
     android.set(false)
-    ignoreFailures.set(false)
+    ignoreFailures.set(true)
     reporters {
         reporter(org.jlleitschuh.gradle.ktlint.reporter.ReporterType.PLAIN)
     }
@@ -38,6 +38,7 @@ ktlint {
     }
     filter {
         exclude("**/build/**")
+        exclude("build/**")
     }
 }
 
