@@ -1,16 +1,16 @@
 package com.google.adk.kt.examples.artifacts
 
-import com.google.adk.kt.agents.LlmAgent
 import com.google.adk.kt.agents.Instruction
+import com.google.adk.kt.agents.LlmAgent
+import com.google.adk.kt.artifacts.GcsArtifactService
+import com.google.adk.kt.artifacts.InMemoryArtifactService
 import com.google.adk.kt.models.Gemini
 import com.google.adk.kt.runners.InMemoryRunner
 import com.google.adk.kt.sessions.InMemorySessionService
-import com.google.adk.kt.artifacts.InMemoryArtifactService
-import com.google.adk.kt.artifacts.GcsArtifactService
-import com.google.adk.kt.tools.ToolContext
 import com.google.adk.kt.tools.LoadArtifactsTool
-import com.google.adk.kt.types.Part
+import com.google.adk.kt.tools.ToolContext
 import com.google.adk.kt.types.Blob
+import com.google.adk.kt.types.Part
 import kotlinx.coroutines.runBlocking
 
 // --8<-- [start:full_example]
@@ -19,12 +19,14 @@ fun artifactRepresentationExample() {
     // Assume 'imageBytes' contains the binary data of a PNG image
     val imageBytes = byteArrayOf(0x89.toByte(), 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A)
 
-    val imageArtifact = Part(
-        inlineData = Blob(
-            mimeType = "image/png",
-            data = imageBytes
+    val imageArtifact =
+        Part(
+            inlineData =
+                Blob(
+                    mimeType = "image/png",
+                    data = imageBytes,
+                ),
         )
-    )
 
     println("Artifact MIME Type: ${imageArtifact.inlineData?.mimeType}")
     println("Artifact Data (first 8 bytes): ${imageArtifact.inlineData?.data?.take(8)}")
@@ -33,16 +35,18 @@ fun artifactRepresentationExample() {
 
 // --8<-- [start:configure_runner]
 fun configureRunnerExample() {
-    val myAgent = LlmAgent(name = "artifact_user_agent", model = Gemini(name = "gemini-flash-latest"))
+    val myAgent =
+        LlmAgent(name = "artifact_user_agent", model = Gemini(name = "gemini-flash-latest"))
     val artifactService = InMemoryArtifactService()
     val sessionService = InMemorySessionService()
 
-    val runner = InMemoryRunner(
-        agent = myAgent,
-        appName = "my_artifact_app",
-        sessionService = sessionService,
-        artifactService = artifactService
-    )
+    val runner =
+        InMemoryRunner(
+            agent = myAgent,
+            appName = "my_artifact_app",
+            sessionService = sessionService,
+            artifactService = artifactService,
+        )
 }
 // --8<-- [end:configure_runner]
 
@@ -51,12 +55,14 @@ fun artifactDataExample() {
     val pdfBytes = "%PDF-1.4...".toByteArray()
     val pdfMimeType = "application/pdf"
 
-    val pdfArtifact = Part(
-        inlineData = Blob(
-            data = pdfBytes,
-            mimeType = pdfMimeType
+    val pdfArtifact =
+        Part(
+            inlineData =
+                Blob(
+                    data = pdfBytes,
+                    mimeType = pdfMimeType,
+                ),
         )
-    )
 
     println("Created Kotlin artifact with MIME type: ${pdfArtifact.inlineData?.mimeType}")
 }
@@ -73,18 +79,28 @@ fun namespacingExample() {
 // --8<-- [end:namespacing]
 
 // --8<-- [start:interaction_save]
-suspend fun saveGeneratedReport(context: ToolContext, reportBytes: ByteArray) {
-    val reportArtifact = Part(
-        inlineData = Blob(
-            data = reportBytes,
-            mimeType = "application/pdf"
+suspend fun saveGeneratedReport(
+    context: ToolContext,
+    reportBytes: ByteArray,
+) {
+    val reportArtifact =
+        Part(
+            inlineData =
+                Blob(
+                    data = reportBytes,
+                    mimeType = "application/pdf",
+                ),
         )
-    )
     val filename = "generated_report.pdf"
 
     val service = context.invocationContext.artifactService
     if (service != null) {
-        val version = service.saveArtifact(context.invocationContext.session.key, filename, reportArtifact)
+        val version =
+            service.saveArtifact(
+                context.invocationContext.session.key,
+                filename,
+                reportArtifact,
+            )
         println("Successfully saved Kotlin artifact '$filename' as version $version.")
     } else {
         println("Artifact service not available.")
@@ -110,15 +126,17 @@ suspend fun processLatestReport(context: ToolContext) {
 
 // --8<-- [start:load_artifacts_tool]
 fun loadArtifactsToolExample() {
-    val rootAgent = LlmAgent(
-        name = "artifact_reader",
-        model = Gemini(name = "gemini-flash-latest"),
-        instruction = Instruction(
-            "Answer questions about available user files. " +
-            "Call load_artifacts before answering when you need file contents."
-        ),
-        tools = listOf(LoadArtifactsTool())
-    )
+    val rootAgent =
+        LlmAgent(
+            name = "artifact_reader",
+            model = Gemini(name = "gemini-flash-latest"),
+            instruction =
+                Instruction(
+                    "Answer questions about available user files. " +
+                        "Call load_artifacts before answering when you need file contents.",
+                ),
+            tools = listOf(LoadArtifactsTool()),
+        )
 }
 // --8<-- [end:load_artifacts_tool]
 
@@ -154,10 +172,11 @@ fun gcsServiceExample() {
 }
 // --8<-- [end:gcs_service]
 
-fun main() = runBlocking {
-    artifactRepresentationExample()
-    artifactDataExample()
-    inMemoryServiceExample()
-    gcsServiceExample()
-}
+fun main() =
+    runBlocking {
+        artifactRepresentationExample()
+        artifactDataExample()
+        inMemoryServiceExample()
+        gcsServiceExample()
+    }
 // --8<-- [end:full_example]

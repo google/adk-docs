@@ -107,7 +107,12 @@ fun main() =
             if (userInput.lowercase() == "quit") break
 
             val userContent = Content(role = Role.USER, parts = listOf(Part(text = userInput)))
-            val events = runner.runAsync(userId = userId, sessionId = sessionId, newMessage = userContent).toList()
+            val events =
+                runner.runAsync(
+                    userId = userId,
+                    sessionId = sessionId,
+                    newMessage = userContent,
+                ).toList()
 
             print("\nAgent > ")
             for (event in events) {
