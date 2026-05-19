@@ -167,7 +167,7 @@ This sample code demonstrates how you can use an ***edges*** array to define a
 graph with routes between a set of *nodes*, which are discrete tasks that can
 include agents, Tools, your code, and even additional ***Workflows***. For
 information about building advanced graphs for workflows, see
-[Build graph routes for workflow agents](/workflows/graph-routes/).
+[Build graph routes for workflow agents](/graphs/routes/).
 
 ## Known limitations {#known-limitations}
 
