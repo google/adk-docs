@@ -2,6 +2,11 @@
 # Add regular expressions (one per line) for URLs to exclude from checking.
 # See: https://github.com/lycheeverse/lychee-action
 
+# Rate limits automated requests
+^https://www\.gnu\.org/
+^https://www\.markifact\.com
+^https?://x\.com/
+
 # Google Cloud Console (requires authentication, returns HTTP/2 errors)
 ^https://console\.(cloud\.google|developers\.google)\.com
 
@@ -10,7 +15,3 @@
 
 # Requires authentication
 ^https://postman\.postman\.co/settings/me/
-
-# Rate limits automated requests
-^https://www\.gnu\.org/
-^https://www\.markifact\.com

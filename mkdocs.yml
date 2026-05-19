@@ -33,18 +33,6 @@ extra_javascript:
 
 # Additional config
 extra:
-  first_repo_url: https://github.com/google/adk-python
-  first_repo_name: adk-python
-  first_repo_icon: fontawesome/brands/github
-  second_repo_url: https://github.com/google/adk-js
-  second_repo_name: adk-js
-  second_repo_icon: fontawesome/brands/github
-  third_repo_url: https://github.com/google/adk-go
-  third_repo_name: adk-go
-  third_repo_icon: fontawesome/brands/github
-  fourth_repo_url: https://github.com/google/adk-java
-  fourth_repo_name: adk-java
-  fourth_repo_icon: fontawesome/brands/github
   analytics:
     provider: google
     property: G-DKHZS27PHP
@@ -83,19 +71,15 @@ theme:
   features:
     - content.action.edit
     - content.action.view
-    - content.code.annotate
     - content.code.copy
-    - content.code.select
     - content.tabs.link
     - content.tooltips
-    - navigation.footer
     - navigation.indexes
     - navigation.instant
     - navigation.instant.progress
     - navigation.path
     - navigation.sections
     - navigation.top
-    - navigation.tracking
     - navigation.tabs
     - toc.follow
 
@@ -114,6 +98,7 @@ markdown_extensions:
       pygments_lang_class: true
   - pymdownx.inlinehilite
   - pymdownx.snippets:
+      check_paths: true
       dedent_subsections: true
   - pymdownx.superfences:
       custom_fences:
@@ -277,6 +262,7 @@ nav:
       - TypeScript: get-started/typescript.md
       - Go: get-started/go.md
       - Java: get-started/java.md
+      - Kotlin: get-started/kotlin.md
     - Build your Agent:
       - tutorials/index.md
       - Multi-tool agent: tutorials/multi-tool-agent.md
@@ -423,6 +409,7 @@ nav:
       - Typescript ADK: api-reference/typescript/index.html
       - Go ADK: https://pkg.go.dev/google.golang.org/adk" target="_blank
       - Java ADK: api-reference/java/index.html
+      - Kotlin ADK: api-reference/kotlin/index.html
       - CLI Reference: api-reference/cli/index.html
       - Agent Config Reference: api-reference/agentconfig/index.html
       - REST API: api-reference/rest/index.html
