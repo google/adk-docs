@@ -20,7 +20,7 @@ it can select a fallback.
 `RoutedAgent` is different from [workflow agents](workflow-agents/index.md) like
 `SequentialAgent` or `ParallelAgent`, which orchestrate multiple agents in a
 fixed pattern, and from [LLM-driven
-delegation](multi-agents.md#b-llm-driven-delegation-agent-transfer), where the
+delegation](/agents/custom-agents/#delegation), where the
 LLM decides which agent to hand off to. With `RoutedAgent`, you write an
 explicit routing function that selects **one** agent per invocation. For
 model-level routing, see [Model routing](models/routing.md).
