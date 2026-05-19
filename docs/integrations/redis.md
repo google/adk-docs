@@ -5,14 +5,15 @@ catalog_icon: /integrations/assets/redis.png
 catalog_tags: ["data","mcp"]
 ---
 
-# Redis for ADK
+# Redis integration for ADK
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
 </div>
 
-[`adk-redis`](https://github.com/redis-developer/adk-redis) connects your ADK
-agent to [Redis](https://redis.io/), giving it RedisVL-backed search tools
+The [adk-redis integration](https://github.com/redis-developer/adk-redis)
+connects your ADK agent to [Redis](https://redis.io/), giving it
+RedisVL-backed search tools
 over a Redis index, persistent sessions and long-term memory via
 [Redis Agent Memory Server](https://github.com/redis/agent-memory-server),
 and semantic caching for LLM responses and tool results. Redis runs as a
@@ -101,6 +102,7 @@ pip install 'adk-redis[all]'         # everything above
 
     ```python
     from google.adk.agents import Agent
+    from google.adk.runners import Runner
 
     from adk_redis import (
         RedisLongTermMemoryService,
@@ -127,7 +129,12 @@ pip install 'adk-redis[all]'         # everything above
         instruction="Use long-term memory to personalize responses.",
     )
 
-    # Pass session_service and memory_service to your ADK Runner.
+    runner = Runner(
+        app_name="redis_memory_app",
+        agent=root_agent,
+        session_service=session_service,
+        memory_service=memory_service,
+    )
     ```
 
 === "MCP toolset"
@@ -156,12 +163,15 @@ pip install 'adk-redis[all]'         # everything above
 === "Semantic cache"
 
     ```python
+    from google.adk.agents import Agent
+    from redisvl.utils.vectorize import HFTextVectorizer
+
     from adk_redis import (
         LLMResponseCache,
         RedisVLCacheProvider,
         RedisVLCacheProviderConfig,
+        create_llm_cache_callbacks,
     )
-    from redisvl.utils.vectorize import HFTextVectorizer
 
     provider = RedisVLCacheProvider(
         config=RedisVLCacheProviderConfig(
@@ -175,9 +185,15 @@ pip install 'adk-redis[all]'         # everything above
     )
 
     llm_cache = LLMResponseCache(provider=provider)
+    before_model_cb, after_model_cb = create_llm_cache_callbacks(llm_cache)
 
-    # Register llm_cache.before_model_callback and llm_cache.after_model_callback
-    # on your ADK agent to skip repeat LLM calls for semantically similar prompts.
+    root_agent = Agent(
+        model="gemini-flash-latest",
+        name="cached_agent",
+        instruction="You are a helpful assistant with semantic caching enabled.",
+        before_model_callback=before_model_cb,
+        after_model_callback=after_model_cb,
+    )
     ```
 
 ## Available tools
@@ -229,7 +245,7 @@ Provider | Description
 - [adk-redis on GitHub](https://github.com/redis-developer/adk-redis)
 - [adk-redis on PyPI](https://pypi.org/project/adk-redis/)
 - [adk-redis documentation](https://redis.io/docs/latest/integrate/google-adk/)
+- [Runnable examples](https://github.com/redis-developer/adk-redis/tree/main/examples)
 - [Redis Agent Memory Server](https://github.com/redis/agent-memory-server)
 - [RedisVL documentation](https://docs.redisvl.com)
 - [Redis LangCache](https://redis.io/langcache)
-- [Runnable examples](https://github.com/redis-developer/adk-redis/tree/main/examples)
