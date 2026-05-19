@@ -18,7 +18,7 @@ the method that best fits your development workflow.
     Use `adk web` to launch a browser-based interface for interacting with your
     agents.
 
-    [:octicons-arrow-right-24: Use the Web Interface](web-interface.md)
+    [:octicons-arrow-right-24: Use the Web Interface](web-interface/index.md)
 
 -   :material-console:{ .lg .middle } **Command Line**
 

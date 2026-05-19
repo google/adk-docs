@@ -221,7 +221,6 @@ plugins:
         Build Agents:
         - get-started/*.md
         - tutorials/*.md
-        - visual-builder/*.md
         - agents/*.md
         - workflows/*.md
         - integrations/*.md
@@ -230,6 +229,7 @@ plugins:
         - skills/*.md
         Run Agents:
         - runtime/*.md
+        - visual-builder/*.md
         - deploy/*.md
         - observability/*.md
         - evaluate/*.md
@@ -271,7 +271,6 @@ nav:
         - get-started/streaming/index.md
         - Python: get-started/streaming/quickstart-streaming.md
         - Java: get-started/streaming/quickstart-streaming-java.md
-      - Visual Builder: visual-builder/index.md
       - Coding with AI: tutorials/coding-with-ai.md
       - Advanced setup: get-started/installation.md
     - Agents:
@@ -315,7 +314,9 @@ nav:
   - Run Agents:
     - Agent Runtime:
       - Agent Runtime: runtime/index.md
-      - Web Interface: runtime/web-interface.md
+      - Web Interface:
+          - runtime/web-interface/index.md
+          - Visual Builder: visual-builder/index.md
       - Command Line: runtime/command-line.md
       - API Server: runtime/api-server.md
       - Ambient Agents: runtime/ambient-agents.md
