@@ -116,7 +116,7 @@ First, make sure you have the necessary dependencies installed:
 pip install google-adk[a2a]
 ```
 
-You can clone and navigate to the [**a2a_root** sample](https://github.com/google/adk-python/tree/main/contributing/samples/a2a_root) here:
+You can clone and navigate to the [**a2a_root** sample](https://github.com/google/adk-python/tree/main/contributing/samples/a2a/a2a_root) here:
 
 ```bash
 git clone https://github.com/google/adk-python.git

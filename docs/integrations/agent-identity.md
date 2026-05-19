@@ -79,7 +79,7 @@ object, then pass it to the `auth_scheme` parameter of any supported `Tool` or
 `Toolset`. The following example shows usage with `McpToolset`, but
 `GcpAuthProviderScheme` also works with other tools like
 `AuthenticatedFunctionTool`. See the [GCP Auth
-sample](https://github.com/google/adk-python/tree/main/contributing/samples/gcp_auth)
+sample](https://github.com/google/adk-python/tree/main/src/google/adk/integrations/agent_identity)
 for a complete example.
 
 ```python
@@ -128,4 +128,7 @@ toolset = McpToolset(
 ## Resources
 
 - [Google Cloud Agent Identity Overview](https://docs.cloud.google.com/iam/docs/agent-identity-overview)
-- [Sample agent code](https://github.com/google/adk-python/tree/main/contributing/samples/gcp_auth)
+- [2-legged OAuth using Google Cloud Agent Identity](https://docs.cloud.google.com/iam/docs/auth-with-2lo)
+- [3-legged OAuth using Google Cloud Agent Identity](https://docs.cloud.google.com/iam/docs/auth-with-3lo)
+- [API key auth using Google Cloud Agent Identity](https://docs.cloud.google.com/iam/docs/auth-with-api-key)
+- [Sample agent code](https://github.com/google/adk-python/tree/main/src/google/adk/integrations/agent_identity)

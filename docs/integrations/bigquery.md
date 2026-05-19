@@ -118,6 +118,6 @@ The following sample code demonstrates how to use the `BigQueryToolset` in an AD
 
 ## Sample Agent
 
-For a complete, ready-to-run sample of a BigQuery-powered agent with detailed authentication examples, see the [BigQuery Sample Agent](https://github.com/google/adk-python/tree/main/contributing/samples/bigquery) on GitHub.
+For a complete, ready-to-run sample of a BigQuery-powered agent with detailed authentication examples, see the [BigQuery Sample Agent](https://github.com/google/adk-python/tree/main/contributing/samples/integrations/bigquery) on GitHub.
 
 Note: If you want to access a BigQuery data agent as a tool, see [Data Agents tools for ADK](data-agent.md).

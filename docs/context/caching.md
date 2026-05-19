@@ -87,7 +87,7 @@ all agents within your app.
 For a full implementation of how to use and test the context caching feature,
 see the following sample:
 
--   [`cache_analysis`](https://github.com/google/adk-python/tree/main/contributing/samples/cache_analysis):
+-   [`cache_analysis`](https://github.com/google/adk-python/tree/main/contributing/samples/context_management/cache_analysis):
     A code sample that demonstrates how to analyze the performance of context
     caching.
 
@@ -96,5 +96,5 @@ a session, consider using the `static_instruction` parameter for an agent, which
 allows you to amend the system instructions for a generative model. For more
 details, see this sample code:
 
--   [`static_instruction`](https://github.com/google/adk-python/tree/main/contributing/samples/static_instruction):
+-   [`static_instruction`](https://github.com/google/adk-python/tree/main/contributing/samples/context_management/static_instruction):
     An implementation of a digital pet agent using static instructions.
