@@ -1,7 +1,7 @@
 # Agent activity logging
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 Agent Development Kit (ADK) provides flexible and powerful logging capabilities
@@ -174,6 +174,27 @@ gcp_exporters = get_gcp_exporters(
 os.environ["OTEL_SERVICE_NAME"] = "your-adk-agent"
 os.environ["OTEL_RESOURCE_ATTRIBUTES"] = "key1=value1,key2=value2"
 maybe_set_otel_providers([gcp_exporters])
+```
+
+### Kotlin programmatic setup
+
+In Kotlin, ADK uses standard JVM logging facilities (defaulting to Flogger) and OpenTelemetry for structured GenAI logs.
+
+#### Capture prompt content
+
+You can enable full prompt logging by configuring the global `TelemetryConfig`:
+
+```kotlin
+--8<-- "examples/kotlin/snippets/observability/LoggingExamples.kt:
+capture_content"
+```
+
+#### Activity logging with Plugins
+
+To get detailed logs of agent activity (user messages, model requests/responses, tool calls) in the console, use the `LoggingPlugin`:
+
+```kotlin
+--8<-- "examples/kotlin/snippets/observability/LoggingExamples.kt:logging_plugin"
 ```
 
 ### Go programmatic setup

@@ -1,7 +1,7 @@
 # State: The Session's Scratchpad
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 Within each `Session` (our conversation thread), the **`state`** attribute acts like the agent's dedicated scratchpad for that specific interaction. While `session.events` holds the full history, `session.state` is where the agent stores and updates dynamic details needed *during* the conversation.
@@ -131,13 +131,19 @@ To inject a value from the session state, enclose the key of the desired state v
 
     LlmAgent storyGenerator = LlmAgent.builder()
         .name("StoryGenerator")
-        .model("gemini-flash-latest")
+        .model(geminiModel)
         .instruction("Write a short story about a cat, focusing on the theme: " + topic)
         .build();
 
     // Assuming session.state().put("topic", "friendship"), the LLM
     // will receive the following instruction:
     // "Write a short story about a cat, focusing on the theme: friendship."
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/sessions/StateExample.kt:instruction_templating"
     ```
 
 #### Important Considerations
@@ -220,6 +226,12 @@ The `InstructionProvider` function receives a `ReadonlyContext` object, which yo
         .name("template_helper_agent")
         .instruction(myInstructionProvider)
         .build();
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/sessions/StateExample.kt:instruction_provider"
     ```
 
 If you want to both use an `InstructionProvider` *and* inject state into your instructions, you can use the `inject_session_state` utility function. Only `{key}` placeholders matching valid state variable names will be replaced; other text (including curly braces that don't match valid identifiers) will be left as-is.
@@ -531,6 +543,12 @@ For more complex scenarios (updating multiple keys, non-string values, specific 
     --8<-- "examples/java/snippets/src/main/java/state/ManualStateUpdateExample.java:full_code"
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/sessions/StateExample.kt:full_example"
+    ```
+
 **3. Via `CallbackContext` or `ToolContext` (Recommended for Callbacks and Tools)**
 
 *(Note: In TypeScript, this is done via the unified `Context` type.)*
@@ -614,6 +632,12 @@ For more comprehensive details on context objects, refer to the [Context documen
             // ... rest of callback logic ...
         }
     }
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/sessions/StateExample.kt:state_updates_context"
     ```
 
 **What `append_event` Does:**
