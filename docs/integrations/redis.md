@@ -25,7 +25,7 @@ There are five ways to use this integration:
 |----------|-------------|
 | **RedisVL MCP** | Connect ADK's native `McpToolset` to a running [`rvl mcp`](https://docs.redisvl.com/en/latest/user_guide/how_to_guides/mcp.html) server. Exposes `search-records` (vector / fulltext / hybrid) and `upsert-records` with schema-aware filter and return-field hints. |
 | **Session + Memory services** | `RedisWorkingMemorySessionService` and `RedisLongTermMemoryService` that implement ADK's `BaseSessionService` and `BaseMemoryService`, backed by Agent Memory Server. |
-| **AMS MCP** | Connect ADK's native `McpToolset` to [Agent Memory Server](https://github.com/redis/agent-memory-server)'s MCP endpoint over SSE. Gives the agent direct tool access to `search_long_term_memory`, `create_long_term_memories`, and `memory_prompt`. |
+| **Sessions + Memory MCP** | Connect ADK's native `McpToolset` to [Agent Memory Server](https://github.com/redis/agent-memory-server)'s MCP endpoint over SSE. Gives the agent direct tool access to `search_long_term_memory`, `create_long_term_memories`, and `memory_prompt`. |
 | **Search tools** | Five `BaseTool` subclasses (`RedisVectorSearchTool`, `RedisHybridSearchTool`, `RedisRangeSearchTool`, `RedisTextSearchTool`, `RedisSQLSearchTool`) over RedisVL queries against a bound index. |
 | **Semantic cache** | `RedisVLCacheProvider` (self-hosted) and `LangCacheProvider` (managed via [Redis LangCache](https://redis.io/langcache)) for LLM-response and tool-result caching. |
 
@@ -154,7 +154,7 @@ pip install 'redisvl[mcp]>=0.18.2'
     )
     ```
 
-=== "AMS MCP server"
+=== "Sessions + Memory MCP server"
 
     Connect ADK's native `McpToolset` to
     [Agent Memory Server](https://github.com/redis/agent-memory-server)'s
@@ -278,7 +278,7 @@ Tool | Description
 Source | Description
 ------ | -----------
 [RedisVL MCP server](https://docs.redisvl.com/en/latest/user_guide/how_to_guides/mcp.html) (`rvl mcp`) | Connect ADK's native `McpToolset` to a running `rvl mcp` server. The server exposes `search-records` (vector / fulltext / hybrid, chosen per server via YAML) and `upsert-records`, with schema-aware filter and return-field hints derived from the index. Supports `stdio`, `sse`, and `streamable-http`; bearer auth on HTTP; suppress writes with `--read-only` on the server or `tool_filter=["search-records"]` on the `McpToolset`.
-[Agent Memory Server](https://github.com/redis/agent-memory-server) MCP | Connect ADK's native `McpToolset` to Agent Memory Server's MCP endpoint over SSE. Exposes `search_long_term_memory`, `create_long_term_memories`, `edit_long_term_memory`, `delete_long_term_memories`, and `memory_prompt`. Runs on a separate port from the REST API.
+[Sessions + Memory MCP server](https://github.com/redis/agent-memory-server) | Connect ADK's native `McpToolset` to Agent Memory Server's MCP endpoint over SSE. Exposes `search_long_term_memory`, `create_long_term_memories`, `edit_long_term_memory`, `delete_long_term_memories`, and `memory_prompt`. Runs on a separate port from the REST API.
 
 ### Memory tools
 
