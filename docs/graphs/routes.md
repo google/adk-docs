@@ -124,79 +124,31 @@ edges=[
 
 The subsequent rows of the ***edges*** arrays after the START keyword define
 additional execution logic for nodes. For branching paths, which is how you create a conditional node, you define a node,
-usually a ***FunctionNode***, that outputs an Event with a specific  ***route*** value. In the edges graph, you then define the conditional execution logic by mapping these route values to target nodes, as shown in the following code example of a weekend planner agent:
+usually a ***FunctionNode***, that outputs an Event with a specific  ***route*** value. In the edges graph, you then define the conditional execution logic by mapping these route values to target nodes, as shown in the following code example:
 
 ```python
-class WeekendBudget(BaseModel):
-  budget: float = Field(
-      default=None, description="The budget for the weekend in US dollars."
-  )
+def router(node_input: str):
+    """Route to task B or C based on node_input."""
+    if condition(node_input):
+      return Event(route="RUN_TASK_C")
+    return Event(route="RUN_TASK_B")
 
-def process_input(node_input: str):
-  """Saves the user's raw text into the workflow state."""
-  return Event(state={"latest_input": node_input})
+task_B_node = Agent(name="task_B_agent") # An agent to execute node B
 
-extract_budget = Agent(
-    name="extract_budget",
-    model=MODEL_NAME,
-    instruction=(
-        "You are a data extraction assistant. Read the user's latest input:"
-        " '{latest_input}'. Extract the budget they have for their weekend"
-        " plans. If they do not explicitly mention a budget, set it to 100."
-    ),
-    output_schema=WeekendBudget,
-    output_key="weekend_budget",
-)
-
-def route_weekend(weekend_budget: WeekendBudget):
-  amount = weekend_budget.budget
-
-  if amount < 5:
-    yield Event(route="too_low")
-  elif amount < 100:
-    yield Event(route="value_ideas")
-  else:
-    yield Event(route="premium_ideas")
-
-def handle_too_low():
-  """Fallback route for very low budgets."""
-  yield Event(
-      message="I'm sorry, but a budget under $5 is too low to do anything fun!"
-  )
-
-value_agent = Agent(
-    name="value_agent",
-    model=MODEL_NAME,
-    instruction=(
-        "The user is looking for weekend ideas and has a budget of"
-        " ${weekend_budget.budget}. Suggest 2 to 3 fun, cheap ideas they"
-        " can do that fit strictly within this budget."
-    ),
-)
-
-premium_agent = Agent(
-    name="premium_agent",
-    model=MODEL_NAME,
-    instruction=(
-        # Changed the variable placeholder here:
-        "The user is looking for weekend ideas and has a generous budget of"
-        " ${weekend_budget.budget}. Suggest 2 to 3 fancy, premium ideas they"
-        " can do that utilize this budget."
-    ),
-)
+def task_C_node(node_input: str):
+    """A FunctionNode to execute node C."""
+    return Event(output="Task C completed")
 
 root_agent = Workflow(
-    name="weekend_planner",
+    name="routing_workflow",
     edges=[
-        ("START", process_input, extract_budget, route_weekend),
-
-        (
-            route_weekend,
-            {
-                "too_low": handle_too_low,
-                "value_ideas": value_agent,
-                "premium_ideas": premium_agent,
-            },
+        ("START", task_A_node, router),
+        (router,
+          {
+            # "route value": node_to_run
+            "RUN_TASK_B": task_B_node,
+            "RUN_TASK_C": task_C_node,
+          },
         ),
     ],
 )
