@@ -116,6 +116,11 @@ pip install 'redisvl[mcp]>=0.18.2'
 
 === "Sessions + Memory"
 
+    Plug [Agent Memory Server](https://github.com/redis/agent-memory-server)
+    into any ADK `Runner` via the REST-based session and memory services.
+    Working memory handles per-session state with auto-summarization;
+    long-term memory provides cross-session semantic search.
+
     ```python
     from google.adk.agents import Agent
     from google.adk.runners import Runner
@@ -196,6 +201,10 @@ pip install 'redisvl[mcp]>=0.18.2'
         for a complete working setup with Docker Compose.
 
 === "Search tools"
+
+    Use RedisVL-backed `BaseTool` subclasses to run vector, hybrid, range,
+    text, or SQL searches against a Redis index. Bind a tool to an existing
+    index and pass it directly to your agent.
 
     ```python
     from google.adk.agents import Agent
