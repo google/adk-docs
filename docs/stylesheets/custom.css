@@ -585,3 +585,12 @@ nav.md-nav--primary .md-nav__item--section>.md-nav__link {
   text-decoration: none; font-weight: 500; white-space: nowrap;
 }
 .md-banner .announce-item a:hover { text-decoration: underline; }
+
+@media (max-width: 768px) {
+  .md-banner {
+    text-align: center;
+  }
+  .md-banner .announce-item {
+    display: inline;
+  }
+}
