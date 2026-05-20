@@ -1,5 +1,10 @@
 # Test deployed agents in Agent Runtime
 
+<div class="language-support-tag" title="Agent Runtime currently supports Python and Go.">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-go">Go v1.2.0</span>
+</div>
+
+
 These instructions explain how to test an ADK agent deployed to the
 [Agent Runtime](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview)
 runtime environment. Before using these instructions, you need to have completed
