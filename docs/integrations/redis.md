@@ -1,7 +1,7 @@
 ---
 catalog_title: Redis
 catalog_description: Vector, hybrid, and SQL search plus session, memory, and semantic cache for agents
-catalog_icon: /integrations/assets/redis.png
+catalog_icon: /integrations/assets/redis.svg
 catalog_tags: ["data","mcp"]
 ---
 
