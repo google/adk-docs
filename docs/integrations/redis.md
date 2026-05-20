@@ -19,14 +19,13 @@ over a Redis index, persistent sessions and long-term memory via
 and semantic caching for LLM responses and tool results. Redis runs as a
 managed service or self-hosted (Redis 8.4+ with the RediSearch module).
 
-There are several ways to use this integration:
+There are three ways to use this integration:
 
 | Approach | Description |
 |----------|-------------|
 | **Search tools** | Five `BaseTool` subclasses (`RedisVectorSearchTool`, `RedisHybridSearchTool`, `RedisRangeSearchTool`, `RedisTextSearchTool`, `RedisSQLSearchTool`) over RedisVL queries against a bound index. |
 | **Session + Memory services** | `RedisWorkingMemorySessionService` and `RedisLongTermMemoryService` that implement ADK's `BaseSessionService` and `BaseMemoryService`, backed by Agent Memory Server. |
 | **RedisVL MCP** | Connect ADK's native `McpToolset` to a running [`rvl mcp`](https://docs.redisvl.com/en/latest/user_guide/how_to_guides/mcp.html) server. Exposes `search-records` (vector / fulltext / hybrid) and `upsert-records` with schema-aware filter and return-field hints. |
-| **AMS MCP toolset** | `create_memory_mcp_toolset(...)` connects to Agent Memory Server's MCP endpoint and surfaces memory tools (`search_long_term_memory`, `create_long_term_memories`, etc.). |
 | **Semantic cache** | `RedisVLCacheProvider` (self-hosted) and `LangCacheProvider` (managed via [Redis LangCache](https://redis.io/langcache)) for LLM-response and tool-result caching. |
 
 ## Use cases
@@ -236,7 +235,6 @@ Tool | Description
 Source | Description
 ------ | -----------
 [RedisVL MCP server](https://docs.redisvl.com/en/latest/user_guide/how_to_guides/mcp.html) (`rvl mcp`) | Connect ADK's native `McpToolset` to a running `rvl mcp` server. The server exposes `search-records` (vector / fulltext / hybrid, chosen per server via YAML) and `upsert-records`, with schema-aware filter and return-field hints derived from the index. Supports `stdio`, `sse`, and `streamable-http`; bearer auth on HTTP; suppress writes with `--read-only` on the server or `tool_filter=["search-records"]` on the `McpToolset`.
-`create_memory_mcp_toolset(...)` | `McpToolset` bound to Agent Memory Server's MCP endpoint. Exposes `search_long_term_memory`, `create_long_term_memories`, `edit_long_term_memory`, `delete_long_term_memories`, `memory_prompt`, and related memory tools over SSE.
 
 ### Memory tools
 
