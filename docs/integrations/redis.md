@@ -25,7 +25,8 @@ There are four ways to use this integration:
 |----------|-------------|
 | **Search tools** | Five `BaseTool` subclasses (`RedisVectorSearchTool`, `RedisHybridSearchTool`, `RedisRangeSearchTool`, `RedisTextSearchTool`, `RedisSQLSearchTool`) over RedisVL queries against a bound index. |
 | **Session + Memory services** | `RedisWorkingMemorySessionService` and `RedisLongTermMemoryService` that implement ADK's `BaseSessionService` and `BaseMemoryService`, backed by Agent Memory Server. |
-| **MCP toolsets** | `create_redisvl_mcp_toolset(...)` for RedisVL's MCP server (`rvl mcp`) and `create_memory_mcp_toolset(...)` for Agent Memory Server's MCP endpoint. |
+| **RedisVL MCP** | Connect ADK's native `McpToolset` to a running [`rvl mcp`](https://docs.redisvl.com) server. Exposes `search-records` (vector / fulltext / hybrid) and `upsert-records` with schema-aware filter and return-field hints. |
+| **AMS MCP toolset** | `create_memory_mcp_toolset(...)` connects to Agent Memory Server's MCP endpoint and surfaces memory tools (`search_long_term_memory`, `create_long_term_memories`, etc.). |
 | **Semantic cache** | `RedisVLCacheProvider` (self-hosted) and `LangCacheProvider` (managed via [Redis LangCache](https://redis.io/langcache)) for LLM-response and tool-result caching. |
 
 ## Use cases
@@ -62,9 +63,11 @@ Install only the extras you need:
 pip install 'adk-redis[memory]'      # session + long-term memory services
 pip install 'adk-redis[search]'      # RedisVL-backed search tools
 pip install 'adk-redis[sql]'         # RedisSQLSearchTool (sql-redis)
-pip install 'adk-redis[mcp-search]'  # create_redisvl_mcp_toolset helper
 pip install 'adk-redis[langcache]'   # managed semantic cache provider
 pip install 'adk-redis[all]'         # everything above
+
+# For the RedisVL MCP server (used with ADK's native McpToolset):
+pip install 'redisvl[mcp]>=0.18.2'
 ```
 
 ## Use with agent
@@ -78,7 +81,7 @@ pip install 'adk-redis[all]'         # everything above
 
     from adk_redis import RedisVectorQueryConfig, RedisVectorSearchTool
 
-    vectorizer = HFTextVectorizer(model="sentence-transformers/all-MiniLM-L6-v2")
+    vectorizer = HFTextVectorizer(model="redis/langcache-embed-v2")
     index = SearchIndex.from_existing("products", redis_url="redis://localhost:6379")
 
     search_tool = RedisVectorSearchTool(
@@ -137,28 +140,48 @@ pip install 'adk-redis[all]'         # everything above
     )
     ```
 
-=== "MCP toolset"
+=== "RedisVL MCP server"
+
+    Start the [RedisVL MCP server](https://docs.redisvl.com) (`rvl mcp`)
+    pointed at your Redis index, then connect ADK's native `McpToolset`
+    to it. The example below uses the stdio transport so no separate
+    server process is needed; swap in `StreamableHTTPConnectionParams`
+    or `SseConnectionParams` to connect to a long-running remote server.
 
     ```python
     from google.adk.agents import Agent
-    from pydantic import SecretStr
-
-    from adk_redis import create_redisvl_mcp_toolset
-
-    # Connect to a running `rvl mcp` server over streamable-http.
-    redis_tools = create_redisvl_mcp_toolset(
-        url="http://localhost:8000/mcp",
-        auth_token=SecretStr("YOUR_TOKEN"),
-        read_only=True,
-    )
+    from google.adk.tools.mcp_tool import McpToolset
+    from google.adk.tools.mcp_tool.mcp_session_manager import StdioConnectionParams
+    from mcp import StdioServerParameters
 
     root_agent = Agent(
         model="gemini-flash-latest",
         name="redis_mcp_agent",
         instruction="Use the search-records tool to answer questions.",
-        tools=[redis_tools],
+        tools=[
+            McpToolset(
+                connection_params=StdioConnectionParams(
+                    server_params=StdioServerParameters(
+                        command="rvl",
+                        args=[
+                            "mcp",
+                            "--config",
+                            "/path/to/mcp_config.yaml",
+                            "--read-only",
+                        ],
+                    ),
+                    timeout=30,
+                ),
+                tool_filter=["search-records"],
+            ),
+        ],
     )
     ```
+
+    !!! note
+
+        For other ADK language SDKs (TypeScript, etc.), see
+        [Custom MCP Tools](/tools-custom/mcp-tools/).
 
 === "Semantic cache"
 
@@ -180,7 +203,7 @@ pip install 'adk-redis[all]'         # everything above
             distance_threshold=0.1,
         ),
         vectorizer=HFTextVectorizer(
-            model="sentence-transformers/all-MiniLM-L6-v2",
+            model="redis/langcache-embed-v2",
         ),
     )
 
@@ -208,12 +231,12 @@ Tool | Description
 `RedisTextSearchTool` | BM25 keyword full-text search. No vectorizer required.
 `RedisSQLSearchTool` | SQL `SELECT` against a bound index via `redisvl.query.SQLQuery`. Supports `:name` parameter placeholders. Requires `adk-redis[sql]`.
 
-### MCP toolsets
+### MCP
 
-Helper | Description
+Source | Description
 ------ | -----------
-`create_redisvl_mcp_toolset(...)` | `McpToolset` bound to a RedisVL MCP server (`rvl mcp`). Supports `stdio`, `sse`, and `streamable-http`; bearer auth on HTTP transports; `--read-only` default for stdio. Exposes `search-records` and `upsert-records`.
-`create_memory_mcp_toolset(...)` | `McpToolset` bound to Agent Memory Server's MCP endpoint. Exposes `search_long_term_memory`, `create_long_term_memories`, `edit_long_term_memory`, `delete_long_term_memories`, `memory_prompt`, and related memory tools.
+[RedisVL MCP server](https://docs.redisvl.com) (`rvl mcp`) | Connect ADK's native `McpToolset` to a running `rvl mcp` server. The server exposes `search-records` (vector / fulltext / hybrid, chosen per server via YAML) and `upsert-records`, with schema-aware filter and return-field hints derived from the index. Supports `stdio`, `sse`, and `streamable-http`; bearer auth on HTTP; suppress writes with `--read-only` on the server or `tool_filter=["search-records"]` on the `McpToolset`.
+`create_memory_mcp_toolset(...)` | `McpToolset` bound to Agent Memory Server's MCP endpoint. Exposes `search_long_term_memory`, `create_long_term_memories`, `edit_long_term_memory`, `delete_long_term_memories`, `memory_prompt`, and related memory tools over SSE.
 
 ### Memory tools
 
