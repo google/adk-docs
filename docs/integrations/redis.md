@@ -119,7 +119,7 @@ pip install 'redisvl[mcp]>=0.18.2'
     Plug [Agent Memory Server](https://github.com/redis/agent-memory-server)
     into any ADK `Runner` via the REST-based session and memory services.
     Working memory handles per-session state with auto-summarization;
-    long-term memory provides cross-session semantic search.
+    long-term memory provides cross-session hybrid search.
 
     ```python
     from google.adk.agents import Agent
