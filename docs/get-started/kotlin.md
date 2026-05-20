@@ -6,6 +6,13 @@ for Kotlin. Before you start, make sure you have the following installed:
 - Java 17 or later
 - Gradle 8.0 or later
 
+??? tip "Building for Android?"
+
+    This quickstart covers Kotlin on the JVM. If you're building an Android app,
+    complete this quickstart first to learn the agent API, then see [Build ADK
+    agents for Android](https://developer.android.com/ai/adk) for
+    Android-specific project setup and on-device models.
+
 ## Create an agent project
 
 Create an agent project with the following files and directory structure:
@@ -290,3 +297,4 @@ Now that you have ADK installed and your first agent running, try building
 your own agent with our build guides:
 
 - [Build your agent](/tutorials/)
+- [Build ADK agents for Android](https://developer.android.com/ai/adk)
