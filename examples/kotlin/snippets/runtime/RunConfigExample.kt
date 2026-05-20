@@ -41,6 +41,12 @@ val metadataConfig = RunConfig(
 )
 // --8<-- [end:custom_metadata]
 
+// --8<-- [start:streaming_config]
+val streamingConfig = RunConfig(
+    streamingMode = StreamingMode.SSE,
+)
+// --8<-- [end:streaming_config]
+
 // --8<-- [start:resume_usage]
 fun resumeAgent(runner: InMemoryRunner) = runBlocking {
     runner.runAsync(
