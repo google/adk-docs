@@ -40,7 +40,7 @@ MCP Toolbox provides out-of-the-box toolsets for the following databases and dat
 *   [Cloud SQL Admin](https://mcp-toolbox.dev/integrations/cloud-sql-admin/source/)
 *   [Firestore](https://mcp-toolbox.dev/integrations/firestore/source/)
 *   [Bigtable](https://mcp-toolbox.dev/integrations/bigtable/source/)
-*   [Knowledge Catalog (previously known as Dataplex](https://mcp-toolbox.dev/integrations/knowledge-catalog/source/) (for data discovery and metadata search)
+*   [Knowledge Catalog (previously known as Dataplex)](https://mcp-toolbox.dev/integrations/knowledge-catalog/source/) (for data discovery and metadata search)
 *   [Cloud Monitoring](https://mcp-toolbox.dev/integrations/cloudmonitoring/source/)
 *   [Cloud Healthcare](https://mcp-toolbox.dev/integrations/cloudhealthcare/source/)
 *   [Cloud Logging Admin](https://mcp-toolbox.dev/integrations/cloudloggingadmin/source/)
