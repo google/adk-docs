@@ -19,13 +19,13 @@ over a Redis index, persistent sessions and long-term memory via
 and semantic caching for LLM responses and tool results. Redis runs as a
 managed service or self-hosted (Redis 8.4+ with the RediSearch module).
 
-There are three ways to use this integration:
+There are four ways to use this integration:
 
 | Approach | Description |
 |----------|-------------|
-| **Search tools** | Five `BaseTool` subclasses (`RedisVectorSearchTool`, `RedisHybridSearchTool`, `RedisRangeSearchTool`, `RedisTextSearchTool`, `RedisSQLSearchTool`) over RedisVL queries against a bound index. |
-| **Session + Memory services** | `RedisWorkingMemorySessionService` and `RedisLongTermMemoryService` that implement ADK's `BaseSessionService` and `BaseMemoryService`, backed by Agent Memory Server. |
 | **RedisVL MCP** | Connect ADK's native `McpToolset` to a running [`rvl mcp`](https://docs.redisvl.com/en/latest/user_guide/how_to_guides/mcp.html) server. Exposes `search-records` (vector / fulltext / hybrid) and `upsert-records` with schema-aware filter and return-field hints. |
+| **Session + Memory services** | `RedisWorkingMemorySessionService` and `RedisLongTermMemoryService` that implement ADK's `BaseSessionService` and `BaseMemoryService`, backed by Agent Memory Server. |
+| **Search tools** | Five `BaseTool` subclasses (`RedisVectorSearchTool`, `RedisHybridSearchTool`, `RedisRangeSearchTool`, `RedisTextSearchTool`, `RedisSQLSearchTool`) over RedisVL queries against a bound index. |
 | **Semantic cache** | `RedisVLCacheProvider` (self-hosted) and `LangCacheProvider` (managed via [Redis LangCache](https://redis.io/langcache)) for LLM-response and tool-result caching. |
 
 ## Use cases
@@ -71,74 +71,6 @@ pip install 'redisvl[mcp]>=0.18.2'
 
 ## Use with agent
 
-=== "Search tools"
-
-    ```python
-    from google.adk.agents import Agent
-    from redisvl.index import SearchIndex
-    from redisvl.utils.vectorize import HFTextVectorizer
-
-    from adk_redis import RedisVectorQueryConfig, RedisVectorSearchTool
-
-    vectorizer = HFTextVectorizer(model="redis/langcache-embed-v2")
-    index = SearchIndex.from_existing("products", redis_url="redis://localhost:6379")
-
-    search_tool = RedisVectorSearchTool(
-        index=index,
-        vectorizer=vectorizer,
-        config=RedisVectorQueryConfig(num_results=5),
-        return_fields=["title", "price", "category"],
-        name="search_products",
-        description="Semantic search over the product catalog.",
-    )
-
-    root_agent = Agent(
-        model="gemini-flash-latest",
-        name="redis_search_agent",
-        instruction="Help users find products using semantic search.",
-        tools=[search_tool],
-    )
-    ```
-
-=== "Sessions + Memory"
-
-    ```python
-    from google.adk.agents import Agent
-    from google.adk.runners import Runner
-
-    from adk_redis import (
-        RedisLongTermMemoryService,
-        RedisLongTermMemoryServiceConfig,
-        RedisWorkingMemorySessionService,
-        RedisWorkingMemorySessionServiceConfig,
-    )
-
-    session_service = RedisWorkingMemorySessionService(
-        config=RedisWorkingMemorySessionServiceConfig(
-            api_base_url="http://localhost:8000",
-        ),
-    )
-    memory_service = RedisLongTermMemoryService(
-        config=RedisLongTermMemoryServiceConfig(
-            api_base_url="http://localhost:8000",
-            recency_boost=True,
-        ),
-    )
-
-    root_agent = Agent(
-        model="gemini-flash-latest",
-        name="redis_memory_agent",
-        instruction="Use long-term memory to personalize responses.",
-    )
-
-    runner = Runner(
-        app_name="redis_memory_app",
-        agent=root_agent,
-        session_service=session_service,
-        memory_service=memory_service,
-    )
-    ```
-
 === "RedisVL MCP server"
 
     Start the [RedisVL MCP server](https://docs.redisvl.com/en/latest/user_guide/how_to_guides/mcp.html) (`rvl mcp`) pointed
@@ -181,6 +113,74 @@ pip install 'redisvl[mcp]>=0.18.2'
 
         To connect to this MCP server from other ADK languages, see [MCP
         Tools](/tools-custom/mcp-tools/).
+
+=== "Sessions + Memory"
+
+    ```python
+    from google.adk.agents import Agent
+    from google.adk.runners import Runner
+
+    from adk_redis import (
+        RedisLongTermMemoryService,
+        RedisLongTermMemoryServiceConfig,
+        RedisWorkingMemorySessionService,
+        RedisWorkingMemorySessionServiceConfig,
+    )
+
+    session_service = RedisWorkingMemorySessionService(
+        config=RedisWorkingMemorySessionServiceConfig(
+            api_base_url="http://localhost:8000",
+        ),
+    )
+    memory_service = RedisLongTermMemoryService(
+        config=RedisLongTermMemoryServiceConfig(
+            api_base_url="http://localhost:8000",
+            recency_boost=True,
+        ),
+    )
+
+    root_agent = Agent(
+        model="gemini-flash-latest",
+        name="redis_memory_agent",
+        instruction="Use long-term memory to personalize responses.",
+    )
+
+    runner = Runner(
+        app_name="redis_memory_app",
+        agent=root_agent,
+        session_service=session_service,
+        memory_service=memory_service,
+    )
+    ```
+
+=== "Search tools"
+
+    ```python
+    from google.adk.agents import Agent
+    from redisvl.index import SearchIndex
+    from redisvl.utils.vectorize import HFTextVectorizer
+
+    from adk_redis import RedisVectorQueryConfig, RedisVectorSearchTool
+
+    vectorizer = HFTextVectorizer(model="redis/langcache-embed-v2")
+    index = SearchIndex.from_existing("products", redis_url="redis://localhost:6379")
+
+    search_tool = RedisVectorSearchTool(
+        index=index,
+        vectorizer=vectorizer,
+        config=RedisVectorQueryConfig(num_results=5),
+        return_fields=["title", "price", "category"],
+        name="search_products",
+        description="Semantic search over the product catalog.",
+    )
+
+    root_agent = Agent(
+        model="gemini-flash-latest",
+        name="redis_search_agent",
+        instruction="Help users find products using semantic search.",
+        tools=[search_tool],
+    )
+    ```
 
 === "Semantic cache"
 
