@@ -237,6 +237,7 @@ plugins:
         - deploy/*.md
         - observability/*.md
         - evaluate/*.md
+        - optimize/*.md
         - safety/*.md
         Components:
         - tools/*.md
