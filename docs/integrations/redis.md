@@ -368,7 +368,8 @@ Provider | Description
 
 - [adk-redis on GitHub](https://github.com/redis-developer/adk-redis)
 - [adk-redis on PyPI](https://pypi.org/project/adk-redis/)
-- [adk-redis documentation](https://redis.io/docs/latest/integrate/google-adk/)
+- [adk-redis documentation](https://redis-developer.github.io/adk-redis/)
+- [ADK + Redis on redis.io](https://redis.io/docs/latest/integrate/google-adk/)
 - [Runnable examples](https://github.com/redis-developer/adk-redis/tree/main/examples)
 - [Redis Agent Memory Server](https://github.com/redis/agent-memory-server)
 - [RedisVL documentation](https://docs.redisvl.com)
