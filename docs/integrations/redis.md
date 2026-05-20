@@ -19,7 +19,7 @@ over a Redis index, persistent sessions and long-term memory via
 and semantic caching for LLM responses and tool results. Redis runs as a
 managed service or self-hosted (Redis 8.4+ with the RediSearch module).
 
-There are five ways to use this integration:
+There are four ways to use this integration:
 
 | Approach | Description |
 |----------|-------------|
@@ -27,7 +27,6 @@ There are five ways to use this integration:
 | **Session + Memory services** | `RedisWorkingMemorySessionService` and `RedisLongTermMemoryService` that implement ADK's `BaseSessionService` and `BaseMemoryService`, backed by Agent Memory Server. |
 | **Sessions + Memory MCP** | Connect ADK's native `McpToolset` to [Agent Memory Server](https://github.com/redis/agent-memory-server)'s MCP endpoint over SSE. Gives the agent direct tool access to `search_long_term_memory`, `create_long_term_memories`, and `memory_prompt`. |
 | **Search tools** | Five `BaseTool` subclasses (`RedisVectorSearchTool`, `RedisHybridSearchTool`, `RedisRangeSearchTool`, `RedisTextSearchTool`, `RedisSQLSearchTool`) over RedisVL queries against a bound index. |
-| **Semantic cache** | `RedisVLCacheProvider` (self-hosted) and `LangCacheProvider` (managed via [Redis LangCache](https://redis.io/langcache)) for LLM-response and tool-result caching. |
 
 ## Use cases
 
@@ -224,6 +223,12 @@ pip install 'redisvl[mcp]>=0.18.2'
         tools=[search_tool],
     )
     ```
+
+## Semantic caching
+
+Wrap any LLM call site with semantic caching so repeat or near-duplicate
+prompts skip the model. Choose self-hosted (bring your own Redis and
+vectorizer) or managed via [Redis LangCache](https://redis.io/langcache).
 
 === "Semantic cache (self-hosted)"
 
