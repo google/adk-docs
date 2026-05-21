@@ -16,10 +16,12 @@
 
 package com.google.adk.kt.examples.runtime
 
+import com.google.adk.kt.agents.LlmAgent
 import com.google.adk.kt.agents.ResumabilityConfig
 import com.google.adk.kt.agents.RunConfig
 import com.google.adk.kt.agents.StreamingMode
 import com.google.adk.kt.annotations.ExperimentalResumabilityFeature
+import com.google.adk.kt.models.Gemini
 import com.google.adk.kt.runners.InMemoryRunner
 import com.google.adk.kt.sessions.InMemorySessionService
 import com.google.adk.kt.types.Content
@@ -71,6 +73,9 @@ val streamingConfig =
         streamingMode = StreamingMode.SSE,
     )
 // --8<-- [end:streaming_config]
+
+private val rootAgent =
+    LlmAgent(name = "my_agent", model = Gemini(name = "gemini-flash-latest"))
 
 // --8<-- [start:resumability_config]
 @OptIn(ExperimentalResumabilityFeature::class)
