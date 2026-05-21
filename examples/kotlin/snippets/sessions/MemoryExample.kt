@@ -158,6 +158,63 @@ fun preloadMemoryAgent(model: Gemini) {
 // --8<-- [end:preload_memory_agent]
 
 // --8<-- [start:auto_save_callback]
+
+// --8<-- [start:multi_memory]
+/**
+ * Example of using two memory services in Kotlin.
+ */
+suspend fun searchAllMemory(
+    toolContext: ToolContext,
+    query: String,
+    docsMemory: InMemoryMemoryService,
+): Map<String, List<String>> {
+    // Search the conversational memory (configured in the runner)
+    val conversational = toolContext.invocationContext.memoryService?.searchMemory(
+        appName = toolContext.invocationContext.session.key.appName,
+        userId = toolContext.invocationContext.session.key.userId,
+        query = query
+    )
+
+    // Search a separate docs knowledge base
+    val docs = docsMemory.searchMemory(
+        appName = "docs",
+        userId = "shared",
+        query = query
+    )
+
+    return mapOf(
+        "from_conversations" to
+            (
+                conversational?.memories?.map {
+                    it.content.parts.joinToString(" ") { p -> p.text ?: "" }
+                } ?: emptyList()
+            ),
+        "from_docs" to
+            docs.memories.map {
+                it.content.parts.joinToString(" ") { p -> p.text ?: "" }
+            },
+    )
+}
+
+fun multiMemoryAgent(model: Gemini) {
+    // docs_memory could be any MemoryService implementation
+    val docsMemory = InMemoryMemoryService()
+
+    val agent =
+        LlmAgent(
+            model = model,
+            name = "multi_memory_agent",
+            instruction =
+                Instruction(
+                    "Answer questions using both your conversation history and the " +
+                        "docs knowledge base. Use the search_all_memory tool.",
+                ),
+            // In a real app, you'd wrap searchAllMemory in a @Tool annotated class
+            // and pass docsMemory to its constructor.
+        )
+}
+// --8<-- [end:multi_memory]
+
 suspend fun autoSaveSessionToMemoryCallback(
     context: CallbackContext,
 ): CallbackChoice<Unit, Content> {
