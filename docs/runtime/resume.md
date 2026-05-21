@@ -1,7 +1,7 @@
 # Resume stopped agents
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.14.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.14.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 An ADK agent's execution can be interrupted by various factors including
@@ -23,16 +23,24 @@ Enable the Resume function for an agent workflow by applying a Resumability
 configuration to the App object of your ADK workflow, as shown in the following
 code example:
 
-```python
-app = App(
-    name='my_resumable_agent',
-    root_agent=root_agent,
-    # Set the resumability config to enable resumability.
-    resumability_config=ResumabilityConfig(
-        is_resumable=True,
-    ),
-)
-```
+=== "Python"
+
+    ```python
+    app = App(
+        name='my_resumable_agent',
+        root_agent=root_agent,
+        # Set the resumability config to enable resumability.
+        resumability_config=ResumabilityConfig(
+            is_resumable=True,
+        ),
+    )
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/runtime/RunConfigExample.kt:resumability_config"
+    ```
 
 !!! warning "Caution: Long Running Functions, Confirmations, Authentication"
     For agents that use
@@ -77,13 +85,21 @@ curl -X POST http://localhost:8000/run_sse \
 You can also resume a workflow using the Runner object Run Async method, as
 shown below:
 
-```python
-runner.run_async(user_id='u_123', session_id='s_abc',
-    invocation_id='invocation-123')
+=== "Python"
 
-# When new_message is set to a function response,
-# we are trying to resume a long running function.
-```
+    ```python
+    runner.run_async(user_id='u_123', session_id='s_abc',
+        invocation_id='invocation-123')
+
+    # When new_message is set to a function response,
+    # we are trying to resume a long running function.
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/runtime/RunConfigExample.kt:resume_usage"
+    ```
 
 !!! info "Note"
     Resuming a workflow from the ADK Web user interface or using the ADK
