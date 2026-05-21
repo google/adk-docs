@@ -23,16 +23,24 @@ Enable the Resume function for an agent workflow by applying a Resumability
 configuration to the App object of your ADK workflow, as shown in the following
 code example:
 
-```python
-app = App(
-    name='my_resumable_agent',
-    root_agent=root_agent,
-    # Set the resumability config to enable resumability.
-    resumability_config=ResumabilityConfig(
-        is_resumable=True,
-    ),
-)
-```
+=== "Python"
+
+    ```python
+    app = App(
+        name='my_resumable_agent',
+        root_agent=root_agent,
+        # Set the resumability config to enable resumability.
+        resumability_config=ResumabilityConfig(
+            is_resumable=True,
+        ),
+    )
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/runtime/RunConfigExample.kt:resumability_config"
+    ```
 
 !!! warning "Caution: Long Running Functions, Confirmations, Authentication"
     For agents that use

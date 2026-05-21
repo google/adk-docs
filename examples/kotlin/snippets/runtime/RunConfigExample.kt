@@ -16,9 +16,12 @@
 
 package com.google.adk.kt.examples.runtime
 
+import com.google.adk.kt.agents.ResumabilityConfig
 import com.google.adk.kt.agents.RunConfig
 import com.google.adk.kt.agents.StreamingMode
+import com.google.adk.kt.annotations.ExperimentalResumabilityFeature
 import com.google.adk.kt.runners.InMemoryRunner
+import com.google.adk.kt.sessions.InMemorySessionService
 import com.google.adk.kt.types.Content
 import com.google.adk.kt.types.Role
 import kotlinx.coroutines.flow.collect
@@ -68,6 +71,17 @@ val streamingConfig =
         streamingMode = StreamingMode.SSE,
     )
 // --8<-- [end:streaming_config]
+
+// --8<-- [start:resumability_config]
+@OptIn(ExperimentalResumabilityFeature::class)
+val runner =
+    InMemoryRunner(
+        agent = rootAgent,
+        appName = "my_resumable_agent",
+        sessionService = InMemorySessionService(),
+        resumabilityConfig = ResumabilityConfig(isResumable = true),
+    )
+// --8<-- [end:resumability_config]
 
 // --8<-- [start:resume_usage]
 fun resumeAgent(runner: InMemoryRunner) =
