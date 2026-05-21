@@ -1,10 +1,13 @@
 package com.google.adk.kt.examples.runtime
 
+import com.google.adk.kt.agents.InvocationContext
 import com.google.adk.kt.agents.LlmAgent
 import com.google.adk.kt.events.Event
+import com.google.adk.kt.events.EventActions
 import com.google.adk.kt.runners.InMemoryRunner
 import com.google.adk.kt.sessions.InMemorySessionService
 import com.google.adk.kt.types.Content
+import com.google.adk.kt.types.Role
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.onEach
 
@@ -40,22 +43,16 @@ fun runAsync(
 /**
  * Simplified view of logic inside Agent.runAsync, callbacks, or tools in Kotlin
  */
-suspend fun executionLogic(ctx: com.google.adk.kt.agents.InvocationContext) {
+suspend fun executionLogic(ctx: InvocationContext) {
     // ... previous code runs based on current state ...
 
     // 1. Determine a change or output is needed, construct the event
     val updateData = mapOf("field_1" to "value_2")
     val eventWithStateChange =
-        com.google.adk.kt.events.Event(
+        Event(
             author = "my_agent",
-            actions =
-                com.google.adk.kt.events
-                    .EventActions(stateDelta = updateData.toMutableMap()),
-            content =
-                com.google.adk.kt.types.Content.fromText(
-                    com.google.adk.kt.types.Role.MODEL,
-                    "State updated.",
-                ),
+            actions = EventActions(stateDelta = updateData.toMutableMap()),
+            content = Content.fromText(Role.MODEL, "State updated."),
         )
 
     // 2. Yield the event to the Runner for processing & commit
@@ -79,17 +76,13 @@ suspend fun executionLogic(ctx: com.google.adk.kt.agents.InvocationContext) {
 /**
  * Conceptual view of state update timing in Kotlin
  */
-suspend fun stateUpdateTiming(ctx: com.google.adk.kt.agents.InvocationContext) {
+suspend fun stateUpdateTiming(ctx: InvocationContext) {
     // 1. Modify state
     ctx.session.state["status"] = "processing"
     val event1 =
-        com.google.adk.kt.events.Event(
+        Event(
             author = "my_agent",
-            actions =
-                com.google.adk.kt.events.EventActions(
-                    stateDelta =
-                        mutableMapOf("status" to "processing"),
-                ),
+            actions = EventActions(stateDelta = mutableMapOf("status" to "processing")),
         )
 
     // 2. Yield event with the delta (emit to flow)
@@ -109,7 +102,7 @@ suspend fun stateUpdateTiming(ctx: com.google.adk.kt.agents.InvocationContext) {
 /**
  * Conceptual view of dirty reads in Kotlin
  */
-fun dirtyRead(ctx: com.google.adk.kt.agents.InvocationContext) {
+fun dirtyRead(ctx: InvocationContext) {
     // Code in a callback
     ctx.session.state["field_1"] = "value_1"
     // State is locally set to 'value_1', but not yet committed by Runner
