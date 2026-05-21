@@ -159,8 +159,6 @@ fun preloadMemoryAgent(model: Gemini) {
 }
 // --8<-- [end:preload_memory_agent]
 
-// --8<-- [start:auto_save_callback]
-
 // --8<-- [start:multi_memory]
 
 /**
@@ -220,6 +218,7 @@ fun multiMemoryAgent(model: Gemini) {
 }
 // --8<-- [end:multi_memory]
 
+// --8<-- [start:auto_save_callback]
 suspend fun autoSaveSessionToMemoryCallback(
     context: CallbackContext,
 ): CallbackChoice<Unit, Content> {
