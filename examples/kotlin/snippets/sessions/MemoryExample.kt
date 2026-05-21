@@ -1,3 +1,19 @@
+/*
+ * Copyright 2026 Google LLC
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.google.adk.kt.examples.sessions
 
 import com.google.adk.kt.agents.CallbackContext
@@ -71,17 +87,18 @@ fun main() =
         val userInput1 = Content.fromText(Role.USER, "My favorite project is Project Alpha.")
 
         // Run the agent
-        runner1.runAsync(
-            userId = userId,
-            sessionId = sessionId1,
-            newMessage = userInput1,
-        ).collect { event ->
-            event.content?.parts?.forEach { part ->
-                if (!part.text.isNullOrBlank()) {
-                    println("Agent Response: ${part.text}")
+        runner1
+            .runAsync(
+                userId = userId,
+                sessionId = sessionId1,
+                newMessage = userInput1,
+            ).collect { event ->
+                event.content?.parts?.forEach { part ->
+                    if (!part.text.isNullOrBlank()) {
+                        println("Agent Response: ${part.text}")
+                    }
                 }
             }
-        }
 
         // Get the completed session using SessionKey
         val session1 = sessionService.getSession(SessionKey(appName, userId, sessionId1))
@@ -106,17 +123,18 @@ fun main() =
         val userInput2 = Content.fromText(Role.USER, "What is my favorite project?")
 
         // Run the second agent
-        runner2.runAsync(
-            userId = userId,
-            sessionId = sessionId2,
-            newMessage = userInput2,
-        ).collect { event ->
-            event.content?.parts?.forEach { part ->
-                if (!part.text.isNullOrBlank()) {
-                    println("Agent Response: ${part.text}")
+        runner2
+            .runAsync(
+                userId = userId,
+                sessionId = sessionId2,
+                newMessage = userInput2,
+            ).collect { event ->
+                event.content?.parts?.forEach { part ->
+                    if (!part.text.isNullOrBlank()) {
+                        println("Agent Response: ${part.text}")
+                    }
                 }
             }
-        }
     }
 // --8<-- [end:full_example]
 
@@ -156,6 +174,65 @@ fun preloadMemoryAgent(model: Gemini) {
         )
 }
 // --8<-- [end:preload_memory_agent]
+
+// --8<-- [start:multi_memory]
+
+/**
+ * Example of using two memory services in Kotlin.
+ */
+suspend fun searchAllMemory(
+    toolContext: ToolContext,
+    query: String,
+    docsMemory: InMemoryMemoryService,
+): Map<String, List<String>> {
+    // Search the conversational memory (configured in the runner)
+    val conversational =
+        toolContext.invocationContext.memoryService?.searchMemory(
+            appName = toolContext.invocationContext.session.key.appName,
+            userId = toolContext.invocationContext.session.key.userId,
+            query = query,
+        )
+
+    // Search a separate docs knowledge base
+    val docs =
+        docsMemory.searchMemory(
+            appName = "docs",
+            userId = "shared",
+            query = query,
+        )
+
+    return mapOf(
+        "from_conversations" to
+            (
+                conversational?.memories?.map {
+                    it.content.parts.joinToString(" ") { p -> p.text ?: "" }
+                } ?: emptyList()
+            ),
+        "from_docs" to
+            docs.memories.map {
+                it.content.parts.joinToString(" ") { p -> p.text ?: "" }
+            },
+    )
+}
+
+fun multiMemoryAgent(model: Gemini) {
+    // docs_memory could be any MemoryService implementation
+    val docsMemory = InMemoryMemoryService()
+
+    val agent =
+        LlmAgent(
+            model = model,
+            name = "multi_memory_agent",
+            instruction =
+                Instruction(
+                    "Answer questions using both your conversation history and the " +
+                        "docs knowledge base. Use the search_all_memory tool.",
+                ),
+            // In a real app, you'd wrap searchAllMemory in a @Tool annotated class
+            // and pass docsMemory to its constructor.
+        )
+}
+// --8<-- [end:multi_memory]
 
 // --8<-- [start:auto_save_callback]
 suspend fun autoSaveSessionToMemoryCallback(

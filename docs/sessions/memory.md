@@ -1,7 +1,7 @@
 # Memory: Long-Term Knowledge with `MemoryService`
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 We've seen how `Session` tracks the history (`events`) and temporary data (`state`) for a *single, ongoing conversation*. But what if an agent needs to recall information from *past* conversations? This is where the concept of **Long-Term Knowledge** and the **`MemoryService`** come into play.
@@ -230,12 +230,6 @@ You can also search memory from within a custom tool by using the tool context.
         }
     ```
 
-=== "Go"
-
-    ```go
-    --8<-- "examples/go/snippets/sessions/memory_example/memory_example.go:tool_search"
-    ```
-
 === "TypeScript"
 
     ```typescript
@@ -248,6 +242,12 @@ You can also search memory from within a custom tool by using the tool context.
         memories: response.memories.map(m => m.content.parts?.map(p => p.text).join(' ')).join('\n')
       };
     }
+    ```
+
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/sessions/memory_example/memory_example.go:tool_search"
     ```
 
 === "Java"
@@ -508,6 +508,7 @@ For example, your agent can use the framework-configured `InMemoryMemoryService`
 #### Example: Using Two Memory Services
 
 === "Python"
+
     ```python
     from google.adk.agents import Agent
     from google.adk.memory import InMemoryMemoryService
@@ -548,4 +549,10 @@ For example, your agent can use the framework-configured `InMemoryMemoryService`
         ),
         tools=[search_all_memory],
     )
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/sessions/MemoryExample.kt:multi_memory"
     ```
