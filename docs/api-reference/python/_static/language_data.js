@@ -189,3 +189,4 @@ var Stemmer = function() {
     return w;
   }
 }
+

@@ -120,18 +120,24 @@ edges=[
     you cannot run multiple interactive chat sessions within the same agent
     session.
 
-### Route branches
+### Route branches and conditional execution
 
 The subsequent rows of the ***edges*** arrays after the START keyword define
-additional execution logic for nodes. For branching paths, you define a node,
-usually a ***FunctionNode***, that outputs a ***route*** with one or more route
-values. In the edges graph, you define the execution logic with route values and
-target nodes, as shown in the following code example:
+additional execution logic for nodes. For branching paths, which is how you create a conditional node, you define a node,
+usually a ***FunctionNode***, that outputs an Event with a specific  ***route*** value. In the edges graph, you then define the conditional execution logic by mapping these route values to target nodes, as shown in the following code example:
 
 ```python
 def router(node_input: str):
-    """Simulate a routing decision"""
-    return Event(route="RUN_TASK_C")
+    """Route to task B or C based on node_input."""
+    if condition(node_input):
+        return Event(route="RUN_TASK_C")
+    return Event(route="RUN_TASK_B")
+
+task_B_node = Agent(name="task_B_agent") # An agent to execute node B
+
+def task_C_node(node_input: str):
+    """A FunctionNode to execute node C."""
+    return Event(output="Task C completed")
 
 root_agent = Workflow(
     name="routing_workflow",
