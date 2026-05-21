@@ -71,17 +71,18 @@ fun main() =
         val userInput1 = Content.fromText(Role.USER, "My favorite project is Project Alpha.")
 
         // Run the agent
-        runner1.runAsync(
-            userId = userId,
-            sessionId = sessionId1,
-            newMessage = userInput1,
-        ).collect { event ->
-            event.content?.parts?.forEach { part ->
-                if (!part.text.isNullOrBlank()) {
-                    println("Agent Response: ${part.text}")
+        runner1
+            .runAsync(
+                userId = userId,
+                sessionId = sessionId1,
+                newMessage = userInput1,
+            ).collect { event ->
+                event.content?.parts?.forEach { part ->
+                    if (!part.text.isNullOrBlank()) {
+                        println("Agent Response: ${part.text}")
+                    }
                 }
             }
-        }
 
         // Get the completed session using SessionKey
         val session1 = sessionService.getSession(SessionKey(appName, userId, sessionId1))
@@ -106,17 +107,18 @@ fun main() =
         val userInput2 = Content.fromText(Role.USER, "What is my favorite project?")
 
         // Run the second agent
-        runner2.runAsync(
-            userId = userId,
-            sessionId = sessionId2,
-            newMessage = userInput2,
-        ).collect { event ->
-            event.content?.parts?.forEach { part ->
-                if (!part.text.isNullOrBlank()) {
-                    println("Agent Response: ${part.text}")
+        runner2
+            .runAsync(
+                userId = userId,
+                sessionId = sessionId2,
+                newMessage = userInput2,
+            ).collect { event ->
+                event.content?.parts?.forEach { part ->
+                    if (!part.text.isNullOrBlank()) {
+                        println("Agent Response: ${part.text}")
+                    }
                 }
             }
-        }
     }
 // --8<-- [end:full_example]
 
@@ -160,6 +162,7 @@ fun preloadMemoryAgent(model: Gemini) {
 // --8<-- [start:auto_save_callback]
 
 // --8<-- [start:multi_memory]
+
 /**
  * Example of using two memory services in Kotlin.
  */
@@ -169,18 +172,20 @@ suspend fun searchAllMemory(
     docsMemory: InMemoryMemoryService,
 ): Map<String, List<String>> {
     // Search the conversational memory (configured in the runner)
-    val conversational = toolContext.invocationContext.memoryService?.searchMemory(
-        appName = toolContext.invocationContext.session.key.appName,
-        userId = toolContext.invocationContext.session.key.userId,
-        query = query
-    )
+    val conversational =
+        toolContext.invocationContext.memoryService?.searchMemory(
+            appName = toolContext.invocationContext.session.key.appName,
+            userId = toolContext.invocationContext.session.key.userId,
+            query = query,
+        )
 
     // Search a separate docs knowledge base
-    val docs = docsMemory.searchMemory(
-        appName = "docs",
-        userId = "shared",
-        query = query
-    )
+    val docs =
+        docsMemory.searchMemory(
+            appName = "docs",
+            userId = "shared",
+            query = query,
+        )
 
     return mapOf(
         "from_conversations" to
