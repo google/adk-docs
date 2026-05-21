@@ -16,8 +16,13 @@ snippets/agents/llm-agent/CapitalAgent.kt
 snippets/agents/multi-agent/MultiAgentExample.kt
 snippets/callbacks/CallbackBasic.kt
 snippets/callbacks/BeforeModelCallback.kt
+snippets/get-started/multi_tool_agent/MultiToolAgent.kt
+snippets/mcp/McpExample.kt
+snippets/mcp/McpGroundingExample.kt
 snippets/observability/LoggingExamples.kt
 snippets/observability/SetupExample.kt
+snippets/runtime/RunConfigExample.kt
+snippets/runtime/RunnerLoop.kt
 snippets/sessions/MemoryExample.kt
 snippets/sessions/StateExample.kt
 snippets/tools/function-tools/RequiredParams.kt
@@ -27,8 +32,5 @@ snippets/tools/function-tools/LongRunningTool.kt
 snippets/tools/function-tools/AgentTool.kt
 snippets/tools/function-tools/PassData.kt
 snippets/tools/LimitationsWorkaround.kt
-snippets/get-started/multi_tool_agent/MultiToolAgent.kt
-snippets/runtime/RunConfigExample.kt
-snippets/runtime/RunnerLoop.kt
 
 

@@ -17,6 +17,7 @@ dependencies {
     implementation("com.google.adk:google-adk-kotlin-core:0.1.0")
     implementation("com.google.adk:google-adk-kotlin-webserver:0.1.0")
     ksp("com.google.adk:google-adk-kotlin-processor:0.1.0")
+    implementation("io.modelcontextprotocol.sdk:mcp:1.1.2")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
     implementation("com.google.cloud:google-cloud-storage:2.48.2")
     implementation("io.opentelemetry:opentelemetry-sdk:1.56.0")
