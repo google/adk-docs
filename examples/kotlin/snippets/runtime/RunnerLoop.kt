@@ -17,7 +17,6 @@
 package com.google.adk.kt.examples.runtime
 
 import com.google.adk.kt.agents.InvocationContext
-import com.google.adk.kt.agents.LlmAgent
 import com.google.adk.kt.events.Event
 import com.google.adk.kt.events.EventActions
 import com.google.adk.kt.runners.InMemoryRunner
