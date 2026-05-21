@@ -1,7 +1,7 @@
 # Model Context Protocol Tools
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 This guide walks you through two ways of integrating Model Context Protocol (MCP) with ADK.
@@ -237,7 +237,7 @@ Event received: {"id":"8728380b-bfad-4d14-8421-fa98d09364f1","invocationId":"e-c
 Event received: {"id":"8fe7e594-3e47-4254-8b57-9106ad8463cb","invocationId":"e-c2458c56-e57a-45b2-97de-ae7292e505ef","author":"enterprise_assistant","content":{"parts":[{"text":"There are three files in the directory: first, second, and third."}],"role":"model"},"actions":{"stateDelta":{},"artifactDelta":{},"requestedAuthConfigs":{}},"timestamp":1747377544689}
 ```
 
-For Typescript, you can define an agent that initializes the `MCPToolset` as follows:
+For TypeScript, you can define an agent that initializes the `MCPToolset` as follows:
 
 ```typescript
 import 'dotenv/config';
@@ -274,6 +274,13 @@ export const rootAgent = new LlmAgent({
     ],
 });
 ```
+
+For Kotlin, refer to the following sample to define an agent that initializes the `McpToolset`:
+
+```kotlin
+--8<-- "examples/kotlin/snippets/mcp/McpExample.kt:stdio_mcp"
+```
+
 
 
 
@@ -492,6 +499,13 @@ export const rootAgent = new LlmAgent({
     ],
 });
 ```
+
+For Kotlin, refer to the following sample to define an agent that initializes the `McpToolset`:
+
+```kotlin
+--8<-- "examples/kotlin/snippets/mcp/McpGroundingExample.kt:maps_grounding"
+```
+
 
 ## 2. Building an MCP server with ADK tools (MCP server exposing ADK)
 
@@ -1090,6 +1104,12 @@ if __name__ == "__main__":
             .build();
 
     McpToolset toolset = new McpToolset(streamableParams);
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/mcp/McpExample.kt:http_mcp"
     ```
 
 #### Pattern 3: Sidecar MCP Servers (GKE)
