@@ -6,7 +6,7 @@
 # This script runs in an isolated temporary directory and does not
 # modify any existing adk-kotlin clones or local environments.
 #
-# Prerequisites: java (JDK 17+), ANDROID_HOME, git, gradle
+# Prerequisites: java (JDK 17+), Android SDK (ANDROID_HOME must be set), git
 # Run from: adk-docs repository root
 #
 # Usage: bash tools/kotlin-api-docs/generate.sh <version>
@@ -37,12 +37,6 @@ fi
 
 if ! command -v git &> /dev/null; then
   echo "Error: git is required but not installed."
-  exit 1
-fi
-
-if ! command -v gradle &> /dev/null; then
-  echo "Error: gradle is required but not installed."
-  echo "  Install with: brew install gradle"
   exit 1
 fi
 
@@ -92,5 +86,25 @@ popd > /dev/null || exit 1
 echo "Copying to $TARGET_DIR..."
 rm -rf "$TARGET_DIR"/*
 cp -r "$WORK_DIR/adk-kotlin/build/dokka/htmlMultiModule"/* "$TARGET_DIR/"
+
+# Add Google Analytics tag to generated HTML files
+echo "Adding Google Analytics tag..."
+GA_TAG_FILE=$(mktemp)
+cat > "$GA_TAG_FILE" <<'EOF'
+<!-- Google Analytics tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DKHZS27PHP"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-DKHZS27PHP');
+</script>
+EOF
+GA_TAG=$(<"$GA_TAG_FILE")
+rm -f "$GA_TAG_FILE"
+export GA_TAG
+find "$TARGET_DIR" -name '*.html' -print0 | while IFS= read -r -d '' file; do
+  awk 'BEGIN{tag=ENVIRON["GA_TAG"]} {gsub(/<\/head>/, "\n" tag "\n</head>")}1' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
+done
 
 echo "Done."
