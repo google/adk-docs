@@ -259,6 +259,5 @@ Variable | Required | Default | Description
 - [e2a MCP Server source](https://github.com/Mnexa-AI/e2a/tree/main/mcp)
 - [Runnable ADK example](https://github.com/Mnexa-AI/e2a/tree/main/mcp/examples/adk)
 - [Cloud-mode webhook example](https://github.com/Mnexa-AI/e2a/tree/main/examples/adk-cloud-webhook)
-- [Hosted MCP endpoint](https://mcp.e2a.dev/mcp)
 - [e2a documentation](https://e2a.dev)
 - [npm package](https://www.npmjs.com/package/@e2a/mcp-server)
