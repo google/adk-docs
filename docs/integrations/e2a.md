@@ -12,38 +12,33 @@ catalog_tags: ["mcp"]
 </div>
 
 The [e2a MCP Server](https://github.com/Mnexa-AI/e2a/tree/main/mcp) connects
-your ADK agent to [e2a](https://e2a.dev), an authenticated email gateway
-built for AI agents. Inbound mail is SPF/DKIM-verified before it reaches
-your agent. Outbound mail can be held for human approval before it ships.
+your ADK agent to [e2a](https://e2a.dev), an authenticated email gateway built
+for AI agents. This integration gives your agent its own email inbox to send,
+receive, and reply to messages using natural language, with SPF/DKIM-verified
+inbound mail and optional human-in-the-loop approval on outbound messages.
 
 ## Use cases
 
-- **Give agents their own inboxes**: Provision dedicated email addresses
-  (e.g. `support-bot@your-domain.com`) and let agents send and receive
-  mail just like a teammate.
+- **Give agents their own inboxes**: Provision dedicated email addresses (e.g.
+  `support-bot@your-domain.com`) and let agents send and receive mail just like
+  a teammate.
 
-- **Authenticated inbound**: Every incoming message arrives with SPF and
-  DKIM verification results so your agent knows whether the sender is who
-  they claim to be.
+- **Authenticated inbound**: Every incoming message arrives with SPF and DKIM
+  verification results so your agent knows whether the sender is who they claim
+  to be.
 
-- **Human-in-the-loop approval**: Configure HITL on any agent and
-  outbound messages are held in a pending queue until a reviewer
-  approves them — optionally with edits to subject, body, or recipients
-  before sending.
+- **Human-in-the-loop approval**: Configure HITL on any agent and outbound
+  messages are held in a pending queue until a reviewer approves them,
+  optionally with edits to subject, body, or recipients before sending.
 
-- **Automate threaded conversations**: Reply to received emails with
-  proper In-Reply-To and References headers preserved, so threads stay
-  intact across multiple turns.
+- **Automate threaded conversations**: Reply to received emails with proper
+  In-Reply-To and References headers preserved, so threads stay intact across
+  multiple turns.
 
 ## Prerequisites
 
-- A free [e2a account](https://e2a.dev) and an API key from the dashboard.
-- For the **local MCP server**: Node.js 18+ on the machine running the
-  agent (the server is distributed via `npx -y @e2a/mcp-server`).
-- For the **hosted MCP server**: nothing else — connect to
-  `https://mcp.e2a.dev/mcp` with your API key in the `Authorization`
-  header. This path is what you want when deploying ADK agents to
-  Cloud Run (which does not support stdio MCP servers).
+- A free [e2a account](https://e2a.dev) and an API key from the dashboard
+- Node.js 18+ (only required for the local MCP server)
 
 ## Use with agent
 
@@ -200,21 +195,17 @@ Tool | Description
 ---- | -----------
 `whoami` | Return the default agent's full record (requires `E2A_AGENT_EMAIL` when the account has more than one agent)
 `list_agents` | List every agent inbox owned by the authenticated user
-`create_agent` | Register a new inbox using a slug on the shared domain; defaults to `local` mode so the agent receives mail by polling — no webhook required
+`create_agent` | Register a new inbox using a slug on the shared domain; defaults to `local` mode so the agent receives mail by polling and no webhook is required
 `update_agent` | Update an existing agent's webhook URL, mode, or HITL setting
 `delete_agent` | Permanently delete an agent (requires `confirm: true`) and stop accepting mail for that address
 
 !!! warning "Cloud-mode agents must verify webhook signatures"
 
-    When you create an agent with `agent_mode: "cloud"`, e2a HMAC-signs every
-    webhook delivery against your account's webhook signing secret
-    (`E2A_WEBHOOK_SECRET`, shown in the [e2a dashboard](https://e2a.dev)).
-    Your webhook handler must verify the signature on every request —
-    the e2a SDK exposes `parseWebhook(body, secret)` which parses and
-    verifies in one call. Local-mode agents (the default) avoid this
-    entirely by polling via `list_messages`. A complete runnable
-    cloud-mode + ADK example with proper signature verification lives
-    at [github.com/Mnexa-AI/e2a/tree/main/examples/adk-cloud-webhook](https://github.com/Mnexa-AI/e2a/tree/main/examples/adk-cloud-webhook).
+    Agents created with `agent_mode: "cloud"` receive mail via webhooks instead
+    of polling. Your webhook handler must verify the HMAC signature on every
+    delivery. See the [cloud-mode webhook
+    example](https://github.com/Mnexa-AI/e2a/tree/main/examples/adk-cloud-webhook)
+    for a complete setup with signature verification.
 
 ### Messages
 
@@ -248,9 +239,9 @@ Tool | Description
 
 Variable | Required | Default | Description
 -------- | -------- | ------- | -----------
-`E2A_API_KEY` | Yes | — | Your e2a API key (long-lived, from the dashboard). Pass via env for stdio, or via `Authorization: Bearer …` for hosted.
-`E2A_AGENT_EMAIL` | No | — | Default agent inbox; scopes tools so the LLM doesn't repeat the address on every call. Single-agent accounts on the hosted endpoint resolve this automatically at session init.
-`E2A_BASE_URL` | No | `https://e2a.dev` | Self-hosted e2a backend URL. Read by the stdio launcher and by anyone running their own MCP server; has no effect when an agent connects to the public hosted endpoint at `https://mcp.e2a.dev/mcp`.
+`E2A_API_KEY` | Yes | — | Your e2a API key
+`E2A_AGENT_EMAIL` | No | — | Default agent inbox; scopes tools so the LLM doesn't need to specify it on every call
+`E2A_BASE_URL` | No | `https://e2a.dev` | Self-hosted deployment URL (local MCP server only)
 
 ## Additional resources
 
