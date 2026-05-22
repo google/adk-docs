@@ -216,7 +216,7 @@ to use built-in tools with other tools by using multiple agents:
 ADK Python has a built-in workaround which bypasses this limitation for
 `GoogleSearchTool` and `VertexAiSearchTool` (use `bypass_multi_tools_limit=True` to enable it),
 as shown in the
-[built_in_multi_tools](https://github.com/google/adk-python/tree/main/contributing/samples/built_in_multi_tools).
+[built_in_multi_tools](https://github.com/google/adk-python/tree/main/contributing/samples/tools/built_in_multi_tools).
 sample agent.
 
 !!! warning

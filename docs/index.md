@@ -20,6 +20,9 @@ hide:
 <!-- Hero Section -->
 {{% include '_includes/homepage/_hero.md' %}}
 
+<!-- Graphs -->
+{{% include '_includes/homepage/_graphs.md' %}}
+
 <!-- Framework -->
 {{% include '_includes/homepage/_framework.md' %}}
 
@@ -28,9 +31,6 @@ hide:
 
 <!-- AI Dev Tools -->
 {{% include '_includes/homepage/_ai-dev-tools.md' %}}
-
-<!-- Eval Section -->
-{{% include '_includes/homepage/_eval.md' %}}
 
 <!-- Ready to Build CTA Section -->
 {{% include '_includes/homepage/_build-cta.md' %}}

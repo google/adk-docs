@@ -41,7 +41,7 @@ scenarios. For a complete code sample, see the
 [human_tool_confirmation](https://github.com/google/adk-python/blob/fc90ce968f114f84b14829f8117797a4c256d710/contributing/samples/human_tool_confirmation/agent.py)
 example. There are additional ways to incorporate human input into your agent
 workflow, for more details, see the
-[Human-in-the-loop](/agents/multi-agents/#human-in-the-loop-pattern)
+[Human-in-the-loop](/workflows/patterns/#human-in-the-loop)
 agent pattern.
 
 ## Boolean confirmation {#boolean-confirmation}

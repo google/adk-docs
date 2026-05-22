@@ -12,4 +12,4 @@ kotlin_imports_layout = google_style
 ktlint_standard_no-wildcard-imports = enabled
 ktlint_standard_indent = enabled
 ktlint_standard_final-newline = enabled
-ktlint_code_style = google
+ktlint_code_style = ktlint_official

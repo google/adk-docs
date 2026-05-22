@@ -60,7 +60,7 @@ root_agent = Agent(
 ```
 
 For a full implementation example, see the
-[Local environment sample](https://github.com/google/adk-python/tree/main/contributing/samples/local_environment).
+[Local environment sample](https://github.com/google/adk-python/tree/main/contributing/samples/environment_and_skills/local_environment).
 
 ### Try with agent
 

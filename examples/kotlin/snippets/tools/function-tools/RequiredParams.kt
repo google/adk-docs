@@ -11,7 +11,7 @@ class WeatherService {
     @Tool
     fun getWeather(
         @Param("The city and state, e.g., San Francisco, CA") location: String,
-        @Param("The temperature unit, either 'Celsius' or 'Fahrenheit'") unit: String
+        @Param("The temperature unit, either 'Celsius' or 'Fahrenheit'") unit: String,
     ): String {
         // ... function logic ...
         return "Weather for $location is sunny in $unit."
