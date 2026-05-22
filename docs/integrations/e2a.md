@@ -91,15 +91,13 @@ your agent. Outbound mail can be held for human approval before it ships.
     === "Remote MCP Server"
 
         ```python
-        import os
-
         from google.adk.agents import Agent
         from google.adk.tools.mcp_tool import McpToolset
         from google.adk.tools.mcp_tool.mcp_session_manager import (
             StreamableHTTPConnectionParams,
         )
 
-        E2A_API_KEY = os.environ["E2A_API_KEY"]
+        E2A_API_KEY = "YOUR_E2A_API_KEY"
 
         root_agent = Agent(
             model="gemini-flash-latest",
@@ -165,7 +163,7 @@ your agent. Outbound mail can be held for human approval before it ships.
         ```typescript
         import { LlmAgent, MCPToolset } from "@google/adk";
 
-        const E2A_API_KEY = process.env.E2A_API_KEY!;
+        const E2A_API_KEY = "YOUR_E2A_API_KEY";
 
         const rootAgent = new LlmAgent({
             model: "gemini-flash-latest",
