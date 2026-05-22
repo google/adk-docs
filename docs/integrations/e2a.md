@@ -88,7 +88,7 @@ your agent. Outbound mail can be held for human approval before it ships.
         )
         ```
 
-    === "Hosted MCP Server"
+    === "Remote MCP Server"
 
         ```python
         import os
@@ -160,7 +160,7 @@ your agent. Outbound mail can be held for human approval before it ships.
         export { rootAgent };
         ```
 
-    === "Hosted MCP Server"
+    === "Remote MCP Server"
 
         ```typescript
         import { LlmAgent, MCPToolset } from "@google/adk";
