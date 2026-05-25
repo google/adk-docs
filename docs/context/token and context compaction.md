@@ -4,19 +4,23 @@
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.16.0</span><span class="lst-java">Java v0.2.0</span><span class="lst-typescript">TypeScript v0.6.0</span>
 </div>
 
-As an ADK agent runs it collects *context* information, including user
-instructions, retrieved data, tool responses, and generated content. As the size
-of this context data grows, agent processing times typically also increase.
-More and more data is sent to the generative AI model used by the agent,
-increasing processing time and slowing down responses. The ADK Context
-Compaction feature is designed to reduce the size of context as an agent
-is running by summarizing older parts of the agent workflow event history.
+## What is compaction?
+In the context of LLM agents, compaction is the process of managing a session's "memory" (context window). As a conversation grows, it consumes more tokens. Compaction automatically trims or compresses older parts of the history so the agent stays within its limits while still remembering the most important recent details. Think of it as "auto-archiving" a long email thread so you only see the most relevant replies
 
-The Context Compaction feature uses a *sliding window* approach for collecting
-and summarizing agent workflow event data within a
-[Session](/sessions/session/). When you configure this feature in your
-agent, it summarizes data from older events once it reaches a threshold of a
-specific number of workflow events, or invocations, with the current Session.
+## Types of compaction
+- Context
+- Token
+
+## When to use each
+| Feature | Sliding Window | Token-based |
+| :--- | :--- | :--- |
+| **Trigger** | Number of events (turns) | Estimated token count |
+| **Best For** | Consistent, short chat interactions | Large payloads, variable input sizes |
+| **Key Parameters** | `compaction_interval`, `overlap_size` | `token_threshold`, `event_retention_size` |
+| **Precedence** | Secondary | Primary (if triggered) |
+
+> [!NOTE]
+> If both token-based and sliding window compaction are active, token-based compaction takes priority. If the token threshold triggers a compaction, the sliding window check is skipped for that turn.
 
 ## Configure context compaction
 
@@ -204,3 +208,27 @@ customize the `prompt_template` on `LlmEventSummarizer`. In TypeScript, customiz
 the `prompt` on `LlmSummarizer`. For more details, see the
 [`LlmEventSummarizer` code](https://github.com/google/adk-python/blob/main/src/google/adk/apps/llm_event_summarizer.py#L60) or
 [`LlmSummarizer` code](https://github.com/google/adk-js/blob/main/core/src/context/summarizers/llm_summarizer.ts).
+
+## Token-based compaction
+
+### What is it?
+Token-based compaction triggers context management based on the volume of data (tokens) rather than the number of turns (events). This is more precise for applications with highly variable input sizes, such as code reviews or document analysis.
+
+### Applications
+- **Cost Management**: Prevents unexpected spikes in API costs by capping token usage per turn.
+- **Performance Stability**: Keeps the context size optimal for model reasoning, avoiding the "lost in the middle" phenomenon.
+- **Long-running Sessions**: Ideal for agents that stay active for hours or days where event counts don't accurately reflect memory usage.
+  
+### How it relates to context compaction?
+While standard compaction looks at how many things happened, token-based compaction looks at how big those things were. If both are configured, Token-based Compaction takes precedence. If the token threshold is crossed, the system will compact the history even if the event interval hasn't been reached yet.
+
+## Configuration settings
+
+The configuration settings for this feature control how frequently event data is compressed of the prior event data.
+*   **`overlap_size`**: Set how many of the previously compacted events are included in a
+    newly compacted context set.
+*   **`token_threshold`**: The token count that triggers compaction.
+*   **`event_retention_size`**: The number of recent raw events to keep uncompressed.
+*   **`summarizer`**: (Optional) Define a summarizer object including a specific AI model
+    to use for summarization. For more information, see
+    [Define a Summarizer](#define-summarizer).
