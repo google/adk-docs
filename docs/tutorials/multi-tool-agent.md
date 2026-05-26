@@ -4,14 +4,15 @@
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
-This quickstart guides you through installing the Agent Development Kit (ADK),
-setting up a basic agent with multiple tools, and running it locally either in the terminal or in the interactive, browser-based dev UI.
+This quickstart guides you through installing Agent Development Kit (ADK),
+setting up a basic agent with multiple tools, and running it locally either in
+the terminal or in the interactive, browser-based dev UI.
 
 <!-- <img src="../../assets/quickstart.png" alt="Quickstart setup"> -->
 
-This quickstart assumes a local IDE (VS Code, PyCharm, IntelliJ IDEA, etc.)
-with Python 3.10+ or Java 17+ and terminal access. This method runs the
-application entirely on your machine and is recommended for internal development.
+This quickstart assumes a local IDE (VS Code, PyCharm, IntelliJ IDEA, etc.) with
+Python 3.10+ or Java 17+ and terminal access. This method runs the application
+entirely on your machine and is recommended for internal development.
 
 ## 1. Set up Environment & Install ADK { #set-up-environment-install-adk }
 
@@ -46,7 +47,8 @@ application entirely on your machine and is recommended for internal development
     npm install -D typescript
     ```
 
-    Create a `tsconfig.json` file with the following content. This configuration ensures your project correctly handles modern Node.js modules.
+    Create a `tsconfig.json` file with the following content. This configuration
+    ensures your project correctly handles modern Node.js modules.
 
     ```json title="tsconfig.json"
     {
@@ -62,7 +64,7 @@ application entirely on your machine and is recommended for internal development
       }
     }
     ```
-    
+
 === "Go"
 
     ## Create a new Go module
@@ -87,17 +89,13 @@ application entirely on your machine and is recommended for internal development
 
 === "Java"
 
-    To install ADK and setup the environment, proceed to the following steps.
+    To install ADK Java and set up the environment, see the [Java
+    Quickstart](/get-started/java/).
 
 === "Kotlin"
 
-    Create a new Kotlin project (e.g., using IntelliJ IDEA or Gradle) and add the following dependency to your `build.gradle.kts`:
-
-    ```kotlin
-    dependencies {
-        implementation("com.google.adk:google-adk-kotlin-core:0.1.0") // Replace with actual version
-    }
-    ```
+    To install ADK Kotlin and set up the environment, see the [Kotlin
+    Quickstart](/get-started/kotlin/).
 
 ## 2. Create Agent Project { #create-agent-project }
 

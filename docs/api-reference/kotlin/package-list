@@ -27,7 +27,10 @@ com.google.adk.kt.tools.mcp
 com.google.adk.kt.types
 com.google.adk.kt.utils.mlkit
 module:google-adk-kotlin-examples
+com.google.adk.kt.examples.artifacts
+com.google.adk.kt.examples.callbacks
 com.google.adk.kt.examples.hello
+com.google.adk.kt.examples.structural
 com.google.adk.kt.examples.tools
 module:google-adk-kotlin-firebase
 com.google.adk.firebase.models
