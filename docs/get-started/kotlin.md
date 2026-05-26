@@ -144,6 +144,10 @@ dependencies {
                 ?: "com.example.agent.MainKt"
         )
     }
+
+    tasks.named<JavaExec>("run") {
+        standardInput = System.`in`
+    }
     ```
 
 ### Set your API key
