@@ -7,7 +7,7 @@ agent workflow. This page lists these tool limitations and workarounds, if avail
 
 !!! note "ONLY for Search in ADK Python v1.15.0 and lower"
 
-    This limitation only applies to the use of Google Search and Vertex AI Search
+    This limitation only applies to the use of Google Search and Agent Search
     tools in ADK Python v1.15.0 and lower. ADK Python release v1.16.0 and higher
     provides a built-in workaround to remove this limitation.
 
@@ -16,9 +16,12 @@ tools within an agent excludes the use of any other tools in that agent. The
 following ADK Tools can only be used by themselves, without any other tools, in
 a single agent object:
 
-*   [Code Execution](/tools/gemini-api/code-execution/) with Gemini API
-*   [Google Search](/tools/gemini-api/google-search/) with Gemini API
-*   [Vertex AI Search](/tools/google-cloud/vertex-ai-search/)
+* [Code Execution](/integrations/code-execution/) with Gemini API (Note: in
+  TypeScript, this requires Gemini 2.0+ and does not have this limitation)
+* [Google Search](/integrations/google-search/) with Gemini API (Note:
+  limitation only applies to Gemini 1.x models in TypeScript)
+* [Agent Search](/integrations/agent-search/) (Note: currently unavailable in
+  TypeScript)
 
 For example, the following approach that uses one of these tools along with
 other tools, within a single agent, is ***not supported***:
@@ -35,6 +38,20 @@ other tools, within a single agent, is ***not supported***:
     )
     ```
 
+=== "TypeScript"
+
+    ```typescript
+    import {Agent, BuiltInCodeExecutor} from '@google/adk';
+
+    const rootAgent = new Agent({
+      name: 'RootAgent',
+      model: 'gemini-flash-latest',
+      description: 'Code Agent',
+      tools: [myCustomTool], // Assume myCustomTool is defined
+      codeExecutor: new BuiltInCodeExecutor(), // <-- NOT supported when used with tools
+    });
+    ```
+
 === "Java"
 
     ```java
@@ -47,10 +64,21 @@ other tools, within a single agent, is ***not supported***:
                 .build();
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    val searchAgent = LlmAgent(
+        name = "SearchAgent",
+        model = Gemini(name = "gemini-flash-latest"),
+        instruction = Instruction("You're a specialist in Google Search"),
+        tools = listOf(GoogleSearchTool(), YourCustomTool()) // <-- NOT supported
+    )
+    ```
+
 ### Workaround #1: AgentTool.create() method
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-java">Java</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript (v0.6.1+)</span><span class="lst-java">Java</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 The following code sample demonstrates how to use multiple built-in tools or how
@@ -86,6 +114,33 @@ to use built-in tools with other tools by using multiple agents:
         description="Root Agent",
         tools=[AgentTool(agent=search_agent), AgentTool(agent=coding_agent)],
     )
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    import {Agent, AgentTool, BuiltInCodeExecutor, GOOGLE_SEARCH} from '@google/adk';
+
+    const searchAgent = new Agent({
+      model: 'gemini-flash-latest',
+      name: 'SearchAgent',
+      instruction: "You're a specialist in Google Search",
+      tools: [GOOGLE_SEARCH],
+    });
+
+    const codingAgent = new Agent({
+      model: 'gemini-flash-latest', // Built-in code execution requires Gemini 2.0+ in ADK JS
+      name: 'CodeAgent',
+      instruction: "You're a specialist in Code Execution",
+      codeExecutor: new BuiltInCodeExecutor(),
+    });
+
+    const rootAgent = new Agent({
+      name: 'RootAgent',
+      model: 'gemini-flash-latest',
+      description: 'Root Agent',
+      tools: [new AgentTool({agent: searchAgent}), new AgentTool({agent: codingAgent})],
+    });
     ```
 
 === "Java"
@@ -146,16 +201,22 @@ to use built-in tools with other tools by using multiple agents:
     }
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/tools/LimitationsWorkaround.kt:workaround_1"
+    ```
+
 ### Workaround #2: bypass_multi_tools_limit
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-java">Java</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-java">Java</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 ADK Python has a built-in workaround which bypasses this limitation for
 `GoogleSearchTool` and `VertexAiSearchTool` (use `bypass_multi_tools_limit=True` to enable it),
 as shown in the
-[built_in_multi_tools](https://github.com/google/adk-python/tree/main/contributing/samples/built_in_multi_tools).
+[built_in_multi_tools](https://github.com/google/adk-python/tree/main/contributing/samples/tools/built_in_multi_tools).
 sample agent.
 
 !!! warning
@@ -197,6 +258,33 @@ is **not supported**:
     )
     ```
 
+=== "TypeScript"
+
+    ```typescript
+    import {Agent, BuiltInCodeExecutor} from '@google/adk';
+
+    const urlContextAgent = new Agent({
+      model: 'gemini-flash-latest',
+      name: 'UrlContextAgent',
+      instruction: "You're a specialist in URL Context",
+      tools: [myCustomTool], // Assume myCustomTool is defined
+    });
+
+    const codingAgent = new Agent({
+      model: 'gemini-flash-latest',
+      name: 'CodeAgent',
+      instruction: "You're a specialist in Code Execution",
+      codeExecutor: new BuiltInCodeExecutor(),
+    });
+
+    const rootAgent = new Agent({
+      name: 'RootAgent',
+      model: 'gemini-flash-latest',
+      description: 'Root Agent',
+      subAgents: [urlContextAgent, codingAgent], // NOT supported when sub-agents use built-in tools
+    });
+    ```
+
 === "Java"
 
     ```java
@@ -224,4 +312,30 @@ is **not supported**:
             .description("Root Agent")
             .subAgents(searchAgent, codingAgent) // Not supported, as the sub agents use built in tools.
             .build();
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    val searchAgent = LlmAgent(
+        model = Gemini(name = "gemini-flash-latest"),
+        name = "SearchAgent",
+        instruction = Instruction("You're a specialist in Google Search"),
+        tools = listOf(GoogleSearchTool())
+    )
+
+    val codingAgent = LlmAgent(
+        model = Gemini(name = "gemini-flash-latest"),
+        name = "CodeAgent",
+        instruction = Instruction("You're a specialist in Code Execution")
+        // Kotlin currently doesn't have a BuiltInCodeExecutionTool in core
+    )
+
+
+    val rootAgent = LlmAgent(
+        name = "RootAgent",
+        model = Gemini(name = "gemini-flash-latest"),
+        description = "Root Agent",
+        subAgents = listOf(searchAgent, codingAgent) // Not supported when sub-agents use built-in tools
+    )
     ```

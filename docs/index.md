@@ -7,7 +7,7 @@ hide:
 <link rel="stylesheet" type="text/css" href="stylesheets/homepage.css" />
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/asciinema-player@3.9.0/dist/bundle/asciinema-player.css" />
 <script src="https://cdn.jsdelivr.net/npm/asciinema-player@3.9.0/dist/bundle/asciinema-player.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@600;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script>document.body.classList.add('adk-landing-page');</script>
 
 <div class="adk-landing">
@@ -20,6 +20,9 @@ hide:
 <!-- Hero Section -->
 {{% include '_includes/homepage/_hero.md' %}}
 
+<!-- Graphs -->
+{{% include '_includes/homepage/_graphs.md' %}}
+
 <!-- Framework -->
 {{% include '_includes/homepage/_framework.md' %}}
 
@@ -28,9 +31,6 @@ hide:
 
 <!-- AI Dev Tools -->
 {{% include '_includes/homepage/_ai-dev-tools.md' %}}
-
-<!-- Eval Section -->
-{{% include '_includes/homepage/_eval.md' %}}
 
 <!-- Ready to Build CTA Section -->
 {{% include '_includes/homepage/_build-cta.md' %}}
@@ -42,38 +42,10 @@ hide:
 {{% include '_includes/homepage/_faq.md' %}}
 
 <script>
-// Tab switching logic
-document.addEventListener("DOMContentLoaded", function() {
-  var tabs = document.querySelectorAll('.iterm-tab');
-  var langs = ['python', 'go', 'java', 'typescript'];
-
-  tabs.forEach(function(tab) {
-    tab.addEventListener('click', function() {
-      var lang = this.getAttribute('data-lang');
-      tabs.forEach(function(t) { t.classList.remove('active'); });
-      this.classList.add('active');
-      langs.forEach(function(l) {
-        document.getElementById('code-' + l).style.display = l === lang ? 'block' : 'none';
-        document.getElementById('install-' + l).style.display = l === lang ? 'flex' : 'none';
-      });
-    });
-  });
-
-  // Copy-to-clipboard buttons
-  document.addEventListener('click', function(e) {
-    var btn = e.target.closest('.copy-btn');
-    if (!btn) return;
-    var text = btn.getAttribute('data-copy');
-    navigator.clipboard.writeText(text).then(function() {
-      var orig = btn.textContent;
-      btn.textContent = '✅';
-      setTimeout(function() { btn.textContent = orig; }, 1500);
-    });
-  });
-
+function initHomepage() {
   // Asciinema player (for _agent-cli.md)
   var playerEl = document.getElementById('asciinema-demo');
-  if (playerEl && typeof AsciinemaPlayer !== 'undefined') {
+  if (playerEl && !playerEl.hasChildNodes() && typeof AsciinemaPlayer !== 'undefined') {
     AsciinemaPlayer.create('assets/adk-demo.cast', playerEl, {
       theme: 'monokai',
       fit: 'width',
@@ -86,5 +58,46 @@ document.addEventListener("DOMContentLoaded", function() {
       poster: 'npt:0:18'
     });
   }
+}
+
+// Event delegation for tab switching and copy buttons.
+// Attaching to `document` means these handlers survive DOM replacement
+// during MkDocs Material instant (SPA) navigation.
+document.addEventListener('click', function(e) {
+  // Tab switching
+  var tab = e.target.closest('.iterm-tab');
+  if (tab) {
+    var lang = tab.getAttribute('data-lang');
+    var allTabs = document.querySelectorAll('.iterm-tab');
+    var langs = ['python', 'go', 'java', 'typescript', 'kotlin'];
+    allTabs.forEach(function(t) { t.classList.remove('active'); });
+    tab.classList.add('active');
+    langs.forEach(function(l) {
+      var codeEl = document.getElementById('code-' + l);
+      var installEl = document.getElementById('install-' + l);
+      if (codeEl) codeEl.style.display = l === lang ? 'block' : 'none';
+      if (installEl) installEl.style.display = l === lang ? 'flex' : 'none';
+    });
+    return;
+  }
+
+  // Copy-to-clipboard buttons
+  var btn = e.target.closest('.copy-btn');
+  if (btn) {
+    var text = btn.getAttribute('data-copy');
+    navigator.clipboard.writeText(text).then(function() {
+      var orig = btn.textContent;
+      btn.textContent = '✅';
+      setTimeout(function() { btn.textContent = orig; }, 1500);
+    });
+  }
 });
+
+// Initialize on first load
+document.addEventListener('DOMContentLoaded', initHomepage);
+
+// Re-initialize after MkDocs Material instant navigation
+if (typeof document$ !== 'undefined') {
+  document$.subscribe(function() { initHomepage(); });
+}
 </script>

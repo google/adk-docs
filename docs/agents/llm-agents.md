@@ -1,29 +1,24 @@
-# LLM Agent
+# Simple agents with LlmAgent
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span>
-  <span class="lst-python">Python v0.1.0</span>
-  <span class="lst-typescript">Typescript v0.2.0</span>
-  <span class="lst-go">Go v0.1.0</span>
-  <span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
-The `LlmAgent` (often aliased simply as `Agent`) is a core component in ADK,
-acting as the "thinking" part of your application. It leverages the power of a
-Large Language Model (LLM) for reasoning, understanding natural language, making
-decisions, generating responses, and interacting with tools.
-
-Unlike deterministic [Workflow Agents](workflow-agents/index.md) that follow
-predefined execution paths, `LlmAgent` behavior is non-deterministic. It uses
-the LLM to interpret instructions and context, deciding dynamically how to
-proceed, which tools to use (if any), or whether to transfer control to another
-agent.
+The `LlmAgent` class, often aliased simply as `Agent`, is a core component in
+ADK, acting as the core part of your agent application. It leverages the power
+of a Large Language Model (LLM) or generative AI model for reasoning,
+understanding natural language, making decisions, generating responses, and
+interacting with tools. Since this type of agent uses an AI model interpret
+instructions and context, the AI model dynamically decides how to proceed, which
+tools to use (if any), and what output to provide. As such, the behavior of this
+type of agent is non-deterministic and must be built and evaluated with this
+behavior in mind.
 
 Building an effective `LlmAgent` involves defining its identity, clearly guiding
 its behavior through instructions, and equipping it with the necessary tools and
 capabilities.
 
-## Defining the Agent's Identity and Purpose
+## Define agent identity and purpose
 
 First, you need to establish what the agent *is* and what it's *for*.
 
@@ -88,7 +83,13 @@ First, you need to establish what the agent *is* and what it's *for*.
             .build();
     ```
 
-## Guiding the Agent: Instructions (`instruction`)
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/agents/llm-agent/CapitalAgent.kt:identity"
+    ```
+
+## Guide the Agent: Instructions
 
 The `instruction` parameter is arguably the most critical for shaping an
 `LlmAgent`'s behavior. It's a string (or a function returning a string) that
@@ -183,20 +184,25 @@ tells the agent:
             .build();
     ```
 
-*(Note: For instructions that apply to *all* agents in a system, consider using
-`global_instruction` on the root agent, detailed further in the
-[Multi-Agents](multi-agents.md) section.)*
+=== "Kotlin"
 
-## Equipping the Agent: Tools (`tools`)
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/agents/llm-agent/CapitalAgent.kt:instruction"
+    ```
+
+**Note:** For instructions that apply to *all* agents in a system, consider using
+`global_instruction` on the root agent.
+
+## Equip the Agent: Tools
 
 Tools give your `LlmAgent` capabilities beyond the LLM's built-in knowledge or
 reasoning. They allow the agent to interact with the outside world, perform
 calculations, fetch real-time data, or execute specific actions.
 
 * **`tools` (Optional):** Provide a list of tools the agent can use. Each item in the list can be:
-    * A native function or method (wrapped as a `FunctionTool`). Python ADK automatically wraps the native function into a `FunctionTool` whereas, you must explicitly wrap your Java methods using `FunctionTool.create(...)`
+    * A native function or method (wrapped as a `FunctionTool`). Python ADK automatically wraps the native function into a `FunctionTool` whereas, you must explicitly wrap your Java methods using `FunctionTool.create(...)`. In Kotlin, you can use the `@Tool` annotation to automatically generate a `FunctionTool` at compile-time.
     * An instance of a class inheriting from `BaseTool`.
-    * An instance of another agent (`AgentTool`, enabling agent-to-agent delegation - see [Multi-Agents](multi-agents.md)).
+    * An instance of another agent (`AgentTool`, enabling agent-to-agent delegation - see [Custom agent workflows](/agents/custom-agents/#delegation)).
 
 The LLM uses the function/tool names, descriptions (from docstrings or the
 `description` field), and parameter schemas to decide which tool to call based
@@ -302,15 +308,24 @@ on the conversation and its instructions.
             .build();
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/agents/llm-agent/CapitalAgent.kt:tool_definition"
+
+    // Add the tool to the agent
+    --8<-- "examples/kotlin/snippets/agents/llm-agent/CapitalAgent.kt:tool_usage"
+    ```
+
 Learn more about Tools in [Custom Tools](/tools-custom/).
 
 ## Advanced Configuration & Control
 
 Beyond the core parameters, `LlmAgent` offers several options for finer control:
 
-### Fine-Tuning LLM Generation (`generate_content_config`)
+### Fine-tune AI model operation
 
-You can adjust how the underlying LLM generates responses using `generate_content_config`.
+You can adjust how the underlying AI model generates responses using `generate_content_config`.
 
 * **`generate_content_config` (Optional):** Pass an instance of [`google.genai.types.GenerateContentConfig`](https://googleapis.github.io/python-genai/genai.html#genai.types.GenerateContentConfig) to control parameters like `temperature` (randomness), `max_output_tokens` (response length), `top_p`, `top_k`, and safety settings.
 
@@ -373,7 +388,13 @@ You can adjust how the underlying LLM generates responses using `generate_conten
             .build();
     ```
 
-### Structuring Data (`input_schema`, `output_schema`, `output_key`)
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/agents/llm-agent/CapitalAgent.kt:gen_config"
+    ```
+
+### Structure data input and output {#data-handling}
 
 For scenarios requiring structured data exchange with an `LLM Agent`, the ADK provides mechanisms to define expected input and desired output formats using schema definitions.
 
@@ -477,7 +498,7 @@ For scenarios requiring structured data exchange with an `LLM Agent`, the ADK pr
             .build();
     ```
 
-### Managing Context (`include_contents`)
+### Manage agent context
 
 Control whether the agent receives the prior conversation history.
 
@@ -710,7 +731,7 @@ call_agent("If it's raining in New York right now, what is the current temperatu
 
 - **`code_executor` (Optional):** Provide a `BaseCodeExecutor` instance to allow
   the agent to execute code blocks found in the LLM's response. For more
-  information, see [Code Execution with Gemini API](/tools/gemini-api/code-execution/).
+  information, see [Code Execution with Gemini API](/integrations/code-execution/).
 
 === "Python"
 
@@ -724,7 +745,10 @@ call_agent("If it's raining in New York right now, what is the current temperatu
     --8<-- "examples/java/snippets/src/main/java/tools/CodeExecutionAgentApp.java:full_code"
     ```
 
-## Putting It Together: Example
+## Code example
+
+This following example demonstrates the core concepts discussed in this page.
+More complex agents might incorporate schemas, context control, and planning.
 
 ??? "Code"
     Here's the complete basic `capital_agent`:
@@ -753,11 +777,21 @@ call_agent("If it's raining in New York right now, what is the current temperatu
         --8<-- "examples/java/snippets/src/main/java/agents/LlmAgentExample.java:full_code"
         ```
 
-_(This example demonstrates the core concepts. More complex agents might incorporate schemas, context control, planning, etc.)_
+    === "Kotlin"
 
-## Related Concepts (Deferred Topics)
+        ```kotlin
+        --8<-- "examples/kotlin/snippets/agents/llm-agent/CapitalAgent.kt:full_example"
+        ```
 
-While this page covers the core configuration of `LlmAgent`, several related concepts provide more advanced control and are detailed elsewhere:
+## Additional features
 
-* **Callbacks:** Intercepting execution points (before/after model calls, before/after tool calls) using `before_model_callback`, `after_model_callback`, etc. See [Callbacks](../callbacks/types-of-callbacks.md).
-* **Multi-Agent Control:** Advanced strategies for agent interaction, including planning (`planner`), controlling agent transfer (`disallow_transfer_to_parent`, `disallow_transfer_to_peers`), and system-wide instructions (`global_instruction`). See [Multi-Agents](multi-agents.md).
+ADK provides additonal features for agents not covered in this guide, including
+the following:
+
+* **Callbacks:** Add more controls by intercepting agent execution points,
+  including before and after model calls, and before and after tool calls with
+  [Callbacks](/callbacks/types-of-callbacks/).
+* **Multi-Agent Control:** Advanced strategies for agent interaction, including
+  planning (`planner`), controlling agent transfer
+  (`disallow_transfer_to_parent`, `disallow_transfer_to_peers`), and system-wide
+  instructions (`global_instruction`). See [Custom agent workflows](/agents/custom-agents/).

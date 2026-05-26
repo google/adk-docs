@@ -1,4 +1,4 @@
-# Apps: workflow management class
+# App workflow management class
 
 <div class="language-support-tag">
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.14.0</span><span class="lst-java">Java v0.1.0</span>
@@ -166,7 +166,7 @@ You can use the ***Runner*** class to run your agent workflow using the
     Run your App agent with the `main.py` code using the following command:
 
     ```console
-    python main.py
+    python3 main.py
     ```
 
 === "Java"
@@ -180,5 +180,5 @@ You can use the ***Runner*** class to run your agent workflow using the
 ## Next steps
 
 For a more complete sample code implementation, see the
-[Hello World App](https://github.com/google/adk-python/tree/main/contributing/samples/hello_world_app)
+[Hello World App](https://github.com/google/adk-python/tree/main/contributing/samples/core/app)
 code example.

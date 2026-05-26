@@ -1,7 +1,7 @@
 # Events
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 Events are the fundamental units of information flow within the Agent Development Kit (ADK). They represent every significant occurrence during an agent's interaction lifecycle, from initial user input to the final response and all the steps in between. Understanding events is crucial because they are the primary way components communicate, state is managed, and control flow is directed.
@@ -117,6 +117,27 @@ An `Event` in ADK is an immutable record representing a specific point in the ag
     //     // ... other fields like turnComplete, longRunningToolIds etc.
     // }
     ```
+
+=== "Kotlin"
+    In Kotlin, this is an instance of the `com.google.adk.kt.events.Event` class.
+
+    ```kotlin
+    // Conceptual Structure of an Event (Kotlin)
+    // data class Event(
+    //     val author: String,
+    //     val content: Content? = null,
+    //     val actions: EventActions = EventActions(),
+    //     val invocationId: String? = null,
+    //     val branch: String? = null,
+    //     val timestamp: Long = Clock.System.now().toEpochMilliseconds(),
+    //     val id: String = Uuid.random(),
+    //     val partial: Boolean = false,
+    //     val turnComplete: Boolean = false,
+    //     val longRunningToolIds: Set<String> = emptySet()
+    // )
+    ```
+
+
 
 Events are central to ADK's operation for several key reasons:
 
@@ -320,6 +341,36 @@ Quickly determine what an event represents by checking:
     //         System.out.println("  Type: Control Signal or Other");
     //     }
     // });
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    // Pseudocode: Basic event identification (Kotlin)
+    // runner.runAsync(...).collect { event ->
+    //     println("Event from: ${event.author}")
+    //
+    //     val content = event.content
+    //     if (content != null && content.parts.isNotEmpty()) {
+    //         if (event.functionCalls().isNotEmpty()) {
+    //             println("  Type: Tool Call Request")
+    //         } else if (event.functionResponses().isNotEmpty()) {
+    //             println("  Type: Tool Result")
+    //         } else if (content.parts[0].text != null) {
+    //             if (event.partial) {
+    //                 println("  Type: Streaming Text Chunk")
+    //             } else {
+    //                 println("  Type: Complete Text Message")
+    //             }
+    //         } else {
+    //             println("  Type: Other Content (e.g., code result)")
+    //         }
+    //     } else if (event.actions.stateDelta.isNotEmpty() || event.actions.artifactDelta.isNotEmpty()) {
+    //         println("  Type: State/Artifact Update")
+    //     } else {
+    //         println("  Type: Control Signal or Other")
+    //     }
+    // }
     ```
 
 ### Extracting Key Information

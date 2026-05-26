@@ -133,6 +133,6 @@ async for event in runner.run_async(
 ![Agent Experiments](https://storage.googleapis.com/arize-phoenix-assets/assets/images/google-adk-experiments.png)
 
 ## Support and Resources
-- [Arize AX Documentation](https://arize.com/docs/ax/integrations/frameworks-and-platforms/google-adk)
+- [Arize AX Documentation](https://arize.com/docs/ax/integrations/python-agent-frameworks/google-adk)
 - [Arize Community Slack](https://arize-ai.slack.com/join/shared_invite/zt-11t1vbu4x-xkBIHmOREQnYnYDH1GDfCg#/shared-invite/email)
 - [OpenInference Package](https://github.com/Arize-ai/openinference/tree/main/python/instrumentation/openinference-instrumentation-google-adk)

@@ -49,7 +49,7 @@ operations.
         STRIPE_SECRET_KEY = "YOUR_STRIPE_SECRET_KEY"
 
         root_agent = Agent(
-            model="gemini-2.5-pro",
+            model="gemini-flash-latest",
             name="stripe_agent",
             instruction="Help users manage their Stripe account",
             tools=[
@@ -85,7 +85,7 @@ operations.
         STRIPE_SECRET_KEY = "YOUR_STRIPE_SECRET_KEY"
 
         root_agent = Agent(
-            model="gemini-2.5-pro",
+            model="gemini-flash-latest",
             name="stripe_agent",
             instruction="Help users manage their Stripe account",
             tools=[
@@ -111,7 +111,7 @@ operations.
         const STRIPE_SECRET_KEY = "YOUR_STRIPE_SECRET_KEY";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-2.5-pro",
+            model: "gemini-flash-latest",
             name: "stripe_agent",
             instruction: "Help users manage their Stripe account",
             tools: [
@@ -145,7 +145,7 @@ operations.
         const STRIPE_SECRET_KEY = "YOUR_STRIPE_SECRET_KEY";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-2.5-pro",
+            model: "gemini-flash-latest",
             name: "stripe_agent",
             instruction: "Help users manage their Stripe account",
             tools: [

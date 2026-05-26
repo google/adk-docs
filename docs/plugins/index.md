@@ -58,9 +58,9 @@ agent application.
 ADK includes several plugins that you can add to your agent workflows
 immediately:
 
-*   [**Reflect and Retry Tools**](/plugins/reflect-and-retry/):
+*   [**Reflect and Retry Tools**](/integrations/reflect-and-retry/):
     Tracks tool failures and intelligently retries tool requests.
-*   [**BigQuery Analytics**](/observability/bigquery-agent-analytics/):
+*   [**BigQuery Analytics**](/integrations/bigquery-agent-analytics/):
     Enables agent logging and analysis with BigQuery.
 *   [**Context Filter**](https://github.com/google/adk-python/blob/main/src/google/adk/plugins/context_filter_plugin.py):
     Filters the generative AI context to reduce its size.
@@ -75,7 +75,7 @@ immediately:
 
 This section explains how to define Plugin classes and register them as part of
 your agent workflow. For a complete code example, see
-[Plugin Basic](https://github.com/google/adk-python/tree/main/contributing/samples/plugin_basic)
+[Plugin Basic](https://github.com/google/adk-python/tree/main/contributing/samples/plugin/plugin_basic)
 in the repository.
 
 ### Create Plugin class

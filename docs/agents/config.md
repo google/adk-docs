@@ -201,7 +201,7 @@ tools:
 ```
 
 For more details, see the full code for this sample in the
-[ADK sample repository](https://github.com/google/adk-python/blob/main/contributing/samples/tool_builtin_config/root_agent.yaml).
+[ADK sample repository](https://github.com/google/adk-python/blob/main/contributing/samples/tools/tool_builtin_config/root_agent.yaml).
 
 ### Custom tool example
 
@@ -225,7 +225,7 @@ tools:
 ```
 
 For more details, see the full code for this sample in the
-[ADK sample repository](https://github.com/google/adk-python/blob/main/contributing/samples/multi_agent_llm_config/prime_agent.yaml).
+[ADK sample repository](https://github.com/google/adk-python/blob/main/contributing/samples/multi_agent/multi_agent_llm_config/prime_agent.yaml).
 
 ### Sub-agents example
 
@@ -256,17 +256,17 @@ sub_agents:
 ```
 
 For more details, see the full code for this sample in the
-[ADK sample repository](https://github.com/google/adk-python/blob/main/contributing/samples/multi_agent_basic_config/root_agent.yaml).
+[ADK sample repository](https://github.com/google/adk-python/blob/main/contributing/samples/multi_agent/multi_agent_basic_config/root_agent.yaml).
 
 ## Deploy agent configs
 
 You can deploy Agent Config agents with
 [Cloud Run](/deploy/cloud-run/) and
-[Agent Engine](/deploy/agent-engine/),
+[Agent Runtime](/deploy/agent-runtime/),
 using the same procedure as code-based agents. For more information on how
 to prepare and deploy Agent Config-based agents, see the
 [Cloud Run](/deploy/cloud-run/) and
-[Agent Engine](/deploy/agent-engine/)
+[Agent Runtime](/deploy/agent-runtime/)
 deployment guides.
 
 ## Known limitations {#known-limitations}
@@ -296,7 +296,7 @@ limitations:
     -   `ExampleTool`: Provides example-based few-shot learning for tools.
 -   **Agent Type Support:** The `LangGraphAgent` and `A2aAgent` types are
     not yet supported.
--   **Vertex AI Search:** The `VertexAiSearchTool` is currently supported in
+-   **Agent Search:** The `VertexAiSearchTool` is currently supported in
     Python and Java Agent Configs.
 
 ## Next steps

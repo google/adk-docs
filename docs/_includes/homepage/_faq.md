@@ -27,7 +27,7 @@
 
   <details class="faq-item-arrow">
     <summary>How does ADK deploy to production?</summary>
-    <p>ADK is built for <em>deploy anywhere</em> flexibility. You can containerize and run ADK on your own infrastructure, or take advantage of our native, one-command deployment to Google Cloud. When deploying to Google Cloud via Agent Engine (Vertex AI), Cloud Run, or GKE, your agents instantly inherit managed infrastructure, built-in authentication, Cloud Trace observability, and enterprise-grade security—all without requiring you to change a single line of your agent code. Develop locally, scale globally.</p>
+    <p>ADK is built for <em>deploy anywhere</em> flexibility. You can containerize and run ADK on your own infrastructure, or take advantage of our native, one-command deployment to Google Cloud. When deploying to Google Cloud via Agent Runtime (Agent Platform), Cloud Run, or GKE, your agents instantly inherit managed infrastructure, built-in authentication, Cloud Trace observability, and enterprise-grade security—all without requiring you to change a single line of your agent code. Develop locally, scale globally.</p>
   </details>
 
   <details class="faq-item-arrow">
