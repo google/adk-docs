@@ -1,7 +1,7 @@
 # Agent activity metrics
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.32.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.32.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 Agent Development Kit (ADK) provides built-in, vendor-neutral metrics collection to help you understand the performance, cost, and usage patterns of your agents. While logs provide a detailed narrative of *what* happened, metrics give you aggregated, quantitative data to answer *how often* and *how fast* things are happening.
@@ -51,10 +51,10 @@ adk web path/to/your/agents_dir
 
 #### GCP export
 
-To enable metrics export to Google Cloud Monitoring, use the `-otel_to_cloud` flag:
+To enable metrics export to Google Cloud Monitoring, use the `--otel_to_cloud` flag:
 
 ```bash
-adk web -otel_to_cloud path/to/your/agents_dir
+adk web --otel_to_cloud path/to/your/agents_dir
 ```
 
 ### Programmatic metrics export
@@ -90,4 +90,16 @@ gcp_exporters = get_gcp_exporters(
 os.environ["OTEL_SERVICE_NAME"] = "your-adk-agent"
 os.environ["OTEL_RESOURCE_ATTRIBUTES"] = "key1=value1,key2=value2"
 maybe_set_otel_providers([gcp_exporters])
+```
+
+### Kotlin programmatic setup
+
+In Kotlin, ADK uses the standard `GlobalOpenTelemetry` to manage metrics. Configuring your OpenTelemetry SDK with a `MeterProvider` will enable metric collection.
+
+#### OTLP export setup
+
+To enable metrics and export them to an OpenTelemetry Collector, configure the OpenTelemetry SDK with the appropriate metrics exporter:
+
+```kotlin
+--8<-- "examples/kotlin/snippets/observability/SetupExample.kt:full_example"
 ```

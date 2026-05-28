@@ -1,7 +1,7 @@
 # Google Gemini models for ADK agents
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.2.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.2.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 ADK supports the Google Gemini family of generative AI models that provide a
@@ -71,6 +71,23 @@ in your agents:
             .instruction("You are a fast and helpful Gemini assistant.")
             // ... other agent parameters
             .build();
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    import com.google.adk.kt.agents.Instruction
+    import com.google.adk.kt.agents.LlmAgent
+    import com.google.adk.kt.models.Gemini
+
+    // --- Example using a stable Gemini Flash model ---
+    val agentGeminiFlash = LlmAgent(
+        // Use the latest stable Flash model identifier
+        name = "gemini_flash_agent",
+        model = Gemini(name = "gemini-flash-latest"),
+        instruction = Instruction("You are a fast and helpful Gemini assistant."),
+        // ... other agent parameters
+    )
     ```
 
 ??? note "Note: Gemini model selector `gemini-flash-latest`"
@@ -204,7 +221,7 @@ To mitigate this, you can do one of the following:
 
     There are two ways you can set retry options:
 
-    **Option 1:** Set retry options on the Agent as a part of generate_content_config.
+    **Option 1:** Set retry options on the Agent as a part of `generate_content_config`.
 
     You would use this option if you are instantiating this model adapter by
     yourself.
@@ -293,9 +310,36 @@ To mitigate this, you can do one of the following:
             .build();
         ```
 
+    === "Kotlin"
+
+        In Kotlin, you can achieve this by creating the `Client` instance yourself and passing it to the `Gemini` constructor.
+
+        ```kotlin
+        import com.google.adk.kt.agents.LlmAgent
+        import com.google.adk.kt.models.Gemini
+        import com.google.genai.Client
+        import com.google.genai.types.HttpOptions
+        import com.google.genai.types.HttpRetryOptions
+
+        val client = Client.builder()
+            .apiKey("YOUR_API_KEY")
+            .httpOptions(HttpOptions.builder()
+                .retryOptions(HttpRetryOptions.builder().initialDelay(1.0).attempts(2).build())
+                .build())
+            .build()
+
+        val model = Gemini(client = client, name = "gemini-flash-latest")
+
+        val agent = LlmAgent(
+            name = "my_agent",
+            model = model
+            // ...
+        )
+        ```
+
 ## Gemini Interactions API {#interactions-api}
 
-<div class="language-support-tag" title="Java ADK currently supports Gemini and Anthropic models.">
+<div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.21.0</span>
 </div>
 
@@ -329,28 +373,8 @@ snippet:
     )
     ```
 
-=== "Java"
-
-    ```java
-    import com.google.adk.agents.LlmAgent;
-    import com.google.adk.models.Gemini;
-    import com.google.adk.tools.GoogleSearchTool;
-
-    // Note: Interactions API support in Java ADK is currently under development.
-    LlmAgent rootAgent = LlmAgent.builder()
-        .model(Gemini.builder()
-            .modelName("gemini-flash-latest")
-            .build())
-        .name("interactions_test_agent")
-        .tools(
-            GoogleSearchTool.INSTANCE, // Search tool
-            getCurrentWeather // Custom function tool
-        )
-        .build();
-    ```
-
 For a complete code sample, see the
-[Interactions API sample](https://github.com/google/adk-python/tree/main/contributing/samples/interactions_api).
+[Interactions API sample](https://github.com/google/adk-python/tree/main/contributing/samples/models/interactions_api).
 
 ### Known limitations
 
@@ -368,14 +392,6 @@ parameter:
     GoogleSearchTool(bypass_multi_tools_limit=True)
     ```
 
-=== "Java"
-
-    ```java
-    // Note: bypassMultiToolsLimit is Python-specific.
-    // In Java, simply use the tool instance.
-    GoogleSearchTool.INSTANCE;
-    ```
-
-In this example, this option converts the built-in google_search to a function
-calling tool (via GoogleSearchAgentTool), which allows it to work alongside
+In this example, this option converts the built-in `google_search` to a function
+calling tool (via `GoogleSearchAgentTool`), which allows it to work alongside
 custom function tools.

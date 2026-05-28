@@ -1,13 +1,18 @@
 # Build a multi-tool agent
 
-This quickstart guides you through installing the Agent Development Kit (ADK),
-setting up a basic agent with multiple tools, and running it locally either in the terminal or in the interactive, browser-based dev UI.
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
+</div>
+
+This quickstart guides you through installing Agent Development Kit (ADK),
+setting up a basic agent with multiple tools, and running it locally either in
+the terminal or in the interactive, browser-based dev UI.
 
 <!-- <img src="../../assets/quickstart.png" alt="Quickstart setup"> -->
 
-This quickstart assumes a local IDE (VS Code, PyCharm, IntelliJ IDEA, etc.)
-with Python 3.10+ or Java 17+ and terminal access. This method runs the
-application entirely on your machine and is recommended for internal development.
+This quickstart assumes a local IDE (VS Code, PyCharm, IntelliJ IDEA, etc.) with
+Python 3.10+ or Java 17+ and terminal access. This method runs the application
+entirely on your machine and is recommended for internal development.
 
 ## 1. Set up Environment & Install ADK { #set-up-environment-install-adk }
 
@@ -42,7 +47,8 @@ application entirely on your machine and is recommended for internal development
     npm install -D typescript
     ```
 
-    Create a `tsconfig.json` file with the following content. This configuration ensures your project correctly handles modern Node.js modules.
+    Create a `tsconfig.json` file with the following content. This configuration
+    ensures your project correctly handles modern Node.js modules.
 
     ```json title="tsconfig.json"
     {
@@ -58,10 +64,6 @@ application entirely on your machine and is recommended for internal development
       }
     }
     ```
-
-=== "Java"
-
-    To install ADK and setup the environment, proceed to the following steps.
 
 === "Go"
 
@@ -84,6 +86,16 @@ application entirely on your machine and is recommended for internal development
     ```
 
     This will add the ADK as a dependency to your `go.mod` file.
+
+=== "Java"
+
+    To install ADK Java and set up the environment, see the [Java
+    Quickstart](/get-started/java/).
+
+=== "Kotlin"
+
+    To install ADK Kotlin and set up the environment, see the [Kotlin
+    Quickstart](/get-started/kotlin/).
 
 ## 2. Create Agent Project { #create-agent-project }
 
@@ -212,32 +224,6 @@ application entirely on your machine and is recommended for internal development
 
     More instructions about this file are described in the next section on [Set up the model](#set-up-the-model).
 
-=== "Java"
-
-    Java projects generally feature the following project structure:
-
-    ```console
-    project_folder/
-    ├── pom.xml (or build.gradle)
-    ├── src/
-    ├── └── main/
-    │       └── java/
-    │           └── agents/
-    │               └── multitool/
-    └── test/
-    ```
-
-    ### Create `MultiToolAgent.java`
-
-    Create a `MultiToolAgent.java` source file in the `agents.multitool` package
-    in the `src/main/java/agents/multitool/` directory.
-
-    Copy and paste the following code into `MultiToolAgent.java`:
-
-    ```java title="agents/multitool/MultiToolAgent.java"
-    --8<-- "examples/java/cloud-run/src/main/java/agents/multitool/MultiToolAgent.java:full_code"
-    ```
-
 === "Go"
 
     You will need to create the following project structure:
@@ -282,6 +268,56 @@ application entirely on your machine and is recommended for internal development
         ```console
         type nul > .env
         ```
+
+=== "Java"
+
+    Java projects generally feature the following project structure:
+
+    ```console
+    project_folder/
+    ├── pom.xml (or build.gradle)
+    ├── src/
+    ├── └── main/
+    │       └── java/
+    │           └── agents/
+    │               └── multitool/
+    └── test/
+    ```
+
+    ### Create `MultiToolAgent.java`
+
+    Create a `MultiToolAgent.java` source file in the `agents.multitool` package
+    in the `src/main/java/agents/multitool/` directory.
+
+    Copy and paste the following code into `MultiToolAgent.java`:
+
+    ```java title="agents/multitool/MultiToolAgent.java"
+    --8<-- "examples/java/cloud-run/src/main/java/agents/multitool/MultiToolAgent.java:full_code"
+    ```
+
+=== "Kotlin"
+
+    Kotlin projects generally feature the following project structure:
+
+    ```console
+    project_folder/
+    ├── build.gradle.kts
+    ├── src/
+    ├── └── main/
+    │       └── kotlin/
+    │           └── agents/
+    │               └── multitool/
+    ```
+
+    ### Create `MultiToolAgent.kt`
+
+    Create a `MultiToolAgent.kt` source file in the `src/main/kotlin/agents/multitool/` directory.
+
+    Copy and paste the following code into `MultiToolAgent.kt`:
+
+    ```kotlin title="src/main/kotlin/agents/multitool/MultiToolAgent.kt"
+    --8<-- "examples/kotlin/snippets/get-started/multi_tool_agent/MultiToolAgent.kt"
+    ```
 
 ![intro_components.png](../assets/quickstart-flow-tool.png)
 
@@ -726,6 +762,31 @@ agent will be unable to function.
         ```console
         gradle runAgent
         ```
+
+=== "Kotlin"
+
+    Using the terminal, navigate to your agent project directory:
+
+    ```console
+    project_folder/                <-- navigate to this directory
+    ├── build.gradle.kts
+    ├── src/
+    ├── └── main/
+    │       └── kotlin/
+    │           └── agents/
+    │               └── multitool/
+    │                   └── MultiToolAgent.kt
+    ```
+
+    ### Run your Agent
+
+    You can run the `main()` method of your Kotlin class using Gradle:
+
+    ```console
+    ./gradlew run
+    ```
+
+    Or if you are using IntelliJ IDEA, you can just click the green run arrow next to the `main()` function.
 
 ### 📝 Example prompts to try
 

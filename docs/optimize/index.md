@@ -24,7 +24,7 @@ the sampler and uses them to improve the agent.
 
 In this example, we will use the `adk optimize` command to update the
 instructions of the
-[`hello_world`](https://github.com/google/adk-python/tree/main/contributing/samples/hello_world)
+[`hello_world`](https://github.com/google/adk-python/tree/main/contributing/samples/core/hello_world)
 sample agent based on evaluation results over a small eval set.
 
 ### Step 1: Specify the Example Dataset {#exampledataset}
@@ -37,7 +37,7 @@ The optimizer is expected to derive this new rule and add it to the agent
 instructions.
 
 Create a file `train_eval_set.evalset.json` in
-[`contributing/samples/hello_world/`](https://github.com/google/adk-python/tree/main/contributing/samples/hello_world)
+[`contributing/samples/core/hello_world/`](https://github.com/google/adk-python/tree/main/contributing/samples/core/hello_world)
 with the following contents:
 
 ```json
@@ -118,7 +118,7 @@ also specifies the eval set to use for optimizing the agent.
 
 The full list of configuration options is available [below](#localevalsampler);
 for now, simply create a file `sampler_config.json` in
-[`contributing/samples/hello_world/`](https://github.com/google/adk-python/tree/main/contributing/samples/hello_world)
+[`contributing/samples/core/hello_world/`](https://github.com/google/adk-python/tree/main/contributing/samples/core/hello_world)
 with the following contents:
 
 ```json
@@ -139,8 +139,8 @@ Run the `adk optimize` command, pointing it to the `hello_world` agent's
 directory and passing the configuration file created above.
 
 ```bash
-adk optimize contributing/samples/hello_world \
---sampler_config_file_path contributing/samples/hello_world/sampler_config.json
+adk optimize contributing/samples/core/hello_world \
+--sampler_config_file_path contributing/samples/core/hello_world/sampler_config.json
 ```
 
 The final output varies, but might look similar to the following:
@@ -170,7 +170,7 @@ adk optimize [OPTIONS] AGENT_MODULE_FILE_PATH
 module by the name `agent`.
 The `agent` module must contain a `root_agent`.
 For an example of a valid setup, examine the
-[`hello_world`](https://github.com/google/adk-python/tree/main/contributing/samples/hello_world)
+[`hello_world`](https://github.com/google/adk-python/tree/main/contributing/samples/core/hello_world)
 agent.
 * `--sampler_config_file_path PATH`: The path to the config for the sampler.
 The sampler implementation and config format are described
@@ -379,7 +379,7 @@ The following reference code replicates the functionality of the `adk optimize`
 command for the above [example](#example).
 To use it, create the [dataset](#exampledataset) as shown in the example and run
 this code from a Python script within the
-[same directory](https://github.com/google/adk-python/tree/main/contributing/samples/hello_world):
+[same directory](https://github.com/google/adk-python/tree/main/contributing/samples/core/hello_world):
 
 ```python
 import asyncio

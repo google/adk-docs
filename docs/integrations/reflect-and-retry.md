@@ -109,7 +109,7 @@ error_handling_plugin = CustomRetryPlugin(max_retries=5)
 
 For complete code samples using the Reflect and Retry plugin, see the following:
 
-*   [Basic](https://github.com/google/adk-python/tree/main/contributing/samples/plugin_reflect_tool_retry/basic)
+*   [Basic](https://github.com/google/adk-python/tree/main/contributing/samples/plugin/plugin_reflect_tool_retry/basic)
     code sample
-*   [Hallucinating function name](https://github.com/google/adk-python/tree/main/contributing/samples/plugin_reflect_tool_retry/hallucinating_func_name)
+*   [Hallucinating function name](https://github.com/google/adk-python/tree/main/contributing/samples/plugin/plugin_reflect_tool_retry/hallucinating_func_name)
     code sample

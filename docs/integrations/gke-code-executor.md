@@ -70,7 +70,7 @@ with the GKE Code Executor tool:
 - GKE cluster with a **gVisor-enabled node pool** (required for both Job Mode's default image and typical Agent Sandbox templates).
 - Agent's service account requires specific **RBAC permissions**:
     - **Job Mode:** Create, watch, and delete **Jobs**; Manage **ConfigMaps**; List **Pods** and read their **logs**. For a complete, ready-to-use configuration for Job Mode, see the
-[deployment_rbac.yaml](https://github.com/google/adk-python/blob/main/contributing/samples/gke_agent_sandbox/deployment_rbac.yaml)
+[deployment_rbac.yaml](https://github.com/google/adk-python/blob/main/contributing/samples/integrations/gke_agent_sandbox/deployment_rbac.yaml)
 sample.
     - **Sandbox Mode:** Permissions to create, get, watch, and delete **SandboxClaim** and **Sandbox** resources within the namespace where the Agent Sandbox is deployed.
 - Install the client library with the appropriate extras: `pip install google-adk[gke]`

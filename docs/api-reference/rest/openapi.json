@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "ADK REST API Reference",
-    "version": "1.32.0"
+    "version": "2.0.0"
   },
   "paths": {
     "/health": {
@@ -125,90 +125,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/AppInfo"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/debug/trace/{event_id}": {
-      "get": {
-        "tags": [
-          "Debug"
-        ],
-        "summary": "Get Trace Dict",
-        "operationId": "get_trace_dict_debug_trace__event_id__get",
-        "parameters": [
-          {
-            "name": "event_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Event Id"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "title": "Response Get Trace Dict Debug Trace  Event Id  Get"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/debug/trace/session/{session_id}": {
-      "get": {
-        "tags": [
-          "Debug"
-        ],
-        "summary": "Get Session Trace",
-        "operationId": "get_session_trace_debug_trace_session__session_id__get",
-        "parameters": [
-          {
-            "name": "session_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Session Id"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "title": "Response Get Session Trace Debug Trace Session  Session Id  Get"
                 }
               }
             }
@@ -590,1097 +506,6 @@
         }
       }
     },
-    "/apps/{app_name}/eval-sets": {
-      "post": {
-        "tags": [
-          "Evaluation"
-        ],
-        "summary": "Create Eval Set",
-        "operationId": "create_eval_set_apps__app_name__eval_sets_post",
-        "parameters": [
-          {
-            "name": "app_name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "App Name"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateEvalSetRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/EvalSet"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      },
-      "get": {
-        "tags": [
-          "Evaluation"
-        ],
-        "summary": "List Eval Sets",
-        "description": "Lists all eval sets for the given app.",
-        "operationId": "list_eval_sets_apps__app_name__eval_sets_get",
-        "parameters": [
-          {
-            "name": "app_name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "App Name"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ListEvalSetsResponse"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/apps/{app_name}/eval_sets/{eval_set_id}": {
-      "post": {
-        "tags": [
-          "Evaluation"
-        ],
-        "summary": "Create Eval Set Legacy",
-        "description": "Creates an eval set, given the id.",
-        "operationId": "create_eval_set_legacy_apps__app_name__eval_sets__eval_set_id__post",
-        "parameters": [
-          {
-            "name": "app_name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "App Name"
-            }
-          },
-          {
-            "name": "eval_set_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Eval Set Id"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/apps/{app_name}/eval_sets": {
-      "get": {
-        "tags": [
-          "Evaluation"
-        ],
-        "summary": "List Eval Sets Legacy",
-        "operationId": "list_eval_sets_legacy_apps__app_name__eval_sets_get",
-        "parameters": [
-          {
-            "name": "app_name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "App Name"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  },
-                  "title": "Response List Eval Sets Legacy Apps  App Name  Eval Sets Get"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/apps/{app_name}/eval_sets/{eval_set_id}/run_eval": {
-      "post": {
-        "tags": [
-          "Evaluation"
-        ],
-        "summary": "Run Eval Legacy",
-        "operationId": "run_eval_legacy_apps__app_name__eval_sets__eval_set_id__run_eval_post",
-        "parameters": [
-          {
-            "name": "app_name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "App Name"
-            }
-          },
-          {
-            "name": "eval_set_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Eval Set Id"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RunEvalRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/RunEvalResult"
-                  },
-                  "title": "Response Run Eval Legacy Apps  App Name  Eval Sets  Eval Set Id  Run Eval Post"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/apps/{app_name}/eval_results/{eval_result_id}": {
-      "get": {
-        "tags": [
-          "Evaluation"
-        ],
-        "summary": "Get Eval Result Legacy",
-        "operationId": "get_eval_result_legacy_apps__app_name__eval_results__eval_result_id__get",
-        "parameters": [
-          {
-            "name": "app_name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "App Name"
-            }
-          },
-          {
-            "name": "eval_result_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Eval Result Id"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/EvalSetResult"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/apps/{app_name}/eval_results": {
-      "get": {
-        "tags": [
-          "Evaluation"
-        ],
-        "summary": "List Eval Results Legacy",
-        "operationId": "list_eval_results_legacy_apps__app_name__eval_results_get",
-        "parameters": [
-          {
-            "name": "app_name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "App Name"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  },
-                  "title": "Response List Eval Results Legacy Apps  App Name  Eval Results Get"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/apps/{app_name}/eval_sets/{eval_set_id}/add_session": {
-      "post": {
-        "tags": [
-          "Evaluation"
-        ],
-        "summary": "Add Session To Eval Set",
-        "operationId": "add_session_to_eval_set_apps__app_name__eval_sets__eval_set_id__add_session_post",
-        "parameters": [
-          {
-            "name": "app_name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "App Name"
-            }
-          },
-          {
-            "name": "eval_set_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Eval Set Id"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AddSessionToEvalSetRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/apps/{app_name}/eval-sets/{eval_set_id}/add-session": {
-      "post": {
-        "tags": [
-          "Evaluation"
-        ],
-        "summary": "Add Session To Eval Set",
-        "operationId": "add_session_to_eval_set_apps__app_name__eval_sets__eval_set_id__add_session_post",
-        "parameters": [
-          {
-            "name": "app_name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "App Name"
-            }
-          },
-          {
-            "name": "eval_set_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Eval Set Id"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AddSessionToEvalSetRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/apps/{app_name}/eval_sets/{eval_set_id}/evals": {
-      "get": {
-        "tags": [
-          "Evaluation"
-        ],
-        "summary": "List Evals In Eval Set",
-        "description": "Lists all evals in an eval set.",
-        "operationId": "list_evals_in_eval_set_apps__app_name__eval_sets__eval_set_id__evals_get",
-        "parameters": [
-          {
-            "name": "app_name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "App Name"
-            }
-          },
-          {
-            "name": "eval_set_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Eval Set Id"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  },
-                  "title": "Response List Evals In Eval Set Apps  App Name  Eval Sets  Eval Set Id  Evals Get"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/apps/{app_name}/eval_sets/{eval_set_id}/evals/{eval_case_id}": {
-      "get": {
-        "tags": [
-          "Evaluation"
-        ],
-        "summary": "Get Eval",
-        "description": "Gets an eval case in an eval set.",
-        "operationId": "get_eval_apps__app_name__eval_sets__eval_set_id__evals__eval_case_id__get",
-        "parameters": [
-          {
-            "name": "app_name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "App Name"
-            }
-          },
-          {
-            "name": "eval_set_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Eval Set Id"
-            }
-          },
-          {
-            "name": "eval_case_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Eval Case Id"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/EvalCase"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "Evaluation"
-        ],
-        "summary": "Update Eval",
-        "operationId": "update_eval_apps__app_name__eval_sets__eval_set_id__evals__eval_case_id__put",
-        "parameters": [
-          {
-            "name": "app_name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "App Name"
-            }
-          },
-          {
-            "name": "eval_set_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Eval Set Id"
-            }
-          },
-          {
-            "name": "eval_case_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Eval Case Id"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/EvalCase"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Evaluation"
-        ],
-        "summary": "Delete Eval",
-        "operationId": "delete_eval_apps__app_name__eval_sets__eval_set_id__evals__eval_case_id__delete",
-        "parameters": [
-          {
-            "name": "app_name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "App Name"
-            }
-          },
-          {
-            "name": "eval_set_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Eval Set Id"
-            }
-          },
-          {
-            "name": "eval_case_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Eval Case Id"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/apps/{app_name}/eval-sets/{eval_set_id}/eval-cases/{eval_case_id}": {
-      "get": {
-        "tags": [
-          "Evaluation"
-        ],
-        "summary": "Get Eval",
-        "description": "Gets an eval case in an eval set.",
-        "operationId": "get_eval_apps__app_name__eval_sets__eval_set_id__eval_cases__eval_case_id__get",
-        "parameters": [
-          {
-            "name": "app_name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "App Name"
-            }
-          },
-          {
-            "name": "eval_set_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Eval Set Id"
-            }
-          },
-          {
-            "name": "eval_case_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Eval Case Id"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/EvalCase"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "Evaluation"
-        ],
-        "summary": "Update Eval",
-        "operationId": "update_eval_apps__app_name__eval_sets__eval_set_id__eval_cases__eval_case_id__put",
-        "parameters": [
-          {
-            "name": "app_name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "App Name"
-            }
-          },
-          {
-            "name": "eval_set_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Eval Set Id"
-            }
-          },
-          {
-            "name": "eval_case_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Eval Case Id"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/EvalCase"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Evaluation"
-        ],
-        "summary": "Delete Eval",
-        "operationId": "delete_eval_apps__app_name__eval_sets__eval_set_id__eval_cases__eval_case_id__delete",
-        "parameters": [
-          {
-            "name": "app_name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "App Name"
-            }
-          },
-          {
-            "name": "eval_set_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Eval Set Id"
-            }
-          },
-          {
-            "name": "eval_case_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Eval Case Id"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/apps/{app_name}/eval-sets/{eval_set_id}/run": {
-      "post": {
-        "tags": [
-          "Evaluation"
-        ],
-        "summary": "Run Eval",
-        "description": "Runs an eval given the details in the eval request.",
-        "operationId": "run_eval_apps__app_name__eval_sets__eval_set_id__run_post",
-        "parameters": [
-          {
-            "name": "app_name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "App Name"
-            }
-          },
-          {
-            "name": "eval_set_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Eval Set Id"
-            }
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/RunEvalRequest"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RunEvalResponse"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/apps/{app_name}/eval-results/{eval_result_id}": {
-      "get": {
-        "tags": [
-          "Evaluation"
-        ],
-        "summary": "Get Eval Result",
-        "description": "Gets the eval result for the given eval id.",
-        "operationId": "get_eval_result_apps__app_name__eval_results__eval_result_id__get",
-        "parameters": [
-          {
-            "name": "app_name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "App Name"
-            }
-          },
-          {
-            "name": "eval_result_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Eval Result Id"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/EvalResult"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/apps/{app_name}/eval-results": {
-      "get": {
-        "tags": [
-          "Evaluation"
-        ],
-        "summary": "List Eval Results",
-        "description": "Lists all eval results for the given app.",
-        "operationId": "list_eval_results_apps__app_name__eval_results_get",
-        "parameters": [
-          {
-            "name": "app_name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "App Name"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ListEvalResultsResponse"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/apps/{app_name}/metrics-info": {
-      "get": {
-        "tags": [
-          "Evaluation"
-        ],
-        "summary": "List Metrics Info",
-        "description": "Lists all eval metrics for the given app.",
-        "operationId": "list_metrics_info_apps__app_name__metrics_info_get",
-        "parameters": [
-          {
-            "name": "app_name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "App Name"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ListMetricsInfoResponse"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/apps/{app_name}/users/{user_id}/sessions/{session_id}/artifacts/{artifact_name}": {
       "get": {
         "summary": "Load Artifact",
@@ -1989,6 +814,7 @@
     "/apps/{app_name}/users/{user_id}/sessions/{session_id}/artifacts": {
       "post": {
         "summary": "Save Artifact",
+        "description": "Request payload for saving a new artifact.",
         "operationId": "save_artifact_apps__app_name__users__user_id__sessions__session_id__artifacts_post",
         "parameters": [
           {
@@ -2391,135 +1217,6 @@
           }
         }
       }
-    },
-    "/dev/{app_name}/graph": {
-      "get": {
-        "tags": [
-          "Debug"
-        ],
-        "summary": "Get App Graph Dot",
-        "description": "Returns the base agent graph in DOT format without any highlights.\n\nThis endpoint allows the frontend to fetch the graph structure once\nand compute highlights client-side for better performance.\n\nArgs:\n  app_name: The name of the agent/app\n  dark_mode: Whether to use dark theme background color",
-        "operationId": "get_app_graph_dot_dev__app_name__graph_get",
-        "parameters": [
-          {
-            "name": "app_name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "App Name"
-            }
-          },
-          {
-            "name": "dark_mode",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "boolean",
-              "default": false,
-              "title": "Dark Mode"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "anyOf": [
-                    {
-                      "$ref": "#/components/schemas/GetEventGraphResult"
-                    },
-                    {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
-                  ],
-                  "title": "Response Get App Graph Dot Dev  App Name  Graph Get"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/apps/{app_name}/users/{user_id}/sessions/{session_id}/events/{event_id}/graph": {
-      "get": {
-        "tags": [
-          "Debug"
-        ],
-        "summary": "Get Event Graph",
-        "operationId": "get_event_graph_apps__app_name__users__user_id__sessions__session_id__events__event_id__graph_get",
-        "parameters": [
-          {
-            "name": "app_name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "App Name"
-            }
-          },
-          {
-            "name": "user_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "User Id"
-            }
-          },
-          {
-            "name": "session_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Session Id"
-            }
-          },
-          {
-            "name": "event_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Event Id"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
     }
   },
   "components": {
@@ -2565,54 +1262,6 @@
           "cookie"
         ],
         "title": "APIKeyIn"
-      },
-      "AddSessionToEvalSetRequest": {
-        "properties": {
-          "evalId": {
-            "type": "string",
-            "title": "Evalid"
-          },
-          "sessionId": {
-            "type": "string",
-            "title": "Sessionid"
-          },
-          "userId": {
-            "type": "string",
-            "title": "Userid"
-          }
-        },
-        "type": "object",
-        "required": [
-          "evalId",
-          "sessionId",
-          "userId"
-        ],
-        "title": "AddSessionToEvalSetRequest"
-      },
-      "AgentDetails": {
-        "properties": {
-          "name": {
-            "type": "string",
-            "title": "Name"
-          },
-          "instructions": {
-            "type": "string",
-            "title": "Instructions",
-            "default": ""
-          },
-          "toolDeclarations": {
-            "items": {},
-            "type": "array",
-            "title": "Tooldeclarations"
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "required": [
-          "name"
-        ],
-        "title": "AgentDetails",
-        "description": "Details about the individual agent in the App.\n\nThis could be a root agent or the sub-agents in the Agent Tree."
       },
       "AgentInfo": {
         "properties": {
@@ -2768,21 +1417,6 @@
         ],
         "title": "ApiSpec",
         "description": "The API spec that the external API implements.\n\nThis enum is not supported in Gemini API."
-      },
-      "AppDetails": {
-        "properties": {
-          "agentDetails": {
-            "additionalProperties": {
-              "$ref": "#/components/schemas/AgentDetails"
-            },
-            "type": "object",
-            "title": "Agentdetails"
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "title": "AppDetails",
-        "description": "Contains details about the App (the agentic system).\n\nThis structure is only a projection of the actual app. Only details\nthat are relevant to the Eval System are captured here."
       },
       "AppInfo": {
         "properties": {
@@ -3143,22 +1777,6 @@
         "title": "AuthType",
         "description": "Type of auth scheme. This enum is not supported in Gemini API."
       },
-      "BaseCriterion": {
-        "properties": {
-          "threshold": {
-            "type": "number",
-            "title": "Threshold",
-            "description": "The threshold to be used by the metric."
-          }
-        },
-        "additionalProperties": true,
-        "type": "object",
-        "required": [
-          "threshold"
-        ],
-        "title": "BaseCriterion",
-        "description": "Base criterion to use for an Eval Metric."
-      },
       "Behavior": {
         "type": "string",
         "enum": [
@@ -3501,48 +2119,6 @@
         "title": "Content",
         "description": "Contains the multi-part content of a message."
       },
-      "ConversationScenario": {
-        "properties": {
-          "startingPrompt": {
-            "type": "string",
-            "title": "Startingprompt"
-          },
-          "conversationPlan": {
-            "type": "string",
-            "title": "Conversationplan"
-          },
-          "userPersona": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/UserPersona"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "required": [
-          "startingPrompt",
-          "conversationPlan"
-        ],
-        "title": "ConversationScenario",
-        "description": "Scenario for a conversation between a simulated user and the Agent under test."
-      },
-      "CreateEvalSetRequest": {
-        "properties": {
-          "evalSet": {
-            "$ref": "#/components/schemas/EvalSet"
-          }
-        },
-        "type": "object",
-        "required": [
-          "evalSet"
-        ],
-        "title": "CreateEvalSetRequest"
-      },
       "CreateSessionRequest": {
         "properties": {
           "sessionId": {
@@ -3686,512 +2262,6 @@
         ],
         "title": "Environment",
         "description": "The environment being operated."
-      },
-      "EvalCase": {
-        "properties": {
-          "evalId": {
-            "type": "string",
-            "title": "Evalid"
-          },
-          "conversation": {
-            "anyOf": [
-              {
-                "items": {
-                  "$ref": "#/components/schemas/Invocation"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Conversation"
-          },
-          "conversationScenario": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/ConversationScenario"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "sessionInput": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/SessionInput"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "creationTimestamp": {
-            "type": "number",
-            "title": "Creationtimestamp",
-            "default": 0.0
-          },
-          "rubrics": {
-            "anyOf": [
-              {
-                "items": {
-                  "$ref": "#/components/schemas/Rubric"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Rubrics"
-          },
-          "finalSessionState": {
-            "anyOf": [
-              {
-                "additionalProperties": true,
-                "type": "object"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Finalsessionstate"
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "required": [
-          "evalId"
-        ],
-        "title": "EvalCase",
-        "description": "An eval case."
-      },
-      "EvalCaseResult": {
-        "properties": {
-          "evalSetFile": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Evalsetfile",
-            "description": "This field is deprecated, use eval_set_id instead.",
-            "deprecated": true
-          },
-          "evalSetId": {
-            "type": "string",
-            "title": "Evalsetid",
-            "default": ""
-          },
-          "evalId": {
-            "type": "string",
-            "title": "Evalid",
-            "default": ""
-          },
-          "finalEvalStatus": {
-            "$ref": "#/components/schemas/EvalStatus"
-          },
-          "evalMetricResults": {
-            "anyOf": [
-              {
-                "items": {
-                  "prefixItems": [
-                    {
-                      "$ref": "#/components/schemas/EvalMetric"
-                    },
-                    {
-                      "$ref": "#/components/schemas/EvalMetricResult"
-                    }
-                  ],
-                  "type": "array",
-                  "maxItems": 2,
-                  "minItems": 2
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Evalmetricresults",
-            "description": "This field is deprecated, use overall_eval_metric_results instead.",
-            "deprecated": true
-          },
-          "overallEvalMetricResults": {
-            "items": {
-              "$ref": "#/components/schemas/EvalMetricResult"
-            },
-            "type": "array",
-            "title": "Overallevalmetricresults"
-          },
-          "evalMetricResultPerInvocation": {
-            "items": {
-              "$ref": "#/components/schemas/EvalMetricResultPerInvocation"
-            },
-            "type": "array",
-            "title": "Evalmetricresultperinvocation"
-          },
-          "sessionId": {
-            "type": "string",
-            "title": "Sessionid"
-          },
-          "sessionDetails": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/Session"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "userId": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Userid"
-          }
-        },
-        "type": "object",
-        "required": [
-          "finalEvalStatus",
-          "overallEvalMetricResults",
-          "evalMetricResultPerInvocation",
-          "sessionId"
-        ],
-        "title": "EvalCaseResult",
-        "description": "Case level evaluation results."
-      },
-      "EvalMetric": {
-        "properties": {
-          "metricName": {
-            "type": "string",
-            "title": "Metricname",
-            "description": "The name of the metric."
-          },
-          "threshold": {
-            "anyOf": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Threshold",
-            "description": "This field will be deprecated soon. Please use `criterion` instead. A threshold value. Each metric decides how to interpret this threshold."
-          },
-          "criterion": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/BaseCriterion"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Evaluation criterion used by the metric."
-          },
-          "customFunctionPath": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Customfunctionpath",
-            "description": "Path to custom function, if this is a custom metric."
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "required": [
-          "metricName"
-        ],
-        "title": "EvalMetric",
-        "description": "A metric used to evaluate a particular aspect of an eval case."
-      },
-      "EvalMetricResult": {
-        "properties": {
-          "metricName": {
-            "type": "string",
-            "title": "Metricname",
-            "description": "The name of the metric."
-          },
-          "threshold": {
-            "anyOf": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Threshold",
-            "description": "This field will be deprecated soon. Please use `criterion` instead. A threshold value. Each metric decides how to interpret this threshold."
-          },
-          "criterion": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/BaseCriterion"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "Evaluation criterion used by the metric."
-          },
-          "customFunctionPath": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Customfunctionpath",
-            "description": "Path to custom function, if this is a custom metric."
-          },
-          "score": {
-            "anyOf": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Score",
-            "description": "Score obtained after evaluating the metric. Optional, as evaluation might not have happened."
-          },
-          "evalStatus": {
-            "$ref": "#/components/schemas/EvalStatus",
-            "description": "The status of this evaluation."
-          },
-          "details": {
-            "$ref": "#/components/schemas/EvalMetricResultDetails",
-            "description": ""
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "required": [
-          "metricName",
-          "evalStatus"
-        ],
-        "title": "EvalMetricResult",
-        "description": "The actual computed score/value of a particular EvalMetric."
-      },
-      "EvalMetricResultDetails": {
-        "properties": {
-          "rubricScores": {
-            "anyOf": [
-              {
-                "items": {
-                  "$ref": "#/components/schemas/RubricScore"
-                },
-                "type": "array"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Rubricscores",
-            "description": "The scores obtained after applying the rubrics to the Agent's response."
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "title": "EvalMetricResultDetails"
-      },
-      "EvalMetricResultPerInvocation": {
-        "properties": {
-          "actualInvocation": {
-            "$ref": "#/components/schemas/Invocation",
-            "description": "The actual invocation, usually obtained by inferencing the agent."
-          },
-          "expectedInvocation": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/Invocation"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "The expected invocation, usually the reference or golden invocation."
-          },
-          "evalMetricResults": {
-            "items": {
-              "$ref": "#/components/schemas/EvalMetricResult"
-            },
-            "type": "array",
-            "title": "Evalmetricresults",
-            "description": "Eval results for each applicable metric.",
-            "default": []
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "required": [
-          "actualInvocation"
-        ],
-        "title": "EvalMetricResultPerInvocation",
-        "description": "Eval metric results per invocation."
-      },
-      "EvalResult": {
-        "properties": {
-          "evalSetResultId": {
-            "type": "string",
-            "title": "Evalsetresultid"
-          },
-          "evalSetResultName": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Evalsetresultname"
-          },
-          "evalSetId": {
-            "type": "string",
-            "title": "Evalsetid"
-          },
-          "evalCaseResults": {
-            "items": {
-              "$ref": "#/components/schemas/EvalCaseResult"
-            },
-            "type": "array",
-            "title": "Evalcaseresults"
-          },
-          "creationTimestamp": {
-            "type": "number",
-            "title": "Creationtimestamp",
-            "default": 0.0
-          }
-        },
-        "type": "object",
-        "required": [
-          "evalSetResultId",
-          "evalSetId"
-        ],
-        "title": "EvalResult",
-        "description": "This class has no field intentionally.\n\nThe goal here is to just give a new name to the class to align with the API\nendpoint."
-      },
-      "EvalSet": {
-        "properties": {
-          "eval_set_id": {
-            "type": "string",
-            "title": "Eval Set Id"
-          },
-          "name": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Name"
-          },
-          "description": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Description"
-          },
-          "eval_cases": {
-            "items": {
-              "$ref": "#/components/schemas/EvalCase"
-            },
-            "type": "array",
-            "title": "Eval Cases"
-          },
-          "creation_timestamp": {
-            "type": "number",
-            "title": "Creation Timestamp",
-            "default": 0.0
-          }
-        },
-        "type": "object",
-        "required": [
-          "eval_set_id",
-          "eval_cases"
-        ],
-        "title": "EvalSet",
-        "description": "A set of eval cases."
-      },
-      "EvalSetResult": {
-        "properties": {
-          "evalSetResultId": {
-            "type": "string",
-            "title": "Evalsetresultid"
-          },
-          "evalSetResultName": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Evalsetresultname"
-          },
-          "evalSetId": {
-            "type": "string",
-            "title": "Evalsetid"
-          },
-          "evalCaseResults": {
-            "items": {
-              "$ref": "#/components/schemas/EvalCaseResult"
-            },
-            "type": "array",
-            "title": "Evalcaseresults"
-          },
-          "creationTimestamp": {
-            "type": "number",
-            "title": "Creationtimestamp",
-            "default": 0.0
-          }
-        },
-        "type": "object",
-        "required": [
-          "evalSetResultId",
-          "evalSetId"
-        ],
-        "title": "EvalSetResult",
-        "description": "Eval set level evaluation results."
-      },
-      "EvalStatus": {
-        "type": "integer",
-        "enum": [
-          1,
-          2,
-          3
-        ],
-        "title": "EvalStatus"
       },
       "Event-Input": {
         "properties": {
@@ -4423,10 +2493,23 @@
           },
           "author": {
             "type": "string",
-            "title": "Author"
+            "title": "Author",
+            "default": ""
           },
           "actions": {
             "$ref": "#/components/schemas/EventActions-Input"
+          },
+          "output": {
+            "anyOf": [
+              {},
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Output"
+          },
+          "nodeInfo": {
+            "$ref": "#/components/schemas/NodeInfo"
           },
           "longRunningToolIds": {
             "anyOf": [
@@ -4454,6 +2537,17 @@
             ],
             "title": "Branch"
           },
+          "isolationScope": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Isolationscope"
+          },
           "id": {
             "type": "string",
             "title": "Id",
@@ -4465,9 +2559,6 @@
           }
         },
         "type": "object",
-        "required": [
-          "author"
-        ],
         "title": "Event",
         "description": "Represents an event in a conversation between agents and users.\n\nIt is used to store the content of the conversation, as well as the actions\ntaken by the agents like function calls, etc."
       },
@@ -4701,10 +2792,23 @@
           },
           "author": {
             "type": "string",
-            "title": "Author"
+            "title": "Author",
+            "default": ""
           },
           "actions": {
             "$ref": "#/components/schemas/EventActions-Output"
+          },
+          "output": {
+            "anyOf": [
+              {},
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Output"
+          },
+          "nodeInfo": {
+            "$ref": "#/components/schemas/NodeInfo"
           },
           "longRunningToolIds": {
             "anyOf": [
@@ -4732,6 +2836,17 @@
             ],
             "title": "Branch"
           },
+          "isolationScope": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Isolationscope"
+          },
           "id": {
             "type": "string",
             "title": "Id",
@@ -4743,9 +2858,6 @@
           }
         },
         "type": "object",
-        "required": [
-          "author"
-        ],
         "title": "Event",
         "description": "Represents an event in a conversation between agents and users.\n\nIt is used to store the content of the conversation, as well as the actions\ntaken by the agents like function calls, etc."
       },
@@ -4854,6 +2966,39 @@
             ],
             "title": "Rewindbeforeinvocationid"
           },
+          "route": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "items": {
+                  "anyOf": [
+                    {
+                      "type": "boolean"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ]
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Route"
+          },
           "renderUiWidgets": {
             "anyOf": [
               {
@@ -4867,6 +3012,15 @@
               }
             ],
             "title": "Renderuiwidgets"
+          },
+          "setModelResponse": {
+            "anyOf": [
+              {},
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Setmodelresponse"
           }
         },
         "additionalProperties": false,
@@ -4979,6 +3133,39 @@
             ],
             "title": "Rewindbeforeinvocationid"
           },
+          "route": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "items": {
+                  "anyOf": [
+                    {
+                      "type": "boolean"
+                    },
+                    {
+                      "type": "integer"
+                    },
+                    {
+                      "type": "string"
+                    }
+                  ]
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Route"
+          },
           "renderUiWidgets": {
             "anyOf": [
               {
@@ -4992,6 +3179,15 @@
               }
             ],
             "title": "Renderuiwidgets"
+          },
+          "setModelResponse": {
+            "anyOf": [
+              {},
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Setmodelresponse"
           }
         },
         "additionalProperties": false,
@@ -5829,19 +4025,6 @@
         "title": "GenerateContentResponseUsageMetadata",
         "description": "Usage metadata about the content generation request and response.\n\nThis message provides a detailed breakdown of token usage and other relevant\nmetrics. This data type is not supported in Gemini API."
       },
-      "GetEventGraphResult": {
-        "properties": {
-          "dotSrc": {
-            "type": "string",
-            "title": "Dotsrc"
-          }
-        },
-        "type": "object",
-        "required": [
-          "dotSrc"
-        ],
-        "title": "GetEventGraphResult"
-      },
       "GoogleMaps": {
         "properties": {
           "authConfig": {
@@ -5915,7 +4098,7 @@
           "timeRangeFilter": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/google__genai__types__Interval"
+                "$ref": "#/components/schemas/Interval"
               },
               {
                 "type": "null"
@@ -6561,6 +4744,18 @@
             ],
             "title": "Pagenumber",
             "description": "Optional. Page number of the retrieved context. This field is not supported in Vertex AI."
+          },
+          "mediaId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mediaid",
+            "description": "Optional. Media ID. This field is not supported in Vertex AI."
           }
         },
         "additionalProperties": false,
@@ -7038,163 +5233,39 @@
         "title": "ImageSearch",
         "description": "Image search for grounding and related configurations."
       },
-      "IntermediateData": {
+      "Interval": {
         "properties": {
-          "toolUses": {
-            "items": {
-              "$ref": "#/components/schemas/FunctionCall"
-            },
-            "type": "array",
-            "title": "Tooluses",
-            "default": []
-          },
-          "toolResponses": {
-            "items": {
-              "$ref": "#/components/schemas/FunctionResponse"
-            },
-            "type": "array",
-            "title": "Toolresponses",
-            "default": []
-          },
-          "intermediateResponses": {
-            "items": {
-              "prefixItems": [
-                {
-                  "type": "string"
-                },
-                {
-                  "items": {
-                    "$ref": "#/components/schemas/Part"
-                  },
-                  "type": "array"
-                }
-              ],
-              "type": "array",
-              "maxItems": 2,
-              "minItems": 2
-            },
-            "type": "array",
-            "title": "Intermediateresponses",
-            "default": []
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "title": "IntermediateData",
-        "description": "Container for intermediate data that an agent would generate as it responds with a final answer."
-      },
-      "Invocation": {
-        "properties": {
-          "invocationId": {
-            "type": "string",
-            "title": "Invocationid",
-            "default": ""
-          },
-          "userContent": {
-            "$ref": "#/components/schemas/Content"
-          },
-          "finalResponse": {
+          "endTime": {
             "anyOf": [
               {
-                "$ref": "#/components/schemas/Content"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          },
-          "intermediateData": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/IntermediateData"
-              },
-              {
-                "$ref": "#/components/schemas/InvocationEvents"
+                "type": "string",
+                "format": "date-time"
               },
               {
                 "type": "null"
               }
             ],
-            "title": "Intermediatedata"
+            "title": "Endtime",
+            "description": "Optional. Exclusive end of the interval. If specified, a Timestamp matching this interval will have to be before the end."
           },
-          "creationTimestamp": {
-            "type": "number",
-            "title": "Creationtimestamp",
-            "default": 0.0
-          },
-          "rubrics": {
+          "startTime": {
             "anyOf": [
               {
-                "items": {
-                  "$ref": "#/components/schemas/Rubric"
-                },
-                "type": "array"
+                "type": "string",
+                "format": "date-time"
               },
               {
                 "type": "null"
               }
             ],
-            "title": "Rubrics"
-          },
-          "appDetails": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/AppDetails"
-              },
-              {
-                "type": "null"
-              }
-            ]
+            "title": "Starttime",
+            "description": "Optional. Inclusive start of the interval. If specified, a Timestamp matching this interval will have to be the same or after the start."
           }
         },
         "additionalProperties": false,
         "type": "object",
-        "required": [
-          "userContent"
-        ],
-        "title": "Invocation",
-        "description": "Represents a single invocation."
-      },
-      "InvocationEvent": {
-        "properties": {
-          "author": {
-            "type": "string",
-            "title": "Author"
-          },
-          "content": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/Content"
-              },
-              {
-                "type": "null"
-              }
-            ]
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "required": [
-          "author",
-          "content"
-        ],
-        "title": "InvocationEvent",
-        "description": "An immutable record representing a specific point in the agent's invocation.\n\nIt captures agent's replies, requests to use tools (function calls), and tool\nresults.\n\nThis structure is a simple projection of the actual `Event` datamodel that\nis intended for the Eval System."
-      },
-      "InvocationEvents": {
-        "properties": {
-          "invocationEvents": {
-            "items": {
-              "$ref": "#/components/schemas/InvocationEvent"
-            },
-            "type": "array",
-            "title": "Invocationevents"
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "title": "InvocationEvents",
-        "description": "A container for events that occur during the course of an invocation."
+        "title": "Interval",
+        "description": "Represents a time interval, encoded as a Timestamp start (inclusive) and a Timestamp end (exclusive).\n\nThe start must be less than or equal to the end. When the start equals the\nend, the interval is empty (matches no time). When both start and end are\nunspecified, the interval matches any time."
       },
       "Language": {
         "type": "string",
@@ -7220,54 +5291,6 @@
           "apps"
         ],
         "title": "ListAppsResponse"
-      },
-      "ListEvalResultsResponse": {
-        "properties": {
-          "evalResultIds": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array",
-            "title": "Evalresultids"
-          }
-        },
-        "type": "object",
-        "required": [
-          "evalResultIds"
-        ],
-        "title": "ListEvalResultsResponse"
-      },
-      "ListEvalSetsResponse": {
-        "properties": {
-          "evalSetIds": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array",
-            "title": "Evalsetids"
-          }
-        },
-        "type": "object",
-        "required": [
-          "evalSetIds"
-        ],
-        "title": "ListEvalSetsResponse"
-      },
-      "ListMetricsInfoResponse": {
-        "properties": {
-          "metricsInfo": {
-            "items": {
-              "$ref": "#/components/schemas/MetricInfo"
-            },
-            "type": "array",
-            "title": "Metricsinfo"
-          }
-        },
-        "type": "object",
-        "required": [
-          "metricsInfo"
-        ],
-        "title": "ListMetricsInfoResponse"
       },
       "LiveServerGoAway": {
         "properties": {
@@ -7494,51 +5517,6 @@
         "title": "MediaModality",
         "description": "Server content modalities."
       },
-      "MetricInfo": {
-        "properties": {
-          "metricName": {
-            "type": "string",
-            "title": "Metricname",
-            "description": "The name of the metric."
-          },
-          "description": {
-            "type": "string",
-            "title": "Description",
-            "description": "A 2 to 3 line description of the metric."
-          },
-          "metricValueInfo": {
-            "$ref": "#/components/schemas/MetricValueInfo",
-            "description": "Information on the nature of values supported by the metric."
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "required": [
-          "metricName",
-          "metricValueInfo"
-        ],
-        "title": "MetricInfo",
-        "description": "Information about the metric that are used for Evals."
-      },
-      "MetricValueInfo": {
-        "properties": {
-          "interval": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/google__adk__evaluation__eval_metrics__Interval"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "description": "The values represented by the metric are of type interval."
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "title": "MetricValueInfo",
-        "description": "Information about the type of metric value."
-      },
       "ModalityTokenCount": {
         "properties": {
           "modality": {
@@ -7569,6 +5547,43 @@
         "type": "object",
         "title": "ModalityTokenCount",
         "description": "Represents token counting info for a single modality."
+      },
+      "NodeInfo": {
+        "properties": {
+          "path": {
+            "type": "string",
+            "title": "Path",
+            "default": ""
+          },
+          "outputFor": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Outputfor"
+          },
+          "messageAsOutput": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Messageasoutput"
+          }
+        },
+        "type": "object",
+        "title": "NodeInfo",
+        "description": "Workflow node metadata attached to an Event."
       },
       "OAuth2": {
         "properties": {
@@ -7753,6 +5768,28 @@
               }
             ],
             "title": "Audience"
+          },
+          "codeVerifier": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Codeverifier"
+          },
+          "codeChallengeMethod": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Codechallengemethod"
           },
           "tokenEndpointAuthMethod": {
             "anyOf": [
@@ -8730,118 +6767,17 @@
         "title": "RetrievalMetadata",
         "description": "Metadata returned to client when grounding is enabled."
       },
-      "Rubric": {
-        "properties": {
-          "rubricId": {
-            "type": "string",
-            "title": "Rubricid",
-            "description": "Unique identifier for the rubric."
-          },
-          "rubricContent": {
-            "$ref": "#/components/schemas/RubricContent",
-            "description": "The actual testable criterion for the rubric."
-          },
-          "description": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Description",
-            "description": "A description of the rubric that provide details on how the results of the rubric assessment be interpreted."
-          },
-          "type": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Type",
-            "description": "Optional. A type designator for the rubric, which can\n      inform how it's evaluated or interpreted by systems or users.\n\n      It's recommended to use consistent, well-defined, upper snake_case\n      strings.\n\n      Examples: \"TOOL_USE_QUALITY\", \"FINAL_RESPONSE_QUALITY\",\n      \"INSTRUCTION_ADHERENCE\"."
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "required": [
-          "rubricId",
-          "rubricContent"
-        ],
-        "title": "Rubric",
-        "description": "This class represents a single Rubric."
-      },
-      "RubricContent": {
-        "properties": {
-          "textProperty": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Textproperty",
-            "description": "The property being evaluated. Example: \"The agent's response is grammatically correct.\" "
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "required": [
-          "textProperty"
-        ],
-        "title": "RubricContent",
-        "description": "The content of a rubric."
-      },
-      "RubricScore": {
-        "properties": {
-          "rubricId": {
-            "type": "string",
-            "title": "Rubricid",
-            "description": "The id of the rubric that was assessed."
-          },
-          "rationale": {
-            "anyOf": [
-              {
-                "type": "string"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Rationale",
-            "description": "Reasoning/rationale for the score."
-          },
-          "score": {
-            "anyOf": [
-              {
-                "type": "number"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Score",
-            "description": "Score obtained after assessing the rubric. Optional, as assessment might not have happened."
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "required": [
-          "rubricId"
-        ],
-        "title": "RubricScore",
-        "description": "The score obtained after applying the rubric to the Agent's response."
-      },
       "RunAgentRequest": {
         "properties": {
           "appName": {
-            "type": "string",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
             "title": "Appname"
           },
           "userId": {
@@ -8904,133 +6840,10 @@
         },
         "type": "object",
         "required": [
-          "appName",
           "userId",
           "sessionId"
         ],
         "title": "RunAgentRequest"
-      },
-      "RunEvalRequest": {
-        "properties": {
-          "evalIds": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array",
-            "title": "Evalids",
-            "description": "This field is deprecated, use eval_case_ids instead.",
-            "deprecated": true
-          },
-          "evalCaseIds": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array",
-            "title": "Evalcaseids",
-            "description": "List of eval case ids to evaluate. if empty, then all eval cases in the eval set are run."
-          },
-          "evalMetrics": {
-            "items": {
-              "$ref": "#/components/schemas/EvalMetric"
-            },
-            "type": "array",
-            "title": "Evalmetrics"
-          }
-        },
-        "type": "object",
-        "required": [
-          "evalMetrics"
-        ],
-        "title": "RunEvalRequest"
-      },
-      "RunEvalResponse": {
-        "properties": {
-          "runEvalResults": {
-            "items": {
-              "$ref": "#/components/schemas/RunEvalResult"
-            },
-            "type": "array",
-            "title": "Runevalresults"
-          }
-        },
-        "type": "object",
-        "required": [
-          "runEvalResults"
-        ],
-        "title": "RunEvalResponse"
-      },
-      "RunEvalResult": {
-        "properties": {
-          "evalSetFile": {
-            "type": "string",
-            "title": "Evalsetfile"
-          },
-          "evalSetId": {
-            "type": "string",
-            "title": "Evalsetid"
-          },
-          "evalId": {
-            "type": "string",
-            "title": "Evalid"
-          },
-          "finalEvalStatus": {
-            "$ref": "#/components/schemas/EvalStatus"
-          },
-          "evalMetricResults": {
-            "items": {
-              "prefixItems": [
-                {
-                  "$ref": "#/components/schemas/EvalMetric"
-                },
-                {
-                  "$ref": "#/components/schemas/EvalMetricResult"
-                }
-              ],
-              "type": "array",
-              "maxItems": 2,
-              "minItems": 2
-            },
-            "type": "array",
-            "title": "Evalmetricresults",
-            "description": "This field is deprecated, use overall_eval_metric_results instead.",
-            "default": [],
-            "deprecated": true
-          },
-          "overallEvalMetricResults": {
-            "items": {
-              "$ref": "#/components/schemas/EvalMetricResult"
-            },
-            "type": "array",
-            "title": "Overallevalmetricresults"
-          },
-          "evalMetricResultPerInvocation": {
-            "items": {
-              "$ref": "#/components/schemas/EvalMetricResultPerInvocation"
-            },
-            "type": "array",
-            "title": "Evalmetricresultperinvocation"
-          },
-          "userId": {
-            "type": "string",
-            "title": "Userid"
-          },
-          "sessionId": {
-            "type": "string",
-            "title": "Sessionid"
-          }
-        },
-        "type": "object",
-        "required": [
-          "evalSetFile",
-          "evalSetId",
-          "evalId",
-          "finalEvalStatus",
-          "overallEvalMetricResults",
-          "evalMetricResultPerInvocation",
-          "userId",
-          "sessionId"
-        ],
-        "title": "RunEvalResult"
       },
       "SaveArtifactRequest": {
         "properties": {
@@ -9687,31 +7500,6 @@
         "title": "Session",
         "description": "Represents a series of interactions between a user and agents."
       },
-      "SessionInput": {
-        "properties": {
-          "appName": {
-            "type": "string",
-            "title": "Appname"
-          },
-          "userId": {
-            "type": "string",
-            "title": "Userid"
-          },
-          "state": {
-            "additionalProperties": true,
-            "type": "object",
-            "title": "State"
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "required": [
-          "appName",
-          "userId"
-        ],
-        "title": "SessionInput",
-        "description": "Values that help initialize a Session."
-      },
       "StreamableHttpTransport": {
         "properties": {
           "headers": {
@@ -10219,75 +8007,6 @@
         "title": "UrlContext",
         "description": "Tool to support URL context."
       },
-      "UserBehavior": {
-        "properties": {
-          "name": {
-            "type": "string",
-            "title": "Name",
-            "description": "Name of the UserBehavior"
-          },
-          "description": {
-            "type": "string",
-            "title": "Description",
-            "description": "General description of the expected behavior. This will be used in bot the instructions for the user simulator and the user simulator evaluator."
-          },
-          "behavior_instructions": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array",
-            "title": "Behavior Instructions",
-            "description": "Instructions the user should follow. These will be included in the instructions for the user simulator."
-          },
-          "violation_rubrics": {
-            "items": {
-              "type": "string"
-            },
-            "type": "array",
-            "title": "Violation Rubrics",
-            "description": "Rubrics to evaluate whether the user simulator presents the behavior. If the user response presents any of these violations, the evaluator will consider the user simulator response as invalid."
-          }
-        },
-        "type": "object",
-        "required": [
-          "name",
-          "description",
-          "behavior_instructions",
-          "violation_rubrics"
-        ],
-        "title": "UserBehavior",
-        "description": "Container for the behavior of a persona."
-      },
-      "UserPersona": {
-        "properties": {
-          "id": {
-            "type": "string",
-            "title": "Id",
-            "description": "Human readable identifier for the UserPersona. Persona registries will refer to this identifier."
-          },
-          "description": {
-            "type": "string",
-            "title": "Description",
-            "description": "Description for the UserPersona. This will be included in the instructions for the user simulator and its verifier."
-          },
-          "behaviors": {
-            "items": {
-              "$ref": "#/components/schemas/UserBehavior"
-            },
-            "type": "array",
-            "title": "Behaviors",
-            "description": "Sequence of UserBehaviors for the persona. These will be included in the instructions for the user simulator and its verifier."
-          }
-        },
-        "type": "object",
-        "required": [
-          "id",
-          "description",
-          "behaviors"
-        ],
-        "title": "UserPersona",
-        "description": "Container for a persona."
-      },
       "ValidationError": {
         "properties": {
           "loc": {
@@ -10670,40 +8389,6 @@
         "title": "AuthConfig",
         "description": "The auth config sent by tool asking client to collect auth credentials and\n\nadk and client will help to fill in the response"
       },
-      "google__adk__evaluation__eval_metrics__Interval": {
-        "properties": {
-          "minValue": {
-            "type": "number",
-            "title": "Minvalue",
-            "description": "The smaller end of the interval."
-          },
-          "openAtMin": {
-            "type": "boolean",
-            "title": "Openatmin",
-            "description": "The interval is Open on the min end. The default value is False, which means that we assume that the interval is Closed.",
-            "default": false
-          },
-          "maxValue": {
-            "type": "number",
-            "title": "Maxvalue",
-            "description": "The larger end of the interval."
-          },
-          "openAtMax": {
-            "type": "boolean",
-            "title": "Openatmax",
-            "description": "The interval is Open on the max end. The default value is False, which means that we assume that the interval is Closed.",
-            "default": false
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "required": [
-          "minValue",
-          "maxValue"
-        ],
-        "title": "Interval",
-        "description": "Represents a range of numeric values, e.g. [0 ,1] or (2,3) or [-1, 6)."
-      },
       "google__genai__types__AuthConfig": {
         "properties": {
           "apiKey": {
@@ -10789,40 +8474,6 @@
         "type": "object",
         "title": "AuthConfig",
         "description": "The authentication config to access the API."
-      },
-      "google__genai__types__Interval": {
-        "properties": {
-          "endTime": {
-            "anyOf": [
-              {
-                "type": "string",
-                "format": "date-time"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Endtime",
-            "description": "Optional. Exclusive end of the interval. If specified, a Timestamp matching this interval will have to be before the end."
-          },
-          "startTime": {
-            "anyOf": [
-              {
-                "type": "string",
-                "format": "date-time"
-              },
-              {
-                "type": "null"
-              }
-            ],
-            "title": "Starttime",
-            "description": "Optional. Inclusive start of the interval. If specified, a Timestamp matching this interval will have to be the same or after the start."
-          }
-        },
-        "additionalProperties": false,
-        "type": "object",
-        "title": "Interval",
-        "description": "Represents a time interval, encoded as a Timestamp start (inclusive) and a Timestamp end (exclusive).\n\nThe start must be less than or equal to the end. When the start equals the\nend, the interval is empty (matches no time). When both start and end are\nunspecified, the interval matches any time."
       }
     }
   }
