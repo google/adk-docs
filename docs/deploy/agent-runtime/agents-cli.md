@@ -1,7 +1,7 @@
 # Deploy to Agent Runtime with Agents CLI
 
 <div class="language-support-tag" title="Agent Runtime currently supports Python and Go.">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-go">Go v1.2.0</span>
 </div>
 
 This deployment procedure describes how to perform a deployment using
