@@ -1,5 +1,10 @@
 # Test deployed agents in Agent Runtime
 
+<div class="language-support-tag" title="Agent Runtime currently supports Python and Go.">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-go">Go v1.2.0</span>
+</div>
+
+
 These instructions explain how to test an ADK agent deployed to the
 [Agent Runtime](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/overview)
 runtime environment. Before using these instructions, you need to have completed
@@ -36,8 +41,9 @@ To find your project information with Google Cloud Console:
 1.  In the Google Cloud Console, navigate to the Agent Runtime page:
     [https://console.cloud.google.com/vertex-ai/agents/agent-engines](https://console.cloud.google.com/vertex-ai/agents/agent-engines)
 
-1.  At the top of the page, select **API URLs**, and then copy the **Query
-    URL** string for your deployed agent, which should be in this format:
+1.  Choose the instance you want to view.
+
+1.  At the top of the page, select **Copy query URL**, which should be in this format:
 
         https://$(LOCATION_ID)-aiplatform.googleapis.com/v1/projects/$(PROJECT_ID)/locations/$(LOCATION_ID)/reasoningEngines/$(RESOURCE_ID):query
 

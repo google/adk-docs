@@ -1,7 +1,7 @@
 # Deploy to Agent Runtime
 
-<div class="language-support-tag" title="Agent Runtime currently supports only Python.">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
+<div class="language-support-tag" title="Agent Runtime currently supports Python and Go.">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-go">Go v1.2.0</span>
 </div>
 
 Google Cloud Agent Platform
@@ -45,6 +45,15 @@ uploaded to the service:
 - Your ADK agent code
 - Any dependencies declared in your ADK agent code
 
-The deployment *does not* include the ADK API server or the ADK web user
-interface libraries. The Agent Runtime service provides the libraries for ADK API
-server functionality.
+Depending on what programming language you use, additional libraries may be included as explained in the following sections.
+
+=== "Python"
+
+    The deployment with Python *does not* include the ADK API server or the ADK web user
+    interface libraries. The Agent Runtime service provides the libraries for ADK API
+    server functionality.
+
+=== "Go"
+
+    The deployment with Go *does* include the dedicated ADK API server.
+
