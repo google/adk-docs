@@ -39,27 +39,21 @@ purposes:
 
 ## Deployment payload {#payload}
 
+When you deploy your ADK agent project to Agent Runtime, the following content is
+uploaded to the service:
+
+- Your ADK agent code
+- Any dependencies declared in your ADK agent code
+
+Depending on what programming language you use, additional libraries may be included as explained in the following sections.
 
 === "Python"
 
-    When you deploy your ADK agent project to Agent Runtime, the following content is
-    uploaded to the service:
-
-    - Your ADK agent code
-    - Any dependencies declared in your ADK agent code
-
-    The deployment *does not* include the ADK API server or the ADK web user
+    The deployment with Python *does not* include the ADK API server or the ADK web user
     interface libraries. The Agent Runtime service provides the libraries for ADK API
     server functionality.
 
 === "Go"
 
-    When you deploy your ADK project to Agent Runtime, the following content is uploaded to the server:
+    The deployment with Go *does* include the dedicated ADK API server.
 
-    - Your ADK project source code
-
-    Please mind that Agent Runtime has its own API for querying the agent. All you have to do is use a dedicated launcher:
-    ```go
-	l := agentengine.NewLauncher(agentEngineID)
-    err := l.Execute(ctx, config, os.Args[1:])
-    ```
