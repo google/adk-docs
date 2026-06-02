@@ -56,7 +56,7 @@ Set your environment variables as described in the [Setup and Installation](../g
 ```bash
 export GOOGLE_CLOUD_PROJECT=your-project-id
 export GOOGLE_CLOUD_LOCATION=us-central1 # Or your preferred location
-export GOOGLE_GENAI_USE_VERTEXAI=True
+export GOOGLE_GENAI_USE_ENTERPRISE=True
 ```
 
 _(Replace `your-project-id` with your actual GCP project ID)_
@@ -66,7 +66,7 @@ Alternatively you can also use an API key from AI Studio
 ```bash
 export GOOGLE_CLOUD_PROJECT=your-project-id
 export GOOGLE_CLOUD_LOCATION=us-central1 # Or your preferred location
-export GOOGLE_GENAI_USE_VERTEXAI=FALSE
+export GOOGLE_GENAI_USE_ENTERPRISE=FALSE
 export GOOGLE_API_KEY=your-api-key
 ```
 *(Replace `your-project-id` with your actual GCP project ID and `your-api-key` with your actual API key from AI Studio)*
@@ -336,7 +336,7 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
     --region $GOOGLE_CLOUD_LOCATION \
     --project $GOOGLE_CLOUD_PROJECT \
     --allow-unauthenticated \
-    --set-env-vars="GOOGLE_CLOUD_PROJECT=$GOOGLE_CLOUD_PROJECT,GOOGLE_CLOUD_LOCATION=$GOOGLE_CLOUD_LOCATION,GOOGLE_GENAI_USE_VERTEXAI=$GOOGLE_GENAI_USE_VERTEXAI"
+    --set-env-vars="GOOGLE_CLOUD_PROJECT=$GOOGLE_CLOUD_PROJECT,GOOGLE_CLOUD_LOCATION=$GOOGLE_CLOUD_LOCATION,GOOGLE_GENAI_USE_ENTERPRISE=$GOOGLE_GENAI_USE_ENTERPRISE"
     # Add any other necessary environment variables your agent might need
     ```
 
@@ -579,7 +579,7 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
     --region $GOOGLE_CLOUD_LOCATION \
     --project $GOOGLE_CLOUD_PROJECT \
     --allow-unauthenticated \
-    --set-env-vars="GOOGLE_CLOUD_PROJECT=$GOOGLE_CLOUD_PROJECT,GOOGLE_CLOUD_LOCATION=$GOOGLE_CLOUD_LOCATION,GOOGLE_GENAI_USE_VERTEXAI=$GOOGLE_GENAI_USE_VERTEXAI"
+    --set-env-vars="GOOGLE_CLOUD_PROJECT=$GOOGLE_CLOUD_PROJECT,GOOGLE_CLOUD_LOCATION=$GOOGLE_CLOUD_LOCATION,GOOGLE_GENAI_USE_ENTERPRISE=$GOOGLE_GENAI_USE_ENTERPRISE"
     # Add any other necessary environment variables your agent might need
     ```
 

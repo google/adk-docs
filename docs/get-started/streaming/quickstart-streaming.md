@@ -90,7 +90,7 @@ To run the agent, choose a platform from either Google AI Studio or Google Cloud
     2. Open the **`.env`** file located inside (`app/`) and copy-paste the following code.
 
         ```env title=".env"
-        GOOGLE_GENAI_USE_VERTEXAI=FALSE
+        GOOGLE_GENAI_USE_ENTERPRISE=FALSE
         GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_API_KEY_HERE
         ```
 
@@ -111,7 +111,7 @@ To run the agent, choose a platform from either Google AI Studio or Google Cloud
        the following code and update the project ID and location.
 
         ```env title=".env"
-        GOOGLE_GENAI_USE_VERTEXAI=TRUE
+        GOOGLE_GENAI_USE_ENTERPRISE=TRUE
         GOOGLE_CLOUD_PROJECT=PASTE_YOUR_ACTUAL_PROJECT_ID
         GOOGLE_CLOUD_LOCATION=us-central1
         ```

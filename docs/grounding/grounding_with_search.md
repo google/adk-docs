@@ -22,7 +22,7 @@ Before creating a grounded agent, you must have an existing Agent Search Data St
 * For Java, ensure your application environment has Google Cloud default credentials configured (`GOOGLE_APPLICATION_CREDENTIALS`).
 
 ```env title=".env"
-GOOGLE_GENAI_USE_VERTEXAI=TRUE
+GOOGLE_GENAI_USE_ENTERPRISE=TRUE
 GOOGLE_CLOUD_PROJECT=YOUR_PROJECT_ID
 GOOGLE_CLOUD_LOCATION=LOCATION
 ```
