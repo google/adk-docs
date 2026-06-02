@@ -133,7 +133,7 @@ This is the simplest method and is recommended for getting started quickly.
 
         ```shell
         export GOOGLE_API_KEY="YOUR_GOOGLE_API_KEY"
-        export GOOGLE_GENAI_USE_VERTEXAI=FALSE
+        export GOOGLE_GENAI_USE_ENTERPRISE=FALSE
         ```
 
         (or)
@@ -165,7 +165,7 @@ For scalable and production-oriented use cases, Agent Platform is the recommende
     Explicitly tell the library to use Agent Platform:
 
     ```shell
-    export GOOGLE_GENAI_USE_VERTEXAI=TRUE
+    export GOOGLE_GENAI_USE_ENTERPRISE=TRUE
     ```
 
 4. **Models:** Find available model IDs in the
@@ -178,7 +178,7 @@ For scalable and production-oriented use cases, Agent Platform is the recommende
 2.  **Set environment variables:**
     ```shell
     export GOOGLE_GENAI_API_KEY="PASTE_YOUR_EXPRESS_MODE_API_KEY_HERE"
-    export GOOGLE_GENAI_USE_VERTEXAI=TRUE
+    export GOOGLE_GENAI_USE_ENTERPRISE=TRUE
     ```
 
 ### **Method C: Service Account (for Production & Automation)**
