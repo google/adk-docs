@@ -339,28 +339,28 @@ agent will be unable to function.
     and copy-paste the following code.
 
         ```env title="multi_tool_agent/.env"
-        GOOGLE_GENAI_USE_VERTEXAI=FALSE
+        GOOGLE_GENAI_USE_ENTERPRISE=FALSE
         GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_API_KEY_HERE
         ```
 
         When using Java, define environment variables:
 
         ```console title="terminal"
-        export GOOGLE_GENAI_USE_VERTEXAI=FALSE
+        export GOOGLE_GENAI_USE_ENTERPRISE=FALSE
         export GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_API_KEY_HERE
         ```
 
         When using TypeScript, the `.env` file is automatically loaded by the `import 'dotenv/config';` line at the top of your `agent.ts` file.
 
         ```env title="multi_tool_agent/.env"
-        GOOGLE_GENAI_USE_VERTEXAI=FALSE
+        GOOGLE_GENAI_USE_ENTERPRISE=FALSE
         GOOGLE_GENAI_API_KEY=PASTE_YOUR_ACTUAL_API_KEY_HERE
         ```
 
         When using Go, define environment variables in your terminal or use a `.env` file:
 
         ```bash title="terminal"
-        export GOOGLE_GENAI_USE_VERTEXAI=FALSE
+        export GOOGLE_GENAI_USE_ENTERPRISE=FALSE
         export GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_API_KEY_HERE
         ```
 
@@ -374,7 +374,7 @@ agent will be unable to function.
     the following code and update the project ID and location.
 
         ```env title="multi_tool_agent/.env"
-        GOOGLE_GENAI_USE_VERTEXAI=TRUE
+        GOOGLE_GENAI_USE_ENTERPRISE=TRUE
         GOOGLE_CLOUD_PROJECT=YOUR_PROJECT_ID
         GOOGLE_CLOUD_LOCATION=LOCATION
         ```
@@ -382,7 +382,7 @@ agent will be unable to function.
         When using Java, define environment variables:
 
         ```console title="terminal"
-        export GOOGLE_GENAI_USE_VERTEXAI=TRUE
+        export GOOGLE_GENAI_USE_ENTERPRISE=TRUE
         export GOOGLE_CLOUD_PROJECT=YOUR_PROJECT_ID
         export GOOGLE_CLOUD_LOCATION=LOCATION
         ```
@@ -390,7 +390,7 @@ agent will be unable to function.
         When using TypeScript, the `.env` file is automatically loaded by the `import 'dotenv/config';` line at the top of your `agent.ts` file.
 
         ```env title=".env"
-        GOOGLE_GENAI_USE_VERTEXAI=TRUE
+        GOOGLE_GENAI_USE_ENTERPRISE=TRUE
         GOOGLE_CLOUD_PROJECT=YOUR_PROJECT_ID
         GOOGLE_CLOUD_LOCATION=LOCATION
         ```
@@ -398,7 +398,7 @@ agent will be unable to function.
         When using Go, define environment variables in your terminal or use a `.env` file:
 
         ```bash title="terminal"
-        export GOOGLE_GENAI_USE_VERTEXAI=TRUE
+        export GOOGLE_GENAI_USE_ENTERPRISE=TRUE
         export GOOGLE_CLOUD_PROJECT=YOUR_PROJECT_ID
         export GOOGLE_CLOUD_LOCATION=LOCATION
         ```
@@ -412,28 +412,28 @@ agent will be unable to function.
     the following code and update the project ID and location.
 
         ```env title="multi_tool_agent/.env"
-        GOOGLE_GENAI_USE_VERTEXAI=TRUE
+        GOOGLE_GENAI_USE_ENTERPRISE=TRUE
         GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_EXPRESS_MODE_API_KEY_HERE
         ```
 
         When using Java, define environment variables:
 
         ```console title="terminal"
-        export GOOGLE_GENAI_USE_VERTEXAI=TRUE
+        export GOOGLE_GENAI_USE_ENTERPRISE=TRUE
         export GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_EXPRESS_MODE_API_KEY_HERE
         ```
 
         When using TypeScript, the `.env` file is automatically loaded by the `import 'dotenv/config';` line at the top of your `agent.ts` file.
 
         ```env title=".env"
-        GOOGLE_GENAI_USE_VERTEXAI=TRUE
+        GOOGLE_GENAI_USE_ENTERPRISE=TRUE
         GOOGLE_GENAI_API_KEY=PASTE_YOUR_ACTUAL_EXPRESS_MODE_API_KEY_HERE
         ```
 
         When using Go, define environment variables in your terminal or use a `.env` file:
 
         ```bash title="terminal"
-        export GOOGLE_GENAI_USE_VERTEXAI=TRUE
+        export GOOGLE_GENAI_USE_ENTERPRISE=TRUE
         export GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_EXPRESS_MODE_API_KEY_HERE
         ```
 

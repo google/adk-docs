@@ -6,7 +6,7 @@ Using ADK Java SDK to perform the popular Patent Search (Contextual Search)  use
    
 2. Set env variables:
 ```
-export GOOGLE_GENAI_USE_VERTEXAI=FALSE
+export GOOGLE_GENAI_USE_ENTERPRISE=FALSE
 export GOOGLE_API_KEY="<your-api-key>"
 ```
 3. Update the placeholders in the code with values from your project (like PROJECT_ID etc.)
