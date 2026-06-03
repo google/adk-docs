@@ -24,7 +24,7 @@ and logs critical operational events directly into a Google BigQuery table,
 empowering you with advanced capabilities for debugging, real-time monitoring,
 and comprehensive offline performance evaluation.
 
-Version 1.26.0 adds **Auto Schema Upgrade** (safely add new columns to existing
+Python version 1.26.0 adds **Auto Schema Upgrade** (safely add new columns to existing
 tables), **Tool Provenance** tracking (LOCAL, MCP, SUB_AGENT, A2A,
 TRANSFER_AGENT, TRANSFER_A2A), and **HITL Event Tracing** for human-in-the-loop
 interactions. Version 1.27.0 adds **Automatic View Creation** (generate flat,
