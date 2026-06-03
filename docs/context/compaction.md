@@ -12,6 +12,65 @@ increasing processing time and slowing down responses. The ADK Context
 Compaction feature is designed to reduce the size of context as an agent
 is running by summarizing older parts of the agent workflow event history.
 
+## What is compaction?
+
+Compaction manages token usage by trimming or summarizing older session history—including instructions, inputs, and model responses. By maintaining a compact context window, this process **optimizes latency and reduces costs** while ensuring the agent retains access to essential recent interactions.
+
+Compaction is integrated directly into SingleFlow via the `CompactionRequestProcessor`, 
+allowing automatic event compaction based on the rules you set in the `EventsCompactionConfig`.
+
+## Choosing your strategy
+
+You can manage your session's data using two different strategies within `EventsCompactionConfig`:
+
+- **Token-Based (Primary)**: Triggers cleanup based on the actual volume of tokens consumed. This acts as an absolute safety net and is ideal for unpredictable workloads, like when users paste massive code blocks or upload large files.
+- **Sliding Window (Turn-Based)**: Triggers cleanup after a fixed number of conversational turns. This is useful for regular, predictable text chats.
+
+When both are configured, token-based compaction takes priority. If the session length crosses your defined token threshold on a given turn, token-based compaction fires, and the standard sliding-window compaction is skipped for that turn.
+
+## Token based compaction
+
+As stated above, Token-based compaction triggers context management based on the volume of data (tokens) rather than the number of turns (events).
+
+### Configuration settings
+
+Add token-based compaction to your agent workflow by adding an `EventsCompactionConfig` setting to the App object. You must specify the following:
+- **`token_threshold`**: The safety limit of tokens that automatically triggers tail-retention compaction once reached.
+- **`event_retention_size`**: The number of recent events/interactions kept in "raw" un-compacted format when compaction is triggered. This maintains immediate conversational context and pronoun resolution.
+
+To implement this in your project, use the following configuration:
+
+ ```python
+# 1. Correct the import path to use the google.adk namespace
+from google.adk.apps.app import App, EventsCompactionConfig
+from google.adk.agents import Agent # Or import your specific agent class
+
+# Initialize your root agent (required for App setup)
+root_agent = Agent(
+    name="my_root_agent",
+    description="Main coordinating agent for the workflow."
+)
+
+# Configure the application workflow with a valid compaction setup
+compaction_config = EventsCompactionConfig(
+    # REQUIRED SLIDING WINDOW PARAMETERS (No defaults)
+    compaction_interval=10,   # Number of turns between standard compactions
+    overlap_size=2,           # Number of events to retain as overlapping context
+    
+    # TOKEN-BASED PARAMETERS (Activates the priority/pre-call layer)
+    token_threshold=4000,     # Triggers compaction when actual token count exceeds this
+    event_retention_size=5    # Number of recent raw events to keep intact when token limit is hit
+)
+
+# 2. Register with required name and root_agent fields
+app = App(
+    name="my_compacting_agent_app",
+    root_agent=root_agent,
+    events_compaction_config=compaction_config
+)
+```
+## Sliding window compaction
+
 The Context Compaction feature uses a *sliding window* approach for collecting
 and summarizing agent workflow event data within a
 [Session](/sessions/session/). When you configure this feature in your
