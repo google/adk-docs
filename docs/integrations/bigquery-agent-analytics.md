@@ -8,7 +8,7 @@ catalog_tags: ["observability", "google"]
 # BigQuery Agent Analytics plugin for ADK
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.21.0</span><span class="lst-java">Java v1.4.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.21.0</span><span class="lst-java">Java v1.3.0</span>
 </div>
 
 !!! important "Version Requirement"
@@ -1905,7 +1905,7 @@ by credential services) is never persisted in BigQuery.
 Provide a custom `content_formatter` function in `BigQueryLoggerConfig` to strip
 or mask sensitive fields before they are written:
 
-
+=== "Python"
 
     ```python
     import json
@@ -2062,9 +2062,6 @@ call) reconstructs cleanly from BigQuery.
     - **`await plugin.create_analytics_views()`**: Manually (re-)create all
       per-event-type analytics views. Useful after a schema upgrade or when views
       need to be refreshed.
-    - **`plugin.get_drop_stats()`**: Return a snapshot of dropped-event counts per
-      `drop_reason`. See [Dropped-event
-      observability](#dropped-event-observability) below.
     - **Async context manager**: The plugin supports `async with` for automatic
       startup and shutdown:
 
