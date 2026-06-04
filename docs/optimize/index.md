@@ -188,11 +188,7 @@ Valid options are `DEBUG`, `INFO`, `WARNING`, `ERROR`, and `CRITICAL`.
 
 ## Available Samplers and Agent Optimizers
 
-ADK provides the following samplers and agent optimizers.
-The `adk optimize` command uses the `LocalEvalSampler` and
-`GEPARootAgentPromptOptimizer` described below.
-You can also use these samplers and agent optimizers in your own scripts. 
-Additionally, the `SimplePromptOptimizer` is a newly introduced tool available for custom implementations.
+ADK provides several samplers and agent optimizers which you can run using the `adk optimize` command line. The available options are as follows: 
 
 ### `LocalEvalSampler` {#localevalsampler}
 
@@ -259,7 +255,7 @@ Defaults to 3.
 optimization results if desired.
 Facilitates warm starts.
 
-### `Simple_Prompt_Optimizer` {#Simple_Prompt_Optimizer}
+### `SimplePromptOptimizer` {#simplepromptoptimizer}
 
 The `SimplePromptOptimizer` is an automated, iterative prompt-tuning component designed
 to systematically improve an agent's root system instructions using empirical evaluation data.
@@ -276,16 +272,16 @@ The optimizer automatically executes an asynchronous, four-stage feedback loop:
 
 **Note:** The optimization loop does not mutate your initial agent instance in place. Upon completion, it returns an `OptimizerResult` containing the highest-scoring agent variation extracted during the process.
 
-### **Configuration**
+### Configuration
 
 Configure the behavior of the loop by passing a `SimplePromptOptimizerConfig` instance to the optimizer.
 
 | Parameter | Type | Default | Description |
 | :---- | :---- | :---- | :---- |
-| `num\_iterations` | int | *Required* | The total number of optimization rounds to execute. |
-| `batch\_size` | int | *Required* | The number of evaluation sample cases processed by the sampler during each individual iteration. |
+| `num_iterations` | int | *Required* | The total number of optimization rounds to execute. |
+| `batch_size` | int | *Required* | The number of evaluation sample cases processed by the sampler during each individual iteration. |
 
-### **Implementation Example**
+### Implementation Example
 
 Once your configuration is defined, run the optimization with:
 
