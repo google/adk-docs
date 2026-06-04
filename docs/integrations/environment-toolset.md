@@ -30,8 +30,6 @@ implementation for use with the Environment Toolset framework.
 Enable local environment interactions by adding the ***EnvironmentToolset***
 with a ***LocalEnvironment*** instance to your agent's tools.
 
-You can use the optional `max_output_chars` parameter when initializing `EnvironmentToolset` to limit the maximum number of characters returned from file reads or command executions. This helps prevent large file contents or command outputs from exceeding the agent's context window limit.
-
 ```python
 from google.adk import Agent
 from google.adk.environment import LocalEnvironment
@@ -100,6 +98,7 @@ The ***LocalEnvironment*** class supports the following parameters:
     more details, see [File persistence](#file-persistence).
 -   **env_vars**: (optional) A dictionary of environment variables to be set
     for the execution context.
+- **max_output chars**: (optional) A parameter to use with `EnvironmentToolset` to limit the maximum number of characters returned from file reads or command executions. This helps prevent large file contents or command outputs from exceeding the agent's context window limit.
 
 The following code sample shows how to set these options for a
 ***LocalEnvironment*** object:
