@@ -24,7 +24,7 @@ Agents CLI Skills:
 *   Project scaffolding
 *   Evaluation methodology and scoring
 *   Agent Runtime, Cloud Run, and GKE deployment
-*   Gemini Enterprise registration
+*   Gemini Enterprise agent publishing
 *   Trace, logging, and integrations
 *   Python API quick reference and docs index
 
