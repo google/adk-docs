@@ -306,12 +306,12 @@ Based on who is maintaining the eval set data, there are two routes:
 
 `adk conformance test` command verifies that your AI agents behave consistently over time. It ensures that updates to your codebase or models don't introduce regressions by validating current agent outputs against baseline data.
 
-#### **Prerequisites and setup**
+#### Prerequisites and setup
 
 Before the `adk conformance` command can execute meaningful regression testing, you must establish an optimal "golden baseline." Conformance testing operates by comparing live agent behavior against these previously recorded, verified interactions.
 
 Follow this workflow to prepare your environment:
-**Create the Test Directory Hierarchy**
+##### Create the Test Directory Hierarchy
 
  Conformance tests rely on a strict file layout to automatically discover and map test cases. 
  Initialize your testing directory using the following structure
@@ -330,7 +330,7 @@ tests/
 
 > Note: If your agent utilizes Server-Sent Events (SSE), the testing framework will additionally look for `generated-recordings-sse.yaml` and `generated-session-sse.yaml` within the same folder.
 
-**Define the Test Specification** (spec.yaml)
+##### Define the Test Specification (spec.yaml)
 
 In your target test folder, create a `spec.yaml` file. This file outlines the initial conditions, configurations, and user prompts that the agent will execute during the baseline recording and subsequent conformance runs. Ensure your file matches the following basic schema, this is an example only:
 
@@ -341,7 +341,7 @@ user_prompts: - "What's the temperature in San Francisco right now?" expected_to
  - "get_weather_api"
 ```
 
-**Automate the Baseline** 
+#### Automate the Baseline 
 
 Because the background data (like LLM requests and tool calls) is complex, you shouldn't try to write or save the baseline files manually. Instead, let the ADK generate them for you.
 
@@ -361,7 +361,7 @@ This automatically runs the scenario, records all the interactions, and saves th
 
 Once these baseline files are locked in, your setup is complete, and the directory is ready to be targeted by `adk conformance` in either **Replay** or **Live** mode.
 
-#### **How it works**
+#### How it works
 
 * **Replay Mode (Default):** The tool runs your agent and compares its live LLM requests, responses, and tool calls directly against your previously recorded interactions to catch unexpected deviations.  
 * **Live Mode:** Runs evaluation-based verification against active environments *(Note: This mode is a work in progress)*.
@@ -594,7 +594,7 @@ Here are the details for each command line argument:
 
 You can run all your tests at once, run specific ones, or create a summary report.
 
-**Run All Tests**
+#### Run All Tests
 
 If you don't type a specific folder path, the tool automatically looks for a tests/ folder in your workspace and runs everything inside it:
 
@@ -602,7 +602,7 @@ If you don't type a specific folder path, the tool automatically looks for a tes
 adk conformance test
 ```
 
-**Run Specific Test Groups or Individual Cases**
+#### Run Specific Test Groups or Individual Cases
 
 Pass one or more folder paths to narrow down which tests execute:
 
@@ -616,7 +616,7 @@ adk conformance test tests/core/description_001
 
 ```
 
-#### **Generate Markdown Test Reports**
+#### Generate Markdown Test Reports
 
 Add the `--generate_report` flag to produce a clean test summary report. You can optionally specify where to save it using the `--report_dir parameter`:
 
@@ -625,5 +625,5 @@ Add the `--generate_report` flag to produce a clean test summary report. You can
 adk conformance test --generate_report --report_dir=reports
 ```
 
-**Automating with CI/CD**  
+#### Automating with CI/CD  
 Because adk conformance test is a command-line tool that fails if things don't match, it is highly useful for CI/CD pipelines. You can set it up to run automatically whenever someone opens a pull request, blocking any code from merging if it changes the agent's expected behavior.
