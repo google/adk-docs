@@ -11,7 +11,7 @@ catalog_tags: ["google", "mcp", "connectors"]
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.26.0</span><span class="lst-preview">Preview</span>
 </div>
 
-The Agent Registry client library withins Agent Development Kit (ADK) allows
+The Agent Registry client library within Agent Development Kit (ADK) allows
 developers to discover, look up, and connect to AI Agents and MCP Servers
 cataloged within the [Google Cloud Agent
 Registry](https://docs.cloud.google.com/agent-registry/overview). This enables
