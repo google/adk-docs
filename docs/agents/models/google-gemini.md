@@ -374,7 +374,7 @@ snippet:
     ```
 
 For a complete code sample, see the
-[Interactions API sample](https://github.com/google/adk-python/tree/main/contributing/samples/interactions_api).
+[Interactions API sample](https://github.com/google/adk-python/tree/main/contributing/samples/models/interactions_api).
 
 ### Known limitations
 

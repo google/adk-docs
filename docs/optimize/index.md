@@ -24,7 +24,7 @@ the sampler and uses them to improve the agent.
 
 In this example, we will use the `adk optimize` command to update the
 instructions of the
-[`hello_world`](https://github.com/google/adk-python/tree/main/contributing/samples/hello_world)
+[`hello_world`](https://github.com/google/adk-python/tree/main/contributing/samples/core/hello_world)
 sample agent based on evaluation results over a small eval set.
 
 ### Step 1: Specify the Example Dataset {#exampledataset}
@@ -37,7 +37,7 @@ The optimizer is expected to derive this new rule and add it to the agent
 instructions.
 
 Create a file `train_eval_set.evalset.json` in
-[`contributing/samples/hello_world/`](https://github.com/google/adk-python/tree/main/contributing/samples/hello_world)
+[`contributing/samples/core/hello_world/`](https://github.com/google/adk-python/tree/main/contributing/samples/core/hello_world)
 with the following contents:
 
 ```json
@@ -118,7 +118,7 @@ also specifies the eval set to use for optimizing the agent.
 
 The full list of configuration options is available [below](#localevalsampler);
 for now, simply create a file `sampler_config.json` in
-[`contributing/samples/hello_world/`](https://github.com/google/adk-python/tree/main/contributing/samples/hello_world)
+[`contributing/samples/core/hello_world/`](https://github.com/google/adk-python/tree/main/contributing/samples/core/hello_world)
 with the following contents:
 
 ```json
@@ -139,8 +139,8 @@ Run the `adk optimize` command, pointing it to the `hello_world` agent's
 directory and passing the configuration file created above.
 
 ```bash
-adk optimize contributing/samples/hello_world \
---sampler_config_file_path contributing/samples/hello_world/sampler_config.json
+adk optimize contributing/samples/core/hello_world \
+--sampler_config_file_path contributing/samples/core/hello_world/sampler_config.json
 ```
 
 The final output varies, but might look similar to the following:
@@ -170,7 +170,7 @@ adk optimize [OPTIONS] AGENT_MODULE_FILE_PATH
 module by the name `agent`.
 The `agent` module must contain a `root_agent`.
 For an example of a valid setup, examine the
-[`hello_world`](https://github.com/google/adk-python/tree/main/contributing/samples/hello_world)
+[`hello_world`](https://github.com/google/adk-python/tree/main/contributing/samples/core/hello_world)
 agent.
 * `--sampler_config_file_path PATH`: The path to the config for the sampler.
 The sampler implementation and config format are described
@@ -188,16 +188,13 @@ Valid options are `DEBUG`, `INFO`, `WARNING`, `ERROR`, and `CRITICAL`.
 
 ## Available Samplers and Agent Optimizers
 
-The following samplers and agent optimizers are provided with ADK.
-The `adk optimize` command uses the `LocalEvalSampler` and
-`GEPARootAgentPromptOptimizer` described below.
-You can also use these samplers and agent optimizers in your own scripts.
+ADK provides several samplers and agent optimizers which you can run using the `adk optimize` command line. The available options are as follows: 
 
 ### `LocalEvalSampler` {#localevalsampler}
 
 The
 [`LocalEvalSampler`](https://github.com/google/adk-python/blob/main/src/google/adk/optimization/local_eval_sampler.py)
-evaluates candidate agents using the ADK's
+evaluates candidate agents using ADK's
 [`LocalEvalService`](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/local_eval_service.py).
 It provides eval results as an [`UnstructuredSamplingResult`](#sampler-results).
 You can configure the `LocalEvalSampler` with a `LocalEvalSamplerConfig` that
@@ -257,6 +254,52 @@ Defaults to 3.
 * `run_dir` (optional): The directory to save intermediate and final
 optimization results if desired.
 Facilitates warm starts.
+
+### `SimplePromptOptimizer` {#simplepromptoptimizer}
+
+The `SimplePromptOptimizer` is an automated, iterative prompt-tuning component designed
+to systematically improve an agent's root system instructions using empirical evaluation data.
+Unlike the GEPA-based optimizers that maintain a diverse Pareto frontier of multiple candidate 
+agents, the `SimplePromptOptimizer` executes a direct, sequential optimization loop focused entirely on 
+refining a single primary prompt across a series of specified iterations.
+
+The optimizer automatically executes an asynchronous, four-stage feedback loop:
+
+1. **Execute:** The target agent processes a specific batch of evaluation tasks managed by an implementation of the `Sampler` class.  
+2. **Evaluate**: The Sampler scores the agent's outputs against your evaluation datasets and returns a structured `SamplingResult`.  
+3. **Critique**: An underlying optimization large language model (LLM) (defaulting to Gemini-2.5-flash) analyzes the historical evaluation scores alongside the current prompt to isolate specific behavioral weaknesses or gaps.  
+4. **Rewrite**: The optimization model generates an updated variation of the system prompt tailored to address the discovered weaknesses. This new prompt is then fed directly into the next iteration.
+
+**Note:** The optimization loop does not mutate your initial agent instance in place. Upon completion, it returns an `OptimizerResult` containing the highest-scoring agent variation extracted during the process.
+
+### Configuration
+
+Configure the behavior of the loop by passing a `SimplePromptOptimizerConfig` instance to the optimizer.
+
+| Parameter | Type | Default | Description |
+| :---- | :---- | :---- | :---- |
+| `num_iterations` | int | *Required* | The total number of optimization rounds to execute. |
+| `batch_size` | int | *Required* | The number of evaluation sample cases processed by the sampler during each individual iteration. |
+
+### Implementation Example
+
+Once your configuration is defined, run the optimization with:
+
+```python
+from google.adk.optimization import SimplePromptOptimizer, SimplePromptOptimizerConfig
+
+# Define your Agent and Sampler first...
+
+# Configure the optimizer
+config = SimplePromptOptimizerConfig(
+    num_iterations=5,
+    batch_size=10
+)
+
+# Run optimization
+optimizer = SimplePromptOptimizer(config=config)
+optimized_result = await optimizer.optimize(agent, sampler)
+```
 
 ## Key Data Types
 
@@ -379,7 +422,7 @@ The following reference code replicates the functionality of the `adk optimize`
 command for the above [example](#example).
 To use it, create the [dataset](#exampledataset) as shown in the example and run
 this code from a Python script within the
-[same directory](https://github.com/google/adk-python/tree/main/contributing/samples/hello_world):
+[same directory](https://github.com/google/adk-python/tree/main/contributing/samples/core/hello_world):
 
 ```python
 import asyncio

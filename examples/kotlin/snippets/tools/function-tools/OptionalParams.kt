@@ -12,7 +12,7 @@ class FlightService {
     fun searchFlights(
         @Param("The destination city.") destination: String,
         @Param("The desired departure date.") departureDate: String,
-        @Param("Number of flexible days for the search. Defaults to 0.") flexibleDays: Int? = 0
+        @Param("Number of flexible days for the search. Defaults to 0.") flexibleDays: Int? = 0,
     ): String {
         // ... function logic ...
         val days = flexibleDays ?: 0

@@ -28,4 +28,7 @@ snippets/tools/function-tools/AgentTool.kt
 snippets/tools/function-tools/PassData.kt
 snippets/tools/LimitationsWorkaround.kt
 snippets/get-started/multi_tool_agent/MultiToolAgent.kt
+snippets/runtime/RunConfigExample.kt
+snippets/runtime/RunnerLoop.kt
+
 

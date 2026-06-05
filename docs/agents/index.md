@@ -48,7 +48,7 @@ project, or as you discover limitations of a single-agent approach, such as:
   interweave the non-deterministic functionality of AI models with deterministic
   code, rather than relying on non-deterministic AI models to manage the full
   execution of a task. For more details, see
-  [Graph-based workflows](/workflows/graphs/).
+  [Graph-based workflows](/graphs/).
 
 For more information about ADK Workflows and agent project architectures, see
 the [Workflows](/workflows/) section.

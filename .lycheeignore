@@ -15,3 +15,6 @@
 
 # Requires authentication
 ^https://postman\.postman\.co/settings/me/
+
+# Site is currently down
+^https://freeplay\.ai

@@ -57,7 +57,7 @@ You can define [skills in code](#inline-skills) or load
 
     For a complete code example of an ADK agent with a Skill, including both
     file-based and in-line Skill definitions, see the code sample
-    [skills_agent](https://github.com/google/adk-python/tree/main/contributing/samples/skills_agent).
+    [skills_agent](https://github.com/google/adk-python/tree/main/contributing/samples/environment_and_skills/skills_agent).
 
 === "TypeScript"
 
@@ -317,6 +317,6 @@ You can define Skills within the code of your agent, as shown below.
 
 Check out these resources for building agents with Skills:
 
-- [Skills in Python - code sample](https://github.com/google/adk-python/tree/main/contributing/samples/skills_agent)
+- [Skills in Python - code sample](https://github.com/google/adk-python/tree/main/contributing/samples/environment_and_skills/skills_agent)
 - [Skills in Go - code sample](https://github.com/google/adk-go/tree/main/examples/skills)
 - Agent Skills [specification documentation](https://agentskills.io/)

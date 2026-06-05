@@ -1,7 +1,7 @@
 # Runtime Configuration
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 `RunConfig` controls how agents behave at runtime, including streaming mode,
@@ -56,6 +56,12 @@ to `runner.run_async()` or `runner.run_live()` to override default behavior.
         .streamingMode(StreamingMode.SSE)
         .maxLlmCalls(200)
         .build();
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/runtime/RunConfigExample.kt:basic_usage"
     ```
 
 ## Manage sessions and context
@@ -149,6 +155,12 @@ execute function calls. CFC uses the Live API under the hood.
         .streamingMode(StreamingMode.SSE)
         .maxLlmCalls(150)
         .build();
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/runtime/RunConfigExample.kt:streaming_config"
     ```
 
 ## Configure audio and speech

@@ -68,7 +68,7 @@ alternative `agent_engine_resource_name` parameter, see [Configuration
 parameters](#config-parameters). For a more advanced example, including
 recommended system instructions for the tool, see the [Advanced
 example](#advanced-example) or the full
-[agent code example](https://github.com/google/adk-python/tree/main/contributing/samples/agent_engine_code_execution).
+[agent code example](https://github.com/google/adk-python/tree/main/contributing/samples/code_execution/agent_engine_code_execution).
 
 ## How it works
 
@@ -237,4 +237,4 @@ When plotting trends, you should make sure to sort and order the data by the x-a
 ```
 
 For a complete version of an ADK agent using this example code, see the
-[agent_engine_code_execution sample](https://github.com/google/adk-python/tree/main/contributing/samples/agent_engine_code_execution).
+[agent_engine_code_execution sample](https://github.com/google/adk-python/tree/main/contributing/samples/code_execution/agent_engine_code_execution).

@@ -30,7 +30,7 @@ specific, templated execution patterns.
 The following is a quick guide to the multiple methods for building workflows
 for your agent application with ADK:
 
-*   [**Graph-based workflows:**](/workflows/graphs/) (ADK 2.0 and higher)
+*   [**Graph-based workflows:**](/graphs/) (ADK 2.0 and higher)
     This workflow type allows you to compose both AI-powered agents and deterministic
     execution nodes into a flexible execution graph that can include decision branching.
 

@@ -6,6 +6,13 @@ for Kotlin. Before you start, make sure you have the following installed:
 - Java 17 or later
 - Gradle 8.0 or later
 
+??? tip "Building for Android?"
+
+    This quickstart covers Kotlin on the JVM. If you're building an Android app,
+    complete this quickstart first to learn the agent API, then see [Build ADK
+    agents for Android](https://developer.android.com/ai/adk) for
+    Android-specific project setup and on-device models.
+
 ## Create an agent project
 
 Create an agent project with the following files and directory structure:
@@ -101,8 +108,8 @@ An ADK Kotlin agent project requires the following dependencies in your
 
 ```kotlin title="my_agent/build.gradle.kts (partial)"
 dependencies {
-    implementation("com.google.adk:google-adk-kotlin-core:0.1.0")
-    ksp("com.google.adk:google-adk-kotlin-processor:0.1.0")
+    implementation("com.google.adk:google-adk-kotlin-core:0.2.0")
+    ksp("com.google.adk:google-adk-kotlin-processor:0.2.0")
 }
 ```
 
@@ -122,9 +129,9 @@ dependencies {
     }
 
     dependencies {
-        implementation("com.google.adk:google-adk-kotlin-core:0.1.0")
-        implementation("com.google.adk:google-adk-kotlin-webserver:0.1.0")
-        ksp("com.google.adk:google-adk-kotlin-processor:0.1.0")
+        implementation("com.google.adk:google-adk-kotlin-core:0.2.0")
+        implementation("com.google.adk:google-adk-kotlin-webserver:0.2.0")
+        ksp("com.google.adk:google-adk-kotlin-processor:0.2.0")
     }
 
     kotlin {
@@ -136,6 +143,10 @@ dependencies {
             project.findProperty("mainClass") as? String
                 ?: "com.example.agent.MainKt"
         )
+    }
+
+    tasks.named<JavaExec>("run") {
+        standardInput = System.`in`
     }
     ```
 
@@ -224,9 +235,9 @@ to your `build.gradle.kts`:
 
 ```kotlin title="my_agent/build.gradle.kts (add to dependencies)"
 dependencies {
-    implementation("com.google.adk:google-adk-kotlin-core:0.1.0")
-    implementation("com.google.adk:google-adk-kotlin-webserver:0.1.0")
-    ksp("com.google.adk:google-adk-kotlin-processor:0.1.0")
+    implementation("com.google.adk:google-adk-kotlin-core:0.2.0")
+    implementation("com.google.adk:google-adk-kotlin-webserver:0.2.0")
+    ksp("com.google.adk:google-adk-kotlin-processor:0.2.0")
 }
 ```
 
@@ -236,7 +247,6 @@ Then create a `WebMain.kt` file alongside your `Main.kt`:
 package com.example.agent
 
 import com.google.adk.kt.artifacts.InMemoryArtifactService
-import com.google.adk.kt.runners.InMemoryRunner
 import com.google.adk.kt.sessions.InMemorySessionService
 import com.google.adk.kt.webserver.AdkWebServer
 import com.google.adk.kt.webserver.loaders.SingleAgentLoader
@@ -252,11 +262,6 @@ fun main() {
         sessionService = sessionService,
         artifactService = artifactService,
         agentLoader = SingleAgentLoader(agent),
-        runner = InMemoryRunner(
-            agent = agent,
-            sessionService = sessionService,
-            artifactService = artifactService,
-        ),
         apiServerSpanExporter = ApiServerSpanExporter(),
     )
 
@@ -290,3 +295,4 @@ Now that you have ADK installed and your first agent running, try building
 your own agent with our build guides:
 
 - [Build your agent](/tutorials/)
+- [Build ADK agents for Android](https://developer.android.com/ai/adk)
