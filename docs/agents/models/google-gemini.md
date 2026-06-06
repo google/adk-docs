@@ -102,110 +102,100 @@ in your agents:
 
 ## Gemini model authentication
 
-This section covers authenticating with Google's Gemini models, either through Google AI Studio for rapid development or Google Cloud Agent Platform for enterprise applications. This is the most direct way to use Google's flagship models within ADK.
+When using an AI model through a service, such as the Gemini API or Gemini
+Enterprise Agent Platform on Google Cloud, you must provide an API key or
+authenticate with the service. The most direct way to provide this information
+is to use environment variables or an `.env` file. The following examples show
+the most common way to configure an agent for use with the Gemini API or Gemini
+Enterprise Agent Platform.
 
-**Integration Method:** Once you are authenticated using one of the below methods, you can pass the model's identifier string directly to the
-`model` parameter of `LlmAgent`.
+=== "Gemini API"
 
-
-!!! tip
-
-    The `google-genai` library, used internally by ADK for Gemini models, can connect
-    through either Google AI Studio or Agent Platform.
-
-    **Model support for voice/video streaming**
-
-    In order to use voice/video streaming in ADK, you will need to use Gemini
-    models that support the Live API. You can find the **model ID(s)** that
-    support the Gemini Live API in the documentation:
-
-    - [Google AI Studio: Gemini Live API](https://ai.google.dev/gemini-api/docs/models#live-api)
-    - [Agent Platform: Gemini Live API](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api)
-
-### Google AI Studio
-
-This is the simplest method and is recommended for getting started quickly.
-
-*   **Authentication Method:** API Key
-*   **Setup:**
-    1.  **Get an API key:** Obtain your key from [Google AI Studio](https://aistudio.google.com/apikey).
-    2.  **Set environment variables:** Create a `.env` file (Python) or `.properties` (Java) in your project's root directory and add the following lines. ADK will automatically load this file.
-
-        ```shell
-        export GOOGLE_API_KEY="YOUR_GOOGLE_API_KEY"
-        export GOOGLE_GENAI_USE_VERTEXAI=FALSE
-        ```
-
-        (or)
-
-        Pass these variables during the model initialization via the `Client` (see example below).
-
-* **Models:** Find all available models on the
-  [Google AI for Developers site](https://ai.google.dev/gemini-api/docs/models).
-
-### Google Cloud Agent Platform
-
-For scalable and production-oriented use cases, Agent Platform is the recommended platform. Gemini on Agent Platform supports enterprise-grade features, security, and compliance controls. Based on your development environment and usecase, *choose one of the below methods to authenticate*.
-
-**Pre-requisites:** A Google Cloud Project with [Agent Platform enabled](https://console.cloud.google.com/apis/enableflow;apiid=aiplatform.googleapis.com).
-
-### **Method A: User Credentials (for Local Development)**
-
-1.  **Install the gcloud CLI:** Follow the official [installation instructions](https://cloud.google.com/sdk/docs/install).
-2.  **Log in using ADC:** This command opens a browser to authenticate your user account for local development.
-    ```bash
-    gcloud auth application-default login
     ```
-3.  **Set environment variables:**
-    ```shell
-    export GOOGLE_CLOUD_PROJECT="YOUR_PROJECT_ID"
-    export GOOGLE_CLOUD_LOCATION="YOUR_VERTEX_AI_LOCATION" # e.g., us-central1
+    # .env configuration file
+    GOOGLE_API_KEY="PASTE_YOUR_GEMINI_API_KEY_HERE"
     ```
 
-    Explicitly tell the library to use Agent Platform:
+=== "Google Cloud Agent Platform"
 
-    ```shell
-    export GOOGLE_GENAI_USE_VERTEXAI=TRUE
+    ```
+    # .env configuration file
+    GOOGLE_CLOUD_PROJECT=your-project-id
+    GOOGLE_CLOUD_LOCATION=location-code        # example: us-central1
+    GOOGLE_GENAI_USE_ENTERPRISE=True
     ```
 
-4. **Models:** Find available model IDs in the
-  [Agent Platform documentation](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/models).
+For more details on connecting ADK agents to Google Cloud hosted models and services,
+including Gemini Enterprise Agent Platform, see the
+[Connect to Google Cloud and Agent Platform](/get-started/google-cloud/) guide.
 
-### **Method B: Agent Platform Express Mode**
-[Agent Platform Express Mode](https://cloud.google.com/vertex-ai/generative-ai/docs/start/express-mode/overview) offers a simplified, API-key-based setup for rapid prototyping.
+## Voice and video streaming support
 
-1.  **Sign up for Express Mode** to get your API key.
-2.  **Set environment variables:**
-    ```shell
-    export GOOGLE_GENAI_API_KEY="PASTE_YOUR_EXPRESS_MODE_API_KEY_HERE"
-    export GOOGLE_GENAI_USE_VERTEXAI=TRUE
+In order to use voice/video streaming in ADK, you will need to use Gemini
+models that support the Live API. You can find the **model ID(s)** that
+support the Gemini Live API in the documentation:
+
+- [Google AI Studio: Gemini Live API](https://ai.google.dev/gemini-api/docs/models#live-api)
+- [Agent Platform: Gemini Live API](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api)
+
+## Gemini Interactions API {#interactions-api}
+
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.21.0</span>
+</div>
+
+The Gemini [Interactions API](https://ai.google.dev/gemini-api/docs/interactions)
+is an alternative to the ***generateContent*** inference API, which provides
+stateful conversation capabilities, allowing you to chain interactions using a
+`previous_interaction_id` instead of sending the full conversation history with
+each request. Using this feature can be more efficient for long conversations.
+
+You can enable the Interactions API by setting the `use_interactions_api=True`
+parameter in the Gemini model configuration, as shown in the following code
+snippet:
+
+=== "Python"
+
+    ```python
+    from google.adk.agents.llm_agent import Agent
+    from google.adk.models.google_llm import Gemini
+    from google.adk.tools.google_search_tool import GoogleSearchTool
+
+    root_agent = Agent(
+        model=Gemini(
+            model="gemini-flash-latest",
+            use_interactions_api=True,  # Enable Interactions API
+        ),
+        name="interactions_test_agent",
+        tools=[
+            GoogleSearchTool(bypass_multi_tools_limit=True),  # Converted to function tool
+            get_current_weather,  # Custom function tool
+        ],
+    )
     ```
 
-### **Method C: Service Account (for Production & Automation)**
+For a complete code sample, see the
+[Interactions API sample](https://github.com/google/adk-python/tree/main/contributing/samples/models/interactions_api).
 
-For deployed applications, a service account is the standard method.
+### Known limitations
 
-1.  [**Create a Service Account**](https://cloud.google.com/iam/docs/service-accounts-create#console) and grant it the `Agent Platform User` role.
-2.  **Provide credentials to your application:**
-    *   **On Google Cloud:** If you are running the agent in Cloud Run, GKE, VM or other Google Cloud services, the environment can automatically provide the service account credentials. You don't have to create a key file.
-    *   **Elsewhere:** Create a [service account key file](https://cloud.google.com/iam/docs/keys-create-delete#console) and point to it with an environment variable:
-        ```bash
-        export GOOGLE_APPLICATION_CREDENTIALS="/path/to/your/keyfile.json"
-        ```
-    Instead of the key file, you can also authenticate the service account using Workload Identity. But this is outside the scope of this guide.
+The Interactions API **does not** support mixing custom function calling tools with
+built-in tools, such as the
+[Google Search](/integrations/google-search/),
+tool, within the same agent. You can work around this limitation by configuring the
+the built-in tool to operate as a custom tool using the `bypass_multi_tools_limit`
+parameter:
 
-!!! warning "Secure Your Credentials"
+=== "Python"
 
-    Service account credentials or API keys are powerful credentials. Never
-    expose them publicly. Use a secret manager such as [Google Cloud Secret
-    Manager](https://cloud.google.com/security/products/secret-manager) to store
-    and access them securely in production.
+    ```python
+    # Use bypass_multi_tools_limit=True to convert google_search to a function tool
+    GoogleSearchTool(bypass_multi_tools_limit=True)
+    ```
 
-!!! note "Gemini model versions"
-
-    Always check the official Gemini documentation for the latest model names,
-    including specific preview versions if needed. Preview models might have
-    different availability or quota limitations.
+In this example, this option converts the built-in `google_search` to a function
+calling tool (via `GoogleSearchAgentTool`), which allows it to work alongside
+custom function tools.
 
 ## Troubleshooting
 
@@ -336,62 +326,3 @@ To mitigate this, you can do one of the following:
             // ...
         )
         ```
-
-## Gemini Interactions API {#interactions-api}
-
-<div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.21.0</span>
-</div>
-
-The Gemini [Interactions API](https://ai.google.dev/gemini-api/docs/interactions)
-is an alternative to the ***generateContent*** inference API, which provides
-stateful conversation capabilities, allowing you to chain interactions using a
-`previous_interaction_id` instead of sending the full conversation history with
-each request. Using this feature can be more efficient for long conversations.
-
-You can enable the Interactions API by setting the `use_interactions_api=True`
-parameter in the Gemini model configuration, as shown in the following code
-snippet:
-
-=== "Python"
-
-    ```python
-    from google.adk.agents.llm_agent import Agent
-    from google.adk.models.google_llm import Gemini
-    from google.adk.tools.google_search_tool import GoogleSearchTool
-
-    root_agent = Agent(
-        model=Gemini(
-            model="gemini-flash-latest",
-            use_interactions_api=True,  # Enable Interactions API
-        ),
-        name="interactions_test_agent",
-        tools=[
-            GoogleSearchTool(bypass_multi_tools_limit=True),  # Converted to function tool
-            get_current_weather,  # Custom function tool
-        ],
-    )
-    ```
-
-For a complete code sample, see the
-[Interactions API sample](https://github.com/google/adk-python/tree/main/contributing/samples/models/interactions_api).
-
-### Known limitations
-
-The Interactions API **does not** support mixing custom function calling tools with
-built-in tools, such as the
-[Google Search](/integrations/google-search/),
-tool, within the same agent. You can work around this limitation by configuring the
-the built-in tool to operate as a custom tool using the `bypass_multi_tools_limit`
-parameter:
-
-=== "Python"
-
-    ```python
-    # Use bypass_multi_tools_limit=True to convert google_search to a function tool
-    GoogleSearchTool(bypass_multi_tools_limit=True)
-    ```
-
-In this example, this option converts the built-in `google_search` to a function
-calling tool (via `GoogleSearchAgentTool`), which allows it to work alongside
-custom function tools.
