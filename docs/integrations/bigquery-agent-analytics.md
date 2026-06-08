@@ -183,6 +183,8 @@ LIMIT 20;
 
 ??? example "Full example with GCS offloading, OpenTelemetry, and BigQuery tools"
 
+=== "Python"
+
     ```python title="my_bq_agent/agent.py"
     # my_bq_agent/agent.py
     import os
@@ -261,6 +263,45 @@ LIMIT 20;
         root_agent=root_agent,
         plugins=[bq_logging_plugin],
     )
+    ```
+
+  === "Java"
+
+    ```// 1. Configure the BigQuery Logger
+    BigQueryLoggerConfig config =
+        BigQueryLoggerConfig.builder()
+            .projectId(PROJECT_ID)
+            .datasetId(DATASET_ID)
+            .tableName(TABLE_ID)
+            .gcsBucketName(GCS_BUCKET_NAME)
+            .createViews(true)
+            .build();
+
+    // 2. Create the plugin instance
+    Plugin bqLoggingPlugin = new BigQueryAgentAnalyticsPlugin(config);
+
+    // 3. Initialize the model (Gemini)
+    Gemini model =
+        Gemini.builder()
+            .modelName("gemini-3-flash-preview") // Use appropriate model
+            .apiKey(API_KEY)
+            .build();
+
+    // 4. Create the agent with the tool and plugin
+    LlmAgent agent =
+        LlmAgent.builder()
+            .model(model)
+            .name("bq_demo_agent")
+            .instruction(
+                "You are a helpful assistant. You have a tool 'reverseString' that you can use to"
+                    + " reverse text.")
+            .tools(FunctionTool.create(BqDemoAgent.class, "reverseString"))
+            .generateContentConfig(GenerateContentConfig.builder().temperature(0.5f).build())
+            .build();
+
+    // 5. Initialize the runner
+    InMemoryRunner runner =
+        new InMemoryRunner(agent, "bq_demo_agent", ImmutableList.of(bqLoggingPlugin));
     ```
 
 !!! tip "Deploying to Agent Runtime?"
@@ -1472,7 +1513,7 @@ by credential services) is never persisted in BigQuery.
 Provide a custom `content_formatter` function in `BigQueryLoggerConfig` to strip
 or mask sensitive fields before they are written:
 
-=== "Python"
+
 
     ```python
     import json
