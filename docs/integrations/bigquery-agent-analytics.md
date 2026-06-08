@@ -1064,6 +1064,42 @@ Hub](https://console.cloud.google.com/bigquery/agents_hub) connected to your
 - "What are the most common tool calls?"
 - "Identify sessions with high token usage"
 
+## The context graph {#context-graph}
+
+Beyond row-level `agent_events`, the [BigQuery Agent Analytics
+SDK](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-SDK) can
+materialize a **context graph**: a queryable BigQuery [property
+graph](https://cloud.google.com/bigquery/docs/graph-overview) of your
+agent's decisions — the requests it handled, the options it weighed, and the
+outcomes it chose. It lets you trace *why* a decision happened with Graph Query
+Language (GQL), not just *that* an event was logged.
+
+![Context graph flow: agent_events flow through the BigQuery Agent Analytics plugin into BigQuery; the SDK's bqaa context-graph command extracts a structured decision graph that you query with GQL.](/integrations/assets/bigquery-agent-analytics-context-graph-flow.png)
+
+The graph is defined by two declarative artifacts — your table DDL and a `CREATE
+PROPERTY GRAPH` schema — and the SDK's `bqaa context-graph --property-graph`
+command derives the extraction (which entities and relationships to pull, and
+their column types) from them plus your live table schemas. No separate ontology
+or binding file is required for the common case; reach for an explicit
+`ontology.yaml` / `binding.yaml` only when you need descriptions to steer the AI
+prompt, entity inheritance, derived properties, or column renames.
+
+Run it once locally, or on a schedule as a Cloud Run Job triggered by Cloud
+Scheduler — with split read-only-events / writable-graph datasets,
+least-privilege service accounts, structured JSON logs, and Cloud Monitoring
+alerts. The operational reference (prerequisites, the IAM matrix, recommended
+schedules, the JSON log shape, monitoring, and teardown) lives in the SDK repo:
+
+- [Periodic materialization
+  codelab](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-SDK/blob/main/docs/codelabs/periodic_materialization.md)
+  — build and query a decision graph end to end.
+- [Scheduled deploy
+  runbook](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-SDK/blob/main/docs/guides/scheduled-context-graph-deploy.md)
+  — take that graph to a hands-off scheduled deploy.
+- [Deploy reference (Cloud Run + Cloud
+  Scheduler)](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-SDK/blob/main/examples/context_graph/periodic_materialization/README.md)
+  — the full IAM matrix, schedules, monitoring, and the Terraform module.
+
 ## Deploy to Agent Runtime with the plugin {#deploy-agent-runtime}
 
 You can deploy an agent with the BigQuery Agent Analytics plugin to [Agent
