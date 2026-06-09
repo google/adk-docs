@@ -1074,7 +1074,7 @@ agent's decisions — the requests it handled, the options it weighed, and the
 outcomes it chose. It lets you trace *why* a decision happened with Graph Query
 Language (GQL), not just *that* an event was logged.
 
-![Context graph flow: agent_events flow through the BigQuery Agent Analytics plugin into BigQuery; the SDK's bqaa context-graph command extracts a structured decision graph that you query with GQL.](/integrations/assets/bigquery-agent-analytics-context-graph-flow.png)
+![Context graph flow: an ADK agent's events flow through the BigQuery Agent Analytics plugin into the agent_events table; the SDK's bqaa context-graph command materializes a structured decision graph that auditors, operators, and executives consume through GQL in BigQuery Studio and Conversational Analytics — with no external graph database.](/integrations/assets/bigquery-agent-analytics-context-graph-flow.png)
 
 The graph is defined by two declarative artifacts — your table DDL and a `CREATE
 PROPERTY GRAPH` schema — and the SDK's `bqaa context-graph --property-graph`
