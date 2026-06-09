@@ -1,0 +1,34 @@
+# This file lists Kotlin snippet files to be built and run by runner.sh.
+# Each line represents a single build/run target.
+#
+# Format:
+# - Lines starting with '#' are treated as comments and ignored.
+# - Each non-comment line should contain one or more Kotlin file paths,
+#   relative to the 'examples/kotlin/' directory.
+# - If multiple files are on a single line, they are treated as part of the same project
+#   and built together.
+#
+# Examples:
+#   # Single file example
+#   snippets/get-started/HelloTimeAgent.kt
+snippets/artifacts/ArtifactExamples.kt  
+snippets/agents/llm-agent/CapitalAgent.kt
+snippets/agents/multi-agent/MultiAgentExample.kt
+snippets/callbacks/CallbackBasic.kt
+snippets/callbacks/BeforeModelCallback.kt
+snippets/observability/LoggingExamples.kt
+snippets/observability/SetupExample.kt
+snippets/sessions/MemoryExample.kt
+snippets/sessions/StateExample.kt
+snippets/tools/function-tools/RequiredParams.kt
+snippets/tools/function-tools/OptionalParams.kt
+snippets/tools/function-tools/FuncTool.kt
+snippets/tools/function-tools/LongRunningTool.kt
+snippets/tools/function-tools/AgentTool.kt
+snippets/tools/function-tools/PassData.kt
+snippets/tools/LimitationsWorkaround.kt
+snippets/get-started/multi_tool_agent/MultiToolAgent.kt
+snippets/runtime/RunConfigExample.kt
+snippets/runtime/RunnerLoop.kt
+
+

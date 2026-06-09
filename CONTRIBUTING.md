@@ -93,6 +93,7 @@ We review contributions for integrations based on the following criteria:
 | [Documentation fixes](#documentation-fixes) | Fix typos, broken links, or minor wording improvements |
 | [New documentation](#new-documentation) | Add a new guide, tutorial, or reference page |
 | [Major changes](#major-changes) | Large-scale reorganization or refactoring |
+| [API and CLI reference](#api-and-cli-reference) | Pre-built reference docs generated from upstream ADK repositories |
 | [Integrations](#integrations) | Tools, plugins, observability libraries, user interfaces, or any extensions to ADK agents or agent development |
 
 ### Documentation Fixes
@@ -120,13 +121,29 @@ For large-scale reorganization or refactoring:
 2. Wait for maintainer feedback before starting work
 3. Consider breaking large changes into smaller, reviewable PRs
 
+### API and CLI Reference
+
+For changes to the API and CLI reference pages, **do not edit files in
+`docs/api-reference/` directly.** These are pre-built HTML generated from the
+upstream ADK source repositories and are overwritten each time the docs are
+regenerated.
+
+To contribute to API and CLI reference documentation, make your changes in the
+ADK source repository for the relevant language (for example, adding or updating
+docstrings, exporting new public symbols, etc.).
+
+The reference docs are regenerated periodically, and your changes will be
+included in the next update. See the [ADK Contributing
+Guide](https://adk.dev/community/contributing-guide/) for links to each
+language-specific repository.
+
 ### Integrations
 
 Integrations include third-party tools, plugins, and observability platforms for
 ADK agents. All integrations live under `docs/integrations/`. Examples include
-[GitHub](https://google.github.io/adk-docs/integrations/github/),
-[Daytona](https://google.github.io/adk-docs/integrations/daytona/), and
-[AgentOps](https://google.github.io/adk-docs/integrations/agentops/).
+[GitHub](https://adk.dev/integrations/github/),
+[Daytona](https://adk.dev/integrations/daytona/), and
+[AgentOps](https://adk.dev/integrations/agentops/).
 
 **To contribute an integration:**
 
@@ -147,7 +164,7 @@ ADK agents. All integrations live under `docs/integrations/`. Examples include
     ---
     catalog_title: Integration Name
     catalog_description: A short description of what your integration does
-    catalog_icon: /adk-docs/integrations/assets/<name>.png
+    catalog_icon: /integrations/assets/<name>.png
     ---
 
     # Integration Name

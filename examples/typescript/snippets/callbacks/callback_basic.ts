@@ -15,15 +15,7 @@
  */
 
 // --8<-- [start:callback_basic]
-import {
-  LlmAgent,
-  InMemoryRunner,
-  CallbackContext,
-  LlmRequest,
-  LlmResponse,
-  Event,
-  isFinalResponse,
-} from "@google/adk";
+import { LlmAgent, InMemoryRunner, Context, LlmRequest, LlmResponse, Event, isFinalResponse } from '@google/adk';
 import { createUserContent } from "@google/genai";
 import type { Content } from "@google/genai";
 
@@ -38,7 +30,7 @@ function myBeforeModelLogic({
   context,
   request,
 }: {
-  context: CallbackContext;
+  context: Context;
   request: LlmRequest;
 }): LlmResponse | undefined {
   console.log(
