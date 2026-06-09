@@ -89,7 +89,7 @@ ADK agent for accessing secrets from global Secret Manager.
 
 ## Resources
 - Refer to the
-  (Secret Manager platform documentation)[/secret-manager/docs](https://docs.cloud.google.com/secret-manager/docs/overview).
+  [Secret Manager platform documentation](https://docs.cloud.google.com/secret-manager/docs/overview).
 - View the [ADK GitHub
   repository](https://github.com/google/adk-python).
 
