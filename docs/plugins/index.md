@@ -796,12 +796,12 @@ object takes the potentially modified user message and prepares for execution.
 The `before_run_callback` fires here, allowing for global setup before any agent
 logic begins.
 
--   **When It Runs:** Immediately after `runner.run()` is called, before
-    any other processing.
--   **Purpose:** The first opportunity to inspect or modify the user's raw
-    input.
--   **Flow Control:** Return a `types.Content` object to **replace** the
-    user's original message.
+-   **When It Runs:** After the `on_user_message_callback`, when the `Runner`
+    prepares for execution and before any agent logic begins.
+-   **Purpose:** Global setup or initialization before the invocation runs.
+-   **Flow Control:** Return a `types.Content` object to **halt execution**:
+    the `Runner` exits early and ends the run with that content as the result.
+    Return `None` to proceed normally.
 
 The following code example shows the basic syntax of this callback:
 
