@@ -25,7 +25,7 @@ The [Secret Manager](https://docs.cloud.google.com/secret-manager/docs/overview)
 Complete the following setup steps:
 1. [Set up an agent with ADK](https://adk.dev/get-started/).
 1. [Create a secret](https://docs.cloud.google.com/secret-manager/docs/creating-and-accessing-secrets) (such as an API key) in Secret Manager.
-1. Grant the `Secret Manager Secret Accessor` IAM role to your agent identity.
+1. Grant the [`Secret Manager Secret Accessor`](https://docs.cloud.google.com/iam/docs/roles-permissions/secretmanager#secretmanager.secretAccessor) IAM role to your agent identity.
 
 ## Installation
 
