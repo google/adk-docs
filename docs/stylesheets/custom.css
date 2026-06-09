@@ -169,55 +169,83 @@ button.md-content__button:hover svg {
   overflow: hidden !important;
 }
 
-.md-header__source {
-  flex-shrink: 0 !important;
-  display: flex !important;
-  align-items: center;
-  gap: 2px !important;
-  flex-wrap: nowrap !important;
-  max-width: none !important;
-  width: auto !important;
-}
-
-.md-header .md-source {
-  min-width: auto !important;
-  width: auto !important;
-  margin-right: 2px !important;
-}
-
-.md-header .md-source__repository {
-  font-size: 0.65rem;
-  white-space: nowrap;
-  max-width: none !important;
-  overflow: visible !important;
-}
-
-.md-header .md-source__icon svg {
-  width: 1rem !important;
-  height: 1rem !important;
-}
-
-@media (max-width: 1200px) {
-  .md-header .md-source__repository { display: none !important; }
-  .md-header .md-source { margin-right: 4px !important; position: relative; }
-  .md-header .md-source::after {
-    content: ''; display: inline-block; width: 16px; height: 16px;
-    background-size: contain; background-repeat: no-repeat; background-position: center;
-    position: absolute; right: 4px; top: 50%; transform: translateY(-50%);
+/* Constrain header right edge and search bar width on desktop */
+@media screen and (min-width: 60em) {
+  .md-header__inner {
+    padding-right: 5rem;
   }
-  .md-header .md-source { padding-right: 22px !important; min-width: 0 !important; width: auto !important; }
-  .md-header .md-source[href*="adk-python"]::after { background-image: url('https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg'); }
-  .md-header .md-source[href*="adk-js"]::after { background-image: url('https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/typescript/typescript-original.svg'); }
-  .md-header .md-source[href*="adk-go"]::after { background-image: url('https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/go/go-original.svg'); }
-  .md-header .md-source[href*="adk-java"]::after { background-image: url('https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg'); }
+  .md-search__form {
+    max-width: 12rem;
+  }
 }
 
-@media (max-width: 900px) {
-  .md-header .md-source { display: none !important; }
+/* Language SDK icons in header */
+.lang-header-repos {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: nowrap;
+  margin-right: 1rem;
 }
 
-.md-source__facts {
-  display: none !important;
+/* Language SDK icon links */
+.lang-repos {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.lang-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  text-decoration: none;
+  color: var(--md-default-fg-color);
+  padding: 6px 6px;
+  border-radius: 4px;
+  transition: background-color 0.15s ease;
+}
+
+.lang-item:hover {
+  background-color: rgba(0, 0, 0, 0.06);
+}
+
+.lang-icon {
+  width: 24px;
+  height: 24px;
+  filter: grayscale(1);
+  transition: filter 0.15s ease;
+}
+
+.lang-item:hover .lang-icon {
+  filter: grayscale(0);
+}
+
+.lang-label {
+  font-size: 0.55rem;
+  font-weight: 500;
+  color: var(--md-default-fg-color--light);
+  white-space: nowrap;
+  line-height: 1;
+}
+
+/* Responsive: hide labels on medium screens */
+@media (max-width: 1100px) {
+  .lang-label {
+    display: none;
+  }
+  .lang-item {
+    padding: 4px;
+  }
+}
+
+/* Responsive: hide icons entirely on small screens */
+@media (max-width: 700px) {
+  .lang-repos {
+    display: none;
+  }
 }
 
 /* Navigation section titles */
@@ -557,3 +585,12 @@ nav.md-nav--primary .md-nav__item--section>.md-nav__link {
   text-decoration: none; font-weight: 500; white-space: nowrap;
 }
 .md-banner .announce-item a:hover { text-decoration: underline; }
+
+@media (max-width: 768px) {
+  .md-banner {
+    text-align: center;
+  }
+  .md-banner .announce-item {
+    display: inline;
+  }
+}

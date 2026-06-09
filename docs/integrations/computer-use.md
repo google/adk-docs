@@ -82,7 +82,7 @@ configure the tool, you must provide a implementation of the `BaseComputer`
 class which defines an interface for an agent to use a computer. In the
 following example, the `PlaywrightComputer` class is defined for this purpose.
 You can find the code for this implementation in `playwright.py` file of the
-[computer_use](https://github.com/google/adk-python/blob/main/contributing/samples/computer_use/playwright.py)
+[computer_use](https://github.com/google/adk-python/blob/main/contributing/samples/multimodal/computer_use/playwright.py)
 agent sample project.
 
 ```python
@@ -108,5 +108,5 @@ root_agent = Agent(
 ```
 
 For a complete code example, see the
-[computer_use](https://github.com/google/adk-python/tree/main/contributing/samples/computer_use)
+[computer_use](https://github.com/google/adk-python/tree/main/contributing/samples/multimodal/computer_use)
 agent sample project.

@@ -1,6 +1,6 @@
 # API Reference
 
-The Agent Development Kit (ADK) provides comprehensive API references for both Python and Java, allowing you to dive deep into all available classes, methods, and functionalities.
+The Agent Development Kit (ADK) provides comprehensive API references across supported languages, allowing you to dive deep into all available classes, methods, and functionalities.
 
 <div class="grid cards" markdown>
 
@@ -13,6 +13,17 @@ The Agent Development Kit (ADK) provides comprehensive API references for both P
     <!-- Assuming your Python API docs are in a 'python' subdirectory -->
     <!-- Or link to an external ReadTheDocs, etc. -->
     <!-- [:octicons-arrow-right-24: View Python API Docs](python/index.html) -->
+
+<!-- This comment forces a block separation -->
+
+-   :fontawesome-brands-js:{ .lg .middle } **Typescript API Reference**
+
+    ---
+    Access the complete API documentation for the TypeScript Agent Development Kit. Find detailed information on all packages, classes, and methods to build powerful and flexible AI agents with TypeScript.
+
+    [:octicons-arrow-right-24: View Typescript API Docs](https://adk.dev/api-reference/typescript/) <br>
+    <!-- Assuming your Typescript API docs are in a 'typescript' subdirectory -->
+    <!-- [:octicons-arrow-right-24: View Typescript API Docs](typescript/index.html) -->
 
 <!-- This comment forces a block separation -->
 
@@ -37,14 +48,12 @@ The Agent Development Kit (ADK) provides comprehensive API references for both P
 
 <!-- This comment forces a block separation -->
 
--   :fontawesome-brands-js:{ .lg .middle } **Typescript API Reference**
+-   :simple-kotlin:{ .lg .middle } **Kotlin API Reference**
 
     ---
-    Access the complete API documentation for the TypeScript Agent Development Kit. Find detailed information on all packages, classes, and methods to build powerful and flexible AI agents with TypeScript.
+    Access the complete KDoc documentation for the Kotlin Agent Development Kit. This reference covers all packages, classes, and functions for building AI agents with Kotlin.
 
-    [:octicons-arrow-right-24: View Typescript API Docs](https://adk.dev/api-reference/typescript/) <br>
-    <!-- Assuming your Typescript API docs are in a 'typescript' subdirectory -->
-    <!-- [:octicons-arrow-right-24: View Typescript API Docs](typescript/index.html) -->
+    [:octicons-arrow-right-24: View Kotlin API Docs](https://adk.dev/api-reference/kotlin/) <br>
 
 <!-- This comment forces a block separation -->
 
