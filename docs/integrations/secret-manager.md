@@ -28,6 +28,11 @@ Complete the following setup steps:
 1. Grant the [`Secret Manager Secret Accessor`](https://docs.cloud.google.com/iam/docs/roles-permissions/secretmanager#secretmanager.secretAccessor) IAM role to your agent identity.
 
 ## Installation
+```bash
+pip install "google-adk[extensions]"
+```
+
+## Use with agent
 
 <!--
 # Copyright 2026 Google LLC
@@ -89,7 +94,7 @@ ADK agent for accessing secrets from global Secret Manager.
 
 ## Resources
 - Refer to the
-  [Secret Manager platform documentation](https://docs.cloud.google.com/secret-manager/docs/overview).
+  [Secret Manager documentation](https://docs.cloud.google.com/secret-manager/docs/overview).
 - View the [ADK GitHub
   repository](https://github.com/google/adk-python).
 
