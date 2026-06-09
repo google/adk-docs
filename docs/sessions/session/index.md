@@ -303,11 +303,12 @@ session_service = DatabaseSessionService(db_url=db_url)
 
 The `DatabaseSessionService` ensures data integrity during concurrent operations through a
 two-tiered locking architecture:
-- **In-Process locking:** The service uses an internal, in-process lock to
+
+* **In-Process locking:** The service uses an internal, in-process lock to
         serialize `append_event` calls for the same session. This prevents race
         conditions when multiple requests try to update the same session
         simultaneously within the same process.
-- **Row-Level locking:** For PostgreSQL, MySQL, and MariaDB, the service
+* **Row-Level locking:** For PostgreSQL, MySQL, and MariaDB, the service
         uses row-level locking (via `SELECT ... FOR UPDATE`) to prevent race
         conditions when multiple processes or replicas try to update the same
         session simultaneously.
