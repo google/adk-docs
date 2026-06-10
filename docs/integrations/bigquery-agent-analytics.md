@@ -183,126 +183,245 @@ LIMIT 20;
 
 ??? example "Full example with GCS offloading, OpenTelemetry, and BigQuery tools"
 
-=== "Python"
+    === "Python"
 
-    ```python title="my_bq_agent/agent.py"
-    # my_bq_agent/agent.py
-    import os
-    import google.auth
-    from google.adk.apps import App
-    from google.adk.plugins.bigquery_agent_analytics_plugin import BigQueryAgentAnalyticsPlugin, BigQueryLoggerConfig
-    from google.adk.agents import Agent
-    from google.adk.models.google_llm import Gemini
-    from google.adk.tools.bigquery import BigQueryToolset, BigQueryCredentialsConfig
+        ```python title="my_bq_agent/agent.py"
+        # my_bq_agent/agent.py
+        import os
+        import google.auth
+        from google.adk.apps import App
+        from google.adk.plugins.bigquery_agent_analytics_plugin import BigQueryAgentAnalyticsPlugin, BigQueryLoggerConfig
+        from google.adk.agents import Agent
+        from google.adk.models.google_llm import Gemini
+        from google.adk.tools.bigquery import BigQueryToolset, BigQueryCredentialsConfig
 
 
-    # --- OpenTelemetry TracerProvider Setup (Optional) ---
-    # ADK includes OpenTelemetry as a core dependency.
-    # Configuring a TracerProvider enables full distributed tracing
-    # (populates trace_id, span_id with standard OTel identifiers).
-    # If no TracerProvider is configured, the plugin falls back to internal
-    # UUIDs for span correlation while still preserving the parent-child hierarchy.
-    from opentelemetry import trace
-    from opentelemetry.sdk.trace import TracerProvider
-    trace.set_tracer_provider(TracerProvider())
+        # --- OpenTelemetry TracerProvider Setup (Optional) ---
+        # ADK includes OpenTelemetry as a core dependency.
+        # Configuring a TracerProvider enables full distributed tracing
+        # (populates trace_id, span_id with standard OTel identifiers).
+        # If no TracerProvider is configured, the plugin falls back to internal
+        # UUIDs for span correlation while still preserving the parent-child hierarchy.
+        from opentelemetry import trace
+        from opentelemetry.sdk.trace import TracerProvider
+        trace.set_tracer_provider(TracerProvider())
 
-    # --- Configuration ---
-    PROJECT_ID = os.environ.get("GOOGLE_CLOUD_PROJECT", "your-gcp-project-id")
-    DATASET_ID = os.environ.get("BIG_QUERY_DATASET_ID", "your-big-query-dataset-id")
-    # GOOGLE_CLOUD_LOCATION must be a valid Agent Platform region (e.g., "us-central1").
-    # BQ_LOCATION is the BigQuery dataset location, which can be a multi-region
-    # like "US" or "EU", or a single region like "us-central1".
-    VERTEX_LOCATION = os.environ.get("GOOGLE_CLOUD_LOCATION", "us-central1")
-    BQ_LOCATION = os.environ.get("BQ_LOCATION", "US")
-    GCS_BUCKET = os.environ.get("GCS_BUCKET_NAME", "your-gcs-bucket-name") # Optional
+        # --- Configuration ---
+        PROJECT_ID = os.environ.get("GOOGLE_CLOUD_PROJECT", "your-gcp-project-id")
+        DATASET_ID = os.environ.get("BIG_QUERY_DATASET_ID", "your-big-query-dataset-id")
+        # GOOGLE_CLOUD_LOCATION must be a valid Agent Platform region (e.g., "us-central1").
+        # BQ_LOCATION is the BigQuery dataset location, which can be a multi-region
+        # like "US" or "EU", or a single region like "us-central1".
+        VERTEX_LOCATION = os.environ.get("GOOGLE_CLOUD_LOCATION", "us-central1")
+        BQ_LOCATION = os.environ.get("BQ_LOCATION", "US")
+        GCS_BUCKET = os.environ.get("GCS_BUCKET_NAME", "your-gcs-bucket-name") # Optional
 
-    if PROJECT_ID == "your-gcp-project-id":
-        raise ValueError("Please set GOOGLE_CLOUD_PROJECT or update the code.")
+        if PROJECT_ID == "your-gcp-project-id":
+            raise ValueError("Please set GOOGLE_CLOUD_PROJECT or update the code.")
 
-    # --- CRITICAL: Set environment variables BEFORE Gemini instantiation ---
-    os.environ['GOOGLE_CLOUD_PROJECT'] = PROJECT_ID
-    os.environ['GOOGLE_CLOUD_LOCATION'] = VERTEX_LOCATION
-    os.environ['GOOGLE_GENAI_USE_VERTEXAI'] = 'True'
+        # --- CRITICAL: Set environment variables BEFORE Gemini instantiation ---
+        os.environ['GOOGLE_CLOUD_PROJECT'] = PROJECT_ID
+        os.environ['GOOGLE_CLOUD_LOCATION'] = VERTEX_LOCATION
+        os.environ['GOOGLE_GENAI_USE_VERTEXAI'] = 'True'
 
-    # --- Initialize the Plugin with Config ---
-    bq_config = BigQueryLoggerConfig(
-        enabled=True,
-        gcs_bucket_name=GCS_BUCKET, # Enable GCS offloading for multimodal content
-        log_multi_modal_content=True,
-        max_content_length=500 * 1024, # 500 KB limit for inline text
-        batch_size=1, # Default is 1 for low latency, increase for high throughput
-        shutdown_timeout=10.0
-    )
+        # --- Initialize the Plugin with Config ---
+        bq_config = BigQueryLoggerConfig(
+            enabled=True,
+            gcs_bucket_name=GCS_BUCKET, # Enable GCS offloading for multimodal content
+            log_multi_modal_content=True,
+            max_content_length=500 * 1024, # 500 KB limit for inline text
+            batch_size=1, # Default is 1 for low latency, increase for high throughput
+            shutdown_timeout=10.0
+        )
 
-    bq_logging_plugin = BigQueryAgentAnalyticsPlugin(
-        project_id=PROJECT_ID,
-        dataset_id=DATASET_ID,
-        table_id="agent_events", # default table name is agent_events
-        config=bq_config,
-        location=BQ_LOCATION
-    )
+        bq_logging_plugin = BigQueryAgentAnalyticsPlugin(
+            project_id=PROJECT_ID,
+            dataset_id=DATASET_ID,
+            table_id="agent_events", # default table name is agent_events
+            config=bq_config,
+            location=BQ_LOCATION
+        )
 
-    # --- Initialize Tools and Model ---
-    credentials, _ = google.auth.default(scopes=["https://www.googleapis.com/auth/cloud-platform"])
-    bigquery_toolset = BigQueryToolset(
-        credentials_config=BigQueryCredentialsConfig(credentials=credentials)
-    )
+        # --- Initialize Tools and Model ---
+        credentials, _ = google.auth.default(scopes=["https://www.googleapis.com/auth/cloud-platform"])
+        bigquery_toolset = BigQueryToolset(
+            credentials_config=BigQueryCredentialsConfig(credentials=credentials)
+        )
 
-    llm = Gemini(model="gemini-flash-latest")
+        llm = Gemini(model="gemini-flash-latest")
 
-    root_agent = Agent(
-        model=llm,
-        name='my_bq_agent',
-        instruction="You are a helpful assistant with access to BigQuery tools.",
-        tools=[bigquery_toolset]
-    )
+        root_agent = Agent(
+            model=llm,
+            name='my_bq_agent',
+            instruction="You are a helpful assistant with access to BigQuery tools.",
+            tools=[bigquery_toolset]
+        )
 
-    # --- Create the App ---
-    app = App(
-        name="my_bq_agent",
-        root_agent=root_agent,
-        plugins=[bq_logging_plugin],
-    )
-    ```
+        # --- Create the App ---
+        app = App(
+            name="my_bq_agent",
+            root_agent=root_agent,
+            plugins=[bq_logging_plugin],
+        )
+        ```
 
-  === "Java"
+    === "Java"
 
-    ```// 1. Configure the BigQuery Logger
-    BigQueryLoggerConfig config =
-        BigQueryLoggerConfig.builder()
-            .projectId(PROJECT_ID)
-            .datasetId(DATASET_ID)
-            .tableName(TABLE_ID)
-            .gcsBucketName(GCS_BUCKET_NAME)
-            .createViews(true)
-            .build();
+        ```java
+        package adk.plugins.agentanalytics.demo;
 
-    // 2. Create the plugin instance
-    Plugin bqLoggingPlugin = new BigQueryAgentAnalyticsPlugin(config);
+        import static java.nio.charset.StandardCharsets.UTF_8;
+        import static java.util.Collections.singletonList;
 
-    // 3. Initialize the model (Gemini)
-    Gemini model =
-        Gemini.builder()
-            .modelName("gemini-3-flash-preview") // Use appropriate model
-            .apiKey(API_KEY)
-            .build();
+        import com.google.adk.agents.LlmAgent;
+        import com.google.adk.agents.RunConfig;
+        import com.google.adk.events.Event;
+        import com.google.adk.models.Gemini;
+        import com.google.adk.plugins.Plugin;
+        import com.google.adk.plugins.agentanalytics.BigQueryAgentAnalyticsPlugin;
+        import com.google.adk.plugins.agentanalytics.BigQueryLoggerConfig;
+        import com.google.adk.runner.InMemoryRunner;
+        import com.google.adk.sessions.Session;
+        import com.google.adk.tools.FunctionTool;
+        import com.google.adk.tools.ToolContext;
+        import com.google.genai.types.Content;
+        import com.google.genai.types.GenerateContentConfig;
+        import com.google.genai.types.Part;
+        import io.opentelemetry.sdk.OpenTelemetrySdk;
+        import io.opentelemetry.sdk.common.CompletableResultCode;
+        import io.opentelemetry.sdk.trace.SdkTracerProvider;
+        import io.opentelemetry.sdk.trace.data.SpanData;
+        import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
+        import io.opentelemetry.sdk.trace.export.SpanExporter;
+        import io.reactivex.rxjava3.core.Flowable;
+        import java.util.Collection;
+        import java.util.Scanner;
 
-    // 4. Create the agent with the tool and plugin
-    LlmAgent agent =
-        LlmAgent.builder()
-            .model(model)
-            .name("bq_demo_agent")
-            .instruction(
-                "You are a helpful assistant. You have a tool 'reverseString' that you can use to"
-                    + " reverse text.")
-            .tools(FunctionTool.create(BqDemoAgent.class, "reverseString"))
-            .generateContentConfig(GenerateContentConfig.builder().temperature(0.5f).build())
-            .build();
+        /** Demo agent showing how to use BigQueryAgentAnalyticsPlugin. */
+        public final class BqDemoAgent {
+          private static final String PROJECT_ID = "your-gcp-project-id";
+          private static final String DATASET_ID = "your-gcp-dataset_id";
+          private static final String TABLE_ID = "your-gcp-table";
+          private static final String GCS_BUCKET_NAME = "your-gcs-bucket-name";
+          private static final String API_KEY = "your-api_key";
 
-    // 5. Initialize the runner
-    InMemoryRunner runner =
-        new InMemoryRunner(agent, "bq_demo_agent", ImmutableList.of(bqLoggingPlugin));
-    ```
+          // A simple tool to demonstrate tool execution logging
+          public static String reverseString(String input, ToolContext toolContext) {
+            return new StringBuilder(input).reverse().toString();
+          }
+
+          public static void main(String[] args) throws Exception {
+            // 0. Initialize OpenTelemetry
+            initOpenTelemetry();
+
+            // 1. Configure the BigQuery Logger
+            BigQueryLoggerConfig config =
+                BigQueryLoggerConfig.builder()
+                    .projectId(PROJECT_ID)
+                    .datasetId(DATASET_ID)
+                    .tableName(TABLE_ID)
+                    .gcsBucketName(GCS_BUCKET_NAME)
+                    .createViews(true)
+                    .build();
+
+            // 2. Create the plugin instance
+            Plugin bqLoggingPlugin = new BigQueryAgentAnalyticsPlugin(config);
+
+            // 3. Initialize the model (Gemini)
+            Gemini model =
+                Gemini.builder()
+                    .modelName("gemini-3-flash-preview") // Use appropriate model
+                    .apiKey(API_KEY)
+                    .build();
+
+            // 4. Create the agent with the tool and plugin
+            LlmAgent agent =
+                LlmAgent.builder()
+                    .model(model)
+                    .name("bq_demo_agent")
+                    .instruction(
+                        "You are a helpful assistant. You have a tool 'reverseString' that you can use to"
+                            + " reverse text.")
+                    .tools(FunctionTool.create(BqDemoAgent.class, "reverseString"))
+                    .generateContentConfig(GenerateContentConfig.builder().temperature(0.5f).build())
+                    .build();
+
+            // 5. Initialize the runner
+            InMemoryRunner runner =
+                new InMemoryRunner(agent, "bq_demo_agent", singletonList(bqLoggingPlugin));
+
+            // 6. Create a session
+            Session session =
+                runner.sessionService().createSession(runner.appName(), "demo_user").blockingGet();
+
+            RunConfig runConfig = RunConfig.builder().build();
+
+            System.out.println("Agent ready. Type 'quit' to exit.");
+
+            try (Scanner scanner = new Scanner(System.in, UTF_8)) {
+              while (true) {
+                System.out.print("\nUser: ");
+                String userInput = scanner.nextLine();
+                if (userInput.trim().equalsIgnoreCase("quit")) {
+                  break;
+                }
+
+                Content userMsg = Content.fromParts(Part.fromText(userInput));
+
+                // Run the agent and stream events
+                Flowable<Event> events =
+                    runner.runAsync(session.userId(), session.id(), userMsg, runConfig);
+
+                System.out.print("Agent: ");
+                events.blockingForEach(
+                    event -> {
+                      if (event.finalResponse()) {
+                        System.out.println(event.stringifyContent());
+                      }
+                    });
+              }
+            } finally {
+              System.out.println("Closing runner (flushing remaining logs)...");
+              runner.close().blockingAwait();
+              System.out.println("Done.");
+            }
+          }
+
+          private static void initOpenTelemetry() {
+            PrintingSpanExporter exporter = new PrintingSpanExporter();
+            SdkTracerProvider tracerProvider =
+                SdkTracerProvider.builder().addSpanProcessor(SimpleSpanProcessor.create(exporter)).build();
+            OpenTelemetrySdk.builder().setTracerProvider(tracerProvider).buildAndRegisterGlobal();
+          }
+
+          private static class PrintingSpanExporter implements SpanExporter {
+            @Override
+            public CompletableResultCode export(Collection<SpanData> spans) {
+              for (SpanData span : spans) {
+                System.out.println("--- Span: " + span.getName() + " ---");
+                System.out.println("  TraceId: " + span.getTraceId());
+                System.out.println("  SpanId: " + span.getSpanId());
+                System.out.println("  ParentSpanId: " + span.getParentSpanId());
+                System.out.println("  Attributes: " + span.getAttributes());
+                System.out.println("------------------------");
+              }
+              return CompletableResultCode.ofSuccess();
+            }
+
+            @Override
+            public CompletableResultCode flush() {
+              return CompletableResultCode.ofSuccess();
+            }
+
+            @Override
+            public CompletableResultCode shutdown() {
+              return CompletableResultCode.ofSuccess();
+            }
+          }
+
+          private BqDemoAgent() {}
+        }
+        ```
 
 !!! tip "Deploying to Agent Runtime?"
 
