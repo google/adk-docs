@@ -1,5 +1,5 @@
 <!-- Developer Tools -->
-<div class="feature-split">
+<div class="feature-split reverse">
   <div class="feature-text">
     <span class="feature-badge">Framework</span>
     <h2>Powerful simplicity. Built for scale.</h2>
