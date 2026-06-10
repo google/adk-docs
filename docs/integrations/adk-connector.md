@@ -1,0 +1,144 @@
+---
+catalog_title: ADK Connector
+catalog_description: Connect Google ADK agents to Telegram, Discord, Slack, and WhatsApp with minimal code and cross-device session synchronization.
+catalog_icon: /integrations/assets/adk-connector.png
+catalog_tags: ["connectors"]
+---
+
+# ADK Connector
+
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript</span>
+</div>
+
+[ADK Connectors](https://github.com/Harshk133/adk-connector) is a plug-and-play toolkit that wraps any [Google Agent Development Kit (ADK)](https://github.com/google/adk) agent and exposes it as a chatbot on messaging channels such as **Telegram**, **Discord**, **WhatsApp**, and **Slack**.
+
+By adding just a few lines of code, you can bridge the gap between local development, testing, and production messaging platforms, with native support for database-backed cross-device session synchronization.
+
+## Use cases
+
+- **Multi-Channel Deployment**: Instantly deploy your ADK agents (written in Python or JavaScript/TypeScript) as chatbots on Telegram, with WhatsApp, Discord, and Slack support coming soon.
+- **Cross-Device Session Synchronization**: Seamlessly transition conversations. Chat on Telegram, then inspect, debug, and continue the exact same conversation inside the local ADK Web UI (`adk web`).
+- **Resilient State Management**: Automatically configures an asynchronous SQLite backend to record session states, tool invocations, and user interactions.
+- **Robust Multi-Agent Workflows**: Double-import safety and automatic resolution of prompt context variables across parent and sub-agents.
+
+## Prerequisites
+
+- Python 3.10+ or Node.js 18+
+- A Telegram account and a Bot Token from BotFather
+- A Gemini API Key (set as `GEMINI_API_KEY`)
+
+## Installation
+
+You can install the connectors for either Python or JavaScript / TypeScript depending on your ADK project.
+
+=== "Python"
+
+    ```bash
+    pip install adk-connector
+    ```
+
+    To enable database-backed cross-device session synchronization (e.g. `adk web` UI), also install the ADK DB components:
+
+    ```bash
+    pip install "google-adk[db]"
+    ```
+
+=== "JavaScript / TypeScript"
+
+    ```bash
+    npm install adk-connector-js
+    ```
+
+## Use with agent
+
+Here is how you can wrap your existing Google ADK agents and launch them on Telegram.
+
+=== "Python"
+
+    ```python
+    import os
+    from dotenv import load_dotenv
+    from google.adk.agents.llm_agent import Agent
+    from adk_connectors.telegram import TelegramConnector
+
+    # Load environment variables
+    load_dotenv()
+
+    # 1. Define your standard Google ADK Agent
+    assistant = Agent(
+        model='gemini-2.5-flash',
+        name='my_assistant',
+        instruction='You are a helpful assistant.'
+    )
+
+    if __name__ == "__main__":
+        # 2. Retrieve your Telegram Bot Token
+        token = os.getenv("TELEGRAM_BOT_TOKEN")
+        
+        # 3. Bind the connector
+        connector = TelegramConnector(
+            token=token,
+            agent=assistant
+        )
+        
+        # 4. Start polling
+        connector.start()
+    ```
+
+=== "JavaScript / TypeScript"
+
+    ```typescript
+    import { LlmAgent } from '@google/adk';
+    import { TelegramConnector } from 'adk-connector-js';
+    import dotenv from 'dotenv';
+
+    dotenv.config();
+
+    // 1. Define your standard Google ADK Agent
+    export const rootAgent = new LlmAgent({
+      name: 'my_assistant',
+      model: 'gemini-2.5-flash',
+      instruction: 'You are a helpful assistant.'
+    });
+
+    // 2. Launch the Telegram Connector under script entrypoint
+    if (import.meta.url === `file://${process.argv[1]}` || process.argv[1]?.endsWith('agent.ts')) {
+      const connector = new TelegramConnector({
+        token: process.env.TELEGRAM_BOT_TOKEN!,
+        agent: rootAgent
+      });
+
+      connector.start();
+    }
+    ```
+
+## Advanced Setup: Session Sync (with `adk web`)
+
+For Python setups, you can sync Telegram chat history directly with the local ADK Web UI by mapping your Telegram user ID to the local development environment:
+
+1. In your code, set `session_management_across_device=True` and pass your user ID:
+   ```python
+   connector = TelegramConnector(
+       token=token,
+       agent=assistant,
+       session_management_across_device=True,  # Spin up DB & mapping persistence
+       dev_user_id=os.getenv("TELEGRAM_USER_ID") # Syncs this ID to the "user" Web UI namespace
+   )
+   ```
+2. Run your bot script:
+   ```bash
+   python agent.py
+   ```
+3. Run the ADK Web UI in a separate terminal:
+   ```bash
+   adk web .
+   ```
+4. Access `http://127.0.0.1:8000` to view active Telegram conversations and tool execution logs directly in the browser.
+
+## Additional resources
+
+- [ADK Connector GitHub Repository](https://github.com/Harshk133/adk-connector)
+- [ADK Connector Python Package (PyPI)](https://pypi.org/project/adk-connector/)
+- [ADK Connector JS/TS Package (NPM)](https://www.npmjs.com/package/adk-connector-js)
+- [Official Google ADK Repository](https://github.com/google/adk)
