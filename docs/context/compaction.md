@@ -8,29 +8,25 @@ As an ADK agent runs it collects *context* information, including user
 instructions, retrieved data, tool responses, and generated content. As the size
 of this context data grows, agent processing times typically also increase.
 More and more data is sent to the generative AI model used by the agent,
-increasing processing time and slowing down responses. The ADK Context
+increasing processing time and slowing down responses. ADK Context
 Compaction feature is designed to reduce the size of context as an agent
-is running by summarizing older parts of the agent workflow event history.
-
-## What is compaction?
-
-Compaction manages token usage by trimming or summarizing older session history—including instructions, inputs, and model responses. By maintaining a compact context window, this process **optimizes latency and reduces costs** while ensuring the agent retains access to essential recent interactions.
+is running by summarizing older session history—including instructions, inputs, and model responses. By maintaining a compact context window, this process **optimizes latency and reduces costs** while ensuring the agent retains access to essential recent interactions.
 
 Compaction is integrated directly into SingleFlow via the `CompactionRequestProcessor`, 
 allowing automatic event compaction based on the rules you set in the `EventsCompactionConfig`.
 
-## Choosing your strategy
+## Choose your strategy
 
-You can manage your session's data using two different strategies within `EventsCompactionConfig`:
+You can manage your session's data using the following strategies within `EventsCompactionConfig`:
 
 - **Token-Based (Primary)**: Triggers cleanup based on the actual volume of tokens consumed. This acts as an absolute safety net and is ideal for unpredictable workloads, like when users paste massive code blocks or upload large files.
 - **Sliding Window (Turn-Based)**: Triggers cleanup after a fixed number of conversational turns. This is useful for regular, predictable text chats.
 
-When both are configured, token-based compaction takes priority. If the session length crosses your defined token threshold on a given turn, token-based compaction fires, and the standard sliding-window compaction is skipped for that turn.
+If you configure both compaction strategies, the system prioritizes token-based compaction. When the session length exceeds your defined token threshold, the system triggers token-based compaction and skips sliding-window compaction for that turn.
 
-## Token based compaction
+## Token-based compaction
 
-As stated above, Token-based compaction triggers context management based on the volume of data (tokens) rather than the number of turns (events).
+Token-based compaction triggers context management based on the volume of tokens or data, rather than the number of events or turns
 
 ### Configuration settings
 
@@ -40,7 +36,7 @@ Add token-based compaction to your agent workflow by adding an `EventsCompaction
 
 To implement this in your project, use the following configuration:
 
- ```python
+```python
 # 1. Correct the import path to use the google.adk namespace
 from google.adk.apps.app import App, EventsCompactionConfig
 from google.adk.agents import Agent # Or import your specific agent class
