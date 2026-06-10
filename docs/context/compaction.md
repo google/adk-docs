@@ -31,6 +31,7 @@ Token-based compaction triggers context management based on the volume of tokens
 ### Configuration settings
 
 Add token-based compaction to your agent workflow by adding an `EventsCompactionConfig` setting to the App object. You must specify the following:
+
 - **`token_threshold`**: The safety limit of tokens that automatically triggers tail-retention compaction once reached.
 - **`event_retention_size`**: The number of recent events/interactions kept in "raw" un-compacted format when compaction is triggered. This maintains immediate conversational context and pronoun resolution.
 
