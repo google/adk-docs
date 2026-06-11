@@ -1,7 +1,7 @@
 # Deploy to Agent Runtime
 
-<div class="language-support-tag" title="Agent Runtime currently supports only Python.">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
+<div class="language-support-tag" title="Agent Runtime currently supports Python and Go.">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-go">Go v1.2.0</span>
 </div>
 
 This deployment procedure describes how to perform a standard deployment of
@@ -110,16 +110,30 @@ With your Google Cloud and coding environment prepared, you're ready to deploy
 your agent. The instructions assume that you have an agent project folder,
 such as:
 
-```shell
-multi_tool_agent/
-├── .env
-├── __init__.py
-└── agent.py
-```
 
-For more details on the project files and format, see the
-[multi_tool_agent](https://github.com/google/adk-docs/tree/main/examples/python/snippets/get-started/multi_tool_agent)
-code sample.
+=== "Python"
+
+    ```shell
+    multi_tool_agent/
+    ├── .env
+    ├── __init__.py
+    └── agent.py
+    ```
+
+    For more details on the project files and format, see the
+    [multi_tool_agent](https://github.com/google/adk-docs/tree/main/examples/python/snippets/get-started/multi_tool_agent)
+    code sample.
+
+
+=== "Go"
+    ```shell
+    multi_tool_agent/
+    ├── go.mod
+    ├── go.sum
+    └── main.go
+    ``` 
+    
+
 
 ## Deploy the agent {#deploy-agent}
 
@@ -130,35 +144,85 @@ managed Agent Runtime service. This process can take several minutes.
 The following example deploy command uses the `multi_tool_agent` sample code as
 the project to be deployed:
 
-```shell
-PROJECT_ID=my-project-id
-LOCATION_ID=us-central1
+=== "Python"
 
-adk deploy agent_engine \
-        --project=$PROJECT_ID \
-        --region=$LOCATION_ID \
-        --display_name="My First Agent" \
-        multi_tool_agent
-```
+    ```shell
+    PROJECT_ID=my-project-id
+    LOCATION_ID=us-central1
+
+    adk deploy agent_engine \
+            --project=$PROJECT_ID \
+            --region=$LOCATION_ID \
+            --display_name="My First Agent" \
+            multi_tool_agent
+    ```
+
+=== "Go"
+
+    ```shell
+    PROJECT_ID=my-project-id
+    LOCATION_ID=us-central1
+
+    adkgo deploy agentengine \
+        -e ./main.go \
+        -s "multi_tool_agent" \
+        -p $PROJECT_ID \
+        -r $LOCATION_ID \
+        -d .
+    ```
+
 
 For `region`, you can find a list of the supported regions on the
 [Agent Builder locations page](https://docs.cloud.google.com/agent-builder/locations#supported-regions-agent-engine).
-To learn about the CLI options for the `adk deploy agent_engine` command, see the
-[ADK CLI Reference](/api-reference/cli/#adk-deploy-agent-engine).
+
+=== "Python"
+
+    To learn about the CLI options for the `adk deploy agent_engine` command, see the
+    [ADK CLI Reference](/api-reference/cli/#adk-deploy-agent-engine).
+
+=== "Go"
+
+    To learn about the CLI options for the `adkgo deploy agentengine` command you can run `adkgo help deploy agentengine` which will display available options. 
+    The most important are:
+    ```shell
+    -e, --entry_point_path string   Path to an entry point (go 'main')
+    -s, --name string               Agent Engine name
+    -p, --project_name string       GCP Project Name
+    -r, --region string             GCP Region
+    -d, --source_dir string         Directory to archive, defaults to current working directory
+    ```
+
 
 ### Deploy command output
 
 Once successfully deployed, you should see the following output:
 
-```shell
-Creating AgentEngine
-Create AgentEngine backing LRO: projects/123456789/locations/us-central1/reasoningEngines/751619551677906944/operations/2356952072064073728
-View progress and logs at https://console.cloud.google.com/logs/query?project=hopeful-sunset-478017-q0
-AgentEngine created. Resource name: projects/123456789/locations/us-central1/reasoningEngines/751619551677906944
-To use this AgentEngine in another session:
-agent_engine = vertexai.agent_engines.get('projects/123456789/locations/us-central1/reasoningEngines/751619551677906944')
-Cleaning up the temp folder: /var/folders/k5/pv70z5m92s30k0n7hfkxszfr00mz24/T/agent_engine_deploy_src/20251219_134245
-```
+=== "Python"
+    ```shell
+    Creating AgentEngine
+    Create AgentEngine backing LRO: projects/123456789/locations/us-central1/reasoningEngines/751619551677906944/operations/2356952072064073728
+    View progress and logs at https://console.cloud.google.com/logs/query?project=hopeful-sunset-478017-q0
+    AgentEngine created. Resource name: projects/123456789/locations/us-central1/reasoningEngines/751619551677906944
+    To use this AgentEngine in another session:
+    agent_engine = vertexai.agent_engines.get('projects/123456789/locations/us-central1/reasoningEngines/751619551677906944')
+    Cleaning up the temp folder: /var/folders/k5/pv70z5m92s30k0n7hfkxszfr00mz24/T/agent_engine_deploy_src/20251219_134245
+    ```
+
+=== "Go"
+    ```shell
+    Computing flags & preparing temp : Starting
+
+    ...
+    
+        >  [Deployed Reasoning Engine: projects/887748635400/locations/us-central1/reasoningEngines/751619551677906944]
+        >  [Display Name: simpleText]
+
+    Deploying to Agent Engine : Finished successfully
+    Cleaning temp : Starting
+        >  [Clean temp starting with /tmp/agentEngine_20260424_141040__2470352066]
+
+    Cleaning temp : Finished successfully
+    ```
 
 Note that you now have a `RESOURCE_ID` where your agent has been deployed (which
 in the example above is `751619551677906944`). You need this ID number along
