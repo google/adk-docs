@@ -37,6 +37,7 @@ Add token-based compaction to your agent workflow by adding an `EventsCompaction
 
 To implement this in your project, use the following configuration:
 
+
 ```python
 # 1. Correct the import path to use the google.adk namespace
 from google.adk.apps.app import App, EventsCompactionConfig
@@ -66,6 +67,7 @@ app = App(
     events_compaction_config=compaction_config
 )
 ```
+
 ## Sliding window compaction
 
 The Context Compaction feature uses a *sliding window* approach for collecting
