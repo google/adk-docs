@@ -403,7 +403,9 @@ Before you begin, ensure you have the following set up:
 
 If your agent uses Agent Platform, the workload running in your cluster needs permission to call the Agent Platform API. Unlike the manual path, `adk deploy gke` generates a manifest that uses the `default` Kubernetes service account in the `default` namespace. Grant the `Agent Platform User` role to that service account through Workload Identity so the agent can access models such as Gemini.
 
-> If you are using AI Studio and accessing the model with an API key you can skip this step.
+!!! tip "Skip if using AI Studio"
+
+    If you are using AI Studio and accessing the model with an API key you can skip this step.
 
 ```bash
 gcloud projects add-iam-policy-binding projects/${GOOGLE_CLOUD_PROJECT} \
@@ -412,7 +414,7 @@ gcloud projects add-iam-policy-binding projects/${GOOGLE_CLOUD_PROJECT} \
     --condition=None
 ```
 
-If you skip this step, the agent's pods start successfully, but requests to the model fail with a `403 PERMISSION_DENIED` error when verifying your deployment.
+If you are using a Google Cloud project and skip this step, the agent's pods start successfully, but requests to the model fail with a `403 PERMISSION_DENIED` error when verifying your deployment.
 
 ### The `deploy gke` Command
 
