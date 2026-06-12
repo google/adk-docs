@@ -1,3 +1,5 @@
+The Parameter Manager integration is an extension of the Secret Manager class, offering a lightweight client designed to fetch processed parameter data from Google Cloud. This tool is ideal for agents that require configuration settings to be handled independently of the agent’s internal process.  If you want to know more about [all options, features or capabilities that this integration facilitates, click here.]([url](https://docs.cloud.google.com/secret-manager/parameter-manager/docs/overview))
+
 ---
 catalog_title: Parameter Manager
 catalog_description: A client for interacting with Google Cloud Parameter Manager.
