@@ -27,6 +27,9 @@ GOOGLE_CLOUD_PROJECT=YOUR_PROJECT_ID
 GOOGLE_CLOUD_LOCATION=LOCATION
 ```
 
+For more information on connecting to Google Cloud from ADK agents, see
+[Connect to Google Cloud and Agent Platform](/get-started/google-cloud/).
+
 ## Creating a Grounded Agent
 
 To enable Grounding with Search, you include the search tool in your agent definition, providing the `data_store_id`.

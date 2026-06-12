@@ -59,17 +59,8 @@ export GOOGLE_CLOUD_LOCATION=us-central1 # Or your preferred location
 export GOOGLE_GENAI_USE_VERTEXAI=True
 ```
 
-_(Replace `your-project-id` with your actual GCP project ID)_
-
-Alternatively you can also use an API key from AI Studio
-
-```bash
-export GOOGLE_CLOUD_PROJECT=your-project-id
-export GOOGLE_CLOUD_LOCATION=us-central1 # Or your preferred location
-export GOOGLE_GENAI_USE_VERTEXAI=FALSE
-export GOOGLE_API_KEY=your-api-key
-```
-*(Replace `your-project-id` with your actual GCP project ID and `your-api-key` with your actual API key from AI Studio)*
+For more information on connecting to Google Cloud from ADK agents, see
+[Connect to Google Cloud and Agent Platform](/get-started/google-cloud/).
 
 ## Prerequisites
 
@@ -77,7 +68,7 @@ export GOOGLE_API_KEY=your-api-key
     1. Project name (i.e. "my-project")
     1. Project location (i.e. "us-central1")
     1. Service account (i.e. "1234567890-compute@developer.gserviceaccount.com")
-    1. GOOGLE_API_KEY 
+    1. GOOGLE_API_KEY
 
 ## Secret
 
@@ -532,8 +523,8 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
 
            * The definition of the agent can be exposed in a static method or inlined during declaration.
 
-        See the code for the `CapitalAgent` example in the 
-        [examples](https://github.com/google/adk-docs/blob/main/examples/java/cloud-run/src/main/java/agents/capitalagent/CapitalAgent.java) 
+        See the code for the `CapitalAgent` example in the
+        [examples](https://github.com/google/adk-docs/blob/main/examples/java/cloud-run/src/main/java/agents/capitalagent/CapitalAgent.java)
         repository.
 
     2. Add the following dependencies and plugin to the pom.xml file.

@@ -39,7 +39,7 @@ Connect to Google Cloud with user credentials authentication method working with
 local development environments.
 
 1.  Authenticate your local workstation using Application Default Credentials
-    (ADC) *before* running your ADK agent application :
+    (ADC) *before* running your ADK agent application:
     ```bash
     gcloud auth application-default login
     ```

@@ -314,6 +314,9 @@ the storage backend that best suits your needs:
             .blockingGet();
     ```
 
+For more information on connecting to Google Cloud from ADK agents, see
+[Connect to Google Cloud and Agent Platform](/get-started/google-cloud/).
+
 ### `DatabaseSessionService`
 
 <div class="language-support-tag">
