@@ -1,7 +1,7 @@
 # Vertex AI hosted models for ADK agents
 
 For enterprise-grade scalability, reliability, and integration with Google
-Cloud's MLOps ecosystem, you can use models deployed to Vertex AI Endpoints.
+Cloud's MLOps ecosystem, you can use models deployed to Vertex AI (now known as Agent Platform) Endpoints.
 This includes models from Model Garden or your own fine-tuned models.
 
 **Integration Method:** Pass the full Vertex AI Endpoint resource string
@@ -14,7 +14,7 @@ This includes models from Model Garden or your own fine-tuned models.
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.29.0</span>
 </div>
 
-As a more direct alternative to setting environment variables, you can pass a fully qualified Vertex AI model or endpoint resource name directly into the `model` parameter. The ADK automatically parses the Project ID, location, and model name from the string, configuring the client to use the Vertex AI backend.
+As a more direct alternative to setting environment variables, you can pass a fully qualified Vertex AI (now known as Agent Platform) model or endpoint resource name directly into the `model` parameter. The ADK automatically parses the Project ID, location, and model name from the string, configuring the client to use the Vertex AI backend.
 
 This method is convenient when working with models from Model Garden or when your application needs to access models across different Google Cloud projects.
 
