@@ -20,6 +20,9 @@ hide:
 <!-- Hero Section -->
 {{% include '_includes/homepage/_hero.md' %}}
 
+<!-- Agent CLI -->
+{{% include '_includes/homepage/_agent-cli.md' %}}
+
 <!-- Graphs -->
 {{% include '_includes/homepage/_graphs.md' %}}
 
@@ -28,9 +31,6 @@ hide:
 
 <!-- Ecosystem -->
 {{% include '_includes/homepage/_ecosystem.md' %}}
-
-<!-- AI Dev Tools -->
-{{% include '_includes/homepage/_ai-dev-tools.md' %}}
 
 <!-- Ready to Build CTA Section -->
 {{% include '_includes/homepage/_build-cta.md' %}}
