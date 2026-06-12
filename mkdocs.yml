@@ -368,6 +368,7 @@ nav:
       - Tool limitations: tools/limitations.md
     - Artifacts:
       - artifacts/index.md
+      - artifacts/files-retrieval.md
     - Skills for Agents:
       - skills/index.md
     - App management:
