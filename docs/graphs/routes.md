@@ -1,4 +1,4 @@
-# Build graph routes for agent workflows
+f# Build graph routes for agent workflows
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span>
@@ -158,9 +158,9 @@ root_agent = Workflow(
 
 You can create graphs that split execution across multiple, parallel nodes, and
 typically you need to assemble the output of each node for further processing.
-This pattern has two stages: the workflow fans out when it starts multiple
-parallel tasks, and then it joins those paths when their outputs are assembled
-for the next step.
+This task execution pattern has two stages. The workflow first fans out when it 
+starts multiple parallel tasks, and then it re-joins those paths when those 
+those tasks are completed before proceeding to the next step.
 
 You accomplish the join step by using a ***JoinNode*** object, which waits for
 each parallel task to complete and then passes the collection of outputs from
