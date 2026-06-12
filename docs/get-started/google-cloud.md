@@ -12,7 +12,7 @@ services, make sure you have completed the following prerequisites:
 *  Google Cloud Project with the **Agent Platform API** (`aiplatform.googleapis.com`) enabled.
 *  Install the [gcloud CLI](https://cloud.google.com/sdk/docs/install) tool.
 
-### Google Cloud authentication options
+## Google Cloud authentication options
 
 You have a few options for authentication when connecting your ADK agent to Google Cloud,
 as described in the table below.
@@ -20,9 +20,9 @@ as described in the table below.
 | Method | Best Used For | Authentication Mechanism | Environment |
 | :--- | :--- | :--- | :--- |
 | [**User Credentials**](#user-credentials) | Local development and testing | Application Default Credentials via `gcloud` | Local workstation |
-| [**Agent Identity**](/integrations/agent-identity) | Production deployment and CI/CD | Google IAM Service Account Key / Workload Identity | Google Cloud (Agent Runtime, Cloud Run, GKE) |
 | [**Service Account**](#service-account) | Production deployment and CI/CD | Google IAM Service Account Key / Workload Identity | Google Cloud (Agent Runtime, Cloud Run, GKE) or external servers |
 | [**Express Mode**](#express-mode) | Rapid prototyping and testing | API Key | Local or cloud environments |
+| [**Agent Identity**](/integrations/agent-identity) | Production deployment and CI/CD | Google IAM Service Account Key / Workload Identity | Google Cloud (Agent Runtime, Cloud Run, GKE) |
 
 !!! warning "Warning: Protect your credentials"
 
@@ -112,16 +112,18 @@ Express Mode offers a simplified, API-key-based setup for prototyping without fu
 
 ## Google Cloud hosted models
 
-Google Cloud Agent Platform hosts a wide array of AI model you can connect to your
-ADK agents, including Gemini models, third-party AI models, open weight models, and
-models custom-tuned for your organization. Check out these resources to explore and
+Google Cloud Agent Platform hosts a wide array of AI model you can connect to
+your ADK agents, including Gemini models, third-party AI models, open weight
+models, and models custom-tuned for your organization. Once you have connected
+your ADK agent to Google Cloud and Agent Platform, you have access to AI models
+to fit your application requirements. Check out these resources to explore and
 find the model that's right for your project:
 
 *   Get more information about using [Gemini models](/agents/models/google-gemini/)
     with ADK agents.
 *   Explore third party and custom model options in
-    [Agent Platform hosted](/agents/models/agent-platform/)
-    models for use with ADK agents.
+    [Agent Platform hosted models](/agents/models/agent-platform/)
+    for use with ADK agents.
 *   Find available models and model IDs from Google Cloud in the
     [Agent Platform](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/google-models)
     documentation.
