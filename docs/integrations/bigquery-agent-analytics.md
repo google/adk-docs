@@ -8,7 +8,7 @@ catalog_tags: ["observability", "google"]
 # BigQuery Agent Analytics plugin for ADK
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.21.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.21.0</span><span class="lst-java">Java v1.4.0</span>
 </div>
 
 !!! important "Version Requirement"
@@ -24,7 +24,7 @@ and logs critical operational events directly into a Google BigQuery table,
 empowering you with advanced capabilities for debugging, real-time monitoring,
 and comprehensive offline performance evaluation.
 
-Version 1.26.0 adds **Auto Schema Upgrade** (safely add new columns to existing
+Python version 1.26.0 adds **Auto Schema Upgrade** (safely add new columns to existing
 tables), **Tool Provenance** tracking (LOCAL, MCP, SUB_AGENT, A2A,
 TRANSFER_AGENT, TRANSFER_A2A), and **HITL Event Tracing** for human-in-the-loop
 interactions. Version 1.27.0 adds **Automatic View Creation** (generate flat,
@@ -108,37 +108,81 @@ shows the BigQuery view optionally created when
 
 ## Quickstart
 
-Add the plugin to your agent's `App` object. For prerequisites, see
-[Prerequisites](#prerequisites).
+=== "Python"
 
-```python title="agent.py"
-import os
-from google.adk.agents import Agent
-from google.adk.apps import App
-from google.adk.models.google_llm import Gemini
-from google.adk.plugins.bigquery_agent_analytics_plugin import BigQueryAgentAnalyticsPlugin
+    Add the plugin to your agent's `App` object. For prerequisites, see
+    [Prerequisites](#prerequisites).
 
-os.environ['GOOGLE_CLOUD_PROJECT'] = 'your-gcp-project-id'
-os.environ['GOOGLE_CLOUD_LOCATION'] = 'us-central1'
-os.environ['GOOGLE_GENAI_USE_VERTEXAI'] = 'True'
+    ```python title="agent.py"
+    import os
+    from google.adk.agents import Agent
+    from google.adk.apps import App
+    from google.adk.models.google_llm import Gemini
+    from google.adk.plugins.bigquery_agent_analytics_plugin import BigQueryAgentAnalyticsPlugin
 
-plugin = BigQueryAgentAnalyticsPlugin(
-    project_id="your-gcp-project-id",
-    dataset_id="your-big-query-dataset-id",
-)
+    os.environ['GOOGLE_CLOUD_PROJECT'] = 'your-gcp-project-id'
+    os.environ['GOOGLE_CLOUD_LOCATION'] = 'us-central1'
+    os.environ['GOOGLE_GENAI_USE_VERTEXAI'] = 'True'
 
-root_agent = Agent(
-    model=Gemini(model="gemini-flash-latest"),
-    name='my_agent',
-    instruction="You are a helpful assistant.",
-)
+    plugin = BigQueryAgentAnalyticsPlugin(
+        project_id="your-gcp-project-id",
+        dataset_id="your-big-query-dataset-id",
+    )
 
-app = App(
-    name="my_agent",
-    root_agent=root_agent,
-    plugins=[plugin],
-)
-```
+    root_agent = Agent(
+        model=Gemini(model="gemini-flash-latest"),
+        name='my_agent',
+        instruction="You are a helpful assistant.",
+    )
+
+    app = App(
+        name="my_agent",
+        root_agent=root_agent,
+        plugins=[plugin],
+    )
+    ```
+
+=== "Java"
+
+    Add the plugin to your runner's plugins list. For prerequisites, see
+    [Prerequisites](#prerequisites).
+
+    ```java title="Agent.java"
+    import com.google.adk.agents.LlmAgent;
+    import com.google.adk.agents.RunConfig;
+    import com.google.adk.models.Gemini;
+    import com.google.adk.plugins.Plugin;
+    import com.google.adk.plugins.agentanalytics.BigQueryAgentAnalyticsPlugin;
+    import com.google.adk.plugins.agentanalytics.BigQueryLoggerConfig;
+    import com.google.adk.runner.InMemoryRunner;
+    import com.google.common.collect.ImmutableList;
+
+    public final class Agent {
+      public static void main(String[] args) throws Exception {
+        Plugin bqLoggingPlugin = new BigQueryAgentAnalyticsPlugin(
+            BigQueryLoggerConfig.builder()
+                .projectId("your-gcp-project-id")
+                .datasetId("your-big-query-dataset-id")
+                .tableName("agent_events") // Optional, defaults to "events" in Java
+                .build());
+
+        InMemoryRunner runner = new InMemoryRunner(
+            LlmAgent.builder()
+                .model(Gemini.builder().modelName("gemini-2.5-flash").build())
+                .name("my_agent")
+                .instruction("You are a helpful assistant.")
+                .build(),
+            "my_agent",
+            ImmutableList.of(bqLoggingPlugin));
+
+        // Use runner ...
+
+        // Close runner to flush and close plugin
+        runner.close().blockingAwait();
+      }
+    }
+    ```
+
 
 ### Run and test agent
 
@@ -213,36 +257,194 @@ LIMIT 20;
         shutdown_timeout=10.0
     )
 
-    bq_logging_plugin = BigQueryAgentAnalyticsPlugin(
-        project_id=PROJECT_ID,
-        dataset_id=DATASET_ID,
-        table_id="agent_events", # default table name is agent_events
-        config=bq_config,
-        location=BQ_LOCATION
-    )
+        bq_logging_plugin = BigQueryAgentAnalyticsPlugin(
+            project_id=PROJECT_ID,
+            dataset_id=DATASET_ID,
+            table_id="agent_events", # default table name is agent_events
+            config=bq_config,
+            location=BQ_LOCATION
+        )
 
-    # --- Initialize Tools and Model ---
-    credentials, _ = google.auth.default(scopes=["https://www.googleapis.com/auth/cloud-platform"])
-    bigquery_toolset = BigQueryToolset(
-        credentials_config=BigQueryCredentialsConfig(credentials=credentials)
-    )
+        # --- Initialize Tools and Model ---
+        credentials, _ = google.auth.default(scopes=["https://www.googleapis.com/auth/cloud-platform"])
+        bigquery_toolset = BigQueryToolset(
+            credentials_config=BigQueryCredentialsConfig(credentials=credentials)
+        )
 
-    llm = Gemini(model="gemini-flash-latest")
+        llm = Gemini(model="gemini-flash-latest")
 
-    root_agent = Agent(
-        model=llm,
-        name='my_bq_agent',
-        instruction="You are a helpful assistant with access to BigQuery tools.",
-        tools=[bigquery_toolset]
-    )
+        root_agent = Agent(
+            model=llm,
+            name='my_bq_agent',
+            instruction="You are a helpful assistant with access to BigQuery tools.",
+            tools=[bigquery_toolset]
+        )
 
-    # --- Create the App ---
-    app = App(
-        name="my_bq_agent",
-        root_agent=root_agent,
-        plugins=[bq_logging_plugin],
-    )
-    ```
+        # --- Create the App ---
+        app = App(
+            name="my_bq_agent",
+            root_agent=root_agent,
+            plugins=[bq_logging_plugin],
+        )
+        ```
+
+    === "Java"
+
+        ```java
+        package adk.plugins.agentanalytics.demo;
+
+        import static java.nio.charset.StandardCharsets.UTF_8;
+        import static java.util.Collections.singletonList;
+
+        import com.google.adk.agents.LlmAgent;
+        import com.google.adk.agents.RunConfig;
+        import com.google.adk.events.Event;
+        import com.google.adk.models.Gemini;
+        import com.google.adk.plugins.Plugin;
+        import com.google.adk.plugins.agentanalytics.BigQueryAgentAnalyticsPlugin;
+        import com.google.adk.plugins.agentanalytics.BigQueryLoggerConfig;
+        import com.google.adk.runner.InMemoryRunner;
+        import com.google.adk.sessions.Session;
+        import com.google.adk.tools.FunctionTool;
+        import com.google.adk.tools.ToolContext;
+        import com.google.genai.types.Content;
+        import com.google.genai.types.GenerateContentConfig;
+        import com.google.genai.types.Part;
+        import io.opentelemetry.sdk.OpenTelemetrySdk;
+        import io.opentelemetry.sdk.common.CompletableResultCode;
+        import io.opentelemetry.sdk.trace.SdkTracerProvider;
+        import io.opentelemetry.sdk.trace.data.SpanData;
+        import io.opentelemetry.sdk.trace.export.SimpleSpanProcessor;
+        import io.opentelemetry.sdk.trace.export.SpanExporter;
+        import io.reactivex.rxjava3.core.Flowable;
+        import java.util.Collection;
+        import java.util.Scanner;
+
+        /** Demo agent showing how to use BigQueryAgentAnalyticsPlugin. */
+        public final class BqDemoAgent {
+          private static final String PROJECT_ID = "your-gcp-project-id";
+          private static final String DATASET_ID = "your-gcp-dataset_id";
+          private static final String TABLE_ID = "your-gcp-table";
+          private static final String GCS_BUCKET_NAME = "your-gcs-bucket-name";
+          private static final String API_KEY = "your-api_key";
+
+          // A simple tool to demonstrate tool execution logging
+          public static String reverseString(String input, ToolContext toolContext) {
+            return new StringBuilder(input).reverse().toString();
+          }
+
+          public static void main(String[] args) throws Exception {
+            // 0. Initialize OpenTelemetry
+            initOpenTelemetry();
+
+            // 1. Configure the BigQuery Logger
+            BigQueryLoggerConfig config =
+                BigQueryLoggerConfig.builder()
+                    .projectId(PROJECT_ID)
+                    .datasetId(DATASET_ID)
+                    .tableName(TABLE_ID)
+                    .gcsBucketName(GCS_BUCKET_NAME)
+                    .createViews(true)
+                    .build();
+
+            // 2. Create the plugin instance
+            Plugin bqLoggingPlugin = new BigQueryAgentAnalyticsPlugin(config);
+
+            // 3. Initialize the model (Gemini)
+            Gemini model =
+                Gemini.builder()
+                    .modelName("gemini-3-flash-preview") // Use appropriate model
+                    .apiKey(API_KEY)
+                    .build();
+
+            // 4. Create the agent with the tool and plugin
+            LlmAgent agent =
+                LlmAgent.builder()
+                    .model(model)
+                    .name("bq_demo_agent")
+                    .instruction(
+                        "You are a helpful assistant. You have a tool 'reverseString' that you can use to"
+                            + " reverse text.")
+                    .tools(FunctionTool.create(BqDemoAgent.class, "reverseString"))
+                    .generateContentConfig(GenerateContentConfig.builder().temperature(0.5f).build())
+                    .build();
+
+            // 5. Initialize the runner
+            InMemoryRunner runner =
+                new InMemoryRunner(agent, "bq_demo_agent", singletonList(bqLoggingPlugin));
+
+            // 6. Create a session
+            Session session =
+                runner.sessionService().createSession(runner.appName(), "demo_user").blockingGet();
+
+            RunConfig runConfig = RunConfig.builder().build();
+
+            System.out.println("Agent ready. Type 'quit' to exit.");
+
+            try (Scanner scanner = new Scanner(System.in, UTF_8)) {
+              while (true) {
+                System.out.print("\nUser: ");
+                String userInput = scanner.nextLine();
+                if (userInput.trim().equalsIgnoreCase("quit")) {
+                  break;
+                }
+
+                Content userMsg = Content.fromParts(Part.fromText(userInput));
+
+                // Run the agent and stream events
+                Flowable<Event> events =
+                    runner.runAsync(session.userId(), session.id(), userMsg, runConfig);
+
+                System.out.print("Agent: ");
+                events.blockingForEach(
+                    event -> {
+                      if (event.finalResponse()) {
+                        System.out.println(event.stringifyContent());
+                      }
+                    });
+              }
+            } finally {
+              System.out.println("Closing runner (flushing remaining logs)...");
+              runner.close().blockingAwait();
+              System.out.println("Done.");
+            }
+          }
+
+          private static void initOpenTelemetry() {
+            PrintingSpanExporter exporter = new PrintingSpanExporter();
+            SdkTracerProvider tracerProvider =
+                SdkTracerProvider.builder().addSpanProcessor(SimpleSpanProcessor.create(exporter)).build();
+            OpenTelemetrySdk.builder().setTracerProvider(tracerProvider).buildAndRegisterGlobal();
+          }
+
+          private static class PrintingSpanExporter implements SpanExporter {
+            @Override
+            public CompletableResultCode export(Collection<SpanData> spans) {
+              for (SpanData span : spans) {
+                System.out.println("--- Span: " + span.getName() + " ---");
+                System.out.println("  TraceId: " + span.getTraceId());
+                System.out.println("  SpanId: " + span.getSpanId());
+                System.out.println("  ParentSpanId: " + span.getParentSpanId());
+                System.out.println("  Attributes: " + span.getAttributes());
+                System.out.println("------------------------");
+              }
+              return CompletableResultCode.ofSuccess();
+            }
+
+            @Override
+            public CompletableResultCode flush() {
+              return CompletableResultCode.ofSuccess();
+            }
+
+            @Override
+            public CompletableResultCode shutdown() {
+              return CompletableResultCode.ofSuccess();
+            }
+          }
+
+          private BqDemoAgent() {}
+        }
+        ```
 
 !!! tip "Deploying to Agent Runtime?"
 
@@ -285,108 +487,174 @@ account) under which the agent is running needs these Google Cloud roles:
 
 ## Configuration options {#configuration-options}
 
-### Constructor parameters
+=== "Python"
 
-The `BigQueryAgentAnalyticsPlugin` constructor accepts these parameters. It also
-accepts `**kwargs`, which are forwarded directly to `BigQueryLoggerConfig` (see
-below).
+    ### Constructor parameters
 
-| Parameter | Type | Default | Use when |
-| --- | --- | --- | --- |
-| `project_id` | `str` | *(required)* | Select the Google Cloud project |
-| `dataset_id` | `str` | *(required)* | Select the BigQuery dataset |
-| `table_id` | `Optional[str]` | `None` | Use a custom table name (overrides config `table_id`) |
-| `config` | `Optional[BigQueryLoggerConfig]` | `None` | Pass a config object for detailed tuning |
-| `location` | `str` | `"US"` | Match the BigQuery dataset location (e.g., `"US"`, `"EU"`, `"us-central1"`) |
-| `credentials` | `Optional[google.auth.credentials.Credentials]` | `None` | Use explicit service-account, impersonated, or cross-project credentials instead of [ADC](https://cloud.google.com/docs/authentication/application-default-credentials) |
+    The `BigQueryAgentAnalyticsPlugin` constructor accepts these parameters. It also
+    accepts `**kwargs`, which are forwarded directly to `BigQueryLoggerConfig` (see
+    below).
 
-```python
-plugin = BigQueryAgentAnalyticsPlugin(
-    project_id="my-project",
-    dataset_id="my_dataset",
-    batch_size=10,           # forwarded to BigQueryLoggerConfig
-    shutdown_timeout=5.0,    # forwarded to BigQueryLoggerConfig
-)
-```
+    | Parameter | Type | Default | Use when |
+    | --- | --- | --- | --- |
+    | `project_id` | `str` | *(required)* | Select the Google Cloud project |
+    | `dataset_id` | `str` | *(required)* | Select the BigQuery dataset |
+    | `table_id` | `Optional[str]` | `None` | Use a custom table name (overrides config `table_id`) |
+    | `config` | `Optional[BigQueryLoggerConfig]` | `None` | Pass a config object for detailed tuning |
+    | `location` | `str` | `"US"` | Match the BigQuery dataset location (e.g., `"US"`, `"EU"`, `"us-central1"`) |
+    | `credentials` | `Optional[google.auth.credentials.Credentials]` | `None` | Use explicit service-account, impersonated, or cross-project credentials instead of [ADC](https://cloud.google.com/docs/authentication/application-default-credentials) |
 
-### BigQueryLoggerConfig options
+    ```python
+    plugin = BigQueryAgentAnalyticsPlugin(
+        project_id="my-project",
+        dataset_id="my_dataset",
+        batch_size=10,           # forwarded to BigQueryLoggerConfig
+        shutdown_timeout=5.0,    # forwarded to BigQueryLoggerConfig
+    )
+    ```
 
-All options below are optional and have sensible defaults. Pass them to
-`BigQueryLoggerConfig` or as `**kwargs` to the plugin constructor.
+    ### BigQueryLoggerConfig options
 
-| Option | Type | Default | Use when |
-| --- | --- | --- | --- |
-| `enabled` | `bool` | `True` | Temporarily disable logging |
-| `table_id` | `str` | `"agent_events"` | Use a custom table name (constructor value takes precedence) |
-| `clustering_fields` | `List[str]` | `["event_type", "agent", "user_id"]` | Customize table clustering on creation |
-| `gcs_bucket_name` | `Optional[str]` | `None` | Offload large text and multimodal content to GCS |
-| `connection_id` | `Optional[str]` | `None` | Use BigQuery ObjectRef / object tables (e.g., `us.my-connection`) |
-| `max_content_length` | `int` | `500 * 1024` | Control inline payload size before offloading/truncating |
-| `batch_size` | `int` | `1` | Tune write throughput vs. latency |
-| `batch_flush_interval` | `float` | `1.0` | Flush partial batches periodically (seconds) |
-| `shutdown_timeout` | `float` | `10.0` | Wait for final flush on shutdown (seconds) |
-| `event_allowlist` | `Optional[List[str]]` | `None` | Log only selected [event types](#event-types) |
-| `event_denylist` | `Optional[List[str]]` | `None` | Skip sensitive or noisy [event types](#event-types) |
-| `content_formatter` | `Optional[Callable]` | `None` | Apply custom masking/formatting per event (receives `(content, event_type)`) |
-| `log_multi_modal_content` | `bool` | `True` | Capture `content_parts` details including GCS references |
-| `queue_max_size` | `int` | `10000` | Bound the in-memory event queue |
-| `retry_config` | `RetryConfig` | `RetryConfig()` | Tune retry behavior (`max_retries=3`, `initial_delay=1.0`, `multiplier=2.0`, `max_delay=10.0`) |
-| `log_session_metadata` | `bool` | `True` | Add session info to `attributes` (`session_id`, `app_name`, `user_id`, `state`). Keys prefixed `temp:` or `secret:` are [redacted](#built-in-redaction). |
-| `custom_tags` | `Dict[str, Any]` | `{}` | Add static tags (e.g., `{"env": "prod"}`) to every event's `attributes` |
-| `auto_schema_upgrade` | `bool` | `True` | Automatically add new columns to existing tables (additive only) |
-| `create_views` | `bool` | `True` | Create per-event-type BigQuery views (1.27.0+) |
-| `view_prefix` | `str` | `"v"` | Avoid view-name collisions when multiple plugins share a dataset (e.g., `"v_staging"`) |
+    All options below are optional and have sensible defaults. Pass them to
+    `BigQueryLoggerConfig` or as `**kwargs` to the plugin constructor.
+
+    | Option | Type | Default | Use when |
+    | --- | --- | --- | --- |
+    | `enabled` | `bool` | `True` | Temporarily disable logging |
+    | `table_id` | `str` | `"agent_events"` | Use a custom table name (constructor value takes precedence) |
+    | `clustering_fields` | `List[str]` | `["event_type", "agent", "user_id"]` | Customize table clustering on creation |
+    | `gcs_bucket_name` | `Optional[str]` | `None` | Offload large text and multimodal content to GCS |
+    | `connection_id` | `Optional[str]` | `None` | Use BigQuery ObjectRef / object tables (e.g., `us.my-connection`) |
+    | `max_content_length` | `int` | `500 * 1024` | Control inline payload size before offloading/truncating |
+    | `batch_size` | `int` | `1` | Tune write throughput vs. latency |
+    | `batch_flush_interval` | `float` | `1.0` | Flush partial batches periodically (seconds) |
+    | `shutdown_timeout` | `float` | `10.0` | Wait for final flush on shutdown (seconds) |
+    | `event_allowlist` | `Optional[List[str]]` | `None` | Log only selected [event types](#event-types) |
+    | `event_denylist` | `Optional[List[str]]` | `None` | Skip sensitive or noisy [event types](#event-types) |
+    | `content_formatter` | `Optional[Callable]` | `None` | Apply custom masking/formatting per event (receives `(content, event_type)`) |
+    | `log_multi_modal_content` | `bool` | `True` | Capture `content_parts` details including GCS references |
+    | `queue_max_size` | `int` | `10000` | Bound the in-memory event queue |
+    | `retry_config` | `RetryConfig` | `RetryConfig()` | Tune retry behavior (`max_retries=3`, `initial_delay=1.0`, `multiplier=2.0`, `max_delay=10.0`) |
+    | `log_session_metadata` | `bool` | `True` | Add session info to `attributes` (`session_id`, `app_name`, `user_id`, `state`). Keys prefixed `temp:` or `secret:` are [redacted](#built-in-redaction). |
+    | `custom_tags` | `Dict[str, Any]` | `{}` | Add static tags (e.g., `{"env": "prod"}`) to every event's `attributes` |
+    | `auto_schema_upgrade` | `bool` | `True` | Automatically add new columns to existing tables (additive only) |
+    | `create_views` | `bool` | `True` | Create per-event-type BigQuery views (1.27.0+) |
+    | `view_prefix` | `str` | `"v"` | Avoid view-name collisions when multiple plugins share a dataset (e.g., `"v_staging"`) |
 
 
-The following code sample shows how to define a configuration for the BigQuery
-Agent Analytics plugin:
+    The following code sample shows how to define a configuration for the BigQuery
+    Agent Analytics plugin:
 
-```python
-import json
-import re
+    ```python
+    import json
+    import re
 
-from google.adk.plugins.bigquery_agent_analytics_plugin import BigQueryLoggerConfig
+    from google.adk.plugins.bigquery_agent_analytics_plugin import BigQueryLoggerConfig
 
-def redact_dollar_amounts(event_content: Any, event_type: str) -> str:
-    """
-    Custom formatter to redact dollar amounts (e.g., $600, $12.50)
-    and ensure JSON output if the input is a dict.
+    def redact_dollar_amounts(event_content: Any, event_type: str) -> str:
+        """
+        Custom formatter to redact dollar amounts (e.g., $600, $12.50)
+        and ensure JSON output if the input is a dict.
 
-    Args:
-        event_content: The raw content of the event.
-        event_type: The event type string (e.g., "LLM_REQUEST", "LLM_RESPONSE").
-    """
-    text_content = ""
-    if isinstance(event_content, dict):
-        text_content = json.dumps(event_content)
-    else:
-        text_content = str(event_content)
+        Args:
+            event_content: The raw content of the event.
+            event_type: The event type string (e.g., "LLM_REQUEST", "LLM_RESPONSE").
+        """
+        text_content = ""
+        if isinstance(event_content, dict):
+            text_content = json.dumps(event_content)
+        else:
+            text_content = str(event_content)
 
-    # Regex to find dollar amounts: $ followed by digits, optionally with commas or decimals.
-    # Examples: $600, $1,200.50, $0.99
-    redacted_content = re.sub(r'\$\d+(?:,\d{3})*(?:\.\d+)?', 'xxx', text_content)
+        # Regex to find dollar amounts: $ followed by digits, optionally with commas or decimals.
+        # Examples: $600, $1,200.50, $0.99
+        redacted_content = re.sub(r'\$\d+(?:,\d{3})*(?:\.\d+)?', 'xxx', text_content)
 
-    return redacted_content
+        return redacted_content
 
-config = BigQueryLoggerConfig(
-    enabled=True,
-    event_allowlist=["LLM_REQUEST", "LLM_RESPONSE"], # Only log these events
-    # event_denylist=["TOOL_STARTING"], # Skip these events
-    shutdown_timeout=10.0, # Wait up to 10s for logs to flush on exit
-    max_content_length=500, # Truncate content to 500 chars
-    content_formatter=redact_dollar_amounts, # Redact the dollar amounts in the logging content
-    queue_max_size=10000, # Max events to hold in memory
-    auto_schema_upgrade=True, # Automatically add new columns to existing tables
-    create_views=True, # Automatically create per-event-type views
-    # retry_config=RetryConfig(max_retries=3), # Optional: Configure retries
-)
+    config = BigQueryLoggerConfig(
+        enabled=True,
+        event_allowlist=["LLM_REQUEST", "LLM_RESPONSE"], # Only log these events
+        # event_denylist=["TOOL_STARTING"], # Skip these events
+        shutdown_timeout=10.0, # Wait up to 10s for logs to flush on exit
+        max_content_length=500, # Truncate content to 500 chars
+        content_formatter=redact_dollar_amounts, # Redact the dollar amounts in the logging content
+        queue_max_size=10000, # Max events to hold in memory
+        auto_schema_upgrade=True, # Automatically add new columns to existing tables
+        create_views=True, # Automatically create per-event-type views
+        # retry_config=RetryConfig(max_retries=3), # Optional: Configure retries
+    )
 
-plugin = BigQueryAgentAnalyticsPlugin(
-    project_id="my-project",
-    dataset_id="my_dataset",
-    config=config,
-)
-```
+    plugin = BigQueryAgentAnalyticsPlugin(
+        project_id="my-project",
+        dataset_id="my_dataset",
+        config=config,
+    )
+    ```
+
+=== "Java"
+
+    In Java, all configuration is managed via the `BigQueryLoggerConfig` builder.
+
+    #### BigQueryLoggerConfig Builder options
+
+    | Builder Method | Type | Default | Description |
+    | --- | --- | --- | --- |
+    | `enabled(boolean)` | `boolean` | `true` | Temporarily disable logging |
+    | `projectId(String)` | `String` | *(required)* | Select the Google Cloud project |
+    | `datasetId(String)` | `String` | `"agent_analytics"` | Select the BigQuery dataset |
+    | `tableName(String)` | `String` | `"events"` | Use a custom table name (Note: defaults to `"events"`, unlike Python's `"agent_events"`) |
+    | `location(String)` | `String` | `"us"` | Match the BigQuery dataset location |
+    | `clusteringFields(List<String>)` | `List<String>` | `["event_type", "agent", "user_id"]` | Customize table clustering on creation |
+    | `gcsBucketName(String)` | `String` | `""` | Offload large text and multimodal content to GCS |
+    | `connectionId(String)` | `String` | `null` | Use BigQuery ObjectRef / object tables |
+    | `maxContentLength(int)` | `int` | `500 * 1024` | Control inline payload size before offloading/truncating |
+    | `batchSize(int)` | `int` | `1` | Tune write throughput vs. latency |
+    | `batchFlushInterval(Duration)` | `Duration` | `Duration.ofSeconds(1)` | Flush partial batches periodically |
+    | `shutdownTimeout(Duration)` | `Duration` | `Duration.ofSeconds(10)` | Wait for final flush on shutdown |
+    | `eventAllowlist(List<String>)` | `List<String>` | `[]` | Log only selected event types |
+    | `eventDenylist(List<String>)` | `List<String>` | `[]` | Skip sensitive or noisy event types |
+    | `contentFormatter(BiFunction)` | `BiFunction<Object, String, Object>` | `null` | Apply custom masking/formatting per event |
+    | `logMultiModalContent(boolean)` | `boolean` | `true` | Capture `content_parts` details including GCS references |
+    | `queueMaxSize(int)` | `int` | `10000` | Bound the in-memory event queue |
+    | `retryConfig(RetryConfig)` | `RetryConfig` | `RetryConfig.builder().build()` | Tune retry behavior |
+    | `logSessionMetadata(boolean)` | `boolean` | `true` | Add session info to `attributes` |
+    | `customTags(Map<String, Object>)` | `Map<String, Object>` | `{}` | Add static tags to every event's `attributes` |
+    | `autoSchemaUpgrade(boolean)` | `boolean` | `true` | Automatically add new columns to existing tables |
+    | `createViews(boolean)` | `boolean` | `false` | Create per-event-type BigQuery views (Note: defaults to `false`, unlike Python's `true`) |
+    | `viewPrefix(String)` | `String` | `"v"` | Avoid view-name collisions |
+    | `credentials(Credentials)` | `Credentials` | `null` | Use explicit service-account credentials |
+
+    The following code sample shows how to define a configuration for the BigQuery
+    Agent Analytics plugin in Java:
+
+    ```java
+    import com.google.adk.plugins.agentanalytics.BigQueryAgentAnalyticsPlugin;
+    import com.google.adk.plugins.agentanalytics.BigQueryLoggerConfig;
+    import java.time.Duration;
+    import java.util.function.BiFunction;
+
+    // Custom formatter to redact dollar amounts
+    BiFunction<Object, String, Object> redactDollarAmounts = (content, eventType) -> {
+      String textContent = content.toString();
+      return textContent.replaceAll("\\$\\d+(?:,\\d{3})*(?:\\.\\d+)?", "xxx");
+    };
+
+    BigQueryLoggerConfig config = BigQueryLoggerConfig.builder()
+        .enabled(true)
+        .projectId("my-project")
+        .datasetId("my_dataset")
+        .tableName("agent_events")
+        .batchSize(1)
+        .batchFlushInterval(Duration.ofMillis(500))
+        .contentFormatter(redactDollarAmounts)
+        .autoSchemaUpgrade(true)
+        .createViews(true)
+        .build();
+
+    BigQueryAgentAnalyticsPlugin plugin = new BigQueryAgentAnalyticsPlugin(config);
+    ```
+
 
 ## Schema and production setup
 
@@ -1089,6 +1357,42 @@ Hub](https://console.cloud.google.com/bigquery/agents_hub) connected to your
 - "What are the most common tool calls?"
 - "Identify sessions with high token usage"
 
+## The context graph {#context-graph}
+
+Beyond row-level `agent_events`, the [BigQuery Agent Analytics
+SDK](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-SDK) can
+materialize a **context graph**: a queryable BigQuery [property
+graph](https://cloud.google.com/bigquery/docs/graph-overview) of your
+agent's decisions — the requests it handled, the options it weighed, and the
+outcomes it chose. It lets you trace *why* a decision happened with Graph Query
+Language (GQL), not just *that* an event was logged.
+
+![Context graph flow: an ADK agent's events flow through the BigQuery Agent Analytics plugin into the agent_events table; the SDK's bqaa context-graph command materializes a structured decision graph that auditors, operators, and executives consume through GQL in BigQuery Studio and Conversational Analytics — with no external graph database.](/integrations/assets/bigquery-agent-analytics-context-graph-flow.png)
+
+The graph is defined by two declarative artifacts — your table DDL and a `CREATE
+PROPERTY GRAPH` schema — and the SDK's `bqaa context-graph --property-graph`
+command derives the extraction (which entities and relationships to pull, and
+their column types) from them plus your live table schemas. No separate ontology
+or binding file is required for the common case; reach for an explicit
+`ontology.yaml` / `binding.yaml` only when you need descriptions to steer the AI
+prompt, entity inheritance, derived properties, or column renames.
+
+Run it once locally, or on a schedule as a Cloud Run Job triggered by Cloud
+Scheduler — with split read-only-events / writable-graph datasets,
+least-privilege service accounts, structured JSON logs, and Cloud Monitoring
+alerts. The operational reference (prerequisites, the IAM matrix, recommended
+schedules, the JSON log shape, monitoring, and teardown) lives in the SDK repo:
+
+- [Periodic materialization
+  codelab](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-SDK/blob/main/docs/codelabs/periodic_materialization.md)
+  — build and query a decision graph end to end.
+- [Scheduled deploy
+  runbook](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-SDK/blob/main/docs/guides/scheduled-context-graph-deploy.md)
+  — take that graph to a hands-off scheduled deploy.
+- [Deploy reference (Cloud Run + Cloud
+  Scheduler)](https://github.com/GoogleCloudPlatform/BigQuery-Agent-Analytics-SDK/blob/main/examples/context_graph/periodic_materialization/README.md)
+  — the full IAM matrix, schedules, monitoring, and the Terraform module.
+
 ## Deploy to Agent Runtime with the plugin {#deploy-agent-runtime}
 
 You can deploy an agent with the BigQuery Agent Analytics plugin to [Agent
@@ -1387,49 +1691,94 @@ by credential services) is never persisted in BigQuery.
 Provide a custom `content_formatter` function in `BigQueryLoggerConfig` to strip
 or mask sensitive fields before they are written:
 
-```python
-import json
-import re
-from typing import Any
 
-SENSITIVE_KEYS = {"client_secret", "access_token", "refresh_token", "api_key", "secret"}
 
-def redact_credentials(event_content: Any, event_type: str) -> str:
-    """Redact OAuth secrets and tokens from logged content."""
-    if isinstance(event_content, dict):
-        text = json.dumps(event_content)
-    else:
-        text = str(event_content)
+    ```python
+    import json
+    import re
+    from typing import Any
 
-    for key in SENSITIVE_KEYS:
-        # Redact values in JSON-like strings: "client_secret": "GOCSPX-xxx"
-        text = re.sub(
-            rf'("{key}"\s*:\s*)"[^"]*"',
-            rf'\1"[REDACTED]"',
-            text,
-            flags=re.IGNORECASE,
-        )
-    return text
+    SENSITIVE_KEYS = {"client_secret", "access_token", "refresh_token", "api_key", "secret"}
 
-config = BigQueryLoggerConfig(
-    content_formatter=redact_credentials,
-    # ... other options
-)
-```
+    def redact_credentials(event_content: Any, event_type: str) -> str:
+        """Redact OAuth secrets and tokens from logged content."""
+        if isinstance(event_content, dict):
+            text = json.dumps(event_content)
+        else:
+            text = str(event_content)
+
+        for key in SENSITIVE_KEYS:
+            # Redact values in JSON-like strings: "client_secret": "GOCSPX-xxx"
+            text = re.sub(
+                rf'("{key}"\s*:\s*)"[^"]*"',
+                rf'\1"[REDACTED]"',
+                text,
+                flags=re.IGNORECASE,
+            )
+        return text
+
+    config = BigQueryLoggerConfig(
+        content_formatter=redact_credentials,
+        # ... other options
+    )
+    ```
+
+=== "Java"
+
+    ```java
+    import com.google.adk.plugins.agentanalytics.BigQueryLoggerConfig;
+    import java.util.function.BiFunction;
+    import java.util.Set;
+
+    Set<String> SENSITIVE_KEYS = Set.of("client_secret", "access_token", "refresh_token", "api_key", "secret");
+
+    BiFunction<Object, String, Object> redactCredentials = (content, eventType) -> {
+      String text = content.toString();
+      for (String key : SENSITIVE_KEYS) {
+        // Redact values in JSON-like strings: "client_secret": "GOCSPX-xxx"
+        text = text.replaceAll(
+            "(?i)(\"" + key + "\"\\s*:\\s*)\"[^\"]*\"",
+            "$1\"[REDACTED]\""
+        );
+      }
+      return text;
+    };
+
+    BigQueryLoggerConfig config = BigQueryLoggerConfig.builder()
+        .contentFormatter(redactCredentials)
+        // ... other options
+        .build();
+    ```
 
 ### Use `event_denylist` to skip credential events
 
 If you do not need to log authentication-related events, exclude them entirely:
 
-```python
-config = BigQueryLoggerConfig(
-    event_denylist=[
-        "HITL_CREDENTIAL_REQUEST",
-        "HITL_CREDENTIAL_REQUEST_COMPLETED",
-    ],
-    # ... other options
-)
-```
+=== "Python"
+
+    ```python
+    config = BigQueryLoggerConfig(
+        event_denylist=[
+            "HITL_CREDENTIAL_REQUEST",
+            "HITL_CREDENTIAL_REQUEST_COMPLETED",
+        ],
+        # ... other options
+    )
+    ```
+
+=== "Java"
+
+    ```java
+    import com.google.common.collect.ImmutableList;
+
+    BigQueryLoggerConfig config = BigQueryLoggerConfig.builder()
+        .eventDenylist(ImmutableList.of(
+            "HITL_CREDENTIAL_REQUEST",
+            "HITL_CREDENTIAL_REQUEST_COMPLETED"
+        ))
+        // ... other options
+        .build();
+    ```
 
 ### General best practices
 
@@ -1485,7 +1834,7 @@ call) reconstructs cleanly from BigQuery.
 
 ### Public methods
 
-The plugin exposes several public methods for lifecycle management:
+=== "Python"
 
 - **`await plugin.flush()`**: Flush all pending events to BigQuery. Call this
   before shutdown to avoid data loss.
@@ -1501,13 +1850,36 @@ The plugin exposes several public methods for lifecycle management:
 - **Async context manager**: The plugin supports `async with` for automatic
   startup and shutdown:
 
-    ```python
-    async with BigQueryAgentAnalyticsPlugin(
-        project_id=PROJECT_ID, dataset_id=DATASET_ID
-    ) as plugin:
-        # plugin is initialized and ready to use
-        ...
-    # plugin.shutdown() is called automatically on exit
+    - **`await plugin.flush()`**: Flush all pending events to BigQuery. Call this
+      before shutdown to avoid data loss.
+    - **`await plugin.shutdown(timeout=None)`**: Gracefully shut down the plugin,
+      flushing pending events and releasing resources. The optional `timeout`
+      parameter overrides `shutdown_timeout` from the config.
+    - **`await plugin.create_analytics_views()`**: Manually (re-)create all
+      per-event-type analytics views. Useful after a schema upgrade or when views
+      need to be refreshed.
+    - **Async context manager**: The plugin supports `async with` for automatic
+      startup and shutdown:
+
+        ```python
+        async with BigQueryAgentAnalyticsPlugin(
+            project_id=PROJECT_ID, dataset_id=DATASET_ID
+        ) as plugin:
+            # plugin is initialized and ready to use
+            ...
+        # plugin.shutdown() is called automatically on exit
+        ```
+
+=== "Java"
+
+    In Java, the plugin lifecycle is managed via the `close()` method (inherited from `Plugin`), which returns an RxJava `Completable`.
+
+    - **`plugin.close()`**: Gracefully shuts down the plugin, flushing pending events and releasing resources (including the BigQuery write client and executors).
+    - **Automatic Closure**: If you are using `InMemoryRunner`, calling `runner.close()` will automatically close all registered plugins, including the BigQuery Agent Analytics plugin.
+
+    ```java
+    // Manual shutdown
+    plugin.close().blockingAwait();
     ```
 
 ### Dropped-event observability {#dropped-event-observability}
