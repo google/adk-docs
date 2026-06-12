@@ -26,7 +26,7 @@ If you configure both compaction strategies, the system prioritizes token-based 
 
 ## Token-based compaction
 
-Token-based compaction triggers context management based on the volume of tokens or data, rather than the number of events or turns
+Token-based compaction triggers context management based on the volume of tokens or data, rather than the number of events or turns.
 
 ### Configuration settings
 
@@ -37,30 +37,24 @@ Add token-based compaction to your agent workflow by adding an `EventsCompaction
 
 To implement this in your project, use the following configuration:
 
-
 ```python
 # 1. Correct the import path to use the google.adk namespace
 from google.adk.apps.app import App, EventsCompactionConfig
-from google.adk.agents import Agent # Or import your specific agent class
+from google.adk.agents import Agent
 
-# Initialize your root agent (required for App setup)
+# 2. Initialize your root agent (required for App setup)
 root_agent = Agent(
     name="my_root_agent",
     description="Main coordinating agent for the workflow."
 )
 
-# Configure the application workflow with a valid compaction setup
+# 3. Token-based configuration: Activates the priority/pre-call layer
 compaction_config = EventsCompactionConfig(
-    # REQUIRED SLIDING WINDOW PARAMETERS (No defaults)
-    compaction_interval=10,   # Number of turns between standard compactions
-    overlap_size=2,           # Number of events to retain as overlapping context
-    
-    # TOKEN-BASED PARAMETERS (Activates the priority/pre-call layer)
     token_threshold=4000,     # Triggers compaction when actual token count exceeds this
     event_retention_size=5    # Number of recent raw events to keep intact when token limit is hit
 )
 
-# 2. Register with required name and root_agent fields
+# 4. Register with required name and root_agent fields, and the config object
 app = App(
     name="my_compacting_agent_app",
     root_agent=root_agent,
@@ -75,6 +69,13 @@ and summarizing agent workflow event data within a
 [Session](/sessions/session/). When you configure this feature in your
 agent, it summarizes data from older events once it reaches a threshold of a
 specific number of workflow events, or invocations, with the current Session.
+
+```python
+# (Optional) Event-based, sliding window as supplementary setting
+compaction_config = EventsCompactionConfig(
+    compaction_interval=10,   # Number of turns between standard compactions
+    overlap_size=2,           # Number of events to retain as overlapping context
+```
 
 ## Configure context compaction
 
