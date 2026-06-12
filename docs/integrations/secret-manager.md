@@ -21,13 +21,14 @@ The [Secret Manager](https://docs.cloud.google.com/secret-manager/docs/overview)
 
 ## Prerequisites
 
-- **Required Software Versions**: `adk-python` version 1.29 and later
+- **Required Software Versions**: ADK Python version v1.29.0 or higher
 - **Required Accounts / APIs**: A [Google Cloud Project](https://docs.cloud.google.com/resource-manager/docs/creating-managing-projects) with the [**Secret Manager API**](https://docs.cloud.google.com/secret-manager/docs/configuring-secret-manager) and **Agent Development Kit API** enabled.
 
 Complete the following setup steps:
-1. [Set up an agent with ADK](/get-started/).
-1. [Create a secret](https://docs.cloud.google.com/secret-manager/docs/creating-and-accessing-secrets) (such as an API key) in Secret Manager.
-1. Grant the [`Secret Manager Secret Accessor`](https://docs.cloud.google.com/iam/docs/roles-permissions/secretmanager#secretmanager.secretAccessor) IAM role to your agent identity.
+
+1.  [Set up an agent with ADK](/get-started/).
+1.  [Create a secret](https://docs.cloud.google.com/secret-manager/docs/creating-and-accessing-secrets) (such as an API key) in Secret Manager.
+1.  Grant the [`Secret Manager Secret Accessor`](https://docs.cloud.google.com/iam/docs/roles-permissions/secretmanager#secretmanager.secretAccessor) IAM role to your agent identity.
 
 ## Installation
 
