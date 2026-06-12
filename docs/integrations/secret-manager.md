@@ -7,7 +7,9 @@ catalog_tags: ["google"]
 
 # Secret Manager for ADK
 
-Supported in ADK Python client version v1.29.0 or later.
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.29.0</span>
+</div>
 
 The [Secret Manager](https://docs.cloud.google.com/secret-manager/docs/overview) integration provides a standard interface for ADK agents to retrieve sensitive credentials (such as API keys, database passwords, and private keys) at runtime. This approach ensures that sensitive information isn't hardcoded in the source code or exposed in the LLM's context window, conversation history, or observability logs.
 
@@ -23,34 +25,18 @@ The [Secret Manager](https://docs.cloud.google.com/secret-manager/docs/overview)
 - **Required Accounts / APIs**: A [Google Cloud Project](https://docs.cloud.google.com/resource-manager/docs/creating-managing-projects) with the [**Secret Manager API**](https://docs.cloud.google.com/secret-manager/docs/configuring-secret-manager) and **Agent Development Kit API** enabled.
 
 Complete the following setup steps:
-1. [Set up an agent with ADK](https://adk.dev/get-started/).
+1. [Set up an agent with ADK](/get-started/).
 1. [Create a secret](https://docs.cloud.google.com/secret-manager/docs/creating-and-accessing-secrets) (such as an API key) in Secret Manager.
 1. Grant the [`Secret Manager Secret Accessor`](https://docs.cloud.google.com/iam/docs/roles-permissions/secretmanager#secretmanager.secretAccessor) IAM role to your agent identity.
 
 ## Installation
+
 ```bash
 pip install "google-adk[extensions]"
 ```
 
 ## Use with agent
 
-<!--
-# Copyright 2026 Google LLC
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-"""
-ADK agent for accessing secrets from global Secret Manager.
-"""
--->
 ```python
   import os
 
@@ -91,10 +77,6 @@ ADK agent for accessing secrets from global Secret Manager.
   print("Agent initialized successfully.")
  ```
 
-
 ## Resources
-- Refer to the
-  [Secret Manager documentation](https://docs.cloud.google.com/secret-manager/docs/overview).
-- View the [ADK GitHub
-  repository](https://github.com/google/adk-python).
-
+- [Secret Manager documentation](https://docs.cloud.google.com/secret-manager/docs/overview).
+- [ADK GitHub repository](https://github.com/google/adk-python).
