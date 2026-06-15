@@ -21,7 +21,7 @@ from google.genai import types # For creating message Content/Parts
 
 
 # Use one of the model constants defined earlier
-MODEL_GEMINI_2_5_FLASH = "gemini-2.5-flash"
+MODEL_GEMINI_FLASH = "gemini-flash-latest"
 
 
 # @title Define the get_weather Tool
@@ -60,7 +60,7 @@ def get_weather(city: str) -> dict:
 
 root_agent = Agent(
     name="weather_agent_v1",
-    model=MODEL_GEMINI_2_5_FLASH, # Can be a string for Gemini or a LiteLlm object
+    model=MODEL_GEMINI_FLASH, # Can be a string for Gemini or a LiteLlm object
     description="Provides weather information for specific cities.",
     instruction="You are a helpful weather assistant. "
                 "When the user asks for the weather in a specific city, "
