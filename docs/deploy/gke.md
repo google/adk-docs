@@ -399,6 +399,23 @@ Before you begin, ensure you have the following set up:
 
    * **Logs Writer**  (`roles/logging.logWriter`): To allow Cloud Build to write build logs to Cloud Logging.
 
+### Configure Workload Identity for Agent Platform
+
+If your agent uses Agent Platform, the workload running in your cluster needs permission to call the Agent Platform API. Unlike the manual path, `adk deploy gke` generates a manifest that uses the `default` Kubernetes service account in the `default` namespace. Grant the `Agent Platform User` role to that service account through Workload Identity so the agent can access models such as Gemini.
+
+!!! tip "Skip if using AI Studio"
+
+    If you are using AI Studio and accessing the model with an API key you can skip this step.
+
+```bash
+gcloud projects add-iam-policy-binding projects/${GOOGLE_CLOUD_PROJECT} \
+    --role=roles/aiplatform.user \
+    --member=principal://iam.googleapis.com/projects/${GOOGLE_CLOUD_PROJECT_NUMBER}/locations/global/workloadIdentityPools/${GOOGLE_CLOUD_PROJECT}.svc.id.goog/subject/ns/default/sa/default \
+    --condition=None
+```
+
+If you are using a Google Cloud project and skip this step, the agent's pods start successfully, but requests to the model fail with a `403 PERMISSION_DENIED` error when verifying your deployment.
+
 ### The `deploy gke` Command
 
 The command takes the path to your agent and parameters specifying the target GKE cluster.
@@ -561,7 +578,7 @@ These are some common issues you might encounter when deploying your agent to GK
 
 ### 403 Permission Denied for `Gemini 2.0 Flash`
 
-This usually means that the Kubernetes service account does not have the necessary permission to access the Agent Platform API. Ensure that you have created the service account and bound it to the `Agent Platform User` role as described in the [Configure Kubernetes Service Account for Agent Platform](#configure-kubernetes-service-account-for-agent-platform) section. If you are using AI Studio, ensure that you have set the `GOOGLE_API_KEY` environment variable in the deployment manifest and it is valid.
+This usually means that the Kubernetes service account does not have the necessary permission to access the Agent Platform API. Ensure that you have created the service account and bound it to the `Agent Platform User` role as described in the [Configure Kubernetes Service Account for Agent Platform](#configure-kubernetes-service-account-for-agent-platform) section. If you deployed with `adk deploy gke`, bind the `default` service account instead, as described in the [Configure Workload Identity for Agent Platform](#configure-workload-identity-for-agent-platform) section. If you are using AI Studio, ensure that you have set the `GOOGLE_API_KEY` environment variable in the deployment manifest and it is valid.
 
 ### 404 or Not Found response
 
