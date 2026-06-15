@@ -108,9 +108,21 @@ The central piece holding all this information together for a single, complete u
     }
     ```
 
-## The Different types of Context
+## Types of context
 
-While `InvocationContext` acts as the comprehensive internal container, ADK provides specialized context objects tailored to specific situations. This ensures you have the right tools and permissions for the task at hand without needing to handle the full complexity of the internal context everywhere. Here are the different "flavors" you'll encounter:
+ADK uses the `Context` class as the central mechanism to manage an agent's environment, state, and resources. While `Context` serves as the foundational base for all agent interactions, it manifests in specialized "flavors" designed to provide the right balance of capabilities and permissions depending on where they are used in the agent's execution flow.
+If you use these specific context types, ADK ensures that your agent has access to necessary information, such as memory, session state, or credentials, exactly when and where you need them.
+Here are the primary context flavors you will encounter:
+
+- **`InvocationContext`**: Used during core agent runs (`_run_async_impl`, `_run_live_impl`) to provide a comprehensive view of the entire invocation, including service references and lifecycle management.
+  
+- **`ReadonlyContext`**: A lightweight, restricted view of fundamental contextual details used in scenarios where mutation is disallowed, such as within instruction providers.
+  
+- **`Context`**: Used in agent lifecycle and model callbacks. It provides a robust set of features for reading/writing session state, managing artifacts, and injecting data into the memory service.
+  
+- **`ToolContext`**: Tailored for tool execution and tool-related callbacks. In addition to the capabilities of Context, it includes specialized methods for authentication flows, memory searching, and artifact discovery.
+
+!!! Note on compatibility: The `CallbackContext` class is maintained as an alias for `Context` to ensure backward compatibility. While you may encounter `CallbackContext` in existing codebases, **we recommend using the `Context` class** for all new development to take advantage of the full, unified feature set.
 
 1.  **`InvocationContext`**
     *   **Where Used:** Received as the `ctx` argument directly within an agent's core implementation methods (`_run_async_impl`, `_run_live_impl`).
@@ -434,15 +446,15 @@ While `InvocationContext` acts as the comprehensive internal container, ADK prov
 Understanding these different context objects and when to use them is key to effectively managing state, accessing services, and controlling the flow of your ADK application. The next section will detail common tasks you can perform using these contexts.
 
 
-## Common Tasks Using Context
+## Common tasks using context
 
 Now that you understand the different context objects, let's focus on how to use them for common tasks when building your agents and tools.
 
-### Accessing Information
+### Access information
 
 You'll frequently need to read information stored within the context.
 
-*   **Reading Session State:** Access data saved in previous steps or user/app-level settings. Use dictionary-like access on the `state` property.
+*   **Read session state:** Access data saved in previous steps or user/app-level settings. Use dictionary-like access on the `state` property.
 
     === "Python"
 
@@ -544,7 +556,7 @@ You'll frequently need to read information stored within the context.
         }
         ```
 
-*   **Getting Current Identifiers:** Useful for logging or custom logic based on the current operation.
+*   **Get current identifiers:** Useful for logging or custom logic based on the current operation.
 
     === "Python"
 
@@ -597,7 +609,7 @@ You'll frequently need to read information stored within the context.
         }
         ```
 
-*   **Accessing the Initial User Input:** Refer back to the message that started the current invocation.
+*   **Access the initial user input:** Refer back to the message that started the current invocation.
 
     === "Python"
 
@@ -665,13 +677,13 @@ You'll frequently need to read information stored within the context.
         }
         ```
 
-### Managing State
+### Manage state
 
 State is crucial for memory and data flow. When you modify state using `CallbackContext` or `ToolContext`, the changes are automatically tracked and persisted by the framework.
 
 *   **How it Works:** Writing to `callback_context.state['my_key'] = my_value` or `tool_context.state['my_key'] = my_value` adds this change to the `EventActions.state_delta` associated with the current step's event. The `SessionService` then applies these deltas when persisting the event.
 
-*  **Passing Data Between Tools**
+*  **Pass data between tools**
 
     === "Python"
 
@@ -761,7 +773,7 @@ State is crucial for memory and data flow. When you modify state using `Callback
         }
         ```
 
-*   **Updating User Preferences:**
+*   **Update user preferences:**
 
     === "Python"
 
@@ -815,13 +827,13 @@ State is crucial for memory and data flow. When you modify state using `Callback
         }
         ```
 
-*   **State Prefixes:** While basic state is session-specific, prefixes like `app:` and `user:` can be used with persistent `SessionService` implementations (like `DatabaseSessionService` or `VertexAiSessionService`) to indicate broader scope (app-wide or user-wide across sessions). `temp:` can denote data only relevant within the current invocation.
+*   **State prefixes:** While basic state is session-specific, prefixes like `app:` and `user:` can be used with persistent `SessionService` implementations (like `DatabaseSessionService` or `VertexAiSessionService`) to indicate broader scope (app-wide or user-wide across sessions). `temp:` can denote data only relevant within the current invocation.
 
-### Working with Artifacts
+### Work with artifacts
 
 Use artifacts to handle files or large data blobs associated with the session. Common use case: processing uploaded documents.
 
-*   **Document Summarizer Example Flow:**
+*   **Document summarizer example flow:**
 
     1.  **Ingest Reference (e.g., in a Setup Tool or Callback):** Save the *path or URI* of the document, not the entire content, as an artifact.
 
@@ -1082,7 +1094,7 @@ Use artifacts to handle files or large data blobs associated with the session. C
             }
             ```
 
-*   **Listing Artifacts:** Discover what files are available.
+*   **List Artifacts:** Discover what files are available.
 
     === "Python"
 
@@ -1144,7 +1156,7 @@ Use artifacts to handle files or large data blobs associated with the session. C
         }
         ```
 
-### Handling Tool Authentication
+### Handle tool authentication
 
 <div class="language-support-tag">
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-java">Java v0.2.0</span>
