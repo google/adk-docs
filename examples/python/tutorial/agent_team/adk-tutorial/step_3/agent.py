@@ -21,7 +21,7 @@ from google.genai import types # For creating message Content/Parts
 from typing import Optional
 
 # Use one of the model constants defined earlier
-MODEL_GEMINI_2_5_FLASH = "gemini-2.5-flash"
+MODEL_GEMINI_FLASH = "gemini-flash-latest"
 
 
 # @title Define the get_weather Tool
@@ -83,7 +83,7 @@ greeting_agent = None
 try:
     greeting_agent = Agent(
         # Using a potentially different/cheaper model for a simple task
-        model = MODEL_GEMINI_2_5_FLASH,
+        model = MODEL_GEMINI_FLASH,
         # model=LiteLlm(model=MODEL_GPT_4O), # If you would like to experiment with other models
         name="greeting_agent",
         instruction="You are the Greeting Agent. Your ONLY task is to provide a friendly greeting to the user. "
@@ -102,7 +102,7 @@ farewell_agent = None
 try:
     farewell_agent = Agent(
         # Can use the same or a different model
-        model = MODEL_GEMINI_2_5_FLASH,
+        model = MODEL_GEMINI_FLASH,
         # model=LiteLlm(model=MODEL_GPT_4O), # If you would like to experiment with other models
         name="farewell_agent",
         instruction="You are the Farewell Agent. Your ONLY task is to provide a polite goodbye message. "
@@ -119,7 +119,7 @@ except Exception as e:
 
 root_agent = Agent(
     name="weather_agent_v2", # Give it a new version name
-    model=MODEL_GEMINI_2_5_FLASH,
+    model=MODEL_GEMINI_FLASH,
     description="The main coordinator agent. Handles weather requests and delegates greetings/farewells to specialists.",
     instruction="You are the main Weather Agent coordinating a team. Your primary responsibility is to provide weather information. "
                 "Use the 'get_weather' tool ONLY for specific weather requests (e.g., 'weather in London'). "
