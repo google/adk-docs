@@ -158,17 +158,22 @@ root_agent = Workflow(
 
 You can create graphs that split execution across multiple, parallel nodes, and
 typically you need to assemble the output of each node for further processing.
-You accomplish this by using a ***JoinNode*** object, which waits for each
-parallel task to complete and then passes the collection of outputs from these
-nodes to the next node.
+This task execution pattern has two stages. The workflow first fans out when it 
+starts multiple parallel tasks, and then it re-joins those paths when those 
+those tasks are completed before proceeding to the next step.
+
+You accomplish the join step by using a ***JoinNode*** object, which waits for
+each parallel task to complete and then passes the collection of outputs from
+these nodes to the next node.
 
 ![Tasks connecting to a JoinNode](/assets/graph-joinnode.svg)
 
 **Figure 2.** The output of parallel task nodes can be assembled using a
 JoinNode object.
 
-The following code snippet shows how to implement a basic ***JoinNode*** object
-and use it to assemble output of all the nodes:
+The following code snippet shows how to start three parallel tasks from
+***START*** and use a basic ***JoinNode*** object to join their outputs before
+running the final task:
 
 ```python
 ​​from google.adk.workflow import JoinNode
