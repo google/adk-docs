@@ -30,12 +30,14 @@ TRANSFER_AGENT, TRANSFER_A2A), and **HITL Event Tracing** for human-in-the-loop
 interactions. Version 1.27.0 adds **Automatic View Creation** (generate flat,
 query-friendly event views).
 
-**ADK Python 2.0** extends tracing to multi-agent workflows and long-running
-tools. It adds four new event types — `AGENT_TRANSFER`,
-`AGENT_STATE_CHECKPOINT`, `EVENT_COMPACTION`, and `TOOL_PAUSED` — and stamps an
-`attributes.adk` envelope on every row so you can reconstruct the agent
-execution graph and join a paused tool to the row that resumes it. See [Agent
-workflow and pause/resume events (ADK 2.0)](#adk-2-events).
+Support for **ADK 2.0** multi-agent workflows extends tracing to agent
+transfers, state checkpoints, event compaction, and long-running tools. It adds
+four new event types — `AGENT_TRANSFER`, `AGENT_STATE_CHECKPOINT`,
+`EVENT_COMPACTION`, and `TOOL_PAUSED` — and stamps an `attributes.adk` envelope
+on every row so you can reconstruct the agent execution graph and join a paused
+tool to the row that resumes it. See [Agent workflow and pause/resume events
+(ADK 2.0)](#adk-2-events) for the event details and the release that includes
+this support.
 
 The plugin includes three reliability and observability fixes:
 
@@ -1094,9 +1096,13 @@ Logged when an A2A remote agent call completes.
 
 !!! important "Version Requirement"
 
-    The event types in this section require **ADK Python 2.0 or higher**. On
-    earlier versions the plugin does not emit them, and the `attributes.adk`
-    envelope is absent.
+    The event types in this section require a build of the plugin that includes
+    the ADK 2.0 workflow event support. As of this writing that support is
+    present on `google/adk-python` `main` but is **not yet in a published
+    release** (it is not in `v2.2.0`, the latest release). On a build without it
+    the plugin does not emit these events and the `attributes.adk` envelope is
+    absent. This note will name the first release that includes the support once
+    it is tagged.
 
 ADK 2.0 introduced multi-agent workflows (agents that transfer control,
 checkpoint their state, and compact long histories) and long-running tools that
@@ -1116,7 +1122,7 @@ row they are simply absent (and resolve to SQL `NULL` when queried).
 | `schema_version` | string | Envelope version (currently `"1"`). Gate downstream queries on this when the envelope evolves. |
 | `app_name` | string | The ADK app that produced the row. |
 | `source_event_id` | string | ID of the originating ADK `Event`. The reliable key for joining the multiple rows a single event can produce. |
-| `node` | object | Workflow node identity: `{ "path", "run_id", "parent_path" }`. `parent_path` is derived from `path` (or `null` at the root). |
+| `node` | object | Workflow node identity: `{ "path", "run_id", "parent_run_id" }`. `parent_run_id` is the run ID of the parent node (`null` at the root). |
 | `branch` | string | The event's branch, when the workflow runs branched paths. |
 | `scope` | object | Isolation scope `{ "id", "kind" }`, where `kind` is `node_run` (a workflow node run, e.g. `loopA@42`), `function_call` (a model-generated call ID), or `unknown`. |
 | `pause_kind` | string | On `TOOL_PAUSED` / resumed `TOOL_COMPLETED` rows: `tool` for a regular long-running tool, or `hitl_credential` / `hitl_confirmation` / `hitl_input` for a HITL request. |
@@ -1172,7 +1178,8 @@ explicit `null` checkpoint (the end-of-run marker) versus an absent value.
 Logged when ADK compacts a window of earlier events into a summary (used to keep
 long conversations within the context window). The timestamps are fractional
 epoch seconds; the view also exposes them as BigQuery `TIMESTAMP` columns
-(`window_start`, `window_end`).
+(`window_start`, `window_end`). `compacted_content` holds the plugin-formatted
+text of the compacted window (a string), not a structured object.
 
 ```json
 {
@@ -1180,18 +1187,19 @@ epoch seconds; the view also exposes them as BigQuery `TIMESTAMP` columns
   "content": {
     "start_timestamp": 1733856000.123,
     "end_timestamp": 1733856120.456,
-    "compacted_content": { "summary": "User booked a flight to SFO..." }
+    "compacted_content": "User booked a flight to SFO, then asked about baggage..."
   }
 }
 ```
 
 #### TOOL_PAUSED and pause/resume pairing
 
-A long-running tool (or a HITL request that suspends the run) emits a
-`TOOL_PAUSED` row when it yields, and a `TOOL_COMPLETED` row when its result
-arrives — often on a later turn. Both rows carry the same `function_call_id`
-(and a `pause_kind`), so you can pair a pause with its completion and measure how
-long the tool was suspended.
+An ordinary long-running tool emits a `TOOL_PAUSED` row when it yields, and a
+`TOOL_COMPLETED` row when its result arrives — often on a later turn. Both rows
+carry the same `function_call_id` and a `pause_kind` of `tool`, so you can pair a
+pause with its completion and measure how long the tool was suspended. (HITL
+requests also emit `TOOL_PAUSED`, but their completions are logged differently —
+see the note below.)
 
 ```json
 {
@@ -1212,8 +1220,14 @@ long the tool was suspended.
     `HITL_*_REQUEST` event as described in [HITL events](#hitl-events). When that
     request is also long-running, the plugin additionally emits a `TOOL_PAUSED`
     row whose `pause_kind` identifies the HITL kind (for example
-    `hitl_confirmation`), so HITL pauses participate in the same pairing model as
-    ordinary tools.
+    `hitl_confirmation`) — giving HITL pauses the same visibility as tool pauses.
+
+    **A HITL completion does not arrive as `TOOL_COMPLETED`, though.** The user's
+    response is logged as the corresponding `HITL_*_REQUEST_COMPLETED` event, not
+    `TOOL_COMPLETED`, so a `hitl_*` pause will not pair through the tool join
+    below. To see a HITL pause resolve, look to its `HITL_*_REQUEST_COMPLETED`
+    event (see [HITL events](#hitl-events)). The pause/resume queries below are
+    therefore scoped to ordinary tools (`pause_kind = 'tool'`).
 
 Pair paused tools with their completions using the shared keys. On the base
 table:
@@ -1233,6 +1247,7 @@ JOIN `your-gcp-project-id.adk_agent_logs.agent_events` AS c
   AND JSON_VALUE(c.attributes, '$.adk.function_call_id')
       = JSON_VALUE(p.attributes, '$.adk.function_call_id')
 WHERE p.event_type = 'TOOL_PAUSED'
+  AND JSON_VALUE(p.attributes, '$.adk.pause_kind') = 'tool'
 ORDER BY paused_at;
 ```
 
@@ -1249,6 +1264,7 @@ SELECT
 FROM `your-gcp-project-id.adk_agent_logs.v_tool_paused` AS p
 JOIN `your-gcp-project-id.adk_agent_logs.v_tool_completed` AS c
   USING (session_id, user_id, function_call_id)
+WHERE p.pause_kind = 'tool'
 ORDER BY paused_at;
 ```
 
