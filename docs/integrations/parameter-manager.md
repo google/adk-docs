@@ -56,10 +56,10 @@ Complete the following setup steps:
 1.  [Set up an agent with ADK](/get-started/).
 1.  [Create a
     parameter](https://docs.cloud.google.com/secret-manager/parameter-manager/docs/create-parameter).
-1.  Grant the Parameter Manager Parameter Accessor role
+1.  Grant the [Parameter Manager Parameter Accessor](https://docs.cloud.google.com/iam/docs/roles-permissions/parametermanager#parametermanager.parameterAccessor) role
     (`roles/parametermanager.parameterAccessor`)
     IAM role to your agent identity. This role allows your agent to render the parameter configuration at runtime.
-1. If your parameter contains embedded secrets, grant the Secret Manager Secret Accessor role (`roles/secretmanager.secretAccessor`) to your parameter resource. This cross-service permission allows Parameter Manager to resolve the referenced secrets on behalf of the agent. For more information, [Grant the Secret Manager Secret Accessor role to the parameter](https://docs.cloud.google.com/secret-manager/parameter-manager/docs/reference-secrets-in-parameter#grant_the_secret_manager_secret_accessor_role_to_the_parameter)
+1. If your parameter contains embedded secrets, grant the [Secret Manager Secret Accessor](https://docs.cloud.google.com/iam/docs/roles-permissions/secretmanager#secretmanager.secretAccessor) role (`roles/secretmanager.secretAccessor`) to your parameter resource. This cross-service permission allows Parameter Manager to resolve the referenced secrets on behalf of the agent. For more information, [Grant the Secret Manager Secret Accessor role to the parameter](https://docs.cloud.google.com/secret-manager/parameter-manager/docs/reference-secrets-in-parameter#grant_the_secret_manager_secret_accessor_role_to_the_parameter).
 
 ## Installation
 
@@ -162,6 +162,6 @@ print("Agent initialized successfully.")
 ## Resources
 
 -   [Parameter Manager
-    documentation](https://docs.cloud.google.com/secret-manager/parameter-manager/docs/overview).
--   [ADK GitHub repository](https://github.com/google/adk-python).
+    documentation](https://docs.cloud.google.com/secret-manager/parameter-manager/docs/overview)
+-   [ADK GitHub repository](https://github.com/google/adk-python)
 -   [Include few shot examples](https://docs.cloud.google.com/gemini-enterprise-agent-platform/models/prompts/few-shot-examples)
