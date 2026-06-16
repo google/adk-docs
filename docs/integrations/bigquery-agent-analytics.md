@@ -726,7 +726,7 @@ you can optionally create the table manually using the DDL below.
       invocation_id STRING OPTIONS(description="A unique identifier for each individual agent execution or turn within a session."),
       user_id STRING OPTIONS(description="The identifier of the user associated with the current session."),
       trace_id STRING OPTIONS(description="32-char hex trace ID. Inherited from the ambient OpenTelemetry span when one is active; otherwise generated per invocation by the plugin."),
-      span_id STRING OPTIONS(description="16-char hex span ID for this specific operation. Generated internally by the plugin (no OpenTelemetry span is created or exported)."),
+      span_id STRING OPTIONS(description="16-char hex span ID for this specific operation. Tracked on the plugin's internal stack; the root invocation span may reuse the ambient OTel span id, while child BQAA spans are generated internally. No OpenTelemetry span is created or exported."),
       parent_span_id STRING OPTIONS(description="16-char hex span ID of the immediate caller, used to reconstruct the parent-child execution tree."),
       content JSON OPTIONS(description="The event-specific data (payload) stored as JSON."),
       content_parts ARRAY<STRUCT<
