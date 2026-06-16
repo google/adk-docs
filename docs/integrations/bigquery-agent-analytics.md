@@ -13,9 +13,17 @@ catalog_tags: ["observability", "google"]
 
 !!! important "Version Requirement"
 
-    Use ADK Python version 1.26.0 or higher to make full use of the features
-    described in this document, including auto-schema-upgrade, tool provenance
-    tracking, and HITL event tracing.
+    Use ADK Python version 1.26.0 or higher for auto-schema-upgrade, tool
+    provenance tracking, and HITL event tracing, and 1.27.0 or higher for
+    automatic view creation.
+
+    The **ADK 2.0** multi-agent workflow features in this document — the
+    `AGENT_TRANSFER`, `AGENT_STATE_CHECKPOINT`, `EVENT_COMPACTION`, and
+    `TOOL_PAUSED` event types, the `attributes.adk` envelope, and the ADK 2.0
+    views and columns — require a newer build of the plugin. As of this writing
+    that support is present on `google/adk-python` `main` but is **not yet in a
+    published release** (it is not in `v2.2.0`, the latest release). See [Agent
+    workflow and pause/resume events (ADK 2.0)](#adk-2-events) for details.
 
 The BigQuery Agent Analytics Plugin significantly enhances Agent Development Kit
 (ADK) by providing a robust solution for in-depth agent behavior analysis. Using
@@ -29,6 +37,15 @@ tables), **Tool Provenance** tracking (LOCAL, MCP, SUB_AGENT, A2A,
 TRANSFER_AGENT, TRANSFER_A2A), and **HITL Event Tracing** for human-in-the-loop
 interactions. Version 1.27.0 adds **Automatic View Creation** (generate flat,
 query-friendly event views).
+
+Support for **ADK 2.0** multi-agent workflows extends tracing to agent
+transfers, state checkpoints, event compaction, and long-running tools. It adds
+four new event types — `AGENT_TRANSFER`, `AGENT_STATE_CHECKPOINT`,
+`EVENT_COMPACTION`, and `TOOL_PAUSED` — and stamps an `attributes.adk` envelope
+on every row so you can reconstruct the agent execution graph and join a paused
+tool to the row that resumes it. See [Agent workflow and pause/resume events
+(ADK 2.0)](#adk-2-events) for the event details and the release that includes
+this support.
 
 The plugin includes three reliability and observability fixes:
 
@@ -72,6 +89,9 @@ The plugin includes three reliability and observability fixes:
   server, sub-agent, A2A remote agent, or transfer agent).
 - **Human-in-the-Loop (HITL) Tracing**: Dedicated event types for credential
   requests, confirmation prompts, and user input requests.
+- **Agent Workflow Tracing** (ADK 2.0): Capture agent transfers, state
+  checkpoints, event compaction, and long-running tool pause/resume, with an
+  `attributes.adk` envelope for reconstructing the execution graph.
 - **Queryable Event Views**: Automatically create flat, per-event-type BigQuery
   views (e.g., `v_llm_request`, `v_tool_completed`) to simplify downstream
   analytics by unnesting JSON payload data.
@@ -105,6 +125,10 @@ shows the BigQuery view optionally created when
 | `HITL_INPUT_REQUEST_COMPLETED` | User provides input response | synthetic tool name, result | *(base table only)* |
 | `A2A_INTERACTION` | Remote A2A call completes | response, task ID, context ID, request/response | `v_a2a_interaction` |
 | `AGENT_RESPONSE` | Final agent response is yielded | response (content), source event ID/author/branch (attributes) | `v_agent_response` |
+| `AGENT_TRANSFER` | One agent hands off control to another | from agent, to agent, source event ID | `v_agent_transfer` |
+| `AGENT_STATE_CHECKPOINT` | An agent snapshots its state (or marks the end of its run) | agent state, end-of-agent flag, source event ID | `v_agent_state_checkpoint` |
+| `EVENT_COMPACTION` | A window of events is compacted into a summary | window start/end timestamps, compacted content | `v_event_compaction` |
+| `TOOL_PAUSED` | A long-running tool (or HITL request) suspends, awaiting resumption | tool name, args, pause kind, function call ID | `v_tool_paused` |
 
 ## Quickstart
 
@@ -216,8 +240,11 @@ LIMIT 20;
 
 
         # --- OpenTelemetry note (no setup required for BQAA) ---
-        # The BQAA plugin does NOT export OTel spans of its own; it generates
-        # span_id values internally as 16-hex strings. The plugin's `trace_id`
+        # The BQAA plugin does NOT export OTel spans of its own. It tracks the
+        # parent-child hierarchy on an internal stack: the root invocation span
+        # reuses the ambient OTel span's id (as a 16-hex string) when one is
+        # active, and child BQAA spans are generated internally as 16-hex
+        # strings. The plugin's `trace_id`
         # column inherits from whichever OpenTelemetry span is active in the
         # surrounding runtime when the agent runs:
         #   * Agent Engine wires its invocation span automatically, so
@@ -668,13 +695,13 @@ provides a comprehensive reference with example values.
 | Field Name | Type | Mode | Description | Example Value |
 | --- | --- | --- | --- | --- |
 | **timestamp** | `TIMESTAMP` | `REQUIRED` | UTC timestamp of event creation. Acts as the primary ordering key and the daily partitioning key. Precision is microsecond. | `2026-02-03 20:52:17 UTC` |
-| **event_type** | `STRING` | `NULLABLE` | The canonical event category. Standard values include `LLM_REQUEST`, `LLM_RESPONSE`, `LLM_ERROR`, `TOOL_STARTING`, `TOOL_COMPLETED`, `TOOL_ERROR`, `AGENT_STARTING`, `AGENT_COMPLETED`, `STATE_DELTA`, `INVOCATION_STARTING`, `INVOCATION_COMPLETED`, `USER_MESSAGE_RECEIVED`, and HITL events (see [HITL events](#hitl-events)). Used for high-level filtering. | `LLM_REQUEST` |
+| **event_type** | `STRING` | `NULLABLE` | The canonical event category. Standard values include `LLM_REQUEST`, `LLM_RESPONSE`, `LLM_ERROR`, `TOOL_STARTING`, `TOOL_COMPLETED`, `TOOL_ERROR`, `AGENT_STARTING`, `AGENT_COMPLETED`, `STATE_DELTA`, `INVOCATION_STARTING`, `INVOCATION_COMPLETED`, `USER_MESSAGE_RECEIVED`, HITL events (see [HITL events](#hitl-events)), and the ADK 2.0 workflow events `AGENT_TRANSFER`, `AGENT_STATE_CHECKPOINT`, `EVENT_COMPACTION`, and `TOOL_PAUSED` (see [Agent workflow and pause/resume events](#adk-2-events)). Used for high-level filtering. | `LLM_REQUEST` |
 | **agent** | `STRING` | `NULLABLE` | The name of the agent responsible for this event. Defined during agent initialization or via the `root_agent_name` context. | `my_bq_agent` |
 | **session_id** | `STRING` | `NULLABLE` | A persistent identifier for the entire conversation thread. Stays constant across multiple turns and sub-agent calls. | `04275a01-1649-4a30-b6a7-5b443c69a7bc` |
 | **invocation_id** | `STRING` | `NULLABLE` | The unique identifier for a single execution turn or request cycle. Corresponds to `trace_id` in many contexts. | `e-b55b2000-68c6-4e8b-b3b3-ffb454a92e40` |
 | **user_id** | `STRING` | `NULLABLE` | The identifier of the user (human or system) initiating the session. Extracted from the `User` object or metadata. | `test_user` |
 | **trace_id** | `STRING` | `NULLABLE` | 32-character hex Trace ID. Inherited from the ambient OpenTelemetry span when one is active (e.g. Agent Engine's invocation span or the ADK Runner span) so BigQuery rows join cleanly to your existing Cloud Trace traces; otherwise generated by the plugin per invocation. Links all operations within a single distributed request lifecycle. | `a2c7f13d3a3f0bbb8793692f76a6012a` |
-| **span_id** | `STRING` | `NULLABLE` | 16-character hex Span ID identifying this specific atomic operation. **Generated by the plugin internally** (the plugin does not call `tracer.start_span` against your configured OpenTelemetry provider — see [Tracing and observability](#tracing-and-observability)). | `3916f5762bcd4d42` |
+| **span_id** | `STRING` | `NULLABLE` | 16-character hex Span ID identifying this specific atomic operation. **Tracked on the plugin's internal stack, not exported as an OTel span** — the plugin does not call `tracer.start_span` against your configured OpenTelemetry provider. The root invocation span reuses the ambient OTel span's id when one is active; child spans are generated internally (see [Tracing and observability](#tracing-and-observability)). | `3916f5762bcd4d42` |
 | **parent_span_id** | `STRING` | `NULLABLE` | 16-character hex Span ID of the immediate caller. Used to reconstruct the parent-child execution tree (DAG). | `4c4a42bfdeb84934` |
 | **content** | `JSON` | `NULLABLE` | The primary event payload. Structure is polymorphic based on `event_type`. | `{"system_prompt": "You are...", "prompt": [{"role": "user", "content": "hello"}], "response": "Hi", "usage": {"total": 15}}` |
 | **attributes** | `JSON` | `NULLABLE` | Metadata/Enrichment (usage stats, model info, tool provenance, custom tags). | `{"model": "gemini-flash-latest", "usage_metadata": {"total_token_count": 15}, "session_metadata": {"session_id": "...", "app_name": "...", "user_id": "...", "state": {}}, "custom_tags": {"env": "prod"}}` |
@@ -699,7 +726,7 @@ you can optionally create the table manually using the DDL below.
       invocation_id STRING OPTIONS(description="A unique identifier for each individual agent execution or turn within a session."),
       user_id STRING OPTIONS(description="The identifier of the user associated with the current session."),
       trace_id STRING OPTIONS(description="32-char hex trace ID. Inherited from the ambient OpenTelemetry span when one is active; otherwise generated per invocation by the plugin."),
-      span_id STRING OPTIONS(description="16-char hex span ID for this specific operation. Generated internally by the plugin (no OpenTelemetry span is created or exported)."),
+      span_id STRING OPTIONS(description="16-char hex span ID for this specific operation. Tracked on the plugin's internal stack; the root invocation span may reuse the ambient OTel span id, while child BQAA spans are generated internally. No OpenTelemetry span is created or exported."),
       parent_span_id STRING OPTIONS(description="16-char hex span ID of the immediate caller, used to reconstruct the parent-child execution tree."),
       content JSON OPTIONS(description="The event-specific data (payload) stored as JSON."),
       content_parts ARRAY<STRUCT<
@@ -774,7 +801,7 @@ columns:
 | **`v_llm_response`** | `response` (JSON), `usage_prompt_tokens` (INT64), `usage_completion_tokens` (INT64), `usage_total_tokens` (INT64), `usage_cached_tokens` (INT64), `total_ms` (INT64), `ttft_ms` (INT64), `model_version` (STRING), `usage_metadata` (JSON), `cache_metadata` (JSON), `context_cache_hit_rate` (FLOAT64) |
 | **`v_llm_error`** | `total_ms` (INT64) |
 | **`v_tool_starting`** | `tool_name` (STRING), `tool_args` (JSON), `tool_origin` (STRING) |
-| **`v_tool_completed`** | `tool_name` (STRING), `tool_result` (JSON), `tool_origin` (STRING), `total_ms` (INT64) |
+| **`v_tool_completed`** | `tool_name` (STRING), `tool_result` (JSON), `tool_origin` (STRING), `total_ms` (INT64), `pause_kind` (STRING) †, `function_call_id` (STRING) † |
 | **`v_tool_error`** | `tool_name` (STRING), `tool_args` (JSON), `tool_origin` (STRING), `total_ms` (INT64) |
 | **`v_agent_starting`** | `agent_instruction` (STRING) |
 | **`v_agent_completed`** | `total_ms` (INT64) |
@@ -786,6 +813,15 @@ columns:
 | **`v_hitl_input_request`** | `tool_name` (STRING), `tool_args` (JSON) |
 | **`v_a2a_interaction`** | `response_content` (JSON), `a2a_task_id` (STRING), `a2a_context_id` (STRING), `a2a_request` (JSON), `a2a_response` (JSON) |
 | **`v_agent_response`** | `response_text` (STRING), `source_event_id` (STRING), `source_event_author` (STRING), `source_event_branch` (STRING) |
+| **`v_agent_transfer`** † | `from_agent` (STRING), `to_agent` (STRING), `source_event_id` (STRING) |
+| **`v_agent_state_checkpoint`** † | `agent_state` (JSON), `agent_state_type` (STRING), `end_of_agent` (BOOL), `source_event_id` (STRING) |
+| **`v_event_compaction`** † | `start_seconds` (FLOAT64), `end_seconds` (FLOAT64), `window_start` (TIMESTAMP), `window_end` (TIMESTAMP), `compacted_content` (JSON, holding the formatted summary string) |
+| **`v_tool_paused`** † | `tool_name` (STRING), `tool_args` (JSON), `pause_kind` (STRING), `function_call_id` (STRING) |
+
+† Part of the [ADK 2.0 workflow event support](#adk-2-events): created only by
+builds that include it (not in `v2.2.0`). On a 1.27.0+ release without that
+support, these four views are not created and `v_tool_completed` does not have
+the `pause_kind` / `function_call_id` columns.
 
 ## Event types and payloads {#event-types}
 
@@ -1070,6 +1106,182 @@ Logged when an A2A remote agent call completes.
     "a2a_response": { ... }
   }
 }
+```
+
+### Agent workflow and pause/resume events (ADK 2.0) {#adk-2-events}
+
+!!! important "Version Requirement"
+
+    The event types in this section require a build of the plugin that includes
+    the ADK 2.0 workflow event support. As of this writing that support is
+    present on `google/adk-python` `main` but is **not yet in a published
+    release** (it is not in `v2.2.0`, the latest release). On a build without it
+    the plugin does not emit these events and the `attributes.adk` envelope is
+    absent. This note will name the first release that includes the support once
+    it is tagged.
+
+ADK 2.0 introduced multi-agent workflows (agents that transfer control,
+checkpoint their state, and compact long histories) and long-running tools that
+pause and resume across turns. The plugin makes these flows observable with four
+new event types and a small metadata envelope, `attributes.adk`, that ties the
+rows back to the ADK event that produced them.
+
+#### The `attributes.adk` envelope
+
+Every row now carries an `attributes.adk` object. `schema_version` and
+`app_name` are always present; the remaining fields are added only for rows that
+originate from an ADK event (lifecycle and workflow events), so on a callback-only
+row they are simply absent (and resolve to SQL `NULL` when queried).
+
+| Field | Type | Meaning |
+| --- | --- | --- |
+| `schema_version` | string | Envelope version (currently `"1"`). Gate downstream queries on this when the envelope evolves. |
+| `app_name` | string | The ADK app that produced the row. |
+| `source_event_id` | string | ID of the originating ADK `Event`. The reliable key for joining the multiple rows a single event can produce. |
+| `node` | object | Workflow node identity: `{ "path", "run_id", "parent_run_id" }`. `parent_run_id` is the run ID of the parent node (`null` at the root). |
+| `branch` | string | The event's branch, when the workflow runs branched paths. |
+| `scope` | object | Isolation scope `{ "id", "kind" }`, where `kind` is `node_run` (a workflow node run, e.g. `loopA@42`), `function_call` (a model-generated call ID), or `unknown`. |
+| `pause_kind` | string | On `TOOL_PAUSED`: `tool` for a regular long-running tool, or `hitl_credential` / `hitl_confirmation` / `hitl_input` for a HITL request. On a resumed `TOOL_COMPLETED` row it is always `tool` — HITL completions are logged as `HITL_*_REQUEST_COMPLETED`, never `TOOL_COMPLETED`. |
+| `function_call_id` | string | The function call ID. Set on `TOOL_PAUSED` and on the matching resumed `TOOL_COMPLETED` row so the two can be paired (ordinary tools only). |
+
+!!! tip "Querying the envelope"
+
+    Read envelope fields with `JSON_VALUE(attributes, '$.adk.<field>')` (or
+    `JSON_QUERY` for the `node` / `scope` objects). The auto-created views already
+    expose the commonly used fields (`source_event_id`, `pause_kind`,
+    `function_call_id`) as flat columns, so most queries can use the view instead.
+
+#### AGENT_TRANSFER
+
+Logged when one agent hands off control to another (for example, a coordinator
+routing to a specialist sub-agent).
+
+```json
+{
+  "event_type": "AGENT_TRANSFER",
+  "content": {
+    "from_agent": "coordinator",
+    "to_agent": "flight_agent"
+  },
+  "attributes": {
+    "adk": { "source_event_id": "evt-abc123" }
+  }
+}
+```
+
+#### AGENT_STATE_CHECKPOINT
+
+Logged when an agent snapshots its state. The plugin also emits a checkpoint with
+`end_of_agent: true` to mark the end of an agent's run. The `v_agent_state_checkpoint`
+view exposes `agent_state_type` so you can distinguish a real state object from an
+explicit `null` checkpoint (the end-of-run marker) versus an absent value.
+
+```json
+{
+  "event_type": "AGENT_STATE_CHECKPOINT",
+  "content": {
+    "agent_state": { "step": 3, "retries": 0 },
+    "end_of_agent": false
+  },
+  "attributes": {
+    "adk": { "source_event_id": "evt-def456" }
+  }
+}
+```
+
+#### EVENT_COMPACTION
+
+Logged when ADK compacts a window of earlier events into a summary (used to keep
+long conversations within the context window). The timestamps are fractional
+epoch seconds; the view also exposes them as BigQuery `TIMESTAMP` columns
+(`window_start`, `window_end`). `compacted_content` holds the plugin-formatted
+text of the compacted window (a string), not a structured object.
+
+```json
+{
+  "event_type": "EVENT_COMPACTION",
+  "content": {
+    "start_timestamp": 1733856000.123,
+    "end_timestamp": 1733856120.456,
+    "compacted_content": "User booked a flight to SFO, then asked about baggage..."
+  }
+}
+```
+
+#### TOOL_PAUSED and pause/resume pairing
+
+An ordinary long-running tool emits a `TOOL_PAUSED` row when it yields, and a
+`TOOL_COMPLETED` row when its result arrives — often on a later turn. Both rows
+carry the same `function_call_id` and a `pause_kind` of `tool`, so you can pair a
+pause with its completion and measure how long the tool was suspended. (HITL
+requests also emit `TOOL_PAUSED`, but their completions are logged differently —
+see the note below.)
+
+```json
+{
+  "event_type": "TOOL_PAUSED",
+  "content": {
+    "tool": "request_manager_approval",
+    "args": { "amount": 5000 }
+  },
+  "attributes": {
+    "adk": { "pause_kind": "tool", "function_call_id": "call-789" }
+  }
+}
+```
+
+!!! note "Relationship to HITL events"
+
+    A HITL request (`adk_request_confirmation`, etc.) still emits its dedicated
+    `HITL_*_REQUEST` event as described in [HITL events](#hitl-events). When that
+    request is also long-running, the plugin additionally emits a `TOOL_PAUSED`
+    row whose `pause_kind` identifies the HITL kind (for example
+    `hitl_confirmation`) — giving HITL pauses the same visibility as tool pauses.
+
+    **A HITL completion does not arrive as `TOOL_COMPLETED`, though.** The user's
+    response is logged as the corresponding `HITL_*_REQUEST_COMPLETED` event, not
+    `TOOL_COMPLETED`, so a `hitl_*` pause will not pair through the tool join
+    below. To see a HITL pause resolve, look to its `HITL_*_REQUEST_COMPLETED`
+    event (see [HITL events](#hitl-events)). The pause/resume queries below are
+    therefore scoped to ordinary tools (`pause_kind = 'tool'`).
+
+Pair paused tools with their completions using the shared keys. On the base
+table:
+
+```sql
+SELECT
+  p.timestamp AS paused_at,
+  c.timestamp AS resumed_at,
+  TIMESTAMP_DIFF(c.timestamp, p.timestamp, SECOND) AS paused_seconds,
+  JSON_VALUE(p.content, '$.tool') AS tool_name,
+  JSON_VALUE(p.attributes, '$.adk.pause_kind') AS pause_kind
+FROM `your-gcp-project-id.adk_agent_logs.agent_events` AS p
+JOIN `your-gcp-project-id.adk_agent_logs.agent_events` AS c
+  ON  c.event_type = 'TOOL_COMPLETED'
+  AND c.session_id = p.session_id
+  AND c.user_id = p.user_id
+  AND JSON_VALUE(c.attributes, '$.adk.function_call_id')
+      = JSON_VALUE(p.attributes, '$.adk.function_call_id')
+WHERE p.event_type = 'TOOL_PAUSED'
+  AND JSON_VALUE(p.attributes, '$.adk.pause_kind') = 'tool'
+ORDER BY paused_at;
+```
+
+Or, more simply, against the auto-created views, which expose `pause_kind` and
+`function_call_id` as flat columns:
+
+```sql
+SELECT
+  p.timestamp AS paused_at,
+  c.timestamp AS resumed_at,
+  TIMESTAMP_DIFF(c.timestamp, p.timestamp, SECOND) AS paused_seconds,
+  p.tool_name,
+  p.pause_kind
+FROM `your-gcp-project-id.adk_agent_logs.v_tool_paused` AS p
+JOIN `your-gcp-project-id.adk_agent_logs.v_tool_completed` AS c
+  USING (session_id, user_id, function_call_id)
+WHERE p.pause_kind = 'tool'
+ORDER BY paused_at;
 ```
 
 ## Storage behavior: GCS offloading
@@ -1800,9 +2012,11 @@ The plugin populates the `trace_id`, `span_id`, and `parent_span_id` columns on
 every emitted row so the parent-child execution tree (Agent → LLM call / Tool
 call) reconstructs cleanly from BigQuery.
 
-- **Internal span tracking, no OTel span export.** The plugin generates
-  `span_id` values directly as 16-hex strings and tracks the parent-child
-  hierarchy on its own internal stack. It does **not** call
+- **Internal span tracking, no OTel span export.** The plugin tracks the
+  parent-child hierarchy on its own internal stack of 16-hex `span_id` values.
+  The root invocation span reuses the ambient OTel span's id when one is active
+  (so it lines up with the runner's invocation span); child BQAA spans are
+  generated internally. It does **not** call
   `tracer.start_span(...)` on any configured OpenTelemetry
   `TracerProvider`, so its instrumentation never reaches your configured
   exporter — this is what prevents duplicate spans in Cloud Trace when Agent
