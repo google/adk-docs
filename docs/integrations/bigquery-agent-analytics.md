@@ -790,7 +790,7 @@ columns:
 | **`v_llm_response`** | `response` (JSON), `usage_prompt_tokens` (INT64), `usage_completion_tokens` (INT64), `usage_total_tokens` (INT64), `usage_cached_tokens` (INT64), `total_ms` (INT64), `ttft_ms` (INT64), `model_version` (STRING), `usage_metadata` (JSON), `cache_metadata` (JSON), `context_cache_hit_rate` (FLOAT64) |
 | **`v_llm_error`** | `total_ms` (INT64) |
 | **`v_tool_starting`** | `tool_name` (STRING), `tool_args` (JSON), `tool_origin` (STRING) |
-| **`v_tool_completed`** | `tool_name` (STRING), `tool_result` (JSON), `tool_origin` (STRING), `total_ms` (INT64), `pause_kind` (STRING), `function_call_id` (STRING) |
+| **`v_tool_completed`** | `tool_name` (STRING), `tool_result` (JSON), `tool_origin` (STRING), `total_ms` (INT64), `pause_kind` (STRING) †, `function_call_id` (STRING) † |
 | **`v_tool_error`** | `tool_name` (STRING), `tool_args` (JSON), `tool_origin` (STRING), `total_ms` (INT64) |
 | **`v_agent_starting`** | `agent_instruction` (STRING) |
 | **`v_agent_completed`** | `total_ms` (INT64) |
@@ -802,10 +802,15 @@ columns:
 | **`v_hitl_input_request`** | `tool_name` (STRING), `tool_args` (JSON) |
 | **`v_a2a_interaction`** | `response_content` (JSON), `a2a_task_id` (STRING), `a2a_context_id` (STRING), `a2a_request` (JSON), `a2a_response` (JSON) |
 | **`v_agent_response`** | `response_text` (STRING), `source_event_id` (STRING), `source_event_author` (STRING), `source_event_branch` (STRING) |
-| **`v_agent_transfer`** | `from_agent` (STRING), `to_agent` (STRING), `source_event_id` (STRING) |
-| **`v_agent_state_checkpoint`** | `agent_state` (JSON), `agent_state_type` (STRING), `end_of_agent` (BOOL), `source_event_id` (STRING) |
-| **`v_event_compaction`** | `start_seconds` (FLOAT64), `end_seconds` (FLOAT64), `window_start` (TIMESTAMP), `window_end` (TIMESTAMP), `compacted_content` (JSON) |
-| **`v_tool_paused`** | `tool_name` (STRING), `tool_args` (JSON), `pause_kind` (STRING), `function_call_id` (STRING) |
+| **`v_agent_transfer`** † | `from_agent` (STRING), `to_agent` (STRING), `source_event_id` (STRING) |
+| **`v_agent_state_checkpoint`** † | `agent_state` (JSON), `agent_state_type` (STRING), `end_of_agent` (BOOL), `source_event_id` (STRING) |
+| **`v_event_compaction`** † | `start_seconds` (FLOAT64), `end_seconds` (FLOAT64), `window_start` (TIMESTAMP), `window_end` (TIMESTAMP), `compacted_content` (JSON, holding the formatted summary string) |
+| **`v_tool_paused`** † | `tool_name` (STRING), `tool_args` (JSON), `pause_kind` (STRING), `function_call_id` (STRING) |
+
+† Part of the [ADK 2.0 workflow event support](#adk-2-events): created only by
+builds that include it (not in `v2.2.0`). On a 1.27.0+ release without that
+support, these four views are not created and `v_tool_completed` does not have
+the `pause_kind` / `function_call_id` columns.
 
 ## Event types and payloads {#event-types}
 
@@ -1125,8 +1130,8 @@ row they are simply absent (and resolve to SQL `NULL` when queried).
 | `node` | object | Workflow node identity: `{ "path", "run_id", "parent_run_id" }`. `parent_run_id` is the run ID of the parent node (`null` at the root). |
 | `branch` | string | The event's branch, when the workflow runs branched paths. |
 | `scope` | object | Isolation scope `{ "id", "kind" }`, where `kind` is `node_run` (a workflow node run, e.g. `loopA@42`), `function_call` (a model-generated call ID), or `unknown`. |
-| `pause_kind` | string | On `TOOL_PAUSED` / resumed `TOOL_COMPLETED` rows: `tool` for a regular long-running tool, or `hitl_credential` / `hitl_confirmation` / `hitl_input` for a HITL request. |
-| `function_call_id` | string | On `TOOL_PAUSED` / resumed `TOOL_COMPLETED` rows: the function call ID used to pair the pause with its completion. |
+| `pause_kind` | string | On `TOOL_PAUSED`: `tool` for a regular long-running tool, or `hitl_credential` / `hitl_confirmation` / `hitl_input` for a HITL request. On a resumed `TOOL_COMPLETED` row it is always `tool` — HITL completions are logged as `HITL_*_REQUEST_COMPLETED`, never `TOOL_COMPLETED`. |
+| `function_call_id` | string | The function call ID. Set on `TOOL_PAUSED` and on the matching resumed `TOOL_COMPLETED` row so the two can be paired (ordinary tools only). |
 
 !!! tip "Querying the envelope"
 
