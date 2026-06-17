@@ -70,7 +70,8 @@ You can give the file any name for example `evaluation.test.json`. The framework
 [Eval Case](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_case.py).
 Here is a test file with a few examples:
 
-!!! Note: Comments are included for explanatory purposes and should be removed for the JSON to be valid.
+!!! note 
+    Comments are included for explanatory purposes and should be removed for the JSON to be valid.
 
 ```json
 # Do note that some fields are removed for sake of making this doc readable.
@@ -129,7 +130,8 @@ Test files can be organized into folders. Optionally, a folder can also include 
 
 #### How to migrate test files not backed by the Pydantic schema?
 
-!!! Note: If your test files don't adhere to [EvalSet](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py) schema file, then this section is relevant to you.
+!!! note 
+    If your test files don't adhere to [EvalSet](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py) schema file, then this section is relevant to you.
 
 Please use `AgentEvaluator.migrate_eval_data_to_new_schema` to migrate your
 existing `*.test.json` files to the Pydantic backed schema.
@@ -153,7 +155,8 @@ Creating evalsets manually can be complex, therefore UI tools are provided to he
     This evalset evaluation method requires the use of a paid service,
     [Vertex Gen AI Evaluation Service API](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/evaluation).
 
-!!! Note: Comments are included for explanatory purposes and should be removed for the JSON to be valid.
+!!! note 
+    Comments are included for explanatory purposes and should be removed for the JSON to be valid.
 
 ```json
 # Do note that some fields are removed for sake of making this doc readable.
@@ -291,7 +294,8 @@ Creating evalsets manually can be complex, therefore UI tools are provided to he
 
 #### How to migrate eval set files not backed by the Pydantic schema?
 
-!!! Note: If your eval set files don't adhere to [EvalSet](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py) schema file, then this section is relevant to you.
+!!! note
+    If your eval set files don't adhere to [EvalSet](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py) schema file, then this section is relevant to you.
 
 Based on who is maintaining the eval set data, there are two routes:
 
@@ -318,20 +322,16 @@ Follow this workflow to prepare your environment:
 
 ```
 tests
-
 └── category_name/
-
     └── test_case_name/
-
         ├── spec.yaml                  # Test case specification
-
         ├── generated-recordings.yaml   # Baseline recorded interactions
-
         └── generated-session.yaml      # Baseline session data
 
 ```
 
-!!! Note: If your agent uses Server-Sent Events (SSE), the testing framework will additionally look for `generated-recordings-sse.yaml` and `generated-session-sse.yaml` within the same folder.
+!!! note
+    If your agent uses Server-Sent Events (SSE), the testing framework will additionally look for `generated-recordings-sse.yaml` and `generated-session-sse.yaml` within the same folder.
 
 ##### Define the test specification (spec.yaml)
 
