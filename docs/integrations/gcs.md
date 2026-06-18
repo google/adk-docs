@@ -7,6 +7,10 @@ catalog_tags: ["storage", "google"]
 
 # Google Cloud Storage (GCS)
 
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.3.0</span>
+</div>
+
 The `GCSToolset` and `GCSAdminToolset` allow ADK agents to interact with
 [Google Cloud Storage (GCS)](https://cloud.google.com/storage) to manage buckets
 and read/write objects.
