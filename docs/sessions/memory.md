@@ -11,23 +11,23 @@ Think of it this way:
 * **`Session` / `State`:** Like your short-term memory during one specific chat.
 * **Long-Term Knowledge (`MemoryService`)**: Like a searchable archive or knowledge library the agent can consult, potentially containing information from many past chats or other sources.
 
-## The `MemoryService` Role
+## The `MemoryService` role
 
-The `BaseMemoryService` defines the interface for managing this searchable, long-term knowledge store. Its primary responsibilities are:
+The `BaseMemoryService` defines the interface for managing this searchable, long-term knowledge store. Its primary uses are:
 
-1. **Ingesting Information (`add_session_to_memory`):** Taking the contents of a (usually completed) `Session` and adding relevant information to the long-term knowledge store.
-2. **Adding Memory Directly (`add_memory`):** In addition to ingesting entire sessions, you can directly add discrete pieces of information to the memory. This is useful for explicitly providing facts, instructions, or data that don't originate from a conversational session.
+1. **Ingest information (`add_session_to_memory`):** Add the contents of a completed `Session` to the long-term knowledge store.
+2. **Add memory directly (`add_memory`):** Inject discrete facts, instructions, or data directly into the memory store. Use this method for structured information that does not originate from a conversational session.
 
     When using `VertexAiMemoryBankService`, the `add_memory` method offers two ways to handle this:
 
-    *   **Direct Creation (`memories.create`):** By default, `add_memory` calls the underlying `memories.create` API. This treats each memory item as a distinct, new fact and adds it to the Memory Bank without any transformation.
+    *   **Direct Creation (`memories.create`):** By default, `add_memory` calls the underlying `memories.create` API to add a memory item as a distinct fact without transformation.
 
-    *   **Consolidation (`memories.generate`):** If you set `enable_consolidation` to `True` in the `custom_metadata` when calling `add_memory`, the service will instead use the `memories.generate` API. This allows the Memory Bank to process and consolidate the new information with existing memories, potentially summarizing, correcting, or merging facts to maintain a more coherent and less redundant knowledge base.
-3. **Searching Information (`search_memory`):** Allowing an agent (typically via a `Tool`) to query the knowledge store and retrieve relevant snippets or context based on a search query.
+    *   **Consolidation (`memories.generate`):** Set `enable_consolidation` to `True` in the `custom_metadata` when calling `add_memory`. The service uses the `memories.generate` API to process and consolidate the new information with existing memories.
+3. **Search Information (`search_memory`):** Allows an agent (typically via a `Tool`) to query the knowledge store and retrieve relevant snippets or context based on a search query.
 
-## Choosing the Right Memory Service
+## Choose the right memory service
 
-The ADK offers two distinct `MemoryService` implementations, each tailored to different use cases. Use the table below to decide which is the best fit for your agent.
+ADK offers two distinct `MemoryService` implementations, each tailored to different use cases. Use the table below to decide which is the best fit for your agent.
 
 | **Feature** | **InMemoryMemoryService** | **VertexAiMemoryBankService** |
 | :--- | :--- | :--- |
@@ -169,7 +169,7 @@ This example demonstrates the basic flow using the `InMemoryMemoryService` for s
     ```
 
 
-### Searching Memory Within a Tool
+### Search memory within a tool
 
 You can also search memory from within a custom tool by using the `tool.Context`.
 
@@ -235,7 +235,7 @@ Or, you can configure your agent to use the Memory Bank by manually instantiatin
   )
   ```
 
-## Using Memory in Your Agent
+## Use memory in your agent
 
 When a memory service is configured, your agent can use a tool or callback to retrieve memories. ADK includes two pre-built tools for retrieving memories:
 
@@ -279,7 +279,7 @@ agent = Agent(
 
 ## Advanced Concepts
 
-### How Memory Works in Practice
+### How memory works in practice
 
 The memory workflow internally involves these steps:
 
@@ -295,11 +295,11 @@ The memory workflow internally involves these steps:
 
 *   **Through Standard Configuration: No.** The framework (`adk web`, `adk api_server`) is designed to be configured with one single memory service at a time via the `--memory_service_uri` flag. This single service is then provided to the agent and accessed through the built-in `self.search_memory()` method. From a configuration standpoint, you can only choose one backend (`InMemory`, `VertexAiMemoryBankService`) for all agents served by that process.
 
-*   **Within Your Agent's Code: Yes, absolutely.** There is nothing preventing you from manually importing and instantiating another memory service directly inside your agent's code. This allows you to access multiple memory sources within a single agent turn.
+*   **Within Your Agent's Code: Yes, absolutely.** Manually import and instantiate additional memory services to meet your specific requirements. This approach enables your agent to access multiple memory sources within a single turn.
 
 For example, your agent could use the framework-configured `InMemoryMemoryService` to recall conversational history, and also manually instantiate a `VertexAiMemoryBankService` to look up information in a technical manual.
 
-#### Example: Using Two Memory Services
+#### Example: use two memory services
 
 Here’s how you could implement that in your agent's code:
 
