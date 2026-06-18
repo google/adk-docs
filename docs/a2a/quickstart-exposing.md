@@ -226,16 +226,6 @@ Bot: 8 is not a prime number.
 
 In scenarios where you want more granular control than what `to_a2a()` provides, you may instantiate and pass an [`A2aAgentExecutorConfig`](https://github.com/google/adk-python/blob/main/src/google/adk/a2a/executor/config.py) directly to the `A2aAgentExecutor`. This allows you to override default data converters and inject execution middleware.
 
-### Suppressing Experimental Feature Warnings
-
-When you use experimental A2A features, ADK displays warnings. If you are knowingly using these features and want cleaner logs, you can suppress these warnings.
-
-To disable warnings for experimental A2A features, set the `ADK_SUPPRESS_A2A_EXPERIMENTAL_FEATURE_WARNINGS` environment variable to `true`.
-
-```bash
-export ADK_SUPPRESS_A2A_EXPERIMENTAL_FEATURE_WARNINGS=true
-```
-
 ### Converters
 
 Converters handle the bidirectional translation between A2A protocol payloads and ADK's native `Event` or `Part` objects. You can provide your own mapping functions for the following hooks:
@@ -253,6 +243,13 @@ You can inject a list of `execute_interceptors` to add middleware logic to the `
 *   **`before_agent`**: Executed before the agent starts processing the request. It allows you to inspect or modify the incoming `RequestContext`.
 *   **`after_event`**: Executed *after* an ADK event is converted to an A2A event. Allows you to mutate the outgoing event before it is enqueued, or return `None` to filter out and drop the event entirely.
 *   **`after_agent`**: Executed after the agent finishes and the final event is prepared. Use this to inspect or modify the terminal status event (e.g., `completed` or `failed`) before it is sent.
+
+!!! tip "Suppress experimental warnings"
+
+    You can suppress the experimental feature warnings for this feature in the logs for your agent using an environment variable, as shown below:
+
+    ```bash
+    export ADK_SUPPRESS_A2A_EXPERIMENTAL_FEATURE_WARNINGS=true```
 
 ## Agent Executor V2
 
