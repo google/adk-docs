@@ -16,17 +16,17 @@ and read/write objects.
 - **Object Management**: Read, download, create, upload, list, metadata check,
   and delete GCS objects.
 - **Bucket Management**: List cloud storage buckets, create new buckets, change
-  configurations (e.g., enabling versioning or uniform bucket-level access), and
+  configurations, such as enabling versioning or uniform bucket-level access, and
   delete buckets.
 - **Data Integration**: Use cloud storage objects dynamically as part of the
-  agent's workflow (e.g. processing files, ingestion).
+  agent's workflow, such as processing files and ingestion.
 
 ## Prerequisites
 
 - **Enable the Google Cloud Storage API** in the target Google Cloud project.
 - **IAM Permissions**: The authenticated principal (Application Default
-  Credentials, service account, or user) must have the correct permissions
-  (e.g., `roles/storage.objectAdmin`, `roles/storage.admin`) to perform GCS
+  Credentials, service account, or user) must have the correct permissions,
+  including `roles/storage.objectAdmin` and `roles/storage.admin`, to perform GCS
   bucket and object operations.
 - A Google Cloud Project ID configured.
 
@@ -37,8 +37,8 @@ via `GCSCredentialsConfig`:
 
 ### Application Default Credentials
 
-Recommended for local development and Google Cloud services (e.g., Cloud Run,
-GKE).
+Recommended for local development and deployment to Google Cloud, including 
+Agent Runtime, Cloud Run, and GKE.
 
 ```python
 import google.auth
@@ -199,4 +199,3 @@ authentication configurations, see:
 
 - [Google Cloud Storage Documentation](https://cloud.google.com/storage/docs)
 - [GitHub Repository](https://github.com/google/adk-python)
-
