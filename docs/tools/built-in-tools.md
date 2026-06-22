@@ -96,7 +96,7 @@ with the GKE Code Executor tool:
 - Install the client library with GKE extras: `pip install google-adk[gke]`
 
 For a complete, ready-to-use configuration, see the 
-[deployment_rbac.yaml](https://github.com/google/adk-python/blob/main/contributing/samples/gke_agent_sandbox/deployment_rbac.yaml)
+[deployment_rbac.yaml](https://github.com/google/adk-python/blob/main/contributing/samples/integrations/gke_agent_sandbox/deployment_rbac.yaml)
 sample. For more information on deploying ADK workflows to GKE, see
 [Deploy to Google Kubernetes Engine (GKE)](/adk-docs/deploy/gke/).
 
