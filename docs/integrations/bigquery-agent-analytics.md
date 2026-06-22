@@ -8,7 +8,7 @@ catalog_tags: ["observability", "google"]
 # BigQuery Agent Analytics plugin for ADK
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.21.0</span><span class="lst-java">Java v1.4.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.21.0</span><span class="lst-java">Java v1.5.0</span>
 </div>
 
 !!! important "Version Requirement"
@@ -1905,7 +1905,7 @@ by credential services) is never persisted in BigQuery.
 Provide a custom `content_formatter` function in `BigQueryLoggerConfig` to strip
 or mask sensitive fields before they are written:
 
-
+=== "Python"
 
     ```python
     import json
