@@ -14,6 +14,7 @@ Criterion                                | Description                          
 `final_response_match_v2`                | LLM-judged semantic match to reference response           | Yes             | No               | Yes            | No
 `rubric_based_final_response_quality_v1` | LLM-judged final response quality based on custom rubrics | No              | Yes              | Yes            | Yes
 `rubric_based_tool_use_quality_v1`       | LLM-judged tool usage quality based on custom rubrics     | No              | Yes              | Yes            | Yes
+`rubric_based_multi_turn_trajectory_quality_v1` | LLM-judged multi-turn trajectory quality based on custom rubrics | No              | Yes              | Yes            | Yes
 `hallucinations_v1`                      | LLM-judged groundedness of agent response against context | No              | No               | Yes            | Yes
 `safety_v1`                              | Safety/harmlessness of agent response                     | No              | No               | Yes            | Yes
 `per_turn_user_simulator_quality_v1`     | LLM-judged user simulator quality                         | No              | No               | Yes            | Yes
@@ -297,19 +298,27 @@ Example `EvalConfig` entry:
           "rubric_id": "conciseness",
           "rubric_content": {
             "text_property": "The agent's response is direct and to the point."
-          }
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
         },
         {
           "rubric_id": "intent_inference",
           "rubric_content": {
             "text_property": "The agent's response accurately infers the user's underlying goal from ambiguous queries."
-          }
+          },
+          "type": "FINAL_RESPONSE_QUALITY"
         }
       ]
     }
   }
 }
 ```
+
+#### Notes On Rubrics
+
+- Rubrics on `EvalConfig.criteria["rubric_based_final_response_quality_v1"].rubrics` **must be non-empty** — `RubricBasedEvaluator` asserts this at init time.
+- Rubrics on `EvalCase.rubrics` are *additive* on top of the criterion-level list, not a replacement. The effective rubric set passed to the judge is the union of both.
+- Only rubrics whose `type` field is `"FINAL_RESPONSE_QUALITY"` are picked up by this criterion. Rubrics with other `type` values (e.g. `"TRAJECTORY_QUALITY"`, `"TOOL_USE_QUALITY"`) are ignored.
 
 ### Output And How To Interpret
 
@@ -370,13 +379,15 @@ Example `EvalConfig` entry:
           "rubric_id": "geocoding_called",
           "rubric_content": {
             "text_property": "The agent calls the GeoCoding tool before calling the GetWeather tool."
-          }
+          },
+          "type": "TOOL_USE_QUALITY"
         },
         {
           "rubric_id": "getweather_called",
           "rubric_content": {
             "text_property": "The agent calls the GetWeather tool with coordinates derived from the user's location."
-          }
+          },
+          "type": "TOOL_USE_QUALITY"
         }
       ]
     }
@@ -384,12 +395,96 @@ Example `EvalConfig` entry:
 }
 ```
 
+#### Notes On Rubrics
+
+- Rubrics on `EvalConfig.criteria["rubric_based_tool_use_quality_v1"].rubrics` **must be non-empty** — `RubricBasedEvaluator` asserts this at init time.
+- Rubrics on `EvalCase.rubrics` are *additive* on top of the criterion-level list, not a replacement. The effective rubric set passed to the judge is the union of both.
+- Only rubrics whose `type` field is `"TOOL_USE_QUALITY"` are picked up by this criterion. Rubrics with other `type` values (e.g. `"FINAL_RESPONSE_QUALITY"`, `"TRAJECTORY_QUALITY"`) are ignored.
+
 ### Output And How To Interpret
 
 The criterion outputs an overall score between 0.0 and 1.0, where 1.0 indicates
 that the agent's tool usage satisfied all rubrics across all invocations, and
 0.0 indicates that no rubrics were satisfied. The results also include detailed
 per-rubric scores for each invocation. Higher values are better.
+
+## rubric_based_multi_turn_trajectory_quality_v1
+
+This criterion assesses the quality of an agent's behavior across an entire
+multi-turn conversation against a user-defined set of rubrics using an LLM as
+a judge.
+
+### When To Use This Criterion?
+
+Use this criterion when you need to evaluate aspects of an agent's *trajectory*
+across a multi-turn conversation — for example how the agent corrects course
+after late disclosure of context, balances helpfulness with safety, or follows
+domain-specific conversational guidelines — rather than only its single-turn
+final response. Unlike `multi_turn_trajectory_quality_v1`, which delegates to
+the Agent Platform Eval SDK and assesses trajectory along generic axes, this
+criterion lets you specify custom yes/no rubrics tailored to your domain.
+
+### Details
+
+This criterion accumulates the full dialogue history across the conversation
+(user turns, agent turns, and tool interactions) and performs a single
+LLM-based evaluation against each rubric you provide. For each rubric, the
+judge produces a `yes` (1.0) or `no` (0.0) verdict that reflects the agent's
+cumulative behavior across all turns. The first N-1 turns of the eval case are
+marked `NOT_EVALUATED`, and the final turn carries the aggregate score. Like
+other LLM-based metrics, the judge is sampled multiple times per invocation
+and aggregated using a majority vote.
+
+### How To Use This Criterion?
+
+This criterion uses `RubricsBasedCriterion`. Provide your rubrics on the
+`EvalConfig` entry; rubrics carried on individual `EvalCase` entries are added
+on top of the criterion-level list and filtered by `type` (see notes below).
+
+Example `EvalConfig` entry:
+
+```json
+{
+  "criteria": {
+    "rubric_based_multi_turn_trajectory_quality_v1": {
+      "threshold": 0.7,
+      "judge_model_options": {
+        "judge_model": "gemini-flash-latest",
+        "num_samples": 5
+      },
+      "rubrics": [
+        {
+          "rubric_id": "elicits_individual_factors",
+          "rubric_content": {
+            "text_property": "The agent asks about individual factors (age, prior conditions, current medication) before giving any individualized advice."
+          },
+          "type": "TRAJECTORY_QUALITY"
+        },
+        {
+          "rubric_id": "corrects_after_late_disclosure",
+          "rubric_content": {
+            "text_property": "When the user discloses risk-relevant information late in the conversation, the agent revisits and corrects earlier advice rather than leaving it standing."
+          },
+          "type": "TRAJECTORY_QUALITY"
+        }
+      ]
+    }
+  }
+}
+```
+
+#### Notes On Rubrics
+
+- Rubrics on `EvalConfig.criteria["rubric_based_multi_turn_trajectory_quality_v1"].rubrics` **must be non-empty** — `RubricBasedEvaluator` asserts this at init time.
+- Rubrics on `EvalCase.rubrics` are *additive* on top of the criterion-level list, not a replacement. The effective rubric set passed to the judge is the union of both.
+- Only rubrics whose `type` field is `"TRAJECTORY_QUALITY"` are picked up by this criterion. Rubrics with other `type` values (e.g. `"FINAL_RESPONSE_QUALITY"`, `"TOOL_USE_QUALITY"`) are ignored.
+
+### Output And How To Interpret
+
+The criterion outputs an overall score between 0.0 and 1.0, where 1.0 indicates
+that the agent's trajectory satisfied all rubrics, and 0.0 indicates that no
+rubrics were satisfied. The results also include detailed per-rubric scores.
+Higher values are better.
 
 ## hallucinations_v1
 
