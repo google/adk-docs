@@ -1,3 +1,10 @@
+---
+catalog_title: Google Cloud Secret Manager
+catalog_description: built-in client to simplify
+retrieving secrets, such as API keys or other credentials, in your production
+deployments..
+---
+
 # Google Cloud Secret Manager Integration
 
 The ADK provides a built-in client for Google Cloud Secret Manager to simplify
