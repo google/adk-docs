@@ -98,7 +98,7 @@ with the GKE Code Executor tool:
 For a complete, ready-to-use configuration, see the 
 [deployment_rbac.yaml](https://github.com/google/adk-python/blob/main/contributing/samples/integrations/gke_agent_sandbox/deployment_rbac.yaml)
 sample. For more information on deploying ADK workflows to GKE, see
-[Deploy to Google Kubernetes Engine (GKE)](/adk-docs/deploy/gke/).
+[Deploy to Google Kubernetes Engine (GKE)](https://adk.dev/deploy/gke/).
 
 === "Python"
 
