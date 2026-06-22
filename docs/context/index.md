@@ -123,7 +123,7 @@ Here are the primary context flavors you will encounter:
 - **`ToolContext`**: Tailored for tool execution and tool-related callbacks. In addition to the capabilities of Context, it includes specialized methods for authentication flows, memory searching, and artifact discovery.
 
 !!! note
-    **About compatibility**: In Python and TypeScript, `CallbackContext` and `ToolContext` have been replaced by the `Context` type. The `CallbackContext` class is maintained as an alias for `Context` to ensure backward compatibility. While you may encounter `CallbackContext` in existing codebases, **we recommend using the `Context` class** for all new development to take advantage of the full, unified feature set.
+    **About compatibility**: In Python and TypeScript, `CallbackContext` and `ToolContext` have been replaced by the `Context` type. The `CallbackContext` class is maintained as an alias for `Context` to ensure backward compatibility. While you may encounter `CallbackContext` in existing codebases, **you should use the `Context` class** for all new development to take advantage of the full, unified feature set.
 
 ### `InvocationContext`
 - **Where Used:** Received as the `ctx` argument directly within an agent's core implementation methods (`_run_async_impl`, `_run_live_impl`).
