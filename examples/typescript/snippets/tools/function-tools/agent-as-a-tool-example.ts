@@ -13,11 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {
-  AgentTool,
-  InMemoryRunner,
-  LlmAgent,
-} from '@google/adk';
+import { AgentTool, InMemoryRunner, LlmAgent } from '@google/adk';
 import {Part, createUserContent} from '@google/genai';
 
 /**
