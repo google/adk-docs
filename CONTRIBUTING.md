@@ -134,16 +134,16 @@ docstrings, exporting new public symbols, etc.).
 
 The reference docs are regenerated periodically, and your changes will be
 included in the next update. See the [ADK Contributing
-Guide](https://google.github.io/adk-docs/contributing-guide/) for links to each
+Guide](https://adk.dev/community/contributing-guide/) for links to each
 language-specific repository.
 
 ### Integrations
 
 Integrations include third-party tools, plugins, and observability platforms for
 ADK agents. All integrations live under `docs/integrations/`. Examples include
-[GitHub](https://google.github.io/adk-docs/integrations/github/),
-[Daytona](https://google.github.io/adk-docs/integrations/daytona/), and
-[AgentOps](https://google.github.io/adk-docs/integrations/agentops/).
+[GitHub](https://adk.dev/integrations/github/),
+[Daytona](https://adk.dev/integrations/daytona/), and
+[AgentOps](https://adk.dev/integrations/agentops/).
 
 **To contribute an integration:**
 
@@ -164,7 +164,7 @@ ADK agents. All integrations live under `docs/integrations/`. Examples include
     ---
     catalog_title: Integration Name
     catalog_description: A short description of what your integration does
-    catalog_icon: /adk-docs/integrations/assets/<name>.png
+    catalog_icon: /integrations/assets/<name>.png
     ---
 
     # Integration Name

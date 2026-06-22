@@ -33,28 +33,37 @@ on:
     - cron: "0 0 * * 0"
 
 jobs:
-  build:
+  get_sample_dirs:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.9", "3.10", "3.11", "3.12"]
-        sample_dir: ${{ fromJson(needs.get_sample_dirs.outputs.sample_dirs) }}
-      fail-fast: false # Important: Don't stop if one matrix configuration fails
-
-    needs:
-      - get_sample_dirs
-
+    outputs:
+      sample_dirs: ${{ steps.get_dirs.outputs.sample_dirs }}
     steps:
       - uses: actions/checkout@v6
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Get Sample Directories
-        id: get_sample_dirs
+        id: get_dirs
         run: |
-          SAMPLE_DIRS=$( find $PYTHON_DIR -type d -not -path "*/.venv*" -exec test -e '{}'/requirements.txt \; -print )
+          SAMPLE_DIRS=$( find samples/python -type d -not -path "*/.venv*" -exec test -e '{}'/requirements.txt \; -print | jq -R -s -c 'split("\n") | map(select(. != ""))' )
           echo "sample_dirs=$SAMPLE_DIRS" >> $GITHUB_OUTPUT
           echo "SAMPLE_DIRS: $SAMPLE_DIRS"  # For debugging
+
+  build:
+    runs-on: ubuntu-latest
+    needs:
+      - get_sample_dirs
+    if: ${{ needs.get_sample_dirs.outputs.sample_dirs != '[]' }}
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
+        sample_dir: ${{ fromJson(needs.get_sample_dirs.outputs.sample_dirs) }}
+      fail-fast: false # Important: Don't stop if one matrix configuration fails
+
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v6

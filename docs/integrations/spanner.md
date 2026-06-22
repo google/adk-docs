@@ -1,7 +1,7 @@
 ---
 catalog_title: Spanner Tools
 catalog_description: Interact with Spanner to retrieve data, search, and execute SQL
-catalog_icon: /adk-docs/integrations/assets/spanner.png
+catalog_icon: /integrations/assets/spanner.png
 catalog_tags: ["data","google"]
 ---
 
@@ -26,4 +26,3 @@ They are packaged in the toolset `SpannerToolset`.
 ```py
 --8<-- "examples/python/snippets/tools/built-in-tools/spanner.py"
 ```
-

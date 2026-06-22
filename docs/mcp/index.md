@@ -13,7 +13,7 @@ obtain context, execute actions, and interact with various systems.
 
 !!! tip "MCP tools for ADK"
     For a list of pre-built MCP tools for ADK, see
-    [Tools and Integrations](/adk-docs/integrations/?topic=mcp).
+    [Tools and Integrations](/integrations/?topic=mcp).
 
 ## How does MCP work?
 
@@ -28,9 +28,9 @@ ADK helps you both use and consume MCP tools in your agents, whether you're
 trying to build a tool to call an MCP service, or exposing an MCP server for
 other developers or agents to interact with your tools.
 
-See [Tools and Integrations](/adk-docs/integrations/) for pre-built
+See [Tools and Integrations](/integrations/) for pre-built
 MCP tools you can use in your agents. Refer to the
-[MCP Tools documentation](/adk-docs/tools-custom/mcp-tools/) for code samples
+[MCP Tools documentation](/tools-custom/mcp-tools/) for code samples
 and design patterns that help you use ADK together with MCP servers, including:
 
 - **Using Existing MCP Servers within ADK**: An ADK agent can act as an MCP
@@ -44,7 +44,7 @@ complex MCP protocol details and server management, so you can focus on
 building great tools. It's designed to be high-level and Pythonic; in most
 cases, decorating a function is all you need.
 
-Refer to the [MCP Tools](/adk-docs/tools-custom/mcp-tools/) documentation on
+Refer to the [MCP Tools](/tools-custom/mcp-tools/) documentation on
 how you can use ADK together with the FastMCP server running on Cloud Run.
 
 ## MCP Servers for Google Cloud Genmedia

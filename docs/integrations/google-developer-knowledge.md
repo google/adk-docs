@@ -1,7 +1,7 @@
 ---
 catalog_title: Google Developer Knowledge
 catalog_description: Search Google's official developer documentation for code and guidance
-catalog_icon: /adk-docs/integrations/assets/google-developer-knowledge.png
+catalog_icon: /integrations/assets/google-developer-knowledge.png
 catalog_tags: ["mcp"]
 ---
 
@@ -52,7 +52,7 @@ Guide](https://developers.google.com/knowledge/mcp#installation) for the precise
         DEVELOPER_KNOWLEDGE_API_KEY = "YOUR_DEVELOPER_KNOWLEDGE_API_KEY"
 
         root_agent = Agent(
-            model="gemini-2.5-pro",
+            model="gemini-flash-latest",
             name="google_knowledge_agent",
             instruction="Search Google developer documentation for implementation guidance.",
             tools=[
@@ -76,7 +76,7 @@ Guide](https://developers.google.com/knowledge/mcp#installation) for the precise
         const DEVELOPER_KNOWLEDGE_API_KEY = "YOUR_DEVELOPER_KNOWLEDGE_API_KEY";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-2.5-pro",
+            model: "gemini-flash-latest",
             name: "google_knowledge_agent",
             instruction: "Search Google developer documentation for implementation guidance.",
             tools: [

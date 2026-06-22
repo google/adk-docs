@@ -1,68 +1,151 @@
-# Welcome to ADK 2.0 Alpha
+---
+hide:
+  - navigation
+---
 
-!!! example "Alpha Release"
-
-    ADK 2.0 is an Alpha release and may cause breaking changes when used with prior
-    versions of ADK. Do not use ADK 2.0 if you require backwards compatibility, such
-    as in production environments. We encourage you to test this release and we
-    welcome your
-    [feedback](https://github.com/google/adk-python/issues/new?template=feature_request.md&labels=v2)!
+# Welcome to ADK 2.0
 
 ADK 2.0 introduces powerful tools for building sophisticated AI agents, and
 helps you structure agents to execute challenging tasks with more control,
-predictability, and reliability. ADK 2.0 is available as an Alpha release for
-Python and includes the following key features:
+predictability, and reliability. ADK 2.0 is available for Python and includes
+the following key features:
 
--   [**Graph-based workflows**](/adk-docs/workflows/): Build deterministic agent
+-   [**Graph-based workflows**](/graphs/): Build deterministic agent
     workflows with more control over how tasks are routed and executed.
 
--   [**Collaborative agents**](/adk-docs/workflows/collaboration/):
-    Build complex agent architectures with coordinator agents and multiple
-    subagents working together.
-
--   [**Dynamic workflows**](/adk-docs/workflows/dynamic/):
+-   [**Dynamic workflows**](/graphs/dynamic/):
     Use code-based logic for building more complex workflows including
     iterative loops and complex decision-based branching.
+
+-   [**Collaborative workflows**](/workflows/collaboration/):
+    Build complex agent architectures with coordinator agents and multiple
+    subagents working together.
 
 Check out the linked topics above for more information, and try out the new way
 to build agents with ADK 2.0!
 
-## ADK 1.0 compatibility
+!!! tip "ADK Python v2.0.0 GA release"
+
+    ADK Python 2.0 is released for general availability as of May 19, 2026.
+
+## ADK Python 1.x compatibility
 
 ADK 2.0 is designed to be compatible with agents developed with ADK 1.x
-releases. However, given the number and diversity of agents built with ADK 1.x,
-we expect that some agent implementations, particularly advanced and
-feature-rich agents, will uncover incompatibilities in ADK 2.0. During the
-current pre-GA release period, we ask your assistance helping us identify these
-issues so we have a chance to address them. Report any ADK 1.0 to ADK 2.0
-incompatibilities you encounter through our
+releases. However, there are a few breaking changes you should be aware of
+before upgrading an ADK 1.x project to ADK 2.0.
+
+!!! warning "Breaking changes: ADK Python 1.x to 2.0 incompatibilities"
+
+    There are several known incompatibilities and breaking changes introduced
+    with ADK Python v2.0.0. Before upgrading, review these changes and take
+    mitigation steps, if necessary.
+
+The ADK 2.0 release introduces the Workflow Runtime, transitioning ADK from a
+hierarchical agent executor to a graph-based execution engine. In this new
+architecture, your Agents, Tools, and Functions are evaluated as individual
+*nodes* within a workflow graph. If you are upgrading from ADK 1.x, review the
+following breaking changes and migration steps to ensure a smooth transition for
+your production applications.
+
+### Event Schema & Custom Session Databases
+
+ADK 2.0 introduces new fields `node_info` and `output` to the core
+***Event*** schema to track graph state and workflow outputs.
+
+*   **Custom Session storage:** If you have implemented a custom
+    `BaseSessionService`, such as storing sessions in your own SQL or NoSQL
+    databases using rigid columns, your underlying database schema must be
+    updated to accommodate these new fields. Inserting a 2.0 ***Event*** into a
+    rigid 1.x database table causes insertion or ORM deserialization
+    failures. *However, if your custom session service stores events as
+    serialized JSON blobs rather than mapping them to explicit columns, you do
+    not need to update your schema.*
+*   **Strict JSON validation:** If your deployment includes downstream API
+    gateways, mobile clients, or web frontends that perform strict JSON schema
+    validation, including setting `additionalProperties: false`, then validation
+    will reject 2.0 events until their expected schemas are updated.
+
+**Migration action:** Update your database schemas and downstream client
+validators to expect and store the `node_info` and `output` fields on all Event
+payloads. Ensure all reader applications are updated to handle the 2.0 format
+before writing 2.0 sessions to a shared database.
+
+### Agent Execution: BaseAgent to BaseNode
+
+In ADK 1.x, Agents were standalone executors. In ADK 2.0, the ***BaseAgent***
+class now subclasses ***BaseNode***. Agents are now evaluated as individual
+*nodes* within the new Workflow Graph engine.
+
+*   **Execution driver custom overrides:** The ABC contract has changed. Custom
+    overrides of 1.x abstract methods, such as `_run_async_impl()` or
+    `generate_content()`, are no longer the correct way to drive execution. The
+    Workflow Graph engine completely bypasses these legacy overrides. If you
+    inject custom telemetry or state management by overriding these methods,
+    those calls are silently ignored.
+
+**Migration action:** Move custom execution logic out of `run()` overrides.
+Instead, utilize the standardized `BeforeAgentCallback` and `AfterAgentCallback`
+interfaces to safely inject custom logic into the execution lifecycle.
+
+### Context & Callbacks: In-Place Mutation
+
+Bypassing the framework to manually append events is no longer safe.
+
+*   **Direct appending of events:** In ADK 1.x, some developers forcefully
+    appended events to the session via
+    `context.session.events.append(custom_event)`. In ADK 2.0, the Workflow
+    runner needs strict control over event emission to manage state, graph
+    routing, and streaming. Manually appending to the session list circumvents
+    the graph engine and breaks determinism.
+
+**Migration action:** Do not append events directly to the session, and do not
+use `enqueue_event` directly. You must now explicitly yield the event from within
+your node or agent so that the framework can manage its persistence, routing, and
+streaming natively.
+
+### Error Handling & Automatic Retries
+
+The ADK 2.0 framework now automatically catches exceptions to enable automatic
+retries, telemetry, and Human-in-the-Loop (HITL) pauses.
+
+*   **`Try...except` and `BaseException`:** In ADK 1.x, the framework did not
+    have native automatic retries, so developers often wrote manual
+    `try...except` loops inside their tools to prevent crashes. In ADK 2.0, if
+    you migrate a tool and leave a broad `except Exception:` block inside it,
+    this code masks the failure from the framework, permanently disabling the
+    new 2.0 automatic retry mechanisms for that step. Furthermore, catching
+    `BaseException` inadvertently traps `NodeInterruptedError`, which breaks
+    the framework's ability to pause the workflow for Human-in-the-Loop (HITL)
+    input.
+
+**Migration Action:** Allow standard exceptions to propagate out of your tools
+so the framework can evaluate them against your configured ***RetryConfig***,
+such as `RetryConfig(max_attempts=3)`. Never catch ***BaseException*** unless
+you are explicitly re-raising the exception.
+
+If you encounter additional ADK 1.0 to ADK 2.0 incompatibilities, report them
+through the
 [issue tracker](https://github.com/google/adk-python/issues/new?template=bug_report.md&labels=v2).
 
-!!! danger "WARNING: DO NOT MIX ADK 2.0 and ADK 1.0 data storage systems"
 
-    If you use persistent storage for ADK 2.0 projects, **DO NOT allow ADK 2.0
-    projects to share storage with ADK 1.0 projects**, including, but not limited to,
-    session storage, memory systems, and evaluation data. Doing so may result in
-    loss of data or make the data unusable in ADK 1.0 projects.
+### Installing ADK Python 1.x {#install}
 
-## Install ADK 2.0 {#install}
+If you want to update ADK, but are not yet ready to update to ADK 2.0, make sure
+to specify an ADK version during installation or use the compatible release `~=`
+operator as shown below. ADK 1.0 has the following system requirements:
 
-While ADK 2.0 is available as a pre-GA release, it is not installed automatically.
-You must select it as an installation option. This version has the following
-system requirements:
-
-*   **Python 3.11** or later
+*   **Python 3.10** or later
 *   `pip` for installing packages
 
-To install ADK 2.0, follow these steps:
+To install the latest version of ADK 1.x, follow these steps:
 
 1.  Enable a Python virtual environment. See below for instructions.
 
-1.  Install the package using pip using `--pre` to select the current,
-    pre-GA version of ADK 2.0:
+1.  Install the package using pip using compatible release `~=`
+    operator for ADK 1.x:
 
     ```bash
-    pip install google-adk --pre
+    pip install "google-adk~=1.0"
     ```
 
 ??? tip "Recommended: Create and activate a Python virtual environment"
@@ -70,7 +153,7 @@ To install ADK 2.0, follow these steps:
     Create a Python virtual environment:
 
     ```shell
-    python -m venv .venv
+    python3 -m venv .venv
     ```
 
     Activate the Python virtual environment:
@@ -93,22 +176,13 @@ To install ADK 2.0, follow these steps:
         source .venv/bin/activate
         ```
 
-!!! note "Note: Updating existing ADK 1.0 projects"
-
-    The `--pre` option does not install the ADK 2.0 libraries if you already have
-    ADK 1.0 libraries installed in a Python environment. You can force installation
-    of the ADK 2.0 library by adding the `--force` option to the install command
-    shown above. Remember to use Python virtual environments for ADK 2.0, and
-    **ensure you have backups of ADK 1.0 projects *before* updating them to
-    use ADK 2.0 libraries.**
-
 ## Next steps
 
 Read the developer guides for building agents with ADK 2.0 features:
 
--   [**Graph-based workflows**](/adk-docs/workflows/)
--   [**Collaborative agents**](/adk-docs/workflows/collaboration/)
--   [**Dynamic workflows**](/adk-docs/workflows/dynamic/)
+-   [**Graph-based workflows**](/graphs/)
+-   [**Collaborative agents**](/workflows/collaboration/)
+-   [**Dynamic workflows**](/graphs/dynamic/)
 
 Check out these ADK 2.0 code samples for testing and inspiration:
 

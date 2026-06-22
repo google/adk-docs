@@ -75,7 +75,7 @@ def define_env(env):
                     frontmatter.get('description', ''))
                 icon = frontmatter.get('catalog_icon',
                     frontmatter.get('tool_icon',
-                    frontmatter.get('icon', '/adk-docs/integrations/assets/toolbox.svg'))) # Default icon
+                    frontmatter.get('icon', '/integrations/assets/toolbox.svg'))) # Default icon
 
                 tags = frontmatter.get('catalog_tags', [])
                 if isinstance(tags, str):
@@ -85,18 +85,13 @@ def define_env(env):
                 tags = [t.lower() for t in tags]
                 all_tags.update(tags)
 
-                # Calculate relative link
-                # mkdocs uses site_url structure. We want /adk-docs/...
-                # file_path is absolute. we want relative to docs_dir
+                # Calculate root-relative link from file path
                 rel_path = file_path.relative_to(docs_dir).with_suffix('')
-                # We need to handle index.html vs pretty urls.
-                # Assuming standard mkdocs behavior: tools/foo.md -> tools/foo/
-                link = f"/adk-docs/{rel_path}/"
+                link = f"/{rel_path}/"
 
-                # Ensure icon path is correct (if relative, make it absolute-ish for the site)
-                # If icon starts with assets/, prepend /adk-docs/
+                # Ensure icon path is root-relative
                 if not icon.startswith('/') and not icon.startswith('http'):
-                     icon = f"/adk-docs/{icon}"
+                     icon = f"/{icon}"
 
                 cards_data.append({
                     'title': title,
