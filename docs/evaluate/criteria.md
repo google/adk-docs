@@ -230,7 +230,7 @@ Example `EvalConfig` entry:
     "final_response_match_v2": {
       "threshold": 0.8,
       "judge_model_options": {
-            "judge_model": "gemini-2.5-flash",
+            "judge_model": "gemini-flash-latest",
             "num_samples": 5
           }
         }
@@ -289,7 +289,7 @@ Example `EvalConfig` entry:
     "rubric_based_final_response_quality_v1": {
       "threshold": 0.8,
       "judge_model_options": {
-        "judge_model": "gemini-2.5-flash",
+        "judge_model": "gemini-flash-latest",
         "num_samples": 5
       },
       "rubrics": [
@@ -362,7 +362,7 @@ Example `EvalConfig` entry:
     "rubric_based_tool_use_quality_v1": {
       "threshold": 1.0,
       "judge_model_options": {
-        "judge_model": "gemini-2.5-flash",
+        "judge_model": "gemini-flash-latest",
         "num_samples": 5
       },
       "rubrics": [
@@ -434,7 +434,7 @@ Example `EvalConfig` entry:
     "hallucinations_v1": {
       "threshold": 0.8,
       "judge_model_options": {
-            "judge_model": "gemini-2.5-flash",
+            "judge_model": "gemini-flash-latest",
           },
       "evaluate_intermediate_nl_responses": true
     }
@@ -466,13 +466,13 @@ response safety is a priority.
 This criterion assesses whether the agent's response contains any harmful
 content, such as hate speech, harassment, or dangerous information. Unlike other
 metrics implemented natively within ADK, `safety_v1` delegates the evaluation to
-the Vertex AI General AI Eval SDK.
+the Agent Platform Eval SDK.
 
 ### How To Use This Criterion?
 
 Using this criterion requires a Google Cloud Project. You must have
 `GOOGLE_CLOUD_PROJECT` and `GOOGLE_CLOUD_LOCATION` environment variables set,
-typically in an `.env` file in your agent's directory, for the Vertex AI SDK to
+typically in an `.env` file in your agent's directory, for the Agent Platform SDK to
 function correctly.
 
 You can specify a threshold for this criterion in `EvalConfig` under the
@@ -532,7 +532,7 @@ Example `EvalConfig` entry:
     "per_turn_user_simulator_quality_v1": {
       "threshold": 1.0,
       "judge_model_options": {
-        "judge_model": "gemini-2.5-flash",
+        "judge_model": "gemini-flash-latest",
         "num_samples": 5
       },
       "stop_signal": "</finished>"
@@ -564,13 +564,13 @@ outcome rather than the specific steps taken to reach it.
 
 This criterion takes into account all the turns of the multi-turn conversation
 to determine if the task was successfully completed. It delegates the evaluation
-to the Vertex AI General AI Eval SDK.
+to the Agent Platform Eval SDK.
 
 #### How To Use This Criterion?
 
 Using this criterion requires a Google Cloud Project. You must have
 `GOOGLE_CLOUD_PROJECT` and `GOOGLE_CLOUD_LOCATION` environment variables set,
-typically in an `.env` file in your agent's directory, for the Vertex AI SDK to
+typically in an `.env` file in your agent's directory, for the Agent Platform SDK to
 function correctly.
 
 You can specify a threshold for this criterion in `EvalConfig` under the
@@ -610,13 +610,13 @@ steps taken during the conversation.
 
 This criterion is a reference-free metric that assesses the quality of the 
 interaction trajectory across multiple turns. It delegates the evaluation to the
-Vertex AI General AI Eval SDK.
+Agent Platform Eval SDK.
 
 #### How To Use This Criterion?
 
 Using this criterion requires a Google Cloud Project. You must have
 `GOOGLE_CLOUD_PROJECT` and `GOOGLE_CLOUD_LOCATION` environment variables set,
-typically in an `.env` file in your agent's directory, for the Vertex AI SDK to
+typically in an `.env` file in your agent's directory, for the Agent Platform SDK to
 function correctly.
 
 You can specify a threshold for this criterion in `EvalConfig` under the
@@ -662,7 +662,7 @@ AI General AI Eval SDK.
 
 Using this criterion requires a Google Cloud Project. You must have
 `GOOGLE_CLOUD_PROJECT` and `GOOGLE_CLOUD_LOCATION` environment variables set,
-typically in an `.env` file in your agent's directory, for the Vertex AI SDK to
+typically in an `.env` file in your agent's directory, for the Agent Platform SDK to
 function correctly.
 
 You can specify a threshold for this criterion in `EvalConfig` under the

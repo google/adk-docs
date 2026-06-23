@@ -72,7 +72,7 @@ agentic applications:
    streaming (text and audio). This integrates seamlessly with underlying
    capabilities like the [Gemini Live API for the Gemini Developer API](https://ai.google.dev/gemini-api/docs/live)
    (or for
-   [Vertex AI](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/multimodal-live)),
+   [Agent Platform](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/multimodal-live)),
    often enabled with simple configuration changes.
 6. **Built-in Agent Evaluation:** Assess agent performance systematically. The
    framework includes tools to create multi-turn evaluation datasets and run

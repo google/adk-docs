@@ -37,7 +37,7 @@ my_agent/
 ### Define the agent code
 
 Create the code for a basic agent that uses the built-in
-[Google Search tool](/tools/built-in-tools/#google-search). Add the
+[Google Search tool](/integrations/google-search/). Add the
 following code to the `my_agent/agent.go` file in your project directory:
 
 ```go title="my_agent/agent.go"
@@ -61,7 +61,7 @@ import (
 func main() {
 	ctx := context.Background()
 
-	model, err := gemini.NewModel(ctx, "gemini-2.5-flash", &genai.ClientConfig{
+	model, err := gemini.NewModel(ctx, "gemini-flash-latest", &genai.ClientConfig{
 		APIKey: os.Getenv("GOOGLE_API_KEY"),
 	})
 	if err != nil {
@@ -117,10 +117,16 @@ your project to set environment variables:
     echo 'export GOOGLE_API_KEY="YOUR_API_KEY"' > .env
     ```
 
-=== "Windows"
+=== "Windows PowerShell"
 
     ```console title="Update: my_agent/env.bat"
     echo 'set GOOGLE_API_KEY="YOUR_API_KEY"' > env.bat
+    ```
+
+=== "Windows Command Prompt"
+
+    ```console title="Update: my_agent/env.bat"
+    echo set GOOGLE_API_KEY="YOUR_API_KEY" > env.bat
     ```
 
 ??? tip "Using other AI models with ADK"

@@ -1,7 +1,7 @@
 # Runtime Event Loop
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 The ADK Runtime is the underlying engine that powers your agent application during user interactions. It's the system that takes your defined agents, tools, and callbacks and orchestrates their execution in response to user input, managing the flow of information, state changes, and interactions with external services like LLMs or storage.
@@ -177,6 +177,12 @@ The `Runner` acts as the central coordinator for a single user invocation. Its r
             return event;
         });
     }
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/runtime/RunnerLoop.kt:conceptual_loop"
     ```
 
 ### Execution Logic's Role (Agent, Tool, Callback)
@@ -370,6 +376,12 @@ Your code within agents, tools, and callbacks is responsible for the actual comp
 
             // ... subsequent code continues ...
             // If this subsequent code needs to yield another event, it would do so here.
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/runtime/RunnerLoop.kt:execution_logic"
     ```
 
 This cooperative yield/pause/resume cycle between the `Runner` and your Execution Logic, mediated by `Event` objects, forms the core of the ADK Runtime.
@@ -588,6 +600,12 @@ Understanding a few key aspects of how the ADK Runtime handles state, streaming,
     // or emitting more events based on the now-updated `ctx.session().state()`.
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/runtime/RunnerLoop.kt:state_update_timing"
+    ```
+
 ### "Dirty Reads" of Session State
 
 * **Definition:** While commitment happens *after* the yield, code running *later within the same invocation*, but *before* the state-changing event is actually yielded and processed, **can often see the local, uncommitted changes**. This is sometimes called a "dirty read".
@@ -664,6 +682,12 @@ Understanding a few key aspects of how the ADK Runtime handles state, streaming,
     System.out.println("Dirty read value in tool: " + val);
     // Assume the event carrying the state_delta={'field_1': 'value_1'}
     // is yielded *after* this tool runs and is processed by the Runner.
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/runtime/RunnerLoop.kt:dirty_read"
     ```
 
 * **Implications:**

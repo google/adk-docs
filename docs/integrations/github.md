@@ -46,7 +46,7 @@ automate workflows using natural language.
         GITHUB_TOKEN = "YOUR_GITHUB_TOKEN"
 
         root_agent = Agent(
-            model="gemini-2.5-pro",
+            model="gemini-flash-latest",
             name="github_agent",
             instruction="Help users get information from GitHub",
             tools=[
@@ -74,7 +74,7 @@ automate workflows using natural language.
         const GITHUB_TOKEN = "YOUR_GITHUB_TOKEN";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-2.5-pro",
+            model: "gemini-flash-latest",
             name: "github_agent",
             instruction: "Help users get information from GitHub",
             tools: [
