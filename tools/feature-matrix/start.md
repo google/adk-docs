@@ -22,8 +22,8 @@ The following matrix shows which ADK features are currently supported in each la
 | | **Built-in: Google Search** | [Supported](https://adk.dev/tools/built-in-tools/#google-search) | [Supported](https://adk.dev/tools/built-in-tools/#google-search) |
 | | **Built-in: Code Execution** | [Supported](https://adk.dev/tools/built-in-tools/#code-execution) | [Supported](https://adk.dev/tools/built-in-tools/#code-execution) |
 | | **Built-in: GKE Code Executor** | [Supported](https://adk.dev/tools/built-in-tools/#gke-code-executor) | Not Supported |
-| | **Built-in: Vertex AI RAG** | [Supported](https://adk.dev/tools/built-in-tools/#vertex-ai-rag-engine) | Not Supported |
-| | **Built-in: Vertex AI Search** | [Supported](https://adk.dev/tools/built-in-tools/#vertex-ai-search) | Not Supported |
+| | **Built-in: Knowledge Engine** | [Supported](https://adk.dev/integrations/knowledge-engine/) | Not Supported |
+| | **Built-in: Agent Search** | [Supported](https://adk.dev/tools/built-in-tools/#agent-search) | Not Supported |
 | | **Built-in: BigQuery, Spanner, Bigtable** | [Supported](https://adk.dev/tools/built-in-tools/#bigquery) | Not Supported |
 | | **Google Cloud Tools (API Hub, etc.)** | [Supported](https://adk.dev/tools/google-cloud-tools/#apigee-api-hub-tools) | Not Supported |
 | | **MCP Tools** | [Supported](https://adk.dev/tools/mcp-tools/#example-1-file-system-mcp-server) | [Supported](https://adk.dev/tools/mcp-tools/#example-1-file-system-mcp-server) |
@@ -40,7 +40,7 @@ The following matrix shows which ADK features are currently supported in each la
 | | **Multi-Model: Direct Anthropic** | Not Supported | [Supported](https://adk.dev/agents/models/#using-anthropic-models) |
 | **Development Lifecycle** | **Evaluation** | [Supported](https://adk.dev/evaluate/#how-evaluation-works-with-the-adk) | Not Supported |
 | | **Observability (AgentOps, Arize, etc.)** | [Supported](https://adk.dev/observability/agentops/) | Not Supported |
-| | **Deployment: Vertex AI Agent Engine** | [Supported](https://adk.dev/deploy/agent-engine/#standard-deployment) | [No](https://adk.dev/deploy/agent-engine/) |
+| | **Deployment: Agent Runtime** | [Supported](https://adk.dev/deploy/agent-runtime/#standard-deployment) | [No](https://adk.dev/deploy/agent-runtime/) |
 | | **Deployment: Cloud Run** | [Supported](https://adk.dev/deploy/cloud-run/#deployment-commands) | [Supported](https://adk.dev/deploy/cloud-run/#deployment-commands) |
 | | **Deployment: GKE** | [Supported](https://adk.dev/deploy/gke/#option-1-manual-deployment-using-gcloud-and-kubectl) | Not Supported |
 | | **Agent2Agent (A2A) Protocol** | [Supported](https://adk.dev/a2a/quickstart-consuming/#getting-the-sample-code) | Not Supported |
@@ -63,7 +63,7 @@ Based on the documentation, ADK delivers a comprehensive set of features for bui
 *   **Function Tools**: Extend agent capabilities by creating custom tools from standard functions.
 *   **Long-Running Function Tools**: Handle asynchronous tasks that take significant time to complete without blocking the agent.
 *   **Agents-as-a-Tool**: Use an entire agent as a callable tool within another agent.
-*   **Built-in Tools**: Leverage pre-built capabilities like Google Search, Vertex AI Search, and secure code execution.
+*   **Built-in Tools**: Leverage pre-built capabilities like Google Search, Agent Search, and secure code execution.
 *   **Google Cloud Tools**: Seamlessly connect to Google Cloud services like API Hub, Application Integration, and databases via MCP Toolbox.
 *   **MCP (Model Context Protocol) Tools**: Use and expose tools via the open MCP standard.
 *   **Tool Confirmation**: Implement human-in-the-loop workflows by requiring user confirmation before a tool executes.
@@ -83,5 +83,5 @@ Based on the documentation, ADK delivers a comprehensive set of features for bui
 ### Development Lifecycle
 *   **Evaluation**: Systematically assess agent performance by evaluating both the final response quality and the step-by-step execution trajectory.
 *   **Observability & Logging**: Gain deep insights into agent behavior with detailed logging and integrations with observability platforms like MLflow, AgentOps, Arize AX, Cloud Trace, and Weave.
-*   **Deployment**: Deploy your agents to a variety of environments, including serverless (Cloud Run), Kubernetes (GKE), and the fully managed Vertex AI Agent Engine.
+*   **Deployment**: Deploy your agents to a variety of environments, including serverless (Cloud Run), Kubernetes (GKE), and the fully managed Agent Runtime.
 *   **Agent2Agent (A2A) Protocol**: Build distributed, multi-agent systems where agents running as separate services can communicate and collaborate using the open A2A standard.

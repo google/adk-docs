@@ -48,7 +48,7 @@ collaboration workflows using natural language.
 
 
         root_agent = Agent(
-            model="gemini-2.5-pro",
+            model="gemini-flash-latest",
             name="atlassian_agent",
             instruction="Help users work with data in Atlassian products",
             tools=[
@@ -77,7 +77,7 @@ collaboration workflows using natural language.
         import { LlmAgent, MCPToolset } from "@google/adk";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-2.5-pro",
+            model: "gemini-flash-latest",
             name: "atlassian_agent",
             instruction: "Help users work with data in Atlassian products",
             tools: [

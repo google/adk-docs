@@ -1,0 +1,267 @@
+<!doctype html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>LlmResponse</title>
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer></script>
+<!-- Google Analytics tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DKHZS27PHP"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-DKHZS27PHP');
+</script>
+</head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+<a class="library-name--link" href="../../../index.html">
+                            google-adk-kotlin
+                    </a>            </div>
+            <div class="library-version">0.2.0
+            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector common-like" data-active="" data-filter=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">common</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="google-adk-kotlin-core::com.google.adk.kt.models/LlmResponse///PointingToDeclaration//-1644122207">
+  <div class="breadcrumbs"><a href="../../index.html">google-adk-kotlin-core</a><span class="delimiter">/</span><a href="../index.html">com.google.adk.kt.models</a><span class="delimiter">/</span><span class="current">LlmResponse</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Llm</span><wbr><span><span>Response</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="index.html">LlmResponse</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>content<span class="token operator">: </span><a href="../../com.google.adk.kt.types/-content/index.html">Content</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>usageMetadata<span class="token operator">: </span><a href="../../com.google.adk.kt.types/-usage-metadata/index.html">UsageMetadata</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>finishReason<span class="token operator">: </span><a href="../../com.google.adk.kt.types/-finish-reason/index.html">FinishReason</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>errorMessage<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>partial<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>interrupted<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>modelVersion<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>citationMetadata<span class="token operator">: </span><a href="../../com.google.adk.kt.types/-citation-metadata/index.html">CitationMetadata</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>groundingMetadata<span class="token operator">: </span><a href="../../com.google.adk.kt.types/-grounding-metadata/index.html">GroundingMetadata</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span></div><p class="paragraph">LLM response class that provides the first candidate response from the model if available. Otherwise, contains the error code and message.</p></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="CONSTRUCTOR">
+        <h2 class="">Constructors</h2>
+        <div class="table"><a data-name="-679862823%2FConstructors%2F-1644122207" anchor-label="LlmResponse" id="-679862823%2FConstructors%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-togglable="CONSTRUCTOR" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-llm-response.html"><span>Llm</span><wbr><span><span>Response</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-679862823%2FConstructors%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">constructor</span><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">content<span class="token operator">: </span><a href="../../com.google.adk.kt.types/-content/index.html">Content</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">usageMetadata<span class="token operator">: </span><a href="../../com.google.adk.kt.types/-usage-metadata/index.html">UsageMetadata</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">finishReason<span class="token operator">: </span><a href="../../com.google.adk.kt.types/-finish-reason/index.html">FinishReason</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">errorMessage<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">partial<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">interrupted<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter ">modelVersion<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">citationMetadata<span class="token operator">: </span><a href="../../com.google.adk.kt.types/-citation-metadata/index.html">CitationMetadata</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter ">groundingMetadata<span class="token operator">: </span><a href="../../com.google.adk.kt.types/-grounding-metadata/index.html">GroundingMetadata</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="TYPE">
+        <h2 class="">Types</h2>
+        <div class="table"><a data-name="-92603341%2FClasslikes%2F-1644122207" anchor-label="Companion" id="-92603341%2FClasslikes%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-companion/index.html"><span><span>Companion</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-92603341%2FClasslikes%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="-companion/index.html">Companion</a></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="PROPERTY">
+        <h2 class="">Properties</h2>
+        <div class="table"><a data-name="-1378529480%2FProperties%2F-1644122207" anchor-label="citationMetadata" id="-1378529480%2FProperties%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="citation-metadata.html"><span>citation</span><wbr><span><span>Metadata</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1378529480%2FProperties%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="citation-metadata.html">citationMetadata</a><span class="token operator">: </span><a href="../../com.google.adk.kt.types/-citation-metadata/index.html">CitationMetadata</a><span class="token operator">?</span><span class="token operator"> = </span>null</div><div class="brief "><p class="paragraph">The citation metadata of the response.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1120387155%2FProperties%2F-1644122207" anchor-label="content" id="1120387155%2FProperties%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="content.html"><span><span>content</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1120387155%2FProperties%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="content.html">content</a><span class="token operator">: </span><a href="../../com.google.adk.kt.types/-content/index.html">Content</a><span class="token operator">?</span><span class="token operator"> = </span>null</div><div class="brief "><p class="paragraph">The generative content of the response. This should only contain content from the user or the model, and not any framework or system-generated data.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-830597585%2FProperties%2F-1644122207" anchor-label="errorMessage" id="-830597585%2FProperties%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="error-message.html"><span>error</span><wbr><span><span>Message</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-830597585%2FProperties%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="error-message.html">errorMessage</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null</div><div class="brief "><p class="paragraph">Error message if the response is an error.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-398297769%2FProperties%2F-1644122207" anchor-label="finishReason" id="-398297769%2FProperties%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="finish-reason.html"><span>finish</span><wbr><span><span>Reason</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-398297769%2FProperties%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="finish-reason.html">finishReason</a><span class="token operator">: </span><a href="../../com.google.adk.kt.types/-finish-reason/index.html">FinishReason</a><span class="token operator">?</span><span class="token operator"> = </span>null</div><div class="brief "><p class="paragraph">The finish reason of the response.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-876117534%2FProperties%2F-1644122207" anchor-label="groundingMetadata" id="-876117534%2FProperties%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="grounding-metadata.html"><span>grounding</span><wbr><span><span>Metadata</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-876117534%2FProperties%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="grounding-metadata.html">groundingMetadata</a><span class="token operator">: </span><a href="../../com.google.adk.kt.types/-grounding-metadata/index.html">GroundingMetadata</a><span class="token operator">?</span><span class="token operator"> = </span>null</div><div class="brief "><p class="paragraph">The grounding metadata of the response.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="94837546%2FProperties%2F-1644122207" anchor-label="interrupted" id="94837546%2FProperties%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="interrupted.html"><span><span>interrupted</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="94837546%2FProperties%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="interrupted.html">interrupted</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span></div><div class="brief "><p class="paragraph">Flag indicating that LLM was interrupted when generating the content. Usually it's due to user interruption during a bidi streaming.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1133689759%2FProperties%2F-1644122207" anchor-label="modelVersion" id="1133689759%2FProperties%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="model-version.html"><span>model</span><wbr><span><span>Version</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1133689759%2FProperties%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="model-version.html">modelVersion</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">?</span><span class="token operator"> = </span>null</div><div class="brief "><p class="paragraph">The model version used to generate the response.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-695311285%2FProperties%2F-1644122207" anchor-label="partial" id="-695311285%2FProperties%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="partial.html"><span><span>partial</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-695311285%2FProperties%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="partial.html">partial</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span></div><div class="brief "><p class="paragraph">Indicates whether the text content is part of an unfinished text stream. Only used for streaming mode and when the content is plain text.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1742594692%2FProperties%2F-1644122207" anchor-label="usageMetadata" id="-1742594692%2FProperties%2F-1644122207" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="usage-metadata.html"><span>usage</span><wbr><span><span>Metadata</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1742594692%2FProperties%2F-1644122207"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/commonMain"><div class="symbol monospace"><span class="token keyword">val </span><a href="usage-metadata.html">usageMetadata</a><span class="token operator">: </span><a href="../../com.google.adk.kt.types/-usage-metadata/index.html">UsageMetadata</a><span class="token operator">?</span><span class="token operator"> = </span>null</div><div class="brief "><p class="paragraph">The usage metadata of the LlmResponse.</p></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2026 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

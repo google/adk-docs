@@ -1,7 +1,7 @@
 # Agent Runtime
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 ADK provides several ways to run and test your agents during development. Choose
@@ -18,7 +18,7 @@ the method that best fits your development workflow.
     Use `adk web` to launch a browser-based interface for interacting with your
     agents.
 
-    [:octicons-arrow-right-24: Use the Web Interface](web-interface.md)
+    [:octicons-arrow-right-24: Use the Web Interface](web-interface/index.md)
 
 -   :material-console:{ .lg .middle } **Command Line**
 
@@ -36,6 +36,15 @@ the method that best fits your development workflow.
 
     [:octicons-arrow-right-24: Use the API Server](api-server.md)
 
+-   :material-access-point:{ .lg .middle } **Ambient Agents**
+
+    ---
+
+    Build autonomous agents that process events, monitor systems, and respond
+    asynchronously without human intervention.
+
+    [:octicons-arrow-right-24: Use Ambient Agents](ambient-agents.md)
+
 </div>
 
 ## Technical reference
@@ -47,5 +56,7 @@ pages:
   ADK, including the yield/pause/resume cycle.
 - **[Resume Agents](resume.md)**: Learn how to resume agent execution from a
   previous state.
+- **[Cancel Agent Runs](cancel.md)**: Gracefully cancel running
+  agent invocations using AbortSignal (TypeScript).
 - **[Runtime Config](runconfig.md)**: Configure runtime behavior with
   RunConfig.

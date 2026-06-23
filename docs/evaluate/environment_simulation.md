@@ -92,7 +92,7 @@ config = EnvironmentSimulationConfig(
 
 agent = LlmAgent(
     name="my_agent",
-    model="gemini-2.5-flash",
+    model="gemini-flash-latest",
     tools=[get_user_profile],
     before_tool_callback=EnvironmentSimulationFactory.create_callback(config),
 )
@@ -138,7 +138,7 @@ The top-level configuration object.
 Field                            | Type                         | Default              | Description
 :------------------------------- | :--------------------------- | :------------------- | :----------
 `tool_simulation_configs`        | `List[ToolSimulationConfig]` | required             | One entry per tool to simulate. Must not be empty, and tool names must be unique.
-`simulation_model`               | `str`                        | `"gemini-2.5-flash"` | The LLM used for tool connection analysis and mock response generation.
+`simulation_model`               | `str`                        | `"gemini-flash-latest"` | The LLM used for tool connection analysis and mock response generation.
 `simulation_model_configuration` | `GenerateContentConfig`      | thinking enabled     | LLM generation config for internal simulator calls.
 `environment_data`               | `str \| None`                | `None`               | Optional environment context (e.g., a JSON database snapshot) passed to mock strategies to generate more realistic responses.
 `tracing`                        | `str \| None`                | `None`               | Tracing data (e.g., a prior agent run trace in JSON string format) to provide historical context.
