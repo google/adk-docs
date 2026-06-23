@@ -49,7 +49,7 @@ The Parameter Manager integration supports several operations:
 You must meet the following requirements before you configure the integration:
 
 - **Required Software Versions**: ADK Python version v1.30.0 or higher
-- **Required Accounts / APIs**: A [Google Cloud Project](https://docs.cloud.google.com/resource-manager/docs/creating-managing-projects) with the [**Parameter Manager API**](https://docs.cloud.google.com/secret-manager/parameter-manager/docs/prepare-environment#enable_api)), [**Secret Manager API**](https://docs.cloud.google.com/secret-manager/docs/configuring-secret-manager), and **Agent Development Kit API** enabled.
+- **Required Accounts / APIs**: A [Google Cloud Project](https://docs.cloud.google.com/resource-manager/docs/creating-managing-projects) with the [**Parameter Manager API**](https://docs.cloud.google.com/secret-manager/parameter-manager/docs/prepare-environment#enable_api), [**Secret Manager API**](https://docs.cloud.google.com/secret-manager/docs/configuring-secret-manager), and **Agent Development Kit API** enabled.
 
 Complete the following setup steps:
 
