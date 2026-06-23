@@ -1,42 +1,9 @@
 # Build Your First Intelligent Agent Team: A Progressive Weather Bot with ADK
 
-<!-- Optional outer container for overall padding/spacing -->
-<div style="padding: 10px 0;">
-
-  <!-- Line 1: Open in Colab -->
-  <!-- This div ensures the link takes up its own line and adds space below -->
-  <div style="margin-bottom: 10px;">
-    <a href="https://colab.research.google.com/github/google/adk-docs/blob/main/examples/python/tutorial/agent_team/adk_tutorial.ipynb" target="_blank" style="display: inline-flex; align-items: center; gap: 5px; text-decoration: none; color: #4285F4;">
-      <img width="32px" src="https://www.gstatic.com/pantheon/images/bigquery/welcome_page/colab-logo.svg" alt="Google Colaboratory logo">
-      <span>Open in Colab</span>
-    </a>
-  </div>
-
-  <!-- Line 2: Share Links -->
-  <!-- This div acts as a flex container for the "Share to" text and icons -->
-  <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-    <!-- Share Text -->
-    <span style="font-weight: bold;">Share to:</span>
-
-    <!-- Social Media Links -->
-    <a href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A//github/google/adk-docs/blob/main/examples/python/tutorial/agent_team/adk_tutorial.ipynb" target="_blank" title="Share on LinkedIn">
-      <img width="20px" src="https://upload.wikimedia.org/wikipedia/commons/8/81/LinkedIn_icon.svg" alt="LinkedIn logo" style="vertical-align: middle;">
-    </a>
-    <a href="https://bsky.app/intent/compose?text=https%3A//github/google/adk-docs/blob/main/examples/python/tutorial/agent_team/adk_tutorial.ipynb" target="_blank" title="Share on Bluesky">
-      <img width="20px" src="https://upload.wikimedia.org/wikipedia/commons/7/7a/Bluesky_Logo.svg" alt="Bluesky logo" style="vertical-align: middle;">
-    </a>
-    <a href="https://twitter.com/intent/tweet?url=https%3A//github/google/adk-docs/blob/main/examples/python/tutorial/agent_team/adk_tutorial.ipynb" target="_blank" title="Share on X (Twitter)">
-      <img width="20px" src="https://upload.wikimedia.org/wikipedia/commons/5/5a/X_icon_2.svg" alt="X logo" style="vertical-align: middle;">
-    </a>
-    <a href="https://reddit.com/submit?url=https%3A//github/google/adk-docs/blob/main/examples/python/tutorial/agent_team/adk_tutorial.ipynb" target="_blank" title="Share on Reddit">
-      <img width="20px" src="https://redditinc.com/hubfs/Reddit%20Inc/Brand/Reddit_Logo.png" alt="Reddit logo" style="vertical-align: middle;">
-    </a>
-    <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A//github/google/adk-docs/blob/main/examples/python/tutorial/agent_team/adk_tutorial.ipynb" target="_blank" title="Share on Facebook">
-      <img width="20px" src="https://upload.wikimedia.org/wikipedia/commons/5/51/Facebook_f_logo_%282019%29.svg" alt="Facebook logo" style="vertical-align: middle;">
-    </a>
-  </div>
-
-</div>
+<a href="https://colab.research.google.com/github/google/adk-docs/blob/main/examples/python/tutorial/agent_team/adk_tutorial.ipynb" target="_blank" style="display: inline-flex; align-items: center; gap: 5px; text-decoration: none; color: #4285F4;">
+  <img width="32px" src="https://www.gstatic.com/pantheon/images/bigquery/welcome_page/colab-logo.svg" alt="Google Colaboratory logo">
+  <span>Open in Colab</span>
+</a>
 
 This tutorial extends from the [Multi-tool agent](/tutorials/multi-tool-agent/) project. Now, you're ready to dive deeper and construct a more sophisticated, **multi-agent system**.
 
@@ -149,7 +116,7 @@ print(f"Google API Key set: {'Yes' if os.environ.get('GOOGLE_API_KEY') and os.en
 print(f"OpenAI API Key set: {'Yes' if os.environ.get('OPENAI_API_KEY') and os.environ['OPENAI_API_KEY'] != 'YOUR_OPENAI_API_KEY' else 'No (REPLACE PLACEHOLDER!)'}")
 print(f"Anthropic API Key set: {'Yes' if os.environ.get('ANTHROPIC_API_KEY') and os.environ['ANTHROPIC_API_KEY'] != 'YOUR_ANTHROPIC_API_KEY' else 'No (REPLACE PLACEHOLDER!)'}")
 
-# Configure ADK to use API keys directly (not Vertex AI for this multi-model setup)
+# Configure ADK to use API keys directly (not Agent Platform for this multi-model setup)
 os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "False"
 
 
@@ -161,7 +128,7 @@ os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "False"
 # --- Define Model Constants for easier use ---
 
 # More supported models can be referenced here: https://ai.google.dev/gemini-api/docs/models#model-variations
-MODEL_GEMINI_2_5_FLASH = "gemini-2.5-flash"
+MODEL_GEMINI_2_5_FLASH = "gemini-flash-latest"
 
 # More supported models can be referenced here: https://docs.litellm.ai/docs/providers/openai#openai-chat-completion-models
 MODEL_GPT_4O = "openai/gpt-4.1" # You can also try: gpt-4.1-mini, gpt-4o etc.

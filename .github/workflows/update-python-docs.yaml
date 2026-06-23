@@ -64,6 +64,6 @@ jobs:
           CODE_OWNER: 'google'
           CODE_REPO: 'adk-python'
           INTERACTIVE: 0
-          PYTHONPATH: adk-python/contributing/samples/adk_documentation
+          PYTHONPATH: adk-python/contributing/samples/adk_team/adk_documentation
         run:
           python -m adk_docs_updater.main --issue_number ${{ github.event.issue.number }}

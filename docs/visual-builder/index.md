@@ -1,35 +1,36 @@
-# Visual Builder for agents
+# Use the Visual Builder
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.18.0</span><span class="lst-preview">Experimental</span>
 </div>
 
-The ADK Visual Builder is a web-based tool that provides a visual workflow
-design environment for creating and managing ADK agents. It allows you to
-design, build, and test your agents in a beginner-friendly graphical interface,
-and includes an AI-powered assistant to help you build agents.
+The ADK Visual Builder is a feature of the ADK web interface that provides a
+visual workflow design environment for creating and managing agents. The Visual
+Builder allows you to design, build, and test agents in a beginner-friendly
+graphical interface, and includes an AI-powered assistant to help you build
+agents.
 
 ![Visual Agent Builder](../assets/visual-builder.png)
 
 !!! example "Experimental"
+
     The Visual Builder feature is an experimental release. We welcome your
     [feedback](https://github.com/google/adk-python/issues/new?template=feature_request.md)!
 
-## Get started
+## Create an agent
 
-The Visual Builder interface is part of the ADK Web tool user interface.
-Make sure you have ADK library
-[installed](/get-started/installation/#python)
-and then run the ADK Web user interface.
+To use the Visual Builder, start the ADK web interface:
 
 ```console
-adk web --port 8000
+adk web
 ```
+
+Then follow the steps below to create an agent.
 
 ??? tip "Tip: Run from a code development directory"
 
     The Visual Builder tool writes project files to new subdirectories located
-    in the directory where you run the ADK Web tool. Make sure you run this
+    in the directory where you run ADK Web. Make sure you run this
     command from a developer directory location where you have write access.
 
 ![Visual Agent Builder start](../assets/visual-builder-start.png)
@@ -41,13 +42,13 @@ To create an agent with Visual Builder:
 1.  Type a name for your agent application and select **Create**.
 1.  Edit your agent by doing any of the following:
     *   In the left panel, edit agent component values.
-    *   In the central panel, add new agent components .
+    *   In the central panel, add new agent components.
     *   In the right panel, use prompts to modify the agent or get help.
 1.  In bottom left corner, select **Save** to save your agent.
 1.  Interact with your new agent to test it.
 1.  In top left of the page, select the pencil icon, as shown in *Figure 1*, to continue editing your agent.
 
-Here are few things to note when using Visual Builder:
+Here are a few things to note when using Visual Builder:
 
 *   **Create agent and save:** When creating an agent, make sure you select
     **Save** before exiting the editing interface, otherwise your new agent may
@@ -57,11 +58,19 @@ Here are few things to note when using Visual Builder:
 *   **Add tools:** When adding existing custom Tools to a Visual Builder
     agent, specify a fully-qualified Python function name.
 
-## Workflow component support
+??? tip "Try this prompt with the Visual Builder assistant"
 
-The Visual Builder tool provides a drag-and-drop user interface for constructing agents, as
-well as an AI-powered development Assistant that can answer questions and edit your agent workflow.
-The tool supports all the essential components for building an ADK agent workflow, including:
+    ```none
+    Help me add a dice roll tool to my current agent.
+    Use the default model if you need to configure that.
+    ```
+
+## Supported components
+
+The Visual Builder tool provides a drag-and-drop user interface for constructing
+agents, as well as an AI-powered development Assistant that can answer questions
+and edit your agent workflow. The tool supports all the essential components for
+building an ADK agent workflow, including:
 
 *   **Agents**
     *   **Root Agent**: The primary controlling agent for a workflow. All other agents in
@@ -75,7 +84,7 @@ The tool supports all the essential components for building an ADK agent workflo
     *   [**Parallel Agent:**](/agents/workflow-agents/parallel-agents/)
         A workflow agent that executes multiple sub-agents concurrently.
 *   **Tools**
-    *   [**Prebuilt tools:**](/tools/built-in-tools/)
+    *   [**Prebuilt tools:**](/integrations/)
         A limited set of ADK-provided tools can be added to agents.
     *   [**Custom tools:**](/tools-custom/)
         You can build and add custom tools to your workflow.
@@ -85,15 +94,15 @@ The tool supports all the essential components for building an ADK agent workflo
         and end of agent workflow events.
 
 Some advanced ADK features are not supported by Visual Builder due to
-limitations of the Agent Config feature. For more information, see the
-Agent Config [Known limitations](/agents/config/#known-limitations).
+limitations of the Agent Config feature. For more information, see the Agent
+Config [Known limitations](/agents/config/#known-limitations).
 
-## Project code output
+## Generated project structure
 
 The Visual Builder tool generates code in the [Agent Config](/agents/config/)
 format, using `.yaml` configuration files for agents and Python code for custom
 tools. These files are generated in a subfolder of the directory where you ran
-the ADK Web interface. The following listing shows an example layout for a
+the ADK web interface. The following listing shows an example layout for a
 DiceAgent project:
 
 ```none
@@ -110,18 +119,6 @@ DiceAgent/
     You can edit the generated files in your development environment. However,
     some changes may not be compatible with Visual Builder.
 
-## Next steps
-
-Using the Visual Builder development Assistant, try building a new agent using
-this prompt:
-
-```none
-Help me add a dice roll tool to my current agent.
-Use the default model if you need to configure that.
-```
-
-Check out more information on the Agent Config code format used by Visual Builder
-and the available options:
-
-*   [Agent Config](/agents/config/)
-*   [Agent Config YAML schema](/api-reference/agentconfig/)
+For more information on the Agent Config code format used by Visual Builder, see
+[Agent Config](/agents/config/) and [Agent Config YAML
+schema](/api-reference/agentconfig/).

@@ -1,5 +1,5 @@
 <!-- Eval Section -->
-<div class="feature-split">
+<div class="feature-split reverse">
   <div class="feature-text">
     <span class="feature-badge">Evaluation</span>
     <h2>Go beyond vibes. Evaluate everything.</h2>

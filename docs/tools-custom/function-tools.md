@@ -1,7 +1,7 @@
 # Function tools
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 When pre-built ADK tools don't meet your requirements, you can create custom *function tools*. Building function tools allows you to create tailored functionality, such as connecting to proprietary databases or implementing unique algorithms.
@@ -89,10 +89,23 @@ A well-defined function signature is crucial for the LLM to use your tool correc
         ```
     In this example, both `location` and `unit` are mandatory.
 
+=== "Kotlin"
+    In Kotlin, parameters are considered **required** by default if they are of a non-nullable type and have no default value. The LLM must provide a value for these arguments.
+
+    The `@Param` annotation is used to provide the argument's description. This is crucial for the LLM to understand what the argument is for.
+
+    ???+ "Example: Required Parameters"
+        ```kotlin
+        --8<-- "examples/kotlin/snippets/tools/function-tools/RequiredParams.kt:required_params"
+        ```
+    In this example, both `location` and `unit` are mandatory.
+
 ##### Optional Parameters
 
 === "Python"
     A parameter is considered **optional** if you provide a **default value**. This is the standard Python way to define optional arguments. You can also mark a parameter as optional using `typing.Optional[SomeType]` or the `| None` syntax (Python 3.10+).
+
+    Use defaults only for values that are truly optional. Do not add defaults for information the model should derive from the user request or ask the user to provide.
 
     ???+ "Example: Optional Parameters"
         ```python
@@ -159,6 +172,15 @@ A well-defined function signature is crucial for the LLM to use your tool correc
         ```
     Here, `flexibleDays` is optional. The LLM can choose to provide it, but it's not required.
 
+=== "Kotlin"
+    In Kotlin, a parameter is considered **optional** if it is of a **nullable type** or if it has a **default value**.
+
+    ???+ "Example: Optional Parameters"
+        ```kotlin
+        --8<-- "examples/kotlin/snippets/tools/function-tools/OptionalParams.kt:optional_params"
+        ```
+    Here, `flexibleDays` is optional. The LLM can choose to provide it, but it's not required.
+
 ##### Optional Parameters with `typing.Optional`
 You can also mark a parameter as optional using `typing.Optional[SomeType]` or the `| None` syntax (Python 3.10+). This signals that the parameter can be `None`. When combined with a default value of `None`, it behaves as a standard optional parameter.
 
@@ -186,13 +208,13 @@ While you can include `*args` (variable positional arguments) and `**kwargs` (va
 
 #### Return Type
 
-The preferred return type for a Function Tool is a **dictionary** in Python, a **Map** or custom **Record or POJO** in Java, or an **object** in TypeScript. This allows you to structure the response with key-value pairs, providing context and clarity to the LLM. If your function returns a type other than a dictionary or map, the framework automatically wraps it into a dictionary with a single key named **"result"**.
+The preferred return type for a Function Tool is a **dictionary** in Python, a **Map** or custom **Record or POJO** in Java, an **object** in TypeScript, or a **Map** or **Data Class** in Kotlin. This allows you to structure the response with key-value pairs, providing context and clarity to the LLM. If your function returns a type other than a dictionary or map, the framework automatically wraps it into a dictionary with a single key named **"result"**.
 
 Strive to make your return values as descriptive as possible. *For example,* instead of returning a numeric error code, return a dictionary with an "error_message" key containing a human-readable explanation. **Remember that the LLM**, not a piece of code, needs to understand the result. As a best practice, include a "status" key in your return dictionary to indicate the overall outcome (e.g., "success", "error", "pending"), providing the LLM with a clear signal about the operation's state.
 
 #### Docstrings
 
-The docstring of your function serves as the tool's **description** and is sent to the LLM. Therefore, a well-written and comprehensive docstring is crucial for the LLM to understand how to use the tool effectively. Clearly explain the purpose of the function, the meaning of its parameters, and the expected return values. In Java, you can use Javadoc comments or the `@Schema(description="...")` annotation on your method to serve as this description.
+The docstring of your function serves as the tool's **description** and is sent to the LLM. Therefore, a well-written and comprehensive docstring is crucial for the LLM to understand how to use the tool effectively. Clearly explain the purpose of the function, the meaning of its parameters, and the expected return values. In Java, you can use Javadoc comments or the `@Schema(description="...")` annotation on your method to serve as this description. In Kotlin, you can use KDoc comments or the `@Tool(description="...")` and `@Param(description="...")` annotations to provide these descriptions.
 
 ### Passing Data Between Tools
 
@@ -274,6 +296,20 @@ A tool can write data to a `temp:` variable, and a subsequent tool can read it. 
 
         ```json
         For input `GOOG`: {"symbol": "GOOG", "price": "1.0"}
+        ```
+
+    === "Kotlin"
+
+        This tool retrieves the mocked value of a stock price.
+
+        ```kotlin
+        --8<-- "examples/kotlin/snippets/tools/function-tools/FuncTool.kt:full_example"
+        ```
+
+        The return value from this tool will be a Map.
+
+        ```json
+        For input `GOOG`: {"symbol": "GOOG", "price": 123.45}
         ```
 
 ### Best Practices
@@ -388,6 +424,14 @@ Define your tool function and wrap it using the `LongRunningFunctionTool` class:
                 .build();
       }
     }
+    ```
+
+=== "Kotlin"
+
+    In Kotlin, you can create a long-running function tool by setting the `isLongRunning` property to `true` in the `@Tool` annotation.
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/tools/function-tools/LongRunningTool.kt:long_running_tool"
     ```
 
 ### Intermediate / Final result Updates
@@ -520,6 +564,12 @@ To use an agent as a tool, wrap the agent with the AgentTool class.
     AgentTool.create(agent)
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    AgentTool(agent = agentB)
+    ```
+
 ### Customization
 
 The `AgentTool` class provides the following attributes for customizing its behavior:
@@ -562,11 +612,17 @@ The `AgentTool` class provides the following attributes for customizing its beha
         --8<-- "examples/java/snippets/src/main/java/tools/AgentToolCustomization.java:full_code"
         ```
 
+    === "Kotlin"
+
+        ```kotlin
+        --8<-- "examples/kotlin/snippets/tools/function-tools/AgentTool.kt:agent_tool"
+        ```
+
 ### How it works
 
-1. When the `main_agent` receives the long text, its instruction tells it to use the 'summarize' tool for long texts.
+1. When the `root_agent` receives the long text, its instruction tells it to use the 'summarize' tool for long texts.
 2. The framework recognizes 'summarize' as an `AgentTool` that wraps the `summary_agent`.
-3. Behind the scenes, the `main_agent` will call the `summary_agent` with the long text as input.
+3. Behind the scenes, the `root_agent` will call the `summary_agent` with the long text as input.
 4. The `summary_agent` will process the text according to its instruction and generate a summary.
-5. **The response from the `summary_agent` is then passed back to the `main_agent`.**
-6. The `main_agent` can then take the summary and formulate its final response to the user (e.g., "Here's a summary of the text: ...")
+5. **The response from the `summary_agent` is then passed back to the `root_agent`.**
+6. The `root_agent` can then take the summary and formulate its final response to the user (e.g., "Here's a summary of the text: ...")

@@ -55,7 +55,7 @@ workflows and business insights.
         PAYPAL_ACCESS_TOKEN = "YOUR_PAYPAL_ACCESS_TOKEN"
 
         root_agent = Agent(
-            model="gemini-2.5-pro",
+            model="gemini-flash-latest",
             name="paypal_agent",
             instruction="Help users manage their PayPal account",
             tools=[
@@ -93,7 +93,7 @@ workflows and business insights.
         PAYPAL_ACCESS_TOKEN = "YOUR_PAYPAL_ACCESS_TOKEN"
 
         root_agent = Agent(
-            model="gemini-2.5-pro",
+            model="gemini-flash-latest",
             name="paypal_agent",
             instruction="Help users manage their PayPal account",
             tools=[
@@ -120,7 +120,7 @@ workflows and business insights.
         const PAYPAL_ACCESS_TOKEN = "YOUR_PAYPAL_ACCESS_TOKEN";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-2.5-pro",
+            model: "gemini-flash-latest",
             name: "paypal_agent",
             instruction: "Help users manage their PayPal account",
             tools: [

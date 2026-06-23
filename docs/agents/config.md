@@ -11,7 +11,7 @@ following is a simple example of a basic Agent Config definition:
 
 ```yaml
 name: assistant_agent
-model: gemini-2.5-flash
+model: gemini-flash-latest
 description: A helper agent that can answer users' questions.
 instruction: You are an agent to help answer users' various questions.
 ```
@@ -110,7 +110,7 @@ To create an ADK project for use with Agent Config:
 ```
 # yaml-language-server: $schema=https://raw.githubusercontent.com/google/adk-python/refs/heads/main/src/google/adk/agents/config_schemas/AgentConfig.json
 name: assistant_agent
-model: gemini-2.5-flash
+model: gemini-flash-latest
 description: A helper agent that can answer users' questions.
 instruction: You are an agent to help answer users' various questions.
 ```
@@ -193,7 +193,7 @@ tool to reply to user requests.
 ```
 # yaml-language-server: $schema=https://raw.githubusercontent.com/google/adk-python/refs/heads/main/src/google/adk/agents/config_schemas/AgentConfig.json
 name: search_agent
-model: gemini-2.0-flash
+model: gemini-flash-latest
 description: 'an agent whose job it is to perform Google search queries and answer questions about the results.'
 instruction: You are an agent whose job is to perform Google search queries and answer questions about the results.
 tools:
@@ -201,7 +201,7 @@ tools:
 ```
 
 For more details, see the full code for this sample in the
-[ADK sample repository](https://github.com/google/adk-python/blob/main/contributing/samples/tool_builtin_config/root_agent.yaml).
+[ADK sample repository](https://github.com/google/adk-python/blob/main/contributing/samples/tools/tool_builtin_config/root_agent.yaml).
 
 ### Custom tool example
 
@@ -212,7 +212,7 @@ list of numbers provided by the user are prime numbers.
 ```
 # yaml-language-server: $schema=https://raw.githubusercontent.com/google/adk-python/refs/heads/main/src/google/adk/agents/config_schemas/AgentConfig.json
 agent_class: LlmAgent
-model: gemini-2.5-flash
+model: gemini-flash-latest
 name: prime_agent
 description: Handles checking if numbers are prime.
 instruction: |
@@ -225,7 +225,7 @@ tools:
 ```
 
 For more details, see the full code for this sample in the
-[ADK sample repository](https://github.com/google/adk-python/blob/main/contributing/samples/multi_agent_llm_config/prime_agent.yaml).
+[ADK sample repository](https://github.com/google/adk-python/blob/main/contributing/samples/multi_agent/multi_agent_llm_config/prime_agent.yaml).
 
 ### Sub-agents example
 
@@ -238,7 +238,7 @@ YAML files.
 ```
 # yaml-language-server: $schema=https://raw.githubusercontent.com/google/adk-python/refs/heads/main/src/google/adk/agents/config_schemas/AgentConfig.json
 agent_class: LlmAgent
-model: gemini-2.5-flash
+model: gemini-flash-latest
 name: root_agent
 description: Learning assistant that provides tutoring in code and math.
 instruction: |
@@ -256,17 +256,17 @@ sub_agents:
 ```
 
 For more details, see the full code for this sample in the
-[ADK sample repository](https://github.com/google/adk-python/blob/main/contributing/samples/multi_agent_basic_config/root_agent.yaml).
+[ADK sample repository](https://github.com/google/adk-python/blob/main/contributing/samples/multi_agent/multi_agent_basic_config/root_agent.yaml).
 
 ## Deploy agent configs
 
 You can deploy Agent Config agents with
 [Cloud Run](/deploy/cloud-run/) and
-[Agent Engine](/deploy/agent-engine/),
+[Agent Runtime](/deploy/agent-runtime/),
 using the same procedure as code-based agents. For more information on how
 to prepare and deploy Agent Config-based agents, see the
 [Cloud Run](/deploy/cloud-run/) and
-[Agent Engine](/deploy/agent-engine/)
+[Agent Runtime](/deploy/agent-runtime/)
 deployment guides.
 
 ## Known limitations {#known-limitations}
@@ -296,7 +296,7 @@ limitations:
     -   `ExampleTool`: Provides example-based few-shot learning for tools.
 -   **Agent Type Support:** The `LangGraphAgent` and `A2aAgent` types are
     not yet supported.
--   **Vertex AI Search:** The `VertexAiSearchTool` is currently supported in
+-   **Agent Search:** The `VertexAiSearchTool` is currently supported in
     Python and Java Agent Configs.
 
 ## Next steps
