@@ -13,9 +13,9 @@ catalog_tags: ["google"]
 
 The [Google Cloud Parameter
 Manager](https://docs.cloud.google.com/secret-manager/parameter-manager/docs/overview)
-integration provides a standard interface for Agent Development Kit (ADK) agents to connect with the Parameter Manager service
+integration provides a standard interface for Agent Development Kit (ADK) agents to connect with the Google Cloud Parameter Manager service
 and retrieve rendered parameter values at runtime. This module lets you use the
-Parameter Manager service as the single source of truth for agent instructions and tool
+Google Cloud Parameter Manager service as the single source of truth for agent instructions and tool
 configurations.
 
 ## Use cases
