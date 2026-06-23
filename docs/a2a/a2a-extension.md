@@ -1,7 +1,7 @@
 # A2A extension for improved reliability
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python 1.27.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.27.0</span>
 </div>
 
 ADK provides an extension for Agent2Agent (A2A) support to improved message and data handling as part of

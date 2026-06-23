@@ -19,7 +19,7 @@
 translation layer for models and model hosting services, providing a
 standardized, OpenAI-compatible interface to over 100+ LLMs. ADK provides
 integration through the LiteLLM library, allowing you to access a vast range of
-LLMs from providers like OpenAI, Anthropic (non-Vertex AI), Cohere, and many
+LLMs from providers like OpenAI, Anthropic (non-Agent Platform), Cohere, and many
 others. You can run open-source models locally or self-host them and integrate
 them using LiteLLM for operational control, cost savings, privacy, or offline
 use cases.
@@ -65,7 +65,7 @@ You can use the LiteLLM library to access remote or locally hosted AI models:
         export OPENAI_API_KEY="YOUR_OPENAI_API_KEY"
         ```
 
-    * *Example for Anthropic (non-Vertex AI):*
+    * *Example for Anthropic (non-Agent Platform):*
 
         ```shell
         export ANTHROPIC_API_KEY="YOUR_ANTHROPIC_API_KEY"

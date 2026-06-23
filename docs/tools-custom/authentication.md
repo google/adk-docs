@@ -34,11 +34,14 @@ When deploying agents to production hosted environments, your agent's ability to
 properly authenticate to restricted tools and services becomes more challenging
 and more important to properly manage. This authentication challenge can become
 even more complicated when users of your agent have varying levels of access to
-restricted tools and data. Rather than writing code to handle the authentication
-process and credential managment for various tools used by your agent, use an
-*authentication manager* service that manages *both* for you. This service
-should handle the storage of keys and secrets, as well as the acquisition,
-management, and storage of OAuth access or refresh tokens.
+restricted tools and data.
+
+Rather than writing code to handle the authentication process and credential
+management for various tools used by your agent, use an *authentication manager*
+service that manages *both* for you. This service should handle the storage of
+keys and secrets, as well as the acquisition, management, and storage of OAuth
+access or refresh tokens. Learn more about 
+[Agent Identity integration](/integrations/agent-identity/) with ADK.
 
 ### Self-managed authentication
 

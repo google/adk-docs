@@ -11,11 +11,12 @@ catalog_tags: ["resilience"]
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
 </div>
 
-[Temporal](https://temporal.io) is a general-purpose durable execution platform that makes ADK
-agents resilient, scalable, and production-ready. LLM calls and tool executions
-run as Temporal [Activities](https://docs.temporal.io/activities) with automatic
-retries and recovery. If anything fails, your agent picks up exactly where it
-left off - no manual session management or external database required.
+[Temporal](https://temporal.io) is a general-purpose durable execution platform
+that makes ADK agents resilient, scalable, and production-ready. LLM calls and
+tool executions run as Temporal
+[Activities](https://docs.temporal.io/activities) with automatic retries and
+recovery. If anything fails, your agent picks up exactly where it left off - no
+manual session management or external database required.
 
 ## Use cases
 
@@ -51,7 +52,6 @@ The Temporal plugin gives your agents:
 
 Note that as of Temporal Python 1.24.0, this integration is experimental and
 there may be future breaking changes.
-
 
 ## Installation
 
@@ -104,7 +104,7 @@ weather_tool = activity_tool(
 agent = Agent(
     name="weather_agent",
     model=TemporalModel(
-      "gemini-2.5-pro",
+      "gemini-flash-latest",
       activity_config=ActivityConfig(summary="Weather Agent")),
     tools=[weather_tool],
 )
@@ -138,7 +138,8 @@ class WeatherAgentWorkflow:
 
 **2. Configure and start the worker**
 
-Use `GoogleAdkPlugin` to configure the worker to make ADK ready to run in a Workflow on a distributed system:
+Use `GoogleAdkPlugin` to configure the worker to make ADK ready to run in a
+Workflow on a distributed system:
 
 ```python
 import asyncio
@@ -186,7 +187,6 @@ async def start():
 asyncio.run(start())
 ```
 
-
 ### Using MCP tools
 
 Execute [MCP](/mcp/) tools as Temporal
@@ -205,18 +205,20 @@ from temporalio.contrib.google_adk_agents import (
     TemporalMcpToolSetProvider,
 )
 
-# Define a factory that lets Temporal instantiate your MCPToolset as needed.
-toolset_provider = TemporalMcpToolSetProvider(
-    "my-tools",
-    lambda _: McpToolset(
+# Define a shared factory for your MCP toolset.
+# Both the worker (TemporalMcpToolSetProvider) and agent (TemporalMcpToolSet) use it.
+def toolset_factory(_):
+    return McpToolset(
         connection_params=StdioConnectionParams(
             server_params=StdioServerParameters(
                 command="npx",
                 args=["-y", "@modelcontextprotocol/server-filesystem", "/path/to/dir"],
             ),
         ),
-    ),
-)
+    )
+
+# The provider tells the worker how to instantiate the toolset.
+toolset_provider = TemporalMcpToolSetProvider("my-tools", toolset_factory)
 
 # Configure the client with the toolset provider
 client = await Client.connect(
@@ -224,17 +226,33 @@ client = await Client.connect(
     plugins=[GoogleAdkPlugin(toolset_providers=[toolset_provider])]
 )
 
-# Reference the toolset by name when you declare your Agent (inside a @workflow.run)
+# Reference the toolset by name when you declare your Agent (inside a @workflow.run).
+# not_in_workflow_toolset lets this agent also run locally with `adk web`.
 agent = Agent(
     name="tool_agent",
-    model=TemporalModel("gemini-2.5-pro"),
-    tools=[TemporalMcpToolSet("my-tools")],
+    model=TemporalModel("gemini-flash-latest"),
+    tools=[TemporalMcpToolSet("my-tools", not_in_workflow_toolset=toolset_factory)],
 )
 ```
 
+### Local development with `adk web`
+
+For ease of local development, the Temporal wrappers automatically fall back to
+direct execution when run outside a Temporal Workflow, so you can use `adk web`
+and other ADK development commands without a running Temporal server. You won't
+get the benefits of durable execution in this mode, nor will you be precisely
+testing the production behavior.
+
+- `TemporalModel` and `activity_tool` work automatically — they detect they're
+  outside a workflow and call the underlying LLM or function directly.
+- `TemporalMcpToolSet` requires the `not_in_workflow_toolset` parameter (shown
+  in the MCP example above) so it knows how to instantiate the toolset locally.
+
 ## How it works
 
-The plugin ensures your ADK agent runs deterministically inside Temporal Workflow code, and causes inputs and outputs to be serialized and recorded for robust recovery.  For example:
+The plugin ensures your ADK agent runs deterministically inside Temporal
+Workflow code, and causes inputs and outputs to be serialized and recorded for
+robust recovery. For example:
 
 - **LLM calls** are executed as Temporal Activities via `TemporalModel`. If a
   call fails or the worker crashes, Temporal retries or replays from the last
@@ -243,7 +261,7 @@ The plugin ensures your ADK agent runs deterministically inside Temporal Workflo
   automatically replaced with Temporal's deterministic equivalents
   (`workflow.now()`, `workflow.uuid4()`) when run in Workflow code (but not Activity code).
 - **ADK and Gemini modules** are configured for Temporal's
-  [sandbox](https://docs.temporal.io/develop/python/sandbox-environment)
+  [sandbox](https://docs.temporal.io/develop/python/best-practices/python-sdk-sandbox)
   environment with automatic passthrough.
 - **Pydantic serialization** is configured automatically for ADK's data types.
 
@@ -253,13 +271,12 @@ The plugin ensures your ADK agent runs deterministically inside Temporal Workflo
 | --- | --- |
 | Durable tool execution | `activity_tool` wraps tool functions as Activities, supporting long-running tools, automatic retries, and heartbeating |
 | MCP tool support | `TemporalMcpToolSet` executes MCP tools as Activities with full event propagation |
-| Human-in-the-loop | Your Agent Workflow can wait for [Signals](https://docs.temporal.io/signals) and [Updates](https://docs.temporal.io/messages#updates) to wait for human input, and clients can send those to resume the Agent |
+| Human-in-the-loop | Your Agent Workflow can wait for [Signals](https://docs.temporal.io/sending-messages#sending-signals) and [Updates](https://docs.temporal.io/sending-messages#sending-updates) to wait for human input, and clients can send those to resume the Agent |
 | Deterministic runtime | `GoogleAdkPlugin` replaces non-deterministic calls with Temporal-safe equivalents |
 | Debuggability | Every LLM call and tool execution is visible as an Activity in the Temporal UI, making it trivial to debug faults. |
 | Observability | Work with your favorite Observability solution using OpenTelemetry, with cross-process spans that are resilient to crashes. |
 | Safe versioning | Deploy new agent versions using [Temporal Worker Versioning](https://docs.temporal.io/production-deployment/worker-deployments/worker-versioning) without disrupting in-flight executions |
 | Multi-agent orchestration | Compose multiple agents within a Workflow, or scale them to more complex use cases by using [Child Workflows](https://docs.temporal.io/child-workflows) or [Nexus](https://docs.temporal.io/nexus) |
-
 
 ## Additional resources
 
