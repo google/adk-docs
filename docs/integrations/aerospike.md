@@ -1,6 +1,6 @@
 ---
 catalog_title: Aerospike
-catalog_description: Session, memory, and artifact storage for ADK agents on one Aerospike cluster
+catalog_description: Store sessions, memory, and artifacts for ADK agents on one Aerospike cluster
 catalog_icon: /integrations/assets/aerospike.png
 catalog_tags: ["data"]
 ---
@@ -12,20 +12,19 @@ catalog_tags: ["data"]
 </div>
 
 The [`adk-aerospike`](https://github.com/aerospike-community/adk-aerospike)
-integration connects your ADK agent to
-[Aerospike](https://aerospike.com/), a distributed real-time key-value database.
-It implements all three ADK Python storage interfaces on a single cluster using
-the native Aerospike client in your application process. Register the
-`aerospike://` URI scheme once and the `adk` CLI can use Aerospike for
-sessions, artifacts, and memory.
+integration connects your ADK agent to [Aerospike](https://aerospike.com/), a
+distributed real-time key-value database. It implements all three ADK Python
+storage interfaces on a single cluster using the native Aerospike client in your
+application process. Register the `aerospike://` URI scheme once and the `adk`
+CLI can use Aerospike for sessions, artifacts, and memory.
 
 There are several ways to use this integration:
 
 | Approach | Description |
 | -------- | ----------- |
-| **Session service** | `AerospikeSessionService` — scoped state (`app:`, `user:`, session), event history with chunked storage, atomic `append_event`. |
-| **Memory service** | `AerospikeMemoryService` — lexical word-overlap search via per-token posting-list keys; same semantics as `InMemoryMemoryService`. |
-| **Artifact service** | `AerospikeArtifactService` — versioned blobs per session or `user:` namespace. |
+| **Session service** | `AerospikeSessionService`: Scoped state (`app:`, `user:`, session), event history with chunked storage, atomic `append_event`. |
+| **Memory service** | `AerospikeMemoryService`: Lexical word-overlap search via per-token posting-list keys; same semantics as `InMemoryMemoryService`. |
+| **Artifact service** | `AerospikeArtifactService`: Versioned blobs per session or `user:` namespace. |
 | **Full stack** | Wire all three services into one `Runner`, or pass matching `aerospike://` URIs to `adk web` / `adk run`. |
 
 ## Use cases
@@ -35,9 +34,9 @@ There are several ways to use this integration:
   memory service.
 - **High-throughput agents**: Sub-millisecond reads and writes for chat, voice,
   and real-time orchestration where session append latency matters.
-- **Lexical long-term memory**: Tokenize text at write time; search with
-  point reads on posting-list keys (`app:user:kw:<token>`) and hydrate memory
-  rows — no embedding model required.
+- **Lexical long-term memory**: Tokenize text at write time; search with point
+  reads on posting-list keys (`app:user:kw:<token>`) and hydrate memory rows,
+  with no embedding model required.
 - **Multimodal artifacts**: Store images, files, and generated outputs with
   version history; `user:` filenames are visible across sessions (ADK contract).
 - **Self-hosted and multi-tenant**: One namespace, composite secondary indexes
@@ -47,7 +46,7 @@ There are several ways to use this integration:
 ## Prerequisites
 
 - Python 3.11 or later
-- [Google ADK](https://adk.dev/) for Python (`google-adk`)
+- [ADK for Python](/get-started/python/) (`google-adk`)
 - Aerospike Database 7.x or 8.x (Community or Enterprise)
 - A reachable cluster (local Docker example below)
 
@@ -299,15 +298,15 @@ pip install google-adk adk-aerospike
 
     ```bash
     adk web \
-      --session_db_url=aerospike://localhost:3000/adk \
-      --artifact_storage_uri=aerospike://localhost:3000/adk \
+      --session_service_uri=aerospike://localhost:3000/adk \
+      --artifact_service_uri=aerospike://localhost:3000/adk \
       --memory_service_uri=aerospike://localhost:3000/adk
     ```
 
     !!! note
 
-        `register()` wires `aerospike://` into ADK's service registry so the
-        dev UI and CLI resolve these URLs without custom factory code.
+        `register()` wires `aerospike://` into ADK's service registry so the dev
+        UI and CLI resolve these URLs without custom factory code.
 
 ## Configuration
 
@@ -332,8 +331,8 @@ aerospike://user:pass@node1:3000,node2:3000/prod?set_prefix=prod_&tls=true
 | `tls=true` | Enable TLS. Pass `tls_config={...}` to `from_uri` for mTLS details. |
 | `auth_mode` | `INTERNAL` (default), `EXTERNAL`, `EXTERNAL_INSECURE`, or `PKI`. |
 
-You can also construct services with an existing `aerospike.Client` and
-`Schema` for shared connection pools across services.
+You can also construct services with an existing `aerospike.Client` and `Schema`
+for shared connection pools across services.
 
 ### State scoping
 
@@ -391,4 +390,4 @@ in the repository for indexes, chunking invariants, and operational notes.
 - [adk-aerospike on PyPI](https://pypi.org/project/adk-aerospike/)
 - [Runnable examples](https://github.com/aerospike-community/adk-aerospike/tree/main/examples)
 - [Aerospike documentation](https://aerospike.com/docs/)
-- [ADK sessions and memory](https://adk.dev/sessions/)
+- [ADK sessions and memory](/sessions/)
