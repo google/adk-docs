@@ -11,11 +11,11 @@ catalog_tags: ["google"]
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.30.0</span>
 </div>
 
-The [Parameter
+The [Google Cloud Parameter
 Manager](https://docs.cloud.google.com/secret-manager/parameter-manager/docs/overview)
-integration provides a standard interface for Agent Development Kit (ADK) agents
-to retrieve rendered parameter values at runtime. This module lets you use
-Parameter Manager as the single source of truth for agent instructions and tool
+integration provides a standard interface for Agent Development Kit (ADK) agents to connect with the Parameter Manager service
+and retrieve rendered parameter values at runtime. This module lets you use the
+Parameter Manager service as the single source of truth for agent instructions and tool
 configurations.
 
 ## Use cases
@@ -48,6 +48,7 @@ The Parameter Manager integration supports several operations:
 
 You must meet the following requirements before you configure the integration:
 
+*   A [Google Cloud project](https://cloud.google.com/resource-manager/docs/creating-managing-projects) with the Parameter Manager API enabled.
 *   Use ADK version `adk-python` 1.30 or higher.
 *   Enable the [Parameter Manager](https://docs.cloud.google.com/secret-manager/parameter-manager/docs/prepare-environment#enable_api) and [Secret Manager](https://docs.cloud.google.com/secret-manager/docs/configuring-secret-manager) APIs.
 
