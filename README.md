@@ -5,7 +5,7 @@
 [![NPM Version](https://img.shields.io/npm/v/@google/adk)](https://www.npmjs.com/package/@google/adk)
 [![Go Doc](https://img.shields.io/badge/Go%20Package-Doc-blue.svg)](https://pkg.go.dev/google.golang.org/adk)
 [![Maven Central Java](https://img.shields.io/maven-central/v/com.google.adk/google-adk)](https://search.maven.org/artifact/com.google.adk/google-adk)
-[![Maven Central Kotlin](https://img.shields.io/maven-central/v/com.google.adk/google-adk-kotlin-core)](https://search.maven.org/artifact/com.google.adk/google-adk-kotlin-core)
+[![Maven Central Kotlin](https://img.shields.io/maven-central/v/com.google.adk/google-adk-kotlin-core.svg)](https://search.maven.org/artifact/com.google.adk/google-adk-kotlin-core)
 
 <html>
   <h2 align="center">
