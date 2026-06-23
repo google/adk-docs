@@ -45,7 +45,7 @@ This integration provides a small client for fetching Google Cloud parameter val
 ## Resources
 
 - [Deploy Preview](https://deploy-preview-1729--adk-docs-preview.netlify.app/integrations/parameter-manager/#initialize-the-client)
-- [GitHub Repository](src/google/adk/integrations/parameter_manager/parameter_client.py)
+- [GitHub Repository]([src/google/adk/integrations/parameter_manager/parameter_client.py](https://github.com/google/adk-python/blob/main/src/google/adk/integrations/parameter_manager/parameter_client.py))
 - [Google Cloud](https://docs.cloud.google.com/secret-manager/parameter-manager/docs/overview)
 - [Google AI Studio](https://aistudio-preprod.corp.google.com/prompts/1C4ldgvJkKT6qHtFUeiZKcTiDGOmlP1ze?resourceKey=0-IldDiiPSogAPqBzVfz5jSw)
 
