@@ -1,5 +1,5 @@
 <!-- Ecosystem -->
-<div class="feature-split reverse">
+<div class="feature-split">
   <div class="feature-text">
     <span class="feature-badge">Ecosystem</span>
     <h2>Open ecosystem. Connect everything.</h2>
