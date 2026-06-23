@@ -1,7 +1,7 @@
 # Memory: Long-Term Knowledge with `MemoryService`
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 We've seen how `Session` tracks the history (`events`) and temporary data (`state`) for a *single, ongoing conversation*. But what if an agent needs to recall information from *past* conversations? This is where the concept of **Long-Term Knowledge** and the **`MemoryService`** come into play.
@@ -74,6 +74,11 @@ The `InMemoryMemoryService` stores session information in the application's memo
     import com.google.adk.memory.InMemoryMemoryService;
 
     InMemoryMemoryService memoryService = new InMemoryMemoryService();
+    ```
+
+=== "Kotlin"
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/sessions/MemoryExample.kt:instantiate_service"
     ```
 
 
@@ -192,93 +197,13 @@ This example demonstrates the basic flow using the `InMemoryMemoryService` for s
 
     ```java
     package com.google.adk.examples.sessions;
+    ...
+    ```
 
-    import com.google.adk.agents.LlmAgent;
-    import com.google.adk.memory.InMemoryMemoryService;
-    import com.google.adk.runner.Runner;
-    import com.google.adk.sessions.InMemorySessionService;
-    import com.google.adk.sessions.Session;
-    import com.google.adk.tools.LoadMemoryTool;
-    import com.google.genai.types.Content;
-    import com.google.genai.types.Part;
-    import java.util.Optional;
+=== "Kotlin"
 
-    public class MemoryExample {
-
-      private static final String APP_NAME = "memory_example_app";
-      private static final String USER_ID = "mem_user";
-      private static final String MODEL = "gemini-flash-latest";
-
-      public static void main(String[] args) {
-        // Services
-        InMemorySessionService sessionService = new InMemorySessionService();
-        InMemoryMemoryService memoryService = new InMemoryMemoryService();
-
-        // Agent 1: Capture
-        LlmAgent infoCaptureAgent = new LlmAgent.Builder()
-            .model(MODEL)
-            .name("InfoCaptureAgent")
-            .instruction("Acknowledge the user's statement.")
-            .build();
-
-        // Agent 2: Recall
-        LlmAgent memoryRecallAgent = new LlmAgent.Builder()
-            .model(MODEL)
-            .name("MemoryRecallAgent")
-            .instruction("Answer the user's question. Use the 'load_memory' tool if the answer might be in past conversations.")
-            .tools(new LoadMemoryTool())
-            .build();
-
-        // Turn 1
-        System.out.println("--- Turn 1: Capturing Information ---");
-        Runner runner1 = new Runner.Builder()
-            .agent(infoCaptureAgent)
-            .appName(APP_NAME)
-            .sessionService(sessionService)
-            .memoryService(memoryService)
-            .build();
-
-        String session1Id = "session_info";
-        // Create session
-        sessionService.createSession(APP_NAME, USER_ID, null, session1Id).blockingGet();
-
-        Content userInput1 = Content.fromParts(Part.fromText("My favorite project is Project Alpha."));
-
-        runner1.runAsync(USER_ID, session1Id, userInput1)
-            .blockingForEach(event -> {
-               if (event.finalResponse() && event.content().isPresent()) {
-                 System.out.println("Agent 1 Response: " + event.content().get().parts().get(0).text().get());
-               }
-            });
-
-        // Add to memory
-        System.out.println("\n--- Adding Session 1 to Memory ---");
-        Session completedSession1 = sessionService.getSession(APP_NAME, USER_ID, session1Id, Optional.empty()).blockingGet();
-        memoryService.addSessionToMemory(completedSession1).blockingAwait();
-        System.out.println("Session added to memory.");
-
-        // Turn 2
-        System.out.println("\n--- Turn 2: Recalling Information ---");
-        Runner runner2 = new Runner.Builder()
-            .agent(memoryRecallAgent)
-            .appName(APP_NAME)
-            .sessionService(sessionService)
-            .memoryService(memoryService)
-            .build();
-
-        String session2Id = "session_recall";
-        sessionService.createSession(APP_NAME, USER_ID, null, session2Id).blockingGet();
-
-        Content userInput2 = Content.fromParts(Part.fromText("What is my favorite project?"));
-
-        runner2.runAsync(USER_ID, session2Id, userInput2)
-            .blockingForEach(event -> {
-               if (event.finalResponse() && event.content().isPresent()) {
-                 System.out.println("Agent 2 Response: " + event.content().get().parts().get(0).text().get());
-               }
-            });
-      }
-    }
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/sessions/MemoryExample.kt:full_example"
     ```
 
 
@@ -305,12 +230,6 @@ You can also search memory from within a custom tool by using the tool context.
         }
     ```
 
-=== "Go"
-
-    ```go
-    --8<-- "examples/go/snippets/sessions/memory_example/memory_example.go:tool_search"
-    ```
-
 === "TypeScript"
 
     ```typescript
@@ -325,6 +244,12 @@ You can also search memory from within a custom tool by using the tool context.
     }
     ```
 
+=== "Go"
+
+    ```go
+    --8<-- "examples/go/snippets/sessions/memory_example/memory_example.go:tool_search"
+    ```
+
 === "Java"
 
     ```java
@@ -337,6 +262,12 @@ You can also search memory from within a custom tool by using the tool context.
               return new ToolOutput(response.memories().toString());
           });
     }
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/sessions/MemoryExample.kt:search_within_tool"
     ```
 
 ## Memory Bank
@@ -474,6 +405,11 @@ When a memory service is configured, your agent can use a tool or callback to re
         .build();
     ```
 
+=== "Kotlin"
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/sessions/MemoryExample.kt:preload_memory_agent"
+    ```
+
 To extract memories from your session, you need to call `add_session_to_memory`. For example, you can automate this via a callback:
 
 === "Python"
@@ -541,6 +477,11 @@ To extract memories from your session, you need to call `add_session_to_memory`.
     })
     ```
 
+=== "Kotlin"
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/sessions/MemoryExample.kt:auto_save_callback"
+    ```
+
 
 ## Advanced Concepts
 
@@ -567,6 +508,7 @@ For example, your agent can use the framework-configured `InMemoryMemoryService`
 #### Example: Using Two Memory Services
 
 === "Python"
+
     ```python
     from google.adk.agents import Agent
     from google.adk.memory import InMemoryMemoryService
@@ -607,4 +549,10 @@ For example, your agent can use the framework-configured `InMemoryMemoryService`
         ),
         tools=[search_all_memory],
     )
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/sessions/MemoryExample.kt:multi_memory"
     ```

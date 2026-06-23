@@ -52,7 +52,7 @@ root_agent = Agent(
 ```
 
 For a full implementation example, see the
-[Local environment sample](https://github.com/google/adk-python/tree/main/contributing/samples/local_environment).
+[Local environment sample](https://github.com/google/adk-python/tree/main/contributing/samples/environment_and_skills/local_environment).
 
 ### Try with agent
 
@@ -98,6 +98,7 @@ The ***LocalEnvironment*** class supports the following parameters:
     more details, see [File persistence](#file-persistence).
 -   **env_vars**: (optional) A dictionary of environment variables to be set
     for the execution context.
+- **max_output chars**: (optional) A parameter to use with `EnvironmentToolset` to limit the maximum number of characters returned from file reads or command executions. This helps prevent large file contents or command outputs from exceeding the agent's context window limit.
 
 The following code sample shows how to set these options for a
 ***LocalEnvironment*** object:

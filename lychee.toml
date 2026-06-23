@@ -24,4 +24,5 @@ host_request_interval = "1s"
 # Add paths here for directories containing partial/template files
 exclude_path = [
     "_includes",
+    "adk-samples",  # TODO: Remove at release time
 ]

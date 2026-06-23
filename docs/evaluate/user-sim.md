@@ -1,4 +1,4 @@
-# User Simulation
+# User simulation
 
 <div class="language-support-tag">
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.18.0</span>
@@ -23,7 +23,7 @@ A `ConversationScenario` consists of the following components:
     expertise or linguistic style.
 
 A sample conversation scenario for the
-[`hello_world`](https://github.com/google/adk-python/tree/main/contributing/samples/hello_world)
+[`hello_world`](https://github.com/google/adk-python/tree/main/contributing/samples/core/hello_world)
 agent is shown below:
 
 ```json
@@ -54,7 +54,11 @@ While the conversation plan dictates what must be accomplished, the persona dict
     You'll define a conversation scenario, run a "dry run" to check the
     dialogue, and then perform a full evaluation to score the agent's responses.
 
-## User Personas
+## User personas
+
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.26.0</span>
+</div>
 
 A User Persona is a role that the simulated user adopts during the conversation.
 It is defined by a set of **behaviors** that dictate how the user interacts with
@@ -91,14 +95,14 @@ below summarizes the behaviors for each persona:
 | **Troubleshoot Agent Errors** | Once | Never | Never |
 | **Tone** | Professional | Conversational | Conversational |
 
-## Example: Evaluating the [`hello_world`](https://github.com/google/adk-python/tree/main/contributing/samples/hello_world) agent with conversation scenarios
+## Example: Evaluate the [`hello_world`](https://github.com/google/adk-python/tree/main/contributing/samples/core/hello_world) agent with conversation scenarios
 
 To add evaluation cases containing conversation scenarios to a new or existing
 [`EvalSet`](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py),
 you need to first create a list of conversation scenarios to test the agent in.
 
 Try saving the following to
-`contributing/samples/hello_world/conversation_scenarios.json`:
+`contributing/samples/core/hello_world/conversation_scenarios.json`:
 
 ```json
 {
@@ -120,7 +124,7 @@ Try saving the following to
 You will also need a session input file containing information used during
 evaluation.
 Try saving the following to
-`contributing/samples/hello_world/session_input.json`:
+`contributing/samples/core/hello_world/session_input.json`:
 
 ```json
 {
@@ -134,15 +138,15 @@ Then, you can add the conversation scenarios to an `EvalSet`:
 ```bash
 # (optional) create a new EvalSet
 adk eval_set create \
-  contributing/samples/hello_world \
+  contributing/samples/core/hello_world \
   eval_set_with_scenarios
 
 # add conversation scenarios to the EvalSet as new eval cases
 adk eval_set add_eval_case \
-  contributing/samples/hello_world \
+  contributing/samples/core/hello_world \
   eval_set_with_scenarios \
-  --scenarios_file contributing/samples/hello_world/conversation_scenarios.json \
-  --session_input_file contributing/samples/hello_world/session_input.json
+  --scenarios_file contributing/samples/core/hello_world/conversation_scenarios.json \
+  --session_input_file contributing/samples/core/hello_world/session_input.json
 ```
 
 By default, ADK runs evaluations with metrics that require the agent's expected
@@ -152,7 +156,7 @@ Since that is not the case for a dynamic conversation scenario, we will use an
 with some alternate supported metrics.
 
 Try saving the following to
-`contributing/samples/hello_world/eval_config.json`:
+`contributing/samples/core/hello_world/eval_config.json`:
 
 ```json
 {
@@ -172,8 +176,8 @@ Finally, you can use the `adk eval` command to run the evaluation:
 
 ```bash
 adk eval \
-    contributing/samples/hello_world \
-    --config_file_path contributing/samples/hello_world/eval_config.json \
+    contributing/samples/core/hello_world \
+    --config_file_path contributing/samples/core/hello_world/eval_config.json \
     eval_set_with_scenarios \
     --print_detailed_results
 ```
@@ -224,7 +228,7 @@ The below `EvalConfig` shows the default user simulator configuration:
     *   You can also access the `UserPersona` object through the `{{ persona }}`
         placeholder.
 
-## Custom Personas
+## Custom personas
 
 You can define your own custom persona by providing a `UserPersona` object in
 the `ConversationScenario`.
@@ -256,7 +260,7 @@ Example of a custom persona definition:
 }
 ```
 
-## Generating Evaluation Cases via User Simulation
+## Generate evaluation cases via user simulation
 
 Writing evaluation cases manually can be time-consuming and may not cover all potential failure modes. ADK provides a command to automatically generate diverse and realistic conversation scenarios based on your agent's definition using the Agent Platform Eval SDK.
 

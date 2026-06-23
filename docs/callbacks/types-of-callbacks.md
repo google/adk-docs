@@ -91,7 +91,11 @@ These callbacks are available on *any* agent that inherits from `BaseAgent` (inc
 
 **When:** Called *immediately after* the agent's `_run_async_impl` (or `_run_live_impl`) method successfully completes. It does *not* run if the agent was skipped due to `before_agent_callback` returning content or if `end_invocation` was set during the agent's run.
 
-**Purpose:** Useful for cleanup tasks, post-execution validation, logging the completion of an agent's activity, modifying final state, or augmenting the agent's final output.
+**Purpose:** Useful for cleanup tasks, post-execution validation, logging the completion of an agent's activity, or modifying final state.
+
+!!! note "After Agent Callback output modification limitations"
+
+    The `after_agent_callback` can not fully alter the response output because the agent may have called AI models multiple times and omitted multiple events. So modifying the output is not allowed, although you can *append* additional content. If you want to change an AI model response, consider `after_model_callback`.
 
 ??? "Code"
     === "Python"
