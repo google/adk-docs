@@ -19,9 +19,9 @@ Cloud Trace is a component of Google Cloud Observability. It is a powerful tool 
 
 Cloud Trace is built on [OpenTelemetry](https://opentelemetry.io/), an open-source standard that supports many languages and ingestion methods for generating trace data. This aligns with observability practices for ADK applications, which also leverage OpenTelemetry-compatible instrumentation, allowing you to :
 
-- Trace agent interactions : Cloud Trace continuously gathers and analyzes trace data from your project, enabling you to rapidly diagnose latency issues and errors within your ADK applications. This automatic data collection simplifies the process of identifying problems in complex agent workflows.
-- Debug issues : Quickly diagnose latency issues and errors by analyzing detailed traces. Crucial for understanding issues that manifest as increased communication latency across different services or during specific agent actions like tool calls.
-- In-depth Analysis and Visualization: Trace Explorer is the primary tool for analyzing traces, offering visual aids like heatmaps for span duration and line charts for request/error rates. It also provides a spans table, groupable by service and operation, which gives one-click access to representative traces and a waterfall view to easily identify bottlenecks and sources of errors within your agent's execution path
+- **Trace agent interactions** : Cloud Trace continuously gathers and analyzes trace data from your project, enabling you to rapidly diagnose latency issues and errors within your ADK applications. This automatic data collection simplifies the process of identifying problems in complex agent workflows.
+- **Debug issues** : Quickly diagnose latency issues and errors by analyzing detailed traces. Crucial for understanding issues that manifest as increased communication latency across different services or during specific agent actions like tool calls.
+- **In-depth Analysis and Visualization**: Trace Explorer is the primary tool for analyzing traces, offering visual aids like heatmaps for span duration and line charts for request/error rates. It also provides a spans table, groupable by service and operation, which gives one-click access to representative traces and a waterfall view to easily identify bottlenecks and sources of errors within your agent's execution path
 
 The following example will assume the following agent directory structure
 
@@ -74,7 +74,7 @@ def get_weather(city: str) -> dict:
 # Create an agent with tools
 root_agent = Agent(
     name="weather_agent",
-    model="gemini-1.5-flash",
+    model="gemini-2.5-flash",
     description="Agent to answer questions using weather tools.",
     instruction="You must use the available tools to find an answer.",
     tools=[get_weather],
@@ -270,11 +270,11 @@ If you click on one of the traces, you will see the waterfall view of the detail
 
 ADK automatically enriches traces with the following attributes to help you filter and analyze your agent's behavior:
 - `gen_ai.agent.name`: The name of the agent being executed.
-- `user.id`: The ID of the user interacting with the agent.
+- `user.id`: The identifier (ID) of the user interacting with the agent.
 - `gcp.vertex.agent.invocation_id`: The unique ID of the invocation.
 - `gcp.vertex.agent.event_id`: The ID of the specific event.
 - `gen_ai.conversation.id`: The session ID.
 
 ## Resources
 
-- [Google Cloud Trace Documentation](https://cloud.google.com/trace)
+- For more information on analyzing this data, see [Google Cloud Trace Documentation](https://cloud.google.com/trace)
