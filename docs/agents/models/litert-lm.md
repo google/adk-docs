@@ -1,18 +1,165 @@
 # LiteRT-LM model host for ADK agents
 
 <div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-kotlin">Kotlin v0.4.0</span>
 </div>
 
-[LiteRT-LM](https://github.com/google-ai-edge/LiteRT-LM) is a C++ library to
-efficiently run language models across edge platforms.
-On desktop (Linux, macOS, and Windows), ADK integrates with LiteRT-LM-hosted
-models through the LiteRT-LM server launched by the LiteRT-LM CLI `lit`.
+[LiteRT-LM](https://github.com/google-ai-edge/LiteRT-LM) is a library to
+efficiently run language models across edge platforms. ADK can be used with
+local models run by LiteRT-LM in Kotlin and Python.
 
-## Get started
+In Kotlin, ADK integrates with LiteRT-LM through the
+`com.google.adk.kt.litertlm` package.
 
-LiteRT-LM works with the `Gemini` class. You only have to set the `base_url` and
-`model` parameters.
+In Python, ADK integrates with LiteRT-LM-hosted models through a LiteRT-LM
+server launched by the LiteRT-LM tool `lit`.
+
+## Kotlin
+
+### Download a Model
+
+The easiest way to download a model compatible with LiteRT-LM is to use the
+`litert-lm` CLI.
+
+#### 1. Install the LiteRT-LM CLI
+
+Prerequisites: Python 3.10 or higher
+
+To install the CLI, run:
+
+```bash
+pip install --upgrade litert-lm
+```
+
+_(For alternative installation methods, such as using uv, refer to the official
+[LiteRT-LM CLI Installation Guide](https://developers.google.com/edge/litert-lm/cli/installation).)_
+
+#### 2. Download Gemma 4 E2B
+
+Using `litert-lm`, you can import models directly from Hugging Face:
+
+```bash
+litert-lm import \
+  --from-huggingface-repo litert-community/gemma-4-E2B-it-litert-lm \
+  gemma-4-E2B-it.litertlm
+```
+
+Once downloaded, the model is stored locally at:
+
+```
+~/.litert-lm/models/gemma-4-E2B-it.litertlm/model.litertlm
+```
+
+For more details about `litert-lm`, refer to the
+[LiteRT-LM CLI Usage Guide](https://developers.google.com/edge/litert-lm/cli/usage).
+
+### Add Dependencies
+
+ADK Kotlin works with LiteRT-LM through an adapter package,
+`com.google.adk:google-adk-kotlin-litertlm`.
+
+In your `build.gradle.kts`, add `com.google.adk:google-adk-kotlin-litertlm` and
+`com.google.ai.edge.litertlm:litertlm-jvm` to your dependencies:
+
+```kt
+repositories {
+    mavenCentral()
+    google()
+}
+
+dependencies {
+    implementation("com.google.adk:google-adk-kotlin-core:0.4.0")
+    implementation("com.google.adk:google-adk-kotlin-litertlm:0.4.0")
+    implementation("com.google.ai.edge.litertlm:litertlm-jvm:0.13.1")
+    // other dependencies...
+}
+```
+
+### Set the Agent's Model
+
+To use LiteRT-LM to run a local model for your agent, set the model to a
+`LiteRtLmModel` when creating the `LlmAgent` (in place of a `Gemini` model, for
+instance).
+
+Follow the [Kotlin Quickstart for ADK](/get-started/kotlin/) to create a Kotlin
+ADK project.
+
+When creating the `LlmAgent`, set the `model` parameter to a `LiteRtLmModel`:
+
+```kt
+ object HelloTimeAgent {
+
+    // Get model path from environment variable.
+    private val modelPath: String by lazy {
+        System.getenv("LITERT_LM_MODEL_PATH")
+            ?: throw IllegalStateException(
+                "LITERT_LM_MODEL_PATH environment variable must be set pointing to a .litertlm file."
+            )
+    }
+
+    @JvmField
+    val rootAgent =
+        LlmAgent(
+            name = "hello_time_agent",
+            description = "Tells the current time in a specified city.",
+            model =
+                LiteRtLmModel.create(
+                    EngineConfig(modelPath = modelPath, backend = Backend.CPU())
+                ),
+            instruction =
+                Instruction(
+                    "You are a helpful assistant that tells the current time in a city. " +
+                        "Use the 'getCurrentTime' tool for this purpose."
+                ),
+            tools = TimeService().generatedTools(),
+        )
+}
+```
+
+In this example, the path to the LiteRT-LM model file is read from the
+environment variable `LITERT_LM_MODEL_PATH`. The model will be run on the CPU.
+You can run the model on a GPU by setting `backend = Backend.GPU()`.
+
+When you run the agent, set `LITERT_LM_MODEL_PATH` to the location of the model
+file, e.g. `~/.litert-lm/models/gemma-4-E2B-it.litertlm/model.litertlm`.
+
+### Run your agent
+
+If you followed the _Kotlin Quickstart for ADK_ with the above modifications,
+you can run your ADK agent using the command-line REPL (with the environment
+variable `LITERT_LM_MODEL_PATH` set to the path of the model file):
+
+```bash
+LITERT_LM_MODEL_PATH=~/.litert-lm/models/gemma-4-E2B-it.litertlm/model.litertlm ./gradlew run
+```
+
+Example interaction:
+
+```
+Agent hello_time_agent is ready. Type 'exit' to quit.
+
+You > what's your name?
+
+hello_time_agent > I am Gemma 4, a Large Language Model developed by Google DeepMind.
+
+You > what time is it in paris?
+
+hello_time_agent > calls tool: getCurrentTime
+
+hello_time_agent > The time in Paris is 10:30 am.
+```
+
+## Python
+
+### Get started
+
+In Python, LiteRT-LM works with the `Gemini` model class and the `lit` command
+line tool.
+
+`lit` runs the LiteRT-LM server, accessible through `localhost`.
+
+To use LiteRT-LM with the `Gemini` class, set the `base_url` and `model`
+parameters.
 
 1.  Set `base_url` to the LiteRT-LM server URL, for example: `localhost:8001`.
 2.  Set `model` to the LiteRT-LM model name, for example: `gemma3n-e2b`.
@@ -47,22 +194,22 @@ Then run the agent as usual:
 adk web
 ```
 
-## Running the LiteRT-LM Server
+### Running the LiteRT-LM Server
 
 The LiteRT-LM server is a separate process that serves LiteRT-LM models. It is
 started by the LiteRT-LM CLI tool `lit`.
 
-### Download the `lit` CLI tool
+#### Download the `lit` CLI tool
 
 Download the `lit` CLI tool by following these
 [instructions](https://github.com/google-ai-edge/LiteRT-LM?tab=readme-ov-file#desktop-cli-lit)
 in the LiteRT-LM GitHub repository.
 
-### Download a model
+#### Download a model
 
 Before you start the server, you need to download a model. You'll need a
-*Hugging Face* user access token to download a LiteRT-LM model using `lit`. You
-can get a token for your *Hugging Face* account
+_Hugging Face_ user access token to download a LiteRT-LM model using `lit`. You
+can get a token for your _Hugging Face_ account
 [here](https://huggingface.co/settings/tokens).
 
 To see a list of models available for download, use the `lit list` command:
@@ -78,7 +225,7 @@ export HUGGING_FACE_HUB_TOKEN="**your Hugging Face token**"
 lit pull gemma3n-e2b
 ```
 
-### Run the server
+#### Run the server
 
 After downloading a model, start the LiteRT-LM server locally by running the
 following command:
@@ -91,7 +238,7 @@ lit serve --port 8001
 
     You may choose any port number for the LiteRT-LM server as long as it matches the `base_url` you set in the `Gemini` class in your agent code.
 
-### Debugging
+#### Debugging
 
 To see incoming requests to the LiteRT-LM server and the exact input sent to the
 model, use the `--verbose` flag:
