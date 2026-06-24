@@ -3,7 +3,7 @@ module snippets
 go 1.25.1
 
 require (
-	google.golang.org/adk v1.3.0
+	google.golang.org/adk v1.4.0
 	google.golang.org/genai v1.57.0
 )
 

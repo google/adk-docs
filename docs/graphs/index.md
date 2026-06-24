@@ -1,7 +1,7 @@
 # Graph-based agent workflows
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span><span class="lst-go">Go v2.0.0</span>
 </div>
 
 Graph-based agent workflows in ADK let you build agents with more precise control,
@@ -37,59 +37,73 @@ provide the following advantages:
 
 This section describes how to get started with graph-based agents. The following
 example shows how to create a sequential graph-based agent workflow that
-generates a city name, looks up the current time in that city with code
+generates a city name, looks up the current time in that city with a code
 function, and the final agent reports the information.
 
-```python
-from google.adk import Agent
-from google.adk import Workflow
-from google.adk import Event
-from pydantic import BaseModel
+=== "Python"
 
-city_generator_agent = Agent(
-    name="city_generator_agent",
-    model="gemini-flash-latest",
-    instruction="""Return the name of a random city.
-      Return only the name, nothing else.""",
-    output_schema=str,
-)
+    ```python
+    from google.adk import Agent
+    from google.adk import Workflow
+    from google.adk import Event
+    from pydantic import BaseModel
 
-class CityTime(BaseModel):
-    time_info: str  # time information
-    city: str       # city name
-
-def lookup_time_function(node_input: str):
-    """Simulate returning the current time in the specified city."""
-    return CityTime(time_info="10:10 AM", city=node_input)
-
-city_report_agent = Agent(
-    name="city_report_agent",
-    model="gemini-flash-latest",
-    input_schema=CityTime,
-    instruction="""Output following line:
-    It is {CityTime.time_info} in {CityTime.city} right now.""",
-    output_schema=str,
-)
-
-def completed_message_function(node_input: str):
-    return Event(
-        message=f"{node_input}\n WORKFLOW COMPLETED.",
+    city_generator_agent = Agent(
+        name="city_generator_agent",
+        model="gemini-flash-latest",
+        instruction="""Return the name of a random city.
+          Return only the name, nothing else.""",
+        output_schema=str,
     )
 
-root_agent = Workflow(
-    name="root_agent",
-    edges=[
-        ("START", city_generator_agent, lookup_time_function,
-          city_report_agent, completed_message_function)
-    ],
-)
-```
+    class CityTime(BaseModel):
+        time_info: str  # time information
+        city: str       # city name
 
-This sample code demonstrates how you can use the ***Workflow*** class to
-assemble a simple, sequential workflow and alternate between AI agent processing
-and code execution. While you could perform these steps using a single agent
-with a longer prompt and a tool call, the graph-based approach gives you precise
-control over the task execution order and the data output from each step.
+    def lookup_time_function(node_input: str):
+        """Simulate returning the current time in the specified city."""
+        return CityTime(time_info="10:10 AM", city=node_input)
+
+    city_report_agent = Agent(
+        name="city_report_agent",
+        model="gemini-flash-latest",
+        input_schema=CityTime,
+        instruction="""Output following line:
+        It is {CityTime.time_info} in {CityTime.city} right now.""",
+        output_schema=str,
+    )
+
+    def completed_message_function(node_input: str):
+        return Event(
+            message=f"{node_input}\n WORKFLOW COMPLETED.",
+        )
+
+    root_agent = Workflow(
+        name="root_agent",
+        edges=[
+            ("START", city_generator_agent, lookup_time_function,
+              city_report_agent, completed_message_function)
+        ],
+    )
+    ```
+
+=== "Go"
+
+    In Go, sequential workflows are built by composing sub-agents with
+    `sequentialagent.New`. Each agent is an `agent.Agent` implementation whose
+    `Run` function yields `*session.Event` values. Agents share data between
+    steps by writing to session state with `ctx.Session().State().Set` and
+    reading it back with `ctx.Session().State().Get`.
+
+    ```go
+    --8<-- "examples/go/snippets/graphs/index/main.go:sequential-get-started"
+    ```
+
+This sample code demonstrates how you can assemble a simple, sequential
+workflow and alternate between agent processing and code execution. While you
+could perform these steps using a single agent with a longer prompt and a tool
+call, the graph-based approach gives you precise control over the task
+execution order and the data output from each step.
 
 For more information about data handling with graph-based workflows, see
 [Data handling with workflow nodes and agents](/graphs/data-handling/).
@@ -121,52 +135,66 @@ switching between non-deterministic AI-powered agents and deterministic code as
 needed.
 
 The following code sample shows how the workflow graph in Figure 2 could be
-translated into a graph-based agent using the ***Workflow*** class:
+translated into a graph-based agent:
 
-```python
-process_message = Agent(
-    name="process_message",
-    model="gemini-flash-latest",
-    instruction="""Classify user message into either "BUG", "CUSTOMER_SUPPORT",
-      or "LOGISTICS". If you think a message applies to more than one category,
-      reply with a comma separated list of categories.
-   """,
-    output_schema=str,
-)
+=== "Python"
 
-def router(node_input: str):
-    routes = node_input.split(",")
-    routes = [route.strip() for route in routes]
-    return Event(route=routes)
+    ```python
+    process_message = Agent(
+        name="process_message",
+        model="gemini-flash-latest",
+        instruction="""Classify user message into either "BUG", "CUSTOMER_SUPPORT",
+          or "LOGISTICS". If you think a message applies to more than one category,
+          reply with a comma separated list of categories.
+       """,
+        output_schema=str,
+    )
 
-def response_1_bug():
-    return Event(message="Handling bug...")
+    def router(node_input: str):
+        routes = node_input.split(",")
+        routes = [route.strip() for route in routes]
+        return Event(route=routes)
 
-def response_2_support():
-    return Event(message="Handling customer support...")
+    def response_1_bug():
+        return Event(message="Handling bug...")
 
-def response_3_logistics():
-    return Event(message="Handling logistics...")
+    def response_2_support():
+        return Event(message="Handling customer support...")
 
-root_agent = Workflow(
-   name="routing_workflow",
-   edges=[
-       ("START", process_message, router),
-       ( router,
-           {
-               "BUG": response_1_bug,
-               "CUSTOMER_SUPPORT": response_2_support,
-               "LOGISTICS": response_3_logistics,
-           }
-       )
-   ],
-)
-```
+    def response_3_logistics():
+        return Event(message="Handling logistics...")
 
-This sample code demonstrates how you can use an ***edges*** array to define a
-graph with routes between a set of *nodes*, which are discrete tasks that can
-include agents, Tools, your code, and even additional ***Workflows***. For
-information about building advanced graphs for workflows, see
+    root_agent = Workflow(
+       name="routing_workflow",
+       edges=[
+           ("START", process_message, router),
+           ( router,
+               {
+                   "BUG": response_1_bug,
+                   "CUSTOMER_SUPPORT": response_2_support,
+                   "LOGISTICS": response_3_logistics,
+               }
+           )
+       ],
+    )
+    ```
+
+=== "Go"
+
+    In Go, a processing pipeline is assembled by composing workflow agents. The
+    example below uses `sequentialagent.New` to run a classification agent
+    followed by a handler agent. The classification result is written to session
+    state with `ctx.Session().State().Set` and can be read by subsequent agents
+    to implement branching logic.
+
+    ```go
+    --8<-- "examples/go/snippets/graphs/index/main.go:process-pipeline"
+    ```
+
+This sample code demonstrates how you can compose a sequence of agents to
+define a graph with routes between a set of *nodes*, which are discrete tasks
+that can include agents, Tools, your code, and even additional workflow agents.
+For information about building advanced pipelines, see
 [Build graph routes for workflow agents](/graphs/routes/).
 
 ## Known limitations {#known-limitations}
@@ -179,3 +207,13 @@ are *not compatible* with the following ADK features:
 -   **Integrations:** Some third-party
     [Integrations](/integrations/) may not be
     compatible with graph-based workflows.
+
+!!! note "Go: graph syntax not yet available"
+
+    The Python `Workflow` class with `edges` arrays, `JoinNode`, and
+    `Event(route=...)` conditional routing are not yet available in ADK Go.
+    In Go, use the prebuilt workflow agents —
+    [`sequentialagent`](/agents/workflow-agents/sequential-agents/),
+    [`parallelagent`](/agents/workflow-agents/parallel-agents/), and
+    [`loopagent`](/agents/workflow-agents/loop-agents/) — to compose
+    deterministic, multi-step agent pipelines.
