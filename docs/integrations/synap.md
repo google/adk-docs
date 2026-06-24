@@ -12,16 +12,16 @@ catalog_tags: ["data"]
 </div>
 
 The [`maximem-synap-google-adk`](https://pypi.org/project/maximem-synap-google-adk/)
-plugin connects your ADK agent to [Synap](https://maximem.ai), a managed
+plugin connects your ADK agent to [Synap](https://www.maximem.ai/synap), a managed
 long-term memory layer for AI agents. Synap automatically extracts and
-structures knowledge from conversations — facts, preferences, episodes,
-emotions, and temporal events — and retrieves only what is semantically relevant
+structures knowledge from conversations (facts, preferences, episodes,
+emotions, and temporal events) and retrieves only what is semantically relevant
 to the current query.
 
 ## Use cases
 
 - **Persistent cross-session memory**: Give your ADK agents long-term memory
-  that survives across sessions and deployments — no manual bookkeeping.
+  that survives across sessions and deployments, with no manual bookkeeping.
 - **Multi-tenant isolation**: Memory is scoped to `user_id` and `customer_id`,
   ensuring strict isolation in multi-user deployments.
 - **Semantic recall**: Server-side extraction surfaces only what is relevant to
@@ -30,8 +30,8 @@ to the current query.
 ## Prerequisites
 
 - A [Synap](https://synap.maximem.ai) account and API key
-- [Gemini API key](https://aistudio.google.com/app/api-keys) (or any other
-  model provider configured with ADK)
+- [Gemini API key](https://aistudio.google.com/app/api-keys) (or any other model
+  provider configured with ADK)
 
 ## Installation
 
@@ -47,9 +47,9 @@ export SYNAP_API_KEY="your-synap-api-key"
 
 ## Use with agent
 
-`create_synap_tools(...)` returns two `FunctionTool` instances —
-`search_memory` and `store_memory` — that the agent can call to recall and
-persist memories on demand.
+`create_synap_tools(...)` returns two `FunctionTool` instances, `search_memory`
+and `store_memory`, that the agent can call to recall and persist memories on
+demand.
 
 ```python
 import os
@@ -67,7 +67,7 @@ synap_tools = create_synap_tools(
 )
 
 root_agent = Agent(
-    model="gemini-2.0-flash",
+    model="gemini-flash-latest",
     name="memory_assistant",
     instruction=(
         "You are a helpful assistant with long-term memory. "
@@ -85,7 +85,7 @@ adk run path/to/your_agent
 ```
 
 Teach the agent something on the first turn (e.g. *"I'm allergic to peanuts"*),
-then ask about it on a later turn — Synap retrieves the relevant memory
+then ask about it on a later turn. Synap retrieves the relevant memory
 automatically, even across separate `adk run` invocations.
 
 ## Available tools
