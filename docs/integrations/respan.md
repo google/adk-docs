@@ -11,11 +11,12 @@ catalog_tags: ["observability"]
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
 </div>
 
-[Respan](https://www.respan.ai/) captures Google ADK runner, agent, model, and
-tool spans so you can inspect complete agent workflows in the Respan platform.
-The ADK integration uses `respan-instrumentation-google-adk`, which wraps the
-OpenInference ADK instrumentor and adds Respan-specific span normalization
-before traces are exported.
+[Respan](https://www.respan.ai/) captures ADK runner, agent, model, and tool
+spans so you can inspect complete agent workflows in the Respan platform. The
+ADK integration uses
+[`respan-instrumentation-google-adk`](https://pypi.org/project/respan-instrumentation-google-adk/),
+which wraps the OpenInference ADK instrumentor and adds Respan-specific span
+normalization before traces are exported.
 
 ## Overview
 
