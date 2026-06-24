@@ -1,7 +1,9 @@
 # FilesRetrieval
 
-In the Agent Development Kit (ADK), retrieving directory files is essential for equipping agents with the local context needed to perform complex, data-driven tasks. This functionality is particularly useful for scenarios like code project analysis, where an agent must traverse a file system to understand repository structures, perform automated code reviews, or triage bugs across multiple source files.
-The `FilesRetrieval` tool allows an agent to retrieve data by reading in a local directory of files. The default embedding model used by the `FilesRetrieval` tool is `gemini-embedding-2-preview`.
+Retrieving and indexing files from a directory is essential when you need to provide an AI agent with context from local text-based content. This allows the agent to perform Retrieval-Augmented Generation (RAG), enabling it to answer questions, summarize information, or perform analysis based on the contents of the files in the specified directory. For example, you could use this functionality to analyze a code project, query a local knowledge base of markdown documents, or understand the key themes across a collection of reports.
+
+## What it does
+This agent indexes local text files from the data/ directory using FilesRetrieval (backed by LlamaIndex's VectorStoreIndex and Google's gemini-embedding-2-preview embedding model), then answers user questions by retrieving relevant documents before generating a response.
 
 
 ## Configuration Parameters
