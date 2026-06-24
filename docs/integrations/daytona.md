@@ -1,7 +1,7 @@
 ---
 catalog_title: Daytona
 catalog_description: Execute code, run shell commands, and manage files in secure sandboxes
-catalog_icon: /adk-docs/integrations/assets/daytona.png
+catalog_icon: /integrations/assets/daytona.png
 catalog_tags: ["code"]
 ---
 
@@ -50,7 +50,7 @@ plugin = DaytonaPlugin(
 )
 
 root_agent = Agent(
-    model="gemini-2.5-pro",
+    model="gemini-flash-latest",
     name="sandbox_agent",
     instruction="Help users execute code and commands in a secure sandbox",
     tools=plugin.get_tools(),

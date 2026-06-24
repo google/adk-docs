@@ -7,3 +7,4 @@ language. For detailed information on ADK releases, see these locations:
 *   [ADK TypeScript release notes](https://github.com/google/adk-js/releases)
 *   [ADK Go release notes](https://github.com/google/adk-go/releases)
 *   [ADK Java release notes](https://github.com/google/adk-java/releases)
+*   [ADK Kotlin release notes](https://github.com/google/adk-kotlin/releases)
