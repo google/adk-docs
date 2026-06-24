@@ -2,7 +2,7 @@
 catalog_title: Phoenix
 catalog_description: Open-source, self-hosted observability, tracing, and evaluation of LLM applications
 catalog_icon: /integrations/assets/phoenix.png
-catalog_tags: ["observability"]
+catalog_tags: ["observability", "evaluation"]
 ---
 
 # Phoenix observability for ADK

@@ -2,7 +2,7 @@
 catalog_title: Datadog
 catalog_description: Develop, evaluate, and monitor LLM applications
 catalog_icon: /integrations/assets/datadog.png
-catalog_tags: ["observability"]
+catalog_tags: ["observability", "evaluation"]
 ---
 
 # Datadog Observability for ADK
