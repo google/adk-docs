@@ -1,6 +1,6 @@
 ---
 catalog_title: Google Cloud Storage
-catalog_description: Access and perform operations on Google Cloud Storage buckets and objects.
+catalog_description: Access and perform operations on Google Cloud Storage buckets and objects
 catalog_icon: /integrations/assets/gcs.png
 catalog_tags: ["data", "google"]
 ---
@@ -41,7 +41,7 @@ via `GCSCredentialsConfig`:
 
 ### Application Default Credentials
 
-Recommended for local development and deployment to Google Cloud, including 
+Recommended for local development and deployment to Google Cloud, including
 Agent Runtime, Cloud Run, and GKE.
 
 ```python
@@ -150,7 +150,7 @@ tool_settings = GCSToolSettings(capabilities=[Capabilities.READ_WRITE])
 
 # 4. Instantiate the GCS Toolset
 gcs_toolset = GCSToolset(
-    credentials_config=credentials_config, 
+    credentials_config=credentials_config,
     gcs_tool_settings=tool_settings
 )
 
@@ -160,7 +160,7 @@ agent = LlmAgent(
     name="gcs_agent",
     description="Agent for interacting with GCS buckets and objects.",
     instruction="""
-        You are a storage assistant agent. Use the GCS tools to answer questions, 
+        You are a storage assistant agent. Use the GCS tools to answer questions,
         list objects, upload files, or perform admin tasks as requested.
     """,
     tools=[gcs_toolset]
