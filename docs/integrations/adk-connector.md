@@ -1,6 +1,6 @@
 ---
 catalog_title: ADK Connector
-catalog_description: Connect Google ADK agents to Telegram, Discord, Slack, and WhatsApp with minimal code and cross-device session synchronization.
+catalog_description: Expose ADK agents as chatbots on popular messaging channels with cross-device session sync
 catalog_icon: /integrations/assets/adk-connector.png
 catalog_tags: ["connectors"]
 ---
@@ -11,28 +11,41 @@ catalog_tags: ["connectors"]
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript</span>
 </div>
 
-[ADK Connectors](https://github.com/Harshk133/adk-connector) is a plug-and-play toolkit that wraps any [Google Agent Development Kit (ADK)](https://github.com/google/adk) agent and exposes it as a chatbot on messaging channels such as **Telegram**, **Discord**, **WhatsApp**, and **Slack**.
+[ADK Connector](https://github.com/Harshk133/adk-connector) is a plug-and-play
+toolkit that wraps any ADK agent and exposes it as a chatbot on popular
+messaging channels such as Telegram and Discord. See the project repository for
+the current list of supported channels.
 
-By adding just a few lines of code, you can bridge the gap between local development, testing, and production messaging platforms, with native support for database-backed cross-device session synchronization.
+By adding just a few lines of code, you can bridge the gap between local
+development, testing, and production messaging platforms, with native support
+for database-backed cross-device session synchronization.
 
 ## Use cases
 
-- **Multi-Channel Deployment**: Instantly deploy your ADK agents (written in Python or JavaScript/TypeScript) as chatbots on Telegram and Discord, with WhatsApp and Slack support coming soon.
-- **Cross-Device Session Synchronization**: Seamlessly transition conversations. Chat on Telegram or Discord, then inspect, debug, and continue the exact same conversation inside the local ADK Web UI (`adk web`).
-- **Resilient State Management**: Automatically configures an asynchronous SQLite backend to record session states, tool invocations, and user interactions.
-- **Robust Multi-Agent Workflows**: Double-import safety and automatic resolution of prompt context variables across parent and sub-agents.
+- **Multi-Channel Deployment**: Instantly deploy your ADK agents (written in
+  Python or JavaScript/TypeScript) as chatbots on supported messaging channels
+  like Telegram and Discord.
+- **Cross-Device Session Synchronization**: Seamlessly transition conversations.
+  Chat on Telegram or Discord, then inspect, debug, and continue the exact same
+  conversation inside the local ADK Web UI (`adk web`).
+- **Resilient State Management**: Automatically configures an asynchronous
+  SQLite backend to record session states, tool invocations, and user
+  interactions.
+- **Robust Multi-Agent Workflows**: Double-import safety and automatic
+  resolution of prompt context variables across parent and sub-agents.
 
 ## Prerequisites
 
 - Python 3.10+ or Node.js 18+
-- A Gemini API Key (set as `GEMINI_API_KEY`)
+- A Gemini API Key (set as `GOOGLE_API_KEY`)
 - Messaging channel credentials:
     - **Telegram**: A Telegram account and a Bot Token from BotFather
     - **Discord**: A Discord developer account, a Discord Bot Token, and client ID
 
 ## Installation
 
-You can install the connectors for either Python or JavaScript / TypeScript depending on your ADK project.
+You can install the connectors for either Python or JavaScript / TypeScript
+depending on your ADK project.
 
 === "Python"
 
@@ -40,7 +53,8 @@ You can install the connectors for either Python or JavaScript / TypeScript depe
     pip install adk-connector
     ```
 
-    To enable database-backed cross-device session synchronization (e.g. `adk web` UI), also install the ADK DB components:
+    To enable database-backed cross-device session synchronization (e.g. `adk
+    web` UI), also install the ADK DB components:
 
     ```bash
     pip install "google-adk[db]"
@@ -54,7 +68,8 @@ You can install the connectors for either Python or JavaScript / TypeScript depe
 
 ## Use with agent
 
-Here is how you can wrap your existing Google ADK agents and launch them on messaging channels.
+Here is how you can wrap your existing Google ADK agents and launch them on
+messaging channels.
 
 === "Python (Telegram)"
 
@@ -69,7 +84,7 @@ Here is how you can wrap your existing Google ADK agents and launch them on mess
 
     # 1. Define your standard Google ADK Agent
     assistant = Agent(
-        model='gemini-2.5-flash',
+        model='gemini-flash-latest',
         name='my_assistant',
         instruction='You are a helpful assistant.'
     )
@@ -77,13 +92,13 @@ Here is how you can wrap your existing Google ADK agents and launch them on mess
     if __name__ == "__main__":
         # 2. Retrieve your Telegram Bot Token
         token = os.getenv("TELEGRAM_BOT_TOKEN")
-        
+
         # 3. Bind the connector
         connector = TelegramConnector(
             token=token,
             agent=assistant
         )
-        
+
         # 4. Start polling
         connector.start()
     ```
@@ -101,7 +116,7 @@ Here is how you can wrap your existing Google ADK agents and launch them on mess
 
     # 1. Define your standard Google ADK Agent
     assistant = Agent(
-        model='gemini-2.5-flash',
+        model='gemini-flash-latest',
         name='my_assistant',
         instruction='You are a helpful assistant.'
     )
@@ -109,13 +124,13 @@ Here is how you can wrap your existing Google ADK agents and launch them on mess
     if __name__ == "__main__":
         # 2. Retrieve your Discord Bot Token
         token = os.getenv("DISCORD_BOT_TOKEN")
-        
+
         # 3. Bind the connector
         connector = DiscordConnector(
             token=token,
             agent=assistant
         )
-        
+
         # 4. Start the bot!
         connector.start()
     ```
@@ -132,7 +147,7 @@ Here is how you can wrap your existing Google ADK agents and launch them on mess
     // 1. Define your standard Google ADK Agent
     export const rootAgent = new LlmAgent({
       name: 'my_assistant',
-      model: 'gemini-2.5-flash',
+      model: 'gemini-flash-latest',
       instruction: 'You are a helpful assistant.'
     });
 
@@ -147,9 +162,11 @@ Here is how you can wrap your existing Google ADK agents and launch them on mess
     }
     ```
 
-## Advanced Setup: Session Sync (with `adk web`)
+## Session sync with `adk web`
 
-For Python setups, you can sync Telegram or Discord chat history directly with the local ADK Web UI by mapping your provider-specific user ID to the local development environment.
+For Python setups, you can sync Telegram or Discord chat history directly with
+the local ADK Web UI by mapping your provider-specific user ID to the local
+development environment.
 
 1. In your code, set `session_management_across_device=True` and pass your user ID:
 
@@ -183,11 +200,11 @@ For Python setups, you can sync Telegram or Discord chat history directly with t
    ```bash
    adk web .
    ```
-4. Access `http://127.0.0.1:8000` to view active conversations and tool execution logs directly in the browser.
+4. Access `http://127.0.0.1:8000` to view active conversations and tool
+   execution logs directly in the browser.
 
 ## Additional resources
 
 - [ADK Connector GitHub Repository](https://github.com/Harshk133/adk-connector)
 - [ADK Connector Python Package (PyPI)](https://pypi.org/project/adk-connector/)
 - [ADK Connector JS/TS Package (NPM)](https://www.npmjs.com/package/adk-connector-js)
-- [Official Google ADK Repository](https://github.com/google/adk)
