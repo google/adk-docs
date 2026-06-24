@@ -1,12 +1,11 @@
 # FilesRetrieval
 
-The `FilesRetrieval` tool allows an agent to retrieve data by reading in a local directory of files.
+The `FilesRetrieval` tool allows an agent to retrieve data by reading in a local directory of files. The default embedding model used by the `FilesRetrieval` tool is `gemini-embedding-2-preview`.
+
 
 ## Configuration Parameters
 
 To use the `FilesRetrieval` tool, you need to initialize it by providing the path to the directory containing the files you want to use for retrieval. You specify this directory using the `input_dir` parameter.
-
-The default embedding model used by the `FilesRetrieval` tool is `gemini-embedding-2-preview`.
 
 ## Get started
 
