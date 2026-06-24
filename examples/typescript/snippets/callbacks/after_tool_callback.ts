@@ -13,14 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {
-  LlmAgent,
-  InMemoryRunner,
-  FunctionTool,
-  isFinalResponse,
-  ToolContext,
-  BaseTool,
-} from "@google/adk";
+import { LlmAgent, InMemoryRunner, FunctionTool, isFinalResponse, Context, BaseTool } from '@google/adk';
 import { createUserContent } from "@google/genai";
 import { z } from "zod";
 
@@ -65,7 +58,7 @@ function simpleAfterToolModifier({
 }: {
   tool: BaseTool;
   args: Record<string, any>;
-  context: ToolContext;
+  context: Context;
   response: Record<string, any>;
 }) {
   const agentName = context.agentName;

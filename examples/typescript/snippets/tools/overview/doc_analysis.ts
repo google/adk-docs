@@ -1,22 +1,22 @@
 import { Part } from "@google/genai";
-import { ToolContext } from "@google/adk";
+import { Context } from '@google/adk';
 
 // Analyzes a document using context from memory.
 export async function processDocument(
   params: { documentName: string; analysisQuery: string },
-  toolContext?: ToolContext
+  context?: Context
 ): Promise<Record<string, any>> {
-  if (!toolContext) {
-    throw new Error("ToolContext is required for this tool.");
+  if (!context) {
+    throw new Error("Context is required for this tool.");
   }
 
   // 1. List all available artifacts
-  const artifacts = await toolContext.listArtifacts();
+  const artifacts = await context.listArtifacts();
   console.log(`Listing all available artifacts: ${artifacts}`);
 
   // 2. Load an artifact
   console.log(`Tool: Attempting to load artifact: ${params.documentName}`);
-  const documentPart = await toolContext.loadArtifact(params.documentName);
+  const documentPart = await context.loadArtifact(params.documentName);
   if (!documentPart) {
     console.log(`Tool: Document '${params.documentName}' not found.`);
     return {
@@ -32,7 +32,7 @@ export async function processDocument(
 
   // 3. Search memory for related context
   console.log(`Tool: Searching memory for context related to '${params.analysisQuery}'`);
-  const memory_results = await toolContext.searchMemory(params.analysisQuery);
+  const memory_results = await context.searchMemory(params.analysisQuery);
   console.log(`Tool: Found ${memory_results.memories.length} relevant memories.`);
   const context_from_memory = memory_results.memories
     .map((m) => m.content.parts[0].text)
@@ -48,7 +48,7 @@ export async function processDocument(
   // 5. Save the analysis result as a new artifact
   const analysisPart: Part = { text: analysisResult };
   const newArtifactName = `analysis_${params.documentName}`;
-  await toolContext.saveArtifact(newArtifactName, analysisPart);
+  await context.saveArtifact(newArtifactName, analysisPart);
   console.log(`Tool: Saved analysis result to '${newArtifactName}'.`);
 
   return {

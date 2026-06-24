@@ -1,7 +1,7 @@
 # State: The Session's Scratchpad
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 Within each `Session` (our conversation thread), the **`state`** attribute acts like the agent's dedicated scratchpad for that specific interaction. While `session.events` holds the full history, `session.state` is where the agent stores and updates dynamic details needed *during* the conversation.
@@ -93,7 +93,7 @@ To inject a value from the session state, enclose the key of the desired state v
 
     story_generator = LlmAgent(
         name="StoryGenerator",
-        model="gemini-2.0-flash",
+        model="gemini-flash-latest",
         instruction="""Write a short story about a cat, focusing on the theme: {topic}."""
     )
 
@@ -109,7 +109,7 @@ To inject a value from the session state, enclose the key of the desired state v
 
     const storyGenerator = new LlmAgent({
         name: "StoryGenerator",
-        model: "gemini-2.5-flash",
+        model: "gemini-flash-latest",
         instruction: "Write a short story about a cat, focusing on the theme: {topic}."
     });
 
@@ -122,6 +122,28 @@ To inject a value from the session state, enclose the key of the desired state v
 
     ```go
     --8<-- "examples/go/snippets/sessions/instruction_template/instruction_template_example.go:key_template"
+    ```
+
+=== "Java"
+
+    ```java
+    import com.google.adk.agents.LlmAgent;
+
+    LlmAgent storyGenerator = LlmAgent.builder()
+        .name("StoryGenerator")
+        .model(geminiModel)
+        .instruction("Write a short story about a cat, focusing on the theme: " + topic)
+        .build();
+
+    // Assuming session.state().put("topic", "friendship"), the LLM
+    // will receive the following instruction:
+    // "Write a short story about a cat, focusing on the theme: friendship."
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/sessions/StateExample.kt:instruction_templating"
     ```
 
 #### Important Considerations
@@ -153,7 +175,7 @@ The `InstructionProvider` function receives a `ReadonlyContext` object, which yo
         return 'Format your output as JSON: {"city": "<name>", "population": <number>}'
 
     agent = LlmAgent(
-        model="gemini-2.0-flash",
+        model="gemini-flash-latest",
         name="template_helper_agent",
         instruction=my_instruction_provider
     )
@@ -171,7 +193,7 @@ The `InstructionProvider` function receives a `ReadonlyContext` object, which yo
     }
 
     const agent = new LlmAgent({
-        model: "gemini-2.5-flash",
+        model: "gemini-flash-latest",
         name: "template_helper_agent",
         instruction: myInstructionProvider
     });
@@ -181,6 +203,35 @@ The `InstructionProvider` function receives a `ReadonlyContext` object, which yo
 
     ```go
     --8<-- "examples/go/snippets/sessions/instruction_provider/instruction_provider_example.go:bypass_state_injection"
+    ```
+
+=== "Java"
+
+    ```java
+    import com.google.adk.agents.Instruction;
+    import com.google.adk.agents.LlmAgent;
+    import com.google.adk.agents.ReadonlyContext;
+    import io.reactivex.rxjava3.core.Single;
+
+    // This is an Instruction.Provider
+    Instruction.Provider myInstructionProvider = new Instruction.Provider(
+        (ReadonlyContext context) -> {
+            // No state injection occurs — curly braces are treated as literal text.
+            return Single.just("Format your output as JSON: {\"city\": \"<name>\", \"population\": <number>}");
+        }
+    );
+
+    LlmAgent agent = LlmAgent.builder()
+        .model("gemini-flash-latest")
+        .name("template_helper_agent")
+        .instruction(myInstructionProvider)
+        .build();
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/sessions/StateExample.kt:instruction_provider"
     ```
 
 If you want to both use an `InstructionProvider` *and* inject state into your instructions, you can use the `inject_session_state` utility function. Only `{key}` placeholders matching valid state variable names will be replaced; other text (including curly braces that don't match valid identifiers) will be left as-is.
@@ -199,7 +250,7 @@ If you want to both use an `InstructionProvider` *and* inject state into your in
         return await instructions_utils.inject_session_state(template, context)
 
     agent = LlmAgent(
-        model="gemini-2.0-flash",
+        model="gemini-flash-latest",
         name="dynamic_template_helper_agent",
         instruction=my_dynamic_instruction_provider
     )
@@ -209,6 +260,31 @@ If you want to both use an `InstructionProvider` *and* inject state into your in
 
     ```go
     --8<-- "examples/go/snippets/sessions/instruction_provider/instruction_provider_example.go:manual_state_injection"
+    ```
+
+=== "Java"
+
+    ```java
+    import com.google.adk.agents.Instruction;
+    import com.google.adk.agents.LlmAgent;
+    import com.google.adk.agents.ReadonlyContext;
+    import com.google.adk.utils.InstructionUtils;
+    import io.reactivex.rxjava3.core.Single;
+
+    Instruction.Provider myDynamicInstructionProvider = new Instruction.Provider(
+        (ReadonlyContext context) -> {
+            String template = "This is a " + adjective + " instruction. Use JSON like: {\"key\": \"value\"}.";
+            // This will inject the 'adjective' state variable.
+            // The JSON braces are left alone because their content is not a valid identifier.
+            return InstructionUtils.injectSessionState(context.invocationContext(), template);
+        }
+    );
+
+    LlmAgent agent = LlmAgent.builder()
+        .model("gemini-flash-latest")
+        .name("dynamic_template_helper_agent")
+        .instruction(myDynamicInstructionProvider)
+        .build();
     ```
 
 **Benefits of Direct Injection**
@@ -245,7 +321,7 @@ This is the simplest method for saving an agent's final text response directly i
     # Define agent with output_key
     greeting_agent = LlmAgent(
         name="Greeter",
-        model="gemini-2.0-flash", # Use a valid model
+        model="gemini-flash-latest", # Use a valid model
         instruction="Generate a short, friendly greeting.",
         output_key="last_greeting" # Save response to state['last_greeting']
     )
@@ -288,7 +364,7 @@ This is the simplest method for saving an agent's final text response directly i
     // Define agent with outputKey
     const greetingAgent = new LlmAgent({
         name: "Greeter",
-        model: "gemini-2.5-flash",
+        model: "gemini-flash-latest",
         instruction: "Generate a short, friendly greeting.",
         outputKey: "last_greeting" // Save response to state['last_greeting']
     });
@@ -467,7 +543,15 @@ For more complex scenarios (updating multiple keys, non-string values, specific 
     --8<-- "examples/java/snippets/src/main/java/state/ManualStateUpdateExample.java:full_code"
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/sessions/StateExample.kt:full_example"
+    ```
+
 **3. Via `CallbackContext` or `ToolContext` (Recommended for Callbacks and Tools)**
+
+*(Note: In TypeScript, this is done via the unified `Context` type.)*
 
 Modifying state within agent callbacks (e.g., `on_before_agent_call`, `on_after_agent_call`) or tool functions is best done using the `state` attribute of the `CallbackContext` or `ToolContext` provided to your function.
 
@@ -504,10 +588,10 @@ For more comprehensive details on context objects, refer to the [Context documen
 
     ```typescript
     // In an agent callback or tool function
-    import { CallbackContext } from "@google/adk"; // or ToolContext
+    import { Context } from "@google/adk";
 
     function myCallbackOrToolFunction(
-        context: CallbackContext, // Or ToolContext
+        context: Context,
         // ... other parameters ...
     ) {
         // Update existing state
@@ -548,6 +632,12 @@ For more comprehensive details on context objects, refer to the [Context documen
             // ... rest of callback logic ...
         }
     }
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/sessions/StateExample.kt:state_updates_context"
     ```
 
 **What `append_event` Does:**
