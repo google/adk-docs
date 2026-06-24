@@ -2,7 +2,7 @@
 catalog_title: Google Cloud Storage
 catalog_description: Access and perform operations on Google Cloud Storage buckets and objects.
 catalog_icon: /integrations/assets/gcs.png
-catalog_tags: ["storage", "google"]
+catalog_tags: ["data", "google"]
 ---
 
 # Google Cloud Storage (GCS)
