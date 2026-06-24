@@ -1,5 +1,6 @@
 # FilesRetrieval
 
+In the Agent Development Kit (ADK), retrieving directory files is essential for equipping agents with the local context needed to perform complex, data-driven tasks. This functionality is particularly useful for scenarios like code project analysis, where an agent must traverse a file system to understand repository structures, perform automated code reviews, or triage bugs across multiple source files.
 The `FilesRetrieval` tool allows an agent to retrieve data by reading in a local directory of files. The default embedding model used by the `FilesRetrieval` tool is `gemini-embedding-2-preview`.
 
 
