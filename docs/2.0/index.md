@@ -5,10 +5,14 @@ hide:
 
 # Welcome to ADK 2.0
 
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span><span class="lst-go">Go v2.0.0</span>
+</div>
+
 ADK 2.0 introduces powerful tools for building sophisticated AI agents, and
 helps you structure agents to execute challenging tasks with more control,
-predictability, and reliability. ADK 2.0 is available for Python and includes
-the following key features:
+predictability, and reliability. ADK 2.0 is available for Python and Go and
+includes the following key features:
 
 -   [**Graph-based workflows**](/graphs/): Build deterministic agent
     workflows with more control over how tasks are routed and executed.
@@ -27,6 +31,10 @@ to build agents with ADK 2.0!
 !!! tip "ADK Python v2.0.0 GA release"
 
     ADK Python 2.0 is released for general availability as of May 19, 2026.
+
+!!! tip "ADK Go v2.0.0 GA release"
+
+    ADK Go 2.0 is released for general availability as of <TBD>.
 
 ## ADK Python 1.x compatibility
 
@@ -123,8 +131,8 @@ so the framework can evaluate them against your configured ***RetryConfig***,
 such as `RetryConfig(max_attempts=3)`. Never catch ***BaseException*** unless
 you are explicitly re-raising the exception.
 
-If you encounter additional ADK 1.0 to ADK 2.0 incompatibilities, report them
-through the
+If you encounter additional ADK Python 1.0 to ADK 2.0 incompatibilities, report
+them through the
 [issue tracker](https://github.com/google/adk-python/issues/new?template=bug_report.md&labels=v2).
 
 
@@ -176,6 +184,95 @@ To install the latest version of ADK 1.x, follow these steps:
         source .venv/bin/activate
         ```
 
+## ADK Go 1.x compatibility
+
+ADK Go 2.0 is designed to be compatible with agents developed with ADK Go 1.x
+releases. However, there are a few breaking changes you should be aware of
+before upgrading an ADK Go 1.x project to ADK Go 2.0.
+
+!!! warning "Breaking changes: ADK Go 1.x to 2.0 incompatibilities"
+
+    There are several known incompatibilities and breaking changes introduced
+    with ADK Go v2.0.0. Before upgrading, review these changes and take
+    mitigation steps, if necessary.
+
+The ADK Go 2.0 release introduces the Workflow Runtime, transitioning ADK Go
+from a hierarchical agent executor to a graph-based execution engine. In this
+new architecture, your Agents, Tools, and Functions are evaluated as individual
+*nodes* within a workflow graph. If you are upgrading from ADK Go 1.x, review
+the following breaking changes and migration steps.
+
+### Module import path
+
+ADK Go 2.0 uses a new major version module path. You must update all import
+paths in your Go source files and your `go.mod` file.
+
+*   **1.x import path:** `google.golang.org/adk`
+*   **2.0 import path:** `google.golang.org/adk/v2`
+
+**Migration action:** Run `go get google.golang.org/adk/v2` and update all
+import statements in your source files from `google.golang.org/adk/...` to
+`google.golang.org/adk/v2/...`.
+
+### Agent Execution: Agent interface changes
+
+In ADK Go 1.x, agents implemented the `agent.Agent` interface by providing a
+`Run` method. In ADK Go 2.0, agents are evaluated as individual *nodes* within
+the new Workflow Graph engine.
+
+*   **Execution driver custom overrides:** Custom agent types that override
+    internal execution behavior may no longer work as expected. The Workflow
+    Graph engine manages execution scheduling and event emission, and custom
+    implementations that bypass these mechanisms are silently ignored.
+
+**Migration action:** Move custom execution logic into standardized
+`BeforeAgentCallback` and `AfterAgentCallback` hooks to safely inject custom
+logic into the execution lifecycle.
+
+### Event Schema & Custom Session Storage
+
+ADK Go 2.0 introduces new fields `node_info` and `output` to the core
+***Event*** schema to track graph state and workflow outputs.
+
+*   **Custom session storage:** If you have implemented a custom
+    `session.Service`, such as storing sessions in your own SQL or NoSQL
+    databases with rigid schemas, your underlying database schema must be
+    updated to accommodate these new fields. Inserting a 2.0 ***Event*** into a
+    rigid 1.x database table causes insertion or deserialization failures.
+    *However, if your custom session service stores events as serialized JSON
+    blobs, you do not need to update your schema.*
+
+**Migration action:** Update your database schemas and downstream client
+validators to expect and store the `node_info` and `output` fields on all Event
+payloads.
+
+If you encounter additional ADK Go 1.0 to ADK 2.0 incompatibilities, report
+them through the
+[issue tracker](https://github.com/google/adk-go/issues/new?template=bug_report.md&labels=v2).
+
+### Installing ADK Go 2.0 {#install-go}
+
+ADK Go 2.0 has the following system requirements:
+
+*   **Go 1.25** or later
+*   A Go module initialized with `go mod init`
+
+To install ADK Go 2.0, run the following command in your module directory:
+
+```shell
+go get google.golang.org/adk/v2
+```
+
+This adds ADK Go 2.0 as a dependency to your `go.mod` file. Verify your
+installation by checking for the `google.golang.org/adk/v2` entry in `go.mod`.
+
+If you want to continue using ADK Go 1.x and are not yet ready to upgrade to
+ADK Go 2.0, pin your dependency to the 1.x release line:
+
+```shell
+go get google.golang.org/adk@v1
+```
+
 ## Next steps
 
 Read the developer guides for building agents with ADK 2.0 features:
@@ -186,8 +283,16 @@ Read the developer guides for building agents with ADK 2.0 features:
 
 Check out these ADK 2.0 code samples for testing and inspiration:
 
--   [**Workflow samples**](https://github.com/google/adk-python/tree/v2/contributing/workflow_samples)
--   [**Collaborative task samples**](https://github.com/google/adk-python/tree/v2/contributing/task_samples)
+=== "Python"
 
-Thanks for checking out ADK 2.0! We look forward to your
-[feedback](https://github.com/google/adk-python/issues/new?template=feature_request.md&labels=v2)!
+    -   [**Workflow samples**](https://github.com/google/adk-python/tree/v2/contributing/workflow_samples)
+    -   [**Collaborative task samples**](https://github.com/google/adk-python/tree/v2/contributing/task_samples)
+
+=== "Go"
+
+    -   [**Sequential workflow sample**](https://github.com/google/adk-go/tree/v2/examples/workflowagents/sequential)
+    -   [**Parallel workflow sample**](https://github.com/google/adk-go/tree/v2/examples/workflowagents/parallel)
+    -   [**Loop workflow sample**](https://github.com/google/adk-go/tree/v2/examples/workflowagents/loop)
+    -   [**Sequential code workflow sample**](https://github.com/google/adk-go/tree/v2/examples/workflowagents/sequentialCode)
+
+Thanks for checking out ADK 2.0! We look forward to your feedback!
