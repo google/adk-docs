@@ -14,8 +14,8 @@ catalog_tags: ["observability"]
 [Respan](https://www.respan.ai/) captures Google ADK runner, agent, model, and
 tool spans so you can inspect complete agent workflows in the Respan platform.
 The ADK integration uses `respan-instrumentation-google-adk`, which wraps the
-OpenInference Google ADK instrumentor and adds Respan-specific span
-normalization before traces are exported.
+OpenInference ADK instrumentor and adds Respan-specific span normalization
+before traces are exported.
 
 ## Overview
 
@@ -76,7 +76,7 @@ respan = Respan(
 
 agent = Agent(
     name="assistant",
-    model="gemini-2.0-flash",
+    model="gemini-flash-latest",
     instruction="You are a concise assistant.",
 )
 
@@ -152,7 +152,7 @@ def get_weather(city: str) -> str:
 
 agent = Agent(
     name="weather_agent",
-    model="gemini-2.0-flash",
+    model="gemini-flash-latest",
     instruction="Use the get_weather tool when weather is requested.",
     tools=[get_weather],
 )
@@ -189,7 +189,7 @@ agent = Agent(
 
 ## Resources
 
-- [Respan Google ADK tracing docs](https://www.respan.ai/docs/integrations/google-adk)
-- [Respan Google ADK gateway docs](https://www.respan.ai/docs/integrations/gateway/google-adk)
+- [Respan ADK tracing docs](https://www.respan.ai/docs/integrations/google-adk)
+- [Respan ADK gateway docs](https://www.respan.ai/docs/integrations/gateway/google-adk)
 - [Respan Python examples](https://github.com/respanai/respan-example-projects/tree/main/python/tracing/google-adk)
 - [Respan platform](https://platform.respan.ai/platform/traces)
