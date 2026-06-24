@@ -2,7 +2,7 @@
 catalog_title: Google Cloud Skill Registry
 catalog_description: Dynamically search, discover, and fetch remote Skills
 catalog_icon: /integrations/assets/agent-platform.svg
-catalog_tags: ["google", "skills", "connectors"]
+catalog_tags: ["google", "connectors"]
 ---
 
 # Google Cloud Skill Registry
