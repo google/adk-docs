@@ -2,7 +2,6 @@
 catalog_title: Agent Threat Rules (ATR)
 catalog_description: Open detection rules that block prompt injection and tool-argument attacks in the ADK Runner
 catalog_icon: /integrations/assets/atr-guardrail.png
-catalog_tags: ["resilience"]
 ---
 
 # Agent Threat Rules (ATR) guardrail plugin for ADK
@@ -34,7 +33,7 @@ or blocks them when a rule matches. Detection is deterministic pattern matching
 ## Prerequisites
 
 - Python >= 3.10
-- [ADK](https://adk.dev) >= 1.0.0
+- [ADK](https://adk.dev) >= 2.0.0
 - No account, API key, or network connection — detection runs in-process via the
   open-source [`pyatr`](https://pypi.org/project/pyatr/) engine.
 
@@ -46,13 +45,14 @@ pip install adk-atr-guardrail
 
 ## Use with agent
 
-Register the plugin once on a `Runner`. It then applies to every agent, model
-call, and tool call managed by that runner.
+Register the plugin once on the `App`. It then applies to every agent, model
+call, and tool call managed by the runner.
 
 ```python
 import asyncio
 
 from google.adk import Agent
+from google.adk.apps import App
 from google.adk.runners import InMemoryRunner
 from google.genai import types
 
@@ -60,17 +60,19 @@ from adk_atr_guardrail import AtrGuardrailPlugin
 
 root_agent = Agent(
     name="assistant",
+    model="gemini-flash-latest",
     description="A helpful assistant.",
     instruction="Answer the user's question.",
 )
 
 
 async def main() -> None:
-    runner = InMemoryRunner(
-        agent=root_agent,
-        app_name="guarded_app",
+    app = App(
+        name="guarded_app",
+        root_agent=root_agent,
         plugins=[AtrGuardrailPlugin(min_severity="high")],
     )
+    runner = InMemoryRunner(app=app)
     session = await runner.session_service.create_session(
         user_id="user", app_name="guarded_app"
     )
