@@ -43,7 +43,7 @@ from those traces.
 
 - MLflow 3.13 or newer for the full scorer set. MLflow 3.11 ships the two
   deterministic scorers; the three LLM-judge scorers landed in 3.13.
-- Google ADK installed in your environment.
+- ADK installed in your environment.
 - For the LLM-judge scorers: a `GEMINI_API_KEY` (Gemini Developer API) or
   Google Cloud project credentials (Vertex AI). `Safety` always requires the
   Vertex AI path because it delegates to a managed metric.
@@ -62,16 +62,16 @@ The five MLflow scorers, grouped by how they score:
 | --- | --- | --- |
 | `ToolTrajectory` | Whether the agent called the right tools in the right order | `TrajectoryEvaluator` |
 | `ResponseMatch` | Lexical similarity between actual and expected response (ROUGE-1 F-measure) | `RougeEvaluator` |
-| `ResponseEvaluation` | Whether the final response matches expected semantically (LLM judge) | `FinalResponseMatchV2Evaluator` |
+| `ResponseEvaluation` | Whether the final response matches the expected response semantically (LLM judge) | `FinalResponseMatchV2Evaluator` |
 | `Safety` | Whether the response contains unsafe content | `SafetyEvaluatorV1` (Vertex AI managed) |
 | `Hallucination` | Whether the response contains hallucinated content (LLM judge) | `HallucinationsV1Evaluator` |
 
 `ToolTrajectory` and `ResponseMatch` run in microseconds and have no API cost.
-`ResponseEvaluation` and `Hallucination` call `gemini-2.5-flash` by default with
-five-sample majority voting; both arguments are configurable. `Safety` is the
-exception. It routes through Vertex AI's prebuilt SAFETY metric, which manages
-its own model selection, so the scorer raises `TypeError` if you pass `model` or
-`num_samples`.
+`ResponseEvaluation` and `Hallucination` call a default Gemini Flash judge model
+with five-sample majority voting; both the model and sample count are
+configurable. `Safety` is the exception. It routes through Vertex AI's prebuilt
+SAFETY metric, which manages its own model selection, so the scorer raises
+`TypeError` if you pass `model` or `num_samples`.
 
 ## Quick start
 
@@ -166,16 +166,16 @@ threshold, and a sample count for majority voting:
 from mlflow.genai.scorers.google_adk import Hallucination, ResponseEvaluation
 
 response_eval = ResponseEvaluation(
-    model="gemini-2.5-flash",
+    model="gemini-flash-latest",
     threshold=0.5,
     num_samples=5,
 )
 
-hallucination = Hallucination(model="gemini-2.5-flash", threshold=0.5)
+hallucination = Hallucination(model="gemini-flash-latest", threshold=0.5)
 ```
 
 The model must be a name that ADK's `LlmRegistry` can resolve, such as
-`gemini-2.5-flash` or `gemini-2.5-pro`. MLflow model URIs like `databricks` or
+`gemini-flash-latest` or `gemini-pro-latest`. MLflow model URIs like `databricks` or
 `openai:/gpt-4o` aren't supported here because ADK's evaluators wire directly
 into Google's model registry.
 
@@ -195,8 +195,8 @@ misconfiguration per sample.
 
 ## Resources
 
-- [MLflow Google ADK scorer documentation](https://mlflow.org/docs/latest/genai/eval-monitor/scorers/third-party/google-adk/)
+- [MLflow ADK scorer documentation](https://mlflow.org/docs/latest/genai/eval-monitor/scorers/third-party/google-adk/)
 - [MLflow Tracing integration for ADK](/integrations/mlflow-tracing/)
 - [MLflow AI Gateway for ADK](/integrations/mlflow-gateway/)
-- [ADK evaluation guide](/evaluate/)
+- [ADK Evaluation Guide](/evaluate/)
 - [MLflow on GitHub](https://github.com/mlflow/mlflow)
