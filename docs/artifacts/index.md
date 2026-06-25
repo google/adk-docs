@@ -1,27 +1,31 @@
 # Artifacts
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported"> Supported in ADK </span> <span class="lst-python"> Python v0.1.0 </span><span class="lst-go"> Go v0.1.0 </span><span class="lst-java"> Java v0.1.0 </span>
 </div>
 
-In ADK, **Artifacts** represent a crucial mechanism for managing named, versioned binary data associated either with a specific user interaction session or persistently with a user across multiple sessions. They allow your agents and tools to handle data beyond simple text strings, enabling richer interactions involving files, images, audio, and other binary formats.
+In ADK, **Artifacts** represent a crucial mechanism for managing named, versioned binary data associated either with a specific user interaction session or persistently with a user across multiple sessions. They allow your agents and tools to handle data beyond simple text strings, enabling richer interactions with files, images, audio, and other binary formats.
 
 !!! Note
-    The specific parameters or method names for the primitives may vary slightly by SDK language (e.g., `save_artifact` in Python, `saveArtifact` in Java). Refer to the language-specific API documentation for details.
+    The specific parameters or method names for the primitives may vary slightly by SDK language (for example, `save_artifact` in Python, `saveArtifact` in Java). Refer to the language-specific API documentation for details.
 
 ## What are Artifacts?
 
-*   **Definition:** An Artifact is essentially a piece of binary data (like the content of a file) identified by a unique `filename` string within a specific scope (session or user). Each time you save an artifact with the same filename, a new version is created.
+An Artifact is essentially a piece of binary data (like the content of a file) identified by a unique `filename` string within a specific scope (session or user). Each time you save an artifact with the same filename, a new version is created. 
+Learn more about how to represent, store, and retrieve artifacts as follows.
 
-*   **Representation:** Artifacts are consistently represented using the standard `google.genai.types.Part` object. The core data is typically stored within an inline data structure of the `Part` (accessed via `inline_data`), which itself contains:
+* **Representation:** Artifacts are consistently represented using the standard `google.genai.types.Part` object. The core data is typically stored within an inline data structure of the `Part` (accessed via `inline_data`), which itself contains:
     *   `data`: The raw binary content as bytes.
     *   `mime_type`: A string indicating the type of the data (e.g., `"image/png"`, `"application/pdf"`). This is essential for correctly interpreting the data later.
+
+Check some examples of artifacts below represented in Python, Golang, and Java:
 
 
 === "Python"
 
     ```py
-    # Example of how an artifact might be represented as a types.Part
+    
+	# Example of how an artifact might be represented as a types.Part
     import google.genai.types as types
 
     # Assume 'image_bytes' contains the binary data of a PNG image
@@ -50,7 +54,7 @@ In ADK, **Artifacts** represent a crucial mechanism for managing named, versione
 		"google.golang.org/genai"
 	)
 
-	--8<-- "examples/go/snippets/artifacts/main.go:representation"
+	--8<-- "examples/go/snippets/artifacts/main.go:representation" (from line 170 onwards)
     ```
 
 === "Java"
@@ -76,9 +80,9 @@ In ADK, **Artifacts** represent a crucial mechanism for managing named, versione
     }
     ```
 
-*   **Persistence & Management:** Artifacts are not stored directly within the agent or session state. Their storage and retrieval are managed by a dedicated **Artifact Service** (an implementation of `BaseArtifactService`, defined in `google.adk.artifacts`. ADK provides various implementations, such as:
-    *   An in-memory service for testing or temporary storage (e.g., `InMemoryArtifactService` in Python, defined in `google.adk.artifacts.in_memory_artifact_service.py`).
-    *   A service for persistent storage using Google Cloud Storage (GCS) (e.g., `GcsArtifactService` in Python, defined in `google.adk.artifacts.gcs_artifact_service.py`).
+*   **Persistence & Management:** Artifacts are not stored directly within the agent or session state. Their storage and retrieval are managed by a dedicated **Artifact Service** (an implementation of `BaseArtifactService`, defined in `google.adk.artifacts`). ADK provides various implementations, such as:
+    *   An in-memory service for testing or temporary storage (for instance, `InMemoryArtifactService` in Python, defined in `google.adk.artifacts.in_memory_artifact_service.py`).
+    *   A service for persistent storage using Google Cloud Storage (GCS) (for example, `GcsArtifactService` in Python, defined in `google.adk.artifacts.gcs_artifact_service.py`).
     The chosen service implementation handles versioning automatically when you save data.
 
 ## Why Use Artifacts?
