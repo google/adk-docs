@@ -1942,24 +1942,46 @@ or mask sensitive fields before they are written:
     ```java
     import com.google.adk.plugins.agentanalytics.BigQueryLoggerConfig;
     import java.util.function.BiFunction;
-    import java.util.Set;
+    ...
 
-    Set<String> SENSITIVE_KEYS = Set.of("client_secret", "access_token", "refresh_token", "api_key", "secret");
-
-    BiFunction<Object, String, Object> redactCredentials = (content, eventType) -> {
-      String text = content.toString();
-      for (String key : SENSITIVE_KEYS) {
-        // Redact values in JSON-like strings: "client_secret": "GOCSPX-xxx"
-        text = text.replaceAll(
-            "(?i)(\"" + key + "\"\\s*:\\s*)\"[^\"]*\"",
-            "$1\"[REDACTED]\""
-        );
+    BiFunction<Object, String, Object> maskObject = (content, eventType) ->  {
+      if (content instanceof LlmRequest req) {
+        List<Content> maskedContents = new ArrayList<>();
+        for (Content c : req.contents()) {
+          maskedContents.add(maskContent(c));
+        }
+        return req.toBuilder().contents(maskedContents).build();
+      } else if (content instanceof LlmResponse res) {
+        if (res.content().isPresent()) {
+          return res.toBuilder().content(maskContent(res.content().get())).build();
+        }
+        return res;
+      } else if (content instanceof Content content2) {
+        return maskContent(content2);
+      } else if (content instanceof String string && string.contains("secret")) {
+        return string.replace("secret", "****");
       }
-      return text;
+      return content;
     };
 
+    private static Content maskContent(Content originalContent) {
+      if (originalContent.parts().isPresent()) {
+        List<Part> maskedParts = new ArrayList<>();
+        for (Part part : originalContent.parts().get()) {
+          if (part.text().isPresent() && part.text().get().contains("secret")) {
+            String maskedText = part.text().get().replace("secret", "****");
+            maskedParts.add(part.toBuilder().text(maskedText).build());
+          } else {
+            maskedParts.add(part);
+          }
+        }
+        return originalContent.toBuilder().parts(maskedParts).build();
+      }
+      return originalContent;
+    }
+
     BigQueryLoggerConfig config = BigQueryLoggerConfig.builder()
-        .contentFormatter(redactCredentials)
+        .contentFormatter(maskObject)
         // ... other options
         .build();
     ```
