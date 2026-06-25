@@ -50,3 +50,9 @@ snippets/graphs/index/main.go
 snippets/graphs/human-input/main.go
 snippets/graphs/routes/main.go
 snippets/graphs/data-handling/main.go
+# NOTE: snippets/graphs/dynamic/main.go uses the workflow package from ADK Go v2.0.0
+# (google.golang.org/adk/workflow, google.golang.org/adk/agent/workflowagent). This package
+# is not available in the currently published v1.x module. The file carries a
+# //go:build ignore constraint so `go build` skips it; it is registered here so
+# check_go_snippets.sh passes. Remove the constraint and this comment once v2.0.0 is tagged.
+snippets/graphs/dynamic/main.go
