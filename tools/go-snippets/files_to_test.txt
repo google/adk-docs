@@ -49,3 +49,4 @@ snippets/runtime/triggers/event_processing_agent.go
 snippets/graphs/index/main.go
 snippets/graphs/human-input/main.go
 snippets/graphs/routes/main.go
+snippets/graphs/data-handling/main.go
