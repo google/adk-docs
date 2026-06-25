@@ -71,7 +71,7 @@ root_agent = Agent(
 ```
 
 ## Cloud Trace Setup
-Configuring Cloud Trace functionalities is important for monitoring, debugging, and improving the performance of your applications by focusing specifically on tracing capabilities. Below you'll see the setup of an Agent Engine Deployment, particulary of the deploy with an Agent Engine from ADK CLI and from Python SDK.
+Configuring Cloud Trace functionalities is important for monitoring, debugging, and improving the performance of your applications by focusing specifically on tracing capabilities. Below you'll see the setup of an Agent Engine Deployment, particulary of the deploy with an Agent Engine from ADK CLI and from Python SDK. Also how to configure Cloud Run Deployment from CLI of ADK. Furthermore, you will learn about how to setup Customize Deployment, specifically for Built-in `get_fast_api_app` Module and Customized Agent Runner.
 
 ### Setup for Agent Engine Deployment
 The setup for deploying an Agent Engine is available as of now from the ADK CLI and from the Python SDK as follows:
@@ -148,6 +148,7 @@ adk deploy cloud_run \
 If you want to enable cloud tracing and using a customized agent service deployment on Cloud Run, you can refer to the [Setup for Customized Deployment](#setup-for-customized-deployment) section below
 
 ### Setup for Customized Deployment
+For a more tailored agent service you can either use the built-in `get_fast_api_app` module and set `trace_to_cloud=True`. If you want to go further in the agent deployment configuration, you can define an Agent Runner, which will enable cloud tracing by using `CloudTraceSpanExporter` module from Opentelemetry.
 
 #### From Built-in `get_fast_api_app` Module
 
@@ -251,7 +252,7 @@ After the setup is complete, whenever you interact with the agent it will automa
 
 ![cloud-trace](../assets/cloud-trace1.png)
 
-And then you will see all available traces produced by ADK agent which configured in several span names such as `invocation` , `agent_run` . `call_llm` and `execute_tool`
+And then you will see all available traces produced by ADK agent which are configured in several span names such as `invocation` , `agent_run`, `call_llm`, and `execute_tool`
 
 ![cloud-trace](../assets/cloud-trace2.png)
 
@@ -261,7 +262,7 @@ If you click on one of the traces, you will see the waterfall view of the detail
 
 ## Privacy and Data Capture
 
-You can control the logging of sensitive content in traces using environment variables. This is important for privacy and compliance. ADK tracing aligns with OpenTelemetry Semantic Conventions for Generative AI.
+You can control the logging of sensitive content in traces using environment variables. This is important for privacy and compliance. ADK tracing aligns with OpenTelemetry Semantic Conventions for Generative AI. Important environment variables are the ones below:
 
 -   **ADK_CAPTURE_MESSAGE_CONTENT_IN_SPANS**: Set this environment variable to 'false' or '0' to disable capturing potentially personally identifiable information (PII) such as LLM requests, LLM responses, and tool arguments in ADK spans. By default, this is set to 'true'.
 
