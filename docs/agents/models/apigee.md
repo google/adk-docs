@@ -18,11 +18,10 @@ Apigee proxy, you immediately gain enterprise-grade capabilities:
 
 - **Monitoring & Visibility:** Get granular monitoring, analysis, and auditing of all your AI requests.
 
-!!! note
-   The `ApigeeLLM` wrapper is currently designed for use with Agent Platform
+   The `ApigeeLLM` wrapper is designed for use with Agent Platform
    and the Gemini API (generateContent). We are continually expanding support for
-   other models and interfaces. For OpenAI compatible models (including self-hosted or 
-   other providers), use the `CompletionsHTTPClient` to route traffic through your Apigee proxy.
+   other models and interfaces. For OpenAI compatible models, including self-hosted or 
+   other providers, use the `CompletionsHTTPClient` to route traffic through your Apigee proxy.
 
 ## Implementation example
 
@@ -96,7 +95,8 @@ The `CompletionsHTTPClient` is a generic HTTP client designed for compatibility 
 
 ### Implementation example
 
-```Python
+```python
+
 import asyncio
 from google.adk.models.apigee_llm import CompletionsHTTPClient
 from google.adk.models.llm_request import LlmRequest
