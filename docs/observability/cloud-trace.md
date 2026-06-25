@@ -1,6 +1,6 @@
 # Agent Observability with Cloud Trace
 
-With ADK, you’ve already capable of inspecting and observing your agent interaction locally utilizing the powerful web development UI discussed in [here](https://google.github.io/adk-docs/evaluate/#debugging-with-the-trace-view). However, if we aim for cloud deployment, we will need a centralized dashboard to observe real traffic.
+With ADK, you’re already capable of inspecting and observing your agent interaction locally utilizing the powerful web development UI discussed in [here](https://google.github.io/adk-docs/evaluate/#debugging-with-the-trace-view). However, if we aim for cloud deployment, we will need a centralized dashboard to observe real traffic.
 
 Cloud Trace is a component of Google Cloud Observability. It is a powerful tool for monitoring, debugging, and improving the performance of your applications by focusing specifically on tracing capabilities. For Agent Development Kit (ADK) applications, Cloud Trace enables comprehensive tracing, helping you understand how requests flow through your agent's interactions and identify performance bottlenecks or errors within your AI agents.
 
@@ -71,10 +71,12 @@ root_agent = Agent(
 ```
 
 ## Cloud Trace Setup
+Configuring Cloud Trace functionalities is important for monitoring, debugging, and improving the performance of your applications by focusing specifically on tracing capabilities. Below you'll see the setup of an Agent Engine Deployment, particulary of the deploy with an Agent Engine from ADK CLI and from Python SDK.
 
 ### Setup for Agent Engine Deployment
+The setup for deploying an Agent Engine is available as of now from the ADK CLI and from the Python SDK as follows:
 
-#### Agent Engine Deployment - from ADK CLI
+#### Setup for Agent Engine Deployment - from ADK CLI
 
 You can enable cloud tracing by adding `--trace_to_cloud` flag when deploying your agent using `adk deploy agent_engine` command for agent engine deployment.
 
@@ -87,7 +89,7 @@ adk deploy agent_engine \
     $AGENT_PATH
 ```
 
-#### Agent Engine Deployment - from Python SDK
+#### Setup for Agent Engine Deployment - from Python SDK
 
 If you prefer using Python SDK, you can enable cloud tracing by adding `enable_tracing=True` when initialize the `AdkApp` object
 
@@ -128,9 +130,11 @@ remote_app = agent_engines.create(
 ```
 
 ### Setup for Cloud Run Deployment
+The setup for the deployment of the Cloud Run is currently feasible from the ADK CLI as follows:
 
-#### Cloud Run Deployment - from ADK CLI
+#### Setup for Cloud Run Deployment - from ADK CLI
 
+It is possible to configure the Cloud Run Deployment, with the ADK CLI.
 You can enable cloud tracing by adding `--trace_to_cloud` flag when deploying your agent using `adk deploy cloud_run` command for cloud run deployment.
 
 ```bash
