@@ -1,7 +1,7 @@
 # Function tools
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 When pre-built ADK tools don't meet your requirements, you can create custom *function tools*. Building function tools allows you to create tailored functionality, such as connecting to proprietary databases or implementing unique algorithms.
@@ -79,13 +79,24 @@ A well-defined function signature is crucial for the LLM to use your tool correc
         public static Map<String, Object> getWeather(
             @Schema(description = "The city and state, e.g., San Francisco, CA", name = "location")
             String location,
-            
+
             @Schema(description = "The temperature unit, either 'Celsius' or 'Fahrenheit'", name = "unit")
             String unit) {
-            
+
             // ... function logic ...
             return Map.of("status", "success", "report", "Weather for " + location + " is sunny.");
         }
+        ```
+    In this example, both `location` and `unit` are mandatory.
+
+=== "Kotlin"
+    In Kotlin, parameters are considered **required** by default if they are of a non-nullable type and have no default value. The LLM must provide a value for these arguments.
+
+    The `@Param` annotation is used to provide the argument's description. This is crucial for the LLM to understand what the argument is for.
+
+    ???+ "Example: Required Parameters"
+        ```kotlin
+        --8<-- "examples/kotlin/snippets/tools/function-tools/RequiredParams.kt:required_params"
         ```
     In this example, both `location` and `unit` are mandatory.
 
@@ -93,6 +104,8 @@ A well-defined function signature is crucial for the LLM to use your tool correc
 
 === "Python"
     A parameter is considered **optional** if you provide a **default value**. This is the standard Python way to define optional arguments. You can also mark a parameter as optional using `typing.Optional[SomeType]` or the `| None` syntax (Python 3.10+).
+
+    Use defaults only for values that are truly optional. Do not add defaults for information the model should derive from the user request or ask the user to provide.
 
     ???+ "Example: Optional Parameters"
         ```python
@@ -142,13 +155,13 @@ A well-defined function signature is crucial for the LLM to use your tool correc
         public static Map<String, Object> searchFlights(
             @Schema(description = "The destination city.", name = "destination")
             String destination,
-            
+
             @Schema(description = "The desired departure date.", name = "departureDate")
             String departureDate,
-            
+
             @Schema(description = "Number of flexible days for the search. Defaults to 0.", name = "flexibleDays")
             Optional<Integer> flexibleDays) {
-            
+
             // ... function logic ...
             int days = flexibleDays.orElse(0);
             if (days > 0) {
@@ -156,6 +169,15 @@ A well-defined function signature is crucial for the LLM to use your tool correc
             }
             return Map.of("status", "success", "report", "Found flights to " + destination + " on " + departureDate + ".");
         }
+        ```
+    Here, `flexibleDays` is optional. The LLM can choose to provide it, but it's not required.
+
+=== "Kotlin"
+    In Kotlin, a parameter is considered **optional** if it is of a **nullable type** or if it has a **default value**.
+
+    ???+ "Example: Optional Parameters"
+        ```kotlin
+        --8<-- "examples/kotlin/snippets/tools/function-tools/OptionalParams.kt:optional_params"
         ```
     Here, `flexibleDays` is optional. The LLM can choose to provide it, but it's not required.
 
@@ -186,13 +208,13 @@ While you can include `*args` (variable positional arguments) and `**kwargs` (va
 
 #### Return Type
 
-The preferred return type for a Function Tool is a **dictionary** in Python, a **Map** or custom **Record or POJO** in Java, or an **object** in TypeScript. This allows you to structure the response with key-value pairs, providing context and clarity to the LLM. If your function returns a type other than a dictionary or map, the framework automatically wraps it into a dictionary with a single key named **"result"**.
+The preferred return type for a Function Tool is a **dictionary** in Python, a **Map** or custom **Record or POJO** in Java, an **object** in TypeScript, or a **Map** or **Data Class** in Kotlin. This allows you to structure the response with key-value pairs, providing context and clarity to the LLM. If your function returns a type other than a dictionary or map, the framework automatically wraps it into a dictionary with a single key named **"result"**.
 
 Strive to make your return values as descriptive as possible. *For example,* instead of returning a numeric error code, return a dictionary with an "error_message" key containing a human-readable explanation. **Remember that the LLM**, not a piece of code, needs to understand the result. As a best practice, include a "status" key in your return dictionary to indicate the overall outcome (e.g., "success", "error", "pending"), providing the LLM with a clear signal about the operation's state.
 
 #### Docstrings
 
-The docstring of your function serves as the tool's **description** and is sent to the LLM. Therefore, a well-written and comprehensive docstring is crucial for the LLM to understand how to use the tool effectively. Clearly explain the purpose of the function, the meaning of its parameters, and the expected return values. In Java, you can use Javadoc comments or the `@Schema(description="...")` annotation on your method to serve as this description.
+The docstring of your function serves as the tool's **description** and is sent to the LLM. Therefore, a well-written and comprehensive docstring is crucial for the LLM to understand how to use the tool effectively. Clearly explain the purpose of the function, the meaning of its parameters, and the expected return values. In Java, you can use Javadoc comments or the `@Schema(description="...")` annotation on your method to serve as this description. In Kotlin, you can use KDoc comments or the `@Tool(description="...")` and `@Param(description="...")` annotations to provide these descriptions.
 
 ### Passing Data Between Tools
 
@@ -276,6 +298,20 @@ A tool can write data to a `temp:` variable, and a subsequent tool can read it. 
         For input `GOOG`: {"symbol": "GOOG", "price": "1.0"}
         ```
 
+    === "Kotlin"
+
+        This tool retrieves the mocked value of a stock price.
+
+        ```kotlin
+        --8<-- "examples/kotlin/snippets/tools/function-tools/FuncTool.kt:full_example"
+        ```
+
+        The return value from this tool will be a Map.
+
+        ```json
+        For input `GOOG`: {"symbol": "GOOG", "price": 123.45}
+        ```
+
 ### Best Practices
 
 While you have considerable flexibility in defining your function, remember that simplicity enhances usability for the LLM. Consider these guidelines:
@@ -284,7 +320,7 @@ While you have considerable flexibility in defining your function, remember that
 * **Simple Data Types:** Favor primitive data types like `str` and `int` over custom classes whenever possible.
 * **Meaningful Names:** The function's name and parameter names significantly influence how the LLM interprets and utilizes the tool. Choose names that clearly reflect the function's purpose and the meaning of its inputs. Avoid generic names like `do_stuff()` or `beAgent()`.
 * **Build for Parallel Execution:** Improve function calling performance when multiple tools are run by building for asynchronous operation. For information on enabling parallel execution for tools, see
-[Increase tool performance with parallel execution](/adk-docs/tools-custom/performance/).
+[Increase tool performance with parallel execution](/tools-custom/performance/).
 
 ## Long Running Function Tools {#long-run-tool}
 
@@ -302,7 +338,7 @@ When using a `LongRunningFunctionTool`, your function can initiate the long-runn
     Depending on the type of tool you are building, designing for asynchronous
     operation may be a better solution than creating a long running tool. For
     more information, see
-    [Increase tool performance with parallel execution](/adk-docs/tools-custom/performance/).
+    [Increase tool performance with parallel execution](/tools-custom/performance/).
 
 ### How it Works
 
@@ -390,6 +426,14 @@ Define your tool function and wrap it using the `LongRunningFunctionTool` class:
     }
     ```
 
+=== "Kotlin"
+
+    In Kotlin, you can create a long-running function tool by setting the `isLongRunning` property to `true` in the `@Tool` annotation.
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/tools/function-tools/LongRunningTool.kt:long_running_tool"
+    ```
+
 ### Intermediate / Final result Updates
 
 Agent client received an event with long running function calls and check the status of the ticket. Then Agent client can send the intermediate or final response back to update the progress. The framework packages this value (even if it's None) into the content of the `FunctionResponse` sent back to the LLM.
@@ -397,7 +441,7 @@ Agent client received an event with long running function calls and check the st
 !!! note "Note: Long running function response with Resume feature"
 
     If your ADK agent workflow is configured with the
-    [Resume](/adk-docs/runtime/resume/) feature, you also must include
+    [Resume](/runtime/resume/) feature, you also must include
     the Invocation ID (`invocation_id`) parameter with the long running
     function response. The Invocation ID you provide must be the same
     invocation that generated the long running function request, otherwise
@@ -406,7 +450,7 @@ Agent client received an event with long running function calls and check the st
     as a parameter with your long running function request, so it can be
     included with the response. For more details on using the Resume
     feature, see
-    [Resume stopped agents](/adk-docs/runtime/resume/).
+    [Resume stopped agents](/runtime/resume/).
 
 ??? Tip "Applies to only Java ADK"
 
@@ -520,11 +564,17 @@ To use an agent as a tool, wrap the agent with the AgentTool class.
     AgentTool.create(agent)
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    AgentTool(agent = agentB)
+    ```
+
 ### Customization
 
 The `AgentTool` class provides the following attributes for customizing its behavior:
 
-* **skip\_summarization: bool:** If set to True, the framework will **bypass the LLM-based summarization** of the tool agent's response. This can be useful when the tool's response is already well-formatted and requires no further processing.
+* **skip\_summarization** (Python/TypeScript) / **skipSummarization** (Kotlin/Java): (boolean) If set to True, the framework will **bypass the LLM-based summarization** of the tool agent's response. This can be useful when the tool's response is already well-formatted and requires no further processing.
 
 ??? "Example"
 
@@ -561,11 +611,17 @@ The `AgentTool` class provides the following attributes for customizing its beha
         --8<-- "examples/java/snippets/src/main/java/tools/AgentToolCustomization.java:full_code"
         ```
 
+    === "Kotlin"
+
+        ```kotlin
+        --8<-- "examples/kotlin/snippets/tools/function-tools/AgentTool.kt:agent_tool"
+        ```
+
 ### How it works
 
-1. When the `main_agent` receives the long text, its instruction tells it to use the 'summarize' tool for long texts.
+1. When the `root_agent` receives the long text, its instruction tells it to use the 'summarize' tool for long texts.
 2. The framework recognizes 'summarize' as an `AgentTool` that wraps the `summary_agent`.
-3. Behind the scenes, the `main_agent` will call the `summary_agent` with the long text as input.
+3. Behind the scenes, the `root_agent` will call the `summary_agent` with the long text as input.
 4. The `summary_agent` will process the text according to its instruction and generate a summary.
-5. **The response from the `summary_agent` is then passed back to the `main_agent`.**
-6. The `main_agent` can then take the summary and formulate its final response to the user (e.g., "Here's a summary of the text: ...")
+5. **The response from the `summary_agent` is then passed back to the `root_agent`.**
+6. The `root_agent` can then take the summary and formulate its final response to the user (e.g., "Here's a summary of the text: ...")

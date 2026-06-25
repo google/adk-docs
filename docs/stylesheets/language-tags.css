@@ -53,6 +53,11 @@
  padding: 4px 6px;
  display: inline-block;
 }
+.lst-kotlin {
+ background-color: #7F52FF;
+ padding: 4px 6px;
+ display: inline-block;
+}
 .lst-preview {
  background-color: #7c4dff;
  padding: 4px 6px;

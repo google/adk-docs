@@ -1,8 +1,8 @@
 ---
 catalog_title: Galileo
 catalog_description: End-to-end tracing, evaluation, and monitoring for ADK agents
-catalog_icon: /adk-docs/integrations/assets/galileo.png
-catalog_tags: ["observability"]
+catalog_icon: /integrations/assets/galileo.png
+catalog_tags: ["observability", "evaluation"]
 ---
 
 # Agent Observability and Evaluation with Galileo
@@ -94,7 +94,7 @@ def get_current_time(city: str) -> dict:
 
 
 root_agent = Agent(
-    model="gemini-3-flash-preview",
+    model="gemini-flash-latest",
     name="root_agent",
     description="Tells the current time in a specified city.",
     instruction=(

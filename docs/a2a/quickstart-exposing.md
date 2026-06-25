@@ -49,7 +49,7 @@ You can take an existing agent built using ADK and make it A2A-compatible by sim
 ```python
 # Your agent code here
 root_agent = Agent(
-    model='gemini-2.0-flash',
+    model='gemini-flash-latest',
     name='hello_world_agent',
     
     <...your agent code...>
@@ -116,7 +116,7 @@ First, make sure you have the necessary dependencies installed:
 pip install google-adk[a2a]
 ```
 
-You can clone and navigate to the [**a2a_root** sample](https://github.com/google/adk-python/tree/main/contributing/samples/a2a_root) here:
+You can clone and navigate to the [**a2a_root** sample](https://github.com/google/adk-python/tree/main/contributing/samples/a2a/a2a_root) here:
 
 ```bash
 git clone https://github.com/google/adk-python.git

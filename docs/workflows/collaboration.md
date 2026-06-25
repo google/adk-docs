@@ -1,7 +1,7 @@
 # Build collaborative agent teams
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span><span class="lst-preview">Alpha</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span>
 </div>
 
 Some complex tasks may require multiple agents with specific responsibilities
@@ -28,13 +28,11 @@ available for collaboration modes:
 This guide covers how to use modes for your subagents and how these modes impact
 agent behavior.
 
-!!! example "Alpha Release"
+!!! warning "Disabled: Task mode in graph-based workflows"
 
-    ADK 2.0 is an Alpha release and may cause breaking changes when used with prior
-    versions of ADK. Do not use ADK 2.0 if you require backwards compatibility, such
-    as in production environments. We encourage you to test this release and we
-    welcome your
-    [feedback](https://github.com/google/adk-python/issues/new?template=feature_request.md&labels=v2)!
+    The collaborative mode `task` behavior is disabled for use in
+    graph-based workflows in ADK Python v2.0.0. This feature
+    is expected to be re-enabled in a future release.
 
 ## Get started
 
@@ -42,7 +40,7 @@ The following code example shows how to set operating modes for
 a small team of subagents and assign them to a coordinator agent:
 
 ```python
-from google.adk.workflow.agents.llm_agent import Agent
+from google.adk import Agent
 
 weather_agent = Agent(
     name="weather_checker",
@@ -68,7 +66,7 @@ identifies and assigns tasks to the subagents. When a subagent completes
 a task, it automatically returns to the coordinator agent.
 For more information about structuring data using ***input_schema*** and
 ***output_schema*** with agents, subagents, and workflow nodes, see
-[Data handling for agent workflows](/adk-docs/workflows/data-handling/).
+[Data handling for agent workflows](/graphs/data-handling/).
 
 ## Mode configuration and behaviors
 

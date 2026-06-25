@@ -5,37 +5,38 @@ You can use AI coding assistants to build agents with Agent Development Kit
 into your project, or by connecting it to ADK documentation through an MCP
 server.
 
-- [**ADK Dev Skills**](#adk-dev-skills): Install ADK development skills directly into
-  your project.
+- [**Agents CLI in Agent Platform**](#agents-cli): Command-line tool and coding skills for ADK development.
 - [**ADK Docs MCP Server**](#adk-docs-mcp-server): Connect your coding tool to
   ADK documentation through an MCP server.
 - [**ADK Docs Index**](#adk-docs-index): Machine-readable documentation files
   following the `llms.txt` standard.
 
-## ADK Dev Skills
+## Agents CLI {#agents-cli}
 
-ADK provides a set of development [skills](https://agentskills.io/) that cover
-APIs, coding patterns, deployment, and evaluation. The skills work with any
-compatible tool, including Gemini CLI, Antigravity, Claude Code, and Cursor.
+The [Agents CLI](https://google.github.io/agents-cli/) tool set lets you plug
+ADK agent expertise into your favorite AI-coding environments including
+Antigravity, Gemini CLI, Claude Code, and Cursor. Install Agents CLI into your
+current AI-powered development environment to scaffold, build, test, evaluate,
+and deploy ADK agents. Enable your development environment with these
+Agents CLI Skills:
 
-To install the ADK development skills, run the following in your project
-directory:
+*   Development lifecycle and coding guidelines
+*   Project scaffolding
+*   Evaluation methodology and scoring
+*   Agent Runtime, Cloud Run, and GKE deployment
+*   Gemini Enterprise agent publishing
+*   Trace, logging, and integrations
+*   Python API quick reference and docs index
+
+To install Agents CLI and set up ADK development skills:
 
 ```bash
-npx skills add google/adk-docs/skills -y -g
+uvx google-agents-cli setup
 ```
 
-Browse the [ADK Dev Skills on
-GitHub](https://github.com/google/adk-docs/tree/main/skills), which include:
-
-| Skill | Description |
-|-------|-------------|
-| `adk-cheatsheet` | Python API quick reference and docs index |
-| `adk-deploy-guide` | Agent Engine and Cloud Run deployment |
-| `adk-dev-guide` | Development lifecycle and coding guidelines |
-| `adk-eval-guide` | Evaluation methodology and scoring |
-| `adk-observability-guide` | Tracing, logging, and integrations |
-| `adk-scaffold` | Project scaffolding |
+For more information on installing Agents CLI and using it in your development
+environment, see the
+[Agents CLI documentation](https://google.github.io/agents-cli/).
 
 ## ADK Docs MCP Server
 
@@ -71,7 +72,7 @@ To add the ADK docs MCP server to [Antigravity](https://antigravity.google/)
             "mcpdoc",
             "mcpdoc",
             "--urls",
-            "AgentDevelopmentKit:https://google.github.io/adk-docs/llms.txt",
+            "AgentDevelopmentKit:https://adk.dev/llms.txt",
             "--transport",
             "stdio"
           ]
@@ -86,7 +87,7 @@ To add the ADK docs MCP server to
 [Claude Code](https://code.claude.com/docs/en/overview):
 
 ```bash
-claude mcp add adk-docs --transport stdio -- uvx --from mcpdoc mcpdoc --urls AgentDevelopmentKit:https://google.github.io/adk-docs/llms.txt --transport stdio
+claude mcp add adk-docs --transport stdio -- uvx --from mcpdoc mcpdoc --urls AgentDevelopmentKit:https://adk.dev/llms.txt --transport stdio
 ```
 
 ### Cursor
@@ -108,7 +109,7 @@ To add the ADK docs MCP server to [Cursor](https://cursor.com/) (requires
             "mcpdoc",
             "mcpdoc",
             "--urls",
-            "AgentDevelopmentKit:https://google.github.io/adk-docs/llms.txt",
+            "AgentDevelopmentKit:https://adk.dev/llms.txt",
             "--transport",
             "stdio"
           ]
@@ -131,5 +132,5 @@ every documentation update and are always up to date.
 
 | File | Description | URL |
 |------|-------------|-----|
-| `llms.txt` | Documentation index with links | [`google.github.io/adk-docs/llms.txt`](https://google.github.io/adk-docs/llms.txt) |
-| `llms-full.txt` | Full documentation in a single file | [`google.github.io/adk-docs/llms-full.txt`](https://google.github.io/adk-docs/llms-full.txt) |
+| `llms.txt` | Documentation index with links | [`adk.dev/llms.txt`](https://adk.dev/llms.txt) |
+| `llms-full.txt` | Full documentation in a single file | [`adk.dev/llms-full.txt`](https://adk.dev/llms-full.txt) |

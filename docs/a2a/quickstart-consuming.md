@@ -39,7 +39,7 @@ First, make sure you have the necessary dependencies installed:
 pip install google-adk[a2a]
 ```
 
-You can clone and navigate to the [**`a2a_basic`** sample](https://github.com/google/adk-python/tree/main/contributing/samples/a2a_basic) here:
+You can clone and navigate to the [**`a2a_basic`** sample](https://github.com/google/adk-python/tree/main/contributing/samples/a2a/a2a_basic) here:
 
 ```bash
 git clone https://github.com/google/adk-python.git
@@ -78,13 +78,13 @@ To show how your ADK agent can consume a remote agent via A2A, you'll first need
 
 ```bash
 # Start the remote a2a server that serves the check_prime_agent on port 8001
-adk api_server --a2a --port 8001 contributing/samples/a2a_basic/remote_a2a
+adk api_server --a2a --port 8001 contributing/samples/a2a/a2a_basic/remote_a2a
 ```
 
 ??? note "Adding logging for debugging with `--log_level debug`"
     To enable debug-level logging, you can add `--log_level debug` to your `adk api_server`, as in:
     ```bash
-    adk api_server --a2a --port 8001 contributing/samples/a2a_basic/remote_a2a --log_level debug
+    adk api_server --a2a --port 8001 contributing/samples/a2a/a2a_basic/remote_a2a --log_level debug
     ```
     This will give richer logs for you to inspect when testing your agents.
 
@@ -172,7 +172,7 @@ from google.adk.agents.llm_agent import Agent
 from google.genai import types
 
 root_agent = Agent(
-    model="gemini-2.0-flash",
+    model="gemini-flash-latest",
     name="root_agent",
     instruction="""
       <You are a helpful assistant that can roll dice and check if numbers are prime.

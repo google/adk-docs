@@ -1,7 +1,7 @@
 ---
 catalog_title: Reflect and Retry Plugin
 catalog_description: Automatically retry tool calls that fail
-catalog_icon: /adk-docs/integrations/assets/adk.png
+catalog_icon: /integrations/assets/adk.png
 catalog_tags: ["google", "resilience"]
 ---
 
@@ -12,7 +12,7 @@ catalog_tags: ["google", "resilience"]
 </div>
 
 The Reflect and Retry plugin can help your agent recover from error
-responses from ADK [Tools](/adk-docs/tools-custom/) and automatically retry the
+responses from ADK [Tools](/tools-custom/) and automatically retry the
 tool request. This plugin intercepts tool failures, provides structured guidance
 to the AI model for reflection and correction, and retries the operation up to a
 configurable limit. This plugin can help you build more resilience into your
@@ -109,7 +109,7 @@ error_handling_plugin = CustomRetryPlugin(max_retries=5)
 
 For complete code samples using the Reflect and Retry plugin, see the following:
 
-*   [Basic](https://github.com/google/adk-python/tree/main/contributing/samples/plugin_reflect_tool_retry/basic)
+*   [Basic](https://github.com/google/adk-python/tree/main/contributing/samples/plugin/plugin_reflect_tool_retry/basic)
     code sample
-*   [Hallucinating function name](https://github.com/google/adk-python/tree/main/contributing/samples/plugin_reflect_tool_retry/hallucinating_func_name)
+*   [Hallucinating function name](https://github.com/google/adk-python/tree/main/contributing/samples/plugin/plugin_reflect_tool_retry/hallucinating_func_name)
     code sample

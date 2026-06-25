@@ -1,7 +1,7 @@
 ---
 catalog_title: Bigtable Tools
 catalog_description: Interact with Bigtable to retrieve data and execute SQL
-catalog_icon: /adk-docs/integrations/assets/bigtable.png
+catalog_icon: /integrations/assets/bigtable.png
 catalog_tags: ["data", "google"]
 ---
 
@@ -26,4 +26,3 @@ They are packaged in the toolset `BigtableToolset`.
 ```py
 --8<-- "examples/python/snippets/tools/built-in-tools/bigtable.py"
 ```
-

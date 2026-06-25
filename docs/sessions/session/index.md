@@ -1,7 +1,7 @@
 # Session: Tracking Individual Conversations
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 Following our Introduction, let's dive into the `Session`. Think back to the
@@ -58,7 +58,7 @@ are its key properties:
         print(f"---------------------------------")
 
         # Clean up (optional for this example)
-        temp_service = await temp_service.delete_session(app_name=example_session.app_name,
+        await temp_service.delete_session(app_name=example_session.app_name,
                                     user_id=example_session.user_id, session_id=example_session.id)
         print("The final status of temp_service - ", temp_service)
        ```
@@ -131,6 +131,36 @@ are its key properties:
         var unused = exampleSessionService.deleteSession(appName, userId, sessionId);
        ```
 
+=== "Kotlin"
+
+       ```kotlin
+        import com.google.adk.kt.sessions.InMemorySessionService
+        import com.google.adk.kt.sessions.SessionKey
+
+        val sessionId = "123"
+        val appName = "example-app"
+        val userId = "example-user"
+        val initialState = mapOf("newKey" to "newValue")
+        val sessionService = InMemorySessionService()
+
+        // Create Session
+        val exampleSession = sessionService.createSession(
+            key = SessionKey(appName, userId, sessionId),
+            state = initialState
+        )
+        println("Session created successfully.")
+
+        println("--- Examining Session Properties ---")
+        println("ID (`id`):                ${exampleSession.key.id}")
+        println("Application Name (`appName`): ${exampleSession.key.appName}")
+        println("User ID (`userId`):         ${exampleSession.key.userId}")
+        println("State (`state`):           ${exampleSession.state}")
+        println("------------------------------------")
+
+        // Clean up (optional for this example)
+        sessionService.deleteSession(exampleSession.key)
+       ```
+
 *(**Note:** The state shown above is only the initial state. State updates
 happen via events, as discussed in the State section.)*
 
@@ -196,25 +226,32 @@ the storage backend that best suits your needs:
         InMemorySessionService exampleSessionService = new InMemorySessionService();
       ```
 
+=== "Kotlin"
+
+      ```kotlin
+        import com.google.adk.kt.sessions.InMemorySessionService
+        val sessionService = InMemorySessionService()
+      ```
+
 ### `VertexAiSessionService`
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
-*   **How it works:** Uses Google Cloud Vertex AI infrastructure via API
+*   **How it works:** Uses Google Cloud Agent Platform infrastructure via API
     calls for session management.
 *   **Persistence:** Yes. Data is managed reliably and scalably via
-    [Vertex AI Agent Engine](https://google.github.io/adk-docs/deploy/agent-engine/).
+    [Agent Runtime](/deploy/agent-runtime/).
 *   **Requires:**
     *   A Google Cloud project (`pip install vertexai`)
     *   A Google Cloud storage bucket that can be configured by this
         [step](https://cloud.google.com/vertex-ai/docs/pipelines/configure-project#storage).
-    *   A Reasoning Engine resource name/ID that can setup following this
-        [tutorial](https://google.github.io/adk-docs/deploy/agent-engine/).
-    *   If you do not have a Google Cloud project and you want to try the VertexAiSessionService, see [Vertex AI Express Mode](/adk-docs/tools/google-cloud/express-mode/).
+    *   An Agent Runtime resource name/ID that can setup following this
+        [tutorial](/deploy/agent-runtime/).
+    *   If you do not have a Google Cloud project and you want to try the VertexAiSessionService, see [Agent Platform Express Mode](/integrations/express-mode/).
 *   **Best for:** Scalable production applications deployed on Google Cloud,
-    especially when integrating with other Vertex AI features.
+    especially when integrating with other Agent Platform features.
 
 === "Python"
 
@@ -299,6 +336,20 @@ db_url = "sqlite+aiosqlite:///./my_agent_data.db"
 session_service = DatabaseSessionService(db_url=db_url)
 ```
 
+#### Concurrency and locking
+
+The `DatabaseSessionService` ensures data integrity during concurrent operations through a
+two-tiered locking architecture:
+
+* **In-Process locking:** The service uses an internal, in-process lock to
+        serialize `append_event` calls for the same session. This prevents race
+        conditions when multiple requests try to update the same session
+        simultaneously within the same process.
+* **Row-Level locking:** For PostgreSQL, MySQL, and MariaDB, the service
+        uses row-level locking (via `SELECT ... FOR UPDATE`) to prevent race
+        conditions when multiple processes or replicas try to update the same
+        session simultaneously.
+
 !!! warning "Async Driver Requirement"
 
     `DatabaseSessionService` requires an async database driver. When using SQLite,
@@ -310,11 +361,11 @@ session_service = DatabaseSessionService(db_url=db_url)
 
     The schema for the session database changed in ADK Python v1.22.0, which
     requires migration of the Session Database. For more information, see
-    [Session database schema migration](/adk-docs/sessions/session/migrate/).
+    [Session database schema migration](/sessions/session/migrate/).
 
 ## The Session Lifecycle
 
-<img src="../../assets/session_lifecycle.png" alt="Session lifecycle">
+<img src="../../assets/event-loop.png" alt="Session lifecycle">
 
 Here’s a simplified flow of how `Session` and `SessionService` work together
 during a conversation turn:

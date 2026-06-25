@@ -28,11 +28,11 @@ Some typical applications of Plugins are as follows:
 !!! tip "Tip: Use Plugins for safety features"
     When implementing security guardrails and policies, use ADK Plugins for
     better modularity and flexibility than Callbacks. For more details, see
-    [Callbacks and Plugins for Security Guardrails](/adk-docs/safety/#callbacks-and-plugins-for-security-guardrails).
+    [Callbacks and Plugins for Security Guardrails](/safety/#callbacks-and-plugins-for-security-guardrails).
 
 !!! tip "Tip: ADK Integrations"
     For a list of pre-built plugins and other integrations for ADK, see
-    [Tools and Integrations](/adk-docs/integrations/).
+    [Tools and Integrations](/integrations/).
 
 ## How do Plugins work?
 
@@ -58,9 +58,9 @@ agent application.
 ADK includes several plugins that you can add to your agent workflows
 immediately:
 
-*   [**Reflect and Retry Tools**](/adk-docs/plugins/reflect-and-retry/):
+*   [**Reflect and Retry Tools**](/integrations/reflect-and-retry/):
     Tracks tool failures and intelligently retries tool requests.
-*   [**BigQuery Analytics**](/adk-docs/observability/bigquery-agent-analytics/):
+*   [**BigQuery Analytics**](/integrations/bigquery-agent-analytics/):
     Enables agent logging and analysis with BigQuery.
 *   [**Context Filter**](https://github.com/google/adk-python/blob/main/src/google/adk/plugins/context_filter_plugin.py):
     Filters the generative AI context to reduce its size.
@@ -75,7 +75,7 @@ immediately:
 
 This section explains how to define Plugin classes and register them as part of
 your agent workflow. For a complete code example, see
-[Plugin Basic](https://github.com/google/adk-python/tree/main/contributing/samples/plugin_basic)
+[Plugin Basic](https://github.com/google/adk-python/tree/main/contributing/samples/plugin/plugin_basic)
 in the repository.
 
 ### Create Plugin class
@@ -282,7 +282,7 @@ a simple ADK agent.
         print(f'Hello world: query is [{query}]')
 
         root_agent = Agent(
-            model='gemini-2.0-flash',
+            model='gemini-flash-latest',
             name='hello_world',
             description='Prints hello world with user query.',
             instruction="""Use hello_world tool to print hello world and user query.
@@ -349,7 +349,7 @@ a simple ADK agent.
     });
 
     const rootAgent = new LlmAgent({
-        model: "gemini-2.5-flash", // Preserved from your Python code
+        model: "gemini-flash-latest", // Preserved from your Python code
         name: "hello_world",
         description: "Prints hello world with user query.",
         instruction: `Use hello_world tool to print hello world and user query.`,
@@ -412,7 +412,7 @@ a simple ADK agent.
     // import com.example.CountInvocationPlugin;
 
     public class Main {
-    
+
       public static class HelloTool {
         @Schema(name = "hello_world", description = "Prints hello world with user query.")
         public static Map<String, Object> helloWorld(
@@ -425,7 +425,7 @@ a simple ADK agent.
 
       public static void main(String[] args) {
         LlmAgent rootAgent = LlmAgent.builder()
-            .model("gemini-2.0-flash")
+            .model("gemini-flash-latest")
             .name("hello_world")
             .description("Prints hello world with user query.")
             .instruction("Use hello_world tool to print hello world and user query.")
@@ -501,7 +501,7 @@ a simple ADK agent.
 
     func main() {
     	ctx := context.Background()
-    	model, err := gemini.NewModel(ctx, "gemini-2.0-flash", &genai.ClientConfig{})
+    	model, err := gemini.NewModel(ctx, "gemini-flash-latest", &genai.ClientConfig{})
     	if err != nil {
     		log.Fatalf("failed to create model: %v", err)
     	}
@@ -614,8 +614,8 @@ Hello world: query is [hello world]
 
 
 For more information on running ADK agents, see the
-[Quickstart](/adk-docs/get-started/quickstart/#run-your-agent)
-guide.
+[Agent Runtime](/runtime/#ways-to-run-agents)
+guides.
 
 ## Build workflows with Plugins
 
@@ -1132,4 +1132,4 @@ projects:
 -   For more ADK Plugin code examples, see the
     [ADK Samples repository](https://github.com/google/adk-samples).
 -   For information on applying Plugins for security purposes, see
-    [Callbacks and Plugins for Security Guardrails](/adk-docs/safety/#callbacks-and-plugins-for-security-guardrails).
+    [Callbacks and Plugins for Security Guardrails](/safety/#callbacks-and-plugins-for-security-guardrails).
