@@ -68,5 +68,6 @@ jobs:
           CODE_REPO: 'adk-python'
           INTERACTIVE: 0
           PYTHONPATH: adk-python/contributing/samples/adk_team/adk_documentation
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
         run:
-          python -m adk_docs_updater.main --issue_number ${{ github.event.issue.number }}
+          python -m adk_docs_updater.main --issue_number "${ISSUE_NUMBER}"

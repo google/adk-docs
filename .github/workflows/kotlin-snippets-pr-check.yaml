@@ -56,10 +56,13 @@ jobs:
     - name: Get changed Kotlin snippet files (PR only)
       if: github.event_name == 'pull_request'
       id: changed-files
+      env:
+        BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        HEAD_SHA: ${{ github.event.pull_request.head.sha }}
       run: |
         # This command gets the list of changed .kt files in the snippets directory
         # between the PR's head and the base branch.
-        CHANGED_FILES=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.event.pull_request.head.sha }} -- 'examples/kotlin/snippets/**/*.kt' | xargs)
+        CHANGED_FILES=$(git diff --name-only "${BASE_SHA}" "${HEAD_SHA}" -- 'examples/kotlin/snippets/**/*.kt' | xargs)
         echo "changed_files=${CHANGED_FILES}" >> $GITHUB_OUTPUT
         echo "Detected changes in: ${CHANGED_FILES}"
 
