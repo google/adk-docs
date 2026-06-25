@@ -47,3 +47,4 @@ snippets/tools-custom/customer_support_agent/main.go
 snippets/get-started/multi_tool_agent/main.go
 snippets/runtime/triggers/event_processing_agent.go
 snippets/graphs/index/main.go
+snippets/graphs/human-input/main.go
