@@ -3,8 +3,15 @@
 This guide shows you how to get up and running with Agent Development Kit
 for Go. Before you start, make sure you have the following installed:
 
-*   Go 1.24.4 or later
-*   ADK Go v0.2.0 or later
+*   Go 1.25 or later
+*   ADK Go v2.0.0 or later
+
+!!! tip "What's new in ADK Go 2.0"
+
+    ADK Go 2.0 introduces graph-based workflow agents, parallel and loop
+    execution primitives, and Human-in-the-Loop tool confirmation. See the
+    [ADK 2.0 release page](/2.0/) for the full list of new features and
+    migration guidance.
 
 ## Create an agent project
 
@@ -178,4 +185,6 @@ upper left corner and type a request.
 Now that you have ADK installed and your first agent running, try building
 your own agent with our build guides:
 
-*  [Build your agent](/tutorials/)
+*   [Build your agent](/tutorials/)
+*   [Build graph-based workflows](/graphs/)
+*   [ADK Go workflow agents](/agents/workflow-agents/)
