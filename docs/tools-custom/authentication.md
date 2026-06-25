@@ -1,4 +1,4 @@
-# Authenticating with Tools
+# Authenticating with tools
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
@@ -157,15 +157,15 @@ see the [ADK Integrations](/integrations) catalog.
 
 ---
 
-## Journey 1: Building Agentic Applications with Authenticated Tools
+## Build Agentic Applications with Authenticated Tools
 
 This section focuses on using pre-existing tools (like those from `RestApiTool/ OpenAPIToolset`, `APIHubToolset`, `GoogleApiToolSet`) that require authentication within your agentic application. Your main responsibility is configuring the tools and handling the client-side part of interactive authentication flows (if required by the tool).
 
-### 1. Configuring Tools with Authentication
+### Configure Tools with Authentication
 
 When adding an authenticated tool to your agent, you need to provide its required `AuthScheme` and your application's initial `AuthCredential`.
 
-**A. Using OpenAPI-based Toolsets (`OpenAPIToolset`, `APIHubToolset`, etc.)**
+#### A. Use OpenAPI-based Toolsets (`OpenAPIToolset`, `APIHubToolset`, etc.)
 
 Pass the scheme and credential during toolset initialization. The toolset applies them to all generated tools. Here are few ways to create tools with authentication in ADK.
 
@@ -279,7 +279,7 @@ Pass the scheme and credential during toolset initialization. The toolset applie
       )
       ```
 
-**B. Using Google API Toolsets (e.g., `calendar_tool_set`)**
+#### B. Use Google API Toolsets (e.g., `calendar_tool_set`)
 
 These toolsets often have dedicated configuration methods.
 
@@ -300,12 +300,63 @@ calendar_tool_set.configure_auth(
 # agent = LlmAgent(..., tools=calendar_tool_set.get_tool('calendar_tool_set'))
 ```
 
+#### C. Use ID Token
+
+When your agent calls a locked-down service (like a private Cloud Run or Cloud Function), you need to prove who you are (identity), not just what you can do (permissions).
+* **Access Token (Default)**: Like a keycard. Used for calling Google APIs (Drive, BigQuery).
+  
+* **ID Token**: Like a passport. Used for calling your own services secured by IAM.
+  
+If you are calling a service behind Cloud IAM, you should be using an ID token.
+
+##### Key takeaways
+
+* **Audience Requirement**: The `audience` is a security feature. It binds the token to a specific destination so it cannot be "replayed" against other services. If you set `use_id_token=True` without an `audience`, ADK will throw an error.
+  
+* **No Auto-Refresh**: Unlike standard OAuth2 access tokens for users, service-account ID tokens are fetched at the time of the request. They do not auto-refresh on a background timer.
+  
+* **The Flow**: You define the intent and ADK handles the handshake, fetches the token from Google's auth servers, and injects it into your outgoing HTTP headers.
+
+##### Implementation shortcut
+
+Simply configure your  `ServiceAccount ` to flip to ID token mode and specify the target service's URL as the `audience`.
+
+```bash
+ServiceAccount(
+    service_account_credential=...,   # the JSON key  (OR)
+    use_default_credential=True,      # use ADC instead of a key
+    scopes=[...],                     # for ACCESS tokens
+    use_id_token=True,                # switch to ID-token mode
+    audience="https://my-service.run.app",  # required when use_id_token=True
+)
+```
+
+##### Configuration
+
+To implement ID Token authentication, configure your ServiceAccount with the following parameters, ensuring you specify the target service's URL as the `audience`.
+
+```python
+from google.adk.auth.auth_credential import ServiceAccount
+
+# Configure the ServiceAccount to use ID Token authentication.
+# Replace <YOUR_AUDIENCE_URL> with the URL of the service you are calling.
+sa_config = ServiceAccount(
+    use_default_credential=True,  
+    use_id_token=True,            
+    audience="<YOUR_AUDIENCE_URL>"  
+)
+
+```
+
+!!! Tip
+  If you receive an authentication error, verify that your service account has the 'Cloud Run Invoker' (or equivalent) role on the target service.
+
 The sequence diagram of auth request flow (where tools are requesting auth credentials) looks like below:
 
 ![Authentication](../assets/auth_part1.svg)
 
 
-### 2. Handling the Interactive OAuth/OIDC Flow (Client-Side)
+### Handle the Interactive OAuth/OIDC Flow (Client-Side)
 
 If a tool requires user login/consent (typically OAuth 2.0 or OIDC), the ADK framework pauses execution and signals your ***Agent Client*** application. There are two cases:
 
@@ -511,7 +562,7 @@ The sequence diagram of auth response flow, where the ***Agent Client*** sends b
 
 ![Authentication](../assets/auth_part2.svg)
 
-## Journey 2: Building Custom Tools (`FunctionTool`) Requiring Authentication
+## Build custom tools (`FunctionTool`) requiring authentication
 
 This section focuses on implementing the authentication logic *inside* your custom Python function when creating a new ADK Tool. We will implement a `FunctionTool` as an example.
 
