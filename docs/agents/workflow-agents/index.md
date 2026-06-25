@@ -15,8 +15,8 @@ how and when other agents run, defining the control flow of a process.
     Starting in ADK 2.0, template workflows have been superseded
 
     by more flexible workflow structures, including
-    [graph-based workflows](/workflows/graphs/) and
-    [dynamic workflows](/workflows/dynamic/).
+    [graph-based workflows](/graphs/) and
+    [dynamic workflows](/graphs/dynamic/).
     These workflow architectures provide more control, flexibility
     and capability to evolve your agent workflows over time.
 

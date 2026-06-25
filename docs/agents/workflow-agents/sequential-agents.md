@@ -19,8 +19,8 @@ object you define.
     Starting in ADK 2.0, templated workflows have been superseded
 
     by more flexible workflow structures, including
-    [graph-based workflows](/workflows/graphs/) and
-    [dynamic workflows](/workflows/dynamic/).
+    [graph-based workflows](/graphs/) and
+    [dynamic workflows](/graphs/dynamic/).
 
 ### Example scenario
 

@@ -544,6 +544,26 @@ Control whether the agent receives the prior conversation history.
             .build();
     ```
 
+!!! note "Go v2.0.0: agent execution modes"
+
+    ADK Go v2.0.0 introduces an explicit `Mode` field on `llmagent.Config` that
+    controls how the agent runs when used inside a graph-based or dynamic
+    workflow. Three modes are available:
+
+    -   **`ModeChat`** (default when used as a top-level agent): The agent
+        participates in a multi-turn conversation and can transfer to peer agents.
+    -   **`ModeSingleTurn`**: The agent processes one turn and exits. History
+        is not included; the agent is wired as a sub-agent tool callable by a
+        parent.
+    -   **`ModeTask`**: Similar to `ModeSingleTurn` but retains the ability to
+        call sub-agents to accomplish longer-running tasks.
+
+    When you wrap an `llmagent` with `workflow.NewAgentNode`, the workflow
+    engine automatically sets the mode to `ModeSingleTurn` if no mode is
+    specified — equivalent to Python's `mode="single_turn"` on an agent used
+    as a workflow node. For more information on composing agents in graph-based
+    workflows, see [Graph-based agent workflows](/graphs/).
+
 ### Planner
 
 <div class="language-support-tag" title="">
@@ -795,3 +815,7 @@ the following:
   planning (`planner`), controlling agent transfer
   (`disallow_transfer_to_parent`, `disallow_transfer_to_peers`), and system-wide
   instructions (`global_instruction`). See [Custom agent workflows](/agents/custom-agents/).
+* **Graph-based workflows:** Compose LLM agents as steps in deterministic,
+  graph-based pipelines using [Graph-based agent workflows](/graphs/) (sequential,
+  parallel, loop, and dynamic orchestration). In Go v2.0.0, use
+  `workflow.NewAgentNode` to wrap any LLM agent as a workflow node.
