@@ -19,7 +19,7 @@ applications with ADK. Explore our collection below and happy building:
 
     Create a workflow that uses multiple tools.
 
-    [:octicons-arrow-right-24: Build a multi-tool agent](../get-started/quickstart.md)
+    [:octicons-arrow-right-24: Build a multi-tool agent](/tutorials/multi-tool-agent/)
 
 -   :material-console-line: **Agent team**
 
@@ -28,7 +28,7 @@ applications with ADK. Explore our collection below and happy building:
     Build an multi-agent workflow including agent delegation,
     session management, and safety callbacks.
 
-    [:octicons-arrow-right-24: Build an agent team](../tutorials/agent-team.md)
+    [:octicons-arrow-right-24: Build an agent team](/tutorials/agent-team/)
 
 -   :material-console-line: **Streaming agent**
 
@@ -45,13 +45,5 @@ applications with ADK. Explore our collection below and happy building:
     Discover sample agents for retail, travel, customer service, and more!
 
     [:octicons-arrow-right-24: Discover adk-samples](https://github.com/google/adk-samples){:target="_blank"}
-
--   :material-console-line: **Agentic UI with AG-UI**
-
-    ---
-
-    Build a rich user interface for your agent using the AG-UI protocol and CopilotKit.
-
-    [:octicons-arrow-right-24: Build an agentic UI](ag-ui.md)
 
 </div>

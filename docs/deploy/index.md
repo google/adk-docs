@@ -12,13 +12,13 @@ from your local development machine to a scalable and reliable environment.
 Your ADK agent can be deployed to a range of different environments based
 on your needs for production readiness or custom flexibility:
 
-### Agent Engine in Vertex AI
+### Agent Runtime on Agent Platform
 
-[Agent Engine](agent-engine.md) is a fully managed auto-scaling service on Google Cloud
+[Agent Runtime](agent-runtime/index.md) is a fully managed auto-scaling service on Google Cloud
 specifically designed for deploying, managing, and scaling AI agents built with
 frameworks such as ADK.
 
-Learn more about [deploying your agent to Vertex AI Agent Engine](agent-engine.md).
+Learn more about [deploying your agent to Agent Runtime](agent-runtime/index.md).
 
 ### Cloud Run
 
@@ -45,6 +45,6 @@ locally in Docker or Podman. This is a good option if you prefer to run offline
 or disconnected, or otherwise in a system that has no connection to Google
 Cloud.
 
-Follow the instructions for [deploying your agent to Cloud Run](cloud-run.md),
-specifically the case where you it describes how to use a custom Dockerfile.
-
+Follow the instructions for [deploying your agent to Cloud Run](cloud-run.md#deployment-commands).
+In the "Deployment Commands" section for gcloud CLI, you will find an example FastAPI entry point and 
+Dockerfile.

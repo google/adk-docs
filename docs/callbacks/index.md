@@ -1,6 +1,8 @@
 # Callbacks: Observe, Customize, and Control Agent Behavior
 
-## Introduction: What are Callbacks and Why Use Them?
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
+</div>
 
 Callbacks are a cornerstone feature of ADK, providing a powerful mechanism to hook into an agent's execution process. They allow you to observe, customize, and even control the agent's behavior at specific, predefined points without modifying the core ADK framework code.
 
@@ -18,30 +20,51 @@ Callbacks are a cornerstone feature of ADK, providing a powerful mechanism to ho
 
 **Why use them?** Callbacks unlock significant flexibility and enable advanced agent capabilities:
 
-* **Observe & Debug:** Log detailed information at critical steps for monitoring and troubleshooting.  
-* **Customize & Control:** Modify data flowing through the agent (like LLM requests or tool results) or even bypass certain steps entirely based on your logic.  
-* **Implement Guardrails:** Enforce safety rules, validate inputs/outputs, or prevent disallowed operations.  
-* **Manage State:** Read or dynamically update the agent's session state during execution.  
+* **Observe & Debug:** Log detailed information at critical steps for monitoring and troubleshooting.
+* **Customize & Control:** Modify data flowing through the agent (like LLM requests or tool results) or even bypass certain steps entirely based on your logic.
+* **Implement Guardrails:** Enforce safety rules, validate inputs/outputs, or prevent disallowed operations.
+* **Manage State:** Read or dynamically update the agent's session state during execution.
 * **Integrate & Enhance:** Trigger external actions (API calls, notifications) or add features like caching.
 
 !!! tip
     When implementing security guardrails and policies, use ADK Plugins for
-    better modularity and flexibility than Callbacks. For more details, see 
-    [Callbacks and Plugins for Security Guardrails](/adk-docs/safety/#callbacks-and-plugins-for-security-guardrails).
+    better modularity and flexibility than Callbacks. For more details, see
+    [Callbacks and Plugins for Security Guardrails](/safety/#callbacks-and-plugins-for-security-guardrails).
 
-**How are they added:** 
+**How are they added:**
 
 ??? "Code"
     === "Python"
-    
+
         ```python
         --8<-- "examples/python/snippets/callbacks/callback_basic.py:callback_basic"
         ```
-    
+
+    === "Typescript"
+
+        ```typescript
+        --8<-- "examples/typescript/snippets/callbacks/callback_basic.ts:callback_basic"
+        ```
+
+    === "Go"
+
+        ```go
+        --8<-- "examples/go/snippets/callbacks/main.go:imports"
+
+
+        --8<-- "examples/go/snippets/callbacks/main.go:callback_basic"
+        ```
+
     === "Java"
-    
+
         ```java
         --8<-- "examples/java/snippets/src/main/java/callbacks/AgentWithBeforeModelCallback.java:init"
+        ```
+
+    === "Kotlin"
+
+        ```kotlin
+        --8<-- "examples/kotlin/snippets/callbacks/CallbackBasic.kt:callback_basic"
         ```
 
 ## The Callback Mechanism: Interception and Control
@@ -52,40 +75,56 @@ When the ADK framework encounters a point where a callback can run (e.g., just b
 
 **Controlling the Flow (The Core Mechanism):** The most powerful aspect of callbacks lies in how their **return value** influences the agent's subsequent actions. This is how you intercept and control the execution flow:
 
-1. **`return None` (Allow Default Behavior):**  
+1. **`return None` (Allow Default Behavior):**
 
-    * The specific return type can vary depending on the language. In Java, the equivalent return type is `Optional.empty()`. Refer to the API documentation for language specific guidance.
-    * This is the standard way to signal that your callback has finished its work (e.g., logging, inspection, minor modifications to *mutable* input arguments like `llm_request`) and that the ADK agent should **proceed with its normal operation**.  
-    * For `before_*` callbacks (`before_agent`, `before_model`, `before_tool`), returning `None` means the next step in the sequence (running the agent logic, calling the LLM, executing the tool) will occur.  
-    * For `after_*` callbacks (`after_agent`, `after_model`, `after_tool`), returning `None` means the result just produced by the preceding step (the agent's output, the LLM's response, the tool's result) will be used as is.
+    * The specific return type can vary depending on the language. In Java, the equivalent return type is `Optional.empty()`. In Kotlin, it is `CallbackChoice.Continue(value)` (for `before_*` callbacks) or returning the original object (for `after_*` callbacks). Refer to the API documentation for language specific guidance.
+    * This is the standard way to signal that your callback has finished its work (e.g., logging, inspection, minor modifications to input arguments) and that the ADK agent should **proceed with its normal operation**.
+    * For `before_*` callbacks (`before_agent`, `before_model`, `before_tool`), returning `CallbackChoice.Continue(...)` means the next step in the sequence (running the agent logic, calling the LLM, executing the tool) will occur.
+    * For `after_*` callbacks (`after_agent`, `after_model`, `after_tool`), returning the result just produced (the agent's output, the LLM's response, the tool's result) as is means the framework will continue processing.
 
-2. **`return <Specific Object>` (Override Default Behavior):**  
+2. **`return <Specific Object>` (Override Default Behavior):**
 
-    * Returning a *specific type of object* (instead of `None`) is how you **override** the ADK agent's default behavior. The framework will use the object you return and *skip* the step that would normally follow or *replace* the result that was just generated.  
-    * **`before_agent_callback` → `types.Content`**: Skips the agent's main execution logic (`_run_async_impl` / `_run_live_impl`). The returned `Content` object is immediately treated as the agent's final output for this turn. Useful for handling simple requests directly or enforcing access control.  
-    * **`before_model_callback` → `LlmResponse`**: Skips the call to the external Large Language Model. The returned `LlmResponse` object is processed as if it were the actual response from the LLM. Ideal for implementing input guardrails, prompt validation, or serving cached responses.  
-    * **`before_tool_callback` → `dict` or `Map`**: Skips the execution of the actual tool function (or sub-agent). The returned `dict` is used as the result of the tool call, which is then typically passed back to the LLM. Perfect for validating tool arguments, applying policy restrictions, or returning mocked/cached tool results.  
-    * **`after_agent_callback` → `types.Content`**: *Replaces* the `Content` that the agent's run logic just produced.  
-    * **`after_model_callback` → `LlmResponse`**: *Replaces* the `LlmResponse` received from the LLM. Useful for sanitizing outputs, adding standard disclaimers, or modifying the LLM's response structure.  
-    * **`after_tool_callback` → `dict` or `Map`**: *Replaces* the `dict` result returned by the tool. Allows for post-processing or standardization of tool outputs before they are sent back to the LLM.
+    * Returning a *specific type of object* (instead of signaling "Continue") is how you **override** the ADK agent's default behavior. In Kotlin, this is achieved by returning `CallbackChoice.Break(value)` (for `before_*` callbacks) or a replacement object (for `after_*` callbacks). The framework will use the object you return and *skip* the step that would normally follow or *replace* the result that was just generated.
+    * **`before_agent_callback` → `CallbackChoice.Break(Content)`**: Skips the agent's main execution logic. The returned `Content` object is immediately treated as the agent's final output for this turn. Useful for handling simple requests directly or enforcing access control.
+    * **`before_model_callback` → `CallbackChoice.Break(LlmResponse)`**: Skips the call to the external Large Language Model. The returned `LlmResponse` object is processed as if it were the actual response from the LLM. Ideal for implementing input guardrails, prompt validation, or serving cached responses.
+    * **`before_tool_callback` → `CallbackChoice.Break(Map<String, Any>)`**: Skips the execution of the actual tool function (or sub-agent). The returned `Map` is used as the result of the tool call, which is then typically passed back to the LLM. Perfect for validating tool arguments, applying policy restrictions, or returning mocked/cached tool results.
+    * **`after_agent_callback` → `Content`**: *Replaces* the `Content` that the agent's run logic just produced.
+    * **`after_model_callback` → `LlmResponse`**: *Replaces* the `LlmResponse` received from the LLM. Useful for sanitizing outputs, adding standard disclaimers, or modifying the LLM's response structure.
+    * **`after_tool_callback` → `Map<String, Any>`**: *Replaces* the `Map` result returned by the tool. Allows for post-processing or standardization of tool outputs before they are sent back to the LLM.
 
 **Conceptual Code Example (Guardrail):**
 
 This example demonstrates the common pattern for a guardrail using `before_model_callback`.
 
-<!-- ```py
---8<-- "examples/python/snippets/callbacks/before_model_callback.py"
-``` -->
 ??? "Code"
     === "Python"
-    
+
         ```python
         --8<-- "examples/python/snippets/callbacks/before_model_callback.py"
         ```
-    
+
+    === "Typescript"
+        ```typescript
+        --8<-- "examples/typescript/snippets/callbacks/before_model_callback.ts"
+        ```
+
+    === "Go"
+        ```go
+        --8<-- "examples/go/snippets/callbacks/main.go:imports"
+
+
+        --8<-- "examples/go/snippets/callbacks/main.go:guardrail_init"
+        ```
+
     === "Java"
         ```java
         --8<-- "examples/java/snippets/src/main/java/callbacks/BeforeModelGuardrailExample.java:init"
         ```
 
+    === "Kotlin"
+        ```kotlin
+        --8<-- "examples/kotlin/snippets/callbacks/BeforeModelCallback.kt:before_model_callback"
+        ```
+
 By understanding this mechanism of returning `None` versus returning specific objects, you can precisely control the agent's execution path, making callbacks an essential tool for building sophisticated and reliable agents with ADK.
+

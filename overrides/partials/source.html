@@ -1,32 +1,38 @@
-<!-- First repository information -->
-<a
-  href="{{ config.extra.first_repo_url }}"
-  title="{{ config.extra.first_repo_name or 'First Repository' }}"
-  class="md-source"
-  data-md-component="source"
-  style="margin-right: 10px;"
->
-  <div class="md-source__icon md-icon">
-    {% set first_icon = config.extra.first_repo_icon or "fontawesome/brands/github" %}
-    {% include ".icons/" ~ first_icon ~ ".svg" %}
-  </div>
-  <div class="md-source__repository">
-    {{ config.extra.first_repo_name or 'First Repository' }}
-  </div>
-</a>
+<div class="lang-repos">
+  <a href="https://github.com/google/adk-python"
+     title="adk-python on GitHub"
+     class="lang-item">
+    <img src="/assets/icon-python.svg"
+         alt="Python" class="lang-icon" width="24" height="24" />
+    <span class="lang-label">Python</span>
+  </a>
+  <a href="https://github.com/google/adk-js"
+     title="adk-js on GitHub"
+     class="lang-item">
+    <img src="/assets/icon-typescript.svg"
+         alt="TypeScript" class="lang-icon" width="24" height="24" />
+    <span class="lang-label">JS</span>
+  </a>
+  <a href="https://github.com/google/adk-go"
+     title="adk-go on GitHub"
+     class="lang-item">
+    <img src="/assets/icon-go.svg"
+         alt="Go" class="lang-icon" width="24" height="24" />
+    <span class="lang-label">Go</span>
+  </a>
+  <a href="https://github.com/google/adk-java"
+     title="adk-java on GitHub"
+     class="lang-item">
+    <img src="/assets/icon-java.svg"
+         alt="Java" class="lang-icon" width="24" height="24" />
+    <span class="lang-label">Java</span>
+  </a>
+  <a href="https://github.com/google/adk-kotlin"
+     title="adk-kotlin on GitHub"
+     class="lang-item">
+    <img src="/assets/icon-kotlin.svg"
+         alt="Kotlin" class="lang-icon" width="24" height="24" />
+    <span class="lang-label">Kotlin</span>
+  </a>
+</div>
 
-<!-- Second repository information -->
-<a
-  href="{{ config.extra.second_repo_url }}"
-  title="{{ config.extra.second_repo_name or 'Second Repository' }}"
-  class="md-source"
-  data-md-component="source"
->
-  <div class="md-source__icon md-icon">
-    {% set second_icon = config.extra.second_repo_icon or "fontawesome/brands/github" %}
-    {% include ".icons/" ~ second_icon ~ ".svg" %}
-  </div>
-  <div class="md-source__repository">
-    {{ config.extra.second_repo_name or 'Second Repository' }}
-  </div>
-</a>

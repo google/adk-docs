@@ -1,6 +1,8 @@
-# Why Evaluate Agents
+# Why evaluate agents
 
-![python_only](https://img.shields.io/badge/Currently_supported_in-Python-blue){ title="This feature is currently available for Python. Java support is planned/ coming soon."}
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
+</div>
 
 In traditional software development, unit tests and integration tests provide confidence that code functions as expected and remains stable through changes. These tests provide a clear "pass/fail" signal, guiding further development. However, LLM agents introduce a level of variability that makes traditional testing approaches insufficient.
 
@@ -10,7 +12,7 @@ This may seem like a lot of extra work to set up, but the investment of automati
 
 ![intro_components.png](../assets/evaluate_agent.png)
 
-## Preparing for Agent Evaluations
+## Prepare for agent evaluations
 
 Before automating agent evaluations, define clear objectives and success criteria:
 
@@ -20,16 +22,16 @@ Before automating agent evaluations, define clear objectives and success criteri
 
 These considerations will guide the creation of evaluation scenarios and enable effective monitoring of agent behavior in real-world deployments.
 
-## What to Evaluate?
+## What to evaluate?
 
 To bridge the gap between a proof-of-concept and a production-ready AI agent, a robust and automated evaluation framework is essential. Unlike evaluating generative models, where the focus is primarily on the final output, agent evaluation requires a deeper understanding of the decision-making process. Agent evaluation can be broken down into two components:
 
-1. **Evaluating Trajectory and Tool Use:** Analyzing the steps an agent takes to reach a solution, including its choice of tools, strategies, and the efficiency of its approach.  
-2. **Evaluating the Final Response:** Assessing the quality, relevance, and correctness of the agent's final output.
+1. **Evaluate Trajectory and Tool Use:** Analyzing the steps an agent takes to reach a solution, including its choice of tools, strategies, and the efficiency of its approach.  
+2. **Evaluate the Final Response:** Assessing the quality, relevance, and correctness of the agent's final output.
 
 The trajectory is just a list of steps the agent took before it returned to the user. We can compare that against the list of steps we expect the agent to have taken.
 
-### Evaluating trajectory and tool use
+### Evaluate trajectory and tool use
 
 Before responding to a user, an agent typically performs a series of actions, which we refer to as a 'trajectory.' It might compare the user input with session history to disambiguate a term, or lookup a policy document, search a knowledge base or invoke an API to save a ticket. We call this a ‘trajectory’ of actions. Evaluating an agent's performance requires comparing its actual trajectory to an expected, or ideal, one. This comparison can reveal errors and inefficiencies in the agent's process. The expected trajectory represents the ground truth \-- the list of steps we anticipate the agent should take.
 
@@ -41,22 +43,13 @@ expected_steps = ["determine_intent", "use_tool", "review_results", "report_gene
 actual_steps = ["determine_intent", "use_tool", "review_results", "report_generation"]
 ```
 
-Several ground-truth-based trajectory evaluations exist:
+ADK provides both groundtruth based and rubric based tool use evaluation metrics. To select the appropriate metric for your agent's specific requirements and goals, please refer to our [recommendations](#recommendations-on-criteria).
 
-1. **Exact match:** Requires a perfect match to the ideal trajectory.  
-2. **In-order match:** Requires the correct actions in the correct order, allows for extra actions.  
-3. **Any-order match:** Requires the correct actions in any order, allows for extra actions.  
-4. **Precision:** Measures the relevance/correctness of predicted actions.  
-5. **Recall:** Measures how many essential actions are captured in the prediction.  
-6. **Single-tool use:** Checks for the inclusion of a specific action.
+## How evaluation works with ADK
 
-Choosing the right evaluation metric depends on the specific requirements and goals of your agent. For instance, in high-stakes scenarios, an exact match might be crucial, while in more flexible situations, an in-order or any-order match might suffice.
+ADK offers two methods for evaluating agent performance against predefined datasets and evaluation criteria. While conceptually similar, they differ in the amount of data they can process, which typically dictates the appropriate use case for each.
 
-## How Evaluation works with the ADK
-
-The ADK offers two methods for evaluating agent performance against predefined datasets and evaluation criteria. While conceptually similar, they differ in the amount of data they can process, which typically dictates the appropriate use case for each.
-
-### First approach: Using a test file
+### Evaluate with test files
 
 This approach involves creating individual test files, each representing a single, simple agent-model interaction (a session). It's most effective during active agent development, serving as a form of unit testing. These tests are designed for rapid execution and should focus on simple session complexity. Each test file contains a single session, which may consist of multiple turns. A turn represents a single interaction between the user and the agent. Each turn includes
 
@@ -72,12 +65,13 @@ This approach involves creating individual test files, each representing a singl
     through the right path to generate final response.
 -   `Final Response`: The expected final response from the agent.
 
-You can give the file any name for example `evaluation.test.json`.The framework only checks for the `.test.json` suffix, and the preceding part of the filename is not constrained. The test files are backed by a formal Pydantic data model. The two key schema files are
+You can give the file any name for example `evaluation.test.json`. The framework only checks for the `.test.json` suffix, and the preceding part of the filename is not constrained. The test files are backed by a formal Pydantic data model. The two key schema files are
 [Eval Set](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py) and
 [Eval Case](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_case.py).
 Here is a test file with a few examples:
 
-*(Note: Comments are included for explanatory purposes and should be removed for the JSON to be valid.)*
+!!! note 
+    Comments are included for explanatory purposes and should be removed for the JSON to be valid.
 
 ```json
 # Do note that some fields are removed for sake of making this doc readable.
@@ -119,16 +113,16 @@ Here is a test file with a few examples:
               }
             ],
             "intermediate_responses": [] # Any intermediate sub-agent responses.
-          },
+          }
         }
       ],
       "session_input": { # Initial session input.
         "app_name": "home_automation_agent",
         "user_id": "test_user",
         "state": {}
-      },
+      }
     }
-  ],
+  ]
 }
 ```
 
@@ -136,7 +130,8 @@ Test files can be organized into folders. Optionally, a folder can also include 
 
 #### How to migrate test files not backed by the Pydantic schema?
 
-NOTE: If your test files don't adhere to [EvalSet](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py) schema file, then this section is relevant to you.
+!!! note 
+    If your test files don't adhere to [EvalSet](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py) schema file, then this section is relevant to you.
 
 Please use `AgentEvaluator.migrate_eval_data_to_new_schema` to migrate your
 existing `*.test.json` files to the Pydantic backed schema.
@@ -146,11 +141,11 @@ file, and generates a single output json file with data serialized in the new
 format. Given that the new schema is more cohesive, both the old test data file
 and initial session file can be ignored (or removed.)
 
-### Second approach: Using An Evalset File
+### Evaluate with an Evalset File
 
 The evalset approach utilizes a dedicated dataset called an "evalset" for evaluating agent-model interactions. Similar to a test file, the evalset contains example interactions. However, an evalset can contain multiple, potentially lengthy sessions, making it ideal for simulating complex, multi-turn conversations. Due to its ability to represent complex sessions, the evalset is well-suited for integration tests. These tests are typically run less frequently than unit tests due to their more extensive nature.
 
-An evalset file contains multiple "evals," each representing a distinct session. Each eval consists of one or more "turns," which include the user query, expected tool use, expected intermediate agent responses, and a reference response. These fields have the same meaning as they do in the test file approach. Each eval is identified by a unique name. Furthermore, each eval includes an associated initial session state.
+An evalset file contains multiple "evals," each representing a distinct session. Each eval consists of one or more "turns," which include the user query, expected tool use, expected intermediate agent responses, and a reference response. These fields have the same meaning as they do in the test file approach. Alternatively, an eval can define a *conversation scenario* which is used to [dynamically simulate](./user-sim.md) a user interaction with the agent. Each eval is identified by a unique name. Furthermore, each eval includes an associated initial session state.
 
 Creating evalsets manually can be complex, therefore UI tools are provided to help capture relevant sessions and easily convert them into evals within your evalset. Learn more about using the web UI for evaluation below. Here is an example evalset containing two sessions. The eval set files are  backed by a formal Pydantic data model. The two key schema files are
 [Eval Set](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py) and
@@ -160,7 +155,8 @@ Creating evalsets manually can be complex, therefore UI tools are provided to he
     This evalset evaluation method requires the use of a paid service,
     [Vertex Gen AI Evaluation Service API](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/evaluation).
 
-*(Note: Comments are included for explanatory purposes and should be removed for the JSON to be valid.)*
+!!! note 
+    Comments are included for explanatory purposes and should be removed for the JSON to be valid.
 
 ```json
 # Do note that some fields are removed for sake of making this doc readable.
@@ -194,14 +190,14 @@ Creating evalsets manually can be complex, therefore UI tools are provided to he
           "intermediate_data": {
             "tool_uses": [],
             "intermediate_responses": []
-          },
-        },
+          }
+        }
       ],
       "session_input": {
         "app_name": "hello_world",
         "user_id": "user",
         "state": {}
-      },
+      }
     },
     {
       "eval_id": "session_02",
@@ -227,7 +223,7 @@ Creating evalsets manually can be complex, therefore UI tools are provided to he
           "intermediate_data": {
             "tool_uses": [],
             "intermediate_responses": []
-          },
+          }
         },
         {
           "invocation_id": "e-bf8549a1-2a61-4ecc-a4ee-4efbbf25a8ea",
@@ -283,22 +279,23 @@ Creating evalsets manually can be complex, therefore UI tools are provided to he
                 ]
               ]
             ]
-          },
+          }
         }
       ],
       "session_input": {
         "app_name": "hello_world",
         "user_id": "user",
         "state": {}
-      },
+      }
     }
-  ],
+  ]
 }
 ```
 
 #### How to migrate eval set files not backed by the Pydantic schema?
 
-NOTE: If your eval set files don't adhere to [EvalSet](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py) schema file, then this section is relevant to you.
+!!! note
+    If your eval set files don't adhere to [EvalSet](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py) schema file, then this section is relevant to you.
 
 Based on who is maintaining the eval set data, there are two routes:
 
@@ -309,9 +306,72 @@ Based on who is maintaining the eval set data, there are two routes:
     migration tool is in the works, until then the ADK eval CLI command will
     continue to support data in the old format.
 
+### Evaluate with conformance testing
+
+`adk conformance test` command verifies that your AI agents behave consistently over time. It ensures that updates to your codebase or models don't introduce regressions by validating current agent outputs against baseline data.
+
+#### Prerequisites and setup
+
+Before the `adk conformance` command can execute meaningful regression testing, you must establish an optimal "golden baseline." Conformance testing operates by comparing live agent behavior against these previously recorded, verified interactions.
+
+Follow this workflow to prepare your environment:
+##### Create the Test Directory Hierarchy
+
+ Conformance tests rely on a strict file layout to automatically discover and map test cases. 
+ Initialize your testing directory using the following structure:
+
+```
+tests
+└── category_name/
+    └── test_case_name/
+        ├── spec.yaml                  # Test case specification
+        ├── generated-recordings.yaml   # Baseline recorded interactions
+        └── generated-session.yaml      # Baseline session data
+
+```
+
+!!! note
+    If your agent uses Server-Sent Events (SSE), the testing framework will additionally look for `generated-recordings-sse.yaml` and `generated-session-sse.yaml` within the same folder.
+
+##### Define the test specification (spec.yaml)
+
+In your target test folder, create a `spec.yaml` file. This file outlines the initial conditions, configurations, and user prompts that the agent will execute during the baseline recording and subsequent conformance runs. Ensure your file matches the following basic schema, this is an example only:
+
+```
+# Example spec.yaml for a Weather Agent name: "current_weather_check" description:
+"Verifies the agent correctly identifies location and calls the weather tool."
+user_prompts: - "What's the temperature in San Francisco right now?" expected_tools:
+ - "get_weather_api"
+```
+
+#### Automate the baseline 
+
+Because the background data (like LLM requests and tool calls) is complex, you shouldn't try to write or save the baseline files manually. Instead, let ADK generate them for you.
+
+1. Start your ADK web server with the recording plugin turned on:
+
+```shell
+adk web -v --extra_plugins=google.adk.cli.plugins.recordings_plugin.RecordingsPlugin /path/to/agents
+```
+
+   2. Next, open a new terminal window and tell ADK to create the baseline files based on your spec.yaml:
+
+```shell
+adk conformance create tests/category/test_name
+```
+
+This automatically runs the scenario, records all the interactions, and saves the generated-recordings.yaml and generated-session.yaml files exactly where they need to be.
+
+Once these baseline files are locked in, your setup is complete, and the directory is ready to be targeted by `adk conformance` in either **Replay** or **Live** mode.
+
+#### How it works
+
+* **Replay Mode (Default):** The tool runs your agent and compares its live LLM requests, responses, and tool calls directly against your previously recorded interactions to catch unexpected deviations.  
+* **Live Mode:** Runs evaluation-based verification against active environments *(Note: This mode is a work in progress)*.
+
 ### Evaluation Criteria
 
-ADK provides several built-in criterion for evaluating agent performance, ranging
+ADK provides several built-in criteria for evaluating agent performance, ranging
 from tool trajectory matching to LLM-based response quality assessment. For a
 detailed list of available criteria and guidance on when to use them, please see
 [Evaluation Criteria](./criteria.md).
@@ -329,6 +389,13 @@ Here is a summary of all the available criteria:
 *   **hallucinations_v1**: LLM-judged groundedness of agent response against
     context.
 *   **safety_v1**: Safety/harmlessness of agent response.
+*   **per_turn_user_simulator_quality_v1**: LLM-judged user simulator quality.
+*   **multi_turn_task_success_v1**: Evaluates if agent achieves goal(s) of
+    conversation.
+*   **multi_turn_trajectory_quality_v1**: Evaluates the overall trajectory of
+    the conversation.
+*   **multi_turn_tool_use_quality_v1**: Evaluates function calls made during a
+    conversation.
 
 If no evaluation criteria are provided, the following default configuration is used:
 
@@ -371,17 +438,43 @@ Choose criteria based on your evaluation goals:
     the information available to it (e.g., tool outputs).
 *   **Check for harmful content:** Use `safety_v1` to ensure that agent
     responses are safe and do not violate safety policies.
+*   **Evaluate multi-turn goal completion:** Use `multi_turn_task_success_v1` to
+    measure the overall success of a multi-turn conversation in achieving its
+    intended objectives.
+*   **Evaluate overall conversation trajectory:** Use
+    `multi_turn_trajectory_quality_v1` to assess the efficiency, effectiveness,
+    and logic of the steps taken during the conversation.
+*   **Evaluate tool usage in multi-turn workflows:** Use
+    `multi_turn_tool_use_quality_v1` to assess the quality, relevance, and
+    correctness of tool or function calls made across multiple turns.
 
+In addition, criteria which require information on expected agent tool use
+and/or responses are not supported in combination with
+[User Simulation](./user-sim.md).
+Currently, only the `hallucinations_v1` and `safety_v1` criteria support such evals.
 
-## How to run Evaluation with the ADK
+### User Simulation
+
+When evaluating conversational agents, it is not always practical to use a fixed
+set of user prompts, as the conversation can proceed in unexpected ways.
+For example, if the agent needs the user to supply two values to perform a task,
+it may ask for those values one at a time or both at once.
+To resolve this issue, ADK allows you test the behavior of the agent in a
+specific *conversation scenario* with user prompts that are dynamically
+generated by an AI model.
+For details on how to set up an eval with user simulation, see
+[User Simulation](./user-sim.md).
+
+## How to run Evaluation with ADK
 
 As a developer, you can evaluate your agents using the ADK in the following ways:
 
-1. **Web-based UI (**`adk web`**):** Evaluate agents interactively through a web-based interface.  
-2. **Programmatically (**`pytest`**)**: Integrate evaluation into your testing pipeline using `pytest` and test files.  
-3. **Command Line Interface (**`adk eval`**):** Run evaluations on an existing evaluation set file directly from the command line.
+- **Web-based UI (**`adk web`**):** Evaluate agents interactively through a web-based interface.  
+- **Programmatically (**`pytest`**)**: Integrate evaluation into your testing pipeline using `pytest` and test files.  
+- **Command Line Interface (**`adk eval`**):** Run evaluations on an existing evaluation set file directly from the command line.
+- **Conformance Testing** (**`adk conformance`**):** Execute automated tests against your baseline files to detect unexpected deviations or regressions.
 
-### 1\. `adk web` \- Run Evaluations via the Web UI
+### Run Evaluations via the Web UI
 
 The web UI provides an interactive way to evaluate agents, generate evaluation datasets, and inspect agent behavior in detail.
 
@@ -422,7 +515,7 @@ After the run completes, you can analyze the results:
 
 ### Debugging with the Trace View
 
-The ADK web UI includes a powerful **Trace** tab for debugging agent behavior. This feature is available for any agent session, not just during evaluation.
+ADK web UI includes a powerful **Trace** tab for debugging agent behavior. This feature is available for any agent session, not just during evaluation.
 
 The **Trace** tab provides a detailed and interactive way to inspect your agent's execution flow. Traces are automatically grouped by user message, making it easy to follow the chain of events.
 
@@ -440,7 +533,7 @@ Each trace row is interactive:
 
 Blue rows in the trace view indicate that an event was generated from that interaction. Clicking on these blue rows will open the bottom event detail panel, providing deeper insights into the agent's execution flow.
 
-### 2\.  `pytest` \- Run Tests Programmatically
+### Run Tests Programmatically
 
 You can also use **`pytest`** to run test files as part of your integration tests.
 
@@ -469,7 +562,7 @@ async def test_with_single_test_file():
 
 This approach allows you to integrate agent evaluations into your CI/CD pipelines or larger test suites. If you want to specify the initial session state for your tests, you can do that by storing the session details in a file and passing that to `AgentEvaluator.evaluate` method.
 
-### 3\. `adk eval` \- Run Evaluations via the CLI
+### Run Evaluations via the CLI
 
 You can also run evaluation of an eval set file through the command line interface (CLI). This runs the same evaluation that runs on the UI, but it helps with automation, i.e. you can add this command as a part of your regular build generation and verification process.
 
@@ -499,3 +592,41 @@ Here are the details for each command line argument:
   `This will only run eval_1, eval_2 and eval_3 from sample_eval_set_file.json`  
 * `CONFIG_FILE_PATH`: The path to the config file.  
 * `PRINT_DETAILED_RESULTS`: Prints detailed results on the console.
+
+### Run conformance tests
+
+You can run all your tests at once, run specific ones, or create a summary report.
+
+#### Run All Tests
+
+If you don't type a specific folder path, the tool automatically looks for a tests/ folder in your workspace and runs everything inside it:
+
+```
+adk conformance test
+```
+
+#### Run Specific Test Groups or Individual Cases
+
+Pass one or more folder paths to narrow down which tests execute:
+
+```
+
+# Test an entire category of tests
+adk conformance test tests/core
+
+# Test one specific case
+adk conformance test tests/core/description_001
+
+```
+
+#### Generate Markdown Test Reports
+
+Add the `--generate_report` flag to produce a clean test summary report. You can optionally specify where to save it using the `--report_dir parameter`:
+
+```
+# Save the report in a specific folder
+adk conformance test --generate_report --report_dir=reports
+```
+
+#### Automating with CI/CD  
+Because adk conformance test is a command-line tool that fails if things don't match, it is highly useful for CI/CD pipelines. You can set it up to run automatically whenever someone opens a pull request, blocking any code from merging if it changes the agent's expected behavior.

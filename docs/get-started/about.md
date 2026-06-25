@@ -68,11 +68,11 @@ agentic applications:
    UI for running agents, inspecting execution steps (events, state changes),
    debugging interactions, and visualizing agent definitions.
 5. **Native Streaming Support:** Build real-time, interactive experiences with
-   native support for bidirectional streaming (text and audio). This integrates
-   seamlessly with underlying capabilities like the
-   [Multimodal Live API for the Gemini Developer API](https://ai.google.dev/gemini-api/docs/live)
+   [ADK Gemini Live API Toolkit](../streaming/index.md) that provides native support for bidirectional
+   streaming (text and audio). This integrates seamlessly with underlying
+   capabilities like the [Gemini Live API for the Gemini Developer API](https://ai.google.dev/gemini-api/docs/live)
    (or for
-   [Vertex AI](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/multimodal-live)),
+   [Agent Platform](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/multimodal-live)),
    often enabled with simple configuration changes.
 6. **Built-in Agent Evaluation:** Assess agent performance systematically. The
    framework includes tools to create multi-turn evaluation datasets and run
@@ -88,8 +88,7 @@ agentic applications:
    generated reports during their execution.
 9. **Extensibility and Interoperability:** ADK promotes an open
    ecosystem. While providing core tools, it allows developers to easily
-   integrate and reuse tools from other popular agent frameworks including
-   LangChain and CrewAI.
+   integrate and reuse third-party tools and data connectors.
 10. **State and Memory Management:** Automatically handles short-term
     conversational memory (`State` within a `Session`) managed by the
     `SessionService`. Provides integration points for longer-term `Memory`
@@ -100,4 +99,4 @@ agentic applications:
 
 ## Get Started
 
-* Ready to build your first agent? [Try the quickstart](./quickstart.md)
+* Ready to build your first agent? [Get started](/get-started/)!

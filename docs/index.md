@@ -1,120 +1,103 @@
 ---
+title: Agent Development Kit (ADK)
 hide:
+  - navigation
   - toc
 ---
+<link rel="stylesheet" type="text/css" href="stylesheets/homepage.css" />
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/asciinema-player@3.9.0/dist/bundle/asciinema-player.css" />
+<script src="https://cdn.jsdelivr.net/npm/asciinema-player@3.9.0/dist/bundle/asciinema-player.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@600;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>document.body.classList.add('adk-landing-page');</script>
 
-<div style="text-align: center;">
-  <div class="centered-logo-text-group">
-    <img src="assets/agent-development-kit.png" alt="Agent Development Kit Logo" width="100">
-    <h1>Agent Development Kit</h1>
-  </div>
-</div>
+<div class="adk-landing">
 
-Agent Development Kit (ADK) is a flexible and modular framework for **developing
-and deploying AI agents**. While optimized for Gemini and the Google ecosystem,
-ADK is **model-agnostic**, **deployment-agnostic**, and is built for
-**compatibility with other frameworks**. ADK was designed to make agent
-development feel more like software development, to make it easier for
-developers to create, deploy, and orchestrate agentic architectures that range
-from simple tasks to complex workflows.
+<!-- Ambient Glows -->
+<div class="glow glow-tl"></div>
+<div class="glow glow-tr"></div>
+<div class="glow glow-mr"></div>
 
-<div id="centered-install-tabs" class="install-command-container" markdown="1">
+<!-- Hero Section -->
+{{% include '_includes/homepage/_hero.md' %}}
 
-<p class="get-started-text" style="text-align: center;">Get started:</p>
+<!-- Agent CLI -->
+{{% include '_includes/homepage/_agent-cli.md' %}}
 
-=== "Python"
-    <br>
-    <p style="text-align: center;">
-    <code>pip install google-adk</code>
-    </p>
+<!-- Graphs -->
+{{% include '_includes/homepage/_graphs.md' %}}
 
-=== "Java"
+<!-- Framework -->
+{{% include '_includes/homepage/_framework.md' %}}
 
-    ```xml title="pom.xml"
-    <dependency>
-        <groupId>com.google.adk</groupId>
-        <artifactId>google-adk</artifactId>
-        <version>0.2.0</version>
-    </dependency>
-    ```
+<!-- Ecosystem -->
+{{% include '_includes/homepage/_ecosystem.md' %}}
 
-    ```gradle title="build.gradle"
-    dependencies {
-        implementation 'com.google.adk:google-adk:0.2.0'
-    }
-    ```
-</div>
+<!-- Ready to Build CTA Section -->
+{{% include '_includes/homepage/_build-cta.md' %}}
 
-<p style="text-align:center;">
-  <a href="/adk-docs/get-started/python/" class="md-button" style="margin:3px">Start with Python</a>
-  <a href="/adk-docs/get-started/java/" class="md-button" style="margin:3px">Start with Java</a>
-  <a href="/adk-docs/get-started/about/" class="md-button" style="margin:3px">Technical overview</a>
-</p>
+<!-- Community Section -->
+{{% include '_includes/homepage/_community.md' %}}
 
----
+<!-- FAQ Section -->
+{{% include '_includes/homepage/_faq.md' %}}
 
-## Learn more
+<script>
+function initHomepage() {
+  // Asciinema player (for _agent-cli.md)
+  var playerEl = document.getElementById('asciinema-demo');
+  if (playerEl && !playerEl.hasChildNodes() && typeof AsciinemaPlayer !== 'undefined') {
+    AsciinemaPlayer.create('assets/adk-demo.cast', playerEl, {
+      theme: 'monokai',
+      fit: 'width',
+      autoPlay: true,
+      loop: true,
+      speed: 1,
+      idleTimeLimit: 2,
+      cols: 85,
+      rows: 24,
+      poster: 'npt:0:18'
+    });
+  }
+}
 
-[:fontawesome-brands-youtube:{.youtube-red-icon} Watch "Introducing Agent Development Kit"!](https://www.youtube.com/watch?v=zgrOwow_uTQ target="_blank" rel="noopener noreferrer")
+// Event delegation for tab switching and copy buttons.
+// Attaching to `document` means these handlers survive DOM replacement
+// during MkDocs Material instant (SPA) navigation.
+document.addEventListener('click', function(e) {
+  // Tab switching
+  var tab = e.target.closest('.iterm-tab');
+  if (tab) {
+    var lang = tab.getAttribute('data-lang');
+    var allTabs = document.querySelectorAll('.iterm-tab');
+    var langs = ['python', 'go', 'java', 'typescript', 'kotlin'];
+    allTabs.forEach(function(t) { t.classList.remove('active'); });
+    tab.classList.add('active');
+    langs.forEach(function(l) {
+      var codeEl = document.getElementById('code-' + l);
+      var installEl = document.getElementById('install-' + l);
+      if (codeEl) codeEl.style.display = l === lang ? 'block' : 'none';
+      if (installEl) installEl.style.display = l === lang ? 'flex' : 'none';
+    });
+    return;
+  }
 
-<div class="grid cards" markdown>
+  // Copy-to-clipboard buttons
+  var btn = e.target.closest('.copy-btn');
+  if (btn) {
+    var text = btn.getAttribute('data-copy');
+    navigator.clipboard.writeText(text).then(function() {
+      var orig = btn.textContent;
+      btn.textContent = '✅';
+      setTimeout(function() { btn.textContent = orig; }, 1500);
+    });
+  }
+});
 
--   :material-transit-connection-variant: **Flexible Orchestration**
+// Initialize on first load
+document.addEventListener('DOMContentLoaded', initHomepage);
 
-    ---
-
-    Define workflows using workflow agents (`Sequential`, `Parallel`, `Loop`)
-    for predictable pipelines, or leverage LLM-driven dynamic routing
-    (`LlmAgent` transfer) for adaptive behavior.
-
-    [**Learn about agents**](agents/index.md)
-
--   :material-graph: **Multi-Agent Architecture**
-
-    ---
-
-    Build modular and scalable applications by composing multiple specialized
-    agents in a hierarchy. Enable complex coordination and delegation.
-
-    [**Explore multi-agent systems**](agents/multi-agents.md)
-
--   :material-toolbox-outline: **Rich Tool Ecosystem**
-
-    ---
-
-    Equip agents with diverse capabilities: use pre-built tools (Search, Code
-    Exec), create custom functions, integrate 3rd-party libraries (LangChain,
-    CrewAI), or even use other agents as tools.
-
-    [**Browse tools**](tools/index.md)
-
--   :material-rocket-launch-outline: **Deployment Ready**
-
-    ---
-
-    Containerize and deploy your agents anywhere – run locally, scale with
-    Vertex AI Agent Engine, or integrate into custom infrastructure using Cloud
-    Run or Docker.
-
-    [**Deploy agents**](deploy/index.md)
-
--   :material-clipboard-check-outline: **Built-in Evaluation**
-
-    ---
-
-    Systematically assess agent performance by evaluating both the final
-    response quality and the step-by-step execution trajectory against
-    predefined test cases.
-
-    [**Evaluate agents**](evaluate/index.md)
-
--   :material-console-line: **Building Safe and Secure Agents**
-
-    ---
-
-    Learn how to building powerful and trustworthy agents by implementing
-    security and safety patterns and best practices into your agent's design.
-
-    [**Safety and Security**](safety/index.md)
-
-</div>
+// Re-initialize after MkDocs Material instant navigation
+if (typeof document$ !== 'undefined') {
+  document$.subscribe(function() { initHomepage(); });
+}
+</script>

@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 from google.adk.agents import Agent
 from google.adk.tools import google_search  # Import the tool
 
@@ -19,8 +20,7 @@ root_agent = Agent(
    # A unique name for the agent.
    name="google_search_agent",
    # The Large Language Model (LLM) that agent will use.
-   model="gemini-2.0-flash-exp", # if this model does not work, try below
-   #model="gemini-2.0-flash-live-001",
+   model=os.getenv("DEMO_AGENT_MODEL"),
    # A short description of the agent's purpose.
    description="Agent to answer questions using Google Search.",
    # Instructions to set the agent's behavior.

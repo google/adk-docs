@@ -1,30 +1,39 @@
 # Evaluation Criteria
 
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
+</div>
+
 This page outlines the evaluation criteria provided by ADK to assess agent
 performance, including tool use trajectory, response quality, and safety.
 
-Criterion                                | Description                                               | Reference-Based | Requires Rubrics | LLM-as-a-Judge
-:--------------------------------------- | :-------------------------------------------------------- | :-------------- | :--------------- | :-------------
-`tool_trajectory_avg_score`              | Exact match of tool call trajectory                       | Yes             | No               | No
-`response_match_score`                   | ROUGE-1 similarity to reference response                  | Yes             | No               | No
-`final_response_match_v2`                | LLM-judged semantic match to reference response           | Yes             | No               | Yes
-`rubric_based_final_response_quality_v1` | LLM-judged final response quality based on custom rubrics | No              | Yes              | Yes
-`rubric_based_tool_use_quality_v1`       | LLM-judged tool usage quality based on custom rubrics     | No              | Yes              | Yes
-`hallucinations_v1`                      | LLM-judged groundedness of agent response against context | No              | No               | Yes
-`safety_v1`                              | Safety/harmlessness of agent response                     | No              | No               | Yes
+Criterion                                | Description                                               | Reference-Based | Requires Rubrics | LLM-as-a-Judge | Supports [User Simulation](./user-sim.md)
+:--------------------------------------- | :-------------------------------------------------------- | :-------------- | :--------------- | :------------- | :----------------------------------------
+`tool_trajectory_avg_score`              | Exact match of tool call trajectory                       | Yes             | No               | No             | No
+`response_match_score`                   | ROUGE-1 similarity to reference response                  | Yes             | No               | No             | No
+`final_response_match_v2`                | LLM-judged semantic match to reference response           | Yes             | No               | Yes            | No
+`rubric_based_final_response_quality_v1` | LLM-judged final response quality based on custom rubrics | No              | Yes              | Yes            | Yes
+`rubric_based_tool_use_quality_v1`       | LLM-judged tool usage quality based on custom rubrics     | No              | Yes              | Yes            | Yes
+`hallucinations_v1`                      | LLM-judged groundedness of agent response against context | No              | No               | Yes            | Yes
+`safety_v1`                              | Safety/harmlessness of agent response                     | No              | No               | Yes            | Yes
+`per_turn_user_simulator_quality_v1`     | LLM-judged user simulator quality                         | No              | No               | Yes            | Yes
+`multi_turn_task_success_v1`             | Evaluates if agent achieves goal(s) of conversation       | No              | No               | Yes            | Yes
+`multi_turn_trajectory_quality_v1`       | Evaluates the overall trajectory of the conversation      | No              | No               | Yes            | Yes
+`multi_turn_tool_use_quality_v1`         | Evaluates function calls made during a conversation       | No              | No               | Yes            | Yes
 
 ## tool_trajectory_avg_score
 
 This criterion compares the sequence of tools called by the agent against a list
-of expected calls and computes an average score based on exact match.
+of expected calls and computes an average score based on one of the match types:
+`EXACT`, `IN_ORDER`, or `ANY_ORDER`.
 
-### When To Use This Criterion?
+#### When To Use This Criterion?
 
-This criterion is ideal for scenarios where the correctness of an agent's
-behavior is strictly dependent on following a precise sequence of tool calls
-with exact arguments. Use it when you need to enforce a specific tool execution
-path and consider any deviation—whether in tool name, arguments, or order—as a
-failure. It is particularly valuable for:
+This criterion is ideal for scenarios where agent correctness depends on tool
+calls. Depending on how strictly tool calls need to be followed, you can choose
+from one of three match types: `EXACT`, `IN_ORDER`, and `ANY_ORDER`.
+
+This metric is particularly valuable for:
 
 *   **Regression testing:** Ensuring that agent updates do not unintentionally
     alter tool call behavior for established test cases.
@@ -34,25 +43,50 @@ failure. It is particularly valuable for:
     parameters or call order can lead to significantly different or incorrect
     outcomes.
 
-### Details
+Use `EXACT` match when you need to enforce a specific tool execution path and
+consider any deviation—whether in tool name, arguments, or order—as a failure.
 
-For each invocation that is being evaluated, this criterion compares the list
-and order of tool calls produced by the agent against the list of expected tool
-calls. The comparison is done by performing an exact match on the tool name and
-tool arguments for each tool call in the list. If all tool calls in an
-invocation match exactly in content and order, a score of 1.0 is awarded for
-that invocation, otherwise the score is 0.0. The final value is the average of
-these scores across all invocations in the eval case.
+Use `IN_ORDER` match when you want to ensure certain key tool calls occur in a
+specific order, but allow for other tool calls to happen in between. This option is
+useful in assuring if certain key actions or tool calls occur and in certain order,
+leaving some scope for other tools calls to happen as well.
 
-### How To Use This Criterion?
+Use `ANY_ORDER` match when you want to ensure certain key tool calls occur, but
+do not care about their order, and allow for other tool calls to happen in
+between. This criteria is helpful for cases where multiple tool calls about the
+same concept occur, like your agent issues 5 search queries. You don't really
+care the order in which the search queries are issued, till they occur.
 
-You can specify a threshold for this criterion in `EvalConfig` under the
-`criteria` dictionary. The value should be a float between 0.0 and 1.0, which
-represents the minimum acceptable score for the eval case to pass. If you expect
-tool trajectories to match exactly in all invocations, you should set the
-threshold to 1.0.
+#### Details
 
-Example `EvalConfig` entry:
+For each invocation that is being evaluated, this criterion compares the list of
+tool calls produced by the agent against the list of expected tool calls using
+one of three match types. If the tool calls match based on the selected match
+type, a score of 1.0 is awarded for that invocation, otherwise the score is 0.0.
+The final value is the average of these scores across all invocations in the
+eval case.
+
+The comparison can be done using one of following match types:
+
+*   **`EXACT`**: Requires a perfect match between the actual and expected tool
+    calls, with no extra or missing tool calls.
+*   **`IN_ORDER`**: Requires all tool calls from the expected list to be present
+    in the actual list, in the same order, but allows for other tool calls to
+    appear in between.
+*   **`ANY_ORDER`**: Requires all tool calls from the expected list to be
+    present in the actual list, in any order, and allows for other tool calls to
+    appear in between.
+
+#### How To Use This Criterion?
+
+By default, `tool_trajectory_avg_score` uses `EXACT` match type. You can specify
+just a threshold for this criterion in `EvalConfig` under the `criteria`
+dictionary for `EXACT` match type. The value should be a float between 0.0 and
+1.0, which represents the minimum acceptable score for the eval case to pass. If
+you expect tool trajectories to match exactly in all invocations, you should set
+the threshold to 1.0.
+
+Example `EvalConfig` entry for `EXACT` match:
 
 ```json
 {
@@ -62,7 +96,50 @@ Example `EvalConfig` entry:
 }
 ```
 
-### Output And How To Interpret
+Or you could specify the `match_type` explicitly:
+
+```json
+{
+  "criteria": {
+    "tool_trajectory_avg_score": {
+      "threshold": 1.0,
+      "match_type": "EXACT"
+    }
+  }
+}
+```
+
+
+If you want to use `IN_ORDER` or `ANY_ORDER` match type, you can specify it via
+`match_type` field along with threshold.
+
+Example `EvalConfig` entry for `IN_ORDER` match:
+
+```json
+{
+  "criteria": {
+    "tool_trajectory_avg_score": {
+      "threshold": 1.0,
+      "match_type": "IN_ORDER"
+    }
+  }
+}
+```
+
+Example `EvalConfig` entry for `ANY_ORDER` match:
+
+```json
+{
+  "criteria": {
+    "tool_trajectory_avg_score": {
+      "threshold": 1.0,
+      "match_type": "ANY_ORDER"
+    }
+  }
+}
+```
+
+#### Output And How To Interpret
 
 The output is a score between 0.0 and 1.0, where 1.0 indicates a perfect match
 between actual and expected tool trajectories for all invocations, and 0.0
@@ -153,7 +230,7 @@ Example `EvalConfig` entry:
     "final_response_match_v2": {
       "threshold": 0.8,
       "judge_model_options": {
-            "judge_model": "gemini-2.5-flash",
+            "judge_model": "gemini-flash-latest",
             "num_samples": 5
           }
         }
@@ -212,7 +289,7 @@ Example `EvalConfig` entry:
     "rubric_based_final_response_quality_v1": {
       "threshold": 0.8,
       "judge_model_options": {
-        "judge_model": "gemini-2.5-flash",
+        "judge_model": "gemini-flash-latest",
         "num_samples": 5
       },
       "rubrics": [
@@ -285,7 +362,7 @@ Example `EvalConfig` entry:
     "rubric_based_tool_use_quality_v1": {
       "threshold": 1.0,
       "judge_model_options": {
-        "judge_model": "gemini-2.5-flash",
+        "judge_model": "gemini-flash-latest",
         "num_samples": 5
       },
       "rubrics": [
@@ -357,7 +434,7 @@ Example `EvalConfig` entry:
     "hallucinations_v1": {
       "threshold": 0.8,
       "judge_model_options": {
-            "judge_model": "gemini-2.5-flash",
+            "judge_model": "gemini-flash-latest",
           },
       "evaluate_intermediate_nl_responses": true
     }
@@ -389,13 +466,13 @@ response safety is a priority.
 This criterion assesses whether the agent's response contains any harmful
 content, such as hate speech, harassment, or dangerous information. Unlike other
 metrics implemented natively within ADK, `safety_v1` delegates the evaluation to
-the Vertex AI General AI Eval SDK.
+the Agent Platform Eval SDK.
 
 ### How To Use This Criterion?
 
 Using this criterion requires a Google Cloud Project. You must have
 `GOOGLE_CLOUD_PROJECT` and `GOOGLE_CLOUD_LOCATION` environment variables set,
-typically in an `.env` file in your agent's directory, for the Vertex AI SDK to
+typically in an `.env` file in your agent's directory, for the Agent Platform SDK to
 function correctly.
 
 You can specify a threshold for this criterion in `EvalConfig` under the
@@ -417,3 +494,193 @@ Example `EvalConfig` entry:
 The criterion returns a score between 0.0 and 1.0. Scores closer to 1.0 indicate
 that the response is safe, while scores closer to 0.0 indicate potential safety
 issues.
+
+## per_turn_user_simulator_quality_v1
+
+This criterion evaluates whether a user simulator is faithful to a conversation
+plan and persona.
+
+#### When To Use This Criterion?
+
+Use this criterion when you need to evaluate a user simulator in a multi-turn
+conversation. It is designed to assess whether the simulator follows the
+conversation plan and persona defined in the `ConversationScenario`.
+
+#### Details
+
+This criterion determines whether the a user simulator follows a defined
+`ConversationScenario` in a multi-turn conversation.
+
+For the first turn, this criterion checks if user simulator response matches the
+`starting_prompt` in the `ConversationScenario`. For subsequent turns, it uses
+LLM-as-a-judge to evaluate if the user response follows the `conversation_plan`
+and `user_persona` in the `ConversationScenario`. To check adherence to the
+persona, we use the `violation_rubrics` specified in the `UserPersona`.
+
+#### How To Use This Criterion?
+
+This criterion allows you to configure the evaluation threshold, the judge model
+and the number of samples per invocation. The criterion also lets you specify a
+`stop_signal`, which signals the LLM judge that the conversation was completed.
+For best results, use the stop signal in `LlmBackedUserSimulator`.
+
+Example `EvalConfig` entry:
+
+```json
+{
+  "criteria": {
+    "per_turn_user_simulator_quality_v1": {
+      "threshold": 1.0,
+      "judge_model_options": {
+        "judge_model": "gemini-flash-latest",
+        "num_samples": 5
+      },
+      "stop_signal": "</finished>"
+    }
+  }
+}
+```
+
+#### Output And How To Interpret
+
+The criterion returns a score between 0.0 and 1.0, representing the fraction of
+turns in which the user simulator's response was judged to be valid according to
+the conversation scenario. A score of 1.0 indicates that the simulator behaved
+as expected in all turns, while a score closer to 0.0 indicates that the
+simulator deviated in many turns. Higher values are better.
+
+### multi_turn_task_success_v1
+
+This criterion evaluates if the agent achieved the goal or goals of the
+conversation.
+
+#### When To Use This Criterion?
+
+Use this criterion when you want to measure the overall success of a multi-turn
+conversation in achieving its intended objectives. It focuses on the final
+outcome rather than the specific steps taken to reach it.
+
+#### Details
+
+This criterion takes into account all the turns of the multi-turn conversation
+to determine if the task was successfully completed. It delegates the evaluation
+to the Agent Platform Eval SDK.
+
+#### How To Use This Criterion?
+
+Using this criterion requires a Google Cloud Project. You must have
+`GOOGLE_CLOUD_PROJECT` and `GOOGLE_CLOUD_LOCATION` environment variables set,
+typically in an `.env` file in your agent's directory, for the Agent Platform SDK to
+function correctly.
+
+You can specify a threshold for this criterion in `EvalConfig` under the
+`criteria` dictionary. The value should be a float between 0.0 and 1.0,
+representing the minimum score for the conversation to be considered a success.
+
+Example `EvalConfig` entry:
+
+```json
+{
+  "criteria": {
+    "multi_turn_task_success_v1": 0.8
+  }
+}
+```
+
+#### Output And How To Interpret
+
+The criterion returns a score between 0.0 and 1.0. Scores closer to 1.0 indicate
+that the task was successfully achieved, while scores closer to 0.0 indicate
+failure to achieve the goals.
+
+### multi_turn_trajectory_quality_v1
+
+This criterion evaluates the overall trajectory of the conversation.
+
+#### When To Use This Criterion?
+
+This metric is different from `multi_turn_task_success_v1`, in the sense that
+task success only concerns itself with whether the goal was achieved or not. How
+that was achieved is not its concern. This metric, on the other hand, evaluates
+the path or trajectory that the agent took to achieve the goal. Use this
+criterion when you care about the efficiency, effectiveness, and logic of the
+steps taken during the conversation.
+
+#### Details
+
+This criterion is a reference-free metric that assesses the quality of the 
+interaction trajectory across multiple turns. It delegates the evaluation to the
+Agent Platform Eval SDK.
+
+#### How To Use This Criterion?
+
+Using this criterion requires a Google Cloud Project. You must have
+`GOOGLE_CLOUD_PROJECT` and `GOOGLE_CLOUD_LOCATION` environment variables set,
+typically in an `.env` file in your agent's directory, for the Agent Platform SDK to
+function correctly.
+
+You can specify a threshold for this criterion in `EvalConfig` under the
+`criteria` dictionary. The value should be a float between 0.0 and 1.0,
+representing the minimum trajectory quality score to be considered passing.
+
+Example `EvalConfig` entry:
+
+```json
+{
+  "criteria": {
+    "multi_turn_trajectory_quality_v1": 0.8
+  }
+}
+```
+
+#### Output And How To Interpret
+
+The criterion returns a score between 0.0 and 1.0. Scores closer to 1.0 indicate
+a high-quality trajectory, while scores closer to 0.0 indicate a poor or
+inefficient trajectory.
+
+### multi_turn_tool_use_quality_v1
+
+This criterion evaluates the function calls made during a multi-turn
+conversation.
+
+#### When To Use This Criterion?
+
+Use this criterion to specifically assess the quality, relevance, and
+correctness of tool or function calls made by the agent across multiple turns of
+a conversation. It's useful for debugging agent capabilities such as whether the
+agent knows when and how to select proper tools in complex, multi-step
+workflows.
+
+#### Details
+
+This metric is reference-free and evaluates the function calling behavior
+without requiring a golden trajectory. It delegates the evaluation to the Vertex
+AI General AI Eval SDK.
+
+#### How To Use This Criterion?
+
+Using this criterion requires a Google Cloud Project. You must have
+`GOOGLE_CLOUD_PROJECT` and `GOOGLE_CLOUD_LOCATION` environment variables set,
+typically in an `.env` file in your agent's directory, for the Agent Platform SDK to
+function correctly.
+
+You can specify a threshold for this criterion in `EvalConfig` under the
+`criteria` dictionary. The value should be a float between 0.0 and 1.0,
+representing the minimum tool use quality score to be considered passing.
+
+Example `EvalConfig` entry:
+
+```json
+{
+  "criteria": {
+    "multi_turn_tool_use_quality_v1": 0.8
+  }
+}
+```
+
+#### Output And How To Interpret
+
+The criterion returns a score between 0.0 and 1.0. Scores closer to 1.0 indicate
+excellent tool usage throughout the conversation, while scores closer to 0.0
+indicate poor
