@@ -23,6 +23,9 @@ on:
   schedule:
     - cron: '0 3 * * 0'
 
+permissions:
+  contents: read
+
 jobs:
   # This job builds and runs the Go snippets.
   test:

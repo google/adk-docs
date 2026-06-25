@@ -19,6 +19,9 @@ on:
   pull_request:
     branches: [ "main" ]
 
+permissions:
+  contents: read
+
 jobs:
   # This job builds the Kotlin snippets.
   test:

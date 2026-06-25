@@ -20,6 +20,9 @@ on:
       - main
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   link-check:
     runs-on: ubuntu-latest

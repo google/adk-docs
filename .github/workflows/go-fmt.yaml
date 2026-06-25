@@ -5,6 +5,9 @@ on:
     paths:
       - '**.go'
 
+permissions:
+  contents: read
+
 jobs:
   gofmt:
     runs-on: ubuntu-latest

@@ -14,6 +14,8 @@ on:
   issues:
     types: [opened, labeled]
 
+permissions: {}
+
 jobs:
   update-adk-python-docs-from-issue:
     if: contains(github.event.issue.labels.*.name, 'docs updates')
