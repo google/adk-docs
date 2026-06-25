@@ -5,6 +5,23 @@ Retrieving and indexing files from a directory is essential when you need to pro
 ## What it does
 This agent indexes local text files from the data/ directory using FilesRetrieval (backed by LlamaIndex's VectorStoreIndex and Google's gemini-embedding-2-preview embedding model), then answers user questions by retrieving relevant documents before generating a response.
 
+## Interaction with Artifacts functionality
+
+### 1. The "Context-to-Creation" Workflow
+This is the most common interaction. The agent uses Files Retrieval to understand your project and then uses the Artifacts UI to present the solution.
+
+### 2. Analysis and Refactoring
+
+When you ask an agent to refactor a file, these features create a seamless bridge between your local disk and the AI’s suggestions. The File Retrieval pulls the "source of truth" from your local directory into the LLM's prompt. Meanwhile, Artifacts create a "version 2" of that file. You can then compare the retrieved original with the newly generated artifact side-by-side.
+
+### 3. Iterative Development (The Loop)
+
+If your ADK configuration is set up so that the agent can save Artifacts back into the same data/ directory used by FilesRetrieval, it creates an iterative loop. Consisting in a reading stage where the agent retrieves an existing document, an agent creating an updated artifact, so the user can save the Artifact to the local directory. Finally, a directory re-indexing phase on which the agent now "knows" about the updated content for the next turn of the conversation.
+
+### 4. Technical Synergy: Managing Large Projects
+
+Artifacts have a limit on how much "memory" they can take up in a single window, acting as the active workspace (focusing on the specific 50 lines of code you are currently writing or editing). On the other hand, Files Retrieval acts as the long-term memory (searching through thousands of lines across many files).
+
 
 ## Configuration Parameters
 
