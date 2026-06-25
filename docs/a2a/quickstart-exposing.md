@@ -246,7 +246,7 @@ You can inject a list of `execute_interceptors` to add middleware logic to the `
 
 !!! tip "Suppress experimental warnings"
 
-    You can suppress the experimental feature warnings for this feature in the logs for your agent using an environment variable, as shown below:
+    ADK_SUPPRESS_A2A_EXPERIMENTAL_FEATURE_WARNINGS environment variable can be set to true to suppress warnings related to experimental A2A features. This is useful for developers who are knowingly using these features and wish to have cleaner logs:
 
     ```bash
     export ADK_SUPPRESS_A2A_EXPERIMENTAL_FEATURE_WARNINGS=true```
