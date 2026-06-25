@@ -38,7 +38,7 @@ When you start building with the Model Context Protocol (MCP) and ADK, these key
     * **Deployment:** This statefulness can pose challenges for scaling and deployment, especially for remote servers handling many users. The original MCP design often assumed client and server were co-located. Managing these persistent connections requires careful infrastructure considerations (e.g., load balancing, session affinity).
     * **ADK McpToolset:** Manages this connection lifecycle. The exit\_stack pattern shown in the examples is crucial for ensuring the connection (and potentially the server process) is properly terminated when the ADK agent finishes.
  
-* **Session persistence**: The `MCPToolset` now supports object serialization via `getstate` and `setstate` methods. This helps your agent maintain its context when deployed to managed environments like Cloud Run or Google Kubernetes Engine (GKE).
+* **Session persistence**: The `MCPToolset` supports object serialization via `getstate` and `setstate` methods. This feature helps your agent maintain its context when deployed to managed environments like Cloud Run or Google Kubernetes Engine (GKE).
 
 !!! Note: While the agent preserves its session state during lifecycle events, active MCP connections are not automatically re-established upon restoration. The agent will re-initialize its connection to the MCP server as needed after the process is restored to ensure a reliable and up-to-date link.
 
@@ -515,7 +515,7 @@ export const rootAgent = new LlmAgent({
 });
 ```
 
-## 2. Building an MCP server with ADK tools (MCP server exposing ADK)
+## 2. Build an MCP server with ADK tools (MCP server exposing ADK)
 
 This pattern allows you to wrap existing ADK tools and make them available to any standard MCP client application. The example in this section exposes the ADK `load_web_page` tool through a custom-built MCP server.
 
@@ -738,7 +738,7 @@ This example demonstrates how ADK tools can be encapsulated within an MCP server
 
 Refer to the [documentation](https://modelcontextprotocol.io/quickstart/server#core-mcp-concepts), to try it out with Claude Desktop.
 
-## Using MCP Tools in your own Agent out of `adk web`
+## Use MCP Tools in your own Agent out of `adk web`
 
 This section is relevant to you if:
 
@@ -850,7 +850,7 @@ if __name__ == '__main__':
     print(f"An error occurred: {e}")
 ```
 
-## Deploying Agents with MCP Tools
+## Deploy Agents with MCP Tools
 
 When deploying ADK agents that use MCP tools to production environments like Cloud Run, GKE, or Agent Runtime, you need to consider how MCP connections will work in containerized and distributed environments.
 
