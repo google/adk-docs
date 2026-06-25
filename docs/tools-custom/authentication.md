@@ -303,8 +303,9 @@ calendar_tool_set.configure_auth(
 #### C. Use ID Token
 
 When your agent calls a locked-down service (like a private Cloud Run or Cloud Function), you need to prove who you are (identity), not just what you can do (permissions).
+
 * **Access Token (Default)**: Like a keycard. Used for calling Google APIs (Drive, BigQuery).
-  
+    
 * **ID Token**: Like a passport. Used for calling your own services secured by IAM.
   
 If you are calling a service behind Cloud IAM, you should be using an ID token.
@@ -351,7 +352,10 @@ sa_config = ServiceAccount(
 !!! Tip
   If you receive an authentication error, verify that your service account has the 'Cloud Run Invoker' (or equivalent) role on the target service.
 
-The sequence diagram of auth request flow (where tools are requesting auth credentials) looks like below:
+##### Authentication request flow
+
+This diagram visualizes the end-to-end authentication handshake, tracing the path from the initial user query to the point where the ADK captures a credential request,
+handles the redirection flow, and retries the tool call once authorized.
 
 ![Authentication](../assets/auth_part1.svg)
 
