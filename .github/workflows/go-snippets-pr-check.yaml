@@ -30,18 +30,19 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v6
+      uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
       with:
         # Fetch the entire history to compare branches in the PR.
         fetch-depth: 0
+        persist-credentials: false
 
     - name: Set up Go
-      uses: actions/setup-go@v6
+      uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6.5.0
       with:
         go-version: '1.25'
 
     - name: Cache Go modules
-      uses: actions/cache@v5
+      uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
       with:
         path: ~/go/pkg/mod
         key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
@@ -72,7 +73,9 @@ jobs:
       if: github.event_name == 'pull_request' && steps.changed-files.outputs.changed_files != ''
       run: |
         echo "Building only the changed Go files..."
-        ./tools/go-snippets/runner.sh build ${{ steps.changed-files.outputs.changed_files }}
+        ./tools/go-snippets/runner.sh build ${STEPS_CHANGED_FILES_OUTPUTS_CHANGED_FILES}
+      env:
+        STEPS_CHANGED_FILES_OUTPUTS_CHANGED_FILES: ${{ steps.changed-files.outputs.changed_files }}
 
     # --- Scheduled Checks ---
     # These steps only run on the weekly schedule.
