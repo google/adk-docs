@@ -18,8 +18,7 @@ to override these defaults.
 - Java ADK typically uses immutable data classes.
 
 === "Python"
-
-    ```python
+```python
     class RunConfig(BaseModel):
         """Configs for runtime behavior of agents."""
     
@@ -34,11 +33,12 @@ to override these defaults.
         streaming_mode: StreamingMode = StreamingMode.NONE
         output_audio_transcription: Optional[types.AudioTranscriptionConfig] = None
         max_llm_calls: int = 500
-    ```
+
+```
 
 === "Java"
 
-    ```java
+```java
     public abstract class RunConfig {
       
       public enum StreamingMode {
@@ -59,7 +59,7 @@ to override these defaults.
       
       // ...
     }
-    ```
+```
 
 ## Runtime Parameters
 
@@ -74,6 +74,53 @@ to override these defaults.
 | `support_cfc` | `bool` | *Currently not supported* | `False` / N/A | **Python:** Enables Compositional Function Calling. Requires `streaming_mode=SSE` and uses the LIVE API. **Experimental.** |
 | `context_window_compression` | `Optional[types.ContextWindowCompressionConfig]` | | `None` | Configuration for context window compression. |
 
+### ContextWindowCompressionConfig for ADK's RunConfig ("context_window_compression" attribute)
+
+Based on the typical structure in ADK and similar systems, ContextWindowCompressionConfig is used to automatically manage the size of the input provided to the LLM, preventing it from exceeding the model's context window limit.
+
+#### Settings for ContextWindowCompressionConfig
+
+* **trigger_tokens (int)**:
+Defines the threshold at which the compression mechanism is activated.
+When the total tokens in the context window exceed this number, the ADK (via the Live API) will trigger a "cleanup" or compression routine.
+Common values: 60,000 to 100,000 tokens.
+
+* **sliding_window (types.SlidingWindow)**:
+Configures the specific behavior of the sliding window mechanism. 
+   * Settings within SlidingWindow:
+target_tokens (int): The desired number of tokens to retain after compression. This value must be lower than trigger_tokens. For example, if you trigger at 100k tokens and target 80k, the oldest 20k tokens will be discarded or summarized to make room for new content
+
+#### Minimal Use Example
+
+To use this configuration, you pass it to the context_window_compression parameter of a RunConfig object:
+
+```python
+from google.adk.agents import RunConfig
+from google.adk import types
+
+# Define the compression strategy
+compression_config = types.ContextWindowCompressionConfig(
+    trigger_tokens=80000,
+    sliding_window=types.SlidingWindow(
+        target_tokens=40000
+    )
+)
+
+# Apply it to your RunConfig
+run_config = RunConfig(
+    context_window_compression=compression_config,
+    # Usually used in tandem with BIDI/Live streaming
+    streaming_mode=types.StreamingMode.BIDI
+)
+
+# Example of how you might use the config (as commented in the original):
+# async for event in runner.run_async(user_input, run_config=run_config):
+# #     ...
+
+print("RunConfig created successfully with Context Window Compression:")
+print(run_config)
+
+```
 ### `speech_config`
 
 !!! Note
