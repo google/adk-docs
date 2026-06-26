@@ -49,10 +49,10 @@ type ExitLoopArgs struct{}
 type ExitLoopResults struct{}
 
 // ExitLoop is a tool that signals the loop to terminate by setting Escalate to true.
-func ExitLoop(ctx tool.Context, input ExitLoopArgs) ExitLoopResults {
+func ExitLoop(ctx tool.Context, input ExitLoopArgs) (ExitLoopResults, error) {
 	fmt.Printf("[Tool Call] exitLoop triggered by %s \n", ctx.AgentName())
 	ctx.Actions().Escalate = true
-	return ExitLoopResults{}
+	return ExitLoopResults{}, nil
 }
 
 func main() {

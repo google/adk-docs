@@ -82,14 +82,14 @@ func _snippet_tool_example(model model.LLM) {
 	type getCapitalCityArgs struct {
 		Country string `json:"country" jsonschema:"The country to get the capital of."`
 	}
-	getCapitalCity := func(ctx tool.Context, args getCapitalCityArgs) map[string]any {
+	getCapitalCity := func(ctx tool.Context, args getCapitalCityArgs) (map[string]any, error) {
 		// Replace with actual logic (e.g., API call, database lookup)
 		capitals := map[string]string{"france": "Paris", "japan": "Tokyo", "canada": "Ottawa"}
 		capital, ok := capitals[strings.ToLower(args.Country)]
 		if !ok {
-			return map[string]any{"result": fmt.Sprintf("Sorry, I don't know the capital of %s.", args.Country)}
+			return nil, fmt.Errorf("Sorry, I don't know the capital of %s.", args.Country)
 		}
-		return map[string]any{"result": capital}
+		return map[string]any{"result": capital}, nil
 	}
 
 	// Add the tool to the agent

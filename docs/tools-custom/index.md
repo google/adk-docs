@@ -1,7 +1,7 @@
 # Custom Tools for ADK
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
 
 In an ADK agent workflow, Tools are programming functions with structured input
@@ -18,10 +18,10 @@ programming functions with an ADK Tool, such as:
 *   Retrieving information from documents (RAG)
 *   Interacting with other software or services
 
-!!! tip "[ADK Tools list](/adk-docs/tools/)"
-    Before building your own Tools for ADK, check out the
-    **[ADK Tools list](/adk-docs/tools/)**
-    for pre-built tools you can use with ADK Agents.
+!!! tip "[ADK Tools and Integrations](/integrations/)"
+    Before building your own tools for ADK, check out the **[ADK Tools and
+    Integrations](/integrations/)** for pre-built tools and integrations you can
+    use with ADK Agents.
 
 ## What is a Tool?
 
@@ -31,7 +31,7 @@ with the world beyond its core text generation and reasoning abilities. What
 distinguishes capable agents from basic language models is often their effective
 use of tools.
 
-Technically, a tool is typically a modular code component—**like a Python/ Java
+Technically, a tool is typically a modular code component—**like a Python, Java, or TypeScript
 function**, a class method, or even another specialized agent—designed to
 execute a distinct, predefined task. These tasks often involve interacting with
 external systems or data.
@@ -63,11 +63,11 @@ Think of the tools as a specialized toolkit that the agent's intelligent core (t
 
 ADK offers flexibility by supporting several types of tools:
 
-1. **[Function Tools](/adk-docs/tools-custom/function-tools/):** Tools created by you, tailored to your specific application's needs.
-    * **[Functions/Methods](/adk-docs/tools-custom/function-tools/#1-function-tool):** Define standard synchronous functions or methods in your code (e.g., Python def).
-    * **[Agents-as-Tools](/adk-docs/tools-custom/function-tools/#3-agent-as-a-tool):** Use another, potentially specialized, agent as a tool for a parent agent.
-    * **[Long Running Function Tools](/adk-docs/tools-custom/function-tools/#2-long-running-function-tool):** Support for tools that perform asynchronous operations or take significant time to complete.
-2. **[Built-in Tools](/adk-docs/tools/built-in-tools/):** Ready-to-use tools provided by the framework for common tasks.
+1. **[Function Tools](/tools-custom/function-tools/):** Tools created by you, tailored to your specific application's needs.
+    * **[Functions/Methods](/tools-custom/function-tools/#1-function-tool):** Define standard synchronous functions or methods in your code (e.g., Python def).
+    * **[Agents-as-Tools](/tools-custom/function-tools/#3-agent-as-a-tool):** Use another, potentially specialized, agent as a tool for a parent agent.
+    * **[Long Running Function Tools](/tools-custom/function-tools/#2-long-running-function-tool):** Support for tools that perform asynchronous operations or take significant time to complete.
+2. **[Built-in Tools](/integrations/):** Ready-to-use tools provided by the framework for common tasks.
         Examples: Google Search, Code Execution, Retrieval-Augmented Generation (RAG).
 3. **Third-Party Tools:** Integrate tools seamlessly from popular external libraries.
 
@@ -89,6 +89,12 @@ The following example showcases how an agent can use tools by **referencing thei
 
     ```py
     --8<-- "examples/python/snippets/tools/overview/weather_sentiment.py"
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/tools/overview/weather_sentiment.ts"
     ```
 
 === "Go"
@@ -147,6 +153,12 @@ The `tool_context.state` attribute provides direct read and write access to the 
     --8<-- "examples/python/snippets/tools/overview/user_preference.py"
     ```
 
+=== "TypeScript"
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/tools/overview/user_preference.ts"
+    ```
+
 === "Go"
 
     ```go
@@ -182,7 +194,7 @@ The `tool_context.state` attribute provides direct read and write access to the 
 
 ### **Controlling Agent Flow**
 
-The `tool_context.actions` attribute (`ToolContext.actions()` in Java and `tool.Context.Actions()` in Go) holds an **EventActions** object. Modifying attributes on this object allows your tool to influence what the agent or framework does after the tool finishes execution.
+The `tool_context.actions` attribute in Python and TypeScript, `ToolContext.actions()` in Java, and `tool.Context.Actions()` in Go, holds an **EventActions** object. Modifying attributes on this object allows your tool to influence what the agent or framework does after the tool finishes execution.
 
 * **`skip_summarization: bool`**: (Default: False) If set to True, instructs the ADK to bypass the LLM call that typically summarizes the tool's output. This is useful if your tool's return value is already a user-ready message.
 
@@ -196,6 +208,12 @@ The `tool_context.actions` attribute (`ToolContext.actions()` in Java and `tool.
 
     ```py
     --8<-- "examples/python/snippets/tools/overview/customer_support_agent.py"
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/tools/overview/customer_support_agent.ts"
     ```
 
 === "Go"
@@ -223,17 +241,13 @@ This example illustrates how a tool, through EventActions in its ToolContext, ca
 
 ### **Authentication**
 
-<div class="language-support-tag">
-    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
-</div>
-
 ToolContext provides mechanisms for tools interacting with authenticated APIs. If your tool needs to handle authentication, you might use the following:
 
-* **`auth_response`**: Contains credentials (e.g., a token) if authentication was already handled by the framework before your tool was called (common with RestApiTool and OpenAPI security schemes).
+* **`auth_response`** (in Python): Contains credentials (e.g., a token) if authentication was already handled by the framework before your tool was called (common with RestApiTool and OpenAPI security schemes). In TypeScript, this is retrieved via the getAuthResponse() method.
 
-* **`request_credential(auth_config: dict)`**: Call this method if your tool determines authentication is needed but credentials aren't available. This signals the framework to start an authentication flow based on the provided auth_config.
+* **`request_credential(auth_config: dict)`** (in Python) or **`requestCredential(authConfig: AuthConfig)`** (in TypeScript): Call this method if your tool determines authentication is needed but credentials aren't available. This signals the framework to start an authentication flow based on the provided auth_config.
 
-* **`get_auth_response()`**: Call this in a subsequent invocation (after request_credential was successfully handled) to retrieve the credentials the user provided.
+* **`get_auth_response()`** (in Python) or **`getAuthResponse(authConfig: AuthConfig)`** (in TypeScript): Call this in a subsequent invocation (after request_credential was successfully handled) to retrieve the credentials the user provided.
 
 For detailed explanations of authentication flows, configuration, and examples, please refer to the dedicated Tool Authentication documentation page.
 
@@ -241,14 +255,15 @@ For detailed explanations of authentication flows, configuration, and examples, 
 
 These methods provide convenient ways for your tool to interact with persistent data associated with the session or user, managed by configured services.
 
-* **`list_artifacts()`** (or **`listArtifacts()`** in Java): Returns a list of filenames (or keys) for all artifacts currently stored for the session via the artifact_service. Artifacts are typically files (images, documents, etc.) uploaded by the user or generated by tools/agents.
+* **`list_artifacts()`** (in Python) or **`listArtifacts()`** (in Java and TypeScript): Returns a list of filenames (or keys) for all artifacts currently stored for the session via the artifact_service. Artifacts are typically files (images, documents, etc.) uploaded by the user or generated by tools/agents.
 
 * **`load_artifact(filename: str)`**: Retrieves a specific artifact by its filename from the **artifact_service**. You can optionally specify a version; if omitted, the latest version is returned. Returns a `google.genai.types.Part` object containing the artifact data and mime type, or None if not found.
 
 * **`save_artifact(filename: str, artifact: types.Part)`**: Saves a new version of an artifact to the artifact_service. Returns the new version number (starting from 0).
 
-* **`search_memory(query: str)`**: (Support in ADK Python and Go)
+* **`search_memory(query: str)`**: (Support in ADK Python, Go and TypeScript)
     Queries the user's long-term memory using the configured `memory_service`. This is useful for retrieving relevant information from past interactions or stored knowledge. The structure of the **SearchMemoryResponse** depends on the specific memory service implementation but typically contains relevant text snippets or conversation excerpts.
+
 
 #### Example
 
@@ -256,6 +271,12 @@ These methods provide convenient ways for your tool to interact with persistent 
 
     ```py
     --8<-- "examples/python/snippets/tools/overview/doc_analysis.py"
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/tools/overview/doc_analysis.ts"
     ```
 
 === "Go"
@@ -336,11 +357,11 @@ Here are key guidelines for defining effective tool functions:
     * Use clear and descriptive names (e.g., `city` instead of `c`, `search_query` instead of `q`).
     * **Provide type hints in Python**  for all parameters (e.g., `city: str`, `user_id: int`, `items: list[str]`). This is essential for ADK to generate the correct schema for the LLM.
     * Ensure all parameter types are **JSON serializable**. All java primitives as well as standard Python types like `str`, `int`, `float`, `bool`, `list`, `dict`, and their combinations are generally safe. Avoid complex custom class instances as direct parameters unless they have a clear JSON representation.
-    * **Do not set default values** for parameters. E.g., `def my_func(param1: str = "default")`. Default values are not reliably supported or used by the underlying models during function call generation. All necessary information should be derived by the LLM from the context or explicitly requested if missing.
+    * **Avoid default values for information the model must provide.** E.g., avoid `def my_func(destination: str = "Paris")` if the destination should come from the user or conversation context. Default values can be appropriate for genuinely optional tuning parameters, but do not use them to hide required business inputs from the tool schema.
     * **`self` / `cls` Handled Automatically:** Implicit parameters like `self` (for instance methods) or `cls` (for class methods) are automatically handled by ADK and excluded from the schema shown to the LLM. You only need to define type hints and descriptions for the logical parameters your tool requires the LLM to provide.
 
 * **Return Type:**
-    * The function's return value **must be a dictionary (`dict`)** in Python or a **Map** in Java.
+    * The function's return value **must be a dictionary (`dict`)** in Python, a **Map** in Java, or a plain **object** in TypeScript.
     * If your function returns a non-dictionary type (e.g., a string, number, list), the ADK framework will automatically wrap it into a dictionary/Map like `{'result': your_original_return_value}` before passing the result back to the model.
     * Design the dictionary/Map keys and values to be **descriptive and easily understood *by the LLM***. Remember, the model reads this output to decide its next step.
     * Include meaningful keys. For example, instead of returning just an error code like `500`, return `{'status': 'error', 'error_message': 'Database connection failed'}`.
@@ -390,6 +411,49 @@ Here are key guidelines for defining effective tool functions:
 
     ```
 
+=== "TypeScript"
+
+    ```typescript
+    /**
+     * Fetches the current status of a customer's order using its ID.
+     *
+     * Use this tool ONLY when a user explicitly asks for the status of
+     * a specific order and provides the order ID. Do not use it for
+     * general inquiries.
+     *
+     * @param params The parameters for the function.
+     * @param params.order_id The unique identifier of the order to look up.
+     * @returns A dictionary indicating the outcome.
+     *          On success, status is 'success' and includes an 'order' dictionary.
+     *          On failure, status is 'error' and includes an 'error_message'.
+     *          Example success: {'status': 'success', 'order': {'state': 'shipped', 'tracking_number': '1Z9...'}}
+     *          Example error: {'status': 'error', 'error_message': 'Order ID not found.'}
+     */
+    async function lookupOrderStatus(params: { order_id: string }): Promise<Record<string, any>> {
+      // ... function implementation to fetch status from a backend ...
+      const status_details = await fetchStatusFromBackend(params.order_id);
+      if (status_details) {
+        return {
+          "status": "success",
+          "order": {
+            "state": status_details.state,
+            "tracking_number": status_details.tracking,
+          },
+        };
+      } else {
+        return { "status": "error", "error_message": `Order ID ${params.order_id} not found.` };
+      }
+    }
+
+    // Placeholder for a backend call
+    async function fetchStatusFromBackend(order_id: string): Promise<{state: string, tracking: string} | null> {
+        if (order_id === "12345") {
+            return { state: "shipped", tracking: "1Z9..." };
+        }
+        return null;
+    }
+    ```
+
 === "Go"
 
     ```go
@@ -428,16 +492,17 @@ Here are key guidelines for defining effective tool functions:
 * **Simplicity and Focus:**
     * **Keep Tools Focused:** Each tool should ideally perform one well-defined task.
     * **Fewer Parameters are Better:** Models generally handle tools with fewer, clearly defined parameters more reliably than those with many optional or complex ones.
-    * **Use Simple Data Types:** Prefer basic types (`str`, `int`, `bool`, `float`, `List[str]`, in **Python**, or `int`, `byte`, `short`, `long`, `float`, `double`, `boolean` and `char` in **Java**) over complex custom classes or deeply nested structures as parameters when possible.
+    * **Use Simple Data Types:** Prefer basic types (`str`, `int`, `bool`, `float`, `List[str]`, in **Python**; `int`, `byte`, `short`, `long`, `float`, `double`, `boolean` and `char` in **Java**; or `string`, `number`, `boolean`, and arrays like `string[]` in **TypeScript**) over complex custom classes or deeply nested structures as parameters when possible.
     * **Decompose Complex Tasks:** Break down functions that perform multiple distinct logical steps into smaller, more focused tools. For instance, instead of a single `update_user_profile(profile: ProfileObject)` tool, consider separate tools like `update_user_name(name: str)`, `update_user_address(address: str)`, `update_user_preferences(preferences: list[str])`, etc. This makes it easier for the LLM to select and use the correct capability.
 
 By adhering to these guidelines, you provide the LLM with the clarity and structure it needs to effectively utilize your custom function tools, leading to more capable and reliable agent behavior.
 
 ## Toolsets: Grouping and Dynamically Providing Tools
 
-<div class="language-support-tag" title="This feature is currently available for Python.">
-   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.5.0</span>
+<div class="language-support-tag" title="This feature is currently available for Python and Typescript.">
+   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.5.0</span><span class="lst-typescript">Typescript v0.2.0</span>
 </div>
+
 
 Beyond individual tools, ADK introduces the concept of a **Toolset** via the `BaseToolset` interface (defined in `google.adk.tools.base_toolset`). A toolset allows you to manage and provide a collection of `BaseTool` instances, often dynamically, to an agent.
 
@@ -472,9 +537,23 @@ When the agent initializes or needs to determine its available capabilities, the
 
 Let's create a basic example of a toolset that provides simple arithmetic operations.
 
-```py
---8<-- "examples/python/snippets/tools/overview/toolset_example.py:init"
-```
+=== "Python"
+
+    ```py
+    --8<-- "examples/python/snippets/tools/overview/toolset_example.py:init"
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/tools/overview/toolset_example.ts"
+    ```
+
+=== "Java"
+
+    ```java
+    --8<-- "examples/java/snippets/src/main/java/tools/SimpleMathToolsetApp.java:init"
+    ```
 
 In this example:
 

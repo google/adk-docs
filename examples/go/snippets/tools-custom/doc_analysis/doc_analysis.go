@@ -33,13 +33,13 @@ type processDocumentResult struct {
 	Message          string `json:"message,omitempty"`
 }
 
-func processDocument(ctx tool.Context, args processDocumentArgs) processDocumentResult {
+func processDocument(ctx tool.Context, args processDocumentArgs) (*processDocumentResult, error) {
 	fmt.Printf("Tool: Attempting to load artifact: %s\n", args.DocumentName)
 
 	// List all artifacts
 	listResponse, err := ctx.Artifacts().List(ctx)
 	if err != nil {
-		return processDocumentResult{Status: "error", Message: "Failed to list artifacts."}
+		return nil, fmt.Errorf("failed to list artifacts")
 	}
 
 	fmt.Println("Tool: Available artifacts:")
@@ -49,7 +49,7 @@ func processDocument(ctx tool.Context, args processDocumentArgs) processDocument
 
 	documentPart, err := ctx.Artifacts().Load(ctx, args.DocumentName)
 	if err != nil {
-		return processDocumentResult{Status: "error", Message: fmt.Sprintf("Document '%s' not found.", args.DocumentName)}
+		return nil, fmt.Errorf("document '%s' not found", args.DocumentName)
 	}
 
 	fmt.Printf("Tool: Loaded document '%s' of size %d bytes.\n", args.DocumentName, len(documentPart.Part.InlineData.Data))
@@ -73,13 +73,13 @@ func processDocument(ctx tool.Context, args processDocumentArgs) processDocument
 	newArtifactName := fmt.Sprintf("analysis_%s", args.DocumentName)
 	version, err := ctx.Artifacts().Save(ctx, newArtifactName, analysisPart)
 	if err != nil {
-		return processDocumentResult{Status: "error", Message: "Failed to save artifact."}
+		return nil, fmt.Errorf("failed to save artifact")
 	}
 	fmt.Printf("Tool: Saved analysis result as '%s' version %d.\n", newArtifactName, version.Version)
 
-	return processDocumentResult{
+	return &processDocumentResult{
 		Status:           "success",
 		AnalysisArtifact: newArtifactName,
 		Version:          version.Version,
-	}
+	}, nil
 }

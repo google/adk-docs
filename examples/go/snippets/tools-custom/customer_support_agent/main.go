@@ -38,13 +38,13 @@ type checkAndTransferResult struct {
 	Status string `json:"status"`
 }
 
-func checkAndTransfer(ctx tool.Context, args checkAndTransferArgs) checkAndTransferResult {
+func checkAndTransfer(ctx tool.Context, args checkAndTransferArgs) (checkAndTransferResult, error) {
 	if strings.Contains(strings.ToLower(args.Query), "urgent") {
 		fmt.Println("Tool: Detected urgency, transferring to the support agent.")
 		ctx.Actions().TransferToAgent = "support_agent"
-		return checkAndTransferResult{Status: "Transferring to the support agent..."}
+		return checkAndTransferResult{Status: "Transferring to the support agent..."}, nil
 	}
-	return checkAndTransferResult{Status: fmt.Sprintf("Processed query: '%s'. No further action needed.", args.Query)}
+	return checkAndTransferResult{Status: fmt.Sprintf("Processed query: '%s'. No further action needed.", args.Query)}, nil
 }
 
 func main() {

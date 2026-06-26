@@ -21,11 +21,10 @@ import (
 	"os"
 	"strings"
 
+	"google.golang.org/adk/agent"
 	"google.golang.org/adk/agent/llmagent"
-	"google.golang.org/adk/cmd/launcher/adk"
+	"google.golang.org/adk/cmd/launcher"
 	"google.golang.org/adk/cmd/launcher/full"
-	"google.golang.org/adk/server/restapi/services"
-
 	"google.golang.org/adk/model/gemini"
 	"google.golang.org/adk/tool"
 	"google.golang.org/adk/tool/functiontool"
@@ -36,12 +35,7 @@ type getCapitalCityArgs struct {
 	Country string `json:"country" jsonschema:"The country for which to find the capital city."`
 }
 
-type getCapitalCityResult struct {
-	Result       string `json:"result,omitempty"`
-	ErrorMessage string `json:"error_message,omitempty"`
-}
-
-func getCapitalCity(ctx tool.Context, args getCapitalCityArgs) getCapitalCityResult {
+func getCapitalCity(ctx tool.Context, args getCapitalCityArgs) (string, error) {
 	capitals := map[string]string{
 		"united states": "Washington, D.C.",
 		"canada":        "Ottawa",
@@ -50,11 +44,10 @@ func getCapitalCity(ctx tool.Context, args getCapitalCityArgs) getCapitalCityRes
 	}
 	capital, ok := capitals[strings.ToLower(args.Country)]
 	if !ok {
-		result := fmt.Sprintf("Sorry, I couldn't find the capital for %s.", args.Country)
-		return getCapitalCityResult{ErrorMessage: result}
+		return "", fmt.Errorf("couldn't find the capital for %s", args.Country)
 	}
 
-	return getCapitalCityResult{Result: capital}
+	return capital, nil
 }
 
 func main() {
@@ -78,7 +71,7 @@ func main() {
 		log.Fatalf("Failed to create function tool: %v", err)
 	}
 
-	agent, err := llmagent.New(llmagent.Config{
+	geoAgent, err := llmagent.New(llmagent.Config{
 		Name:        "capital_agent",
 		Model:       model,
 		Description: "Agent to find the capital city of a country.",
@@ -89,8 +82,8 @@ func main() {
 		log.Fatalf("Failed to create agent: %v", err)
 	}
 
-	config := &adk.Config{
-		AgentLoader: services.NewSingleAgentLoader(agent),
+	config := &launcher.Config{
+		AgentLoader: agent.NewSingleLoader(geoAgent),
 	}
 
 	l := full.NewLauncher()

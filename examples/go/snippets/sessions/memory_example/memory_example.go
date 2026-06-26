@@ -36,7 +36,7 @@ import (
 const (
 	appName = "go_memory_example_app"
 	userID  = "go_mem_user"
-	modelID = "gemini-2.5-pro"
+	modelID = "gemini-2.5-flash"
 )
 
 // Args defines the input structure for the memory search tool.
@@ -53,13 +53,13 @@ type Result struct {
 
 // memorySearchToolFunc is the implementation of the memory search tool.
 // This function demonstrates accessing memory via tool.Context.
-func memorySearchToolFunc(tctx tool.Context, args Args) Result {
+func memorySearchToolFunc(tctx tool.Context, args Args) (Result, error) {
 	fmt.Printf("Tool: Searching memory for query: '%s'\n", args.Query)
 	// The SearchMemory function is available on the context.
 	searchResults, err := tctx.SearchMemory(context.Background(), args.Query)
 	if err != nil {
 		log.Printf("Error searching memory: %v", err)
-		return Result{Results: []string{"Error searching memory."}}
+		return Result{}, fmt.Errorf("failed memory search")
 	}
 
 	var results []string
@@ -68,11 +68,11 @@ func memorySearchToolFunc(tctx tool.Context, args Args) Result {
 			results = append(results, textParts(res.Content)...)
 		}
 	}
-	return Result{Results: results}
+	return Result{Results: results}, nil
 }
 
 // Define a tool that can search memory.
-var memorySearchTool = must(functiontool.New[Args, Result](
+var memorySearchTool = must(functiontool.New(
 	functiontool.Config{
 		Name:        "search_past_conversations",
 		Description: "Searches past conversations for relevant information.",
@@ -119,7 +119,7 @@ func main() {
 			log.Printf("Agent 1 Error: %v", err)
 			continue
 		}
-		if event.Content != nil && !event.LLMResponse.Partial {
+		if event.LLMResponse.Content != nil && !event.LLMResponse.Partial {
 			finalResponseText = strings.Join(textParts(event.LLMResponse.Content), "")
 		}
 	}
@@ -131,7 +131,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to get completed session: %v", err)
 	}
-	if err := memoryService.AddSession(ctx, resp.Session); err != nil {
+	if err := memoryService.AddSessionToMemory(ctx, resp.Session); err != nil {
 		log.Fatalf("Failed to add session to memory: %v", err)
 	}
 	fmt.Println("Session added to memory.")
@@ -163,7 +163,7 @@ func main() {
 			log.Printf("Agent 2 Error: %v", err)
 			continue
 		}
-		if event.Content != nil && !event.LLMResponse.Partial {
+		if event.LLMResponse.Content != nil && !event.LLMResponse.Partial {
 			finalResponseText2 = strings.Join(textParts(event.LLMResponse.Content), "")
 		}
 	}

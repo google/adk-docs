@@ -59,13 +59,13 @@ type getStockPriceResults struct {
 // from the mockStockPrices map. It demonstrates how a function can be used as a
 // tool by an agent. If the symbol is found, it returns a struct containing the
 // symbol and its price. Otherwise, it returns a struct with an error message.
-func getStockPrice(ctx tool.Context, input getStockPriceArgs) getStockPriceResults {
+func getStockPrice(ctx tool.Context, input getStockPriceArgs) (getStockPriceResults, error) {
 	symbolUpper := strings.ToUpper(input.Symbol)
 	if price, ok := mockStockPrices[symbolUpper]; ok {
 		fmt.Printf("Tool: Found price for %s: %f\n", input.Symbol, price)
-		return getStockPriceResults{Symbol: input.Symbol, Price: price}
+		return getStockPriceResults{Symbol: input.Symbol, Price: price}, nil
 	}
-	return getStockPriceResults{Symbol: input.Symbol, Error: "No data found for symbol"}
+	return getStockPriceResults{}, fmt.Errorf("no data found for symbol")
 }
 
 // createStockAgent initializes and configures an LlmAgent.

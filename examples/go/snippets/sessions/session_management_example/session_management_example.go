@@ -37,22 +37,6 @@ func main() {
 	inMemoryService := session.InMemoryService()
 	fmt.Println("Initialized InMemoryService.")
 
-	// --8<-- [start:vertexai_service]
-	// 2. VertexAIService
-	// Before running, ensure your environment is authenticated:
-	// gcloud auth application-default login
-	// export GOOGLE_CLOUD_PROJECT="your-gcp-project-id"
-	// export GOOGLE_CLOUD_LOCATION="your-gcp-location"
-	modelName := "gemini-1.5-flash-001" // Replace with your desired model
-	vertexService, err := session.VertexAIService(ctx, modelName)
-	if err != nil {
-		log.Printf("Could not initialize VertexAIService (this is expected if the gcloud project is not set): %v", err)
-	} else {
-		fmt.Println("Successfully initialized VertexAIService.")
-	}
-	// --8<-- [end:vertexai_service]
-	_ = vertexService // Avoid unused variable error if initialization fails.
-
 	// --- Examining Session Properties ---
 	// We'll use the InMemoryService for this demonstration.
 	// --8<-- [start:examine_session]

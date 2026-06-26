@@ -1,18 +1,33 @@
-# Parallel agents
+# Parallel template workflow agent
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.2.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.2.0</span>
 </div>
 
-The `ParallelAgent` is a [workflow agent](index.md) that executes its sub-agents *concurrently*. This dramatically speeds up workflows where tasks can be performed independently.
+The ***ParallelAgent*** class is a [template workflow](/agents/workflow-agents/)
+agent that executes its sub-agents concurrently. This execution strategy can
+dramatically speed up workflows where two or more tasks can be performed
+independently. For scenarios prioritizing speed and involving independent,
+resource-intensive tasks, this templated workflow facilitates parallel
+execution, which can significantly reduce overall processing time. When using
+this workflow type, it is important that each sub-agent can operate without
+depending on the other sub-agents. This workflow type is particularly beneficial
+for operations like multi-source data retrieval or heavy computations, where
+parallelization yields substantial performance gains.
 
-Use `ParallelAgent` when: For scenarios prioritizing speed and involving independent, resource-intensive tasks, a `ParallelAgent` facilitates efficient parallel execution. **When sub-agents operate without dependencies, their tasks can be performed concurrently**, significantly reducing overall processing time.
+As with other templated workflows, the execution of a ***ParallelAgent*** object
+is not controlled by an AI model, and is deterministic in how it executes its
+sub-agents. The sub-agents specified in the parallel execution set may or may
+not utilize AI models, but the overall execution of those sub-agents is
+ultimately managed by the ***ParallelAgent*** object you define.
 
-As with other [workflow agents](index.md), the `ParallelAgent` is not powered by an LLM, and is thus deterministic in how it executes. That being said, workflow agents are only concerned with their execution (i.e. executing sub-agents in parallel), and not their internal logic; the tools or sub-agents of a workflow agent may or may not utilize LLMs.
+!!! note "Alternative: graph-based workflows"
 
-### Example
+    Starting in ADK 2.0, templated workflows have been superseded
 
-This approach is particularly beneficial for operations like multi-source data retrieval or heavy computations, where parallelization yields substantial performance gains. Importantly, this strategy assumes no inherent need for shared state or direct information exchange between the concurrently executing agents.
+    by more flexible workflow structures, including
+    [graph-based workflows](/workflows/graphs/) and
+    [dynamic workflows](/workflows/dynamic/).
 
 ### How it works
 
@@ -30,7 +45,7 @@ It's *crucial* to understand that sub-agents within a `ParallelAgent` run indepe
 * **External State Management:**  Use an external database, message queue, or other mechanism to manage shared state and facilitate communication between agents.
 * **Post-Processing:** Collect results from each branch, and then implement logic to coordinate data afterwards.
 
-![Parallel Agent](../../assets/parallel-agent.png){: width="600"}
+![Parallel Agent](/assets/parallel-agent.png){: width="600"}
 
 ### Full Example: Parallel Web Research
 
@@ -51,6 +66,11 @@ These research tasks are independent.  Using a `ParallelAgent` allows them to ru
     === "Python"
         ```py
          --8<-- "examples/python/snippets/agents/workflow-agents/parallel_agent_web_research.py:init"
+        ```
+
+    === "Typescript"
+        ```typescript
+         --8<-- "examples/typescript/snippets/agents/workflow-agents/parallel_agent_web_research.ts:init"
         ```
 
     === "Go"

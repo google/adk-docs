@@ -161,9 +161,9 @@ func contextStateUpdateExample(sessionService session.Service) {
 	ctx := context.Background()
 
 	// Define the tool that modifies state
-	updateActionCountTool, err := functiontool.New[struct{}, struct{}](
+	updateActionCountTool, err := functiontool.New(
 		functiontool.Config{Name: "update_action_count", Description: "Updates the user action count in the state."},
-		func(tctx tool.Context, args struct{}) struct{} {
+		func(tctx tool.Context, args struct{}) (struct{}, error) {
 			actx, ok := tctx.(agent.CallbackContext)
 			if !ok {
 				log.Fatalf("tool.Context is not of type agent.CallbackContext")
@@ -183,7 +183,7 @@ func contextStateUpdateExample(sessionService session.Service) {
 				log.Printf("could not set temp:last_operation_status: %v", err)
 			}
 			fmt.Println("Tool: Updated state via agent.CallbackContext.")
-			return struct{}{}
+			return struct{}{}, nil
 		},
 	)
 	if err != nil {

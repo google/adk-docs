@@ -27,11 +27,10 @@ type updateUserPreferenceArgs struct {
 }
 
 type updateUserPreferenceResult struct {
-	Status            string `json:"status"`
 	UpdatedPreference string `json:"updated_preference"`
 }
 
-func updateUserPreference(ctx tool.Context, args updateUserPreferenceArgs) updateUserPreferenceResult {
+func updateUserPreference(ctx tool.Context, args updateUserPreferenceArgs) (*updateUserPreferenceResult, error) {
 	userPrefsKey := "user:preferences"
 	val, err := ctx.State().Get(userPrefsKey)
 	if err != nil {
@@ -46,11 +45,13 @@ func updateUserPreference(ctx tool.Context, args updateUserPreferenceArgs) updat
 	preferencesMap[args.Preference] = args.Value
 
 	if err := ctx.State().Set(userPrefsKey, preferencesMap); err != nil {
-		return updateUserPreferenceResult{Status: "error"}
+		return nil, err
 	}
 
 	fmt.Printf("Tool: Updated user preference '%s' to '%s'\n", args.Preference, args.Value)
-	return updateUserPreferenceResult{Status: "success", UpdatedPreference: args.Preference}
+	return &updateUserPreferenceResult{
+		UpdatedPreference: args.Preference,
+	}, nil
 }
 
 // --8<-- [end:example]
