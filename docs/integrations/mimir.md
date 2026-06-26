@@ -143,5 +143,6 @@ session = await runner.session_service.create_session(
 ## Resources
 
 - [adk-mimir-memory on GitHub](https://github.com/Perseus-Computing-LLC/adk-mimir-memory)
+- [adk-mimir-memory on PyPI](https://pypi.org/project/adk-mimir-memory/)
 - [Mimir (backing service)](https://github.com/Perseus-Computing-LLC/mimir)
 - [Perseus (context engine)](https://github.com/Perseus-Computing-LLC/perseus)
