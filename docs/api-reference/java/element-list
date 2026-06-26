@@ -1,5 +1,7 @@
+adkreleasedocs
 com.example
 com.example.a2a_basic
+com.example.github
 com.example.helloworld
 com.example.mcpfilesystem
 com.google.adk
@@ -46,6 +48,7 @@ com.google.adk.tools.applicationintegrationtoolset
 com.google.adk.tools.computeruse
 com.google.adk.tools.mcp
 com.google.adk.tools.retrieval
+com.google.adk.tools.skills
 com.google.adk.tutorials
 com.google.adk.utils
 com.google.adk.web

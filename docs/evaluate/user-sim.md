@@ -1,4 +1,4 @@
-# User Simulation
+# User simulation
 
 <div class="language-support-tag">
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.18.0</span>
@@ -54,7 +54,11 @@ While the conversation plan dictates what must be accomplished, the persona dict
     You'll define a conversation scenario, run a "dry run" to check the
     dialogue, and then perform a full evaluation to score the agent's responses.
 
-## User Personas
+## User personas
+
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.26.0</span>
+</div>
 
 A User Persona is a role that the simulated user adopts during the conversation.
 It is defined by a set of **behaviors** that dictate how the user interacts with
@@ -91,7 +95,7 @@ below summarizes the behaviors for each persona:
 | **Troubleshoot Agent Errors** | Once | Never | Never |
 | **Tone** | Professional | Conversational | Conversational |
 
-## Example: Evaluating the [`hello_world`](https://github.com/google/adk-python/tree/main/contributing/samples/core/hello_world) agent with conversation scenarios
+## Example: Evaluate the [`hello_world`](https://github.com/google/adk-python/tree/main/contributing/samples/core/hello_world) agent with conversation scenarios
 
 To add evaluation cases containing conversation scenarios to a new or existing
 [`EvalSet`](https://github.com/google/adk-python/blob/main/src/google/adk/evaluation/eval_set.py),
@@ -224,7 +228,7 @@ The below `EvalConfig` shows the default user simulator configuration:
     *   You can also access the `UserPersona` object through the `{{ persona }}`
         placeholder.
 
-## Custom Personas
+## Custom personas
 
 You can define your own custom persona by providing a `UserPersona` object in
 the `ConversationScenario`.
@@ -256,7 +260,7 @@ Example of a custom persona definition:
 }
 ```
 
-## Generating Evaluation Cases via User Simulation
+## Generate evaluation cases via user simulation
 
 Writing evaluation cases manually can be time-consuming and may not cover all potential failure modes. ADK provides a command to automatically generate diverse and realistic conversation scenarios based on your agent's definition using the Agent Platform Eval SDK.
 

@@ -105,6 +105,7 @@ The input file should contain initial state and queries:
 |--------|-------------|---------|
 | `--session_service_uri` | Custom session storage URI | SQLite under `.adk/session.db` |
 | `--artifact_service_uri` | Custom artifact storage URI | Local `.adk/artifacts` |
+| `--memory_service_uri` | Custom memory service URI | In-memory |
 
 ### Example with storage options
 
@@ -122,3 +123,4 @@ adk run --session_service_uri "sqlite:///my_sessions.db" path/to/my_agent
 | `--replay` | Path to an input file for non-interactive replay |
 | `--session_service_uri` | Custom session storage URI |
 | `--artifact_service_uri` | Custom artifact storage URI |
+| `--memory_service_uri` | Custom memory service URI |

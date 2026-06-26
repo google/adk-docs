@@ -2,7 +2,7 @@
 catalog_title: Future AGI
 catalog_description: Trace, evaluate, and improve ADK agents with the traceAI OpenTelemetry integration
 catalog_icon: /integrations/assets/futureagi.png
-catalog_tags: ["observability"]
+catalog_tags: ["observability", "evaluation"]
 ---
 
 # Future AGI observability for ADK
