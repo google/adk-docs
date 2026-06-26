@@ -26,9 +26,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
-        with:
-          persist-credentials: false
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3 # zizmor: ignore[artipacked] - gh-deploy needs the persisted GITHUB_TOKEN to push to gh-pages
       - name: Configure Git Credentials
         run: |
           git config user.name github-actions[bot]
