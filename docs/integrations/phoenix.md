@@ -39,7 +39,7 @@ These instructions show you how to use Phoenix Cloud. You can also [launch Phoen
 
 1. Sign up for a [free Phoenix account](https://arize.com/phoenix/).
 2. From the Settings page of your new Phoenix Space, create your API key
-3. Copy your endpoint which should look like: https://app.phoenix.arize.com/s/[your-space-name]
+3. Copy your endpoint which should look like: https://app.phoenix.arize.com/s/your-space-name
 
 **Set your Phoenix endpoint and API Key:**
 
