@@ -50,7 +50,7 @@ local development environments.
 
         ```console
         # Add to ADK code project but NOT source control
-        GOOGLE_GENAI_USE_VERTEXAI=TRUE
+        GOOGLE_GENAI_USE_ENTERPRISE=TRUE
         GOOGLE_CLOUD_PROJECT=your-project-id
         GOOGLE_CLOUD_LOCATION=cloud-location   # example: us-central1
         ```
@@ -58,10 +58,17 @@ local development environments.
     === "Terminal"
 
         ```bash
-        export GOOGLE_GENAI_USE_VERTEXAI=TRUE
+        export GOOGLE_GENAI_USE_ENTERPRISE=TRUE
         export GOOGLE_CLOUD_PROJECT="your-project-id"
         export GOOGLE_CLOUD_LOCATION="cloud-location"   # example: us-central1
         ```
+
+!!! note "`GOOGLE_GENAI_USE_ENTERPRISE` was previously `GOOGLE_GENAI_USE_VERTEXAI`"
+
+    These variable names are equivalent and do the same thing.
+    If you set `GOOGLE_GENAI_USE_ENTERPRISE` and your agent
+    does not connect to Agent Platform, you're on an older ADK version. Use
+    `GOOGLE_GENAI_USE_VERTEXAI` instead, or update to a newer version of ADK.
 
 ### Service account for production {#service-account}
 
@@ -99,20 +106,20 @@ Express Mode offers a simplified, API-key-based setup for prototyping without fu
 
         ```console
         # Add to ADK code project but NOT source control
-        GOOGLE_GENAI_USE_VERTEXAI=TRUE
+        GOOGLE_GENAI_USE_ENTERPRISE=TRUE
         GOOGLE_GENAI_API_KEY=PASTE_YOUR_ACTUAL_EXPRESS_MODE_API_KEY_HERE
         ```
 
     === "Terminal"
 
         ```bash
-        export GOOGLE_GENAI_USE_VERTEXAI=TRUE
+        export GOOGLE_GENAI_USE_ENTERPRISE=TRUE
         export GOOGLE_GENAI_API_KEY="PASTE_YOUR_EXPRESS_MODE_API_KEY_HERE"
         ```
 
 ## Google Cloud hosted models
 
-Google Cloud Agent Platform hosts a wide array of AI model you can connect to
+Google Cloud Agent Platform hosts a wide array of AI models you can connect to
 your ADK agents, including Gemini models, third-party AI models, open weight
 models, and models custom-tuned for your organization. Once you have connected
 your ADK agent to Google Cloud and Agent Platform, you have access to AI models

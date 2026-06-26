@@ -183,7 +183,7 @@ The Interactions API **does not** support mixing custom function calling tools w
 built-in tools, such as the
 [Google Search](/integrations/google-search/),
 tool, within the same agent. You can work around this limitation by configuring the
-the built-in tool to operate as a custom tool using the `bypass_multi_tools_limit`
+built-in tool to operate as a custom tool using the `bypass_multi_tools_limit`
 parameter:
 
 === "Python"
