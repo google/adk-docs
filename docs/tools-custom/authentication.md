@@ -326,7 +326,7 @@ sa_config = ServiceAccount(
 ```
 
 !!! Tip
-  If you receive an authentication error, verify that your service account has the 'Cloud Run Invoker' (or equivalent) role on the target service.
+  If you receive an authentication error, verify that your service account has the 'Cloud Run Invoker' or equivalent role on the target service.
 
 ##### Key takeaways
 
@@ -342,13 +342,13 @@ Configure your  `ServiceAccount` to use ID token authentication and specify the 
 
 * `service_account_credential` (Optional): Provide the path or dict for your service account JSON key file. Use this if you are running locally or outside of Google Cloud.
   
-* ` use_default_credential` (Optional): Set to True to use Application Default Credentials (ADC). Recommended if your agent is already running within Google Cloud (e.g., on Cloud Run or Cloud Functions), as it avoids the need for local key files.
+* ` use_default_credential` (Optional): Set to True to use Application Default Credentials (ADC). Recommended if your agent is already running within Google Cloud, for example on Cloud Run or Cloud Functions, as it avoids the need for local key files.
   
-* `use_id_token` (Required for IAM): Set to True to enable ID token-based authentication. This switches the ADK from requesting an Access Token (for Google APIs) to an ID Token (for your own IAM-secured services).
+* `use_id_token` (Required for IAM): Set to True to enable ID token-based authentication. This switches the ADK from requesting an Access Token, for Google APIs, to an ID Token, for your own IAM-secured services.
   
-* `audience` (Required if use_id_token=True): The URL of the service you are calling (for example, https://my-service.run.app). This is a security binding that ensures the token is valid only for that specific destination.
+* `audience` (Required if use_id_token=True): The URL of the service you are calling, for example, https://my-service.run.app. This is a security binding that ensures the token is valid only for that specific destination.
   
-* `scopes` (Optional): Use it only when requesting Access Tokens for Google Cloud APIs (like Drive or BigQuery). You do not need to set this if you are using ID tokens for private service authentication.
+* `scopes` (Optional): Use it only when requesting Access Tokens for Google Cloud APIs, like Drive or BigQuery. You do not need to set this if you are using ID tokens for private service authentication.
 
 !!! tip
     Always use `use_id_token=True` and `audience` together. If you provide one without the other, the ADK will raise an error to prevent accidental misconfiguration.
