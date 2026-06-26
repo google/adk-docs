@@ -69,95 +69,9 @@ ADK provides the `LangchainTool` wrapper to integrate tools from the LangChain e
 Here's the full code combining the steps above to create and run an agent using the LangChain Tavily search tool.
 
 ```py
---8<-- "examples/python/snippets/tools/third-party/langchain_tavily_search.py"
+--8<-- "adk-docs/examples/python/snippets/tools/third-party
+/langchain_tavily_search.py"
 ```
-
-### Example: Using LangChain's StructuredTool
-
-from google.adk.agents.llm_agent import Agent  # Import the core Agent class to create the AI assistant
-from google.adk.tools.langchain_tool import LangchainTool  # Import wrapper to make LangChain tools compatible with ADK
-from langchain_core.tools import tool  # Import decorator to quickly turn functions into LangChain tools
-from langchain_core.tools.structured import StructuredTool  # Import class for creating tools with explicit schemas
-from pydantic import BaseModel  # Import BaseModel to define structured data schemas for tool inputs
-
-
-async def add(x: int, y: int) -> int:
-    """
-    An asynchronous function that performs addition.
-    
-    Args:
-        x (int): The first number.
-        y (int): The second number.
-        
-    Returns:
-        int: The sum of x and y.
-    """
-    return x + y  # Returns the result of adding x and y
-
-
-@tool
-def minus(x: int, y: int) -> int:
-    """
-    A synchronous function decorated as a LangChain tool to perform subtraction.
-    
-    The @tool decorator automatically converts this function into a LangChain tool 
-    using the function name as the tool name and this docstring as the description.
-    
-    Args:
-        x (int): The number to subtract from.
-        y (int): The number to be subtracted.
-        
-    Returns:
-        int: The difference between x and y.
-    """
-    return x - y  # Returns the result of subtracting y from x
-
-
-class AddSchema(BaseModel):
-    """
-    Pydantic schema defining the input structure for the 'add' tool.
-    This helps the LLM understand that 'x' and 'y' must be integers.
-    """
-    x: int  # Defines 'x' as a required integer
-    y: int  # Defines 'y' as a required integer
-
-
-class MinusSchema(BaseModel):
-    """
-    Pydantic schema defining the input structure for the 'minus' tool.
-    Ensures the LLM provides the correct types when calling the subtraction tool.
-    """
-    x: int  # Defines 'x' as a required integer
-    y: int  # Defines 'y' as a required integer
-
-
-# Create a formal 'StructuredTool' from the 'add' function.
-# This method is more explicit than the @tool decorator, allowing for manual naming and schema binding.
-test_langchain_add_tool = StructuredTool.from_function(
-    func=add,                          # The actual logic (the add function defined above)
-    name="add",                        # The name the LLM will see for this tool
-    description="Adds two numbers",    # Description used by the LLM to decide when to use this tool
-    args_schema=AddSchema,             # Links the Pydantic schema to validate and describe the inputs
-)
-
-# Initialize the Root Agent (the "brain" of the application).
-root_agent = Agent(
-    model="gemini-2.0-flash-001",      # Specifies the Google Gemini model to power the agent
-    name="test_app",                   # Internal identifier/name for the agent
-    description="A helpful assistant for user questions.",  # High-level description of the agent's purpose
-    instruction=(                      # The system prompt that guides the agent's behavior
-        "You are a helpful assistant for user questions, you have access to a"
-        " tool that adds two numbers."
-    ),
-    tools=[                            # List of tools the agent is allowed to use
-        # Wraps the StructuredTool 'add' into the ADK format
-        LangchainTool(tool=test_langchain_add_tool), 
-        # Wraps the decorated '@tool' function 'minus' into the ADK format
-        LangchainTool(tool=minus),
-    ],
-)
-
-
 ## 2. Using CrewAI tools
 
 ADK provides the `CrewaiTool` wrapper to integrate tools from the CrewAI library.
