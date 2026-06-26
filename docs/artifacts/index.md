@@ -1267,4 +1267,4 @@ To use artifacts effectively and maintainably:
 
 ## Examples
 
-*   [Context Offloading with Artifacts](https://github.com/google/adk-python/tree/main/contributing/samples/context_offloading_with_artifact): This sample demonstrates how to offload context to artifacts to manage the context window size.
+*   [Context Offloading with Artifacts](https://github.com/google/adk-python/blob/main/contributing/samples/patterns/context_offloading_with_artifact/agent.py): This sample demonstrates how to offload context to artifacts to manage the context window size.
