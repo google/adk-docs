@@ -38,35 +38,50 @@ keyword matching with dense vector retrieval.
 
 ## Installation
 
+Install the Python package:
+
 ```bash
 pip install adk-mimir-memory
 ```
 
-Then download the `mimir` binary from the [Mimir releases
-page](https://github.com/Perseus-Computing-LLC/mimir/releases), or build from
-source:
-
-```bash
-cargo install mimir
-```
+Then install the `mimir` binary: download the build for your platform from the
+[Mimir releases page](https://github.com/Perseus-Computing-LLC/mimir/releases)
+and place it on your `PATH`. The service looks for `mimir` by default, or pass
+`mimir_binary="/absolute/path/to/mimir"` to `MimirMemoryService`.
 
 ## Use with agent
 
+Create the `MimirMemoryService`, pass it to your `Runner`, and give the agent
+the `load_memory` tool so it can recall past sessions:
+
 ```python
-from google.adk.agents import Agent
 from adk_mimir_memory import MimirMemoryService
+from google.adk.agents import Agent
+from google.adk.runners import Runner
+from google.adk.sessions import InMemorySessionService
+from google.adk.tools import load_memory
 
 agent = Agent(
-    name="my_agent",
+    name="memory_assistant",
     model="gemini-flash-latest",
-    instruction="You are a helpful assistant with persistent memory.",
-    memory_service=MimirMemoryService(
-        db_path="~/.adk/mimir.db",
-    ),
+    instruction="You are a helpful assistant with long-term memory.",
+    tools=[load_memory],
+)
+
+runner = Runner(
+    agent=agent,
+    app_name="mimir_app",
+    session_service=InMemorySessionService(),
+    memory_service=MimirMemoryService(db_path="~/.adk/mimir.db"),
 )
 ```
 
-### Perseus Live Context (Optional)
+After a session completes, call
+`await memory_service.add_session_to_memory(session)` to persist it. The agent
+recalls relevant memories in later sessions through the `load_memory` tool. See
+[ADK memory](/sessions/memory/) for the full ingest-and-recall flow.
+
+### Perseus live context (optional)
 
 For live workspace awareness, install the `perseus` extra:
 
@@ -74,25 +89,31 @@ For live workspace awareness, install the `perseus` extra:
 pip install adk-mimir-memory[perseus]
 ```
 
+Then use the prebuilt `perseus_context_agent`, which resolves `@file`,
+`@search`, and `@memory` directives at inference time:
+
 ```python
 from adk_mimir_memory.perseus_context import perseus_context_agent
+from google.adk.runners import Runner
+from google.adk.sessions import InMemorySessionService
 
-# The agent resolves @file, @search, @memory directives at inference time
-runner.run_async(
-    user_id="user",
-    session_id="session",
-    new_message=types.Content(role="user", parts=[types.Part.from_text(
-        text="What does the README say about deployment?"
-    )]),
+# The pre-built agent ships without a model; set one before use.
+perseus_context_agent.model = "gemini-flash-latest"
+
+runner = Runner(
     agent=perseus_context_agent,
+    app_name="perseus_app",
+    session_service=InMemorySessionService(),
+    memory_service=MimirMemoryService(db_path="~/.adk/mimir.db"),
 )
 ```
 
-Set Perseus directives via session state:
+Set Perseus directives via session state when creating the session (inside an
+async function):
 
 ```python
 session = await runner.session_service.create_session(
-    app_name="my_app",
+    app_name="perseus_app",
     user_id="user",
     state={
         "_perseus_directives": "@file AGENTS.md @file README.md @memory deployment",
@@ -112,12 +133,12 @@ session = await runner.session_service.create_session(
 
 ## Backend comparison
 
-| Backend | Dependencies | Encryption | Hybrid Search | Local |
+| Backend | Dependencies | At-rest encryption | Search | Hosting |
 |---|---|---|---|---|
-| **InMemoryMemoryService** | None | ❌ | ❌ | ✅ |
-| **VertexAiMemoryBankService** | GCP + Gemini | ❌ | Gemini-driven | ❌ |
-| **VertexAiRagMemoryService** | GCP + RAG | ❌ | GCP vector | ❌ |
-| **MimirMemoryService** | Single binary | ✅ AES-256 | ✅ BM25+FTS5+Dense | ✅ |
+| **InMemoryMemoryService** | None | Not persisted | Keyword | Local (ephemeral) |
+| **VertexAiMemoryBankService** | Google Cloud | Google-managed (CMEK optional) | Semantic (Gemini) | Google Cloud |
+| **VertexAiRagMemoryService** | Google Cloud | Google-managed (CMEK optional) | Vector similarity | Google Cloud |
+| **MimirMemoryService** | `mimir` binary | Local AES-256-GCM (optional) | Hybrid (FTS5 + dense) | Local |
 
 ## Resources
 
