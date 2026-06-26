@@ -302,35 +302,11 @@ calendar_tool_set.configure_auth(
 
 #### C. Use ID Token
 
-When your agent calls a locked-down service (like a private Cloud Run or Cloud Function), you need to prove who you are (identity), not just what you can do (permissions).
+If your agent calls a restricted service, for example a private Cloud Run or Cloud Function, the agent needs to prove your identity, not just your permissions. If you are calling a service that is accessed using Cloud IAM, you should use an ID token.
 
-* **Access Token (Default)**: Like a keycard. Used for calling Google APIs (Drive, BigQuery).
+* **Access Token (Default)**: It calls Google APIs (Drive, BigQuery). Think of it as your keycard.
     
-* **ID Token**: Like a passport. Used for calling your own services secured by IAM.
-  
-If you are calling a service behind Cloud IAM, you should be using an ID token.
-
-##### Key takeaways
-
-* **Audience Requirement**: The `audience` is a security feature. It binds the token to a specific destination so it cannot be "replayed" against other services. If you set `use_id_token=True` without an `audience`, ADK will throw an error.
-  
-* **No Auto-Refresh**: Unlike standard OAuth2 access tokens for users, service-account ID tokens are fetched at the time of the request. They do not auto-refresh on a background timer.
-  
-* **The Flow**: You define the intent and ADK handles the handshake, fetches the token from Google's auth servers, and injects it into your outgoing HTTP headers.
-
-##### Implementation shortcut
-
-Simply configure your  `ServiceAccount ` to flip to ID token mode and specify the target service's URL as the `audience`.
-
-```bash
-ServiceAccount(
-    service_account_credential=...,   # the JSON key  (OR)
-    use_default_credential=True,      # use ADC instead of a key
-    scopes=[...],                     # for ACCESS tokens
-    use_id_token=True,                # switch to ID-token mode
-    audience="https://my-service.run.app",  # required when use_id_token=True
-)
-```
+* **ID Token**: It calls your own services secured by IAM. Think of it as your passport.
 
 ##### Configuration
 
@@ -352,7 +328,32 @@ sa_config = ServiceAccount(
 !!! Tip
   If you receive an authentication error, verify that your service account has the 'Cloud Run Invoker' (or equivalent) role on the target service.
 
-##### Authentication request flow
+##### Key takeaways
+
+* **Audience Requirement**: The `audience` is a security feature. It binds the token to a specific destination so it cannot be "replayed" against other services.
+  
+* **No Auto-Refresh**: Unlike standard OAuth2 access tokens for users, service-account ID tokens are fetched at the time of the request. They do not auto-refresh on a background timer.
+  
+* **The Flow**: You define the intent and ADK handles the handshake, fetches the token from Google's auth servers, and injects it into your outgoing HTTP headers.
+
+##### ServiceAccount configuration parameters
+
+Configure your  `ServiceAccount` to use ID token authentication and specify the target service's URL as the `audience`.
+
+* `service_account_credential` (Optional): Provide the path or dict for your service account JSON key file. Use this if you are running locally or outside of Google Cloud.
+  
+* ` use_default_credential` (Optional): Set to True to use Application Default Credentials (ADC). Recommended if your agent is already running within Google Cloud (e.g., on Cloud Run or Cloud Functions), as it avoids the need for local key files.
+  
+* `use_id_token` (Required for IAM): Set to True to enable ID token-based authentication. This switches the ADK from requesting an Access Token (for Google APIs) to an ID Token (for your own IAM-secured services).
+  
+* `audience` (Required if use_id_token=True): The URL of the service you are calling (for example, https://my-service.run.app). This is a security binding that ensures the token is valid only for that specific destination.
+  
+* `scopes` (Optional): Use it only when requesting Access Tokens for Google Cloud APIs (like Drive or BigQuery). You do not need to set this if you are using ID tokens for private service authentication.
+
+!!! tip
+    Always use `use_id_token=True` and `audience` together. If you provide one without the other, the ADK will raise an error to prevent accidental misconfiguration.
+
+#### Authentication request flow
 
 This diagram visualizes the end-to-end authentication handshake, tracing the path from the initial user query to the point where the ADK captures a credential request,
 handles the redirection flow, and retries the tool call once authorized.
@@ -364,8 +365,8 @@ handles the redirection flow, and retries the tool call once authorized.
 
 If a tool requires user login/consent (typically OAuth 2.0 or OIDC), the ADK framework pauses execution and signals your ***Agent Client*** application. There are two cases:
 
-* ***Agent Client*** application runs the agent directly (via `runner.run_async`) in the same process. e.g. UI backend, CLI app, or Spark job etc.
-* ***Agent Client*** application interacts with ADK's fastapi server via `/run` or `/run_sse` endpoint. While ADK's fastapi server could be setup on the same server or different server as ***Agent Client*** application
+* **Agent Client** application runs the agent directly (via `runner.run_async`) in the same process. e.g. UI backend, CLI app, or Spark job etc.
+* **Agent Client** application interacts with ADK's fastapi server via `/run` or `/run_sse` endpoint. While ADK's fastapi server could be setup on the same server or different server as ***Agent Client*** application
 
 The second case is a special case of first case, because `/run` or `/run_sse` endpoint also invokes `runner.run_async`. The only differences are:
 
@@ -382,7 +383,7 @@ Here's the step-by-step process for your client application:
 * Iterate through the yielded events.
 * Look for a specific function call event whose function call has a special name: `adk_request_credential`. This event signals that user interaction is needed. You can use helper functions to identify this event and extract necessary information. (For the second case, the logic is similar. You deserialize the event from the http response).
 
-```py
+```python
 
 # runner = Runner(...)
 # session = await session_service.create_session(...)
