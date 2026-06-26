@@ -1,27 +1,34 @@
 ---
 catalog_title: Mimir Memory
-catalog_description: Persistent, local, encrypted cross-session memory for ADK agents — backed by Mimir
+catalog_description: Add persistent, local, encrypted cross-session memory to ADK agents
 catalog_icon: /integrations/assets/mimir.svg
+catalog_tags: ["data"]
 ---
 
-# Mimir Memory — Persistent Cross-Session Memory for ADK
+# Mimir Memory integration for ADK
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
 </div>
 
-Mimir provides persistent, encrypted, cross-session memory for ADK agents.
-Backed by a single Rust binary with an embedded SQLite database, it requires
-**zero cloud dependencies** — everything runs locally. Memory is encrypted at
-rest with AES-256-GCM, and search combines FTS5 keyword matching with dense
-vector retrieval.
+The [`adk-mimir-memory`](https://github.com/Perseus-Computing-LLC/adk-mimir-memory)
+integration connects your ADK agent to
+[Mimir](https://github.com/Perseus-Computing-LLC/mimir), a persistent,
+cross-session memory backend. Backed by a single Rust binary with an embedded
+SQLite database, it requires **zero cloud dependencies**, and everything runs
+locally. Memory is encrypted at rest with AES-256-GCM, and search combines FTS5
+keyword matching with dense vector retrieval.
 
 ## Use cases
 
-- **Persistent agent memory across restarts**: Sessions survive process restarts — agents recall past conversations automatically
-- **Private, air-gapped deployments**: No cloud dependency — Mimir runs entirely on your machine with optional AES-256-GCM encryption
-- **Hybrid search across memories**: Combine keyword (FTS5/BM25) and semantic (dense vector) search to find relevant past interactions
-- **Workspace-aware agents**: Pair with Perseus for agents that know about your project files, git state, and configuration
+- **Persistent agent memory across restarts**: Sessions survive process
+  restarts, and agents recall past conversations automatically
+- **Private, air-gapped deployments**: No cloud dependency, and Mimir runs
+  entirely on your machine with optional AES-256-GCM encryption
+- **Hybrid search across memories**: Combine keyword (FTS5/BM25) and semantic
+  (dense vector) search to find relevant past interactions
+- **Workspace-aware agents**: Pair with Perseus for agents that know about your
+  project files, git state, and configuration
 
 ## Prerequisites
 
@@ -35,8 +42,9 @@ vector retrieval.
 pip install adk-mimir-memory
 ```
 
-Then download the `mimir` binary from the [Mimir releases page](https://github.com/Perseus-Computing-LLC/mimir/releases),
-or build from source:
+Then download the `mimir` binary from the [Mimir releases
+page](https://github.com/Perseus-Computing-LLC/mimir/releases), or build from
+source:
 
 ```bash
 cargo install mimir
@@ -50,7 +58,7 @@ from adk_mimir_memory import MimirMemoryService
 
 agent = Agent(
     name="my_agent",
-    model="gemini-2.5-flash",
+    model="gemini-flash-latest",
     instruction="You are a helpful assistant with persistent memory.",
     memory_service=MimirMemoryService(
         db_path="~/.adk/mimir.db",
