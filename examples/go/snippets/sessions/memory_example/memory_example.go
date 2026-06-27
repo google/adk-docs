@@ -36,7 +36,7 @@ import (
 const (
 	appName = "go_memory_example_app"
 	userID  = "go_mem_user"
-	modelID = "gemini-2.5-pro"
+	modelID = "gemini-2.5-flash"
 )
 
 // Args defines the input structure for the memory search tool.
@@ -119,7 +119,7 @@ func main() {
 			log.Printf("Agent 1 Error: %v", err)
 			continue
 		}
-		if event.Content != nil && !event.LLMResponse.Partial {
+		if event.LLMResponse.Content != nil && !event.LLMResponse.Partial {
 			finalResponseText = strings.Join(textParts(event.LLMResponse.Content), "")
 		}
 	}
@@ -131,7 +131,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to get completed session: %v", err)
 	}
-	if err := memoryService.AddSession(ctx, resp.Session); err != nil {
+	if err := memoryService.AddSessionToMemory(ctx, resp.Session); err != nil {
 		log.Fatalf("Failed to add session to memory: %v", err)
 	}
 	fmt.Println("Session added to memory.")
@@ -163,7 +163,7 @@ func main() {
 			log.Printf("Agent 2 Error: %v", err)
 			continue
 		}
-		if event.Content != nil && !event.LLMResponse.Partial {
+		if event.LLMResponse.Content != nil && !event.LLMResponse.Partial {
 			finalResponseText2 = strings.Join(textParts(event.LLMResponse.Content), "")
 		}
 	}

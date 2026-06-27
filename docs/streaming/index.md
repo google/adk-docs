@@ -26,7 +26,33 @@ text, audio, and video inputs, and they can provide text and audio output.
   </div>
 </div>
 
+## Live Demos
 
+<div class="grid cards" markdown>
+
+-   :material-shopping-outline: **LensMosaic: Visual Shopping with Live AI**
+
+    ---
+
+    [![LensMosaic screenshot](https://raw.githubusercontent.com/kazunori279/lens-mosaic/main/assets/lens-mosaic-demo.png)](https://lens-mosaic-nhhfh7g7iq-uc.a.run.app)
+
+    A demo app that merges live camera input, voice interaction, and intelligent product discovery. Point your camera at any object to find similar products, combine visual and voice input for personalized recommendations, or chat with a real-time AI shopping assistant. Built with ADK Gemini Live API Toolkit, Gemini Embedding, Vector Search, and FastAPI.
+
+    - [LensMosaic Demo](https://lens-mosaic-nhhfh7g7iq-uc.a.run.app)
+    - [Source Code](https://github.com/kazunori279/lens-mosaic)
+
+-   :material-microphone-outline: **ADK Gemini Live API Toolkit Demo**
+
+    ---
+
+    [![Bidi Demo screenshot](https://raw.githubusercontent.com/google/adk-samples/main/python/agents/bidi-demo/assets/bidi-demo-screen.png)](https://bidi-demo-761793285222.us-central1.run.app/)
+
+    A production-ready reference implementation showcasing ADK Gemini Live API Toolkit with multimodal support (text, audio, image). This FastAPI-based demo demonstrates real-time WebSocket communication, automatic transcription, tool calling with Google Search, and complete streaming lifecycle management.
+
+    - [Bidi Demo](https://bidi-demo-761793285222.us-central1.run.app/)
+    - [Source Code](https://github.com/google/adk-samples/tree/main/python/agents/bidi-demo)
+
+</div>
 
 <div class="grid cards" markdown>
 
@@ -75,13 +101,13 @@ text, audio, and video inputs, and they can provide text and audio output.
 
     - [Streaming Tools](streaming-tools.md)
 
--   :material-console-line: **Blog post: Google ADK + Vertex AI Live API**
+-   :material-console-line: **Blog post: Google ADK + Gemini Live API**
 
     ---
 
     This article shows how to use Gemini Live API Toolkit in ADK for real-time audio/video streaming. It offers a Python server example using LiveRequestQueue to build custom, interactive AI agents.
 
-    - [Blog post: Google ADK + Vertex AI Live API](https://medium.com/google-cloud/google-adk-vertex-ai-live-api-125238982d5e)
+    - [Blog post: Google ADK + Gemini Live API](https://medium.com/google-cloud/google-adk-vertex-ai-live-api-125238982d5e)
 
 -   :material-console-line: **Blog post: Supercharge ADK Development with Claude Code Skills**
 
