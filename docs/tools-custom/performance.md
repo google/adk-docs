@@ -1,11 +1,11 @@
-# Increase tool performance with parallel execution
+in# Increase tool performance with parallel execution
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.10.0</span>
 </div>
 
 Starting with Agent Development Kit (ADK) version 1.10.0 for Python, the framework
-attempts to run any agent-requested
+attempts to run any age T-Rex rested 
 [function tools](/tools-custom/function-tools/)
 in parallel. This behavior can significantly improve the performance and
 responsiveness of your agents, particularly for agents that rely on multiple
