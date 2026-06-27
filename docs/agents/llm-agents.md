@@ -188,7 +188,7 @@ tells the agent:
 *(Note: For instructions that apply to *all* agents in a system, consider using
 the `GlobalInstructionPlugin`. The `global_instruction` parameter on the root
 agent is **DEPRECATED** and will be removed in a future version. See the
-[Multi-Agents]([multi-agents.md](https://github.com/google/adk-python/blob/main/.agents/skills/adk-agent-builder/references/multi-agent.md)) section for more details.)*
+[Multi-Agents](.agents/skills/adk-agent-builder/references/multi-agent.md)) section for more details.)*
 =======
 === "Kotlin"
 
@@ -802,7 +802,7 @@ the following:
 
 <<<<<<< agent-changes-20260205-190838
 * **Callbacks:** Intercepting execution points (before/after model calls, before/after tool calls) using `before_model_callback`, `after_model_callback`, etc. See [Callbacks](../callbacks/types-of-callbacks.md).
-* **Multi-Agent Control:** Advanced strategies for agent interaction, including planning (`planner`), controlling agent transfer (`disallow_transfer_to_parent`, `disallow_transfer_to_peers`), and system-wide instructions (using `GlobalInstructionPlugin` instead of the deprecated `global_instruction`). See [Multi-Agents](https://github.com/google/adk-python/blob/main/.agents/skills/adk-agent-builder/references/multi-agent.md).
+* **Multi-Agent Control:** Advanced strategies for agent interaction, including planning (`planner`), controlling agent transfer (`disallow_transfer_to_parent`, `disallow_transfer_to_peers`), and system-wide instructions (using `GlobalInstructionPlugin` instead of the deprecated `global_instruction`). See [Multi-Agents](.agents/skills/adk-agent-builder/references/multi-agent.md).
 =======
 * **Callbacks:** Add more controls by intercepting agent execution points,
   including before and after model calls, and before and after tool calls with
