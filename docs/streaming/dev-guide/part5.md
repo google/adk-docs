@@ -398,7 +398,7 @@ This architecture ensures smooth, low-latency audio playback while handling netw
 
 ## How to Use Image and Video
 
-Both images and video in ADK Bidi-streaming are processed as JPEG frames. Rather than typical video streaming using HLS, mp4, or H.264, ADK uses a straightforward frame-by-frame image processing approach where both static images and video frames are sent as individual JPEG images.
+Both images and video in ADK Gemini Live API Toolkit are processed as JPEG frames. Rather than typical video streaming using HLS, mp4, or H.264, ADK uses a straightforward frame-by-frame image processing approach where both static images and video frames are sent as individual JPEG images.
 
 **Image/Video Specifications:**
 
@@ -584,7 +584,7 @@ ADK provides special tool support for processing video frames during streaming s
 
 **Important**: You must provide a `stop_streaming(function_name: str)` function as a tool to allow the model to explicitly stop streaming operations.
 
-For implementing custom video streaming tools that process and yield video frames to the model, see the [Streaming Tools documentation](https://google.github.io/adk-docs/streaming/streaming-tools/).
+For implementing custom video streaming tools that process and yield video frames to the model, see the [Streaming Tools documentation](/streaming/streaming-tools/).
 
 ## Understanding Audio Model Architectures
 
@@ -599,7 +599,7 @@ A fully integrated end-to-end audio model architecture where the model processes
 | Audio Model Architecture | Platform | Model | Notes |
 |-------------------|----------|-------|-------|
 | Native Audio | Gemini Live API | [gemini-2.5-flash-native-audio-preview-12-2025](https://ai.google.dev/gemini-api/docs/models#gemini-2.5-flash-live) |Publicly available|
-| Native Audio | Vertex AI Live API | [gemini-live-2.5-flash-native-audio](https://cloud.google.com/vertex-ai/generative-ai/docs/models/gemini/2-5-flash-live-api) | Public preview |
+| Native Audio | Gemini Live API | [gemini-live-2.5-flash-native-audio](https://cloud.google.com/vertex-ai/generative-ai/docs/models/gemini/2-5-flash-live-api) | Public preview |
 
 **Key Characteristics:**
 
@@ -622,7 +622,7 @@ Audio input is processed natively, but responses are first generated as text the
 | Audio Model Architecture | Platform | Model | Notes |
 |-------------------|----------|-------|-------|
 | Half-Cascade | Gemini Live API | [gemini-2.0-flash-live-001](https://ai.google.dev/gemini-api/docs/models#gemini-2.0-flash-live) | Deprecated on December 09, 2025 |
-| Half-Cascade | Vertex AI Live API | [gemini-live-2.5-flash](https://cloud.google.com/vertex-ai/generative-ai/docs/models/gemini/2-5-flash#2.5-flash) | Private GA, not publicly available |
+| Half-Cascade | Gemini Live API | [gemini-live-2.5-flash](https://cloud.google.com/vertex-ai/generative-ai/docs/models/gemini/2-5-flash#2.5-flash) | Private GA, not publicly available |
 
 **Key Characteristics:**
 
@@ -654,7 +654,7 @@ agent = Agent(
 **Why use environment variables:**
 
 - **Model availability changes**: Models are released, updated, and deprecated regularly (e.g., `gemini-2.0-flash-live-001` was deprecated on December 09, 2025)
-- **Platform-specific names**: Gemini Live API and Vertex AI Live API use different model naming conventions for the same functionality
+- **Platform-specific names**: Gemini Live API and Gemini Live API on Agent Platform use different model naming conventions for the same functionality
 - **Easy switching**: Change models without modifying code by updating the `.env` file
 - **Environment-specific configuration**: Use different models for development, staging, and production
 
@@ -664,7 +664,7 @@ agent = Agent(
 # For Gemini Live API (publicly available)
 DEMO_AGENT_MODEL=gemini-2.5-flash-native-audio-preview-12-2025
 
-# For Vertex AI Live API (if using Vertex AI)
+# For Gemini Live API (if using Agent Platform)
 # DEMO_AGENT_MODEL=gemini-live-2.5-flash-native-audio
 ```
 
@@ -699,7 +699,7 @@ DEMO_AGENT_MODEL=gemini-2.5-flash-native-audio-preview-12-2025
 
 **Selecting the right model:**
 
-1. **Choose platform**: Decide between Gemini Live API (public) or Vertex AI Live API (enterprise)
+1. **Choose platform**: Decide between Gemini Live API (public) or Gemini Live API on Agent Platform (enterprise)
 2. **Choose architecture**:
    - Native Audio for natural conversational AI with advanced features
    - Half-Cascade for production reliability with tool execution
@@ -711,7 +711,7 @@ DEMO_AGENT_MODEL=gemini-2.5-flash-native-audio-preview-12-2025
 For the latest information on Live API model compatibility and availability:
 
 - **Gemini Live API models**: See the [Gemini models documentation](https://ai.google.dev/gemini-api/docs/models/gemini)
-- **Vertex AI Live API models**: See the [Vertex AI model documentation](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/models)
+- **Gemini Live API models (Agent Platform)**: See the [Agent Platform model documentation](https://cloud.google.com/vertex-ai/generative-ai/docs/learn/models)
 
 Always verify model availability and feature support in the official documentation before deploying to production.
 
@@ -982,7 +982,7 @@ The automatic enablement happens in `Runner.run_live()` when both conditions are
 
 !!! note "Source"
 
-    [`runners.py:1395-1404`](https://github.com/google/adk-python/blob/fd2c0f556b786417a9f6add744827b07e7a06b7d/src/google/adk/runners.py#L1395-L1404)
+    [`runners.py:1391-1400`](https://github.com/google/adk-python/blob/427a983b18088bdc22272d02714393b0a779ecdf/src/google/adk/runners.py#L1391-L1400)
 
 ## Voice Configuration (Speech Config)
 
@@ -1208,11 +1208,11 @@ Voice configuration is supported on both platforms, but voice availability may v
 - ✅ Half-cascade models: 8 voices (Puck, Charon, Kore, Fenrir, Aoede, Leda, Orus, Zephyr)
 - ✅ Native audio models: Extended voice list (see [documentation](https://ai.google.dev/gemini-api/docs/live-guide))
 
-**Vertex AI Live API:**
+**Gemini Live API (Agent Platform):**
 
 - ✅ Voice configuration supported
 - ⚠️ **Platform-specific difference**: Voice availability may differ from Gemini Live API
-- ⚠️ **Verification required**: Check [Vertex AI documentation](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api) for the current list of supported voices
+- ⚠️ **Verification required**: Check [Agent Platform documentation](https://cloud.google.com/vertex-ai/generative-ai/docs/live-api) for the current list of supported voices
 
 **Best practice**: Always test your chosen voice configuration on your target platform during development. If a voice is not supported on your platform/model combination, the Live API will return an error at connection time.
 
@@ -1556,7 +1556,7 @@ These features are **model-specific** and have platform implications:
 - ✅ Supported on `gemini-2.5-flash-native-audio-preview-12-2025` (native audio model)
 - ❌ Not supported on `gemini-live-2.5-flash-preview` (half-cascade model)
 
-**Vertex AI Live API:**
+**Gemini Live API (Agent Platform):**
 
 - ❌ Not currently supported on `gemini-live-2.5-flash` (half-cascade model)
 - ⚠️ **Platform-specific difference**: Proactivity and affective dialog require native audio models, which are currently only available on Gemini Live API
@@ -1594,8 +1594,8 @@ Consider disabling proactivity/affective dialog for:
 
 ## Summary
 
-In this part, you learned how to implement multimodal features in ADK Bidi-streaming applications, focusing on audio, image, and video capabilities. We covered audio specifications and format requirements, explored the differences between native audio and half-cascade architectures, examined how to send and receive audio streams through LiveRequestQueue and Events, and learned about advanced features like audio transcription, voice activity detection, and proactive/affective dialog. You now understand how to build natural voice-enabled AI experiences with proper audio handling, implement video streaming for visual context, and configure model-specific features based on platform capabilities. With this comprehensive understanding of ADK's multimodal streaming features, you're equipped to build production-ready applications that handle text, audio, image, and video seamlessly—creating rich, interactive AI experiences across diverse use cases.
+In this part, you learned how to implement multimodal features in ADK Gemini Live API Toolkit applications, focusing on audio, image, and video capabilities. We covered audio specifications and format requirements, explored the differences between native audio and half-cascade architectures, examined how to send and receive audio streams through LiveRequestQueue and Events, and learned about advanced features like audio transcription, voice activity detection, and proactive/affective dialog. You now understand how to build natural voice-enabled AI experiences with proper audio handling, implement video streaming for visual context, and configure model-specific features based on platform capabilities. With this comprehensive understanding of ADK's multimodal streaming features, you're equipped to build production-ready applications that handle text, audio, image, and video seamlessly—creating rich, interactive AI experiences across diverse use cases.
 
-**Congratulations!** You've completed the ADK Bidi-streaming Developer Guide. You now have a comprehensive understanding of how to build production-ready real-time streaming AI applications with Google's Agent Development Kit.
+**Congratulations!** You've completed the ADK Gemini Live API Toolkit Developer Guide. You now have a comprehensive understanding of how to build production-ready real-time streaming AI applications with Google's Agent Development Kit.
 
 ← [Previous: Part 4: Understanding RunConfig](part4.md)

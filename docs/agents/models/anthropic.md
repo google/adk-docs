@@ -5,16 +5,16 @@
 </div>
 
 You can integrate Anthropic's Claude models directly using an Anthropic API key
-or from a Vertex AI backend into your Java ADK applications by using the ADK's
+or from an Agent Platform backend into your Java ADK applications by using the ADK's
 `Claude` wrapper class. You can also access Anthropic models through
-Google Cloud Vertex AI services. For more information, see the
-[Third-Party Models on Vertex AI](/adk-docs/agents/models/vertex/#third-party-models-on-vertex-ai-eg-anthropic-claude)
+Google Cloud Agent Platform services. For more information, see the
+[Third-Party Models on Agent Platform](/agents/models/agent-platform/#anthropic-claude)
 section. You can also use Anthropic models through the
-[LiteLLM](/adk-docs/agents/models/litellm/) library for Python.
+[LiteLLM](/agents/models/litellm/) library for Python.
 
 ## Get started
 
-The following code examples show a basic implementation for using Gemini models
+The following code examples show a basic implementation for using Anthropic models
 in your agents:
 
 ```java
@@ -25,7 +25,7 @@ public static LlmAgent createAgent() {
       .build();
 
   Claude claudeModel = new Claude(
-      "claude-3-7-sonnet-latest", anthropicClient
+      "claude-sonnet-4-6", anthropicClient
   );
 
   return LlmAgent.builder()
@@ -61,7 +61,7 @@ import com.anthropic.client.okhttp.AnthropicOkHttpClient; // From Anthropic's SD
 
 public class DirectAnthropicAgent {
 
-  private static final String CLAUDE_MODEL_ID = "claude-3-7-sonnet-latest"; // Or your preferred Claude model
+  private static final String CLAUDE_MODEL_ID = "claude-sonnet-4-6"; // Or your preferred Claude model
 
   public static LlmAgent createAgent() {
 
