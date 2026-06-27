@@ -188,7 +188,7 @@ tells the agent:
 *(Note: For instructions that apply to *all* agents in a system, consider using
 the `GlobalInstructionPlugin`. The `global_instruction` parameter on the root
 agent is **DEPRECATED** and will be removed in a future version. See the
-[Multi-Agents](.agents/skills/adk-agent-builder/references/multi-agent.md)) section for more details.)*
+[Multi-Agents](.agents/skills/adk-agent-builder/references/multi-agent.md) section for more details.)*
 =======
 === "Kotlin"
 
