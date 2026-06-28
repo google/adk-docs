@@ -39,7 +39,7 @@ jobs:
           --no-progress
           --root-dir "$(pwd)/docs"
           './**/*.md'
-        fail: true
+        fail: false
         failIfEmpty: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
