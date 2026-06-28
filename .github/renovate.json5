@@ -1,0 +1,73 @@
+{
+  "extends": [
+    "config:recommended"
+  ],
+  "prConcurrentLimit": 0,
+  "rebaseWhen": "never",
+  "dependencyDashboard": true,
+  "pip_requirements": {
+    "fileMatch": [
+      "requirements.txt",
+      "requirements-test.txt",
+      "requirements-composer.txt",
+      "constraints.txt",
+      "constraints-test.txt"
+    ]
+  },
+  "ignorePaths": [
+    "**/target/**"
+  ],
+  "packageRules": [
+    {
+      "matchDatasources": ["maven"],
+      "matchFilePatterns": ["pom.xml"],
+      "groupName": "Java Maven Dependencies"
+    },
+    {
+      "matchDatasources": ["pypi"],
+      "matchFilePatterns": ["requirements.txt"],
+      "groupName": "Python pip Dependencies"
+    },
+    {
+      "separateMinorPatch": true,
+      "matchPackageNames": [
+        "/pytest/"
+      ]
+    },
+    {
+      "matchUpdateTypes": [
+        "minor"
+      ],
+      "extends": [
+        "schedule:monthly"
+      ]
+    },
+    {
+      "matchUpdateTypes": [
+        "patch"
+      ],
+      "extends": [
+        "schedule:quarterly"
+      ]
+    },
+    {
+      "matchDatasources": ["maven"],
+      "matchUpdateTypes": ["minor"],
+      "groupName": "Java Minor Updates",
+      "extends": ["schedule:monthly"]
+    },
+    {
+      "matchDatasources": ["maven"],
+      "matchUpdateTypes": ["patch"],
+      "groupName": "Java Patch Updates",
+      "extends": ["schedule:quarterly"]
+    }
+  ],
+  "vulnerabilityAlerts": {
+    "schedule": [
+      "at any time"
+    ]
+  },
+  "platformAutomerge": true,
+  "automergeType": "branch"
+}

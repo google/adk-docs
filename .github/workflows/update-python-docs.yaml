@@ -1,0 +1,73 @@
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: Update ADK Python Docs
+
+on:
+  issues:
+    types: [opened, labeled]
+
+permissions: {}
+
+jobs:
+  update-adk-python-docs-from-issue:
+    if: contains(github.event.issue.labels.*.name, 'docs updates')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout ADK Python repository
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          repository: google/adk-python
+          path: ./adk-python
+          token: ${{ secrets.ADK_BOT_GITHUB_TOKEN }}
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: '3.11'
+
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
+        with:
+          credentials_json: '${{ secrets.ADK_GCP_SA_KEY }}'
+
+      - name: Load adk-bot SSH Private Key
+        uses: webfactory/ssh-agent@dc588b651fe13675774614f8e6a936a468676387 # v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.ADK_BOT_SSH_PRIVATE_KEY }}
+
+      - name: Set Git Author Identity (for adk-bot)
+        run: |
+          git config --global user.name "adk-bot"
+          git config --global user.email "adk-bot@google.com"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install google-adk
+
+      - name: Run ADK docs updater script
+        env:
+          GITHUB_TOKEN: ${{ secrets.ADK_BOT_GITHUB_TOKEN }}
+          GOOGLE_CLOUD_PROJECT: ${{ secrets.GOOGLE_CLOUD_PROJECT }}
+          GOOGLE_CLOUD_LOCATION: ${{ secrets.GOOGLE_CLOUD_LOCATION }}
+          GOOGLE_GENAI_USE_VERTEXAI: 1
+          DOC_OWNER: 'google'
+          DOC_REPO: 'adk-docs'
+          CODE_OWNER: 'google'
+          CODE_REPO: 'adk-python'
+          INTERACTIVE: 0
+          PYTHONPATH: adk-python/contributing/samples/adk_team/adk_documentation
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run:
+          python -m adk_docs_updater.main --issue_number "${ISSUE_NUMBER}"

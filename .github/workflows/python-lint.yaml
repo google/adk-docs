@@ -1,0 +1,90 @@
+# Copyright 2025 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: Python Lint
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "samples/python/**"
+      - ".github/workflows/python-lint.yaml"
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+    paths:
+      - "samples/python/**"
+      - ".github/workflows/python-lint.yaml"
+  schedule:
+    - cron: "0 0 * * 0"
+
+permissions:
+  contents: read
+
+jobs:
+  get_sample_dirs:
+    runs-on: ubuntu-latest
+    outputs:
+      sample_dirs: ${{ steps.get_dirs.outputs.sample_dirs }}
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+
+      - name: Get Sample Directories
+        id: get_dirs
+        run: |
+          SAMPLE_DIRS=$(find samples/python/ -type d -maxdepth 5 ! -path "samples/python" | jq -R -s 'split("\n")[:-1]' )
+          echo "sample_dirs=$SAMPLE_DIRS" >> $GITHUB_OUTPUT
+          echo "SAMPLE_DIRS: $SAMPLE_DIRS"  # For debugging
+
+  lint:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
+        sample_dir: ${{ fromJson(needs.get_sample_dirs.outputs.sample_dirs) }}
+      fail-fast: false
+
+    needs:
+      - get_sample_dirs
+
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install black flake8
+
+      - name: Run Black and Flake8 Linting in ${{ matrix.sample_dir }}
+        run: |
+          cd ${MATRIX_SAMPLE_DIR}
+          black .
+          flake8 .
+        env:
+          MATRIX_SAMPLE_DIR: ${{ matrix.sample_dir }}

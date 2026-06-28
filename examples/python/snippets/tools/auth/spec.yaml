@@ -1,0 +1,120 @@
+openapi: 3.0.1
+info:
+  title: Okta User Info API
+  version: 1.0.0
+  description: |-
+    API to retrieve user profile information based on a valid Okta OIDC Access Token.
+    Authentication is handled via OpenID Connect with Okta.
+  contact:
+    name: API Support
+    email: support@example.com # Replace with actual contact if available
+servers:
+  - url: <substitute with your server name>
+    description: Production Environment
+paths:
+  /okta-jwt-user-api:
+    get:
+      summary: Get Authenticated User Info
+      description: |-
+        Fetches profile details for the user
+      operationId: getUserInfo
+      tags:
+        - User Profile
+      security:
+        - okta_oidc:
+            - openid
+            - email
+            - profile
+      responses:
+        '200':
+          description: Successfully retrieved user information.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sub:
+                    type: string
+                    description: Subject identifier for the user.
+                    example: "abcdefg"
+                  name:
+                    type: string
+                    description: Full name of the user.
+                    example: "Example LastName"
+                  locale:
+                    type: string
+                    description: User's locale, e.g., en-US or en_US.
+                    example: "en_US"
+                  email:
+                    type: string
+                    format: email
+                    description: User's primary email address.
+                    example: "username@example.com"
+                  preferred_username:
+                    type: string
+                    description: Preferred username of the user (often the email).
+                    example: "username@example.com"
+                  given_name:
+                    type: string
+                    description: Given name (first name) of the user.
+                    example: "Example"
+                  family_name:
+                    type: string
+                    description: Family name (last name) of the user.
+                    example: "LastName"
+                  zoneinfo:
+                    type: string
+                    description: User's timezone, e.g., America/Los_Angeles.
+                    example: "America/Los_Angeles"
+                  updated_at:
+                    type: integer
+                    format: int64 # Using int64 for Unix timestamp
+                    description: Timestamp when the user's profile was last updated (Unix epoch time).
+                    example: 1743617719
+                  email_verified:
+                    type: boolean
+                    description: Indicates if the user's email address has been verified.
+                    example: true
+                required:
+                  - sub
+                  - name
+                  - locale
+                  - email
+                  - preferred_username
+                  - given_name
+                  - family_name
+                  - zoneinfo
+                  - updated_at
+                  - email_verified
+        '401':
+          description: Unauthorized. The provided Bearer token is missing, invalid, or expired.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden. The provided token does not have the required scopes or permissions to access this resource.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  securitySchemes:
+    okta_oidc:
+      type: openIdConnect
+      description: Authentication via Okta using OpenID Connect. Requires a Bearer Access Token.
+      openIdConnectUrl: https://your-endpoint.okta.com/.well-known/openid-configuration
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+          description: An error code.
+        message:
+          type: string
+          description: A human-readable error message.
+      required:
+        - code
+        - message

@@ -1,0 +1,11 @@
+[build]
+publish = "site"
+
+[build.environment]
+PYTHON_VERSION = "3.12"
+
+[context.production]
+  command = "echo 'Skipping — production is deployed via GitHub Pages' && mkdir -p site && echo '<html><body>Production is on GitHub Pages</body></html>' > site/index.html"
+
+[context.deploy-preview]
+  command = "pip install -r requirements.txt && mkdocs build"

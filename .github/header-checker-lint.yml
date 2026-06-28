@@ -1,0 +1,15 @@
+allowedCopyrightHolders:
+  - "Google LLC"
+
+allowedLicenses:
+  - "Apache-2.0"
+
+ignoreFiles:
+  - "**/requirements*.txt"
+  - "**/__init__.py"
+  - "**/constraints*.txt"
+
+ignoreLicenseYear: true
+
+sourceFileExtensions:
+  - "py"
