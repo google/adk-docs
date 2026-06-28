@@ -1,14 +1,16 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#0a0f1e"/>
-      <stop offset="100%" stop-color="#121a33"/>
-    </linearGradient>
-  </defs>
-  <rect width="128" height="128" rx="16" fill="url(#bg)"/>
-  <text x="58" y="80" font-family="monospace" font-size="56" font-weight="bold" fill="#f0b429" text-anchor="middle">P</text>
-  <circle cx="92" cy="32" r="3" fill="#fde68a"/>
-  <circle cx="104" cy="52" r="2.5" fill="#fde68a"/>
-  <circle cx="88" cy="60" r="2" fill="#fde68a"/>
-  <path d="M92 32 L104 52 L88 60" fill="none" stroke="#f0b429" stroke-width="1.5" opacity="0.5"/>
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Perseus">
+  <rect width="128" height="128" rx="30" fill="#161420"></rect>
+  <g stroke="#F5A623" stroke-width="6" stroke-linecap="round">
+    <line x1="34" y1="38" x2="88" y2="63"></line>
+    <line x1="34" y1="55" x2="88" y2="63"></line>
+    <line x1="34" y1="72" x2="88" y2="63"></line>
+    <line x1="34" y1="89" x2="88" y2="63"></line>
+  </g>
+  <g fill="#F5A623">
+    <circle cx="34" cy="38" r="4.5"></circle>
+    <circle cx="34" cy="55" r="4.5"></circle>
+    <circle cx="34" cy="72" r="4.5"></circle>
+    <circle cx="34" cy="89" r="4.5"></circle>
+  </g>
+  <circle cx="90" cy="63" r="10" fill="#F5A623"></circle>
 </svg>
