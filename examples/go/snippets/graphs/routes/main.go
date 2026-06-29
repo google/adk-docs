@@ -14,31 +14,47 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Package main demonstrates graph routing patterns using the ADK Go prebuilt
-// workflow agents (sequentialagent, parallelagent, loopagent).
+// Package main demonstrates graph routing patterns in ADK Go v2.
 //
-// These agents are available in ADK Go v1.x and v2.x. ADK Go v2.0.0 also
-// introduces a lower-level graph engine (workflowagent + workflow.Edge) that
-// maps more directly to the Python Workflow(edges=[...]) API; the prebuilt
-// agents remain a convenient alternative for the most common topologies.
+// NOTE: This file requires google.golang.org/adk/v2 (the workflow package),
+// available in ADK Go v2.0.0 and later. It carries //go:build ignore so it is
+// excluded from the current examples/go module (which is still on the v1 path)
+// until examples/go is migrated to google.golang.org/adk/v2 at the v2.0.0
+// release.
 //
-// Data flows between steps via session state: an agent writes its output to a
-// named key using llmagent.Config.OutputKey, and downstream agents read it by
-// referencing {key} in their Instruction template.
+// # Routing patterns in ADK Go v2
+//
+// ADK Go v2.0.0 provides two complementary approaches to graph routing:
+//
+// ## workflow package (graph engine)
+//
+// workflow.NewFunctionNode, workflow.NewAgentNode, and workflow.NewDynamicNode
+// create nodes that communicate through session.Event fields — mirroring the
+// Python Workflow(edges=[...]) API closely:
+//
+//   - workflow.Chain(workflow.Start, nodeA, nodeB) — sequential edges
+//   - workflow.Concat + []workflow.Edge{...} — conditional branching
+//   - workflow.NewEdgeBuilder with AddFanOut/AddFanIn — fan-out/join
+//   - workflow.NewJoinNode — barrier that waits for all predecessors
+//
+// ## Prebuilt workflow agents
+//
+// sequentialagent, parallelagent, and loopagent are higher-level wrappers
+// for the three most common topologies. They communicate through session state
+// (llmagent.Config.OutputKey / ctx.Session().State().Set / {key} in Instruction).
 //
 // This file contains five snippet regions used in docs/graphs/routes.md:
 //
-//	function-node       – custom Run function as a workflow step
-//	sequential-nodes    – route sequences (one or more nodes in order)
-//	parallel-fan-out    – parallel fan-out collected by a synthesis agent
-//	nested-workflows    – workflow agent nested inside another workflow agent
-//	loop-escalate       – loop with Escalate-based exit (conditional routing)
+//	function-node       – workflow.NewFunctionNode as a graph node (v2 graph engine)
+//	sequential-nodes    – sequential route using the prebuilt sequentialagent
+//	parallel-fan-out    – parallel fan-out using the prebuilt parallelagent + sequentialagent
+//	nested-workflows    – nested sequentialagent inside another sequentialagent
+//	loop-escalate       – loopagent with Escalate-based exit (prebuilt tier)
 package main
 
 import (
 	"context"
 	"fmt"
-	"iter"
 	"log"
 	"strings"
 
@@ -46,55 +62,66 @@ import (
 
 	"google.golang.org/adk/v2/agent"
 	"google.golang.org/adk/v2/agent/llmagent"
+	"google.golang.org/adk/v2/agent/workflowagent"
 	"google.golang.org/adk/v2/agent/workflowagents/loopagent"
 	"google.golang.org/adk/v2/agent/workflowagents/parallelagent"
 	"google.golang.org/adk/v2/agent/workflowagents/sequentialagent"
-	"google.golang.org/adk/v2/model"
 	"google.golang.org/adk/v2/model/gemini"
-	"google.golang.org/adk/v2/session"
 	"google.golang.org/adk/v2/tool"
 	"google.golang.org/adk/v2/tool/functiontool"
+	"google.golang.org/adk/v2/workflow"
 )
 
 const modelName = "gemini-flash-latest"
 
 // --8<-- [start:function-node]
-// upperCaseRun is a custom Run function that acts as a workflow step (node).
-// It reads the user content, transforms it, writes to state, and yields an
-// event — equivalent to a Python FunctionNode that returns Event(output=...).
-func upperCaseRun(ctx agent.InvocationContext) iter.Seq2[*session.Event, error] {
-	return func(yield func(*session.Event, error) bool) {
-		var inputText string
-		if ctx.UserContent() != nil {
-			for _, p := range ctx.UserContent().Parts {
-				inputText += p.Text
-			}
-		}
-		result := strings.ToUpper(inputText)
-
-		if err := ctx.Session().State().Set("upper_result", result); err != nil {
-			yield(nil, fmt.Errorf("state.Set: %w", err))
-			return
-		}
-		yield(&session.Event{
-			LLMResponse: model.LLMResponse{
-				Content: &genai.Content{
-					Parts: []*genai.Part{{Text: result}},
-				},
-			},
-		}, nil)
+// newFunctionNodePipeline demonstrates workflow.NewFunctionNode as the primary
+// v2 node type. A FunctionNode wraps a plain Go function: the function returns
+// a typed value, and the framework automatically wraps it in a session.Event,
+// setting event.Output. The successor node receives this value as its typed
+// input parameter.
+//
+// This is the direct Go equivalent of the Python FunctionNode:
+//
+//	def my_function_node(node_input: str):
+//	    return Event(output=node_input.upper())
+func newFunctionNodePipeline() (agent.Agent, error) {
+	upperFn := func(_ agent.Context, input string) (string, error) {
+		return strings.ToUpper(input), nil
 	}
+
+	suffixFn := func(_ agent.Context, input string) (string, error) {
+		return input + " IS AWESOME!", nil
+	}
+
+	// workflow.NewFunctionNode wraps the function as a graph node.
+	// workflow.Chain wires them in order: START → upper → suffix.
+	// The output of upperFn is delivered as the typed input of suffixFn
+	// via event.Output — no session state writes are needed.
+	nodeA := workflow.NewFunctionNode("upper", upperFn, workflow.NodeConfig{})
+	nodeB := workflow.NewFunctionNode("suffix", suffixFn, workflow.NodeConfig{})
+
+	return workflowagent.New(workflowagent.Config{
+		Name:        "function_node_pipeline",
+		Description: "Demonstrates workflow.NewFunctionNode data flow via Event.Output.",
+		Edges:       workflow.Chain(workflow.Start, nodeA, nodeB),
+	})
 }
 
 // --8<-- [end:function-node]
 
 // --8<-- [start:sequential-nodes]
-// newSequentialNodes builds a two-step sequential workflow.
-// It is the Go equivalent of:
+// newSequentialNodes builds a two-step pipeline using the prebuilt
+// sequentialagent. This is an alternative to the workflow graph engine for
+// simple sequential topologies.
+//
+// The sequentialagent runs each SubAgent once, in the listed order. Data flows
+// through session state: step A writes to OutputKey, step B reads it via {key}
+// in its Instruction template.
+//
+// workflow.Chain equivalent:
 //
 //	edges=[("START", task_A_node, task_B_node)]
-//
-// The sequentialagent runs each SubAgent once, in the listed order.
 func newSequentialNodes(ctx context.Context) (agent.Agent, error) {
 	geminiModel, err := gemini.NewModel(ctx, modelName, &genai.ClientConfig{})
 	if err != nil {
@@ -134,19 +161,14 @@ func newSequentialNodes(ctx context.Context) (agent.Agent, error) {
 // --8<-- [end:sequential-nodes]
 
 // --8<-- [start:parallel-fan-out]
-// newParallelFanOut builds a workflow that fans out across three parallel
-// research agents and then re-joins by passing their OutputKey results into
-// a single synthesis agent via session state — the Go equivalent of using a
-// JoinNode followed by a final task.
+// newParallelFanOut builds a fan-out / join pipeline using the prebuilt
+// parallelagent and sequentialagent. This is the prebuilt-agent alternative
+// to workflow.NewJoinNode + EdgeBuilder.AddFanOut/AddFanIn.
 //
-// Python equivalent:
-//
-//	edges=[
-//	    ("START", research_A, join_node),
-//	    ("START", research_B, join_node),
-//	    ("START", research_C, join_node),
-//	    (join_node, synthesis_agent),
-//	]
+// parallelagent runs researchA, researchB, and researchC concurrently; each
+// writes its output to a distinct session state key via OutputKey. The
+// enclosing sequentialagent then runs synthesisAgent, which reads all three
+// keys via {result_A}, {result_B}, {result_C} in its Instruction.
 func newParallelFanOut(ctx context.Context) (agent.Agent, error) {
 	geminiModel, err := gemini.NewModel(ctx, modelName, &genai.ClientConfig{})
 	if err != nil {
@@ -186,8 +208,6 @@ func newParallelFanOut(ctx context.Context) (agent.Agent, error) {
 		return nil, fmt.Errorf("researchC: %w", err)
 	}
 
-	// parallelagent runs researchA, researchB, and researchC concurrently.
-	// Each agent writes its output to a distinct key in session state.
 	parallelResearch, err := parallelagent.New(parallelagent.Config{
 		AgentConfig: agent.Config{
 			Name:        "parallel_research",
@@ -199,8 +219,6 @@ func newParallelFanOut(ctx context.Context) (agent.Agent, error) {
 		return nil, fmt.Errorf("parallelagent: %w", err)
 	}
 
-	// synthesisAgent reads all three results from state and produces a report.
-	// This is the "join" step: it only runs after parallelResearch completes.
 	synthesisAgent, err := llmagent.New(llmagent.Config{
 		Name:  "synthesis_agent",
 		Model: geminiModel,
@@ -214,8 +232,8 @@ C: {result_C}`,
 		return nil, fmt.Errorf("synthesisAgent: %w", err)
 	}
 
-	// The top-level sequentialagent guarantees that synthesis only starts
-	// after all parallel branches have completed.
+	// The top-level sequentialagent guarantees synthesis only starts after
+	// all parallel branches have completed.
 	return sequentialagent.New(sequentialagent.Config{
 		AgentConfig: agent.Config{
 			Name:        "fan_out_workflow",
@@ -228,22 +246,20 @@ C: {result_C}`,
 // --8<-- [end:parallel-fan-out]
 
 // --8<-- [start:nested-workflows]
-// newNestedWorkflows shows how to use one workflow agent as a sub-agent of
-// another — the Go equivalent of nesting Workflow objects as nodes.
+// newNestedWorkflows shows how to use one prebuilt workflow agent as a
+// sub-agent of another — the prebuilt-agent approach to nested workflows.
 //
-// Python equivalent:
+// For the workflow graph engine alternative, wrap a workflowagent with
+// workflow.NewAgentNode and place it as a node in the outer graph's edges:
 //
-//	root_agent = Workflow(
-//	    name="parent_workflow",
-//	    edges=[("START", task_A1, nested_workflow_B)],
-//	)
+//	innerNode, _ := workflow.NewAgentNode(innerWorkflowAgent, workflow.NodeConfig{})
+//	edges := workflow.Chain(workflow.Start, outerStep, innerNode, finalNode)
 func newNestedWorkflows(ctx context.Context) (agent.Agent, error) {
 	geminiModel, err := gemini.NewModel(ctx, modelName, &genai.ClientConfig{})
 	if err != nil {
 		return nil, fmt.Errorf("gemini.NewModel: %w", err)
 	}
 
-	// --- Inner workflow B ---
 	innerStep1, err := llmagent.New(llmagent.Config{
 		Name:        "inner_step_1",
 		Model:       geminiModel,
@@ -265,7 +281,6 @@ func newNestedWorkflows(ctx context.Context) (agent.Agent, error) {
 		return nil, fmt.Errorf("innerStep2: %w", err)
 	}
 
-	// workflowB is a self-contained sequential workflow used as a sub-agent.
 	workflowB, err := sequentialagent.New(sequentialagent.Config{
 		AgentConfig: agent.Config{
 			Name:        "workflow_B",
@@ -277,7 +292,6 @@ func newNestedWorkflows(ctx context.Context) (agent.Agent, error) {
 		return nil, fmt.Errorf("workflowB: %w", err)
 	}
 
-	// --- Outer step that runs before workflowB ---
 	taskA1, err := llmagent.New(llmagent.Config{
 		Name:        "task_A1",
 		Model:       geminiModel,
@@ -289,7 +303,6 @@ func newNestedWorkflows(ctx context.Context) (agent.Agent, error) {
 		return nil, fmt.Errorf("taskA1: %w", err)
 	}
 
-	// parentWorkflow runs taskA1, then hands off to workflowB as a single node.
 	return sequentialagent.New(sequentialagent.Config{
 		AgentConfig: agent.Config{
 			Name:        "parent_workflow",
@@ -309,23 +322,18 @@ type ExitLoopArgs struct{}
 type ExitLoopResults struct{}
 
 // exitLoop signals the loopagent to stop by setting Escalate = true on the
-// current event's actions. This is the Go equivalent of routing to an exit
-// node in a Python conditional-branch graph.
-func exitLoop(ctx tool.Context, _ ExitLoopArgs) (ExitLoopResults, error) {
+// current event's actions. The tool function receives agent.Context, which
+// is the unified context type in ADK Go v2.
+func exitLoop(ctx agent.Context, _ ExitLoopArgs) (ExitLoopResults, error) {
 	ctx.Actions().Escalate = true
 	return ExitLoopResults{}, nil
 }
 
 // newLoopEscalate builds a workflow that iteratively refines a document and
-// exits the loop when the critic is satisfied.
+// exits when the critic is satisfied. This uses the prebuilt loopagent.
 //
-// Python equivalent of the conditional routing pattern:
-//
-//	edges=[
-//	    ("START", critic_node, router),
-//	    (router, {"DONE": exit_node, "REFINE": refiner_node}),
-//	    (refiner_node, critic_node),  # loop back
-//	]
+// For the workflow graph engine alternative, create a back-edge from the
+// refiner node back to the critic node using []workflow.Edge.
 func newLoopEscalate(ctx context.Context) (agent.Agent, error) {
 	geminiModel, err := gemini.NewModel(ctx, modelName, &genai.ClientConfig{})
 	if err != nil {
@@ -349,8 +357,6 @@ func newLoopEscalate(ctx context.Context) (agent.Agent, error) {
 		return nil, fmt.Errorf("functiontool.New: %w", err)
 	}
 
-	// criticAgent reviews the current draft and either provides feedback or
-	// writes donePhrase when no further changes are needed.
 	criticAgent, err := llmagent.New(llmagent.Config{
 		Name:        "critic_agent",
 		Model:       geminiModel,
@@ -365,7 +371,6 @@ If it is good enough, respond exactly with: "%s"`, stateDoc, donePhrase),
 		return nil, fmt.Errorf("criticAgent: %w", err)
 	}
 
-	// refinerAgent applies the critique or calls exitLoop if done.
 	refinerAgent, err := llmagent.New(llmagent.Config{
 		Name:        "refiner_agent",
 		Model:       geminiModel,
@@ -397,7 +402,6 @@ Otherwise apply the suggestions and output the improved draft.`, stateDoc, state
 		return nil, fmt.Errorf("loopagent: %w", err)
 	}
 
-	// initialWriterAgent produces the first draft before the loop starts.
 	initialWriterAgent, err := llmagent.New(llmagent.Config{
 		Name:        "initial_writer_agent",
 		Model:       geminiModel,
@@ -409,8 +413,6 @@ Otherwise apply the suggestions and output the improved draft.`, stateDoc, state
 		return nil, fmt.Errorf("initialWriterAgent: %w", err)
 	}
 
-	// The top-level sequentialagent runs the writer once, then hands off to
-	// the loop, which runs until escalation or max iterations.
 	return sequentialagent.New(sequentialagent.Config{
 		AgentConfig: agent.Config{
 			Name:        "iterative_writer",
@@ -424,6 +426,12 @@ Otherwise apply the suggestions and output the improved draft.`, stateDoc, state
 
 func main() {
 	ctx := context.Background()
+
+	fnPipeline, err := newFunctionNodePipeline()
+	if err != nil {
+		log.Fatalf("newFunctionNodePipeline: %v", err)
+	}
+	log.Printf("created %s", fnPipeline.Name())
 
 	seqAgent, err := newSequentialNodes(ctx)
 	if err != nil {
@@ -448,15 +456,4 @@ func main() {
 		log.Fatalf("newLoopEscalate: %v", err)
 	}
 	log.Printf("created %s", loopAgent.Name())
-
-	// Demonstrate that the function-node custom Run can be wrapped in an agent.
-	funcNode, err := agent.New(agent.Config{
-		Name:        "upper_case_node",
-		Description: "Transforms input to upper case.",
-		Run:         upperCaseRun,
-	})
-	if err != nil {
-		log.Fatalf("agent.New (function-node): %v", err)
-	}
-	log.Printf("created %s", funcNode.Name())
 }

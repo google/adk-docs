@@ -93,9 +93,12 @@ objects.
 
 === "Go"
 
-    In Go, a workflow step (node) is an `agent.Agent` whose `Run` function
-    yields `*session.Event` values. The following custom `Run` function acts
-    as a node that transforms its input and writes the result to session state:
+    In ADK Go v2.0.0, the primary node type is `workflow.NewFunctionNode`.
+    A `FunctionNode` wraps a plain Go function: the function returns a typed
+    value, and the framework automatically wraps it in a `session.Event`,
+    setting `event.Output`. The successor node receives this value as its
+    typed `input` parameter — no manual state writes or event construction
+    needed:
 
     ```go
     --8<-- "examples/go/snippets/graphs/routes/main.go:function-node"
@@ -291,7 +294,7 @@ before passing results to the next step.
 
     `workflow.EdgeBuilder` makes the fan-out / fan-in wiring concise with its
     dedicated `AddFanOut` and `AddFanIn` helpers (as shown in the
-    [complex workflow example](https://github.com/google/adk-go/tree/examples/workflow/complex)):
+    [complex workflow example](https://github.com/google/adk-go/tree/v2/examples/workflow/complex)):
 
     ```go
     gatherNode := workflow.NewJoinNode("gather")
@@ -439,7 +442,7 @@ Go v2.0.0 you can express the same pattern in two ways:
     by setting `ctx.Actions().Escalate = true`, and the loop exits at the end
     of that iteration. The same iterative-refinement pattern can also be
     expressed with a back-edge in the `workflowagent` graph engine (see the
-    [routing examples](https://github.com/google/adk-go/tree/examples/workflow/routing)):
+    [routing examples](https://github.com/google/adk-go/tree/v2/examples/workflow/routing)):
 
     ```go
     --8<-- "examples/go/snippets/graphs/routes/main.go:loop-escalate"
