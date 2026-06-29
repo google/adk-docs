@@ -1,0 +1,26 @@
+{
+  "name": "adk-docs-examples",
+  "version": "1.0.0",
+  "description": "TS code examples for the ADK Documentation",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc",
+    "clean": "rm -rf dist"
+  },
+  "keywords": ["adk", "google", "agent", "typescript", "gemini", "adk-js", "adk-ts", "javascript"],
+  "author": "",
+  "license": "Apache-2.0",
+  "type": "commonjs",
+  "devDependencies": {
+    "@types/node": "^20.14.2",
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "@google/adk": "^0.2.0",
+    "@google/adk-devtools": "^0.2.0",
+    "module-alias": "^2.2.3",
+    "tsconfig-paths": "^4.2.0",
+    "zod-to-json-schema": "^3.24.6"
+  }
+}

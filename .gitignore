@@ -65,6 +65,9 @@ db.sqlite3-journal
 instance/
 .webassets-cache
 
+#Gemini Stuff
+gemini.md
+
 # Scrapy stuff:
 .scrapy
 
@@ -164,6 +167,10 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
+# Typescript
+**/node_modules/
+**/package-lock.json
+
 # Mac Finder files
 .DS_Store
 
@@ -185,5 +192,10 @@ docs/site
 # Claude Code
 .claude
 
+
 # Bash files
 ***/*.sh
+
+# Ignore a local build but keep the directory
+/site/*
+!/site/.gitkeep

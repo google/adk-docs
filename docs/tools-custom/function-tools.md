@@ -1,11 +1,11 @@
 # Function tools
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 When pre-built ADK tools don't meet your requirements, you can create custom *function tools*. Building function tools allows you to create tailored functionality, such as connecting to proprietary databases or implementing unique algorithms.
-For example, a function tool, `myfinancetool`, might be a function that calculates a specific financial metric. ADK also supports long running functions, so if that calculation takes a while, the agent can continue working on other tasks.
+For example, a function tool, `myfinancetool`, might be a function that calculates a specific financial metric. ADK also supports long-running functions, so if that calculation takes a while, the agent can continue working on other tasks.
 
 ADK offers several ways to create functions tools, each suited to different levels of complexity and control:
 
@@ -68,10 +68,44 @@ A well-defined function signature is crucial for the LLM to use your tool correc
         ```
     In this example, both `location` and `unit` are mandatory.
 
+=== "Java"
+    In Java, primitive types (e.g., `int`, `double`, `boolean`) are inherently **required** because they cannot be null. For object types (like `String` or `Integer`), they are typically considered required unless explicitly marked as optional.
+
+    The `@Schema` annotation is used to provide the argument's description and can explicitly define parameter properties. This is crucial for the LLM to understand what the argument is for.
+
+    ???+ "Example: Required Parameters"
+        ```java
+        // The @Schema annotation on the parameter provides the description.
+        public static Map<String, Object> getWeather(
+            @Schema(description = "The city and state, e.g., San Francisco, CA", name = "location")
+            String location,
+
+            @Schema(description = "The temperature unit, either 'Celsius' or 'Fahrenheit'", name = "unit")
+            String unit) {
+
+            // ... function logic ...
+            return Map.of("status", "success", "report", "Weather for " + location + " is sunny.");
+        }
+        ```
+    In this example, both `location` and `unit` are mandatory.
+
+=== "Kotlin"
+    In Kotlin, parameters are considered **required** by default if they are of a non-nullable type and have no default value. The LLM must provide a value for these arguments.
+
+    The `@Param` annotation is used to provide the argument's description. This is crucial for the LLM to understand what the argument is for.
+
+    ???+ "Example: Required Parameters"
+        ```kotlin
+        --8<-- "examples/kotlin/snippets/tools/function-tools/RequiredParams.kt:required_params"
+        ```
+    In this example, both `location` and `unit` are mandatory.
+
 ##### Optional Parameters
 
 === "Python"
     A parameter is considered **optional** if you provide a **default value**. This is the standard Python way to define optional arguments. You can also mark a parameter as optional using `typing.Optional[SomeType]` or the `| None` syntax (Python 3.10+).
+
+    Use defaults only for values that are truly optional. Do not add defaults for information the model should derive from the user request or ask the user to provide.
 
     ???+ "Example: Optional Parameters"
         ```python
@@ -110,6 +144,43 @@ A well-defined function signature is crucial for the LLM to use your tool correc
         ```
     Here, `unit` and `days` are optional. The LLM can choose to provide them, but they are not required.
 
+=== "Java"
+    A parameter can be considered **optional** in Java by using object types that allow `null` values (such as `Integer` instead of `int`), or by explicitly defining it as optional using `java.util.Optional`.
+
+    ???+ "Example: Optional Parameters"
+        ```java
+        import java.util.Map;
+        import java.util.Optional;
+
+        public static Map<String, Object> searchFlights(
+            @Schema(description = "The destination city.", name = "destination")
+            String destination,
+
+            @Schema(description = "The desired departure date.", name = "departureDate")
+            String departureDate,
+
+            @Schema(description = "Number of flexible days for the search. Defaults to 0.", name = "flexibleDays")
+            Optional<Integer> flexibleDays) {
+
+            // ... function logic ...
+            int days = flexibleDays.orElse(0);
+            if (days > 0) {
+                return Map.of("status", "success", "report", "Found flexible flights to " + destination + ".");
+            }
+            return Map.of("status", "success", "report", "Found flights to " + destination + " on " + departureDate + ".");
+        }
+        ```
+    Here, `flexibleDays` is optional. The LLM can choose to provide it, but it's not required.
+
+=== "Kotlin"
+    In Kotlin, a parameter is considered **optional** if it is of a **nullable type** or if it has a **default value**.
+
+    ???+ "Example: Optional Parameters"
+        ```kotlin
+        --8<-- "examples/kotlin/snippets/tools/function-tools/OptionalParams.kt:optional_params"
+        ```
+    Here, `flexibleDays` is optional. The LLM can choose to provide it, but it's not required.
+
 ##### Optional Parameters with `typing.Optional`
 You can also mark a parameter as optional using `typing.Optional[SomeType]` or the `| None` syntax (Python 3.10+). This signals that the parameter can be `None`. When combined with a default value of `None`, it behaves as a standard optional parameter.
 
@@ -137,13 +208,13 @@ While you can include `*args` (variable positional arguments) and `**kwargs` (va
 
 #### Return Type
 
-The preferred return type for a Function Tool is a **dictionary** in Python or **Map** in Java. This allows you to structure the response with key-value pairs, providing context and clarity to the LLM. If your function returns a type other than a dictionary, the framework automatically wraps it into a dictionary with a single key named **"result"**.
+The preferred return type for a Function Tool is a **dictionary** in Python, a **Map** or custom **Record or POJO** in Java, an **object** in TypeScript, or a **Map** or **Data Class** in Kotlin. This allows you to structure the response with key-value pairs, providing context and clarity to the LLM. If your function returns a type other than a dictionary or map, the framework automatically wraps it into a dictionary with a single key named **"result"**.
 
 Strive to make your return values as descriptive as possible. *For example,* instead of returning a numeric error code, return a dictionary with an "error_message" key containing a human-readable explanation. **Remember that the LLM**, not a piece of code, needs to understand the result. As a best practice, include a "status" key in your return dictionary to indicate the overall outcome (e.g., "success", "error", "pending"), providing the LLM with a clear signal about the operation's state.
 
 #### Docstrings
 
-The docstring of your function serves as the tool's **description** and is sent to the LLM. Therefore, a well-written and comprehensive docstring is crucial for the LLM to understand how to use the tool effectively. Clearly explain the purpose of the function, the meaning of its parameters, and the expected return values.
+The docstring of your function serves as the tool's **description** and is sent to the LLM. Therefore, a well-written and comprehensive docstring is crucial for the LLM to understand how to use the tool effectively. Clearly explain the purpose of the function, the meaning of its parameters, and the expected return values. In Java, you can use Javadoc comments or the `@Schema(description="...")` annotation on your method to serve as this description. In Kotlin, you can use KDoc comments or the `@Tool(description="...")` and `@Param(description="...")` annotations to provide these descriptions.
 
 ### Passing Data Between Tools
 
@@ -159,21 +230,35 @@ A tool can write data to a `temp:` variable, and a subsequent tool can read it. 
 ??? "Example"
 
     === "Python"
-    
+
         This tool is a python function which obtains the Stock price of a given Stock ticker/ symbol.
-    
+
         <u>Note</u>: You need to `pip install yfinance` library before using this tool.
-    
-        ```py
+
+        ```python
         --8<-- "examples/python/snippets/tools/function-tools/func_tool.py"
         ```
-    
+
         The return value from this tool will be wrapped into a dictionary.
-    
+
         ```json
         {"result": "$123"}
         ```
-    
+
+    === "Typescript"
+
+        This tool retrieves the mocked value of a stock price.
+
+        ```typescript
+        --8<-- "examples/typescript/snippets/tools/function-tools/function-tools-example.ts"
+        ```
+
+        The return value from this tool will be an object.
+
+        ```json
+        For input `GOOG`: {"price": 2800.0, "currency": "USD"}
+        ```
+
     === "Go"
 
         This tool retrieves the mocked value of a stock price.
@@ -200,28 +285,42 @@ A tool can write data to a `temp:` variable, and a subsequent tool can read it. 
         ```
 
     === "Java"
-    
+
         This tool retrieves the mocked value of a stock price.
-    
+
         ```java
         --8<-- "examples/java/snippets/src/main/java/tools/StockPriceAgent.java:full_code"
         ```
-    
+
         The return value from this tool will be wrapped into a Map<String, Object>.
-    
+
         ```json
         For input `GOOG`: {"symbol": "GOOG", "price": "1.0"}
+        ```
+
+    === "Kotlin"
+
+        This tool retrieves the mocked value of a stock price.
+
+        ```kotlin
+        --8<-- "examples/kotlin/snippets/tools/function-tools/FuncTool.kt:full_example"
+        ```
+
+        The return value from this tool will be a Map.
+
+        ```json
+        For input `GOOG`: {"symbol": "GOOG", "price": 123.45}
         ```
 
 ### Best Practices
 
 While you have considerable flexibility in defining your function, remember that simplicity enhances usability for the LLM. Consider these guidelines:
 
-* **Fewer Parameters are Better:** Minimize the number of parameters to reduce complexity.  
-* **Simple Data Types:** Favor primitive data types like `str` and `int` over custom classes whenever possible.  
+* **Fewer Parameters are Better:** Minimize the number of parameters to reduce complexity.
+* **Simple Data Types:** Favor primitive data types like `str` and `int` over custom classes whenever possible.
 * **Meaningful Names:** The function's name and parameter names significantly influence how the LLM interprets and utilizes the tool. Choose names that clearly reflect the function's purpose and the meaning of its inputs. Avoid generic names like `do_stuff()` or `beAgent()`.
 * **Build for Parallel Execution:** Improve function calling performance when multiple tools are run by building for asynchronous operation. For information on enabling parallel execution for tools, see
-[Increase tool performance with parallel execution](/adk-docs/tools-custom/performance/).
+[Increase tool performance with parallel execution](/tools-custom/performance/).
 
 ## Simplified Tool Declaration with JSON Schema (Experimental)
 
@@ -244,19 +343,19 @@ When using a `LongRunningFunctionTool`, your function can initiate the long-runn
     server to do the task.
 
 !!! tip "Tip: Parallel execution"
-    Depending on the type of tool you are building, designing for asychronous
+    Depending on the type of tool you are building, designing for asynchronous
     operation may be a better solution than creating a long running tool. For
     more information, see
-    [Increase tool performance with parallel execution](/adk-docs/tools-custom/performance/).
+    [Increase tool performance with parallel execution](/tools-custom/performance/).
 
 ### How it Works
 
-In Python, you wrap a function with `LongRunningFunctionTool`.  In Java, you pass a Method name to `LongRunningFunctionTool.create()`.
+In Python, you wrap a function with `LongRunningFunctionTool`. In Java, you pass a Method name to `LongRunningFunctionTool.create()`. In TypeScript, you instantiate the `LongRunningFunctionTool` class.
 
 
 1. **Initiation:** When the LLM calls the tool, your function starts the long-running operation.
 
-2. **Initial Updates:** Your function should optionally return an initial result (e.g. the long-running operaiton id). The ADK framework takes the result and sends it back to the LLM packaged within a `FunctionResponse`. This allows the LLM to inform the user (e.g., status, percentage complete, messages). And then the agent run is ended / paused.
+2. **Initial Updates:** Your function should optionally return an initial result (e.g. the long-running operation id). The ADK framework takes the result and sends it back to the LLM packaged within a `FunctionResponse`. This allows the LLM to inform the user (e.g., status, percentage complete, messages). And then the agent run is ended / paused.
 
 3. **Continue or Wait:** After each agent run is completed. Agent client can query the progress of the long-running operation and decide whether to continue the agent run with an intermediate response (to update the progress) or wait until a final response is retrieved. Agent client should send the intermediate or final response back to the agent for the next run.
 
@@ -268,8 +367,14 @@ Define your tool function and wrap it using the `LongRunningFunctionTool` class:
 
 === "Python"
 
-    ```py
+    ```python
     --8<-- "examples/python/snippets/tools/function-tools/human_in_the_loop.py:define_long_running_function"
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/tools/function-tools/long-running-function-tool-example.ts:define_long_running_function"
     ```
 
 === "Go"
@@ -294,16 +399,16 @@ Define your tool function and wrap it using the `LongRunningFunctionTool` class:
     import com.google.adk.tools.LongRunningFunctionTool;
     import java.util.HashMap;
     import java.util.Map;
-    
+
     public class ExampleLongRunningFunction {
-    
+
       // Define your Long Running function.
       // Ask for approval for the reimbursement.
       public static Map<String, Object> askForApproval(String purpose, double amount) {
         // Simulate creating a ticket and sending a notification
         System.out.println(
             "Simulating ticket creation for purpose: " + purpose + ", amount: " + amount);
-    
+
         // Send a notification to the approver with the link of the ticket
         Map<String, Object> result = new HashMap<>();
         result.put("status", "pending");
@@ -313,12 +418,12 @@ Define your tool function and wrap it using the `LongRunningFunctionTool` class:
         result.put("ticket-id", "approval-ticket-1");
         return result;
       }
-    
+
       public static void main(String[] args) throws NoSuchMethodException {
         // Pass the method to LongRunningFunctionTool.create
         LongRunningFunctionTool approveTool =
             LongRunningFunctionTool.create(ExampleLongRunningFunction.class, "askForApproval");
-    
+
         // Include the tool in the agent
         LlmAgent approverAgent =
             LlmAgent.builder()
@@ -329,23 +434,31 @@ Define your tool function and wrap it using the `LongRunningFunctionTool` class:
     }
     ```
 
+=== "Kotlin"
+
+    In Kotlin, you can create a long-running function tool by setting the `isLongRunning` property to `true` in the `@Tool` annotation.
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/tools/function-tools/LongRunningTool.kt:long_running_tool"
+    ```
+
 ### Intermediate / Final result Updates
 
 Agent client received an event with long running function calls and check the status of the ticket. Then Agent client can send the intermediate or final response back to update the progress. The framework packages this value (even if it's None) into the content of the `FunctionResponse` sent back to the LLM.
 
 !!! note "Note: Long running function response with Resume feature"
 
-    If your ADK agent workflow is configured with the 
-    [Resume](/adk-docs/runtime/resume/) feature, you also must include
-    the Invocation ID (`invocation_id`) parameter with the long running 
-    function response. The Invocation ID you provide must be the same 
-    invocation that generated the long running function request, otherwise 
+    If your ADK agent workflow is configured with the
+    [Resume](/runtime/resume/) feature, you also must include
+    the Invocation ID (`invocation_id`) parameter with the long running
+    function response. The Invocation ID you provide must be the same
+    invocation that generated the long running function request, otherwise
     the system starts a new invocation with the response. If your
     agent uses the Resume feature, consider including the Invocation ID
     as a parameter with your long running function request, so it can be
-    included with the response. For more details on using the Resume 
+    included with the response. For more details on using the Resume
     feature, see
-    [Resume stopped agents](/adk-docs/runtime/resume/).
+    [Resume stopped agents](/runtime/resume/).
 
 ??? Tip "Applies to only Java ADK"
 
@@ -380,8 +493,14 @@ Agent client received an event with long running function calls and check the st
 
 === "Python"
 
-    ```py
+    ```python
     --8<-- "examples/python/snippets/tools/function-tools/human_in_the_loop.py:call_reimbursement_tool"
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    --8<-- "examples/typescript/snippets/tools/function-tools/long-running-function-tool-example.ts"
     ```
 
 === "Go"
@@ -398,9 +517,10 @@ Agent client received an event with long running function calls and check the st
     --8<-- "examples/java/snippets/src/main/java/tools/LongRunningFunctionExample.java:full_code"
     ```
 
+
 ??? "Python complete example: File Processing Simulation"
 
-    ```py
+    ```python
     --8<-- "examples/python/snippets/tools/function-tools/human_in_the_loop.py"
     ```
 
@@ -420,7 +540,7 @@ This powerful feature allows you to leverage the capabilities of other agents wi
 
 It's important to distinguish an Agent-as-a-Tool from a Sub-Agent.
 
-* **Agent-as-a-Tool:** When Agent A calls Agent B as a tool (using Agent-as-a-Tool), Agent B's answer is **passed back** to Agent A, which then summarizes the answer and generates a response to the user. Agent A retains control and continues to handle future user input.  
+* **Agent-as-a-Tool:** When Agent A calls Agent B as a tool (using Agent-as-a-Tool), Agent B's answer is **passed back** to Agent A, which then summarizes the answer and generates a response to the user. Agent A retains control and continues to handle future user input.
 
 * **Sub-agent:** When Agent A calls Agent B as a sub-agent, the responsibility of answering the user is completely **transferred to Agent B**. Agent A is effectively out of the loop. All subsequent user input will be answered by Agent B.
 
@@ -430,8 +550,14 @@ To use an agent as a tool, wrap the agent with the AgentTool class.
 
 === "Python"
 
-    ```py
+    ```python
     tools=[AgentTool(agent=agent_b)]
+    ```
+
+=== "TypeScript"
+
+    ```typescript
+    tools: [new AgentTool({agent: agentB})]
     ```
 
 === "Go"
@@ -446,21 +572,32 @@ To use an agent as a tool, wrap the agent with the AgentTool class.
     AgentTool.create(agent)
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    AgentTool(agent = agentB)
+    ```
 
 ### Customization
 
 The `AgentTool` class provides the following attributes for customizing its behavior:
 
-* **skip\_summarization: bool:** If set to True, the framework will **bypass the LLM-based summarization** of the tool agent's response. This can be useful when the tool's response is already well-formatted and requires no further processing.
+* **skip\_summarization** (Python/TypeScript) / **skipSummarization** (Kotlin/Java): (boolean) If set to True, the framework will **bypass the LLM-based summarization** of the tool agent's response. This can be useful when the tool's response is already well-formatted and requires no further processing.
 
 ??? "Example"
 
     === "Python"
 
-        ```py
+        ```python
         --8<-- "examples/python/snippets/tools/function-tools/summarizer.py"
         ```
-  
+
+    === "TypeScript"
+
+        ```typescript
+        --8<-- "examples/typescript/snippets/tools/function-tools/agent-as-a-tool-example.ts"
+        ```
+
     === "Go"
 
         ```go
@@ -482,11 +619,17 @@ The `AgentTool` class provides the following attributes for customizing its beha
         --8<-- "examples/java/snippets/src/main/java/tools/AgentToolCustomization.java:full_code"
         ```
 
+    === "Kotlin"
+
+        ```kotlin
+        --8<-- "examples/kotlin/snippets/tools/function-tools/AgentTool.kt:agent_tool"
+        ```
+
 ### How it works
 
-1. When the `main_agent` receives the long text, its instruction tells it to use the 'summarize' tool for long texts.  
-2. The framework recognizes 'summarize' as an `AgentTool` that wraps the `summary_agent`.  
-3. Behind the scenes, the `main_agent` will call the `summary_agent` with the long text as input.  
-4. The `summary_agent` will process the text according to its instruction and generate a summary.  
-5. **The response from the `summary_agent` is then passed back to the `main_agent`.**  
-6. The `main_agent` can then take the summary and formulate its final response to the user (e.g., "Here's a summary of the text: ...")
+1. When the `root_agent` receives the long text, its instruction tells it to use the 'summarize' tool for long texts.
+2. The framework recognizes 'summarize' as an `AgentTool` that wraps the `summary_agent`.
+3. Behind the scenes, the `root_agent` will call the `summary_agent` with the long text as input.
+4. The `summary_agent` will process the text according to its instruction and generate a summary.
+5. **The response from the `summary_agent` is then passed back to the `root_agent`.**
+6. The `root_agent` can then take the summary and formulate its final response to the user (e.g., "Here's a summary of the text: ...")
