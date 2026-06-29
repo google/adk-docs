@@ -127,7 +127,7 @@ func runGetStarted() error {
 
 // --8<-- [end:get-started]
 
-// --8<-- [start:workflows-building-blocks]
+// --8<-- [start:building-blocks-nodes]
 // myFunctionNode demonstrates the explicit NewFunctionNode constructor —
 // equivalent to wrapping a function in a FunctionNode manually in Python:
 //
@@ -154,6 +154,9 @@ var myFormattingNode = workflow.NewFunctionNode("format",
 	workflow.NodeConfig{},
 )
 
+// --8<-- [end:building-blocks-nodes]
+
+// --8<-- [start:building-blocks-workflow]
 // orchestratorWorkflow is a dynamic node that schedules two children in
 // sequence via workflow.RunNode, equivalent to:
 //
@@ -173,7 +176,7 @@ var orchestratorWorkflow = workflow.NewDynamicNode[string, string]("my_workflow"
 	workflow.NodeConfig{},
 )
 
-// --8<-- [end:workflows-building-blocks]
+// --8<-- [end:building-blocks-workflow]
 
 // --8<-- [start:data-handling]
 // newDataHandlingWorkflow demonstrates how to pass data between a dynamic

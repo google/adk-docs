@@ -137,7 +137,7 @@ run within a workflow.
     to `workflow.RunNode` inside a dynamic orchestrator:
 
     ```go
-    --8<-- "examples/go/snippets/graphs/dynamic/main.go:workflows-building-blocks"
+    --8<-- "examples/go/snippets/graphs/dynamic/main.go:building-blocks-nodes"
     ```
 
     `NodeConfig` holds the same options as Python's `@node` arguments (for
@@ -177,7 +177,7 @@ execution logic (order and paths) for those nodes.
     `Workflow(edges=[("START", my_workflow)])`:
 
     ```go
-    --8<-- "examples/go/snippets/graphs/dynamic/main.go:workflows-building-blocks"
+    --8<-- "examples/go/snippets/graphs/dynamic/main.go:building-blocks-workflow"
     ```
 
 ## Data handling
@@ -281,11 +281,11 @@ as you can with graph-based workflows.
 === "Go"
 
     Call `workflow.RunNode` sequentially inside a `NewDynamicNode` body —
-    each call awaits the child before the next one starts:
-
-    ```go
-    --8<-- "examples/go/snippets/graphs/dynamic/main.go:data-handling"
-    ```
+    each call awaits the child before the next one starts. The
+    [data handling example above](#data-handling) demonstrates exactly this
+    pattern: `cityWorkflow` calls `workflow.RunNode` for `cityTimeNode` and
+    then `cityReportNode` in order, passing each node's typed output to the
+    next.
 
 ### Loop route
 
