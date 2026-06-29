@@ -37,7 +37,7 @@ agents.
 
 === "Go"
 
-    ADK Go v2.0.0 provides two complementary approaches to graph-based
+    ADK Go v2.0.0 provides the following approach to graph-based
     workflows:
 
     **Graph engine** (`workflowagent` + `workflow.Edge`): A node-and-edges
@@ -291,7 +291,7 @@ before passing results to the next step.
 
     `workflow.EdgeBuilder` makes the fan-out / fan-in wiring concise with its
     dedicated `AddFanOut` and `AddFanIn` helpers (as shown in the
-    [complex workflow example](https://github.com/google/adk-go/tree/v2/examples/workflow/complex)):
+    [complex workflow example](https://github.com/google/adk-go/tree/examples/workflow/complex)):
 
     ```go
     gatherNode := workflow.NewJoinNode("gather")
@@ -439,7 +439,7 @@ Go v2.0.0 you can express the same pattern in two ways:
     by setting `ctx.Actions().Escalate = true`, and the loop exits at the end
     of that iteration. The same iterative-refinement pattern can also be
     expressed with a back-edge in the `workflowagent` graph engine (see the
-    [routing examples](https://github.com/google/adk-go/tree/v2/examples/workflow/routing)):
+    [routing examples](https://github.com/google/adk-go/tree/examples/workflow/routing)):
 
     ```go
     --8<-- "examples/go/snippets/graphs/routes/main.go:loop-escalate"
