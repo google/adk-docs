@@ -50,9 +50,14 @@ snippets/graphs/index/main.go
 snippets/graphs/human-input/main.go
 snippets/graphs/routes/main.go
 snippets/graphs/data-handling/main.go
-# NOTE: snippets/graphs/dynamic/main.go uses the workflow package from ADK Go v2.0.0
-# (google.golang.org/adk/workflow, google.golang.org/adk/agent/workflowagent). This package
-# is not available in the currently published v1.x module. The file carries a
-# //go:build ignore constraint so `go build` skips it; it is registered here so
-# check_go_snippets.sh passes. Remove the constraint and this comment once v2.0.0 is tagged.
+# NOTE: The graphs snippets target ADK Go v2 (google.golang.org/adk/v2). They compile
+# only when the examples/go module is on google.golang.org/adk/v2 at v2.0.0 -- i.e. after
+# the v2.0.0 release is tagged and runner.sh fetches `go get google.golang.org/adk/v2@v2.0.0`.
+# Until then they will not build against the published v1.x module.
+#
+# snippets/graphs/dynamic/main.go additionally uses v2-only packages
+# (google.golang.org/adk/v2/workflow, .../agent/workflowagent) and carries a //go:build
+# ignore constraint. runner.sh builds by package directory, which honors that constraint
+# (the older file-mode `go build file.go` form did not). It is registered here so
+# check_go_snippets.sh passes. Remove the //go:build ignore once the module is on v2.0.0.
 snippets/graphs/dynamic/main.go

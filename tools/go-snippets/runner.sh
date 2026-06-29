@@ -84,10 +84,15 @@ get_command_for_action() {
   local command=""
 
   if [ "${action}" == "build" ]; then
-    # For 'build', extract only the file paths, ignoring any arguments.
-    # 'go build' does not accept application arguments, so they must be stripped.
-    local files_to_build=$(echo "${line}" | awk '{for(i=1;i<=NF;i++) if($i ~ /\.go$/) printf "%s ", $i}')
-    command="go build ${files_to_build}"
+    # For 'build', build by package directory rather than by individual file.
+    # File-mode `go build pkg/main.go` ignores Go build constraints (e.g.
+    # //go:build tags), so a constrained file would be compiled regardless.
+    # Building the package directory honors those constraints. Each line lists
+    # files from a single package directory, and `go build ./dir/` is
+    # non-recursive, so this matches the intended target. Arguments are dropped
+    # because `go build` does not accept application arguments.
+    local dirs_to_build=$(echo "${line}" | awk '{for(i=1;i<=NF;i++) if($i ~ /\.go$/){d=$i; sub(/\/[^\/]*$/,"",d); print "./"d"/"}}' | sort -u | tr '\n' ' ')
+    command="go build ${dirs_to_build}"
   elif [ "${action}" == "run" ]; then
     # For 'run', use the line as is, as 'go run' will pass arguments to the application.
     command="go run ${line}"
