@@ -2,7 +2,7 @@
 catalog_title: Mimir Memory
 catalog_description: Add persistent, local, encrypted cross-session memory to ADK agents
 catalog_icon: /integrations/assets/mimir.svg
-catalog_tags: ["data", "mcp"]
+catalog_tags: ["data"]
 ---
 
 # Mimir Memory integration for ADK
