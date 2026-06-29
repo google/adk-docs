@@ -346,7 +346,7 @@ Configure your  `ServiceAccount` to use ID token authentication and specify the 
   
 * `use_id_token` (Required for IAM): Set to True to enable ID token-based authentication. This switches the ADK from requesting an Access Token, for Google APIs, to an ID Token, for your own IAM-secured services.
   
-* `audience` (Required if use_id_token=True): The URL of the service you are calling, for example, https://my-service.run.app. This is a security binding that ensures the token is valid only for that specific destination.
+* `audience` (Required if use_id_token=True): The URL of the service you are calling, for example, `https://my-service.run.app`. This is a security binding that ensures the token is valid only for that specific destination.
   
 * `scopes` (Optional): Use it only when requesting Access Tokens for Google Cloud APIs, like Drive or BigQuery. You do not need to set this if you are using ID tokens for private service authentication.
 
