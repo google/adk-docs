@@ -33,6 +33,20 @@ provide the following advantages:
 -   **Enhance reliability:** Improve the predictability of your agents by
     relying on structured node definitions rather than prompts alone.
 
+!!! note "Workflow styles in ADK"
+
+    ADK offers three complementary ways to compose multi-step work:
+
+    -   **Graph-based workflows** (this section): a declarative graph of nodes
+        and edges with explicit routing — best for deterministic, structured
+        processes.
+    -   **[Dynamic workflows](/graphs/dynamic/):** programmatic orchestration
+        in your own code (loops, conditionals, recursion) — best when the
+        control flow is too complex or iterative for a static graph.
+    -   **[Prebuilt workflow agents](/agents/workflow-agents/)** (sequential,
+        parallel, loop): higher-level building blocks for common patterns
+        without assembling a graph yourself.
+
 ## Get started
 
 This section describes how to get started with graph-based agents. The following
