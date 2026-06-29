@@ -128,12 +128,12 @@ a function node returns or yields an `Event(output=...)`. In Go, an
 
     ```go
     // step1 writes two separate keys to state:
-    //   state["city_name"] = "Paris"   (via OutputKey on an llmagent)
-    //   state["city_time"] = "10:10 AM" (via OutputKey on another llmagent,
-    //                                    or State().Set in a custom Run func)
+    state["city_name"] = "Paris"   (via OutputKey on an llmagent)
+    state["city_time"] = "10:10 AM" (via OutputKey on another llmagent,
+    // or State().Set in a custom Run func)
     //
     // step2 reads both via its Instruction template:
-    //   Instruction: "It is {city_time} in {city_name} right now."
+    Instruction: "It is {city_time} in {city_name} right now."
     ```
 
 ### User-facing messages
