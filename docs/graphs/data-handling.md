@@ -15,9 +15,8 @@ schemas and specific instruction syntax.
 ## Workflow data flow
 
 Within a graph-based workflow, nodes pass data to downstream steps through
-session state. All execution nodes in a workflow can read from and write to
-session state; a step writes its output to a named key, and the next step reads
-it by referencing that key in its configuration.
+events. A step writes its output to a named event field, and the next step
+receives it as its typed input.
 
 === "Python"
 
@@ -31,16 +30,31 @@ it by referencing that key in its configuration.
 
 === "Go"
 
-    In ADK Go, workflow data flow is managed through **session state** rather
-    than through Event fields. The two primary mechanisms are:
+    In ADK Go v2.0.0, the data-passing mechanism depends on which agent style
+    you use:
 
-    -   **`OutputKey`** on `llmagent.Config`: after each turn, the framework
-        automatically captures the agent's final text response and writes it to
-        session state under the key you specify. Downstream agents read it by
-        placing `{key}` in their `Instruction` template — the same curly-brace
-        syntax as Python.
-    -   **`ctx.Session().State().Set` / `.Get`**: for custom `Run` functions and
-        tools that need to write or read arbitrary values from state directly.
+    **workflow package** (`FunctionNode`, `AgentNode`, `DynamicNode`): nodes
+    communicate through `session.Event` fields, mirroring Python closely:
+
+    -   **`Event.Output`**: the node's return value, set automatically by the
+        framework when a `FunctionNode` returns a non-`*genai.Content` value.
+        The successor node receives this as its typed `input` parameter.
+    -   **`Event.Routes`**: routing keys set explicitly by an emitting node to
+        select which conditional edge to follow — the Go equivalent of
+        Python's `Event(route=...)`.
+    -   **`Event.NodeInfo`**: scheduler metadata (`path`, `MessageAsOutput`,
+        `OutputFor`). Set by the workflow engine; nodes do not set this
+        directly.
+
+    **Prebuilt workflow agents** (`sequentialagent`, `parallelagent`,
+    `loopagent`): these agents communicate through session state:
+
+    -   **`OutputKey`** on `llmagent.Config`: the framework writes the agent's
+        final text response to `state[OutputKey]` after each turn.
+    -   **`ctx.Session().State().Set` / `.Get`**: write or read arbitrary
+        values from state inside custom code.
+    -   **`{key}` in `Instruction`**: the framework substitutes `state["key"]`
+        into the prompt before calling the model.
 
     State keys may carry a prefix that controls their lifetime and scope:
 
@@ -53,10 +67,7 @@ it by referencing that key in its configuration.
 
 ### Node output
 
-Each step in a workflow produces output by writing to session state. In Python,
-a function node returns or yields an `Event(output=...)`. In Go, an
-`llmagent` step writes via `OutputKey`, and a custom `Run` function writes via
-`ctx.Session().State().Set`.
+Each step in a workflow produces output for its successor.
 
 === "Python"
 
@@ -80,18 +91,21 @@ a function node returns or yields an `Event(output=...)`. In Go, an
 
 === "Go"
 
-    Use `OutputKey` on `llmagent.Config` to automatically save an agent's
-    response to session state. For custom `Run` functions, call
-    `ctx.Session().State().Set` directly:
+    **workflow package**: a `FunctionNode` simply returns a typed Go value.
+    The framework automatically wraps the return value in a `session.Event`
+    and sets `Event.Output`. The successor node receives this value as its
+    typed `input` parameter — no manual event construction needed:
+
+    ```go
+    --8<-- "examples/go/snippets/graphs/data-handling/main.go:event-output"
+    ```
+
+    **Prebuilt workflow agents**: use `OutputKey` on `llmagent.Config` to
+    save an agent's text response to session state, then reference it with
+    `{key}` in downstream agents' `Instruction` templates:
 
     ```go
     --8<-- "examples/go/snippets/graphs/data-handling/main.go:output-key"
-    ```
-
-    For custom `Run` functions acting as workflow steps:
-
-    ```go
-    --8<-- "examples/go/snippets/graphs/data-handling/main.go:custom-run-node"
     ```
 
 ### Node output: passing structured data
@@ -119,21 +133,42 @@ a function node returns or yields an `Event(output=...)`. In Go, an
 
 === "Go"
 
-    In Go, structured data is stored as separate keys in session state, each
-    written by its producing step using `OutputKey` or `State().Set`. There is
-    no single-payload restriction; each key is an independent write. Downstream
-    agents access individual fields by placing `{key}` in their `Instruction`.
-
-    For example, to pass both a city name and a time value to the next step:
+    **workflow package**: a `FunctionNode` can return any JSON-serializable
+    Go struct. The framework serializes it into `Event.Output` and
+    deserializes it back into the successor node's typed `input` parameter.
+    There is no single-payload restriction — each node has exactly one typed
+    return value:
 
     ```go
-    // step1 writes two separate keys to state:
-    state["city_name"] = "Paris"   (via OutputKey on an llmagent)
-    state["city_time"] = "10:10 AM" (via OutputKey on another llmagent,
-    // or State().Set in a custom Run func)
-    //
-    // step2 reads both via its Instruction template:
-    Instruction: "It is {city_time} in {city_name} right now."
+    --8<-- "examples/go/snippets/graphs/data-handling/main.go:structured-output"
+    ```
+
+    **Prebuilt workflow agents**: use multiple `OutputKey` values, one per
+    agent, to store individual fields in session state. Downstream agents
+    read each field independently via `{key}` in their `Instruction`.
+
+### Routing output
+
+=== "Python"
+
+    Use the `route` parameter of an ***Event*** to drive conditional edge
+    dispatch:
+
+    ```python
+    def router(node_input: str):
+        return Event(route="BUG")
+    ```
+
+=== "Go"
+
+    **workflow package**: an emitting `FunctionNode` constructs a
+    `session.Event` directly, sets `Event.Routes` to the desired route keys,
+    and sets `Event.Output` to forward the payload to the successor. The
+    workflow engine reads `Event.Routes` at dispatch time to select the
+    matching edge:
+
+    ```go
+    --8<-- "examples/go/snippets/graphs/data-handling/main.go:routing-output"
     ```
 
 ### User-facing messages
@@ -151,19 +186,21 @@ a function node returns or yields an `Event(output=...)`. In Go, an
 
 === "Go"
 
-    In Go, a workflow step sends a user-facing message by yielding a
-    `session.Event` whose `LLMResponse.Content` contains the text. The runner
-    surfaces this to the caller as a normal agent response:
+    **workflow package**: to emit a user-visible message without advancing
+    the node's typed output, set `Event.Content` on an intermediate event
+    emitted via the `emit` callback in an `EmittingFunctionNode`. The
+    terminal return value (or `nil`) controls `Event.Output`.
 
-    ```go
-    --8<-- "examples/go/snippets/graphs/data-handling/main.go:message-output"
-    ```
+    **Prebuilt workflow agents**: any `llmagent` step automatically emits its
+    model response as a user-facing event. For non-LLM steps, write a custom
+    `Run` function on an `agent.Agent` that yields events whose
+    `LLMResponse.Content` contains the text.
 
 ### Session state and state scopes
 
-Session state persists data across the steps of a workflow and across turns
-within a session. State key prefixes control how long values live and who can
-see them.
+Session state persists data across turns within a session. It is the primary
+data-sharing mechanism for the prebuilt workflow agents, and is also available
+inside tools and callbacks regardless of which agent style you use.
 
 === "Python"
 
@@ -204,9 +241,11 @@ see them.
 
 === "Go"
 
-    In Go, state is written with `ctx.Session().State().Set(key, value)` and
-    read with `.Get(key)`. The `session` package defines prefix constants that
-    map to the same lifetime scopes as Python's state parameter:
+    State is written with `ctx.Session().State().Set(key, value)` and read
+    with `.Get(key)`. The `session` package defines prefix constants that map
+    to the same lifetime scopes as Python's state parameter. This pattern
+    applies to prebuilt workflow agents and to tools and callbacks in any
+    agent style:
 
     ```go
     --8<-- "examples/go/snippets/graphs/data-handling/main.go:state-scopes"
@@ -217,6 +256,13 @@ see them.
         Session state is a lightweight key-value store. Do not use it to persist
         large payloads such as file contents or binary data. Use ADK artifacts
         or external storage tools instead.
+
+    !!! tip "workflow package: prefer Event.Output over state"
+
+        For the `workflow` package (`FunctionNode`, `AgentNode`, `DynamicNode`),
+        pass data between nodes by returning typed values — the framework sets
+        `Event.Output` automatically. Only use `State().Set` when you need to
+        share values with tools, callbacks, or agent `Instruction` templates.
 
 ## Constrain node data with schemas
 
@@ -262,24 +308,22 @@ accepted and produced by any agent node.
 
 === "Go"
 
-    In Go, schemas are defined as `*genai.Schema` values and assigned to
-    `InputSchema` and `OutputSchema` on `llmagent.Config`.
-
-    -   **`InputSchema`**: constrains what the agent accepts when called as a
-        sub-agent. The caller must provide a JSON object matching this schema.
-    -   **`OutputSchema`**: forces the model to reply with a JSON object matching
-        the schema. When `OutputSchema` is set the agent cannot use tools.
+    **workflow package**: schemas are attached to a node with
+    `workflow.NewAgentNodeWithSchemas`, which accepts `*genai.Schema` values
+    for input and output. The node's `Event.Output` carries the structured
+    result to the successor — no `OutputKey` or state write is needed:
 
     ```go
     --8<-- "examples/go/snippets/graphs/data-handling/main.go:input-output-schema"
     ```
 
-## Access structured data in agents
+    **Prebuilt workflow agents**: set `InputSchema` and `OutputSchema` on
+    `llmagent.Config`. `OutputSchema` forces the model to reply with a JSON
+    object matching the schema (the agent cannot use tools when `OutputSchema`
+    is set). Use `OutputKey` to save the JSON string to state for downstream
+    agents to reference via `{key}` in their `Instruction`.
 
-When structured data has been written to session state by a previous step, a
-downstream agent can reference it in its `Instruction` using `{key}` template
-placeholders. The ADK framework substitutes the current value of `state[key]`
-into the instruction before it is sent to the model.
+## Access structured data in agents
 
 === "Python"
 
@@ -325,14 +369,21 @@ into the instruction before it is sent to the model.
 
 === "Go"
 
-    In Go, each state key is referenced independently using `{key}` in the
-    `Instruction` field. There is no class-scoped or source-node-qualified
-    syntax; instead, use distinct, descriptive key names and write each value
-    to its own key via `OutputKey` or `State().Set`:
+    **workflow package**: a `FunctionNode` returns a typed struct; the
+    framework serializes it into `Event.Output` and the successor `AgentNode`
+    receives it as its user content. The struct fields are available to the
+    agent inline — no `{key}` template syntax is required. See the
+    [structured output snippet](#node-output-passing-structured-data) above
+    for an example.
+
+    **Prebuilt workflow agents**: each state key is referenced independently
+    using `{key}` in the `Instruction` field. There is no class-scoped or
+    source-node-qualified syntax; use distinct, descriptive key names and
+    write each value to its own key via `OutputKey`:
 
     ```go
-    --8<-- "examples/go/snippets/graphs/data-handling/main.go:template-data-access"
+    --8<-- "examples/go/snippets/graphs/data-handling/main.go:output-key"
     ```
 
-For a complete, but simplified version of this workflow, see
+For a complete example of this workflow, see
 [Graph-based agent workflows](/graphs/#get-started).
