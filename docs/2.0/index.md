@@ -229,23 +229,60 @@ the new Workflow Graph engine.
 `BeforeAgentCallback` and `AfterAgentCallback` hooks to safely inject custom
 logic into the execution lifecycle.
 
+### Event Construction: `session.NewEvent` signature change
+
+`session.NewEvent` now requires a `context.Context` as its first argument:
+
+```go
+// Before (ADK Go 1.x)
+ev := session.NewEvent(ctx.InvocationID())
+// or
+ev := session.NewEventWithContext(ctx, ctx.InvocationID())
+
+// After (ADK Go 2.0)
+ev := session.NewEvent(ctx, ctx.InvocationID())
+```
+
+The event ID and timestamp are now obtained through the `platform` package,
+so a time or UUID provider installed on `ctx` controls them. This lets workflow
+engines produce deterministic, replay-safe events. The previous
+parameterless-context form and the temporary `NewEventWithContext` helper are
+removed.
+
+**Migration action:** Pass the context already in scope as the first argument
+to `session.NewEvent`. Any `context.Context` works — the `ctx` of an agent,
+tool, or callback (which embed `context.Context`), a request context, or in
+tests, `t.Context()`. If a helper that calls `NewEvent` does not yet receive a
+context, add a `ctx context.Context` parameter and thread it down from the
+caller. Avoid creating a new `context.Background()` mid-call-chain; reserve
+that for `main`, `init`, and top-level test setup.
+
 ### Event Schema & Custom Session Storage
 
-ADK Go 2.0 introduces new fields to the core ***Event*** schema to track graph
-state and workflow outputs: `Output` (which has no JSON struct tag and so
-serializes as `Output`) and `nodeInfo` (`json:"nodeInfo"`).
+ADK Go 2.0 adds five new fields to the core ***Event*** struct to support
+graph routing, workflow state, and human-in-the-loop pausing:
+
+| Go field | Serialized name | Purpose |
+|---|---|---|
+| `IsolationScope string` | `isolationScope` (`json:"isolationScope,omitempty"`) | Restricts which agent contexts see this event in LLM prompt history. |
+| `Routes []string` | `Routes` (no JSON tag) | Routing keys emitted by a node to drive conditional edge dispatch. |
+| `RequestedInput *RequestInput` | `RequestedInput` (no JSON tag) | Signals that a workflow node is pausing for human input. |
+| `Output any` | `Output` (no JSON tag) | Generic data output from a workflow node. |
+| `NodeInfo *NodeInfo` | `nodeInfo` (`json:"nodeInfo,omitempty"`) | Workflow-node metadata identifying which node emitted the event. |
 
 *   **Custom session storage:** If you have implemented a custom
     `session.Service`, such as storing sessions in your own SQL or NoSQL
     databases with rigid schemas, your underlying database schema must be
-    updated to accommodate these new fields. Inserting a 2.0 ***Event*** into a
-    rigid 1.x database table causes insertion or deserialization failures.
-    *However, if your custom session service stores events as serialized JSON
-    blobs, you do not need to update your schema.*
+    updated to accommodate all five new fields. Inserting a 2.0 ***Event***
+    into a rigid 1.x database table causes insertion or deserialization
+    failures. *However, if your custom session service stores events as
+    serialized JSON blobs, you do not need to update your schema.*
 
 **Migration action:** Update your database schemas and downstream client
-validators to expect and store the `Output` and `nodeInfo` fields on all Event
-payloads.
+validators to expect and store the five new fields on all Event payloads.
+Pay particular attention to `Routes`, `RequestedInput`, and `Output`, which
+have no JSON struct tags and therefore serialize under their Go field names
+exactly as shown above.
 
 If you encounter additional ADK Go 1.0 to ADK 2.0 incompatibilities, report
 them through the
