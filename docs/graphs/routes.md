@@ -198,7 +198,7 @@ before passing results to the next step.
     from these nodes to the next node.
 
     ```python
-    ​​from google.adk.workflow import JoinNode
+    from google.adk.workflow import JoinNode
 
     my_join_node = JoinNode(name="my_join_node")
 
