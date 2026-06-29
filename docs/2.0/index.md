@@ -210,8 +210,8 @@ paths in your Go source files and your `go.mod` file.
 *   **1.x import path:** `google.golang.org/adk`
 *   **2.0 import path:** `google.golang.org/adk/v2`
 
-**Migration action:** Run `go get google.golang.org/adk/v2` and update all
-import statements in your source files from `google.golang.org/adk/...` to
+**Migration action:** Run `go get google.golang.org/adk/v2@v2.0.0` and update
+all import statements in your source files from `google.golang.org/adk/...` to
 `google.golang.org/adk/v2/...`.
 
 ### Agent Execution: Agent interface changes
@@ -260,7 +260,7 @@ ADK Go 2.0 has the following system requirements:
 To install ADK Go 2.0, run the following command in your module directory:
 
 ```shell
-go get google.golang.org/adk/v2
+go get google.golang.org/adk/v2@v2.0.0
 ```
 
 This adds ADK Go 2.0 as a dependency to your `go.mod` file. Verify your

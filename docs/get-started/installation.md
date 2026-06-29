@@ -71,13 +71,13 @@ across supported languages. For a guided introduction, start with the
     To add ADK Go v2.0.0 to your project, run the following command:
 
     ```shell
-    go get google.golang.org/adk@v2
+    go get google.golang.org/adk/v2@v2.0.0
     ```
 
     This will add ADK Go v2.0.0 as a dependency to your `go.mod` file.
 
     (Optional) Verify your installation by checking your `go.mod` file for the
-    `google.golang.org/adk` entry at version `v2.x.x` or later.
+    `google.golang.org/adk/v2` entry.
 
     ??? tip "Still using ADK Go v1.x?"
 
