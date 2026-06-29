@@ -255,6 +255,12 @@ This parameter prevents excessive API usage and potential runaway processes.
 Since LLM calls often incur costs and consume resources, setting appropriate
 limits is crucial.
 
+### `tool_thread_pool_config` 
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+</div>
+This parameter configures a thread pool for running synchronous tools to avoid blocking the event loop, which is critical for Live API mode
+
 ## Validation Rules
 
 <div class="language-support-tag">
