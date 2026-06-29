@@ -100,9 +100,10 @@ To create an ADK project for use with Agent Config:
             GOOGLE_CLOUD_PROJECT=<your_gcp_project>
             GOOGLE_CLOUD_LOCATION=us-central1
 
-        For information on creating a Cloud Project, see the Google Cloud docs
-        for
+        For information on creating a Cloud Project, see the Google Cloud docs for
         [Creating and managing projects](https://cloud.google.com/resource-manager/docs/creating-managing-projects).
+        For more information on connecting to Google Cloud from ADK agents, see
+        [Connect to Google Cloud and Agent Platform](/get-started/google-cloud/).
 
 1.  Using text editor, edit the Agent Config file
     `my_agent/root_agent.yaml`, as shown below:

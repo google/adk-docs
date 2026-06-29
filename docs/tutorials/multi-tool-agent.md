@@ -324,118 +324,39 @@ entirely on your machine and is recommended for internal development.
 ## 3. Set up the model { #set-up-the-model }
 
 Your agent's ability to understand user requests and generate responses is
-powered by a Large Language Model (LLM). Your agent needs to make secure calls
-to this external LLM service, which **requires authentication credentials**. Without
-valid authentication, the LLM service will deny the agent's requests, and the
-agent will be unable to function.
+powered by a generative AI model or Large Language Model (LLM). This guide uses Gemini models as
+examples, but ADK is compatible with many AI models from Google and other
+providers. For more information on available models and how to configure
+them, see [AI Models for ADK agents](/agents/models/).
 
-!!!tip "Model Authentication guide"
-    For a detailed guide on authenticating to different models, see the [Authentication guide](/agents/models/google-gemini#google-ai-studio).
-    This is a critical step to ensure your agent can make calls to the LLM service.
+### Model connection and authentication
 
-=== "Gemini - Google AI Studio"
-    1. Get an API key from [Google AI Studio](https://aistudio.google.com/apikey).
-    2. When using Python, open the **`.env`** file located inside (`multi_tool_agent/`)
-    and copy-paste the following code.
+When using an AI model through a service, such as the Gemini API or Gemini
+Enterprise Agent Platform on Google Cloud, you must provide an API key or
+authenticate with the service. The most direct way to provide this information
+is to use environment variables or an `.env` file. The following examples show
+the most common way to configure an agent for use with the Gemini API or Gemini
+Enterprise Agent Platform.
 
-        ```env title="multi_tool_agent/.env"
-        GOOGLE_GENAI_USE_ENTERPRISE=FALSE
-        GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_API_KEY_HERE
-        ```
+=== "Gemini API"
 
-        When using Java, define environment variables:
+    ```
+    # .env configuration file
+    GOOGLE_API_KEY="PASTE_YOUR_GEMINI_API_KEY_HERE"
+    ```
 
-        ```console title="terminal"
-        export GOOGLE_GENAI_USE_ENTERPRISE=FALSE
-        export GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_API_KEY_HERE
-        ```
+=== "Google Cloud Agent Platform"
 
-        When using TypeScript, the `.env` file is automatically loaded by the `import 'dotenv/config';` line at the top of your `agent.ts` file.
+    ```
+    # .env configuration file
+    GOOGLE_CLOUD_PROJECT=your-project-id
+    GOOGLE_CLOUD_LOCATION=location-code        # example: us-central1
+    GOOGLE_GENAI_USE_ENTERPRISE=True
+    ```
 
-        ```env title="multi_tool_agent/.env"
-        GOOGLE_GENAI_USE_ENTERPRISE=FALSE
-        GOOGLE_GENAI_API_KEY=PASTE_YOUR_ACTUAL_API_KEY_HERE
-        ```
-
-        When using Go, define environment variables in your terminal or use a `.env` file:
-
-        ```bash title="terminal"
-        export GOOGLE_GENAI_USE_ENTERPRISE=FALSE
-        export GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_API_KEY_HERE
-        ```
-
-    3. Replace `PASTE_YOUR_ACTUAL_API_KEY_HERE` with your actual `API KEY`.
-
-=== "Gemini - Google Cloud Agent Platform"
-    1. Set up a [Google Cloud project](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-gcp) and [enable the Agent Platform API](https://console.cloud.google.com/flows/enableapi?apiid=aiplatform.googleapis.com).
-    2. Set up the [gcloud CLI](https://cloud.google.com/vertex-ai/generative-ai/docs/start/quickstarts/quickstart-multimodal#setup-local).
-    3. Authenticate to Google Cloud from the terminal by running `gcloud auth application-default login`.
-    4. When using Python, open the **`.env`** file located inside (`multi_tool_agent/`). Copy-paste
-    the following code and update the project ID and location.
-
-        ```env title="multi_tool_agent/.env"
-        GOOGLE_GENAI_USE_ENTERPRISE=TRUE
-        GOOGLE_CLOUD_PROJECT=YOUR_PROJECT_ID
-        GOOGLE_CLOUD_LOCATION=LOCATION
-        ```
-
-        When using Java, define environment variables:
-
-        ```console title="terminal"
-        export GOOGLE_GENAI_USE_ENTERPRISE=TRUE
-        export GOOGLE_CLOUD_PROJECT=YOUR_PROJECT_ID
-        export GOOGLE_CLOUD_LOCATION=LOCATION
-        ```
-
-        When using TypeScript, the `.env` file is automatically loaded by the `import 'dotenv/config';` line at the top of your `agent.ts` file.
-
-        ```env title=".env"
-        GOOGLE_GENAI_USE_ENTERPRISE=TRUE
-        GOOGLE_CLOUD_PROJECT=YOUR_PROJECT_ID
-        GOOGLE_CLOUD_LOCATION=LOCATION
-        ```
-
-        When using Go, define environment variables in your terminal or use a `.env` file:
-
-        ```bash title="terminal"
-        export GOOGLE_GENAI_USE_ENTERPRISE=TRUE
-        export GOOGLE_CLOUD_PROJECT=YOUR_PROJECT_ID
-        export GOOGLE_CLOUD_LOCATION=LOCATION
-        ```
-
-=== "Gemini - Google Cloud Agent Platform with Express Mode"
-    1. You can sign up for a free Google Cloud project and use Gemini for free with an eligible account!
-        * Set up a
-          [Google Cloud project with Agent Platform Express Mode](https://cloud.google.com/vertex-ai/generative-ai/docs/start/express-mode/overview)
-        * Get an API key from your Express mode project. This key can be used with ADK to use Gemini models for free, as well as access to Agent Runtime services.
-    2. When using Python, open the **`.env`** file located inside (`multi_tool_agent/`). Copy-paste
-    the following code and update the project ID and location.
-
-        ```env title="multi_tool_agent/.env"
-        GOOGLE_GENAI_USE_ENTERPRISE=TRUE
-        GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_EXPRESS_MODE_API_KEY_HERE
-        ```
-
-        When using Java, define environment variables:
-
-        ```console title="terminal"
-        export GOOGLE_GENAI_USE_ENTERPRISE=TRUE
-        export GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_EXPRESS_MODE_API_KEY_HERE
-        ```
-
-        When using TypeScript, the `.env` file is automatically loaded by the `import 'dotenv/config';` line at the top of your `agent.ts` file.
-
-        ```env title=".env"
-        GOOGLE_GENAI_USE_ENTERPRISE=TRUE
-        GOOGLE_GENAI_API_KEY=PASTE_YOUR_ACTUAL_EXPRESS_MODE_API_KEY_HERE
-        ```
-
-        When using Go, define environment variables in your terminal or use a `.env` file:
-
-        ```bash title="terminal"
-        export GOOGLE_GENAI_USE_ENTERPRISE=TRUE
-        export GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_EXPRESS_MODE_API_KEY_HERE
-        ```
+For more details on connecting ADK agents to Google Cloud hosted models and services,
+including Gemini Enterprise Agent Platform, see the
+[Connect to Google Cloud and Agent Platform](/get-started/google-cloud/) guide.
 
 ## 4. Run Your Agent { #run-your-agent }
 

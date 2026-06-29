@@ -34,7 +34,7 @@ for your agent application with ADK:
     This workflow type allows you to compose both AI-powered agents and deterministic
     execution nodes into a flexible execution graph that can include decision branching.
 
-*   [**Dynamic workflows:**](/workflows/collaboration/) (ADK 2.0 and higher)
+*   [**Dynamic workflows:**](/graphs/dynamic/) (ADK 2.0 and higher)
     This workflow type allows you to compose AI-powered agents and deterministic
     execution nodes using full programmatic code logic.
 

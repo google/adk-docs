@@ -206,3 +206,4 @@ If you click on one of the traces, you will see a waterfall view of the detailed
 
 - [Google Cloud Trace Documentation](https://cloud.google.com/trace)
 - [OpenTelemetry Documentation](https://opentelemetry.io/docs/)
+- [Connect to Google Cloud and Agent Platform](/get-started/google-cloud/)

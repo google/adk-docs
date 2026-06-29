@@ -14,6 +14,8 @@ on:
   issues:
     types: [opened, labeled]
 
+permissions: {}
+
 jobs:
   update-adk-python-docs-from-issue:
     if: contains(github.event.issue.labels.*.name, 'docs updates')
@@ -21,25 +23,26 @@ jobs:
 
     steps:
       - name: Checkout ADK Python repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
         with:
           repository: google/adk-python
           path: ./adk-python
           token: ${{ secrets.ADK_BOT_GITHUB_TOKEN }}
+          persist-credentials: false
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
         with:
           python-version: '3.11'
 
       - name: Authenticate to Google Cloud
         id: auth
-        uses: 'google-github-actions/auth@v3'
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3.0.0
         with:
           credentials_json: '${{ secrets.ADK_GCP_SA_KEY }}'
 
       - name: Load adk-bot SSH Private Key
-        uses: webfactory/ssh-agent@v0.9.0
+        uses: webfactory/ssh-agent@dc588b651fe13675774614f8e6a936a468676387 # v0.9.0
         with:
           ssh-private-key: ${{ secrets.ADK_BOT_SSH_PRIVATE_KEY }}
 
@@ -65,5 +68,6 @@ jobs:
           CODE_REPO: 'adk-python'
           INTERACTIVE: 0
           PYTHONPATH: adk-python/contributing/samples/adk_team/adk_documentation
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
         run:
-          python -m adk_docs_updater.main --issue_number ${{ github.event.issue.number }}
+          python -m adk_docs_updater.main --issue_number "${ISSUE_NUMBER}"

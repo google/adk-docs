@@ -116,6 +116,9 @@ To run the agent, choose a platform from either Google AI Studio or Google Cloud
         GOOGLE_CLOUD_LOCATION=us-central1
         ```
 
+For more information on connecting to Google Cloud from ADK agents, see
+[Connect to Google Cloud and Agent Platform](/get-started/google-cloud/).
+
 ## 4. Try the agent with `adk web` { #try-the-agent-with-adk-web }
 
 Now it's ready to try the agent. Run the following command to launch the **dev UI**. First, make sure to set the current directory to `app`:
