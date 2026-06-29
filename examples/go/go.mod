@@ -1,6 +1,6 @@
 module snippets
 
-go 1.25.1
+go 1.25.0
 
 require (
 	google.golang.org/adk v1.4.0
