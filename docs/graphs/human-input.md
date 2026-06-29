@@ -81,9 +81,12 @@ the input process more predictable and reliable.
 
 === "Go"
 
-    In ADK Go, the HITL tool-confirmation flow is configured through
-    `functiontool.Config` and the `agent.Context` interface. The equivalent
-    configuration options are:
+    In ADK Go, a tool can request HITL confirmation in two ways: set the static
+    `RequireConfirmation` toggle in `functiontool.Config` (the framework pauses
+    with a generic prompt *before* the tool body runs), or call
+    `ctx.RequestConfirmation(hint, payload)` from inside the tool body for a
+    custom prompt. The relevant options on `functiontool.Config` and the
+    `agent.Context` interface are:
 
     -   **`RequireConfirmation`** (`bool` in `functiontool.Config`): Set to
         `true` to make the framework always pause and ask for user approval
