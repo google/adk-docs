@@ -68,7 +68,7 @@ type DoubleNumberResults struct {
 // execution and emits an "adk_request_confirmation" event to the client before
 // running the tool. The client must reply with a FunctionResponse confirming
 // or denying the action.
-func doubleNumber(ctx agent.ToolContext, args DoubleNumberArgs) (DoubleNumberResults, error) {
+func doubleNumber(ctx agent.Context, args DoubleNumberArgs) (DoubleNumberResults, error) {
 	return DoubleNumberResults{Result: args.Number * 2}, nil
 }
 
@@ -119,7 +119,7 @@ type BookFlightResults struct {
 // bookFlight is a tool that pauses for human approval before completing a
 // booking. It calls ctx.RequestConfirmation with a descriptive hint message
 // so that the client can display exactly what action is pending.
-func bookFlight(ctx agent.ToolContext, args BookFlightArgs) (BookFlightResults, error) {
+func bookFlight(ctx agent.Context, args BookFlightArgs) (BookFlightResults, error) {
 	// Check whether the user has already responded to an earlier confirmation
 	// request for this exact tool call.
 	if confirmation := ctx.ToolConfirmation(); confirmation != nil {
@@ -195,7 +195,7 @@ type ReviewItineraryResults struct {
 
 // reviewItinerary pauses for user feedback and sends a structured payload (the
 // full itinerary) alongside the hint so the client can render it for the user.
-func reviewItinerary(ctx agent.ToolContext, args ReviewItineraryArgs) (ReviewItineraryResults, error) {
+func reviewItinerary(ctx agent.Context, args ReviewItineraryArgs) (ReviewItineraryResults, error) {
 	if confirmation := ctx.ToolConfirmation(); confirmation != nil {
 		if !confirmation.Confirmed {
 			return ReviewItineraryResults{Status: "Itinerary rejected by user."}, nil

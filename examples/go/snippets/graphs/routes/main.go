@@ -311,7 +311,7 @@ type ExitLoopResults struct{}
 // exitLoop signals the loopagent to stop by setting Escalate = true on the
 // current event's actions. This is the Go equivalent of routing to an exit
 // node in a Python conditional-branch graph.
-func exitLoop(ctx tool.Context, _ ExitLoopArgs) (ExitLoopResults, error) {
+func exitLoop(ctx agent.Context, _ ExitLoopArgs) (ExitLoopResults, error) {
 	ctx.Actions().Escalate = true
 	return ExitLoopResults{}, nil
 }

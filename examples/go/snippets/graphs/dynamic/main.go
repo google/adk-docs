@@ -98,7 +98,7 @@ var helloNode = workflow.NewFunctionNode("hello_node",
 // workflow.NewDynamicNode defaults RerunOnResume to &true, matching the
 // Python @node(rerun_on_resume=True) behaviour.
 var myWorkflow = workflow.NewDynamicNode[string, string]("my_workflow",
-	func(ctx workflow.NodeContext, _ string, _ func(*session.Event) error) (string, error) {
+	func(ctx agent.Context, _ string, _ func(*session.Event) error) (string, error) {
 		return workflow.RunNode[string](ctx, helloNode, "hello")
 	},
 	workflow.NodeConfig{},
@@ -166,7 +166,7 @@ var myFormattingNode = workflow.NewFunctionNode("format",
 //	    result_formatted = await ctx.run_node(my_formatting_node, node_input=result)
 //	    return result_formatted
 var orchestratorWorkflow = workflow.NewDynamicNode[string, string]("my_workflow",
-	func(ctx workflow.NodeContext, _ string, _ func(*session.Event) error) (string, error) {
+	func(ctx agent.Context, _ string, _ func(*session.Event) error) (string, error) {
 		result, err := workflow.RunNode[string](ctx, myFunctionNode, "Hello")
 		if err != nil {
 			return "", err
@@ -225,7 +225,7 @@ func newDataHandlingWorkflow(ctx context.Context) (agent.Agent, error) {
 	}
 
 	cityWorkflow := workflow.NewDynamicNode[string, string]("city_workflow",
-		func(ctx workflow.NodeContext, _ string, _ func(*session.Event) error) (string, error) {
+		func(ctx agent.Context, _ string, _ func(*session.Event) error) (string, error) {
 			cityTime, err := workflow.RunNode[string](ctx, cityTimeNode, "Paris")
 			if err != nil {
 				return "", err
@@ -308,7 +308,7 @@ func newLoopWorkflow(ctx context.Context) (agent.Agent, error) {
 	}
 
 	codeWorkflow := workflow.NewDynamicNode[string, string]("code_workflow",
-		func(ctx workflow.NodeContext, userRequest string, _ func(*session.Event) error) (string, error) {
+		func(ctx agent.Context, userRequest string, _ func(*session.Event) error) (string, error) {
 			code, err := workflow.RunNode[string](ctx, coderNode, userRequest)
 			if err != nil {
 				return "", err
@@ -412,7 +412,7 @@ func newHITLWorkflow() (agent.Agent, error) {
 	// greetNode pauses for the user's name on the first pass and produces a
 	// greeting on resume. workflow.ResumeOrRequestInput handles both phases.
 	greetNode := workflow.NewEmittingFunctionNode[any, any]("get_user_approval",
-		func(nc workflow.NodeContext, _ any, emit func(*session.Event) error) (any, error) {
+		func(nc agent.Context, _ any, emit func(*session.Event) error) (any, error) {
 			// ResumeOrRequestInput: on first pass, emits the prompt and
 			// returns ErrNodeInterrupted. On re-run after the human replies,
 			// it returns the reply payload directly.
@@ -464,7 +464,7 @@ func newCustomIDWorkflow() (agent.Agent, error) {
 	orders := []string{"ord-001", "ord-002", "ord-003"}
 
 	processAllOrders := workflow.NewDynamicNode[any, []string]("process_all_orders",
-		func(ctx workflow.NodeContext, _ any, _ func(*session.Event) error) ([]string, error) {
+		func(ctx agent.Context, _ any, _ func(*session.Event) error) ([]string, error) {
 			results := make([]string, 0, len(orders))
 			for _, orderID := range orders {
 				// WithRunID supplies a stable, deterministic identifier for
