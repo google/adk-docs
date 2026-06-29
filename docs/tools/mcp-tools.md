@@ -66,7 +66,7 @@ root_agent = LlmAgent(
     ],
 )
 ```
-For a complete example, see the [mcp_dynamic_header_agent sample](https://github.com/google/adk-python/tree/main/contributing/samples/mcp_dynamic_header_agent).
+For a complete example, see the [mcp_dynamic_header_agent sample](https://github.com/google/adk-python/tree/main/contributing/samples/mcp/mcp_dynamic_header_agent).
 
 The following examples demonstrate how to use `MCPToolset` within the `adk web` development environment. For scenarios where you need more fine-grained control over the MCP connection lifecycle or are not using `adk web`, refer to the "Using MCP Tools in your own Agent out of `adk web`" section later in this page.
 
