@@ -550,13 +550,15 @@ Control whether the agent receives the prior conversation history.
     controls how the agent runs when used inside a graph-based or dynamic
     workflow. Three modes are available:
 
-    -   **`ModeChat`** (default when used as a top-level agent): The agent
-        participates in a multi-turn conversation and can transfer to peer agents.
-    -   **`ModeSingleTurn`**: The agent processes one turn and exits. History
-        is not included; the agent is wired as a sub-agent tool callable by a
-        parent.
-    -   **`ModeTask`**: Similar to `ModeSingleTurn` but retains the ability to
-        call sub-agents to accomplish longer-running tasks.
+    -   **`ModeChat`** (default for an agent used as a sub-agent): The agent
+        participates in a multi-turn conversation with the user and is reachable
+        from peer agents via `transfer_to_agent`.
+    -   **`ModeSingleTurn`** (default for an agent used as a node in a
+        workflow): The agent completes its task in a single turn without
+        chatting with the user.
+    -   **`ModeTask`**: A task agent that chats with the user to accomplish a
+        task — in contrast to `ModeSingleTurn`, it can interact with the user
+        across turns to complete the work.
 
     When you wrap an `llmagent` with `workflow.NewAgentNode`, the workflow
     engine automatically sets the mode to `ModeSingleTurn` if no mode is
