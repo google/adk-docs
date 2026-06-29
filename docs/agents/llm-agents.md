@@ -818,6 +818,5 @@ the following:
   (`disallow_transfer_to_parent`, `disallow_transfer_to_peers`), and system-wide
   instructions (`global_instruction`). See [Custom agent workflows](/agents/custom-agents/).
 * **Graph-based workflows:** Compose LLM agents as steps in deterministic,
-  graph-based pipelines using [Graph-based agent workflows](/graphs/) (sequential,
-  parallel, loop, and dynamic orchestration). In Go v2.0.0, use
+  graph-based pipelines using [Graph-based agent workflows](/graphs/). In Go v2.0.0, use
   `workflow.NewAgentNode` to wrap any LLM agent as a workflow node.
