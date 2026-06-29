@@ -170,13 +170,23 @@ In Python, branching is handled by a `FunctionNode` that returns an
 
 === "Go"
 
-    ADK Go does not have `Event(route=...)` conditional dispatch. The
-    equivalent pattern is to encode the routing decision in session state
-    (via `OutputKey`) and let downstream agents inspect it in their
-    `Instruction` template, or to use a `loopagent` with `Escalate`-based
-    exit for loop-until-done patterns. See the
-    [loop and escalation example](#loop-and-escalation-exit) below for the
-    canonical Go approach to conditional routing.
+    In ADK Go 2.0, conditional dispatch is expressed in the `workflow` graph
+    API: a node sets one or more route values on its emitted `session.Event`
+    (the `Routes` field), and each `workflow.Edge` selects its target with a
+    `workflow.Route` matcher — `workflow.StringRoute`, `IntRoute`, `BoolRoute`,
+    or `MultiRoute`. For example,
+    `workflow.Edge{From: classify, To: question, Route: workflow.StringRoute("question")}`.
+    See the runnable
+    [string](https://github.com/google/adk-go/tree/main/examples/workflow/routing/string),
+    [int](https://github.com/google/adk-go/tree/main/examples/workflow/routing/int),
+    and [LLM](https://github.com/google/adk-go/tree/main/examples/workflow/routing/llm)
+    routing examples.
+
+    When using the prebuilt workflow agents instead of the graph API, encode
+    the routing decision in session state (via `OutputKey`) and let downstream
+    agents inspect it in their `Instruction` template, or use a `loopagent`
+    with an `Escalate`-based exit for loop-until-done patterns (see the
+    [loop and escalation example](#loop-and-escalation-exit) below).
 
 ## Parallel tasks: fan out and join paths
 
@@ -220,12 +230,14 @@ before passing results to the next step.
 
 === "Go"
 
-    In Go, the fan-out and join pattern is expressed by nesting a
-    `parallelagent` as the first sub-agent of a `sequentialagent`. Each
-    parallel branch writes its output to a unique `OutputKey` in session
-    state. After all branches complete, the synthesis agent reads those keys
-    through its `Instruction` template — providing the same join semantics
-    as `JoinNode`:
+    ADK Go 2.0 provides `workflow.JoinNode` (`workflow.NewJoinNode`) for true
+    fan-in in the graph API: parallel edges feed into the join node, which
+    waits for all of them to complete before continuing. When using the
+    prebuilt workflow agents instead, you can express the same fan-out/join by
+    nesting a `parallelagent` as the first sub-agent of a `sequentialagent`:
+    each parallel branch writes its output to a unique `OutputKey` in session
+    state, and after all branches complete the synthesis agent reads those
+    keys through its `Instruction` template (shown below):
 
     ```go
     --8<-- "examples/go/snippets/graphs/routes/main.go:parallel-fan-out"

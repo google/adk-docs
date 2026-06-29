@@ -208,12 +208,18 @@ are *not compatible* with the following ADK features:
     [Integrations](/integrations/) may not be
     compatible with graph-based workflows.
 
-!!! note "Go: graph syntax not yet available"
+!!! note "Go: graph workflow API"
 
-    The Python `Workflow` class with `edges` arrays, `JoinNode`, and
-    `Event(route=...)` conditional routing are not yet available in ADK Go.
-    In Go, use the prebuilt workflow agents —
+    ADK Go 2.0 provides the equivalent of the Python `Workflow` class in the
+    `workflow` package: build a graph with `workflow.New` and a slice of
+    `workflow.Edge` values, express conditional routing with `workflow.Route`
+    (for example `workflow.StringRoute`, `IntRoute`, or `BoolRoute`) matched
+    against the `Routes` on the emitted `session.Event`, and fan results back
+    in with `workflow.JoinNode`. Wrap a graph as an agent with
+    `workflowagent.New`.
+
+    For simple, deterministic pipelines you can also use the prebuilt workflow
+    agents —
     [`sequentialagent`](/agents/workflow-agents/sequential-agents/),
     [`parallelagent`](/agents/workflow-agents/parallel-agents/), and
-    [`loopagent`](/agents/workflow-agents/loop-agents/) — to compose
-    deterministic, multi-step agent pipelines.
+    [`loopagent`](/agents/workflow-agents/loop-agents/).
