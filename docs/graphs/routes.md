@@ -61,19 +61,6 @@ agents.
     })
     ```
 
-    **Prebuilt workflow agents**: For the three most common topologies, ADK Go
-    also provides self-contained agents available in v1.x and v2.x:
-
-    | Graph topology | Prebuilt agent |
-    |---|---|
-    | Ordered sequence of nodes | `sequentialagent` |
-    | Parallel fan-out across nodes | `parallelagent` |
-    | Repeated execution with exit condition | `loopagent` |
-
-    With the prebuilt agents, data flows through session state: a step writes
-    its output to a named key with `llmagent.Config.OutputKey` and downstream
-    steps read it by referencing `{key}` in their `Instruction` template.
-
 The advantage of using a graph-based agent workflow is the significant increase
 in control, predictability, and reliability over prompt-based agents. By
 defining the overall process workflow in code, you gain more control over how
