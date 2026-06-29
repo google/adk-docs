@@ -55,7 +55,7 @@ architecture, your Agents, Tools, and Functions are evaluated as individual
 following breaking changes and migration steps to ensure a smooth transition for
 your production applications.
 
-### Event Schema & Custom Session Databases
+### Event Schema & Custom Session Storage
 
 ADK 2.0 introduces new fields `node_info` and `output` to the core
 ***Event*** schema to track graph state and workflow outputs.
@@ -295,4 +295,4 @@ Check out these ADK 2.0 code samples for testing and inspiration:
     -   [**Loop workflow sample**](https://github.com/google/adk-go/tree/main/examples/workflowagents/loop)
     -   [**Sequential code workflow sample**](https://github.com/google/adk-go/tree/main/examples/workflowagents/sequentialCode)
 
-Thanks for checking out ADK 2.0! We look forward to your feedback!
+Thanks for checking out ADK 2.0! We look forward to your feedback — let us know on [ADK Go](https://github.com/google/adk-go/issues/new) or [ADK Python](https://github.com/google/adk-python/issues/new).

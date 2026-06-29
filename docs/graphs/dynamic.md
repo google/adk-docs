@@ -14,7 +14,7 @@ manage.
 
 Dynamic workflows in ADK allow you to put aside graph-based path structures and
 use the full power of your chosen programming language to build workflows. With
-Dynamic workflows, you can create workflows with simple decorators (Python) or
+dynamic workflows, you can create workflows with simple decorators (Python) or
 constructor functions (Go), invoke workflow nodes as functions, and build
 complex routing logic. Here are some of the benefits of dynamic workflows in ADK:
 
@@ -28,7 +28,7 @@ complex routing logic. Here are some of the benefits of dynamic workflows in ADK
     execution. Successful sub-nodes are automatically skipped when resuming the
     workflow, making complex logic durable and resumable by default.
 -   **Encapsulation:** Wrap business logic into *parent* nodes that
-    internally compose lower-level nodes, keeping the overall workflow graph
+    internally compose lower-level nodes, keeping the overall workflow
     clean and manageable.
 
 !!! note "Go: dynamic workflows require ADK Go v2.0.0"
@@ -88,7 +88,7 @@ workflow containing a single node with a function:
 ## Building blocks: nodes and workflows
 
 Nodes and workflows represent the basic building blocks of ADK's dynamic
-workflows. These classes and functions provide the functionality required to
+workflows. These types and functions provide the functionality required to
 wrap your code so it can be integrated into code-based workflows in ADK.
 
 ### Nodes {#node}
@@ -148,7 +148,7 @@ run within a workflow.
 
 ### Workflows
 
-In an ADK dynamic workflow, you use the workflow container as a primary
+In an ADK dynamic workflow, you use a dynamic node as the primary
 orchestrator for nodes. A dynamic node manages running child nodes and the
 execution logic (order and paths) for those nodes.
 
@@ -204,7 +204,7 @@ manually read and write session state keys for data transfer.
         return formatted_text
     ```
 
-    You can also pass specific data schemas using defined class and configure
+    You can also pass specific data schemas using a defined class and configure
     input and output schemas, similar to graph-based workflow nodes:
 
     ```python

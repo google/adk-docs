@@ -216,11 +216,10 @@ For information about building advanced pipelines, see
 There are some known limitations with graph-based workflows. They
 are *not compatible* with the following ADK features:
 
--   **Live Streaming** functionality is not compatible with graph-based
-    workflows.
+-   **Live streaming:** Not supported in graph-based workflows.
 -   **Integrations:** Some third-party
-    [Integrations](/integrations/) may not be
-    compatible with graph-based workflows.
+    [integrations](/integrations/) may not be compatible with graph-based
+    workflows.
 
 !!! note "Go: graph workflow API"
 

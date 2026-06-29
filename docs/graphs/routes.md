@@ -13,7 +13,9 @@ logic, this approach allows you to define a specific, step-wise process workflow
 in code, providing improved precision and reliability over purely prompt-based
 agents.
 
-![Graph-based flight upgrade agent](/assets/graph-workflow-router.svg)
+![Task graph with conditional routing between nodes](/assets/graph-workflow-router.svg)
+
+**Figure 1.** Visualization of a task graph and the routing code to implement it.
 
 === "Python"
 
@@ -49,8 +51,6 @@ agents.
     Data flows between steps through session state: a step writes its output
     to a named key with `llmagent.Config.OutputKey`, and downstream steps
     read it by referencing `{key}` in their `Instruction` template.
-
-**Figure 1.** Visualization of a task graph and the routing code to implement it.
 
 The advantage of using a graph-based agent workflow is the significant increase
 in control, predictability, and reliability over prompt-based agents. By
@@ -102,8 +102,8 @@ overview of the common routing patterns.
 
 !!! caution "Caution: Workflow agent limitations"
 
-    You can add ***LlmAgents*** to graph-based workflows, however they must
-    be configured for single-turn (task) mode. For more information about
+    You can add ***LlmAgents*** to graph-based workflows. However, they must
+    be configured for single-turn mode (`ModeSingleTurn`). For more information about
     agent modes, see
     [Build collaborative agent teams](/workflows/collaboration/#mode-configuration-and-behaviors).
 
