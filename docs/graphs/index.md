@@ -226,7 +226,8 @@ are *not compatible* with the following ADK features:
     ADK Go 2.0 provides the equivalent of the Python `Workflow` class in the
     `workflow` package: build a graph with `workflow.New` and a slice of
     `workflow.Edge` values, express conditional routing with `workflow.Route`
-    (for example `workflow.StringRoute`, `IntRoute`, or `BoolRoute`) matched
+    (for example `workflow.StringRoute`, `workflow.IntRoute`, or
+    `workflow.BoolRoute`) matched
     against the `Routes` on the emitted `session.Event`, and fan results back
     in with `workflow.JoinNode`. Wrap a graph as an agent with
     `workflowagent.New`.

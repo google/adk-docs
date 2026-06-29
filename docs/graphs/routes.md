@@ -173,8 +173,8 @@ In Python, branching is handled by a `FunctionNode` that returns an
     In ADK Go 2.0, conditional dispatch is expressed in the `workflow` graph
     API: a node sets one or more route values on its emitted `session.Event`
     (the `Routes` field), and each `workflow.Edge` selects its target with a
-    `workflow.Route` matcher — `workflow.StringRoute`, `IntRoute`, `BoolRoute`,
-    or `MultiRoute`. For example,
+    `workflow.Route` matcher — `workflow.StringRoute`, `workflow.IntRoute`,
+    `workflow.BoolRoute`, or `workflow.MultiRoute`. For example,
     `workflow.Edge{From: classify, To: question, Route: workflow.StringRoute("question")}`.
     See the runnable
     [string](https://github.com/google/adk-go/tree/main/examples/workflow/routing/string),
