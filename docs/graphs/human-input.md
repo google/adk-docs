@@ -41,13 +41,18 @@ the input process more predictable and reliable.
 
 === "Go"
 
-    In ADK Go, human-in-the-loop (HITL) input is obtained through the
-    **tool-confirmation** mechanism rather than graph-based `RequestInput` nodes.
-    A tool signals that it needs human approval by setting
+    In ADK Go, the human-in-the-loop (HITL) pattern shown here — pausing for a
+    human to approve or reject a tool call — uses the **tool-confirmation**
+    mechanism. A tool signals that it needs human approval by setting
     `RequireConfirmation: true` in `functiontool.Config`. The framework
     automatically emits an `adk_request_confirmation` `FunctionCall` event to
     the client. The client displays the confirmation prompt and sends back a
     `FunctionResponse` with `"confirmed": true` or `"confirmed": false`.
+
+    To request arbitrary input (not just a yes/no approval) from a human inside
+    a dynamic workflow, use `workflow.ResumeOrRequestInput` with a
+    `session.RequestInput` event — see
+    [Dynamic agent workflows](/graphs/dynamic/#human-input).
 
     ```go
     --8<-- "examples/go/snippets/graphs/human-input/main.go:simple-hitl"
