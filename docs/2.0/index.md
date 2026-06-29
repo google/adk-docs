@@ -285,14 +285,14 @@ Check out these ADK 2.0 code samples for testing and inspiration:
 
 === "Python"
 
-    -   [**Workflow samples**](https://github.com/google/adk-python/tree/v2/contributing/workflow_samples)
-    -   [**Collaborative task samples**](https://github.com/google/adk-python/tree/v2/contributing/task_samples)
+    -   [**Workflow samples**](https://github.com/google/adk-python/tree/main/contributing/samples/workflows)
+    -   [**Collaborative task samples**](https://github.com/google/adk-python/tree/main/contributing/samples/multi_agent)
 
 === "Go"
 
-    -   [**Sequential workflow sample**](https://github.com/google/adk-go/tree/v2/examples/workflowagents/sequential)
-    -   [**Parallel workflow sample**](https://github.com/google/adk-go/tree/v2/examples/workflowagents/parallel)
-    -   [**Loop workflow sample**](https://github.com/google/adk-go/tree/v2/examples/workflowagents/loop)
-    -   [**Sequential code workflow sample**](https://github.com/google/adk-go/tree/v2/examples/workflowagents/sequentialCode)
+    -   [**Sequential workflow sample**](https://github.com/google/adk-go/tree/main/examples/workflowagents/sequential)
+    -   [**Parallel workflow sample**](https://github.com/google/adk-go/tree/main/examples/workflowagents/parallel)
+    -   [**Loop workflow sample**](https://github.com/google/adk-go/tree/main/examples/workflowagents/loop)
+    -   [**Sequential code workflow sample**](https://github.com/google/adk-go/tree/main/examples/workflowagents/sequentialCode)
 
 Thanks for checking out ADK 2.0! We look forward to your feedback!
