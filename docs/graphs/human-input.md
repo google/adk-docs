@@ -90,16 +90,16 @@ the input process more predictable and reliable.
 
     -   **`RequireConfirmation`** (`bool` in `functiontool.Config`): Set to
         `true` to make the framework always pause and ask for user approval
-        before executing the tool. This is a static on/off toggle; there is no
-        single equivalent Python config field (in Python a tool opts in by
-        calling `tool_context.request_confirmation(...)`).
+        before executing the tool. This is a static on/off toggle. There is no
+        single equivalent Python config field. In Python a tool opts in by
+        calling `tool_context.request_confirmation(...)`.
     -   **`hint`** (argument to `ctx.RequestConfirmation`): A human-readable
         string explaining why approval is needed, displayed to the user in the
         confirmation prompt. This is the equivalent of Python's `hint` argument
         to `request_confirmation`.
     -   **`payload`** (argument to `ctx.RequestConfirmation`): Any structured
         data to include alongside the confirmation request, allowing the client
-        to render additional context for the user. Equivalent to Python's
+        to render additional context for the user. This is equivalent to Python's
         `payload` argument.
 
     The client receives the `adk_request_confirmation` `FunctionCall` event and
