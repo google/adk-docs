@@ -259,7 +259,7 @@ limits is crucial.
 <div class="language-support-tag">
     <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span>
 </div>
-This parameter configures a thread pool for running synchronous tools to avoid blocking the event loop, which is critical for Live API mode
+This parameter configures a thread pool for running synchronous tools to avoid blocking the event loop, which is critical for Live API mode. Its primery purpose is keeping the event loop responsive to user interruptions (for example, stopping a running agent) while tools are actively executing.
 
 ## Validation Rules
 
