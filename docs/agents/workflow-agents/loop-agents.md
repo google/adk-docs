@@ -16,7 +16,7 @@ the ***LoopAgent*** object you define.
 
 !!! note "Alternative: graph-based workflows"
 
-    Starting in ADK 2.0, templated workflows have been superseded
+    Starting in ADK 2.0 for Python and Go, templated workflows have been superseded
 
     by more flexible workflow structures, including
     [graph-based workflows](/graphs/) and

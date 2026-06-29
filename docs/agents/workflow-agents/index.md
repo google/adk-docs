@@ -12,7 +12,7 @@ how and when other agents run, defining the control flow of a process.
 
 !!! note "Alternative: graph-based workflows"
 
-    Starting in ADK 2.0, template workflows have been superseded
+    Starting in ADK 2.0 for Python and Go, template workflows have been superseded
 
     by more flexible workflow structures, including
     [graph-based workflows](/graphs/) and
