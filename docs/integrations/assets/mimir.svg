@@ -1,12 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#0c0814"/>
-      <stop offset="100%" stop-color="#1a1030"/>
-    </linearGradient>
-  </defs>
-  <rect width="128" height="128" rx="16" fill="url(#bg)"/>
-  <text x="64" y="78" font-family="monospace" font-size="52" font-weight="bold" fill="#a78bfa" text-anchor="middle">M</text>
-  <path d="M34 96 L54 96 L44 84 Z" fill="#7c3aed" opacity="0.6"/>
-  <path d="M94 96 L74 96 L84 84 Z" fill="#7c3aed" opacity="0.6"/>
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Mimir">
+  <rect width="128" height="128" rx="30" fill="#161420"></rect>
+  <rect x="32" y="33" width="64" height="10" rx="5" fill="#8B5CF6"></rect>
+  <rect x="32" y="50" width="64" height="10" rx="5" fill="#8B5CF6" fill-opacity="0.8"></rect>
+  <rect x="32" y="67" width="64" height="10" rx="5" fill="#8B5CF6" fill-opacity="0.62"></rect>
+  <rect x="32" y="84" width="64" height="10" rx="5" fill="#8B5CF6" fill-opacity="0.46"></rect>
 </svg>
