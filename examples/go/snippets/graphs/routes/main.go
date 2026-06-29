@@ -1,3 +1,5 @@
+//go:build ignore
+
 // Copyright 2025 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,24 +14,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Package main demonstrates graph routing patterns in ADK Go.
+// Package main demonstrates graph routing patterns using the ADK Go prebuilt
+// workflow agents (sequentialagent, parallelagent, loopagent).
 //
-// In ADK Go, workflow graphs are expressed through three composable workflow
-// agent types rather than an edges-array DSL:
-//
-//   - [sequentialagent] – runs sub-agents one after another in the listed order.
-//   - [parallelagent]   – runs sub-agents concurrently in isolated branches.
-//   - [loopagent]       – repeatedly runs sub-agents until MaxIterations is
-//     reached or any sub-agent sets EventActions.Escalate = true.
+// These agents are available in ADK Go v1.x and v2.x. ADK Go v2.0.0 also
+// introduces a lower-level graph engine (workflowagent + workflow.Edge) that
+// maps more directly to the Python Workflow(edges=[...]) API; the prebuilt
+// agents remain a convenient alternative for the most common topologies.
 //
 // Data flows between steps via session state: an agent writes its output to a
 // named key using llmagent.Config.OutputKey, and downstream agents read it by
 // referencing {key} in their Instruction template.
 //
-// This file contains four snippet regions used in docs/graphs/routes.md:
+// This file contains five snippet regions used in docs/graphs/routes.md:
 //
-//	sequential-nodes    – route sequences (one or more nodes in order)
 //	function-node       – custom Run function as a workflow step
+//	sequential-nodes    – route sequences (one or more nodes in order)
 //	parallel-fan-out    – parallel fan-out collected by a synthesis agent
 //	nested-workflows    – workflow agent nested inside another workflow agent
 //	loop-escalate       – loop with Escalate-based exit (conditional routing)
@@ -311,7 +311,7 @@ type ExitLoopResults struct{}
 // exitLoop signals the loopagent to stop by setting Escalate = true on the
 // current event's actions. This is the Go equivalent of routing to an exit
 // node in a Python conditional-branch graph.
-func exitLoop(ctx agent.Context, _ ExitLoopArgs) (ExitLoopResults, error) {
+func exitLoop(ctx tool.Context, _ ExitLoopArgs) (ExitLoopResults, error) {
 	ctx.Actions().Escalate = true
 	return ExitLoopResults{}, nil
 }
