@@ -101,11 +101,13 @@ func main() {
 
 ### Configure project and dependencies
 
-Use the `go mod` command to initialize the project modules and install the
-required packages based on the `import` statement in your agent code file:
+Initialize your module, add ADK Go 2.0 as a pinned dependency, then let `go mod
+tidy` resolve the remaining packages based on the `import` statements in your
+agent code file:
 
 ```console
 go mod init my-agent/main
+go get google.golang.org/adk/v2@v2.0.0
 go mod tidy
 ```
 
