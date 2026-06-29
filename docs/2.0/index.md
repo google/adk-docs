@@ -288,21 +288,7 @@ If you encounter additional ADK Go 1.0 to ADK 2.0 incompatibilities, report
 them through the
 [issue tracker](https://github.com/google/adk-go/issues/new?template=bug_report.md&labels=v2).
 
-### Installing ADK Go 2.0 {#install-go}
-
-ADK Go 2.0 has the following system requirements:
-
-*   **Go 1.25** or later
-*   A Go module initialized with `go mod init`
-
-To install ADK Go 2.0, run the following command in your module directory:
-
-```shell
-go get google.golang.org/adk/v2@v2.0.0
-```
-
-This adds ADK Go 2.0 as a dependency to your `go.mod` file. Verify your
-installation by checking for the `google.golang.org/adk/v2` entry in `go.mod`.
+### Installing ADK Go 1.x {#install-go}
 
 If you want to continue using ADK Go 1.x and are not yet ready to upgrade to
 ADK Go 2.0, pin your dependency to the 1.x release line:
