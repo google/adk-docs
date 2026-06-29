@@ -34,7 +34,7 @@ to build agents with ADK 2.0!
 
 !!! tip "ADK Go v2.0.0 GA release"
 
-    ADK Go 2.0 is released for general availability as of <TBD>.
+    ADK Go 2.0 is released for general availability as of June 30, 2026.
 
 ## ADK Python 1.x compatibility
 
