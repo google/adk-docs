@@ -231,8 +231,9 @@ logic into the execution lifecycle.
 
 ### Event Schema & Custom Session Storage
 
-ADK Go 2.0 introduces new fields `node_info` and `output` to the core
-***Event*** schema to track graph state and workflow outputs.
+ADK Go 2.0 introduces new fields to the core ***Event*** schema to track graph
+state and workflow outputs: `Output` (which has no JSON struct tag and so
+serializes as `Output`) and `nodeInfo` (`json:"nodeInfo"`).
 
 *   **Custom session storage:** If you have implemented a custom
     `session.Service`, such as storing sessions in your own SQL or NoSQL
@@ -243,7 +244,7 @@ ADK Go 2.0 introduces new fields `node_info` and `output` to the core
     blobs, you do not need to update your schema.*
 
 **Migration action:** Update your database schemas and downstream client
-validators to expect and store the `node_info` and `output` fields on all Event
+validators to expect and store the `Output` and `nodeInfo` fields on all Event
 payloads.
 
 If you encounter additional ADK Go 1.0 to ADK 2.0 incompatibilities, report
