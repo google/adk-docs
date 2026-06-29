@@ -37,20 +37,42 @@ agents.
 
 === "Go"
 
-    In ADK Go, workflow graphs are expressed through three composable workflow
-    agent types rather than an `edges` array DSL. Each type maps to a common
-    graph topology:
+    ADK Go v2.0.0 provides two complementary approaches to graph-based
+    workflows:
 
-    | Graph topology | Go workflow agent |
+    **Graph engine** (`workflowagent` + `workflow.Edge`): A node-and-edges
+    graph API that maps directly to Python's `Workflow(edges=[...])`.
+    Nodes are defined with `workflow.NewFunctionNode`, `workflow.NewAgentNode`,
+    or `workflow.NewDynamicNode`, edges are declared as `[]workflow.Edge`, and
+    the whole graph is wrapped in a `workflowagent.New` call:
+
+    ```go
+    edges := workflow.Concat(
+        workflow.Chain(workflow.Start, classifyNode),
+        []workflow.Edge{
+            {From: classifyNode, To: responseA, Route: workflow.StringRoute("output-1")},
+            {From: classifyNode, To: responseB, Route: workflow.StringRoute("output-2")},
+            {From: classifyNode, To: responseC, Route: workflow.StringRoute("output-3")},
+        },
+    )
+    rootAgent, _ := workflowagent.New(workflowagent.Config{
+        Name:  "routing_workflow",
+        Edges: edges,
+    })
+    ```
+
+    **Prebuilt workflow agents**: For the three most common topologies, ADK Go
+    also provides self-contained agents available in v1.x and v2.x:
+
+    | Graph topology | Prebuilt agent |
     |---|---|
     | Ordered sequence of nodes | `sequentialagent` |
     | Parallel fan-out across nodes | `parallelagent` |
-    | Repeated execution / loop with exit condition | `loopagent` |
+    | Repeated execution with exit condition | `loopagent` |
 
-    Agents are composed by nesting them in each other's `SubAgents` field.
-    Data flows between steps through session state: a step writes its output
-    to a named key with `llmagent.Config.OutputKey`, and downstream steps
-    read it by referencing `{key}` in their `Instruction` template.
+    With the prebuilt agents, data flows through session state: a step writes
+    its output to a named key with `llmagent.Config.OutputKey` and downstream
+    steps read it by referencing `{key}` in their `Instruction` template.
 
 The advantage of using a graph-based agent workflow is the significant increase
 in control, predictability, and reliability over prompt-based agents. By
@@ -170,23 +192,67 @@ In Python, branching is handled by a `FunctionNode` that returns an
 
 === "Go"
 
-    In ADK Go 2.0, conditional dispatch is expressed in the `workflow` graph
-    API: a node sets one or more route values on its emitted `session.Event`
-    (the `Routes` field), and each `workflow.Edge` selects its target with a
-    `workflow.Route` matcher — `workflow.StringRoute`, `workflow.IntRoute`,
-    `workflow.BoolRoute`, or `workflow.MultiRoute`. For example,
-    `workflow.Edge{From: classify, To: question, Route: workflow.StringRoute("question")}`.
-    See the runnable
-    [string](https://github.com/google/adk-go/tree/main/examples/workflow/routing/string),
-    [int](https://github.com/google/adk-go/tree/main/examples/workflow/routing/int),
-    and [LLM](https://github.com/google/adk-go/tree/main/examples/workflow/routing/llm)
-    routing examples.
+    In ADK Go v2.0.0, conditional dispatch uses the `workflow` graph engine.
+    A node sets `Event.Routes` to one or more string route keys, and each
+    `workflow.Edge` selects its successor using a `workflow.Route` matcher:
 
-    When using the prebuilt workflow agents instead of the graph API, encode
-    the routing decision in session state (via `OutputKey`) and let downstream
-    agents inspect it in their `Instruction` template, or use a `loopagent`
-    with an `Escalate`-based exit for loop-until-done patterns (see the
-    [loop and escalation example](#loop-and-escalation-exit) below).
+    -   `workflow.StringRoute("category")` — matches a single string value
+    -   `workflow.IntRoute(n)` or `workflow.MultiRoute[int]{1, 2, 3}` — matches
+        integer values
+    -   `workflow.BoolRoute(true)` — matches a boolean value
+    -   `workflow.Default` — matches when no other route on the same source
+        node matches
+
+    The following pattern is the Go equivalent of the Python router above:
+
+    ```go
+    // classifyNode emits an Event with Routes=[]string{"BUG"},
+    // ["CUSTOMER_SUPPORT"], or ["LOGISTICS"] based on the message.
+    edges := workflow.Concat(
+        workflow.Chain(workflow.Start, processMessage, classifyNode),
+        []workflow.Edge{
+            {From: classifyNode, To: bugHandler,       Route: workflow.StringRoute("BUG")},
+            {From: classifyNode, To: supportHandler,   Route: workflow.StringRoute("CUSTOMER_SUPPORT")},
+            {From: classifyNode, To: logisticsHandler, Route: workflow.StringRoute("LOGISTICS")},
+        },
+    )
+    rootAgent, _ := workflowagent.New(workflowagent.Config{
+        Name:  "routing_workflow",
+        Edges: edges,
+    })
+    ```
+
+    `workflow.EdgeBuilder` provides a fluent alternative to assembling the
+    `[]workflow.Edge` slice by hand. The builder's `Add`, `AddFanOut`, and
+    `AddFanIn` methods express the same topology with less repetition:
+
+    ```go
+    eb := workflow.NewEdgeBuilder()
+    eb.Add(workflow.Start, processMessage)
+    eb.Add(processMessage, classifyNode)
+    eb.Add(classifyNode, bugHandler,       workflow.StringRoute("BUG"))
+    eb.Add(classifyNode, supportHandler,   workflow.StringRoute("CUSTOMER_SUPPORT"))
+    eb.Add(classifyNode, logisticsHandler, workflow.StringRoute("LOGISTICS"))
+
+    rootAgent, _ := workflowagent.New(workflowagent.Config{
+        Name:  "routing_workflow",
+        Edges: eb.Build(),
+    })
+    ```
+
+    For complete, runnable routing examples see:
+    [string routing](https://github.com/google/adk-go/tree/v2/examples/workflow/routing/string),
+    [int / multi-value routing](https://github.com/google/adk-go/tree/v2/examples/workflow/routing/int),
+    and [LLM-driven routing](https://github.com/google/adk-go/tree/v2/examples/workflow/routing/llm).
+
+    !!! note "Prebuilt agents: encoding routing in state"
+
+        When using `sequentialagent` / `parallelagent` / `loopagent` instead
+        of the graph engine, there is no `Event.Routes` dispatch. Encode the
+        routing decision in session state via `OutputKey` and let downstream
+        agents inspect it in their `Instruction` template, or use a `loopagent`
+        with an `Escalate`-based exit — see the
+        [loop and escalation example](#loop-and-escalation-exit) below.
 
 ## Parallel tasks: fan out and join paths
 
@@ -230,14 +296,36 @@ before passing results to the next step.
 
 === "Go"
 
-    ADK Go 2.0 provides `workflow.JoinNode` (`workflow.NewJoinNode`) for true
-    fan-in in the graph API: parallel edges feed into the join node, which
-    waits for all of them to complete before continuing. When using the
-    prebuilt workflow agents instead, you can express the same fan-out/join by
-    nesting a `parallelagent` as the first sub-agent of a `sequentialagent`:
-    each parallel branch writes its output to a unique `OutputKey` in session
-    state, and after all branches complete the synthesis agent reads those
-    keys through its `Instruction` template (shown below):
+    ADK Go v2.0.0 provides `workflow.NewJoinNode` for true fan-in in the
+    graph engine: fan-out edges from `workflow.Start` (or any shared source
+    node) feed in parallel to the join node, which waits for all of them to
+    complete before emitting a `map[string]any` keyed by predecessor node name
+    to the next node.
+
+    `workflow.EdgeBuilder` makes the fan-out / fan-in wiring concise with its
+    dedicated `AddFanOut` and `AddFanIn` helpers (as shown in the
+    [complex workflow example](https://github.com/google/adk-go/tree/v2/examples/workflow/complex)):
+
+    ```go
+    gatherNode := workflow.NewJoinNode("gather")
+
+    eb := workflow.NewEdgeBuilder()
+    eb.AddFanOut(workflow.Start, researchNodeA, researchNodeB, researchNodeC)
+    eb.AddFanIn(gatherNode, researchNodeA, researchNodeB, researchNodeC)
+    eb.Add(gatherNode, formatNode)
+    eb.Add(formatNode, synthesisNode)
+
+    rootAgent, _ := workflowagent.New(workflowagent.Config{
+        Name:  "research_pipeline",
+        Edges: eb.Build(),
+    })
+    ```
+
+    When using the prebuilt `parallelagent` instead, express fan-out/join by
+    nesting a `parallelagent` as the first sub-agent of a `sequentialagent`.
+    Each parallel branch writes its output to a unique `OutputKey` in session
+    state; after all branches complete the synthesis agent reads those keys
+    through its `Instruction` template:
 
     ```go
     --8<-- "examples/go/snippets/graphs/routes/main.go:parallel-fan-out"
@@ -291,11 +379,31 @@ accomplish this goal.
 
 === "Go"
 
-    In Go, any workflow agent (sequential, parallel, or loop) can be
-    provided as a `SubAgent` of another workflow agent. The nested workflow
-    runs to completion as a single logical step from the parent's perspective.
-    State written by steps inside the nested workflow is immediately visible
-    to steps that follow it in the parent:
+    ADK Go v2.0.0 supports nested workflows in two complementary ways:
+
+    **Graph engine** (`workflowagent` + `workflow.Edge`): A `workflowagent`
+    created with `workflowagent.New` is itself an `agent.Agent`, so it can
+    be wrapped with `workflow.NewAgentNode` and used as a node inside another
+    workflow's `edges` slice. The inner workflow runs to completion as a single
+    node from the outer graph's perspective, and its terminal output is emitted
+    as the node output on the outer graph's edge:
+
+    ```go
+    innerNode, _ := workflow.NewAgentNode(innerWorkflowAgent, workflow.NodeConfig{})
+
+    outerEdges := workflow.Chain(workflow.Start, outerStepNode, innerNode, finalNode)
+    rootAgent, _ := workflowagent.New(workflowagent.Config{
+        Name:  "parent_workflow",
+        Edges: outerEdges,
+    })
+    ```
+
+    **Prebuilt workflow agents**: Any prebuilt workflow agent (sequential,
+    parallel, or loop) can be provided as a `SubAgent` of another prebuilt
+    workflow agent. The nested workflow runs to completion as a single logical
+    step from the parent's perspective. State written by steps inside the
+    nested workflow is immediately visible to steps that follow it in the
+    parent:
 
     ```go
     --8<-- "examples/go/snippets/graphs/routes/main.go:nested-workflows"
@@ -304,9 +412,15 @@ accomplish this goal.
 ## Loop and escalation exit
 
 A loop repeats a set of steps until a termination condition is met. In Python
-this is a cycle in the `edges` graph that routes back to an earlier node; in
-Go it is a `loopagent` that stops when any sub-agent sets
-`EventActions.Escalate = true` or when `MaxIterations` is reached.
+this is a cycle in the `edges` graph that routes back to an earlier node. In
+Go v2.0.0 you can express the same pattern in two ways:
+
+-   **Graph engine** (`workflowagent` + `workflow.Edge`): Create a back-edge
+    from a node back to an earlier node in the `edges` slice. The engine
+    follows the route and re-activates the target node in the same run.
+-   **Prebuilt `loopagent`** (v1.x and v2.x): Repeatedly runs its `SubAgents`
+    in order until any sub-agent (or a tool called by a sub-agent) sets
+    `ctx.Actions().Escalate = true`, or until `MaxIterations` is reached.
 
 === "Python"
 
@@ -333,11 +447,12 @@ Go it is a `loopagent` that stops when any sub-agent sets
 
 === "Go"
 
-    `loopagent` repeatedly runs its `SubAgents` in order. A sub-agent (or a
-    tool called by a sub-agent) signals termination by setting
-    `ctx.Actions().Escalate = true`. The loop exits immediately after the
-    current iteration completes. This is the idiomatic Go equivalent of
-    conditional routing back to an earlier node:
+    The following example uses the prebuilt `loopagent`. It repeatedly runs
+    its `SubAgents` in order; a tool called by a sub-agent signals termination
+    by setting `ctx.Actions().Escalate = true`, and the loop exits at the end
+    of that iteration. The same iterative-refinement pattern can also be
+    expressed with a back-edge in the `workflowagent` graph engine (see the
+    [routing examples](https://github.com/google/adk-go/tree/v2/examples/workflow/routing)):
 
     ```go
     --8<-- "examples/go/snippets/graphs/routes/main.go:loop-escalate"
