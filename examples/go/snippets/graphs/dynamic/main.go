@@ -396,7 +396,7 @@ func newParallelWorkflow() (agent.Agent, error) {
 //
 // In Python this is equivalent to:
 //
-//	@node(rerun_on_resume=False)
+//	@node(rerun_on_resume=True)
 //	async def get_user_approval(ctx, node_input):
 //	    yield RequestInput(message="Please approve this request (Yes/No)")
 //
@@ -409,9 +409,10 @@ func newParallelWorkflow() (agent.Agent, error) {
 func newHITLWorkflow() (agent.Agent, error) {
 	rerun := true
 
-	// greetNode pauses for the user's name on the first pass and produces a
-	// greeting on resume. workflow.ResumeOrRequestInput handles both phases.
-	greetNode := workflow.NewEmittingFunctionNode[any, any]("get_user_approval",
+	// approvalNode pauses on the first pass to ask the user for a Yes/No
+	// approval, then resolves their decision on resume.
+	// workflow.ResumeOrRequestInput handles both phases.
+	approvalNode := workflow.NewEmittingFunctionNode[any, any]("get_user_approval",
 		func(nc agent.Context, _ any, emit func(*session.Event) error) (any, error) {
 			// ResumeOrRequestInput: on first pass, emits the prompt and
 			// returns ErrNodeInterrupted. On re-run after the human replies,
@@ -439,7 +440,7 @@ func newHITLWorkflow() (agent.Agent, error) {
 	return workflowagent.New(workflowagent.Config{
 		Name:        "hitl_workflow",
 		Description: "Pauses for user approval before completing a task.",
-		Edges:       workflow.Chain(workflow.Start, greetNode),
+		Edges:       workflow.Chain(workflow.Start, approvalNode),
 	})
 }
 
