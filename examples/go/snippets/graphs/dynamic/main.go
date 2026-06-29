@@ -189,7 +189,7 @@ var orchestratorWorkflow = workflow.NewDynamicNode[string, string]("my_workflow"
 //	    report_text = await ctx.run_node(city_report_agent, city_time)
 //	    return report_text
 func newDataHandlingWorkflow(ctx context.Context) (agent.Agent, error) {
-	model, err := gemini.NewModel(ctx, "gemini-2.5-flash", &genai.ClientConfig{})
+	model, err := gemini.NewModel(ctx, "gemini-flash-latest", &genai.ClientConfig{})
 	if err != nil {
 		return nil, fmt.Errorf("gemini.NewModel: %w", err)
 	}
@@ -255,7 +255,7 @@ func newDataHandlingWorkflow(ctx context.Context) (agent.Agent, error) {
 //	        check_resp = await ctx.run_node(compile_lint_check, code)
 //	    return code
 func newLoopWorkflow(ctx context.Context) (agent.Agent, error) {
-	model, err := gemini.NewModel(ctx, "gemini-2.5-flash", &genai.ClientConfig{})
+	model, err := gemini.NewModel(ctx, "gemini-flash-latest", &genai.ClientConfig{})
 	if err != nil {
 		return nil, fmt.Errorf("gemini.NewModel: %w", err)
 	}

@@ -56,7 +56,7 @@ import (
 	"google.golang.org/adk/tool/functiontool"
 )
 
-const modelName = "gemini-2.5-flash"
+const modelName = "gemini-flash-latest"
 
 // --8<-- [start:function-node]
 // upperCaseRun is a custom Run function that acts as a workflow step (node).

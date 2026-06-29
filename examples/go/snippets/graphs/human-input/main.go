@@ -49,7 +49,7 @@ import (
 const (
 	appName   = "hitl_demo"
 	userID    = "demo_user"
-	modelName = "gemini-2.5-flash"
+	modelName = "gemini-flash-latest"
 )
 
 // --8<-- [start:simple-hitl]
