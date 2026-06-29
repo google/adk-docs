@@ -50,14 +50,19 @@ snippets/graphs/index/main.go
 snippets/graphs/human-input/main.go
 snippets/graphs/routes/main.go
 snippets/graphs/data-handling/main.go
-# NOTE: The graphs snippets target ADK Go v2 (google.golang.org/adk/v2). They compile
-# only when the examples/go module is on google.golang.org/adk/v2 at v2.0.0 -- i.e. after
-# the v2.0.0 release is tagged and runner.sh fetches `go get google.golang.org/adk/v2@v2.0.0`.
-# Until then they will not build against the published v1.x module.
+# NOTE: The graphs snippets target ADK Go v2 (google.golang.org/adk/v2), whose module
+# path is unpublished until the v2.0.0 release is tagged. The examples/go module is still
+# on the bare google.golang.org/adk path, so it cannot resolve these /v2 imports yet.
+# As a result `go mod tidy` in runner.sh fails and the "Go Snippets Build" check is
+# EXPECTED TO BE RED on this draft PR until examples/go is migrated to
+# google.golang.org/adk/v2 @ v2.0.0 at release (when runner.sh should also
+# `go get google.golang.org/adk/v2@v2.0.0`). The graphs snippets have been verified to
+# compile against the v2 codebase out of band.
 #
 # snippets/graphs/dynamic/main.go additionally uses v2-only packages
 # (google.golang.org/adk/v2/workflow, .../agent/workflowagent) and carries a //go:build
-# ignore constraint. runner.sh builds by package directory, which honors that constraint
-# (the older file-mode `go build file.go` form did not). It is registered here so
-# check_go_snippets.sh passes. Remove the //go:build ignore once the module is on v2.0.0.
+# ignore so it stays out of the v1 module graph. It is registered here only so the
+# registration check (check_go_snippets.sh) passes -- that is separate from the build
+# check above. At the release migration, move examples/go to /v2 @ v2.0.0 and remove the
+# //go:build ignore.
 snippets/graphs/dynamic/main.go
