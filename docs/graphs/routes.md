@@ -103,7 +103,7 @@ overview of the common routing patterns.
 !!! caution "Caution: Workflow agent limitations"
 
     You can add ***LlmAgents*** to graph-based workflows. However, they must
-    be configured for single-turn mode (`ModeSingleTurn`). For more information about
+    be configured for single-turn or task mode. For more information about
     agent modes, see
     [Build collaborative agent teams](/workflows/collaboration/#mode-configuration-and-behaviors).
 
