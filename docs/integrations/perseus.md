@@ -1,8 +1,8 @@
 ---
 catalog_title: Perseus Context
-catalog_description: Compile deterministic, workspace-aware context for ADK agents — no index, no embeddings
+catalog_description: Compile deterministic, workspace-aware context for ADK agents
 catalog_icon: /integrations/assets/perseus.svg
-catalog_tags: ["code", "mcp"]
+catalog_tags: ["data", "mcp"]
 ---
 
 # Perseus Context integration for ADK
@@ -14,32 +14,31 @@ catalog_tags: ["code", "mcp"]
 The [`adk-perseus-context`](https://github.com/Perseus-Computing-LLC/adk-perseus-context)
 integration injects a deterministically compiled context into your ADK agent's
 system instruction. It is powered by
-[Perseus](https://github.com/Perseus-Computing-LLC/perseus), an open-source (MIT)
-**context compiler**: Perseus resolves directives like `@file`, `@search`, and
-`@memory` into one byte-stable context string at inference time — with **no
-retrieval index, no embeddings, and no extra LLM round-trip**. Everything runs
+[Perseus](https://github.com/Perseus-Computing-LLC/perseus), an open-source
+context compiler: Perseus resolves directives like `@file`, `@search`, and
+`@memory` into one byte-stable context string at inference time, with no
+retrieval index, no embeddings, and no extra LLM round-trip. Everything runs
 locally.
 
-Perseus is a context *compiler*, not a memory or RAG backend. For persistent
-cross-session memory, pair it with its companion,
-[Mimir](/integrations/mimir/).
+Perseus is a context compiler, not a memory or RAG backend. For persistent
+cross-session memory, pair it with its companion, [Mimir](/integrations/mimir/).
 
 ## Use cases
 
 - **Deterministic context assembly**: The same inputs always compile to the same
-  context — byte-identical builds, no per-query retrieval variance
+  context, with byte-identical builds and no per-query retrieval variance
 - **Workspace-aware agents**: Resolve `@file`, `@include`, `@search`, and
   `@memory` directives so the agent sees current project files and state
-- **Index-free, local context**: No vector store, no embeddings, no cloud — the
+- **Index-free, local context**: No vector store, no embeddings, no cloud. The
   context is compiled on the machine that runs the agent
 - **Full coverage at a fixed size**: Pull in exactly the context you declared,
-  rather than a top-k slice that can drop facts
+  rather than a top-k slice
 
 ## Prerequisites
 
 - Python 3.10+
-- `google-adk>=1.0.0`
-- `perseus-ctx>=1.0.10` (installed automatically)
+- `google-adk>=1.14.0`
+- `perseus-ctx>=1.0.10` (installed automatically with `adk-perseus-context`)
 
 ## Installation
 
@@ -49,8 +48,8 @@ pip install adk-perseus-context
 
 ## Use with agent
 
-There are two ways to inject a compiled Perseus context. Use the **plugin** for a
-context shared across every agent in a `Runner`, or the **callback** for a single
+There are two ways to inject a compiled Perseus context. Use the plugin for a
+context shared across every agent in a `Runner`, or the callback for a single
 agent. `source` is a path to a `.perseus` file or an inline string starting with
 `@perseus`.
 
@@ -59,6 +58,7 @@ agent. `source` is a path to a `.perseus` file or an inline string starting with
 ```python
 from adk_perseus_context import PerseusContextPlugin
 from google.adk.agents import Agent
+from google.adk.apps import App
 from google.adk.runners import Runner
 from google.adk.sessions import InMemorySessionService
 
@@ -68,11 +68,15 @@ agent = Agent(
     instruction="Help the user.",
 )
 
-runner = Runner(
-    agent=agent,
-    app_name="perseus_app",
-    session_service=InMemorySessionService(),
+app = App(
+    name="perseus_app",
+    root_agent=agent,
     plugins=[PerseusContextPlugin("context.perseus")],
+)
+
+runner = Runner(
+    app=app,
+    session_service=InMemorySessionService(),
 )
 ```
 
@@ -92,13 +96,14 @@ agent = Agent(
 
 Either way, the compiled context is appended to the request's system instruction
 (via ADK's `LlmRequest.append_instructions`) on every model call. If Perseus is
-unavailable or a compile fails, the request proceeds without injected context and
-a warning is logged (`fail_open=True` by default).
+unavailable or a compile fails, the request proceeds without injected context
+and a warning is logged (`fail_open=True` by default).
 
 ### Per-session context
 
-Override the source per session through session state — useful when each user or
-task targets a different workspace or directive set:
+Override the source per session through session state. This is useful when each
+user or task targets a different workspace or directive set. Create the session
+inside an async function:
 
 ```python
 session = await runner.session_service.create_session(
@@ -113,8 +118,8 @@ session = await runner.session_service.create_session(
 
 ## Use as an MCP server (optional)
 
-Perseus also ships an MCP server that exposes its directives as tools, so you can
-consume it through ADK's `McpToolset` instead of (or alongside) the plugin:
+Perseus also ships an MCP server that exposes its directives as tools, so you
+can consume it through ADK's `McpToolset` instead of (or alongside) the plugin:
 
 ```python
 from google.adk.agents import Agent
@@ -148,11 +153,11 @@ agent = Agent(
 
 ## Comparison
 
-| Approach | Index / embeddings | Extra LLM call | Output stability | Coverage |
+| Approach | Index / embeddings | Extra model call | Output stability | Coverage |
 |---|---|---|---|---|
-| Naive context dump | None | No | Stable | Full but bloated |
-| RAG / vector retrieval | Required | Sometimes | Varies per query | Top-k (can miss facts) |
-| **Perseus compile** | **None** | **No** | **Byte-identical** | **Full, declared** |
+| Naive context dump | None | No | Stable | Everything in the prompt |
+| RAG / vector retrieval | Required | Query embedding | Varies with query | Top-k results |
+| Perseus compile | None | No | Byte-identical | Full, declared |
 
 ## Resources
 
