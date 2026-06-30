@@ -126,8 +126,6 @@ Here is a test file with a few examples:
 }
 ```
 
-Test files can be organized into folders. Optionally, a folder can also include a `test_config.json` file that specifies the evaluation criteria.
-
 #### How to migrate test files not backed by the Pydantic schema?
 
 !!! note 
@@ -154,6 +152,7 @@ Creating evalsets manually can be complex, therefore UI tools are provided to he
 !!! warning
     This evalset evaluation method requires the use of a paid service,
     [Vertex Gen AI Evaluation Service API](https://cloud.google.com/vertex-ai/generative-ai/docs/model-reference/evaluation).
+    You can authenticate with the Vertex Gen AI Evaluation Service using a `GOOGLE_API_KEY` environment variable as an alternative to Google Cloud Project credentials (Application Default Credentials).
 
 !!! note 
     Comments are included for explanatory purposes and should be removed for the JSON to be valid.
