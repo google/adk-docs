@@ -1,3 +1,5 @@
+//go:build ignore
+
 // Copyright 2025 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,199 +14,182 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Package main provides snippet examples for graph-based workflow agents in ADK Go.
+// Package main provides snippet examples for graph-based workflow agents in ADK Go v2.
+//
+// NOTE: This file requires google.golang.org/adk/v2 (the workflow package),
+// available in ADK Go v2.0.0 and later. It carries //go:build ignore so it is
+// excluded from the current examples/go module until examples/go is migrated to
+// google.golang.org/adk/v2 at the v2.0.0 release.
+//
+// Both snippets use the v2 graph engine (workflow.NewFunctionNode +
+// workflowagent.New) rather than the prebuilt workflow agents from v1.x.
+// This mirrors the Python Workflow(edges=[...]) API directly:
+//
+//   - workflow.Chain(workflow.Start, nodeA, nodeB) — sequential edges
+//   - workflow.NewEmittingFunctionNode + ev.Routes + []workflow.Edge — routing
+//   - workflow.StringRoute("category") — conditional edge matcher
 package main
 
 import (
-	"context"
 	"fmt"
-	"iter"
 	"log"
+	"strings"
 
 	"google.golang.org/adk/v2/agent"
-	"google.golang.org/adk/v2/agent/workflowagents/sequentialagent"
-	"google.golang.org/adk/v2/model"
+	"google.golang.org/adk/v2/agent/workflowagent"
 	"google.golang.org/adk/v2/session"
-	"google.golang.org/genai"
+	"google.golang.org/adk/v2/workflow"
 )
 
 // --8<-- [start:sequential-get-started]
-// cityGeneratorRun yields a fixed city name and writes it to session state.
-func cityGeneratorRun(ctx agent.InvocationContext) iter.Seq2[*session.Event, error] {
-	return func(yield func(*session.Event, error) bool) {
-		city := "Tokyo"
-		if err := ctx.Session().State().Set("city_name", city); err != nil {
-			yield(nil, fmt.Errorf("failed to set city_name: %w", err))
-			return
-		}
-		yield(&session.Event{
-			LLMResponse: model.LLMResponse{
-				Content: &genai.Content{
-					Parts: []*genai.Part{{Text: city}},
-				},
-			},
-		}, nil)
-	}
+// cityTime holds the data passed from the lookup step to the report step.
+type cityTime struct {
+	City     string
+	TimeInfo string
 }
 
-// lookupTimeRun reads the city from state and returns simulated time
-// information for that city.
-func lookupTimeRun(ctx agent.InvocationContext) iter.Seq2[*session.Event, error] {
-	return func(yield func(*session.Event, error) bool) {
-		city, _ := ctx.Session().State().Get("city_name")
-		timeInfo := fmt.Sprintf("10:10 AM in %v", city)
-		if err := ctx.Session().State().Set("time_info", timeInfo); err != nil {
-			yield(nil, fmt.Errorf("failed to set time_info: %w", err))
-			return
-		}
-		yield(&session.Event{
-			LLMResponse: model.LLMResponse{
-				Content: &genai.Content{
-					Parts: []*genai.Part{{Text: timeInfo}},
-				},
-			},
-		}, nil)
-	}
-}
-
-// cityReportRun formats a final message combining the city and time from state.
-func cityReportRun(ctx agent.InvocationContext) iter.Seq2[*session.Event, error] {
-	return func(yield func(*session.Event, error) bool) {
-		city, _ := ctx.Session().State().Get("city_name")
-		timeStr, _ := ctx.Session().State().Get("time_info")
-		msg := fmt.Sprintf("It is %v in %v right now.\nWORKFLOW COMPLETED.", timeStr, city)
-		yield(&session.Event{
-			LLMResponse: model.LLMResponse{
-				Content: &genai.Content{
-					Parts: []*genai.Part{{Text: msg}},
-				},
-			},
-		}, nil)
-	}
-}
-
+// newSequentialGetStarted builds a three-node sequential workflow using the
+// v2 graph engine. Each node is a workflow.NewFunctionNode whose return value
+// is automatically wrapped in session.Event.Output and forwarded to the next
+// node as its typed input.
+//
+// This is the Go equivalent of the Python Workflow example:
+//
+//	root_agent = Workflow(
+//	    name="root_agent",
+//	    edges=[("START", city_generator_agent, lookup_time_function,
+//	             city_report_agent, completed_message_function)],
+//	)
 func newSequentialGetStarted() (agent.Agent, error) {
-	cityAgent, err := agent.New(agent.Config{
-		Name:        "city_generator_agent",
-		Description: "Returns the name of a random city and stores it in state.",
-		Run:         cityGeneratorRun,
-	})
-	if err != nil {
-		return nil, fmt.Errorf("failed to create city agent: %w", err)
-	}
-
-	timeAgent, err := agent.New(agent.Config{
-		Name:        "lookup_time_agent",
-		Description: "Reads the city from state and returns the current time.",
-		Run:         lookupTimeRun,
-	})
-	if err != nil {
-		return nil, fmt.Errorf("failed to create time agent: %w", err)
-	}
-
-	reportAgent, err := agent.New(agent.Config{
-		Name:        "city_report_agent",
-		Description: "Reports the city and current time from state.",
-		Run:         cityReportRun,
-	})
-	if err != nil {
-		return nil, fmt.Errorf("failed to create report agent: %w", err)
-	}
-
-	rootAgent, err := sequentialagent.New(sequentialagent.Config{
-		AgentConfig: agent.Config{
-			Name:        "root_agent",
-			Description: "A sequential workflow: generate city → look up time → report.",
-			SubAgents:   []agent.Agent{cityAgent, timeAgent, reportAgent},
+	// Step 1: return a city name. The string is set as event.Output and
+	// becomes the typed input of the next node.
+	cityGeneratorNode := workflow.NewFunctionNode("city_generator_agent",
+		func(_ agent.Context, _ any) (string, error) {
+			return "Tokyo", nil
 		},
-	})
-	if err != nil {
-		return nil, fmt.Errorf("failed to create sequential agent: %w", err)
-	}
+		workflow.NodeConfig{},
+	)
 
-	return rootAgent, nil
+	// Step 2: receive the city name and return structured time data.
+	lookupTimeNode := workflow.NewFunctionNode("lookup_time_function",
+		func(_ agent.Context, city string) (cityTime, error) {
+			return cityTime{City: city, TimeInfo: "10:10 AM"}, nil
+		},
+		workflow.NodeConfig{},
+	)
+
+	// Step 3: receive the cityTime struct and produce the final report string.
+	cityReportNode := workflow.NewFunctionNode("city_report_agent",
+		func(_ agent.Context, ct cityTime) (string, error) {
+			return fmt.Sprintf("It is %s in %s right now.\nWORKFLOW COMPLETED.",
+				ct.TimeInfo, ct.City), nil
+		},
+		workflow.NodeConfig{},
+	)
+
+	// workflow.Chain wires START → cityGeneratorNode → lookupTimeNode → cityReportNode.
+	// Data flows through event.Output: no session state writes needed.
+	return workflowagent.New(workflowagent.Config{
+		Name:        "root_agent",
+		Description: "Sequential workflow: generate city → look up time → report.",
+		Edges:       workflow.Chain(workflow.Start, cityGeneratorNode, lookupTimeNode, cityReportNode),
+	})
 }
 
 // --8<-- [end:sequential-get-started]
 
 // --8<-- [start:process-pipeline]
-// messageProcessorRun classifies an incoming message by writing the category
-// to session state.
-func messageProcessorRun(ctx agent.InvocationContext) iter.Seq2[*session.Event, error] {
-	return func(yield func(*session.Event, error) bool) {
-		// In a real workflow this step calls an LLM; here we return a fixed
-		// category for illustration.
-		category := "BUG"
-		if err := ctx.Session().State().Set("message_category", category); err != nil {
-			yield(nil, fmt.Errorf("failed to set message_category: %w", err))
-			return
-		}
-		yield(&session.Event{
-			LLMResponse: model.LLMResponse{
-				Content: &genai.Content{
-					Parts: []*genai.Part{{Text: category}},
-				},
-			},
-		}, nil)
+// classifyMessage is the router node. It emits ev.Routes to select which
+// branch to follow — the Go equivalent of Python's:
+//
+//	def router(node_input: str):
+//	    return Event(route=["BUG"])
+func classifyMessage(ctx agent.Context, msg string, emit func(*session.Event) error) (any, error) {
+	// In a real workflow this step calls an LLM; here we classify by keyword.
+	category := "LOGISTICS"
+	lower := strings.ToLower(msg)
+	switch {
+	case strings.Contains(lower, "bug") || strings.Contains(lower, "error"):
+		category = "BUG"
+	case strings.Contains(lower, "help") || strings.Contains(lower, "support"):
+		category = "CUSTOMER_SUPPORT"
 	}
+
+	ev := session.NewEvent(ctx, ctx.InvocationID())
+	ev.Routes = []string{category} // drives edge dispatch
+	ev.Output = msg                // forward original message to the chosen handler
+	if err := emit(ev); err != nil {
+		return nil, err
+	}
+	return nil, nil // nil suppresses the automatic terminal event
 }
 
-// bugHandlerRun handles messages that were classified as bugs.
-func bugHandlerRun(ctx agent.InvocationContext) iter.Seq2[*session.Event, error] {
-	return func(yield func(*session.Event, error) bool) {
-		yield(&session.Event{
-			LLMResponse: model.LLMResponse{
-				Content: &genai.Content{
-					Parts: []*genai.Part{{Text: "Handling bug..."}},
-				},
-			},
-		}, nil)
-	}
-}
-
+// newProcessPipeline builds a classification + conditional-routing workflow
+// using the v2 graph engine. The classifyMessage emitting node sets
+// ev.Routes, and the graph engine dispatches to the matching handler via
+// workflow.StringRoute.
+//
+// This is the Go equivalent of the Python Workflow example:
+//
+//	root_agent = Workflow(
+//	    name="routing_workflow",
+//	    edges=[
+//	        ("START", process_message, router),
+//	        (router, {
+//	            "BUG": response_1_bug,
+//	            "CUSTOMER_SUPPORT": response_2_support,
+//	            "LOGISTICS": response_3_logistics,
+//	        }),
+//	    ],
+//	)
 func newProcessPipeline() (agent.Agent, error) {
-	processAgent, err := agent.New(agent.Config{
-		Name:        "process_message",
-		Description: "Classifies a user message into BUG, CUSTOMER_SUPPORT, or LOGISTICS.",
-		Run:         messageProcessorRun,
-	})
-	if err != nil {
-		return nil, fmt.Errorf("failed to create process agent: %w", err)
-	}
+	classifyNode := workflow.NewEmittingFunctionNode(
+		"process_message", classifyMessage, workflow.NodeConfig{},
+	)
 
-	bugAgent, err := agent.New(agent.Config{
-		Name:        "bug_handler",
-		Description: "Handles bug reports.",
-		Run:         bugHandlerRun,
-	})
-	if err != nil {
-		return nil, fmt.Errorf("failed to create bug handler: %w", err)
-	}
-
-	// In Go, conditional routing is expressed by composing workflow agents and
-	// reading session state within each sub-agent's Run function. A
-	// SequentialAgent runs each sub-agent in the listed order; the category
-	// written to state by processAgent is available to every subsequent agent.
-	rootAgent, err := sequentialagent.New(sequentialagent.Config{
-		AgentConfig: agent.Config{
-			Name:        "routing_workflow",
-			Description: "Classifies then routes a message to the appropriate handler.",
-			SubAgents:   []agent.Agent{processAgent, bugAgent},
+	bugNode := workflow.NewFunctionNode("response_1_bug",
+		func(_ agent.Context, _ any) (string, error) {
+			return "Handling bug...", nil
 		},
-	})
-	if err != nil {
-		return nil, fmt.Errorf("failed to create routing workflow: %w", err)
-	}
+		workflow.NodeConfig{},
+	)
 
-	return rootAgent, nil
+	supportNode := workflow.NewFunctionNode("response_2_support",
+		func(_ agent.Context, _ any) (string, error) {
+			return "Handling customer support...", nil
+		},
+		workflow.NodeConfig{},
+	)
+
+	logisticsNode := workflow.NewFunctionNode("response_3_logistics",
+		func(_ agent.Context, _ any) (string, error) {
+			return "Handling logistics...", nil
+		},
+		workflow.NodeConfig{},
+	)
+
+	// workflow.Concat merges the sequential chain with the conditional edges.
+	// Each workflow.Edge carries a workflow.StringRoute matcher that the engine
+	// checks against ev.Routes emitted by classifyNode.
+	edges := workflow.Concat(
+		workflow.Chain(workflow.Start, classifyNode),
+		[]workflow.Edge{
+			{From: classifyNode, To: bugNode, Route: workflow.StringRoute("BUG")},
+			{From: classifyNode, To: supportNode, Route: workflow.StringRoute("CUSTOMER_SUPPORT")},
+			{From: classifyNode, To: logisticsNode, Route: workflow.StringRoute("LOGISTICS")},
+		},
+	)
+
+	return workflowagent.New(workflowagent.Config{
+		Name:        "routing_workflow",
+		Description: "Classifies a message and routes it to the appropriate handler.",
+		Edges:       edges,
+	})
 }
 
 // --8<-- [end:process-pipeline]
 
 func main() {
-	ctx := context.Background()
-	_ = ctx
-
 	seqAgent, err := newSequentialGetStarted()
 	if err != nil {
 		log.Fatalf("Failed to create sequential agent: %v", err)

@@ -103,11 +103,12 @@ function, and the final agent reports the information.
 
 === "Go"
 
-    In Go, sequential workflows are built by composing sub-agents with
-    `sequentialagent.New`. Each agent is an `agent.Agent` implementation whose
-    `Run` function yields `*session.Event` values. Agents share data between
-    steps by writing to session state with `ctx.Session().State().Set` and
-    reading it back with `ctx.Session().State().Get`.
+    In ADK Go v2.0.0, sequential workflows use the graph engine:
+    `workflow.NewFunctionNode` wraps each step, and `workflow.Chain` wires
+    the nodes into a sequential `edges` slice. The framework automatically
+    passes each node's typed return value to the next node via
+    `event.Output` — no session state writes are needed. The whole graph is
+    wrapped in `workflowagent.New`, which produces a standard `agent.Agent`.
 
     ```go
     --8<-- "examples/go/snippets/graphs/index/main.go:sequential-get-started"
@@ -195,11 +196,11 @@ translated into a graph-based agent:
 
 === "Go"
 
-    In Go, a processing pipeline is assembled by composing workflow agents. The
-    example below uses `sequentialagent.New` to run a classification agent
-    followed by a handler agent. The classification result is written to session
-    state with `ctx.Session().State().Set` and can be read by subsequent agents
-    to implement branching logic.
+    In ADK Go v2.0.0, conditional routing uses `workflow.NewEmittingFunctionNode`
+    to set `event.Routes` and `workflow.StringRoute` edges to dispatch to the
+    matching handler — the direct equivalent of Python's `router` function and
+    dict dispatch. `workflow.Concat` merges the chain and the conditional edges
+    into a single `edges` slice passed to `workflowagent.New`.
 
     ```go
     --8<-- "examples/go/snippets/graphs/index/main.go:process-pipeline"
@@ -223,17 +224,16 @@ are *not compatible* with the following ADK features:
 
 !!! note "Go: graph workflow API"
 
-    ADK Go 2.0 provides the equivalent of the Python `Workflow` class in the
-    `workflow` package: build a graph with `workflow.New` and a slice of
-    `workflow.Edge` values, express conditional routing with `workflow.Route`
-    (for example `workflow.StringRoute`, `workflow.IntRoute`, or
-    `workflow.BoolRoute`) matched
-    against the `Routes` on the emitted `session.Event`, and fan results back
-    in with `workflow.JoinNode`. Wrap a graph as an agent with
-    `workflowagent.New`.
+    The `workflow` package in ADK Go v2.0.0 is the direct equivalent of the
+    Python `Workflow` class. Use `workflow.NewFunctionNode` and
+    `workflow.NewAgentNode` to define nodes, `workflow.Chain` or
+    `workflow.Concat` with `[]workflow.Edge` to wire them, and
+    `workflowagent.New` to wrap the graph as a runnable agent. Conditional
+    routing uses `workflow.StringRoute`, `workflow.IntRoute`, or
+    `workflow.BoolRoute` matched against `event.Routes`. Fan-in is handled by
+    `workflow.NewJoinNode`.
 
-    For simple, deterministic pipelines you can also use the prebuilt workflow
-    agents —
-    [`sequentialagent`](/agents/workflow-agents/sequential-agents/),
-    [`parallelagent`](/agents/workflow-agents/parallel-agents/), and
-    [`loopagent`](/agents/workflow-agents/loop-agents/).
+    For advanced routing patterns and fan-out/join examples, see
+    [Build graph routes for workflow agents](/graphs/routes/). For prebuilt
+    higher-level alternatives (sequential, parallel, loop), see
+    [Prebuilt workflow agents](/agents/workflow-agents/).
