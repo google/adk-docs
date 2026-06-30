@@ -297,6 +297,9 @@ Before you can use this feature, you must have:
     export GOOGLE_CLOUD_LOCATION="your-gcp-location"
     ```
 
+For more information on connecting to Google Cloud from ADK agents, see
+[Connect to Google Cloud and Agent Platform](/get-started/google-cloud/).
+
 ### Configuration
 
 To connect your agent to the Memory Bank, you use the `--memory_service_uri` flag when starting the ADK server (`adk web` or `adk api_server`). The URI must be in the format `agentengine://<agent_engine_id>`.
