@@ -8,7 +8,7 @@
 
 To deploy your agent you will need to have a Kubernetes cluster running on GKE. You can create a cluster using the Google Cloud Console or the `gcloud` command line tool.
 
-In this example we will deploy a simple agent to GKE. The Python agent is a FastAPI application that uses `Gemini 2.0 Flash` as the LLM. The Go agent uses the ADK launcher and a statically-linked binary in a minimal container. We can use Vertex AI or AI Studio as the LLM provider.
+In this example we will deploy a simple agent to GKE. The Python agent is a FastAPI application that uses `Gemini Flash` as the LLM. The Go agent uses the ADK launcher and a statically-linked binary in a minimal container. We can use Vertex AI or AI Studio as the LLM provider.
 
 ## Environment variables
 
@@ -286,7 +286,7 @@ We will reference the `capital_agent` example defined on the [LLM agents](../age
         func main() {
             ctx := context.Background()
 
-            model, err := gemini.NewModel(ctx, "gemini-2.0-flash", &genai.ClientConfig{
+            model, err := gemini.NewModel(ctx, "gemini-flash-latest", &genai.ClientConfig{
                 APIKey: os.Getenv("GOOGLE_API_KEY"),
             })
             if err != nil {
@@ -330,7 +330,7 @@ We will reference the `capital_agent` example defined on the [LLM agents](../age
         the Vertex AI backend:
 
         ```go
-        model, err := gemini.NewModel(ctx, "gemini-2.0-flash", &genai.ClientConfig{
+        model, err := gemini.NewModel(ctx, "gemini-flash-latest", &genai.ClientConfig{
             Backend:  genai.BackendVertexAI,
             Project:  os.Getenv("GOOGLE_CLOUD_PROJECT"),
             Location: os.Getenv("GOOGLE_CLOUD_LOCATION"),
