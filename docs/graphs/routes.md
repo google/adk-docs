@@ -147,10 +147,10 @@ A sequential route runs each node once, in the listed order.
 
 ### Route branches and conditional execution
 
-In Python, branching is handled by a `FunctionNode` that returns an
-`Event(route=...)` value, which the `edges` dict dispatches to different nodes.
-
 === "Python"
+
+    In Python, branching is handled by a `FunctionNode` that returns an
+    `Event(route=...)` value, which the `edges` dict dispatches to different nodes.
 
     ```python
     def router(node_input: str):
@@ -193,7 +193,7 @@ In Python, branching is handled by a `FunctionNode` that returns an
     -   `workflow.Default` — matches when no other route on the same source
         node matches
 
-    The following pattern is the Go equivalent of the Python router above:
+    The following pattern is the Go equivalent of the Python router:
 
     ```go
     // classifyNode emits an Event with Routes=[]string{"BUG"},
@@ -402,15 +402,11 @@ accomplish this goal.
 ## Loop and escalation exit
 
 A loop repeats a set of steps until a termination condition is met. In Python
-this is a cycle in the `edges` graph that routes back to an earlier node. In
-Go v2.0.0 you can express the same pattern in two ways:
-
--   **Graph engine** (`workflowagent` + `workflow.Edge`): Create a back-edge
-    from a node back to an earlier node in the `edges` slice. The engine
-    follows the route and re-activates the target node in the same run.
--   **Prebuilt `loopagent`** (v1.x and v2.x): Repeatedly runs its `SubAgents`
-    in order until any sub-agent (or a tool called by a sub-agent) sets
-    `ctx.Actions().Escalate = true`, or until `MaxIterations` is reached.
+this is expressed as a back-edge in the `edges` graph that routes back to an
+earlier node. In ADK Go v2.0.0, the graph engine supports the same pattern
+directly: add an edge from a downstream node back to an earlier node with a
+route condition, and the engine re-activates the target node with a fresh
+lifecycle on each iteration.
 
 === "Python"
 
@@ -437,12 +433,10 @@ Go v2.0.0 you can express the same pattern in two ways:
 
 === "Go"
 
-    The following example uses the prebuilt `loopagent`. It repeatedly runs
-    its `SubAgents` in order; a tool called by a sub-agent signals termination
-    by setting `ctx.Actions().Escalate = true`, and the loop exits at the end
-    of that iteration. The same iterative-refinement pattern can also be
-    expressed with a back-edge in the `workflowagent` graph engine (see the
-    [routing examples](https://github.com/google/adk-go/tree/v2/examples/workflow/routing)):
+    The following example uses the graph engine with `workflow.EdgeBuilder`.
+    The critic node returns a verdict, a router node sets `Event.Routes`, and
+    a back-edge from the refiner to the critic creates the loop. When the
+    critic is satisfied it routes to the terminal `done` node instead:
 
     ```go
     --8<-- "examples/go/snippets/graphs/routes/main.go:loop-escalate"

@@ -63,12 +63,10 @@ import (
 	"google.golang.org/adk/v2/agent"
 	"google.golang.org/adk/v2/agent/llmagent"
 	"google.golang.org/adk/v2/agent/workflowagent"
-	"google.golang.org/adk/v2/agent/workflowagents/loopagent"
 	"google.golang.org/adk/v2/agent/workflowagents/parallelagent"
 	"google.golang.org/adk/v2/agent/workflowagents/sequentialagent"
 	"google.golang.org/adk/v2/model/gemini"
-	"google.golang.org/adk/v2/tool"
-	"google.golang.org/adk/v2/tool/functiontool"
+	"google.golang.org/adk/v2/session"
 	"google.golang.org/adk/v2/workflow"
 )
 
@@ -315,110 +313,103 @@ func newNestedWorkflows(ctx context.Context) (agent.Agent, error) {
 // --8<-- [end:nested-workflows]
 
 // --8<-- [start:loop-escalate]
-// ExitLoopArgs is the (empty) input struct for the exitLoop tool.
-type ExitLoopArgs struct{}
-
-// ExitLoopResults is the (empty) output struct for the exitLoop tool.
-type ExitLoopResults struct{}
-
-// exitLoop signals the loopagent to stop by setting Escalate = true on the
-// current event's actions. The tool function receives agent.Context, which
-// is the unified context type in ADK Go v2.
-func exitLoop(ctx agent.Context, _ ExitLoopArgs) (ExitLoopResults, error) {
-	ctx.Actions().Escalate = true
-	return ExitLoopResults{}, nil
+// draft carries the working document through the refinement loop.
+type draft struct {
+	Text string `json:"text"`
 }
 
-// newLoopEscalate builds a workflow that iteratively refines a document and
-// exits when the critic is satisfied. This uses the prebuilt loopagent.
+// criticResult is emitted by the critic node with the review verdict and
+// optional suggestions. The router reads Verdict to set Event.Routes.
+type criticResult struct {
+	Verdict     string `json:"verdict"`     // "REFINE" or "DONE"
+	Suggestions string `json:"suggestions"` // non-empty when Verdict == "REFINE"
+}
+
+// writeDraft is the initial writer node: produces the first draft from the
+// user's topic. Its typed return value becomes the input to the critic node
+// via Event.Output — no session state writes needed.
+func writeDraft(_ agent.Context, topic string) (draft, error) {
+	// In a real workflow this would call an LLM; here we return a stub.
+	return draft{Text: "Draft about " + topic + ": placeholder content."}, nil
+}
+
+// reviewDraft is the critic node: inspects the draft and returns a verdict.
+// "DONE" exits the loop; "REFINE" triggers a back-edge to the refiner.
+func reviewDraft(_ agent.Context, d draft) (criticResult, error) {
+	// Simulate a critic: approve once the draft contains "improved".
+	if strings.Contains(d.Text, "improved") {
+		return criticResult{Verdict: "DONE"}, nil
+	}
+	return criticResult{
+		Verdict:     "REFINE",
+		Suggestions: "Add more detail and mark the text as improved.",
+	}, nil
+}
+
+// routeVerdict reads the critic's verdict and sets Event.Routes so the
+// graph engine dispatches to either the refiner or the done node.
+// Returning nil suppresses the automatic terminal event.
+func routeVerdict(ctx agent.Context, r criticResult, emit func(*session.Event) error) (any, error) {
+	ev := session.NewEvent(ctx, ctx.InvocationID())
+	ev.Routes = []string{r.Verdict}
+	ev.Output = r // forward the full result to the chosen successor
+	if err := emit(ev); err != nil {
+		return nil, err
+	}
+	return nil, nil
+}
+
+// refineDraft applies the critic's suggestions and returns the improved draft.
+// Its output feeds back to the critic node via the back-edge.
+func refineDraft(_ agent.Context, r criticResult) (draft, error) {
+	return draft{Text: "improved draft incorporating: " + r.Suggestions}, nil
+}
+
+// reportDone is the terminal node, reached only when the critic is satisfied.
+func reportDone(_ agent.Context, r criticResult) (string, error) {
+	return "Refinement complete. Final verdict: " + r.Verdict, nil
+}
+
+// newLoopEscalate builds an iterative document-refinement workflow using the
+// graph engine. The critic node emits a route ("REFINE" or "DONE") and the
+// engine dispatches to either the refiner (which loops back to the critic via
+// a back-edge) or the terminal done node.
 //
-// For the workflow graph engine alternative, create a back-edge from the
-// refiner node back to the critic node using []workflow.Edge.
-func newLoopEscalate(ctx context.Context) (agent.Agent, error) {
-	geminiModel, err := gemini.NewModel(ctx, modelName, &genai.ClientConfig{})
-	if err != nil {
-		return nil, fmt.Errorf("gemini.NewModel: %w", err)
-	}
+// Graph topology:
+//
+//	START → writer → critic → router ─┬─ "REFINE" → refiner ──┐
+//	                                   └─ "DONE"   → done       │
+//	                 ▲_______________________________┘ (back-edge)
+//
+// Python equivalent:
+//
+//	edges=[
+//	    ("START", writer_node, critic_node, router),
+//	    (router, {"REFINE": refiner_node, "DONE": done_node}),
+//	    (refiner_node, critic_node),  # back-edge creates the loop
+//	]
+func newLoopEscalate() (agent.Agent, error) {
+	writerNode := workflow.NewFunctionNode("writer", writeDraft, workflow.NodeConfig{})
+	criticNode := workflow.NewFunctionNode("critic", reviewDraft, workflow.NodeConfig{})
+	routerNode := workflow.NewEmittingFunctionNode("router", routeVerdict, workflow.NodeConfig{})
+	refinerNode := workflow.NewFunctionNode("refiner", refineDraft, workflow.NodeConfig{})
+	doneNode := workflow.NewFunctionNode("done", reportDone, workflow.NodeConfig{})
 
-	const (
-		stateDoc   = "current_draft"
-		stateCrit  = "criticism"
-		donePhrase = "No major issues found."
-	)
+	// Build the edges. The back-edge from refinerNode to criticNode creates
+	// the loop; the graph engine re-activates criticNode with a fresh
+	// lifecycle on each iteration.
+	eb := workflow.NewEdgeBuilder()
+	eb.Add(workflow.Start, writerNode)
+	eb.Add(writerNode, criticNode)
+	eb.Add(criticNode, routerNode)
+	eb.AddRoute(routerNode, refinerNode, workflow.StringRoute("REFINE"))
+	eb.AddRoute(routerNode, doneNode, workflow.StringRoute("DONE"))
+	eb.Add(refinerNode, criticNode) // back-edge: loop back for another review
 
-	exitLoopTool, err := functiontool.New(
-		functiontool.Config{
-			Name:        "exitLoop",
-			Description: "Call this tool ONLY when the critique says the document needs no further changes.",
-		},
-		exitLoop,
-	)
-	if err != nil {
-		return nil, fmt.Errorf("functiontool.New: %w", err)
-	}
-
-	criticAgent, err := llmagent.New(llmagent.Config{
-		Name:        "critic_agent",
-		Model:       geminiModel,
-		Description: "Reviews the draft and suggests improvements, or signals completion.",
-		Instruction: fmt.Sprintf(`Review this draft:
-"""{%s}"""
-If it needs improvement, provide 1-2 specific suggestions.
-If it is good enough, respond exactly with: "%s"`, stateDoc, donePhrase),
-		OutputKey: stateCrit,
-	})
-	if err != nil {
-		return nil, fmt.Errorf("criticAgent: %w", err)
-	}
-
-	refinerAgent, err := llmagent.New(llmagent.Config{
-		Name:        "refiner_agent",
-		Model:       geminiModel,
-		Description: "Refines the draft or exits the loop when the critique signals completion.",
-		Instruction: fmt.Sprintf(`Current draft:
-"""{%s}"""
-Critique: {%s}
-
-If the critique is exactly "%s", call the exitLoop tool.
-Otherwise apply the suggestions and output the improved draft.`, stateDoc, stateCrit, donePhrase),
-		Tools:     []tool.Tool{exitLoopTool},
-		OutputKey: stateDoc,
-	})
-	if err != nil {
-		return nil, fmt.Errorf("refinerAgent: %w", err)
-	}
-
-	// loopagent repeatedly runs [criticAgent → refinerAgent] until either
-	// refinerAgent calls exitLoop (Escalate = true) or MaxIterations is reached.
-	refinementLoop, err := loopagent.New(loopagent.Config{
-		MaxIterations: 5,
-		AgentConfig: agent.Config{
-			Name:        "refinement_loop",
-			Description: "Iteratively refines the draft until the critic is satisfied.",
-			SubAgents:   []agent.Agent{criticAgent, refinerAgent},
-		},
-	})
-	if err != nil {
-		return nil, fmt.Errorf("loopagent: %w", err)
-	}
-
-	initialWriterAgent, err := llmagent.New(llmagent.Config{
-		Name:        "initial_writer_agent",
-		Model:       geminiModel,
-		Description: "Writes the first draft.",
-		Instruction: "Write a 2-3 sentence draft about the user's topic.",
-		OutputKey:   stateDoc,
-	})
-	if err != nil {
-		return nil, fmt.Errorf("initialWriterAgent: %w", err)
-	}
-
-	return sequentialagent.New(sequentialagent.Config{
-		AgentConfig: agent.Config{
-			Name:        "iterative_writer",
-			Description: "Writes then iteratively refines a document.",
-			SubAgents:   []agent.Agent{initialWriterAgent, refinementLoop},
-		},
+	return workflowagent.New(workflowagent.Config{
+		Name:        "iterative_writer",
+		Description: "Writes then iteratively refines a document using a critic/refiner loop.",
+		Edges:       eb.Build(),
 	})
 }
 
@@ -451,7 +442,7 @@ func main() {
 	}
 	log.Printf("created %s", nestedAgent.Name())
 
-	loopAgent, err := newLoopEscalate(ctx)
+	loopAgent, err := newLoopEscalate()
 	if err != nil {
 		log.Fatalf("newLoopEscalate: %v", err)
 	}

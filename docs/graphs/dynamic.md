@@ -31,13 +31,6 @@ complex routing logic. Here are some of the benefits of dynamic workflows in ADK
     internally compose lower-level nodes, keeping the overall workflow
     clean and manageable.
 
-!!! note "Go: dynamic workflows require ADK Go v2.0.0"
-
-    The `workflow` package (`workflow.NewDynamicNode`, `workflow.RunNode`,
-    `workflowagent.New`, etc.) is available in ADK Go **v2.0.0 and later**.
-    It is not present in v1.x releases. See the
-    [ADK 2.0 release page](/2.0/) for upgrade guidance.
-
 ## Get started
 
 The following dynamic workflow code example shows how to define a basic
