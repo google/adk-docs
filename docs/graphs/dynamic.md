@@ -81,6 +81,9 @@ workflow containing a single node with a function:
     `ctx.run_node()`. `workflowagent.New` with `workflow.Chain` replaces
     `Workflow(edges=[...])`.
 
+    Resume behaviour after a human-in-the-loop pause is controlled by
+    `NodeConfig.RerunOnResume` — see [Nodes](#node) below for details.
+
     ```go
     --8<-- "examples/go/snippets/graphs/dynamic/main.go:get-started"
     ```
@@ -140,11 +143,35 @@ run within a workflow.
     --8<-- "examples/go/snippets/graphs/dynamic/main.go:building-blocks-nodes"
     ```
 
-    `NodeConfig` holds the same options as Python's `@node` arguments (for
-    example, `RerunOnResume *bool` mirrors `rerun_on_resume=True`). Creating
-    nodes explicitly is useful when you need multiple nodes from the same
-    function with different configurations, or when wrapping functions from an
-    external package.
+    `NodeConfig` holds the same options as Python's `@node` arguments.
+    The most important field is `RerunOnResume *bool`, which controls what
+    happens when a workflow resumes after a human-in-the-loop pause:
+
+    -   **`&true` (re-entry mode)**: the interrupted node is re-run from the
+        beginning on resume. Use this for dynamic orchestrator nodes that call
+        `workflow.RunNode` in a loop — the body re-executes and already-completed
+        child activations are skipped automatically (checkpointing). This mirrors
+        Python's `@node(rerun_on_resume=True)`.
+    -   **`&false` (handoff mode)**: the resume payload is routed directly to
+        the node's successor as input, bypassing the interrupted node entirely.
+        Use this for leaf nodes that simply emit a pause event and expect the
+        human response to flow to the next step.
+    -   **`nil` (default)**: the engine decides — currently treated as handoff
+        (`&false`).
+
+    ```go
+    rerun := true
+    orchestratorNode := workflow.NewDynamicNode[string, string]("my_workflow",
+        myOrchestratorfn,
+        workflow.NodeConfig{RerunOnResume: &rerun}, // re-entry: node body re-runs on resume
+    )
+
+    handoffNode := workflow.NewFunctionNode("leaf_node",
+        myLeafFn,
+        workflow.NodeConfig{}, // nil RerunOnResume = handoff (default)
+    )
+    ```
+
 
 ### Workflows
 
