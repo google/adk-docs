@@ -149,19 +149,26 @@ run within a workflow.
         the node's successor as input, bypassing the interrupted node entirely.
         Use this for leaf nodes that simply emit a pause event and expect the
         human response to flow to the next step.
-    -   **`nil` (default)**: the engine decides — currently treated as handoff
-        (`&false`).
+    -   **`nil`**: the default depends on node type. `workflow.NewDynamicNode`
+        automatically sets `nil → &true` (re-entry mode), because an
+        orchestrator body must be re-entered on resume to deliver cached child
+        results. `workflow.NewFunctionNode` and other leaf node constructors
+        leave `nil` as-is, which the engine treats as handoff (`&false`).
+        Explicit `&false` is always respected on any node type.
 
     ```go
+    // NewDynamicNode: nil RerunOnResume is automatically set to &true.
+    // Passing &rerun explicitly is equivalent and makes the intent clear.
     rerun := true
     orchestratorNode := workflow.NewDynamicNode[string, string]("my_workflow",
         myOrchestratorfn,
         workflow.NodeConfig{RerunOnResume: &rerun}, // re-entry: node body re-runs on resume
     )
 
+    // NewFunctionNode: nil RerunOnResume stays nil → engine treats as handoff.
     handoffNode := workflow.NewFunctionNode("leaf_node",
         myLeafFn,
-        workflow.NodeConfig{}, // nil RerunOnResume = handoff (default)
+        workflow.NodeConfig{}, // nil RerunOnResume → handoff for FunctionNode
     )
     ```
 
