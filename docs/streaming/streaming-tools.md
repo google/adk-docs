@@ -68,7 +68,7 @@ Now let's define an agent that can monitor stock price changes and monitor the v
     ) -> AsyncGenerator[str, None]:
       """Monitor how many people are in the video streams."""
       print("start monitor_video_stream!")
-      client = Client(vertexai=False)
+      client = Client(enterprise=False)
       prompt_text = (
           "Count the number of people in this image. Just respond with a numeric"
           " number."

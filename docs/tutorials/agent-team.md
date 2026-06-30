@@ -117,7 +117,7 @@ print(f"OpenAI API Key set: {'Yes' if os.environ.get('OPENAI_API_KEY') and os.en
 print(f"Anthropic API Key set: {'Yes' if os.environ.get('ANTHROPIC_API_KEY') and os.environ['ANTHROPIC_API_KEY'] != 'YOUR_ANTHROPIC_API_KEY' else 'No (REPLACE PLACEHOLDER!)'}")
 
 # Configure ADK to use API keys directly (not Agent Platform for this multi-model setup)
-os.environ["GOOGLE_GENAI_USE_VERTEXAI"] = "False"
+os.environ["GOOGLE_GENAI_USE_ENTERPRISE"] = "False"
 
 
 # @markdown **Security Note:** It's best practice to manage API keys securely (e.g., using Colab Secrets or environment variables) rather than hardcoding them directly in the notebook. Replace the placeholder strings above.

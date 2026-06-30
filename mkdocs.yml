@@ -428,7 +428,9 @@ nav:
       - api-reference/index.md
       - Python ADK: api-reference/python/index.html
       - Typescript ADK: api-reference/typescript/index.html
-      - Go ADK: https://pkg.go.dev/google.golang.org/adk" target="_blank
+      - Go ADK:
+        - Go v2.x: https://pkg.go.dev/google.golang.org/adk/v2" target="_blank
+        - Go v1.x: https://pkg.go.dev/google.golang.org/adk" target="_blank
       - Java ADK: api-reference/java/index.html
       - Kotlin ADK: api-reference/kotlin/index.html
       - CLI Reference: api-reference/cli/index.html
