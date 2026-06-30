@@ -28,7 +28,7 @@ from google.adk.tools.tool_context import ToolContext
 from typing import Optional, Dict, Any # For type hints
 
 # Use one of the model constants defined earlier
-MODEL_GEMINI_2_5_FLASH = "gemini-2.5-flash"
+MODEL_GEMINI_FLASH = "gemini-flash-latest"
 
 
 def get_weather_stateful(city: str, tool_context: ToolContext) -> dict:
@@ -191,7 +191,7 @@ greeting_agent = None
 try:
     # Use a defined model constant
     greeting_agent = Agent(
-        model=MODEL_GEMINI_2_5_FLASH,
+        model=MODEL_GEMINI_FLASH,
         name="greeting_agent", # Keep original name for consistency
         instruction="You are the Greeting Agent. Your ONLY task is to provide a friendly greeting using the 'say_hello' tool. Do nothing else.",
         description="Handles simple greetings and hellos using the 'say_hello' tool.",
@@ -205,7 +205,7 @@ farewell_agent = None
 try:
     # Use a defined model constant
     farewell_agent = Agent(
-        model=MODEL_GEMINI_2_5_FLASH,
+        model=MODEL_GEMINI_FLASH,
         name="farewell_agent", # Keep original name
         instruction="You are the Farewell Agent. Your ONLY task is to provide a polite goodbye message using the 'say_goodbye' tool. Do not perform any other actions.",
         description="Handles simple farewells and goodbyes using the 'say_goodbye' tool.",
@@ -218,7 +218,7 @@ except Exception as e:
 
 root_agent = Agent(
         name="weather_agent_v6_tool_guardrail", # New version name
-        model=MODEL_GEMINI_2_5_FLASH,
+        model=MODEL_GEMINI_FLASH,
         description="Main agent: Handles weather, delegates, includes input AND tool guardrails.",
         instruction="You are the main Weather Agent. Provide weather using 'get_weather_stateful'. "
                     "Delegate greetings to 'greeting_agent' and farewells to 'farewell_agent'. "
