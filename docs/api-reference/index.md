@@ -2,6 +2,16 @@
 
 The Agent Development Kit (ADK) provides comprehensive API references across supported languages, allowing you to dive deep into all available classes, methods, and functionalities.
 
+{{#
+  CONTRIBUTORS: Keep all API reference links below as full `https://` absolute URLs.
+  These API docs (python/, typescript/, java/, kotlin/, cli/, agentconfig/, rest/)
+  are externally generated HTML, not MkDocs Markdown pages. If written as relative
+  or root-relative paths, such as `python/index.html` or `/api-reference/python/`,
+  the mkdocs-llmstxt plugin rewrites them to non-existent `.md` URLs, such as
+  `https://adk.dev/api-reference/python/index.md`, producing broken 404 links in
+  llms.txt / llms-full.txt. See #1716 and #1717 for history.
+#}}
+
 <div class="grid cards" markdown>
 
 -   :fontawesome-brands-python:{ .lg .middle } **Python API Reference**
@@ -9,7 +19,7 @@ The Agent Development Kit (ADK) provides comprehensive API references across sup
     ---
     Explore the complete API documentation for the Python Agent Development Kit. Discover detailed information on all modules, classes, functions, and examples to build sophisticated AI agents with Python.
 
-    [:octicons-arrow-right-24: View Python API Docs](/api-reference/python/) <br>
+    [:octicons-arrow-right-24: View Python API Docs](https://adk.dev/api-reference/python/) <br>
 
 <!-- This comment forces a block separation -->
 
@@ -18,7 +28,7 @@ The Agent Development Kit (ADK) provides comprehensive API references across sup
     ---
     Access the complete API documentation for the TypeScript Agent Development Kit. Find detailed information on all packages, classes, and methods to build powerful and flexible AI agents with TypeScript.
 
-    [:octicons-arrow-right-24: View Typescript API Docs](/api-reference/typescript/) <br>
+    [:octicons-arrow-right-24: View Typescript API Docs](https://adk.dev/api-reference/typescript/) <br>
 
 <!-- This comment forces a block separation -->
 
@@ -37,7 +47,7 @@ The Agent Development Kit (ADK) provides comprehensive API references across sup
     ---
     Access the comprehensive Javadoc for the Java Agent Development Kit. This reference provides detailed specifications for all packages, classes, interfaces, and methods, enabling you to develop robust AI agents using Java.
 
-    [:octicons-arrow-right-24: View Java API Docs](/api-reference/java/) <br>
+    [:octicons-arrow-right-24: View Java API Docs](https://adk.dev/api-reference/java/) <br>
 
 <!-- This comment forces a block separation -->
 
@@ -46,7 +56,7 @@ The Agent Development Kit (ADK) provides comprehensive API references across sup
     ---
     Access the complete KDoc documentation for the Kotlin Agent Development Kit. This reference covers all packages, classes, and functions for building AI agents with Kotlin.
 
-    [:octicons-arrow-right-24: View Kotlin API Docs](/api-reference/kotlin/) <br>
+    [:octicons-arrow-right-24: View Kotlin API Docs](https://adk.dev/api-reference/kotlin/) <br>
 
 <!-- This comment forces a block separation -->
 
@@ -56,7 +66,7 @@ The Agent Development Kit (ADK) provides comprehensive API references across sup
     Explore the complete API documentation for the CLI including all of the
     valid options and subcommands.
 
-    [:octicons-arrow-right-24: View CLI Docs](/api-reference/cli/) <br>
+    [:octicons-arrow-right-24: View CLI Docs](https://adk.dev/api-reference/cli/) <br>
 
 <!-- This comment forces a block separation -->
 
@@ -66,7 +76,7 @@ The Agent Development Kit (ADK) provides comprehensive API references across sup
     View the full Agent Config syntax for configuring ADK with
     YAML text files.
 
-    [:octicons-arrow-right-24: View Agent Config reference](/api-reference/agentconfig/) <br>
+    [:octicons-arrow-right-24: View Agent Config reference](https://adk.dev/api-reference/agentconfig/) <br>
 
 <!-- This comment forces a block separation -->
 
@@ -75,6 +85,6 @@ The Agent Development Kit (ADK) provides comprehensive API references across sup
     ---
     Explore the REST API for the ADK web server. This reference provides details on the available endpoints, request and response formats, and more.
 
-    [:octicons-arrow-right-24: View REST API Docs](/api-reference/rest/) <br>
+    [:octicons-arrow-right-24: View REST API Docs](https://adk.dev/api-reference/rest/) <br>
 
 </div>
