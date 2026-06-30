@@ -34,11 +34,6 @@ agent behavior.
     graph-based workflows in ADK Python v2.0.0. This feature
     is expected to be re-enabled in a future release.
 
-    In ADK Go v2.0.0, when an `llmagent` is wrapped as a graph node with
-    `workflow.NewAgentNode`, the workflow engine automatically applies
-    `ModeSingleTurn` if the agent has no mode configured. Task mode is not
-    supported for graph nodes in this release.
-
 ## Get started
 
 The following code example shows how to set operating modes for
