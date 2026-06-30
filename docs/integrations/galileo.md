@@ -2,7 +2,7 @@
 catalog_title: Galileo
 catalog_description: End-to-end tracing, evaluation, and monitoring for ADK agents
 catalog_icon: /integrations/assets/galileo.png
-catalog_tags: ["observability"]
+catalog_tags: ["observability", "evaluation"]
 ---
 
 # Agent Observability and Evaluation with Galileo
@@ -38,7 +38,7 @@ Configure environment variables:
 
 ```env title="my_agent/.env"
 # Gemini environment variables
-GOOGLE_GENAI_USE_VERTEXAI=0
+GOOGLE_GENAI_USE_ENTERPRISE=0
 GOOGLE_API_KEY="YOUR_API_KEY"
 
 # Galileo environment variables

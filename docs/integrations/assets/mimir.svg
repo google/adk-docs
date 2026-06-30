@@ -1,0 +1,7 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Mimir">
+  <rect width="128" height="128" rx="30" fill="#161420"></rect>
+  <rect x="32" y="33" width="64" height="10" rx="5" fill="#8B5CF6"></rect>
+  <rect x="32" y="50" width="64" height="10" rx="5" fill="#8B5CF6" fill-opacity="0.8"></rect>
+  <rect x="32" y="67" width="64" height="10" rx="5" fill="#8B5CF6" fill-opacity="0.62"></rect>
+  <rect x="32" y="84" width="64" height="10" rx="5" fill="#8B5CF6" fill-opacity="0.46"></rect>
+</svg>

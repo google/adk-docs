@@ -10,27 +10,9 @@ This includes models from Model Garden or your own fine-tuned models.
 
 ## Agent Platform Setup
 
-Ensure your environment is configured for Agent Platform:
-
-1. **Authentication:** Use Application Default Credentials (ADC):
-
-    ```shell
-    gcloud auth application-default login
-    ```
-
-2. **Environment Variables:** Set your project and location:
-
-    ```shell
-    export GOOGLE_CLOUD_PROJECT="YOUR_PROJECT_ID"
-    export GOOGLE_CLOUD_LOCATION="YOUR_VERTEX_AI_LOCATION" # e.g., us-central1
-    ```
-
-3. **Enable Agent Platform Backend:** Crucially, ensure the `google-genai` library
-   targets Agent Platform:
-
-    ```shell
-    export GOOGLE_GENAI_USE_VERTEXAI=TRUE
-    ```
+For more details on connecting ADK agents to Google Cloud hosted models and services,
+including Gemini Enterprise Agent Platform, see the
+[Connect to Google Cloud and Agent Platform](/get-started/google-cloud/) guide.
 
 ## Model Garden Deployments
 
@@ -165,7 +147,7 @@ Agent Platform.
     **Setup:**
 
     1. **Agent Platform Environment:** Ensure the consolidated Agent Platform setup (ADC, Env
-       Vars, `GOOGLE_GENAI_USE_VERTEXAI=TRUE`) is complete.
+       Vars, `GOOGLE_GENAI_USE_ENTERPRISE=TRUE`) is complete.
 
     2. **Install Provider Library:** Install the necessary client library configured
        for Agent Platform.
@@ -296,7 +278,7 @@ Agent Platform offers a curated selection of open-source models, such as Meta Ll
     **Setup:**
 
     1. **Agent Platform Environment:** Ensure the consolidated Agent Platform setup (ADC, Env
-       Vars, `GOOGLE_GENAI_USE_VERTEXAI=TRUE`) is complete.
+       Vars, `GOOGLE_GENAI_USE_ENTERPRISE=TRUE`) is complete.
 
     2. **Install LiteLLM:**
             ```shell

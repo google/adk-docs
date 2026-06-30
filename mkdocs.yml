@@ -274,6 +274,7 @@ nav:
       - Java: get-started/java.md
       - Kotlin: get-started/kotlin.md
       - Installation: get-started/installation.md
+      - Google Cloud: get-started/google-cloud.md
     - Build your Agent:
       - tutorials/index.md
       - Multi-tool agent: tutorials/multi-tool-agent.md
