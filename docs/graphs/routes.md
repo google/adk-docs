@@ -221,9 +221,9 @@ A sequential route runs each node once, in the listed order.
     eb := workflow.NewEdgeBuilder()
     eb.Add(workflow.Start, processMessage)
     eb.Add(processMessage, classifyNode)
-    eb.Add(classifyNode, bugHandler,       workflow.StringRoute("BUG"))
-    eb.Add(classifyNode, supportHandler,   workflow.StringRoute("CUSTOMER_SUPPORT"))
-    eb.Add(classifyNode, logisticsHandler, workflow.StringRoute("LOGISTICS"))
+    eb.AddRoute(classifyNode, bugHandler,       workflow.StringRoute("BUG"))
+    eb.AddRoute(classifyNode, supportHandler,   workflow.StringRoute("CUSTOMER_SUPPORT"))
+    eb.AddRoute(classifyNode, logisticsHandler, workflow.StringRoute("LOGISTICS"))
 
     rootAgent, _ := workflowagent.New(workflowagent.Config{
         Name:  "routing_workflow",
