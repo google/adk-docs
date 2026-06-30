@@ -5,7 +5,7 @@ is often not enough. You will want to create specialized agents that can
 collaborate to solve a problem. The [**Agent2Agent (A2A) Protocol**](https://a2a-protocol.org) is the
 standard that allows these agents to communicate with each other.
 
-## When to Use A2A vs. Local Sub-Agents
+## When to use A2A vs. local sub-agents
 
 - **Local Sub-Agents:** These are agents that run *within the same application
   process* as your main agent. They are like internal modules or libraries, used
@@ -27,7 +27,7 @@ Consider using **A2A** when:
 - You want to enforce a **strong, formal contract** (the A2A protocol) between
   your system's components.
 
-### When to Use A2A: Concrete Examples
+### When to use A2A: concrete examples
 
 - **Integrating with a Third-Party Service:** Your main agent needs to get
   real-time stock prices from an external financial data provider. This
@@ -44,7 +44,7 @@ Consider using **A2A** when:
   contribute agents, and you need a strict contract for how these agents
   interact to ensure compatibility and stability.
 
-### When NOT to Use A2A: Concrete Examples (Prefer Local Sub-Agents)
+### When NOT to use A2A: concrete examples (prefer local sub-agents)
 
 - **Internal Code Organization:** You are breaking down a complex task within a
   single agent into smaller, manageable functions or modules (e.g., a
@@ -61,14 +61,14 @@ Consider using **A2A** when:
   require independent deployment or complex state management, a simple function
   or class within the same agent is more appropriate than a separate A2A agent.
 
-## The A2A Workflow in ADK: A Simplified View
+## The A2A workflow in ADK: a simplified wiew
 
 Agent Development Kit (ADK) simplifies the process of building and connecting
 agents using the A2A protocol. Here's a straightforward breakdown of how it
 works:
 
 1. **Making an Agent Accessible (Exposing):** You start with an existing ADK
-    agent that you want other agents to be able to interact with. The ADK
+    agent that you want other agents to be able to interact with. ADK
     provides a simple way to "expose" this agent, turning it into an
     **A2AServer**. This server acts as a public interface, allowing other agents
     to send requests to your agent over a network. Think of it like setting up a
@@ -83,15 +83,26 @@ works:
 
 From your perspective as a developer, once you've set up this connection,
 interacting with the remote agent feels just like interacting with a local tool
-or function. The ADK abstracts away the network layer, making distributed agent
+or function. ADK abstracts away the network layer, making distributed agent
 systems as easy to work with as local ones.
 
-## Visualizing the A2A Workflow
+## Supported capabilities in A2A
+
+The A2A implementation provides three core features for complex agentic systems. 
+Each feature is powered by a specific module that delivers the necessary functionality to handle data transformation and state management.
+
+| Feature | Module | Functionality | In simpler terms |
+| :---- | :---- | :---- | :---- |
+| **Reasoning & Artifacts** | `part\_converter.py` | Encodes and decodes thought traces and file artifacts between A2A and the model SDK, ensuring data integrity | The Translator: Resolves language barriers between internal agent logic and the AI model SDK. |
+| **Long-Running Tools** | `long\_running\_functions.py` | Manages asynchronous state for tool calls that exceed standard response times to prevent timeouts. | The Manager: Coordinates asynchronous operations, maintaining conversation flow while waiting for external input. |
+| **Event Ingestion** | `from\_adk\_event.py` | Transforms raw platform events into structured A2A objects, serving as the ingestion point for all incoming agent commands. | The Receptionist: Orchestrates incoming traffic, transforming raw signals into actionable commands.|
+
+## Visualizing the A2A workflow
 
 To further clarify the A2A workflow, let's look at the "before and after" for
 both exposing and consuming agents, and then the combined system.
 
-### Exposing an Agent
+### Exposing an agent
 
 **Before Exposing:**
 Your agent code runs as a standalone component, but in this scenario, you want
@@ -128,7 +139,7 @@ accessible over a network to other remote agents.
 +-----------------------------+
 ```
 
-### Consuming an Agent
+### Consuming an agent
 
 **Before Consuming:**
 Your agent (referred to as the "Root Agent" in this context) is the application
@@ -160,7 +171,7 @@ remote agent.
       (Now talks to remote agent via RemoteA2aAgent)
 ```
 
-### Final System (Combined View)
+### Final system (combined view)
 
 This diagram shows how the consuming and exposing parts connect to form a
 complete A2A system.
@@ -192,7 +203,7 @@ Exposing Side:
                                                +-------------------+
 ```
 
-## Concrete Use Case: Customer Service and Product Catalog Agents
+## Concrete use case: customer service and product catalog agents
 
 Let's consider a practical example: a **Customer Service Agent** that needs to
 retrieve product information from a separate **Product Catalog Agent**.
@@ -248,7 +259,7 @@ Server. Then, the Customer Service Agent can simply call methods on the
 communication to the Product Catalog Agent. This allows for clear separation of
 concerns and easy integration of specialized agents.
 
-## Next Steps
+## Next steps
 
 Now that you understand the "why" of A2A, let's dive into the "how."
 
