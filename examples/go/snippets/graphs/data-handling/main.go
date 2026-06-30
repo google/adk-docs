@@ -315,43 +315,35 @@ func stateScopes(ctx agent.Context) error {
 // --8<-- [end:state-scopes]
 
 // --8<-- [start:input-output-schema]
-// newSchemaAgentPipeline demonstrates InputSchema and OutputSchema on an
-// AgentNode. These constrain the typed input the node accepts and force the
-// model to reply with a JSON object matching the output schema.
-//
-// When wrapped with workflow.NewAgentNodeTyped[FlightSearchInput, FlightSearchOutput],
-// the schemas are inferred from the generic type parameters automatically —
-// no need to construct *genai.Schema by hand.
-//
-// This is the Go equivalent of:
+// FlightSearchInput is the typed input schema for the flight-search agent node.
+// workflow.NewAgentNodeTyped[FlightSearchInput, FlightSearchOutput] reflects
+// these structs into *jsonschema.Schema automatically — no hand-built schema
+// construction needed.
+type FlightSearchInput struct {
+	Origin        string `json:"origin"         jsonschema:"description=Departure airport code e.g. SFO"`
+	Destination   string `json:"destination"    jsonschema:"description=Arrival airport code e.g. CDG"`
+	DepartureDate string `json:"departure_date" jsonschema:"description=Travel date in YYYY-MM-DD format"`
+}
+
+// FlightSearchOutput is the typed output schema for the flight-search agent node.
+type FlightSearchOutput struct {
+	CheapestPrice string `json:"cheapest_price" jsonschema:"description=Cheapest available fare e.g. $450"`
+	FlightCount   string `json:"flight_count"   jsonschema:"description=Number of matching flights found"`
+}
+
+// newSchemaAgentPipeline demonstrates workflow.NewAgentNodeTyped, which infers
+// *jsonschema.Schema from the generic type parameters. This is the Go equivalent
+// of Python's:
 //
 //	flight_searcher = Agent(
 //	    input_schema=FlightSearchInput,
 //	    output_schema=FlightSearchOutput,
 //	    ...
 //	)
+//
+// The node's event.Output carries the structured result to the successor —
+// no OutputKey or state write is needed.
 func newSchemaAgentPipeline(ctx context.Context, geminiModel model.LLM) (agent.Agent, error) {
-	flightInputSchema := &genai.Schema{
-		Type:        genai.TypeObject,
-		Description: "Input for a flight search request.",
-		Properties: map[string]*genai.Schema{
-			"origin":         {Type: genai.TypeString, Description: "Departure airport code, e.g. SFO."},
-			"destination":    {Type: genai.TypeString, Description: "Arrival airport code, e.g. CDG."},
-			"departure_date": {Type: genai.TypeString, Description: "Departure date in YYYY-MM-DD format."},
-		},
-		Required: []string{"origin", "destination", "departure_date"},
-	}
-
-	flightOutputSchema := &genai.Schema{
-		Type:        genai.TypeObject,
-		Description: "Result of a flight search.",
-		Properties: map[string]*genai.Schema{
-			"cheapest_price": {Type: genai.TypeString, Description: "Cheapest fare, e.g. '$450'."},
-			"flight_count":   {Type: genai.TypeString, Description: "Number of matching flights."},
-		},
-		Required: []string{"cheapest_price", "flight_count"},
-	}
-
 	flightSearchAgent, err := llmagent.New(llmagent.Config{
 		Name:        "flight_searcher",
 		Model:       geminiModel,
@@ -372,9 +364,10 @@ func newSchemaAgentPipeline(ctx context.Context, geminiModel model.LLM) (agent.A
 		return nil, fmt.Errorf("synthAgent: %w", err)
 	}
 
-	// NewAgentNodeWithSchemas wires explicit input/output schemas onto the node.
-	// The node's event.Output carries the structured result to the next node.
-	flightNode, err := workflow.NewAgentNodeWithSchemas(flightSearchAgent, flightInputSchema, flightOutputSchema, workflow.NodeConfig{})
+	// NewAgentNodeTyped[In, Out] reflects FlightSearchInput and FlightSearchOutput
+	// into *jsonschema.Schema automatically. The node enforces the input schema
+	// and constrains the model reply to the output schema's shape.
+	flightNode, err := workflow.NewAgentNodeTyped[FlightSearchInput, FlightSearchOutput](flightSearchAgent, workflow.NodeConfig{})
 	if err != nil {
 		return nil, fmt.Errorf("flightNode: %w", err)
 	}

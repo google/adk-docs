@@ -308,10 +308,11 @@ accepted and produced by any agent node.
 
 === "Go"
 
-    **workflow package**: schemas are attached to a node with
-    `workflow.NewAgentNodeWithSchemas`, which accepts `*genai.Schema` values
-    for input and output. The node's `Event.Output` carries the structured
-    result to the successor — no `OutputKey` or state write is needed:
+    **workflow package**: use `workflow.NewAgentNodeTyped[Input, Output]` to
+    attach schemas to an agent node. The generic type parameters are reflected
+    into `*jsonschema.Schema` automatically — no hand-built schema construction
+    needed. The node's `Event.Output` carries the structured result to the
+    successor — no `OutputKey` or state write is needed:
 
     ```go
     --8<-- "examples/go/snippets/graphs/data-handling/main.go:input-output-schema"
