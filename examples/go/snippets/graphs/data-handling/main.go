@@ -315,15 +315,15 @@ func stateScopes(ctx agent.Context) error {
 // these structs into *jsonschema.Schema automatically — no hand-built schema
 // construction needed.
 type FlightSearchInput struct {
-	Origin        string `json:"origin"         jsonschema:"description=Departure airport code e.g. SFO"`
-	Destination   string `json:"destination"    jsonschema:"description=Arrival airport code e.g. CDG"`
-	DepartureDate string `json:"departure_date" jsonschema:"description=Travel date in YYYY-MM-DD format"`
+	Origin        string `json:"origin"         jsonschema:"Departure airport code e.g. SFO"`
+	Destination   string `json:"destination"    jsonschema:"Arrival airport code e.g. CDG"`
+	DepartureDate string `json:"departure_date" jsonschema:"Travel date in YYYY-MM-DD format"`
 }
 
 // FlightSearchOutput is the typed output schema for the flight-search agent node.
 type FlightSearchOutput struct {
-	CheapestPrice string `json:"cheapest_price" jsonschema:"description=Cheapest available fare e.g. $450"`
-	FlightCount   string `json:"flight_count"   jsonschema:"description=Number of matching flights found"`
+	CheapestPrice string `json:"cheapest_price" jsonschema:"Cheapest available fare e.g. $450"`
+	FlightCount   string `json:"flight_count"   jsonschema:"Number of matching flights found"`
 }
 
 // newSchemaAgentPipeline demonstrates workflow.NewAgentNodeTyped, which infers
