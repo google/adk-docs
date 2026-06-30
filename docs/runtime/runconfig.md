@@ -324,5 +324,6 @@ your language:
 
 - [Python API reference](../api-reference/python/google-adk.html#google.adk.agents.RunConfig)
 - [TypeScript API reference](../api-reference/typescript/interfaces/RunConfig.html)
-- [Go API reference](https://pkg.go.dev/google.golang.org/adk/agent#RunConfig)
+- [Go API reference](https://pkg.go.dev/google.golang.org/adk/v2/agent#RunConfig)
 - [Java API reference](../api-reference/java/com/google/adk/agents/RunConfig.html)
+- [Kotlin API reference](../api-reference/kotlin/google-adk-kotlin-core/com.google.adk.kt.agents/-run-config/index.html)
