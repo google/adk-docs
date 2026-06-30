@@ -41,6 +41,9 @@ dynamic composition of agent-based applications using governed components.
   `us-central1`).
 - `google-adk` library installed.
 
+For more information on connecting to Google Cloud from ADK agents, see
+[Connect to Google Cloud and Agent Platform](/get-started/google-cloud/).
+
 ## Installation
 
 The [Agent Registry](https://docs.cloud.google.com/agent-registry/overview)

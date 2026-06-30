@@ -11,7 +11,7 @@ catalog_tags: ["observability", "evaluation"]
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
 </div>
 
-[Phoenix](https://arize.com/docs/phoenix) is an open-source, self-hosted observability platform for monitoring, debugging, and improving LLM applications and AI Agents at scale. It provides comprehensive tracing and evaluation capabilities for your Google ADK applications. To get started, sign up for a [free account](https://phoenix.arize.com/).
+[Phoenix](https://arize.com/docs/phoenix) is an open-source, self-hosted observability platform for monitoring, debugging, and improving LLM applications and AI Agents at scale. It provides comprehensive tracing and evaluation capabilities for your Google ADK applications. To get started, sign up for a [free account](https://arize.com/phoenix/).
 
 
 ## Overview
@@ -37,7 +37,7 @@ pip install openinference-instrumentation-google-adk google-adk arize-phoenix-ot
 
 These instructions show you how to use Phoenix Cloud. You can also [launch Phoenix](https://arize.com/docs/phoenix/integrations/llm-providers/google-gen-ai/google-adk-tracing) in a notebook, from your terminal, or self-host it using a container.
 
-1. Sign up for a [free Phoenix account](https://phoenix.arize.com/).
+1. Sign up for a [free Phoenix account](https://arize.com/phoenix/).
 2. From the Settings page of your new Phoenix Space, create your API key
 3. Copy your endpoint which should look like: https://app.phoenix.arize.com/s/[your-space-name]
 
