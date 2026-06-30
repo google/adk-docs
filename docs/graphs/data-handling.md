@@ -369,20 +369,16 @@ accepted and produced by any agent node.
 
 === "Go"
 
-    **workflow package**: a `FunctionNode` returns a typed struct; the
-    framework serializes it into `Event.Output` and the successor `AgentNode`
-    receives it as its user content. The struct fields are available to the
-    agent inline — no `{key}` template syntax is required. See the
-    [structured output snippet](#node-output-passing-structured-data) above
-    for an example.
-
-    **Prebuilt workflow agents**: each state key is referenced independently
-    using `{key}` in the `Instruction` field. There is no class-scoped or
-    source-node-qualified syntax; use distinct, descriptive key names and
-    write each value to its own key via `OutputKey`:
+    In ADK Go v2.0.0, a `FunctionNode` returns a typed struct and the
+    framework serializes it into `Event.Output`. The successor `AgentNode`
+    receives the struct as its user content — the fields are available to the
+    agent's `Instruction` without any `{key}` template syntax. This is the
+    direct equivalent of Python's `input_schema=CityTime` with
+    `{CityTime.time_info}` template placeholders: the struct fields are
+    delivered as typed input rather than looked up by name from state.
 
     ```go
-    --8<-- "examples/go/snippets/graphs/data-handling/main.go:output-key"
+    --8<-- "examples/go/snippets/graphs/data-handling/main.go:structured-output"
     ```
 
 For a complete example of this workflow, see
