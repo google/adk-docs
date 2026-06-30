@@ -15,9 +15,7 @@
 // Package main demonstrates collaborative agent team patterns in ADK Go v2.
 //
 // NOTE: This file requires google.golang.org/adk/v2, available in ADK Go
-// v2.0.0 and later. It carries //go:build ignore so it is excluded from the
-// current examples/go module (which is still on the v1 path) until examples/go
-// is migrated to google.golang.org/adk at the v2.0.0 release.
+// v2.0.0 and later.
 //
 // # Agent collaboration modes in ADK Go v2
 //

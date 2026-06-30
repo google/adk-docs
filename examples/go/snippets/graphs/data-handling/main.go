@@ -14,7 +14,7 @@
 
 // Package main demonstrates data-handling patterns for ADK Go v2 workflow agents.
 //
-// NOTE: This file requires google.golang.org/adk (the workflow package),
+// NOTE: This file requires google.golang.org/adk/v2 (the workflow package),
 // available in ADK Go v2.0.0 and later.
 //
 // # Data flow in ADK Go v2
