@@ -357,13 +357,13 @@ When a memory service is configured, your agent can use a tool or callback to re
 === "Python"
     ```python
     from google.adk.agents import Agent
-    from google.adk.tools.preload_memory_tool import PreloadMemoryTool
+    from google.adk.tools import preload_memory
 
     agent = Agent(
         model=MODEL_ID,
         name='weather_sentiment_agent',
         instruction="...",
-        tools=[PreloadMemoryTool()]
+        tools=[preload_memory]
     )
     ```
 
@@ -418,7 +418,7 @@ To extract memories from your session, you need to call `add_session_to_memory`.
 === "Python"
     ```python
     from google.adk.agents import Agent
-    from google import adk
+    from google.adk.tools import preload_memory
 
     async def auto_save_session_to_memory_callback(callback_context):
         await callback_context.add_session_to_memory()
@@ -427,7 +427,7 @@ To extract memories from your session, you need to call `add_session_to_memory`.
         model=MODEL,
         name="Generic_QA_Agent",
         instruction="Answer the user's questions",
-        tools=[adk.tools.preload_memory_tool.PreloadMemoryTool()],
+        tools=[preload_memory],
         after_agent_callback=auto_save_session_to_memory_callback,
     )
     ```
