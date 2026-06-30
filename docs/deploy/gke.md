@@ -8,7 +8,7 @@
 
 To deploy your agent you will need to have a Kubernetes cluster running on GKE. You can create a cluster using the Google Cloud Console or the `gcloud` command line tool.
 
-In this example we will deploy a simple agent to GKE. The Python agent is a FastAPI application that uses `Gemini Flash` as the LLM. The Go agent uses the ADK launcher and a statically-linked binary in a minimal container. We can use Vertex AI or AI Studio as the LLM provider.
+In this example deploys a simple agent to GKE. The Python agent is a FastAPI application that uses `Gemini Flash` as the LLM. The Go agent uses the ADK launcher and a statically-linked binary in a minimal container. We can use Vertex AI or AI Studio as the LLM provider. You can use Agent Platform or AI Studio as the LLM provider with the environment variable `GOOGLE_GENAI_USE_ENTERPRISE`.
 
 ## Environment variables
 
@@ -17,7 +17,7 @@ Set your environment variables as described in the [Setup and Installation](../g
 ```bash
 export GOOGLE_CLOUD_PROJECT=your-project-id # Your GCP project ID
 export GOOGLE_CLOUD_LOCATION=us-central1 # Or your preferred location
-export GOOGLE_GENAI_USE_VERTEXAI=true # Set to true if using Agent Platform
+export GOOGLE_GENAI_USE_ENTERPRISE=true # Set to true if using Agent Platform
 export GOOGLE_CLOUD_PROJECT_NUMBER=$(gcloud projects describe --format json $GOOGLE_CLOUD_PROJECT | jq -r ".projectNumber")
 ```
 
@@ -479,9 +479,9 @@ spec:
             value: $GOOGLE_CLOUD_PROJECT
           - name: GOOGLE_CLOUD_LOCATION
             value: $GOOGLE_CLOUD_LOCATION
-          - name: GOOGLE_GENAI_USE_VERTEXAI
-            value: "$GOOGLE_GENAI_USE_VERTEXAI"
-          # If using AI Studio, set GOOGLE_GENAI_USE_VERTEXAI to false and set the following:
+          - name: GOOGLE_GENAI_USE_ENTERPRISE
+            value: "$GOOGLE_GENAI_USE_ENTERPRISE"
+          # If using AI Studio, set GOOGLE_GENAI_USE_ENTERPRISE to false and set the following:
           # - name: GOOGLE_API_KEY
           #   value: $GOOGLE_API_KEY
           # Add any other necessary environment variables your agent might need
