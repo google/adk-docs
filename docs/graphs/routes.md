@@ -138,8 +138,9 @@ A sequential route runs each node once, in the listed order.
 
 === "Go"
 
-    `sequentialagent.New` accepts a list of `SubAgents` and runs them in the
-    listed order — one after another, passing session state between steps:
+    `workflow.Chain(workflow.Start, nodeA, nodeB, nodeC)` wires nodes into a
+    sequential edge slice. Each node's typed return value is forwarded to the
+    next node via `event.Output` — no session state writes needed:
 
     ```go
     --8<-- "examples/go/snippets/graphs/routes/main.go:sequential-nodes"
@@ -311,22 +312,20 @@ before passing results to the next step.
     })
     ```
 
-    When using the prebuilt `parallelagent` instead, express fan-out/join by
-    nesting a `parallelagent` as the first sub-agent of a `sequentialagent`.
-    Each parallel branch writes its output to a unique `OutputKey` in session
-    state; after all branches complete the synthesis agent reads those keys
-    through its `Instruction` template:
+    The following snippet shows the complete fan-out / join pattern using
+    `workflow.NewJoinNode` and `EdgeBuilder.AddFanOut` / `AddFanIn`:
 
     ```go
     --8<-- "examples/go/snippets/graphs/routes/main.go:parallel-fan-out"
     ```
 
-    !!! warning "Caution: Parallel agent isolation"
+    !!! warning "Caution: Stuck JoinNode from incomplete nodes"
 
-        Each sub-agent in a `parallelagent` runs in an isolated branch
-        context. They share the underlying session state for writes, but
-        they do not see each other's in-progress events. Use distinct
-        `OutputKey` values to avoid write collisions between branches.
+        `workflow.NewJoinNode` proceeds only after every predecessor node has
+        emitted an `event.Output`. If a predecessor fails without emitting
+        output, the JoinNode is stuck and workflow execution stops. Attach a
+        `RetryConfig` to flaky predecessor nodes to guard against transient
+        failures.
 
 ## Nested workflows
 
@@ -388,12 +387,9 @@ accomplish this goal.
     })
     ```
 
-    **Prebuilt workflow agents**: Any prebuilt workflow agent (sequential,
-    parallel, or loop) can be provided as a `SubAgent` of another prebuilt
-    workflow agent. The nested workflow runs to completion as a single logical
-    step from the parent's perspective. State written by steps inside the
-    nested workflow is immediately visible to steps that follow it in the
-    parent:
+    The following snippet shows both the inner and outer graph construction.
+    `workflow.NewAgentNode` wraps the inner `workflowagent` so it can be
+    placed in the outer graph's `workflow.Chain`:
 
     ```go
     --8<-- "examples/go/snippets/graphs/routes/main.go:nested-workflows"

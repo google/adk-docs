@@ -14,7 +14,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Package main demonstrates graph routing patterns in ADK Go v2.
+// Package main demonstrates graph routing patterns in ADK Go v2 using the
+// graph engine: workflow.NewFunctionNode, workflow.NewAgentNode, workflow.Chain,
+// workflow.Concat, workflow.NewEdgeBuilder, workflow.NewJoinNode, and
+// workflowagent.New.
 //
 // NOTE: This file requires google.golang.org/adk/v2 (the workflow package),
 // available in ADK Go v2.0.0 and later. It carries //go:build ignore so it is
@@ -22,55 +25,25 @@
 // until examples/go is migrated to google.golang.org/adk/v2 at the v2.0.0
 // release.
 //
-// # Routing patterns in ADK Go v2
-//
-// ADK Go v2.0.0 provides two complementary approaches to graph routing:
-//
-// ## workflow package (graph engine)
-//
-// workflow.NewFunctionNode, workflow.NewAgentNode, and workflow.NewDynamicNode
-// create nodes that communicate through session.Event fields — mirroring the
-// Python Workflow(edges=[...]) API closely:
-//
-//   - workflow.Chain(workflow.Start, nodeA, nodeB) — sequential edges
-//   - workflow.Concat + []workflow.Edge{...} — conditional branching
-//   - workflow.NewEdgeBuilder with AddFanOut/AddFanIn — fan-out/join
-//   - workflow.NewJoinNode — barrier that waits for all predecessors
-//
-// ## Prebuilt workflow agents
-//
-// sequentialagent, parallelagent, and loopagent are higher-level wrappers
-// for the three most common topologies. They communicate through session state
-// (llmagent.Config.OutputKey / ctx.Session().State().Set / {key} in Instruction).
-//
 // This file contains five snippet regions used in docs/graphs/routes.md:
 //
-//	function-node       – workflow.NewFunctionNode as a graph node (v2 graph engine)
-//	sequential-nodes    – sequential route using the prebuilt sequentialagent
-//	parallel-fan-out    – parallel fan-out using the prebuilt parallelagent + sequentialagent
-//	nested-workflows    – nested sequentialagent inside another sequentialagent
-//	loop-escalate       – loopagent with Escalate-based exit (prebuilt tier)
+//	function-node       – workflow.NewFunctionNode as a graph node
+//	sequential-nodes    – sequential route using workflow.Chain
+//	parallel-fan-out    – fan-out/join using workflow.NewJoinNode + EdgeBuilder
+//	nested-workflows    – inner workflowagent wrapped as workflow.NewAgentNode
+//	loop-escalate       – back-edge loop using workflow.EdgeBuilder.AddRoute
 package main
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"strings"
 
-	"google.golang.org/genai"
-
 	"google.golang.org/adk/v2/agent"
-	"google.golang.org/adk/v2/agent/llmagent"
 	"google.golang.org/adk/v2/agent/workflowagent"
-	"google.golang.org/adk/v2/agent/workflowagents/parallelagent"
-	"google.golang.org/adk/v2/agent/workflowagents/sequentialagent"
-	"google.golang.org/adk/v2/model/gemini"
 	"google.golang.org/adk/v2/session"
 	"google.golang.org/adk/v2/workflow"
 )
-
-const modelName = "gemini-flash-latest"
 
 // --8<-- [start:function-node]
 // newFunctionNodePipeline demonstrates workflow.NewFunctionNode as the primary
@@ -92,7 +65,7 @@ func newFunctionNodePipeline() (agent.Agent, error) {
 		return input + " IS AWESOME!", nil
 	}
 
-	// workflow.NewFunctionNode wraps the function as a graph node.
+	// workflow.NewFunctionNode wraps each function as a graph node.
 	// workflow.Chain wires them in order: START → upper → suffix.
 	// The output of upperFn is delivered as the typed input of suffixFn
 	// via event.Output — no session state writes are needed.
@@ -109,204 +82,187 @@ func newFunctionNodePipeline() (agent.Agent, error) {
 // --8<-- [end:function-node]
 
 // --8<-- [start:sequential-nodes]
-// newSequentialNodes builds a two-step pipeline using the prebuilt
-// sequentialagent. This is an alternative to the workflow graph engine for
-// simple sequential topologies.
+// newSequentialNodes builds a two-step sequential workflow using the v2 graph
+// engine. workflow.Chain wires the nodes in order; each node's typed return
+// value is forwarded to the next node via event.Output.
 //
-// The sequentialagent runs each SubAgent once, in the listed order. Data flows
-// through session state: step A writes to OutputKey, step B reads it via {key}
-// in its Instruction template.
-//
-// workflow.Chain equivalent:
+// This is the Go equivalent of:
 //
 //	edges=[("START", task_A_node, task_B_node)]
-func newSequentialNodes(ctx context.Context) (agent.Agent, error) {
-	geminiModel, err := gemini.NewModel(ctx, modelName, &genai.ClientConfig{})
-	if err != nil {
-		return nil, fmt.Errorf("gemini.NewModel: %w", err)
-	}
-
-	taskA, err := llmagent.New(llmagent.Config{
-		Name:        "task_A_agent",
-		Model:       geminiModel,
-		Description: "Performs task A.",
-		Instruction: "Summarise the user request in one sentence.",
-		OutputKey:   "task_a_result",
-	})
-	if err != nil {
-		return nil, fmt.Errorf("taskA: %w", err)
-	}
-
-	taskB, err := llmagent.New(llmagent.Config{
-		Name:        "task_B_agent",
-		Model:       geminiModel,
-		Description: "Performs task B using task A output.",
-		Instruction: "Translate this summary into French: {task_a_result}",
-	})
-	if err != nil {
-		return nil, fmt.Errorf("taskB: %w", err)
-	}
-
-	return sequentialagent.New(sequentialagent.Config{
-		AgentConfig: agent.Config{
-			Name:        "sequential_workflow",
-			Description: "Runs task A then task B in order.",
-			SubAgents:   []agent.Agent{taskA, taskB},
+func newSequentialNodes() (agent.Agent, error) {
+	// task_A_node: transforms the user's input.
+	taskANode := workflow.NewFunctionNode("task_A_node",
+		func(_ agent.Context, input string) (string, error) {
+			return "Summary: " + strings.TrimSpace(input), nil
 		},
+		workflow.NodeConfig{},
+	)
+
+	// task_B_node: receives task A's output as its typed input and produces
+	// the final result. No session state reads needed.
+	taskBNode := workflow.NewFunctionNode("task_B_node",
+		func(_ agent.Context, summary string) (string, error) {
+			return strings.ToUpper(summary), nil
+		},
+		workflow.NodeConfig{},
+	)
+
+	return workflowagent.New(workflowagent.Config{
+		Name:        "sequential_workflow",
+		Description: "Runs task A then task B in order via workflow.Chain.",
+		Edges:       workflow.Chain(workflow.Start, taskANode, taskBNode),
 	})
 }
 
 // --8<-- [end:sequential-nodes]
 
 // --8<-- [start:parallel-fan-out]
-// newParallelFanOut builds a fan-out / join pipeline using the prebuilt
-// parallelagent and sequentialagent. This is the prebuilt-agent alternative
-// to workflow.NewJoinNode + EdgeBuilder.AddFanOut/AddFanIn.
+// newParallelFanOut builds a fan-out / join workflow using the v2 graph engine.
+// Three research nodes run in parallel from Start; workflow.NewJoinNode waits
+// for all of them to complete and emits a map[nodeName]output to the format
+// node, which assembles the results for a synthesis node.
 //
-// parallelagent runs researchA, researchB, and researchC concurrently; each
-// writes its output to a distinct session state key via OutputKey. The
-// enclosing sequentialagent then runs synthesisAgent, which reads all three
-// keys via {result_A}, {result_B}, {result_C} in its Instruction.
-func newParallelFanOut(ctx context.Context) (agent.Agent, error) {
-	geminiModel, err := gemini.NewModel(ctx, modelName, &genai.ClientConfig{})
-	if err != nil {
-		return nil, fmt.Errorf("gemini.NewModel: %w", err)
-	}
-
-	researchA, err := llmagent.New(llmagent.Config{
-		Name:        "research_agent_A",
-		Model:       geminiModel,
-		Description: "Researches topic A.",
-		Instruction: "Give a 1-sentence fact about renewable energy.",
-		OutputKey:   "result_A",
-	})
-	if err != nil {
-		return nil, fmt.Errorf("researchA: %w", err)
-	}
-
-	researchB, err := llmagent.New(llmagent.Config{
-		Name:        "research_agent_B",
-		Model:       geminiModel,
-		Description: "Researches topic B.",
-		Instruction: "Give a 1-sentence fact about electric vehicles.",
-		OutputKey:   "result_B",
-	})
-	if err != nil {
-		return nil, fmt.Errorf("researchB: %w", err)
-	}
-
-	researchC, err := llmagent.New(llmagent.Config{
-		Name:        "research_agent_C",
-		Model:       geminiModel,
-		Description: "Researches topic C.",
-		Instruction: "Give a 1-sentence fact about carbon capture.",
-		OutputKey:   "result_C",
-	})
-	if err != nil {
-		return nil, fmt.Errorf("researchC: %w", err)
-	}
-
-	parallelResearch, err := parallelagent.New(parallelagent.Config{
-		AgentConfig: agent.Config{
-			Name:        "parallel_research",
-			Description: "Runs three research agents in parallel.",
-			SubAgents:   []agent.Agent{researchA, researchB, researchC},
+// Graph topology:
+//
+//	START ─┬─> research_A ──┐
+//	       ├─> research_B ──┼─> gather (JoinNode) ─> format ─> synthesis
+//	       └─> research_C ──┘
+//
+// Python equivalent:
+//
+//	edges=[
+//	    ("START", research_A, my_join_node),
+//	    ("START", research_B, my_join_node),
+//	    ("START", research_C, my_join_node),
+//	    (my_join_node, format_node),
+//	    (format_node, synthesis_node),
+//	]
+func newParallelFanOut() (agent.Agent, error) {
+	researchA := workflow.NewFunctionNode("research_A",
+		func(_ agent.Context, _ any) (string, error) {
+			return "Fact about renewable energy.", nil
 		},
-	})
-	if err != nil {
-		return nil, fmt.Errorf("parallelagent: %w", err)
-	}
-
-	synthesisAgent, err := llmagent.New(llmagent.Config{
-		Name:  "synthesis_agent",
-		Model: geminiModel,
-		Instruction: `Combine the following research results into one paragraph:
-A: {result_A}
-B: {result_B}
-C: {result_C}`,
-		Description: "Synthesises outputs from the parallel research agents.",
-	})
-	if err != nil {
-		return nil, fmt.Errorf("synthesisAgent: %w", err)
-	}
-
-	// The top-level sequentialagent guarantees synthesis only starts after
-	// all parallel branches have completed.
-	return sequentialagent.New(sequentialagent.Config{
-		AgentConfig: agent.Config{
-			Name:        "fan_out_workflow",
-			Description: "Parallel research followed by synthesis.",
-			SubAgents:   []agent.Agent{parallelResearch, synthesisAgent},
+		workflow.NodeConfig{},
+	)
+	researchB := workflow.NewFunctionNode("research_B",
+		func(_ agent.Context, _ any) (string, error) {
+			return "Fact about electric vehicles.", nil
 		},
+		workflow.NodeConfig{},
+	)
+	researchC := workflow.NewFunctionNode("research_C",
+		func(_ agent.Context, _ any) (string, error) {
+			return "Fact about carbon capture.", nil
+		},
+		workflow.NodeConfig{},
+	)
+
+	// workflow.NewJoinNode waits for all predecessors (research_A, research_B,
+	// research_C) to complete and emits a map[nodeName]output to its successor.
+	gatherNode := workflow.NewJoinNode("gather")
+
+	// formatNode receives map[string]any from gatherNode and assembles a
+	// combined prompt string.
+	formatNode := workflow.NewFunctionNode("format",
+		func(_ agent.Context, results map[string]any) (string, error) {
+			return fmt.Sprintf("A: %v\nB: %v\nC: %v",
+				results["research_A"],
+				results["research_B"],
+				results["research_C"],
+			), nil
+		},
+		workflow.NodeConfig{},
+	)
+
+	synthesisNode := workflow.NewFunctionNode("synthesis",
+		func(_ agent.Context, prompt string) (string, error) {
+			return "Combined report: " + prompt, nil
+		},
+		workflow.NodeConfig{},
+	)
+
+	// EdgeBuilder.AddFanOut fans workflow.Start out to all three research nodes.
+	// EdgeBuilder.AddFanIn routes all three research nodes into gatherNode.
+	eb := workflow.NewEdgeBuilder()
+	eb.AddFanOut(workflow.Start, researchA, researchB, researchC)
+	eb.AddFanIn(gatherNode, researchA, researchB, researchC)
+	eb.Add(gatherNode, formatNode)
+	eb.Add(formatNode, synthesisNode)
+
+	return workflowagent.New(workflowagent.Config{
+		Name:        "fan_out_workflow",
+		Description: "Parallel research fan-out with JoinNode barrier and synthesis.",
+		Edges:       eb.Build(),
 	})
 }
 
 // --8<-- [end:parallel-fan-out]
 
 // --8<-- [start:nested-workflows]
-// newNestedWorkflows shows how to use one prebuilt workflow agent as a
-// sub-agent of another — the prebuilt-agent approach to nested workflows.
+// newNestedWorkflows shows how to nest one workflowagent inside another using
+// the v2 graph engine. The inner workflowagent is wrapped with
+// workflow.NewAgentNode and placed as a node in the outer graph's edge slice.
+// From the outer graph's perspective the inner workflow is a single node that
+// runs to completion before the edge to finalNode is followed.
 //
-// For the workflow graph engine alternative, wrap a workflowagent with
-// workflow.NewAgentNode and place it as a node in the outer graph's edges:
+// Python equivalent:
 //
-//	innerNode, _ := workflow.NewAgentNode(innerWorkflowAgent, workflow.NodeConfig{})
-//	edges := workflow.Chain(workflow.Start, outerStep, innerNode, finalNode)
-func newNestedWorkflows(ctx context.Context) (agent.Agent, error) {
-	geminiModel, err := gemini.NewModel(ctx, modelName, &genai.ClientConfig{})
-	if err != nil {
-		return nil, fmt.Errorf("gemini.NewModel: %w", err)
-	}
-
-	innerStep1, err := llmagent.New(llmagent.Config{
-		Name:        "inner_step_1",
-		Model:       geminiModel,
-		Description: "First step of the inner workflow.",
-		Instruction: "Translate the user's request into Spanish.",
-		OutputKey:   "spanish_text",
-	})
-	if err != nil {
-		return nil, fmt.Errorf("innerStep1: %w", err)
-	}
-
-	innerStep2, err := llmagent.New(llmagent.Config{
-		Name:        "inner_step_2",
-		Model:       geminiModel,
-		Description: "Second step of the inner workflow.",
-		Instruction: "Now translate this Spanish text back into English: {spanish_text}",
-	})
-	if err != nil {
-		return nil, fmt.Errorf("innerStep2: %w", err)
-	}
-
-	workflowB, err := sequentialagent.New(sequentialagent.Config{
-		AgentConfig: agent.Config{
-			Name:        "workflow_B",
-			Description: "Translates to Spanish then back to English.",
-			SubAgents:   []agent.Agent{innerStep1, innerStep2},
+//	root_agent = Workflow(
+//	    name="parent_workflow",
+//	    edges=[("START", task_A1, workflow_B, final_node)],
+//	)
+func newNestedWorkflows() (agent.Agent, error) {
+	// --- Inner workflow B ---
+	innerStep1 := workflow.NewFunctionNode("inner_step_1",
+		func(_ agent.Context, input string) (string, error) {
+			return "[ES] " + input, nil // simulate translation to Spanish
 		},
+		workflow.NodeConfig{},
+	)
+	innerStep2 := workflow.NewFunctionNode("inner_step_2",
+		func(_ agent.Context, spanish string) (string, error) {
+			return "[EN] " + spanish, nil // simulate translation back to English
+		},
+		workflow.NodeConfig{},
+	)
+
+	// workflowB is a self-contained inner graph.
+	workflowB, err := workflowagent.New(workflowagent.Config{
+		Name:        "workflow_B",
+		Description: "Translates input to Spanish then back to English.",
+		Edges:       workflow.Chain(workflow.Start, innerStep1, innerStep2),
 	})
 	if err != nil {
 		return nil, fmt.Errorf("workflowB: %w", err)
 	}
 
-	taskA1, err := llmagent.New(llmagent.Config{
-		Name:        "task_A1",
-		Model:       geminiModel,
-		Description: "Prepares the input for the nested workflow.",
-		Instruction: "Summarise the user request in one sentence.",
-		OutputKey:   "task_a1_result",
-	})
+	// --- Outer graph ---
+	taskA1 := workflow.NewFunctionNode("task_A1",
+		func(_ agent.Context, input string) (string, error) {
+			return "Summary: " + strings.TrimSpace(input), nil
+		},
+		workflow.NodeConfig{},
+	)
+
+	finalNode := workflow.NewFunctionNode("final_node",
+		func(_ agent.Context, result string) (string, error) {
+			return "Final: " + result, nil
+		},
+		workflow.NodeConfig{},
+	)
+
+	// workflow.NewAgentNode wraps workflowB so it can be placed as a node
+	// in the outer graph's edges slice.
+	innerNode, err := workflow.NewAgentNode(workflowB, workflow.NodeConfig{})
 	if err != nil {
-		return nil, fmt.Errorf("taskA1: %w", err)
+		return nil, fmt.Errorf("NewAgentNode(workflowB): %w", err)
 	}
 
-	return sequentialagent.New(sequentialagent.Config{
-		AgentConfig: agent.Config{
-			Name:        "parent_workflow",
-			Description: "Runs a pre-processing step then a nested workflow.",
-			SubAgents:   []agent.Agent{taskA1, workflowB},
-		},
+	return workflowagent.New(workflowagent.Config{
+		Name:        "parent_workflow",
+		Description: "Runs task_A1 then the nested workflow_B then final_node.",
+		Edges:       workflow.Chain(workflow.Start, taskA1, innerNode, finalNode),
+		SubAgents:   []agent.Agent{workflowB},
 	})
 }
 
@@ -416,27 +372,25 @@ func newLoopEscalate() (agent.Agent, error) {
 // --8<-- [end:loop-escalate]
 
 func main() {
-	ctx := context.Background()
-
 	fnPipeline, err := newFunctionNodePipeline()
 	if err != nil {
 		log.Fatalf("newFunctionNodePipeline: %v", err)
 	}
 	log.Printf("created %s", fnPipeline.Name())
 
-	seqAgent, err := newSequentialNodes(ctx)
+	seqAgent, err := newSequentialNodes()
 	if err != nil {
 		log.Fatalf("newSequentialNodes: %v", err)
 	}
 	log.Printf("created %s", seqAgent.Name())
 
-	parallelAgent, err := newParallelFanOut(ctx)
+	parallelAgent, err := newParallelFanOut()
 	if err != nil {
 		log.Fatalf("newParallelFanOut: %v", err)
 	}
 	log.Printf("created %s", parallelAgent.Name())
 
-	nestedAgent, err := newNestedWorkflows(ctx)
+	nestedAgent, err := newNestedWorkflows()
 	if err != nil {
 		log.Fatalf("newNestedWorkflows: %v", err)
 	}
