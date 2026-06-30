@@ -195,7 +195,7 @@ func newItineraryReviewWorkflow() (agent.Agent, error) {
 // --8<-- [start:simple-hitl]
 // DoubleNumberArgs holds the input for the doubleNumber tool.
 type DoubleNumberArgs struct {
-	Number int `json:"number" jsonschema:"description=The number to double."`
+	Number int `json:"number" jsonschema:"The number to double."`
 }
 
 // DoubleNumberResults holds the output of the doubleNumber tool.
@@ -245,9 +245,9 @@ func newSimpleHITLAgent(ctx context.Context) (agent.Agent, error) {
 // --8<-- [start:hitl-with-hint]
 // BookFlightArgs holds the input for the bookFlight tool.
 type BookFlightArgs struct {
-	Origin      string `json:"origin"      jsonschema:"description=Departure airport code."`
-	Destination string `json:"destination" jsonschema:"description=Arrival airport code."`
-	Date        string `json:"date"        jsonschema:"description=Travel date in YYYY-MM-DD format."`
+	Origin      string `json:"origin"      jsonschema:"Departure airport code."`
+	Destination string `json:"destination" jsonschema:"Arrival airport code."`
+	Date        string `json:"date"        jsonschema:"Travel date in YYYY-MM-DD format."`
 }
 
 // BookFlightResults holds the outcome of the bookFlight tool.
