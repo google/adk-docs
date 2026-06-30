@@ -8,7 +8,7 @@ The `LlmAgent` class, often aliased simply as `Agent`, is a core component in
 ADK, acting as the core part of your agent application. It leverages the power
 of a Large Language Model (LLM) or generative AI model for reasoning,
 understanding natural language, making decisions, generating responses, and
-interacting with tools. Since this type of agent uses an AI model interpret
+interacting with tools. Since this type of agent uses an AI model to interpret
 instructions and context, the AI model dynamically decides how to proceed, which
 tools to use (if any), and what output to provide. As such, the behavior of this
 type of agent is non-deterministic and must be built and evaluated with this
