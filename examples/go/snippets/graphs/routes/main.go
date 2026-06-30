@@ -1,5 +1,3 @@
-//go:build ignore
-
 // Copyright 2025 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,11 +17,8 @@
 // workflow.Concat, workflow.NewEdgeBuilder, workflow.NewJoinNode, and
 // workflowagent.New.
 //
-// NOTE: This file requires google.golang.org/adk/v2 (the workflow package),
-// available in ADK Go v2.0.0 and later. It carries //go:build ignore so it is
-// excluded from the current examples/go module (which is still on the v1 path)
-// until examples/go is migrated to google.golang.org/adk/v2 at the v2.0.0
-// release.
+// NOTE: This file requires google.golang.org/adk (the workflow package),
+// available in ADK Go v2.0.0 and later.
 //
 // This file contains five snippet regions used in docs/graphs/routes.md:
 //

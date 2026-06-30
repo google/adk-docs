@@ -47,14 +47,6 @@ snippets/tools-custom/customer_support_agent/main.go
 snippets/get-started/multi_tool_agent/main.go
 snippets/runtime/triggers/event_processing_agent.go
 snippets/graphs/human-input/main.go
-# NOTE: The following snippets target ADK Go v2 (google.golang.org/adk/v2),
-# whose module path is unpublished until the v2.0.0 release is tagged. All four
-# files carry a //go:build ignore constraint so they stay out of the current v1
-# module graph; go build silently skips them. They are registered here so
-# check_go_snippets.sh passes (file registration is a separate check from the
-# build check). At the v2.0.0 release, migrate examples/go to
-# google.golang.org/adk/v2 @ v2.0.0, update runner.sh's go get call accordingly,
-# and remove the //go:build ignore constraints from all four files.
 snippets/graphs/index/main.go
 snippets/graphs/routes/main.go
 snippets/graphs/data-handling/main.go

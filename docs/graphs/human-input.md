@@ -41,21 +41,19 @@ the input process more predictable and reliable.
 
 === "Go"
 
-    In ADK Go, the human-in-the-loop (HITL) pattern shown here — pausing for a
-    human to approve or reject a tool call — uses the **tool-confirmation**
-    mechanism. A tool signals that it needs human approval by setting
-    `RequireConfirmation: true` in `functiontool.Config`. The framework
-    automatically emits an `adk_request_confirmation` `FunctionCall` event to
-    the client. The client displays the confirmation prompt and sends back a
-    `FunctionResponse` with `"confirmed": true` or `"confirmed": false`.
+    In ADK Go v2.0.0, a HITL graph node is built with
+    `workflow.NewEmittingFunctionNode` and `workflow.ResumeOrRequestInput`.
+    This is the direct equivalent of Python's `RequestInput` node:
 
-    To request arbitrary input (not just a yes/no approval) from a human inside
-    a dynamic workflow, use `workflow.ResumeOrRequestInput` with a
-    `session.RequestInput` event — see
-    [Dynamic agent workflows](/graphs/dynamic/#human-input).
+    -   On the **first pass**, `workflow.ResumeOrRequestInput` emits a
+        `session.RequestInput` event (surfaced as `Event.RequestedInput`) and
+        returns `ErrNodeInterrupted`, pausing the workflow.
+    -   After the human replies, the node is **re-invoked from the top**
+        (`RerunOnResume: &true`) and `ResumeOrRequestInput` returns the reply
+        payload, which flows as typed input to the next node via `event.Output`.
 
     ```go
-    --8<-- "examples/go/snippets/graphs/human-input/main.go:simple-hitl"
+    --8<-- "examples/go/snippets/graphs/human-input/main.go:graph-hitl-get-started"
     ```
 
 ## Configuration options
@@ -81,81 +79,38 @@ the input process more predictable and reliable.
 
 === "Go"
 
-    In ADK Go, a tool can request HITL confirmation in two ways: set the static
-    `RequireConfirmation` toggle in `functiontool.Config` (the framework pauses
-    with a generic prompt *before* the tool body runs), or call
-    `ctx.RequestConfirmation(hint, payload)` from inside the tool body for a
-    custom prompt. The relevant options on `functiontool.Config` and the
-    `agent.Context` interface are:
+    `session.RequestInput` carries the following fields, which map directly to
+    Python's `RequestInput` parameters:
 
-    -   **`RequireConfirmation`** (`bool` in `functiontool.Config`): Set to
-        `true` to make the framework always pause and ask for user approval
-        before executing the tool. This is a static on/off toggle. There is no
-        single equivalent Python config field. In Python a tool opts in by
-        calling `tool_context.request_confirmation(...)`.
-    -   **`hint`** (argument to `ctx.RequestConfirmation`): A human-readable
-        string explaining why approval is needed, displayed to the user in the
-        confirmation prompt. This is the equivalent of Python's `hint` argument
-        to `request_confirmation`.
-    -   **`payload`** (argument to `ctx.RequestConfirmation`): Any structured
-        data to include alongside the confirmation request, allowing the client
-        to render additional context for the user. This is equivalent to Python's
-        `payload` argument.
+    -   **`InterruptID`** (`string`): A unique identifier for this pause point.
+        Use a stable prefix plus a UUID to avoid collision across workflow runs.
+        Equivalent to the implicit interrupt ID in Python.
+    -   **`Message`** (`string`): Human-readable prompt displayed to the user.
+        Equivalent to Python's `message` parameter.
+    -   **`Payload`** (`any`): Optional structured data sent alongside the
+        prompt so the client can render additional context. Equivalent to
+        Python's `payload` parameter.
 
-    The client receives the `adk_request_confirmation` `FunctionCall` event and
-    must respond with a `FunctionResponse` whose body includes
-    `"confirmed": true` or `"confirmed": false`. After the response is received,
-    the framework re-invokes the tool function with `ctx.ToolConfirmation()`
-    returning the user's decision.
+    `workflow.NodeConfig.RerunOnResume` controls what happens on resume:
+
+    -   **`&true`**: the node body is re-run from the top; `ResumeOrRequestInput`
+        returns the human's reply on the second pass. Required for nodes that
+        use `ResumeOrRequestInput`.
+    -   **`&false`** or **`nil`** (leaf default): the reply is routed to the
+        node's successor as input, bypassing the interrupted node.
 
     !!! note "Note: Structured response from the client"
 
         ADK Go does not automatically parse or validate the structure of the
-        user's response payload. If your tool needs structured feedback (for
-        example, a selection from a list), include a UI or an agent node to
-        collect and validate that data before passing it back as the
-        `FunctionResponse` payload.
+        human's reply payload. If your workflow needs structured feedback,
+        include a UI or a downstream agent node to validate the response before
+        acting on it.
 
 ## Human input examples
 
 The following code examples demonstrate more detailed human input requests.
 
-### Request input with a hint message
-
-=== "Python"
-
-    The following code sample shows how to construct a ***RequestInput*** object
-    in a workflow node, including a ***response schema***:
-
-    ```python
-    async def initial_prompt(ctx: Context):
-       """Ask the user for itinerary information"""
-       input_message = """
-           This is an interactive concierge workflow tasked with making you a great
-           itinerary for you in your city of choice. If you give some details about
-           yourself or what you are generally looking for I can better personalize
-           your itinerary.
-           For example, input your:
-               City (Required),
-               Age,
-               Hobby,
-               Example of attraction you liked
-       """
-       yield RequestInput(message=input_message, response_schema=str)
-    ```
-
-=== "Go"
-
-    The following code sample shows how to call `ctx.RequestConfirmation` inside
-    a tool function with a descriptive hint. The tool checks
-    `ctx.ToolConfirmation()` first; if no confirmation has arrived yet it
-    emits the pause request, otherwise it acts on the user's decision:
-
-    ```go
-    --8<-- "examples/go/snippets/graphs/human-input/main.go:hitl-with-hint"
-    ```
-
-### Request input with a data payload
+### Request input with a message and payload
 
 === "Python"
 
@@ -196,11 +151,57 @@ The following code examples demonstrate more detailed human input requests.
 
 === "Go"
 
-    The following code sample shows how to pass a structured payload alongside
-    the confirmation hint. The payload is sent to the client so it can render
-    the full itinerary for the user. The tool reads any structured feedback the
-    client includes in the `FunctionResponse` payload after the user responds:
+    The following code sample shows a three-node graph: a builder node generates
+    a structured itinerary, a HITL node sends it as `Payload` alongside the
+    prompt, and a final node acts on the user's feedback. The `Payload` field
+    lets the client render the full itinerary for the user before they respond:
 
     ```go
-    --8<-- "examples/go/snippets/graphs/human-input/main.go:hitl-with-payload"
+    --8<-- "examples/go/snippets/graphs/human-input/main.go:graph-hitl-with-payload"
+    ```
+
+## Tool-confirmation: approval prompts in LLM agents
+
+Tool-confirmation is a separate, LLM-agent–level mechanism for yes/no
+approval prompts. Unlike graph HITL nodes, tool-confirmation works inside an
+`llmagent` tool function rather than as a standalone graph node. It is useful
+when you want an LLM agent to pause and ask for approval before executing a
+specific tool call.
+
+=== "Python"
+
+    The following code sample shows how to construct a ***RequestInput*** object
+    in a workflow node, including a ***response schema***:
+
+    ```python
+    async def initial_prompt(ctx: Context):
+       """Ask the user for itinerary information"""
+       input_message = """
+           This is an interactive concierge workflow tasked with making you a great
+           itinerary for you in your city of choice. If you give some details about
+           yourself or what you are generally looking for I can better personalize
+           your itinerary.
+           For example, input your:
+               City (Required),
+               Age,
+               Hobby,
+               Example of attraction you liked
+       """
+       yield RequestInput(message=input_message, response_schema=str)
+    ```
+
+=== "Go"
+
+    Set `RequireConfirmation: true` in `functiontool.Config` for a static
+    yes/no approval before a tool executes, or call `ctx.RequestConfirmation`
+    from inside the tool for a custom hint message:
+
+    ```go
+    --8<-- "examples/go/snippets/graphs/human-input/main.go:simple-hitl"
+    ```
+
+    For a custom hint with manual re-entry handling:
+
+    ```go
+    --8<-- "examples/go/snippets/graphs/human-input/main.go:hitl-with-hint"
     ```

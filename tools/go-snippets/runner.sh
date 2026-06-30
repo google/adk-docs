@@ -142,7 +142,7 @@ if [[ "${BASH_SOURCE[0]}" == "${0}" ]]; then
 
   # Update to the latest version of the ADK.
   # This ensures that we are always testing against the most recent release.
-  execute_and_check "(cd examples/go && go get google.golang.org/adk@latest)" "Updating google.golang.org/adk to latest"
+  execute_and_check "(cd examples/go && go get google.golang.org/adk/v2@latest)" "Updating google.golang.org/adk/v2 to latest"
   if [ ${EXIT_CODE} -ne 0 ]; then
     exit ${EXIT_CODE} # Exit immediately if go get failed.
   fi

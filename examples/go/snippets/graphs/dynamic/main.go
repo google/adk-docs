@@ -4,22 +4,19 @@
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
 //
-//     http://www.apache.org/licenses/LICENSE-2.0
+//	http://www.apache.org/licenses/LICENSE-2.0
 //
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
-//go:build ignore
-
 // Package main demonstrates dynamic workflow patterns in ADK Go v2.
 //
 // NOTE: This file requires the google.golang.org/adk/workflow package,
 // which is available in ADK Go v2.0.0 and later. The workflow package is
 // not present in v1.x releases. The snippets in this file are based on the
-// examples found in adk-go/tree/v2/examples/workflow/.
+// examples found in https://github.com/google/adk-go/releases/tag/v2.0.0/examples/workflow/.
 //
 // Key types and functions used in this file:
 //

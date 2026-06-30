@@ -1,5 +1,3 @@
-//go:build ignore
-
 // Copyright 2025 Google LLC
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,10 +14,8 @@
 
 // Package main provides snippet examples for graph-based workflow agents in ADK Go v2.
 //
-// NOTE: This file requires google.golang.org/adk/v2 (the workflow package),
-// available in ADK Go v2.0.0 and later. It carries //go:build ignore so it is
-// excluded from the current examples/go module until examples/go is migrated to
-// google.golang.org/adk/v2 at the v2.0.0 release.
+// NOTE: This file requires google.golang.org/adk (the workflow package),
+// available in ADK Go v2.0.0 and later.
 //
 // Both snippets use the v2 graph engine (workflow.NewFunctionNode +
 // workflowagent.New) rather than the prebuilt workflow agents from v1.x.

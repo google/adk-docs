@@ -12,22 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Package main demonstrates Human-in-the-Loop (HITL) patterns in ADK Go.
+// Package main demonstrates Human-in-the-Loop (HITL) patterns in ADK Go v2.
 //
-// In ADK Go, human input is obtained through the tool-confirmation mechanism
-// rather than graph-based RequestInput nodes. A tool can pause execution and
-// request user approval in two ways:
+// NOTE: This file requires google.golang.org/adk/v2, available in ADK Go
+// v2.0.0 and later.
 //
-//  1. Simple: set RequireConfirmation: true in functiontool.Config. The
-//     framework automatically emits an "adk_request_confirmation" FunctionCall
-//     event that the client must respond to.
+// # Graph HITL (primary pattern for /graphs/ pages)
 //
-//  2. Manual: call ctx.RequestConfirmation(hint, payload) inside the tool
-//     function itself for full control over the hint message and any structured
-//     payload sent to the client.
+// In ADK Go v2, the primary way to add a human input node to a graph-based
+// workflow is workflow.NewEmittingFunctionNode with workflow.ResumeOrRequestInput.
+// This is the direct Go equivalent of the Python RequestInput node:
 //
-// The client receives a FunctionCall event named "adk_request_confirmation" and
-// must respond with a FunctionResponse whose "confirmed" field is true or false.
+//   - On the first pass the node emits a session.RequestInput event
+//     (surfaced via Event.RequestedInput) and returns ErrNodeInterrupted,
+//     pausing the workflow.
+//   - The workflow resumes after the client sends a reply. The node is
+//     re-invoked from the top (RerunOnResume defaults to &true on dynamic
+//     nodes; set it explicitly on EmittingFunctionNode), and
+//     workflow.ResumeOrRequestInput returns the human's reply payload.
+//
+// # Tool-confirmation (secondary pattern, LLM-agent feature)
+//
+// Tool-confirmation (RequireConfirmation / ctx.RequestConfirmation) is a
+// separate LLM-agent mechanism for yes/no approval prompts before a tool
+// executes. It is not graph-node based.
 package main
 
 import (
@@ -39,11 +47,12 @@ import (
 
 	"google.golang.org/adk/v2/agent"
 	"google.golang.org/adk/v2/agent/llmagent"
+	"google.golang.org/adk/v2/agent/workflowagent"
 	"google.golang.org/adk/v2/model/gemini"
-	"google.golang.org/adk/v2/runner"
 	"google.golang.org/adk/v2/session"
 	"google.golang.org/adk/v2/tool"
 	"google.golang.org/adk/v2/tool/functiontool"
+	"google.golang.org/adk/v2/workflow"
 )
 
 const (
@@ -51,6 +60,137 @@ const (
 	userID    = "demo_user"
 	modelName = "gemini-flash-latest"
 )
+
+// --8<-- [start:graph-hitl-get-started]
+// newGraphHITLWorkflow demonstrates a graph HITL node using
+// workflow.NewEmittingFunctionNode and workflow.ResumeOrRequestInput.
+//
+// This is the Go equivalent of the Python RequestInput node:
+//
+//	def step1():  # Human input step
+//	    yield RequestInput(message="Enter a number:")
+//
+//	def step2(node_input):
+//	    return node_input * 2
+//
+//	root_agent = Workflow(
+//	    name="root_agent",
+//	    edges=[('START', step1, step2)],
+//	)
+//
+// On the first pass, step1Node emits a RequestInput event and pauses the
+// workflow (ErrNodeInterrupted). After the human replies, the node is re-run
+// and ResumeOrRequestInput returns the reply, which flows as typed input to
+// step2Node via event.Output.
+func newGraphHITLWorkflow() (agent.Agent, error) {
+	rerun := true
+
+	// step1Node: pauses for human input on the first pass, returns the
+	// human's reply on resume. workflow.ResumeOrRequestInput handles both
+	// phases — no manual re-entry bookkeeping needed.
+	step1Node := workflow.NewEmittingFunctionNode[any, string]("step1",
+		func(ctx agent.Context, _ any, emit func(*session.Event) error) (string, error) {
+			reply, err := workflow.ResumeOrRequestInput(ctx, emit, session.RequestInput{
+				InterruptID: "enter_number",
+				Message:     "Enter a number:",
+			})
+			if err != nil {
+				// ErrNodeInterrupted on first pass — workflow pauses here.
+				return "", err
+			}
+			// On resume, reply is the human's text response.
+			number, _ := reply.(string)
+			return number, nil
+		},
+		workflow.NodeConfig{RerunOnResume: &rerun},
+	)
+
+	// step2Node: receives the human's input as its typed string input via
+	// event.Output and doubles the number.
+	step2Node := workflow.NewFunctionNode("step2",
+		func(_ agent.Context, input string) (string, error) {
+			return fmt.Sprintf("You entered: %s (doubled: %s%s)", input, input, input), nil
+		},
+		workflow.NodeConfig{},
+	)
+
+	return workflowagent.New(workflowagent.Config{
+		Name:        "root_agent",
+		Description: "Pauses for a number from the user, then doubles it.",
+		Edges:       workflow.Chain(workflow.Start, step1Node, step2Node),
+	})
+}
+
+// --8<-- [end:graph-hitl-get-started]
+
+// --8<-- [start:graph-hitl-with-payload]
+// ItineraryItem represents a single activity in a travel plan.
+type ItineraryItem struct {
+	Name        string `json:"name"`
+	Description string `json:"description"`
+}
+
+// newItineraryReviewWorkflow demonstrates a graph HITL node that sends a
+// structured payload alongside the input prompt so the client can render
+// additional context for the user. This mirrors Python's:
+//
+//	async def get_user_feedback(node_input: ActivitiesList):
+//	    yield RequestInput(
+//	        message="Which items appeal to you?",
+//	        payload=node_input,
+//	        response_schema=UserFeedback,
+//	    )
+func newItineraryReviewWorkflow() (agent.Agent, error) {
+	rerun := true
+
+	// buildItineraryNode: generates an itinerary and passes it to the HITL
+	// node as its typed output via event.Output.
+	buildItineraryNode := workflow.NewFunctionNode("build_itinerary",
+		func(_ agent.Context, _ any) ([]ItineraryItem, error) {
+			return []ItineraryItem{
+				{Name: "Eiffel Tower", Description: "Iconic iron lattice tower."},
+				{Name: "Louvre Museum", Description: "World's largest art museum."},
+				{Name: "Seine River Cruise", Description: "Scenic boat tour of Paris."},
+			}, nil
+		},
+		workflow.NodeConfig{},
+	)
+
+	// reviewNode: sends the itinerary as payload alongside the prompt so the
+	// client can display it. On resume, the human's selection is returned.
+	reviewNode := workflow.NewEmittingFunctionNode[[]ItineraryItem, string]("get_user_feedback",
+		func(ctx agent.Context, itinerary []ItineraryItem, emit func(*session.Event) error) (string, error) {
+			reply, err := workflow.ResumeOrRequestInput(ctx, emit, session.RequestInput{
+				InterruptID: "itinerary_review",
+				Message:     fmt.Sprintf("Here is your recommended itinerary (%d activities). Which items appeal to you?", len(itinerary)),
+				Payload:     itinerary, // structured payload rendered by the client
+			})
+			if err != nil {
+				// ErrNodeInterrupted on first pass — workflow pauses here.
+				return "", err
+			}
+			feedback, _ := reply.(string)
+			return feedback, nil
+		},
+		workflow.NodeConfig{RerunOnResume: &rerun},
+	)
+
+	// finalNode: receives the user's feedback and produces a confirmation.
+	finalNode := workflow.NewFunctionNode("finalize",
+		func(_ agent.Context, feedback string) (string, error) {
+			return fmt.Sprintf("Itinerary finalised with your feedback: %q", feedback), nil
+		},
+		workflow.NodeConfig{},
+	)
+
+	return workflowagent.New(workflowagent.Config{
+		Name:        "concierge_workflow",
+		Description: "Builds an itinerary, asks the user for feedback, then finalises.",
+		Edges:       workflow.Chain(workflow.Start, buildItineraryNode, reviewNode, finalNode),
+	})
+}
+
+// --8<-- [end:graph-hitl-with-payload]
 
 // --8<-- [start:simple-hitl]
 // DoubleNumberArgs holds the input for the doubleNumber tool.
@@ -68,12 +208,12 @@ type DoubleNumberResults struct {
 // execution and emits an "adk_request_confirmation" event to the client before
 // running the tool. The client must reply with a FunctionResponse confirming
 // or denying the action.
-func doubleNumber(ctx agent.Context, args DoubleNumberArgs) (DoubleNumberResults, error) {
+func doubleNumber(_ agent.Context, args DoubleNumberArgs) (DoubleNumberResults, error) {
 	return DoubleNumberResults{Result: args.Number * 2}, nil
 }
 
 // newSimpleHITLAgent creates an LLM agent with a tool that always requires
-// user confirmation before it executes.
+// user confirmation before it executes (tool-confirmation pattern).
 func newSimpleHITLAgent(ctx context.Context) (agent.Agent, error) {
 	model, err := gemini.NewModel(ctx, modelName, &genai.ClientConfig{})
 	if err != nil {
@@ -84,7 +224,7 @@ func newSimpleHITLAgent(ctx context.Context) (agent.Agent, error) {
 		functiontool.Config{
 			Name:                "double_number",
 			Description:         "Doubles the given number. Requires user approval before running.",
-			RequireConfirmation: true, // Pause and ask for human approval on every call.
+			RequireConfirmation: true,
 		},
 		doubleNumber,
 	)
@@ -117,23 +257,18 @@ type BookFlightResults struct {
 }
 
 // bookFlight is a tool that pauses for human approval before completing a
-// booking. It calls ctx.RequestConfirmation with a descriptive hint message
-// so that the client can display exactly what action is pending.
+// booking (tool-confirmation pattern with a custom hint message).
 func bookFlight(ctx agent.Context, args BookFlightArgs) (BookFlightResults, error) {
-	// Check whether the user has already responded to an earlier confirmation
-	// request for this exact tool call.
 	if confirmation := ctx.ToolConfirmation(); confirmation != nil {
 		if !confirmation.Confirmed {
 			return BookFlightResults{Status: "Booking cancelled by user."}, nil
 		}
-		// Confirmation received and approved — complete the booking.
 		return BookFlightResults{
 			Status:        "Booking confirmed.",
 			ConfirmNumber: "FLT-20251031",
 		}, nil
 	}
 
-	// No confirmation yet: compose a human-readable hint and pause.
 	hint := fmt.Sprintf(
 		"The agent wants to book a flight from %s to %s on %s. Do you approve?",
 		args.Origin, args.Destination, args.Date,
@@ -141,13 +276,11 @@ func bookFlight(ctx agent.Context, args BookFlightArgs) (BookFlightResults, erro
 	if err := ctx.RequestConfirmation(hint, nil); err != nil {
 		return BookFlightResults{}, fmt.Errorf("failed to request confirmation: %w", err)
 	}
-	// Returning here suspends the tool; the framework re-invokes it after the
-	// client sends back a FunctionResponse for "adk_request_confirmation".
 	return BookFlightResults{Status: "Awaiting user approval."}, nil
 }
 
 // newHITLWithHintAgent creates an LLM agent whose bookFlight tool manually
-// requests confirmation with a descriptive hint.
+// requests confirmation with a descriptive hint (tool-confirmation pattern).
 func newHITLWithHintAgent(ctx context.Context) (agent.Agent, error) {
 	model, err := gemini.NewModel(ctx, modelName, &genai.ClientConfig{})
 	if err != nil {
@@ -175,136 +308,29 @@ func newHITLWithHintAgent(ctx context.Context) (agent.Agent, error) {
 
 // --8<-- [end:hitl-with-hint]
 
-// --8<-- [start:hitl-with-payload]
-// ItineraryItem represents a single activity in a travel plan.
-type ItineraryItem struct {
-	Name        string `json:"name"`
-	Description string `json:"description"`
-}
-
-// ReviewItineraryArgs holds the input for the reviewItinerary tool.
-type ReviewItineraryArgs struct {
-	Itinerary []ItineraryItem `json:"itinerary" jsonschema:"description=List of activities to review."`
-}
-
-// ReviewItineraryResults holds the outcome after the user responds.
-type ReviewItineraryResults struct {
-	Status       string `json:"status"`
-	UserFeedback string `json:"user_feedback,omitempty"`
-}
-
-// reviewItinerary pauses for user feedback and sends a structured payload (the
-// full itinerary) alongside the hint so the client can render it for the user.
-func reviewItinerary(ctx agent.Context, args ReviewItineraryArgs) (ReviewItineraryResults, error) {
-	if confirmation := ctx.ToolConfirmation(); confirmation != nil {
-		if !confirmation.Confirmed {
-			return ReviewItineraryResults{Status: "Itinerary rejected by user."}, nil
-		}
-		// Extract free-text feedback from the structured payload, if provided.
-		feedback := ""
-		if m, ok := confirmation.Payload.(map[string]any); ok {
-			if f, ok := m["user_feedback"].(string); ok {
-				feedback = f
-			}
-		}
-		return ReviewItineraryResults{
-			Status:       "Itinerary approved.",
-			UserFeedback: feedback,
-		}, nil
-	}
-
-	hint := fmt.Sprintf(
-		"Here is your recommended itinerary (%d activities). Which items appeal to you?",
-		len(args.Itinerary),
-	)
-	// Pass the full itinerary as the payload so the client can display it.
-	if err := ctx.RequestConfirmation(hint, args.Itinerary); err != nil {
-		return ReviewItineraryResults{}, fmt.Errorf("failed to request confirmation: %w", err)
-	}
-	return ReviewItineraryResults{Status: "Awaiting user feedback."}, nil
-}
-
-// newHITLWithPayloadAgent creates an LLM agent whose reviewItinerary tool sends
-// a structured payload to the client alongside the confirmation prompt.
-func newHITLWithPayloadAgent(ctx context.Context) (agent.Agent, error) {
-	model, err := gemini.NewModel(ctx, modelName, &genai.ClientConfig{})
-	if err != nil {
-		return nil, fmt.Errorf("failed to create model: %w", err)
-	}
-
-	reviewTool, err := functiontool.New(
-		functiontool.Config{
-			Name:        "review_itinerary",
-			Description: "Presents the proposed itinerary to the user for feedback.",
-		},
-		reviewItinerary,
-	)
-	if err != nil {
-		return nil, fmt.Errorf("failed to create tool: %w", err)
-	}
-
-	return llmagent.New(llmagent.Config{
-		Name:        "concierge_agent",
-		Model:       model,
-		Instruction: "You are a travel concierge. Build an itinerary and present it to the user for review.",
-		Tools:       []tool.Tool{reviewTool},
-	})
-}
-
-// --8<-- [end:hitl-with-payload]
-
 func main() {
-	ctx := context.Background()
+	graphAgent, err := newGraphHITLWorkflow()
+	if err != nil {
+		log.Fatalf("Failed to create graph HITL workflow: %v", err)
+	}
+	log.Printf("Created graph HITL workflow: %s", graphAgent.Name())
 
+	itineraryAgent, err := newItineraryReviewWorkflow()
+	if err != nil {
+		log.Fatalf("Failed to create itinerary review workflow: %v", err)
+	}
+	log.Printf("Created itinerary review workflow: %s", itineraryAgent.Name())
+
+	ctx := context.Background()
 	simpleAgent, err := newSimpleHITLAgent(ctx)
 	if err != nil {
 		log.Fatalf("Failed to create simple HITL agent: %v", err)
 	}
+	log.Printf("Created simple HITL agent: %s", simpleAgent.Name())
 
 	hintAgent, err := newHITLWithHintAgent(ctx)
 	if err != nil {
 		log.Fatalf("Failed to create hint HITL agent: %v", err)
 	}
-
-	payloadAgent, err := newHITLWithPayloadAgent(ctx)
-	if err != nil {
-		log.Fatalf("Failed to create payload HITL agent: %v", err)
-	}
-
-	sessionService := session.InMemoryService()
-	sess, err := sessionService.Create(ctx, &session.CreateRequest{
-		AppName: appName,
-		UserID:  userID,
-	})
-	if err != nil {
-		log.Fatalf("Failed to create session: %v", err)
-	}
-
-	for _, ag := range []agent.Agent{simpleAgent, hintAgent, payloadAgent} {
-		r, err := runner.New(runner.Config{
-			AppName:        appName,
-			Agent:          ag,
-			SessionService: sessionService,
-		})
-		if err != nil {
-			log.Fatalf("Failed to create runner: %v", err)
-		}
-
-		userMsg := genai.NewContentFromText("Hello, please help me.", genai.RoleUser)
-		for event, err := range r.Run(ctx, userID, sess.Session.ID(), userMsg, agent.RunConfig{
-			StreamingMode: agent.StreamingModeNone,
-		}) {
-			if err != nil {
-				log.Printf("Event error from %s: %v", ag.Name(), err)
-				continue
-			}
-			if event.Content != nil {
-				for _, p := range event.Content.Parts {
-					if p.Text != "" {
-						fmt.Printf("[%s]: %s\n", ag.Name(), p.Text)
-					}
-				}
-			}
-		}
-	}
+	log.Printf("Created hint HITL agent: %s", hintAgent.Name())
 }
