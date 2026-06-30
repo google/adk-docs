@@ -15,7 +15,7 @@
 // Package main demonstrates Human-in-the-Loop (HITL) patterns in ADK Go v2.
 //
 // NOTE: This file requires google.golang.org/adk/v2, available in ADK Go
-// v2.0.0 and later.
+// v2.0.0 and higher.
 //
 // # Graph HITL (primary pattern for /graphs/ pages)
 //

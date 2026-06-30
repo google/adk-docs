@@ -14,7 +14,7 @@
 // Package main demonstrates dynamic workflow patterns in ADK Go v2.
 //
 // NOTE: This file requires the google.golang.org/adk/v2/workflow package,
-// which is available in ADK Go v2.0.0 and later. The workflow package is
+// which is available in ADK Go v2.0.0 and higher. The workflow package is
 // not present in v1.x releases. The snippets in this file are based on the
 // examples found in https://github.com/google/adk-go/tree/main/examples/workflow.
 //
