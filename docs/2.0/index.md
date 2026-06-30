@@ -210,7 +210,7 @@ paths in your Go source files and your `go.mod` file.
 *   **1.x import path:** `google.golang.org/adk`
 *   **2.0 import path:** `google.golang.org/adk/v2`
 
-**Migration action:** Run `go get google.golang.org/adk/v2@v2.0.0` and update
+**Migration action:** Run `go get google.golang.org/adk/v2` and update
 all import statements in your source files from `google.golang.org/adk/...` to
 `google.golang.org/adk/v2/...`.
 

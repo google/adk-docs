@@ -107,7 +107,7 @@ agent code file:
 
 ```console
 go mod init my-agent/main
-go get google.golang.org/adk/v2@v2.0.0
+go get google.golang.org/adk/v2
 go mod tidy
 ```
 
