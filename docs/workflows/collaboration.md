@@ -1,7 +1,7 @@
 # Build collaborative agent teams
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.0.0</span><span class="lst-go">Go v2.0.0</span>
 </div>
 
 Some complex tasks may require multiple agents with specific responsibilities
@@ -34,32 +34,50 @@ agent behavior.
     graph-based workflows in ADK Python v2.0.0. This feature
     is expected to be re-enabled in a future release.
 
+    In ADK Go v2.0.0, when an `llmagent` is wrapped as a graph node with
+    `workflow.NewAgentNode`, the workflow engine automatically applies
+    `ModeSingleTurn` if the agent has no mode configured. Task mode is not
+    supported for graph nodes in this release.
+
 ## Get started
 
 The following code example shows how to set operating modes for
 a small team of subagents and assign them to a coordinator agent:
 
-```python
-from google.adk import Agent
+=== "Python"
 
-weather_agent = Agent(
-    name="weather_checker",
-    mode="single_turn",         # no user interaction
-    tools=[get_weather, user_info, geocode_address],
-)
-flight_agent = Agent(
-    name="flight_booker",
-    mode="task",                # can ask user questions
-    input_schema=FlightInput,
-    output_schema=FlightResult,
-    tools=[search_flights, book_flight],
-)
-root = Agent(
-    name="travel_planner",      # coordinator agent
-    sub_agents=[weather_agent, flight_agent],
-    # Auto-injects: request_task_weather_checker, request_task_flight_booker
-)
-```
+    ```python
+    from google.adk import Agent
+
+    weather_agent = Agent(
+        name="weather_checker",
+        mode="single_turn",         # no user interaction
+        tools=[get_weather, user_info, geocode_address],
+    )
+    flight_agent = Agent(
+        name="flight_booker",
+        mode="task",                # can ask user questions
+        input_schema=FlightInput,
+        output_schema=FlightResult,
+        tools=[search_flights, book_flight],
+    )
+    root = Agent(
+        name="travel_planner",      # coordinator agent
+        sub_agents=[weather_agent, flight_agent],
+        # Auto-injects: request_task_weather_checker, request_task_flight_booker
+    )
+    ```
+
+=== "Go"
+
+    In ADK Go v2.0.0, the `Mode` field on `llmagent.Config` accepts the same
+    mode strings as Python: `"chat"`, `"task"`, and `"single_turn"`. Declaring
+    `SubAgents` on the coordinator agent causes ADK to automatically generate
+    `request_task_<name>` delegation tools, exactly as in Python.
+
+    ```go
+    --8<-- "examples/go/snippets/workflows/collaboration/main.go:get-started"
+    ```
 
 When you run this workflow, the `travel_planner` coordinator agent automatically
 identifies and assigns tasks to the subagents. When a subagent completes
@@ -139,10 +157,12 @@ Workflow Agent graph nodes, and with ***LlmAgent*** instances. However the
 execution transfer behavior is different depending on the calling, or parent,
 agent:
 
-**As a workflow graph node:** When a task agent is placed within a workflow
-graph, such as ***SequentialAgent***, ***ParallelAgent***, the agent executes
-its task. Upon completion, control automatically advances to the next node based
-on the logic of the workflow agent's graph.
+**As a workflow graph node:** When a task or single-turn agent is placed within
+a workflow graph — such as a ***SequentialAgent*** or ***ParallelAgent*** (Python
+and Go prebuilt agents), or wrapped with `workflow.NewAgentNode` in the ADK Go
+v2.0.0 graph engine — the agent executes its task. Upon completion, control
+automatically advances to the next node based on the logic of the workflow
+agent's graph.
 
 **As a transferee from an LlmAgent:** When a parent ***LlmAgent*** transfers
 control to a task agent via `request_task`, the task agent executes until it
