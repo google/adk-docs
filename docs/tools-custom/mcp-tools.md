@@ -83,7 +83,7 @@ The `McpToolset` class is ADK's primary mechanism for integrating tools from an 
 
 ### Dynamic Headers with `header_provider`
 
-You can provide a `header_provider` to the `McpToolset` to dynamically generate headers for each request. This is useful for multi-tenancy or other scenarios where headers need to change based on the context.
+You can provide a `header_provider` to the `McpToolset` for dynamically generating headers for each request. This is useful for multi-tenancy or other scenarios where headers need to change based on the context.
 
 **Example:**
 ```python
