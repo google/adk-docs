@@ -269,7 +269,7 @@ mvn compile exec:java \
 ```
 
 This command starts a web server with a chat interface for your agent. You can
-access the web interface at (http://localhost:8000). Select your agent at the
+access the web interface at `http://localhost:8000`. Select your agent at the
 upper left corner and type a request.
 
 ![adk-web-dev-ui-chat.png](/assets/adk-web-dev-ui-chat.png)

@@ -14,8 +14,8 @@
 
 // Package main provides snippet examples for graph-based workflow agents in ADK Go v2.
 //
-// NOTE: This file requires google.golang.org/adk (the workflow package),
-// available in ADK Go v2.0.0 and later.
+// NOTE: This file requires google.golang.org/adk/v2 (the workflow package),
+// available in ADK Go v2.0.0 and higher.
 //
 // Both snippets use the v2 graph engine (workflow.NewFunctionNode +
 // workflowagent.New) rather than the prebuilt workflow agents from v1.x.
