@@ -149,18 +149,8 @@ The output should appear similar to:
     2025/01/01 00:00:00        api:  you can access API using http://localhost:8080/api
     2025/01/01 00:00:00        api:      for instance: http://localhost:8080/api/list-apps
     ```
-
-=== "Java"
-
-    ```shell
-    2025-05-13T23:32:08.972-06:00  INFO 37864 --- [ebServer.main()] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
-    2025-05-13T23:32:08.980-06:00  INFO 37864 --- [ebServer.main()] com.google.adk.web.AdkWebServer          : Started AdkWebServer in 1.15 seconds (process running for 2.877)
-    2025-05-13T23:32:08.981-06:00  INFO 37864 --- [ebServer.main()] com.google.adk.web.AdkWebServer          : AdkWebServer application started successfully.
-    ```
-
-Your server is now running locally. Ensure you use the correct **_port number_** in all the subsequent commands.
-
-!!! note "Go: default port and path prefix"
+    
+    !!! note "Go: default port and path prefix"
 
     The Go API server defaults to port **8080** (not 8000) and serves all
     REST endpoints under the **`/api`** path prefix by default. Adjust all
@@ -180,6 +170,16 @@ Your server is now running locally. Ensure you use the correct **_port number_**
     ```shell
     go run agent.go web -port 8000 api -path_prefix ""
     ```
+
+=== "Java"
+
+    ```shell
+    2025-05-13T23:32:08.972-06:00  INFO 37864 --- [ebServer.main()] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+    2025-05-13T23:32:08.980-06:00  INFO 37864 --- [ebServer.main()] com.google.adk.web.AdkWebServer          : Started AdkWebServer in 1.15 seconds (process running for 2.877)
+    2025-05-13T23:32:08.981-06:00  INFO 37864 --- [ebServer.main()] com.google.adk.web.AdkWebServer          : AdkWebServer application started successfully.
+    ```
+
+Your server is now running locally. Ensure you use the correct **_port number_** in all the subsequent commands.
 
 **Create a new session**
 

@@ -115,7 +115,17 @@ Use the following command to start the ADK web interface:
 Once started, the server prints the access URL to the console. Open it in your
 browser to use the web interface:
 
-=== "Python / TypeScript / Java"
+=== "Python"
+
+    ```shell
+    +-----------------------------------------------------------------------------+
+    | ADK Web Server started                                                      |
+    |                                                                             |
+    | For local testing, access at http://localhost:8000.                         |
+    +-----------------------------------------------------------------------------+
+    ```
+
+=== "TypeScript"
 
     ```shell
     +-----------------------------------------------------------------------------+
@@ -134,9 +144,37 @@ browser to use the web interface:
     2025/01/01 00:00:00        api:  you can access API using http://localhost:8080/api
     ```
 
+=== "Java"
+
+    ```shell
+    +-----------------------------------------------------------------------------+
+    | ADK Web Server started                                                      |
+    |                                                                             |
+    | For local testing, access at http://localhost:8000.                         |
+    +-----------------------------------------------------------------------------+
+    ```
 ## Common options
 
-=== "Python / TypeScript"
+=== "Python"
+
+    Here are some commonly used options for the `adk web` command. Run `adk web
+    --help` to see all available options.
+
+    | Option | Description | Default |
+    |--------|-------------|---------|
+    | `--port` | Port to run the server on | `8000` |
+    | `--host` | Host binding address | `127.0.0.1` |
+    | `--session_service_uri` | Custom session storage URI | In-memory |
+    | `--artifact_service_uri` | Custom artifact storage URI | Local `.adk/artifacts` |
+    | `--reload/--no-reload` | Enable auto-reload on code changes | `true` |
+
+    For example:
+
+    ```shell
+    adk web --port 3000 --session_service_uri "sqlite:///sessions.db"
+    ```
+
+=== "TypeScript"
 
     Here are some commonly used options for the `adk web` command. Run `adk web
     --help` to see all available options.

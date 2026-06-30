@@ -66,7 +66,16 @@ Use the following command to run your agent in the ADK command line interface:
 This starts an interactive session where you can type queries and see agent
 responses directly in your terminal.
 
-=== "Python / TypeScript / Java"
+=== "Python"
+
+    ```shell
+    Running agent my_agent, type exit to exit.
+    [user]: What's the weather in New York?
+    [my_agent]: The weather in New York is sunny with a temperature of 25°C.
+    [user]: exit
+    ```
+
+=== "TypeScript"
 
     ```shell
     Running agent my_agent, type exit to exit.
@@ -86,6 +95,15 @@ responses directly in your terminal.
     ```
 
     To exit, press **Ctrl+C** or send EOF (**Ctrl+D**).
+
+=== "Java"
+
+    ```shell
+    Running agent my_agent, type exit to exit.
+    [user]: What's the weather in New York?
+    [my_agent]: The weather in New York is sunny with a temperature of 25°C.
+    [user]: exit
+    ```
 
 ## Session options
 
