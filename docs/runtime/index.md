@@ -36,6 +36,15 @@ the method that best fits your development workflow.
 
     [:octicons-arrow-right-24: Use the API Server](api-server.md)
 
+-   :material-monitor-dashboard:{ .lg .middle } **Frontend**
+
+    ---
+
+    Connect ADK Runtime event streams to application UIs with AG-UI, A2UI, and
+    framework client patterns.
+
+    [:octicons-arrow-right-24: Connect Frontend](frontend/index.md)
+
 -   :material-access-point:{ .lg .middle } **Ambient Agents**
 
     ---
