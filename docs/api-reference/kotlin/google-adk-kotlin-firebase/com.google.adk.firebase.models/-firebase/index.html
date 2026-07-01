@@ -50,7 +50,7 @@
 <a class="library-name--link" href="../../../index.html">
                             google-adk-kotlin
                     </a>            </div>
-            <div class="library-version">0.2.0
+            <div class="library-version">0.4.0
             </div>
         </div>
         <div class="filter-section" id="filter-section">
@@ -71,7 +71,7 @@
   <div class="breadcrumbs"><a href="../../index.html">google-adk-kotlin-firebase</a><span class="delimiter">/</span><a href="../index.html">com.google.adk.firebase.models</a><span class="delimiter">/</span><span class="current">Firebase</span></div>
   <div class="cover ">
     <h1 class="cover"><span><span>Firebase</span></span></h1>
-    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-firebase:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">Firebase</a> : <a href="../../../google-adk-kotlin-core/com.google.adk.kt.models/-model/index.html">Model</a></div><p class="paragraph">Implementation of the Model interface using Firebase AI.</p></div></div>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-firebase:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">Firebase</a> : <a href="../../../google-adk-kotlin-core/com.google.adk.kt.models/-model/index.html">Model</a></div><p class="paragraph">Implementation of the Model interface using Firebase AI.</p><p class="paragraph"><strong>Limitation:</strong> With thinking models, only <a href="../../../google-adk-kotlin-core/com.google.adk.kt.sessions/-in-memory-session-service/index.html">com.google.adk.kt.sessions.InMemorySessionService</a> is supported. Persistent session services cannot preserve thought signatures (the relevant Firebase <code class="lang-kotlin">Part</code> field is not public), so restoring such a session will produce requests that the Firebase API rejects.</p></div></div>
   </div>
   <div class="tabbedcontent">
     <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
