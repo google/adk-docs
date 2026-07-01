@@ -168,8 +168,8 @@ across supported languages. For a guided introduction, start with the
     }
 
     dependencies {
-        implementation("com.google.adk:google-adk-kotlin-core:0.2.0")
-        ksp("com.google.adk:google-adk-kotlin-processor:0.2.0")
+        implementation("com.google.adk:google-adk-kotlin-core:0.4.0")
+        ksp("com.google.adk:google-adk-kotlin-processor:0.4.0")
     }
     ```
 
