@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "ADK REST API Reference",
-    "version": "2.0.0"
+    "version": "2.3.0"
   },
   "paths": {
     "/health": {
@@ -506,10 +506,10 @@
         }
       }
     },
-    "/apps/{app_name}/users/{user_id}/sessions/{session_id}/artifacts/{artifact_name}": {
+    "/apps/{app_name}/users/{user_id}/sessions/{session_id}/artifacts/{artifact_name}/versions/{version_id}/metadata": {
       "get": {
-        "summary": "Load Artifact",
-        "operationId": "load_artifact_apps__app_name__users__user_id__sessions__session_id__artifacts__artifact_name__get",
+        "summary": "Get Artifact Version Metadata",
+        "operationId": "get_artifact_version_metadata_apps__app_name__users__user_id__sessions__session_id__artifacts__artifact_name__versions__version_id__metadata_get",
         "parameters": [
           {
             "name": "app_name",
@@ -548,19 +548,12 @@
             }
           },
           {
-            "name": "version",
-            "in": "query",
-            "required": false,
+            "name": "version_id",
+            "in": "path",
+            "required": true,
             "schema": {
-              "anyOf": [
-                {
-                  "type": "integer"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Version"
+              "type": "string",
+              "title": "Version Id"
             }
           }
         ],
@@ -570,78 +563,8 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "anyOf": [
-                    {
-                      "$ref": "#/components/schemas/Part"
-                    },
-                    {
-                      "type": "null"
-                    }
-                  ],
-                  "title": "Response Load Artifact Apps  App Name  Users  User Id  Sessions  Session Id  Artifacts  Artifact Name  Get"
+                  "$ref": "#/components/schemas/ArtifactVersion"
                 }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "summary": "Delete Artifact",
-        "operationId": "delete_artifact_apps__app_name__users__user_id__sessions__session_id__artifacts__artifact_name__delete",
-        "parameters": [
-          {
-            "name": "app_name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "App Name"
-            }
-          },
-          {
-            "name": "user_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "User Id"
-            }
-          },
-          {
-            "name": "session_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Session Id"
-            }
-          },
-          {
-            "name": "artifact_name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Artifact Name"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {}
               }
             }
           },
@@ -711,89 +634,6 @@
                     "$ref": "#/components/schemas/ArtifactVersion"
                   },
                   "title": "Response List Artifact Versions Metadata Apps  App Name  Users  User Id  Sessions  Session Id  Artifacts  Artifact Name  Versions Metadata Get"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/apps/{app_name}/users/{user_id}/sessions/{session_id}/artifacts/{artifact_name}/versions/{version_id}": {
-      "get": {
-        "summary": "Load Artifact Version",
-        "operationId": "load_artifact_version_apps__app_name__users__user_id__sessions__session_id__artifacts__artifact_name__versions__version_id__get",
-        "parameters": [
-          {
-            "name": "app_name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "App Name"
-            }
-          },
-          {
-            "name": "user_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "User Id"
-            }
-          },
-          {
-            "name": "session_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Session Id"
-            }
-          },
-          {
-            "name": "artifact_name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "title": "Artifact Name"
-            }
-          },
-          {
-            "name": "version_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "title": "Version Id"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successful Response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "anyOf": [
-                    {
-                      "$ref": "#/components/schemas/Part"
-                    },
-                    {
-                      "type": "null"
-                    }
-                  ],
-                  "title": "Response Load Artifact Version Apps  App Name  Users  User Id  Sessions  Session Id  Artifacts  Artifact Name  Versions  Version Id  Get"
                 }
               }
             }
@@ -938,10 +778,10 @@
         }
       }
     },
-    "/apps/{app_name}/users/{user_id}/sessions/{session_id}/artifacts/{artifact_name}/versions/{version_id}/metadata": {
+    "/apps/{app_name}/users/{user_id}/sessions/{session_id}/artifacts/{artifact_name}/versions/{version_id}": {
       "get": {
-        "summary": "Get Artifact Version Metadata",
-        "operationId": "get_artifact_version_metadata_apps__app_name__users__user_id__sessions__session_id__artifacts__artifact_name__versions__version_id__metadata_get",
+        "summary": "Load Artifact Version",
+        "operationId": "load_artifact_version_apps__app_name__users__user_id__sessions__session_id__artifacts__artifact_name__versions__version_id__get",
         "parameters": [
           {
             "name": "app_name",
@@ -984,7 +824,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "integer",
+              "type": "string",
               "title": "Version Id"
             }
           }
@@ -995,7 +835,15 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ArtifactVersion"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/Part"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Response Load Artifact Version Apps  App Name  Users  User Id  Sessions  Session Id  Artifacts  Artifact Name  Versions  Version Id  Get"
                 }
               }
             }
@@ -1067,6 +915,158 @@
                   },
                   "title": "Response List Artifact Versions Apps  App Name  Users  User Id  Sessions  Session Id  Artifacts  Artifact Name  Versions Get"
                 }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apps/{app_name}/users/{user_id}/sessions/{session_id}/artifacts/{artifact_name}": {
+      "get": {
+        "summary": "Load Artifact",
+        "operationId": "load_artifact_apps__app_name__users__user_id__sessions__session_id__artifacts__artifact_name__get",
+        "parameters": [
+          {
+            "name": "app_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "App Name"
+            }
+          },
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "User Id"
+            }
+          },
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          },
+          {
+            "name": "artifact_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Artifact Name"
+            }
+          },
+          {
+            "name": "version",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Version"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/Part"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Response Load Artifact Apps  App Name  Users  User Id  Sessions  Session Id  Artifacts  Artifact Name  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete Artifact",
+        "operationId": "delete_artifact_apps__app_name__users__user_id__sessions__session_id__artifacts__artifact_name__delete",
+        "parameters": [
+          {
+            "name": "app_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "App Name"
+            }
+          },
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "User Id"
+            }
+          },
+          {
+            "name": "session_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Session Id"
+            }
+          },
+          {
+            "name": "artifact_name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Artifact Name"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
               }
             }
           },
@@ -1785,7 +1785,7 @@
           "NON_BLOCKING"
         ],
         "title": "Behavior",
-        "description": "Specifies the function Behavior.\n\nCurrently only supported by the BidiGenerateContent method. This enum is not\nsupported in Vertex AI."
+        "description": "Specifies the function Behavior.\n\nCurrently only non-blocking functions are supported. If not specified, the\nsystem keeps the current function call behavior. This field is currently only\nsupported by the BidiGenerateContent method."
       },
       "Blob": {
         "properties": {
@@ -2042,13 +2042,13 @@
               }
             ],
             "title": "Id",
-            "description": "The identifier of the `ExecutableCode` part this result is for. Only populated if the corresponding `ExecutableCode` has an id."
+            "description": "Optional. The identifier of the `ExecutableCode` part this result is for. Only populated if the corresponding `ExecutableCode` has an id. This field is not supported in Vertex AI."
           }
         },
         "additionalProperties": false,
         "type": "object",
         "title": "CodeExecutionResult",
-        "description": "Result of executing the `ExecutableCode`.\n\nGenerated only when the `CodeExecution` tool is used."
+        "description": "Result of executing the ExecutableCode.\n\nGenerated only when the `CodeExecution` tool is used."
       },
       "ComputerUse": {
         "properties": {
@@ -2076,7 +2076,34 @@
               }
             ],
             "title": "Excludedpredefinedfunctions",
-            "description": "By default, predefined functions are included in the final model call.\n    Some of them can be explicitly excluded from being automatically included.\n    This can serve two purposes:\n      1. Using a more restricted / different action space.\n      2. Improving the definitions / instructions of predefined functions."
+            "description": "Optional. By default, [predefined functions](https://cloud.google.com/vertex-ai/generative-ai/docs/computer-use#supported-actions) are included in the final model call. Some of them can be explicitly excluded from being automatically included. This can serve two purposes: 1. Using a more restricted / different action space. 2. Improving the definitions / instructions of predefined functions."
+          },
+          "enablePromptInjectionDetection": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Enablepromptinjectiondetection",
+            "description": "Optional. Enables the prompt injection detection check on computer-use request."
+          },
+          "disabledSafetyPolicies": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/SafetyPolicy"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Disabledsafetypolicies",
+            "description": "Optional. Disabled safety policies for computer use. This field is not supported in Vertex AI."
           }
         },
         "additionalProperties": false,
@@ -2258,7 +2285,9 @@
         "type": "string",
         "enum": [
           "ENVIRONMENT_UNSPECIFIED",
-          "ENVIRONMENT_BROWSER"
+          "ENVIRONMENT_BROWSER",
+          "ENVIRONMENT_MOBILE",
+          "ENVIRONMENT_DESKTOP"
         ],
         "title": "Environment",
         "description": "The environment being operated."
@@ -2317,6 +2346,16 @@
               }
             ],
             "title": "Turncomplete"
+          },
+          "turnCompleteReason": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TurnCompleteReason"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "finishReason": {
             "anyOf": [
@@ -2616,6 +2655,16 @@
               }
             ],
             "title": "Turncomplete"
+          },
+          "turnCompleteReason": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TurnCompleteReason"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "finishReason": {
             "anyOf": [
@@ -3254,13 +3303,13 @@
               }
             ],
             "title": "Id",
-            "description": "Unique identifier of the `ExecutableCode` part. The server returns the `CodeExecutionResult` with the matching `id`."
+            "description": "Optional. Unique identifier of the `ExecutableCode` part. The server returns the `CodeExecutionResult` with the matching `id`. This field is not supported in Vertex AI."
           }
         },
         "additionalProperties": false,
         "type": "object",
         "title": "ExecutableCode",
-        "description": "Model-generated code executed server-side, results returned to the model.\n\nOnly generated when using the `CodeExecution` tool, in which the code will\nbe automatically executed, and a corresponding `CodeExecutionResult` will\nalso be generated."
+        "description": "Code generated by the model that is meant to be executed, and the result returned to the model.\n\nGenerated when using the `CodeExecution` tool, in which the code will be\nautomatically executed, and a corresponding CodeExecutionResult will also be\ngenerated."
       },
       "ExternalApi": {
         "properties": {
@@ -3515,7 +3564,7 @@
               }
             ],
             "title": "Id",
-            "description": "The unique id of the function call. If populated, the client to execute the\n   `function_call` and return the response with the matching `id`."
+            "description": "Optional. The unique id of the function call. If populated, the client to execute the `function_call` and return the response with the matching `id`."
           },
           "args": {
             "anyOf": [
@@ -3528,7 +3577,7 @@
               }
             ],
             "title": "Args",
-            "description": "Optional. The function parameters and values in JSON object format. See [FunctionDeclaration.parameters] for parameter details."
+            "description": "Optional. The function parameters and values in JSON object format. See FunctionDeclaration.parameters for parameter details."
           },
           "name": {
             "anyOf": [
@@ -3540,7 +3589,7 @@
               }
             ],
             "title": "Name",
-            "description": "Optional. The name of the function to call. Matches [FunctionDeclaration.name]."
+            "description": "Optional. The name of the function to call. Matches FunctionDeclaration.name."
           },
           "partialArgs": {
             "anyOf": [
@@ -3573,7 +3622,7 @@
         "additionalProperties": false,
         "type": "object",
         "title": "FunctionCall",
-        "description": "A function call."
+        "description": "A predicted FunctionCall returned from the model that contains a string representing the FunctionDeclaration.name and a structured JSON object containing the parameters and their values."
       },
       "FunctionDeclaration": {
         "properties": {
@@ -3599,7 +3648,7 @@
               }
             ],
             "title": "Name",
-            "description": "Required. The name of the function to call. Must start with a letter or an underscore. Must be a-z, A-Z, 0-9, or contain underscores, dots, colons and dashes, with a maximum length of 64."
+            "description": "Required. The name of the function to call. Must start with a letter or an underscore. Must be a-z, A-Z, 0-9, or contain underscores, dots, colons and dashes, with a maximum length of 128."
           },
           "parameters": {
             "anyOf": [
@@ -3652,7 +3701,7 @@
                 "type": "null"
               }
             ],
-            "description": "Optional. Specifies the function Behavior. Currently only supported by the BidiGenerateContent method. This field is not supported in Vertex AI."
+            "description": "Optional. Specifies the function Behavior. Currently only non-blocking functions are supported. If not specified, the system keeps the current function call behavior. This field is currently only supported by the BidiGenerateContent method."
           }
         },
         "additionalProperties": false,
@@ -3672,7 +3721,7 @@
               }
             ],
             "title": "Willcontinue",
-            "description": "Signals that function call continues, and more responses will be returned, turning the function call into a generator. Is only applicable to NON_BLOCKING function calls (see FunctionDeclaration.behavior for details), ignored otherwise. If false, the default, future responses will not be considered. Is only applicable to NON_BLOCKING function calls, is ignored otherwise. If set to false, future responses will not be considered. It is allowed to return empty `response` with `will_continue=False` to signal that the function call is finished."
+            "description": "Optional. Signals that function call continues, and more responses will be returned, turning the function call into a generator. Is only applicable to NON_BLOCKING function calls, is ignored otherwise. If set to false, future responses will not be considered. It is allowed to return empty `response` with `will_continue=False` to signal that the function call is finished. This may still trigger the model generation. To avoid triggering the generation and finish the function call, additionally set `scheduling` to `SILENT`. This field is not supported in Vertex AI."
           },
           "scheduling": {
             "anyOf": [
@@ -3683,7 +3732,7 @@
                 "type": "null"
               }
             ],
-            "description": "Specifies how the response should be scheduled in the conversation. Only applicable to NON_BLOCKING function calls, is ignored otherwise. Defaults to WHEN_IDLE."
+            "description": "Optional. Specifies how the response should be scheduled in the conversation. Only applicable to NON_BLOCKING function calls, is ignored otherwise. Defaults to WHEN_IDLE."
           },
           "parts": {
             "anyOf": [
@@ -3698,7 +3747,7 @@
               }
             ],
             "title": "Parts",
-            "description": "List of parts that constitute a function response. Each part may\n      have a different IANA MIME type."
+            "description": "Optional. Ordered `Parts` that constitute a function response. Parts may have different IANA MIME types."
           },
           "id": {
             "anyOf": [
@@ -3722,7 +3771,7 @@
               }
             ],
             "title": "Name",
-            "description": "Required. The name of the function to call. Matches [FunctionDeclaration.name] and [FunctionCall.name]."
+            "description": "Required. The name of the function to call. Matches FunctionDeclaration.name and FunctionCall.name."
           },
           "response": {
             "anyOf": [
@@ -3741,7 +3790,7 @@
         "additionalProperties": false,
         "type": "object",
         "title": "FunctionResponse",
-        "description": "A function response."
+        "description": "The result output from a FunctionCall that contains a string representing the FunctionDeclaration.name and a structured JSON object containing any output from the function is used as context to the model.\n\nThis should contain the result of a `FunctionCall` made based on model\nprediction."
       },
       "FunctionResponseBlob": {
         "properties": {
@@ -3769,7 +3818,7 @@
               }
             ],
             "title": "Data",
-            "description": "Required. Inline media bytes."
+            "description": "Required. Raw bytes."
           },
           "displayName": {
             "anyOf": [
@@ -3781,13 +3830,13 @@
               }
             ],
             "title": "Displayname",
-            "description": "Optional. Display name of the blob.\n      Used to provide a label or filename to distinguish blobs."
+            "description": "Optional. Display name of the blob. Used to provide a label or filename to distinguish blobs. This field is only returned in PromptMessage for prompt management. It is currently used in the Gemini GenerateContent calls only when server side tools (code_execution, google_search, and url_context) are enabled. This field is not supported in Gemini API."
           }
         },
         "additionalProperties": false,
         "type": "object",
         "title": "FunctionResponseBlob",
-        "description": "Raw media bytes for function response.\n\nText should not be sent as raw bytes, use the FunctionResponse.response\nfield."
+        "description": "Raw media bytes for function response.\n\nText should not be sent as raw bytes, use the 'text' field."
       },
       "FunctionResponseFileData": {
         "properties": {
@@ -3825,13 +3874,13 @@
               }
             ],
             "title": "Displayname",
-            "description": "Optional. Display name of the file.\n      Used to provide a label or filename to distinguish files."
+            "description": "Optional. Display name of the file data. Used to provide a label or filename to distinguish file datas. This field is only returned in PromptMessage for prompt management. It is currently used in the Gemini GenerateContent calls only when server side tools (code_execution, google_search, and url_context) are enabled."
           }
         },
         "additionalProperties": false,
         "type": "object",
         "title": "FunctionResponseFileData",
-        "description": "URI based data for function response."
+        "description": "URI based data for function response.\n\nThis data type is not supported in Gemini API."
       },
       "FunctionResponsePart": {
         "properties": {
@@ -3844,7 +3893,7 @@
                 "type": "null"
               }
             ],
-            "description": "Optional. Inline media bytes."
+            "description": "Inline media bytes."
           },
           "fileData": {
             "anyOf": [
@@ -3855,13 +3904,13 @@
                 "type": "null"
               }
             ],
-            "description": "Optional. URI based data."
+            "description": "URI based data. This field is not supported in Gemini API."
           }
         },
         "additionalProperties": false,
         "type": "object",
         "title": "FunctionResponsePart",
-        "description": "A datatype containing media that is part of a `FunctionResponse` message.\n\nA `FunctionResponsePart` consists of data which has an associated datatype. A\n`FunctionResponsePart` can only contain one of the accepted types in\n`FunctionResponsePart.data`.\n\nA `FunctionResponsePart` must have a fixed IANA MIME type identifying the\ntype and subtype of the media if the `inline_data` field is filled with raw\nbytes."
+        "description": "A datatype containing media that is part of a `FunctionResponse` message.\n\nA `FunctionResponsePart` consists of data which has an associated datatype. A\n`FunctionResponsePart` can only contain one of the accepted types in\n`FunctionResponsePart.data`. A `FunctionResponsePart` must have a fixed IANA\nMIME type identifying the type and subtype of the media if the `inline_data`\nfield is filled with raw bytes."
       },
       "FunctionResponseScheduling": {
         "type": "string",
@@ -3872,7 +3921,7 @@
           "INTERRUPT"
         ],
         "title": "FunctionResponseScheduling",
-        "description": "Specifies how the response should be scheduled in the conversation."
+        "description": "Specifies how the response should be scheduled in the conversation.\n\nOnly applicable to NON_BLOCKING function calls, is ignored otherwise. Defaults\nto WHEN_IDLE."
       },
       "GenerateContentResponseUsageMetadata": {
         "properties": {
@@ -4048,7 +4097,7 @@
               }
             ],
             "title": "Enablewidget",
-            "description": "Optional. Whether to return a widget context token in the GroundingMetadata of the response. Developers can use the widget context token to render a Google Maps widget with geospatial context related to the places that the model references in the response."
+            "description": "Deprecated. The Google Maps contextual widget behavior in Grounding with Google Maps is being deprecated; this field is planned for removal and no longer has any effect once removed. Optional. Whether to return a widget context token in the GroundingMetadata of the response."
           }
         },
         "additionalProperties": false,
@@ -4743,7 +4792,7 @@
               }
             ],
             "title": "Pagenumber",
-            "description": "Optional. Page number of the retrieved context. This field is not supported in Vertex AI."
+            "description": "Optional. Page number of the retrieved context, if applicable. This field is not supported in Vertex AI."
           },
           "mediaId": {
             "anyOf": [
@@ -4755,7 +4804,7 @@
               }
             ],
             "title": "Mediaid",
-            "description": "Optional. Media ID. This field is not supported in Vertex AI."
+            "description": "Optional. The media blob resource name for multimodal file search results. Format: fileSearchStores/{file_search_store_id}/media/{blob_id}. This field is not supported in Vertex AI."
           }
         },
         "additionalProperties": false,
@@ -5348,7 +5397,7 @@
               }
             ],
             "title": "Lastconsumedclientmessageindex",
-            "description": "Index of last message sent by client that is included in state represented by this SessionResumptionToken. Only sent when `SessionResumptionConfig.transparent` is set.\n\nPresence of this index allows users to transparently reconnect and avoid issue of losing some part of realtime audio input/video. If client wishes to temporarily disconnect (for example as result of receiving GoAway) they can do it without losing state by buffering messages sent since last `SessionResmumptionTokenUpdate`. This field will enable them to limit buffering (avoid keeping all requests in RAM).\n\nNote: This should not be used for when resuming a session at some time later -- in those cases partial audio and video frames arelikely not needed."
+            "description": "Index of last message sent by client that is included in state represented by this SessionResumptionToken. Only sent when `SessionResumptionConfig.transparent` is set.\n\nPresence of this index allows users to transparently reconnect and avoid issue of losing some part of realtime audio input/video. If client wishes to temporarily disconnect (for example as result of receiving GoAway) they can do it without losing state by buffering messages sent since last `SessionResumptionTokenUpdate`. This field will enable them to limit buffering (avoid keeping all requests in RAM).\n\nNote: This should not be used for when resuming a session at some time later -- in those cases partial audio and video frames are likely not needed."
           }
         },
         "additionalProperties": false,
@@ -5502,7 +5551,7 @@
         "additionalProperties": false,
         "type": "object",
         "title": "McpServer",
-        "description": "A MCPServer is a server that can be called by the model to perform actions.\n\nIt is a server that implements the MCP protocol. Next ID: 5. This data type is\nnot supported in Vertex AI."
+        "description": "A MCPServer is a server that can be called by the model to perform actions.\n\nIt is a server that implements the MCP protocol. Next ID: 6. This data type is\nnot supported in Vertex AI."
       },
       "MediaModality": {
         "type": "string",
@@ -5515,7 +5564,7 @@
           "DOCUMENT"
         ],
         "title": "MediaModality",
-        "description": "Server content modalities."
+        "description": "The modality that this token count applies to."
       },
       "ModalityTokenCount": {
         "properties": {
@@ -5528,7 +5577,7 @@
                 "type": "null"
               }
             ],
-            "description": "The modality associated with this token count."
+            "description": "The modality that this token count applies to."
           },
           "tokenCount": {
             "anyOf": [
@@ -5546,7 +5595,7 @@
         "additionalProperties": false,
         "type": "object",
         "title": "ModalityTokenCount",
-        "description": "Represents token counting info for a single modality."
+        "description": "Represents a breakdown of token usage by modality.\n\nThis message is used in CountTokensResponse and\nGenerateContentResponse.UsageMetadata to provide a detailed view of how many\ntokens are used by each modality (e.g., text, image, video) in a request. This\nis particularly useful for multimodal models, allowing you to track and manage\ntoken consumption for billing and quota purposes."
       },
       "NodeInfo": {
         "properties": {
@@ -6468,6 +6517,30 @@
             ],
             "title": "Text",
             "description": "The content of the chunk."
+          },
+          "chunkId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Chunkid",
+            "description": "The ID of the chunk."
+          },
+          "fileId": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fileid",
+            "description": "The ID of the file that the chunk belongs to."
           }
         },
         "additionalProperties": false,
@@ -6836,6 +6909,18 @@
               }
             ],
             "title": "Invocationid"
+          },
+          "customMetadata": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Custommetadata"
           }
         },
         "type": "object",
@@ -6844,6 +6929,21 @@
           "sessionId"
         ],
         "title": "RunAgentRequest"
+      },
+      "SafetyPolicy": {
+        "type": "string",
+        "enum": [
+          "SAFETY_POLICY_UNSPECIFIED",
+          "FINANCIAL_TRANSACTIONS",
+          "SENSITIVE_DATA_MODIFICATION",
+          "COMMUNICATION_TOOL",
+          "ACCOUNT_CREATION",
+          "DATA_MODIFICATION",
+          "USER_CONSENT_MANAGEMENT",
+          "LEGAL_TERMS_AND_AGREEMENTS"
+        ],
+        "title": "SafetyPolicy",
+        "description": "SafetyPolicy"
       },
       "SaveArtifactRequest": {
         "properties": {
@@ -7462,32 +7562,55 @@
         "properties": {
           "id": {
             "type": "string",
-            "title": "Id"
+            "title": "Id",
+            "description": "Unique identifier of the session.",
+            "examples": [
+              "session-abc123"
+            ]
           },
           "appName": {
             "type": "string",
-            "title": "Appname"
+            "title": "Appname",
+            "description": "Application name that owns the session.",
+            "examples": [
+              "hello_world"
+            ]
           },
           "userId": {
             "type": "string",
-            "title": "Userid"
+            "title": "Userid",
+            "description": "User ID that owns the session.",
+            "examples": [
+              "user-123"
+            ]
           },
           "state": {
             "additionalProperties": true,
             "type": "object",
-            "title": "State"
+            "title": "State",
+            "description": "Current persisted session state.",
+            "examples": [
+              {
+                "locale": "en-US"
+              }
+            ]
           },
           "events": {
             "items": {
               "$ref": "#/components/schemas/Event-Output"
             },
             "type": "array",
-            "title": "Events"
+            "title": "Events",
+            "description": "Ordered event history for the session, including user, model, and tool events (e.g. user input, model response, function call/response)."
           },
           "lastUpdateTime": {
             "type": "number",
             "title": "Lastupdatetime",
-            "default": 0.0
+            "description": "Unix timestamp in seconds for the most recent session update.",
+            "default": 0.0,
+            "examples": [
+              1742000000.0
+            ]
           }
         },
         "additionalProperties": false,
@@ -7593,7 +7716,7 @@
                 "type": "null"
               }
             ],
-            "description": "Optional. Tool to support the model interacting directly with the\n      computer. If enabled, it automatically populates computer-use specific\n      Function Declarations."
+            "description": "Optional. Tool to support the model interacting directly with the computer. If enabled, it automatically populates computer-use specific Function Declarations."
           },
           "fileSearch": {
             "anyOf": [
@@ -7768,7 +7891,7 @@
         "additionalProperties": false,
         "type": "object",
         "title": "ToolCodeExecution",
-        "description": "Tool that executes code generated by the model, and automatically returns the result to the model.\n\nSee also [ExecutableCode]and [CodeExecutionResult] which are input and output\nto this tool. This data type is not supported in Gemini API."
+        "description": "Tool that executes code generated by the model, and automatically returns the result to the model.\n\nSee also ExecutableCode and CodeExecutionResult, which are input and output to\nthis tool. This data type is not supported in Gemini API."
       },
       "ToolConfirmation": {
         "properties": {
@@ -7924,12 +8047,59 @@
             ],
             "title": "Finished",
             "description": "Optional. The bool indicates the end of the transcription."
+          },
+          "languageCode": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Languagecode",
+            "description": "The BCP-47 language code of the transcription."
           }
         },
         "additionalProperties": false,
         "type": "object",
         "title": "Transcription",
-        "description": "Audio transcription in Server Conent."
+        "description": "Audio transcription in Server Content."
+      },
+      "TurnCompleteReason": {
+        "type": "string",
+        "enum": [
+          "TURN_COMPLETE_REASON_UNSPECIFIED",
+          "MALFORMED_FUNCTION_CALL",
+          "RESPONSE_REJECTED",
+          "NEED_MORE_INPUT",
+          "PROHIBITED_INPUT_CONTENT",
+          "IMAGE_PROHIBITED_INPUT_CONTENT",
+          "INPUT_TEXT_CONTAIN_PROMINENT_PERSON_PROHIBITED",
+          "INPUT_IMAGE_CELEBRITY",
+          "INPUT_IMAGE_PHOTO_REALISTIC_CHILD_PROHIBITED",
+          "INPUT_TEXT_NCII_PROHIBITED",
+          "INPUT_OTHER",
+          "INPUT_IP_PROHIBITED",
+          "BLOCKLIST",
+          "UNSAFE_PROMPT_FOR_IMAGE_GENERATION",
+          "GENERATED_IMAGE_SAFETY",
+          "GENERATED_CONTENT_SAFETY",
+          "GENERATED_AUDIO_SAFETY",
+          "GENERATED_VIDEO_SAFETY",
+          "GENERATED_CONTENT_PROHIBITED",
+          "GENERATED_CONTENT_BLOCKLIST",
+          "GENERATED_IMAGE_PROHIBITED",
+          "GENERATED_IMAGE_CELEBRITY",
+          "GENERATED_IMAGE_PROMINENT_PEOPLE_DETECTED_BY_REWRITER",
+          "GENERATED_IMAGE_IDENTIFIABLE_PEOPLE",
+          "GENERATED_IMAGE_MINORS",
+          "OUTPUT_IMAGE_IP_PROHIBITED",
+          "GENERATED_OTHER",
+          "MAX_REGENERATION_REACHED"
+        ],
+        "title": "TurnCompleteReason",
+        "description": "The reason why the turn is complete."
       },
       "Type": {
         "type": "string",
