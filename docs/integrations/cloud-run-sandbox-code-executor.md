@@ -1,6 +1,6 @@
 ---
 catalog_title: Cloud Run Sandbox Code Executor
-catalog_description: Run AI-generated code inside secure Cloud Run nested sandboxes
+catalog_description: Run AI-generated code inside secure Cloud Run sandboxes
 catalog_icon: /integrations/assets/cloud-run.png
 catalog_tags: ["code","google"]
 ---
@@ -11,7 +11,7 @@ catalog_tags: ["code","google"]
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.23.0</span>
 </div>
 
-The Cloud Run Sandbox Code Executor (`CloudRunSandboxCodeExecutor`) provides a secure method for executing LLM-generated code by leveraging Google Cloud Run's nested sandboxing capabilities. 
+The Cloud Run Sandbox Code Executor (`CloudRunSandboxCodeExecutor`) provides a secure method for executing LLM-generated code by leveraging Google Cloud Run's sandboxing capabilities. 
 
 This executor is designed to run from **within** a Cloud Run container (such as a Cloud Run Service) where the sandbox launcher is enabled. It executes untrusted code locally inside an isolated guest sandbox using the container's own Python interpreter, preventing the code from accessing the parent container's environment or credentials.
 
