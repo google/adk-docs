@@ -366,7 +366,7 @@ two-tiered locking architecture:
     requires migration of the Session Database. For more information, see
     [Session database schema migration](/sessions/session/migrate/).
 
-## The Session Lifecycle
+## The session lifecycle
 
 <img src="../../assets/event-loop.png" alt="Session lifecycle">
 
@@ -399,3 +399,21 @@ during a conversation turn:
 
 This cycle highlights how the `SessionService` ensures conversational continuity
 by managing the history and state associated with each `Session` object.
+
+## Troubleshoot session errors
+
+`SessionNotFoundError`: During execution, ADK can raise specific exceptions to help you identify configuration or state issues.
+Raised when a runner attempts to access or execute a session that does not exist in the active session store. For backward compatibility,
+this exception inherits from `ValueError`.
+
+* **Common Causes:** Passing an invalid, expired, or missing session_id. Attempting to run a session before you create it.
+  
+* **How to resolve:** Verify the session_id is correctly passed from your client-side storage. Use `list_sessions()` to audit existing active IDs.
+
+```python
+
+  class SessionNotFoundError(ValueError):
+  def __init__(self, message="Session not found."):
+    super().__init__(message)
+
+```
