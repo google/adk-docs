@@ -37,16 +37,18 @@ This capability is essential for building contextually aware RAG applications.
 The `SpannerVectorStoreSettings` configuration class defines the parameters for how `vector_store_similarity_search` operates. Use the following parameters:
 
 **Required parameters**
+
 * **`project_id`**: Your Google Cloud Project ID required for authentication context.
 * **`instance_id`**: The Spanner instance ID
-* **`database_id`**: The Spanner database ID
-* **`table_name`**: The Spanner table containing the vector embeddings
+* **`database_id`**: The Spanner database ID.
+* **`table_name`**: The Spanner table containing the vector embeddings.
 * **`embedding_column`**: The `ARRAY<FLOAT>` or `ARRAY<DOUBLE>` column where the vector embeddings are stored.
 * **`content_column`**: The column containing the original text or content to be retrieved.
 * **`vector_length`**: The dimensionality of your embedding vectors that must match your model.
 * **`vertex_ai_embedding_model_name`**: The Vertex AI model used to generate the embeddings, for example "text-embedding-005").
 
 **Optional parameters**
+
 * **`selected_columns`**: A list of columns you can include in the search results, such as metadata or identifiers.
 * **`nearest_neighbors_algorithm`**: The algorithm you use for the search, such as "EXACT_NEAREST_NEIGHBORS".
 * **`top_k`**: The number of nearest neighbors to retrieve per query.
