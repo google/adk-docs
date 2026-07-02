@@ -287,11 +287,11 @@ You can define Skills within the code of your agent, as shown below.
     ```go
     import (
         "os"
-    
+
         "google.golang.org/adk/tool/skilltoolset/skill"
         "google.golang.org/adk/tool/skilltoolset"
     )
-    
+
     // ...
 
     source := skill.NewFileSystemSource(os.DirFS("./skills"))
@@ -301,7 +301,7 @@ You can define Skills within the code of your agent, as shown below.
     //   source, _, err = skill.WithFrontmatterPreloadSource(ctx, source)
     //   source, _, err = skill.WithCompletePreloadSource(ctx, source)
     // For more information about these and other wrappers, see
-    // https://pkg.go.dev/google.golang.org/adk/tool/skilltoolset/skill#Source.
+    // https://pkg.go.dev/google.golang.org/adk/v2/tool/skilltoolset/skill#Source.
 
     skillToolset, err := skilltoolset.New(ctx, skilltoolset.Config{
         Source: source,

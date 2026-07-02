@@ -2,7 +2,7 @@
 catalog_title: Google Cloud Skill Registry
 catalog_description: Dynamically search, discover, and fetch remote Skills
 catalog_icon: /integrations/assets/agent-platform.svg
-catalog_tags: ["google", "skills", "connectors"]
+catalog_tags: ["google", "connectors"]
 ---
 
 # Google Cloud Skill Registry
@@ -11,7 +11,7 @@ catalog_tags: ["google", "skills", "connectors"]
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.27.0</span><span class="lst-preview">Preview</span>
 </div>
 
-The **Google Cloud Skill Registry** integration within the Agent Development Kit (ADK) allows developers to dynamically search, discover, and fetch remote Skills cataloged within a central repository. 
+The **Google Cloud Skill Registry** integration within the Agent Development Kit (ADK) allows developers to dynamically search, discover, and fetch remote Skills cataloged within a central repository.
 
 Rather than statically injecting every available skill into your agent's context window at initialization, the Skill Registry enables **on-demand targeted retrieval**. As your catalog of specialized capabilities scales to hundreds or thousands of skills, agents can dynamically discover, download, and activate the exact instructions and tools they need based on user intent. For more information about the Skills Registry service, see the [Google Cloud Skills Registry](https://docs.cloud.google.com/gemini-enterprise-agent-platform/build/skill-registry) documentation.
 
@@ -19,8 +19,6 @@ Rather than statically injecting every available skill into your agent's context
     The Google Cloud Skills Registry feature is a Preview release. For
     more information, see the
     [launch stage descriptions](https://cloud.google.com/products#product-launch-stages).
-
----
 
 ## Use Cases
 
@@ -40,7 +38,8 @@ Rather than statically injecting every available skill into your agent's context
 !!! warning "Internet Access Requirements"
     Since the GCP Skill Registry interacts with Vertex AI services using the Vertex AI Client SDK, agents running in sandboxed environments without outbound network access to Vertex AI endpoints will fail to reach the registry. Ensure proper network access is configured, or else the system falls back to local, filesystem-loaded skills.
 
----
+For more information on connecting to Google Cloud from ADK agents, see
+[Connect to Google Cloud and Agent Platform](/get-started/google-cloud/).
 
 ## Installation
 
@@ -73,7 +72,7 @@ registry = GCPSkillRegistry(
 # 2. Create the SkillToolset with the Registry
 # You can optionally pre-load some local skills as well.
 skill_toolset = SkillToolset(
-    skills=[], 
+    skills=[],
     registry=registry
 )
 
@@ -103,26 +102,26 @@ sequenceDiagram
 
     User->>Agent: "How to optimize a BigQuery query?"
     Note over Agent: LLM realizes it does not have<br/>instructions for BigQuery locally.
-    
+
     Agent->>Toolset: search_skills(query="BigQuery optimization")
     Toolset->>Registry: Search matching skills
     Registry-->>Toolset: Returns frontmatters (e.g., "bigquery")
     Toolset-->>Agent: Returns list of matches (filtered)
-    
+
     Note over Agent: LLM identifies "bigquery" as<br/>the best candidate.
-    
+
     Agent->>Toolset: load_skill(skill_name="bigquery")
     Toolset->>Registry: Fetch remote skill details
     Registry-->>Toolset: Returns skill payload
     Note over Toolset: Unpacks payload &<br/>caches skill in Session State
     Toolset-->>Agent: Success. Skill loaded.
-    
+
     Note over Agent: LLM appends skill instructions to system prompt,<br/>making tools available.
     Agent-->>User: Fulfills request utilizing BigQuery skill instructions!
 ```
 
 ### Semantic Discovery (`search_skills`)
-If the agent determines that its current system instructions are insufficient to answer a user query, it automatically invokes the `search_skills` tool. 
+If the agent determines that its current system instructions are insufficient to answer a user query, it automatically invokes the `search_skills` tool.
 
 *   **Collision Prevention**: To prevent namespace conflicts, ADK automatically filters out registry skills that duplicate the name of any locally loaded skills.
 
