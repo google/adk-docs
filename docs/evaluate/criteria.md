@@ -15,6 +15,9 @@ Criterion                                | Description                          
 `rubric_based_final_response_quality_v1` | LLM-judged final response quality based on custom rubrics | No              | Yes              | Yes            | Yes
 `rubric_based_tool_use_quality_v1`       | LLM-judged tool usage quality based on custom rubrics     | No              | Yes              | Yes            | Yes
 `hallucinations_v1`                      | LLM-judged groundedness of agent response against context | No              | No               | Yes            | Yes
+`multi_turn_task_success_v1`| LLM-judged task success in a multi-turn conversation| No | No | Yes | Yes |
+`multi_turn_tool_use_quality_v1`| LLM-judged tool use quality in a multi-turn conversation | No | No | Yes | Yes |
+`multi_turn_trajectory_quality_v1`| LLM-judged trajectory quality in a multi-turn conversation | No | No | Yes | Yes |
 `safety_v1`                              | Safety/harmlessness of agent response                     | No              | No               | Yes            | Yes
 `per_turn_user_simulator_quality_v1`     | LLM-judged user simulator quality                         | No              | No               | Yes            | Yes
 `multi_turn_task_success_v1`             | Evaluates if agent achieves goal(s) of conversation       | No              | No               | Yes            | Yes
@@ -236,7 +239,6 @@ Example `EvalConfig` entry:
         }
     }
   }
-}
 ```
 
 ### Output And How To Interpret
@@ -449,6 +451,102 @@ The criterion returns a score between 0.0 and 1.0. A score of 1.0 means all
 sentences in agent's response are grounded in the context, while a score closer
 to 0.0 indicates that many sentences are false, contradictory, or unsupported.
 Higher values are better.
+
+## multi_turn_task_success_v1
+
+This criterion evaluates if the agent was able to achieve the goal or goals of a multi-turn conversation.
+
+### When To Use This Criterion?
+
+Use this criterion when you want to assess the agent's ability to complete a task over a series of turns. This is useful for evaluating agents that handle complex user requests that require multiple interactions.
+
+### Details
+
+This criterion delegates the evaluation to the Vertex AI Gen AI Eval SDK. It is a reference-free metric that uses an LLM-as-a-judge to evaluate the entire conversation.
+
+### How To Use This Criterion?
+
+Using this criterion requires a Google Cloud Project. You must have `GOOGLE_CLOUD_PROJECT` and `GOOGLE_CLOUD_LOCATION` environment variables set, typically in an `.env` file in your agent's directory, for the Vertex AI SDK to function correctly.
+
+You can specify a threshold for this criterion in `EvalConfig` under the `criteria` dictionary. The value should be a float between 0.0 and 1.0.
+
+Example `EvalConfig` entry:
+
+```json
+{
+  "criteria": {
+    "multi_turn_task_success_v1": 0.8
+  }
+}
+```
+
+### Output And How To Interpret
+
+The criterion returns a score between 0.0 and 1.0. A score of 1.0 means the agent successfully completed the task, while a score closer to 0.0 indicates that the agent failed to complete the task. Higher values are better.
+
+## multi_turn_tool_use_quality_v1
+
+This criterion evaluates the quality of tool calls made during a multi-turn conversation.
+
+### When To Use This Criterion?
+
+Use this criterion when you want to assess how well the agent is using its tools throughout a conversation. This is particularly useful for debugging tool use and ensuring that the agent is making appropriate and efficient use of its tools.
+
+### Details
+
+This criterion delegates the evaluation to the Vertex AI Gen AI Eval SDK. It is a reference-free metric that uses an LLM-as-a-judge to evaluate the tool calls in the conversation.
+
+### How To Use This Criterion?
+
+Using this criterion requires a Google Cloud Project. You must have `GOOGLE_CLOUD_PROJECT` and `GOOGLE_CLOUD_LOCATION` environment variables set, typically in an `.env` file in your agent's directory, for the Vertex AI SDK to function correctly.
+
+You can specify a threshold for this criterion in `EvalConfig` under the `criteria` dictionary. The value should be a float between 0.0 and 1.0.
+
+Example `EvalConfig` entry:
+
+```json
+{
+  "criteria": {
+    "multi_turn_tool_use_quality_v1": 0.8
+  }
+}
+```
+
+### Output And How To Interpret
+
+The criterion returns a score between 0.0 and 1.0. A score of 1.0 means the agent's tool use was of high quality, while a score closer to 0.0 indicates issues with tool use. Higher values are better.
+
+## multi_turn_trajectory_quality_v1
+
+This criterion evaluates the overall quality of the conversation trajectory.
+
+### When To Use This Criterion?
+
+Use this criterion when you want to assess the overall flow and coherence of the conversation. This is different from `multi_turn_task_success_v1` because it considers the path taken to achieve the goal, not just whether the goal was achieved. This is useful for evaluating the user experience and ensuring that the conversation is natural and efficient.
+
+### Details
+
+This criterion delegates the evaluation to the Vertex AI Gen AI Eval SDK. It is a reference-free metric that uses an LLM-as-a-judge to evaluate the entire conversation trajectory.
+
+### How To Use This Criterion?
+
+Using this criterion requires a Google Cloud Project. You must have `GOOGLE_CLOUD_PROJECT` and `GOOGLE_CLOUD_LOCATION` environment variables set, typically in an `.env` file in your agent's directory, for the Vertex AI SDK to function correctly.
+
+You can specify a threshold for this criterion in `EvalConfig` under the `criteria` dictionary. The value should be a float between 0.0 and 1.0.
+
+Example `EvalConfig` entry:
+
+```json
+{
+  "criteria": {
+    "multi_turn_trajectory_quality_v1": 0.8
+  }
+}
+```
+
+### Output And How To Interpret
+
+The criterion returns a score between 0.0 and 1.0. A score of 1.0 means the conversation trajectory was of high quality, while a score closer to 0.0 indicates a poor quality trajectory. Higher values are better.
 
 ## safety_v1
 
