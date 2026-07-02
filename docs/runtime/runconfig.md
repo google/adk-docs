@@ -4,6 +4,159 @@
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
+<<<<<<< agent-changes-20251022-210838
+When constructing an agent run, you can pass a `RunConfig` to customize how the
+agent interacts with models, handles audio, and streams responses. By default,
+no streaming is enabled and inputs aren’t retained as artifacts. Use `RunConfig`
+to override these defaults.
+
+## Class Definition
+
+ The `RunConfig` class holds configuration parameters for an agent's runtime behavior.
+
+- Python ADK uses Pydantic for this validation.
+
+- Java ADK typically uses immutable data classes.
+
+=== "Python"
+```python
+    class RunConfig(BaseModel):
+        """Configs for runtime behavior of agents."""
+    
+        model_config = ConfigDict(
+            extra='forbid',
+        )
+    
+        speech_config: Optional[types.SpeechConfig] = None
+        response_modalities: Optional[list[str]] = None
+        save_input_blobs_as_artifacts: bool = False
+        support_cfc: bool = False
+        streaming_mode: StreamingMode = StreamingMode.NONE
+        output_audio_transcription: Optional[types.AudioTranscriptionConfig] = None
+        max_llm_calls: int = 500
+
+```
+
+=== "Java"
+
+```java
+    public abstract class RunConfig {
+      
+      public enum StreamingMode {
+        NONE,
+        SSE,
+        BIDI
+      }
+      
+      public abstract @Nullable SpeechConfig speechConfig();
+    
+      public abstract ImmutableList<Modality> responseModalities();
+    
+      public abstract boolean saveInputBlobsAsArtifacts();
+      
+      public abstract @Nullable AudioTranscriptionConfig outputAudioTranscription();
+    
+      public abstract int maxLlmCalls();
+      
+      // ...
+    }
+```
+
+## Runtime Parameters
+
+| Parameter | Python Type | Java Type | Default (Py / Java) | Description |
+| :--- | :--- |:---|:---|:---|
+| `speech_config` | `Optional[types.SpeechConfig]` | `SpeechConfig` (nullable via `@Nullable`) | `None` / `null` | Configures speech synthesis (voice, language) using the `SpeechConfig` type. |
+| `response_modalities` | `Optional[list[str]]` | `ImmutableList<Modality>` | `None` / Empty `ImmutableList` | List of desired output modalities (e.g., Python: `["TEXT", "AUDIO"]`; Java: uses structured `Modality` objects). |
+| `save_input_blobs_as_artifacts` | `bool` | `boolean` | `False` / `false` | If `true`, saves input blobs (e.g., uploaded files) as run artifacts for debugging/auditing. |
+| `streaming_mode` | `StreamingMode` | *Currently not supported* | `StreamingMode.NONE` / N/A | Sets the streaming behavior: `NONE` (default), `SSE` (server-sent events), or `BIDI` (bidirectional). |
+| `output_audio_transcription` | `Optional[types.AudioTranscriptionConfig]` | `AudioTranscriptionConfig` (nullable via `@Nullable`) | `None` / `null` | Configures transcription of generated audio output using the `AudioTranscriptionConfig` type. |
+| `max_llm_calls` | `int` | `int` | `500` / `500` | Limits total LLM calls per run. `0` or negative means unlimited (warned); `sys.maxsize` raises `ValueError`. |
+| `support_cfc` | `bool` | *Currently not supported* | `False` / N/A | **Python:** Enables Compositional Function Calling. Requires `streaming_mode=SSE` and uses the LIVE API. **Experimental.** |
+| `context_window_compression` | `Optional[types.ContextWindowCompressionConfig]` | | `None` | Configuration for context window compression. |
+
+### ContextWindowCompressionConfig for ADK's RunConfig ("context_window_compression" attribute)
+
+Based on the typical structure in ADK and similar systems, ContextWindowCompressionConfig is used to automatically manage the size of the input provided to the LLM, preventing it from exceeding the model's context window limit.
+
+#### Settings for ContextWindowCompressionConfig
+
+* **trigger_tokens (int)**:
+Defines the threshold at which the compression mechanism is activated.
+When the total tokens in the context window exceed this number, the ADK (via the Live API) will trigger a "cleanup" or compression routine.
+Common values: 60,000 to 100,000 tokens.
+
+* **sliding_window (types.SlidingWindow)**:
+Configures the specific behavior of the sliding window mechanism. 
+   * Settings within SlidingWindow:
+target_tokens (int): The desired number of tokens to retain after compression. This value must be lower than trigger_tokens. For example, if you trigger at 100k tokens and target 80k, the oldest 20k tokens will be discarded or summarized to make room for new content
+
+#### Minimal Use Example
+
+To use this configuration, you pass it to the context_window_compression parameter of a RunConfig object:
+
+```python
+from google.adk.agents import RunConfig
+from google.adk import types
+
+# Define the compression strategy
+compression_config = types.ContextWindowCompressionConfig(
+    trigger_tokens=80000,
+    sliding_window=types.SlidingWindow(
+        target_tokens=40000
+    )
+)
+
+# Apply it to your RunConfig
+run_config = RunConfig(
+    context_window_compression=compression_config,
+    # Usually used in tandem with BIDI/Live streaming
+    streaming_mode=types.StreamingMode.BIDI
+)
+
+# Example of how you might use the config (as commented in the original):
+# async for event in runner.run_async(user_input, run_config=run_config):
+# #     ...
+
+print("RunConfig created successfully with Context Window Compression:")
+print(run_config)
+
+```
+### `speech_config`
+
+!!! Note
+    The interface or definition of `SpeechConfig` is the same, irrespective of the language.
+
+Speech configuration settings for live agents with audio capabilities. The
+`SpeechConfig` class has the following structure:
+
+```python
+class SpeechConfig(_common.BaseModel):
+    """The speech generation configuration."""
+
+    voice_config: Optional[VoiceConfig] = Field(
+        default=None,
+        description="""The configuration for the speaker to use.""",
+    )
+    language_code: Optional[str] = Field(
+        default=None,
+        description="""Language code (ISO 639. e.g. en-US) for the speech synthesization.
+        Only available for Live API.""",
+    )
+```
+
+The `voice_config` parameter uses the `VoiceConfig` class:
+
+```python
+class VoiceConfig(_common.BaseModel):
+    """The configuration for the voice to use."""
+
+    prebuilt_voice_config: Optional[PrebuiltVoiceConfig] = Field(
+        default=None,
+        description="""The configuration for the speaker to use.""",
+    )
+```
+=======
 `RunConfig` controls how agents behave at runtime, including streaming mode,
 speech settings, LLM call limits, and live agent options. Pass a `RunConfig`
 to `runner.run_async()` or `runner.run_live()` to override default behavior.
@@ -12,6 +165,7 @@ to `runner.run_async()` or `runner.run_live()` to override default behavior.
 
     ```python
     from google.adk.agents.run_config import RunConfig, StreamingMode
+>>>>>>> main
 
     config = RunConfig(
         streaming_mode=StreamingMode.SSE,
