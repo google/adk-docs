@@ -105,14 +105,28 @@ tools. These files are generated in a subfolder of the directory where you ran
 the ADK web interface. The following listing shows an example layout for a
 DiceAgent project:
 
-```none
+### Project structure breakdown
+
+The Visual Builder automatically generates your agent's files into a structured project folder. This is what the structure looks like:
+
+```text
 DiceAgent/
     root_agent.yaml    # main agent code
     sub_agent_1.yaml   # sub agents (if any)
     tools/             # tools directory
         __init__.py
         dice_tool.py   # tool code
+
 ```
+
+Here is what each file and directory does:
+
+*   **`DiceAgent/`**: The root directory named after your specific agent application. All project assets live inside this folder.
+*   **`root_agent.yaml`**: The primary configuration file containing the main agent code. It acts as the central controller for the entire workflow.
+*   **`sub_agent_1.yaml`**: Configuration files for any additional sub-agents, such as sequential, loop, or parallel agents, that are managed by the root agent.
+*   **`tools/`**: The dedicated directory where all custom tool configurations and executable code are stored.
+    *   **`__init__.py`**: A required Python file that initializes the `tools` directory as a package so the system can locate and import your custom tools.
+    *   **`dice_tool.py`**: The actual Python source code implementing your custom tool's logic, in this case, the dice-rolling functionality.
 
 !!! note "Editing generated agents"
 
@@ -125,14 +139,14 @@ schema](/api-reference/agentconfig/).
 
 ## Security and deployment
 
-The Visual Builder saves agent configuration files to your project directory
-through a set of builder API endpoints. For security reasons, these endpoints
-are only available when you run the ADK web interface with `adk web`. In
-headless or production deployments, such as an agent deployed with
-`adk deploy cloud_run`, the builder endpoints are not registered, and the
-Visual Builder is not available.
+The Visual Builder saves agent configuration files to your project directory through local API endpoints. For security reasons, these endpoints are active only when you run the local ADK web interface using `adk web`. 
+
+In headless or production deployments—such as when you deploy an agent using `adk deploy cloud_run`, ADK server completely disables the builder endpoints to prevent unauthorized file writes.
 
 !!! note "File upload restrictions"
 
-    To limit file writes to agent configuration files, uploads through the
-    Visual Builder only accept files with a `.yaml` or `.yml` extension.
+    To prevent arbitrary file writes, file uploads through the Visual Builder 
+    accept only files with `.yaml` and `.yml` extensions. The server automatically
+    rejects absolute paths, path traversal sequences (`..`), and YAML files containing
+    blocked keys (such as `args`) that can execute arbitrary code.
+    
