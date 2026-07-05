@@ -122,3 +122,17 @@ DiceAgent/
 For more information on the Agent Config code format used by Visual Builder, see
 [Agent Config](/agents/config/) and [Agent Config YAML
 schema](/api-reference/agentconfig/).
+
+## Security and deployment
+
+The Visual Builder saves agent configuration files to your project directory
+through a set of builder API endpoints. For security reasons, these endpoints
+are only available when you run the ADK web interface with `adk web`. In
+headless or production deployments, such as an agent deployed with
+`adk deploy cloud_run`, the builder endpoints are not registered, and the
+Visual Builder is not available.
+
+!!! note "File upload restrictions"
+
+    To limit file writes to agent configuration files, uploads through the
+    Visual Builder only accept files with a `.yaml` or `.yml` extension.
