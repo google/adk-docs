@@ -165,7 +165,7 @@ This section focuses on using pre-existing tools (like those from `RestApiTool/ 
 
 When adding an authenticated tool to your agent, you need to provide its required `AuthScheme` and your application's initial `AuthCredential`.
 
-#### A. Use OpenAPI-based toolsets (`OpenAPIToolset`, `APIHubToolset`, etc.)
+#### Use OpenAPI-based toolsets (`OpenAPIToolset`, `APIHubToolset`, etc.)
 
 Pass the scheme and credential during toolset initialization. The toolset applies them to all generated tools. Here are few ways to create tools with authentication in ADK.
 
@@ -279,7 +279,7 @@ Pass the scheme and credential during toolset initialization. The toolset applie
       )
       ```
 
-#### B. Use Google API toolsets (e.g., `calendar_tool_set`)
+#### Use Google API toolsets (e.g., `calendar_tool_set`)
 
 These toolsets often have dedicated configuration methods.
 
@@ -300,7 +300,7 @@ calendar_tool_set.configure_auth(
 # agent = LlmAgent(..., tools=calendar_tool_set.get_tool('calendar_tool_set'))
 ```
 
-#### C. Use ID token
+#### Use ID token
 
 If your agent calls a restricted service, for example a private Cloud Run or Cloud Function, the agent needs to prove your identity, not just your permissions. If you are calling a service that is accessed using Cloud IAM, you should use an ID token.
 
