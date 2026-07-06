@@ -53,7 +53,7 @@ test_get_command_for_run_action() {
 # This is critical because 'go build' does not accept application arguments.
 test_get_command_for_build_action_strips_args() {
   local line="snippets/quickstart/main.go"
-  local expected="go build snippets/quickstart/main.go "
+  local expected="go build -o /dev/null ./snippets/quickstart/ "
   local actual=$(get_command_for_action "build" "${line}")
   assert_equals "${expected}" "${actual}" "Should create correct 'build' command and strip arguments"
 }
@@ -62,7 +62,7 @@ test_get_command_for_build_action_strips_args() {
 # This is important for packages that are split across multiple files.
 test_get_command_for_multi_file_build() {
   local line="file1.go file2.go"
-  local expected="go build file1.go file2.go "
+  local expected="go build -o /dev/null ./ "
   local actual=$(get_command_for_action "build" "${line}")
   assert_equals "${expected}" "${actual}" "Should handle multiple files correctly for build"
 }

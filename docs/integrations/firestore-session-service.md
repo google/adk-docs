@@ -11,7 +11,7 @@ catalog_tags: ["data", "google"]
   <span class="lst-supported">Supported in ADK</span><span class="lst-java">Java</span>
 </div>
 
-[Google Cloud Firestore](https://cloud.google.com/firestore) is a flexible, scalable NoSQL cloud database to store and sync data for client- and server-side development. 
+[Google Cloud Firestore](https://cloud.google.com/firestore) is a flexible, scalable NoSQL cloud database to store and sync data for client- and server-side development.
 ADK provides a native integration for managing persistent agent session states using Firestore, allowing continuous multi-turn conversations without losing conversation history.
 
 ## Use cases
@@ -31,9 +31,13 @@ ADK provides a native integration for managing persistent agent session states u
 
 !!! note
 
-    Ensure you use the same version for both `google-adk` and `google-adk-firestore-session-service` to guarantee compatibility.
+    Use the same version for both `google-adk` and
+    `google-adk-firestore-session-service` to guarantee compatibility. The
+    examples below use `1.5.0`; check for the latest ADK version and use it in
+    both dependencies.
 
-Add the following dependencies to your `pom.xml` (Maven) or `build.gradle` (Gradle), replacing `1.4.0` with your target ADK version:
+Add the following dependencies to your `pom.xml` (Maven) or `build.gradle`
+(Gradle):
 
 ### Maven
 
@@ -43,13 +47,13 @@ Add the following dependencies to your `pom.xml` (Maven) or `build.gradle` (Grad
     <dependency>
         <groupId>com.google.adk</groupId>
         <artifactId>google-adk</artifactId>
-        <version>1.4.0</version>
+        <version>1.5.0</version>
     </dependency>
     <!-- Firestore Session Service -->
     <dependency>
         <groupId>com.google.adk</groupId>
         <artifactId>google-adk-firestore-session-service</artifactId>
-        <version>1.4.0</version>
+        <version>1.5.0</version>
     </dependency>
 </dependencies>
 ```
@@ -59,9 +63,9 @@ Add the following dependencies to your `pom.xml` (Maven) or `build.gradle` (Grad
 ```gradle
 dependencies {
     // ADK Core
-    implementation 'com.google.adk:google-adk:1.4.0'
+    implementation 'com.google.adk:google-adk:1.5.0'
     // Firestore Session Service
-    implementation 'com.google.adk:google-adk-firestore-session-service:1.4.0'
+    implementation 'com.google.adk:google-adk-firestore-session-service:1.5.0'
 }
 ```
 
@@ -97,7 +101,7 @@ public class YourAgentApplication {
         String appName = "hello-time-agent";
 
         BaseAgent timeAgent = initAgent();
-        
+
         // Initialize Firestore
         FirestoreOptions firestoreOptions = FirestoreOptions.getDefaultInstance();
         Firestore firestore = firestoreOptions.getService();
@@ -145,7 +149,7 @@ public class YourAgentApplication {
             "time", "The time is 10:30am."
         );
     }
-    
+
     private static BaseAgent initAgent() {
         return LlmAgent.builder()
             .name("hello-time-agent")
@@ -167,7 +171,7 @@ public class YourAgentApplication {
 
     The Firestore Session Service supports properties file configuration. This allows you to easily target a dedicated Firestore database and define custom collection names for storing your agent session data.
 
-You can customize your ADK application to use the Firestore session service by providing your own Firestore property settings, otherwise the library will use the default settings. 
+You can customize your ADK application to use the Firestore session service by providing your own Firestore property settings, otherwise the library will use the default settings.
 
 ### Environment-Specific Configuration
 
@@ -189,14 +193,14 @@ keyword.extraction.stopwords=a,about,above,after,again,against,all,am,an,and,any
 
 !!! important
 
-    `FirestoreDatabaseRunner` requires the `gcs.adk.bucket.name` property to be defined. This is because the runner internally initializes the `GcsArtifactService` to handle multi-modal artifact storage. If this property is missing or empty, the application will throw a `RuntimeException` during startup. This is used for storing artifacts like images, videos, audio files, etc. that are generated or processed by the agent. 
+    `FirestoreDatabaseRunner` requires the `gcs.adk.bucket.name` property to be defined. This is because the runner internally initializes the `GcsArtifactService` to handle multi-modal artifact storage. If this property is missing or empty, the application will throw a `RuntimeException` during startup. This is used for storing artifacts like images, videos, audio files, etc. that are generated or processed by the agent.
 
 
 ## Resources
 
-- [Firestore Session Service](https://github.com/google/adk-java/tree/main/contrib/firestore-session-service): 
+- [Firestore Session Service](https://github.com/google/adk-java/tree/main/contrib/firestore-session-service):
   Source code for the Firestore Session Service.
-- [Spring Boot Google ADK + Firestore Example](https://github.com/mohan-ganesh/spring-boot-google-adk-firestore): 
+- [Spring Boot Google ADK + Firestore Example](https://github.com/mohan-ganesh/spring-boot-google-adk-firestore):
   An example project demonstrating how to build a Java-based Google ADK agent application using Cloud Firestore for session management.
-- [Firestore Session Service - DeepWiki](https://deepwiki.com/google/adk-java/4.3-firestore-session-service): 
+- [Firestore Session Service - DeepWiki](https://deepwiki.com/google/adk-java/4.3-firestore-session-service):
   Detailed description of Firestore integration in the Google ADK for Java.

@@ -44,7 +44,7 @@ working_dir/
 
     os.environ.setdefault("GOOGLE_CLOUD_PROJECT", "{your-project-id}")
     os.environ.setdefault("GOOGLE_CLOUD_LOCATION", "global")
-    os.environ.setdefault("GOOGLE_GENAI_USE_VERTEXAI", "True")
+    os.environ.setdefault("GOOGLE_GENAI_USE_ENTERPRISE", "True")
 
 
     # Define a tool function

@@ -1,9 +1,9 @@
 module snippets
 
-go 1.25.1
+go 1.25.0
 
 require (
-	google.golang.org/adk v1.3.0
+	google.golang.org/adk/v2 v2.0.0
 	google.golang.org/genai v1.57.0
 )
 

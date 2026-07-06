@@ -56,6 +56,8 @@ across supported languages. For a guided introduction, start with the
 
 === "Go"
 
+    **Prerequisites:** Go 1.25 or later is required for ADK Go v2.0.0.
+
     **Create a new Go module**
 
     If you are starting a new project, you can create a new Go module:
@@ -64,18 +66,30 @@ across supported languages. For a guided introduction, start with the
     go mod init example.com/my-agent
     ```
 
-    **Install ADK**
+    **Install ADK Go v2.0.0**
 
-    To add the ADK to your project, run the following command:
+    To add ADK Go v2.0.0 to your project, run the following command:
 
     ```shell
-    go get google.golang.org/adk
+    go get google.golang.org/adk/v2
     ```
 
-    This will add the ADK as a dependency to your `go.mod` file.
+    This will add ADK Go v2.0.0 as a dependency to your `go.mod` file.
 
     (Optional) Verify your installation by checking your `go.mod` file for the
-    `google.golang.org/adk` entry.
+    `google.golang.org/adk/v2` entry.
+
+    ??? tip "Still using ADK Go v1.x?"
+
+        If you are not yet ready to upgrade to v2.0.0, you can continue using
+        the v1.x release line:
+
+        ```shell
+        go get google.golang.org/adk@v1
+        ```
+
+        See the [ADK 2.0 release page](/2.0/) for upgrade guidance, including
+        breaking changes and migration steps for ADK Go 1.x projects.
 
 === "Java"
 
@@ -111,13 +125,13 @@ across supported languages. For a guided introduction, start with the
             <dependency>
                 <groupId>com.google.adk</groupId>
                 <artifactId>google-adk</artifactId>
-                <version>1.4.0</version>
+                <version>1.5.0</version>
             </dependency>
             <!-- The ADK dev web UI to debug your agent -->
             <dependency>
                 <groupId>com.google.adk</groupId>
                 <artifactId>google-adk-dev</artifactId>
-                <version>1.4.0</version>
+                <version>1.5.0</version>
             </dependency>
         </dependencies>
 
@@ -132,8 +146,8 @@ across supported languages. For a guided introduction, start with the
 
     ```title="build.gradle"
     dependencies {
-        implementation 'com.google.adk:google-adk:1.4.0'
-        implementation 'com.google.adk:google-adk-dev:1.4.0'
+        implementation 'com.google.adk:google-adk:1.5.0'
+        implementation 'com.google.adk:google-adk-dev:1.5.0'
     }
     ```
 
