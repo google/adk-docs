@@ -165,6 +165,8 @@ This section focuses on using pre-existing tools (like those from `RestApiTool/ 
 
 When adding an authenticated tool to your agent, you need to provide its required `AuthScheme` and your application's initial `AuthCredential`.
 
+You can configure authentication differently depending on your toolset type, OpenAPI-based or Google API toolsets, and, for services protected by Cloud IAM, whether the service needs an ID token instead of an access token. The following subsections cover each case.
+
 #### Use OpenAPI-based toolsets (`OpenAPIToolset`, `APIHubToolset`, etc.)
 
 Pass the scheme and credential during toolset initialization. The toolset applies them to all generated tools. Here are few ways to create tools with authentication in ADK.
