@@ -27,7 +27,7 @@ from typing import Optional
 
 
 # Use one of the model constants defined earlier
-MODEL_GEMINI_2_0_FLASH = "gemini-2.0-flash"
+MODEL_GEMINI_FLASH = "gemini-flash-latest"
 
 
 def get_weather_stateful(city: str, tool_context: ToolContext) -> dict:
@@ -76,7 +76,7 @@ def get_weather_stateful(city: str, tool_context: ToolContext) -> dict:
         return {"status": "error", "error_message": error_msg}
 
 
-def say_hello(name: Optional[str] = None) -> str: 
+def say_hello(name: Optional[str] = None) -> str:
     """Provides a simple greeting. If a name is provided, it will be used.
 
     Args:
@@ -149,7 +149,7 @@ greeting_agent = None
 try:
     # Use a defined model constant
     greeting_agent = Agent(
-        model=MODEL_GEMINI_2_0_FLASH,
+        model=MODEL_GEMINI_FLASH,
         name="greeting_agent", # Keep original name for consistency
         instruction="You are the Greeting Agent. Your ONLY task is to provide a friendly greeting using the 'say_hello' tool. Do nothing else.",
         description="Handles simple greetings and hellos using the 'say_hello' tool.",
@@ -163,7 +163,7 @@ farewell_agent = None
 try:
     # Use a defined model constant
     farewell_agent = Agent(
-        model=MODEL_GEMINI_2_0_FLASH,
+        model=MODEL_GEMINI_FLASH,
         name="farewell_agent", # Keep original name
         instruction="You are the Farewell Agent. Your ONLY task is to provide a polite goodbye message using the 'say_goodbye' tool. Do not perform any other actions.",
         description="Handles simple farewells and goodbyes using the 'say_goodbye' tool.",
@@ -176,7 +176,7 @@ except Exception as e:
 
 root_agent = Agent(
     name="weather_agent_v5_model_guardrail", # New version name for clarity
-    model=MODEL_GEMINI_2_0_FLASH,
+    model=MODEL_GEMINI_FLASH,
     description="Main agent: Handles weather, delegates greetings/farewells, includes input keyword guardrail.",
     instruction="You are the main Weather Agent. Provide weather using 'get_weather_stateful'. "
                 "Delegate simple greetings to 'greeting_agent' and farewells to 'farewell_agent'. "
@@ -187,7 +187,7 @@ root_agent = Agent(
     before_model_callback=block_keyword_guardrail # <<< Assign the guardrail callback
 )
 
-# Sample queries to test the agent: 
+# Sample queries to test the agent:
 
 # # Agent will give weather information for the specified cities.
 # # What's the weather in Tokyo?
@@ -195,7 +195,7 @@ root_agent = Agent(
 # # Tell me the weather in New York?
 
 # # Agent will not have information for the specified city.
-# # How about Paris?  
+# # How about Paris?
 
 # # Agent will delegate greetings to the greeting_agent.
 # # Hi there!
