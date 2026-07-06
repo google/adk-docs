@@ -19,7 +19,7 @@ import (
 	"fmt"
 	"log"
 
-	"google.golang.org/adk/session"
+	"google.golang.org/adk/v2/session"
 )
 
 // This example demonstrates session management in the Go ADK, covering:
