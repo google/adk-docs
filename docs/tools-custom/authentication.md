@@ -310,14 +310,14 @@ If your agent calls a restricted service, for example a private Cloud Run or Clo
 
 ##### Configuration
 
-To implement ID Token authentication, configure your ServiceAccount with the following parameters, ensuring you specify the target service's URL as the `audience`.
+To implement ID token authentication, configure your ServiceAccount with the following parameters, ensuring you specify the target service's URL as the `audience`.
 
 ```python
 from google.adk.auth.auth_credential import ServiceAccount
 from google.adk.tools.openapi_tool.auth.auth_helpers import service_account_scheme_credential
 from google.adk.tools.openapi_tool.openapi_spec_parser.openapi_toolset import OpenAPIToolset
 
-# Configure the ServiceAccount to use ID Token authentication.
+# Configure the ServiceAccount to use ID token authentication.
 # Replace <YOUR_AUDIENCE_URL> with the URL of the service you are calling.
 sa_config = ServiceAccount(
     use_default_credential=True,
@@ -372,7 +372,7 @@ handles the redirection flow, and retries the tool call once authorized.
 ![Authentication](../assets/auth_part1.svg)
 
 
-### Handle the interactive OAuth/OIDC Flow (client-side)
+### Handle the interactive OAuth/OIDC flow (client-side)
 
 If a tool requires user login/consent (typically OAuth 2.0 or OIDC), the ADK framework pauses execution and signals your ***Agent Client*** application. There are two cases:
 
@@ -686,7 +686,7 @@ If no valid credentials (Step 1.) and no auth response (Step 2.) are found, the 
 
 **Step 4: Exchange Authorization Code for Tokens**
 
-ADK automatically generates oauth authorization URL and presents it to your ***Agent Client*** application. your ***Agent Client*** application should follow the same way described in [Build Agentic Applications with Authenticated Tools](#build-agentic-applications-with-authenticated-tools) to redirect the user to the authorization URL (with `redirect_uri` appended). Once a user completes the login flow, ADK extracts the authentication callback url from ***Agent Client*** applications, automatically parses the auth code, and generates auth token. At the next Tool call, `tool_context.get_auth_response` in step 2 will contain a valid credential to use in subsequent API calls.
+ADK automatically generates oauth authorization URL and presents it to your ***Agent Client*** application. your ***Agent Client*** application should follow the same way described in [Build agentic applications with authenticated tools](#build-agentic-applications-with-authenticated-tools) to redirect the user to the authorization URL (with `redirect_uri` appended). Once a user completes the login flow, ADK extracts the authentication callback url from ***Agent Client*** applications, automatically parses the auth code, and generates auth token. At the next Tool call, `tool_context.get_auth_response` in step 2 will contain a valid credential to use in subsequent API calls.
 
 **Step 5: Cache Obtained Credentials**
 
