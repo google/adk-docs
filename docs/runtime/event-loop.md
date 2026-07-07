@@ -1,7 +1,7 @@
 # Runtime Event Loop
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">Typescript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
 </div>
 
 The ADK Runtime is the underlying engine that powers your agent application during user interactions. It's the system that takes your defined agents, tools, and callbacks and orchestrates their execution in response to user input, managing the flow of information, state changes, and interactions with external services like LLMs or storage.
@@ -19,7 +19,7 @@ In simple terms:
 1. The `Runner` receives a user query and asks the main `Agent` to start processing.
 2. The `Agent` (and its associated logic) runs until it has something to report (like a response, a request to use a tool, or a state change) – it then **yields** or **emits** an `Event`.
 3. The `Runner` receives this `Event`, processes any associated actions (like saving state changes via `Services`), and forwards the event onwards (e.g., to the user interface).
-4. Only *after* the `Runner` has processed the event does the `Agent`'s logic **resume** from where it paused, now potentially seeing the effects of the changes committed by the Runner.
+4. The `Agent`'s logic **resumes** from where it paused only *after* the `Runner` has processed the event, and then potentially sees the effects of the changes committed by the Runner.
 5. This cycle repeats until the agent has no more events to yield for the current user query.
 
 This event-driven loop is the fundamental pattern governing how ADK executes your agent code.
@@ -103,7 +103,7 @@ The `Runner` acts as the central coordinator for a single user invocation. Its r
         return func(yield func(*Event, error) bool) {
             // 1. Append new_query to session event history (via SessionService)
             // ...
-            userEvent := session.NewEvent(ctx.InvocationID()) // Simplified for conceptual view
+            userEvent := session.NewEvent(ctx, ctx.InvocationID()) // Simplified for conceptual view
             userEvent.Author = "user"
             userEvent.LLMResponse = model.LLMResponse{Content: newQuery}
 
@@ -177,6 +177,12 @@ The `Runner` acts as the central coordinator for a single user invocation. Its r
             return event;
         });
     }
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/runtime/RunnerLoop.kt:conceptual_loop"
     ```
 
 ### Execution Logic's Role (Agent, Tool, Callback)
@@ -372,6 +378,12 @@ Your code within agents, tools, and callbacks is responsible for the actual comp
             // If this subsequent code needs to yield another event, it would do so here.
     ```
 
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/runtime/RunnerLoop.kt:execution_logic"
+    ```
+
 This cooperative yield/pause/resume cycle between the `Runner` and your Execution Logic, mediated by `Event` objects, forms the core of the ADK Runtime.
 
 ## Key components of the Runtime
@@ -387,9 +399,9 @@ Several components work together within the ADK Runtime to execute an agent invo
 
       * **Role:** The parts containing your custom code and the core agent capabilities.
       * **Components:**
-      * `Agent` (`BaseAgent`, `LlmAgent`, etc.): Your primary logic units that process information and decide on actions. They implement the `_run_async_impl` method which yields events.
-      * `Tools` (`BaseTool`, `FunctionTool`, `AgentTool`, etc.): External functions or capabilities used by agents (often `LlmAgent`) to interact with the outside world or perform specific tasks. They execute and return results, which are then wrapped in events.
-      * `Callbacks` (Functions): User-defined functions attached to agents (e.g., `before_agent_callback`, `after_model_callback`) that hook into specific points in the execution flow, potentially modifying behavior or state, whose effects are captured in events.
+        * `Agent` (`BaseAgent`, `LlmAgent`, etc.): Your primary logic units that process information and decide on actions. They implement the `_run_async_impl` method which yields events.
+        * `Tools` (`BaseTool`, `FunctionTool`, `AgentTool`, etc.): External functions or capabilities used by agents (often `LlmAgent`) to interact with the outside world or perform specific tasks. They execute and return results, which are then wrapped in events.
+        * `Callbacks` (Functions): User-defined functions attached to agents (e.g., `before_agent_callback`, `after_model_callback`) that hook into specific points in the execution flow, potentially modifying behavior or state, whose effects are captured in events.
       * **Function:** Perform the actual thinking, calculation, or external interaction. They communicate their results or needs by **yielding `Event` objects** and pausing until the Runner processes them.
 
 3. ### `Event`
@@ -401,9 +413,9 @@ Several components work together within the ADK Runtime to execute an agent invo
 
       * **Role:** Backend components responsible for managing persistent or shared resources. Used primarily by the `Runner` during event processing.
       * **Components:**
-      * `SessionService` (`BaseSessionService`, `InMemorySessionService`, etc.): Manages `Session` objects, including saving/loading them, applying `state_delta` to the session state, and appending events to the `event history`.
-      * `ArtifactService` (`BaseArtifactService`, `InMemoryArtifactService`, `GcsArtifactService`, etc.): Manages the storage and retrieval of binary artifact data. Although `save_artifact` is called via context during execution logic, the `artifact_delta` in the event confirms the action for the Runner/SessionService.
-      * `MemoryService` (`BaseMemoryService`, etc.): (Optional) Manages long-term semantic memory across sessions for a user.
+        * `SessionService` (`BaseSessionService`, `InMemorySessionService`, etc.): Manages `Session` objects, including saving/loading them, applying `state_delta` to the session state, and appending events to the `event history`.
+        * `ArtifactService` (`BaseArtifactService`, `InMemoryArtifactService`, `GcsArtifactService`, etc.): Manages the storage and retrieval of binary artifact data. Although `save_artifact` is called via context during execution logic, the `artifact_delta` in the event confirms the action for the Runner/SessionService.
+        * `MemoryService` (`BaseMemoryService`, etc.): (Optional) Manages long-term semantic memory across sessions for a user.
       * **Function:** Provide the persistence layer. The `Runner` interacts with them to ensure changes signaled by `event.actions` are reliably stored *before* the Execution Logic resumes.
 
 5. ### `Session`
@@ -516,7 +528,7 @@ Understanding a few key aspects of how the ADK Runtime handles state, streaming,
 
           // 1. Determine a change or output is needed, construct the event
           updateData := map[string]interface{}{"field_1": "value_2"}
-          eventWithStateChange := session.NewEvent(ctx.InvocationID())
+          eventWithStateChange := session.NewEvent(ctx, ctx.InvocationID())
           eventWithStateChange.Author = a.Name()
           eventWithStateChange.Actions = &session.EventActions{StateDelta: updateData}
           // ... other event fields ...
@@ -542,7 +554,7 @@ Understanding a few key aspects of how the ADK Runtime handles state, streaming,
           // of the *next* `Run` invocation in a subsequent turn.
 
           // ... subsequent code continues, potentially yielding more events ...
-          finalEvent := session.NewEvent(ctx.InvocationID())
+          finalEvent := session.NewEvent(ctx, ctx.InvocationID())
           finalEvent.Author = a.Name()
           // ...
           yield(finalEvent, nil)
@@ -586,6 +598,12 @@ Understanding a few key aspects of how the ADK Runtime handles state, streaming,
 
     // ... subsequent agent logic might involve further reactive operators
     // or emitting more events based on the now-updated `ctx.session().state()`.
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/runtime/RunnerLoop.kt:state_update_timing"
     ```
 
 ### "Dirty Reads" of Session State
@@ -664,6 +682,12 @@ Understanding a few key aspects of how the ADK Runtime handles state, streaming,
     System.out.println("Dirty read value in tool: " + val);
     // Assume the event carrying the state_delta={'field_1': 'value_1'}
     // is yielded *after* this tool runs and is processed by the Runner.
+    ```
+
+=== "Kotlin"
+
+    ```kotlin
+    --8<-- "examples/kotlin/snippets/runtime/RunnerLoop.kt:dirty_read"
     ```
 
 * **Implications:**

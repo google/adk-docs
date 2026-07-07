@@ -1,7 +1,8 @@
 ---
 catalog_title: Atlassian
 catalog_description: Manage issues, search pages, and update team content
-catalog_icon: /adk-docs/integrations/assets/atlassian.png
+catalog_icon: /integrations/assets/atlassian.png
+catalog_tags: ["mcp"]
 ---
 
 # Atlassian MCP tool for ADK
@@ -47,7 +48,7 @@ collaboration workflows using natural language.
 
 
         root_agent = Agent(
-            model="gemini-2.5-pro",
+            model="gemini-flash-latest",
             name="atlassian_agent",
             instruction="Help users work with data in Atlassian products",
             tools=[
@@ -76,7 +77,7 @@ collaboration workflows using natural language.
         import { LlmAgent, MCPToolset } from "@google/adk";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-2.5-pro",
+            model: "gemini-flash-latest",
             name: "atlassian_agent",
             instruction: "Help users work with data in Atlassian products",
             tools: [

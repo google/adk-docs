@@ -1,7 +1,8 @@
 ---
 catalog_title: Postman
 catalog_description: Manage API collections, workspaces, and generate client code
-catalog_icon: /adk-docs/integrations/assets/postman.png
+catalog_icon: /integrations/assets/postman.png
+catalog_tags: ["mcp"]
 ---
 
 # Postman MCP tool for ADK
@@ -50,7 +51,7 @@ natural language interactions.
         POSTMAN_API_KEY = "YOUR_POSTMAN_API_KEY"
 
         root_agent = Agent(
-            model="gemini-2.5-pro",
+            model="gemini-flash-latest",
             name="postman_agent",
             instruction="Help users manage their Postman workspaces and collections",
             tools=[
@@ -81,17 +82,17 @@ natural language interactions.
         ```python
         from google.adk.agents import Agent
         from google.adk.tools.mcp_tool import McpToolset
-        from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPServerParams
+        from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPConnectionParams
 
         POSTMAN_API_KEY = "YOUR_POSTMAN_API_KEY"
 
         root_agent = Agent(
-            model="gemini-2.5-pro",
+            model="gemini-flash-latest",
             name="postman_agent",
             instruction="Help users manage their Postman workspaces and collections",
             tools=[
                 McpToolset(
-                    connection_params=StreamableHTTPServerParams(
+                    connection_params=StreamableHTTPConnectionParams(
                         url="https://mcp.postman.com/mcp",
                         # (Optional) Use "/minimal" for essential tools only
                         # (Optional) Use "/code" for code generation tools
@@ -115,7 +116,7 @@ natural language interactions.
         const POSTMAN_API_KEY = "YOUR_POSTMAN_API_KEY";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-2.5-pro",
+            model: "gemini-flash-latest",
             name: "postman_agent",
             instruction: "Help users manage their Postman workspaces and collections",
             tools: [
@@ -149,7 +150,7 @@ natural language interactions.
         const POSTMAN_API_KEY = "YOUR_POSTMAN_API_KEY";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-2.5-pro",
+            model: "gemini-flash-latest",
             name: "postman_agent",
             instruction: "Help users manage their Postman workspaces and collections",
             tools: [
@@ -159,8 +160,12 @@ natural language interactions.
                     // (Optional) Use "/minimal" for essential tools only
                     // (Optional) Use "/code" for code generation tools
                     // (Optional) Use "https://mcp.eu.postman.com" for EU region
-                    header: {
-                        Authorization: `Bearer ${POSTMAN_API_KEY}`,
+                    transportOptions: {
+                        requestInit: {
+                            headers: {
+                                Authorization: `Bearer ${POSTMAN_API_KEY}`,
+                            },
+                        },
                     },
                 }),
             ],

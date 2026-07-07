@@ -1,7 +1,8 @@
 ---
 catalog_title: Stripe
 catalog_description: Manage payments, customers, subscriptions, and invoices
-catalog_icon: /adk-docs/integrations/assets/stripe.png
+catalog_icon: /integrations/assets/stripe.png
+catalog_tags: ["mcp"]
 ---
 
 # Stripe MCP tool for ADK
@@ -48,7 +49,7 @@ operations.
         STRIPE_SECRET_KEY = "YOUR_STRIPE_SECRET_KEY"
 
         root_agent = Agent(
-            model="gemini-2.5-pro",
+            model="gemini-flash-latest",
             name="stripe_agent",
             instruction="Help users manage their Stripe account",
             tools=[
@@ -79,17 +80,17 @@ operations.
         ```python
         from google.adk.agents import Agent
         from google.adk.tools.mcp_tool import McpToolset
-        from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPServerParams
+        from google.adk.tools.mcp_tool.mcp_session_manager import StreamableHTTPConnectionParams
 
         STRIPE_SECRET_KEY = "YOUR_STRIPE_SECRET_KEY"
 
         root_agent = Agent(
-            model="gemini-2.5-pro",
+            model="gemini-flash-latest",
             name="stripe_agent",
             instruction="Help users manage their Stripe account",
             tools=[
                 McpToolset(
-                    connection_params=StreamableHTTPServerParams(
+                    connection_params=StreamableHTTPConnectionParams(
                         url="https://mcp.stripe.com",
                         headers={
                             "Authorization": f"Bearer {STRIPE_SECRET_KEY}",
@@ -110,7 +111,7 @@ operations.
         const STRIPE_SECRET_KEY = "YOUR_STRIPE_SECRET_KEY";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-2.5-pro",
+            model: "gemini-flash-latest",
             name: "stripe_agent",
             instruction: "Help users manage their Stripe account",
             tools: [
@@ -144,15 +145,19 @@ operations.
         const STRIPE_SECRET_KEY = "YOUR_STRIPE_SECRET_KEY";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-2.5-pro",
+            model: "gemini-flash-latest",
             name: "stripe_agent",
             instruction: "Help users manage their Stripe account",
             tools: [
                 new MCPToolset({
                     type: "StreamableHTTPConnectionParams",
                     url: "https://mcp.stripe.com",
-                    header: {
-                        Authorization: `Bearer ${STRIPE_SECRET_KEY}`,
+                    transportOptions: {
+                        requestInit: {
+                            headers: {
+                                Authorization: `Bearer ${STRIPE_SECRET_KEY}`,
+                            },
+                        },
                     },
                 }),
             ],

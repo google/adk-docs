@@ -14,12 +14,7 @@
  * limitations under the License.
  */
 
-import {
-  LlmAgent,
-  InMemoryRunner,
-  CallbackContext,
-  isFinalResponse,
-} from "@google/adk";
+import { LlmAgent, InMemoryRunner, Context, isFinalResponse } from '@google/adk';
 import { createUserContent } from "@google/genai";
 
 const MODEL_NAME = "gemini-2.5-flash";
@@ -33,7 +28,7 @@ function simpleAfterModelModifier({
   context,
   response,
 }: {
-  context: CallbackContext;
+  context: Context;
   response: any;
 }): any | undefined {
   console.log(

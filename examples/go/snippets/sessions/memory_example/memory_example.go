@@ -22,21 +22,21 @@ import (
 	"log"
 	"strings"
 
-	"google.golang.org/adk/agent"
-	"google.golang.org/adk/agent/llmagent"
-	"google.golang.org/adk/memory"
-	"google.golang.org/adk/model/gemini"
-	"google.golang.org/adk/runner"
-	"google.golang.org/adk/session"
-	"google.golang.org/adk/tool"
-	"google.golang.org/adk/tool/functiontool"
+	"google.golang.org/adk/v2/agent"
+	"google.golang.org/adk/v2/agent/llmagent"
+	"google.golang.org/adk/v2/memory"
+	"google.golang.org/adk/v2/model/gemini"
+	"google.golang.org/adk/v2/runner"
+	"google.golang.org/adk/v2/session"
+	"google.golang.org/adk/v2/tool"
+	"google.golang.org/adk/v2/tool/functiontool"
 	"google.golang.org/genai"
 )
 
 const (
 	appName = "go_memory_example_app"
 	userID  = "go_mem_user"
-	modelID = "gemini-2.5-pro"
+	modelID = "gemini-2.5-flash"
 )
 
 // Args defines the input structure for the memory search tool.
@@ -52,8 +52,8 @@ type Result struct {
 // --8<-- [start:tool_search]
 
 // memorySearchToolFunc is the implementation of the memory search tool.
-// This function demonstrates accessing memory via tool.Context.
-func memorySearchToolFunc(tctx tool.Context, args Args) (Result, error) {
+// This function demonstrates accessing memory via agent.Context.
+func memorySearchToolFunc(tctx agent.Context, args Args) (Result, error) {
 	fmt.Printf("Tool: Searching memory for query: '%s'\n", args.Query)
 	// The SearchMemory function is available on the context.
 	searchResults, err := tctx.SearchMemory(context.Background(), args.Query)
@@ -85,7 +85,7 @@ var memorySearchTool = must(functiontool.New(
 // This example demonstrates how to use the MemoryService in the Go ADK.
 // It covers two main scenarios:
 // 1. Adding a completed session to memory and recalling it in a new session.
-// 2. Searching memory from within a custom tool using the tool.Context.
+// 2. Searching memory from within a custom tool using the agent.Context.
 func main() {
 	ctx := context.Background()
 
@@ -119,7 +119,7 @@ func main() {
 			log.Printf("Agent 1 Error: %v", err)
 			continue
 		}
-		if event.Content != nil && !event.LLMResponse.Partial {
+		if event.LLMResponse.Content != nil && !event.LLMResponse.Partial {
 			finalResponseText = strings.Join(textParts(event.LLMResponse.Content), "")
 		}
 	}
@@ -131,7 +131,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to get completed session: %v", err)
 	}
-	if err := memoryService.AddSession(ctx, resp.Session); err != nil {
+	if err := memoryService.AddSessionToMemory(ctx, resp.Session); err != nil {
 		log.Fatalf("Failed to add session to memory: %v", err)
 	}
 	fmt.Println("Session added to memory.")
@@ -163,7 +163,7 @@ func main() {
 			log.Printf("Agent 2 Error: %v", err)
 			continue
 		}
-		if event.Content != nil && !event.LLMResponse.Partial {
+		if event.LLMResponse.Content != nil && !event.LLMResponse.Partial {
 			finalResponseText2 = strings.Join(textParts(event.LLMResponse.Content), "")
 		}
 	}

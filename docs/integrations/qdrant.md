@@ -1,7 +1,8 @@
 ---
 catalog_title: Qdrant
 catalog_description: Store and retrieve information using semantic vector search
-catalog_icon: /adk-docs/integrations/assets/qdrant.png
+catalog_icon: /integrations/assets/qdrant.png
+catalog_tags: ["data","mcp"]
 ---
 
 # Qdrant MCP tool for ADK
@@ -49,7 +50,7 @@ retrieve information using semantic search.
         # QDRANT_API_KEY = "YOUR_QDRANT_API_KEY"
 
         root_agent = Agent(
-            model="gemini-2.5-pro",
+            model="gemini-flash-latest",
             name="qdrant_agent",
             instruction="Help users store and retrieve information using semantic search",
             tools=[
@@ -83,7 +84,7 @@ retrieve information using semantic search.
         // const QDRANT_API_KEY = "YOUR_QDRANT_API_KEY";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-2.5-pro",
+            model: "gemini-flash-latest",
             name: "qdrant_agent",
             instruction: "Help users store and retrieve information using semantic search",
             tools: [
