@@ -402,18 +402,13 @@ by managing the history and state associated with each `Session` object.
 
 ## Troubleshoot session errors
 
-`SessionNotFoundError`: During execution, ADK can raise specific exceptions to help you identify configuration or state issues.
-Raised when a runner attempts to access or execute a session that does not exist in the active session store. For backward compatibility,
-this exception inherits from `ValueError`.
+During execution, ADK can raise specific exceptions to help you identify configuration or state issues.
 
-* **Common Causes:** Passing an invalid, expired, or missing session_id. Attempting to run a session before you create it.
-  
-* **How to resolve:** Verify the session_id is correctly passed from your client-side storage. Use `list_sessions()` to audit existing active IDs.
+### `SessionNotFoundError` 
 
-```python
+Raised when a runner attempts to access or execute a session that does not exist in the active session store. Inherits from `ValueError` for backward compatibility.
 
-  class SessionNotFoundError(ValueError):
-  def __init__(self, message="Session not found."):
-    super().__init__(message)
-
-```
+* **Common Causes:** an invalid, expired, or missing `session_id`; running a
+    session before it has been created.
+* **How to resolve:** ensure the session exists first via `create_session(...)`,
+    or construct the `Runner` with `auto_create_session=True`.
