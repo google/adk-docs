@@ -38,15 +38,17 @@ Then follow the steps below to create an agent.
 
 To create an agent with Visual Builder:
 
-1.  In top left of the page, select the **+** (plus sign), as shown in *Figure 1*, to start creating an agent.
-1.  Type a name for your agent application and select **Create**.
-1.  Edit your agent by doing any of the following:
-    *   In the left panel, edit agent component values.
-    *   In the central panel, add new agent components.
-    *   In the right panel, use prompts to modify the agent or get help.
-1.  In bottom left corner, select **Save** to save your agent.
-1.  Interact with your new agent to test it.
-1.  In top left of the page, select the pencil icon, as shown in *Figure 1*, to continue editing your agent.
+1. In top left of the page, select the **+** (plus sign), as shown in *Figure
+   1*, to start creating an agent.
+1. Type a name for your agent application and select **Create**.
+1. Edit your agent by doing any of the following:
+   *   In the left panel, edit agent component values.
+   *   In the central panel, add new agent components.
+   *   In the right panel, use prompts to modify the agent or get help.
+1. In bottom left corner, select **Save** to save your agent.
+1. Interact with your new agent to test it.
+1. In top left of the page, select the pencil icon, as shown in *Figure 1*, to
+   continue editing your agent.
 
 Here are a few things to note when using Visual Builder:
 
@@ -105,10 +107,6 @@ tools. These files are generated in a subfolder of the directory where you ran
 the ADK web interface. The following listing shows an example layout for a
 DiceAgent project:
 
-### Project structure breakdown
-
-The Visual Builder automatically generates your agent's files into a structured project folder. This is what the structure looks like:
-
 ```text
 DiceAgent/
     root_agent.yaml    # main agent code
@@ -116,17 +114,7 @@ DiceAgent/
     tools/             # tools directory
         __init__.py
         dice_tool.py   # tool code
-
 ```
-
-Here is what each file and directory does:
-
-*   **`DiceAgent/`**: The root directory named after your specific agent application. All project assets live inside this folder.
-*   **`root_agent.yaml`**: The primary configuration file containing the main agent code. It acts as the central controller for the entire workflow.
-*   **`sub_agent_1.yaml`**: Configuration files for any additional sub-agents, such as sequential, loop, or parallel agents, that are managed by the root agent.
-*   **`tools/`**: The dedicated directory where all custom tool configurations and executable code are stored.
-    *   **`__init__.py`**: A required Python file that initializes the `tools` directory as a package so the system can locate and import your custom tools.
-    *   **`dice_tool.py`**: The actual Python source code implementing your custom tool's logic, in this case, the dice-rolling functionality.
 
 !!! note "Editing generated agents"
 
@@ -139,14 +127,16 @@ schema](/api-reference/agentconfig/).
 
 ## Security and deployment
 
-The Visual Builder saves agent configuration files to your project directory through local API endpoints. For security reasons, these endpoints are active only when you run the local ADK web interface using `adk web`. 
-
-In headless or production deployments—such as when you deploy an agent using `adk deploy cloud_run`, ADK server completely disables the builder endpoints to prevent unauthorized file writes.
+The Visual Builder saves agent configuration files to your project directory
+through local API endpoints. For security reasons, these endpoints are available
+only when the web UI is served (for example, `adk web`). In headless or API-only
+deployments, such as the default `adk deploy cloud_run`, they are not
+registered, which prevents unauthorized file writes.
 
 !!! note "File upload restrictions"
 
-    To prevent arbitrary file writes, file uploads through the Visual Builder 
-    accept only files with `.yaml` and `.yml` extensions. The server automatically
-    rejects absolute paths, path traversal sequences (`..`), and YAML files containing
-    blocked keys (such as `args`) that can execute arbitrary code.
-    
+    To prevent arbitrary file writes, file uploads through the Visual Builder
+    accept only files with `.yaml` and `.yml` extensions. The server
+    automatically rejects absolute paths, path traversal sequences (`..`), and
+    YAML files containing blocked keys (such as `args`) that can execute
+    arbitrary code.
