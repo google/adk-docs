@@ -61,7 +61,7 @@ Consider using **A2A** when:
   require independent deployment or complex state management, a simple function
   or class within the same agent is more appropriate than a separate A2A agent.
 
-## The A2A workflow in ADK: a simplified wiew
+## The A2A workflow in ADK: a simplified view
 
 Agent Development Kit (ADK) simplifies the process of building and connecting
 agents using the A2A protocol. Here's a straightforward breakdown of how it
@@ -91,11 +91,9 @@ systems as easy to work with as local ones.
 The A2A implementation provides three core features for complex agentic systems. 
 Each feature is powered by a specific module that delivers the necessary functionality to handle data transformation and state management.
 
-| Feature | Module | Functionality | In simpler terms |
-| :---- | :---- | :---- | :---- |
-| **Reasoning & Artifacts** | `part\_converter.py` | Encodes and decodes thought traces and file artifacts between A2A and the model SDK, ensuring data integrity | The Translator: Resolves language barriers between internal agent logic and the AI model SDK. |
-| **Long-Running Tools** | `long\_running\_functions.py` | Manages asynchronous state for tool calls that exceed standard response times to prevent timeouts. | The Manager: Coordinates asynchronous operations, maintaining conversation flow while waiting for external input. |
-| **Event Ingestion** | `from\_adk\_event.py` | Transforms raw platform events into structured A2A objects, serving as the ingestion point for all incoming agent commands. | The Receptionist: Orchestrates incoming traffic, transforming raw signals into actionable commands.|
+* **Reasoning:** Encodes and decodes thought traces between A2A and the model SDK, ensuring data integrity.
+* **Long-Running Tools:** Manages asynchronous state for tool calls that exceed standard response times to prevent timeouts.
+* **Artifacts:** Encodes and decodes file artifacts between A2A and the model SDK, ensuring data integrity.
 
 ## Visualizing the A2A workflow
 
