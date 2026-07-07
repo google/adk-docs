@@ -51,8 +51,8 @@ in your agents:
 
     ```go
     import (
-    	"google.golang.org/adk/agent/llmagent"
-    	"google.golang.org/adk/model/gemini"
+    	"google.golang.org/adk/v2/agent/llmagent"
+    	"google.golang.org/adk/v2/model/gemini"
     	"google.golang.org/genai"
     )
 
