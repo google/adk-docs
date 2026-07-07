@@ -14,29 +14,47 @@ catalog_tags: ["data"]
 The [`adk-perseus-vault-memory`](https://github.com/Perseus-Computing-LLC/adk-mimir-memory)
 integration connects your ADK agent to
 [Perseus Vault](https://github.com/Perseus-Computing-LLC/perseus-vault), a
-persistent, cross-session memory backend (formerly "Mimir"/"Mneme"). Backed by a
-single Rust binary with an embedded SQLite database, everything runs locally.
-Memory is encrypted at rest with AES-256-GCM, and search combines FTS5 keyword
-matching with dense vector retrieval.
+persistent, cross-session memory backend. Backed by a single Rust binary with an
+embedded SQLite database, it requires **zero cloud dependencies**, and everything
+runs locally. Memory is encrypted at rest with AES-256-GCM, and search combines
+FTS5 keyword matching with dense vector retrieval.
+
+## Use cases
+
+- **Persistent agent memory across restarts**: Sessions survive process
+  restarts, and agents recall past conversations automatically
+- **Private, air-gapped deployments**: No cloud dependency, and Perseus Vault
+  runs entirely on your machine with optional AES-256-GCM encryption
+- **Hybrid search across memories**: Combine keyword (FTS5/BM25) and semantic
+  (dense vector) search to find relevant past interactions
+- **Workspace-aware agents**: Pair with Perseus for agents that know about your
+  project files, git state, and configuration
 
 ## Prerequisites
 
 - Python 3.10+
-- The `perseus-vault` binary on your `PATH`
+- The `perseus-vault` binary (see [Installation](#installation))
 - `google-adk>=1.0.0`
 
 ## Installation
+
+Install the Python package:
 
 ```bash
 pip install adk-perseus-vault-memory
 ```
 
-Install the `perseus-vault` binary from the
+Then install the `perseus-vault` binary: download the build for your platform
+from the
 [releases page](https://github.com/Perseus-Computing-LLC/perseus-vault/releases)
-(or `cargo install perseus-vault`) and place it on your `PATH`, or pass
-`vault_binary="/path/to/perseus-vault"` to `PerseusVaultMemoryService`.
+and place it on your `PATH`. The service looks for `perseus-vault` by default, or
+pass `vault_binary="/absolute/path/to/perseus-vault"` to
+`PerseusVaultMemoryService`.
 
 ## Use with agent
+
+Create the `PerseusVaultMemoryService`, pass it to your `Runner`, and give the
+agent the `load_memory` tool so it can recall past sessions:
 
 ```python
 from adk_perseus_vault_memory import PerseusVaultMemoryService
