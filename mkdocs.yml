@@ -274,6 +274,7 @@ nav:
       - Java: get-started/java.md
       - Kotlin: get-started/kotlin.md
       - Installation: get-started/installation.md
+      - Google Cloud: get-started/google-cloud.md
     - Build your Agent:
       - tutorials/index.md
       - Multi-tool agent: tutorials/multi-tool-agent.md
@@ -427,7 +428,9 @@ nav:
       - api-reference/index.md
       - Python ADK: api-reference/python/index.html
       - Typescript ADK: api-reference/typescript/index.html
-      - Go ADK: https://pkg.go.dev/google.golang.org/adk" target="_blank
+      - Go ADK:
+        - Go v2.x: https://pkg.go.dev/google.golang.org/adk/v2" target="_blank
+        - Go v1.x: https://pkg.go.dev/google.golang.org/adk" target="_blank
       - Java ADK: api-reference/java/index.html
       - Kotlin ADK: api-reference/kotlin/index.html
       - CLI Reference: api-reference/cli/index.html

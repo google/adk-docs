@@ -63,7 +63,7 @@ Before running any agent step, you **must** configure your API keys.
     **Example `.env` content:**
     ```dotenv
     # Set to False to use API keys directly (required for multi-model)
-    GOOGLE_GENAI_USE_VERTEXAI=FALSE
+    GOOGLE_GENAI_USE_ENTERPRISE=FALSE
 
     # --- Replace with your actual keys ---
     GOOGLE_API_KEY=PASTE_YOUR_ACTUAL_GOOGLE_API_KEY_HERE
