@@ -88,12 +88,15 @@ systems as easy to work with as local ones.
 
 ## Supported capabilities in A2A
 
-The A2A implementation provides three core features for complex agentic systems. 
-Each feature is powered by a specific module that delivers the necessary functionality to handle data transformation and state management.
+ADK's A2A integration provides three core capabilities for complex agentic
+systems:
 
-* **Reasoning:** Encodes and decodes thought traces between A2A and the model SDK, ensuring data integrity.
-* **Long-Running Tools:** Manages asynchronous state for tool calls that exceed standard response times to prevent timeouts.
-* **Artifacts:** Encodes and decodes file artifacts between A2A and the model SDK, ensuring data integrity.
+- **Reasoning:** Preserves a model's reasoning/thought traces when messages pass
+  between agents over A2A.
+- **Long-Running Tools:** Tracks tool calls that run longer than a standard
+  response, so long-running operations don't time out.
+- **Artifacts:** Passes file artifacts (such as generated files) between agents
+  over A2A.
 
 ## Visualizing the A2A workflow
 
