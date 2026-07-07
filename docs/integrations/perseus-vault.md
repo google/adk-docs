@@ -83,6 +83,47 @@ to persist it; the agent recalls memories in later sessions through the
 `load_memory` tool. See [ADK memory](/sessions/memory/) for the full
 ingest-and-recall flow.
 
+### Perseus live context (optional)
+
+For live workspace awareness, install the `perseus` extra:
+
+```bash
+pip install adk-perseus-vault-memory[perseus]
+```
+
+Then use the prebuilt `perseus_context_agent`, which resolves `@file`,
+`@search`, and `@memory` directives at inference time:
+
+```python
+from adk_perseus_vault_memory.perseus_context import perseus_context_agent
+from google.adk.runners import Runner
+from google.adk.sessions import InMemorySessionService
+
+# The pre-built agent ships without a model; set one before use.
+perseus_context_agent.model = "gemini-flash-latest"
+
+runner = Runner(
+    agent=perseus_context_agent,
+    app_name="perseus_app",
+    session_service=InMemorySessionService(),
+    memory_service=PerseusVaultMemoryService(db_path="~/.adk/vault.db"),
+)
+```
+
+Set Perseus directives via session state when creating the session (inside an
+async function):
+
+```python
+session = await runner.session_service.create_session(
+    app_name="perseus_app",
+    user_id="user",
+    state={
+        "_perseus_directives": "@file AGENTS.md @file README.md @memory deployment",
+        "_perseus_workspace": "/path/to/project",
+    },
+)
+```
+
 ## Available memory operations
 
 | Method | Description |
