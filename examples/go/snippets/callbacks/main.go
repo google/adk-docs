@@ -21,24 +21,24 @@ import (
 	"log"
 	"strings"
 
-	"google.golang.org/adk/agent"
-	"google.golang.org/adk/agent/llmagent"
-	"google.golang.org/adk/model"
-	"google.golang.org/adk/model/gemini"
-	"google.golang.org/adk/runner"
-	"google.golang.org/adk/session"
+	"google.golang.org/adk/v2/agent"
+	"google.golang.org/adk/v2/agent/llmagent"
+	"google.golang.org/adk/v2/model"
+	"google.golang.org/adk/v2/model/gemini"
+	"google.golang.org/adk/v2/runner"
+	"google.golang.org/adk/v2/session"
 	"google.golang.org/genai"
 )
 
 // --8<-- [end:imports]
 
 const (
-	modelName = "gemini-2.5-flash"
+	modelName = "gemini-flash-latest"
 )
 
 // --8<-- [start:callback_basic]
 // onBeforeModel is a callback function that gets triggered before an LLM call.
-func onBeforeModel(ctx agent.CallbackContext, req *model.LLMRequest) (*model.LLMResponse, error) {
+func onBeforeModel(ctx agent.Context, req *model.LLMRequest) (*model.LLMResponse, error) {
 	log.Println("--- onBeforeModel Callback Triggered ---")
 	log.Printf("Model Request to be sent: %v\n", req)
 	// Returning nil allows the default LLM call to proceed.
@@ -107,7 +107,7 @@ func runBasicExample() {
 // onBeforeModelGuardrail is a callback that inspects the LLM request.
 // If it contains a forbidden topic, it blocks the request and returns a
 // predefined response. Otherwise, it allows the request to proceed.
-func onBeforeModelGuardrail(ctx agent.CallbackContext, req *model.LLMRequest) (*model.LLMResponse, error) {
+func onBeforeModelGuardrail(ctx agent.Context, req *model.LLMRequest) (*model.LLMResponse, error) {
 	log.Println("--- onBeforeModelGuardrail Callback Triggered ---")
 
 	// Inspect the request content for forbidden topics.

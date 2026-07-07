@@ -6,12 +6,8 @@
     </a>
   {% endif %}
   {% if "content.action.view" in features %}
-    {% if "/blob/" in page.edit_url %}
-      {% set part = "blob" %}
-    {% else %}
-      {% set part = "edit" %}
-    {% endif %}
-    <a href="{{ page.edit_url | replace(part, 'raw') }}" title="View Markdown source" class="md-content__button md-icon">
+    {% set view_url = page.url | url ~ "index.md" %}
+    <a href="{{ view_url }}" title="View this page as Markdown" class="md-content__button md-icon">
       {% set icon = config.theme.icon.view or "material/file-eye-outline" %}
       {% include ".icons/" ~ icon ~ ".svg" %}
     </a>
