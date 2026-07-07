@@ -20,14 +20,14 @@ import (
 	"log"
 	"strings"
 
-	"google.golang.org/adk/agent"
-	"google.golang.org/adk/agent/llmagent"
-	"google.golang.org/adk/model/gemini"
-	"google.golang.org/adk/runner"
-	"google.golang.org/adk/session"
-	"google.golang.org/adk/tool"
-	"google.golang.org/adk/tool/agenttool"
-	"google.golang.org/adk/tool/functiontool"
+	"google.golang.org/adk/v2/agent"
+	"google.golang.org/adk/v2/agent/llmagent"
+	"google.golang.org/adk/v2/model/gemini"
+	"google.golang.org/adk/v2/runner"
+	"google.golang.org/adk/v2/session"
+	"google.golang.org/adk/v2/tool"
+	"google.golang.org/adk/v2/tool/agenttool"
+	"google.golang.org/adk/v2/tool/functiontool"
 
 	"google.golang.org/genai"
 )
@@ -59,7 +59,7 @@ type getStockPriceResults struct {
 // from the mockStockPrices map. It demonstrates how a function can be used as a
 // tool by an agent. If the symbol is found, it returns a struct containing the
 // symbol and its price. Otherwise, it returns a struct with an error message.
-func getStockPrice(ctx tool.Context, input getStockPriceArgs) (getStockPriceResults, error) {
+func getStockPrice(ctx agent.Context, input getStockPriceArgs) (getStockPriceResults, error) {
 	symbolUpper := strings.ToUpper(input.Symbol)
 	if price, ok := mockStockPrices[symbolUpper]; ok {
 		fmt.Printf("Tool: Found price for %s: %f\n", input.Symbol, price)
@@ -83,7 +83,7 @@ func createStockAgent(ctx context.Context) (agent.Agent, error) {
 		return nil, err
 	}
 
-	model, err := gemini.NewModel(ctx, "gemini-2.5-flash", &genai.ClientConfig{})
+	model, err := gemini.NewModel(ctx, "gemini-flash-latest", &genai.ClientConfig{})
 
 	if err != nil {
 		log.Fatalf("Failed to create model: %v", err)
@@ -188,7 +188,7 @@ func RunAgentSimulation() {
 // --8<-- [start:agent_tool_example]
 // createSummarizerAgent creates an agent whose sole purpose is to summarize text.
 func createSummarizerAgent(ctx context.Context) (agent.Agent, error) {
-	model, err := gemini.NewModel(ctx, "gemini-2.5-flash", &genai.ClientConfig{})
+	model, err := gemini.NewModel(ctx, "gemini-flash-latest", &genai.ClientConfig{})
 	if err != nil {
 		return nil, err
 	}
@@ -202,7 +202,7 @@ func createSummarizerAgent(ctx context.Context) (agent.Agent, error) {
 
 // createMainAgent creates the primary agent that will use the summarizer agent as a tool.
 func createMainAgent(ctx context.Context, tools ...tool.Tool) (agent.Agent, error) {
-	model, err := gemini.NewModel(ctx, "gemini-2.5-flash", &genai.ClientConfig{})
+	model, err := gemini.NewModel(ctx, "gemini-flash-latest", &genai.ClientConfig{})
 	if err != nil {
 		return nil, err
 	}
