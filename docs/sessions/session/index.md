@@ -215,7 +215,7 @@ the storage backend that best suits your needs:
 === "Go"
 
       ```go
-        import "google.golang.org/adk/session"
+        import "google.golang.org/adk/v2/session"
         inMemoryService := session.InMemoryService()
       ```
 
@@ -273,7 +273,7 @@ the storage backend that best suits your needs:
 === "Go"
 
     ```go
-    import "google.golang.org/adk/session"
+    import "google.golang.org/adk/v2/session"
 
     // 2. VertexAIService
     // Before running, ensure your environment is authenticated:
