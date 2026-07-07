@@ -38,27 +38,27 @@ Then follow the steps below to create an agent.
 
 To create an agent with Visual Builder:
 
-1. In top left of the page, select the **+** (plus sign), as shown in *Figure
-   1*, to start creating an agent.
+1. In the top left of the web UI, select the **+** (plus sign), as shown in
+   *Figure 1*, to start creating an agent.
 1. Type a name for your agent application and select **Create**.
 1. Edit your agent by doing any of the following:
-   *   In the left panel, edit agent component values.
-   *   In the central panel, add new agent components.
-   *   In the right panel, use prompts to modify the agent or get help.
-1. In bottom left corner, select **Save** to save your agent.
+    - In the left panel, edit agent component values.
+    - In the central panel, add new agent components.
+    - In the right panel, use prompts to modify the agent or get help.
+1. In the bottom left corner, select **Save** to save your agent.
 1. Interact with your new agent to test it.
-1. In top left of the page, select the pencil icon, as shown in *Figure 1*, to
-   continue editing your agent.
+1. In the top left of the web UI, select the pencil icon, as shown in *Figure
+   1*, to continue editing your agent.
 
 Here are a few things to note when using Visual Builder:
 
-*   **Create agent and save:** When creating an agent, make sure you select
-    **Save** before exiting the editing interface, otherwise your new agent may
-    not be editable.
-*   **Agent editing:** Edit (pencil icon) for agents is *only* available for
-    agents created with Visual Builder
-*   **Add tools:** When adding existing custom Tools to a Visual Builder
-    agent, specify a fully-qualified Python function name.
+- **Create agent and save:** When creating an agent, make sure you select
+  **Save** before exiting the editing interface, otherwise your new agent may
+  not be editable.
+- **Agent editing:** Edit (pencil icon) for agents is *only* available for
+  agents created with Visual Builder.
+- **Add tools:** When adding existing custom Tools to a Visual Builder agent,
+  specify a fully-qualified Python function name.
 
 ??? tip "Try this prompt with the Visual Builder assistant"
 
@@ -74,26 +74,26 @@ agents, as well as an AI-powered development Assistant that can answer questions
 and edit your agent workflow. The tool supports all the essential components for
 building an ADK agent workflow, including:
 
-*   **Agents**
-    *   **Root Agent**: The primary controlling agent for a workflow. All other agents in
-        an ADK agent workflow are considered Sub Agents.
-    *   [**LLM Agent:**](/agents/llm-agents/)
-        An agent powered by a generative AI model.
-    *   [**Sequential Agent:**](/agents/workflow-agents/sequential-agents/)
-        A workflow agent that executes a series of sub-agents in a sequence.
-    *   [**Loop Agent:**](/agents/workflow-agents/loop-agents/)
-        A workflow agent that repeatedly executes a sub-agent until a certain condition is met.
-    *   [**Parallel Agent:**](/agents/workflow-agents/parallel-agents/)
-        A workflow agent that executes multiple sub-agents concurrently.
-*   **Tools**
-    *   [**Prebuilt tools:**](/integrations/)
-        A limited set of ADK-provided tools can be added to agents.
-    *   [**Custom tools:**](/tools-custom/)
-        You can build and add custom tools to your workflow.
-*   **Components**
-    *   [**Callbacks**](/callbacks/)
-        A flow control component that lets you modify the behavior of agents at the start
-        and end of agent workflow events.
+- **Agents**
+    - **Root Agent**: The primary controlling agent for a workflow. All other
+      agents in an ADK agent workflow are considered Sub Agents.
+    - [**LLM Agent:**](/agents/llm-agents/)
+      An agent powered by a generative AI model.
+    - [**Sequential Agent:**](/agents/workflow-agents/sequential-agents/)
+      A workflow agent that executes a series of sub-agents in a sequence.
+    - [**Loop Agent:**](/agents/workflow-agents/loop-agents/)
+      A workflow agent that repeatedly executes a sub-agent until a certain condition is met.
+    - [**Parallel Agent:**](/agents/workflow-agents/parallel-agents/)
+      A workflow agent that executes multiple sub-agents concurrently.
+- **Tools**
+    - [**Prebuilt tools:**](/integrations/)
+      A limited set of ADK-provided tools can be added to agents.
+    - [**Custom tools:**](/tools-custom/)
+      You can build and add custom tools to your workflow.
+- **Components**
+    - [**Callbacks**](/callbacks/)
+      A flow control component that lets you modify the behavior of agents at the start
+      and end of agent workflow events.
 
 Some advanced ADK features are not supported by Visual Builder due to
 limitations of the Agent Config feature. For more information, see the Agent
