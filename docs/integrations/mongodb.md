@@ -1,7 +1,7 @@
 ---
 catalog_title: MongoDB
 catalog_description: Query collections, manage databases, and analyze schemas
-catalog_icon: /adk-docs/integrations/assets/mongodb.png
+catalog_icon: /integrations/assets/mongodb.png
 catalog_tags: ["data","mcp"]
 ---
 
@@ -57,7 +57,7 @@ using natural language.
         # ATLAS_CLIENT_SECRET = "YOUR_ATLAS_CLIENT_SECRET"
 
         root_agent = Agent(
-            model="gemini-2.5-pro",
+            model="gemini-flash-latest",
             name="mongodb_agent",
             instruction="Help users query and manage MongoDB databases",
             tools=[
@@ -100,7 +100,7 @@ using natural language.
         // const ATLAS_CLIENT_SECRET = "YOUR_ATLAS_CLIENT_SECRET";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-2.5-pro",
+            model: "gemini-flash-latest",
             name: "mongodb_agent",
             instruction: "Help users query and manage MongoDB databases",
             tools: [

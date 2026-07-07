@@ -56,20 +56,11 @@ Set your environment variables as described in the [Setup and Installation](../g
 ```bash
 export GOOGLE_CLOUD_PROJECT=your-project-id
 export GOOGLE_CLOUD_LOCATION=us-central1 # Or your preferred location
-export GOOGLE_GENAI_USE_VERTEXAI=True
+export GOOGLE_GENAI_USE_ENTERPRISE=True
 ```
 
-_(Replace `your-project-id` with your actual GCP project ID)_
-
-Alternatively you can also use an API key from AI Studio
-
-```bash
-export GOOGLE_CLOUD_PROJECT=your-project-id
-export GOOGLE_CLOUD_LOCATION=us-central1 # Or your preferred location
-export GOOGLE_GENAI_USE_VERTEXAI=FALSE
-export GOOGLE_API_KEY=your-api-key
-```
-*(Replace `your-project-id` with your actual GCP project ID and `your-api-key` with your actual API key from AI Studio)*
+For more information on connecting to Google Cloud from ADK agents, see
+[Connect to Google Cloud and Agent Platform](/get-started/google-cloud/).
 
 ## Prerequisites
 
@@ -77,11 +68,22 @@ export GOOGLE_API_KEY=your-api-key
     1. Project name (i.e. "my-project")
     1. Project location (i.e. "us-central1")
     1. Service account (i.e. "1234567890-compute@developer.gserviceaccount.com")
-    1. GOOGLE_API_KEY 
+    1. GOOGLE_API_KEY
 
 ## Secret
 
 Please make sure you have created a secret which can be read by your service account.
+
+
+### Cloud Build Permissions
+
+Since the `adk deploy` command uses Google Cloud Build to automate the build process, you must set your default compute service account to have permission to use Cloud Build.
+The following command example shows how to grant this permission:
+
+```bash
+gcloud projects add-iam-policy-binding [PROJECT_ID] \
+    --member="serviceAccount:[PROJECT_NUMBER]-compute@developer.gserviceaccount.com" \
+    --role="roles/cloudbuild.builds.builder"
 
 ### Entry for GOOGLE_API_KEY secret
 
@@ -173,7 +175,7 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
     * `--region TEXT`: (Required) The Google Cloud location for deployment (e.g., `$GOOGLE_CLOUD_LOCATION`, `us-central1`).
     * `--service_name TEXT`: (Optional) The name for the Cloud Run service (e.g., `$SERVICE_NAME`). Defaults to `adk-default-service-name`.
     * `--app_name TEXT`: (Optional) The application name for the ADK API server (e.g., `$APP_NAME`). Defaults to the name of the directory specified by `AGENT_PATH` (e.g., `capital_agent` if `AGENT_PATH` is `./capital_agent`).
-    * `--agent_engine_id TEXT`: (Optional) If you are using a managed session service via Vertex AI Agent Engine, provide its resource ID here.
+    * `--agent_engine_id TEXT`: (Optional) If you are using a managed session service via Agent Runtime, provide its resource ID here.
     * `--port INTEGER`: (Optional) The port number the ADK API server will listen on within the container. Defaults to 8000.
     * `--with_ui`: (Optional) If included, deploys the ADK dev UI alongside the agent API server. By default, only the API server is deployed.
     * `--temp_folder TEXT`: (Optional) Specifies a directory for storing intermediate files generated during the deployment process. Defaults to a timestamped folder in the system's temporary directory. *(Note: This option is generally not needed unless troubleshooting issues).*
@@ -325,7 +327,7 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
     --region $GOOGLE_CLOUD_LOCATION \
     --project $GOOGLE_CLOUD_PROJECT \
     --allow-unauthenticated \
-    --set-env-vars="GOOGLE_CLOUD_PROJECT=$GOOGLE_CLOUD_PROJECT,GOOGLE_CLOUD_LOCATION=$GOOGLE_CLOUD_LOCATION,GOOGLE_GENAI_USE_VERTEXAI=$GOOGLE_GENAI_USE_VERTEXAI"
+    --set-env-vars="GOOGLE_CLOUD_PROJECT=$GOOGLE_CLOUD_PROJECT,GOOGLE_CLOUD_LOCATION=$GOOGLE_CLOUD_LOCATION,GOOGLE_GENAI_USE_ENTERPRISE=$GOOGLE_GENAI_USE_ENTERPRISE"
     # Add any other necessary environment variables your agent might need
     ```
 
@@ -521,8 +523,8 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
 
            * The definition of the agent can be exposed in a static method or inlined during declaration.
 
-        See the code for the `CapitalAgent` example in the 
-        [examples](https://github.com/google/adk-docs/blob/main/examples/java/cloud-run/src/main/java/agents/capitalagent/CapitalAgent.java) 
+        See the code for the `CapitalAgent` example in the
+        [examples](https://github.com/google/adk-docs/blob/main/examples/java/cloud-run/src/main/java/agents/capitalagent/CapitalAgent.java)
         repository.
 
     2. Add the following dependencies and plugin to the pom.xml file.
@@ -532,12 +534,12 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
           <dependency>
              <groupId>com.google.adk</groupId>
              <artifactId>google-adk</artifactId>
-             <version>0.6.0</version>
+             <version>1.5.0</version>
           </dependency>
           <dependency>
              <groupId>com.google.adk</groupId>
              <artifactId>google-adk-dev</artifactId>
-             <version>0.6.0</version>
+             <version>1.5.0</version>
           </dependency>
         </dependencies>
 
@@ -568,7 +570,7 @@ unless you specify it as deployment setting, such as the `--with_ui` option for
     --region $GOOGLE_CLOUD_LOCATION \
     --project $GOOGLE_CLOUD_PROJECT \
     --allow-unauthenticated \
-    --set-env-vars="GOOGLE_CLOUD_PROJECT=$GOOGLE_CLOUD_PROJECT,GOOGLE_CLOUD_LOCATION=$GOOGLE_CLOUD_LOCATION,GOOGLE_GENAI_USE_VERTEXAI=$GOOGLE_GENAI_USE_VERTEXAI"
+    --set-env-vars="GOOGLE_CLOUD_PROJECT=$GOOGLE_CLOUD_PROJECT,GOOGLE_CLOUD_LOCATION=$GOOGLE_CLOUD_LOCATION,GOOGLE_GENAI_USE_ENTERPRISE=$GOOGLE_GENAI_USE_ENTERPRISE"
     # Add any other necessary environment variables your agent might need
     ```
 
