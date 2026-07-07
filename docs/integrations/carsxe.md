@@ -94,8 +94,12 @@ authenticates with your API key via the `X-API-Key` header.
             new MCPToolset({
                 type: "StreamableHTTPConnectionParams",
                 url: "https://mcp.carsxe.com/mcp",
-                headers: {
-                    "X-API-Key": CARSXE_API_KEY,
+                transportOptions: {
+                    requestInit: {
+                        headers: {
+                            "X-API-Key": CARSXE_API_KEY,
+                        },
+                    },
                 },
             }),
         ],
