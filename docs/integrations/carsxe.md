@@ -126,4 +126,4 @@ Tool | Description
 - [CarsXE MCP server repository](https://github.com/carsxe/carsxe-mcp-server)
 - [CarsXE API documentation](https://api.carsxe.com/docs)
 - [CarsXE homepage](https://www.carsxe.com/)
-- [Get an API key](https://api.carsxe.com/dashboard/developer)
+- [Get a CarsXE API key](https://api.carsxe.com/dashboard/developer)
