@@ -265,13 +265,13 @@ A tool can write data to a `temp:` variable, and a subsequent tool can read it. 
 
         ```go
         import (
-            "google.golang.org/adk/agent"
-            "google.golang.org/adk/agent/llmagent"
-            "google.golang.org/adk/model/gemini"
-            "google.golang.org/adk/runner"
-            "google.golang.org/adk/session"
-            "google.golang.org/adk/tool"
-            "google.golang.org/adk/tool/functiontool"
+            "google.golang.org/adk/v2/agent"
+            "google.golang.org/adk/v2/agent/llmagent"
+            "google.golang.org/adk/v2/model/gemini"
+            "google.golang.org/adk/v2/runner"
+            "google.golang.org/adk/v2/session"
+            "google.golang.org/adk/v2/tool"
+            "google.golang.org/adk/v2/tool/functiontool"
             "google.golang.org/genai"
         )
 
@@ -373,11 +373,11 @@ Define your tool function and wrap it using the `LongRunningFunctionTool` class:
 
     ```go
     import (
-        "google.golang.org/adk/agent"
-        "google.golang.org/adk/agent/llmagent"
-        "google.golang.org/adk/model/gemini"
-        "google.golang.org/adk/tool"
-        "google.golang.org/adk/tool/functiontool"
+        "google.golang.org/adk/v2/agent"
+        "google.golang.org/adk/v2/agent/llmagent"
+        "google.golang.org/adk/v2/model/gemini"
+        "google.golang.org/adk/v2/tool"
+        "google.golang.org/adk/v2/tool/functiontool"
         "google.golang.org/genai"
     )
 
@@ -594,11 +594,11 @@ The `AgentTool` class provides the following attributes for customizing its beha
 
         ```go
         import (
-            "google.golang.org/adk/agent"
-            "google.golang.org/adk/agent/llmagent"
-            "google.golang.org/adk/model/gemini"
-            "google.golang.org/adk/tool"
-            "google.golang.org/adk/tool/agenttool"
+            "google.golang.org/adk/v2/agent"
+            "google.golang.org/adk/v2/agent/llmagent"
+            "google.golang.org/adk/v2/model/gemini"
+            "google.golang.org/adk/v2/tool"
+            "google.golang.org/adk/v2/tool/agenttool"
             "google.golang.org/genai"
         )
 

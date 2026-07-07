@@ -210,10 +210,10 @@ methods, as shown in the following code example:
     import (
     	"fmt"
 
-    	"google.golang.org/adk/agent"
-    	"google.golang.org/adk/agent/llmagent"
-    	"google.golang.org/adk/model"
-    	"google.golang.org/adk/plugin"
+    	"google.golang.org/adk/v2/agent"
+    	"google.golang.org/adk/v2/agent/llmagent"
+    	"google.golang.org/adk/v2/model"
+    	"google.golang.org/adk/v2/plugin"
         "google.golang.org/genai"
     )
 
@@ -474,14 +474,14 @@ a simple ADK agent.
     	"fmt"
     	"log"
 
-    	"google.golang.org/adk/agent"
-    	"google.golang.org/adk/agent/llmagent"
-    	"google.golang.org/adk/model/gemini"
-    	"google.golang.org/adk/plugin"
-    	"google.golang.org/adk/runner"
-    	"google.golang.org/adk/session"
-    	"google.golang.org/adk/tool"
-    	"google.golang.org/adk/tool/functiontool"
+    	"google.golang.org/adk/v2/agent"
+    	"google.golang.org/adk/v2/agent/llmagent"
+    	"google.golang.org/adk/v2/model/gemini"
+    	"google.golang.org/adk/v2/plugin"
+    	"google.golang.org/adk/v2/runner"
+    	"google.golang.org/adk/v2/session"
+    	"google.golang.org/adk/v2/tool"
+    	"google.golang.org/adk/v2/tool/functiontool"
     	"google.golang.org/genai"
     )
 
@@ -796,12 +796,12 @@ object takes the potentially modified user message and prepares for execution.
 The `before_run_callback` fires here, allowing for global setup before any agent
 logic begins.
 
--   **When It Runs:** Immediately after `runner.run()` is called, before
-    any other processing.
--   **Purpose:** The first opportunity to inspect or modify the user's raw
-    input.
--   **Flow Control:** Return a `types.Content` object to **replace** the
-    user's original message.
+-   **When It Runs:** After the `on_user_message_callback`, when the `Runner`
+    prepares for execution and before any agent logic begins.
+-   **Purpose:** Global setup or initialization before the invocation runs.
+-   **Flow Control:** Return a `types.Content` object to **halt execution**:
+    the `Runner` exits early and ends the run with that content as the result.
+    Return `None` to proceed normally.
 
 The following code example shows the basic syntax of this callback:
 
