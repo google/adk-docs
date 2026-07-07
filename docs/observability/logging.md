@@ -199,7 +199,7 @@ To get detailed logs of agent activity (user messages, model requests/responses,
 
 ### Go programmatic setup
 
-In Go, ADK uses the `google.golang.org/adk/telemetry` package for OpenTelemetry
+In Go, ADK uses the `google.golang.org/adk/v2/telemetry` package for OpenTelemetry
 configuration and the standard `log` package for general events.
 
 #### Capture prompt content
@@ -211,7 +211,7 @@ package main
 
 import (
 	"context"
-	"google.golang.org/adk/telemetry"
+	"google.golang.org/adk/v2/telemetry"
 )
 
 func main() {
@@ -243,7 +243,7 @@ package main
 
 import (
 	"context"
-	"google.golang.org/adk/telemetry"
+	"google.golang.org/adk/v2/telemetry"
 )
 
 func main() {
