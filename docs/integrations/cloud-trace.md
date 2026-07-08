@@ -82,9 +82,9 @@ working_dir/
     )
     ```
 
-## Cloud Trace Setup
+## Cloud trace setup
 
-### Using the ADK CLI
+### Use the ADK CLI
 
 You can enable cloud tracing by adding a flag when deploying or running your agent using the ADK CLI.
 
@@ -104,9 +104,9 @@ You can enable cloud tracing by adding a flag when deploying or running your age
     adkgo web -otel_to_cloud
     ```
 
-### Programmatic Setup
+### Programmatic setup
 
-#### Using ADK App abstractions
+#### Use ADK app abstractions
 
 === "Python"
     If you are using the `AdkApp` abstraction, you can enable cloud tracing by adding `enable_tracing=True`:
@@ -119,7 +119,7 @@ You can enable cloud tracing by adding a flag when deploying or running your age
     )
     ```
 
-#### Using Telemetry modules
+#### Use telemetry modules
 
 For fully customized agent runtimes, you can enable cloud tracing by using the built-in telemetry modules.
 
@@ -188,9 +188,9 @@ For fully customized agent runtimes, you can enable cloud tracing by using the b
     }
     ```
 
-## Inspect Cloud Traces
+## Inspect cloud traces
 
-After the setup is complete, whenever you interact with the agent, it will automatically send trace data to Cloud Trace. You can inspect the traces by visiting the **Trace Explorer** in the [Google Cloud Console](https://console.cloud.google.com).
+After the setup is complete, whenever you interact with the agent, it will automatically send trace data to Cloud Trace. You can inspect the traces by visiting the **Trace Explorer** in the [Google Cloud Console](https://console.cloud.google.com/traces).
 
 ![cloud-trace](../assets/cloud-trace1.png)
 
@@ -202,20 +202,19 @@ If you click on one of the traces, you will see a waterfall view of the detailed
 
 ![cloud-trace](../assets/cloud-trace3.png)
 
-### Captured Attributes
+### Captured attributes
 
 ADK automatically enriches traces with the following attributes to help you filter and analyze your agent's behavior:
+
 * `gen_ai.agent.name`: The name of the agent being executed.
-  
 * `user.id`: The identifier (ID) of the user interacting with the agent.
-  
 * `gcp.vertex.agent.invocation_id`: The unique ID of the invocation.
-  
 * `gcp.vertex.agent.event_id`: The ID of the specific event.
-  
 * `gen_ai.conversation.id`: The session ID.
 
 ## Resources
+
+To learn more about tracing, OpenTelemetry, and Google Cloud integrations, explore the following documentation:
 
 - [Google Cloud Trace Documentation](https://cloud.google.com/trace)
 - [OpenTelemetry Documentation](https://opentelemetry.io/docs/)
