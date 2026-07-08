@@ -20,14 +20,14 @@ import (
 	"log"
 	"time"
 
-	"google.golang.org/adk/agent"
-	"google.golang.org/adk/agent/llmagent"
-	"google.golang.org/adk/model"
-	"google.golang.org/adk/model/gemini"
-	"google.golang.org/adk/runner"
-	"google.golang.org/adk/session"
-	"google.golang.org/adk/tool"
-	"google.golang.org/adk/tool/functiontool"
+	"google.golang.org/adk/v2/agent"
+	"google.golang.org/adk/v2/agent/llmagent"
+	"google.golang.org/adk/v2/model"
+	"google.golang.org/adk/v2/model/gemini"
+	"google.golang.org/adk/v2/runner"
+	"google.golang.org/adk/v2/session"
+	"google.golang.org/adk/v2/tool"
+	"google.golang.org/adk/v2/tool/functiontool"
 	"google.golang.org/genai"
 )
 
@@ -123,7 +123,7 @@ func manualStateUpdateExample(sessionService session.Service) {
 	}
 
 	// Create an event with the state changes
-	systemEvent := session.NewEvent("inv_login_update")
+	systemEvent := session.NewEvent(ctx, "inv_login_update")
 	systemEvent.Author = "system"
 	systemEvent.Actions.StateDelta = stateChanges
 
@@ -155,7 +155,7 @@ func manualStateUpdateExample(sessionService session.Service) {
 
 // --8<-- [start:context]
 //  3. contextStateUpdateExample demonstrates the recommended way to modify state
-//     from within a tool function using the provided `tool.Context`.
+//     from within a tool function using the provided `agent.Context`.
 func contextStateUpdateExample(sessionService session.Service) {
 	fmt.Println("--- Running Context State Update (ToolContext) Example ---")
 	ctx := context.Background()
@@ -163,11 +163,7 @@ func contextStateUpdateExample(sessionService session.Service) {
 	// Define the tool that modifies state
 	updateActionCountTool, err := functiontool.New(
 		functiontool.Config{Name: "update_action_count", Description: "Updates the user action count in the state."},
-		func(tctx tool.Context, args struct{}) (struct{}, error) {
-			actx, ok := tctx.(agent.CallbackContext)
-			if !ok {
-				log.Fatalf("tool.Context is not of type agent.CallbackContext")
-			}
+		func(actx agent.Context, args struct{}) (struct{}, error) {
 			s, err := actx.State().Get("user_action_count")
 			if err != nil {
 				log.Printf("could not get user_action_count: %v", err)
@@ -182,7 +178,7 @@ func contextStateUpdateExample(sessionService session.Service) {
 			if err := actx.State().Set("temp:last_operation_status", "success from tool"); err != nil {
 				log.Printf("could not set temp:last_operation_status: %v", err)
 			}
-			fmt.Println("Tool: Updated state via agent.CallbackContext.")
+			fmt.Println("Tool: Updated state via agent.Context.")
 			return struct{}{}, nil
 		},
 	)

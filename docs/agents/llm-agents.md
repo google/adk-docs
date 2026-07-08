@@ -527,7 +527,7 @@ Control whether the agent receives the prior conversation history.
 === "Go"
 
     ```go
-    import "google.golang.org/adk/agent/llmagent"
+    import "google.golang.org/adk/v2/agent/llmagent"
 
     --8<-- "examples/go/snippets/agents/llm-agents/snippets/main.go:include_contents"
     ```
