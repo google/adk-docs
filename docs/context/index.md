@@ -172,8 +172,8 @@ Here are the primary context flavors you will encounter:
 
         ```go
         import (
-        	"google.golang.org/adk/agent"
-        	"google.golang.org/adk/session"
+        	"google.golang.org/adk/v2/agent"
+        	"google.golang.org/adk/v2/session"
         )
 
         --8<-- "examples/go/snippets/context/main.go:invocation_context_agent"
@@ -239,7 +239,7 @@ Here are the primary context flavors you will encounter:
     === "Go"
 
         ```go
-        import "google.golang.org/adk/agent"
+        import "google.golang.org/adk/v2/agent"
 
         --8<-- "examples/go/snippets/context/main.go:readonly_context_instruction"
         ```
@@ -314,8 +314,8 @@ Here are the primary context flavors you will encounter:
 
         ```go
         import (
-        	"google.golang.org/adk/agent"
-        	"google.golang.org/adk/model"
+        	"google.golang.org/adk/v2/agent"
+        	"google.golang.org/adk/v2/model"
         )
 
         --8<-- "examples/go/snippets/context/main.go:callback_context_callback"
@@ -413,7 +413,7 @@ Here are the primary context flavors you will encounter:
     === "Go"
 
         ```go
-        import "google.golang.org/adk/tool"
+        import "google.golang.org/adk/v2/tool"
 
         --8<-- "examples/go/snippets/context/main.go:tool_context_tool"
         ```
@@ -518,9 +518,9 @@ You'll frequently need to read information stored within the context.
 
         ```go
         import (
-        	"google.golang.org/adk/agent"
-        	"google.golang.org/adk/session"
-            "google.golang.org/adk/tool"
+        	"google.golang.org/adk/v2/agent"
+        	"google.golang.org/adk/v2/session"
+            "google.golang.org/adk/v2/tool"
         	"google.golang.org/genai"
         )
 
@@ -593,7 +593,7 @@ You'll frequently need to read information stored within the context.
     === "Go"
 
         ```go
-        import "google.golang.org/adk/tool"
+        import "google.golang.org/adk/v2/tool"
 
         --8<-- "examples/go/snippets/context/main.go:accessing_ids"
         ```
@@ -656,7 +656,7 @@ You'll frequently need to read information stored within the context.
 
         ```go
         import (
-        	"google.golang.org/adk/agent"
+        	"google.golang.org/adk/v2/agent"
         	"google.golang.org/genai"
         )
 
@@ -742,7 +742,7 @@ State is crucial for memory and data flow. When you modify state using `Callback
     === "Go"
 
         ```go
-        import "google.golang.org/adk/tool"
+        import "google.golang.org/adk/v2/tool"
 
         --8<-- "examples/go/snippets/context/main.go:passing_data_tool1"
 
@@ -810,7 +810,7 @@ State is crucial for memory and data flow. When you modify state using `Callback
     === "Go"
 
         ```go
-        import "google.golang.org/adk/tool"
+        import "google.golang.org/adk/v2/tool"
 
         --8<-- "examples/go/snippets/context/main.go:updating_preferences"
         ```
@@ -894,7 +894,7 @@ Use artifacts to handle files or large data blobs associated with the session. C
 
             ```go
             import (
-            	"google.golang.org/adk/tool"
+            	"google.golang.org/adk/v2/tool"
             	"google.golang.org/genai"
             )
 
@@ -1039,7 +1039,7 @@ Use artifacts to handle files or large data blobs associated with the session. C
         === "Go"
 
             ```go
-            import "google.golang.org/adk/tool"
+            import "google.golang.org/adk/v2/tool"
 
             --8<-- "examples/go/snippets/context/main.go:artifacts_summarize"
             ```
@@ -1134,7 +1134,7 @@ Use artifacts to handle files or large data blobs associated with the session. C
     === "Go"
 
         ```go
-        import "google.golang.org/adk/tool"
+        import "google.golang.org/adk/v2/tool"
 
         --8<-- "examples/go/snippets/context/main.go:artifacts_list"
         ```

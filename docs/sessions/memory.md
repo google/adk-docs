@@ -60,8 +60,8 @@ The `InMemoryMemoryService` stores session information in the application's memo
 === "Go"
     ```go
     import (
-      "google.golang.org/adk/memory"
-      "google.golang.org/adk/session"
+      "google.golang.org/adk/v2/memory"
+      "google.golang.org/adk/v2/session"
     )
 
     // Services must be shared across runners to share state and memory.
@@ -357,13 +357,13 @@ When a memory service is configured, your agent can use a tool or callback to re
 === "Python"
     ```python
     from google.adk.agents import Agent
-    from google.adk.tools.preload_memory_tool import PreloadMemoryTool
+    from google.adk.tools import preload_memory
 
     agent = Agent(
         model=MODEL_ID,
         name='weather_sentiment_agent',
         instruction="...",
-        tools=[PreloadMemoryTool()]
+        tools=[preload_memory]
     )
     ```
 
@@ -382,9 +382,9 @@ When a memory service is configured, your agent can use a tool or callback to re
 === "Go"
     ```go
     import (
-        "google.golang.org/adk/agent/llmagent"
-        "google.golang.org/adk/tool"
-        "google.golang.org/adk/tool/preloadmemorytool"
+        "google.golang.org/adk/v2/agent/llmagent"
+        "google.golang.org/adk/v2/tool"
+        "google.golang.org/adk/v2/tool/preloadmemorytool"
     )
 
     agent, _ := llmagent.New(llmagent.Config{
@@ -418,7 +418,7 @@ To extract memories from your session, you need to call `add_session_to_memory`.
 === "Python"
     ```python
     from google.adk.agents import Agent
-    from google import adk
+    from google.adk.tools import preload_memory
 
     async def auto_save_session_to_memory_callback(callback_context):
         await callback_context.add_session_to_memory()
@@ -427,7 +427,7 @@ To extract memories from your session, you need to call `add_session_to_memory`.
         model=MODEL,
         name="Generic_QA_Agent",
         instruction="Answer the user's questions",
-        tools=[adk.tools.preload_memory_tool.PreloadMemoryTool()],
+        tools=[preload_memory],
         after_agent_callback=auto_save_session_to_memory_callback,
     )
     ```
@@ -457,11 +457,11 @@ To extract memories from your session, you need to call `add_session_to_memory`.
     ```go
     import (
         "context"
-        "google.golang.org/adk/agent"
-        "google.golang.org/adk/agent/llmagent"
-        "google.golang.org/adk/session"
-        "google.golang.org/adk/tool"
-        "google.golang.org/adk/tool/loadmemorytool"
+        "google.golang.org/adk/v2/agent"
+        "google.golang.org/adk/v2/agent/llmagent"
+        "google.golang.org/adk/v2/session"
+        "google.golang.org/adk/v2/tool"
+        "google.golang.org/adk/v2/tool/loadmemorytool"
     )
 
     func autoSaveSessionToMemoryCallback(ctx agent.CallbackContext, s session.Session) (*genai.Content, error) {

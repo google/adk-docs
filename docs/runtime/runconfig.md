@@ -39,7 +39,7 @@ to `runner.run_async()` or `runner.run_live()` to override default behavior.
 === "Go"
 
     ```go
-    import "google.golang.org/adk/agent"
+    import "google.golang.org/adk/v2/agent"
 
     config := agent.RunConfig{
         StreamingMode: agent.StreamingModeSSE,
@@ -138,7 +138,7 @@ execute function calls. CFC uses the Live API under the hood.
 === "Go"
 
     ```go
-    import "google.golang.org/adk/agent"
+    import "google.golang.org/adk/v2/agent"
 
     config := agent.RunConfig{
         StreamingMode: agent.StreamingModeSSE,
