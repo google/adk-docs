@@ -72,10 +72,10 @@ You can define [skills in code](#inline-skills) or load
         "context"
         "os"
 
-        "google.golang.org/adk/agent/llmagent"
-        "google.golang.org/adk/tool/skilltoolset/skill"
-        "google.golang.org/adk/tool/skilltoolset"
-        "google.golang.org/adk/tool"
+        "google.golang.org/adk/v2/agent/llmagent"
+        "google.golang.org/adk/v2/tool/skilltoolset/skill"
+        "google.golang.org/adk/v2/tool/skilltoolset"
+        "google.golang.org/adk/v2/tool"
     )
 
     mySkillToolset, err := skilltoolset.New(ctx, skilltoolset.Config{
@@ -205,7 +205,7 @@ You can define Skills within the code of your agent, as shown below.
         "slices"
         "strings"
 
-        "google.golang.org/adk/tool/skilltoolset/skill"
+        "google.golang.org/adk/v2/tool/skilltoolset/skill"
     )
 
     // Example implementation of a static in-memory skill.Source:
@@ -288,8 +288,8 @@ You can define Skills within the code of your agent, as shown below.
     import (
         "os"
 
-        "google.golang.org/adk/tool/skilltoolset/skill"
-        "google.golang.org/adk/tool/skilltoolset"
+        "google.golang.org/adk/v2/tool/skilltoolset/skill"
+        "google.golang.org/adk/v2/tool/skilltoolset"
     )
 
     // ...

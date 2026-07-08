@@ -31,7 +31,7 @@ public class MultiToolAgent {
     public static BaseAgent initAgent() {
         return LlmAgent.builder()
             .name(NAME)
-            .model("gemini-2.0-flash")
+            .model("gemini-flash-latest")
             .description("Agent to answer questions about the time and weather in a city.")
             .instruction(
                 "You are a helpful agent who can answer user questions about the time and weather"

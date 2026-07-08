@@ -355,7 +355,7 @@ func newLoopEscalate() (agent.Agent, error) {
 	eb.Add(criticNode, routerNode)
 	eb.AddRoute(routerNode, refinerNode, workflow.StringRoute("REFINE"))
 	eb.AddRoute(routerNode, doneNode, workflow.StringRoute("DONE"))
-	eb.Add(refinerNode, criticNode) // back-edge: loop back for another review
+	eb.AddRoute(refinerNode, criticNode, workflow.Default) // back-edge: loop back for another review
 
 	return workflowagent.New(workflowagent.Config{
 		Name:        "iterative_writer",
