@@ -1,7 +1,7 @@
 ---
 catalog_title: Computer Use
 catalog_description: Operate computer user interfaces using Gemini models
-catalog_icon: /adk-docs/integrations/assets/gemini-spark.svg
+catalog_icon: /integrations/assets/gemini-spark.svg
 catalog_tags: ["google"]
 ---
 
@@ -19,7 +19,7 @@ web pages by taking screenshots, clicking, typing, and navigating.
 
 For more information about the computer use model, see
 Gemini API [Computer use](https://ai.google.dev/gemini-api/docs/computer-use)
-or the Google Cloud Vertex AI API
+or the Agent Platform API
 [Computer use](https://cloud.google.com/vertex-ai/generative-ai/docs/computer-use).
 
 !!! example "Preview release"
@@ -37,7 +37,7 @@ to be able to use the Computer Use Toolset.
     Create a Python virtual environment:
 
     ```shell
-    python -m venv .venv
+    python3 -m venv .venv
     ```
 
     Activate the Python virtual environment:
@@ -82,7 +82,7 @@ configure the tool, you must provide a implementation of the `BaseComputer`
 class which defines an interface for an agent to use a computer. In the
 following example, the `PlaywrightComputer` class is defined for this purpose.
 You can find the code for this implementation in `playwright.py` file of the
-[computer_use](https://github.com/google/adk-python/blob/main/contributing/samples/computer_use/playwright.py)
+[computer_use](https://github.com/google/adk-python/blob/main/contributing/samples/multimodal/computer_use/playwright.py)
 agent sample project.
 
 ```python
@@ -108,5 +108,5 @@ root_agent = Agent(
 ```
 
 For a complete code example, see the
-[computer_use](https://github.com/google/adk-python/tree/main/contributing/samples/computer_use)
+[computer_use](https://github.com/google/adk-python/tree/main/contributing/samples/multimodal/computer_use)
 agent sample project.

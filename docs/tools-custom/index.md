@@ -18,10 +18,10 @@ programming functions with an ADK Tool, such as:
 *   Retrieving information from documents (RAG)
 *   Interacting with other software or services
 
-!!! tip "[ADK Tools list](/adk-docs/tools/)"
-    Before building your own Tools for ADK, check out the
-    **[ADK Tools list](/adk-docs/tools/)**
-    for pre-built tools you can use with ADK Agents.
+!!! tip "[ADK Tools and Integrations](/integrations/)"
+    Before building your own tools for ADK, check out the **[ADK Tools and
+    Integrations](/integrations/)** for pre-built tools and integrations you can
+    use with ADK Agents.
 
 ## What is a Tool?
 
@@ -63,11 +63,11 @@ Think of the tools as a specialized toolkit that the agent's intelligent core (t
 
 ADK offers flexibility by supporting several types of tools:
 
-1. **[Function Tools](/adk-docs/tools-custom/function-tools/):** Tools created by you, tailored to your specific application's needs.
-    * **[Functions/Methods](/adk-docs/tools-custom/function-tools/#1-function-tool):** Define standard synchronous functions or methods in your code (e.g., Python def).
-    * **[Agents-as-Tools](/adk-docs/tools-custom/function-tools/#3-agent-as-a-tool):** Use another, potentially specialized, agent as a tool for a parent agent.
-    * **[Long Running Function Tools](/adk-docs/tools-custom/function-tools/#2-long-running-function-tool):** Support for tools that perform asynchronous operations or take significant time to complete.
-2. **[Built-in Tools](/adk-docs/tools/built-in-tools/):** Ready-to-use tools provided by the framework for common tasks.
+1. **[Function Tools](/tools-custom/function-tools/):** Tools created by you, tailored to your specific application's needs.
+    * **[Functions/Methods](/tools-custom/function-tools/#1-function-tool):** Define standard synchronous functions or methods in your code (e.g., Python def).
+    * **[Agents-as-Tools](/tools-custom/function-tools/#3-agent-as-a-tool):** Use another, potentially specialized, agent as a tool for a parent agent.
+    * **[Long Running Function Tools](/tools-custom/function-tools/#2-long-running-function-tool):** Support for tools that perform asynchronous operations or take significant time to complete.
+2. **[Built-in Tools](/integrations/):** Ready-to-use tools provided by the framework for common tasks.
         Examples: Google Search, Code Execution, Retrieval-Augmented Generation (RAG).
 3. **Third-Party Tools:** Integrate tools seamlessly from popular external libraries.
 
@@ -357,7 +357,7 @@ Here are key guidelines for defining effective tool functions:
     * Use clear and descriptive names (e.g., `city` instead of `c`, `search_query` instead of `q`).
     * **Provide type hints in Python**  for all parameters (e.g., `city: str`, `user_id: int`, `items: list[str]`). This is essential for ADK to generate the correct schema for the LLM.
     * Ensure all parameter types are **JSON serializable**. All java primitives as well as standard Python types like `str`, `int`, `float`, `bool`, `list`, `dict`, and their combinations are generally safe. Avoid complex custom class instances as direct parameters unless they have a clear JSON representation.
-    * **Do not set default values** for parameters. E.g., `def my_func(param1: str = "default")`. Default values are not reliably supported or used by the underlying models during function call generation. All necessary information should be derived by the LLM from the context or explicitly requested if missing.
+    * **Avoid default values for information the model must provide.** E.g., avoid `def my_func(destination: str = "Paris")` if the destination should come from the user or conversation context. Default values can be appropriate for genuinely optional tuning parameters, but do not use them to hide required business inputs from the tool schema.
     * **`self` / `cls` Handled Automatically:** Implicit parameters like `self` (for instance methods) or `cls` (for class methods) are automatically handled by ADK and excluded from the schema shown to the LLM. You only need to define type hints and descriptions for the logical parameters your tool requires the LLM to provide.
 
 * **Return Type:**
@@ -547,6 +547,12 @@ Let's create a basic example of a toolset that provides simple arithmetic operat
 
     ```typescript
     --8<-- "examples/typescript/snippets/tools/overview/toolset_example.ts"
+    ```
+
+=== "Java"
+
+    ```java
+    --8<-- "examples/java/snippets/src/main/java/tools/SimpleMathToolsetApp.java:init"
     ```
 
 In this example:

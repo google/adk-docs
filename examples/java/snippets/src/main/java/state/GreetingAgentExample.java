@@ -20,7 +20,7 @@ public class GreetingAgentExample {
     LlmAgent greetingAgent =
         LlmAgent.builder()
             .name("Greeter")
-            .model("gemini-2.0-flash")
+            .model("gemini-2.5-flash")
             .instruction("Generate a short, friendly greeting.")
             .description("Greeting agent")
             .outputKey("last_greeting") // Save response to state['last_greeting']
@@ -32,7 +32,11 @@ public class GreetingAgentExample {
     String sessionId = "session1";
 
     InMemorySessionService sessionService = new InMemorySessionService();
-    Runner runner = new Runner(greetingAgent, appName, null, sessionService); // artifactService can be null if not used
+    Runner runner = Runner.builder()
+      .agent(greetingAgent)
+      .appName(appName)
+      .sessionService(sessionService)
+      .build();
 
     Session session =
         sessionService.createSession(appName, userId, null, sessionId).blockingGet();

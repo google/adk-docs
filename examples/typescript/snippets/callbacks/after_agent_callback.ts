@@ -13,12 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import {
-  LlmAgent,
-  CallbackContext,
-  isFinalResponse,
-  InMemoryRunner,
-} from "@google/adk";
+import { LlmAgent, Context, isFinalResponse, InMemoryRunner } from '@google/adk';
 import { createUserContent } from "@google/genai";
 
 const MODEL_NAME = "gemini-2.5-flash";
@@ -33,7 +28,7 @@ const SESSION_MODIFY_ID = "session_modify_output_ts";
  * If True, returns new Content to *replace* the agent's original output.
  * If False or not present, returns void, allowing the agent's original output to be used.
  */
-function modifyOutputAfterAgent(context: CallbackContext): any {
+function modifyOutputAfterAgent(context: Context): any {
   const agentName = context.agentName;
   const invocationId = context.invocationId;
   const currentState = context.state;
