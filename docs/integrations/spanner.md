@@ -11,7 +11,14 @@ catalog_tags: ["data","google"]
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.11.0</span>
 </div>
 
-These tools provide integration with Spanner:
+[Google Cloud Spanner](https://cloud.google.com/spanner) is a fully managed,
+distributed database with support for SQL and vector search. The ADK Spanner
+tools let your agent explore database schemas, run SQL queries, and perform
+vector similarity search against your Spanner data.
+
+## Available tools
+
+The `SpannerToolset` provides the following tools:
 
 - **`list_table_names`**: Fetches table names present in a GCP Spanner database.
 - **`list_table_indexes`**: Fetches table indexes present in a GCP Spanner
@@ -24,13 +31,13 @@ These tools provide integration with Spanner:
 - **`execute_sql`**: Runs a SQL query in Spanner database and fetch the result.
 - **`similarity_search`**: Similarity search in Spanner using a text query.
 
-They are packaged in the toolset `SpannerToolset`.
+## Use with agent
 
 ```py
 --8<-- "examples/python/snippets/tools/built-in-tools/spanner.py"
 ```
 
-## Perform vector similarity search
+## Vector similarity search
 
 The `vector_store_similarity_search` tool enables agents to perform semantic
 searches against a Spanner table configured as a vector store. This capability
@@ -44,42 +51,8 @@ the most relevant Spanner data.
 
     This feature is experimental and may be updated in future releases.
 
-### Configure the parameters
-
-The `SpannerVectorStoreSettings` configuration class defines the parameters for
-how `vector_store_similarity_search` operates. Use the following parameters:
-
-#### Required parameters
-
-- **`project_id`**: Your Google Cloud Project ID required for authentication
-  context.
-- **`instance_id`**: The Spanner instance ID.
-- **`database_id`**: The Spanner database ID.
-- **`table_name`**: The Spanner table containing the vector embeddings.
-- **`embedding_column`**: The `ARRAY<FLOAT>` or `ARRAY<DOUBLE>` column where the
-  vector embeddings are stored.
-- **`content_column`**: The column containing the original text or content to be
-  retrieved.
-- **`vector_length`**: The dimensionality of your embedding vectors that must
-  match your model.
-- **`vertex_ai_embedding_model_name`**: The model used to generate the
-  embeddings, for example "text-embedding-005".
-
-#### Optional parameters
-
-- **`selected_columns`**: A list of columns you can include in the search
-  results, such as metadata or identifiers.
-- **`nearest_neighbors_algorithm`**: The algorithm you use for the search, such
-  as `EXACT_NEAREST_NEIGHBORS` and `APPROXIMATE_NEAREST_NEIGHBORS`.
-    - **`num_leaves_to_search`**: Number of index leaf nodes searched. Only used
-      with `APPROXIMATE_NEAREST_NEIGHBORS`.
-    - **`vector_search_index_settings`**: Vector index settings. Only required with
-      `APPROXIMATE_NEAREST_NEIGHBORS`.
-- **`top_k`**: The number of nearest neighbors to retrieve per query.
-- **`distance_type`**: The distance metric used for similarity calculation, such
-  as `COSINE` or `EUCLIDEAN`.
-- **`additional_filter`**: An optional SQL filter string to apply during the
-  search, for example: "inventoryCount > 0".
+The following example configures a Spanner table as a vector store and wires the
+`vector_store_similarity_search` tool into a RAG agent:
 
 ```py
 from google.adk.agents import LlmAgent
@@ -133,3 +106,40 @@ my_rag_agent = LlmAgent(
     tools=[my_spanner_toolset],
 )
 ```
+
+### Configuration
+
+The `SpannerVectorStoreSettings` class used above defines how
+`vector_store_similarity_search` operates. It accepts the following parameters:
+
+#### Required parameters
+
+- **`project_id`**: Your Google Cloud Project ID required for authentication
+  context.
+- **`instance_id`**: The Spanner instance ID.
+- **`database_id`**: The Spanner database ID.
+- **`table_name`**: The Spanner table containing the vector embeddings.
+- **`embedding_column`**: The `ARRAY<FLOAT>` or `ARRAY<DOUBLE>` column where the
+  vector embeddings are stored.
+- **`content_column`**: The column containing the original text or content to be
+  retrieved.
+- **`vector_length`**: The dimensionality of your embedding vectors that must
+  match your model.
+- **`vertex_ai_embedding_model_name`**: The model used to generate the
+  embeddings, for example "text-embedding-005".
+
+#### Optional parameters
+
+- **`selected_columns`**: A list of columns you can include in the search
+  results, such as metadata or identifiers.
+- **`nearest_neighbors_algorithm`**: The algorithm you use for the search, such
+  as `EXACT_NEAREST_NEIGHBORS` and `APPROXIMATE_NEAREST_NEIGHBORS`.
+    - **`num_leaves_to_search`**: Number of index leaf nodes searched. Only used
+      with `APPROXIMATE_NEAREST_NEIGHBORS`.
+    - **`vector_search_index_settings`**: Vector index settings. Only required with
+      `APPROXIMATE_NEAREST_NEIGHBORS`.
+- **`top_k`**: The number of nearest neighbors to retrieve per query.
+- **`distance_type`**: The distance metric used for similarity calculation, such
+  as `COSINE` or `EUCLIDEAN`.
+- **`additional_filter`**: An optional SQL filter string to apply during the
+  search, for example: "inventoryCount > 0".
