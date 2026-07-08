@@ -11,7 +11,7 @@ catalog_tags: ["data","google"]
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.11.0</span>
 </div>
 
-These are a set of tools aimed to provide integration with Spanner, namely:
+These tools provide integration with Spanner:
 
 * **`list_table_names`**: Fetches table names present in a GCP Spanner database.
 * **`list_table_indexes`**: Fetches table indexes present in a GCP Spanner database.
@@ -29,36 +29,47 @@ They are packaged in the toolset `SpannerToolset`.
 
 ## Perform vector similarity search
 
-The `vector_store_similarity_search` tool enables agents to perform semantic searches against a Spanner table configured as a vector store. 
-This capability is essential for building contextually aware RAG applications.
+The `vector_store_similarity_search` tool enables agents to perform semantic searches against a Spanner table configured as a vector store.
+This capability is essential for building contextually aware RAG applications; it allows AI models to retrieve database context based on semantic
+meaning rather than exact keyword matches. By configuring `SpannerVectorStoreSettings`, your agents can better understand the intent behind user 
+queries and ground their responses in the most relevant Spanner data.
+
+!!! example "Experimental"
+    
+    This feature is experimental and may be updated in future releases.
 
 ### Configure the parameters
 
 The `SpannerVectorStoreSettings` configuration class defines the parameters for how `vector_store_similarity_search` operates. Use the following parameters:
 
-**Required parameters**
+#### Required parameters
 
 * **`project_id`**: Your Google Cloud Project ID required for authentication context.
-* **`instance_id`**: The Spanner instance ID
+* **`instance_id`**: The Spanner instance ID.
 * **`database_id`**: The Spanner database ID.
 * **`table_name`**: The Spanner table containing the vector embeddings.
 * **`embedding_column`**: The `ARRAY<FLOAT>` or `ARRAY<DOUBLE>` column where the vector embeddings are stored.
 * **`content_column`**: The column containing the original text or content to be retrieved.
 * **`vector_length`**: The dimensionality of your embedding vectors that must match your model.
-* **`vertex_ai_embedding_model_name`**: The Vertex AI model used to generate the embeddings, for example "text-embedding-005").
+* **`vertex_ai_embedding_model_name`**: The model used to generate the embeddings, for example "text-embedding-005".
 
-**Optional parameters**
+#### Optional parameters
 
 * **`selected_columns`**: A list of columns you can include in the search results, such as metadata or identifiers.
-* **`nearest_neighbors_algorithm`**: The algorithm you use for the search, such as "EXACT_NEAREST_NEIGHBORS".
+* **`nearest_neighbors_algorithm`**: The algorithm you use for the search, such as `EXACT_NEAREST_NEIGHBORS` and `APPROXIMATE_NEAREST_NEIGHBORS`, or both.
+  * **`num_leaves_to_search`**: Number of index leaf nodes searched. Only used with `APPROXIMATE_NEAREST_NEIGHBORS`.
+  * **`vector_search_index_settings`**:Vector index settings. Only required with `APPROXIMATE_NEAREST_NEIGHBORS`.
 * **`top_k`**: The number of nearest neighbors to retrieve per query.
-* **`distance_type`**: The distance metric used for similarity calculation, such as "COSINE" or "EUCLIDEAN".
+* **`distance_type`**: The distance metric used for similarity calculation, such as `COSINE` or `EUCLIDEAN`.
 * **`additional_filter`**: An optional SQL filter string to apply during the search, for example: "inventoryCount > 0".
   
 ```py
-from google.adk.agents.llm_agent import LlmAgent
-from google.adk.tools.spanner.settings import Capabilities, SpannerToolSettings, SpannerVectorStoreSettings, SpannerCredentialsConfig
-from google.adk.tools.spanner.spanner_toolset import SpannerToolset
+from google.adk.tools.spanner import SpannerCredentialsConfig, SpannerToolset
+from google.adk.tools.spanner.settings import (
+    Capabilities,
+    SpannerToolSettings,
+    SpannerVectorStoreSettings,
+)
 
 # 1. Define Spanner tool config with vector store settings
 my_vector_store_settings = SpannerVectorStoreSettings(
@@ -92,7 +103,7 @@ my_spanner_toolset = SpannerToolset(
 
 # 3. Use the toolset in your RAG agent
 my_rag_agent = LlmAgent(
-    model="gemini-2.5-flash",
+    model="gemini-flash-latest",
     name="product_search_agent",
     instruction="""
     You are a helpful assistant that answers user questions by finding similar products.
@@ -104,10 +115,3 @@ my_rag_agent = LlmAgent(
 )
 
 ```
-
-### Why this matters for RAG
-
-RAG is the standard way we stop AI models from hallucinating by grounding their answers in your actual data.
-By adding this tool to Spanner, your AI can now directly "query" your database for relevant context in a way that truly understands the meaning behind a user's question, rather than just matching words.
-
-Think about it as asking a librarian: "Do you have anything for a toddler learning to ride?" The librarian knows 'toddler' is related to 'small children' and 'learning to ride' is related to 'bikes,' so the output is related to what you’re looking for. By using `SpannerVectorStoreSettings` to configure your `SpannerToolset`, you are basically turning your Spanner database into that "smart librarian" that understands the meaning of your data.
