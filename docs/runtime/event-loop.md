@@ -103,7 +103,7 @@ The `Runner` acts as the central coordinator for a single user invocation. Its r
         return func(yield func(*Event, error) bool) {
             // 1. Append new_query to session event history (via SessionService)
             // ...
-            userEvent := session.NewEvent(ctx.InvocationID()) // Simplified for conceptual view
+            userEvent := session.NewEvent(ctx, ctx.InvocationID()) // Simplified for conceptual view
             userEvent.Author = "user"
             userEvent.LLMResponse = model.LLMResponse{Content: newQuery}
 
@@ -528,7 +528,7 @@ Understanding a few key aspects of how the ADK Runtime handles state, streaming,
 
           // 1. Determine a change or output is needed, construct the event
           updateData := map[string]interface{}{"field_1": "value_2"}
-          eventWithStateChange := session.NewEvent(ctx.InvocationID())
+          eventWithStateChange := session.NewEvent(ctx, ctx.InvocationID())
           eventWithStateChange.Author = a.Name()
           eventWithStateChange.Actions = &session.EventActions{StateDelta: updateData}
           // ... other event fields ...
@@ -554,7 +554,7 @@ Understanding a few key aspects of how the ADK Runtime handles state, streaming,
           // of the *next* `Run` invocation in a subsequent turn.
 
           // ... subsequent code continues, potentially yielding more events ...
-          finalEvent := session.NewEvent(ctx.InvocationID())
+          finalEvent := session.NewEvent(ctx, ctx.InvocationID())
           finalEvent.Author = a.Name()
           // ...
           yield(finalEvent, nil)

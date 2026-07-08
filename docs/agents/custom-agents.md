@@ -348,8 +348,8 @@ The foundation for structuring multi-agent systems is the parent-child relations
 
     ```go
     import (
-        "google.golang.org/adk/agent"
-        "google.golang.org/adk/agent/llmagent"
+        "google.golang.org/adk/v2/agent"
+        "google.golang.org/adk/v2/agent/llmagent"
     )
 
     --8<-- "examples/go/snippets/agents/multi-agent/main.go:hierarchy"
@@ -426,9 +426,9 @@ ADK includes specialized agents derived from `BaseAgent` that don't perform task
 
     ```go
     import (
-        "google.golang.org/adk/agent"
-        "google.golang.org/adk/agent/llmagent"
-        "google.golang.org/adk/agent/workflowagents/sequentialagent"
+        "google.golang.org/adk/v2/agent"
+        "google.golang.org/adk/v2/agent/llmagent"
+        "google.golang.org/adk/v2/agent/workflowagents/sequentialagent"
     )
 
     --8<-- "examples/go/snippets/agents/multi-agent/main.go:sequential-pipeline"
@@ -490,9 +490,9 @@ ADK includes specialized agents derived from `BaseAgent` that don't perform task
 
     ```go
     import (
-        "google.golang.org/adk/agent"
-        "google.golang.org/adk/agent/llmagent"
-        "google.golang.org/adk/agent/workflowagents/parallelagent"
+        "google.golang.org/adk/v2/agent"
+        "google.golang.org/adk/v2/agent/llmagent"
+        "google.golang.org/adk/v2/agent/workflowagents/parallelagent"
     )
 
     --8<-- "examples/go/snippets/agents/multi-agent/main.go:parallel-execution"
@@ -600,10 +600,10 @@ ADK includes specialized agents derived from `BaseAgent` that don't perform task
     ```go
     import (
         "iter"
-        "google.golang.org/adk/agent"
-        "google.golang.org/adk/agent/llmagent"
-        "google.golang.org/adk/agent/workflowagents/loopagent"
-        "google.golang.org/adk/session"
+        "google.golang.org/adk/v2/agent"
+        "google.golang.org/adk/v2/agent/llmagent"
+        "google.golang.org/adk/v2/agent/workflowagents/loopagent"
+        "google.golang.org/adk/v2/session"
     )
 
     --8<-- "examples/go/snippets/agents/multi-agent/main.go:loop-with-condition"
@@ -704,9 +704,9 @@ The most fundamental way for agents operating within the same invocation (and th
 
     ```go
     import (
-        "google.golang.org/adk/agent"
-        "google.golang.org/adk/agent/llmagent"
-        "google.golang.org/adk/agent/workflowagents/sequentialagent"
+        "google.golang.org/adk/v2/agent"
+        "google.golang.org/adk/v2/agent/llmagent"
+        "google.golang.org/adk/v2/agent/workflowagents/sequentialagent"
     )
 
     --8<-- "examples/go/snippets/agents/multi-agent/main.go:output-key-state"
@@ -804,7 +804,7 @@ Leverages an [`LlmAgent`](llm-agents.md)'s understanding to dynamically route ta
 
     ```go
     import (
-        "google.golang.org/adk/agent/llmagent"
+        "google.golang.org/adk/v2/agent/llmagent"
     )
 
     --8<-- "examples/go/snippets/agents/multi-agent/main.go:llm-transfer"
@@ -947,12 +947,12 @@ Allows an [`LlmAgent`](llm-agents.md) to treat another `BaseAgent` instance as a
     import (
         "fmt"
         "iter"
-        "google.golang.org/adk/agent"
-        "google.golang.org/adk/agent/llmagent"
-        "google.golang.org/adk/model"
-        "google.golang.org/adk/session"
-        "google.golang.org/adk/tool"
-        "google.golang.org/adk/tool/agenttool"
+        "google.golang.org/adk/v2/agent"
+        "google.golang.org/adk/v2/agent/llmagent"
+        "google.golang.org/adk/v2/model"
+        "google.golang.org/adk/v2/session"
+        "google.golang.org/adk/v2/tool"
+        "google.golang.org/adk/v2/tool/agenttool"
         "google.golang.org/genai"
     )
 

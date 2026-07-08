@@ -147,7 +147,7 @@ Agent Platform.
     **Setup:**
 
     1. **Agent Platform Environment:** Ensure the consolidated Agent Platform setup (ADC, Env
-       Vars, `GOOGLE_GENAI_USE_VERTEXAI=TRUE`) is complete.
+       Vars, `GOOGLE_GENAI_USE_ENTERPRISE=TRUE`) is complete.
 
     2. **Install Provider Library:** Install the necessary client library configured
        for Agent Platform.
@@ -278,7 +278,7 @@ Agent Platform offers a curated selection of open-source models, such as Meta Ll
     **Setup:**
 
     1. **Agent Platform Environment:** Ensure the consolidated Agent Platform setup (ADC, Env
-       Vars, `GOOGLE_GENAI_USE_VERTEXAI=TRUE`) is complete.
+       Vars, `GOOGLE_GENAI_USE_ENTERPRISE=TRUE`) is complete.
 
     2. **Install LiteLLM:**
             ```shell

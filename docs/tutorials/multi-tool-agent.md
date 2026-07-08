@@ -82,7 +82,7 @@ entirely on your machine and is recommended for internal development.
     To add the ADK to your project, run the following command:
 
     ```bash
-    go get google.golang.org/adk
+    go get google.golang.org/adk/v2
     ```
 
     This will add the ADK as a dependency to your `go.mod` file.
