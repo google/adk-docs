@@ -20,6 +20,28 @@ This guide covers two primary integration patterns:
 1. **Using Existing MCP Servers within ADK:** An ADK agent acts as an MCP client, leveraging tools provided by external MCP servers.
 2. **Exposing ADK Tools via an MCP Server:** Building an MCP server that wraps ADK tools, making them accessible to any MCP client.
 
+## Key considerations
+
+When you start building with the Model Context Protocol (MCP) and ADK, these key architectural differences will help you design more stable and efficient agents:
+
+* **Protocol vs. Library:** MCP is a protocol specification, defining communication rules. ADK is a Python library/framework for building agents. McpToolset bridges these by implementing the client side of the MCP protocol within the ADK framework. Conversely, building an MCP server in Python requires using the model-context-protocol library.
+
+* **ADK Tools vs. MCP Tools:**
+
+    * ADK Tools (BaseTool, FunctionTool, AgentTool, etc.) are Python objects designed for direct use within the ADK's LlmAgent and Runner.
+    * MCP Tools are capabilities exposed by an MCP Server according to the protocol's schema. McpToolset makes these look like ADK tools to an LlmAgent.
+
+* **Asynchronous nature:** Both ADK and the MCP Python library are heavily based on the asyncio Python library. Tool implementations and server handlers should generally be async functions.
+
+* **Stateful sessions (MCP):** MCP establishes stateful, persistent connections between a client and server instance. This differs from typical stateless REST APIs.
+
+    * **Deployment:** This statefulness can pose challenges for scaling and deployment, especially for remote servers handling many users. The original MCP design often assumed client and server were co-located. Managing these persistent connections requires careful infrastructure considerations (e.g., load balancing, session affinity).
+    * **ADK McpToolset:** Manages this connection lifecycle. The exit\_stack pattern shown in the examples is crucial for ensuring the connection (and potentially the server process) is properly terminated when the ADK agent finishes.
+ 
+* **Session persistence**: The `MCPToolset` supports object serialization via `getstate` and `setstate` methods. This feature helps your agent maintain its context when deployed to managed environments like Cloud Run or Google Kubernetes Engine (GKE).
+
+!!! Note: While the agent preserves its session state during lifecycle events, active MCP connections are not automatically re-established upon restoration. The agent will re-initialize its connection to the MCP server as needed after the process is restored to ensure a reliable and up-to-date link.
+
 ## Prerequisites
 
 Before you begin, ensure you have the following set up:
@@ -90,7 +112,7 @@ TARGET_FOLDER_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "/
 # If you created ./adk_agent_samples/mcp_agent/your_folder,
 
 root_agent = LlmAgent(
-    model='gemini-2.5-flash',
+    model='gemini-flash-latest',
     name='filesystem_assistant_agent',
     instruction='Help the user manage their files. You can list files, read files, etc.',
     tools=[
@@ -151,9 +173,7 @@ Once the ADK Web UI loads in your browser:
 
 You should see the agent interacting with the MCP file system server, and the server's responses (file listings, file content) relayed through the agent. The `adk web` console (terminal where you ran the command) might also show logs from the `npx` process if it outputs to stderr.
 
-<img src="../../assets/adk-tool-mcp-filesystem-adk-web-demo.png" alt="MCP with ADK Web - FileSystem Example">
-
-
+![MCP with ADK Web - FileSystem Example](../assets/adk-tool-mcp-filesystem-adk-web-demo.png)
 
 For Java, refer to the following sample to define an agent that initializes the `McpToolset`:
 
@@ -193,7 +213,7 @@ public class McpAgentCreator {
 
         try (McpToolset toolset = new McpToolset(serverParams.toServerParameters())) {
             LlmAgent agent = LlmAgent.builder()
-                    .model("gemini-2.5-flash")
+                    .model("gemini-flash-latest")
                     .name("enterprise_assistant")
                     .description("An agent to help users access their file systems")
                     .instruction(
@@ -249,7 +269,7 @@ import {LlmAgent, MCPToolset} from "@google/adk";
 const TARGET_FOLDER_PATH = "/path/to/your/folder";
 
 export const rootAgent = new LlmAgent({
-    model: "gemini-2.5-flash",
+    model: "gemini-flash-latest",
     name: "filesystem_assistant_agent",
     instruction: "Help the user manage their files. You can list files, read files, etc.",
     tools: [
@@ -321,7 +341,7 @@ if not GOOGLE_MAPS_API_KEY:
         # You might want to raise an error or exit if the key is crucial and not found.
 
 root_agent = Agent(
-    model='gemini-3-flash-preview',
+    model='gemini-flash-latest',
     name='travel_planner_agent',
     description='A helpful assistant for planning travel routes.',
     tools=[
@@ -373,8 +393,7 @@ from . import agent
 
 You should see the agent use the Google Maps Grounding Lite MCP tools to provide directions or location-based information.
 
-<img src="../../assets/adk-tool-maps-lite-mcp-adk-web-demo.png" alt="Google Maps Grounding Lite MCP with ADK Web Example">
-
+![Google Maps Grounding Lite MCP with ADK Web Example](../assets/adk-tool-maps-lite-mcp-adk-web-demo.png)
 
 For Java, refer to the following sample to define an agent that initializes the `McpToolset`:
 
@@ -395,7 +414,7 @@ import java.util.Map;
 public class MapsAgentCreator {
 
     /**
-     * Initializes an McpToolset for Google Maps Grounding Lite, 
+     * Initializes an McpToolset for Google Maps Grounding Lite,
      * creates an LlmAgent, sends a map-related prompt, and closes the toolset.
      */
     public static void main(String[] args) {
@@ -424,7 +443,7 @@ public class MapsAgentCreator {
         try (McpToolset toolset = new McpToolset(serverParams)) {
             // Build the Agent with the configured Toolset
             LlmAgent agent = LlmAgent.builder()
-                    .model("gemini-3-flash-preview")
+                    .model("gemini-flash-latest")
                     .name("travel_planner_agent")
                     .description("A helpful assistant for planning travel routes.")
                     .tools(toolset)
@@ -477,14 +496,14 @@ if (!googleMapsApiKey) {
 }
 
 export const rootAgent = new LlmAgent({
-    model: "gemini-3-flash-preview",
+    model: "gemini-flash-latest",
     name: "travel_planner_agent",
     description: "A helpful assistant for planning travel.",
     tools: [
         new MCPToolset({
             // Using SseConnectionParams to connect to the remote Grounding Lite service,
             // mirroring Python's StreamableHTTPConnectionParams.
-            type: "SseConnectionParams", 
+            type: "SseConnectionParams",
             url: "https://mapstools.googleapis.com/mcp",
             headers: {
                 "X-Goog-Api-Key": googleMapsApiKey,
@@ -496,7 +515,7 @@ export const rootAgent = new LlmAgent({
 });
 ```
 
-## 2. Building an MCP server with ADK tools (MCP server exposing ADK)
+## 2. Build an MCP server with ADK tools (MCP server exposing ADK)
 
 This pattern allows you to wrap existing ADK tools and make them available to any standard MCP client application. The example in this section exposes the ADK `load_web_page` tool through a custom-built MCP server.
 
@@ -669,7 +688,7 @@ if PATH_TO_YOUR_MCP_SERVER_SCRIPT == "/path/to/your/my_adk_mcp_server.py":
     # Optionally, raise an error if the path is critical
 
 root_agent = LlmAgent(
-    model='gemini-2.5-flash',
+    model='gemini-flash-latest',
     name='web_reader_mcp_client_agent',
     instruction="Use the 'load_web_page' tool to fetch content from a URL provided by the user.",
     tools=[
@@ -719,7 +738,7 @@ This example demonstrates how ADK tools can be encapsulated within an MCP server
 
 Refer to the [documentation](https://modelcontextprotocol.io/quickstart/server#core-mcp-concepts), to try it out with Claude Desktop.
 
-## Using MCP Tools in your own Agent out of `adk web`
+## Use MCP Tools in your own Agent out of `adk web`
 
 This section is relevant to you if:
 
@@ -778,7 +797,7 @@ async def get_agent_async():
 
   # Use in an agent
   root_agent = LlmAgent(
-      model='gemini-2.5-flash', # Adjust model name if needed based on availability
+      model='gemini-flash-latest', # Adjust model name if needed based on availability
       name='enterprise_assistant',
       instruction='Help user accessing their file systems',
       tools=[toolset], # Provide the MCP tools to the ADK agent
@@ -831,28 +850,9 @@ if __name__ == '__main__':
     print(f"An error occurred: {e}")
 ```
 
+## Deploy Agents with MCP Tools
 
-## Key considerations
-
-When working with MCP and ADK, keep these points in mind:
-
-* **Protocol vs. Library:** MCP is a protocol specification, defining communication rules. ADK is a Python library/framework for building agents. McpToolset bridges these by implementing the client side of the MCP protocol within the ADK framework. Conversely, building an MCP server in Python requires using the model-context-protocol library.
-
-* **ADK Tools vs. MCP Tools:**
-
-    * ADK Tools (BaseTool, FunctionTool, AgentTool, etc.) are Python objects designed for direct use within the ADK's LlmAgent and Runner.
-    * MCP Tools are capabilities exposed by an MCP Server according to the protocol's schema. McpToolset makes these look like ADK tools to an LlmAgent.
-
-* **Asynchronous nature:** Both ADK and the MCP Python library are heavily based on the asyncio Python library. Tool implementations and server handlers should generally be async functions.
-
-* **Stateful sessions (MCP):** MCP establishes stateful, persistent connections between a client and server instance. This differs from typical stateless REST APIs.
-
-    * **Deployment:** This statefulness can pose challenges for scaling and deployment, especially for remote servers handling many users. The original MCP design often assumed client and server were co-located. Managing these persistent connections requires careful infrastructure considerations (e.g., load balancing, session affinity).
-    * **ADK McpToolset:** Manages this connection lifecycle. The exit\_stack pattern shown in the examples is crucial for ensuring the connection (and potentially the server process) is properly terminated when the ADK agent finishes.
-
-## Deploying Agents with MCP Tools
-
-When deploying ADK agents that use MCP tools to production environments like Cloud Run, GKE, or Vertex AI Agent Engine, you need to consider how MCP connections will work in containerized and distributed environments.
+When deploying ADK agents that use MCP tools to production environments like Cloud Run, GKE, or Agent Runtime, you need to consider how MCP connections will work in containerized and distributed environments.
 
 ### Critical Deployment Requirement: Synchronous Agent Definition
 
@@ -869,7 +869,7 @@ from mcp import StdioServerParameters
 _allowed_path = os.path.dirname(os.path.abspath(__file__))
 
 root_agent = LlmAgent(
-    model='gemini-2.5-flash',
+    model='gemini-flash-latest',
     name='enterprise_assistant',
     instruction=f'Help user accessing their file systems. Allowed directory: {_allowed_path}',
     tools=[
@@ -901,7 +901,7 @@ async def get_agent():  # This won't work for deployment
 
 ### Quick Deployment Commands
 
-#### Vertex AI Agent Engine
+#### Agent Runtime
 ```bash
 uv run adk deploy agent_engine \
   --project=<your-gcp-project-id> \
@@ -1206,9 +1206,9 @@ McpToolset(
 )
 ```
 
-#### Vertex AI Agent Engine
+#### Agent Runtime
 ```python
-# Agent Engine managed deployment
+# Agent Runtime managed deployment
 # Prefer lightweight, self-contained MCP servers or external services
 McpToolset(
     connection_params=SseConnectionParams(

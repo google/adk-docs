@@ -19,18 +19,18 @@ pip install google-adk
     Create a Python virtual environment:
 
     ```shell
-    python -m venv .venv
+    python3 -m venv .venv
     ```
 
     Activate the Python virtual environment:
 
-    === "Windows CMD"
+    === "Windows Command Prompt"
 
         ```console
         .venv\Scripts\activate.bat
         ```
 
-    === "Windows Powershell"
+    === "Windows PowerShell"
 
         ```console
         .venv\Scripts\Activate.ps1
@@ -78,7 +78,7 @@ def get_current_time(city: str) -> dict:
     return {"status": "success", "city": city, "time": "10:30 AM"}
 
 root_agent = Agent(
-    model='gemini-3-flash-preview',
+    model='gemini-flash-latest',
     name='root_agent',
     description="Tells the current time in a specified city.",
     instruction="You are a helpful assistant that tells the current time in cities. Use the 'get_current_time' tool for this purpose.",
@@ -94,9 +94,23 @@ don't already have Gemini API key, create a key in Google AI Studio on the
 
 In a terminal window, write your API key into an `.env` file as an environment variable:
 
-```console title="Update: my_agent/.env"
-echo 'GOOGLE_API_KEY="YOUR_API_KEY"' > .env
-```
+=== "MacOS / Linux"
+
+    ```bash title="Update: my_agent/.env"
+    echo 'GOOGLE_API_KEY="YOUR_API_KEY"' > .env
+    ```
+
+=== "Windows PowerShell"
+
+    ```console title="Update: my_agent/.env"
+    echo 'GOOGLE_API_KEY="YOUR_API_KEY"' > .env
+    ```
+
+=== "Windows Command Prompt"
+
+    ```console title="Update: my_agent/.env"
+    echo GOOGLE_API_KEY="YOUR_API_KEY" > .env
+    ```
 
 ??? tip "Using other AI models with ADK"
     ADK supports the use of many generative AI models. For more
@@ -136,7 +150,7 @@ adk web --port 8000
     run `adk web` from the `agents/` directory.
 
 This command starts a web server with a chat interface for your agent. You can
-access the web interface at (http://localhost:8000). Select the agent at the
+access the web interface at `http://localhost:8000`. Select the agent at the
 upper left corner and type a request.
 
 ![adk-web-dev-ui-chat.png](/assets/adk-web-dev-ui-chat.png)

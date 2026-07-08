@@ -44,7 +44,7 @@ working_dir/
 
     os.environ.setdefault("GOOGLE_CLOUD_PROJECT", "{your-project-id}")
     os.environ.setdefault("GOOGLE_CLOUD_LOCATION", "global")
-    os.environ.setdefault("GOOGLE_GENAI_USE_VERTEXAI", "True")
+    os.environ.setdefault("GOOGLE_GENAI_USE_ENTERPRISE", "True")
 
 
     # Define a tool function
@@ -75,7 +75,7 @@ working_dir/
     # Create an agent with tools
     root_agent = Agent(
         name="weather_agent",
-        model="gemini-2.5-flash",
+        model="gemini-flash-latest",
         description="Agent to answer questions using weather tools.",
         instruction="You must use the available tools to find an answer.",
         tools=[get_weather],
@@ -157,7 +157,7 @@ For fully customized agent runtimes, you can enable cloud tracing by using the b
     	"log"
     	"time"
 
-    	"google.golang.org/adk/telemetry"
+    	"google.golang.org/adk/v2/telemetry"
     )
 
     func main() {
@@ -206,3 +206,4 @@ If you click on one of the traces, you will see a waterfall view of the detailed
 
 - [Google Cloud Trace Documentation](https://cloud.google.com/trace)
 - [OpenTelemetry Documentation](https://opentelemetry.io/docs/)
+- [Connect to Google Cloud and Agent Platform](/get-started/google-cloud/)

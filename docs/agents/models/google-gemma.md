@@ -11,7 +11,7 @@ and [Structured Output](/agents/llm-agents/#structuring-data-input_schema-output
 
 You can use Gemma 4 through the [Gemini API](https://ai.google.dev/gemini-api/docs),
 or with one of many self-hosting options on Google Cloud:
-[Vertex AI](https://console.cloud.google.com/vertex-ai/publishers/google/model-garden/gemma4),
+[Agent Platform](https://console.cloud.google.com/vertex-ai/publishers/google/model-garden/gemma4),
 [Google Kubernetes Engine](https://docs.cloud.google.com/kubernetes-engine/docs/tutorials/serve-gemma-gpu-vllm),
 [Cloud Run](https://docs.cloud.google.com/run/docs/run-gemma-on-cloud-run).
 
@@ -79,7 +79,7 @@ The following example shows how to use a Gemma 4 vLLM endpoint with ADK agents.
 ### Setup
 
 1. **Deploy Model:** Deploy your chosen model using
-    [Vertex AI](https://console.cloud.google.com/vertex-ai/publishers/google/model-garden/gemma4),
+    [Agent Platform](https://console.cloud.google.com/vertex-ai/publishers/google/model-garden/gemma4),
     [Google Kubernetes Engine](https://docs.cloud.google.com/kubernetes-engine/docs/tutorials/serve-gemma-gpu-vllm),
     or [Cloud Run](https://docs.cloud.google.com/run/docs/run-gemma-on-cloud-run),
     and use its OpenAI-compatible API endpoint.

@@ -24,13 +24,13 @@ import (
 
 	"google.golang.org/genai"
 
-	"google.golang.org/adk/agent"
-	"google.golang.org/adk/agent/llmagent"
-	"google.golang.org/adk/cmd/launcher"
-	"google.golang.org/adk/cmd/launcher/full"
-	"google.golang.org/adk/model/gemini"
-	"google.golang.org/adk/tool"
-	"google.golang.org/adk/tool/functiontool"
+	"google.golang.org/adk/v2/agent"
+	"google.golang.org/adk/v2/agent/llmagent"
+	"google.golang.org/adk/v2/cmd/launcher"
+	"google.golang.org/adk/v2/cmd/launcher/full"
+	"google.golang.org/adk/v2/model/gemini"
+	"google.golang.org/adk/v2/tool"
+	"google.golang.org/adk/v2/tool/functiontool"
 )
 
 type CityArgs struct {
@@ -42,7 +42,7 @@ func main() {
 
 	// 1. Setup the model.
 	// Note: Authentication is handled via GOOGLE_API_KEY environment variable.
-	model, err := gemini.NewModel(ctx, "gemini-2.5-flash", &genai.ClientConfig{
+	model, err := gemini.NewModel(ctx, "gemini-flash-latest", &genai.ClientConfig{
 		APIKey: os.Getenv("GOOGLE_API_KEY"),
 	})
 	if err != nil {
@@ -54,7 +54,7 @@ func main() {
 			Name:        "get_weather",
 			Description: "Retrieves the current weather report for a specified city.",
 		},
-		func(ctx tool.Context, args CityArgs) (map[string]any, error) {
+		func(ctx agent.Context, args CityArgs) (map[string]any, error) {
 			if strings.EqualFold(args.City, "new york") {
 				return map[string]any{
 					"status": "success",
@@ -76,7 +76,7 @@ func main() {
 			Name:        "get_current_time",
 			Description: "Returns the current time in a specified city.",
 		},
-		func(ctx tool.Context, args CityArgs) (map[string]any, error) {
+		func(ctx agent.Context, args CityArgs) (map[string]any, error) {
 			var tzIdentifier string
 			if strings.EqualFold(args.City, "new york") {
 				tzIdentifier = "America/New_York"

@@ -62,6 +62,26 @@ for updates on the next call. Recent recordings are below, or browse the full
 playlist](https://www.youtube.com/playlist?list=PLwi6PfxEP7zZbBPmWiZ8QbPcuKyAY5RR3).
 
 <div class="resource-grid">
+  <a href="https://www.youtube.com/watch?v=XAvXSACGdEQ" class="resource-card">
+    <div class="card-image-wrapper">
+      <img src="https://img.youtube.com/vi/XAvXSACGdEQ/maxresdefault.jpg" alt="ADK Community Call June 2026">
+    </div>
+    <div class="card-content">
+      <div class="type">Community Call</div>
+      <h3>📞 June 2026 Recording</h3>
+      <p>Discussions include multi-language SDK support, native GCS integration, the new ADK Environments feature, the Agents CLI and Agent Eval CLI, and a community spotlight on a prompt optimization taxonomy plugin.</p>
+    </div>
+  </a>
+  <a href="https://www.youtube.com/watch?v=vbqKmK0rArI" class="resource-card">
+    <div class="card-image-wrapper">
+      <img src="https://img.youtube.com/vi/vbqKmK0rArI/maxresdefault.jpg" alt="ADK Community Call May 2026">
+    </div>
+    <div class="card-content">
+      <div class="type">Community Call</div>
+      <h3>📞 May 2026 Recording</h3>
+      <p>Discussions include the ADK Python 2.0 GA release, initial release of ADK for Kotlin and Android, demos of Agents CLI and Skills for dynamic capability loading, and a community spotlight on Beever Atlas.</p>
+    </div>
+  </a>
   <a href="https://www.youtube.com/watch?v=bPngDY7EuOQ" class="resource-card">
     <div class="card-image-wrapper">
       <img src="https://img.youtube.com/vi/bPngDY7EuOQ/maxresdefault.jpg" alt="ADK Community Call Mar 2026">
@@ -70,26 +90,6 @@ playlist](https://www.youtube.com/playlist?list=PLwi6PfxEP7zZbBPmWiZ8QbPcuKyAY5R
       <div class="type">Community Call</div>
       <h3>📞 Mar 2026 Recording</h3>
       <p>Discussions include the ADK 2.0 alpha release, Workflows for graph-based agent composition, Agent Modes for structured multi-agent coordination, and a community spotlight on Restate durable agents.</p>
-    </div>
-  </a>
-  <a href="https://www.youtube.com/watch?v=cXDr4RYJxK0" class="resource-card">
-    <div class="card-image-wrapper">
-      <img src="https://img.youtube.com/vi/cXDr4RYJxK0/maxresdefault.jpg" alt="ADK Community Call Feb 2026">
-    </div>
-    <div class="card-content">
-      <div class="type">Community Call</div>
-      <h3>📞 Feb 2026 Recording</h3>
-      <p>Discussions include ADK evaluations with built-in metrics, token-based context compaction, the BigQuery observability plugin, and a community spotlight on Redis integration.</p>
-    </div>
-  </a>
-  <a href="https://www.youtube.com/watch?v=h9Lueiqo89E" class="resource-card">
-    <div class="card-image-wrapper">
-      <img src="https://img.youtube.com/vi/h9Lueiqo89E/maxresdefault.jpg" alt="ADK Community Call Jan 2026">
-    </div>
-    <div class="card-content">
-      <div class="type">Community Call</div>
-      <h3>📞 Jan 2026 Recording</h3>
-      <p>Discussions include Session Service schema for cross-language support, TypeScript multi-agent demo, API Registry for MCP servers, and third-party tool integrations.</p>
     </div>
   </a>
 
@@ -215,11 +215,11 @@ playlist](https://www.youtube.com/playlist?list=PLwi6PfxEP7zZbBPmWiZ8QbPcuKyAY5R
   </a>
   <a href="https://medium.com/google-cloud/google-adk-vertex-ai-live-api-125238982d5e" class="resource-card">
     <div class="card-image-wrapper">
-      <img src="../assets/community-adk-vertex-ai-live-api.png" alt="ADK + Vertex AI Live API">
+      <img src="../assets/community-adk-gemini-live-api.png" alt="ADK + Gemini Live API">
     </div>
     <div class="card-content">
       <div class="type">Blog Post</div>
-      <h3>📖 Google ADK + Vertex AI Live API</h3>
+      <h3>📖 Google ADK + Gemini Live API</h3>
       <p>Go beyond the ADK CLI by building real-time, streaming experiences with the Live API.</p>
     </div>
   </a>

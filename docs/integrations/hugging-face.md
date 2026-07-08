@@ -45,7 +45,7 @@ your ADK agent to the Hugging Face Hub and thousands of Gradio AI Applications.
         HUGGING_FACE_TOKEN = "YOUR_HUGGING_FACE_TOKEN"
 
         root_agent = Agent(
-            model="gemini-2.5-pro",
+            model="gemini-flash-latest",
             name="hugging_face_agent",
             instruction="Help users get information from Hugging Face",
             tools=[
@@ -78,7 +78,7 @@ your ADK agent to the Hugging Face Hub and thousands of Gradio AI Applications.
         HUGGING_FACE_TOKEN = "YOUR_HUGGING_FACE_TOKEN"
 
         root_agent = Agent(
-            model="gemini-2.5-pro",
+            model="gemini-flash-latest",
             name="hugging_face_agent",
             instruction="Help users get information from Hugging Face",
             tools=[
@@ -104,7 +104,7 @@ your ADK agent to the Hugging Face Hub and thousands of Gradio AI Applications.
         const HUGGING_FACE_TOKEN = "YOUR_HUGGING_FACE_TOKEN";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-2.5-pro",
+            model: "gemini-flash-latest",
             name: "hugging_face_agent",
             instruction: "Help users get information from Hugging Face",
             tools: [
@@ -132,7 +132,7 @@ your ADK agent to the Hugging Face Hub and thousands of Gradio AI Applications.
         const HUGGING_FACE_TOKEN = "YOUR_HUGGING_FACE_TOKEN";
 
         const rootAgent = new LlmAgent({
-            model: "gemini-2.5-pro",
+            model: "gemini-flash-latest",
             name: "hugging_face_agent",
             instruction: "Help users get information from Hugging Face",
             tools: [

@@ -28,9 +28,34 @@ Use the following command to run your agent in an ADK API server:
 
 === "Go"
 
+    In Go, there is no standalone `adk` CLI. Instead, you embed the launcher
+    directly in your agent's `main.go`. The `full.NewLauncher()` helper bundles
+    the REST API, Web UI, and other modes into a single binary:
+
+    ```go title="main.go"
+    import (
+        "google.golang.org/adk/v2/cmd/launcher"
+        "google.golang.org/adk/v2/cmd/launcher/full"
+    )
+
+    func main() {
+        // ... build your agent and config ...
+        l := full.NewLauncher()
+        if err := l.Execute(ctx, config, os.Args[1:]); err != nil {
+            log.Fatalf("Run failed: %v\n\n%s", err, l.CommandLineSyntax())
+        }
+    }
+    ```
+
+    Then start the API server by passing the `web` and `api` subcommands on
+    the command line:
+
     ```shell
     go run agent.go web api
     ```
+
+    The `web` keyword activates the HTTP server. `api` adds the ADK REST API
+    backend and registers all routes under the `/api` path prefix by default.
 
 === "Java"
 
@@ -114,6 +139,36 @@ The output should appear similar to:
     |                                                                             |
     | For local testing, access at http://localhost:8000.                         |
     +-----------------------------------------------------------------------------+
+    ```
+
+=== "Go"
+
+    ```shell
+    2025/01/01 00:00:00 Starting the web server: &{port:8080 ...}
+    2025/01/01 00:00:00 Web servers starts on http://localhost:8080
+    2025/01/01 00:00:00        api:  you can access API using http://localhost:8080/api
+    2025/01/01 00:00:00        api:      for instance: http://localhost:8080/api/list-apps
+    ```
+    
+    !!! note "Go: default port and path prefix"
+
+    The Go API server defaults to port **8080** (not 8000) and serves all
+    REST endpoints under the **`/api`** path prefix by default. Adjust all
+    example `curl` commands below accordingly:
+
+    | Python/TypeScript/Java | Go |
+    |---|---|
+    | `http://localhost:8000/list-apps` | `http://localhost:8080/api/list-apps` |
+    | `http://localhost:8000/apps/…` | `http://localhost:8080/api/apps/…` |
+    | `http://localhost:8000/run` | `http://localhost:8080/api/run` |
+    | `http://localhost:8000/run_sse` | `http://localhost:8080/api/run_sse` |
+
+    The port can be changed with the `-port` flag on the `web` subcommand and
+    the prefix can be changed with the `-path_prefix` flag on the `api`
+    subcommand. For example:
+
+    ```shell
+    go run agent.go web -port 8000 api -path_prefix ""
     ```
 
 === "Java"
@@ -283,13 +338,20 @@ issues, and evaluating performance.
 Now that you've verified the local operation of your agent, you're ready to move
 on to deploying your agent! Here are some ways you can deploy your agent:
 
-* Deploy to [Agent Engine](../deploy/agent-engine/index.md), a simple way to deploy
-  your ADK agents to a managed service in Vertex AI on Google Cloud.
+* Deploy to [Agent Runtime](../deploy/agent-runtime/index.md), a simple way to deploy
+  your ADK agents to a managed service on Agent Platform on Google Cloud.
 * Deploy to [Cloud Run](../deploy/cloud-run.md) and have full control over how
   you scale and manage your agents using serverless architecture on Google
   Cloud.
 
 ## Interactive API docs
+
+!!! note "Python and TypeScript only"
+
+    Swagger UI interactive documentation is served at `/docs` by the Python and
+    TypeScript ADK API servers only. The Go API server does not expose a `/docs`
+    endpoint. To explore the Go REST API, use the endpoint reference below or
+    send requests directly with `curl`.
 
 The API server automatically generates interactive API documentation using Swagger UI. This is an invaluable tool for exploring endpoints, understanding request formats, and testing your agent directly from your browser.
 
@@ -330,6 +392,12 @@ curl -X GET http://localhost:8000/list-apps
 Sessions store the state and event history for a specific user's interaction with an agent.
 
 #### Update a session
+
+!!! note "Not available in Go"
+
+    The `PATCH` session update endpoint is not implemented in the Go ADK REST
+    API server. To modify session state in Go, pass a `stateDelta` field in
+    your `/run` or `/run_sse` request body instead.
 
 Updates an existing session.
 
@@ -388,7 +456,8 @@ curl -X DELETE http://localhost:8000/apps/my_sample_agent/users/u_123/sessions/s
 ```
 
 **Example Response**
-A successful deletion returns an empty response with a `204 No Content` status code.
+A successful deletion returns an empty response. Python and TypeScript return a
+`204 No Content` status code. Go returns `200 OK` with an empty body.
 
 ---
 

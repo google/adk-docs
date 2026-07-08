@@ -3,8 +3,9 @@
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![PyPI](https://img.shields.io/pypi/v/google-adk)](https://pypi.org/project/google-adk/)
 [![NPM Version](https://img.shields.io/npm/v/@google/adk)](https://www.npmjs.com/package/@google/adk)
-[![Go Doc](https://img.shields.io/badge/Go%20Package-Doc-blue.svg)](https://pkg.go.dev/google.golang.org/adk)
-[![Maven Central](https://img.shields.io/maven-central/v/com.google.adk/google-adk)](https://search.maven.org/artifact/com.google.adk/google-adk)
+[![Go Doc](https://img.shields.io/badge/Go%20Package-Doc-blue.svg)](https://pkg.go.dev/google.golang.org/adk/v2)
+[![Maven Central Java](https://img.shields.io/maven-central/v/com.google.adk/google-adk)](https://search.maven.org/artifact/com.google.adk/google-adk)
+[![Maven Central Kotlin](https://img.shields.io/maven-central/v/com.google.adk/google-adk-kotlin-core)](https://search.maven.org/artifact/com.google.adk/google-adk-kotlin-core)
 
 <html>
   <h2 align="center">
@@ -41,7 +42,7 @@ from simple tasks to complex workflows.
   workflows.
 
 - **Deploy Anywhere**: Easily containerize and deploy agents on Cloud Run or GKE, or
-  scale seamlessly with Vertex AI Agent Engine.
+  scale seamlessly with Agent Runtime.
 
 ## 🚀 Usage
 
@@ -54,6 +55,8 @@ You can use Agent Development Kit (ADK) with your preferred language:
 - **[Get started with ADK Go](https://adk.dev/get-started/go/)**
 
 - **[Get started with ADK Java](https://adk.dev/get-started/java/)**
+
+- **[Get started with ADK Kotlin](https://adk.dev/get-started/kotlin/)**
 
 ## 📚 Documentation
 

@@ -1,0 +1,219 @@
+<!doctype html>
+<html class="no-js">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
+    <title>McpToolset</title>
+<link href="../../../images/logo-icon.svg" rel="icon" type="image/svg">    <script>var pathToRoot = "../../../";</script>
+    <script>document.documentElement.classList.replace("no-js","js");</script>
+    <script>const storage = localStorage.getItem("dokka-dark-mode")
+    if (storage == null) {
+        const osDarkSchemePreferred = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (osDarkSchemePreferred === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    } else {
+        const savedDarkMode = JSON.parse(storage)
+        if(savedDarkMode === true) {
+            document.getElementsByTagName("html")[0].classList.add("theme-dark")
+        }
+    }
+    </script>
+<script type="text/javascript" src="https://unpkg.com/kotlin-playground@1/dist/playground.min.js" async></script>
+<script type="text/javascript" src="../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../styles/style.css" rel="Stylesheet">
+<link href="../../../styles/main.css" rel="Stylesheet">
+<link href="../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../styles/logo-styles.css" rel="Stylesheet">
+<link href="../../../styles/font-jb-sans-auto.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../scripts/clipboard.js" async></script>
+<script type="text/javascript" src="../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../scripts/prism.js" async></script>
+<script type="text/javascript" src="../../../scripts/symbol-parameters-wrapper_deferred.js" defer></script>
+<!-- Google Analytics tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-DKHZS27PHP"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-DKHZS27PHP');
+</script>
+</head>
+<body>
+    <div class="root">
+<nav class="navigation" id="navigation-wrapper">
+    <div class="navigation--inner">
+        <div class="navigation-title">
+            <button class="menu-toggle" id="menu-toggle" type="button">toggle menu</button>
+            <div class="library-name">
+<a class="library-name--link" href="../../../index.html">
+                            google-adk-kotlin
+                    </a>            </div>
+            <div class="library-version">0.2.0
+            </div>
+        </div>
+        <div class="filter-section" id="filter-section">
+                <button class="platform-tag platform-selector jvm-like" data-active="" data-filter=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain">jvm</button>
+        </div>
+    </div>
+    <div class="navigation-controls">
+        <button class="navigation-controls--btn navigation-controls--theme" id="theme-toggle-button" type="button">switch theme</button>
+        <div class="navigation-controls--btn navigation-controls--search" id="searchBar" role="button">search in API</div>
+    </div>
+</nav>
+        <div id="container">
+            <div class="sidebar" id="leftColumn">
+                <div class="sidebar--inner" id="sideMenu"></div>
+            </div>
+            <div id="main">
+<div class="main-content" data-page-type="classlike" id="content" pageids="google-adk-kotlin-core::com.google.adk.kt.tools.mcp/McpToolset///PointingToDeclaration//-1959370187">
+  <div class="breadcrumbs"><a href="../../index.html">google-adk-kotlin-core</a><span class="delimiter">/</span><a href="../index.html">com.google.adk.kt.tools.mcp</a><span class="delimiter">/</span><span class="current">McpToolset</span></div>
+  <div class="cover ">
+    <h1 class="cover"><span>Mcp</span><wbr><span><span>Toolset</span></span></h1>
+    <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+      <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain" data-active="" data-toggle=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain">jvm</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain"><div class="symbol monospace"><span class="token keyword">class </span><a href="index.html">McpToolset</a> : <a href="../../com.google.adk.kt.tools/-toolset/index.html">Toolset</a></div><p class="paragraph">Connects to an MCP Server and exposes the server's MCP tools to an agent as ADK <a href="../../com.google.adk.kt.tools/-base-tool/index.html">BaseTool</a>s.</p><p class="paragraph"><code class="lang-kotlin">McpToolset</code> manages the lifecycle of the connection to a single MCP server and lazily fetches the server's tool list on first use. The instance can then be passed directly to an <code class="lang-kotlin">LlmAgent</code>'s <code class="lang-kotlin">toolsets</code>.</p><p class="paragraph">Instances are created via <a href="-mcp-toolset-config/to-toolset.html">McpToolsetConfig.toToolset</a>, for example:</p><div class="sample-container"><pre><code class="block lang-kotlin" theme="idea">val toolset =<br>  McpToolset.McpToolsetConfig(<br>      stdioConnectionParams =<br>        McpConnectionParameters.Stdio(<br>          command = "npx",<br>          args = listOf("-y", "@modelcontextprotocol/server-filesystem"),<br>        ),<br>      toolFilter = listOf("read_file", "list_directory"),<br>    )<br>    .toToolset()</code></pre><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><p class="paragraph">The constructor is <code class="lang-kotlin">internal</code>; user code should use <a href="-mcp-toolset-config/to-toolset.html">McpToolsetConfig.toToolset</a> instead.</p></div>    </div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="CONSTRUCTOR,TYPE,PROPERTY,FUNCTION">Members</button></div>
+    <div class="tabs-section-body">
+      <div data-togglable="TYPE">
+        <h2 class="">Types</h2>
+        <div class="table"><a data-name="-1998149468%2FClasslikes%2F-1959370187" anchor-label="Companion" id="-1998149468%2FClasslikes%2F-1959370187" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-companion/index.html"><span><span>Companion</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1998149468%2FClasslikes%2F-1959370187"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain" data-active="" data-toggle=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain">jvm</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain"><div class="symbol monospace"><span class="token keyword">object </span><a href="-companion/index.html">Companion</a></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-492911264%2FClasslikes%2F-1959370187" anchor-label="McpToolsetConfig" id="-492911264%2FClasslikes%2F-1959370187" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="-mcp-toolset-config/index.html"><span>Mcp</span><wbr><span>Toolset</span><wbr><span><span>Config</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-492911264%2FClasslikes%2F-1959370187"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain" data-active="" data-toggle=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain">jvm</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="-mcp-toolset-config/index.html">McpToolsetConfig</a><span class="token punctuation">(</span><span class="parameters "><span class="parameter "><span class="token keyword">val </span>stdioConnectionParams<span class="token operator">: </span><a href="../-mcp-connection-parameters/-stdio/index.html">McpConnectionParameters.Stdio</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>sseConnectionParams<span class="token operator">: </span><a href="../-mcp-connection-parameters/-sse/index.html">McpConnectionParameters.Sse</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>streamableHttpConnectionParams<span class="token operator">: </span><a href="../-mcp-connection-parameters/-streamable-http/index.html">McpConnectionParameters.StreamableHttp</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>toolFilter<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">&gt;</span><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>useMcpResources<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-boolean/index.html">Boolean</a><span class="token operator"> = </span><span class="token boolean">false</span><span class="token punctuation">, </span></span><span class="parameter "><span class="token keyword">val </span>maxMcpResourceLength<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span>DEFAULT_MAX_RESOURCE_LENGTH</span></span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Configuration for an <a href="index.html">McpToolset</a>, used to construct one via <a href="-mcp-toolset-config/to-toolset.html">toToolset</a>.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-togglable="FUNCTION">
+        <h2 class="">Functions</h2>
+        <div class="table"><a data-name="-1457917851%2FFunctions%2F-1959370187" anchor-label="close" id="-1457917851%2FFunctions%2F-1959370187" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="close.html"><span><span>close</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1457917851%2FFunctions%2F-1959370187"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain" data-active="" data-toggle=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain">jvm</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">override </span><span class="token keyword">fun </span><a href="close.html"><span class="token function">close</span></a><span class="token punctuation">(</span><span class="token punctuation">)</span></div><div class="brief "><p class="paragraph">Performs cleanup and releases resources held by the toolset.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="963759631%2FFunctions%2F-1959370187" anchor-label="getTools" id="963759631%2FFunctions%2F-1959370187" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="get-tools.html"><span>get</span><wbr><span><span>Tools</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="963759631%2FFunctions%2F-1959370187"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain" data-active="" data-toggle=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain">jvm</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">suspend override </span><span class="token keyword">fun </span><a href="get-tools.html"><span class="token function">getTools</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">readonlyContext<span class="token operator">: </span><a href="../../com.google.adk.kt.agents/-readonly-context/index.html">ReadonlyContext</a><span class="token operator">?</span></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="../../com.google.adk.kt.tools/-base-tool/index.html">BaseTool</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Return all tools in the toolset based on the provided context.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="-1922715311%2FFunctions%2F-1959370187" anchor-label="listResources" id="-1922715311%2FFunctions%2F-1959370187" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="list-resources.html"><span>list</span><wbr><span><span>Resources</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1922715311%2FFunctions%2F-1959370187"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain" data-active="" data-toggle=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain">jvm</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="list-resources.html"><span class="token function">listResources</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">readonlyContext<span class="token operator">: </span><a href="../../com.google.adk.kt.agents/-readonly-context/index.html">ReadonlyContext</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin.collections/-list/index.html">List</a><span class="token operator">&lt;</span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token operator">&gt;</span></div><div class="brief "><p class="paragraph">Returns a list of resource names available on the MCP server.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="1153583277%2FFunctions%2F-1959370187" anchor-label="processLlmRequest" id="1153583277%2FFunctions%2F-1959370187" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="../../com.google.adk.kt.tools/-toolset/process-llm-request.html"><span>process</span><wbr><span>Llm</span><wbr><span><span>Request</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1153583277%2FFunctions%2F-1959370187"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain" data-active="" data-toggle=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain">jvm</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain"><div class="symbol monospace"><span class="token keyword">open </span><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="../../com.google.adk.kt.tools/-toolset/process-llm-request.html"><span class="token function">processLlmRequest</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">toolContext<span class="token operator">: </span><a href="../../com.google.adk.kt.tools/-tool-context/index.html">ToolContext</a><span class="token punctuation">, </span></span><span class="parameter ">llmRequest<span class="token operator">: </span><a href="../../com.google.adk.kt.models/-llm-request/index.html">LlmRequest</a></span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="../../com.google.adk.kt.models/-llm-request/index.html">LlmRequest</a></div><div class="brief "><p class="paragraph">Allows the toolset to process the LLM request.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+<a data-name="510238227%2FFunctions%2F-1959370187" anchor-label="readResource" id="510238227%2FFunctions%2F-1959370187" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain"></a>
+          <div class="table-row" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain">
+            <div class="main-subrow keyValue ">
+              <div class=""><span class="inline-flex">
+                  <div><a href="read-resource.html"><span>read</span><wbr><span><span>Resource</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="510238227%2FFunctions%2F-1959370187"></span>
+                    <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                  </span></span></div>
+              <div>
+                <div class="title">
+                  <div class="platform-hinted  with-platform-tabs" data-platform-hinted="data-platform-hinted">
+                    <div class="platform-bookmarks-row" data-toggle-list="data-toggle-list"><button class="platform-bookmark" data-filterable-current=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain" data-filterable-set=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain" data-active="" data-toggle=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain">jvm</button></div>
+<div class="content sourceset-dependent-content" data-active="" data-togglable=":google-adk-kotlin-core:dokkaHtmlPartial/jvmMain"><div class="symbol monospace"><span class="token keyword">suspend </span><span class="token keyword">fun </span><a href="read-resource.html"><span class="token function">readResource</span></a><span class="token punctuation">(</span><span class="parameters "><span class="parameter ">uri<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-string/index.html">String</a><span class="token punctuation">, </span></span><span class="parameter ">readonlyContext<span class="token operator">: </span><a href="../../com.google.adk.kt.agents/-readonly-context/index.html">ReadonlyContext</a><span class="token operator">?</span><span class="token operator"> = </span>null</span></span><span class="token punctuation">)</span><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin-stdlib/kotlin/-any/index.html">Any</a></div><div class="brief "><p class="paragraph">Fetches and returns a list of contents of the resource with the given URI.</p></div></div>                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      <div class="footer">
+        <span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2026 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+      </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
