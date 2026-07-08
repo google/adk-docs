@@ -8,13 +8,16 @@ catalog_tags: ["data","google"]
 # Google Cloud Spanner tool for ADK
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.11.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.11.0</span><span class="lst-preview">Experimental</span>
 </div>
 
 [Google Cloud Spanner](https://cloud.google.com/spanner) is a fully managed,
 distributed database with support for SQL and vector search. The ADK Spanner
 tools let your agent explore database schemas, run SQL queries, and perform
 vector similarity search against your Spanner data.
+
+!!! example "Experimental"
+    This feature is experimental and may be updated in future releases.
 
 ## Available tools
 
@@ -46,10 +49,6 @@ models to retrieve database context based on semantic meaning rather than exact
 keyword matches. By configuring `SpannerVectorStoreSettings`, your agents can
 better understand the intent behind user queries and ground their responses in
 the most relevant Spanner data.
-
-!!! example "Experimental"
-
-    This feature is experimental and may be updated in future releases.
 
 The following example configures a Spanner table as a vector store and wires the
 `vector_store_similarity_search` tool into a RAG agent:
