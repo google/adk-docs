@@ -11,20 +11,6 @@ catalog_tags: ["observability", "google"]
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.21.0</span><span class="lst-java">Java v1.5.0</span>
 </div>
 
-!!! important "Version Requirement"
-
-    Use ADK Python version 1.26.0 or higher for auto-schema-upgrade, tool
-    provenance tracking, and HITL event tracing, and 1.27.0 or higher for
-    automatic view creation.
-
-    The **ADK 2.0** multi-agent workflow features in this document — the
-    `AGENT_TRANSFER`, `AGENT_STATE_CHECKPOINT`, `EVENT_COMPACTION`, and
-    `TOOL_PAUSED` event types, the `attributes.adk` envelope, and the ADK 2.0
-    views and columns — require a newer build of the plugin. As of this writing
-    that support is present on `google/adk-python` `main` but is **not yet in a
-    published release** (it is not in `v2.2.0`, the latest release). See [Agent
-    workflow and pause/resume events (ADK 2.0)](#adk-2-events) for details.
-
 The BigQuery Agent Analytics Plugin significantly enhances Agent Development Kit
 (ADK) by providing a robust solution for in-depth agent behavior analysis. Using
 the ADK Plugin architecture and the **BigQuery Storage Write API**, it captures
@@ -32,11 +18,11 @@ and logs critical operational events directly into a Google BigQuery table,
 empowering you with advanced capabilities for debugging, real-time monitoring,
 and comprehensive offline performance evaluation.
 
-Python version 1.26.0 adds **Auto Schema Upgrade** (safely add new columns to existing
-tables), **Tool Provenance** tracking (LOCAL, MCP, SUB_AGENT, A2A,
-TRANSFER_AGENT, TRANSFER_A2A), and **HITL Event Tracing** for human-in-the-loop
-interactions. Version 1.27.0 adds **Automatic View Creation** (generate flat,
-query-friendly event views).
+The plugin also provides **Auto Schema Upgrade** (safely add new columns to
+existing tables), **Tool Provenance** tracking (LOCAL, MCP, SUB_AGENT, A2A,
+TRANSFER_AGENT, TRANSFER_A2A), **HITL Event Tracing** for human-in-the-loop
+interactions, and **Automatic View Creation** (generate flat, query-friendly
+event views).
 
 Support for **ADK 2.0** multi-agent workflows extends tracing to agent
 transfers, state checkpoints, event compaction, and long-running tools. It adds
@@ -44,8 +30,7 @@ four new event types — `AGENT_TRANSFER`, `AGENT_STATE_CHECKPOINT`,
 `EVENT_COMPACTION`, and `TOOL_PAUSED` — and stamps an `attributes.adk` envelope
 on every row so you can reconstruct the agent execution graph and join a paused
 tool to the row that resumes it. See [Agent workflow and pause/resume events
-(ADK 2.0)](#adk-2-events) for the event details and the release that includes
-this support.
+(ADK 2.0)](#adk-2-events) for details.
 
 The plugin includes three reliability and observability fixes:
 
@@ -567,8 +552,11 @@ account) under which the agent is running needs these Google Cloud roles:
     | `log_session_metadata` | `bool` | `True` | Add session info to `attributes` (`session_id`, `app_name`, `user_id`, `state`). Keys prefixed `temp:` or `secret:` are [redacted](#built-in-redaction). |
     | `custom_tags` | `Dict[str, Any]` | `{}` | Add static tags (e.g., `{"env": "prod"}`) to every event's `attributes` |
     | `auto_schema_upgrade` | `bool` | `True` | Automatically add new columns to existing tables (additive only) |
-    | `create_views` | `bool` | `True` | Create per-event-type BigQuery views (1.27.0+) |
+    | `create_views` | `bool` | `True` | Create per-event-type BigQuery views |
     | `view_prefix` | `str` | `"v"` | Avoid view-name collisions when multiple plugins share a dataset (e.g., `"v_staging"`) |
+    | `enable_otel_correlation` | `bool` | `False` | Capture the ambient OpenTelemetry span context into `attributes.otel.{span_id, trace_id}` as a best-effort Cloud Trace join key |
+    | `custom_metadata_allowlist` | `Optional[List[str]]` | `None` | Capture selected `event.custom_metadata` keys into `attributes.custom_metadata.*` — exact keys or `"prefix*"` patterns |
+    | `payload_column_denylist` | `Optional[List[str]]` | `None` | Project payload columns (`content`, `content_parts`, `attributes`, `latency_ms`) out of the table at write time |
 
 
     The following code sample shows how to define a configuration for the BigQuery
@@ -618,6 +606,41 @@ account) under which the agent is running needs these Google Cloud roles:
         project_id="my-project",
         dataset_id="my_dataset",
         config=config,
+    )
+    ```
+
+    ### Trace correlation, metadata capture, and column projection
+
+    <div class="language-support-tag">
+      <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.4.0</span>
+    </div>
+
+    Three options control what extra context lands in `attributes` — and whether
+    payload columns are written at all. Each is listed in the
+    `BigQueryLoggerConfig` options table above; the notes below add the
+    cross-option rules the flat table can't express:
+
+    - **`enable_otel_correlation`** — the captured span context is a best-effort
+      Cloud Trace correlation key, not a foreign key; when disabled (the
+      default) no `attributes.otel` is written.
+    - **`custom_metadata_allowlist`** — leaving it unset preserves the previous
+      behavior, where only the built-in `a2a:*` capture runs. Captured values
+      pass the same safety pipeline as all other logged content (truncation,
+      sensitive-key redaction, circular-reference handling).
+    - **`payload_column_denylist`** — only `content`, `content_parts`,
+      `attributes`, and `latency_ms` may be listed; identity and correlation
+      columns are protected and raise `ValueError`. The projection is applied
+      schema-first, so the table schema, the written rows, and the auto-created
+      views stay consistent (views drop derived columns that depend on a denied
+      column). Denying `attributes` also disables `attributes.otel` and
+      `attributes.custom_metadata`, and combining it with a non-empty
+      `custom_metadata_allowlist` is rejected at construction.
+
+    ```python
+    config = BigQueryLoggerConfig(
+        enable_otel_correlation=True,                      # join key against Cloud Trace
+        custom_metadata_allowlist=["ticket_id", "exp:*"],  # capture selected custom_metadata keys
+        # payload_column_denylist=["content_parts"],       # don't persist multimodal payloads
     )
     ```
 
@@ -753,9 +776,13 @@ you can optionally create the table manually using the DDL below.
     CLUSTER BY event_type, agent, user_id;
     ```
 
-### Automatically Created Views (1.27.0+)
+### Automatically Created Views
 
-When `create_views=True` (the default in 1.27.0 and higher), the plugin
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.27.0</span>
+</div>
+
+When `create_views=True` (the default), the plugin
 automatically generates views for each event type that unnest common JSON
 structures into flat, typed columns. This significantly simplifies SQL,
 eliminating the need to write complex `JSON_VALUE` or `JSON_QUERY` functions
@@ -798,10 +825,10 @@ columns:
 | --- | --- |
 | **`v_user_message_received`** | *(common columns only)* |
 | **`v_llm_request`** | `model` (STRING), `request_content` (JSON), `llm_config` (JSON), `tools` (JSON) |
-| **`v_llm_response`** | `response` (JSON), `usage_prompt_tokens` (INT64), `usage_completion_tokens` (INT64), `usage_total_tokens` (INT64), `usage_cached_tokens` (INT64), `total_ms` (INT64), `ttft_ms` (INT64), `model_version` (STRING), `usage_metadata` (JSON), `cache_metadata` (JSON), `context_cache_hit_rate` (FLOAT64) |
+| **`v_llm_response`** | `response` (JSON), `usage_prompt_tokens` (INT64), `usage_completion_tokens` (INT64), `usage_total_tokens` (INT64), `usage_cached_tokens` (INT64), `usage_thinking_tokens` (INT64), `usage_tool_use_tokens` (INT64), `total_ms` (INT64), `ttft_ms` (INT64), `model_version` (STRING), `usage_metadata` (JSON), `cache_metadata` (JSON), `context_cache_hit_rate` (FLOAT64) |
 | **`v_llm_error`** | `total_ms` (INT64) |
 | **`v_tool_starting`** | `tool_name` (STRING), `tool_args` (JSON), `tool_origin` (STRING) |
-| **`v_tool_completed`** | `tool_name` (STRING), `tool_result` (JSON), `tool_origin` (STRING), `total_ms` (INT64), `pause_kind` (STRING) †, `function_call_id` (STRING) † |
+| **`v_tool_completed`** | `tool_name` (STRING), `tool_result` (JSON), `tool_origin` (STRING), `total_ms` (INT64), `pause_kind` (STRING), `function_call_id` (STRING) |
 | **`v_tool_error`** | `tool_name` (STRING), `tool_args` (JSON), `tool_origin` (STRING), `total_ms` (INT64) |
 | **`v_agent_starting`** | `agent_instruction` (STRING) |
 | **`v_agent_completed`** | `total_ms` (INT64) |
@@ -813,15 +840,15 @@ columns:
 | **`v_hitl_input_request`** | `tool_name` (STRING), `tool_args` (JSON) |
 | **`v_a2a_interaction`** | `response_content` (JSON), `a2a_task_id` (STRING), `a2a_context_id` (STRING), `a2a_request` (JSON), `a2a_response` (JSON) |
 | **`v_agent_response`** | `response_text` (STRING), `source_event_id` (STRING), `source_event_author` (STRING), `source_event_branch` (STRING) |
-| **`v_agent_transfer`** † | `from_agent` (STRING), `to_agent` (STRING), `source_event_id` (STRING) |
-| **`v_agent_state_checkpoint`** † | `agent_state` (JSON), `agent_state_type` (STRING), `end_of_agent` (BOOL), `source_event_id` (STRING) |
-| **`v_event_compaction`** † | `start_seconds` (FLOAT64), `end_seconds` (FLOAT64), `window_start` (TIMESTAMP), `window_end` (TIMESTAMP), `compacted_content` (JSON, holding the formatted summary string) |
-| **`v_tool_paused`** † | `tool_name` (STRING), `tool_args` (JSON), `pause_kind` (STRING), `function_call_id` (STRING) |
+| **`v_agent_transfer`** | `from_agent` (STRING), `to_agent` (STRING), `source_event_id` (STRING) |
+| **`v_agent_state_checkpoint`** | `agent_state` (JSON), `agent_state_type` (STRING), `end_of_agent` (BOOL), `source_event_id` (STRING) |
+| **`v_event_compaction`** | `start_seconds` (FLOAT64), `end_seconds` (FLOAT64), `window_start` (TIMESTAMP), `window_end` (TIMESTAMP), `compacted_content` (JSON, holding the formatted summary string) |
+| **`v_tool_paused`** | `tool_name` (STRING), `tool_args` (JSON), `pause_kind` (STRING), `function_call_id` (STRING) |
 
-† Part of the [ADK 2.0 workflow event support](#adk-2-events): created only by
-builds that include it (not in `v2.2.0`). On a 1.27.0+ release without that
-support, these four views are not created and `v_tool_completed` does not have
-the `pause_kind` / `function_call_id` columns.
+The four workflow views (`v_agent_transfer`, `v_agent_state_checkpoint`,
+`v_event_compaction`, `v_tool_paused`) and the `pause_kind` / `function_call_id`
+columns on `v_tool_completed` come with the [ADK 2.0 workflow event
+support](#adk-2-events).
 
 ## Event types and payloads {#event-types}
 
@@ -869,6 +896,9 @@ instructions.
   }
 }
 ```
+
+The automatically created `v_llm_request` view exposes the `tools` attribute as
+its `tools` (JSON) column.
 
 **2. LLM_RESPONSE**
 
@@ -1110,15 +1140,9 @@ Logged when an A2A remote agent call completes.
 
 ### Agent workflow and pause/resume events (ADK 2.0) {#adk-2-events}
 
-!!! important "Version Requirement"
-
-    The event types in this section require a build of the plugin that includes
-    the ADK 2.0 workflow event support. As of this writing that support is
-    present on `google/adk-python` `main` but is **not yet in a published
-    release** (it is not in `v2.2.0`, the latest release). On a build without it
-    the plugin does not emit these events and the `attributes.adk` envelope is
-    absent. This note will name the first release that includes the support once
-    it is tagged.
+<div class="language-support-tag">
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v2.3.0</span>
+</div>
 
 ADK 2.0 introduced multi-agent workflows (agents that transfer control,
 checkpoint their state, and compact long histories) and long-running tools that
