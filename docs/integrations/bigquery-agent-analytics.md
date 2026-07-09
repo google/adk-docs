@@ -569,6 +569,9 @@ account) under which the agent is running needs these Google Cloud roles:
     | `auto_schema_upgrade` | `bool` | `True` | Automatically add new columns to existing tables (additive only) |
     | `create_views` | `bool` | `True` | Create per-event-type BigQuery views (1.27.0+) |
     | `view_prefix` | `str` | `"v"` | Avoid view-name collisions when multiple plugins share a dataset (e.g., `"v_staging"`) |
+    | `enable_otel_correlation` | `bool` | `False` | Capture the ambient OpenTelemetry span context into `attributes.otel.{span_id, trace_id}` as a best-effort Cloud Trace join key (v2.4.0+) |
+    | `custom_metadata_allowlist` | `Optional[List[str]]` | `None` | Capture selected `event.custom_metadata` keys into `attributes.custom_metadata.*` — exact keys or `"prefix*"` patterns (v2.4.0+) |
+    | `payload_column_denylist` | `Optional[List[str]]` | `None` | Project payload columns (`content`, `content_parts`, `attributes`, `latency_ms`) out of the table at write time (v2.4.0+) |
 
 
     The following code sample shows how to define a configuration for the BigQuery
@@ -618,6 +621,42 @@ account) under which the agent is running needs these Google Cloud roles:
         project_id="my-project",
         dataset_id="my_dataset",
         config=config,
+    )
+    ```
+
+    ### Trace correlation, metadata capture, and column projection (v2.4.0+)
+
+    Three options control what extra context lands in `attributes` — and whether
+    payload columns are written at all:
+
+    - **`enable_otel_correlation`** — when `True`, each row captures the ambient
+      OpenTelemetry span context at emission time into `attributes.otel.span_id`
+      and `attributes.otel.trace_id`. Use it to join `agent_events` rows against
+      Cloud Trace spans. This is a best-effort correlation key, not a foreign
+      key; when disabled (the default) no `attributes.otel` is written.
+    - **`custom_metadata_allowlist`** — captures selected keys from an event's
+      `custom_metadata` into `attributes.custom_metadata.*`. Entries are exact
+      keys or prefix patterns ending in `*` (for example `"exp:*"`). Captured
+      values pass the same safety pipeline as all other logged content
+      (truncation, sensitive-key redaction, circular-reference handling).
+      Leaving it unset preserves the previous behavior, where only the built-in
+      `a2a:*` capture runs.
+    - **`payload_column_denylist`** — projects payload columns out of the table
+      at write time, for deployments that must not persist payloads. Only
+      `content`, `content_parts`, `attributes`, and `latency_ms` may be listed;
+      identity and correlation columns are protected and raise `ValueError` if
+      listed. The projection is applied schema-first, so the table schema, the
+      written rows, and the auto-created views stay consistent — views drop
+      derived columns that depend on a denied column. Note that denying
+      `attributes` also disables `attributes.otel` and
+      `attributes.custom_metadata`, and combining it with a non-empty
+      `custom_metadata_allowlist` is rejected at construction.
+
+    ```python
+    config = BigQueryLoggerConfig(
+        enable_otel_correlation=True,                      # join key against Cloud Trace
+        custom_metadata_allowlist=["ticket_id", "exp:*"],  # capture selected custom_metadata keys
+        # payload_column_denylist=["content_parts"],       # don't persist multimodal payloads
     )
     ```
 
@@ -798,7 +837,7 @@ columns:
 | --- | --- |
 | **`v_user_message_received`** | *(common columns only)* |
 | **`v_llm_request`** | `model` (STRING), `request_content` (JSON), `llm_config` (JSON), `tools` (JSON) |
-| **`v_llm_response`** | `response` (JSON), `usage_prompt_tokens` (INT64), `usage_completion_tokens` (INT64), `usage_total_tokens` (INT64), `usage_cached_tokens` (INT64), `total_ms` (INT64), `ttft_ms` (INT64), `model_version` (STRING), `usage_metadata` (JSON), `cache_metadata` (JSON), `context_cache_hit_rate` (FLOAT64) |
+| **`v_llm_response`** | `response` (JSON), `usage_prompt_tokens` (INT64), `usage_completion_tokens` (INT64), `usage_total_tokens` (INT64), `usage_cached_tokens` (INT64), `usage_thinking_tokens` (INT64) ‡, `usage_tool_use_tokens` (INT64) ‡, `total_ms` (INT64), `ttft_ms` (INT64), `model_version` (STRING), `usage_metadata` (JSON), `cache_metadata` (JSON), `context_cache_hit_rate` (FLOAT64) |
 | **`v_llm_error`** | `total_ms` (INT64) |
 | **`v_tool_starting`** | `tool_name` (STRING), `tool_args` (JSON), `tool_origin` (STRING) |
 | **`v_tool_completed`** | `tool_name` (STRING), `tool_result` (JSON), `tool_origin` (STRING), `total_ms` (INT64), `pause_kind` (STRING) †, `function_call_id` (STRING) † |
@@ -822,6 +861,11 @@ columns:
 builds that include it (not in `v2.2.0`). On a 1.27.0+ release without that
 support, these four views are not created and `v_tool_completed` does not have
 the `pause_kind` / `function_call_id` columns.
+
+‡ Added in v2.4.0: extracted from `attributes.usage_metadata.thoughts_token_count`
+and `attributes.usage_metadata.tool_use_prompt_token_count`, so thinking-model
+reasoning tokens and tool-use prompt tokens can be tracked (and costed)
+separately from ordinary prompt/completion tokens.
 
 ## Event types and payloads {#event-types}
 
@@ -861,7 +905,21 @@ instructions.
   "attributes": {
     "root_agent_name": "my_bq_agent",
     "model": "gemini-flash-latest",
-    "tools": ["list_dataset_ids", "execute_sql"],
+    "tools": [
+      {
+        "name": "list_dataset_ids",
+        "description": "Fetches BigQuery dataset ids present in a GCP project.",
+        "parameters": {
+          "type": "object",
+          "properties": {"project_id": {"type": "string"}},
+          "required": ["project_id"]
+        }
+      },
+      {
+        "name": "execute_sql",
+        "description": "Run a BigQuery SQL query and return the results."
+      }
+    ],
     "llm_config": {
       "temperature": 0.5,
       "top_p": 0.9
@@ -869,6 +927,15 @@ instructions.
   }
 }
 ```
+
+Each `tools` entry carries the tool `name` and, when available, its
+`description` and OpenAPI `parameters` schema — enough context for downstream
+consumers (such as online evaluation) to judge whether the model selected and
+invoked the right tool. Extraction is best-effort and per-tool, so one tool
+with an unresolvable declaration never drops the whole `tools` attribute.
+Releases up to and including v2.4.0 log a bare list of tool names instead
+(`"tools": ["list_dataset_ids", "execute_sql"]`). The automatically created
+`v_llm_request` view exposes this attribute as its `tools` (JSON) column.
 
 **2. LLM_RESPONSE**
 
