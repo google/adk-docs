@@ -905,6 +905,27 @@ instructions.
   "attributes": {
     "root_agent_name": "my_bq_agent",
     "model": "gemini-flash-latest",
+    "tools": ["list_dataset_ids", "execute_sql"],
+    "llm_config": {
+      "temperature": 0.5,
+      "top_p": 0.9
+    }
+  }
+}
+```
+
+The automatically created `v_llm_request` view exposes the `tools` attribute as
+its `tools` (JSON) column.
+
+!!! note "Structured tool declarations (post-v2.4.0)"
+
+    On builds newer than v2.4.0, each `tools` entry is a structured object
+    carrying the tool `name` and, when available, its `description` and OpenAPI
+    `parameters` schema — enough context for downstream consumers (such as
+    online evaluation) to judge whether the model selected and invoked the
+    right tool:
+
+    ```json
     "tools": [
       {
         "name": "list_dataset_ids",
@@ -914,28 +935,12 @@ instructions.
           "properties": {"project_id": {"type": "string"}},
           "required": ["project_id"]
         }
-      },
-      {
-        "name": "execute_sql",
-        "description": "Run a BigQuery SQL query and return the results."
       }
-    ],
-    "llm_config": {
-      "temperature": 0.5,
-      "top_p": 0.9
-    }
-  }
-}
-```
+    ]
+    ```
 
-Each `tools` entry carries the tool `name` and, when available, its
-`description` and OpenAPI `parameters` schema — enough context for downstream
-consumers (such as online evaluation) to judge whether the model selected and
-invoked the right tool. Extraction is best-effort and per-tool, so one tool
-with an unresolvable declaration never drops the whole `tools` attribute.
-Releases up to and including v2.4.0 log a bare list of tool names instead
-(`"tools": ["list_dataset_ids", "execute_sql"]`). The automatically created
-`v_llm_request` view exposes this attribute as its `tools` (JSON) column.
+    Extraction is best-effort and per-tool, so one tool with an unresolvable
+    declaration never drops the whole `tools` attribute.
 
 **2. LLM_RESPONSE**
 
