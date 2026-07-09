@@ -55,6 +55,22 @@ We review contributions for integrations based on the following criteria:
 - **Link to external resources** for detailed platform-specific documentation
 - **Use consistent formatting** with existing documentation pages
 
+## AI-Assisted Development
+
+This repo includes built-in skills for AI coding agents to help with ADK
+documentation contributions:
+
+- **`integration-create`:** Draft a new integration page under
+  `docs/integrations/`: gathers details, picks the right category template (MCP
+  tool, observability, or plugin), and follows the catalog conventions.
+
+- **`integration-review`:** Review an integration page or PR for correct
+  frontmatter, structure, working code, valid links, and catalog conventions,
+  and produce a prioritized report.
+
+These skills are located in `.agents/skills/` and are automatically available
+when using compatible AI coding tools in this repo.
+
 ## Set Up Your Environment
 
 1. **Clone the repository:**
@@ -144,6 +160,11 @@ ADK agents. All integrations live under `docs/integrations/`. Examples include
 [GitHub](https://adk.dev/integrations/github/),
 [Daytona](https://adk.dev/integrations/daytona/), and
 [AgentOps](https://adk.dev/integrations/agentops/).
+
+> [!TIP]
+> If you use an AI coding agent in this repo, the `integration-create` skill can
+> scaffold a draft page for you, and `integration-review` can check it before you
+> submit. See [AI-Assisted Development](#ai-assisted-development).
 
 **To contribute an integration:**
 
