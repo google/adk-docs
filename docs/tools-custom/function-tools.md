@@ -13,21 +13,21 @@ ADK offers several ways to create functions tools, each suited to different leve
 *  [Long Running Function Tools](#long-run-tool)
 *  [Agents-as-a-Tool](#agent-tool)
 
-## Function Tools {#function-tool}
+## Create function tools {#function-tool}
 
 Transforming a Python function into a tool is a straightforward way to integrate custom logic into your agents. When you assign a function to an agent’s `tools` list, the framework automatically wraps it as a `FunctionTool`.
 
-### How it Works
+### How it works
 
 The ADK framework automatically inspects your Python function's signature—including its name, docstring, parameters, type hints, and default values—to generate a schema. This schema is what the LLM uses to understand the tool's purpose, when to use it, and what arguments it requires.
 
-### Defining Function Signatures
+### Define function signatures
 
 A well-defined function signature is crucial for the LLM to use your tool correctly.
 
 #### Parameters
 
-##### Required Parameters
+##### Required parameters
 
 === "Python"
     A parameter is considered **required** if it has a type hint but **no default value**. The LLM must provide a value for this argument when it calls the tool. The parameter's description is taken from the function's docstring.
@@ -100,7 +100,7 @@ A well-defined function signature is crucial for the LLM to use your tool correc
         ```
     In this example, both `location` and `unit` are mandatory.
 
-##### Optional Parameters
+##### Optional parameters
 
 === "Python"
     A parameter is considered **optional** if you provide a **default value**. This is the standard Python way to define optional arguments. You can also mark a parameter as optional using `typing.Optional[SomeType]` or the `| None` syntax (Python 3.10+).
@@ -181,8 +181,10 @@ A well-defined function signature is crucial for the LLM to use your tool correc
         ```
     Here, `flexibleDays` is optional. The LLM can choose to provide it, but it's not required.
 
-##### Optional Parameters with `typing.Optional`
-You can also mark a parameter as optional using `typing.Optional[SomeType]` or the `| None` syntax (Python 3.10+). This signals that the parameter can be `None`. When combined with a default value of `None`, it behaves as a standard optional parameter.
+##### Optional parameters with `typing.Optional`
+
+You can also mark a parameter as optional using `typing.Optional[SomeType]` or the `| None` syntax (Python 3.10+).
+This signals that the parameter can be `None`. When combined with a default value of `None`, it behaves as a standard optional parameter.
 
 ???+ "Example: `typing.Optional`"
     === "Python"
@@ -203,10 +205,52 @@ You can also mark a parameter as optional using `typing.Optional[SomeType]` or t
             return {"status": "success", "message": f"Profile for {username} created."}
         ```
 
-##### Variadic Parameters (`*args` and `**kwargs`)
-While you can include `*args` (variable positional arguments) and `**kwargs` (variable keyword arguments) in your function signature for other purposes, they are **ignored by the ADK framework** when generating the tool schema for the LLM. The LLM will not be aware of them and cannot pass arguments to them. It's best to rely on explicitly defined parameters for all data you expect from the LLM.
+##### Variadic parameters (`*args` and `**kwargs`)
 
-#### Return Type
+While you can include `*args` (variable positional arguments) and `**kwargs` (variable keyword arguments)
+in your function signature for other purposes, they are **ignored by the ADK framework** when generating 
+the tool schema for the LLM. The LLM will not be aware of them and cannot pass arguments to them. It's best
+to rely on explicitly defined parameters for all data you expect from the LLM.
+
+#### Context injection
+
+Context injection allows your custom functions to access the agent's environment, 
+such as session state or available actions. To enable, add a parameter typed as 
+`ToolContext` to your function. 
+ADK automatically injects the context data before your function runs and ensures
+this parameter is not visible to the LLM.
+
+```python
+from google.adk.tools import FunctionTool
+from google.adk.types import ToolContext
+
+def my_tool(arg1: str, tool_context: ToolContext):
+  # Example: Accessing session state
+  user_id = tool_context.state.get("user_id")
+  # Example: Triggering an action
+  # tool_context.actions.transfer_to_agent = ("secondary_agent")
+  pass
+```
+
+`ToolContext` provides access to:
+
+* **`state`:** A dictionary-like object for session-scoped data.
+* **`actions`:** Controls for agent behavior, for example `transfer_to_agent`.
+* **Methods**: To handle artifacts, such as `load_artifact` or `save_artifact`.
+
+##### Customize the name
+
+By default, ADK looks for a parameter named `tool_context`. You can customize 
+this name using the `context_param_name` argument in `FunctionTool`:
+
+```python
+my_function_tool = FunctionTool(
+    func=my_tool,
+    context_param_name="agent_env" # Injects ToolContext into a parameter named 'agent_env'
+)
+```
+
+#### Return type
 
 The preferred return type for a Function Tool is a **dictionary** in Python, a **Map** or custom **Record or POJO** in Java, an **object** in TypeScript, or a **Map** or **Data Class** in Kotlin. This allows you to structure the response with key-value pairs, providing context and clarity to the LLM. If your function returns a type other than a dictionary or map, the framework automatically wraps it into a dictionary with a single key named **"result"**.
 
@@ -216,7 +260,7 @@ Strive to make your return values as descriptive as possible. *For example,* ins
 
 The docstring of your function serves as the tool's **description** and is sent to the LLM. Therefore, a well-written and comprehensive docstring is crucial for the LLM to understand how to use the tool effectively. Clearly explain the purpose of the function, the meaning of its parameters, and the expected return values. In Java, you can use Javadoc comments or the `@Schema(description="...")` annotation on your method to serve as this description. In Kotlin, you can use KDoc comments or the `@Tool(description="...")` and `@Param(description="...")` annotations to provide these descriptions.
 
-### Passing Data Between Tools
+### Pass data between tools
 
 When an agent calls multiple tools in a sequence, you might need to pass data from one tool to another. The recommended way to do this is by using the `temp:` prefix in the session state.
 
@@ -312,7 +356,7 @@ A tool can write data to a `temp:` variable, and a subsequent tool can read it. 
         For input `GOOG`: {"symbol": "GOOG", "price": 123.45}
         ```
 
-### Best Practices
+### Best practices
 
 While you have considerable flexibility in defining your function, remember that simplicity enhances usability for the LLM. Consider these guidelines:
 
@@ -322,38 +366,36 @@ While you have considerable flexibility in defining your function, remember that
 * **Build for Parallel Execution:** Improve function calling performance when multiple tools are run by building for asynchronous operation. For information on enabling parallel execution for tools, see
 [Increase tool performance with parallel execution](/tools-custom/performance/).
 
-## Long Running Function Tools {#long-run-tool}
+## Long running function tools {#long-run-tool}
 
 This tool is designed to help you start and manage tasks that are handled outside the operation of your agent workflow, and require a significant amount of processing time, without blocking the agent's execution. This tool is a subclass of `FunctionTool`.
 
 When using a `LongRunningFunctionTool`, your function can initiate the long-running operation and optionally return an **initial result**, such as a long-running operation id. Once a long running function tool is invoked the agent runner pauses the agent run and lets the agent client to decide whether to continue or wait until the long-running operation finishes. The agent client can query the progress of the long-running operation and send back an intermediate or final response. The agent can then continue with other tasks. An example is the human-in-the-loop scenario where the agent needs human approval before proceeding with a task.
 
 !!! warning "Warning: Execution handling"
+    
     Long Running Function Tools are designed to help you start and *manage* long running
     tasks as part of your agent workflow, but ***not perform*** the actual, long task.
     For tasks that require significant time to complete, you should implement a separate
     server to do the task.
 
 !!! tip "Tip: Parallel execution"
+    
     Depending on the type of tool you are building, designing for asynchronous
     operation may be a better solution than creating a long running tool. For
     more information, see
     [Increase tool performance with parallel execution](/tools-custom/performance/).
 
-### How it Works
+### How it works
 
 In Python, you wrap a function with `LongRunningFunctionTool`. In Java, you pass a Method name to `LongRunningFunctionTool.create()`. In TypeScript, you instantiate the `LongRunningFunctionTool` class.
 
-
 1. **Initiation:** When the LLM calls the tool, your function starts the long-running operation.
-
 2. **Initial Updates:** Your function should optionally return an initial result (e.g. the long-running operation id). The ADK framework takes the result and sends it back to the LLM packaged within a `FunctionResponse`. This allows the LLM to inform the user (e.g., status, percentage complete, messages). And then the agent run is ended / paused.
-
 3. **Continue or Wait:** After each agent run is completed. Agent client can query the progress of the long-running operation and decide whether to continue the agent run with an intermediate response (to update the progress) or wait until a final response is retrieved. Agent client should send the intermediate or final response back to the agent for the next run.
-
 4. **Framework Handling:** The ADK framework manages the execution. It sends the intermediate or final `FunctionResponse` sent by agent client to the LLM to generate a user friendly message.
 
-### Creating the Tool
+### Create the tool
 
 Define your tool function and wrap it using the `LongRunningFunctionTool` class:
 
@@ -434,7 +476,7 @@ Define your tool function and wrap it using the `LongRunningFunctionTool` class:
     --8<-- "examples/kotlin/snippets/tools/function-tools/LongRunningTool.kt:long_running_tool"
     ```
 
-### Intermediate / Final result Updates
+### Intermediate / final result updates
 
 Agent client received an event with long running function calls and check the status of the ticket. Then Agent client can send the intermediate or final response back to update the progress. The framework packages this value (even if it's None) into the content of the `FunctionResponse` sent back to the LLM.
 
@@ -519,12 +561,10 @@ Agent client received an event with long running function calls and check the st
 #### Key aspects of this example
 
 * **`LongRunningFunctionTool`**: Wraps the supplied method/function; the framework handles sending yielded updates and the final return value as sequential FunctionResponses.
-
 * **Agent instruction**: Directs the LLM to use the tool and understand the incoming FunctionResponse stream (progress vs. completion) for user updates.
-
 * **Final return**: The function returns the final result dictionary, which is sent in the concluding FunctionResponse to indicate completion.
 
-## Agent-as-a-Tool {#agent-tool}
+## Agent-as-a-tool {#agent-tool}
 
 This powerful feature allows you to leverage the capabilities of other agents within your system by calling them as tools. The Agent-as-a-Tool enables you to invoke another agent to perform a specific task, effectively **delegating responsibility**. This is conceptually similar to creating a Python function that calls another agent and uses the agent's response as the function's return value.
 
@@ -533,10 +573,9 @@ This powerful feature allows you to leverage the capabilities of other agents wi
 It's important to distinguish an Agent-as-a-Tool from a Sub-Agent.
 
 * **Agent-as-a-Tool:** When Agent A calls Agent B as a tool (using Agent-as-a-Tool), Agent B's answer is **passed back** to Agent A, which then summarizes the answer and generates a response to the user. Agent A retains control and continues to handle future user input.
-
 * **Sub-agent:** When Agent A calls Agent B as a sub-agent, the responsibility of answering the user is completely **transferred to Agent B**. Agent A is effectively out of the loop. All subsequent user input will be answered by Agent B.
 
-### Usage
+### Use the agent
 
 To use an agent as a tool, wrap the agent with the AgentTool class.
 
