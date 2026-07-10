@@ -115,7 +115,7 @@ mostly a trade-off between out-of-the-box power and fine-grained control.
 ## How it works
 
 When you invoke a `ManagedAgent`, ADK sends your request to the managed agent via
-the [Interactions API](https://docs.cloud.google.com/gemini-enterprise-agent-platform/build/managed-agents/interact-with-agents)
+the [Interactions API](https://ai.google.dev/gemini-api/docs/interactions-overview)
 and streams the results, both partial and final, back into your ADK flow in real
 time. The reasoning, tools, and execution all run in Google's managed environment
 rather than in your ADK process.
