@@ -87,10 +87,11 @@ catalog_tags: ["<tag>", "<tag>"]
 ```
 
 - **`catalog_title`**: the human-readable product name shown on the card.
-- **`catalog_description`**: short, verb-led, roughly 40 to 60 characters (about
-  8 to 12 words). Flag anything long enough to wrap awkwardly on a card. It must
-  **not repeat the product name** (the title already shows it). No verbose lists
-  of technologies; describe what the integration does. No overclaims.
+- **`catalog_description`**: short, verb-led, roughly 45 to 75 characters (about
+  6 to 11 words). Flag anything over ~80 characters as likely to wrap awkwardly
+  on a card. It must **not repeat the product name** (the title already shows
+  it). No verbose lists of technologies; describe what the integration does. No
+  overclaims.
 - **`catalog_icon`**: `/integrations/assets/<slug>.png` (or `.svg` or `.jpg`).
   The referenced asset file must actually exist in `docs/integrations/assets/`
   and be a real image.

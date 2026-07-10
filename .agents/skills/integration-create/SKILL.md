@@ -81,8 +81,10 @@ catalog_tags: ["<tag>", "<tag>"]
 ---
 ```
 
-- `catalog_description`: short and verb-led, roughly 40 to 60 characters. Do not
-  repeat the product name (the title shows it). No verbose lists, no overclaims.
+- `catalog_description`: short and verb-led, roughly 45 to 75 characters (about
+  6 to 11 words); keep it under ~80 so it does not wrap awkwardly on a card. Do
+  not repeat the product name (the title shows it). No verbose lists, no
+  overclaims.
 - `catalog_tags`: use only tags that already exist in the catalog; never invent
   one. List the valid tags by scanning the `catalog_tags` field across
   `docs/integrations/*.md` first. Tags combine. Any page that uses MCP must
