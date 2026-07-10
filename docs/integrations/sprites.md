@@ -14,9 +14,10 @@ catalog_tags: ["code"]
 The [Sprites ADK plugin](https://github.com/superfly/sprites-adk) connects your
 ADK agent to [Sprites](https://sprites.dev) — persistent, stateful Linux
 sandboxes from [Fly.io](https://fly.io). Unlike ephemeral sandboxes, a Sprite
-keeps its filesystem, installed packages, and services between sessions, and it
-can **checkpoint and restore** its entire state — so an agent can snapshot the
-environment before a risky change and roll back if it goes wrong.
+keeps its filesystem, installed packages, and running processes between
+sessions, and it can **checkpoint and restore** its entire state — so your
+agent can snapshot the environment before a risky change and roll back if it
+goes wrong.
 
 ## Use cases
 
@@ -27,8 +28,8 @@ environment before a risky change and roll back if it goes wrong.
 - **Secure code execution**: Run agent-generated Python, JavaScript, or bash in
   an isolated microVM instead of on the host machine.
 
-- **Checkpoint and rollback**: Snapshot the whole environment before package
-  upgrades, migrations, or bulk edits, and restore it if the change breaks
+- **Fearless experimentation**: Checkpoint the whole environment before package
+  upgrades, migrations, or bulk edits, then restore it if the change breaks
   things.
 
 - **File workflows**: Write scripts and data into the sandbox, run them, and
@@ -51,9 +52,8 @@ pip install sprites-adk
 from sprites_adk import SpritesPlugin
 from google.adk.agents import Agent
 
-# SpritesPlugin() creates an ephemeral sandbox, destroyed on plugin.close().
-# SpritesPlugin(sprite_name="my-project") attaches to a persistent environment
-# whose state is reused across sessions.
+# SpritesPlugin() gives each run a fresh sandbox; SpritesPlugin(sprite_name="my-project")
+# reuses one persistent environment across sessions.
 plugin = SpritesPlugin(
   # token="your-sprites-token"  # Or set the SPRITES_TOKEN environment variable
 )
