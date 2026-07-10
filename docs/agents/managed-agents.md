@@ -4,8 +4,8 @@
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span>
 </div>
 
-Managed agents let you use Google's first-party, out-of-the-box agents—backed by
-the Managed Agents API (`interactions.create`)—from within your ADK flows. The
+Managed agents let you use Google's first-party, out-of-the-box agents, backed by
+the Managed Agents API (`interactions.create`), from within your ADK flows. The
 `ManagedAgent` class connects to a managed agent (such as the Antigravity agent)
 that runs in a specialized, server-side execution environment, so you get
 powerful built-in capabilities without managing sandboxes or writing client-side
@@ -29,7 +29,7 @@ This gives you:
 *   **First-party, out-of-the-box agents.** Connect to ready-made agents (for
     example, the Antigravity agent) by referencing their `agent_id`.
 *   **Built-in, server-side execution.** Capabilities such as web search and code
-    execution run in a managed sandbox on the server—no local sandbox to
+    execution run in a managed sandbox on the server, with no local sandbox to
     provision or secure.
 *   **No client-side function declarations.** Server-side tools are configured on
     the managed agent, so you don't declare or execute them locally.
@@ -55,8 +55,8 @@ The Gemini Enterprise Agents Platform (GEAP) was formerly known as Vertex.
 
 *   **Authentication.** GEAP requires Google Cloud credentials. Follow the
     [GEAP setup instructions](https://docs.cloud.google.com/gemini-enterprise-agent-platform/build/managed-agents/create-manage#before-you-begin)
-    to authenticate your local environment—for example, with
-    `gcloud auth application-default login`.
+    to authenticate your local environment (for example, with
+    `gcloud auth application-default login`).
 *   **Location.** The Managed Agents API is served only from the `global`
     location. `ManagedAgent` enforces a connection to `global` on the GEAP
     backend.
@@ -112,26 +112,23 @@ mostly a trade-off between out-of-the-box power and fine-grained control.
     fine-grained control over the model, instructions, tools (including custom
     function tools and MCP tools), and where execution happens.
 
-Use the following table as a starting point:
-
-| Scenario | Recommended path |
-| --- | --- |
-| You need web-grounded answers or server-side code execution with no tool or sandbox setup | Managed agent |
-| You want to use a first-party, out-of-the-box agent (such as Antigravity) as-is | Managed agent |
-| You need custom Python function tools, callables, or MCP tools | Build your own ADK agent |
-| You need custom instructions, a specific model, or client-side tool execution | Build your own ADK agent |
-| You need a regional (non-`global`) deployment on GEAP | Build your own ADK agent |
-
 ## How it works
 
-`ManagedAgent` implements the `BaseAgent` contract but bypasses standard
-`generate_content` calls. Instead, it sends interactions via
-`_create_interactions` with `background=True` and streams partial and terminal
-events back to the ADK `Runner` or parent flow in real time. On the GEAP backend
-it enforces a connection to the `global` location, since the Managed Agents API
-is only available globally. Tools are translated into standard `ToolParam`
-formats; any raw `google.genai.types.Tool` configs are passed through to the
-backend, enabling server-side code execution or web search.
+When you invoke a `ManagedAgent`, ADK sends your request to the managed agent via
+the [Interactions API](https://docs.cloud.google.com/gemini-enterprise-agent-platform/build/managed-agents/interact-with-agents)
+and streams the results, both partial and final, back into your ADK flow in real
+time. The reasoning, tools, and execution all run in Google's managed environment
+rather than in your ADK process.
+
+!!! note "How `ManagedAgent` maps to the Managed Agents API"
+    An ADK `ManagedAgent` does not create or register a new managed agent
+    resource. It connects to an agent that already exists on the backend (the one
+    named by `agent_id`) and applies its configuration (such as `tools` and
+    `environment`) as per-interaction overrides at runtime. In Managed Agents API
+    terms, ADK works entirely on the *data plane* (the Interactions API) and
+    leaves the *control plane* (the Agents API, which creates and manages agent
+    resources) untouched. For how these two planes differ, see the
+    [Managed Agents API system architecture](https://docs.cloud.google.com/gemini-enterprise-agent-platform/build/managed-agents).
 
 ### Local session vs. remote state
 
@@ -141,8 +138,8 @@ values on the events it emits: the `previous_interaction_id` and the sandbox
 session events, then reuses them so the conversation and its sandbox continue.
 
 Everything else lives server-side. The Managed Agents API owns the sandbox
-environment and the full interaction history, and that remote interaction—not the
-local session—is the source of truth for continuing a conversation. Response text
+environment and the full interaction history, and that remote interaction, not the
+local session, is the source of truth for continuing a conversation. Response text
 appears in both the local ADK events and the remote interaction history, but ADK
 stores only the IDs it needs to recover and reuse the remote state; it never
 re-sends prior turns.
