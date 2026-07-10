@@ -28,7 +28,7 @@ goes wrong.
 - **Secure code execution**: Run agent-generated Python, JavaScript, or bash in
   an isolated microVM instead of on the host machine.
 
-- **Fearless experimentation**: Checkpoint the whole environment before package
+- **Safe experimentation**: Checkpoint the whole environment before package
   upgrades, migrations, or bulk edits, then restore it if the change breaks
   things.
 
@@ -51,6 +51,7 @@ pip install sprites-adk
 ```python
 from sprites_adk import SpritesPlugin
 from google.adk.agents import Agent
+from google.adk.runners import InMemoryRunner
 
 # SpritesPlugin() gives each run a fresh sandbox; SpritesPlugin(sprite_name="my-project")
 # reuses one persistent environment across sessions.
@@ -64,6 +65,9 @@ root_agent = Agent(
     instruction="Run code and commands in the Sprite sandbox, not locally.",
     tools=plugin.get_tools(),
 )
+
+# Register the plugin on the runner so its lifecycle callbacks and cleanup run.
+runner = InMemoryRunner(agent=root_agent, plugins=[plugin])
 ```
 
 ## Available tools
