@@ -121,3 +121,57 @@ Use the following table as a starting point:
 | You need custom Python function tools, callables, or MCP tools | Build your own ADK agent |
 | You need custom instructions, a specific model, or client-side tool execution | Build your own ADK agent |
 | You need a regional (non-`global`) deployment on GEAP | Build your own ADK agent |
+
+## How it works
+
+`ManagedAgent` implements the `BaseAgent` contract but bypasses standard
+`generate_content` calls. Instead, it sends interactions via
+`_create_interactions` with `background=True` and streams partial and terminal
+events back to the ADK `Runner` or parent flow in real time. On the GEAP backend
+it enforces a connection to the `global` location, since the Managed Agents API
+is only available globally. Tools are translated into standard `ToolParam`
+formats; any raw `google.genai.types.Tool` configs are passed through to the
+backend, enabling server-side code execution or web search.
+
+### Local session vs. remote state
+
+`ManagedAgent` keeps almost no state locally. The ADK session persists only two
+values on the events it emits: the `previous_interaction_id` and the sandbox
+`environment_id`. On each new turn the agent recovers both by scanning prior
+session events, then reuses them so the conversation and its sandbox continue.
+
+Everything else lives server-side. The Managed Agents API owns the sandbox
+environment and the full interaction history, and that remote interaction—not the
+local session—is the source of truth for continuing a conversation. Response text
+appears in both the local ADK events and the remote interaction history, but ADK
+stores only the IDs it needs to recover and reuse the remote state; it never
+re-sends prior turns.
+
+## Limitations and notes
+
+*   **Location pinned (GEAP only).** For the GEAP backend, the Managed Agents API
+    is currently served only from the `global` location. Regional endpoints raise
+    an error.
+*   **Server-side tools only.** Client-executed tools (Python functions,
+    callables) and MCP tools are not supported and raise a `NotImplementedError`.
+*   **Streaming only.** The agent uses streaming interactions (`stream=True`).
+    Background-polling execution and strictly non-streaming connections are not
+    yet fully supported.
+*   **Backend differences.** The Gemini API and GEAP backends currently exhibit
+    slightly different behavioral patterns. Test against the specific backend you
+    intend to use.
+
+## Related resources
+
+*   **Samples:**
+    [Managed Agent Basic](https://github.com/google/adk-python/tree/main/contributing/samples/managed_agent/basic)
+    and
+    [Managed Agent Code Execution](https://github.com/google/adk-python/tree/main/contributing/samples/managed_agent/code_execution).
+*   **Backend documentation:**
+    [Gemini API Agents](https://ai.google.dev/gemini-api/docs/agents)
+    and
+    [GEAP Managed Agents](https://docs.cloud.google.com/gemini-enterprise-agent-platform/build/managed-agents).
+*   **Related ADK topics:**
+    [Models for agents](/agents/models/),
+    [Multi-agent workflows](/workflows/), and
+    [Custom tools](/tools-custom/).
