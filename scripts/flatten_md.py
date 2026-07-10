@@ -69,6 +69,10 @@ def on_post_build(config, **kwargs) -> None:  # noqa: ARG001
         renamed += 1
 
     # Pass 2: rewrite site-internal .../index.md links in all text outputs.
+    # Load-bearing assumption: internal .md links are absolute {site_url}/... URLs
+    # because mkdocs-llmstxt normalizes them via its _convert_to_absolute_link, so
+    # rewrite_index_links only handles absolute links; relative .../index.md links
+    # are not expected here.
     rewritten = 0
     targets = list(site_dir.rglob("*.md"))
     for extra in ("llms.txt", "llms-full.txt"):
