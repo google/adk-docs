@@ -7,8 +7,11 @@ Registered via the top-level ``hooks:`` list in ``mkdocs.yml``. Runs after the
 
 from __future__ import annotations
 
+import logging
 import re
-from pathlib import PurePosixPath
+from pathlib import Path, PurePosixPath
+
+import mkdocs.plugins
 
 
 def flat_md_target(rel_path: str) -> str | None:
@@ -40,3 +43,47 @@ def rewrite_index_links(text: str, site_url: str) -> str:
     base = site_url.rstrip("/")
     pattern = re.compile(re.escape(base) + r"/([^\s)]+?)/index\.md")
     return pattern.sub(lambda m: f"{base}/{m.group(1)}.md", text)
+
+
+log = logging.getLogger("mkdocs.hooks.flatten_md")
+
+
+@mkdocs.plugins.event_priority(-100)
+def on_post_build(config, **kwargs) -> None:  # noqa: ARG001
+    """Rename generated ``index.md`` files to flat ``page.md`` and fix links.
+
+    Priority ``-100`` ensures this runs after the ``mkdocs-llmstxt`` plugin's
+    own ``on_post_build`` (lower priority runs later).
+    """
+    site_dir = Path(config["site_dir"])
+    site_url = config["site_url"]
+
+    # Pass 1: rename <dir>/index.md -> <dir>.md (root index.md is left alone).
+    renamed = 0
+    for md_path in list(site_dir.rglob("index.md")):
+        rel = md_path.relative_to(site_dir).as_posix()
+        target_rel = flat_md_target(rel)
+        if target_rel is None:
+            continue
+        md_path.replace(site_dir / target_rel)
+        renamed += 1
+
+    # Pass 2: rewrite site-internal .../index.md links in all text outputs.
+    rewritten = 0
+    targets = list(site_dir.rglob("*.md"))
+    for extra in ("llms.txt", "llms-full.txt"):
+        extra_path = site_dir / extra
+        if extra_path.exists():
+            targets.append(extra_path)
+    for path in targets:
+        text = path.read_text(encoding="utf8")
+        new_text = rewrite_index_links(text, site_url)
+        if new_text != text:
+            path.write_text(new_text, encoding="utf8")
+            rewritten += 1
+
+    log.info(
+        "flatten_md: renamed %d markdown file(s), rewrote links in %d file(s)",
+        renamed,
+        rewritten,
+    )
