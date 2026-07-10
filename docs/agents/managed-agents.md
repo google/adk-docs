@@ -63,3 +63,61 @@ The Gemini Enterprise Agents Platform (GEAP) was formerly known as Vertex.
 *   **Agent ID.** As with the Gemini API, you need an `agent_id`. Create one via
     the [GEAP Managed Agents guide](https://docs.cloud.google.com/gemini-enterprise-agent-platform/build/managed-agents),
     or use an out-of-the-box agent ID available to your project.
+
+## Get started
+
+The following example creates two managed agents: one that answers questions
+using web search, and one that solves computational questions by running code
+server-side. Both run their tools in the managed environment
+(`environment={'type': 'remote'}`).
+
+=== "Python"
+
+    ```python
+    import os
+    from google.adk.agents import ManagedAgent
+    from google.adk.tools import google_search
+    from google.genai import types
+
+    # Ensure you have the MANAGED_AGENT_ID and the proper environment config
+    _AGENT_ID = os.environ.get('MANAGED_AGENT_ID', 'antigravity-preview-05-2026')
+
+    managed_search_agent = ManagedAgent(
+        name='managed_search_agent',
+        description='Answers questions that need fresh, grounded information from the web.',
+        agent_id=_AGENT_ID,
+        environment={'type': 'remote'},
+        tools=[google_search],
+    )
+
+    # A managed code execution agent using raw types.Tool
+    managed_code_execution_agent = ManagedAgent(
+        name='managed_code_execution_agent',
+        description='Solves computational questions by running code server-side.',
+        agent_id=_AGENT_ID,
+        environment={'type': 'remote'},
+        tools=[types.Tool(code_execution=types.ToolCodeExecution())],
+    )
+    ```
+
+## When to use managed agents vs. building your own
+
+Managed agents and ADK agents solve different problems. Choosing between them is
+mostly a trade-off between out-of-the-box power and fine-grained control.
+
+*   **Managed agents** give you a powerful agent out of the box, but with limited
+    flexibility. The toolset is predefined and server-side, the agent runs only
+    in the managed environment, and client-side or MCP tools are not supported.
+*   **ADK agents** (such as [`LlmAgent`](/agents/llm-agents/)) give you
+    fine-grained control over the model, instructions, tools (including custom
+    function tools and MCP tools), and where execution happens.
+
+Use the following table as a starting point:
+
+| Scenario | Recommended path |
+| --- | --- |
+| You need web-grounded answers or server-side code execution with no tool or sandbox setup | Managed agent |
+| You want to use a first-party, out-of-the-box agent (such as Antigravity) as-is | Managed agent |
+| You need custom Python function tools, callables, or MCP tools | Build your own ADK agent |
+| You need custom instructions, a specific model, or client-side tool execution | Build your own ADK agent |
+| You need a regional (non-`global`) deployment on GEAP | Build your own ADK agent |
