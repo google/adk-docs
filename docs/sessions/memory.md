@@ -1,4 +1,4 @@
-# Memory: long-term knowledge with `MemoryService`
+# Memory: Long-term knowledge with `MemoryService`
 
 <div class="language-support-tag">
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-typescript">TypeScript v0.2.0</span><span class="lst-go">Go v0.1.0</span><span class="lst-java">Java v0.1.0</span><span class="lst-kotlin">Kotlin v0.1.0</span>
@@ -11,20 +11,20 @@ While a `Session` tracks the history (`events`) and temporary data (`state`) of 
 
 ## The `MemoryService` role
 
-The `BaseMemoryService` (or `Service` in Go) defines the interface for managing this searchable, long-term knowledge store. It supports four operations:
+The `BaseMemoryService` (or `Service` in Go) defines the interface for managing this searchable, long-term knowledge store. It supports these operations:
 
-1. **Ingesting a session (`add_session_to_memory`):** Take the contents of a completed `Session` and add relevant information to the long-term knowledge store.
-2. **Ingesting events incrementally (`add_events_to_memory`):** Append a delta of events, for example the latest turn, without re-ingesting the full session. Useful when you want to write to memory partway through a long-running session.
-3. **Writing memory items directly (`add_memory`):** Insert pre-built `MemoryEntry` items, for services that support direct writes alongside event-based extraction.
-4. **Searching (`search_memory`):** Allow an agent, typically via a `Tool`, to query the knowledge store and retrieve relevant snippets based on a search query.
+*   **Ingesting Information:**
+    *   **`add_session_to_memory`**: Takes a completed `Session` and adds relevant information to the long-term knowledge store. This approach is ideal for automatically capturing the essence of a conversation.
+    *   **`add_memory`**: Allows you to add explicit `MemoryEntry` objects directly to the memory. This entry gives you fine-grained control and is useful for injecting specific facts from other sources.
+*   **Searching Information (`search_memory`):** Allowing an agent (typically via a `Tool`) to query the knowledge store and retrieve relevant snippets or context based on a search query.
 
-Operations 2 and 3 are optional — the base class implementations of `add_events_to_memory` and `add_memory` raise `NotImplementedError`, so check your concrete service before relying on them.
+## Choose the right memory service
 
 The Python ADK ships three `MemoryService` implementations. Use the table below to decide which is the best fit for your agent.
 
 | **Feature** | **InMemoryMemoryService** | **VertexAiMemoryBankService** | **VertexAiRagMemoryService** |
 | :--- | :--- | :--- | :--- |
-| **Persistence** | None, data is lost on restart | Yes, managed by agent platform | Yes, stored in Knowledge Engine |
+| **Persistence** | None, data is lost on restart | Yes, managed by the Agent Platform | Yes, stored in Knowledge Engine |
 | **Primary Use Case** | Prototyping, local development, and simple testing. | Building meaningful, evolving memories from user conversations. | Vector-search retrieval over the full conversation corpus, or alongside other RAG-indexed content. |
 | **Memory Extraction** | Stores full conversation | Extracts [meaningful information](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/memory-bank/generate-memories) from conversations and consolidates it with existing memories powered by LLM | Stores full conversation, indexed by [Knowledge Engine](https://cloud.google.com/vertex-ai/generative-ai/docs/rag-engine/rag-overview). |
 | **Search Capability** | Basic keyword matching. | Advanced semantic search. | Vector similarity search over Knowledge Engine. |
@@ -266,7 +266,7 @@ You can also search memory from within a custom tool by using the tool context.
     --8<-- "examples/kotlin/snippets/sessions/MemoryExample.kt:search_within_tool"
     ```
 
-## Memory Bank
+## Memory bank
 
 The `VertexAiMemoryBankService` connects your agent to [Memory Bank](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/memory-bank/overview), a fully managed Google Cloud service that provides sophisticated, persistent memory capabilities for conversational agents.
 
@@ -277,12 +277,48 @@ The service handles two key operations:
 *   **Generating Memories:** At the end of a conversation, you can send the session's events to the Memory Bank, which intelligently processes and stores the information as "memories."
 *   **Retrieving Memories:** Your agent code can issue a search query against the Memory Bank to retrieve relevant memories from past conversations.
 
+### Direct memory ingestion with `add_memory`
+
+Besides generating memories from session history, `VertexAiMemoryBankService` also supports direct memory ingestion via the `add_memory` method. This method gives you precise control over the facts stored in the Memory Bank.
+
+How it works depends on the `enable_consolidation` option:
+
+*   **Direct Creation (Default):** By default, `add_memory` calls the underlying `memories.create` API. Each `MemoryEntry` you provide is added as a distinct, separate memory item.
+
+    ```python
+    from google.adk.memory import MemoryEntry, VertexAiMemoryBankService
+    from google.genai.types import Content, Part
+
+    memory_service = VertexAiMemoryBankService(...)
+
+    await memory_service.add_memory(
+        app_name="my-app",
+        user_id="user-123",
+        memories=[
+            MemoryEntry(content=Content(parts=[Part(text="The user's favorite color is blue.")]))
+        ]
+    )
+    ```
+
+*   **Creation with Consolidation:** If you set `enable_consolidation` to `True` in the `custom_metadata`, the service uses the `memories.generate` API. This setting allows the Memory Bank to intelligently consolidate the new memory items with existing related memories, preventing redundancy and building a more coherent knowledge base.
+
+    ```python
+    await memory_service.add_memory(
+        app_name="my-app",
+        user_id="user-123",
+        memories=[
+            MemoryEntry(content=Content(parts=[Part(text="The user's favorite color is light blue.")]))
+        ],
+        custom_metadata={"enable_consolidation": True}
+    )
+    ```
+
 ### Prerequisites
 
 Before you can use this feature, you must have:
 
 1.  **A Google Cloud Project:** With the Agent Platform API enabled.
-2.  **An Agent Runtime:** You need to create an Agent Runtime on Agent Platform. You do not need to deploy your agent to Agent Runtime to use Memory Bank. This will provide you with the **Agent Runtime ID** required for configuration.
+2.  **An Agent Runtime:** You need to create an Agent Runtime on Agent Platform. You do not need to deploy your agent to Agent Runtime to use Memory Bank. This setup will provide you with the **Agent Runtime ID** required for configuration.
 3.  **Authentication:** Ensure your local environment is authenticated to access Google Cloud services. The simplest way is to run:
     ```bash
     gcloud auth application-default login
@@ -409,7 +445,7 @@ When a memory service is configured, your agent can use a tool or callback to re
     --8<-- "examples/kotlin/snippets/sessions/MemoryExample.kt:preload_memory_agent"
     ```
 
-To extract memories from your session, you need to call `add_session_to_memory`. For example, you can automate this via a callback:
+To extract memories from your session, you need to call `add_session_to_memory`. For example, you can automate this method via a callback:
 
 === "Python"
     ```python
@@ -482,25 +518,25 @@ To extract memories from your session, you need to call `add_session_to_memory`.
     ```
 
 
-## Advanced Concepts
+## Advanced concepts
 
 ### How memory works in practice
 
-The memory workflow internally involves these steps:
+The memory workflow includes the following steps:
 
-1. **Session Interaction:** A user interacts with an agent via a `Session`, managed by a `SessionService`. During this interaction, events are recorded and session state is updated.
+1. **Session Interaction:** A user interacts with an agent via a `Session`, managed by a `SessionService`. During this interaction, events are recorded and session state may be updated.
 2. **Ingestion into Memory:** When a session concludes or captures significant information, your application calls `memory_service.add_session_to_memory(session)`. This action extracts key data and persists it to your long-term knowledge store, such as the Agent Runtime Memory Bank.
 3. **Later Query:** In a different, or in the same session, you might ask a question requiring past context, for example, "What did we discuss about project X last week?".
 4. **Agent Uses Memory Tool:** An agent equipped with a memory-retrieval tool, such as the built-in `load_memory` tool, recognizes the need for past context. It calls the tool, providing a search query (e.g., "discussion project X last week").
 5. **Search Execution:** The tool internally calls `memory_service.search_memory(app_name=..., user_id=..., query=...)`.
-6. **Results Returned:** The `MemoryService` searches its store, using keyword matching or semantic search, and returns matching snippets as a `SearchMemoryResponse` containing a list of `MemoryEntry` objects, each holding `content`, and all optional: `author`,`timestamp`, and `custom_metadata`.
+6. **Results Returned:** The `MemoryService` searches its store, using keyword matching or semantic search, and returns matching snippets as a `SearchMemoryResponse` containing a list of `MemoryEntry` objects, each holding `content`, and all optional: `author`, `timestamp`, and `custom_metadata`.
 7. **Agent Uses Results:** The tool returns these results to the agent, usually as part of the context or function response. The agent can then use this retrieved information to formulate its final answer to the user.
 
 ### Can an agent have access to more than one memory service?
 
 *   **Through Standard Configuration: No.** The framework (`adk web`, `adk api_server`) is designed to be configured with one memory service at a time via the `--memory_service_uri` flag. That single service is wired into the runner and exposed through `tool_context.search_memory()` and `callback_context.search_memory()`.
 
-*   **Within Your Agent's Code: Yes, absolutely.** Manually import and instantiate additional memory services to meet your specific requirements. This approach enables your agent to access multiple memory sources within a single turn.
+*   **Within Your Agent's Code: Yes.** You can instantiate a second `BaseMemoryService` and consult it from a custom tool, which already has a `ToolContext` for the framework-configured service.
 
 For example, your agent can use the framework-configured `InMemoryMemoryService` for conversation history and manually instantiate a second service, a `VertexAiMemoryBankService`, a `VertexAiRagMemoryService` over a docs corpus, or any other `BaseMemoryService` implementation, for a separate knowledge base.
 
