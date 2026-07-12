@@ -39,6 +39,7 @@ to install or run locally.
 
 - An [Unstructured account](https://transform.unstructured.io) and API key.
   See [Get your API key](https://docs.unstructured.io/transform/code#get-your-unstructured-api-key-and-url).
+- A [Gemini API key](https://aistudio.google.com/apikey) for the agent's model.
 - Python 3.10 or later.
 
 ## Installation
@@ -52,14 +53,39 @@ pip install "google-adk[mcp]"
 
 ## Use with agent
 
+Set your API keys as environment variables:
+
+```bash
+export UNSTRUCTURED_API_KEY="<your-unstructured-api-key>"
+export GOOGLE_API_KEY="<your-gemini-api-key>"
+export GOOGLE_GENAI_USE_VERTEXAI=FALSE
+```
+
 The server authenticates with your Unstructured API key as a bearer token on
-every request, including the initial handshake:
+every request, including the initial handshake. The `wait_seconds` helper lets
+the agent pause between status checks, because parsing jobs run asynchronously:
 
 ```python
 import os
+import time
 
 from google.adk.agents import Agent
 from google.adk.tools.mcp_tool import McpToolset, StreamableHTTPConnectionParams
+
+
+def wait_seconds(seconds: int) -> dict:
+    """Pause before the next status check. Use 30 seconds unless told otherwise.
+
+    Args:
+        seconds: How long to wait.
+
+    Returns:
+        dict confirming the wait.
+    """
+    seconds = max(1, min(int(seconds), 120))
+    time.sleep(seconds)
+    return {"waited_seconds": seconds}
+
 
 root_agent = Agent(
     model="gemini-flash-latest",
@@ -67,12 +93,15 @@ root_agent = Agent(
     instruction=(
         "You parse documents with the Unstructured Transform MCP server. "
         "Pass public https:// file URLs straight to transform_files. It "
-        "returns a job_id; poll with check_transform_status, waiting about "
-        "30 seconds between checks - jobs take 30 seconds to a few minutes. "
-        "When the job completes, call get_transform_results and report the "
-        "parsed content back to the user."
+        "returns a job_id; poll with check_transform_status, calling "
+        "wait_seconds(30) between checks - jobs take 30 seconds to a few "
+        "minutes. When the job completes, call get_transform_results and "
+        "report the parsed content back to the user. If asked to parse a "
+        "local file, explain that this requires the upload helper from the "
+        "Unstructured ADK guide."
     ),
     tools=[
+        wait_seconds,
         McpToolset(
             connection_params=StreamableHTTPConnectionParams(
                 url="https://mcp.transform.unstructured.io",  # root URL - do not append /mcp
