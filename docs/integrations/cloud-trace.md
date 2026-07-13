@@ -11,17 +11,39 @@ catalog_tags: ["observability", "google"]
   <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python</span><span class="lst-typescript">TypeScript</span><span class="lst-go">Go</span>
 </div>
 
-With ADK, you can already inspect and observe your agent interaction locally utilizing the powerful web development UI discussed in [here](/evaluate/#debugging-with-the-trace-view). However, for cloud deployment, you will need a centralized dashboard to observe real traffic.
+During local development, you can inspect agent behavior with the [Trace view in
+the ADK web UI](/evaluate/#debugging-with-the-trace-view). Once your agent is
+deployed, you need a way to observe traces from real traffic in one place.
 
-Cloud Trace is a component of Google Cloud Observability. It is a powerful tool for monitoring, debugging, and improving the performance of your applications by focusing specifically on tracing capabilities. For Agent Development Kit (ADK) applications, Cloud Trace enables comprehensive tracing, helping you understand how requests flow through your agent's interactions and identify performance bottlenecks or errors within your AI agents.
+[Cloud Trace](https://cloud.google.com/trace) is the distributed tracing
+component of Google Cloud Observability. It collects and visualizes trace data
+so you can monitor latency, debug errors, and improve performance across your
+applications. For ADK agents, Cloud Trace captures how each request flows
+through model calls, tool executions, and agent steps, so you can pinpoint
+bottlenecks and errors in production.
 
 ## Overview
 
-Cloud Trace is built on [OpenTelemetry](https://opentelemetry.io/), an open-source standard that supports many languages and ingestion methods for generating trace data. This aligns with observability practices for ADK applications, which also leverage OpenTelemetry-compatible instrumentation, allowing you to:
+Cloud Trace is built on [OpenTelemetry](https://opentelemetry.io/), an
+open-source standard that supports many languages and ingestion methods for
+generating trace data. This aligns with observability practices for ADK
+applications, which also leverage OpenTelemetry-compatible instrumentation,
+allowing you to:
 
-- **Trace agent interactions**: Cloud Trace continuously gathers and analyzes trace data from your project, enabling you to rapidly diagnose latency issues and errors within your ADK applications. This automatic data collection simplifies the process of identifying problems in complex agent workflows.
-- **Debug issues**: Quickly diagnose latency issues and errors by analyzing detailed traces. These traces are crucial for understanding issues that manifest as increased communication latency across different services or during specific agent actions like tool calls.
-- **In-depth analysis and visualization**: Trace Explorer is the primary tool for analyzing traces, offering visual aids like heatmaps for span duration and line charts for span rates. It also provides a spans table, groupable by service and operation, which gives one-click access to representative traces and a waterfall view to easily identify bottlenecks and sources of errors within your agent's execution path.
+- **Trace agent interactions**: Cloud Trace continuously gathers and analyzes
+  trace data from your project, enabling you to rapidly diagnose latency issues
+  and errors within your ADK applications. This automatic data collection
+  simplifies the process of identifying problems in complex agent workflows.
+- **Debug issues**: Quickly diagnose latency issues and errors by analyzing
+  detailed traces. These traces are crucial for understanding issues that
+  manifest as increased communication latency across different services or
+  during specific agent actions like tool calls.
+- **In-depth analysis and visualization**: Trace Explorer is the primary tool
+  for analyzing traces, offering visual aids like heatmaps for span duration and
+  line charts for span rates. It also provides a spans table, groupable by
+  service and operation, which gives one-click access to representative traces
+  and a waterfall view to easily identify bottlenecks and sources of errors
+  within your agent's execution path.
 
 The following example will assume the following agent directory structure:
 
@@ -86,10 +108,13 @@ working_dir/
 
 ### Use the ADK CLI
 
-You can enable cloud tracing by adding a flag when deploying or running your agent using the ADK CLI.
+You can enable cloud tracing by adding a flag when deploying or running your
+agent using the ADK CLI.
 
 === "Python"
+
     When deploying your agent using the `adk deploy` command:
+
     ```bash
     adk deploy agent_engine \
         --project=$GOOGLE_CLOUD_PROJECT \
@@ -99,7 +124,9 @@ You can enable cloud tracing by adding a flag when deploying or running your age
     ```
 
 === "Go"
+
     When running your agent built with the ADK Go launcher:
+
     ```bash
     adkgo web -otel_to_cloud
     ```
@@ -109,7 +136,9 @@ You can enable cloud tracing by adding a flag when deploying or running your age
 #### Use ADK app abstractions
 
 === "Python"
+
     If you are using the `AdkApp` abstraction, you can enable cloud tracing by adding `enable_tracing=True`:
+
     ```python
     from google.adk.apps import AdkApp
 
@@ -124,6 +153,7 @@ You can enable cloud tracing by adding a flag when deploying or running your age
 For fully customized agent runtimes, you can enable cloud tracing by using the built-in telemetry modules.
 
 === "Python"
+
     ```python
     from google.adk import telemetry
     from google.adk.telemetry import google_cloud
@@ -136,6 +166,7 @@ For fully customized agent runtimes, you can enable cloud tracing by using the b
     ```
 
 === "TypeScript"
+
     ```typescript
     import { getGcpExporters, maybeSetOtelProviders } from '@google/adk';
 
@@ -151,6 +182,7 @@ For fully customized agent runtimes, you can enable cloud tracing by using the b
     ```
 
 === "Go"
+
     ```go
     import (
     	"context"
@@ -190,21 +222,27 @@ For fully customized agent runtimes, you can enable cloud tracing by using the b
 
 ## Inspect Cloud Trace data
 
-After the setup is complete, whenever you interact with the agent, it will automatically send trace data to Cloud Trace. You can inspect the traces by visiting the **Trace Explorer** in the [Google Cloud Console](https://console.cloud.google.com/traces/explorer).
+After the setup is complete, whenever you interact with the agent, it will
+automatically send trace data to Cloud Trace. You can inspect the traces by
+visiting the **Trace Explorer** in the [Google Cloud
+Console](https://console.cloud.google.com/traces/explorer).
 
 ![cloud-trace](../assets/cloud-trace1.png)
 
-You will see all available traces produced by the ADK agent, with span names such as `invoke_agent`, `generate_content`, `call_llm`, and `execute_tool`.
+You will see all available traces produced by the ADK agent, with span names
+such as `invoke_agent`, `generate_content`, `call_llm`, and `execute_tool`.
 
 ![cloud-trace](../assets/cloud-trace2.png)
 
-If you click on one of the traces, you will see a waterfall view of the detailed process, similar to the trace view in the local ADK web UI.
+If you click on one of the traces, you will see a waterfall view of the detailed
+process, similar to the trace view in the local ADK web UI.
 
 ![cloud-trace](../assets/cloud-trace3.png)
 
 ### Captured attributes
 
-ADK automatically enriches traces with the following attributes to help you filter and analyze your agent's behavior:
+ADK automatically enriches traces with the following attributes to help you
+filter and analyze your agent's behavior:
 
 - `gen_ai.agent.name`: The name of the agent being executed.
 - `gcp.vertex.agent.invocation_id`: The unique ID of the invocation.
@@ -213,7 +251,8 @@ ADK automatically enriches traces with the following attributes to help you filt
 
 ## Resources
 
-To learn more about tracing, OpenTelemetry, and Google Cloud integrations, explore the following documentation:
+To learn more about tracing, OpenTelemetry, and Google Cloud integrations,
+explore the following documentation:
 
 - [Google Cloud Trace Documentation](https://cloud.google.com/trace)
 - [OpenTelemetry Documentation](https://opentelemetry.io/docs/)
