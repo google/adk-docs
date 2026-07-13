@@ -19,9 +19,9 @@ Cloud Trace is a component of Google Cloud Observability. It is a powerful tool 
 
 Cloud Trace is built on [OpenTelemetry](https://opentelemetry.io/), an open-source standard that supports many languages and ingestion methods for generating trace data. This aligns with observability practices for ADK applications, which also leverage OpenTelemetry-compatible instrumentation, allowing you to:
 
-- **Trace agent interactions** : Cloud Trace continuously gathers and analyzes trace data from your project, enabling you to rapidly diagnose latency issues and errors within your ADK applications. This automatic data collection simplifies the process of identifying problems in complex agent workflows.
-- **Debug issues** : Quickly diagnose latency issues and errors by analyzing detailed traces. Crucial for understanding issues that manifest as increased communication latency across different services or during specific agent actions like tool calls.
-- **In-depth Analysis and Visualization**: Trace Explorer is the primary tool for analyzing traces, offering visual aids like heatmaps for span duration and line charts for request/error rates. It also provides a spans table, groupable by service and operation, which gives one-click access to representative traces and a waterfall view to easily identify bottlenecks and sources of errors within your agent's execution path
+- **Trace agent interactions**: Cloud Trace continuously gathers and analyzes trace data from your project, enabling you to rapidly diagnose latency issues and errors within your ADK applications. This automatic data collection simplifies the process of identifying problems in complex agent workflows.
+- **Debug issues**: Quickly diagnose latency issues and errors by analyzing detailed traces. These traces are crucial for understanding issues that manifest as increased communication latency across different services or during specific agent actions like tool calls.
+- **In-depth analysis and visualization**: Trace Explorer is the primary tool for analyzing traces, offering visual aids like heatmaps for span duration and line charts for span rates. It also provides a spans table, groupable by service and operation, which gives one-click access to representative traces and a waterfall view to easily identify bottlenecks and sources of errors within your agent's execution path.
 
 The following example will assume the following agent directory structure:
 
@@ -82,7 +82,7 @@ working_dir/
     )
     ```
 
-## Cloud trace setup
+## Cloud Trace setup
 
 ### Use the ADK CLI
 
