@@ -221,15 +221,13 @@ ADK automatically injects the context data before your function runs and ensures
 this parameter is not visible to the LLM.
 
 ```python
-from google.adk.tools import FunctionTool
-from google.adk.types import ToolContext
+from google.adk.tools import ToolContext
 
 def my_tool(arg1: str, tool_context: ToolContext):
   # Example: Accessing session state
   user_id = tool_context.state.get("user_id")
   # Example: Triggering an action
-  # tool_context.actions.transfer_to_agent = ("secondary_agent")
-  pass
+  # tool_context.actions.transfer_to_agent = "secondary_agent"
 ```
 
 `ToolContext` provides access to:
@@ -238,16 +236,17 @@ def my_tool(arg1: str, tool_context: ToolContext):
 * **`actions`:** Controls for agent behavior, for example `transfer_to_agent`.
 * **Methods**: To handle artifacts, such as `load_artifact` or `save_artifact`.
 
-##### Customize the name
+##### Customize the parameter name
 
-By default, ADK looks for a parameter named `tool_context`. You can customize 
-this name using the `context_param_name` argument in `FunctionTool`:
+By default, the injected parameter is called `tool_context`, but you can name
+the parameter anything you want. ADK detects it by its `ToolContext` type
+annotation rather than by name. For example, to use the name `ctx`:
 
 ```python
-my_function_tool = FunctionTool(
-    func=my_tool,
-    context_param_name="agent_env" # Injects ToolContext into a parameter named 'agent_env'
-)
+from google.adk.tools import ToolContext
+
+def my_tool(arg1: str, ctx: ToolContext):
+    # 'ctx' receives the ToolContext because of its type annotation
 ```
 
 #### Return type
