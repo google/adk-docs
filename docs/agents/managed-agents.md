@@ -72,9 +72,9 @@ you plan to use: obtain credentials and an `agent_id`.
 - **Location:** The Managed Agents API is served only from the `global`
   location. `ManagedAgent` enforces a connection to `global` on the Agent
   Platform backend.
-- **Agent ID:** As with the Gemini API, you need an `agent_id`. Create one via
-  the [Agent Platform Managed Agents
-  guide](https://docs.cloud.google.com/gemini-enterprise-agent-platform/build/managed-agents),
+- **Agent ID:** As with the Gemini API, you need an `agent_id`. Create one using
+  the [Create and manage agents
+  guide](https://docs.cloud.google.com/gemini-enterprise-agent-platform/build/managed-agents/create-manage),
   or use an out-of-the-box agent ID available to your project.
 
 ## Get started
