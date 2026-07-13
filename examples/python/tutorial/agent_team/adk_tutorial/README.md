@@ -20,7 +20,7 @@ This version allows you to run each step of the tutorial without manually settin
 1.  **Clone the Repository:**
     ```bash
     git clone https://github.com/google/adk-docs.git
-    cd adk-docs/examples/python/tutorial/agent_team/adk-tutorial/ # Navigate into the cloned directory
+    cd adk-docs/examples/python/tutorial/agent_team/adk_tutorial/ # Navigate into the cloned directory
     ```
 
 2.  **Create and Activate a Virtual Environment (Recommended):**
@@ -80,10 +80,10 @@ Ensure your virtual environment is activated before running these commands. Each
 
 ### Using `adk web` (Recommended for Interactive UI)
 
-1.  **Navigate to the parent `adk-tutorial` directory** (the one containing the `step_1`, `step_2_...` folders).
+1.  **Navigate to the parent `adk_tutorial` directory** (the one containing the `step_1`, `step_2_...` folders).
     ```bash
-    # Make sure you are in the main 'adk-tutorial' folder
-    cd /path/to/your/adk-tutorial
+    # Make sure you are in the main 'adk_tutorial' folder
+    cd /path/to/your/adk_tutorial
     ```
 2.  **Run the command:**
     ```bash
@@ -99,7 +99,7 @@ The `adk run` command allows you to interact with an agent directly from your te
 
 *   **Example (running Step 1):**
     ```bash
-    # Make sure you are in the main 'adk-tutorial' folder
+    # Make sure you are in the main 'adk_tutorial' folder
     adk run step_1
     ```
 *   For detailed usage and options for `adk run`, please refer to the ADK Agent Runtime [Command Line](https://adk.dev/runtime/command-line/) topic.
@@ -110,7 +110,7 @@ The `adk api_server` command starts a FastAPI server, exposing your agent via an
 
 *   **Example (serving Step 1):**
     ```bash
-    # Make sure you are in the main 'adk-tutorial' folder
+    # Make sure you are in the main 'adk_tutorial' folder
     adk api_server
     ```
 *   For detailed usage, API endpoint structure, and options for `adk api_server`, see the ADK [API Server](https://adk.dev/runtime/api-server/) page.
@@ -118,7 +118,7 @@ The `adk api_server` command starts a FastAPI server, exposing your agent via an
 ## Directory Structure
 
 ```
-adk-tutorial/
+adk_tutorial/
 ├── step_1/
 │   ├── __init__.py
 │   ├── agent.py      # Agent definition for Step 1

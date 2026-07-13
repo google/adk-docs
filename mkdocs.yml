@@ -289,6 +289,7 @@ nav:
     - Agents:
       - agents/index.md
       - Simple agents: agents/llm-agents.md
+      - Managed agents: agents/managed-agents.md
     - Graph Workflows:
       - graphs/index.md
       - Graph routes: graphs/routes.md
