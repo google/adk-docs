@@ -12,7 +12,8 @@ output of this skill is a strong starting point, not a finished page: when done,
 run the `integration-review` skill on it and test with `mkdocs serve`.
 
 The real template is the set of **existing shipping pages**. Before drafting,
-open the exemplar(s) for the chosen category and mirror their shape:
+open the exemplar(s) for the chosen category and match their structure and
+conventions:
 
 - MCP tools: `docs/integrations/github.md`, `docs/integrations/notion.md`
 - Observability: `docs/integrations/phoenix.md`, `docs/integrations/arize-ax.md`
@@ -112,8 +113,6 @@ the TypeScript span if Python-only):
 
 ## Skeleton: MCP tool
 
-Mirror `github.md` / `notion.md`.
-
 ````markdown
 ## Use cases
 
@@ -190,8 +189,6 @@ or environment variables.
 
 ## Skeleton: Observability
 
-Mirror `phoenix.md` / `arize-ax.md`.
-
 ````markdown
 <one-paragraph intro of what the platform provides for ADK>
 
@@ -224,8 +221,6 @@ A single copy-pasteable end-to-end code block is acceptable and often better
 than splitting Setup and Observe.
 
 ## Skeleton: Plugin
-
-Mirror `daytona.md` / `goodmem.md`.
 
 ````markdown
 ## Use cases
