@@ -19,6 +19,11 @@ conventions:
 - Observability: `docs/integrations/phoenix.md`, `docs/integrations/arize-ax.md`
 - Plugins: `docs/integrations/daytona.md`, `docs/integrations/goodmem.md`
 
+To find more similar pages, scan `catalog_tags` in one pass (`grep catalog_tags
+docs/integrations/*.md`) and read the ones sharing the category's tag (e.g.
+`mcp`, `observability`) or product domain in full. Match live pages and repo
+conventions rather than inferring everything from the templates below.
+
 See `CONTRIBUTING.md` (the "Integrations" section) for the human-facing
 contract. For the full rulebook applied during review, see the
 `integration-review` skill.
@@ -87,9 +92,9 @@ catalog_tags: ["<tag>", "<tag>"]
   not repeat the product name (the title shows it). No verbose lists, no
   overclaims.
 - `catalog_tags`: use only tags that already exist in the catalog; never invent
-  one. List the valid tags by scanning the `catalog_tags` field across
-  `docs/integrations/*.md` first. Tags combine. Any page that uses MCP must
-  include `mcp`.
+  one. Enumerate the valid tags in one pass with
+  `grep catalog_tags docs/integrations/*.md`. Tags combine. Any page that uses
+  MCP must include `mcp`.
 - `catalog_icon`: `/integrations/assets/<slug>.png` (or `.svg` or `.jpg`). No
   `/adk-docs/` prefix.
 

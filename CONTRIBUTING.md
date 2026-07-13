@@ -62,7 +62,7 @@ documentation contributions:
 
 - **`integration-create`:** Draft a new integration page under
   `docs/integrations/`: gathers details, picks the right category template (MCP
-  tool, observability, or plugin), and follows the catalog conventions.
+  tool, observability, plugin, etc.), and follows the catalog conventions.
 
 - **`integration-review`:** Review an integration page or PR for correct
   frontmatter, structure, working code, valid links, and catalog conventions,
