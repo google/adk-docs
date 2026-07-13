@@ -9,11 +9,11 @@ For example, a function tool, `myfinancetool`, might be a function that calculat
 
 ADK offers several ways to create functions tools, each suited to different levels of complexity and control:
 
-*  [Function Tools](#function-tool)
-*  [Long Running Function Tools](#long-run-tool)
-*  [Agents-as-a-Tool](#agent-tool)
+*  [Function tools](#function-tool)
+*  [Long running function tools](#long-run-tool)
+*  [Agent-as-a-Tool](#agent-tool)
 
-## Create function tools {#function-tool}
+## Function tools {#function-tool}
 
 Transforming a Python function into a tool is a straightforward way to integrate custom logic into your agents. When you assign a function to an agent’s `tools` list, the framework automatically wraps it as a `FunctionTool`.
 
@@ -208,15 +208,15 @@ This signals that the parameter can be `None`. When combined with a default valu
 ##### Variadic parameters (`*args` and `**kwargs`)
 
 While you can include `*args` (variable positional arguments) and `**kwargs` (variable keyword arguments)
-in your function signature for other purposes, they are **ignored by the ADK framework** when generating 
+in your function signature for other purposes, they are **ignored by the ADK framework** when generating
 the tool schema for the LLM. The LLM will not be aware of them and cannot pass arguments to them. It's best
 to rely on explicitly defined parameters for all data you expect from the LLM.
 
 #### Context injection
 
-Context injection allows your custom functions to access the agent's environment, 
-such as session state or available actions. To enable, add a parameter typed as 
-`ToolContext` to your function. 
+Context injection allows your custom functions to access the agent's environment,
+such as session state or available actions. To enable, add a parameter typed as
+`ToolContext` to your function.
 ADK automatically injects the context data before your function runs and ensures
 this parameter is not visible to the LLM.
 
@@ -224,10 +224,10 @@ this parameter is not visible to the LLM.
 from google.adk.tools import ToolContext
 
 def my_tool(arg1: str, tool_context: ToolContext):
-  # Example: Accessing session state
-  user_id = tool_context.state.get("user_id")
-  # Example: Triggering an action
-  # tool_context.actions.transfer_to_agent = "secondary_agent"
+    # Example: Accessing session state
+    user_id = tool_context.state.get("user_id")
+    # Example: Triggering an action
+    # tool_context.actions.transfer_to_agent = "secondary_agent"
 ```
 
 `ToolContext` provides access to:
@@ -247,6 +247,7 @@ from google.adk.tools import ToolContext
 
 def my_tool(arg1: str, ctx: ToolContext):
     # 'ctx' receives the ToolContext because of its type annotation
+    user_id = ctx.state.get("user_id")
 ```
 
 #### Return type
@@ -372,14 +373,14 @@ This tool is designed to help you start and manage tasks that are handled outsid
 When using a `LongRunningFunctionTool`, your function can initiate the long-running operation and optionally return an **initial result**, such as a long-running operation id. Once a long running function tool is invoked the agent runner pauses the agent run and lets the agent client to decide whether to continue or wait until the long-running operation finishes. The agent client can query the progress of the long-running operation and send back an intermediate or final response. The agent can then continue with other tasks. An example is the human-in-the-loop scenario where the agent needs human approval before proceeding with a task.
 
 !!! warning "Warning: Execution handling"
-    
+
     Long Running Function Tools are designed to help you start and *manage* long running
     tasks as part of your agent workflow, but ***not perform*** the actual, long task.
     For tasks that require significant time to complete, you should implement a separate
     server to do the task.
 
 !!! tip "Tip: Parallel execution"
-    
+
     Depending on the type of tool you are building, designing for asynchronous
     operation may be a better solution than creating a long running tool. For
     more information, see
@@ -563,7 +564,7 @@ Agent client received an event with long running function calls and check the st
 * **Agent instruction**: Directs the LLM to use the tool and understand the incoming FunctionResponse stream (progress vs. completion) for user updates.
 * **Final return**: The function returns the final result dictionary, which is sent in the concluding FunctionResponse to indicate completion.
 
-## Agent-as-a-tool {#agent-tool}
+## Agent-as-a-Tool {#agent-tool}
 
 This powerful feature allows you to leverage the capabilities of other agents within your system by calling them as tools. The Agent-as-a-Tool enables you to invoke another agent to perform a specific task, effectively **delegating responsibility**. This is conceptually similar to creating a Python function that calls another agent and uses the agent's response as the function's return value.
 
@@ -574,9 +575,9 @@ It's important to distinguish an Agent-as-a-Tool from a Sub-Agent.
 * **Agent-as-a-Tool:** When Agent A calls Agent B as a tool (using Agent-as-a-Tool), Agent B's answer is **passed back** to Agent A, which then summarizes the answer and generates a response to the user. Agent A retains control and continues to handle future user input.
 * **Sub-agent:** When Agent A calls Agent B as a sub-agent, the responsibility of answering the user is completely **transferred to Agent B**. Agent A is effectively out of the loop. All subsequent user input will be answered by Agent B.
 
-### Use the agent
+### Use `AgentTool`
 
-To use an agent as a tool, wrap the agent with the AgentTool class.
+To use an agent as a tool, wrap the agent with the `AgentTool` class.
 
 === "Python"
 
