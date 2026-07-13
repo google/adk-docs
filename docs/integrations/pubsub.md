@@ -8,12 +8,15 @@ catalog_tags: ["google"]
 # Google Cloud Pub/Sub tool for ADK
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.22.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.22.0</span><span class="lst-preview">Experimental</span>
 </div>
 
 The `PubSubToolset` allows agents to interact with
 [Google Cloud Pub/Sub](https://cloud.google.com/pubsub)
 service to publish, pull, and acknowledge messages.
+
+!!! example "Experimental"
+    This feature is experimental and may be updated in future releases.
 
 ## Prerequisites
 

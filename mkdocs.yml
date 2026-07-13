@@ -206,6 +206,7 @@ plugins:
         'observability/freeplay.md': 'integrations/freeplay.md'
         'observability/mlflow.md': 'integrations/mlflow-tracing.md'
         'integrations/mlflow.md': 'integrations/mlflow-tracing.md'
+        'integrations/mimir.md': 'integrations/perseus-vault.md'
         'observability/monocle.md': 'integrations/monocle.md'
         'observability/phoenix.md': 'integrations/phoenix.md'
         'observability/weave.md': 'integrations/weave.md'
@@ -288,6 +289,7 @@ nav:
     - Agents:
       - agents/index.md
       - Simple agents: agents/llm-agents.md
+      - Managed agents: agents/managed-agents.md
     - Graph Workflows:
       - graphs/index.md
       - Graph routes: graphs/routes.md
