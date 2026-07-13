@@ -190,7 +190,7 @@ For fully customized agent runtimes, you can enable cloud tracing by using the b
 
 ## Inspect cloud traces
 
-After the setup is complete, whenever you interact with the agent, it will automatically send trace data to Cloud Trace. You can inspect the traces by visiting the **Trace Explorer** in the [Google Cloud Console](https://console.cloud.google.com/traces).
+After the setup is complete, whenever you interact with the agent, it will automatically send trace data to Cloud Trace. You can inspect the traces by visiting the **Trace Explorer** in the [Google Cloud Console](https://console.cloud.google.com/traces/explorer).
 
 ![cloud-trace](../assets/cloud-trace1.png)
 
@@ -206,11 +206,11 @@ If you click on one of the traces, you will see a waterfall view of the detailed
 
 ADK automatically enriches traces with the following attributes to help you filter and analyze your agent's behavior:
 
-* `gen_ai.agent.name`: The name of the agent being executed.
-* `user.id`: The identifier (ID) of the user interacting with the agent.
-* `gcp.vertex.agent.invocation_id`: The unique ID of the invocation.
-* `gcp.vertex.agent.event_id`: The ID of the specific event.
-* `gen_ai.conversation.id`: The session ID.
+- `gen_ai.agent.name`: The name of the agent being executed.
+- `user.id`: The identifier (ID) of the user interacting with the agent.
+- `gcp.vertex.agent.invocation_id`: The unique ID of the invocation.
+- `gcp.vertex.agent.event_id`: The ID of the specific event.
+- `gen_ai.conversation.id`: The session ID.
 
 ## Resources
 
