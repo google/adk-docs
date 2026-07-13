@@ -42,15 +42,19 @@ The authoritative sources of truth for this review are:
   blocker.
 - If reviewing a local file, run `git status` and `git diff` to see the change.
 
-### Step 2: Read peer pages
+### Step 2: Find and read similar pages
 
-Open 5 or more existing pages of the **same category** as the page under review
-(see the exemplars above) and compare section-by-section. The peer pages define
-the norm; the review measures the change against them.
+Find 5 or more similar pages and read them in full. Identify candidates in one
+pass by scanning `catalog_tags` (`grep catalog_tags docs/integrations/*.md`) and
+matching the tag under review (e.g. `mcp`, `observability`); widen the set with
+other signals such as product domain, structural template, and language support
+(they need not all be the exact same category). Reading the full pages, not just
+frontmatter, grounds the review in live examples and repo conventions rather
+than inferring everything from the templates in this skill.
 
 ### Step 3: Run the checklist
 
-Work through every dimension in the checklist below.
+Work through every dimension in the review checklist below.
 
 ### Step 4: Verify code, packages, and links
 
@@ -98,8 +102,8 @@ catalog_tags: ["<tag>", "<tag>"]
 - **`catalog_tags`**: a JSON array of lowercase tags. **Use only tags that
   already exist in the catalog; never invent a new one.** Tags combine (e.g.
   `["data", "mcp"]`). Any page that uses MCP in its body must carry the `mcp`
-  tag. To see the valid tags, scan the `catalog_tags` field across
-  `docs/integrations/*.md`.
+  tag. Enumerate the valid tags in one pass with `grep catalog_tags
+  docs/integrations/*.md`.
 
 ### 2. Structure and required elements
 
@@ -267,6 +271,6 @@ After the report, **stop**. Do not modify files unless the user explicitly asks.
 - Diplomatic and actionable; give the contributor an out (e.g. "Do you have a
   sample agent in a repo? Otherwise you can remove this link and this page will
   serve as the sample.").
-- Use precise terminology ("catalog title" for the frontmatter field, not
-  "rename the page"). Reference the contributing guide for mechanics instead of
-  over-explaining.
+- Use precise, actionable terminology (e.g. "rename the catalog title" for the
+  frontmatter field, not "rename the page"). Reference the contributing guide for
+  mechanics instead of over-explaining.
