@@ -65,7 +65,7 @@ deploying agents:
 
 - **[Documentation](https://adk.dev)**
 
-## ✨ Vibe Coding
+## ✨ Coding with AI
 
 Accelerate your ADK agent development workflow with AI-assisted coding. ADK
 provides optimized documentation context compatible with AI code editors:
@@ -77,10 +77,9 @@ provides optimized documentation context compatible with AI code editors:
   comprehensive documentation reference, ideal for complex implementations or
   models with large context windows.
 
-You can also visit our
-**[Coding with AI](https://adk.dev/tutorials/coding-with-ai/)**
-guide for instructions on using these files with development tools like Gemini
-CLI and Antigravity.
+You can also visit our **[Coding with
+AI](https://adk.dev/tutorials/coding-with-ai/)** guide for instructions on using
+these files with AI coding tools via MCP servers.
 
 ## 🤝 Contributing
 

@@ -157,7 +157,7 @@ For fully customized agent runtimes, you can enable cloud tracing by using the b
     	"log"
     	"time"
 
-    	"google.golang.org/adk/telemetry"
+    	"google.golang.org/adk/v2/telemetry"
     )
 
     func main() {

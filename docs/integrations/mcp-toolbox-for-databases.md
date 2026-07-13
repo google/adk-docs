@@ -248,7 +248,7 @@ documentation:
     	"fmt"
 
     	"github.com/googleapis/mcp-toolbox-sdk-go/tbadk"
-    	"google.golang.org/adk/agent/llmagent"
+    	"google.golang.org/adk/v2/agent/llmagent"
     )
 
     func main() {
