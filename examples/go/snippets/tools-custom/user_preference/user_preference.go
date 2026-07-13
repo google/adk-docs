@@ -18,7 +18,7 @@ package main
 import (
 	"fmt"
 
-	"google.golang.org/adk/tool"
+	"google.golang.org/adk/v2/agent"
 )
 
 type updateUserPreferenceArgs struct {
@@ -30,7 +30,7 @@ type updateUserPreferenceResult struct {
 	UpdatedPreference string `json:"updated_preference"`
 }
 
-func updateUserPreference(ctx tool.Context, args updateUserPreferenceArgs) (*updateUserPreferenceResult, error) {
+func updateUserPreference(ctx agent.Context, args updateUserPreferenceArgs) (*updateUserPreferenceResult, error) {
 	userPrefsKey := "user:preferences"
 	val, err := ctx.State().Get(userPrefsKey)
 	if err != nil {

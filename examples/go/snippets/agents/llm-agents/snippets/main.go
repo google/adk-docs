@@ -20,11 +20,12 @@ import (
 	"log"
 	"strings"
 
-	"google.golang.org/adk/agent/llmagent"
-	"google.golang.org/adk/model"
-	"google.golang.org/adk/model/gemini"
-	"google.golang.org/adk/tool"
-	"google.golang.org/adk/tool/functiontool"
+	"google.golang.org/adk/v2/agent"
+	"google.golang.org/adk/v2/agent/llmagent"
+	"google.golang.org/adk/v2/model"
+	"google.golang.org/adk/v2/model/gemini"
+	"google.golang.org/adk/v2/tool"
+	"google.golang.org/adk/v2/tool/functiontool"
 
 	"google.golang.org/genai"
 )
@@ -82,7 +83,7 @@ func _snippet_tool_example(model model.LLM) {
 	type getCapitalCityArgs struct {
 		Country string `json:"country" jsonschema:"The country to get the capital of."`
 	}
-	getCapitalCity := func(ctx tool.Context, args getCapitalCityArgs) (map[string]any, error) {
+	getCapitalCity := func(ctx agent.Context, args getCapitalCityArgs) (map[string]any, error) {
 		// Replace with actual logic (e.g., API call, database lookup)
 		capitals := map[string]string{"france": "Paris", "japan": "Tokyo", "canada": "Ottawa"}
 		capital, ok := capitals[strings.ToLower(args.Country)]

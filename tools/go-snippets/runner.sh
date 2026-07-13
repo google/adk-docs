@@ -92,7 +92,7 @@ get_command_for_action() {
     # non-recursive, so this matches the intended target. Arguments are dropped
     # because `go build` does not accept application arguments.
     local dirs_to_build=$(echo "${line}" | awk '{for(i=1;i<=NF;i++) if($i ~ /\.go$/){d=$i; if (sub(/\/[^\/]*$/,"",d)) print "./"d"/"; else print "./"}}' | sort -u | tr '\n' ' ')
-    command="go build ${dirs_to_build}"
+    command="go build -o /dev/null ${dirs_to_build}"
   elif [ "${action}" == "run" ]; then
     # For 'run', use the line as is, as 'go run' will pass arguments to the application.
     command="go run ${line}"
