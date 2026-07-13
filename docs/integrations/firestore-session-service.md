@@ -33,7 +33,7 @@ ADK provides a native integration for managing persistent agent session states u
 
     Use the same version for both `google-adk` and
     `google-adk-firestore-session-service` to guarantee compatibility. The
-    examples below use `1.5.0`; check for the latest ADK version and use it in
+    examples below use `1.6.0`; check for the latest ADK version and use it in
     both dependencies.
 
 Add the following dependencies to your `pom.xml` (Maven) or `build.gradle`
@@ -47,13 +47,13 @@ Add the following dependencies to your `pom.xml` (Maven) or `build.gradle`
     <dependency>
         <groupId>com.google.adk</groupId>
         <artifactId>google-adk</artifactId>
-        <version>1.5.0</version>
+        <version>1.6.0</version>
     </dependency>
     <!-- Firestore Session Service -->
     <dependency>
         <groupId>com.google.adk</groupId>
         <artifactId>google-adk-firestore-session-service</artifactId>
-        <version>1.5.0</version>
+        <version>1.6.0</version>
     </dependency>
 </dependencies>
 ```
@@ -63,9 +63,9 @@ Add the following dependencies to your `pom.xml` (Maven) or `build.gradle`
 ```gradle
 dependencies {
     // ADK Core
-    implementation 'com.google.adk:google-adk:1.5.0'
+    implementation 'com.google.adk:google-adk:1.6.0'
     // Firestore Session Service
-    implementation 'com.google.adk:google-adk-firestore-session-service:1.5.0'
+    implementation 'com.google.adk:google-adk-firestore-session-service:1.6.0'
 }
 ```
 
