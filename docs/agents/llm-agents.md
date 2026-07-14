@@ -396,32 +396,32 @@ You can adjust how the underlying AI model generates responses using `generate_c
 
 ### Configure a default model
 
-You can set a system-wide default model for all `LlmAgent` instances using the 
+You can set a system-wide default model for all `LlmAgent` instances using the
 `set_default_model` class method. If you do not specify a model when creating an
-agent, it falls back to ADK's built-in default model. This setting helps you 
+agent, it falls back to ADK's built-in default model. This setting helps you
 avoid redundant model specifications and easily change the model for all agents
 at once.
 
-```Python
-    from google.adk.agents import LlmAgent
+```python
+from google.adk.agents import LlmAgent
 
-    # 1. Set a new default model for all agents
-    LlmAgent.set_default_model("gemini-flash-latest")
+# 1. Set a new default model for all agents
+LlmAgent.set_default_model("gemini-flash-latest")
 
-    # 2. This agent will now use "gemini-flash-latest" by default
-    agent_with_default_model = LlmAgent(
-        name="default_model_agent",
-        instruction="You are a helpful assistant."
-    )
+# 2. This agent will now use "gemini-flash-latest" by default
+agent_with_default_model = LlmAgent(
+    name="default_model_agent",
+    instruction="You are a helpful assistant."
+)
 
-    # 3. You can still override the default for specific agents
-    specific_agent = LlmAgent(
-        name="specific_model_agent",
-        model="gemini-pro-latest",
-        instruction="You are a creative writer."
-    )
+# 3. You can still override the default for specific agents
+specific_agent = LlmAgent(
+    name="specific_model_agent",
+    model="gemini-pro-latest",
+    instruction="You are a creative writer."
+)
 ```
-    
+
 ### Structure data input and output {#data-handling}
 
 For scenarios requiring structured data exchange with an `LLM Agent`, the ADK provides mechanisms to define expected input and desired output formats using schema definitions.
