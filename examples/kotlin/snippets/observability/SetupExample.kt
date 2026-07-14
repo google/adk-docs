@@ -17,9 +17,9 @@
 package com.google.adk.kt.examples.observability
 
 import com.google.adk.kt.agents.LlmAgent
+import com.google.adk.kt.apps.App
 import com.google.adk.kt.models.Gemini
 import com.google.adk.kt.plugins.LoggingPlugin
-import com.google.adk.kt.plugins.PluginManager
 import com.google.adk.kt.runners.InMemoryRunner
 import com.google.adk.kt.telemetry.TelemetryConfig
 import com.google.adk.kt.types.Content
@@ -63,7 +63,9 @@ suspend fun main() {
     val agent = LlmAgent(name = "my_agent", model = Gemini(name = "gemini-flash-latest"))
 
     val runner =
-        InMemoryRunner(agent = agent, pluginManager = PluginManager(listOf(LoggingPlugin())))
+        InMemoryRunner(
+            App(appName = "my_agent", rootAgent = agent, plugins = listOf(LoggingPlugin())),
+        )
 
     // The runner will now automatically emit traces via GlobalOpenTelemetry
     // and log activity to the console via the LoggingPlugin.
