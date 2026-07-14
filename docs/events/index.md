@@ -69,7 +69,7 @@ An `Event` in ADK is an immutable record representing a specific point in the ag
     ```
 
 === "Go"
-    In Go, this is a struct of type `google.golang.org/adk/session.Event`.
+    In Go, this is a struct of type `google.golang.org/adk/v2/session.Event`.
 
     ```go
     // Conceptual Structure of an Event (Go - See session/session.go)
@@ -248,7 +248,7 @@ Quickly determine what an event represents by checking:
       // Pseudocode: Basic event identification (Go)
     import (
       "fmt"
-      "google.golang.org/adk/session"
+      "google.golang.org/adk/v2/session"
       "google.golang.org/genai"
     )
 
@@ -414,7 +414,7 @@ Once you know the event type, access the relevant data:
         ```go
         import (
             "fmt"
-            "google.golang.org/adk/session"
+            "google.golang.org/adk/v2/session"
             "google.golang.org/genai"
         )
 
@@ -487,7 +487,7 @@ Once you know the event type, access the relevant data:
         ```go
         import (
             "fmt"
-            "google.golang.org/adk/session"
+            "google.golang.org/adk/v2/session"
             "google.golang.org/genai"
         )
 
@@ -557,7 +557,7 @@ The `event.actions` object signals changes that occurred or should occur. Always
         ```go
         import (
             "fmt"
-            "google.golang.org/adk/session"
+            "google.golang.org/adk/v2/session"
         )
 
         func handleStateChanges(event *session.Event) {
@@ -605,12 +605,12 @@ The `event.actions` object signals changes that occurred or should occur. Always
         ```
 
     === "Go"
-        `artifactChanges := event.Actions.ArtifactDelta` (a `map[string]artifact.Artifact`)
+        `artifactChanges := event.Actions.ArtifactDelta` (a `map[string]int64`)
         ```go
         import (
             "fmt"
-            "google.golang.org/adk/artifact"
-            "google.golang.org/adk/session"
+            "google.golang.org/adk/v2/artifact"
+            "google.golang.org/adk/v2/session"
         )
 
         func handleArtifactChanges(event *session.Event) {
@@ -618,8 +618,8 @@ The `event.actions` object signals changes that occurred or should occur. Always
                 fmt.Printf("  Artifacts saved: %v\n", event.Actions.ArtifactDelta)
                 // UI might refresh an artifact list
                 // Iterate through event.Actions.ArtifactDelta to get filename and artifact.Artifact details
-                for filename, art := range event.Actions.ArtifactDelta {
-                    fmt.Printf("    Filename: %s, Version: %d, MIMEType: %s\n", filename, art.Version, art.MIMEType)
+                for filename, version := range event.Actions.ArtifactDelta {
+                    fmt.Printf("    Filename: %s, Version: %d\n", filename, version)
                 }
             }
         }
@@ -685,7 +685,7 @@ The `event.actions` object signals changes that occurred or should occur. Always
         ```go
         import (
             "fmt"
-            "google.golang.org/adk/session"
+            "google.golang.org/adk/v2/session"
         )
 
         func handleControlFlow(event *session.Event) {
@@ -827,7 +827,7 @@ Use the built-in helper method `event.is_final_response()` to identify events su
         import (
             "fmt"
             "strings"
-            "google.golang.org/adk/session"
+            "google.golang.org/adk/v2/session"
             "google.golang.org/genai"
         )
 

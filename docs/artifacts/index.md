@@ -219,11 +219,11 @@ Understanding artifacts involves grasping a few key components: the service that
       "context"
       "log"
 
-      "google.golang.org/adk/agent/llmagent"
-      "google.golang.org/adk/artifactservice"
-      "google.golang.org/adk/llm/gemini"
-      "google.golang.org/adk/runner"
-      "google.golang.org/adk/sessionservice"
+      "google.golang.org/adk/v2/agent/llmagent"
+      "google.golang.org/adk/v2/artifact"
+      "google.golang.org/adk/v2/model/gemini"
+      "google.golang.org/adk/v2/runner"
+      "google.golang.org/adk/v2/session"
       "google.golang.org/genai"
 	)
 
@@ -498,11 +498,11 @@ Before you can use any artifact methods via the context objects, you **must** pr
       "context"
       "log"
 
-      "google.golang.org/adk/agent/llmagent"
-      "google.golang.org/adk/artifactservice"
-      "google.golang.org/adk/llm/gemini"
-      "google.golang.org/adk/runner"
-      "google.golang.org/adk/sessionservice"
+      "google.golang.org/adk/v2/agent/llmagent"
+      "google.golang.org/adk/v2/artifact"
+      "google.golang.org/adk/v2/model/gemini"
+      "google.golang.org/adk/v2/runner"
+      "google.golang.org/adk/v2/session"
       "google.golang.org/genai"
     )
 
@@ -622,8 +622,8 @@ The artifact interaction methods are available directly on instances of `Callbac
         import (
           "log"
 
-          "google.golang.org/adk/agent"
-          "google.golang.org/adk/llm"
+          "google.golang.org/adk/v2/agent"
+          "google.golang.org/adk/v2/model"
           "google.golang.org/genai"
         )
 
@@ -752,8 +752,8 @@ The artifact interaction methods are available directly on instances of `Callbac
         import (
           "log"
 
-          "google.golang.org/adk/agent"
-          "google.golang.org/adk/llm"
+          "google.golang.org/adk/v2/agent"
+          "google.golang.org/adk/v2/model"
         )
 
         --8<-- "examples/go/snippets/artifacts/main.go:loading-artifacts"
@@ -896,9 +896,9 @@ artifact in a later turn.
 
     ```go
     import (
-      "google.golang.org/adk/agent/llmagent"
-      "google.golang.org/adk/tool"
-      "google.golang.org/adk/tool/loadartifactstool"
+      "google.golang.org/adk/v2/agent/llmagent"
+      "google.golang.org/adk/v2/tool"
+      "google.golang.org/adk/v2/tool/loadartifactstool"
     )
 
     agent, err := llmagent.New(llmagent.Config{
@@ -988,8 +988,8 @@ artifact in a later turn.
           "log"
           "strings"
 
-          "google.golang.org/adk/agent"
-          "google.golang.org/adk/llm"
+          "google.golang.org/adk/v2/agent"
+          "google.golang.org/adk/v2/model"
           "google.golang.org/genai"
         )
 
@@ -1132,7 +1132,7 @@ ADK provides concrete implementations of the `BaseArtifactService` interface, of
 
         ```go
         import (
-          "google.golang.org/adk/artifactservice"
+          "google.golang.org/adk/v2/artifact"
         )
 
         --8<-- "examples/go/snippets/artifacts/main.go:in-memory-service"

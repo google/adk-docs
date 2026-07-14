@@ -206,6 +206,7 @@ plugins:
         'observability/freeplay.md': 'integrations/freeplay.md'
         'observability/mlflow.md': 'integrations/mlflow-tracing.md'
         'integrations/mlflow.md': 'integrations/mlflow-tracing.md'
+        'integrations/mimir.md': 'integrations/perseus-vault.md'
         'observability/monocle.md': 'integrations/monocle.md'
         'observability/phoenix.md': 'integrations/phoenix.md'
         'observability/weave.md': 'integrations/weave.md'
@@ -274,6 +275,7 @@ nav:
       - Java: get-started/java.md
       - Kotlin: get-started/kotlin.md
       - Installation: get-started/installation.md
+      - Google Cloud: get-started/google-cloud.md
     - Build your Agent:
       - tutorials/index.md
       - Multi-tool agent: tutorials/multi-tool-agent.md
@@ -287,6 +289,7 @@ nav:
     - Agents:
       - agents/index.md
       - Simple agents: agents/llm-agents.md
+      - Managed agents: agents/managed-agents.md
     - Graph Workflows:
       - graphs/index.md
       - Graph routes: graphs/routes.md
@@ -427,7 +430,9 @@ nav:
       - api-reference/index.md
       - Python ADK: api-reference/python/index.html
       - Typescript ADK: api-reference/typescript/index.html
-      - Go ADK: https://pkg.go.dev/google.golang.org/adk" target="_blank
+      - Go ADK:
+        - Go v2.x: https://pkg.go.dev/google.golang.org/adk/v2" target="_blank
+        - Go v1.x: https://pkg.go.dev/google.golang.org/adk" target="_blank
       - Java ADK: api-reference/java/index.html
       - Kotlin ADK: api-reference/kotlin/index.html
       - CLI Reference: api-reference/cli/index.html

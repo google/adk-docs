@@ -17,8 +17,8 @@
 package com.google.adk.kt.examples.observability
 
 import com.google.adk.kt.agents.LlmAgent
+import com.google.adk.kt.apps.App
 import com.google.adk.kt.plugins.LoggingPlugin
-import com.google.adk.kt.plugins.PluginManager
 import com.google.adk.kt.runners.InMemoryRunner
 import com.google.adk.kt.telemetry.TelemetryConfig
 
@@ -32,6 +32,8 @@ suspend fun loggingExamples(agent: LlmAgent) {
     // --8<-- [start:logging_plugin]
     // Use the LoggingPlugin for structured activity logging to the console
     val runner =
-        InMemoryRunner(agent = agent, pluginManager = PluginManager(listOf(LoggingPlugin())))
+        InMemoryRunner(
+            App(appName = agent.name, rootAgent = agent, plugins = listOf(LoggingPlugin())),
+        )
     // --8<-- [end:logging_plugin]
 }

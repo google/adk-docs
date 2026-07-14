@@ -226,7 +226,7 @@ During the tool execution, [**`Tool Context`**](../tools-custom/index.md#tool-co
     	"fmt"
     	"strings"
 
-    	"google.golang.org/adk/tool"
+    	"google.golang.org/adk/v2/tool"
     )
 
     func query(ctx tool.Context, args QueryArgs) (map[string]any, error) {
@@ -351,7 +351,7 @@ Gemini models come with in-built safety mechanisms that can be leveraged to impr
 
     ```go
     import (
-    	"google.golang.org/adk/agent/llmagent"
+    	"google.golang.org/adk/v2/agent/llmagent"
     	"google.golang.org/genai"
     )
 
@@ -464,8 +464,8 @@ When modifications to the tools to add guardrails aren't possible, the [**`Befor
     import (
     	"fmt"
 
-    	"google.golang.org/adk/agent/llmagent"
-    	"google.golang.org/adk/tool"
+    	"google.golang.org/adk/v2/agent/llmagent"
+    	"google.golang.org/adk/v2/tool"
     )
 
     // Hypothetical callback function

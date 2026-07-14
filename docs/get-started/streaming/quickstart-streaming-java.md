@@ -109,7 +109,7 @@ To run the server, you’ll need to export two environment variables:
 * a variable to specify we’re not using Agent Platform this time.
 
 ```shell
-export GOOGLE_GENAI_USE_VERTEXAI=FALSE
+export GOOGLE_GENAI_USE_ENTERPRISE=FALSE
 export GOOGLE_API_KEY=YOUR_API_KEY
 ```
 
@@ -191,7 +191,7 @@ Replace your existing pom.xml with the following.
     <auto-value.version>1.11.0</auto-value.version>
     <!-- Main class for exec-maven-plugin -->
     <exec.mainClass>samples.liveaudio.LiveAudioRun</exec.mainClass>
-    <google-adk.version>1.4.0</google-adk.version>
+    <google-adk.version>1.6.0</google-adk.version>
   </properties>
 
   <dependencyManagement>

@@ -23,13 +23,13 @@ import (
 	"log"
 	"strings"
 
-	"google.golang.org/adk/agent"
-	"google.golang.org/adk/agent/llmagent"
-	"google.golang.org/adk/model/gemini"
-	"google.golang.org/adk/runner"
-	"google.golang.org/adk/session"
-	"google.golang.org/adk/tool"
-	"google.golang.org/adk/tool/functiontool"
+	"google.golang.org/adk/v2/agent"
+	"google.golang.org/adk/v2/agent/llmagent"
+	"google.golang.org/adk/v2/model/gemini"
+	"google.golang.org/adk/v2/runner"
+	"google.golang.org/adk/v2/session"
+	"google.golang.org/adk/v2/tool"
+	"google.golang.org/adk/v2/tool/functiontool"
 
 	"google.golang.org/genai"
 )
@@ -37,7 +37,7 @@ import (
 // --- Main Runnable Example ---
 
 const (
-	modelName = "gemini-2.0-flash"
+	modelName = "gemini-flash-latest"
 	appName   = "agent_comparison_app"
 	userID    = "test_user_456"
 )
@@ -47,7 +47,7 @@ type getCapitalCityArgs struct {
 }
 
 // getCapitalCity retrieves the capital city of a given country.
-func getCapitalCity(ctx tool.Context, args getCapitalCityArgs) (map[string]any, error) {
+func getCapitalCity(ctx agent.Context, args getCapitalCityArgs) (map[string]any, error) {
 	fmt.Printf("\n-- Tool Call: getCapitalCity(country='%s') --\n", args.Country)
 	capitals := map[string]string{
 		"united states": "Washington, D.C.",

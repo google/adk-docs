@@ -19,19 +19,19 @@ import (
 	"fmt"
 	"log"
 
-	"google.golang.org/adk/agent"
-	"google.golang.org/adk/agent/llmagent"
-	"google.golang.org/adk/model/gemini"
-	"google.golang.org/adk/runner"
-	"google.golang.org/adk/session"
-	"google.golang.org/adk/tool"
-	"google.golang.org/adk/tool/functiontool"
+	"google.golang.org/adk/v2/agent"
+	"google.golang.org/adk/v2/agent/llmagent"
+	"google.golang.org/adk/v2/model/gemini"
+	"google.golang.org/adk/v2/runner"
+	"google.golang.org/adk/v2/session"
+	"google.golang.org/adk/v2/tool"
+	"google.golang.org/adk/v2/tool/functiontool"
 	"google.golang.org/genai"
 )
 
 func main() {
 	ctx := context.Background()
-	model, err := gemini.NewModel(ctx, "gemini-2.0-flash", &genai.ClientConfig{})
+	model, err := gemini.NewModel(ctx, "gemini-flash-latest", &genai.ClientConfig{})
 	if err != nil {
 		log.Fatal(err)
 	}

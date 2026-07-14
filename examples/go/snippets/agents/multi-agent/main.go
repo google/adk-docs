@@ -19,17 +19,17 @@ import (
 	"fmt"
 	"iter"
 
-	"google.golang.org/adk/agent"
-	"google.golang.org/adk/agent/llmagent"
-	"google.golang.org/adk/agent/workflowagents/loopagent"
-	"google.golang.org/adk/agent/workflowagents/parallelagent"
-	"google.golang.org/adk/agent/workflowagents/sequentialagent"
-	"google.golang.org/adk/model"
-	"google.golang.org/adk/model/gemini"
-	"google.golang.org/adk/session"
-	"google.golang.org/adk/tool"
-	"google.golang.org/adk/tool/agenttool"
-	"google.golang.org/adk/tool/functiontool"
+	"google.golang.org/adk/v2/agent"
+	"google.golang.org/adk/v2/agent/llmagent"
+	"google.golang.org/adk/v2/agent/workflowagents/loopagent"
+	"google.golang.org/adk/v2/agent/workflowagents/parallelagent"
+	"google.golang.org/adk/v2/agent/workflowagents/sequentialagent"
+	"google.golang.org/adk/v2/model"
+	"google.golang.org/adk/v2/model/gemini"
+	"google.golang.org/adk/v2/session"
+	"google.golang.org/adk/v2/tool"
+	"google.golang.org/adk/v2/tool/agenttool"
+	"google.golang.org/adk/v2/tool/functiontool"
 	"google.golang.org/genai"
 )
 
@@ -335,7 +335,7 @@ func advancedPatternSnippets(m model.LLM) {
 		Amount float64 `json:"amount" jsonschema:"The amount for which approval is requested."`
 		Reason string  `json:"reason" jsonschema:"The reason for the approval request."`
 	}
-	var externalApprovalTool func(tool.Context, externalApprovalToolArgs) (string, error)
+	var externalApprovalTool func(agent.Context, externalApprovalToolArgs) (string, error)
 	approvalTool, _ := functiontool.New(
 		functiontool.Config{
 			Name:        "external_approval_tool",

@@ -48,8 +48,8 @@ ADK project's App object, as shown below:
 
     ```go
     import (
-    	"google.golang.org/adk/plugin/retryandreflect"
-    	"google.golang.org/adk/runner"
+    	"google.golang.org/adk/v2/plugin/retryandreflect"
+    	"google.golang.org/adk/v2/runner"
     )
 
     // ... create rootAgent and sessionService ...
