@@ -99,3 +99,45 @@ agent_claude_direct = LlmAgent(
     # ... other agent parameters
 )
 ```
+
+## DaoXE (OpenAI-compatible gateway)
+
+[DaoXE](https://daoxe.com) is a multi-model multi-protocol API gateway with an
+OpenAI-compatible Chat Completions endpoint. It also exposes other protocols
+(such as Anthropic Messages) for other clients; with ADK you use the LiteLLM
+OpenAI-compatible path below.
+
+1. Create an API key in the [DaoXE dashboard](https://daoxe.com).
+2. Use an exact model ID from your DaoXE account catalog (`GET /v1/models` or
+   your account UI). Prefer live account IDs over hard-coded public lists.
+   DaoXE is not available in mainland China.
+
+Set the key LiteLLM reads for OpenAI-compatible endpoints:
+
+```shell
+export OPENAI_API_KEY="YOUR_DAOXE_API_KEY"
+```
+
+Then point `LiteLlm` at DaoXE with `api_base` and the `openai/` model prefix:
+
+```python
+from google.adk.agents import LlmAgent
+from google.adk.models.lite_llm import LiteLlm
+
+agent_daoxe = LlmAgent(
+    model=LiteLlm(
+        model="openai/YOUR_DAOXE_MODEL_ID",  # exact ID from your DaoXE account
+        api_base="https://daoxe.com/v1",
+        # Or pass the key explicitly instead of OPENAI_API_KEY:
+        # api_key="YOUR_DAOXE_API_KEY",
+    ),
+    name="daoxe_agent",
+    instruction="You are a helpful assistant routed through DaoXE.",
+    # ... other agent parameters
+)
+```
+
+For more on OpenAI-compatible providers in LiteLLM, see the
+[LiteLLM OpenAI-compatible providers](https://docs.litellm.ai/docs/providers/openai_compatible)
+documentation. Client setup examples:
+[DaoXE-AI](https://github.com/seven7763/DaoXE-AI).
