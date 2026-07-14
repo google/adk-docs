@@ -1,6 +1,6 @@
 ---
 catalog_title: Unstructured
-catalog_description: Parse PDFs, Office docs, images, and 60+ file types into structured, AI-ready data
+catalog_description: Parse PDFs, Office docs, images, and 40+ file types into structured, AI-ready data
 catalog_icon: /integrations/assets/unstructured.png
 catalog_tags: ["mcp"]
 ---
@@ -15,9 +15,9 @@ The [Unstructured Transform MCP Server](https://docs.unstructured.io/transform/o
 connects your ADK agent to [Unstructured](https://unstructured.io), a document
 processing platform that turns raw files into structured, AI-ready data. This
 integration gives your agent the ability to parse PDFs, Office documents,
-emails, images, and scanned files — 60+
+emails, images, and scanned files - 40+
 [supported file types](https://docs.unstructured.io/transform/supported-file-types)
-in total — into partitioned, enriched, chunked, and embedded output using
+in total - into partitioned, enriched, chunked, and embedded output using
 natural language. Transform is a hosted remote MCP server, so there is nothing
 to install or run locally.
 
@@ -29,8 +29,8 @@ to install or run locally.
 - **Document Q&A agents**: Let an agent fetch and parse a contract, report, or
   paper on demand, then answer questions grounded in the parsed content.
 
-- **Format normalization**: Convert mixed inputs — scanned PDFs, spreadsheets,
-  presentations, email threads — into one consistent structured representation.
+- **Format normalization**: Convert mixed inputs - scanned PDFs, spreadsheets,
+  presentations, email threads - into one consistent structured representation.
 
 - **OCR at agent runtime**: Extract text and structure from images and scanned
   documents as a step inside a larger agent workflow.
@@ -44,7 +44,7 @@ to install or run locally.
 
 ## Installation
 
-Install ADK with the `mcp` extra. The extra is required — without it, ADK's
+Install ADK with the `mcp` extra. The extra is required - without it, ADK's
 MCP classes are not importable:
 
 ```bash
