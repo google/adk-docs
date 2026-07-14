@@ -12,7 +12,7 @@ catalog_tags: ["mcp"]
 </div>
 
 The [CarsXE MCP server](https://github.com/carsxe/carsxe-mcp-server) connects your
-ADK agent to the [CarsXE](https://www.carsxe.com/) vehicle data platform. It
+ADK agent to the [CarsXE](https://carsxe.com/) vehicle data platform. It
 exposes CarsXE's APIs — VIN decoding and full specifications, license-plate
 decoding, market value, title and ownership history, safety recalls, lien and
 theft records, OBD-II code decoding, and image lookups — as MCP tools your agent
@@ -129,5 +129,5 @@ Tool | Description
 
 - [CarsXE MCP server repository](https://github.com/carsxe/carsxe-mcp-server)
 - [CarsXE API documentation](https://api.carsxe.com/docs)
-- [CarsXE homepage](https://www.carsxe.com/)
+- [CarsXE homepage](https://carsxe.com/)
 - [Get a CarsXE API key](https://api.carsxe.com/dashboard/developer)
