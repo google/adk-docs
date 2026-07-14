@@ -89,7 +89,7 @@ First, you need to establish what the agent *is* and what it's *for*.
     --8<-- "examples/kotlin/snippets/agents/llm-agent/CapitalAgent.kt:identity"
     ```
 
-## Guide the Agent: Instructions
+## Guide the agent with instructions
 
 The `instruction` parameter is arguably the most critical for shaping an
 `LlmAgent`'s behavior. It's a string (or a function returning a string) that
@@ -101,14 +101,14 @@ tells the agent:
 * How and when to use its `tools`. You should explain the purpose of each tool and the circumstances under which it should be called, supplementing any descriptions within the tool itself.
 * The desired format for its output (e.g., "Respond in JSON," "Provide a bulleted list").
 
-**Tips for Effective Instructions:**
+**Tips for effective instructions:**
 
 * **Be Clear and Specific:** Avoid ambiguity. Clearly state the desired actions and outcomes.
 * **Use Markdown:** Improve readability for complex instructions using headings, lists, etc.
 * **Provide Examples (Few-Shot):** For complex tasks or specific output formats, include examples directly in the instruction.
 * **Guide Tool Use:** Don't just list tools; explain *when* and *why* the agent should use them.
 
-**State:**
+**Use dynamic state variables:**
 
 * The instruction is a string template, you can use the `{var}` syntax to insert dynamic values into the instruction.
 * `{var}` is used to insert the value of the state variable named var.
@@ -193,7 +193,7 @@ tells the agent:
 **Note:** For instructions that apply to *all* agents in a system, consider using
 `global_instruction` on the root agent.
 
-## Equip the Agent: Tools
+## Equip the agent with tools
 
 Tools give your `LlmAgent` capabilities beyond the LLM's built-in knowledge or
 reasoning. They allow the agent to interact with the outside world, perform
@@ -319,7 +319,7 @@ on the conversation and its instructions.
 
 Learn more about Tools in [Custom Tools](/tools-custom/).
 
-## Advanced Configuration & Control
+## Advanced configuration & control
 
 Beyond the core parameters, `LlmAgent` offers several options for finer control:
 
@@ -394,6 +394,34 @@ You can adjust how the underlying AI model generates responses using `generate_c
     --8<-- "examples/kotlin/snippets/agents/llm-agent/CapitalAgent.kt:gen_config"
     ```
 
+### Configure a default model
+
+You can set a system-wide default model for all `LlmAgent` instances using the 
+`set_default_model` class method. If you do not specify a model when creating an
+agent, it falls back to ADK's built-in default model. This setting helps you 
+avoid redundant model specifications and easily change the model for all agents
+at once.
+
+```Python
+    from google.adk.agents import LlmAgent
+
+    # 1. Set a new default model for all agents
+    LlmAgent.set_default_model("gemini-flash-latest")
+
+    # 2. This agent will now use "gemini-flash-latest" by default
+    agent_with_default_model = LlmAgent(
+        name="default_model_agent",
+        instruction="You are a helpful assistant."
+    )
+
+    # 3. You can still override the default for specific agents
+    specific_agent = LlmAgent(
+        name="specific_model_agent",
+        model="gemini-pro-latest",
+        instruction="You are a creative writer."
+    )
+```
+    
 ### Structure data input and output {#data-handling}
 
 For scenarios requiring structured data exchange with an `LLM Agent`, the ADK provides mechanisms to define expected input and desired output formats using schema definitions.
@@ -566,7 +594,7 @@ Control whether the agent receives the prior conversation history.
     as a workflow node. For more information on composing agents in graph-based
     workflows, see [Graph-based agent workflows](/graphs/).
 
-### Planner
+### Configure a planner
 
 <div class="language-support-tag" title="">
    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span>
@@ -745,7 +773,7 @@ call_agent("If it's raining in New York right now, what is the current temperatu
 
 ```
 
-### Code Execution
+### Code execution
 
 <div class="language-support-tag">
    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v0.1.0</span><span class="lst-java">Java v0.1.0</span>
@@ -816,7 +844,7 @@ the following:
 * **Multi-Agent Control:** Advanced strategies for agent interaction, including
   planning (`planner`), controlling agent transfer
   (`disallow_transfer_to_parent`, `disallow_transfer_to_peers`), and system-wide
-  instructions (`global_instruction`). See [Custom agent workflows](/agents/custom-agents/).
+  instructions (`global_instruction`). See [Multi-Agents](multi-agents.md).
 * **Graph-based workflows:** Compose LLM agents as steps in deterministic,
   graph-based pipelines using [Graph-based agent workflows](/graphs/). In Go v2.0.0, use
   `workflow.NewAgentNode` to wrap any LLM agent as a workflow node.
