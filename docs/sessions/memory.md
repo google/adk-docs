@@ -15,8 +15,11 @@ The `BaseMemoryService` (or `Service` in Go) defines the interface for managing 
 
 *   **Ingesting Information:**
     *   **`add_session_to_memory`**: Takes a completed `Session` and adds relevant information to the long-term knowledge store. This approach is ideal for automatically capturing the essence of a conversation.
-    *   **`add_memory`**: Allows you to add explicit `MemoryEntry` objects directly to the memory. This entry gives you fine-grained control and is useful for injecting specific facts from other sources.
-*   **Searching Information (`search_memory`):** Allowing an agent (typically via a `Tool`) to query the knowledge store and retrieve relevant snippets or context based on a search query.
+    *   **`add_events_to_memory`**: Appends a delta of events (for example, the latest turn) without re-ingesting the full session. Useful when you want to write to memory partway through a long-running session.
+    *   **`add_memory`**: Adds explicit `MemoryEntry` objects directly to the memory. This method gives you fine-grained control and is useful for injecting specific facts from other sources.
+*   **Searching Information (`search_memory`):** Lets an agent (typically via a `Tool`) query the knowledge store and retrieve relevant snippets or context based on a search query.
+
+`add_events_to_memory` and `add_memory` are optional and are not implemented by every service, so confirm that your chosen service supports them before relying on them.
 
 ## Choose the right memory service
 
@@ -266,7 +269,7 @@ You can also search memory from within a custom tool by using the tool context.
     --8<-- "examples/kotlin/snippets/sessions/MemoryExample.kt:search_within_tool"
     ```
 
-## Memory bank
+## Memory Bank
 
 The `VertexAiMemoryBankService` connects your agent to [Memory Bank](https://cloud.google.com/vertex-ai/generative-ai/docs/agent-engine/memory-bank/overview), a fully managed Google Cloud service that provides sophisticated, persistent memory capabilities for conversational agents.
 
@@ -286,7 +289,8 @@ How it works depends on the `enable_consolidation` option:
 *   **Direct Creation (Default):** By default, `add_memory` calls the underlying `memories.create` API. Each `MemoryEntry` you provide is added as a distinct, separate memory item.
 
     ```python
-    from google.adk.memory import MemoryEntry, VertexAiMemoryBankService
+    from google.adk.memory import VertexAiMemoryBankService
+    from google.adk.memory.memory_entry import MemoryEntry
     from google.genai.types import Content, Part
 
     memory_service = VertexAiMemoryBankService(...)
