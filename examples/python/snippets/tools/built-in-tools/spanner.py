@@ -97,7 +97,7 @@ spanner_agent = Agent(
     description=(
         "Agent to answer questions about Spanner database and execute SQL queries."
     ),
-    instruction="""\
+    instruction="""
         You are a data assistant agent with access to several Spanner tools.
         Make use of those tools to answer the user's questions.
     """,

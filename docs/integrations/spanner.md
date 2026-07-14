@@ -8,21 +8,137 @@ catalog_tags: ["data","google"]
 # Google Cloud Spanner tool for ADK
 
 <div class="language-support-tag">
-  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.11.0</span>
+  <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.11.0</span><span class="lst-preview">Experimental</span>
 </div>
 
-These are a set of tools aimed to provide integration with Spanner, namely:
+[Google Cloud Spanner](https://cloud.google.com/spanner) is a fully managed,
+distributed database with support for SQL and vector search. The ADK Spanner
+tools let your agent explore database schemas, run SQL queries, and perform
+vector similarity search against your Spanner data.
 
-* **`list_table_names`**: Fetches table names present in a GCP Spanner database.
-* **`list_table_indexes`**: Fetches table indexes present in a GCP Spanner database.
-* **`list_table_index_columns`**: Fetches table index columns present in a GCP Spanner database.
-* **`list_named_schemas`**: Fetches named schema for a Spanner database.
-* **`get_table_schema`**: Fetches Spanner database table schema and metadata information.
-* **`execute_sql`**: Runs a SQL query in Spanner database and fetch the result.
-* **`similarity_search`**: Similarity search in Spanner using a text query.
+!!! example "Experimental"
+    This feature is experimental and may be updated in future releases.
 
-They are packaged in the toolset `SpannerToolset`.
+## Available tools
+
+The `SpannerToolset` provides the following tools:
+
+- **`list_table_names`**: Fetches table names present in a GCP Spanner database.
+- **`list_table_indexes`**: Fetches table indexes present in a GCP Spanner
+  database.
+- **`list_table_index_columns`**: Fetches table index columns present in a GCP
+  Spanner database.
+- **`list_named_schemas`**: Fetches named schema for a Spanner database.
+- **`get_table_schema`**: Fetches Spanner database table schema and metadata
+  information.
+- **`execute_sql`**: Runs a SQL query in Spanner database and fetch the result.
+- **`similarity_search`**: Similarity search in Spanner using a text query.
+
+## Use with agent
 
 ```py
 --8<-- "examples/python/snippets/tools/built-in-tools/spanner.py"
 ```
+
+## Vector similarity search
+
+The `vector_store_similarity_search` tool enables agents to perform semantic
+searches against a Spanner table configured as a vector store. This capability
+is essential for building contextually aware RAG applications; it allows AI
+models to retrieve database context based on semantic meaning rather than exact
+keyword matches. By configuring `SpannerVectorStoreSettings`, your agents can
+better understand the intent behind user queries and ground their responses in
+the most relevant Spanner data.
+
+The following example configures a Spanner table as a vector store and wires the
+`vector_store_similarity_search` tool into a RAG agent:
+
+```py
+from google.adk.agents import LlmAgent
+from google.adk.tools.spanner import SpannerCredentialsConfig, SpannerToolset
+from google.adk.tools.spanner.settings import (
+    Capabilities,
+    SpannerToolSettings,
+    SpannerVectorStoreSettings,
+)
+
+# 1. Define Spanner tool config with vector store settings
+my_vector_store_settings = SpannerVectorStoreSettings(
+    project_id="your-gcp-project",
+    instance_id="your-spanner-instance",
+    database_id="your-database",
+    table_name="my_products",
+    content_column="productDescription",
+    embedding_column="productDescriptionEmbedding",
+    vector_length=768,
+    vertex_ai_embedding_model_name="text-embedding-005",
+    selected_columns=["productId", "productName", "productDescription"],
+    nearest_neighbors_algorithm="EXACT_NEAREST_NEIGHBORS",
+    top_k=3,
+    distance_type="COSINE",
+    additional_filter="inventoryCount > 0",
+)
+
+my_tool_settings = SpannerToolSettings(
+    capabilities=[Capabilities.DATA_READ],
+    vector_store_settings=my_vector_store_settings,
+)
+
+# 2. Initialize the Spanner toolset
+credentials_config = SpannerCredentialsConfig()
+my_spanner_toolset = SpannerToolset(
+    credentials_config=credentials_config,
+    spanner_tool_settings=my_tool_settings,
+    tool_filter=["vector_store_similarity_search"],
+)
+
+# 3. Use the toolset in your RAG agent
+my_rag_agent = LlmAgent(
+    model="gemini-flash-latest",
+    name="product_search_agent",
+    instruction="""
+    You are a helpful assistant that answers user questions by finding similar products.
+    1. Always use the `vector_store_similarity_search` tool to find relevant product information.
+    2. If no relevant information is found, state that no matching products were found.
+    3. Present the relevant product details clearly in your response.
+    """,
+    tools=[my_spanner_toolset],
+)
+```
+
+### Configuration
+
+The `SpannerVectorStoreSettings` class used above defines how
+`vector_store_similarity_search` operates. It accepts the following parameters:
+
+#### Required parameters
+
+- **`project_id`**: Your Google Cloud Project ID required for authentication
+  context.
+- **`instance_id`**: The Spanner instance ID.
+- **`database_id`**: The Spanner database ID.
+- **`table_name`**: The Spanner table containing the vector embeddings.
+- **`embedding_column`**: The `ARRAY<FLOAT>` or `ARRAY<DOUBLE>` column where the
+  vector embeddings are stored.
+- **`content_column`**: The column containing the original text or content to be
+  retrieved.
+- **`vector_length`**: The dimensionality of your embedding vectors that must
+  match your model.
+- **`vertex_ai_embedding_model_name`**: The model used to generate the
+  embeddings, for example "text-embedding-005".
+
+#### Optional parameters
+
+- **`selected_columns`**: A list of columns you can include in the search
+  results, such as metadata or identifiers.
+- **`nearest_neighbors_algorithm`**: The algorithm you use for the search, such
+  as `EXACT_NEAREST_NEIGHBORS` and `APPROXIMATE_NEAREST_NEIGHBORS`.
+    - **`num_leaves_to_search`**: Number of index leaf nodes searched. Only used
+      with `APPROXIMATE_NEAREST_NEIGHBORS`.
+    - **`vector_search_index_settings`**: Vector index settings. Only required with
+      `APPROXIMATE_NEAREST_NEIGHBORS`.
+- **`top_k`**: The number of nearest neighbors to retrieve per query.
+- **`distance_type`**: The distance metric used for similarity calculation, such
+  as `COSINE` or `EUCLIDEAN`.
+- **`additional_filter`**: An optional SQL filter string to apply during the
+  search, for example: "inventoryCount > 0".
