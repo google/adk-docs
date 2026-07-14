@@ -96,7 +96,11 @@ root_agent = Agent(
         "returns a job_id; poll with check_transform_status, calling "
         "wait_seconds(30) between checks - jobs take 30 seconds to a few "
         "minutes. When the job completes, call get_transform_results and "
-        "report the parsed content back to the user. If asked to parse a "
+        "report the parsed content back to the user. transform_files "
+        "accepts an optional stages config; it auto-selects a parse "
+        "strategy by default, but if the output looks low quality "
+        "(garbled text or lost tables), re-run the file with a hi_res "
+        "partition strategy for a cleaner result. If asked to parse a "
         "local file, explain that this requires the upload helper from the "
         "Unstructured ADK guide."
     ),
