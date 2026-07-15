@@ -312,6 +312,29 @@ Example `EvalConfig` entry:
 }
 ```
 
+Rubrics can also be attached per-case via `EvalCase.rubrics`. Unlike
+criterion-level rubrics, these are filtered by `type`. Only entries whose
+`type` matches this criterion's expected value (`"FINAL_RESPONSE_QUALITY"`)
+are merged into the effective rubric set:
+
+```json
+{
+  "eval_id": "case_01",
+  "conversation": [ ... ],
+  "rubrics": [
+    {
+      "rubric_id": "no_speculative_pricing",
+      "rubric_content": {
+        "text_property": "The agent's final response does not fabricate prices for products it did not look up."
+      },
+      "type": "FINAL_RESPONSE_QUALITY"
+    }
+  ]
+}
+```
+
+The merged rubric list passed to the judge is the union of the criterion-level list above and any type-matching entries from `EvalCase.rubrics`.
+
 #### Notes On Rubrics
 
 - Rubrics on `EvalConfig.criteria["rubric_based_final_response_quality_v1"].rubrics` **must be non-empty** — `RubricBasedEvaluator` asserts this at init time.
@@ -391,6 +414,29 @@ Example `EvalConfig` entry:
 }
 ```
 
+Rubrics can also be attached per-case via `EvalCase.rubrics`. Unlike
+criterion-level rubrics, these are filtered by `type`. Only entries whose
+`type` matches this criterion's expected value (`"TOOL_USE_QUALITY"`) are
+merged into the effective rubric set:
+
+```json
+{
+  "eval_id": "case_01",
+  "conversation": [ ... ],
+  "rubrics": [
+    {
+      "rubric_id": "no_pricing_tool_when_not_asked",
+      "rubric_content": {
+        "text_property": "The agent does not call the pricing tool in this case, since the user only asked about availability."
+      },
+      "type": "TOOL_USE_QUALITY"
+    }
+  ]
+}
+```
+
+The merged rubric list passed to the judge is the union of the criterion-level list above and any type-matching entries from `EvalCase.rubrics`.
+
 #### Notes On Rubrics
 
 - Rubrics on `EvalConfig.criteria["rubric_based_tool_use_quality_v1"].rubrics` **must be non-empty** — `RubricBasedEvaluator` asserts this at init time.
@@ -466,6 +512,29 @@ Example `EvalConfig` entry:
   }
 }
 ```
+
+Rubrics can also be attached per-case via `EvalCase.rubrics`. Unlike
+criterion-level rubrics, these are filtered by `type`. Only entries whose
+`type` matches this criterion's expected value (`"TRAJECTORY_QUALITY"`) are
+merged into the effective rubric set:
+
+```json
+{
+  "eval_id": "case_01",
+  "conversation": [ ... ],
+  "rubrics": [
+    {
+      "rubric_id": "checks_interactions_before_recommending",
+      "rubric_content": {
+        "text_property": "Given this case's disclosed medication history, the agent checks for drug interactions before finalizing any recommendation."
+      },
+      "type": "TRAJECTORY_QUALITY"
+    }
+  ]
+}
+```
+
+The merged rubric list passed to the judge is the union of the criterion-level list above and any type-matching entries from `EvalCase.rubrics`.
 
 #### Notes On Rubrics
 
