@@ -298,15 +298,13 @@ Example `EvalConfig` entry:
           "rubric_id": "conciseness",
           "rubric_content": {
             "text_property": "The agent's response is direct and to the point."
-          },
-          "type": "FINAL_RESPONSE_QUALITY"
+          }
         },
         {
           "rubric_id": "intent_inference",
           "rubric_content": {
             "text_property": "The agent's response accurately infers the user's underlying goal from ambiguous queries."
-          },
-          "type": "FINAL_RESPONSE_QUALITY"
+          }
         }
       ]
     }
@@ -379,15 +377,13 @@ Example `EvalConfig` entry:
           "rubric_id": "geocoding_called",
           "rubric_content": {
             "text_property": "The agent calls the GeoCoding tool before calling the GetWeather tool."
-          },
-          "type": "TOOL_USE_QUALITY"
+          }
         },
         {
           "rubric_id": "getweather_called",
           "rubric_content": {
             "text_property": "The agent calls the GetWeather tool with coordinates derived from the user's location."
-          },
-          "type": "TOOL_USE_QUALITY"
+          }
         }
       ]
     }
@@ -457,15 +453,13 @@ Example `EvalConfig` entry:
           "rubric_id": "elicits_individual_factors",
           "rubric_content": {
             "text_property": "The agent asks about individual factors (age, prior conditions, current medication) before giving any individualized advice."
-          },
-          "type": "TRAJECTORY_QUALITY"
+          }
         },
         {
           "rubric_id": "corrects_after_late_disclosure",
           "rubric_content": {
             "text_property": "When the user discloses risk-relevant information late in the conversation, the agent revisits and corrects earlier advice rather than leaving it standing."
-          },
-          "type": "TRAJECTORY_QUALITY"
+          }
         }
       ]
     }
