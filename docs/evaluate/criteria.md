@@ -318,7 +318,7 @@ Example `EvalConfig` entry:
 
 - Rubrics on `EvalConfig.criteria["rubric_based_final_response_quality_v1"].rubrics` **must be non-empty** — `RubricBasedEvaluator` asserts this at init time.
 - Rubrics on `EvalCase.rubrics` are *additive* on top of the criterion-level list, not a replacement. The effective rubric set passed to the judge is the union of both.
-- Only rubrics whose `type` field is `"FINAL_RESPONSE_QUALITY"` are picked up by this criterion. Rubrics with other `type` values (e.g. `"TRAJECTORY_QUALITY"`, `"TOOL_USE_QUALITY"`) are ignored.
+- Rubrics supplied per-case via `EvalCase.rubrics` are filtered by `type`: only those whose `type` is `"FINAL_RESPONSE_QUALITY"` are merged in. Criterion-level rubrics in `EvalConfig` are **not** filtered by `type`.
 
 ### Output And How To Interpret
 
@@ -399,7 +399,7 @@ Example `EvalConfig` entry:
 
 - Rubrics on `EvalConfig.criteria["rubric_based_tool_use_quality_v1"].rubrics` **must be non-empty** — `RubricBasedEvaluator` asserts this at init time.
 - Rubrics on `EvalCase.rubrics` are *additive* on top of the criterion-level list, not a replacement. The effective rubric set passed to the judge is the union of both.
-- Only rubrics whose `type` field is `"TOOL_USE_QUALITY"` are picked up by this criterion. Rubrics with other `type` values (e.g. `"FINAL_RESPONSE_QUALITY"`, `"TRAJECTORY_QUALITY"`) are ignored.
+- Rubrics supplied per-case via `EvalCase.rubrics` are filtered by `type`: only those whose `type` is `"TOOL_USE_QUALITY"` are merged in. Criterion-level rubrics in `EvalConfig` are **not** filtered by `type`.
 
 ### Output And How To Interpret
 
@@ -477,7 +477,7 @@ Example `EvalConfig` entry:
 
 - Rubrics on `EvalConfig.criteria["rubric_based_multi_turn_trajectory_quality_v1"].rubrics` **must be non-empty** — `RubricBasedEvaluator` asserts this at init time.
 - Rubrics on `EvalCase.rubrics` are *additive* on top of the criterion-level list, not a replacement. The effective rubric set passed to the judge is the union of both.
-- Only rubrics whose `type` field is `"TRAJECTORY_QUALITY"` are picked up by this criterion. Rubrics with other `type` values (e.g. `"FINAL_RESPONSE_QUALITY"`, `"TOOL_USE_QUALITY"`) are ignored.
+- Rubrics supplied per-case via `EvalCase.rubrics` are filtered by `type`: only those whose `type` is `"TRAJECTORY_QUALITY"` are merged in. Criterion-level rubrics in `EvalConfig` are **not** filtered by `type`.
 
 ### Output And How To Interpret
 
