@@ -27,3 +27,30 @@ of the tool, see
 ```py
 --8<-- "examples/python/snippets/tools/built-in-tools/agent_search.py"
 ```
+
+## Dynamic configuration
+
+You can create a subclass of `VertexAiSearchTool` and override the 
+`_build_vertex_ai_search_config` method to dynamically configure the search 
+settings based on the conversation context. It's useful for implementing 
+features such as per-user data filtering.
+
+The `_build_vertex_ai_search_config` method receives the conversation 
+`readonly_context` as an argument. Use this context to access state 
+information and modify the search configuration at runtime.
+
+```python
+from google.genai import types
+from google.adk.agents.readonly_context import ReadonlyContext
+from google.adk.tools import VertexAiSearchTool
+
+class MyVertexAISearchTool(VertexAiSearchTool):
+    def _build_vertex_ai_search_config(
+        self, context: ReadonlyContext
+    ) -> types.VertexAISearch:
+        """Builds the VertexAISearch configuration, adding a user-specific filter."""
+        config = super()._build_vertex_ai_search_config(context)
+        if "user_id" in context.state:
+            user_id = context.state["user_id"]
+            config.filter = f'user_id: ANY("{user_id}")'
+        return config
