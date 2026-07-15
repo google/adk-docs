@@ -435,16 +435,16 @@ at once.
     ```python
     from google.adk.agents import LlmAgent
 
-    # 1. Set a new default model for all agents
+    # Set a new default model for all agents
     LlmAgent.set_default_model("gemini-flash-latest")
 
-    # 2. This agent will now use "gemini-flash-latest" by default
+    # This agent will now use "gemini-flash-latest" by default
     agent_with_default_model = LlmAgent(
         name="default_model_agent",
         instruction="You are a helpful assistant."
     )
 
-    # 3. You can still override the default for specific agents
+    # You can still override the default for specific agents
     specific_agent = LlmAgent(
         name="specific_model_agent",
         model="gemini-pro-latest",
