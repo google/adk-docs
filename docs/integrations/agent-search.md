@@ -54,3 +54,4 @@ class MyVertexAISearchTool(VertexAiSearchTool):
             user_id = context.state["user_id"]
             config.filter = f'user_id: ANY("{user_id}")'
         return config
+```
