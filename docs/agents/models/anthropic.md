@@ -93,3 +93,26 @@ public class DirectAnthropicAgent {
   }
 }
 ```
+
+### Anthropic reasoning and `thinking_blocks`
+
+When you use Anthropic's Claude models (such as Claude 3.7 Sonnet) through the
+`LiteLlm` connector, ADK provides full support for their structured reasoning
+feature, known as "thinking blocks". ADK automatically extracts and preserves
+the `thinking_blocks` and their signatures across tool call boundaries. Use
+this automatic extraction to maintain Claude's reasoning in ADK agents across
+complex multi-turn interactions.
+
+#### Adaptive thinking and signatures
+
+For newer Anthropic reasoning models utilizing dynamic adaptive thinking
+with effort levels instead of fixed token budgets:
+
+* **Omitted Content:** Anthropic hides the raw thought tokens by default on
+  these models to reduce payload size and latency.
+* **State Management:** ADK automatically captures the encrypted `signature`
+  field from the API response and routes it back through the LiteLLM
+  connector on the next turn.
+* **Developer Impact:** You do not need to build custom state-tracking or
+  session management to maintain the model's reasoning loop when adaptive
+  thinking is active.
