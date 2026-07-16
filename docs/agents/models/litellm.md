@@ -115,5 +115,4 @@ Anthropic requires these signatures to be sent back in multi-turn conversations,
 and otherwise silently drops thinking after the first turn. ADK rebuilds the
 `thinking_blocks` with their signatures on each outbound request, so Claude's
 reasoning is preserved across tool calls and multi-turn interactions without any
-custom state management on your part. Full signature round-trip preservation
-across tool-call boundaries was hardened in ADK Python v2.4.0.
+custom state management on your part.

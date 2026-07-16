@@ -271,7 +271,7 @@ its reasoning depth itself rather than using a fixed token budget. On the native
 Claude path, a negative `thinking_budget` maps to adaptive thinking.
 
 The recommended way to control reasoning depth is the `effort` field on
-`AnthropicGenerateContentConfig` (available in ADK Python v2.4.0 and later):
+`AnthropicGenerateContentConfig`:
 
 ```python
 from google.adk.agents import LlmAgent
