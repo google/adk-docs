@@ -99,3 +99,20 @@ agent_claude_direct = LlmAgent(
     # ... other agent parameters
 )
 ```
+
+## Anthropic thinking blocks
+
+<div class="language-support-tag">
+    <span class="lst-supported">Supported in ADK</span><span class="lst-python">Python v1.28.0</span>
+</div>
+
+When you use Anthropic Claude models (such as Claude 3.7 Sonnet) through the
+`LiteLlm` connector, ADK supports Anthropic's structured reasoning feature, known
+as "thinking blocks". ADK automatically extracts the `thinking_blocks` and their
+signatures.
+
+Anthropic requires these signatures to be sent back in multi-turn conversations,
+and otherwise silently drops thinking after the first turn. ADK rebuilds the
+`thinking_blocks` with their signatures on each outbound request, so Claude's
+reasoning is preserved across tool calls and multi-turn interactions without any
+custom state management on your part.
